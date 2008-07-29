@@ -18,21 +18,18 @@ admin:
     user_number:    123456789
     last_name:      Reid      
     first_name:     Karen
-    status:
     role:           admin
 
 ta:
     user_name:      ta1
     user_number:    234567891
-    last_name:      Reid      
-    first_name:     Karen
-    status:
+    last_name:      Wayne      
+    first_name:     Bruce
     role:           ta
 
 student:
     user_name:      student1
     user_number:    345678912
-    last_name:      Reid      
-    first_name:     Karen
-    status:
+    last_name:      Dent      
+    first_name:     Harvey
     role:           student

@@ -8,7 +8,7 @@ require 'yaml'
 RAILS_ENV = "development"
 
 # get a database connection
-dbconfig = YAML::load(File.open('../config/database.yml'))[RAILS_ENV]
+dbconfig = YAML::load(File.open('config/database.yml'))[RAILS_ENV]
 ActiveRecord::Base.establish_connection(dbconfig)
 
 # ActiveRecord class declarations for use when parsing
@@ -28,10 +28,10 @@ end
 #load('../test/fixtures/users.yml') { |v| User.new(v).save! }
 #puts User.count.to_s + " user(s) has been added to database."
 
-load('../config/assignments.yml') { |v| 
-  Assignment.find_or_create_by_name(v).save!
+load('config/setup_users.yml') { |v| 
+  User.find_or_create_by_user_number(v).save!
 }
 
-load('../config/assignment_files.yml') { |v| 
-  AssignmentFile.find_or_create_by_filename(v).save!
+load('config/setup_assignments.yml') { |v| 
+  Assignment.find_or_create_by_name(v).save!
 }

@@ -2,16 +2,20 @@
 
 A1:
     name: A1
+    description: Write Tests!
     due_date: <%= 1.hour.from_now.to_s(:db) %>
 
 A2:
     name: A2
+    description: Run Tests!
     due_date: <%= 3.days.from_now.to_s(:db) %>
 
 A3:
     name: A3
+    description: Write Code!
     due_date: <%= 3.weeks.from_now.to_s(:db) %>
 
 A4:
     name: A4
+    description: Run Code!
     due_date: <%= 3.months.from_now.to_s(:db) %>
