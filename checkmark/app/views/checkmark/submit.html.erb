@@ -1,0 +1,30 @@
+
+<script type="text/javascript" language="JavaScript"><!--
+function check() {
+  var ext = document.f.pic.value;
+  ext = ext.substring(ext.length-3,ext.length);
+  ext = ext.toLowerCase();
+  if(ext != 'jpg') {
+    alert('You selected a .'+ ext +
+          ' file; please select a .jpg file instead!');
+    return false; }
+  else
+    return true; }
+//--></script>
+
+
+
+<h1><%= @task[:title] %></h1>
+
+<h3>
+<%= link_to 'Select an Assignment', :action => @task[:action] %> &gt;
+<span style="color:blue">Upload Files</span>
+</h3>
+
+<% form_tag({:action=>'upload'}, :multipart => true) do %>
+  <% for file in @files do -%>
+    <p><%= file.filename %> <input type="file" name="file" /></p>
+  <% end -%>
+
+  <p><input type="submit" name="Upload" value="Submit Files" /></p>
+<% end %>

@@ -1,0 +1,38 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+# User schema template:
+#
+# one:
+#    id:
+#    user_name:
+#    user_number:
+#    last_name:
+#    first_name:
+#    status:
+#    role:
+#    created_at: <% Time.now.to_s(:db) %>
+#    updated_at: <% Time.now.to_s(:db) %>
+
+admin:
+    user_name:      admin
+    user_number:    123456789
+    last_name:      Reid      
+    first_name:     Karen
+    status:
+    role:           admin
+
+ta:
+    user_name:      ta1
+    user_number:    234567891
+    last_name:      Reid      
+    first_name:     Karen
+    status:
+    role:           ta
+
+student:
+    user_name:      student1
+    user_number:    345678912
+    last_name:      Reid      
+    first_name:     Karen
+    status:
+    role:           student

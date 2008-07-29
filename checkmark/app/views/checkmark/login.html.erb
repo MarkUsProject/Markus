@@ -1,0 +1,30 @@
+
+
+<%= stylesheet_link_tag 'login.css', :media => 'all' %>
+
+<div id="login">
+
+  <h1 id="logo">Welcome to CheckMark</h1>
+  <% if flash[:login_notice] -%>
+    <div class="error"><%=h flash[:login_notice] %></div>
+  <% end -%>
+  <% form_tag({ :action => 'login', :id => nil }, :id => 'login_form') do %>
+    <p>
+      <%= label_tag 'login', 'CDF Login:' -%><br />
+      <%= text_field_tag 'user_login', nil, :size => 16, :tabindex => 10 %>
+    </p>
+
+    <p>
+      <%= label_tag 'password', 'Password:' %><br />
+      <%= password_field_tag 'user_password', nil, :size => 16, :tabindex => 20 %>
+    </p>
+
+    <p><%= submit_tag "Log in", :disabled_with => 'Logging in...', :tabindex => 100 %></p>
+  <% end %>
+</div>    
+
+<%# Try to put focus on the login text field on load %>
+<script type="text/javascript">
+  try{ document.getElementById('user_login').focus(); } catch(e) {}
+</script>
+

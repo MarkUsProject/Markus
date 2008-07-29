@@ -1,0 +1,16 @@
+
+<h1><%= @task[:title] %></h1>
+
+<h3><span style="color:blue">Select an assignment</span></h3>
+
+<ul>
+<% for assignment in @assignments %>
+  <li>
+    <%= link_to assignment.name, 
+        :action => 'submit', 
+        :name => assignment.name  %>
+  </li>
+<% end %>
+</ul>
+
+

@@ -1,0 +1,3679 @@
+Unable to load ar_user, underlying cause no such file to load -- ar_user 
+
+ /usr/lib/ruby/1.8/rubygems/custom_require.rb:27:in `gem_original_require'
+/usr/lib/ruby/1.8/rubygems/custom_require.rb:27:in `require'
+/var/lib/gems/1.8/gems/activesupport-2.1.0/lib/active_support/dependencies.rb:509:in `require'
+/var/lib/gems/1.8/gems/activesupport-2.1.0/lib/active_support/dependencies.rb:354:in `new_constants_in'
+/var/lib/gems/1.8/gems/activesupport-2.1.0/lib/active_support/dependencies.rb:509:in `require'
+/var/lib/gems/1.8/gems/activesupport-2.1.0/lib/active_support/dependencies.rb:101:in `require_or_load'
+/var/lib/gems/1.8/gems/activesupport-2.1.0/lib/active_support/dependencies.rb:60:in `depend_on'
+/var/lib/gems/1.8/gems/activesupport-2.1.0/lib/active_support/dependencies.rb:456:in `require_dependency'
+/var/lib/gems/1.8/gems/activerecord-2.1.0/lib/active_record/fixtures.rb:855:in `try_to_load_dependency'
+/var/lib/gems/1.8/gems/activerecord-2.1.0/lib/active_record/fixtures.rb:870:in `require_fixture_classes'
+/var/lib/gems/1.8/gems/activerecord-2.1.0/lib/active_record/fixtures.rb:867:in `each'
+/var/lib/gems/1.8/gems/activerecord-2.1.0/lib/active_record/fixtures.rb:867:in `require_fixture_classes'
+/var/lib/gems/1.8/gems/activerecord-2.1.0/lib/active_record/fixtures.rb:850:in `fixtures'
+./test/test_helper.rb:35
+./test/functional/checkmark_controller_test.rb:1:in `require'
+./test/functional/checkmark_controller_test.rb:1
+/var/lib/gems/1.8/gems/rake-0.8.1/lib/rake/rake_test_loader.rb:5:in `load'
+/var/lib/gems/1.8/gems/rake-0.8.1/lib/rake/rake_test_loader.rb:5
+/var/lib/gems/1.8/gems/rake-0.8.1/lib/rake/rake_test_loader.rb:5:in `each'
+/var/lib/gems/1.8/gems/rake-0.8.1/lib/rake/rake_test_loader.rb:5
+Unable to load ar_user, underlying cause no such file to load -- ar_user 
+
+ /usr/lib/ruby/1.8/rubygems/custom_require.rb:27:in `gem_original_require'
+/usr/lib/ruby/1.8/rubygems/custom_require.rb:27:in `require'
+/var/lib/gems/1.8/gems/activesupport-2.1.0/lib/active_support/dependencies.rb:509:in `require'
+/var/lib/gems/1.8/gems/activesupport-2.1.0/lib/active_support/dependencies.rb:354:in `new_constants_in'
+/var/lib/gems/1.8/gems/activesupport-2.1.0/lib/active_support/dependencies.rb:509:in `require'
+/var/lib/gems/1.8/gems/activesupport-2.1.0/lib/active_support/dependencies.rb:101:in `require_or_load'
+/var/lib/gems/1.8/gems/activesupport-2.1.0/lib/active_support/dependencies.rb:60:in `depend_on'
+/var/lib/gems/1.8/gems/activesupport-2.1.0/lib/active_support/dependencies.rb:456:in `require_dependency'
+/var/lib/gems/1.8/gems/activerecord-2.1.0/lib/active_record/fixtures.rb:855:in `try_to_load_dependency'
+/var/lib/gems/1.8/gems/activerecord-2.1.0/lib/active_record/fixtures.rb:870:in `require_fixture_classes'
+/var/lib/gems/1.8/gems/activerecord-2.1.0/lib/active_record/fixtures.rb:867:in `each'
+/var/lib/gems/1.8/gems/activerecord-2.1.0/lib/active_record/fixtures.rb:867:in `require_fixture_classes'
+/var/lib/gems/1.8/gems/activerecord-2.1.0/lib/active_record/fixtures.rb:850:in `fixtures'
+./test/test_helper.rb:35
+./test/unit/assignment_test.rb:1:in `require'
+./test/unit/assignment_test.rb:1
+/var/lib/gems/1.8/gems/rake-0.8.1/lib/rake/rake_test_loader.rb:5:in `load'
+/var/lib/gems/1.8/gems/rake-0.8.1/lib/rake/rake_test_loader.rb:5
+/var/lib/gems/1.8/gems/rake-0.8.1/lib/rake/rake_test_loader.rb:5:in `each'
+/var/lib/gems/1.8/gems/rake-0.8.1/lib/rake/rake_test_loader.rb:5
+  [4;36;1mSQL (0.000128)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000068)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000045)[0m   [0;1mROLLBACK[0m
+Unable to load ar_user, underlying cause no such file to load -- ar_user 
+
+ /usr/lib/ruby/1.8/rubygems/custom_require.rb:27:in `gem_original_require'
+/usr/lib/ruby/1.8/rubygems/custom_require.rb:27:in `require'
+/var/lib/gems/1.8/gems/activesupport-2.1.0/lib/active_support/dependencies.rb:509:in `require'
+/var/lib/gems/1.8/gems/activesupport-2.1.0/lib/active_support/dependencies.rb:354:in `new_constants_in'
+/var/lib/gems/1.8/gems/activesupport-2.1.0/lib/active_support/dependencies.rb:509:in `require'
+/var/lib/gems/1.8/gems/activesupport-2.1.0/lib/active_support/dependencies.rb:101:in `require_or_load'
+/var/lib/gems/1.8/gems/activesupport-2.1.0/lib/active_support/dependencies.rb:60:in `depend_on'
+/var/lib/gems/1.8/gems/activesupport-2.1.0/lib/active_support/dependencies.rb:456:in `require_dependency'
+/var/lib/gems/1.8/gems/activerecord-2.1.0/lib/active_record/fixtures.rb:855:in `try_to_load_dependency'
+/var/lib/gems/1.8/gems/activerecord-2.1.0/lib/active_record/fixtures.rb:870:in `require_fixture_classes'
+/var/lib/gems/1.8/gems/activerecord-2.1.0/lib/active_record/fixtures.rb:867:in `each'
+/var/lib/gems/1.8/gems/activerecord-2.1.0/lib/active_record/fixtures.rb:867:in `require_fixture_classes'
+/var/lib/gems/1.8/gems/activerecord-2.1.0/lib/active_record/fixtures.rb:850:in `fixtures'
+./test/test_helper.rb:35
+./test/functional/checkmark_controller_test.rb:1:in `require'
+./test/functional/checkmark_controller_test.rb:1
+/var/lib/gems/1.8/gems/rake-0.8.1/lib/rake/rake_test_loader.rb:5:in `load'
+/var/lib/gems/1.8/gems/rake-0.8.1/lib/rake/rake_test_loader.rb:5
+/var/lib/gems/1.8/gems/rake-0.8.1/lib/rake/rake_test_loader.rb:5:in `each'
+/var/lib/gems/1.8/gems/rake-0.8.1/lib/rake/rake_test_loader.rb:5
+  [4;36;1mSQL (0.000134)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000048)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000064)[0m   [0;1mROLLBACK[0m
+  [4;36;1mSQL (0.000098)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000063)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000059)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000063)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000064)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000063)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000122)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000070)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000052)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000073)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000038)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000062)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000121)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000072)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000054)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000053)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000047)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000063)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000105)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000059)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000051)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000067)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000043)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000066)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000128)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000074)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000036)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000037)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000044)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000046)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000123)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000071)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000044)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000065)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000063)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000066)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000120)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000072)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000062)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000063)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000050)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000045)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000046)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000043)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000122)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000068)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000026)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000026)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000050)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000061)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000064)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000062)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000105)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000060)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000052)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000056)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000046)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000045)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000064)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000064)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000127)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000069)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000032)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000027)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000047)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000036)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000038)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000023)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000105)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000062)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000036)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000049)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000062)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000061)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000115)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000064)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000062)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000037)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000024)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000035)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000050)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000046)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000088)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000061)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000036)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000035)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000044)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000072)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000123)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000067)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000033)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000029)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000047)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000045)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000039)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000064)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000092)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000061)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000036)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000038)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000025)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000069)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000124)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000064)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000059)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000062)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000064)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000062)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000065)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000061)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000105)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000115)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000061)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000066)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000046)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000075)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000130)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000059)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000055)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000052)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000042)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000057)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000063)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000063)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000096)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000067)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000044)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000068)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000064)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000067)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000162)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000081)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000127)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000137)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000110)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000067)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000036)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000038)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000082)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000050)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000037)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000040)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000037)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000036)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000094)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000060)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000036)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000043)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000038)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000040)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000099)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000061)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000061)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000042)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000056)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000056)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000093)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000810)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000030)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000031)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000030)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000030)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000029)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000029)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000106)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000059)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000036)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000047)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000033)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000037)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000032)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000050)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000082)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000047)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000036)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000045)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000100)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000039)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000137)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000073)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000065)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000071)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000073)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000077)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000145)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000088)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000037)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 16:52:28) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00052 (1911 reqs/sec) | DB: 0.00752 (1437%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000065)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000038)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000037)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000113)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000074)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000036)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 16:52:50) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00051 (1960 reqs/sec) | DB: 0.01012 (1983%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000260)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000040)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000038)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000100)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000068)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000072)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 16:53:00) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00046 (2193 reqs/sec) | DB: 0.00391 (857%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000063)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000033)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000032)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000173)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000074)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000036)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 16:53:13) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00908 (110 reqs/sec) | Rendering: 0.00595 (65%) | DB: 0.00943 (103%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 16:53:13) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00041 (2432 reqs/sec) | Rendering: 0.00595 (1448%) | DB: 0.00943 (2293%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000107)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000072)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 16:53:13) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00039 (2597 reqs/sec) | DB: 0.00018 (46%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000070)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000042)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000045)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000101)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000068)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000034)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 16:53:28) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00855 (116 reqs/sec) | Rendering: 0.00565 (66%) | DB: 0.01433 (167%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 16:53:28) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00041 (2416 reqs/sec) | Rendering: 0.00565 (1364%) | DB: 0.01433 (3463%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000094)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000045)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 16:53:28) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00040 (2531 reqs/sec) | DB: 0.00014 (35%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000077)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000045)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000045)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000100)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000086)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000037)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 16:53:42) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00886 (112 reqs/sec) | Rendering: 0.00574 (64%) | DB: 0.00981 (110%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 16:53:42) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00041 (2421 reqs/sec) | Rendering: 0.00574 (1389%) | DB: 0.00981 (2374%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000111)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000088)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 16:53:42) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00038 (2611 reqs/sec) | DB: 0.00020 (51%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000076)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000042)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000033)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000096)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000049)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000083)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 16:54:28) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00872 (114 reqs/sec) | Rendering: 0.00569 (65%) | DB: 0.01059 (121%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 16:54:28) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"asfd"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00041 (2416 reqs/sec) | Rendering: 0.00569 (1374%) | DB: 0.01059 (2557%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000105)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000043)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 16:54:28) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00162 (615 reqs/sec) | Rendering: 0.00148 (91%) | DB: 0.00015 (9%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 16:54:28) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00041 (2451 reqs/sec) | Rendering: 0.00148 (363%) | DB: 0.00015 (36%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000077)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000086)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 16:54:28) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00040 (2519 reqs/sec) | DB: 0.00016 (41%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000076)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000086)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000077)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000092)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000060)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000063)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 16:55:32) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00877 (114 reqs/sec) | Rendering: 0.00571 (65%) | DB: 0.00909 (103%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 16:55:32) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"asfd"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00041 (2439 reqs/sec) | Rendering: 0.00571 (1392%) | DB: 0.00909 (2218%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000081)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000079)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 16:55:32) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00231 (432 reqs/sec) | Rendering: 0.00215 (93%) | DB: 0.00016 (6%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 16:55:32) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00063 (1589 reqs/sec) | Rendering: 0.00215 (342%) | DB: 0.00016 (25%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000091)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000055)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 16:55:32) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00062 (1615 reqs/sec) | DB: 0.00015 (23%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000082)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000059)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000059)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000082)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000048)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000037)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 16:55:41) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00857 (116 reqs/sec) | Rendering: 0.00566 (66%) | DB: 0.00930 (108%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 16:55:41) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"asfd"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00041 (2439 reqs/sec) | Rendering: 0.00566 (1381%) | DB: 0.00930 (2268%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000114)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000038)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 16:55:41) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00162 (618 reqs/sec) | Rendering: 0.00146 (90%) | DB: 0.00015 (9%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 16:55:41) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00040 (2513 reqs/sec) | Rendering: 0.00146 (367%) | DB: 0.00015 (38%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000060)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000069)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 16:55:41) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00042 (2369 reqs/sec) | DB: 0.00013 (30%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000068)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000079)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000074)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000101)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000051)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000036)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000042)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000047)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000038)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000036)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000037)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000036)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000037)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000139)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000075)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000036)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000042)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000037)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000038)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000037)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000038)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000037)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000037)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000082)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000048)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000037)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 16:56:37) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00922 (108 reqs/sec) | Rendering: 0.00611 (66%) | DB: 0.00855 (92%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 16:56:37) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"asfd"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00042 (2403 reqs/sec) | Rendering: 0.00611 (1468%) | DB: 0.00855 (2055%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000109)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000070)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 16:56:37) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00170 (588 reqs/sec) | Rendering: 0.00155 (90%) | DB: 0.00018 (10%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 16:56:37) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00040 (2501 reqs/sec) | Rendering: 0.00155 (386%) | DB: 0.00018 (44%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000081)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000079)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 16:56:37) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00038 (2624 reqs/sec) | DB: 0.00016 (41%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000064)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000067)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000056)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000099)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000070)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000037)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:02:34) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00905 (110 reqs/sec) | Rendering: 0.00584 (64%) | DB: 0.00819 (90%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:02:34) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00041 (2438 reqs/sec) | Rendering: 0.00584 (1425%) | DB: 0.00819 (1998%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000111)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000039)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:02:34) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00162 (618 reqs/sec) | Rendering: 0.00146 (90%) | DB: 0.00015 (9%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:02:34) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2571 reqs/sec) | Rendering: 0.00146 (375%) | DB: 0.00015 (38%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000142)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000093)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:02:34) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00159 (628 reqs/sec) | Rendering: 0.00145 (90%) | DB: 0.00023 (14%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:02:34) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00043 (2335 reqs/sec) | Rendering: 0.00145 (338%) | DB: 0.00023 (54%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000073)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000069)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 17:02:34) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00038 (2624 reqs/sec) | DB: 0.00014 (37%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000069)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000089)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000098)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000037)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:03:07) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00914 (109 reqs/sec) | Rendering: 0.00600 (65%) | DB: 0.00799 (87%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:03:07) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00045 (2216 reqs/sec) | Rendering: 0.00600 (1329%) | DB: 0.00799 (1772%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000117)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000033)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:03:07) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00174 (576 reqs/sec) | Rendering: 0.00158 (91%) | DB: 0.00015 (8%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:03:07) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00041 (2420 reqs/sec) | Rendering: 0.00158 (382%) | DB: 0.00015 (36%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000076)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000063)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:03:07) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00166 (602 reqs/sec) | Rendering: 0.00152 (91%) | DB: 0.00014 (8%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:03:07) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2551 reqs/sec) | Rendering: 0.00152 (387%) | DB: 0.00014 (35%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000074)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000030)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 17:03:07) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00039 (2584 reqs/sec) | DB: 0.00010 (26%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000068)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000151)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000072)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000068)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:03:27) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00889 (112 reqs/sec) | Rendering: 0.00576 (64%) | DB: 0.00653 (73%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:03:27) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00041 (2445 reqs/sec) | Rendering: 0.00576 (1407%) | DB: 0.00653 (1597%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000115)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000071)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:03:27) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00171 (584 reqs/sec) | Rendering: 0.00155 (90%) | DB: 0.00019 (10%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:03:27) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00043 (2348 reqs/sec) | Rendering: 0.00155 (363%) | DB: 0.00019 (43%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000088)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000085)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:03:27) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00158 (632 reqs/sec) | Rendering: 0.00143 (90%) | DB: 0.00017 (10%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:03:27) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00044 (2288 reqs/sec) | Rendering: 0.00143 (328%) | DB: 0.00017 (39%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000073)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000071)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 17:03:27) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00039 (2545 reqs/sec) | DB: 0.00014 (36%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000068)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000088)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000046)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000033)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:07:37) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00899 (111 reqs/sec) | Rendering: 0.00607 (67%) | DB: 0.01267 (140%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:07:37) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00042 (2403 reqs/sec) | Rendering: 0.00607 (1460%) | DB: 0.01267 (3046%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000101)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000071)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:07:37) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00166 (603 reqs/sec) | Rendering: 0.00152 (91%) | DB: 0.00017 (10%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:07:37) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2584 reqs/sec) | Rendering: 0.00152 (391%) | DB: 0.00017 (44%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000067)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000057)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:07:37) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00171 (585 reqs/sec) | Rendering: 0.00155 (91%) | DB: 0.00012 (7%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:07:37) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2563 reqs/sec) | Rendering: 0.00155 (398%) | DB: 0.00012 (31%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000068)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000071)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 17:07:37) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00041 (2416 reqs/sec) | DB: 0.00014 (33%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000077)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000094)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000060)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000063)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:18:31) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00887 (112 reqs/sec) | Rendering: 0.00580 (65%) | DB: 0.00963 (108%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:18:31) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00042 (2398 reqs/sec) | Rendering: 0.00580 (1391%) | DB: 0.00963 (2308%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000100)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000062)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:18:31) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00178 (561 reqs/sec) | Rendering: 0.00160 (89%) | DB: 0.00016 (9%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:18:31) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2537 reqs/sec) | Rendering: 0.00160 (406%) | DB: 0.00016 (41%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000069)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000049)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:18:31) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00161 (619 reqs/sec) | Rendering: 0.00147 (91%) | DB: 0.00012 (7%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:18:31) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2551 reqs/sec) | Rendering: 0.00147 (375%) | DB: 0.00012 (30%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000063)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000039)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 17:18:31) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00049 (2053 reqs/sec) | DB: 0.00010 (20%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000065)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000129)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000064)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000054)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:18:54) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00873 (114 reqs/sec) | Rendering: 0.00579 (66%) | DB: 0.01042 (119%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:18:54) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00041 (2444 reqs/sec) | Rendering: 0.00579 (1414%) | DB: 0.01042 (2546%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000081)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000071)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:18:54) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00163 (614 reqs/sec) | Rendering: 0.00148 (91%) | DB: 0.00015 (9%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:18:54) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00040 (2531 reqs/sec) | Rendering: 0.00148 (375%) | DB: 0.00015 (38%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000070)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000062)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:18:54) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00162 (616 reqs/sec) | Rendering: 0.00148 (91%) | DB: 0.00013 (8%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:18:54) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00040 (2513 reqs/sec) | Rendering: 0.00148 (371%) | DB: 0.00013 (33%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000070)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000033)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 17:18:54) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00038 (2611 reqs/sec) | DB: 0.00010 (26%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000067)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000097)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000066)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000108)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:19:16) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.02699 (37 reqs/sec) | Rendering: 0.01793 (66%) | DB: 0.05187 (192%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:19:16) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00128 (778 reqs/sec) | Rendering: 0.01793 (1395%) | DB: 0.05187 (4037%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000165)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000099)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:19:16) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00518 (193 reqs/sec) | Rendering: 0.00473 (91%) | DB: 0.00026 (5%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:19:16) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00127 (785 reqs/sec) | Rendering: 0.00473 (371%) | DB: 0.00026 (20%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000204)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000108)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:19:16) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00553 (180 reqs/sec) | Rendering: 0.00497 (89%) | DB: 0.00031 (5%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:19:16) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00129 (774 reqs/sec) | Rendering: 0.00497 (385%) | DB: 0.00031 (24%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000714)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000112)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 17:19:16) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00124 (806 reqs/sec) | DB: 0.00083 (66%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000143)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000093)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000059)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000030)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:20:03) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00915 (109 reqs/sec) | Rendering: 0.00606 (66%) | DB: 0.00898 (98%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:20:03) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00041 (2432 reqs/sec) | Rendering: 0.00606 (1473%) | DB: 0.00898 (2183%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000091)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000060)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:20:03) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00165 (606 reqs/sec) | Rendering: 0.00150 (90%) | DB: 0.00015 (9%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:20:03) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2545 reqs/sec) | Rendering: 0.00150 (381%) | DB: 0.00015 (38%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000065)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000037)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:20:03) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00158 (631 reqs/sec) | Rendering: 0.00144 (90%) | DB: 0.00010 (6%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:20:03) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2538 reqs/sec) | Rendering: 0.00144 (364%) | DB: 0.00010 (25%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000072)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000038)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 17:20:03) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00038 (2618 reqs/sec) | DB: 0.00011 (28%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000065)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000098)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000066)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000036)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:20:19) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00936 (106 reqs/sec) | Rendering: 0.00620 (66%) | DB: 0.00549 (58%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:20:19) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00042 (2385 reqs/sec) | Rendering: 0.00620 (1478%) | DB: 0.00549 (1310%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000098)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000060)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:20:19) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00165 (607 reqs/sec) | Rendering: 0.00150 (91%) | DB: 0.00016 (9%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:20:19) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00043 (2299 reqs/sec) | Rendering: 0.00150 (345%) | DB: 0.00016 (36%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000067)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000072)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:20:19) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00162 (618 reqs/sec) | Rendering: 0.00147 (91%) | DB: 0.00014 (8%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:20:19) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00040 (2531 reqs/sec) | Rendering: 0.00147 (373%) | DB: 0.00014 (35%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000070)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000070)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 17:20:19) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00038 (2611 reqs/sec) | DB: 0.00014 (36%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000068)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000093)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000058)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000030)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:20:52) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00884 (113 reqs/sec) | Rendering: 0.00580 (65%) | DB: 0.00995 (112%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:20:52) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00043 (2326 reqs/sec) | Rendering: 0.00580 (1349%) | DB: 0.00995 (2314%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000107)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000064)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:20:52) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00172 (582 reqs/sec) | Rendering: 0.00157 (91%) | DB: 0.00017 (9%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:20:52) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2557 reqs/sec) | Rendering: 0.00157 (401%) | DB: 0.00017 (43%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000070)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000069)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:20:52) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00161 (620 reqs/sec) | Rendering: 0.00147 (91%) | DB: 0.00014 (8%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:20:52) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2557 reqs/sec) | Rendering: 0.00147 (375%) | DB: 0.00014 (35%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000070)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000070)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 17:20:52) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00043 (2325 reqs/sec) | DB: 0.00014 (32%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000058)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000097)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000065)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000043)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:21:06) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.01338 (74 reqs/sec) | Rendering: 0.01023 (76%) | DB: 0.00793 (59%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:21:06) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00069 (1442 reqs/sec) | Rendering: 0.01023 (1476%) | DB: 0.00793 (1144%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000096)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000051)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:21:06) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00279 (358 reqs/sec) | Rendering: 0.00252 (90%) | DB: 0.00015 (5%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:21:06) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00068 (1481 reqs/sec) | Rendering: 0.00252 (373%) | DB: 0.00015 (21%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000107)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000071)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:21:06) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00260 (384 reqs/sec) | Rendering: 0.00237 (91%) | DB: 0.00018 (6%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:21:06) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00063 (1589 reqs/sec) | Rendering: 0.00237 (376%) | DB: 0.00018 (28%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000073)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000070)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 17:21:06) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00062 (1618 reqs/sec) | DB: 0.00014 (23%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000045)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000120)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000072)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000057)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:21:13) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00934 (107 reqs/sec) | Rendering: 0.00621 (66%) | DB: 0.00639 (68%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:21:13) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00042 (2364 reqs/sec) | Rendering: 0.00621 (1468%) | DB: 0.00639 (1511%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000089)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000042)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:21:13) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00167 (598 reqs/sec) | Rendering: 0.00153 (91%) | DB: 0.00013 (7%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:21:13) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2545 reqs/sec) | Rendering: 0.00153 (388%) | DB: 0.00013 (33%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000059)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000059)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:21:13) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00158 (631 reqs/sec) | Rendering: 0.00144 (90%) | DB: 0.00012 (7%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:21:13) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00040 (2474 reqs/sec) | Rendering: 0.00144 (356%) | DB: 0.00012 (29%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000064)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000052)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 17:21:13) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00038 (2611 reqs/sec) | DB: 0.00012 (30%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000069)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000096)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000050)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000029)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:23:40) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00897 (111 reqs/sec) | Rendering: 0.00583 (64%) | DB: 0.00931 (103%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:23:40) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00042 (2375 reqs/sec) | Rendering: 0.00583 (1384%) | DB: 0.00931 (2210%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000092)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000072)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:23:40) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00159 (627 reqs/sec) | Rendering: 0.00145 (91%) | DB: 0.00016 (10%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:23:40) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2557 reqs/sec) | Rendering: 0.00145 (371%) | DB: 0.00016 (41%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000069)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000070)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:23:40) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00160 (625 reqs/sec) | Rendering: 0.00145 (90%) | DB: 0.00014 (8%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:23:40) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2551 reqs/sec) | Rendering: 0.00145 (370%) | DB: 0.00014 (35%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000071)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000071)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 17:23:40) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00038 (2624 reqs/sec) | DB: 0.00014 (37%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000068)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000097)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000065)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000032)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:23:49) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00862 (115 reqs/sec) | Rendering: 0.00572 (66%) | DB: 0.01318 (152%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:23:49) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00041 (2468 reqs/sec) | Rendering: 0.00572 (1411%) | DB: 0.01318 (3253%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000098)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000034)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:23:49) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00160 (623 reqs/sec) | Rendering: 0.00146 (90%) | DB: 0.00013 (8%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:23:49) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00040 (2481 reqs/sec) | Rendering: 0.00146 (361%) | DB: 0.00013 (32%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000071)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000034)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:23:49) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00158 (632 reqs/sec) | Rendering: 0.00144 (90%) | DB: 0.00011 (6%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:23:49) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2576 reqs/sec) | Rendering: 0.00144 (370%) | DB: 0.00011 (27%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000067)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000059)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 17:23:49) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00043 (2348 reqs/sec) | DB: 0.00013 (29%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000069)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000091)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000047)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000030)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:24:39) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00872 (114 reqs/sec) | Rendering: 0.00583 (66%) | DB: 0.00726 (83%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:24:39) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00041 (2432 reqs/sec) | Rendering: 0.00583 (1417%) | DB: 0.00726 (1767%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000113)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000064)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:24:39) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00168 (593 reqs/sec) | Rendering: 0.00153 (90%) | DB: 0.00018 (10%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:24:39) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00040 (2499 reqs/sec) | Rendering: 0.00153 (382%) | DB: 0.00018 (44%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000068)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000060)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:24:39) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00161 (620 reqs/sec) | Rendering: 0.00147 (91%) | DB: 0.00013 (7%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:24:39) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2551 reqs/sec) | Rendering: 0.00147 (374%) | DB: 0.00013 (32%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000064)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000038)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 17:24:39) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00038 (2618 reqs/sec) | DB: 0.00010 (26%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000137)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000085)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000048)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000031)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:25:17) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00853 (117 reqs/sec) | Rendering: 0.00567 (66%) | DB: 0.00793 (93%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:25:17) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00041 (2462 reqs/sec) | Rendering: 0.00567 (1395%) | DB: 0.00793 (1954%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000116)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000065)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:25:17) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00173 (579 reqs/sec) | Rendering: 0.00157 (90%) | DB: 0.00018 (10%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:25:17) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00044 (2247 reqs/sec) | Rendering: 0.00157 (352%) | DB: 0.00018 (40%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000069)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000060)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:25:17) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00157 (636 reqs/sec) | Rendering: 0.00143 (91%) | DB: 0.00013 (8%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:25:17) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00040 (2481 reqs/sec) | Rendering: 0.00143 (355%) | DB: 0.00013 (32%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000059)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000069)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 17:25:17) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00038 (2637 reqs/sec) | DB: 0.00013 (33%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000067)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000106)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000059)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000030)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:26:51) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00873 (114 reqs/sec) | Rendering: 0.00574 (65%) | DB: 0.01067 (122%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:26:51) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00043 (2325 reqs/sec) | Rendering: 0.00574 (1335%) | DB: 0.01067 (2481%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000109)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000073)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:26:51) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00166 (603 reqs/sec) | Rendering: 0.00151 (91%) | DB: 0.00018 (10%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:26:51) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2532 reqs/sec) | Rendering: 0.00151 (383%) | DB: 0.00018 (46%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000075)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000039)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:26:51) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00166 (603 reqs/sec) | Rendering: 0.00151 (91%) | DB: 0.00011 (6%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:26:51) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00043 (2304 reqs/sec) | Rendering: 0.00151 (348%) | DB: 0.00011 (26%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000071)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000033)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 17:26:51) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00039 (2545 reqs/sec) | DB: 0.00010 (26%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000070)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000098)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000059)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000031)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:27:12) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00864 (115 reqs/sec) | Rendering: 0.00572 (66%) | DB: 0.00959 (110%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:27:12) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00041 (2449 reqs/sec) | Rendering: 0.00572 (1401%) | DB: 0.00959 (2348%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000103)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000073)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:27:12) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00165 (607 reqs/sec) | Rendering: 0.00151 (91%) | DB: 0.00018 (10%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:27:12) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2551 reqs/sec) | Rendering: 0.00151 (384%) | DB: 0.00018 (44%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000068)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000060)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:27:12) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00164 (610 reqs/sec) | Rendering: 0.00149 (90%) | DB: 0.00013 (7%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:27:12) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2584 reqs/sec) | Rendering: 0.00149 (384%) | DB: 0.00013 (33%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000059)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000058)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 17:27:12) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00041 (2462 reqs/sec) | DB: 0.00012 (28%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000054)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000081)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000056)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000030)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:27:49) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00873 (114 reqs/sec) | Rendering: 0.00576 (65%) | DB: 0.00707 (80%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:27:49) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00040 (2475 reqs/sec) | Rendering: 0.00576 (1426%) | DB: 0.00707 (1750%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000098)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000070)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:27:49) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00165 (607 reqs/sec) | Rendering: 0.00150 (91%) | DB: 0.00017 (10%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:27:49) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00041 (2445 reqs/sec) | Rendering: 0.00150 (368%) | DB: 0.00017 (41%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000073)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000033)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:27:49) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00163 (615 reqs/sec) | Rendering: 0.00148 (91%) | DB: 0.00011 (6%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:27:49) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00040 (2470 reqs/sec) | Rendering: 0.00148 (366%) | DB: 0.00011 (26%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000071)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000032)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 17:27:49) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00038 (2624 reqs/sec) | DB: 0.00010 (26%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000069)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000083)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000047)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000031)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:28:51) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00866 (115 reqs/sec) | Rendering: 0.00577 (66%) | DB: 0.00722 (83%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:28:51) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00041 (2445 reqs/sec) | Rendering: 0.00577 (1410%) | DB: 0.00722 (1765%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000108)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000033)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:28:51) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00166 (600 reqs/sec) | Rendering: 0.00151 (90%) | DB: 0.00014 (8%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:28:51) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2543 reqs/sec) | Rendering: 0.00151 (384%) | DB: 0.00014 (35%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000066)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000033)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:28:51) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00161 (619 reqs/sec) | Rendering: 0.00147 (91%) | DB: 0.00010 (6%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:28:51) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00040 (2513 reqs/sec) | Rendering: 0.00147 (370%) | DB: 0.00010 (24%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000070)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000058)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 17:28:51) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00041 (2410 reqs/sec) | DB: 0.00013 (30%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000059)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000126)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000063)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000035)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:29:00) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.01359 (73 reqs/sec) | Rendering: 0.01066 (78%) | DB: 0.01284 (94%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:29:00) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00128 (778 reqs/sec) | Rendering: 0.01066 (829%) | DB: 0.01284 (999%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000148)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000104)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:29:00) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00509 (196 reqs/sec) | Rendering: 0.00465 (91%) | DB: 0.00025 (4%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:29:00) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00128 (781 reqs/sec) | Rendering: 0.00465 (362%) | DB: 0.00025 (19%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000141)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000107)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:29:00) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00500 (199 reqs/sec) | Rendering: 0.00456 (91%) | DB: 0.00025 (4%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:29:00) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00125 (800 reqs/sec) | Rendering: 0.00456 (365%) | DB: 0.00025 (19%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000123)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000322)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 17:29:00) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00125 (799 reqs/sec) | DB: 0.00044 (35%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000120)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000077)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000045)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000043)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:29:23) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.01356 (73 reqs/sec) | Rendering: 0.00898 (66%) | DB: 0.00966 (71%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:29:23) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00065 (1543 reqs/sec) | Rendering: 0.00898 (1386%) | DB: 0.00966 (1490%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000123)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000070)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:29:23) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00262 (381 reqs/sec) | Rendering: 0.00239 (91%) | DB: 0.00019 (7%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:29:23) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00064 (1560 reqs/sec) | Rendering: 0.00239 (372%) | DB: 0.00019 (30%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000082)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000046)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:29:23) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00252 (396 reqs/sec) | Rendering: 0.00230 (91%) | DB: 0.00013 (5%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:29:23) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00064 (1569 reqs/sec) | Rendering: 0.00230 (361%) | DB: 0.00013 (20%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000077)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000074)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 17:29:23) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00061 (1636 reqs/sec) | DB: 0.00015 (24%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000069)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000092)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000059)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000030)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:30:24) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.01145 (87 reqs/sec) | Rendering: 0.00853 (74%) | DB: 0.01128 (98%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:30:24) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00087 (1146 reqs/sec) | Rendering: 0.00853 (977%) | DB: 0.01128 (1293%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000126)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000084)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:30:24) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00337 (296 reqs/sec) | Rendering: 0.00307 (91%) | DB: 0.00021 (6%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:30:24) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00085 (1172 reqs/sec) | Rendering: 0.00307 (360%) | DB: 0.00021 (24%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000096)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000072)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:30:24) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00343 (291 reqs/sec) | Rendering: 0.00312 (90%) | DB: 0.00017 (4%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:30:24) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00084 (1188 reqs/sec) | Rendering: 0.00312 (370%) | DB: 0.00017 (19%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000091)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000072)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:30:24) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00346 (289 reqs/sec) | Rendering: 0.00316 (91%) | DB: 0.00016 (4%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:30:24) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"admin", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afdse"}
+  [4;35;1mUser Load (0.000352)[0m   [0mSELECT * FROM `users` WHERE (`users`.`user_name` = 'admin') LIMIT 1[0m
+  [4;36;1mUser Load (0.000243)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`id` = 1) LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00875 (114 reqs/sec) | Rendering: 0.00316 (36%) | DB: 0.00076 (8%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000135)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000066)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:30:24) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00178 (560 reqs/sec) | Rendering: 0.00162 (90%) | DB: 0.00020 (11%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:30:24) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"stud1", "action"=>"login", "controller"=>"checkmark", "user_password"=>"lala"}
+  [4;35;1mUser Load (0.000275)[0m   [0mSELECT * FROM `users` WHERE (`users`.`user_name` = 'stud1') LIMIT 1[0m
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00262 (381 reqs/sec) | Rendering: 0.00171 (65%) | DB: 0.00027 (10%) | 200 OK [http://test.host/checkmark/login]
+  [4;36;1mSQL (0.000089)[0m   [0;1mROLLBACK[0m
+  [4;35;1mSQL (0.000065)[0m   [0mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:30:24) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00170 (587 reqs/sec) | Rendering: 0.00155 (91%) | DB: 0.00015 (9%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:30:24) [POST]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark", "nuser_login"=>"stud1", "user_password"=>"lala"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00040 (2474 reqs/sec) | Rendering: 0.00155 (383%) | DB: 0.00015 (38%) | 302 Found [http://test.host/checkmark/login]
+  [4;36;1mSQL (0.000066)[0m   [0;1mROLLBACK[0m
+  [4;35;1mSQL (0.000072)[0m   [0mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 17:30:24) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00040 (2531 reqs/sec) | DB: 0.00014 (34%) | 302 Found [http://test.host/checkmark]
+  [4;36;1mSQL (0.000063)[0m   [0;1mROLLBACK[0m
+  [4;36;1mSQL (0.000112)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000075)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000030)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:32:52) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.01354 (73 reqs/sec) | Rendering: 0.00893 (65%) | DB: 0.01218 (89%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:32:52) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00065 (1533 reqs/sec) | Rendering: 0.00893 (1369%) | DB: 0.01218 (1867%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000112)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000065)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:32:52) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00257 (388 reqs/sec) | Rendering: 0.00234 (91%) | DB: 0.00018 (6%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:32:52) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00071 (1416 reqs/sec) | Rendering: 0.00234 (332%) | DB: 0.00018 (25%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000081)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000077)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:32:52) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00254 (393 reqs/sec) | Rendering: 0.00232 (91%) | DB: 0.00016 (6%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:32:52) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00063 (1592 reqs/sec) | Rendering: 0.00232 (369%) | DB: 0.00016 (25%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000188)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000045)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:32:52) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00252 (397 reqs/sec) | Rendering: 0.00230 (91%) | DB: 0.00023 (9%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 17:32:52) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"admin", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afdse"}
+  [4;35;1mUser Load (0.000313)[0m   [0mSELECT * FROM `users` WHERE (`users`.`user_name` = 'admin') LIMIT 1[0m
+  [4;36;1mUser Load (0.000173)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`id` = 1) LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00672 (148 reqs/sec) | Rendering: 0.00230 (34%) | DB: 0.00072 (10%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000153)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000046)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 17:32:52) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00044 (2281 reqs/sec) | DB: 0.00020 (45%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000069)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000216)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (0.000127)[0m   [0mSHOW TABLES[0m
+  [4;36;1mSQL (0.000126)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (0.000123)[0m   [0mSHOW TABLES[0m
+  [4;36;1mSQL (0.000125)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (0.000122)[0m   [0mSHOW TABLES[0m
+  [4;36;1mSQL (0.000235)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000265)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000103)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 18:04:05) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.05053 (19 reqs/sec) | Rendering: 0.04142 (81%) | DB: 0.01758 (34%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 18:04:05) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00132 (757 reqs/sec) | Rendering: 0.04142 (3135%) | DB: 0.01758 (1331%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000206)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000102)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 18:04:05) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00510 (195 reqs/sec) | Rendering: 0.00466 (91%) | DB: 0.00031 (6%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 18:04:05) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00126 (794 reqs/sec) | Rendering: 0.00466 (370%) | DB: 0.00031 (24%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000125)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000123)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 18:04:05) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00506 (197 reqs/sec) | Rendering: 0.00462 (91%) | DB: 0.00025 (4%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 18:04:05) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00127 (788 reqs/sec) | Rendering: 0.00462 (364%) | DB: 0.00025 (19%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000785)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000129)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 18:04:05) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00509 (196 reqs/sec) | Rendering: 0.00464 (91%) | DB: 0.00091 (17%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 18:04:05) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"admin", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afdse"}
+  [4;35;1mUser Load (0.000519)[0m   [0mSELECT * FROM `users` WHERE (`users`.`user_name` = 'admin') LIMIT 1[0m
+  [4;36;1mUser Load (0.000354)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`id` = 1) LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.01328 (75 reqs/sec) | Rendering: 0.00464 (34%) | DB: 0.00179 (13%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000244)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000132)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 18:04:05) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00136 (733 reqs/sec) | DB: 0.00038 (27%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000140)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000488)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (0.000382)[0m   [0mSHOW TABLES[0m
+  [4;36;1mSQL (0.000349)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (0.000321)[0m   [0mSHOW TABLES[0m
+  [4;36;1mSQL (0.000325)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (0.000345)[0m   [0mSHOW TABLES[0m
+  [4;36;1mSQL (0.000153)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000078)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000050)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 18:04:10) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00881 (113 reqs/sec) | Rendering: 0.00582 (66%) | DB: 0.00697 (79%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 18:04:10) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00041 (2416 reqs/sec) | Rendering: 0.00582 (1407%) | DB: 0.00697 (1683%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000111)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000067)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 18:04:10) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00160 (623 reqs/sec) | Rendering: 0.00146 (91%) | DB: 0.00018 (11%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 18:04:10) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2545 reqs/sec) | Rendering: 0.00146 (371%) | DB: 0.00018 (45%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000080)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000057)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 18:04:10) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00157 (635 reqs/sec) | Rendering: 0.00143 (90%) | DB: 0.00014 (8%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 18:04:10) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00042 (2391 reqs/sec) | Rendering: 0.00143 (341%) | DB: 0.00014 (32%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000073)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000079)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 18:04:10) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00155 (643 reqs/sec) | Rendering: 0.00142 (90%) | DB: 0.00015 (9%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 18:04:10) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"admin", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afdse"}
+  [4;35;1mUser Load (0.000304)[0m   [0mSELECT * FROM `users` WHERE (`users`.`user_name` = 'admin') LIMIT 1[0m
+  [4;36;1mUser Load (0.000245)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`id` = 1) LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00685 (145 reqs/sec) | Rendering: 0.00142 (20%) | DB: 0.00070 (10%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000137)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000065)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 18:04:10) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00042 (2398 reqs/sec) | DB: 0.00020 (48%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000073)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000249)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (0.000112)[0m   [0mSHOW TABLES[0m
+  [4;36;1mSQL (0.000116)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (0.000114)[0m   [0mSHOW TABLES[0m
+  [4;36;1mSQL (0.000394)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (0.000151)[0m   [0mSHOW TABLES[0m
+  [4;36;1mSQL (0.000133)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000086)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000062)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 18:05:32) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00885 (113 reqs/sec) | Rendering: 0.00576 (65%) | DB: 0.00767 (86%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 18:05:32) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00044 (2293 reqs/sec) | Rendering: 0.00576 (1320%) | DB: 0.00767 (1759%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000095)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000053)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 18:05:32) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00162 (616 reqs/sec) | Rendering: 0.00148 (91%) | DB: 0.00015 (9%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 18:05:32) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00041 (2468 reqs/sec) | Rendering: 0.00148 (365%) | DB: 0.00015 (36%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000098)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000079)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 18:05:32) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00174 (576 reqs/sec) | Rendering: 0.00159 (91%) | DB: 0.00018 (10%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 18:05:32) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00040 (2486 reqs/sec) | Rendering: 0.00159 (396%) | DB: 0.00018 (43%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000088)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000119)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 18:05:32) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00160 (625 reqs/sec) | Rendering: 0.00146 (91%) | DB: 0.00021 (12%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 18:05:32) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"admin", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afdse"}
+  [4;35;1mUser Load (0.000260)[0m   [0mSELECT * FROM `users` WHERE (`users`.`user_name` = 'admin') LIMIT 1[0m
+  [4;36;1mUser Load (0.000173)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`id` = 1) LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00450 (222 reqs/sec) | Rendering: 0.00146 (32%) | DB: 0.00064 (14%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000138)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000071)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 18:05:32) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00046 (2159 reqs/sec) | DB: 0.00021 (45%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000061)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000238)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (0.000157)[0m   [0mSHOW TABLES[0m
+  [4;36;1mSQL (0.000141)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (0.000141)[0m   [0mSHOW TABLES[0m
+  [4;36;1mSQL (0.000111)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (0.000110)[0m   [0mSHOW TABLES[0m
+  [4;36;1mSQL (0.000120)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000073)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000035)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:28:33) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00848 (117 reqs/sec) | Rendering: 0.00563 (66%) | DB: 0.00778 (91%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:28:33) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2545 reqs/sec) | Rendering: 0.00563 (1431%) | DB: 0.00778 (1979%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000089)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000066)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:28:33) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00161 (619 reqs/sec) | Rendering: 0.00147 (90%) | DB: 0.00015 (9%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:28:33) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00042 (2404 reqs/sec) | Rendering: 0.00147 (353%) | DB: 0.00015 (37%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000068)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000070)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:28:33) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00235 (426 reqs/sec) | Rendering: 0.00215 (91%) | DB: 0.00014 (5%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:28:33) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00123 (810 reqs/sec) | Rendering: 0.00215 (173%) | DB: 0.00014 (11%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000508)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000107)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:28:33) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00511 (195 reqs/sec) | Rendering: 0.00466 (91%) | DB: 0.00062 (12%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:28:33) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"admin", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afdse"}
+  [4;35;1mUser Load (0.000492)[0m   [0mSELECT * FROM `users` WHERE (`users`.`user_name` = 'admin') LIMIT 1[0m
+  [4;36;1mUser Load (0.000344)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`id` = 1) LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.01340 (74 reqs/sec) | Rendering: 0.00466 (34%) | DB: 0.00145 (10%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000143)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000067)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 19:28:33) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00041 (2438 reqs/sec) | DB: 0.00021 (51%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000068)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000081)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000046)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000031)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:30:27) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00875 (114 reqs/sec) | Rendering: 0.00569 (64%) | DB: 0.00641 (73%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:30:27) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00040 (2519 reqs/sec) | Rendering: 0.00569 (1433%) | DB: 0.00641 (1613%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000097)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000044)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:30:27) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00161 (619 reqs/sec) | Rendering: 0.00147 (91%) | DB: 0.00014 (8%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:30:27) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00038 (2611 reqs/sec) | Rendering: 0.00147 (384%) | DB: 0.00014 (36%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000073)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000033)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:30:27) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00166 (602 reqs/sec) | Rendering: 0.00151 (91%) | DB: 0.00011 (6%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:30:27) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00038 (2639 reqs/sec) | Rendering: 0.00151 (399%) | DB: 0.00011 (27%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000049)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000044)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:30:27) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00158 (631 reqs/sec) | Rendering: 0.00145 (91%) | DB: 0.00009 (5%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:30:27) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"admin", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afdse"}
+  [4;35;1mUser Load (0.000268)[0m   [0mSELECT * FROM `users` WHERE (`users`.`user_name` = 'admin') LIMIT 1[0m
+  [4;36;1mUser Load (0.000144)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`id` = 1) LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00455 (219 reqs/sec) | Rendering: 0.00145 (31%) | DB: 0.00050 (11%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000164)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000136)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 19:30:27) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00127 (784 reqs/sec) | DB: 0.00030 (23%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000104)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000130)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000065)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000035)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:31:03) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.01081 (92 reqs/sec) | Rendering: 0.00713 (65%) | DB: 0.01887 (174%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:31:03) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00053 (1897 reqs/sec) | Rendering: 0.00713 (1352%) | DB: 0.01887 (3581%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000099)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000062)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:31:03) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00204 (490 reqs/sec) | Rendering: 0.00186 (91%) | DB: 0.00016 (7%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:31:03) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00050 (1988 reqs/sec) | Rendering: 0.00186 (369%) | DB: 0.00016 (32%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000062)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000054)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:31:03) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00202 (495 reqs/sec) | Rendering: 0.00184 (91%) | DB: 0.00012 (5%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:31:03) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00053 (1897 reqs/sec) | Rendering: 0.00184 (349%) | DB: 0.00012 (22%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000072)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000063)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:31:03) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00203 (491 reqs/sec) | Rendering: 0.00185 (90%) | DB: 0.00013 (6%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:31:03) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"admin", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afdse"}
+  [4;35;1mUser Load (0.000270)[0m   [0mSELECT * FROM `users` WHERE (`users`.`user_name` = 'admin') LIMIT 1[0m
+  [4;36;1mUser Load (0.000173)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`id` = 1) LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00549 (182 reqs/sec) | Rendering: 0.00185 (33%) | DB: 0.00058 (10%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000117)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000054)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 19:31:03) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00052 (1927 reqs/sec) | DB: 0.00017 (32%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000058)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000124)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000044)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000030)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:32:14) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00865 (115 reqs/sec) | Rendering: 0.00575 (66%) | DB: 0.00934 (107%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:32:14) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00042 (2392 reqs/sec) | Rendering: 0.00575 (1375%) | DB: 0.00934 (2235%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000112)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000071)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:32:14) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00172 (582 reqs/sec) | Rendering: 0.00157 (91%) | DB: 0.00018 (10%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:32:14) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2537 reqs/sec) | Rendering: 0.00157 (399%) | DB: 0.00018 (46%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000069)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000060)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:32:14) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00170 (588 reqs/sec) | Rendering: 0.00155 (90%) | DB: 0.00013 (7%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:32:14) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00040 (2501 reqs/sec) | Rendering: 0.00155 (386%) | DB: 0.00013 (32%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000068)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000058)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:32:14) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00161 (621 reqs/sec) | Rendering: 0.00146 (90%) | DB: 0.00013 (7%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-28 19:32:14) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"admin", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afdse"}
+  [4;35;1mUser Load (0.000278)[0m   [0mSELECT * FROM `users` WHERE (`users`.`user_name` = 'admin') LIMIT 1[0m
+  [4;36;1mUser Load (0.000210)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`id` = 1) LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00470 (212 reqs/sec) | Rendering: 0.00146 (31%) | DB: 0.00061 (13%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000137)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000056)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-28 19:32:14) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00045 (2212 reqs/sec) | DB: 0.00019 (42%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000053)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000238)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000214)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000120)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:28:29) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.04139 (24 reqs/sec) | Rendering: 0.03220 (77%) | DB: 0.01539 (37%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:28:29) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00132 (754 reqs/sec) | Rendering: 0.03220 (2430%) | DB: 0.01539 (1161%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000207)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000130)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:28:29) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00509 (196 reqs/sec) | Rendering: 0.00464 (91%) | DB: 0.00034 (6%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:28:29) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00126 (791 reqs/sec) | Rendering: 0.00464 (367%) | DB: 0.00034 (26%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000163)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000126)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:28:29) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00517 (193 reqs/sec) | Rendering: 0.00471 (91%) | DB: 0.00029 (5%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:28:29) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00127 (789 reqs/sec) | Rendering: 0.00471 (371%) | DB: 0.00029 (22%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000146)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000104)[0m   [0;1mBEGIN[0m
+  [4;35;1mUser Load (0.000486)[0m   [0mSELECT * FROM `users` WHERE (`users`.`id` = 1) [0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:28:29) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"admin", "action"=>"login", "controller"=>"checkmark", "user_password"=>"asfd"}
+  [4;36;1mUser Load (0.000539)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`user_name` = 'admin') LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00602 (166 reqs/sec) | DB: 0.00128 (21%) | 302 Found [http://test.host/checkmark/login?user_login=admin&user_password=asfd]
+  [4;35;1mSQL (0.000255)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000123)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000125)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000103)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-29 10:28:30) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00131 (760 reqs/sec) | DB: 0.00061 (46%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000148)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000108)[0m   [0;1mBEGIN[0m
+  [4;35;1mUser Load (0.000192)[0m   [0mSELECT * FROM `users` WHERE (`users`.`id` = 1) [0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:28:30) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>"lala"}
+  [4;36;1mUser Load (0.000483)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`user_name` = 'afds') LIMIT 1[0m
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00733 (136 reqs/sec) | Rendering: 0.00494 (67%) | DB: 0.00093 (12%) | 200 OK [http://test.host/checkmark/login?user_login=afds&user_password=lala]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:28:30) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"admin", "action"=>"login", "controller"=>"checkmark", "user_password"=>"lala"}
+  [4;35;1mUser Load (0.000168)[0m   [0mSELECT * FROM `users` WHERE (`users`.`user_name` = 'admin') LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00458 (218 reqs/sec) | Rendering: 0.00494 (107%) | DB: 0.00110 (23%) | 302 Found [http://test.host/checkmark/login?user_login=afds&user_password=lala]
+  [4;36;1mSQL (0.000310)[0m   [0;1mROLLBACK[0m
+  [4;36;1mSQL (0.000085)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000048)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000037)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:29:04) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.01043 (95 reqs/sec) | Rendering: 0.00727 (69%) | DB: 0.00916 (87%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:29:04) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00043 (2325 reqs/sec) | Rendering: 0.00727 (1689%) | DB: 0.00916 (2129%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000112)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000033)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:29:04) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00164 (611 reqs/sec) | Rendering: 0.00150 (91%) | DB: 0.00014 (8%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:29:04) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2570 reqs/sec) | Rendering: 0.00150 (384%) | DB: 0.00014 (37%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000075)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000041)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:29:04) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00162 (618 reqs/sec) | Rendering: 0.00147 (91%) | DB: 0.00012 (7%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:29:04) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2563 reqs/sec) | Rendering: 0.00147 (378%) | DB: 0.00012 (29%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000073)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000078)[0m   [0;1mBEGIN[0m
+  [4;35;1mUser Load (0.000239)[0m   [0mSELECT * FROM `users` WHERE (`users`.`id` = 1) [0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:29:04) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"admin", "action"=>"login", "controller"=>"checkmark", "user_password"=>"asfd"}
+  [4;36;1mUser Load (0.000208)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`user_name` = 'admin') LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00173 (577 reqs/sec) | DB: 0.00060 (34%) | 302 Found [http://test.host/checkmark/login?user_login=admin&user_password=asfd]
+  [4;35;1mSQL (0.000138)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000078)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000056)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000080)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-29 10:29:04) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00042 (2398 reqs/sec) | DB: 0.00035 (84%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000073)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000041)[0m   [0;1mBEGIN[0m
+  [4;35;1mUser Load (0.000079)[0m   [0mSELECT * FROM `users` WHERE (`users`.`id` = 1) [0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:29:04) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>"lala"}
+  [4;36;1mUser Load (0.000247)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`user_name` = 'afds') LIMIT 1[0m
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00253 (395 reqs/sec) | Rendering: 0.00166 (65%) | DB: 0.00044 (17%) | 200 OK [http://test.host/checkmark/login?user_login=afds&user_password=lala]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:29:04) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"admin", "action"=>"login", "controller"=>"checkmark", "user_password"=>"lala"}
+  [4;35;1mUser Load (0.000086)[0m   [0mSELECT * FROM `users` WHERE (`users`.`user_name` = 'admin') LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00110 (908 reqs/sec) | Rendering: 0.00166 (150%) | DB: 0.00053 (47%) | 302 Found [http://test.host/checkmark/login?user_login=afds&user_password=lala]
+  [4;36;1mSQL (0.000090)[0m   [0;1mROLLBACK[0m
+  [4;36;1mSQL (0.000125)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000062)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000038)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:29:27) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.01003 (99 reqs/sec) | Rendering: 0.00690 (68%) | DB: 0.00997 (99%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:29:27) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00042 (2369 reqs/sec) | Rendering: 0.00690 (1633%) | DB: 0.00997 (2363%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000124)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000071)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:29:27) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00163 (613 reqs/sec) | Rendering: 0.00149 (91%) | DB: 0.00020 (11%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:29:27) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00040 (2525 reqs/sec) | Rendering: 0.00149 (376%) | DB: 0.00020 (49%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000071)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000096)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:29:27) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00161 (621 reqs/sec) | Rendering: 0.00147 (91%) | DB: 0.00017 (10%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:29:27) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2571 reqs/sec) | Rendering: 0.00147 (377%) | DB: 0.00017 (42%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000066)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000072)[0m   [0;1mBEGIN[0m
+  [4;35;1mUser Load (0.000236)[0m   [0mSELECT * FROM `users` WHERE (`users`.`id` = 1) [0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:29:27) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"admin", "action"=>"login", "controller"=>"checkmark", "user_password"=>"asfd"}
+  [4;36;1mUser Load (0.000186)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`user_name` = 'admin') LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00161 (621 reqs/sec) | DB: 0.00056 (34%) | 302 Found [http://test.host/checkmark/login?user_login=admin&user_password=asfd]
+  [4;35;1mSQL (0.000134)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000060)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000057)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000057)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-29 10:29:27) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00046 (2187 reqs/sec) | DB: 0.00031 (67%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000055)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000057)[0m   [0;1mBEGIN[0m
+  [4;35;1mUser Load (0.000069)[0m   [0mSELECT * FROM `users` WHERE (`users`.`id` = 1) [0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:29:27) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>"lala"}
+  [4;36;1mUser Load (0.000227)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`user_name` = 'afds') LIMIT 1[0m
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00267 (374 reqs/sec) | Rendering: 0.00179 (67%) | DB: 0.00041 (15%) | 200 OK [http://test.host/checkmark/login?user_login=afds&user_password=lala]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:29:27) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"admin", "action"=>"login", "controller"=>"checkmark", "user_password"=>"lala"}
+  [4;35;1mUser Load (0.000079)[0m   [0mSELECT * FROM `users` WHERE (`users`.`user_name` = 'admin') LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00118 (843 reqs/sec) | Rendering: 0.00179 (150%) | DB: 0.00049 (41%) | 302 Found [http://test.host/checkmark/login?user_login=afds&user_password=lala]
+  [4;36;1mSQL (0.000135)[0m   [0;1mROLLBACK[0m
+  [4;36;1mSQL (0.000089)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000048)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000038)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:32:44) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00960 (104 reqs/sec) | Rendering: 0.00646 (67%) | DB: 0.00741 (77%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:32:44) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00045 (2236 reqs/sec) | Rendering: 0.00646 (1444%) | DB: 0.00741 (1656%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000108)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000044)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:32:44) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00169 (593 reqs/sec) | Rendering: 0.00153 (90%) | DB: 0.00015 (9%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:32:44) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00040 (2493 reqs/sec) | Rendering: 0.00153 (380%) | DB: 0.00015 (37%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000079)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000076)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:32:44) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00163 (615 reqs/sec) | Rendering: 0.00148 (91%) | DB: 0.00015 (9%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:32:44) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00041 (2445 reqs/sec) | Rendering: 0.00148 (362%) | DB: 0.00015 (37%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000072)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000081)[0m   [0;1mBEGIN[0m
+  [4;35;1mUser Load (0.000239)[0m   [0mSELECT * FROM `users` WHERE (`users`.`id` = 1) [0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:32:44) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"admin", "action"=>"login", "controller"=>"checkmark", "user_password"=>"asfd"}
+  [4;36;1mUser Load (0.000194)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`user_name` = 'admin') LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00154 (651 reqs/sec) | DB: 0.00059 (38%) | 302 Found [http://test.host/checkmark/login?user_login=admin&user_password=asfd]
+  [4;35;1mSQL (0.000141)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000077)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000102)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000045)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-29 10:32:45) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00042 (2381 reqs/sec) | DB: 0.00037 (86%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000074)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000069)[0m   [0;1mBEGIN[0m
+  [4;35;1mUser Load (0.000073)[0m   [0mSELECT * FROM `users` WHERE (`users`.`id` = 1) [0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:32:45) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>"lala"}
+  [4;36;1mUser Load (0.000254)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`user_name` = 'afds') LIMIT 1[0m
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00261 (382 reqs/sec) | Rendering: 0.00171 (65%) | DB: 0.00047 (17%) | 200 OK [http://test.host/checkmark/login?user_login=afds&user_password=lala]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:32:45) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"admin", "action"=>"login", "controller"=>"checkmark", "user_password"=>"lala"}
+  [4;35;1mUser Load (0.000104)[0m   [0mSELECT * FROM `users` WHERE (`users`.`user_name` = 'admin') LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00113 (885 reqs/sec) | Rendering: 0.00171 (151%) | DB: 0.00057 (50%) | 302 Found [http://test.host/checkmark/login?user_login=afds&user_password=lala]
+  [4;36;1mSQL (0.000076)[0m   [0;1mROLLBACK[0m
+  [4;35;1mSQL (0.000234)[0m   [0mSHOW TABLES[0m
+  [4;36;1mSQL (0.000145)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (0.000142)[0m   [0mSHOW TABLES[0m
+  [4;36;1mSQL (0.000139)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (0.000125)[0m   [0mSHOW TABLES[0m
+  [4;36;1mSQL (0.000122)[0m   [0;1mSHOW TABLES[0m
+  [4;36;1mSQL (0.000095)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000069)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000038)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:33:29) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00935 (106 reqs/sec) | Rendering: 0.00618 (66%) | DB: 0.01097 (117%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:33:29) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00047 (2114 reqs/sec) | Rendering: 0.00618 (1306%) | DB: 0.01097 (2319%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000354)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000076)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:33:29) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00170 (586 reqs/sec) | Rendering: 0.00155 (90%) | DB: 0.00043 (25%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:33:29) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00040 (2525 reqs/sec) | Rendering: 0.00155 (391%) | DB: 0.00043 (108%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000081)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000076)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:33:29) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00169 (591 reqs/sec) | Rendering: 0.00155 (91%) | DB: 0.00016 (9%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:33:29) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2570 reqs/sec) | Rendering: 0.00155 (397%) | DB: 0.00016 (40%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000077)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000066)[0m   [0;1mBEGIN[0m
+  [4;35;1mUser Load (0.000220)[0m   [0mSELECT * FROM `users` WHERE (`users`.`id` = 1) [0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:33:29) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"admin", "action"=>"login", "controller"=>"checkmark", "user_password"=>"asfd"}
+  [4;36;1mUser Load (0.000221)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`user_name` = 'admin') LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00159 (629 reqs/sec) | DB: 0.00058 (36%) | 302 Found [http://test.host/checkmark/login?user_login=admin&user_password=asfd]
+  [4;35;1mSQL (0.000128)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000069)[0m   [0;1mBEGIN[0m
+  [4;35;1mUser Load (0.000247)[0m   [0mSELECT * FROM `users` WHERE (`users`.`id` = 3) [0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:33:29) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"student1", "action"=>"login", "controller"=>"checkmark", "user_password"=>"lala"}
+  [4;36;1mUser Load (0.000192)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`user_name` = 'student1') LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00119 (838 reqs/sec) | DB: 0.00064 (53%) | 302 Found [http://test.host/checkmark/login?user_login=student1&user_password=lala]
+
+
+Processing CheckmarkController#logout (for 0.0.0.0 at 2008-07-29 10:33:29) [GET]
+  Session ID: 
+  Parameters: {"action"=>"logout", "controller"=>"checkmark"}
+Cookie set: auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT
+Redirected to http://test.host/checkmark/login
+Completed in 0.00052 (1923 reqs/sec) | DB: 0.00000 (0%) | 302 Found [http://test.host/checkmark/login?user_login=student1&user_password=lala]
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-29 10:33:29) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00040 (2525 reqs/sec) | DB: 0.00000 (0%) | 302 Found [http://test.host/checkmark/login?user_login=student1&user_password=lala]
+  [4;35;1mSQL (0.000109)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000078)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-29 10:33:29) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00040 (2525 reqs/sec) | DB: 0.00019 (47%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000054)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000044)[0m   [0;1mBEGIN[0m
+  [4;35;1mUser Load (0.000095)[0m   [0mSELECT * FROM `users` WHERE (`users`.`id` = 1) [0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:33:29) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>"lala"}
+  [4;36;1mUser Load (0.000202)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`user_name` = 'afds') LIMIT 1[0m
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00239 (418 reqs/sec) | Rendering: 0.00159 (66%) | DB: 0.00039 (16%) | 200 OK [http://test.host/checkmark/login?user_login=afds&user_password=lala]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:33:29) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"admin", "action"=>"login", "controller"=>"checkmark", "user_password"=>"lala"}
+  [4;35;1mUser Load (0.000081)[0m   [0mSELECT * FROM `users` WHERE (`users`.`user_name` = 'admin') LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00104 (960 reqs/sec) | Rendering: 0.00159 (152%) | DB: 0.00048 (45%) | 302 Found [http://test.host/checkmark/login?user_login=afds&user_password=lala]
+  [4;36;1mSQL (0.000085)[0m   [0;1mROLLBACK[0m
+  [4;36;1mSQL (0.000086)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000049)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000032)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:34:03) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00910 (109 reqs/sec) | Rendering: 0.00593 (65%) | DB: 0.01654 (181%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:34:03) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00041 (2410 reqs/sec) | Rendering: 0.00593 (1428%) | DB: 0.01654 (3986%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000135)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000079)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:34:03) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00164 (611 reqs/sec) | Rendering: 0.00149 (91%) | DB: 0.00021 (13%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:34:03) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00040 (2495 reqs/sec) | Rendering: 0.00149 (372%) | DB: 0.00021 (53%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000077)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000079)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:34:03) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00160 (625 reqs/sec) | Rendering: 0.00146 (91%) | DB: 0.00016 (9%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:34:03) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00044 (2278 reqs/sec) | Rendering: 0.00146 (332%) | DB: 0.00016 (35%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000079)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000040)[0m   [0;1mBEGIN[0m
+  [4;35;1mUser Load (0.000235)[0m   [0mSELECT * FROM `users` WHERE (`users`.`id` = 1) [0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:34:03) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"admin", "action"=>"login", "controller"=>"checkmark", "user_password"=>"asfd"}
+  [4;36;1mUser Load (0.000196)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`user_name` = 'admin') LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00160 (624 reqs/sec) | DB: 0.00055 (34%) | 302 Found [http://test.host/checkmark/login?user_login=admin&user_password=asfd]
+  [4;35;1mSQL (0.000146)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000078)[0m   [0;1mBEGIN[0m
+  [4;35;1mUser Load (0.000244)[0m   [0mSELECT * FROM `users` WHERE (`users`.`id` = 3) [0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:34:03) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"student1", "action"=>"login", "controller"=>"checkmark", "user_password"=>"lala"}
+  [4;36;1mUser Load (0.000203)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`user_name` = 'student1') LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00125 (796 reqs/sec) | DB: 0.00067 (53%) | 302 Found [http://test.host/checkmark/login?user_login=student1&user_password=lala]
+
+
+Processing CheckmarkController#logout (for 0.0.0.0 at 2008-07-29 10:34:03) [GET]
+  Session ID: 
+  Parameters: {"action"=>"logout", "controller"=>"checkmark"}
+Cookie set: auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT
+Redirected to http://test.host/checkmark/login
+Completed in 0.00052 (1919 reqs/sec) | DB: 0.00000 (0%) | 302 Found [http://test.host/checkmark/login?user_login=student1&user_password=lala]
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-29 10:34:03) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00038 (2610 reqs/sec) | DB: 0.00000 (0%) | 302 Found [http://test.host/checkmark/login?user_login=student1&user_password=lala]
+  [4;35;1mSQL (0.000208)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000081)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-29 10:34:03) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00040 (2519 reqs/sec) | DB: 0.00029 (72%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000065)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000086)[0m   [0;1mBEGIN[0m
+  [4;35;1mUser Load (0.000085)[0m   [0mSELECT * FROM `users` WHERE (`users`.`id` = 1) [0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:34:03) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>"lala"}
+  [4;36;1mUser Load (0.000213)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`user_name` = 'afds') LIMIT 1[0m
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00242 (413 reqs/sec) | Rendering: 0.00159 (65%) | DB: 0.00045 (18%) | 200 OK [http://test.host/checkmark/login?user_login=afds&user_password=lala]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:34:03) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"admin", "action"=>"login", "controller"=>"checkmark", "user_password"=>"lala"}
+  [4;35;1mUser Load (0.000079)[0m   [0mSELECT * FROM `users` WHERE (`users`.`user_name` = 'admin') LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00106 (941 reqs/sec) | Rendering: 0.00159 (149%) | DB: 0.00053 (49%) | 302 Found [http://test.host/checkmark/login?user_login=afds&user_password=lala]
+  [4;36;1mSQL (0.000091)[0m   [0;1mROLLBACK[0m
+  [4;36;1mSQL (0.000096)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000059)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000031)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:36:14) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.01323 (75 reqs/sec) | Rendering: 0.00999 (75%) | DB: 0.01337 (101%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:36:14) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00046 (2178 reqs/sec) | Rendering: 0.00999 (2176%) | DB: 0.01337 (2912%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000091)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000035)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:36:14) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00171 (585 reqs/sec) | Rendering: 0.00156 (91%) | DB: 0.00013 (7%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:36:14) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2557 reqs/sec) | Rendering: 0.00156 (397%) | DB: 0.00013 (32%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000070)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000079)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:36:14) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00165 (606 reqs/sec) | Rendering: 0.00151 (91%) | DB: 0.00015 (9%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:36:14) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00039 (2549 reqs/sec) | Rendering: 0.00151 (384%) | DB: 0.00015 (38%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000079)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000079)[0m   [0;1mBEGIN[0m
+  [4;35;1mUser Load (0.000218)[0m   [0mSELECT * FROM `users` WHERE (`users`.`id` = 1) [0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:36:14) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"admin", "action"=>"login", "controller"=>"checkmark", "user_password"=>"asfd"}
+  [4;36;1mUser Load (0.000193)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`user_name` = 'admin') LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00153 (652 reqs/sec) | DB: 0.00057 (37%) | 302 Found [http://test.host/checkmark/login?user_login=admin&user_password=asfd]
+  [4;35;1mSQL (0.000139)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000074)[0m   [0;1mBEGIN[0m
+  [4;35;1mUser Load (0.000270)[0m   [0mSELECT * FROM `users` WHERE (`users`.`id` = 3) [0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:36:14) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"student1", "action"=>"login", "controller"=>"checkmark", "user_password"=>"lala"}
+  [4;36;1mUser Load (0.000276)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`user_name` = 'student1') LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00130 (768 reqs/sec) | DB: 0.00076 (58%) | 302 Found [http://test.host/checkmark/login?user_login=student1&user_password=lala]
+
+
+Processing CheckmarkController#logout (for 0.0.0.0 at 2008-07-29 10:36:14) [GET]
+  Session ID: 
+  Parameters: {"action"=>"logout", "controller"=>"checkmark"}
+Cookie set: auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT
+Redirected to http://test.host/checkmark/login
+Completed in 0.00052 (1930 reqs/sec) | DB: 0.00000 (0%) | 302 Found [http://test.host/checkmark/login?user_login=student1&user_password=lala]
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-29 10:36:14) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00038 (2618 reqs/sec) | DB: 0.00000 (0%) | 302 Found [http://test.host/checkmark/login?user_login=student1&user_password=lala]
+  [4;35;1mSQL (0.000108)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000078)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-29 10:36:14) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00039 (2565 reqs/sec) | DB: 0.00019 (47%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000069)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000067)[0m   [0;1mBEGIN[0m
+  [4;35;1mUser Load (0.000075)[0m   [0mSELECT * FROM `users` WHERE (`users`.`id` = 1) [0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:36:14) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>"lala"}
+  [4;36;1mUser Load (0.000209)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`user_name` = 'afds') LIMIT 1[0m
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00238 (419 reqs/sec) | Rendering: 0.00158 (66%) | DB: 0.00042 (17%) | 200 OK [http://test.host/checkmark/login?user_login=afds&user_password=lala]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 10:36:14) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"admin", "action"=>"login", "controller"=>"checkmark", "user_password"=>"lala"}
+  [4;35;1mUser Load (0.000074)[0m   [0mSELECT * FROM `users` WHERE (`users`.`user_name` = 'admin') LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00110 (912 reqs/sec) | Rendering: 0.00158 (143%) | DB: 0.00049 (45%) | 302 Found [http://test.host/checkmark/login?user_login=afds&user_password=lala]
+  [4;36;1mSQL (0.000092)[0m   [0;1mROLLBACK[0m
+Unable to load assignment_file, underlying cause no such file to load -- assignment_file 
+
+ /usr/lib/ruby/1.8/rubygems/custom_require.rb:27:in `gem_original_require'
+/usr/lib/ruby/1.8/rubygems/custom_require.rb:27:in `require'
+/var/lib/gems/1.8/gems/activesupport-2.1.0/lib/active_support/dependencies.rb:509:in `require'
+/var/lib/gems/1.8/gems/activesupport-2.1.0/lib/active_support/dependencies.rb:354:in `new_constants_in'
+/var/lib/gems/1.8/gems/activesupport-2.1.0/lib/active_support/dependencies.rb:509:in `require'
+/var/lib/gems/1.8/gems/activesupport-2.1.0/lib/active_support/dependencies.rb:101:in `require_or_load'
+/var/lib/gems/1.8/gems/activesupport-2.1.0/lib/active_support/dependencies.rb:60:in `depend_on'
+/var/lib/gems/1.8/gems/activesupport-2.1.0/lib/active_support/dependencies.rb:456:in `require_dependency'
+/var/lib/gems/1.8/gems/activerecord-2.1.0/lib/active_record/fixtures.rb:855:in `try_to_load_dependency'
+/var/lib/gems/1.8/gems/activerecord-2.1.0/lib/active_record/fixtures.rb:870:in `require_fixture_classes'
+/var/lib/gems/1.8/gems/activerecord-2.1.0/lib/active_record/fixtures.rb:867:in `each'
+/var/lib/gems/1.8/gems/activerecord-2.1.0/lib/active_record/fixtures.rb:867:in `require_fixture_classes'
+/var/lib/gems/1.8/gems/activerecord-2.1.0/lib/active_record/fixtures.rb:850:in `fixtures'
+./test/functional/../test_helper.rb:35
+test/functional/checkmark_controller_test.rb:1:in `require'
+test/functional/checkmark_controller_test.rb:1
+  [4;36;1mSQL (0.000136)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.000090)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.000057)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 12:30:52) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.01363 (73 reqs/sec) | Rendering: 0.00898 (65%) | DB: 0.00909 (66%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 12:30:52) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>"afds"}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00065 (1536 reqs/sec) | Rendering: 0.00898 (1380%) | DB: 0.00909 (1397%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000100)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000072)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 12:30:52) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00348 (287 reqs/sec) | Rendering: 0.00324 (93%) | DB: 0.00017 (4%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 12:30:52) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00066 (1519 reqs/sec) | Rendering: 0.00324 (492%) | DB: 0.00017 (26%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000129)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000098)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 12:30:52) [GET]
+  Session ID: 
+  Parameters: {"action"=>"login", "controller"=>"checkmark"}
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00346 (288 reqs/sec) | Rendering: 0.00316 (91%) | DB: 0.00023 (6%) | 200 OK [http://test.host/checkmark/login]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 12:30:52) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>""}
+Redirected to http://test.host/checkmark/login
+Completed in 0.00093 (1081 reqs/sec) | Rendering: 0.00316 (341%) | DB: 0.00023 (24%) | 302 Found [http://test.host/checkmark/login]
+  [4;35;1mSQL (0.000152)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000094)[0m   [0;1mBEGIN[0m
+  [4;35;1mUser Load (0.000325)[0m   [0mSELECT * FROM `users` WHERE (`users`.`id` = 1) [0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 12:30:52) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"admin", "action"=>"login", "controller"=>"checkmark", "user_password"=>"asfd"}
+  [4;36;1mUser Load (0.000305)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`user_name` = 'admin') LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00308 (324 reqs/sec) | DB: 0.00088 (28%) | 302 Found [http://test.host/checkmark/login?user_login=admin&user_password=asfd]
+  [4;35;1mSQL (0.000139)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000078)[0m   [0;1mBEGIN[0m
+  [4;35;1mUser Load (0.000310)[0m   [0mSELECT * FROM `users` WHERE (`users`.`id` = 3) [0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 12:30:52) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"student1", "action"=>"login", "controller"=>"checkmark", "user_password"=>"lala"}
+  [4;36;1mUser Load (0.000331)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`user_name` = 'student1') LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00247 (405 reqs/sec) | DB: 0.00086 (34%) | 302 Found [http://test.host/checkmark/login?user_login=student1&user_password=lala]
+
+
+Processing CheckmarkController#logout (for 0.0.0.0 at 2008-07-29 12:30:52) [GET]
+  Session ID: 
+  Parameters: {"action"=>"logout", "controller"=>"checkmark"}
+Cookie set: auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT
+Redirected to http://test.host/checkmark/login
+Completed in 0.00109 (917 reqs/sec) | DB: 0.00000 (0%) | 302 Found [http://test.host/checkmark/login?user_login=student1&user_password=lala]
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-29 12:30:52) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00082 (1225 reqs/sec) | DB: 0.00000 (0%) | 302 Found [http://test.host/checkmark/login?user_login=student1&user_password=lala]
+  [4;35;1mSQL (0.000130)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000066)[0m   [0;1mBEGIN[0m
+
+
+Processing CheckmarkController#index (for 0.0.0.0 at 2008-07-29 12:30:52) [GET]
+  Session ID: 
+  Parameters: {"action"=>"index", "controller"=>"checkmark"}
+Redirected to http://test.host/checkmark/login
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0.00042 (2357 reqs/sec) | DB: 0.00020 (46%) | 302 Found [http://test.host/checkmark]
+  [4;35;1mSQL (0.000066)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000077)[0m   [0;1mBEGIN[0m
+  [4;35;1mUser Load (0.000087)[0m   [0mSELECT * FROM `users` WHERE (`users`.`id` = 1) [0m
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 12:30:52) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"afds", "action"=>"login", "controller"=>"checkmark", "user_password"=>"lala"}
+  [4;36;1mUser Load (0.000250)[0m   [0;1mSELECT * FROM `users` WHERE (`users`.`user_name` = 'afds') LIMIT 1[0m
+Rendering template within layouts/content
+Rendering checkmark/login
+Completed in 0.00247 (405 reqs/sec) | Rendering: 0.00160 (64%) | DB: 0.00048 (19%) | 200 OK [http://test.host/checkmark/login?user_login=afds&user_password=lala]
+
+
+Processing CheckmarkController#login (for 0.0.0.0 at 2008-07-29 12:30:52) [POST]
+  Session ID: 
+  Parameters: {"user_login"=>"admin", "action"=>"login", "controller"=>"checkmark", "user_password"=>"lala"}
+  [4;35;1mUser Load (0.000092)[0m   [0mSELECT * FROM `users` WHERE (`users`.`user_name` = 'admin') LIMIT 1[0m
+Redirected to http://test.host/checkmark
+Completed in 0.00115 (868 reqs/sec) | Rendering: 0.00160 (138%) | DB: 0.00057 (49%) | 302 Found [http://test.host/checkmark/login?user_login=afds&user_password=lala]
+  [4;36;1mSQL (0.000090)[0m   [0;1mROLLBACK[0m

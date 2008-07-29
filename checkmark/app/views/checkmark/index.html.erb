@@ -1,0 +1,10 @@
+
+<h1>Welcome, <%=h @user.first_name %></h1>
+
+<h3>What would you like to do?</h3>
+
+<p id="student_task">
+<ul>
+  <li><%= link_to 'Submit an assignment', :action => 'submit' %></li>
+</ul>
+</p>
