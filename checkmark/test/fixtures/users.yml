@@ -19,7 +19,6 @@ admin:
     user_number:    123456789
     last_name:      Reid      
     first_name:     Karen
-    status:         active
     role:           admin
     created_at:     <% Time.now.to_s(:db) %>
     updated_at:     <% Time.now.to_s(:db) %>
@@ -30,7 +29,6 @@ ta:
     user_number:    234567891
     last_name:      Chang    
     first_name:     Roger
-    status:         active
     role:           ta
     created_at:     <% Time.now.to_s(:db) %>
     updated_at:     <% Time.now.to_s(:db) %>
@@ -41,7 +39,6 @@ student:
     user_number:    345678912
     last_name:      Wayne      
     first_name:     Bruce
-    status:         active
     role:           student
     created_at:     <% Time.now.to_s(:db) %>
     updated_at:     <% Time.now.to_s(:db) %>

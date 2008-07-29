@@ -30,4 +30,13 @@ class User < ActiveRecord::Base
     true
   end
   
+  
+  def self.update_on_duplicate(hash_values)
+    return unless hash_values.has_key?(:user_number)
+    u = find_or_create_by_user_number(hash_values)
+    u.attributes = hash_values
+    u.save!
+    u
+  end
+  
 end
