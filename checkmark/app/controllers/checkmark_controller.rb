@@ -13,10 +13,10 @@ class CheckmarkController < ApplicationController
   # the website and has not logged in yet, or session has expired.  User 
   # is redirected to main page if session is still active and valid.
   def login
-    return unless request.post?
-    
     # redirect to main page if user is already logged in.
-    redirect_to :action => 'index' && return if logged_in?
+    redirect_to :action => 'index' if logged_in?
+    
+    return unless request.post?
     
     # check for blank username and password
     blank_login = params[:user_login].blank?
@@ -50,12 +50,12 @@ class CheckmarkController < ApplicationController
   end
 
   
-
-  # TODO refactor everything below; move to another controller
+  # TODO refactor everything below; move to respective controllers
   
   def submit
     @task = { :title => 'Submit an Assignment', :action => 'submit' }
     
+    # TODO the if cases here should be an action in a 'submit' controller
     unless params[:name].blank?
       assignment = Assignment.find_by_name(params[:name])
       @files = AssignmentFile.find(:all, 
@@ -67,5 +67,7 @@ class CheckmarkController < ApplicationController
       render :action => 'assignments'
     end
   end
+  
+  # 
   
 end

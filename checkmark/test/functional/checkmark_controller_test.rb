@@ -84,5 +84,18 @@ class CheckmarkControllerTest < ActionController::TestCase
     assert_redirected_to :action => "login"
   end
   
+  # Test if users are redirected to main page 
+  # if they are already logged in.
+  def test_redirect_logged_in
+    # log in
+    admin = users(:admin)
+    post :login, :user_login => admin.user_name, :user_password => 'asfd'
+    assert_redirected_to :action => "index"
+    
+    # try to go to login page when logged in
+    get :login
+    assert_redirected_to :action => "index"
+  end
+  
   
 end
