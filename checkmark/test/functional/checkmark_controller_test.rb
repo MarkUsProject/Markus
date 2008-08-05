@@ -97,5 +97,14 @@ class CheckmarkControllerTest < ActionController::TestCase
     assert_redirected_to :action => "index"
   end
   
+  # Authorization tests -------------------------------------------------
+   
+  # Test to make sure students or TAs cannot access students page
+  def test_authorized
+    user = users(:student)
+    post :login, :user_login => user.user_name, :user_password => 'asfd'
+    get :students
+    assert_response 404
+  end
   
 end

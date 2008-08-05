@@ -4,21 +4,22 @@
 # All controllers are expected to extend this module (already by default)
 module SessionHandler
   
-  # TODO implement session timeout limit on a per-role basis,
-  # e.g. faculty has more timeout limit than students
-  MAX_SESSION_PERIOD = 3600  # session timeout in seconds
+  # session timeout in seconds for different roles
+  MAX_SESSION_PERIOD = {
+    User::STUDENT => 600,  
+    User::TA => 1800,
+    User::ADMIN => 1800
+  }
   
   # Note: setter method for current_user is defined in login controller 
   # since other controllers do not need ability to set this
 
-  # Retrieve current user for this session.
-  # Call only when necessary and use local variables 
-  # since user is fetched from DB on every call to this method
+  # Retrieve current user for this session, or nil if none exists
   def current_user
     # retrieve from database on every request instead of 
     # storing it as global variable when current_user= 
     # is called to prevent user information becoming stale.
-    (session[:uid] && User.find_by_id(session[:uid])) || nil
+    @current_user ||= (session[:uid] && User.find_by_id(session[:uid])) || nil
   end
   
   # Check if there's any user associated with this session
@@ -27,10 +28,9 @@ module SessionHandler
   end
   
   # Check if current user matches given role.
-  # Does not check if user is logged in
-  def authorized?(role='student')
+  def authorized?(role=User::ADMIN)
     user = current_user
-    user ? user.role.casecmp(role) : false
+    user ? (user.role.casecmp(role) == 0) : false
   end
   
   # Checks user satsifies the following conditions:
@@ -39,19 +39,29 @@ module SessionHandler
   # If not, then user is redirected to login page for authentication.
   def authenticate
     if !session_expired? && logged_in?
-      refresh_timeout
+      refresh_timeout  # renew timeout for this session
+      @current_user = current_user
     else
-      clear_session
       session[:redirect_uri] = request.request_uri  # save current uri
+      clear_session
       flash[:login_notice] = "Please log in"
       redirect_to :controller => 'checkmark', :action => 'login'
     end
   end
   
+  # Helper method to check if current user is authorized given a 
+  # specific role. Defaults to highest level of authorization required.
+  def authorize(role=User::ADMIN)
+    unless authorized?(role)
+      render :file => "#{RAILS_ROOT}/public/404.html",  
+        :status => 404
+    end
+  end
+  
   # Refreshes the timeout for this session to be 
-  # MAX_SESSION_PERIOD seconds from now
+  # MAX_SESSION_PERIOD seconds from now, depending on the role
   def refresh_timeout
-    session[:timeout] = MAX_SESSION_PERIOD.seconds.from_now
+    session[:timeout] = MAX_SESSION_PERIOD[current_user.role].seconds.from_now
   end
     
   def session_expired?
