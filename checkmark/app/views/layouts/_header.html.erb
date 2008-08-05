@@ -1,6 +1,46 @@
+<style type="text/css">
+  #header {
+    padding: 5px;
+    background-color: #464646;
+    color: #fff;
+    min-height: 30px;
+    line-height: 140%;
+  }
 
-<%=h flash[:notice] %>
-<div class="header">
-<%= link_to "Main Page", :controller => 'checkmark', :action => 'index' %>
-<%= link_to "Log out", :controller => 'checkmark', :action => 'logout' %>
+  #main_menu {
+    float: left;
+    width: 300px;
+  }
+
+  #course {
+    float: left;
+    border: auto, auto, 0px, 0px;
+    text-align: center;
+  }
+
+  #user_info {
+    width: 300px;
+    float:left;
+    text-align: right;
+  }
+
+  span#user_name {
+  }
+</style>
+
+
+<div id="header">
+  <div id="main_menu">
+    <%= link_to "Go back to Main Page", :controller => 'checkmark', :action => 'index' %>
+  </div>
+
+  <div id="course">
+    CSC540 Summer 2008: History of Silicon Valley 
+  </div>
+
+  <div id="user_info">
+    Logged in as <span id="user_name"><b><%=h @current_user.user_name %></b></span> | 
+    <%= link_to "Log out", :controller => 'checkmark', :action => 'logout' %>
+  </div>
+
 </div>

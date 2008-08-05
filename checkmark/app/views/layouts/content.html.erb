@@ -6,14 +6,19 @@
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <title>CheckMark - <%= controller.action_name %></title>
   <%= stylesheet_link_tag 'main.css', :media => 'all' %>
+  <%= javascript_include_tag 'prototype' %>
 </head>
 
 <body>
-<%= render :partial => 'layouts/header' unless controller.action_name == 'login' %>
-<%= @content_for_layout  %>
+
+  <%= render :partial => 'layouts/header' unless controller.action_name == 'login' %>
+
+  <div id="content">
+    <%= @content_for_layout  %>
+  </div>
 
 <% # For debugging purposes; not to be used for production -%>
-<%= javascript_include_tag 'prototype' %>
+
 <% if ENV['RAILS_ENV'] == 'development' %>
     <div id="debug" style="margin: 40px 5px 5px 5px;">
         <a href="#" onclick="Element.toggle('debug_info');return false" style="text-decoration: none; color: #ccc;">Show Debug Info &#10162;</a>
