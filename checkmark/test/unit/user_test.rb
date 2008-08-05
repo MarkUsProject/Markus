@@ -31,6 +31,8 @@ class UserTest < ActiveSupport::TestCase
     }
   end
   
+  # User.update_on_duplicate tests ----------------------------------------
+  
   
   # Test if user with a unique user number has been added to database
   def test_update_on_no_duplicate

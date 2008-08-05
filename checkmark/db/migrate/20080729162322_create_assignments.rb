@@ -3,6 +3,7 @@ class CreateAssignments < ActiveRecord::Migration
     create_table :assignments do |t|
       t.column  :name,          :string,  :null => false
       t.column  :description,   :string
+      t.column  :message,       :text
       t.column  :due_date,      :datetime
       
       t.timestamps

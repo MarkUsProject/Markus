@@ -33,5 +33,6 @@ load('config/setup_users.yml') { |v|
 }
 
 load('config/setup_assignments.yml') { |v| 
-  Assignment.find_or_create_by_name(v).save!
+  # stub assignments to have a due date 3 weeks from now
+  Assignment.find_or_create_by_name(v.merge({"due_date" => 3.weeks.from_now })).save!
 }
