@@ -7,6 +7,9 @@ class CheckmarkController < ApplicationController
   
   # exclude login/logout page so that anyone can access it (duh!)
   skip_before_filter :authenticate,   :only => [:login, :logout]
+  
+  # check for authorization (needs admin role by default)
+  before_filter      :authorize,      :only => :students
 
   
   # Handles login requests; usually redirected here when trying to access 
@@ -14,7 +17,10 @@ class CheckmarkController < ApplicationController
   # is redirected to main page if session is still active and valid.
   def login
     # redirect to main page if user is already logged in.
-    redirect_to :action => 'index' if logged_in?
+    if logged_in?
+      redirect_to :action => 'index' 
+      return
+    end
     
     return unless request.post?
     
@@ -53,21 +59,27 @@ class CheckmarkController < ApplicationController
   # TODO refactor everything below; move to respective controllers
   
   def submit
-    @task = { :title => 'Submit an Assignment', :action => 'submit' }
-    
-    # TODO the if cases here should be an action in a 'submit' controller
-    unless params[:name].blank?
-      assignment = Assignment.find_by_name(params[:name])
-      @files = AssignmentFile.find(:all, 
-        :conditions => ['assignment_id = ?', assignment.id], 
-        :order => 'filename ASC')
+    if params[:name].blank?
+      render_assignments('Submit an Assignment', 'submit')
     else
-      # generate the assignment selection page for submitting assignment
-      @assignments = Assignment.find(:all)
-      render :action => 'assignments'
+      # TODO Get the list of files required for this assignment
+      
     end
   end
   
-  # 
+  def students
+    @students = User.find_all_by_role(User::STUDENT)
+  end
+  
+  
+  protected
+  
+  # Generate the assignment selection page for submitting assignment, 
+  # linking back to the called action
+  def render_assignments(title, action)
+    @task = { :title => title, :action => action }
+    @assignments = Assignment.find(:all)
+    render :action => 'assignments'
+  end
   
 end

@@ -1,13 +1,10 @@
 module CheckmarkHelper
   
-  include SessionHandler
-  
-  # moved here to avoid being filtered by authenticate
+  protected
   
   # Sets current user for this session
-  # TODO set private
   def current_user=(user)
-    session[:uid] = user.blank? ? nil : user.id 
+    session[:uid] = (user.blank? || !user.kind_of?(User)) ? nil : user.id 
   end
   
   def get_blank_message(blank_login, blank_password)
