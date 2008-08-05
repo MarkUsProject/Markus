@@ -3,8 +3,16 @@
 
 <h3>What would you like to do?</h3>
 
-<p id="student_task">
+<% if @user.admin? -%>
+<div id="admin_task">
+<ul>
+  <li><%= link_to 'Manage student list', :action => 'students' %></li>
+</ul>
+</div>
+<% end -%>
+
+<div id="student_task">
 <ul>
   <li><%= link_to 'Submit an assignment', :action => 'submit' %></li>
 </ul>
-</p>
+</div>

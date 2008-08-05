@@ -1,0 +1,27 @@
+<h1>Create a New Student</h1>
+
+<% form_for :student, :url => {:controller => 'students', :action => 'create'} do |f| -%>
+  <%= f.error_messages -%>
+
+  <p>
+    <%= f.label :user_name %><br />
+    <%= f.text_field :user_name %>
+  </p>
+  <p>
+    <%= f.label :user_number %><br />
+    <%= f.text_field :user_number %>
+  </p>
+  <p>
+    <%= f.label :last_name %><br />
+    <%= f.text_field :last_name %>
+  </p>
+  <p>
+    <%= f.label :first_name %><br />
+    <%= f.text_field :first_name %>
+  </p>
+  <p>
+    <%= f.submit 'Add student', :name => 'create' %>
+  </p>
+<% end %>
+
+<%= link_to '< Cancel', :controller => 'checkmark', :action => 'students' %>

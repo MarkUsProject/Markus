@@ -1,0 +1,28 @@
+<h1>Edit Student</h1>
+
+<% form_for :student, :url => {:controller => 'students', :action => 'edit'} do |f| -%>
+  <%= f.error_messages -%>
+
+  <p>
+    <%= f.label :user_name %><br />
+    <%= f.text_field :user_name %>
+  </p>
+  <p>
+    <%= f.label :user_number %><br />
+    <%= f.text_field :user_number %>
+  </p>
+  <p>
+    <%= f.label :last_name %><br />
+    <%= f.text_field :last_name %>
+  </p>
+  <p>
+    <%= f.label :first_name %><br />
+    <%= f.text_field :first_name %>
+  </p>
+  <p>
+    <%= f.submit 'Update', :name => 'update' %>
+    <%= hidden_field :student, :id %>
+  </p>
+<% end %>
+
+<%= link_to '< Cancel', :controller => 'checkmark', :action => 'students' %>
