@@ -5,6 +5,7 @@ class CreateAssignments < ActiveRecord::Migration
       t.column  :description,   :string
       t.column  :message,       :text
       t.column  :due_date,      :datetime
+      t.column  :group_limit,   :integer, :default => 1
       
       t.timestamps
     end

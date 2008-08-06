@@ -67,8 +67,16 @@ class CheckmarkController < ApplicationController
     end
   end
   
+  # Displays "Manage Students" page that displays a list of the students, 
+  # and for adding and editing student information.
   def students
     @students = User.find_all_by_role(User::STUDENT)
+  end
+  
+  # Displays "Manage Assignments" page for creating and editing 
+  # assignment information
+  def assignments
+    @assignments = Assignment.find(:all)
   end
   
   
