@@ -1,5 +1,5 @@
 
-<h3><span style="color:blue">Select an assignment</span></h3>
+<h3>Select an assignment to modify:</h3>
 
 <ul>
 <% for assignment in @assignments %>
@@ -12,6 +12,6 @@
 <% end %>
 </ul>
 
-<h3>Or <%= link_to 'Create a new assignment', :controller => 'assignments', :action=>'create' %></h3>
+<h3>Or <%= link_to 'Create a new assignment', :controller => 'assignments', :action=>'new' %></h3>
 
 

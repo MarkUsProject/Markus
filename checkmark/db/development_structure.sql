@@ -1,8 +1,21 @@
+CREATE TABLE `assignment_files` (
+  `id` int(11) NOT NULL auto_increment,
+  `assignment_id` int(11) default NULL,
+  `filename` varchar(255) NOT NULL,
+  `created_at` datetime default NULL,
+  `updated_at` datetime default NULL,
+  PRIMARY KEY  (`id`),
+  KEY `fk_assignment_files_assignments` (`assignment_id`),
+  CONSTRAINT `fk_assignment_files_assignments` FOREIGN KEY (`assignment_id`) REFERENCES `assignments` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 CREATE TABLE `assignments` (
   `id` int(11) NOT NULL auto_increment,
   `name` varchar(255) NOT NULL,
   `description` varchar(255) default NULL,
+  `message` text,
   `due_date` datetime default NULL,
+  `group_limit` int(11) default '1',
   `created_at` datetime default NULL,
   `updated_at` datetime default NULL,
   PRIMARY KEY  (`id`),
@@ -23,7 +36,7 @@ CREATE TABLE `sessions` (
   PRIMARY KEY  (`id`),
   KEY `index_sessions_on_session_id` (`session_id`),
   KEY `index_sessions_on_updated_at` (`updated_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL auto_increment,
@@ -36,10 +49,12 @@ CREATE TABLE `users` (
   `updated_at` datetime default NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `index_users_on_user_number` (`user_number`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 INSERT INTO schema_migrations (version) VALUES ('20080729160237');
 
 INSERT INTO schema_migrations (version) VALUES ('20080729162213');
 
 INSERT INTO schema_migrations (version) VALUES ('20080729162322');
+
+INSERT INTO schema_migrations (version) VALUES ('20080806143028');
