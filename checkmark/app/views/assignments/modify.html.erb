@@ -1,0 +1,46 @@
+<h3><%=h @title %></h3>
+
+<% form_for :assignment, :url => {:action => action, :id => params[:id] } do |f| -%>
+  
+  <%= error_messages_for :assignment, :assignment_files %>
+  
+  <p>
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.label :description %><br />
+    <%= f.text_field :description %>
+  </p>
+  <p>
+    <%= f.label :message %> (Optional)<br />
+    <%= f.text_area :message, :rows => 5 %>
+  </p>
+  <p>
+    <%= f.label :due_date %>
+    <%= f.datetime_select "due_date", :default => 3.hours.from_now %>
+  </p>
+
+  <p>
+    Group Limit (1 or more):
+    from <%= f.text_field :group_min, :size => 5, :maxlength => 3 %>
+    to <%= f.text_field :group_max, :size => 5, :maxlength => 3 %>
+  </p>
+
+  <h4>Add filename(s) that students can only submit:</h4>
+  <%# render the link instead of embedding, to dynamically update 
+        the index of the next file text field -%>
+  <%= render :partial => 'add_file_link', 
+    :locals => { :index => @assignment.assignment_files.size } %>
+  
+  <p id="files">
+    <% @assignment.assignment_files.each_with_index do |file, index| -%>
+      <%= render :partial => 'file_fields', :locals => { :file => file, :index => index } -%>
+    <% end -%> 
+  </p>
+
+  <p><%= f.submit @submit_text, :name => action %></p>
+<% end %>
+
+<%= link_to '< Cancel', :controller => 'checkmark', :action => 'assignments' %>
+

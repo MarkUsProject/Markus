@@ -7,11 +7,12 @@
     <%= link_to assignment.name, 
         :controller => 'assignments',
         :action => 'edit', 
-        :name => assignment.name  %>
+        :id => assignment  %>
   </li>
 <% end %>
 </ul>
 
-<h3>Or <%= link_to 'Create a new assignment', :controller => 'assignments', :action=>'new' %></h3>
+<h3>Or <%= link_to 'Create a new assignment', 
+  :controller => 'assignments', :action => 'new', :id => nil %></h3>
 
 

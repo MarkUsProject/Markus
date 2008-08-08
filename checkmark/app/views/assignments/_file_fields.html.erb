@@ -3,7 +3,8 @@
       <% fields_for "files[#{index}]", file do |f| -%>
       <p>
         <%= f.text_field :filename %>
-        <%= link_to_remote '[x]', :url => { :action => 'remove_file', :index => index } %>
+        <%= link_to_remote '[x]', :url => 
+          { :action => 'remove_file', :index => index } %>
       </p>
       <% end -%>
     </div> 
