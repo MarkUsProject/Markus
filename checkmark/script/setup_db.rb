@@ -29,7 +29,11 @@ end
 #puts User.count.to_s + " user(s) has been added to database."
 
 load('config/setup_users.yml') { |v| 
-  User.find_or_create_by_user_number(v).save!
+  # Bug on postgres 8.3/activerecord that the user number is being stored 
+  # as string in psql but is being compared as integer when using activerecord 
+  # find.
+  # User.find_or_create_by_user_number(v).save!
+  User.new(v).save!
 }
 
 load('config/setup_assignments.yml') { |v| 
