@@ -9,10 +9,10 @@ class AssignmentTest < Test::Unit::TestCase
   end
   
   # Tests if group limit cannot be assigned a value < 1
-  def test_numericality_group_limit
-    @assign.group_limit = 0
+  def test_numericality_group_min
+    @assign.group_min = 0
     assert !@assign.valid?
-    @assign.group_limit = -5
+    @assign.group_min = -5
     assert !@assign.valid?
     assert !@assign.save
   end

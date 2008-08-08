@@ -11,6 +11,8 @@ class CreateAssignmentFiles < ActiveRecord::Migration
       t.timestamps
     end
     
+    # only unique filenames allowed for each assignment
+    add_index :assignments, [:assignment_id, :filename], :unique => true
     foreign_key(:assignment_files, :assignment_id, :assignments)
   end
 
