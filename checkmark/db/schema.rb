@@ -12,20 +12,19 @@
 ActiveRecord::Schema.define(:version => 20080806143028) do
 
   create_table "assignment_files", :force => true do |t|
-    t.integer  "assignment_id", :limit => 11
-    t.string   "filename",                    :null => false
+    t.integer  "assignment_id"
+    t.string   "filename",      :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "assignment_files", ["assignment_id"], :name => "fk_assignment_files_assignments"
-
   create_table "assignments", :force => true do |t|
-    t.string   "name",                                     :null => false
+    t.string   "name",                       :null => false
     t.string   "description"
     t.text     "message"
     t.datetime "due_date"
-    t.integer  "group_limit", :limit => 11, :default => 1
+    t.integer  "group_min",   :default => 1, :null => false
+    t.integer  "group_max"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

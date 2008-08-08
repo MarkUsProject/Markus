@@ -1,4 +1,4 @@
-require 'test_helper'
+require File.dirname(__FILE__) + '/../test_helper'
 
 class AssignmentsControllerTest < ActionController::TestCase
   # Replace this with your real tests.
