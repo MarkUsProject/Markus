@@ -32,7 +32,9 @@ class AssignmentsController < ApplicationController
     return unless request.post?
     
     @assignment = Assignment.new(params[:assignment])
-    build_files
+    params[:files].each_value do |file|
+      @assignment.assignment_files.build(file) unless file['filename'].blank?
+    end
     
     # Go back to "Create assignment" page if unable to save
     if @assignment.save
@@ -49,27 +51,34 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find_by_id(params[:id])
     @assignment.attributes = params[:assignment]
     
-    # delete all then recreate, more optimal and straightforward
-    @assignment.assignment_files.destroy_all
-    build_files
+    # split text fields that exists in db and those that don't
+    existing_files = {} # hash the id to the attribute values
+    new_files = []
+    params[:files].each_value do |f|
+      id = f.delete("id")
+      id.blank? ? new_files << f : existing_files[id.to_s] = f
+    end
+    
+    # Update first existing files to see if filename 
+    # has changed or has been deleted.
+    @assignment.assignment_files.each do |file|
+      attr = existing_files[file.id.to_s]
+      attr ? file.attributes = attr : file.destroy # destroy if removed
+    end
+    
+    # update the rest of the added text fields;
+    # needs to be done after existing files are updated
+    new_files.each do |file| 
+      @assignment.assignment_files.build(file) unless file['filename'].blank?
+    end
     
     # Go back to "Edit assignment" page if unable to save
-    if @assignment.save
+    if @assignment.save && @assignment.assignment_files.each(&:save)
       redirect_to :controller => 'checkmark', :action => 'assignments'
     else
       render :action => 'edit'
     end
     
   end
-  
-  protected
 
-  # helper method to create files for each of the file fields submitted
-  def build_files
-    return unless (params[:files] && @assignment)
-    params[:files].each_value do |file|
-      @assignment.assignment_files.build(file) unless file['filename'].blank?
-    end
-  end
-
-  end
+end
