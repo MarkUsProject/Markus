@@ -33,9 +33,17 @@ class User < ActiveRecord::Base
   # Responsible for the actual authentication of login against 
   # its password. This is done by 
   def self.verify(login, password)
-    # TODO call external script to validate cdf login/password
-    # no password verification for now.
-    true
+    
+    # TODO create a config file
+    validate_file = "#{RAILS_ROOT}/config/dummy_validate.sh"
+    pipe = IO.popen(validate_file, "w+")
+    
+    # TODO check if sanitized
+    args = %{#{login}\n#{password}\n}
+    pipe.write(args)
+    pipe.close
+    
+    return $?.exitstatus == 0
   end
   
   # Helper methods -----------------------------------------------------
