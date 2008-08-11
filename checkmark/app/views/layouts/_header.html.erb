@@ -34,9 +34,7 @@
     <%= link_to "Go back to Main Page", :controller => 'checkmark', :action => 'index' %>
   </div>
 
-  <div id="course">
-    CSC540 Summer 2008: History of Silicon Valley 
-  </div>
+  <div id="course"><%=h COURSE_NAME %></div>
 
   <div id="user_info">
     Logged in as <span id="user_name"><b><%=h @current_user.user_name %></b></span> | 

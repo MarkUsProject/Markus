@@ -18,6 +18,8 @@ ActiveRecord::Schema.define(:version => 20080806143028) do
     t.datetime "updated_at"
   end
 
+  add_index "assignment_files", ["assignment_id", "filename"], :name => "index_assignment_files_on_assignment_id_and_filename", :unique => true
+
   create_table "assignments", :force => true do |t|
     t.string   "name",                       :null => false
     t.string   "description"

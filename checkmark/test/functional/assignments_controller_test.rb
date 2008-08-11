@@ -21,7 +21,11 @@ class AssignmentsControllerTest < ActionController::TestCase
   
   # Test update valid assignment without file
   
-  # Test 
+  # Test update 0-1 file with blank text fields
+  
+  # Test add and remove at the same time
+  
+  # Test remove all files
   
   
 end

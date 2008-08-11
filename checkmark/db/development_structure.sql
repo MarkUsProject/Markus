@@ -219,6 +219,13 @@ ALTER TABLE ONLY users
 
 
 --
+-- Name: index_assignment_files_on_assignment_id_and_filename; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_assignment_files_on_assignment_id_and_filename ON assignment_files USING btree (assignment_id, filename);
+
+
+--
 -- Name: index_assignments_on_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
