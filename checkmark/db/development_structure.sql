@@ -45,6 +45,21 @@ CREATE TABLE assignments (
 
 
 --
+-- Name: groups; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE groups (
+    id integer NOT NULL,
+    user_id integer,
+    group_number integer,
+    assignment_id integer,
+    status character varying(255) DEFAULT NULL::character varying,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -63,6 +78,20 @@ CREATE TABLE sessions (
     data text,
     created_at timestamp without time zone,
     updated_at timestamp without time zone
+);
+
+
+--
+-- Name: submissions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE submissions (
+    id integer NOT NULL,
+    user_id integer,
+    group_number integer,
+    group_id integer,
+    assignment_file_id integer,
+    submitted_at timestamp without time zone
 );
 
 
@@ -106,7 +135,6 @@ ALTER SEQUENCE assignment_files_id_seq OWNED BY assignment_files.id;
 --
 
 CREATE SEQUENCE assignments_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -118,6 +146,25 @@ CREATE SEQUENCE assignments_id_seq
 --
 
 ALTER SEQUENCE assignments_id_seq OWNED BY assignments.id;
+
+
+--
+-- Name: groups_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE groups_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
+-- Name: groups_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE groups_id_seq OWNED BY groups.id;
 
 
 --
@@ -140,11 +187,29 @@ ALTER SEQUENCE sessions_id_seq OWNED BY sessions.id;
 
 
 --
+-- Name: submissions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE submissions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
+-- Name: submissions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE submissions_id_seq OWNED BY submissions.id;
+
+
+--
 -- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE users_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -176,7 +241,21 @@ ALTER TABLE assignments ALTER COLUMN id SET DEFAULT nextval('assignments_id_seq'
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE groups ALTER COLUMN id SET DEFAULT nextval('groups_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE sessions ALTER COLUMN id SET DEFAULT nextval('sessions_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE submissions ALTER COLUMN id SET DEFAULT nextval('submissions_id_seq'::regclass);
 
 
 --
@@ -203,11 +282,27 @@ ALTER TABLE ONLY assignments
 
 
 --
+-- Name: groups_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY groups
+    ADD CONSTRAINT groups_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY sessions
     ADD CONSTRAINT sessions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: submissions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY submissions
+    ADD CONSTRAINT submissions_pkey PRIMARY KEY (id);
 
 
 --
@@ -233,6 +328,27 @@ CREATE UNIQUE INDEX index_assignments_on_name ON assignments USING btree (name);
 
 
 --
+-- Name: index_groups_on_user_id_and_assignment_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_groups_on_user_id_and_assignment_id ON groups USING btree (user_id, assignment_id);
+
+
+--
+-- Name: index_groups_on_user_id_and_group_number; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_groups_on_user_id_and_group_number ON groups USING btree (user_id, group_number);
+
+
+--
+-- Name: index_groups_on_user_id_and_group_number_and_assignment_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_groups_on_user_id_and_group_number_and_assignment_id ON groups USING btree (user_id, group_number, assignment_id);
+
+
+--
 -- Name: index_sessions_on_session_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -244,6 +360,27 @@ CREATE INDEX index_sessions_on_session_id ON sessions USING btree (session_id);
 --
 
 CREATE INDEX index_sessions_on_updated_at ON sessions USING btree (updated_at);
+
+
+--
+-- Name: index_submissions_on_group_id_and_assignment_file_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_submissions_on_group_id_and_assignment_file_id ON submissions USING btree (group_id, assignment_file_id);
+
+
+--
+-- Name: index_submissions_on_user_id_and_group_number; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_submissions_on_user_id_and_group_number ON submissions USING btree (user_id, group_number);
+
+
+--
+-- Name: index_users_on_user_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_users_on_user_name ON users USING btree (user_name);
 
 
 --
@@ -269,6 +406,38 @@ ALTER TABLE ONLY assignment_files
 
 
 --
+-- Name: fk_groups_assignments; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY groups
+    ADD CONSTRAINT fk_groups_assignments FOREIGN KEY (assignment_id) REFERENCES assignments(id);
+
+
+--
+-- Name: fk_groups_users; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY groups
+    ADD CONSTRAINT fk_groups_users FOREIGN KEY (user_id) REFERENCES users(id);
+
+
+--
+-- Name: fk_submissions_assignment_files; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY submissions
+    ADD CONSTRAINT fk_submissions_assignment_files FOREIGN KEY (assignment_file_id) REFERENCES assignment_files(id);
+
+
+--
+-- Name: fk_submissions_users; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY submissions
+    ADD CONSTRAINT fk_submissions_users FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+
+
+--
 -- PostgreSQL database dump complete
 --
 
@@ -279,3 +448,7 @@ INSERT INTO schema_migrations (version) VALUES ('20080729162213');
 INSERT INTO schema_migrations (version) VALUES ('20080729162322');
 
 INSERT INTO schema_migrations (version) VALUES ('20080806143028');
+
+INSERT INTO schema_migrations (version) VALUES ('20080812143621');
+
+INSERT INTO schema_migrations (version) VALUES ('20080812143641');

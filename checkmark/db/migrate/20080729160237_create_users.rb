@@ -12,6 +12,7 @@ class CreateUsers < ActiveRecord::Migration
     end
     
     add_index :users, :user_number, :unique => true
+    add_index :users, :user_name, :unique => true
   end
 
   def self.down

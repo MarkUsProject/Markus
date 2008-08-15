@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20080806143028) do
+ActiveRecord::Schema.define(:version => 20080812143641) do
 
   create_table "assignment_files", :force => true do |t|
     t.integer  "assignment_id"
@@ -33,6 +33,19 @@ ActiveRecord::Schema.define(:version => 20080806143028) do
 
   add_index "assignments", ["name"], :name => "index_assignments_on_name", :unique => true
 
+  create_table "groups", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "group_number"
+    t.integer  "assignment_id"
+    t.string   "status"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "groups", ["assignment_id", "user_id"], :name => "index_groups_on_user_id_and_assignment_id", :unique => true
+  add_index "groups", ["group_number", "user_id"], :name => "index_groups_on_user_id_and_group_number", :unique => true
+  add_index "groups", ["assignment_id", "group_number", "user_id"], :name => "index_groups_on_user_id_and_group_number_and_assignment_id", :unique => true
+
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false
     t.text     "data"
@@ -42,6 +55,17 @@ ActiveRecord::Schema.define(:version => 20080806143028) do
 
   add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
   add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
+
+  create_table "submissions", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "group_number"
+    t.integer  "group_id"
+    t.integer  "assignment_file_id"
+    t.datetime "submitted_at"
+  end
+
+  add_index "submissions", ["assignment_file_id", "group_id"], :name => "index_submissions_on_group_id_and_assignment_file_id"
+  add_index "submissions", ["group_number", "user_id"], :name => "index_submissions_on_user_id_and_group_number", :unique => true
 
   create_table "users", :force => true do |t|
     t.string   "user_name",   :null => false
@@ -53,6 +77,7 @@ ActiveRecord::Schema.define(:version => 20080806143028) do
     t.datetime "updated_at"
   end
 
+  add_index "users", ["user_name"], :name => "index_users_on_user_name", :unique => true
   add_index "users", ["user_number"], :name => "index_users_on_user_number", :unique => true
 
 end
