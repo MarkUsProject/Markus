@@ -17,8 +17,8 @@ admin:
     id:             1
     user_name:      admin
     user_number:    123456789
-    last_name:      Reid      
-    first_name:     Karen
+    last_name:      Osterman
+    first_name:     Jon
     role:           admin
     created_at:     <% Time.now.to_s(:db) %>
     updated_at:     <% Time.now.to_s(:db) %>
@@ -27,18 +27,58 @@ ta:
     id:             2
     user_name:      ta1
     user_number:    234567891
-    last_name:      Chang    
-    first_name:     Roger
+    last_name:      Zandt
+    first_name:     Ursula
     role:           ta
     created_at:     <% Time.now.to_s(:db) %>
     updated_at:     <% Time.now.to_s(:db) %>
 
-student:
+student1:
     id:             3
     user_name:      student1
     user_number:    345678912
-    last_name:      Wayne      
-    first_name:     Bruce
+    last_name:      Mason
+    first_name:     Hollis
+    role:           student
+    created_at:     <% Time.now.to_s(:db) %>
+    updated_at:     <% Time.now.to_s(:db) %>
+
+student2:
+    id:             4
+    user_name:      student2
+    user_number:    348567912
+    last_name:      Juspeckzyk
+    first_name:     Sally
+    role:           student
+    created_at:     <% Time.now.to_s(:db) %>
+    updated_at:     <% Time.now.to_s(:db) %>
+
+student3:
+    id:             5
+    user_name:      student3
+    user_number:    346789512
+    last_name:      Kovacs
+    first_name:     Walter
+    role:           student
+    created_at:     <% Time.now.to_s(:db) %>
+    updated_at:     <% Time.now.to_s(:db) %>
+
+student4:
+    id:             6
+    user_name:      student4
+    user_number:    347895126
+    last_name:      Blake
+    first_name:     Edward
+    role:           student
+    created_at:     <% Time.now.to_s(:db) %>
+    updated_at:     <% Time.now.to_s(:db) %>
+
+student5:
+    id:             7
+    user_name:      student5
+    user_number:    374581296
+    last_name:      Dreiberg
+    first_name:     Dan
     role:           student
     created_at:     <% Time.now.to_s(:db) %>
     updated_at:     <% Time.now.to_s(:db) %>

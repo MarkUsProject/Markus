@@ -5,7 +5,7 @@
 class User < ActiveRecord::Base
   
   validates_presence_of     :user_name, :user_number, :last_name, :first_name
-  validates_uniqueness_of   :user_number
+  validates_uniqueness_of   :user_number, :user_name
   
   validates_format_of       :role,          :with => /student|admin|ta/
   
@@ -52,6 +52,10 @@ class User < ActiveRecord::Base
   def admin?
     role == ADMIN
   end
+  
+  def student?
+    role == STUDENT
+  end
 
   
   # Classlist parser ---------------------------------------------------
@@ -61,9 +65,10 @@ class User < ActiveRecord::Base
   # then the existing record is overwritten only with the supplied values.
   # Returns the new user created or updated, or nil if no user has neither 
   # been created nor updated.
-  def self.update_on_duplicate(hash_values)
+  def self.update_on_duplicate(hash_values, role=User::STUDENT)
     nil unless hash_values.has_key?(:user_number)
     u = find_or_create_by_user_number(hash_values)
+    u.role = role
     u.attributes = hash_values
     u.save ? u : nil
   end

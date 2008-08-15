@@ -1,0 +1,25 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+# student3 is being used for testing on adding new members
+# do not add to any group here
+
+group1a:  # student5
+    id:             1
+    user_id:        7
+    group_number:   1
+    assignment_id:  1
+    status:         inviter
+
+group1b:  # student2
+    id:             2
+    user_id:        4
+    group_number:   1
+    assignment_id:  1
+    status:         pending
+
+group2a:  # student4
+    id:             3
+    user_id:        6
+    group_number:   2
+    assignment_id:  1
+    status:         inviter

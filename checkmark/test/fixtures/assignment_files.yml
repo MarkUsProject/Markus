@@ -5,3 +5,13 @@
 #
 # two:
 #   column: value
+
+shapes:
+    id:                 1
+    assignment_id:      1
+    filename:           Shapes.java
+
+testshapes:
+    id:                 2
+    assignment_id:      1
+    filename:           TestShapes.java

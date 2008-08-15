@@ -1,0 +1,18 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+# entries here depend on groups.yml and assignment_files.yml
+# check them for consistency if this file is changed.
+
+# student5 submitted Shapes.java
+submission_group1a:
+    group_number:           1
+    group_id:               1
+    assignment_file_id:     1
+    submitted_at:           
+
+# student2 submitted TestShapes.java
+submission_group1b:
+    group_number:           1
+    group_id:               2
+    assignment_file_id:     2
+    submitted_at:           

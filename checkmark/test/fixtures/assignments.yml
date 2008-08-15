@@ -6,10 +6,11 @@
 # two:
 #   column: value
 
-A1:
-    name: A1
-    description: Write Tests!
+a1:
+    id:             1
+    name:           A1
+    description:    Write Tests!
     message:
-    due_date: <%= 1.hour.from_now.to_s(:db) %>
-    group_min: 1
-    group_max: 2
+    due_date:       <%= 1.hour.from_now.to_s(:db) %>
+    group_min:      1
+    group_max:      2
