@@ -4,6 +4,8 @@
 # All controllers are expected to extend this module (already by default)
 module SessionHandler
   
+  protected
+  
   # session timeout in seconds for different roles
   MAX_SESSION_PERIOD = {
     User::STUDENT => 600,  
