@@ -33,12 +33,9 @@ class User < ActiveRecord::Base
   # Responsible for the actual authentication of login against 
   # its password. This is done by 
   def self.verify(login, password)
+    pipe = IO.popen(VALIDATE_FILE, "w+")
     
-    # TODO create a config file
-    validate_file = "#{RAILS_ROOT}/config/dummy_validate.sh"
-    pipe = IO.popen(validate_file, "w+")
-    
-    # TODO check if sanitized
+    # TODO sanitize
     args = %{#{login}\n#{password}\n}
     pipe.write(args)
     pipe.close
@@ -55,6 +52,11 @@ class User < ActiveRecord::Base
   
   def student?
     role == STUDENT
+  end
+  
+  # Returns an array of users with student role
+  def self.students
+    find_all_by_role(STUDENT)
   end
 
   
