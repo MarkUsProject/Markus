@@ -120,12 +120,21 @@ class GroupTest < ActiveSupport::TestCase
   end
   
   # Test forming a group is invalid if user is in a group already
-  def test_form_new_invalid
+  def test_form_new_invalid_user
+    # TODO check if there's error msgs on the model
     group = Group.find_group(@pending.id, @assignment.id)
     assert_not_nil group
     
     assert_nil Group.form_new(@pending.id, @assignment.id)
     assert_nil Group.form_new(1375, @assignment.id), "invalid user id"
+  end
+  
+  # Test if forming group is not allowed on an individual assignment
+  def test_form_new_invalid_assignment
+    # TODO check if there's errors on the model
+    @assignment2 = assignments(:a2) # an individual assignment
+    assert_nil Group.find_group(@non_member.id, @assignment2.id)
+    assert_nil Group.form_new(@non_member.id, @assignment2.id)
   end
   
 end

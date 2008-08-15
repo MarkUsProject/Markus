@@ -8,4 +8,10 @@ class Assignment < ActiveRecord::Base
   
   validates_numericality_of :group_min, :only_integer => true,  :greater_than => 0
   validates_numericality_of :group_max, :only_integer => true,  :allow_nil => true
+  
+  # Checks if an assignment is an individually-submitted assignment (no groups)
+  def individual?
+    group_min == 1 && group_max == 1
+  end
+  
 end

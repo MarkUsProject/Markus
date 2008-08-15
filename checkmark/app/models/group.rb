@@ -18,7 +18,15 @@ class Group < ActiveRecord::Base
   
   # Validate group members are students only
   def validate_on_create
-    errors.add(:user_id, "must be another student") unless user && user.student?
+    # check if user is a student
+    unless user && user.student?
+      errors.add(:user_id, "must be another student")
+    end
+    
+    # check if groups can be formed on an assignment
+    if assignment.individual?
+      errors.add(:assignment_id, "is not a group assignment")
+    end
   end
   
   
