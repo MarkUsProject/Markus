@@ -8,6 +8,12 @@ class StudentsController < ApplicationController
   
   # Publicly accessible actions ---------------------------------------
   
+  # Displays "Manage Students" page that displays a list of the students, 
+  # and for adding and editing student information.
+  def index
+    @students = User.students
+  end
+  
   def edit
     @student = User.find_by_id(params[:id])
     update_student if request.post?
@@ -20,7 +26,7 @@ class StudentsController < ApplicationController
     attr = params[:student].merge(User.get_default_student_attrs)
     @student = User.new(attr)
     return unless @student.save
-    redirect_to :controller => 'checkmark', :action => 'students'
+    redirect_to :action => 'index'
   end
   
   # Renders XML format of the student claslist that is OLM-compatible
@@ -59,21 +65,21 @@ class StudentsController < ApplicationController
     end
     
     # display 'Manage Students' page
-    redirect_to :controller => 'checkmark', :action => 'students'
+    redirect_to :action => 'index'
   end
   
   protected
   
   # Update information for an individual student 
   def update_student
-    redirect_to :controller => 'checkmark', :action => 'students' unless request.post?
+    redirect_to :action => 'index' unless request.post?
     
     @student = User.find_by_id(params[:student][:id])
     attrs = params[:student].merge(User.get_default_student_attrs)
     return unless @student.update_attributes(attrs)
     
     flash[:edit_notice] = @student.user_name + " has been updated."
-    redirect_to :controller => 'checkmark', :action => 'students'
+    redirect_to :action => 'index'
   end
   
   # Helper methods ----------------------------------------------------

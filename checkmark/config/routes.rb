@@ -36,6 +36,17 @@ ActionController::Routing::Routes.draw do |map|
   # See how all your routes lay out with "rake routes"
 
   # Install the default routes as the lowest priority.
+  map.connect 'checkmark', :controller => 'checkmark'
+  map.connect 'checkmark/login', :controller => 'checkmark', :action => 'login'
+  map.connect 'checkmark/logout', :controller => 'checkmark', :action => 'logout'
+  
+  # append xml to the link
+  map.connect 'checkmark/students/classlist.:format', 
+    :controller => 'students', :action => 'classlist'
+  
+  map.connect 'checkmark/:controller/:action/:id'
+  
+
   map.connect ':controller/:action/:id'
-  map.connect ':controller/:action/:id.:format'
+  #map.connect ':controller/:action/:id.:format'
 end

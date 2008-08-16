@@ -9,8 +9,10 @@ class CheckmarkController < ApplicationController
   skip_before_filter :authenticate,   :only => [:login, :logout]
   
   # check for authorization (needs admin role by default)
-  before_filter      :authorize,      :only => :students
+  before_filter      :authorize,      :only => [:students, :assignments]
 
+  #########################################################################
+  # Authentication
   
   # Handles login requests; usually redirected here when trying to access 
   # the website and has not logged in yet, or session has expired.  User 
@@ -52,42 +54,7 @@ class CheckmarkController < ApplicationController
   end
   
   def index
-    @user = self.current_user
-  end
-
-  
-  # TODO refactor everything below; move to respective controllers
-  
-  def submit
-    if params[:name].blank?
-      render_assignments('Submit an Assignment', 'submit')
-    else
-      # TODO Get the list of files required for this assignment
-      
-    end
-  end
-  
-  # Displays "Manage Students" page that displays a list of the students, 
-  # and for adding and editing student information.
-  def students
-    @students = User.find_all_by_role(User::STUDENT)
-  end
-  
-  # Displays "Manage Assignments" page for creating and editing 
-  # assignment information
-  def assignments
-    @assignments = Assignment.find(:all)
-  end
-  
-  
-  protected
-  
-  # Generate the assignment selection page for submitting assignment, 
-  # linking back to the called action
-  def render_assignments(title, action)
-    @task = { :title => title, :action => action }
-    @assignments = Assignment.find(:all)
-    render :action => 'assignments'
+    @user = current_user
   end
   
 end

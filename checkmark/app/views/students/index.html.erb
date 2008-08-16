@@ -1,0 +1,72 @@
+
+
+<h1>Manage Students</h1>
+
+<div id="upload">
+  <h3>Upload a class list</h3>
+
+  <% if flash[:upload_notice] -%>
+    <p style="color:green"><%=h flash[:upload_notice] %></p>
+  <% end -%>
+  
+  Select a CSV file of the following form: 
+  user name,student number,last name,first name<br />
+  If a student with the same student number exists, then the student's information is updated.
+  <p>
+    <%= form_tag '/checkmark/students/update_classlist', :multipart => true %>
+      <input type="file" name="classlist" /><br />
+      <p><%= submit_tag "Update classlist", :disabled_with => 'Processing classlist...'%></p>
+  </p>
+  <h3>Or <%= link_to 'Add a new student individually', :controller => 'students', :action=>'create' %></h3>
+
+  <% # display lines in csv file that has not been successfully processed %>
+  <div id="invalid_students" style="color:red">
+  <% if flash[:invalid_lines] != nil && !flash[:invalid_lines].empty? -%>
+    The following student(s) have not been successfully added:
+    <p>
+      <ul>
+        <% for line in flash[:invalid_lines] -%>
+          <li><%=h line %></li>
+        <% end -%>
+      </ul>
+    </p>
+    Make sure that:
+      <ul>
+        <li>Student numbers are 9 digits.</li>
+        <li>Each field is separated by a comma (no spaces).</li>
+        <li>Each line has the required fields specified above.</li>
+      </ul>
+  <% end -%>
+  </div>
+
+</div>
+
+<div id="show">
+  <h3>View student list</h3>
+  <p><%= link_to "View as XML", :action => 'classlist', :format => 'xml' %></p>
+  <% if flash[:edit_notice] -%>
+    <p style="color:green"><%=h flash[:edit_notice] %></p>
+  <% end -%>
+  
+  <table>
+    <tr>
+      <th>CDF username</th>
+      <th>Student Number</th>
+      <th>Last Name</th>
+      <th>First Name</th>
+    </tr>
+      
+    <% for student in @students %>
+      <tr>
+        <td><%=h student.user_name %></td>
+        <td><%=h student.user_number %></td>
+        <td><%=h student.last_name %></td>
+        <td><%=h student.first_name %></td>
+        <td><%= link_to 'Edit', :controller => 'students', :action => 'edit', :id => student %></td>
+      </tr>
+    <% end %>
+  </table>
+</div>
+
+  
+  

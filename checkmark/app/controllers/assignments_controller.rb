@@ -1,6 +1,14 @@
 class AssignmentsController < ApplicationController
   
+  before_filter      :authorize
+  
   # Publicly accessible actions ---------------------------------------
+  
+  # Displays "Manage Assignments" page for creating and editing 
+  # assignment information
+  def index
+    @assignments = Assignment.all(:order => :id)
+  end
   
   def edit
     @assignment = Assignment.find_by_id(params[:id])
@@ -34,11 +42,11 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.new(params[:assignment])
     params[:files].each_value do |file|
       @assignment.assignment_files.build(file) unless file['filename'].blank?
-    end
+    end if params[:files]
     
     # Go back to "Create assignment" page if unable to save
     if @assignment.save
-      redirect_to :controller => 'checkmark', :action => 'assignments'
+      redirect_to :action => 'index'
     else
       render :action => 'new'
     end
@@ -57,7 +65,7 @@ class AssignmentsController < ApplicationController
     params[:files].each_value do |f|
       id = f.delete("id")
       id.blank? ? new_files << f : existing_files[id.to_s] = f
-    end
+    end if params[:files]
     
     # Update first existing files to see if filename 
     # has changed or has been deleted.
@@ -74,7 +82,7 @@ class AssignmentsController < ApplicationController
     
     # Go back to "Edit assignment" page if unable to save
     if @assignment.save && @assignment.assignment_files.each(&:save)
-      redirect_to :controller => 'checkmark', :action => 'assignments'
+      redirect_to :action => 'index'
     else
       render :action => 'edit'
     end

@@ -6,14 +6,16 @@
 <% if @user.admin? -%>
 <div id="admin_task">
 <ul>
-  <li><%= link_to 'Manage student list', :action => 'students' %></li>
-  <li><%= link_to 'Manage assignments', :action => 'assignments' %></li>
+  <li><%= link_to 'Manage student list', :controller => 'students' %></li>
+  <li><%= link_to 'Manage assignments', :controller => 'assignments' %></li>
 </ul>
 </div>
 <% end -%>
 
+<% if @user.student? -%>
 <div id="student_task">
 <ul>
-  <li><%= link_to 'Submit an assignment', :action => 'submit' %></li>
+  <li><%= link_to 'Submit an assignment', :controller => 'submissions', :action => 'assignments' %></li>
 </ul>
 </div>
+<% end -%>
