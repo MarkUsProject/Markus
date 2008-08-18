@@ -8,6 +8,8 @@ class AssignmentFile < ActiveRecord::Base
  
   # sanitize filename input before saving
   def before_save
+    # TODO should have no '..' or file path separators
+    
     filename.strip!
     filename.gsub(/^(..)+/, ".")
     filename.gsub(/[^\s]/, "") # replace spaces with 

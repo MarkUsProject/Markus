@@ -48,6 +48,19 @@ class Group < ActiveRecord::Base
     Group.find(:all, :conditions => [condition, group_number])
   end
   
+  # Returns the inviter user instance for a group, given an assignment.
+  # All submissions are stored using the group inviter's name
+  def self.inviter(group_number, assignment_id)
+    condition = "group_number = :group and assignment_id = :id and status='inviter'"
+    find(:first, :conditions => [condition, 
+        {:group => group_number, :id => assignment_id}])
+  end
+  
+  # instance version of inviter
+  def inviter(assignment_id)
+    Group.inviter(group_number, assignment_id)
+  end
+  
   # Returns array of assignment files submitted by this user's group
   def self.find_submission_files()
     return [] unless in_group?
@@ -62,15 +75,20 @@ class Group < ActiveRecord::Base
   # Returns the group representation for this user, 
   # or nil if group cannot be formed
   def self.form_new(user_id, assignment_id)
-    new_group = Group.create(:user_id => user_id) do |m|
+    # TODO verify there's only one inviter per group per assignment
+    new_group = create(:user_id => user_id) do |m|
       m.assignment_id = assignment_id
-      m.status = 'inviter'
+      m.status = 'pending'
     end
     return nil unless new_group.save # need to save before setting group number
     
     # set group id of new_group to be group number
     new_group.update_attribute(:group_number, new_group.id)
-    return nil unless new_group.save
+    new_group.status = 'inviter'
+    unless new_group.save
+      new_group.destroy
+      return nil
+    end
     return new_group
   end
   
@@ -112,7 +130,7 @@ class Group < ActiveRecord::Base
   
   def self.get_submit_number(time=Time.now)
     t = submitted_at ? submitted_at : time
-    t.strftimestrftime("%m-%d-%Y")
+    t.strftime("%m-%d-%Y")
   end
   
   def in_group?

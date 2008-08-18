@@ -7,7 +7,6 @@ class CreateSubmissions < ActiveRecord::Migration
     create_table :submissions do |t|
       t.column  :user_id,              :int
       t.column  :group_number,         :int, :null => false
-      t.column  :group_id,             :int # for join between group and files
       t.column  :assignment_file_id,   :int
       
       t.column  :submitted_at,         :timestamp

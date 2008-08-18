@@ -15,7 +15,7 @@ class CreateGroups < ActiveRecord::Migration
     
     add_index :groups, [:user_id, :group_number],  :unique => true
     add_index :groups, [:user_id, :assignment_id], :unique => true
-    add_index :groups, [:user_id, :group_number, :assignment_id], :unique => true
+    add_index :groups, [:group_number, :assignment_id]
     
     foreign_key_no_delete :groups, :user_id,  :users
     foreign_key_no_delete :groups, :assignment_id,  :assignments

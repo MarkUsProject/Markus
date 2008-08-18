@@ -114,6 +114,7 @@ class GroupTest < ActiveSupport::TestCase
     Group.form_new(@non_member.id, @assignment.id)
     
     group = Group.find_group(@non_member.id, @assignment.id)
+    assert_not_nil group
     assert_equal 1, group.members.length
     assert_equal 'inviter', group.status
     assert_equal group.user, @non_member
@@ -135,6 +136,24 @@ class GroupTest < ActiveSupport::TestCase
     @assignment2 = assignments(:a2) # an individual assignment
     assert_nil Group.find_group(@non_member.id, @assignment2.id)
     assert_nil Group.form_new(@non_member.id, @assignment2.id)
+  end
+  
+  # Tests inviter method for an instance of group
+  def test_inviter_instance
+    inviter = Group.find_group(@inviter.id, @assignment.id)
+    pending = Group.find_group(@pending.id, @assignment.id)
+    
+    assert_equal inviter.group_number, pending.group_number
+    assert_equal inviter, pending.inviter(@assignment.id)
+  end
+  
+  # Tests static method inviter for group
+  def test_inviter_class
+    inviter = Group.find_group(@inviter.id, @assignment.id)
+    pending = Group.find_group(@pending.id, @assignment.id)
+    
+    assert_equal inviter.group_number, pending.group_number
+    assert_equal inviter, Group.inviter(pending.group_number, @assignment.id)
   end
   
 end

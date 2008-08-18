@@ -69,6 +69,7 @@ end
 
 
 # Checkmark-specific settings
+# use "/" as path separator no matter what OS server is running
 
 COURSE_NAME         = "CSCxxx Summer 2008: Course Title Here"
 SUBMISSIONS_PATH    = "#{RAILS_ROOT}/submissions"
