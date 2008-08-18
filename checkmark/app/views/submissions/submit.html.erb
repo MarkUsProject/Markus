@@ -1,0 +1,53 @@
+
+<script type="text/javascript" language="JavaScript"><!--
+function check() {
+  var ext = document.f.pic.value;
+  ext = ext.substring(ext.length-3,ext.length);
+  ext = ext.toLowerCase();
+  if(ext != 'jpg') {
+    alert('You selected a .'+ ext +
+          ' file; please select a .jpg file instead!');
+    return false; }
+  else
+    return true; }
+//--></script>
+
+<h1>Submit an Assignment</h1>
+
+<% # Display when assignment has groups -%>
+<% if @group -%>
+<h3>Group Status</h3>
+<%= render :partial => 'group_status', :locals => { :group => @group } %>
+<% end -%>
+
+<% # lists files to upload -%>
+<h3>Upload Files for <%= h(@assignment.name) %></h3>
+<p><%= h(@assignment.message) %></p>
+<h4>You need to submit only the following files:</h4>
+<ul>
+  <% for file in @assignment.assignment_files -%>
+  <li><%= file.filename %></li>
+  <% end -%>
+</ul>
+
+<% # Upload form -%>
+<% form_tag({ :action => 'upload', :id => @assignment.id}, 
+  :multipart => true, :id => 'submit_form') do %>
+  
+  <input type="file" name="file" />
+  <p><input type="submit" name="upload" value="Submit Files" /></p>
+<% end -%>
+
+<% # lists submissions so far by student/group -%>
+<% if @submissions.length == 0 -%>
+<h3>You have no submissions so far</h3>
+<% else -%>
+
+<h3>So far, you have submitted:</h3>
+<% for sub in @submissions do -%>
+  <%= link_to sub.assignment_file.filename %>
+<% end -%>
+
+<% end -%>
+
+  
