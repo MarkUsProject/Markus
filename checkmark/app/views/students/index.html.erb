@@ -8,14 +8,15 @@
   <% if flash[:upload_notice] -%>
     <p style="color:green"><%=h flash[:upload_notice] %></p>
   <% end -%>
-  
-  Select a CSV file of the following form: 
-  user name,student number,last name,first name<br />
+  <p>
+  Select a CSV file of the following form:<br />
+  <code>user_name,student_number,last_name,first_name</code><br />
+  </p>
   If a student with the same student number exists, then the student's information is updated.
   <p>
     <%= form_tag '/checkmark/students/update_classlist', :multipart => true %>
       <input type="file" name="classlist" /><br />
-      <p><%= submit_tag "Update classlist", :disabled_with => 'Processing classlist...'%></p>
+      <p><%= submit_tag "Update classlist", :disable_with => 'Processing classlist...' %></p>
   </p>
   <h3>Or <%= link_to 'Add a new student individually', :controller => 'students', :action=>'create' %></h3>
 
@@ -38,12 +39,10 @@
       </ul>
   <% end -%>
   </div>
-
 </div>
 
 <div id="show">
-  <h3>View student list</h3>
-  <p><%= link_to "View as XML", :action => 'classlist', :format => 'xml' %></p>
+  <h3>View student list (<%= link_to "XML", :action => 'classlist', :format => 'xml' %>)</h3>
   <% if flash[:edit_notice] -%>
     <p style="color:green"><%=h flash[:edit_notice] %></p>
   <% end -%>
