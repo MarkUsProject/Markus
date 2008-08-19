@@ -1,32 +1,37 @@
 
 <h1><%= "Create a Group" %></h1>
 
-
-<h4>You have not yet formed a group. Please enter 
-<%= ("at least" + @assignment.group_min.to_s) if @assignment.group_min > 1 %>
-other CDF username(s) you want to form a group with, or confirm that you want to work alone.</h4>
-
-Member 1: <%=  h(@current_user.user_name) %>
+<h4>You have not yet formed a group. <br />
+Please enter <%= ("at least " + (@assignment.group_min-1).to_s) if @assignment.group_min > 1 %>
+other CDF username(s) you want to form a group with<%= ", or confirm that you want to work alone" if @assignment.group_min == 1 %>.</h4>
 
 <% # TODO make this dynamic addition; put in a ticket -%>
 <% # Use the maximum number of members in the group for now as the number of text fields -%>
 
-<% form_tag :action => 'creategroup', :id => @assignment.id do -%>
 
-  <% (@assignment.group_max - 1).times do |index|  %>
-    <div id="group_<%= index %>">
-      <% fields_for "group[#{index}]" do |g| -%>
+<% form_tag :action => 'creategroup', :id => @assignment.id do -%>
+  <%= error_messages_for :group -%>
+  
+  Member 1: <%=  h(@current_user.user_name) %>
+
+  <% ([@assignment.group_max - 1, 10].min).times do |index|  %>
+    <div id="groups_<%= index %>">
+      <% fields_for "groups[#{index}]" do |g| -%>
         <p>
             <% # start with member 2 -%>
             <%= g.label "member " + (index+2).to_s + ":" %>
-            <%= g.text_field :username %>
+            <% if @groups -%>
+              <%= g.text_field :user_name, :value => @groups[index.to_s]['user_name'] %>
+            <% else -%>
+              <%= g.text_field :user_name %>
+            <% end -%>
         </p>
       <% end -%>
-    </div> 
+    </div>
   <% end -%>
   
   <% if @assignment.group_min == 1 -%>
-        <%= check_box "group", "count", {} %> <b>I want to work alone</b>
+        <%= check_box "group", "individual?", {} %> <b>I want to work alone</b>
     (if checked, names entered above will be ignored)
   <% end -%>
   

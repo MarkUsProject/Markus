@@ -4,6 +4,8 @@
 # If there are added columns, add the default values to default_values
 class User < ActiveRecord::Base
   
+  has_many :groups
+  
   validates_presence_of     :user_name, :user_number, :last_name, :first_name
   validates_uniqueness_of   :user_number, :user_name
   

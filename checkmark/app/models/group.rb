@@ -127,6 +127,10 @@ class Group < ActiveRecord::Base
     end
   end
   
+  # Returns 0 if this group has no members or 1 if it has only one member
+  def individual?
+    return (members.empty? || members.length > 1) ? 0 : 1 
+  end
   
   def self.get_submit_number(time=Time.now)
     t = submitted_at ? submitted_at : time

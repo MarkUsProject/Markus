@@ -1,0 +1,13 @@
+
+<h1><%= "Join a Group" %></h1>
+
+<% form_tag :action => 'join', :id => @assignment.id do %>
+<p>
+  <b><%= h(@inviter.user_name) %></b> has invited you to join his group 
+  for <b>assignment <%= h(@assignment.name) %></b>.
+</p>
+  
+  <%= submit_tag "Accept", :name => 'accept' %> 
+  <%= submit_tag "Reject", :name => 'reject', :confirm => 'Are you sure? This will redirect you to creating a group' %>
+  
+<% end -%>
