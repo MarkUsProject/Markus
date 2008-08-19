@@ -1,0 +1,27 @@
+#header {
+    padding: 5px;
+    background-color: #464646;
+    color: #fff;
+    min-height: 28px;
+    line-height: 200%;
+}
+
+#main_menu {
+    margin: 3px;
+    float: left;
+}
+
+#course {
+    float: right;
+}  
+
+div#user_info a {
+    color: #ccc;
+    background-color: #464646;
+    text-decoration: none;
+}
+
+div#user_info a:hover {
+    color: #fff;
+    background-color: #464646;
+}

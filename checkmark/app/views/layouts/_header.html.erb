@@ -1,44 +1,15 @@
-<style type="text/css">
-  #header {
-    padding: 5px;
-    background-color: #464646;
-    color: #fff;
-    min-height: 30px;
-    line-height: 140%;
-  }
-
-  #main_menu {
-    float: left;
-    width: 300px;
-  }
-
-  #course {
-    float: left;
-    border: auto, auto, 0px, 0px;
-    text-align: center;
-  }
-
-  #user_info {
-    width: 300px;
-    float:left;
-    text-align: right;
-  }
-
-  span#user_name {
-  }
-</style>
-
+<%= stylesheet_link_tag 'header.css', :media => 'all' %>
 
 <div id="header">
   <div id="main_menu">
-    <%= link_to "Go back to Main Page", :controller => 'checkmark', :action => 'index' %>
+    <%= link_to image_tag('/images/home.jpg', :border => 0), 
+        :controller => 'checkmark', :action => 'index' %>
   </div>
-
-  <div id="course"><%=h COURSE_NAME %></div>
-
+  
+  <div id="course"><b><%=h COURSE_NAME %></b></div>
+  
   <div id="user_info">
     Logged in as <span id="user_name"><b><%=h @current_user.user_name %></b></span> | 
     <%= link_to "Log out", :controller => 'checkmark', :action => 'logout' %>
   </div>
-
 </div>
