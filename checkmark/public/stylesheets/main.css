@@ -28,6 +28,7 @@ pre {
 a { color: #000; }
 a:visited { color: #666; }
 a:hover { color: #fff; background-color:#000; }
+a { text-decoration: none; }
 
 .fieldWithErrors {
   padding: 2px;
