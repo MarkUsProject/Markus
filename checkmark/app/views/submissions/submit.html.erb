@@ -1,51 +1,78 @@
 
-<script type="text/javascript" language="JavaScript"><!--
-function check() {
-  var ext = document.f.pic.value;
+<script type="text/javascript" language="JavaScript">//<![CDATA[
+function check(file_field) {
+  var files = []
+  var ext = file_field.value;
   ext = ext.substring(ext.length-3,ext.length);
   ext = ext.toLowerCase();
-  if(ext != 'jpg') {
-    alert('You selected a .'+ ext +
-          ' file; please select a .jpg file instead!');
-    return false; }
-  else
-    return true; }
-//--></script>
+
+  invalid = false;
+  if invalid { alert(''); }
+  return invalid;
+//]]></script>
 
 <h1>Submit an Assignment</h1>
 
 <% # Display when assignment has groups -%>
 <% if @group -%>
 <h3>Group Status</h3>
+<%= h(flash[:group_notice]) %>
 <%= render :partial => 'group_status', :locals => { :group => @group } %>
 <% end -%>
 
 <% # lists files to upload -%>
 <h3>Upload Files for <%= h(@assignment.name) %></h3>
+
+<% if flash[:submit] -%>
+  <% h(flash[:submit]) %>
+<% end -%>
+
+<% if flash[:submit_files] -%>
+<div class="errorExplanation" id="errorExplanation">
+  <h2>The following files has not been submitted</h2>
+  <h5>Make sure that you fix these errors before resubmitting</h5>
+  <ul>
+    <% for msg in flash[:submit_files] -%>
+    <li><%= msg %></li>
+    <% end -%>
+  </ul>  
+</div>
+<% end -%>
+
 <p><%= h(@assignment.message) %></p>
-<h4>You need to submit only the following files:</h4>
+<h4>Submit files only with the following filenames (case sensitive):</h4>
 <ul>
   <% for file in @assignment.assignment_files -%>
   <li><%= file.filename %></li>
   <% end -%>
 </ul>
 
+
 <% # Upload form -%>
+<div id="submit_form">
 <% form_tag({ :action => 'upload', :id => @assignment.id}, 
-  :multipart => true, :id => 'submit_form') do %>
+  :multipart => true, :id => 'submit_form') do -%>
   
-  <input type="file" name="file" />
-  <p><input type="submit" name="upload" value="Submit Files" /></p>
+  <% (@assignment.assignment_files.length).times do |index| -%>
+    <% fields_for "files[#{index}]" do |f| -%>
+    <p><%= f.file_field :file, :onfocus => "check(this);" %></p>
+    <% end -%>
+  <% end -%>
+  
+  <p><%= submit_tag "Submit Files", :name => 'upload', :disabled => flash[:group_submit] %></p>
 <% end -%>
+</div>
 
 <% # lists submissions so far by student/group -%>
 <% if @submissions.length == 0 -%>
 <h3>You have no submissions so far</h3>
 <% else -%>
 
-<h3>So far, you have submitted:</h3>
+<h3>So far, you<%= "r group" unless @assignment.individual? -%> submitted:</h3>
 <% for sub in @submissions do -%>
-  <%= link_to sub.assignment_file.filename %>
+  <% if sub.assignment_file.assignment == @assignment -%>      
+  <%= link_to sub.assignment_file.filename, :action => 'view', :filename => sub.assignment_file.filename %>
+  <% end -%>
 <% end -%>
 
 <% end -%>

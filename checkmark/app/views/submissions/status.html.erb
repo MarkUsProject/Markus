@@ -1,6 +1,10 @@
-<%#
-# To change this template, choose Tools | Templates
-# and open the template in the editor.
-%>
 
-<%= "status.html" %>
+
+<% if @group -%>
+  
+<h3>Group Status</h3>
+
+  
+<%= render :partial => 'group_status', :locals => { :members => @members } %>
+
+<% end -%>

@@ -1,1 +1,4 @@
 
+<% for member in @members -%>
+<p><%= h(member.user.user_name) %> <%= h(member.status) %></p>
+<% end -%>

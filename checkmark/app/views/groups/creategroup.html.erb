@@ -31,8 +31,8 @@ other CDF username(s) you want to form a group with<%= ", or confirm that you wa
   <% end -%>
   
   <% if @assignment.group_min == 1 -%>
-    <p><%= check_box "group", "individual?", {} %> <b>I want to work alone</b>
-    (if checked, names entered above will be ignored)</p>
+        <%= check_box "group", "individual?", {} %> <b>I want to work alone</b>
+    (if checked, names entered above will be ignored)
   <% end -%>
   
   <p><%= submit_tag "Create Group" %></p>
