@@ -7,11 +7,11 @@ class Submission < ActiveRecord::Base
   # TODO if assignment is individual, user_id is used as group_number
   # TODO test distinct keywords
   
-  # returns the files 
+  # returns assignment files submitted by this group
   def self.submitted_files(group_number)
     # TODO filter out multiple submissions of the same file.
-    return unless group_number
-    all(:include => :assignment_files, :select => "DISTINCT assignment_file_id",
+    return nil unless group_number
+    all(:include => :assignment_file, :select => "DISTINCT assignment_file_id",
       :conditions => ["group_number = ?", group_number])
   end
   

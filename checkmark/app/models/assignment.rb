@@ -9,7 +9,7 @@ class Assignment < ActiveRecord::Base
   validates_numericality_of :group_min, :only_integer => true,  :greater_than => 0
   validates_numericality_of :group_max, :only_integer => true
   
-  def validate_on_create
+  def validate
     if group_max && group_min && group_max < group_min
       errors.add(:group_max, "must be greater than the minimum number of groups")
     end

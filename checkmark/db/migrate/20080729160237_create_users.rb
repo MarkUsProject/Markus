@@ -5,7 +5,7 @@ class CreateUsers < ActiveRecord::Migration
       t.column  :user_number,     :string,  :null => false
       t.column  :last_name,       :string
       t.column  :first_name,      :string
-      
+      t.column  :grace_days,      :int,     :null => true
       t.column  :role,            :string
       
       t.timestamps

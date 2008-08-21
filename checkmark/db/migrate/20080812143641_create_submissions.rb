@@ -12,8 +12,8 @@ class CreateSubmissions < ActiveRecord::Migration
       t.column  :submitted_at,         :timestamp
     end
     
-    add_index :submissions, [:group_id, :assignment_file_id]
-    add_index :submissions, [:user_id, :group_number],  :unique => true
+    add_index :submissions, [:group_number, :assignment_file_id]
+    add_index :submissions, [:user_id, :group_number]
     
     foreign_key :submissions, :user_id,  :users
     foreign_key_no_delete :submissions, :assignment_file_id, :assignment_files

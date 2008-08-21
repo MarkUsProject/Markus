@@ -38,7 +38,7 @@ CREATE TABLE assignments (
     message text,
     due_date timestamp without time zone,
     group_min integer DEFAULT 1 NOT NULL,
-    group_max integer,
+    group_max integer DEFAULT 1 NOT NULL,
     created_at timestamp without time zone,
     updated_at timestamp without time zone
 );
@@ -88,8 +88,7 @@ CREATE TABLE sessions (
 CREATE TABLE submissions (
     id integer NOT NULL,
     user_id integer,
-    group_number integer,
-    group_id integer,
+    group_number integer NOT NULL,
     assignment_file_id integer,
     submitted_at timestamp without time zone
 );
@@ -105,6 +104,7 @@ CREATE TABLE users (
     user_number character varying(255) NOT NULL,
     last_name character varying(255) DEFAULT NULL::character varying,
     first_name character varying(255) DEFAULT NULL::character varying,
+    grace_days integer,
     role character varying(255) DEFAULT NULL::character varying,
     created_at timestamp without time zone,
     updated_at timestamp without time zone
@@ -135,6 +135,7 @@ ALTER SEQUENCE assignment_files_id_seq OWNED BY assignment_files.id;
 --
 
 CREATE SEQUENCE assignments_id_seq
+    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -210,6 +211,7 @@ ALTER SEQUENCE submissions_id_seq OWNED BY submissions.id;
 --
 
 CREATE SEQUENCE users_id_seq
+    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -328,6 +330,13 @@ CREATE UNIQUE INDEX index_assignments_on_name ON assignments USING btree (name);
 
 
 --
+-- Name: index_groups_on_group_number_and_assignment_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_groups_on_group_number_and_assignment_id ON groups USING btree (group_number, assignment_id);
+
+
+--
 -- Name: index_groups_on_user_id_and_assignment_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -339,13 +348,6 @@ CREATE UNIQUE INDEX index_groups_on_user_id_and_assignment_id ON groups USING bt
 --
 
 CREATE UNIQUE INDEX index_groups_on_user_id_and_group_number ON groups USING btree (user_id, group_number);
-
-
---
--- Name: index_groups_on_user_id_and_group_number_and_assignment_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE UNIQUE INDEX index_groups_on_user_id_and_group_number_and_assignment_id ON groups USING btree (user_id, group_number, assignment_id);
 
 
 --
@@ -363,10 +365,10 @@ CREATE INDEX index_sessions_on_updated_at ON sessions USING btree (updated_at);
 
 
 --
--- Name: index_submissions_on_group_id_and_assignment_file_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_submissions_on_group_number_and_assignment_file_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_submissions_on_group_id_and_assignment_file_id ON submissions USING btree (group_id, assignment_file_id);
+CREATE INDEX index_submissions_on_group_number_and_assignment_file_id ON submissions USING btree (group_number, assignment_file_id);
 
 
 --

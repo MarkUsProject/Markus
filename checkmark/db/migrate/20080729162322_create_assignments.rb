@@ -6,7 +6,7 @@ class CreateAssignments < ActiveRecord::Migration
       t.column  :message,       :text
       t.column  :due_date,      :datetime
       t.column  :group_min,     :integer, :null => false, :default => 1
-      t.column  :group_max,     :integer
+      t.column  :group_max,     :integer, :null => false, :default => 1
       
       t.timestamps
     end

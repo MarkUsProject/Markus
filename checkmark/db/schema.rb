@@ -26,7 +26,7 @@ ActiveRecord::Schema.define(:version => 20080812143641) do
     t.text     "message"
     t.datetime "due_date"
     t.integer  "group_min",   :default => 1, :null => false
-    t.integer  "group_max"
+    t.integer  "group_max",   :default => 1, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -42,9 +42,9 @@ ActiveRecord::Schema.define(:version => 20080812143641) do
     t.datetime "updated_at"
   end
 
+  add_index "groups", ["assignment_id", "group_number"], :name => "index_groups_on_group_number_and_assignment_id"
   add_index "groups", ["assignment_id", "user_id"], :name => "index_groups_on_user_id_and_assignment_id", :unique => true
   add_index "groups", ["group_number", "user_id"], :name => "index_groups_on_user_id_and_group_number", :unique => true
-  add_index "groups", ["assignment_id", "group_number", "user_id"], :name => "index_groups_on_user_id_and_group_number_and_assignment_id", :unique => true
 
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false
@@ -58,13 +58,12 @@ ActiveRecord::Schema.define(:version => 20080812143641) do
 
   create_table "submissions", :force => true do |t|
     t.integer  "user_id"
-    t.integer  "group_number"
-    t.integer  "group_id"
+    t.integer  "group_number",       :null => false
     t.integer  "assignment_file_id"
     t.datetime "submitted_at"
   end
 
-  add_index "submissions", ["assignment_file_id", "group_id"], :name => "index_submissions_on_group_id_and_assignment_file_id"
+  add_index "submissions", ["assignment_file_id", "group_number"], :name => "index_submissions_on_group_number_and_assignment_file_id"
   add_index "submissions", ["group_number", "user_id"], :name => "index_submissions_on_user_id_and_group_number", :unique => true
 
   create_table "users", :force => true do |t|
@@ -72,6 +71,7 @@ ActiveRecord::Schema.define(:version => 20080812143641) do
     t.string   "user_number", :null => false
     t.string   "last_name"
     t.string   "first_name"
+    t.integer  "grace_days"
     t.string   "role"
     t.datetime "created_at"
     t.datetime "updated_at"

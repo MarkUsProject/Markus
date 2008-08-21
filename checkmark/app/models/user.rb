@@ -10,6 +10,8 @@ class User < ActiveRecord::Base
   validates_uniqueness_of   :user_number, :user_name
   
   validates_format_of       :role,          :with => /student|admin|ta/
+  validates_format_of       :last_name, :first_name,    
+    :with => /^\w+$/, :message => "should be alphanumeric"
   
   # student/faculty number validation
   validates_format_of       :user_number,   :with =>/\d{9}/,
@@ -19,7 +21,12 @@ class User < ActiveRecord::Base
   STUDENT = 'student'
   ADMIN = 'admin'
   TA = 'ta'
+  
+  GRACE_DAYS = 1  # TODO add to config when creating course, hardcoded for now
                           
+  def before_save
+    self.grace_days ||= GRACE_DAYS if self.student?
+  end
   
   # Authentication------------------------------------------------------
   
