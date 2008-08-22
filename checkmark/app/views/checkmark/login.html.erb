@@ -4,9 +4,9 @@
 
 <div id="login">
 
-  <h1 id="logo">Welcome to CheckMark</h1>
+  <p><%= image_tag "/images/checkmark.gif", :alt => "Welcome to CheckMark" %></p>
   <% if flash[:login_notice] -%>
-    <div class="error"><%=h flash[:login_notice] %></div>
+    <div class="login-error"><%=h flash[:login_notice] %></div>
   <% end -%>
   <% form_tag({ :action => 'login', :id => nil }, :id => 'login_form') do %>
     <p>
@@ -21,7 +21,7 @@
 
     <p><%= submit_tag "Log in", :disabled_with => 'Logging in...', :tabindex => 100 %></p>
   <% end %>
-</div>    
+</div>
 
 <%# Try to put focus on the login text field on load %>
 <script type="text/javascript">
