@@ -64,7 +64,7 @@ ActiveRecord::Schema.define(:version => 20080812143641) do
   end
 
   add_index "submissions", ["assignment_file_id", "group_number"], :name => "index_submissions_on_group_number_and_assignment_file_id"
-  add_index "submissions", ["group_number", "user_id"], :name => "index_submissions_on_user_id_and_group_number", :unique => true
+  add_index "submissions", ["group_number", "user_id"], :name => "index_submissions_on_user_id_and_group_number"
 
   create_table "users", :force => true do |t|
     t.string   "user_name",   :null => false

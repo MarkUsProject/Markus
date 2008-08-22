@@ -45,8 +45,8 @@ ActionController::Routing::Routes.draw do |map|
     :controller => 'students', :action => 'classlist'
   
   # map filenames to a nice-looking url
-  map.connect 'checkmark/submissions/view/:id/:filename', 
-    :controller => 'submissions', :action => 'view'
+  #map.connect 'checkmark/submissions/view/:id/:filename', 
+  #  :controller => 'submissions', :action => 'view', :id => /\d+/, :filename => /\w+.\w+/
   
   map.connect 'checkmark/:controller/:action/:id'
   

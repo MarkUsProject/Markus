@@ -6,11 +6,10 @@ class SubmissionsController < ApplicationController
   
   def submit
     @assignment = Assignment.find(params[:id])
-    files = (@assignment.assignment_files.map { |v| v.filename }).join(',')
     # user id is used for group_number on individual submissions
     session[:group_number] = current_user.id
     if @assignment.individual? # an individual assignment, no groups
-      @submissions = Submission.submitted_files(session[:group_number])
+      @submissions = Submission.submitted_files(session[:group_number], params[:id])
       return
     end
     
@@ -32,7 +31,7 @@ class SubmissionsController < ApplicationController
       session[:group_number] = @group.group_number
       @members = @group.members
       @has_enough = @group.count_joined_members >= @assignment.group_min
-      @submissions = Submission.submitted_files(session[:group_number])
+      @submissions = Submission.submitted_files(session[:group_number], params[:id])
     end
     
   end
@@ -41,8 +40,9 @@ class SubmissionsController < ApplicationController
   def upload
     @assignment = Assignment.find(params[:id])
     redirect_to :action => 'submit', :id => params[:id] unless request.post?
+    indiv = @assignment.individual?
     
-    # check if user is indeed allowed to submit and is not passed deadline
+    # check if user is indeed allowed to submit
     if @assignment.individual?
       group_number = current_user.id
     else
@@ -55,19 +55,54 @@ class SubmissionsController < ApplicationController
       group_number = group.group_number
     end
     
+    # check if submitting past deadline
+    submission_time = Time.now
+    due_date = @assignment.due_date
+    if submission_time > due_date
+      # check how many grace days user has used so far 
+      # by looking at last submission date
+      grace_days = Submission.get_used_grace_days(current_user, group_number, @assignment)
+      if submission_time > due_date.advance(:days => grace_days)
+        # we need to use another grace day. check if we have enough
+        gd_left = group ? group.grace_days : current_user.grace_days
+        
+        unless gd_left > 0  # no more grace days
+          flash[:error] = "Deadline has passed. You cannot submit anymore."
+          redirect_to :action => 'submit', :id => params[:id]
+          return
+        end
+        
+        # check if user wants to use a grace day
+        if params[:group] && (params[:group]['use_grace_day'] == "1")
+          # verify grace days has been properly updated
+          unless use_grace_day(current_user, group)
+            flash[:error] = "There was a problem updating your grace days. Please re-submit."
+            redirect_to :action => 'submit', :id => params[:id]
+            return
+          end
+        else
+          flash[:error] = "Deadline has passed. Use your grace days and re-submit."
+          flash[:grace_days] = gd_left
+          redirect_to :action => 'submit', :id => params[:id]
+          return
+        end
+      end
+      # user can still submit using current grace days
+    end
+    
     # sanitize submitted files first
-    # check for duplicate files, empty files and required files
+    # check for duplicate files and required files
     assignment_files = @assignment.assignment_files.index_by { |f| f.filename.to_s }
     valid_files = sanitize_files(assignment_files, params[:files])
     
     # get submission information
     user = @assignment.individual? ? current_user : 
-    Group.inviter(group_number, @assignment.id).user
-    submission_time = Time.now
+      Group.inviter(group_number, @assignment.id).user
     dir = submission_dir(@assignment.name, user.user_name, 
-      submission_time.strftime("%m-%d-%Y"))
+      Submission.get_version(submission_time))
     
     # upload files
+    flash[:success] = []
     valid_files.each_pair do |filename, file|
       filepath = File.join(dir, filename)
       sub = Submission.new do |s|
@@ -80,6 +115,7 @@ class SubmissionsController < ApplicationController
       # make sure that the submission has been recorded properly before uploading
       if sub.save
         File.open(filepath, "wb") { |f| f.write(file.read) }
+        flash[:success] << filename + (file.size > 0 ? "" : " (blank file)")
       else # save failed
         flash[:submit_files] << "<b>#{filename}</b> cannot be saved at this time"
       end
@@ -89,33 +125,38 @@ class SubmissionsController < ApplicationController
   end
   
   def view
-    assignment = Assignment.find(params[:id])
-    file = assignment.assigment_files.find_by_filename(params[:filename])
+    @assignment = Assignment.find(params[:id])
+    file = @assignment.assignment_files.find_by_filename(params[:filename])
+    render :text => "File not found", :status => 404 && return unless file
     individual = @assignment.individual?
-    return unless file
     
     user = current_user
     unless individual
-      group = Group.find_group(user.id, assignment.id)
-      user = group.inviter(assignment.id).user
+      group = Group.find_group(user.id, @assignment.id)
+      user = group.inviter.user
     end
     
-    # find last submission date
+    # find last submission date of the assignment file
     conditions = { 
       :assignment_file_id => file.id,
       :user_id => user.id,
       :group_number => individual ? user.id : group.group_number
     }
-    submission_time = Submission.find(:first, 
-      :order => "submitted_at DESC", :conditions => conditions).submitted_at
+    submission_time = Submission.find(:first, :order => "submitted_at DESC", 
+      :conditions => conditions).submitted_at
     dir = submission_dir(@assignment.name, user.user_name, 
-      submission_time.strftime("%m-%d-%Y"))
+      Submission.get_version(submission_time))
     
     # get file and show it
-    path = File.join(submission_dir, file.filename)
+    path = File.join(dir, file.filename)
+    unless File.exists?(path)
+      render :text => "File not found", :status => 401
+      return
+    end
     send_file path, :type => 'text/plain', :disposition => 'inline'
   end
   
+  # 
   def join
     @assignment = Assignment.find(params[:id])
     assignment_id = @assignment.id
@@ -123,8 +164,8 @@ class SubmissionsController < ApplicationController
     
     redirect_to :action => 'creategroup', :id => assignment_id unless @group
     
-    unless @group.in_group?
-      @inviter = @group.inviter(assignment_id).user
+    if @group && !@group.in_group?  # group member has pending status
+      @inviter = @group.inviter.user
       return unless request.post?
       params[:accept] ? @group.accept_invite : @group.reject_invite
       @group.save unless @group.frozen?
@@ -156,8 +197,8 @@ class SubmissionsController < ApplicationController
         members << member if member
       end
       
-      # check if we have enough members or has at least one member if not 
-      # working individually
+      # check if we have enough members or has at least one member 
+      # if not working individually
       group_min = @assignment.group_min - 1
       if members.length < group_min || group_min == 0
         @group.errors.add_to_base(
@@ -171,12 +212,46 @@ class SubmissionsController < ApplicationController
       redirect_to(:action => 'status', :id => @assignment.id) if members.all?(&:save)
     else
       @group.destroy
+      members[0].errors.each do |m|
+        m
+      end unless members.empty?
     end
-    
   end
   
   
   private
+  
+  # add members to this group
+  def add_members(group)
+    return false unless group
+    
+    
+    
+  end
+  
+  
+  
+  # deducts a grace day for all members in the group or for user
+  # returns true if users has been successfully updated
+  def use_grace_day(user, group)
+    if group
+      members = group.joined_members
+      begin
+        Group.transaction do
+          members.each do |m|
+            m.user.grace_days -= 1
+            m.save!
+          end
+        end
+      rescue
+        return false
+      end
+      
+    else
+      user.grace_days -= 1
+      return user.save
+    end
+  end
   
   # filters user-submitted files to make sure that only required files are 
   # submitted with no duplicates.
@@ -228,6 +303,9 @@ class SubmissionsController < ApplicationController
       group.errors.add_to_base("username '" + 
           CGI.escapeHTML(user_name) + "' is not valid")
       return nil
+    elsif member.user_name == current_user.user_name
+      group.errors.add_to_base("You cannot invite yourself to your own group")
+      return nil
     end
     
     # check if user is already in a group
@@ -257,7 +335,7 @@ class SubmissionsController < ApplicationController
   # submission_folder/assignment_name/user or group name/submission_date/filename
   def submission_dir(assignment_name, user_folder, version)
     path = File.join(SUBMISSIONS_PATH, assignment_name, user_folder, version)
-    FileUtils.mkdir_p(path) unless File.exists?(path)
+    FileUtils.mkdir_p(path)
     return path
   end
   

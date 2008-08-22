@@ -6,10 +6,10 @@ class Group < ActiveRecord::Base
   
   # user association/validations
   belongs_to  :user
-  validates_presence_of     :user_id
+  validates_presence_of     :user_id, :message => "presence is not strong with you"
   validates_uniqueness_of   :user_id,       :scope => [:assignment_id], 
     :message => "is currently invited or in a group."
-  validates_associated      :user
+  validates_associated      :user, :message => 'association is not strong with you'
   
   # other attribute validations
   attr_protected  :status
@@ -48,6 +48,17 @@ class Group < ActiveRecord::Base
     Group.find(:all, :conditions => [condition, group_number])
   end
   
+  def joined_members
+    condition = "group_number = ? and assignment_id = #{assignment_id} and status <> 'pending'"
+    Group.find(:all, :conditions => [condition, group_number])
+  end
+  
+  def count_joined_members
+    condition = "group_number = #{group_number} and " + 
+      "assignment_id = #{assignment_id} and status <> 'pending'"
+    Group.count_by_sql "SELECT COUNT(*) FROM groups WHERE " + condition
+  end
+  
   # Returns the inviter user instance for a group, given an assignment.
   # All submissions are stored using the group inviter's name
   def self.inviter(group_number, assignment_id)
@@ -57,7 +68,7 @@ class Group < ActiveRecord::Base
   end
   
   # instance version of inviter
-  def inviter(assignment_id)
+  def inviter
     Group.inviter(group_number, assignment_id)
   end
   
@@ -132,6 +143,19 @@ class Group < ActiveRecord::Base
     return (members.empty? || members.length > 1) ? 0 : 1 
   end
   
+  # Return the maximum number of grace days this group can use
+  def grace_days
+    condition = "group_number = ? and assignment_id = #{assignment_id}"
+    members = Group.find(:all, :include => :user, :conditions => [condition, group_number])
+    
+    grace_day = User::GRACE_DAYS + 1
+    members.each do |m|
+      mgd = m.user.grace_days
+      (grace_day = mgd) if mgd && mgd < grace_day
+    end
+    return grace_day
+  end
+  
   def self.get_submit_number(time=Time.now)
     t = submitted_at ? submitted_at : time
     t.strftime("%m-%d-%Y")
@@ -143,6 +167,10 @@ class Group < ActiveRecord::Base
   
   def can_invite?
     status == 'inviter'
+  end
+  
+  def use_grace_days
+    return false
   end
   
   

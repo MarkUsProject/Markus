@@ -27,8 +27,8 @@ function check(file_field) {
   <% h(flash[:submit]) %>
 <% end -%>
 
-<% if flash[:submit_files] -%>
-<div class="errorExplanation" id="errorExplanation">
+<% if flash[:submit_files] && !flash[:submit_files].empty? -%>
+<p><div class="errorExplanation" id="errorExplanation">
   <h2>The following files has not been submitted</h2>
   <h5>Make sure that you fix these errors before resubmitting</h5>
   <ul>
@@ -36,6 +36,19 @@ function check(file_field) {
     <li><%= msg %></li>
     <% end -%>
   </ul>  
+</div></p>
+<% end -%>
+
+<% if flash[:error] -%>
+  <div class="error"><%= flash[:error] %></div>
+<% end -%>
+
+<% if flash[:success] && !flash[:success].empty? -%>
+<div class="success-no-img">
+  <% for f in flash[:success] -%>
+  <%= image_tag '/images/icon_success.png', :size => "13x13" %> 
+  <b><%=h f %></b> has been submitted<br />
+  <% end -%>
 </div>
 <% end -%>
 
@@ -59,7 +72,11 @@ function check(file_field) {
     <% end -%>
   <% end -%>
   
-  <p><%= submit_tag "Submit Files", :name => 'upload', :disabled => flash[:group_submit] %></p>
+  <% if flash[:grace_days] && flash[:grace_days] > 0 -%>
+    <p><%= check_box "group", "use_grace_day" %> Use a grace day to submit<p>
+  <% end -%>
+  
+  <p><%= submit_tag "Submit Files", :name => 'upload' %></p>
 <% end -%>
 </div>
 
@@ -68,12 +85,12 @@ function check(file_field) {
 <h3>You have no submissions so far</h3>
 <% else -%>
 
+<% # display links to submitted files by student/group -%>
 <h3>So far, you<%= "r group" unless @assignment.individual? -%> submitted:</h3>
 <% for sub in @submissions do -%>
-  <% if sub.assignment_file.assignment == @assignment -%>      
-  <%= link_to sub.assignment_file.filename, :action => 'view', :filename => sub.assignment_file.filename %>
+  <%= link_to sub.assignment_file.filename, 
+    :action => 'view', :id => @assignment.id, :filename => sub.assignment_file.filename %>
   <% end -%>
-<% end -%>
 
 <% end -%>
 

@@ -10,19 +10,22 @@ class User < ActiveRecord::Base
   validates_uniqueness_of   :user_number, :user_name
   
   validates_format_of       :role,          :with => /student|admin|ta/
-  validates_format_of       :last_name, :first_name,    
-    :with => /^\w+$/, :message => "should be alphanumeric"
+  #validates_format_of       :last_name, :first_name,    
+  #  :with => /^(\w)+$/, :message => "should be alphanumeric"
   
   # student/faculty number validation
   validates_format_of       :user_number,   :with =>/\d{9}/,
     :message => "should all be 9 digits."
+  
+  validates_numericality_of :grace_days, :only_integer => true, 
+    :greater_than_or_equal_to => 0
     
   # role constants
   STUDENT = 'student'
   ADMIN = 'admin'
   TA = 'ta'
   
-  GRACE_DAYS = 1  # TODO add to config when creating course, hardcoded for now
+  GRACE_DAYS = 1  # TODO add to config when creating course, hardcoded for now, must be >= 0
                           
   def before_save
     self.grace_days ||= GRACE_DAYS if self.student?

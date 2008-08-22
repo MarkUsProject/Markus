@@ -375,7 +375,7 @@ CREATE INDEX index_submissions_on_group_number_and_assignment_file_id ON submiss
 -- Name: index_submissions_on_user_id_and_group_number; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE UNIQUE INDEX index_submissions_on_user_id_and_group_number ON submissions USING btree (user_id, group_number);
+CREATE INDEX index_submissions_on_user_id_and_group_number ON submissions USING btree (user_id, group_number);
 
 
 --
