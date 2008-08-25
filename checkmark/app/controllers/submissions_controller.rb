@@ -7,9 +7,8 @@ class SubmissionsController < ApplicationController
   def submit
     @assignment = Assignment.find(params[:id])
     # user id is used for group_number on individual submissions
-    session[:group_number] = current_user.id
     if @assignment.individual? # an individual assignment, no groups
-      @submissions = Submission.submitted_files(session[:group_number], params[:id])
+      @submissions = Submission.submitted_files(current_user.id, params[:id])
       return
     end
     
@@ -17,21 +16,26 @@ class SubmissionsController < ApplicationController
     @group = Group.find_group(current_user.id, params[:id])
     if not @group
       # user is not in a group
-      session[:group_number] = nil
       redirect_to :action => 'creategroup', :id => params[:id]
       
     elsif not @group.in_group?
       # user has been invited to join a group
-      session[:group_number] = nil
       redirect_to :action => 'join', :id => params[:id]
       
     else
       # user is in a group
-      # TODO check number of joined members in the group
-      session[:group_number] = @group.group_number
+      group_number = @group.group_number
       @members = @group.members
-      @has_enough = @group.count_joined_members >= @assignment.group_min
-      @submissions = Submission.submitted_files(session[:group_number], params[:id])
+       # count number of joined members
+      @num_mbrs = @members.inject(0) do |count, m|
+        m.in_group? ? count + 1 : count
+      end
+      if @num_mbrs < @assignment.group_min
+        flash[:status] = "You can only submit once you have at least " + 
+          @assignment.group_min.to_s + " member(s) in the group"
+        render :action => 'status', :id => params[:id]
+      end
+      @submissions = Submission.submitted_files(group_number, params[:id])
     end
     
   end
@@ -167,14 +171,21 @@ class SubmissionsController < ApplicationController
     if @group && !@group.in_group?  # group member has pending status
       @inviter = @group.inviter.user
       return unless request.post?
-      params[:accept] ? @group.accept_invite : @group.reject_invite
-      @group.save unless @group.frozen?
+      if params[:accept]
+        @group.accept_invite
+        @group.save  # TODO verify it is indeed saved
+      elsif params[:reject]
+        @group.reject_invite
+      else
+        # somebody's not doing the right thing...
+      end
       redirect_to :action => 'submit', :id => assignment_id
     end
   end
   
   # Creates a group and invite members specified
   def creategroup
+    # TODO verify user is not in a group, (they can't create anyways)
     @assignment = Assignment.find(params[:id])
     @groups = params[:groups]
     
@@ -190,13 +201,9 @@ class SubmissionsController < ApplicationController
       redirect_to(:action => 'submit', :id => params[:id])
     else
       # invite users to this group
-      members = []
-      params[:groups].each_value do |m|
-        user_name = m['user_name'].strip
-        member = invite(@group, user_name) unless user_name.blank?
-        members << member if member
-      end
-      
+      members = add_members(@group, params[:groups].values)
+    
+      # TODO we might not need this restriction. redirect instead to status page
       # check if we have enough members or has at least one member 
       # if not working individually
       group_min = @assignment.group_min - 1
@@ -211,22 +218,51 @@ class SubmissionsController < ApplicationController
       @group.save
       redirect_to(:action => 'status', :id => @assignment.id) if members.all?(&:save)
     else
-      @group.destroy
-      members[0].errors.each do |m|
-        m
-      end unless members.empty?
+      @group.destroy  # ugly, but necessary. use transactions next time?
     end
   end
   
+  # Shows group status and a way to invite additional members 
+  # to the group for the inviter member
+  def status
+    action_init(params[:id])
+    @members = @group.members
+    
+    return unless request.post?
+    members = add_members(@group, params[:groups].values)
+    if @group.errors.empty? && members.all?(&:valid?)
+      redirect_to(:action => 'status', :id => @assignment.id) if members.all?(&:save)
+    end
+  end
   
   private
   
-  # add members to this group
-  def add_members(group)
-    return false unless group
+  # Helper method to do most common tasks for action: fetch assignment 
+  # and group, and redirect to appropriate page if necessary
+  def action_init(aid)
+    @assignment = Assignment.find(aid)
+    @group = Group.find_group(current_user, @assignment.id)
+    unless @group || @assignment.individual?
+      redirect_to :action => 'creategroup', :id => aid
+    end
+  end
+  
+  # add hash of member usernames { 'user_name' => <user_name> } to this group
+  def add_members(group, members)
+    # invite users to this group
+    valid_members = []
+    members.each do |m|
+      user_name = m['user_name'].strip
+      member = invite(group, user_name) unless user_name.blank?
+      valid_members << member if member
+    end
     
-    
-    
+    # verify that group does not exceed group max
+    if group.members.length > @assignment.group_max
+      group.errors.add_to_base("You have exceeded number of members allowed for this assignment")
+      return []
+    end
+    return valid_members
   end
   
   
@@ -281,7 +317,7 @@ class SubmissionsController < ApplicationController
           valid_files[filename] = file[:file]
         end
       end
-    end
+    end if files
     
     return valid_files
   end
@@ -325,11 +361,6 @@ class SubmissionsController < ApplicationController
     g.user = member
     return g
   end
-  
-  def status
-    #Group.find_group(user_id, assignment_id)
-  end
-  
   
   # Creates and returns the path where to store
   # submission_folder/assignment_name/user or group name/submission_date/filename

@@ -1,10 +1,39 @@
 
+<h1>Group Status</h1>
+
+<% if flash[:status] -%>
+  <% h(flash[:status]) %>
+<% end -%>
 
 <% if @group -%>
   
-<h3>Group Status</h3>
-
-  
 <%= render :partial => 'group_status', :locals => { :members => @members } %>
+
+<% if @group.status == 'inviter' -%>
+<h3>Add More Members</h3>
+<% form_tag :action => 'status', :id => @assignment.id do -%>
+  <%= error_messages_for :group -%>
+
+  <% ([@assignment.group_max - @members.length, 10].min).times do |index|  %>
+    <div id="groups_<%= index %>">
+      <% fields_for "groups[#{index}]" do |g| -%>
+        <p>
+            <% # start with member 2 -%>
+            <%= g.label "member:" %>
+            <% if @groups -%>
+              <%= g.text_field :user_name, :value => @groups[index.to_s]['user_name'] %>
+            <% else -%>
+              <%= g.text_field :user_name %>
+            <% end -%>
+        </p>
+      <% end -%>
+    </div>
+  <% end -%>
+  
+  <p><%= submit_tag "Add Members" %></p>
+<% end -%>
+
+<% end -%>
+
 
 <% end -%>
