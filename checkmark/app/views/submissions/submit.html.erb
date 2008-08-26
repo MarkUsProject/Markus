@@ -7,8 +7,8 @@
 <% # Display when assignment has groups -%>
 <% if @group -%>
 <h3>Group Status</h3>
-<%= h(flash[:group_notice]) %>
 <%= render :partial => 'group_status', :locals => { :group => @group } %>
+<p><%= link_to "Add more members", :action => 'status', :id => @assignment.id %></p>
 <% end -%>
 
 <% # lists files to upload -%>
@@ -60,7 +60,7 @@
   
   <% (@assignment.assignment_files.length).times do |index| -%>
     <% fields_for "files[#{index}]" do |f| -%>
-    <p><%= f.file_field :file, :onfocus => "check(this);" %></p>
+    <p><%= f.file_field :file %></p>
     <% end -%>
   <% end -%>
   
