@@ -2,7 +2,7 @@
 <h1>Group Status</h1>
 
 <% if flash[:status] -%>
-  <% h(flash[:status]) %>
+  <p><%= h(flash[:status]) %><p>
 <% end -%>
 
 <% if @group -%>

@@ -99,3 +99,19 @@ ul {
   color: #FF6619;
 }
 
+#time {
+    font-weight: bold;
+    font-size: 10px;
+}
+
+.group {
+    font-weight: bold;
+    border: 1px solid #CCC;
+    background-color: #FCF1C3;
+    padding: 10px;
+    width: 200px;
+}
+
+.inviter  { color: #2CAAE1; }
+.pending  { color: #E91756; }
+.accepted { color: #3AB192; }

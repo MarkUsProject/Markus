@@ -37,9 +37,11 @@ class Submission < ActiveRecord::Base
     return (a_submission.save ? submission : nil)
   end
   
-  # Returns the number of grace days used by this user or group for this assignment
-  # If assignment is individual, group_number must be the user id.
-  def self.get_used_grace_days(user, group_number, assignment)
+  
+  # Returns last submission time for this user in a group for an assignment.
+  # returns beginning of epoch time if user has not submitted anything
+  # If assignment is individual group number is the user id
+  def self.last_submission(user, group_number, assignment)
     cond_val = {
       :uid => user.id,
       :group => group_number, 
@@ -53,13 +55,15 @@ class Submission < ActiveRecord::Base
     sub = find(:first, :order => "submitted_at DESC", 
       :joins => "inner join assignment_files as a on submissions.assignment_file_id = a.id",
       :conditions => [conditions, cond_val])
-    return 0 unless sub  # no submissions yet for this assignment
-    
+    return sub ? sub.submitted_at : Time.at(0)
+  end
+  
+  # get number of used grace days used given last submission time for this assignment
+  def self.get_used_grace_days(last_submission_time, assignment)
     hours = 0
     due_date = assignment.due_date
-    last_submission_time = sub.submitted_at
     if last_submission_time > due_date
-      hours = (last_submission_time - due_date) / 3600  # rounded in hours
+      hours = (last_submission_time - due_date) / 3600.0  # in hours
     end
     
     return (hours / 24.0).ceil

@@ -1,17 +1,8 @@
 
-<script type="text/javascript" language="JavaScript">//<![CDATA[
-function check(file_field) {
-  var files = []
-  var ext = file_field.value;
-  ext = ext.substring(ext.length-3,ext.length);
-  ext = ext.toLowerCase();
 
-  invalid = false;
-  if invalid { alert(''); }
-  return invalid;
-//]]></script>
-
+<span id="time"><%= Time.now.strftime("Today is %A, %B %d, %Y %I:%M%p") %></span>
 <h1>Submit an Assignment</h1>
+
 
 <% # Display when assignment has groups -%>
 <% if @group -%>
@@ -21,7 +12,8 @@ function check(file_field) {
 <% end -%>
 
 <% # lists files to upload -%>
-<h3>Upload Files for <%= h(@assignment.name) %></h3>
+<h3>Upload Files for <%= h(@assignment.name) %> (deadline: 
+<%= @assignment.due_date.strftime("%A, %B %d, %Y at %I:%M%p") %>)</h3>
 
 <% if flash[:submit] -%>
   <% h(flash[:submit]) %>
@@ -86,7 +78,7 @@ function check(file_field) {
 <% else -%>
 
 <% # display links to submitted files by student/group -%>
-<h3>So far, you<%= "r group" unless @assignment.individual? -%> submitted:</h3>
+<h3>Select the files below to view  your<%= "group's" unless @assignment.individual? -%> submitted files:</h3>
 <% for sub in @submissions do -%>
   <%= link_to sub.assignment_file.filename, 
     :action => 'view', :id => @assignment.id, :filename => sub.assignment_file.filename %>

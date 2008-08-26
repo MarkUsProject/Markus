@@ -65,7 +65,8 @@ class SubmissionsController < ApplicationController
     if submission_time > due_date
       # check how many grace days user has used so far 
       # by looking at last submission date
-      grace_days = Submission.get_used_grace_days(current_user, group_number, @assignment)
+      lst = Submission.last_submission(current_user, group_number, @assignment)
+      grace_days = Submission.get_used_grace_days(lst, @assignment)
       if submission_time > due_date.advance(:days => grace_days)
         # we need to use another grace day. check if we have enough
         gd_left = group ? group.grace_days : current_user.grace_days
@@ -198,7 +199,9 @@ class SubmissionsController < ApplicationController
     
     if params[:group] && params[:group]['individual'] == "1"
       # redirect to submit page if person is working alone
+      @group.save
       redirect_to(:action => 'submit', :id => params[:id])
+      return
     else
       # invite users to this group
       members = add_members(@group, params[:groups].values)
@@ -228,6 +231,7 @@ class SubmissionsController < ApplicationController
     action_init(params[:id])
     @members = @group.members
     
+    # add additional members to the group
     return unless request.post?
     members = add_members(@group, params[:groups].values)
     if @group.errors.empty? && members.all?(&:valid?)
