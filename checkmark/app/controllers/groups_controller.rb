@@ -1,5 +1,7 @@
 class GroupsController < ApplicationController
   
+  before_filter      :authorize,      :only => [:manage]
+  
   def index
     @assignments = Assignment.all(:order => 'id')
   end
