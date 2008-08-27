@@ -32,8 +32,8 @@ load('config/setup_users.yml') { |v|
   # Bug on postgres 8.3/activerecord that the user number is being stored 
   # as string in psql but is being compared as integer when using activerecord 
   # find.
-  v['user_number'] = v['user_number'].to_s
-  User.find_or_create_by_user_number(v).save!
+  #v['user_number'] = v['user_number'].to_s
+  User.find_or_create_by_user_name(v).save!
 }
 
 #load('config/setup_assignments.yml') { |v| 
