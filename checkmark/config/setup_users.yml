@@ -13,23 +13,15 @@
 #    created_at: <% Time.now.to_s(:db) %>
 #    updated_at: <% Time.now.to_s(:db) %>
 
-admin:
-    user_name:      admin
-    user_number:    123456789
+admin1:
+    user_name:      reid
     last_name:      Reid      
     first_name:     Karen
     role:           admin
 
-ta:
-    user_name:      ta1
-    user_number:    234567891
-    last_name:      Wayne      
-    first_name:     Bruce
-    role:           ta
-
-student:
-    user_name:      student1
-    user_number:    345678912
-    last_name:      Dent      
-    first_name:     Harvey
-    role:           student
+admin2:
+    user_name:      flaps
+    last_name:      Rosenthal      
+    first_name:     Alan
+    role:           admin
+    
