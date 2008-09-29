@@ -1,6 +1,8 @@
-require 'test_helper'
+require File.dirname(__FILE__) + '/../test_helper'
+require 'groups_controller'
 
-class GroupsControllerControllerTest < ActionController::TestCase
+class GroupsControllerTest < ActionController::TestCase
+  
   # Replace this with your real tests.
   def test_truth
     assert true

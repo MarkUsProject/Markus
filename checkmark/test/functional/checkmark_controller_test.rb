@@ -71,7 +71,7 @@ class CheckmarkControllerTest < ActionController::TestCase
   
   # Test if logging out redirects user to login page and clears session
   def test_logout
-    student = users(:student)
+    student = users(:student1)
     post :login, :user_login => student.user_name, :user_password => "lala"
     assert_redirected_to :action => "index"
     get :logout
@@ -101,7 +101,7 @@ class CheckmarkControllerTest < ActionController::TestCase
    
   # Test to make sure students or TAs cannot access students page
   def test_authorized
-    user = users(:student)
+    user = users(:student1)
     post :login, :user_login => user.user_name, :user_password => 'asfd'
     get :students
     assert_response 404

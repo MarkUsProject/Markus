@@ -144,7 +144,7 @@ class GroupTest < ActiveSupport::TestCase
     pending = Group.find_group(@pending.id, @assignment.id)
     
     assert_equal inviter.group_number, pending.group_number
-    assert_equal inviter, pending.inviter(@assignment.id)
+    assert_equal inviter, pending.inviter
   end
   
   # Tests static method inviter for group
