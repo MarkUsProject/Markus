@@ -18,7 +18,7 @@ class User < ActiveRecord::Base
     :message => "should all be 9 digits."
   
   validates_numericality_of :grace_days, :only_integer => true, 
-    :greater_than_or_equal_to => 0
+    :greater_than_or_equal_to => 0, :allow_nil => true
     
   # role constants
   STUDENT = 'student'
@@ -26,10 +26,6 @@ class User < ActiveRecord::Base
   TA = 'ta'
   
   GRACE_DAYS = 1  # TODO add to config when creating course, hardcoded for now, must be >= 0
-                          
-  def before_save
-    self.grace_days ||= GRACE_DAYS if self.student?
-  end
   
   # Authentication------------------------------------------------------
   
@@ -70,6 +66,11 @@ class User < ActiveRecord::Base
   def self.students
     find_all_by_role(STUDENT)
   end
+  
+  # Returns a hash of all the default attribute values for a student user
+  def self.get_default_student_attrs
+    {:role => STUDENT, :grace_days => GRACE_DAYS}
+  end
 
   
   # Classlist parser ---------------------------------------------------
@@ -85,11 +86,6 @@ class User < ActiveRecord::Base
     u.role = role
     u.attributes = hash_values
     u.save ? u : nil
-  end
-  
-  # Returns a hash of all the default attribute values for a student user
-  def self.get_default_student_attrs
-    {:role => STUDENT}
   end
   
 end
