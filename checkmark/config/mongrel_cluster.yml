@@ -1,8 +1,8 @@
 --- 
-address: localhost
+cwd: /data/c494h01/checkmark
 log_file: log/mongrel.log
 port: "8000"
-cwd: /Users/reid/Sites/checkmark/current/
-environment: production
+environment: development
+address: localhost
 pid_file: tmp/pids/mongrel.pid
-servers: 2
+servers: 1
