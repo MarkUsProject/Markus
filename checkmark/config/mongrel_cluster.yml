@@ -1,5 +1,5 @@
 --- 
-cwd: /data/c494h01/checkmark
+cwd: /data/c494h01/checkmark/current
 log_file: log/mongrel.log
 port: "8000"
 environment: development
