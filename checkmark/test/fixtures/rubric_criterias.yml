@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: MyString
+  description: MyText
+  assignment_id: 1
+  weight: 9.99
+
+two:
+  name: MyString2
+  description: MyText2
+  assignment_id: 1
+  weight: 9.99

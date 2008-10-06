@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  rubric_criteria_id: 1
+  name: MyString
+  description: MyString
+  level: 1
+
+two:
+  rubric_criteria_id: 1
+  name: MyString2
+  description: MyString2
+  level: 1
