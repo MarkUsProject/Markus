@@ -6,7 +6,7 @@ class CreateRubricLevels < ActiveRecord::Migration
       t.column :rubric_criteria_id, :integer,  :null => false
       t.column :name,  :string, :null => false
       t.column :description,  :text
-      t.column :level, :decimal, :null => false
+      t.column :level, :integer, :null => false
       t.timestamps
     end
     foreign_key(:rubric_levels, :rubric_criteria_id, :rubric_criterias)

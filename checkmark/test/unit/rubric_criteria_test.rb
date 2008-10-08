@@ -10,25 +10,25 @@ class RubricCriteriaTest < ActiveSupport::TestCase
     assert !no_criteria_name.valid?
   end
   
-  #Test that Criteria with no description is OK
+  #Test that Criteria with no description are OK
   def test_no_description_attr_ok
     no_criteria_description = create_no_attr(:description)
     assert no_criteria_description.valid?
   end
   
-  #Test that Criteria with a description is OK
+  #Test that Criteria with a description are OK
   def test_description_attr
     with_criteria_description = create_no_attr(nil)
     assert with_criteria_description.valid?
   end
   
-  #Test that Criteria unassigned to Assignment is NOT OK
+  #Test that Criteria unassigned to Assignment are NOT OK
   def test_no_assignment_id
     no_assignment_id = create_no_attr(:assignment_id)
     assert !no_assignment_id.valid?
   end
   
-  #Test that Criteria without weight is NOT OK
+  #Test that Criteria without weight are NOT OK
   def test_no_weight
     no_weight = create_no_attr(:weight)
     assert !no_weight.valid?
@@ -80,14 +80,14 @@ class RubricCriteriaTest < ActiveSupport::TestCase
     
   end
     
-  # Helper method for test_validate_presence_of to create a user without 
+  # Helper method for test_validate_presence_of to create a criterion without 
   # the specified attribute. if attr == nil then all attributes are included
   def create_no_attr(attr)
     new_rubric_criteria = { 
       :name => 'somecriteria',
       :description => 'This is my description', 
       :assignment_id => '1', 
-      :weight => '.25', 
+      :weight => 0.25
     }
     
     new_rubric_criteria.delete(attr) if attr
