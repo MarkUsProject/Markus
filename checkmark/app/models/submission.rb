@@ -1,13 +1,79 @@
 class Submission < ActiveRecord::Base
   
-  belongs_to  :assignment_file
+  belongs_to  :assignment
+  belongs_to  :user
+  belongs_to  :group
+  has_many    :submission_files
   
-  
+  belongs_to  :assignment_file  # TODO deprecated
   # TODO cannot submit if pending
-  # TODO if assignment is individual, user_id is used as group_number
   # TODO test distinct keywords
   
+  # Handles file submissions
+  def submit(user, file, submission_time)
+    filename = file.original_filename
+    
+    # create a backup if file already exists
+    filepath = File.join(submit_dir, filename)
+    create_backup(filename) if File.exists?(filepath)
+    
+    # create a submission_file record
+    submission_file = submission_files.create do |f|
+      f.user = user
+      f.filename = file.original_filename
+      f.submitted_at = submission_time
+    end
+    
+    # upload file contents to file system
+    File.open(filepath, "wb") { |f| f.write(file.read) } if submission_file.save
+    return submission_file
+  end
+  
+  # Moves the file to a folder with the last submission date
+  #   filepath - absolute path of the file
+  def create_backup(filename)
+    ts = last_submission_time_by_filename(filename)
+    timestamp = ts.strftime("%m-%d-%Y-%H-%M-%S")
+    
+    # create backup directory and move file
+    backup_dir = File.join(submit_dir, timestamp)
+    FileUtils.mkdir_p(backup_dir)
+    dest_file = File.join(backup_dir, filename)
+    source_file = File.join(submit_dir, filename)
+    FileUtils.mv(source_file, dest_file, :force => true)
+  end
+  
+  # Returns the submission directory for this user
+  def submit_dir
+    path = File.join(SUBMISSIONS_PATH, assignment.name, owner.user_name)
+    FileUtils.mkdir_p(path)
+    return path
+  end
+  
+  
+  # Query functions -------------------------------------------------------
+  
+  # Returns an array of distinct submitted file names.
+  def submitted_filenames
+    #submission_files.maximum(:submitted_at, :group => :filename)
+    submission_files.find(:all, :select => "DISTINCT filename")
+  end
+  
+  # Returns the last submission time with the given filename
+  def last_submission_time_by_filename(filename)
+    conditions = ["filename = ?", filename]
+    submission_files.maximum(:submitted_at, :conditions => conditions)
+  end
+  
+  # Returns the last submission time for any submitted file
+  def last_submission_time
+    submission_files.maximum(:submitted_at)
+  end
+  
+  # DEPRECATED -------------------------------------------------------------
+  
   # returns assignment files submitted by this group
+  # TODO deprecated: only used in submit()
   def self.submitted_files(group_number, aid)
     return nil unless group_number
     
