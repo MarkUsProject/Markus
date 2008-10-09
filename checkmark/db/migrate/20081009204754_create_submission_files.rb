@@ -10,7 +10,7 @@ class CreateSubmissionFiles < ActiveRecord::Migration
       
       # submission file attributes
       t.column  :filename,              :string
-      t.column  :submitted_at,          :timestamp
+      t.column  :submitted_at,          :datetime
       t.column  :status,                :string
     end
     
