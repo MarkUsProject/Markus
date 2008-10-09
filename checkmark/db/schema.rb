@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20080812143641) do
+ActiveRecord::Schema.define(:version => 20081009204754) do
 
   create_table "assignment_files", :force => true do |t|
     t.integer  "assignment_id"
@@ -33,18 +33,47 @@ ActiveRecord::Schema.define(:version => 20080812143641) do
 
   add_index "assignments", ["name"], :name => "index_assignments_on_name", :unique => true
 
+  create_table "assignments_groups", :id => false, :force => true do |t|
+    t.integer "group_id"
+    t.integer "assignment_id"
+    t.string  "status"
+  end
+
+  add_index "assignments_groups", ["assignment_id", "group_id"], :name => "index_assignments_groups_on_group_id_and_assignment_id", :unique => true
+
   create_table "groups", :force => true do |t|
+    t.string "status"
+  end
+
+  create_table "memberships", :force => true do |t|
     t.integer  "user_id"
-    t.integer  "group_number"
-    t.integer  "assignment_id"
+    t.integer  "group_id"
     t.string   "status"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "groups", ["assignment_id", "group_number"], :name => "index_groups_on_group_number_and_assignment_id"
-  add_index "groups", ["assignment_id", "user_id"], :name => "index_groups_on_user_id_and_assignment_id", :unique => true
-  add_index "groups", ["group_number", "user_id"], :name => "index_groups_on_user_id_and_group_number", :unique => true
+  add_index "memberships", ["group_id", "user_id"], :name => "index_memberships_on_user_id_and_group_id", :unique => true
+
+  create_table "rubric_criterias", :force => true do |t|
+    t.string   "name",          :null => false
+    t.text     "description"
+    t.integer  "assignment_id", :null => false
+    t.decimal  "weight",        :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "rubric_criterias", ["assignment_id", "name"], :name => "index_rubric_criterias_on_assignment_id_and_name", :unique => true
+
+  create_table "rubric_levels", :force => true do |t|
+    t.integer  "rubric_criteria_id", :null => false
+    t.string   "name",               :null => false
+    t.text     "description"
+    t.integer  "level",              :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false
@@ -56,19 +85,26 @@ ActiveRecord::Schema.define(:version => 20080812143641) do
   add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
   add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
 
-  create_table "submissions", :force => true do |t|
+  create_table "submission_files", :force => true do |t|
     t.integer  "user_id"
-    t.integer  "group_number",       :null => false
-    t.integer  "assignment_file_id"
+    t.integer  "submission_id"
+    t.string   "filename"
     t.datetime "submitted_at"
+    t.string   "status"
   end
 
-  add_index "submissions", ["assignment_file_id", "group_number"], :name => "index_submissions_on_group_number_and_assignment_file_id"
-  add_index "submissions", ["group_number", "user_id"], :name => "index_submissions_on_user_id_and_group_number"
+  add_index "submission_files", ["filename"], :name => "index_submission_files_on_filename"
+  add_index "submission_files", ["submission_id"], :name => "index_submission_files_on_submission_id"
+
+  create_table "submissions", :force => true do |t|
+    t.integer "user_id"
+    t.integer "group_id"
+    t.integer "assignment_id"
+  end
 
   create_table "users", :force => true do |t|
     t.string   "user_name",   :null => false
-    t.string   "user_number", :null => false
+    t.string   "user_number"
     t.string   "last_name"
     t.string   "first_name"
     t.integer  "grace_days"
