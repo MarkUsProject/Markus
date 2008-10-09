@@ -15,37 +15,27 @@
 <h3>Upload Files for <%= h(@assignment.name) %> (deadline: 
 <%= @assignment.due_date.strftime("%A, %B %d, %Y at %I:%M%p") %>)</h3>
 
-<% if flash[:submit] -%>
-  <% h(flash[:submit]) %>
-<% end -%>
-
-<% if flash[:submit_files] && !flash[:submit_files].empty? -%>
-<p><div class="errorExplanation" id="errorExplanation">
-  <h2>The following files has not been submitted</h2>
-  <h5>Make sure that you fix these errors before resubmitting</h5>
-  <ul>
-    <% for msg in flash[:submit_files] -%>
-    <li><%= msg %></li>
-    <% end -%>
-  </ul>  
-</div></p>
-<% end -%>
-
 <% if flash[:error] -%>
-  <div class="error"><%= flash[:error] %></div>
+  <div class="error"><%= flash[:error] %></div><br />
 <% end -%>
 
-<% if flash[:success] && !flash[:success].empty? -%>
-<div class="success-no-img">
-  <% for f in flash[:success] -%>
-  <%= image_tag '/images/icon_success.png', :size => "13x13" %> 
-  <b><%=h f %></b> has been submitted<br />
-  <% end -%>
-</div>
+<% # Display upload messages -%>
+<% if flash[:upload] -%>
+  <div class="fail-no-img">
+    <% for f in flash[:upload][:fail] -%>
+        <%= image_tag '/images/icon_error.png', :size => "13x13" %> 
+      <b><%=h f %></b> has <b>not</b> been submitted<br />
+    <% end -%>
+  </div><br />
+  <div class="success-no-img">
+    <% for f in flash[:upload][:success] -%>
+        <%= image_tag '/images/icon_success.png', :size => "13x13" %> 
+      <b><%=h f %></b> has been submitted<br />
+    <% end -%>
+  </div>
 <% end -%>
 
 <p><%= h(@assignment.message) %></p>
-<h4>Submit files only with the following filenames (case sensitive):</h4>
 <ul>
   <% for file in @assignment.assignment_files -%>
   <li><%= file.filename %></li>
@@ -55,10 +45,10 @@
 
 <% # Upload form -%>
 <div id="submit_form">
-<% form_tag({ :action => 'upload', :id => @assignment.id}, 
-  :multipart => true, :id => 'submit_form') do -%>
+<% form_tag({ :action => 'submit', :id => @assignment.id}, 
+  :multipart => true) do -%>
   
-  <% (@assignment.assignment_files.length).times do |index| -%>
+  <% 3.times do |index| -%>
     <% fields_for "files[#{index}]" do |f| -%>
     <p><%= f.file_field :file %></p>
     <% end -%>
@@ -73,15 +63,15 @@
 </div>
 
 <% # lists submissions so far by student/group -%>
-<% if @submissions.length == 0 -%>
+<% if @files.length == 0 -%>
 <h3>You have no submissions so far</h3>
 <% else -%>
 
 <% # display links to submitted files by student/group -%>
 <h3>Select the files below to view  your<%= "group's" unless @assignment.individual? -%> submitted files:</h3>
-<% for sub in @submissions do -%>
-  <%= link_to sub.assignment_file.filename, 
-    :action => 'view', :id => @assignment.id, :filename => sub.assignment_file.filename %>
+<% for sub in @files do -%>
+  <%= link_to sub.filename, 
+    :action => 'view', :id => @assignment.id, :filename => sub.filename %>
   <% end -%>
 
 <% end -%>

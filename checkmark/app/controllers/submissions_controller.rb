@@ -4,7 +4,53 @@ class SubmissionsController < ApplicationController
     @assignments = Assignment.all(:order => :id)
   end
   
+  # Handles file submissions for a form POST, 
+  # or displays submission page for the user
   def submit
+    @assignment = Assignment.find(params[:id])
+    #validate_submit(@assignment)
+    submission = @assignment.submission_by(current_user)
+    
+    if request.post?  # process upload
+      flash[:upload] =  { :success => [], :fail => [] }
+      sub_time = Time.now  # submission timestamp for all files
+      
+      params[:files].each_value do |file|
+        f = file[:file]
+        unless f.blank?
+          subfile = submission.submit(current_user, f, sub_time)
+          if subfile.valid?
+            flash[:upload][:success] << subfile.filename
+          else
+            flash[:upload][:fail] << subfile.filename
+          end
+        end
+      end if params[:files]
+    end
+    # display submitted filenames
+    @files = submission.submitted_filenames || []
+  end
+  
+  # Handles file viewing submitted by the user or group
+  def view
+    @assignment = Assignment.find(params[:id])
+    submission = @assignment.submission_by(current_user)
+    
+    # check if user has a submitted file by that filename
+    subfile = submission.submission_files.find_by_filename(params[:filename])
+    dir = submission.submit_dir
+    filepath = File.join(dir, params[:filename])
+    
+    if subfile && File.exist?(filepath)
+      send_file filepath, :type => 'text/plain', :disposition => 'inline'
+    else
+      render :text => "File not found", :status => 401
+    end
+  end
+  
+  # UNREFACTORED CODE ---------------------------------------------------
+  
+  def submit_old
     @assignment = Assignment.find(params[:id])
     # user id is used for group_number on individual submissions
     if @assignment.individual? # an individual assignment, no groups
@@ -129,7 +175,7 @@ class SubmissionsController < ApplicationController
     redirect_to :action => 'submit', :id => params[:id]
   end
   
-  def view
+  def view_old
     @assignment = Assignment.find(params[:id])
     file = @assignment.assignment_files.find_by_filename(params[:filename])
     render :text => "File not found", :status => 404 && return unless file

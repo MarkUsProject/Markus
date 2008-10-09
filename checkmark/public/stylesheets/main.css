@@ -29,6 +29,14 @@
     padding: 5px 5px 4px 19px;
 }
 
+.fail-no-img {
+    width: 400px;
+    border: 2px solid #f34f4f;
+    font-size: 12px;
+    color: #be0b0b;
+    padding: 5px 5px 4px 19px;
+}
+
 body {
     background-color: #fff; 
     color: #333;
