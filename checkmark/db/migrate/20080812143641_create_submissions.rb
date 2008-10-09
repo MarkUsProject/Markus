@@ -20,6 +20,6 @@ class CreateSubmissions < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table :submissions
+    drop_table(:submissions)  if table_exists?(:submissions)
   end
 end

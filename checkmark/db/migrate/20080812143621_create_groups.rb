@@ -22,6 +22,6 @@ class CreateGroups < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table :groups
+    drop_table(:groups) if table_exists?(:groups)
   end
 end
