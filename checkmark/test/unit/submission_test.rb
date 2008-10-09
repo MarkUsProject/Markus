@@ -1,19 +1,29 @@
 require File.dirname(__FILE__) + '/../test_helper'
-require 'assignment_file'
-require 'submission'
 
 class SubmissionTest < ActiveSupport::TestCase
   
-  fixtures :users, :assignments
-  fixtures :groups, :assignment_files, :submissions
+  fixtures  :submissions
   
-  def setup
-    @assignment = assignments(:a1)
-    @student = users(:student5) # user with invite privileges
+  # Query function tests --------------------------------------------------
+  
+  def test_submitted_filenames
+    student2_subs = submissions(:student2a3sub)
+    files = student2_subs.submitted_filenames
+    
+    filenames = files.map { |sf| sf.filename  }
+    assert 2, files.length
+    assert filenames.include?("test1.txt")
+    assert filenames.include?("test2.txt")
   end
   
-  def test_get_group_submissions
-    group = Group.find_group(@student.id, @assignment.id)
+  def test_submitted_filenames_group
+    group4_subs = submissions(:group4a2sub)
+    files = group4_subs.submitted_filenames
+    
+    filenames = files.map { |sf| sf.filename  }
+    assert 2, files.length
+    assert filenames.include?("test3.txt") # submitted by student 5
+    assert filenames.include?("test4.txt") # submitted by student 1
   end
   
 end

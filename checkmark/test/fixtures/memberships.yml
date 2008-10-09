@@ -1,0 +1,28 @@
+
+# assignment 1 groups
+student5_group3:
+    user:       student5
+    group:      group3
+    status:     inviter
+
+student4_group2:
+    user:       student4
+    group:      group2
+    status:     inviter
+
+student2_group3:
+    user:       student2
+    group:      group3
+    status:     pending
+
+
+# assignment 2 groups
+student5_group4:
+    user:       student5
+    group:      group4
+    status:     inviter
+
+student1_group4:
+    user:       student1
+    group:      group4
+    status:     accepted

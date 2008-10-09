@@ -1,16 +1,11 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+# group assignment submissions
 
-# entries here depend on groups.yml and assignment_files.yml
-# check them for consistency if this file is changed.
+group4a2sub:
+    group:          group4
+    assignment:     a2
 
-# student5 submitted Shapes.java
-submission_group1a:
-    group_number:           1
-    assignment_file_id:     1
-    submitted_at:           
+# individual assignment submissions
 
-# student2 submitted TestShapes.java
-submission_group1b:
-    group_number:           1
-    assignment_file_id:     2
-    submitted_at:           
+student2a3sub:
+    user:           student2
+    assignment:     a3

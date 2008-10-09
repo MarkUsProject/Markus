@@ -2,7 +2,6 @@
 
 # a group assignment
 a1:
-    id:             1
     name:           A1
     description:    Write Tests!
     message:
@@ -10,11 +9,17 @@ a1:
     group_min:      1
     group_max:      2
 
+a2:
+    name:           A2
+    description:    Write Tests Again!
+    message:
+    due_date:       <%= 1.hour.from_now.to_s(:db) %>
+    group_min:      2
+    group_max:      2
 
 # an individual assignment
-a2:
-    id:             2
-    name:           A2
+a3:
+    name:           A3
     description:    Write Tests On Your Own!
     message:
     due_date:       <%= 1.hour.from_now.to_s(:db) %>
