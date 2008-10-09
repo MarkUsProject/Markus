@@ -4,7 +4,11 @@
 # If there are added columns, add the default values to default_values
 class User < ActiveRecord::Base
   
-  has_many :groups
+  # Group relationships
+  has_many  :memberships
+  has_many  :groups,  :through => :memberships
+  has_many  :submissions, :class_name => 'UserSubmission'
+  
   
   validates_presence_of     :user_name, :user_number, :last_name, :first_name
   validates_uniqueness_of   :user_number, :user_name
@@ -38,8 +42,8 @@ class User < ActiveRecord::Base
     find_by_user_name(login) if verify(login, password)
   end
   
-  # Responsible for the actual authentication of login against 
-  # its password. This is done by 
+  # Authenticates login against its password 
+  # through a script validate file.
   def self.verify(login, password)
     pipe = IO.popen(VALIDATE_FILE, "w+")
     
@@ -50,6 +54,18 @@ class User < ActiveRecord::Base
     
     return $?.exitstatus == 0
   end
+  
+  # Group methods ------------------------------------------------------
+  
+  
+  # Returns the group given a specified assignment id. Returns nil if no 
+  # group exists for this user with the given assignment.
+  def group_for(aid)
+    groups.find(:first, 
+      :include => :assignments, 
+      :conditions => ["assignments.id = ?", aid])
+  end
+  
   
   # Helper methods -----------------------------------------------------
   
@@ -89,3 +105,9 @@ class User < ActiveRecord::Base
   end
   
 end
+
+
+
+
+
+

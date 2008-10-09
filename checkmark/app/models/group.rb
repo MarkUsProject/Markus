@@ -2,18 +2,31 @@
 # Maintains group information for a given user on a specific assignment
 class Group < ActiveRecord::Base
   
-  belongs_to  :assignment
+  has_many  :memberships
+  has_many  :members, :through => :memberships, :source => :user
+  has_many  :joined_members,  # members who are members of this group
+    :through => :memberships, 
+    :source => :user, 
+    :conditions => "status != 'pending'"
+  
+  
+  has_and_belongs_to_many :assignments
+  has_many  :submissions, :class_name => 'GroupSubmission'
+  
+  
+  # Membership functions --------------------------------------------------
+  
+  # Returns the member with 'inviter' status for this group
+  def inviter
+    members.find(:first, :conditions => "status = 'inviter'")
+  end
+  
   
   # user association/validations
-  belongs_to  :user
   validates_presence_of     :user_id, :message => "presence is not strong with you"
-  validates_uniqueness_of   :user_id,       :scope => [:assignment_id], 
-    :message => "is currently invited or in a group."
   validates_associated      :user, :message => 'association is not strong with you'
   
   # other attribute validations
-  attr_protected  :status
-  validates_format_of       :status,    :with => /inviter|pending|accepted/
   validates_uniqueness_of   :group_number,  :scope => [:user_id]
   
   # Validate group members are students only
@@ -35,20 +48,19 @@ class Group < ActiveRecord::Base
   
   # Retrieve group object given user and assignment IDs.
   def self.find_group(user_id, assignment_id)
-    condition = "user_id = :user_id and assignment_id = :assignment_id"
-    find(:first, :conditions => [condition, 
-        {:user_id => user_id, :assignment_id => assignment_id}] )
+    user = User.find(user_id)
+    return (user ? user.group_for(assignment_id) : nil)
   end
   
   # Retrieves all group members for this group, including this member, 
   # for a particular assignment.
   # This also includes members that have been invited but hasn't accepted yet.
-  def members
+  def members2
     condition = "group_number = ? and assignment_id = #{assignment_id}"
     Group.find(:all, :conditions => [condition, group_number])
   end
   
-  def joined_members
+  def joined_members2
     condition = "group_number = ? and assignment_id = #{assignment_id} and status <> 'pending'"
     Group.find(:all, :conditions => [condition, group_number])
   end
@@ -68,7 +80,7 @@ class Group < ActiveRecord::Base
   end
   
   # instance version of inviter
-  def inviter
+  def inviter2
     Group.inviter(group_number, assignment_id)
   end
   
