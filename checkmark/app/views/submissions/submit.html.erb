@@ -21,18 +21,22 @@
 
 <% # Display upload messages -%>
 <% if flash[:upload] -%>
+<% unless flash[:upload][:fail].empty? -%>
   <div class="fail-no-img">
     <% for f in flash[:upload][:fail] -%>
         <%= image_tag '/images/icon_error.png', :size => "13x13" %> 
       <b><%=h f %></b> has <b>not</b> been submitted<br />
     <% end -%>
   </div><br />
+<% end -%>
+<% unless flash[:upload][:success].empty? -%>
   <div class="success-no-img">
     <% for f in flash[:upload][:success] -%>
         <%= image_tag '/images/icon_success.png', :size => "13x13" %> 
       <b><%=h f %></b> has been submitted<br />
     <% end -%>
   </div>
+<% end -%>
 <% end -%>
 
 <p><%= h(@assignment.message) %></p>
