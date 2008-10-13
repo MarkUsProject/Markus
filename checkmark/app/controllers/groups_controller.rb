@@ -5,6 +5,30 @@ class GroupsController < ApplicationController
   def index
     @assignments = Assignment.all(:order => 'id')
   end
+  
+  # Group management functions ---------------------------------------------
+  
+  # Changes the user's member status for an assignment. 
+  # If user rejects invite, user is removed from the group
+  def join
+    @assignment = Assignment.find(params[:id])
+    group = current_user.group_for(@assignment.id)
+    if !group || group.status(current_user) != 'pending'
+      redirect_to :action => 'creategroup', :id => params[:id]
+    end
+    @inviter = group.inviter
+    return unless request.post?
+    
+    if params[:accept]
+       group.accept(current_user)
+    else if params[:reject]
+      group.reject(current_user)
+      redirect_to :action => 'creategroup', :id => params[:id]
+    end
+  end
+  
+  
+  # Group administration functions -----------------------------------------
 
   # Gives a csv list of group members for a specific assignment
   # for each group, members are listed then the last submission time followed by used grace days

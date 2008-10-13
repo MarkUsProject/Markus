@@ -48,29 +48,6 @@ class SubmissionsController < ApplicationController
     end
   end
   
-  # 
-  def join
-    @assignment = Assignment.find(params[:id])
-    assignment_id = @assignment.id
-    @group = Group.find_group(current_user.id, assignment_id)
-    
-    redirect_to :action => 'creategroup', :id => assignment_id unless @group
-    
-    if @group && !@group.in_group?  # group member has pending status
-      @inviter = @group.inviter.user
-      return unless request.post?
-      if params[:accept]
-        @group.accept_invite
-        @group.save  # TODO verify it is indeed saved
-      elsif params[:reject]
-        @group.reject_invite
-      else
-        # somebody's not doing the right thing...
-      end
-      redirect_to :action => 'submit', :id => assignment_id
-    end
-  end
-  
   # Creates a group and invite members specified
   def creategroup
     # TODO verify user is not in a group, (they can't create anyways)

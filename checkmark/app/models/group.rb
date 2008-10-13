@@ -14,14 +14,6 @@ class Group < ActiveRecord::Base
   has_many  :submissions, :class_name => 'GroupSubmission'
   
   
-  # Membership functions --------------------------------------------------
-  
-  # Returns the member with 'inviter' status for this group
-  def inviter
-    members.find(:first, :conditions => "status = 'inviter'")
-  end
-  
-  
   # user association/validations
   validates_presence_of     :user_id, :message => "presence is not strong with you"
   validates_associated      :user, :message => 'association is not strong with you'
@@ -43,8 +35,39 @@ class Group < ActiveRecord::Base
   end
   
   
-  #######################################################################
-  # Query functions
+  # Query Functions ------------------------------------------------------
+  
+  # Returns the member with 'inviter' status for this group
+  def inviter
+    members.find(:first, :conditions => ["status = 'inviter'"])
+  end
+  
+  def status(user)
+    member = memberships.find_by_user_id(user.id)
+    member ? member.status : nil  # return nil if user is not a member
+  end
+  
+  # Edit functions -------------------------------------------------------
+  
+  # Changes the membership status of member from 'pending' to 'accepted'
+  def accept(user)
+    member = memberships.find_by_user_id(user.id)
+    raise "Invalid user" unless member # user does not belong in this group
+    raise "Invalid status" unless member.status == 'pending'
+    
+    member.status = 'accepted'
+    return member.save
+  end
+  
+  # Removes the user from this group
+  def reject(user)
+    member = memberships.find_by_user_id(user.id)
+    raise "Invalid user" unless member # user does not belong in this group
+    raise "Invalid status" unless member.status == 'pending'  
+    member.destroy
+  end
+  
+  # Unrefactored code...
   
   # Retrieve group object given user and assignment IDs.
   def self.find_group(user_id, assignment_id)
