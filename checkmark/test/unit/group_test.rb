@@ -67,5 +67,9 @@ class GroupTest < ActiveSupport::TestCase
     assert !group.members.include?(student2)
   end
   
+  def test_add_member_admin
+    
+  end
+  
 end
 

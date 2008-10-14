@@ -48,47 +48,6 @@ class SubmissionsController < ApplicationController
     end
   end
   
-  # Creates a group and invite members specified
-  def creategroup
-    # TODO verify user is not in a group, (they can't create anyways)
-    @assignment = Assignment.find(params[:id])
-    @groups = params[:groups]
-    
-    return unless request.post?
-    
-    # create a new group
-    @group = form_new
-    return unless @group.save
-    @group.group_number = @group.id
-    
-    if params[:group] && params[:group]['individual'] == "1"
-      # redirect to submit page if person is working alone
-      @group.save
-      redirect_to(:action => 'submit', :id => params[:id])
-      return
-    else
-      # invite users to this group
-      members = add_members(@group, params[:groups].values)
-    
-      # TODO we might not need this restriction. redirect instead to status page
-      # check if we have enough members or has at least one member 
-      # if not working individually
-      group_min = @assignment.group_min - 1
-      if members.length < group_min || group_min == 0
-        @group.errors.add_to_base(
-          "You need to have at least #{[group_min, 1].max} valid user name(s)")
-      end
-    end
-    
-    # check if we do not have any errors
-    if @group.errors.empty? && members.all?(&:valid?)
-      @group.save
-      redirect_to(:action => 'status', :id => @assignment.id) if members.all?(&:save)
-    else
-      @group.destroy  # ugly, but necessary. use transactions next time?
-    end
-  end
-  
   # Shows group status and a way to invite additional members 
   # to the group for the inviter member
   def status
@@ -115,33 +74,7 @@ class SubmissionsController < ApplicationController
     end
   end
   
-  # add hash of member usernames { 'user_name' => <user_name> } to this group
-  def add_members(group, members)
-    # invite users to this group
-    valid_members = []
-    members.each do |m|
-      user_name = m['user_name'].strip
-      member = invite(group, user_name) unless user_name.blank?
-      valid_members << member if member
-    end
-    
-    # verify that group does not exceed group max
-    if group.members.length > @assignment.group_max
-      group.errors.add_to_base("You have exceeded number of members allowed for this assignment")
-      return []
-    end
-    return valid_members
-  end
-  
-  # Create a new group
-  def form_new
-    g = Group.new
-    g.assignment = @assignment
-    g.status = 'inviter'
-    g.user = current_user
-    
-    return g
-  end
+
   
   def invite(group, user_name)
     # check if a valid user

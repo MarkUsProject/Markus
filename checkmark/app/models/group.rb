@@ -9,28 +9,26 @@ class Group < ActiveRecord::Base
     :source => :user, 
     :conditions => "status != 'pending'"
   
-  
   has_and_belongs_to_many :assignments
   has_many  :submissions, :class_name => 'GroupSubmission'
   
   
-  # user association/validations
-  validates_presence_of     :user_id, :message => "presence is not strong with you"
-  validates_associated      :user, :message => 'association is not strong with you'
-  
-  # other attribute validations
-  validates_uniqueness_of   :group_number,  :scope => [:user_id]
-  
-  # Validate group members are students only
-  def validate_on_create
-    # check if user is a student
-    unless user && user.student?
-      errors.add(:user_id, "must be another student")
-    end
+  def validate
     
-    # check if groups can be formed on an assignment
-    if assignment.individual?
-      errors.add(:assignment_id, "is not a group assignment")
+    assignments.each do |a|
+      # check if groups can be formed on an assignment
+      if a.group_assignment?
+        errors.add(:assignment_id, "is not a group assignment")
+      end
+      
+      # check if number of members meet the min and max criteria
+      num_members = members.length
+      min = a.group_min
+      max = a.group_max
+      if num_members < min || num_members > max
+        errors.add_to_base("Number of members must be " +
+            "greater than #{min} and less than #{max}")
+      end
     end
   end
   
@@ -48,6 +46,22 @@ class Group < ActiveRecord::Base
   end
   
   # Edit functions -------------------------------------------------------
+  
+  # Invites each user in 'members' by its user name, to this group
+  def invite(members)
+    members.each do |m|
+      user = User.find_by_user_name(m)
+      add_member(user)
+    end
+  end
+  
+  # Add a new member to this group.
+  def add_member(user, status='pending')
+    if user.group_for(assignment.id)
+      errors.add_to_base("User #{user.user_name} is already in another group.")
+    end
+    memberships << Membership.new(:user => user, :status => status)
+  end
   
   # Changes the membership status of member from 'pending' to 'accepted'
   def accept(user)
