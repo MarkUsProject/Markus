@@ -11,6 +11,18 @@
 
 ActiveRecord::Schema.define(:version => 20081009204754) do
 
+  create_table "annotations", :force => true do |t|
+    t.integer "pos_start"
+    t.integer "pos_end"
+    t.integer "line_start"
+    t.integer "line_end"
+    t.integer "description_id"
+    t.integer "assignmentfile_id"
+  end
+
+  add_index "annotations", ["assignmentfile_id"], :name => "index_annotations_on_assignmentfile_id"
+  add_index "annotations", ["description_id"], :name => "index_annotations_on_description_id"
+
   create_table "assignment_files", :force => true do |t|
     t.integer  "assignment_id"
     t.string   "filename",      :null => false
@@ -40,6 +52,24 @@ ActiveRecord::Schema.define(:version => 20081009204754) do
   end
 
   add_index "assignments_groups", ["assignment_id", "group_id"], :name => "index_assignments_groups_on_group_id_and_assignment_id", :unique => true
+
+  create_table "categories", :force => true do |t|
+    t.text    "name"
+    t.text    "token"
+    t.integer "ntoken"
+  end
+
+  create_table "descriptions", :force => true do |t|
+    t.text    "name"
+    t.text    "description"
+    t.text    "token"
+    t.integer "ntoken"
+    t.integer "category_id"
+    t.integer "assignment_id"
+  end
+
+  add_index "descriptions", ["assignment_id"], :name => "index_descriptions_on_assignment_id"
+  add_index "descriptions", ["category_id"], :name => "index_descriptions_on_category_id"
 
   create_table "groups", :force => true do |t|
     t.string "status"
