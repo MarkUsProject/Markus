@@ -1,0 +1,17 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+    name: desc1name
+    description: desc1desc
+    token: d1
+    ntoken: 1
+    category_id: 1
+    assignment_id: 1
+
+two:
+    name: desc2name
+    description: desc2desc
+    token: d2
+    ntoken: 2
+    category_id: 2
+    assignment_id: 2

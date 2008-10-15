@@ -1,0 +1,18 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+
+one:
+  pos_start: 1
+  pos_end: 10
+  line_start: 1
+  line_end: 20
+  description_id: 1
+  assignmentfile_id: 1
+
+two:
+  pos_start: 2
+  pos_end: 20
+  line_start: 2
+  line_end: 40
+  description_id: 2
+  assignmentfile_id: 2
