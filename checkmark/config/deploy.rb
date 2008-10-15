@@ -13,10 +13,10 @@ role :db,  "dbsrv3.cdf.utoronto.ca", :primary => true
 set :runner, 'mongrel'
 set :mongrel_conf, "#{current_path}/config/mongrel_cluster.yml"
 
-set :user, 'g4alouis' # going to have to do something about this...
+set :user, 'reid' # going to have to do something about this...
 set :use_sudo, false
 ssh_options[:port] = 22
-ssh_options[:username] = 'g4alouis'
+ssh_options[:username] = 'reid'
 
 
 task :after_update_code, :roles => :app do 
