@@ -52,8 +52,10 @@ end
 def set_group_permissions
   # we use a weird chmod option to give the permissions
   # of the user to the group on all files/dirs
+  run "/bin/rm #{release_path}/log"
   run "chmod -R g=u #{release_path}/*"
   run "chmod -R g=u #{release_path}"  
   run "chgrp -R c494h01 #{release_path}/*"
   run "chgrp -R c494h01 #{release_path}"  
+  run "ln -s #{shared_path}/log #{release_path}/log"
 end
