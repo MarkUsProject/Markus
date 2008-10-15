@@ -62,12 +62,14 @@ class Submission < ActiveRecord::Base
   # Returns the last submission time with the given filename
   def last_submission_time_by_filename(filename)
     conditions = ["filename = ?", filename]
-    submission_files.maximum(:submitted_at, :conditions => conditions)
+    # need to convert to local time
+    submission_files.maximum(:submitted_at, :conditions => conditions).getlocal
   end
   
   # Returns the last submission time for any submitted file
   def last_submission_time
-    submission_files.maximum(:submitted_at)
+    # need to convert to local time
+    submission_files.maximum(:submitted_at).getlocal
   end
   
   # DEPRECATED -------------------------------------------------------------
