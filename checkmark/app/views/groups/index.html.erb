@@ -1,5 +1,11 @@
 
 <% @title = "Select which assignment to view groups" -%>
 
-<%= render :partial => "layouts/assignments", 
-  :locals => { :controller => 'groups', :action => 'manage' } -%>
+<% if @current_user.admin? -%>
+  <%= render :partial => "layouts/assignments", 
+    :locals => { :controller => 'groups', :action => 'manage' } -%>
+  
+<% elsif @current_user.student? -%>
+  <%= render :partial => "layouts/assignments", 
+    :locals => { :controller => 'groups', :action => 'creategroup' } -%>
+<% end -%>

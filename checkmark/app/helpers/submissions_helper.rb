@@ -4,25 +4,26 @@ module SubmissionsHelper
   # given an assignment instance.
   # Also responsible for the redirects if certain rules are violated
   # Override when necessary
-  def can_submit?(assignment)
+  def validate_submit(assignment)
     redirect_to :action => 'index' unless assignment
     return true unless assignment.group_assignment?  # individual assignment
     
-  end
-  
-  
-  def validate_submit(assignment)
-    # TODO do validation
-    # you must be in a group to submit
-  end
-  
-  # Returns true if submission is accepted
-  def allow_late_submissions?(submission)
-    due_date = submission.assignment.due_date
-    last_submission = submission.last_submission
+    # check if user has a group
+    @group = current_user.group_for(assignment.id)
+    if not @group
+      redirect_to :controller => "groups", 
+        :action => 'creategroup', :id => assignment.id
+      return false
+    end
     
+    # check if user has pending status
+    if @group.status(current_user) == 'pending'
+      redirect_to :controller => "groups", 
+        :action => 'join', :id => assignment.id
+      return false
+    end
     
+    return true
   end
-  
   
 end

@@ -61,8 +61,7 @@ class User < ActiveRecord::Base
   # Returns the group given a specified assignment id. Returns nil if no 
   # group exists for this user with the given assignment.
   def group_for(aid)
-    groups.find(:first, 
-      :include => :assignments, 
+    groups.first(:include => :assignments, 
       :conditions => ["assignments.id = ?", aid])
   end
   

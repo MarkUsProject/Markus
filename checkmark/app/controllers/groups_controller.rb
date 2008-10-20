@@ -1,16 +1,20 @@
 class GroupsController < ApplicationController
   
   before_filter      :authorize,      :only => [:manage]
+  # TODO filter (except index) to make sure assignment is a group assignment
   
   def index
-    @assignments = Assignment.all(:order => 'id')
+    @assignments = Assignment.all(:order => 'id', 
+      :conditions => ["group_max > 1"]) # only group assignments
   end
   
   # Group management functions ---------------------------------------------
   
   def creategroup
     @assignment = Assignment.find(params[:id])
+    @group = current_user.group_for(@assignment)
     @groups = params[:groups]
+    
     return unless request.post?
     
     # Create new group for this assignment
@@ -20,51 +24,15 @@ class GroupsController < ApplicationController
     # Set this user as inviter
     @group.add_member(current_user, 'inviter')
     unless params[:group] && params[:group][:single] == '1'
-      users = params[:groups].values.map { |m| m['user_name'].strip  }
-      @group.invite(users)  # invite members to this group
-    end
-    
-    @group.save
-  end
-  
-  # DEPRECATED Creates a group and invite members specified
-  def creategroup_old
-    # TODO verify user is not in a group, (they can't create anyways)
-    @assignment = Assignment.find(params[:id])
-    @groups = params[:groups]
-    
-    return unless request.post?
-    
-    # create a new group
-    @group = form_new
-    return unless @group.save
-    @group.group_number = @group.id
-    
-    if params[:group] && params[:group]['individual'] == "1"
-      # redirect to submit page if person is working alone
-      @group.save
-      redirect_to(:action => 'submit', :id => params[:id])
-      return
-    else
-      # invite users to this group
-      members = add_members(@group, params[:groups].values)
-    
-      # TODO we might not need this restriction. redirect instead to status page
-      # check if we have enough members or has at least one member 
-      # if not working individually
-      group_min = @assignment.group_min - 1
-      if members.length < group_min || group_min == 0
-        @group.errors.add_to_base(
-          "You need to have at least #{[group_min, 1].max} valid user name(s)")
+      if params[:groups]
+        users = params[:groups].values.map { |m| m['user_name'].strip  }
+        @group.invite(users)  # invite members to this group
       end
     end
     
-    # check if we do not have any errors
-    if @group.errors.empty? && members.all?(&:valid?)
-      @group.save
-      redirect_to(:action => 'status', :id => @assignment.id) if members.all?(&:save)
-    else
-      @group.destroy  # ugly, but necessary. use transactions next time?
+    if @group.valid_with_base?
+      redirect_to :controller => 'submissions', 
+        :action => 'submit', :id => @assignment.id
     end
   end
   
@@ -95,7 +63,7 @@ class GroupsController < ApplicationController
   # for students not in a group, only the user name is listed
   # groups with no submission has a beginning of epoch time as last submission time
   def manage
-    @assignment = Assignment.find_by_id(params[:id])
+    @assignment = Assignment.find(params[:id])
     redirect_to :action => 'index' unless @assignment
     
     # process csv for all groups and students not in a group

@@ -10,9 +10,8 @@ class Membership < ActiveRecord::Base
   # user association/validations
   validates_presence_of   :user_id, :message => "presence is not strong with you"
   validates_associated    :user,    :message => 'association is not strong with you'
-  validates_presence_of   :user_id
   
   def validate
-    errors.add_to_base("User must be a student") unless user && user.student?
+    errors.add_to_base("User must be a student") if user && !user.student?
   end
 end

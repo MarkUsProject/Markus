@@ -1,4 +1,5 @@
 class SubmissionsController < ApplicationController
+  include SubmissionsHelper
   
   def index
     @assignments = Assignment.all(:order => :id)
@@ -8,7 +9,7 @@ class SubmissionsController < ApplicationController
   # or displays submission page for the user
   def submit
     @assignment = Assignment.find(params[:id])
-    #validate_submit(@assignment)
+    return unless validate_submit(@assignment)
     submission = @assignment.submission_by(current_user)
     
     if request.post?  # process upload
@@ -73,38 +74,5 @@ class SubmissionsController < ApplicationController
       redirect_to :action => 'creategroup', :id => aid
     end
   end
-  
-
-  
-  def invite(group, user_name)
-    # check if a valid user
-    member = User.find_by_user_name(user_name)
-    if not member
-      group.errors.add_to_base("username '" + 
-          CGI.escapeHTML(user_name) + "' is not valid")
-      return nil
-    elsif member.user_name == current_user.user_name
-      group.errors.add_to_base("You cannot invite yourself to your own group")
-      return nil
-    end
-    
-    # check if user is already in a group
-    in_member = Group.find_group(member.id, @assignment.id)
-    if in_member
-      str = in_member.in_group? ? "already in" : "being invited to"
-      group.errors.add_to_base(user_name + " is #{str} a group")
-      return nil
-    end
-    
-    # create a new member
-    g = Group.new do |m|
-      m.group_number = group.group_number
-      m.assignment_id = group.assignment_id
-      m.status = 'pending'
-    end
-    g.user = member
-    return g
-  end
-  
   
 end

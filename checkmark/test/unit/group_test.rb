@@ -67,8 +67,35 @@ class GroupTest < ActiveSupport::TestCase
     assert !group.members.include?(student2)
   end
   
-  def test_add_member_admin
+  def test_add_member_valid
+    group = groups(:group3)
+    student = users(:student1)
+    group.add_member(student)
     
+    assert_nil group.errors.on_base, group.errors.on_base
+    assert group.save, group.errors.on_base
+    assert "pending", group.status(student)
+  end
+  
+  def test_add_member_invalid
+    group = groups(:group3)
+    student = users(:student4) # already in group
+    
+    group.add_member(student)
+    assert !group.errors.on_base.empty?
+  end
+  
+  def test_invite_invalid
+    group = groups(:group3)
+    
+    group.invite(['student4']) # already in group
+    assert !group.errors.on_base.empty?
+    
+    group.invite(['asdfafa']) # user doesn't exists
+    assert !group.errors.on_base.empty?
+    
+    group.invite(['admin']) # not a student
+    assert !group.errors.on_base.empty?
   end
   
 end

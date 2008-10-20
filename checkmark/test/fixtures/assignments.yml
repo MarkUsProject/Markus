@@ -7,7 +7,7 @@ a1:
     message:
     due_date:       <%= 1.hour.from_now.to_s(:db) %>
     group_min:      1
-    group_max:      2
+    group_max:      4
 
 a2:
     name:           A2
