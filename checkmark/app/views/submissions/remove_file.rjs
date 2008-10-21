@@ -1,6 +1,0 @@
-# Remove the text field for the file with given index
-page["filename_#{params[:filename]}"].remove
-
-# reinsert file if deleted fiel is a required file
-#page.insert_html :bottom, :files, :partial => 'required_file', 
-#  :locals => { :required => @file } 

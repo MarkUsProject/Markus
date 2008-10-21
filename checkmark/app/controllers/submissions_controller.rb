@@ -79,10 +79,17 @@ class SubmissionsController < ApplicationController
   
   # AJAX handlers
   def remove_file
-    if request.delete?
-      # TODO delete file
-      # check if deleted file is a required file
-      
+    return unless request.delete?    
+    # TODO delete file
+
+    # check if deleted file is a required file
+    assignment = Assignment.find(params[:id])
+    @reqfiles = assignment.assignment_files.map { |af| af.filename } || []
+    render :update do |page|
+      page["filename_#{params[:filename]}"].remove
+      if @reqfiles.include? params[:filename]
+        page.insert_html :after, "table_heading", :partial => 'required_file'
+      end
     end
   end
   

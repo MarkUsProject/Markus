@@ -190,15 +190,16 @@ width:1.3em;
     </tr>
     
     <% for sub in @files do -%>
-    <%= tag "tr", :id => "filename_#{sub.filename}" %>
+    <tr id="<%= 'filename_' + sub.filename %>">
       <td class="icon"><%= image_tag '/images/icon_file.png' %></td>
-    <% if sub.status == 'unsubmitted' -%>
+
+      <% if sub.status == 'unsubmitted' -%>
       <td class="unsubmitted"><%= sub.filename %></td>
       <td class="unsubmitted">Not yet submitted (required)</td>
       <td></td>
       <td></td>
        
-    <% else -%>
+      <% else -%>
       <td>
         <%= link_to sub.filename, :action => 'view', 
           :id => @assignment.id, :filename => sub.filename %>
@@ -206,11 +207,10 @@ width:1.3em;
       <td><%=h sub.submitted_at.strftime("%B %d, %Y  %I:%M %p") %></td>
       <td><%=h sub.user.user_name %></td>
       <td align="center"><%= link_to_remote "x", :method => "delete",
-         :url => { :action => 'remove_file', :filename => sub.filename}, 
+         :url => { :action => 'remove_file', :id => @assignment.id, :filename => sub.filename}, 
          :confirm => "Are you sure you want to delete this submission?" %></td>
-    <% end -%>
+      <% end -%>
     </tr>
-    
     <% end -%>
       
   </tbody></table>
