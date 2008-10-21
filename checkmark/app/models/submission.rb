@@ -55,8 +55,19 @@ class Submission < ActiveRecord::Base
   
   # Returns an array of distinct submitted file names.
   def submitted_filenames
-    #submission_files.maximum(:submitted_at, :group => :filename)
-    submission_files.find(:all, :select => "DISTINCT filename")
+    reqfiles = assignment.assignment_files.map { |af| af.filename } || []
+    result = []
+    fnames = submission_files.maximum(:submitted_at, :group => :filename)
+    fnames.each do |filename, submitted_at|
+      result << submission_files.find_by_filename_and_submitted_at(filename, submitted_at)
+      reqfiles.delete(filename) # required file has already been submitted
+    end
+    
+    # convert required files to a SubmissionFile instance 
+    reqfiles = reqfiles.map do |af| 
+      SubmissionFile.new(:filename => af, :status => "unsubmitted")
+    end
+    return reqfiles.concat(result)
   end
   
   # Returns the last submission time with the given filename
@@ -70,6 +81,11 @@ class Submission < ActiveRecord::Base
   def last_submission_time
     # need to convert to local time
     submission_files.maximum(:submitted_at).getlocal
+  end
+  
+  # array of required filenames that has not yet been submitted
+  def unsubmitted_files
+   
   end
   
   # DEPRECATED -------------------------------------------------------------

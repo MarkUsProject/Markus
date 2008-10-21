@@ -75,6 +75,7 @@ width:1.3em;
     color:#0066B3;
 }
 
+#browser table .unsubmitted { color: #B32400; font-weight: normal; }
 </style>
 
 
@@ -111,11 +112,12 @@ width:1.3em;
   <%= text_field_tag 'lala', 'type username(s) to invite', :size => 30, :onclick => "if (this.value == 'type username(s) to invite') { this.value='' }", :style => "color:  #777;" %>
   <p><%= submit_tag "Invite" %></p>
 <% end -%>
-
   </div>
-
 </div>
 
+
+
+<div id="main_submit">
 <h1>Submit an Assignment</h1>
 
 <% # lists files to upload -%>
@@ -147,21 +149,16 @@ width:1.3em;
 <% end -%>
 
 <p><%= h(@assignment.message) %></p>
-<ul>
-  <% for file in @assignment.assignment_files -%>
-  <li><%= file.filename %></li>
-  <% end -%>
-</ul>
 
 
 <% # Upload form -%>
 <div id="submit_form">
-<% form_tag({ :action => 'submit', :id => @assignment.id}, 
+<% form_tag({ :action => 'submit_sample', :id => @assignment.id}, 
   :multipart => true) do -%>
   
   <% 1.times do |index| -%>
-    <% fields_for "files[#{index}]" do |f| -%>
-    <p><%= f.file_field :file %></p>
+    <% fields_for "files[#{index}]" do |file| -%>
+    <p><%= file.file_field :file %></p>
     <% end -%>
   <% end -%>
   
@@ -173,67 +170,51 @@ width:1.3em;
 <% end -%>
 </div>
 
-<% # lists submissions so far by student/group -%>
-<% if @files.length == 0 -%>
-<h3>You have no submissions so far</h3>
-<% else -%>
 
-<% # display links to submitted files by student/group -%>
-<h3>View your<%= "group's" unless @assignment.individual? -%> submitted files:</h3>
-<% end -%>
+  <% # lists submissions so far by student/group -%>
+  <div id="browser">
+  <% if @files.length == 0 -%>
+  <h3>You have no submissions so far</h3>
+  
+  <% # display links to submitted files by student/group -%>
+  <% else -%>
+  <h3>View your<%= " group's" unless @assignment.individual? -%> submitted files:</h3>
 
-<div id="browser">
-
-  <table cellpadding="0" cellspacing="0">
-    <tbody><tr>
+  <table cellpadding="0" cellspacing="0"><tbody>
+    <tr id="table_heading">
       <th></th>
       <th>name</th>
       <th>last submitted</th>
       <th>submitted by</th>
+      <th>delete?</th>
     </tr>
-
     
-      <tr class="alt">
-        <td class="icon"> <%= image_tag '/images/icon_file.png' %>  </td>
-        <td> <a href="/arya/tm_syntax_highlighting/tree/master/MIT-LICENSE">MIT-LICENSE</a> </td>
-
-        <td> <span class="relatize">October 30, 2008  09:56 AM</span> </td>
-        <td> g6hitchco </td>
-      </tr>
+    <% for sub in @files do -%>
+    <%= tag "tr", :id => "filename_#{sub.filename}" %>
+      <td class="icon"><%= image_tag '/images/icon_file.png' %></td>
+    <% if sub.status == 'unsubmitted' -%>
+      <td class="unsubmitted"><%= sub.filename %></td>
+      <td class="unsubmitted">Not yet submitted (required)</td>
+      <td></td>
+      <td></td>
+       
+    <% else -%>
+      <td>
+        <%= link_to sub.filename, :action => 'view', 
+          :id => @assignment.id, :filename => sub.filename %>
+      </td>
+      <td><%=h sub.submitted_at.strftime("%B %d, %Y  %I:%M %p") %></td>
+      <td><%=h sub.user.user_name %></td>
+      <td align="center"><%= link_to_remote "x", :method => "delete",
+         :url => { :action => 'remove_file', :filename => sub.filename}, 
+         :confirm => "Are you sure you want to delete this submission?" %></td>
+    <% end -%>
+    </tr>
     
-      <tr class="">
-        <td class="icon"> <%= image_tag '/images/icon_file.png' %> </td>
-
-        <td> <a href="/arya/tm_syntax_highlighting/tree/master/README">README</a> </td>
-        <td> <span class="relatize">May 30, 2008  3:45 PM</span> </td>
-        <td> g6wachows </td>
-      </tr>
-
-    
-      <tr class="alt">
-        <td class="icon"><%= image_tag '/images/icon_file.png' %> </td>
-        <td> <a href="/arya/tm_syntax_highlighting/tree/master/Rakefile">Rakefile</a> </td>
-        <td> <span class="relatize">June 08, 2008  11:23 AM</span> </td>
-        <td>g6flores </td>
-
-      </tr>
-    
-      <tr class="">
-        <td class="icon"> <%= image_tag '/images/icon_file.png' %> </td>
-        <td> <a href="/arya/tm_syntax_highlighting/tree/master/generators">supercalifragelisticexpialidocious</a> </td>
-        <td> <span class="relatize">December 30, 2008  12:34 AM</span> </td>
-
-        <td> g6deniro </td>
-      </tr>
+    <% end -%>
+      
   </tbody></table>
-
-  
-
-
-  
-  
-  
+  <% end -%>
+  </div>
   
 </div>
-  
-
