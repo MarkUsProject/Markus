@@ -55,6 +55,27 @@ class GroupsController < ApplicationController
     end
   end
   
+    
+  # Shows group status and a way to invite additional members 
+  # to the group for the inviter member
+  def status
+    @assignment = Assignment.find(params[:id])
+    @group = current_user.group_for(@assignment.id)
+    @members = @group.members
+    
+    # add additional members to the group
+    return unless request.post?
+    if params[:groups]
+        users = params[:groups].values.map { |m| m['user_name'].strip  }
+        @group.invite(users)  # invite members to this group
+      end
+    
+    if @group.valid_with_base?
+      redirect_to :controller => 'submissions', 
+        :action => 'submit', :id => @assignment.id
+    end
+  end
+  
   
   # Group administration functions -----------------------------------------
 

@@ -7,7 +7,7 @@ class Group < ActiveRecord::Base
   has_many  :joined_members,  # members who are members of this group
   :through => :memberships, 
     :source => :user, 
-    :conditions => "status != 'pending'"
+    :conditions => "status = 'inviter' and status = 'accepted'"
   
   has_and_belongs_to_many :assignments
   has_many  :submissions, :class_name => 'GroupSubmission'

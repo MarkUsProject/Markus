@@ -7,8 +7,8 @@
 <% # Display when assignment has groups -%>
 <% if @group -%>
 <h3>Group Status</h3>
-<%= render :partial => 'group_status', :locals => { :group => @group } %>
-<p><%= link_to "Add more members", 
+<%= render :partial => 'groups/group_status', :locals => { :group => @group } %>
+<p><%= link_to "Add more members", :controller => 'groups', 
   :action => 'status', :id => @assignment.id %></p>
 <% end -%>
 
@@ -41,6 +41,7 @@
 <% end -%>
 
 <p><%= h(@assignment.message) %></p>
+Please submit the following required files:
 <ul>
   <% for file in @assignment.assignment_files -%>
   <li><%= file.filename %></li>

@@ -7,10 +7,12 @@
 
 <% if @group -%>
   
-<%= render :partial => 'group_status', :locals => { :members => @members } %>
+<%= render :partial => 'groups/group_status', :locals => { :members => @members } %>
 
-<% if @group.status == 'inviter' -%>
+<% if @group.inviter == @current_user -%>
+  
 <h3>Add More Members</h3>
+<% if flash[:error] -%><div style="color:red"><%= flash[:error] -%></div><% end -%>
 <% form_tag :action => 'status', :id => @assignment.id do -%>
   <%= error_messages_for :group -%>
 
