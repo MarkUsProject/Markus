@@ -58,10 +58,22 @@
 		width: 415px;
 		border: 1px solid #000000;
 	}
-	.criterion_input_name {
+	.criterion_input_name, .criterion_input_weight {
 		background: #EEEEEE;
 		font-size: medium;
 		font-weight: bold;
+		border: 1px solid #DDDDDD;
+	}
+	.criterion_input_name {
+		width: 400px;
+	}
+	.criterion_input_weight {
+		width: 50px;
+		display: block;
+	}
+	.criterion_textarea_description {
+		background: #EEEEEE;
+		font-size: medium;
 		border: 1px solid #DDDDDD;
 		width: 400px;
 	}
@@ -86,10 +98,7 @@
 	.capitalize {
 		text-transform: capitalize;
 	}
-	div.slider { width:256px; margin:10px 0; background-color:#ccc; height:10px; position: relative; }
-	div.slider div.handle { width:10px; height:15px; background-color:#f00; cursor:move; position: absolute;
 </style>
-<%= javascript_include_tag  'slider' %>
 
 <script type="text/javascript" language="JavaScript">
 	
@@ -130,27 +139,31 @@
 			//The Criterion weight element
 			
 			this.weight = weight;
-			var cri_weight_slider = new Element('div', {'class':'slider'});
-			var cri_weight_handle = new Element('div', {'class':'handle'});
-			$(cri_weight_slider).insert($(cri_weight_handle));
-			$(root_div).insert(cri_weight_slider, {position: 'bottom'});
-			this.slider = new Control.Slider(cri_weight_handle, cri_weight_slider, {
-		       axis:'horizontal',
-			   maximum: 100,
-			   minimum: 0,
-			   increment: 1,
-			   alignX: -125,
-			   disabled: false, 
-			   onChange: function(value) {
-					console.info(value);
-			   }
-		    });
-
-
+			var cri_weight = new Element('input', {'class': 'criterion_input_weight', 'type': 'text'});
+			$(cri_weight).addClassName('hover_edit').addClassName('capitalize');
+			$(cri_weight).value = this.weight;
+			Event.observe(cri_weight, 'keypress', function(event){
+				if (event.keyCode == Event.KEY_RETURN) {
+					done_edit(event);
+					//TODO:  Validation here
+				}
+			});
+			Event.observe(cri_weight, 'blur', function(event) {done_edit(event); /*TODO: Validation?*/});
+			Event.observe(cri_weight, 'click', 
+				function(event) {
+					Event.element(event).removeClassName('hover_edit');
+					Event.element(event).addClassName('editing');
+					Event.element(event).select();
+				}
+			);
+			var cri_weight_container = new Element('div', {'class':'criterion_input_weight_container'});
+			$(cri_weight_container).update("Weight:");
+			$(cri_weight_container).insert(cri_weight);
+			$(root_div).insert(cri_weight_container, {position: 'bottom'});
 			
 			//The Criterion description element
 			this.description = description;
-			var cri_description = new Element('textarea');
+			var cri_description = new Element('textarea', {'class':'criterion_textarea_description'});
 			$(cri_description).update(this.description);
 			$(root_div).insert(cri_description, {position: 'bottom'});
 		
@@ -199,7 +212,7 @@
 	function add_criterion(){
 		//TODO
 		made_change();
-		var blank_criterion = new Criterion('test', 'test', 0);
+		var blank_criterion = new Criterion('New Criterion', 'Put your description here', 1);
 		c_list.add(blank_criterion);
 		$('rubric_criteria_pane_instructions').hide();
 	}
