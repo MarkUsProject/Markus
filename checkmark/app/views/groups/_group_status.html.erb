@@ -2,6 +2,6 @@
 <div class="group">
 <% for member in @group.memberships -%>
 <%= h(member.user.user_name) %>
-<span class="<%= member.status%>"><%= member.status %></span>
+<span class="<%= member.status%>"><%= member.status %></span><br />
 <% end -%>
 </div>

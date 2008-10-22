@@ -30,7 +30,7 @@ class GroupsController < ApplicationController
       end
     end
     
-    if @group.valid_with_base?
+    if @group.valid_with_base? && @group.save
       redirect_to :controller => 'submissions', 
         :action => 'submit', :id => @assignment.id
     end
@@ -49,10 +49,13 @@ class GroupsController < ApplicationController
     
     if params[:accept]
       group.accept(current_user)
+      redirect_to :controller => 'submissions', 
+        :action => 'submit', :id => @assignment.id
     elsif params[:reject]
       group.reject(current_user)
       redirect_to :action => 'creategroup', :id => params[:id]
     end
+    
   end
   
     
