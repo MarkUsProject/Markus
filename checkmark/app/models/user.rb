@@ -62,7 +62,7 @@ class User < ActiveRecord::Base
   # group exists for this user with the given assignment.
   def group_for(aid)
     groups.first(:include => :assignments, 
-      :conditions => ["assignments.id = ?", aid])
+      :conditions => ["assignments.id = ? and memberships.status != 'rejected'", aid])
   end
   
   
