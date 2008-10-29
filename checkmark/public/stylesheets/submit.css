@@ -1,0 +1,91 @@
+
+#main_submit {
+    margin-left: 350px;
+}
+#sidebar {
+    float: left;
+    width: 350px;
+    margin: 0;
+    border: 10px;
+}
+
+/* Sidebar module settings */
+.module {
+    width: 300px;
+    border: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px dotted grey;
+}
+div.module h3 {
+    background:#555;
+    color:#fff;
+    padding:0.25em;
+}
+div.groups table {
+    list-style: none;
+    color: #3c3c3c;
+    font-weight: bold;
+    padding-left: 2em;
+    border: none;
+}
+
+div .module #message {
+    background:#E0EAF1; 
+    padding:0.3em;
+    font-size:85%;
+}
+
+.status { 
+  color: #FFF; 
+  padding-left: 0.5em; 
+  padding-right: 0.5em; 
+}
+
+.inviter { background: #6B006B; }
+.pending { background: #FFCC00; }
+.accepted { background: #00B366; }
+.rejected { background: #B32400; }
+
+
+/* submissions table */
+#browser table {
+border-left:1px solid #D8D8D8;
+border-right:1px solid #D8D8D8;
+border-top:1px solid #D8D8D8;
+font-size-adjust:none;
+font-style:normal;
+font-variant:normal;
+font-weight:normal;
+font-size:90%;
+text-align:left;
+line-height: 1.4em;
+}
+
+#browser table th {
+background-color:#EAEAEA;
+border-bottom:1px solid #D8D8D8;
+color:#999999;
+font-weight:normal;
+padding:0.5em 0.3em;
+text-align:left;
+}
+
+#browser table td {
+background:#F8F8F8 url(/images/row_bg.png) repeat-x scroll 0 100%;
+border-bottom:1px solid #E1E1E1;
+color:#484848;
+padding:0.25em 0.15em;
+font-size:90%;
+}
+#browser table td.icon {
+width:1.3em;
+}
+
+#browser table a {
+    color:#0066B3;
+}
+
+#browser table .unsubmitted { 
+    color: #B32400; 
+    font-weight: normal; 
+}

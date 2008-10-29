@@ -1,220 +1,113 @@
-<style>
-#main_submit {
-    margin-left: 350px;
-}
-#sidebar {
-    float: left;
-    width: 350px;
-    margin: 0;
-    border: 10px;
-}
-.module {
-    width: 300px;
-    border: 10px;
-    padding-bottom: 5px;
-    border-bottom: 1px dotted grey;
-}
-div.module h3 {
-    color: #AE0000;
-}
-div.module table {
-    list-style: none;
-    color: #3c3c3c;
-    font-weight: bold;
-    padding-left: 2em;
-}
+<%= stylesheet_link_tag 'submit.css', :media => 'all' %>
 
-.status { 
-  color: #FFF; 
-  padding-left: 0.5em; 
-  padding-right: 0.5em; 
-}
+<span id="time"><%= Time.now.strftime("Last refresh time is %A, %B %d, %Y %I:%M%p") %></span>
 
-.inviter { background: #6B006B; }
-.pending { background: #FFCC00; }
-.accepted { background: #00B366; }
-.rejected { background: #B32400; }
-
-
-/* submissions table */
-#browser table {
-border-left:1px solid #D8D8D8;
-border-right:1px solid #D8D8D8;
-border-top:1px solid #D8D8D8;
-font-size-adjust:none;
-font-style:normal;
-font-variant:normal;
-font-weight:normal;
-font-size:90%;
-width:65%;
-text-align:left;
-line-height: 1.4em;
-}
-
-#browser table th {
-background-color:#EAEAEA;
-border-bottom:1px solid #D8D8D8;
-color:#999999;
-font-weight:normal;
-padding:0.5em 0.3em;
-text-align:left;
-}
-
-#browser table td {
-background:#F8F8F8 url(/images/row_bg.png) repeat-x scroll 0 100%;
-border-bottom:1px solid #E1E1E1;
-color:#484848;
-padding:0.25em 0.15em;
-font-size:90%;
-}
-#browser table td.icon {
-width:1.3em;
-}
-
-#browser table a {
-    color:#0066B3;
-}
-
-#browser table .unsubmitted { color: #B32400; font-weight: normal; }
-</style>
-
-
-<span id="time"><%= Time.now.strftime("Today is %A, %B %d, %Y %I:%M%p") %></span>
-
-<div id="sidebar">
-
-  <div class="module">
-    <h3 style="background:#555;color:#fff;padding:0.25em;">Group Information</h3>
-
-    <table style="border:none">
-      <tr><td>g6busemi</td><td><span class="status inviter">inviter</span></td></tr>
-      <tr><td>g8bergal</td><td><span class="status pending">pending</span></td></tr>
-      <tr><td>g6flor</td><td><span class="status accepted">accepted</span></td></tr>
-      <tr><td>c4arnold</td><td><span class="status rejected">rejected</span></td><td><a href="#"> [x]</a></td></tr>
-      <tr><td>g6busemi</td><td><span class="status accepted">accepted</span></td></tr>
-      <tr><td>g6flor</td><td><span class="status accepted">accepted</span></td></tr>
-      <tr><td>g6flore</td><td><span class="status pending">pending</span></td></tr>
-      <tr><td>g6flor</td><td><span class="status rejected">rejected</span></td><td><a href="#"> [x]</a></td></tr>
-    </table>
-<% form_tag :action => 'status', :id => @assignment.id do -%>
-  <p style="background:#E0EAF1; padding:0.3em;font-size:85%;">Invite other members in the group by typing their username(s) separated by commas</p>
-
-    <p>
-      <div class="fail-no-img" style="width:250px;margin-left:0.5em">
-        <%= image_tag '/images/icon_error.png', :size => "13x13" %> 
-      <b>g6flores</b> has <b>not</b> been invited<br />
- <%= image_tag '/images/icon_error.png', :size => "13x13" %> 
-      <b>g8turino</b> has <b>not</b> been invited<br />
-      </div>
-  </p><br/>
-
-  
-  <%= text_field_tag 'lala', 'type username(s) to invite', :size => 30, :onclick => "if (this.value == 'type username(s) to invite') { this.value='' }", :style => "color:  #777;" %>
-  <p><%= submit_tag "Invite" %></p>
-<% end -%>
+<% if @assignment.group_assignment? -%>
+  <div id="sidebar">
+    <%= render :partial => 'groups/status' %>
   </div>
-</div>
+<% end -%>
 
-
-
-<div id="main_submit">
+<!-- Main submissions page -->
 <h1>Submit an Assignment</h1>
+<div id="main_submit">
 
-<% # lists files to upload -%>
-<h3>Upload Files for <%= h(@assignment.name) %> (deadline: 
-<%= @assignment.due_date.strftime("%A, %B %d, %Y at %I:%M%p") %>)</h3>
-
-<% if flash[:error] -%>
-  <div class="error"><%= flash[:error] %></div><br />
-<% end -%>
-
-<% # Display upload messages -%>
-<% if flash[:upload] -%>
-<% unless flash[:upload][:fail].empty? -%>
-  <div class="fail-no-img">
-    <% for f in flash[:upload][:fail] -%>
-        <%= image_tag '/images/icon_error.png', :size => "13x13" %> 
-      <b><%=h f %></b> has <b>not</b> been submitted<br />
-    <% end -%>
-  </div><br />
-<% end -%>
-<% unless flash[:upload][:success].empty? -%>
-  <div class="success-no-img">
-    <% for f in flash[:upload][:success] -%>
-        <%= image_tag '/images/icon_success.png', :size => "13x13" %> 
-      <b><%=h f %></b> has been submitted<br />
-    <% end -%>
-  </div>
-<% end -%>
-<% end -%>
-
-<p><%= h(@assignment.message) %></p>
-
-
-<% # Upload form -%>
-<div id="submit_form">
-<% form_tag({ :action => 'submit_sample', :id => @assignment.id}, 
-  :multipart => true) do -%>
-  
-  <% 1.times do |index| -%>
-    <% fields_for "files[#{index}]" do |file| -%>
-    <p><%= file.file_field :file %></p>
-    <% end -%>
-  <% end -%>
-  
-  <% if flash[:grace_days] && flash[:grace_days] > 0 -%>
-    <p><%= check_box "group", "use_grace_day" %> Use a grace day to submit<p>
-  <% end -%>
-  
-  <p><%= submit_tag "Submit Files", :name => 'upload' %></p>
-<% end -%>
-</div>
-
-
-  <% # lists submissions so far by student/group -%>
-  <div id="browser">
-  <% if @files.length == 0 -%>
-  <h3>You have no submissions so far</h3>
-  
-  <% # display links to submitted files by student/group -%>
-  <% else -%>
-  <h3>View your<%= " group's" unless @assignment.individual? -%> submitted files:</h3>
-
-  <table cellpadding="0" cellspacing="0"><tbody>
-    <tr id="table_heading">
-      <th></th>
-      <th>name</th>
-      <th>last submitted</th>
-      <th>submitted by</th>
-      <th>delete?</th>
-    </tr>
+  <% unless flash[:error] -%>
     
-    <% for sub in @files do -%>
-    <tr id="<%= 'filename_' + sub.filename %>">
-      <td class="icon"><%= image_tag '/images/icon_file.png' %></td>
-
-      <% if sub.status == 'unsubmitted' -%>
-      <td class="unsubmitted"><%= sub.filename %></td>
-      <td class="unsubmitted">Not yet submitted (required)</td>
-      <td></td>
-      <td></td>
-       
-      <% else -%>
-      <td>
-        <%= link_to sub.filename, :action => 'view', 
-          :id => @assignment.id, :filename => sub.filename %>
-      </td>
-      <td><%=h sub.submitted_at.strftime("%B %d, %Y  %I:%M %p") %></td>
-      <td><%=h sub.user.user_name %></td>
-      <td align="center"><%= link_to_remote "x", :method => "delete",
-         :url => { :action => 'remove_file', :id => @assignment.id, :filename => sub.filename}, 
-         :confirm => "Are you sure you want to delete this submission?" %></td>
+    <h3>
+      Upload Files for <%= h(@assignment.name) %> (due 
+      <%= @assignment.due_date.strftime("%A, %B %d, %Y at %I:%M%p") %>)
+    </h3>
+    <p><%= h(@assignment.message) %></p>
+  
+    <% # Upload error messages -%>
+    <% unless flash[:upload][:fail].empty? -%>
+      <div class="fail-no-img">
+      <% for f in flash[:upload][:fail] -%>
+        <%= image_tag '/images/icon_error.png', :size => "13x13" %> 
+        <b><%=h f %></b> has <b>not</b> been submitted<br />
       <% end -%>
-    </tr>
+      </div><br />
     <% end -%>
+  
+    <% # Upload success messages -%>
+    <% unless flash[:upload][:success].empty? -%>
+      <div class="success-no-img">
+      <% for f in flash[:upload][:success] -%>
+        <%= image_tag '/images/icon_success.png', :size => "13x13" %> 
+        <b><%=h f %></b> has been submitted<br />
+      <% end -%>
+      </div>
+    <% end -%>
+  
+    <% # Upload form -%>
+    <div id="submit_form">
+    <% form_tag({ :action => 'submit_sample', 
+        :id => @assignment.id}, :multipart => true) do -%>
       
-  </tbody></table>
+      <% 1.times do |index| -%>
+        <% fields_for "files[#{index}]" do |file| -%>
+          <p><%= file.file_field :file %></p>
+        <% end -%>
+      <% end -%>
+      <p><%= submit_tag "Submit Files", :name => 'upload' %></p>
+    <% end -%>
+    </div>
+  
+    
+    <% # lists submissions so far by student/group -%>
+    <div id="browser">
+      <% if @files.length == 0 -%>
+      <h3>You have no submissions so far</h3>
+        
+      <% else -%>
+      <h3>View your<%= " group's" if @assignment.group_assignment? -%> submitted files:</h3>
+        
+      <table cellpadding="0" cellspacing="0"><tbody>
+        <tr id="table_heading">
+          <th></th>
+          <th>name</th>
+          <th>last submitted</th>
+          <th>submitted by</th>
+          <th>delete?</th>
+        </tr>
+                
+        <% for sub in @files do -%>
+           <tr id="<%= 'filename_' + sub.filename %>">
+             <td class="icon"><%= image_tag '/images/icon_file.png' %></td>
+                      
+             <% if sub.status == 'unsubmitted' -%>
+             <td class="unsubmitted"><%= sub.filename %></td>
+             <td class="unsubmitted">Not yet submitted (required)</td>
+             <td></td>
+             <td></td>
+                        
+             <% else -%>
+             <td>
+               <%= link_to sub.filename, :action => 'view', 
+                 :id => @assignment.id, :filename => sub.filename %>
+             </td>
+             <td><%=h sub.submitted_at.strftime("%B %d, %Y  %I:%M %p") %></td>
+             <td><%=h sub.user.user_name %></td>
+             <td align="center">
+               <%= link_to_remote "x", :method => "delete", 
+                 :url => { :action => 'remove_file', :id => @assignment.id, :filename => sub.filename}, 
+                 :confirm => "Are you sure you want to delete this submission?" %>
+             </td>
+             <% end -%>
+           </tr>
+         <% end -%>
+                    
+       </tbody></table>
+       <% end -%>
+     </div>
+  
+  
+  <% else -%>
+    <% # User failed a requirement for submission; display message -%>
+    <div class="error"><%= flash[:error] %></div>
   <% end -%>
-  </div>
   
 </div>
+  
+

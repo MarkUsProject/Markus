@@ -11,6 +11,7 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find(params[:id])
     return unless validate_submit(@assignment)
     submission = @assignment.submission_by(current_user)
+    @group = current_user.group_for(params[:id])
     
     if request.post?  # process upload
       flash[:upload] =  { :success => [], :fail => [] }
@@ -39,9 +40,9 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find(params[:id])
     return unless validate_submit(@assignment)
     submission = @assignment.submission_by(current_user)
+    flash[:upload] =  { :success => [], :fail => [] }
     
     if request.post?  # process upload
-      flash[:upload] =  { :success => [], :fail => [] }
       sub_time = Time.now  # submission timestamp for all files
       
       params[:files].each_value do |file|
@@ -79,11 +80,13 @@ class SubmissionsController < ApplicationController
   
   # AJAX handlers
   def remove_file
-    return unless request.delete?    
-    # TODO delete file
+    return unless request.delete?
+    # delete file
+    assignment = Assignment.find(params[:id])
+    submission = assignment.submission_by(current_user)
+    submission.remove_file(params[:filename])  # TODO delete file
 
     # check if deleted file is a required file
-    assignment = Assignment.find(params[:id])
     @reqfiles = assignment.assignment_files.map { |af| af.filename } || []
     render :update do |page|
       page["filename_#{params[:filename]}"].remove
