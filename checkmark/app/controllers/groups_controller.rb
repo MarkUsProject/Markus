@@ -11,11 +11,8 @@ class GroupsController < ApplicationController
   # Group management functions ---------------------------------------------
   
   def creategroup
-    @assignment = Assignment.find(params[:id])
-    @group = current_user.group_for(@assignment)
-    @groups = params[:groups]
-    
     return unless request.post?
+    @assignment = Assignment.find(params[:id])
     
     # Create new group for this assignment
     @group = Group.new
@@ -24,15 +21,41 @@ class GroupsController < ApplicationController
     # Set this user as inviter
     @group.add_member(current_user, 'inviter')
     unless params[:group] && params[:group][:single] == '1'
-      if params[:groups]
-        users = params[:groups].values.map { |m| m['user_name'].strip  }
+      if params[:members]
+        users = params[:members].values.map { |m| m['user_name'].strip  }
         @group.invite(users)  # invite members to this group
       end
     end
     
-    if @group.valid_with_base? && @group.save
-      redirect_to :controller => 'submissions', 
-        :action => 'submit', :id => @assignment.id
+    # display ajax response
+    render :update do |page|
+      if @group.valid_with_base? && @group.save
+        page.redirect_to :controller => 'submissions', 
+          :action => 'submit_sample', :id => @assignment.id
+      else
+        page.replace_html 'creategroup_error',
+          :partial => 'groups/error_single', :locals => { :objekt => @group }
+      end
+    end
+    
+  end
+  
+  # Add additional members to group
+  def add_members
+    return unless (request.post? && params[:members])
+    @assignment = Assignment.find(params[:id])
+    @group = current_user.group_for(@assignment.id) # assert not nil
+    
+    # add additional members to the group if requested
+    users = params[:members].values.map { |m| m['user_name'].strip  }
+    @group.invite(users)
+    
+    render :update do |page|
+      page.replace "module_groups", :partial => 'groups/status'
+      unless @group.valid_with_base?
+        page.replace_html 'addmembers_error',
+          :partial => 'groups/error_single', :locals => { :objekt => @group }
+      end
     end
   end
   
@@ -41,41 +64,30 @@ class GroupsController < ApplicationController
   def join
     @assignment = Assignment.find(params[:id])
     group = current_user.group_for(@assignment.id)
-    if !group || group.status(current_user) != 'pending'
-      redirect_to :action => 'creategroup', :id => params[:id]
-    end
     @inviter = group.inviter
     return unless request.post?
     
-    if params[:accept]
-      group.accept(current_user)
-      redirect_to :controller => 'submissions', 
-        :action => 'submit', :id => @assignment.id
-    elsif params[:reject]
-      group.reject(current_user)
-      redirect_to :action => 'creategroup', :id => params[:id]
+    if group && group.pending?(current_user)
+      if params[:accept]
+        group.accept(current_user)
+      elsif params[:reject]
+        group.reject(current_user)
+      end
     end
     
+    redirect_to :controller => 'submissions', 
+      :action => 'submit_sample', :id => @assignment.id
   end
   
+  # Remove rejected member
+  def remove_member
+    return unless request.delete?
+    @group = current_user.group_for(params[:id]) # assert not nil
     
-  # Shows group status and a way to invite additional members 
-  # to the group for the inviter member
-  def status
-    @assignment = Assignment.find(params[:id])
-    @group = current_user.group_for(@assignment.id)
-    @members = @group.members
-    
-    # add additional members to the group
-    return unless request.post?
-    if params[:groups]
-        users = params[:groups].values.map { |m| m['user_name'].strip  }
-        @group.invite(users)  # invite members to this group
-      end
-    
-    if @group.valid_with_base?
-      redirect_to :controller => 'submissions', 
-        :action => 'submit', :id => @assignment.id
+    return unless @group.inviter == current_user
+    @group.remove_member(params[:member_id])
+    render :update do |page|
+      page.visual_effect(:fade, "mbr_#{params[:member_id]}")
     end
   end
   
