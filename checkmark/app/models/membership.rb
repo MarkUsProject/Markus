@@ -5,7 +5,7 @@ class Membership < ActiveRecord::Base
   belongs_to  :user
   belongs_to  :group
   validates_uniqueness_of :user_id, :scope => :group_id
-  validates_format_of :status, :with => /inviter|pending|accepted/
+  validates_format_of :status, :with => /inviter|pending|accepted|rejected/
   
   # user association/validations
   validates_presence_of   :user_id, :message => "presence is not strong with you"

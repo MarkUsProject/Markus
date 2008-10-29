@@ -46,6 +46,7 @@ class Assignment < ActiveRecord::Base
   def group_by(uid, pending=false)
     return nil unless group_assignment?
     condition = "memberships.user_id = ?"
+    condition += " and memberships.status != 'rejected'"
     # add non-pending status clause to condition
     condition += " and memberships.status != 'pending'" unless pending
     groups.find(:first, :include => :memberships, :conditions => [condition, uid])

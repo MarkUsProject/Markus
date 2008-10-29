@@ -3,7 +3,8 @@
 class Group < ActiveRecord::Base
   
   has_many  :memberships
-  has_many  :members, :through => :memberships, :source => :user
+  has_many  :members, :through => :memberships, :source => :user, 
+    :conditions => "status != 'rejected'"
   has_many  :joined_members,  # members who are members of this group
   :through => :memberships, 
     :source => :user, 
@@ -49,6 +50,10 @@ class Group < ActiveRecord::Base
     members.find(:first, :conditions => ["status = 'inviter'"])
   end
   
+  def pending?(user)
+    return status(user) == 'pending'
+  end
+  
   def status(user)
     member = memberships.find_by_user_id(user.id)
     member ? member.status : nil  # return nil if user is not a member
@@ -70,7 +75,7 @@ class Group < ActiveRecord::Base
       if user && user.student?
         add_member(user)
       else
-        errors.add_to_base("Username '#{m}' is not a valid student user name.") 
+        errors.add_to_base("Username '#{m}' is not a valid student user name.")
       end
     end
   end
@@ -101,7 +106,15 @@ class Group < ActiveRecord::Base
     member = memberships.find_by_user_id(user.id)
     raise "Invalid user" unless member # user does not belong in this group
     raise "Invalid status" unless member.status == 'pending'  
-    member.destroy
+    
+    member.status = 'rejected'
+    return member.save
+  end
+  
+  # Removes the member rejected by its membership id
+  def remove_member(mbr_id)
+    member = memberships.find(mbr_id)
+    member.destroy if member.status == 'rejected'
   end
   
   # Unrefactored code...
