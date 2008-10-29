@@ -47,7 +47,15 @@ module SessionHandler
       session[:redirect_uri] = request.request_uri  # save current uri
       clear_session
       flash[:login_notice] = "Please log in"
-      redirect_to :controller => 'checkmark', :action => 'login'
+      
+      if request.xhr?
+        session[:redirect_uri] = request.referer
+        render :update do |page|
+          page.redirect_to :controller => 'checkmark', :action => 'login'
+        end
+      else
+        redirect_to :controller => 'checkmark', :action => 'login'
+      end
     end
   end
   
