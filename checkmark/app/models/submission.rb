@@ -29,6 +29,19 @@ class Submission < ActiveRecord::Base
     return submission_file
   end
   
+  # Delete all records of filename in submissions and store in backup folder
+  def remove_file(filename)
+    _adir = submit_dir
+    backup_dir = File.join(_adir, "BACKUP")
+    FileUtils.mkdir(backup_dir)
+    
+    source_file = File.join(_adir, filename)
+    dest_file = File.join(backup_dir, filename)
+    FileUtils.mv(source_file, dest_file, :force => true)
+    
+    submission_files.destroy_all(["filename = ?", filename])
+  end
+  
   # Moves the file to a folder with the last submission date
   #   filepath - absolute path of the file
   def create_backup(filename)
@@ -37,7 +50,7 @@ class Submission < ActiveRecord::Base
     
     # create backup directory and move file
     backup_dir = File.join(submit_dir, timestamp)
-    FileUtils.mkdir_p(backup_dir)
+    FileUtils.mkdir(backup_dir)
     dest_file = File.join(backup_dir, filename)
     source_file = File.join(submit_dir, filename)
     FileUtils.mv(source_file, dest_file, :force => true)
