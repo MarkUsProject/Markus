@@ -84,7 +84,7 @@ class SubmissionsController < ApplicationController
     # delete file
     assignment = Assignment.find(params[:id])
     submission = assignment.submission_by(current_user)
-    submission.remove_file(params[:filename])  # TODO delete file
+    submission.remove_file(params[:filename])
 
     # check if deleted file is a required file
     @reqfiles = assignment.assignment_files.map { |af| af.filename } || []
