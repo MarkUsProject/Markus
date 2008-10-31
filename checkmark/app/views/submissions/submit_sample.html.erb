@@ -1,5 +1,39 @@
 <%= stylesheet_link_tag 'submit.css', :media => 'all' %>
 
+<script type="text/javascript" language="JavaScript">
+  var submit_field_count = 1;
+
+  // helper method to create a file field element of the form:
+  // <input id="files_0_file" name="files[0][file]" size="30" type="file" />
+  function create_submit_field() {
+    var new_ff = new Element('input', {'type': 'file'});
+    $(new_ff).id = "files_" + submit_field_count + "_file";
+    $(new_ff).name = "files[" + submit_field_count + "][file]";
+    $(new_ff).size = '30';
+    submit_field_count++;
+
+    return new_ff
+  }
+
+  /* Removes the file field paragraph (as parent of 'elem') */
+  function remove_submit_field(elem) {
+    var parent = elem.parentNode;
+    $(parent).remove();
+  }
+
+  /* Adds additional submission file fields */
+  function add_submit_fields() { 
+    elem = new Element('p');
+    // a javascript href does not accept 'this' as a pointer to the current node.
+    elem.insert('<%= link_to "x ", "#", :onclick => "remove_submit_field(this);return false;" %>');
+    var new_ff = create_submit_field();
+    elem.insert(new_ff);
+    
+    // insert new field at the end (i.e. top of the submit button) of existing fields
+    Element.insert($('submit_button'), { before: elem });
+  }
+</script>
+
 <span id="time"><%= Time.now.strftime("Last refresh time is %A, %B %d, %Y %I:%M%p") %></span>
 
 <% if @assignment.group_assignment? -%>
@@ -42,15 +76,19 @@
   
     <% # Upload form -%>
     <div id="submit_form">
+    <%= link_to "Submit more files", "javascript:add_submit_fields();" %>
     <% form_tag({ :action => 'submit_sample', 
         :id => @assignment.id}, :multipart => true) do -%>
-      
+
       <% 1.times do |index| -%>
         <% fields_for "files[#{index}]" do |file| -%>
-          <p><%= file.file_field :file %></p>
+          <p>
+            <%= link_to "x", "#", :onclick => "remove_submit_field(this);return false;" %>
+            <%= file.file_field :file %>
+          </p>
         <% end -%>
       <% end -%>
-      <p><%= submit_tag "Submit Files", :name => 'upload' %></p>
+      <p id="submit_button"><%= submit_tag "Submit Files", :name => 'upload' %></p>
     <% end -%>
     </div>
   
