@@ -10,7 +10,7 @@
 
 <!-- Main submissions page -->
 <h1>Submit an Assignment</h1>
-<div id="main_submit" <% 'class="group_submit"' if @assignment.group_assignment? -%>>
+<div id="main_submit" <%= 'class="group_submit"' if @assignment.group_assignment? -%>>
 
   <% unless flash[:error] -%>
     
