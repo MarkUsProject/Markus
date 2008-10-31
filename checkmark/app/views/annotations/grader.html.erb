@@ -1,0 +1,32 @@
+<%= javascript_include_tag "selection.js" %>
+
+<h3>Grading Assignment: <%= @assignment.name %> </h3>
+<h3>Select the files below to view  your<%= "group's" unless @assignment.individual? -%> submitted files:</h3>
+
+
+<%= button_to_function "Get selection", "getSel();" %>
+
+
+<select name="file[file_filename]" onChange="
+    <%= remote_function ( 
+                   :update => "codeviewer",
+                   :url =>{ :action => "codeviewer", :id => @assignment.id },
+                   :with => "'filename='+value")%> ">
+
+    <option value="None"> 
+        (Select a file)
+    </option>
+
+    <% @files.each do |file| %>
+
+        <option value="<%= file.filename %>"> 
+          <%= file.filename %>
+        </option>
+
+    <% end %>
+
+</select>
+
+<div id="codeviewer">
+    <%= render :partial => "codeviewer", :locals => { :filetext => "" } %>
+</div>
