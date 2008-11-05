@@ -47,8 +47,7 @@
 		padding-left: 10px;
 		padding-right: 10px;
 	}
-	
-	.criterion {
+	.criterion_holder, .rubric_level {
 		padding: 5px;
 		background: #DDDDDD;
 		font-weight: bold;
@@ -58,25 +57,40 @@
 		width: 415px;
 		border: 1px solid #000000;
 	}
-	.criterion_input_name, .criterion_input_weight {
+	.criterion_holder_selected {
+            background: #CCCCFF;
+        }
+        .criterion_title_div {
+            cursor: pointer;
+	    text-transform: capitalize;
+        }
+        
+	.criterion_input_name, .level_input_name {
 		background: #EEEEEE;
 		font-size: medium;
 		font-weight: bold;
 		border: 1px solid #DDDDDD;
+		float: left;
+	}
+	.criterion_delete {
+		float: right;
 	}
 	.criterion_input_name {
-		width: 400px;
+		width: 300px;
 	}
-	.criterion_input_weight {
-		width: 50px;
-		display: block;
+	.criterion_weight_display {
+		margin-left: 10px;
+		margin-right: 10px;
+		display: inline;
+		text-align: center;
 	}
-	.criterion_textarea_description {
+	.criterion_textarea_description, .level_textarea_description {
 		background: #EEEEEE;
 		font-size: medium;
 		border: 1px solid #DDDDDD;
 		width: 400px;
 	}
+
 	.hover_edit:hover {
 		background: #EAEAEA;
 		border: 1px dashed #DDDDDD;		
@@ -99,11 +113,14 @@
 		text-transform: capitalize;
 	}
 </style>
+<%= stylesheet_link_tag("tabs") %>
+<%= javascript_include_tag  'livepipe' %>
+<%= javascript_include_tag  'tabs' %>
 
 <script type="text/javascript" language="JavaScript">
 	
 	var Criterion = Class.create({
-		initialize: function(name, description, weight) {
+		initialize: function(name, description, weight, levels) {
 			function done_edit(event) { 
 				$('pull_focus').select();
 				$('pull_focus').focus();
@@ -134,50 +151,125 @@
 					Event.element(event).select();
 				}
 			);
+                        this.cri_name = cri_name;
+
+                        function update_name(event, criterion) {
+                            $(criterion).title_div.update($F(criterion.cri_name));
+                        }
+                        $(cri_name).observe('change', update_name.bindAsEventListener(this, this));
+			
+			var delete_button = new Element('input', {'type': 'button', 'class': 'criterion_delete', 'value': 'Delete'});
+			var do_delete = function(event, criterion) {
+				if(confirm('Are you sure you want to delete this criterion?')) {
+					c_list.remove(criterion);
+					made_change();
+				}
+			}
+			$(delete_button).observe('click', do_delete.bindAsEventListener(null, this));
+			
 			$(root_div).insert(cri_name, {position: 'top'});
+			$(root_div).insert(delete_button);
+			$(root_div).insert(new Element('div', {'class':'clear'}), {position: 'bottom'});
 
 			//The Criterion weight element
 			
 			this.weight = weight;
-			var cri_weight = new Element('input', {'class': 'criterion_input_weight', 'type': 'text'});
-			$(cri_weight).addClassName('hover_edit').addClassName('capitalize');
-			$(cri_weight).value = this.weight;
-			Event.observe(cri_weight, 'keypress', function(event){
-				if (event.keyCode == Event.KEY_RETURN) {
-					done_edit(event);
-					//TODO:  Validation here
+			this.weight_display = new Element('span', {'class' : 'criterion_weight_display'});
+			$(this.weight_display).update(this.weight);
+			
+			var cri_weight_dec = new Element('input', {'type': 'button', 'value': '-'});
+			var cri_weight_inc = new Element('input', {'type': 'button', 'value': '+'});
+			
+			var mod_weight = function(event, criterion, value) {
+				if (criterion.weight + value > 0) {
+					criterion.weight += value;
+					$(criterion.weight_display).update(criterion.weight);
 				}
-			});
-			Event.observe(cri_weight, 'blur', function(event) {done_edit(event); /*TODO: Validation?*/});
-			Event.observe(cri_weight, 'click', 
-				function(event) {
-					Event.element(event).removeClassName('hover_edit');
-					Event.element(event).addClassName('editing');
-					Event.element(event).select();
-				}
-			);
+			}
+
+			$(cri_weight_dec).observe('click', mod_weight.bindAsEventListener(null, this, -1));
+			$(cri_weight_inc).observe('click', mod_weight.bindAsEventListener(null, this, 1));
+			
 			var cri_weight_container = new Element('div', {'class':'criterion_input_weight_container'});
 			$(cri_weight_container).update("Weight:");
-			$(cri_weight_container).insert(cri_weight);
+			$(cri_weight_container).insert(cri_weight_dec);
+			$(cri_weight_container).insert(this.weight_display);
+			$(cri_weight_container).insert(cri_weight_inc);
 			$(root_div).insert(cri_weight_container, {position: 'bottom'});
 			
 			//The Criterion description element
 			this.description = description;
 			var cri_description = new Element('textarea', {'class':'criterion_textarea_description'});
 			$(cri_description).update(this.description);
+			
+			this.set_description = new Element('input', {'type':'button', 'value':'Set Description'});
+			$(this.set_description).hide();
+			
+			var show_set_description = function(event, object, show) {
+				if(show) {
+					$(object).show();
+				}
+				else {
+					$(object).hide();
+				}
+			}
+			
+			$(cri_description).observe('click', show_set_description.bindAsEventListener(null, this.set_description, true));
+			$(cri_description).observe('blur', show_set_description.bindAsEventListener(null, this.set_description, false));
+			$(this.set_description).observe('click', function(event) {
+				Event.element(event).hide(); 
+				$('pull_focus').select();
+				$('pull_focus').focus();	
+				made_change();
+			});
+			
 			$(root_div).insert(cri_description, {position: 'bottom'});
-		
+			$(root_div).insert(this.set_description, {position: 'bottom'});
 
+                        this.root_div_holder = new Element('div', {'class':'criterion_holder'});
+                        this.title_div = new Element('div', {'class':'criterion_title_div'});
+                        $(this.title_div).update(this.name);
+                        $(this.title_div).hide();
+                        
+                        function show_me(event, criterion) {
+                            criterion.show();
+                            $(selected_criterion).hide();
+                            selected_criterion = criterion;
+                        }
+
+                        $(this.title_div).observe('click', show_me.bindAsEventListener(this, this));
+                        
+                        this.root_div_holder.insert($(this.title_div), {'position':'top'});
+                        this.root_div_holder.insert($(this.root_div), {'position':'bottom'});
+
+			//Create Criterion Levels
+			
+			this.levels = levels;
 
 		},
-		slider: null,
+		hide: function() {
+                 new Effect.BlindUp(this.root_div);
+                 new Effect.Appear(this.title_div);
+                 $(this.root_div_holder).removeClassName('criterion_holder_selected');
+		},
+		show: function() {
+                 new Effect.BlindDown(this.root_div);
+		 new Effect.Fade(this.title_div);
+                 $(this.root_div_holder).addClassName('criterion_holder_selected');
+		//TODO: Remove 
+		$('rubric_levels').show();
+
+		},
 		root_div: null,
-		name_input: null,
+                root_div_holder: null,
+                title_div: null,
+		cri_name: null,
 		description_input: null,
-		weight_input: null,
+		weight_display: null,
 		name: null,
 		description: null,
-		weight: null
+		weight: null,
+		levels: $A()
 	})
 
 	var CriterionList = Class.create({
@@ -186,14 +278,21 @@
 		},
 		add: function(criterion) {
 			this.root_array.push(criterion);
-			$(this.root_div).insert(criterion.root_div, {position: 'bottom'});
+			$(this.root_div).insert(criterion.root_div_holder, {position: 'bottom'});
+			//TODO: Remove 
+			$('rubric_levels').show();
+		},
+		remove: function(criterion) {
+			this.root_array = this.root_array.without(criterion);
+			$(criterion.root_div_holder).remove();
+			//TODO: Remove 
+			$('rubric_levels').hide();
 		},
 		root_div: null,
 		root_array: $A()
 	});
 	
 	var c_list = null;
-	var available_weight = 100;
 	document.observe("dom:loaded", function() {
 		c_list = new CriterionList($('rubric_criteria_pane_list'));
 	});
@@ -201,6 +300,7 @@
 
 <script type="text/javascript" language="JavaScript">
 	var new_criterion_index = 0;
+        var selected_criterion = null;
 	
 	function save_changes() {
 		//TODO
@@ -210,54 +310,15 @@
 		$('rubric_status').addClassName('save_success');
 	}
 	function add_criterion(){
-		//TODO
 		made_change();
-		var blank_criterion = new Criterion('New Criterion', 'Put your description here', 1);
+		var blank_criterion = new Criterion('New Criterion', '', 1);
 		c_list.add(blank_criterion);
+                if(selected_criterion != null) {
+                    selected_criterion.hide();
+                }
+                selected_criterion = blank_criterion;
+                $(selected_criterion.root_div_holder).addClassName('criterion_holder_selected');
 		$('rubric_criteria_pane_instructions').hide();
-	}
-	function create_blank_criterion() {
-		//TODO
-		var blank_criterion = new Element('div', {'class': 'criterion'});
-		var cri_name = new Element('input', {'class': 'criterion_input_name', 'type': 'text'});
-		$(cri_name).addClassName('hover_edit').addClassName('capitalize');
-		$(cri_name).value = 'New Criterion'
-
-		function done_edit(event) { 
-			$('pull_focus').select();
-			$('pull_focus').focus();
-			Event.element(event).removeClassName('editing');
-			Event.element(event).addClassName('hover_edit');
-			made_change();
-		}
-		
-		Event.observe(cri_name, 'keypress', function(event){
-			if (event.keyCode == Event.KEY_RETURN) {
-				done_edit(event);
-			}
-		});
-		Event.observe(cri_name, 'blur', function(event) {done_edit(event);});
-		Event.observe(cri_name, 'click', 
-			function(event) {
-				Event.element(event).removeClassName('hover_edit');
-				Event.element(event).addClassName('editing');
-				Event.element(event).select();
-			}
-		);
-		$(cri_name).writeAttribute()
-		$(blank_criterion).insert(cri_name, {position: 'top'});
-		
-		var cri_weight_slider = new Element('div');
-		$(cri_weight_slider).update('Weight Slider goes here');
-		
-		$(blank_criterion).insert(cri_weight_slider, {position: 'bottom'});
-		
-		var cri_description_label = new Element('label', {'for':''});
-		var cri_description = new Element('textarea');
-		$(cri_description).update('Test 123');
-		$(blank_criterion).insert(cri_description, {position: 'bottom'});
-		
-		return blank_criterion;
 	}
 	function made_change() {
 		$('rubric_status').update("Changes have NOT yet been saved");
@@ -265,8 +326,21 @@
 		$('rubric_status').removeClassName('save_error');
 		$('rubric_status').addClassName('save_warning');
 	}
+	
+document.observe('dom:loaded', function() {
+	var tab_menu = new Control.Tabs('rubric_tabs');
+	tab_menu.setActiveTab('manually_edit_rubric_canvas');
+});
+
 </script>
-<div id="rubric_canvas">
+
+<ul id="rubric_tabs" class="subsection_tabs">
+	<li class="tab"><a href="#manually_edit_rubric_canvas">Manually Edit Rubric</a></li>
+	<li class="tab"><a href="#upload_rubric_file_canvas">Upload Rubric File</a></li>
+</ul>
+
+
+<div id="manually_edit_rubric_canvas">
 	<input type="text" id="pull_focus" value="Hidden field to pull focus" style="display: none;">
 	<div id="rubric_upper_pane">
 	    <h2>Rubric Management:  [ASSIGNMENT NAME]</h2>	
@@ -286,7 +360,6 @@
 			<div id="rubric_criteria_pane_menu">
 				<div style="float: left;">
 					<h1>Rubric Criteria</h1>
-					Available Weight: <span id="available_weight">100</span>%
 				</div>
 				<div style="float: right;">
 					<%= button_to_function "+ Add Criterion", "add_criterion();" %>
@@ -308,9 +381,42 @@
 			</div>
 			<div id="rubric_levels_pane_list">
 				
+				<!-- Fake out -->
+				<div class="rubric_level_holder" style="display: none;" id="rubric_levels">
+					<div class="rubric_level">
+						0. <input type="text" class="level_input_name" value="Not Applicable">
+						<textarea class="level_textarea_description">This criterion was not satisfied whatsoever</textarea>
+					</div>
+					<div class="rubric_level">
+						1. <input type="text" class="level_input_name" value="Needs Improvement">
+						<textarea class="level_textarea_description">This criterion was met, but work needs considerable improvement</textarea>
+					</div>
+					<div class="rubric_level">
+						2. <input type="text" class="level_input_name" value="Satisfactory">
+						<textarea class="level_textarea_description">This criterion was met, but could stand some improvement</textarea>
+					</div>
+					<div class="rubric_level">
+						3. <input type="text" class="level_input_name" value="Good">
+						<textarea class="level_textarea_description">This criterion was met</textarea>
+					</div>
+					<div class="rubric_level">
+						4. <input type="text" class="level_input_name" value="Excellent">
+						<textarea class="level_textarea_description">This criterion was met excellently!</textarea>
+					</div>
+
+				</div>
+				<!-- End Fake out -->
 			</div>
 			
 			
 		</div>
 	</div>
+</div>
+
+<div id="upload_rubric_file_canvas">
+<h1>Upload Rubric File</h1>
+<form>
+	<input type="file" name="rubric_file" id="rubric_file">
+	<input type="submit" value="Upload File">
+</form>
 </div>
