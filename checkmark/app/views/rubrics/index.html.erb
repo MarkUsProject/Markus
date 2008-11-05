@@ -47,6 +47,10 @@
 		padding-left: 10px;
 		padding-right: 10px;
 	}
+	#selected_criterion_name {
+		text-transform: capitalize;
+		font-weight: bold;
+	}
 	.criterion_holder, .rubric_level {
 		padding: 5px;
 		background: #DDDDDD;
@@ -155,6 +159,8 @@
 
                         function update_name(event, criterion) {
                             $(criterion).title_div.update($F(criterion.cri_name));
+			    this.name = $F(criterion.cri_name);
+			    $('selected_criterion_name').update(this.name);
                         }
                         $(cri_name).observe('change', update_name.bindAsEventListener(this, this));
 			
@@ -174,7 +180,7 @@
 			//The Criterion weight element
 			
 			this.weight = weight;
-			this.weight_display = new Element('span', {'class' : 'criterion_weight_display'});
+			this.weight_display = new Element('input', {'class' : 'criterion_input_weight'});
 			$(this.weight_display).update(this.weight);
 			
 			var cri_weight_dec = new Element('input', {'type': 'button', 'value': '-'});
@@ -183,7 +189,7 @@
 			var mod_weight = function(event, criterion, value) {
 				if (criterion.weight + value > 0) {
 					criterion.weight += value;
-					$(criterion.weight_display).update(criterion.weight);
+					$(criterion.weight_display).value = criterion.weight;
 				}
 			}
 
@@ -256,6 +262,7 @@
                  new Effect.BlindDown(this.root_div);
 		 new Effect.Fade(this.title_div);
                  $(this.root_div_holder).addClassName('criterion_holder_selected');
+		 $('selected_criterion_name').update(this.name);
 		//TODO: Remove 
 		$('rubric_levels').show();
 
@@ -279,12 +286,14 @@
 		add: function(criterion) {
 			this.root_array.push(criterion);
 			$(this.root_div).insert(criterion.root_div_holder, {position: 'bottom'});
+			$('selected_criterion_name').update(criterion.name);
 			//TODO: Remove 
 			$('rubric_levels').show();
 		},
 		remove: function(criterion) {
 			this.root_array = this.root_array.without(criterion);
 			$(criterion.root_div_holder).remove();
+			$('selected_criterion_name').update('');
 			//TODO: Remove 
 			$('rubric_levels').hide();
 		},
@@ -377,7 +386,8 @@ document.observe('dom:loaded', function() {
 		
 		<div id="rubric_levels_pane">
 			<div id="rubric_levels_pane_menu">
-				<h1>Rubric Levels</h1>
+				<h1>Rubric Levels: <span id="selected_criterion_name"></span></h1>
+				
 			</div>
 			<div id="rubric_levels_pane_list">
 				
