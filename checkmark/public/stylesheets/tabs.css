@@ -1,0 +1,36 @@
+ul.subsection_tabs {
+	list-style: none;
+	margin: 0 0 5px 0;
+	padding: 0;
+	clear: both;
+	border-bottom: 1px solid #ccc;
+	height: 20px;
+	clear: both;
+}
+
+ul.subsection_tabs li.tab {
+	float:left;
+	margin-right:7px;
+	text-align:center;
+}
+
+ul.subsection_tabs li.tab a {
+	display:block;
+	height:20px;
+	padding:0 6px 0 6px;
+	background-color:#fff;
+	color:#666;
+	width:150px;
+}
+
+ul.subsection_tabs li.tab a:hover {
+	color:#666;
+}
+
+ul.subsection_tabs li.tab a.active {
+	background-color:#ddd;
+}
+
+ul.subsection_tabs li.source_code {
+	float:right;
+}
