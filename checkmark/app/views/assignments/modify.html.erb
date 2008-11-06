@@ -1,5 +1,7 @@
 <h1><%=h @title %></h1>
 
+<%= link_to "Manage Rubric for this assignment", :controller => "rubrics", :action => 'index', :id => @assignment.id %>
+
 <% form_for :assignment, :url => {:action => action, :id => params[:id] } do |f| -%>
   
   <%= error_messages_for :assignment, :assignment_files %>

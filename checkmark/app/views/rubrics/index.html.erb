@@ -352,7 +352,7 @@ document.observe('dom:loaded', function() {
 <div id="manually_edit_rubric_canvas">
 	<input type="text" id="pull_focus" value="Hidden field to pull focus" style="display: none;">
 	<div id="rubric_upper_pane">
-	    <h2>Rubric Management:  [ASSIGNMENT NAME]</h2>	
+	    <h2>Rubric Management:  <%= @assignment.name %></h2>	
 		<div id="rubric_menu">
 		<%= link_to '< Back to Manage Assignments', :controller => 'assignments', :action => 'index' %>
 		</div>
