@@ -50,10 +50,13 @@ class Group < ActiveRecord::Base
     members.find(:first, :conditions => ["status = 'inviter'"])
   end
   
+  # Returns true if this user has a pending status for this group; 
+  # false otherwise, or if user is not in this group.
   def pending?(user)
     return status(user) == 'pending'
   end
   
+  # Returns the status of this user, or nil if user is not a member
   def status(user)
     member = memberships.find_by_user_id(user.id)
     member ? member.status : nil  # return nil if user is not a member
