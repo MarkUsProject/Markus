@@ -1,6 +1,6 @@
 <%= javascript_include_tag "selection.js" %>
 
-<h3>Grading Assignment: <%= @assignment.name %> </h3>
+<h1>Grading Assignment: <%= link_to @assignment.name, :controller => 'annotations', :action => 'students', :id => @assignment.id %> </h1>
 <h3>Select the files below to view  your<%= "group's" unless @assignment.individual? -%> submitted files:</h3>
 
 
@@ -10,7 +10,7 @@
 <select name="file[file_filename]" onChange="
     <%= remote_function ( 
                    :update => "codeviewer",
-                   :url =>{ :action => "codeviewer", :id => @assignment.id },
+                   :url =>{ :action => "codeviewer", :id => @assignment.id, :uid => @uid },
                    :with => "'filename='+value")%> ">
 
     <option value="None"> 

@@ -399,7 +399,6 @@ ALTER SEQUENCE rubric_levels_id_seq OWNED BY rubric_levels.id;
 --
 
 CREATE SEQUENCE sessions_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -456,7 +455,6 @@ ALTER SEQUENCE submissions_id_seq OWNED BY submissions.id;
 --
 
 CREATE SEQUENCE users_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE

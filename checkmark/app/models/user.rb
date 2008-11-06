@@ -103,6 +103,13 @@ class User < ActiveRecord::Base
     u.save ? u : nil
   end
   
+	# Submissions methods ------------------------------------------------------
+  
+  def submission_for(aid)
+    #TODO - doesn't work
+    submissions.first(:conditions => ["assignment_id = ?", aid])
+  end
+
 end
 
 

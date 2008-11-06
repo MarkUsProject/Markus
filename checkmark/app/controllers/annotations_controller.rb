@@ -1,16 +1,24 @@
 class AnnotationsController < ApplicationController
   def index
+    @assignments = Assignment.all(:order => :id)
+  end
+
+  def students
+    @students = User.students
+    @aid = params[:id]
+    @aname = Assignment.find(@aid).name
   end
 
   def grader
-    @assignment = Assignment.find(params[:id])
-    submission = @assignment.submission_by(current_user)
+    @assignment = Assignment.find(params[:aid])
+    @uid = params[:uid]
+    submission = @assignment.submission_by(User.find(@uid))
     @files = submission.submitted_filenames || []
   end
 
   def codeviewer
     @assignment = Assignment.find(params[:id])
-    submission = @assignment.submission_by(current_user)
+    submission = @assignment.submission_by(User.find(params[:uid]))
     
     dir = submission.submit_dir
 
@@ -25,7 +33,7 @@ class AnnotationsController < ApplicationController
 
     end
 
-    render :partial => "codeviewer", :locals => { :filetext => filetext }
+    render :partial => "codeviewer", :locals => { :uid => params[:uid], :filetext => filetext }
     
   end
 end
