@@ -1,0 +1,44 @@
+<h1>Workspace: <%= @aname %></h1>
+
+<h2>Students you can mark:</h2>
+
+<table>
+<tr>
+  <th>CDF username</th>
+  <th>Student Number</th>
+  <th>Last Name</th>
+  <th>First Name</th>
+  <th>Status</th>
+  <th>Other</th>
+  <th>Grade</th>
+</tr>
+      
+<% for student in @students %>
+  <tr>
+    <td>
+    	<% if student.submission_for(1) %>
+        	<%= link_to student.user_name, :controller => 'annotations', :action => 'grader', :aid => @aid, :uid => student.id %>
+    	<% else %>
+        	<%=h student.user_name %>
+    	<% end %>
+	</td>
+    <td><%=h student.user_number %></td>
+    <td><%=h student.last_name %></td>
+    <td><%=h student.first_name %></td>
+    <td><%=h 'unmarked' %></td>
+    <td>
+    	<% if student.submission_for(1) %>
+        	<%=h 'Submission recieved' %>
+    	<% else %>
+        	<%=h 'No submission' %>
+    	<% end %>
+	</td>
+    <td><%=h '0.0%' %></td>
+  </tr>
+<% end %>
+
+</table>
+
+<br />
+
+<%= link_to "Exit workspace", :controller => 'annotations', :action => 'index' %>
