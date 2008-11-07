@@ -69,22 +69,24 @@
 	    text-transform: capitalize;
         }
         
-	.criterion_input_name, .level_input_name {
+	.criterion_input_name, .level_input_name, .criterion_input_weight {
 		background: #EEEEEE;
 		font-size: medium;
 		font-weight: bold;
 		border: 1px solid #DDDDDD;
-		float: left;
+		
 	}
 	.criterion_delete {
 		float: right;
 	}
 	.criterion_input_name {
 		width: 300px;
+		float: left;
 	}
-	.criterion_weight_display {
+	.criterion_input_weight {
 		margin-left: 10px;
 		margin-right: 10px;
+		width: 50px;
 		display: inline;
 		text-align: center;
 	}
@@ -180,16 +182,30 @@
 			//The Criterion weight element
 			
 			this.weight = weight;
-			this.weight_display = new Element('input', {'class' : 'criterion_input_weight'});
-			$(this.weight_display).update(this.weight);
-			
+			this.weight_input = new Element('input', {'class' : 'criterion_input_weight'});
+			$(this.weight_input).value = this.weight;
+			$(this.weight_input).observe('keypress', function(event){
+				if (event.keyCode == Event.KEY_RETURN) {
+					done_edit(event);
+				}
+			});
+			$(this.weight_input).observe('blur', function(event) {done_edit(event);});
+			$(this.weight_input).observe('click', 
+				function(event) {
+					Event.element(event).removeClassName('hover_edit');
+					Event.element(event).addClassName('editing');
+					Event.element(event).select();
+				}
+			);
+
 			var cri_weight_dec = new Element('input', {'type': 'button', 'value': '-'});
 			var cri_weight_inc = new Element('input', {'type': 'button', 'value': '+'});
 			
 			var mod_weight = function(event, criterion, value) {
+				criterion.weight = parseFloat($F(criterion.weight_input));
 				if (criterion.weight + value > 0) {
 					criterion.weight += value;
-					$(criterion.weight_display).value = criterion.weight;
+					$(criterion.weight_input).value = criterion.weight;
 				}
 			}
 
@@ -199,7 +215,7 @@
 			var cri_weight_container = new Element('div', {'class':'criterion_input_weight_container'});
 			$(cri_weight_container).update("Weight:");
 			$(cri_weight_container).insert(cri_weight_dec);
-			$(cri_weight_container).insert(this.weight_display);
+			$(cri_weight_container).insert(this.weight_input);
 			$(cri_weight_container).insert(cri_weight_inc);
 			$(root_div).insert(cri_weight_container, {position: 'bottom'});
 			
