@@ -1,14 +1,40 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + '/authenticated_controller_test'
 
-class AssignmentsControllerTest < ActionController::TestCase
-  # Replace this with your real tests.
-  def test_truth
-    assert true
+class AssignmentsControllerTest < AuthenticatedControllerTest
+  
+  fixtures  :users, :assignments
+  
+  def setup
+    @controller = AssignmentsController.new
+    @request = ActionController::TestRequest.new
+    @response = ActionController::TestResponse.new
+    
+    # login before testing
+    @admin = users(:admin)
+    @request.session['uid'] = @admin.id
+    
+    # stub assignment
+    @new_assignment = {  
+      'name'          => '', 
+      'message'       => '', 
+      'group_min'     => '',
+      'group_max'     => '',
+      'due_date(1i)'  => '',
+      'due_date(2i)'  => '',
+      'due_date(2i)'  => '',
+      'due_date(2i)'  => '',
+    }
+  end
+  
+  # Test for accessing new assignment page
+  def test_get_new
+    get_as @admin, :new
+    assert_response :success
+    assert_not_nil assigns['assignment']
   end
   
   # TODO
   
-  # Test create assignment without assignment files
   
   # Test create assignment with assignment files
   
