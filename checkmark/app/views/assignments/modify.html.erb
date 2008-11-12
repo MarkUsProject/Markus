@@ -1,9 +1,11 @@
 <h1><%=h @title %></h1>
 
-<%= link_to "Manage Rubric for this assignment", :controller => "rubrics", :action => 'index', :id => @assignment.id %>
 
 <% form_for :assignment, :url => {:action => action, :id => params[:id] } do |f| -%>
-  
+
+<fieldset>
+  <legend>Assignment Properties</legend>
+
   <%= error_messages_for :assignment, :assignment_files %>
   
   <p>
@@ -19,17 +21,11 @@
     <%= f.text_area :message, :rows => 5 %>
   </p>
   <p>
-    <%= f.label :due_date %>
+    <%= f.label "This assignment is due on:"%>
     <%= f.datetime_select "due_date", :default => 3.hours.from_now %>
   </p>
 
-  <p>
-    Group Limit (1 or more):
-    from <%= f.text_field :group_min, :size => 5, :maxlength => 3 %>
-    to <%= f.text_field :group_max, :size => 5, :maxlength => 3 %>
-  </p>
-
-  <h4>Add filename(s) that students can only submit:</h4>
+  <h4>Add filename(s) that students would be required to submit:</h4>
   <%# render the link instead of embedding, to dynamically update 
         the index of the next file text field -%>
   <%= render :partial => 'add_file_link', 
@@ -40,8 +36,43 @@
       <%= render :partial => 'file_fields', :locals => { :file => file, :index => index } -%>
     <% end -%> 
   </p>
+</fieldset>
+  
+  
+<fieldset>
+  <legend>Group Properties</legend>
+
+  <p>
+    Group Limit (must be 1 or more):
+    from <%= f.text_field :group_min, :size => 5, :maxlength => 3 %>
+    to <%= f.text_field :group_max, :size => 5, :maxlength => 3 %>
+    people in a group.
+  </p>
+  <p>Allow students to invite members to the group until: <br />
+  <%= datetime_select "group_rule", "add_member" %>
+  </p>
+</fieldset>
+
+<fieldset>
+  <legend>Submission Rules</legend>
+
+  <p>Allow students to submit <%= text_field_tag 'max_gd', '', :size => 3 %> days before deadline<br>
+  <p>Allow students to submit <%= text_field_tag 'max_gd', '', :size => 3 %> hours after deadline</p>
+
+  <h5>Choose penalty rules to apply for late submissions:</h5>
+  <p><%= radio_button "submission_rule", "category", "grace_days" %>Use Grace Days</p>
+  <p>Allow students to use up to <%= text_field_tag 'max_gd', '1', :size => 3 %> grace days for this assignment.</p>
+  
+  <p>
+  <%= radio_button "submission_rule", "category", "formula" %>Use Penalty Formula
+  </p>
+</fieldset>
+
+
 
   <p><%= f.submit @submit_text, :name => action %></p>
+
+
 <% end %>
 
 <%= link_to '< Cancel', :action => 'index' %>
