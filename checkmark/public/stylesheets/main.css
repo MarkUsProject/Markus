@@ -1,7 +1,51 @@
-/* { 
-  margin: 0; 
-  padding: 0; 
-} */
+/* HTML tag styles */
+
+body {
+    background-color: #fff; 
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+body, p, ol, ul, td {
+  font-family: verdana, arial, helvetica, sans-serif;
+  font-size:   13px;
+  line-height: 18px;
+}
+
+pre {
+  background-color: #eee;
+  padding: 10px;
+  font-size: 11px;
+}
+
+a { color: #000; }
+a:visited { color: #666; }
+a:hover { color: #fff; background-color:#000; }
+a { text-decoration: none; }
+
+h1 { color: #528BC0 }
+
+ul {
+  list-style-position: outside;
+  color: #FF6619;
+}
+
+fieldset {
+  border: 1px solid #B7B7B7;
+  margin: 0;
+  padding: 0.5em;
+  width: 700px;
+}
+
+legend {
+  color: #999999;
+  font-size: 90%;
+  font-weight: bold;
+  padding: 0 0.25em;
+}
+
+/* User message styles TODO: needs cleanup */
 
 .success {
     width: 400px;
@@ -38,46 +82,6 @@
     padding: 5px 5px 4px 19px;
 }
 
-body {
-    background-color: #fff; 
-    color: #333;
-    margin: 0;
-}
-
-#content {
-    padding: 10px;
-}
-
-body, p, ol, ul, td {
-  font-family: verdana, arial, helvetica, sans-serif;
-  font-size:   13px;
-  line-height: 18px;
-}
-
-pre {
-  background-color: #eee;
-  padding: 10px;
-  font-size: 11px;
-}
-
-a { color: #000; }
-a:visited { color: #666; }
-a:hover { color: #fff; background-color:#000; }
-a { text-decoration: none; }
-
-fieldset {
-  border: 1px solid #B7B7B7;
-  margin: 0;
-  padding: 0.5em;
-  width: 700px;
-}
-
-legend {
-  color: #999999;
-  font-size: 90%;
-  font-weight: bold;
-  padding: 0 0.25em;
-}
 
 .fieldWithErrors {
   padding: 2px;
@@ -115,24 +119,11 @@ legend {
   list-style: square;
 }
 
-h1 { color: #528BC0 }
 
-ul {
-  list-style-position: outside;
-  color: #FF6619;
-}
+/* Class and ID-specific CSS */
 
-#time {
-    font-weight: bold;
-    font-size: 10px;
-}
-
-.group {
-    font-weight: bold;
-    border: 1px solid #CCC;
-    background-color: #FCF1C3;
+#content {
     padding: 10px;
-    width: 200px;
 }
 
 .inviter  { color: #2CAAE1; }
