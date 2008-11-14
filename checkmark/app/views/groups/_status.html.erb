@@ -18,7 +18,7 @@
           <td><span class="<%= 'status ' + mbr.status %>"><%= mbr.status %></span></td>
           <% if mbr.status == 'rejected' -%>
             <td><%= link_to_remote "x", :method => "delete", :url => { 
-              :controller => 'groups', :action => 'remove_member', 
+              :controller => 'groups', :action => 'remove_rejected', 
               :id => @assignment.id, :member_id => mbr.id} %></td>
           <% end -%>
         </tr>

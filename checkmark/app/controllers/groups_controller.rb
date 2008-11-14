@@ -1,6 +1,6 @@
 class GroupsController < ApplicationController
   
-  before_filter      :authorize,      :only => [:manage]
+  before_filter      :authorize,      :only => [:manage, :remove_member]
   # TODO filter (except index) to make sure assignment is a group assignment
   
   def index
@@ -80,12 +80,12 @@ class GroupsController < ApplicationController
   end
   
   # Remove rejected member
-  def remove_member
+  def remove_rejected
     return unless request.delete?
     @group = current_user.group_for(params[:id]) # assert not nil
     
     return unless @group.inviter == current_user
-    @group.remove_member(params[:member_id])
+    @group.remove_rejected(params[:member_id])
     render :update do |page|
       page.visual_effect(:fade, "mbr_#{params[:member_id]}")
     end
@@ -93,6 +93,13 @@ class GroupsController < ApplicationController
   
   
   # Group administration functions -----------------------------------------
+  
+  def manage_new
+    @assignment = Assignment.find(params[:id])
+    
+    # TODO do we want to list students not in group?
+    @groups = @assignment.groups.all(:include => [:memberships])
+  end
 
   # Gives a csv list of group members for a specific assignment
   # for each group, members are listed then the last submission time followed by used grace days

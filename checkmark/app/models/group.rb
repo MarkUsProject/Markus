@@ -114,10 +114,18 @@ class Group < ActiveRecord::Base
     return member.save
   end
   
-  # Removes the member rejected by its membership id
+  # Removes the member by its membership id
   def remove_member(mbr_id)
     member = memberships.find(mbr_id)
-    member.destroy if member.status == 'rejected'
+    member.destroy if member
+  end
+  
+  # Removes the member rejected by its membership id
+  # Used as safeguard when student deletes the record
+  def remove_rejected(mbr_id)
+    memberships.destr
+    member = memberships.find(mbr_id)
+    member.destroy if member && member.status == 'rejected'
   end
   
   # Unrefactored code...
