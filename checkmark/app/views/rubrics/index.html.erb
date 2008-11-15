@@ -61,7 +61,7 @@
 		width: 415px;
 		border: 1px solid #000000;
 	}
-	.criterion_holder_selected {
+	.criterion_holder_selected, .rubric_level {
             background: #CCCCFF;
         }
         .criterion_title_div {
@@ -122,11 +122,14 @@
 <%= stylesheet_link_tag("tabs") %>
 <%= javascript_include_tag  'livepipe' %>
 <%= javascript_include_tag  'tabs' %>
+<%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
 
 <script type="text/javascript" language="JavaScript">
-	
+
 	var Criterion = Class.create({
-		initialize: function(name, description, weight, levels) {
+		initialize: function(name, description, weight,passed_levels, exists_in_db, id) {
+                        this.id = id;
+
 			function done_edit(event) { 
 				$('pull_focus').select();
 				$('pull_focus').focus();
@@ -134,6 +137,8 @@
 				Event.element(event).addClassName('hover_edit');
 				made_change();
 			}
+
+                        this.exists_in_db = exists_in_db;
 
 			//Create the root div to hold on screen elements
 			var root_div = new Element('div', {'class': 'criterion'});
@@ -175,9 +180,9 @@
 			}
 			$(delete_button).observe('click', do_delete.bindAsEventListener(null, this));
 			
-			$(root_div).insert(cri_name, {position: 'top'});
+			$(root_div).insert(cri_name, {'position': 'top'});
 			$(root_div).insert(delete_button);
-			$(root_div).insert(new Element('div', {'class':'clear'}), {position: 'bottom'});
+			$(root_div).insert(new Element('div', {'class':'clear'}), {'position': 'bottom'});
 
 			//The Criterion weight element
 			
@@ -217,12 +222,11 @@
 			$(cri_weight_container).insert(cri_weight_dec);
 			$(cri_weight_container).insert(this.weight_input);
 			$(cri_weight_container).insert(cri_weight_inc);
-			$(root_div).insert(cri_weight_container, {position: 'bottom'});
+			$(root_div).insert(cri_weight_container, {'position': 'bottom'});
 			
 			//The Criterion description element
-			this.description = description;
-			var cri_description = new Element('textarea', {'class':'criterion_textarea_description'});
-			$(cri_description).update(this.description);
+			this.cri_description = new Element('textarea', {'class':'criterion_textarea_description'});
+			$(this.cri_description).update(description);
 			
 			this.set_description = new Element('input', {'type':'button', 'value':'Set Description'});
 			$(this.set_description).hide();
@@ -236,8 +240,8 @@
 				}
 			}
 			
-			$(cri_description).observe('click', show_set_description.bindAsEventListener(null, this.set_description, true));
-			$(cri_description).observe('blur', show_set_description.bindAsEventListener(null, this.set_description, false));
+			$(this.cri_description).observe('click', show_set_description.bindAsEventListener(null, this.set_description, true));
+			$(this.cri_description).observe('blur', show_set_description.bindAsEventListener(null, this.set_description, false));
 			$(this.set_description).observe('click', function(event) {
 				Event.element(event).hide(); 
 				$('pull_focus').select();
@@ -245,17 +249,20 @@
 				made_change();
 			});
 			
-			$(root_div).insert(cri_description, {position: 'bottom'});
-			$(root_div).insert(this.set_description, {position: 'bottom'});
+			$(root_div).insert(this.cri_description, {'position': 'bottom'});
+			$(root_div).insert(this.set_description, {'position': 'bottom'});
 
                         this.root_div_holder = new Element('div', {'class':'criterion_holder'});
                         this.title_div = new Element('div', {'class':'criterion_title_div'});
+                        
                         $(this.title_div).update(this.name);
                         $(this.title_div).hide();
                         
                         function show_me(event, criterion) {
                             criterion.show();
-                            $(selected_criterion).hide();
+                            if(selected_criterion != null) {
+                                $(selected_criterion).hide();
+                            }
                             selected_criterion = criterion;
                         }
 
@@ -265,33 +272,67 @@
                         this.root_div_holder.insert($(this.root_div), {'position':'bottom'});
 
 			//Create Criterion Levels
-			
-			this.levels = levels;
+			this.levels_holder = new Element('div', {'class':'levels_holder'});
+
+                       passed_levels.each(function(level, index)  {
+                            var level_div = new Element('div', {'class':'rubric_level'});
+                            var a_level = $H();
+
+                            var level_header = new Element('div');
+                            $(level_header).update("Level " + index);
+                            level_div.insert(level_header);
+
+                            var name_input = new Element('input', {'type':'text','value':level.name,'class':'level_input_name'});
+                            a_level['name'] = name_input;
+                            level_div.insert(name_input);
+
+                            var description_input = new Element('textarea', {'class':'level_textarea_description'});
+                            $(description_input).update(level.description);
+                            a_level['description'] = description_input;
+                            level_div.insert(description_input);
+
+                            var disabled_input = new Element('input', {'type':'checkbox'});
+                            a_level['disabled'] = disabled_input;
+                            level_div.insert(disabled_input);
+
+                            this.levels.push(a_level);
+                            this.levels_holder.insert(level_div);
+                        }, this);
+			//this.levels = levels;
+                        $('rubric_levels').insert(this.levels_holder);
+                        $(this.levels_holder).hide();
 
 		},
 		hide: function() {
-                 new Effect.BlindUp(this.root_div);
-                 new Effect.Appear(this.title_div);
+                $(this.root_div).hide();
+                $(this.title_div).show();
+                 //new Effect.BlindUp(this.root_div);
+                 //new Effect.Appear(this.title_div);
+                 $(this.levels_holder).hide();
                  $(this.root_div_holder).removeClassName('criterion_holder_selected');
 		},
 		show: function() {
-                 new Effect.BlindDown(this.root_div);
-		 new Effect.Fade(this.title_div);
+                // new Effect.BlindDown(this.root_div);
+		 //new Effect.Fade(this.title_div);
+                $(this.root_div).show();
+                $(this.title_div).hide();
                  $(this.root_div_holder).addClassName('criterion_holder_selected');
 		 $('selected_criterion_name').update(this.name);
-		//TODO: Remove 
-		$('rubric_levels').show();
+		$(this.levels_holder).show();
 
 		},
+                id: null,
+                exists_in_db: null,
 		root_div: null,
                 root_div_holder: null,
                 title_div: null,
 		cri_name: null,
-		description_input: null,
-		weight_display: null,
+		cri_description: null,
+		weight_input: null,
 		name: null,
 		description: null,
 		weight: null,
+                levels_holder: null,
 		levels: $A()
 	})
 
@@ -302,16 +343,19 @@
 		add: function(criterion) {
 			this.root_array.push(criterion);
 			$(this.root_div).insert(criterion.root_div_holder, {position: 'bottom'});
-			$('selected_criterion_name').update(criterion.name);
-			//TODO: Remove 
-			$('rubric_levels').show();
+                        $('selected_criterion_name').update(criterion.name);
 		},
+                unselect_all: function() {
+                    this.root_array.each(function(criterion) {
+                        criterion.hide();
+                    });
+                },
 		remove: function(criterion) {
 			this.root_array = this.root_array.without(criterion);
 			$(criterion.root_div_holder).remove();
 			$('selected_criterion_name').update('');
 			//TODO: Remove 
-			$('rubric_levels').hide();
+			$(criterion.levels_holder).remove();
 		},
 		root_div: null,
 		root_array: $A()
@@ -320,15 +364,61 @@
 	var c_list = null;
 	document.observe("dom:loaded", function() {
 		c_list = new CriterionList($('rubric_criteria_pane_list'));
+                //Here's where the current criterias / levels get added
+
+               //TODO:  Fixups
+                <%@assignment.rubric_criterias.each{|criterion|%>
+                    c_list.add(new Criterion('<%=criterion.name%>', '<%=criterion.description%>', <%=criterion.weight%>, [
+                        <%criterion.rubric_levels.each{|level| %>
+                          {'name':'<%=level.name%>', 'description':'<%=level.description%>'}
+                        <%=',' unless level == criterion.rubric_levels.last%>
+                        <% } %>
+                        
+                    ], true, <%=criterion.id%>));
+                <% } %>
+                if (c_list.root_array.length > 0) {
+                    $('rubric_criteria_pane_instructions').hide();
+                }
+                c_list.unselect_all();
 	});
 </script>
 
 <script type="text/javascript" language="JavaScript">
 	var new_criterion_index = 0;
         var selected_criterion = null;
-	
+        var commands = $A();	
+
 	function save_changes() {
 		//TODO
+
+                c_list.root_array.each(function(criterion, index) {
+                    var criterion_command = {};
+                    criterion_command['name'] = $F(criterion.cri_name);
+                    criterion_command['description'] = $(criterion.cri_description).value;
+                    criterion_command['weight'] = $F(criterion.weight_input);
+                    criterion_command['index'] = index;
+
+                    if(criterion.exists_in_db) {
+                        criterion_command['command'] = 'modify';
+                       criterion_command['id'] = criterion.id;
+
+                    }
+                    else {
+                        criterion_command['command'] = 'new';
+                    }
+                    commands.push(criterion_command);
+                });
+                console.info(commands.toJSON());
+                new Ajax.Request('<%= url_for(:action => 'modify', :authenticity_token => form_authenticity_token) %>',
+                  {
+                    method:'post',
+                    parameters: {'test': 'can you read me?'},
+                    onSuccess: function(transport){
+                      console.log("Success");
+                    },
+                    onFailure: function(){ console.error('Something went wrong...') }
+                  });
+
 		$('rubric_status').update('Changes saved!');
 		$('rubric_status').removeClassName('save_warning');
 		$('rubric_status').removeClassName('save_error');
@@ -336,13 +426,22 @@
 	}
 	function add_criterion(){
 		made_change();
-		var blank_criterion = new Criterion('New Criterion', '', 1);
+		var blank_criterion = new Criterion('New Criterion', '', 1, 
+                   [{'name':'Horrible', 'description':'This criterion was not satisfied whatsoever', 'disabled':false},
+                   {'name':'Satisfactory', 'description':'This criterion was satisfied', 'disabled':false},
+                   {'name':'Good', 'description':'This criterion was satisfied well', 'disabled':false},
+                   {'name':'Excellent', 'description':'This criterion was satisfied excellently', 'disabled':false},
+                 
+               
+                ]);
 		c_list.add(blank_criterion);
                 if(selected_criterion != null) {
                     selected_criterion.hide();
+                    $(selected_criterion.levels_holder).hide();
                 }
                 selected_criterion = blank_criterion;
-                $(selected_criterion.root_div_holder).addClassName('criterion_holder_selected');
+                selected_criterion.show();
+                    $(selected_criterion.root_div_holder).addClassName('criterion_holder_selected');
 		$('rubric_criteria_pane_instructions').hide();
 	}
 	function made_change() {
@@ -407,31 +506,8 @@ document.observe('dom:loaded', function() {
 			</div>
 			<div id="rubric_levels_pane_list">
 				
-				<!-- Fake out -->
-				<div class="rubric_level_holder" style="display: none;" id="rubric_levels">
-					<div class="rubric_level">
-						0. <input type="text" class="level_input_name" value="Not Applicable">
-						<textarea class="level_textarea_description">This criterion was not satisfied whatsoever</textarea>
-					</div>
-					<div class="rubric_level">
-						1. <input type="text" class="level_input_name" value="Needs Improvement">
-						<textarea class="level_textarea_description">This criterion was met, but work needs considerable improvement</textarea>
-					</div>
-					<div class="rubric_level">
-						2. <input type="text" class="level_input_name" value="Satisfactory">
-						<textarea class="level_textarea_description">This criterion was met, but could stand some improvement</textarea>
-					</div>
-					<div class="rubric_level">
-						3. <input type="text" class="level_input_name" value="Good">
-						<textarea class="level_textarea_description">This criterion was met</textarea>
-					</div>
-					<div class="rubric_level">
-						4. <input type="text" class="level_input_name" value="Excellent">
-						<textarea class="level_textarea_description">This criterion was met excellently!</textarea>
-					</div>
-
-				</div>
-				<!-- End Fake out -->
+                            <div class="rubric_level_holder" id="rubric_levels">
+                            </div>
 			</div>
 			
 			
@@ -444,5 +520,9 @@ document.observe('dom:loaded', function() {
 <form>
 	<input type="file" name="rubric_file" id="rubric_file">
 	<input type="submit" value="Upload File">
+</form>
+<form action="<%= url_for(:action => 'modify') %>" method="POST">
+<input type="hidden" name="authenticity_token" value="<%=form_authenticity_token%>">
+<input type="submit">
 </form>
 </div>
