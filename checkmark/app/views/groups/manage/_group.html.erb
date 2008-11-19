@@ -2,18 +2,25 @@
 # Erb template for inserting a new group for managing groups
 %>
 
+
 <div class="group" id="<%= "group_#{group.id}" %>">
-      <%= link_to_remote "x ", :method => 'delete',
-        :url => { :action => 'remove_group', :id => @assignment.id, :group_id => group.id }, 
-        :html => { :class => 'remove_group', :title => 'Delete this group' }, 
-        :confirm => 'This will remove all members in the group and delete all information associated with this group. Continue?' %>
+  <%= link_to_remote "x ", :method => 'delete',
+    :url => { :action => 'remove_group', :id => @assignment.id, :group_id => group.id }, 
+    :html => { :class => 'remove_group', :title => 'Delete this group' }, 
+    :confirm => 'This will remove all members in the group and delete all information associated with this group. Continue?' %>
     
-      <ul id="group_<%= group.id %>_list"></ul>
+  <ul id="group_<%= group.id %>_list">
+  <% group.memberships.all(:include => :user).each do |member| %>
+    <%= render :partial => "groups/manage/member", 
+      :locals => {:member => member, :group => group } %>
+    <% @students.delete(member.user.id) if @students %>
+  <% end -%>
+  </ul>
       
-      <p id="error_<%= group.id %>"></p>
-      <% form_remote_tag(:url => {:action => 'add_member', 
-          :id => @assignment.id, :group_id => group.id}) do %>
-        <%= text_field_tag "member", '' %>
-        <%= submit_tag "Add Member" %>
-      <% end -%>
+  <p id="error_<%= group.id %>"></p>
+  <% form_remote_tag(:url => {:action => 'add_member', 
+      :id => @assignment.id, :group_id => group.id}) do %>
+    <%= text_field_tag "member_name[#{group.id}]", '' %>
+    <%= submit_tag "Add Member" %>
+  <% end -%>
 </div>

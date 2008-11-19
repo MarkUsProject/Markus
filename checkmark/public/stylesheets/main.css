@@ -126,7 +126,14 @@ legend {
     padding: 10px;
 }
 
-.inviter  { color: #2CAAE1; }
-.pending  { color: #E91756; }
-.accepted { color: #3AB192; }
+.status { 
+  color: #FFF; 
+  padding-left: 0.5em; 
+  padding-right: 0.5em; 
+}
+
+.inviter { background: #6B006B; }
+.pending { background: #FFCC00; }
+.accepted { background: #00B366; }
+.rejected { background: #B32400; }
 

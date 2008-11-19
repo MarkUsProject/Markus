@@ -36,6 +36,8 @@
     color: #444444;
   }
 
+  #groups_container ul li { margin: 5px; }
+
   #groups_container a {
     color: #AA0000; /* link for delete */
   }
@@ -55,6 +57,15 @@
 
 </style>
 
+<script type="text/javascript" language="JavaScript">
+  function clearText(id) {
+    $("member_name[" + id + "]").value = "";
+  }
+  function focusText(id) {
+    $("member_name[" + id + "]").focus()
+  }
+</script>
+
 <h1>Manage Groups for <%= @assignment.name %></h1>
 
 <p><%= link_to_remote "Create a New Group", :method => 'post', 
@@ -65,27 +76,7 @@
 
   <div class="groups" id="groups">
     <% @groups.each do |group| -%>
-    <div class="group" id="<%= "group_#{group.id}" %>">
-      <%= link_to_remote "x ", :method => 'delete',
-        :url => { :action => 'remove_group', :id => @assignment.id, :group_id => group.id }, 
-        :html => { :class => 'remove_group', :title => 'Delete this group' }, 
-        :confirm => 'This will remove all members in the group and delete all information associated with this group. Continue?' %>
-    
-      <ul id="group_<%= group.id %>_list">
-      <% group.memberships.all(:include => :user).each do |member| %>
-        <%= render :partial => "groups/manage/member", 
-          :locals => {:member => member, :group => group } %>
-        <% @students.delete(member.user.id) %>
-      <% end -%>
-      </ul>
-      
-      <p id="error_<%= group.id %>"></p>
-      <% form_remote_tag(:url => {:action => 'add_member', 
-          :id => @assignment.id, :group_id => group.id}) do %>
-        <%= text_field_tag "member", '' %>
-        <%= submit_tag "Add Member" %>
-      <% end -%>
-    </div>
+      <%= render :partial => "groups/manage/group", :locals => {:group => group} %>
     <% end -%>
   </div>
 
