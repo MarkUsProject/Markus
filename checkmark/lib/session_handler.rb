@@ -40,6 +40,9 @@ module SessionHandler
   # => User has privilege to view the page/perform action
   # If not, then user is redirected to login page for authentication.
   def authenticate
+    # Note: testing depends on the fact that 'authenticated' means having the 
+    # session['uid'] and session['timeout'] set appropriately.  Make sure to 
+    # change AuthenticatedControllerTest if this is changed.
     if !session_expired? && logged_in?
       refresh_timeout  # renew timeout for this session
       @current_user = current_user
@@ -70,10 +73,12 @@ module SessionHandler
   
   # Refreshes the timeout for this session to be 
   # MAX_SESSION_PERIOD seconds from now, depending on the role
+  # This should be done on every page request or refresh that a user does.
   def refresh_timeout
     session[:timeout] = MAX_SESSION_PERIOD[current_user.role].seconds.from_now
   end
-    
+  
+  # Check if this current user's session has not yet expired.
   def session_expired?
     session[:timeout] == nil || session[:timeout] < Time.now
   end
