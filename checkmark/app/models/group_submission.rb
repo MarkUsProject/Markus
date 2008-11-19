@@ -8,4 +8,13 @@ class GroupSubmission < Submission
     group.inviter
   end
   
+  # Change the owner of this group submission 
+  # by renaming submission folder to this new owner
+  def owner=(member, sdir=SUBMISSIONS_PATH)
+    old_path = File.join(sdir, assignment.name, owner.user_name)
+    return unless File.exist?(old_path)  # no need to rename
+    new_path = File.join(sdir, assignment.name, member.user.user_name)
+    File.rename(old_path, new_path)
+  end
+  
 end

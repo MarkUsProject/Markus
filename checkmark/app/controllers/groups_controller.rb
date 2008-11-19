@@ -33,7 +33,7 @@ class GroupsController < ApplicationController
     render :update do |page|
       if @group.valid_with_base? && @group.save
         page.redirect_to :controller => 'submissions', 
-          :action => 'submit_sample', :id => @assignment.id
+          :action => 'submit', :id => @assignment.id
       else
         page.replace_html 'creategroup_error',
           :partial => 'groups/error_single', :locals => { :objekt => @group }
@@ -78,7 +78,7 @@ class GroupsController < ApplicationController
     end
     
     redirect_to :controller => 'submissions', 
-      :action => 'submit_sample', :id => @assignment.id
+      :action => 'submit', :id => @assignment.id
   end
   
   # Remove rejected member
@@ -98,12 +98,12 @@ class GroupsController < ApplicationController
   # Verify that all functions below are included in the authorize filter above
   
   def add_member
-    return unless (request.post? && params[:member])
+    return unless (request.post? && params[:member_name])
     
-    # add additional members to the group if requested
-    user = [params[:member]]
+    # add member to the group with status depending if group is empty or not
     group = Group.find(params[:group_id])
-    member = group.invite(user)
+    status = group.memberships.empty? ? 'inviter' : 'accepted'
+    member = group.invite(params[:member_name][group.id.to_s], status)
     
     render :update do |page|
       if group.valid_with_base? && group.save
@@ -111,9 +111,11 @@ class GroupsController < ApplicationController
         page.insert_html :bottom, "group_#{group.id}_list", 
           :partial => 'groups/manage/member', :locals => {:group => group, :member => member}
         # remove from 'no group' list if in there
-        page.remove "user_#{params[:member]}"
+        page.remove "user_#{params[:member_name][group.id.to_s]}"
+        page.call(:clearText, group.id.to_s)  # clear text
+        page.replace_html("error_#{group.id}", "")  # clear errors
       else
-         page.replace_html "error_#{group.id}",
+        page.replace_html "error_#{group.id}",
           :partial => 'groups/error_single', :locals => { :objekt => group }
       end
     end
@@ -121,14 +123,23 @@ class GroupsController < ApplicationController
   
   def remove_member
     return unless request.delete?
-    # TODO remove submissions in file system?
+    
     group = Group.find(params[:group_id])
     member = group.memberships.find(params[:mbr_id])  # use group as scope
     student = member.user  # need to find user name to add to student list
+    
+    if member.inviter?   # randomly assign new inviter and rename submission file
+      @assignment = Assignment.find(params[:id])
+      subm = @assignment.submission_by(student)
+      inviter = group.memberships.first(:status == 'accepted', :order => "created_at")
+      subm.owner = inviter  # assign new_inviter as submission owner
+      inviter.status = "inviter" && inviter.save
+    end
+    
     member.destroy
     render :update do |page|
       page.visual_effect(:fade, "mbr_#{params[:mbr_id]}", :duration => 0.5)
-      # TODO update list of users not in group
+      # add members back to student list
       page.insert_html :bottom, "student_list",  
         "<li id='user_#{student.user_name}'>#{student.user_name}</li>"
     end
@@ -144,6 +155,7 @@ class GroupsController < ApplicationController
     render :update do |page|
       page.insert_html :top, "groups", 
         :partial => "groups/manage/group", :locals => { :group => group }
+       page.call(:focusText, group.id.to_s)
     end
   end
   
@@ -152,11 +164,16 @@ class GroupsController < ApplicationController
     # TODO remove groups for all assignment or just for the specific assignment?
     # TODO remove submissions in file system?
     group = Group.find(params[:group_id])
-    group.destroy  # destroys group for all assignments linked to it
     render :update do |page|
+      # update list of users not in group
+      group.memberships.all(:include => :user).each do |member|
+        student = member.user
+        page.insert_html :bottom, "student_list",  
+          "<li id='user_#{student.user_name}'>#{student.user_name}</li>"
+      end
       page.visual_effect(:fade, "group_#{params[:group_id]}", :duration => 0.5)
-      # TODO update list of users not in group
     end
+    group.destroy
   end
   
   def manage_new
@@ -166,54 +183,6 @@ class GroupsController < ApplicationController
     memberships = @groups.map { |g| g.memberships }
     user_groups = memberships.flatten.map { |m| m.user.id }
     @students = User.students.index_by { |s| s.id }
-  end
-
-  # Gives a csv list of group members for a specific assignment
-  # for each group, members are listed then the last submission time followed by used grace days
-  # for students not in a group, only the user name is listed
-  # groups with no submission has a beginning of epoch time as last submission time
-  def manage
-    @assignment = Assignment.find(params[:id])
-    redirect_to :action => 'index' unless @assignment
-    
-    # process csv for all groups and students not in a group
-    
-    # join the list of all students with the group table, 
-    # order by group number given a specified assignment
-    
-    select_stmt = "SELECT * "
-    from_stmt = "FROM (SELECT * FROM groups WHERE groups.assignment_id = E'#{@assignment.id}') AS g "
-    join_stmt = "RIGHT OUTER JOIN users AS u on u.id = g.user_id "
-    where_stmt = "WHERE u.role = '#{User::STUDENT}' "
-    order_stmt = "ORDER BY g.group_number ASC "
-    
-    @students = User.find_by_sql(select_stmt + from_stmt + join_stmt + where_stmt + order_stmt)
-    
-    @groups = []
-    @students.group_by(&:group_number).each do |gn, members|
-      if gn
-        
-        group = []
-        last_submission = Time.at(0)
-        members.each do |m|
-          m.status == 'pending' ? @groups << m.user_name : group << m.user_name
-          # get max of last submission date for each member
-          if last_submission
-            submitted_at = Submission.last_submission(m, gn, @assignment)
-            last_submission = [last_submission, submitted_at].max
-          else
-            last_submission = m.submitted_at
-          end
-        end
-        
-        # append last submission time and used grace days
-        group << Submission.get_version(last_submission)
-        group << Submission.get_used_grace_days(last_submission, @assignment)
-        @groups.insert(0, group)
-      else
-        members.each { |m| @groups << [m.user_name] }
-      end
-    end
   end
   
 end

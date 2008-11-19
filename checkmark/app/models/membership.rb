@@ -14,4 +14,8 @@ class Membership < ActiveRecord::Base
   def validate
     errors.add_to_base("User must be a student") if user && !user.student?
   end
+  
+  def inviter?
+    return status == 'inviter'
+  end
 end
