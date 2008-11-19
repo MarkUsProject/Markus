@@ -6,7 +6,29 @@ class RubricsController < ApplicationController
     @assignment = Assignment.find(params[:id])
   end
   
-  def modify
-      render :text => params.inspect   
+  def update
+      commands =  ActiveSupport::JSON.decode(params[:commands])
+      @assignment = Assignment.find(params[:assignment_id])
+      
+      commands.each{|command_hash|
+       if command_hash['command'] == 'modify'
+         rc = RubricCriteria.find(command_hash['id'])
+         rc.name = command_hash['name']
+         rc.weight = command_hash['weight']
+         rc.description = command_hash['description']
+         #TODO:  Modify levels too...
+         rc.save
+         elsif command_hash['command'] == 'new' 
+           rc = RubricCriteria.new
+           rc.name = command_hash['name']
+           rc.weight = command_hash['weight']
+           rc.description = command_hash['description']
+           rc.assignment = Assignment.find(params[:assignment_id])
+           #TODO:  Create levels...
+           rc.save
+      end
+      
+      }
+      render :text => 'success'
   end
 end
