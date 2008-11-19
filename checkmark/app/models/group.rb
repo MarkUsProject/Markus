@@ -2,7 +2,7 @@
 # Maintains group information for a given user on a specific assignment
 class Group < ActiveRecord::Base
   
-  has_many  :memberships
+  has_many  :memberships, :dependent => :destroy
   has_many  :members, :through => :memberships, :source => :user, 
     :conditions => "status != 'rejected'"
   has_many  :joined_members,  # members who are members of this group
@@ -11,7 +11,7 @@ class Group < ActiveRecord::Base
     :conditions => "status = 'inviter' and status = 'accepted'"
   
   has_and_belongs_to_many :assignments
-  has_many  :submissions, :class_name => 'GroupSubmission'
+  has_many  :submissions, :class_name => 'GroupSubmission', :dependent => :destroy
   
   
   def validate_on_create
@@ -69,14 +69,16 @@ class Group < ActiveRecord::Base
   end
   
   # Edit functions -------------------------------------------------------
-  
+
   # Invites each user in 'members' by its user name, to this group
-  def invite(members)
+  def invite(members, status='pending')
+    members = [members] if members.is_a?(String) # put string in an array
     members.each do |m|
       next if m.blank?  # ignore blank users
       user = User.find_by_user_name(m)
       if user && user.student?
-        add_member(user)
+        member = add_member(user, status)
+        return member if members.size == 1  # return immediately
       else
         errors.add_to_base("Username '#{m}' is not a valid student user name.")
       end
@@ -91,7 +93,9 @@ class Group < ActiveRecord::Base
         return
       end
     end
-    memberships << Membership.new(:user => user, :status => status)
+    member = Membership.new(:user => user, :status => status)
+    memberships << member
+    return member
   end
   
   # Changes the membership status of member from 'pending' to 'accepted'
