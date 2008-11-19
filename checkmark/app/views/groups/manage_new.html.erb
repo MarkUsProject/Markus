@@ -1,0 +1,106 @@
+<style>
+
+  #student_container {
+    color: #444444;
+    width: 250px;
+    float: left;
+  }
+
+  #student_container ul {
+    height: 500px;
+    overflow: auto;
+    list-style-type: none;
+  }
+
+  #groups_container {
+    width: 350px;
+    float: left;
+    border: 1px solid #333;
+    margin-right: 15px;
+  }
+
+  .groups {
+    overflow: auto;
+    height: 500px;
+  }
+
+  #groups_container .header {
+    height: 60px;
+    padding: 5px;
+    background: #DDDDDD none repeat scroll 0 0;
+  }
+
+  #groups_container ul {
+    list-style: none;
+    padding: 0;
+    color: #444444;
+  }
+
+  #groups_container a {
+    color: #AA0000; /* link for delete */
+  }
+
+  .remove_group { float: right; }
+
+  .group {
+    font-weight: bold;
+    border: 1px solid #CCC;
+    background-color: #FCF1C3;
+    padding: 10px;
+    width: 300px;
+    margin: 5px;
+  }
+
+  .fail-no-img { width: 250px; font-size: 80%; }
+
+</style>
+
+<h1>Manage Groups for <%= @assignment.name %></h1>
+
+<p><%= link_to_remote "Create a New Group", :method => 'post', 
+  :url => { :action => 'add_group', :id => @assignment.id } %></p>
+
+<div id="groups_container">
+  <div class="header"><h2>Groups for <%= @assignment.name %></h2></div>
+
+  <div class="groups" id="groups">
+    <% @groups.each do |group| -%>
+    <div class="group" id="<%= "group_#{group.id}" %>">
+      <%= link_to_remote "x ", :method => 'delete',
+        :url => { :action => 'remove_group', :id => @assignment.id, :group_id => group.id }, 
+        :html => { :class => 'remove_group', :title => 'Delete this group' }, 
+        :confirm => 'This will remove all members in the group and delete all information associated with this group. Continue?' %>
+    
+      <ul id="group_<%= group.id %>_list">
+      <% group.memberships.all(:include => :user).each do |member| %>
+        <%= render :partial => "groups/manage/member", 
+          :locals => {:member => member, :group => group } %>
+        <% @students.delete(member.user.id) %>
+      <% end -%>
+      </ul>
+      
+      <p id="error_<%= group.id %>"></p>
+      <% form_remote_tag(:url => {:action => 'add_member', 
+          :id => @assignment.id, :group_id => group.id}) do %>
+        <%= text_field_tag "member", '' %>
+        <%= submit_tag "Add Member" %>
+      <% end -%>
+    </div>
+    <% end -%>
+  </div>
+
+</div>
+
+<% # order of processing students is important. we go through each member 
+   # one by one and delete them above from the list of students 
+   # if they are already in a group %>
+
+<div id="student_container">
+  <h3>Users not in group:</h3>
+
+  <ul id="student_list">
+    <% @students.each do |user_id, s| -%>
+      <li id="user_<%= s.user_name %>"><%= s.user_name %></li>
+    <% end -%>
+  </ul>
+</div>

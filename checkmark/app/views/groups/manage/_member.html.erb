@@ -1,0 +1,10 @@
+<%#
+# Erb template for inserting a member into a group for managing groups
+%>
+
+<li id="<%= "mbr_#{member.id}" %>">
+  <%= link_to_remote "x ", :method => 'delete', 
+    :url => { :action => 'remove_member', :group_id => group.id, :mbr_id => member.id }, 
+    :html => { :title => 'Remove this member from this group' } %>
+  <%= member.user.user_name %>
+</li>
