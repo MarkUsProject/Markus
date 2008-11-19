@@ -3,11 +3,13 @@ class Submission < ActiveRecord::Base
   belongs_to  :assignment
   belongs_to  :user
   belongs_to  :group
-  has_many    :submission_files
+  has_many    :submission_files, :dependent => :destroy
   
-  belongs_to  :assignment_file  # TODO deprecated
-  # TODO cannot submit if pending
-  # TODO test distinct keywords
+  belongs_to  :assignment_file
+  
+  # For group submissions, actions here must only be accessible to members
+  # that has inviter or accepted status. This check is done when fetching 
+  # the user or group submission from an assignment (see controller).
   
   # Handles file submissions
   def submit(user, file, submission_time, sdir=SUBMISSIONS_PATH)
@@ -15,7 +17,7 @@ class Submission < ActiveRecord::Base
     
     # create a backup if file already exists
     dir = submit_dir(sdir)
-    filepath = File.join(dir, filename, sdir=SUBMISSIONS_PATH)
+    filepath = File.join(dir, filename)
     create_backup(filename) if File.exists?(filepath)
     
     # create a submission_file record
@@ -68,17 +70,13 @@ class Submission < ActiveRecord::Base
     return reqfiles.concat(result)
   end
   
-  # Returns the last submission time with the given filename
+  # Returns the last submission time with the given filename.  
+  # Returns epoch time if no such file exists.
   def last_submission_time_by_filename(filename)
     conditions = ["filename = ?", filename]
     # need to convert to local time
-    submission_files.maximum(:submitted_at, :conditions => conditions).getlocal
-  end
-  
-  # Returns the last submission time for any submitted file
-  def last_submission_time
-    # need to convert to local time
-    submission_files.maximum(:submitted_at).getlocal
+    ts = submission_files.maximum(:submitted_at, :conditions => conditions)
+    return ts ? ts.getlocal : ts  # return nil if no such file exists
   end
   
   # Returns the submission directory for this user
@@ -96,6 +94,7 @@ class Submission < ActiveRecord::Base
   #   filepath - absolute path of the file
   def create_backup(filename)
     ts = last_submission_time_by_filename(filename)
+    return unless ts
     timestamp = ts.strftime("%m-%d-%Y-%H-%M-%S")
     
     # create backup directory and move file
