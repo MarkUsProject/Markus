@@ -367,7 +367,7 @@
                 //Here's where the current criterias / levels get added
 
                //TODO:  Fixups
-                <%@assignment.rubric_criterias.each{|criterion|%>
+                <% @assignment.rubric_criterias.each{|criterion| %>
                     c_list.add(new Criterion('<%=criterion.name%>', '<%=criterion.description%>', <%=criterion.weight%>, [
                         <%criterion.rubric_levels.each{|level| %>
                           {'name':'<%=level.name%>', 'description':'<%=level.description%>'}
@@ -408,21 +408,23 @@
                     }
                     commands.push(criterion_command);
                 });
-                console.info(commands.toJSON());
-                new Ajax.Request('<%= url_for(:action => 'modify', :authenticity_token => form_authenticity_token) %>',
-                  {
-                    method:'post',
-                    parameters: {'test': 'can you read me?'},
+                new Ajax.Request('../update',
+                  {asynchronous:true,
+                  method: 'get',
+                     parameters:{'assignment_id': <%= @assignment.id %>,'commands':commands.toJSON()},
                     onSuccess: function(transport){
                       console.log("Success");
+                      $('rubric_status').update('Changes saved!');
+                      $('rubric_status').removeClassName('save_warning');
+                      $('rubric_status').removeClassName('save_error');
+                      $('rubric_status').addClassName('save_success');
                     },
                     onFailure: function(){ console.error('Something went wrong...') }
                   });
-
-		$('rubric_status').update('Changes saved!');
+		$('rubric_status').update('Saving changes...');
 		$('rubric_status').removeClassName('save_warning');
 		$('rubric_status').removeClassName('save_error');
-		$('rubric_status').addClassName('save_success');
+                $('rubric_status').removeClassName('save_success');
 	}
 	function add_criterion(){
 		made_change();
@@ -521,8 +523,9 @@ document.observe('dom:loaded', function() {
 	<input type="file" name="rubric_file" id="rubric_file">
 	<input type="submit" value="Upload File">
 </form>
-<form action="<%= url_for(:action => 'modify') %>" method="POST">
+<form action="<%= url_for(:action => 'update') %>" method="POST">
 <input type="hidden" name="authenticity_token" value="<%=form_authenticity_token%>">
+<input type="hidden" name="val_from_submit" value="This works!">
 <input type="submit">
 </form>
 </div>
