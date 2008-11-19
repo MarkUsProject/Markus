@@ -1,6 +1,7 @@
 class GroupsController < ApplicationController
   
-  before_filter      :authorize,      :only => [:manage, :remove_member]
+  before_filter      :authorize, 
+    :only => [:manage, :add_member, :remove_member, :add_group, :remove_group]
   # TODO filter (except index) to make sure assignment is a group assignment
   
   def index
@@ -20,6 +21,7 @@ class GroupsController < ApplicationController
     
     # Set this user as inviter
     @group.add_member(current_user, 'inviter')
+    # check if user is forming group on its own
     unless params[:group] && params[:group][:single] == '1'
       if params[:members]
         users = params[:members].values.map { |m| m['user_name'].strip  }
@@ -93,12 +95,77 @@ class GroupsController < ApplicationController
   
   
   # Group administration functions -----------------------------------------
+  # Verify that all functions below are included in the authorize filter above
+  
+  def add_member
+    return unless (request.post? && params[:member])
+    
+    # add additional members to the group if requested
+    user = [params[:member]]
+    group = Group.find(params[:group_id])
+    member = group.invite(user)
+    
+    render :update do |page|
+      if group.valid_with_base? && group.save
+        # add member to the group list
+        page.insert_html :bottom, "group_#{group.id}_list", 
+          :partial => 'groups/manage/member', :locals => {:group => group, :member => member}
+        # remove from 'no group' list if in there
+        page.remove "user_#{params[:member]}"
+      else
+         page.replace_html "error_#{group.id}",
+          :partial => 'groups/error_single', :locals => { :objekt => group }
+      end
+    end
+  end
+  
+  def remove_member
+    return unless request.delete?
+    # TODO remove submissions in file system?
+    group = Group.find(params[:group_id])
+    member = group.memberships.find(params[:mbr_id])  # use group as scope
+    student = member.user  # need to find user name to add to student list
+    member.destroy
+    render :update do |page|
+      page.visual_effect(:fade, "mbr_#{params[:mbr_id]}", :duration => 0.5)
+      # TODO update list of users not in group
+      page.insert_html :bottom, "student_list",  
+        "<li id='user_#{student.user_name}'>#{student.user_name}</li>"
+    end
+  end
+  
+  def add_group
+    return unless request.post?
+    @assignment = Assignment.find(params[:id])
+    # Create new group for this assignment
+    group = Group.new
+    group.assignments << @assignment
+    group.save(false) # skip validation requiring groups to have at least 1 member 
+    render :update do |page|
+      page.insert_html :top, "groups", 
+        :partial => "groups/manage/group", :locals => { :group => group }
+    end
+  end
+  
+  def remove_group
+    return unless request.delete?
+    # TODO remove groups for all assignment or just for the specific assignment?
+    # TODO remove submissions in file system?
+    group = Group.find(params[:group_id])
+    group.destroy  # destroys group for all assignments linked to it
+    render :update do |page|
+      page.visual_effect(:fade, "group_#{params[:group_id]}", :duration => 0.5)
+      # TODO update list of users not in group
+    end
+  end
   
   def manage_new
     @assignment = Assignment.find(params[:id])
-    
-    # TODO do we want to list students not in group?
     @groups = @assignment.groups.all(:include => [:memberships])
+    
+    memberships = @groups.map { |g| g.memberships }
+    user_groups = memberships.flatten.map { |m| m.user.id }
+    @students = User.students.index_by { |s| s.id }
   end
 
   # Gives a csv list of group members for a specific assignment
