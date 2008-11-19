@@ -128,12 +128,16 @@ class GroupsController < ApplicationController
     member = group.memberships.find(params[:mbr_id])  # use group as scope
     student = member.user  # need to find user name to add to student list
     
-    if member.inviter?   # randomly assign new inviter and rename submission file
+    inviter = nil  # new inviter if member being removed is an inviter
+    # randomly assign new inviter and rename submission file
+    if member.inviter?  && group.memberships.count > 1
       @assignment = Assignment.find(params[:id])
       subm = @assignment.submission_by(student)
-      inviter = group.memberships.first(:status == 'accepted', :order => "created_at")
-      subm.owner = inviter  # assign new_inviter as submission owner
-      inviter.status = "inviter" && inviter.save
+      inviter = group.memberships.first(:order => "created_at", 
+        :conditions => ["status = 'accepted'"])
+      subm.owner = inviter.user  # assign new_inviter as submission owner
+      inviter.status = "inviter"
+      inviter.save
     end
     
     member.destroy
@@ -142,6 +146,12 @@ class GroupsController < ApplicationController
       # add members back to student list
       page.insert_html :bottom, "student_list",  
         "<li id='user_#{student.user_name}'>#{student.user_name}</li>"
+      if inviter
+        # replace the status of the new inviter to 'inviter'
+        page.remove "mbr_#{inviter.id}"
+        page.insert_html :top, "group_#{group.id}_list", 
+          :partial => 'groups/manage/member', :locals => {:group => group, :member => inviter}
+      end
     end
   end
   
@@ -155,7 +165,7 @@ class GroupsController < ApplicationController
     render :update do |page|
       page.insert_html :top, "groups", 
         :partial => "groups/manage/group", :locals => { :group => group }
-       page.call(:focusText, group.id.to_s)
+      page.call(:focusText, group.id.to_s)
     end
   end
   

@@ -1,5 +1,7 @@
 <h1><%=h @title %></h1>
 
+<p><%= link_to "Manage Rubric for this assignment", 
+  :controller => 'rubrics', :action => 'index', :id => @assignment.id %></p>
 
 <% form_for :assignment, :url => {:action => action, :id => params[:id] } do |f| -%>
 

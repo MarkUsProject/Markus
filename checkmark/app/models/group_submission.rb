@@ -13,7 +13,7 @@ class GroupSubmission < Submission
   def owner=(member, sdir=SUBMISSIONS_PATH)
     old_path = File.join(sdir, assignment.name, owner.user_name)
     return unless File.exist?(old_path)  # no need to rename
-    new_path = File.join(sdir, assignment.name, member.user.user_name)
+    new_path = File.join(sdir, assignment.name, member.user_name)
     File.rename(old_path, new_path)
   end
   
