@@ -212,6 +212,7 @@
 					criterion.weight += value;
 					$(criterion.weight_input).value = criterion.weight;
 				}
+                                $(criterion.title_div).update(criterion.name + ' - ' + criterion.weight);
 			}
 
 			$(cri_weight_dec).observe('click', mod_weight.bindAsEventListener(null, this, -1));
@@ -255,7 +256,7 @@
                         this.root_div_holder = new Element('div', {'class':'criterion_holder'});
                         this.title_div = new Element('div', {'class':'criterion_title_div'});
                         
-                        $(this.title_div).update(this.name);
+                        $(this.title_div).update(this.name + ' - ' + $F(this.weight_input));
                         $(this.title_div).hide();
                         
                         function show_me(event, criterion) {
@@ -408,18 +409,19 @@
                     }
                     commands.push(criterion_command);
                 });
-                new Ajax.Request('../update',
-                  {asynchronous:true,
-                  method: 'get',
-                     parameters:{'assignment_id': <%= @assignment.id %>,'commands':commands.toJSON()},
-                    onSuccess: function(transport){
-                      console.log("Success");
-                      $('rubric_status').update('Changes saved!');
-                      $('rubric_status').removeClassName('save_warning');
-                      $('rubric_status').removeClassName('save_error');
-                      $('rubric_status').addClassName('save_success');
-                    },
-                    onFailure: function(){ console.error('Something went wrong...') }
+                new Ajax.Request('../update', 
+                  {
+                  asynchronous: true,
+                  method: 'post', 
+                  parameters: { 'assignment_id': <%= @assignment.id %>,'commands':commands.toJSON() },
+                  onSuccess: function(transport) {
+                    console.log("Success");
+                    $('rubric_status').update('Changes saved!');
+                    $('rubric_status').removeClassName('save_warning');
+                    $('rubric_status').removeClassName('save_error');
+                    $('rubric_status').addClassName('save_success');
+                  },
+                  onFailure: function() { console.error('Something went wrong...') }
                   });
 		$('rubric_status').update('Saving changes...');
 		$('rubric_status').removeClassName('save_warning');
