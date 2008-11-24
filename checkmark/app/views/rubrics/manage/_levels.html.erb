@@ -1,0 +1,19 @@
+<%#
+# Erb template for display rubric criterion levels in the assignment rubric manager
+%>
+<div id="rubric_levels_top"></div>
+<% levels.each do |level|%>
+<div class="rubric_level">
+  <div>
+    Level <%=level.level%>
+    <input type="text" value="<%=level.name%>" class="level_input_name" id="<%="level_inputs_#{level.id}_name"%>">
+    <%=javascript_tag "$('level_inputs_#{level.id}_name').observe('keypress', function(event, input) {if (event.keyCode == Event.KEY_RETURN) {level_input_edited('name', Event.element(event), #{level.id});}})"%>
+    <%=javascript_tag "$('level_inputs_#{level.id}_name').observe('blur', function(event, input) {level_input_edited('name', Event.element(event), #{level.id});})"%>
+
+    <textarea class="level_textarea_description" id="<%="level_inputs_#{level.id}_description"%>" onclick="$('<%="level_inputs_#{level.id}_set_desc"%>').show();" onblur="level_input_edited('description', $('<%="level_inputs_#{level.id}_description"%>'), <%=level.id%>);$('pull_focus').focus(); $('<%="level_inputs_#{level.id}_set_desc"%>').hide();"><%=level.description%></textarea>
+
+    <%=button_to_function "Set Description", "level_input_edited('description', $('level_inputs_#{level.id}_description'), #{level.id});$('pull_focus').focus(); $(this).hide();", :id => "level_inputs_#{level.id}_set_desc", :style => "display:none;"%>
+  </div>
+
+</div>
+<% end %>

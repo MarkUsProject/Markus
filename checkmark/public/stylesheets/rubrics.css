@@ -1,0 +1,124 @@
+#rubric_canvas {		
+        width: 990px;
+}
+
+#rubric_menu {
+        float: left;
+}
+#rubric_status_pane {		
+        float: right;
+        text-align: right;
+}
+#rubric_criteria_pane, #rubric_levels_pane {
+        width: 450px;		
+        height: 380px;
+        margin-left: 30px;
+        margin-top: 10px;
+        float: left;
+        border: 1px solid #AAAAAA;
+}
+#rubric_criteria_pane_menu, #rubric_levels_pane_menu {
+        background: #DDDDDD;
+        height: 50px;
+        padding: 5px;
+}
+#rubric_criteria_pane_menu h1, #rubric_levels_pane_menu h1 {
+        font-size: medium;
+        margin: 0;
+        color: #000000;
+}
+
+#rubric_criteria_pane_list, #rubric_levels_pane_list {
+        overflow: auto;
+        height: 320px;
+        width: 450px;
+}
+ul {
+    list-style-image:none;
+    list-style-position: outside;
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
+    text-indent: none;
+    color: inherit;
+}
+
+#rubric_criteria_pane_instructions {
+        border: 1px solid #7777FF;
+        background: #DDDDFF;
+        padding: 10px;
+        font-weight: bold;
+}
+#rubric_status {
+        font-weight: bold;
+        padding-left: 10px;
+        padding-right: 10px;
+}
+#selected_criterion_name {
+        text-transform: capitalize;
+        font-weight: bold;
+}
+.criterion_holder, .rubric_level {
+        padding: 5px;
+        background: #DDDDDD;
+        font-weight: bold;
+        margin-top: 5px;
+        margin-left: 5px;
+        margin-right: 5px;
+        width: 415px;
+        border: 1px solid #000000;
+}
+.criterion_holder_selected, .rubric_level {
+    background: #CCCCFF;
+}
+.criterion_title_div {
+    cursor: pointer;
+    text-transform: capitalize;
+}
+
+.criterion_input_name, .level_input_name, .criterion_input_weight {
+        background: #EEEEEE;
+        font-size: medium;
+        font-weight: bold;
+        border: 1px solid #DDDDDD;
+
+}
+.criterion_delete {
+        float: right;
+}
+.criterion_input_name {
+        width: 300px;
+        float: left;
+}
+.criterion_input_weight {
+        margin-left: 10px;
+        margin-right: 10px;
+        width: 50px;
+        display: inline;
+        text-align: center;
+}
+.criterion_textarea_description, .level_textarea_description {
+        background: #EEEEEE;
+        font-size: medium;
+        border: 1px solid #DDDDDD;
+        width: 400px;
+}
+
+.hover_edit:hover {
+        background: #EAEAEA;
+        border: 1px dashed #DDDDDD;		
+}
+.editing {
+        background: #f9ffb1;
+        border: 1px dashed #d6de78;
+}
+
+.clear {
+        clear: both;
+}
+.save_warning {
+        background: yellow;
+}
+.save_success {
+        color: green;
+}
