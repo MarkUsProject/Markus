@@ -7,6 +7,10 @@ class SubmissionTest < ActiveSupport::TestCase
   # Create a separate directory for testing submissions
   SUBMISSIONS_TEST_PATH = File.join(SUBMISSIONS_PATH, "test")
   
+  def teardown
+    #FileUtils.remove_dir(SUBMISSIONS_TEST_PATH, true)
+  end
+  
   # Query function tests --------------------------------------------------
   
   def test_submitted_filenames
@@ -83,19 +87,70 @@ class SubmissionTest < ActiveSupport::TestCase
   
   # File upload tests  -----------------------------------------------------
   # Need to get submission instance from Assigment.submitted_by and not 
-  # directly from fixtures (e.g. not "submissions(:studentsub))"
+  # directly from fixtures (e.g. not "submissions(:studentsub))" to get 
+  # specific subclass of Submission (either user or group submission)
   # Append SUBMISSIONS_TEST_PATH when testing submit
+  
+  # test if correct path is given for individual assignments
+  def test_indiv_submit_dir
+    owner = users(:student2)
+    assignment = assignments(:a3)
+    subpath = File.join(SUBMISSIONS_TEST_PATH, assignment.name, owner.user_name)
+    
+    subm = assignment.submission_by(owner)
+    assert_equal subpath, subm.submit_dir(SUBMISSIONS_TEST_PATH)
+  end
+  
+  # test if correct path is given for group assignments
+  def test_group_submit_dir
+    owner = users(:student5)
+    user = users(:student1)
+    assignment = assignments(:a2)
+    subpath = File.join(SUBMISSIONS_TEST_PATH, assignment.name, owner.user_name)
+    
+    subm = assignment.submission_by(user)
+    assert_equal subpath, subm.submit_dir(SUBMISSIONS_TEST_PATH)
+  end
   
   def test_indiv_submit
     user = users(:student2)
     subm = assignments(:a3).submission_by(user)
     assert subm.is_a?(UserSubmission) # make sure correct instance is given
     
-    t = Time.now
-    tempfile = ActionController::UploadedTempFile.new("/files/Shapes.java")
-    subm.submit(user, tempfile, SUBMISSIONS_TEST_PATH)
+    sub_time = Time.now
+    tempfile = to_upload_file("Shapes.java", "this is content")
+    filename = tempfile.original_filename
     
+    # check if file has indeed been copied
+    subm.submit(user, tempfile, sub_time, SUBMISSIONS_TEST_PATH)
+    file = File.join(subm.submit_dir(SUBMISSIONS_TEST_PATH), filename)
+    assert File.exist?(file), file
     
+    # check submission file record
+    t = subm.last_submission_time_by_filename(filename)
+    assert_equal sub_time, t
+  end
+  
+  
+  protected
+  
+  # Wraps a String to an "upload file" that is expected when submitting.
+  # "Upload file" is just an StringIO with an original_filename method, 
+  # compared to real ActionController::UploadFile used in uploads.
+  def to_upload_file(filename, content)
+    strfile = StringIO.new(content)
+
+    def strfile.original_filename=(filename)  # instance setter method
+      @filename = filename
+    end
+    
+    def strfile.original_filename  # instace setter method
+      return @filename
+    end
+    
+    strfile.original_filename = filename
+    assert_equal filename, strfile.original_filename
+    return strfile
   end
   
 end
