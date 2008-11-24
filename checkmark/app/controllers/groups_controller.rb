@@ -143,6 +143,7 @@ class GroupsController < ApplicationController
     member.destroy
     render :update do |page|
       page.visual_effect(:fade, "mbr_#{params[:mbr_id]}", :duration => 0.5)
+      page.delay(0.5) { page.remove "mbr_#{params[:mbr_id]}" }
       # add members back to student list
       page.insert_html :bottom, "student_list",  
         "<li id='user_#{student.user_name}'>#{student.user_name}</li>"
@@ -182,6 +183,7 @@ class GroupsController < ApplicationController
           "<li id='user_#{student.user_name}'>#{student.user_name}</li>"
       end
       page.visual_effect(:fade, "group_#{params[:group_id]}", :duration => 0.5)
+      page.delay(0.5) { page.remove "group_#{params[:group_id]}"  }
     end
     group.destroy
   end
