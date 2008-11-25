@@ -137,8 +137,11 @@ class SubmissionTest < ActiveSupport::TestCase
     subm.submit(user, tempfile, new_sub_time, SUBMISSIONS_TEST_PATH)
     file = File.join(subm.submit_dir(SUBMISSIONS_TEST_PATH), filename)
     assert File.exist?(file)
-    assert_equal 4, subm.submission_files.count
+    assert_equal 4, subm.submission_files.count  # test fixtures + 2 submissions
     assert_equal new_sub_time, subm.last_submission_time_by_filename(filename)
+    backup = File.join(subm.submit_dir(SUBMISSIONS_TEST_PATH), 
+      sub_time.strftime("%m-%d-%Y-%H-%M-%S"))
+    assert File.exist?(backup), backup  # check if backup has been copied
   end
   
   

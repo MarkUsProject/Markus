@@ -125,7 +125,7 @@
                <%= link_to sub.filename, :action => 'view', 
                  :id => @assignment.id, :filename => sub.filename %>
              </td>
-             <td><%=h sub.submitted_at.strftime("%B %d, %Y  %I:%M %p") %></td>
+             <td><%=h time_ago_in_words(sub.submitted_at) %> ago</td>
              <td><%=h sub.user.user_name %></td>
              <td align="center">
                <%= link_to_remote "x", :method => "delete", 
