@@ -18,7 +18,7 @@ class Submission < ActiveRecord::Base
     # create a backup if file already exists
     dir = submit_dir(sdir)
     filepath = File.join(dir, filename)
-    create_backup(filename) if File.exists?(filepath)
+    create_backup(filename, sdir) if File.exists?(filepath)
     
     # create a submission_file record
     submission_file = submission_files.create do |f|
@@ -92,13 +92,13 @@ class Submission < ActiveRecord::Base
   
   # Moves the file to a folder with the last submission date
   #   filepath - absolute path of the file
-  def create_backup(filename)
+  def create_backup(filename, sdir=SUBMISSIONS_PATH)
     ts = last_submission_time_by_filename(filename)
     return unless ts
     timestamp = ts.strftime("%m-%d-%Y-%H-%M-%S")
     
     # create backup directory and move file
-    backup_dir = File.join(submit_dir, timestamp)
+    backup_dir = File.join(submit_dir(sdir), timestamp)
     FileUtils.mkdir_p(backup_dir)
     dest_file = File.join(backup_dir, filename)
     source_file = File.join(submit_dir, filename)
