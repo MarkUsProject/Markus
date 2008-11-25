@@ -112,6 +112,7 @@ class SubmissionTest < ActiveSupport::TestCase
     assert_equal subpath, subm.submit_dir(SUBMISSIONS_TEST_PATH)
   end
   
+  # Test submission for an individual assignment
   def test_indiv_submit
     user = users(:student2)
     subm = assignments(:a3).submission_by(user)
@@ -120,6 +121,7 @@ class SubmissionTest < ActiveSupport::TestCase
     sub_time = Time.now
     tempfile = to_upload_file("Shapes.java", "this is content")
     filename = tempfile.original_filename
+    assert_equal 2, subm.submission_files.count  # from test fixtures
     
     # check if file has indeed been copied
     subm.submit(user, tempfile, sub_time, SUBMISSIONS_TEST_PATH)
@@ -129,6 +131,14 @@ class SubmissionTest < ActiveSupport::TestCase
     # check submission file record
     t = subm.last_submission_time_by_filename(filename)
     assert_equal sub_time, t
+    
+    # test resubmit same file
+    new_sub_time = Time.now
+    subm.submit(user, tempfile, new_sub_time, SUBMISSIONS_TEST_PATH)
+    file = File.join(subm.submit_dir(SUBMISSIONS_TEST_PATH), filename)
+    assert File.exist?(file)
+    assert_equal 4, subm.submission_files.count
+    assert_equal new_sub_time, subm.last_submission_time_by_filename(filename)
   end
   
   
