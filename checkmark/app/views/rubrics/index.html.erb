@@ -41,7 +41,7 @@ var xhr_in_progress = false;
 			</div>
 
 			<ul id="rubric_criteria_pane_list">
-                          <% @assignment.rubric_criterias.each do |criterion| -%>
+                          <% @criteria.each do |criterion| -%>
                                 <%= render :partial => "rubrics/manage/criterion", :locals => {:criterion => criterion} %>
                          <% end -%>
 
@@ -55,8 +55,6 @@ var xhr_in_progress = false;
 				
 			</div>
 			<div id="rubric_levels_pane_list">
-                            <div class="rubric_level_holder" id="rubric_levels">
-                            </div>
 			</div>
 			
 			

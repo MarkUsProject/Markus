@@ -2,6 +2,7 @@ class RubricsController < ApplicationController
   
   def index
     @assignment = Assignment.find(params[:id])
+    @criteria = @assignment.rubric_criterias(:order => 'position')
   end
   
   def add_criterion
@@ -14,6 +15,7 @@ class RubricsController < ApplicationController
     criterion.description = ''
     criterion.weight = 1
     criterion.save
+    criterion.position = RubricCriteria.count + 1
     
     #Create the default levels
     #TODO:  Put these default values in a config file?
@@ -58,6 +60,7 @@ class RubricsController < ApplicationController
     criterion = RubricCriteria.find(params[:criterion_id])
     render :update do |page|
       page.visual_effect(:fade, "criterion_#{params[:criterion_id]}", :duration => 0.5)
+      page.remove("criterion_#{params[:criterion_id]}")
       #update the sortable criteria list
       page.sortable 'rubric_criteria_pane_list', :constraint => false, :url => { :action => :update_positions }
      end
@@ -82,7 +85,7 @@ class RubricsController < ApplicationController
      if criterion.valid? && criterion.save
        output = {'status' => 'OK'}
      else
-       output = {'status' => 'error', 'old_value' => old_value}
+       output = {'status' => 'error', 'old_value' => old_value, 'message' => criterion.errors.full_messages}
      end
      render :json => output.to_json
    end
@@ -108,7 +111,7 @@ class RubricsController < ApplicationController
   
   #This method handles the drag/drop RubricCriteria sorting
   def update_positions
-    params[:sortable_list].each_with_index do |id, position|
+    params[:rubric_criteria_pane_list].each_with_index do |id, position|
       RubricCriteria.update(id, :position => position+1)
     end
     render :nothing => true

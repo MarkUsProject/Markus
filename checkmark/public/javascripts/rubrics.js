@@ -1,14 +1,20 @@
 function load_levels(id) {
     $('selected_criterion_name').update($F('criterion_inputs_'+id+'_name'));
-    new Ajax.Request('/checkmark/rubrics/list_levels/1', {asynchronous:true, evalScripts:true,parameters: {'criterion_id':id,'authenticity_token': encodeURIComponent(authenticity_token)}});
+    new Ajax.Request('/checkmark/rubrics/list_levels/1', {method: 'get',asynchronous:true, evalScripts:true,parameters: {'criterion_id':id,'authenticity_token': encodeURIComponent(authenticity_token)}});
+}
+
+function hide_levels() {
+    $('rubric_levels_pane_list').update('');
 }
 
 function focus_criterion(id) {
     if(selected_criterion_id != null) {
         hide_criterion(selected_criterion_id);
     }
+    hide_levels();
     show_criterion(id);
     selected_criterion_id = id;
+    load_levels(id);
 }
 function hide_criterion(id) {
     $('criterion_inputs_'+id).hide();
@@ -60,6 +66,13 @@ function level_input_edited(input_type, input, level_id) {
 
 function criterion_input_edited(input_type, input, criterion_id) {
   $(input).disable();
+  //Reset error displays
+  $('criterion_error_'+criterion_id).update('');
+  $('criterion_error_'+criterion_id).hide();
+  $('criterion_inputs_'+criterion_id+'_name').removeClassName('editing');
+  $('criterion_inputs_'+criterion_id+'_weight').removeClassName('editing');
+  $('criterion_inputs_'+criterion_id+'_description').removeClassName('editing');
+  
   new Ajax.Request('/checkmark/rubrics/update_criterion/1', {
       asynchronous:true, 
       evalScripts:true, 
@@ -70,6 +83,7 @@ function criterion_input_edited(input_type, input, criterion_id) {
               //Update the title_div name and description, in case these have been changed
               if(input_type == 'name') {
                   $('criterion_title_'+criterion_id+'_name').update($F(input));
+                  $('selected_criterion_name').update($F(input));
               }
               else if(input_type == 'weight') {
                   $('criterion_title_'+criterion_id+'_weight').update($F(input));
@@ -77,6 +91,8 @@ function criterion_input_edited(input_type, input, criterion_id) {
           }
           else if(data.status == 'error') {
               //TODO:  Visually alert user that update did not take place
+              $('criterion_error_'+criterion_id).update(data.message);
+              $('criterion_error_'+criterion_id).show();
               $(input).value = data.old_value;
               $(input).enable();
           }

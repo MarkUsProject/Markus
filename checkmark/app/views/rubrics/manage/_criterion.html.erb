@@ -5,7 +5,7 @@
 
 <li class="criterion_holder" id="<%= "criterion_#{criterion.id}" %>">
   
-  <div class="criterion_title_div" id="<%= "criterion_title_#{criterion.id}"%>" onclick="<%="load_levels(#{criterion.id});"%><%="focus_criterion(#{criterion.id})"%>">
+  <div class="criterion_title_div" id="<%= "criterion_title_#{criterion.id}"%>" onclick="<%="focus_criterion(#{criterion.id})"%>">
     <div id="<%="criterion_title_#{criterion.id}_name"%>" style="float:left;"><%=criterion.name%></div>
     <div id="<%="criterion_title_#{criterion.id}_weight"%>"style="float:right;"><%=criterion.weight%></div>
     <div class="clear"></div>
@@ -13,6 +13,7 @@
  <div id="<%="criterion_inputs_#{criterion.id}"%>" style="display:none;">
   <div style="float:left;">
     <input type="text" class="criterion_input_name" value="<%=criterion.name%>" id="<%="criterion_inputs_#{criterion.id}_name"%>">
+    <%=javascript_tag "$('criterion_inputs_#{criterion.id}_name').observe('focus', function(event) {$(Event.element(event)).addClassName('editing');})"%>
     <%=javascript_tag "$('criterion_inputs_#{criterion.id}_name').observe('keypress', function(event, name_input) {if (event.keyCode == Event.KEY_RETURN) {criterion_input_edited('name', Event.element(event), #{criterion.id});}})"%>
     <%=javascript_tag "$('criterion_inputs_#{criterion.id}_name').observe('blur', function(event, name_input) {criterion_input_edited('name', Event.element(event), #{criterion.id});})"%>
    </div>
@@ -20,18 +21,21 @@
   <%= link_to_remote "Delete", :method => 'delete',
     :url => { :action => 'remove_criterion', :id => @assignment.id, :criterion_id => criterion.id }, 
     :html => { :class => 'remove_criterion', :title => 'Delete this criterion' }, 
-    :confirm => 'Are you sure you want to remove this criterion?' %>
+    :confirm => 'Are you sure you want to remove this criterion?', :complete => "selected_criterion_id=null;hide_levels();"%>
+  
   </div>
   <div class="clear"></div>
 <%=button_to_function "-", "criterion_weight_bump(-1, $('criterion_inputs_#{criterion.id}_weight'), #{criterion.id});"%>
 <input type="text" class="criterion_input_weight" id="<%="criterion_inputs_#{criterion.id}_weight"%>" value="<%=criterion.weight%>"  
+<%=javascript_tag "$('criterion_inputs_#{criterion.id}_weight').observe('focus', function(event) {$(Event.element(event)).addClassName('editing');})"%>
 <%=javascript_tag "$('criterion_inputs_#{criterion.id}_weight').observe('keypress', function(event, input) {if (event.keyCode == Event.KEY_RETURN) {criterion_input_edited('weight', Event.element(event), #{criterion.id});}})"%>
 <%=javascript_tag "$('criterion_inputs_#{criterion.id}_weight').observe('blur', function(event, input) {criterion_input_edited('weight', Event.element(event), #{criterion.id});})"%>
 <%=button_to_function "+", "criterion_weight_bump(1, $('criterion_inputs_#{criterion.id}_weight'), #{criterion.id});"%>
 
 <textarea class="criterion_textarea_description" id="<%="criterion_inputs_#{criterion.id}_description"%>" onclick="$('<%="criterion_inputs_#{criterion.id}_set_desc"%>').show();" onblur="criterion_input_edited('description', $('<%="criterion_inputs_#{criterion.id}_description"%>'), <%=criterion.id%>);$('pull_focus').focus(); $('<%="criterion_inputs_#{criterion.id}_set_desc"%>').hide();"><%=criterion.description%></textarea>
+<%=javascript_tag "$('criterion_inputs_#{criterion.id}_description').observe('focus', function(event) {$(Event.element(event)).addClassName('editing');})"%>
 <%=button_to_function "Set Description", "criterion_input_edited('description', $('criterion_inputs_#{criterion.id}_description'), #{criterion.id});$('pull_focus').focus(); $(this).hide();", :id => "criterion_inputs_#{criterion.id}_set_desc", :style => "display:none;"%>
-<p id="error_<%= criterion.id %>"></p>
+<p id="criterion_error_<%= criterion.id %>" class="error" style="display:none;"></p>
 </div>
 </li>     
 

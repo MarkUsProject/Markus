@@ -104,10 +104,6 @@ ul {
         width: 400px;
 }
 
-.hover_edit:hover {
-        background: #EAEAEA;
-        border: 1px dashed #DDDDDD;		
-}
 .editing {
         background: #f9ffb1;
         border: 1px dashed #d6de78;
@@ -116,9 +112,6 @@ ul {
 .clear {
         clear: both;
 }
-.save_warning {
-        background: yellow;
-}
-.save_success {
-        color: green;
+.error {
+    width: 350px;
 }
