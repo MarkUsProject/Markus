@@ -1,25 +1,16 @@
-<%= javascript_include_tag "selection.js" %>
+<%= javascript_include_tag "selecttext.js" %>
 
 <h1>Grading Assignment: <%= link_to @assignment.name, :controller => 'annotations', :action => 'students', :id => @assignment.id %> </h1>
 <h3>Select the files below to view  your<%= "group's" unless @assignment.individual? -%> submitted files:</h3>
 
-
-<%= button_to_function "Get selection", "getSel();" %>
-
-
 <select name="file[file_filename]" onChange="
-    <%= remote_function ( 
-                   :update => "codeviewer",
+    <%= remote_function (:update => "codeviewer",
                    :url =>{ :action => "codeviewer", :id => @assignment.id, :uid => @uid },
-                   :with => "'filename='+value")%> ">
-
-    <option value="None"> 
-        (Select a file)
-    </option>
+                   :with => "'fid='+value")%>">
 
     <% @files.each do |file| %>
 
-        <option value="<%= file.filename %>"> 
+        <option value="<%= file.id %>"> 
           <%= file.filename %>
         </option>
 

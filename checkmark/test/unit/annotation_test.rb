@@ -51,20 +51,20 @@ class AnnotationTest < ActiveSupport::TestCase
   end
 
   #Description Id must be an integer greater or equal to 0
-  def test_assignmentfile_id_range
-    assignmentfile_id_range = create_no_attr(nil)
+  def test_submissionfile_id_range
+    submissionfile_id_range = create_no_attr(nil)
 
     bad = %w{ 'string', -0.1, -1, 0}
 
     bad.each do |id|
 
-        assignmentfile_id_range.assignmentfile_id = id
-        assert !assignmentfile_id_range.valid?
+        submissionfile_id_range.submissionfile_id = id
+        assert !submissionfile_id_range.valid?
 
     end
 
-    assignmentfile_id_range.assignmentfile_id = 1
-    assert assignmentfile_id_range.valid?
+    submissionfile_id_range.submissionfile_id = 1
+    assert submissionfile_id_range.valid?
 
   end
 
@@ -78,10 +78,10 @@ class AnnotationTest < ActiveSupport::TestCase
   
   #Test that Annotation assigned to non-existant File is not valid
 
-  def test_assignmentfile_id_dne
-    assignmentfile_id_dne = create_no_attr(nil)
-    assignmentfile_id_dne.assignment_file = AssignmentFile.new
-    assert !assignmentfile_id_dne.save
+  def test_submissionfile_id_dne
+    submissionfile_id_dne = create_no_attr(nil)
+    submissionfile_id_dne.submission_file = AssignmentFile.new
+    assert !submissionfile_id_dne.save
   end
   
   
@@ -94,7 +94,7 @@ class AnnotationTest < ActiveSupport::TestCase
       :line_start => 1, 
       :line_end => 10,
       :description_id => 1,
-      :assignmentfile_id => 1
+      :submissionfile_id => 1
     }
     
     new_annotation.delete(attr) if attr
