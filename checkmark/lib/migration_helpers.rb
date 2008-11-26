@@ -22,4 +22,9 @@ module MigrationHelpers
               foreign key (#{from_column}) references #{to_table} (id)}
   end
   
+  def delete_foreign_key(from_table, to_table)
+    constraint_name = "fk_#{from_table}_#{to_table}"
+    execute %{alter table #{from_table} drop constraint #{constraint_name}}
+  end
+  
 end

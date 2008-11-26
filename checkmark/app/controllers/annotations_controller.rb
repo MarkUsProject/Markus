@@ -10,10 +10,11 @@ class AnnotationsController < ApplicationController
       :line_start => params[:line_start], 
       :line_end => params[:line_end],
       :description_id => 1,
-      :submissionfile_id => params[:fid]
+      :submission_file_id => params[:fid]
     }
     a = Annotation.new(new_annotation)
     a.save
+    render :text => a.inspect
   end
 
   def destroy
@@ -24,7 +25,7 @@ class AnnotationsController < ApplicationController
   def students
     @students = User.students
     @aid = params[:id]
-    @aname = Assignment.find(@aid).name
+    @assignment = Assignment.find(@aid)
   end
 
   def grader
@@ -39,7 +40,7 @@ class AnnotationsController < ApplicationController
     submission = @assignment.submission_by(User.find(params[:uid]))
     @fid = params[:fid]
     file = SubmissionFile.find(@fid)
-    annots = Annotation.find(:all, :conditions => ['submissionfile_id = ?', @fid] )
+    annots = Annotation.find(:all, :conditions => ['submission_file_id = ?', @fid] )
     
     dir = submission.submit_dir
 
@@ -47,7 +48,8 @@ class AnnotationsController < ApplicationController
 
     filetext = File.read(filepath)
 
-    render :partial => "codeviewer", :locals => { :uid => params[:uid], :filetext => filetext, :annots => annots }
+    render :partial => "codeviewer", :locals =>
+      { :uid => params[:uid], :filetext => filetext, :annots => annots}
     
   end
 end

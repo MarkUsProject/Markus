@@ -11,5 +11,5 @@ class Annotation < ActiveRecord::Base
   validates_associated      :description, :message => 'description associations failed'
   
   validates_numericality_of :description_id, :only_integer => true, :greater_than => 0, :message => 'can only be whole number greater than 0.'
-  validates_numericality_of :submissionfile_id, :only_integer => true, :greater_than => 0, :message => 'can only be whole number greater than 0.'
+  validates_numericality_of :submission_file_id, :only_integer => true, :greater_than => 0, :message => 'can only be whole number greater than 0.'
 end

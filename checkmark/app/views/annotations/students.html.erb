@@ -1,4 +1,4 @@
-<h1>Workspace: <%= @aname %></h1>
+<h1>Workspace: <%= @assignment.name %></h1>
 
 <h2>Students you can mark:</h2>
 
@@ -16,7 +16,8 @@
 <% for student in @students %>
   <tr>
     <td>
-    	<% if student.submission_for(1) %>
+    	<% sub = @assignment.submission_by(student) %>
+        <% if sub.submission_files.count > 0 %>
         	<%= link_to student.user_name, :controller => 'annotations', :action => 'grader', :aid => @aid, :uid => student.id %>
     	<% else %>
         	<%=h student.user_name %>

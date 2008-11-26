@@ -7,7 +7,7 @@
     <%= remote_function (:update => "codeviewer",
                    :url =>{ :action => "codeviewer", :id => @assignment.id, :uid => @uid },
                    :with => "'fid='+value")%>">
-
+<option value="">Select a file</option>
     <% @files.each do |file| %>
 
         <option value="<%= file.id %>"> 
