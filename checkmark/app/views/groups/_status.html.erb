@@ -3,7 +3,7 @@
 
   <h3>Group Information</h3>
 
-  <% if not @group -%>
+  <% if !@group -%>
     <%= render :partial => 'groups/creategroup' %>
 
   <% elsif @group.pending?(@current_user) -%>
@@ -24,7 +24,7 @@
         </tr>
       <% end -%>
     </table>
-  
+
     <% #form_tag :action => 'status', :id => @assignment.id do -%>
     <% form_remote_tag(:url => {:controller => 'groups', 
             :action => 'add_members', :id => @assignment.id}) do %>
@@ -45,7 +45,7 @@
       <% end -%>
   
       <p><%= submit_tag "Add Members" %></p>
-    <% end -%>
+    <% end if @assignment.student_invite_until.getlocal > Time.now -%>
     
   <% end -%>
 </div>

@@ -1,4 +1,10 @@
 
+<%- unless @assignment.student_form_groups -%>
+  <p style="align:center;font-weight:bold;color:red">
+    Your instructor has not yet assigned a group for you.
+  </p>
+
+<%- else -%>  
 <p style="align:center;font-weight:bold;color:red">You have not yet formed a group</p>
 
 <p id="message">
@@ -31,3 +37,4 @@
 
 <% end -%>
 
+<%- end -%>
