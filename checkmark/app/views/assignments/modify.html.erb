@@ -11,7 +11,7 @@
 <fieldset>
   <legend>Assignment Properties</legend>
 
-  <%= error_messages_for :assignment, :assignment_files %>
+  <%= error_messages_for :assignment, :assignment_files, :object => @assignment.submission_rule %>
   
   <p>
     <%= f.label :name %><br />
@@ -53,24 +53,60 @@
     to <%= f.text_field :group_max, :size => 5, :maxlength => 3 %>
     people in a group.
   </p>
-  <p>Allow students to form their own groups</p>
-  <p>Allow students to invite members to the group until: <br />
-  <%= datetime_select "group_rule", "add_member" %>
+
+  <p>
+    Allow students to form their own groups
+    <%= f.check_box :student_form_groups %>
+  </p>
+
+  <p>
+    Allow students to invite members to the group until: <br />
+    <%= f.datetime_select :student_invite_until, :default => 1.days.from_now %>
   </p>
 </fieldset>
+
 
 <fieldset>
   <legend>Submission Rules</legend>
 
-  <p>Allow students to submit <%= text_field_tag 'max_gd', '', :size => 3 %> hours after deadline</p>
+  <%- fields_for :submission_rule, @assignment.submission_rule do |rule| -%>
+    <p>
+      Allow students to submit 
+      <%= rule.text_field :allow_submit_until, :size => 3 %> 
+      hours after deadline
+    </p>
 
-  <h5>Choose penalty rules to apply for late submissions:</h5>
-  <p><%= radio_button "submission_rule", "category", "grace_days" %>Use Grace Days</p>
-  <p>Allow students to use up to <%= text_field_tag 'max_gd', '1', :size => 3 %> grace days for this assignment.</p>
+    <h5>Choose penalty rules to apply for late submissions:</h5>
+
+    <p>
+      <%= rule.radio_button :type, "NullSubmissionRule" %>
+      No penalty for late submissions
+    </p>
+
+    <p>
+      <%= rule.radio_button :type, "GraceDaySubmissionRule" %>
+      Automatically deduct grace days
+    </p>
+
+    <p>
+      Allow students to use up to 
+      <%= rule.text_field :grace_day_limit, :size => 3 %> 
+      grace days for this assignment.
+    </p>
   
-  <p>
-  <%= radio_button "submission_rule", "category", "formula" %>Use Penalty Formula
-  </p>
+    <p>
+      <%= rule.radio_button :type, "PenaltySubmissionRule" %>
+      Use Penalty Formula
+    </p>
+
+    <p>
+      Deduct at most <%= rule.text_field :penalty_limit, :size => 3 %> points 
+      in increments of <%= rule.text_field :penalty_increment, :size => 3 %> for every 
+      <%= rule.text_field :penalty_interval, :size => 3 %>
+      <%= rule.select :penalty_interval_unit, ["days", "hours", "minutes"] %>
+      late.
+    </p>
+  <%- end -%>
 </fieldset>
 
 
