@@ -37,6 +37,11 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
   
   
   # Test create assignment with assignment files
+  def test_create_assignment
+    get_as @admin, :new
+    
+  end
+  
   
   # Test create assignment with assignment files and blank text fields
   

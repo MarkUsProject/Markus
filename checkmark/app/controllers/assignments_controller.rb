@@ -12,12 +12,21 @@ class AssignmentsController < ApplicationController
   
   def edit
     @assignment = Assignment.find_by_id(params[:id])
-    # assignment_file fetching will be done on the template
+    # TODO Code below is only temporary for migration
+    # delete when all assignments have submission rules
+    unless @assignment.submission_rule
+      @assignment.submission_rule = SubmissionRule.new
+      @assignment.student_form_groups = true  # default value
+      @assignment.save
+    end
   end
   
   def new
     @assignment = Assignment.new
     @assignment.assignment_files.build  # create at least one file
+    @assignment.student_form_groups = true  # default value
+    
+    @assignment.submission_rule = SubmissionRule.new
   end
   
   # Ajax support for adding another file text field for this assignment
@@ -44,12 +53,13 @@ class AssignmentsController < ApplicationController
       @assignment.assignment_files.build(file) unless file['filename'].blank?
     end if params[:files]
     
+    # create and save new submission rule
+    rule = SubmissionRule.new(params[:submission_rule])
+    @assignment.submission_rule = rule if rule.valid?
+    
     # Go back to "Create assignment" page if unable to save
-    if @assignment.save
-      redirect_to :action => 'index'
-    else
-      render :action => 'new'
-    end
+    action = @assignment.save ? 'index' : 'new'
+    redirect_to :action => action
   end
   
   # Called when form for updating existing assignment is submitted
@@ -58,6 +68,11 @@ class AssignmentsController < ApplicationController
     
     @assignment = Assignment.find_by_id(params[:id])
     @assignment.attributes = params[:assignment]
+    
+    rules = @assignment.submission_rule
+    # must be explicitly assigned, due to method conflict for "type"
+    rules[:type] = params[:submission_rule][:type]
+    rules.attributes = params[:submission_rule]
     
     # split text fields that exists in db and those that don't
     existing_files = {} # hash the id to the attribute values
@@ -81,7 +96,7 @@ class AssignmentsController < ApplicationController
     end
     
     # Go back to "Edit assignment" page if unable to save
-    if @assignment.save && @assignment.assignment_files.each(&:save)
+    if (@assignment.save && @assignment.assignment_files.each(&:save) && rules.save)
       redirect_to :action => 'index'
     else
       render :action => 'edit'
