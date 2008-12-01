@@ -9,13 +9,20 @@ class SubmissionsController < ApplicationController
   # or displays submission page for the user
   def submit
     @assignment = Assignment.find(params[:id])
-    return unless validate_submit(@assignment)
+    sub_time = Time.now  # submission timestamp for submitted files
+    return unless validate_submit(@assignment, sub_time)
     submission = @assignment.submission_by(current_user)
     flash[:upload] =  { :success => [], :fail => [] }
     
-    if request.post?  # process upload
-      sub_time = Time.now  # submission timestamp for all files
+    # process upload
+    if (request.post? && params[:files])
+      # handle late submissions
+      if @assignment.due_date < sub_time
+        rule = @assignment.submission_rule || NullSubmissionRule.new
+        rule.handle_late_submission(submission)
+      end
       
+      # do file upload
       params[:files].each_value do |file|
         f = file[:file]
         unless f.blank?
@@ -26,8 +33,9 @@ class SubmissionsController < ApplicationController
             flash[:upload][:fail] << subfile.filename
           end
         end
-      end if params[:files]
+      end
     end
+      
     # display submitted filenames, including unsubmitted required files
     @files = submission.submitted_filenames || []
   end

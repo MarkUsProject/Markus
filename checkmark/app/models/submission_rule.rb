@@ -37,6 +37,7 @@ class SubmissionRule < ActiveRecord::Base
   
   
   # all subclasses must define a late submission handle
+  # this is independent on whether a student can submit late submissions
   def handle_late_submission(submission)
     return submission
   end

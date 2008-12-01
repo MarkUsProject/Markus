@@ -15,7 +15,7 @@ class Submission < ActiveRecord::Base
   # that has inviter or accepted status. This check is done when fetching 
   # the user or group submission from an assignment (see controller).
   
-  # Handles file submissions
+  # Handles file submissions. Late submissions have a status of "late"
   def submit(user, file, submission_time, sdir=SUBMISSIONS_PATH)
     filename = file.original_filename
     
@@ -29,6 +29,7 @@ class Submission < ActiveRecord::Base
       f.user = user
       f.filename = file.original_filename
       f.submitted_at = submission_time
+      f.status = "late" if assignment.due_date < submission_time
     end
     
     # upload file contents to file system
