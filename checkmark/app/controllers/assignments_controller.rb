@@ -7,6 +7,7 @@ class AssignmentsController < ApplicationController
   # Displays "Manage Assignments" page for creating and editing 
   # assignment information
   def index
+    #TODO:  Shouldn't we just be pulling Assignments that this Professor created?
     @assignments = Assignment.all(:order => :id)
   end
   

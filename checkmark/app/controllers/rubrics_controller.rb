@@ -8,7 +8,7 @@ class RubricsController < ApplicationController
   def add_criterion
     return unless request.post?
     @assignment = Assignment.find(params[:id])
-    # Create new group for this assignment
+    # Create a default Criterion 'New Criterion n'.
     criterion = RubricCriteria.new
     criterion.assignment = @assignment
     criterion.name = 'New Criterion '  +params[:create_num]
@@ -30,8 +30,6 @@ class RubricsController < ApplicationController
       new_level.level = index
       new_level.rubric_criteria = criterion
       new_level.save
-      
-      
     end
     
     render :update do |page|
@@ -40,8 +38,6 @@ class RubricsController < ApplicationController
       #update the sortable criteria list
       page.sortable 'rubric_criteria_pane_list', :constraint => false, :url => { :action => :update_positions }
       page.call(:focus_criterion, criterion.id.to_s)
-
-      
     end
   end
 

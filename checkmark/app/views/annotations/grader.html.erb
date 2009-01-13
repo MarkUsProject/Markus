@@ -1,4 +1,8 @@
+<%= javascript_include_tag "tooltip.js" %>
 <%= javascript_include_tag "selecttext.js" %>
+<script>
+var tool_tips = $A();
+</script>
 
 <h1>Grading Assignment: <%= link_to @assignment.name, :controller => 'annotations', :action => 'students', :id => @assignment.id %> </h1>
 <h3>Select the files below to view  your<%= "group's" unless @assignment.individual? -%> submitted files:</h3>
@@ -21,3 +25,7 @@
 <div id="codeviewer">
     <%= render :partial => "codeviewer", :locals => { :filetext => "" } %>
 </div>
+
+<div id="annotation" style="display:none;">
+    This is some annotation
+ </div>

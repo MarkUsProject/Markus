@@ -2,7 +2,7 @@
                     :url => { :action => "create", :fid => @fid },
                     :with => "'pos_start=' + positions.pos_start + '&pos_end=' + positions.pos_end + '&line_start=' + positions.line_start + ' &line_end=' + positions.line_end",
                     :before => "positions = getSel();",
-                    :after => "highlightRange(positions.line_start, positions.line_end)" %>
+                    :after => "highlightRange(positions.line_start, positions.line_end).each(function(node) { var new_tool_tip = new Tooltip(node, 'annotation'); tool_tips.push(new_tool_tip)});" %>
 
 <br />
 
@@ -29,7 +29,11 @@
 
     <% if false %>
         <% annots.each do |annot| %>
-            highlightRange(<%= annot.line_start %>, <%= annot.line_end %>);
+            highlightRange(<%= annot.line_start %>, <%= annot.line_end %>).each(function(node) {
+              var new_tool_tip = new Tooltip(node, 'annotation');
+              tool_tips.push(new_tool_tip);  
+            });
+            
         <% end %>
     <% end %>
 </script>

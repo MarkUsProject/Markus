@@ -64,13 +64,9 @@ var xhr_in_progress = false;
 
 <div id="upload_rubric_file_canvas">
 <h1>Upload Rubric File</h1>
+<!--TODO-->
 <form>
 	<input type="file" name="rubric_file" id="rubric_file">
 	<input type="submit" value="Upload File">
-</form>
-<form action="<%= url_for(:action => 'update') %>" method="POST">
-<input type="hidden" name="authenticity_token" value="<%=form_authenticity_token%>">
-<input type="hidden" name="val_from_submit" value="This works!">
-<input type="submit">
 </form>
 </div>
