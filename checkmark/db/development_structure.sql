@@ -8,18 +8,37 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET escape_string_warning = off;
 
---
--- Name: plpgsql; Type: PROCEDURAL LANGUAGE; Schema: -; Owner: -
---
-
-CREATE PROCEDURAL LANGUAGE plpgsql;
-
-
 SET search_path = public, pg_catalog;
 
 SET default_tablespace = '';
 
 SET default_with_oids = false;
+
+--
+-- Name: annotation_categories; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE annotation_categories (
+    id integer NOT NULL,
+    name text,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: annotation_labels; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE annotation_labels (
+    id integer NOT NULL,
+    name text,
+    content text,
+    annotation_category_id integer NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
 
 --
 -- Name: annotations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
@@ -31,8 +50,8 @@ CREATE TABLE annotations (
     pos_end integer,
     line_start integer,
     line_end integer,
-    description_id integer,
-    assignmentfile_id integer
+    annotation_label_id integer,
+    submission_file_id integer
 );
 
 
@@ -62,7 +81,9 @@ CREATE TABLE assignments (
     group_min integer DEFAULT 1 NOT NULL,
     group_max integer DEFAULT 1 NOT NULL,
     created_at timestamp without time zone,
-    updated_at timestamp without time zone
+    updated_at timestamp without time zone,
+    student_form_groups boolean,
+    student_invite_until timestamp without time zone
 );
 
 
@@ -139,7 +160,8 @@ CREATE TABLE rubric_criterias (
     assignment_id integer NOT NULL,
     weight numeric NOT NULL,
     created_at timestamp without time zone,
-    updated_at timestamp without time zone
+    updated_at timestamp without time zone,
+    "position" integer
 );
 
 
@@ -195,6 +217,25 @@ CREATE TABLE submission_files (
 
 
 --
+-- Name: submission_rules; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE submission_rules (
+    id integer NOT NULL,
+    assignment_id integer NOT NULL,
+    allow_submit_until integer DEFAULT 0,
+    type character varying(255) DEFAULT 'NullSubmissionRule'::character varying,
+    grace_day_limit integer,
+    penalty_limit integer,
+    penalty_increment integer,
+    penalty_interval integer,
+    penalty_interval_unit character varying(255) DEFAULT NULL::character varying,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
 -- Name: submissions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -224,11 +265,46 @@ CREATE TABLE users (
 
 
 --
+-- Name: annotation_categories_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE annotation_categories_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
+-- Name: annotation_categories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE annotation_categories_id_seq OWNED BY annotation_categories.id;
+
+
+--
+-- Name: annotation_labels_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE annotation_labels_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
+-- Name: annotation_labels_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE annotation_labels_id_seq OWNED BY annotation_labels.id;
+
+
+--
 -- Name: annotations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE annotations_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -247,7 +323,6 @@ ALTER SEQUENCE annotations_id_seq OWNED BY annotations.id;
 --
 
 CREATE SEQUENCE assignment_files_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -266,7 +341,6 @@ ALTER SEQUENCE assignment_files_id_seq OWNED BY assignment_files.id;
 --
 
 CREATE SEQUENCE assignments_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -417,7 +491,6 @@ ALTER SEQUENCE sessions_id_seq OWNED BY sessions.id;
 --
 
 CREATE SEQUENCE submission_files_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -432,11 +505,28 @@ ALTER SEQUENCE submission_files_id_seq OWNED BY submission_files.id;
 
 
 --
+-- Name: submission_rules_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE submission_rules_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
+-- Name: submission_rules_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE submission_rules_id_seq OWNED BY submission_rules.id;
+
+
+--
 -- Name: submissions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE submissions_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -466,6 +556,20 @@ CREATE SEQUENCE users_id_seq
 --
 
 ALTER SEQUENCE users_id_seq OWNED BY users.id;
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE annotation_categories ALTER COLUMN id SET DEFAULT nextval('annotation_categories_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE annotation_labels ALTER COLUMN id SET DEFAULT nextval('annotation_labels_id_seq'::regclass);
 
 
 --
@@ -549,6 +653,13 @@ ALTER TABLE submission_files ALTER COLUMN id SET DEFAULT nextval('submission_fil
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE submission_rules ALTER COLUMN id SET DEFAULT nextval('submission_rules_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE submissions ALTER COLUMN id SET DEFAULT nextval('submissions_id_seq'::regclass);
 
 
@@ -557,6 +668,22 @@ ALTER TABLE submissions ALTER COLUMN id SET DEFAULT nextval('submissions_id_seq'
 --
 
 ALTER TABLE users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
+
+
+--
+-- Name: annotation_categories_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY annotation_categories
+    ADD CONSTRAINT annotation_categories_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: annotation_labels_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY annotation_labels
+    ADD CONSTRAINT annotation_labels_pkey PRIMARY KEY (id);
 
 
 --
@@ -648,6 +775,14 @@ ALTER TABLE ONLY submission_files
 
 
 --
+-- Name: submission_rules_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY submission_rules
+    ADD CONSTRAINT submission_rules_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: submissions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -667,14 +802,21 @@ ALTER TABLE ONLY users
 -- Name: index_annotations_on_assignmentfile_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_annotations_on_assignmentfile_id ON annotations USING btree (assignmentfile_id);
+CREATE INDEX index_annotations_on_assignmentfile_id ON annotations USING btree (submission_file_id);
 
 
 --
 -- Name: index_annotations_on_description_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_annotations_on_description_id ON annotations USING btree (description_id);
+CREATE INDEX index_annotations_on_description_id ON annotations USING btree (annotation_label_id);
+
+
+--
+-- Name: index_annotations_on_submission_file_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_annotations_on_submission_file_id ON annotations USING btree (submission_file_id);
 
 
 --
@@ -776,19 +918,27 @@ CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (v
 
 
 --
--- Name: fk_annotations_assignment_files; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: fk_annotation_labels_annotation_categories; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY annotation_labels
+    ADD CONSTRAINT fk_annotation_labels_annotation_categories FOREIGN KEY (annotation_category_id) REFERENCES annotation_categories(id) ON DELETE CASCADE;
+
+
+--
+-- Name: fk_annotations_annotation_labels; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY annotations
-    ADD CONSTRAINT fk_annotations_assignment_files FOREIGN KEY (assignmentfile_id) REFERENCES assignment_files(id);
+    ADD CONSTRAINT fk_annotations_annotation_labels FOREIGN KEY (annotation_label_id) REFERENCES annotation_labels(id);
 
 
 --
--- Name: fk_annotations_descriptions; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: fk_annotations_submission_files; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY annotations
-    ADD CONSTRAINT fk_annotations_descriptions FOREIGN KEY (description_id) REFERENCES descriptions(id);
+    ADD CONSTRAINT fk_annotations_submission_files FOREIGN KEY (submission_file_id) REFERENCES submission_files(id);
 
 
 --
@@ -880,6 +1030,14 @@ ALTER TABLE ONLY submission_files
 
 
 --
+-- Name: fk_submission_rules_assignments; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY submission_rules
+    ADD CONSTRAINT fk_submission_rules_assignments FOREIGN KEY (assignment_id) REFERENCES assignments(id) ON DELETE CASCADE;
+
+
+--
 -- Name: fk_submissions_assignments; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -938,3 +1096,17 @@ INSERT INTO schema_migrations (version) VALUES ('20081009204730');
 INSERT INTO schema_migrations (version) VALUES ('20081009204739');
 
 INSERT INTO schema_migrations (version) VALUES ('20081009204754');
+
+INSERT INTO schema_migrations (version) VALUES ('20081126183411');
+
+INSERT INTO schema_migrations (version) VALUES ('20081126200403');
+
+INSERT INTO schema_migrations (version) VALUES ('20081130222245');
+
+INSERT INTO schema_migrations (version) VALUES ('20081130222302');
+
+INSERT INTO schema_migrations (version) VALUES ('20090116054833');
+
+INSERT INTO schema_migrations (version) VALUES ('20090116055742');
+
+INSERT INTO schema_migrations (version) VALUES ('20090116063343');

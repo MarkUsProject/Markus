@@ -59,8 +59,7 @@ class RubricCriteriaTest < ActiveSupport::TestCase
     
   end
   
-  #Weights are restricted to a decimal value greater than 0 and less
-  #than 1.
+  #Weights are restricted to a decimal value greater than 0
   def test_bad_weight_range
     weight_range = create_no_attr(nil)
     weight_range.weight = 'string'
@@ -72,8 +71,8 @@ class RubricCriteriaTest < ActiveSupport::TestCase
     weight_range.weight = 0.0
     assert !weight_range.valid?
     
-    weight_range.weight = 1.1
-    assert !weight_range.valid?
+    weight_range.weight = 100.0
+    assert weight_range.valid?
     
     weight_range.weight = 0.5
     assert weight_range.valid?

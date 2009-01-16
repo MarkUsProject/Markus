@@ -97,10 +97,13 @@ function highlightLine(lineNum) {
     var ourlineClassNames = ourline.classNames;
     ourline.removeClassName('alt')
     ourline.addClassName('checkmark')
+    return ourline;
 }
 
 function highlightRange(startLine, endLine) {
+    var range_array = $A();
     for (i = startLine; i <= endLine; i++) {
-        highlightLine(i);
+        range_array.push(highlightLine(i));
     }
+    return range_array;
 }
