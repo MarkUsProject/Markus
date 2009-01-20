@@ -1,3 +1,7 @@
+require 'fastercsv'
+
+# Manages actions relating to editing and modifying 
+# groups.
 class GroupsController < ApplicationController
   
   before_filter      :authorize, 
@@ -196,5 +200,25 @@ class GroupsController < ApplicationController
     user_groups = memberships.flatten.map { |m| m.user.id }
     @students = User.students.index_by { |s| s.id }
   end
+  
+  # Allows the user to upload a csv file listing groups.
+  def csv_upload
+     if request.post? && !params[:upload][:grouplist].blank?
+     	  @assignment = Assignment.find(params[:id])
+        FasterCSV.parse(params[:upload][:grouplist]) do |row|
+		     group = Group.new
+		     group.assignments << @assignment
+		     group.save(false) # skip validation requiring groups to have at least 1 member 
+		  	  #render :update do |page|
+           #   page.insert_html :top, "groups", 
+		     #   :partial => "groups/manage/group", :locals => { :group => group }
+           #	  page.call(:focusText, group.id.to_s)
+           #end   
+		  end
+		  flash[:upload_notice] = "Successfully added groups."
+     end
+     redirect_to :action => 'index'
+  end
+  
   
 end
