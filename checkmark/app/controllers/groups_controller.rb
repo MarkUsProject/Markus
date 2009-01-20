@@ -205,7 +205,10 @@ class GroupsController < ApplicationController
   def csv_upload
      if request.post? && !params[:upload][:grouplist].blank?
      	  @assignment = Assignment.find(params[:id])
+        #FasterCSV.foreach(params[:upload][:grouplist]) do |row|
         FasterCSV.parse(params[:upload][:grouplist]) do |row|
+        	  # don't know how to fetch line so we concat given array
+           next if FasterCSV.generate_line(row).strip.empty?
 		     group = Group.new
 		     group.assignments << @assignment
 		     group.save(false) # skip validation requiring groups to have at least 1 member 
