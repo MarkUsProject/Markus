@@ -203,21 +203,30 @@ class GroupsController < ApplicationController
   
   # Allows the user to upload a csv file listing groups.
   def csv_upload
-     if request.post? && !params[:upload][:grouplist].blank?
+     if request.post? && !params[:upload].blank?
      	  @assignment = Assignment.find(params[:id])
+     	  
+     	  # Gives No such file or directory - group_test.csv
         #FasterCSV.foreach(params[:upload][:grouplist]) do |row|
-        FasterCSV.parse(params[:upload][:grouplist]) do |row|
-        	  # don't know how to fetch line so we concat given array
-           next if FasterCSV.generate_line(row).strip.empty?
-		     group = Group.new
+        
+        # Only loops once when it should read 3 rows...
+        #FasterCSV.parse(params[:upload][:grouplist]) do |row|
+        
+        FasterCSV.open(params[:upload][:grouplist], 'a', :row_sep => "\r\n") do |row|         
+        		debugger
+           id,game_id, region_id, rating, duration = row
+        #FasterCSV.readlines(params[:upload][:grouplist]) do |row|
+		  	  group = Group.new
 		     group.assignments << @assignment
 		     group.save(false) # skip validation requiring groups to have at least 1 member 
 		  	  #render :update do |page|
            #   page.insert_html :top, "groups", 
 		     #   :partial => "groups/manage/group", :locals => { :group => group }
            #	  page.call(:focusText, group.id.to_s)
-           #end   
-		  end
+           #end
+           flash[:upload_notice] = "Added a group."
+            
+		   end
 		  flash[:upload_notice] = "Successfully added groups."
      end
      redirect_to :action => 'index'
