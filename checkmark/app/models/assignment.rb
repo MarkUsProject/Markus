@@ -22,7 +22,6 @@ class Assignment < ActiveRecord::Base
   # Returns a Submission instance for this user depending on whether this 
   # assignment is a group or individual assignment
   def submission_by(user)
-    
     # submission owner is either an individual (user) or a group
     owner = group_assignment? ? group_by(user.id) : user
     return nil unless owner
