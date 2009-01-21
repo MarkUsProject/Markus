@@ -74,23 +74,19 @@
       Select a CSV file form:<br />
       <code>user_name,user_name,user_name ... </code><br />
   </p>
-  
 	<p>
 		<% form_for :upload, :url => { :controller=>"groups",
 										:action => 'csv_upload',
-										:id => @assignment.id} do |f| -%>
+										:id => @assignment.id,
+										:html => {:multipart => true }} do |f| -%>
 		<p>
-			 <%= f.file_field :grouplist %>
+	      <%= f.file_field :grouplist %>
 		</p>
-		
 		<p>
 			<%= submit_tag("Submit") %>
-		</p>
-										
-	<% end %>
+		</p>							
+	   <% end %>
 	</p>
-	
-	
 </div>
 
 <p><%= link_to_remote "Create a New Group", :method => 'post', 
