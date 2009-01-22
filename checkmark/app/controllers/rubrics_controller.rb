@@ -1,3 +1,5 @@
+require 'fastercsv'
+
 class RubricsController < ApplicationController
   
   def index
@@ -16,21 +18,9 @@ class RubricsController < ApplicationController
     criterion.weight = 1
     criterion.save
     criterion.position = RubricCriteria.count + 1
-    
-    #Create the default levels
-    #TODO:  Put these default values in a config file?
-    levels=[{'name'=>'Horrible', 'description'=>'This criterion was not satisfied whatsoever', 'disabled'=>false}, 
-      {'name'=>'Satisfactory', 'description'=>'This criterion was satisfied', 'disabled'=>false},
-      {'name'=>'Good', 'description'=>'This criterion was satisfied well', 'disabled'=>false},
-      {'name'=>'Excellent', 'description'=>'This criterion was satisfied excellently', 'disabled'=>false}]
-    levels.each_with_index do |level, index|
-      new_level = RubricLevel.new
-      new_level.name = level['name']
-      new_level.description = level['description']
-      new_level.level = index
-      new_level.rubric_criteria = criterion
-      new_level.save
-    end
+
+    # g6mandi: moved level creation to a helper method create_levels for now!
+    create_levels(criterion)
     
     render :update do |page|
       page.insert_html :bottom, "rubric_criteria_pane_list", 
@@ -86,6 +76,63 @@ class RubricsController < ApplicationController
      render :json => output.to_json
    end
 
+   def upload_rubric
+    file = params[:upload_rubric][:rubric]
+    @assignment = Assignment.find(params[:id])
+    if request.post? && !file.blank?
+      num_update = 0
+      flash[:invalid_lines] = []  # store lines that were not processed
+      # read each line of the file and update rubric
+      #FasterCSV.foreach(file) do |row|
+      CSV::Reader.parse(file) do |row|
+        next if CSV.generate_line(row).strip.empty?
+        #next if FasterCSV.generate_line(row).strip.empty?
+        if add_cvs_criterion(row, @assignment) == nil
+          flash[:invalid_lines] << row.join(",")
+        else
+          num_update += 1
+        end
+      end
+
+      flash[:upload_notice] = "Rubric added/updated."
+    end
+
+    redirect_to :action => 'index', :id => 1
+   end
+
+   def add_cvs_criterion(values, assignment)
+    # convert each line to a hash with FIELDS as corresponding keys
+    # and create or update a user with the hash values
+    return nil if values.length != 3
+    criterion = RubricCriteria.new;
+    criterion.assignment = assignment
+    criterion.name = values[0]
+    criterion.weight = values[1]
+    criterion.description = values[2]
+    criterion.position = RubricCriteria.count + 1
+    criterion.save
+    create_levels(criterion)
+   end
+
+   # Moved all of this to one helper method for the time being, need to figure out where to put these!
+   def create_levels(criterion)
+    #Create the default levels
+    #TODO:  Put these default values in a config file?
+
+    levels=[{'name'=>'Horrible', 'description'=>'This criterion was not satisfied whatsoever', 'disabled'=>false},
+      {'name'=>'Satisfactory', 'description'=>'This criterion was satisfied', 'disabled'=>false},
+      {'name'=>'Good', 'description'=>'This criterion was satisfied well', 'disabled'=>false},
+      {'name'=>'Excellent', 'description'=>'This criterion was satisfied excellently', 'disabled'=>false}]
+    levels.each_with_index do |level, index|
+      new_level = RubricLevel.new
+      new_level.name = level['name']
+      new_level.description = level['description']
+      new_level.level = index
+      new_level.rubric_criteria = criterion
+      new_level.save
+    end
+   end
+
    def update_level
        return unless request.post?
        level = RubricLevel.find(params[:level_id])
@@ -114,4 +161,6 @@ class RubricsController < ApplicationController
   end
 
 end
+
+
 

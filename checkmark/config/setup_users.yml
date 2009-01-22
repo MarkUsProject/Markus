@@ -14,14 +14,14 @@
 #    updated_at: <% Time.now.to_s(:db) %>
 
 admin1:
-    user_name:      reid
-    last_name:      Reid      
-    first_name:     Karen
+    user_name:      man	
+    last_name:      Manarin      
+    first_name:     Amanda
     role:           admin
 
 admin2:
-    user_name:      flaps
-    last_name:      Rosenthal      
-    first_name:     Alan
+    user_name:      a
+    last_name:      Admin      
+    first_name:     Mr
     role:           admin
     

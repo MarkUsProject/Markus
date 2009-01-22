@@ -64,9 +64,43 @@ var xhr_in_progress = false;
 
 <div id="upload_rubric_file_canvas">
 <h1>Upload Rubric File</h1>
-<!--TODO-->
+<% if flash[:upload_notice] -%>
+    <p class="success"><%=h flash[:upload_notice] %></p>
+  <% end -%>
+  <p>
+  Select a CSV file of the following form:<br />
+  <code>title,weight,description</code><br />
+  </p>
+
+  <p>
+    <% form_for :upload_rubric, :html => {:multipart => true}, :url => { :controller=>"rubrics",
+										:action => 'upload_rubric',
+										:id => @assignment.id,
+										:html => {:multipart => true }} do |f| -%>
+		<p>
+	      <%= f.file_field :rubric %>
+		</p>
+		<p>
+			<%= submit_tag("Submit") %>
+		</p>
+	   <% end %>
+  </p>
+  
+  <% # display lines in csv file that has not been successfully processed %>
+  <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? -%>
+  <div class="errorExplanation" id="errorExplanation">
+    <h2>The following criteria has not been successfully added:</h2>
+    <ul>
+      <% for line in flash[:invalid_lines] -%>
+      <li><%=h line %></li>
+      <% end -%>
+    </ul>
+
+  </div>
+  <% end -%>
+<!--TODO
 <form>
 	<input type="file" name="rubric_file" id="rubric_file">
 	<input type="submit" value="Upload File">
-</form>
+</form>-->
 </div>
