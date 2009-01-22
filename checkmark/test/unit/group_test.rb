@@ -149,9 +149,8 @@ class GroupTest < ActiveSupport::TestCase
   	assert !group.members.include?(student)
   end
   
-  def test_individual?
-  	group = group(:group3)
-  	
+  def test_individual
+  	group = groups(:group3)
   end
   
   
