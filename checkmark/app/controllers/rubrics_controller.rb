@@ -83,15 +83,15 @@ class RubricsController < ApplicationController
       num_update = 0
       flash[:invalid_lines] = []  # store lines that were not processed
       # read each line of the file and update rubric
-      #FasterCSV.foreach(file) do |row|
-      CSV::Reader.parse(file) do |row|
-        next if CSV.generate_line(row).strip.empty?
-        #next if FasterCSV.generate_line(row).strip.empty?
-        if add_csv_criterion(row, @assignment) == nil
-          flash[:invalid_lines] << row.join(",")
-        else
-          num_update += 1
-        end
+      
+      ### Amanda:  Changed FasterCSV.foreach(file) to the following:
+      FasterCSV.parse(file.read) do |row|      
+       next if FasterCSV.generate_line(row).strip.empty?
+       if add_csv_criterion(row, @assignment) == nil
+         flash[:invalid_lines] << row.join(",")
+       else
+         num_update += 1
+       end
       end
 
       flash[:upload_notice] = "Rubric added/updated."
