@@ -97,7 +97,7 @@ class RubricsController < ApplicationController
       flash[:upload_notice] = "Rubric added/updated."
     end
 
-    redirect_to :action => 'index', :id => 1
+    redirect_to :action => 'index', :id => @assignment.id
    end
 
    def add_cvs_criterion(values, assignment)
