@@ -87,7 +87,7 @@ class RubricsController < ApplicationController
       CSV::Reader.parse(file) do |row|
         next if CSV.generate_line(row).strip.empty?
         #next if FasterCSV.generate_line(row).strip.empty?
-        if add_cvs_criterion(row, @assignment) == nil
+        if add_csv_criterion(row, @assignment) == nil
           flash[:invalid_lines] << row.join(",")
         else
           num_update += 1
@@ -100,7 +100,7 @@ class RubricsController < ApplicationController
     redirect_to :action => 'index', :id => @assignment.id, :activate_upload_tab => true
    end
 
-   def add_cvs_criterion(values, assignment)
+   def add_csv_criterion(values, assignment)
     return nil if values.length != 3
     criterion = RubricCriteria.new;
     criterion.assignment = assignment
