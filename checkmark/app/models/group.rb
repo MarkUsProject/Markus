@@ -127,7 +127,6 @@ class Group < ActiveRecord::Base
   # Removes the member rejected by its membership id
   # Used as safeguard when student deletes the record
   def remove_rejected(mbr_id)
-    memberships.destr
     member = memberships.find(mbr_id)
     member.destroy if member && member.status == 'rejected'
   end
