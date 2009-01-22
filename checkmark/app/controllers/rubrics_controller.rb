@@ -120,15 +120,14 @@ class RubricsController < ApplicationController
     levels=[{'name'=>'Horrible', 'description'=>'This criterion was not satisfied whatsoever', 'disabled'=>false},
       {'name'=>'Satisfactory', 'description'=>'This criterion was satisfied', 'disabled'=>false},
       {'name'=>'Good', 'description'=>'This criterion was satisfied well', 'disabled'=>false},
+      {'name'=>'Great', 'description'=>'This criterion was satisfied really well!', 'disabled'=>false},
       {'name'=>'Excellent', 'description'=>'This criterion was satisfied excellently', 'disabled'=>false}]
+      
     levels.each_with_index do |level, index|
-      new_level = RubricLevel.new
-      new_level.name = level['name']
-      new_level.description = level['description']
-      new_level.level = index
-      new_level.rubric_criteria = criterion
-      new_level.save
+      criterion['level_' + index + '_name'] = level['name']
+      criterion['level_' + index + '_description'] = level['description']
     end
+    criterion.save
    end
 
    def update_level

@@ -415,7 +415,6 @@ ALTER SEQUENCE groups_id_seq OWNED BY groups.id;
 --
 
 CREATE SEQUENCE memberships_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -434,7 +433,6 @@ ALTER SEQUENCE memberships_id_seq OWNED BY memberships.id;
 --
 
 CREATE SEQUENCE rubric_criterias_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -453,7 +451,6 @@ ALTER SEQUENCE rubric_criterias_id_seq OWNED BY rubric_criterias.id;
 --
 
 CREATE SEQUENCE rubric_levels_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
