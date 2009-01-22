@@ -75,7 +75,7 @@
       <code>user_name,user_name,user_name ... </code><br />
   </p>
 	<p>
-		<% form_for :upload, :url => { :controller=>"groups",
+		<% form_for :upload, :html => {:multipart => true}, :url => { :controller=>"groups",
 										:action => 'csv_upload',
 										:id => @assignment.id,
 										:html => {:multipart => true }} do |f| -%>
