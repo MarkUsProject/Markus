@@ -1,6 +1,6 @@
 function load_levels(id) {
     $('selected_criterion_name').update($F('criterion_inputs_'+id+'_name'));
-    new Ajax.Request('/checkmark/rubrics/list_levels/1', {method: 'get',asynchronous:true, evalScripts:true,parameters: {'criterion_id':id,'authenticity_token': encodeURIComponent(authenticity_token)}});
+    new Ajax.Request('/checkmark/rubrics/list_levels', {method: 'get',asynchronous:true, evalScripts:true,parameters: {'criterion_id':id,'authenticity_token': encodeURIComponent(authenticity_token)}});
 }
 
 function hide_levels() {
@@ -40,7 +40,7 @@ function criterion_weight_bump(amount, input, criterion_id) {
 
 function level_input_edited(input_type, input, level_id) {
   $(input).disable();
-  new Ajax.Request('/checkmark/rubrics/update_level/1', {
+  new Ajax.Request('/checkmark/rubrics/update_level', {
       asynchronous:true, 
       evalScripts:true, 
       onSuccess:function(request){
@@ -59,7 +59,7 @@ function level_input_edited(input_type, input, level_id) {
            alert('Server communications failure:  this value was not updated.');
            $(input).disable();
       },
-      parameters: {'level_id': level_id, 'update_type': input_type, 'new_value': $F(input), 'authenticity_token':  encodeURIComponent(authenticity_token)}
+      parameters: {'level_index': level_index, 'update_type': input_type, 'new_value': $F(input), 'authenticity_token':  encodeURIComponent(authenticity_token)}
    }
  );
 }
@@ -109,4 +109,5 @@ function criterion_input_edited(input_type, input, criterion_id) {
 document.observe('dom:loaded', function() {
 var tab_menu = new Control.Tabs('rubric_tabs');
 tab_menu.setActiveTab('manually_edit_rubric_canvas');
+
 });

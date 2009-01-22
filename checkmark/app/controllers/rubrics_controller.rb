@@ -32,7 +32,9 @@ class RubricsController < ApplicationController
   end
 
    def list_levels
-     @criterion_levels = RubricLevel.find_all_by_rubric_criteria_id(params[:criterion_id], :order=>'level')
+     @criterion = RubricCriteria.find(params[:criterion_id])
+     @criterion_levels = [{:name => @criterion.level_0_name, :description => @criterion.level_0_description}]
+   
      render :update do |page|
        page.replace_html("rubric_levels_pane_list", :partial => "rubrics/manage/levels", :locals => {:levels => @criterion_levels})
        #Now that the levels have been reloaded, scroll the overflow div back to the top
@@ -122,10 +124,10 @@ class RubricsController < ApplicationController
       {'name'=>'Good', 'description'=>'This criterion was satisfied well', 'disabled'=>false},
       {'name'=>'Great', 'description'=>'This criterion was satisfied really well!', 'disabled'=>false},
       {'name'=>'Excellent', 'description'=>'This criterion was satisfied excellently', 'disabled'=>false}]
-      
+
     levels.each_with_index do |level, index|
-      criterion['level_' + index + '_name'] = level['name']
-      criterion['level_' + index + '_description'] = level['description']
+      criterion['level_' + index.to_s + '_name'] = level['name']
+      criterion['level_' + index.to_s + '_description'] = level['description']
     end
     criterion.save
    end
