@@ -5,7 +5,7 @@ var tool_tips = $A();
 </script>
 
 <h1>Grading Assignment: <%= link_to @assignment.name, :controller => 'annotations', :action => 'students', :id => @assignment.id %> </h1>
-<h3>Select the files below to view  your<%= "group's" unless @assignment.individual? -%> submitted files:</h3>
+<h3>Select the files below to viewEmail  your<%= "group's" unless @assignment.individual? -%> submitted files:</h3>
 
 <select name="file[file_filename]" onChange="
     <%= remote_function (:update => "codeviewer",

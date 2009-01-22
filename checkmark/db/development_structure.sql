@@ -397,7 +397,6 @@ ALTER SEQUENCE descriptions_id_seq OWNED BY descriptions.id;
 --
 
 CREATE SEQUENCE groups_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE

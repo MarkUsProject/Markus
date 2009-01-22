@@ -9,7 +9,7 @@ class AnnotationsController < ApplicationController
       :pos_end => params[:pos_end], 
       :line_start => params[:line_start], 
       :line_end => params[:line_end],
-      :description_id => 2,
+      :annotation_label_id => 1,
       :submission_file_id => params[:fid]
     }
     a = Annotation.new(new_annotation)

@@ -17,11 +17,13 @@
   <tr>
     <td>
     	<% sub = @assignment.submission_by(student) %>
-        <% if sub.submission_files.count > 0 %>
-        	<%= link_to student.user_name, :controller => 'annotations', :action => 'grader', :aid => @aid, :uid => student.id %>
-    	<% else %>
-        	<%=h student.user_name %>
-    	<% end %>
+    	<% if sub%>
+                <% if sub.submission_files.count > 0 %>
+                	<%= link_to student.user_name, :controller => 'annotations', :action => 'grader', :aid => @aid, :uid => student.id %>
+            	<% else %>
+                	<%=h student.user_name %>
+            	<% end %>
+        <% end %>
 	</td>
     <td><%=h student.user_number %></td>
     <td><%=h student.last_name %></td>

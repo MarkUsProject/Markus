@@ -7,7 +7,7 @@
 <br />
 
 <div id="delSelection">
-    <% if false %>
+    <% if (defined? annots) %>
         <% annots.each do |annot| %>
             <%= link_to_remote "Delete " + annot.line_start.to_s() + "-" + annot.line_end.to_s(),
                                 :url => { :action => "destroy", :id => annot.id } %>
@@ -27,7 +27,7 @@
     dp.SyntaxHighlighter.ClipboardSwf = '/javascripts/syntaxhighlighter/clipboard.swf';
     dp.SyntaxHighlighter.HighlightAll('code');
 
-    <% if false %>
+    <% if (defined? annots) %>
         <% annots.each do |annot| %>
             highlightRange(<%= annot.line_start %>, <%= annot.line_end %>).each(function(node) {
               var new_tool_tip = new Tooltip(node, 'annotation');
