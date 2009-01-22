@@ -203,34 +203,41 @@ class GroupsController < ApplicationController
   
   # Allows the user to upload a csv file listing groups.
   def csv_upload
-     if request.post? && !params[:upload].blank?
+     if request.post? && !params[:group].blank?
      	  @assignment = Assignment.find(params[:id])
      	  
-     	  # Gives No such file or directory - group_test.csv
-        #FasterCSV.foreach(params[:upload][:grouplist]) do |row|
+     	  num_update = 0
+      	flash[:invalid_lines] = []  # store lines that were not processed
         
-        # Only loops once when it should read 3 rows...
-        #FasterCSV.parse(params[:upload][:grouplist]) do |row|
+        FasterCSV.parse(params[:group][:grouplist]) do |row|
         
-        FasterCSV.open(params[:upload][:grouplist], 'a', :row_sep => "\r\n") do |row|         
-        		debugger
-           id,game_id, region_id, rating, duration = row
-        #FasterCSV.readlines(params[:upload][:grouplist]) do |row|
-		  	  group = Group.new
-		     group.assignments << @assignment
-		     group.save(false) # skip validation requiring groups to have at least 1 member 
-		  	  #render :update do |page|
-           #   page.insert_html :top, "groups", 
-		     #   :partial => "groups/manage/group", :locals => { :group => group }
-           #	  page.call(:focusText, group.id.to_s)
-           #end
-           flash[:upload_notice] = "Added a group."
-            
+					if add_csv_groups(row, @assignment) == nil
+						 flash[:invalid_lines] << row.join(",")
+					else
+         		num_update += 1
+       		end
 		   end
-		  flash[:upload_notice] = "Successfully added groups."
+		 	flash[:upload_notice] = "#{num_update} group(s) added/updated."
      end
-     redirect_to :action => 'index'
+     redirect_to :action => 'index', :id => @assignment.id
   end
   
+  # Helper method to add the listed memebers.
+  def add_csv_groups (members, assignment)
+  	return nil if members.length <= 0
+  	
+  		group = Group.new
+		  group.assignments << assignment
+		  group.save(false) # skip validation requiring groups to have at least 1 member
+		  
+			# Add first memeber to group.  
+    	member = group.invite(members[0], 'inviter')
+    	
+    	# Add the rest of the members
+    	group.invite(members[1,members.length], 'pending')
+    	#members[1, members.length].each do |student|
+    		#@group.invite(student, 'pending')
+    	#end
+  end
   
 end
