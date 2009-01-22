@@ -20,7 +20,7 @@ class RubricsControllerTest < ActionController::TestCase
   def test_add_criterion
     criterion = @controller.add_criterion
     assert_not_nill criterion
-    assert_equals "New Criterion 1", criterion.name;
+    assert_equals "New Criterion 1", criterion.name
   end
   
   # TODO Test update criterion
