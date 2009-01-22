@@ -219,7 +219,7 @@ class GroupsController < ApplicationController
 		   end
 		 	flash[:upload_notice] = "#{num_update} group(s) added/updated."
      end
-     redirect_to :action => 'index', :id => @assignment.id
+     redirect_to :action => 'manage_new', :id => @assignment.id
   end
   
   # Helper method to add the listed memebers.
