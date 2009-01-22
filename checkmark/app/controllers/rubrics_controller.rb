@@ -101,8 +101,6 @@ class RubricsController < ApplicationController
    end
 
    def add_cvs_criterion(values, assignment)
-    # convert each line to a hash with FIELDS as corresponding keys
-    # and create or update a user with the hash values
     return nil if values.length != 3
     criterion = RubricCriteria.new;
     criterion.assignment = assignment
