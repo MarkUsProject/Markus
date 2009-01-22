@@ -97,7 +97,7 @@ class RubricsController < ApplicationController
       flash[:upload_notice] = "Rubric added/updated."
     end
 
-    redirect_to :action => 'index', :id => @assignment.id
+    redirect_to :action => 'index', :id => @assignment.id, :activate_upload_tab => true
    end
 
    def add_cvs_criterion(values, assignment)
@@ -108,7 +108,7 @@ class RubricsController < ApplicationController
     criterion.weight = values[1]
     criterion.description = values[2]
     criterion.position = RubricCriteria.count + 1
-    criterion.save
+    return nil if !criterion.valid? || !criterion.save
     create_levels(criterion)
    end
 

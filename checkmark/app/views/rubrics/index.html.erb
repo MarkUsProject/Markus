@@ -3,7 +3,6 @@
 <%= javascript_include_tag  'livepipe' %>
 <%= javascript_include_tag  'tabs' %>
 <%= javascript_include_tag  'rubrics' %>
-
 <script>
 var create_num = <%=@assignment.rubric_criterias.length%> + 1;
 var authenticity_token = '<%=form_authenticity_token%>';
@@ -90,7 +89,8 @@ var xhr_in_progress = false;
   <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? -%>
   <div class="errorExplanation" id="errorExplanation">
     <h2>The following criteria has not been successfully added:</h2>
-    <ul>
+    <br />
+    <ul style="padding-left:20px;">
       <% for line in flash[:invalid_lines] -%>
       <li><%=h line %></li>
       <% end -%>
