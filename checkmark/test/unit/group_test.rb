@@ -21,12 +21,12 @@ class GroupTest < ActiveSupport::TestCase
   end
   
   def test_pending?
-  	group = groups(:group3)
-  	student5 = users(:student5)
-  	student2 = users(:student2)
+    group = groups(:group3)
+    student5 = users(:student5)
+    student2 = users(:student2)
   	
-  	assert !group.pending?(student5)
-  	assert group.pending?(student2)
+    assert !group.pending?(student5)
+    assert group.pending?(student2)
   end
   
   # Test if status is correctly fetched for each user
@@ -77,7 +77,7 @@ class GroupTest < ActiveSupport::TestCase
   
   # Tests if reject changes a user status to reject.
   def test_reject_status
-  	group = groups(:group3)
+    group = groups(:group3)
     student2 = users(:student2)
     
     assert_equal "pending", group.status(student2)
@@ -90,32 +90,59 @@ class GroupTest < ActiveSupport::TestCase
   
   # Test if reject raises an error if a user was not invited.
   def test_reject_invalid_no_user
-  	group = groups(:group3)
-  	student4 = users(:student4)
+    group = groups(:group3)
+    student4 = users(:student4)
   	
-  	assert_raise RuntimeError do
-  		group.reject(student4) # Student 4 was not invited.
-  	end
+    assert_raise RuntimeError do
+      group.reject(student4) # Student 4 was not invited.
+    end
   end
   
   # Test if reject raises an error if rejecting a user who's status is not pending.
   def test_reject_invalid_status
-  	group = groups(:group3)
-  	student5 = users(:student5)
+    group = groups(:group3)
+    student5 = users(:student5)
   	
-  	assert_raise RuntimeError do
-  		group.reject(student5) # Student 5 is not pending.
-  	end
+    assert_raise RuntimeError do
+      group.reject(student5) # Student 5 is not pending.
+    end
   end
   
   def test_add_member_valid
     group = groups(:group3)
+    
+    # student does not belong to any group
     student = users(:student1)
     group.add_member(student)
     
     assert_nil group.errors.on_base, group.errors.on_base
     assert group.save, group.errors.on_base
     assert_equal "pending", group.status(student)
+    
+    # bug ticket #22: student with rejected status 
+    # should be able to be added to a group
+    student = users(:student3)
+    group.add_member(student)
+    
+    assert_nil group.errors.on_base, group.errors.on_base
+    assert group.save, group.errors.on_base
+    assert_equal "pending", group.status(student)
+  end
+  
+  # Test add_member() when creating a new group; 
+  # validation is different between create and update for groups
+  # Note: the following is the same as creategroup controller
+  def test_add_member_new_group
+    student = users(:student3)  # student has a rejected status
+    assignment = assignments(:a1)
+    
+    group = Group.new
+    group.assignments << assignment
+    group.add_member(student, "inviter")
+    
+    assert_nil group.errors.on_base, group.errors.on_base
+    assert group.save, group.errors.on_base
+    assert_equal "inviter", group.status(student)
   end
   
   def test_add_member_invalid
@@ -124,6 +151,13 @@ class GroupTest < ActiveSupport::TestCase
     
     group.add_member(student)
     assert !group.errors.on_base.empty?
+  end
+  
+  def test_invite_valid
+    group = groups(:group3)
+    
+    group.invite('student3') # already in group
+    assert group.errors.empty?
   end
   
   def test_invite_invalid
@@ -141,16 +175,16 @@ class GroupTest < ActiveSupport::TestCase
   
   # Test if a user can be removed from a group.
   def test_remove_member_in_group
-  	group = groups(:group3)
-  	student = users(:student5) # In group 3.
-  	m = memberships(:student5_group3)
-  	group.remove_member(m)
+    group = groups(:group3)
+    student = users(:student5) # In group 3.
+    m = memberships(:student5_group3)
+    group.remove_member(m)
   	
-  	assert !group.members.include?(student)
+    assert !group.members.include?(student)
   end
   
   def test_individual
-  	group = groups(:group3)
+    group = groups(:group3)
   end
   
   

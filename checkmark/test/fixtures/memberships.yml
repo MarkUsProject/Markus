@@ -15,6 +15,11 @@ student2_group3:
     group:      group3
     status:     pending
 
+student3_group1:
+    user:       student3
+    group:      group1
+    status:     rejected
+
 
 # assignment 2 groups
 student5_group4:

@@ -21,8 +21,9 @@ class Group < ActiveRecord::Base
     # validate each member does not belong in more than one group
     assignments.each do |a|
       memberships.each do |m|
-        g = m.user.group_for(a.id)  # user must not be in a group for this assignment
-        if m.valid? && !g
+        user = m.user
+        g = user.group_for(a.id)  # user must not be in a group for this assignment
+        if m.valid? && g # user already in a group
           errors.add_to_base("User '#{user.user_name}' already belongs in a group")
         end
       end
