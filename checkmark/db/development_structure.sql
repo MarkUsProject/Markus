@@ -269,6 +269,7 @@ CREATE TABLE users (
 --
 
 CREATE SEQUENCE annotation_categories_id_seq
+    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -287,6 +288,7 @@ ALTER SEQUENCE annotation_categories_id_seq OWNED BY annotation_categories.id;
 --
 
 CREATE SEQUENCE annotation_labels_id_seq
+    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -305,6 +307,7 @@ ALTER SEQUENCE annotation_labels_id_seq OWNED BY annotation_labels.id;
 --
 
 CREATE SEQUENCE annotations_id_seq
+    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -323,6 +326,7 @@ ALTER SEQUENCE annotations_id_seq OWNED BY annotations.id;
 --
 
 CREATE SEQUENCE assignment_files_id_seq
+    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -487,6 +491,7 @@ ALTER SEQUENCE sessions_id_seq OWNED BY sessions.id;
 --
 
 CREATE SEQUENCE submission_files_id_seq
+    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
