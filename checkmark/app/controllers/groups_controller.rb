@@ -162,11 +162,18 @@ class GroupsController < ApplicationController
   
   def add_group
     return unless request.post?
+    
     @assignment = Assignment.find(params[:id])
     # Create new group for this assignment
     group = Group.new
     group.assignments << @assignment
+    
+    # Set default group name. (Just Testing)
+    debugger
+    group.name = group.object_id
+    
     group.save(false) # skip validation requiring groups to have at least 1 member 
+    
     render :update do |page|
       page.insert_html :top, "groups", 
         :partial => "groups/manage/group", :locals => { :group => group }
@@ -205,39 +212,36 @@ class GroupsController < ApplicationController
   def csv_upload
      if request.post? && !params[:group].blank?
      	  @assignment = Assignment.find(params[:id])
-     	  
+
      	  num_update = 0
       	flash[:invalid_lines] = []  # store lines that were not processed
         
+        # Loop over each row, which lists the members to be added to the group.
         FasterCSV.parse(params[:group][:grouplist]) do |row|
-        
-					if add_csv_groups(row, @assignment) == nil
+					if add_csv_group(row, @assignment) == nil
 						 flash[:invalid_lines] << row.join(",")
 					else
          		num_update += 1
        		end
 		   end
-		 	flash[:upload_notice] = "#{num_update} group(s) added/updated."
+		 	flash[:upload_notice] = "#{num_update} group(s) added."
      end
      redirect_to :action => 'manage_new', :id => @assignment.id
   end
   
   # Helper method to add the listed memebers.
-  def add_csv_groups (members, assignment)
+  def add_csv_group (members, assignment)
   	return nil if members.length <= 0
-  	
-  		group = Group.new
-		  group.assignments << assignment
-		  group.save(false) # skip validation requiring groups to have at least 1 member
+
+		group = Group.new
+		group.assignments << assignment
+		group.save(false) # skip validation requiring groups to have at least 1 member
 		  
-			# Add first memeber to group.  
-    	member = group.invite(members[0], 'inviter')
+		# Add first member to group.  
+    member = group.invite(members[0], 'inviter')
     	
-    	# Add the rest of the members
-    	group.invite(members[1,members.length], 'pending')
-    	#members[1, members.length].each do |student|
-    		#@group.invite(student, 'pending')
-    	#end
+   	# Add the rest of the members
+   	group.invite(members[1,members.length], 'accepted')
   end
   
 end
