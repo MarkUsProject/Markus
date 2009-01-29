@@ -20,7 +20,7 @@
   <p id="error_<%= group.id %>"></p>
   <% form_remote_tag(:url => {:action => 'add_member', 
       :id => @assignment.id, :group_id => group.id}) do %>
-    <%= text_field_tag "member_name[#{group.id}]", '' %>
+    <%= text_field_tag "member_name[#{group.id}]", '', :id => "member_name[#{group.id}]" %>
     <%= submit_tag "Add Member" %>
   <% end -%>
 </div>
