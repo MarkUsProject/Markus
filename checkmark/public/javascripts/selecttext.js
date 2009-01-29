@@ -13,7 +13,7 @@ function getSel() {
         var startOffset = range.anchorOffset;
         var endOffset = range.focusOffset;
         
-        pre = document.getElementById('codetext');
+        pre = document.getElementById('code');
         preContent = pre.innerHTML;
 
         var start = getStartPos(startNode, startOffset);
@@ -53,8 +53,6 @@ function getSel() {
     var line_start = preContent.substring(0,start).split("\n").length;
     var line_end = preContent.substring(0,end).split("\n").length;
 
-    alert("start: " + start + "\nend: " +  end + "\nline start: " + line_start + "\nline end:" + line_end);
-
     return {'pos_start': start, 
             'pos_end': end,
             'line_start': line_start,
@@ -92,12 +90,15 @@ function getEndPos(endNode, endOffset) {
 }
 
 function highlightLine(lineNum) {
+    console.log('Attempting to highlight line ' + lineNum);
     var code = document.getElementsByClassName('dp-j')[0]
-    var ourline = code.childNodes[lineNum - 1]
-    var ourlineClassNames = ourline.classNames;
-    ourline.removeClassName('alt')
-    ourline.addClassName('checkmark')
-    return ourline;
+    if(lineNum > 0 && lineNum < code.childNodes.length) {
+      var ourline = code.childNodes[lineNum - 1]
+      var ourlineClassNames = ourline.classNames;
+      ourline.removeClassName('alt')
+      ourline.addClassName('checkmark')
+      return ourline;
+    }
 }
 
 function highlightRange(startLine, endLine) {

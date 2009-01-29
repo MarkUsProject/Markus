@@ -1,27 +1,13 @@
-<%= link_to_remote "Highlight selection",
-                    :url => { :action => "create", :fid => @fid },
-                    :with => "'pos_start=' + positions.pos_start + '&pos_end=' + positions.pos_end + '&line_start=' + positions.line_start + ' &line_end=' + positions.line_end",
-                    :before => "positions = getSel();",
-                    :after => "highlightRange(positions.line_start, positions.line_end).each(function(node) { var new_tool_tip = new Tooltip(node, 'annotation'); tool_tips.push(new_tool_tip)});" %>
-
-<br />
-
 <div id="delSelection">
-    <% if (defined? annots) %>
-        <% annots.each do |annot| %>
-            <%= link_to_remote "Delete " + annot.line_start.to_s() + "-" + annot.line_end.to_s(),
+    <% annots.each do |annot| %>
+        <%= link_to_remote "Delete " + annot.line_start.to_s() + "-" + annot.line_end.to_s(),
                                 :url => { :action => "destroy", :id => annot.id } %>
-        <% end %>
     <% end %>
 </div>
 
-<pre id="codetext" name="code" class="java" cols="80" rows="50"><%= filetext %></pre>
+<pre id="code" name="code" class="java" cols="80" rows="50"><%= filetext %></pre>
 
 <link type="text/css" rel="stylesheet" href="/stylesheets/SyntaxHighlighter.css"></link>
-
-<script language="javascript" src="/javascripts/syntaxhighlighter/shCore.js"></script>
-<script language="javascript" src="/javascripts/syntaxhighlighter/shBrushJava.js"></script>
-<script language="javascript" src="/javascripts/syntaxhighlighter/shBrushXml.js"></script>
 
 <script language="javascript">
     dp.SyntaxHighlighter.ClipboardSwf = '/javascripts/syntaxhighlighter/clipboard.swf';
@@ -29,9 +15,11 @@
 
     <% if (defined? annots) %>
         <% annots.each do |annot| %>
+          render_annotation_label("<%=h(annot.id)%>", "<%=h(annot.annotation_label.content)%>");
+
+
             highlightRange(<%= annot.line_start %>, <%= annot.line_end %>).each(function(node) {
-              var new_tool_tip = new Tooltip(node, 'annotation');
-              tool_tips.push(new_tool_tip);  
+              add_tool_tip(node, <%=annot.id%>); 
             });
             
         <% end %>
