@@ -5,7 +5,7 @@ require 'fastercsv'
 class GroupsController < ApplicationController
   
   before_filter      :authorize, 
-    :only => [:manage, :add_member, :remove_member, :add_group, :remove_group]
+    :only => [:manage_new, :add_member, :remove_member, :add_group, :remove_group]
   # TODO filter (except index) to make sure assignment is a group assignment
   
   def index
@@ -167,13 +167,12 @@ class GroupsController < ApplicationController
     # Create new group for this assignment
     group = Group.new
     group.assignments << @assignment
-    
-    # Set default group name. (Just Testing)
-    debugger
-    group.name = group.object_id
-    
+       
     group.save(false) # skip validation requiring groups to have at least 1 member 
-    
+   
+    # Set default group name. (Just Testing) 
+		group.name = "group_" + group.id.to_s    
+		
     render :update do |page|
       page.insert_html :top, "groups", 
         :partial => "groups/manage/group", :locals => { :group => group }
@@ -236,7 +235,10 @@ class GroupsController < ApplicationController
 		group = Group.new
 		group.assignments << assignment
 		group.save(false) # skip validation requiring groups to have at least 1 member
-		  
+		
+		# Set default group name. (Just Testing) 
+		group.name = "group_" + group.id.to_s 
+		
 		# Add first member to group.  
     member = group.invite(members[0], 'inviter')
     	
