@@ -1,6 +1,7 @@
 class AnnotationsController < ApplicationController
   def index
     @assignments = Assignment.all(:order => :id)
+
   end
 
   def create
@@ -42,6 +43,7 @@ class AnnotationsController < ApplicationController
 
   def grader
     @assignment = Assignment.find(params[:aid])
+    @rubric_criteria = @assignment.rubric_criterias
     @uid = params[:uid]
     submission = @assignment.submission_by(User.find(@uid))
     @files = submission.submitted_filenames || []

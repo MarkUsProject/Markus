@@ -1,4 +1,5 @@
 <%= stylesheet_link_tag("annotations") %>
+<%= stylesheet_link_tag("rubrics") %>
 <%= javascript_include_tag "tooltip.js" %>
 <%= javascript_include_tag "selecttext.js" %>
 <%= javascript_include_tag "syntaxhighlighter/shCore.js" %>
@@ -71,7 +72,19 @@ function add_tool_tip(node, annotation_id) {
   </div>
 </div>
 <div id="rubric_viewer" style="float:left;">
-TODO:  Rubric goes here...
+
+    <% @rubric_criteria.each do |criterion| %>
+      <div class="criterion_holder">      
+        <p><%=criterion.name%></p>
+        <p><%=criterion.description%></p>
+        <ul>
+          <input type="radio" name="rubric_criterion_<%=criterion.id%>"><%=criterion.level_0_name%>
+          <p><%=criterion.level_0_description%></p>
+        </ul>
+      </div>
+    <% end %>
+  
+
 </div>
 
 <div id="annotation_holder">
