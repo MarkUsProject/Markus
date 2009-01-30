@@ -57,8 +57,10 @@ class GroupsController < ApplicationController
     @group.invite(users)
     
     render :update do |page|
-      page.replace "module_groups", :partial => 'groups/status'
-      unless @group.valid_with_base?
+      if @group.valid_with_base?
+        page.redirect_to :controller => 'submissions', 
+          :action => 'submit', :id => @assignment.id
+      else
         page.replace_html 'addmembers_error',
           :partial => 'groups/error_single', :locals => { :objekt => @group }
       end
