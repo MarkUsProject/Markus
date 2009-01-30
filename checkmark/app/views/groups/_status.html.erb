@@ -25,7 +25,6 @@
       <% end -%>
     </table>
 
-    <% #form_tag :action => 'status', :id => @assignment.id do -%>
     <% form_remote_tag(:url => {:controller => 'groups', 
             :action => 'add_members', :id => @assignment.id}) do %>
     
@@ -45,7 +44,7 @@
       <% end -%>
   
       <p><%= submit_tag "Add Members" %></p>
-    <% end if @assignment.student_invite_until.getlocal > Time.now -%>
+    <% end if @assignment.can_invite? && @group.members.count < @assignment.group_max -%>
     
   <% end -%>
 </div>

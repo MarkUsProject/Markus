@@ -59,4 +59,11 @@ class Assignment < ActiveRecord::Base
     group_min == 1 && group_max == 1
   end
   
+  # Returns true if a student is allowed to form groups and still allowed to 
+  # invite; otherwise, returns false
+  def can_invite?
+    result = student_form_groups && student_invite_until.getlocal > Time.now
+    return result
+  end
+  
 end
