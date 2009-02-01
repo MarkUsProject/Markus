@@ -20,7 +20,7 @@ class RubricsController < ApplicationController
     criterion.position = RubricCriteria.count + 1
 
     # g6mandi: moved level creation to a helper method create_levels for now!
-    create_levels(criterion)
+    create_default_levels(criterion)
     
     render :update do |page|
       page.insert_html :bottom, "rubric_criteria_pane_list", 
@@ -33,8 +33,13 @@ class RubricsController < ApplicationController
 
    def list_levels
      @criterion = RubricCriteria.find(params[:criterion_id])
-     @criterion_levels = [{:name => @criterion.level_0_name, :description => @criterion.level_0_description}]
-   
+     @criterion_levels = [{:name => @criterion.level_0_name, :description => @criterion.level_0_description},
+                          {:name => @criterion.level_1_name, :description => @criterion.level_1_description},
+                          {:name => @criterion.level_2_name, :description => @criterion.level_2_description},
+                          {:name => @criterion.level_3_name, :description => @criterion.level_3_description},
+                          {:name => @criterion.level_4_name, :description => @criterion.level_4_description},
+     ]
+
      render :update do |page|
        page.replace_html("rubric_levels_pane_list", :partial => "rubrics/manage/levels", :locals => {:levels => @criterion_levels})
        #Now that the levels have been reloaded, scroll the overflow div back to the top
@@ -85,11 +90,16 @@ class RubricsController < ApplicationController
       num_update = 0
       flash[:invalid_lines] = []  # store lines that were not processed
       # read each line of the file and update rubric
-      
+      # flag
+      first_line = true;
+      levels = nil;
       ### Amanda:  Changed FasterCSV.foreach(file) to the following:
       FasterCSV.parse(file.read) do |row|      
        next if FasterCSV.generate_line(row).strip.empty?
-       if add_csv_criterion(row, @assignment) == nil
+       if first_line #get the row of levels
+         levels = row;
+         first_line = false;
+       elsif add_csv_criterion(row, levels, @assignment) == nil
          flash[:invalid_lines] << row.join(",")
        else
          num_update += 1
@@ -102,7 +112,7 @@ class RubricsController < ApplicationController
     redirect_to :action => 'index', :id => @assignment.id, :activate_upload_tab => true
    end
 
-   def add_csv_criterion(values, assignment)
+   def add_csv_criterion(values, levels, assignment)
     return nil if values.length != 3
     criterion = RubricCriteria.new;
     criterion.assignment = assignment
@@ -111,11 +121,28 @@ class RubricsController < ApplicationController
     criterion.description = values[2]
     criterion.position = RubricCriteria.count + 1
     return nil if !criterion.valid? || !criterion.save
-    create_levels(criterion)
+    create_levels(criterion, levels)
    end
 
    # Moved all of this to one helper method for the time being, need to figure out where to put these!
-   def create_levels(criterion)
+   def create_levels(criterion, levels)
+    #no more than 5 levels, (0-4), and each level name should have a
+    #corresponding description!
+    if levels.length % 2 != 0 && levels.length > 10
+        return nil
+    else
+      i = 0;
+      num_levels = levels.length/2;
+      while i < num_levels do
+        criterion['level_' + i.to_s + '_name'] = levels[2*i]
+        criterion['level_' + i.to_s + '_description'] = levels[(2*i)+1]
+        i+=1
+      end
+      criterion.save
+    end
+   end
+
+   def create_default_levels(criterion)
     #Create the default levels
     #TODO:  Put these default values in a config file?
 
@@ -132,18 +159,23 @@ class RubricsController < ApplicationController
     criterion.save
    end
 
+
    def update_level
+       criterion = RubricCriteria.find(params[:criterion_id]);
        return unless request.post?
-       level = RubricLevel.find(params[:level_id])
+       id = params[:level_index]
+       level_name = 'level_'+ id + '_name'
+       level_desc = 'level_'+ id + '_description'
+       #level = RubricLevel.find(params[:level_id])
        case params[:update_type]
        when 'name' 
-           old_value = level.name
-           level.name = params[:new_value]
+         old_value = criterion[level_name]
+         criterion[level_name] = params[:new_value]
        when 'description'
-         old_value = level.description
-         level.description = params[:new_value]
+         old_value = criterion[level_desc]
+         criterion[level_desc] = params[:new_value]
        end
-       if level.valid? && level.save
+       if criterion.valid? && criterion.save
          output = {'status' => 'OK'}
        else
          output = {'status' => 'error', 'old_value' => old_value}

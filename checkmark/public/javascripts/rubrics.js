@@ -59,7 +59,7 @@ function level_input_edited(input_type, input, level_id) {
            alert('Server communications failure:  this value was not updated.');
            $(input).disable();
       },
-      parameters: {'level_index': level_index, 'update_type': input_type, 'new_value': $F(input), 'authenticity_token':  encodeURIComponent(authenticity_token)}
+      parameters: {'level_index': level_id,'criterion_id':selected_criterion_id, 'update_type': input_type, 'new_value': $F(input), 'authenticity_token':  encodeURIComponent(authenticity_token)}
    }
  );
 }

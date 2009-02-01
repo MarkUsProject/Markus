@@ -8,6 +8,7 @@ var create_num = <%=@assignment.rubric_criterias.length%> + 1;
 var authenticity_token = '<%=form_authenticity_token%>';
 var selected_criterion_id = null;
 var xhr_in_progress = false;
+var activate_upload_tab = false;
 </script>
 
 <ul id="rubric_tabs" class="subsection_tabs">
