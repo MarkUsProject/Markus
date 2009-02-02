@@ -108,6 +108,9 @@ function criterion_input_edited(input_type, input, criterion_id) {
 }
 document.observe('dom:loaded', function() {
 var tab_menu = new Control.Tabs('rubric_tabs');
-tab_menu.setActiveTab('manually_edit_rubric_canvas');
-
+if (activate_upload_tab) {
+    tab_menu.setActiveTab('upload_rubric_file_canvas');
+}else {
+    tab_menu.setActiveTab('manually_edit_rubric_canvas');
+}
 });

@@ -93,8 +93,7 @@ class RubricsController < ApplicationController
       # flag
       first_line = true;
       levels = nil;
-      ### Amanda:  Changed FasterCSV.foreach(file) to the following:
-      FasterCSV.parse(file.read) do |row|      
+      FasterCSV.parse(file.read) do |row|
        next if FasterCSV.generate_line(row).strip.empty?
        if first_line #get the row of levels
          levels = row;
@@ -113,27 +112,34 @@ class RubricsController < ApplicationController
    end
 
    def add_csv_criterion(values, levels, assignment)
-    return nil if values.length != 3
-    criterion = RubricCriteria.new;
+    criterion = RubricCriteria.new
+    #must have at least 3 values - name, weight description
+    #must have at most 8 values - name, weight description, and 5 level (0-4)
+    #descriptions
+    return nil if values.length < 3 || values.length > 8
     criterion.assignment = assignment
     criterion.name = values[0]
     criterion.weight = values[1]
     criterion.description = values[2]
     criterion.position = RubricCriteria.count + 1
-    return nil if !criterion.valid? || !criterion.save
-    create_levels(criterion, levels)
+    #the rest of the values are level descriptions
+    i = 3
+    while i < values.length do
+      criterion['level_' + (i-3).to_s + '_description'] = values[i]
+      i+=1
+    end
+    return nil if (create_levels(criterion, levels)==nil) || !criterion.valid? || !criterion.save
    end
 
    # Moved all of this to one helper method for the time being, need to figure out where to put these!
    def create_levels(criterion, levels)
-    #no more than 5 levels, (0-4 -- may want to change
+    #no more than 5 levels, (0-4)
     if levels.length > 5
         return nil
     else
       levels.each_with_index do |level, index|
         criterion['level_' + index.to_s + '_name'] = level
       end
-      criterion.save
     end
    end
 

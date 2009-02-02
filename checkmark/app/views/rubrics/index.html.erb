@@ -9,6 +9,9 @@ var authenticity_token = '<%=form_authenticity_token%>';
 var selected_criterion_id = null;
 var xhr_in_progress = false;
 var activate_upload_tab = false;
+<% if flash[:invalid_lines] && !flash[:invalid_lines].empty? -%>
+  activate_upload_tab = true;
+<% end -%>
 </script>
 
 <ul id="rubric_tabs" class="subsection_tabs">
@@ -25,9 +28,15 @@ var activate_upload_tab = false;
 		<%= link_to '< Back to Manage Assignments', :controller => 'assignments', :action => 'index' %>
 		</div>
 	</div>
-	
-	<div class="clear"></div>
-	
+
+    <div class="clear"></div>
+
+    <% if flash[:upload_notice] -%>
+    <div>
+      <p class="success"><%=h flash[:upload_notice] %></p>
+    </div>
+    <% end -%>
+
 	<div id="rubric_lower_pane">
 		<div id="rubric_criteria_pane">
 			<div id="rubric_criteria_pane_menu">
@@ -61,15 +70,13 @@ var activate_upload_tab = false;
 		</div>
 	</div>
 </div>
-
 <div id="upload_rubric_file_canvas">
 <h1>Upload Rubric File</h1>
-<% if flash[:upload_notice] -%>
-    <p class="success"><%=h flash[:upload_notice] %></p>
-  <% end -%>
   <p>
-  Select a CSV file of the following form:<br />
-  <code>title,weight,description</code><br />
+  Select a CSV file of the following form:<br /><br />
+  <code>level1_name,level2_name,level3_name,level4_name,level5_name <br />
+        criterion,weight,description,level0_desc,level1_desc,level2_desc,level3_desc,level4_desc,<br />
+        ...</code><br />
   </p>
 
   <p>
@@ -96,7 +103,13 @@ var activate_upload_tab = false;
       <li><%=h line %></li>
       <% end -%>
     </ul>
-
+    <h5>Make sure that:</h5>
+    <ul>
+      <li>There are no more than 5 rubric levels</li>
+      <li>Criterion weight is numeric</li>
+      <li>Each field is separated by a comma</li>
+      <li>Each line has the required fields specified above</li>
+    </ul>
   </div>
   <% end -%>
 <!--TODO
