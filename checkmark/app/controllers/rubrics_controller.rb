@@ -128,10 +128,10 @@ class RubricsController < ApplicationController
       criterion['level_' + (i-3).to_s + '_description'] = values[i]
       i+=1
     end
-    return nil if (create_levels(criterion, levels)==nil) || !criterion.valid? || !criterion.save
+    return nil if !criterion.valid? || !criterion.save
+    create_levels(criterion, levels)
    end
 
-   # Moved all of this to one helper method for the time being, need to figure out where to put these!
    def create_levels(criterion, levels)
     #no more than 5 levels, (0-4)
     if levels.length > 5
@@ -140,9 +140,11 @@ class RubricsController < ApplicationController
       levels.each_with_index do |level, index|
         criterion['level_' + index.to_s + '_name'] = level
       end
+      criterion.save
     end
    end
 
+   # Moved all of this to one helper method for the time being, need to figure out where to put these!
    def create_default_levels(criterion)
     #Create the default levels
     #TODO:  Put these default values in a config file?

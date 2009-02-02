@@ -31,7 +31,7 @@ var activate_upload_tab = false;
 
     <div class="clear"></div>
 
-    <% if flash[:upload_notice] -%>
+    <% if flash[:upload_notice] && flash[:invalid_lines].empty? -%>
     <div>
       <p class="success"><%=h flash[:upload_notice] %></p>
     </div>
@@ -75,7 +75,7 @@ var activate_upload_tab = false;
   <p>
   Select a CSV file of the following form:<br /><br />
   <code>level1_name,level2_name,level3_name,level4_name,level5_name <br />
-        criterion,weight,description,level0_desc,level1_desc,level2_desc,level3_desc,level4_desc,<br />
+        criterion,weight,description,level0_desc,level1_desc,level2_desc,level3_desc,level4_desc<br />
         ...</code><br />
   </p>
 
@@ -104,7 +104,7 @@ var activate_upload_tab = false;
       <% end -%>
     </ul>
     <h5>Make sure that:</h5>
-    <ul>
+    <ul style="padding-left:20px;">
       <li>There are no more than 5 rubric levels</li>
       <li>Criterion weight is numeric</li>
       <li>Each field is separated by a comma</li>
