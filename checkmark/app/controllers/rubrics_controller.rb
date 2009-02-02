@@ -126,17 +126,12 @@ class RubricsController < ApplicationController
 
    # Moved all of this to one helper method for the time being, need to figure out where to put these!
    def create_levels(criterion, levels)
-    #no more than 5 levels, (0-4), and each level name should have a
-    #corresponding description!
-    if levels.length % 2 != 0 && levels.length > 10
+    #no more than 5 levels, (0-4 -- may want to change
+    if levels.length > 5
         return nil
     else
-      i = 0;
-      num_levels = levels.length/2;
-      while i < num_levels do
-        criterion['level_' + i.to_s + '_name'] = levels[2*i]
-        criterion['level_' + i.to_s + '_description'] = levels[(2*i)+1]
-        i+=1
+      levels.each_with_index do |level, index|
+        criterion['level_' + index.to_s + '_name'] = level
       end
       criterion.save
     end
