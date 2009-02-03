@@ -1,13 +1,27 @@
 
-<h1><%=h @title %></h1>
+<div class="section">
 
-<ul>
-<% for assignment in @assignments %>
-  <li>
-    <%= link_to assignment.name, 
-        :controller => controller, 
-        :action => action, 
-        :id => assignment  %>
-  </li>
-<% end %>
-</ul>
+  <% if @assignments.empty? %>
+  
+    <p>There is current no assignments.</p>
+    
+  <% else %>
+  
+    <p>Edit existing assignments:</p>
+  
+    <ul>
+    
+    <% for assignment in @assignments %>
+      <li>
+        <%= link_to assignment.name, 
+            :controller => controller, 
+            :action => action, 
+            :id => assignment  %>:  <%= assignment.description %>
+      </li>
+    <% end %>
+    
+    </ul>
+        
+  <% end %>
+
+</div>

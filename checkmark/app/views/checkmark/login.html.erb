@@ -1,26 +1,28 @@
-
-
-<%= stylesheet_link_tag 'login.css', :media => 'all' %>
-
 <div id="login">
 
-  <p><%= image_tag "/images/checkmark.gif", :alt => "Welcome to CheckMark" %></p>
-  <% if flash[:login_notice] -%>
-    <div class="login-error"><%=h flash[:login_notice] %></div>
-  <% end -%>
-  <% form_tag({ :action => 'login', :id => nil }, :id => 'login_form') do %>
-    <p>
-      <%= label_tag 'login', 'CDF Login:' -%><br />
-      <%= text_field_tag 'user_login', nil, :size => 16, :tabindex => 10 %>
-    </p>
+  <h1 id="login"><span>Checkmark</span></h1>
 
-    <p>
-      <%= label_tag 'password', 'Password:' %><br />
-      <%= password_field_tag 'user_password', nil, :size => 16, :tabindex => 20 %>
-    </p>
-
-    <p><%= submit_tag "Log in", :disabled_with => 'Logging in...', :tabindex => 100 %></p>
-  <% end %>
+  <div class="section">
+  
+    <% if flash[:login_notice] -%>
+      <div class="login-error"><%=h flash[:login_notice] %></div>
+    <% end -%>
+    
+    <% form_tag({ :action => 'login', :id => nil }, :id => 'login_form') do %>
+  
+        <%= label_tag 'user_login', 'CDF Login:' -%>
+        <%= text_field_tag 'user_login', nil, :tabindex => 10 %>
+  
+        <%= label_tag 'user_password', 'Password:' %>
+        <%= password_field_tag 'user_password', nil, :tabindex => 20 %><br />
+  
+        <%= label_tag 'commit', 'Login:' %>
+        <%= submit_tag "Log in", :disabled_with => 'Logging in...', :tabindex => 100, :class => 'button' %>
+        
+    <% end %>
+    
+  </div>
+  
 </div>
 
 <%# Try to put focus on the login text field on load %>

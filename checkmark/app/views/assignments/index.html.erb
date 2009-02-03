@@ -1,8 +1,8 @@
 
-<% @title = "Select an assignment to modify:" -%>
+<h1>Manage Assignments</h1>
 
 <%= render :partial => "layouts/assignments", 
   :locals => { :controller => 'assignments', :action => 'edit' } -%>
 
-<h3>Or <%= link_to 'Create a new assignment', 
-  :controller => 'assignments', :action => 'new' %></h3>
+<p>Or <%= link_to 'Create a new assignment', 
+  :controller => 'assignments', :action => 'new' %>.</p>

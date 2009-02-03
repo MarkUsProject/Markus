@@ -1,27 +1,30 @@
-<h1>Create a New Student</h1>
+<h1>Manage New Students</h1>
+
+<h2>Create a New Student</h2>
+
+<div class="section">
 
 <% form_for :student, :url => {:controller => 'students', :action => 'create'} do |f| -%>
-  <%= f.error_messages -%>
+<%= f.error_messages -%>
 
-  <p>
-    <%= f.label :user_name %><br />
+    <%= f.label :user_name %>
+    
     <%= f.text_field :user_name %>
-  </p>
-  <p>
-    <%= f.label :user_number %><br />
+    
+    <%= f.label :user_number %>
     <%= f.text_field :user_number %>
-  </p>
-  <p>
-    <%= f.label :last_name %><br />
+    
+    <%= f.label :last_name %>
     <%= f.text_field :last_name %>
-  </p>
-  <p>
-    <%= f.label :first_name %><br />
+    
+    <%= f.label :first_name %>
     <%= f.text_field :first_name %>
-  </p>
-  <p>
-    <%= f.submit 'Add student', :name => 'create' %>
-  </p>
+    
+    <label for="create">Create</label>
+    <%= f.submit 'Add student', :name => 'create', :class => 'button' %>
+    
 <% end %>
 
-<%= link_to '< Cancel', :controller => 'students' %>
+</div>
+
+<%= link_to 'Cancel', :controller => 'students' %>

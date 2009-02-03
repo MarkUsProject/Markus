@@ -9,19 +9,34 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20081009204754) do
+ActiveRecord::Schema.define(:version => 20090128224245) do
+
+  create_table "annotation_categories", :force => true do |t|
+    t.text     "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "annotation_labels", :force => true do |t|
+    t.text     "name"
+    t.text     "content"
+    t.integer  "annotation_category_id", :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "annotations", :force => true do |t|
     t.integer "pos_start"
     t.integer "pos_end"
     t.integer "line_start"
     t.integer "line_end"
-    t.integer "description_id"
-    t.integer "assignmentfile_id"
+    t.integer "annotation_label_id"
+    t.integer "submission_file_id"
   end
 
-  add_index "annotations", ["assignmentfile_id"], :name => "index_annotations_on_assignmentfile_id"
-  add_index "annotations", ["description_id"], :name => "index_annotations_on_description_id"
+  add_index "annotations", ["annotation_label_id"], :name => "index_annotations_on_description_id"
+  add_index "annotations", ["submission_file_id"], :name => "index_annotations_on_assignmentfile_id"
+  add_index "annotations", ["submission_file_id"], :name => "index_annotations_on_submission_file_id"
 
   create_table "assignment_files", :force => true do |t|
     t.integer  "assignment_id"
@@ -33,14 +48,16 @@ ActiveRecord::Schema.define(:version => 20081009204754) do
   add_index "assignment_files", ["assignment_id", "filename"], :name => "index_assignment_files_on_assignment_id_and_filename", :unique => true
 
   create_table "assignments", :force => true do |t|
-    t.string   "name",                       :null => false
+    t.string   "name",                                :null => false
     t.string   "description"
     t.text     "message"
     t.datetime "due_date"
-    t.integer  "group_min",   :default => 1, :null => false
-    t.integer  "group_max",   :default => 1, :null => false
+    t.integer  "group_min",            :default => 1, :null => false
+    t.integer  "group_max",            :default => 1, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "student_form_groups"
+    t.datetime "student_invite_until"
   end
 
   add_index "assignments", ["name"], :name => "index_assignments_on_name", :unique => true
@@ -73,6 +90,7 @@ ActiveRecord::Schema.define(:version => 20081009204754) do
 
   create_table "groups", :force => true do |t|
     t.string "status"
+    t.text   "name"
   end
 
   create_table "memberships", :force => true do |t|
@@ -86,12 +104,23 @@ ActiveRecord::Schema.define(:version => 20081009204754) do
   add_index "memberships", ["group_id", "user_id"], :name => "index_memberships_on_user_id_and_group_id", :unique => true
 
   create_table "rubric_criterias", :force => true do |t|
-    t.string   "name",          :null => false
+    t.string   "name",                :null => false
     t.text     "description"
-    t.integer  "assignment_id", :null => false
-    t.decimal  "weight",        :null => false
+    t.integer  "assignment_id",       :null => false
+    t.decimal  "weight",              :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "position"
+    t.text     "level_0_name"
+    t.text     "level_0_description"
+    t.text     "level_1_name"
+    t.text     "level_1_description"
+    t.text     "level_2_name"
+    t.text     "level_2_description"
+    t.text     "level_3_name"
+    t.text     "level_3_description"
+    t.text     "level_4_name"
+    t.text     "level_4_description"
   end
 
   add_index "rubric_criterias", ["assignment_id", "name"], :name => "index_rubric_criterias_on_assignment_id_and_name", :unique => true
@@ -125,6 +154,19 @@ ActiveRecord::Schema.define(:version => 20081009204754) do
 
   add_index "submission_files", ["filename"], :name => "index_submission_files_on_filename"
   add_index "submission_files", ["submission_id"], :name => "index_submission_files_on_submission_id"
+
+  create_table "submission_rules", :force => true do |t|
+    t.integer  "assignment_id",                                           :null => false
+    t.integer  "allow_submit_until",    :default => 0
+    t.string   "type",                  :default => "NullSubmissionRule"
+    t.integer  "grace_day_limit"
+    t.integer  "penalty_limit"
+    t.integer  "penalty_increment"
+    t.integer  "penalty_interval"
+    t.string   "penalty_interval_unit"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "submissions", :force => true do |t|
     t.integer "user_id"

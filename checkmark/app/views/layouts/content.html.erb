@@ -5,17 +5,27 @@
 <head>
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <title>CheckMark - <%= controller.action_name %></title>
-  <%= stylesheet_link_tag 'main.css', :media => 'all' %>
+  <%= stylesheet_link_tag 'main.css', :media => 'all' %>   
+  <%= stylesheet_link_tag 'header.css', :media => 'all' %>
+  <%= stylesheet_link_tag 'sidebar.css', :media => 'all' %>
   <%= javascript_include_tag :defaults -%>
 </head>
 
 <body>
 
+  <div id="<%= if (controller.action_name == 'login') then 
+                  "loggedOut" 
+               else 
+                  "loggedIn" 
+               end %>">
+   
   <%= render :partial => 'layouts/header' unless controller.action_name == 'login' %>
-
+  <%= render :partial => 'layouts/sidebar'unless controller.action_name == 'login' %>
+               
   <div id="content">
     <%= @content_for_layout %>
   </div>
+  
 
 <% # For debugging purposes; not to be used for production -%>
 
@@ -29,6 +39,7 @@
     </div>
 <% end %>
 
+</div> <!-- Membership -->
+
 </body>
 </html>
-

@@ -14,64 +14,98 @@ var activate_upload_tab = false;
 <% end -%>
 </script>
 
+<h1>Rubric Management:  <%= @assignment.name %></h1>	
+
+<p><%= link_to '&#171; Back to Manage Assignments', :controller => 'assignments', :action => 'index' %></p>
+
+<% if flash[:upload_notice] && flash[:invalid_lines].empty? -%>
+<div>
+  <p class="success"><%=h flash[:upload_notice] %></p>
+</div>
+<% end -%>
+
+<!-- Needed: rubric_tags, tab -->
 <ul id="rubric_tabs" class="subsection_tabs">
 	<li class="tab"><a href="#manually_edit_rubric_canvas">Manually Edit Rubric</a></li>
 	<li class="tab"><a href="#upload_rubric_file_canvas">Upload Rubric File</a></li>
 </ul>
 
-
+<!-- Need for the tabs -->
 <div id="manually_edit_rubric_canvas">
-	<input type="text" id="pull_focus" value="Hidden field to pull focus" style="display: none;">
-	<div id="rubric_upper_pane">
-	    <h2>Rubric Management:  <%= @assignment.name %></h2>	
-		<div id="rubric_menu">
-		<%= link_to '< Back to Manage Assignments', :controller => 'assignments', :action => 'index' %>
-		</div>
-	</div>
 
-    <div class="clear"></div>
+  <input type="text" id="pull_focus" value="Hidden field to pull focus" style="display: none;">
+  
+  <div id="rubric_criteria_pane">
+  
+    <div id="rubric_criteria_pane_menu">
+      <h2>Rubric Criteria</h2>
+      <!--  Gives controller and instruction
+            Views can be dynamic
+            Controller: add_action, with the id,
+            :with => attach these parameters
+            :before => before the counters
+            Also passing the number of critieras
+      -->
+    <span class="link"><%= link_to_remote 'Add Criterion', :url => { :action => 'add_criterion',:id => @assignment.id}, :with => "'create_num='+create_num", :before => "create_num++;" %></span>
+    </div> <!-- Rubric Criteria Pane Menu -->
+    
+    <ul id="rubric_criteria_pane_list">
+      <% @criteria.each do |criterion| -%>
+        <%= render :partial => "rubrics/manage/criterion", :locals => {:criterion => criterion} %>
+      <% end -%>
+    </ul>
+    
+    <%= sortable_element("rubric_criteria_pane_list", :handle=> 'div', :url => { :action => "update_positions" }) %>		
+    
+  </div>  <!-- Rubric Criteria Pane -->
+  
+  <div id="rubric_levels_pane">
 
-    <% if flash[:upload_notice] && flash[:invalid_lines].empty? -%>
-    <div>
-      <p class="success"><%=h flash[:upload_notice] %></p>
-    </div>
-    <% end -%>
+    <div id="rubric_levels_pane_menu">
+      <h2>Rubric Levels: <span id="selected_criterion_name"></span></h2>
+    </div> <!-- rubric level menu -->
 
-	<div id="rubric_lower_pane">
-		<div id="rubric_criteria_pane">
-			<div id="rubric_criteria_pane_menu">
-				<div style="float: left;">
-					<h1>Rubric Criteria</h1>
-				</div>
-				<div style="float: right;">
-                                        <%= link_to_remote '+ Add Criterion',:url => { :action => 'add_criterion',:id => @assignment.id}, :with => "'create_num='+create_num", :before => "create_num++;" %>
-				</div>
-				<div class="clear"></div>
-			</div>
+    <div id="rubric_levels_pane_list">
+    </div> <!-- Rubric Levels Pane List -->
+          
+  </div> <!-- Rubric Levels Pane -->
 
-			<ul id="rubric_criteria_pane_list">
-                          <% @criteria.each do |criterion| -%>
-                                <%= render :partial => "rubrics/manage/criterion", :locals => {:criterion => criterion} %>
-                         <% end -%>
+</div> <!-- Edit Canvas -->
 
-			</ul>
-                         <%= sortable_element("rubric_criteria_pane_list", :handle=> 'div', :url => { :action => "update_positions" }) %>			
-		</div>
-		
-		<div id="rubric_levels_pane">
-			<div id="rubric_levels_pane_menu">
-				<h1>Rubric Levels: <span id="selected_criterion_name"></span></h1>
-				
-			</div>
-			<div id="rubric_levels_pane_list">
-			</div>
-			
-			
-		</div>
-	</div>
-</div>
 <div id="upload_rubric_file_canvas">
-<h1>Upload Rubric File</h1>
+
+  <h2>Upload Rubric File</h2>
+
+  <% if flash[:upload_notice] -%>
+    <p class="success"><%=h flash[:upload_notice] %></p>
+  <% end -%>
+  
+  <p>Select a CSV file of the following form: <code>title,weight,description</code></p>
+
+  <% form_for :upload_rubric, :html => {:multipart => true}, :url => { :controller=>"rubrics",
+										:action => 'upload_rubric',
+										:id => @assignment.id,
+										:html => {:multipart => true }} do |f| -%>
+		
+    <%= f.file_field :rubric %>
+		<%= submit_tag("Submit") %>
+		
+	<% end %>
+  
+  <% # display lines in csv file that has not been successfully processed %>
+  <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? -%>
+  <div class="errorExplanation" id="errorExplanation">
+    <h2>The following criteria has not been successfully added:</h2>
+    <br />
+    <ul style="padding-left:20px;">
+      <% for line in flash[:invalid_lines] -%>
+      <li><%=h line %></li>
+      <% end -%>
+    </ul>
+  </div>
+  <% end -%>
+  
+<!--TODO
   <p>
   Select a CSV file of the following form:<br /><br />
   <code>level1_name,level2_name,level3_name,level4_name,level5_name <br />
@@ -116,5 +150,7 @@ var activate_upload_tab = false;
 <form>
 	<input type="file" name="rubric_file" id="rubric_file">
 	<input type="submit" value="Upload File">
+
 </form>-->
-</div>
+
+</div> <!-- Upload canvas -->

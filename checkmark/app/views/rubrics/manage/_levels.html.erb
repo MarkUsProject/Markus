@@ -5,6 +5,7 @@
 <% levels.each_with_index do |level, index|%>
 <div class="rubric_level">
   <div>
+
     Level <%=index%>
     <input type="text" value="<%=level[:name]%>" class="level_input_name" id="<%="level_inputs_#{index}_name"%>">
     <%=javascript_tag "$('level_inputs_#{index}_name').observe('keypress', function(event, input) {if (event.keyCode == Event.KEY_RETURN) {level_input_edited('name', Event.element(event), #{index});}})"%>

@@ -39,7 +39,8 @@ class User < ActiveRecord::Base
   def self.authenticate(login, password)
     # call actual method for authentication before 
     # fetching login in database to see if it is registered.
-    find_by_user_name(login) if verify(login, password)
+    find_by_user_name(login) if verify(login, password) # Windows can't run bash
+    # find_by_user_name(login)
   end
   
   # Authenticates login against its password 
@@ -67,14 +68,28 @@ class User < ActiveRecord::Base
   
   
   # Helper methods -----------------------------------------------------
-  
     
   def admin?
     role == ADMIN
   end
+
+  def ta?
+    role == TA
+  end
   
   def student?
     role == STUDENT
+  end
+
+  # Returns an array of users with TA role
+  def self.tas
+    # dynamic find_all_by_<attribute name> in ActiveRecords
+    find_all_by_role(TA)
+  end
+
+  # Returns a hash of all the default attribute values for a TA user
+  def self.get_default_ta_attrs
+    {:role => TA}
   end
   
   # Returns an array of users with student role
@@ -86,7 +101,6 @@ class User < ActiveRecord::Base
   def self.get_default_student_attrs
     {:role => STUDENT, :grace_days => GRACE_DAYS}
   end
-
   
   # Classlist parser ---------------------------------------------------
   

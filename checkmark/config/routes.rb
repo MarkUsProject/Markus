@@ -43,7 +43,9 @@ ActionController::Routing::Routes.draw do |map|
   # append xml to the classlist link
   map.connect 'checkmark/students/classlist.:format', 
     :controller => 'students', :action => 'classlist'
-  
+
+  map.connect 'checkmark/tas', :controller => 'tas'
+    
   # map filenames to a nice-looking url
   #map.connect 'checkmark/submissions/view/:id/:filename', 
   #  :controller => 'submissions', :action => 'view', :id => /\d+/, :filename => /\w+.\w+/

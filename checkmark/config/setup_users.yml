@@ -24,4 +24,9 @@ admin2:
     last_name:      Admin      
     first_name:     Mr
     role:           admin
-    
+
+admin3:
+    user_name:      veve
+    last_name:      Veronica      
+    first_name:     Wong
+    role:           admin

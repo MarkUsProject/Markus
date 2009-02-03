@@ -18,6 +18,7 @@ class CheckmarkController < ApplicationController
   # the website and has not logged in yet, or session has expired.  User 
   # is redirected to main page if session is still active and valid.
   def login
+    
     # redirect to main page if user is already logged in.
     if logged_in?
       redirect_to :action => 'index' 

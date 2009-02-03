@@ -3,32 +3,15 @@
   #student_container {
     color: #444444;
     width: 250px;
-    float: left;
   }
 
-  #student_container ul {
-    height: 500px;
-    overflow: auto;
-    list-style-type: none;
-  }
-
+  #student_container ul { }
+  
   #groups_container {
-    width: 350px;
-    float: left;
-    border: 1px solid #333;
-    margin-right: 15px;
+    margin: 0 0 20px 0;
   }
 
-  .groups {
-    overflow: auto;
-    height: 500px;
-  }
-
-  #groups_container .header {
-    height: 60px;
-    padding: 5px;
-    background: #DDDDDD none repeat scroll 0 0;
-  }
+  .groups { }
 
   #groups_container ul {
     list-style: none;
@@ -49,8 +32,7 @@
     border: 1px solid #CCC;
     background-color: #FCF1C3;
     padding: 10px;
-    width: 300px;
-    margin: 5px;
+    margin: 0 0 20px 0;
   }
 
   .fail-no-img { width: 250px; font-size: 80%; }
@@ -68,51 +50,78 @@
 
 <h1>Manage Groups for <%= @assignment.name %></h1>
 
-<div id="upload">
-   Upload a group list<br />
-   <p>
-      Select a CSV file form:<br />
-      <code>user_name,user_name,user_name ... </code><br />
-  </p>
-	<p>
-		<% form_for :group, :html => {:multipart => true},
-												:url => { :controller=>"groups",
-												:action => 'csv_upload',
-												:id => @assignment.id} do |f| -%>
-		<p>
-	      <%= f.file_field :grouplist %>
-		</p>
-		<p>
-			<%= submit_tag("Submit") %>
-		</p>							
-	   <% end %>
-	</p>
-</div>
+<div class="colsLeftHeavy">
 
-<p><%= link_to_remote "Create a New Group", :method => 'post', 
-  :url => { :action => 'add_group', :id => @assignment.id } %></p>
-
-<div id="groups_container">
-  <div class="header"><h2>Groups for <%= @assignment.name %></h2></div>
-
-  <div class="groups" id="groups">
-    <% @groups.each do |group| -%>
-      <%= render :partial => "groups/manage/group", :locals => {:group => group} %>
-    <% end -%>
+  <div id="upload">
+     Upload a group list<br />
+     <p>
+        Select a CSV file form:<br />
+        <code>user_name,user_name,user_name ... </code><br />
+    </p>
+    <p>
+      <% form_for :group, :html => {:multipart => true},
+                          :url => { :controller=>"groups",
+                          :action => 'csv_upload',
+                          :id => @assignment.id} do |f| -%>
+      <p>
+          <%= f.file_field :grouplist %>
+      </p>
+      <p>
+        <%= submit_tag("Submit") %>
+      </p>							
+       <% end %>
+    </p>
   </div>
+  
+  <p><%= link_to_remote "Create a New Group", :method => 'post', 
+    :url => { :action => 'add_group', :id => @assignment.id } %></p>
 
-</div>
+  <div class="colLeft"><div class="wrapLeft">
+  
+    <h2>Groups for <%= @assignment.name %></h2>
+    
+    <div class="section">
+      
+      <div id="groups_container">
+      
+        <div class="groups" id="groups">
+          <% @groups.each do |group| -%>
+            <%= render :partial => "groups/manage/group", :locals => {:group => group} %>
+          <% end -%>
+        </div>
+      
+      </div>
 
-<% # order of processing students is important. we go through each member 
-   # one by one and delete them above from the list of students 
-   # if they are already in a group %>
+    </div>
 
-<div id="student_container">
-  <h3>Users not in group:</h3>
+    <p><%= link_to_remote "Create a New Group", :method => 'post', 
+       :url => { :action => 'add_group', :id => @assignment.id } %></p>
 
-  <ul id="student_list">
-    <% @students.each do |user_id, s| -%>
-      <li id="user_<%= s.user_name %>"><%= s.user_name %></li>
-    <% end -%>
-  </ul>
-</div>
+    
+  </div></div> <!-- colLeft -->
+
+  <div class="colRight">
+
+    <% # order of processing students is important. we go through each member 
+       # one by one and delete them above from the list of students 
+       # if they are already in a group 
+    %>
+    
+    <h2>Users not in group:</h2>
+    
+    <div class="section">
+
+      <div id="student_container">
+      
+        <ul id="student_list">
+          <% @students.each do |user_id, s| -%>
+            <li id="user_<%= s.user_name %>"><%= s.user_name %></li>
+          <% end -%>
+        </ul>
+      </div>
+    
+    </div>
+  
+  </div> <!-- colRight -->
+
+</div> <!-- ColsLeftHeavy -->

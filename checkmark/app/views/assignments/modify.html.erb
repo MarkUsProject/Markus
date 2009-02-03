@@ -9,26 +9,22 @@
 <% form_for :assignment, :url => {:action => action, :id => params[:id] } do |f| -%>
 
 <fieldset>
+
   <legend>Assignment Properties</legend>
 
   <%= error_messages_for :assignment, :assignment_files, :object => @assignment.submission_rule %>
   
-  <p>
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
-  </p>
-  <p>
-    <%= f.label :description %><br />
-    <%= f.text_field :description %>
-  </p>
-  <p>
-    <%= f.label :message %> (Optional)<br />
-    <%= f.text_area :message, :rows => 5 %>
-  </p>
-  <p>
-    <%= f.label "This assignment is due on:"%>
+    <%= f.label :name %>
+    <%= f.text_field :name %><br />
+
+    <%= f.label :description %>
+    <%= f.text_field :description %><br />
+    
+    <%= f.label :message %>
+    <%= f.text_area :message, :rows => 5, :col => 45 %><br />
+    
+    <%= f.label "Due Date:"%>
     <%= f.datetime_select "due_date", :default => 3.hours.from_now %>
-  </p>
 
   <h4>Add filename(s) that students would be required to submit:</h4>
   <%# render the link instead of embedding, to dynamically update 
@@ -41,10 +37,11 @@
       <%= render :partial => 'file_fields', :locals => { :file => file, :index => index } -%>
     <% end -%> 
   </p>
+  
 </fieldset>
   
-  
 <fieldset>
+
   <legend>Group Properties</legend>
 
   <p>
@@ -112,9 +109,7 @@
 
 
   <p><%= f.submit @submit_text, :name => action %></p>
-
-
+  
 <% end %>
 
-<%= link_to '< Cancel', :action => 'index' %>
-
+<%= link_to '&laquo; Cancel', :action => 'index' %>

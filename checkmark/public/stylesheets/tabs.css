@@ -2,10 +2,8 @@ ul.subsection_tabs {
 	list-style: none;
 	margin: 0 0 5px 0;
 	padding: 0;
-	clear: both;
 	border-bottom: 1px solid #ccc;
 	height: 20px;
-	clear: both;
 }
 
 ul.subsection_tabs li.tab {
