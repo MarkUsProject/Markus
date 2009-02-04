@@ -65,7 +65,7 @@ class RubricsController < ApplicationController
      return unless request.post?
      criterion = RubricCriteria.find(params[:criterion_id])
      case params[:update_type]
-     when 'name' 
+     when 'name'
          old_value = criterion.name
          criterion.name = params[:new_value]
      when 'weight'
@@ -112,16 +112,15 @@ class RubricsController < ApplicationController
    end
 
    def add_csv_criterion(values, levels, assignment)
-    criterion = RubricCriteria.new
     #must have at least 3 values - name, weight description
-    #must have at most 8 values - name, weight description, and 5 level (0-4)
-    #descriptions
-    return nil if values.length < 3 || values.length > 8
+    return nil if values.length < 3
+    criterion = RubricCriteria.new
     criterion.assignment = assignment
     criterion.name = values[0]
     criterion.weight = values[1]
     criterion.description = values[2]
     criterion.position = RubricCriteria.count + 1
+    create_levels(criterion, levels)
     #the rest of the values are level descriptions
     i = 3
     while i < values.length do
@@ -129,19 +128,15 @@ class RubricsController < ApplicationController
       i+=1
     end
     return nil if !criterion.valid? || !criterion.save
-    create_levels(criterion, levels)
+
+    return criterion
    end
 
    def create_levels(criterion, levels)
-    #no more than 5 levels, (0-4)
-    if levels.length > 5
-        return nil
-    else
-      levels.each_with_index do |level, index|
-        criterion['level_' + index.to_s + '_name'] = level
-      end
-      criterion.save
+    levels.each_with_index do |level, index|
+      criterion['level_' + index.to_s + '_name'] = level
     end
+      criterion.save
    end
 
    # Moved all of this to one helper method for the time being, need to figure out where to put these!
