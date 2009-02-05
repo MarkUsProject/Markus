@@ -5,7 +5,6 @@
 <%= javascript_include_tag "syntaxhighlighter/shCore.js" %>
 <%= javascript_include_tag "syntaxhighlighter/shBrushJava.js" %>
 <%= javascript_include_tag "syntaxhighlighter/shBrushXml.js" %>
-
 <script>
 var tool_tips = $A();
 
@@ -35,8 +34,8 @@ function make_new_annotation() {
 
   <%= remote_function (
                     :url => { :action => "create" },
-                    :with => "'fid='+ $('select_file_id').value +'&pos_start=' + positions.pos_start + '&pos_end=' + positions.pos_end + '&line_start=' + positions.line_start + ' &line_end=' + positions.line_end + '&annotation_text='+ escape(new_annotation_text)",
-                    :before => "positions = getSel();")
+                    :with => "'fid='+ $('select_file_id').value +'&line_start=' + positions.line_start + ' &line_end=' + positions.line_end + '&annotation_text='+ escape(new_annotation_text)",
+                    :before => "positions = getSelectedLines($('code'));")
                     %>
 
 }
@@ -78,8 +77,27 @@ function add_tool_tip(node, annotation_id) {
         <p><%=criterion.name%></p>
         <p><%=criterion.description%></p>
         <ul>
-          <input type="radio" name="rubric_criterion_<%=criterion.id%>"><%=criterion.level_0_name%>
-          <p><%=criterion.level_0_description%></p>
+          <li>
+            <input type="radio" name="rubric_criterion_<%=criterion.id%>"><%=criterion.level_0_name%>
+            <p><%=criterion.level_0_description%></p>
+          </li>
+          <li>
+            <input type="radio" name="rubric_criterion_<%=criterion.id%>"><%=criterion.level_1_name%>
+            <p><%=criterion.level_1_description%></p>
+          </li>
+          <li>
+            <input type="radio" name="rubric_criterion_<%=criterion.id%>"><%=criterion.level_2_name%>
+            <p><%=criterion.level_2_description%></p>
+          </li>
+          <li>
+            <input type="radio" name="rubric_criterion_<%=criterion.id%>"><%=criterion.level_3_name%>
+            <p><%=criterion.level_3_description%></p>
+          </li>
+          <li>
+            <input type="radio" name="rubric_criterion_<%=criterion.id%>"><%=criterion.level_4_name%>
+            <p><%=criterion.level_4_description%></p>
+          </li>
+
         </ul>
       </div>
     <% end %>

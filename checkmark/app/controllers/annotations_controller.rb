@@ -14,8 +14,8 @@ class AnnotationsController < ApplicationController
     label.save
     
     new_annotation = { 
-      :pos_start => params[:pos_start],
-      :pos_end => params[:pos_end], 
+      :pos_start => 0,
+      :pos_end => 0, 
       :line_start => params[:line_start], 
       :line_end => params[:line_end],
       :annotation_label_id => label.id,

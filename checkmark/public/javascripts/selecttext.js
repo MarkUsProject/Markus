@@ -1,39 +1,17 @@
-function getSel() {
-
-    if (window.getSelection) {
-        var range = window.getSelection();
-        if(!range.anchorNode) return null;
-        
-        var startNode = range.anchorNode;
-        var endNode = range.focusNode;
-
-        // TODO make sure that the text that is selected if from the textArea
-
-        //these start and end points are relevant to the start and end node
-        var startOffset = range.anchorOffset;
-        var endOffset = range.focusOffset;
-        
-        pre = document.getElementById('code');
-        preContent = pre.innerHTML;
-
-        var start = getStartPos(startNode, startOffset);
-        var end = getEndPos(endNode, endOffset);
-
-        // make sure that the start occurs before the end
-        if (start > end) {
-            var temp = end;
-            end = start;
-            start = temp;
-        }
-
-        if (start-end == 0)
-            return false;
-    }
-    else if (document.selection) {
-        // fill this in for IE
-        var range = document.selection.createRange();
+function getSelectedLines(target_text) {
+  target_text = $(target_text);
+  var anchor = null;
+  var focus = null;
+  if(window.getSelection) {
+    anchor = window.getSelection().anchorNode;
+    focus = window.getSelection().focusNode;
+  }
+  else if(document.selection) {
+    //TODO:  Fix for IE
+    /*
+    var range = document.selection.createRange();
         var stored_range = range.duplicate();
-        var element = $("contents");
+        var element = $(target_text);
         stored_range.moveToElementText( element );
         stored_range.setEndPoint( 'EndToEnd', range );
         start = stored_range.text.length - range.text.length;
@@ -43,62 +21,85 @@ function getSel() {
         if (!codeRange.inRange(stored_range)){
             return false;
         }
+     */
+    alert('Not yet implemented for Internet Explorer');
+  }
+  else {
+    //TODO:  Catch other browsers?
+    alert('Not yet implemented for this browser');
+  }
+  
+  subject_array = $$('.dp-j')[0].childNodes;
+  if(subject_array == null) {
+    alert('Could not find the code viewer');
+  }
+  var anchor_node = getCodeLineNode(anchor);
+  var focus_node = getCodeLineNode(focus);
+  
+  if(anchor_node == null || focus_node == null) {
+    if(console) {
+      console.error('Text was selected outside of code');
     }
-    else {
-        alert("FIXME: Browser compatibility issue in highlight.js");
-        return false;
-    }
-
-
-    var line_start = preContent.substring(0,start).split("\n").length;
-    var line_end = preContent.substring(0,end).split("\n").length;
-
-    return {'pos_start': start, 
-            'pos_end': end,
-            'line_start': line_start,
-            'line_end': line_end};
+    return;
+  }
+  
+  var anchor_node_line = findCodeLineInArray(anchor_node, subject_array) + 1;
+  var focus_node_line = findCodeLineInArray(focus_node, subject_array) + 1;
+  
+  
+  if(anchor_node_line > focus_node_line) {
+    var swap_var = focus_node_line;
+    focus_node_line = anchor_node_line;
+    anchor_node_line = swap_var;
+  }
+  
+  return {line_start: anchor_node_line, line_end: focus_node_line};
+  
 }
 
-/* Given a node and offset, get the final offset including the node's 
-immediate children */
-function getPosition(startNode, offset) {
-    var curNode = startNode;
-    var absOffset = offset;
-    var prevSibling;
-
-    // Embedded comment, want the parent node
-    while ('codeviewer' != curNode.parentNode.parentNode.parentNode.id) {
-        curNode = curNode.parentNode;
+function findCodeLineInArray(node, target_array) {
+  for(i = 0; i < target_array.length; ++i) {
+    if (target_array[i] == node) {
+      return i;
     }
-    
-    while (prevSibling = curNode.previousSibling) {
-        var textLength = prevSibling.textContent.length;
-        absOffset += textLength;
-        curNode = prevSibling;
-    }
-    return absOffset;
+  }
 }
 
-/* Wrapper for getPosition (to make things more readable) */
-function getStartPos(startNode, startOffset) {
-    return getPosition(startNode, startOffset);
-}
+function getCodeLineNode(node) {
+  var current_node = $(node);
+  while(current_node.tagName != 'LI') {
+    current_node = current_node.parentNode;
+    if(current_node == null) {
+      return null;
+    }
+    if(current_node.tagName == 'body') {
+      return null;
+    }
+  }
+  return current_node;
 
-/* Wrapper for getPosition (to make things more readable) */
-function getEndPos(endNode, endOffset) {
-    return getPosition(endNode, endOffset);
 }
 
 function highlightLine(lineNum) {
     console.log('Attempting to highlight line ' + lineNum);
-    var code = document.getElementsByClassName('dp-j')[0]
-    if(lineNum > 0 && lineNum < code.childNodes.length) {
-      var ourline = code.childNodes[lineNum - 1]
-      var ourlineClassNames = ourline.classNames;
-      ourline.removeClassName('alt')
-      ourline.addClassName('checkmark')
-      return ourline;
+    var code = $$('.dp-j')[0];
+    //Make sure we found the OL tag containing the code
+    if(code == null) return false;
+    var target_line  = getCodeLineNode(code.childNodes[lineNum - 1]);
+    if(target_line == null) {
+      console.log('Failed to highlight line ' + lineNum);
+      return;
     }
+      
+    if($(target_line).hasClassName('annotation_highlighted_text')) {
+      $(target_line).removeClassName('annotation_highlighted_text');
+      $(target_line).addClassName('annotation_highlighted_text_overlap');
+    }
+    else {
+      $(target_line).removeClassName('alt')
+      $(target_line).addClassName('annotation_highlighted_text')
+    }
+    return target_line;
 }
 
 function highlightRange(startLine, endLine) {
