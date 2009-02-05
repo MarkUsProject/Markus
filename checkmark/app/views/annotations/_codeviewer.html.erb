@@ -18,9 +18,9 @@
           render_annotation_label("<%=h(annot.id)%>", "<%=h(annot.annotation_label.content)%>");
 
 
-            highlightRange(<%= annot.line_start %>, <%= annot.line_end %>).each(function(node) {
-              add_tool_tip(node, <%=annot.id%>); 
-            });
+            add_annotation($R(<%= annot.line_start %>, <%= annot.line_end %>), 
+             '<%=annot.annotation_label.content%>');
+             console.info("Add Annotation");
             
         <% end %>
     <% end %>

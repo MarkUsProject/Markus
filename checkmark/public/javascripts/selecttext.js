@@ -29,22 +29,13 @@ function getSelectedLines(target_text) {
     alert('Not yet implemented for this browser');
   }
   
-  subject_array = $$('.dp-j')[0].childNodes;
+  subject_array = $$('.dp-j')[0];
   if(subject_array == null) {
     alert('Could not find the code viewer');
   }
-  var anchor_node = getCodeLineNode(anchor);
-  var focus_node = getCodeLineNode(focus);
-  
-  if(anchor_node == null || focus_node == null) {
-    if(console) {
-      console.error('Text was selected outside of code');
-    }
-    return;
-  }
-  
-  var anchor_node_line = findCodeLineInArray(anchor_node, subject_array) + 1;
-  var focus_node_line = findCodeLineInArray(focus_node, subject_array) + 1;
+    
+  var anchor_node_line = findCodeLineInArray(anchor, subject_array) + 1;
+  var focus_node_line = findCodeLineInArray(focus, subject_array) + 1;
   
   
   if(anchor_node_line > focus_node_line) {
@@ -58,25 +49,26 @@ function getSelectedLines(target_text) {
 }
 
 function findCodeLineInArray(node, target_array) {
-  for(i = 0; i < target_array.length; ++i) {
-    if (target_array[i] == node) {
-      return i;
-    }
+  if(node == null || node.parentNode == null) {
+    return null;
   }
+  var line_num = -1;
+  var descendents_list = $(target_array).immediateDescendants();
+  var code_line_node = getCodeLineNode(node.parentNode);
+  line_num = descendents_list.indexOf(code_line_node);
+  return line_num;
 }
 
 function getCodeLineNode(node) {
   var current_node = $(node);
-  while(current_node.tagName != 'LI') {
-    current_node = current_node.parentNode;
-    if(current_node == null) {
-      return null;
+  var code_line_node = null;
+  current_node.ancestors().each(function(a_node) {
+    if(a_node.tagName == 'LI') {
+      code_line_node = a_node;
+      $break;
     }
-    if(current_node.tagName == 'body') {
-      return null;
-    }
-  }
-  return current_node;
+  });
+  return code_line_node;
 
 }
 
@@ -85,7 +77,7 @@ function highlightLine(lineNum) {
     var code = $$('.dp-j')[0];
     //Make sure we found the OL tag containing the code
     if(code == null) return false;
-    var target_line  = getCodeLineNode(code.childNodes[lineNum - 1]);
+    var target_line  = code.immediateDescendants()[lineNum - 1];
     if(target_line == null) {
       console.log('Failed to highlight line ' + lineNum);
       return;
@@ -102,10 +94,8 @@ function highlightLine(lineNum) {
     return target_line;
 }
 
-function highlightRange(startLine, endLine) {
-    var range_array = $A();
-    for (i = startLine; i <= endLine; i++) {
+function highlightRange(range) {
+    range.each(function(line_num) {
         range_array.push(highlightLine(i));
-    }
-    return range_array;
+    });
 }

@@ -7,10 +7,14 @@
 <%= javascript_include_tag "syntaxhighlighter/shBrushXml.js" %>
 <script>
 var tool_tips = $A();
-
+var line_annotations = $A();
 //After DOM is loaded, load up the first submitted file
 document.observe("dom:loaded", function() {
   load_submitted_file('<%=@files[0].id%>');
+  
+  //TODO:  Make it so that the sidebar is never here!
+  $('sidebar').hide();
+  $('content').setStyle({'margin':'0 0 0 0'});
 });
 
 //Load a submitted file into the code-viewer based on file id's
@@ -49,7 +53,51 @@ function render_annotation_label(id, content) {
   $('annotation_holder').insert(annot_label);
 }
 
+function add_annotation(range, annotation) {
+  range.each(function(line_num) {
+      highlightLine(line_num);
+      this_node = get_node_from_line(line_num);
+      if(line_annotations[line_num] == null) {
+        line_annotations[line_num] = $H({'annotations':$A(), 'observing':true});
+        $(this_node).observe('mouseover', function(event) {
+          display_annotation(line_num, Event.pointerX(event), Event.pointerY(event));
+        });
+        $(this_node).observe('mouseout', function() {
+          hide_annotation();
+        });
+      }
+     line_annotations[line_num].get('annotations').push(annotation);
+  });
+}
+
+function display_annotation(line_num, mouse_x, mouse_y) {
+  console.info('Displaying annotation for line number: ' + line_num + 'at (' + mouse_x + ',' + mouse_y+')');
+  var total_annotation = '';
+  line_annotations[line_num].get('annotations').each(
+    function(an_annotation) {
+      total_annotation += '<p>' + an_annotation + '</p>';
+    });
+  $('dummy_annotation').update(total_annotation);
+  $('dummy_annotation').setStyle({'position':'absolute', 'left': mouse_x + 'px', 'top':mouse_y + 'px'});
+  $('dummy_annotation').show();
+  console.info(line_annotations[line_num].get('annotations'));
+}
+function hide_annotation() {
+  console.info('Hiding annotation');
+  $('dummy_annotation').hide();
+}
+
+function get_node_from_line(line_num) {
+   var code = $$('.dp-j')[0];
+   if(code == null) {
+     console.error('Could not find .dp-j class');
+     return;
+   }
+   return code.immediateDescendants()[line_num - 1];
+}
+
 function add_tool_tip(node, annotation_id) {
+  
   var new_tool_tip = new Tooltip(node, "annotation_" + annotation_id);
   tool_tips.push(new_tool_tip);  
 }
@@ -106,4 +154,6 @@ function add_tool_tip(node, annotation_id) {
 </div>
 
 <div id="annotation_holder">
+  <div id="dummy_annotation" style="display:none;" class="annotation">
+  </div>
 </div>

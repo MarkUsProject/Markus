@@ -24,9 +24,7 @@ class AnnotationsController < ApplicationController
     annotation = Annotation.new(new_annotation)
     annotation.save
     render :js => "
-      render_annotation_label(" + annotation.id.to_s + ", \"" + label.content.to_s + "\");    
-      highlightRange(" + params[:line_start].to_s + "," + params[:line_end].to_s + ").each(
-      function(node) { add_tool_tip(node, " + annotation.id.to_s + "); });"
+      add_annotation($R(" + params[:line_start].to_s + ", " + params[:line_end].to_s + "), '" + label.content.to_s + "');"
   end
 
   def destroy
