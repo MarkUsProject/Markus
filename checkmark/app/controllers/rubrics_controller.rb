@@ -1,7 +1,10 @@
 require 'fastercsv'
 
 class RubricsController < ApplicationController
-  
+
+  #max number of rubric levels allowed
+  NUM_LEVELS = 5
+
   def index
     @assignment = Assignment.find(params[:id])
     @criteria = @assignment.rubric_criterias(:order => 'position')
@@ -81,30 +84,65 @@ class RubricsController < ApplicationController
 
    def upload_rubric
     file = params[:upload_rubric][:rubric]
+    file_type = params[:upload_rubric][:file_type]
     @assignment = Assignment.find(params[:id])
-    if request.post? && !file.blank?
-      num_update = 0
-      flash[:invalid_lines] = []  # store lines that were not processed
-      # read each line of the file and update rubric
-      # flag
-      first_line = true;
-      levels = nil;
-      FasterCSV.parse(file.read) do |row|
-       next if FasterCSV.generate_line(row).strip.empty?
-       if first_line #get the row of levels
-         levels = row;
-         first_line = false;
-       elsif add_csv_criterion(row, levels, @assignment) == nil
-         flash[:invalid_lines] << row.join(",")
-       else
-         num_update += 1
-       end
+    if request.post? && !file.blank? && !file_type.blank?
+      case file_type
+      when "csv"
+        parse_csv_rubric(file, @assignment)
+      when "yml"
+        parse_yml_rubric(file, @assignment)
       end
-
-      flash[:upload_notice] = "Rubric added/updated."
     end
 
+    flash[:upload_notice] = "Rubric added/updated."
+
     redirect_to :action => 'index', :id => @assignment.id, :activate_upload_tab => true
+   end
+
+   def parse_csv_rubric(file, assignment)
+    num_update = 0
+    flash[:invalid_lines] = []  # store lines that were not processed
+    # read each line of the file and update rubric
+    # flag
+    first_line = true;
+    levels = nil;
+    FasterCSV.parse(file.read) do |row|
+     next if FasterCSV.generate_line(row).strip.empty?
+     if first_line #get the row of levels
+       levels = row
+       first_line = false
+     elsif add_csv_criterion(row, levels, assignment) == nil
+       flash[:invalid_lines] << row.join(",")
+     else
+       num_update += 1
+     end
+    end
+   end
+
+   def parse_yml_rubric(file, assignment)
+     flash[:invalid_lines] = []
+     rubric = YAML.load(file.read)
+     level_names = rubric["levels"]
+     criteria = rubric["criteria"]
+
+     criteria.each do |c|
+       criterion = RubricCriteria.new
+       criterion.assignment = assignment
+       criterion.name = c["title"]
+       criterion.weight = c["weight"]
+       levels = c["levels"]
+       i = 0
+       while i < NUM_LEVELS do
+         criterion['level_' + i.to_s + '_description'] = levels[i]
+         i+=1
+       end
+       if !criterion.valid? || !criterion.save
+         flash[:invalid_lines] << c.to_s
+       else
+         create_levels(criterion, level_names)
+       end
+     end
    end
 
    def add_csv_criterion(values, levels, assignment)
