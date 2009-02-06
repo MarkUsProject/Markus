@@ -47,9 +47,6 @@
     
     <%=button_to_function "+", "criterion_weight_bump(1, $('criterion_inputs_#{criterion.id}_weight'), #{criterion.id});"%>
     
-    <textarea class="criterion_textarea_description" id="<%="criterion_inputs_#{criterion.id}_description"%>" onclick="$('<%="criterion_inputs_#{criterion.id}_set_desc"%>').show();" onblur="criterion_input_edited('description', $('<%="criterion_inputs_#{criterion.id}_description"%>'), <%=criterion.id%>);$('pull_focus').focus(); $('<%="criterion_inputs_#{criterion.id}_set_desc"%>').hide();"><%=criterion.description%></textarea>
-    <%=javascript_tag "$('criterion_inputs_#{criterion.id}_description').observe('focus', function(event) {$(Event.element(event)).addClassName('editing');})"%>
-    <%=button_to_function "Set Description", "criterion_input_edited('description', $('criterion_inputs_#{criterion.id}_description'), #{criterion.id});$('pull_focus').focus(); $(this).hide();", :id => "criterion_inputs_#{criterion.id}_set_desc", :style => "display:none;"%>
     <p id="criterion_error_<%= criterion.id %>" class="error" style="display:none;"></p>
 
   </div>

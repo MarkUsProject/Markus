@@ -71,7 +71,6 @@ function criterion_input_edited(input_type, input, criterion_id) {
   $('criterion_error_'+criterion_id).hide();
   $('criterion_inputs_'+criterion_id+'_name').removeClassName('editing');
   $('criterion_inputs_'+criterion_id+'_weight').removeClassName('editing');
-  $('criterion_inputs_'+criterion_id+'_description').removeClassName('editing');
   
   new Ajax.Request('/checkmark/rubrics/update_criterion/1', {
       asynchronous:true, 

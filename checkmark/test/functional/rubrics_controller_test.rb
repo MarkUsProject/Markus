@@ -32,7 +32,7 @@ class RubricsControllerTest < ActionController::TestCase
   def test_csv_upload
     assignment = assignments(:a1)
     levels = ["Level 0","Level 1","Level 2","Level 3","Level 4"]
-    values = ["Correctness","15","Program passes all tests"]
+    values = ["Correctness","15"]
     criterion = @controller.add_csv_criterion(values, levels, assignment);
     assert_not_nil criterion
     #check levels were added
@@ -42,7 +42,7 @@ class RubricsControllerTest < ActionController::TestCase
     end
 
     #test that descriptions are saved correctly
-    values2 = ["Documentation","10","Code contains comments","No Comments",
+    values2 = ["Documentation","10","No Comments",
       "Few Comments","Some comments","Many Comments","Everything is commented"]
 
     criterion = @controller.add_csv_criterion(values2, levels, assignment);
@@ -58,11 +58,11 @@ class RubricsControllerTest < ActionController::TestCase
   def test_invalid_csv
     assignment = assignments(:a1)
     levels = ["Level 1", "Level2", "Level3"]
-    values1 = ["Correctness","15"]
+    values1 = ["Correctness"]
     criterion = @controller.add_csv_criterion(values1, levels, assignment)
     assert_nil criterion, "Missing field"
 
-    values2 = ["Documentation","100percent","Code was thoroughly commented"]
+    values2 = ["Documentation","100percent"]
     criterion = @controller.add_csv_criterion(values2, levels, assignment)
     assert_nil criterion, "Weight had a non-numeric value"
   end
@@ -71,7 +71,7 @@ class RubricsControllerTest < ActionController::TestCase
     assignment = assignments(:a1)
     levels = ["Level 1", "Level2", "Level3"]
 
-    values = ["Documentation","10","Code contains comments","No Comments",
+    values = ["Documentation","10","No Comments",
       "Few Comments","Some comments","Many Comments","Everything is commented",
       "Some Extra field here"]
     #extra fields should just be ignored
@@ -97,7 +97,7 @@ class RubricsControllerTest < ActionController::TestCase
   def create_dummy_criterion
     assignment = assignments(:a1)
     levels = ["Level 0","Level 1","Level 2","Level 3","Level 4"]
-    values = ["Documentation","10","Code contains comments","No Comments",
+    values = ["Documentation","10","No Comments",
       "Few Comments","Some comments","Many Comments","Everything is commented",
       "Some Extra field here"]
     return @controller.add_csv_criterion(values, levels, assignment);

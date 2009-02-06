@@ -14,7 +14,6 @@ class RubricsController < ApplicationController
     criterion = RubricCriteria.new
     criterion.assignment = @assignment
     criterion.name = 'New Criterion '  +params[:create_num]
-    criterion.description = ''
     criterion.weight = 1
     criterion.save
     criterion.position = RubricCriteria.count + 1
@@ -71,9 +70,6 @@ class RubricsController < ApplicationController
      when 'weight'
          old_value = criterion.weight
          criterion.weight = params[:new_value]
-     when 'description'
-       old_value = criterion.description
-       criterion.description = params[:new_value]
      end
      if criterion.valid? && criterion.save
        output = {'status' => 'OK'}
@@ -112,17 +108,16 @@ class RubricsController < ApplicationController
    end
 
    def add_csv_criterion(values, levels, assignment)
-    #must have at least 3 values - name, weight description
-    return nil if values.length < 3
+    #must have at least 2 values - name and weight
+    return nil if values.length < 2
     criterion = RubricCriteria.new
     criterion.assignment = assignment
     criterion.name = values[0]
     criterion.weight = values[1]
-    criterion.description = values[2]
     criterion.position = RubricCriteria.count + 1
     create_levels(criterion, levels)
     #the rest of the values are level descriptions
-    i = 3
+    i = 2
     while i < values.length do
       criterion['level_' + (i-3).to_s + '_description'] = values[i]
       i+=1
