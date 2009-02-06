@@ -75,37 +75,7 @@ var activate_upload_tab = false;
 <div id="upload_rubric_file_canvas">
 
   <h2>Upload Rubric File</h2>
-
-  <% if flash[:upload_notice] -%>
-    <p class="success"><%=h flash[:upload_notice] %></p>
-  <% end -%>
   
-  <p>Select a CSV file of the following form: <code>title,weight,description</code></p>
-
-  <% form_for :upload_rubric, :html => {:multipart => true}, :url => { :controller=>"rubrics",
-										:action => 'upload_rubric',
-										:id => @assignment.id,
-										:html => {:multipart => true }} do |f| -%>
-		
-    <%= f.file_field :rubric %>
-		<%= submit_tag("Submit") %>
-		
-	<% end %>
-  
-  <% # display lines in csv file that has not been successfully processed %>
-  <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? -%>
-  <div class="errorExplanation" id="errorExplanation">
-    <h2>The following criteria has not been successfully added:</h2>
-    <br />
-    <ul style="padding-left:20px;">
-      <% for line in flash[:invalid_lines] -%>
-      <li><%=h line %></li>
-      <% end -%>
-    </ul>
-  </div>
-  <% end -%>
-  
-<!--TODO
   <p>
   Select a CSV file of the following form:<br /><br />
   <code>level1_name,level2_name,level3_name,level4_name,level5_name <br />
@@ -146,11 +116,5 @@ var activate_upload_tab = false;
     </ul>
   </div>
   <% end -%>
-<!--TODO
-<form>
-	<input type="file" name="rubric_file" id="rubric_file">
-	<input type="submit" value="Upload File">
-
-</form>-->
 
 </div> <!-- Upload canvas -->
