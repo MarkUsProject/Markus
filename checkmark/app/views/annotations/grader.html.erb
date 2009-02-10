@@ -123,7 +123,6 @@ function add_tool_tip(node, annotation_id) {
     <% @rubric_criteria.each do |criterion| %>
       <div class="criterion_holder">      
         <p><%=criterion.name%></p>
-        <p><%=criterion.description%></p>
         <ul>
           <li>
             <input type="radio" name="rubric_criterion_<%=criterion.id%>"><%=criterion.level_0_name%>
