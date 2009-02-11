@@ -1,6 +1,9 @@
 <%= stylesheet_link_tag("annotations") %>
 <%= stylesheet_link_tag("rubrics") %>
-<%= javascript_include_tag "tooltip.js" %>
+<%= stylesheet_link_tag("contextmenu") %>
+<%= javascript_include_tag "livepipe.js" %>
+<%= javascript_include_tag "controls.js" %>
+<%= javascript_include_tag "contextmenu.js" %>
 <%= javascript_include_tag "selecttext.js" %>
 <%= javascript_include_tag "syntaxhighlighter/shCore.js" %>
 <%= javascript_include_tag "syntaxhighlighter/shBrushJava.js" %>
@@ -58,7 +61,15 @@ function add_annotation(range, annotation) {
       highlightLine(line_num);
       this_node = get_node_from_line(line_num);
       if(line_annotations[line_num] == null) {
-        line_annotations[line_num] = $H({'annotations':$A(), 'observing':true});
+        var context_menu = new Control.ContextMenu($(this_node));
+        context_menu.addItem({
+          label: 'Remove annotation',
+          callback: function() {
+            console.log('Context menu clicked');
+          },
+          enabled: true
+        });
+        line_annotations[line_num] = $H({'annotations':$A(), 'observing':true, 'context_menu': context_menu});
         $(this_node).observe('mouseover', function(event) {
           display_annotation(line_num, Event.pointerX(event), Event.pointerY(event));
         });
@@ -71,14 +82,14 @@ function add_annotation(range, annotation) {
 }
 
 function display_annotation(line_num, mouse_x, mouse_y) {
-  console.info('Displaying annotation for line number: ' + line_num + 'at (' + mouse_x + ',' + mouse_y+')');
+  console.info('Displaying annotation for line number: ' + line_num);
   var total_annotation = '';
   line_annotations[line_num].get('annotations').each(
     function(an_annotation) {
       total_annotation += '<p>' + an_annotation + '</p>';
     });
   $('dummy_annotation').update(total_annotation);
-  $('dummy_annotation').setStyle({'position':'absolute', 'left': mouse_x + 'px', 'top':mouse_y + 'px'});
+  $('dummy_annotation').setStyle({'position':'absolute', 'left': (mouse_x + 15) + 'px', 'top': (mouse_y + 15) + 'px'});
   $('dummy_annotation').show();
   console.info(line_annotations[line_num].get('annotations'));
 }

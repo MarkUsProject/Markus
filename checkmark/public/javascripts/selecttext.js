@@ -88,8 +88,8 @@ function highlightLine(lineNum) {
       $(target_line).addClassName('annotation_highlighted_text_overlap');
     }
     else {
-      $(target_line).removeClassName('alt')
-      $(target_line).addClassName('annotation_highlighted_text')
+      $(target_line).removeClassName('alt');
+      $(target_line).addClassName('annotation_highlighted_text');
     }
     return target_line;
 }
