@@ -94,6 +94,29 @@ function highlightLine(lineNum) {
     return target_line;
 }
 
+function unHighlightLine(lineNum) {
+    console.log('Attempting to unhighlight line ' + lineNum);
+    var code = $$('.dp-j')[0];
+    //Make sure we found the OL tag containing the code
+    if(code == null) return false;
+    var target_line  = code.immediateDescendants()[lineNum - 1];
+    if(target_line == null) {
+      console.log('Failed to unhighlight line ' + lineNum);
+      return;
+    }
+      
+    if($(target_line).hasClassName('annotation_highlighted_text_overlap')) {
+      $(target_line).removeClassName('annotation_highlighted_text_overlap');
+      $(target_line).addClassName('annotation_highlighted_text');
+    }
+    else {
+      $(target_line).removeClassName('annotation_highlighted_text');
+      $(target_line).addClassName('alt');
+    }
+    return target_line;
+}
+
+
 function highlightRange(range) {
     range.each(function(line_num) {
         range_array.push(highlightLine(i));

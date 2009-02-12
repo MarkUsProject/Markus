@@ -24,7 +24,8 @@ class AnnotationsController < ApplicationController
     annotation = Annotation.new(new_annotation)
     annotation.save
     render :js => "
-      add_annotation($R(" + params[:line_start].to_s + ", " + params[:line_end].to_s + "), '" + label.content.to_s + "');"
+      add_annotation_label(" + label.id.to_s + ", '" + label.content.to_s + "');
+      add_annotation($R(" + params[:line_start].to_s + ", " + params[:line_end].to_s + "), " + label.id.to_s + ");"
   end
 
   def destroy

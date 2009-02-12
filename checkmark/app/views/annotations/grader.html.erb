@@ -9,7 +9,7 @@
 <%= javascript_include_tag "syntaxhighlighter/shBrushJava.js" %>
 <%= javascript_include_tag "syntaxhighlighter/shBrushXml.js" %>
 <script>
-var tool_tips = $A();
+var annotation_labels = $H();
 var line_annotations = $A();
 //After DOM is loaded, load up the first submitted file
 document.observe("dom:loaded", function() {
@@ -22,6 +22,8 @@ document.observe("dom:loaded", function() {
 
 //Load a submitted file into the code-viewer based on file id's
 function load_submitted_file(fid) {
+var annotation_labels = $H();
+var line_annotations = $A();
 <%= remote_function (:update => "codeviewer",
                    :url =>{ :action => "codeviewer", :id => @assignment.id, :uid => @uid },
                    :with => "'fid='+fid")%>
@@ -56,45 +58,72 @@ function render_annotation_label(id, content) {
   $('annotation_holder').insert(annot_label);
 }
 
-function add_annotation(range, annotation) {
+function add_annotation(range, label_id) {
+  //Does the label_id exist in the annotation_labels hash?
+  if(annotation_labels[label_id] == null) {
+    console.error('No annotation label exists in memory for label id #' + label_id);
+    return;
+  }
+  annotation_labels[label_id]['annotated_lines'].push(range);
+
   range.each(function(line_num) {
       highlightLine(line_num);
       this_node = get_node_from_line(line_num);
       if(line_annotations[line_num] == null) {
+        line_annotations[line_num] = $H();
+        line_annotations[line_num]['annotations'] = $A();
+        line_annotations[line_num]['observing'] = true;
+        line_annotations[line_num]['old_context_menu_callback'] = null;
+        line_annotations[line_num]['mouseover'] = function(event) {
+          display_annotation(line_num, Event.pointerX(event), Event.pointerY(event));
+        };
+        line_annotations[line_num]['mouseout'] = function() {
+          hide_annotation();
+        };
+        
+        var context_menu_callback = function() {
+            remove_annotation(line_num, label_id);
+        }
+        
         var context_menu = new Control.ContextMenu($(this_node));
         context_menu.addItem({
           label: 'Remove annotation',
-          callback: function() {
-            console.log('Context menu clicked');
-          },
+          callback: context_menu_callback,
           enabled: true
         });
-        line_annotations[line_num] = $H({'annotations':$A(), 'observing':true, 'context_menu': context_menu});
-        $(this_node).observe('mouseover', function(event) {
-          display_annotation(line_num, Event.pointerX(event), Event.pointerY(event));
-        });
-        $(this_node).observe('mouseout', function() {
-          hide_annotation();
-        });
+        line_annotations[line_num]['context_menu'] = context_menu;
+        
+        $(this_node).observe('mouseover', line_annotations[line_num]['mouseover']);
+        $(this_node).observe('mouseout', line_annotations[line_num]['mouseout']);
       }
-     line_annotations[line_num].get('annotations').push(annotation);
+      else {
+      //We've observed this line before - we need to take the old context_menu function,
+      //push it away in an array for a while, and replace it with a new one.
+        var context_menu = line_annotations[line_num]['context_menu'];
+        var context_menu_callback = function() {
+            remove_annotation(line_num, label_id);
+        }
+        var old_context_menu_callback = context_menu.items.last().callback;
+        line_annotations[line_num]['old_context_menu_callback'] = old_context_menu_callback;
+        context_menu.items.last().callback = context_menu_callback;
+      }
+      line_annotations[line_num]['annotations'].push(label_id);
   });
 }
 
 function display_annotation(line_num, mouse_x, mouse_y) {
-  console.info('Displaying annotation for line number: ' + line_num);
   var total_annotation = '';
-  line_annotations[line_num].get('annotations').each(
-    function(an_annotation) {
-      total_annotation += '<p>' + an_annotation + '</p>';
+  line_annotations[line_num]['annotations'].each(
+    function(label_id) {
+      if(annotation_labels[label_id] != null) {
+         total_annotation += '<p>' + annotation_labels[label_id]['content'] + '</p>';
+      }
     });
   $('dummy_annotation').update(total_annotation);
   $('dummy_annotation').setStyle({'position':'absolute', 'left': (mouse_x + 15) + 'px', 'top': (mouse_y + 15) + 'px'});
   $('dummy_annotation').show();
-  console.info(line_annotations[line_num].get('annotations'));
 }
 function hide_annotation() {
-  console.info('Hiding annotation');
   $('dummy_annotation').hide();
 }
 
@@ -107,11 +136,68 @@ function get_node_from_line(line_num) {
    return code.immediateDescendants()[line_num - 1];
 }
 
-function add_tool_tip(node, annotation_id) {
-  
-  var new_tool_tip = new Tooltip(node, "annotation_" + annotation_id);
-  tool_tips.push(new_tool_tip);  
+function add_annotation_label(label_id, label) {
+  if (annotation_labels[label_id] == null) {
+    //We've never used this label before - add it to the collection
+    annotation_labels[label_id] = $H();
+    annotation_labels[label_id]['annotated_lines'] = $A();
+    annotation_labels[label_id]['content'] = label;
+  }
 }
+
+function remove_annotation(line_num, label_id) {
+   console.log('Context menu clicked - remove ' + label_id + ' on ' + line_num);
+   //First, find the range that was selected
+   var target_range = null;
+   annotation_labels[label_id]['annotated_lines'].reverse().each(
+     function(some_range) {
+       if(some_range.include(line_num)) {
+         //We found the range that we're looking for
+         target_range = some_range;
+         $break;
+       }
+   });
+   if(target_range == null) {
+     console.error('Could not find target range');
+     return;
+   }
+   else {
+     console.info('Found range: ' + target_range);
+   }
+   annotation_labels[label_id]['annotated_lines'] = annotation_labels[label_id]['annotated_lines'].without(target_range);
+   target_range.each(
+     function(line_num) {
+       unHighlightLine(line_num);
+       
+       
+       //If an old context menu callback exists, put it back, otherwise, remove
+       //the context menu
+       line_annotations[line_num]['annotations'] = line_annotations[line_num]['annotations'].without(label_id);
+       
+       var old_context_menu_callback = line_annotations[line_num]['old_context_menu_callback'];
+
+       if(old_context_menu_callback != null) {
+
+         //Replace context menu callback
+         line_annotations[line_num]['context_menu'].items.last().callback = old_context_menu_callback;
+       }
+       else {
+         //Remove context menu entirely
+         line_annotations[line_num]['context_menu'].destroy();
+         line_annotations[line_num]['context_menu'] = null;
+       }
+       
+       if(line_annotations[line_num]['annotations'].size() == 0) {
+         //Remove mouseover/mouseout observers on this annotated line
+         var node = get_node_from_line(line_num);
+         $(node).stopObserving('mouseover');
+         $(node).stopObserving('mouseout');
+         line_annotations[line_num] = null;
+       }
+     }
+   );
+}
+
 </script>
 
 <h1>Grading Assignment: <%= link_to @assignment.name, :controller => 'annotations', :action => 'students', :id => @assignment.id %> </h1>
