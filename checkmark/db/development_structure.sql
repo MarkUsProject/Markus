@@ -8,13 +8,6 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET escape_string_warning = off;
 
---
--- Name: plpgsql; Type: PROCEDURAL LANGUAGE; Schema: -; Owner: -
---
-
-CREATE PROCEDURAL LANGUAGE plpgsql;
-
-
 SET search_path = public, pg_catalog;
 
 SET default_tablespace = '';
@@ -82,7 +75,7 @@ CREATE TABLE assignment_files (
 CREATE TABLE assignments (
     id integer NOT NULL,
     name character varying(255) NOT NULL,
-    description character varying(255),
+    description character varying(255) DEFAULT NULL::character varying,
     message text,
     due_date timestamp without time zone,
     group_min integer DEFAULT 1 NOT NULL,
@@ -101,7 +94,7 @@ CREATE TABLE assignments (
 CREATE TABLE assignments_groups (
     group_id integer,
     assignment_id integer,
-    status character varying(255)
+    status character varying(255) DEFAULT NULL::character varying
 );
 
 
@@ -138,7 +131,7 @@ CREATE TABLE descriptions (
 
 CREATE TABLE groups (
     id integer NOT NULL,
-    status character varying(255),
+    status character varying(255) DEFAULT NULL::character varying,
     name text
 );
 
@@ -151,7 +144,7 @@ CREATE TABLE memberships (
     id integer NOT NULL,
     user_id integer,
     group_id integer,
-    status character varying(255),
+    status character varying(255) DEFAULT NULL::character varying,
     created_at timestamp without time zone,
     updated_at timestamp without time zone
 );
@@ -164,7 +157,6 @@ CREATE TABLE memberships (
 CREATE TABLE rubric_criterias (
     id integer NOT NULL,
     name character varying(255) NOT NULL,
-    description text,
     assignment_id integer NOT NULL,
     weight numeric NOT NULL,
     created_at timestamp without time zone,
@@ -228,9 +220,9 @@ CREATE TABLE submission_files (
     id integer NOT NULL,
     user_id integer,
     submission_id integer,
-    filename character varying(255),
+    filename character varying(255) DEFAULT NULL::character varying,
     submitted_at timestamp without time zone,
-    status character varying(255)
+    status character varying(255) DEFAULT NULL::character varying
 );
 
 
@@ -247,7 +239,7 @@ CREATE TABLE submission_rules (
     penalty_limit integer,
     penalty_increment integer,
     penalty_interval integer,
-    penalty_interval_unit character varying(255),
+    penalty_interval_unit character varying(255) DEFAULT NULL::character varying,
     created_at timestamp without time zone,
     updated_at timestamp without time zone
 );
@@ -272,11 +264,11 @@ CREATE TABLE submissions (
 CREATE TABLE users (
     id integer NOT NULL,
     user_name character varying(255) NOT NULL,
-    user_number character varying(255),
-    last_name character varying(255),
-    first_name character varying(255),
+    user_number character varying(255) DEFAULT NULL::character varying,
+    last_name character varying(255) DEFAULT NULL::character varying,
+    first_name character varying(255) DEFAULT NULL::character varying,
     grace_days integer,
-    role character varying(255),
+    role character varying(255) DEFAULT NULL::character varying,
     created_at timestamp without time zone,
     updated_at timestamp without time zone
 );
@@ -287,7 +279,6 @@ CREATE TABLE users (
 --
 
 CREATE SEQUENCE annotation_categories_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -306,7 +297,6 @@ ALTER SEQUENCE annotation_categories_id_seq OWNED BY annotation_categories.id;
 --
 
 CREATE SEQUENCE annotation_labels_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -325,7 +315,6 @@ ALTER SEQUENCE annotation_labels_id_seq OWNED BY annotation_labels.id;
 --
 
 CREATE SEQUENCE annotations_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -344,7 +333,6 @@ ALTER SEQUENCE annotations_id_seq OWNED BY annotations.id;
 --
 
 CREATE SEQUENCE assignment_files_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -419,7 +407,6 @@ ALTER SEQUENCE descriptions_id_seq OWNED BY descriptions.id;
 --
 
 CREATE SEQUENCE groups_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -438,7 +425,6 @@ ALTER SEQUENCE groups_id_seq OWNED BY groups.id;
 --
 
 CREATE SEQUENCE memberships_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -475,7 +461,6 @@ ALTER SEQUENCE rubric_criterias_id_seq OWNED BY rubric_criterias.id;
 --
 
 CREATE SEQUENCE rubric_levels_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -512,7 +497,6 @@ ALTER SEQUENCE sessions_id_seq OWNED BY sessions.id;
 --
 
 CREATE SEQUENCE submission_files_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -549,7 +533,6 @@ ALTER SEQUENCE submission_rules_id_seq OWNED BY submission_rules.id;
 --
 
 CREATE SEQUENCE submissions_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -1137,3 +1120,5 @@ INSERT INTO schema_migrations (version) VALUES ('20090116063343');
 INSERT INTO schema_migrations (version) VALUES ('20090122190852');
 
 INSERT INTO schema_migrations (version) VALUES ('20090128224245');
+
+INSERT INTO schema_migrations (version) VALUES ('20090206022047');

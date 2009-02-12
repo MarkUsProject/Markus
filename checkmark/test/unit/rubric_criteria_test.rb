@@ -9,19 +9,7 @@ class RubricCriteriaTest < ActiveSupport::TestCase
     no_criteria_name = create_no_attr(:name)
     assert !no_criteria_name.valid?
   end
-  
-  #Test that Criteria with no description are OK
-  def test_no_description_attr_ok
-    no_criteria_description = create_no_attr(:description)
-    assert no_criteria_description.valid?
-  end
-  
-  #Test that Criteria with a description are OK
-  def test_description_attr
-    with_criteria_description = create_no_attr(nil)
-    assert with_criteria_description.valid?
-  end
-  
+    
   #Test that Criteria unassigned to Assignment are NOT OK
   def test_no_assignment_id
     no_assignment_id = create_no_attr(:assignment_id)
@@ -84,7 +72,6 @@ class RubricCriteriaTest < ActiveSupport::TestCase
   def create_no_attr(attr)
     new_rubric_criteria = { 
       :name => 'somecriteria',
-      :description => 'This is my description', 
       :assignment_id => '1', 
       :weight => 0.25
     }
