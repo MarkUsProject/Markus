@@ -1,0 +1,30 @@
+.dp-highlighter .annotation_highlighted_text {
+  background-color: #FFFF99; 
+  color: #000000;
+}
+.dp-highlighter .annotation_highlighted_text_overlap {
+  background-color: #DDDD55;
+  color: blue;
+}
+
+.annotation {
+  border: 1px solid #000000;
+  background: #FFFF00;
+  padding: 15px;
+}
+
+.annotation_category {
+/*  margin: 0 0 0 5px;*/
+  padding: 0 10px 0 10px;
+}
+.annotation_category:hover {
+  background: yellow;
+  cursor: pointer;
+}
+.annotation_category_list {
+  position: absolute;
+  background: #DDDDDD;
+  width: 200px;
+  height: 300px;
+  overflow: auto;
+}
