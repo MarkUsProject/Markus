@@ -42,7 +42,7 @@ class CheckmarkController < ApplicationController
       # redirect to last visited page or to main page
       redirect_to(uri || { :action => 'index' })
     else
-      flash[:login_notice] = "Your CDF login and password does not match."
+      flash[:login_notice] = "Your CDF login and password do not match."
     end
   end
   

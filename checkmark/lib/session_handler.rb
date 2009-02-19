@@ -49,7 +49,13 @@ module SessionHandler
     else
       session[:redirect_uri] = request.request_uri  # save current uri
       clear_session
-      flash[:login_notice] = "Please log in"
+      
+      # figure out how we want to explain this to users
+      if session_expired?
+        flash[:login_notice] = "Your session has expired. Please log in"
+      else
+        flash[:login_notice] = "Please log in"
+      end
       
       if request.xhr?
         session[:redirect_uri] = request.referer
