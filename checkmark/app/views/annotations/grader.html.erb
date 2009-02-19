@@ -1,10 +1,8 @@
 <%= stylesheet_link_tag("annotations") %>
 <%= stylesheet_link_tag("rubrics") %>
-<%= stylesheet_link_tag("contextmenu") %>
 <%= stylesheet_link_tag("SyntaxHighlighter") %>
 <%= javascript_include_tag "livepipe.js" %>
 <%= javascript_include_tag "controls.js" %>
-<%= javascript_include_tag "contextmenu.js" %>
 <%= javascript_include_tag "selecttext.js" %>
 <%= javascript_include_tag "syntaxhighlighter/shCore.js" %>
 <%= javascript_include_tag "syntaxhighlighter/shBrushJava.js" %>
@@ -12,14 +10,6 @@
 <script>
 var annotation_labels = $H();
 var line_annotations = $A();
-//After DOM is loaded, load up the first submitted file
-document.observe("dom:loaded", function() {
-  load_submitted_file('<%=@files[0].id%>');
-  
-  //TODO:  Make it so that the sidebar is never here!
-  $('sidebar').hide();
-  $('content').setStyle({'margin':'0 0 0 0'});
-});
 
 //Load a submitted file into the code-viewer based on file id's
 function load_submitted_file(fid) {
@@ -31,7 +21,11 @@ var line_annotations = $A();
 }
 
 function make_new_annotation() {
-
+  var positions = getSelectedLines($('code'));
+  if(positions.line_start == 0 && positions.line_end == 0) {
+    alert('You must select some text to annotate');
+    return false;
+  }
   var new_annotation_text = prompt('Please enter your annotation text');
 
   if (new_annotation_text == null) {
@@ -44,8 +38,7 @@ function make_new_annotation() {
 
   <%= remote_function (
                     :url => { :action => "create" },
-                    :with => "'fid='+ $('select_file_id').value +'&line_start=' + positions.line_start + ' &line_end=' + positions.line_end + '&annotation_text='+ escape(new_annotation_text)",
-                    :before => "positions = getSelectedLines($('code'));")
+                    :with => "'fid='+ $('select_file_id').value +'&line_start=' + positions.line_start + ' &line_end=' + positions.line_end + '&annotation_text='+ escape(new_annotation_text)")
                     %>
 
 }
@@ -81,32 +74,9 @@ function add_annotation(range, label_id) {
         line_annotations[line_num]['mouseout'] = function() {
           hide_annotation();
         };
-        
-        var context_menu_callback = function() {
-            remove_annotation(line_num, label_id);
-        }
-        
-        var context_menu = new Control.ContextMenu($(this_node));
-        context_menu.addItem({
-          label: 'Remove annotation',
-          callback: context_menu_callback,
-          enabled: true
-        });
-        line_annotations[line_num]['context_menu'] = context_menu;
-        
+                        
         $(this_node).observe('mouseover', line_annotations[line_num]['mouseover']);
         $(this_node).observe('mouseout', line_annotations[line_num]['mouseout']);
-      }
-      else {
-      //We've observed this line before - we need to take the old context_menu function,
-      //push it away in an array for a while, and replace it with a new one.
-        var context_menu = line_annotations[line_num]['context_menu'];
-        var context_menu_callback = function() {
-            remove_annotation(line_num, label_id);
-        }
-        var old_context_menu_callback = context_menu.items.last().callback;
-        line_annotations[line_num]['old_context_menu_callback'] = old_context_menu_callback;
-        context_menu.items.last().callback = context_menu_callback;
       }
       line_annotations[line_num]['annotations'].push(label_id);
   });
@@ -199,6 +169,120 @@ function remove_annotation(line_num, label_id) {
    );
 }
 
+//After DOM is loaded, load up the first submitted file
+document.observe("dom:loaded", function() {
+  load_submitted_file('<%=@files[0].id%>');
+  
+  //TODO:  Make it so that the sidebar is never here!
+  $('sidebar').hide();
+  $('content').setStyle({'margin':'0 0 0 0'});
+  
+  //c6conley Test - want to see if I can make dropdown menus...
+  setup_annotation_categories();
+});
+
+function setup_annotation_categories() {
+  <% @annotation_categories.each do |annotation_category| %>
+    $('annotation_category_<%=annotation_category.id%>').observe('click',
+      function(event) {
+        hide_annotation_label_lists();
+        $('annotation_label_list_<%=annotation_category.id%>').show();
+      }
+    );
+    
+    //Set the x/y coordinates for each annotation_label_list
+    var left_offset = get_absolute_offset_left($('annotation_category_<%=annotation_category.id%>'));
+    var top_offset = get_absolute_offset_top($('annotation_category_<%=annotation_category.id%>'));
+    top_offset += get_element_height($('annotation_category_<%=annotation_category.id%>'));
+    
+    $('annotation_label_list_<%=annotation_category.id%>').setStyle({
+      left: left_offset + 'px',
+      top: top_offset + 'px'
+    });
+    
+    $('annotation_label_list_<%=annotation_category.id%>').observe('mouseout',
+      function(event) {
+        var target = $('annotation_label_list_<%=annotation_category.id%>');
+        var mouse_over_element;
+        //This fix is so that when we enter and subelements of target,
+        //we don't accidentally hide the list.
+        //Loosely based on this: 
+        //http://images.code-head.com/code/javascript/fixOnMouseOuttest.html
+        if( event.toElement ) {
+          mouse_over_element = event.toElement;
+        }
+        else if(event.relatedTarget) {
+          mouse_over_element = event.relatedTarget;
+        }
+        if(mouse_over_element == null) {
+          return;
+        }
+        if(!mouse_over_element.descendantOf(target) && target != mouse_over_element) {
+          target.hide();
+        }
+      }
+    );
+  <% end %>
+
+}
+
+function hide_annotation_label_lists() {
+   $$('.annotation_label_list').each(function(element) {
+     $(element).hide();
+   });
+}
+
+//Get the height of this node
+function get_element_height(node) {
+  var node = $(node);
+  return node.offsetHeight;
+  
+}
+//Get the absolute left coordinates for this node
+function get_absolute_offset_left(node) {
+  return get_absolute_offset(node, 'left');
+}
+//Get the absolute top coordinates for this node
+function get_absolute_offset_top(node) {
+  return get_absolute_offset(node, 'top');
+}
+
+function get_absolute_offset(node, type) {
+  //This function based on 'getposOffset' from 
+  //http://www.dynamicdrive.com/dynamicindex1/chrome/index.htm
+
+  var node = $(node);
+  var total = (type == "left") ? node.offsetLeft : node.offsetTop;
+  var parentElement = $(node).offsetParent;
+  while (parentElement!=null){
+    switch(type) {
+      case 'left':
+        total += parentElement.offsetLeft;
+        break;
+      case 'top':
+        total += parentElement.offsetTop;
+        break;
+    }
+    parentElement = parentElement.offsetParent;
+  }
+  return total;
+}
+
+//This function takes the ID of some annotation that already
+//exists in the database, adds the new annotation link to the
+//currently selected text, and then highlights the lines.
+function add_existing_annotation(annotation_label_id) {
+  var positions = getSelectedLines($('code'));
+  if(positions.line_start == 0 && positions.line_end == 0) {
+    alert('You must select some code to annotate');
+    return false;
+  }
+  <%= remote_function (
+                    :url => { :action => "add_existing_annotation" },
+                    :with => "'fid='+ $('select_file_id').value +'&line_start=' + positions.line_start + '&line_end=' + positions.line_end + '&annotation_label_id='+ annotation_label_id")
+                    %>
+
+}
 </script>
 
 <h1>Grading Assignment: <%= link_to @assignment.name, :controller => 'annotations', :action => 'students', :id => @assignment.id %> </h1>
@@ -213,14 +297,31 @@ function remove_annotation(line_num, label_id) {
 
 <div id="code_pane" style="float:left;">
   <div id="annotation_menu" style="background: #AAAAAA;">
-    <div style="float:left;">
-      <button id="highlight_button" onClick="make_new_annotation();">New</button>
-    </div>
-    <div class="annotation_category" style="float: left;">Style</div>
-    <div class="annotation_category_list">
-      <div class="annotation_category_list_element">Some prebuilt annotation</div>
-    </div>
+    <ul id="annotation_categories">
+      <li id="new_annotation_button"><button id="highlight_button" onClick="make_new_annotation();">New</button>
+    <!-- First, output the list of annotation categories -->
+    <% @annotation_categories.each do |annotation_category| %>
+      <li class="annotation_category" id="annotation_category_<%=annotation_category.id%>" onClick="return false;" onMouseDown="return false;">
+        <%=annotation_category.name %>
+      </li>
+    <% end %>
+    </ul>    
+
+    <!-- Next, output the invisible annotation category lists -->
+    <% @annotation_categories.each do |annotation_category| %>
+      <ul id="annotation_label_list_<%=annotation_category.id%>" class="annotation_label_list" style="display:none;" onClick="return false;" onMouseDown="return false;">
+      <% if annotation_category.annotation_labels.size == 0: %>
+        There are no annotations in this category
+      <% end %>
+          <% annotation_category.annotation_labels.each do |annotation_label| %>
+          <li id="annotation_label_<%=annotation_label.id%>" onClick="add_existing_annotation(<%=annotation_label.id%>); hide_annotation_label_lists(); return false;" onMouseDown="return false;">
+            <%=truncate(annotation_label.content, 40, '...')%>
+          </li>
+          <% end %>
+      </ul>
+    <% end %>
     
+
   </div>
   <div class="clear"></div>
   <div id="codeviewer">

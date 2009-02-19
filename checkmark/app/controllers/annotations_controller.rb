@@ -3,6 +3,21 @@ class AnnotationsController < ApplicationController
     @assignments = Assignment.all(:order => :id)
 
   end
+  
+  def add_existing_annotation
+    label = AnnotationLabel.find(params[:annotation_label_id])
+    new_annotation = { 
+      :line_start => params[:line_start], 
+      :line_end => params[:line_end],
+      :annotation_label_id => label.id,
+      :submission_file_id => params[:fid]
+    }
+    annotation = Annotation.new(new_annotation)
+    annotation.save
+    render :js => "
+      add_annotation_label(" + label.id.to_s + ", '" + label.content.to_s + "');
+      add_annotation($R(" + params[:line_start].to_s + ", " + params[:line_end].to_s + "), " + label.id.to_s + ");"
+  end
 
   def create
     new_label = {
@@ -14,8 +29,6 @@ class AnnotationsController < ApplicationController
     label.save
     
     new_annotation = { 
-      :pos_start => 0,
-      :pos_end => 0, 
       :line_start => params[:line_start], 
       :line_end => params[:line_end],
       :annotation_label_id => label.id,

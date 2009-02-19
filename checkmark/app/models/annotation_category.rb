@@ -3,4 +3,6 @@ class AnnotationCategory < ActiveRecord::Base
   has_many :annotation_labels
   belongs_to :assignment
   validates_uniqueness_of :name, :message => 'is already taken'
+  validates_presence_of :assignment_id
+  validates_associated :assignment, :message => 'not strongly associated with assignment'
 end

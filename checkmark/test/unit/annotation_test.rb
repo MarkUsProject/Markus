@@ -1,19 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class AnnotationTest < ActiveSupport::TestCase
-  
-# Test that Annotation without pos_start are not valid
-  def test_no_pos_start
-    no_pos_start = create_no_attr(:pos_start);
-    assert !no_pos_start.valid?
-  end
-  
-  # Test that Annotation without pos_end are not valid
-  def test_no_pos_end
-    no_pos_end = create_no_attr(:pos_end);
-    assert !no_pos_end.valid?
-  end
-  
   # Test that Annotation without line_start are not valid
   def test_no_line_start
     no_line_start = create_no_attr(:line_start);
@@ -77,8 +64,6 @@ class AnnotationTest < ActiveSupport::TestCase
   # the specified attribute. if attr == nil then all attributes are included
   def create_no_attr(attr)
     new_annotation = { 
-      :pos_start => 1,
-      :pos_end => 10, 
       :line_start => 1, 
       :line_end => 10,
       :annotation_label_id => 1,

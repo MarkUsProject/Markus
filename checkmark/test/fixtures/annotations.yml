@@ -2,16 +2,12 @@
 
 
 one:
-  pos_start: 1
-  pos_end: 10
   line_start: 1
   line_end: 20
   annotation_label_id: 1
   submission_file_id: 1
 
 two:
-  pos_start: 2
-  pos_end: 20
   line_start: 2
   line_end: 40
   annotation_label_id: 2

@@ -5,6 +5,9 @@ function getSelectedLines(target_text) {
   if(window.getSelection) {
     anchor = window.getSelection().anchorNode;
     focus = window.getSelection().focusNode;
+    if(window.getSelection().toString().length == 0) {
+        return {line_start: 0, line_end: 0};
+    }
   }
   else if(document.selection) {
     //TODO:  Fix for IE

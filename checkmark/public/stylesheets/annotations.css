@@ -13,18 +13,46 @@
   padding: 15px;
 }
 
-.annotation_category {
+#annotation_categories {
+  list-style-image: none;
+  list-style-position: outside;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+#new_annotation_button {
+  float: left;
+  padding: 0 0 0 0;
+  margin: 0;
+}
+
+li.annotation_category {
 /*  margin: 0 0 0 5px;*/
   padding: 0 10px 0 10px;
+  float:left;
+  
 }
 .annotation_category:hover {
   background: yellow;
   cursor: pointer;
 }
-.annotation_category_list {
+.annotation_label_list {
   position: absolute;
   background: #DDDDDD;
-  width: 200px;
-  height: 300px;
+  width: 300px;
+  height: 350px;
   overflow: auto;
+  border: 1px solid #000000;
+  margin: 0;
+  padding: 0;
+}
+.annotation_label_list li {
+  background: #FFFFFF;
+  border-top: 1px solid #AAAAAA;
+  border-bottom: 1px solid #AAAAAA;
+  padding: 5px;
+}
+.annotation_label_list li:hover {
+  background: yellow;
+  cursor: pointer;
 }
