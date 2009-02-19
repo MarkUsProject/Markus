@@ -4,11 +4,11 @@ require 'rubygems'
 require 'active_record'  
 require 'yaml'  
 
-# TODO how do I hook this up to RAILS_ENV of config/environment.db?
-RAILS_ENV = "development"
+# we default to using development enviroment if RAILS_ENV variable isn't set
+ENV['RAILS_ENV'] ||= "development"
 
 # get a database connection
-dbconfig = YAML::load(File.open('config/database.yml'))[RAILS_ENV]
+dbconfig = YAML::load(File.open(File.dirname(__FILE__) + '/../config/database.yml'))[ENV['RAILS_ENV']]
 ActiveRecord::Base.establish_connection(dbconfig)
 
 # ActiveRecord class declarations for use when parsing
@@ -28,7 +28,7 @@ end
 #load('../test/fixtures/users.yml') { |v| User.new(v).save! }
 #puts User.count.to_s + " user(s) has been added to database."
 
-load('config/setup_users.yml') { |v| 
+load(File.dirname(__FILE__) + '/../config/setup_users.yml') { |v| 
   # Bug on postgres 8.3/activerecord that the user number is being stored 
   # as string in psql but is being compared as integer when using activerecord 
   # find.
