@@ -67,6 +67,14 @@ class UsersController < ApplicationController
     redirect_to :action => 'index'
     
   end
+
+  # Renders XML format of the student claslist that is OLM-compatible
+  def userlist
+
+    @users = User.find_all_by_role(params[:role])
+    render :layout => false
+    
+  end
   
   protected
 
