@@ -1,4 +1,5 @@
 class AnnotationsController < ApplicationController
+  
   def index
     @assignments = Assignment.all(:order => :id)
 
@@ -14,16 +15,16 @@ class AnnotationsController < ApplicationController
     }
     annotation = Annotation.new(new_annotation)
     annotation.save
-    render :js => "
-      add_annotation_label(" + label.id.to_s + ", '" + label.content.to_s + "');
-      add_annotation($R(" + params[:line_start].to_s + ", " + params[:line_end].to_s + "), " + label.id.to_s + ");"
+    render :update do |page|
+      page.call(:add_annotation_label, label.id, label.content)
+      page << "add_annotation($R(#{params[:line_start]}, #{params[:line_end]}), #{label.id})"
+    end
+
   end
 
   def create
     new_label = {
-      :name => params[:annotation_text][0, 8] + '...',
-      :content => params[:annotation_text],
-      :annotation_category_id => 1,  #TODO:  Maybe change from default?
+      :content => params[:annotation_text]
     }
     label = AnnotationLabel.new(new_label)
     label.save
@@ -36,9 +37,11 @@ class AnnotationsController < ApplicationController
     }
     annotation = Annotation.new(new_annotation)
     annotation.save
-    render :js => "
-      add_annotation_label(" + label.id.to_s + ", '" + label.content.to_s + "');
-      add_annotation($R(" + params[:line_start].to_s + ", " + params[:line_end].to_s + "), " + label.id.to_s + ");"
+    render :update do |page|
+      page.call(:add_annotation_label, label.id, label.content)
+      page << "add_annotation($R(#{params[:line_start]}, #{params[:line_end]}), #{label.id})"
+    end
+    
   end
 
   def destroy

@@ -8,10 +8,10 @@
         <% annots.each do |annot| %>
 //          render_annotation_label("<%=h(annot.id)%>", "<%=h(annot.annotation_label.content)%>");
 
-            add_annotation_label(<%=annot.annotation_label.id%>, '<%=annot.annotation_label.content%>');
+            add_annotation_label(<%=annot.annotation_label.id%>, '<%=escape_javascript(annot.annotation_label.content)%>');
             add_annotation($R(<%= annot.line_start %>, <%= annot.line_end %>), 
              '<%=annot.annotation_label.id%>');
-             console.info("Add Annotation");
+
             
         <% end %>
     <% end %>

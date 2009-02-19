@@ -12,7 +12,10 @@
   background: #FFFF00;
   padding: 15px;
 }
-
+#annotation_menu {
+  background: #AADD55;
+  color: #000000;
+}
 #annotation_categories {
   list-style-image: none;
   list-style-position: outside;
