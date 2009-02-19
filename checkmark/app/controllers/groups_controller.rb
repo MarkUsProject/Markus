@@ -201,12 +201,21 @@ class GroupsController < ApplicationController
   end
   
   def manage_new
+
     @assignment = Assignment.find(params[:id])
+    # Assignment and Group model has associations
+    # Can be done with has_many relationships
     @groups = @assignment.groups.all(:include => [:memberships])
-    
+
+    # For each group in @groups as g, grab its membership and store each
+    # of them in membership
     memberships = @groups.map { |g| g.memberships }
+    # Turns list or array into a single array
+    # see roby-doc.org/core/classes/Array.html#M002241
     user_groups = memberships.flatten.map { |m| m.user.id }
+    # Returns a hash where s.id is the key, and student record is the value
     @students = User.students.index_by { |s| s.id }
+    
   end
   
   # Allows the user to upload a csv file listing groups.

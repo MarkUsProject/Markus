@@ -64,6 +64,9 @@ ul {
 
 #sidebar ul { color: #FF6619; }
 
+  #sidebar ul li { margin: 0 0 15px 0; }
+    #sidebar ul li ul li { margin: 0; }
+
 ul ul { padding-left: 20px; }
 
 /* Table Elements */

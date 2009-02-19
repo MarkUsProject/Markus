@@ -5,7 +5,8 @@
 <% if @current_user.admin? -%>
   <div id="admin_task">
     <ul>
-      <li><%= link_to 'Manage Student List', :controller => 'students' %></li>
+      <li><%= link_to 'Manage Student List', :controller => 'users', :role => User::STUDENT %></li>
+      <li><%= link_to 'Manage TA list', :controller => 'users', :role => User::TA %></li>
       <li>
         <%= link_to 'Manage Assignments', :controller => 'assignments' %>
         <ul>
@@ -22,7 +23,13 @@
           <% end -%>
         </ul>
       </li>
-      <li><%= link_to 'Manage TAs', :controller => 'tas' %></li>
+      <li><%= link_to 'Assign TAs to Assignments', :controller => 'ta_assignments' %>
+        <ul>
+          <% for @assignment in Assignment.all(:order => :id) %>
+              <li><%= link_to @assignment.name, :controller => "ta_assignments", :action => "list", :id => @assignment.id %></li>
+          <% end -%>
+        </ul>
+      </li>
     </ul>
   </div>
 <% end -%>

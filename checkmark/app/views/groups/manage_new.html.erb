@@ -57,24 +57,22 @@
      <p>
         Select a CSV file form:<br />
         <code>user_name,user_name,user_name ... </code><br />
-    </p>
-    <p>
-      <% form_for :group, :html => {:multipart => true},
-                          :url => { :controller=>"groups",
-                          :action => 'csv_upload',
-                          :id => @assignment.id} do |f| -%>
-      <p>
-          <%= f.file_field :grouplist %>
-      </p>
-      <p>
-        <%= submit_tag("Submit") %>
-      </p>							
-       <% end %>
-    </p>
+     </p>
+     <% form_for :group, :html => {:multipart => true},
+                         :url => { :controller=>"groups",
+                                   :action => 'csv_upload',
+                                   :id => @assignment.id } do |f| -%>
+     <p>
+       <%= f.file_field :grouplist %>
+     </p>
+     <p>
+       <%= submit_tag("Submit") %>
+     </p>							
+     <% end %>
   </div>
   
-  <p><%= link_to_remote "Create a New Group", :method => 'post', 
-    :url => { :action => 'add_group', :id => @assignment.id } %></p>
+  <p><%= link_to_remote "Create a New Group", :method => 'post',
+      :url => { :action => 'add_group', :id => @assignment.id } %></p>
 
   <div class="colLeft"><div class="wrapLeft">
   
@@ -104,7 +102,8 @@
 
     <% # order of processing students is important. we go through each member 
        # one by one and delete them above from the list of students 
-       # if they are already in a group 
+       # if they are already in a group
+       # See manage/_group.html.erb
     %>
     
     <h2>Users not in group:</h2>

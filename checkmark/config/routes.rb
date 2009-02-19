@@ -45,15 +45,17 @@ ActionController::Routing::Routes.draw do |map|
     :controller => 'students', :action => 'classlist'
 
   map.connect 'checkmark/tas', :controller => 'tas'
-    
+  map.connect 'checkmark/ta_assignments', :controller => 'ta_assignments'
+  
   # map filenames to a nice-looking url
   #map.connect 'checkmark/submissions/view/:id/:filename', 
   #  :controller => 'submissions', :action => 'view', :id => /\d+/, :filename => /\w+.\w+/
+
+  map.connect 'checkmark/users/:role/:action/:id', :controller => 'users'
   
   map.connect 'checkmark/:controller/:action/:id'
-  
 
-  map.connect ':controller/:action/:id'
-  #map.connect ':controller/:action/:id.:format'
+  # map.connect ':controller/:action/:id'
+  # map.connect ':controller/:action/:id.:format'
   map.connect 'checkmark/annotations/grader/:aid/:uid', :controller => 'annotations', :action => 'grader'
 end
