@@ -39,10 +39,6 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'checkmark', :controller => 'checkmark'
   map.connect 'checkmark/login', :controller => 'checkmark', :action => 'login'
   map.connect 'checkmark/logout', :controller => 'checkmark', :action => 'logout'
-  
-  # append xml to the classlist link
-  map.connect 'checkmark/students/classlist.:format', 
-    :controller => 'students', :action => 'classlist'
 
   map.connect 'checkmark/tas', :controller => 'tas'
   map.connect 'checkmark/ta_assignments', :controller => 'ta_assignments'
@@ -52,6 +48,9 @@ ActionController::Routing::Routes.draw do |map|
   #  :controller => 'submissions', :action => 'view', :id => /\d+/, :filename => /\w+.\w+/
 
   map.connect 'checkmark/users/:role/:action/:id', :controller => 'users'
+
+  # append xml to the classlist link
+  map.connect 'checkmark/users/:role/userlist.:format', :controller => 'users', :action =>      'userlist'
   
   map.connect 'checkmark/:controller/:action/:id'
 
