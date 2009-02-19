@@ -1,0 +1,99 @@
+<h1>TA Assignment</h1>
+  
+<style>
+
+  #student_container {
+    color: #444444;
+    width: 250px;
+  }
+
+  #student_container ul { }
+  
+  #groups_container {
+    margin: 0 0 20px 0;
+  }
+
+  .groups { }
+
+  #groups_container ul {
+    list-style: none;
+    padding: 0;
+    color: #444444;
+  }
+
+  #groups_container ul li { margin: 5px; }
+
+  #groups_container a {
+    color: #AA0000; /* link for delete */
+  }
+
+  .remove_group { float: right; }
+
+  .group {
+    font-weight: bold;
+    border: 1px solid #CCC;
+    background-color: #FCF1C3;
+    padding: 10px;
+    margin: 0 0 20px 0;
+  }
+
+  .fail-no-img { width: 250px; font-size: 80%; }
+
+</style>
+
+<script type="text/javascript" language="JavaScript">
+  function clearText(id) {
+    $("member_name[" + id + "]").value = "";
+  }
+  function focusText(id) {
+    $("member_name[" + id + "]").focus()
+  }
+</script>
+
+<div class="colsLeftHeavy">
+
+  <div class="colLeft"><div class="wrapLeft">
+
+    <h2>Current Groups</h2>
+  
+    <div class="section">
+      
+      <div id="groups_container">
+      
+        <div class="groups" id="groups">
+          <% @groups.each do |group| -%>
+            <%= render :partial => "groups/manage/group", :locals => {:group => group} %>
+          <% end -%>
+        </div>
+      
+      </div>
+
+    </div>
+    
+    <h2>Students without a Group</h2>
+
+    <div class="section">
+      <ul id="student_list">
+        <% @students.each do |user_id, s| -%>
+          <li id="user_<%= s.user_name %>"><%= s.user_name %></li>
+        <% end -%>
+      </ul>
+    </div>
+
+  </div></div>
+  
+  <div class="colRight">
+  
+    <h2>Current TAs</h2>
+    
+    <div class="section">
+      <ul>
+        <% @tas.each do |s| -%>
+          <li><%= s.user_name %></li>
+        <% end -%>
+      </ul>
+    </div>
+    
+  </div>
+    
+</div>
