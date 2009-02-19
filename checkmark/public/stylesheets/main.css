@@ -59,10 +59,13 @@ code {
 
 ul {
   list-style-position: outside;
-
 }
 
-#sidebar ul { color: #FF6619; }
+#sidebar ul { 
+  color: #FF6619; 
+  margin: 0;
+  padding: 0 0 0 25px;
+}
 
   #sidebar ul li { margin: 0 0 15px 0; }
     #sidebar ul li ul li { margin: 0; }
