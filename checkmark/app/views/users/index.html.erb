@@ -16,8 +16,8 @@
       
       <%= form_tag "/checkmark/users/#{params[:role]}/update_userlist", :multipart => true %>
         <label for="userlist">CVS File</label>
-        <input type="file" name="userlist" id="userlist" class="limitWidth" />
-        <label for="submit">Submit</label><%= submit_tag "Update userlist", :disable_with => 'Processing...', :class => 'button' %>
+        <input type="file" name="userlist" id="userlist"/>
+        <%= submit_tag "Update userlist", :disable_with => 'Processing...', :class => 'button' %>
       </form>
     
     </div>
