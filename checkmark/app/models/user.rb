@@ -25,6 +25,8 @@ class User < ActiveRecord::Base
     :greater_than_or_equal_to => 0, :allow_nil => true
     
   # role constants
+  # NOTE (from Severin): Names of role constants are pulled into view. 
+  #                      Naming them with correct spelling might make sense.
   STUDENT = 'student'
   ADMIN = 'admin'
   TA = 'ta'
@@ -117,7 +119,7 @@ class User < ActiveRecord::Base
     u.save ? u : nil
   end
   
-	# Submissions methods ------------------------------------------------------
+  # Submissions methods ------------------------------------------------------
   
   def submission_for(aid)
     #TODO - doesn't work
