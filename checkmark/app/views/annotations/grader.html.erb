@@ -1,6 +1,7 @@
 <%= stylesheet_link_tag("annotations") %>
 <%= stylesheet_link_tag("rubrics") %>
 <%= stylesheet_link_tag("contextmenu") %>
+<%= stylesheet_link_tag("SyntaxHighlighter") %>
 <%= javascript_include_tag "livepipe.js" %>
 <%= javascript_include_tag "controls.js" %>
 <%= javascript_include_tag "contextmenu.js" %>
@@ -211,7 +212,17 @@ function remove_annotation(line_num, label_id) {
 </select>
 
 <div id="code_pane" style="float:left;">
-<button id="highlight_button" onClick="make_new_annotation();">Highlight Selection</button>
+  <div id="annotation_menu" style="background: #AAAAAA;">
+    <div style="float:left;">
+      <button id="highlight_button" onClick="make_new_annotation();">New</button>
+    </div>
+    <div class="annotation_category" style="float: left;">Style</div>
+    <div class="annotation_category_list">
+      <div class="annotation_category_list_element">Some prebuilt annotation</div>
+    </div>
+    
+  </div>
+  <div class="clear"></div>
   <div id="codeviewer">
   </div>
 </div>

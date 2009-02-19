@@ -43,6 +43,7 @@ class AnnotationsController < ApplicationController
   def grader
     @assignment = Assignment.find(params[:aid])
     @rubric_criteria = @assignment.rubric_criterias
+    @annotation_categories = @assignment.annotation_categories
     @uid = params[:uid]
     submission = @assignment.submission_by(User.find(@uid))
     @files = submission.submitted_filenames || []

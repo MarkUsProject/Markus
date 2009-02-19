@@ -7,11 +7,9 @@
 #   column: value
 
 one:
-  name: '80 Chars'
   content: 'You went over the 80 char limit'
   annotation_category_id: 1
 
 two:
-  name: 'Other'
   content: 'This is some other label'
   annotation_category_id: 2

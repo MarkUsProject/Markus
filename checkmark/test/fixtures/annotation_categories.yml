@@ -8,6 +8,8 @@
 
 one:
     name: 'Style'
+    assignment_id: 1
     
 two:
     name: 'Other'
+    assignment_id: 2

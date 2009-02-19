@@ -233,3 +233,4 @@ legend {
 .accepted { background: #00B366; }
 .rejected { background: #B32400; }
 
+.clear { clear: both; }

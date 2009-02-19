@@ -1,13 +1,4 @@
-<div id="delSelection">
-    <% annots.each do |annot| %>
-        <%= link_to_remote "Delete " + annot.line_start.to_s() + "-" + annot.line_end.to_s(),
-                                :url => { :action => "destroy", :id => annot.id } %>
-    <% end %>
-</div>
-
 <pre id="code" name="code" class="java" cols="80" rows="50"><%= filetext %></pre>
-
-<link type="text/css" rel="stylesheet" href="/stylesheets/SyntaxHighlighter.css"></link>
 
 <script language="javascript">
     dp.SyntaxHighlighter.ClipboardSwf = '/javascripts/syntaxhighlighter/clipboard.swf';

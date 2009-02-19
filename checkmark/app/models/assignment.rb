@@ -4,6 +4,7 @@ class Assignment < ActiveRecord::Base
   has_many :rubric_criterias
   has_many :assignment_files
   has_one  :submission_rule 
+  has_many :annotation_categories
   validates_associated :assignment_files
   
   validates_presence_of     :name, :group_min
