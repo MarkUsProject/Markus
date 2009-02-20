@@ -318,11 +318,15 @@ document.observe("dom:loaded", function() {
       <ul id="rubric_criteria_pane_list">
         <%# also need to render the mark per criteria (if exist) %>
       <% @rubric_criteria.each do |criterion| -%>
-        <%= render :partial => "annotations/rubric_criterion", :locals => {:criterion => criterion} %>
+        <%= render :partial => "annotations/rubric_criterion", :locals => {:criterion => criterion, :result=>@result, :mark=>@marks_map[criterion.id]} %>
       <% end -%>
       </ul>
 
     </div>
+
+    <div id="total_mark_div" style="float:right;"> /<%= @assignment.total_mark %>  </div>
+    <div id="current_mark_div" style="float:right;"> <%= @result.calculate_total %> </div>
+    <div style="float:right;">Total Mark:&nbsp;</div>
 </div>
 
 <div id="summary_viewer" style="float:left;">

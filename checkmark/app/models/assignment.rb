@@ -12,7 +12,7 @@ class Assignment < ActiveRecord::Base
   
   validates_numericality_of :group_min, :only_integer => true,  :greater_than => 0
   validates_numericality_of :group_max, :only_integer => true
-  
+
   def validate
     if (group_max && group_min) && group_max < group_min
       errors.add(:group_max, "must be greater than the minimum number of groups")
@@ -66,5 +66,14 @@ class Assignment < ActiveRecord::Base
     result = student_form_groups && student_invite_until.getlocal > Time.now
     return result
   end
-  
+
+  def total_mark
+    criteria = RubricCriteria.find_all_by_assignment_id(id)
+    total = 0
+    criteria.each do |criterion|
+      total = total + criterion.weight*4
+    end
+    return total
+  end
+
 end

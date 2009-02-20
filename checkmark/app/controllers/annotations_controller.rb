@@ -64,14 +64,19 @@ class AnnotationsController < ApplicationController
     @annotation_categories = @assignment.annotation_categories
     @uid = params[:uid]
     submission = @assignment.submission_by(User.find(@uid))
-    @group = Membership.find_by_user_id(@uid).group
     @files = submission.submitted_filenames || []
+    #Get the result object
+    @result = Result.find_by_submission_id(submission.id)
+    if (@result == nil)
+      @result = Result.new(:submission_id=>submission.id, :marking_state=>"partial");
+      @result.save
+    end
     #link marks and criterias together
-    #@marks_map = []
-    #@rubric_criteria.each do |criterion|
-    #  @marks_map[criterion.id] = Mark.find(:first,
-    #    :conditions => ["group_id = :g AND criterion = :c", {:g=> @group, :c=>criterion}] )
-    #end
+    @marks_map = []
+    @rubric_criteria.each do |criterion|
+      @marks_map[criterion.id] = Mark.find(:first,
+        :conditions => ["result_id = :r AND criterion_id = :c", {:r=> @result.id, :c=>criterion.id}] )
+    end
   end
 
   def codeviewer
@@ -93,12 +98,17 @@ class AnnotationsController < ApplicationController
   def update_mark
     mark = Mark.find(params[:mark_id]);
     if (mark.nil?)
-      mark = Mark.new(:criterion => criterion_id, :mark=>mark_val, :group_id => group_id)
+      mark = Mark.new(:criterion => criterion_id, :mark=>params[:mark], :group_id => group_id)
     else
-      mark.mark = mark_val;
+      mark.mark = params[:mark];
     end
     mark.save
-    render :layout => false
+    result = Result.find(mark.result_id)
+    render :update do |page|
+      page.replace_html("mark_#{mark.id}_current",  mark.get_mark.to_s + "/")
+      page.replace_html("current_mark_div", result.calculate_total.to_s)
+    end
+
   end
 
 end

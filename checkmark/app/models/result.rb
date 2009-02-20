@@ -10,15 +10,14 @@ class Result < ActiveRecord::Base
     extra_marks = ExtraMark.find_all_by_result_id(id);
     total = 0;
     marks.each do |m|
-     criterion = RubricCriteria.find(m.criterion)
-     total = total + (criterion.weight * m.mark)
+      total = total + m.get_mark
     end
 
     extra_marks.each do |em|
       total = total + em.mark
     end
-  
-    return total.to_f
+
+    return total
   end
   
 end

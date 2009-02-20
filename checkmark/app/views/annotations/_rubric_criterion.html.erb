@@ -1,6 +1,11 @@
 <%
 # Erb template for display rubric criterion in the grader view
-
+%>
+<%
+if (mark == nil)
+  mark = Mark.new(:result_id=> result.id, :criterion_id=>criterion.id,:mark=>0);
+  mark.save
+end
 %>
 <li class="criterion_holder" id="<%= "criterion_#{criterion.id}" %>">
 
@@ -11,8 +16,8 @@
       <%=criterion.name%>
     </div>
 
-    <div id="<%="criterion_title_#{criterion.id}_weight"%>"style="float:right;"><%=criterion.weight%></div>
-    <!--div id="<%="criterion_title_#{criterion.id}_mark"%>"style="float:right;"> 0/</div-->
+    <div id="<%="criterion_title_#{criterion.id}_weight"%>"style="float:right;"><%= criterion.weight * 4 %> </div>
+    <div id="<%="mark_#{mark.id}_current"%>"style="float:right;"> <%= mark.get_mark %>/</div>
     <div class="clear"></div>
 
   </div> <!-- Title Div -->
@@ -21,24 +26,28 @@
 
     <div style="float:left;">
       <ul>
-      <form id="mark_form_<%=criterion.id%>" name="mark_form_<%=criterion.id%>">
+      <% form_tag({}, {:id => "mark_form_#{criterion.id}"}) do %>
         <% num_levels = 0
         selected = false
         while (num_levels < 5) 
           level_name = criterion["level_" + num_levels.to_s + "_name"]
           level_desc = criterion["level_" + num_levels.to_s + "_description"]
-          #selected = false unless (!mark.nil? && num_levels == mark.mark)
-        %>
+          if (num_levels == mark.mark)
+            selected = true
+          else
+            selected = false
+          end
+        -%>
           <% if level_desc && !level_desc.empty? -%>
                   <%= radio_button_tag :mark, num_levels, selected %> <%=level_name%>
                   <p><%=level_desc%></p>
-             <% end %>
+             <% end -%>
 
         <% num_levels = num_levels + 1
-          end %>
+          end -%>
+      <% end -%>
       </ul>
-      <%= observe_form "mark_form_#{criterion.id}", :url => { :action => 'update_mark', :update=> '' } %>
-    </form>
+      <%= observe_form "mark_form_#{criterion.id}", :url => { :action => 'update_mark', :mark_id=>mark.id} -%>
     </div>
 
     <div class="clear"></div>
