@@ -58,11 +58,18 @@ class AnnotationsController < ApplicationController
 
   def grader
     @assignment = Assignment.find(params[:aid])
-    @rubric_criteria = @assignment.rubric_criterias
+    @rubric_criteria = @assignment.rubric_criterias(:order => 'position')
     @annotation_categories = @assignment.annotation_categories
     @uid = params[:uid]
     submission = @assignment.submission_by(User.find(@uid))
+    @group = Membership.find_by_user_id(@uid).group
     @files = submission.submitted_filenames || []
+    #link marks and criterias together
+    #@marks_map = []
+    #@rubric_criteria.each do |criterion|
+    #  @marks_map[criterion.id] = Mark.find(:first,
+    #    :conditions => ["group_id = :g AND criterion = :c", {:g=> @group, :c=>criterion}] )
+    #end
   end
 
   def codeviewer
@@ -80,4 +87,16 @@ class AnnotationsController < ApplicationController
       { :uid => params[:uid], :filetext => filetext, :annots => annots}
     
   end
+
+  def update_mark
+    mark = Mark.find(params[:mark_id]);
+    if (mark.nil?)
+      mark = Mark.new(:criterion => criterion_id, :mark=>mark_val, :group_id => group_id)
+    else
+      mark.mark = mark_val;
+    end
+    mark.save
+    render :layout => false
+  end
+
 end

@@ -1,12 +1,17 @@
 <%= stylesheet_link_tag("annotations") %>
+<%= stylesheet_link_tag("livepipe/tabs") %>
 <%= stylesheet_link_tag("rubrics") %>
 <%= stylesheet_link_tag("SyntaxHighlighter") %>
+<%= javascript_include_tag 'livepipe/livepipe' %>
+<%= javascript_include_tag 'livepipe/tabs' %>
 <%= javascript_include_tag "controls.js" %>
+<%= javascript_include_tag "grader.js" %>
 <%= javascript_include_tag "selecttext.js" %>
 <%= javascript_include_tag "syntaxhighlighter/shCore.js" %>
 <%= javascript_include_tag "syntaxhighlighter/shBrushJava.js" %>
 <%= javascript_include_tag "syntaxhighlighter/shBrushXml.js" %>
 <script>
+var selected_criterion_id = null;
 var annotation_labels = $H();
 var line_annotations = $A();
 var positions = null;
@@ -289,37 +294,25 @@ function add_existing_annotation(annotation_label_id) {
   <div id="codeviewer">
   </div>
 </div>
+
+<ul id="rubric_tabs" class="subsection_tabs">
+	<li class="tab"><a href="#rubric_viewer">Rubric</a></li>
+	<li class="tab"><a href="#summary_viewer">Summary</a></li>
+</ul>
+
 <div id="rubric_viewer" style="float:left;">
+   <div id="rubric_criteria_pane_list" style="width:500px;">
+      <ul id="rubric_criteria_pane_list">
+        <%# also need to render the mark per criteria (if exist) %>
+      <% @rubric_criteria.each do |criterion| -%>
+        <%= render :partial => "annotations/rubric_criterion", :locals => {:criterion => criterion} %>
+      <% end -%>
+      </ul>
 
-    <% @rubric_criteria.each do |criterion| %>
-      <div class="criterion_holder">      
-        <p><%=criterion.name%></p>
-        <ul>
-          <li>
-            <input type="radio" name="rubric_criterion_<%=criterion.id%>"><%=criterion.level_0_name%>
-            <p><%=criterion.level_0_description%></p>
-          </li>
-          <li>
-            <input type="radio" name="rubric_criterion_<%=criterion.id%>"><%=criterion.level_1_name%>
-            <p><%=criterion.level_1_description%></p>
-          </li>
-          <li>
-            <input type="radio" name="rubric_criterion_<%=criterion.id%>"><%=criterion.level_2_name%>
-            <p><%=criterion.level_2_description%></p>
-          </li>
-          <li>
-            <input type="radio" name="rubric_criterion_<%=criterion.id%>"><%=criterion.level_3_name%>
-            <p><%=criterion.level_3_description%></p>
-          </li>
-          <li>
-            <input type="radio" name="rubric_criterion_<%=criterion.id%>"><%=criterion.level_4_name%>
-            <p><%=criterion.level_4_description%></p>
-          </li>
+    </div>
+</div>
 
-        </ul>
-      </div>
-    <% end %>
-  
+<div id="summary_viewer" style="float:left;">
 
 </div>
 

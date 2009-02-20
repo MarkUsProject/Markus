@@ -1,0 +1,48 @@
+<%
+# Erb template for display rubric criterion in the grader view
+
+%>
+<li class="criterion_holder" id="<%= "criterion_#{criterion.id}" %>">
+
+  <div class="criterion_title_div" id="<%= "criterion_title_#{criterion.id}"%>" onclick="<%="focus_criterion(#{criterion.id})"%>">
+
+    <div id="<%="criterion_title_#{criterion.id}_expand"%>" style="float:left;">+ &nbsp;</div>
+    <div id="<%="criterion_title_#{criterion.id}_name"%>" style="float:left;">
+      <%=criterion.name%>
+    </div>
+
+    <div id="<%="criterion_title_#{criterion.id}_weight"%>"style="float:right;"><%=criterion.weight%></div>
+    <!--div id="<%="criterion_title_#{criterion.id}_mark"%>"style="float:right;"> 0/</div-->
+    <div class="clear"></div>
+
+  </div> <!-- Title Div -->
+
+  <div id="<%="criterion_inputs_#{criterion.id}"%>" style="display:none;">
+
+    <div style="float:left;">
+      <ul>
+      <%= form_tag({}, {:id => "mark_form_#{criterion.id}"}) %>
+        <% num_levels = 0
+        selected = false
+        while (num_levels < 5) 
+          level_name = criterion["level_" + num_levels.to_s + "_name"]
+          level_desc = criterion["level_" + num_levels.to_s + "_description"]
+          #selected = false unless (!mark.nil? && num_levels == mark.mark)
+        %>
+          <% if level_desc && !level_desc.empty? -%>
+                  <%= radio_button_tag :mark, num_levels, selected %> <%=level_name%>
+                  <p><%=level_desc%></p>
+             <% end %>
+
+        <% num_levels = num_levels + 1
+          end %>
+      </ul>
+      <%= observe_form "mark_form_#{criterion.id}", :url => { :action => 'update_mark', :update=> '' } %>
+     
+    </div>
+
+    <div class="clear"></div>
+
+  </div>
+
+</li>
