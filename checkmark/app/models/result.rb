@@ -6,11 +6,11 @@ class Result < ActiveRecord::Base
   
   # calculate the total mark for this assignment
   def calculate_total
-    marks = Mark.find_all_by_result_id(submission_id)
-    extra_marks = ExtraMark.find_all_by_result_id(submission_id);
+    marks = Mark.find_all_by_result_id(id)
+    extra_marks = ExtraMark.find_all_by_result_id(id);
     total = 0;
     marks.each do |m|
-     criterion = RubricCriteria.find(m.criterion.object_id)
+     criterion = RubricCriteria.find(m.criterion)
      total = total + (criterion.weight * m.mark)
     end
 
