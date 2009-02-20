@@ -23,8 +23,10 @@ class AnnotationsController < ApplicationController
   end
 
   def create
+   
     new_label = {
-      :content => params[:annotation_text]
+      :content => params[:annotation_text],
+      :annotation_category_id => params[:category_id]
     }
     label = AnnotationLabel.new(new_label)
     label.save

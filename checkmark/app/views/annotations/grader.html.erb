@@ -2,8 +2,9 @@
 <%= stylesheet_link_tag("livepipe/tabs") %>
 <%= stylesheet_link_tag("rubrics") %>
 <%= stylesheet_link_tag("SyntaxHighlighter") %>
-<%= javascript_include_tag 'livepipe/livepipe' %>
-<%= javascript_include_tag 'livepipe/tabs' %>
+<%= javascript_include_tag "livepipe/livepipe.js" %>
+<%= javascript_include_tag "livepipe/window.js" %>
+<%= javascript_include_tag "livepipe/tabs.js" %>
 <%= javascript_include_tag "controls.js" %>
 <%= javascript_include_tag "grader.js" %>
 <%= javascript_include_tag "selecttext.js" %>
@@ -15,7 +16,7 @@ var selected_criterion_id = null;
 var annotation_labels = $H();
 var line_annotations = $A();
 var positions = null;
-
+var modal = null;
 //Load a submitted file into the code-viewer based on file id's
 function load_submitted_file(fid) {
   $('working').show();
@@ -41,24 +42,12 @@ function make_new_annotation() {
     alert('You must select some text to annotate');
     return false;
   }
-  $('create_annotation_dialog').show();
+  
+  modal.open();
   $('new_annotation_content').setValue('');
   $('new_annotation_category').setValue('');
   $('new_annotation_content').focus();
   return false;
-/* 
-  if (new_annotation_text == null) {
-    return false;
-  }
-  if (new_annotation_text.strip() == '') {
-    alert('You must provide some annotation text');
-    return false;
-  }
-*/
-  <%= remote_function (
-                    :url => { :action => "create" },
-                    :with => "'fid='+ $('select_file_id').value +'&line_start=' + positions.line_start + ' &line_end=' + positions.line_end + '&annotation_text='+ escape(new_annotation_text)")
-                    %>
 
 }
 
@@ -135,17 +124,23 @@ function add_annotation_label(label_id, label) {
 }
 
 
-//After DOM is loaded, load up the first submitted file
-document.observe("dom:loaded", function() {
-  load_submitted_file('<%=@files[0].id%>');
-  
-  //TODO:  Make it so that the sidebar is never here!
-  $('sidebar').hide();
-  $('content').setStyle({'margin':'0 0 0 0'});
-  
-  //c6conley Test - want to see if I can make dropdown menus...
-  setup_annotation_categories();
-});
+
+
+function submit_new_annotation(content, category_id) {
+
+  if (content == '') {
+    alert('You must provide some annotation text');
+    return false;
+  }
+  $('working').show();
+  modal.close();
+  <%= remote_function (
+                    :url => { :action => "create" },
+                    :with => "'fid='+ $('select_file_id').value +'&line_start=' + positions.line_start + ' &line_end=' + positions.line_end + '&annotation_text='+ content + '&category_id=' + category_id", :after => "$('working').hide();")
+                    %>
+
+
+}
 
 function setup_annotation_categories() {
   <% @annotation_categories.each do |annotation_category| %>
@@ -250,6 +245,24 @@ function add_existing_annotation(annotation_label_id) {
                     %>
 
 }
+
+
+
+
+//After DOM is loaded, load up the first submitted file
+document.observe("dom:loaded", function() {
+  load_submitted_file('<%=@files[0].id%>');
+  
+  //TODO:  Make it so that the sidebar is never here!
+  $('sidebar').hide();
+  $('content').setStyle({'margin':'0 0 0 0'});
+  
+  //c6conley Test - want to see if I can make dropdown menus...
+  setup_annotation_categories();
+  
+  //Create the modal dialog
+  modal = new Control.Modal($('create_annotation_dialog'), {fade:false});
+});
 </script>
 
 <h1>Grading Assignment: <%= link_to @assignment.name, :controller => 'annotations', :action => 'students', :id => @assignment.id %> </h1>
@@ -301,7 +314,7 @@ function add_existing_annotation(annotation_label_id) {
 </ul>
 
 <div id="rubric_viewer" style="float:left;">
-   <div id="rubric_criteria_pane_list" style="width:500px;">
+   <div id="rubric_criteria_pane_list" style="width:450px;">
       <ul id="rubric_criteria_pane_list">
         <%# also need to render the mark per criteria (if exist) %>
       <% @rubric_criteria.each do |criterion| -%>
@@ -321,8 +334,7 @@ function add_existing_annotation(annotation_label_id) {
   </div>
 </div>
 
-<div id="create_annotation_wrapper">
-  <div id="create_annotation_dialog" style="display:none;">
+<div id="create_annotation_dialog" style="display:none;">
   <p>
     <h2>Create new annotation</h2>
   </p>
@@ -339,8 +351,8 @@ function add_existing_annotation(annotation_label_id) {
     </select>
     </p>
     <p style="margin-top: 5px; border-top: 1px solid #000000; padding-top: 10px;">
-      <button>Create New Annotation</button>
-      <button>Cancel</button>
+      <button onClick="submit_new_annotation(escape($F('new_annotation_content')), $F('new_annotation_category'));">Create New Annotation</button>
+      <button onClick="modal.close();">Cancel</button>
     </p>
-  </div>
 </div>
+

@@ -121,4 +121,9 @@ if (activate_upload_tab) {
 }else {
     tab_menu.setActiveTab('manually_edit_rubric_canvas');
 }
+
+//TODO:  Find a better way to hide the sidebar
+  $('sidebar').hide();
+  $('content').setStyle({'margin':'0 0 0 0'});
+
 });

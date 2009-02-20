@@ -21,7 +21,7 @@
 
     <div style="float:left;">
       <ul>
-      <%= form_tag({}, {:id => "mark_form_#{criterion.id}"}) %>
+      <form id="mark_form_<%=criterion.id%>" name="mark_form_<%=criterion.id%>">
         <% num_levels = 0
         selected = false
         while (num_levels < 5) 
@@ -38,7 +38,7 @@
           end %>
       </ul>
       <%= observe_form "mark_form_#{criterion.id}", :url => { :action => 'update_mark', :update=> '' } %>
-     
+    </form>
     </div>
 
     <div class="clear"></div>
