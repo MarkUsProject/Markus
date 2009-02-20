@@ -1,6 +1,7 @@
 function load_levels(id) {
+    $('working').show();
     $('selected_criterion_name').update($F('criterion_inputs_'+id+'_name'));
-    new Ajax.Request('/checkmark/rubrics/list_levels', {method: 'get',asynchronous:true, evalScripts:true,parameters: {'criterion_id':id,'authenticity_token': encodeURIComponent(authenticity_token)}});
+    new Ajax.Request('/checkmark/rubrics/list_levels', {method: 'get',asynchronous:true, evalScripts:true,parameters: {'criterion_id':id,'authenticity_token': encodeURIComponent(authenticity_token)}, onComplete: function(transport) { $('working').hide();}});
 }
 
 function hide_levels() {
@@ -39,6 +40,7 @@ function criterion_weight_bump(amount, input, criterion_id) {
 }
 
 function level_input_edited(input_type, input, level_id) {
+  $('working').show();
   $(input).disable();
   new Ajax.Request('/checkmark/rubrics/update_level', {
       asynchronous:true, 
@@ -59,12 +61,16 @@ function level_input_edited(input_type, input, level_id) {
            alert('Server communications failure:  this value was not updated.');
            $(input).disable();
       },
+      onComplete: function(request) {
+          $('working').hide();
+      },
       parameters: {'level_index': level_id,'criterion_id':selected_criterion_id, 'update_type': input_type, 'new_value': $F(input), 'authenticity_token':  encodeURIComponent(authenticity_token)}
    }
  );
 }
 
 function criterion_input_edited(input_type, input, criterion_id) {
+  $('working').show();
   $(input).disable();
   //Reset error displays
   $('criterion_error_'+criterion_id).update('');
@@ -99,6 +105,9 @@ function criterion_input_edited(input_type, input, criterion_id) {
       onFailure: function(request) {
            alert('Server communications failure:  this value was not updated.');
            $(input).disable();
+      },
+      onComplete: function(request) {
+          $('working').hide();
       },
       parameters: {'criterion_id': criterion_id, 'update_type': input_type, 'new_value': $F(input), 'authenticity_token':  encodeURIComponent(authenticity_token)}
    }

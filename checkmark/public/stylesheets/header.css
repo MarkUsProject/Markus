@@ -25,3 +25,13 @@ div#user_info a:hover {
     color: #fff;
     background-color: #464646;
 }
+
+#working {
+  background: #AA0000;
+  color: #FFFFFF;
+  font-weight: bold;
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 2px;
+}

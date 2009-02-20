@@ -46,7 +46,7 @@ var activate_upload_tab = false;
             :before => before the counters
             Also passing the number of critieras
       -->
-    <span class="link"><%= link_to_remote 'Add Criterion', :url => { :action => 'add_criterion',:id => @assignment.id}, :with => "'create_num='+create_num", :before => "create_num++;" %></span>
+    <span class="link"><%= link_to_remote 'Add Criterion', :url => { :action => 'add_criterion', :id => @assignment.id}, :with => "'create_num='+create_num", :before => "create_num++;" %></span>
     </div> <!-- Rubric Criteria Pane Menu -->
     
     <ul id="rubric_criteria_pane_list">

@@ -22,6 +22,7 @@
   list-style-type: none;
   padding: 0;
   margin: 0;
+  width: 600px;
 }
 #new_annotation_button {
   float: left;
@@ -58,4 +59,23 @@ li.annotation_category {
 .annotation_label_list li:hover {
   background: yellow;
   cursor: pointer;
+}
+
+#create_annotation_wrapper {
+  position:relative;
+  margin-left:auto;
+  text-align:left;
+}
+
+#create_annotation_dialog {
+  position: absolute;
+  left: 600px;
+  top: 0;
+  background-color: #FFFFFF;
+  border: 1px solid #000000;
+  padding: 10px;
+}
+#create_annotation_dialog textarea {
+  width: 300px;
+  height: 50px;
 }

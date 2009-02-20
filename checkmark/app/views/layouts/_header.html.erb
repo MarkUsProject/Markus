@@ -10,4 +10,8 @@
     Logged in as <span id="user_name"><b><%=h @current_user.user_name %></b></span> | 
     <%= link_to "Log out", :controller => 'checkmark', :action => 'logout' %>
   </div>
+  
+  <div id="working" style="display:none;">
+    Working...
+  </div>
 </div>

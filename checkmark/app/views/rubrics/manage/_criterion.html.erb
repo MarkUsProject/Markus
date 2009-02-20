@@ -32,7 +32,7 @@
       <%= link_to_remote "Delete", :method => 'delete',
       :url => { :action => 'remove_criterion', :id => @assignment.id, :criterion_id => criterion.id }, 
       :html => { :class => 'remove_criterion', :title => 'Delete this criterion' }, 
-      :confirm => 'Are you sure you want to remove this criterion?', :complete => "selected_criterion_id=null;hide_levels();"%>
+      :confirm => 'Are you sure you want to remove this criterion?', :complete => "selected_criterion_id=null;hide_levels();$('working').hide();", :before => "$('working').show();"%>
     
     </div>
   
@@ -40,7 +40,7 @@
   
     <%=button_to_function "-", "criterion_weight_bump(-1, $('criterion_inputs_#{criterion.id}_weight'), #{criterion.id});"%>
     
-    <input type="text" class="criterion_input_weight" id="<%="criterion_inputs_#{criterion.id}_weight"%>" value="<%=criterion.weight%>"  
+    <input type="text" class="criterion_input_weight" id="<%="criterion_inputs_#{criterion.id}_weight"%>" value="<%=criterion.weight%>">
     <%=javascript_tag "$('criterion_inputs_#{criterion.id}_weight').observe('focus', function(event) {$(Event.element(event)).addClassName('editing');})"%>
     <%=javascript_tag "$('criterion_inputs_#{criterion.id}_weight').observe('keypress', function(event, input) {if (event.keyCode == Event.KEY_RETURN) {criterion_input_edited('weight', Event.element(event), #{criterion.id});}})"%>
     <%=javascript_tag "$('criterion_inputs_#{criterion.id}_weight').observe('blur', function(event, input) {criterion_input_edited('weight', Event.element(event), #{criterion.id});})"%>
