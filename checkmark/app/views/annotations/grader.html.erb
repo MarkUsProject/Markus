@@ -67,7 +67,6 @@ function add_annotation(range, label_id) {
         line_annotations[line_num] = $H();
         line_annotations[line_num]['annotations'] = $A();
         line_annotations[line_num]['observing'] = true;
-        line_annotations[line_num]['old_context_menu_callback'] = null;
         line_annotations[line_num]['mouseover'] = function(event) {
           display_annotation(line_num, Event.pointerX(event), Event.pointerY(event));
         };
@@ -314,7 +313,7 @@ function add_existing_annotation(annotation_label_id) {
         There are no annotations in this category
       <% end %>
           <% annotation_category.annotation_labels.each do |annotation_label| %>
-          <li id="annotation_label_<%=annotation_label.id%>" onClick="add_existing_annotation(<%=annotation_label.id%>); hide_annotation_label_lists(); return false;" onMouseDown="return false;">
+          <li id="annotation_label_<%=annotation_label.id%>" onClick="add_existing_annotation(<%=annotation_label.id%>); hide_annotation_label_lists(); return false;" onMouseDown="return false;" title="<%=annotation_label.content%>">
             <%=truncate(annotation_label.content, 40, '...')%>
           </li>
           <% end %>
