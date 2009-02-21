@@ -3,6 +3,8 @@
 <script language="javascript">
     dp.SyntaxHighlighter.ClipboardSwf = '/javascripts/syntaxhighlighter/clipboard.swf';
     dp.SyntaxHighlighter.HighlightAll('code');
+    console.log('Code highlighted.  Now updating divider');
+    
 
     <% if (defined? annots) %>
         <% annots.each do |annot| %>

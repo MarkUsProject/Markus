@@ -22,7 +22,7 @@
   list-style-type: none;
   padding: 0;
   margin: 0;
-  width: 600px;
+  width: 100%;
 }
 #new_annotation_button {
   float: left;
@@ -61,6 +61,19 @@ li.annotation_category {
   cursor: pointer;
 }
 
+#code_pane {
+  float: left;
+  width: 600px;
+}
+
+#pane_divider {
+  float:left; 
+  width: 7px; 
+  height: 700px;
+  background-color:red;
+  cursor: move;
+}
+
 #create_annotation_wrapper {
 /*  position:relative;
   margin-left:auto;
@@ -80,6 +93,12 @@ li.annotation_category {
 
 #control_overlay {
   background-color:#000;
+}
+
+#rubric_criteria_pane_list {
+  width: 450px;
+  height: 500px;
+  overflow: auto;
 }
 
 .modal {

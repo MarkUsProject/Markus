@@ -10,7 +10,7 @@
 	padding-top: 1px; /* adds a little border on top when controls are hidden */
 
         height: 700px;
-        width: 600px;
+        width: 100%;  //Originally width: 600px;
 }
 
 /* clear styles */

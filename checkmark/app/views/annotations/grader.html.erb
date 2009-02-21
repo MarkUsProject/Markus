@@ -1,4 +1,4 @@
-<%= stylesheet_link_tag("annotations") %>
+<%= stylesheet_link_tag("grader") %>
 <%= stylesheet_link_tag("livepipe/tabs") %>
 <%= stylesheet_link_tag("rubrics") %>
 <%= stylesheet_link_tag("SyntaxHighlighter") %>
@@ -17,6 +17,10 @@ var annotation_labels = $H();
 var line_annotations = $A();
 var positions = null;
 var modal = null;
+var init_content_width = 0;
+var init_code_pane_width = 0;
+
+
 //Load a submitted file into the code-viewer based on file id's
 function load_submitted_file(fid) {
   $('working').show();
@@ -247,6 +251,31 @@ function add_existing_annotation(annotation_label_id) {
 }
 
 
+var click_divider = function() {
+  if($$('.dp-highlighter').size() == 0) {  //If SyntaxHighlighted code DNE yet
+    return false;
+  }
+  if(divider_expanded) {
+    contract_code();
+    divider_expanded = false;
+  }
+  else {
+    expand_code();
+    divider_expanded = true;
+  }
+}
+
+function setup_divider(dragger, widen_target) {
+    var divider = new Draggable(dragger, {scroll: window, constraint: 'horizontal',
+    onDrag: function(dragged, event) {
+      if(event != null) { //Sometimes, event is null.  It happens.
+        var delta = event.pointerX() - init_code_pane_width;
+        var pointer_x = event.pointerX();
+        $('code_pane').setStyle({width: (pointer_x - $('code_pane').offsetLeft) + 'px'});
+        $('content').setStyle({width: (init_content_width + delta) + 'px'});
+      }
+    }});
+}
 
 
 //After DOM is loaded, load up the first submitted file
@@ -260,6 +289,11 @@ document.observe("dom:loaded", function() {
   //c6conley Test - want to see if I can make dropdown menus...
   setup_annotation_categories();
   
+  //Make the divider work
+  init_content_width = $('content').getWidth();
+  init_code_pane_width = $('code_pane').getWidth();
+  setup_divider($('pane_divider'), $('code_pane'));
+        
   //Create the modal dialog
   modal = new Control.Modal($('create_annotation_dialog'), {fade:false});
 });
@@ -274,8 +308,7 @@ document.observe("dom:loaded", function() {
         </option>
     <% end %>
 </select>
-
-<div id="code_pane" style="float:left;">
+<div id="code_pane">
   <div id="annotation_menu">
     <ul id="annotation_categories">
       <li id="new_annotation_button"><button id="highlight_button" onClick="make_new_annotation(); return false;">New</button>
@@ -308,29 +341,36 @@ document.observe("dom:loaded", function() {
   </div>
 </div>
 
-<ul id="rubric_tabs" class="subsection_tabs">
+<!-- Divider  -->
+<div id="pane_divider">
+</div>
+<!-- End Divider -->
+
+<div id="rubric_pane" style="float:left;">
+  <ul id="rubric_tabs" class="subsection_tabs">
 	<li class="tab"><a href="#rubric_viewer">Rubric</a></li>
 	<li class="tab"><a href="#summary_viewer">Summary</a></li>
-</ul>
+  </ul>
 
-<div id="rubric_viewer" style="float:left;">
-   <div id="rubric_criteria_pane_list" style="width:450px;">
-      <ul id="rubric_criteria_pane_list">
+  <div id="rubric_viewer" style="float:left;">
+     <div id="rubric_criteria_pane_list">
+        <ul id="rubric_criteria_pane_list">
         <%# also need to render the mark per criteria (if exist) %>
-      <% @rubric_criteria.each do |criterion| -%>
+        <% @rubric_criteria.each do |criterion| -%>
         <%= render :partial => "annotations/rubric_criterion", :locals => {:criterion => criterion, :result=>@result, :mark=>@marks_map[criterion.id]} %>
-      <% end -%>
-      </ul>
+        <% end -%>
+        </ul>
 
-    </div>
+     </div>
 
-    <div id="total_mark_div" style="float:right;"> /<%= @assignment.total_mark %>  </div>
-    <div id="current_mark_div" style="float:right;"> <%= @result.calculate_total %> </div>
-    <div style="float:right;">Total Mark:&nbsp;</div>
-</div>
+     <div id="total_mark_div" style="float:right;"> /<%= @assignment.total_mark %>  </div>
+     <div id="current_mark_div" style="float:right;"> <%= @result.calculate_total %> </div>
+     <div style="float:right;">Total Mark:&nbsp;</div>
+  </div>
 
-<div id="summary_viewer" style="float:left;">
+  <div id="summary_viewer" style="float:left;">
 
+  </div>
 </div>
 
 <div id="annotation_holder">
