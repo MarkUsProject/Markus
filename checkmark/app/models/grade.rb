@@ -12,7 +12,7 @@ class Grade < ActiveRecord::Base
   
   # Each grade is associated with some users, the student/group of students,
   # and the TA who gave the mark
-  has_and_belongs_to :user # TA who graded it; may have many TAs
+  belongs_to :user # TA who graded it; may have many TAs
   belongs_to :group # student (has membership to a group with one member) or student group
 
   # Make sure that the group is only assigned to a specific TA once per assignment
