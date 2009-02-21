@@ -29,14 +29,32 @@ class TaAssignmentsController < ApplicationController
   # Assign a TA to the submissions
   # Allow for multple TAs to be assigned.
   def assign
+
+    @ta = User.find_by_id(params[:ta_id])
+    @selectedGroups = ActiveSupport::JSON.decode(params[:selected_groups])
+
+    #output = { 'status' => 'OK', 'groups' => @selectedGroups }
+    #render :json => output.to_json
     
-    # return unless request.post?
-    # @assignment = Assignment.find(params[:id])
-    # @ta = params[:ta]
+    success = true
+    numGroups = 0;
     
-    # if params[:groups]
-      # insert a new record into Grade for each group
-    # end
+    @selectedGroups.each do |group|
+
+      numGroups = numGroups + 1;
+      ta_assignment = Grade.new
+      ta_assignment.user_id = @ta
+      ta_assignment.group_id = group
+      if (!ta_assignment.save) then success = false end
+    end
+
+    if success
+      output = {'status' => 'OK', 'groups' => @selectedGroups, 'numGroups' => numGroups}
+    else
+      output = {'status' => 'error'}
+    end
+    
+    render :json => output.to_json
     
   end
 

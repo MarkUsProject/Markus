@@ -1,0 +1,30 @@
+.groupHighlight {
+  background: #9FC5E7;
+}
+
+#groups_container {
+  overflow: auto;
+  height: 300px;
+}
+
+#groups_container ul, ul#ta_list {
+  border: 1px solid #E6E6E6;
+  list-style: none;
+  margin: 0 0 20px 0;
+  padding: 10px;
+}
+
+ul#ta_list {
+  border: 0;
+  padding: 0;
+}
+
+#ta_list li {
+   background: #E6E6E6;
+   margin: 0 0 15px 0;
+   padding: 10px;
+}
+
+#ta_list li.activeTA {
+    background: #9FC5E7;
+}

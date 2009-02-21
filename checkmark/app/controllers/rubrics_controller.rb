@@ -35,12 +35,12 @@ class RubricsController < ApplicationController
 
    def list_levels
      @criterion = RubricCriteria.find(params[:criterion_id])
-     @criterion_levels = [{:name => @criterion.level_0_name, :description => @criterion.level_0_description},
+     @criterion_levels = [{:name => @criterion.level_0_name, :description =>
+                          @criterion.level_0_description},
                           {:name => @criterion.level_1_name, :description => @criterion.level_1_description},
                           {:name => @criterion.level_2_name, :description => @criterion.level_2_description},
                           {:name => @criterion.level_3_name, :description => @criterion.level_3_description},
-                          {:name => @criterion.level_4_name, :description => @criterion.level_4_description},
-     ]
+                          {:name => @criterion.level_4_name, :description => @criterion.level_4_description},]
 
      render :update do |page|
        page.replace_html("rubric_levels_pane_list", :partial => "rubrics/manage/levels", :locals => {:levels => @criterion_levels})
