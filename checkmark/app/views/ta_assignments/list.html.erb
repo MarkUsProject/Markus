@@ -17,6 +17,10 @@
       
       <div id="groups_container">
       
+        <% 
+          # TODO: Groups that already been assigned to a TA should be marked as such
+          # Include method in the model that returns True if a group has a TA
+        %>
         <% @groups.each do |group| -%>
           <%= render :partial => "ta_assignments/group", :locals => {:group => group} %>
         <% end -%>
@@ -46,8 +50,14 @@
     
     <div class="section">
       <ul id="ta_list">
+        <%
+          # TODO: Groups that already been assigned to a TA should be matched as such
+          # Include method in the model that returns the number of assignment each TA has
+        %>
         <% @tas.each do |t| -%>
-          <li id="ta_<%= t.id %>" onclick="<%="focus_ta(#{t.id})"%>"><%= t.user_name %></li>
+          <li id="ta_<%= t.id %>" class="<%= cycle('rowA', 'rowB') %>" onclick="<%="focus_ta(#{t.id})"%>">
+            <%= t.user_name %> (<span><%= t.taAssignmentCount(:id) %></span>)
+          </li>
         <% end -%>
       </ul>
     </div>

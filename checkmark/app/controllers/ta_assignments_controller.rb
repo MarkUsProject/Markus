@@ -26,6 +26,10 @@ class TaAssignmentsController < ApplicationController
         
   end
 
+  # List the mappings for this TA
+  def list_by_ta(aid, tid)
+  end
+  
   # Assign a TA to the submissions
   # Allow for multple TAs to be assigned.
   def assign
@@ -33,23 +37,22 @@ class TaAssignmentsController < ApplicationController
     @ta = User.find_by_id(params[:ta_id])
     @selectedGroups = ActiveSupport::JSON.decode(params[:selected_groups])
 
-    #output = { 'status' => 'OK', 'groups' => @selectedGroups }
-    #render :json => output.to_json
-    
-    success = true
-    numGroups = 0;
-    
+    success = 0
+
     @selectedGroups.each do |group|
-
-      numGroups = numGroups + 1;
+      
+      # TODO: Create only if the {user_id, group_id, assignment_id}
+      # In new model: Mapping.find_or_create_by_tid_gid(@ta.id, gid):
+      
       ta_assignment = Grade.new
-      ta_assignment.user_id = @ta
+      ta_assignment.user_id = @ta.id
       ta_assignment.group_id = group
-      if (!ta_assignment.save) then success = false end
+      if (ta_assignment.save) then success = success + 1 end
+      
     end
-
-    if success
-      output = {'status' => 'OK', 'groups' => @selectedGroups, 'numGroups' => numGroups}
+    
+    if (success > 0)
+      output = {'status' => 'OK'}
     else
       output = {'status' => 'error'}
     end
@@ -58,8 +61,8 @@ class TaAssignmentsController < ApplicationController
     
   end
 
-  # Edit the TA for the assignments
-  def edit
+  # Remove a mapping of a TA and a group
+  def remove
   end
 
 end

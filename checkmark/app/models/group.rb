@@ -169,6 +169,5 @@ class Group < ActiveRecord::Base
     end
     return grace_day
   end
-  
-  
+
 end

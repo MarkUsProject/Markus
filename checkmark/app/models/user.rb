@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
   has_many  :memberships
   has_many  :groups,  :through => :memberships
   has_many  :submissions, :class_name => 'UserSubmission'
-  
+  has_many  :grades
   
   validates_presence_of     :user_name, :user_number, :last_name, :first_name
   validates_uniqueness_of   :user_number, :user_name
@@ -103,6 +103,12 @@ class User < ActiveRecord::Base
   def self.get_default_student_attrs
     {:role => STUDENT, :grace_days => GRACE_DAYS}
   end
+
+  # Return the number of groups this TA is assigned to grade
+  def taAssignmentCount(aid)
+    # TODO: Should be assignment specific; handled by new model architecture?
+    Grade.find_all_by_user_id(self.id).size
+  end
   
   # Classlist parser ---------------------------------------------------
   
@@ -127,9 +133,3 @@ class User < ActiveRecord::Base
   end
 
 end
-
-
-
-
-
-

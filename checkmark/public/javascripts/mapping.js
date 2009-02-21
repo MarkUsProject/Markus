@@ -1,5 +1,6 @@
 /* STYLE CLASS/ID VARIABLES */
 var highlightClassName = "groupHighlight";
+var assignedClassName = "groupAssigned";
 var activeTAClassName = "activeTA";
 
 /* STATE VARIABLES */
@@ -63,6 +64,11 @@ function removeSelected(group_id) {
   
 }
 
+/* Toggle the groups that have been assigned the given TA */
+function toggleTA(ta_id) {
+  
+}
+
 function assign_ta_to_students(input) {
   
   /*
@@ -76,16 +82,29 @@ function assign_ta_to_students(input) {
     
     onSuccess: function(request) {
       
-      alert('Groups JSON form: ' + selectedGroups.toJSON());
       data = request.responseText.evalJSON();
       
       if (data.status == 'OK') {
         
-        alert("Ok!");
-        alert('Groups JSON Response: ' + data.groups);
-        alert('GroupsNum JSON Response: ' + data.numGroups);
-        // Update TA count
-        // Remove classes
+        var ta = $('ta_'+selectedTA);
+        var countContainer = ta.childElements()[0];
+        
+        // Deselect the currentTA in preparation for next assignment
+        ta.removeClassName(activeTAClassName);
+        
+        // Mark the groups as assigned
+        for (var i = 0; i < selectedGroups.length; i++) {
+          
+          var group = $('group_'+selectedGroups[i]);
+          group.removeClassName(highlightClassName);
+          group.addClassName(assignedClassName);
+          countContainer.update(parseInt(countContainer.innerHTML) + 1);
+          
+        }
+        selectedGroups = [];
+        selectedTA = -1;
+        
+        // TODO: Update TA count on server side
           
       } else if (data.status == 'error') {
         
