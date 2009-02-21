@@ -42,15 +42,6 @@ dp.SyntaxHighlighter = dp.sh;
 //
 
 dp.sh.Toolbar.Commands = {
-	ExpandSource: {
-		label: '+ expand source',
-		check: function(highlighter) { return highlighter.collapse; },
-		func: function(sender, highlighter)
-		{
-			sender.parentNode.removeChild(sender);
-			highlighter.div.className = highlighter.div.className.replace('collapsed', '');
-		}
-	},
 	
 	// opens a new windows and puts the original unformatted source code inside.
 	ViewSource: {
@@ -61,6 +52,15 @@ dp.sh.Toolbar.Commands = {
 			var wnd = window.open('', '_blank', 'width=750, height=400, location=0, resizable=1, menubar=0, scrollbars=0');
 			wnd.document.write('<textarea style="width:99%;height:99%">' + code + '</textarea>');
 			wnd.document.close();
+		}
+	},
+	ExpandSource: {
+		label: '+ expand source',
+		check: function(highlighter) { return highlighter.collapse; },
+		func: function(sender, highlighter)
+		{
+			sender.parentNode.removeChild(sender);
+			highlighter.div.className = highlighter.div.className.replace('collapsed', '');
 		}
 	},
 	
@@ -138,7 +138,23 @@ dp.sh.Toolbar.Commands = {
 			doc.close();
 			wnd.focus();
 		}
-	}
+	},
+/*  c6conley:  Increase and decrease font functions */
+	BoostCode: {
+	  label: '+A',
+	  func: function(highlighter) {
+	    var code = $$('.dp-highlighter').first();
+            code.setStyle({fontSize: '1.4em'});
+	  }
+        },
+        ShrinkCode: {
+          label: '-A',
+          func: function(highlighter) {
+            var code = $$('.dp-highlighter').first();
+            code.setStyle({fontSize: '1em'});
+          }
+        }
+        
 };
 
 // creates a <div /> with all toolbar links

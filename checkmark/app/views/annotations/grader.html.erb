@@ -271,10 +271,15 @@ function setup_divider(dragger, widen_target) {
       if(event != null) { //Sometimes, event is null.  It happens.
         var delta = event.pointerX() - init_code_pane_width;
         var pointer_x = event.pointerX();
+        console.log(delta);
         $('code_pane').setStyle({width: (pointer_x - $('code_pane').offsetLeft) + 'px'});
-        $('content').setStyle({width: (init_content_width + delta) + 'px'});
+        $('content').setStyle({width: (init_content_width + delta - 60) + 'px'});
       }
-    }});
+    },
+    onEnd: function(dragged, event) {
+      console.info('Content width: ' + $('content').getWidth());
+    }
+    });
 }
 
 
