@@ -16,7 +16,8 @@ class Result < ActiveRecord::Base
     extra_marks.each do |em|
       total = total + em.mark
     end
-
+    self.total_mark = total
+    self.save
     return total
   end
   

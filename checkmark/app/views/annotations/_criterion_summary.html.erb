@@ -1,0 +1,15 @@
+<%#
+# To change this template, choose Tools | Templates
+# and open the template in the editor.
+%>
+
+<li class="criterion_holder" id="<%= "criterion_summary_#{criterion.id}" %>">
+  <div >
+    <div style="float:left;"><%= criterion.name%></div>
+    <div style="float:right;padding-left:20px;" id="<%= "mark_summary_#{mark.id}" %>">
+      <%= criterion.weight %> * <%= mark.mark %> =
+      <%= mark.mark*criterion.weight %> / <%=  criterion.weight * 4 %>
+    </div>
+    <div class="clear"></div>
+  </div>
+</li>

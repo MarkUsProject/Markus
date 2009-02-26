@@ -68,7 +68,7 @@ class AnnotationsController < ApplicationController
     #Get the result object
     @result = Result.find_by_submission_id(submission.id)
     if (@result == nil)
-      @result = Result.new(:submission_id=>submission.id, :marking_state=>"partial");
+      @result = Result.new(:submission_id=>submission.id, :marking_state=>"unmarked");
       @result.save
     end
     #link marks and criterias together
@@ -97,18 +97,28 @@ class AnnotationsController < ApplicationController
 
   def update_mark
     mark = Mark.find(params[:mark_id]);
-    if (mark.nil?)
-      mark = Mark.new(:criterion => criterion_id, :mark=>params[:mark], :group_id => group_id)
-    else
-      mark.mark = params[:mark];
-    end
+    criterion = RubricCriteria.find(mark.criterion_id);
+    mark.mark = params[:mark];
     mark.save
     result = Result.find(mark.result_id)
+    result.marking_state = "partial"
+    result.calculate_total
+    result.save
     render :update do |page|
       page.replace_html("mark_#{mark.id}_current",  mark.get_mark.to_s + "/")
-      page.replace_html("current_mark_div", result.calculate_total.to_s)
+      page.replace_html("current_mark_div", result.total_mark)
+      #<%= criterion.weight %> * <%= mark.mark %> =
+      #<%= mark.mark*criterion.weight %> / <%=  criterion.weight * 4 %>
+      page.replace_html("mark_summary_#{mark.id}",  criterion.weight.to_s + " * " + mark.mark.to_s + " = " + (mark.mark*criterion.weight).to_s + " / " + (criterion.weight * 4).to_s)
     end
+  end
 
+  def update_comment
+    result = Result.find(params[:result_id])
+    result.overall_comment = params[:overall_comment]
+    result.save;
+    render :update do |page|
+    end
   end
 
 end

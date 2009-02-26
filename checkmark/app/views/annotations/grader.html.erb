@@ -313,6 +313,7 @@ document.observe("dom:loaded", function() {
         </option>
     <% end %>
 </select>
+<div>Marking Status: <%= @result.marking_state %> </div>
 <div id="code_pane">
   <div id="annotation_menu">
     <ul id="annotation_categories">
@@ -355,6 +356,7 @@ document.observe("dom:loaded", function() {
   <ul id="rubric_tabs" class="subsection_tabs">
 	<li class="tab"><a href="#rubric_viewer">Rubric</a></li>
 	<li class="tab"><a href="#summary_viewer">Summary</a></li>
+    <li class="tab"><a href="#annotations_summary">Annotations Summary</a></li>
   </ul>
 
   <div id="rubric_viewer" style="float:left;">
@@ -365,17 +367,32 @@ document.observe("dom:loaded", function() {
         <%= render :partial => "annotations/rubric_criterion", :locals => {:criterion => criterion, :result=>@result, :mark=>@marks_map[criterion.id]} %>
         <% end -%>
         </ul>
-
      </div>
-
      <div id="total_mark_div" style="float:right;"> /<%= @assignment.total_mark %>  </div>
-     <div id="current_mark_div" style="float:right;"> <%= @result.calculate_total %> </div>
+     <div id="current_mark_div" style="float:right;"> <%= @result.total_mark %> </div>
      <div style="float:right;">Total Mark:&nbsp;</div>
   </div>
 
-  <div id="summary_viewer" style="float:left;">
 
+  <div id="summary_viewer" style="float:left;">
+    <div id="summary_criteria_pane">
+        <ul id="summary_criteria_pane_list" style="list-style-position:outside;list-style-type: none;margin:0;padding:0;width:100%">
+          <% @rubric_criteria.each do |criterion| -%>
+          <%= render :partial => "annotations/criterion_summary", :locals => {:criterion => criterion, :mark=>@marks_map[criterion.id]} %>
+          <% end -%>
+        </ul>
+    </div>
   </div>
+
+  <div id="annotations_summary" style="float:left;">
+    <div>
+    <% form_tag({}, {:id => "overall_comment_box"}) do %>
+          <p style="padding-left:30px;">Overall Comment: </p>
+          <p style="padding-left:30px;"><%= text_area_tag :overall_comment, @result.overall_comment, :rows => 10, :cols => 40 %></p>
+    <% end -%>
+    <%= observe_form "overall_comment_box", :url => { :action => 'update_comment', :result_id => @result.id} -%>
+    </div>
+   </div>
 </div>
 
 <div id="annotation_holder">
@@ -391,7 +408,7 @@ document.observe("dom:loaded", function() {
     <textarea id="new_annotation_content"></textarea>
   </p>
   <p>
-    <h3>Annotation Category<h3>
+    <h3>Annotation Category</h3>
     <select id="new_annotation_category">
       <option value="">Uncategorized</option>
       <% @annotation_categories.each do |annotation_category| %>
