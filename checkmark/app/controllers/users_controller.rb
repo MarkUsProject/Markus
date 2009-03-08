@@ -5,12 +5,8 @@ class UsersController < ApplicationController
   def index
     # URL mapping: /users/:type/:action; see /config/routes.rb
     # i.e. :type defined via URL
-    if params[:role] == User::TA then
-      @users = User.tas;
-    end
-    if params[:role] == User::STUDENT then
-      @users = User.students;
-    end
+    role = params[:role];
+    @users = User.find_all_by_role(role);
   end
   
   def edit
@@ -26,12 +22,7 @@ class UsersController < ApplicationController
     # Default attributes: role = TA or role = STUDENT
     # params[:user] is a hash of values passed to the controller 
     # by the HTML form with the help of ActiveView::Helper::
-    if params[:user][:role] == User::TA
-      attrs = params[:user].merge(User.get_default_ta_attrs)
-    end
-    if params[:user][:role] == User::STUDENT
-      attrs = params[:user].merge(User.get_default_student_attrs)
-    end
+    attrs = params[:user].merge(User.get_default_attrs(params[:user][:role]));
     @user = User.new(attrs)
     # Return unless the save is successful; save inherted from
     # active records--creates a new record if the model is new, otherwise
@@ -91,12 +82,7 @@ class UsersController < ApplicationController
     # and create or update a user with the hash values
     return nil if values.length < FIELDS.length
 
-    if params[:role] == User::TA
-      attr = User.get_default_ta_attrs
-    end
-    if params[:role] == User::STUDENT
-      attr = User.get_default_student_attrs
-    end
+    attr = User.get_default_attrs(params[:role]);
 
     # FIELDS.zip(values) => [[:user_name, _], [:user_number, _], [:last_name, _], [:first_name, _]]
     # Loop through the resulting array as key, value pairs
@@ -109,8 +95,6 @@ class UsersController < ApplicationController
     
   end
 
-    protected
-  
   # Update information for an individual TA or STUDENT
   def update_user
 
@@ -122,12 +106,7 @@ class UsersController < ApplicationController
     
     # params[:user][:id] indexing the <model><input name>
     @user = User.find_by_id(params[:id])
-    if @user.ta?
-      attrs = params[:user].merge(User.get_default_ta_attrs)
-    end
-    if @user.student?
-      attrs = params[:user].merge(User.get_default_student_attrs)
-    end
+    attrs = params[:user].merge(User.get_default_attrs(params[:user][:role]));
 
     # update_attributes supplied by ActiveRecords
     return unless @user.update_attributes(attrs)

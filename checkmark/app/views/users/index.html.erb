@@ -32,7 +32,7 @@
   
   <div class="colLeft"><div class="wrapLeft">
   
-    <h2>View <%= params[:role] %> list (<%= link_to "XML", :action => 'classlist', :format => 'xml' %>)</h2>
+    <h2>View <%= params[:role] %> list (<%= link_to "XML", :action => 'userlist', :format => 'xml' %>)</h2>
     
       <% if flash[:upload_notice] -%>
           <p class="success"><%=h flash[:upload_notice] %></p>

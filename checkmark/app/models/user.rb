@@ -88,20 +88,19 @@ class User < ActiveRecord::Base
     # dynamic find_all_by_<attribute name> in ActiveRecords
     find_all_by_role(TA)
   end
-
-  # Returns a hash of all the default attribute values for a TA user
-  def self.get_default_ta_attrs
-    {:role => TA}
-  end
   
   # Returns an array of users with student role
   def self.students
     find_all_by_role(STUDENT)
   end
   
-  # Returns a hash of all the default attribute values for a student user
-  def self.get_default_student_attrs
-    {:role => STUDENT, :grace_days => GRACE_DAYS}
+  # Return the default attributes for this user
+  def self.get_default_attrs(role)
+    if role == TA
+      {:role => TA}
+    else
+      {:role => STUDENT, :grace_days => GRACE_DAYS}
+    end
   end
 
   # Return the number of groups this TA is assigned to grade
