@@ -153,6 +153,12 @@ li.annotation_category {
 
 /* Annotation summary list styles */
 
+#annotations_summary {
+  float: left;
+  height: 500px;
+  overflow: auto;
+}
+
 #annotations_summary_list {
   border: 1px solid #000000;
   margin: 5px;

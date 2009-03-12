@@ -62,8 +62,9 @@ class AnnotationsController < ApplicationController
     @assignment = Assignment.find(params[:aid])
     @rubric_criteria = @assignment.rubric_criterias(:order => 'position')
     @annotation_categories = @assignment.annotation_categories
-    @uid = params[:uid]
-    submission = @assignment.submission_by(User.find(@uid))
+    @user = User.find(params[:uid])
+    @uid = @user.id
+    submission = @assignment.submission_by(@user)
     @files = submission.submitted_filenames || []
     #Get the result object
     @result = Result.find_by_submission_id(submission.id)

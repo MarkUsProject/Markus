@@ -153,7 +153,10 @@ function add_annotation_to_summary(range, label_id) {
   
   //Create the menu that allows users to edit/delete annotations
   var annotation_menu = new Element('div', {'class': 'annotation_menu'});
-  var remove_link = new Element('a', {'href':'javascript: remove_annotation();'});
+  var remove_link = new Element('a', {'href':'javascript: void(0);'});
+  remove_link.observe('click', function() {
+    remove_annotation(range, label_id, annotation);
+  });
   remove_link.update('Remove annotation');
   annotation_menu.appendChild(remove_link);
   
@@ -163,8 +166,53 @@ function add_annotation_to_summary(range, label_id) {
 
 }
 
-function remove_annotation() {
-  alert('Clicked the remove link');
+function remove_annotation(range, label_id, summary_element) {
+  if(annotation_labels[label_id] == null) {
+    console.error('No annotation label exists in memory for label id #' + label_id);
+    return;
+  }
+  //Remove range from annotation_labels annotated_lines array.
+  var target_range = null;
+  annotation_labels[label_id]['annotated_lines'].each(function(a_range) {
+    if(a_range.start == range.start && a_range.end == range.end) {
+      target_range = a_range;
+      $break;
+    }
+  });
+  //We didn't find the target range in the annotation_labels annotated_lines array...
+  if(target_range == null) {
+    console.error('Could not find target range: ' + range);
+    return;
+  }
+  //If we DID find it, remove it
+  annotation_labels[label_id]['annotated_lines'] = annotation_labels[label_id]['annotated_lines'].without(target_range);
+    
+  range.each(function(line_num) {
+      unHighlightLine(line_num);
+      this_node = get_node_from_line(line_num);
+      $(this_node).stopObserving('mouseover');
+      $(this_node).stopObserving('mouseout');
+      
+/*      if(line_annotations[line_num] == null) {
+        line_annotations[line_num] = $H();
+        line_annotations[line_num]['annotations'] = $A();
+        line_annotations[line_num]['observing'] = true;
+        line_annotations[line_num]['mouseover'] = function(event) {
+          display_annotation(line_num, Event.pointerX(event), Event.pointerY(event));
+        };
+        line_annotations[line_num]['mouseout'] = function() {
+          hide_annotation();
+        };
+                        
+        $(this_node).observe('mouseover', line_annotations[line_num]['mouseover']);
+        $(this_node).observe('mouseout', line_annotations[line_num]['mouseout']);
+      }
+      line_annotations[line_num]['annotations'].push(label_id);*/
+     
+  });
+  
+  $(summary_element).remove();
+
 }
 
 function submit_new_annotation(content, category_id) {
@@ -341,7 +389,15 @@ document.observe("dom:loaded", function() {
 });
 </script>
 
-<h1>Grading Assignment: <%= link_to @assignment.name, :controller => 'annotations', :action => 'students', :id => @assignment.id %> </h1>
+<div style="float:left;">
+<h1>Grading Assignment: <%= link_to @assignment.name, :controller => 'annotations', :action => 'students', :id => @assignment.id %> 
+</h1>
+</div>
+<div style="float:right;">
+<span id="student_selector"><< Previous Student | <%=@user.user_name%> | Next Student >></span>
+</div>
+<div class="clear"></div>
+
 
 <select id="select_file_id" name="select_file_id" onChange="load_submitted_file($(this).value)">
     <% @files.each do |file| %>
@@ -399,7 +455,7 @@ document.observe("dom:loaded", function() {
   <div id="codeviewer"></div>
   </div> <!-- End of Code holder -->
 
-  <div id="annotations_summary" style="float:left;">
+  <div id="annotations_summary">
     <div id="annotations_summary_list">
     
     </div>
