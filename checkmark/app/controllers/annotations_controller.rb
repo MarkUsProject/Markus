@@ -121,4 +121,56 @@ class AnnotationsController < ApplicationController
     end
   end
 
+  def add_extra_mark
+    extra_mark = ExtraMark.new(:result_id => params[:id], :mark => 0, :description=>"New Extra Mark");
+    extra_mark.save;
+    render :update do |page|
+      page.insert_html :bottom, "extra_marks_list",
+        :partial => "annotations/extra_mark", :locals => { :mark => extra_mark }
+      page.call(:focus_extra_mark, extra_mark.id.to_s)
+    end
+  end
+
+  def remove_extra_mark
+    extra_mark = ExtraMark.find(params[:mark_id])
+    extra_mark.destroy
+    #need to recalculate total mark
+    result = Result.find(extra_mark.result_id)
+    result.calculate_total
+    result.save
+    render :update do |page|
+      page.visual_effect(:fade, "extra_mark_#{params[:mark_id]}", :duration => 0.5)
+      page.remove("extra_mark_#{params[:mark_id]}")
+      page.replace_html("current_mark_div", result.total_mark)
+    end
+  end
+
+  def update_extra_mark
+    extra_mark = ExtraMark.find(params[:mark_id])
+    description = params[:description]
+    mark = params[:mark]
+    if !description.blank?
+      extra_mark.description = description
+    end
+    if !mark.blank?
+      extra_mark.mark = mark
+    end
+
+    if extra_mark.valid? && extra_mark.save
+      #need to update the total mark
+      result = Result.find(extra_mark.result_id)
+      result.calculate_total
+      result.save
+      print result.total_mark
+      render :update do |page|
+        page.replace_html("extra_mark_title_#{extra_mark.id}_description", "+ " + description)
+        page.replace_html("extra_mark_title_#{extra_mark.id}_mark",  mark.to_s)
+        page.replace_html("current_mark_div", result.total_mark)
+      end
+    else
+      output = {'status' => 'error'}
+      render :json => output.to_json
+    end
+  end
+
 end

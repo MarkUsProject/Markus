@@ -30,6 +30,27 @@ function show_criterion(id) {
     //$('criterion_inputs_'+id).addClassName('criterion_holder_selected');
 }
 
+function focus_extra_mark(id) {
+    if(selected_extra_mark_id != null) {
+        hide_extra_mark(selected_extra_mark_id);
+    }
+    show_extra_mark(id);
+    selected_extra_mark_id = id;
+}
+
+function hide_extra_mark(id) {
+    $('extra_mark_inputs_'+id).hide();
+    $('extra_mark_title_'+id).show();
+}
+
+function show_extra_mark(id) {
+    $('extra_mark_title_'+id).hide();
+    $('extra_mark_inputs_'+id).show();
+    $('extra_mark_inputs_'+id).addClassName('criterion_holder_selected');
+}
+
+
+
 document.observe('dom:loaded', function() {
 var rubric_tab_menu = new Control.Tabs('rubric_tabs');
 rubric_tab_menu.setActiveTab('rubric_viewer');

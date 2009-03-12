@@ -151,4 +151,126 @@ li.annotation_category {
   cursor:hand;
 }
 
-	
+/* CSS for grading view */
+
+
+/* Rubric Criteria - TO CHANGE! defaults to original rubric css for now! */
+
+.rubric_criteria_pane {
+  border: 1px solid #DADADA;
+  float: left;
+  margin: 10px 0 20px 30px;
+  width: 450px;
+}
+
+.rubric_criteria_pane_list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+/* ================ CRITERIONS ============== */
+
+  .criterion_holder, .link {
+    background: #FBFBFB;
+    border-bottom: 1px solid #DADADA;
+    padding: 10px;
+  }
+
+  .link {
+    background: #FFD4BF;
+    display: block;
+  }
+
+  .criterion_title_div {
+    cursor: pointer;
+    text-transform: capitalize;
+  }
+
+  .criterion_holder_selected, .rubric_level {
+    background: #CCCCFF;
+  }
+
+
+  .editing {
+        background: #f9ffb1;
+        border: 1px dashed #d6de78;
+  }
+
+
+#selected_criterion_name {
+        text-transform: capitalize;
+        font-weight: bold;
+}
+
+.clear {
+        clear: both;
+}
+.error {
+    width: 350px;
+}
+
+/* Extra Mark holder */
+
+.extra_mark_holder, .link {
+    background: #FBFBFB;
+    border-bottom: 1px solid #DADADA;
+    padding: 10px;
+  }
+
+  .link {
+    background: #FFD4BF;
+    display: block;
+  }
+
+  .extra_mark_title_div {
+    cursor: pointer;
+    text-transform: capitalize;
+  }
+
+  .extra_mark_holder_selected {
+    background: #CCCCFF;
+  }
+
+  .extra_mark_delete {
+        float: right;
+  }
+
+  .extra_marks_pane {
+  border: 1px solid #DADADA;
+  float: left;
+  margin: 10px 0 20px 30px;
+ }
+
+  .extra_marks_pane_list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+
+/* criterion summary holder */
+
+   .marks_summary_pane {
+  border: 1px solid #DADADA;
+  float: left;
+  margin: 10px 0 20px 30px;
+ }
+
+  .mark_summary_holder, .link {
+    background: #FBFBFB;
+    padding: 10px;
+  }
+
+  .mark_summary_holder_selected {
+    background: #CCCCFF;
+  }
+
+  .marks_summary_pane_list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+

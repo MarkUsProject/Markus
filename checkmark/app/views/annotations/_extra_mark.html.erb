@@ -1,0 +1,39 @@
+<%#
+# Erb template for inserting a new extra mark into an assignment grade
+%>
+
+<li class="extra_mark_holder" id="<%= "extra_mark_#{mark.id}" %>">
+
+  <div class="extra_mark_title_div" id="<%= "extra_mark_title_#{mark.id}"%>" onclick="<%="focus_extra_mark(#{mark.id})"%>">
+
+    <div id="<%="extra_mark_title_#{mark.id}_description"%>" style="float:left;">+ <%=mark.description%></div>
+
+    <div id="<%="extra_mark_title_#{mark.id}_mark"%>"style="float:right;"><%=mark.mark%></div>
+
+    <div class="clear"></div>
+
+  </div>
+
+  <div id="<%="extra_mark_inputs_#{mark.id}"%>" style="display:none;">
+
+    <% form_tag({}, {:id => "extra_mark_form_#{mark.id}"}) do %>
+      <div style="float:left;">
+        <%=  text_field_tag :description, mark.description %>
+      </div>
+
+      <div style="float:right;">
+
+       <%= link_to_remote "Delete", :method => 'delete',
+       :url => { :action => 'remove_extra_mark', :mark_id => mark.id },
+       :html => { :class => 'extra_mark_delete', :title => 'Delete this extra mark' },
+        :confirm => 'Are you sure you want to remove this extra mark?', :complete => "selected_extra_mark_id=null;hide_levels();$('working').hide();", :before => "$('working').show();"%>
+      </div>
+      <div class="clear"></div>
+      <%= text_field_tag :mark, mark.mark, :size=>4 %>
+   <% end -%>
+   <%= observe_form "extra_mark_form_#{mark.id}", :url => { :action => 'update_extra_mark', :mark_id=>mark.id} -%>
+   <p id="extra_mark_error_<%= mark.id %>" class="error" style="display:none;"></p>
+ </div>
+
+</li>
+

@@ -1,6 +1,5 @@
 <%= stylesheet_link_tag("grader") %>
 <%= stylesheet_link_tag("livepipe/tabs") %>
-<%= stylesheet_link_tag("rubrics") %>
 <%= stylesheet_link_tag("SyntaxHighlighter") %>
 <%= javascript_include_tag "livepipe/livepipe.js" %>
 <%= javascript_include_tag "livepipe/window.js" %>
@@ -13,6 +12,7 @@
 <%= javascript_include_tag "syntaxhighlighter/shBrushXml.js" %>
 <script>
 var selected_criterion_id = null;
+var selected_extra_mark_id = null;
 var annotation_labels = $H();
 var line_annotations = $A();
 var positions = null;
@@ -313,10 +313,13 @@ document.observe("dom:loaded", function() {
         </option>
     <% end %>
 </select>
-<div>Marking Status: <%= @result.marking_state %> </div>
 
-
-
+<div id="marking_status">
+  <div style="float:left;">Marking Status: <%= @result.marking_state %>   &nbsp; &nbsp;</div>
+  <div style="float:left;">Total Mark:&nbsp;</div>
+  <div id="current_mark_div" style="float:left;"> <%= @result.total_mark %> </div>
+  <div id="total_mark_div" style="float:left;"> /<%= @assignment.total_mark %>  </div>
+</div><br/>
 
 <div id="code_pane">
 
@@ -382,28 +385,34 @@ document.observe("dom:loaded", function() {
 	<li class="tab"><a href="#summary_viewer">Summary</a></li>
   </ul>
 
-  <div id="rubric_viewer" style="float:left;">
-     <div id="rubric_criteria_pane_list">
-        <ul id="rubric_criteria_pane_list">
+  <div id="rubric_viewer" style="float:left;" class="rubric_criteria_pane">
+     <div id="rubric_criteria_pane">
+        <ul id="rubric_criteria_pane_list" class="rubric_criteria_pane_list">
         <%# also need to render the mark per criteria (if exist) %>
         <% @rubric_criteria.each do |criterion| -%>
         <%= render :partial => "annotations/rubric_criterion", :locals => {:criterion => criterion, :result=>@result, :mark=>@marks_map[criterion.id]} %>
         <% end -%>
         </ul>
      </div>
-     <div id="total_mark_div" style="float:right;"> /<%= @assignment.total_mark %>  </div>
-     <div id="current_mark_div" style="float:right;"> <%= @result.total_mark %> </div>
-     <div style="float:right;">Total Mark:&nbsp;</div>
   </div>
 
 
-  <div id="summary_viewer" style="float:left;">
+  <div id="summary_viewer" class="marks_summary_pane">
     <div id="summary_criteria_pane">
-        <ul id="summary_criteria_pane_list" style="list-style-position:outside;list-style-type: none;margin:0;padding:0;width:100%">
+        <ul id="summary_criteria_pane_list" class="marks_summary_pane_list">
           <% @rubric_criteria.each do |criterion| -%>
           <%= render :partial => "annotations/criterion_summary", :locals => {:criterion => criterion, :mark=>@marks_map[criterion.id]} %>
           <% end -%>
         </ul>
+    </div>
+    <div id="extra_marks_pane" class="extra_marks_pane">
+      <div><b>Additions/Deductions</b></div>
+      <div class="link"><%= link_to_remote 'Add Additions/Deductions', :url => { :action => 'add_extra_mark', :id => @result.id}%></div>
+      <ul id="extra_marks_list" class="extra_marks_pane_list">
+        <% ExtraMark.find_all_by_result_id(@result.id).each do |extra_mark| -%>
+          <%= render :partial => "annotations/extra_mark", :locals => {:mark => extra_mark, :reault_id=>@result.id} %>
+        <% end -%>
+      </ul>
     </div>
   </div>
 
