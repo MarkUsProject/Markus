@@ -1,12 +1,7 @@
 <%
 # Erb template for display rubric criterion in the grader view
 %>
-<%
-if (mark == nil)
-  mark = Mark.new(:result_id=> result.id, :criterion_id=>criterion.id,:mark=>0);
-  mark.save
-end
-%>
+
 <li class="criterion_holder" id="<%= "criterion_#{criterion.id}" %>">
 
   <div class="criterion_title_div" id="<%= "criterion_title_#{criterion.id}"%>" onclick="<%="focus_criterion(#{criterion.id})"%>">

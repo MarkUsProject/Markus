@@ -53,13 +53,16 @@ class RubricsController < ApplicationController
    def remove_criterion
     return unless request.delete?
     criterion = RubricCriteria.find(params[:criterion_id])
+
+     #delete all marks associated with this criterion
+    Mark.delete_all(["criterion_id = :c", {:c=>criterion.id}])
+
     render :update do |page|
       page.visual_effect(:fade, "criterion_#{params[:criterion_id]}", :duration => 0.5)
       page.remove("criterion_#{params[:criterion_id]}")
       #update the sortable criteria list
       page.sortable 'rubric_criteria_pane_list', :constraint => false, :url => { :action => :update_positions }
      end
-    #TODO:  Destroy all Rubric Levels for this Criterion
     criterion.destroy
   end
   

@@ -75,8 +75,13 @@ class AnnotationsController < ApplicationController
     #link marks and criterias together
     @marks_map = []
     @rubric_criteria.each do |criterion|
-      @marks_map[criterion.id] = Mark.find(:first,
+      mark = Mark.find(:first,
         :conditions => ["result_id = :r AND criterion_id = :c", {:r=> @result.id, :c=>criterion.id}] )
+      if mark.nil?
+        mark = Mark.new(:result_id=>@result.id, :criterion_id=>criterion.id,:mark=>0)
+        mark.save
+      end
+      @marks_map[criterion.id] = mark
     end
   end
 
