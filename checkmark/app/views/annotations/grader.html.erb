@@ -314,21 +314,34 @@ document.observe("dom:loaded", function() {
     <% end %>
 </select>
 <div>Marking Status: <%= @result.marking_state %> </div>
+
+
+
+
 <div id="code_pane">
-  <div id="annotation_menu">
-    <ul id="annotation_categories">
+
+  <ul id="code_and_annotations_tabs" class="subsection_tabs">
+     <li class="tab"><a href="#code_holder">Source Code</a></li>
+     <li class="tab"><a href="#annotations_summary">Annot. Summary</a></li>
+  </ul>
+  
+  <div id="code_holder">
+  
+    <div id="annotation_menu">
+    
+     <ul id="annotation_categories">
       <li id="new_annotation_button"><button id="highlight_button" onClick="make_new_annotation(); return false;">New</button>
-    <!-- First, output the list of annotation categories -->
-    <% @annotation_categories.each do |annotation_category| %>
+      <!-- First, output the list of annotation categories -->
+      <% @annotation_categories.each do |annotation_category| %>
       <li class="annotation_category" id="annotation_category_<%=annotation_category.id%>" onClick="return false;" onMouseDown="return false;">
         <%=annotation_category.name %>
       </li>
     <% end %>
-    </ul>    
+     </ul>    
 
     <!-- Next, output the invisible annotation category lists -->
     <% @annotation_categories.each do |annotation_category| %>
-      <ul id="annotation_label_list_<%=annotation_category.id%>" class="annotation_label_list" style="display:none;" onClick="return false;" onMouseDown="return false;">
+     <ul id="annotation_label_list_<%=annotation_category.id%>" class="annotation_label_list" style="display:none;" onClick="return false;" onMouseDown="return false;">
       <% if annotation_category.annotation_labels.size == 0: %>
         There are no annotations in this category
       <% end %>
@@ -337,15 +350,26 @@ document.observe("dom:loaded", function() {
             <%=truncate(annotation_label.content, 40, '...')%>
           </li>
           <% end %>
-      </ul>
-    <% end %>
+     </ul>
+     <% end %>
     
+    <div class="clear"></div>
+  </div> <!-- End of annotation_menu -->
   <div class="clear"></div>
-  </div>
-  <div class="clear"></div>
-  <div id="codeviewer">
+  <div id="codeviewer"></div>
+  </div> <!-- End of Code holder -->
+
+  <div id="annotations_summary" style="float:left;">
+    <div>
+    <% form_tag({}, {:id => "overall_comment_box"}) do %>
+          <p style="padding-left:30px;">Overall Comment: </p>
+          <p style="padding-left:30px;"><%= text_area_tag :overall_comment, @result.overall_comment, :rows => 10, :cols => 40 %></p>
+    <% end -%>
+    <%= observe_form "overall_comment_box", :url => { :action => 'update_comment', :result_id => @result.id} -%>
+    </div>
   </div>
 </div>
+
 
 <!-- Divider  -->
 <div id="pane_divider">
@@ -356,7 +380,6 @@ document.observe("dom:loaded", function() {
   <ul id="rubric_tabs" class="subsection_tabs">
 	<li class="tab"><a href="#rubric_viewer">Rubric</a></li>
 	<li class="tab"><a href="#summary_viewer">Summary</a></li>
-    <li class="tab"><a href="#annotations_summary">Annotations Summary</a></li>
   </ul>
 
   <div id="rubric_viewer" style="float:left;">
@@ -384,15 +407,7 @@ document.observe("dom:loaded", function() {
     </div>
   </div>
 
-  <div id="annotations_summary" style="float:left;">
-    <div>
-    <% form_tag({}, {:id => "overall_comment_box"}) do %>
-          <p style="padding-left:30px;">Overall Comment: </p>
-          <p style="padding-left:30px;"><%= text_area_tag :overall_comment, @result.overall_comment, :rows => 10, :cols => 40 %></p>
-    <% end -%>
-    <%= observe_form "overall_comment_box", :url => { :action => 'update_comment', :result_id => @result.id} -%>
-    </div>
-   </div>
+
 </div>
 
 <div id="annotation_holder">

@@ -47,7 +47,7 @@ end
           end -%>
       <% end -%>
       </ul>
-      <%= observe_form "mark_form_#{criterion.id}", :url => { :action => 'update_mark', :mark_id=>mark.id} -%>
+      <%= observe_form "mark_form_#{criterion.id}", :url => { :action => 'update_mark', :mark_id=>mark.id}, :before => "element.disable();$('working').show();", :complete => "element.enable();$('working').hide();" -%>
     </div>
 
     <div class="clear"></div>

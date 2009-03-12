@@ -81,6 +81,38 @@ class RubricsController < ApplicationController
      end
      render :json => output.to_json
    end
+   
+   def download_rubric
+     @assignment = Assignment.find(params[:id])
+     format = params[:format]
+     case format
+     when "csv"
+       file_out = create_csv_rubric(@assignment)
+     when "yml"
+       file_out = create_yml_rubric(@assignment)
+     end
+     
+     send_data(file_out, :type => "text/csv", :disposition => "inline")
+     
+   end
+   
+   def create_csv_rubric(assignment)
+     csv_string = FasterCSV.generate do |csv|
+       assignment.rubric_criterias.each do |criterion|
+         criterion_array = [criterion.name,criterion.weight]
+         (0..NUM_LEVELS - 1).each do |i|
+           criterion_array.push(criterion['level_' + i.to_s + '_name'])
+           criterion_array.push(criterion['level_' + i.to_s + '_description'])
+         end
+         csv << criterion_array
+       end
+     end
+     return csv_string
+   end
+   
+   def create_yml_rubric(assignment)
+   end
+
 
    def upload_rubric
     file = params[:upload_rubric][:rubric]
@@ -99,7 +131,7 @@ class RubricsController < ApplicationController
 
     redirect_to :action => 'index', :id => @assignment.id, :activate_upload_tab => true
    end
-
+   
    def parse_csv_rubric(file, assignment)
     num_update = 0
     flash[:invalid_lines] = []  # store lines that were not processed

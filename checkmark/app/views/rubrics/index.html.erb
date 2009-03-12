@@ -28,6 +28,7 @@ var activate_upload_tab = false;
 <ul id="rubric_tabs" class="subsection_tabs">
 	<li class="tab"><a href="#manually_edit_rubric_canvas">Manually Edit Rubric</a></li>
 	<li class="tab"><a href="#upload_rubric_file_canvas">Upload Rubric File</a></li>
+	<li class="tab"><a href="#download_rubric_file_canvas">Download Rubric File</a></li>
 </ul>
 
 <!-- Need for the tabs -->
@@ -98,7 +99,7 @@ var activate_upload_tab = false;
           <%= f.radio_button :file_type, "yml" %>yml
         </p>
 		<p>
-			<%= submit_tag("Submit") %>
+			<%= submit_tag("Upload") %>
 		</p>
 	   <% end %>
   </p>
@@ -124,3 +125,35 @@ var activate_upload_tab = false;
   <% end -%>
 
 </div> <!-- Upload canvas -->
+
+<!-- Download canvas -->
+
+<div id="download_rubric_file_canvas">
+
+  <h2>Download Rubric File</h2>
+  
+  <p>
+  What format would you like to download the rubric in?
+  </p>
+
+  <p>
+    <ul>
+      <li><%= link_to 'Download rubric in CSV Format', {:controller=>"rubrics", :action=>"download_rubric", :format => 'csv', :id=> @assignment.id}%></li>
+      <li><%= link_to 'Download rubric in YML Format', {:controller=>"rubrics", :action=>"download_rubric", :format => 'yml', :id=> @assignment.id}%></li>
+    </ul>
+  </p>
+  
+  <% # display lines in csv file that has not been successfully processed %>
+  <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? -%>
+  <div class="errorExplanation" id="errorExplanation">
+    <h2>The following problems were encountered:</h2>
+    <br />
+    <ul style="padding-left:20px;">
+      <% for line in flash[:invalid_lines] -%>
+      <li><%=h line %></li>
+      <% end -%>
+    </ul>
+  </div>
+  <% end -%>
+
+</div> <!-- Download canvas -->
