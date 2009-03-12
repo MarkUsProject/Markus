@@ -33,6 +33,7 @@ function load_submitted_file(fid) {
   }
   annotation_labels = $H();
   line_annotations.clear();
+  $('annotations_summary_list').update();
 
 <%= remote_function (:update => "codeviewer",
                    :url =>{ :action => "codeviewer", :id => @assignment.id, :uid => @uid },
@@ -64,6 +65,7 @@ function render_annotation_label(id, content) {
   $('annotation_holder').insert(annot_label);
 }
 
+//Adds annotation to client-side list, and highlights the code
 function add_annotation(range, label_id) {
   //Does the label_id exist in the annotation_labels hash?
   if(annotation_labels[label_id] == null) {
@@ -71,6 +73,8 @@ function add_annotation(range, label_id) {
     return;
   }
   annotation_labels[label_id]['annotated_lines'].push(range);
+  
+  add_annotation_to_summary(range, label_id);
 
   range.each(function(line_num) {
       highlightLine(line_num);
@@ -127,8 +131,41 @@ function add_annotation_label(label_id, label) {
   }
 }
 
+function add_annotation_to_summary(range, label_id) {
+  var list = $('annotations_summary_list');
+  
+  //Create the annotation DIV to go in the summary list
+  var annotation = new Element('div', {'class': 'annotation_summary_list_element'});
+  
+  //Create the div to hold the annotation range
+  var range_display = new Element('div', {'class': 'range_display'});
+  //And display the range in it
+  range_display.update("Lines " + range.start + " to " + range.end);
+  //Add it to the annotation div
+  annotation.appendChild(range_display);
+  
+  //Create the div to hold the annotation label
+  var annotation_label_display = new Element('div', {'class': 'annotation_label_display'});
+  //Add the label
+  annotation_label_display.update(annotation_labels[label_id]['content']);
+  //Add it to the annotation div
+  annotation.appendChild(annotation_label_display);
+  
+  //Create the menu that allows users to edit/delete annotations
+  var annotation_menu = new Element('div', {'class': 'annotation_menu'});
+  var remove_link = new Element('a', {'href':'javascript: remove_annotation();'});
+  remove_link.update('Remove annotation');
+  annotation_menu.appendChild(remove_link);
+  
+  annotation.appendChild(annotation_menu);
+  
+  list.appendChild(annotation);
 
+}
 
+function remove_annotation() {
+  alert('Clicked the remove link');
+}
 
 function submit_new_annotation(content, category_id) {
 
@@ -363,6 +400,10 @@ document.observe("dom:loaded", function() {
   </div> <!-- End of Code holder -->
 
   <div id="annotations_summary" style="float:left;">
+    <div id="annotations_summary_list">
+    
+    </div>
+  
     <div>
     <% form_tag({}, {:id => "overall_comment_box"}) do %>
           <p style="padding-left:30px;">Overall Comment: </p>

@@ -151,15 +151,29 @@ li.annotation_category {
   cursor:hand;
 }
 
+/* Annotation summary list styles */
+
+#annotations_summary_list {
+  border: 1px solid #000000;
+  margin: 5px;
+  background: #EEEEEE;
+}
+#annotations_summary_list .annotation_summary_list_element {
+  background: #BBBBBB;
+  padding: 5px;
+  border: 1px solid #000000;
+}
+#annotations_summary_list a {
+  color: blue;
+}
+
 /* CSS for grading view */
-
-
 /* Rubric Criteria - TO CHANGE! defaults to original rubric css for now! */
 
 .rubric_criteria_pane {
   border: 1px solid #DADADA;
   float: left;
-  margin: 10px 0 20px 30px;
+/*  margin: 10px 0 20px 30px;*/
   width: 450px;
 }
 

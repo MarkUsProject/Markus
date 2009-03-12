@@ -84,7 +84,7 @@ class AnnotationsController < ApplicationController
     submission = @assignment.submission_by(User.find(params[:uid]))
     @fid = params[:fid]
     file = SubmissionFile.find(@fid)
-    annots = Annotation.find_all_by_submission_file_id(@fid) || []
+    annots = Annotation.find_all_by_submission_file_id(@fid, :order => "line_start") || []
     dir = submission.submit_dir
 
     filepath = File.join(dir, file.filename)
