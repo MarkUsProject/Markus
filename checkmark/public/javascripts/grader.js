@@ -52,8 +52,9 @@ function show_extra_mark(id) {
 
 
 document.observe('dom:loaded', function() {
-var rubric_tab_menu = new Control.Tabs('rubric_tabs');
-rubric_tab_menu.setActiveTab('rubric_viewer');
-var code_tab_menu = new Control.Tabs('code_and_annotations_tabs');
-code_tab_menu.setActiveTab('code_pane');
-})
+  var rubric_tab_menu = new Control.Tabs('rubric_tabs');
+  rubric_tab_menu.setActiveTab('rubric_viewer');
+  var code_tab_menu = new Control.Tabs('code_and_annotations_tabs');
+  code_tab_menu.setActiveTab('code_pane');
+  
+});

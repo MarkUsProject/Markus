@@ -6,43 +6,74 @@
 <%= javascript_include_tag "livepipe/tabs.js" %>
 <%= javascript_include_tag "controls.js" %>
 <%= javascript_include_tag "grader.js" %>
-<%= javascript_include_tag "selecttext.js" %>
+<%= javascript_include_tag "SourceCodeGlower/AnnotationLabel.js"%>
+<%= javascript_include_tag "SourceCodeGlower/AnnotationLabelDisplayer.js"%>
+<%= javascript_include_tag "SourceCodeGlower/AnnotationLabelManager.js"%>
+<%= javascript_include_tag "SourceCodeGlower/SourceCodeLine.js"%>
+<%= javascript_include_tag "SourceCodeGlower/SourceCodeLineAnnotations.js"%>
+<%= javascript_include_tag "SourceCodeGlower/SourceCodeLineCollection.js"%>
+<%= javascript_include_tag "SourceCodeGlower/SourceCodeLineArray.js"%>
+<%= javascript_include_tag "SourceCodeGlower/SourceCodeLine.js"%>
+<%= javascript_include_tag "SourceCodeGlower/SyntaxHighlighter1p5Line.js"%>
+<%= javascript_include_tag "SourceCodeGlower/SourceCodeLineManager.js"%>
+<%= javascript_include_tag "SourceCodeGlower/SourceCodeLineFactory.js"%>
+<%= javascript_include_tag "SourceCodeGlower/SourceCodeAdapter.js"%>
+<%= javascript_include_tag "SourceCodeGlower/SyntaxHighlighter1p5Adapter.js"%>
+
 <%= javascript_include_tag "syntaxhighlighter/shCore.js" %>
 <%= javascript_include_tag "syntaxhighlighter/shBrushJava.js" %>
 <%= javascript_include_tag "syntaxhighlighter/shBrushXml.js" %>
 <script>
 var selected_criterion_id = null;
 var selected_extra_mark_id = null;
-var annotation_labels = $H();
-var line_annotations = $A();
 var positions = null;
 var modal = null;
 var init_content_width = 0;
 var init_code_pane_width = 0;
 
+var line_annotations = null;
+var syntax_highlighter_adapter = null;
 
-//Load a submitted file into the code-viewer based on file id's
-function load_submitted_file(fid) {
-  $('working').show();
-  if(line_annotations.size() > 0) {
-    line_annotations.each(function(line, index) {
-      var node = get_node_from_line(index + 1);
-      $(node).stopObserving('mouseover', line['mouseover']);
-      $(node).stopObserving('mouseout', line['mouseout']);
-    });
-  }
-  annotation_labels = $H();
-  line_annotations.clear();
-  $('annotations_summary_list').update();
+function sourceCodeReady() {
+  syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter($$('.dp-highlighter').first().getElementsBySelector('ol').first());
+  var collection = new SourceCodeLineArray();
+  var line_factory = new SourceCodeLineFactory();
+  var line_manager = new SourceCodeLineManager(syntax_highlighter_adapter, line_factory, collection);
+  var annotation_label_manager = new AnnotationLabelManager();
+  var annotation_label_displayer = new AnnotationLabelDisplayer($('annotation_holder'));
+  
+  line_annotations = new SourceCodeLineAnnotations(line_manager, annotation_label_manager, annotation_label_displayer);
+}
 
-<%= remote_function (:update => "codeviewer",
-                   :url =>{ :action => "codeviewer", :id => @assignment.id, :uid => @uid },
-                   :with => "'fid='+fid", :after => "$('working').hide();")%>
+function add_annotation_label(annotation_label_id, content) {
+  var annotation_label = new AnnotationLabel(annotation_label_id, 0, content);
+  line_annotations.registerAnnotationLabel(annotation_label);
+}
+
+function add_annotation(range, annotation_label_id) {
+  line_annotations.annotateRange(range, annotation_label_id);
+}
+
+function getAnchor() {
+  //TODO:  Get this to work for IE
+  return window.getSelection().anchorNode;
+}
+
+function getFocus() {
+  //TODO:  Get this to work for IE
+  return window.getSelection().focusNode;
 }
 
 function make_new_annotation() {
-
-  positions = getSelectedLines($('code'));
+  var mouse_anchor = getAnchor();
+  var mouse_focus = getFocus();
+  var anchor_node = syntax_highlighter_adapter.getRootFromSelection(mouse_anchor);
+  var focus_node = syntax_highlighter_adapter.getRootFromSelection(mouse_focus);
+  var line_start = line_annotations.getLineManager().getLineNumber(anchor_node);
+  var line_end = line_annotations.getLineManager().getLineNumber(focus_node);
+  
+  positions = {line_start: line_start, line_end: line_end};
+  console.dir(positions);
   if(positions.line_start == 0 && positions.line_end == 0) {
     alert('You must select some text to annotate');
     return false;
@@ -56,164 +87,16 @@ function make_new_annotation() {
 
 }
 
-function render_annotation_label(id, content) {
-  var annot_label = new Element('div', 
-      {'class': 'annotation', 
-       'id': 'annotation_'+id,
-       'style': 'display:none;'
-      }).update(content);
-  $('annotation_holder').insert(annot_label);
+
+//Load a submitted file into the code-viewer based on file id's
+function load_submitted_file(fid) {
+  $('working').show();
+  line_annotations = null;
+<%= remote_function (:update => "codeviewer",
+                   :url =>{ :action => "codeviewer", :id => @assignment.id, :uid => @uid },
+                   :with => "'fid='+fid", :after => "$('working').hide();")%>
 }
 
-//Adds annotation to client-side list, and highlights the code
-function add_annotation(range, label_id) {
-  //Does the label_id exist in the annotation_labels hash?
-  if(annotation_labels[label_id] == null) {
-    console.error('No annotation label exists in memory for label id #' + label_id);
-    return;
-  }
-  annotation_labels[label_id]['annotated_lines'].push(range);
-  
-  add_annotation_to_summary(range, label_id);
-
-  range.each(function(line_num) {
-      highlightLine(line_num);
-      this_node = get_node_from_line(line_num);
-      if(line_annotations[line_num] == null) {
-        line_annotations[line_num] = $H();
-        line_annotations[line_num]['annotations'] = $A();
-        line_annotations[line_num]['observing'] = true;
-        line_annotations[line_num]['mouseover'] = function(event) {
-          display_annotation(line_num, Event.pointerX(event), Event.pointerY(event));
-        };
-        line_annotations[line_num]['mouseout'] = function() {
-          hide_annotation();
-        };
-                        
-        $(this_node).observe('mouseover', line_annotations[line_num]['mouseover']);
-        $(this_node).observe('mouseout', line_annotations[line_num]['mouseout']);
-      }
-      line_annotations[line_num]['annotations'].push(label_id);
-  });
-}
-
-function display_annotation(line_num, mouse_x, mouse_y) {
-  var total_annotation = '';
-  line_annotations[line_num]['annotations'].each(
-    function(label_id) {
-      if(annotation_labels[label_id] != null) {
-         total_annotation += '<p>' + annotation_labels[label_id]['content'] + '</p>';
-      }
-    });
-  $('dummy_annotation').update(total_annotation);
-  $('dummy_annotation').setStyle({'position':'absolute', 'left': (mouse_x + 15) + 'px', 'top': (mouse_y + 15) + 'px'});
-  $('dummy_annotation').show();
-}
-function hide_annotation() {
-  $('dummy_annotation').hide();
-}
-
-function get_node_from_line(line_num) {
-   var code = $$('.dp-j')[0];
-   if(code == null) {
-     console.error('Could not find .dp-j class');
-     return;
-   }
-   return code.immediateDescendants()[line_num - 1];
-}
-
-function add_annotation_label(label_id, label) {
-  if (annotation_labels[label_id] == null) {
-    //We've never used this label before - add it to the collection
-    annotation_labels[label_id] = $H();
-    annotation_labels[label_id]['annotated_lines'] = $A();
-    annotation_labels[label_id]['content'] = label;
-  }
-}
-
-function add_annotation_to_summary(range, label_id) {
-  var list = $('annotations_summary_list');
-  
-  //Create the annotation DIV to go in the summary list
-  var annotation = new Element('div', {'class': 'annotation_summary_list_element'});
-  
-  //Create the div to hold the annotation range
-  var range_display = new Element('div', {'class': 'range_display'});
-  //And display the range in it
-  range_display.update("Lines " + range.start + " to " + range.end);
-  //Add it to the annotation div
-  annotation.appendChild(range_display);
-  
-  //Create the div to hold the annotation label
-  var annotation_label_display = new Element('div', {'class': 'annotation_label_display'});
-  //Add the label
-  annotation_label_display.update(annotation_labels[label_id]['content']);
-  //Add it to the annotation div
-  annotation.appendChild(annotation_label_display);
-  
-  //Create the menu that allows users to edit/delete annotations
-  var annotation_menu = new Element('div', {'class': 'annotation_menu'});
-  var remove_link = new Element('a', {'href':'javascript: void(0);'});
-  remove_link.observe('click', function() {
-    remove_annotation(range, label_id, annotation);
-  });
-  remove_link.update('Remove annotation');
-  annotation_menu.appendChild(remove_link);
-  
-  annotation.appendChild(annotation_menu);
-  
-  list.appendChild(annotation);
-
-}
-
-function remove_annotation(range, label_id, summary_element) {
-  if(annotation_labels[label_id] == null) {
-    console.error('No annotation label exists in memory for label id #' + label_id);
-    return;
-  }
-  //Remove range from annotation_labels annotated_lines array.
-  var target_range = null;
-  annotation_labels[label_id]['annotated_lines'].each(function(a_range) {
-    if(a_range.start == range.start && a_range.end == range.end) {
-      target_range = a_range;
-      $break;
-    }
-  });
-  //We didn't find the target range in the annotation_labels annotated_lines array...
-  if(target_range == null) {
-    console.error('Could not find target range: ' + range);
-    return;
-  }
-  //If we DID find it, remove it
-  annotation_labels[label_id]['annotated_lines'] = annotation_labels[label_id]['annotated_lines'].without(target_range);
-    
-  range.each(function(line_num) {
-      unHighlightLine(line_num);
-      this_node = get_node_from_line(line_num);
-      $(this_node).stopObserving('mouseover');
-      $(this_node).stopObserving('mouseout');
-      
-/*      if(line_annotations[line_num] == null) {
-        line_annotations[line_num] = $H();
-        line_annotations[line_num]['annotations'] = $A();
-        line_annotations[line_num]['observing'] = true;
-        line_annotations[line_num]['mouseover'] = function(event) {
-          display_annotation(line_num, Event.pointerX(event), Event.pointerY(event));
-        };
-        line_annotations[line_num]['mouseout'] = function() {
-          hide_annotation();
-        };
-                        
-        $(this_node).observe('mouseover', line_annotations[line_num]['mouseover']);
-        $(this_node).observe('mouseout', line_annotations[line_num]['mouseout']);
-      }
-      line_annotations[line_num]['annotations'].push(label_id);*/
-     
-  });
-  
-  $(summary_element).remove();
-
-}
 
 function submit_new_annotation(content, category_id) {
 
@@ -227,8 +110,6 @@ function submit_new_annotation(content, category_id) {
                     :url => { :action => "create" },
                     :with => "'fid='+ $('select_file_id').value +'&line_start=' + positions.line_start + ' &line_end=' + positions.line_end + '&annotation_text='+ content + '&category_id=' + category_id", :after => "$('working').hide();")
                     %>
-
-
 }
 
 function setup_annotation_categories() {
@@ -517,8 +398,6 @@ document.observe("dom:loaded", function() {
 </div>
 
 <div id="annotation_holder">
-  <div id="dummy_annotation" style="display:none;" class="annotation">
-  </div>
 </div>
 
 <div id="create_annotation_dialog" style="display:none;">

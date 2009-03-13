@@ -6,11 +6,12 @@
   background-color: #DDDD55;
   color: blue;
 }
-
-.annotation {
+.annotation_label_display {
   border: 1px solid #000000;
   background: #FFFF00;
   padding: 15px;
+  position: absolute;
+  width: 400px;
 }
 #annotation_menu {
   background: #AADD55;

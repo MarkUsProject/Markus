@@ -188,4 +188,12 @@
 .dp-highlighter .keyword { color: #069; font-weight: bold; background-color: inherit; }
 .dp-highlighter .preprocessor { color: gray; background-color: inherit; }
 
-/*.dp-highlighter { background-color: #FFFF99; color: #000000; }  */
+/*.dp-highlighter { background-color: #FFFF99; color: #000000; }  */.dp-highlighter .source_code_glowing_1 {
+  background-color: #FFFF99; 
+  color: #000000;
+}
+.dp-highlighter .source_code_glowing_2 {
+  background-color: #DDDD55;
+  color: blue;
+}
+

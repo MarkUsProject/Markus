@@ -3,7 +3,9 @@
 <script language="javascript">
     dp.SyntaxHighlighter.ClipboardSwf = '/javascripts/syntaxhighlighter/clipboard.swf';
     dp.SyntaxHighlighter.HighlightAll('code');
-    console.log('Code highlighted.  Now updating divider');
+    console.log('SyntaxHighlighting Complete - Setting up SourceCodeGlower');
+    sourceCodeReady();
+    console.log('SourceCodeGlower ready.  Now updating divider');
     
 
     <% if (defined? annots) %>
@@ -14,8 +16,6 @@
              '<%=annot.annotation_label.id%>');
 console.info('<%=annot.annotation_label.id%>');
 
-
-            
         <% end %>
     <% end %>
 

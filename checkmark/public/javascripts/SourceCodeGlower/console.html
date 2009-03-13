@@ -1,0 +1,121 @@
+<html>
+
+<head>
+  <link href="../../stylesheets/SyntaxHighlighter.css" rel="stylesheet" type="text/css">
+
+  <script type="text/javascript" src="../prototype.js"></script>
+  <script type="text/javascript" src="AnnotationLabel.js"></script>
+  <script type="text/javascript" src="AnnotationLabelDisplayer.js"></script>
+  <script type="text/javascript" src="AnnotationLabelManager.js"></script>
+  <script type="text/javascript" src="SourceCodeLine.js"></script>
+  <script type="text/javascript" src="SourceCodeLineAnnotations.js"></script>
+  <script type="text/javascript" src="SourceCodeLineCollection.js"></script>
+  <script type="text/javascript" src="SourceCodeLineArray.js"></script>
+  <script type="text/javascript" src="SourceCodeLine.js"></script>
+  <script type="text/javascript" src="SyntaxHighlighter1p5Line.js"></script>
+  <script type="text/javascript" src="SourceCodeLineManager.js"></script>
+  <script type="text/javascript" src="SourceCodeLineFactory.js"></script>
+  <script type="text/javascript" src="SourceCodeAdapter.js"></script>
+  <script type="text/javascript" src="SyntaxHighlighter1p5Adapter.js"></script>
+  
+  <script type="text/javascript" src="../syntaxhighlighter/shCore.js"></script>
+  <script type="text/javascript" src="../syntaxhighlighter/shBrushJScript.js"></script>
+  <style>
+  .annotation_label_display {
+    position: absolute;
+    border: 1px solid #000000;
+    background: yellow;
+  }
+  </style>
+ 
+  <script>
+    var adapter;
+    var collection;
+    var line_manager;
+    var line_factory
+    var annotation_label_manager;
+    
+    document.observe('dom:loaded', function() {
+      dp.SyntaxHighlighter.HighlightAll('code');
+      
+      adapter = new SyntaxHighlighter1p5Adapter($$('.dp-highlighter').first().getElementsBySelector('ol').first());
+      
+      collection = new SourceCodeLineArray();
+      line_factory = new SourceCodeLineFactory();
+      line_manager = new SourceCodeLineManager(adapter, line_factory, collection);
+      annotation_label_manager = new AnnotationLabelManager();
+      annotation_label_displayer = new AnnotationLabelDisplayer($('content'));
+      line_annotations = new SourceCodeLineAnnotations(line_manager, annotation_label_manager, annotation_label_displayer);
+      
+    });
+  </script>
+</head>
+
+<body id="content">
+<h1>Source Code Glower</h1>
+
+<pre name="code" class="javascript">
+/** Source Code Line Class
+
+This class represents a single line of source code, and controls "glowing", and
+mouseover/mouseout observing.
+
+Rules:
+- This class requires/assumes the Prototype javascript library
+- When a line is "glowing", it has a class of "source_code_glowing_" and then
+  a number indicating the "depth" of its glow.  This allows for annotation overlapping.
+  For example, 5 lines of source could be "glowed", and then three lines within that
+  original 5 could be glowed again - their glow depth will increase.
+**/
+
+var SourceCodeLine = Class.create({
+  initialize: function(line_node) {
+    //line_node is the DOM element that holds a line of source code
+    this.line_node = line_node;
+    this.glow_depth = 0;
+  },
+  // Increase a Source Code Line's glow depth
+  glow: function() {
+    //Increase the depth
+    this.incGlowDepth(1);
+    //Add the appropriate glow class
+    $(this.getLineNode()).addClassName('source_code_glowing_' + this.getGlowDepth());
+  },
+  // Decrease a Source Code Line's glow depth
+  unGlow: function() {
+    //Is this line glowing?
+    if(this.isGlowing()) {
+      $(this.getLineNode()).removeClassName('source_code_glowing_' + this.getGlowDepth());
+    }
+    //Decrease the glow depth
+    this.decGlowDepth(1);
+  },
+  incGlowDepth: function(amount) {
+    this.setGlowDepth(this.getGlowDepth + amount); 
+  },
+  decGlowDepth: function(amount) {
+    this.setGlowDepth(this.getGlowDepth - amount);
+    //Did we remove too much glow?  Set it to 0 then.
+    if(this.getGlowDepth() < 0) {
+      this.setGlowDepth(0);
+    }
+  },
+  getLineNode: function() {
+    return this.line_node;
+  },
+  getGlowDepth: function() {
+    return this.glow_depth;
+  },
+  setGlowDepth: function(glow_depth) {
+    this.glow_depth = glow_depth;
+  },
+  isGlowing: function() {
+    return this.getGlowDepth() > 0;
+  }
+  
+});
+</pre>
+
+</body>
+
+</html>
