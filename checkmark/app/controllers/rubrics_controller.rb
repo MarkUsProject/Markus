@@ -99,12 +99,26 @@ class RubricsController < ApplicationController
      
    end
    
+   #given an assignment, return the names of the levels in the assignment's
+   #rubric
+   def get_level_names(assignment)
+     first_criterion = assignment.rubric_criterias.first
+     return nil if first_criterion.nil?
+     levels_array = []
+     (0..NUM_LEVELS - 1).each do |i|
+       levels_array.push(first_criterion['level_' + i.to_s + "_name"])
+     end
+     return levels_array
+   end
+
    def create_csv_rubric(assignment)
      csv_string = FasterCSV.generate do |csv|
+       #first line is level names
+       levels_array = get_level_names(assignment)
+       csv << levels_array
        assignment.rubric_criterias.each do |criterion|
          criterion_array = [criterion.name,criterion.weight]
          (0..NUM_LEVELS - 1).each do |i|
-           criterion_array.push(criterion['level_' + i.to_s + '_name'])
            criterion_array.push(criterion['level_' + i.to_s + '_description'])
          end
          csv << criterion_array
@@ -114,6 +128,35 @@ class RubricsController < ApplicationController
    end
    
    def create_yml_rubric(assignment)
+     #we reconstruct a yaml object representing a rubric which is
+     # {levels => array, criteria => array}
+     yml_string = ""
+     #need to get the level names from the first criterion
+     levels_array = get_level_names(assignment)
+     
+     #this will store all the criteria objects
+     criteria_array = []
+     assignment.rubric_criterias.each do |criterion|
+        #for each criterion we need to reconstruct a yaml object which is
+        # {title => string, weight => int, levels => array}
+        
+        #get the level_descriptions
+        level_descriptions = {}
+        (0..NUM_LEVELS - 1).each do |i|
+          level_descriptions[i]= criterion['level_' + i.to_s + "_description"]
+        end
+        
+        #this creates the yaml object for a criterion and adds it to the array
+        criteria_array.push({"title" => criterion.name,
+           "weight" => criterion.weight,
+           "levels" => level_descriptions})
+     end
+
+     #call to_yaml to generate yaml string for the rubric
+     #TODO/FIXME: find a better way to create yaml as to_yaml puts everything in a
+     # (seemingly) random order. 
+     yml_string << {"levels" => levels_array, "criteria" => criteria_array}.to_yaml
+     return yml_string
    end
 
 
