@@ -73,7 +73,7 @@ function make_new_annotation() {
   var line_end = line_annotations.getLineManager().getLineNumber(focus_node);
   
   positions = {line_start: line_start, line_end: line_end};
-  console.dir(positions);
+  //console.dir(positions);
   if(positions.line_start == 0 && positions.line_end == 0) {
     alert('You must select some text to annotate');
     return false;
@@ -237,7 +237,6 @@ function setup_divider(dragger, widen_target) {
       if(event != null) { //Sometimes, event is null.  It happens.
         var delta = event.pointerX() - init_code_pane_width;
         var pointer_x = event.pointerX();
-        console.log(delta);
         $('code_pane').setStyle({width: (pointer_x - $('code_pane').offsetLeft) + 'px'});
         $('content').setStyle({width: (init_content_width + delta - 60) + 'px'});
       }
