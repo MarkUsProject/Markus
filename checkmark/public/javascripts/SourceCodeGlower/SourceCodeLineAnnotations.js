@@ -12,7 +12,7 @@ Rules:
 
 
 var SourceCodeLineAnnotations = Class.create({
-  initialize: function(line_manager, annotation_label_manager, annotation_label_displayer) {
+  initialize: function(line_manager, annotation_label_manager, annotation_label_displayer, annotation_id) {
     //Make sure we got what we wanted...
     this.line_manager = line_manager;
     this.annotation_label_manager = annotation_label_manager;
@@ -29,16 +29,16 @@ var SourceCodeLineAnnotations = Class.create({
     return this.annotation_label_displayer;
   },
   //Annotate a single Source Code Line
-  annotateLine: function(line_num, annotation_id) {
-    if(!this.getAnnotationLabelManager().annotationLabelExists(annotation_id)) {
-      throw("Attempting to annotate using an id that doesn't exist: " + annotation_id);
+  annotateLine: function(annotation_id, line_num, annotation_label_id) {
+    if(!this.getAnnotationLabelManager().annotationLabelExists(annotation_label_id)) {
+      throw("Attempting to annotate using an id that doesn't exist: " + annotation_label_id);
     }
-    if(this.relationshipExists(line_num, annotation_id)) {
+    if(this.relationshipExists(line_num, annotation_label_id)) {
       throw("This Source Code Line has already been annotated with this Annotation Label");
     }
     
     //Mark the relationship between this line_num, and annotation_id
-    this.addRelationship(line_num, annotation_id);
+    this.addRelationship(annotation_id, line_num, annotation_label_id);
     
     //Glow the Source Code Line
     var line = this.getLineManager().getLine(line_num);
@@ -58,12 +58,12 @@ var SourceCodeLineAnnotations = Class.create({
       });
   },
   //Annotate a Range of Source Code Lines
-  annotateRange: function(range, annotation_id) {
+  annotateRange: function(annotation_id, range, annotation_label_id) {
     //Javascript scope is confusing...assign 'this' to me,
     //so that we can see 'me' in the loop
     var me = this;
     range.each(function(line_num) {
-      me.annotateLine(line_num, annotation_id);
+      me.annotateLine(annotation_id, line_num, annotation_label_id);
     });
   },
   removeAnnotationFromLine: function(line_num, annotation_id) {
@@ -88,11 +88,11 @@ var SourceCodeLineAnnotations = Class.create({
     this.getAnnotationLabelManager().addAnnotationLabel(annotation_label);
   },
   
-  addRelationship: function(line_num, annotation_id) {
-    if(this.relationshipExists(line_num, annotation_id)) {
+  addRelationship: function(annotation_id, line_num, annotation_label_id) {
+    if(this.relationshipExists(line_num, annotation_label_id)) {
       return true;
     }
-    this.getRelationships().push($H({'line_num':line_num, 'annotation_id':annotation_id}));
+    this.getRelationships().push($H({'line_num':line_num, 'annotation_label_id':annotation_label_id, 'annotation_id': annotation_id}));
   },
   
   getRelationships: function() {
@@ -103,19 +103,19 @@ var SourceCodeLineAnnotations = Class.create({
     this.relationships = relationships;
   },
   
-  relationshipExists: function(line_num, annotation_id) {
+  relationshipExists: function(line_num, annotation_label_id) {
     var result = null;
     //Search through relationships, looking to see if we have one that matches this
     this.getRelationships().each(function(relationship) {
-      if(relationship.get('line_num') == line_num && relationship.get('annotation_id') == annotation_id) {
+      if(relationship.get('line_num') == line_num && relationship.get('annotation_label_id') == annotation_label_id) {
         result = relationship;
       }
     });
     return result;
   },
   
-  removeRelationship: function(line_num, annotation_id) {
-    var relationship = this.relationshipExists(line_num, annotation_id);
+  removeRelationship: function(line_num, annotation_label_id) {
+    var relationship = this.relationshipExists(line_num, annotation_label_id);
     if(relationship == null) {
       throw("Could not remove a non-existent relationship");
     }
@@ -128,7 +128,7 @@ var SourceCodeLineAnnotations = Class.create({
     var me = this;
     this.getRelationships().each(function(relationship) {
       if(relationship.get('line_num') == line_num) {
-        result.push(me.getAnnotationLabelManager().getAnnotationLabel(relationship.get('annotation_id')));
+        result.push(me.getAnnotationLabelManager().getAnnotationLabel(relationship.get('annotation_label_id')));
       }
     });
     return result;

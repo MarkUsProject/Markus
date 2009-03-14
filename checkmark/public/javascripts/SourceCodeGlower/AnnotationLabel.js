@@ -8,8 +8,8 @@ Rules:
 
 var AnnotationLabel = Class.create({
   //Constructor:  Create the Annotation Label
-  initialize: function(annotation_id, annotation_category_id, content) {
-    this.annotation_id = annotation_id;
+  initialize: function(annotation_label_id, annotation_category_id, content) {
+    this.annotation_label_id = annotation_label_id;
     this.annotation_category_id = annotation_category_id;
     this.content = content;
   },
@@ -21,6 +21,6 @@ var AnnotationLabel = Class.create({
     return this.content;
   },
   getId: function() {
-    return this.annotation_id
+    return this.annotation_label_id
   }
 });

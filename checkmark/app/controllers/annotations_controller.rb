@@ -41,15 +41,21 @@ class AnnotationsController < ApplicationController
     annotation.save
     render :update do |page|
       page.call(:add_annotation_label, label.id, label.content)
-      page << "add_annotation($R(#{params[:line_start]}, #{params[:line_end]}), #{label.id})"
+      page << "add_annotation(#{annotation.id},$R(#{params[:line_start]}, #{params[:line_end]}), #{label.id})"
     end
     
   end
 
   def destroy
     @annot = Annotation.find(params[:id])
-    @annot.destroy
-    render :text => 'OK'
+    old_annot = @annot.destroy
+    annots = Annotation.find_all_by_submission_file_id(params[:fid], :order => "line_start") || []
+    render :update do |page|
+      page << "remove_annotation(#{old_annot.id}, $R(#{old_annot.line_start}, #{old_annot.line_end}), #{old_annot.annotation_label.id});"
+
+      page.replace_html 'annotation_summary_list', :partial => 'annotation_summary', :locals => {:annots => annots, :fid => params[:fid]}
+      
+    end
   end
 
   def students
@@ -96,8 +102,16 @@ class AnnotationsController < ApplicationController
     filepath = File.join(dir, file.filename)
 
     filetext = File.read(filepath)
-    render :partial => "codeviewer", :locals =>
-      { :uid => params[:uid], :filetext => filetext, :annots => annots}
+    
+    render :update do |page|
+
+      #Render the source code for syntax highlighting...
+      page.replace_html 'codeviewer', :partial => 'codeviewer', :locals => 
+        { :uid => params[:uid], :filetext => filetext, :annots => annots}
+      #Also update the annotation_summary_list
+      page.replace_html 'annotation_summary_list', :partial => 'annotation_summary', :locals => {:annots => annots, :fid => @fid}
+
+    end      
     
   end
 

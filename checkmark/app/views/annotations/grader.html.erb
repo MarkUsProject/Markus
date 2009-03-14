@@ -50,8 +50,12 @@ function add_annotation_label(annotation_label_id, content) {
   line_annotations.registerAnnotationLabel(annotation_label);
 }
 
-function add_annotation(range, annotation_label_id) {
-  line_annotations.annotateRange(range, annotation_label_id);
+function add_annotation(annotation_id, range, annotation_label_id) {
+  line_annotations.annotateRange(annotation_id, range, annotation_label_id);
+}
+
+function remove_annotation(annotation_id, range, annotation_label_id) {
+  line_annotations.removeAnnotationFromRange(range, annotation_label_id);
 }
 
 function getAnchor() {
@@ -92,8 +96,7 @@ function make_new_annotation() {
 function load_submitted_file(fid) {
   $('working').show();
   line_annotations = null;
-<%= remote_function (:update => "codeviewer",
-                   :url =>{ :action => "codeviewer", :id => @assignment.id, :uid => @uid },
+<%= remote_function (:url =>{ :action => "codeviewer", :id => @assignment.id, :uid => @uid },
                    :with => "'fid='+fid", :after => "$('working').hide();")%>
 }
 
@@ -336,9 +339,8 @@ document.observe("dom:loaded", function() {
   </div> <!-- End of Code holder -->
 
   <div id="annotations_summary">
-    <div id="annotations_summary_list">
-    
-    </div>
+    <ul id="annotation_summary_list">
+    </ul>
   
     <div>
     <% form_tag({}, {:id => "overall_comment_box"}) do %>
