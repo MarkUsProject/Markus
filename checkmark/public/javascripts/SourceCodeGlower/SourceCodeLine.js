@@ -21,6 +21,7 @@ var SourceCodeLine = Class.create({
     this.glow_depth = 0;
     this.observe_over_func = null;
     this.observe_out_func = null;
+    this.is_observing = false;
   },
   // Increase a Source Code Line's glow depth
   glow: function() {
@@ -80,14 +81,24 @@ var SourceCodeLine = Class.create({
   // Handle all observations, and store references in the functions so that
   // we can remove observations easily
   observe: function(over_func, out_func) {
+    //If we're already observing, we don't need to do this.
+    if(this.isObserving()) {
+      return;
+    }
     this.setObserveOverFunc(over_func);
     this.setObserveOutFunc(out_func);
     this.getLineNode().observe('mouseover', this.getObserveOverFunc());
     this.getLineNode().observe('mouseout', this.getObserveOutFunc());
+    this.setObserving(true);
   },
   stopObserving: function() {
+    //If we're not observing this, this isn't a problem
+    if(!this.isObserving()) {
+      return;
+    }
     this.getLineNode().stopObserving('mouseover', this.getObserveOverFunc());
     this.getLineNode().stopObserving('mouseout', this.getObserveOutFunc());
+    this.setObserving(false);
   },
   setObserveOverFunc: function(func) {
     this.observe_over_func = func;
@@ -100,6 +111,12 @@ var SourceCodeLine = Class.create({
   },
   getObserveOutFunc: function(func) {
     return this.observe_out_func;
+  },
+  isObserving: function() {
+    return this.is_observing;
+  },
+  setObserving: function(is_observing) {
+    this.is_observing = is_observing;
   }
   
 });
