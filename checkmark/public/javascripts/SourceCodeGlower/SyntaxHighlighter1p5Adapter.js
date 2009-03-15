@@ -2,8 +2,9 @@
 
 This class implements the SourceCodeAdapter abstract class.
 
-This takes the DOM elements that the Syntax Highlighter library creates, and generates
-the DOM nodes that we're looking for.
+This takes the DOM elements that the Syntax Highlighter library creates, and generates the DOM nodes that we're looking for.
+
+This class also does any modifications / hackery necessary to the Syntax Highlighter.  In this case, it implements the font increase and decrease functions
 
 Rules:
 - This class requires/assumes the Prototype javascript library
@@ -15,6 +16,7 @@ var SyntaxHighlighter1p5Adapter = Class.create(SourceCodeAdapter, {
   //we pass it the root of that tree...
   initialize: function(root_of_ol){
     this.root = $(root_of_ol);
+    this.font_size = 1;
   },
   //Returns an Enumerable collection of DOM nodes representing the source code lines,
   //in order.
@@ -34,5 +36,42 @@ var SyntaxHighlighter1p5Adapter = Class.create(SourceCodeAdapter, {
       return null;
     }
     return current_node;
+  },
+  getFontSize: function() {
+    return this.font_size;
+  },
+  setFontSize: function(font_size) {
+    this.font_size = font_size;
+  },
+  applyMods: function() {
+    //We're going to extend Syntax Highlighters menu, and give it some new
+    //commands
+    if(dp == null) {
+      throw("Could not modify Syntax Highlighter:  DP doesn't exist");
+    }
+    
+    me = this;
+     
+    var original_commands = dp.sh.Toolbar.Commands;
+    original_commands["BoostCode"] = {
+    	  label: '+A',
+	  func: function(highlighter) {
+	    var code = $$('.dp-highlighter').first();
+	    var font_size = me.getFontSize() + .25;
+	    me.setFontSize(font_size);
+            code.setStyle({fontSize: font_size + 'em'});
+	  }
+        };
+    original_commands["ShrinkCode"] = {    
+          label: '-A',
+          func: function(highlighter) {
+            var code = $$('.dp-highlighter').first();
+            var font_size = me.getFontSize() - .25;
+            me.setFontSize(font_size);
+            code.setStyle({fontSize: font_size + 'em'});
+          }
+        };
+    //Attempt to replace tools menu with these new commands
+    $$('.tools').first().update(dp.sh.Toolbar.Create('code').innerHTML)
   }
 });

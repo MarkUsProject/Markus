@@ -36,6 +36,10 @@ var syntax_highlighter_adapter = null;
 
 function sourceCodeReady() {
   syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter($$('.dp-highlighter').first().getElementsBySelector('ol').first());
+  
+  //Apply modifications to Syntax Highlighter
+  syntax_highlighter_adapter.applyMods();
+  
   var collection = new SourceCodeLineArray();
   var line_factory = new SourceCodeLineFactory();
   var line_manager = new SourceCodeLineManager(syntax_highlighter_adapter, line_factory, collection);
@@ -145,7 +149,7 @@ function add_existing_annotation(annotation_label_id) {
  
   <%= remote_function (
                     :url => { :action => "add_existing_annotation" },
-                    :with => "'fid='+ $('select_file_id').value +'&line_start=' + positions.line_start + '&line_end=' + positions.line_end + '&annotation_label_id='+ annotation_label_id")
+                    :with => "'submission_file_id='+ $('select_file_id').value +'&line_start=' + positions.line_start + '&line_end=' + positions.line_end + '&annotation_label_id='+ annotation_label_id")
                     %>
 
 }
@@ -153,11 +157,11 @@ function add_existing_annotation(annotation_label_id) {
 
 
 //Load a submitted file into the code-viewer based on file id's
-function load_submitted_file(fid) {
+function load_submitted_file(submission_file_id) {
   $('working').show();
   line_annotations = null;
 <%= remote_function (:url =>{ :action => "codeviewer", :id => @assignment.id, :uid => @uid },
-                   :with => "'fid='+fid", :after => "$('working').hide();")%>
+                   :with => "'submission_file_id='+submission_file_id", :after => "$('working').hide();")%>
 }
 
 
@@ -173,7 +177,7 @@ function submit_new_annotation(content, category_id) {
   //Send AJAX request
   <%= remote_function (
                     :url => { :action => "create" },
-                    :with => "'fid='+ $('select_file_id').value +'&line_start=' + positions.line_start + ' &line_end=' + positions.line_end + '&annotation_text='+ content + '&category_id=' + category_id")
+                    :with => "'submission_file_id='+ $('select_file_id').value +'&line_start=' + positions.line_start + ' &line_end=' + positions.line_end + '&annotation_text='+ content + '&category_id=' + category_id")
                     %>
 }
 

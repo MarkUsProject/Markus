@@ -138,23 +138,7 @@ dp.sh.Toolbar.Commands = {
 			doc.close();
 			wnd.focus();
 		}
-	},
-/*  c6conley:  Increase and decrease font functions */
-	BoostCode: {
-	  label: '+A',
-	  func: function(highlighter) {
-	    var code = $$('.dp-highlighter').first();
-            code.setStyle({fontSize: '1.4em'});
-	  }
-        },
-        ShrinkCode: {
-          label: '-A',
-          func: function(highlighter) {
-            var code = $$('.dp-highlighter').first();
-            code.setStyle({fontSize: '1em'});
-          }
-        }
-        
+	}
 };
 
 // creates a <div /> with all toolbar links

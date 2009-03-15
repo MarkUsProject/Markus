@@ -11,10 +11,13 @@ var SourceCodeAdapter = Class.create({
   initialize: function(){},
   //Sets a particular source code line at a line number
   getSourceNodes: function() {
-    throw("SourceCodeCollection:getSourceNodes not implemented");
+    throw("SourceCodeAdapter:getSourceNodes not implemented");
   },
   /**Given some node, trace up the tree until the node that is associated with Source Code Lines is found.  This is a workaround for dealing with window.getSelection().anchorNode/focusNode.**/
   getRootFromSelection: function(some_node) {
-    throw("SourceCodeCollection:getRootFromSelection not implemented");
+    throw("SourceCodeAdapter:getRootFromSelection not implemented");
+  },
+  applyMods: function() {
+    throw("SourceCodeAdapter:applyMods not implemented");
   }
 });
