@@ -27,7 +27,7 @@ var SyntaxHighlighter1p5Adapter = Class.create(SourceCodeAdapter, {
       return null;
     }
     var current_node = some_node;
-    while(current_node.tagName != 'LI' && current_node != null) {
+    while(current_node != null && current_node.tagName != 'LI') {
       current_node = current_node.parentNode;
     }
     if(current_node === some_node) {

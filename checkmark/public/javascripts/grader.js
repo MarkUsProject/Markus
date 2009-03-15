@@ -56,5 +56,16 @@ document.observe('dom:loaded', function() {
   rubric_tab_menu.setActiveTab('rubric_viewer');
   var code_tab_menu = new Control.Tabs('code_and_annotations_tabs');
   code_tab_menu.setActiveTab('code_pane');
-  
+
+Ajax.Responders.register({
+  onCreate: function() {
+    console.info('Made!');
+    $('working').show();
+  },
+  onComplete: function() {
+    $('working').hide();
+  }
+});
+
+
 });

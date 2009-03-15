@@ -15,9 +15,13 @@ class AnnotationsController < ApplicationController
     }
     annotation = Annotation.new(new_annotation)
     annotation.save
+    annots = Annotation.find_all_by_submission_file_id(params[:fid], :order => "line_start") || []
+
     render :update do |page|
       page.call(:add_annotation_label, label.id, label.content)
-      page << "add_annotation($R(#{params[:line_start]}, #{params[:line_end]}), #{label.id})"
+      page << "add_annotation(#{annotation.id},$R(#{params[:line_start]}, #{params[:line_end]}), #{label.id})"
+      page.replace_html 'annotation_summary_list', :partial => 'annotation_summary', :locals => {:annots => annots, :fid => params[:fid]}
+
     end
 
   end
