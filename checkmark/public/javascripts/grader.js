@@ -49,13 +49,20 @@ function show_extra_mark(id) {
     $('extra_mark_inputs_'+id).addClassName('criterion_holder_selected');
 }
 
+/** START Annotation/SourceCodeGlower functions **/
 
+
+
+/** END Annotation/SourceCodeGlower functions **/
+
+var code_tab_menu = null;
+var rubric_tab_menu = null;
 
 document.observe('dom:loaded', function() {
-  var rubric_tab_menu = new Control.Tabs('rubric_tabs');
+  rubric_tab_menu = new Control.Tabs('rubric_tabs');
   rubric_tab_menu.setActiveTab('rubric_viewer');
-  var code_tab_menu = new Control.Tabs('code_and_annotations_tabs');
-  code_tab_menu.setActiveTab('code_pane');
+  code_tab_menu = new Control.Tabs('code_and_annotations_tabs');
+  code_tab_menu.setActiveTab('code_holder');
 
 Ajax.Responders.register({
   onCreate: function() {

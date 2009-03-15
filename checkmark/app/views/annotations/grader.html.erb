@@ -55,23 +55,28 @@ function add_annotation(annotation_id, range, annotation_label_id) {
 }
 
 function remove_annotation(annotation_id, range, annotation_label_id) {
-  line_annotations.removeAnnotationFromRange(range, annotation_label_id);
+  line_annotations.removeAnnotationFromRange(annotation_id, range, annotation_label_id);
 }
 
-function getAnchor() {
+function update_annotation_label(annotation_label_id, new_content) {
+  line_annotations.getAnnotationLabelManager().getAnnotationLabel(annotation_label_id).setContent(new_content);
+}
+
+
+function get_anchor() {
   //TODO:  Get this to work for IE
   return window.getSelection().anchorNode;
 }
 
-function getFocus() {
+function get_focus() {
   //TODO:  Get this to work for IE
   return window.getSelection().focusNode;
 }
 
 function get_mouse_positions() {
  //Get the start (anchor) and finish (focus) text nodes for where the mouse has selected
-  var mouse_anchor = getAnchor();
-  var mouse_focus = getFocus();
+  var mouse_anchor = get_anchor();
+  var mouse_focus = get_focus();
   
   //Use the SourceCodeAdapter to get the nodes that represent source code
   //lines.  
@@ -137,13 +142,14 @@ function add_existing_annotation(annotation_label_id) {
   if(!positions) {
     return false;
   }
-  $('working').show();
+ 
   <%= remote_function (
                     :url => { :action => "add_existing_annotation" },
-                    :with => "'fid='+ $('select_file_id').value +'&line_start=' + positions.line_start + '&line_end=' + positions.line_end + '&annotation_label_id='+ annotation_label_id", :after => "$('working').hide();")
+                    :with => "'fid='+ $('select_file_id').value +'&line_start=' + positions.line_start + '&line_end=' + positions.line_end + '&annotation_label_id='+ annotation_label_id")
                     %>
 
 }
+
 
 
 //Load a submitted file into the code-viewer based on file id's
@@ -161,17 +167,26 @@ function submit_new_annotation(content, category_id) {
     alert('You must provide some annotation text');
     return false;
   }
-  //Show working div
-  $('working').show();
+
   //Close the dialog
   modal.close();
   //Send AJAX request
   <%= remote_function (
                     :url => { :action => "create" },
-                    :with => "'fid='+ $('select_file_id').value +'&line_start=' + positions.line_start + ' &line_end=' + positions.line_end + '&annotation_text='+ content + '&category_id=' + category_id", :after => "$('working').hide();")
+                    :with => "'fid='+ $('select_file_id').value +'&line_start=' + positions.line_start + ' &line_end=' + positions.line_end + '&annotation_text='+ content + '&category_id=' + category_id")
                     %>
 }
 
+function focus_source_code_line(line_num) {
+  //First, switch to the source code viewer tab
+  code_tab_menu.setActiveTab('code_holder');
+  //Next, grab the dom node that represents this source code line,
+  //and scroll to it.
+  var line = line_annotations.getLineManager().getLine(line_num);
+  if(line != null) {
+    $(line.getLineNode()).scrollIntoView();
+  }
+}
 
 /** Begin Annotation Category dropdown code **/
 

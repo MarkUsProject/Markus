@@ -62,7 +62,6 @@ class AnnotationsController < ApplicationController
     annots = Annotation.find_all_by_submission_file_id(params[:fid], :order => "line_start") || []
     render :update do |page|
       page << "remove_annotation(#{old_annot.id}, $R(#{old_annot.line_start}, #{old_annot.line_end}), #{old_annot.annotation_label.id});"
-
       page.replace_html 'annotation_summary_list', :partial => 'annotation_summary', :locals => {:annots => annots, :fid => params[:fid]}
       
     end
@@ -141,6 +140,23 @@ class AnnotationsController < ApplicationController
       #<%= mark.mark*criterion.weight %> / <%=  criterion.weight * 4 %>
       page.replace_html("mark_summary_#{mark.id}",  criterion.weight.to_s + " * " + mark.mark.to_s + " = " + (mark.mark*criterion.weight).to_s + " / " + (criterion.weight * 4).to_s)
     end
+  end
+  
+  def update_annotation
+    content = params[:annotation_label][:content]
+    id = params[:annotation_label][:id]
+    fid = params[:annotation_label][:fid]
+    
+    annotation_label = AnnotationLabel.find(id)
+    annotation_label.content = content
+    annotation_label.save
+ 
+    annots = Annotation.find_all_by_submission_file_id(fid, :order => "line_start") || []
+    render :update do |page|
+      page.replace_html 'annotation_summary_list', :partial => 'annotation_summary', :locals => {:annots => annots, :fid => fid}
+      page.call(:update_annotation_label, id, content)
+    end 
+
   end
 
   def update_comment

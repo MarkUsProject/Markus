@@ -12,7 +12,7 @@ Rules:
 
 
 var SourceCodeLineAnnotations = Class.create({
-  initialize: function(line_manager, annotation_label_manager, annotation_label_displayer, annotation_id) {
+  initialize: function(line_manager, annotation_label_manager, annotation_label_displayer) {
     //Make sure we got what we wanted...
     this.line_manager = line_manager;
     this.annotation_label_manager = annotation_label_manager;
@@ -33,7 +33,7 @@ var SourceCodeLineAnnotations = Class.create({
     if(!this.getAnnotationLabelManager().annotationLabelExists(annotation_label_id)) {
       throw("Attempting to annotate using an id that doesn't exist: " + annotation_label_id);
     }
-    if(this.relationshipExists(line_num, annotation_label_id)) {
+    if(this.relationshipExists(annotation_id, line_num, annotation_label_id)) {
       throw("This Source Code Line has already been annotated with this Annotation Label");
     }
     
@@ -66,17 +66,22 @@ var SourceCodeLineAnnotations = Class.create({
       me.annotateLine(annotation_id, line_num, annotation_label_id);
     });
   },
-  removeAnnotationFromLine: function(line_num, annotation_id) {
-    this.removeRelationship(line_num, annotation_id);
+  removeAnnotationFromLine: function(annotation_id, line_num, annotation_label_id) {
+    this.removeRelationship(annotation_id, line_num, annotation_label_id);
     var line = this.getLineManager().getLine(line_num);
     line.unGlow();
-    line.stopObserving();
+    
+    //If there are no more annotations on this line, stop observing mouseovers
+    //and mousedowns
+    if(!this.hasAnnotation(line_num)) {
+      line.stopObserving();
+    }
   },
   
-  removeAnnotationFromRange: function(range, annotation_id) {
+  removeAnnotationFromRange: function(annotation_id, range, annotation_label_id) {
     var me = this;
     range.each(function(line_num) {
-      me.removeAnnotationFromLine(line_num, annotation_id);
+      me.removeAnnotationFromLine(annotation_id, line_num, annotation_label_id);
     });
   },
   
@@ -89,7 +94,7 @@ var SourceCodeLineAnnotations = Class.create({
   },
   
   addRelationship: function(annotation_id, line_num, annotation_label_id) {
-    if(this.relationshipExists(line_num, annotation_label_id)) {
+    if(this.relationshipExists(annotation_id, line_num, annotation_label_id)) {
       return true;
     }
     this.getRelationships().push($H({'line_num':line_num, 'annotation_label_id':annotation_label_id, 'annotation_id': annotation_id}));
@@ -103,19 +108,19 @@ var SourceCodeLineAnnotations = Class.create({
     this.relationships = relationships;
   },
   
-  relationshipExists: function(line_num, annotation_label_id) {
+  relationshipExists: function(annotation_id, line_num, annotation_label_id) {
     var result = null;
     //Search through relationships, looking to see if we have one that matches this
     this.getRelationships().each(function(relationship) {
-      if(relationship.get('line_num') == line_num && relationship.get('annotation_label_id') == annotation_label_id) {
+      if(relationship.get('line_num') == line_num && relationship.get('annotation_label_id') == annotation_label_id && relationship.get('annotation_id') == annotation_id) {
         result = relationship;
       }
     });
     return result;
   },
   
-  removeRelationship: function(line_num, annotation_label_id) {
-    var relationship = this.relationshipExists(line_num, annotation_label_id);
+  removeRelationship: function(annotation_id, line_num, annotation_label_id) {
+    var relationship = this.relationshipExists(annotation_id, line_num, annotation_label_id);
     if(relationship == null) {
       throw("Could not remove a non-existent relationship");
     }
@@ -133,10 +138,23 @@ var SourceCodeLineAnnotations = Class.create({
     });
     return result;
   },
+  //Does this source code line have any annotations at all?
+  hasAnnotation: function(line_num) {
+    var me = this;
+    var result = false;
+    this.getRelationships().each(function(relationship) {
+      if(relationship.get('line_num') == line_num) {
+        result = true;
+        $break;
+      }
+    });
+    return result;
+  },
   
   hideLabel: function() {
     this.getAnnotationLabelDisplayer().hide();
   },
+  
   
   displayLabelsForLine: function(line_num, x, y) {
     var labels = this.getAnnotationLabelsForLineNum(line_num);
