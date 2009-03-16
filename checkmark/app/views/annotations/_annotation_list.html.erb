@@ -4,7 +4,7 @@
   <% end %>
   
   <% annotation_category.annotation_labels.each do |annotation_label| %>
-  <li id="annotation_label_<%=annotation_label.id%>" onClick="add_existing_annotation(<%=annotation_label.id%>); hide_annotation_label_lists(); return false;" onMouseDown="return false;" title="<%=annotation_label.content%>">
+  <li id="annotation_label_<%=annotation_label.id%>" onClick="add_existing_annotation(<%=annotation_label.id%>); return false;" onMouseDown="return false;" title="<%=annotation_label.content%>">
   <%=truncate(annotation_label.content, 40, '...')%>
   </li>
   <% end %>       

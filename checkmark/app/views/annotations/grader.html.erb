@@ -25,6 +25,8 @@
 <%= javascript_include_tag "syntaxhighlighter/shBrushXml.js" %>
 
 <%= javascript_include_tag "DropDownMenu/DropDownMenu.js"%>
+
+<%= javascript_include_tag "ResizePane/ResizePane.js"%>
 <script>
 var selected_criterion_id = null;
 var selected_extra_mark_id = null;
@@ -203,34 +205,8 @@ function setup_annotation_categories() {
   <% end %>
 }
 
-var click_divider = function() {
-  if($$('.dp-highlighter').size() == 0) {  //If SyntaxHighlighted code DNE yet
-    return false;
-  }
-  if(divider_expanded) {
-    contract_code();
-    divider_expanded = false;
-  }
-  else {
-    expand_code();
-    divider_expanded = true;
-  }
-}
-
 function setup_divider(dragger, widen_target) {
-    var divider = new Draggable(dragger, {scroll: window, constraint: 'horizontal',
-    onDrag: function(dragged, event) {
-      if(event != null) { //Sometimes, event is null.  It happens.
-        var delta = event.pointerX() - init_code_pane_width;
-        var pointer_x = event.pointerX();
-        $('code_pane').setStyle({width: (pointer_x - $('code_pane').offsetLeft) + 'px'});
-        $('content').setStyle({width: (init_content_width + delta - 60) + 'px'});
-      }
-    },
-    onEnd: function(dragged, event) {
-      console.info('Content width: ' + $('content').getWidth());
-    }
-    });
+    var divider = new ResizePane(widen_target, dragger);
 }
 
 
@@ -242,10 +218,10 @@ document.observe("dom:loaded", function() {
   $('sidebar').hide();
   $('content').setStyle({'margin':'0 0 0 0'});
   
-  //c6conley Test - want to see if I can make dropdown menus...
+  //Register drop down menus...
   setup_annotation_categories();
   
-  //Make the divider work
+  //TODO:  Refactor divider
   init_content_width = $('content').getWidth();
   init_code_pane_width = $('code_pane').getWidth();
   setup_divider($('pane_divider'), $('code_pane'));
