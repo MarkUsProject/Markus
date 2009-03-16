@@ -9,6 +9,7 @@ var ResizePane = Class.create({
     this.handle_draggable = this.createDragger();
     this.init_pane_node_width = $(this.getPaneNode().getWidth());
     this.init_pane_node_parent_width = this.getPaneNode().up('div').getWidth();
+    this.init_pane_node_height = $(this.getPaneNode()).getHeight();
     [this.init_pane_node_offset_left, this.init_pane_node_offset_top] = $(this.getPaneNode().cumulativeOffset());
     
   },
@@ -20,6 +21,9 @@ var ResizePane = Class.create({
   },
   getInitPaneNodeWidth: function() {
     return this.init_pane_node_width;
+  },
+  getInitPaneNodeHeight: function() {
+    return this.init_pane_node_height;
   },
   getInitPaneNodeOffsetLeft: function() {
     return this.init_pane_node_offset_left;
@@ -51,6 +55,7 @@ var ResizePane = Class.create({
       //Eliminate bug that would keep the 'left' value of the handle at -3...
       me.getHandleNode().setStyle({left: '0px'});
     });
+    
     return dragger;
   }
   
