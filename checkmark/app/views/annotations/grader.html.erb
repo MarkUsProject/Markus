@@ -205,7 +205,7 @@ function setup_annotation_categories() {
   <% end %>
 }
 
-function setup_divider(dragger, widen_target) {
+function setup_divider(widen_target, dragger) {
     var divider = new ResizePane(widen_target, dragger);
 }
 
@@ -224,7 +224,7 @@ document.observe("dom:loaded", function() {
   //TODO:  Refactor divider
   init_content_width = $('content').getWidth();
   init_code_pane_width = $('code_pane').getWidth();
-  setup_divider($('pane_divider'), $('code_pane'));
+  setup_divider($('code_pane'), $('pane_divider'));
         
   //Create the modal dialog
   modal = new Control.Modal($('create_annotation_dialog'), {fade:false});
