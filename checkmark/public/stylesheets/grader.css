@@ -72,7 +72,7 @@ li.annotation_category {
   width: 7px; 
   height: 773px;
   background-color:red;
-  cursor: move;
+  cursor: col-resize;
 }
 
 #create_annotation_wrapper {
