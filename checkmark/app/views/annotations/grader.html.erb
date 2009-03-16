@@ -23,6 +23,8 @@
 <%= javascript_include_tag "syntaxhighlighter/shCore.js" %>
 <%= javascript_include_tag "syntaxhighlighter/shBrushJava.js" %>
 <%= javascript_include_tag "syntaxhighlighter/shBrushXml.js" %>
+
+<%= javascript_include_tag "DropDownMenu/DropDownMenu.js"%>
 <script>
 var selected_criterion_id = null;
 var selected_extra_mark_id = null;
@@ -194,94 +196,12 @@ function focus_source_code_line(line_num) {
 
 /** Begin Annotation Category dropdown code **/
 
+var drop_down_menus = $A();
 function setup_annotation_categories() {
   <% @annotation_categories.each do |annotation_category| %>
-    $('annotation_category_<%=annotation_category.id%>').observe('click',
-      function(event) {
-        hide_annotation_label_lists();
-        $('annotation_label_list_<%=annotation_category.id%>').show();
-      }
-    );
-    
-    //Set the x/y coordinates for each annotation_label_list
-    var left_offset = get_absolute_offset_left($('annotation_category_<%=annotation_category.id%>'));
-    var top_offset = get_absolute_offset_top($('annotation_category_<%=annotation_category.id%>'));
-    top_offset += get_element_height($('annotation_category_<%=annotation_category.id%>'));
-    
-    $('annotation_label_list_<%=annotation_category.id%>').setStyle({
-      left: left_offset + 'px',
-      top: top_offset + 'px'
-    });
-    
-    $('annotation_label_list_<%=annotation_category.id%>').observe('mouseout',
-      function(event) {
-        var target = $('annotation_label_list_<%=annotation_category.id%>');
-        var mouse_over_element;
-        //This fix is so that when we enter and subelements of target,
-        //we don't accidentally hide the list.
-        //Loosely based on this: 
-        //http://images.code-head.com/code/javascript/fixOnMouseOuttest.html
-        if( event.toElement ) {
-          mouse_over_element = event.toElement;
-        }
-        else if(event.relatedTarget) {
-          mouse_over_element = event.relatedTarget;
-        }
-        if(mouse_over_element == null) {
-          return;
-        }
-        if(!mouse_over_element.descendantOf(target) && target != mouse_over_element) {
-          target.hide();
-        }
-      }
-    );
+  drop_down_menus[<%=annotation_category.id%>] = new DropDownMenu($('annotation_category_<%=annotation_category.id%>'), $('annotation_label_list_<%=annotation_category.id%>'));
   <% end %>
-
 }
-
-function hide_annotation_label_lists() {
-   $$('.annotation_label_list').each(function(element) {
-     $(element).hide();
-   });
-}
-
-//Get the height of this node
-function get_element_height(node) {
-  var node = $(node);
-  return node.offsetHeight;
-  
-}
-//Get the absolute left coordinates for this node
-function get_absolute_offset_left(node) {
-  return get_absolute_offset(node, 'left');
-}
-//Get the absolute top coordinates for this node
-function get_absolute_offset_top(node) {
-  return get_absolute_offset(node, 'top');
-}
-
-function get_absolute_offset(node, type) {
-  //This function based on 'getposOffset' from 
-  //http://www.dynamicdrive.com/dynamicindex1/chrome/index.htm
-
-  var node = $(node);
-  var total = (type == "left") ? node.offsetLeft : node.offsetTop;
-  var parentElement = $(node).offsetParent;
-  while (parentElement!=null){
-    switch(type) {
-      case 'left':
-        total += parentElement.offsetLeft;
-        break;
-      case 'top':
-        total += parentElement.offsetTop;
-        break;
-    }
-    parentElement = parentElement.offsetParent;
-  }
-  return total;
-}
-
-
 
 var click_divider = function() {
   if($$('.dp-highlighter').size() == 0) {  //If SyntaxHighlighted code DNE yet
@@ -370,30 +290,10 @@ document.observe("dom:loaded", function() {
   <div id="code_holder">
   
     <div id="annotation_menu">
-    
-     <ul id="annotation_categories">
-      <li id="new_annotation_button"><button id="highlight_button" onClick="make_new_annotation(); return false;">New</button>
-      <!-- First, output the list of annotation categories -->
-      <% @annotation_categories.each do |annotation_category| %>
-      <li class="annotation_category" id="annotation_category_<%=annotation_category.id%>" onClick="return false;" onMouseDown="return false;">
-        <%=annotation_category.name %>
-      </li>
-    <% end %>
-     </ul>    
+      <button id="new_annotation_button" onClick="make_new_annotation(); return false;">New Annot.</button>
+      
+      <%= render :partial => "annotation_categories", :locals => {:annotation_categories => @annotation_categories}%>
 
-    <!-- Next, output the invisible annotation category lists -->
-    <% @annotation_categories.each do |annotation_category| %>
-     <ul id="annotation_label_list_<%=annotation_category.id%>" class="annotation_label_list" style="display:none;" onClick="return false;" onMouseDown="return false;">
-      <% if annotation_category.annotation_labels.size == 0: %>
-        There are no annotations in this category
-      <% end %>
-          <% annotation_category.annotation_labels.each do |annotation_label| %>
-          <li id="annotation_label_<%=annotation_label.id%>" onClick="add_existing_annotation(<%=annotation_label.id%>); hide_annotation_label_lists(); return false;" onMouseDown="return false;" title="<%=annotation_label.content%>">
-            <%=truncate(annotation_label.content, 40, '...')%>
-          </li>
-          <% end %>
-     </ul>
-     <% end %>
     
     <div class="clear"></div>
   </div> <!-- End of annotation_menu -->

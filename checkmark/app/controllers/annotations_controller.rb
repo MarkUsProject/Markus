@@ -49,7 +49,10 @@ class AnnotationsController < ApplicationController
 
     render :update do |page|
       page.replace_html 'annotation_summary_list', :partial => 'annotation_summary', :locals => {:annots => annots, :submission_file_id => params[:submission_file_id]}
-
+      if(label.annotation_category_id != nil) 
+        page.replace_html "annotation_label_list_#{label.annotation_category_id}", :partial => 'annotation_list', :locals => {:annotation_category => label.annotation_category}
+      end
+      
       page.call(:add_annotation_label, label.id, label.content)
       page << "add_annotation(#{annotation.id},$R(#{params[:line_start]}, #{params[:line_end]}), #{label.id})"
 
@@ -156,6 +159,10 @@ class AnnotationsController < ApplicationController
     annots = Annotation.find_all_by_submission_file_id(@submission_file_id, :order => "line_start") || []
     render :update do |page|
       page.replace_html 'annotation_summary_list', :partial => 'annotation_summary', :locals => {:annots => annots, :submission_file_id => @submission_file_id}
+      if(annotation_label.annotation_category_id != nil) 
+        page.replace_html "annotation_label_list_#{annotation_label.annotation_category_id}", :partial => 'annotation_list', :locals => {:annotation_category => annotation_label.annotation_category}
+      end
+
       page.call(:update_annotation_label, id, content)
     end 
 
