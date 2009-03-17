@@ -117,11 +117,14 @@ class AnnotationsController < ApplicationController
 
     filetext = File.read(filepath)
     
+    #@code_type = file.get_file_type
+    @code_type = 'ruby'
+    
     render :update do |page|
 
       #Render the source code for syntax highlighting...
       page.replace_html 'codeviewer', :partial => 'codeviewer', :locals => 
-        { :uid => params[:uid], :filetext => filetext, :annots => annots}
+        { :uid => params[:uid], :filetext => filetext, :annots => annots, :code_type => @code_type}
       #Also update the annotation_summary_list
       page.replace_html 'annotation_summary_list', :partial => 'annotation_summary', :locals => {:annots => annots, :submission_file_id => @submission_file_id}
 

@@ -1,12 +1,11 @@
-<pre id="code" name="code" class="java" cols="80" rows="50"><%= filetext %></pre>
+<pre id="code" name="code" class="<%=@code_type%>" cols="80" rows="50"><%= filetext %></pre>
 
 <script language="javascript">
     dp.SyntaxHighlighter.ClipboardSwf = '/javascripts/syntaxhighlighter/clipboard.swf';
     dp.SyntaxHighlighter.HighlightAll('code');
     console.log('SyntaxHighlighting Complete - Setting up SourceCodeGlower');
     sourceCodeReady();
-    console.log('SourceCodeGlower ready.  Now updating divider');
-    
+    console.log('SourceCodeGlower ready.  Now updating divider');  
 
     <% if (defined? annots) %>
         <% annots.each do |annot| %>
