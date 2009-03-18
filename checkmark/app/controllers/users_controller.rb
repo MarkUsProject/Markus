@@ -1,4 +1,4 @@
-require 'csv'
+require 'fastercsv'
 
 class UsersController < ApplicationController
 
@@ -41,9 +41,9 @@ class UsersController < ApplicationController
       flash[:invalid_lines] = []  # store lines that were not processed
       
       # read each line of the file and update classlist
-      CSV::Reader.parse(params[:userlist]) do |row|
+      FasterCSV.parse(params[:userlist]) do |row|
         # don't know how to fetch line so we concat given array
-        next if CSV.generate_line(row).strip.empty?
+        next if FasterCSV.generate_line(row).strip.empty?
         if add_user(row) == nil
           flash[:invalid_lines] << row.join(",")
         else
@@ -65,6 +65,23 @@ class UsersController < ApplicationController
     @users = User.find_all_by_role(params[:role])
     render :layout => false
     
+  end
+
+  #downloads users with the given role as a csv list
+  def download_userlist
+    #find all the users
+    role = params[:role]
+    users = User.find_all_by_role(role)
+
+    file_out = FasterCSV.generate do |csv|
+       users.each do |user|
+         # csv format is user_name, student_number, last_name, first_name
+         user_array = [user.user_name,user.user_number,user.last_name,user.first_name]
+         csv << user_array
+       end
+     end
+
+    send_data(file_out, :type => "text/csv", :disposition => "inline")
   end
   
   protected
@@ -115,5 +132,5 @@ class UsersController < ApplicationController
     redirect_to :action => 'index'
     
   end
-   
+
 end

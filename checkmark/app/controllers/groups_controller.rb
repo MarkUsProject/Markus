@@ -257,4 +257,24 @@ class GroupsController < ApplicationController
    	group.invite(members[1,members.length], 'accepted')
   end
   
+  def download_grouplist
+    assignment = Assignment.find(params[:id])
+
+    #get all the groups
+    groups = assignment.groups.all(:include => [:memberships])
+
+    file_out = FasterCSV.generate do |csv|
+       groups.each do |group|
+         group_array = []
+         # csv format is user1_name, user2_name, ... etc
+         group.memberships.all(:include => :user).each do |member|
+            group_array.push(member.user.user_name);
+         end
+         csv << group_array
+       end
+     end
+
+    send_data(file_out, :type => "text/csv", :disposition => "inline")
+  end
+
 end

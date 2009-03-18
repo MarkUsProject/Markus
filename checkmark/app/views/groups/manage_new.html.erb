@@ -70,7 +70,11 @@
      </p>							
      <% end %>
   </div>
-  
+
+  <div id="download">
+    <%= link_to 'Download group list CSV Format', {:controller=>"groups", :action=>"download_grouplist", :id=> @assignment.id}%>
+  </div>
+
   <p><%= link_to_remote "Create a New Group", :method => 'post',
       :url => { :action => 'add_group', :id => @assignment.id } %></p>
 

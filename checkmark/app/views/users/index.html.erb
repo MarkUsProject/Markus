@@ -27,7 +27,13 @@
     <div class="section">
       <p><%= link_to "Add a new #{params[:role]}", :controller => 'users', :action => 'create' %></p>
     </div>
-    
+
+    <h3>Download <%= params[:role] %> List</h3>
+
+    <div class="section">
+      <p><%= link_to "Download #{params[:role]} list in CSV format", :controller => 'users', :action => 'download_userlist' %></p>
+    </div>
+
   </div>
   
   <div class="colLeft"><div class="wrapLeft">
