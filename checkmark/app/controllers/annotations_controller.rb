@@ -36,6 +36,8 @@ class AnnotationsController < ApplicationController
     label = AnnotationLabel.new(new_label)
     label.save
     
+    @submission_file_id = params[:submission_file_id]
+    
     new_annotation = { 
       :line_start => params[:line_start], 
       :line_end => params[:line_end],
@@ -45,10 +47,10 @@ class AnnotationsController < ApplicationController
     annotation = Annotation.new(new_annotation)
     annotation.save
 
-    annots = Annotation.find_all_by_submission_file_id(params[:submission_file_id], :order => "line_start") || []
+    annots = Annotation.find_all_by_submission_file_id(@submission_file_id, :order => "line_start") || []
 
     render :update do |page|
-      page.replace_html 'annotation_summary_list', :partial => 'annotation_summary', :locals => {:annots => annots, :submission_file_id => params[:submission_file_id]}
+      page.replace_html 'annotation_summary_list', :partial => 'annotation_summary', :locals => {:annots => annots, :submission_file_id => @submission_file_id}
       if(label.annotation_category_id != nil) 
         page.replace_html "annotation_label_list_#{label.annotation_category_id}", :partial => 'annotation_list', :locals => {:annotation_category => label.annotation_category}
       end
