@@ -146,13 +146,14 @@ class AnnotationsController < ApplicationController
     result.save
     render :update do |page|
       page.replace_html("criterion_title_#{mark.id}_mark",
-              "<b>"+ mark.smark.to_s + "&nbsp;" +
+              "<b>"+ mark.mark.to_s + "&nbsp;" +
               criterion["level_" + mark.mark.to_s + "_name"] + "</b> &nbsp;" +
               criterion["level_" + mark.mark.to_s + "_description"])
       page.replace_html("current_mark_div", result.total_mark)
-      #<%= criterion.weight %> * <%= mark.mark %> =
-      #<%= mark.mark*criterion.weight %> / <%=  criterion.weight * 4 %>
-      page.replace_html("mark_summary_#{mark.id}",  criterion.weight.to_s + " * " + mark.mark.to_s + " = " + (mark.mark*criterion.weight).to_s + " / " + (criterion.weight * 4).to_s)
+      page.replace_html("mark_summary_#{mark.id}_mark",  mark.mark.to_s)
+      page.replace_html("mark_summary_#{mark.id}_grade",
+        (mark.mark*criterion.weight).to_s +
+        " / " + (criterion.weight * 4).to_s)
     end
   end
   

@@ -8,13 +8,9 @@
    end
 %>
 
-<li class="mark_summary_holder" id="<%= "criterion_summary_#{criterion.id}" %>">
-  <div >
-    <div style="float:left;"><%= criterion.name%></div>
-    <div style="float:right;padding-left:20px;" id="<%= "mark_summary_#{mark.id}" %>">
-      <%= criterion.weight %> * <%= m %> =
-      <%= m*criterion.weight %> / <%=  criterion.weight * 4 %>
-    </div>
-    <div class="clear"></div>
-  </div>
-</li>
+<tr class="<%= cycle('mark_summary_holderA', 'mark_summary_holderB') %>" id="<%= "mark_summary_#{mark.id}" %>">
+    <td><%= criterion.name%></td>
+    <td><%= criterion.weight %></td>
+    <td id="<%= "mark_summary_#{mark.id}_mark" %>"><%= m %></td>
+    <td id="<%= "mark_summary_#{mark.id}_grade" %>"><%= m*criterion.weight %> / <%=  criterion.weight * 4 %></td>
+</tr>

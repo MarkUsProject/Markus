@@ -198,8 +198,14 @@ li.annotation_category {
 
 /* ================ CRITERIONS ============== */
 
-  .criterion_holder, .link {
-    background: #FBFBFB;
+  .criterion_holderA, .link {
+    background: #EDEDED;
+    border-bottom: 1px solid #DADADA;
+    padding: 5px;
+  }
+
+  .criterion_holderB, .link {
+    background: #FFFFFF;
     border-bottom: 1px solid #DADADA;
     padding: 5px;
   }
@@ -298,12 +304,16 @@ li.annotation_category {
    .marks_summary_pane {
   border: 1px solid #DADADA;
   float: left;
- }
-
-  .mark_summary_holder, .link {
-    background: #FBFBFB;
-    padding: 10px;
+  font-size:11px;
   }
+
+  .mark_summary_holderA, .link {
+    background: #EDEDED;
+   }
+
+  .mark_summary_holderB, .link {
+    background: #FFFFFF;
+   }
 
   .mark_summary_holder_selected {
     background: #CCCCFF;

@@ -2,7 +2,7 @@
 # Erb template for display rubric criterion in the grader view
 %>
 
-<li class="criterion_holder" id="<%= "criterion_#{criterion.id}" %>">
+<li class="<%= cycle('criterion_holderA', 'criterion_holderB') %>" id="<%= "criterion_#{criterion.id}" %>">
 
   <div class="criterion_title_div" id="<%= "criterion_title_#{criterion.id}"%>" onclick="<%="focus_criterion(#{criterion.id})"%>">
 

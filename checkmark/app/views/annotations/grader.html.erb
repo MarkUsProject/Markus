@@ -340,11 +340,17 @@ document.observe("dom:loaded", function() {
 
   <div id="summary_viewer" class="marks_summary_pane">
     <div id="summary_criteria_pane">
-        <ul id="summary_criteria_pane_list" class="marks_summary_pane_list">
+        <table id="summary_criteria_pane_list" class="marks_summary_pane_list">
+          <tr>
+            <th>Title</th>
+            <th>Weight</th>
+            <th>x &nbsp; Mark</th>
+            <th>= &nbsp; Grade</th>
+          </tr>
           <% @rubric_criteria.each do |criterion| -%>
           <%= render :partial => "annotations/criterion_summary", :locals => {:criterion => criterion, :mark=>@marks_map[criterion.id]} %>
           <% end -%>
-        </ul>
+        </table>
     </div>
     <div id="extra_marks_pane" class="extra_marks_pane">
       <div><b>Additions/Deductions</b></div>
