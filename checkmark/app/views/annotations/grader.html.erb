@@ -253,23 +253,26 @@ document.observe("dom:loaded", function() {
 </div>
 <div class="clear"></div>
 
-
-<button onClick="bump_select($('select_file_id'), -1);"><-</button>
-<select id="select_file_id" name="select_file_id" onChange="load_submitted_file($(this).value)">
+<div style="float:left;">
+  <button onClick="bump_select($('select_file_id'), -1);"><-</button>
+  <select id="select_file_id" name="select_file_id" onChange="load_submitted_file($(this).value)">
     <% @files.each do |file| %>
-        <option value="<%= file.id %>"> 
+        <option value="<%= file.id %>">
           <%= file.filename %>
         </option>
     <% end %>
-</select>
-<button onClick="bump_select($('select_file_id'), 1);">-></button>
+  </select>
+  <button onClick="bump_select($('select_file_id'), 1);">-></button>
+</div>
 
-<div id="marking_status">
+<div style="float:right;">
   <div style="float:left;">Marking Status: <%= @result.marking_state %>   &nbsp; &nbsp;</div>
   <div style="float:left;">Total Mark:&nbsp;</div>
-  <div id="current_mark_div" style="float:left;"> <%= @result.total_mark %> </div>
-  <div id="total_mark_div" style="float:left;"> /<%= @assignment.total_mark %>  </div>
-</div><br/>
+  <div style="float:left;" id="current_mark_div"> <%= @result.total_mark %> </div>
+  <div style="float:left;" id="total_mark_div"> /<%= @assignment.total_mark %>  </div>
+</div>
+
+<div class="clear"></div>
 
 <div id="code_pane">
 
@@ -319,6 +322,11 @@ document.observe("dom:loaded", function() {
   </ul>
 
   <div id="rubric_viewer" style="float:left;" class="rubric_criteria_pane">
+     <div class="rubric_tools">
+       <%= button_to_remote("Expand All", :url => {:controller => 'annotations', :action => 'expand_criteria', :expand => true, :aid => @assignment.id, :rid => @result.id}) %>
+       <%= button_to_remote("Collapse All", :url => {:controller => 'annotations', :action => 'expand_criteria', :expand => false, :aid => @assignment.id, :rid => @result.id}) %>
+       <%= button_to_remote("Expand Unmarked", :url => {:controller => 'annotations', :action => 'expand_criteria', :expand => true, :unmarked => true, :aid => @assignment.id, :rid => @result.id}) %>
+     </div>
      <div id="rubric_criteria_pane">
         <ul id="rubric_criteria_pane_list" class="rubric_criteria_pane_list">
         <%# also need to render the mark per criteria (if exist) %>

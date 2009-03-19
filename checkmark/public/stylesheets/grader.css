@@ -178,17 +178,22 @@ li.annotation_category {
 /* Rubric Criteria - TO CHANGE! defaults to original rubric css for now! */
 
 .rubric_criteria_pane {
-  border: 1px solid #DADADA;
   float: left;
+  font-size: 10px;
 /*  margin: 10px 0 20px 30px;*/
   width: 450px;
 }
 
 .rubric_criteria_pane_list {
+  border: 1px solid #DADADA;
   list-style: none;
   margin: 0;
   padding: 0;
   width: 100%;
+}
+
+.rubric_tools {
+    text-align:center;
 }
 
 /* ================ CRITERIONS ============== */
@@ -196,7 +201,7 @@ li.annotation_category {
   .criterion_holder, .link {
     background: #FBFBFB;
     border-bottom: 1px solid #DADADA;
-    padding: 10px;
+    padding: 5px;
   }
 
   .link {
@@ -209,10 +214,27 @@ li.annotation_category {
     text-transform: capitalize;
   }
 
+    .criterion_title_div_level {
+        font-size: 12px;
+    }
   .criterion_holder_selected, .rubric_level {
     background: #CCCCFF;
   }
 
+.criterion_level_container {
+    margin-left:20px;
+    margin-top: 10px;
+}
+
+.criterion_level_container table {
+    border-collapse:collapse;
+    border:1px solid #DADADA;
+}
+
+.criterion_level_container td {
+    border-top:1px solid #DADADA;
+    border-bottom:1px solid #DADADA;
+}
 
   .editing {
         background: #f9ffb1;
@@ -237,7 +259,7 @@ li.annotation_category {
 .extra_mark_holder, .link {
     background: #FBFBFB;
     border-bottom: 1px solid #DADADA;
-    padding: 10px;
+    padding: 5px;
   }
 
   .link {
@@ -276,7 +298,6 @@ li.annotation_category {
    .marks_summary_pane {
   border: 1px solid #DADADA;
   float: left;
-  margin: 10px 0 20px 30px;
  }
 
   .mark_summary_holder, .link {

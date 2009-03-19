@@ -100,8 +100,9 @@ class AnnotationsController < ApplicationController
       mark = Mark.find(:first,
         :conditions => ["result_id = :r AND criterion_id = :c", {:r=> @result.id, :c=>criterion.id}] )
       if mark.nil?
-        mark = Mark.new(:result_id=>@result.id, :criterion_id=>criterion.id,:mark=>0)
-        mark.save
+        mark = Mark.new(:result_id=>@result.id, :criterion_id=>criterion.id)
+        #save even though there is no mark yet
+        mark.save(false)
       end
       @marks_map[criterion.id] = mark
     end
@@ -144,7 +145,10 @@ class AnnotationsController < ApplicationController
     result.calculate_total
     result.save
     render :update do |page|
-      page.replace_html("mark_#{mark.id}_current",  mark.get_mark.to_s + "/")
+      page.replace_html("criterion_title_#{mark.id}_mark",
+              "<b>"+ mark.smark.to_s + "&nbsp;" +
+              criterion["level_" + mark.mark.to_s + "_name"] + "</b> &nbsp;" +
+              criterion["level_" + mark.mark.to_s + "_description"])
       page.replace_html("current_mark_div", result.total_mark)
       #<%= criterion.weight %> * <%= mark.mark %> =
       #<%= mark.mark*criterion.weight %> / <%=  criterion.weight * 4 %>
@@ -233,4 +237,31 @@ class AnnotationsController < ApplicationController
     end
   end
 
+  def expand_criteria
+    #true if we want to expand, false to collapse
+    expand = params[:expand]
+    #true if we only want to expand the unmarked portion
+    unmarked = params[:unmarked]
+    assignment = Assignment.find(params[:aid])
+    result = Result.find(params[:rid])
+    criteria = assignment.rubric_criterias
+    render :update do |page|
+      criteria.each do |criterion|
+        mark = Mark.find(:first,
+              :conditions => ["result_id = :r AND criterion_id = :c", {:r=> result.id, :c=>criterion.id}] )
+        html = "+ &nbsp;"
+        if expand
+          html = "- &nbsp;"
+          if (unmarked and mark.mark.nil?) or not unmarked
+            page["criterion_inputs_#{criterion.id}"].show();
+          end
+        else
+          page["criterion_inputs_#{criterion.id}"].hide();
+          page["criterion_title_#{criterion.id}"].show();
+        end
+        page["criterion_title_#{criterion.id}_expand"].innerHTML = html 
+      end
+    end
+  end
+  
 end
