@@ -180,7 +180,6 @@ li.annotation_category {
 .rubric_criteria_pane {
   float: left;
   font-size: 10px;
-/*  margin: 10px 0 20px 30px;*/
   width: 450px;
 }
 
@@ -289,8 +288,9 @@ li.annotation_category {
   .extra_marks_pane {
   border: 1px solid #DADADA;
   float: left;
-  margin: 10px 0 20px 30px;
- }
+  margin-left:10px;
+  width:400px;
+  }
 
   .extra_marks_pane_list {
     list-style: none;
@@ -305,6 +305,7 @@ li.annotation_category {
   border: 1px solid #DADADA;
   float: left;
   font-size:11px;
+  width:500px;
   }
 
   .mark_summary_holderA, .link {
@@ -320,9 +321,21 @@ li.annotation_category {
   }
 
   .marks_summary_pane_list {
-    list-style: none;
     margin: 0;
     padding: 0;
     width: 100%;
   }
+
+.mark_subtotal {
+  font-size:10px;
+  font-weight:bold;
+  padding: 10px;
+}
+
+.mark_total {
+  font-size:12px;
+  font-weight:bold;
+  padding: 10px;
+}
+
 

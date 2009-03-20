@@ -149,7 +149,8 @@ class AnnotationsController < ApplicationController
               "<b>"+ mark.mark.to_s + "&nbsp;" +
               criterion["level_" + mark.mark.to_s + "_name"] + "</b> &nbsp;" +
               criterion["level_" + mark.mark.to_s + "_description"])
-      page.replace_html("current_mark_div", result.total_mark)
+      page.replace_html("current_subtotal_div", result.get_subtotal)
+      page.replace_html("current_total_mark_div", result.total_mark)
       page.replace_html("mark_summary_#{mark.id}_mark",  mark.mark.to_s)
       page.replace_html("mark_summary_#{mark.id}_grade",
         (mark.mark*criterion.weight).to_s +
@@ -186,6 +187,14 @@ class AnnotationsController < ApplicationController
     end
   end
 
+  def update_marking_state
+    result = Result.find(params[:id])
+    result.marking_state = params[:value]
+    result.save;
+    render :update do |page|
+    end
+  end
+
   def add_extra_mark
     extra_mark = ExtraMark.new(:result_id => params[:id], :mark => 0, :description=>"New Extra Mark");
     extra_mark.save;
@@ -204,33 +213,29 @@ class AnnotationsController < ApplicationController
     result.calculate_total
     result.save
     render :update do |page|
-      page.visual_effect(:fade, "extra_mark_#{params[:mark_id]}", :duration => 0.5)
       page.remove("extra_mark_#{params[:mark_id]}")
-      page.replace_html("current_mark_div", result.total_mark)
+      page.replace_html("current_total_mark_div", result.total_mark)
     end
   end
 
   def update_extra_mark
-    extra_mark = ExtraMark.find(params[:mark_id])
-    description = params[:description]
-    mark = params[:mark]
-    if !description.blank?
-      extra_mark.description = description
-    end
-    if !mark.blank?
-      extra_mark.mark = mark
-    end
+    extra_mark = ExtraMark.find(params[:id])
+    #the attribute to be changed - description or mark
+    type = params[:type]
+    #the new attribute value
+    val = params[:value]
+    extra_mark[type] = val
 
     if extra_mark.valid? && extra_mark.save
       #need to update the total mark
       result = Result.find(extra_mark.result_id)
       result.calculate_total
       result.save
-      print result.total_mark
       render :update do |page|
-        page.replace_html("extra_mark_title_#{extra_mark.id}_description", "+ " + description)
-        page.replace_html("extra_mark_title_#{extra_mark.id}_mark",  mark.to_s)
-        page.replace_html("current_mark_div", result.total_mark)
+        page.replace_html("extra_mark_title_#{extra_mark.id}_" + type, val)
+        page.replace_html("current_total_mark_div", result.total_mark)
+        page.replace_html("extra_marks_bonus", result.get_bonus_marks)
+        page.replace_html("extra_marks_deducted", result.get_deductions)
       end
     else
       output = {'status' => 'error'}
@@ -238,6 +243,8 @@ class AnnotationsController < ApplicationController
     end
   end
 
+  #should be moved to javascript, but put here for now, since we can easily access all
+  #unmarked criterion here.
   def expand_criteria
     #true if we want to expand, false to collapse
     expand = params[:expand]
@@ -252,8 +259,8 @@ class AnnotationsController < ApplicationController
               :conditions => ["result_id = :r AND criterion_id = :c", {:r=> result.id, :c=>criterion.id}] )
         html = "+ &nbsp;"
         if expand
-          html = "- &nbsp;"
           if (unmarked and mark.mark.nil?) or not unmarked
+            html = "- &nbsp;"
             page["criterion_inputs_#{criterion.id}"].show();
           end
         else

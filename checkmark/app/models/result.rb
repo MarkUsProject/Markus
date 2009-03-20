@@ -26,5 +26,31 @@ class Result < ActiveRecord::Base
 
     return total
   end
+
+  def get_bonus_marks
+    total = 0
+    marks = ExtraMark.find_all_by_result_id(id)
+    marks.each do |m|
+      mark = m.mark
+      if (mark > 0)
+        total = total + mark
+      end
+    end
+
+    return total
+  end
+
+  def get_deductions
+    total = 0
+    marks = ExtraMark.find_all_by_result_id(id)
+    marks.each do |m|
+      mark = m.mark
+      if (mark < 0)
+        total = total + mark
+      end
+    end
+
+    return total
+  end
   
 end

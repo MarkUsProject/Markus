@@ -266,10 +266,15 @@ document.observe("dom:loaded", function() {
 </div>
 
 <div style="float:right;">
-  <div style="float:left;">Marking Status: <%= @result.marking_state %>   &nbsp; &nbsp;</div>
-  <div style="float:left;">Total Mark:&nbsp;</div>
-  <div style="float:left;" id="current_mark_div"> <%= @result.total_mark %> </div>
-  <div style="float:left;" id="total_mark_div"> /<%= @assignment.total_mark %>  </div>
+  <div style="float:left;">Marking Status: 
+    <select id="marking_state" value="<%= @result.marking_state %>">
+      <option value="unmarked">Unmarked</option>
+      <option value="partial">Partial</option>
+      <option value="complete">Complete</option>
+    </select>
+    &nbsp; &nbsp;
+    <%=observe_field :marking_state, :url => {:controller => 'annotations', :action => 'update_marking_state', :id => @result.id}, :on => 'changed', :with => "value"%>
+  </div>
 </div>
 
 <div class="clear"></div>
@@ -352,14 +357,48 @@ document.observe("dom:loaded", function() {
           <% end -%>
         </table>
     </div>
+
+    <div class="mark_subtotal">
+      <div style="float:left;">Subtotal&nbsp;</div>
+      <div style="float:right;"> /<%= @assignment.total_mark %>  </div>
+      <div style="float:right;" id="current_subtotal_div"> <%= @result.get_subtotal %> </div>
+    </div>
+
+    <div class="clear"></div>
+
     <div id="extra_marks_pane" class="extra_marks_pane">
-      <div><b>Additions/Deductions</b></div>
-      <div class="link"><%= link_to_remote 'Add Additions/Deductions', :url => { :action => 'add_extra_mark', :id => @result.id}%></div>
-      <ul id="extra_marks_list" class="extra_marks_pane_list">
+      <div><b>Bonus/Deductions</b></div>
+      <div class="link"><%= link_to_remote 'Add', :url => { :action => 'add_extra_mark', :id => @result.id}%></div>
+      <table class="extra_marks_pane_list">
+        <tbody id="extra_marks_list" >
+        <tr>
+          <td><b>Comment</b></td>
+          <td><b>Mark</b></td>
+          <td> <div class="clear"></div></td>
+        </tr>
         <% ExtraMark.find_all_by_result_id(@result.id).each do |extra_mark| -%>
           <%= render :partial => "annotations/extra_mark", :locals => {:mark => extra_mark, :reault_id=>@result.id} %>
         <% end -%>
-      </ul>
+        </tbody>
+      </table>
+      <div class="clear"></div>
+      <div>
+        <div style="float:left;">Bonus Marks:&nbsp;</div>
+        <div style="float:left;" id="extra_marks_bonus"><%= @result.get_bonus_marks%></div>
+      </div>
+      <div class="clear"></div>
+      <div>
+        <div style="float:left;">Deducted Marks:&nbsp;</div>
+        <div style="float:left;" id="extra_marks_deducted"><%= @result.get_deductions%></div>
+      </div>
+    </div>
+
+    <div class="clear"></div>
+
+    <div class="mark_total">
+      <div style="float:left;">Final Mark&nbsp;</div>
+      <div style="float:right;"> /<%= @assignment.total_mark %>  </div>
+      <div style="float:right;" id="current_total_mark_div"> <%= @result.total_mark %> </div>
     </div>
   </div>
 

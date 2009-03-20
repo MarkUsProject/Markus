@@ -39,14 +39,22 @@ function focus_extra_mark(id) {
 }
 
 function hide_extra_mark(id) {
-    $('extra_mark_inputs_'+id).hide();
-    $('extra_mark_title_'+id).show();
+    //hide all the input boxes
+    $('extra_mark_inputs_'+id+'_description').hide();
+    $('extra_mark_inputs_'+id+'_mark').hide();
+    $('extra_mark_'+id+'_delete').hide();
+    $('extra_mark_title_'+id+'_description').show();
+    $('extra_mark_title_'+id+'_mark').show();
+    $('extra_mark_'+id).removeClassName('criterion_holder_selected')
 }
 
 function show_extra_mark(id) {
-    $('extra_mark_title_'+id).hide();
-    $('extra_mark_inputs_'+id).show();
-    $('extra_mark_inputs_'+id).addClassName('criterion_holder_selected');
+    $('extra_mark_inputs_'+id+'_description').show();
+    $('extra_mark_inputs_'+id+'_mark').show();
+    $('extra_mark_'+id+'_delete').show();
+    $('extra_mark_title_'+id+'_description').hide();
+    $('extra_mark_title_'+id+'_mark').hide();
+    $('extra_mark_'+id).addClassName('criterion_holder_selected');
 }
 
 /** START Annotation/SourceCodeGlower functions **/
