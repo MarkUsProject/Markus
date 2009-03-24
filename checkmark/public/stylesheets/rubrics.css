@@ -2,6 +2,7 @@
         float: right;
         text-align: right;
 }
+
 #rubric_criteria_pane, #rubric_levels_pane {
   border: 1px solid #DADADA;
   border-bottom: 0;
@@ -9,38 +10,52 @@
   margin: 10px 0 20px 30px;
   width: 450px;     
 }
+
 #rubric_criteria_pane_menu, #rubric_levels_pane_menu {
   background: #DDDDDD;
 }
+
 #rubric_criteria_pane_menu h2, #rubric_levels_pane_menu h2 {
   border-bottom: 1px solid #DADADA;
-  color: #000000;
+  color: #000;
   margin: 0;
   padding: 10px;
 }
 
-#rubric_levels_pane_list {
-  width: 450px;
-}
+  #rubric_criteria_pane_menu h2#rubricCriteria {
+    float: left;
+    width: 70%:
+  }
+  
+  #rubric_criteria_pane_menu span#addCriterion {
+    display: block;
+    float: right;
+    text-align: right;
+    padding: 10px;
+  }
+  
+    #rubric_criteria_pane_menu span#addCriterion a {
+        -moz-border-radius: 5px;
+        background: #B7D3EC;
+        border: 1px solid #ddd;
+        padding: 3px 10px;
+    }
 
-ul#rubric_criteria_pane_list {
+ul#rubric_criteria_pane_list, ul#rubric_levels_pane_list {
   list-style: none;
   margin: 0;
   padding: 0;
   width: 100%;
 }
 
+  #rubric_levels_pane_list .rowA { background: #FFFCC4; }
+  #rubric_levels_pane_list .rowB { background: #FFFBB6; }
+  
 /* ================ CRITERIONS ============== */
 
-  .criterion_holder, .link {
-    background: #FBFBFB;
+  .criterion_holder {
     border-bottom: 1px solid #DADADA;
     padding: 10px;
-  }
-  
-  .link { 
-    background: #FFD4BF;
-    display: block;
   }
   
   .criterion_title_div {
@@ -48,8 +63,8 @@ ul#rubric_criteria_pane_list {
     text-transform: capitalize;
   }
 
-  .criterion_holder_selected, .rubric_level {
-    background: #CCCCFF;
+  .criterion_holder_selected {
+    background: #FFFAA8;
   }
   
 /* ============= CRITERIONS EDITING ========== */
@@ -86,33 +101,32 @@ ul#rubric_criteria_pane_list {
   }
   
 /* ================= LEVELS ================= */
-
+  
   .rubric_level {
     padding: 5px;
-    background: #FBFBFB;
     border-bottom: 1px solid #DADADA;
     padding: 10px;
   }
+    
+  #rubric_criteria_pane_instructions {
+          border: 1px solid #7777FF;
+          background: #DDDDFF;
+          padding: 10px;
+          font-weight: bold;
+  }
+  #rubric_status {
+          font-weight: bold;
+          padding-left: 10px;
+          padding-right: 10px;
+  }
+  #selected_criterion_name {
+          text-transform: capitalize;
+          font-weight: bold;
+  }
   
-#rubric_criteria_pane_instructions {
-        border: 1px solid #7777FF;
-        background: #DDDDFF;
-        padding: 10px;
-        font-weight: bold;
-}
-#rubric_status {
-        font-weight: bold;
-        padding-left: 10px;
-        padding-right: 10px;
-}
-#selected_criterion_name {
-        text-transform: capitalize;
-        font-weight: bold;
-}
-
-.clear {
-        clear: both;
-}
-.error {
-    width: 350px;
-}
+  .clear {
+          clear: both;
+  }
+  .error {
+      width: 350px;
+  }

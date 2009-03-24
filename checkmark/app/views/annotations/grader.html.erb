@@ -244,17 +244,37 @@ document.observe("dom:loaded", function() {
 });
 </script>
 
-<div style="float:left;">
 <h1>Grading Assignment: <%= link_to @assignment.name, :controller => 'annotations', :action => 'students', :id => @assignment.id %> 
 </h1>
-</div>
-<div style="float:right;">
-<span id="student_selector"><< Previous Submission | [CURRENT SUBMISSION] | Next Submission >></span>
-</div>
-<div class="clear"></div>
 
-<div style="float:left;">
+<div id="student_selector">
+  <span class="left"><a href="">&laquo; Previous Submission</a></span>
+  <span class="middle">
+    <%=@user.user_name%> 
+    
+    (Marking Status: 
+     <select id="marking_state" value="<%= @result.marking_state %>">
+       <option value="unmarked">Unmarked</option>
+       <option value="partial">Partial</option>
+       <option value="complete">Complete</option>
+     </select>
+    
+    <%=observe_field :marking_state, :url => {:controller => 'annotations', :action => 'update_marking_state', :id => @result.id}, :on => 'changed', :with => "value"%>
+     
+    <em>Total Mark:</em>
+    <span id="current_mark_div"><%= @result.total_mark %></span> / 
+    <span id="total_mark_div"><%= @assignment.total_mark %></span>)
+  </span> 
+  <span class="right"><a href="">Next Submission &raquo;</a></span>
+  <div class="clear"></div>
+</div>
+
+<p>
+
+  Submission File: 
+
   <button onClick="bump_select($('select_file_id'), -1);"><-</button>
+  
   <select id="select_file_id" name="select_file_id" onChange="load_submitted_file($(this).value)">
     <% @files.each do |file| %>
         <option value="<%= file.id %>">
@@ -262,102 +282,103 @@ document.observe("dom:loaded", function() {
         </option>
     <% end %>
   </select>
+  
   <button onClick="bump_select($('select_file_id'), 1);">-></button>
-</div>
 
-<div style="float:right;">
-  <div style="float:left;">Marking Status: 
-    <select id="marking_state" value="<%= @result.marking_state %>">
-      <option value="unmarked">Unmarked</option>
-      <option value="partial">Partial</option>
-      <option value="complete">Complete</option>
-    </select>
-    &nbsp; &nbsp;
-    <%=observe_field :marking_state, :url => {:controller => 'annotations', :action => 'update_marking_state', :id => @result.id}, :on => 'changed', :with => "value"%>
-  </div>
-</div>
+</p>
 
-<div class="clear"></div>
+<div class="taggedContainer">
 
-<div id="code_pane">
+  <div id="code_pane">
 
-  <ul id="code_and_annotations_tabs" class="subsection_tabs">
-     <li class="tab"><a href="#code_holder">Source Code</a></li>
-     <li class="tab"><a href="#annotations_summary">Annot. Summary</a></li>
-  </ul>
-  
-  <div id="code_holder">
-  
-    <div id="annotation_menu">
-      <button id="new_annotation_button" onClick="make_new_annotation(); return false;">New Annot.</button>
-      
-      <%= render :partial => "annotation_categories", :locals => {:annotation_categories => @annotation_categories}%>
-
-    
-    <div class="clear"></div>
-  </div> <!-- End of annotation_menu -->
-  <div class="clear"></div>
-  <div id="codeviewer"></div>
-  </div> <!-- End of Code holder -->
-
-  <div id="annotations_summary">
-    <ul id="annotation_summary_list">
+    <ul id="code_and_annotations_tabs" class="subsection_tabs">
+       <li class="tab"><a href="#code_holder">Source Code</a></li>
+       <li class="tab"><a href="#annotations_summary">Annot. Summary</a></li>
     </ul>
+    
+    <div id="code_holder" class="tabbedArea">
+    
+      <div id="annotation_menu">
+      
+        <button id="new_annotation_button" onClick="make_new_annotation(); return false;">New Annot.</button>
+        
+        <%= render :partial => "annotation_categories", :locals => {:annotation_categories => @annotation_categories}%>
   
-    <div>
-    <% form_tag({}, {:id => "overall_comment_box"}) do %>
-          <p style="padding-left:30px;">Overall Comment: </p>
-          <p style="padding-left:30px;"><%= text_area_tag :overall_comment, @result.overall_comment, :rows => 10, :cols => 40 %></p>
-    <% end -%>
-    <%= observe_form "overall_comment_box", :url => { :action => 'update_comment', :result_id => @result.id} -%>
-    </div>
-  </div>
-</div>
+        <div class="clear"></div>
+        
+      </div> <!-- End of annotation_menu -->
+        
+      <div class="clear"></div>
+      
+      <div id="codeviewer"></div>
+    
+    </div> <!-- End of Code holder -->
+  
+    <div id="annotations_summary" class="tabbedArea">
+    
+      <ul id="annotation_summary_list">
+      </ul>
+      
+      <div>
+      <% form_tag({}, {:id => "overall_comment_box"}) do %>
+            <p style="padding-left:30px;">Overall Comment: </p>
+            <p style="padding-left:30px;"><%= text_area_tag :overall_comment, @result.overall_comment, :rows => 10, :cols => 40 %></p>
+      <% end -%>
+      <%= observe_form "overall_comment_box", :url => { :action => 'update_comment', :result_id => @result.id} -%>
+      </div>
+      
+    </div> <!-- Annotations Summary -->
 
+  </div> <!-- Code Pane -->
+  
+</div> <!-- Tabbed Container -->
 
 <!-- Divider  -->
 <div id="pane_divider">
 </div>
 <!-- End Divider -->
 
-<div id="rubric_pane" style="float:left;">
-  <ul id="rubric_tabs" class="subsection_tabs">
-	<li class="tab"><a href="#rubric_viewer">Rubric</a></li>
-	<li class="tab"><a href="#summary_viewer">Summary</a></li>
-  </ul>
-
-  <div id="rubric_viewer" style="float:left;" class="rubric_criteria_pane">
-     <div class="rubric_tools">
-       <%= button_to_remote("Expand All", :url => {:controller => 'annotations', :action => 'expand_criteria', :expand => true, :aid => @assignment.id, :rid => @result.id}) %>
-       <%= button_to_remote("Collapse All", :url => {:controller => 'annotations', :action => 'expand_criteria', :expand => false, :aid => @assignment.id, :rid => @result.id}) %>
-       <%= button_to_remote("Expand Unmarked", :url => {:controller => 'annotations', :action => 'expand_criteria', :expand => true, :unmarked => true, :aid => @assignment.id, :rid => @result.id}) %>
-     </div>
-     <div id="rubric_criteria_pane">
-        <ul id="rubric_criteria_pane_list" class="rubric_criteria_pane_list">
-        <%# also need to render the mark per criteria (if exist) %>
-        <% @rubric_criteria.each do |criterion| -%>
-        <%= render :partial => "annotations/rubric_criterion", :locals => {:criterion => criterion, :result=>@result, :mark=>@marks_map[criterion.id]} %>
-        <% end -%>
-        </ul>
-     </div>
-  </div>
-
-
-  <div id="summary_viewer" class="marks_summary_pane">
-    <div id="summary_criteria_pane">
-        <table id="summary_criteria_pane_list" class="marks_summary_pane_list">
-          <tr>
-            <th>Title</th>
-            <th>Weight</th>
-            <th>x &nbsp; Mark</th>
-            <th>= &nbsp; Grade</th>
-          </tr>
-          <% @rubric_criteria.each do |criterion| -%>
-          <%= render :partial => "annotations/criterion_summary", :locals => {:criterion => criterion, :mark=>@marks_map[criterion.id]} %>
-          <% end -%>
-        </table>
-    </div>
-
+  <div id="rubric_pane" style="float:left;">
+  
+    <ul id="rubric_tabs" class="subsection_tabs">
+      <li class="tab"><a href="#rubric_viewer">Rubric</a></li>
+      <li class="tab"><a href="#summary_viewer">Summary</a></li>
+    </ul>
+  
+    <div id="rubric_viewer" class="tabbedArea">
+    
+      <div class="rubric_tools">
+         <%= button_to_remote("Expand All", :url => {:controller => 'annotations', :action => 'expand_criteria', :expand => true, :aid => @assignment.id, :rid => @result.id}) %>
+         <%= button_to_remote("Collapse All", :url => {:controller => 'annotations', :action => 'expand_criteria', :expand => false, :aid => @assignment.id, :rid => @result.id}) %>
+         <%= button_to_remote("Expand Unmarked", :url => {:controller => 'annotations', :action => 'expand_criteria', :expand => true, :unmarked => true, :aid => @assignment.id, :rid => @result.id}) %>
+       </div>  <!-- Rubric Tools -->
+    
+       <div id="rubric_criteria_pane">
+          <ul id="rubric_criteria_pane_list">
+            <%# also need to render the mark per criteria (if exist) %>
+            <% @rubric_criteria.each do |criterion| -%>
+            <%= render :partial => "annotations/rubric_criterion", :locals => {:criterion => criterion, :result=>@result, :mark=>@marks_map[criterion.id]} %>
+            <% end -%>
+          </ul> <!-- Rubric Criteria Pane List -->
+       </div> <!-- Rubric Criteria Pane -->
+       
+    </div>  <!-- Rubric Viewer -->
+  
+    <div id="summary_viewer" class="marks_summary_pane tabbedArea">
+      <div id="summary_criteria_pane">
+          <table id="summary_criteria_pane_list" class="marks_summary_pane_list">
+            <tr>
+              <th>Title</th>
+              <th>Weight</th>
+              <th>x &nbsp; Mark</th>
+              <th>= &nbsp; Grade</th>
+            </tr>
+            <% @rubric_criteria.each do |criterion| -%>
+               <%= render :partial => "annotations/criterion_summary", :locals => {:criterion => criterion, :mark=>@marks_map[criterion.id]} %>
+            <% end -%>
+          </table>  <!-- Summary Criteria Pane List -->
+      </div>  <!-- Summary Criteria Pane -->
+      
     <div class="mark_subtotal">
       <div style="float:left;">Subtotal&nbsp;</div>
       <div style="float:right;"> /<%= @assignment.total_mark %>  </div>
@@ -391,8 +412,8 @@ document.observe("dom:loaded", function() {
         <div style="float:left;">Deducted Marks:&nbsp;</div>
         <div style="float:left;" id="extra_marks_deducted"><%= @result.get_deductions%></div>
       </div>
-    </div>
-
+    </div>      
+    
     <div class="clear"></div>
 
     <div class="mark_total">
@@ -401,32 +422,28 @@ document.observe("dom:loaded", function() {
       <div style="float:right;" id="current_total_mark_div"> <%= @result.total_mark %> </div>
     </div>
   </div>
-
-
-</div>
-
-<div id="annotation_holder">
-</div>
-
-<div id="create_annotation_dialog" style="display:none;">
-  <p>
-    <h2>Create new annotation</h2>
-  </p>
-  <p>
-    <textarea id="new_annotation_content"></textarea>
-  </p>
-  <p>
-    <h3>Annotation Category</h3>
-    <select id="new_annotation_category">
-      <option value="">Uncategorized</option>
-      <% @annotation_categories.each do |annotation_category| %>
-      <option value="<%=annotation_category.id%>"><%=annotation_category.name%></option>
-      <% end %>
-    </select>
+  
+  <div id="annotation_holder">
+  </div>
+  
+  <div id="create_annotation_dialog" style="display:none;">
+    <p>
+      <h2>Create new annotation</h2>
     </p>
-    <p style="margin-top: 5px; border-top: 1px solid #000000; padding-top: 10px;">
-      <button onClick="submit_new_annotation(escape($F('new_annotation_content')), $F('new_annotation_category'));">Create New Annotation</button>
-      <button onClick="modal.close();">Cancel</button>
+    <p>
+      <textarea id="new_annotation_content"></textarea>
     </p>
-</div>
-
+    <p>
+      <h3>Annotation Category</h3>
+      <select id="new_annotation_category">
+        <option value="">Uncategorized</option>
+        <% @annotation_categories.each do |annotation_category| %>
+        <option value="<%=annotation_category.id%>"><%=annotation_category.name%></option>
+        <% end %>
+      </select>
+      </p>
+      <p style="margin-top: 5px; border-top: 1px solid #000000; padding-top: 10px;">
+        <button onClick="submit_new_annotation(escape($F('new_annotation_content')), $F('new_annotation_category'));">Create New Annotation</button>
+        <button onClick="modal.close();">Cancel</button>
+      </p>
+  </div>

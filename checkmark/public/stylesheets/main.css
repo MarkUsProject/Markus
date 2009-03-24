@@ -80,8 +80,8 @@ table {
 }
 
 tr {  margin: 0 0 1px 0; }
-tr.rowA { background: #F6F6F6; }
-tr.rowB { background: #EDEDED; }
+.rowA { background: #F6F6F6; }
+.rowB { background: #EDEDED; }
 
 th, td {
   background: #85B8E8;

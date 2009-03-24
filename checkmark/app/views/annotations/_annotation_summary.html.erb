@@ -4,12 +4,11 @@
   <li>
     <p><%=link_to_function "Line #{annot.line_start} to #{annot.line_end}", "focus_source_code_line(#{annot.line_start})"%></p>
     <div id="annotation_label_content_display_<%=annot.annotation_label.id%>"><%=annot.annotation_label.content%>
-    <br>
-    <%=link_to_function "Edit", "$('annotation_label_content_edit_#{annot.annotation_label.id}').show();$('annotation_label_content_display_#{annot.annotation_label.id}').hide();"%>
-    <br>
-    <%=link_to_remote "Remove", :url => {:action=>"destroy", :id=>annot.id, :submission_file_id=>@submission_file_id}, :confirm => "Are you sure you want to remove this annotation?"%></p>
-
     </div>
+    <p><%=link_to_function "Edit", "$('annotation_label_content_edit_#{annot.annotation_label.id}').show();$('annotation_label_content_display_#{annot.annotation_label.id}').hide();"%>
+    &middot;
+    <%=link_to_remote "Remove", :url => {:action=>"destroy", :id=>annot.id, :submission_file_id=>@submission_file_id}, :confirm => "Are you sure you want to remove this annotation?"%>
+    </p>
 
     <div id="annotation_label_content_edit_<%=annot.annotation_label.id%>" style="display: none;">
     <% remote_form_for :annotation_label, annot.annotation_label, :url => {:action => "update_annotation"} do |f| %>    

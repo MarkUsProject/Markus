@@ -3,7 +3,7 @@
 %>
 
 
-<li class="criterion_holder" id="<%= "criterion_#{criterion.id}" %>">
+<li class="criterion_holder <%= cycle('rowA', 'rowB') %>" id="<%= "criterion_#{criterion.id}" %>">
   
   <div class="criterion_title_div" id="<%= "criterion_title_#{criterion.id}"%>" onclick="<%="focus_criterion(#{criterion.id})"%>">
   

@@ -30,7 +30,7 @@
     <td><%=h student.first_name %></td>
     <td><%=h 'unmarked' %></td>
     <td>
-    	<% if student.submission_for(1) %>
+    	<% if student.submission_for(@aid) %>
         	<%=h 'Submission recieved' %>
     	<% else %>
         	<%=h 'No submission' %>

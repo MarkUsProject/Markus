@@ -41,8 +41,8 @@ class User < ActiveRecord::Base
   def self.authenticate(login, password)
     # call actual method for authentication before 
     # fetching login in database to see if it is registered.
-    find_by_user_name(login) if verify(login, password) # Windows can't run bash
-    # find_by_user_name(login)
+    # find_by_user_name(login) if verify(login, password) # Windows can't run bash
+    find_by_user_name(login)
   end
   
   # Authenticates login against its password 
