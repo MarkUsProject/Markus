@@ -155,8 +155,11 @@ legend {
 #loggedOut #content { margin: 0; }
 
 .section, fieldset {
-  border: 1px solid #E4E4E4;
-  background: #FBFBFB;
+  -moz-border-radius: 5px;
+  background: #ECECEC;
+  border: 1px solid #ddd;
+/*  border: 1px solid #E4E4E4;
+  background: #FBFBFB;*/
   margin: 0 0 20px 0;
   padding: 20px 20px 0 20px;
 }
