@@ -30,6 +30,13 @@ function show_criterion(id) {
     //$('criterion_inputs_'+id).addClassName('criterion_holder_selected');
 }
 
+function unselect_extra_mark() {
+    if (selected_extra_mark_id != null) {
+        hide_extra_mark(selected_extra_mark_id);
+        selected_extra_mark_id = null;
+    }
+}
+
 function focus_extra_mark(id) {
     if(selected_extra_mark_id != null) {
         hide_extra_mark(selected_extra_mark_id);

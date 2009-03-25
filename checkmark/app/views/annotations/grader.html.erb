@@ -388,8 +388,8 @@ document.observe("dom:loaded", function() {
     <div class="clear"></div><br/>
     
     <div id="extra_marks_pane" class="extra_marks_pane">
-      <div style="padding:5px;background-color:#B7D3EC;"><b>Bonus/Deductions</b></div>
-      <div class="link"><%= link_to_remote 'Add', :url => { :action => 'add_extra_mark', :id => @result.id}%></div>
+      <div style="padding:5px;background-color:#B7D3EC;" onclick="unselect_extra_mark();"><b>Bonus/Deductions</b></div>
+      <div class="link" onclick="unselect_extra_mark();"><%= link_to_remote 'Add', :url => { :action => 'add_extra_mark', :id => @result.id}%></div>
       <table class="extra_marks_pane_list">
         <tbody id="extra_marks_list" >
         <tr>
@@ -403,12 +403,12 @@ document.observe("dom:loaded", function() {
         </tbody>
       </table>
       <div class="clear"></div>
-      <div style="padding:10px;">
+      <div style="padding:10px;" onclick="unselect_extra_mark();">
         <div style="float:left;"><b>Bonus Marks:&nbsp;</b></div>
         <div style="float:left;" id="extra_marks_bonus"><%= @result.get_bonus_marks%></div>
       </div>
       <div class="clear"></div>
-      <div style="padding:10px;">
+      <div style="padding:10px;" onclick="unselect_extra_mark();">
         <div style="float:left;"><b>Deducted Marks:&nbsp;</b></div>
         <div style="float:left;" id="extra_marks_deducted"><%= @result.get_deductions%></div>
       </div>

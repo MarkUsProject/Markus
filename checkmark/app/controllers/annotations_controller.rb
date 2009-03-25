@@ -148,10 +148,12 @@ class AnnotationsController < ApplicationController
     result.calculate_total
     result.save
     render :update do |page|
-      #Change the css class of the old level to make it appear unselected
-      page["criterion_#{criterion.id}_level_#{old_mark}"].removeClassName("criterion_level_selected")
-      page["criterion_#{criterion.id}_level_#{old_mark}"].addClassName("criterion_level")
-
+      if !old_mark.nil?
+        #Change the css class of the old level to make it appear unselected
+        page["criterion_#{criterion.id}_level_#{old_mark}"].removeClassName("criterion_level_selected")
+        page["criterion_#{criterion.id}_level_#{old_mark}"].addClassName("criterion_level")
+      end
+      
       #Change the css class of the new level to make it appear selected
       page["criterion_#{criterion.id}_level_#{mark.mark}"].removeClassName("criterion_level")
       page["criterion_#{criterion.id}_level_#{mark.mark}"].addClassName("criterion_level_selected")
@@ -174,6 +176,7 @@ class AnnotationsController < ApplicationController
         " / " + (criterion.weight * 4).to_s)
       #6 total mark div at the top of the page
       page.replace_html("current_mark_div", result.total_mark)
+      
     end
   end
   
@@ -309,9 +312,11 @@ class AnnotationsController < ApplicationController
 
   #Creates a gradesfile in the format specified by
   #http://www.cs.toronto.edu/~clarke/grade/new/fileformat.html
+  # TODO this code probably needs some cleaning up, especially
+  # in the manner which it finds student's marks
   def get_gradesfile
     file_out = ""
-    assignments = Assignment.find(:all)
+    assignments = Assignment.find(:all, :order => "id")
     students = User.find_all_by_role('student')
     results = Result.find(:all)
     #need to create the header, which is the list of assignments and their total
@@ -322,29 +327,37 @@ class AnnotationsController < ApplicationController
     end
 
     file_out << "\n"
-    #header also contains asts: which is a mapping of assignments to its weight
-    #TODO right now we do not record the weight of an assignment, so this line
-    #has been left out for now
-
-
+   
     #next we generate the list of students and marks
-    #student# + four spaces + student name + marks (each preceded by a tab char)
+    #student# + four spaces + student last name + 2 spaces + student first name
+    # + marks (each preceded by a tab char)
     students.each do |student|
       str = ""
       str << student.user_number + "    " + student.last_name + "  " + student.first_name
-      #now get all of the student's marks
-      assignments.each do |asst|
-        #find the students membership for the current assignment
-        mem = Membership.find(:first,
-              :conditions => ["user_id = :u", {:u => student.id}])
-        next if mem.nil?
-        sub = Submission.find(:first,
-              :conditions => ["group_id = :g AND assignment_id = :a", {:g=> mem.group_id, :a => asst.id}])
+      #this will hold a mapping for the assignment id to the students results
+      #object
+      results = {}
+
+      #find the students membership for the current assignment
+      memberships = Membership.find_all_by_user_id(student.id)
+      next if memberships.nil?
+
+      #for each membership, we find the students submission
+      memberships.each do |mem|
+        sub = Submission.find_by_group_id(mem.group_id)
         next if sub.nil?
+        #find the corresponding submission
         result = Result.find_by_submission_id(sub.id)
         next if result.nil?
+        #get the results object
+        results[sub.assignment_id] = result
+      end
+
+      #for each assignment add the mark to the line
+      assignments.each do |asst|
+        result = results[asst.id];
+        next if result.nil?
         str << "\t" + result.total_mark.to_s
-        
       end
 
       file_out << str + "\n"
