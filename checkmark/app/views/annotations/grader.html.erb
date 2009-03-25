@@ -1,6 +1,6 @@
-<%= stylesheet_link_tag("grader") %>
 <%= stylesheet_link_tag("livepipe/tabs") %>
 <%= stylesheet_link_tag("SyntaxHighlighter") %>
+<%= stylesheet_link_tag("grader") %>
 <%= javascript_include_tag "livepipe/livepipe.js" %>
 <%= javascript_include_tag "livepipe/window.js" %>
 <%= javascript_include_tag "livepipe/tabs.js" %>
@@ -370,8 +370,8 @@ document.observe("dom:loaded", function() {
             <tr>
               <th>Title</th>
               <th>Weight</th>
-              <th>x &nbsp; Mark</th>
-              <th>= &nbsp; Grade</th>
+              <th>x Mark</th>
+              <th>= Grade</th>
             </tr>
             <% @rubric_criteria.each do |criterion| -%>
                <%= render :partial => "annotations/criterion_summary", :locals => {:criterion => criterion, :mark=>@marks_map[criterion.id]} %>
@@ -385,10 +385,10 @@ document.observe("dom:loaded", function() {
       <div style="float:right;" id="current_subtotal_div"> <%= @result.get_subtotal %> </div>
     </div>
 
-    <div class="clear"></div>
-
+    <div class="clear"></div><br/>
+    
     <div id="extra_marks_pane" class="extra_marks_pane">
-      <div><b>Bonus/Deductions</b></div>
+      <div style="padding:5px;background-color:#B7D3EC;"><b>Bonus/Deductions</b></div>
       <div class="link"><%= link_to_remote 'Add', :url => { :action => 'add_extra_mark', :id => @result.id}%></div>
       <table class="extra_marks_pane_list">
         <tbody id="extra_marks_list" >
@@ -403,13 +403,13 @@ document.observe("dom:loaded", function() {
         </tbody>
       </table>
       <div class="clear"></div>
-      <div>
-        <div style="float:left;">Bonus Marks:&nbsp;</div>
+      <div style="padding:10px;">
+        <div style="float:left;"><b>Bonus Marks:&nbsp;</b></div>
         <div style="float:left;" id="extra_marks_bonus"><%= @result.get_bonus_marks%></div>
       </div>
       <div class="clear"></div>
-      <div>
-        <div style="float:left;">Deducted Marks:&nbsp;</div>
+      <div style="padding:10px;">
+        <div style="float:left;"><b>Deducted Marks:&nbsp;</b></div>
         <div style="float:left;" id="extra_marks_deducted"><%= @result.get_deductions%></div>
       </div>
     </div>      

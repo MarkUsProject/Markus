@@ -135,26 +135,45 @@ class AnnotationsController < ApplicationController
     
   end
 
+  #Update the mark for a specific criterion
   def update_mark
     mark = Mark.find(params[:mark_id]);
+    old_mark = mark.mark;
     criterion = RubricCriteria.find(mark.criterion_id);
     mark.mark = params[:mark];
     mark.save
+    #update the total mark
     result = Result.find(mark.result_id)
     result.marking_state = "partial"
     result.calculate_total
     result.save
     render :update do |page|
+      #Change the css class of the old level to make it appear unselected
+      page["criterion_#{criterion.id}_level_#{old_mark}"].removeClassName("criterion_level_selected")
+      page["criterion_#{criterion.id}_level_#{old_mark}"].addClassName("criterion_level")
+
+      #Change the css class of the new level to make it appear selected
+      page["criterion_#{criterion.id}_level_#{mark.mark}"].removeClassName("criterion_level")
+      page["criterion_#{criterion.id}_level_#{mark.mark}"].addClassName("criterion_level_selected")
+
+      #we need to update the following items to reflect the new mark
+      #1 the mark in the criterion holder itself
       page.replace_html("criterion_title_#{mark.id}_mark",
               "<b>"+ mark.mark.to_s + "&nbsp;" +
               criterion["level_" + mark.mark.to_s + "_name"] + "</b> &nbsp;" +
               criterion["level_" + mark.mark.to_s + "_description"])
+      #2 The subtotal div in summary pane
       page.replace_html("current_subtotal_div", result.get_subtotal)
+      #3 Total mark div in summary pane
       page.replace_html("current_total_mark_div", result.total_mark)
+      #4 The mark as it appears in the summary view
       page.replace_html("mark_summary_#{mark.id}_mark",  mark.mark.to_s)
+      #5 Need to update the grade for the criterion
       page.replace_html("mark_summary_#{mark.id}_grade",
         (mark.mark*criterion.weight).to_s +
         " / " + (criterion.weight * 4).to_s)
+      #6 total mark div at the top of the page
+      page.replace_html("current_mark_div", result.total_mark)
     end
   end
   
@@ -179,6 +198,7 @@ class AnnotationsController < ApplicationController
 
   end
 
+  #Updates the overall comment from the annotations tab
   def update_comment
     result = Result.find(params[:result_id])
     result.overall_comment = params[:overall_comment]
@@ -187,6 +207,7 @@ class AnnotationsController < ApplicationController
     end
   end
 
+  #Updates the marking state
   def update_marking_state
     result = Result.find(params[:id])
     result.marking_state = params[:value]
@@ -195,47 +216,59 @@ class AnnotationsController < ApplicationController
     end
   end
 
+  #Adds a new extra mark object and inserts it into the html
   def add_extra_mark
     extra_mark = ExtraMark.new(:result_id => params[:id], :mark => 0, :description=>"New Extra Mark");
     extra_mark.save;
     render :update do |page|
+      #insert the new mark into the bottom of the table and focus it
       page.insert_html :bottom, "extra_marks_list",
         :partial => "annotations/extra_mark", :locals => { :mark => extra_mark }
       page.call(:focus_extra_mark, extra_mark.id.to_s)
     end
   end
 
+  #Deletes an extra mark from the database and removes it from the html
   def remove_extra_mark
+    #find the extra mark and destroy it
     extra_mark = ExtraMark.find(params[:mark_id])
     extra_mark.destroy
     #need to recalculate total mark
     result = Result.find(extra_mark.result_id)
     result.calculate_total
-    result.save
     render :update do |page|
+      #delete it from the html
       page.remove("extra_mark_#{params[:mark_id]}")
       page.replace_html("current_total_mark_div", result.total_mark)
     end
   end
 
+  #update the mark and/or description of the extra mark
   def update_extra_mark
     extra_mark = ExtraMark.find(params[:id])
     #the attribute to be changed - description or mark
     type = params[:type]
     #the new attribute value
     val = params[:value]
+    #change the value
     extra_mark[type] = val
 
+    #save it
     if extra_mark.valid? && extra_mark.save
       #need to update the total mark
       result = Result.find(extra_mark.result_id)
       result.calculate_total
-      result.save
       render :update do |page|
+        #The following divs need to be changed
+        #1 the display of the extra mark
         page.replace_html("extra_mark_title_#{extra_mark.id}_" + type, val)
+        #2 the display of the total mark
         page.replace_html("current_total_mark_div", result.total_mark)
+        #3 the divs containing deductions/bonuses
         page.replace_html("extra_marks_bonus", result.get_bonus_marks)
         page.replace_html("extra_marks_deducted", result.get_deductions)
+        #4 the div containing the total mark at the top of the page
+        page.replace_html("current_mark_div", result.total_mark)
       end
     else
       output = {'status' => 'error'}
@@ -258,7 +291,9 @@ class AnnotationsController < ApplicationController
         mark = Mark.find(:first,
               :conditions => ["result_id = :r AND criterion_id = :c", {:r=> result.id, :c=>criterion.id}] )
         html = "+ &nbsp;"
-        if expand
+        if expand #if we want to expand criteria...
+          #if we want to expand ony unmarked assignments, expand ones where the
+          #mark is nil
           if (unmarked and mark.mark.nil?) or not unmarked
             html = "- &nbsp;"
             page["criterion_inputs_#{criterion.id}"].show();
@@ -270,6 +305,52 @@ class AnnotationsController < ApplicationController
         page["criterion_title_#{criterion.id}_expand"].innerHTML = html 
       end
     end
+  end
+
+  #Creates a gradesfile in the format specified by
+  #http://www.cs.toronto.edu/~clarke/grade/new/fileformat.html
+  def get_gradesfile
+    file_out = ""
+    assignments = Assignment.find(:all)
+    students = User.find_all_by_role('student')
+    results = Result.find(:all)
+    #need to create the header, which is the list of assignments and their total
+    #mark
+    assignments.each do |asst|
+      str = asst.name + ' / ' + asst.total_mark.to_s;
+      file_out << str + "\n"
+    end
+
+    file_out << "\n"
+    #header also contains asts: which is a mapping of assignments to its weight
+    #TODO right now we do not record the weight of an assignment, so this line
+    #has been left out for now
+
+
+    #next we generate the list of students and marks
+    #student# + four spaces + student name + marks (each preceded by a tab char)
+    students.each do |student|
+      str = ""
+      str << student.user_number + "    " + student.last_name + "  " + student.first_name
+      #now get all of the student's marks
+      assignments.each do |asst|
+        #find the students membership for the current assignment
+        mem = Membership.find(:first,
+              :conditions => ["user_id = :u", {:u => student.id}])
+        next if mem.nil?
+        sub = Submission.find(:first,
+              :conditions => ["group_id = :g AND assignment_id = :a", {:g=> mem.group_id, :a => asst.id}])
+        next if sub.nil?
+        result = Result.find_by_submission_id(sub.id)
+        next if result.nil?
+        str << "\t" + result.total_mark.to_s
+        
+      end
+
+      file_out << str + "\n"
+    end
+
+    send_data(file_out, :type => "text", :disposition => "inline")
   end
   
 end

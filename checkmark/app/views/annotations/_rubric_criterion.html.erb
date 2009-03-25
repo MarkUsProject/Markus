@@ -27,32 +27,31 @@
   <div id="<%="criterion_inputs_#{criterion.id}"%>" class="criterion_level_container" style="display:none;">
 
     <div style="float:left;">
-      <% form_tag({}, {:id => "mark_form_#{criterion.id}"}) do %>
         <table>
         <% num_levels = 0
-        selected = false
+        selected = "criterion_level"
         while (num_levels < 5) 
           level_name = criterion["level_" + num_levels.to_s + "_name"]
           level_desc = criterion["level_" + num_levels.to_s + "_description"]
           if (num_levels == mark.mark)
-            selected = true
+            td_class = "criterion_level_selected"
           else
-            selected = false
+            td_class = "criterion_level"
           end
         -%>
           <% if level_desc && !level_desc.empty? -%>
             <tr>
-               <td><%= radio_button_tag :mark, num_levels, selected %></td>
-               <td><b><%= level_name %></b>
-                  <%=level_desc%></td>
+               <td id="<%="criterion_#{criterion.id}_level_#{num_levels}"%>" class="<%=td_class%>">
+                 <%= link_to_remote "<b>#{num_levels}&nbsp; #{level_name}</b> &nbsp;
+                  #{level_desc}", {:url => { :action => 'update_mark', :mark_id=>mark.id, :mark=>num_levels}},
+                 {:style => "color:#000000;background:none;"}%>
+               </td>
             </tr>
          <% end -%>
 
         <% num_levels = num_levels + 1
           end -%>
           </table>
-      <% end -%>
-      <%= observe_form "mark_form_#{criterion.id}", :url => { :action => 'update_mark', :mark_id=>mark.id}, :before => "element.disable();$('working').show();", :complete => "element.enable();$('working').hide();" -%>
     </div>
 
     <div class="clear"></div>

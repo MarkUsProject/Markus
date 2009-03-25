@@ -219,6 +219,8 @@ ul#annotation_summary_list {
   margin: 0;
   padding: 0;
   width: 100%;
+  line-height:normal;
+  font-size: 10px;
 }
 
 .rubric_tools {
@@ -227,21 +229,16 @@ ul#annotation_summary_list {
 
 /* ================ CRITERIONS ============== */
 
-  .criterion_holderA, .link {
+  .criterion_holderA {
     background: #EDEDED;
     border-bottom: 1px solid #DADADA;
     padding: 5px;
   }
 
-  .criterion_holderB, .link {
+  .criterion_holderB {
     background: #FFFFFF;
     border-bottom: 1px solid #DADADA;
     padding: 5px;
-  }
-
-  .link {
-    background: #FFD4BF;
-    display: block;
   }
 
   .criterion_title_div {
@@ -256,6 +253,17 @@ ul#annotation_summary_list {
     background: #CCCCFF;
   }
 
+.criterion_level {
+    color:black;
+    font-size:10px;
+    background:none;
+}
+
+.criterion_level_selected {
+    font-size:10px;
+    background-color:#FFFFCC;
+}
+
 .criterion_level_container {
     margin-left:20px;
     margin-top: 10px;
@@ -264,6 +272,7 @@ ul#annotation_summary_list {
 .criterion_level_container table {
     border-collapse:collapse;
     border:1px solid #DADADA;
+    line-height:normal;
 }
 
 .criterion_level_container td {
@@ -297,10 +306,7 @@ ul#annotation_summary_list {
     padding: 5px;
   }
 
-  .link {
-    background: #FFD4BF;
-    display: block;
-  }
+
 
   .extra_mark_title_div {
     cursor: pointer;
@@ -316,17 +322,18 @@ ul#annotation_summary_list {
   }
 
   .extra_marks_pane {
-  border: 1px solid #DADADA;
   float: left;
   margin-left:10px;
   width:400px;
+  font-size:10px;
+  border: 1px solid #DADADA;
   }
 
   .extra_marks_pane_list {
-    list-style: none;
     margin: 0;
     padding: 0;
     width: 100%;
+    border-bottom: 1px solid #DADADA;
   }
 
 /* criterion summary holder */
@@ -334,35 +341,46 @@ ul#annotation_summary_list {
  .marks_summary_pane {
   float: left;
   width: 430px;
+  font-size:10px;
+  line-height:normal;
  }
 
-  .mark_summary_holder, .link {
+  .mark_summary_holder {
     border-bottom: 1px solid #DADADA;
     background: #FBFBFB;
-    padding: 10px;
+    padding: 5px;
   }
 
-  .mark_summary_holderA, .link {
+  .mark_summary_holderA {
     background: #EDEDED;
+    padding-left: 5px;
    }
 
-  .mark_summary_holderB, .link {
+  .mark_summary_holderB {
     background: #FFFFFF;
+    padding-left: 5px;
    }
-
-  .mark_summary_holder_selected {
-    background: #CCCCFF;
-  }
 
   .marks_summary_pane_list {
     margin: 0;
     padding: 0;
   }
 
+.marks_summary_pane_list th {
+    padding-left:5px;
+    padding-right:5px;
+    padding-top:5px;
+    padding-bottom:5px;
+    background-color:#B7D3EC;
+}
+
 .mark_subtotal {
-  font-size:10px;
+  font-size:12px;
   font-weight:bold;
-  padding: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 .mark_total {

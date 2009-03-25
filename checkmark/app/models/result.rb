@@ -17,6 +17,7 @@ class Result < ActiveRecord::Base
     return total
   end
 
+  #returns the sum of the marks not including bonuses/deductions
   def get_subtotal
     marks = Mark.find_all_by_result_id(id)
     total = 0;
@@ -27,6 +28,7 @@ class Result < ActiveRecord::Base
     return total
   end
 
+  #returns the sum of all the POSITIVE extra marks
   def get_bonus_marks
     total = 0
     marks = ExtraMark.find_all_by_result_id(id)
@@ -40,6 +42,7 @@ class Result < ActiveRecord::Base
     return total
   end
 
+  # Returns the sum of all the negative bonus marks
   def get_deductions
     total = 0
     marks = ExtraMark.find_all_by_result_id(id)
