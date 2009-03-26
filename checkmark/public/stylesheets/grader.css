@@ -5,16 +5,6 @@
   margin:  0 0 20px 0;
 }
 
-.tools {
-  font: 9px Verdana, Geneva, Arial, Helvetica, sans-serif;
-	color: silver;
-	background-color: #f8f8f8;
-  padding: 5px;
-  text-align: right;
-  margin: 0;
-}
-  .tools a { margin-right: 10px; }
-
 .annotations1 {  background-color: #FFFCC4; }
 .annotations2 { background-color: #FFFF99; }
 
