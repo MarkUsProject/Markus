@@ -5,6 +5,13 @@
   margin:  0 0 20px 0;
 }
 
+.code_scroller {
+  height: 550px;
+  overflow: auto;
+  margin: 0;
+  padding: 0 0 0 50px !important;
+}
+
 .annotations1 {  background-color: #FFFCC4; }
 .annotations2 { background-color: #FFFF99; }
 
