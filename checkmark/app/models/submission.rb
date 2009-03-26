@@ -8,7 +8,7 @@ class Submission < ActiveRecord::Base
   belongs_to  :user
   belongs_to  :group
   has_many    :submission_files, :dependent => :destroy
-  
+  has_many    :annotations, :through => :submission_files
   belongs_to  :assignment_file
   
   # For group submissions, actions here must only be accessible to members

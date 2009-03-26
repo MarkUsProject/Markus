@@ -3,6 +3,7 @@ class SubmissionFile < ActiveRecord::Base
   
   belongs_to  :submission
   belongs_to  :user
+  has_many :annotations
   
   def get_file_type
     #TODO:  Add more languages?
