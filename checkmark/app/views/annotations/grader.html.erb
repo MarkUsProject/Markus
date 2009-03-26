@@ -256,7 +256,7 @@ document.observe("dom:loaded", function() {
      <select id="marking_state" value="<%= @result.marking_state %>">
        <option value="unmarked">Unmarked</option>
        <option value="partial">Partial</option>
-       <option value="complete">Complete</option>
+       <option value="complete">Complete</option>to
      </select>
     
     <%=observe_field :marking_state, :url => {:controller => 'annotations', :action => 'update_marking_state', :id => @result.id}, :on => 'changed', :with => "value"%>
@@ -269,7 +269,7 @@ document.observe("dom:loaded", function() {
   <div class="clear"></div>
 </div>
 
-<p>
+<div id="file_selector">
 
   Submission File: 
 
@@ -285,9 +285,9 @@ document.observe("dom:loaded", function() {
   
   <button onClick="bump_select($('select_file_id'), 1);">-></button>
 
-</p>
+</div>
 
-<div class="taggedContainer">
+<div>
 
   <div id="code_pane">
 
@@ -316,16 +316,20 @@ document.observe("dom:loaded", function() {
   
     <div id="annotations_summary" class="tabbedArea">
     
+      <h3>Current Annotations</h3>
+      
+      <p>Current annotations across all submission files. Click on the line number to jump to the location in the file.</p>
+    
       <ul id="annotation_summary_list">
       </ul>
       
-      <div>
+      <h3>Overall Comments</h3>
+      
       <% form_tag({}, {:id => "overall_comment_box"}) do %>
-            <p style="padding-left:30px;">Overall Comment: </p>
-            <p style="padding-left:30px;"><%= text_area_tag :overall_comment, @result.overall_comment, :rows => 10, :cols => 40 %></p>
+            <label>Comment:</label>
+            <%= text_area_tag :overall_comment, @result.overall_comment, :cols => 50, :rows => 5 %>
       <% end -%>
       <%= observe_form "overall_comment_box", :url => { :action => 'update_comment', :result_id => @result.id} -%>
-      </div>
       
     </div> <!-- Annotations Summary -->
 
@@ -446,4 +450,5 @@ document.observe("dom:loaded", function() {
         <button onClick="submit_new_annotation(escape($F('new_annotation_content')), $F('new_annotation_category'));">Create New Annotation</button>
         <button onClick="modal.close();">Cancel</button>
       </p>
-  </div>
+      
+</div>

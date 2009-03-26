@@ -59,6 +59,7 @@ code {
 
 ul {
   list-style-position: outside;
+  margin: 0 0 20px 0;
 }
 
 #sidebar ul { 
@@ -81,7 +82,7 @@ table {
 
 tr {  margin: 0 0 1px 0; }
 .rowA { background: #F6F6F6; }
-.rowB { background: #EDEDED; }
+.rowB { background: #EFEFEF; }
 
 th, td {
   background: #85B8E8;
@@ -118,7 +119,8 @@ input {
 input.limitWidth { width: 195px; }
 
 fieldset {
-
+  /* Margin declaration defined before fieldset properties below. Need to this one to take precedence. */
+  margin: 0 0 10px 0 !important; 
 }
 
 legend {
@@ -129,6 +131,13 @@ legend {
 }
 
 .button { width: auto; }
+
+.buttonLink {
+  -moz-border-radius: 5px;
+  background: #B7D3EC;
+  border: 1px solid #ddd;
+  padding: 3px 10px;
+}
 
 /* Structure Classes */
 

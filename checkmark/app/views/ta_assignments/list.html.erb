@@ -12,6 +12,18 @@
   <div class="colLeft"><div class="wrapLeft">
 
     <h2>Current Groups</h2>
+    
+    <p>Toggle Groups:
+    <%# TODO: implement functionality %>
+    <select id="select_ta_id" name="select_ta_id">
+      <option>Assigned groups</option>
+      <option>Unassigned groups</option>
+      <% @tas.each do |ta| %>
+        <option value="<%= ta.id %>">
+          Groups assigned to <%= ta.user_name %>
+        </option>
+      <% end %>
+    </select></p>
   
     <div class="section">
       

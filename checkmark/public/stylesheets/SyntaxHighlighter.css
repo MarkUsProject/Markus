@@ -2,15 +2,14 @@
 {
 	font-family: "Consolas", "Courier New", Courier, mono, serif;
 	font-size: 12px;
-	background-color: #E7E5DC;
+  line-height: 28px;
 	width: 99%;
 	overflow: auto;
 /*	margin: 18px 0 18px 0 !important;*/
-        margin: 0;
+  margin: 0;
 	padding-top: 1px; /* adds a little border on top when controls are hidden */
-
-        height: 700px;
-        width: 100%;  //Originally width: 600px;
+  height: 700px;
+  width: 100%;  //Originally width: 600px;
 }
 
 /* clear styles */
@@ -34,7 +33,10 @@
 
 .dp-highlighter .bar
 {
-	padding-left: 45px;
+  -moz-border-radius: 5px;
+  background: #EDEDED;
+	padding: 5px;
+  margin:  0 0 20px 0;
 }
 
 .dp-highlighter.collapsed .bar,
@@ -64,7 +66,7 @@
 {
 	list-style: decimal-leading-zero; /* better look for others, override cascade from OL */
 	list-style-position: outside !important;
-	border-left: 3px solid #6CE26C;
+	border-left: 2px solid #DDD;
 	background-color: #F8F8F8;
 	color: #5C5C5C;
 	padding: 0 3px 0 10px !important;
@@ -136,12 +138,11 @@
 
 .dp-highlighter .tools
 {
-	padding: 3px 8px 3px 10px;
 	font: 9px Verdana, Geneva, Arial, Helvetica, sans-serif;
 	color: silver;
 	background-color: #f8f8f8;
-	padding-bottom: 10px;
-	border-left: 3px solid #6CE26C;
+  padding: 5px;
+  text-align: right;
 }
 
 .dp-highlighter.nogutter .tools
@@ -188,12 +189,13 @@
 .dp-highlighter .keyword { color: #069; font-weight: bold; background-color: inherit; }
 .dp-highlighter .preprocessor { color: gray; background-color: inherit; }
 
-/*.dp-highlighter { background-color: #FFFF99; color: #000000; }  */.dp-highlighter .source_code_glowing_1 {
-  background-color: #FFFF99; 
+/*.dp-highlighter { background-color: #FFFF99; color: #000000; }  */
+.dp-highlighter .source_code_glowing_1 {
+  background-color: #FFFCC4; 
   color: #000000;
 }
 .dp-highlighter .source_code_glowing_2 {
-  background-color: #DDDD55;
+  background-color: #FFFF99;
   color: blue;
 }
 

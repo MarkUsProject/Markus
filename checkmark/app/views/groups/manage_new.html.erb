@@ -4,22 +4,17 @@
     color: #444444;
     width: 250px;
   }
-
-  #student_container ul { }
   
   #groups_container {
     margin: 0 0 20px 0;
   }
 
-  .groups { }
-
-  #groups_container ul {
-    list-style: none;
-    padding: 0;
-    color: #444444;
-  }
-
-  #groups_container ul li { margin: 5px; }
+    #groups_container ul {
+      list-style: none;
+      padding: 0;
+      color: #444444;
+      margin: 0;
+    }
 
   #groups_container a {
     color: #AA0000; /* link for delete */
@@ -28,15 +23,17 @@
   .remove_group { float: right; }
 
   .group {
-    font-weight: bold;
     border: 1px solid #CCC;
-    background-color: #FCF1C3;
     padding: 10px;
     margin: 0 0 20px 0;
   }
+  
+  .group form { margin: 0; }
 
   .fail-no-img { width: 250px; font-size: 80%; }
 
+  .students { margin: 0; }
+  
 </style>
 
 <script type="text/javascript" language="JavaScript">
@@ -52,45 +49,22 @@
 
 <div class="colsLeftHeavy">
 
-  <div id="upload">
-     Upload a group list<br />
-     <p>
-        Select a CSV file form:<br />
-        <code>user_name,user_name,user_name ... </code><br />
-     </p>
-     <% form_for :group, :html => {:multipart => true},
-                         :url => { :controller=>"groups",
-                                   :action => 'csv_upload',
-                                   :id => @assignment.id } do |f| -%>
-     <p>
-       <%= f.file_field :grouplist %>
-     </p>
-     <p>
-       <%= submit_tag("Submit") %>
-     </p>							
-     <% end %>
-  </div>
-
-  <div id="download">
-    <%= link_to 'Download group list CSV Format', {:controller=>"groups", :action=>"download_grouplist", :id=> @assignment.id}%>
-  </div>
-
-  <p><%= link_to_remote "Create a New Group", :method => 'post',
-      :url => { :action => 'add_group', :id => @assignment.id } %></p>
-
   <div class="colLeft"><div class="wrapLeft">
   
     <h2>Groups for <%= @assignment.name %></h2>
+    
+    <p><%= link_to_remote "Create a New Group", :method => 'post', :class => 'buttonLink', 
+      :url => { :action => 'add_group', :id => @assignment.id } %></p>
     
     <div class="section">
       
       <div id="groups_container">
       
-        <div class="groups" id="groups">
+        <ul class="groups" id="groups">
           <% @groups.each do |group| -%>
             <%= render :partial => "groups/manage/group", :locals => {:group => group} %>
           <% end -%>
-        </div>
+        </ul>
       
       </div>
 
@@ -124,7 +98,31 @@
       </div>
     
     </div>
-  
+    
+    <h2>Upload a Group List</h2>
+    
+    <div class="section">
+    
+      <div id="upload">
+        <p>
+          Select a CSV file form:<br />
+          <code>user_name,user_name,user_name ... </code><br />
+        </p>
+        <% form_for :group, :html => {:multipart => true},
+                             :url => { :controller=>"groups",
+                                       :action => 'csv_upload',
+                                       :id => @assignment.id } do |f| -%>
+           <p><%= f.file_field :grouplist %>
+              <%= submit_tag("Submit") %></p>							
+        <% end %>
+      </div> <!-- Upload -->
+      
+      <p id="download">
+        <%= link_to 'Download group list CSV Format', {:controller=>"groups", :action=>"download_grouplist", :id=> @assignment.id}%>
+      </p>
+      
+    </div>
+      
   </div> <!-- colRight -->
 
 </div> <!-- ColsLeftHeavy -->

@@ -1,3 +1,22 @@
+.annotations1 {  background-color: #FFFCC4; }
+.annotations2 { background-color: #FFFF99; }
+
+.lineNumber { margin: 0 0 10px 0; }
+
+  .lineNumber a { 
+    background: url('../images/goToIcon.gif') right 4px no-repeat;
+    padding: 0 20px 0 0;
+  }
+
+.annotationContent, .manageAnnotations {
+  font: normal 0.85em "Verdana", sans-serif;
+  font-style: italic;
+  margin: 0 0 10px 0;
+  padding: 0 0 0 10px;
+}
+
+#annotation_summary_list form { margin: 0 0 10px 0; }
+
 #student_selector {
   -moz-border-radius: 5px;
   background: #ECECEC;
@@ -5,6 +24,7 @@
   padding: 2px 10px;
   margin: 0 0 10px 0;
 }
+
   #student_selector .left, #student_selector .middle, #student_selector .right { float: left; }
   #student_selector .left {
     text-align: left;
@@ -19,6 +39,10 @@
     width: 20%;
   }
 
+#file_selector {
+  margin: 20px 0 10px 0;
+}
+  
 .dp-highlighter .annotation_highlighted_text {
   background-color: #FFFF99; 
   color: #000000;
@@ -28,15 +52,18 @@
   color: blue;
 }
 .annotation_label_display {
-  border: 1px solid #000000;
-  background: #FFFF00;
+  -moz-border-radius: 5px;
+  border: 1px solid #FF6651;
+  background: #EDEDED;
   padding: 15px;
   position: absolute;
   width: 400px;
 }
 #annotation_menu {
-  background: #AADD55;
-  color: #000000;
+  -moz-border-radius: 5px;
+  background: #B7D3EC;
+	padding: 5px;
+  margin: 0 0 10px 0;
 }
 #annotation_categories {
   list-style-image: none;
@@ -197,14 +224,15 @@ li.annotation_category {
 }
 
 ul#annotation_summary_list {
+  border-top: 1px solid #ddd;
   list-style: none;
-  margin: 0;
+  margin: 0 0 20px 0;
   padding: 0;
 }
 
-  ul#annotation_summary_list li {
+  #annotation_summary_list li {
     border-bottom: 1px solid #DADADA;
-    padding: 5px;
+    padding: 5px 10px;
   }
   
   #annotations_summary_list a {
