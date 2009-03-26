@@ -114,20 +114,22 @@ li.annotation_category {
   -moz-border-radius: 5px;
   background: #ECECEC;
   border: 1px solid #ddd;
-  margin: 0;
-  padding: 10px;
   float: left;
+  margin: 0 0 20px 0;
+  padding: 10px;
   width: 600px;
+  height: 700px;
 }
 
 #rubric_pane {
   -moz-border-radius: 5px;
   background: #ECECEC;
   border: 1px solid #ddd;
+  float: left;
   margin: 0 0 10px 0;
   padding: 10px;
-  float: left;
   width: 450px;
+  height: 700px;
 }
 
 #pane_divider {
@@ -162,7 +164,7 @@ li.annotation_category {
 }
 
 #rubric_criteria_pane_list {
-  height: 500px;
+  height: 100%;
   overflow: auto;
 }
 
@@ -218,11 +220,6 @@ li.annotation_category {
 
 /* Annotation summary list styles */
 
-#annotations_summary {
-  height: 500px;
-  overflow: auto;
-}
-
 ul#annotation_summary_list {
   border-top: 1px solid #ddd;
   list-style: none;
@@ -238,16 +235,21 @@ ul#annotation_summary_list {
   #annotations_summary_list a {
     color: blue;
   }
-
+  
 /* CSS for grading view */
 /* Rubric Criteria - TO CHANGE! defaults to original rubric css for now! */
+
+#rubric_viewer, #summary_viewer, #code_holder, #annotations_summary {
+  height: 650px;
+  overflow: auto;
+}
+#code_holder { overflow: hidden; }
 
 #rubric_criteria_pane_list {
   list-style: none;
   margin: 0;
   padding: 0;
   width: 100%;
-  line-height:normal;
   font-size: 10px;
 }
 
@@ -300,7 +302,6 @@ ul#annotation_summary_list {
 .criterion_level_container table {
     border-collapse:collapse;
     border:1px solid #DADADA;
-    line-height:normal;
 }
 
 .criterion_level_container td {
@@ -370,7 +371,6 @@ ul#annotation_summary_list {
   float: left;
   width: 430px;
   font-size:10px;
-  line-height:normal;
  }
 
   .mark_summary_holder {

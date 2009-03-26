@@ -2,14 +2,13 @@
 {
 	font-family: "Consolas", "Courier New", Courier, mono, serif;
 	font-size: 12px;
-  line-height: 28px;
 	width: 99%;
 	overflow: auto;
 /*	margin: 18px 0 18px 0 !important;*/
   margin: 0;
 	padding-top: 1px; /* adds a little border on top when controls are hidden */
-  height: 700px;
-  width: 100%;  //Originally width: 600px;
+  height: 650px;
+  width: 100%; 
 }
 
 /* clear styles */
