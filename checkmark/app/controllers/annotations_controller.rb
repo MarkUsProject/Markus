@@ -98,9 +98,9 @@ class AnnotationsController < ApplicationController
     @marks_map = []
     @rubric_criteria.each do |criterion|
       mark = Mark.find(:first,
-        :conditions => ["result_id = :r AND criterion_id = :c", {:r=> @result.id, :c=>criterion.id}] )
+        :conditions => ["result_id = :r AND rubric_criteria_id = :c", {:r=> @result.id, :c=>criterion.id}] )
       if mark.nil?
-        mark = Mark.new(:result_id=>@result.id, :criterion_id=>criterion.id)
+        mark = Mark.new(:result_id=>@result.id, :rubric_criteria_id=>criterion.id)
         #save even though there is no mark yet
         mark.save(false)
       end
@@ -139,7 +139,7 @@ class AnnotationsController < ApplicationController
   def update_mark
     mark = Mark.find(params[:mark_id]);
     old_mark = mark.mark;
-    criterion = RubricCriteria.find(mark.criterion_id);
+    criterion = RubricCriteria.find(mark.rubric_criteria_id);
     mark.mark = params[:mark];
     mark.save
     #update the total mark
@@ -292,7 +292,7 @@ class AnnotationsController < ApplicationController
     render :update do |page|
       criteria.each do |criterion|
         mark = Mark.find(:first,
-              :conditions => ["result_id = :r AND criterion_id = :c", {:r=> result.id, :c=>criterion.id}] )
+              :conditions => ["result_id = :r AND rubric_criteria_id = :c", {:r=> result.id, :c=>criterion.id}] )
         html = "+ &nbsp;"
         if expand #if we want to expand criteria...
           #if we want to expand ony unmarked assignments, expand ones where the
