@@ -1,3 +1,7 @@
+#pane_holders {
+  width: 1000px;
+}
+
 #toolbar {
   -moz-border-radius: 5px;
   background: #EDEDED;
