@@ -1,5 +1,6 @@
 #pane_holders {
-  width: 1000px;
+  width: 2000px;
+  overflow: auto;
 }
 
 #toolbar {
@@ -155,7 +156,8 @@ li.annotation_category {
   width: 4px; 
   margin: 0 2px 10px 2px;
   height: 773px;
-  background-color: DDDDDD;
+  /*background-color: DDDDDD;*/
+  background-color: red;
   cursor: col-resize;
 }
 

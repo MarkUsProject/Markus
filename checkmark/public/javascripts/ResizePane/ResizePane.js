@@ -8,7 +8,7 @@ var ResizePane = Class.create({
     this.handle_node = handle_node;
     this.handle_draggable = this.createDragger();
     this.init_pane_node_width = $(this.getPaneNode().getWidth());
-    this.init_pane_node_parent_width = this.getPaneNode().up('div').getWidth();
+    this.init_pane_node_parent_width = this.getPaneNode().up(0).getWidth();
     this.init_pane_node_height = $(this.getPaneNode()).getHeight();
     [this.init_pane_node_offset_left, this.init_pane_node_offset_top] = $(this.getPaneNode().cumulativeOffset());
     
