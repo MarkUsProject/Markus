@@ -39,7 +39,7 @@ var SourceCodeLine = Class.create({
   },
   // Decrease a Source Code Line's glow depth
   unGlow: function() {
-    this.beforeGlow();
+    this.beforeUnGlow();
     //Is this line glowing?
     if(this.isGlowing()) {
       $(this.getLineNode()).removeClassName('source_code_glowing_' + this.getGlowDepth());
@@ -47,7 +47,7 @@ var SourceCodeLine = Class.create({
     }
     //Decrease the glow depth
     this.decGlowDepth(1);
-    this.afterGlow();
+    this.afterUnGlow();
   },
   incGlowDepth: function(amount) {
     this.setGlowDepth(this.getGlowDepth() + amount); 
@@ -73,10 +73,16 @@ var SourceCodeLine = Class.create({
   },
   //Some hook functions for before/after glowing
   beforeGlow: function() {
-    throw("SourceCodeLine:beforeGlow not implemented");
+    //hook
   },
   afterGlow: function() {
-    throw("SourceCodeLine:afterGlow not implemented");
+    //hook
+  },
+  beforeUnGlow: function() {
+    //hook
+  },
+  afterUnGlow: function() {
+    //hook
   },
   // Handle all observations, and store references in the functions so that
   // we can remove observations easily

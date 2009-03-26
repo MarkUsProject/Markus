@@ -73,5 +73,12 @@ var SyntaxHighlighter1p5Adapter = Class.create(SourceCodeAdapter, {
         };
     //Attempt to replace tools menu with these new commands
     $$('.tools').first().update(dp.sh.Toolbar.Create('code').innerHTML)
+    
+    //Now we're going to move the tool bar to the new DIV *outside* of the SyntaxHighlighter
+    //pane
+    var ordered_list_of_code = $$('.dp-highlighter').first().immediateDescendants()[1];
+    
+    ordered_list_of_code.addClassName('code_scroller');
+
   }
 });

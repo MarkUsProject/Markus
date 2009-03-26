@@ -19,7 +19,6 @@ var AnnotationLabelDisplayer = Class.create({
   initialize: function(parent_node) {
     //Create the div that we will display in
     this.display_node = new Element('div', {'class': 'annotation_label_display'});
-    this.display_node.update('Test');
     $(parent_node).appendChild(this.display_node);
     this.hide();
   },

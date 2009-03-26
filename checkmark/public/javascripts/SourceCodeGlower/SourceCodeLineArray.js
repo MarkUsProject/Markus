@@ -20,5 +20,17 @@ var SourceCodeLineArray = Class.create(SourceCodeLineCollection, {
   },
   each: function(each_func) {
     this.collection.each(each_func);
+  },
+  getLineNumOfNode: function(line_node) {
+   //Default result is -1 (we didn't find it)
+    var result = -1;
+    this.each(function(each_line, index) {
+      if(each_line.getLineNode() === line_node) {
+        //We found it
+        result = index;
+        $break; //Break out of the loop
+      }
+    });
+    return result;
   }
 });

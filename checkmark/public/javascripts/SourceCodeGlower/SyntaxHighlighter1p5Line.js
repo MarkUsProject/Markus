@@ -14,15 +14,15 @@ var SyntaxHighlighter1p5Line = Class.create(SourceCodeLine, {
     this.has_alt = $(line_node).hasClassName('alt');
     $super(line_node);
   },
-  beforeGlow: function($super) {
+  beforeGlow: function() {
     if(this.has_alt) {
       this.getLineNode().removeClassName('alt');
     }
   },
-  afterGlow: function() {
+  afterUnGlow: function() {
   //If we've removed all glow, put the Syntax Highlighter alt css class back
     if(this.getGlowDepth() == 0 && this.has_alt) {
       this.getLineNode().addClassName('alt');
-    }
-  }
+    }  
+  },
 });

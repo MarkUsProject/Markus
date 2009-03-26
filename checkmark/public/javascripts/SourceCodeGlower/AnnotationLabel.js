@@ -22,5 +22,8 @@ var AnnotationLabel = Class.create({
   },
   getId: function() {
     return this.annotation_label_id
+  },
+  getCategoryId: function() {
+    return this.annotation_category_id;
   }
 });
