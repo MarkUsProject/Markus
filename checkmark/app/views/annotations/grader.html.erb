@@ -253,13 +253,9 @@ document.observe("dom:loaded", function() {
     <%=@user.user_name%> 
     
     (Marking Status: 
-     <select id="marking_state" value="<%= @result.marking_state %>">
-       <option value="unmarked">Unmarked</option>
-       <option value="partial">Partial</option>
-       <option value="complete">Complete</option>to
-     </select>
+     <%=  select_tag "marking_state", options_for_select(["unmarked", "partial", "complete"],[@result.marking_state]) %>
     
-    <%=observe_field :marking_state, :url => {:controller => 'annotations', :action => 'update_marking_state', :id => @result.id}, :on => 'changed', :with => "value"%>
+     <%=observe_field :marking_state, :url => {:controller => 'annotations', :action => 'update_marking_state', :id => @result.id}, :on => 'changed', :with => "value"%>
      
     <em>Total Mark:</em>
     <span id="current_mark_div"><%= @result.total_mark %></span> / 

@@ -322,7 +322,7 @@ class AnnotationsController < ApplicationController
     #need to create the header, which is the list of assignments and their total
     #mark
     assignments.each do |asst|
-      str = asst.name + ' / ' + asst.total_mark.to_s;
+      str = asst.name.tr(" ", "") + ' / ' + asst.total_mark.to_s;
       file_out << str + "\n"
     end
 
