@@ -30,8 +30,7 @@
 	margin: 0;
 }
 
-.dp-highlighter .bar
-{
+.dp-highlighter .bar {
   -moz-border-radius: 5px;
   background: #EDEDED;
 	padding: 5px;
