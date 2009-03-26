@@ -312,8 +312,7 @@ class AnnotationsController < ApplicationController
 
   #Creates a gradesfile in the format specified by
   #http://www.cs.toronto.edu/~clarke/grade/new/fileformat.html
-  # TODO this code probably needs some cleaning up, especially
-  # in the manner which it finds student's marks
+
   def get_gradesfile
     file_out = ""
     assignments = Assignment.find(:all, :order => "id")
@@ -334,28 +333,17 @@ class AnnotationsController < ApplicationController
     students.each do |student|
       str = ""
       str << student.user_number + "    " + student.last_name + "  " + student.first_name
-      #this will hold a mapping for the assignment id to the students results
-      #object
-      results = {}
-
-      #find the students membership for the current assignment
-      memberships = Membership.find_all_by_user_id(student.id)
-      next if memberships.nil?
-
-      #for each membership, we find the students submission
-      memberships.each do |mem|
-        sub = Submission.find_by_group_id(mem.group_id)
-        next if sub.nil?
-        #find the corresponding submission
-        result = Result.find_by_submission_id(sub.id)
-        next if result.nil?
-        #get the results object
-        results[sub.assignment_id] = result
-      end
 
       #for each assignment add the mark to the line
       assignments.each do |asst|
-        result = results[asst.id];
+        #get the student's group for this assignment
+        group = asst.group_by(student.id);
+        next if group.nil?
+        #find the corresponding submission
+        sub = Submission.find_by_group_id(group.id)
+        next if sub.nil?
+        #find the corresponding result
+        result = Result.find_by_submission_id(sub.id)
         next if result.nil?
         str << "\t" + result.total_mark.to_s
       end
