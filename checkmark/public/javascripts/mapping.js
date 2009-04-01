@@ -103,9 +103,7 @@ function assign_ta_to_students(input) {
         }
         selectedGroups = [];
         selectedTA = -1;
-        
-        // TODO: Update TA count on server side
-          
+                  
       } else if (data.status == 'error') {
         
         alert("Errors!");
