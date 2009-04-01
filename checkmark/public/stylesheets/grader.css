@@ -370,11 +370,9 @@ ul#annotation_summary_list {
   }
 
   .extra_marks_pane {
-  float: left;
-  margin-left:10px;
-  width:400px;
-  font-size:10px;
-  border: 1px solid #DADADA;
+    margin-left:10px;
+    font-size:10px;
+    border: 1px solid #DADADA;
   }
 
   .extra_marks_pane_list {
@@ -387,8 +385,6 @@ ul#annotation_summary_list {
 /* criterion summary holder */
 
  .marks_summary_pane {
-  float: left;
-  width: 430px;
   font-size:10px;
  }
 

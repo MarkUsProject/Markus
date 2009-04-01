@@ -2,4 +2,4 @@
 
 <h2>Create a new <%= params[:role] %></h2>
 
-<%= render :partial => "layouts/userform", :locals => { :controller => 'users', :action => 'create', :role => params[:role] } -%>
+<%= render :partial => "users/userform", :locals => { :controller => 'users', :action => 'create', :role => params[:role] } -%>
