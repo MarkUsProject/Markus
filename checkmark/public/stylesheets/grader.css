@@ -1,32 +1,26 @@
-#pane_holders {
-  width: 1000px;
-  overflow: auto;
-}
+/* =================================================================================
+  ANNOTATION SUMMARY RELATED STYLES
+===================================================================================*/
 
-#toolbar {
-  -moz-border-radius: 5px;
-  background: #EDEDED;
-	padding: 5px;
-  margin:  0 0 20px 0;
-}
-
-.code_scroller {
-  height: 550px;
-  overflow: auto;
-  margin: 0;
-  padding: 0 0 0 50px !important;
-}
-
+/****************************************************
+  Annotations highlight; two colours, one for single comment
+  one for overlapping comment
+ ****************************************************/
 .annotations1 {  background-color: #FFFCC4; }
 .annotations2 { background-color: #FFFF99; }
 
+/****************************************************
+  Link to line number in Annotations Summary
+ ****************************************************/
 .lineNumber { margin: 0 0 10px 0; }
-
   .lineNumber a { 
     background: url('../images/goToIcon.gif') right 4px no-repeat;
     padding: 0 20px 0 0;
   }
 
+/****************************************************
+  Style for the actual annotations content
+*****************************************************/
 .annotationContent, .manageAnnotations {
   font: normal 0.85em "Verdana", sans-serif;
   font-style: italic;
@@ -129,41 +123,77 @@ li.annotation_category {
   cursor: pointer;
 }
 
-#code_pane {
+/* =================================================================================
+  GENERAL LAYOUT STYLES
+  #pane_holder 
+     #code_pane
+        tabs => see livepipe/tabs.css
+        #code_holder
+            #annotations_menu
+            #codeviewer
+        #annotations_summary
+            #annotation_summary_list
+                #annotations1, #annotations2
+     #pane_divider
+     #rubric_pane
+        tabs => see livelipe/tabs.css
+        #rubric_viewer
+            #rubric_tools
+            #rubric_criteria_pane
+                #rubric_criteria_pane_list
+        #summary_viewer .marks_summary_viewer
+            #summary_criteria_pane
+                #summary_citeria_pane_list
+            #extra_marks_pane
+        #annotations_holder
+===================================================================================*/
+
+#pane_holders {
+  width: 1000px;
+  overflow: auto;
+}
+
+  #pane_divider {
+    float:left; 
+    width: 4px; 
+    margin: 0 2px 10px 2px;
+    height: 722px;
+    background-color: DDDDDD;
+    cursor: col-resize;
+  }
+
+  #code_pane, #rubric_pane {
+    -moz-border-radius: 5px;
+    background: #ECECEC;
+    border: 1px solid #ddd;
+    float: left;
+    margin: 0 0 10px 0;
+    padding: 10px;
+    width: 595px;
+    height: 700px;
+  }
+  #rubric_pane {
+    width: 350px;
+  }
+  
+    #rubric_viewer, #summary_viewer, #code_holder, #annotations_summary {
+      height: 650px;
+      overflow: auto;
+    }
+    #code_holder { overflow: hidden; }
+
+#toolbar {
   -moz-border-radius: 5px;
-  background: #ECECEC;
-  border: 1px solid #ddd;
-  float: left;
-  margin: 0 0 20px 0;
-  padding: 10px;
-  width: 595px;
-  height: 700px;
+  background: #EDEDED;
+	padding: 5px;
+  margin:  0 0 20px 0;
 }
 
-#rubric_pane {
-  -moz-border-radius: 5px;
-  background: #ECECEC;
-  border: 1px solid #ddd;
-  float: left;
-  margin: 0 0 10px 0;
-  padding: 10px;
-  width: 350px;
-  height: 700px;
-}
-
-#pane_divider {
-  float:left; 
-  width: 4px; 
-  margin: 0 2px 10px 2px;
-  height: 722px;
-  background-color: DDDDDD;
-  cursor: col-resize;
-}
-
-#create_annotation_wrapper {
-/*  position:relative;
-  margin-left:auto;
-  text-align:left;*/
+.code_scroller {
+  height: 550px;
+  overflow: auto;
+  margin: 0;
+  padding: 0 0 0 50px !important;
 }
 
 #create_annotation_dialog {
@@ -258,11 +288,6 @@ ul#annotation_summary_list {
 /* CSS for grading view */
 /* Rubric Criteria - TO CHANGE! defaults to original rubric css for now! */
 
-#rubric_viewer, #summary_viewer, #code_holder, #annotations_summary {
-  height: 650px;
-  overflow: auto;
-}
-#code_holder { overflow: hidden; }
 
 #rubric_criteria_pane_list {
   list-style: none;
@@ -403,7 +428,7 @@ ul#annotation_summary_list {
     background: #FFFFFF;
     padding-left: 5px;
    }
-iju
+
   .marks_summary_pane_list {
     margin: 0;
     padding: 0;

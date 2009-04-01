@@ -1,6 +1,3 @@
-.rowA { background: #FFF; } /* Alternating row colors */
-.rowB { background: #F1F1F1; } /* Alternating row colors */
-
 .groupHighlight { /* For a group that has been selected*/
   /* ! important to override id style which has higher precedence */
   background: #9FC5E7 ! important; 
@@ -16,6 +13,9 @@
   margin: 0 0 20px 0;
   overflow: auto;
 }
+
+.rowA { background: #FFF; } /* Alternating row colors */
+.rowB { background: #F1F1F1; } /* Alternating row colors */
 
 #groups_container ul, ul#ta_list {
   border: 1px solid #E6E6E6;
