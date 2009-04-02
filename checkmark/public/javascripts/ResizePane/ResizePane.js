@@ -9,6 +9,7 @@ var ResizePane = Class.create({
     this.handle_draggable = this.createDragger();
     this.init_pane_node_width = $(this.getPaneNode().getWidth());
     this.init_pane_node_parent_width = this.getPaneNode().up(0).getWidth();
+    this.init_pane_node_parent = this.getPaneNode().up(0);
     this.init_pane_node_height = $(this.getPaneNode()).getHeight();
     [this.init_pane_node_offset_left, this.init_pane_node_offset_top] = $(this.getPaneNode().cumulativeOffset());
     
@@ -34,6 +35,9 @@ var ResizePane = Class.create({
   getInitPaneNodeParentWidth: function() {
     return this.init_pane_node_parent_width;
   },
+  getInitPaneNodeParent: function() {
+    return this.init_pane_node_parent;
+  },
   createDragger: function() {
       //Set up the events for the pane and handle nodes
     var me = this;
@@ -48,7 +52,7 @@ var ResizePane = Class.create({
         //The magic 65 in the next line...can't seem to figure out why, when I resize the pane,
         //that even when I only resize by 1 or 2 pixels, I get a scroll bar appearing at the
         //bottom of the pane.  This page 65 seems to correct that...yech.
-        me.getPaneNode().up('div').setStyle({width: (me.getInitPaneNodeParentWidth() + delta - 65) + 'px'});
+        me.getInitPaneNodeParent().setStyle({width: (me.getInitPaneNodeParentWidth() + delta) + 'px'});
       }
     }});
     $(this.getHandleNode()).observe('mouseup', function(event) {
