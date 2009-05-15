@@ -30,3 +30,9 @@ admin3:
     last_name:      Veronica      
     first_name:     Wong
     role:           admin
+
+admin4:
+    user_name:      Nelle
+    last_name:      Varoquaux	     
+    first_name:     Nelle
+    role:           admin

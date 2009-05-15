@@ -1,4 +1,4 @@
-# MySQL.  Versions 4.1 and 5.0 are recommended.
+#MySQL.  Versions 4.1 and 5.0 are recommended.
 #
 # Install the MySQL driver:
 #   gem install mysql
@@ -19,7 +19,7 @@ development:
   encoding: utf8
   database: checkmark_development
   username: root
-  password: root-pwd
+  password: 
   socket: /var/run/mysqld/mysqld.sock
 
 # Warning: The database defined as "test" will be erased and
@@ -30,7 +30,7 @@ test:
   encoding: utf8
   database: checkmark_test
   username: root
-  password: root-pwd
+  password: 
   socket: /var/run/mysqld/mysqld.sock
 
 production:
@@ -38,5 +38,5 @@ production:
   encoding: utf8
   database: checkmark_production
   username: root
-  password: root-pwd
+  password: 
   socket: /var/run/mysqld/mysqld.sock
