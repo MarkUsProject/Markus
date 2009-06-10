@@ -1,0 +1,68 @@
+################################################################################
+#
+# Memberships Table
+# 
+# one:
+#   id
+#   user_id
+#   grouping_id
+#   membership_status
+#   type
+#   created_at
+#   updated_at
+#
+################################################################################
+
+membership1:
+   user_id:            <%= Fixtures.identify(:student1) %>
+   grouping_id:        <%= Fixtures.identify(:grouping_1) %> 
+   membership_status: inviter
+   type:               StudentMembership
+   created_at:         <% Time.now.to_s(:db)%>
+   updated_at:         <%Time.now.to_s(:db)%>
+
+
+membership2:
+   user_id:            <%= Fixtures.identify(:student2) %>
+   grouping_id:        <%= Fixtures.identify(:grouping_1) %>
+   membership_status: accepted
+   type:               StudentMembership
+   created_at:         <% Time.now.to_s(:db)%>
+   updated_at:         <%Time.now.to_s(:db)%>
+
+
+membership3:
+   user_id:            <%= Fixtures.identify(:student3) %>
+   grouping_id:        <%= Fixtures.identify(:grouping_1) %>
+   membership_status: accepted
+   type:               StudentMembership
+   created_at:         <% Time.now.to_s(:db)%>
+   updated_at:         <%Time.now.to_s(:db)%>
+
+
+membership4:
+   user_id:            <%= Fixtures.identify(:student4) %>
+   grouping_id:        <%= Fixtures.identify(:grouping_2) %>
+   membership_status: inviter
+   type:               StudentMembership
+   created_at:         <% Time.now.to_s(:db)%>
+   updated_at:         <%Time.now.to_s(:db)%>
+
+
+membership5:
+   user_id:            <%= Fixtures.identify(:student5) %>
+   grouping_id:        <%= Fixtures.identify(:grouping_2) %>
+   membership_status: pending
+   type:               StudentMembership
+   created_at:         <% Time.now.to_s(:db)%>
+   updated_at:         <%Time.now.to_s(:db)%>
+
+
+membership_1:
+   user_id:            <%= Fixtures.identify(:ta1) %>
+   grouping_id:        <%= Fixtures.identify(:grouping_2) %>
+   membership_status: 
+   type:               TAMembership
+   created_at:         <% Time.now.to_s(:db)%>
+   updated_at:         <%Time.now.to_s(:db)%>
+

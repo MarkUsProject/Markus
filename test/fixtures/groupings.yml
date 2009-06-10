@@ -1,0 +1,23 @@
+################################################################################
+#
+# groupings Table
+# one
+#  group_id
+#  assignment_id
+################################################################################
+
+grouping_1:
+   group_id: <%= Fixtures.identify(:group_1) %> 
+   assignment_id: <%= Fixtures.identify(:assignment_1) %> 
+
+grouping_2:
+   group_id: <%= Fixtures.identify(:group_2) %>
+   assignment_id: <%= Fixtures.identify(:assignment_1) %> 
+
+grouping_3:
+   group_id: <%= Fixtures.identify(:group_3) %>
+   assignment_id: <%= Fixtures.identify(:assignment_1) %> 
+
+grouping_4:
+   group_id: <%= Fixtures.identify(:group_4) %>
+   assignment_id: <%= Fixtures.identify(:assignment_1) %> 

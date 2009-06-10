@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <title>CheckMark - <%= controller.action_name %></title>
+  <%= stylesheet_link_tag 'main.css', :media => 'all' %>   
+  <%= stylesheet_link_tag 'header.css', :media => 'all' %>
+  <%= stylesheet_link_tag 'content.css', :media => 'all' %>
+  <%= javascript_include_tag :defaults -%>
+</head>
+
+<body>
+
+  <div id="<%= if (controller.action_name == 'login') then 
+                  "loggedOut" 
+               else 
+                  "loggedIn" 
+               end %>">
+   
+  <%= render :partial => 'layouts/header' unless controller.action_name == 'login' %>
+<div id="container">
+  <div id="content">
+    <%= @content_for_layout %>
+  </div>
+  
+
+<% # For debugging purposes; not to be used for production -%>
+
+<% if ENV['RAILS_ENV'] == 'test' %>
+    <div id="debug" style="margin: 40px 5px 5px 5px;">
+        <a href="#" onclick="Element.toggle('debug_info');return false" style="text-decoration: none; color: #ccc;">Show Debug Info &#10162;</a>
+        <div id="debug_info" style="display : none;">
+            <%= debug session %>
+            <%= debug params %>
+        </div>
+    </div>
+<% end %>
+</div>
+</div> <!-- Membership -->
+
+</body>
+</html>

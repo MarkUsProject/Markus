@@ -1,0 +1,11 @@
+<ul class="annotation_text_list" >
+  <% if annotation_category.annotation_texts.size == 0: %>
+    There are no annotations in this category
+  <% end %>
+  
+  <% annotation_category.annotation_texts.each do |annotation_text| %>
+  <li id="annotation_text_<%=annotation_text.id%>" onClick="add_existing_annotation(<%=annotation_text.id%>); return false;" onMouseDown="return false;" title="<%=annotation_text.content%>">
+  <%=truncate(annotation_text.content, 40, '...')%>
+  </li>
+  <% end %>       
+</ul>

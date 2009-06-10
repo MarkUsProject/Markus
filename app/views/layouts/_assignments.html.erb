@@ -1,0 +1,27 @@
+
+<div class="section">
+
+  <% if @assignments.empty? %>
+  
+    <p>There are currently no assignments.</p>
+    
+  <% else %>
+  
+    <p>Edit existing assignments:</p>
+  
+    <ul>
+    
+    <% for assignment in @assignments %>
+      <li>
+        <%= link_to assignment.name, 
+            :controller => controller, 
+            :action => action, 
+            :id => assignment  %>:  <%= assignment.description %>
+      </li>
+    <% end %>
+    
+    </ul>
+        
+  <% end %>
+
+</div>

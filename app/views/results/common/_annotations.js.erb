@@ -1,0 +1,187 @@
+<script language="Javascript" type="text/javascript">
+var selected_rubric_criterion_id = null;
+var selected_extra_mark_id = null;
+var positions = null;
+var modal = null;
+var init_content_width = 0;
+var init_code_pane_width = 0;
+
+var line_annotations = null;
+var syntax_highlighter_adapter = null;
+
+function sourceCodeReady() {
+  syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter($$('.dp-highlighter').first().getElementsBySelector('ol').first());
+  
+  //Apply modifications to Syntax Highlighter
+  syntax_highlighter_adapter.applyMods();
+  
+  var collection = new SourceCodeLineArray();
+  var line_factory = new SourceCodeLineFactory();
+  var line_manager = new SourceCodeLineManager(syntax_highlighter_adapter, line_factory, collection);
+  var annotation_text_manager = new AnnotationTextManager();
+  var annotation_text_displayer = new AnnotationTextDisplayer($('annotation_holder'));
+  
+  line_annotations = new SourceCodeLineAnnotations(line_manager, annotation_text_manager, annotation_text_displayer);
+}
+
+function add_annotation_text(annotation_text_id, content) {
+  var annotation_text = new AnnotationText(annotation_text_id, 0, content);
+  line_annotations.registerAnnotationText(annotation_text);
+}
+
+function add_annotation(annotation_id, range, annotation_text_id) {
+  line_annotations.annotateRange(annotation_id, range, annotation_text_id);
+}
+
+function remove_annotation(annotation_id, range, annotation_text_id) {
+  line_annotations.removeAnnotationFromRange(annotation_id, range, annotation_text_id);
+}
+
+function update_annotation_text(annotation_text_id, new_content) {
+  line_annotations.getAnnotationTextManager().getAnnotationText(annotation_text_id).setContent(new_content);
+}
+
+
+function get_anchor() {
+  //TODO:  Get this to work for IE
+  return window.getSelection().anchorNode;
+}
+
+function get_focus() {
+  //TODO:  Get this to work for IE
+  return window.getSelection().focusNode;
+}
+
+function get_mouse_positions() {
+ //Get the start (anchor) and finish (focus) text nodes for where the mouse has selected
+  var mouse_anchor = get_anchor();
+  var mouse_focus = get_focus();
+  
+  //Use the SourceCodeAdapter to get the nodes that represent source code
+  //lines.  
+  var anchor_node = syntax_highlighter_adapter.getRootFromSelection(mouse_anchor);
+  var focus_node = syntax_highlighter_adapter.getRootFromSelection(mouse_focus);
+  
+  //Translate these nodes to line numbers
+  var line_start = line_annotations.getLineManager().getLineNumber(anchor_node);
+  var line_end = line_annotations.getLineManager().getLineNumber(focus_node);
+
+  //If no source code lines were selected, bail out
+  if(line_start == 0 && line_end == 0) {
+    alert('You must select some source code text');
+    return false;
+  }
+  //If only one valid source code line was selected, we'll only highlight 
+  //that one.  This is for the case where you highlight the first line, and
+  //then focus some text outside of the source code as well.
+  
+  if(line_start == 0 && line_end != 0) {
+    line_start = line_end;
+  }
+  if(line_start != 0 && line_end == 0) {
+    line_end = line_start;
+  }
+
+  //If line_start > line_end, swap
+  if(line_start > line_end) {
+    var temp = line_start;
+    line_start = line_end;
+    line_end = temp;
+  }
+  
+  //Return positions as an object
+  return {line_start: line_start, line_end: line_end};
+}
+
+function make_new_annotation() {
+  //Set global variable 'positions' to current mouse positions
+  //TODO:  Refactor?  Why the global variable?
+  if (syntax_highlighter_adapter == null) {
+    return false;
+  }
+  
+  positions = get_mouse_positions();
+  if(!positions) {
+    //If no text was returned, return false;
+    return false;
+  }
+  //Open the modal dialog to ask for new Annotation details
+  modal.open();
+  //Manually reset the modal dialog values
+  //TODO:  Refactor?
+  $('new_annotation_content').setValue('');
+  $('new_annotation_category').setValue('');
+  $('new_annotation_content').focus();
+  
+  return false;
+}
+
+//This function takes the ID of some annotation that already
+//exists in the database, adds the new annotation link to the
+//currently selected text, and then highlights the lines.
+
+function add_existing_annotation(annotation_text_id) {
+  positions = get_mouse_positions();
+  if(!positions) {
+    return false;
+  }
+ 
+  <%= remote_function (
+                    :url => { :controller => "annotations", :action => "add_existing_annotation" },
+                    :with => "'submission_file_id='+ $('select_file_id').value +'&line_start=' + positions.line_start + '&line_end=' + positions.line_end + '&annotation_text_id='+ annotation_text_id")
+                    %>
+
+}
+
+
+
+//Load a submitted file into the code-viewer based on file id's
+function load_submitted_file(submission_file_id) {
+  $('working').show();
+  line_annotations = null;
+<%= remote_function (:url =>{ :action => "codeviewer", :id => @assignment.id, :uid => @uid }, :with => "'submission_file_id='+submission_file_id", :after => "$('working').hide();")%>
+}
+
+
+function submit_new_annotation(content, category_id) {
+  //Was any annotation text content provided?
+  if (content == '') {
+    alert('You must provide some annotation text');
+    return false;
+  }
+
+  //Close the dialog
+  modal.close();
+  //Send AJAX request
+  <%= remote_function (
+                    :url => { :controller => "annotations", :action => "create" },
+                    :with => "'submission_file_id='+ $('select_file_id').value +'&line_start=' + positions.line_start + ' &line_end=' + positions.line_end + '&content='+ content + '&category_id=' + category_id")
+                    %>
+}
+
+function focus_source_code_line(line_num) {
+  //First, switch to the source code viewer tab
+  code_tab_menu.setActiveTab('code_holder');
+  //Next, grab the dom node that represents this source code line,
+  //and scroll to it.
+  var line = line_annotations.getLineManager().getLine(line_num);
+  if(line != null) {
+    $(line.getLineNode()).scrollIntoView();
+  }
+}
+
+/** Begin Annotation Category dropdown code **/
+
+var drop_down_menus = $A();
+function setup_annotation_categories() {
+  <% @annotation_categories.each do |annotation_category| %>
+  drop_down_menus[<%=annotation_category.id%>] = new DropDownMenu($('annotation_category_<%=annotation_category.id%>'), $('annotation_text_list_<%=annotation_category.id%>'));
+  <% end %>
+}
+
+function setup_divider(widen_target, dragger) {
+    var divider = new ResizePane(widen_target, dragger);
+}
+
+
+</script>

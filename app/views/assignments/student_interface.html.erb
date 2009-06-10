@@ -1,0 +1,74 @@
+<h1> Assignment <%= @assignment.name%></h1>
+
+<div class="colsLeftHeavy">
+ <div class="colLeft">
+  <div class="wrapLeft">
+    <div class="fieldset">
+      <h2 class="legend">Submissions</h2>
+        <% if !@grouping.nil? and @grouping.has_submission?%>
+	  <p>You have already submitted something</p>
+	<% else %>
+	  <p>You don't have any submission yet</p>
+	<% end %>
+    </div>
+
+    <%= render :partial => 'read'%>
+  </div>
+ </div>
+ <div class="colRight">
+     <div class="fieldset">
+       <h2 class="legend">Group Informations</h2>	
+         <% if @grouping.nil? %>
+
+	   <% # Test if the student can form groupings or not %>
+	   <% if @assignment.student_form_groups == false %>
+	     <p>You cannot form groups for this assignment.</p>
+	   <% end %>
+
+	   <% # test if the student has been invited %>
+	   <% if @student.has_pending_groupings_for?(@assignment.id)%>
+	     <% @pending_grouping.each do |grouping|%>
+	       <p>You have been invited by <span class="last_name"><%=
+	     grouping.inviter.last_name %></span> <%= grouping.inviter.first_name%></p>  
+	     <% end %>
+	     <%= link_to "See details", :controller => 'groups', :action => 'student_interface', :id => @assignment.id %>
+	   <% end %>
+
+	   <h3>Create a group</h3>
+	   <% if @assignment.group_min == 1%>
+	   <p><%= link_to_remote "Work alone", :url => {:controller => 'groups',:action => 'creategroup', :id => @assignment.id, :workalone => 'true'}%></p>
+	   <% end %>
+	   <p>
+	   <%= link_to_remote "Create a group", :url => {:controller =>'groups', :action => 'creategroup', :id => @assignment.id} %>
+	   </p>
+
+	 <% else %>
+	   <% # As the student already has a group, we display the
+	      # informations on this group %>
+
+	   <% # We check to see if the groupname is displayed%>
+	   <% if @assignment.group_name_displayed == true%>
+	     <h3> <%= @group.group_name%></h3>
+	   <% end %>
+
+	   <% # If the group not yet the right amount of members, display
+	      # the information%>
+	   <% if !@grouping.is_valid?%>
+	      <p class="warning"> There is not enought members in this
+	      group yet!</p>
+	   <% elsif @grouping.student_membership_number == @assignment.group_max %>
+	      <p class="fine"> Group complete </p>
+	   <% end %>
+
+	   <% # For each member of this group, we display the
+	      # informations we have on them %>
+	   <ul>
+	    <% @studentmemberships.each do |member|%>
+	       <%= render :partial => "assignments/member", :locals =>
+	       {:member => member, :grouping => @grouping} %>
+	    <% end -%>
+	   </ul>
+	 <% end -%>
+     </div>     
+ </div>
+</div>

@@ -1,0 +1,3 @@
+class Admin < User
+  SESSION_TIMEOUT = USER_ADMIN_SESSION_TIMEOUT
+end

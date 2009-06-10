@@ -1,0 +1,21 @@
+#sidebar {
+    background: #464646;
+    color: #85B8E8;
+    float: left;    
+    margin-top: 3px;
+    padding: 10px;
+    width: 15%;
+}
+
+#sidebar a {
+   color: #dddddd;
+   font-weight: bold;
+}
+
+#sidebar a:hover {
+   background: none;
+   color: #ffffff;
+   font-weight: bold;
+}
+
+

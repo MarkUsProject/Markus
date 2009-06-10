@@ -1,0 +1,21 @@
+#sf1:
+#  submission_id: 1
+#  filename:  "TestFile.java"
+#  submitted_at: <%= 1.day.ago.to_s(:db) %>
+
+#sf2:
+#  submission_id: 1
+#  filename:  "Shapes.java"
+#  submitted_at: <%= 1.day.ago.to_s(:db) %>
+
+#sf3:
+#  submission_id: 2
+#  filename:  "TestFile.java"
+#  submitted_at: <%= 1.day.ago.to_s(:db) %>
+
+#sf4:
+#  submission_id: 2
+#  filename:  "Shapes.java"
+#  submitted_at: <%= 1.day.ago.to_s(:db) %>
+  
+  

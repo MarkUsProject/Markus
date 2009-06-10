@@ -1,0 +1,62 @@
+<div id="sidebar">
+
+  <h2>Navigation</h2>
+  
+<% if @current_user.admin? -%>
+  <div id="admin_task">
+    <ul>
+      <li>
+        <%= link_to 'Manage Assignments', :controller => 'assignments' %>
+        <ul>
+          <% for @assignment in Assignment.all(:order => :id) %>
+              <li><%= link_to @assignment.name, :controller => "assignments", :action => "edit", :id => @assignment.id %></li>
+          <% end -%>
+        </ul>
+      </li> 
+
+      <li>
+        <%= link_to 'View Submissions', :controller => 'submissions' %>
+        <ul>
+          <% for @assignment in Assignment.all(:order => :id) %>
+              <li><%= link_to @assignment.name, :controller => "submissions", :action => "browse", :id => @assignment.id %></li>
+          <% end -%>
+        </ul>
+      </li> 
+      <li><%= link_to 'Manage Student List', :controller => 'students'%></li>
+      <li><%= link_to 'Manage TA list', :controller => 'tas'%></li>
+      <li><%= link_to 'Manage Admin list', :controller => 'admins'%></li>
+
+  </ul>
+  </div>
+
+<% end -%>
+<% if @current_user.ta? -%>
+  <div id="ta_task">
+  <ul>
+    <li><%= link_to 'View Submissions', :controller => 'submissions' %>
+        <ul>
+          <% for @assignment in Assignment.all(:order => :id) %>
+              <li><%= link_to @assignment.name, :controller => "submissions", :action => "browse", :id => @assignment.id %></li>
+          <% end -%>
+        </ul>
+    </li>
+  </ul>
+  </div>
+<% end -%>
+
+<% if @current_user.student? -%>
+  <div id="student_task">
+  <ul>
+    <li><b>Submit an assignment</b>
+        <ul>
+          <% for @assignment in Assignment.all(:order => :id) %>
+              <li><%= link_to @assignment.name, :controller =>
+"assignments", :action => "student_interface", :id => @assignment.id %></li>
+          <% end -%>
+        </ul>
+    </li>
+  </ul>
+  </div>
+<% end -%>
+  
+</div> <!-- sidebar --ns>

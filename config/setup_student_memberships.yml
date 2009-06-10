@@ -1,0 +1,15 @@
+sm1:
+  membership_status:  inviter
+  grouping_id: 1
+
+sm2:
+  membership_status:  accepted
+  grouping_id: 1
+  
+sm3:
+  membership_status:  pending
+  grouping_id: 1
+  
+sm4:
+  membership_status:  inviter
+  grouping_id: 2

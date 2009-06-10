@@ -1,0 +1,20 @@
+<% # Make sure to include the public/javascripts/Grader/file_selector.js 
+   # file when using this partial 
+%>
+<div id="file_selector">
+  Submission File: 
+  <button onClick="bump_select($('select_file_id'), -1);"><-</button>
+  <select id="select_file_id" name="select_file_id" onChange="if ($(this).getValue() != '') { load_submitted_file($(this).getValue()); }">
+    <% if files.empty? %>
+      <option value="">[No files in repository]</option>
+    <% # else %>
+     <% # <option value="">[Select a file]</option> %>
+    <% end %>
+    <% files.each do |file| %>
+        <option value="<%= file.id %>">
+          <%= File.join(file.path, file.filename) %>
+        </option>
+    <% end %>
+  </select>  
+  <button onClick="bump_select($('select_file_id'), 1);">-></button>
+</div>

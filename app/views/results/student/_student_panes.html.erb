@@ -1,0 +1,62 @@
+<div id="pane_holders">
+  <div id="code_pane">
+    <ul id="code_and_annotations_tabs" class="subsection_tabs">
+       <li class="tab"><a href="#code_holder">Source Code</a></li>
+       <li class="tab"><a href="#annotations_summary">Annot. Summary</a></li>
+    </ul>  
+    <div id="code_holder" class="tabbedArea">
+
+      <div class="clear"></div>
+      <div id="codeviewer">
+      </div> <!-- codeviewer --> 
+      
+    </div> <!-- End of Code holder -->
+  
+    <div id="annotations_summary" class="tabbedArea">    
+      <h3>Current Annotations</h3>
+      <p>Current annotations across all submission files. Click on the line number to jump to the location in the file.</p>
+    
+      <ul id="annotation_summary_list">
+      </ul>
+      
+      <h3>Overall Comments</h3>
+      
+      <% form_tag({}, {:id => "overall_comment_box"}) do %>
+            <label>Comment:</label>
+            <%= text_area_tag :overall_comment, result.overall_comment, :cols => 50, :rows => 5 %>
+      <% end -%>
+      <%= observe_form "overall_comment_box", :url => { :action => 'update_comment', :result_id => result.id} -%>
+    </div> <!-- Annotations Summary -->
+  </div> <!-- Code Pane -->
+  
+  <!-- Divider  -->
+  <div id="pane_divider">
+  </div>
+  <!-- End Divider -->
+
+  <div id="rubric_pane" style="float:left;">
+    <ul id="rubric_tabs" class="subsection_tabs">
+      <li class="tab"><a href="#rubric_viewer">Rubric</a></li>
+      <li class="tab"><a href="#summary_viewer">Summary</a></li>
+    </ul>  
+    <div id="rubric_viewer" class="tabbedArea">
+      <div id="rubric_criteria_pane">
+        <ul id="rubric_criteria_pane_list">
+          <%# also need to render the mark per criteria (if exist) %>
+          <% rubric_criteria.each do |rubric_criterion| -%>
+          <%= render :partial => "results/student/student_rubric_criterion_li", :locals => {:rubric_criterion => rubric_criterion, :result => result, :mark=>marks_map[rubric_criterion.id]} %>
+            <% end -%>
+          </ul> <!-- Rubric Criteria Pane List -->
+       </div> <!-- Rubric Criteria Pane -->
+       
+    </div>  <!-- Rubric Viewer -->
+  
+    <div id="summary_viewer" class="marks_summary_pane tabbedArea">
+    <%= render :partial => "results/student/student_summary", :locals => {:rubric_criteria => rubric_criteria, :marks_map => marks_map, :assignment => assignment, :result => result, :extra_marks => extra_marks}%>
+
+   </div>
+  
+  <div id="annotation_holder">
+  </div>
+  
+</div> <!-- pane_holders -->

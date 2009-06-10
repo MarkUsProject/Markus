@@ -1,0 +1,14 @@
+<h1>Welcome, <%= @current_user.first_name %></h1>
+
+
+<h2>Choose your workspace:</h2>
+
+<%= render :partial => "layouts/assignments", 
+  :locals => { :controller => 'annotations', :action => 'students' } -%>
+
+<h3>Download Grades File</h3>
+<div class="section" style="width:450px;">
+   <p><%= link_to "Download Grades File", :controller => 'annotations', :action => 'get_gradesfile' %></p>
+</div>
+
+

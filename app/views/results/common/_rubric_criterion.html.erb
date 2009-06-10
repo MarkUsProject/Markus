@@ -1,0 +1,16 @@
+<div id="<%="rubric_criterion_title_#{rubric_criterion.id}_name"%>" class="rubric_criterion_title_div_level" style="float:left;">
+  <b><%=rubric_criterion.rubric_criterion_name%></b>
+</div>
+
+<div class="clear"></div>
+
+<div id="<%="rubric_criterion_title_#{mark.id}_mark"%>" style="padding-left:30px;">
+<% if !mark.mark.nil? -%>
+  <b>
+    <%= mark.mark %>&nbsp;<%= rubric_criterion["level_" + mark.mark.to_s + "_name"] %>&nbsp;
+  </b>
+  <%= rubric_criterion["level_" + mark.mark.to_s + "_description"] %>
+<% end -%>
+</div>
+<div class="clear"></div>
+

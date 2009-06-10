@@ -1,0 +1,28 @@
+<div id="grouping_<%= grouping.id %>" class="grouping
+<% if grouping.has_ta_for_marking? %>
+groupings_list_assigned_light
+<% end %>
+<%= cycle('rowA', 'rowB') %>" onclick="<%="focus_group(#{grouping.id})"%>">
+
+<p>
+<span class="group_name"><%=grouping.group.group_name%></span>:
+<ul>
+  <% grouping.student_memberships.all(:include => :user).each do |member| %>
+    <li><%= member.user.user_name %></li>
+    <% # Delete all the students in a group so that we can identify who isn't in a group
+      @students.delete(member.user.id)  
+    %>
+  <% end -%>
+</ul>
+</p>
+<div class="clear"></div>
+
+<div class="grouping_tas_list">
+  <p>
+    TAs:
+  <span id="grouping_<%=grouping.id%>_assigned_tas"><%= grouping.get_ta_names.join(', ') %></span>
+  </p>
+  <div class="clear"></div>
+</div>
+
+</div>

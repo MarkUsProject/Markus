@@ -1,0 +1,74 @@
+# timestamp_revisions:
+#    - timestamp: month-day-year-24 hour-minute-second
+#    - revision: revision_number
+users:
+   - c6conley
+
+revision_timestamps:
+   - Tue May 19 13:35:02 -0400 2009
+   - Wed May 20 13:35:02 -0400 2009
+   - Thu May 21 13:35:02 -0400 2009
+   - Fri May 22 13:35:02 -0400 2009
+
+
+revisions:
+  # Revision 0
+  - comment: "Repository created"
+    timestamp:  Tue May 19 13:35:02 -0400 2009
+    user_id: c6conley
+    files: {}
+  # Revision 1
+  - comment: "This was my first commit!"
+    timestamp:  Wed May 20 13:35:02 -0400 2009
+    user_id: c6conley
+    files:
+      Test.java:
+        name: Test.java
+        path: /
+        last_modified_revision: 1
+        mime_type: text/java
+        content: This is some Test.java file!
+        user_id: c6conley
+        changed: true
+  # Revision 2
+  - comment: "Whoops - needed to add TestShapes.java"
+    timestamp: Thu May 21 13:35:02 -0400 2009
+    user_id: c6conley
+    files:
+      Test.java:
+        name: Test.java
+        path: /
+        last_modified_revision: 1
+        mime_type: text/java 
+        content: This is some Test.java file!
+        user_id: c6conley
+        changed: false
+      TestShapes.java:
+        name: TestShapes.java
+        path: /
+        last_modified_revision: 2
+        mime_type: text/java 
+        content: This is some NEW TestShapes.java file!
+        user_id: c6conley
+        changed: true
+  # Revision 3
+  - comment:  "Needed to update TestShapes.java!"
+    timestamp:  Fri May 22 13:35:02 -0400 2009
+    user_id: c6conley
+    files:
+      Test.java:
+        name: Test.java
+        path: /
+        last_modified_revision: 1
+        mime_type: text/java 
+        content: This is some Test.java file!
+        user_id: c6conley
+        changed: false
+      TestShapes.java:
+        name: TestShapes.java
+        path: /
+        last_modified_revision: 3
+        mime_type: text/java 
+        content: This is some ALTERED Test.java file!
+        user_id: c6conley
+        changed: true

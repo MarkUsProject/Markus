@@ -1,0 +1,23 @@
+<%
+   # Erb template for inserting member's of a group into the assignment
+   # view of students
+%>
+
+
+<%# If this member is an inviter%>
+<% if member.membership_status == StudentMembership::STATUSES[:inviter] %>
+<li id="member_inviter">
+   <span class="last_name"><%= member.user.last_name %> </span> <%=
+member.user.first_name%></li>
+<%# If this member is an accepted member %>
+<% elsif member.membership_status == StudentMembership::STATUSES[:accepted] %>
+<li>
+   <span class="last_name"><%= member.user.last_name %> </span> <%=
+member.user.first_name%></li>
+<%# If this member is pending%>
+<% elsif member.membership_status == StudentMembership::STATUSES[:pending] %>
+<li class="membership_status_pending">
+   <span class="last_name"><%= member.user.last_name %> </span> <%=
+member.user.first_name%> (invited)</li>
+<% end %>
+

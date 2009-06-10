@@ -1,0 +1,29 @@
+<table id="summary_criteria_pane_list" class="marks_summary_pane_list">
+<thead>
+  <th>Title</th>
+  <th>Weight</th>
+  <th>x Mark</th>
+  <th>= Grade</th>
+</thead>
+<% @rubric_criteria.each do |criterion| -%>
+<% 
+   mark = marks_map[criterion.id]
+   if mark.nil? or mark.mark.nil?
+     mark_value = 0
+   else
+     mark_value = mark.mark
+   end
+   
+%>
+
+<tr class="<%= cycle('mark_summary_holderA', 'mark_summary_holderB') %>" id="<%= "mark_#{mark.id}_summary" %>">
+    <td><%= criterion.rubric_criterion_name%></td>
+    <td><%= criterion.weight %></td>
+    <td><span id="mark_<%= mark.id%>_summary_mark"><%= mark_value%></span></td>
+    <td><span id="mark_<%= mark.id%>_summary_mark_after_weight"><%= (mark_value * criterion.weight) %></span> / <%=  criterion.weight * 4 %></td>
+
+</tr>   
+
+<% end -%>
+</table>  <!-- Summary Criteria Pane List -->
+

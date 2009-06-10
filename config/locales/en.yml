@@ -1,0 +1,10 @@
+en:
+    user:
+        user_name:      "CDF ID"
+        first_name:     "First Name"
+        last_name:      "Last Name"
+    assignment:
+        name:           "Assignment Name"
+        has_dependency: "Assignment Builds on Top Of"
+        no_dependency:    "Nothing - It's Unique"
+        

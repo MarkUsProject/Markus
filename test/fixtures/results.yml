@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+#r1:
+#  submission: group1sub
+#  total_mark: 0
+#  marking_state: "Partial"
+#  overall_comment: "Good Assignment"
+
+#r2:
+#  submission: group2sub
+#  total_mark: 0
+#  marking_state: "Partial"
+#  overall_comment: "Bad Assignment"

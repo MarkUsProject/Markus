@@ -1,0 +1,3 @@
+
+class NullSubmissionRule < SubmissionRule
+end

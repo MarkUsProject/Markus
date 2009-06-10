@@ -1,0 +1,54 @@
+<h1>Workspace: <%= @assignment.name %></h1>
+
+<h2>Students you can mark:</h2>
+
+<table>
+  <thead>
+    <th>Submission By</th>
+    <th>Submission Collected On</th>
+    <th>Marking Status</th>
+    <th>Final Results</th>
+  </thead>
+  <tbody>
+<% for grouping in @groupings %>
+  <tr>
+    <td>
+      <% for student_membership in grouping.student_memberships %>
+        <% some_user = student_membership.user %>
+        <%=some_user.user_name%>(<%=some_user.last_name%>, <%=some_user.first_name%>)<br />
+      <% end %>
+    </td>
+    <td>
+      <% submission = grouping.get_submission_used %>
+      <% if submission.nil? %>
+      <%= link_to "Create Submission Manually", :controller => 'submissions', :action => 'create_manually', :id => @assignment.id, :grouping_id => grouping.id %>
+      <% else %> 
+        <%= submission.created_at %>
+      <% end %>
+    </td>
+    <td>
+       <% if submission.nil? %>
+       -
+       <% else %>
+         <% if submission.result.nil? %>
+           No Marking Results
+         <% else %>
+           <%= link_to submission.result.marking_state, :controller =>   'results', :action=> 'edit', :id => submission.result.id %>
+         <% end %>
+       <% end %>
+    </td>
+    <td>
+      <% if submission.nil? %>
+      -
+      <% else %>
+       <% if submission.result.nil? %>
+        <%= link_to 'Begin Grading', :controller => 'results', :action => 'create', :id => submission.id %>
+       <% else %>
+         TODO:  Grade
+       <% end %>
+       <% end %> 
+    <td>
+  </tr>
+<% end %>
+  </tbody>
+</table>

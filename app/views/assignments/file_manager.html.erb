@@ -1,0 +1,115 @@
+<%=javascript_include_tag "file_manager"%>
+
+  <% if flash[:submit_notice] -%>   
+     <p style="color:green"><%=h flash[:submit_notice] %> </p>
+  <% end %>
+
+<h1><%=@assignment.name%>: File Manager</h1>
+<h2>Revision #:  <%=@revision.revision_number%></h2>
+
+<div id="directory_selector" <%='style="display:none;"' unless @directories.count > 0 %>>
+<%=form_tag({:action => 'file_manager'}, :method => :get) %>
+<select id="path" name="path" onchange="$(this).form.submit();">
+    <option>/</option>
+<% @directories.each do |directory_name, directory| %>
+    <option><%= directory_name %></option>
+<% end %>
+</select>
+</form>
+</div>
+
+<% if !@grouping.is_valid? %>
+<div class="error">
+  Your group is currently invalid.  You probably haven't met the group size minimum.  You will not be able to submit anything until you have met this minimum.
+</div>
+<% end %>
+
+<% if flash[:transaction_warning] %>
+  <div class="warning"><%= flash[:transaction_warning] %></div>
+<% end %>
+
+<% if flash[:update_conflicts] %>
+  <div class="error">
+    <h2>Conflicts</h2>
+    <p>Your changes have not been made.  The following file conflicts were detected:</p>
+    <ul>
+    <% flash[:update_conflicts].each do |conflict| %>
+      <li><%=conflict.to_s%></li>
+    <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<% if @missing_assignment_files.size > 0 %>
+  <div class="warning">
+  <p>You still need to submit <%=@missing_assignment_files.size%> required file(s) for this assignment:
+  <% if @missing_assignment_files.size > 5 %>
+    <%= link_to_function "click here to toggle the list of missing files.", "$('missing_assignment_files_list').toggle();"%>
+  <% end %>
+  </p>
+  <ul id="missing_assignment_files_list" <%='style="display:none;"' if @missing_assignment_files.size > 5%>
+  <% @missing_assignment_files.each do |assignment_file| %>
+  
+    <li><%=assignment_file.filename%></li>
+  <% end %>
+  </ul>
+  <p>
+    If you do not submit these files, your assignment will be graded as incomplete.
+  </p>
+  </div>
+<% end %>
+
+<%= form_tag( {:action => "update_files", :id => @assignment.id}, {:multipart => true, :id => 'submit_form'} ) %>
+<table>
+  <thead>
+    <th>Filename</th>
+    <th>Last Modified Revision</th>
+    <th>Revised By</th>
+    <th>Replace File Contents</th>
+    <th>Delete</th>
+  </thead>
+  <tbody>   
+    <% @files.sort.each do |file_name, file| %>
+    <tr>
+      <td>
+        <%=link_to file_name, :action => 'download', :id => @assignment.id, :revision_number => @revision.revision_number, :file_name => file_name%>
+      </td>
+      <td>
+        <%=file.last_modified_revision%>
+      </td>
+      <td>
+        <%=file.user_id%>
+      </td>
+      <td>
+      	<input type="hidden" id="file_revisions[<%=h file_name %>]" name="file_revisions[<%=h file_name %>]" value="<%=file.last_modified_revision%>"/>
+     <input id="replace_files[<%=h file_name %>]" name="replace_files[<%=h file_name %>]" type="file" onchange="check_change_of_filename('<%=h file_name %>', this.value.escapeHTML(), this)" <%="disabled" if !@grouping.is_valid?%>/>
+      </td>
+      <td>
+        <input name="delete_files[<%=h file_name %>]" type="checkbox" <%="disabled" if !@grouping.is_valid?%> onclick="if ($(this).getValue()) {
+          $('replace_files[<%=h file_name %>]').disable();
+        } else {
+          $('replace_files[<%=h file_name %>]').enable();
+        }
+        "/>
+      </td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div id="new_files">
+</div>
+<div id="new_file_link" <%='style="display:none;"' if !@grouping.is_valid?%>>
+  <%=link_to_function "Add A New File", "injectFileInput();"%>
+</div>
+
+<%= submit_tag 'Submit', :disabled => !@grouping.is_valid? %>
+</form>
+
+<p>
+<%=form_tag({:action => 'hand_in', :id => @assignment.id}) %>
+<%= submit_tag "Hand In Assignment", :confirm => "Are you sure you want to hand in this assignment?", :disabled => !@grouping.is_valid? %>
+</form>
+</p>
+
+

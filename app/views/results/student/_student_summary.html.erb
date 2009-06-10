@@ -1,0 +1,36 @@
+<div id="summary_criteria_pane">
+  <%= render :partial => "results/common/marks_summary_table", :locals => {:rubric_criteria => rubric_criteria, :marks_map => marks_map} %>
+</div>  <!-- Summary Criteria Pane -->
+      
+    <div class="mark_subtotal">
+      <div style="float:left;">Subtotal&nbsp;</div>
+      <div style="float:right;"> /<%= assignment.total_mark %>  </div>
+      <div style="float:right;" id="current_subtotal_div"> <%= result.get_subtotal %> </div>
+    </div>
+
+    <div class="clear"></div><br/>
+    
+    <div id="extra_marks_pane" class="extra_marks_pane">
+      <div style="padding:5px;background-color:#B7D3EC;" onclick="unselect_extra_mark();"><b>Bonus/Deductions</b></div>
+
+    <%= render :partial => 'results/common/extra_marks_table', :locals => {:extra_marks => extra_marks, :result_id => result.id} %>
+      
+
+      <div style="padding:10px;" onclick="unselect_extra_mark();">
+        <div style="float:left;"><b>Bonus Marks:&nbsp;</b></div>
+        <div style="float:left;" id="extra_marks_bonus"><%= result.get_bonus_marks%></div>
+      </div>
+      <div class="clear"></div>
+      <div style="padding:10px;" onclick="unselect_extra_mark();">
+        <div style="float:left;"><b>Deducted Marks:&nbsp;</b></div>
+        <div style="float:left;" id="extra_marks_deducted"><%= @result.get_deductions%></div>
+      </div>
+    </div>      
+    
+    <div class="clear"></div>
+
+    <div class="mark_total">
+      <div style="float:left;">Final Mark&nbsp;</div>
+      <div style="float:right;"> /<%= assignment.total_mark %>  </div>
+      <div style="float:right;" id="current_total_mark_div"> <%= result.total_mark %> </div>
+    </div>

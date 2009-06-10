@@ -1,0 +1,434 @@
+/* Core Elements */
+
+body {
+    background-color: #fff; 
+    color: #333;
+    font: normal 0.8em/1.8em "Verdana", sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+h1 { 
+  color: #528BC0;
+  margin: 10px 0 20px 0;
+  padding: 0;
+}
+
+h1#login { 
+  background: url(/images/checkmark.gif) center top no-repeat;
+  height: 81px;
+  width: 300px;
+  margin: 0 auto 20px auto;
+}
+
+  #login span { visibility: hidden; }
+
+h3 {
+  padding: 0;
+  margin: 0 0 20px 0;
+}
+
+p {
+  margin: 0 0 20px 0;
+  padding: 0;
+}
+
+a { 
+  color: #000; 
+  text-decoration: none;
+}
+a:hover { 
+  color: #fff; 
+  background:#000; 
+}
+
+#content a { color: #FF6619; }
+#content a:hover { background: #ECECEC; }
+
+pre {
+  background-color: #eee;
+  padding: 10px;
+}
+
+code {
+  color: #528BC0;
+  font-family: "Courier New", sans-serif;
+}
+
+/* List Elements */
+
+ul {
+  list-style-position: outside;
+  margin: 0 0 20px 0;
+}
+
+#sidebar ul { 
+  color: #FF6619; 
+  margin: 0;
+  padding: 0 0 0 25px;
+}
+
+  #sidebar ul li { margin: 0 0 15px 0; }
+    #sidebar ul li ul li { margin: 0; }
+
+ul ul { padding-left: 20px; }
+
+/* Table Elements */
+
+table {
+  margin: 0 auto 20px auto;
+  width: 98%;
+}
+
+tr {  margin: 0 0 1px 0; }
+.rowA { background: #F6F6F6; }
+.rowB { background: #EFEFEF; }
+
+th, td {
+  background: #85B8E8;
+  font: bold 1em arial sans-serif;
+  margin: 0 1px;
+  padding: 2px 10px;
+  text-align: left;
+}
+
+td {
+  background: none;
+  font-weight: normal;
+}
+
+/* Form Elements */
+
+form { margin: 0 0 20px 0; }
+
+label {
+  background: #D8D8D8;
+  color: #2C669C;
+  font-weight: bold;
+  display: block;
+  float: left;
+  margin: 2px 5px 2px 0;
+  padding: 0 5px 0 5px;
+  width: 195px;
+}
+
+input { 
+  background: #fff;
+  border: 1px solid #D8D8D8;
+  margin: 2px 0 5px 0;
+  padding: 3px 5px 3px 5px;
+}
+
+input.limitWidth { width: 195px; }
+
+fieldset {
+  /* Margin declaration defined before fieldset properties below. Need to this one to take precedence. */
+  margin: 0 0 10px 0 !important; 
+}
+
+legend {
+  color: #999999;
+  font: bold 1.1em/1.8em "Verdana", sans-serif;
+  padding: 0 5px;
+  margin: 0;
+}
+
+.button { width: auto; }
+
+.buttonLink {
+  -moz-border-radius: 5px;
+  background: #B7D3EC;
+  border: 1px solid #ddd;
+  padding: 3px 10px;
+}
+
+/* Structure Classes */
+
+.wrapLeft { padding-right: 20px; }
+.wrapRight { padding-left: 20px; }
+
+.colLeft { float: left; }
+.colRight { float: right; }
+
+.colsLeftHeavy .colLeft { width: 65%; }
+.colsLeftHeavy .colRight { width: 35%; }
+
+.colsRightHeavy .colLeft { width: 35%; }
+.colsRightHeavy .colRight { width: 65%; }
+
+.colsEqual .colLeft { width: 50%; }
+.colsEqual .colRight { width: 50%; }
+
+#loggedIn #content{
+    padding: 10px;
+    background: #ffffff;
+    margin: 10px;
+    width: 79%;
+    float: left;
+}
+
+#loggedOut #content { margin: 0; }
+
+.section, fieldset {
+  -moz-border-radius: 5px;
+  background: #ECECEC;
+  border: 1px solid #ddd;
+/*  border: 1px solid #E4E4E4;
+  background: #FBFBFB;*/
+  margin: 0 0 20px 0;
+  padding: 20px 20px 0 20px;
+}
+
+#login {
+  width: 400px;
+  margin: 160px auto 0 auto;
+}
+
+.indent_button {
+  margin-left: 165px;
+}
+
+/* Message Classes */
+
+.success {
+  background: #e2f9e3 url('/images/icon_success.png') 13px 50% no-repeat;
+  border: 2px solid #9c9; 
+  color: #080;
+  padding: 5px 5px 4px 40px;
+}
+
+.error {
+  background: #ffe1da url('/images/icon_error.png') 13px 50% no-repeat;
+  font-size: 12px;
+  border: 2px solid #f34f4f;  
+  color: #be0b0b;
+  padding: 5px 5px 4px 40px;
+}
+
+.warning {
+  background: #FFFBCF url('/images/icon_warning.png') 13px 50% no-repeat;
+  font-size: 12px;
+  border: 2px solid #8B7500;  
+  color: #000000;
+  padding: 5px 5px 4px 40px;
+}
+
+
+.login-error {
+  margin:0 0 20px 0;
+  color: #f00;
+  font-weight: bold;
+}
+
+.success-no-img {
+  width: 400px;
+  border: 2px solid #9c9;
+  font-size: 12px;
+  color: #080;
+  padding: 5px 5px 4px 19px;
+  background-color: #e2f9e3;
+}
+
+.fail-no-img {
+  width: 400px;
+  border: 2px solid #f34f4f;
+  font-size: 12px;
+  color: #be0b0b;
+  padding: 5px 5px 4px 19px;
+}
+
+.fieldWithErrors {
+  padding: 2px;
+  background-color: red;
+  display: table;
+}
+
+#errorExplanation {
+  background-color: #FBFBFB;
+  border: 2px solid red;
+  padding: 20px 20px 0 20px;
+  margin: 0 0 20px 0;
+}
+
+#errorExplanation p { color: #333; }
+
+.status { 
+  color: #FFF; 
+  padding-left: 0.5em; 
+  padding-right: 0.5em; 
+}
+
+.inviter { background: #6B006B; }
+.pending { background: #FFCC00; }
+.accepted { background: #00B366; }
+.rejected { background: #B32400; }
+
+.clear { clear: both; }
+
+#user_info{
+ float: left;
+}
+
+/*menu*/
+
+#title_header{
+  margin: 0;
+  color: #85B8E8;
+  background: #464646 center;
+  padding-bottom: 15px;
+}
+
+#menu_header{
+  margin-top: -30px;
+}
+
+#menu_header h1{
+  text-align: center;
+  padding-top: 5px;
+}
+
+
+#menu_header ul{
+    background: #464646;
+    list-style: none; 
+    padding: 5px 0 0 0; 
+    font-weight: bold;
+    margin-top: 2px; 
+}
+
+#menu_header ul li{
+    display: inline;
+    margin: 0; 
+    padding: 9px 6px 6px 6px;
+    border-right: #ffffff 3px solid;
+    min-width: 150px;
+ }
+
+#menu_header a {
+    min-width: 100px; 
+    padding: 2px 20px 2px 20px;
+    margin: 0;
+    color: #cccccc;
+}
+
+#menu_header a:hover {
+    background: none;
+    padding: 2px 20px 2px 20px;
+    margin: 0;
+    color: #ffffff; 
+}
+
+
+#menu_header #active a{
+    color: #85B8E8;
+ }
+
+#menu_header #active a:hover{
+    color: #ffffff ;
+ }
+
+
+/*Sub menu*/
+
+#sub_menu {
+    float: right;
+    margin-top: -40px;
+}
+
+#sub_menu ul {
+    list-style: none;
+}
+
+#sub_menu li{
+    display: inline;
+    padding-left: 5px;
+}
+
+
+#sub_menu a:hover{
+   background: none;
+   text-decoration: underline;
+}
+
+
+/*Class fieldset, legend etc...*/
+
+  .label {
+     background: #D8D8D8 repeat;
+     color: #2C669C; 
+     font-weight: bold;
+     margin: 2px 5px 2px 5px;
+     padding 0 5px;
+     width: 150px;
+  }
+  
+  .fieldset{
+    -x-system-font: none;
+    background: #ECECEC;
+    -moz-border-radius-bottomleft: 5px;
+    -moz-border-radius-bottomright: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+    border: 1px solid #DDDDDD;
+    padding: 20px 26px 0;
+    margin: 0 0 10px; !important
+  }
+
+
+  .fieldset h3 {
+    margin: 0 0 5px;
+    color: #528BC0;
+   }
+
+  .legend{
+    color: #999999;
+    font-family: "Verdana", sans-serif;
+    font-size: 1.1em;
+    font-weight: bold;
+    line-height: 1.8em;
+    margin-top: -33px;
+    padding: 0 5px;
+  }
+
+  .last_name{
+    font-weight: bold;
+  }
+
+  ul{
+    list-style: none;
+  }
+
+  #member_inviter{
+    color: red;
+  }
+
+  .membership_status_pending {
+    font-style: italic;
+    font-size: 0.8em;
+  }
+
+ .group_invitation{
+    background: #ffffff;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+    -moz-border-radius-bottomleft: 5px;
+    -moz-border-radius-bottomright: 5px;
+    margin: 5px;
+    padding: 5px;
+    border: 1px solid #cccccc;
+    }
+
+
+#invite_dialog{
+    background: white;
+    padding: 0 10px 0 10px;
+    border: 1px solid #000000;
+    -moz-border-radius-bottomleft: 5px;
+    -moz-border-radius-bottomright: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+}
+
+#control_overlay {
+    background: black;
+}
