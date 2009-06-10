@@ -1,8 +1,0 @@
---- 
-cwd: /data/c494h01/checkmark/current
-log_file: log/mongrel.log
-port: "8000"
-environment: development
-address: localhost
-pid_file: tmp/pids/mongrel.pid
-servers: 1

@@ -1,9 +1,0 @@
-
-# Add another file field within tag with id="files" for this assignment,
-# with an index params[:index] passed on when called
-page.insert_html :bottom, :files, :partial => 'file_fields', 
-  :locals => { :file => @file, :index => params[:index] } 
-
-# Update the next index to append when a text field as added for a file
-page.replace :add_file_link, :partial => 'add_file_link', 
-  :locals => { :index => (params[:index].to_i + 1) }
