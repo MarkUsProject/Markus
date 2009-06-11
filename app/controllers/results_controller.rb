@@ -70,7 +70,16 @@ class ResultsController < ApplicationController
   def codeviewer
     @assignment = Assignment.find(params[:id])
     @submission_file_id = params[:submission_file_id]
+      
     file = SubmissionFile.find(@submission_file_id)
+    # Is the current user a student?
+    if current_user.student?
+      # The Student does not have access to this file.  Render nothing.
+      if file.submission.grouping.membership_status(current_user).nil?
+        raise "No access to submission file with id #{@submission_file_id}"
+      end
+    end
+
     annots = Annotation.find_all_by_submission_file_id(@submission_file_id, :order => "line_start") || []
     begin
       file_contents = retrieve_file(file)

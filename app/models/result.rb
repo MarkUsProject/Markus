@@ -1,4 +1,11 @@
 class Result < ActiveRecord::Base
+  
+  MARKING_STATES = {
+    :complete => 'complete',
+    :partial => 'partial',
+    :unmarked => 'unmarked'
+  }
+  
   belongs_to :submission
   has_many :marks
   has_many :extra_marks
@@ -46,7 +53,7 @@ class Result < ActiveRecord::Base
   # If this record is marked as "partial", ensure that its
   # "released_to_students" value is set to false.
   def unrelease_partial_results
-    if marking_state != 'complete'
+    if marking_state != MARKING_STATES[:complete]
       self.released_to_students = false
     end
     return true

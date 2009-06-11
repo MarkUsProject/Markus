@@ -1,5 +1,16 @@
 <h1>Workspace: <%= @assignment.name %></h1>
 
+<% if flash[:release_errors] %>
+<div class="error">
+  <h1>Errors</h1>
+  <ul>
+  <% flash[:release_errors].each do |error_message| %>
+    <li><%=error_message%></li>
+  <% end %>
+  </ul>
+</div>
+<% end %>
+
 <h2>Students you can mark:</h2>
 <%=form_tag({:action => 'update_submissions', :id => @assignment.id}) %>
 <table>

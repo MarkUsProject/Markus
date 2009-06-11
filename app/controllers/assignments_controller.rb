@@ -43,11 +43,12 @@ require 'lib/repo/repository_factory'
     file_name = params[:file_name]
     path = params[:path] || '/'
     assignment_id = params[:id]
+    revision_number = params[:revision_number]
     assignment = Assignment.find(assignment_id)
     assignment_folder = assignment.repository_folder
     user_group = current_user.accepted_grouping_for(assignment_id).group
     repo = Repository.create(REPOSITORY_TYPE).new(File.join(REPOSITORY_STORAGE, user_group.repository_name))
-    revision = repo.get_latest_revision
+    revision = repo.get_revision(revision_number.to_i)
     file = revision.files_at_path(File.join(assignment_folder, path))[file_name]
     if file.nil?
       @file_contents = "Could not find the file #{file_name} in the repository for group #{user_group.group_name} for revision #{revision.revision_number}"

@@ -33,7 +33,11 @@
          <% if submission.result.nil? %>
            No Marking Results
          <% else %>
+           <% if submission.result.released_to_students %>
+             Released
+           <% else %>
            <%= link_to submission.result.marking_state, :controller =>   'results', :action=> 'edit', :id => submission.result.id %>
+           <% end %>
          <% end %>
        <% end %>
     </td>

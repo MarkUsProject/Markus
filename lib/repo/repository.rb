@@ -53,15 +53,28 @@ class AbstractRepository
     raise NotImplementedError, "Repository::create Not yet implemented"
   end
   
-  # Given a repositoryFile of class File, return a stream of data for
-  # the user to download as that file.
-  def download(repositoryFile)
+  # Given either an array of, or a single object of class RevisionFile, 
+  # return a stream of data for the user to download as the file(s).
+  def download(files)
     raise NotImplementedError,  "Repository.download: Not yet implemented"
   end 
+
+  # Returns the most recent revision of the repository. If a path is specified, 
+  # the youngest revision is returned for that path; if a revision is also specified,
+  # the function will return the youngest revision that is equal to or older than the one passed.
+  # 
+  # This will only work for paths that have not been deleted from the repository.
+  def latest_revision_number(path=nil, revision_number=nil)
+    raise NotImplementedError, "Repository.latest_revision_number: Not yet implemented"  
+  end
   
   def get_transaction(user_id, comment)
     raise NotImplementedError,  "Repository.get_transaction: Not yet implemented"
   end  
+  
+  def commit(transaction)
+  
+  end
   
   def number_of_revisions
     raise NotImplementedError, "Repository.number_of_revisions: Not yet implemented"
@@ -71,16 +84,19 @@ class AbstractRepository
     raise NotImplementedError, "Repository.get_latest_revision: Not yet implemented"
   end
     
-  # Returns an array of File objects for all files in root_path, for a given
-  # revision number
-  def get_revision(revision)
-    raise NotImplementedError,  "Repository.all_files_by_revision: Not yet implemented"
+  # Return a RepositoryRevision for a given revision_number
+  def get_revision(revision_number)
+    raise NotImplementedError,  "Repository.get_revision: Not yet implemented"
   end
   
-  # Returns an array of File objects for all files in root_path, for a given
-  # timestamp
+  # Return a RepositoryRevision for a given timestamp
   def get_revision_by_timestamp(timestamp)
-    raise NotImplementedError,  "Repository.all_files_by_timestamp: Not yet implemented"
+    raise NotImplementedError,  "Repository.get_revision_by_timestamp: Not yet implemented"
+  end
+
+  # Return a revision number for a given timestamp
+  def get_revision_number_by_timestamp(timestamp)
+    raise NotImplementedError,  "Repository.get_revision_number_by_timestamp: Not yet implemented"  
   end
    
   # Adds user permissions for read/write access to the repository

@@ -1,4 +1,9 @@
 class Mark < ActiveRecord::Base
+  # When a mark is created, or updated, we need to make sure that that
+  # Result that it belongs to has a marking_state of "partial".
+  after_save :ensure_result_marking_state_partial
+  after_update :ensure_result_marking_state_partial
+
   belongs_to :rubric_criterion
   belongs_to :result
   validates_presence_of :result_id, :rubric_criterion_id
@@ -11,6 +16,15 @@ class Mark < ActiveRecord::Base
   def get_mark
     criterion = RubricCriterion.find(rubric_criterion_id)
     return mark.to_f * criterion.weight
+  end
+  
+  private
+  
+  def ensure_result_marking_state_partial
+    if result.marking_state != Result::MARKING_STATES[:partial]
+      result.marking_state = Result::MARKING_STATES[:partial]
+      result.save
+    end
   end
 end
 

@@ -150,22 +150,27 @@ class SubmissionsController < ApplicationController
   def update_submissions
     return unless request.post?
     if params[:release_results]
+      flash[:release_errors] = []
       params[:groupings].each do |grouping_id|
         grouping = Grouping.find(grouping_id)
         if !grouping.has_submission?
           # TODO:  Neaten this up...
-          render :text => "Grouping ID:#{grouping_id} had no submission"
-          return
+          flash[:release_errors].push("Grouping ID:#{grouping_id} had no submission")
+          next
         end
         submission = grouping.get_submission_used
         if !submission.has_result?
           # TODO:  Neaten this up...
-          render :text => "Grouping ID:#{grouping_id} had no result"
-          return       
+          flash[:release_errors].push("Grouping ID:#{grouping_id} had no result")
+          next     
         end
         result = submission.result
+        if result.marking_state != Result::MARKING_STATES[:complete]
+          flash[:release_errors].push("Can not release result for grouping #{grouping.id}: the marking state is not complete")
+          next
+        end
         result.released_to_students = true
-        result.save
+        result.save        
       end
     end
     redirect_to :action => 'browse', :id => params[:id]
