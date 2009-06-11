@@ -31,7 +31,8 @@
 
 <% # if the student is the inviter, and the student can still
 	      # invite, display a link to invite %>
-<% if grouping.inviter.id == @student.id and !grouping.is_valid? %>
+<% if grouping.inviter.id == @student.id and
+grouping.student_membership_number < @assignment.group_max%>
   <% if @assignment.student_invite_until.nil? or Time.now < @assignment.student_invite_until %>
      <%= button_to_function "Invite", 'invite(); return false;'%>
   <% end %>

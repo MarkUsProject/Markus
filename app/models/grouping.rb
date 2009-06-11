@@ -63,7 +63,7 @@ class Grouping < ActiveRecord::Base
   # returns the numbers of memberships, all includ (inviter, pending,
   # accepted, and rejected
   def student_membership_number
-     return student_memberships.count 
+     return accepted_students.count 
   end
   
   # Returns true if either this Grouping has met the assignment group
