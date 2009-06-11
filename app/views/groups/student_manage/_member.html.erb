@@ -18,7 +18,17 @@ member.user.first_name%></li>
 <% elsif member.membership_status == StudentMembership::STATUSES[:pending] %>
 <li class="membership_status_pending">
    <span class="last_name"><%= member.user.last_name %> </span> <%=
-member.user.first_name%> (invited)</li>
+member.user.first_name%> (invited)
+   <% if grouping.inviter.id == @student.id  %>
+     <%= link_to_remote "<b>Disinvite</b>" , 
+     :url => {:action => 'disinvite_member', :id => @assignment.id,
+     :membership => member.id},
+     :html => { :class => 'disinvite_member', :title => 'Disinvite this
+     member'},
+     :confirm => 'Are you sure you want to disinvite this member?'
+     %>
+   <% end %>
+</li>
 
 <%# If this member rejected %>
 <% elsif member.membership_status == StudentMembership::STATUSES[:rejected] %>

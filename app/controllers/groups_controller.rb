@@ -11,7 +11,7 @@ class GroupsController < ApplicationController
   
   before_filter      :authorize_only_for_admin, :except => [:creategroup,
   :student_interface, :invite_member, :join, :decline_invitation,
-  :delete_rejected, :delete_group]
+  :delete_rejected, :delete_group, :disinvite_member]
    
    auto_complete_for :student, :user_name
    auto_complete_for :assignment, :name
@@ -178,7 +178,21 @@ class GroupsController < ApplicationController
         assignment.id
      end
   end
-  
+ 
+  def disinvite_member
+     assignment = Assignment.find(params[:id])
+     membership = StudentMembership.find(params[:membership])
+     membership.delete
+     membership.save
+
+     flash[:edit_notice] = "Member disinvited"
+     
+     render :update do |page|
+        page.redirect_to :action => 'student_interface', :id => assignment.id
+     end
+  end
+
+
    def delete_group
     @assignment = Assignment.find(params[:id])
     return unless request.delete?
