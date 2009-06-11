@@ -79,13 +79,13 @@ require 'lib/repo/repository_factory'
     
     # Replace files
     replace_files.each do |filename, file_object|
-      txn.replace(File.join(assignment_folder, filename), file_object.read, file_revisions[filename])
+      txn.replace(File.join(assignment_folder, filename), file_object.read, file_object.content_type, file_revisions[filename])
     end
 
     
     # Add new files
     new_files.each do |file_object|
-      txn.add(File.join(assignment_folder, file_object.original_filename), file_object.read)
+      txn.add(File.join(assignment_folder, file_object.original_filename), file_object.read, file_object.content_type)
     end
 
     # finish transaction

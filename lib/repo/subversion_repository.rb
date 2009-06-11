@@ -58,7 +58,7 @@ class SubversionRepository < Repository::AbstractRepository
       end 
       begin
         @repos.fs.root(file.from_revision).file_contents(File.join(file.path, file.name)){|f| f.read}
-      rescue Svn::Error::FS_NOT_FOUND
+      rescue Svn::Error::FS_NOT_FOUND => e
         raise FileDoesNotExistConflict.new(File.join(file.path, file.name))
       end
     }
@@ -79,9 +79,9 @@ class SubversionRepository < Repository::AbstractRepository
       begin
         data = Svn::Repos.get_committed_info(@repos.fs.root(revision_number || @repos.fs.youngest_rev), path)
         return data[0]
-      rescue Svn::Error::FS_NOT_FOUND
+      rescue Svn::Error::FS_NOT_FOUND => e
         raise Repository::FileDoesNotExistConflict.new(path)
-      rescue Svn::Error::FS_NO_SUCH_REVISION
+      rescue Svn::Error::FS_NO_SUCH_REVISION => e
         raise "Revision " + revision_number.to_s + " does not exist."
       end
     else
@@ -94,11 +94,11 @@ class SubversionRepository < Repository::AbstractRepository
   end
   
   def self.repository_exists?(repos_path)
-    return File.exist?(File.join(repos_path, "format"))
+    File.exist?(File.join(repos_path, "format"))
   end
   
   def property(prop, rev=nil)
-    return @repos.prop(Repository::SVN_CONSTANTS[prop] || prop.to_s, rev)  
+    @repos.prop(Repository::SVN_CONSTANTS[prop] || prop.to_s, rev)  
   end
   
   def ls(path="/", revision_number=nil)
@@ -106,7 +106,7 @@ class SubversionRepository < Repository::AbstractRepository
     entries.each do |key, value|
       entries[key] = (value.kind == 1) ? :file : :directory
     end
-    return entries
+    entries
   end
   
   # This function is very similar to @repos.fs.history(); however, it's been altered a little
@@ -131,20 +131,20 @@ class SubversionRepository < Repository::AbstractRepository
       begin
         Svn::Repos.history2(@repos.fs, path, history_function, nil, starting_revision || 0, 
                        ending_revision || @repos.fs.youngest_rev, true)
-      rescue Svn::Error::FS_NOT_FOUND
+      rescue Svn::Error::FS_NOT_FOUND => e
         raise Repository::FileDoesNotExistConflict.new(path)
-      rescue Svn::Error::FS_NO_SUCH_REVISION
+      rescue Svn::Error::FS_NO_SUCH_REVISION => e
         raise "Ending revision " + ending_revision.to_s + " does not exist."
       end
                           
       revision_numbers.concat hist
     end
     
-    return revision_numbers.sort.uniq
+    revision_numbers.sort.uniq
   end
   
   def get_revision(revision_number)
-    return Repository::SubversionRevision.new(revision_number, self)   
+    revision = Repository::SubversionRevision.new(revision_number, self)   
   end
   
   # Assumes timestamp is a Time object (which is part of the Ruby standard library)
@@ -167,7 +167,7 @@ class SubversionRepository < Repository::AbstractRepository
   # keys set to their respective values, or it takes in an array of hashes each with the
   # same keys set. Passing an array will let you commit multiple files at once.
   # 
-  # The attributes hash is optional, and as of now, is only available for setting the
+  # The attributes hash is option, and as of now, is only available for setting the
   # author of a revisoin. An example would be {:author => "tcoulter"}.
   # 
   # Note that this function takes care of making sure files and directories are present
@@ -180,25 +180,25 @@ class SubversionRepository < Repository::AbstractRepository
       case job[:action]
         when :add_path
           begin
-            make_directory(txn, job[:path])
+            txn = make_directory(txn, job[:path])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
         when :add
           begin
-            add_file(txn, job[:path], job[:file_data])
+            txn = add_file(txn, job[:path], job[:file_data], job[:mime_type])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
         when :remove
           begin
-            remove_file(txn, job[:path], job[:expected_revision_number])
+            txn = remove_file(txn, job[:path], job[:expected_revision_number])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
         when :replace
           begin
-            replace_file(txn, job[:path], job[:file_data], job[:expected_revision_number])
+            txn = replace_file(txn, job[:path], job[:file_data], job[:mime_type], job[:expected_revision_number])
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
@@ -208,8 +208,7 @@ class SubversionRepository < Repository::AbstractRepository
     if transaction.conflicts?
       return false
     end
-    
-    @repos.commit(txn)
+    txn.commit
     return true
   end
   
@@ -235,16 +234,17 @@ class SubversionRepository < Repository::AbstractRepository
   end
 
   def path_exists?(path, revision=nil)
-    return @repos.fs.root(revision).check_path(path) != 0
+    @repos.fs.root(revision).check_path(path) != 0
   end 
   
   private
   
-  def add_file(txn, path, file_data=nil)
+  def add_file(txn, path, file_data=nil, mime_type=nil)
     if path_exists?(path)
       raise Repository::FileExistsConflict.new(path)
     end
-    write_file(txn, path, file_data)
+    txn = write_file(txn, path, file_data, mime_type)
+    return txn
   end
   
   def remove_file(txn, path, expected_revision_number=0)
@@ -255,29 +255,34 @@ class SubversionRepository < Repository::AbstractRepository
       raise Repository::FileDoesNotExistConflict.new(path)
     end
     txn.root.delete(path)
+    return txn
   end
   
-  def replace_file(txn, path, file_data=nil, expected_revision_number=0)
+  def replace_file(txn, path, file_data=nil, mime_type=nil, expected_revision_number=0)
     if latest_revision_number(path).to_i != expected_revision_number.to_i
       raise Repository::FileOutOfSyncConflict.new(path)
     end
-    write_file(txn, path, file_data)
+    txn = write_file(txn, path, file_data, mime_type)
+    return txn
   end
   
-  def write_file(txn, path, file_data=nil)
+  def write_file(txn, path, file_data=nil, mime_type=nil)
      if (!path_exists?(path))
       pieces = path.split("/").delete_if {|x| x == ""}
       dir_path = ""
       
       (0..pieces.length - 2).each do |index|     
         dir_path += "/" + pieces[index]
-        make_directory(txn, dir_path)
+        txn = make_directory(txn, dir_path)
       end
-      make_file(txn, path)
+      txn = make_file(txn, path)
     end
     stream = txn.root.apply_text(path)
     stream.write(file_data)
-    stream.close 
+    stream.close
+    # Set the mime type...
+    txn.root.set_node_prop(path, SVN_CONSTANTS[:mime_type], mime_type)
+    return txn
   end
   
   # Make a file if it's not already present.
@@ -285,6 +290,7 @@ class SubversionRepository < Repository::AbstractRepository
     if (txn.root.check_path(path) == 0)
       txn.root.make_file(path)
     end
+    return txn
   end
   
   # Make a directory if it's not already present.
@@ -292,7 +298,19 @@ class SubversionRepository < Repository::AbstractRepository
     if (txn.root.check_path(path) == 0)
       txn.root.make_dir(path)
     end
+    return txn
   end
+
+  def make_hash_friendly(hash)
+    Repository::SVN_CONSTANTS.each do |friendly_key, svn_key|
+      if (hash.has_key?(svn_key))
+        hash[friendly_key] = hash[svn_key] 
+        hash.delete(svn_key)
+      end              
+    end
+  end
+  
+
 
 end
 
@@ -310,11 +328,11 @@ class SubversionRevision < Repository::AbstractRevision
       
   # Return all of the files in this repository at the root directory
   def files_at_path(path)
-    return files_at_path_helper(path)
+    files_at_path_helper(path)
   end
   
   def path_exists?(path)
-    return @repo.path_exists?(path, @revision_number)
+    @repo.path_exists?(path, @revision_number)
   end
   
   def directories_at_path(path='/')
@@ -337,7 +355,7 @@ class SubversionRevision < Repository::AbstractRevision
   end
   
   def changed_files_at_path(path)
-    return files_at_path_helper(path, true)
+    files_at_path_helper(path, true)
   end
   
   private

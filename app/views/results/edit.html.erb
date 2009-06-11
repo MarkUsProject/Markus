@@ -54,7 +54,7 @@
 <%= render :partial => 'results/common/errors' %>
 
 
-<%= render :partial => 'results/common/file_selector', :locals => {:files => @files} %>
+<%= render :partial => 'results/common/file_selector', :locals => {:files => @files, :can_download => true} %>
 
 <%= render :partial => 'results/marker/marker_panes', :locals => {:extra_marks => @extra_marks, :annotation_categories => @annotation_categories, :result => @result, :assignment => @assignment, :marks_map => @marks_map, :rubric_criteria => @rubric_criteria} %>
 

@@ -1,7 +1,7 @@
 require 'lib/repo/repository_factory'
 class ResultsController < ApplicationController
-  before_filter      :authorize_only_for_admin, :except => [:codeviewer, :edit, :update_mark, :view_marks, :create, :add_extra_mark]
-  before_filter      :authorize_for_ta_and_admin, :only => [:edit, :update_mark, :create, :add_extra_mark]
+  before_filter      :authorize_only_for_admin, :except => [:codeviewer, :edit, :update_mark, :view_marks, :create, :add_extra_mark, :download]
+  before_filter      :authorize_for_ta_and_admin, :only => [:edit, :update_mark, :create, :add_extra_mark, :download]
   before_filter      :authorize_for_user, :only => [:codeviewer]
   before_filter      :authorize_for_student, :only => [:view_marks]
 
@@ -55,7 +55,7 @@ class ResultsController < ApplicationController
   end
   
   def download
-    file = SubmissionFile.find(params[:submission_file_id])
+    file = SubmissionFile.find(params[:select_file_id])
     begin
       file_contents = retrieve_file(file)
     rescue Exception => e
@@ -82,21 +82,31 @@ class ResultsController < ApplicationController
     end   
     
     # Is this file a binary?
-    if SubmissionFile.is_binary?(file_contents)
-      render :update do |page|
-        page.redirect_to :action => 'download', :submission_file_id => @submission_file_id
-      end
-      return
-    end
+#    if SubmissionFile.is_binary?(file_contents)
+#      render :update do |page|
+#        page.redirect_to :action => 'download', :submission_file_id => @submission_file_id
+#      end
+#      return
+#    end
     
     @code_type = file.get_file_type
     
     render :update do |page|
       #Render the source code for syntax highlighting...
-      page.replace_html 'codeviewer', :partial => 'results/common/codeviewer', :locals => 
+      begin
+        page.replace_html 'codeviewer', :partial => 'results/common/codeviewer', :locals => 
         { :uid => params[:uid], :file_contents => file_contents, :annots => annots, :code_type => @code_type}
       #Also update the annotation_summary_list
-      page.replace_html 'annotation_summary_list', :partial => 'annotations/annotation_summary', :locals => {:annots => annots, :submission_file_id => @submission_file_id}
+        page.replace_html 'annotation_summary_list', :partial => 'annotations/annotation_summary', :locals => {:annots => annots, :submission_file_id => @submission_file_id}
+      rescue
+        # There's a bug in Rails as of 2.3.2 - #1112 - some binary strings
+        # will result in a "redundant UTF-8 sequence" error when attempting
+        # to convert to JSON.  This is scheduled for fixing in Rails 2.3.4.
+        # Until then, we'll just ask the user to download the file.
+        
+        # TODO:  Make this more graceful, and localized
+        page.call "alert", "Could not render this file in the code viewer.  Click on the Download button to download the file instead."
+      end
     end    
   end
   
