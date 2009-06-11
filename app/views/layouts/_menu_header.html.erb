@@ -4,6 +4,10 @@
 <% if @current_user.admin? -%>
   <div id="admin_task">
     <ul>
+       <li>
+           <%= link_to "Home", :controller => 'checkmark', :action =>
+	   'index' %>
+       </li>
        <li <% if controller.controller_name == 'assignments' %>
 id="active" <% end %> ><%= link_to 'Properties', :controller =>
 'assignments', :action => "edit", :id => @assignment.id %></li>
@@ -20,6 +24,11 @@ id="active" <% end %> ><%= link_to " Rubrics ", :controller => 'rubrics',
 <% if @current_user.ta? -%>
   <div id="ta_task">
   <ul>
+     <li>
+           <%= link_to "Home", :controller => 'checkmark', :action =>
+	   'index' %>
+       </li>
+
      <li><%= link_to "Submissions", :controller => "submissions", :action => "browse", :id => @assignment.id %></li>
   </ul>
 </div>
@@ -28,6 +37,11 @@ id="active" <% end %> ><%= link_to " Rubrics ", :controller => 'rubrics',
 <% if @current_user.student? -%>
   <div id="student_task">
   <ul>
+       <li>
+           <%= link_to "Home", :controller => 'checkmark', :action =>
+	   'index' %>
+       </li>
+
        <li <% if controller.controller_name == 'assignments' %> id="active" <% end %> > 
 <%= link_to "Assignment's Rule", :controller => "assignments",
 :action => 'student_interface', :id => @assignment.id %></li>
