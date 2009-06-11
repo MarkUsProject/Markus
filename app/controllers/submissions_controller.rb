@@ -21,8 +21,8 @@ class SubmissionsController < ApplicationController
      @revision = repo.get_revision(revision_number.to_i)
    end
    @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, path))
-   @files = @revision.directories_at_path(File.join(@assignment.repository_folder, path))
-   debugger
+   @files = @revision.files_at_path(File.join(@assignment.repository_folder, path))
+
    @missing_assignment_files = []
    @assignment.assignment_files.each do |assignment_file|
      if !@revision.path_exist?(File.join(@assignment.repository_folder,
