@@ -46,6 +46,15 @@ class GroupsController < ApplicationController
        end
      end
      @students = @students_list
+
+     # we make a list of the student not in a group yet AND not invited
+     # to this particular group yet
+     @students_list = []
+     @students.each do |s|
+       if !@grouping.pending?(s)
+         @students_list.push(s)
+       end
+     end 
   end
   
   # Group management functions ---------------------------------------------

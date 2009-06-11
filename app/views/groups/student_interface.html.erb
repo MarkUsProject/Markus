@@ -100,7 +100,7 @@ document.observe("dom:loaded", function(){
       <p>
         <fieldset>
 	  <select id="invite_member" name="invite_member">
-	      <% @students.each do |s|%>
+	      <% @students_list.each do |s|%>
 	        <option value="<%=s.id%>"><%=s.last_name%> <%= s.first_name%></option>
 	       <% end %>
 	  </select>
