@@ -31,10 +31,14 @@ id="active" <% end %> ><%= link_to " Rubrics ", :controller => 'rubrics',
        <li <% if controller.controller_name == 'assignments' %> id="active" <% end %> > 
 <%= link_to "Assignment's Rule", :controller => "assignments",
 :action => 'student_interface', :id => @assignment.id %></li>
-       <%#   # TODO
-             # Test if a student is part of a group befor displaying the
-	     # ling%>
-      <li><%= link_to "Submissions", :controller => "assignments", :action => "file_manager", :id => @assignment.id %></li>
+      <li <% if controller.controller_name == 'submissions' %> id="active" <% end %>><%= link_to "Submissions", :controller => "assignments", :action => "file_manager", :id => @assignment.id %></li>
+      <li <% if controller.controller_name == 'groups' %> id="active" <% end %> > 
+<%= link_to "Group", :controller => "groups",
+:action => 'student_interface', :id => @assignment.id %></li>
+      <li <% if controller.controller_name == 'results' %> id="active" <% end %> > 
+<%= link_to "Assignment Marks", :controller => "results",
+:action => 'view_marks', :id => @assignment.id %></li>
+
   </ul>
   </div>
 <% end -%>
