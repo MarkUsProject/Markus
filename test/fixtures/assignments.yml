@@ -16,6 +16,7 @@
 #    group_name_displayed
 #    created_at
 #    updated_at
+#    repository_folder
 ################################################################################
 
 assignment_1:

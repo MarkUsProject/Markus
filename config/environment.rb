@@ -93,6 +93,10 @@ Rails::Initializer.run do |config|
 
   # Activate observers that should always be running
   # config.active_record.observers = :cacher, :garbage_collector
+  
+  
+  config.gem 'thoughtbot-shoulda', :lib => 'shoulda', :source  =>
+"http://gems.github.com", :version => '>= 2.0.6' 
 end
 
 ###################################################################

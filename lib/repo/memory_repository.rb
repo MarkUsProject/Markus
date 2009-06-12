@@ -1,27 +1,38 @@
 require 'yaml'
 require 'lib/repo/repository'
 
+module Repository
+
 class InvalidConnectionFileFormat < Repository::ConnectionError; end
 
 class MemoryRepository < Repository::AbstractRepository
   
+  TEST_REPOSITORY = 'lib/repo/memory_repository.yml'
+  
   # Initializes Object, and verifies connection to the repository back end.
   # This should throw a ConnectionError if we're unable to connect.
-  def initialize(connect_string)
-   #  raise NotImplementedError, "Repository.initialize(connect_string): Not yet implemented"
+  def initialize(args)
+   if !args[:blank]
+     # We're opening the pre-existing test repository
+     if !self.class.repository_path_valid?(TEST_REPOSITORY)
+       raise "Could not open #{TEST_REPOSITORY} as the test repository"
+     end
+     seed = YAML::load_file(TEST_REPOSITORY)
+     populate(seed)
+   end
   end
   
   def self.repository_path_valid?(path)
-    return !File.exists?(path)
+    return File.exists?(path) && File.readable?(path)
   end
   
   def self.open(connect_string)
-    return MemoryRepository.new(connect_string)
+    return MemoryRepository.new(:blank => false)
     # raise NotImplementedError, "Repository::open Not yet implemented"
   end
   
   def self.create(connect_string)
-    return true
+    return MemoryRepository.new(:blank => true)
   end
   
   # Given either an array of, or a single object of class RevisionFile, 
@@ -36,7 +47,8 @@ class MemoryRepository < Repository::AbstractRepository
   # 
   # This will only work for paths that have not been deleted from the repository.
   def latest_revision_number(path=nil, revision_number=nil)
-    raise NotImplementedError, "Repository.latest_revision_number: Not yet implemented"  
+    #raise NotImplementedError, "Repository.latest_revision_number: Not yet implemented"  
+    return 0
   end
   
   def get_transaction(user_id, comment)
@@ -52,7 +64,7 @@ class MemoryRepository < Repository::AbstractRepository
   end
   
   def get_latest_revision
-    raise NotImplementedError, "Repository.get_latest_revision: Not yet implemented"
+    return MemoryRevision.new(latest_revision_number())
   end
     
   # Return a RepositoryRevision for a given revision_number
@@ -83,6 +95,12 @@ class MemoryRepository < Repository::AbstractRepository
   def get_users
     raise NotImplementedError, "Repository.get_users: Not yet implemented"
   end
+  
+  private
+  
+  def populate(seed)
+  
+  end
  
 end
 
@@ -92,7 +110,8 @@ class MemoryRevision < Repository::AbstractRevision
   end
   
   def path_exists?(path)
-    raise NotImplementedError, "Revision.path_exists? not yet implemented"
+    #raise NotImplementedError, "Revision.path_exists? not yet implemented"
+    return true;
   end
   
   # Return all of the files in this repository at the root directory
@@ -107,4 +126,6 @@ class MemoryRevision < Repository::AbstractRevision
   def changed_files_at_path(path)
     raise NotImplementedError, "Revision.changed_files_at_path not yet implemented"
   end    
+end
+
 end
