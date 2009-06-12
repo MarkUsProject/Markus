@@ -1,8 +1,9 @@
 require 'test_helper'
+require 'shoulda'
 
 class StudentTest < ActiveSupport::TestCase
   fixtures :users
-  
+
   # Update tests ---------------------------------------------------------
   
   # These tests are for the CSV/YML upload functions.  They're testing
@@ -67,7 +68,6 @@ exist_student,USER2,USER2"
   def test_accepted_grouping_for
      user = Student.new({:user_name => "exist_student", :first_name => "Nelle", :last_name => "Varoquaux"})
      user.save
-     assert_nil !user.accepted_grouping_for(1)
 
      group = Group.new({:group_name => "nelle"})
      group.save

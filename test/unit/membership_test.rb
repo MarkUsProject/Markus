@@ -1,16 +1,30 @@
 require 'test_helper'
+require 'shoulda'
 
 class MembershipTest < ActiveSupport::TestCase
-  def test_should_not_save_without_user
-    membership = Membership.new
-    membership.grouping_id = 1
-    assert !membership.save, "saved without a user"
+  fixtures :memberships
+  fixtures :users
+  fixtures :groupings
+
+  should_belong_to :user
+  should_belong_to :grouping
+  # should_validate_presence_of :user_id
+  # should_validate_presence_of :grouping_id
+
+################################################################################
+# 
+# STUDENT_MEMBERSHIPS TESTS
+#
+################################################################################
+
+  def test_if_studentmembership_is_inviter_true
+    membership = memberships(:membership1)
+    assert membership.inviter?
   end
 
-  def test_should_not_save_without_grouping
-    membership = Membership.new
-    membership.user_id = 1
-    assert !membership.save, "saved without a user"
+  def test_if_studentmembership_is_inviter_false
+    membership = memberships(:membership2)
+    assert !membership.inviter?
   end
 
 end

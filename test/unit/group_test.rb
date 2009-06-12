@@ -1,8 +1,12 @@
 require 'test_helper'
+require 'shoulda'
 
 class GroupTest < ActiveSupport::TestCase
   fixtures :users
-
+  should_have_many :groupings
+  should_have_many :submissions, :through => :groupings
+  should_have_many :assignments, :through => :groupings
+  should_validate_presence_of :group_name
 
   def test_should_not_save_without_groupname
     group = Group.new

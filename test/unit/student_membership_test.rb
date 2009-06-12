@@ -1,6 +1,9 @@
 require 'test_helper'
+require 'shoulda'
 
 class StudentMembershipTest < ActiveSupport::TestCase
+  should_belong_to :user
+  should_belong_to :grouping
 
   def test_should_not_save_without_membership_status
     membership = StudentMembership.new

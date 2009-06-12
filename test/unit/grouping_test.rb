@@ -46,7 +46,7 @@ class GroupingTest < ActiveSupport::TestCase
   end
 
   def test_if_has_ta_for_marking_false
-     grouping = grouping(:grouping_1)
+     grouping = groupings(:grouping_1)
      assert !grouping.has_ta_for_marking?
   end
 
@@ -140,9 +140,26 @@ class GroupingTest < ActiveSupport::TestCase
   def test_remove_rejected_member
      grouping = groupings(:grouping_1)
      student = users(:student3)
-     grouping.remove_rejected(student)
+     membership = memberships(:membership3)
+     grouping.remove_rejected(membership)
      assert_nil(grouping.membership_status(student), "This student has
      just been deleted. He's not part of this group anymore -
      membership_status should be nil")
   end
+
+  def test_remove_member
+     grouping = groupings(:grouping_1)
+     membership = memberships(:membership2)
+     student = users(:student2)
+     grouping.remove_member(membership)
+     assert_nil(grouping.membership_status(student), "This student hs
+     just been deleted from this griyp. His membership status should be
+     nil")
+  end
+
+  #########################################################
+  #
+  # TODO: create test for create_grouping_repository_factory
+  #
+  #########################################################"
 end
