@@ -31,10 +31,7 @@ class GroupsController < ApplicationController
      if !@grouping.nil?
        @studentmemberships = @grouping.student_memberships
        @group = @grouping.group
-       @inviter = StudentMembership.find(:first, :conditions =>
-       {:grouping_id => @grouping.id, :membership_status =>
-       StudentMembership::STATUSES[:inviter] })
-     end
+    end
 
      # To list the students not in a group yet
      # We make a list of all students
@@ -506,16 +503,6 @@ class GroupsController < ApplicationController
         page.redirect_to :action => 'manage', :id => @target_assignment.id
     end
   
-  end
-
-  # creates all the groups when the instructor wants the student to work
-  # alone
-  def create_groups_when_students_work_alone
-    @assignment = Assignment.find(params[:id])
-    @students = Student.find(:all)
-    for @student in @students
-      @student.create_group(@assignment.id)
-    end
   end
 
 end

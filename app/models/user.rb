@@ -61,20 +61,7 @@ class User < ActiveRecord::Base
     self.groupings.find(:all, :conditions => ["memberships.membership_status != :u", { :u => StudentMembership::STATUSES[:rejected]}])
   end
 
-  def groups
-    self.groupings.collect{|x| x.group}
-  end  
-  
-  def active_groups
-    self.active_groupings.collect{|x| x.group}
-  end
-  
-  def assignments
-    self.groupings.collect{|x| x.assignment}
-  end
-  
- 
-  
+
   # Group methods ------------------------------------------------------
   
   # Helper methods -----------------------------------------------------
