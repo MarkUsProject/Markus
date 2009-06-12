@@ -47,8 +47,8 @@ class Group < ActiveRecord::Base
       end
     end
   end
-  
-  def repository_name
+
+def repository_name
     return "Group_" + id.to_s.rjust(3, "0")
   end
 
