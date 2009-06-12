@@ -23,15 +23,19 @@ class GroupingTest < ActiveSupport::TestCase
 
   def test_save_grouping
     grouping = Grouping.new
-    grouping.assignment_id = 1
-
-    group = Group.new
-    group.group_name = "l'Olivier"
-    group.save
-    grouping.group_id = group.id
+    grouping.assignment_id = 2
+    grouping.group_id = 5
     assert grouping.save, "Save the grouping"
   end
 
+  def test_if_has_ta_for_marking_true
+    grouping = grouping(:grouping_2)
+    assert grouping.has_ta_for_marking?
+  end
 
+  def test_if_has_ta_for_marking_false
+     grouping = grouping(:grouping_1)
+     assert !grouping.has_ta_for_marking?
+  end
 
 end
