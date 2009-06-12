@@ -79,7 +79,7 @@ class Assignment < ActiveRecord::Base
     # groupings.find(:first, :include => :memberships, :conditions => [condition, uid]) #FIXME: needs schema update
     
     #FIXME: needs to be rewritten using a proper query...
-    return User.find(uid).grouping_for(self.id)    
+    return User.find(uid).accepted_grouping_for(self.id)    
     
   end
   

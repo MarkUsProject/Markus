@@ -1,11 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
+require 'shoulda'
 
-class ExtraMarkTest < ActiveSupport::TestCase
-  fixtures :results
-
-  def test_create_extra_mark
-    mark = ExtraMark.new({:result => results(:r1), :mark => 4, :description => "Bonus Mark"})
-    assert mark.save
-  end
-
+class ExtraMarkTest < Test::Unit::TestCase
+  should_belong_to :result
+  should_require_attributes :result_id
 end

@@ -8,7 +8,7 @@ class MemoryRepository < Repository::AbstractRepository
   # Initializes Object, and verifies connection to the repository back end.
   # This should throw a ConnectionError if we're unable to connect.
   def initialize(connect_string)
-    raise NotImplementedError, "Repository.initialize(connect_string): Not yet implemented"
+   #  raise NotImplementedError, "Repository.initialize(connect_string): Not yet implemented"
   end
   
   def self.repository_path_valid?(path)
@@ -16,7 +16,8 @@ class MemoryRepository < Repository::AbstractRepository
   end
   
   def self.open(connect_string)
-    raise NotImplementedError, "Repository::open Not yet implemented"
+    return MemoryRepository.new(connect_string)
+    # raise NotImplementedError, "Repository::open Not yet implemented"
   end
   
   def self.create(connect_string)
