@@ -9,12 +9,12 @@
     </p>
     <p class="manageAnnotations"><%=link_to_function "Edit", "$('annotation_text_content_edit_#{annot.annotation_text.id}').show();$('annotation_text_content_display_#{annot.annotation_text.id}').hide();"%>
     &middot;
-    <%=link_to_remote "Remove", :url => {:action=>"destroy", :id=>annot.id, :submission_file_id=>@submission_file_id}, :confirm => "Are you sure you want to remove this annotation?"%>
+    <%=link_to_remote "Remove", :url => {:controller => "annotations", :action=>"destroy", :id=>annot.id, :submission_file_id=>@submission_file_id}, :confirm => "Are you sure you want to remove this annotation?"%>
     </p>
 
     <div id="annotation_text_content_edit_<%=annot.annotation_text.id%>" style="display: none;">
     
-      <% remote_form_for :annotation_text, annot.annotation_text, :url => {:action => "update_annotation"} do |f| %>   
+      <% remote_form_for :annotation_text, annot.annotation_text, :url => {:action => "update_annotation", :controller => "annotations"} do |f| %>   
       
         <%= f.hidden_field :id%>
         <input type="hidden" name="annotation_text[submission_file_id]" value="<%=@submission_file_id%>" />

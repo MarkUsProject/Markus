@@ -1,41 +1,40 @@
 require 'lib/repo/repository_factory'
 
- class AssignmentsController < ApplicationController
+class AssignmentsController < ApplicationController
   before_filter      :authorize_only_for_admin, :except =>
   [:file_manager, :index, :download, :student_interface, :hand_in, :update_files]
 
   auto_complete_for :assignment, :name
   # Publicly accessible actions ---------------------------------------
   
-    def student_interface
-     @assignment = Assignment.find(params[:id])
-     @student = Student.find(session[:uid]) 
-     @grouping = @student.accepted_grouping_for(@assignment.id)
+  def student_interface
+    @assignment = Assignment.find(params[:id])
+    @student = Student.find(session[:uid]) 
+    @grouping = @student.accepted_grouping_for(@assignment.id)
 
-     if @student.has_pending_groupings_for?(@assignment.id)
-       @pending_grouping = @student.pending_groupings_for(@assignment.id) 
-     end
+    if @student.has_pending_groupings_for?(@assignment.id)
+      @pending_grouping = @student.pending_groupings_for(@assignment.id) 
+    end
 
-     if @grouping.nil?
-       if @assignment.group_max == 1
-          @student.create_group_for_working_alone_student(@assignment.id)
-         redirect_to :action => 'student_interface', :id => @assignment.id
-       else
-         render :action => 'student_interface', :layout => 'no_menu_header'
-         return
-       end
-     end
-     
-     if !@grouping.nil?
-       # We look for the informations on this group
-       # The members
-       @studentmemberships =  @grouping.student_memberships
-       # The group name
-       @group = @grouping.group
-       # The inviter
-       
-       @inviter = @grouping.inviter
-     end
+    if @grouping.nil?
+      if @assignment.group_max == 1
+         @student.create_group_for_working_alone_student(@assignment.id)
+        redirect_to :action => 'student_interface', :id => @assignment.id
+      else
+        render :action => 'student_interface', :layout => 'no_menu_header'
+        return
+      end
+    end
+   
+    if !@grouping.nil?
+      # We look for the informations on this group
+      # The members
+      @studentmemberships =  @grouping.student_memberships
+      # The group name
+      @group = @grouping.group
+      # The inviter   
+      @inviter = @grouping.inviter
+    end
   end
 
 

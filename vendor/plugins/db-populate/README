@@ -1,0 +1,63 @@
+db_populate
+===========
+db_populate is an answer to the question "how do I get seed data into a Rails application?" 
+Seed data is normally the contents of lookup tables that are essential to the normal
+functioning of your application: lists of roles, administrative accounts, choices for
+dropdown boxes, and so on.
+
+The inspiration (and some of the code) for this plugin come from a blog entry by Luke
+Francl (http://railspikes.com/2008/2/1/loading-seed-data) that looked at some of the
+available alternatives for loading seed data. Some more of the code came from Josh
+Knowles' db_populate plugin (http://code.google.com/p/db-populate/). But I didn't like 
+having to assemble bits, and had some ideas to extend it, and...well, you know how it
+goes.
+
+Using db_populate
+=================
+The basic idea behind db_populate is simple: to put seed data in your application's
+tables, it executes ruby code. The code needs to be in a specific place, and there's a 
+helper to make it easier to create and update consistent seed data. Then there are a
+couple of rake tasks. That's it.
+
+Setting up for db_populate
+==========================
+
+To get started with db_populate, create the folder db/populate in your Rails application.
+Any code you put in this folder will be run by db_populate. Optionally, you can create
+subfolders for your Rails environments, just as you can with config files. db_populate
+executes all of the top-level populate files first, followed by any environment-specific
+populate files, sorting each list by name. So, for example, with 4 files in the production
+environment, db_populate would order this way:
+
+db/populate/01_roles.rb
+db/populate/02_services.rb
+db/populate/production/01_users.rb
+db/populate/production/02_options.rb
+
+Within each file, you can place whatever ruby code you like. To help create consistent
+records, db_populate adds create_or_update to ActiveRecord::Base. This method looks up
+a record by ID; if the record exists, it is updated, and if it doesn't, it is created. Using
+this technique means that you can edit and re-run your db_populate tasks without damaging 
+data that have already been loaded once. For example, assuming your roles table has already
+been populated, a db_populate file to create an administrative user might look like this:
+
+user = User.create_or_update(:id => 1, :login => "admin", :email => "admin@example.com", 
+ :name => "Site Administrator", :password => "admin", :password_confirmation => "admin")
+role = Role.find_by_rolename('administrator')
+Permission.create_or_update(:id => 1, :role_id => role.id, :user_id => user.id)
+
+If you change your mind about the name for the site administrator, you can just edit the data
+and re-run the task.
+
+db_populate rake tasks
+======================
+db_populate includes two rake tasks:
+
+rake db:populate loads all of the data for the current environment
+rake db:migrate_and_populate is the same as calling rake db:migrate followed by rake db:populate
+
+History
+=======
+2009-05-17 Fix typo in README
+2009-03-21 Patch from Ahmed El-Daly to allow PKs with names other than id
+2008-10-11 Initial release

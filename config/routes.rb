@@ -48,15 +48,11 @@ ActionController::Routing::Routes.draw do |map|
   #map.connect 'checkmark/submissions/view/:id/:filename', 
   #  :controller => 'submissions', :action => 'view', :id => /\d+/, :filename => /\w+.\w+/
 
-  map.connect 'checkmark/users/:role/:action/:id', :controller => 'users'
-
   # append xml to the classlist link
-  map.connect 'checkmark/users/:role/userlist.:format', :controller => 'users', :action =>      'userlist'
   
   map.connect 'checkmark/:controller/:action/:id'
 
   # map.connect ':controller/:action/:id'
   # map.connect ':controller/:action/:id.:format'
-  map.connect 'checkmark/annotations/grader/:aid/:uid', :controller => 'annotations', :action => 'grader'
 
 end
