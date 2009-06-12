@@ -102,3 +102,12 @@ student5:
     type:           Student
     created_at:     <% Time.now.to_s(:db) %>
     updated_at:     <% Time.now.to_s(:db) %>
+
+student6:
+    user_name:      student6
+    last_name:      Devisscher
+    first_name:     Audrey
+    grace_days:     1
+    type:           Student
+    created_at:     <% Time.now.to_s(:db) %>
+    updated_at:     <% Time.now.to_s(:db) %>

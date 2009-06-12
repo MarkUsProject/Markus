@@ -61,7 +61,7 @@ class Grouping < ActiveRecord::Base
   end
  
   # returns the numbers of memberships, all includ (inviter, pending,
-  # accepted, and rejected
+  # accepted
   def student_membership_number
      return accepted_students.count 
   end
@@ -80,68 +80,9 @@ class Grouping < ActiveRecord::Base
   def get_submission_used
     submissions.find(:first, :conditions => {:submission_version_used => true})
   end
-  
-  
-  # Edit functions -------------------------------------------------------
+ 
 
-  # Invite a member in a group
-  def invite_member(user)
-      if user.role != 'student'
-        return("This user is not a student")
-      end
-
-      StudentMembership.new(:user => user, :membership_status =>
-      StudentMembership::STATUSES[:pending], :grouping => self)
-  end
-
-  # Invites each user in 'members' by its user name, to this group
-  def invite(members, membership_status='pending')
-    # overloading invite() to accept members arg as both a string and array
-    members = [members] if members.is_a?(String) # put string in an array
-    members.each do |m|
-      next if m.blank?  # ignore blank users
-      user = User.find_by_user_name(m)
-      if user && user.student?
-        member = self.add_member(user, membership_status)
-        return member if members.size == 1  # return immediately
-      else
-        errors.add_to_base("Username '#{m}' is not a valid student user name.")
-      end
-    end
-  end
-  
-  # Add a new member to this group.
-  def add_member(user, membership_status=StudentMembership::STATUSES[:accepted])
-    # assignments.each do |a|
-    #   if user.group_for(a.id)
-    #     errors.add_to_base("User '#{user.user_name}' already belongs in a group")
-    #     return
-    #   end
-    # end
-    member = StudentMembership.new(:user => user, :membership_status => membership_status, :grouping => self)
-    member.save
-    return member
-  end
-  
-  # Changes the membership status of member from 'pending' to 'accepted'
-  def accept(user)
-    member = memberships.find_by_user_id(user.id)
-    raise "Invalid user" unless member # user does not belong in this group
-    raise "Invalid status" unless member.membership_status == StudentMembership::STATUSES[:pending]
-    member.membership_status = StudentMembership::STATUSES[:accepted]
-    return member.save
-  end
-  
-  # Removes the user from this group
-  def reject(user)
-    member = memberships.find_by_user_id(user.id)
-    raise "Invalid user" unless member # user does not belong in this group
-    raise "Invalid status" unless member.membership_status == StudentMembership::STATUSES[:pending]
-    
-    member.membership_status = StudentMembership::STATUSES[:rejected]
-    return member.save
-  end
-  
+# EDIT METHODS 
   # Removes the member by its membership id
   def remove_member(mbr_id)
     member = student_memberships.find(mbr_id)

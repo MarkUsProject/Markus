@@ -34,7 +34,7 @@ membership2:
 membership3:
    user_id:            <%= Fixtures.identify(:student3) %>
    grouping_id:        <%= Fixtures.identify(:grouping_1) %>
-   membership_status: accepted
+   membership_status:  rejected
    type:               StudentMembership
    created_at:         <% Time.now.to_s(:db)%>
    updated_at:         <%Time.now.to_s(:db)%>
