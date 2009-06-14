@@ -4,15 +4,15 @@ require 'time'
 
   def basic_fixture
     transaction = @repo.get_transaction("someuser")
-    transaction.add({"SomeFile.java" => "File Contents"})
+    transaction.add("SomeFile.java", "File contents", "text/java")
     @repo.commit(transaction)
     
     transaction = @repo.get_transaction("someuser")
-    transaction.add({"SomeNewFile.java" => "File Contents"})
+    transaction.add("SomeNewFile.java",  "File Contents", "text/java")
     @repo.commit(transaction)
     
     transaction = @repo.get_transaction("someuser")
-    transaction.add({"new_folder/SomeFolderFile.java" => "File Contents"})
+    transaction.add("new_folder/SomeFolderFile.java",  "File Contents", "text/java")
     @repo.commit(transaction)
   end
 
@@ -23,7 +23,7 @@ require 'time'
   def test_number_of_revisions
     assert_equal 0, @repo.latest_revision_number, "Number of revisions is wrong"
     transaction = @repo.get_transaction("someuser")
-    transaction.add({"SomeFile.java" => "File Contents"})
+    transaction.add("SomeFile.java", "File Contents", "text/java")
     @repo.commit(transaction)
     assert_equal 1, @repo.latest_revision_number, "Number of revisions is wrong"
   end
@@ -51,7 +51,9 @@ require 'time'
     assert_raises Repository::RevisionDoesNotExist do
       revision = @repo.get_revision(4)
     end
-    @repo.commit({"NewFile.java" => "Some new file"})
+    transaction = @repo.get_transaction("someuser")
+    transaction.add("NewFile.java", "Some new file contents", "text/java")
+    @repo.commit(transaction)
     revision = @repo.get_revision(4)
     assert_not_nil revision, "Could not find revision"
   end
@@ -84,8 +86,8 @@ require 'time'
     begin
       @repo.download(file)
     rescue Repository::FileDoesNotExistConflict => e
-      assert e.attempted_job.kind_of?(Repository::RevisionFile), "Did not get the right kind of conflict - expected the attempted_job to be a file"
-      assert_equal 'InvalidFile.java', e.attempted_job.name, "Did not get the right conflict contents - expected the missing file"
+#      assert e.attempted_job.kind_of?(Repository::RevisionFile), "Did not get the right kind of conflict - expected the attempted_job to be a file"
+      assert_equal '/InvalidFile.java', e.path, "Did not get the right conflict contents - expected the missing file"
     end
     
     file = Repository::RevisionFile.new(1, {
@@ -102,13 +104,14 @@ require 'time'
     begin
       @repo.download(file)
     rescue Repository::FileDoesNotExistConflict => e
-      assert e.attempted_job.kind_of?(Repository::RevisionFile), "Did not get the right kind of conflict - expected the attempted_job to be a file"
-      assert_equal '??>@$>Z>$@<D', e.attempted_job.name, "Did not get the right conflict contents - expected the missing file"
+      assert_equal '/s35523/a4yasda/asdr43rasdf/??!....%*@#!(@)/??>@$>Z>$@<D', e.path, "Did not get the right conflict contents - expected the missing file"
     end
 
   end
   
   def test_get_missing_directory
+    basic_fixture
+    
   end
   
 #    revision = @repo.get_revision(3)

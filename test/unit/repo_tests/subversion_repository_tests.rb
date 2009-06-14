@@ -1,5 +1,5 @@
 require 'test/unit'
-require 'test/unit/repo_tests/repository_abstract_tests_read'
+require 'test/unit/repo_tests/repository_abstract_tests'
 require 'lib/repo/subversion_repository'
 require 'fileutils'
 require "svn/repos"
