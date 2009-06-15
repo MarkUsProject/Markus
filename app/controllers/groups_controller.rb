@@ -192,7 +192,7 @@ class GroupsController < ApplicationController
     StudentMembership::STATUSES[:accepted]     
     member = grouping.invite(params[:student][:user_name], membership_status) 
     render :update do |page|
-      if grouping.save
+      if !member.nil?
         # add member to the group list
         page.insert_html :bottom, "grouping_#{grouping.id}_list", 
           :partial => 'groups/manage/member', :locals => {:grouping => grouping, :member => member}

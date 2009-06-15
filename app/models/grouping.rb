@@ -69,6 +69,9 @@ class Grouping < ActiveRecord::Base
        user = User.find_by_user_name(m)
        if user && user.student?
          member = self.add_member(user, membership_status)
+         if member.nil?
+           errors.add_to_base("Student already in a group")
+         end
          return member if members.size == 1 #return immediately
        else
          errors.add_to_base("Username '#{m}' is not a valid student user
@@ -79,10 +82,14 @@ class Grouping < ActiveRecord::Base
 
    # Add a new member to base
    def add_member(user, membership_status=StudentMembership::STATUSES[:accepted])
-     member = StudentMembership.new(:user => user, :membership_status =>
-     membership_status, :grouping => self)
-     member.save
-     return member
+     if user.has_accepted_grouping_for?(self.assignment_id)
+       return nil
+     else
+       member = StudentMembership.new(:user => user, :membership_status =>
+       membership_status, :grouping => self)
+       member.save
+       return member
+     end
    end
   # Returns the status of this user, or nil if user is not a member
   def membership_status(user)
