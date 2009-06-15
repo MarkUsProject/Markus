@@ -1,31 +1,15 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
-#m1:
-#  result: r1
-#  rubric_criteria: c1
-#  mark: 3
+mark_1:
+   result_id:            <%= Fixtures.identify(:result_1)%>
+   rubric_criterion_id:  <%= Fixtures.identify(:c1)%>
+   mark:                 3
+   created_at:           <% Time.now.to_s(:db)%>
+   updated_at:           <% Time.now.to_s(:db)%>
 
-#m2:
-#  result: r1
-#  rubric_criteria: c2
-#  mark: 4
-
-#m3:
-#  result: r1
-#  rubric_criteria: c3
-#  mark: 2
-
-#m4:
-#  result: r1
-#  rubric_criteria: c4
-#  mark: 1
-
-#m5:
-#  result: r1
-#  rubric_criteria: c5
-#  mark: 4
-
-#m6:
-#  result: r1
-#  rubric_criteria: c6
-#  mark: 3
+mark_2:
+   result_id:            <%= Fixtures.identify(:result_2)%>
+   rubric_criterion_id:  <%= Fixtures.identify(:c2)%>
+   mark:                 2
+   created_at:           <% Time.now.to_s(:db)%>
+   updated_at:           <% Time.now.to_s(:db)%>

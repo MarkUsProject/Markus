@@ -1,13 +1,18 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
-#r1:
-#  submission: group1sub
-#  total_mark: 0
-#  marking_state: "Partial"
-#  overall_comment: "Good Assignment"
+result_1:
+   submission_id:        <%= Fixtures.identify(:submission_1)%>
+   marking_state:        unmarked
+   overall_comment:      
+   created_at:           <% Time.now.to_s(:db) %>
+   updated_at:           <% Time.now.to_s(:db)%>
+   released_to_students: false
 
-#r2:
-#  submission: group2sub
-#  total_mark: 0
-#  marking_state: "Partial"
-#  overall_comment: "Bad Assignment"
+result_2:
+   submission_id:        <%= Fixtures.identify(:submission_2)%>
+   marking_state:        partial
+   overall_comment:      
+   created_at:           <% Time.now.to_s(:db) %>
+   updated_at:           <% Time.now.to_s(:db)%>
+   released_to_students: false
+

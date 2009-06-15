@@ -1,16 +1,22 @@
-#group1sub:
-#  group: group1
-#  assignment: a1
+#
+# Submissions fixtures are a bit hacky: they refere to a revision number,
+# of a svn revision, that doesn't exist. These submissions fixtures are
+# implemented only to test the result and the mark models
 
-#group2sub:
-#  group: group2
-#  assignment: a1
+submission_1:
+   grouping_id:              <%= Fixtures.identify(:grouping1)%>
+   created_at:               <%= Time.now.to_s(:db) %>
+   submission_version:       1
+   submission_version_used:  true
+   revision_number:          4
+   revision_timestamp:       <%= Time.now.to_s(:b)%>
 
-# group assignment submissions
-#group4a2sub:
-#    grouping: grouping1
+submission_2:
+   grouping_id:              <%= Fixtures.identify(:grouping2)%>
+   created_at:               <%= Time.now.to_s(:db) %>
+   submission_version:       1
+   submission_version_used:  true
+   revision_number:          1
+   revision_timestamp:       <%= Time.now.to_s(:b)%>
 
 
-# individual assignment submissions
-#student2a3sub:
-#    grouping: grouping2

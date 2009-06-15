@@ -55,7 +55,31 @@ membership5:
    membership_status: pending
    type:               StudentMembership
    created_at:         <% Time.now.to_s(:db)%>
-   updated_at:         <%Time.now.to_s(:db)%>
+   updated_at:         <% Time.now.to_s(:db)%>
+
+membership6:
+   user_id:             <%= Fixtures.identify(:student1)%>
+   grouping_id:         <%= Fixtures.identify(:grouping1)%>
+   membership_status:   inviter
+   type:                StudentMembership
+   created_at:          <% Time.now.to_s(:db) %>
+   updated_at:          <% Time.now.to_s(:db)%>
+
+membership7:
+   user_id:             <%= Fixtures.identify(:student2)%>
+   grouping_id:         <%= Fixtures.identify(:grouping2)%>
+   membership_status:   inviter
+   type:                StudentMembership
+   created_at:          <% Time.now.to_s(:db) %>
+   updated_at:          <% Time.now.to_s(:db)%>
+
+membership8:
+   user_id:             <%= Fixtures.identify(:student3)%>
+   grouping_id:         <%= Fixtures.identify(:grouping3)%>
+   membership_status:   inviter
+   type:                StudentMembership
+   created_at:          <% Time.now.to_s(:db) %>
+   updated_at:          <% Time.now.to_s(:db)%>
 
 
 membership_1:
@@ -65,4 +89,5 @@ membership_1:
    type:               TAMembership
    created_at:         <% Time.now.to_s(:db)%>
    updated_at:         <%Time.now.to_s(:db)%>
+
 

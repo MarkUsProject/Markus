@@ -107,4 +107,6 @@ class UserTest < ActiveSupport::TestCase
      assert !student.student?, "should return false as student is not a
      student"
   end
+
+
 end

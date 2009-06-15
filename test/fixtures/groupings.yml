@@ -20,4 +20,16 @@ grouping_3:
 
 grouping_4:
    group_id: <%= Fixtures.identify(:group_4) %>
-   assignment_id: <%= Fixtures.identify(:assignment_1) %> 
+   assignment_id: <%= Fixtures.identify(:assignment_1) %>
+
+grouping1:
+   group_id: <%= Fixtures.identify(:group1) %> 
+   assignment_id: <%= Fixtures.identify(:assignment_2) %>
+
+grouping2:
+   group_id: <%= Fixtures.identify(:group2)%>
+   assignment_id: <%= Fixtures.identify(:assignment_2)%>
+
+grouping3:
+   group_id: <%= Fixtures.identify(:group3)%>
+   assignment_id: <%= Fixtures.identify(:assignment_2)%>
