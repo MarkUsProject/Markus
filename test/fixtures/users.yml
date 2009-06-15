@@ -19,24 +19,24 @@ olm_admin_1:
   last_name:         admin
   first_name:        some
   type:              Admin
-  created_at:     <% Time.now.to_s(:db) %>
-  updated_at:     <% Time.now.to_s(:db) %>
+  created_at:     <%= Time.now.to_s(:db) %>
+  updated_at:     <%= Time.now.to_s(:db) %>
 
 olm_admin_2:
   user_name:         olm_admin2
   last_name:         admin2
   first_name:        some
   type:              Admin
-  created_at:     <% Time.now.to_s(:db) %>
-  updated_at:     <% Time.now.to_s(:db) %>
+  created_at:     <%= Time.now.to_s(:db) %>
+  updated_at:     <%= Time.now.to_s(:db) %>
 
 olm_admin_3:
   user_name:         olm_admin3
   last_name:         admin3
   first_name:        some
   type:              Admin
-  created_at:     <% Time.now.to_s(:db) %>
-  updated_at:     <% Time.now.to_s(:db) %>
+  created_at:     <%= Time.now.to_s(:db) %>
+  updated_at:     <%= Time.now.to_s(:db) %>
 
 # Now some TAs...
   
@@ -45,16 +45,16 @@ ta1:
     last_name:      Zandt
     first_name:     Ursula
     type:           Ta
-    created_at:     <% Time.now.to_s(:db) %>
-    updated_at:     <% Time.now.to_s(:db) %>
+    created_at:     <%= Time.now.to_s(:db) %>
+    updated_at:     <%= Time.now.to_s(:db) %>
 
 ta2:
     user_name:      ta2
     last_name:      Smith
     first_name:     William
     type:           Ta
-    created_at:     <% Time.now.to_s(:db) %>
-    updated_at:     <% Time.now.to_s(:db) %>
+    created_at:     <%= Time.now.to_s(:db) %>
+    updated_at:     <%= Time.now.to_s(:db) %>
 
 # Now, let's create some students
 
@@ -64,8 +64,8 @@ student1:
     first_name:     Hollis
     grace_days:     1
     type:           Student
-    created_at:     <% Time.now.to_s(:db) %>
-    updated_at:     <% Time.now.to_s(:db) %>
+    created_at:     <%= Time.now.to_s(:db) %>
+    updated_at:     <%= Time.now.to_s(:db) %>
 
 student2:
     user_name:      student2
@@ -73,8 +73,8 @@ student2:
     first_name:     Sally
     grace_days:     1
     type:           Student
-    created_at:     <% Time.now.to_s(:db) %>
-    updated_at:     <% Time.now.to_s(:db) %>
+    created_at:     <%= Time.now.to_s(:db) %>
+    updated_at:     <%= Time.now.to_s(:db) %>
 
 student3:
     user_name:      student3
@@ -82,8 +82,8 @@ student3:
     first_name:     Walter
     grace_days:     1
     type:           Student
-    created_at:     <% Time.now.to_s(:db) %>
-    updated_at:     <% Time.now.to_s(:db) %>
+    created_at:     <%= Time.now.to_s(:db) %>
+    updated_at:     <%= Time.now.to_s(:db) %>
 
 student4:
     user_name:      student4
@@ -91,8 +91,8 @@ student4:
     first_name:     Edward
     grace_days:     1
     type:           Student
-    created_at:     <% Time.now.to_s(:db) %>
-    updated_at:     <% Time.now.to_s(:db) %>
+    created_at:     <%= Time.now.to_s(:db) %>
+    updated_at:     <%= Time.now.to_s(:db) %>
 
 student5:
     user_name:      student_dup
@@ -100,8 +100,8 @@ student5:
     first_name:     Dan
     grace_days:     1
     type:           Student
-    created_at:     <% Time.now.to_s(:db) %>
-    updated_at:     <% Time.now.to_s(:db) %>
+    created_at:     <%= Time.now.to_s(:db) %>
+    updated_at:     <%= Time.now.to_s(:db) %>
 
 student6:
     user_name:      student6
@@ -109,5 +109,5 @@ student6:
     first_name:     Audrey
     grace_days:     1
     type:           Student
-    created_at:     <% Time.now.to_s(:db) %>
-    updated_at:     <% Time.now.to_s(:db) %>
+    created_at:     <%= Time.now.to_s(:db) %>
+    updated_at:     <%= Time.now.to_s(:db) %>

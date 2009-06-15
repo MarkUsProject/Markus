@@ -2,14 +2,14 @@
 
 mark_1:
    result_id:            <%= Fixtures.identify(:result_1)%>
-   rubric_criterion_id:  <%= Fixtures.identify(:c1)%>
+   rubric_criterion_id:  <%= Fixtures.identify(:c4)%>
    mark:                 3
-   created_at:           <% Time.now.to_s(:db)%>
-   updated_at:           <% Time.now.to_s(:db)%>
+   created_at:           <%= Time.now.to_s(:db)%>
+   updated_at:           <%= Time.now.to_s(:db)%>
 
 mark_2:
    result_id:            <%= Fixtures.identify(:result_2)%>
-   rubric_criterion_id:  <%= Fixtures.identify(:c2)%>
+   rubric_criterion_id:  <%= Fixtures.identify(:c6)%>
    mark:                 2
-   created_at:           <% Time.now.to_s(:db)%>
-   updated_at:           <% Time.now.to_s(:db)%>
+   created_at:           <%= Time.now.to_s(:db)%>
+   updated_at:           <%= Time.now.to_s(:db)%>

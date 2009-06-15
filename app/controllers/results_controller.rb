@@ -25,7 +25,7 @@ class ResultsController < ApplicationController
     
     new_result = Result.new
     new_result.submission = @submission
-    new_result.marking_state = "partial"
+    new_result.marking_state = Result::MARKING_STATE[:partial]
     new_result.save
     redirect_to :action => 'edit', :id => new_result.id
   end

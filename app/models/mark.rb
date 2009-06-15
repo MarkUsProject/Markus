@@ -16,14 +16,15 @@ class Mark < ActiveRecord::Base
   def get_mark
     criterion = RubricCriterion.find(rubric_criterion_id)
     return mark.to_f * criterion.weight
+
   end
   
   private
   
   def ensure_result_marking_state_partial
     if result.marking_state != Result::MARKING_STATES[:partial]
-      result.marking_state = Result::MARKING_STATES[:partial]
-      result.save
+       result.marking_state = Result::MARKING_STATES[:partial]
+       result.save
     end
   end
 end
