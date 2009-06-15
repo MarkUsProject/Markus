@@ -22,6 +22,7 @@ class GroupingTest < ActiveSupport::TestCase
     assert !grouping.save, "Saved the grouping without group"
   end
 
+
   def test_save_grouping
     grouping = Grouping.new
     grouping.assignment = assignments(:assignment_2)
@@ -56,6 +57,21 @@ class GroupingTest < ActiveSupport::TestCase
     assert_equal(grouping.inviter.user_name, invite.user_name, "shuld
     return inviter" )
   end
+
+  def test_is_inviter_true
+     grouping = groupings(:grouping_1)
+     student = users(:student1)
+     assert grouping.is_inviter?(student), "should return true as student
+     is the inviter"
+  end
+
+  def test_is_inviter_false
+     grouping = groupings(:grouping_1)
+     student = users(:student2)
+     assert !grouping.is_inviter?(student), "should return false as student
+     is NOT the inviter"
+  end
+
 
   def test_should_return_true_for_pending
      grouping = groupings(:grouping_2)
@@ -137,6 +153,13 @@ class GroupingTest < ActiveSupport::TestCase
   #
   ####################################################
 
+  def test_decline_invitation
+     grouping = groupings(:grouping_2)
+     student = users(:student5)
+     grouping.decline_invitation(student)
+     assert !grouping.pending?(student), "student has just decline this invitation. Membership_status should be 'rejected'"
+  end
+
   def test_remove_rejected_member
      grouping = groupings(:grouping_1)
      student = users(:student3)
@@ -152,10 +175,29 @@ class GroupingTest < ActiveSupport::TestCase
      membership = memberships(:membership2)
      student = users(:student2)
      grouping.remove_member(membership)
-     assert_nil(grouping.membership_status(student), "This student hs
-     just been deleted from this griyp. His membership status should be
+     assert_nil(grouping.membership_status(student), "This student has
+     just been deleted from this group. His membership status should be
      nil")
   end
+
+  def test_remove_member_when_member_inviter
+     grouping = groupings(:grouping_1)
+     membership = memberships(:membership1)
+     student = users(:student1)
+     grouping.remove_member(membership)
+     assert_nil(grouping.membership_status(student), "This student has
+     just been deleted from this group. His membership status should be
+     nil")
+  end
+
+  def test_remove_member_when_member_inviter2
+     grouping = groupings(:grouping_1)
+     membership = memberships(:membership2)
+     student = users(:student2)
+     grouping.remove_member(membership)
+     assert_not_nil grouping.inviter 
+  end
+
 
   #########################################################
   #

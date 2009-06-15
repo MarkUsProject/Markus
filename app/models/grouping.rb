@@ -47,13 +47,43 @@ class Grouping < ActiveRecord::Base
     invite = Student.find(member.user_id)
     return invite
   end
-  
+
+
   # Returns true if this user has a pending status for this group; 
   # false otherwise, or if user is not in this group.
   def pending?(user)
     return membership_status(user) == StudentMembership::STATUSES[:pending]
   end
-  
+ 
+  def is_inviter?(user)
+    return membership_status(user) ==  StudentMembership::STATUSES[:inviter]
+  end
+
+   #invites each user in 'members' by its user name, to this group
+   def invite(members, membership_status='pending')
+     # overloading invite() to accept members arg as both a string and a array
+     members = [members] if members.is_a?(String) # put a string in an
+                                                 # array
+     members.each do |m|
+       next if m.blank? # ignore blank users
+       user = User.find_by_user_name(m)
+       if user && user.student?
+         member = self.add_member(user, membership_status)
+         return member if members.size == 1 #return immediately
+       else
+         errors.add_to_base("Username '#{m}' is not a valid student user
+         name")
+       end
+     end
+   end
+
+   # Add a new member to base
+   def add_member(user, membership_status=StudentMembership::STATUSES[:accepted])
+     member = StudentMembership.new(:user => user, :membership_status =>
+     membership_status, :grouping => self)
+     member.save
+     return member
+   end
   # Returns the status of this user, or nil if user is not a member
   def membership_status(user)
     member = student_memberships.find_by_user_id(user.id)
@@ -86,7 +116,18 @@ class Grouping < ActiveRecord::Base
   # Removes the member by its membership id
   def remove_member(mbr_id)
     member = student_memberships.find(mbr_id)
-    member.destroy if member
+    if member.membership_status == StudentMembership::STATUSES[:inviter]
+       if member.grouping.student_membership_number > 1
+          membership = member.grouping.accepted_students[1].memberships.find_by_grouping_id(member.grouping.id) 
+          membership.membership_status = StudentMembership::STATUSES[:inviter]
+          membership.save
+          member.destroy if member
+       else
+          member.destroy if member
+       end
+    else
+      member.destroy if member
+    end
   end
   
   # Removes the member rejected by its membership id
@@ -94,7 +135,13 @@ class Grouping < ActiveRecord::Base
   def remove_rejected(mbr_id)
     member = memberships.find(mbr_id)
     member.destroy if member && member.membership_status == StudentMembership::STATUSES[:rejected]
-  end  
+  end 
+
+  def decline_invitation(student)
+     membership = student.memberships.find_by_grouping_id(self.id)
+     membership.membership_status = StudentMembership::STATUSES[:rejected]
+     membership.save
+  end
   
   # When a Grouping is created, automatically create the folder for the
   # assignment in the repository, if it doesn't already exist.

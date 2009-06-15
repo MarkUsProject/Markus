@@ -47,6 +47,7 @@ class Student < User
     return nil
   end
 
+
   # Returns the Membership for a Grouping for an Assignment with id 'aid' if 
   # this Student is a member with either 'accepted' or 'invitier' membership
   # status
@@ -61,7 +62,6 @@ class Student < User
      end
      return @memberships
   end
-  
 
   def invite(gid)
     membership = StudentMembership.new
@@ -131,7 +131,6 @@ class Student < User
       m.membership_status = 'rejected'
       m.save
     end
-
   end
 
 end

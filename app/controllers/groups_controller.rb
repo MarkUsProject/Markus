@@ -90,16 +90,10 @@ class GroupsController < ApplicationController
     @grouping = @student.accepted_grouping_for(@assignment.id) # his group
 
     @invited = Student.find(params[:invite_member])
-    # We first check he isn't already invited for this grouping
+    # We first check he isn't already invited in this grouping
     groupings = @invited.pending_groupings_for(@assignment.id)
 
-    already_pending_member = false
-    groupings.each do |g|
-       if g.id == @grouping.id
-          already_pending_member = true
-       end
-    end
-    if !already_pending_member
+    if !@grouping.pending?(@student)
        @invited.invite(@grouping.id)
        flash[:edit_notice] = "Student invited."
     else
@@ -129,10 +123,8 @@ class GroupsController < ApplicationController
     @assignment = Assignment.find(params[:id])
     @grouping = Grouping.find(params[:grouping_id])
     @user = Student.find(session[:uid])
-    membership = StudentMembership.find(:first, :conditions => {:user_id => @user.id, :grouping_id => @grouping.id})
     return unless request.post?
-    membership.membership_status = StudentMembership::STATUSES[:rejected]
-    membership.save
+    @grouping.decline_invitation(@user)
     render :update do |page|
       page.redirect_to :action => 'student_interface', :id => @assignment.id
     end 
@@ -220,32 +212,27 @@ class GroupsController < ApplicationController
     
     grouping = Grouping.find(params[:grouping_id])
     member = grouping.student_memberships.find(params[:mbr_id])  # use group as scope
+    if member.membership_status == StudentMembership::STATUSES[:inviter]
+        inviter = true
+    end
     student = member.user  # need to find user name to add to student list
     
-    inviter = nil  # new inviter if member being removed is an inviter
-    # randomly assign new inviter and rename submission file
-    if member.inviter?  && grouping.student_memberships.count > 1
-      @assignment = Assignment.find(params[:id])
-      # subm = @assignment.submission_by(student) #FIXME: make sure if submitter is removed, transfer 
-      inviter = group.student_memberships.first(:order => "created_at", 
-        :conditions => ["membership_status = 'accepted'"])
-      # subm.owner = inviter.user  # assign new_inviter as submission owner
-      inviter.membership_status = StudentMembership::STATUSES[:inviter]
-      inviter.save
-    end
-    
-    member.destroy
+    grouping.remove_member(member)
+
     render :update do |page|
       page.visual_effect(:fade, "mbr_#{params[:mbr_id]}", :duration => 0.5)
       page.delay(0.5) { page.remove "mbr_#{params[:mbr_id]}" }
       # add members back to student list
       page.insert_html :bottom, "student_list",  
         "<li id='user_#{student.user_name}'>#{student.user_name}</li>"
-      if inviter
+    if inviter
+        # find the new inviter
+        inviter = grouping.student_memberships.find_by_membership_status(StudentMembership::STATUSES[:inviter])
         # replace the status of the new inviter to 'inviter'
         page.remove "mbr_#{inviter.id}"
-        page.insert_html :top, "group_#{group.id}_list", 
-          :partial => 'groups/manage/member', :locals => {:group => group, :member => inviter}
+        page.insert_html :top, "grouping_#{grouping.id}", 
+          :partial => 'groups/manage/member', :locals => {:grouping =>
+          grouping, :member => inviter}
       end
     end
   end
