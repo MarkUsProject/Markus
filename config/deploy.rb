@@ -1,61 +1,36 @@
-set :application, "checkmark"
-set :repository,  "https://stanley.cdf.toronto.edu/svn/csc49x/olm_rails/trunk/checkmark/"
-
-set :application, "checkmark"
-set :deploy_to, "/data/c494h01/checkmark"
-
-set :keep_releases, 4
-
-role :app, "dbsrv3.cdf.utoronto.ca"
-role :web, "dbsrv3.cdf.utoronto.ca"
-role :db,  "dbsrv3.cdf.utoronto.ca", :primary => true
-
-set :runner, 'mongrel'
-set :mongrel_conf, "#{current_path}/config/mongrel_cluster.yml"
-
-set :user, 'reid' # going to have to do something about this...
+# Necessary to run on Site5
 set :use_sudo, false
-ssh_options[:port] = 22
-ssh_options[:username] = 'reid'
+set :group_writable, false
 
+# Less releases, less space wasted
+set :keep_releases, 2
 
-task :after_update_code, :roles => :app do 
-  copy_database_config
-  set_group_permissions
+# thanks to http://www.rubyrobot.org/article/deploying-rails-20-to-mongrel-with-capistrano-21
+set :runner, nil
+
+set :application, "markus_cap1"
+set :user, "markuspr"
+set :repository, "https://stanley.cdf.toronto.edu/svn/csc49x/olm_rails/trunk/"
+#
+set :deploy_to, "/home/#{user}/markus-apps/#{application}"
+default_run_options[:pty] = true
+
+role :app, "satyrs.site5.com"
+role :web, "satyrs.site5.com"
+role :db,  "satyrs.site5.com", :primary => true
+
+desc "Restart the web server. Overrides the default task for Site5 use"
+deploy.task :restart, :roles => :app do
+  run "cd /home/#{user}; rm -rf public_html; ln -s #{current_path}/public ./public_html"
+  run "skill -9 -u #{user} -c dispatch.fcgi"
 end
 
-# mongrel commands
-namespace :deploy do
-  desc "The spinner task is used by :cold_deploy to start the application up"
-  task :spinner, :roles => :app do
-    run "cd #{release_path}/ && mongrel_rails cluster::start"
-  end
-
-  desc "Restart the mongrel cluster"
-  task :restart, :roles => :app do
-    run "cd #{release_path}/ && mongrel_rails cluster::restart"
-  end
-  
-  desc "Restart the mongrel cluster"
-  task :stop, :roles => :app do
-    run "cd #{release_path}/ && mongrel_rails cluster::stop"
-  end  
-end
-
-# copy database config from shared to release
-def copy_database_config
-  db_config = "#{shared_path}/config/database.yml"
-  run "cp -f #{db_config} #{release_path}/config/database.yml"
-end
-
-# give group the right permissions on the files in 'current'
-def set_group_permissions
-  # we use a weird chmod option to give the permissions
-  # of the user to the group on all files/dirs
-  run "/bin/rm #{release_path}/log"
-  run "chmod -R g=u #{release_path}/*"
-  run "chmod -R g=u #{release_path}"  
-  run "chgrp -R c494h01 #{release_path}/*"
-  run "chgrp -R c494h01 #{release_path}"  
-  run "ln -s #{shared_path}/log #{release_path}/log"
+# set up config files
+after "deploy:update_code", :configure_app
+desc "Copy database.yml, environment.rb into the current release path"
+task :configure_app, :roles => :app do
+  db_config = "/home/#{user}/markus-apps/app_config/database.yml"
+  env_config = "/home/#{user}/markus-apps/app_config/environment.rb"
+  run "cp #{db_config} #{release_path}/config/database.yml"
+  run "cp #{env_config} #{release_path}/config/environment.rb"
 end
