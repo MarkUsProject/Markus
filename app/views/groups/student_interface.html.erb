@@ -19,8 +19,8 @@ function submit_invite(invite_member) {
   modal.close();
   //send AJAX request
  <%= 
- remote_function (
-    :url  => { :action => 'invite_member', :id => @assignment.id},
+ remote_function(
+    :url  => { :action => 'invite_member', :id => @assignment.id },
     :with => "'&invite_member=' + invite_member")
   %>
 }
