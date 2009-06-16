@@ -15,7 +15,7 @@ h1 {
 }
 
 h1#login { 
-  background: url(/images/checkmark.gif) center top no-repeat;
+  background: url(../images/checkmark.gif) center top no-repeat;
   height: 81px;
   width: 300px;
   margin: 0 auto 20px auto;
@@ -191,14 +191,14 @@ legend {
 /* Message Classes */
 
 .success {
-  background: #e2f9e3 url('/images/icon_success.png') 13px 50% no-repeat;
+  background: #e2f9e3 url('../images/icon_success.png') 13px 50% no-repeat;
   border: 2px solid #9c9; 
   color: #080;
   padding: 5px 5px 4px 40px;
 }
 
 .error {
-  background: #ffe1da url('/images/icon_error.png') 13px 50% no-repeat;
+  background: #ffe1da url('../images/icon_error.png') 13px 50% no-repeat;
   font-size: 12px;
   border: 2px solid #f34f4f;  
   color: #be0b0b;
@@ -206,7 +206,7 @@ legend {
 }
 
 .warning {
-  background: #FFFBCF url('/images/icon_warning.png') 13px 50% no-repeat;
+  background: #FFFBCF url('../images/icon_warning.png') 13px 50% no-repeat;
   font-size: 12px;
   border: 2px solid #8B7500;  
   color: #000000;
