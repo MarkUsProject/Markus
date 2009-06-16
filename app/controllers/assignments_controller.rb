@@ -1,4 +1,5 @@
-require 'lib/repo/repository_factory'
+# this controller uses Repository module in directory 'lib'
+require File.join(File.dirname(__FILE__),'/../../lib/repo/repository_factory')
 
 class AssignmentsController < ApplicationController
   before_filter      :authorize_only_for_admin, :except =>
