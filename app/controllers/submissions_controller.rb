@@ -1,4 +1,4 @@
-require 'lib/repo/repository_factory'
+require File.join(File.dirname(__FILE__),'../../lib/repo/repository_factory')
 
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
