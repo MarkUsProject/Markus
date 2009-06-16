@@ -25,7 +25,7 @@ class SubmissionsController < ApplicationController
 
    @missing_assignment_files = []
    @assignment.assignment_files.each do |assignment_file|
-     if !@revision.path_exist?(File.join(@assignment.repository_folder,
+     if !@revision.path_exists?(File.join(@assignment.repository_folder,
      assignment_file.filename))
        @missing_assignment_files.push(assignment_file)
      end
