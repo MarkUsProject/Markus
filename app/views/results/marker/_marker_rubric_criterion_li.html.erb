@@ -17,14 +17,14 @@
         <table id="mark_<%=mark.id%>_table">
         <% num_levels = 0
         selected = "rubric_criterion_level"
-        while (num_levels < 5) 
-          level_name = rubric_criterion["level_" + num_levels.to_s + "_name"]
-          level_desc = rubric_criterion["level_" + num_levels.to_s + "_description"]
-          if (num_levels == mark.mark)
-            td_class = "rubric_criterion_level_selected"
-          else
-            td_class = "rubric_criterion_level"
-          end
+          while (num_levels < 5) 
+            level_name = rubric_criterion["level_" + num_levels.to_s + "_name"]
+            level_desc = rubric_criterion["level_" + num_levels.to_s + "_description"]
+            if (num_levels == mark.mark)
+              td_class = "rubric_criterion_level_selected"
+            else
+              td_class = "rubric_criterion_level"
+            end
         -%>
           <% if level_desc && !level_desc.empty? -%>
             <tr>
@@ -35,7 +35,6 @@
                </td>
             </tr>
          <% end -%>
-
         <% num_levels = num_levels + 1
           end -%>
           </table>

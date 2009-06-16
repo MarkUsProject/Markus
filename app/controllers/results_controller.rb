@@ -27,7 +27,7 @@ class ResultsController < ApplicationController
     
     new_result = Result.new
     new_result.submission = @submission
-    new_result.marking_state = Result::MARKING_STATE[:partial]
+    new_result.marking_state = Result::MARKING_STATES[:partial]
     new_result.save
     redirect_to :action => 'edit', :id => new_result.id
   end
@@ -38,6 +38,10 @@ class ResultsController < ApplicationController
   def edit
     result_id = params[:id]
     @result = Result.find(result_id)
+    if @result.released_to_students == true
+       flash[:fail_notice] = "The marks have been released. You cannot
+       change the grades"
+    end
     @assignment = @result.submission.assignment
     @rubric_criteria = @assignment.rubric_criteria
     @submission = @result.submission

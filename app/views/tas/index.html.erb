@@ -75,7 +75,8 @@
       
       <p>If a TA with the same user_name exists, then that TA's information is updated.</p>
       
-      <%= form_tag "/checkmark/tas/upload_ta_list", :multipart => true %>
+      <%= form_tag({ :controller => 'tas', :actions => "upload_ta_list"},
+{:multipart => true}) %>
         <label for="userlist">CVS File</label>
         <input type="file" name="userlist" id="userlist"/>
         <%= submit_tag "Update userlist", :disable_with => 'Processing...', :class => 'button' %>

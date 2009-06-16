@@ -62,7 +62,7 @@
         <% unless flash[:upload][:fail].empty? -%>
           <div class="fail-no-img">
           <% for f in flash[:upload][:fail] -%>
-            <%= image_tag '/images/icon_error.png', :size => "13x13" %> 
+            <%= image_tag 'icon_error.png', :size => "13x13" %> 
             <b><%=h f %></b> has <b>not</b> been submitted<br />
           <% end -%>
           </div><br />
