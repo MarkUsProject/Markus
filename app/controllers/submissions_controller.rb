@@ -170,6 +170,9 @@ class SubmissionsController < ApplicationController
           flash[:release_errors].push("Can not release result for grouping #{grouping.id}: the marking state is not complete")
           next
         end
+	if flash[:release_errors].size == 0
+         flash[:release_errors] = nil
+	end
         result.released_to_students = true
         result.save        
       end
