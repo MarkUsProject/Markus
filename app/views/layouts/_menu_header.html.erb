@@ -17,6 +17,12 @@ id="active" <% end %> ><%= link_to 'Properties', :controller =>
        <li <% if controller.controller_name == 'rubrics' %>
 id="active" <% end %> ><%= link_to " Rubrics ", :controller => 'rubrics',
 :action => "index", :id => @assignment.id %></li>
+       <li <% if controller.controller_name == 'results' or
+controller.controller_name == 'submissions' %>
+id="active" <% end %> ><%= link_to "Submissions", :controller =>
+'submissions',
+:action => "browse", :id => @assignment.id %></li>
+
 
   </div>
 <% end -%>
