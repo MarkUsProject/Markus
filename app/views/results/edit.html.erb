@@ -45,11 +45,8 @@
 
 <% #TEMPORARY JS TO DISABLE CHANGING MARKS WHEN RELEASED TO STUDENT %>
    <% if @result.released_to_students == true %>
-<script>
-document.observe("dom:loaded", function(){
-    $('criterion_title_div').disable();
- };
    <% end -%>
+
 <%= render :partial => "results/common/annotations.js" %>
 <%= render :partial => "results/common/boot.js", :locals => {:first_file => @first_file} %>
 

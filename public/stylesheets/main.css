@@ -432,3 +432,7 @@ legend {
 #control_overlay {
     background: black;
 }
+
+.disable{
+    color: #929292;
+}

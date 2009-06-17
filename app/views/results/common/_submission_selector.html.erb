@@ -1,7 +1,13 @@
 <div id="student_selector">
-  <span class="left"><a href="">&laquo; Previous Submission</a></span>
+<span class="left">
+  <% if !@previous.nil?%>
+    <%= link_to "Previous Submission", :action => 'next', :id => @previous.id %>
+  <% else %>
+     <span class="disable"> Previous Submission </span>
+  <% end %>
+</span>
   <span class="middle">
-    <%=group.group_name%> 
+    <%=h group.group_name%> 
     
     (Marking Status: 
      <%=  select_tag "marking_state", options_for_select(["unmarked", "partial", "complete"],[result.marking_state]) %>
@@ -12,6 +18,13 @@
     <span id="current_mark_div"><%= result.total_mark %></span> / 
     <span id="total_mark_div"><%= assignment.total_mark %></span>)
   </span> 
-  <span class="right"><a href="">Next Submission &raquo;</a></span>
+  <span class="right">
+
+<% if !@next.nil? %>
+   <%= link_to "Next Submission", :action => 'next', :id => @next.id%>
+<% else %>
+   <span class="disable">Next Submission</span>
+<% end %>
+</span>
   <div class="clear"></div>
 </div>

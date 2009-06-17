@@ -2,8 +2,11 @@
 require File.join(File.dirname(__FILE__),'/../../lib/repo/repository_factory')
 
 class ResultsController < ApplicationController
-  before_filter      :authorize_only_for_admin, :except => [:codeviewer, :edit, :update_mark, :view_marks, :create, :add_extra_mark, :download]
-  before_filter      :authorize_for_ta_and_admin, :only => [:edit, :update_mark, :create, :add_extra_mark, :download]
+  before_filter      :authorize_only_for_admin, :except => [:codeviewer,
+  :edit, :update_mark, :view_marks, :create, :add_extra_mark, :download,
+  :next]
+  before_filter      :authorize_for_ta_and_admin, :only => [:edit,
+  :update_mark, :create, :add_extra_mark, :download, :next]
   before_filter      :authorize_for_user, :only => [:codeviewer]
   before_filter      :authorize_for_student, :only => [:view_marks]
 
@@ -40,7 +43,7 @@ class ResultsController < ApplicationController
     @result = Result.find(result_id)
     if @result.released_to_students == true
        flash[:fail_notice] = "The marks have been released. You cannot
-       change the grades"
+       change the grades."
     end
     @assignment = @result.submission.assignment
     @rubric_criteria = @assignment.rubric_criteria
@@ -57,9 +60,57 @@ class ResultsController < ApplicationController
       mark.save(false)
       @marks_map[criterion.id] = mark
     end
-    
+
+    # Get the previous and the next submission
+    if current_user.ta?
+       groupings = []
+       @assignment.ta_memberships.find_all_by_user_id(current_user.id).each do |membership|
+         groupings.push(membership.grouping)
+       end
+    end
+
+    if current_user.admin?
+      groupings = @assignment.groupings
+    end
+
+    submissions = []
+    groupings.each do |g|
+      submission = g.get_submission_used
+      if !submission.nil?
+        submissions.push(submission)
+      end
+    end
+
+    i = 0
+    while i <= submissions.size do
+        if submissions[i].id == @submission.id
+          if i == 0
+            @next = submissions[i + 1]
+            i = submissions.size + 1
+          elsif i == submissions.size
+            @previous = submissions[submissions.size - 1]
+            i = submissions.size + 1
+          else
+            @previous = submissions[i - 1]
+            @next = submissions[i + 1]
+            i = submissions.size + 1
+          end
+        else 
+         i = i + 1
+        end
+    end
   end
-  
+
+  def next
+    submission = Submission.find(params[:id])
+    if submission.result.nil?
+      redirect_to :action => 'create', :id => submission.id
+    else
+       redirect_to :action => 'edit', :id => submission.result.id
+    end
+  end
+
+
   def download
     file = SubmissionFile.find(params[:select_file_id])
     begin
