@@ -1,5 +1,5 @@
 
-<% @title = "Edit Assignment: " + @assignment.name -%>
+<% @title = "Edit Assignment: " + sanitize(@assignment.name) -%>
 <% @submit_text = "Update Assignment" -%>
 
 <%= render "assignments/modify", { :action => 'update' } -%>

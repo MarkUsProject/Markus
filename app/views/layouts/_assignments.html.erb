@@ -13,10 +13,10 @@
     
     <% for assignment in @assignments %>
       <li>
-        <%= link_to assignment.name, 
+        <%= link_to h(sanitize(assignment.name)), 
             :controller => controller, 
             :action => action, 
-            :id => assignment  %>:  <%= assignment.description %>
+            :id => assignment  %>:  <%= h(assignment.description) %>
       </li>
     <% end %>
     

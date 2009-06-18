@@ -1,5 +1,5 @@
 <% if @assignment.group_name_displayed == true%>
-    <h3> <%= grouping.group.group_name%></h3>
+    <h3> <%= h(grouping.group.group_name) %></h3>
 <% end %>
 <%# If the student is the inviter %>
 <% if grouping.inviter.id == @student.id and !grouping.is_valid? %>

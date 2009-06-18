@@ -19,8 +19,8 @@
       <option>Assigned groups</option>
       <option>Unassigned groups</option>
       <% @tas.each do |ta| %>
-        <option value="<%= ta.id %>">
-          Groups assigned to <%= ta.user_name %>
+        <option value="<%= h(ta.id) %>">
+          Groups assigned to <%= h(ta.user_name) %>
         </option>
       <% end %>
     </select></p>
@@ -39,7 +39,7 @@
 
     </div>
     
-    <h2>Students without a Grouping for <%=@assignment.name%></h2>
+    <h2>Students without a Grouping for <%= h(sanitize(@assignment.name)) %></h2>
 
     <div class="section">
       <ul id="student_list">
@@ -47,7 +47,7 @@
           # See ta_assignment/_group; students that are in groups are deleted from the groups array
         %>
         <% @students.each do |user_id, s| -%>
-          <li id="user_<%= s.user_name %>"><%= s.user_name %></li>
+          <li id="user_<%= h(s.user_name) %>"><%= h(s.user_name) %></li>
         <% end -%>
       </ul>
     </div>
@@ -66,7 +66,7 @@
         %>
         <% @tas.each do |t| -%>
           <li id="ta_<%= t.id %>" class="<%= cycle('rowA', 'rowB') %>" onclick="toggle_ta(<%=t.id%>); if (this_ta_selected(<%=t.id%>)) {<%= remote_function :url => { :action => 'focus_ta', :id => @assignment.id, :ta_id => t.id }%>} else { clear_show_ta_assignment();}">
-            <%= t.user_name %> (<span id="ta_<%=t.id%>_membership_count"><%= t.memberships_for_assignment(@assignment.id).length %></span>)
+            <%= h(t.user_name) %> (<span id="ta_<%=h(t.id)%>_membership_count"><%= t.memberships_for_assignment(@assignment.id).length %></span>)
           </li>
         <% end -%>
       </ul>

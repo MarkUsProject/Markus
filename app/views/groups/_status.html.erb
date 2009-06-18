@@ -13,9 +13,9 @@
     <table>
       <% @group.memberships.each do |mbr| -%>
         <% next if mbr.membership_status == StudentMembership::STATUSES[:rejected] && @group.inviter != @current_user %>
-        <tr id="<%= 'mbr_' + mbr.id.to_s %>">
-          <td><%= mbr.user.user_name %></td>
-          <td><span class="<%= 'status ' + mbr.membership_status %>"><%= mbr.status %></span></td>
+        <tr id="<%= h('mbr_' + mbr.id.to_s) %>">
+          <td><%= h(mbr.user.user_name) %></td>
+          <td><span class="<%= h('status ' + mbr.membership_status) %>"><%= h(mbr.status) %></span></td>
           <% if mbr.status == StudentMembership::STATUSES[:rejected] -%>
             <td><%= link_to_remote "x", :method => "delete", :url => { 
               :controller => 'groups', :action => 'remove_rejected', 

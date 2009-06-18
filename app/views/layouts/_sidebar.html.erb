@@ -9,7 +9,7 @@
         <%= link_to 'Manage Assignments', :controller => 'assignments' %>
         <ul>
           <% for @assignment in Assignment.all(:order => :id) %>
-              <li><%= link_to @assignment.name, :controller => "assignments", :action => "edit", :id => @assignment.id %></li>
+              <li><%= link_to h(sanitize(@assignment.name)), :controller => "assignments", :action => "edit", :id => @assignment.id %></li>
           <% end -%>
         </ul>
       </li> 
@@ -18,7 +18,7 @@
         <%= link_to 'View Submissions', :controller => 'submissions' %>
         <ul>
           <% for @assignment in Assignment.all(:order => :id) %>
-              <li><%= link_to @assignment.name, :controller => "submissions", :action => "browse", :id => @assignment.id %></li>
+              <li><%= link_to h(sanitize(@assignment.name)), :controller => "submissions", :action => "browse", :id => @assignment.id %></li>
           <% end -%>
         </ul>
       </li> 
@@ -36,7 +36,7 @@
     <li><%= link_to 'View Submissions', :controller => 'submissions' %>
         <ul>
           <% for @assignment in Assignment.all(:order => :id) %>
-              <li><%= link_to @assignment.name, :controller => "submissions", :action => "browse", :id => @assignment.id %></li>
+              <li><%= link_to h(sanitize(@assignment.name)), :controller => "submissions", :action => "browse", :id => @assignment.id %></li>
           <% end -%>
         </ul>
     </li>
@@ -50,7 +50,7 @@
     <li><b>Submit an assignment</b>
         <ul>
           <% for @assignment in Assignment.all(:order => :id) %>
-              <li><%= link_to @assignment.name, :controller =>
+              <li><%= link_to h(sanitize(@assignment.name)), :controller =>
 "assignments", :action => "student_interface", :id => @assignment.id %></li>
           <% end -%>
         </ul>

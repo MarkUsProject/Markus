@@ -5,7 +5,7 @@
 <tr id="<%= "extra_mark_#{mark.id}" %>"  onclick="<%="focus_extra_mark(#{mark.id})"%>">
   <td>
     <div  id="<%="extra_mark_title_#{mark.id}_description"%>">
-        <%=mark.description%>
+        <%=h(mark.description)%>
     </div>
     <div id="<%="extra_mark_inputs_#{mark.id}_description"%>" style="display:none;">
       <%=  text_field_tag "extra_mark_#{mark.id}_description", mark.description %>

@@ -7,5 +7,5 @@
     :url => { :action => 'remove_member', :id => params[:id], :grouping_id => grouping.id, :mbr_id => member.id }, 
     :html => { :title => 'Remove this member from this group' } %>
   <%= member.user.user_name %>
-  <span class="<%= 'status ' + member.membership_status %>"><%= member.membership_status %></span>
+  <span class="<%= h('status ' + member.membership_status) %>"><%= h(member.membership_status) %></span>
 </li>

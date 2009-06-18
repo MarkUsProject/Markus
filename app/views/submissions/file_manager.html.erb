@@ -1,18 +1,18 @@
 <%=javascript_include_tag "file_manager"%>
 
   <% if flash[:submit_notice] -%>   
-     <p style="color:green"><%=h flash[:submit_notice] %> </p>
+     <p style="color:green"><%= h(flash[:submit_notice]) %> </p>
   <% end %>
 
-<h1><%=@assignment.name%>: File Manager</h1>
-<h2>Revision #:  <%=@revision.revision_number%></h2>
+<h1><%= h(sanitize(@assignment.name)) %>: File Manager</h1>
+<h2>Revision #:  <%= h(@revision.revision_number)%></h2>
 
 <div id="directory_selector" <%='style="display:none;"' unless @directories.count > 0 %>>
 <%=form_tag({:action => 'file_manager'}, :method => :get) %>
 <select id="path" name="path" onchange="$(this).form.submit();">
     <option>/</option>
 <% @directories.each do |directory_name, directory| %>
-    <option><%= directory_name %></option>
+    <option><%= h(directory_name) %></option>
 <% end %>
 </select>
 </form>
@@ -34,7 +34,7 @@
     <p>Your changes have not been made.  The following file conflicts were detected:</p>
     <ul>
     <% flash[:update_conflicts].each do |conflict| %>
-      <li><%=conflict.to_s%></li>
+      <li><%= h(conflict.to_s) %></li>
     <% end %>
     </ul>
   </div>
@@ -50,7 +50,7 @@
   <ul id="missing_assignment_files_list" <%='style="display:none;"' if @missing_assignment_files.size > 5%>
   <% @missing_assignment_files.each do |assignment_file| %>
   
-    <li><%=assignment_file.filename%></li>
+    <li><%= h(assignment_file.filename) %></li>
   <% end %>
   </ul>
   <p>
@@ -72,13 +72,13 @@
     <% @files.sort.each do |file_name, file| %>
     <tr>
       <td>
-        <%=link_to file_name, :action => 'download', :id => @assignment.id, :revision_number => @revision.revision_number, :file_name => file_name%>
+        <%=link_to h(sanitize(file_name)), :action => 'download', :id => @assignment.id, :revision_number => @revision.revision_number, :file_name => file_name%>
       </td>
       <td>
-        <%=file.last_modified_revision%>
+        <%=h(file.last_modified_revision)%>
       </td>
       <td>
-        <%=file.user_id%>
+        <%=h(file.user_id)%>
       </td>
       <td>
       	<input type="hidden" id="file_revisions[<%=h file_name %>]" name="file_revisions[<%=h file_name %>]" value="<%=file.last_modified_revision%>"/>
@@ -86,9 +86,9 @@
       </td>
       <td>
         <input name="delete_files[<%=h file_name %>]" type="checkbox" <%="disabled" if !@grouping.is_valid?%> onclick="if ($(this).getValue()) {
-          $('replace_files[<%=h file_name %>]').disable();
+          $('replace_files[<%= h(file_name) %>]').disable();
         } else {
-          $('replace_files[<%=h file_name %>]').enable();
+          $('replace_files[<%= h(file_name) %>]').enable();
         }
         "/>
       </td>

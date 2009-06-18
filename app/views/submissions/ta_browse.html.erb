@@ -1,4 +1,4 @@
-<h1>Workspace: <%= @assignment.name %></h1>
+<h1>Workspace: <%= h(sanitize(@assignment.name)) %></h1>
 
 <h2>Students you can mark:</h2>
 
@@ -15,7 +15,7 @@
     <td>
       <% for student_membership in grouping.student_memberships %>
         <% some_user = student_membership.user %>
-        <%=some_user.user_name%>(<%=some_user.last_name%>, <%=some_user.first_name%>)<br />
+        <%= h(some_user.user_name) %>(<%= h(some_user.last_name) %>, <%= h(some_user.first_name) %>)<br />
       <% end %>
     </td>
     <td>
@@ -36,7 +36,7 @@
            <% if submission.result.released_to_students %>
              Released
            <% else %>
-           <%= link_to submission.result.marking_state, :controller =>   'results', :action=> 'edit', :id => submission.result.id %>
+           <%= link_to h(sanitize(submission.result.marking_state)), :controller =>   'results', :action=> 'edit', :id => submission.result.id %>
            <% end %>
          <% end %>
        <% end %>

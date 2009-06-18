@@ -185,25 +185,25 @@ document.observe("dom:loaded", function(){
   }
 </script>
 
-<h1>Manage Groups for <%= @assignment.name %></h1>
+<h1>Manage Groups for <%= h(sanitize(@assignment.name)) %></h1>
    <%= button_to_function "Use another assignment's groups", 'assignment_group_use(); return
     false;' %> 
 <div class="colsLeftHeavy">
 
   <div class="colLeft"><div class="wrapLeft">
   
-    <h2>Groups for <%= @assignment.name %></h2>
+    <h2>Groups for <%= h(sanitize(@assignment.name)) %></h2>
 
       <% if flash[:upload_notice] -%>
-          <p class="success"><%=h flash[:upload_notice] %></p>
+          <p class="success"><%= h(flash[:upload_notice]) %></p>
       <% end -%>
       
       <% if flash[:edit_notice] -%>
-        <p style="color:green"><%=h flash[:edit_notice] %></p>
+        <p style="color:green"><%= h(flash[:edit_notice]) %></p>
       <% end -%>
 
       <% if flash[:fail_notice] -%>
-        <p style="color:red"><%=h flash[:fail_notice] %></p>
+        <p style="color:red"><%= h(flash[:fail_notice]) %></p>
       <% end -%>
   
     
@@ -222,7 +222,7 @@ document.observe("dom:loaded", function(){
       <select id="clone_groups_assignment_id" name="clone_groups_assignment_id">
         <% @all_assignments.each do |an_assignment| %>
           <% if an_assignment != @assignment %>
-          <option value="<%=an_assignment.id%>"><%=an_assignment.name%></option>
+          <option value="<%=h(an_assignment.id)%>"><%=h(an_assignment.name)%></option>
           <% end %>
         <% end %>
       </select>
@@ -300,7 +300,7 @@ document.observe("dom:loaded", function(){
       
         <ul id="student_list">
           <% @students.each do |user_id, s| -%>
-            <li id="user_<%= s.user_name %>"><%= s.user_name %></li>
+            <li id="user_<%= h(s.user_name) %>"><%= h(s.user_name) %></li>
           <% end -%>
         </ul>
       </div>

@@ -12,8 +12,8 @@
      <% # <option value="">[Select a file]</option> %>
     <% end %>
     <% files.each do |file| %>
-        <option value="<%= file.id %>">
-          <%= File.join(file.path, file.filename) %>
+        <option value="<%= h(file.id) %>">
+          <%= h(File.join(file.path, file.filename)) %>
         </option>
     <% end %>
   </select>  

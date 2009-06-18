@@ -34,7 +34,7 @@
 
 <h1>Submit an Assignment</h1>
 
-<p><%= Time.now.strftime("Last refresh time is %A, %B %d, %Y %I:%M%p") %></p>
+<p><%= h(Time.now.strftime("Last refresh time is %A, %B %d, %Y %I:%M%p")) %></p>
 
 <div class="colsLeftHeavy">
 
@@ -43,12 +43,12 @@
     <div id="main_submit" <%= 'class="group_submit"' if @assignment.group_assignment? -%>>
     
       <h3>
-          Upload Files for <%= h(@assignment.name) %> (due 
-          <%= @assignment.due_date.strftime("%A, %B %d, %Y at %I:%M%p") %>)
+          Upload Files for <%= h(sanitize(@assignment.name)) %> (due 
+          <%= h(@assignment.due_date.strftime("%A, %B %d, %Y at %I:%M%p")) %>)
       </h3>
 
       <% if flash[:submit_notice]%>   
-         <p style="color:green"><%=h flash[submit_notice]%> </p>
+         <p style="color:green"><%= flash[submit_notice]%> </p>
       <% end %>
 
  
@@ -72,8 +72,8 @@
         <% unless flash[:upload][:success].empty? -%>
           <div class="success-no-img">
           <% for f in flash[:upload][:success] -%>
-            <%= image_tag '/images/icon_success.png', :size => "13x13" %> 
-            <b><%=h f %></b> has been submitted<br />
+            <%= image_tag 'images/icon_success.png', :size => "13x13" %> 
+            <b><%= h(f) %></b> has been submitted<br />
           <% end -%>
           </div>
         <% end -%>
@@ -120,7 +120,7 @@
                     
             <% for sub in @files do -%>
                <tr id="<%= 'filename_' + sub.filename %>">
-                 <td class="icon"><%= image_tag '/images/icon_file.png' %></td>
+                 <td class="icon"><%= image_tag 'images/icon_file.png' %></td>
                           
                  <% if sub.status == 'unsubmitted' -%>
                  <td class="unsubmitted"><%= sub.filename %></td>
@@ -130,11 +130,11 @@
                             
                  <% else -%>
                  <td>
-                   <%= link_to sub.filename, :action => 'view', 
+                   <%= link_to h(sanitize(sub.filename)), :action => 'view', 
                      :id => @assignment.id, :filename => sub.filename %>
                  </td>
-                 <td><%=h time_ago_in_words(sub.submitted_at) %> ago</td>
-                 <td><%=h sub.user.user_name %></td>
+                 <td><%= h(time_ago_in_words(sub.submitted_at)) %> ago</td>
+                 <td><%= h(sub.user.user_name) %></td>
                  <td align="center">
                    <%= link_to_remote "x", :method => "delete", 
                      :url => { :action => 'remove_file', :id => @assignment.id, :filename => sub.filename}, 

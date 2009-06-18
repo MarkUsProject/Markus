@@ -7,9 +7,9 @@
   
   <div class="criterion_title_div" id="<%= "criterion_title_#{criterion.id}"%>" onclick="<%="focus_criterion(#{criterion.id})"%>">
   
-    <div id="<%="criterion_title_#{criterion.id}_name"%>" style="float:left;">+ <%=criterion.rubric_criterion_name%></div>
+    <div id="<%="criterion_title_#{criterion.id}_name"%>" style="float:left;">+ <%= h(criterion.rubric_criterion_name) %></div>
     
-    <div id="<%="criterion_title_#{criterion.id}_weight"%>"style="float:right;"><%=criterion.weight%></div>
+    <div id="<%="criterion_title_#{criterion.id}_weight"%>"style="float:right;"><%= h(criterion.weight) %></div>
     
     <div class="clear"></div>
     

@@ -8,7 +8,7 @@
 <p style="align:center;font-weight:bold;color:red">You have not yet formed a group</p>
 
 <p id="message">
-  Please enter <%= ("at least " + (@assignment.group_min-1).to_s) if @assignment.group_min > 1 %> 
+  Please enter <%= h( ("at least " + (@assignment.group_min-1).to_s) ) if @assignment.group_min > 1 %> 
   other CDF username(s) you want to form a group 
   with<%= ", or confirm that you want to work alone" if @assignment.group_min == 1 %>.
 </p>

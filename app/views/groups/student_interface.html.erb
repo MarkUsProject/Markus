@@ -38,21 +38,21 @@ document.observe("dom:loaded", function(){
 </script>
 
 
-<h1>Your Group for <%= @assignment.name %></h1>
+<h1>Your Group for <%= h(sanitize(@assignment.name)) %></h1>
 <div class="colsLeftHeavy">
 
   <div class="colLeft"><div class="wrapLeft">
 
       <% if flash[:upload_notice] -%>
-          <p class="success"><%=h flash[:upload_notice] %></p>
+          <p class="success"><%= h(flash[:upload_notice]) %></p>
       <% end -%>
       
       <% if flash[:edit_notice] -%>
-        <p style="color:green"><%=h flash[:edit_notice] %></p>
+        <p style="color:green"><%= h(flash[:edit_notice]) %></p>
       <% end -%>
 
       <% if flash[:fail_notice] -%>
-        <p style="color:red"><%=h flash[:fail_notice] %></p>
+        <p style="color:red"><%= h(flash[:fail_notice]) %></p>
       <% end -%>
 <div class="fieldset"> 
 
@@ -69,7 +69,7 @@ document.observe("dom:loaded", function(){
 
        <% if @student.has_pending_groupings_for?(@assignment.id) %>
           <% @pending_groupings.each do |grouping|%>
-             <p><%= grouping.inviter.last_name%> <%= grouping.inviter.first_name%> invites you to be part of his group.</p>
+             <p><%= h(grouping.inviter.last_name)%> <%= h(grouping.inviter.first_name) %> invites you to be part of his group.</p>
 	     <div class="group_invitation">
               <%= render :partial => 'groups/student_manage/group', :locals =>
        {:grouping => grouping, :group => grouping.group, :assignment =>
@@ -101,7 +101,7 @@ document.observe("dom:loaded", function(){
         <fieldset>
 	  <select id="invite_member" name="invite_member">
 	      <% @students_list.each do |s|%>
-	        <option value="<%=s.id%>"><%=s.last_name%> <%= s.first_name%></option>
+	        <option value="<%=h(s.id)%>"><%=h(s.last_name)%> <%= h(s.first_name) %></option>
 	       <% end %>
 	  </select>
 	</fieldset>
@@ -131,8 +131,7 @@ document.observe("dom:loaded", function(){
       
         <ul id="student_list">
           <% @students.each do |s| -%>
-            <li id="user_<%= s.user_name %>"><%= s.last_name %> <%=
-s.first_name%></li>
+            <li id="user_<%= h(s.user_name) %>"><%= h(s.last_name) %> <%= h(s.first_name) %></li>
           <% end -%>
         </ul>
       </div>

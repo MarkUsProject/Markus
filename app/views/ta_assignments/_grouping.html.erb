@@ -8,7 +8,7 @@ groupings_list_assigned_light
 <span class="group_name"><%=grouping.group.group_name%></span>:
 <ul>
   <% grouping.student_memberships.all(:include => :user).each do |member| %>
-    <li><%= member.user.user_name %></li>
+    <li><%= h(member.user.user_name) %></li>
     <% # Delete all the students in a group so that we can identify who isn't in a group
       @students.delete(member.user.id)  
     %>
@@ -20,7 +20,7 @@ groupings_list_assigned_light
 <div class="grouping_tas_list">
   <p>
     TAs:
-  <span id="grouping_<%=grouping.id%>_assigned_tas"><%= grouping.get_ta_names.join(', ') %></span>
+  <span id="grouping_<%=grouping.id%>_assigned_tas"><%= h(grouping.get_ta_names.join(', ')) %></span>
   </p>
   <div class="clear"></div>
 </div>

@@ -244,13 +244,13 @@ document.observe("dom:loaded", function() {
 });
 </script>
 
-<h1>Grading Assignment: <%= link_to @assignment.name, :controller => 'annotations', :action => 'students', :id => @assignment.id %> 
+<h1>Grading Assignment: <%= link_to h(sanitize(@assignment.name)), :controller => 'annotations', :action => 'students', :id => @assignment.id %> 
 </h1>
 
 <div id="student_selector">
   <span class="left"><a href="">&laquo; Previous Submission</a></span>
   <span class="middle">
-    <%=@user.user_name%> 
+    <%=h(@user.user_name)%> 
     
     (Marking Status: 
      <%=  select_tag "marking_state", options_for_select(["unmarked", "partial", "complete"],[@result.marking_state]) %>
@@ -258,8 +258,8 @@ document.observe("dom:loaded", function() {
      <%=observe_field :marking_state, :url => {:controller => 'annotations', :action => 'update_marking_state', :id => @result.id}, :on => 'changed', :with => "value"%>
      
     <em>Total Mark:</em>
-    <span id="current_mark_div"><%= @result.total_mark %></span> / 
-    <span id="total_mark_div"><%= @assignment.total_mark %></span>)
+    <span id="current_mark_div"><%= h(@result.total_mark) %></span> / 
+    <span id="total_mark_div"><%= h(@assignment.total_mark) %></span>)
   </span> 
   <span class="right"><a href="">Next Submission &raquo;</a></span>
   <div class="clear"></div>
@@ -274,7 +274,7 @@ document.observe("dom:loaded", function() {
   <select id="select_file_id" name="select_file_id" onChange="load_submitted_file($(this).value)">
     <% @files.each do |file| %>
         <option value="<%= file.id %>">
-          <%= file.filename %>
+          <%= h(file.filename) %>
         </option>
     <% end %>
   </select>
@@ -381,8 +381,8 @@ document.observe("dom:loaded", function() {
       
     <div class="mark_subtotal">
       <div style="float:left;">Subtotal&nbsp;</div>
-      <div style="float:right;"> /<%= @assignment.total_mark %>  </div>
-      <div style="float:right;" id="current_subtotal_div"> <%= @result.get_subtotal %> </div>
+      <div style="float:right;"> /<%= h(@assignment.total_mark) %>  </div>
+      <div style="float:right;" id="current_subtotal_div"> <%= h(@result.get_subtotal) %> </div>
     </div>
 
     <div class="clear"></div><br/>
@@ -418,8 +418,8 @@ document.observe("dom:loaded", function() {
 
     <div class="mark_total">
       <div style="float:left;">Final Mark&nbsp;</div>
-      <div style="float:right;"> /<%= @assignment.total_mark %>  </div>
-      <div style="float:right;" id="current_total_mark_div"> <%= @result.total_mark %> </div>
+      <div style="float:right;"> /<%= h(@assignment.total_mark) %>  </div>
+      <div style="float:right;" id="current_total_mark_div"> <%= h(@result.total_mark) %> </div>
     </div>
   </div>
   
@@ -438,7 +438,7 @@ document.observe("dom:loaded", function() {
       <select id="new_annotation_category">
         <option value="">Uncategorized</option>
         <% @annotation_categories.each do |annotation_category| %>
-        <option value="<%=annotation_category.id%>"><%=annotation_category.name%></option>
+        <option value="<%=annotation_category.id%>"><%= h(annotation_category.name)%></option>
         <% end %>
       </select>
       </p>

@@ -3,21 +3,21 @@
 
   <h2 class="legend">Assignment Properties</h2>
     <span class="label">Name :</span>
-    <%= @assignment.name %><br />
+    <%= h(@assignment.name) %><br />
 
     <span class="label">Description :</span>
-    <%= @assignment.description %><br />
+    <%= h(@assignment.description) %><br />
     
     <span class="label">Message :</span>
-    <%= @assignment.message %><br />
+    <%= h(@assignment.message) %><br />
     
     <span class="label">Due date :</span>
-    <%= @assignment.due_date %>
+    <%= h(@assignment.due_date) %>
 
   <h4>Files required for this assignment</h4>
   <ul>
   <% @assignment.assignment_files.each do |assignment_file| %>
-    <li><%=assignment_file.filename%></li>
+    <li><%= h(assignment_file.filename) %></li>
   <% end %>
   </ul>
 </div>
@@ -27,8 +27,8 @@
    <div id="group_properties"> 
   <p>
     Group Limit (must be 1 or more):
-    from <%= @assignment.group_min %>
-    to <%= @assignment.group_max%>
+    from <%= h(@assignment.group_min) %>
+    to <%= h(@assignment.group_max) %>
     people in a group.
   </p>
 </div>

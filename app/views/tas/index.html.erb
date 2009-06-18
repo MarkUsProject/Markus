@@ -25,7 +25,7 @@
         <p>The following TAs have not been successfully added:</p>
         <ul>
           <% for line in flash[:invalid_lines] -%>
-          <li><%=h line %></li>
+          <li><%= h(line) %></li>
           <% end -%>
         </ul>
         <p>Make sure that:</p>
@@ -51,9 +51,9 @@
           
         <% for u in @tas %>
           <tr class="<%= cycle('rowA', 'rowB') %>">
-            <td><%=h u.user_name %></td>
-            <td><%=h u.last_name %></td>
-            <td><%=h u.first_name %></td>
+            <td><%= h(u.user_name) %></td>
+            <td><%= h(u.last_name) %></td>
+            <td><%= h(u.first_name) %></td>
             <td><%= link_to 'Edit', :controller => 'tas', :action => 'edit', :id => u %></td>
           </tr>
         <% end %>

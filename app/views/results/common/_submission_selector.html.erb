@@ -7,7 +7,7 @@
   <% end %>
 </span>
   <span class="middle">
-    <%=h group.group_name%> 
+    <%= h(group.group_name)%> 
     
     (Marking Status: 
 <% if !@result.released_to_students %>
@@ -18,8 +18,8 @@
 Result released to students
 <% end %>
     <em>Total Mark:</em>
-    <span id="current_mark_div"><%=h result.total_mark %></span> / 
-    <span id="total_mark_div"><%=h assignment.total_mark %></span>)
+    <span id="current_mark_div"><%= h(result.total_mark) %></span> / 
+    <span id="total_mark_div"><%= h(assignment.total_mark) %></span>)
   </span> 
   <span class="right">
 

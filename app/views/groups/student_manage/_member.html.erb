@@ -7,18 +7,15 @@
 <%# If this member is an inviter%>
 <% if member.membership_status == StudentMembership::STATUSES[:inviter] %>
 <li id="member_inviter">
-   <span class="last_name"><%= member.user.last_name %> </span> <%=
-member.user.first_name%></li>
+   <span class="last_name"><%= h(member.user.last_name) %> </span> <%= h(member.user.first_name) %></li>
 <%# If this member is an accepted member %>
 <% elsif member.membership_status == StudentMembership::STATUSES[:accepted] %>
 <li>
-   <span class="last_name"><%= member.user.last_name %> </span> <%=
-member.user.first_name%></li>
+   <span class="last_name"><%= h(member.user.last_name) %> </span> <%= h(member.user.first_name) %></li>
 <%# If this member is pending%>
 <% elsif member.membership_status == StudentMembership::STATUSES[:pending] %>
 <li class="membership_status_pending">
-   <span class="last_name"><%= member.user.last_name %> </span> <%=
-member.user.first_name%> (invited)
+   <span class="last_name"><%= h(member.user.last_name) %> </span> <%= h(member.user.first_name)%> (invited)
    <% if grouping.inviter.id == @student.id  %>
      <%= link_to_remote "<b>Disinvite</b>" , 
      :url => {:action => 'disinvite_member', :id => @assignment.id,
@@ -33,8 +30,7 @@ member.user.first_name%> (invited)
 <%# If this member rejected %>
 <% elsif member.membership_status == StudentMembership::STATUSES[:rejected] %>
     <% if grouping.inviter.id == @student.id %>
-      <li><span class="last_name"><%= member.user.last_name %> </span> <%=
-member.user.first_name%> 
+      <li><span class="last_name"><%= h(member.user.last_name) %> </span> <%= h(member.user.first_name) %> 
          <span class="membership_status_rejected"> has decline the
           invitation</span>
 	   <%= link_to_remote "<b>x</b>", :method => :delete,

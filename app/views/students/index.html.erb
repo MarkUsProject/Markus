@@ -14,11 +14,11 @@
     <h2>View Student List (<%= link_to "XML", :action => 'download_student_list', :format => 'xml' %>)</h2>
     
       <% if flash[:upload_notice] -%>
-          <p class="success"><%=h flash[:upload_notice] %></p>
+          <p class="success"><%= h(flash[:upload_notice]) %></p>
       <% end -%>
       
       <% if flash[:edit_notice] -%>
-        <p style="color:green"><%=h flash[:edit_notice] %></p>
+        <p style="color:green"><%= h(flash[:edit_notice]) %></p>
       <% end -%>
       
       <% # display lines in csv file that has not been successfully processed %>
@@ -27,7 +27,7 @@
         <p>The following Students have not been successfully added:</p>
         <ul>
           <% for line in flash[:invalid_lines] -%>
-          <li><%=h line %></li>
+          <li><%= h(line) %></li>
           <% end -%>
         </ul>
         <p>Make sure that:</p>
@@ -53,9 +53,9 @@
           
         <% for u in @students %>
           <tr class="<%= cycle('rowA', 'rowB') %>">
-            <td><%=h u.user_name %></td>
-            <td><%=h u.last_name %></td>
-            <td><%=h u.first_name %></td>
+            <td><%= h(u.user_name) %></td>
+            <td><%= h(u.last_name) %></td>
+            <td><%= h(u.first_name) %></td>
             <td><%= link_to 'Edit', :controller => 'students', :action => 'edit', :id => u %></td>
           </tr>
         <% end %>

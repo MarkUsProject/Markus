@@ -82,7 +82,7 @@
       <select id="new_annotation_category">
         <option value="">Uncategorized</option>
         <% @annotation_categories.each do |annotation_category| %>
-        <option value="<%=annotation_category.id%>"><%=annotation_category.annotation_category_name%></option>
+        <option value="<%=h(annotation_category.id)%>"><%=h(annotation_category.annotation_category_name)%></option>
         <% end %>
       </select>
       </p>

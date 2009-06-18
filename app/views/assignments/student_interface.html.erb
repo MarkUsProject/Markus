@@ -1,4 +1,4 @@
-<h1> Assignment <%= @assignment.name%></h1>
+<h1> Assignment <%= h(sanitize(@assignment.name)) %></h1>
 
 <div class="colsLeftHeavy">
  <div class="colLeft">
@@ -29,7 +29,7 @@
 	   <% if @student.has_pending_groupings_for?(@assignment.id)%>
 	     <% @pending_grouping.each do |grouping|%>
 	       <p>You have been invited by <span class="last_name"><%=
-	     grouping.inviter.last_name %></span> <%= grouping.inviter.first_name%></p>  
+	     grouping.inviter.last_name %></span> <%= h(grouping.inviter.first_name) %></p>  
 	     <% end %>
 	     <%= link_to "See details", :controller => 'groups', :action => 'student_interface', :id => @assignment.id %>
 	   <% end %>
@@ -48,7 +48,7 @@
 
 	   <% # We check to see if the groupname is displayed%>
 	   <% if @assignment.group_name_displayed == true%>
-	     <h3> <%= @group.group_name%></h3>
+	     <h3> <%= h(@group.group_name) %></h3>
 	   <% end %>
 
 	   <% # If the group not yet the right amount of members, display

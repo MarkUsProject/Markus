@@ -3,7 +3,7 @@
   <% @annotation_categories.each do |annotation_category| %>
   <li class="annotation_category" id="annotation_category_<%=annotation_category.id%>" onClick="return false;" onMouseDown="return false;">
 
-  <%=annotation_category.annotation_category_name %>
+  <%=h(annotation_category.annotation_category_name) %>
 
   <div id="annotation_text_list_<%=annotation_category.id%>" style="display:none;" onClick="return false;" onMouseDown="return false;">
 

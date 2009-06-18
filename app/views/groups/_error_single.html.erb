@@ -2,7 +2,7 @@
 <% objekt.errors.full_messages.each do |m| %>
   <p class="fail-no-img" style="width:250px;margin-left:0.5em">
     <%= image_tag 'icon_error.png', :size => "13x13" %> 
-    <%=h m %>
+    <%= h(m) %>
   </p>
 <% end if objekt -%>
 

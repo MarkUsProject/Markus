@@ -44,7 +44,7 @@
 <%= render :partial => "results/common/annotations.js" %>
 <%= render :partial => "results/common/boot.js", :locals => {:first_file => @first_file} %>
 
-<h1>Results For <%=@assignment.name %></h1>
+<h1>Results For <%= h(sanitize(@assignment.name)) %></h1>
 
 <%= render :partial => 'results/common/errors' %>
 

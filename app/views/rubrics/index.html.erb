@@ -14,11 +14,11 @@ var activate_upload_tab = false;
 <% end -%>
 </script>
 
-<h1>Rubric Management:  <%= @assignment.name %></h1>	
+<h1>Rubric Management:  <%= h(sanitize(@assignment.name)) %></h1>	
 
 <% if flash[:upload_notice] && flash[:invalid_lines].empty? -%>
 <div>
-  <p class="success"><%=h flash[:upload_notice] %></p>
+  <p class="success"><%= h(flash[:upload_notice]) %></p>
 </div>
 <% end -%>
 
@@ -115,7 +115,7 @@ var activate_upload_tab = false;
       <br />
       <ul style="padding-left:20px;">
         <% for line in flash[:invalid_lines] -%>
-        <li><%=h line %></li>
+        <li><%= h(line) %></li>
         <% end -%>
       </ul>
       <h5>Make sure that:</h5>
@@ -151,7 +151,7 @@ var activate_upload_tab = false;
       
       <ul style="padding-left:20px;">
         <% for line in flash[:invalid_lines] -%>
-          <li><%=h line %></li>
+          <li><%= h(line) %></li>
         <% end -%>
       </ul>
       
