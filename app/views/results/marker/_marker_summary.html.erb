@@ -12,13 +12,14 @@
     
     <div id="extra_marks_pane" class="extra_marks_pane">
       <div style="padding:5px;background-color:#B7D3EC;" onclick="unselect_extra_mark();"><b>Bonus/Deductions</b></div>
-      
+<% if @result.marking_state != Result::MARKING_STATES[:complete]%>      
      <% remote_form_for(:extra_mark, :url => {:action => :add_extra_mark, :result_id => result.id}) do |f|%>
      <%=f.label :description, "Comment" %> <%= f.text_field :description %>
      <%=f.label :extra_mark, "Mark" %> <%= f.text_field :extra_mark %>
      <%=f.hidden_field :result_id, :value => result.id%>
       <%= f.submit "Add Extra Mark"%>
      <% end %>
+<% end %>
     <%= render :partial => 'results/common/extra_marks_table', :locals => {:extra_marks => extra_marks, :result_id => result.id} %>
 
 

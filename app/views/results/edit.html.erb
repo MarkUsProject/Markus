@@ -1,14 +1,16 @@
+
 <%= stylesheet_link_tag("livepipe/tabs") %>
 <%= stylesheet_link_tag("SyntaxHighlighter") %>
 <%= stylesheet_link_tag("grader") %>
 
+<% if @result.marking_state != Result::MARKING_STATES[:complete] %>
 <% # UI LIBRARIES %>
 <%= javascript_include_tag "livepipe/livepipe.js" %>
 <%= javascript_include_tag "livepipe/window.js" %>
 <%= javascript_include_tag "livepipe/tabs.js" %>
 <%= javascript_include_tag "controls.js" %>
 <%= javascript_include_tag "DropDownMenu/DropDownMenu.js"%>
-<%= javascript_include_tag "ResizePane/ResizePane.js"%>
+  <%= javascript_include_tag "ResizePane/ResizePane.js"%>
 
 <% # SOURCE CODE GLOWER %>
 <%= javascript_include_tag "SourceCodeGlower/AnnotationText.js"%>
@@ -43,13 +45,9 @@
 <% # BOOT SCRIPTS %>
 <%= javascript_include_tag "Grader/tabs_boot.js" %>
 
-<% #TEMPORARY JS TO DISABLE CHANGING MARKS WHEN RELEASED TO STUDENT %>
-   <% if @result.released_to_students == true %>
-   <% end -%>
-
 <%= render :partial => "results/common/annotations.js" %>
 <%= render :partial => "results/common/boot.js", :locals => {:first_file => @first_file} %>
-
+<% end %>
 <h1>Grading Assignment: <%= link_to @assignment.name, :controller => 'annotations', :action => 'students', :id => @assignment.id %> 
 </h1>
 
@@ -62,7 +60,7 @@
 <%= render :partial => 'results/common/errors' %>
 
 
-<% if !@result.released_to_students %>
+<% if @result.marking_state != Result::MARKING_STATES[:complete] %>
 <%= render :partial => 'results/common/file_selector', :locals => {:files => @files, :can_download => true} %>
 
 <%= render :partial => 'results/marker/marker_panes', :locals => {:extra_marks => @extra_marks, :annotation_categories => @annotation_categories, :result => @result, :assignment => @assignment, :marks_map => @marks_map, :rubric_criteria => @rubric_criteria} %>
