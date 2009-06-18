@@ -1,0 +1,14 @@
+if @member.nil?
+# add member to the group list
+page.insert_html :bottom, "grouping_#{grouping.id}_list", 
+   :partial => 'groups/manage/member', :locals => {:grouping =>
+@grouping, :member => @member}
+# remove from 'no group' list if in there
+page.remove "user_#{params[:student][:user_name]}"
+page.call(:clearText, grouping.id.to_s)  # clear text
+        page.replace_html("error_#{grouping.id}", "")  # clear errors
+      else
+        page.replace_html "error_#{grouping.id}",
+          :partial => 'groups/error_single', :locals => { :objekt =>
+@grouping }
+      end
