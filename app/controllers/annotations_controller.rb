@@ -67,10 +67,11 @@ class AnnotationsController < ApplicationController
   #Updates the marking state
   def update_marking_state
     result = Result.find(params[:id])
-    return unless result.released_to_students == true
     result.marking_state = params[:value]
-    result.save;
+    result.save
     render :update do |page|
+       page.redirect_to :controller => 'results', :action => 'edit', :id =>
+       result.id
     end
   end
 
