@@ -48,7 +48,7 @@
        <% if submission.result.nil? %>
         <%= link_to 'Begin Grading', :controller => 'results', :action => 'create', :id => submission.id %>
        <% else %>
-         TODO:  Grade
+          <%= submission.result.total_mark%>/<%= @assignment.total_mark %>
        <% end %>
        <% end %> 
     <td>
