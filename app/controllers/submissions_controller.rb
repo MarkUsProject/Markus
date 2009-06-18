@@ -58,6 +58,7 @@ class SubmissionsController < ApplicationController
   
   def index
     @assignments = Assignment.all(:order => :id)
+    render :action => 'index', :layout => 'sidebar'
   end
 
   # controller handles transactional submission of files
