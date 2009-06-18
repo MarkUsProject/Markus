@@ -1,8 +1,7 @@
 <div id="result_summary">
-
-<%= render :partial => "results/marker/marker_summary", :locals =>
-{:rubric_criteria => @rubric_criteria, :marks_map => @marks_map,
-:assignment => @assignment, :result => @result, :extra_marks => @extra_marks}%>
+<%= render :partial => 'results/student/student_panes', :locals =>
+{:extra_marks => @extra_marks, :result => @result, :rubric_criteria =>
+@rubric_criteria, :marks_map => @marks_map, :assignment => @assignment } %>
 
 </div>
 

@@ -3,7 +3,6 @@
 <%= stylesheet_link_tag("SyntaxHighlighter") %>
 <%= stylesheet_link_tag("grader") %>
 
-<% if @result.marking_state != Result::MARKING_STATES[:complete] %>
 <% # UI LIBRARIES %>
 <%= javascript_include_tag "livepipe/livepipe.js" %>
 <%= javascript_include_tag "livepipe/window.js" %>
@@ -47,7 +46,6 @@
 
 <%= render :partial => "results/common/annotations.js" %>
 <%= render :partial => "results/common/boot.js", :locals => {:first_file => @first_file} %>
-<% end %>
 <h1>Grading Assignment: <%= link_to h(sanitize(@assignment.name)), :controller => 'annotations', :action => 'students', :id => @assignment.id %> 
 </h1>
 
