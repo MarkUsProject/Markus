@@ -34,6 +34,5 @@ class AdminsController < ApplicationController
     # active records--creates a new record if the model is new, otherwise
     # updates the existing record
     return unless @user.save
-    redirect_to :action => 'index' # Redirect 
   end
 end
