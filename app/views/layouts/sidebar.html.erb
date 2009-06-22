@@ -8,6 +8,7 @@
   <%= stylesheet_link_tag 'main.css', :media => 'all' %>   
   <%= stylesheet_link_tag 'header.css', :media => 'all' %>
   <%= stylesheet_link_tag 'sidebar.css', :media => 'all' %>
+  
   <%= javascript_include_tag :defaults -%>
 </head>
 
@@ -23,8 +24,15 @@
 
   <%= render :partial => 'layouts/sidebar'unless controller.action_name == 'login' %>
 
-
   <div id="content">
+<noscript>  
+<div class="warning">This page users Javascript. Your browser either
+doesn't support
+javascript or you have turned it off.<br />
+To see this page as it is meant to
+appear, please use a Javascript enable browser.</div>
+</noscript>
+
     <%= @content_for_layout %>
   </div>
   
