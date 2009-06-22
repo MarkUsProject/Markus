@@ -23,6 +23,7 @@
   <%= render :partial => 'layouts/menu_header' unless controller.action_name == 'login'%>
 <div id="container">
   <div id="content">
+<%= render :partial => 'layouts/noscript'%>
     <%= @content_for_layout %>
   </div>
   
