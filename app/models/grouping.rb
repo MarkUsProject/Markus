@@ -109,6 +109,12 @@ class Grouping < ActiveRecord::Base
     return admin_approved || (pending_students.count + accepted_students.count >= assignment.group_min)
   end
 
+  # Validates a group
+  def validate_grouping
+    self.admin_approved = true
+    self.save
+  end
+
   # Submission Functions
   def has_submission?
     return submissions.count > 0

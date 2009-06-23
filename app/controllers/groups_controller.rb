@@ -303,8 +303,7 @@ class GroupsController < ApplicationController
   def valid_grouping
      @assignment = Assignment.find(params[:id])
      grouping = Grouping.find(params[:grouping_id])
-     grouping.admin_approved = true
-     grouping.save
+     grouping.validate_grouping
   end
 
 

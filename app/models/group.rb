@@ -19,34 +19,34 @@ class Group < ActiveRecord::Base
   # updates. 
   # Separate checks are done when adding members; see invite() and add_member()
 
-  def validate_on_create
-    # validate each member does not belong in more than one group
-    assignments.each do |a|
-      student_memberships.each do |m|
-        user = m.user
-        g = user.group_for(a.id)  # user must not be in a group for this assignment
-        if m.valid? && g # user already in a group
-          errors.add_to_base("User '#{user.user_name}' already belongs in a group")
-        end
-      end
-
-      
-      if !a.group_assignment?
-        # check if groups can be formed on an assignment
-        errors.add_to_base("#{a.name} is not a group assignment")
-      else
-        # check if number of members meet the min and max criteria
-        num_members = student_memberships.length
-        min = a.group_min
-        max = a.group_max
-        if num_members < min
-          errors.add_to_base("You need at least #{min} members in the group.")
-        elsif num_members > max
-          errors.add_to_base("You can only have up to #{max} members in the group.")            
-        end
-      end
-    end
-  end
+#  def validate_on_create
+#    # validate each member does not belong in more than one group
+#    assignments.each do |a|
+#      student_memberships.each do |m|
+#        user = m.user
+#        g = user.group_for(a.id)  # user must not be in a group for this assignment
+#        if m.valid? && g # user already in a group
+#          errors.add_to_base("User '#{user.user_name}' already belongs in a group")
+#        end
+#      end
+#
+#      
+#      if !a.group_assignment?
+#        # check if groups can be formed on an assignment
+#        errors.add_to_base("#{a.name} is not a group assignment")
+#      else
+#        # check if number of members meet the min and max criteria
+#        num_members = student_memberships.length
+#        min = a.group_min
+#        max = a.group_max
+#        if num_members < min
+#          errors.add_to_base("You need at least #{min} members in the group.")
+#        elsif num_members > max
+#          errors.add_to_base("You can only have up to #{max} members in the group.")            
+#        end
+#     end
+#   end
+# end
 
 def repository_name
     return "Group_" + id.to_s.rjust(3, "0")
