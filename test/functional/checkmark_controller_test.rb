@@ -50,7 +50,7 @@ class CheckmarkControllerTest < ActionController::TestCase
   # Test if users with valid username and password can login and that 
   # session parameters has been correctly set
   def test_correct_login
-    admin = users(:admin)
+    admin = users(:olm_admin_1)
     post :login, :user_login => admin.user_name, :user_password => 'asfd'
     assert_equal "", flash[:login_notice]
     assert_redirected_to :action => "index"
@@ -60,7 +60,7 @@ class CheckmarkControllerTest < ActionController::TestCase
   
   # Test when user fails to validate and correctly tries again
   def test_second_try
-    admin = users(:admin)
+    admin = users(:olm_admin_1)
     post :login, :user_login => "afds", :user_password => "lala"
     assert_not_equal "", flash[:login_notice]
     
@@ -88,7 +88,7 @@ class CheckmarkControllerTest < ActionController::TestCase
   # if they are already logged in.
   def test_redirect_logged_in
     # log in
-    admin = users(:admin)
+    admin = users(:olm_admin_1)
     post :login, :user_login => admin.user_name, :user_password => 'asfd'
     assert_redirected_to :action => "index"
     

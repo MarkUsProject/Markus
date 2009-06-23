@@ -1,6 +1,7 @@
-require 'test_helper'
+require File.dirname(__FILE__) + '/authenticated_controller_test'
 
-class AnnotationsControllerTest < ActionController::TestCase
+
+class AnnotationsControllerTest < AuthenticatedControllerTest
   # Replace this with your real tests.
   def test_truth
     assert true

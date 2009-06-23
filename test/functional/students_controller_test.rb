@@ -1,4 +1,3 @@
-require 'test_helper'
 require File.dirname(__FILE__) + '/authenticated_controller_test'
 
 class StudentsControllerTest < AuthenticatedControllerTest

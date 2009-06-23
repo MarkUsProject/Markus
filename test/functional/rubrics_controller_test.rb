@@ -15,7 +15,7 @@ class RubricsControllerTest < ActionController::TestCase
 
   def test_index
     #this doesn't work...
-    #assignment = assignments(:a1)
+    #assignment = assignments(:a)
     #get :index, {}, {:id=>assignment.id}
     #assert_response :success
   end
@@ -30,7 +30,7 @@ class RubricsControllerTest < ActionController::TestCase
   
   # Check csv upload works correctly
   def test_csv_upload
-    assignment = assignments(:a1)
+    assignment = assignments(:assignment_1)
     levels = ["Level 0","Level 1","Level 2","Level 3","Level 4"]
     values = ["Correctness","15"]
     criterion = @controller.add_csv_criterion(values, levels, assignment);
@@ -56,7 +56,7 @@ class RubricsControllerTest < ActionController::TestCase
   
   # Check invalid csv lines are handled correctly
   def test_invalid_csv
-    assignment = assignments(:a1)
+    assignment = assignments(:assignment_1)
     levels = ["Level 1", "Level2", "Level3"]
     values1 = ["Correctness"]
     criterion = @controller.add_csv_criterion(values1, levels, assignment)
@@ -68,7 +68,7 @@ class RubricsControllerTest < ActionController::TestCase
   end
 
   def test_special_case_csv
-    assignment = assignments(:a1)
+    assignment = assignments(:assignment_1)
     levels = ["Level 1", "Level2", "Level3"]
 
     values = ["Documentation","10","No Comments",
@@ -95,7 +95,7 @@ class RubricsControllerTest < ActionController::TestCase
   end
 
   def create_dummy_criterion
-    assignment = assignments(:a1)
+    assignment = assignments(:assignment_1)
     levels = ["Level 0","Level 1","Level 2","Level 3","Level 4"]
     values = ["Documentation","10","No Comments",
       "Few Comments","Some comments","Many Comments","Everything is commented",

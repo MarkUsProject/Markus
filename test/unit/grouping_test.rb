@@ -54,7 +54,7 @@ class GroupingTest < ActiveSupport::TestCase
   def test_should_return_inviter
     grouping = groupings(:grouping_1)
     invite = users(:student1)
-    assert_equal(grouping.inviter.user_name, invite.user_name, "shuld
+    assert_equal(grouping.inviter.user_name, invite.user_name, "should
     return inviter" )
   end
 

@@ -25,6 +25,17 @@ class GroupTest < ActiveSupport::TestCase
     assert group.save, "Group not saved..."
   end
 
+  def  test_is_valid_false
+     grouping = groupings(:grouping_3)
+     assert !grouping.is_valid?
+  end
+ 
+  def test_validate_grouping
+    grouping = groupings(:grouping_3)
+    grouping.validate_grouping
+    assert grouping.is_valid?
+  end
+
 end
 
 
