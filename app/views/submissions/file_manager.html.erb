@@ -72,7 +72,8 @@
     <% @files.sort.each do |file_name, file| %>
     <tr>
       <td>
-        <%=link_to h(sanitize(file_name)), :action => 'download', :id => @assignment.id, :revision_number => @revision.revision_number, :file_name => file_name%>
+        <%=link_to h(sanitize(file_name)), :action => 'download', :id =>
+@assignment.id, :revision_number => @revision.revision_number, :file_name => file_name%>
       </td>
       <td>
         <%=h(file.last_modified_revision)%>

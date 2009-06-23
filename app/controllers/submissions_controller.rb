@@ -5,7 +5,7 @@ class SubmissionsController < ApplicationController
   include SubmissionsHelper
   
   before_filter    :authorize_only_for_admin, :except => [:browse,
-  :index, :file_manager, :update_files, :hand_in]
+  :index, :file_manager, :update_files, :hand_in, :download]
   before_filter    :authorize_for_ta_and_admin, :only => [:browse, :index]
  
  def file_manager
@@ -139,7 +139,30 @@ class SubmissionsController < ApplicationController
     flash[:submit_notice] = "Submission saved"
      redirect_to :action => "file_manager", :id => @assignment.id
   end
- 
+
+  def download
+    @assignment = Assignment.find(params[:id])
+    @grouping = current_user.accepted_grouping_for(@assignment.id)
+    user_group = @grouping.group
+    revision_number = params[:revision_number]
+    path = params[:path] || '/'
+    repo = Repository.create(REPOSITORY_TYPE).open(File.join(REPOSITORY_STORAGE,
+    user_group.repository_name))
+    if revision_number.nil?
+      @revision = repo.get_latest_revision
+    else
+      @revision = repo.get_revision(revision_number.to_i)
+    end
+    begin 
+     file_contents = repo.download(@revision.files_at_path(File.join(@assignment.repository_folder,path))[params[:file_name]])
+    rescue Exception => e
+      render :update do |page|
+        page.call "alert", e.message
+      end
+      return
+    end
+    send_data file_contents, :disposition => 'inline', :filename => params[:file_name]
+ end 
   
   def create_manually
     grouping = Grouping.find(params[:grouping_id])

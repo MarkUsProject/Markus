@@ -3,12 +3,12 @@ require File.join(File.dirname(__FILE__),'/../../lib/repo/repository_factory')
 
 class ResultsController < ApplicationController
   before_filter      :authorize_only_for_admin, :except => [:codeviewer,
-  :edit, :update_mark, :view_marks, :create, :add_extra_mark, :download,
+  :edit, :update_mark, :view_marks, :create, :add_extra_mark,
   :next]
   before_filter      :authorize_for_ta_and_admin, :only => [:edit,
   :update_mark, :create, :add_extra_mark, :download, :next]
   before_filter      :authorize_for_user, :only => [:codeviewer]
-  before_filter      :authorize_for_student, :only => [:view_marks]
+  before_filter      :authorize_for_student, :only => [:view_marks, :download]
 
   def create
     # Create new Result for this Submission
