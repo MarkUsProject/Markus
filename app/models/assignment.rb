@@ -80,9 +80,32 @@ class Assignment < ActiveRecord::Base
     
     #FIXME: needs to be rewritten using a proper query...
     return User.find(uid).accepted_grouping_for(self.id)    
-    
+  end
+
+  # Make a list of students without any groupings
+  def no_grouping_students_list
+   @students = Student.all
+   @students_list = []
+   @students.each do |s|
+     if !s.has_accepted_grouping_for?(self.id)
+       @students_list.push(s)
+      end
+   end
+   return @students_list
   end
   
+  # Make a list of the students an inviter can invite for his grouping
+  def can_invite_for(gid)
+    grouping = Grouping.find(gid)
+    students = self.no_grouping_students_list
+    students_list = []
+    students.each do |s|
+      if !grouping.pending?(s)
+        students_list.push(s)
+      end
+    end
+    return students_list
+  end
   
   # TODO DEPRECATED: use group_assignment? instead
   # Checks if an assignment is an individually-submitted assignment (no groups)

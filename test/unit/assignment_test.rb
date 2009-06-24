@@ -60,4 +60,17 @@ class AssignmentTest < ActiveSupport::TestCase
     a1.group_min = 2
     assert a1.valid?, "group_min < group_max"
   end
+
+  def test_no_groupings_student_list
+    a = assignments(:assignment_1)
+    assert_equal(3, a.no_grouping_students_list.count, "should be equal
+    to 3")
+  end
+
+  def test_can_invite_for
+    a = assignments(:assignment_1)
+    g = groupings(:grouping_2)
+    assert_equal(2, a.can_invite_for(g.id).count)
+    end
+  
 end
