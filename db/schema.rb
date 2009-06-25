@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090609195721) do
+ActiveRecord::Schema.define(:version => 20090623140913) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -18,12 +18,16 @@ ActiveRecord::Schema.define(:version => 20090609195721) do
     t.integer  "assignment_id",            :null => false
   end
 
+  add_index "annotation_categories", ["assignment_id"], :name => "index_annotation_categories_on_assignment_id"
+
   create_table "annotation_texts", :force => true do |t|
     t.text     "content"
     t.integer  "annotation_category_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "annotation_texts", ["annotation_category_id"], :name => "index_annotation_texts_on_annotation_category_id"
 
   create_table "annotations", :force => true do |t|
     t.integer "line_start"
@@ -32,6 +36,7 @@ ActiveRecord::Schema.define(:version => 20090609195721) do
     t.integer "submission_file_id"
   end
 
+  add_index "annotations", ["annotation_text_id"], :name => "index_annotations_on_annotation_text_id"
   add_index "annotations", ["annotation_text_id"], :name => "index_annotations_on_description_id"
   add_index "annotations", ["submission_file_id"], :name => "index_annotations_on_assignmentfile_id"
   add_index "annotations", ["submission_file_id"], :name => "index_annotations_on_submission_file_id"
@@ -44,6 +49,7 @@ ActiveRecord::Schema.define(:version => 20090609195721) do
   end
 
   add_index "assignment_files", ["assignment_id", "filename"], :name => "index_assignment_files_on_assignment_id_and_filename", :unique => true
+  add_index "assignment_files", ["assignment_id"], :name => "index_assignment_files_on_assignment_id"
 
   create_table "assignments", :force => true do |t|
     t.string   "name",                                    :null => false
@@ -71,6 +77,8 @@ ActiveRecord::Schema.define(:version => 20090609195721) do
     t.datetime "updated_at"
   end
 
+  add_index "extra_marks", ["result_id"], :name => "index_extra_marks_on_result_id"
+
   create_table "groupings", :force => true do |t|
     t.integer  "group_id",                          :null => false
     t.integer  "assignment_id",                     :null => false
@@ -78,6 +86,9 @@ ActiveRecord::Schema.define(:version => 20090609195721) do
     t.datetime "updated_at"
     t.boolean  "admin_approved", :default => false, :null => false
   end
+
+  add_index "groupings", ["assignment_id"], :name => "index_groupings_on_assignment_id"
+  add_index "groupings", ["group_id"], :name => "index_groupings_on_group_id"
 
   create_table "groups", :force => true do |t|
     t.text "group_name"
@@ -91,6 +102,9 @@ ActiveRecord::Schema.define(:version => 20090609195721) do
     t.datetime "updated_at"
   end
 
+  add_index "marks", ["result_id"], :name => "index_marks_on_result_id"
+  add_index "marks", ["rubric_criterion_id"], :name => "index_marks_on_rubric_criterion_id"
+
   create_table "memberships", :force => true do |t|
     t.integer  "user_id"
     t.string   "membership_status"
@@ -99,6 +113,9 @@ ActiveRecord::Schema.define(:version => 20090609195721) do
     t.integer  "grouping_id",       :null => false
     t.string   "type"
   end
+
+  add_index "memberships", ["grouping_id"], :name => "index_memberships_on_grouping_id"
+  add_index "memberships", ["user_id"], :name => "index_memberships_on_user_id"
 
   create_table "results", :force => true do |t|
     t.integer  "submission_id"
@@ -110,9 +127,9 @@ ActiveRecord::Schema.define(:version => 20090609195721) do
   end
 
   create_table "rubric_criteria", :force => true do |t|
-    t.string   "rubric_criterion_name", :null => false
-    t.integer  "assignment_id",         :null => false
-    t.decimal  "weight",                :null => false
+    t.string   "rubric_criterion_name",                                              :null => false
+    t.integer  "assignment_id",                                                      :null => false
+    t.integer  "weight",                :limit => 10, :precision => 10, :scale => 0, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "position"
@@ -129,6 +146,7 @@ ActiveRecord::Schema.define(:version => 20090609195721) do
   end
 
   add_index "rubric_criteria", ["assignment_id", "rubric_criterion_name"], :name => "index_rubric_criteria_on_assignment_id_and_name", :unique => true
+  add_index "rubric_criteria", ["assignment_id"], :name => "index_rubric_criteria_on_assignment_id"
 
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false
@@ -151,6 +169,7 @@ ActiveRecord::Schema.define(:version => 20090609195721) do
 
   add_index "submission_files", ["filename"], :name => "index_submission_files_on_filename"
   add_index "submission_files", ["submission_id"], :name => "index_submission_files_on_submission_id"
+  add_index "submission_files", ["user_id"], :name => "index_submission_files_on_user_id"
 
   create_table "submission_rules", :force => true do |t|
     t.integer  "assignment_id",                                           :null => false
@@ -165,6 +184,8 @@ ActiveRecord::Schema.define(:version => 20090609195721) do
     t.datetime "updated_at"
   end
 
+  add_index "submission_rules", ["assignment_id"], :name => "index_submission_rules_on_assignment_id"
+
   create_table "submissions", :force => true do |t|
     t.integer  "grouping_id"
     t.datetime "created_at"
@@ -173,6 +194,8 @@ ActiveRecord::Schema.define(:version => 20090609195721) do
     t.integer  "revision_number",         :null => false
     t.datetime "revision_timestamp",      :null => false
   end
+
+  add_index "submissions", ["grouping_id"], :name => "index_submissions_on_grouping_id"
 
   create_table "users", :force => true do |t|
     t.string   "user_name",  :null => false
