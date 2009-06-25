@@ -6,6 +6,7 @@ class ConnectionError < Exception; end
 class Conflict < Exception
   attr_reader :path
   def initialize(path)
+    super()
     @path = path
   end
   def to_s

@@ -1,4 +1,5 @@
-require 'memory_repository'
+require 'fileutils' # required, for File line(s)
+require File.join(File.dirname(__FILE__),'/../memory_repository')
 require 'test/unit'
 require 'time'
 class MemoryRepository_Test < Test::Unit::TestCase

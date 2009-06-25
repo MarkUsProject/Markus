@@ -1,5 +1,6 @@
-require 'lib/repo/subversion_repository'
-require 'lib/repo/memory_repository'
+require 'fileutils' # required, for File line(s)
+require File.join(File.dirname(__FILE__),'/memory_repository')
+require File.join(File.dirname(__FILE__),'/subversion_repository')
 
 module Repository
   def Repository.create(repo_type)

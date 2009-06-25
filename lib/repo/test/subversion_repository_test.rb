@@ -1,35 +1,54 @@
-require 'subversion_repository'
-require 'test/unit'
+require 'fileutils' # required, so that next line works
+require File.join(File.dirname(__FILE__),'/../subversion_repository')
+require 'test/unit' # load Test::Unit
+require 'rubygems'
+require 'shoulda'   # load Thoughtbot Shoulda
 
-class SubversionRepository_Test < Test::Unit::TestCase
+# bring Repository::SubversionRepository into current namespace
+include Repository
 
-  TEST_REPOS = "test_svn_repos/test_repo"
+# Tests for repository 
+class SubversionRepositoryTest < Test::Unit::TestCase
+  
+  SVN_TEST_REPOS_DIR = "svn_repos/"
+  TEST_REPO = SVN_TEST_REPOS_DIR + "repo1"
+ 
+  context "A SubversionRepository instance" do
    
-  def setup
-    @repo = SubversionRepository.new(TEST_REPOS)
-  end
-  
-  def teardown
-    FileUtils.remove_dir(TEST_REPOS, true)
-  end
-  
-  def test_create
-    assert_not_nil @repo, "Could not create Repository"
-  end
-  
-  def test_add_file
-    assert_equal 0, @repo.number_of_revisions, "Revision numbers do not match"
-    initial_revision_count = @repo.number_of_revisions
-    @repo.add_file("NewFile.java", "This is some new content!")
-    @repo.commit
+    setup do
+      # create repository first
+      SubversionRepository.create(TEST_REPO)
+      # open the repository
+      @repo = SubversionRepository.new(TEST_REPO)
+      
+      # first sanity check
+      
+    end
     
-    revision = @repo.get_latest_revision
-
-    target_file = revision.all_files["NewFile.java"]
-    result_string = @repo.download(target_file)
-    assert_equal "This is some new content!", result_string, "Did not receive the correct file contents"   
-    assert_equal initial_revision_count + 1, @repo.number_of_revisions, "Wrong revision count"
-  end
+    teardown do
+      FileUtils.remove_dir(TEST_REPO, true)
+    end
+    
+    should "have been instanciated and a Subversion repository in the filesystem created" do
+      assert_not_nil @repo, "Could not create Repository, look into the Test setup"
+    end
+    
+    should "have 0 revisions initially" do
+      assert_equal 0, @repo.number_of_revisions, "Revision numbers do not match"
+    end
+    
+    should "add a new file" do
+      initial_revision_count = @repo.number_of_revisions
+      @repo.add_file("NewFile.java", "This is some new content!")
+      @repo.commit
+      
+      revision = @repo.get_latest_revision
+  
+      target_file = revision.all_files["NewFile.java"]
+      result_string = @repo.download(target_file)
+      assert_equal "This is some new content!", result_string, "Did not receive the correct file contents"   
+      assert_equal initial_revision_count + 1, @repo.number_of_revisions, "Wrong revision count"
+    end
   
 #  def test_number_of_revisions
 #    assert_equal 3, @repo.number_of_revisions, "Number of revisions is wrong"
@@ -244,5 +263,5 @@ class SubversionRepository_Test < Test::Unit::TestCase
 #    assert_equal ["c6smith"], @repo.get_users, "Users do not match"
 #  end
 
-
+  end # end context
 end

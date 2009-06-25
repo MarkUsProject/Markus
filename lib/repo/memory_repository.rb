@@ -1,5 +1,6 @@
 require 'yaml'
-require 'lib/repo/repository'
+require 'fileutils' # required, for File line(s)
+require File.join(File.dirname(__FILE__),'/memory_repository')
 
 module Repository
 
@@ -7,7 +8,7 @@ class InvalidConnectionFileFormat < Repository::ConnectionError; end
 
 class MemoryRepository < Repository::AbstractRepository
   
-  TEST_REPOSITORY = 'lib/repo/memory_repository.yml'
+  TEST_REPOSITORY = File.join(File.dirname(__FILE__),'/memory_repository.yml')
   
   # Initializes Object, and verifies connection to the repository back end.
   # This should throw a ConnectionError if we're unable to connect.

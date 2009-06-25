@@ -1,7 +1,7 @@
-require "svn/repos"
+require "svn/repos" # load SVN Ruby bindings stuff
 require "md5"
 require "fileutils"
-require 'lib/repo/repository'
+require File.join(File.dirname(__FILE__),'repository') # load repository module
 
 module Repository
 
@@ -17,7 +17,6 @@ class InvalidSubversionRepository < Repository::ConnectionError; end
 
 class SubversionRepository < Repository::AbstractRepository
 
-  
   def initialize(connect_string)
     @repos_path = connect_string
     if (self.class.repository_exists?(@repos_path))
