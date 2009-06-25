@@ -71,6 +71,38 @@ class AssignmentTest < ActiveSupport::TestCase
     a = assignments(:assignment_1)
     g = groupings(:grouping_2)
     assert_equal(2, a.can_invite_for(g.id).count)
-    end
+  end
+
+  def test_add_group
+    a = assignments(:assignment_1)
+    number = a.groupings.count + 1
+    a.add_group("new_group_name")
+    assert_equal(number, a.groupings.count, "should have added one
+    more grouping")
+  end
   
+  def test_add_group_with_already_existing_name_in_another_assignment_1
+    a = assignments(:assignment_3)
+    number = a.groupings.count + 1
+    a.add_group("Titanic")
+    assert_equal(number, a.groupings.count, "should have added one
+    more grouping")
+  end
+
+  def test_add_group_with_already_existing_name_in_another_assignment_2
+    a = assignments(:assignment_3)
+    group = Group.all
+    number = group.count
+    a.add_group("Ukishima Maru")
+    group2 = Group.all
+    assert_equal(number, group2.count, "should NOT have added a new group")
+  end
+
+
+  def test_add_group_with_already_existing_name_in_this_same_assignment
+    a = assignments(:assignment_3)
+    a.add_group("Titanic")
+    assert !a.add_group("Titanic")
+  end
+
 end
