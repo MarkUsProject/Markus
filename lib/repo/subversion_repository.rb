@@ -1,7 +1,7 @@
 require "svn/repos" # load SVN Ruby bindings stuff
 require "md5"
 require "fileutils"
-require File.join(File.dirname(__FILE__),'repository') # load repository module
+require File.join(File.dirname(__FILE__),'/repository') # load repository module
 
 module Repository
 
