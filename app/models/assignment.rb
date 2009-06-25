@@ -143,7 +143,6 @@ class Assignment < ActiveRecord::Base
       if Group.find(:first, :conditions => {:group_name => new_group_name})
         group = Group.find(:first, :conditions => {:group_name =>
 	new_group_name})
-	debugger
         if !self.groupings.find_by_group_id(group.id).nil?
 	  #TODO: ADD AN ERROR MESSAGE
 	  return false
