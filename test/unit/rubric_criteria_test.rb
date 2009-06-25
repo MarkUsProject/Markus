@@ -1,7 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class RubricCriteriaTest < ActiveSupport::TestCase
-  
 #  fixtures :assignments, :rubric_criteria
   
   #Test that Criteria with no names are not valid
