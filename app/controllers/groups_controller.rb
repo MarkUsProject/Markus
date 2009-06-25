@@ -181,10 +181,9 @@ class GroupsController < ApplicationController
   
   def add_group
     @assignment = Assignment.find(params[:id])
-    self.add_group(params[:new_group_name])
+    @assignment.add_group(params[:new_group_name])
     render :update do |page|
       page.redirect_to :action => 'manage', :id => @assignment.id
-      page.call(:focusText, grouping.id.to_s)
     end
   end
   
@@ -265,7 +264,7 @@ class GroupsController < ApplicationController
   def manage
     @all_assignments = Assignment.all(:order => :id)
     @assignment = Assignment.find(params[:id])   
-    @groupings = @assignment.groupings 
+    @groupings = @assignment.groupings
     # Returns a hash where s.id is the key, and student record is the value
     @students = Student.all.index_by { |s| s.id }   
   end
