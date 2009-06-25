@@ -1,7 +1,7 @@
 function load_levels(id) {
     $('working').show();
     $('selected_criterion_name').update($F('criterion_inputs_'+id+'_name'));
-    new Ajax.Request('/checkmark/rubrics/list_levels', {method: 'get',asynchronous:true, evalScripts:true,parameters: {'criterion_id':id,'authenticity_token': encodeURIComponent(authenticity_token)}, onComplete: function(transport) { $('working').hide();}});
+    new Ajax.Request('../list_levels', {method: 'get',asynchronous:true, evalScripts:true,parameters: {'criterion_id':id,'authenticity_token': encodeURIComponent(authenticity_token)}, onComplete: function(transport) { $('working').hide();}});
 }
 
 function hide_levels() {
@@ -42,7 +42,7 @@ function criterion_weight_bump(amount, input, criterion_id) {
 function level_input_edited(input_type, input, level_id) {
   $('working').show();
   $(input).disable();
-  new Ajax.Request('/checkmark/rubrics/update_level', {
+  new Ajax.Request('../update_level', {
       asynchronous:true, 
       evalScripts:true, 
       onSuccess:function(request){
@@ -78,7 +78,7 @@ function criterion_input_edited(input_type, input, criterion_id) {
   $('criterion_inputs_'+criterion_id+'_name').removeClassName('editing');
   $('criterion_inputs_'+criterion_id+'_weight').removeClassName('editing');
   
-  new Ajax.Request('/checkmark/rubrics/update_criterion/1', {
+  new Ajax.Request('../update_criterion/1', {
       asynchronous:true, 
       evalScripts:true, 
       onSuccess:function(request){
