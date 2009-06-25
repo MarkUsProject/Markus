@@ -1,4 +1,4 @@
-namespace :olm do
+namespace :markus do
   desc "Create a single Administrator with username a"
   task(:admin => :environment) do
     puts "Creating Administrator with username 'a'..."
