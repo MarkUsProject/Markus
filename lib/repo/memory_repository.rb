@@ -1,6 +1,6 @@
 require 'yaml'
 require 'fileutils' # required, for File line(s)
-require File.join(File.dirname(__FILE__),'/memory_repository')
+require File.join(File.dirname(__FILE__),'/repository')
 
 module Repository
 
