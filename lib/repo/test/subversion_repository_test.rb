@@ -19,10 +19,7 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       # create repository first
       SubversionRepository.create(TEST_REPO)
       # open the repository
-      @repo = SubversionRepository.new(TEST_REPO)
-      
-      # first sanity check
-      
+      @repo = SubversionRepository.new(TEST_REPO)      
     end
     
     teardown do
