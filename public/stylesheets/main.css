@@ -436,3 +436,66 @@ legend {
 .disable{
     color: #929292;
 }
+
+#student_container {
+   color: #444444; 
+   width: 250px;
+}
+
+#groups_container{
+   margin: 0 0 20px 0;
+}
+
+#groups_container ul {
+   list-style: none;
+   padding: 0;
+   color: #444444;
+   margin: 0;
+}
+
+
+#groups_container a {
+   color: #A40000; /* link for delete */
+}
+
+.remove_group {
+  float: right;
+  padding-right: 3px;
+}
+
+.rename_group {
+   float:right;
+}
+
+.group form {
+   margin: 0;
+}
+
+.fail-no-img {
+   width: 250px;
+   font-size: 80%;
+}
+
+#create_group_dialog {
+   background: white;
+   padding: 0 10px 0 10px;
+   border: 1px solid #000000;
+   -moz-border-radius: 5px;
+   -webkit-border-radius: 5px;
+}
+
+#rename_group_dialog {
+   background: white;
+   padding: 0 10px 0 10px;
+   border: 1px solid #000000;
+   -moz-border-radius: 5px;
+   -webkit-border-radius: 5px;
+}
+
+#assignment_group_usedialog {
+   background: white;
+   padding: 0 10px 0 10px;
+   border: 1px solid #000000;
+   -moz-border-radius: 5px;
+   -webkit-border-radius: 5px;
+}
