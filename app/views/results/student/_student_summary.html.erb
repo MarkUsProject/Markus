@@ -3,34 +3,34 @@
 </div>  <!-- Summary Criteria Pane -->
       
     <div class="mark_subtotal">
-      <div style="float:left;">Subtotal&nbsp;</div>
-      <div style="float:right;"> /<%= h(assignment.total_mark) %>  </div>
-      <div style="float:right;" id="current_subtotal_div"> <%= h(result.get_subtotal) %> </div>
+      <div class="float_left">Subtotal&nbsp;</div>
+      <div class="float_right"> /<%= h(assignment.total_mark) %>  </div>
+      <div class="float_right" id="current_subtotal_div"> <%= h(result.get_subtotal) %> </div>
     </div>
 
     <div class="clear"></div><br/>
     
     <div id="extra_marks_pane" class="extra_marks_pane">
-      <div style="padding:5px;background-color:#B7D3EC;" onclick="unselect_extra_mark();"><b>Bonus/Deductions</b></div>
+      <div class="bonus_deduction" onclick="unselect_extra_mark();"><b>Bonus/Deductions</b></div>
 
     <%= render :partial => 'results/common/extra_marks_table', :locals => {:extra_marks => extra_marks, :result_id => result.id} %>
       
 
-      <div style="padding:10px;" onclick="unselect_extra_mark();">
-        <div style="float:left;"><b>Bonus Marks:&nbsp;</b></div>
-        <div style="float:left;" id="extra_marks_bonus"><%= h(result.get_bonus_marks) %></div>
+      <div onclick="unselect_extra_mark();">
+        <div class="float_left"><b>Bonus Marks:&nbsp;</b></div>
+        <div class="float_left" id="extra_marks_bonus"><%= h(result.get_bonus_marks) %></div>
       </div>
       <div class="clear"></div>
-      <div style="padding:10px;" onclick="unselect_extra_mark();">
-        <div style="float:left;"><b>Deducted Marks:&nbsp;</b></div>
-        <div style="float:left;" id="extra_marks_deducted"><%= h(@result.get_deductions) %></div>
+      <div onclick="unselect_extra_mark();">
+        <div class="float_left"><b>Deducted Marks:&nbsp;</b></div>
+        <div class="float_left" id="extra_marks_deducted"><%= h(@result.get_deductions) %></div>
       </div>
     </div>      
     
     <div class="clear"></div>
 
     <div class="mark_total">
-      <div style="float:left;">Final Mark&nbsp;</div>
-      <div style="float:right;"> /<%= h(assignment.total_mark) %>  </div>
-      <div style="float:right;" id="current_total_mark_div"> <%= h(result.total_mark) %> </div>
+      <div class="float_left">Final Mark&nbsp;</div>
+      <div class="float_right"> /<%= h(assignment.total_mark) %>  </div>
+      <div class="float_right" id="current_total_mark_div"> <%= h(result.total_mark) %> </div>
     </div>

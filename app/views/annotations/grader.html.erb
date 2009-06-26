@@ -338,7 +338,7 @@ document.observe("dom:loaded", function() {
   </div>
   <!-- End Divider -->
 
-  <div id="rubric_pane" style="float:left;">
+  <div id="rubric_pane">
   
     <ul id="rubric_tabs" class="subsection_tabs">
       <li class="tab"><a href="#rubric_viewer">Rubric</a></li>
@@ -380,15 +380,15 @@ document.observe("dom:loaded", function() {
       </div>  <!-- Summary Criteria Pane -->
       
     <div class="mark_subtotal">
-      <div style="float:left;">Subtotal&nbsp;</div>
-      <div style="float:right;"> /<%= h(@assignment.total_mark) %>  </div>
-      <div style="float:right;" id="current_subtotal_div"> <%= h(@result.get_subtotal) %> </div>
+      <div class="float_left">Subtotal&nbsp;</div>
+      <div class="float_right;"> /<%= h(@assignment.total_mark) %>  </div>
+      <div class="float_right;" id="current_subtotal_div"> <%= h(@result.get_subtotal) %> </div>
     </div>
 
     <div class="clear"></div><br/>
     
     <div id="extra_marks_pane" class="extra_marks_pane">
-      <div style="padding:5px;background-color:#B7D3EC;" onclick="unselect_extra_mark();"><b>Bonus/Deductions</b></div>
+      <div class="bonus_deduction" onclick="unselect_extra_mark();"><b>Bonus/Deductions</b></div>
       <div class="link" onclick="unselect_extra_mark();"><%= link_to_remote 'Add', :url => { :action => 'add_extra_mark', :id => @result.id}%></div>
       <table class="extra_marks_pane_list">
         <tbody id="extra_marks_list" >
@@ -403,30 +403,31 @@ document.observe("dom:loaded", function() {
         </tbody>
       </table>
       <div class="clear"></div>
-      <div style="padding:10px;" onclick="unselect_extra_mark();">
-        <div style="float:left;"><b>Bonus Marks:&nbsp;</b></div>
-        <div style="float:left;" id="extra_marks_bonus"><%= @result.get_bonus_marks%></div>
+      <div onclick="unselect_extra_mark();">
+        <div class="float_left;"><b>Bonus Marks:&nbsp;</b></div>
+        <div class=="float_left;" id="extra_marks_bonus"><%= @result.get_bonus_marks%></div>
       </div>
       <div class="clear"></div>
-      <div style="padding:10px;" onclick="unselect_extra_mark();">
-        <div style="float:left;"><b>Deducted Marks:&nbsp;</b></div>
-        <div style="float:left;" id="extra_marks_deducted"><%= @result.get_deductions%></div>
+      <div  onclick="unselect_extra_mark();">
+        <div class="float_left;"><b>Deducted Marks:&nbsp;</b></div>
+        <div class="float_left;" id="extra_marks_deducted"><%= @result.get_deductions%></div>
       </div>
     </div>      
     
     <div class="clear"></div>
 
     <div class="mark_total">
-      <div style="float:left;">Final Mark&nbsp;</div>
-      <div style="float:right;"> /<%= h(@assignment.total_mark) %>  </div>
-      <div style="float:right;" id="current_total_mark_div"> <%= h(@result.total_mark) %> </div>
+      <div class="float_left;">Final Mark&nbsp;</div>
+      <div class="float_right;"> /<%= h(@assignment.total_mark) %>  </div>
+      <div class="float_right;" id="current_total_mark_div"> <%= h(@result.total_mark) %> </div>
     </div>
   </div>
   
   <div id="annotation_holder">
   </div>
   
-  <div id="create_annotation_dialog" style="display:none;">
+  <div id="create_annotation_dialog">
+
     <p>
       <h2>Create new annotation</h2>
     </p>
@@ -442,7 +443,7 @@ document.observe("dom:loaded", function() {
         <% end %>
       </select>
       </p>
-      <p style="margin-top: 5px; border-top: 1px solid #000000; padding-top: 10px;">
+      <p class="p_modal">
         <button onClick="submit_new_annotation(escape($F('new_annotation_content')), $F('new_annotation_category'));">Create New Annotation</button>
         <button onClick="modal.close();">Cancel</button>
       </p>

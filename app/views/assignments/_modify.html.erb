@@ -41,7 +41,7 @@
 <fieldset>
   <legend>Group Properties</legend>
 <% if action == 'create' %>
-<div id="group_properties" style = "display: none;">
+<div id="group_properties">
 <p>
     Group Limit (must be 1 or more):
     from <%= f.text_field :group_min, :size => 5, :maxlength => 3 %>
@@ -69,7 +69,7 @@
 </div>
 
 
-   <div id="other_assignment_groups" style="display: none;">
+   <div id="other_assignment_groups">
 <p>
      Assignment's groups to use: 
      <%= text_field_with_auto_complete :assignment, :name, :id =>

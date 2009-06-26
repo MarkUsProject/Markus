@@ -506,3 +506,20 @@ legend {
   padding-top: 10px;
 
 }
+
+#rubric_pane{
+   float: left;
+}
+
+.float_left{
+   float: left;
+}
+
+.float_right {
+   float: right;
+}
+
+.bonus_deduction {
+  padding: 5px;
+  background-color: #B7D3EC; 
+}

@@ -1,7 +1,7 @@
 <%=javascript_include_tag "file_manager"%>
 
   <% if flash[:submit_notice] -%>   
-     <p style="color:green"><%= h(flash[:submit_notice]) %> </p>
+     <p class="success"><%= h(flash[:submit_notice]) %> </p>
   <% end %>
 
 <h1><%= h(sanitize(@assignment.name)) %>: File Manager</h1>

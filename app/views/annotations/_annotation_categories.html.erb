@@ -5,7 +5,7 @@
 
   <%=h(annotation_category.annotation_category_name) %>
 
-  <div id="annotation_text_list_<%=annotation_category.id%>" style="display:none;" onClick="return false;" onMouseDown="return false;">
+  <div id="annotation_text_list_<%=annotation_category.id%>" onClick="return false;" onMouseDown="return false;">
 
 <%= render :partial => "annotations/annotation_list", :locals => {:annotation_category => annotation_category}%>
 

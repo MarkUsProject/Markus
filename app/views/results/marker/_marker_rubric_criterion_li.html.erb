@@ -6,14 +6,15 @@
 
   <div class="criterion_title_div" id="<%= "rubric_criterion_title_#{rubric_criterion.id}"%>" onclick="<%="focus_rubric_criterion(#{rubric_criterion.id})"%>">
 
-<div id="<%="rubric_criterion_title_#{rubric_criterion.id}_expand"%>" style="float:left;">+ &nbsp;
+<div id="<%="rubric_criterion_title_#{rubric_criterion.id}_expand"%>"
+class="float_left;">+ &nbsp;
 </div>
 
   <%= render :partial => 'results/common/rubric_criterion', :locals => {:rubric_criterion => rubric_criterion, :mark => mark} %>
 
-  <div id="<%="rubric_criterion_inputs_#{rubric_criterion.id}"%>" class="rubric_criterion_level_container" style="display:none;">
+  <div id="<%="rubric_criterion_inputs_#{rubric_criterion.id}"%>" class="rubric_criterion_level_container" >
 
-    <div style="float:left;">
+    <div class="float_left">
         <table id="mark_<%=mark.id%>_table">
         <% num_levels = 0
         selected = "rubric_criterion_level"

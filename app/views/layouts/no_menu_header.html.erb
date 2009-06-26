@@ -26,17 +26,6 @@
   </div>
   
 
-<% # For debugging purposes; not to be used for production -%>
-
-<% if ENV['RAILS_ENV'] == 'test' %>
-    <div id="debug" style="margin: 40px 5px 5px 5px;">
-        <a href="#" onclick="Element.toggle('debug_info');return false" style="text-decoration: none; color: #ccc;">Show Debug Info &#10162;</a>
-        <div id="debug_info" style="display : none;">
-            <%= debug session %>
-            <%= debug params %>
-        </div>
-    </div>
-<% end %>
 </div>
 </div> <!-- Membership -->
 
