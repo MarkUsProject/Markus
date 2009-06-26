@@ -2,11 +2,17 @@
 # Erb template for inserting a new group for managing groups
 %>
 
-<li class="group <%= cycle('rowA', 'rowB') %>" id="<%= "grouping_#{grouping.id}" %>">
-    
-    <%= h(grouping.group.group_name) unless grouping.group.nil? %>
-    <button class="rename_group" onClick="rename_group(<%= grouping.id %>); return
-    false;">Rename</button>
+  
+    <td><%= h(grouping.group.group_name)%></td>
+    <td>
+<% grouping.student_memberships.each do |member| %> 
+   <%= render :partial => "groups/manage/member", 
+      :locals => {:member => member, :grouping => grouping } %>
+    <% @students.delete(member.user.id) if @students %>
+  <% end -%>
+</td>
+<td>
+    <button class="rename_group" onClick="rename_group(<%= grouping.id %>); return false;">Rename</button>
     <% if !grouping.is_valid? %>
       <%= link_to_remote "Valid this group", :url => { :action =>
     'valid_grouping', :id => @assignment.id, :grouping_id =>
@@ -19,20 +25,9 @@
     :url => { :action => 'remove_group', :id => @assignment.id, :grouping_id => grouping.id }, 
     :html => { :class => 'remove_group', :title => 'Delete this group' }, 
     :confirm => 'This will remove all members in the group and delete all information associated with this group. Continue?' %>
-    
-  <ul id="grouping_<%= grouping.id %>_list" class="students">
-  <% grouping.student_memberships.each do |member| %>
- 
-   <%= render :partial => "groups/manage/member", 
-      :locals => {:member => member, :grouping => grouping } %>
-    <% @students.delete(member.user.id) if @students %>
-  <% end -%>
-  </ul>
-      
-  <div id="error_<%= grouping.id %>"></div>
   <% form_remote_tag(:url => {:action => 'add_member', 
       :id => @assignment.id, :grouping_id => grouping.id}) do %>
     <%= text_field_with_auto_complete :student, :user_name%>
     <%= submit_tag "Add Member" %>
   <% end -%>
-</li>
+</td>

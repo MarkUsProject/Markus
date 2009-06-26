@@ -91,6 +91,7 @@ document.observe("dom:loaded", function(){
  
   });
 
+
  modalAssignmentGroupReUse = new Control.Modal($('assignment_group_use_dialog'), 
   {
     overlayOpacity: 0.75,
@@ -196,11 +197,13 @@ document.observe("dom:loaded", function(){
       
       <div id="groups_container">
       
-        <ul class="groups" id="groups">
+        <table class="groups" id="groups">
+          <tr><th>Name</th><th>Members</th><th></th></tr>
           <% @groupings.each do |grouping| -%>
-            <%= render :partial => "groups/manage/group", :locals => {:grouping => grouping} %>
+           <tr> <%= render :partial => "groups/manage/group", :locals =>
+	   {:grouping => grouping} %> </td>
          <% end -%>
-        </ul>
+        </table>
       
       </div>
 

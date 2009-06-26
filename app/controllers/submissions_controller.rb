@@ -174,36 +174,56 @@ class SubmissionsController < ApplicationController
   
   def update_submissions
     return unless request.post?
-    if params[:release_results]
-      flash[:release_errors] = []
-      params[:groupings].each do |grouping_id|
-        grouping = Grouping.find(grouping_id)
-        if !grouping.has_submission?
-          # TODO:  Neaten this up...
-          flash[:release_errors].push("Grouping ID:#{grouping_id} had no submission")
-          next
+    if params[:groupings].nil?
+      flash[:release_results] = "Select a group"
+    else
+      if params[:release_results]
+        flash[:release_errors] = []
+        params[:groupings].each do |grouping_id|
+          grouping = Grouping.find(grouping_id)
+          if !grouping.has_submission?
+            # TODO:  Neaten this up...
+            flash[:release_errors].push("Grouping ID:#{grouping_id} had no submission")
+            next
+          end
+          submission = grouping.get_submission_used
+          if !submission.has_result?
+            # TODO:  Neaten this up...
+            flash[:release_errors].push("Grouping ID:#{grouping_id} had no result")
+             next     
+           end
+           if submission.result.marking_state != Result::MARKING_STATES[:complete]
+             flash[:release_errors].push("Can not release result for grouping #{grouping.id}: the marking state is not complete")
+            next
+          end
+	  if flash[:release_errors].nil? or flash[:release_errors].size == 0
+            flash[:release_errors] = nil
+	  end
+          submission.result.released_to_students = true
+          submission.result.save        
         end
-        submission = grouping.get_submission_used
-        if !submission.has_result?
-          # TODO:  Neaten this up...
-          flash[:release_errors].push("Grouping ID:#{grouping_id} had no result")
-          next     
-        end
-        result = submission.result
-        if result.marking_state != Result::MARKING_STATES[:complete]
-          flash[:release_errors].push("Can not release result for grouping #{grouping.id}: the marking state is not complete")
-          next
-        end
-	if flash[:release_errors].nil? or flash[:release_errors].size == 0
-         flash[:release_errors] = nil
+      elsif params[:unrelease_results]
+       params[:groupings].each do |g|
+         grouping = Grouping.find(g)
+	 grouping.get_submission_used.result.unrelease_results
 	end
-        result.released_to_students = true
-        result.save        
       end
     end
     redirect_to :action => 'browse', :id => params[:id]
   end
 
+
+  def unrelease
+     return unless request.post?
+      if params[:groupings].nil?
+       flash[:release_results] = "Select a group"
+      else
+        params[:groupings].each do |g|
+	  g.unrelease_results
+	end
+      end
+      redirect_to :action => 'browse', :id => params[:id]
+  end
   
 #  # Handles file submissions for a form POST, 
 #  # or displays submission page for the user

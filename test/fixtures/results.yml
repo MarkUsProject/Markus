@@ -16,3 +16,19 @@ result_2:
    updated_at:           <%= Time.now.to_s(:db) %>
    released_to_students: false
 
+result_3:
+   submission_id:        <%= Fixtures.identify(:submission_3)%>
+   marking_state:        complete
+   overall_comment:      
+   created_at:           <%= Time.now.to_s(:db) %>
+   updated_at:           <%= Time.now.to_s(:db) %>
+   released_to_students: false
+
+result_4:
+   submission_id:        <%= Fixtures.identify(:submission_4)%>
+   marking_state:        complete
+   overall_comment:      
+   created_at:           <%= Time.now.to_s(:db) %>
+   updated_at:           <%= Time.now.to_s(:db) %>
+   released_to_students: true
+

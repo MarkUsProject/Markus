@@ -523,3 +523,10 @@ legend {
   padding: 5px;
   background-color: #B7D3EC; 
 }
+
+#standby_highlighting {
+   background: yellow;
+   font-size: 2em;
+   padding: 5px;
+   margin: 5px;
+}

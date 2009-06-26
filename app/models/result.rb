@@ -49,6 +49,19 @@ class Result < ActiveRecord::Base
     return total
   end
   
+  # unrealses the results, and put the marking state to partial.
+  def unrelease_results
+    self.released_to_students = false
+    self.marking_state = Result::MARKING_STATES[:partial]
+    self.save
+  end
+
+  def mark_as_partial
+    return if self.released_to_students == true
+    self.marking_state = Result::MARKING_STATES[:partial]
+    self.save
+  end
+  
   private
   # If this record is marked as "partial", ensure that its
   # "released_to_students" value is set to false.
