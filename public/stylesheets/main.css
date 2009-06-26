@@ -492,10 +492,17 @@ legend {
    -webkit-border-radius: 5px;
 }
 
-#assignment_group_usedialog {
+#assignment_group_use_dialog {
    background: white;
    padding: 0 10px 0 10px;
    border: 1px solid #000000;
    -moz-border-radius: 5px;
    -webkit-border-radius: 5px;
+}
+
+.p_modal{
+  margin-top: 5px;
+  border-top: 1px solid #000000;
+  padding-top: 10px;
+
 }

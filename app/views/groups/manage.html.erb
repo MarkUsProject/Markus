@@ -123,11 +123,11 @@ document.observe("dom:loaded", function(){
       <% end -%>
       
       <% if flash[:edit_notice] -%>
-        <p style="color:green"><%= h(flash[:edit_notice]) %></p>
+        <p class="success"><%= h(flash[:edit_notice]) %></p>
       <% end -%>
 
       <% if flash[:fail_notice] -%>
-        <p style="color:red"><%= h(flash[:fail_notice]) %></p>
+        <p class="error"><%= h(flash[:fail_notice]) %></p>
       <% end -%>
   
     
@@ -137,7 +137,7 @@ document.observe("dom:loaded", function(){
     </p>
     
  
-  <div id="assignment_group_use_dialog" style="display:none;">
+  <div id="assignment_group_use_dialog">
       <h2>Reuse Groups</h2>
     <p>
       <fieldset>
@@ -152,7 +152,7 @@ document.observe("dom:loaded", function(){
       </select>
       </fieldset>
     </p>
-    <p style="margin-top: 5px; border-top: 1px solid #000000; padding-top: 10px;">
+    <p class="p_modal">
    <%= button_to_function 'Submit',
        "if (confirm('This will delete all the groups linked to this assignment. Continue?' )) submit_assignment_group_use(escape($F('clone_groups_assignment_id')))"
    %>        
@@ -160,7 +160,7 @@ document.observe("dom:loaded", function(){
     </p>    
   </div>
  
-  <div id="create_group_dialog" style="display:none;">
+  <div id="create_group_dialog">
       <h2>Create new group</h2>
     <p>
       <fieldset>
@@ -168,7 +168,7 @@ document.observe("dom:loaded", function(){
       <input type="text" id="new_group_name"></input>
       </fieldset>
     </p>
-    <p style="margin-top: 5px; border-top: 1px solid #000000; padding-top: 10px;">
+    <p class="p_modal">
     <%= button_to_function "Create new group",
 "submit_new_group(escape($F('new_group_name')));" %>       
     <%= button_to_function "Cancel", 'modalCreate.close()'%> 
@@ -176,7 +176,7 @@ document.observe("dom:loaded", function(){
       
   </div>
  
- <div id="rename_group_dialog" style="display:none;">
+ <div id="rename_group_dialog">
       <h2>Rename group</h2>
     <p>
       <fieldset>
@@ -184,7 +184,7 @@ document.observe("dom:loaded", function(){
       <input type="text" id="new_groupname"></input>
       </fieldset>
     </p>
-    <p style="margin-top: 5px; border-top: 1px solid #000000; padding-top: 10px;">
+    <p class="p_margin">
         <button
 	onClick="submit_rename_group(escape($F('new_groupname')),
 ($grouping_id));">Rename group</button>
