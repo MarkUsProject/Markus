@@ -68,7 +68,6 @@ class GroupsControllerTest < AuthenticatedControllerTest
      get_as(@admin, :manage, {:id => @assignment.id})
      assert_response :success
    end
-  
  
    def test_should_creategroup
       @assignment = Assignment.first
@@ -77,12 +76,37 @@ class GroupsControllerTest < AuthenticatedControllerTest
       assert_response :success
    end
 
+   def test_should_creategroup_alone
+      @assignment = assignments(:assignment_1)
+      student = users(:student6)
+      post_as(student, :creategroup, {:id => @assignment.id, :working_alone => true})
+      assert_response :success
+   end
+
+
    def test_should_invite_someone
      @assignment = assignments(:assignment_1)
      student = users(:student6)
      post_as(@student, :invite_member, {:id => @assignment.id,
      :invite_member => student.id})
      assert_response :success
+     assert_equal 'Student invited.', flash[:edit_notice]
+   end
+
+   def test_should_invite_someone_alreadyinvited
+     @assignment = assignments(:assignment_1)
+     student = users(:student5)
+     inviter = users(:student4)
+     post_as(inviter, :invite_member, {:id => @assignment.id, :invite_member => student.id})
+     assert_response :success
+     assert_equal 'This student is already a pending member of this group!', flash[:fail_notice]
+   end
+
+   def test_disinvite_member
+     @assignment = assignments(:assignment_1)
+     membership = memberships(:membership5)
+     inviter = users(:student4)
+     post_as(inviter, :disinvite_member, {:id => @assignment.id, :membership => membership.id} )
    end
 
    def test_student_choose_to_join_a_group
@@ -110,8 +134,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
       assert_response :success
    end
 
-
-   def test_remove_member
+  def test_remove_member
       @assignment = Assignment.first
       membership = memberships(:membership2)
       grouping = groupings(:grouping_1)

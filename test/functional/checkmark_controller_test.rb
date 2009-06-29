@@ -1,10 +1,10 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + '/authenticated_controller_test'
 require 'checkmark_controller'
 
 # re-raise errors caught by controller
 class CheckmarkController; def rescue_action(e) raise e end; end
 
-class CheckmarkControllerTest < ActionController::TestCase
+class CheckmarkControllerTest < AuthenticatedControllerTest
   
   fixtures :users
   
@@ -105,6 +105,12 @@ class CheckmarkControllerTest < ActionController::TestCase
     post :login, :user_login => user.user_name, :user_password => 'asfd'
     get :students
     assert_response 404
+  end
+  
+  def test_index
+     user = users(:student1)
+     get_as user, :index
+     assert_response :success
   end
   
 end
