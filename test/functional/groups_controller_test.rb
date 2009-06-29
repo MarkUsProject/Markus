@@ -51,18 +51,65 @@ class GroupsControllerTest < AuthenticatedControllerTest
      assert_response :missing
   end
 
-  # Test the index method
+   def test_should_get_student_interface_working_in_group_student
+     @assignment = assignments(:assignment_1)
+     get_as(@student, :student_interface, {:id => @assignment.id})
+     assert_response :success
+   end
+
+   def test_should_get_student_interface_working_alone_student
+     @assignment = assignments(:assignment_2)
+     get_as(@student, :student_interface, {:id => @assignment.id})
+     assert_response :success
+   end
+
    def test_should_get_manage
      @assignment = Assignment.first
      get_as(@admin, :manage, {:id => @assignment.id})
      assert_response :success
    end
-   
-#   def  test_should_creategroup
-#      @assignment = Assignment.first
-#      post_as(@student, :creategroup, {:id => @assignment.id})
-#      assert_response :success
-#   end
+  
+ 
+   def test_should_creategroup
+      @assignment = Assignment.first
+      student = users(:student6)
+      post_as(student, :creategroup, {:id => @assignment.id})
+      assert_response :success
+   end
+
+   def test_should_invite_someone
+     @assignment = assignments(:assignment_1)
+     student = users(:student6)
+     post_as(@student, :invite_member, {:id => @assignment.id,
+     :invite_member => student.id})
+     assert_response :success
+   end
+
+   def test_student_choose_to_join_a_group
+      @assignment = assignments(:assignment_1)
+      student = users(:student5)
+      grouping = groupings(:grouping_2)
+      post_as(student, :join, {:id => @assignment.id, :grouping_id =>
+      grouping.id})
+      assert_response :success
+   end
+
+   def test_student_choose_to_decline_an_invitation
+      @assignment = assignments(:assignment_1)
+      student = users(:student5)
+      grouping = groupings(:grouping_2)
+      post_as(student, :decline_invitation, {:id => @assignment.id, :grouping_id =>  grouping.id})
+      assert_response :success
+   end
+
+   def test_delete_rejected
+      @assignment = assignments(:assignment_1)
+      membership = memberships(:membership3)
+      post_as(@student, :delete_rejected, {:id => @assignment.id,
+      :membership => membership.id})
+      assert_response :success
+   end
+
 
    def test_remove_member
       @assignment = Assignment.first

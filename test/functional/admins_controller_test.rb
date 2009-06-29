@@ -21,6 +21,7 @@ class AdminsControllerTest < AuthenticatedControllerTest
     assert_response :success
   end
 
+
   def test_create
     assert_difference(Admin.count.to_s) do
         post :create, :admin => {:user_name => 'Essai01', :last_name =>
