@@ -5,7 +5,11 @@ class ResultTest < ActiveSupport::TestCase
   # set_fixture_class is required here, since we don't use Rails'
   # standard pluralization for rubric criteria
   set_fixture_class :rubric_criteria => RubricCriterion 
-  fixtures :assignments, :rubric_criteria,  :submissions, :marks, :results, :extra_marks
+	# Set to false to blow away fixtures cache and ensure our fixtures are loaded
+	# and thus takes into account our set_fixture_class
+	self.use_transactional_fixtures = false
+  fixtures :assignments, :rubric_criteria ,  :submissions, :marks, :results, :extra_marks
+	# fixtures :special_foos set_fixture_class :special_foos => Foo 
 
   should_have_many :marks
   should_have_many :extra_marks
@@ -13,7 +17,7 @@ class ResultTest < ActiveSupport::TestCase
 
   def test_get_subtotal
     result = results(:result_1)
-    assert_equal(6, result.get_subtotal, "Subtotal should be equal to 10")
+    assert_equal(6, result.get_subtotal, "Subtotal should be equal to 6")
   end
   
   def test_unreleased_true
