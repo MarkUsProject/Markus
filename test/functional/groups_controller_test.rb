@@ -79,7 +79,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
    def test_should_creategroup_alone
       @assignment = assignments(:assignment_1)
       student = users(:student6)
-      post_as(student, :creategroup, {:id => @assignment.id, :working_alone => true})
+      post_as(student, :creategroup, {:id => @assignment.id, :workalone => true})
       assert_response :success
    end
 
@@ -143,11 +143,61 @@ class GroupsControllerTest < AuthenticatedControllerTest
       assert_response :success
    end
 
-#   def test_invite_member
-#      @assignment = Assignment.first
-#      student2 = users(:student2)
-#      student.remove_member
-#      post_as(@student, :invite_member, {:id => @assignment.id})
-#   end
+   def test_delete_group_without_submission
+     @assignment = assignments(:assignment_1)
+     grouping = groupings(:grouping_4)
+     post_as(@admin, :delete_group, {:id => @assignment.id, :grouping_id => grouping.id})
+     assert_response :success
+   end
+
+   def test_remove_member
+     @assignment = assignments(:assignment_1)
+     grouping = groupings(:grouping_1)
+     membership = memberships(:membership2)
+     post_as(@admin, :remove_member, {:id => @assignment.id, :grouping_id => grouping.id, :mbr_id => membership.id})
+     assert_response :success
+   end
+
+   def test_remove_member_inviter
+     @assignment = assignments(:assignment_1)
+     grouping = groupings(:grouping_1)
+     membership = memberships(:membership1)
+     post_as(@admin, :remove_member, {:id => @assignment.id, :grouping_id  => grouping.id, :mbr_id => membership.id})
+     assert_response :success
+   end
+
+   def test_add_group_without_groupname
+     @assignment = assignments(:assignment_1)
+     post_as(@admin, :add_group, {:id => @assignment.id})
+     assert_response :success
+   end
+
+   def test_add_group_with_groupname
+     @assignment = assignments(:assignment_1)
+     post_as(@admin, :add_group, {:id => @assignment.id, :new_group_name => "test"})
+     assert_response :success
+   end
+
+   def test_remove_group_without_submission
+     @assignment = assignments(:assignment_1)
+     grouping = groupings(:grouping_4)
+     post_as(@admin, :remove_group, {:id => @assignment.id, :grouping_id => grouping.id})
+     assert_response :success
+   end
+
+
+   def test_valid_grouping
+     assignment = assignments(:assignment_1)
+     grouping = groupings(:grouping_4)
+     post_as(@admin, :valid_grouping, {:id => assignment.id, :grouping_id => grouping.id})
+   end
+
+   def test_use_another_assignment_groups
+      source_assignment = assignments(:assignment_1)
+      target_assignment = assignments(:assignment_3)
+      post_as(@admin, :use_another_assignment_groups, {:id => target_assignment.id, :clone_groups_assignment_id => source_assignment.id})
+      assert_response :success
+      assert_equal("Groups created", flash[:edit_notice])
+   end
 
 end
