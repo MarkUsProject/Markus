@@ -30,7 +30,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
   def test_get_new
     get_as @admin, :new
     assert_response :success
-    assert_not_nil assigns['assignment']
   end
   
   # TODO

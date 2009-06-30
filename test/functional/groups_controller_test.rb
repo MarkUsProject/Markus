@@ -185,11 +185,19 @@ class GroupsControllerTest < AuthenticatedControllerTest
      assert_response :success
    end
 
+   def test_rename_grouping
+     assignment = assignments(:assignment_1)
+     grouping = groupings(:grouping_4)
+     post_as(@admin, :valid_grouping, {:id => assignment.id, :grouping_id => grouping.id, :new_groupname => "NeW"})
+    assert_response :success
+   end
+
 
    def test_valid_grouping
      assignment = assignments(:assignment_1)
      grouping = groupings(:grouping_4)
      post_as(@admin, :valid_grouping, {:id => assignment.id, :grouping_id => grouping.id})
+     assert_response :success
    end
 
    def test_use_another_assignment_groups

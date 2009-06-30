@@ -21,12 +21,23 @@ class AdminsControllerTest < AuthenticatedControllerTest
     assert_response :success
   end
 
-
   def test_create
-    assert_difference(Admin.count.to_s) do
-        post :create, :admin => {:user_name => 'Essai01', :last_name =>
-    'ESSAI', :first_name => 'essai'}
+    post_as(@admin, :create, :user => {:user_name => 'Essai01', :last_name => 'ESSAI', :first_name => 'essai'})
+    assert_response :success
   end
-    assert_redirect_to post_path(assigns(:admin))
+
+  def test_update
+    admin = users(:olm_admin_2)
+    post_as(@admin, :update, :user => {:id => admin.id,:user_name =>'Essai02', :last_name => 'ESSAI', :first_name => 'essai'})
+    assert_response :success
+    assert_equal('Essai02', admin.user_name)
   end
+
+
+  def test_edit
+    admin = users(:olm_admin_2)
+    get_as(@admin, :edit, :id => admin.id)
+    assert_response :success
+  end
+
 end
