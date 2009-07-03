@@ -47,9 +47,9 @@
     </ul>  
     <div id="rubric_viewer" class="tabbedArea">
       <div class="rubric_tools">
-         <%= button_to_remote("Expand All", :url => {:controller => 'annotations', :action => 'expand_criteria', :expand => true, :aid => @assignment.id, :rid => result.id}) %>
-         <%= button_to_remote("Collapse All", :url => {:controller => 'annotations', :action => 'expand_criteria', :expand => false, :aid => @assignment.id, :rid => result.id}) %>
-         <%= button_to_remote("Expand Unmarked", :url => {:controller => 'annotations', :action => 'expand_criteria', :expand => true, :unmarked => true, :aid => assignment.id, :rid => result.id}) %>
+         <%= button_to_remote("Expand All", :url => {:controller => 'results', :action => 'expand_criteria', :aid => @assignment.id}) %>
+         <%= button_to_remote("Collapse All", :url => {:controller => 'results', :action => 'collapse_criteria', :aid => @assignment.id}) %>
+         <%= button_to_remote("Expand Unmarked", :url => {:controller => 'results', :action => 'expand_unmarked_criteria', :aid => assignment.id, :rid => result.id}) %>
        </div>  <!-- Rubric Tools -->
     
        <div id="rubric_criteria_pane">

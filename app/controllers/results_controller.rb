@@ -288,6 +288,28 @@ class ResultsController < ApplicationController
     end
   end
   
+  def expand_criteria
+    @assignment = Assignment.find(params[:aid])
+    @rubric_criteria = @assignment.rubric_criteria
+    render :partial => 'results/marker/expand_criteria', :locals => {:rubric_criteria => @rubric_criteria}
+  end
+  
+  def collapse_criteria
+    @assignment = Assignment.find(params[:aid])
+    @rubric_criteria = @assignment.rubric_criteria
+    render :partial => 'results/marker/collapse_criteria', :locals => {:rubric_criteria => @rubric_criteria}
+  end
+  
+  def expand_unmarked_criteria
+    @assignment = Assignment.find(params[:aid])
+    @rubric_criteria = @assignment.rubric_criteria
+    @result = Result.find(params[:rid])
+    # nil_marks are the marks that have a "nil" value for Mark.mark - so they're
+    # unmarked.
+    @nil_marks = @result.marks.all(:conditions => {:mark => nil})
+    render :partial => 'results/marker/expand_unmarked_criteria', :locals => {:nil_marks => @nil_marks}
+  end
+  
   private
   
   def retrieve_file(file)

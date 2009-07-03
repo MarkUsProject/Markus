@@ -7,7 +7,7 @@
   <div class="criterion_title_div" id="<%= "rubric_criterion_title_#{rubric_criterion.id}"%>" onclick="<%="focus_rubric_criterion(#{rubric_criterion.id})"%>">
 
 <div id="<%="rubric_criterion_title_#{rubric_criterion.id}_expand"%>"
-class="float_left;">+ &nbsp;
+class="float_left rubric_criterion_expand">+ &nbsp;
 </div>
 
   <%= render :partial => 'results/common/rubric_criterion', :locals => {:rubric_criterion => rubric_criterion, :mark => mark} %>

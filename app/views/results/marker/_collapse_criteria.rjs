@@ -1,0 +1,4 @@
+rubric_criteria.each do |criterion|
+  page.call "hide_rubric_criterion", criterion.id
+end
+
