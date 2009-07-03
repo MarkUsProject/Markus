@@ -21,7 +21,7 @@ class AnnotationsController < ApplicationController
     @annotations = Annotation.find_all_by_submission_file_id(@submission_file_id, :order => "line_start") || []
   end
 
-  def create 
+  def create
     @text = AnnotationText.create({
       :content => params[:content],
       :annotation_category_id => params[:category_id]
@@ -75,36 +75,6 @@ class AnnotationsController < ApplicationController
     end
   end
 
-  #should be moved to javascript, but put here for now, since we can easily access all
-  #unmarked criterion here.
-  def expand_criteria
-    #true if we want to expand, false to collapse
-    expand = params[:expand]
-    #true if we only want to expand the unmarked portion
-    unmarked = params[:unmarked]
-    assignment = Assignment.find(params[:aid])
-    result = Result.find(params[:rid])
-    criteria = assignment.rubric_criteria
-    render :update do |page|
-      criteria.each do |criterion|
-        mark = Mark.find(:first,
-              :conditions => ["result_id = :r AND rubric_criteria_id = :c", {:r=> result.id, :c=>criterion.id}] )
-        html = "+ &nbsp;"
-        if expand #if we want to expand criteria...
-          #if we want to expand ony unmarked assignments, expand ones where the
-          #mark is nil
-          if (unmarked and mark.mark.nil?) or not unmarked
-            html = "- &nbsp;"
-            page["criterion_inputs_#{criterion.id}"].show();
-          end
-        else
-          page["criterion_inputs_#{criterion.id}"].hide();
-          page["criterion_title_#{criterion.id}"].show();
-        end
-        page["criterion_title_#{criterion.id}_expand"].innerHTML = html 
-      end
-    end
-  end
 
   #Creates a gradesfile in the format specified by
   #http://www.cs.toronto.edu/~clarke/grade/new/fileformat.html

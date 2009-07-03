@@ -20,7 +20,7 @@ function sourceCodeReady() {
   var line_manager = new SourceCodeLineManager(syntax_highlighter_adapter, line_factory, collection);
   var annotation_text_manager = new AnnotationTextManager();
   var annotation_text_displayer = new AnnotationTextDisplayer($('annotation_holder'));
-  
+   
   line_annotations = new SourceCodeLineAnnotations(line_manager, annotation_text_manager, annotation_text_displayer);
 }
 
@@ -155,7 +155,7 @@ function submit_new_annotation(content, category_id) {
   //Send AJAX request
   <%= remote_function (
                     :url => { :controller => "annotations", :action => "create" },
-                    :with => "'submission_file_id='+ $('select_file_id').value +'&line_start=' + positions.line_start + ' &line_end=' + positions.line_end + '&content='+ content + '&category_id=' + category_id")
+                    :with => "'submission_file_id='+ $('select_file_id').value +'&line_start=' + positions.line_start + ' &line_end=' + positions.line_end + '&content=' + encodeURIComponent(content) + '&category_id=' + category_id")
                     %>
 }
 
@@ -183,5 +183,10 @@ function setup_divider(widen_target, dragger) {
     var divider = new ResizePane(widen_target, dragger);
 }
 
+function hide_all_annotation_content_editors() {
+  $$('.annotation_text_content_editor').each(function(node) {
+    $(node).hide();
+  });
+}
 
 </script>

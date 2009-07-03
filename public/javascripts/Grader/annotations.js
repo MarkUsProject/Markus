@@ -1,3 +1,4 @@
+/*
 var line_annotations = null;
 var syntax_highlighter_adapter = null;
 
@@ -73,3 +74,5 @@ function get_mouse_positions() {
   //Return positions as an object
   return {line_start: line_start, line_end: line_end};
 }
+
+*/

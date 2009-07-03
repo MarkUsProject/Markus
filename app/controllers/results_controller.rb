@@ -164,7 +164,8 @@ class ResultsController < ApplicationController
         { :uid => params[:uid], :file_contents => file_contents, :annots => annots, :code_type => @code_type}
       #Also update the annotation_summary_list
         page.replace_html 'annotation_summary_list', :partial => 'annotations/annotation_summary', :locals => {:annots => annots, :submission_file_id => @submission_file_id}
-      rescue
+        page.call "hide_all_annotation_content_editors"
+      rescue Exception => e
         # There's a bug in Rails as of 2.3.2 - #1112 - some binary strings
         # will result in a "redundant UTF-8 sequence" error when attempting
         # to convert to JSON.  This is scheduled for fixing in Rails 2.3.4.

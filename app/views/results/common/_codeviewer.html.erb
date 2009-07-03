@@ -16,7 +16,7 @@
     <% if (defined? annots) %>
         <% annots.each do |annot| %>
             add_annotation_text(<%=annot.annotation_text.id%>, 
-            '<%=escape_javascript(annot.annotation_text.content.to_s)%>');
+            '<%=h(escape_javascript(CGI.unescape(annot.annotation_text.content.to_s)))%>');
             add_annotation(<%=annot.id%>, $R(<%= annot.line_start %>, <%= annot.line_end %>), 
              '<%=annot.annotation_text.id%>');
 

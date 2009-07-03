@@ -1,20 +1,18 @@
-
-
 <% annots.each do |annot| %>
   <li class="<%= cycle('annotations1', 'annotations2') %>">
   
     <p class="lineNumber"><%=link_to_function "Line #{annot.line_start} to #{annot.line_end}", "focus_source_code_line(#{annot.line_start})"%></p>
     <p class="annotationContent" id="annotation_text_content_display_<%=h(annot.annotation_text.id)%>">
-    <%=h(annot.annotation_text.content)%>
+    <%=h(escape_javascript(CGI.unescape(annot.annotation_text.content)))%>
     </p>
     <p class="manageAnnotations"><%=link_to_function "Edit", "$('annotation_text_content_edit_#{annot.annotation_text.id}').show();$('annotation_text_content_display_#{annot.annotation_text.id}').hide();"%>
     &middot;
     <%=link_to_remote "Remove", :url => {:controller => "annotations", :action=>"destroy", :id=>annot.id, :submission_file_id=>@submission_file_id}, :confirm => "Are you sure you want to remove this annotation?"%>
     </p>
 
-    <div id="annotation_text_content_edit_<%=annot.annotation_text.id%>" >
+    <div id="annotation_text_content_edit_<%=annot.annotation_text.id%>" class="annotation_text_content_editor">
     
-      <% remote_form_for :annotation_text, sanitize(annot.annotation_text), :url => {:action => "update_annotation", :controller => "annotations"} do |f| %>   
+      <% remote_form_for :annotation_text, annot.annotation_text, :url => {:action => "update_annotation", :controller => "annotations"} do |f| %>   
       
         <%= f.hidden_field :id%>
         <input type="hidden" name="annotation_text[submission_file_id]" value="<%=h(@submission_file_id)%>" />
