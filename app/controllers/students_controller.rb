@@ -4,6 +4,7 @@ class StudentsController < ApplicationController
   
   def index
     @students = Student.find(:all, :order => "user_name")
+    @hidden_students_number = Student.all(:conditions => {:hidden => true}).count
   end
 
   def edit
@@ -29,9 +30,11 @@ class StudentsController < ApplicationController
     case params[:bulk_action]
       when "hide"
         Student.hide_students(@student_ids)
+        @hidden_students_number = Student.all(:conditions => {:hidden => true}).count
         render :action => "hide_students"
       when "unhide"
         Student.unhide_students(@student_ids)
+        @hidden_students_number = Student.all(:conditions => {:hidden => true}).count
         render :action => "unhide_students"
     end
   end

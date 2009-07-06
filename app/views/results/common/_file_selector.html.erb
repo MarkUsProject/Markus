@@ -4,7 +4,7 @@
 <div id="file_selector">
 <%= form_tag({:action => "download"}) if can_download %>
   Submission File: 
-  <button onClick="bump_select($('select_file_id'), -1);"><-</button>
+  <button onClick="bump_select($('select_file_id'), -1); return false;"><-</button>
   <select id="select_file_id" name="select_file_id" onChange="if ($(this).getValue() != '') { load_submitted_file($(this).getValue()); }">
     <% if files.empty? %>
       <option value="">[No files in repository]</option>
@@ -17,7 +17,7 @@
         </option>
     <% end %>
   </select>  
-  <button onClick="bump_select($('select_file_id'), 1);">-></button>
+  <button onClick="bump_select($('select_file_id'), 1); return false;">-></button>
   <%= submit_tag "Download" if can_download %>
 <%= "</form>" if can_download%>
 </div>

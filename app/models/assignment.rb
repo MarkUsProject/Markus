@@ -84,7 +84,7 @@ class Assignment < ActiveRecord::Base
 
   # Make a list of students without any groupings
   def no_grouping_students_list
-   @students = Student.all
+   @students = Student.all(:order => :last_name, :conditions => {:hidden => false})
    @students_list = []
    @students.each do |s|
      if !s.has_accepted_grouping_for?(self.id)

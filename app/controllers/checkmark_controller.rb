@@ -33,6 +33,10 @@ class CheckmarkController < ApplicationController
     
     # sets this user as logged in if login and password is valid
     found_user = User.authenticate(params[:user_login], params[:user_password])
+    if found_user.nil?
+      flash[:login_notice] = "Your CDF login and password do not match."
+      return
+    end
     
     # Has this student been hidden?
     if found_user.student? && found_user.hidden

@@ -74,7 +74,10 @@ class GroupsController < ApplicationController
     @invited = Student.find(params[:invite_member])
     # We first check he isn't already invited in this grouping
     groupings = @invited.pending_groupings_for(@assignment.id)
-
+    if @invited.hidden
+      flash[:fail_notice] = "Could not invite this student - this student's account has been disabled"
+      return
+    end
     if !@grouping.pending?(@student)
        @invited.invite(@grouping.id)
        flash[:edit_notice] = "Student invited."

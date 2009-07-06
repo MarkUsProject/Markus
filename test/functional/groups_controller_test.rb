@@ -83,6 +83,16 @@ class GroupsControllerTest < AuthenticatedControllerTest
       assert_response :success
    end
 
+   def test_shouldnts_invite_hidden_student
+     @assignment = assignments(:assignment_1)
+     @grouping = @student.accepted_grouping_for(@assignment.id)
+     original_memberships = @grouping.memberships
+     student = users(:hidden_student)
+     post_as(@student, :invite_member, {:id => @assignment.id, :invite_member => student.id})
+     assert_response :success
+     assert_equal "Could not invite this student - this student's account has been disabled", flash[:fail_notice]
+     assert_equal original_memberships, @grouping.memberships, "Memberships were not equal"
+   end
 
    def test_should_invite_someone
      @assignment = assignments(:assignment_1)

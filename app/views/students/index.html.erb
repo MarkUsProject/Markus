@@ -48,7 +48,7 @@
       </select>
       <%= submit_tag "Apply Bulk Action", :disable_with => "Processing..." %>
       
-      <input type="checkbox" id="show_hidden_students" name="show_hidden_students" value="true" onclick="if($(this).getValue() == 'true') { $$('.hidden_student').each(function(node) { $(node).show();}) } else { $$('.hidden_student').each(function(node) { $(node).hide();}) }"> Show Hidden Students
+      <input type="checkbox" id="show_hidden_students" name="show_hidden_students" value="true" onclick="if($(this).getValue() == 'true') { $$('.hidden_student').each(function(node) { $(node).show();}) } else { $$('.hidden_student').each(function(node) { $(node).hide();}) }"> Show Hidden Students (<span id="hidden_students_number"><%=@hidden_students_number%></span>)
 
       <table>
         

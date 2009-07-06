@@ -5,3 +5,5 @@
     page['student_' + student_id].hide()
   end
 end
+
+page.replace_html 'hidden_students_number', @hidden_students_number

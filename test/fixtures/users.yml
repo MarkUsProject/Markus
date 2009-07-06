@@ -111,3 +111,14 @@ student6:
     type:           Student
     created_at:     <%= Time.now.to_s(:db) %>
     updated_at:     <%= Time.now.to_s(:db) %>
+    
+hidden_student:
+    user_name:      hidden
+    last_name:      Student
+    first_name:     Hidden
+    grace_days:     1
+    type:           Student
+    created_at:     <%= Time.now.to_s(:db) %>
+    updated_at:     <%= Time.now.to_s(:db) %>
+    hidden:         true
+

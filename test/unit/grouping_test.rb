@@ -197,7 +197,23 @@ class GroupingTest < ActiveSupport::TestCase
      grouping.remove_member(membership)
      assert_not_nil grouping.inviter 
   end
-
+  
+  def test_cant_invite_hidden_student
+    grouping = groupings(:grouping_1)
+    hidden = users(:hidden_student)
+    original_number_of_members = grouping.memberships.count
+    grouping.invite(hidden.user_name)
+    assert_equal original_number_of_members, grouping.memberships.count
+  end
+  
+  def test_cant_add_member_hidden_student
+    grouping = groupings(:grouping_1)
+    hidden = users(:hidden_student)
+    original_number_of_members = grouping.memberships.count
+    grouping.add_member(hidden)
+    assert_equal original_number_of_members, grouping.memberships.count
+  end
+  
 
   #########################################################
   #

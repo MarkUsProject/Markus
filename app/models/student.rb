@@ -63,11 +63,13 @@ class Student < User
   end
 
   def invite(gid)
-    membership = StudentMembership.new
-    membership.grouping_id = gid;
-    membership.membership_status = StudentMembership::STATUSES[:pending]
-    membership.user_id = self.id
-    membership.save
+    if !hidden
+      membership = StudentMembership.new
+      membership.grouping_id = gid;
+      membership.membership_status = StudentMembership::STATUSES[:pending]
+      membership.user_id = self.id
+      membership.save
+    end
   end
  
   def destroy_all_pending_memberships(aid)
