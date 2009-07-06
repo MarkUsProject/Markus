@@ -22,6 +22,19 @@ class StudentsController < ApplicationController
       redirect_to :action => 'index'
     end
   end
+  
+  def bulk_modify
+    @student_ids = params[:student_ids]
+    @show_hidden_students = params[:show_hidden_students]
+    case params[:bulk_action]
+      when "hide"
+        Student.hide_students(@student_ids)
+        render :action => "hide_students"
+      when "unhide"
+        Student.unhide_students(@student_ids)
+        render :action => "unhide_students"
+    end
+  end
 
   def create
     return unless request.post?
@@ -56,7 +69,6 @@ class StudentsController < ApplicationController
     send_data(output, :type => format, :disposition => "inline")
   end
   
-  
   def upload_student_list  
     if request.post? && !params[:userlist].blank?
       result = User.upload_user_list(Student, params[:userlist])
@@ -66,5 +78,6 @@ class StudentsController < ApplicationController
       flash[:upload_notice] = result[:upload_notice]
     end
     redirect_to :action => 'index'
-  end
+  end  
+ 
 end

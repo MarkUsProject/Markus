@@ -14,13 +14,9 @@ class CheckmarkController < ApplicationController
   # Handles login requests; usually redirected here when trying to access 
   # the website and has not logged in yet, or session has expired.  User 
   # is redirected to main page if session is still active and valid.
-  
- 
 
   def login
   
-
-    
     # redirect to main page if user is already logged in.
     if logged_in? && !request.post?
       redirect_to :action => 'index' 
@@ -36,7 +32,16 @@ class CheckmarkController < ApplicationController
     redirect_to(:action => 'login') && return if blank_login || blank_pwd
     
     # sets this user as logged in if login and password is valid
-    self.current_user = User.authenticate(params[:user_login], params[:user_password])
+    found_user = User.authenticate(params[:user_login], params[:user_password])
+    
+    # Has this student been hidden?
+    if found_user.student? && found_user.hidden
+      flash[:login_notice] = "This account has been disabled"
+      redirect_to(:action => 'login') && return
+    end
+    
+    self.current_user = found_user
+    
     if logged_in?
       uri = session[:redirect_uri]
       session[:redirect_uri] = nil

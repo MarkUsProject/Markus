@@ -1,3 +1,4 @@
+<%= javascript_include_tag "students_manager"%>
 <h1>Manage Students</h1>
 
 <div id="sub_menu">
@@ -39,12 +40,23 @@
       </div>
       <% end -%>
       
+      <%= form_remote_tag( :url => {:action => "bulk_modify"}) %>
+      <select name="bulk_action">
+        <option value="">Select bulk action</option>
+        <option value="hide">Hide Selected Students</option>
+        <option value="unhide">Unhide Selected Students</option>
+      </select>
+      <%= submit_tag "Apply Bulk Action", :disable_with => "Processing..." %>
+      
+      <input type="checkbox" id="show_hidden_students" name="show_hidden_students" value="true" onclick="if($(this).getValue() == 'true') { $$('.hidden_student').each(function(node) { $(node).show();}) } else { $$('.hidden_student').each(function(node) { $(node).hide();}) }"> Show Hidden Students
+
       <table>
         
        <tr>
        	  <%
 	   # pull "labels" from I18n files
 	  %>
+	  <th></th>
           <th><%= I18n.t('user.user_name') %></th>
           <th><%= I18n.t('user.last_name') %></th>
           <th><%= I18n.t('user.first_name') %></th>
@@ -52,7 +64,8 @@
         </tr>
           
         <% for u in @students %>
-          <tr class="<%= cycle('rowA', 'rowB') %>">
+          <tr class="<%= cycle('rowA', 'rowB') %> <%="hidden_student" if u.hidden%>" id="student_<%=u.id%>">
+            <td><%= check_box_tag 'student_ids[]', u.id, false, :id => "student_#{u.id}_checkbox"%></td>
             <td><%= h(u.user_name) %></td>
             <td><%= h(u.last_name) %></td>
             <td><%= h(u.first_name) %></td>
@@ -61,6 +74,7 @@
         <% end %>
         
       </table>
+      </form>
   </div>
   </div>
   

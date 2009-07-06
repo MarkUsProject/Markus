@@ -530,3 +530,7 @@ legend {
    padding: 5px;
    margin: 5px;
 }
+
+.hidden_student {
+  background: #FFFFAA;
+}

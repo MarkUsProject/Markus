@@ -10,8 +10,7 @@ class Student < User
   has_many :rejected_groupings, :class_name => 'Grouping', :through => :memberships, :conditions => {'memberships.membership_status' => StudentMembership::STATUSES[:rejected]}, :source => :grouping
 
   has_many :student_memberships
-
-  
+   
   # Returns true if this student has a Membership in a Grouping for an
   # Assignment with id 'aid', where that Membership.membership_status is either
   # 'accepted' or 'inviter'
@@ -131,6 +130,22 @@ class Student < User
       m.membership_status = 'rejected'
       m.save
     end
+  end
+  
+  def self.hide_students(student_id_list)
+    update_list = {}
+    student_id_list.each do |student_id|
+      update_list[student_id] = {:hidden => true}
+    end
+    Student.update(update_list.keys, update_list.values)
+  end
+  
+  def self.unhide_students(student_id_list)
+    update_list = {}
+    student_id_list.each do |student_id|
+      update_list[student_id] = {:hidden => false}
+    end
+    Student.update(update_list.keys, update_list.values)
   end
 
 end

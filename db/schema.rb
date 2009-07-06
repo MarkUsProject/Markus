@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090623140913) do
+ActiveRecord::Schema.define(:version => 20090706131528) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -127,9 +127,9 @@ ActiveRecord::Schema.define(:version => 20090623140913) do
   end
 
   create_table "rubric_criteria", :force => true do |t|
-    t.string   "rubric_criterion_name",                                              :null => false
-    t.integer  "assignment_id",                                                      :null => false
-    t.integer  "weight",                :limit => 10, :precision => 10, :scale => 0, :null => false
+    t.string   "rubric_criterion_name", :null => false
+    t.integer  "assignment_id",         :null => false
+    t.decimal  "weight",                :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "position"
@@ -198,13 +198,14 @@ ActiveRecord::Schema.define(:version => 20090623140913) do
   add_index "submissions", ["grouping_id"], :name => "index_submissions_on_grouping_id"
 
   create_table "users", :force => true do |t|
-    t.string   "user_name",  :null => false
+    t.string   "user_name",                     :null => false
     t.string   "last_name"
     t.string   "first_name"
     t.integer  "grace_days"
     t.string   "type"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "hidden",     :default => false, :null => false
   end
 
   add_index "users", ["user_name"], :name => "index_users_on_user_name", :unique => true

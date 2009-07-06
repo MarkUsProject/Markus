@@ -1,0 +1,4 @@
+@student_ids.each do |student_id|
+  page['student_' + student_id + '_checkbox'].setValue(false)
+  page['student_' + student_id].removeClassName('hidden_student')
+end
