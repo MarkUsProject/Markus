@@ -1,3 +1,5 @@
+require File.join(File.dirname(__FILE__),'/../../lib/repo/repository_factory')
+
 # Represents a collection of students working together on an assignment in a group
 class Grouping < ActiveRecord::Base
   before_create :create_grouping_repository_folder
@@ -44,8 +46,8 @@ class Grouping < ActiveRecord::Base
     if member.nil?
       return nil
     end
-    invite = Student.find(member.user_id)
-    return invite
+    inviting_student = Student.find(member.user_id)
+    return inviting_student
   end
 
 
@@ -198,7 +200,6 @@ class Grouping < ActiveRecord::Base
   # When a Grouping is created, automatically create the folder for the
   # assignment in the repository, if it doesn't already exist.
   def create_grouping_repository_folder
-    require 'lib/repo/repository_factory'
     repo = Repository.create(REPOSITORY_TYPE).open(File.join(REPOSITORY_STORAGE, group.repository_name))
     revision = repo.get_latest_revision
     assignment_folder = File.join('/', assignment.repository_folder)
