@@ -62,7 +62,7 @@ class Grouping < ActiveRecord::Base
   end
 
    #invites each user in 'members' by its user name, to this group
-   def invite(members, membership_status=StudentMembership::STATUSES[:pending])
+   def invite(members, set_membership_status=StudentMembership::STATUSES[:pending])
      # overloading invite() to accept members arg as both a string and a array
      members = [members] if members.is_a?(String) # put a string in an
                                                  # array
@@ -73,7 +73,7 @@ class Grouping < ActiveRecord::Base
          if user.hidden
            errors.add_to_base("Student account has been disabled")
          else
-           member = self.add_member(user, membership_status)
+           member = self.add_member(user, set_membership_status)
            if member.nil?
              errors.add_to_base("Student already in a group")
            end
@@ -87,12 +87,12 @@ class Grouping < ActiveRecord::Base
    end
 
    # Add a new member to base
-   def add_member(user, membership_status=StudentMembership::STATUSES[:accepted])
+   def add_member(user, set_membership_status=StudentMembership::STATUSES[:accepted])
      if user.has_accepted_grouping_for?(self.assignment_id) || user.hidden
        return nil
      else
        member = StudentMembership.new(:user => user, :membership_status =>
-       membership_status, :grouping => self)
+       set_membership_status, :grouping => self)
        member.save
        return member
      end
