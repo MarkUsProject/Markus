@@ -24,6 +24,7 @@ class AdminsController < ApplicationController
     end
   end
 
+  # Create a new Admin
   def create
     return unless request.post?
     # Default attributes: role = TA or role = STUDENT

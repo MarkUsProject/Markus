@@ -321,7 +321,7 @@ class ResultsController < ApplicationController
     if revision.files_at_path(file.path)[file.filename].nil?
       raise "Could not find #{file.filename} in repository #{student_group.repository_name}"
     end
-    return repo.download(revision.files_at_path(file.path)[file.filename])
+    return repo.download_as_string(revision.files_at_path(file.path)[file.filename])
   end
   
 end

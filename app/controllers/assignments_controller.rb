@@ -1,4 +1,5 @@
 # this controller uses Repository module in directory 'lib'
+require 'fileutils'
 require File.join(File.dirname(__FILE__),'/../../lib/repo/repository_factory')
 
 class AssignmentsController < ApplicationController
@@ -53,7 +54,7 @@ class AssignmentsController < ApplicationController
     if file.nil?
       @file_contents = "Could not find the file #{file_name} in the repository for group #{user_group.group_name} for revision #{revision.revision_number}"
     else
-      @file_contents = repo.download(file)
+      @file_contents = repo.download_as_string(file)
     end
     # Blast the file contents
     send_data @file_contents, :type => 'text/plain', :disposition => 'inline', :filename => file_name

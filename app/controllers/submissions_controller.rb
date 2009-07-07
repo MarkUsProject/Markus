@@ -1,4 +1,5 @@
 # this controller uses Repository module in directory 'lib'
+require 'fileutils'
 require File.join(File.dirname(__FILE__),'/../../lib/repo/repository_factory')
 
 class SubmissionsController < ApplicationController
@@ -154,7 +155,7 @@ class SubmissionsController < ApplicationController
       @revision = repo.get_revision(revision_number.to_i)
     end
     begin 
-     file_contents = repo.download(@revision.files_at_path(File.join(@assignment.repository_folder,path))[params[:file_name]])
+     file_contents = repo.download_as_string(@revision.files_at_path(File.join(@assignment.repository_folder,path))[params[:file_name]])
     rescue Exception => e
       render :update do |page|
         page.call "alert", e.message
