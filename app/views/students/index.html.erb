@@ -40,13 +40,14 @@
       </div>
       <% end -%>
       
-      <%= form_remote_tag( :url => {:action => "bulk_modify"}) %>
+      <%= form_remote_tag :url => {:action => "bulk_modify"}, :complete => "$('apply_bulk_action').setValue('Apply Bulk Action');$('apply_bulk_action').enable();"
+       %>
       <select name="bulk_action">
         <option value="">Select bulk action</option>
         <option value="hide">Hide Selected Students</option>
         <option value="unhide">Unhide Selected Students</option>
       </select>
-      <%= submit_tag "Apply Bulk Action", :disable_with => "Processing..." %>
+      <%= submit_tag "Apply Bulk Action", :id => 'apply_bulk_action', :onclick => "$(this).setValue('Processing...'); $(this).disable();" %>
       
       <input type="checkbox" id="show_hidden_students" name="show_hidden_students" value="true" onclick="if($(this).getValue() == 'true') { $$('.hidden_student').each(function(node) { $(node).show();}) } else { $$('.hidden_student').each(function(node) { $(node).hide();}) }"> Show Hidden Students (<span id="hidden_students_number"><%=@hidden_students_number%></span>)
 
