@@ -62,7 +62,7 @@ class Grouping < ActiveRecord::Base
   end
 
    #invites each user in 'members' by its user name, to this group
-   def invite(members, membership_status='pending')
+   def invite(members, membership_status=StudentMembership::STATUSES[:pending])
      # overloading invite() to accept members arg as both a string and a array
      members = [members] if members.is_a?(String) # put a string in an
                                                  # array
