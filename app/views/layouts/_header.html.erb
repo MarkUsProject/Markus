@@ -1,17 +1,12 @@
-<div id="header">
-  <div id="main_menu">
-    <%= link_to image_tag('home.jpg', :border => 0), 
-        :controller => 'checkmark', :action => 'index' %>
-  </div>
-  
-  <div id="course"><b><%=h COURSE_NAME %></b></div>
-  
+<div id="header">  
   <div id="user_info">
     Logged in as <span id="user_name"><b><%=h @current_user.user_name %></b></span> | 
     <%= link_to "Log out", :controller => 'checkmark', :action => 'logout' %>
   </div>
-  
   <div id="working" style="display:none;">
     Working...
   </div>
+  <div id="course"><b><%=h COURSE_NAME %></b></div>
+</div>
+<div id="logo">
 </div>

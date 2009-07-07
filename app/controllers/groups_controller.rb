@@ -17,10 +17,6 @@ class GroupsController < ApplicationController
    auto_complete_for :assignment, :name
   # TODO filter (except index) to make sure assignment is a group assignment
   
-  def index
-    @assignments = Assignment.all(:order => 'id', 
-      :conditions => ["group_max > 1"]) # only group assignments
-  end
 
   def student_interface
      @assignment = Assignment.find(params[:id])
@@ -78,12 +74,11 @@ class GroupsController < ApplicationController
       flash[:fail_notice] = "Could not invite this student - this student's account has been disabled"
       return
     end
-    if !@grouping.pending?(@student)
+    if !@grouping.pending?(@invited)
        @invited.invite(@grouping.id)
        flash[:edit_notice] = "Student invited."
     else
-       flash[:fail_notice] = "This student is already a pending member
-       of this group!"
+       flash[:fail_notice] = "This student is already a pending member of this group!"
     end
   end
 
@@ -94,7 +89,6 @@ class GroupsController < ApplicationController
     @user.join(@grouping.id)
   end
   
-  # Remove rejected member
   def decline_invitation
     @assignment = Assignment.find(params[:id])
     @grouping = Grouping.find(params[:grouping_id])
@@ -103,19 +97,19 @@ class GroupsController < ApplicationController
     @grouping.decline_invitation(@user)
   end
 
+  # Remove rejected member
   def delete_rejected
-     assignment = Assignment.find(params[:id])
+     @assignment = Assignment.find(params[:id])
      membership = StudentMembership.find(params[:membership])
      membership.delete
      membership.save
   end
  
   def disinvite_member
-     assignment = Assignment.find(params[:id])
+     @assignment = Assignment.find(params[:id])
      membership = StudentMembership.find(params[:membership])
      membership.delete
      membership.save
-
      flash[:edit_notice] = "Member disinvited"
   end
 
@@ -269,7 +263,28 @@ class GroupsController < ApplicationController
     @assignment = Assignment.find(params[:id])   
     @groupings = @assignment.groupings
     # Returns a hash where s.id is the key, and student record is the value
-    @students = Student.all.index_by { |s| s.id }   
+    @students = Student.all(:order => :user_name).index_by { |s| s.id }
+    @valid_groupings = []
+    @not_valid_groupings = []
+    @assigned_groupings = []
+    @not_assigned_groupings = []
+    @groupings.each do |g|
+      if g.valid?
+        @valid_groupings.push(g)
+      else
+        @not_valid_groupings.push(g)
+      end
+      if g.has_ta_for_marking?
+        @assigned_groupings.push(g)
+      else
+        @not_assigned_groupings.push(g)
+      end
+    end
+    if params[:filters].nil?
+       @filters = "all"
+    else
+       @filters = params[:filters]
+    end
   end
   
   # Assign TAs to Groupings via a csv file
@@ -398,6 +413,36 @@ class GroupsController < ApplicationController
     end
 
     flash[:edit_notice] = "Groups created"
+  end
+
+  def global_actions
+    @assignment = Assignment.find(params[:id])
+    @global_action = params[:global_actions]
+    @groupings = []
+    if params[:groupings].nil? or params[:groupings].size ==  0
+      flash[:error] = "You need to select at least one group."
+    end
+    params[:groupings].each do |g|
+      @groupings.push(g.first)
+    end
+    if params[:global_actions] == "delete"
+      @groupings.each do |g|
+        grouping = Grouping.find(g)
+        if grouping.has_submission?
+	  flash[:error] = flash[:error] + " " + grouping.group_name
+	else
+          grouping.delete_grouping
+	end
+      end
+      if flash[:error].nil? or flash[:error] == ""
+        flash[:success] = "Groups deleted"
+      end
+    elsif params[:global_actions] == "valid"
+      @groupings.each do |g|
+         Grouping.find(g).validate_grouping
+      end
+      flash[:success] = "Groups valid"
+    end
   end
 
 end

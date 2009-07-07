@@ -20,14 +20,12 @@
                end %>">
    
   <%= render :partial => 'layouts/header' unless controller.action_name == 'login' %>
-<div id="container">
-  <div id="content">
-    <%= @content_for_layout %>
-  </div>
-  
-
+  <div id="container">
+    <div id="content">
+       <%= @content_for_layout %>
+    </div><!-- Content -->
+  </div><!-- Container -->
 </div>
-</div> <!-- Membership -->
 
 </body>
 </html>

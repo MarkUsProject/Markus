@@ -1,6 +1,5 @@
 class TasController < ApplicationController
   before_filter  :authorize_only_for_admin
-  layout "sidebar"
   
   def index
     @tas = Ta.find(:all, :order => "user_name")

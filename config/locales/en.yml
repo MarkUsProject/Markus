@@ -1,4 +1,8 @@
 en:
+    name:               "Name"
+    members:            "Members"
+    graders:            "Graders"
+
     user:
         user_name:      "CDF ID"
         first_name:     "First Name"
@@ -7,4 +11,5 @@ en:
         name:           "Assignment Name"
         has_dependency: "Assignment Builds on Top Of"
         no_dependency:    "Nothing - It's Unique"
+
         

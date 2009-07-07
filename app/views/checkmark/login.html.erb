@@ -11,7 +11,7 @@
     <% form_tag({ :action => 'login', :id => nil }, :id => 'login_form') do %>
   
         <%= label_tag 'user_login', 'CDF Login:' -%>
-        <%= text_field_tag 'user_login', nil, :tabindex => 10 %>
+        <%= text_field_tag 'user_login', nil, :tabindex => 10 %><br />
   
         <%= label_tag 'user_password', 'Password:' %>
         <%= password_field_tag 'user_password', nil, :tabindex => 20 %><br />

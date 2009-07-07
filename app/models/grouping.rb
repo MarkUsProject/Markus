@@ -148,6 +148,13 @@ class Grouping < ActiveRecord::Base
       member.destroy if member
     end
   end
+
+  def delete_grouping
+     self.student_memberships.all(:include => :user).each do |member|
+       member.destroy
+     end
+    self.destroy
+  end
   
   # Removes the member rejected by its membership id
   # Used as safeguard when student deletes the record

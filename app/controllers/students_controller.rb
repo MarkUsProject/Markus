@@ -1,6 +1,5 @@
 class StudentsController < ApplicationController
   before_filter    :authorize_only_for_admin
-  layout "sidebar"
   
   def index
     @students = Student.find(:all, :order => "user_name")

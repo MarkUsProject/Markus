@@ -1,7 +1,6 @@
 class AdminsController < ApplicationController
 
   before_filter  :authorize_only_for_admin
-  layout "sidebar"
   
   def index
     @admins = Admin.find(:all, :order => "user_name")

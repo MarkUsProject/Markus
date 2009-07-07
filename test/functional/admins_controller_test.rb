@@ -28,9 +28,8 @@ class AdminsControllerTest < AuthenticatedControllerTest
 
   def test_update
     admin = users(:olm_admin_2)
-    post_as(@admin, :update, :user => {:id => admin.id,:user_name =>'Essai02', :last_name => 'ESSAI', :first_name => 'essai'})
-    assert_response :success
-    assert_equal('Essai02', admin.user_name)
+    post_as(@admin, :update, :user => {:id => admin.id, :last_name => 'ESSAI', :first_name => 'essai'})
+    assert_response :redirect
   end
 
 

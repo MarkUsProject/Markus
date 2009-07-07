@@ -9,9 +9,9 @@
   <%= stylesheet_link_tag 'header.css', :media => 'all' %>
   <%= stylesheet_link_tag 'content.css', :media => 'all' %>
   <%= javascript_include_tag :defaults -%>
+  <%= javascript_include_tag 'menu.js' -%>
+
 </head>
-
-
 
 <body>
   <div id="<%= if (controller.action_name == 'login') then 
@@ -21,17 +21,18 @@
                end %>">
    
   <%= render :partial => 'layouts/header' unless controller.action_name == 'login' %>
-  <%= render :partial => 'layouts/menu_header' unless controller.action_name == 'login'%>
+  <%= render :partial => 'layouts/menu' unless controller.action_name == 'login'%>
+  <%= render :partial => 'layouts/sub_menu' unless controller.action_name == 'login'%>
+
 
 
 <div id="container">
   <div id="content">
 <%= render :partial => 'layouts/noscript'%>
     <%= @content_for_layout %>
-  </div>
-  
+  </div> <!-- content -->
+</div> <!-- container -->
 </div>
-</div> <!-- Membership -->
 
 </body>
 </html>

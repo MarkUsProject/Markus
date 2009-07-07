@@ -117,6 +117,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
      membership = memberships(:membership5)
      inviter = users(:student4)
      post_as(inviter, :disinvite_member, {:id => @assignment.id, :membership => membership.id} )
+# a temriner
    end
 
    def test_student_choose_to_join_a_group
@@ -216,6 +217,18 @@ class GroupsControllerTest < AuthenticatedControllerTest
       post_as(@admin, :use_another_assignment_groups, {:id => target_assignment.id, :clone_groups_assignment_id => source_assignment.id})
       assert_response :success
       assert_equal("Groups created", flash[:edit_notice])
+   end
+
+   def test_global_actions
+     assignment = assignments(:assignment_1) 
+     post_as(@admin, :global_actions, {:id => assignment.id, :global_actions => "delete"})
+     assert_equal("You need to select at least one group.", flash[:error])
+   end
+
+   def test_global_actions1
+     assignment = assignments(:assignment_1) 
+     post_as(@admin, :global_actions, {:id => assignment.id, :global_actions => "delete"})
+     assert_equal("", flash[:edit_notice])
    end
 
 end

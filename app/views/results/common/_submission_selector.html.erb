@@ -12,7 +12,6 @@
     (Marking Status: 
 <% if !@result.released_to_students %>
      <%=  select_tag "marking_state", options_for_select(["unmarked", "partial", "complete"],[result.marking_state]) %>
-    
      <%= observe_field :marking_state, :url => {:controller => 'annotations', :action => 'update_marking_state', :id => result.id}, :on => 'changed', :with => "value"%>
 <%else %>
 Result released to students

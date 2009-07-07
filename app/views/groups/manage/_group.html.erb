@@ -2,8 +2,27 @@
 # Erb template for inserting a new group for managing groups
 %>
 
-  
-    <td><%= h(grouping.group.group_name)%></td>
+    <td><%= check_box_tag "groupings[#{grouping.id}]", true, false, :id => "#{grouping.id}" %></td> 
+    <td><span class="link"><%= h(grouping.group.group_name)%></span>
+    <span class="table_menu">
+    <button class="rename_group" onClick="rename_group(<%= grouping.id %>); return false;">Rename</button>
+    <% if !grouping.is_valid? %>
+      <%= link_to_remote "Valid", :url => { :action =>
+    'valid_grouping', :id => @assignment.id, :grouping_id =>
+    grouping.id},
+    :html => {:class => 'valid', :title => "Valid this group"}, 
+    :confirm => "This will allow this group to submit without the required
+    number of students. Are you sure?"
+     %>
+    <% end %>
+    <%= link_to_remote "Delete", :method => 'delete',
+    :url => { :action => 'remove_group', :id => @assignment.id, :grouping_id => grouping.id }, 
+    :html => { :class => 'delete', :title => 'Delete this group' }, 
+    :confirm => 'This will remove all members in the group and delete all information associated with this group. Continue?' %>
+    <button class="add_member" onClick="add_member(<%= grouping.id %>);
+return false;">Add Member</button>
+</span>
+</td>
     <td>
 <% grouping.student_memberships.each do |member| %> 
    <%= render :partial => "groups/manage/member", 
@@ -12,23 +31,9 @@
   <% end -%>
 </td>
 <td>
-    <button class="rename_group" onClick="rename_group(<%= grouping.id %>); return false;">Rename</button>
-    <% if !grouping.is_valid? %>
-      <%= link_to_remote "Valid this group", :url => { :action =>
-    'valid_grouping', :id => @assignment.id, :grouping_id =>
-    grouping.id},
-    :confirm => "This will allow this group to submit without the required
-    number of students. Are you sure?"
-     %>
-    <% end %>
-    <%= link_to_remote "<b>x | </b> ", :method => 'delete',
-    :url => { :action => 'remove_group', :id => @assignment.id, :grouping_id => grouping.id }, 
-    :html => { :class => 'remove_group', :title => 'Delete this group' }, 
-    :confirm => 'This will remove all members in the group and delete all information associated with this group. Continue?' %>
-  <% form_remote_tag(:url => {:action => 'add_member', 
-      :id => @assignment.id, :grouping_id => grouping.id}) do %>
-      <div id="error_<%=grouping.id%>"></div>
-    <%= text_field_with_auto_complete :student, :user_name%>
-    <%= submit_tag "Add Member" %>
-  <% end -%>
+</td>
+<td>
+<% if grouping.valid?%>
+Valid
+<% end %>
 </td>

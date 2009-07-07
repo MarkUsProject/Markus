@@ -4,7 +4,6 @@
 class CheckmarkController < ApplicationController
   
   include CheckmarkHelper
-  layout "sidebar"  
   # check for authorization 
   before_filter      :authorize_for_user,      :except => [:login, :logout]
 

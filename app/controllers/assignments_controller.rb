@@ -67,7 +67,7 @@ class AssignmentsController < ApplicationController
     if current_user.student?
       render :action => "student_assignment_list"
     end
-    render :action => 'index', :layout => 'sidebar'
+    render :action => 'index'
   end
   
   def edit
