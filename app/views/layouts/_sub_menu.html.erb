@@ -1,0 +1,80 @@
+
+<% if
+  controller.controller_name == 'assignments'  or
+  controller.controller_name == 'rubrics' or
+  controller.controller_name == 'submissions' or
+  controller.controller_name == 'groups' or
+  controller.controller_name == 'results' or
+  controller.controller_name == 'ta_assignments'
+%>
+<div id="sub_menu">
+  <ul id="root" class="level1 horizontal">
+   <li class="level1">
+     <% if @assignment.nil?%>
+       <span id="choose_an_assignment">Choose an assignment</span>
+     <% else %>
+       <span id="choose_an_assignment"><%=
+h(sanitize(@assignment.name))%></span>
+     <% end %>
+        <ul class="level2 dropdown">
+           <%= render :partial => 'layouts/assignments_dropdown_menu'%>
+        </ul>
+   </li>
+
+  <% if 
+    !@assignment.nil?
+  %>
+          <li <% if controller.controller_name == 'assignments' %> 
+         id="sub_menu_active"
+         <%end%>>
+         <%= link_to 'Rules', :controller => 'assignments', :action =>
+	 'edit', :id => @assignment.id %>
+       </li>
+       <li <% if controller.controller_name == 'submissions' or
+       controller.controller_name == 'results' %> 
+          id="sub_menu_active"
+        <%end%>>
+	  <%= link_to 'submissions', :controller => 'submissions', :action => 'browse', :id =>
+@assignment.id %>
+      </li>
+      <li <%if controller.controller_name == 'groups'%> 
+         id="sub_menu_active"
+      <%end%>>
+         <%= link_to 'Groups & Graders', :controller => 'groups', :action => 'manage', :id => @assignment.id%>
+      </li>
+      <li <% if controller.controller_name == 'rubrics'%> 
+        id="sub_menu_active"
+      <% end %>>
+         <%= link_to 'Rubrics', :controller => 'rubrics', :action => 'index', :id => @assignment.id%>
+      </li>
+
+  <% end %>
+
+    </ul>
+  </div>
+<% elsif controller.controller_name == 'admins' or
+         controller.controller_name == 'students' or
+	 controller.controller_name == 'tas'
+%>
+<div id="sub_menu">
+  <ul>
+    <li <% if controller.controller_name == 'students'%> 
+      id="sub_menu_active>"
+    <% end %>>
+      <%= link_to 'Students', :controller => 'students'%>
+    </li>
+    <li <% if controller.controller_name == 'tas'%> 
+      id="sub_menu_active>"
+    <% end %>>
+      <%= link_to 'Graders', :controller => 'tas'%>
+    </li>
+    <li <% if controller.controller_name == 'admins'%> 
+      id="sub_menu_active>"
+    <% end %>>
+      <%= link_to 'Admins', :controller => 'admins'%>
+    </li>
+
+  </ul>
+</div>
+
+<% end %>

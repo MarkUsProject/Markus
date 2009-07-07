@@ -1,0 +1,28 @@
+<%# MENU %>
+
+<div id="menu">
+       <span<% if controller.controller_name == 'checkmark'%>
+      id="menu_active"<%end%>>
+          <%= link_to 'Dashboard', :controller => 'checkmark'%>
+      </span>
+      <span <% if controller.controller_name == 'assignments' or
+                controller.controller_name == 'rubrics' or
+                controller.controller_name == 'ta_assignments' or
+                controller.controller_name == 'submissions' or
+                controller.controller_name == 'groups' or
+		controller.controller_name == 'results'
+           %> id ="menu_active"<% end %>>
+             <%= link_to 'Assignments', :controller => 'assignments'%>
+	</span>
+    <% if @current_user.admin? -%>
+        <span <% if controller.controller_name == 'admins' or
+	          controller.controller_name == 'students' or
+		  controller.controller_name == 'tas'
+	     %>
+	       id = "menu_active"
+	     <% end %>
+	>
+            <%= link_to 'Users', :controller => ''%> 
+        </span>
+     <% end %>
+</div>
