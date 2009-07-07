@@ -48,8 +48,12 @@ class Group < ActiveRecord::Base
 #   end
 # end
 
-def repository_name
+  def repository_name
     return "Group_" + id.to_s.rjust(3, "0")
+  end
+  
+  def grouping_for_assignment(aid)
+    return groupings.first(:conditions => {:assignment_id => aid})
   end
 
  # Retrieve group object given user and assignment IDs.

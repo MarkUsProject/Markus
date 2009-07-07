@@ -8,7 +8,7 @@ class ResultsController < ApplicationController
   before_filter      :authorize_for_ta_and_admin, :only => [:edit,
   :update_mark, :create, :add_extra_mark, :download, :next]
   before_filter      :authorize_for_user, :only => [:codeviewer]
-  before_filter      :authorize_for_student, :only => [:view_marks, :download]
+  before_filter      :authorize_for_student, :only => [:view_marks]
 
   def create
     # Create new Result for this Submission

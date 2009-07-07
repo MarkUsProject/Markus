@@ -27,6 +27,7 @@
     :confirm => 'This will remove all members in the group and delete all information associated with this group. Continue?' %>
   <% form_remote_tag(:url => {:action => 'add_member', 
       :id => @assignment.id, :grouping_id => grouping.id}) do %>
+      <div id="error_<%=grouping.id%>"></div>
     <%= text_field_with_auto_complete :student, :user_name%>
     <%= submit_tag "Add Member" %>
   <% end -%>

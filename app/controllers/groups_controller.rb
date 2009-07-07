@@ -146,10 +146,10 @@ class GroupsController < ApplicationController
     # add member to the group with status depending if group is empty or not
     @grouping = Grouping.find(params[:grouping_id])
     @assignment = Assignment.find(params[:id])
-    membership_status = grouping.student_memberships.empty? ?
+    membership_status = @grouping.student_memberships.empty? ?
     StudentMembership::STATUSES[:inviter] :
     StudentMembership::STATUSES[:accepted]     
-    @member = grouping.invite(params[:student][:user_name], membership_status) 
+    @member = @grouping.invite(params[:student][:user_name], membership_status) 
   end
  
   def remove_member
@@ -270,6 +270,18 @@ class GroupsController < ApplicationController
     @groupings = @assignment.groupings
     # Returns a hash where s.id is the key, and student record is the value
     @students = Student.all.index_by { |s| s.id }   
+  end
+  
+  # Assign TAs to Groupings via a csv file
+  def ta_groupings_csv_upload
+    if !request.post?
+      redirect_to :index
+      return
+    end
+    
+    flash[:invalid_lines] = []
+    Grouping.assign_tas_by_csv(params[:ta_groupings_file], params[:assignment_id])
+    redirect_to :index   
   end
   
   # Allows the user to upload a csv file listing groups.

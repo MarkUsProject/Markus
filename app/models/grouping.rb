@@ -69,7 +69,7 @@ class Grouping < ActiveRecord::Base
        user = User.find_by_user_name(m)
        if user && user.student?
          if user.hidden
-           errors.add_to_base("Student already in a group")
+           errors.add_to_base("Student account has been disabled")
          else
            member = self.add_member(user, membership_status)
            if member.nil?
@@ -158,6 +158,41 @@ class Grouping < ActiveRecord::Base
      membership = student.memberships.find_by_grouping_id(self.id)
      membership.membership_status = StudentMembership::STATUSES[:rejected]
      membership.save
+  end
+  
+  def add_ta_by_id(ta_id)
+    ta_membership = TAMembership.new
+    ta_membership.user_id = ta_id
+    ta_membership.grouping_id = self.id
+    ta_membership.save
+  end
+  
+  def remove_ta_by_id(ta_id)
+    ta_membership = ta_memberships.find_by_user_id(ta_id)
+    ta_membership.destroy
+  end
+  
+  def add_tas_by_user_name_array(ta_user_name_array)
+    ta_user_name_array.each do |ta_user_name|
+      ta = Ta.find_by_user_name(ta_user_name)
+      add_ta_by_id(ta.id)
+    end
+  end
+
+  # Returns an array containing the group names that didn't exist
+  def self.assign_tas_by_csv(csv_file_contents, assignment_id)
+    failures = []
+    FasterCSV.parse(csv_file_contents) do |row|
+      group_name = row.shift # Knocks the first item from array
+      group = Group.find_by_group_name(group_name)
+      if group.nil?
+        failures.push(group_name)
+      else
+        grouping = group.grouping_for_assignment(assignment_id)
+        grouping.add_tas_by_user_name_array(row) # The rest of the array
+      end
+    end
+    return failures
   end
   
   # When a Grouping is created, automatically create the folder for the
