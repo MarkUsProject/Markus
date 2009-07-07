@@ -42,50 +42,47 @@ class AbstractRepository
     raise NotImplementedError, "Repository.initialize(connect_string): Not yet implemented"
   end
   
-  def self.repository_path_valid?(path)
-    return !File.exists?(path)
+  # Static method: Should report if a repository exists at given location
+  def self.repository_exists?(path)
+    raise NotImplementedError, "Repository::repository_exists? Not yet implemented"
   end
   
+  # Static method: Opens a repository at given location; returns an
+  # AbstractRepository instance
   def self.open(connect_string)
     raise NotImplementedError, "Repository::open Not yet implemented"
   end
   
+  # Static method: Creates a new repository at given location; returns
+  # an AbstractRepository instance, with the repository opened.  
   def self.create(connect_string)
     raise NotImplementedError, "Repository::create Not yet implemented"
   end
   
   # Given either an array of, or a single object of class RevisionFile, 
   # return a stream of data for the user to download as the file(s).
-  def download(files)
+  def stringify_files(files)
     raise NotImplementedError,  "Repository.download: Not yet implemented"
-  end 
-
-  # Returns the most recent revision of the repository. If a path is specified, 
-  # the youngest revision is returned for that path; if a revision is also specified,
-  # the function will return the youngest revision that is equal to or older than the one passed.
-  # 
-  # This will only work for paths that have not been deleted from the repository.
-  def latest_revision_number(path=nil, revision_number=nil)
-    raise NotImplementedError, "Repository.latest_revision_number: Not yet implemented"  
   end
-  
+  alias download_as_string stringify_files
+
+  # Returns a transaction for the provided user and uses comment as the commit message
   def get_transaction(user_id, comment)
     raise NotImplementedError,  "Repository.get_transaction: Not yet implemented"
   end  
   
+  # Commits a transaction associated with a repository
   def commit(transaction)
-  
+    raise NotImplementedError,  "Repository.commit: Not yet implemented"
   end
   
-  def number_of_revisions
-    raise NotImplementedError, "Repository.number_of_revisions: Not yet implemented"
-  end
-  
+  # Returns the latest Repository::AbstractRevision
   def get_latest_revision
     raise NotImplementedError, "Repository.get_latest_revision: Not yet implemented"
   end
     
-  # Return a RepositoryRevision for a given revision_number
+  # Return a Repository::AbstractRevision for a given revision_number
+  # if it exists
   def get_revision(revision_number)
     raise NotImplementedError,  "Repository.get_revision: Not yet implemented"
   end
@@ -94,23 +91,25 @@ class AbstractRepository
   def get_revision_by_timestamp(timestamp)
     raise NotImplementedError,  "Repository.get_revision_by_timestamp: Not yet implemented"
   end
-
-  # Return a revision number for a given timestamp
-  def get_revision_number_by_timestamp(timestamp)
-    raise NotImplementedError,  "Repository.get_revision_number_by_timestamp: Not yet implemented"  
-  end
    
-  # Adds user permissions for read/write access to the repository
-  def add_user(user_id)
+  # Adds a user with a given permission-set to the repository
+  def add_user(user_id, permissions)
     raise NotImplementedError,  "Repository.add_user: Not yet implemented"
   end
   
-  # Removes user permissions for read/write access to the repository
+  # Removes user permissions for read & write access to the repository
   def remove_user(user_id)
     raise NotImplementedError,  "Repository.remove_user: Not yet implemented"
   end
   
-  def get_users
+  # Gets a list of users with permissions in question on the repository
+  #   use "PERMISSIONS:ANY" to get a list of all users with any permissions
+  def get_users(permissions)
+    raise NotImplementedError, "Repository.get_users: Not yet implemented"
+  end
+  
+  # Gets permissions for a particular user
+  def get_permissions(user_id)
     raise NotImplementedError, "Repository.get_users: Not yet implemented"
   end
   

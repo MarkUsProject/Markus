@@ -1,4 +1,3 @@
-require 'fileutils' # required, for File line(s)
 require File.join(File.dirname(__FILE__),'/memory_repository')
 require File.join(File.dirname(__FILE__),'/subversion_repository')
 
