@@ -3,7 +3,7 @@ class StudentsController < ApplicationController
   
   def index
     @students = Student.find(:all, :order => "user_name")
-    @hidden_students_number = Student.all(:conditions => {:hidden => true}).count
+    @hidden_students_number = Student.all(:conditions => {:hidden => true}).length
   end
 
   def edit
