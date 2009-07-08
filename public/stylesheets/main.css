@@ -441,23 +441,65 @@ td:hover .table_menu{
    width: 20%;
    text-size: 0.1 em;
 }
-
+  
 .accordion {
-  position: relative;
+  padding-left: 10px;
+  position: fixed;
+  height: 75%;
+  width: 20%;
 }
 
 .accordion-toggle {
+   background: #ccc;
    position: relative;
    z-index: 10;
    cursor: pointer;
+   height: 15px;
+   padding: 5px 5px 5px 10px;
+   font-family: georgia;
+   font-weight: bold;
+   font-style: italic;
+}
+
+.accordion-toggle:hover{
+   color: #ccc;
+   background: #464646;
+}
+
+#accordion-toggle-top {
+   -moz-border-radius-topleft: 10px;
+   -moz-border-radius-topright: 10px;
+   -webkit-border-radius-topleft: 10px;
+   -webkit-border-radius-topright: 10px;
+}
+
+#accordion-toggle-bottom {
+   -moz-border-radius-bottomleft: 10px;
+   -moz-border-radius-bottomright: 10px;
+   -webkit-border-radius-bottomleft: 10px;
+   -webkit-border-radius-bottomright: 10px;
+}
+
+#accordion-toggle-bottom.accordion-toggle-active{
+   -moz-border-radius-bottomleft: 0px;
+   -moz-border-radius-bottomright: 0px;
+   -webkit-border-radius-bottomleft: 0px;
+   -webkit-border-radius-bottomright: 0px;
+    border-bottom: none;
 }
 
 .accordion-toggle-active{
+   background: #ccc;
    overflow: hidden;
    background: #aaa;
 }
 
-
+.accordion-content {
+   overflow: auto;
+   height: 50%;
+   border: 2px solid #ccc;
+   padding: 5px;
+}
 
 
 

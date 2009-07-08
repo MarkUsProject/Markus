@@ -10,7 +10,7 @@ var DropDownMenu = Class.create({
     this.trigger_node = trigger_node;
     this.menu_node = menu_node;
     $(this.menu_node).hide();
-    
+
     //Set up the trigger_node click event
     var me = this;
     $(this.trigger_node).observe('click', function(event) {

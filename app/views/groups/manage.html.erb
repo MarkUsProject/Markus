@@ -267,38 +267,45 @@ false, :id => "groupings[all]", :onchange => "toggle_groups_selection($F('groupi
        # See manage/_group.html.erb
     %>
     <div id="test-accordion" class="accordion">
-    <div class="accordion-toggle">
-      Users not in group
-    </div>
-    <div class="accordion-content">
+      <div class="accordion-toggle" id="accordion-toggle-top">
+        Students without a group
+      </div>
+      <div class="accordion-content">
         <ul id="student_list">
             <% @students.each do |user_id, s| -%>
               <li id="user_<%= h(s.user_name) %>"><%= h(s.user_name) %></li>
             <% end -%>
           </ul>
-    </div>
-    <div class="accordion-toggle">
-    Upload a Group List
-    </div>
-    <div class="accordion-content">
-      <div id="upload">
-        <p>
-          Select a CSV file form:<br />
-          <code>group_name,user_name,user_name ... </code><br />
-        </p>
-        <% form_for :group, :html => {:multipart => true},
+      </div>
+      <div class="accordion-toggle">
+        Graders
+      </div>
+      <div class="accordion-content">
+      Mapping Grader to students???
+      </div>
+
+      <div class="accordion-toggle" id="accordion-toggle-bottom">
+        Upload/Download
+      </div>
+      <div class="accordion-content">
+        <div id="upload">
+          <p>
+            Select a CSV file form:<br />
+            <code>group_name,user_name,user_name ... </code><br />
+          </p>
+          <% form_for :group, :html => {:multipart => true},
                              :url => { :controller=>"groups",
                                        :action => 'csv_upload',
                                        :id => @assignment.id } do |f| -%>
            <p><%= f.file_field :grouplist, :size => 0 %>
               <%= submit_tag("Submit") %></p>							
         <% end %>
-      </div> <!-- Upload -->
-      <p id="download">
-        <%= link_to 'Download group list CSV Format', {:controller=>"groups", :action=>"download_grouplist", :id=> @assignment.id}%>
-      </p>
-    </div>
-   </div>
+        </div> <!-- Upload -->
+        <p id="download">
+          <%= link_to 'Download group list CSV Format', {:controller=>"groups", :action=>"download_grouplist", :id=> @assignment.id}%>
+        </p>
+      </div>
+     </div>
    </div>
   </div> <!-- colRight -->
 </div> <!-- ColsLeftHeavy -->
