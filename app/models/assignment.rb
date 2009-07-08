@@ -6,7 +6,6 @@ class Assignment < ActiveRecord::Base
   has_many :annotation_categories
   
   has_many :groupings
-  
   #TODO:  Do we want these Memberships associated to Assignment?
   has_many :ta_memberships, :through => :groupings
   has_many :student_memberships, :through => :groupings
@@ -195,6 +194,36 @@ class Assignment < ActiveRecord::Base
         membership.save
       end
     end
+  end
+  
+  def grouped_students
+    Student.find(:all, :joins => {:groupings => :student_memberships})
+  end
+  
+  def ungrouped_students
+    Student.all - grouped_students
+  end
+  
+  def valid_groupings
+    result = []
+    groupings.all(:include => [{:student_memberships => :user}]).each do |grouping|
+      if grouping.admin_approved || grouping.student_memberships.count >= group_min
+        result.push(grouping)
+      end
+    end
+    return result
+  end
+  
+  def invalid_groupings
+    return groupings - valid_groupings
+  end
+  
+  def assigned_groupings
+    return groupings.all(:joins => :ta_memberships, :include => [{:ta_memberships => :user}])
+  end
+
+  def unassigned_groupings
+    return groupings - assigned_groupings
   end
   
 end

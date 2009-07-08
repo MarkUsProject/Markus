@@ -31,6 +31,9 @@ return false;">Add Member</button>
   <% end -%>
 </td>
 <td>
+<% grouping.ta_memberships.each do |ta| %> 
+  <%= ta.user.user_name%>
+<% end -%>
 </td>
 <td>
 <% if grouping.valid?%>

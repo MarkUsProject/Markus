@@ -256,35 +256,36 @@ class GroupsController < ApplicationController
      grouping = Grouping.find(params[:grouping_id])
      grouping.validate_grouping
   end
-
+  
+  def filter
+    @assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group]}])   
+    case params[:filter]
+      when "valid"
+        @groupings = @assignment.valid_groupings
+      when "invalid"
+        @groupings = @assignment.invalid_groupings
+      when "assigned"
+        @groupings = @assignment.assigned_groupings
+      when "unassigned"
+        @groupings = @assignment.unassigned_groupings
+      else
+        @groupings = @assignment.groupings
+      end
+  end
 
   def manage
     @all_assignments = Assignment.all(:order => :id)
-    @assignment = Assignment.find(params[:id])   
+    @assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group]}])   
     @groupings = @assignment.groupings
     # Returns a hash where s.id is the key, and student record is the value
-    @students = Student.all(:order => :user_name).index_by { |s| s.id }
-    @valid_groupings = []
-    @not_valid_groupings = []
-    @assigned_groupings = []
-    @not_assigned_groupings = []
-    @groupings.each do |g|
-      if g.valid?
-        @valid_groupings.push(g)
-      else
-        @not_valid_groupings.push(g)
-      end
-      if g.has_ta_for_marking?
-        @assigned_groupings.push(g)
-      else
-        @not_assigned_groupings.push(g)
-      end
-    end
-    if params[:filters].nil?
-       @filters = "all"
-    else
-       @filters = params[:filters]
-    end
+    @ungrouped_students = @assignment.ungrouped_students
+    
+    @all_groupings_size = @groupings.count
+    @valid_groupings_size = (@assignment.valid_groupings).count
+    @invalid_groupings_size = @all_groupings_size - @valid_groupings_size
+
+    @assigned_groupings_size = @assignment.assigned_groupings.count
+    @unassigned_groupings_size = @assignment.unassigned_groupings.count
   end
   
   # Assign TAs to Groupings via a csv file

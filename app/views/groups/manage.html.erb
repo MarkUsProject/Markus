@@ -5,6 +5,7 @@
 <%= javascript_include_tag "16accordion.js" %>
 <%= javascript_include_tag "manage_groups.js" %>
 
+<%= render :partial => "boot.js.erb" %>
 <script>
 
 var modalCreate = null;
@@ -198,22 +199,34 @@ document.observe("dom:loaded", function(){
     <% form_remote_tag :url => {:controller => "groups", :action => "global_actions", :id => @assignment.id}, :html => {:id => "global_action_form"} do -%>
 
       <div id="toggle_actions">
-        <%= link_to "All", :controller => 'groups', :action => 'manage',
-:id => @assignment.id, :filters => 'all' %> (<%=h @groupings.count %>)
+       <%= link_to_remote "All (" + @all_groupings_size.to_s + ")", :url => {:action => 'filter',
+:id => @assignment.id, :filter => 'all'},
+:loading => "$('loading_list').show();",
+:complete => "$('loading_list').hide();"
+%>
 	|
-        <%= link_to "Valid", :controller => 'groups', :action => 'manage',
-:id => @assignment.id, :filters => 'valid' %> (<%=h @valid_groupings.count %>)
+        <%= link_to_remote "Valid (" + @valid_groupings_size.to_s + ")", :url => {:action => 'filter',
+:id => @assignment.id, :filter => 'valid'},
+:loading => "$('loading_list').show();",
+:complete => "$('loading_list').hide();" %>
 	|
-        <%= link_to "Not valid", :controller => 'groups', :action => 'manage',
-:id => @assignment.id, :filters => 'not_valid' %> (<%=h @not_valid_groupings.count %>)
+        <%= link_to_remote "Not valid (" + @invalid_groupings_size.to_s + ")", :url => {:action => 'filter',
+:id => @assignment.id, :filter => 'invalid'},
+:loading => "$('loading_list').show();",
+:complete => "$('loading_list').hide();" %>
 	|
-         <%= link_to "Assigned", :controller => 'groups', :action => 'manage',
-:id => @assignment.id, :filters => 'assigned' %> (<%=h @assigned_groupings.count %>)
+         <%= link_to_remote "Assigned (" + @assigned_groupings_size.to_s + ")", :url => {:action => 'filter',
+:id => @assignment.id, :filter => 'assigned'},
+:loading => "$('loading_list').show();",
+:complete => "$('loading_list').hide();" %>
 	|
-          <%= link_to "Not assigned", :controller => 'groups', :action =>
-	  'manage', :id => @assignment.id, :filters => 'not_assigned' %>  (<%=h @not_assigned_groupings.count %>)
+         <%= link_to_remote "Not assigned " + "(" + @unassigned_groupings_size.to_s + ")", :url => {:action =>
+	  'filter', :id => @assignment.id, :filter => 'unassigned'},
+:loading => "$('loading_list').show();",
+:complete => "$('loading_list').hide();" %>
       </div>
-        <div class="global_action">
+      <div class="global_action">
+        <span id="loading_list"><%= image_tag("spinner.gif") %> Loading List...</span>
         <%= select_tag "global_actions", options_for_select(["Choose an action",
 	"valid", "delete"])%>
 	<%= submit_tag "submit" %>
@@ -231,29 +244,12 @@ false, :id => "groupings[all]", :onchange => "toggle_groups_selection($F('groupi
 	   <th id="group_valid"></th>
 	  </tr>
 	</thead>
-	<tbody>
-	<% if @filters == "all"
-	      groupings = @groupings
-	   elsif @filters == "valid"
-	     groupings = @valid_groupings
-	   elsif @filters == "not_valid"
-	     groupings = @not_valid_groupings
-	   elsif @filters == "assigned"
-	     groupings = @assigned_groupings
-	   elsif @filters == "not_assigned"
-	     groupings = @not_assigned_groupings
-	   end
-	%>
-        <% groupings.each do |grouping| -%>
-          <tr id="grouping[<%= grouping.id %>]">
-         <%= render :partial => "groups/manage/group", :locals =>
-	     {:grouping => grouping} %> 
-	  </tr>
-        <% end -%>
-	</tbody>
+	<tbody id="groupings_table">
+	<%= render :partial => "groups/manage/groupings_table", :locals => {:groupings => []} %>
+        </tbody>
 	<tfoot>
         <tr><th><%= check_box_tag "groupings[all]", true, false, :id =>
-"groupings[all]", :onchange =>"toggle_groups_selection($F('groupings[all]'));" %></th><th><%=t :name %></th><th><%=t :members %></th><th><%=t :graders%></th></tr>
+"groupings[all]", :onchange =>"toggle_groups_selection($F('groupings[all]'));" %></th><th><%=t :name %></th><th><%=t :members %></th><th><%=t :graders%></th><th></th></tr>
 	</tfoot>
         </table>
       </div><!-- group container -->
@@ -272,8 +268,8 @@ false, :id => "groupings[all]", :onchange => "toggle_groups_selection($F('groupi
       </div>
       <div class="accordion-content">
         <ul id="student_list">
-            <% @students.each do |user_id, s| -%>
-              <li id="user_<%= h(s.user_name) %>"><%= h(s.user_name) %></li>
+            <% @ungrouped_students.each do |s| -%>
+              <li><%= h(s.user_name) %></li>
             <% end -%>
           </ul>
       </div>
@@ -322,7 +318,7 @@ false, :id => "groupings[all]", :onchange => "toggle_groups_selection($F('groupi
       <p class="p_margin">
         <button onClick="submit_add_member(escape($F('new_student')),
 ($grouping_id));">Add student</button>
-        <button onClick="modal.close();">Cancel</button>
+        <button onClick="modalAddMember.close();">Cancel</button>
       </p> 
 
 </div> 

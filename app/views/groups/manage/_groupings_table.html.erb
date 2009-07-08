@@ -1,0 +1,7 @@
+<% groupings.each do |grouping| -%>
+  <tr id="grouping[<%= grouping.id %>]">
+  <%= render :partial => "groups/manage/group", :locals =>
+    {:grouping => grouping} %> 
+  </tr>
+<% end -%>
+
