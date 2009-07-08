@@ -1,10 +1,5 @@
-<h1>Manage TAs</h1>
-<div id="sub_menu">
-   <ul>
-      <li><a href="#list"> View TA list | </a></li>
-      <li><a href="#register">Register TAs</a></li>
-   </ul>
-</div>
+<div id="title_bar"><h1>Manage TAs <%= link_to I18n.t(:add_new),
+:controller => 'tas', :action => 'create' %></h1></div>
 <div class="colsLeftHeavy">
 
 <div><div class="wrapLeft">
@@ -36,10 +31,9 @@
         </ul>
       </div>
       <% end -%>
-      
       <table>
-        
-       <tr>
+        <thead>
+           <tr>
           <%
 		  	# pull "labels" from I18n files
 		  %>
@@ -48,16 +42,29 @@
           <th><%= I18n.t('user.first_name') %></th>
           <th></th>
         </tr>
+	</thead>
           
         <% for u in @tas %>
           <tr class="<%= cycle('rowA', 'rowB') %>">
             <td><%= h(u.user_name) %></td>
             <td><%= h(u.last_name) %></td>
             <td><%= h(u.first_name) %></td>
-            <td><%= link_to 'Edit', :controller => 'tas', :action => 'edit', :id => u %></td>
+            <td><%= link_to I18n.t(:edit), :controller => 'tas', :action => 'edit', :id => u %></td>
           </tr>
+
         <% end %>
-        
+         <tfoot>
+           <tr>
+          <%
+		  	# pull "labels" from I18n files
+		  %>
+          <th><%= I18n.t('user.user_name') %></th>
+          <th><%= I18n.t('user.last_name') %></th>
+          <th><%= I18n.t('user.first_name') %></th>
+          <th></th>
+        </tr>
+	</tfoot>
+       
       </table>
   </div>
   </div></div>
@@ -82,12 +89,6 @@
         <%= submit_tag "Update userlist", :disable_with => 'Processing...', :class => 'button' %>
       </form>
     
-    </div>
-    
-    <h3>Add Each TA Individually</h3>
-    
-    <div class="section">
-      <p><%= link_to "Add a new TA", :controller => 'tas', :action => 'create' %></p>
     </div>
 
     <h3>Download TA List</h3>

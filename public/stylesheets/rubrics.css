@@ -4,19 +4,21 @@
 }
 
 #rubric_criteria_pane, #rubric_levels_pane {
-  border: 1px solid #DADADA;
+  border: 2px solid #DADADA;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
   border-bottom: 0;
   float: left;
   margin: 10px 0 20px 30px;
-  width: 420px;     
+  width: 45%;     
 }
 
 #rubric_criteria_pane_menu, #rubric_levels_pane_menu {
-  background: #DDDDDD;
+   background: #ccc;
 }
 
 #rubric_criteria_pane_menu h2, #rubric_levels_pane_menu h2 {
-  border-bottom: 1px solid #DADADA;
+  border-bottom: 2px solid #DADADA;
   color: #000;
   margin: 0;
   padding: 10px;
@@ -36,8 +38,10 @@
   
     #rubric_criteria_pane_menu span#addCriterion a {
         -moz-border-radius: 5px;
-        background: #B7D3EC;
-        border: 1px solid #ddd;
+	-webkit-border-radius: 5px;
+	background: #fff;
+	font-weight: bold;
+        border: 2px solid #464646;
         padding: 3px 10px;
     }
 
@@ -71,7 +75,6 @@ ul#rubric_criteria_pane_list, ul#rubric_levels_pane_list {
 
   .criterion_input_name, .level_input_name, .criterion_input_weight {
     background: #fff;
-    border: 1px solid #DDDDDD;
   }
   
   .editing {
@@ -95,7 +98,6 @@ ul#rubric_criteria_pane_list, ul#rubric_levels_pane_list {
   
   .criterion_textarea_description, .level_textarea_description {
     background: #fff;
-    border: 1px solid #DADADA;
     width: 400px;
     padding: 10px
   }

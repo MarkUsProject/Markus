@@ -1,12 +1,12 @@
 <%= javascript_include_tag "students_manager"%>
-<h1>Manage Students</h1>
+<%= javascript_include_tag "16accordion"%>
+
+<div id="title_bar"><h1>Manage Students <%= link_to I18n.t(:add_new), :controller => 'students', :action => 'create' %> </h1></div>
 
 <div class="colsLeftHeavy">
 
-  <div><div class="wrapLeft">
-    <div id="list">
-    <h2>View Student List (<%= link_to "XML", :action => 'download_student_list', :format => 'xml' %>)</h2>
-    
+  <div class="colLeft"><div class="wrapLeft">
+    <div id="list">    
       <% if flash[:upload_notice] -%>
           <p class="success"><%= h(flash[:upload_notice]) %></p>
       <% end -%>
@@ -45,7 +45,7 @@
       <input type="checkbox" id="show_hidden_students" name="show_hidden_students" value="true" onclick="if($(this).getValue() == 'true') { $$('.hidden_student').each(function(node) { $(node).show();}) } else { $$('.hidden_student').each(function(node) { $(node).hide();}) }"> Show Hidden Students (<span id="hidden_students_number"><%=@hidden_students_number%></span>)
 
       <table>
-        
+       <thead> 
        <tr>
        	  <%
 	   # pull "labels" from I18n files
@@ -56,29 +56,41 @@
           <th><%= I18n.t('user.first_name') %></th>
           <th></th>
         </tr>
-          
+          </thead>
         <% for u in @students %>
           <tr class="<%= cycle('rowA', 'rowB') %> <%="hidden_student" if u.hidden%>" id="student_<%=u.id%>">
             <td><%= check_box_tag 'student_ids[]', u.id, false, :id => "student_#{u.id}_checkbox"%></td>
             <td><%= h(u.user_name) %></td>
             <td><%= h(u.last_name) %></td>
             <td><%= h(u.first_name) %></td>
-            <td><%= link_to 'Edit', :controller => 'students', :action => 'edit', :id => u %></td>
+            <td><%= link_to I18n.t(:edit), :controller => 'students', :action => 'edit', :id => u %></td>
           </tr>
         <% end %>
         
+       <tfoot> 
+       <tr>
+       	  <%
+	   # pull "labels" from I18n files
+	  %>
+	  <th></th>
+          <th><%= I18n.t('user.user_name') %></th>
+          <th><%= I18n.t('user.last_name') %></th>
+          <th><%= I18n.t('user.first_name') %></th>
+          <th></th>
+        </tr>
+          </tfoot>
       </table>
       </form>
   </div>
+</div>
+</div>
+<div class="colRight">  
+<div id="test-accordion" class="accordion">
+  <div class="accordion-toggle" id="accordion-toggle_top"> Upload
   </div>
-  
-<div id="register">
-  <h2>Register Students</h2>
-  
-  
+  <div class="accordion-content">
     <h3>Upload a class list</h3>
-    
-    <div class="section">
+      <div class="section">
       
       <p>Select a CSV file of the following form: <code>user_name,last_name,first_name</code></p>
       
@@ -91,18 +103,15 @@
       </form>
     
     </div>
-    
-    <h3>Add Each Student Individually</h3>
-    
-    <div class="section">
-      <p><%= link_to "Add a new Student", :controller => 'students', :action => 'create' %></p>
-    </div>
+   </div> 
+    <div class="accordion-toggle">Download Student List</div>
 
-    <h3>Download Student List</h3>
-
-    <div class="section">
+    <div class="accordion-content">
       <p><%= link_to "Download Student list in CSV format", :controller => 'students', :action => 'download_student_list', :format => "csv" %></p>
+<p><%= link_to "XML", :action => 'download_student_list', :format =>
+'xml' %></p>
     </div>
+
 </div>
   </div>
 

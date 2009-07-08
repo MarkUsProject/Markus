@@ -1,8 +1,7 @@
 
-<h1>Manage Assignments</h1>
+<div id="title_bar"><h1>Manage Assignments 
+<%= link_to I18n.t(:add_new),  :controller => 'assignments', :action => 'new' %> </h1></div>
 
 <%= render :partial => "layouts/assignments", 
   :locals => { :controller => 'assignments', :action => 'edit' } -%>
 
-<p>Or <%= link_to 'Create a new assignment', 
-  :controller => 'assignments', :action => 'new' %>.</p>

@@ -1,4 +1,4 @@
-
+<% if @current_user.admin?%>
 <% if
   controller.controller_name == 'assignments'  or
   controller.controller_name == 'rubrics' or
@@ -77,4 +77,69 @@ h(sanitize(@assignment.name))%></span>
   </ul>
 </div>
 
+<% end %>
+<% elsif @current_user.ta? %>
+<div id="sub_menu">
+  <ul id="root" class="level1 horizontal">
+   <li class="level1">
+     <% if @assignment.nil?%>
+       <span id="choose_an_assignment">Choose an assignment</span>
+     <% else %>
+       <span id="choose_an_assignment"><%=
+h(sanitize(@assignment.name))%></span>
+     <% end %>
+        <ul class="level2 dropdown">
+           <%= render :partial => 'layouts/assignments_dropdown_menu'%>
+        </ul>
+   </li>
+
+  <% if 
+    !@assignment.nil?
+  %>
+  <%%>
+  <% end %> 
+  </ul>
+</div> 
+<% elsif @current_user.student?%>
+<% if controller.controller_name != 'checkmark'%>
+<div id="sub_menu">
+  <ul id="root" class="level1 horizontal">
+   <li class="level1">
+     <% if @assignment.nil?%>
+       <span id="choose_an_assignment">Choose an assignment</span>
+     <% else %>
+       <span id="choose_an_assignment"><%=
+h(sanitize(@assignment.name))%></span>
+     <% end %>
+        <ul class="level2 dropdown">
+           <%= render :partial => 'layouts/assignments_dropdown_menu'%>
+        </ul>
+   </li>
+
+  <% if 
+    !@assignment.nil?
+  %>
+ <li <% if controller.controller_name == 'assignments' %> 
+          id="sub_menu_active"
+        <%end%>>
+	  <%= link_to 'assignments', :controller => 'assignments',
+	  :action => 'student_interface', :id => @assignment.id %>
+  </li>
+  <li <% if controller.controller_name == 'submissions' %> 
+          id="sub_menu_active"
+        <%end%>>
+	  <%= link_to 'Submissions', :controller => 'submissions',
+	  :action => 'file_manager', :id => @assignment.id %>
+  </li>
+   <li <% if controller.controller_name == 'results' %> 
+          id="sub_menu_active"
+        <%end%>>
+	  <%= link_to 'results', :controller => 'results',
+	  :action => 'view_marks', :id => @assignment.id %>
+  </li>
+  
+   <% end %>
+   </ul>
+</div>
+<% end %>
 <% end %>

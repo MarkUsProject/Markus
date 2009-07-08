@@ -1,4 +1,7 @@
-<h1>Manage Admins</h1>
+<div id="title_bar"><h1>Manage Admins <%= link_to I18n.t(:add_new), :controller => 'admins',
+:action => 'create' %></h1>
+</div>
+
 <div class="colsLeftHeavy">
 
 <div><div class="wrapLeft">
@@ -48,7 +51,7 @@
             <td><%=h u.user_name %></td>
             <td><%=h u.last_name %></td>
             <td><%=h u.first_name %></td>
-            <td><%= link_to 'Edit', :controller => 'admins', :action => 'edit', :id => u %></td>
+            <td><%= link_to I18n.t(:edit), :controller => 'admins', :action => 'edit', :id => u %></td>
           </tr>
         <% end %>
         
@@ -57,18 +60,4 @@
   </div></div>
   
   <!-- Break between sections -->
-  <div id="register">
-  
-  <h2>Register Admins</h2>
-     
-    <h3>Add A New Admin</h3>
-    
-    <div class="section">
-      <p><%= link_to "Add a new Admin", :controller => 'admins', :action => 'create' %></p>
-    </div>
-
-  </div>
-  
-  
-
-</div> <!-- colsLeftHeavy -->
+ </div> <!-- colsLeftHeavy -->

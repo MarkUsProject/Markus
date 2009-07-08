@@ -2,6 +2,8 @@ en:
     name:               "Name"
     members:            "Members"
     graders:            "Graders"
+    add_new:            "Add new"
+    edit:               "Edit"
 
     user:
         user_name:      "CDF ID"
