@@ -142,9 +142,6 @@ class AssignmentsController < ApplicationController
       if params[:persist_groups_assignment]
         @assignment.clone_groupings_from(params[:persist_groups_assignment])
       end
-      if @assignment.group_max == 1
-        @assignment.create_groupings_when_students_work_alone
-      end
       @assignment.save
     end
     redirect_to :action => "edit", :id => @assignment.id
