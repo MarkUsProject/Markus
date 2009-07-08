@@ -185,6 +185,66 @@ class MemoryRepositoryTest < Test::Unit::TestCase
       end
     end
     
+    should "be able to replace file-content of an already existing file in the repository" do
+      # put something into the repository
+      files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
+      add_some_files_helper(@repo, files_to_add) # add some initial files
+      old_revision = @repo.get_latest_revision()
+      # add one more file
+      filename = "ruby_file.rb"
+      txn = @repo.get_transaction(TEST_USER)
+      file_contents = File.read(RESOURCE_DIR+"/"+filename)
+      txn.add("/"+filename, file_contents)
+      @repo.commit(txn)
+      new_revision = @repo.get_latest_revision()
+      assert_instance_of(Repository::MemoryRevision, old_revision, "Should be of type MemoryRevision")
+      assert_instance_of(Repository::MemoryRevision, new_revision, "Should be of type MemoryRevision")
+      assert_equal(old_revision.revision_number + 1, new_revision.revision_number, "Revision number should have been increased by 1")
+      # test repository on its correct content
+      files = new_revision.files_at_path("/")
+      files_to_add << filename # push filename to files_to_add
+      files_to_add.each do |file|
+        assert_not_nil(files[file], "File '"+file+"' not found in repository")
+        content = File.read(RESOURCE_DIR+"/"+file)
+        # test stringify_files also
+        assert_equal(content, @repo.stringify_files(files[file]))
+      end
+      
+      # replace content of a file
+      old_revision = @repo.get_latest_revision()
+      txn = @repo.get_transaction(TEST_USER)
+      replace_content = '''<?xml version="1.0" encoding="utf-8" ?>
+<book>
+  <author>Leonardo da Vinci</author>
+  <para>Some text here</para>
+</book>'''
+      # test if FileDoesNotExistConflict is raised
+      txn.replace("/file/not/existent", replace_content, "application/xml", @repo.get_latest_revision().revision_number)
+      assert_equal(false, @repo.commit(txn), "Commit should not have been successful")
+      assert_equal(true, txn.conflicts?, "Transaction should have a FileDoesNotExistConflict")
+      assert_raise(FileDoesNotExistConflict) do
+        txn.conflicts().each do |conflict|
+          raise conflict
+        end
+      end
+      new_revision = @repo.get_latest_revision()
+      assert_equal(old_revision.revision_number, new_revision.revision_number, "Revision number should not have been increased, since commit had conflicts!")
+      
+      # test clean replace
+      txn = @repo.get_transaction(TEST_USER)
+      txn.replace("/test.xml", replace_content, "application/xml", @repo.get_latest_revision().revision_number)
+      @repo.commit(txn)
+      new_revision = @repo.get_latest_revision()
+      assert_instance_of(Repository::MemoryRevision, old_revision, "Should be of type MemoryRevision")
+      assert_instance_of(Repository::MemoryRevision, new_revision, "Should be of type MemoryRevision")
+      assert_equal(old_revision.revision_number + 1, new_revision.revision_number, "Revision number should have been increased by 1")
+      # test repository on its correct content
+      files = new_revision.files_at_path("/")
+      assert_not_nil(files["test.xml"], "File 'test.xml' not found in repository")
+      # test stringify_files also
+      assert_equal(replace_content, @repo.stringify_files(files["test.xml"]), "Content mismatch")
+    end
+    
     should "be able to get a revision by timestamp" do
       files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
       add_some_files_helper(@repo, files_to_add) # add some initial files
@@ -239,21 +299,75 @@ class MemoryRepositoryTest < Test::Unit::TestCase
       end
     end
     
-    should "be able to add a user with a given permission set to a repository" do
-      # permissions are read-only and read-write
-    end
-    
-    should "be able to remove a user from a repository" do
-      # test removal of non-existent user
+    should "be able to manage users and permissions" do
+      # tests
+      #   'add_user()'
+      #   'remove_user()'
+      #   'get_permissions()'
+      #   'set_permissions()
+      #   'get_users()'
+      another_user = "another_user_id"
       
-    end
-    
-    should "be able to get a list of users with particular permissions" do
+      # check if permission constants are working
+      assert_equal(2, Repository::Permission::WRITE)
+      assert_equal(4, Repository::Permission::READ)
+      assert_equal(6, Repository::Permission::READ_WRITE)
+      assert_equal(4, Repository::Permission::ANY)
       
-    end
-    
-    should "be able to get permissions for a particular user" do
+      users_with_any_perm = @repo.get_users(Repository::Permission::ANY)
+      assert_nil(users_with_any_perm, "There aren't any users, yet")
+      users_with_read_perm = @repo.get_users(Repository::Permission::READ)
+      assert_nil(users_with_read_perm, "There aren't any users, yet")
+      users_with_read_write_perm = @repo.get_users(Repository::Permission::READ_WRITE)
+      assert_nil(users_with_read_write_perm, "There aren't any users, yet")
       
+      @repo.add_user(TEST_USER, Repository::Permission::READ)
+      users_with_any_perm = @repo.get_users(Repository::Permission::ANY)
+      assert_not_nil(users_with_any_perm, "There is a user with some permissions")
+      assert_equal(TEST_USER, users_with_any_perm.shift, TEST_USER+ " should have some permissions")
+      users_with_read_perm = @repo.get_users(Repository::Permission::READ)
+      assert_not_nil(users_with_read_perm, TEST_USER+" should have read permissions")
+      assert_equal(TEST_USER, users_with_read_perm.shift, TEST_USER+ " should have read permissions")
+      users_with_read_write_perm = @repo.get_users(Repository::Permission::READ_WRITE)
+      assert_nil(users_with_read_write_perm, "There is no user with read and write permissions")
+      # see if permissions have been set accordingly
+      assert_equal(Repository::Permission::READ, @repo.get_permissions(TEST_USER), "Permissions don't match")
+      
+      # set (overwrite) permissions
+      @repo.set_permissions(TEST_USER, Repository::Permission::READ_WRITE)
+      assert_equal(Repository::Permission::READ_WRITE, @repo.get_permissions(TEST_USER), "Permissions don't match")
+      users_with_read_write_perm = @repo.get_users(Repository::Permission::READ_WRITE)
+      assert_not_nil(users_with_read_write_perm, "There is a user with read and write permissions")
+      assert_equal(TEST_USER, users_with_read_write_perm.shift, TEST_USER + " should have read and write permissions")
+      
+      # add another user
+      @repo.add_user(another_user, Repository::Permission::READ)
+      assert_equal(Repository::Permission::READ, @repo.get_permissions(another_user), "Permissions don't match")
+      users_with_any_perm = @repo.get_users(Repository::Permission::ANY)
+      assert_not_nil(users_with_any_perm, "There are some users with some permissions")
+      assert_equal([TEST_USER, another_user].sort, users_with_any_perm.sort, "There are some missing users")
+      users_with_read_perm = @repo.get_users(Repository::Permission::READ)
+      assert_not_nil(users_with_read_perm, "Some user has read permissions")
+      assert_equal(another_user, users_with_read_perm.shift, another_user +" should have read permissions")
+      users_with_read_write_perm = @repo.get_users(Repository::Permission::READ_WRITE)
+      assert_not_nil(users_with_read_write_perm, "There are some users with read and write permissions")
+      assert_equal(TEST_USER, users_with_read_write_perm.shift, TEST_USER + " should have read and write permissions")
+      
+      # remove user
+      @repo.remove_user(TEST_USER)
+      assert_equal(Repository::Permission::READ, @repo.get_permissions(another_user), "Permissions don't match")
+      users_with_any_perm = @repo.get_users(Repository::Permission::ANY)
+      assert_not_nil(users_with_any_perm, "There are some users with some permissions")
+      assert_equal(another_user, users_with_any_perm.shift, another_user +" still has some perms")
+      users_with_read_perm = @repo.get_users(Repository::Permission::READ)
+      assert_not_nil(users_with_read_perm, "Some user has read permissions")
+      assert_equal(another_user, users_with_read_perm.shift, another_user +" should have read permissions")
+      users_with_read_write_perm = @repo.get_users(Repository::Permission::READ_WRITE)
+      assert_nil(users_with_read_write_perm, "There are NO users with read and write permissions")
+      
+      @repo.remove_user(another_user)
+      users_with_any_perm = @repo.get_users(Repository::Permission::ANY)
+      assert_nil(users_with_any_perm, "There are NO users with any permissions")
     end
     
   end # end context

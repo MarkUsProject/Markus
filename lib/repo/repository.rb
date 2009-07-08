@@ -1,6 +1,14 @@
 module Repository
 
-# Exceptions for Repositories
+# Permission constants for repositories
+class Permission
+  WRITE      = 2
+  READ       = 4
+  READ_WRITE = READ + WRITE
+  ANY        = READ # any permission means at least read permission
+end
+
+# Exceptions for repositories
 class ConnectionError < Exception; end
 
 class Conflict < Exception
@@ -103,14 +111,20 @@ class AbstractRepository
   end
   
   # Gets a list of users with permissions in question on the repository
-  #   use "PERMISSIONS:ANY" to get a list of all users with any permissions
-  def get_users(permissions)
+  #   use "Repository::Permission::ANY" to get a list of all users with any permissions
+  #   i.e. all users with at least read permissions
+  def get_users(permission)
     raise NotImplementedError, "Repository.get_users: Not yet implemented"
   end
   
   # Gets permissions for a particular user
   def get_permissions(user_id)
-    raise NotImplementedError, "Repository.get_users: Not yet implemented"
+    raise NotImplementedError, "Repository.get_permissions: Not yet implemented"
+  end
+  
+  # Sets permissions for a particular user
+  def set_permissions(user_id, permissions)
+    raise NotImplementedError, "Repository.set_permissions: Not yet implemented"
   end
   
 end
@@ -148,6 +162,10 @@ end
 # Exceptions for Files
 class FileOutOfDate < Exception; end
 class FileDoesNotExist < Exception; end
+  
+# Exceptions for repo user management
+class UserNotFound < Exception; end
+class UserAlreadyExistent < Exception; end
 
 
 #################################################

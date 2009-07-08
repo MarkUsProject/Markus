@@ -28,7 +28,7 @@ class MemoryRepository < Repository::AbstractRepository
   def initialize(location, is_create_call=false)
     
     # variables
-    @users = []                                 # list of users with read/write permissions
+    @users = {}                                 # hash of users (key) with corresponding permissions (value)
     @current_revision = MemoryRevision.new(0)   # the latest revision (we start from 0)
     @revision_history = []                      # a list (array) of old revisions (i.e. < @current_revision)
     # mapping (hash) of timestamps and revisions
@@ -137,6 +137,12 @@ class MemoryRepository < Repository::AbstractRepository
           rescue Repository::Conflict => e
             transaction.add_conflict(e)
           end
+        when :replace
+          begin
+            new_rev = replace_file_content(new_rev, job[:path], job[:file_data], job[:mime_type], job[:expected_revision_number])
+          rescue Repository::Conflict => e
+            transaction.add_conflict(e)
+          end
       end
     end
     
@@ -183,18 +189,51 @@ class MemoryRepository < Repository::AbstractRepository
     return get_revision_number_by_timestamp(timestamp)
   end
    
-  # Adds user permissions for read/write access to the repository
-  def add_user(user_id)
-    raise NotImplementedError,  "Repository.add_user: Not yet implemented"
+  # Adds a user to the repository and grants him/her the provided permissions
+  def add_user(user_id, permissions)
+    if @users.key?(user_id)
+      raise UserAlreadyExistent.new(user_id +" exists already")
+    end
+    @users[user_id] = permissions
   end
   
-  # Removes user permissions for read/write access to the repository
+  # Removes a user from from the repository
   def remove_user(user_id)
-    raise NotImplementedError,  "Repository.remove_user: Not yet implemented"
+    if !@users.key?(user_id)
+      raise UserNotFound.new(user_id + " not find")
+    end
+    @users.delete(user_id)
   end
   
-  def get_users
-    raise NotImplementedError, "Repository.get_users: Not yet implemented"
+  # Gets a list of users with AT LEAST the provided permissions
+  def get_users(with_perms)
+    result_list = []
+    @users.each do |user, perm|
+      if perm >= with_perms
+        result_list.push(user)
+      end
+    end
+    if !result_list.empty?
+      return result_list
+    else
+      return nil
+    end
+  end
+  
+  # Sets permissions for the provided user
+  def set_permissions(user_id, permissions)
+    if !@users.key?(user_id)
+      raise UserNotFound.new(user_id + " not find")
+    end
+    @users[user_id] = permissions
+  end
+  
+  # Gets permissions for a given user
+  def get_permissions(user_id)
+    if !@users.key?(user_id)
+      raise UserNotFound.new(user_id + " not find")
+    end
+    return @users[user_id]
   end
   
   private
@@ -232,10 +271,25 @@ class MemoryRepository < Repository::AbstractRepository
     return rev
   end
   
+  # Replaces file content of a file already existent in a revision
+  def replace_file_content(rev, full_path, file_content, mime_type, expected_revision_int)
+    if !file_exists?(rev, full_path)
+      raise Repository::FileDoesNotExistConflict.new(full_path)
+    end
+    # replace content of file in question
+    act_rev = get_latest_revision()
+    if (act_rev.revision_number != expected_revision_int)
+      raise Repository::FileOutOfSyncConflict.new(full_path)
+    end
+    files_list = rev.files_at_path(File.dirname(full_path))
+    rev.__replace_file_content(files_list[File.basename(full_path)], file_content)
+    return rev
+  end
+  
   # Removes a file from the provided revision
   def remove_file(rev, full_path, expected_revision_int)
     if !file_exists?(rev, full_path)
-      raise FileDoesNotExistConflict
+      raise Repostiory::FileDoesNotExistConflict.new(full_path)
     end
     act_rev = get_latest_revision()
     if (act_rev.revision_number != expected_revision_int)
@@ -307,7 +361,7 @@ class MemoryRepository < Repository::AbstractRepository
       timestamps_list.push(Time._load(time_dump))
     end
     
-    # find closest timestamp
+    # find closest matching timestamp
     best_match = timestamps_list.shift()
     old_diff = wanted_timestamp - best_match
     mapping = {}
@@ -390,6 +444,17 @@ class MemoryRevision < Repository::AbstractRevision
     @files.push(file)
     if file.instance_of?(RevisionFile)
       @files_content[file.to_s] = content
+    end
+  end
+  
+  # Not (!) part of the AbstractRepository API:
+  # A simple helper method to be used to replace the
+  # content of a file
+  def __replace_file_content(file, new_content)
+    if file.instance_of?(RevisionFile)
+      @files_content[file.to_s] = new_content
+    else
+      raise "Expected file to be of type RevisionFile"
     end
   end
   
