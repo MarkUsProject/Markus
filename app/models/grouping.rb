@@ -14,15 +14,9 @@ class Grouping < ActiveRecord::Base
   has_many :pending_students, :class_name => 'Student', :through => :student_memberships, :conditions => {'memberships.membership_status' => StudentMembership::STATUSES[:pending]}, :source => :user
   
   has_many :submissions
-
-  # TODO:  size_valid_groupings doesn't do what it's supposed to (IE:  return 
-  # the Groupings that meet the minimum number of student_memberships for the
-  # given assignment
-  named_scope :size_valid_groupings, :joins => :student_memberships, :conditions => {'memberships.membership_status != ?' => StudentMembership::STATUSES[:rejected]}
   
   named_scope :approved_groupings, :conditions => {:admin_approved => true}
   named_scope :assigned_groupings, :joins => :ta_memberships
-
     
   # user association/validations
   validates_presence_of   :assignment_id, :message => "needs an assignment id"
