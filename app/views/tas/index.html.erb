@@ -1,8 +1,10 @@
+<%= javascript_include_tag "16accordion" %>
+
 <div id="title_bar"><h1>Manage TAs <%= link_to I18n.t(:add_new),
 :controller => 'tas', :action => 'create' %></h1></div>
 <div class="colsLeftHeavy">
 
-<div><div class="wrapLeft">
+<div class="colLeft"><div class="wrapLeft">
   <div id="list">
     <h2>View TA List (<%= link_to "XML", :action => 'download_ta_list', :format => 'xml' %>)</h2>
     
@@ -67,16 +69,16 @@
        
       </table>
   </div>
-  </div></div>
+  </div>
+</div>
   
   <!-- Break between sections -->
-  <div id="register">
-  
-  <h2>Register TAs</h2>
-  
-    <h3>Upload a TA list</h3>
-    
-    <div class="section">
+<div class="colRight">
+  <div id="test-accordion" class="accordion">
+    <div class="accordion-toggle" id="accordion-content">
+      <%=I18n.t(:upload)%>
+    </div>    
+    <div class="accordion-content">
       
       <p>Select a CSV file of the following form: <code>user_name,last_name,first_name</code></p>
       
@@ -87,18 +89,19 @@
         <label for="userlist">CVS File</label>
         <input type="file" name="userlist" id="userlist"/>
         <%= submit_tag "Update userlist", :disable_with => 'Processing...', :class => 'button' %>
-      </form>
-    
+      </form> 
     </div>
 
-    <h3>Download TA List</h3>
+    <div class="accordion-toggle">
+      <%= I18n.t(:download) %>
+    </div>
 
-    <div class="section">
+    <div class="accordion-content">
       <p><%= link_to "Download TA list in CSV format", :controller => 'tas', :action => 'download_ta_list', :format => "csv" %></p>
     </div>
 
   </div>
-  
-  
+</div>  
+ 
 
 </div> <!-- colsLeftHeavy -->

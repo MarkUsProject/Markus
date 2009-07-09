@@ -6,8 +6,6 @@
 
 <div><div class="wrapLeft">
  <div id="list">
-    <h2>View Admin List</h2>
-    
       <% if flash[:upload_notice] -%>
           <p class="success"><%=h flash[:upload_notice] %></p>
       <% end -%>
@@ -35,7 +33,7 @@
       <% end -%>
       
       <table>
-        
+      <thead>  
        <tr>
           <%
 		  	# pull "labels" from I18n files
@@ -45,7 +43,7 @@
           <th><%= I18n.t('user.first_name') %></th>
           <th></th>
         </tr>
-          
+          </thead>
         <% for u in @admins %>
           <tr class="<%= cycle('rowA', 'rowB') %>">
             <td><%=h u.user_name %></td>

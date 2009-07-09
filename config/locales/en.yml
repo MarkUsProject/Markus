@@ -4,6 +4,14 @@ en:
     graders:            "Graders"
     add_new:            "Add new"
     edit:               "Edit"
+    bulk_action:        "Bulk action"
+    submit:             "Submit"
+    all:                "All"
+    hidden:             "Hidden"
+    active:             "Active"
+    not_active:         "Not active"
+    download:           "Download"
+    upload:             "Upload"
 
     user:
         user_name:      "CDF ID"

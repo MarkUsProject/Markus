@@ -59,17 +59,17 @@ h(sanitize(@assignment.name))%></span>
 <div id="sub_menu">
   <ul>
     <li <% if controller.controller_name == 'students'%> 
-      id="sub_menu_active>"
+      id="sub_menu_active"
     <% end %>>
       <%= link_to 'Students', :controller => 'students'%>
     </li>
     <li <% if controller.controller_name == 'tas'%> 
-      id="sub_menu_active>"
+      id="sub_menu_active"
     <% end %>>
       <%= link_to 'Graders', :controller => 'tas'%>
     </li>
     <li <% if controller.controller_name == 'admins'%> 
-      id="sub_menu_active>"
+      id="sub_menu_active"
     <% end %>>
       <%= link_to 'Admins', :controller => 'admins'%>
     </li>

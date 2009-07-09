@@ -1,5 +1,5 @@
 <h1><%=h @title %></h1>
-
+<div class="wrapLeft">
 <p>
 
 <% form_for :assignment, :url => {:action => action, :id => @assignment.id } do |f| -%>
@@ -166,4 +166,5 @@
 <% end %>
 
 <%= link_to 'Cancel', :action => 'index' %>
+</div>
 </div>

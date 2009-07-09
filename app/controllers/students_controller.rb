@@ -4,6 +4,7 @@ class StudentsController < ApplicationController
   def index
     @students = Student.find(:all, :order => "user_name")
     @hidden_students_number = Student.all(:conditions => {:hidden => true}).length
+    @all_students_size = @students.length
   end
 
   def edit
@@ -40,6 +41,18 @@ class StudentsController < ApplicationController
     end
     # Nothing was done
     render :nothing => true
+  end
+
+  def filter
+  case params[:filter]
+    when "hidden"
+       @students = Student.all(:conditions => {:hidden => true}, :order => :user_name)
+    when "visible"
+       @students = Student.all(:conditions => {:hidden => false}, :order => :user_name)
+    else
+      @students = Student.all(:order => :user_name)
+    end
+
   end
 
   def create

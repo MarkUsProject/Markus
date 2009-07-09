@@ -6,4 +6,4 @@
   end
 end
 
-page.replace_html 'hidden_students_number', @hidden_students_number
+page.replace_html 'hidden_students_size', @hidden_students_size

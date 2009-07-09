@@ -1,0 +1,5 @@
+<script type="text/javascript" language="Javascript">
+document.observe("dom:loaded", function() {
+  <%= remote_function :url => {:action => 'filter', :filter => 'all'}, :complete => "$('loading_list').hide();"%>
+});
+</script>

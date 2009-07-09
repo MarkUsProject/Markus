@@ -18,7 +18,7 @@ button{
 }
 
 a {
-   color: #003366;
+   color: #003399;
    text-decoration: none;
    font-family: Georgia, "Times New Roman", sans-serif;
    text-transform: capitalize;
@@ -38,7 +38,7 @@ Unicode", Verdana;
 
 
 h4{
-   color: #003366;
+   color: #003399;
    font-style: italic;
 }
 
@@ -60,7 +60,15 @@ h4{
   display: block;
 }
 
+.wrapLeft{
+  padding: 0 1.3em;
+}
+
 /* Title Bar*/
+
+#title_bar{
+   padding-left: 10px;
+}
 
 #title_bar h1{
    font-family: "Myriad", "Myriad Pro", "Lucida Grande", "Lucida Sans
@@ -71,7 +79,7 @@ Unicode", Verdana;
 
 #title_bar input, #title_bar a{
   background: none;
-  color: #003366;
+  color: #003399;
   border: none;
   font-size: 0.5em;
 }
@@ -108,9 +116,11 @@ Unicode", Verdana;
   -moz-border-radius-topleft: 10px;
   -moz-border-radius-topright: 10px;
   background: #ccc;
+  color: #003366;
 }
 
  #sub_menu #sub_menu_active a{
+   color: #003366;
    background-color: white;
   -moz-border-radius-topleft: 10px;
   -moz-border-radius-topright: 10px;
@@ -169,6 +179,7 @@ Unicode", Verdana;
 
 #sub_menu{
    background: #464646;
+   padding-left: 10px;
 }
 
 .level1{
@@ -218,7 +229,6 @@ input{
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
   border: 2px solid #ccc;
-  text-transform: capitalize;
   text-align: center;
   font-family: "Lucida Grande", Verdana, Arial, sans-serif;
   color: #464646;
@@ -309,6 +319,10 @@ td{
    padding: 0;
 }
 
+tr:hover {
+   background: #ECECEC;
+}
+
 .table_menu{
    visibility: hidden;
    display: block;
@@ -316,7 +330,7 @@ td{
 }
 
 .table_menu a, .table_menu button{
-   color: #003366;
+   color: #003399;
    font-size: 0.9em;
    font-family: Georgia, "Times New Roman", sans-serif;
    text-decoration: none;
@@ -341,13 +355,13 @@ td{
 }
 
 
-td:hover .table_menu{
+tr:hover .table_menu{
   visibility: visible;
 }
 
 .link{
    font-weight: bold;
-   color: #003366;
+   color: #003399;
    text-transform: capitalize;
 }
 
@@ -458,19 +472,17 @@ td:hover .table_menu{
 
 .colLeft{
   float: left;
-  width: 80%;
+  width: 75%;
 }
 
 .colRight{
    float: right;
    width: 20%;
-   text-size: 0.1 em;
 }
   
 .accordion {
-  padding-left: 10px;
   position: fixed;
-  height: 80%;
+  height: 75%;
   width: 20%;
 }
 
@@ -493,23 +505,15 @@ td:hover .table_menu{
 
 #accordion-toggle-top {
    -moz-border-radius-topleft: 10px;
-   -moz-border-radius-topright: 10px;
    -webkit-border-radius-topleft: 10px;
-   -webkit-border-radius-topright: 10px;
 }
 
 #accordion-toggle-bottom {
    -moz-border-radius-bottomleft: 10px;
-   -moz-border-radius-bottomright: 10px;
    -webkit-border-radius-bottomleft: 10px;
-   -webkit-border-radius-bottomright: 10px;
 }
 
 #accordion-toggle-bottom.accordion-toggle-active{
-   -moz-border-radius-bottomleft: 0px;
-   -moz-border-radius-bottomright: 0px;
-   -webkit-border-radius-bottomleft: 0px;
-   -webkit-border-radius-bottomright: 0px;
     border-bottom: none;
 }
 
@@ -517,6 +521,13 @@ td:hover .table_menu{
    background: #ccc;
    overflow: hidden;
    background: #aaa;
+   margin-left: -20px;
+   -moz-border-radius-bottomleft: 10px;
+   -webkit-border-radius-bottomleft: 10px;
+   -moz-border-radius-topleft: 10px;
+   -webkit-border-radius-topleft: 10px;
+   padding-left: 25px;
+
 }
 
 .accordion-content {

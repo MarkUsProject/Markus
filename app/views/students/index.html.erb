@@ -1,6 +1,8 @@
 <%= javascript_include_tag "students_manager"%>
 <%= javascript_include_tag "16accordion"%>
 
+<%= render :partial => "boot.js.erb"%>
+
 <div id="title_bar"><h1>Manage Students <%= link_to I18n.t(:add_new), :controller => 'students', :action => 'create' %> </h1></div>
 
 <div class="colsLeftHeavy">
@@ -35,38 +37,52 @@
       
       <%= form_remote_tag :url => {:action => "bulk_modify"}, :complete => "$('apply_bulk_action').setValue('Apply Bulk Action');$('apply_bulk_action').enable();"
        %>
-      <select name="bulk_action">
-        <option value="">Select bulk action</option>
-        <option value="hide">Hide Selected Students</option>
-        <option value="unhide">Unhide Selected Students</option>
+      <div id="toggle_actions">
+       <%= link_to_remote I18n.t(:all) + " (" + @all_students_size.to_s +
+       ")", :url => {:action => 'filter', :filter => 'all'}, :loading =>
+"$('loading_list').show();",
+       :complete => "$('loading_list').hide();" %>
+       | 
+       <%= link_to_remote I18n.t(:active) + " (" + (@all_students_size -
+@hidden_students_number).to_s +
+       ")", :url => {:action => 'filter', :filter => 'visible'}, :loading => "$('loading_list').show();",
+       :complete => "$('loading_list').hide();" %>
+       |
+       <%= link_to_remote I18n.t(:not_active) + " (" +
+@hidden_students_number.to_s +
+       ")", :url => {:action => 'filter', :filter => 'hidden'}, :loading => "$('loading_list').show();",
+       :complete => "$('loading_list').hide();" %>
+       </div>
+       <div class="global_action">
+        <span id="loading_list"><%= image_tag("spinner.gif")%> Loading
+list...</span>
+        <select name="bulk_action">
+        <option value=""><%= I18n.t(:bulk_action)%></option>
+        <option value="hide">Hide Students</option>
+        <option value="unhide">Unhide Students</option>
       </select>
-      <%= submit_tag "Apply Bulk Action", :id => 'apply_bulk_action', :onclick => "$(this).setValue('Processing...'); $(this).disable();" %>
-      
-      <input type="checkbox" id="show_hidden_students" name="show_hidden_students" value="true" onclick="if($(this).getValue() == 'true') { $$('.hidden_student').each(function(node) { $(node).show();}) } else { $$('.hidden_student').each(function(node) { $(node).hide();}) }"> Show Hidden Students (<span id="hidden_students_number"><%=@hidden_students_number%></span>)
+      <%= submit_tag I18n.t(:submit), :id => 'apply_bulk_action', :onclick => "$(this).setValue('Processing...'); $(this).disable();" %>
+      </div>
 
-      <table>
+      <table id="students">
        <thead> 
        <tr>
        	  <%
 	   # pull "labels" from I18n files
 	  %>
-	  <th></th>
+	  <th id="checkbox"><%= check_box_tag "students[all]", true,
+	  false, :id => "students[all]", :onchange =>
+	  "toggle_students_selection($F('students[all]'));"%></th>
           <th><%= I18n.t('user.user_name') %></th>
           <th><%= I18n.t('user.last_name') %></th>
           <th><%= I18n.t('user.first_name') %></th>
           <th></th>
         </tr>
           </thead>
-        <% for u in @students %>
-          <tr class="<%= cycle('rowA', 'rowB') %> <%="hidden_student" if u.hidden%>" id="student_<%=u.id%>">
-            <td><%= check_box_tag 'student_ids[]', u.id, false, :id => "student_#{u.id}_checkbox"%></td>
-            <td><%= h(u.user_name) %></td>
-            <td><%= h(u.last_name) %></td>
-            <td><%= h(u.first_name) %></td>
-            <td><%= link_to I18n.t(:edit), :controller => 'students', :action => 'edit', :id => u %></td>
-          </tr>
-        <% end %>
-        
+	  <tbody id="students_table">
+	  <%= render :partial => "students/students_table", :locals =>
+	  {:students => []}%>
+	  </tbody>
        <tfoot> 
        <tr>
        	  <%
@@ -86,7 +102,7 @@
 </div>
 <div class="colRight">  
 <div id="test-accordion" class="accordion">
-  <div class="accordion-toggle" id="accordion-toggle_top"> Upload
+  <div class="accordion-toggle" id="accordion-toggle-top"> Upload
   </div>
   <div class="accordion-content">
     <h3>Upload a class list</h3>
@@ -104,7 +120,7 @@
     
     </div>
    </div> 
-    <div class="accordion-toggle">Download Student List</div>
+    <div class="accordion-toggle" id="accordion-toggle-bottom">Download Student List</div>
 
     <div class="accordion-content">
       <p><%= link_to "Download Student list in CSV format", :controller => 'students', :action => 'download_student_list', :format => "csv" %></p>
