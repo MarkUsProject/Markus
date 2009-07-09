@@ -281,11 +281,11 @@ class GroupsController < ApplicationController
     @ungrouped_students = @assignment.ungrouped_students
     
     @all_groupings_size = @groupings.count
-    @valid_groupings_size = (@assignment.valid_groupings).count
+    @valid_groupings_size = (@assignment.valid_groupings).length
     @invalid_groupings_size = @all_groupings_size - @valid_groupings_size
 
-    @assigned_groupings_size = @assignment.assigned_groupings.count
-    @unassigned_groupings_size = @assignment.unassigned_groupings.count
+    @assigned_groupings_size = @assignment.assigned_groupings.length
+    @unassigned_groupings_size = @assignment.unassigned_groupings.length
   end
   
   # Assign TAs to Groupings via a csv file
