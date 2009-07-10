@@ -4,12 +4,16 @@ require File.join(File.dirname(__FILE__),'/repository') # load repository module
 
 module Repository
 
-SVN_CONSTANTS = {
-  :author => Svn::Core::PROP_REVISION_AUTHOR, 
-  :date => Svn::Core::PROP_REVISION_DATE,
-  :mime_type => Svn::Core::PROP_MIME_TYPE
-}
-SVN_FS_TYPES = {:fsfs => Svn::Fs::TYPE_FSFS, :bdb => Svn::Fs::TYPE_BDB}
+if !defined? SVN_CONSTANTS # avoid constants already defined warnings
+  SVN_CONSTANTS = {
+    :author => Svn::Core::PROP_REVISION_AUTHOR, 
+    :date => Svn::Core::PROP_REVISION_DATE,
+    :mime_type => Svn::Core::PROP_MIME_TYPE
+  }
+end
+if !defined? SVN_FS_TYPES
+  SVN_FS_TYPES = {:fsfs => Svn::Fs::TYPE_FSFS, :bdb => Svn::Fs::TYPE_BDB}
+end
 
 
 class InvalidSubversionRepository < Repository::ConnectionError; end

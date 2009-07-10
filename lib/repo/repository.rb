@@ -2,10 +2,18 @@ module Repository
 
 # Permission constants for repositories
 class Permission
-  WRITE      = 2
-  READ       = 4
-  READ_WRITE = READ + WRITE
-  ANY        = READ # any permission means at least read permission
+  if !defined? WRITE  # avoid constant already defined warnings
+    WRITE      = 2
+  end
+  if !defined? READ
+    READ       = 4
+  end
+  if !defined? READ_WRITE
+    READ_WRITE = READ + WRITE
+  end
+  if !defined? ANY
+    ANY        = READ # any permission means at least read permission
+  end
 end
 
 # Exceptions for repositories
