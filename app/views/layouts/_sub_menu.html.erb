@@ -11,7 +11,7 @@
   <ul id="root" class="level1 horizontal">
    <li class="level1">
      <% if @assignment.nil?%>
-       <span id="choose_an_assignment">Choose an assignment</span>
+       <span id="choose_an_assignment">I18n.t(:choose_assignment)</span>
      <% else %>
        <span id="choose_an_assignment"><%=
 h(sanitize(@assignment.name))%></span>
@@ -27,8 +27,18 @@ h(sanitize(@assignment.name))%></span>
           <li <% if controller.controller_name == 'assignments' %> 
          id="sub_menu_active"
          <%end%>>
-         <%= link_to 'Rules', :controller => 'assignments', :action =>
+	 <% if @current_user.student? %>
+            <%= link_to 'Rules', :controller => 'assignments', :action =>
+	 'student_interface', :id => @assignment.id %>
+
+	 <% elsif @current_user.ta? %>
+           <%= link_to 'Rules', :controller => 'assignments', :action =>
 	 'edit', :id => @assignment.id %>
+	 <% else %>
+          <%= link_to 'Rules', :controller => 'assignments', :action =>
+	 'edit', :id => @assignment.id %>
+
+	 <% end %>
        </li>
        <li <% if controller.controller_name == 'submissions' or
        controller.controller_name == 'results' %> 

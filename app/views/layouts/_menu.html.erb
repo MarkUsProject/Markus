@@ -5,6 +5,7 @@
       id="menu_active"<%end%>>
           <%= link_to 'Dashboard', :controller => 'checkmark'%>
       </span>
+
       <span <% if controller.controller_name == 'assignments' or
                 controller.controller_name == 'rubrics' or
                 controller.controller_name == 'ta_assignments' or
@@ -14,6 +15,7 @@
            %> id ="menu_active"<% end %>>
              <%= link_to 'Assignments', :controller => 'assignments'%>
 	</span>
+
     <% if @current_user.admin? -%>
         <span <% if controller.controller_name == 'admins' or
 	          controller.controller_name == 'students' or
