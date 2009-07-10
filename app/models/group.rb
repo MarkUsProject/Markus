@@ -1,3 +1,4 @@
+require File.join(File.dirname(__FILE__),'/../../lib/repo/repository_factory')
 # Maintains group information for a given user on a specific assignment
 class Group < ActiveRecord::Base
   
@@ -55,6 +56,8 @@ class Group < ActiveRecord::Base
   def grouping_for_assignment(aid)
     return groupings.first(:conditions => {:assignment_id => aid})
   end
+  
+  
 
  # Retrieve group object given user and assignment IDs.
  #  def self.find_group(user_id, assignment_id)
@@ -91,7 +94,6 @@ class Group < ActiveRecord::Base
   #end
   
   def build_repository
-    require 'lib/repo/repository_factory'
     # Attempt to build the repository
     begin
       repo = Repository.create(REPOSITORY_TYPE).create(File.join(REPOSITORY_STORAGE, repository_name))
