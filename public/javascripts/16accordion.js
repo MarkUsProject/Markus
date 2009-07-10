@@ -22,7 +22,7 @@ var Accordion = Class.create({
         this.contents = this.accordion.select('div.'+this.options.contentClass);
         this.isAnimating = false;
         this.maxHeight = 0;
-        this.current = defaultExpandedCount ? this.contents[defaultExpandedCount-1] : this.contents[0];
+        this.current = defaultExpandedCount ? this.contents[defaultExpandedCount-1] : null;
         this.toExpand = null;
 
         this.checkMaxHeight();
@@ -36,9 +36,12 @@ var Accordion = Class.create({
     expand: function(el) {
         this.toExpand = el.next('div.'+this.options.contentClass);
         if(this.current != this.toExpand){
-			this.toExpand.show();
+	    this.toExpand.show();
             this.animate();
-        }
+        }else{
+	   this.toExpand = null;
+	   this.animate();
+	}
     },
 
     checkMaxHeight: function() {
@@ -50,8 +53,10 @@ var Accordion = Class.create({
     },
 
     attachInitialMaxHeight: function() {
+       if(this.current){
 		this.current.previous('div.'+this.options.toggleClass).addClassName(this.options.toggleActive);
         if(this.current.getHeight() != this.maxHeight) this.current.setStyle({height: this.maxHeight+"px"});
+	}
     },
 
     clickHandler: function(e) {
@@ -62,13 +67,20 @@ var Accordion = Class.create({
     },
 
     initialHide: function(){
+      if(this.current){
         for(var i=0; i<this.contents.length; i++){
             if(this.contents[i] != this.current) {
                 this.contents[i].hide();
                 this.contents[i].setStyle({height: 0});
             }
-        }
-    },
+	}
+      }else{
+        for(var i=0; i<this.contents.length; i++){
+                this.contents[i].hide();
+                this.contents[i].setStyle({height: 0});
+            }    
+	  }
+        },
 
     animate: function() {
         var effects = new Array();
@@ -85,7 +97,9 @@ var Accordion = Class.create({
             scaleY: true
         };
 
-        effects.push(new Effect.Scale(this.toExpand, 100, options));
+	if(this.toExpand){
+          effects.push(new Effect.Scale(this.toExpand, 100, options));
+	}
 
         options = {
             sync: true,
@@ -95,7 +109,9 @@ var Accordion = Class.create({
             scaleY: true
         };
 
-        effects.push(new Effect.Scale(this.current, 0, options));
+        if(this.current){
+          effects.push(new Effect.Scale(this.current, 0, options));
+	}
 
         var myDuration = 0.75;
 
@@ -108,13 +124,25 @@ var Accordion = Class.create({
             },
             beforeStart: function() {
                 this.isAnimating = true;
+	    if(this.current){
                 this.current.previous('div.'+this.options.toggleClass).removeClassName(this.options.toggleActive);
+	        }
+	    if(this.toExpand){
                 this.toExpand.previous('div.'+this.options.toggleClass).addClassName(this.options.toggleActive);
+		}
             }.bind(this),
+
             afterFinish: function() {
+	      if(this.current){
                 this.current.hide();
+		}
+	       if(this.toExpand){
                 this.toExpand.setStyle({ height: this.maxHeight+"px" });
                 this.current = this.toExpand;
+	        }else{
+		this.current = null
+		}
+
                 this.isAnimating = false;
             }.bind(this)
         });

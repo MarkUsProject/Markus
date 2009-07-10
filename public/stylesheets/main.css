@@ -177,6 +177,17 @@ Unicode", Verdana;
   min-width: 150px;
 }
 
+#sub_menu ul.dropdown a{
+   text-align: left;
+   padding-bottom: 4px;
+}
+
+#sub_menu ul.dropdown a:hover{
+    text-decoration: underline;
+    color: #003399;
+}
+
+
 #sub_menu{
    background: #464646;
    padding-left: 10px;

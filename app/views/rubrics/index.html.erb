@@ -14,8 +14,10 @@ var activate_upload_tab = false;
 <% end -%>
 </script>
 
-<h1>Rubric Management:  <%= h(sanitize(@assignment.name)) %></h1>	
-
+<div id="title_bar">
+  <h1>Rubric Management:  <%= h(sanitize(@assignment.name)) %></h1>	
+</div>
+<div class="wrapLeft">
 <% if flash[:upload_notice] && flash[:invalid_lines].empty? -%>
 <div>
   <p class="success"><%= h(flash[:upload_notice]) %></p>
@@ -161,3 +163,4 @@ var activate_upload_tab = false;
   </div> <!-- Download canvas -->
 
 </div> <!-- Tabbed Area -->
+</div>

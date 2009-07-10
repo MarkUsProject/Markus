@@ -1,6 +1,7 @@
 <%= javascript_include_tag "create_assignment.js" %>
 
-<h1>Create a New Assignment</h1> <!-- TODO:  i18n! -->
+<div id="title_bar"><h1>Create a New Assignment</h1>
+</div>
 
 <p>
 <% form_for :assignment, :url => {:action => 'new'} do |f| -%>

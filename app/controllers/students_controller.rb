@@ -31,16 +31,12 @@ class StudentsController < ApplicationController
       when "hide"
         Student.hide_students(@student_ids)
         @hidden_students_number = Student.all(:conditions => {:hidden => true}).length
-        render :action => "hide_students"
         return
       when "unhide"
         Student.unhide_students(@student_ids)
         @hidden_students_number = Student.all(:conditions => {:hidden => true}).length
-        render :action => "unhide_students"
         return
     end
-    # Nothing was done
-    render :nothing => true
   end
 
   def filter
