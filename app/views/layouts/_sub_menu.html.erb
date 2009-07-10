@@ -11,10 +11,9 @@
   <ul id="root" class="level1 horizontal">
    <li class="level1">
      <% if @assignment.nil?%>
-       <span id="choose_an_assignment">I18n.t(:choose_assignment)</span>
+       <span id="choose_an_assignment"><%= I18n.t(:choose_assignment)%></span>
      <% else %>
-       <span id="choose_an_assignment"><%=
-h(sanitize(@assignment.name))%></span>
+       <span id="choose_an_assignment"><%=h(sanitize(@assignment.name))%></span>
      <% end %>
         <ul class="level2 dropdown">
            <%= render :partial => 'layouts/assignments_dropdown_menu'%>
@@ -28,14 +27,13 @@ h(sanitize(@assignment.name))%></span>
          id="sub_menu_active"
          <%end%>>
 	 <% if @current_user.student? %>
-            <%= link_to 'Rules', :controller => 'assignments', :action =>
+            <%= link_to I18n.t(:rules), :controller => 'assignments', :action =>
 	 'student_interface', :id => @assignment.id %>
 
-	 <% elsif @current_user.ta? %>
-           <%= link_to 'Rules', :controller => 'assignments', :action =>
+	 <% elsif @current_user.ta? %>  <%= link_to I18n.t(:rules), :controller => 'assignments', :action =>
 	 'edit', :id => @assignment.id %>
 	 <% else %>
-          <%= link_to 'Rules', :controller => 'assignments', :action =>
+          <%= link_to I18n.t(:rules), :controller => 'assignments', :action =>
 	 'edit', :id => @assignment.id %>
 
 	 <% end %>
@@ -44,18 +42,18 @@ h(sanitize(@assignment.name))%></span>
        controller.controller_name == 'results' %> 
           id="sub_menu_active"
         <%end%>>
-	  <%= link_to 'submissions', :controller => 'submissions', :action => 'browse', :id =>
+	  <%= link_to I18n.t(:submissions), :controller => 'submissions', :action => 'browse', :id =>
 @assignment.id %>
       </li>
       <li <%if controller.controller_name == 'groups'%> 
          id="sub_menu_active"
       <%end%>>
-         <%= link_to 'Groups & Graders', :controller => 'groups', :action => 'manage', :id => @assignment.id%>
+         <%= link_to I18n.t(groups_and_graders), :controller => 'groups', :action => 'manage', :id => @assignment.id%>
       </li>
       <li <% if controller.controller_name == 'rubrics'%> 
         id="sub_menu_active"
       <% end %>>
-         <%= link_to 'Rubrics', :controller => 'rubrics', :action => 'index', :id => @assignment.id%>
+         <%= link_to I18n.t(:rubrics), :controller => 'rubrics', :action => 'index', :id => @assignment.id%>
       </li>
 
   <% end %>
@@ -93,7 +91,7 @@ h(sanitize(@assignment.name))%></span>
   <ul id="root" class="level1 horizontal">
    <li class="level1">
      <% if @assignment.nil?%>
-       <span id="choose_an_assignment">Choose an assignment</span>
+       <span id="choose_an_assignment"><%= I18n.t(:choose_assignment) %></span>
      <% else %>
        <span id="choose_an_assignment"><%=
 h(sanitize(@assignment.name))%></span>
@@ -116,7 +114,7 @@ h(sanitize(@assignment.name))%></span>
   <ul id="root" class="level1 horizontal">
    <li class="level1">
      <% if @assignment.nil?%>
-       <span id="choose_an_assignment">Choose an assignment</span>
+       <span id="choose_an_assignment"><%= I18n.t(:choose_assignment) %></span>
      <% else %>
        <span id="choose_an_assignment"><%=
 h(sanitize(@assignment.name))%></span>

@@ -1,4 +1,7 @@
 en:
+    markus:             "Markus"
+    login:              "Login"
+    password:           "Password"
     name:               "Name"
     members:            "Members"
     graders:            "Graders"
@@ -12,6 +15,11 @@ en:
     not_active:         "Not active"
     download:           "Download"
     upload:             "Upload"
+    choose_assignment:  "Go to --"
+    rules:              "Rules"
+    submissions:        "Submissions"
+    groups_and_graders: "Groups & Graders"
+    rubrics:            "Rubrics"
 
     user:
         user_name:      "CDF ID"

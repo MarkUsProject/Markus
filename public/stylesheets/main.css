@@ -27,6 +27,7 @@ a {
 a:hover {
    color: #ee6415;
    text-decoration: none;
+   background: inherit;
 }
 
 h1{
@@ -62,6 +63,7 @@ h4{
 
 .wrapLeft{
   padding: 0 1.3em;
+  min-width: 75%;
 }
 
 /* Title Bar*/
@@ -115,6 +117,8 @@ Unicode", Verdana;
 #menu a{
   -moz-border-radius-topleft: 10px;
   -moz-border-radius-topright: 10px;
+  -webkit-border-radius-topleft: 10px;
+  -webkit-border-radius-topright: 10px;
   background: #ccc;
   color: #003366;
 }
@@ -124,6 +128,9 @@ Unicode", Verdana;
    background-color: white;
   -moz-border-radius-topleft: 10px;
   -moz-border-radius-topright: 10px;
+  -webkit-border-radius-topleft: 10px;
+  -webkit-border-radius-topright: 10px;
+
 }
 
 #sub_menu a{
@@ -187,7 +194,6 @@ Unicode", Verdana;
     color: #003399;
 }
 
-
 #sub_menu{
    background: #464646;
    padding-left: 10px;
@@ -214,11 +220,12 @@ span#choose_an_assignment{
    -moz-border-radius: 10px;
    -webkit-border-radius: 10px;
    border: 2px solid #464646;
-   min-width: 150px;
-   height: 14px;
-   padding: 1px 20px;
+   min-width: 13em;
+   height: 1.1em;
+   padding: 0.1em 1em;
    display: inline-block;
    font-weight: bold;
+   text-align: center;
 }
 
 /* Global Action*/
@@ -276,6 +283,7 @@ label{
 
 fieldset {
    -moz-border-radius: 10px;
+   -webkit-border-radius: 10px;
    border: 2px solid #ccc;
    margin-bottom: 10px;
 }
@@ -488,13 +496,13 @@ tr:hover .table_menu{
 
 .colRight{
    float: right;
-   width: 20%;
+   width: 24%;
 }
   
 .accordion {
   position: fixed;
   height: 75%;
-  width: 20%;
+  width: 24%;
 }
 
 .accordion-toggle {
