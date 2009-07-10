@@ -48,7 +48,7 @@
       <li <%if controller.controller_name == 'groups'%> 
          id="sub_menu_active"
       <%end%>>
-         <%= link_to I18n.t(groups_and_graders), :controller => 'groups', :action => 'manage', :id => @assignment.id%>
+         <%= link_to I18n.t(:groups_and_graders), :controller => 'groups', :action => 'manage', :id => @assignment.id%>
       </li>
       <li <% if controller.controller_name == 'rubrics'%> 
         id="sub_menu_active"
