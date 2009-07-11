@@ -54,7 +54,7 @@
 	   <% # If the group not yet the right amount of members, display
 	      # the information%>
 	   <% if !@grouping.is_valid?%>
-	      <p class="warning"> There is not enought members in this
+	      <p class="warning"> There are not enought members in this
 	      group yet!</p>
 	   <% elsif @grouping.student_membership_number == @assignment.group_max %>
 	      <p class="fine"> Group complete </p>
