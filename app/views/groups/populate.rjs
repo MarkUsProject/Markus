@@ -1,0 +1,2 @@
+page.call "groupings_table.populate", @table_rows.to_json
+page.call "groupings_table.render"

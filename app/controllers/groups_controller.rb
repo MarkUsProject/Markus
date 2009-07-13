@@ -5,7 +5,7 @@ require 'auto_complete'
 # Manages actions relating to editing and modifying 
 # groups.
 class GroupsController < ApplicationController
-  
+  include GroupsHelper
   # Administrator
   # -
   
@@ -136,14 +136,14 @@ class GroupsController < ApplicationController
   # Verify that all functions below are included in the authorize filter above
     
   def add_member
-    return unless (request.post? && params[:student][:user_name])
+    return unless (request.post? && params[:student_user_name])
     # add member to the group with status depending if group is empty or not
     @grouping = Grouping.find(params[:grouping_id])
     @assignment = Assignment.find(params[:id])
-    membership_status = @grouping.student_memberships.empty? ?
+    set_membership_status = @grouping.student_memberships.empty? ?
     StudentMembership::STATUSES[:inviter] :
     StudentMembership::STATUSES[:accepted]     
-    @member = @grouping.invite(params[:student][:user_name], membership_status) 
+    @member = @grouping.invite(params[:student_user_name], set_membership_status) 
   end
  
   def remove_member
@@ -257,6 +257,16 @@ class GroupsController < ApplicationController
      grouping.validate_grouping
   end
   
+  def populate
+    @assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group]}])   
+    @groupings = @assignment.groupings
+    @table_rows = {}
+    @groupings.each do |grouping|
+      # construct_table_row is in the groups_helper.rb
+      @table_rows[grouping.id] = construct_table_row(grouping)     
+    end
+  end
+  
   def filter
     @assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group]}])   
     case params[:filter]
@@ -279,6 +289,7 @@ class GroupsController < ApplicationController
     @groupings = @assignment.groupings
     # Returns a hash where s.id is the key, and student record is the value
     @ungrouped_students = @assignment.ungrouped_students
+    @tas = Ta.all
     
     @all_groupings_size = @groupings.count
     @valid_groupings_size = (@assignment.valid_groupings).length
@@ -418,31 +429,48 @@ class GroupsController < ApplicationController
 
   def global_actions
     @assignment = Assignment.find(params[:id])
-    @global_action = params[:global_actions]
-    @groupings = []
+    global_action = params[:global_actions]
+    grouping_ids = params[:groupings]
     if params[:groupings].nil? or params[:groupings].size ==  0
       flash[:error] = "You need to select at least one group."
     end
-    params[:groupings].each do |g|
-      @groupings.push(g.first)
-    end
-    if params[:global_actions] == "delete"
-      @groupings.each do |g|
-        grouping = Grouping.find(g)
-        if grouping.has_submission?
-	  flash[:error] = flash[:error] + " " + grouping.group_name
-	else
-          grouping.delete_grouping
-	end
-      end
-      if flash[:error].nil? or flash[:error] == ""
-        flash[:success] = "Groups deleted"
-      end
-    elsif params[:global_actions] == "valid"
-      @groupings.each do |g|
-         Grouping.find(g).validate_grouping
-      end
-      flash[:success] = "Groups valid"
+    @grouping_data = {}
+    @groupings = []
+    
+    case params[:global_actions]
+      when "delete"
+        grouping_ids.each do |g|
+          grouping = Grouping.find(g)
+          if grouping.has_submission?
+	    flash[:error] = flash[:error] + " " + grouping.group_name
+	  else
+            grouping.delete_grouping
+	  end
+	  @groupings.push(grouping)
+        end
+        if flash[:error].nil? or flash[:error] == ""
+          flash[:success] = "Groups deleted"
+        end
+        render :action => "delete_groupings"
+        return
+      
+      when "valid"
+        grouping_ids.each do |g|
+           @groupings.push(Grouping.find(g).validate_grouping)
+        end
+        flash[:success] = "Groups valid"
+        render :action => "valid_groupings"
+        return
+        
+      when "assign"
+        @groupings_data = assign_tas_to_groupings(grouping_ids, params[:graders])
+        render :action => "modify_groupings"
+        return
+        
+      when "unassign"
+        @groupings_data = unassign_tas_to_groupings(grouping_ids, params[:graders])
+        render :action => "modify_groupings"
+        return
     end
   end
 

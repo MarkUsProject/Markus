@@ -16,7 +16,6 @@ class Grouping < ActiveRecord::Base
   has_many :submissions
   
   named_scope :approved_groupings, :conditions => {:admin_approved => true}
-  named_scope :assigned_groupings, :joins => :ta_memberships
     
   # user association/validations
   validates_presence_of   :assignment_id, :message => "needs an assignment id"
@@ -24,7 +23,7 @@ class Grouping < ActiveRecord::Base
   
   validates_presence_of   :group_id, :message => "needs an group id"
   validates_associated    :group,    :message => "associated group need to be valid"
-  
+   
   def inviter?
     return membership_status == StudentMembership::STATUSES[:inviter]
   end
@@ -116,7 +115,7 @@ class Grouping < ActiveRecord::Base
   # Returns true if either this Grouping has met the assignment group
   # size minimum, OR has been approved by an instructor
   def is_valid?
-    return admin_approved || (pending_students.count + accepted_students.count >= assignment.group_min)
+    return admin_approved || (student_memberships.all(:conditions => ["membership_status != ?", StudentMembership::STATUSES[:rejected]]).length >= assignment.group_min)
   end
 
   # Validates a group
@@ -174,15 +173,30 @@ class Grouping < ActiveRecord::Base
   end
   
   def add_ta_by_id(ta_id)
-    ta_membership = TAMembership.new
-    ta_membership.user_id = ta_id
-    ta_membership.grouping_id = self.id
-    ta_membership.save
+    # Is there a better way to make sure that there is only one
+    # TA Membership per TA per Grouping?
+    if ta_memberships.find_all_by_user_id(ta_id).size < 1
+      ta_membership = TAMembership.new
+      ta_membership.user_id = ta_id
+      ta_memberships << ta_membership
+    end
   end
   
   def remove_ta_by_id(ta_id)
     ta_membership = ta_memberships.find_by_user_id(ta_id)
     ta_membership.destroy
+  end
+  
+  def add_tas(ta_id_array)
+    ta_id_array.each do |ta_id|
+      add_ta_by_id(ta_id)
+    end
+  end
+  
+  def remove_tas(ta_id_array)
+    ta_id_array.each do |ta_id|
+      remove_ta_by_id(ta_id)
+    end
   end
   
   def add_tas_by_user_name_array(ta_user_name_array)

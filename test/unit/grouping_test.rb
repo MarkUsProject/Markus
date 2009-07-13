@@ -223,6 +223,15 @@ class GroupingTest < ActiveSupport::TestCase
     assert_equal 1, grouping.ta_memberships.count, "Got unexpected TA membership count"  
   end
   
+  def test_cant_assign_tas_multiple_times
+    grouping = groupings(:grouping_1)
+    ta = users(:ta1)
+    assert_equal 0, grouping.ta_memberships.count, "Got unexpected TA membership count"
+    grouping.add_ta_by_id(ta.id)
+    grouping.add_ta_by_id(ta.id)
+    assert_equal 1, grouping.ta_memberships.count, "Got unexpected TA membership count"  
+  end
+  
   def test_unassign_tas_to_grouping
     grouping = groupings(:grouping_1)
     ta = users(:ta1)
@@ -261,7 +270,9 @@ Blanche Nef,ta2'''
 
     assert_equal grouping_1_orig_count + 1, grouping_1.ta_memberships.count, "Got unexpected TA membership count"
     
-    assert_equal grouping_2_orig_count + 2, grouping_2.ta_memberships.count, "Got unexpected TA membership count"
+    # This should be +1 ta_memberships, because one of those TAs is already
+    # assigned to Ukishima Maru in the fixtures
+    assert_equal grouping_2_orig_count + 1, grouping_2.ta_memberships.count, "Got unexpected TA membership count"
 
     assert_equal grouping_3_orig_count + 1, grouping_3.ta_memberships.count, "Got unexpected TA membership count"
     

@@ -1,4 +1,5 @@
 class StudentMembership < Membership
+ 
   STATUSES = { 
     :accepted => 'accepted', 
     :inviter => 'inviter', 

@@ -1,67 +1,35 @@
-function toggle_groups_selection(groupings_all){
-    if(groupings_all) {
-         $$('#groups tbody input').each(function(e){
-	   e.setValue(true);
-	   }
-	 );
-    }else{
-         $$('#groups tbody input').each(function(e){
-	    e.setValue(false);
-	    }
-	 );
+function filter(filter_name) {
+  $('loading_list').show();
+  try {
+    switch(filter_name) {
+      case 'validated':
+      case 'unvalidated':
+      case 'assigned':
+      case 'unassigned':
+        groupings_table.filter_only_by(filter_name).render();  
+        break;
+      default:
+        groupings_table.clear_filters().render();
     }
+  }
+  catch (e) {
+    alert(e);
+  }
+  $('loading_list').hide();
 }
 
-function toggle_groupings_not_valid(){
-   $('working').show();
-   $$('#groups tr').each(function(e){
-      e.show();
-   });
-   $$('.grouping_not_valid').each(function(e){
-     e.hide();
-   });
-   $('working').hide();
+function modify_groupings(groupings_json) {
+  var groupings = $H(groupings_json.evalJSON());
+  groupings.each(function(grouping_record) {
+    groupings_table.write_row(grouping_record.key, grouping_record.value);
+  });
+  groupings_table.resort_rows().render();
 }
 
-function toggle_groupings_valid(){
-   $('working').show();
-   $$('#groups tr').each(function(e){
-      e.show();
-   });
-
-   $$('.grouping_valid').each(function(e){
-     e.hide();
-   })
-
-   $('working').hide();
-}
-
-function toggle_groupings_assigned(){
-   $('working').show();
-   $$('#groups tr').each(function(e){
-      e.show();
-   });
-   $$('.assigned').each(function(e){
-     e.hide();
-   });
-   $('working').hide();
-}
-
-function toggle_groupings_unassigned(){
-   $('working').show();
-   $$('#groups tr').each(function(e){
-      e.show();
-   });
-   $$('.unassigned').each(function(e){
-     e.hide();
-   });
-   $('working').hide();
-}
-
-function toggle_groupings_all(){
-   $('working').show();
-   $$('#groups tr').each(function(e){
-      e.show();
-   });
-  ($)
+function remove_groupings(grouping_ids_json) {
+ var grouping_ids = $A(grouping_ids_json.evalJSON());
+  grouping_ids.each(function(grouping_id) {
+    groupings_table.remove_row(grouping_id);
+  });
+  groupings_table.resort_rows().render();
 }

@@ -7,3 +7,4 @@ end
 page.call(:add_annotation_text, @text.id, h(escape_javascript(CGI.unescape(@text.content))))
 page << "add_annotation(#{@annotation.id},$R(#{@annotation.line_start}, #{@annotation.line_end}), #{@text.id})"
 
+page.call :hide_all_annotation_content_editors

@@ -1,8 +1,4 @@
-<%#
-# Erb template for inserting a new group for managing groups
-%>
-    <td><%= check_box_tag "groupings[]", grouping.id, false, :id => "checkbox_#{grouping.id}" %></td> 
-    <td><span class="link"><%= h(grouping.group.group_name)%></span>
+<span class="link"><%= h(grouping.group.group_name)%></span>
     <span class="table_menu">
     <button class="rename_group" onClick="rename_group(<%= grouping.id %>); return false;">Rename</button>
     <% if !grouping.is_valid? %>
@@ -20,21 +16,3 @@
     :confirm => 'This will remove all members in the group and delete all information associated with this group. Continue?' %>
     <button class="add_member" onClick="add_member(<%= grouping.id %>);
 return false;">Add Member</button>
-</span>
-</td>
-    <td>
-<% grouping.student_memberships.each do |member| %> 
-   <%= render :partial => "groups/manage/member", 
-      :locals => {:member => member, :grouping => grouping } %>
-  <% end -%>
-</td>
-<td>
-<% grouping.ta_memberships.each do |ta| %> 
-  <%= ta.user.user_name%>
-<% end -%>
-</td>
-<td>
-<% if grouping.is_valid?%>
-Valid
-<% end %>
-</td>

@@ -581,3 +581,18 @@ tr:hover .table_menu{
   min-width: 150px; 
   margin: 10px;
 }
+
+.invisible_list {
+  list-style-image: none;
+  list-style-position: outside;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+#working {
+  background: red;
+  color: white;
+  position: absolute;
+  right: 0px;
+}

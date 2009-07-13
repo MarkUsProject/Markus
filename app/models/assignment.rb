@@ -197,7 +197,11 @@ class Assignment < ActiveRecord::Base
   end
   
   def grouped_students
-    Student.find(:all, :joins => {:groupings => :student_memberships})
+    result_students = []
+    student_memberships.each do |student_membership|
+      result_students.push(student_membership.user)
+    end
+    return result_students
   end
   
   def ungrouped_students
@@ -212,6 +216,7 @@ class Assignment < ActiveRecord::Base
       end
     end
     return result
+    #groupings.all(:include => [{:student_memberships => :user}], :joins => :student_memberships, :select => "groupings.*, count(memberships.id) members_count", :group => "memberships.grouping_id", :having => "members_count > 5")
   end
   
   def invalid_groupings
@@ -219,7 +224,8 @@ class Assignment < ActiveRecord::Base
   end
   
   def assigned_groupings
-    return groupings.all(:joins => :ta_memberships, :include => [{:ta_memberships => :user}])
+    return groupings.all(:joins => :ta_memberships, :include => [{:ta_memberships => :user}]).uniq
+    
   end
 
   def unassigned_groupings

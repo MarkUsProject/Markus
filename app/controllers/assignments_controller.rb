@@ -66,6 +66,7 @@ class AssignmentsController < ApplicationController
     @assignments = Assignment.all(:order => :id)
     if current_user.student?
       render :action => "student_assignment_list"
+      return
     else
       render :action => 'index'
     end
