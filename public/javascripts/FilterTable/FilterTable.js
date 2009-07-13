@@ -317,7 +317,6 @@ var FilterTable = Class.create({
     if (typeof value == 'undefined') {
       return default_value;
     } 
-    console.info('Returning: ' + value);
     return value;
   }
 });
