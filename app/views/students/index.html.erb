@@ -1,3 +1,4 @@
+<%= javascript_include_tag "FilterTable/FilterTable"%>
 <%= javascript_include_tag "students_manager"%>
 <%= javascript_include_tag "16accordion"%>
 
@@ -38,20 +39,12 @@
       <%= form_remote_tag :url => {:action => "bulk_modify"}, :complete => "$('apply_bulk_action').setValue('Apply Bulk Action');$('apply_bulk_action').enable();"
        %>
       <div id="toggle_actions">
-       <%= link_to_remote I18n.t(:all) + " (" + @all_students_size.to_s +
-       ")", :url => {:action => 'filter', :filter => 'all'}, :loading =>
-"$('loading_list').show();",
-       :complete => "$('loading_list').hide();" %>
+       <%= link_to_function I18n.t(:all) + " (<span id=\"all_students_count\"></span>)", "filter('none');"%>
        | 
-       <%= link_to_remote I18n.t(:active) + " (" + (@all_students_size -
-@hidden_students_number).to_s +
-       ")", :url => {:action => 'filter', :filter => 'visible'}, :loading => "$('loading_list').show();",
-       :complete => "$('loading_list').hide();" %>
+       <%= link_to_function I18n.t(:active) + " (<span id=\"active_students_count\"></span>)", "filter('active');"%>
+
        |
-       <%= link_to_remote I18n.t(:not_active) + " (" +
-@hidden_students_number.to_s +
-       ")", :url => {:action => 'filter', :filter => 'hidden'}, :loading => "$('loading_list').show();",
-       :complete => "$('loading_list').hide();" %>
+       <%= link_to_function I18n.t(:not_active) + " (<span id=\"inactive_students_count\"></span>)", "filter('inactive');"%>
        </div>
        <div class="global_action">
         <span id="loading_list"><%= image_tag("spinner.gif")%> Loading
@@ -65,36 +58,7 @@ list...</span>
       </div>
 
       <table id="students">
-       <thead> 
-       <tr>
-       	  <%
-	   # pull "labels" from I18n files
-	  %>
-	  <th id="checkbox"><%= check_box_tag "students[all]", true,
-	  false, :id => "students[all]", :onchange =>
-	  "toggle_students_selection($F('students[all]'));"%></th>
-          <th><%= I18n.t('user.user_name') %></th>
-          <th><%= I18n.t('user.last_name') %></th>
-          <th><%= I18n.t('user.first_name') %></th>
-          <th></th>
-        </tr>
-          </thead>
-	  <tbody id="students_table">
-	  <%= render :partial => "students/students_table", :locals =>
-	  {:students => []}%>
-	  </tbody>
-       <tfoot> 
-       <tr>
-       	  <%
-	   # pull "labels" from I18n files
-	  %>
-	  <th></th>
-          <th><%= I18n.t('user.user_name') %></th>
-          <th><%= I18n.t('user.last_name') %></th>
-          <th><%= I18n.t('user.first_name') %></th>
-          <th></th>
-        </tr>
-          </tfoot>
+
       </table>
       </form>
   </div>

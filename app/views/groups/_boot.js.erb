@@ -36,6 +36,13 @@ document.observe("dom:loaded", function() {
       nohtml: function(a, b) {
         return a[FILTERTABLE_SORT].stripTags().toLowerCase() < b[FILTERTABLE_SORT].stripTags().toLowerCase();
       }
+    },
+    total_count_id: 'all_groupings_count',
+    filter_count_ids: {
+      validated: 'valid_groupings_count',
+      unvalidated: 'invalid_groupings_count',
+      assigned: 'assigned_groupings_count',
+      unassigned: 'unassigned_groupings_count'
     }
   });
   

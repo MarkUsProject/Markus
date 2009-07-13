@@ -49,9 +49,12 @@ var FilterTable = Class.create({
     this.headers = $H(params.headers);
     this.footer = params.footer;
     this.can_sort = this.set_or_default(params.can_sort, false);
+    this.total_count_id = params.total_count_id;
+    this.filter_count_ids = $H(params.filter_count_ids);
     // By default, we'll sort by id
     this.default_sort = this.set_or_default(params.default_sort, 'id');
     this.filters = $H(this.set_or_default(params.filters, null));
+        
     this.sorts = $H(this.set_or_default(params.sorts, null));
     this.default_filters = $A(this.set_or_default(params.filters, null));
     
@@ -73,6 +76,7 @@ var FilterTable = Class.create({
     this.current_sort = this.default_sort;
     this.table_body = null;
     this.sort_reverse = false;
+    this.reset_filter_counts();
     this.construct_table();
   },
   // Take some JSON data, and add it to the data store.
@@ -160,6 +164,13 @@ var FilterTable = Class.create({
   filter_only_by: function(filter_key) {
     return this.clear_filters().add_filter(filter_key);
   },
+  reset_filter_counts: function() {
+    this.filter_counts = $H();
+    me = this;
+    this.filters.each(function(filter) {
+      me.filter_counts.set(filter.key, 0);
+    });
+  },
   // Clear the contents of the table, visually.  Table data remains in memory.
   clear: function() {
     this.table_body.update('');
@@ -171,22 +182,44 @@ var FilterTable = Class.create({
     this.table_rows = this.table_data.values();
     return this;
   },
+  write_rows: function(rows) {
+    rows = $H(rows);
+    me = this;
+    rows.each(function(row) {
+      me.write_row(row.key, row.value);
+    });
+  },
   // Removes a row with the given id.
   remove_row: function(id) {
     this.table_data.unset(id);
     this.table_rows = this.table_data.values();
     return this;
   },
+  remove_rows: function(rows) {
+    rows = $A(rows);
+    me = this;
+    rows.each(function(id) {
+      me.remove_row(id);
+    });
+  },
   // Helper method for render to see if a table_row passes all filters
   pass_filters: function(table_row) {
     try {
       me = this;
+      
+      // First, recalcuate for each filters count
+      this.filters.each(function(filter_data) {
+        if(filter_data.value.call(me, table_row)) {
+          me.filter_counts.set(filter_data.key, me.filter_counts.get(filter_data.key) + 1);
+        }
+      });
+      
       var pass_filters = true;
       this.current_filters.each(function(filter_key) {
         if(!me.filters.get(filter_key).call(me, table_row)) {
           pass_filters = false;
           throw $break;
-        }
+        } 
       });
       return pass_filters;
     } catch (e) {
@@ -196,12 +229,25 @@ var FilterTable = Class.create({
   },
   // Display the sorted/filtered contents of the table.
   render: function() {
+    this.reset_filter_counts();
     this.clear();
     me = this;
     this.table_rows.each(function(table_row) {
       if(me.pass_filters(table_row)) {
         var row = me.construct_row(table_row);
         me.table_body.insert({bottom: row});
+      }
+    });
+    this.render_counts();
+  },
+  render_counts: function() {
+    if($(this.total_count_id) != null) {
+      $(this.total_count_id).update(this.table_rows.size());
+    }
+    me = this;
+    this.filter_count_ids.each(function(filter_count_id) {
+      if($(filter_count_id.value) != null) {
+        $(filter_count_id.value).update(me.filter_counts.get(filter_count_id.key));
       }
     });
   },

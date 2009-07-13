@@ -199,16 +199,16 @@ document.observe("dom:loaded", function(){
   <div class="colLeft">
     <div class="wrapLeft">
       <div id="toggle_actions">
-       <%= link_to_function "Show All (" + @all_groupings_size.to_s + ")", "filter('none')" %>
+       <%= link_to_function "Show All (<span id=\"all_groupings_count\"></span>)", "filter('none')" %>
 	|
-        <%= link_to_function "Valid (" + @valid_groupings_size.to_s + ")", "filter('validated')" %>
+        <%= link_to_function "Valid (<span id=\"valid_groupings_count\"></span>)", "filter('validated')" %>
 
 	|
-        <%= link_to_function "Not valid (" + @invalid_groupings_size.to_s + ")", "filter('unvalidated')"%>
+        <%= link_to_function "Not valid (<span id=\"invalid_groupings_count\"></span>)", "filter('unvalidated')"%>
 	|
-        <%= link_to_function "Assigned (" + @assigned_groupings_size.to_s + ")", "filter('assigned')"%>
+        <%= link_to_function "Assigned (<span id=\"assigned_groupings_count\"></span>)", "filter('assigned')"%>
 	|
-        <%= link_to_function "Not assigned " + "(" + @unassigned_groupings_size.to_s + ")", "filter('unassigned')"%>
+        <%= link_to_function "Not assigned (<span id=\"unassigned_groupings_count\"></span>)", "filter('unassigned')"%>
       </div>
       <div class="global_action">
         <span id="loading_list"><%= image_tag("spinner.gif") %> Loading List...</span>
@@ -216,30 +216,10 @@ document.observe("dom:loaded", function(){
 	<%= submit_tag "submit" %>
 	<%# observe_field :global_actions, :function =>	"$('global_action_form').submit();" %>
 	
-	
-	<%= hidden_field_tag 'filter', 'all' %>
       </div>
       <div class="clear"></div>
       <div id="groups_container">
         <table class="groups" id="groups">
-        <!--
-	<thead>
-          <tr><th id="checkbox"><%= check_box_tag "groupings_all", true,
-false, :onchange => "toggle_groups_selection($F('groupings_all'));" %> </th> 
-           <th id="group_name"><%=t :name %> </th> 
-           <th id="group_members"> <%=t :members %></th>
-	   <th id="group_graders"><%=t :graders%></th>
-	   <th id="group_valid"></th>
-	  </tr>
-	</thead>
-	-->
-	<tbody id="groupings_table">
-	<%= render :partial => "groups/manage/groupings_table", :locals => {:groupings => [], :assignment => @assignment, :test => 'mike'} %>
-        </tbody>
-        <!--
-	<tfoot>
-        <tr><th><%= check_box_tag "groupings_all_bottom", true, false, :onchange =>"toggle_groups_selection($F('groupings_all_bottom'));" %></th><th><%=t :name %></th><th><%=t :members %></th><th><%=t :graders%></th><th></th></tr>
-	</tfoot>-->
         </table>
       </div><!-- group container -->
     </div>

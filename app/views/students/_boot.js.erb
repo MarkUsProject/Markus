@@ -1,5 +1,37 @@
 <script type="text/javascript" language="Javascript">
 document.observe("dom:loaded", function() {
-  <%= remote_function :url => {:action => 'filter', :filter => 'all'}, :complete => "$('loading_list').hide();"%>
+
+  students_table = new FilterTable({
+    table_id: $('students'),
+    headers: {
+      user_name: {display: "<%= I18n.t('user.user_name') %>", sortable: true},
+      last_name: {display: "<%= I18n.t('user.last_name') %>", sortable: true},
+      first_name: {display: "<%= I18n.t('user.first_name') %>", sortable: true},
+      edit: {display: "", sortable: false}
+    },
+    can_select: true,
+    can_select_all: true,
+    can_sort: true,
+    row_prefix: "students_row_",
+    select_name: "student_ids[]",
+    select_id_prefix: "student_select_",
+    footer: true,
+    filters: {
+      active: function(row) {
+        return !row.hidden;
+      },
+      inactive: function(row) {
+        return row.hidden;
+      }
+    },
+    filter_count_ids: {
+      active: 'active_students_count',
+      inactive: 'inactive_students_count'
+    },
+    total_count_id: 'all_students_count'
+  });
+  
+  <%= remote_function :url => {:action => 'populate'}, :complete => "$('loading_list').hide();"%>
 });
+
 </script>

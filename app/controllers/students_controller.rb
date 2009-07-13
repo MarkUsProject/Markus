@@ -1,10 +1,14 @@
 class StudentsController < ApplicationController
+  include StudentsHelper
   before_filter    :authorize_only_for_admin
   
   def index
     @students = Student.find(:all, :order => "user_name")
-    @hidden_students_number = Student.all(:conditions => {:hidden => true}).length
-    @all_students_size = @students.length
+  end
+  
+  def populate
+    @students_data = Student.find(:all, :order => "user_name")
+    @students = construct_table_rows(@students_data)
   end
 
   def edit
@@ -25,16 +29,15 @@ class StudentsController < ApplicationController
   end
   
   def bulk_modify
-    @student_ids = params[:student_ids]
-    @show_hidden_students = params[:show_hidden_students]
+    student_ids = params[:student_ids]
     case params[:bulk_action]
       when "hide"
-        Student.hide_students(@student_ids)
-        @hidden_students_number = Student.all(:conditions => {:hidden => true}).length
+        Student.hide_students(student_ids)
+        @students = construct_table_rows(Student.find(student_ids))
         return
       when "unhide"
-        Student.unhide_students(@student_ids)
-        @hidden_students_number = Student.all(:conditions => {:hidden => true}).length
+        Student.unhide_students(student_ids)
+        @students = construct_table_rows(Student.find(student_ids))
         return
     end
   end

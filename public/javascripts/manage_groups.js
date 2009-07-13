@@ -1,3 +1,8 @@
+function populate(json_data) {
+  groupings_table.populate(json_data);
+  groupings_table.render();
+}
+
 function filter(filter_name) {
   $('loading_list').show();
   try {

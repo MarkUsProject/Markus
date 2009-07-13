@@ -290,13 +290,6 @@ class GroupsController < ApplicationController
     # Returns a hash where s.id is the key, and student record is the value
     @ungrouped_students = @assignment.ungrouped_students
     @tas = Ta.all
-    
-    @all_groupings_size = @groupings.count
-    @valid_groupings_size = (@assignment.valid_groupings).length
-    @invalid_groupings_size = @all_groupings_size - @valid_groupings_size
-
-    @assigned_groupings_size = @assignment.assigned_groupings.length
-    @unassigned_groupings_size = @assignment.unassigned_groupings.length
   end
   
   # Assign TAs to Groupings via a csv file

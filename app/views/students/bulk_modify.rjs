@@ -1,0 +1,2 @@
+page.call "modify_students", @students.to_json
+
