@@ -5,12 +5,12 @@ var groupings_table = null;
 document.observe("dom:loaded", function() {
   groupings_table = new FilterTable({
     table_id: $('groups'),
-    headers: $H({
+    headers: {
       name: {display: "Name", sortable: true},
-      members: {display: "Members", sortable: true},
+      members: {display: "Members", sortable: true, sort_with: 'nohtml'},
       graders: {display: "Graders", sortable: true},
       valid: {display: "", sortable: false}
-    }),
+    },
     can_select: true,
     can_select_all: true,
     can_sort: true,
@@ -30,6 +30,11 @@ document.observe("dom:loaded", function() {
       },
       unassigned: function(row) {
         return !row.filter_assigned;
+      }
+    },
+    sorts: {
+      nohtml: function(a, b) {
+        return a[FILTERTABLE_SORT].stripTags().toLowerCase() < b[FILTERTABLE_SORT].stripTags().toLowerCase();
       }
     }
   });

@@ -120,15 +120,24 @@ var FilterTable = Class.create({
       $(this.header_id_prefix + sort_by).addClassName(this.sorting_by_class);
     }
     
-    // Is there a custom sort function for this column?
-    if(typeof this.sorts[sort_by] != "undefined") {
-      this.table_rows.sort(this.sorts[sort_by]);
+    var sorting_function_key = sort_by;
+    
+    // Was there a general custom sort for this column?
+    if(typeof this.headers.get(sort_by) != "undefined") {
+      if(typeof this.headers.get(sort_by).sort_with != "undefined") {
+        sorting_function_key = this.headers.get(sort_by).sort_with;
+      }
+    }
+    
+    FILTERTABLE_SORT = this.current_sort;
+    // Was there a specific custom sort function for this column?
+    if(typeof this.sorts.get(sorting_function_key) != "undefined") {
+      this.table_rows.sort(this.sorts.get(sorting_function_key));
     } else {
-      // Use some hackery to run Array.sort on our table data
-      FILTERTABLE_SORT = this.current_sort;
+      // Use some hackery to run Array.sort on our table data     
       this.table_rows.sort(this.standard_sort);
-      FILTERTABLE_SORT = null;
     } 
+    FILTERTABLE_SORT = null;  
   },
   // Add a filter to the current_filters collection
   add_filter: function(filter_key) {
