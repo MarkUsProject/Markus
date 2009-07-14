@@ -18,8 +18,12 @@ class CheckmarkController < ApplicationController
   
     # redirect to main page if user is already logged in.
     if logged_in? && !request.post?
-      redirect_to :action => 'index' 
-      return
+      if @current_user.student?
+        redirect_to :controller => 'assignments', :action => 'index'
+      else
+        redirect_to :action => 'index' 
+        return
+      end
     end
     
     return unless request.post?
@@ -66,6 +70,10 @@ class CheckmarkController < ApplicationController
   
   def index
     @user = current_user
+    if @user.student? or  @user.ta?
+      redirect_to :controller => 'assignments', :action => 'index'
+      return
+    end
   end
   
 end

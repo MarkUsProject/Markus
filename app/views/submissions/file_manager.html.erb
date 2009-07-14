@@ -1,10 +1,16 @@
 <%=javascript_include_tag "file_manager"%>
+<%= javascript_include_tag "FilterTable/FilterTable.js" %>
 
+<%= render :partial => "boot.js.erb" %>
+
+<div id="title_bar">
+<h1><%= h(sanitize(@assignment.name)) %>: File Manager</h1>
+</div>
+<div class="wrapLeft">
   <% if flash[:submit_notice] -%>   
      <p class="success"><%= h(flash[:submit_notice]) %> </p>
   <% end %>
 
-<h1><%= h(sanitize(@assignment.name)) %>: File Manager</h1>
 <h2>Revision #:  <%= h(@revision.revision_number)%></h2>
 
 <div id="directory_selector" <%='style="display:none;"' unless @directories.count > 0 %>>
@@ -60,43 +66,11 @@
 <% end %>
 
 <%= form_tag( {:action => "update_files", :id => @assignment.id}, {:multipart => true, :id => 'submit_form'} ) %>
-<table>
-  <thead>
-    <th>Filename</th>
-    <th>Last Modified Revision</th>
-    <th>Revised By</th>
-    <th>Replace File Contents</th>
-    <th>Delete</th>
-  </thead>
-  <tbody>   
-    <% @files.sort.each do |file_name, file| %>
-    <tr>
-      <td>
-        <%=link_to h(sanitize(file_name)), :action => 'download', :id =>
-@assignment.id, :revision_number => @revision.revision_number, :file_name => file_name%>
-      </td>
-      <td>
-        <%=h(file.last_modified_revision)%>
-      </td>
-      <td>
-        <%=h(file.user_id)%>
-      </td>
-      <td>
-      	<input type="hidden" id="file_revisions[<%=h file_name %>]" name="file_revisions[<%=h file_name %>]" value="<%=file.last_modified_revision%>"/>
-     <input id="replace_files[<%=h file_name %>]" name="replace_files[<%=h file_name %>]" type="file" onchange="check_change_of_filename('<%=h file_name %>', this.value.escapeHTML(), this)" <%="disabled" if !@grouping.is_valid?%>/>
-      </td>
-      <td>
-        <input name="delete_files[<%=h file_name %>]" type="checkbox" <%="disabled" if !@grouping.is_valid?%> onclick="if ($(this).getValue()) {
-          $('replace_files[<%= h(file_name) %>]').disable();
-        } else {
-          $('replace_files[<%= h(file_name) %>]').enable();
-        }
-        "/>
-      </td>
-    </tr>
-    <% end %>
-  </tbody>
-</table>
+<span id="loading_list"><%= image_tag("spinner.gif") %> Loading list...
+</span>
+<div class="clear"></div>
+  <table class="files" id="files">
+  </table>
 
 <div id="new_files">
 </div>
@@ -104,13 +78,8 @@
   <%=link_to_function "Add A New File", "injectFileInput();"%>
 </div>
 
-<%= submit_tag 'Submit', :disabled => !@grouping.is_valid? %>
+<%= submit_tag I18n.t(:submit), :disabled => !@grouping.is_valid? %>
 </form>
 
-<p>
-<%=form_tag({:action => 'hand_in', :id => @assignment.id}) %>
-<%= submit_tag "Hand In Assignment", :confirm => "Are you sure you want to hand in this assignment?", :disabled => !@grouping.is_valid? %>
-</form>
-</p>
-
+</div>
 

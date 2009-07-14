@@ -18,4 +18,11 @@ function check_change_of_filename(file_name, new_file_name, file_input) {
     alert("You cannot replace " + file_name + " with " + new_file_name + ".  You must replace a file with a file with the same name.");
     $(file_input).setValue('');
   }
+
+}
+
+function populate(files_json){
+  // var files = files_json.evalJSON();
+  files_table.populate(files_json).render();
+
 }

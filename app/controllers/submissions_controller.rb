@@ -5,7 +5,7 @@ require File.join(File.dirname(__FILE__),'/../../lib/repo/repository_factory')
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
   
-  before_filter    :authorize_only_for_admin, :except => [:browse,
+  before_filter    :authorize_only_for_admin, :except => [:populate, :browse,
   :index, :file_manager, :update_files, :hand_in, :download]
   before_filter    :authorize_for_ta_and_admin, :only => [:browse, :index]
  
@@ -34,7 +34,26 @@ class SubmissionsController < ApplicationController
    end
  end
   
-
+  def populate
+    @assignment = Assignment.find(params[:id])
+    @grouping = current_user.accepted_grouping_for(@assignment.id)
+    user_group = @grouping.group
+    revision_number= params[:revision_number]
+    path = params[:path] || '/'
+    repo = Repository.create(REPOSITORY_TYPE).open(File.join(REPOSITORY_STORAGE,
+    user_group.repository_name))
+    if revision_number.nil?
+      @revision = repo.get_latest_revision
+    else
+     @revision = repo.get_revision(revision_number.to_i)
+    end
+    @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, path))
+    @files = @revision.files_at_path(File.join(@assignment.repository_folder, path))
+    @table_rows = {} 
+    @files.sort.each do |file_name, file|
+      @table_rows[file.id] = construct_table_row(file_name, file)
+    end
+  end
 
   def browse
     @assignment = Assignment.find(params[:id])

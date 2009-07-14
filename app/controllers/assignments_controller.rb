@@ -4,7 +4,7 @@ require File.join(File.dirname(__FILE__),'/../../lib/repo/repository_factory')
 
 class AssignmentsController < ApplicationController
   before_filter      :authorize_only_for_admin, :except =>
-  [:deletegroup, :delete_rejected, :disinvite_member, :invite_member, :creategroup, :join_group, :decline_invitation, :file_manager, :index, :download, :student_interface, :hand_in, :update_files]
+  [:populate, :deletegroup, :delete_rejected, :disinvite_member, :invite_member, :creategroup, :join_group, :decline_invitation, :file_manager, :index, :download, :student_interface, :hand_in, :update_files]
 
   auto_complete_for :assignment, :name
   # Publicly accessible actions ---------------------------------------

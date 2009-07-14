@@ -42,5 +42,32 @@ module SubmissionsHelper
     
     return true
   end
+
+  def construct_table_row(file_name, file)
+    table_row = {}
+
+    table_row[:id] = file.id
+
+    table_row[:filename] = render_to_string :partial =>
+    "submissions/table_row/filename", :locals => {:file => file,:file_name => file_name}
+
+    table_row[:revision_number] = render_to_string :partial => "submissions/table_row/revision_number", :locals => {:file => file,:file_name => file_name}
+
+    table_row[:revision_by] = render_to_string :partial => "submissions/table_row/revision_by", :locals => {:file => file,:file_name => file_name}
+
+    table_row[:replace] = render_to_string :partial => "submissions/table_row/replace", :locals => {:file => file,:file_name => file_name}
+
+    table_row[:delete_file] = render_to_string :partial => "submissions/table_row/delete_file", :locals => {:file => file,:file_name => file_name}
+
+    return table_row
+  end
+
+  def construct_table_rows(files)
+    result = {}
+    files.each do |file_name, file|
+      result[file.id] = construct_table_row(file_name, file)
+    end
+    return result
+  end
   
 end

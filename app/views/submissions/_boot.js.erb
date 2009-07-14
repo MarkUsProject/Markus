@@ -1,0 +1,27 @@
+<script type="text/javascript" language="Javascript">
+
+var files_table = null;
+
+document.observe("dom:loaded", function() {
+  files_table = new FilterTable({
+    table_id: $('files'),
+    headers: {
+      filename: {display: "Filename", sortable: true},
+      revision_number: {display: "Last Modified Revision", sortable: true},
+      revision_by: {display: "Revised By", sortable: true},
+      replace: {display: "Replace File Contents", sortable: false},
+      delete_file: {display: "Delete", sortable :false}
+    },
+    can_select: false,
+    can_select_all: false,
+    can_sort: true,
+    row_prefix: "files_row_",
+    select_name: "files[]",
+    select_id_prefix: "file_select_",
+    footer: true
+  });
+  
+  <%= remote_function :url => {:action => 'populate', :id => @assignment.id}, :complete => "$('loading_list').hide();" %>
+});
+
+</script>
