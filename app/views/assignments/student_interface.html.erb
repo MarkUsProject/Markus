@@ -1,74 +1,162 @@
-<h1> Assignment <%= h(sanitize(@assignment.name)) %></h1>
+<%= stylesheet_link_tag("livepipe/tabs")%>
+<%= javascript_include_tag "livepipe/livepipe.js"%>
+<%= javascript_include_tag "livepipe/window.js"%>
+<%= javascript_include_tag "livepipe/tabs.js"%>
 
-<div class="colsLeftHeavy">
- <div class="colLeft">
-  <div class="wrapLeft">
-    <div class="fieldset">
-      <h2 class="legend">Submissions</h2>
-        <% if !@grouping.nil? and @grouping.has_submission?%>
-	  <p>You have already submitted something</p>
-	<% else %>
-	  <p>You don't have any submission yet</p>
-	<% end %>
-    </div>
+<script>
+ var invite_modal = null;
 
-    <%= render :partial => 'read'%>
+ function invite(){
+   invite_modal.open();
+   $('invite_member').setValue('');
+   return false;
+ }
+
+ function submit_invite(invite_member){
+   invite_modal.close();
+   <%=
+    remote_function(
+     :url => {:action => 'invite_member', :id => @assignment.id},
+     :with => "'&invite_member=' + invite_member"
+    )
+   %>
+ }
+
+ document.observe("dom:loaded", function(){
+    invite_modal = new Control.Modal($('invite_dialog'), {
+      overlayOpacity: 0.75,
+      className: 'invite_modal',
+      fase: false
+    });
+ } )
+</script>
+
+<div id="title_bar"><h1> Assignment <%= h(sanitize(@assignment.name)) %></h1>
+</div>
+<div class="column_floatLeft">
+ <div class="bloc">
+  <h2>Submissions</h2>
+    <div class="bloc_content">
+  <% if !@grouping.nil? and @grouping.has_submission?%>
+    <p>You have already submitted something</p>
+  <% else %>
+    <p>You don't have any submission yet</p>
+  <% end %>
   </div>
  </div>
- <div class="colRight">
-     <div class="fieldset">
-       <h2 class="legend">Group Informations</h2>	
+ <div class="bloc">
+    <%= render :partial => 'read'%>
+ </div>
+</div>
+
+<div class="column_floatLeft">
+ <div class="bloc">
+  <h2>Group Informations</h2>
+    <div class="bloc_content">
+
          <% if @grouping.nil? %>
+	   <p class="notice">
+	     You don't have a group yet!
+	   </p>
 
 	   <% # Test if the student can form groupings or not %>
 	   <% if @assignment.student_form_groups == false %>
-	     <p>You cannot form groups for this assignment.</p>
+	     <p>You cannot form groups for this assignment. Wait until
+	     your instructor forms the group.</p>
 	   <% end %>
 
 	   <% # test if the student has been invited %>
 	   <% if @student.has_pending_groupings_for?(@assignment.id)%>
-	     <% @pending_grouping.each do |grouping|%>
-	       <p>You have been invited by <span class="last_name"><%=
-	     grouping.inviter.last_name %></span> <%= h(grouping.inviter.first_name) %></p>  
-	     <% end %>
-	     <%= link_to "See details", :controller => 'groups', :action => 'student_interface', :id => @assignment.id %>
-	   <% end %>
 
-	   <h3>Create a group</h3>
-	   <% if @assignment.group_min == 1%>
-	   <p><%= link_to_remote "Work alone", :url => {:controller => 'groups',:action => 'creategroup', :id => @assignment.id, :workalone => 'true'}%></p>
+	   <h3>Invitations</h3>
+	     <% @pending_grouping.each do |grouping|%>
+	     <div class="sub_bloc">
+	       <p>You have been invited by <span class="last_name"><%= grouping.inviter.last_name %></span> <%= h(grouping.inviter.first_name) %></p>  
+	    <ul>
+	    <% grouping.memberships.each do |member|%>
+	       <%= render :partial => "assignments/member", :locals =>
+	       {:member => member, :grouping => grouping} %>
+	    <% end -%>
+	   </ul>
+
+	     <%= link_to_remote I18n.t(:join), :url => { :action => 'join_group', :id => @assignment.id, :grouping_id => grouping.id} %>
+	     <%= link_to_remote I18n.t(:refuse), 
+	     :url => { :action => 'decline_invitation',
+	     :id => @assignment.id, :grouping_id => grouping.id },
+	     :html => {:class => "delete"}
+	     %>
+	     </div>
+	     <div class="bloc_line"></div>
+	     <% end %>
+	   <% end %>
+	   <h3>Form your own group</h3>
+         <p> The groups must be from <b><%=
+	h(@assignment.group_min)%></b> to <b><%= h(@assignment.group_max)%></b>
+	people.</p>
+	   <% if @assignment.group_min == 1 %>
+	   <p><%= link_to_remote "Work alone", :url => {:action => 'creategroup', :id => @assignment.id, :workalone => 'true'}%></p>
 	   <% end %>
 	   <p>
-	   <%= link_to_remote "Create a group", :url => {:controller =>'groups', :action => 'creategroup', :id => @assignment.id} %>
+	   <%= link_to_remote I18n.t(:create), :url => {:action => 'creategroup', :id => @assignment.id} %>
 	   </p>
-
 	 <% else %>
 	   <% # As the student already has a group, we display the
 	      # informations on this group %>
+	   <% # We check to see if the groupname is displayed
+	   %>
 
-	   <% # We check to see if the groupname is displayed%>
-	   <% if @assignment.group_name_displayed == true%>
-	     <h3> <%= h(@group.group_name) %></h3>
+	   <h3>
+	   <% if @assignment.group_name_displayed == true %>
+	     <%= h(@group.group_name) %>
+	   <% else %>
+	     Your group
 	   <% end %>
+	    <%= link_to_remote I18n.t(:delete),:url => { :action => 'deletegroup', :id => @assignment.id, :grouping_id =>  @grouping.id },
+	    :html => {:title => "Delete this group", :class => "delete"},
+	    :confirm => "Are you sure you want to delete this group?"
+	    %> 
+	   </h3>
 
 	   <% # If the group not yet the right amount of members, display
 	      # the information%>
 	   <% if !@grouping.is_valid?%>
-	      <p class="warning"> There are not enought members in this
-	      group yet!</p>
-	   <% elsif @grouping.student_membership_number == @assignment.group_max %>
-	      <p class="fine"> Group complete </p>
+	     <p class="warning"> The group is not valid. You need to
+	     invite more students. </p>
 	   <% end %>
 
 	   <% # For each member of this group, we display the
-	      # informations we have on them %>
+	      # informations we have on them 
+	      %>
 	   <ul>
 	    <% @studentmemberships.each do |member|%>
 	       <%= render :partial => "assignments/member", :locals =>
 	       {:member => member, :grouping => @grouping} %>
 	    <% end -%>
 	   </ul>
-	 <% end -%>
-     </div>     
- </div>
+
+            <% if @grouping.student_membership_number != @assignment.group_max %>
+             <%= button_to_function I18n.t(:invite), 'invite(); return
+	       false;' %>
+	    <% end %>
+
+	  <% end -%>
+            </div>
+ </div>    
 </div>
+
+<div id="invite_dialog">
+  <h2>Invite</h2>
+  <p>
+    <fieldset>
+       <label> <%= I18n.t(:name)%> </label>
+       <%= text_field_tag 'invite_member'%>
+    </fieldset>
+  </p>
+  <p>
+  <%= button_to_function I18n.t(:submit),
+  "submit_invite(escape($F('invite_member')))" %>
+  <%= button_to_function "Cancel", 'invite_modal.close()'%>
+  </p>
+</div>
+
+

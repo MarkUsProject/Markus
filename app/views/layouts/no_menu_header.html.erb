@@ -9,6 +9,8 @@
   <%= stylesheet_link_tag 'header.css', :media => 'all' %>
   <%= stylesheet_link_tag 'content.css', :media => 'all' %>
   <%= javascript_include_tag :defaults -%>
+  <%= javascript_include_tag 'menu.js' -%>
+
 </head>
 
 <body>
@@ -21,7 +23,7 @@
    
   <%= render :partial => 'layouts/header' unless controller.action_name == 'login' %>
   <%= render :partial => 'layouts/menu' unless controller.action_name == 'login' %>
-
+  <%= render :partial => 'layouts/sub_menu', :locals =>{:no_menu_header => 'true'}%>
 
   <div id="container">
     <div id="content">

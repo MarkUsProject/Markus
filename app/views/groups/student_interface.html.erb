@@ -75,7 +75,7 @@ document.observe("dom:loaded", function(){
        {:grouping => grouping, :group => grouping.group, :assignment =>
 @assignment} %>
                <%= link_to_remote "Join", :url => {:action =>
-'join', :id => @assignment.id, :grouping_id => grouping.id}%>
+'join_group', :id => @assignment.id, :grouping_id => grouping.id}%>
                <%= link_to_remote "Refuse", :url => {:action =>
 'decline_invitation', :id => @assignment, :grouping_id => grouping.id}%>
              </div>

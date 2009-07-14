@@ -1,7 +1,5 @@
-
-<div class="fieldset">
-
   <h2 class="legend">Assignment Properties</h2>
+<div class="bloc_content">
     <span class="label">Name :</span>
     <%= h(@assignment.name) %><br />
 
@@ -20,18 +18,6 @@
     <li><%= h(assignment_file.filename) %></li>
   <% end %>
   </ul>
-</div>
-
-<div class="fieldset">
-  <h2 class="legend">Group Properties</h2>
-   <div id="group_properties"> 
-  <p>
-    Group Limit (must be 1 or more):
-    from <%= h(@assignment.group_min) %>
-    to <%= h(@assignment.group_max) %>
-    people in a group.
-  </p>
-</div>
 </div>
 
 

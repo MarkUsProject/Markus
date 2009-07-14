@@ -20,8 +20,8 @@
         </ul>
    </li>
 
-  <% if 
-    !@assignment.nil?
+  <% if
+    !@assignment.nil?	
   %>
           <li <% if controller.controller_name == 'assignments' %> 
          id="sub_menu_active"
@@ -125,7 +125,7 @@ h(sanitize(@assignment.name))%></span>
    </li>
 
   <% if 
-    !@assignment.nil?
+    !@assignment.nil? and @current_user.has_accepted_grouping_for?(@assignment)
   %>
  <li <% if controller.controller_name == 'assignments' %> 
           id="sub_menu_active"

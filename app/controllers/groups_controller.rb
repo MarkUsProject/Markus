@@ -67,9 +67,14 @@ class GroupsController < ApplicationController
     @student = Student.find(session[:uid]) # student who invites
     @grouping = @student.accepted_grouping_for(@assignment.id) # his group
 
-    @invited = Student.find(params[:invite_member])
+    @invited = Student.find_by_user_name(params[:invite_member])
     # We first check he isn't already invited in this grouping
     groupings = @invited.pending_groupings_for(@assignment.id)
+
+    if @invited.nil?
+      flash[:fail_notice] = "This student doesn't exist."
+      return
+    end
     if @invited.hidden
       flash[:fail_notice] = "Could not invite this student - this student's account has been disabled"
       return

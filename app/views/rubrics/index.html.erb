@@ -3,6 +3,8 @@
 <%= javascript_include_tag  'livepipe/livepipe' %>
 <%= javascript_include_tag  'livepipe/tabs' %>
 <%= javascript_include_tag  'rubrics' %>
+<%= javascript_include_tag  '16accordion' %>
+
 <script>
 var create_num = <%=@assignment.rubric_criteria.length%> + 1;
 var authenticity_token = '<%=form_authenticity_token%>';
@@ -24,22 +26,8 @@ var activate_upload_tab = false;
 </div>
 <% end -%>
 
-<div class="tabbedContainer">
-
-  <!-- Needed: rubric_tags, tab -->
-  <ul id="rubric_tabs" class="subsection_tabs">
-    <li class="tab"><a href="#manually_edit_rubric_canvas">Manually Edit Rubric</a></li>
-    <li class="tab"><a href="#upload_rubric_file_canvas">Upload Rubric File</a></li>
-    <li class="tab"><a href="#download_rubric_file_canvas">Download Rubric File</a></li>
-  </ul>
-  
-  <!-- Need for the tabs -->
   <div id="manually_edit_rubric_canvas" class="tabbedArea">
-  
-    <input type="text" id="pull_focus" value="Hidden field to pull focus" style="display: none;">
-    
     <div id="rubric_criteria_pane">
-    
       <div id="rubric_criteria_pane_menu">
         <h2 id="rubricCriteria">Rubric Criteria</h2>
         <!--  Gives controller and instruction
@@ -79,10 +67,9 @@ var activate_upload_tab = false;
   
   </div> <!-- Edit Canvas -->
   
-  <div id="upload_rubric_file_canvas" class="tabbedArea">
-  
-    <h2>Upload Rubric File</h2>
-    
+    <div id="test-accordion" class="accordion"> 
+    <div class="accordion-toggle">Upload Rubric File</div>
+    <div class="accordion-content"
     <p>
     Select a CSV or YAML file to upload
     <!-- Need a better message
@@ -129,15 +116,10 @@ var activate_upload_tab = false;
       </ul>
     </div>
     <% end -%>
+ </div> 
   
-  </div> <!-- Upload canvas -->
-  
-  <!-- Download canvas -->
-  
-  <div id="download_rubric_file_canvas" class="tabbedArea">
-  
-    <h2>Download Rubric File</h2>
-    
+    <div class="accordion-toggle">Download Rubric File</div>
+    <div class="accordion-content">
     <p>What format would you like to download the rubric in?</p>
   
     <ul>
@@ -161,6 +143,5 @@ var activate_upload_tab = false;
     <% end -%>
   
   </div> <!-- Download canvas -->
-
 </div> <!-- Tabbed Area -->
 </div>

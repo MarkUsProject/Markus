@@ -22,12 +22,19 @@ a {
    text-decoration: none;
    font-family: Georgia, "Times New Roman", sans-serif;
    text-transform: capitalize;
+   text-size: 1em;
+   font-style: normal;
+   font-weight: normal;
 }
 
 a:hover {
    color: #ee6415;
    text-decoration: none;
    background: inherit;
+}
+
+a.delete:hover{
+   color: red;
 }
 
 h1{
@@ -98,7 +105,7 @@ Unicode", Verdana;
   display: block;
   padding: 0 0 0 50px;
   margin: 0;
-  border-bottom: 2px solid #ccc;
+  border-bottom: 2px solid #464646;
 }
 
 #menu a, #sub_menu a {
@@ -251,6 +258,7 @@ input{
   font-family: "Lucida Grande", Verdana, Arial, sans-serif;
   color: #464646;
   padding: 3px 5px;
+  margin: 5px;
 }
 
 select{
@@ -338,7 +346,7 @@ td{
    padding: 0;
 }
 
-tr:hover {
+tbody tr:hover {
    background: #ECECEC;
 }
 
@@ -403,13 +411,23 @@ tr:hover .table_menu{
 }
 
 /* flash messages, & warning */
-.error{
+.error, .warning{
   text-align: center;
   border: 1px solid #E6DB55;
   padding: 3px;
   -moz-border-radius: 9px;
   -webkit-border-radius: 9px;
   background: #FFFFE0;
+}
+
+.notice {
+  text-align: center;
+  border: 1px solid #E6DB55;
+  padding: 3px;
+  -moz-border-radius: 9px;
+  -webkit-border-radius: 9px;
+  background: #FFFFE0;
+
 }
 
 .group form {
@@ -437,7 +455,7 @@ tr:hover .table_menu{
    -webkit-border-radius: 5px;
 }
 
-#assignment_group_use_dialog, #add_member_dialog {
+#assignment_group_use_dialog, #add_member_dialog, #invite_dialog {
    background: white;
    padding: 0 10px 0 10px;
    border: 1px solid #000000;
@@ -540,7 +558,7 @@ tr:hover .table_menu{
    background: #ccc;
    overflow: hidden;
    background: #aaa;
-   margin-left: -20px;
+   margin-left: -10px;
    -moz-border-radius-bottomleft: 10px;
    -webkit-border-radius-bottomleft: 10px;
    -moz-border-radius-topleft: 10px;
@@ -582,6 +600,67 @@ tr:hover .table_menu{
   margin: 10px;
 }
 
+
+/* Student Interface: Assignment View*/
+
+.bloc {
+   width: 95%;
+   padding: 0px;
+   margin: 10px;
+   -moz-border-radius: 5px;
+   -webkit-border-radius: 5px;
+   border: 1px solid #ccc;
+}
+
+.bloc h2{
+   background: #DFDFDF;
+   margin: 0;
+   padding: 5px 10px;
+   font-size: 1.1em;
+   border-bottom: 1px solid #ccc;
+   color: #464646;
+   }
+
+.bloc h3{
+   font-style: italic;
+   font-weight: bold;
+   font-size: 1em;
+   color: #464646;
+}
+
+.bloc_content{
+  padding: 10px;
+}
+
+.bloc_line{
+   display: block;
+   margin: 5px;
+   border-top: 1px solid #ccc;
+}
+
+.sub_bloc{
+  margin: 0px 15px;
+}
+
+#member_inviter{
+   font-weight: bold;
+}
+
+.membership_status_pending{
+   font-style: italic;
+}
+
+/* floating object */
+.column_floatRight{
+   float: right;
+}
+
+.column_floatLeft{
+   float: left;
+   width: 50%;
+}
+
+
 .invisible_list {
   list-style-image: none;
   list-style-position: outside;
@@ -596,3 +675,4 @@ tr:hover .table_menu{
   position: absolute;
   right: 0px;
 }
+
