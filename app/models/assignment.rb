@@ -143,8 +143,7 @@ class Assignment < ActiveRecord::Base
         group = Group.find(:first, :conditions => {:group_name =>
 	new_group_name})
         if !self.groupings.find_by_group_id(group.id).nil?
-	  #TODO: ADD AN ERROR MESSAGE
-	  return false
+	  raise "Group #{new_group_name} already exists"
 	end
       else
         group = Group.new

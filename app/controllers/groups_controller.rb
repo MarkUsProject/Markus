@@ -172,7 +172,13 @@ class GroupsController < ApplicationController
   
   def add_group
     @assignment = Assignment.find(params[:id])
-    new_grouping_data = @assignment.add_group(params[:new_group_name])
+    begin
+      new_grouping_data = @assignment.add_group(params[:new_group_name])
+    rescue Exception => e
+      @error = e.message
+      render :action => 'error_single'
+      return 
+    end
     @new_grouping = construct_table_row(new_grouping_data)
   end
   

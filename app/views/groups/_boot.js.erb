@@ -21,6 +21,7 @@ document.observe("dom:loaded", function() {
     select_name: "groupings[]",
     select_id_prefix: "grouping_select_",
     footer: true,
+    default_sort: 'name',
     filters: {
       validated: function(row) {
         return row.filter_valid;

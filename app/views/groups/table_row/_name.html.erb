@@ -1,6 +1,9 @@
 <span class="link"><%= h(grouping.group.group_name)%></span>
+<div>
+  Repo Name: <%=h(grouping.group.repository_name) %>
+</div>
     <span class="table_menu">
-    <button class="rename_group" onClick="rename_group(<%= grouping.id %>); return false;">Rename</button>
+    <button class="rename_group" onClick="rename_group(<%= grouping.id %>); return false;">Rename Group</button>
     <% if !grouping.is_valid? %>
       <%= link_to_remote "Valid", :url => { :action =>
     'valid_grouping', :id => assignment.id, :grouping_id =>
