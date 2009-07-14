@@ -225,9 +225,8 @@ document.observe("dom:loaded", function(){
       <div class="global_action">
         <span id="loading_list"><%= image_tag("spinner.gif") %> Loading List...</span>
         <%= select_tag "global_actions", options_for_select([["Choose an action", ""], ["Validate", "valid"], ["Invalidate", "invalid"], ["Delete", "delete"], ["Assign Grader(s)", "assign"], ["Unassign Grader(s)", "unassign"]])%>
-	<%= submit_tag "submit", :confirm => t(:confirm_bulk_action) %>
-	<%# observe_field :global_actions, :function =>	"$('global_action_form').submit();" %>
-	
+	<%= submit_tag "submit", :confirm => t(:confirm_bulk_action), :onclick => "$('submit_type').setValue('global_action');" %>
+        <%= hidden_field_tag 'submit_type', 'global_action', :id => 'submit_type' %>
       </div>
       <div class="clear"></div>
       <div id="groups_container">
@@ -258,7 +257,9 @@ document.observe("dom:loaded", function(){
         Graders
       </div>
       <div class="accordion-content">
-     
+
+       <%= submit_tag "Randomly assign Graders", :id => "random_assign_graders", :name => "random_assign_graders", :confirm => "Are you sure you want to randomly assign selected graders to all groups?", :onclick => "$('submit_type').setValue('random_assign');" %>
+
        <ul class="invisible_list">
        <% @tas.each do |ta| %>
          <li>

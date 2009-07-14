@@ -190,7 +190,9 @@ class Grouping < ActiveRecord::Base
   
   def remove_ta_by_id(ta_id)
     ta_membership = ta_memberships.find_by_user_id(ta_id)
-    ta_membership.destroy
+    if !ta_membership.nil?
+      ta_membership.destroy
+    end
   end
   
   def add_tas(ta_id_array)

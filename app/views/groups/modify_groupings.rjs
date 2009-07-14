@@ -1,1 +1,2 @@
+page.hide "errors"
 page.call "modify_groupings", @groupings_data.to_json

@@ -392,8 +392,28 @@ class GroupsController < ApplicationController
     flash[:edit_notice] = "Groups created"
   end
 
-  def global_actions
-     @assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group]}])   
+  # TODO:  This method is massive, and does way too much.  Whatever happened
+  # to single-responsibility?
+  def global_actions 
+    @assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group]}])   
+    
+
+    if params[:submit_type] == 'random_assign'
+      begin 
+        if params[:graders].nil?
+          raise "You must select at least one grader for random assignment"
+        end
+        randomly_assign_graders(params[:graders], @assignment.groupings)
+        @groupings_data = construct_table_rows(@assignment.groupings)
+        render :action => "modify_groupings"
+        return
+      rescue Exception => e
+        @error = e.message
+        render :action => 'error_single'
+        return
+      end
+    end
+    
     global_action = params[:global_actions]
     grouping_ids = params[:groupings]
     if params[:groupings].nil? or params[:groupings].size ==  0
@@ -447,5 +467,6 @@ class GroupsController < ApplicationController
         return
     end
   end
+
 
 end
