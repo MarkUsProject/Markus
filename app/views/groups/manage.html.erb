@@ -165,12 +165,19 @@ document.observe("dom:loaded", function(){
   <h1>Manage Groups
   <%= button_to_function "Use another assignment's groups", 'assignment_group_use(); return
     false;' %> 
-    <%= button_to_function "Add New", 'make_new_group(); return
-    false;'  %>
+    <%= button_to_remote "Add New", :url => {:action => 'add_group', :id => @assignment.id}  %>
    </h1>
   </div> <!-- title_bar-->
 <div class="clear"></div>
+
 <div id="notice">
+      <div class="error" id="errors">
+        <h1>There was a problem...</h1>
+        <div id="errors_title">
+        </div>
+        <div id="errors_contents">
+        </div>
+      </div>
       <% if flash[:upload_notice] -%>
           <p class="success"><%= h(flash[:upload_notice]) %></p>
       <% end -%>
@@ -212,8 +219,8 @@ document.observe("dom:loaded", function(){
       </div>
       <div class="global_action">
         <span id="loading_list"><%= image_tag("spinner.gif") %> Loading List...</span>
-        <%= select_tag "global_actions", options_for_select([["Choose an action", ""], ["Validate", "valid"], ["Delete", "delete"], ["Assign Grader(s)", "assign"], ["Unassign Grader(s)", "unassign"]])%>
-	<%= submit_tag "submit" %>
+        <%= select_tag "global_actions", options_for_select([["Choose an action", ""], ["Validate", "valid"], ["Invalidate", "invalid"], ["Delete", "delete"], ["Assign Grader(s)", "assign"], ["Unassign Grader(s)", "unassign"]])%>
+	<%= submit_tag "submit", :confirm => t(:confirm_bulk_action) %>
 	<%# observe_field :global_actions, :function =>	"$('global_action_form').submit();" %>
 	
       </div>

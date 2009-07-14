@@ -123,6 +123,12 @@ class Grouping < ActiveRecord::Base
     self.admin_approved = true
     self.save
   end
+  
+  # Strips admin_approved privledge
+  def invalidate_grouping
+    self.admin_approved = false
+    self.save
+  end
 
   # Submission Functions
   def has_submission?

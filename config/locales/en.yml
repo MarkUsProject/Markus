@@ -37,4 +37,4 @@ en:
         has_dependency: "Assignment Builds on Top Of"
         no_dependency:    "Nothing - It's Unique"
 
-        
+    confirm_bulk_action:  "Are you sure you want to perform this bulk action?"

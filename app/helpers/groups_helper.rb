@@ -20,6 +20,14 @@ module GroupsHelper
     return result
   end
   
+  def construct_table_rows(groupings)
+    result = {}
+    groupings.each do |grouping|
+      result[grouping.id] = construct_table_row(grouping)
+    end
+    return result
+  end
+  
   def construct_table_row(grouping)
       table_row = {}
 

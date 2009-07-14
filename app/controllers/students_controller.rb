@@ -1,5 +1,5 @@
 class StudentsController < ApplicationController
-  include StudentsHelper
+  include UsersHelper
   before_filter    :authorize_only_for_admin
   
   def index
@@ -8,6 +8,7 @@ class StudentsController < ApplicationController
   
   def populate
     @students_data = Student.find(:all, :order => "user_name")
+    # construct_table_rows defined in UsersHelper
     @students = construct_table_rows(@students_data)
   end
 

@@ -1,8 +1,15 @@
 class TasController < ApplicationController
+  include UsersHelper
   before_filter  :authorize_only_for_admin
   
   def index
     @tas = Ta.find(:all, :order => "user_name")
+  end
+  
+  def populate
+    @tas_data = Ta.find(:all, :order => "user_name")
+    # construct_table_rows defined in UsersHelper
+    @tas = construct_table_rows(@tas_data)
   end
 
   def edit

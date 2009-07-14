@@ -23,6 +23,15 @@ function filter(filter_name) {
   $('loading_list').hide();
 }
 
+function modify_grouping(grouping_json, focus_after) {
+  var grouping = grouping_json.evalJSON();
+  groupings_table.write_row(grouping.id, grouping);
+  groupings_table.resort_rows().render();
+  if(focus_after) {
+    groupings_table.focus_row(grouping.id);
+  }
+}
+
 function modify_groupings(groupings_json) {
   var groupings = $H(groupings_json.evalJSON());
   groupings.each(function(grouping_record) {

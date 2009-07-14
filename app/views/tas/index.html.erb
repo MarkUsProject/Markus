@@ -1,4 +1,8 @@
+<%= javascript_include_tag "FilterTable/FilterTable" %>
 <%= javascript_include_tag "16accordion" %>
+<%= javascript_include_tag "users_manager" %>
+
+<%= render :partial => "boot.js" %>
 
 <div id="title_bar"><h1>Manage TAs <%= link_to I18n.t(:add_new),
 :controller => 'tas', :action => 'create' %></h1></div>
@@ -33,39 +37,7 @@
         </ul>
       </div>
       <% end -%>
-      <table>
-        <thead>
-           <tr>
-          <%
-		  	# pull "labels" from I18n files
-		  %>
-          <th><%= I18n.t('user.user_name') %></th>
-          <th><%= I18n.t('user.last_name') %></th>
-          <th><%= I18n.t('user.first_name') %></th>
-          <th></th>
-        </tr>
-	</thead>
-          
-        <% for u in @tas %>
-          <tr class="<%= cycle('rowA', 'rowB') %>">
-            <td><%= h(u.user_name) %></td>
-            <td><%= h(u.last_name) %></td>
-            <td><%= h(u.first_name) %></td>
-            <td><%= link_to I18n.t(:edit), :controller => 'tas', :action => 'edit', :id => u %></td>
-          </tr>
-
-        <% end %>
-         <tfoot>
-           <tr>
-          <%
-		  	# pull "labels" from I18n files
-		  %>
-          <th><%= I18n.t('user.user_name') %></th>
-          <th><%= I18n.t('user.last_name') %></th>
-          <th><%= I18n.t('user.first_name') %></th>
-          <th></th>
-        </tr>
-	</tfoot>
+      <table id="tas">
        
       </table>
   </div>

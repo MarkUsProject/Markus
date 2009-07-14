@@ -1,9 +1,14 @@
 class AdminsController < ApplicationController
-
+  include UsersHelper
   before_filter  :authorize_only_for_admin
   
   def index
-    @admins = Admin.find(:all, :order => "user_name")
+  end
+  
+  def populate
+    admins_data = Admin.find(:all, :order => "user_name")
+    # construct_table_rows defined in UsersHelper
+    @admins = construct_table_rows(admins_data)
   end
 
   def edit
@@ -34,5 +39,7 @@ class AdminsController < ApplicationController
     # active records--creates a new record if the model is new, otherwise
     # updates the existing record
     return unless @user.save
+    
+    redirect_to :action => 'index'
   end
 end

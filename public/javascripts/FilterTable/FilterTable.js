@@ -78,11 +78,13 @@ var FilterTable = Class.create({
     this.sort_reverse = false;
     this.reset_filter_counts();
     this.construct_table();
+    this.row_cache = {};
   },
   // Take some JSON data, and add it to the data store.
   populate: function(json_table_data) {
     this.table_data = $H(json_table_data.evalJSON());
     this.table_rows = this.table_data.values();
+    this.construct_row_cache(this.table_rows);
     this.sort_by(this.default_sort);
     return this;
   },
@@ -180,6 +182,7 @@ var FilterTable = Class.create({
   write_row: function(id, row) {
     this.table_data.set(id, row);
     this.table_rows = this.table_data.values();
+    this.construct_row(row);
     return this;
   },
   write_rows: function(rows) {
@@ -192,6 +195,7 @@ var FilterTable = Class.create({
   // Removes a row with the given id.
   remove_row: function(id) {
     this.table_data.unset(id);
+    this.row_cache[id] = undefined;
     this.table_rows = this.table_data.values();
     return this;
   },
@@ -234,11 +238,12 @@ var FilterTable = Class.create({
     me = this;
     this.table_rows.each(function(table_row) {
       if(me.pass_filters(table_row)) {
-        var row = me.construct_row(table_row);
-        me.table_body.insert({bottom: row});
+        //var row = me.construct_row(table_row);
+        me.table_body.insert({bottom: me.retrieve_from_row_cache(table_row.id)});
       }
     });
     this.render_counts();
+    this.select_all(false);
   },
   render_counts: function() {
     if($(this.total_count_id) != null) {
@@ -249,6 +254,15 @@ var FilterTable = Class.create({
       if($(filter_count_id.value) != null) {
         $(filter_count_id.value).update(me.filter_counts.get(filter_count_id.key));
       }
+    });
+  },
+  retrieve_from_row_cache: function(row_id) {
+    return this.row_cache[row_id];
+  },
+  construct_row_cache: function(table_rows) {
+    me = this;
+    table_rows.each(function(table_row) {
+      me.construct_row(table_row);
     });
   },
   // Helper method used by render() - builds the HTML that will display the table row.
@@ -271,6 +285,7 @@ var FilterTable = Class.create({
       //TODO: More helpful error
       alert("Something went wrong!");
     }
+    this.row_cache[row.id] = tr_element;
     return tr_element;
   },
   // On initialization, this function constructs the table
@@ -342,6 +357,12 @@ var FilterTable = Class.create({
     $$('.' + this.selectable_class).each(function(node) {
       $(node).setValue(is_selected);
     });
+  },
+  focus_row: function(row_id) {
+    var row = $(this.select_id_prefix + row_id);
+    if(row != null) {
+      row.scrollTo();
+    }
   },
   // When all else fails, do the standard_sort...
   standard_sort: function(a, b) {

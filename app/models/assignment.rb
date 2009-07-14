@@ -156,6 +156,7 @@ class Assignment < ActiveRecord::Base
     grouping.group = group
     grouping.assignment = self
     grouping.save
+    return grouping
   end
 
 

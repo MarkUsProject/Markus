@@ -3,6 +3,9 @@
 var groupings_table = null;
 
 document.observe("dom:loaded", function() {
+  // Hide AJAX errors DIV
+  $('errors').hide();
+
   groupings_table = new FilterTable({
     table_id: $('groups'),
     headers: {

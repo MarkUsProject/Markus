@@ -118,24 +118,6 @@ class GroupsController < ApplicationController
      flash[:edit_notice] = "Member disinvited"
   end
 
-
-   def delete_group
-    @assignment = Assignment.find(params[:id])
-    return unless request.delete?
-    # TODO remove groups for all assignment or just for the specific assignment?
-    # TODO remove submissions in file system?
-    @grouping = Grouping.find(params[:grouping_id])
-    if @grouping.has_submission?
-        flash[:fail_notice] = "This groups already has some submission.
-        You cannot delete it."
-    else
-        @grouping.student_memberships.all(:include => :user).each do |member|
-          member.destroy
-        end
-        @grouping.destroy
-    end
-  end
-
  
   # Group administration functions -----------------------------------------
   # Verify that all functions below are included in the authorize filter above
@@ -143,12 +125,19 @@ class GroupsController < ApplicationController
   def add_member
     return unless (request.post? && params[:student_user_name])
     # add member to the group with status depending if group is empty or not
-    @grouping = Grouping.find(params[:grouping_id])
-    @assignment = Assignment.find(params[:id])
-    set_membership_status = @grouping.student_memberships.empty? ?
+    grouping = Grouping.find(params[:grouping_id])
+    @assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group]}]) 
+    if Student.find_by_user_name(params[:student_user_name]).nil?
+      @error = "Could not find student with user name #{params[:student_user_name]}"
+      render :action => 'error_single'
+      return
+    end
+    set_membership_status = grouping.student_memberships.empty? ?
     StudentMembership::STATUSES[:inviter] :
     StudentMembership::STATUSES[:accepted]     
-    @member = @grouping.invite(params[:student_user_name], set_membership_status) 
+    grouping.invite(params[:student_user_name], set_membership_status) 
+    grouping.reload
+    @grouping = construct_table_row(grouping)
   end
  
   def remove_member
@@ -183,37 +172,25 @@ class GroupsController < ApplicationController
   
   def add_group
     @assignment = Assignment.find(params[:id])
-    @assignment.add_group(params[:new_group_name])
-    render :update do |page|
-      page.redirect_to :action => 'manage', :id => @assignment.id
-    end
+    new_grouping_data = @assignment.add_group(params[:new_group_name])
+    @new_grouping = construct_table_row(new_grouping_data)
   end
   
   def remove_group
-    @assignment = Assignment.find(params[:id])
     return unless request.delete?
     # TODO remove groups for all assignment or just for the specific assignment?
     # TODO remove submissions in file system?
-    @grouping = Grouping.find(params[:grouping_id])
-    if @grouping.has_submission?
-        flash[:fail_notice] = "This groups already has some submission.
-        You cannot delete it."
-        render :update do |page|
-          page.redirect_to :action => 'manage', :id => @assignment.id
-        end
+    grouping = Grouping.find(params[:grouping_id])
+    @assignment = grouping.assignment
+    @errors = []
+    @removed_groupings = []
+    if grouping.has_submission?
+        @errors.push(grouping.group.group_name)
+        render :action => "delete_groupings"
     else
-      render :update do |page|
-        # update list of users not in group
-        @grouping.student_memberships.all(:include => :user).each do |member|
-          student = member.user
-          page.insert_html :bottom, "student_list",  
-            "<li id='user_#{student.user_name}'>#{student.user_name}</li>"
-          member.destroy
-        end
-        page.visual_effect(:fade, "grouping_#{params[:grouping_id]}", :duration => 0.5)
-        page.delay(0.5) { page.remove "grouping_#{params[:grouping_id]}"  }
-      end
-      @grouping.destroy
+      grouping.delete_grouping
+      @removed_groupings.push(grouping)
+      render :action => "delete_groupings"
     end
   end
 
@@ -270,22 +247,6 @@ class GroupsController < ApplicationController
       # construct_table_row is in the groups_helper.rb
       @table_rows[grouping.id] = construct_table_row(grouping)     
     end
-  end
-  
-  def filter
-    @assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group]}])   
-    case params[:filter]
-      when "valid"
-        @groupings = @assignment.valid_groupings
-      when "invalid"
-        @groupings = @assignment.invalid_groupings
-      when "assigned"
-        @groupings = @assignment.assigned_groupings
-      when "unassigned"
-        @groupings = @assignment.unassigned_groupings
-      else
-        @groupings = @assignment.groupings
-      end
   end
 
   def manage
@@ -426,7 +387,7 @@ class GroupsController < ApplicationController
   end
 
   def global_actions
-    @assignment = Assignment.find(params[:id])
+     @assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group]}])   
     global_action = params[:global_actions]
     grouping_ids = params[:groupings]
     if params[:groupings].nil? or params[:groupings].size ==  0
@@ -437,27 +398,36 @@ class GroupsController < ApplicationController
     
     case params[:global_actions]
       when "delete"
-        grouping_ids.each do |g|
-          grouping = Grouping.find(g)
+        @removed_groupings = []
+        @errors = []
+        groupings = Grouping.find(grouping_ids)
+        groupings.each do |grouping|
           if grouping.has_submission?
-	    flash[:error] = flash[:error] + " " + grouping.group_name
+            @errors.push(grouping.group.group_name)
 	  else
             grouping.delete_grouping
+            @removed_groupings.push(grouping)
 	  end
-	  @groupings.push(grouping)
-        end
-        if flash[:error].nil? or flash[:error] == ""
-          flash[:success] = "Groups deleted"
         end
         render :action => "delete_groupings"
         return
       
-      when "valid"
-        grouping_ids.each do |g|
-           @groupings.push(Grouping.find(g).validate_grouping)
+      when "invalid"
+        groupings = Grouping.find(grouping_ids)
+        groupings.each do |grouping|
+           grouping.invalidate_grouping
         end
-        flash[:success] = "Groups valid"
-        render :action => "valid_groupings"
+        @groupings_data = construct_table_rows(groupings)
+        render :action => "modify_groupings"
+        return      
+      
+      when "valid"
+        groupings = Grouping.find(grouping_ids)
+        groupings.each do |grouping|
+           grouping.validate_grouping
+        end
+        @groupings_data = construct_table_rows(groupings)
+        render :action => "modify_groupings"
         return
         
       when "assign"
