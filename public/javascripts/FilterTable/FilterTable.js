@@ -56,7 +56,7 @@ var FilterTable = Class.create({
     this.filters = $H(this.set_or_default(params.filters, null));
         
     this.sorts = $H(this.set_or_default(params.sorts, null));
-    this.default_filters = $A(this.set_or_default(params.filters, null));
+    this.default_filters = $A(this.set_or_default(params.default_filters, null));
     
     // Default parameters can be overridden...
     this.header_id_prefix = this.set_or_default(params.header_id_prefix, 'FilterTable_header_');
