@@ -46,8 +46,11 @@ Unicode", Verdana;
 
 
 h4{
-   color: #003399;
+   color: #464646;
    font-style: italic;
+   padding-bottom: 3px;
+   padding-left: 3px;
+   border-bottom: 1px solid #ccc;
 }
 
 
@@ -76,12 +79,11 @@ h4{
 /* Title Bar*/
 
 #title_bar{
-   padding-left: 10px;
+   padding-left: 15px;
 }
 
 #title_bar h1{
-   font-family: "Myriad", "Myriad Pro", "Lucida Grande", "Lucida Sans
-Unicode", Verdana;
+   font-family: "Myriad", "Myriad Pro", "Lucida Grande", "Lucida Sans Unicode", Verdana;
    font-size: 24px;
    color: #464646;
 }
@@ -635,10 +637,15 @@ tr:hover .table_menu{
    }
 
 .bloc h3{
+   font-family: "Georgia";
    font-style: italic;
-   font-weight: bold;
-   font-size: 1em;
+   font-weight: normal;
+   text-transform: capitalize;
+   font-size: 0.9em;
    color: #464646;
+   border-bottom: 1px solid #ccc;
+   padding-bottom:3px;
+   padding-left: 3px;
 }
 
 .bloc_content{
