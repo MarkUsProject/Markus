@@ -26,8 +26,9 @@
 <%# If this member is rejected %>
 <% elsif member.membership_status == StudentMembership::STATUSES[:rejected] %>
    <% if grouping.is_inviter?(@current_user) %>
-<li class="membership_status_pending">
-   <span class="last_name"><%= h(member.user.last_name) %> </span> <%= h(member.user.first_name) %> (invited)
+<li class="membership_status_rejected">
+   <span class="last_name"><%= h(member.user.last_name) %> </span> <%=
+h(member.user.first_name) %> (rejected)
      <%= link_to_remote I18n.t(:delete), :url => {:action =>
      'delete_rejected', :id => @assignment.id, :membership => member.id} %>
 </li>

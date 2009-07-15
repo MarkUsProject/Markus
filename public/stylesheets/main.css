@@ -257,7 +257,7 @@ span#choose_an_assignment{
 }
 
 /* Drop down menu, select, input etc...*/
-input{
+input, .button{
   min-width: 100px;
   background: none;
   -moz-border-radius: 10px;
@@ -265,6 +265,7 @@ input{
   border: 2px solid #ccc;
   text-align: center;
   font-family: "Lucida Grande", Verdana, Arial, sans-serif;
+  font-weight: bold;
   color: #464646;
   padding: 3px 5px;
   margin: 5px;
@@ -399,6 +400,13 @@ tr:hover .table_menu{
    font-weight: bold;
    color: #003399;
    text-transform: capitalize;
+}
+
+
+
+/*student's table*/
+tr.student_hidden{
+  font-style: italic;
 }
 
 /* groups table*/
@@ -670,6 +678,12 @@ tr:hover .table_menu{
    font-style: italic;
 }
 
+.membership_status_rejected{
+   font-style: italic;
+   color: #464646;
+}
+
+
 span.info_red, span.info {
    font-family: "Tahoma";
    font-size: 1em;
@@ -716,7 +730,8 @@ th#FilterTable_header_revision_by{
 
 th#FilterTable_header_filename:hover,
 th#FilterTable_header_revision_number:hover,
-th#FilterTable_header_revision_by:hover
+th#FilterTable_header_revision_by:hover,
+th.FilterTable_sortable:hover
 {
   cursor: pointer;
   color: #000;
@@ -764,8 +779,14 @@ th, td{
   right: 0px;
 }
 
-.icon_remove {
-  display: block-inline;
+a.icon_remove {
+  width: 20px;
+  height: 20px;
+  text-indent: -90000px;
+  background: no-repeat url('../images/icons/cancel.png');
+}
+
+a.icon_remove:hover {
   text-indent: -9000px;
   background: no-repeat url('../images/icons/cancel.png');
 }

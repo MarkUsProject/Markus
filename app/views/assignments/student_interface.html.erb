@@ -107,12 +107,14 @@
          <p> The groups must be from <b><%=
 	h(@assignment.group_min)%></b> to <b><%= h(@assignment.group_max)%></b>
 	people.</p>
+         <% if @assignment.student_form_groups %>
 	   <% if @assignment.group_min == 1 %>
 	   <p><%= link_to_remote "Work alone", :url => {:action => 'creategroup', :id => @assignment.id, :workalone => 'true'}%></p>
 	   <% end %>
 	   <p>
 	   <%= link_to_remote I18n.t(:create), :url => {:action => 'creategroup', :id => @assignment.id} %>
 	   </p>
+         <%end %>
 	 <% else %>
 	   <% # As the student already has a group, we display the
 	      # informations on this group %>
