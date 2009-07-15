@@ -54,7 +54,10 @@ class AbstractRepository
 
   # Initializes Object, and verifies connection to the repository back end.
   # This should throw a ConnectionError if we're unable to connect.
-  def initialize(connect_string)
+  # The is_admin flag indicates if we have admin privileges. If set to false,
+  # the repository relies on a third party to create repositories and manage its
+  # permissions.
+  def initialize(connect_string, is_admin=true)
     raise NotImplementedError, "Repository.initialize(connect_string): Not yet implemented"
   end
   
@@ -121,7 +124,7 @@ class AbstractRepository
   # Gets a list of users with permissions in question on the repository
   #   use "Repository::Permission::ANY" to get a list of all users with any permissions
   #   i.e. all users with at least read permissions
-  def get_users(permission)
+  def get_users(permissions)
     raise NotImplementedError, "Repository.get_users: Not yet implemented"
   end
   
@@ -174,6 +177,8 @@ class FileDoesNotExist < Exception; end
 # Exceptions for repo user management
 class UserNotFound < Exception; end
 class UserAlreadyExistent < Exception; end
+# raised, when trying to modify permissions and repo is not in authoritative mode
+class NotAuthorityError < Exception; end
 
 
 #################################################

@@ -234,23 +234,174 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       end
     end
     
-    # TODO: write add_user, get_users, remove_user tests
-    
   end # end context
   
-  context "A repository with some files in it" do
+  context "A repository with an authorization file specified" do
+    
+    $REPOSITORY_SVN_AUTHZ_FILE = SVN_TEST_REPOS_DIR+"/svn_authz"
     
     setup do
+      # have a clean authz file
+      FileUtils.cp($REPOSITORY_SVN_AUTHZ_FILE+'.orig', $REPOSITORY_SVN_AUTHZ_FILE)
       # create repository first
+      repo1 = SVN_TEST_REPOS_DIR+"/Testrepo1"
+      repo2 = SVN_TEST_REPOS_DIR+"/Repository2"
+      
+      SubversionRepository.create(repo1)
+      SubversionRepository.create(repo2)
       SubversionRepository.create(TEST_REPO)
       # open the repository
-      @repo = SubversionRepository.new(TEST_REPO)
+      @repo1 = SubversionRepository.new(repo1, false) # non-admin repository
+      @repo2 = SubversionRepository.new(repo2, false) # again, a non-admin repo
+      @repo = SubversionRepository.new(TEST_REPO)     # repo with admin-privs
       # add some files
       files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
-      add_some_files_helper(@repo, files_to_add)
+      add_some_files_helper(@repo1, files_to_add)
+      add_some_files_helper(@repo2, files_to_add)
     end
     
-    # TODO: should we write some more tests here?
+    # removes Subversion repositories
+    teardown do
+      FileUtils.remove_dir(SVN_TEST_REPOS_DIR+"/Testrepo1", true)
+      FileUtils.remove_dir(SVN_TEST_REPOS_DIR+"/Repository2", true)
+      FileUtils.remove_dir(TEST_REPO, true)
+      FileUtils.rm($REPOSITORY_SVN_AUTHZ_FILE, :force => true)
+    end
+    
+    should "be able to get permissions for a user" do
+      # check if permission constants are working
+      assert_equal(2, Repository::Permission::WRITE)
+      assert_equal(4, Repository::Permission::READ)
+      assert_equal(6, Repository::Permission::READ_WRITE)
+      assert_equal(4, Repository::Permission::ANY)
+      
+      assert_equal(Repository::Permission::READ_WRITE, @repo1.get_permissions("user1"))
+      assert_equal(Repository::Permission::READ, @repo1.get_permissions("someother_user"))
+      assert_equal(Repository::Permission::READ, @repo2.get_permissions("test"))
+    end
+    
+    should "raise a UserNotFound exception" do
+      # check if permission constants are working
+      assert_equal(2, Repository::Permission::WRITE)
+      assert_equal(4, Repository::Permission::READ)
+      assert_equal(6, Repository::Permission::READ_WRITE)
+      assert_equal(4, Repository::Permission::ANY)
+      
+      assert_raise(UserNotFound) do
+        @repo1.get_permissions("non_existent_user")
+      end
+      assert_raise(UserNotFound) do
+        @repo2.get_permissions("non_existent_user")
+      end
+      assert_raise(UserNotFound) do
+        @repo.set_permissions("non_existent_user", Repository::Permission::READ_WRITE)
+      end
+      assert_raise(UserNotFound) do
+        @repo.remove_user("non_existent_user")
+      end
+    end
+    
+    should "raise a UserAlreadyExistent exception" do
+      # check if permission constants are working
+      assert_equal(2, Repository::Permission::WRITE)
+      assert_equal(4, Repository::Permission::READ)
+      assert_equal(6, Repository::Permission::READ_WRITE)
+      assert_equal(4, Repository::Permission::ANY)
+      
+      @repo.add_user("user_x", Repository::Permission::READ)
+      assert_raise(UserAlreadyExistent) do
+        @repo.add_user("user_x", Repository::Permission::READ_WRITE) # user_x exists already
+      end
+    end
+    
+    should "not be allowed to modify permissions when not it authoritative mode" do
+      # check if permission constants are working
+      assert_equal(2, Repository::Permission::WRITE)
+      assert_equal(4, Repository::Permission::READ)
+      assert_equal(6, Repository::Permission::READ_WRITE)
+      assert_equal(4, Repository::Permission::ANY)
+      
+      assert_raise(NotAuthorityError) do
+        @repo1.add_user("user_x", Repository::Permission::READ)
+      end
+      assert_raise(NotAuthorityError) do
+        @repo2.set_permissions("test", Repository::Permission::READ_WRITE)
+      end
+      assert_raise(NotAuthorityError) do
+        @repo2.remove_user("test")
+      end
+    end
+    
+    should "be able to manage users and permissions" do
+      # tests
+      #   'add_user()'
+      #   'remove_user()'
+      #   'get_permissions()'
+      #   'set_permissions()
+      #   'get_users()'
+      another_user = "another_user_id"
+      
+      # check if permission constants are working
+      assert_equal(2, Repository::Permission::WRITE)
+      assert_equal(4, Repository::Permission::READ)
+      assert_equal(6, Repository::Permission::READ_WRITE)
+      assert_equal(4, Repository::Permission::ANY)
+      
+      users_with_any_perm = @repo.get_users(Repository::Permission::ANY)
+      assert_nil(users_with_any_perm, "There aren't any users, yet")
+      users_with_read_perm = @repo.get_users(Repository::Permission::READ)
+      assert_nil(users_with_read_perm, "There aren't any users, yet")
+      users_with_read_write_perm = @repo.get_users(Repository::Permission::READ_WRITE)
+      assert_nil(users_with_read_write_perm, "There aren't any users, yet")
+      
+      @repo.add_user(TEST_USER, Repository::Permission::READ)
+      users_with_any_perm = @repo.get_users(Repository::Permission::ANY)
+      assert_not_nil(users_with_any_perm, "There is a user with some permissions")
+      assert_equal(TEST_USER, users_with_any_perm.shift, TEST_USER+ " should have some permissions")
+      users_with_read_perm = @repo.get_users(Repository::Permission::READ)
+      assert_not_nil(users_with_read_perm, TEST_USER+" should have read permissions")
+      assert_equal(TEST_USER, users_with_read_perm.shift, TEST_USER+ " should have read permissions")
+      users_with_read_write_perm = @repo.get_users(Repository::Permission::READ_WRITE)
+      assert_nil(users_with_read_write_perm, "There is no user with read and write permissions")
+      # see if permissions have been set accordingly
+      assert_equal(Repository::Permission::READ, @repo.get_permissions(TEST_USER), "Permissions don't match")
+      
+      # set (overwrite) permissions
+      @repo.set_permissions(TEST_USER, Repository::Permission::READ_WRITE)
+      assert_equal(Repository::Permission::READ_WRITE, @repo.get_permissions(TEST_USER), "Permissions don't match")
+      users_with_read_write_perm = @repo.get_users(Repository::Permission::READ_WRITE)
+      assert_not_nil(users_with_read_write_perm, "There is a user with read and write permissions")
+      assert_equal(TEST_USER, users_with_read_write_perm.shift, TEST_USER + " should have read and write permissions")
+      
+      # add another user
+      @repo.add_user(another_user, Repository::Permission::READ)
+      assert_equal(Repository::Permission::READ, @repo.get_permissions(another_user), "Permissions don't match")
+      users_with_any_perm = @repo.get_users(Repository::Permission::ANY)
+      assert_not_nil(users_with_any_perm, "There are some users with some permissions")
+      assert_equal([TEST_USER, another_user].sort, users_with_any_perm.sort, "There are some missing users")
+      users_with_read_perm = @repo.get_users(Repository::Permission::READ)
+      assert_not_nil(users_with_read_perm, "Some user has read permissions")
+      assert_equal(another_user, users_with_read_perm.shift, another_user +" should have read permissions")
+      users_with_read_write_perm = @repo.get_users(Repository::Permission::READ_WRITE)
+      assert_not_nil(users_with_read_write_perm, "There are some users with read and write permissions")
+      assert_equal(TEST_USER, users_with_read_write_perm.shift, TEST_USER + " should have read and write permissions")
+      
+      # remove user
+      @repo.remove_user(TEST_USER)
+      assert_equal(Repository::Permission::READ, @repo.get_permissions(another_user), "Permissions don't match")
+      users_with_any_perm = @repo.get_users(Repository::Permission::ANY)
+      assert_not_nil(users_with_any_perm, "There are some users with some permissions")
+      assert_equal(another_user, users_with_any_perm.shift, another_user +" still has some perms")
+      users_with_read_perm = @repo.get_users(Repository::Permission::READ)
+      assert_not_nil(users_with_read_perm, "Some user has read permissions")
+      assert_equal(another_user, users_with_read_perm.shift, another_user +" should have read permissions")
+      users_with_read_write_perm = @repo.get_users(Repository::Permission::READ_WRITE)
+      assert_nil(users_with_read_write_perm, "There are NO users with read and write permissions")
+      
+      @repo.remove_user(another_user)
+      users_with_any_perm = @repo.get_users(Repository::Permission::ANY)
+      assert_nil(users_with_any_perm, "There are NO users with any permissions")
+    end
 
   end # end context
   

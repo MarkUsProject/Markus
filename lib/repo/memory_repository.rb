@@ -200,16 +200,17 @@ class MemoryRepository < Repository::AbstractRepository
   # Removes a user from from the repository
   def remove_user(user_id)
     if !@users.key?(user_id)
-      raise UserNotFound.new(user_id + " not find")
+      raise UserNotFound.new(user_id + " not found")
     end
     @users.delete(user_id)
   end
   
-  # Gets a list of users with AT LEAST the provided permissions
-  def get_users(with_perms)
+  # Gets a list of users with AT LEAST the provided permissions.
+  # Returns nil if there aren't any.
+  def get_users(permissions)
     result_list = []
     @users.each do |user, perm|
-      if perm >= with_perms
+      if perm >= permissions
         result_list.push(user)
       end
     end
@@ -223,7 +224,7 @@ class MemoryRepository < Repository::AbstractRepository
   # Sets permissions for the provided user
   def set_permissions(user_id, permissions)
     if !@users.key?(user_id)
-      raise UserNotFound.new(user_id + " not find")
+      raise UserNotFound.new(user_id + " not found")
     end
     @users[user_id] = permissions
   end
@@ -231,7 +232,7 @@ class MemoryRepository < Repository::AbstractRepository
   # Gets permissions for a given user
   def get_permissions(user_id)
     if !@users.key?(user_id)
-      raise UserNotFound.new(user_id + " not find")
+      raise UserNotFound.new(user_id + " not found")
     end
     return @users[user_id]
   end

@@ -24,6 +24,13 @@ VALIDATE_FILE       = "#{RAILS_ROOT}/config/dummy_validate.sh"  # bash dummy scr
 # Repository settings
 REPOSITORY_TYPE = "svn"
 REPOSITORY_STORAGE = "/home/svn-repos-root/"
+REPOSITORY_EXTERNAL_SUBMITS_ONLY = true
+# Base URL for external subversion access
+REPOSITORY_EXTERAL_BASE_URL = "http://luckyluke.red.sandbox/svn"
+$REPOSITORY_SVN_AUTHZ_FILE = "/home/svn-repos-root/svn_authz"   # global constant
+IS_REPOSITORY_ADMIN = true          # change this to false if repositories are created by a third party;
+                                    # in that case, MarkUs does not manage repository permissions and
+                                    # relies completely on the third party
 
 
 # Configurations for User of type Student

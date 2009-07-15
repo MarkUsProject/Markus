@@ -69,7 +69,7 @@ require 'time'
     basic_fixture
     file = nil
     assert_raises TypeError do
-      @repo.download(file)
+      @repo.download_as_string(file)
     end
     
     file = Repository::RevisionFile.new(1, {
@@ -80,11 +80,11 @@ require 'time'
       :user_id => 'someuser'
     })
     assert_raises Repository::FileDoesNotExistConflict do
-      @repo.download(file)
+      @repo.download_as_string(file)
     end
     
     begin
-      @repo.download(file)
+      @repo.download_as_string(file)
     rescue Repository::FileDoesNotExistConflict => e
 #      assert e.attempted_job.kind_of?(Repository::RevisionFile), "Did not get the right kind of conflict - expected the attempted_job to be a file"
       assert_equal '/InvalidFile.java', e.path, "Did not get the right conflict contents - expected the missing file"
@@ -98,11 +98,11 @@ require 'time'
       :user_id => 'someuser'
     })
     assert_raises Repository::FileDoesNotExistConflict do
-      @repo.download(file)
+      @repo.download_as_string(file)
     end
     
     begin
-      @repo.download(file)
+      @repo.download_as_string(file)
     rescue Repository::FileDoesNotExistConflict => e
       assert_equal '/s35523/a4yasda/asdr43rasdf/??!....%*@#!(@)/??>@$>Z>$@<D', e.path, "Did not get the right conflict contents - expected the missing file"
     end

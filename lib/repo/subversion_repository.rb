@@ -1,5 +1,7 @@
 require "svn/repos" # load SVN Ruby bindings stuff
 require "md5"
+require "rubygems"    # debugging
+require "ruby-debug"  # debugging
 require File.join(File.dirname(__FILE__),'/repository') # load repository module
 
 module Repository
@@ -28,11 +30,18 @@ class SubversionRepository < Repository::AbstractRepository
   # Constructor: Connects to an existing Subversion
   # repository, using Ruby bindings; Note: A repository has to be
   # created using SubversionRepository.create(), it it is not yet existent
-  def initialize(connect_string)
+  def initialize(connect_string, is_admin=true)
     begin
       super(connect_string) # dummy call to super
     rescue NotImplementedError; end
     @repos_path = connect_string
+    if !defined? $REPOSITORY_SVN_AUTHZ_FILE
+      auth_file_constant = nil
+    else
+      auth_file_constant = $REPOSITORY_SVN_AUTHZ_FILE
+    end
+    @repos_auth_file = auth_file_constant || File.dirname(connect_string)+"/svn_authz"
+    @repos_admin = is_admin
     if (SubversionRepository.repository_exists?(@repos_path))
       @repos = Svn::Repos.open(@repos_path)
     else
@@ -179,8 +188,82 @@ class SubversionRepository < Repository::AbstractRepository
     return true
   end
   
-  # TODO: Implement get_users(), add_user(), remove_user()
-  # These are defined in Repository::AbstractRepository
+  # Adds a user with given permissions to the repository
+  def add_user(user_id, permissions)
+    if @repos_admin # Are we admin?
+      repo_permissions = get_repo_permissions_from_file() # get current permissions from file
+      if repo_permissions.key?(user_id)
+        raise UserAlreadyExistent.new(user_id + " already existent")
+      end
+      svn_permissions = translate_to_svn_perms(permissions)
+      repo_permissions[user_id] = svn_permissions
+      # write new permissions to file
+      return write_repo_permissions_to_auth_file(repo_permissions)
+    else
+      raise NotAuthorityError.new("Unable to modify permissions: Not in authoritative mode!")
+    end
+  end
+  
+  # Gets a list of users with AT LEAST the provided permissions.
+  # Returns nil if there aren't any.
+  def get_users(permissions)
+    if svn_auth_file_checks() # do basic file checks
+      repo_permissions = get_repo_permissions_from_file() # get current permissions from file
+      result_list = []
+      repo_permissions.each do |user, perm|
+        if translate_perms_from_file(perm) >= permissions
+          result_list.push(user)
+        end
+      end
+      if !result_list.empty?
+        return result_list
+      else
+        return nil
+      end
+    end
+  end
+  
+  # Gets permissions of a particular user
+  def get_permissions(user_id)
+    if svn_auth_file_checks() # do basic file checks
+      repo_permissions = get_repo_permissions_from_file()
+      if !repo_permissions.key?(user_id)
+        raise UserNotFound.new(user_id + " not found")
+      end
+        return translate_perms_from_file(repo_permissions[user_id])
+      end
+  end
+  
+  # Set permissions for a given user
+  def set_permissions(user_id, permissions)
+    if @repos_admin # Are we admin?
+      repo_permissions = get_repo_permissions_from_file() # get current permissions from file
+      if !repo_permissions.key?(user_id)
+        raise UserNotFound.new(user_id + " not found")
+      end
+      svn_permissions = translate_to_svn_perms(permissions)
+      repo_permissions[user_id] = svn_permissions
+      # write new permissions to file
+      return write_repo_permissions_to_auth_file(repo_permissions)
+    else
+      raise NotAuthorityError.new("Unable to modify permissions: Not in authoritative mode!")
+    end
+  end
+  
+  # Delete user from access list 
+  def remove_user(user_id)
+    if @repos_admin # Are we admin?
+      repo_permissions = get_repo_permissions_from_file()
+      if !repo_permissions.key?(user_id)
+        raise UserNotFound.new(user_id + " not found")
+      end
+      repo_permissions.delete(user_id) # delete user_id
+      # write new permissions to file
+      return write_repo_permissions_to_auth_file(repo_permissions)
+    else
+      raise NotAuthorityError.new("Unable to modify permissions: Not in authoritative mode!")
+    end
+  end
   
   ####################################################################
   ##  The following stuff is semi-private. As a general rule don't use
@@ -344,7 +427,122 @@ class SubversionRepository < Repository::AbstractRepository
     end
     return txn
   end
-end
+  
+  # Parses repository permissions from @repos_auth_file
+  def get_repo_permissions_from_file()
+    if @repos_admin && ( !File.exist?(@repos_auth_file) || File.zero?(@repos_auth_file) )
+      return {} # we have an empty file, so return the empty hash
+    else
+      u_perm_mapping = {}
+      repo_name = File.basename(@repos_path)
+      file_string = File.read(@repos_auth_file)
+      if /\[#{repo_name}:\/\]([^\[]*)/.match(file_string)
+        perm_string = $1
+        perm_string.strip().split("\n").each do |line|
+          if /\s*(\w+)\s*=\s*(\w+)\s*/.match(line)
+            u_perm_mapping[$1.to_s] = $2.to_s
+          end
+        end
+        return u_perm_mapping
+      else
+        return {} # repo name not found
+      end 
+    end
+  end
+  
+  # Helper method to translate internal permissions to Subversion
+  # permissions
+  def translate_to_svn_perms(permissions)
+    case (permissions)
+      when Repository::Permission::READ
+        return "r"
+      when Repository::Permission::READ_WRITE
+        return "rw"
+      else raise "Unknown permissions"
+    end # end case
+  end
+  
+  # Helper method to translate Subversion permissions to internal
+  # permissions 
+  def translate_perms_from_file(perm_string)
+    case (perm_string)
+      when "r"
+        return Repository::Permission::READ
+      when "rw"
+        return Repository::Permission::READ_WRITE
+      else raise "Unknown permissions"
+    end # end case
+  end
+  
+  # Helper method to check file permissions of svn auth file 
+  def svn_auth_file_checks()
+    if !@repos_admin # if we are not admin, check if files exist
+      if !File.file?(@repos_auth_file)
+        raise FileDoesNotExist.new("'#{@repos_auth_file}' not a file or not existent")
+      end
+      if !File.readable?(@repos_auth_file)
+        raise "File '#{@repos_auth_file}' not readable"
+      end
+    end
+    return true
+  end
+  
+  # Helper method to write new permissions. Expects a hash representing
+  # users <=> svn permissions mapping
+  def write_repo_permissions_to_auth_file(users_permissions)
+    if !File.exist?(@repos_auth_file)
+      File.open(@repos_auth_file, "w") # create file, if not there yet
+    end
+    repo_name = File.basename(@repos_path)
+    file_string = File.read(@repos_auth_file).strip()
+    map_string = perm_mapping_to_svn_authz_string(users_permissions)
+    if /\[#{repo_name}:\/\]([^\[]*)/.match(file_string)
+      file_string = file_string.sub(/(.*)\[#{repo_name}:\/\][^\[]*(.*)/) do
+        # if positional matches (\1,\2, etc) do not capture anything they contain some nasty
+        # non-printable characters, we don't want them written to the file
+        pre_match = "\1"
+        post_match = "\2"
+        pre = ""
+        post = ""
+        pre_match.each_byte do |c|
+          if c >= 32 && c <= 126
+            pre += c.chr # get rid of non-printable chars
+          end
+        end
+        post_match.each_byte do |c|
+          if c >= 32 && c <= 126
+            post += c.chr # get rid of non-printable chars
+          end
+        end
+        pre + map_string + post # result of block
+      end
+    else
+      # repo name not found so append at the end
+      file_string += "\n"+map_string
+    end
+    file_string = file_string.strip() # get rid of leading/trailing white-space
+    # write file
+    auth_file = File.open(@repos_auth_file, "w")
+    retval = (file_string.length() == auth_file.write(file_string))
+    auth_file.close()
+    return retval
+  end
+  
+  # Translates a user <=> permissions mapping to a string corresponding
+  # to Subversions authz file format
+  def perm_mapping_to_svn_authz_string(users_perms)
+    if users_perms.empty?
+      return ""
+    end
+    repo_name = File.basename(@repos_path)
+    result_string = "\n[#{repo_name}:/]\n"
+    users_perms.each do |user, permstr|
+      result_string += "#{user} = #{permstr}\n"
+    end
+    return result_string
+  end
+  
+end # end class SubversionRepository
 
 # Convenience class, so that we can work on Revisions rather
 # than repositories
