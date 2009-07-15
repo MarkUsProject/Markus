@@ -27,6 +27,9 @@ a {
    font-weight: normal;
 }
 
+h2 a, h3 a, h4 a {
+   padding-left: 5px;
+}
 a:hover {
    color: #ee6415;
    text-decoration: none;
@@ -271,6 +274,10 @@ input, .button{
   margin: 5px;
 }
 
+.button{
+  padding: 4px 25px;
+}
+
 select{
    text-transform: capitalize;
    padding: 0 2px;
@@ -280,7 +287,7 @@ select{
    background: none;
 }
 
-input:hover{
+input:hover, .button:hover{
   border-color: #A7B8BE;
   color: #000;
 }
