@@ -7,7 +7,8 @@
 <%# If this member is an inviter%>
 <% if member.membership_status == StudentMembership::STATUSES[:inviter] %>
 <li id="member_inviter">
-   <span class="last_name"><%= h(member.user.last_name) %> </span> <%= h(member.user.first_name) %></li>
+   <span class="last_name"><%= h(member.user.last_name) %> </span> <%=
+h(member.user.first_name) %> (inviter)</li>
 <%# If this member is an accepted member %>
 <% elsif member.membership_status == StudentMembership::STATUSES[:accepted] %>
 <li>
