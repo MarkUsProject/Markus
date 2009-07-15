@@ -764,3 +764,9 @@ th, td{
   right: 0px;
 }
 
+.icon_remove {
+  display: block-inline;
+  text-indent: -9000px;
+  background: no-repeat url('../images/icons/cancel.png');
+}
+

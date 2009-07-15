@@ -2,8 +2,9 @@
 function injectFileInput() {
   var new_file_field = new Element('input', {type: 'file', name: 'new_files[]'});
   var new_file_field_div = new Element('div', {class: 'new_file'});
-  var remove_new_file_field = new Element('a', {href: 'javascript:void(0);'});
-  remove_new_file_field.update('[remove]');
+  var remove_new_file_field = new Element('a', {href: 'javascript:void(0);', alt: 'remove'});
+  remove_new_file_field.update('remove');
+  remove_new_file_field.addClassName('icon_remove');
   remove_new_file_field.observe('click', function(node) {
     $(new_file_field_div).remove();
   });

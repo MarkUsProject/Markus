@@ -13,7 +13,6 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find(params[:id])
     @student = Student.find(session[:uid]) 
     @grouping = @student.accepted_grouping_for(@assignment.id)
-
     if @student.has_pending_groupings_for?(@assignment.id)
       @pending_grouping = @student.pending_groupings_for(@assignment.id) 
     end

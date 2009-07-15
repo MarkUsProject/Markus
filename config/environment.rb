@@ -24,7 +24,7 @@ VALIDATE_FILE       = "#{RAILS_ROOT}/config/dummy_validate.sh"  # bash dummy scr
 # Repository settings
 REPOSITORY_TYPE = "svn"
 REPOSITORY_STORAGE = "/home/svn-repos-root/"
-REPOSITORY_EXTERNAL_SUBMITS_ONLY = true
+REPOSITORY_EXTERNAL_SUBMITS_ONLY = false
 # Base URL for external subversion access
 REPOSITORY_EXTERAL_BASE_URL = "http://luckyluke.red.sandbox/svn"
 $REPOSITORY_SVN_AUTHZ_FILE = "/home/svn-repos-root/svn_authz"   # global constant
