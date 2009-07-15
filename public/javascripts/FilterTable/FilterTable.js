@@ -61,6 +61,9 @@ var FilterTable = Class.create({
     // Default parameters can be overridden...
     this.header_id_prefix = this.set_or_default(params.header_id_prefix, 'FilterTable_header_');
     this.header_class = this.set_or_default(params.header_class, 'FilterTable_header');
+    this.footer_id_prefix = this.set_or_default(params.footer_id_prefix, 'FilterTable_footer_');
+    this.footer_class = this.set_or_default(params.footer_class, 'FilterTable_footer');
+    
     this.sortable_class = this.set_or_default(params.sortable_class, 'FilterTable_sortable');
     this.sorting_by_class = this.set_or_default(params.sorting_by_class, 'FilterTable_sorting_by');
 
@@ -115,7 +118,10 @@ var FilterTable = Class.create({
       if($(this.header_id_prefix + this.current_sort) != null) {
         $(this.header_id_prefix + this.current_sort).removeClassName(this.sorting_by_class);
         $(this.header_id_prefix + this.current_sort).removeClassName(this.sorting_reverse_class);  
-
+      }
+      if($(this.footer_id_prefix + this.current_sort) != null) {
+        $(this.footer_id_prefix + this.current_sort).removeClassName(this.sorting_by_class);
+        $(this.footer_id_prefix + this.current_sort).removeClassName(this.sorting_reverse_class);  
       }
     }
     // We're now sorting by this new header key
@@ -125,6 +131,10 @@ var FilterTable = Class.create({
     if ($(this.header_id_prefix + this.current_sort) != null) {
       $(this.header_id_prefix + sort_by).addClassName(this.sorting_by_class);
     }
+    if ($(this.footer_id_prefix + this.current_sort) != null) {
+      $(this.footer_id_prefix + sort_by).addClassName(this.sorting_by_class);
+    }
+
     
     var sorting_function_key = sort_by;
     
@@ -168,7 +178,7 @@ var FilterTable = Class.create({
   },
   reset_filter_counts: function() {
     this.filter_counts = $H();
-    me = this;
+    var me = this;
     this.filters.each(function(filter) {
       me.filter_counts.set(filter.key, 0);
     });
@@ -186,8 +196,8 @@ var FilterTable = Class.create({
     return this;
   },
   write_rows: function(rows) {
-    rows = $H(rows);
-    me = this;
+    var rows = $H(rows);
+    var me = this;
     rows.each(function(row) {
       me.write_row(row.key, row.value);
     });
@@ -200,8 +210,8 @@ var FilterTable = Class.create({
     return this;
   },
   remove_rows: function(rows) {
-    rows = $A(rows);
-    me = this;
+    var rows = $A(rows);
+    var me = this;
     rows.each(function(id) {
       me.remove_row(id);
     });
@@ -209,7 +219,7 @@ var FilterTable = Class.create({
   // Helper method for render to see if a table_row passes all filters
   pass_filters: function(table_row) {
     try {
-      me = this;
+      var me = this;
       
       // First, recalcuate for each filters count
       this.filters.each(function(filter_data) {
@@ -235,7 +245,7 @@ var FilterTable = Class.create({
   render: function() {
     this.reset_filter_counts();
     this.clear();
-    me = this;
+    var me = this;
     this.table_rows.each(function(table_row) {
       if(me.pass_filters(table_row)) {
         //var row = me.construct_row(table_row);
@@ -249,7 +259,7 @@ var FilterTable = Class.create({
     if($(this.total_count_id) != null) {
       $(this.total_count_id).update(this.table_rows.size());
     }
-    me = this;
+    var me = this;
     this.filter_count_ids.each(function(filter_count_id) {
       if($(filter_count_id.value) != null) {
         $(filter_count_id.value).update(me.filter_counts.get(filter_count_id.key));
@@ -260,7 +270,7 @@ var FilterTable = Class.create({
     return this.row_cache[row_id];
   },
   construct_row_cache: function(table_rows) {
-    me = this;
+    var me = this;
     table_rows.each(function(table_row) {
       me.construct_row(table_row);
     });
@@ -290,7 +300,7 @@ var FilterTable = Class.create({
   },
   // On initialization, this function constructs the table
   construct_table: function() {
-    me = this;
+    var me = this;
     
     var thead_element = new Element('thead');
     var tfoot_element = new Element('tfoot');
@@ -298,20 +308,22 @@ var FilterTable = Class.create({
     
     this.headers.each(function(header_data) {
       var th_element_header = new Element('th', {id: me.header_id_prefix + header_data.key, class: me.header_class }).update(header_data.value.display);
-      
+      var th_element_footer = new Element('th', {id: me.footer_id_prefix + header_data.key, class: me.footer_class} ).update(header_data.value.display);
+           
       if(me.can_sort && header_data.value.sortable) {
         th_element_header.addClassName(me.sortable_class);
+        th_element_footer.addClassName(me.sortable_class);
         if(header_data.key == me.default_sort) {
           th_element_header.addClassName(me.sorting_by_class);
+          th_element_footer.addClassName(me.sorting_by_class);
         }
         th_element_header.observe('click', function() {
           me.click_header(header_data.key);
         });
-      } else {
-        th_element_header
-      }
-            
-      var th_element_footer = new Element('th').update(header_data.value.display);;      
+        th_element_footer.observe('click', function() {
+          me.click_header(header_data.key);
+        });
+      }     
       thead_element.insert({bottom: th_element_header});
       tfoot_element.insert({bottom: th_element_footer});
     });
@@ -349,6 +361,8 @@ var FilterTable = Class.create({
     
     if(this.footer) {
       this.table_id.insert({bottom: tfoot_element});
+    } else {
+      delete tfoot_element
     }
     
   },
