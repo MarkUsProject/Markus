@@ -298,6 +298,10 @@ class SubversionRepository < Repository::AbstractRepository
     return @repos.prop(Repository::SVN_CONSTANTS[prop] || prop.to_s, rev)  
   end
   
+  def __get_file_property(prop, revision_number, path)
+    return @repos.fs.root(revision_number).node_prop(path, Repository::SVN_CONSTANTS[prop])
+  end
+  
   # Not (!) part of the AbstractRepository API:
   # This function is very similar to @repos.fs.history(); however, it's been altered a little
   # to return only an array of revision numbers. This function, in contrast to the original,
@@ -612,7 +616,8 @@ class SubversionRevision < Repository::AbstractRevision
             :path => path,
             :last_modified_revision => last_modified_revision,
             :changed => (last_modified_revision == @revision_number),
-            :user_id => @repo.__get_property(:author, last_modified_revision)
+            :user_id => @repo.__get_property(:author, last_modified_revision),
+            :mime_type => @repo.__get_file_property(:mime_type, last_modified_revision, File.join(path, file_name))
           })
           result[file_name] = new_file
         end

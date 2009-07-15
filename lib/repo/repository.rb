@@ -198,7 +198,7 @@ class RevisionFile
   end
   
   attr_accessor :name, :path, :last_modified_revision, :changed
-  attr_accessor :from_revision, :user_id
+  attr_accessor :from_revision, :user_id, :mime_type
     
 end # end class File
 

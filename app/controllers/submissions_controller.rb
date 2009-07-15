@@ -174,14 +174,15 @@ class SubmissionsController < ApplicationController
       @revision = repo.get_revision(revision_number.to_i)
     end
     begin 
-     file_contents = repo.download_as_string(@revision.files_at_path(File.join(@assignment.repository_folder,path))[params[:file_name]])
+     file = @revision.files_at_path(File.join(@assignment.repository_folder, path))[params[:file_name]]
+     file_contents = repo.download_as_string(file)
     rescue Exception => e
       render :update do |page|
         page.call "alert", e.message
       end
       return
     end
-    send_data file_contents, :disposition => 'inline', :filename => params[:file_name]
+    send_data file_contents, :type => (file.mime_type || 'text'), :disposition => 'inline', :filename => params[:file_name]
  end 
   
   def create_manually

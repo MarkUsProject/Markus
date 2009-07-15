@@ -3,3 +3,5 @@ name="file_revisions[<%=h file_name %>]" value="<%= file.last_modified_revision%
 
 <input id="replace_files[<%=h file_name %>]" name="replace_files[<%=h file_name %>]" type="file" onchange="check_change_of_filename('<%=h file_name %>', this.value.escapeHTML(), this)" <%="disabled" if !@grouping.is_valid? %>/>
 
+<a href="#" onclick="$('replace_files[<%=h file_name %>]').setValue(''); return false;" class="icon_remove">Cancel Replace</a>
+
