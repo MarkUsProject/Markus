@@ -141,6 +141,7 @@ class SubmissionsController < ApplicationController
     if !repo.commit(txn)
       flash[:update_conflicts] = txn.conflicts
     end
+
     redirect_to :action => "file_manager", :id => assignment_id
   end
   
@@ -182,7 +183,7 @@ class SubmissionsController < ApplicationController
       end
       return
     end
-    send_data file_contents, :type => (file.mime_type || 'text'), :disposition => 'inline', :filename => params[:file_name]
+    send_data file_contents, :type => 'text', :disposition => 'inline', :filename => params[:file_name]
  end 
   
   def create_manually

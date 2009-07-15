@@ -62,13 +62,16 @@
  </div>
 <% end %>
 
+
+<%= form_tag( {:action => "update_files", :id => @assignment.id},
+{:multipart => true, :id => 'submit_form'} ) %>
+
 <%= submit_tag I18n.t(:submit), :disabled => !@grouping.is_valid? %>
 <%= link_to I18n.t(:cancel), {:controller => 'submissions', :action =>
 'file_manager'}, :id => @assignment.id, :disabled => !@grouping.is_valid?,
 :class => "button" %>
 
-<%= form_tag( {:action => "update_files", :id => @assignment.id},
-{:multipart => true, :id => 'submit_form'} ) %>
+
 <% if @grouping.is_valid? %>
   <%=link_to_function "Add A New File", "injectFileInput();"%>
 <% end %>

@@ -222,7 +222,9 @@ function configMenu() {
 }
 
 function initMenu() {
-  menu = new Menu('root', 'menu', configMenu);
+  if($('root') != null) {
+    menu = new Menu('root', 'menu', configMenu);
+  }
 }
 
 
