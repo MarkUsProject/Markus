@@ -1,2 +1,10 @@
-Use this README file to introduce your application and point to useful places in the API for learning more.
-Run "rake doc:app" to generate API documentation for your models, controllers, helpers, and libraries.
+This is the API documentation for MarkUs, an online marking tool.
+
+For further information please see:
+	http://www.markusproject.org/
+	
+Tickets and/or bug reports:
+	https://stanley.cdf.toronto.edu/drproject/csc49x/olm_rails/query
+	
+Contact us:
+	markus-users@cs.toronto.edu
