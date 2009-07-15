@@ -49,17 +49,27 @@
        <div class="global_action">
         <span id="loading_list"><%= image_tag("spinner.gif")%> Loading
 list...</span>
-        <select name="bulk_action">
-        <option value=""><%= I18n.t(:bulk_action)%></option>
-        <option value="hide">Hide Students</option>
-        <option value="unhide">Unhide Students</option>
+      <select name="bulk_action" id="bulk_action" onChange="$('bulk_action_2').setValue($(this).getValue());">
+        <option value=""><%= t(:bulk_action)%></option>
+        <option value="hide"><%= t(:hide_students)%></option>
+        <option value="unhide"><%= t(:unhide_students)%></option>
       </select>
-      <%= submit_tag I18n.t(:submit), :id => 'apply_bulk_action', :onclick => "$(this).setValue('Processing...'); $(this).disable();" %>
+      <%= submit_tag t(:submit), :id => 'apply_bulk_action', :onclick => "$(this).setValue('Processing...'); $(this).disable();" %>
       </div>
 
       <table id="students">
 
       </table>
+      
+      <div class="global_action">
+      <select name="bulk_action_2" id="bulk_action_2" onChange="$('bulk_action').setValue($(this).getValue());">
+        <option value=""><%= t(:bulk_action)%></option>
+        <option value="hide"><%= t(:hide_students)%> </option>
+        <option value="unhide"><%= t(:unhide_students) %></option>
+      </select>
+      <%= submit_tag t(:submit), :id => 'apply_bulk_action', :onclick => "$(this).setValue('Processing...'); $(this).disable();" %>
+      </div>
+      
       </form>
   </div>
 </div>

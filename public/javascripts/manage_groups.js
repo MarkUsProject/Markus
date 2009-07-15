@@ -47,3 +47,13 @@ function remove_groupings(grouping_ids_json) {
   });
   groupings_table.resort_rows().render();
 }
+
+function thinking() {
+  $('global_action_form').disable();
+  $('loading_list').show();
+}
+
+function done_thinking() {
+  $('global_action_form').enable();
+  $('loading_list').hide();
+}

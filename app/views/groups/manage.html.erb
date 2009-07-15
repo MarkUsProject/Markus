@@ -205,7 +205,7 @@ document.observe("dom:loaded", function(){
       <% end -%> 
 </div><!-- Notice -->
 
-    <%= form_remote_tag :url => {:controller => "groups", :action => "global_actions", :id => @assignment.id}, :html => {:id => "global_action_form"}%>
+    <%= form_remote_tag :url => {:controller => "groups", :action => "global_actions", :id => @assignment.id}, :html => {:id => "global_action_form"}, :loading => "thinking();", :complete => "done_thinking();"%>
 <div class="clear"></div>
 <div class="colsLeftHeavy">
   <div class="colLeft">
@@ -224,7 +224,7 @@ document.observe("dom:loaded", function(){
       </div>
       <div class="global_action">
         <span id="loading_list"><%= image_tag("spinner.gif") %> Loading List...</span>
-        <%= select_tag "global_actions", options_for_select([["Choose an action", ""], ["Validate", "valid"], ["Invalidate", "invalid"], ["Delete", "delete"], ["Assign Grader(s)", "assign"], ["Unassign Grader(s)", "unassign"]])%>
+        <%= select_tag "global_actions", options_for_select([["Choose an action", ""], ["Validate", "valid"], ["Invalidate", "invalid"], ["Delete", "delete"], ["Assign Grader(s)", "assign"], ["Unassign Grader(s)", "unassign"]]), :onchange => "$('global_actions_2').setValue($(this).getValue());"%>
 	<%= submit_tag "submit", :confirm => t(:confirm_bulk_action), :onclick => "$('submit_type').setValue('global_action');" %>
         <%= hidden_field_tag 'submit_type', 'global_action', :id => 'submit_type' %>
       </div>
@@ -233,6 +233,11 @@ document.observe("dom:loaded", function(){
         <table class="groups" id="groups">
         </table>
       </div><!-- group container -->
+      
+      <div class="global_action">
+        <%= select_tag "global_actions_2", options_for_select([["Choose an action", ""], ["Validate", "valid"], ["Invalidate", "invalid"], ["Delete", "delete"], ["Assign Grader(s)", "assign"], ["Unassign Grader(s)", "unassign"]]), :onClick => "$('global_actions').setValue($(this).getValue());"%>
+	<%= submit_tag "submit", :confirm => t(:confirm_bulk_action), :onchange => "$('submit_type').setValue('global_action');" %>
+      </div>
     </div>
     
   </div> <!-- colLeft -->

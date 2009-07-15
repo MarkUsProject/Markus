@@ -38,3 +38,5 @@ en:
         no_dependency:    "Nothing - It's Unique"
 
     confirm_bulk_action:  "Are you sure you want to perform this bulk action?"
+    hide_students: "Hide Students"
+    unhide_students: "Unhide Students"
