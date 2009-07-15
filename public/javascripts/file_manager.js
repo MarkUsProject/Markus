@@ -3,7 +3,7 @@ function injectFileInput() {
   var new_file_field = new Element('input', {type: 'file', name: 'new_files[]'});
   var new_file_field_div = new Element('div', {class: 'new_file'});
   var remove_new_file_field = new Element('a', {href: 'javascript:void(0);', alt: 'remove'});
-  remove_new_file_field.update('Remove');
+  remove_new_file_field.update('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
   remove_new_file_field.addClassName('icon_remove');
   remove_new_file_field.observe('click', function(node) {
     $(new_file_field_div).remove();
@@ -12,6 +12,7 @@ function injectFileInput() {
   new_file_field_div.insert(new_file_field);
   new_file_field_div.insert(remove_new_file_field);
   $('new_files').insert( {bottom: new_file_field_div});
+  new_file_field.focus();
 }
 
 function check_change_of_filename(file_name, new_file_name, file_input) {
