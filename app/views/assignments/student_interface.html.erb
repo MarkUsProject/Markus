@@ -33,6 +33,12 @@
 
 <div id="title_bar"><h1> Assignment <%= h(sanitize(@assignment.name)) %></h1>
 </div>
+<% if flash[:fail_notice] %>
+  <div class="notice">
+    <%=flash[:fail_notice]%>
+  </div>
+<% end %>
+
 <div class="column_floatLeft">
  <div class="bloc">
   <h2>Submissions</h2>

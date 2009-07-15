@@ -54,7 +54,11 @@ var FilterTable = Class.create({
     // By default, we'll sort by id
     this.default_sort = this.set_or_default(params.default_sort, 'id');
     this.filters = $H(this.set_or_default(params.filters, null));
-        
+    
+    // Filter callbacks
+    this.after_clear_filters = this.set_or_default(params.after_clear_filters, null);
+    this.after_filter_only_by = this.set_or_default(params.after_filter_only_by, null);
+    
     this.sorts = $H(this.set_or_default(params.sorts, null));
     this.default_filters = $A(this.set_or_default(params.default_filters, null));
     
@@ -167,14 +171,30 @@ var FilterTable = Class.create({
     this.current_filters = this.current_filters.without(filter_key);
     return this;
   },
+  get_current_filters: function() {
+    return this.current_filters.clone();
+  },
   // Clear all the filters
   clear_filters: function() {
+    var current_filters = this.get_current_filters();
+    if(this.after_clear_filters != null) {
+      this.after_clear_filters.call(this, current_filters);
+    }
+    this.wipe_out_filters();
+    return this;
+  },
+  wipe_out_filters: function() {
     this.current_filters = $A();
     return this;
   },
   // Only filter by this particular filter_key
   filter_only_by: function(filter_key) {
-    return this.clear_filters().add_filter(filter_key);
+    var current_filters = this.get_current_filters();
+    this.wipe_out_filters().add_filter(filter_key);
+    if(this.after_filter_only_by != null) {
+      this.after_filter_only_by.call(this, current_filters, filter_key);
+    }
+    return this;
   },
   reset_filter_counts: function() {
     this.filter_counts = $H();
@@ -353,7 +373,6 @@ var FilterTable = Class.create({
 
       select_all_bottom.observe('click', select_all_function);
 
-      
     }
 
     this.table_id.insert({top: thead_element});

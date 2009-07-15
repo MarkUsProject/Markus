@@ -211,16 +211,16 @@ document.observe("dom:loaded", function(){
   <div class="colLeft">
     <div class="wrapLeft">
       <div id="toggle_actions">
-       <%= link_to_function "Show All (<span id=\"all_groupings_count\"></span>)", "filter('none')" %>
+       <%= link_to_function "Show All (<span id=\"all_groupings_count\"></span>)", "filter('none')", :id => "filter_link_none" %>
 	|
-        <%= link_to_function "Valid (<span id=\"valid_groupings_count\"></span>)", "filter('validated')" %>
+        <%= link_to_function "Valid (<span id=\"valid_groupings_count\"></span>)", "filter('validated')", :id => "filter_link_validated" %>
 
 	|
-        <%= link_to_function "Not valid (<span id=\"invalid_groupings_count\"></span>)", "filter('unvalidated')"%>
+        <%= link_to_function "Not valid (<span id=\"invalid_groupings_count\"></span>)", "filter('unvalidated')", :id => "filter_link_unvalidated"%>
 	|
-        <%= link_to_function "Assigned (<span id=\"assigned_groupings_count\"></span>)", "filter('assigned')"%>
+        <%= link_to_function "Assigned (<span id=\"assigned_groupings_count\"></span>)", "filter('assigned')", :id => "filter_link_assigned"%>
 	|
-        <%= link_to_function "Not assigned (<span id=\"unassigned_groupings_count\"></span>)", "filter('unassigned')"%>
+        <%= link_to_function "Not assigned (<span id=\"unassigned_groupings_count\"></span>)", "filter('unassigned')", :id => "filter_link_unassigned" %>
       </div>
       <div class="global_action">
         <span id="loading_list"><%= image_tag("spinner.gif") %> Loading List...</span>

@@ -137,13 +137,14 @@ class AssignmentsController < ApplicationController
   def new
     @assignments = Assignment.all
     if !request.post?
-      render :action => 'new', :layout => 'no_menu_header'
+      render :action => 'new'
       return
     end
     @assignment = Assignment.new(params[:assignment])
     @assignment.transaction do
+
       if !@assignment.save
-        render :action => :new, :layout => 'no_menu_header'
+        render :action => :new
         return
       end
       if params[:assignment_files]
@@ -272,10 +273,14 @@ class AssignmentsController < ApplicationController
       flash[:fail_notice] = "This student doesn't exist."
       return
     end
+    if @invited == @student
+      flash[:fail_notice] = "You cannot invite yourself to your own group"
+      return
+    end
 
     groupings = @invited.pending_groupings_for(@assignment.id)
     if @invited.hidden
-      flash[:fail_notice] = "Could not invite this student - this student's account has been disable."
+      flash[:fail_notice] = "Could not invite this student - this student's account has been disabled."
       return
     end
     if !@grouping.pending?(@invited)
