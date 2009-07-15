@@ -27,7 +27,7 @@
          id="sub_menu_active"
          <%end%>>
 	 <% if @current_user.student? %>
-            <%= link_to I18n.t(:rules), :controller => 'assignments', :action =>
+            <%= link_to I18n.t(:properties), :controller => 'assignments', :action =>
 	 'student_interface', :id => @assignment.id %>
 
 	 <% elsif @current_user.ta? %>  <%= link_to I18n.t(:rules), :controller => 'assignments', :action =>

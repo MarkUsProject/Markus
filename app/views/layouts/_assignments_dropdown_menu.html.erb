@@ -1,3 +1,9 @@
+<% if @current_user.admin? %>
+    <li class="level2"><%= link_to I18n.t(:create_new), :controller =>
+'assignments', :action => 'new' %>
+      </li>
+<% end %>
+
 <% Assignment.all.each do |assignment|%>
   <% if assignment != @assignment %>
       <% if controller.controller_name == "assignments" &&
