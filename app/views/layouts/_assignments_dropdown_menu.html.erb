@@ -1,15 +1,15 @@
 <% Assignment.all.each do |assignment|%>
   <% if assignment != @assignment %>
-    <% if @current_user.student? %>
-    <li class="level2">
-      <li class="level2"><%= link_to h(assignment.name), :controller =>
-'assignments', :action => 'student_interface', :id => assignment.id %>
-    </li>
-
-    <% elsif controller.controller_name == "assignments" &&
+      <% if controller.controller_name == "assignments" &&
     controller.action_name == "index"%>
+     <% if @current_user.student? %>
+       <li class="level2"><%= link_to h(assignment.name), :controller =>
+'assignments', :action => 'student_interface', :id => assignment.id %>
+      </li>
+      <% else %>
   <li class="level2"><%= link_to h(assignment.name), :controller =>
 "assignments", :action => "edit", :id => assignment.id %></li>
+     <% end %>
     <% else %>
       <li class="level2"><%= link_to h(assignment.name), :controller =>
 controller.controller_name, :action => controller.action_name, :id => assignment.id %></li>

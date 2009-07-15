@@ -36,6 +36,19 @@ class AssignmentsController < ApplicationController
       @group = @grouping.group
       # The inviter   
       @inviter = @grouping.inviter
+
+       # We search for information on the submissions
+       path = '/'
+       repo = Repository.create(REPOSITORY_TYPE).open(File.join(REPOSITORY_STORAGE, @grouping.group.repository_name))
+       @revision  = repo.get_latest_revision
+       @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, path))
+       @files =   @revision.files_at_path(File.join(File.join(@assignment.repository_folder, path)))
+       @missing_assignment_files = []
+       @assignment.assignment_files.each do |assignment_file|
+         if !@revision.path_exists?(File.join(@assignment.repository_folder, assignment_file.filename))
+	   @missing_assignment_files.push(assignment_file)
+	end
+      end
     end
   end
 

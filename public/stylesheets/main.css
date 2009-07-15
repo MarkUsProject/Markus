@@ -86,11 +86,15 @@ Unicode", Verdana;
    color: #464646;
 }
 
-#title_bar input, #title_bar a{
+#title_bar input, #title_bar a, .sub_title a{
   background: none;
   color: #003399;
   border: none;
   font-size: 0.5em;
+}
+
+.sub_title a {
+   font-size: 0.7em;
 }
 
 #title_bar input:hover, #title_bar a:hover{
@@ -99,6 +103,9 @@ Unicode", Verdana;
   border: none;
 }
 
+#new_files input{
+    width: 300px;
+}
 
 /* menu */
 #menu{
@@ -280,7 +287,7 @@ input:focus{
 }
 
 
-label{
+label, .label{
    display: inline-block;
    min-width: 150px;
    margin-bottom: 15px;
@@ -437,6 +444,12 @@ tr:hover .table_menu{
 .fail-no-img {
    width: 250px;
    font-size: 80%;
+}
+
+/* Modal windows*/
+
+#control_overlay{
+  background: #000;
 }
 
 #create_group_dialog {
@@ -649,6 +662,74 @@ tr:hover .table_menu{
 .membership_status_pending{
    font-style: italic;
 }
+
+span.info_red, span.info {
+   font-family: "Tahoma";
+   font-size: 1em;
+   text-transform: capitalize;
+   line-height: 1.5em;
+}
+
+span.info_red{
+  color: #ee6415;
+}
+
+span.info_number{
+   font-size: 1.5em;
+   font-family: "Georgia";
+   margin-right: 5px;
+   line-height: 1.5em;
+
+}
+
+span.title{
+  font-family: Georgia;
+  display: block;
+  font-style: italic;
+  color: #464646;
+  font-size: 0.9em;
+  width: 100%;
+  border-bottom: 1px solid #ccc;
+  padding-left: 5px;
+  margin-bottom: 5px;
+
+}
+/* Submission's file_manager*/
+th#FilterTable_header_filename{
+  width: 30%;
+}
+
+th#FilterTable_header_revision_number{
+  width: 20%;
+}
+
+th#FilterTable_header_revision_by{
+  width: 20%;
+}
+
+th#FilterTable_header_filename:hover,
+th#FilterTable_header_revision_number:hover,
+th#FilterTable_header_revision_by:hover
+{
+  cursor: pointer;
+  color: #000;
+}
+
+th.FilterTable_sorting_by{
+  background: right url(../images/asc.png) no-repeat;
+  color: #000;
+}
+
+th.FilterTable_sorting_by_revers{
+  background: right url(../images/dsc.png) no-repeat;
+  color: #000;
+}
+
+
+th, td{
+    padding-left: 5px;
+ }
+
 
 /* floating object */
 .column_floatRight{

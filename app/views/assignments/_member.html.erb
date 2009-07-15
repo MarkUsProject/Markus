@@ -17,10 +17,9 @@
 <li class="membership_status_pending">
    <span class="last_name"><%= h(member.user.last_name) %> </span> <%= h(member.user.first_name) %> (invited)
    <% if grouping.is_inviter?(@current_user) %>
-     <%= link_to_remote I18n.t(:delete), :url => {:action => 'disinvite_member', :id => @assignment.id, :membership =>  member.id},
-     :html => {:title => "Disinvite this member", :class => "delete"},
-     :confirm => "This will disinvite this member. Are you sure you want
-     to do this?"
+     <%= link_to_remote I18n.t(:cancel), :url => {:action => 'disinvite_member', :id => @assignment.id, :membership =>  member.id},
+     :html => {:title => "Cancel invitation", :class => "delete"},
+     :confirm => "Are you sure you want to cancel this invitation?"
      %>
    <% end %>
 </li>
