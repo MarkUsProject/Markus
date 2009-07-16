@@ -37,13 +37,13 @@ class MainController < ApplicationController
     # authenticate user
     if User.authenticated?(params[:user_login], params[:user_password])
       # sets this user as logged in if login is a user in MarkUs
-      found_user = User.authorize(params[:user_login]) # if not nil, user authorized
+      found_user = User.authorize(params[:user_login]) # if not nil, user authorized to enter MarkUs
+      if found_user.nil?
+        flash[:login_notice] = "Username not found."
+        return
+      end
     else
       flash[:login_notice] = "Username/password contains illegal characters."
-      return
-    end
-    if found_user.nil?
-      flash[:login_notice] = "Username and password do not match."
       return
     end
     
