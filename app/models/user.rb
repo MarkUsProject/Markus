@@ -31,27 +31,26 @@ class User < ActiveRecord::Base
   
   # Authentication------------------------------------------------------
   
-  # Verifies that the user has a registered login and that its 
-  # password corresponds to the given login.
+  # Verifies if user is allowed to enter MarkUs
   # Returns user object representing the user with the given login.
-  def self.authenticate(login, password)
-    # call actual method for authentication before 
-    # fetching login in database to see if it is registered.
-    # find_by_user_name(login) if verify(login, password) # Windows can't run bash
+  def self.authorize(login)
+    # fetch login in database to see if it is registered.
     find_by_user_name(login)
   end
   
   # Authenticates login against its password 
-  # through a script validate file.
-  def self.verify(login, password)
-    pipe = IO.popen(VALIDATE_FILE, "w+")
-    
-    # TODO sanitize
-    args = %{#{login}\n#{password}\n}
-    pipe.write(args)
-    pipe.close
-    
-    return $?.exitstatus == 0
+  # through a script specified by VALIDATE_FILE
+  def self.authenticated?(login, password)
+    # Do not allow the following characters in usernames/passwords
+    regexp_string = Regexp.escape("\n\t '\$`();:/[]{}|><" + '"')
+    not_allowed_regexp = Regexp.new(/[#{regexp_string}]+/)
+    if !(not_allowed_regexp.match(login) || not_allowed_regexp.match(password))
+      pipe = IO.popen("#{VALIDATE_FILE} '#{login}' '#{password}'", "r")
+      pipe.close
+      return $?.exitstatus == 0
+    else
+      return false
+    end
   end
   
   

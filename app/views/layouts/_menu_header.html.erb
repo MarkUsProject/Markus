@@ -5,7 +5,7 @@
   <div id="admin_task">
     <ul>
        <li>
-           <%= link_to "Home", :controller => 'checkmark', :action =>
+           <%= link_to "Home", :controller => 'main', :action =>
 	   'index' %>
        </li>
        <li <% if controller.controller_name == 'assignments' %>
@@ -31,7 +31,7 @@ id="active" <% end %> ><%= link_to "Submissions", :controller =>
   <div id="ta_task">
   <ul>
      <li>
-           <%= link_to "Home", :controller => 'checkmark', :action =>
+           <%= link_to "Home", :controller => 'main', :action =>
 	   'index' %>
        </li>
 
@@ -44,7 +44,7 @@ id="active" <% end %> ><%= link_to "Submissions", :controller =>
   <div id="student_task">
   <ul>
        <li>
-           <%= link_to "Home", :controller => 'checkmark', :action =>
+           <%= link_to "Home", :controller => 'main', :action =>
 	   'index' %>
        </li>
 

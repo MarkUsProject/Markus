@@ -36,13 +36,13 @@ ActionController::Routing::Routes.draw do |map|
   # See how all your routes lay out with "rake routes"
 
   # Install the default routes as the lowest priority.
-  map.root :controller => "checkmark"
-  map.connect 'checkmark', :controller => 'checkmark'
-  map.connect 'checkmark/login', :controller => 'checkmark', :action => 'login'
-  map.connect 'checkmark/logout', :controller => 'checkmark', :action => 'logout'
+  map.root :controller => "main"
+  map.connect 'main', :controller => 'main'
+  map.connect 'main/login', :controller => 'main', :action => 'login'
+  map.connect 'main/logout', :controller => 'main', :action => 'logout'
 
-  map.connect 'checkmark/tas', :controller => 'tas'
-  map.connect 'checkmark/ta_assignments', :controller => 'ta_assignments'
+  map.connect 'main/tas', :controller => 'tas'
+  map.connect 'main/ta_assignments', :controller => 'ta_assignments'
   
   # map filenames to a nice-looking url
   #map.connect 'checkmark/submissions/view/:id/:filename', 
@@ -50,7 +50,7 @@ ActionController::Routing::Routes.draw do |map|
 
   # append xml to the classlist link
   
-  map.connect 'checkmark/:controller/:action/:id'
+  map.connect 'main/:controller/:action/:id'
 
   # map.connect ':controller/:action/:id'
   # map.connect ':controller/:action/:id.:format'

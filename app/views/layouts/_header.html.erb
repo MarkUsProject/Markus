@@ -1,7 +1,7 @@
 <div id="header">  
   <div id="user_info">
     Logged in as <span id="user_name"><b><%=h @current_user.user_name %></b></span> | 
-    <%= link_to "Log out", :controller => 'checkmark', :action => 'logout' %>
+    <%= link_to "Log out", :controller => 'main', :action => 'logout' %>
   </div>
   <div id="working" style="display:none;">
     Working...

@@ -59,10 +59,10 @@ module SessionHandler
       if request.xhr?
         session[:redirect_uri] = request.referer
         render :update do |page|
-          page.redirect_to :controller => 'checkmark', :action => 'login'
+          page.redirect_to :controller => 'main', :action => 'login'
         end
       else
-        redirect_to :controller => 'checkmark', :action => 'login'
+        redirect_to :controller => 'main', :action => 'login'
       end
     end
   end

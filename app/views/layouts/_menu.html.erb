@@ -2,9 +2,9 @@
 
 <div id="menu">
 <% if @current_user.admin? %>
-       <span<% if controller.controller_name == 'checkmark'%>
+       <span<% if controller.controller_name == 'main'%>
       id="menu_active"<%end%>>
-          <%= link_to 'Dashboard', :controller => 'checkmark'%>
+          <%= link_to 'Dashboard', :controller => 'main'%>
       </span>
 
       <span <% if controller.controller_name == 'assignments' or

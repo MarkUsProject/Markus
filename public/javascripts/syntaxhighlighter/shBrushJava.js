@@ -9,7 +9,6 @@ dp.sh.Brushes.Java = function()
 			'transient try void volatile while';
 
 	this.regexList = [
-    	{ regex: new RegExp('asdf[\\s\\S]*?fdsa', 'gm'),                        css: 'checkmark' },     // checkmark
 		{ regex: dp.sh.RegexLib.SingleLineCComments,							css: 'comment' },		// one line comments
 		{ regex: dp.sh.RegexLib.MultiLineCComments,								css: 'comment' },		// multiline comments
 		{ regex: dp.sh.RegexLib.DoubleQuotedString,								css: 'string' },		// strings
