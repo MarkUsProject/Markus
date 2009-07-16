@@ -435,22 +435,20 @@ tr.student_hidden{
 }
 
 /* flash messages, & warning */
-.error, .warning{
-  text-align: center;
+.error{
+  text-align: left;
   border: 1px solid #E6DB55;
-  padding: 3px;
-  -moz-border-radius: 9px;
-  -webkit-border-radius: 9px;
-  background: #FFFFE0;
+  padding: 3px 30px;
+  background: #FFFFE0 url(../images/icons/exclamation.png) no-repeat;
+  background-position: 7px;
+
 }
 
-.notice {
-  text-align: center;
+.notice, .warning {
   border: 1px solid #E6DB55;
-  padding: 3px;
-  -moz-border-radius: 9px;
-  -webkit-border-radius: 9px;
-  background: #FFFFE0;
+  padding: 3px 30px;
+  background: #FFFFE0 url(../images/icons/error.png) no-repeat;
+  background-position: 7px;
 
 }
 
@@ -728,7 +726,7 @@ th#FilterTable_header_filename{
 }
 
 th#FilterTable_header_revision_number{
-  width: 20%;
+  width: 15%;
 }
 
 th#FilterTable_header_revision_by{
@@ -759,6 +757,9 @@ th, td{
     padding-left: 5px;
  }
 
+td a{
+   text-transform: none;
+}
 
 /* floating object */
 .column_floatRight{

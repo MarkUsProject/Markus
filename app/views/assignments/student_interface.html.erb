@@ -43,7 +43,7 @@
  <div class="bloc">
   <h2>Submissions</h2>
     <div class="bloc_content">
-  <% if !@grouping.nil? and @grouping.has_submission?%>
+  <% if !@grouping.nil? %>
     <% if !@grouping.is_valid? %>
       <p class="notice">Your group is not valid. You can't submit
       anything.</p>
@@ -167,6 +167,12 @@
               <p> The groups must be from <b><%= h(@assignment.group_min)%></b>
 	      to <b><%= h(@assignment.group_max)%></b> people.
 	      </p>
+	      <% if @assignment.student_form_groups %>
+	      <p> Students are allowed to form groups.</p>
+	      <% else%>
+              <p> Instructors will form groups.</p>
+	      <% end %>
+
             </div>
  </div>    
 </div>
