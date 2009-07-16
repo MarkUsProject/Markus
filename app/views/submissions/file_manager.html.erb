@@ -63,28 +63,30 @@
   </div>
 <% end %>
 
-<%= form_tag( {:action => "update_files", :id => @assignment.id}, {:multipart => true, :id => 'submit_form'} ) %>
-<div>
-<div class="global_action_left" >
+<%= form_tag( {:action => "update_files", :id => @assignment.id}, {:multipart => true, :id => 'submit_form'} ) unless !@grouping.is_valid? %>
 <% if @grouping.is_valid? %>
+<div class="global_action_left" >
   <%=button_to_function "Add A New File", "injectFileInput();"%>
-<% end %>
 </div>
+<% end %>
 
 <div class="global_action">
 <span id="loading_list"><%= image_tag("spinner.gif") %> Loading list...
 </span>
+<% if @grouping.is_valid? %>
 <%= submit_tag I18n.t(:submit), :disabled => !@grouping.is_valid? %>
 <%= link_to I18n.t(:cancel), {:controller => 'submissions', :action =>
 'file_manager'}, :id => @assignment.id, :disabled => !@grouping.is_valid?,
 :class => "button", :confirm => "Are you sure you want to discard your changes?" %>
+<% end %>
 </div>
-</div>
+
 <div class="clear"></div>
 
   <table class="files" id="files">
   </table>
 
+<% if @grouping.is_valid? %>
 <div class="global_action">
 <%= submit_tag I18n.t(:submit), :disabled => !@grouping.is_valid? %>
 <%= link_to I18n.t(:cancel), {:controller => 'submissions', :action =>
@@ -92,6 +94,7 @@
 :class => "button" %>
 </div>
 </form>
+<% end %>
 
 </div>
 
