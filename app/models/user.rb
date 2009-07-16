@@ -42,10 +42,16 @@ class User < ActiveRecord::Base
   # through a script specified by VALIDATE_FILE
   def self.authenticated?(login, password)
     # Do not allow the following characters in usernames/passwords
-    regexp_string = Regexp.escape("\n\t '\$`();:/[]{}|><" + '"')
+    # Right now, this is \n and \0 only, since username and password
+    # are delimited by \n and C programs use \0 to terminate strings
+    regexp_string = Regexp.escape("\n\0")
     not_allowed_regexp = Regexp.new(/[#{regexp_string}]+/)
     if !(not_allowed_regexp.match(login) || not_allowed_regexp.match(password))
-      pipe = IO.popen("#{VALIDATE_FILE} '#{login}' '#{password}'", "r")
+      # Open a pipe and write to stdin of the program specified by VALIDATE_FILE. 
+      # We could read something from the programs stdout, but there is no need
+      # for that at the moment (you would do it by e.g. pipe.readlines)
+      pipe = IO.popen(VALIDATE_FILE, "w+")
+      pipe.puts("#{login}\n#{password}") # write to stdin of VALIDATE_FILE
       pipe.close
       return $?.exitstatus == 0
     else

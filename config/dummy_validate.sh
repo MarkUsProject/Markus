@@ -2,21 +2,20 @@
 
 ########################################################################
 # Basic structure as to how a password validation script might look like
+# The preferred way is to write a small C program for this though.
 ########################################################################
-# Username is passed in as the first argument, the users
-# password as a second argument.
 
-user="$1"
-shift
-pw="$1"
-shift
-
-# Check if 2 params have been passed, only
-if [ "${1}_" != "_" ]; then
+# Check that no username/passwords are passed on the command line
+if [ "$#" -ne 0 ]; then
 	# HACK-ALARM?!
-	echo "MarkUs passed a third argument, something's smelly here!" 1>&2
+	echo "usage: $0" 1>&2
 	exit 1
 fi
+
+# Username is passed on the first line from stdin, the users
+# password as the second line
+read user
+read password
 
 
 ########################################################################

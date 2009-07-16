@@ -39,7 +39,10 @@ class MainController < ApplicationController
       # sets this user as logged in if login is a user in MarkUs
       found_user = User.authorize(params[:user_login]) # if not nil, user authorized to enter MarkUs
       if found_user.nil?
-        flash[:login_notice] = "Username not found."
+        # This message actually means "Username not found", but it's from a security-perspective
+        # not a good idea to report this to the outside world. It makes it easier for attempted break-ins
+        # if one can distinguish between existent and non-existent user.
+        flash[:login_notice] = "Login failed." # this is actually a "Username not found."
         return
       end
     else
@@ -62,7 +65,7 @@ class MainController < ApplicationController
       # redirect to last visited page or to main page
       redirect_to(uri || { :action => 'index' })
     else
-      flash[:login_notice] = "Username and password do not match."
+      flash[:login_notice] = "Login failed."
     end
   end
   
