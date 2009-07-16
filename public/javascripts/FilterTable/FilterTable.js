@@ -55,6 +55,15 @@ var FilterTable = Class.create({
     this.default_sort = this.set_or_default(params.default_sort, 'id');
     this.filters = $H(this.set_or_default(params.filters, null));
     
+    // If we want extra TBODY elements above the main TBODY that FilterTable
+    // uses, supply those IDs here, in order
+    this.above_tbodys = $A(this.set_or_default(params.above_tbodys, null));
+
+    // If we want extra TBODY elements above the main TBODY that FilterTable
+    // uses, supply those IDs here, in order
+    this.below_tbodys = $A(this.set_or_default(params.below_tbodys, null));
+
+    
     // Filter callbacks
     this.after_clear_filters = this.set_or_default(params.after_clear_filters, null);
     this.after_filter_only_by = this.set_or_default(params.after_filter_only_by, null);
@@ -306,14 +315,17 @@ var FilterTable = Class.create({
         tr_element.insert({top: td_element});
       }
       this.headers.each(function(column_header) {
-        var column_id = column_header.key;    
+        var column_id = column_header.key;
         var td_element = new Element('td').update(row[column_id]);
+        if(column_header.value['row_class'] != undefined) {
+          td_element.addClassName(column_header.value['row_class']);
+        }
         tr_element.insert({bottom: td_element});
       }); 
     }
     catch (e) {
       //TODO: More helpful error
-      alert("Something went wrong!");
+      alert("Something went wrong: " + e);
     }
     this.row_cache[row.id] = tr_element;
     return tr_element;
@@ -376,7 +388,16 @@ var FilterTable = Class.create({
     }
 
     this.table_id.insert({top: thead_element});
+    
+    this.above_tbodys.each(function(tbody_id) {
+        me.table_id.insert({bottom: new Element('tbody', {id: tbody_id})});
+    });
+    
     this.table_id.insert({bottom: this.table_body});
+    
+    this.below_tbodys.each(function(tbody_id) {
+        me.table_id.insert({bottom: new Element('tbody', {id: tbody_id})});
+    });
     
     if(this.footer) {
       this.table_id.insert({bottom: tfoot_element});

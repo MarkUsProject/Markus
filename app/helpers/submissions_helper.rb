@@ -50,8 +50,10 @@ module SubmissionsHelper
 
     table_row[:filename] = render_to_string :partial =>
     "submissions/table_row/filename", :locals => {:file => file,:file_name => file_name}
+    
+    table_row[:last_modified_date] = render_to_string :partial => "submissions/table_row/last_modified_date", :locals => {:file => file}
 
-    table_row[:revision_number] = render_to_string :partial => "submissions/table_row/revision_number", :locals => {:file => file,:file_name => file_name}
+    table_row[:last_modified_date_unconverted] = render_to_string :partial => "submissions/table_row/last_modified_date_for_js", :locals => {:file => file}
 
     table_row[:revision_by] = render_to_string :partial => "submissions/table_row/revision_by", :locals => {:file => file,:file_name => file_name}
 

@@ -1,17 +1,24 @@
   // add new row of input 
 function injectFileInput() {
   var new_file_field = new Element('input', {type: 'file', name: 'new_files[]'});
-  var new_file_field_div = new Element('div', {class: 'new_file'});
-  var remove_new_file_field = new Element('a', {href: 'javascript:void(0);', alt: 'remove'});
-  remove_new_file_field.update('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
-  remove_new_file_field.addClassName('icon_remove');
-  remove_new_file_field.observe('click', function(node) {
-    $(new_file_field_div).remove();
+  var new_file_field_row = new Element('tr');
+  var new_file_field_input_column = new Element('td', {colspan: 4});
+  
+  var remove_new_file_input = new Element('input', {type: 'checkbox'});
+  
+  remove_new_file_input.observe('change', function(node) {
+    $(new_file_field_row).remove();
   });
   
-  new_file_field_div.insert(new_file_field);
-  new_file_field_div.insert(remove_new_file_field);
-  $('new_files').insert( {bottom: new_file_field_div});
+  var remove_new_file_field_column = new Element('td');
+  remove_new_file_field_column.insert(remove_new_file_input);
+  remove_new_file_field_column.addClassName('delete_row');
+  
+  new_file_field_input_column.insert(new_file_field);
+  new_file_field_row.insert(new_file_field_input_column);
+  new_file_field_row.insert(remove_new_file_field_column);
+  
+  $('add_file_tbody').insert( {bottom: new_file_field_row});
   new_file_field.focus();
 }
 
