@@ -44,8 +44,7 @@ class User < ActiveRecord::Base
     # Do not allow the following characters in usernames/passwords
     # Right now, this is \n and \0 only, since username and password
     # are delimited by \n and C programs use \0 to terminate strings
-    regexp_string = Regexp.escape("\n\0")
-    not_allowed_regexp = Regexp.new(/[#{regexp_string}]+/)
+    not_allowed_regexp = Regexp.new(/[\n\0]+/)
     if !(not_allowed_regexp.match(login) || not_allowed_regexp.match(password))
       # Open a pipe and write to stdin of the program specified by VALIDATE_FILE. 
       # We could read something from the programs stdout, but there is no need
