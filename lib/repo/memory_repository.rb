@@ -248,6 +248,7 @@ class MemoryRepository < Repository::AbstractRepository
       :name => File.basename(full_path),
       :path => File.dirname(full_path),
       :last_modified_revision => rev.revision_number,
+      :last_modified_date => Time.now,
       :changed => true,
       :user_id => rev.user_id
     })
@@ -266,7 +267,8 @@ class MemoryRepository < Repository::AbstractRepository
       :path => File.dirname(full_path),
       :last_modified_revision => rev.revision_number,
       :changed => true,
-      :user_id => rev.user_id
+      :user_id => rev.user_id,
+      :last_modified_date => Time.now
     })
     rev.__add_file(file, content)
     return rev
@@ -319,7 +321,8 @@ class MemoryRepository < Repository::AbstractRepository
           :path => object.path,
           :last_modified_revision => object.last_modified_revision,
           :changed => false, # for copies, set this to false
-          :user_id => object.user_id
+          :user_id => object.user_id,
+          :last_modified_date => object.last_modified_date
         })
         new_revision.files_content[new_object.to_s] = original.files_content[object.to_s]
       else
@@ -327,6 +330,7 @@ class MemoryRepository < Repository::AbstractRepository
           :name => object.name,
           :path => object.path,
           :last_modified_revision => object.last_modified_revision,
+          :last_modified_date => object.last_modified_date,
           :changed => false, # for copies, set this to false
           :user_id => object.user_id
         })

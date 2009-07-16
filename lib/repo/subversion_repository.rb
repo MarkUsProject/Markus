@@ -297,11 +297,25 @@ class SubversionRepository < Repository::AbstractRepository
   def __get_property(prop, rev=nil)
     return @repos.prop(Repository::SVN_CONSTANTS[prop] || prop.to_s, rev)  
   end
-  
-  def __get_file_property(prop, revision_number, path)
+
+  # Not (!) part of the AbstractRepository API:
+  # Returns
+  #    prop
+  # of Subversion repository file
+ 
+  def __get_file_property(prop, path, revision_number)
     return @repos.fs.root(revision_number).node_prop(path, Repository::SVN_CONSTANTS[prop])
   end
-  
+
+  # Not (!) part of the AbstractRepository API:
+  # Returns
+  #    The last modified date
+  # of a Subversion repository file or directory
+
+  def __get_node_last_modified_date(path, revision_number)
+    return @repos.fs.root(revision_number).stat(path).time2
+  end
+
   # Not (!) part of the AbstractRepository API:
   # This function is very similar to @repos.fs.history(); however, it's been altered a little
   # to return only an array of revision numbers. This function, in contrast to the original,
@@ -580,10 +594,12 @@ class SubversionRevision < Repository::AbstractRevision
     raw_contents.each do |file_name, type|
       if type == :directory
         last_modified_revision = @repo.__get_history(File.join(path, file_name)).last
+        last_modified_date = @repo.__get_node_last_modified_date(File.join(path, file_name), @revision_number)
         new_directory = Repository::RevisionDirectory.new(@revision_number, {
           :name => file_name,
           :path => path,
           :last_modified_revision => last_modified_revision,
+          :last_modified_date => last_modified_date,
           :changed => (last_modified_revision == @revision_number),
           :user_id => @repo.__get_property(:author, last_modified_revision)
         })
@@ -608,6 +624,7 @@ class SubversionRevision < Repository::AbstractRevision
     raw_contents = @repo.__get_files(path, @revision_number)
     raw_contents.each do |file_name, type|
       if type == :file
+        last_modified_date = @repo.__get_node_last_modified_date(File.join(path, file_name), @revision_number)
         last_modified_revision = @repo.__get_history(File.join(path, file_name), nil, @revision_number).last
 
         if(!only_changed || (last_modified_revision == @revision_number))
@@ -617,7 +634,8 @@ class SubversionRevision < Repository::AbstractRevision
             :last_modified_revision => last_modified_revision,
             :changed => (last_modified_revision == @revision_number),
             :user_id => @repo.__get_property(:author, last_modified_revision),
-            :mime_type => @repo.__get_file_property(:mime_type, last_modified_revision, File.join(path, file_name))
+            :mime_type => @repo.__get_file_property(:mime_type, File.join(path, file_name), last_modified_revision),
+            :last_modified_date => last_modified_date
           })
           result[file_name] = new_file
         end

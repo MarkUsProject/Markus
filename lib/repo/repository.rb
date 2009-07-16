@@ -191,6 +191,7 @@ class RevisionFile
     @name = args[:name]
     @path = args[:path]
     @last_modified_revision = args[:last_modified_revision]
+    @last_modified_date = args[:last_modified_date]
     @changed = args[:changed]
     @user_id = args[:user_id]
     @mime_type = args[:mime_type]
@@ -198,7 +199,7 @@ class RevisionFile
   end
   
   attr_accessor :name, :path, :last_modified_revision, :changed
-  attr_accessor :from_revision, :user_id, :mime_type
+  attr_accessor :from_revision, :user_id, :mime_type, :last_modified_date
     
 end # end class File
 

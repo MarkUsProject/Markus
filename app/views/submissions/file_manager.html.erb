@@ -7,8 +7,6 @@
 <h1><%= h(sanitize(@assignment.name)) %>: File Manager</h1>
 </div>
 
-<%= form_tag({:action => 'file_manager'}, :method => :get) %>
-
 <div class="wrapLeft">
   <% if flash[:submit_notice] -%>   
      <p class="success"><%= h(flash[:submit_notice]) %> </p>
@@ -18,6 +16,7 @@
 <h2></div>
 
 <div id="directory_selector" <%='style="display:none;"' unless @directories.count > 0 %>>
+<%= form_tag({:action => 'file_manager'}, :method => :get) %>
 <select id="path" name="path" onchange="$(this).form.submit();">
     <option>/</option>
 <% @directories.each do |directory_name, directory| %>
@@ -61,12 +60,21 @@
   </ul>
  </div>
 <% end %>
+<% if flash[:commit_error] %>
+  <div class="warning">
+    <%=flash[:commit_error] %>
+  </div>
+<% end %>
+
+<%= form_tag( {:action => "update_files", :id => @assignment.id}, {:multipart => true, :id => 'submit_form'} ) %>
 <div id="new_files">
 </div>
 <% if @grouping.is_valid? %>
   <%=link_to_function "Add A New File", "injectFileInput();"%>
 <% end %>
 <div>
+
+
 <%= submit_tag I18n.t(:submit), :disabled => !@grouping.is_valid? %>
 <%= link_to I18n.t(:cancel), {:controller => 'submissions', :action =>
 'file_manager'}, :id => @assignment.id, :disabled => !@grouping.is_valid?,

@@ -234,6 +234,26 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       end
     end
     
+    should "be able to get the last_modified_date of a file" do
+      files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
+      add_some_files_helper(@repo, files_to_add) # add some initial files
+      revision = @repo.get_latest_revision
+      
+      files_to_add.each do |file_name|
+        assert_not_nil revision.files_at_path('/')[file_name].last_modified_date
+        assert (revision.files_at_path('/')[file_name].last_modified_date - Time.now) < 1
+      end
+      
+      txn = @repo.get_transaction(TEST_USER)
+      txn.replace('MyClass.java', 'new data', 'text', 1)
+      @repo.commit(txn)
+      
+      new_revision = @repo.get_latest_revision
+      assert_not_nil new_revision.files_at_path('/')['MyClass.java'].last_modified_date
+      assert_not_equal new_revision.files_at_path('/')['MyClass.java'].last_modified_date, revision.files_at_path('/')['MyClass.java'].last_modified_date
+      
+    end
+    
   end # end context
   
   context "A repository with an authorization file specified" do
@@ -426,6 +446,7 @@ end # end class SubversionRepositoryTest
 
 # Test suite for testing proper functioning of 
 # SubversionRevision, an implementation of AbstractRevision
-class SubversionRevisionTest < Test::Unit::TestCase
+
+#class SubversionRevisionTest < Test::Unit::TestCase
   # TODO: Test SubversionRevision here
-end
+#end

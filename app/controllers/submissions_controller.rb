@@ -116,33 +116,42 @@ class SubmissionsController < ApplicationController
     # TODO: change to cdf-id for author-param
     txn = repo.get_transaction(current_user.user_name)
 
-    # delete files marked for deletion
-    delete_files.keys.each do |filename|
-      txn.remove(File.join(assignment_folder, filename), file_revisions[filename])
-    end
+    begin
+      # delete files marked for deletion
+      delete_files.keys.each do |filename|
+        txn.remove(File.join(assignment_folder, filename), file_revisions[filename])
+      end
     
-    # Replace files
-    replace_files.each do |filename, file_object|
-      txn.replace(File.join(assignment_folder, filename), file_object.read, file_object.content_type, file_revisions[filename])
-    end
+      # Replace files
+      replace_files.each do |filename, file_object|
+        txn.replace(File.join(assignment_folder, filename), file_object.read, file_object.content_type, file_revisions[filename])
+      end
 
-    
-    # Add new files
-    new_files.each do |file_object|
-      txn.add(File.join(assignment_folder, file_object.original_filename), file_object.read, file_object.content_type)
-    end
+      # Add new files
+      new_files.each do |file_object|
+        # sanitize_file_name in SubmissionsHelper
+        if file_object.original_filename.nil?
+          raise "Invalid file name on submitted file"
+        end
+        txn.add(File.join(assignment_folder, sanitize_file_name(file_object.original_filename)), file_object.read, file_object.content_type)
+      end
 
-    # finish transaction
-    if !txn.has_jobs?
-      flash[:transaction_warning] = "No actions were detected in the last submit.  Nothing was changed."
+      # finish transaction
+      if !txn.has_jobs?
+        flash[:transaction_warning] = "No actions were detected in the last submit.  Nothing was changed."
+        redirect_to :action => "file_manager", :id => assignment_id
+        return
+      end
+      if !repo.commit(txn)
+        flash[:update_conflicts] = txn.conflicts
+      end      
       redirect_to :action => "file_manager", :id => assignment_id
-      return
+      
+    rescue Exception => e
+      flash[:commit_error] = e.message
+      redirect_to :action => "file_manager", :id => assignment_id
     end
-    if !repo.commit(txn)
-      flash[:update_conflicts] = txn.conflicts
-    end
-
-    redirect_to :action => "file_manager", :id => assignment_id
+    
   end
   
   def hand_in

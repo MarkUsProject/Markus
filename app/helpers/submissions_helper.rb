@@ -70,4 +70,10 @@ module SubmissionsHelper
     return result
   end
   
+  def sanitize_file_name(file_name)
+    # If file_name is blank, return the empty string
+    return "" if file_name.nil?
+    return File.basename(file_name).gsub(/[^\w\.\-]/, '_')
+  end
+  
 end
