@@ -13,7 +13,10 @@ if [ "$#" -ne 0 ]; then
 fi
 
 # Username is passed on the first line from stdin, the users
-# password as the second line
+# password as the second line.
+# WARNING: username and/or password may contain any characters except \n
+# 		   and \0. I.e. don't trust that data in any case. Thus, make
+#		   sure your script/program accounts for that!
 read user
 read password
 

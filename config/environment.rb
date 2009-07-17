@@ -1,10 +1,5 @@
 # Be sure to restart your server when you modify this file
 
-
-# Uncomment below to force Rails into production mode when
-# you don't control web/app server and can't set it the proper way
-# ENV['RAILS_ENV'] ||= 'production'
-
 # Specifies gem version of Rails to use when vendor/rails is not present
 RAILS_GEM_VERSION = '2.3.2' unless defined? RAILS_GEM_VERSION
 
@@ -12,35 +7,93 @@ RAILS_GEM_VERSION = '2.3.2' unless defined? RAILS_GEM_VERSION
 require File.join(File.dirname(__FILE__), 'boot')
 
 ###################################################################
-# OLM SPECIFIC CONFIGURATION
+# MarkUs SPECIFIC CONFIGURATION
 #   - use "/" as path separator no matter what OS server is running
 #   - settings have to be before Rails::Initializer.run in order
 #     to be available in the app
 ###################################################################
 
+###################################################################
+# Set the course name here
 COURSE_NAME         = "CSCxxx Summer 2008: Course Title Here"
-VALIDATE_FILE       = "#{RAILS_ROOT}/config/dummy_validate.sh"  # bash dummy script
 
-# Repository settings
-REPOSITORY_TYPE = "svn"
-REPOSITORY_STORAGE = "/home/svn-repos-root/"
+###################################################################
+# MarkUs relies on external user authentication: An external script
+# (ideally a small C program) is called with username and password
+# piped to stdin of that program (first line is username, second line
+# is password). 
+#
+# If and only if it exits with a return code of 0, the username/password
+# combination is considered valid and the user is authenticated. Moreover,
+# the user is authorized, if it exists as a user in MarkUs.
+#
+# That is why MarkUs does not allow usernames/passwords which contain
+# \n or \0. These are the only restrictions.
+VALIDATE_FILE = "#{RAILS_ROOT}/config/dummy_validate.sh"
+
+###################################################################
+# File storage (Repository) settings
+###################################################################
+# Options for Repository_type are 'svn' and 'memory' for now
+# 'memory' is by design not persistent and only used for testing MarkUs
+REPOSITORY_TYPE = "svn" # use Subversion as storage backend
+
+###################################################################
+# Directory where Repositories will be created. Make sure MarkUs is allowed
+# to write to this directory
+REPOSITORY_STORAGE = "/home/storage/markus/repository-root"
+
+###################################################################
+# Change this to 'REPOSITORY_EXTERNAL_SUBMITS_ONLY = true' if you
+# are using Subversion as a storage backend and the instructor wants his/her
+# students to submit to the repositories by command-line only
 REPOSITORY_EXTERNAL_SUBMITS_ONLY = false
-# Base URL for external subversion access
-REPOSITORY_EXTERAL_BASE_URL = "http://luckyluke.red.sandbox/svn"
-$REPOSITORY_SVN_AUTHZ_FILE = "/home/svn-repos-root/svn_authz"   # global constant
-IS_REPOSITORY_ADMIN = true          # change this to false if repositories are created by a third party;
-                                    # in that case, MarkUs does not manage repository permissions and
-                                    # relies completely on the third party
 
+###################################################################
+# This config setting only makes sense, if you are using
+# 'REPOSITORY_EXTERNAL_SUBMITS_ONLY = true'. If you have Apache httpd
+# configured so that the repositories created by MarkUs will be available to
+# the outside world, this is the URL which internally "points" to the
+# REPOSITORY_STORAGE directory configured earlier. Hence, Subversion
+# repositories will be available to students for example via URL
+# http://www.example.com/markus/svn/Repository_Name. Make sure the path
+# after the hostname matches your <Location> directive in your Apache
+# httpd configuration
+REPOSITORY_EXTERAL_BASE_URL = "http://www.example.com/markus/svn"
 
-# Configurations for User of type Student
-USER_STUDENT_SESSION_TIMEOUT        = 1800
-USER_STUDENT_CSV_UPLOAD_ORDER       = [:user_name, :last_name, :first_name]
-# Configurations for User of type TA
-USER_TA_SESSION_TIMEOUT             = 1800
-USER_TA_CSV_UPLOAD_ORDER            = [:user_name, :last_name, :first_name]
-# Configurations for User of type Admin
-USER_ADMIN_SESSION_TIMEOUT          = 1800
+###################################################################
+# This setting is important for two scenarios:
+# First, if MarkUs should use Subversion repositories created by a
+# third party, point it to the place where it will find the Subversion
+# authz file. In that case, MarkUs would need at least read access to
+# that file.
+# Second, if MarkUs is configured with REPOSITORY_EXTERNAL_SUBMITS_ONLY
+# set to 'true', you can configure as to where MarkUs should write the
+# Subversion authz file.
+$REPOSITORY_SVN_AUTHZ_FILE = "/home/svn-repos-root/svn_authz"
+
+###################################################################
+# This setting configures if MarkUs is reading Subversion
+# repositories' permissions only OR is admin of the Subversion
+# repositories. In the latter case, it will write to
+# $REPOSITORY_SVN_AUTHZ_FILE, otherwise it doesn't. Change this to
+# 'false' if repositories are created by a third party. 
+IS_REPOSITORY_ADMIN = true
+
+###################################################################
+# Session Timeouts
+###################################################################
+USER_STUDENT_SESSION_TIMEOUT        = 1800 # Timeout for student users
+USER_TA_SESSION_TIMEOUT             = 1800 # Timeout for grader users
+USER_ADMIN_SESSION_TIMEOUT          = 1800 # Timeout for admin users
+
+###################################################################
+# CSV upload order of fields (usually you don't want to change this)
+###################################################################
+# Order of student CSV uploads
+USER_STUDENT_CSV_UPLOAD_ORDER = [:user_name, :last_name, :first_name]
+# Order of graders CSV uploads
+USER_TA_CSV_UPLOAD_ORDER  = [:user_name, :last_name, :first_name]
 
 
 Rails::Initializer.run do |config|
@@ -64,10 +117,14 @@ Rails::Initializer.run do |config|
   # :all can be used as a placeholder for all plugins not explicitly named
   config.plugins = [ :ssl_requirement, :auto_complete ]
 
-  # ignore URL prefix specified below
-  config.action_controller.relative_url_root = ""
+  # If you are hosting your application at path
+  # http://hostname/path/to/markus set this to '/path/to/markus'
+  # Ignore URL prefix specified below
+  # config.action_controller.relative_url_root = ""
 
-  # Add additional load paths for your own custom dirs
+  # Add additional load paths for your own custom dirs.
+  # Set it if you are using ruby libs and/or gems
+  # at non-standard paths
   # config.load_paths += %W( #{RAILS_ROOT}/extras )
 
   # Force all environments to use the same logger level
@@ -107,5 +164,5 @@ Rails::Initializer.run do |config|
 end
 
 ###################################################################
-# END OF OLM SPECIFIC CONFIGURATION
+# END OF MarkUs SPECIFIC CONFIGURATION
 ###################################################################
