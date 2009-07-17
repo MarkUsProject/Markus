@@ -152,7 +152,7 @@
 	    <% end -%>
 	   </ul>
 	   <% if REPOSITORY_EXTERNAL_SUBMITS_ONLY %>
-	   	<p>Repository location: <%= h(REPOSITORY_EXTERAL_BASE_URL + "/" + @group.repository_name) %></p>
+	   	<p>Repository location: <%= h(REPOSITORY_EXTERNAL_BASE_URL + "/" + @group.repository_name) %></p>
 	   <% end %>
 	   <% if @grouping.inviter == @current_user %>
             <% if @grouping.student_membership_number != @assignment.group_max %>
