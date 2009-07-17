@@ -59,7 +59,7 @@ REPOSITORY_EXTERNAL_SUBMITS_ONLY = false
 # http://www.example.com/markus/svn/Repository_Name. Make sure the path
 # after the hostname matches your <Location> directive in your Apache
 # httpd configuration
-REPOSITORY_EXTERAL_BASE_URL = "http://www.example.com/markus/svn"
+REPOSITORY_EXTERNAL_BASE_URL = "http://www.example.com/markus/svn"
 
 ###################################################################
 # This setting is important for two scenarios:
