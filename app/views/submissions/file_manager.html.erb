@@ -12,7 +12,7 @@
      <p class="success"><%= h(flash[:submit_notice]) %> </p>
   <% end %>
 
-<div id="directory_selector" <%='style="display:none;"' unless @directories.count > 0 %>>
+<div id="directory_selector" <%='style="display:none;"' unless @directories.length > 0 %>>
 <%= form_tag({:action => 'file_manager'}, :method => :get) %>
 <select id="path" name="path" onchange="$(this).form.submit();">
     <option>/</option>

@@ -15,7 +15,7 @@ h(@assignment.due_date.strftime('%l%p%M')) %>
 
   <h4>Files required for this assignment</h4>
   <ul>
-  <% if @assignment.assignment_files.count == 0%>
+  <% if @assignment.assignment_files.length == 0%>
    <p> There are no required files for this assignment.</p>
   <% end %>
   <% @assignment.assignment_files.each do |assignment_file| %>

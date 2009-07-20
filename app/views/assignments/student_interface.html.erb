@@ -50,9 +50,9 @@
     <% end %>
      <h3>Overview</h3>
      <span class="info_number"><%=h @revision.revision_number %></span><span class="info"> revisions</span><br />
-     <span class="info_number"><%=h @files.count.to_s %></span><span
+     <span class="info_number"><%=h @files.length.to_s %></span><span
      class="info"> files</span><br />
-     <span class="info_number"><%=h @missing_assignment_files.count.to_s%></span><span class="info_red"> missing required files</span><br />
+     <span class="info_number"><%=h @missing_assignment_files.length.to_s%></span><span class="info_red"> missing required files</span><br />
   <% else %>
     <p class="notice">You don't have any submission yet</p>
   <% end %>
