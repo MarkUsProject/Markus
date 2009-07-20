@@ -233,17 +233,20 @@ class Grouping < ActiveRecord::Base
   # When a Grouping is created, automatically create the folder for the
   # assignment in the repository, if it doesn't already exist.
   def create_grouping_repository_folder
-    repo = Repository.create(REPOSITORY_TYPE).open(File.join(REPOSITORY_STORAGE, group.repository_name))
-    revision = repo.get_latest_revision
+    revision = self.repo.get_latest_revision
     assignment_folder = File.join('/', assignment.repository_folder)
     
     if revision.path_exists?(assignment_folder)
       return true
     else
-      txn = repo.get_transaction("olm")
+      txn = self.repo.get_transaction("markus")
       txn.add_path(assignment_folder)
       return repo.commit(txn)  
     end
+  end
+  
+  def repo
+    return Repository.create(REPOSITORY_TYPE).open(File.join(REPOSITORY_STORAGE, group.repository_name))
   end
 
 end
