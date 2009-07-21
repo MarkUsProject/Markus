@@ -1,7 +1,3 @@
-# this controller uses Repository module in directory 'lib'
-require 'fileutils'
-require File.join(File.dirname(__FILE__),'/../../lib/repo/repository_factory')
-
 class AssignmentsController < ApplicationController
   before_filter      :authorize_only_for_admin, :except =>
   [:populate, :deletegroup, :delete_rejected, :disinvite_member, :invite_member, :creategroup, :join_group, :decline_invitation, :file_manager, :index, :download, :student_interface, :hand_in, :update_files]
@@ -36,17 +32,17 @@ class AssignmentsController < ApplicationController
       # The inviter   
       @inviter = @grouping.inviter
 
-       # We search for information on the submissions
-       path = '/'
-       repo = Repository.create(REPOSITORY_TYPE).open(File.join(REPOSITORY_STORAGE, @grouping.group.repository_name))
-       @revision  = repo.get_latest_revision
-       @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, path))
-       @files =   @revision.files_at_path(File.join(File.join(@assignment.repository_folder, path)))
-       @missing_assignment_files = []
-       @assignment.assignment_files.each do |assignment_file|
-         if !@revision.path_exists?(File.join(@assignment.repository_folder, assignment_file.filename))
-	   @missing_assignment_files.push(assignment_file)
-	end
+      # We search for information on the submissions
+      path = '/'
+      repo = @grouping.group.repo
+      @revision  = repo.get_latest_revision
+      @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, path))
+      @files =   @revision.files_at_path(File.join(File.join(@assignment.repository_folder, path)))
+      @missing_assignment_files = []
+      @assignment.assignment_files.each do |assignment_file|
+        if !@revision.path_exists?(File.join(@assignment.repository_folder, assignment_file.filename))
+          @missing_assignment_files.push(assignment_file)
+        end
       end
     end
   end
@@ -60,7 +56,7 @@ class AssignmentsController < ApplicationController
     assignment = Assignment.find(assignment_id)
     assignment_folder = assignment.repository_folder
     user_group = current_user.accepted_grouping_for(assignment_id).group
-    repo = Repository.create(REPOSITORY_TYPE).new(File.join(REPOSITORY_STORAGE, user_group.repository_name))
+    repo = user_group.repo
     revision = repo.get_revision(revision_number.to_i)
     file = revision.files_at_path(File.join(assignment_folder, path))[file_name]
     if file.nil?
@@ -277,7 +273,6 @@ class AssignmentsController < ApplicationController
       return
     end
 
-    groupings = @invited.pending_groupings_for(@assignment.id)
     if @invited.hidden
       flash[:fail_notice] = "Could not invite this student - this student's account has been disabled."
       return
@@ -303,28 +298,6 @@ class AssignmentsController < ApplicationController
     membership = StudentMembership.find(params[:membership])
     membership.delete
     membership.save
-  end
-
-
-  private
-  
-  # determine if filename is in old_file_list
-  def is_new_file(old_files_list, filename)
-    return old_files_list.find(filename).none?
-  end
-  
-  def base_part_of(filename)
-    File.basename(filename).gsub(/[^\w._-]/, '')  
-  end
-  
-  def get_file_contents(multipart, filename)
-    multipart.each do |f|
-      if filename == base_part_of(f.original_filename)
-        return f.read
-      end
-    end
-  end
-
-  
+  end  
 
 end

@@ -68,13 +68,19 @@ class AbstractRepository
   
   # Static method: Opens a repository at given location; returns an
   # AbstractRepository instance
-  def self.open(connect_string)
+  # The is_admin flag indicates if we have admin privileges. If set to false,
+  # the repository relies on a third party to create repositories and manage its
+  # permissions.
+  def self.open(connect_string, is_admin=true)
     raise NotImplementedError, "Repository::open Not yet implemented"
   end
   
   # Static method: Creates a new repository at given location; returns
-  # an AbstractRepository instance, with the repository opened.  
-  def self.create(connect_string)
+  # an AbstractRepository instance, with the repository opened.
+  # The is_admin flag indicates if we have admin privileges. If set to false,
+  # the repository relies on a third party to create repositories and manage its
+  # permissions.  
+  def self.create(connect_string, is_admin=true)
     raise NotImplementedError, "Repository::create Not yet implemented"
   end
   

@@ -1,7 +1,3 @@
-# this controller uses Repository module in directory 'lib'
-require 'fileutils'
-require File.join(File.dirname(__FILE__),'/../../lib/repo/repository_factory')
-
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
   
@@ -9,30 +5,29 @@ class SubmissionsController < ApplicationController
   :index, :file_manager, :update_files, :hand_in, :download]
   before_filter    :authorize_for_ta_and_admin, :only => [:browse, :index]
  
- def file_manager
-   @assignment = Assignment.find(params[:id])
-   @grouping = current_user.accepted_grouping_for(@assignment.id)
-   user_group = @grouping.group
-   revision_number= params[:revision_number]
-   path = params[:path] || '/'
-   repo = Repository.create(REPOSITORY_TYPE).open(File.join(REPOSITORY_STORAGE,
-   user_group.repository_name))
-   if revision_number.nil?
-     @revision = repo.get_latest_revision
-   else
-     @revision = repo.get_revision(revision_number.to_i)
-   end
-   @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, path))
-   @files = @revision.files_at_path(File.join(@assignment.repository_folder, path))
-
-   @missing_assignment_files = []
-   @assignment.assignment_files.each do |assignment_file|
-     if !@revision.path_exists?(File.join(@assignment.repository_folder,
-     assignment_file.filename))
-       @missing_assignment_files.push(assignment_file)
-     end
-   end
- end
+  def file_manager
+    @assignment = Assignment.find(params[:id])
+    @grouping = current_user.accepted_grouping_for(@assignment.id)
+    user_group = @grouping.group
+    revision_number= params[:revision_number]
+    path = params[:path] || '/'
+    repo = user_group.repo
+    if revision_number.nil?
+      @revision = repo.get_latest_revision
+    else
+      @revision = repo.get_revision(revision_number.to_i)
+    end
+    @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, path))
+    @files = @revision.files_at_path(File.join(@assignment.repository_folder, path))
+  
+    @missing_assignment_files = []
+    @assignment.assignment_files.each do |assignment_file|
+      if !@revision.path_exists?(File.join(@assignment.repository_folder,
+      assignment_file.filename))
+        @missing_assignment_files.push(assignment_file)
+      end
+    end
+  end
   
   def populate
     @assignment = Assignment.find(params[:id])
@@ -40,8 +35,7 @@ class SubmissionsController < ApplicationController
     user_group = @grouping.group
     revision_number= params[:revision_number]
     path = params[:path] || '/'
-    repo = Repository.create(REPOSITORY_TYPE).open(File.join(REPOSITORY_STORAGE,
-    user_group.repository_name))
+    repo = user_group.repo
     if revision_number.nil?
       @revision = repo.get_latest_revision
     else
@@ -91,8 +85,7 @@ class SubmissionsController < ApplicationController
       redirect_to :action => :file_manager, :id => assignment_id
       return
     end
-    user_group = grouping.group
-    repo = Repository.create(REPOSITORY_TYPE).open(File.join(REPOSITORY_STORAGE, user_group.repository_name))
+    repo = grouping.group.repo
        
     assignment_folder = File.join(assignment.repository_folder, path)
     
@@ -113,7 +106,6 @@ class SubmissionsController < ApplicationController
     new_files = params[:new_files].nil? ? {} : params[:new_files]
     
     # Create transaction, setting the author.  Timestamp is implicit.
-    # TODO: change to cdf-id for author-param
     txn = repo.get_transaction(current_user.user_name)
 
     begin
@@ -151,7 +143,6 @@ class SubmissionsController < ApplicationController
       flash[:commit_error] = e.message
       redirect_to :action => "file_manager", :id => assignment_id
     end
-    
   end
   
   def hand_in
@@ -173,11 +164,9 @@ class SubmissionsController < ApplicationController
   def download
     @assignment = Assignment.find(params[:id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
-    user_group = @grouping.group
     revision_number = params[:revision_number]
     path = params[:path] || '/'
-    repo = Repository.create(REPOSITORY_TYPE).open(File.join(REPOSITORY_STORAGE,
-    user_group.repository_name))
+    repo = @grouping.group.repo
     if revision_number.nil?
       @revision = repo.get_latest_revision
     else
@@ -193,7 +182,7 @@ class SubmissionsController < ApplicationController
       return
     end
     send_data file_contents, :type => 'text', :disposition => 'inline', :filename => params[:file_name]
- end 
+  end 
   
   def create_manually
     grouping = Grouping.find(params[:grouping_id])
@@ -221,23 +210,23 @@ class SubmissionsController < ApplicationController
           if !submission.has_result?
             # TODO:  Neaten this up...
             flash[:release_errors].push("Grouping ID:#{grouping_id} had no result")
-             next     
-           end
-           if submission.result.marking_state != Result::MARKING_STATES[:complete]
-             flash[:release_errors].push("Can not release result for grouping #{grouping.id}: the marking state is not complete")
+            next     
+          end
+          if submission.result.marking_state != Result::MARKING_STATES[:complete]
+            flash[:release_errors].push("Can not release result for grouping #{grouping.id}: the marking state is not complete")
             next
           end
-	  if flash[:release_errors].nil? or flash[:release_errors].size == 0
+          if flash[:release_errors].nil? or flash[:release_errors].size == 0
             flash[:release_errors] = nil
-	  end
+          end
           submission.result.released_to_students = true
           submission.result.save        
         end
       elsif params[:unrelease_results]
-       params[:groupings].each do |g|
-         grouping = Grouping.find(g)
-	 grouping.get_submission_used.result.unrelease_results
-	end
+        params[:groupings].each do |g|
+          grouping = Grouping.find(g)
+          grouping.get_submission_used.result.unrelease_results
+        end
       end
     end
     redirect_to :action => 'browse', :id => params[:id]
@@ -245,15 +234,15 @@ class SubmissionsController < ApplicationController
 
 
   def unrelease
-     return unless request.post?
-      if params[:groupings].nil?
-       flash[:release_results] = "Select a group"
-      else
-        params[:groupings].each do |g|
-	  g.unrelease_results
-	end
+    return unless request.post?
+    if params[:groupings].nil?
+      flash[:release_results] = "Select a group"
+    else
+      params[:groupings].each do |g|
+        g.unrelease_results
       end
-      redirect_to :action => 'browse', :id => params[:id]
+    end
+    redirect_to :action => 'browse', :id => params[:id]
   end
   
 #  # Handles file submissions for a form POST, 
@@ -327,5 +316,4 @@ class SubmissionsController < ApplicationController
 #    end
 #  end
 #  
-  
 end

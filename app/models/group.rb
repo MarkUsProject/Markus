@@ -96,11 +96,28 @@ class Group < ActiveRecord::Base
   def build_repository
     # Attempt to build the repository
     begin
-      repo = Repository.create(REPOSITORY_TYPE).create(File.join(REPOSITORY_STORAGE, repository_name))
+      if IS_REPOSITORY_ADMIN
+        Repository.get_class(REPOSITORY_TYPE).create(File.join(REPOSITORY_STORAGE, repository_name))
+      else
+        raise Exception.new("Attempted to create repository, but MarkUs not in authoritative mode!")
+      end
     rescue Exception => e
       raise e
     end
     return true
   end
-
+  
+  # Return a repository object, if possible
+  def repo
+    repo_loc = File.join(REPOSITORY_STORAGE, repository_name())
+    if !IS_REPOSITORY_ADMIN
+      if Repository.get_class(REPOSITORY_TYPE).repository_exists?(repo_loc)
+        return Repository.get_class(REPOSITORY_TYPE).open(repo_loc)
+      else
+        raise "Repository not found and MarkUs not in authoritative mode!" # repository not found, and we are not repo-admin
+      end
+    else
+      return Repository.get_class(REPOSITORY_TYPE).open(repo_loc)
+    end
+  end
 end

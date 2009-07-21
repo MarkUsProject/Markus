@@ -1,6 +1,3 @@
-# this controller uses Repository module in directory 'lib'
-require File.join(File.dirname(__FILE__),'/../../lib/repo/repository_factory')
-
 class ResultsController < ApplicationController
   before_filter      :authorize_only_for_admin, :except => [:codeviewer,
   :edit, :update_mark, :view_marks, :create, :add_extra_mark,
@@ -20,12 +17,8 @@ class ResultsController < ApplicationController
       # If so, our new Result needs to have a version number greater than the
       # old result version.  We're also going to set this new result to be current.
       old_result = @submission.get_result_used
-      old_version_number = old_result.result_version
-      new_version_number = old_version_number + 1
       old_result.result_version_used = false
       old_result.save
-    else
-      new_version_number = 1
     end
     
     new_result = Result.new
@@ -315,7 +308,7 @@ class ResultsController < ApplicationController
   
   def retrieve_file(file)
     student_group = file.submission.grouping.group
-    repo = Repository.create(REPOSITORY_TYPE).new(File.join(REPOSITORY_STORAGE, student_group.repository_name))
+    repo = student_group.repo
     revision_number = file.submission.revision_number
     revision = repo.get_revision(revision_number)
     if revision.files_at_path(file.path)[file.filename].nil?

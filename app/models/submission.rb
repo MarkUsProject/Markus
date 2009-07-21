@@ -1,4 +1,4 @@
-require 'lib/repo/repository_factory'
+require 'fileutils' # FileUtils used here
 
 # Handle for getting student submissions.  Actual instance depend 
 # on whether an assignment is a group or individual assignment.
@@ -15,8 +15,7 @@ class Submission < ActiveRecord::Base
      if !timestamp.kind_of? Time
        raise "Expected a timestamp of type Time"
      end
-     user_group = grouping.group
-     repo = Repository.create(REPOSITORY_TYPE).new(File.join(REPOSITORY_STORAGE, user_group.repository_name))
+     repo = grouping.group.repo
      revision = repo.get_revision_by_timestamp(timestamp)
      new_submission = Submission.new
      new_submission.grouping = grouping
@@ -147,6 +146,7 @@ class Submission < ActiveRecord::Base
       new_file.save
     end 
   end
+  
   protected
   
   # Moves the file to a folder with the last submission date
@@ -163,7 +163,5 @@ class Submission < ActiveRecord::Base
     source_file = File.join(submit_dir, filename)
     FileUtils.mv(source_file, dest_file, :force => true)
   end
-   
-
 
 end

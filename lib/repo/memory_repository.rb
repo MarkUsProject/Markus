@@ -24,8 +24,8 @@ class MemoryRepository < Repository::AbstractRepository
   # Constructor: Connects to an existing Memory
   # repository; Note: A repository has to be created using
   # MemoryRepository.create(), if it is not yet existent
-  # Generally: Do not(!) call it with 2 parameters, use MemoryRepository.create() instead!
-  def initialize(location, is_create_call=false)
+  # Generally: Do not(!) call it with 3 parameters, use MemoryRepository.create() instead!
+  def initialize(location, is_admin=true, is_create_call=false)
     
     # variables
     @users = {}                                 # hash of users (key) with corresponding permissions (value)
@@ -63,15 +63,16 @@ class MemoryRepository < Repository::AbstractRepository
     return false
   end
   
-  def self.open(location)
+  # Open repository at specified location
+  def self.open(location, is_admin=true)
     #return @@repositories[location]
-    return MemoryRepository.new(location)
+    return MemoryRepository.new(location, is_admin)
   end
   
   # Creates memory repository at "virtual" location (they are identifiable by location)
-  def self.create(location)
-    MemoryRepository.new(location, true) # want to create a repository
-    return MemoryRepository.open(location)
+  def self.create(location, is_admin=true)
+    MemoryRepository.new(location, is_admin, true) # want to create a repository
+    return MemoryRepository.open(location, is_admin)
   end
   
   # Destroys all repositories

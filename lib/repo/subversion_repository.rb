@@ -30,6 +30,9 @@ class SubversionRepository < Repository::AbstractRepository
   # Constructor: Connects to an existing Subversion
   # repository, using Ruby bindings; Note: A repository has to be
   # created using SubversionRepository.create(), it it is not yet existent
+  # The is_admin flag indicates if we have admin privileges. If set to false,
+  # the repository relies on a third party to create repositories and manage its
+  # permissions.
   def initialize(connect_string, is_admin=true)
     begin
       super(connect_string) # dummy call to super
@@ -51,7 +54,10 @@ class SubversionRepository < Repository::AbstractRepository
 
   # Static method: Creates a new Subversion repository at
   # location 'connect_string'
-  def self.create(connect_string, fs_type = :fsfs)
+  # The is_admin flag indicates if we have admin privileges. If set to false,
+  # the repository relies on a third party to create repositories and manage its
+  # permissions.
+  def self.create(connect_string, is_admin=true)
     if SubversionRepository.repository_exists?(connect_string)
       raise RepositoryCollision.new("There is already a repository at #{connect_string}")
     end
@@ -60,15 +66,18 @@ class SubversionRepository < Repository::AbstractRepository
     end
     
     # create the repository using the ruby bindings
-    fs_config = {Svn::Fs::CONFIG_FS_TYPE => Repository::SVN_FS_TYPES[fs_type]} 
+    fs_config = {Svn::Fs::CONFIG_FS_TYPE => Repository::SVN_FS_TYPES[:fsfs]} 
     Svn::Repos.create(connect_string, {}, fs_config)
-    return SubversionRepository.open(connect_string)
+    return SubversionRepository.open(connect_string, is_admin)
   end
   
   # Static method: Opens an existing Subversion repository
   # at location 'connect_string'
-  def self.open(connect_string)
-    return SubversionRepository.new(connect_string)
+  # The is_admin flag indicates if we have admin privileges. If set to false,
+  # the repository relies on a third party to create repositories and manage its
+  # permissions.
+  def self.open(connect_string, is_admin=true)
+    return SubversionRepository.new(connect_string, is_admin)
   end
   
   # Static method: Reports if a Subversion repository exists
