@@ -96,10 +96,9 @@ class Group < ActiveRecord::Base
   def build_repository
     # Attempt to build the repository
     begin
+      # create repositories if and only if we are admin
       if IS_REPOSITORY_ADMIN
         Repository.get_class(REPOSITORY_TYPE).create(File.join(REPOSITORY_STORAGE, repository_name))
-      else
-        raise Exception.new("Attempted to create repository, but MarkUs not in authoritative mode!")
       end
     rescue Exception => e
       raise e
