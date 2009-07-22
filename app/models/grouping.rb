@@ -1,5 +1,3 @@
-require File.join(File.dirname(__FILE__),'/../../lib/repo/repository_factory')
-
 # Represents a collection of students working together on an assignment in a group
 class Grouping < ActiveRecord::Base
    
@@ -64,42 +62,43 @@ class Grouping < ActiveRecord::Base
     return membership_status(user) ==  StudentMembership::STATUSES[:inviter]
   end
 
-   #invites each user in 'members' by its user name, to this group
-   def invite(members, set_membership_status=StudentMembership::STATUSES[:pending])
-     # overloading invite() to accept members arg as both a string and a array
-     members = [members] if members.is_a?(String) # put a string in an
+  #invites each user in 'members' by its user name, to this group
+  def invite(members, set_membership_status=StudentMembership::STATUSES[:pending])
+    # overloading invite() to accept members arg as both a string and a array
+    members = [members] if members.is_a?(String) # put a string in an
                                                  # array
-     members.each do |m|
-       next if m.blank? # ignore blank users
-       user = User.find_by_user_name(m)
-       if user && user.student?
-         if user.hidden
-           errors.add_to_base("Student account has been disabled")
-         else
-           member = self.add_member(user, set_membership_status)
-           if member.nil?
-             errors.add_to_base("Student already in a group")
-           end
-           return member if members.size == 1 #return immediately
-         end
-       else
-         errors.add_to_base("Username '#{m}' is not a valid student user
-         name")
-       end
-     end
-   end
+    members.each do |m|
+      next if m.blank? # ignore blank users
+      user = User.find_by_user_name(m)
+      if user && user.student?
+        if user.hidden
+          errors.add_to_base("Student account has been disabled")
+        else
+          member = self.add_member(user, set_membership_status)
+          if member.nil?
+            errors.add_to_base("Student already in a group")
+          end
+          return member if members.size == 1 #return immediately
+        end
+      else
+        errors.add_to_base("Username '#{m}' is not a valid student user
+        name")
+      end
+    end
+  end
 
-   # Add a new member to base
-   def add_member(user, set_membership_status=StudentMembership::STATUSES[:accepted])
-     if user.has_accepted_grouping_for?(self.assignment_id) || user.hidden
-       return nil
-     else
-       member = StudentMembership.new(:user => user, :membership_status =>
-       set_membership_status, :grouping => self)
-       member.save
-       return member
-     end
-   end
+  # Add a new member to base
+  def add_member(user, set_membership_status=StudentMembership::STATUSES[:accepted])
+    if user.has_accepted_grouping_for?(self.assignment_id) || user.hidden
+      return nil
+    else
+      member = StudentMembership.new(:user => user, :membership_status =>
+      set_membership_status, :grouping => self)
+      member.save
+      return member
+    end
+  end
+  
   # Returns the status of this user, or nil if user is not a member
   def membership_status(user)
     member = student_memberships.find_by_user_id(user.id)
@@ -140,7 +139,7 @@ class Grouping < ActiveRecord::Base
   end
  
 
-# EDIT METHODS 
+  # EDIT METHODS 
   # Removes the member by its membership id
   def remove_member(mbr_id)
     member = student_memberships.find(mbr_id)

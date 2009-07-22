@@ -68,8 +68,6 @@ class GroupsController < ApplicationController
     @grouping = @student.accepted_grouping_for(@assignment.id) # his group
 
     @invited = Student.find_by_user_name(params[:invite_member])
-    # We first check he isn't already invited in this grouping
-    groupings = @invited.pending_groupings_for(@assignment.id)
 
     if @invited.nil?
       flash[:fail_notice] = "This student doesn't exist."
@@ -414,7 +412,6 @@ class GroupsController < ApplicationController
       end
     end
     
-    global_action = params[:global_actions]
     grouping_ids = params[:groupings]
     if params[:groupings].nil? or params[:groupings].size ==  0
       flash[:error] = "You need to select at least one group."
