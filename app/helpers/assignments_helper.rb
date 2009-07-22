@@ -1,2 +1,37 @@
 module AssignmentsHelper
+
+  def add_assignment_file_link(name, form)
+    link_to_function name do |page|
+      assignment_file = render(:partial => 'assignment_file', :locals => {:form => form, :assignment_file => AssignmentFile.new})
+      page << %{
+        var new_assignment_file_id = "new_" + new Date().getTime();
+        $('assignment_files').insert({bottom: "#{ escape_javascript assignment_file }".replace(/(attributes_\\d+|\[\\d+\])/g, new_assignment_file_id) });
+      }
+    end
+  end
+
+  def add_grace_period_link(name, form)
+    link_to_function name do |page|
+      period = render(:partial => 'grace_period', :locals => {:pf => form, :grace_period => Period.new})
+      page << %{
+        if ($F('assignment_submission_rule_attributes_type_graceperiodsubmissionrule') != null) {
+          var new_period_id = "new_" + new Date().getTime();
+          $('grace_periods').insert({bottom: "#{ escape_javascript period }".replace(/(attributes_\\d+|\[\\d+\])/g, new_period_id) });
+        } else {
+          alert('You must select the Grace Period Submission Rule to add a grace period.');
+        }
+      }
+    end
+  end
+  
+  def add_penalty_period_link(name, form)
+    link_to_function name do |page|
+      period = render(:partial => 'penalty_period', :locals => {:pf => form, :penalty_period => Period.new})
+      page << %{
+        var new_period_id = "new_" + new Date().getTime();
+        $('penalty_periods').insert({bottom: "#{ escape_javascript period }".replace(/(attributes_\\d+|\[\\d+\])/g, new_period_id) });
+      }
+    end
+  end
+  
 end

@@ -1,7 +1,7 @@
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
   
-  before_filter    :authorize_only_for_admin, :except => [:populate, :browse,
+  before_filter    :authorize_only_for_admin, :except => [:populate_file_manager, :browse,
   :index, :file_manager, :update_files, :hand_in, :download]
   before_filter    :authorize_for_ta_and_admin, :only => [:browse, :index]
  
@@ -29,7 +29,7 @@ class SubmissionsController < ApplicationController
     end
   end
   
-  def populate
+  def populate_file_manager
     @assignment = Assignment.find(params[:id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
     user_group = @grouping.group
@@ -45,26 +45,58 @@ class SubmissionsController < ApplicationController
     @files = @revision.files_at_path(File.join(@assignment.repository_folder, path))
     @table_rows = {} 
     @files.sort.each do |file_name, file|
-      @table_rows[file.id] = construct_table_row(file_name, file)
+      @table_rows[file.id] = construct_file_manager_table_row(file_name, file)
     end
+    render :action => 'populate'
   end
 
-  def browse
-    @assignment = Assignment.find(params[:id])
+  def collect_and_begin_grading
+    assignment = Assignment.find(params[:id])
+    if assignment.submission_rule.can_collect_now?
+      grouping = Grouping.find(params[:grouping_id])
+      time = assignment.submission_rule.calculate_collection_time.localtime
+      new_submission = Submission.create_by_timestamp(grouping, time)
+      result = Result.new
+      result.submission = new_submission
+      result.marking_state = Result::MARKING_STATES[:unmarked]
+      result.save
+      redirect_to :controller => 'results', :action => 'edit', :id => result.id
+      return
+    end
+    redirect_to :action => 'browse', :id => assignment.id
+  end
+  
+  
+  def populate_submissions_table
+    assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group]}]) 
     # If the current user is a TA, then we need to get the Groupings
     # that are assigned for them to mark.  If they're an Admin, then
     # we need to give them a list of all Groupings for this Assignment.
     if current_user.ta?
-      @groupings = []
-      @assignment.ta_memberships.find_all_by_user_id(current_user.id).each do |membership|
-        @groupings.push(membership.grouping)
+      groupings = []
+      assignment.ta_memberships.find_all_by_user_id(current_user.id).each do |membership|
+        groupings.push(membership.grouping)
       end
-      render :action => 'ta_browse'
-      return
+    elsif current_user.admin?
+      groupings = assignment.groupings
     end
     
+    @table_rows = {} 
+    groupings.each do |grouping|
+      @table_rows[grouping.id] = construct_submissions_table_row(grouping)
+    end
+    
+    render :action => 'populate'
+  end
+
+  def browse
+    @assignment = Assignment.find(params[:id])
+
+    if current_user.ta?
+      render :action => 'ta_browse'
+      return
+    end 
     if current_user.admin?
-      @groupings = @assignment.groupings
       render :action => 'admin_browse'
       return 
     end
@@ -183,15 +215,7 @@ class SubmissionsController < ApplicationController
     end
     send_data file_contents, :type => 'text', :disposition => 'inline', :filename => params[:file_name]
   end 
-  
-  def create_manually
-    grouping = Grouping.find(params[:grouping_id])
-    assignment_id = params[:id]
-    time = Time.now
-    Submission.create_by_timestamp(grouping, time)
-    redirect_to :action => 'browse', :id => assignment_id
-  end
-  
+
   def update_submissions
     return unless request.post?
     if params[:groupings].nil?

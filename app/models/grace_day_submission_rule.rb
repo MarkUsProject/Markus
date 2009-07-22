@@ -1,4 +1,0 @@
-class GraceDaySubmissionRule < SubmissionRule
-  
-  
-end

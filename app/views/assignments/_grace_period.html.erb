@@ -1,0 +1,42 @@
+<% # Template for Grace Day Periods - uses Prototypes Template class
+   # #{hours} - The default number of hours set on this period
+   # #{deduction} - The default number of grace period credits to deduct
+   # #{period_key} - The unique key that represents this Period.  This helps to
+   #  differentiate it on submission, and connects the hours and deduction inputs
+   #  with a common value
+
+#<input type="text" size="1" name="grace_period[#{period_key}]_hours" #class="PeriodLister_SetHours" value="#{hours}"> hour(s) later...
+#<div>
+#  (<span class="PeriodLister_FromTime"></span> - <span #class="PeriodLister_ToTime"></span>)
+#</div>
+#<div>
+#  Deduct <input type="text" size="1" name="grace_period[#{period_key}]_deduction" #class="PeriodLister_Deduction" value="#{deduction}"> grace period credit(s)
+#</div>
+#<a href="javascript:void(0);" class="PeriodLister_Remove">Remove</a>
+#<div class="clear"></div>
+%>
+<div class="period">
+<% pf.fields_for :periods, grace_period do |f| %>
+  <p>
+    <%= f.label :hours, "After:" %>
+    <%= f.text_field :hours, :size => 1, :class => "PeriodDeltaChain_Hours", :onchange => "grace_periods.refresh();" %>
+    hours...
+  </p>
+  <p>
+    <span class="PeriodDeltaChain_FromTime"></span>
+    <span class="PeriodDeltaChain_ToTime"></span>
+  </p>
+  <p>
+    <%= f.label :deduction, "Grace Period Credit Deduction:" %>
+    <%= f.text_field :deduction, :size => 1 %>
+  </p>
+  <p>
+   <% if !f.object.nil? && !f.object.new_record? %>
+    <%= f.label :_delete, "Remove:" %>
+    <%= f.check_box :_delete %>
+  <% else %>
+    <%= link_to_function "remove", "$(this).up('.period').remove(); grace_periods.refresh();" %>
+  <% end %>
+  </p>
+<% end %>
+</div>

@@ -43,7 +43,7 @@ module SubmissionsHelper
     return true
   end
 
-  def construct_table_row(file_name, file)
+  def construct_file_manager_table_row(file_name, file)
     table_row = {}
 
     table_row[:id] = file.id
@@ -63,14 +63,52 @@ module SubmissionsHelper
 
     return table_row
   end
-
-  def construct_table_rows(files)
+  
+  
+  def construct_file_manager_table_rows(files)
     result = {}
     files.each do |file_name, file|
       result[file.id] = construct_table_row(file_name, file)
     end
     return result
   end
+  
+  
+ def construct_submissions_table_row(grouping)
+    table_row = {}
+
+    table_row[:id] = grouping.id
+
+    table_row[:group_name] = render_to_string :partial =>
+    "submissions/submissions_table_row/group_name", :locals => {:grouping => grouping}
+    
+    table_row[:repository] = render_to_string :partial => "submissions/submissions_table_row/repository", :locals => {:grouping => grouping}
+
+    table_row[:members] = render_to_string :partial => "submissions/submissions_table_row/members", :locals => {:student_memberships => grouping.student_memberships}
+
+    table_row[:commit_date] = render_to_string :partial => "submissions/submissions_table_row/commit_date", :locals => {:grouping => grouping}
+
+    table_row[:marking_state] = render_to_string :partial => "submissions/submissions_table_row/marking_state", :locals => {:grouping => grouping}
+
+    table_row[:final_grade] = render_to_string :partial => "submissions/submissions_table_row/final_grade", :locals => {:grouping => grouping}
+
+    table_row[:released] = render_to_string :partial => "submissions/submissions_table_row/released", :locals => {:grouping => grouping}
+
+    return table_row
+  end
+
+
+  def construct_submissions_table_rows(groupings)
+    result = {}
+    groupings.each do |grouping|
+      result[grouping.id] = construct_submissions_table_row(grouping)
+    end
+    return result
+  end
+    
+  
+  
+  
   
   def sanitize_file_name(file_name)
     # If file_name is blank, return the empty string

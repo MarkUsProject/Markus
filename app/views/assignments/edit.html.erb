@@ -1,5 +1,3 @@
-
-<% @title = "Edit Assignment: " + sanitize(@assignment.name) -%>
-<% @submit_text = "Update Assignment" -%>
-
-<%= render "assignments/modify", { :action => 'update' } -%>
+<div id="title_bar"><h1>Edit Assignment: <%= h(@assignment.name) %></h1>
+</div>
+<%= render :partial => 'form' %>

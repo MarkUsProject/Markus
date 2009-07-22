@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090706131528) do
+ActiveRecord::Schema.define(:version => 20090721192032) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -117,6 +117,16 @@ ActiveRecord::Schema.define(:version => 20090706131528) do
   add_index "memberships", ["grouping_id"], :name => "index_memberships_on_grouping_id"
   add_index "memberships", ["user_id"], :name => "index_memberships_on_user_id"
 
+  create_table "periods", :force => true do |t|
+    t.integer  "submission_rule_id"
+    t.float    "deduction"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.float    "hours"
+  end
+
+  add_index "periods", ["submission_rule_id"], :name => "index_periods_on_submission_rule_id"
+
   create_table "results", :force => true do |t|
     t.integer  "submission_id"
     t.string   "marking_state"
@@ -172,7 +182,6 @@ ActiveRecord::Schema.define(:version => 20090706131528) do
   add_index "submission_files", ["user_id"], :name => "index_submission_files_on_user_id"
 
   create_table "submission_rules", :force => true do |t|
-    t.integer  "assignment_id",                                           :null => false
     t.integer  "allow_submit_until",    :default => 0
     t.string   "type",                  :default => "NullSubmissionRule"
     t.integer  "grace_day_limit"
@@ -182,6 +191,7 @@ ActiveRecord::Schema.define(:version => 20090706131528) do
     t.string   "penalty_interval_unit"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "assignment_id"
   end
 
   add_index "submission_rules", ["assignment_id"], :name => "index_submission_rules_on_assignment_id"

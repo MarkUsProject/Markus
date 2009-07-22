@@ -82,15 +82,38 @@ class AssignmentsController < ApplicationController
   
   def edit
     @assignment = Assignment.find_by_id(params[:id])
-    # TODO Code below is only temporary for migration
-    # delete when all assignments have submission rules
-    unless @assignment.submission_rule
-      @assignment.submission_rule = SubmissionRule.new
-      @assignment.student_form_groups = true  # default value
-      @assignment.save
+    @assignments = Assignment.all
+    if !request.post?
+      return
     end
-  end
-  
+    
+    # Was the SubmissionRule changed?  If so, wipe out any existing
+    # Periods, and switch the type of the SubmissionRule.
+    # This little conditional has to do some hack-y workarounds, since
+    # accepts_nested_attributes_for is a little...dumb.
+    if @assignment.submission_rule.attributes['type'] != params[:assignment][:submission_rule_attributes][:type]
+      @assignment.submission_rule.destroy
+      submission_rule = SubmissionRule.new
+      # A little hack to get around Rails' protection of the "type"
+      # attribute
+      submission_rule.type = params[:assignment][:submission_rule_attributes][:type]
+      @assignment.submission_rule = submission_rule
+      # For some reason, when we create new rule, we can't just apply
+      # the params[:assignment] hash to @assignment.attributes...we have
+      # to create any new periods manually, like this:
+      @assignment.submission_rule.periods_attributes = params[:assignment][:submission_rule_attributes][:periods_attributes]
+    end
+    
+    @assignment.attributes = params[:assignment]
+    
+    if @assignment.save
+      flash[:notice] = "Successfully Updated Assignment"
+      redirect_to :action => 'edit', :id => params[:id]
+      return
+    else
+      render :action => 'edit'
+    end
+ end
 
   
   # Ajax support for adding another file text field for this assignment
@@ -131,11 +154,19 @@ class AssignmentsController < ApplicationController
   # Called when form for creating a new assignment is submitted
   def new
     @assignments = Assignment.all
+    @assignment = Assignment.new
+    @assignment.build_submission_rule
+    #@assignment.assignment_files.build
     if !request.post?
       render :action => 'new'
       return
     end
     @assignment = Assignment.new(params[:assignment])
+    # A little hack to get around Rails' protection of the "type"
+    # attribute
+    @assignment.submission_rule.type = params[:assignment][:submission_rule_attributes][:type]
+    
+
     @assignment.transaction do
 
       if !@assignment.save

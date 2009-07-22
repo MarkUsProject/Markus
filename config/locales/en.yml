@@ -43,6 +43,27 @@ en:
         has_dependency: "Assignment Builds on Top Of"
         no_dependency:  "Nothing - It's Unique"
 
+    confirm_bulk_action:  "Are you sure you want to perform this bulk action?"
+    hide_students: "Hide Students"
+    unhide_students: "Unhide Students"
+    
+    submission_rules:
+      submission_rule:
+        description: "This is the description of the SubmissionRule class.  Since only subclasses of SubmissionRule should be attached to an Assignment, this message should never be seen."
+        commit_after_collection_message: "This message is displayed when students submit code after the collection date.  Since SubmissionRule is to be subclassed, and not referenced directly by an Assignment, this particular message should never be displayed to students."
+        overtime_message:  "This message is displayed to students when they view their file manager after the assignment due date has passed."
+        
+      null_submission_rule:
+        description: "No penalties will be applied to late assignments"
+        commit_after_collection_message: "The due date for this assignment has passed.  Your upload has been accepted, but only what was in your folder on the due date will be graded."
+        overtime_message: "The due date for this assignment has passed.  Only what was in your folder at the due date will be graded."
+   
+      grace_day_submission_rule:
+        description: "You may submit up to {{grace_day_limit}} day(s) past the due date, and will have that number of days subtracted from your allotted grace days"
+        commit_after_collection_message: "The due date for this assignment, plus the maximum number of allowed grace days, has passed.  Your upload has been accepted, but probably will not be included in the grading."
+        overtime_message_with_days_left: "The due date for this assignment has passed.  You may, however, use a maximum of {{grace_day_limit}} grace day(s) in order to complete this assignment"
+        overtime_message_without_days_left: "The due date for this assignment has passed, and you are no longer able to use any grace days.  
+
     criteria_edit_total_mark:     "This criteria will be mark out of"
     criteria:           "Criteria"
     weight:             "Weight"
@@ -81,5 +102,3 @@ en:
 	imperdiet tincidunt. Vestibulum ipsum mauris, adipiscing quis
 	ultricies at, tempus et mauris. Nulla quam massa, ultricies eget
 	faucibus quis, elementum a odio."
-
-

@@ -3,6 +3,10 @@ class Assignment < ActiveRecord::Base
   has_many :rubric_criteria, :class_name => "RubricCriterion", :order => :position
   has_many :assignment_files
   has_one  :submission_rule 
+  accepts_nested_attributes_for :submission_rule, :allow_destroy => true
+  accepts_nested_attributes_for :assignment_files, :allow_destroy => true
+
+  
   has_many :annotation_categories
   
   has_many :groupings

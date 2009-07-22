@@ -1,5 +1,15 @@
+<%= javascript_include_tag "submissions_manager" %>
+<%= javascript_include_tag "FilterTable/FilterTable.js" %>
+<%= render :partial => 'submissions_table_boot.js.erb' %>
+
+
 <div id="title_bar">
   <h1>Workspace: <%= h(sanitize(@assignment.name)) %></h1>
+  <% if Time.now >= @assignment.submission_rule.calculate_collection_time %>
+  <h2>Grading can begin</h2>
+  <% else %>
+  <h2>Grading can begin after <%= h(@assignment.submission_rule.calculate_collection_time)%> </h2>
+  <% end %>
 </div>
 <div class="wrapLeft">
 <% if flash[:release_errors] %>
@@ -14,73 +24,10 @@
 <% end %>
 
 <%= form_tag({:action => 'update_submissions', :id => @assignment.id}) %>
-<table>
-  <thead>
-    <th></th>
-    <th>Submission By</th>
-    <th>Submission Collected On</th>
-    <th>Marking Status</th>
-    <th>Final Results</th>
-    <th>Marks Released</th>
-  </thead>
-  <tbody>
-<% for grouping in @groupings %>
-  <tr>
-    <td>
-       <input name="groupings[]" type="checkbox" value="<%=grouping.id%>"/>
-    </td>
-    <td>
-      <% for student_membership in grouping.student_memberships %>
-        <% some_user = student_membership.user %>
-        <%=h(some_user.user_name)%>(<%=h(some_user.last_name)%>, <%=h(some_user.first_name)%>)<br />
-      <% end %>
-    </td>
-    <td>
-      <% submission = grouping.get_submission_used %>
-      <% if submission.nil? %>
-      <%= link_to "Create Submission Manually", :controller => 'submissions', :action => 'create_manually', :id => @assignment.id, :grouping_id => grouping.id %>
-      <% else %> 
-        <%= h(submission.created_at) %>
-      <% end %>
-    </td>
-    <td>
-       <% if submission.nil? %>
-       -
-       <% else %>
-         <% if submission.result.nil? %>
-           No Marking Results
-         <% else %>
-           <%= link_to h(sanitize(submission.result.marking_state)), :controller =>   'results', :action=> 'edit', :id => submission.result.id %>
-         <% end %>
-       <% end %>
-    </td>
-    <td>
-      <% if submission.nil? %>
-      -
-      <% else %>
-       <% if submission.result.nil? %>
-        <%= link_to 'Begin Grading', :controller => 'results', :action => 'create', :id => submission.id %>
-       <% else %>
-         <%=   submission.result.total_mark %>/<%= @assignment.total_mark%>
-       <% end %>
-       <% end %> 
-    </td>
-    <td>
-      <% if submission.nil? || submission.result.nil? %>
-      -
-      <% else %>
-        <% if submission.result.released_to_students %>
-        Released
-        <% else %>
-        Unreleased
-        <% end %>
-      <% end %>
-        
-    </td>
-  </tr>
-<% end %>
-  </tbody>
+<table id="submissions">
+
 </table>
+
 <%= submit_tag "Release Marks", :name => "release_results" %>
 <%= submit_tag "Unrelease Marks", :name => "unrelease_results" %>
 </form>

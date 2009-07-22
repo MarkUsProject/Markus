@@ -35,6 +35,7 @@ class Submission < ActiveRecord::Base
        new_submission.populate_with_submission_files(revision)
        new_submission.save
      end
+     return new_submission
   end
   
   # For group submissions, actions here must only be accessible to members

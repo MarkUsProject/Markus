@@ -122,7 +122,7 @@
 <fieldset>
   <legend>Submission Rules</legend>
 
-  <%- fields_for :submission_rule, @assignment.submission_rule do |rule| -%>
+  <% f.fields_for :submission_rule, @assignment.submission_rule do |rule| %>
     <p>
       Allow students to submit 
       <%= rule.text_field :allow_submit_until, :size => 3 %> 
@@ -137,8 +137,12 @@
     </p>
 
     <p>
-      <%= rule.radio_button :type, "GraceDaySubmissionRule" %>
+      <%= rule.radio_button :type, "GracePeriodSubmissionRule" %>
       Automatically deduct grace days
+      <% rule.fields_for :periods do |period| %>
+      <%= period.text_field :start_time %>
+      <%= period.text_field :end_time %>
+      <% end %>
     </p>
 
     <p>

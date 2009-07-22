@@ -1,0 +1,13 @@
+<% if !grouping.has_submission? %>
+  <% if grouping.assignment.submission_rule.can_collect_now? %>
+    <%= link_to "Ready for Grading", :action => 'collect_and_begin_grading', :id => grouping.assignment.id, :grouping_id => grouping.id %>
+  <% else %>
+    Uncollected
+  <% end %>
+<% else %>
+  <% if !grouping.get_submission_used.has_result? %>
+    Ready for Grading
+  <% else %>
+    <%= link_to h(grouping.get_submission_used.result.marking_state), :controller => 'results', :action => 'edit', :id => grouping.get_submission_used.result.id %>
+  <% end %>
+<% end %>

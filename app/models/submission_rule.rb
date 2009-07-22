@@ -1,44 +1,53 @@
 class SubmissionRule < ActiveRecord::Base
   
   belongs_to :assignment
+  has_many :periods, :dependent => :destroy
+  accepts_nested_attributes_for :periods, :allow_destroy => true
   
   validates_numericality_of :allow_submit_until, :only_integer => true,  
     :greater_than_or_equal_to => 0
+#  validates_associated :assignment
+#  validates_presence_of :assignment
   
-  # make sure to add :if param for validating specific subclasses
-  
-  # GRACE DAY VALIDATIONS
-  
-  validates_numericality_of :grace_day_limit, :only_integer => true, 
-    :greater_than_or_equal_to => 0, 
-    :if => Proc.new { |r| r[:type] == "GraceDaySubmissionRule" }
-  
-  # PENALTY VALIDATIONS
-  
-  validates_numericality_of :penalty_limit, :only_integer => true, 
-    :greater_than => 0, :if => Proc.new { |r| r[:type] == "PenaltySubmissionRule" }
-  
-  validates_numericality_of :penalty_increment, :only_integer => true, 
-    :greater_than => 0, :if => Proc.new { |r| r[:type] == "PenaltySubmissionRule" }
-  
-  validates_numericality_of :penalty_interval, :only_integer => true, 
-    :greater_than => 0, :if => Proc.new { |r| r[:type] == "PenaltySubmissionRule" }
-  
-  validates_format_of :penalty_interval_unit, :with => /days|hours|minutes/, 
-    :if => Proc.new { |r| r[:type] == "PenaltySubmissionRule" }
-  
-  # Additional validation logic
-  def validate
-    # penalty limit must be > penalty increment
-    if (penalty_increment && penalty_limit) && penalty_increment > penalty_limit
-      errors.add(:penalty_increment, "must be less than the penalty limit.")
-    end
+  def can_collect_now?
+    return Time.now >= calculate_collection_time
   end
   
-  
-  # all subclasses must define a late submission handle
-  # this is independent on whether a student can submit late submissions
-  def handle_late_submission(submission)
-    return submission
+  # Based on the assignment's due date, return the collection time for submissions
+  # Return a value of type Time
+  def calculate_collection_time
+    raise NotImplementedError.new("SubmissionRule:  calculate_collection_time not implemented")
   end
+  
+  # When Students commit code after the collection time, MarkUs should warn
+  # the Students with a message saying that the due date has passed, and the
+  # work they're submitting will probably not be graded
+  def commit_after_collection_message
+    #I18n.t 'submission_rules.submission_rule.commit_after_collection_message'
+    raise NotImplementedError.new("SubmissionRule:  commit_after_collection_message not implemented")
+  end
+  
+  # When we're past the due date, the File Manager for the students will display
+  # a message to tell them that they're currently past the due date.
+  def overtime_message
+    raise NotImplementedError.new("SubmissionRule: overtime_message not implemented")
+  end
+  
+  # Returns true or false based on whether the attached Assignment's properties
+  # will work with this particular SubmissionRule
+  def assignment_valid?
+    raise NotImplementedError.new("SubmissionRule: assignment_valid? not implemented")
+  end
+
+  # Takes a Submission (with an attached Result), and based on the properties of 
+  # this SubmissionRule, applies penalties to the Result - for example, will
+  # add an ExtraMark of a negative value, or perhaps add the use of a Grace Day.
+  def apply_submission_rule(submission)
+    raise NotImplementedError.new("SubmissionRule:  apply_submission_rule not implemented")
+  end
+
+  def description_of_rule
+    raise NotImplementedError.new("SubmissionRule:  description_of_rule not implemented")
+  end
+  
 end

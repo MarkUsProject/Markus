@@ -1,0 +1,12 @@
+<script language="Javascript" type="text/javascript">
+
+  var grace_periods = null;
+  document.observe('dom:loaded', function() {
+    grace_periods = new PeriodDeltaChain({
+      period_root_id: 'grace_periods',
+      date_format: "",
+      due_date: new Date()
+    });
+    grace_periods.refresh();
+  });
+</script>

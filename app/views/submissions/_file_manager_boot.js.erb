@@ -27,7 +27,7 @@ document.observe("dom:loaded", function() {
     }
   });
   
-  <%= remote_function :url => {:action => 'populate', :id => @assignment.id}, :complete => "$('loading_list').hide();" %>
+  <%= remote_function :url => {:action => 'populate_file_manager', :id => @assignment.id}, :complete => "$('loading_list').hide();" %>
 });
 
 </script>
