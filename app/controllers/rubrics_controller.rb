@@ -10,6 +10,7 @@ class RubricsController < ApplicationController
   def index
     @assignment = Assignment.find(params[:id])
     @criteria = @assignment.rubric_criteria(:order => 'position')
+
   end
   
   def add_criterion
@@ -45,13 +46,11 @@ class RubricsController < ApplicationController
                           {:name => @criterion.level_4_name, :description => @criterion.level_4_description},]
 
      render :update do |page|
-       page.replace_html("rubric_levels_pane_list", :partial => "rubrics/manage/levels", :locals => {:levels => @criterion_levels})
-       #Now that the levels have been reloaded, scroll the overflow div back to the top
-       page << "$('rubric_levels_pane_list').scrollTop = 0;"
+       page.replace_html("selected_criterion_name", @criterion.rubric_criterion_name)
+       page.replace_html("rubric_levels_pane_list", :partial => "rubrics/manage/levels", :locals => {:levels => @criterion_levels, :criterion => @criterion})
      end      
    end
 
-  
    def remove_criterion
     return unless request.delete?
     criterion = RubricCriterion.find(params[:criterion_id])
@@ -297,7 +296,9 @@ class RubricsController < ApplicationController
   #This method handles the drag/drop RubricCriteria sorting
   def update_positions
     params[:rubric_criteria_pane_list].each_with_index do |id, position|
-      RubricCriterion.update(id, :position => position+1)
+      if id != ""
+        RubricCriterion.update(id, :position => position+1)
+      end
     end
     render :nothing => true
   end

@@ -29,6 +29,10 @@ en:
     refuse:             "Refuse"
     invite:             "Invite"
     disinvite:          "Disinvite"
+    help:               "Help"
+    confirm_bulk_action: "Are you sure you want to perform this bulk action?"
+    hide_students:      "Hide Students"
+    unhide_students:    "Unhide Students"
 
     user:
         user_name:      "CDF ID"
@@ -37,8 +41,45 @@ en:
     assignment:
         name:           "Assignment Name"
         has_dependency: "Assignment Builds on Top Of"
-        no_dependency:    "Nothing - It's Unique"
+        no_dependency:  "Nothing - It's Unique"
 
-    confirm_bulk_action:  "Are you sure you want to perform this bulk action?"
-    hide_students: "Hide Students"
-    unhide_students: "Unhide Students"
+    criteria_edit_total_mark:     "This criteria will be mark out of"
+    criteria:           "Criteria"
+    weight:             "Weight"
+    editing_criteria:   "Editing criteria"
+    ordering_criteria:  "Ordering criteria"
+    remove_criteria_title:  "Delete this criterion"
+    remove_criteria_message:  "Are you sure you want to remoce this criteria?"
+    help_editing_criteria_message: "
+	Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam
+	tincidunt adipiscing turpis, bibendum mollis purus euismod non.
+	Aenean venenatis tempor lectus nec adipiscing. Donec imperdiet
+	laoreet nibh in rhoncus. Aliquam aliquet est a libero tempus ac
+	ullamcorper turpis sodales. Morbi risus nulla, adipiscing ut pretium
+	at, placerat non purus. Vestibulum sodales nibh nec odio pretium a
+	sodales lacus luctus. Maecenas dapibus imperdiet lacus, eu luctus
+	libero iaculis sit amet. Vivamus congue feugiat lectus et vulputate.
+	Etiam scelerisque libero vel ante pellentesque varius. Sed
+	pellentesque semper eros. Sed pretium interdum blandit. Nulla
+	sollicitudin lacus vitae est placerat convallis. Duis sodales
+	ultricies eros, congue consequat diam ultricies sit amet. Curabitur
+	ut turpis arcu. Etiam quam erat, blandit ac tempus vitae, posuere sit
+	amet risus."
+    help_ordering_criteria_message: "
+	Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam sodales
+	odio eu erat pellentesque sed egestas arcu tempus. Aenean ac rhoncus
+	purus. Aliquam erat volutpat. Cras consectetur justo posuere magna
+	congue auctor iaculis orci condimentum. Aliquam tincidunt congue
+	sodales. Aliquam a quam erat. Nullam a ligula massa. Fusce accumsan
+	mattis felis ut imperdiet. Vestibulum sit amet sem diam, non
+	vestibulum tortor. Fusce gravida nisl id metus facilisis vitae
+	feugiat nunc fermentum. Mauris ultricies sollicitudin risus, sit amet
+	ultrices velit ultricies at. Sed eget malesuada nibh. Quisque
+	ultrices placerat consequat. In ac est at tellus elementum cursus.
+	Phasellus hendrerit dolor sit amet tortor dignissim vitae cursus
+	purus mollis. Aenean adipiscing aliquet ligula, in fringilla nunc
+	imperdiet tincidunt. Vestibulum ipsum mauris, adipiscing quis
+	ultricies at, tempus et mauris. Nulla quam massa, ultricies eget
+	faucibus quis, elementum a odio."
+
+

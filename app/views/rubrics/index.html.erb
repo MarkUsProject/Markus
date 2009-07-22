@@ -1,7 +1,5 @@
 <%= stylesheet_link_tag("livepipe/tabs") %>
-<%= stylesheet_link_tag("rubrics") %>
 <%= javascript_include_tag  'livepipe/livepipe' %>
-<%= javascript_include_tag  'livepipe/tabs' %>
 <%= javascript_include_tag  'rubrics' %>
 <%= javascript_include_tag  '16accordion' %>
 
@@ -10,66 +8,70 @@ var create_num = <%=@assignment.rubric_criteria.length%> + 1;
 var authenticity_token = '<%=form_authenticity_token%>';
 var selected_criterion_id = null;
 var xhr_in_progress = false;
-var activate_upload_tab = false;
-<% if flash[:invalid_lines] && !flash[:invalid_lines].empty? -%>
-  activate_upload_tab = true;
-<% end -%>
 </script>
 
 <div id="title_bar">
   <h1>Rubric Management:  <%= h(sanitize(@assignment.name)) %></h1>	
 </div>
+
 <div class="wrapLeft">
 <% if flash[:upload_notice] && flash[:invalid_lines].empty? -%>
-<div>
-  <p class="success"><%= h(flash[:upload_notice]) %></p>
-</div>
+  <div>
+    <p class="success"><%= h(flash[:upload_notice]) %></p>
+  </div>
 <% end -%>
+<p id="criterion_error" class="warning" style="display: none;">
+  
+</p>
 
-  <div id="manually_edit_rubric_canvas" class="tabbedArea">
-    <div id="rubric_criteria_pane">
+<div class="colLeft">
       <div id="rubric_criteria_pane_menu">
-        <h2 id="rubricCriteria">Rubric Criteria</h2>
-        <!--  Gives controller and instruction
+        <h2 id="rubricCriteria">Rubric Criteria <span id="addCriterion"><%= link_to_remote 'Add Criterion', :url => { :action => 'add_criterion', :id => @assignment.id}, :with => "'create_num='+create_num", :before => "create_num++;" %></span>
+</h2>
+      
+</div>
+  <div id="rubric_criteria_pane">
+  <!--  Gives controller and instruction
               Views can be dynamic
               Controller: add_action, with the id,
               :with => attach these parameters
               :before => before the counters
               Also passing the number of critieras
         -->
-        <span id="addCriterion"><%= link_to_remote 'Add Criterion', :url => { :action => 'add_criterion', :id => @assignment.id}, :with => "'create_num='+create_num", :before => "create_num++;" %></span>
-        <div class="clear"></div>
-      </div> <!-- Rubric Criteria Pane Menu -->
-      
       <ul id="rubric_criteria_pane_list">
+         <li><span class="criterion_weight"><%= h(@assignment.total_mark/4) %></span></li>
         <% @criteria.each do |criterion| -%>
           <%= render :partial => "rubrics/manage/criterion", :locals => {:criterion => criterion} %>
-        <% end -%>
-      </ul>
+         <% end -%>
+
+    </ul>  <!-- Rubric Criteria Pane -->
+      <%= sortable_element("rubric_criteria_pane_list", :url => { :action => "update_positions" }) %>		
       
-      <%= sortable_element("rubric_criteria_pane_list", :handle=> 'div', :url => { :action => "update_positions" }) %>		
-      
-    </div>  <!-- Rubric Criteria Pane -->
-    
+</div>
+<!------------------------------------------------------------------- -->    
+
     <div id="rubric_levels_pane">
-  
       <div id="rubric_levels_pane_menu">
-        <h2>Rubric Levels: <span id="selected_criterion_name"></span></h2>
-      </div> <!-- rubric level menu -->
+        <h2><span id="selected_criterion_name"></span></h2>
+	<div id="rubrics_help">
+	  <h2><%= I18n.t(:help)%></h2>
+	    <h3><%= I18n.t(:editing_criteria)%></h3>
+	       <p><%= I18n.t(:help_editing_criteria_message)%></p>
+	     <h3><%= I18n.t(:ordering_criteria) %></h3>
+	       <p><%= I18n.t(:help_ordering_criteria_message)%></p>
+	</div>
+        <div id="rubric_levels_pane_list">
+        </div>
+    </div>
   
-      <ul id="rubric_levels_pane_list">
-        
-      </ul> <!-- Rubric Levels Pane List -->
-            
-    </div> <!-- Rubric Levels Pane -->
-    
-    <div class="clear"></div>
+   <div class="clear"></div>
   
   </div> <!-- Edit Canvas -->
-  
+ </div>
+<div class="colRight" >
     <div id="test-accordion" class="accordion"> 
     <div class="accordion-toggle">Upload Rubric File</div>
-    <div class="accordion-content"
+    <div class="accordion-content">
     <p>
     Select a CSV or YAML file to upload
     <!-- Need a better message
@@ -144,4 +146,5 @@ var activate_upload_tab = false;
   
   </div> <!-- Download canvas -->
 </div> <!-- Tabbed Area -->
+</div>
 </div>

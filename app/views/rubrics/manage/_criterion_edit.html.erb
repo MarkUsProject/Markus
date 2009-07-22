@@ -1,0 +1,50 @@
+<%#
+# Erb template for inserting a new rubric criterion into the assignment rubric
+%>
+
+<div class="main_rubric_criteria_edit">
+
+<div class="float_right">
+  <%= link_to_remote I18n.t(:delete), :method => 'delete',
+    :url => {:action => 'remove_criterion', :criterion_id => criterion.id},
+    :html => { :class => 'delete', 
+               :title => I18n.t(:remove_criteria_title)
+	       },
+    :confirm => I18n.t(:remove_criteria_message), 
+    :complete => "hide_levels(); show_help(), selected_criterion_id =
+    null;"
+  %>
+</div>
+
+  <span id="<%="criterion_inputs_#{criterion.id}"%>">
+   <label><%= I18n.t(:criteria)%></label>
+      <input type="text" class="criterion_input_name" value="<%=criterion.rubric_criterion_name%>" id="<%="criterion_inputs_#{criterion.id}_name"%>">
+      <%=javascript_tag "$('criterion_inputs_#{criterion.id}_name').observe('focus', function(event) {$(Event.element(event)).addClassName('editing');})"%>
+      <%=javascript_tag "$('criterion_inputs_#{criterion.id}_name').observe('keypress', function(event, name_input) {if (event.keyCode == Event.KEY_RETURN) {criterion_input_edited('name', Event.element(event), #{criterion.id});}})"%>
+      <%=javascript_tag "$('criterion_inputs_#{criterion.id}_name').observe('blur', function(event, name_input) {criterion_input_edited('name', Event.element(event), #{criterion.id});})"%>
+    <br />
+   </span>
+
+    <span id="criterion_weight_edit_<%= criterion.id%>" class="criterion_weight_edit">
+    <label><%= I18n.t(:weight)%></label>
+    <%= button_to_function "-", "criterion_weight_bump(-1,
+$('criterion_inputs_#{criterion.id}_weight'), #{criterion.id});",
+:class => "weight_bump_button"%>
+    
+    <input type="text" class="criterion_input_weight" id="<%="criterion_inputs_#{criterion.id}_weight"%>" value="<%=criterion.weight%>">
+    <%=javascript_tag "$('criterion_inputs_#{criterion.id}_weight').observe('focus', function(event) {$(Event.element(event)).addClassName('editing');})"%>
+    <%=javascript_tag "$('criterion_inputs_#{criterion.id}_weight').observe('keypress', function(event, input) {if (event.keyCode == Event.KEY_RETURN) {criterion_input_edited('weight', Event.element(event), #{criterion.id});}})"%>
+    <%=javascript_tag "$('criterion_inputs_#{criterion.id}_weight').observe('blur', function(event, input) {criterion_input_edited('weight', Event.element(event), #{criterion.id});})"%>
+    
+    <%=button_to_function "+", "criterion_weight_bump(1,
+$('criterion_inputs_#{criterion.id}_weight'), #{criterion.id});",
+:class => "weight_bump_button"
+%><br />
+    </span>
+
+    <span class="criteria_edit_total_mark">
+     <%= I18n.t(:criteria_edit_total_mark)%> <%= criterion.weight*4%>
+    </span>
+</div>
+
+<h3>Levels</h3>

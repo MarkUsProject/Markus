@@ -35,9 +35,12 @@ a:hover {
    text-decoration: none;
    background: inherit;
 }
+a.delete{
+    color: #ee6415;
+}
 
 a.delete:hover{
-   color: red;
+  color: red;
 }
 
 h1{
@@ -299,6 +302,7 @@ input:hover, .button:hover{
 
 input:focus{
   border-color: #003366;
+  color: #000;
 }
 
 
@@ -412,6 +416,8 @@ tr:hover .table_menu{
    font-weight: bold;
    color: #003399;
    text-transform: capitalize;
+   cursor: pointer;
+   padding: 0.1em;
 }
 
 
@@ -819,4 +825,121 @@ a.icon_remove:hover {
   background: no-repeat url('../images/icons/cancel.png');
 }
 
+/* Rubric Criteria */
+#rubric_criteria_pane{
+   float: left;
+   width: 30%;
+   padding: 0px 20px;
+}
 
+#rubric_criteria_pane ul{
+  -moz-border-radius: 9px;
+  -webkit-border-radius: 9px;
+  border: 2px solid #ccc;
+  list-style: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+
+#rubric_levels_pane_list{
+   padding-left: 10px;
+}
+
+.weight_bump_button{
+  width: 10px;
+  padding: 0px 9px;
+  min-width: 10px;
+}
+
+.criterion_input_weight{
+   width: 18px;
+   padding: 2px 9px;
+}
+
+.level_textarea_description{
+   width: 90%;
+}
+
+
+#rubric_levels_pane{
+   width: 65%;
+   float: right;
+   border: 2px solid #ccc;
+   -moz-border-radius: 9px;
+   -webkit-border-radius: 9px;
+}
+
+#rubric_levels_pane h2{
+  padding-left:10px;
+}
+
+#rubrics_help{
+  padding: 0 10px 10px 10px;
+  font-style: italic;
+  line-height: 1.6em;
+}
+
+#rubrics_help h2{
+  padding: 0 10px;
+  color: #464646;
+}
+
+#rubrics_help h3{
+  color: #464646;
+}
+
+
+.criterion_holder_selected{
+  background: #ccc;
+}
+
+#rubric_criteria_pane li{
+   width: 100%;
+   border-bottom: 1px solid #ccc;
+   min-height: 3em; 
+}
+
+.criterion_handle{
+  cursor: move;
+}
+
+.criterion_title_div{
+   padding: 2px 2px 0 4px;
+   float: left;
+}
+
+.criterion_weight {
+   float: right;
+   padding: 2px 4px 0 2px;
+
+}
+
+.delete_criterion a img{
+    color: none;
+    border: none;
+}
+
+.main_rubric_criteria_edit{
+   background: #F8F8F8;
+   margin: 10px;
+   padding: 10px;
+   border: 2px solid #ccc;
+   -moz-border-radius: 9px;
+   -webkit-border-radius: 9px;
+
+}
+
+input.criterion_input_name{
+   background: #fff;
+   width: 25em;
+   text-align: left;
+}
+
+.criteria_edit_total_mark{
+   font-style: italic;
+}
+
+#rubric_levels_pane_list li{
+   padding-bottom: 2em;
+}

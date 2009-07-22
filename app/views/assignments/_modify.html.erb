@@ -162,10 +162,11 @@
   <%- end -%>
 </fieldset>
 
-  <p><%= f.submit @submit_text, :name => action %></p>
+  <p><%= f.submit @submit_text, :name => action %>
+<%= link_to I18n.t(:cancel), {:action => 'index'}, :class => "button" %>
+</p>
   
 <% end %>
 
-<%= link_to 'Cancel', :action => 'index' %>
 </div>
 </div>
