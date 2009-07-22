@@ -62,7 +62,7 @@ en:
         description: "You may submit up to {{grace_day_limit}} day(s) past the due date, and will have that number of days subtracted from your allotted grace days"
         commit_after_collection_message: "The due date for this assignment, plus the maximum number of allowed grace days, has passed.  Your upload has been accepted, but probably will not be included in the grading."
         overtime_message_with_days_left: "The due date for this assignment has passed.  You may, however, use a maximum of {{grace_day_limit}} grace day(s) in order to complete this assignment"
-        overtime_message_without_days_left: "The due date for this assignment has passed, and you are no longer able to use any grace days.  
+        overtime_message_without_days_left: "The due date for this assignment has passed, and you are no longer able to use any grace days."
 
     criteria_edit_total_mark:     "This criteria will be mark out of"
     criteria:           "Criteria"
