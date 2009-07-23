@@ -131,6 +131,15 @@ class Grouping < ActiveRecord::Base
     self.save
   end
 
+  # Grace Credit Query
+  def available_grace_credits
+    total = 0
+    accepted_students.each do |student|
+      total = total + student.remaining_grace_credits
+    end
+    return total
+  end
+
   # Submission Functions
   def has_submission?
     return submissions.count > 0

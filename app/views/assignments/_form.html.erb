@@ -103,11 +103,7 @@
     </p>
 
     <p>
-      Deduct at most <%= rule.text_field :penalty_limit, :size => 3 %> points 
-      in increments of <%= rule.text_field :penalty_increment, :size => 3 %> for every 
-      <%= rule.text_field :penalty_interval, :size => 3 %>
-      <%= rule.select :penalty_interval_unit, ["days", "hours", "minutes"] %>
-      late.
+
     </p>
   <%- end -%>
   

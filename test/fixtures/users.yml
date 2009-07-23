@@ -62,7 +62,7 @@ student1:
     user_name:      student1
     last_name:      Mason
     first_name:     Hollis
-    grace_days:     1
+    grace_credits:     5
     type:           Student
     created_at:     <%= Time.now.to_s(:db) %>
     updated_at:     <%= Time.now.to_s(:db) %>
@@ -71,7 +71,7 @@ student2:
     user_name:      student2
     last_name:      Juspeckzyk
     first_name:     Sally
-    grace_days:     1
+    grace_credits:     5
     type:           Student
     created_at:     <%= Time.now.to_s(:db) %>
     updated_at:     <%= Time.now.to_s(:db) %>
@@ -80,7 +80,7 @@ student3:
     user_name:      student3
     last_name:      Kovacs
     first_name:     Walter
-    grace_days:     1
+    grace_credits:     5
     type:           Student
     created_at:     <%= Time.now.to_s(:db) %>
     updated_at:     <%= Time.now.to_s(:db) %>
@@ -89,7 +89,7 @@ student4:
     user_name:      student4
     last_name:      Blake
     first_name:     Edward
-    grace_days:     1
+    grace_credits:     5
     type:           Student
     created_at:     <%= Time.now.to_s(:db) %>
     updated_at:     <%= Time.now.to_s(:db) %>
@@ -98,7 +98,7 @@ student5:
     user_name:      student_dup
     last_name:      Dreiberg
     first_name:     Dan
-    grace_days:     1
+    grace_credits:     5
     type:           Student
     created_at:     <%= Time.now.to_s(:db) %>
     updated_at:     <%= Time.now.to_s(:db) %>
@@ -107,7 +107,7 @@ student6:
     user_name:      student6
     last_name:      Devisscher
     first_name:     Audrey
-    grace_days:     1
+    grace_credits:     5
     type:           Student
     created_at:     <%= Time.now.to_s(:db) %>
     updated_at:     <%= Time.now.to_s(:db) %>
@@ -116,7 +116,7 @@ hidden_student:
     user_name:      hidden
     last_name:      Student
     first_name:     Hidden
-    grace_days:     1
+    grace_credits:     5
     type:           Student
     created_at:     <%= Time.now.to_s(:db) %>
     updated_at:     <%= Time.now.to_s(:db) %>

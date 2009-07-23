@@ -4,8 +4,6 @@ class SubmissionRule < ActiveRecord::Base
   has_many :periods, :dependent => :destroy
   accepts_nested_attributes_for :periods, :allow_destroy => true
   
-  validates_numericality_of :allow_submit_until, :only_integer => true,  
-    :greater_than_or_equal_to => 0
 #  validates_associated :assignment
 #  validates_presence_of :assignment
   
@@ -25,6 +23,14 @@ class SubmissionRule < ActiveRecord::Base
   def commit_after_collection_message
     #I18n.t 'submission_rules.submission_rule.commit_after_collection_message'
     raise NotImplementedError.new("SubmissionRule:  commit_after_collection_message not implemented")
+  end
+  
+  # When Students view the File Manager after the collection time, 
+  # MarkUs should warnthe Students with a message saying that the 
+  # due date has passed, and that any work they're submitting will 
+  # probably not be graded
+  def after_collection_message
+    raise NotImplementedError.new("SubmissionRule:  after_collection_message not implemented")
   end
   
   # When we're past the due date, the File Manager for the students will display

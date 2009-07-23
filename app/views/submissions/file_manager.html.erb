@@ -28,6 +28,18 @@
   <div class="warning"><%= flash[:transaction_warning] %></div>
 <% end %>
 
+<% if @assignment.submission_rule.can_collect_now? %>
+  <div class="notice">
+    <%= h(@assignment.submission_rule.after_collection_message(@grouping)) %>
+  </div>
+<% else %>
+  <% if @assignment.due_date < Time.now %>
+    <div class="notice">
+      <%= h(@assignment.submission_rule.overtime_message(@grouping)) %>
+    </div>
+  <% end %>
+<% end %>
+
 <% if flash[:update_conflicts] %>
   <div class="error">
     <h2>Conflicts</h2>
@@ -56,6 +68,11 @@
   <% end %>
   </ul>
  </div>
+<% end %>
+<% if flash[:commit_notice] %>
+  <div class="notice">
+    <%=flash[:commit_notice]%>
+  </div>
 <% end %>
 <% if flash[:commit_error] %>
   <div class="warning">
