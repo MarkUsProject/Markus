@@ -829,7 +829,7 @@ a.icon_remove:hover {
 #rubric_criteria_pane{
    float: left;
    width: 30%;
-   padding: 0px 20px;
+   padding: 0px 2%;
 }
 
 #rubric_criteria_pane ul{
@@ -897,15 +897,18 @@ a.icon_remove:hover {
 #rubric_criteria_pane li{
    width: 100%;
    border-bottom: 1px solid #ccc;
-   min-height: 3em; 
+   min-height: 35px; 
+   padding-top: 2px;
 }
 
 .criterion_handle{
+  padding-left: 3px;
   cursor: move;
+  float:left;
 }
 
 .criterion_title_div{
-   padding: 2px 2px 0 4px;
+   padding: 2px 4px 0 4px;
    float: left;
 }
 

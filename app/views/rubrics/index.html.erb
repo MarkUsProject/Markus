@@ -28,7 +28,6 @@ var xhr_in_progress = false;
       <div id="rubric_criteria_pane_menu">
         <h2 id="rubricCriteria">Rubric Criteria <span id="addCriterion"><%= link_to_remote 'Add Criterion', :url => { :action => 'add_criterion', :id => @assignment.id}, :with => "'create_num='+create_num", :before => "create_num++;" %></span>
 </h2>
-      
 </div>
   <div id="rubric_criteria_pane">
   <!--  Gives controller and instruction
@@ -39,7 +38,8 @@ var xhr_in_progress = false;
               Also passing the number of critieras
         -->
       <ul id="rubric_criteria_pane_list">
-         <li><span class="criterion_weight"><%= h(@assignment.total_mark/4) %></span></li>
+         <li><span class="criterion_title_div"><b>Criterion</b></span><span class="criterion_weight"><b>Weight</b> (<%=
+h(@assignment.total_mark/4) %>)</span></li>
         <% @criteria.each do |criterion| -%>
           <%= render :partial => "rubrics/manage/criterion", :locals => {:criterion => criterion} %>
          <% end -%>
@@ -53,6 +53,7 @@ var xhr_in_progress = false;
     <div id="rubric_levels_pane">
       <div id="rubric_levels_pane_menu">
         <h2><span id="selected_criterion_name"></span></h2>
+	<span><%= %></span>
 	<div id="rubrics_help">
 	  <h2><%= I18n.t(:help)%></h2>
 	    <h3><%= I18n.t(:editing_criteria)%></h3>

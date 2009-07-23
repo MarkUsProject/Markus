@@ -4,6 +4,7 @@
 
 <li class="criterion_holder <%= cycle('rowA', 'rowB') %>" id="<%= "criterion_#{criterion.id}" %>" >
   <span class="criterion_handle">
+    <%= image_tag "handle.png" %>
   </span> 
   <span class="criterion_title_div link" id="<%= "criterion_title_#{criterion.id}"%>" onclick="<%="focus_criterion(#{criterion.id})"%>">
     <%= h(criterion.rubric_criterion_name) %>

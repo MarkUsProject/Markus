@@ -104,11 +104,11 @@ function criterion_input_edited(input_type, input, criterion_id) {
               $(input).enable();
               //Update the title_div name and description, in case these have been changed
               if(input_type == 'name') {
-                  $('criterion_title_'+criterion_id+'_name').update('+ '+$F(input));
                   $('selected_criterion_name').update($F(input));
+                  $('criterion_title_'+criterion_id).update($F(input));
               }
               else if(input_type == 'weight') {
-                  $('criterion_title_'+criterion_id+'_weight').update($F(input));
+                  $('criterion_weight_'+criterion_id).update($F(input));
               }
           }
           else if(data.status == 'error') {

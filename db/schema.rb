@@ -191,6 +191,7 @@ ActiveRecord::Schema.define(:version => 20090722201232) do
   add_index "submission_files", ["user_id"], :name => "index_submission_files_on_user_id"
 
   create_table "submission_rules", :force => true do |t|
+    t.integer  "assignment_id",                                           :null => false
     t.integer  "allow_submit_until",    :default => 0
     t.string   "type",                  :default => "NullSubmissionRule"
     t.integer  "grace_day_limit"
@@ -200,7 +201,6 @@ ActiveRecord::Schema.define(:version => 20090722201232) do
     t.string   "penalty_interval_unit"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "assignment_id"
   end
 
   add_index "submission_rules", ["assignment_id"], :name => "index_submission_rules_on_assignment_id"
