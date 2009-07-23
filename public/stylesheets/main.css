@@ -253,7 +253,7 @@ span#choose_an_assignment{
 /* Global Action*/
 .global_action{
   float: right;
-  padding: 10px 0px;
+  padding: 0px;
 }
 
 .global_action_left {
@@ -264,13 +264,17 @@ span#choose_an_assignment{
 /* Toggle action */
 #toggle_actions{
   font-size: 0.9em;
-  font-family: Georgia, "Times New Roman", sans-serif
+  font-family: Georgia, "Times New Roman", sans-serif;
+}
+
+#toggle_actions a{
+  padding: 0px 4px;
 }
 
 /* Drop down menu, select, input etc...*/
 input, .button{
   min-width: 100px;
-  background: none;
+  background: #fff;
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
   border: 2px solid #ccc;
@@ -343,6 +347,19 @@ textarea:focus{
    border-color: #003366;
 }
 /* table */
+.filter_selected{
+  color: #000;
+  font-weight: bold;
+}
+
+a.filter_selected:hover{
+  color: #000;
+  font-weight: bold;
+  cursor: default;
+
+}
+
+
 table{
   width: 100%;
   border-collapse: collapse;
@@ -433,16 +450,21 @@ tr.student_hidden{
   padding: 0;
 }
 
-#group_members{
+#FilterTable_header_members{
   width: 40%;
 }
 
-#group_graders{
-  width: 15%;
+#FilterTable_header_graders{
+  width: 22.5%;
 }
 
-#group_name{
-   width: 30%;
+#FilterTable_header_valid{
+   width: 2.5%;
+}
+
+
+#FilterTable_header_name{
+   width: 32.5%;
 }
 
 /* flash messages, & warning */
@@ -607,6 +629,7 @@ tr.student_hidden{
 }
 
 .accordion-content {
+   background: #F8F8F8;
    overflow: auto;
    height: 60%;
    border: 2px solid #ccc;
@@ -908,7 +931,7 @@ a.icon_remove:hover {
 }
 
 .criterion_title_div{
-   padding: 2px 4px 0 4px;
+   padding: 2px 2px 0 10px;
    float: left;
 }
 

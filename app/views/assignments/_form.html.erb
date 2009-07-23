@@ -2,6 +2,7 @@
 
 <%= render :partial => 'boot.js' %>
 
+<div class="wrapLeft">
 <% form_for :assignment, @assignment do |f| %>
 <%= f.error_messages %>
 <fieldset>
@@ -116,4 +117,5 @@
 <%= f.submit "Submit" %>
 <% end %>
 
+</div>
 </div>

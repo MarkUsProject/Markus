@@ -74,6 +74,11 @@ function assignment_group_use() {
  }
 
 function add_member(id) {
+    if(accordion.current != $$('.accordion-content')[0]){
+      accordion.toExpand = $$('.accordion-content')[0];
+      accordion.toExpand.show();
+      accordion.animate();
+    }
     modalAddMember.open();
     $grouping_id = id
     $('new_student').setValue('');
@@ -211,7 +216,9 @@ document.observe("dom:loaded", function(){
   <div class="colLeft">
     <div class="wrapLeft">
       <div id="toggle_actions">
-       <%= link_to_function "Show All (<span id=\"all_groupings_count\"></span>)", "filter('none')", :id => "filter_link_none" %>
+       <%= link_to_function "Show All (<span
+id=\"all_groupings_count\"></span>)", "filter('none')", :id =>
+"filter_link_none", :class => "filter_selected" %>
 	|
         <%= link_to_function "Valid (<span id=\"valid_groupings_count\"></span>)", "filter('validated')", :id => "filter_link_validated" %>
 
@@ -228,6 +235,7 @@ document.observe("dom:loaded", function(){
 	<%= submit_tag "submit", :confirm => t(:confirm_bulk_action), :onclick => "$('submit_type').setValue('global_action');" %>
         <%= hidden_field_tag 'submit_type', 'global_action', :id => 'submit_type' %>
       </div>
+
       <div class="clear"></div>
       <div id="groups_container">
         <table class="groups" id="groups">
@@ -249,17 +257,23 @@ document.observe("dom:loaded", function(){
     %>
     <div id="test-accordion" class="accordion">
       <div id="accordion-toggle-top" class="accordion-toggle">
-        Students without a group
+        Students without a group (<%= @ungrouped_students.length%>)
       </div>
       <div class="accordion-content">
         <ul id="student_list">
+	  <% if @ungrouped_students.length != 0 %>
+	    <%= I18n.t(:student_without_a_group_list_message)%>
             <% @ungrouped_students.each do |s| -%>
               <li><%= h(s.user_name) %></li>
             <% end -%>
+	  <% else %>
+	    <%= I18n.t(:no_students_wihtou_a_group_message)%>
+
+	  <% end %>
           </ul>
       </div>
       <div class="accordion-toggle">
-        Graders
+        Graders (<%= @tas.length %>)
       </div>
       <div class="accordion-content">
 

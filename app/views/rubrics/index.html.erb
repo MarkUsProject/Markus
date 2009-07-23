@@ -69,9 +69,11 @@ h(@assignment.total_mark/4) %>)</span></li>
   
   </div> <!-- Edit Canvas -->
  </div>
+
+</div>
 <div class="colRight" >
     <div id="test-accordion" class="accordion"> 
-    <div class="accordion-toggle">Upload Rubric File</div>
+    <div class="accordion-toggle" id="accordion-toggle-top" >Upload Rubric File</div>
     <div class="accordion-content">
     <p>
     Select a CSV or YAML file to upload
@@ -83,10 +85,10 @@ h(@assignment.total_mark/4) %>)</span></li>
     </p>
   
     <p>
-      <% form_for :upload_rubric, :html => {:multipart => true}, :url => { :controller=>"rubrics",
+      <% form_for :upload_rubric, :url => { :controller=>"rubrics",
                       :action => 'upload_rubric',
                       :id => @assignment.id,
-                      :html => {:multipart => true }} do |f| -%>
+                      :html => {:multipart => true, :size => 1 }} do |f| -%>
       <p>
           <%= f.file_field :rubric %>
       </p>
@@ -121,7 +123,7 @@ h(@assignment.total_mark/4) %>)</span></li>
     <% end -%>
  </div> 
   
-    <div class="accordion-toggle">Download Rubric File</div>
+    <div class="accordion-toggle" id="accordion-toggle-bottom">Download Rubric File</div>
     <div class="accordion-content">
     <p>What format would you like to download the rubric in?</p>
   
@@ -147,5 +149,4 @@ h(@assignment.total_mark/4) %>)</span></li>
   
   </div> <!-- Download canvas -->
 </div> <!-- Tabbed Area -->
-</div>
 </div>

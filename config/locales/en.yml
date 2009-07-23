@@ -103,3 +103,7 @@ en:
 	imperdiet tincidunt. Vestibulum ipsum mauris, adipiscing quis
 	ultricies at, tempus et mauris. Nulla quam massa, ultricies eget
 	faucibus quis, elementum a odio."
+    student_without_a_group_list_message: "These students don't have a group 
+        yet:"
+    no_student_wihtout_a_group_message: "There are no students without a
+        group."
