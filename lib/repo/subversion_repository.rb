@@ -580,7 +580,7 @@ class SubversionRevision < Repository::AbstractRevision
   def initialize(revision_number, repo)
     @repo = repo
     begin 
-      @repo.__get_property(:date, revision_number).nil? 
+      @timestamp = @repo.__get_property(:date, revision_number)
     rescue Svn::Error::FsNoSuchRevision
       raise RevisionDoesNotExist
     end
