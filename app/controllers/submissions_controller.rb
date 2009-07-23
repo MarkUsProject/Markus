@@ -56,6 +56,8 @@ class SubmissionsController < ApplicationController
       grouping = Grouping.find(params[:grouping_id])
       time = assignment.submission_rule.calculate_collection_time.localtime
       new_submission = Submission.create_by_timestamp(grouping, time)
+      # Apply the SubmissionRule
+      new_submission = assignment.submission_rule.apply_submission_rule(new_submission)
       result = Result.new
       result.submission = new_submission
       result.marking_state = Result::MARKING_STATES[:unmarked]
@@ -68,7 +70,7 @@ class SubmissionsController < ApplicationController
   
   
   def populate_submissions_table
-    assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group]}]) 
+    assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group, {:submissions => :result}]}]) 
     # If the current user is a TA, then we need to get the Groupings
     # that are assigned for them to mark.  If they're an Admin, then
     # we need to give them a list of all Groupings for this Assignment.

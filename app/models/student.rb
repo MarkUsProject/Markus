@@ -10,7 +10,13 @@ class Student < User
   has_many :rejected_groupings, :class_name => 'Grouping', :through => :memberships, :conditions => {'memberships.membership_status' => StudentMembership::STATUSES[:rejected]}, :source => :grouping
 
   has_many :student_memberships
-   
+  
+  has_many :grace_period_deductions, :through => :memberships
+
+  validates_numericality_of :grace_credits, :only_integer => true, 
+    :greater_than_or_equal_to => 0
+
+
   # Returns true if this student has a Membership in a Grouping for an
   # Assignment with id 'aid', where that Membership.membership_status is either
   # 'accepted' or 'inviter'
@@ -31,6 +37,10 @@ class Student < User
   
   def pending_groupings_for(aid)
     return pending_groupings.find_all_by_assignment_id(aid)
+  end
+  
+  def remaining_grace_credits
+    return grace_credits - grace_period_deductions.sum('deduction')
   end
 
   # return pending memberships for a specific assignment

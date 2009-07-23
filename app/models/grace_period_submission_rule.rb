@@ -4,11 +4,11 @@ class GracePeriodSubmissionRule < SubmissionRule
   #  :greater_than_or_equal_to => 0
      
   def calculate_collection_time
-    return assignment.due_date + self.hours_sum
+    return assignment.due_date + self.hours_sum.hours
   end
   
   def hours_sum
-    return periods.sum('hours').hours
+    return periods.sum('hours')
   end
   
   # When Students commit code after the collection time, MarkUs should warn
@@ -42,13 +42,46 @@ class GracePeriodSubmissionRule < SubmissionRule
     return !assignment.nil?
   end
 
-  # The NullSubmissionRule will not add any penalties
   def apply_submission_rule(submission)
+    # If we aren't overtime, we don't need to apply a rule
+    return submission if submission.revision_timestamp <= assignment.due_date
+    
+    # So we're overtime.  How far are we overtime?
+    collection_time = submission.revision_timestamp
+    due_date = assignment.due_date
+    
+    overtime_hours = ((collection_time - due_date) / 1.hour).ceil
+    
+    # Now we need to figure out how many Grace Credits to deduct
+    deduction_amount = calculate_deduction_amount(overtime_hours)
+    
+    # Deduct Grace Credits from every member of the Grouping
+    student_memberships = submission.grouping.accepted_student_memberships
+
+    student_memberships.each do |student_membership|
+      deduction = GracePeriodDeduction.new   
+      deduction.membership = student_membership
+      deduction.deduction = deduction_amount
+      deduction.save
+    end
+    
     return submission
   end
-
+  
   def description_of_rule
     I18n.t 'submission_rules.null_submission_rule.description'
   end
-    
+
+  private 
+  
+  def calculate_deduction_amount(overtime_hours)
+    total_deduction = 0
+    periods.each do |period|
+      total_deduction = total_deduction + period.deduction
+      overtime_hours = overtime_hours - period.hours
+      break if overtime_hours <= 0
+    end
+    return total_deduction
+  end
+ 
 end

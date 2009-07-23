@@ -16,10 +16,7 @@ class User < ActiveRecord::Base
   validates_format_of       :type,          :with => /Student|Admin|Ta/
   #validates_format_of       :last_name, :first_name,    
   #  :with => /^(\w)+$/, :message => "should be alphanumeric"
-   
-  validates_numericality_of :grace_days, :only_integer => true, 
-    :greater_than_or_equal_to => 0, :allow_nil => true
-    
+      
   # role constants
   # NOTE (from Severin): Names of role constants are pulled into view. 
   #                      Naming them with correct spelling might make sense.

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090721192032) do
+ActiveRecord::Schema.define(:version => 20090722201232) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -78,6 +78,15 @@ ActiveRecord::Schema.define(:version => 20090721192032) do
   end
 
   add_index "extra_marks", ["result_id"], :name => "index_extra_marks_on_result_id"
+
+  create_table "grace_period_deductions", :force => true do |t|
+    t.integer  "membership_id"
+    t.integer  "deduction"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "grace_period_deductions", ["membership_id"], :name => "index_grace_period_deductions_on_membership_id"
 
   create_table "groupings", :force => true do |t|
     t.integer  "group_id",                          :null => false
@@ -208,14 +217,14 @@ ActiveRecord::Schema.define(:version => 20090721192032) do
   add_index "submissions", ["grouping_id"], :name => "index_submissions_on_grouping_id"
 
   create_table "users", :force => true do |t|
-    t.string   "user_name",                     :null => false
+    t.string   "user_name",                        :null => false
     t.string   "last_name"
     t.string   "first_name"
-    t.integer  "grace_days"
+    t.integer  "grace_credits", :default => 0,     :null => false
     t.string   "type"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "hidden",     :default => false, :null => false
+    t.boolean  "hidden",        :default => false, :null => false
   end
 
   add_index "users", ["user_name"], :name => "index_users_on_user_name", :unique => true

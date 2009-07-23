@@ -16,6 +16,9 @@ module UsersHelper
     result[:user_name] = CGI.escapeHTML(user.user_name)
     result[:first_name] = CGI.escapeHTML(user.first_name)
     result[:last_name] = CGI.escapeHTML(user.last_name)
+    if user.student?
+      result[:grace_credits] = user.remaining_grace_credits.to_s + '/' + user.grace_credits.to_s
+    end
     result[:hidden] = user.hidden
     result[:edit] = render_to_string :partial => "users/table_row/edit", :locals => {:user => user, :controller => self.controller_name}
     return result

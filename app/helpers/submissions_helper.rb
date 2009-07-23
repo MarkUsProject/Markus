@@ -84,8 +84,6 @@ module SubmissionsHelper
     
     table_row[:repository] = render_to_string :partial => "submissions/submissions_table_row/repository", :locals => {:grouping => grouping}
 
-    table_row[:members] = render_to_string :partial => "submissions/submissions_table_row/members", :locals => {:student_memberships => grouping.student_memberships}
-
     table_row[:commit_date] = render_to_string :partial => "submissions/submissions_table_row/commit_date", :locals => {:grouping => grouping}
 
     table_row[:marking_state] = render_to_string :partial => "submissions/submissions_table_row/marking_state", :locals => {:grouping => grouping}

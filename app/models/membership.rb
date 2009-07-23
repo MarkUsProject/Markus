@@ -3,6 +3,7 @@ class Membership < ActiveRecord::Base
 
   belongs_to :user
   belongs_to :grouping 
+  has_many :grace_period_deductions
 
   validates_presence_of   :user_id, :message => "needs a user id"
   validates_associated    :grouping,    :message => "associated user needs to be valid"

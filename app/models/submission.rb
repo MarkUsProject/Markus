@@ -21,7 +21,7 @@ class Submission < ActiveRecord::Base
      new_submission.grouping = grouping
      new_submission.submission_version = 1
      new_submission.submission_version_used = true
-     new_submission.revision_timestamp = timestamp
+     new_submission.revision_timestamp = revision.timestamp
      new_submission.revision_number = revision.revision_number
 
      # TODO: This next bit needs to be recursive to navigate folders, etc

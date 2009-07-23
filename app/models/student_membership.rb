@@ -6,7 +6,7 @@ class StudentMembership < Membership
     :pending => 'pending', 
     :rejected => 'rejected'
   }
-
+  
   validates_presence_of :membership_status
   validates_format_of :membership_status, :with => /inviter|pending|accepted|rejected/
 

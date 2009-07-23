@@ -38,6 +38,7 @@ en:
         user_name:      "CDF ID"
         first_name:     "First Name"
         last_name:      "Last Name"
+        grace_credits:  "Grace Credits"
     assignment:
         name:           "Assignment Name"
         has_dependency: "Assignment Builds on Top Of"
