@@ -969,3 +969,8 @@ input.criterion_input_name{
 #rubric_levels_pane_list li{
    padding-bottom: 2em;
 }
+
+.disable {
+  font-style: italic;
+  color: #464646;
+}
