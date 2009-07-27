@@ -47,7 +47,7 @@
     <% end %>
   </select>
  </p>
-  <fieldset>
+  <fieldset class="group_properties">
     <legend>Group Properties</legend>
     <div id="group_properties" class="disabled">
   <p id="students_form_groups_style" class="disable">
@@ -88,7 +88,7 @@
     </p>
     
     <div>
-      The Due Date is <%=Time.now%>
+      <span class="due_date">The Due Date is <b><%=Time.now%></b></span>
     </div>
     <div id="grace_periods">
      <% rule.fields_for :periods do |period_form| %>

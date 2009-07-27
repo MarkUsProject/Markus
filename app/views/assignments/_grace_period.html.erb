@@ -15,16 +15,17 @@
 #<a href="javascript:void(0);" class="PeriodLister_Remove">Remove</a>
 #<div class="clear"></div>
 %>
-<div class="period">
+<fieldset class="period">
+<legend>Grace Period</legend>
 <% pf.fields_for :periods, grace_period do |f| %>
   <p>
     <%= f.label :hours, "After:" %>
     <%= f.text_field :hours, :size => 1, :class => "PeriodDeltaChain_Hours", :onchange => "grace_periods.refresh();" %>
     hours...
-  </p>
-  <p>
-    <span class="PeriodDeltaChain_FromTime"></span>
-    <span class="PeriodDeltaChain_ToTime"></span>
+    <span class="PeriodDeltaChain">
+      From <span class="PeriodDeltaChain_FromTime"></span> to
+           <span class="PeriodDeltaChain_ToTime"></span>
+    </span>
   </p>
   <p>
     <%= f.label :deduction, "Grace Period Credit Deduction:" %>
@@ -39,4 +40,4 @@
   <% end %>
   </p>
 <% end %>
-</div>
+</fieldset>

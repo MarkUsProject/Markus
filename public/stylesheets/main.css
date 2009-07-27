@@ -35,6 +35,7 @@ a:hover {
    text-decoration: none;
    background: inherit;
 }
+
 a.delete{
     color: #ee6415;
 }
@@ -974,3 +975,42 @@ input.criterion_input_name{
   font-style: italic;
   color: #464646;
 }
+
+fieldset.period, fieldset.group_properties  {
+   margin-top: 10px;
+   margin-left: 5em;
+   padding: 10px;
+   width: 75%;
+}
+
+fieldset.period p{
+   margin: 0px;
+   padding: 0px;
+}
+
+.PeriodDeltaChain{
+  padding-left: 10em;
+  font-style: italic;
+  font-size: 0.9em;
+}
+
+.PeriodDeltaChain_ToTime{
+   font-weight: bold;
+   padding: 0 10px;
+}
+
+.PeriodDeltaChain_FromTime{
+   font-weight: bold;
+  padding: 0 10px;
+
+}
+
+span.due_date{
+  display: block;
+  font-style: italic;
+  color: #464646;
+  font-size: 0.9em;
+  padding-left: 5px;
+  margin-bottom: 5px;
+}
+
