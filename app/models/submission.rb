@@ -148,7 +148,6 @@ class Submission < ActiveRecord::Base
       new_file.submission = self
       new_file.filename = file.name
       new_file.path = file.path
-      new_file.user_id = file.user_id
       new_file.save
     end 
   end
@@ -158,6 +157,7 @@ class Submission < ActiveRecord::Base
   def create_result
     result = Result.new
     self.result = result
+    result.marking_state = Result::MARKING_STATES[:unmarked]
     result.save
   end
 

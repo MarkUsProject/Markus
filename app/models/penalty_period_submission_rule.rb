@@ -1,5 +1,17 @@
-class GracePeriodSubmissionRule < SubmissionRule
-     
+class PenaltyPeriodSubmissionRule < SubmissionRule
+
+  validates_numericality_of :penalty_limit, :only_integer => true, 
+    :greater_than => 0
+  
+  validates_numericality_of :penalty_increment, :only_integer => true, 
+    :greater_than => 0
+  
+  validates_numericality_of :penalty_interval, :only_integer => true, 
+    :greater_than => 0, :if => Proc.new { |r| r[:type] == "PenaltySubmissionRule" }
+  
+  validates_format_of :penalty_interval_unit, :with => /days|hours|minutes/
+
+
   def calculate_collection_time
     return assignment.due_date + hours_sum.hours
   end
@@ -115,5 +127,6 @@ class GracePeriodSubmissionRule < SubmissionRule
     end
     return assignment.due_date + hours_after_due_date.hours
   end
- 
 end
+
+

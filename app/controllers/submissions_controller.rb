@@ -55,12 +55,11 @@ class SubmissionsController < ApplicationController
     if assignment.submission_rule.can_collect_now?
       grouping = Grouping.find(params[:grouping_id])
       time = assignment.submission_rule.calculate_collection_time.localtime
+      # Create a new Submission by timestamp.
+      # A Result is automatically attached to this Submission, thanks to some callback
+      # logic inside the Submission model
       new_submission = Submission.create_by_timestamp(grouping, time)
-      # Attach a new Result
-      result = Result.new
-      result.submission = new_submission
-      result.marking_state = Result::MARKING_STATES[:unmarked]
-      result.save
+
       # Apply the SubmissionRule
       new_submission = assignment.submission_rule.apply_submission_rule(new_submission)
       redirect_to :controller => 'results', :action => 'edit', :id => result.id

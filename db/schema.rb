@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090723155356) do
+ActiveRecord::Schema.define(:version => 20090727153945) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -178,7 +178,6 @@ ActiveRecord::Schema.define(:version => 20090723155356) do
   add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
 
   create_table "submission_files", :force => true do |t|
-    t.integer  "user_id"
     t.integer  "submission_id"
     t.string   "filename"
     t.datetime "submitted_at"
@@ -188,7 +187,6 @@ ActiveRecord::Schema.define(:version => 20090723155356) do
 
   add_index "submission_files", ["filename"], :name => "index_submission_files_on_filename"
   add_index "submission_files", ["submission_id"], :name => "index_submission_files_on_submission_id"
-  add_index "submission_files", ["user_id"], :name => "index_submission_files_on_user_id"
 
   create_table "submission_rules", :force => true do |t|
     t.string   "type",          :default => "NullSubmissionRule"

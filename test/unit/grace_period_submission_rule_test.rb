@@ -88,7 +88,7 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
         assert_not_nil submission.submission_files.find_by_filename("Driver.java")
         assert_not_nil submission.submission_files.find_by_filename("OvertimeFile.java")
         assert_nil submission.submission_files.find_by_filename("NotIncluded.java")
-            
+        assert_not_nil submission.result
       end
 
     end
@@ -160,6 +160,7 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
         assert_not_nil submission.submission_files.find_by_filename("OvertimeFile1.java")
         assert_not_nil submission.submission_files.find_by_filename("OvertimeFile2.java")
         assert_nil submission.submission_files.find_by_filename("NotIncluded.java")
+        assert_not_nil submission.result
             
       end
 
@@ -230,7 +231,7 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
         assert_not_nil submission.submission_files.find_by_filename("Driver.java")
         assert_nil submission.submission_files.find_by_filename("OvertimeFile2.java")
         assert_nil submission.submission_files.find_by_filename("NotIncluded.java")
-            
+        assert_not_nil submission.result
       end
 
     end
