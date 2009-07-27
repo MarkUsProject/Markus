@@ -47,7 +47,7 @@
   <!-- Break between sections -->
 <div class="colRight">
   <div id="test-accordion" class="accordion">
-    <div class="accordion-toggle" id="accordion-content">
+    <div class="accordion-toggle" id="accordion-toggle-top">
       <%=I18n.t(:upload)%>
     </div>    
     <div class="accordion-content">
@@ -64,11 +64,11 @@
       </form> 
     </div>
 
-    <div class="accordion-toggle">
+    <div class="accordion-toggle" id="accordion-toggle-bottom">
       <%= I18n.t(:download) %>
     </div>
 
-    <div class="accordion-content">
+    <div class="accordion-content" >
       <p><%= link_to "Download TA list in CSV format", :controller => 'tas', :action => 'download_ta_list', :format => "csv" %></p>
     </div>
 
