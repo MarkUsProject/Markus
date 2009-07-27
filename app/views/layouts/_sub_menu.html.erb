@@ -1,6 +1,5 @@
 <% if @current_user.admin?%>
-<% if
-  controller.controller_name == 'assignments'  or
+<% if controller.controller_name == 'assignments' or
   controller.controller_name == 'rubrics' or
   controller.controller_name == 'submissions' or
   controller.controller_name == 'groups' or
@@ -10,9 +9,13 @@
 <div id="sub_menu">
   <ul id="root" class="level1 horizontal">
    <li class="level1">
-     <% if @assignment.nil?%>
+     <% if @assignment.nil?  %>
        <span id="choose_an_assignment"><%= I18n.t(:choose_assignment)%></span>
-     <% else %>
+     <% elsif controller.controller_name == 'assignments' and
+           controller.action_name == 'new'
+      %>
+     <span id="choose_an_assignment"><%= I18n.t(:create_new)%></span>
+     <% else%>
        <span id="choose_an_assignment"><%=h(sanitize(@assignment.name))%></span>
      <% end %>
         <ul class="level2 dropdown">
@@ -21,8 +24,8 @@
    </li>
 
   <% if
-    !@assignment.nil?	
-  %>
+    !@assignment.nil? and controller.controller_name == 'assignments' and
+controller.action_name != 'new'	 %>
           <li <% if controller.controller_name == 'assignments' %> 
          id="sub_menu_active"
          <%end%>>
