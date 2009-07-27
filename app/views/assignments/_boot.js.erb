@@ -7,6 +7,14 @@
       date_format: "",
       due_date: new Date()
     });
+    penalty_periods = new PeriodDeltaChain({
+      period_root_id: 'penalty_periods',
+      date_format: "",
+      due_date: new Date()
+    });
+
     grace_periods.refresh();
+    penalty_periods.refresh();
+    
   });
 </script>

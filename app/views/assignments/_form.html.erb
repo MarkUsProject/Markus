@@ -90,10 +90,13 @@
     <div>
       <span class="due_date">The Due Date is <b><%=Time.now%></b></span>
     </div>
+
     <div id="grace_periods">
+    <% if rule.object.type.to_s == "GracePeriodSubmissionRule" %>
      <% rule.fields_for :periods do |period_form| %>
        <%= render :partial => 'grace_period', :locals => {:grace_period => period_form.object, :pf => rule} %>
      <% end %>
+    <% end %>
     </div>
     <%= add_grace_period_link "Add a Grace Period", rule %>
  
@@ -101,6 +104,14 @@
       <%= rule.radio_button :type, "PenaltyPeriodSubmissionRule" %>
       Use Penalty Formula
     </p>
+    <div id="penalty_periods">
+    <% if rule.object.type.to_s == "PenaltyPeriodSubmissionRule" %>
+     <% rule.fields_for :periods do |period_form| %>
+       <%= render :partial => 'penalty_period', :locals => {:penalty_period => period_form.object, :pf => rule} %>
+     <% end %>
+    <% end %>
+    </div>
+    <%= add_penalty_period_link "Add a Penalty Period", rule %>
 
     <p>
 

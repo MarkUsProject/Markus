@@ -28,9 +28,13 @@ module AssignmentsHelper
     link_to_function name do |page|
       period = render(:partial => 'penalty_period', :locals => {:pf => form, :penalty_period => Period.new})
       page << %{
+      if ($F('assignment_submission_rule_attributes_type_penaltyperiodsubmissionrule') != null) {
         var new_period_id = "new_" + new Date().getTime();
         $('penalty_periods').insert({bottom: "#{ escape_javascript period }".replace(/(attributes_\\d+|\[\\d+\])/g, new_period_id) });
-      }
+      }  else {
+          alert('You must select the Penalty Period Submission Rule to add a grace period.');
+        }
+     }
     end
   end
   

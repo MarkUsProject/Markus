@@ -71,6 +71,7 @@ en:
         after_collection_message: "The maximum number of penalty periods has passed for this assignment.  Any changes will be recorded, but not graded."
         commit_after_collection_message: "The due date for this assignment, plus the maximum number of allowed penalty periods, has passed.  Your changes have been recorded, but will not be included in the grading."
         overtime_message: "The due date for this assignment has passed.  However, you are in a penalty period.  You can make changes to your submission, but will have {{potential_penalty}}% deducted from the final mark on this assignment."
+        extramark_description: "Late submission ({{overtime_hours}} hour(s)) resulted in automatic {{penalty_amount}}% deduction"
 
     criteria_edit_total_mark:     "This criteria will be mark out of"
     criteria:           "Criteria"
