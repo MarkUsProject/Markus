@@ -10,8 +10,7 @@
     <%= h(@assignment.message) %><br />
     
     <span class="label">Due date :</span>
-    <%= h(@assignment.due_date.strftime('%d %B')) %> at <%=
-h(@assignment.due_date.strftime('%l%p%M')) %>
+    <%= h(@assignment.due_date.strftime(LONG_DATE_TIME_FORMAT)) %>
 
   <h4>Files required for this assignment</h4>
   <ul>

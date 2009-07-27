@@ -96,6 +96,13 @@ USER_STUDENT_CSV_UPLOAD_ORDER = [:user_name, :last_name, :first_name]
 # Order of graders CSV uploads
 USER_TA_CSV_UPLOAD_ORDER  = [:user_name, :last_name, :first_name]
 
+###################################################################
+# Date/Time display formats
+###################################################################
+# Short form (displays month, day, year)
+SHORT_DATE_TIME_FORMAT = "%B %d, %Y"
+# Long form (displays month, day, year, hour, minute)
+LONG_DATE_TIME_FORMAT = "%B %d, %Y: %I:%M%p"
 
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence over those specified here.

@@ -26,6 +26,7 @@ class PenaltyPeriodSubmissionRule < SubmissionRule
     return I18n.t 'submission_rules.penalty_period_submission_rule.overtime_message', :potential_penalty => potential_penalty
   end
   
+  
   # GracePeriodSubmissionRule works with all Assignments
   def assignment_valid?
     return !assignment.nil?

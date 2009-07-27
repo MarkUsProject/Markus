@@ -8,7 +8,7 @@
   <% if Time.now >= @assignment.submission_rule.calculate_collection_time %>
   <h2>Grading can begin</h2>
   <% else %>
-  <h2>Grading can begin after <%= h(@assignment.submission_rule.calculate_collection_time)%> </h2>
+  <h2>Grading can begin after <%= h(@assignment.submission_rule.calculate_collection_time.strftime(LONG_DATE_TIME_FORMAT))%> </h2>
   <% end %>
 </div>
 <div class="wrapLeft">

@@ -17,7 +17,7 @@ class Result < ActiveRecord::Base
     total = get_subtotal + get_total_extra_points
     # added_percentage
     percentage = get_total_extra_percentage   
-    total = total + (percentage * total / 100)
+    total = total + (percentage * submission.assignment.total_mark / 100)
     return total
   end
 
