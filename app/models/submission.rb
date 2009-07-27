@@ -4,6 +4,7 @@ require 'fileutils' # FileUtils used here
 # on whether an assignment is a group or individual assignment.
 # Use Assignment.submission_by(user) to retrieve the correct submission.
 class Submission < ActiveRecord::Base
+  after_create :create_result
 
   validates_numericality_of :submission_version, :only_integer => true
   belongs_to :grouping
@@ -150,6 +151,14 @@ class Submission < ActiveRecord::Base
       new_file.user_id = file.user_id
       new_file.save
     end 
+  end
+  
+  private
+  
+  def create_result
+    result = Result.new
+    self.result = result
+    result.save
   end
 
 end

@@ -1,5 +1,7 @@
 class Result < ActiveRecord::Base
   
+  before_validation :set_default_values
+  
   MARKING_STATES = {
     :complete => 'complete',
     :partial => 'partial',
@@ -70,6 +72,12 @@ class Result < ActiveRecord::Base
       self.released_to_students = false
     end
     return true
+  end
+  
+  def set_default_values
+    if marking_state.nil?
+      marking_state = MARKING_STATES[:unmarked]
+    end
   end
   
 end

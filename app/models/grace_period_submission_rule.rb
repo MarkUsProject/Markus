@@ -1,11 +1,7 @@
 class GracePeriodSubmissionRule < SubmissionRule
      
   def calculate_collection_time
-    return assignment.due_date + self.hours_sum.hours
-  end
-  
-  def hours_sum
-    return periods.sum('hours')
+    return assignment.due_date + hours_sum.hours
   end
   
   # When Students commit code after the collection time, MarkUs should warn
@@ -69,6 +65,9 @@ class GracePeriodSubmissionRule < SubmissionRule
       submission.destroy
       collection_time = calculate_collection_date_from_credits(available_grace_credits)
       submission = Submission.create_by_timestamp(grouping, collection_time.localtime)
+      result = Result.new
+      result.submission = submission
+      
       return assignment.submission_rule.apply_submission_rule(submission)
     end
    
@@ -90,6 +89,10 @@ class GracePeriodSubmissionRule < SubmissionRule
   end
 
   private 
+  
+  def hours_sum
+    return periods.sum('hours')
+  end
   
   # Given a certain number of hours into the grace periods, calculate how many credits to
   # deduct 
