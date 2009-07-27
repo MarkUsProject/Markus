@@ -56,4 +56,10 @@ class SubmissionRule < ActiveRecord::Base
     raise NotImplementedError.new("SubmissionRule:  description_of_rule not implemented")
   end
   
+  private
+  
+  def calculate_overtime_hours_from(from_time)
+    return ((from_time - assignment.due_date) / 1.hour).ceil
+  end
+  
 end

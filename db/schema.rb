@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090727153945) do
+ActiveRecord::Schema.define(:version => 20090727170851) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -75,6 +75,7 @@ ActiveRecord::Schema.define(:version => 20090727153945) do
     t.float    "extra_mark"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "unit"
   end
 
   add_index "extra_marks", ["result_id"], :name => "index_extra_marks_on_result_id"
@@ -189,10 +190,10 @@ ActiveRecord::Schema.define(:version => 20090727153945) do
   add_index "submission_files", ["submission_id"], :name => "index_submission_files_on_submission_id"
 
   create_table "submission_rules", :force => true do |t|
-    t.integer  "assignment_id",                                   :null => false
     t.string   "type",          :default => "NullSubmissionRule"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "assignment_id"
   end
 
   add_index "submission_rules", ["assignment_id"], :name => "index_submission_rules_on_assignment_id"

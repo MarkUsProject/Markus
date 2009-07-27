@@ -59,6 +59,7 @@ class SubmissionsController < ApplicationController
       # A Result is automatically attached to this Submission, thanks to some callback
       # logic inside the Submission model
       new_submission = Submission.create_by_timestamp(grouping, time)
+      result = new_submission.result
 
       # Apply the SubmissionRule
       new_submission = assignment.submission_rule.apply_submission_rule(new_submission)

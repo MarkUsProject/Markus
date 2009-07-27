@@ -1,7 +1,5 @@
 class Result < ActiveRecord::Base
-  
-  before_validation :set_default_values
-  
+
   MARKING_STATES = {
     :complete => 'complete',
     :partial => 'partial',
@@ -16,7 +14,10 @@ class Result < ActiveRecord::Base
   
   # calculate the total mark for this assignment
   def total_mark
-    total = get_subtotal + get_bonus_marks + get_deductions
+    total = get_subtotal + get_total_extra_points
+    # added_percentage
+    percentage = get_total_extra_percentage   
+    total = total + (percentage * total / 100)
     return total
   end
 
@@ -30,25 +31,29 @@ class Result < ActiveRecord::Base
   end
 
   #returns the sum of all the POSITIVE extra marks
-  def get_bonus_marks
-    total = 0
-    self.extra_marks.each do |m|
-      if (m.extra_mark > 0)
-        total = total + m.extra_mark
-      end
-    end
-    return total
+  def get_positive_extra_points
+    return extra_marks.positive_points.sum('extra_mark')
+  end
+  
+  # Returns the sum of all the negative bonus marks
+  def get_negative_extra_points
+    return extra_marks.negative_points.sum('extra_mark')
+  end
+  
+  def get_total_extra_points
+    return get_positive_extra_points + get_negative_extra_points
+  end
+  
+  def get_positive_extra_percentage
+    return extra_marks.positive_percentage.sum('extra_mark')
+  end
+  
+  def get_negative_extra_percentage
+    return extra_marks.negative_percentage.sum('extra_mark')
   end
 
-  # Returns the sum of all the negative bonus marks
-  def get_deductions
-    total = 0
-    self.extra_marks.each do |m|
-      if (m.extra_mark < 0)
-        total = total + m.extra_mark
-      end
-    end
-    return total
+  def get_total_extra_percentage
+    return get_positive_extra_percentage + get_negative_extra_percentage
   end
   
   # unrealses the results, and put the marking state to partial.
@@ -74,10 +79,5 @@ class Result < ActiveRecord::Base
     return true
   end
   
-  def set_default_values
-    if marking_state.nil?
-      marking_state = MARKING_STATES[:unmarked]
-    end
-  end
   
 end
