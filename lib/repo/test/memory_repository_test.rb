@@ -370,6 +370,16 @@ class MemoryRepositoryTest < Test::Unit::TestCase
       assert_nil(users_with_any_perm, "There are NO users with any permissions")
     end
     
+    
+    should "have repositories persist" do
+      files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
+      add_some_files_helper(@repo, files_to_add) # add some initial files
+      revision1 = @repo.get_latest_revision()
+      new_repo = MemoryRepository.open(REPO_LOCATION)
+      revision2 = new_repo.get_latest_revision()
+      assert_equal revision1.revision_number, revision2.revision_number, "These two revision numbers should match!"
+    end
+    
   end # end context
   
   private # private helper methods for this class
@@ -445,7 +455,6 @@ class MemoryRevisionTest < Test::Unit::TestCase
       @mem_rev.__add_file(file2, File.read(RESOURCE_DIR+"/"+file2.name))
       @mem_rev.__add_directory(dir1)
     end
-    
     should "know if a path exists in its revision" do      
       assert_equal(true, @mem_rev.path_exists?("/dir_1"), "Path '/dir_1' should exists in this revision")
       assert_equal(false, @mem_rev.path_exists?("/test"), "Path '/test' should NOT exist in this revision")

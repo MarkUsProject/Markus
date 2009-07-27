@@ -215,13 +215,14 @@ class RevisionDirectory
     @name = args[:name]
     @path = args[:path]
     @last_modified_revision = args[:last_modified_revision]
+    @last_modified_date = args[:last_modified_date]
     @changed = args[:changed]
     @user_id = args[:user_id]
     @from_revision = from_revision   
   end
   
   attr_accessor :name, :path, :last_modified_revision, :changed
-  attr_accessor :from_revision, :user_id
+  attr_accessor :from_revision, :user_id, :last_modified_date
     
 end # end class File
 

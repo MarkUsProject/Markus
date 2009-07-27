@@ -18,7 +18,7 @@ function injectFileInput() {
   new_file_field_row.insert(new_file_field_input_column);
   new_file_field_row.insert(remove_new_file_field_column);
   
-  $('add_file_tbody').insert( {bottom: new_file_field_row});
+  $('add_file_tbody').insert( {top: new_file_field_row});
   new_file_field.focus();
 }
 

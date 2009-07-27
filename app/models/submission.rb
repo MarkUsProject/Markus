@@ -7,7 +7,7 @@ class Submission < ActiveRecord::Base
 
   validates_numericality_of :submission_version, :only_integer => true
   belongs_to :grouping
-  has_one    :result
+  has_one    :result, :dependent => :destroy
   has_many    :submission_files, :dependent => :destroy
   has_many    :annotations, :through => :submission_files
   
@@ -131,7 +131,11 @@ class Submission < ActiveRecord::Base
   def populate_with_submission_files(revision, path="/") 
     # Remember that assignments have folders within repositories - these
     # will be "spoofed" as root...
-    path = File.join(assignment.repository_folder, path)
+    if path == '/'
+      path = assignment.repository_folder
+    else
+      path = File.join(assignment.repository_folder, path)
+    end
     # First, go through directories...
     directories = revision.directories_at_path(path)
     directories.each do |directory_name, directory|
@@ -146,23 +150,6 @@ class Submission < ActiveRecord::Base
       new_file.user_id = file.user_id
       new_file.save
     end 
-  end
-  
-  protected
-  
-  # Moves the file to a folder with the last submission date
-  #   filepath - absolute path of the file
-  def create_backup(filename, sdir=SUBMISSIONS_PATH)
-    ts = last_submission_time_by_filename(filename)
-    return unless ts
-    timestamp = ts.strftime("%m-%d-%Y-%H-%M-%S")
-    
-    # create backup directory and move file
-    backup_dir = File.join(submit_dir(sdir), timestamp)
-    FileUtils.mkdir_p(backup_dir)
-    dest_file = File.join(backup_dir, filename)
-    source_file = File.join(submit_dir, filename)
-    FileUtils.mv(source_file, dest_file, :force => true)
   end
 
 end

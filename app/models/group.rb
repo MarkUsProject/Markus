@@ -115,6 +115,7 @@ class Group < ActiveRecord::Base
   def repo
     repo_loc = File.join(REPOSITORY_STORAGE, repository_name())
     if !IS_REPOSITORY_ADMIN
+
       if Repository.get_class(REPOSITORY_TYPE).repository_exists?(repo_loc)
         return Repository.get_class(REPOSITORY_TYPE).open(repo_loc)
       else

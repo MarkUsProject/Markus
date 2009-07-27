@@ -34,6 +34,8 @@ class MemoryRepository < Repository::AbstractRepository
     # mapping (hash) of timestamps and revisions
     @timestamps_revisions = {}
     @timestamps_revisions[Time.now._dump.to_s] = @current_revision   # push first timestamp-revision mapping
+    @repository_location = location
+    
     
     # hack(ish) functionality
     if !is_create_call
@@ -65,8 +67,8 @@ class MemoryRepository < Repository::AbstractRepository
   
   # Open repository at specified location
   def self.open(location, is_admin=true)
-    #return @@repositories[location]
-    return MemoryRepository.new(location, is_admin)
+    return @@repositories[location]
+    #return MemoryRepository.new(location, is_admin)
   end
   
   # Creates memory repository at "virtual" location (they are identifiable by location)
@@ -79,7 +81,7 @@ class MemoryRepository < Repository::AbstractRepository
   def self.purge_all()
     @@repositories = {}
   end
-  
+   
   # Given either an array of, or a single object of class RevisionFile, 
   # return a stream of data for the user to download as the file(s).
   def stringify_files(files)
@@ -154,11 +156,13 @@ class MemoryRepository < Repository::AbstractRepository
     # everything went fine, so push old revision to history revisions,
     # make new_rev the latest one and create a mapping for timestamped
     # revisions
+    timestamp = Time.now._dump.to_s
+    new_rev.timestamp = Time.parse(timestamp)
     @revision_history.push(@current_revision)
     @current_revision = new_rev
     @current_revision.__increment_revision_number() # increment revision number
-    @timestamps_revisions[Time.now._dump.to_s] = @current_revision
-    
+    @timestamps_revisions[timestamp] = @current_revision    
+    @@repositories[@repository_location] = self 
     return true
   end
   
@@ -314,6 +318,7 @@ class MemoryRepository < Repository::AbstractRepository
     new_revision.user_id = original.user_id
     new_revision.comment = original.comment
     new_revision.files_content = {}
+    new_revision.timestamp = original.timestamp
     # copy files objects
     original.files.each do |object|
       if object.instance_of?(RevisionFile)
@@ -398,7 +403,7 @@ end # end class MemoryRepository
 class MemoryRevision < Repository::AbstractRevision
    
   # getter/setters for instance variables
-  attr_accessor :files, :changed_files, :files_content, :user_id, :comment
+  attr_accessor :files, :changed_files, :files_content, :user_id, :comment, :timestamp
   
   # Constructor
   def initialize(revision_number)

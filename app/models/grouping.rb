@@ -133,11 +133,11 @@ class Grouping < ActiveRecord::Base
 
   # Grace Credit Query
   def available_grace_credits
-    total = 0
+    total = []
     accepted_students.each do |student|
-      total = total + student.remaining_grace_credits
+      total.push(student.remaining_grace_credits)
     end
-    return total
+    return total.min
   end
 
   # Submission Functions

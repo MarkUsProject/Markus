@@ -5,3 +5,7 @@
 #
 # two:
 #   column: value
+
+gp_sr_1:
+  type: GracePeriodSubmissionRule
+  assignment_id: <%= Fixtures.identify(:assignment_1) %> 

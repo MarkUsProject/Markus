@@ -26,7 +26,8 @@ class Assignment < ActiveRecord::Base
   validates_numericality_of :group_min, :only_integer => true,  :greater_than => 0
   validates_numericality_of :group_max, :only_integer => true
 
- 
+  validates_associated :submission_rule
+  validates_presence_of :submission_rule
 
   def validate
     if (group_max && group_min) && group_max < group_min
