@@ -24,8 +24,10 @@
    </li>
 
   <% if
-    !@assignment.nil? and controller.controller_name == 'assignments' and
-controller.action_name != 'new'	 %>
+    !@assignment.nil?%>
+    <% if controller.controller_name != 'assignments' or
+    (controller.controller_name == 'assignments' and 
+     controller.action_name != 'new')	 %>
           <li <% if controller.controller_name == 'assignments' %> 
          id="sub_menu_active"
          <%end%>>
@@ -60,7 +62,7 @@ controller.action_name != 'new'	 %>
       </li>
 
   <% end %>
-
+<% end %>
     </ul>
   </div>
 <% elsif controller.controller_name == 'admins' or
