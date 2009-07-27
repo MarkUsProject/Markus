@@ -66,8 +66,8 @@
 }
 .annotation_text_display {
   -moz-border-radius: 5px;
-  border: 1px solid #FF6651;
-  background: #EDEDED;
+  border: 2px solid #ccc;
+  background: #F6F6F6;
   padding: 15px;
   position: absolute;
   width: 400px;
@@ -86,9 +86,9 @@
   margin: 0;
   width: 100%;
 }
+
 #new_annotation_button {
   float: left;
-  padding: 0 0 0 0;
   margin: 0;
 }
 
@@ -186,7 +186,7 @@ li.annotation_category {
 #toolbar {
   -moz-border-radius: 5px;
   background: #EDEDED;
-	padding: 5px;
+  padding: 5px;
   margin:  0 0 20px 0;
 }
 
@@ -197,20 +197,10 @@ li.annotation_category {
   padding: 0 0 0 50px !important;
 }
 
-#create_annotation_dialog {
-  background-color: #FFFFFF;
-  border: 1px solid #000000;
-  padding: 10px;
-}
 
 #create_annotation_dialog textarea {
   width: 300px;
   height: 50px;
-}
-
-
-#control_overlay {
-  background-color:#000;
 }
 
 #rubric_criteria_pane_list {
@@ -378,9 +368,8 @@ ul#annotation_summary_list {
     background: #FBFBFB;
     border-bottom: 1px solid #DADADA;
     padding: 5px;
+    min-width: 5px;
   }
-
-
 
   .extra_mark_title_div {
     cursor: pointer;

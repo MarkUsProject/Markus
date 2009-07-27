@@ -189,10 +189,10 @@ ActiveRecord::Schema.define(:version => 20090727153945) do
   add_index "submission_files", ["submission_id"], :name => "index_submission_files_on_submission_id"
 
   create_table "submission_rules", :force => true do |t|
+    t.integer  "assignment_id",                                   :null => false
     t.string   "type",          :default => "NullSubmissionRule"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "assignment_id"
   end
 
   add_index "submission_rules", ["assignment_id"], :name => "index_submission_rules_on_assignment_id"

@@ -133,9 +133,9 @@
 
 .dp-highlighter .tools
 {
-	font: 9px Verdana, Geneva, Arial, Helvetica, sans-serif;
-	color: silver;
-	background-color: #f8f8f8;
+  font: 9px Verdana, Geneva, Arial, Helvetica, sans-serif;
+  color: #464646;
+  background-color: #f8f8f8;
   padding: 5px;
   text-align: right;
 }
@@ -152,8 +152,8 @@
 
 .dp-highlighter .tools a
 {
-	font-size: 9px;
-	color: #a0a0a0;
+	font-size: 1.1em;
+	color: #003399;
 	background-color: inherit;
 	text-decoration: none;
 	margin-right: 10px;
@@ -161,9 +161,9 @@
 
 .dp-highlighter .tools a:hover
 {
-	color: red;
+	color: #EE6415;
 	background-color: inherit;
-	text-decoration: underline;
+	text-decoration: none;
 }
 
 /* About dialog styles */

@@ -11,11 +11,11 @@
   <div class="colLeft"><div class="wrapLeft">
     <div id="list">    
       <% if flash[:upload_notice] -%>
-          <p class="success"><%= h(flash[:upload_notice]) %></p>
+          <p class="notice"><%= h(flash[:upload_notice]) %></p>
       <% end -%>
       
       <% if flash[:edit_notice] -%>
-        <p style="color:green"><%= h(flash[:edit_notice]) %></p>
+        <p class="notice"><%= h(flash[:edit_notice]) %></p>
       <% end -%>
       
       <% # display lines in csv file that has not been successfully processed %>

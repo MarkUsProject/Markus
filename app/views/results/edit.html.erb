@@ -46,9 +46,11 @@
 
 <%= render :partial => "results/common/annotations.js" %>
 <%= render :partial => "results/common/boot.js", :locals => {:first_file => @first_file} %>
+<div class="title_bar">
 <h1>Grading Assignment: <%= link_to h(sanitize(@assignment.name)), :controller => 'annotations', :action => 'students', :id => @assignment.id %> 
 </h1>
-
+</div>
+<div class="wrapLeft">
 <% if flash[:fail_notice] %>
   <p class=color:red""><%=h flash[:fail_notice] %></p>
 <% end %>
@@ -66,3 +68,4 @@
 <%= render :partial => 'results/result_summary'%>
 
 <% end %>
+</div>

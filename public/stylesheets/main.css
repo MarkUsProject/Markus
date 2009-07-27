@@ -13,8 +13,17 @@ body {
 }
 
 button{
-  background: #ccc;
-  border: 1px solid #333;
+   min-width: 100px;
+  background: #fff;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border: 2px solid #ccc;
+  text-align: center;
+  font-family: "Lucida Grande", Verdana, Arial, sans-serif;
+  font-weight: bold;
+  color: #464646;
+  padding: 3px 5px;
+  margin: 5px;  
 }
 
 a {
@@ -411,6 +420,7 @@ tbody tr:hover {
    border: none;
    padding: 2px;
    margin: 1px;
+   min-width: 5px;
 }
 
 .table_menu button:hover, .table_menu a:hover{
@@ -456,7 +466,7 @@ tr.student_hidden{
 }
 
 #FilterTable_header_graders{
-  width: 22.5%;
+  width: 20%;
 }
 
 #FilterTable_header_valid{
@@ -465,7 +475,7 @@ tr.student_hidden{
 
 
 #FilterTable_header_name{
-   width: 32.5%;
+   width: 35%;
 }
 
 /* flash messages, & warning */
@@ -501,10 +511,10 @@ tr.student_hidden{
   background: #000;
 }
 
-#create_group_dialog {
+#create_group_dialog, #create_annotation_dialog {
    background: white;
    padding: 0 10px 0 10px;
-   border: 1px solid #000000;
+   border: 2px solid #464646;
    -moz-border-radius: 5px;
    -webkit-border-radius: 5px;
 }
@@ -802,6 +812,12 @@ td a{
 
 td.delete_row {
   text-align: center;
+}
+
+/* Grader's view*/
+
+#file_selector button{
+  min-width: 8px;
 }
 
 /* floating object */

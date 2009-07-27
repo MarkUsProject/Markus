@@ -1,7 +1,8 @@
+<div id="title_bar">
 <h1>Manage Students</h1>
-
+</div>
+<div class="wrapLeft">
 <h2>Edit a Student</h2>
-
 <% form_for :user, :url => {:controller => 'students', :action => 'update'} do |f| -%>
   
     <%= f.error_messages -%>
@@ -24,5 +25,5 @@
   <% end %>
 
 </div>
-
+</div>
 
