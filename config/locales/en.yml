@@ -8,6 +8,7 @@ en:
     add_new:            "Add new"
     create_new:         "Create new"
     edit:               "Edit"
+    apply:              "Apply"
     delete:             "Delete"
     create:             "Create"
     bulk_action:        "Bulk action"

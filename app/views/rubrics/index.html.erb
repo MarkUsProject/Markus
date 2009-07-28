@@ -11,7 +11,9 @@ var xhr_in_progress = false;
 </script>
 
 <div id="title_bar">
-  <h1>Rubric Management:  <%= h(sanitize(@assignment.name)) %></h1>	
+  <h1>Rubric Management:  <%= h(sanitize(@assignment.name)) %>
+<%= link_to_remote 'Add Criterion', :url => { :action => 'add_criterion', :id => @assignment.id}, :with => "'create_num='+create_num", :before => "create_num++;" %>
+</h1>	
 </div>
 
 <div class="wrapLeft">
@@ -25,10 +27,6 @@ var xhr_in_progress = false;
 </p>
 
 <div class="colLeft">
-      <div id="rubric_criteria_pane_menu">
-        <h2 id="rubricCriteria">Rubric Criteria <span id="addCriterion"><%= link_to_remote 'Add Criterion', :url => { :action => 'add_criterion', :id => @assignment.id}, :with => "'create_num='+create_num", :before => "create_num++;" %></span>
-</h2>
-</div>
   <div id="rubric_criteria_pane">
   <!--  Gives controller and instruction
               Views can be dynamic

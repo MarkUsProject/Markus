@@ -262,7 +262,17 @@ span#choose_an_assignment{
 
 /* Global Action*/
 .global_action{
-  float: right;
+  float: left;
+  padding: 20px 0px 0px 0px;
+}
+
+.global_action_top{
+  float: left;
+  padding: 20px 0px 0px 0px;
+}
+
+.global_action_bototm{
+  float: left;
   padding: 0px;
 }
 
