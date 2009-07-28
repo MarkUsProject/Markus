@@ -51,7 +51,7 @@
          <%= button_to_remote("Collapse All", :url => {:controller => 'results', :action => 'collapse_criteria', :aid => @assignment.id}) %>
          <%= button_to_remote("Expand Unmarked", :url => {:controller => 'results', :action => 'expand_unmarked_criteria', :aid => assignment.id, :rid => result.id}) %>
        </div>  <!-- Rubric Tools -->
-       <div id="rubric_criteria_pane">
+       <div id="rubric_criteria">
           <ul id="rubric_criteria_pane_list">
             <%# also need to render the mark per criteria (if exist) %>
             <% @rubric_criteria.each do |rubric_criterion| -%>

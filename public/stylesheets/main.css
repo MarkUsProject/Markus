@@ -872,7 +872,7 @@ a.icon_remove:hover {
    padding: 0px 2%;
 }
 
-#rubric_criteria_pane ul, #rubric_criteria ul{
+#rubric_criteria_pane ul{
   -moz-border-radius: 9px;
   -webkit-border-radius: 9px;
   border: 2px solid #ccc;
@@ -934,7 +934,7 @@ a.icon_remove:hover {
   background: #ccc;
 }
 
-#rubric_criteria_pane li, #rubric_criteria li{
+#rubric_criteria_pane li{
    width: 100%;
    border-bottom: 1px solid #ccc;
    min-height: 35px; 

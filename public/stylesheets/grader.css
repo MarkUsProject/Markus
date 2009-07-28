@@ -204,8 +204,6 @@ li.annotation_category {
 }
 
 #rubric_criteria_pane_list {
-  font-size: 10px,
-  width: 100%;  
   height: 100%;
   overflow: auto;
 }
@@ -308,7 +306,7 @@ ul#annotation_summary_list {
     padding: 5px;
   }
 
-  .rubric_criterion_title_div {
+  .rubric_criterion_title {
     cursor: pointer;
     text-transform: capitalize;
   }
