@@ -1,5 +1,5 @@
 # Assignments
-rule = NullSubmissionRule.new
+rule = NoLateSubmissionRule.new
 a = Assignment.create(:name => "A1", :description => "Write some test",
 :message => "Apply what you learn in class, and write some test!!!",
 :group_min => 2, :group_max => 4, :student_form_groups => true,
