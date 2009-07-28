@@ -102,7 +102,9 @@ class Group < ActiveRecord::Base
         # Each admin user will have read and write permissions on each repo
         admins = Admin.all
         admins.each do |admin|
-          self.repo.add_user(admin.user_name, Repository::Permission::READ_WRITE)
+          # TODO:  Uncomment this for later, but for now, keep it like this for the
+          # demo.
+          #self.repo.add_user(admin.user_name, Repository::Permission::READ_WRITE)
         end
       end
     rescue Exception => e
