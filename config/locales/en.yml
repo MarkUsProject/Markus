@@ -93,39 +93,21 @@ en:
     editing_criteria:   "Editing criteria"
     ordering_criteria:  "Ordering criteria"
     remove_criteria_title:  "Delete this criterion"
-    remove_criteria_message:  "Are you sure you want to remoce this criteria?"
+    remove_criteria_message:  "Are you sure you want to delete this criteria?"
     help_editing_criteria_message: "
-	Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam
-	tincidunt adipiscing turpis, bibendum mollis purus euismod non.
-	Aenean venenatis tempor lectus nec adipiscing. Donec imperdiet
-	laoreet nibh in rhoncus. Aliquam aliquet est a libero tempus ac
-	ullamcorper turpis sodales. Morbi risus nulla, adipiscing ut pretium
-	at, placerat non purus. Vestibulum sodales nibh nec odio pretium a
-	sodales lacus luctus. Maecenas dapibus imperdiet lacus, eu luctus
-	libero iaculis sit amet. Vivamus congue feugiat lectus et vulputate.
-	Etiam scelerisque libero vel ante pellentesque varius. Sed
-	pellentesque semper eros. Sed pretium interdum blandit. Nulla
-	sollicitudin lacus vitae est placerat convallis. Duis sodales
-	ultricies eros, congue consequat diam ultricies sit amet. Curabitur
-	ut turpis arcu. Etiam quam erat, blandit ac tempus vitae, posuere sit
-	amet risus."
+	Select a criterion on the left to edit it.  Criteria descriptions, Level
+	headings and descriptions can be modified.  The weight of each criterion
+	can also be changed. To change the weight to a fractional number simply
+	type in a decimal number into the text box.
+
+	Note that the number of levels cannot be changed.  However if no 
+	description is set for a level, that level will not be used.
+	"
     help_ordering_criteria_message: "
-	Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam sodales
-	odio eu erat pellentesque sed egestas arcu tempus. Aenean ac rhoncus
-	purus. Aliquam erat volutpat. Cras consectetur justo posuere magna
-	congue auctor iaculis orci condimentum. Aliquam tincidunt congue
-	sodales. Aliquam a quam erat. Nullam a ligula massa. Fusce accumsan
-	mattis felis ut imperdiet. Vestibulum sit amet sem diam, non
-	vestibulum tortor. Fusce gravida nisl id metus facilisis vitae
-	feugiat nunc fermentum. Mauris ultricies sollicitudin risus, sit amet
-	ultrices velit ultricies at. Sed eget malesuada nibh. Quisque
-	ultrices placerat consequat. In ac est at tellus elementum cursus.
-	Phasellus hendrerit dolor sit amet tortor dignissim vitae cursus
-	purus mollis. Aenean adipiscing aliquet ligula, in fringilla nunc
-	imperdiet tincidunt. Vestibulum ipsum mauris, adipiscing quis
-	ultricies at, tempus et mauris. Nulla quam massa, ultricies eget
-	faucibus quis, elementum a odio."
+	Graders will see the criteria in the order that they are displayed to
+	left.  To change the order, drag a criterion to the desired location
+	in the list.
+	"
     student_without_a_group_list_message: "These students don't have a group 
         yet:"
-    no_student_wihtout_a_group_message: "There are no students without a
-        group."
+    no_student_without_a_group_message: "All students are in a group."
