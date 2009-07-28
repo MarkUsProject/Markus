@@ -18,12 +18,12 @@
 
       <div onclick="unselect_extra_mark();">
         <div class="float_left"><b>Bonus Marks:&nbsp;</b></div>
-        <div class="float_left" id="extra_marks_bonus"><%= h(result.get_bonus_marks) %></div>
+        <div class="float_left" id="extra_marks_bonus"><%= h(result.get_positive_extra_points) %></div>
       </div>
       <div class="clear"></div>
       <div onclick="unselect_extra_mark();">
         <div class="float_left"><b>Deducted Marks:&nbsp;</b></div>
-        <div class="float_left" id="extra_marks_deducted"><%= h(@result.get_deductions) %></div>
+        <div class="float_left" id="extra_marks_deducted"><%= h(@result.get_negative_extra_points) %></div>
       </div>
     </div>      
     
