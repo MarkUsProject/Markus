@@ -865,14 +865,14 @@ a.icon_remove:hover {
   background: no-repeat url('../images/icons/cancel.png');
 }
 
-/* Rubric Criteria */
+/* Rubric Criteria view*/
 #rubric_criteria_pane{
    float: left;
    width: 30%;
    padding: 0px 2%;
 }
 
-#rubric_criteria_pane ul{
+#rubric_criteria_pane ul, #rubric_criteria ul{
   -moz-border-radius: 9px;
   -webkit-border-radius: 9px;
   border: 2px solid #ccc;
@@ -934,11 +934,11 @@ a.icon_remove:hover {
   background: #ccc;
 }
 
-#rubric_criteria_pane li{
+#rubric_criteria_pane li, #rubric_criteria li{
    width: 100%;
    border-bottom: 1px solid #ccc;
    min-height: 35px; 
-   padding-top: 2px;
+   padding: 2px 0px;
 }
 
 .criterion_handle{
@@ -1029,4 +1029,22 @@ span.due_date{
   padding-left: 5px;
   margin-bottom: 5px;
 }
+
+#rubric_viewer #rubric_criteria_pane{
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
+}
+
+#rubric_viewer table{
+  background:#fff;
+  padding: 4px;
+}
+
+#rubric_viewer table tr{
+  background:#fff;
+  padding: 4px;
+}
+
+
 

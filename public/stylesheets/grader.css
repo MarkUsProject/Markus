@@ -204,6 +204,8 @@ li.annotation_category {
 }
 
 #rubric_criteria_pane_list {
+  font-size: 10px,
+  width: 100%;  
   height: 100%;
   overflow: auto;
 }
@@ -337,11 +339,16 @@ ul#annotation_summary_list {
 .rubric_criterion_level_container table {
     border-collapse:collapse;
     border:1px solid #DADADA;
+    padding: 4px;
+    background: #fff;
 }
 
 .rubric_criterion_level_container td {
     border-top:1px solid #DADADA;
     border-bottom:1px solid #DADADA;
+    padding: 4px;
+    font-size: 1.1em;
+    background: #fff;
 }
 
   .editing {
