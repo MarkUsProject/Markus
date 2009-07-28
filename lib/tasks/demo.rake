@@ -11,6 +11,12 @@ namespace :markus do
     i.first_name = "Jim"
     i.last_name = "Clarke"
     i.save
+    
+    puts "Renaming 'c5hanson' to 'student'"
+    
+    s = Student.find_by_user_name('c5hanson')
+    s.user_name = 'student'
+    s.save
 
     puts "Generating Assignment A1 and A2..."
     a1 = Assignment.new
@@ -54,9 +60,8 @@ namespace :markus do
       rc.save
     end
     
-    
     puts "Create Groupings on A1 and A2 for c5hanson, c5glazun, c5anthei, c5berkel, c5bloche"
-    students = ['c5hanson', 'c5glazun', 'c5anthei', 'c5berkel', 'c5bloche']
+    students = ['student', 'c5glazun', 'c5anthei', 'c5berkel', 'c5bloche']
     students.each do |student_name|
       student = Student.find_by_user_name(student_name)
       begin
@@ -68,12 +73,12 @@ namespace :markus do
       end
     end
 
-    puts "Insert a file into c5hanson's repository for A1"    
-    c5hanson = Student.find_by_user_name('c5hanson')
+    puts "Insert a file into student's repository for A1"    
+    c5hanson = Student.find_by_user_name('student')
 
     grouping = c5hanson.accepted_grouping_for(a1.id)
     a1_repo = grouping.group.repo
-    txn = a1_repo.get_transaction('c5hanson')
+    txn = a1_repo.get_transaction('student')
     file_data = %|class A1 {
   // This method should sum only positive values
   public static void main(String args[]) {
