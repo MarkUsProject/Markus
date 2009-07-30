@@ -71,7 +71,7 @@ REPOSITORY_EXTERNAL_BASE_URL = "http://www.example.com/markus/svn"
 # Second, if MarkUs is configured with REPOSITORY_EXTERNAL_SUBMITS_ONLY
 # set to 'true', you can configure as to where MarkUs should write the
 # Subversion authz file.
-$REPOSITORY_SVN_AUTHZ_FILE = "/home/svn-repos-root/svn_authz"
+$REPOSITORY_SVN_AUTHZ_FILE = REPOSITORY_STORAGE + "/svn_authz"
 
 ###################################################################
 # This setting configures if MarkUs is reading Subversion
