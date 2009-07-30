@@ -1,6 +1,7 @@
 require 'fastercsv'
 require 'auto_complete'
-
+# we need repository permission constants
+require File.join(File.dirname(__FILE__),'/../../lib/repo/repository')
 
 # Manages actions relating to editing and modifying 
 # groups.
@@ -58,8 +59,6 @@ class GroupsController < ApplicationController
     end
   end
   
-  #
-
   # Invite members to group
   def invite_member
     return unless (request.post?)
@@ -90,6 +89,11 @@ class GroupsController < ApplicationController
     @grouping = Grouping.find(params[:grouping_id])
     @user = Student.find(session[:uid])
     @user.join(@grouping.id)
+    # If a student joins a group, add repository read and write permissions for him/her
+    # if we are required to do so
+    if @grouping.group.repository_external_commits_only?
+      @grouping.group.repo.add_user(@user.user_name, Repository::Permission::READ_WRITE)
+    end
   end
   
   def decline_invitation
@@ -125,7 +129,8 @@ class GroupsController < ApplicationController
     # add member to the group with status depending if group is empty or not
     grouping = Grouping.find(params[:grouping_id])
     @assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group]}]) 
-    if Student.find_by_user_name(params[:student_user_name]).nil?
+    student = Student.find_by_user_name(params[:student_user_name])
+    if student.nil?
       @error = "Could not find student with user name #{params[:student_user_name]}"
       render :action => 'error_single'
       return
@@ -133,6 +138,11 @@ class GroupsController < ApplicationController
     set_membership_status = grouping.student_memberships.empty? ?
     StudentMembership::STATUSES[:inviter] :
     StudentMembership::STATUSES[:accepted]     
+    # Add repository read and write permissions for user,
+    # if we are required to do so
+    if grouping.group.repository_external_commits_only?
+      grouping.group.repo.add_user(student.user_name, Repository::Permission::READ_WRITE)
+    end
     grouping.invite(params[:student_user_name], set_membership_status) 
     grouping.reload
     @grouping = construct_table_row(grouping)
@@ -149,6 +159,11 @@ class GroupsController < ApplicationController
     student = member.user  # need to find user name to add to student list
     
     grouping.remove_member(member)
+    # Remove user from list of allowed repo users,
+    # if we are required to do so
+    if grouping.group.repository_external_commits_only?
+      grouping.group.repo.remove_user(student.user_name)
+    end
 
     render :update do |page|
       page.visual_effect(:fade, "mbr_#{params[:mbr_id]}", :duration => 0.5)
@@ -205,8 +220,8 @@ class GroupsController < ApplicationController
 
      # Checking if a group with this name already exists
 
-    if @groups = Group.find(:first, :conditions => {:group_name =>
-     [params[:new_groupname]]})
+    if (@groups = Group.find(:first, :conditions => {:group_name =>
+     [params[:new_groupname]]}))
          existing = true
          groupexist_id = @groups.id
     end
@@ -283,10 +298,10 @@ class GroupsController < ApplicationController
       
       # Loop over each row, which lists the members to be added to the group.
       FasterCSV.parse(params[:group][:grouplist]) do |row|
-		if add_csv_group(row, @assignment) == nil
+      if add_csv_group(row, @assignment) == nil
 		    flash[:invalid_lines] << row.join(",")
-		else
-       		num_update += 1
+      else
+     		num_update += 1
      	end
 	   end
 	   flash[:upload_notice] = "#{num_update} group(s) added."

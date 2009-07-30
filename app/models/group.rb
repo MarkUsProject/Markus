@@ -57,6 +57,29 @@ class Group < ActiveRecord::Base
     return groupings.first(:conditions => {:assignment_id => aid})
   end
   
+  # Returns true, if and only if the configured repository setup
+  # allows for externally accessible repositories, in which case
+  # file submissions via the Web interface are not permitted. For
+  # now, this works for Subversion repositories only.
+  def repository_external_commits_only?
+    if IS_REPOSITORY_ADMIN && REPOSITORY_EXTERNAL_SUBMITS_ONLY
+      case REPOSITORY_TYPE
+        when "svn"
+          retval = true
+        else
+          retval = false
+      end
+    else
+      retval = false
+    end
+    return retval
+  end
+  
+  # Returns the URL for externally accessible repos
+  def repository_external_access_url
+    return REPOSITORY_EXTERNAL_BASE_URL + "/" + repository_name
+  end
+  
   
 
  # Retrieve group object given user and assignment IDs.
@@ -99,12 +122,15 @@ class Group < ActiveRecord::Base
       # create repositories and write permissions if and only if we are admin
       if IS_REPOSITORY_ADMIN
         Repository.get_class(REPOSITORY_TYPE).create(File.join(REPOSITORY_STORAGE, repository_name))
-        # Each admin user will have read and write permissions on each repo
-        admins = Admin.all
-        admins.each do |admin|
-          # TODO:  Uncomment this for later, but for now, keep it like this for the
-          # demo.
-          #self.repo.add_user(admin.user_name, Repository::Permission::READ_WRITE)
+        if repository_external_commits_only? # see if repo is capable for external exposure
+          # Each admin user will have read and write permissions on each repo
+          Admin.all.each do |admin|
+            self.repo.add_user(admin.user_name, Repository::Permission::READ_WRITE)
+          end
+          # Each grader will have read and write permissions on each repo
+          Ta.all.each do |ta|
+            self.repo.add_user(ta.user_name, Repository::Permission::READ_WRITE)
+          end
         end
       end
     rescue Exception => e
@@ -119,7 +145,7 @@ class Group < ActiveRecord::Base
     if !IS_REPOSITORY_ADMIN
 
       if Repository.get_class(REPOSITORY_TYPE).repository_exists?(repo_loc)
-        return Repository.get_class(REPOSITORY_TYPE).open(repo_loc)
+        return Repository.get_class(REPOSITORY_TYPE).open(repo_loc, false) # use false as a second parameter, since we are not repo admin
       else
         raise "Repository not found and MarkUs not in authoritative mode!" # repository not found, and we are not repo-admin
       end

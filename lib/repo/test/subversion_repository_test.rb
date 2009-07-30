@@ -352,6 +352,16 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       end
     end
     
+    should "be able to add a user" do
+      # check if permission constants are working
+      assert_equal(2, Repository::Permission::WRITE)
+      assert_equal(4, Repository::Permission::READ)
+      assert_equal(6, Repository::Permission::READ_WRITE)
+      assert_equal(4, Repository::Permission::ANY)
+      @repo.add_user(TEST_USER, Repository::Permission::READ)
+      assert_equal(Repository::Permission::READ, @repo.get_permissions(TEST_USER))
+    end
+    
     should "be able to manage users and permissions" do
       # tests
       #   'add_user()'
@@ -423,6 +433,61 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       assert_nil(users_with_any_perm, "There are NO users with any permissions")
     end
 
+  end # end context
+  
+  context "Looping over several repositories" do
+    
+    should "add a user per each repository" do
+      # use a different svn_authz file for this test
+      old_svn_authz = $REPOSITORY_SVN_AUTHZ_FILE
+      $REPOSITORY_SVN_AUTHZ_FILE = SVN_TEST_REPOS_DIR+"/svn_authz_bulk_stuff"
+      
+      # remove authz file if it exists
+      if File.exist?($REPOSITORY_SVN_AUTHZ_FILE)
+        FileUtils.rm($REPOSITORY_SVN_AUTHZ_FILE)
+      end
+      
+      # create some repositories, add some users
+      repo_base_name = SVN_TEST_REPOS_DIR+"/Group_"
+      repository_names = []
+      (1..5).each do |counter|
+        repository_names.push(repo_base_name + counter.to_s.rjust(3, "0"))
+      end
+      
+      # remove repositories, if they exist
+      repository_names.each do |repo_name|
+        if SubversionRepository.repository_exists?(repo_name)
+          FileUtils.remove_dir(repo_name, true)
+        end
+      end
+      
+      repositories = []
+      repository_names.each do |repo_name|
+        SubversionRepository.create(repo_name)
+        repo = SubversionRepository.open(repo_name)
+        repo.add_user("some_user", Repository::Permission::READ_WRITE)
+        repo.add_user("another_user", Repository::Permission::READ_WRITE)
+        repositories.push(repo)
+      end
+      
+      # add a user for each repository
+      repositories.each do |repo|
+        repo.add_user(TEST_USER, Repository::Permission::READ_WRITE)
+      end
+      
+      # assertions
+      repositories.each do |r|
+        assert_equal(Repository::Permission::READ_WRITE, r.get_permissions(TEST_USER))
+      end
+      
+      # remove repositories repositories created
+      repository_names.each do |repo_name|
+        FileUtils.remove_dir(repo_name, true)
+      end
+      
+      # change back to old authz file again
+      $REPOSITORY_SVN_AUTHZ_FILE = old_svn_authz
+    end
   end # end context
   
   private # private helper methods for this class

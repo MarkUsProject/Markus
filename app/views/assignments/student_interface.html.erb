@@ -151,8 +151,8 @@
 	       {:member => member, :grouping => @grouping} %>
 	    <% end -%>
 	   </ul>
-	   <% if REPOSITORY_EXTERNAL_SUBMITS_ONLY %>
-	   	<p>Repository location: <%= h(REPOSITORY_EXTERNAL_BASE_URL + "/" + @group.repository_name) %></p>
+	   <% if @grouping.group.repository_external_commits_only? %>
+	   	<p>Repository location: <%= h(@grouping.group.repository_external_access_url) %></p>
 	   <% end %>
 	   <% if @grouping.inviter == @current_user %>
             <% if @grouping.student_membership_number != @assignment.group_max %>

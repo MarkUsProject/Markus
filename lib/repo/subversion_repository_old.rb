@@ -200,18 +200,21 @@ class SubversionRepository < Repository::AbstractRepository
   # Adds a user with given permissions to the repository
   def add_user(user_id, permissions)
     if @repos_admin # Are we admin?
+      file_is_empty = false
       if !File.exist?(@repos_auth_file)
         File.open(@repos_auth_file, "w").close() # create file if not existent
+        file_is_empty = true
       end
       
       retval = false
-      repo_permissions = {}
       File.open(@repos_auth_file, "r+") do |auth_file|
         auth_file.flock(File::LOCK_EX)
         # get current permissions from file
-        file_content = auth_file.read()
-        if (file_content.length != 0)
-          repo_permissions = get_repo_permissions_from_file_string(file_content)
+        if !file_is_empty
+          file_string = auth_file.read()
+          repo_permissions = get_repo_permissions_from_file_string(file_string)
+        else
+          repo_permissions = {}
         end
         if repo_permissions.key?(user_id)
           raise UserAlreadyExistent.new(user_id + " already existent")
@@ -219,10 +222,7 @@ class SubversionRepository < Repository::AbstractRepository
         svn_permissions = translate_to_svn_perms(permissions)
         repo_permissions[user_id] = svn_permissions
         # inject new permissions into file string
-        write_string = inject_permissions(repo_permissions, defined?(file_content)? file_content: "")
-        # rewind, so that mime-type is preserved
-        auth_file.rewind
-        auth_file.truncate(0) # truncate file
+        write_string = inject_permissions(repo_permissions, defined?(file_string)? file_string: "")
         retval = (auth_file.write(write_string) == write_string.length)
         auth_file.flock(File::LOCK_UN) # release lock
       end
@@ -238,7 +238,7 @@ class SubversionRepository < Repository::AbstractRepository
     if svn_auth_file_checks() # do basic file checks
       repo_permissions = {}
       File.open(@repos_auth_file) do |auth_file|
-        auth_file.flock(File::LOCK_EX)
+        auth_file.flock(File::LOCK_SH)
         file_content = auth_file.read()
         if (file_content.length != 0)
           repo_permissions = get_repo_permissions_from_file_string(file_content)
@@ -264,35 +264,38 @@ class SubversionRepository < Repository::AbstractRepository
     if svn_auth_file_checks() # do basic file checks
       repo_permissions = {}
       File.open(@repos_auth_file) do |auth_file|
-        auth_file.flock(File::LOCK_EX)
+        auth_file.flock(File::LOCK_SH)
         file_content = auth_file.read()
         if (file_content.length != 0)
           repo_permissions = get_repo_permissions_from_file_string(file_content)
         end
         auth_file.flock(File::LOCK_UN) # release lock
       end
-    if !repo_permissions.key?(user_id)
-      raise UserNotFound.new(user_id + " not found")
-    end
+      if !repo_permissions.key?(user_id)
+        raise UserNotFound.new(user_id + " not found")
+      end
         return translate_perms_from_file(repo_permissions[user_id])
-    end
+      end
   end
   
   # Set permissions for a given user
   def set_permissions(user_id, permissions)
     if @repos_admin # Are we admin?
+      file_is_empty = false
       if !File.exist?(@repos_auth_file)
         File.open(@repos_auth_file, "w").close() # create file if not existent
+        file_is_empty = true
       end
       
       retval = false
-      repo_permissions = {}
       File.open(@repos_auth_file, "r+") do |auth_file|
         auth_file.flock(File::LOCK_EX)
         # get current permissions from file
-        file_content = auth_file.read()
-        if (file_content.length != 0)
-          repo_permissions = get_repo_permissions_from_file_string(file_content)
+        if !file_is_empty
+          file_string = auth_file.read()
+          repo_permissions = get_repo_permissions_from_file_string(file_string)
+        else
+          repo_permissions = {}
         end
         if !repo_permissions.key?(user_id)
           raise UserNotFound.new(user_id + " not found")
@@ -300,10 +303,7 @@ class SubversionRepository < Repository::AbstractRepository
         svn_permissions = translate_to_svn_perms(permissions)
         repo_permissions[user_id] = svn_permissions
         # inject new permissions into file string
-        write_string = inject_permissions(repo_permissions, defined?(file_content)? file_content: "")
-        # rewind, so that mime-type is preserved
-        auth_file.rewind
-        auth_file.truncate(0) # truncate file
+        write_string = inject_permissions(repo_permissions, defined?(file_string)? file_string: "")
         retval = (auth_file.write(write_string) == write_string.length)
         auth_file.flock(File::LOCK_UN) # release lock
       end
@@ -316,27 +316,28 @@ class SubversionRepository < Repository::AbstractRepository
   # Delete user from access list 
   def remove_user(user_id)
     if @repos_admin # Are we admin?
+      file_is_empty = false
       if !File.exist?(@repos_auth_file)
         File.open(@repos_auth_file, "w").close() # create file if not existent
+        file_is_empty = true
       end
       
       retval = false
       File.open(@repos_auth_file, "r+") do |auth_file|
         auth_file.flock(File::LOCK_EX)
         # get current permissions from file
-        file_content = auth_file.read()
-        if (file_content.length != 0)
-          repo_permissions = get_repo_permissions_from_file_string(file_content)
+        if !file_is_empty
+          file_string = auth_file.read()
+          repo_permissions = get_repo_permissions_from_file_string(file_string)
+        else
+          repo_permissions = {}
         end
         if !repo_permissions.key?(user_id)
           raise UserNotFound.new(user_id + " not found")
         end
         repo_permissions.delete(user_id) # delete user_id
         # inject new permissions into file string
-        write_string = inject_permissions(repo_permissions, defined?(file_content)? file_content: "")
-        # rewind, so that mime-type is preserved
-        auth_file.rewind
-        auth_file.truncate(0) # truncate file
+        write_string = inject_permissions(repo_permissions, defined?(file_string)? file_string: "")
         retval = (auth_file.write(write_string) == write_string.length)
         auth_file.flock(File::LOCK_UN) # release lock
       end
@@ -588,8 +589,26 @@ class SubversionRepository < Repository::AbstractRepository
     repo_name = File.basename(@repos_path)
     auth_string = auth_string.strip()
     map_string = perm_mapping_to_svn_authz_string(users_permissions)
-    if /\[#{repo_name}:\/\][^\[]+/.match(auth_string)
-      auth_string = auth_string.sub(/\[#{repo_name}:\/\][^\[]+/, map_string)
+    if /\[#{repo_name}:\/\]([^\[]*)/.match(auth_string)
+      auth_string = auth_string.sub(/(.*)\[#{repo_name}:\/\][^\[]*(.*)/) do
+        # if positional matches (\1,\2, etc) do not capture anything they contain some nasty
+        # non-printable characters, we don't want them written to the file
+        pre_match = "\1"
+        post_match = "\2"
+        pre = ""
+        post = ""
+        pre_match.each_byte do |c|
+          if c >= 32 && c <= 126
+            pre += c.chr # get rid of non-printable chars
+          end
+        end
+        post_match.each_byte do |c|
+          if c >= 32 && c <= 126
+            post += c.chr # get rid of non-printable chars
+          end
+        end
+        pre + map_string + post # result of block
+      end
     else
       # repo name not found so append at the end
       auth_string += "\n"+map_string
@@ -641,7 +660,7 @@ class SubversionRevision < Repository::AbstractRevision
   def initialize(revision_number, repo)
     @repo = repo
     begin 
-      @timestamp = @repo.__get_property(:date, revision_number)
+      @repo.__get_property(:date, revision_number).nil? 
     rescue Svn::Error::FsNoSuchRevision
       raise RevisionDoesNotExist
     end
