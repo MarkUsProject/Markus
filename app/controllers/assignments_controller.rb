@@ -103,6 +103,13 @@ class AssignmentsController < ApplicationController
       # to create any new periods manually, like this:
       @assignment.submission_rule.periods_attributes = params[:assignment][:submission_rule_attributes][:periods_attributes]
     end
+
+    # Is the instructor forming groups?
+    if params[:is_group_assignment] == "true" && params[:assignment][:student_form_groups] == "0"
+      params[:assignment][:instructor_form_groups] = true
+    else
+      params[:assignment][:instructor_form_groups] = false
+    end
     
     @assignment.attributes = params[:assignment]
     
@@ -161,6 +168,13 @@ class AssignmentsController < ApplicationController
       render :action => 'new'
       return
     end
+    # Is the instructor forming groups?
+    if params[:is_group_assignment] == "true" && params[:assignment][:student_form_groups] == "0"
+      params[:assignment][:instructor_form_groups] = true
+    else
+      params[:assignment][:instructor_form_groups] = false
+    end
+    
     @assignment = Assignment.new(params[:assignment])
     # A little hack to get around Rails' protection of the "type"
     # attribute
@@ -208,7 +222,7 @@ class AssignmentsController < ApplicationController
     # must be explicitly assigned, due to method conflict for "type"
     rules[:type] = params[:submission_rule][:type]
     rules.attributes = params[:submission_rule]
-        
+
     # Go back to "Edit assignment" page if unable to save
     if (@assignment.save && @assignment.assignment_files.each(&:save) && rules.save)
       redirect_to :action => 'edit', :id => @assignment.id

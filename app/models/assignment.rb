@@ -5,7 +5,7 @@ class Assignment < ActiveRecord::Base
   has_one  :submission_rule 
   accepts_nested_attributes_for :submission_rule, :allow_destroy => true
   accepts_nested_attributes_for :assignment_files, :allow_destroy => true
-
+  
   
   has_many :annotation_categories
   
@@ -66,7 +66,7 @@ class Assignment < ActiveRecord::Base
   
   # Return true if this is a group assignment; false otherwise
   def group_assignment?
-    group_min != 1 || group_max > 1
+    instructor_form_groups || group_min != 1 || group_max > 1
   end
   
   # Returns the group by the user for this assignment. If pending=true, 

@@ -16,5 +16,10 @@
     grace_periods.refresh();
     penalty_periods.refresh();
     
+    default_group_fields();
+    <% if !@assignment.nil? %>
+    toggle_group_assignment(<%= @assignment.group_assignment? %>);
+    <% end %>
+    
   });
 </script>

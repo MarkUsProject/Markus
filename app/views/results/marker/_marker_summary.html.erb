@@ -3,42 +3,29 @@
 </div>  <!-- Summary Criteria Pane -->
       
     <div class="mark_subtotal">
-      <div class="float_left;">Subtotal&nbsp;</div>
-      <div class="float_right;"> /<%= h(assignment.total_mark) %>  </div>
-      <div class="float_right;" id="current_subtotal_div"> <%= h(result.get_subtotal) %> </div>
+      <span">Subtotal: </span>
+      <span id="current_subtotal_div"> <%= h(result.get_subtotal) %></span>
+      <span> /<%= h(assignment.total_mark) %>  </span>
     </div>
 
     <div class="clear"></div><br/>
     
     <div id="extra_marks_pane" class="extra_marks_pane">
       <div class="bonus_deduction" onclick="unselect_extra_mark();"><b>Bonus/Deductions</b></div>
-<% if @result.marking_state != Result::MARKING_STATES[:complete]%>      
-     <% remote_form_for(:extra_mark, :url => {:action => :add_extra_mark, :result_id => result.id}) do |f|%>
-     <%=f.label :description, "Comment" %> <%= f.text_field :description %>
-     <%=f.label :extra_mark, "Mark" %> <%= f.text_field :extra_mark %>
-     <%=f.hidden_field :result_id, :value => result.id%>
-      <%= f.submit "Add Extra Mark"%>
-     <% end %>
-<% end %>
     <%= render :partial => 'results/common/extra_marks_table', :locals => {:extra_marks => extra_marks, :result_id => result.id} %>
-
-
-      <div class="clear"></div>
-      <div onclick="unselect_extra_mark();">
-        <div class="float_left;"><b>Bonus Marks:&nbsp;</b></div>
-        <div class="float_left;" id="extra_marks_bonus"><%= h(@result.get_positive_extra_points) %></div>
-      </div>
-      <div class="clear"></div>
-      <div  onclick="unselect_extra_mark();">
-        <div class="float_left;"><b>Deducted Marks:&nbsp;</b></div>
-        <div class="float_left;" id="extra_marks_deducted"><%= h(result.get_negative_extra_points) %></div>
-      </div>
     </div>      
+      <div class="clear"></div>
+       <b>Extra Marks:&nbsp;</b>
+      <span id="positive_extra_points"><%= h(@result.get_positive_extra_points) %></span>
+       <b>Deducted Marks:&nbsp;</b>
+      <span id="negative_extra_points"><%= h(result.get_negative_extra_points) %></span>
+
     
     <div class="clear"></div>
 
     <div class="mark_total">
-      <div class="float_left;">Final Mark&nbsp;</div>
-      <div class="float_right;"> /<%= h(assignment.total_mark) %>  </div>
-      <div class="float_right;" id="current_total_mark_div"> <%= h(result.total_mark) %> </div>
+      <span>Final Mark&nbsp;</span>
+      <span id="current_total_mark_div"> <%= h(result.total_mark) %>   </span>
+      <span> / <%= h(assignment.total_mark) %>  </span>
+
 </div>
