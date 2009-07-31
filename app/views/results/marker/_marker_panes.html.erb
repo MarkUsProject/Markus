@@ -26,12 +26,8 @@
       </ul>
       
       <h3>Overall Comments</h3>
-      
-      <% form_tag({}, {:id => "overall_comment_box"}) do %>
-            <label>Comment:</label>
-            <%= text_area_tag :overall_comment, result.overall_comment, :cols => 50, :rows => 5 %>
-      <% end -%>
-      <%= observe_form "overall_comment_box", :url => { :action => 'update_comment', :result_id => result.id} -%>
+
+       <%= render :partial => 'results/marker/overall_comment', :locals => {:result => result} %>
     </div> <!-- Annotations Summary -->
   </div> <!-- Code Pane -->
   

@@ -1,0 +1,13 @@
+<div id="overall_comment">
+  <div id="overall_comment_controls">
+        <p><%=result.overall_comment%></p>
+        <%= link_to_function "Edit", "$('overall_comment_edit').show();$('overall_comment_controls').hide();" %>
+      </div>
+      <div id="overall_comment_edit" style="display:none;">
+      <% remote_form_for result, :url => {:action => 'update_overall_comment', :id => result.id } do |f| %>
+       <%= f.text_area :overall_comment, :cols => 50, :rows => 5 %>
+       <%= f.submit %>
+       <input type="reset" value="Cancel" onclick="$('overall_comment_edit').hide();$('overall_comment_controls').show();">
+      <% end -%>
+  </div>
+</div>

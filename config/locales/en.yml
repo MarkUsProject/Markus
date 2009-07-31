@@ -21,7 +21,7 @@ en:
     download:           "Download"
     upload:             "Upload"
     choose_assignment:  "Choose Assignment"
-    rules:              "Rules"
+    properties:         "Properties"
     properties:         "Properties"
     submissions:        "Submissions"
     groups_and_graders: "Groups & Graders"

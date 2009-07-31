@@ -36,10 +36,10 @@
             <%= link_to I18n.t(:properties), :controller => 'assignments', :action =>
 	 'student_interface', :id => @assignment.id %>
 
-	 <% elsif @current_user.ta? %>  <%= link_to I18n.t(:rules), :controller => 'assignments', :action =>
+	 <% elsif @current_user.ta? %>  <%= link_to I18n.t(:properties), :controller => 'assignments', :action =>
 	 'edit', :id => @assignment.id %>
 	 <% else %>
-          <%= link_to I18n.t(:rules), :controller => 'assignments', :action =>
+          <%= link_to I18n.t(:properties), :controller => 'assignments', :action =>
 	 'edit', :id => @assignment.id %>
 
 	 <% end %>

@@ -1,0 +1,1 @@
+page.replace 'overall_comment', :partial => 'results/marker/overall_comment', :locals => {:result => @result}

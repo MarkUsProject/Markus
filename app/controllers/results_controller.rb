@@ -282,6 +282,12 @@ class ResultsController < ApplicationController
     end
   end
   
+  def update_overall_comment
+    @result = Result.find(params[:id])
+    @result.overall_comment = params[:result][:overall_comment]
+    @result.save
+  end
+  
   def expand_criteria
     @assignment = Assignment.find(params[:aid])
     @rubric_criteria = @assignment.rubric_criteria
