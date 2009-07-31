@@ -59,17 +59,19 @@
             Select a CSV file form:<br />
             <code>category_name,annotation_text,annotation_text ... </code><br />
           </p>
-          <% form_tag :html => {:multipart => true},
-                             :url => { :action => 'csv_upload',
-                                       :id => @assignment.id } %>
+          <% form_tag({:action => 'csv_upload', :id => @assignment.id}, {:multipart => true}) do %>
            <p><%= file_field_tag :annotation_category_list, :size => 0 %>
               <%= submit_tag("Submit") %></p>							
-        <% end %>
+          <% end %>
         </div> <!-- Upload -->
     </div>
 
     <div class="accordion-toggle" id="accordion-toggle-bottom">Download Annotations</div>
     <div class="accordion-content">
+      <ul>
+        <li><%= link_to "Download in CSV Format", {:action => 'download', :id => @assignment.id, :format => 'csv'}%></li>
+        <li><%= link_to "Download in YML Format", {:action => 'download', :id => @assignment.id, :format => 'yml'}%></li>
+      </ul>
     </div>
 
   

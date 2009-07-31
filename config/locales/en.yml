@@ -66,6 +66,8 @@ en:
       delete:
         annotation_text: "Deleting this annotation will remove the text from any files it may be attached to.  Are you sure you want to do this?"
         annotation_category:  "Delete this annotation category will also delete its annotations.  Deleted annotations will no longer be attached to student submissions.  Are you sure you want to do this?"
+      upload:
+        success:  "Successfully uploaded {{annotation_category_number}} new Annotation Categories"
     
     submission_rules:
       submission_rule:
