@@ -1,0 +1,3 @@
+page.remove "annotation_category_#{@annotation_category.id}"
+page.replace_html 'annotation_list_holder', ''
+page.replace_html 'selected_annotation_category', ''

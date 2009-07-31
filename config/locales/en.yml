@@ -47,7 +47,6 @@ en:
     fields specified above."
 
 
-
     user:
         user_name:      "CDF ID"
         first_name:     "First Name"
@@ -61,6 +60,12 @@ en:
     confirm_bulk_action:  "Are you sure you want to perform this bulk action?"
     hide_students: "Hide Students"
     unhide_students: "Unhide Students"
+    
+    annotations:
+      annotations: "Annotations"
+      delete:
+        annotation_text: "Deleting this annotation will remove the text from any files it may be attached to.  Are you sure you want to do this?"
+        annotation_category:  "Delete this annotation category will also delete its annotations.  Deleted annotations will no longer be attached to student submissions.  Are you sure you want to do this?"
     
     submission_rules:
       submission_rule:

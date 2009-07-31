@@ -12,7 +12,8 @@
                 controller.controller_name == 'ta_assignments' or
                 controller.controller_name == 'submissions' or
                 controller.controller_name == 'groups' or
-		controller.controller_name == 'results'
+		controller.controller_name == 'results' or
+		controller.controller_name == 'annotation_categories'
            %> id ="menu_active"<% end %>>
              <%= link_to 'Assignments', :controller => 'assignments'%>
 	</span>

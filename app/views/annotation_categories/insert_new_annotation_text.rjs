@@ -1,0 +1,1 @@
+page.replace 'add_annotation_text', :partial => 'annotation_text', :locals => {:annotation_text => @annotation_text}

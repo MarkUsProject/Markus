@@ -1,0 +1,17 @@
+<div id="annotation_list_holder">
+<%=link_to_remote "Delete Annotation Category", :url => {:action => "delete_annotation_category", :id => @annotation_category.id}, :confirm => t('annotations.delete.annotation_category') %>
+<ul id="annotation_list">
+<% @annotation_texts.each do |annotation_text| %>
+  <%= render :partial => 'annotation_text', :locals => {:annotation_text => annotation_text} %> 
+<% end %>
+</ul>
+<div id="add_annotation_text_control">
+   <%=link_to_function "Add Annotation", %| if($('add_annotation_text_prompt') != null) {
+          $('add_annotation_text_prompt').select();
+          $('add_annotation_text_prompt').focus();
+        } else {
+        #{remote_function :url => {:action => "add_annotation_text", :id => @annotation_category.id}, :method => 'get'}
+        }|%>
+  
+</div>
+</div>

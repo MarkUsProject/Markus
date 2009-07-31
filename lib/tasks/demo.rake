@@ -32,6 +32,7 @@ namespace :markus do
     a1.group_name_displayed = false
     a1.repository_folder = "A1"
     a1.submission_rule = rule
+    a1.instructor_form_groups = false
     a1.save
 
     a2 = Assignment.new
@@ -47,6 +48,7 @@ namespace :markus do
     a2.group_name_displayed = false
     a2.repository_folder = "A2"
     a2.submission_rule = rule
+    a2.instructor_form_groups = false
     a2.save
     
     puts "Creating the Rubric for A1..."
@@ -69,7 +71,7 @@ namespace :markus do
         grouping = student.accepted_grouping_for(a1.id)
         grouping.create_grouping_repository_folder
       rescue Exception => e
-        puts "Caught exception on #{student_name}"
+        puts "Caught exception on #{student_name}: #{e.message}"
       end
     end
 

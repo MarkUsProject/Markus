@@ -308,7 +308,6 @@ Blanche Nef,ta2'''
 
   end
 
-
   #########################################################
   #
   # TODO: create test for create_grouping_repository_factory

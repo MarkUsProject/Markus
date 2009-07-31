@@ -1,0 +1,3 @@
+<li id="annotation_category_<%=annotation_category.id%>">
+<%= link_to_remote annotation_category.annotation_category_name, :url => {:action => 'get_annotations', :id => annotation_category.id} %>
+</li>

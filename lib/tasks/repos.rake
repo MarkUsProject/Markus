@@ -3,6 +3,7 @@ namespace :repos do
   task(:drop => :environment) do
     puts "Destroying Repositories..."
     FileUtils.rm_r Dir.glob(File.join(REPOSITORY_STORAGE, "*"))
+    File.delete($REPOSITORY_SVN_AUTHZ_FILE)
   end
   
   desc "Build repositories in REPOSITORY_STORAGE for all existing Groups"

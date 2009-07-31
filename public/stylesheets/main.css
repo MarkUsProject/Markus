@@ -134,7 +134,7 @@ h4{
 }
 
 #menu a, #sub_menu a {
-  width: 150px;
+  width: 130px;
   height: 25px;
   padding-top: 7px;
   display: inline-block;
@@ -187,7 +187,7 @@ h4{
 
 #sub_menu li{
    display: inline-block;
-   width: 150px;
+   width: 130px;
 }
 
 #sub_menu li li{
@@ -876,13 +876,13 @@ a.icon_remove:hover {
 }
 
 /* Rubric Criteria view*/
-#rubric_criteria_pane{
+#rubric_criteria_pane, #annotation_category_pane {
    float: left;
    width: 30%;
    padding: 0px 2%;
 }
 
-#rubric_criteria_pane ul{
+#rubric_criteria_pane ul, #annotation_category_pane ul{
   -moz-border-radius: 9px;
   -webkit-border-radius: 9px;
   border: 2px solid #ccc;

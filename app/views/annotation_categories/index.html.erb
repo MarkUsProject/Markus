@@ -1,1 +1,78 @@
-TODO:  This is where the annotation category editor can go
+<%= stylesheet_link_tag("livepipe/tabs") %>
+<%= javascript_include_tag  'livepipe/livepipe' %>
+<%= javascript_include_tag  'rubrics' %>
+<%= javascript_include_tag  '16accordion' %>
+
+<%= render :partial => "boot.js" %>
+
+<div id="title_bar">
+  <h1>Annotations: <%=@assignment.name%></h1>	
+</div>
+
+<div class="wrapLeft">
+<% if flash[:upload_notice] && flash[:invalid_lines].empty? -%>
+  <div>
+    <p class="success"><%= h(flash[:upload_notice]) %></p>
+  </div>
+<% end -%>
+<p id="criterion_error" class="warning" style="display: none;">
+  
+</p>
+
+<div class="colLeft">
+  <div id="annotation_category_pane">
+
+     <ul id="annotation_category_pane_list">
+        <% @annotation_categories.each do |annotation_category| %>
+          <%= render :partial => 'annotation_category', :locals => {:annotation_category => annotation_category} %>
+        <% end %>
+      </ul>  <!-- Rubric Criteria Pane -->	
+      <div id="annotation_category_control">
+        <%= link_to_function "Add Annotation Category", %| if($('add_annotation_category_prompt') != null) {
+          $('add_annotation_category_prompt').select();
+          $('add_annotation_category_prompt').focus();
+        } else {
+        #{remote_function :url => {:action => "add_annotation_category", :id => @assignment.id}, :method => 'get'}
+        }|%>
+      </div>
+  </div>
+
+    <div id="annotations_pane">
+      <div id="annotations_pane_menu">
+        <h2><span id="selected_annotation_category"></span></h2>
+      </div>
+      <div id="annotation_list_holder">
+      </div>
+  
+   <div class="clear"></div>
+  
+  </div> <!-- Edit Canvas -->
+ </div>
+
+</div>
+<div class="colRight" >
+    <div id="test-accordion" class="accordion"> 
+    <div class="accordion-toggle" id="accordion-toggle-top" >Upload Annotations</div>
+    <div class="accordion-content">
+    <div id="upload">
+          <p>
+            Select a CSV file form:<br />
+            <code>category_name,annotation_text,annotation_text ... </code><br />
+          </p>
+          <% form_tag :html => {:multipart => true},
+                             :url => { :action => 'csv_upload',
+                                       :id => @assignment.id } %>
+           <p><%= file_field_tag :annotation_category_list, :size => 0 %>
+              <%= submit_tag("Submit") %></p>							
+        <% end %>
+        </div> <!-- Upload -->
+    </div>
+
+    <div class="accordion-toggle" id="accordion-toggle-bottom">Download Annotations</div>
+    <div class="accordion-content">
+    </div>
+
+  
+  </div> <!-- Download canvas -->
+</div> <!-- Tabbed Area -->
+</div> 

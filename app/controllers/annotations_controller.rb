@@ -4,11 +4,7 @@ class AnnotationsController < ApplicationController
   
   # TODO: Is the assignment closed?  If so, begin generating 
   # Submissions and SubmissionFiles
-  
-  def index
-    @assignments = Assignment.all(:order => :id) 
-  end
-  
+   
   def add_existing_annotation
     @text = AnnotationText.find(params[:annotation_text_id])
     @submission_file_id = params[:submission_file_id]

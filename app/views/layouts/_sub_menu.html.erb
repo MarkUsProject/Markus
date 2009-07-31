@@ -4,7 +4,8 @@
   controller.controller_name == 'submissions' or
   controller.controller_name == 'groups' or
   controller.controller_name == 'results' or
-  controller.controller_name == 'ta_assignments'
+  controller.controller_name == 'ta_assignments' or
+  controller.controller_name == 'annotation_categories'
 %>
 <div id="sub_menu">
   <ul id="root" class="level1 horizontal">
@@ -59,6 +60,11 @@
         id="sub_menu_active"
       <% end %>>
          <%= link_to I18n.t(:rubrics), :controller => 'rubrics', :action => 'index', :id => @assignment.id%>
+      </li>
+      <li <% if controller.controller_name == 'annotation_categories'%> 
+        id="sub_menu_active"
+      <% end %>>
+         <%= link_to I18n.t('annotations.annotations'), :controller => 'annotation_categories', :action => 'index', :id => @assignment.id%>
       </li>
 
   <% end %>
