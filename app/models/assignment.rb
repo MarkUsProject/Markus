@@ -33,6 +33,13 @@ class Assignment < ActiveRecord::Base
     if (group_max && group_min) && group_max < group_min
       errors.add(:group_max, "must be greater than the minimum number of groups")
     end
+    if Time.zone.parse(due_date.to_s).nil?
+      errors.add :due_date, 'is not a valid date'
+    else
+      if Time.zone.parse(due_date.to_s) < Time.now
+        errors.add :due_date, 'cannot be in the past'
+      end
+    end
   end
   
   

@@ -176,6 +176,7 @@ class AssignmentsController < ApplicationController
     end
     
     @assignment = Assignment.new(params[:assignment])
+
     # A little hack to get around Rails' protection of the "type"
     # attribute
     @assignment.submission_rule.type = params[:assignment][:submission_rule_attributes][:type]

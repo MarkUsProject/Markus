@@ -125,7 +125,7 @@ Rails::Initializer.run do |config|
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
   # :all can be used as a placeholder for all plugins not explicitly named
-  config.plugins = [ :ssl_requirement, :auto_complete ]
+  config.plugins = [ :ssl_requirement, :auto_complete, :calendar_date_select, :all ]
 
   # If you are hosting your application at path
   # http://hostname/path/to/markus set this to '/path/to/markus'
