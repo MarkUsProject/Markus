@@ -213,7 +213,8 @@ class ResultsController < ApplicationController
     @group = @grouping.group
     @files = @submission.submission_files
     @first_file = @files.first
-    @extra_marks = @result.extra_marks
+    @extra_marks_points = @result.extra_marks.points
+    @extra_marks_percentage = @result.extra_marks.percentage
     @marks_map = []
     @rubric_criteria.each do |criterion|
       mark = Mark.find_or_create_by_result_id_and_rubric_criterion_id(@result.id, criterion.id)

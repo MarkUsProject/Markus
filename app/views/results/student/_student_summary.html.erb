@@ -13,7 +13,7 @@
     <div id="extra_marks_pane" class="extra_marks_pane">
       <div class="bonus_deduction" onclick="unselect_extra_mark();"><b>Bonus/Deductions</b></div>
 
-    <%= render :partial => 'results/common/extra_marks_table', :locals => {:extra_marks => extra_marks, :result_id => result.id} %>
+    <%= render :partial => 'results/student/extra_marks_table', :locals => {:extra_marks_points => extra_marks_points, :result_id => result.id} %>
       
 
       <div onclick="unselect_extra_mark();">

@@ -24,6 +24,8 @@
 <% end %>
 
 <%= form_tag({:action => 'update_submissions', :id => @assignment.id}) %>
+<span id="loading_list"><%= image_tag("spinner.gif")%> Loading
+list...</span>
 <table id="submissions">
 
 </table>

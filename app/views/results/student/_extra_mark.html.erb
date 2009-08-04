@@ -2,27 +2,11 @@
 # Erb template for inserting a new extra mark into an assignment grade
 %>
 
-<tr id="<%= "extra_mark_#{mark.id}" %>"  onclick="<%="focus_extra_mark(#{mark.id})"%>">
-  <td>
-    <div  id="<%="extra_mark_title_#{mark.id}_description"%>">
-        <%=h(mark.description)%>
-    </div>
-    <div id="<%="extra_mark_inputs_#{mark.id}_description"%>" >
-      <%=  text_field_tag "extra_mark_#{mark.id}_description", mark.description %>
-      <%=observe_field "extra_mark_#{mark.id}_description", :url => {:controller => 'annotations', :action => 'update_extra_mark', :type => "description", :id => mark.id}, :on => 'blur', :with => "value"%>
-    </div>
-  </td>
-  <td>
-    <div id="<%="extra_mark_title_#{mark.id}_mark"%>"><%=mark.extra_mark%></div>
-    <div id="<%="extra_mark_inputs_#{mark.id}_mark"%>">
-      <%=  text_field_tag "extra_mark_#{mark.id}_mark", mark.extra_mark, :size=>4 %>
-      <%=observe_field "extra_mark_#{mark.id}_mark", :url => {:controller => 'annotations', :action => 'update_extra_mark', :type => "mark", :id => mark.id}, :on => 'blur', :with => "value"%>
-    </div>
-  </td>
-  <td><div id="<%="extra_mark_#{mark.id}_delete"%>">
-    <%= link_to_remote "Delete", :method => 'delete',
-    :url => { :action => 'remove_extra_mark', :mark_id => mark.id },
-    :html => { :class => 'extra_mark_delete', :title => 'Delete this extra mark' },
-    :confirm => 'Are you sure you want to remove this extra mark?', :complete => "selected_extra_mark_id=null;hide_levels();$('working').hide();", :before => "$('working').show();"%>
-  </div></td>
+<tr>
+ <td>
+   <%=h(extra_mark.description)%>
+ </td>
+ <td>
+   <%=h(extra_mark.extra_mark)%>
+ </td>
 </tr>
