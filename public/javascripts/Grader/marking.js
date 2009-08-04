@@ -4,16 +4,6 @@ function focus_rubric_criterion(id) {
   } else {
     show_rubric_criterion(id);
   }
-//    if(selected_rubric_criterion_id != null) {
-//        hide_rubric_criterion(selected_rubric_criterion_id);
-//    }
-//    if (selected_rubric_criterion_id == id) {
-//        hide_rubric_criterion(id);
-//        selected_rubric_criterion_id = null;
-//    } else {
-//        show_rubric_criterion(id);
-//        selected_rubric_criterion_id = id;
-//    }
 }
 
 function hide_rubric_criterion(id) {
@@ -37,37 +27,9 @@ function select_mark(mark_id, mark) {
   $('mark_' + mark_id + '_' + mark).addClassName('rubric_criterion_level_selected');
 }
 
-function unselect_extra_mark() {
-    if (selected_extra_mark_id != null) {
-        hide_extra_mark(selected_extra_mark_id);
-        selected_extra_mark_id = null;
-    }
-}
 
-function focus_extra_mark(id) {
-    if(selected_extra_mark_id != null) {
-        hide_extra_mark(selected_extra_mark_id);
-    }
-    show_extra_mark(id);
-    selected_extra_mark_id = id;
-}
-
-function hide_extra_mark(id) {
-    //hide all the input boxes
-    $('extra_mark_inputs_'+id+'_description').hide();
-    $('extra_mark_inputs_'+id+'_mark').hide();
-    $('extra_mark_'+id+'_delete').hide();
-    $('extra_mark_title_'+id+'_description').show();
-    $('extra_mark_title_'+id+'_mark').show();
-    $('extra_mark_'+id).removeClassName('criterion_holder_selected')
-}
-
-function show_extra_mark(id) {
-    $('extra_mark_inputs_'+id+'_description').show();
-    $('extra_mark_inputs_'+id+'_mark').show();
-    $('extra_mark_'+id+'_delete').show();
-    $('extra_mark_title_'+id+'_description').hide();
-    $('extra_mark_title_'+id+'_mark').hide();
-    $('extra_mark_'+id).addClassName('criterion_holder_selected');
+function update_total_mark(total_mark) {
+  $('current_mark_div').update(total_mark);
+  $('current_total_mark_div').update(total_mark);
 }
 

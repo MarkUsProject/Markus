@@ -46,7 +46,8 @@ class ResultsController < ApplicationController
     @group = @grouping.group
     @files = @submission.submission_files
     @first_file = @files.first
-    @extra_marks = @result.extra_marks
+    @extra_marks_points = @result.extra_marks.points
+    @extra_marks_percentage = @result.extra_marks.percentage
     @marks_map = []
     @rubric_criteria.each do |criterion|
       mark = Mark.find_or_create_by_result_id_and_rubric_criterion_id(@result.id, criterion.id)
@@ -185,7 +186,7 @@ class ResultsController < ApplicationController
         page.replace_html "mark_#{result_mark.id.to_s}_summary_mark", result_mark.mark
         page.replace_html "mark_#{result_mark.id.to_s}_summary_mark_after_weight", (result_mark.mark * result_mark.rubric_criterion.weight)
         page.replace_html "current_subtotal_div", result_mark.result.get_subtotal
-        page.replace_html "current_total_mark_div", result_mark.result.total_mark
+        page.call "update_total_mark", result_mark.result.total_mark
       end
     end
   end
@@ -221,32 +222,31 @@ class ResultsController < ApplicationController
     end
   end
   
-
-  #Adds a new extra mark object and inserts it into the html
   def add_extra_mark
-    extra_mark = ExtraMark.new(params[:extra_mark])
-    extra_mark.save
-    render :update do |page|
-      #insert the new mark into the bottom of the table and focus it
-      page.insert_html :bottom, "extra_marks_list",
-        :partial => "results/common/extra_mark", :locals => { :mark => extra_mark }
-      page.call(:focus_extra_mark, extra_mark.id.to_s)
+    @result = Result.find(params[:id])
+    if request.post?
+      @extra_mark = ExtraMark.new
+      @extra_mark.result = @result
+      @extra_mark.update_attributes(params[:extra_mark])
+      @extra_mark.unit = ExtraMark::UNITS[:points]
+      if !@extra_mark.save
+        render :action => 'results/marker/add_extra_mark_error'
+      else
+        render :action => 'results/marker/insert_extra_mark'
+      end
+      return
     end
+    render :action => 'results/marker/add_extra_mark'
   end
 
   #Deletes an extra mark from the database and removes it from the html
   def remove_extra_mark
     #find the extra mark and destroy it
-    extra_mark = ExtraMark.find(params[:mark_id])
-    extra_mark.destroy
+    @extra_mark = ExtraMark.find(params[:id])
+    @extra_mark.destroy
     #need to recalculate total mark
-    result = Result.find(extra_mark.result_id)
-    result.calculate_total
-    render :update do |page|
-      #delete it from the html
-      page.remove("extra_mark_#{params[:mark_id]}")
-      page.replace_html("current_total_mark_div", result.total_mark)
-    end
+    @result = @extra_mark.result
+    render :action => 'results/marker/remove_extra_mark'
   end
 
   #update the mark and/or description of the extra mark

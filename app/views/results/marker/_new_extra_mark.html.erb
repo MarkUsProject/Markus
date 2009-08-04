@@ -1,0 +1,13 @@
+<tr id="add_extra_mark_prompt">
+<td colspan="3">
+<% remote_form_for :extra_mark, :url => {:action => 'add_extra_mark', :id => result.id} do |f| %>
+  <%= f.label :description, "Comment" %>
+  <%= f.text_field :description %>
+  <%= f.label :extra_mark, "Mark" %>
+  <%= f.text_field :extra_mark, :size => 3 %>
+  <div class="error" style="display:none;" id="new_extra_mark_error">
+  </div>
+  <%= f.submit %>
+<% end %>
+</td>
+</tr>

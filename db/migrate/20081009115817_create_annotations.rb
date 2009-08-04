@@ -14,7 +14,6 @@ class CreateAnnotations < ActiveRecord::Migration
         t.column :assignmentfile_id,                    :integer
       end
     
-      add_index :annotations, [:description_id]
       add_index :annotations, [:assignmentfile_id]
       
       foreign_key_no_delete :annotations, :description_id, :descriptions

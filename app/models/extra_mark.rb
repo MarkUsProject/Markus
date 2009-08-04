@@ -6,11 +6,12 @@ class ExtraMark < ActiveRecord::Base
     :points => 'points'
   }
   
-  named_scope :positive_points, :conditions => ['extra_mark > 0 AND unit = ?', ExtraMark::UNITS[:points]]
-  named_scope :negative_points, :conditions => ['extra_mark < 0 AND unit = ?', ExtraMark::UNITS[:points]]
+  named_scope :points, :conditions => {:unit => ExtraMark::UNITS[:points]}
+  named_scope :percentage, :conditions => {:unit => ExtraMark::UNITS[:percentage]}
+  
+  named_scope :positive, :conditions => ['extra_mark > 0']
+  named_scope :negative, :conditions => ['extra_mark < 0']
 
-  named_scope :positive_percentage, :conditions => ['extra_mark > 0 AND unit = ?', ExtraMark::UNITS[:percentage]]
-  named_scope :negative_percentage, :conditions => ['extra_mark < 0 AND unit = ?', ExtraMark::UNITS[:percentage]]
   
   after_save :ensure_result_marking_state_partial
   after_update :ensure_result_marking_state_partial

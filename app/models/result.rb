@@ -32,12 +32,12 @@ class Result < ActiveRecord::Base
 
   #returns the sum of all the POSITIVE extra marks
   def get_positive_extra_points
-    return extra_marks.positive_points.sum('extra_mark')
+    return extra_marks.positive.points.sum('extra_mark')
   end
   
   # Returns the sum of all the negative bonus marks
   def get_negative_extra_points
-    return extra_marks.negative_points.sum('extra_mark')
+    return extra_marks.negative.points.sum('extra_mark')
   end
   
   def get_total_extra_points
@@ -45,15 +45,19 @@ class Result < ActiveRecord::Base
   end
   
   def get_positive_extra_percentage
-    return extra_marks.positive_percentage.sum('extra_mark')
+    return extra_marks.positive.percentage.sum('extra_mark')
   end
   
   def get_negative_extra_percentage
-    return extra_marks.negative_percentage.sum('extra_mark')
+    return extra_marks.negative.percentage.sum('extra_mark')
   end
 
   def get_total_extra_percentage
     return get_positive_extra_percentage + get_negative_extra_percentage
+  end
+  
+  def get_total_extra_percentage_as_points
+    return (get_total_extra_percentage * submission.assignment.total_mark / 100)
   end
   
   # unrealses the results, and put the marking state to partial.

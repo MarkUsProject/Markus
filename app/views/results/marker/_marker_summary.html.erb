@@ -11,16 +11,31 @@
     <div class="clear"></div><br/>
     
     <div id="extra_marks_pane" class="extra_marks_pane">
-      <div class="bonus_deduction" onclick="unselect_extra_mark();"><b>Bonus/Deductions</b></div>
-    <%= render :partial => 'results/common/extra_marks_table', :locals => {:extra_marks => extra_marks, :result_id => result.id} %>
+      <div class="bonus_deduction"><b>Bonus/Deductions</b></div>
+    <%= render :partial => 'results/marker/extra_marks_table', :locals => {:extra_marks_points => extra_marks_points, :result_id => result.id} %>
     </div>      
       <div class="clear"></div>
-       <b>Extra Marks:&nbsp;</b>
+       <b>Positive Extra Marks:&nbsp;</b>
       <span id="positive_extra_points"><%= h(@result.get_positive_extra_points) %></span>
-       <b>Deducted Marks:&nbsp;</b>
+       <b>Negative Extra Marks:&nbsp;</b>
       <span id="negative_extra_points"><%= h(result.get_negative_extra_points) %></span>
+      <b>Total Extra Marks:&nbsp;</b>
+      <span id="total_extra_points"><%= h(result.get_total_extra_points) %></span>
 
-    
+
+  <div id="extra_percentage_pane" class="extra_percentage_pane">
+    <%= render :partial => 'results/marker/extra_percentage_table', :locals => {:extra_marks_percentage => extra_marks_percentage, :result_id => result.id} %>
+  </div>      
+  <div class="clear"></div>
+  <b>Positive Extra Percentage:&nbsp;</b>
+      <span id="positive_extra_percentage"><%= h(@result.get_positive_extra_percentage) %></span>
+       <b>Negative Extra Percentage:&nbsp;</b>
+      <span id="negative_extra_percentage"><%= h(result.get_negative_extra_percentage) %></span>
+      <b>Total Extra Percentage:&nbsp;</b>
+      <span id="total_extra_percentage"><%= h(result.get_total_extra_percentage) %></span>
+      <b>Translated to Points:</b>
+      <span id="total_extra_percentage_as_points"><%= h(result.get_total_extra_percentage_as_points)%></span>
+
     <div class="clear"></div>
 
     <div class="mark_total">

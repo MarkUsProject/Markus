@@ -1,5 +1,4 @@
-class Assignment < ActiveRecord::Base
-  
+class Assignment < ActiveRecord::Base 
   has_many :rubric_criteria, :class_name => "RubricCriterion", :order => :position
   has_many :assignment_files
   has_one  :submission_rule 
@@ -36,7 +35,8 @@ class Assignment < ActiveRecord::Base
     if Time.zone.parse(due_date.to_s).nil?
       errors.add :due_date, 'is not a valid date'
     else
-      if Time.zone.parse(due_date.to_s) < Time.now
+      
+      if due_date_changed? && Time.zone.parse(due_date.to_s) < Time.now
         errors.add :due_date, 'cannot be in the past'
       end
     end

@@ -2,7 +2,7 @@ class IndexForeignKeys < ActiveRecord::Migration
   def self.up
     add_index :annotation_categories, :assignment_id
     add_index :annotation_texts, :annotation_category_id
-    add_index :annotations, :annotation_text_id
+    #add_index :annotations, :annotation_text_id
     add_index :marks, :result_id
     add_index :marks, :rubric_criterion_id
     add_index :extra_marks, :result_id

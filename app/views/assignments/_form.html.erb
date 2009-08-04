@@ -14,10 +14,7 @@
     <%= f.text_field :description %><br />
     <%= f.label :message %>
     <%= f.text_area :message, :rows => 5, :col => 45 %><br />
-    <%= f.label "Due Date:"%>
-    <%#= f.calendar_date_select :due_date, 10.days.from_now,
-        :time => "mixed",
-        :year_range => 0.years.ago..1.years.from_now %>
+    <%= f.label :due_date, "Due Date:"%>
     <%= f.calendar_date_select :due_date, {
           :time => "mixed",
           :year_range => 0.years.ago..1.years.from_now} %>

@@ -8,12 +8,14 @@ class AnnotationsController < ApplicationController
   def add_existing_annotation
     @text = AnnotationText.find(params[:annotation_text_id])
     @submission_file_id = params[:submission_file_id]
-    @annotation = Annotation.create({ 
+    @annotation = Annotation.new
+    @annotation.update_attributes({
       :line_start => params[:line_start], 
       :line_end => params[:line_end],
-      :annotation_text_id => @text.id,
       :submission_file_id => params[:submission_file_id]
     })
+    @annotation.annotation_text = @text
+    @annotation.save
     @annotations = Annotation.find_all_by_submission_file_id(@submission_file_id, :order => "line_start") || []
   end
 

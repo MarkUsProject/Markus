@@ -1,0 +1,15 @@
+<%#
+# Erb template for inserting a new extra mark into an assignment grade
+%>
+
+<tr id="<%= "extra_mark_#{extra_mark.id}" %>">
+  <td>
+    <%=extra_mark.description%>
+  </td>
+  <td>
+    <%=extra_mark.extra_mark %>
+  </td>
+  <td>
+    <%= link_to_remote "Remove", :url => {:action => "remove_extra_mark", :id => extra_mark.id}, :confirm => "Are you sure you want to remove this extra mark?" %>
+  </td>
+</tr>
