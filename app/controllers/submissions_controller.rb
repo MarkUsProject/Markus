@@ -222,7 +222,13 @@ class SubmissionsController < ApplicationController
       end
       return
     end
-    send_data file_contents, :type => 'text', :disposition => 'inline', :filename => params[:file_name]
+    if SubmissionFile.is_binary?(file_contents)
+      # If the file appears to be binary, send it as a download
+      send_data file_contents, :disposition => 'attachment', :filename => params[:file_name]  
+    else
+      # Otherwise, blast it out to the screen
+      render :text => file_contents, :layout => 'sanitized_html'
+    end
   end 
 
   def update_submissions

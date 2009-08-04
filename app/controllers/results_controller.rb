@@ -110,7 +110,6 @@ class ResultsController < ApplicationController
     begin
       file_contents = retrieve_file(file)
     rescue Exception => e
-      # TODO:  Make this more graceful (#164)
       flash[:file_download_error] = e.message
       redirect_to :action => 'edit', :id => file.submission.result.id
       return
