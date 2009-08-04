@@ -60,7 +60,7 @@ class Result < ActiveRecord::Base
     return (get_total_extra_percentage * submission.assignment.total_mark / 100)
   end
   
-  # unrealses the results, and put the marking state to partial.
+  # un-releases the result
   def unrelease_results
     self.released_to_students = false
     self.save
