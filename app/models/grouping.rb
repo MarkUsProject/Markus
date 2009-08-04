@@ -23,7 +23,7 @@ class Grouping < ActiveRecord::Base
   
   validates_presence_of   :group_id, :message => "needs an group id"
   validates_associated    :group,    :message => "associated group need to be valid"
-   
+  
   def inviter?
     return membership_status == StudentMembership::STATUSES[:inviter]
   end
@@ -67,7 +67,7 @@ class Grouping < ActiveRecord::Base
   #invites each user in 'members' by its user name, to this group
   def invite(members, set_membership_status=StudentMembership::STATUSES[:pending])
     # overloading invite() to accept members arg as both a string and a array
-    members = [members] if members.is_a?(String) # put a string in an
+    members = [members] if !members.instance_of?(Array) # put a string in an
                                                  # array
     members.each do |m|
       next if m.blank? # ignore blank users
@@ -243,15 +243,18 @@ class Grouping < ActiveRecord::Base
   # When a Grouping is created, automatically create the folder for the
   # assignment in the repository, if it doesn't already exist.
   def create_grouping_repository_folder
-    revision = self.group.repo.get_latest_revision
-    assignment_folder = File.join('/', assignment.repository_folder)
-    
-    if revision.path_exists?(assignment_folder)
-      return true
-    else
-      txn = self.group.repo.get_transaction("markus")
-      txn.add_path(assignment_folder)
-      return self.group.repo.commit(txn)  
+    # create folder only if we are repo admin
+    if self.group.repository_admin?
+      revision = self.group.repo.get_latest_revision
+      assignment_folder = File.join('/', assignment.repository_folder)
+      
+      if revision.path_exists?(assignment_folder)
+        return true
+      else
+        txn = self.group.repo.get_transaction("markus")
+        txn.add_path(assignment_folder)
+        return self.group.repo.commit(txn)  
+      end
     end
   end
 end

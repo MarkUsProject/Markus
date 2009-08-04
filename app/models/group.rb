@@ -2,7 +2,7 @@ require File.join(File.dirname(__FILE__),'/../../lib/repo/repository_factory')
 # Maintains group information for a given user on a specific assignment
 class Group < ActiveRecord::Base
   
-  after_create :build_repository
+  after_create :set_repo_name, :build_repository
   
   has_many :groupings
   has_many :submissions, :through => :groupings
@@ -49,8 +49,15 @@ class Group < ActiveRecord::Base
 #   end
 # end
 
+  # Set repository name in database after a new group is created
+  def set_repo_name
+    self.repo_name="Group_" + self.id.to_s.rjust(3, "0")
+    self.save # need to save!
+  end
+
+  # Returns the repository name for this group
   def repository_name
-    return "Group_" + id.to_s.rjust(3, "0")
+    return self.repo_name
   end
   
   def grouping_for_assignment(aid)
@@ -78,6 +85,11 @@ class Group < ActiveRecord::Base
   # Returns the URL for externally accessible repos
   def repository_external_access_url
     return REPOSITORY_EXTERNAL_BASE_URL + "/" + repository_name
+  end
+  
+  # Returns true if we are in admin mode
+  def repository_admin?
+    return IS_REPOSITORY_ADMIN
   end
   
   
@@ -122,7 +134,7 @@ class Group < ActiveRecord::Base
       # create repositories and write permissions if and only if we are admin
       if IS_REPOSITORY_ADMIN
         Repository.get_class(REPOSITORY_TYPE).create(File.join(REPOSITORY_STORAGE, repository_name))
-        if repository_external_commits_only? # see if repo is capable for external exposure
+        if repository_admin?
           # Each admin user will have read and write permissions on each repo
           Admin.all.each do |admin|
             self.repo.add_user(admin.user_name, Repository::Permission::READ_WRITE)

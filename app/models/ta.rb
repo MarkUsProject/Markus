@@ -24,7 +24,7 @@ class Ta < User
   # if need be
   def grant_repository_permissions
     Group.all.each do |group|
-      if group.repository_external_commits_only?
+      if group.repository_admin?
         group.repo.add_user(self.user_name, Repository::Permission::READ_WRITE)
       end
     end
@@ -33,7 +33,7 @@ class Ta < User
   # Revokes read and write permissions for a deleted TA user
   def revoke_repository_permissions
     Group.all.each do |group|
-      if group.repository_external_commits_only?
+      if group.repository_admin?
         group.repo.remove_user(self.user_name)
       end
     end

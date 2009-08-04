@@ -12,7 +12,7 @@ class Admin < User
   # Adds read and write permissions for each newly created admin user
   def grant_repository_permissions
     Group.all.each do |group|
-      if group.repository_external_commits_only?
+      if group.repository_admin?
         group.repo.add_user(self.user_name, Repository::Permission::READ_WRITE)
       end
     end
@@ -21,7 +21,7 @@ class Admin < User
   # Revokes read and write permissions for a deleted admin user
   def revoke_repository_permissions
     Group.all.each do |group|
-      if group.repository_external_commits_only?
+      if group.repository_admin?
         group.repo.remove_user(self.user_name)
       end
     end
