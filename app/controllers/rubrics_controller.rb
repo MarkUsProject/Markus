@@ -44,73 +44,16 @@ class RubricsController < ApplicationController
     end
   end
   
-  def add_criterion
-    return unless request.post?
-    @assignment = Assignment.find(params[:id])
-    # Create a default Criterion 'New Criterion n'.
-    criterion = RubricCriterion.new
-    criterion.assignment = @assignment
-    criterion.rubric_criterion_name = 'New Criterion '  +params[:create_num]
-    criterion.weight = 1
-    criterion.save
-    criterion.position = RubricCriterion.count + 1
-
-    # g6mandi: moved level creation to a helper method create_levels for now!
-    create_default_levels(criterion)
-    
-    render :update do |page|
-      page.insert_html :bottom, "rubric_criteria_pane_list", 
-        :partial => "rubrics/manage/criterion", :locals => { :criterion => criterion }
-      #update the sortable criteria list
-      page.sortable 'rubric_criteria_pane_list', :constraint => false, :url => { :action => :update_positions }
-      page.call(:focus_criterion, criterion.id.to_s)
-    end
-  end
-
-   def list_levels
-     @criterion = RubricCriterion.find(params[:criterion_id])
-     @criterion_levels = [{:name => @criterion.level_0_name, :description =>
-                          @criterion.level_0_description},
-                          {:name => @criterion.level_1_name, :description => @criterion.level_1_description},
-                          {:name => @criterion.level_2_name, :description => @criterion.level_2_description},
-                          {:name => @criterion.level_3_name, :description => @criterion.level_3_description},
-                          {:name => @criterion.level_4_name, :description => @criterion.level_4_description},]
-
-     render :update do |page|
-       page.replace_html("selected_criterion_name", @criterion.rubric_criterion_name)
-       page.replace_html("rubric_levels_pane_list", :partial => "rubrics/manage/levels", :locals => {:levels => @criterion_levels, :criterion => @criterion})
-     end      
-   end
-
-   def delete
+  def delete
     return unless request.delete?
     @criterion = RubricCriterion.find(params[:id])
      #delete all marks associated with this criterion
     Mark.delete_all(["rubric_criterion_id = :c", {:c => @criterion.id}])
     @criterion.destroy
     flash[:success] = I18n.t('criterion_deleted_success')
-   end
-  
-   def update_criterion
-     return unless request.post?
-     criterion = RubricCriterion.find(params[:criterion_id])
-     case params[:update_type]
-     when 'name'
-         old_value = criterion.rubric_criterion_name
-         criterion.rubric_criterion_name = params[:new_value]
-     when 'weight'
-         old_value = criterion.weight
-         criterion.weight = params[:new_value]
-     end
-     if criterion.valid? && criterion.save
-       output = {'status' => 'OK'}
-     else
-       output = {'status' => 'error', 'old_value' => old_value, 'message' => criterion.errors.full_messages}
-     end
-     render :json => output.to_json
-   end
+  end
    
-   def download_rubric
+  def download_rubric
      @assignment = Assignment.find(params[:id])
      format = params[:format]
      case format
@@ -118,10 +61,8 @@ class RubricsController < ApplicationController
        file_out = create_csv_rubric(@assignment)
      when "yml"
        file_out = create_yml_rubric(@assignment)
-     end
-     
+     end   
      send_data(file_out, :type => "text/csv", :disposition => "inline")
-     
    end
    
    #given an assignment, return the names of the levels in the assignment's
@@ -274,48 +215,6 @@ class RubricsController < ApplicationController
     end
       criterion.save
    end
-
-   # Moved all of this to one helper method for the time being, need to figure out where to put these!
-   def create_default_levels(criterion)
-    #Create the default levels
-    #TODO:  Put these default values in a config file?
-
-    levels=[{'name'=>'Horrible', 'description'=>'This criterion was not satisfied whatsoever', 'disabled'=>false},
-      {'name'=>'Satisfactory', 'description'=>'This criterion was satisfied', 'disabled'=>false},
-      {'name'=>'Good', 'description'=>'This criterion was satisfied well', 'disabled'=>false},
-      {'name'=>'Great', 'description'=>'This criterion was satisfied really well!', 'disabled'=>false},
-      {'name'=>'Excellent', 'description'=>'This criterion was satisfied excellently', 'disabled'=>false}]
-
-    levels.each_with_index do |level, index|
-      criterion['level_' + index.to_s + '_name'] = level['name']
-      criterion['level_' + index.to_s + '_description'] = level['description']
-    end
-    criterion.save
-   end
-
-
-   def update_level
-       criterion = RubricCriterion.find(params[:criterion_id]);
-       return unless request.post?
-       id = params[:level_index]
-       level_name = 'level_'+ id + '_name'
-       level_desc = 'level_'+ id + '_description'
-       #level = RubricLevel.find(params[:level_id])
-       case params[:update_type]
-       when 'name' 
-         old_value = criterion[level_name]
-         criterion[level_name] = params[:new_value]
-       when 'description'
-         old_value = criterion[level_desc]
-         criterion[level_desc] = params[:new_value]
-       end
-       if criterion.valid? && criterion.save
-         output = {'status' => 'OK'}
-       else
-         output = {'status' => 'error', 'old_value' => old_value}
-       end
-       render :json => output.to_json
-  end
   
   #This method handles the drag/drop RubricCriteria sorting
   def update_positions

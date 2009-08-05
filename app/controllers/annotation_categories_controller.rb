@@ -28,6 +28,12 @@ class AnnotationCategoriesController < ApplicationController
     end
   end
   
+  def update_annotation_category
+    @annotation_category = AnnotationCategory.find(params[:id])
+    @annotation_category.update_attributes(params[:annotation_category])
+    @annotation_category.save
+  end
+  
   def update_annotation
     @annotation_text = AnnotationText.find(params[:id])
     @annotation_text.update_attributes(params[:annotation_text])
