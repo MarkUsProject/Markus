@@ -1,13 +1,48 @@
 <%= stylesheet_link_tag("livepipe/tabs") %>
-<%= javascript_include_tag  'livepipe/livepipe' %>
-<%= javascript_include_tag  'rubrics' %>
-<%= javascript_include_tag  '16accordion' %>
+<%= javascript_include_tag "livepipe/livepipe.js" %>
+<%= javascript_include_tag "livepipe/window.js" %>
+<%= javascript_include_tag "livepipe/tabs.js" %>
+
+<script>
+  var modalUpload = null;
+  var modalDownload = null;
+
+  function upload_annotations(){
+    modalUpload.open();
+    return false;
+  }
+
+  function download_annotations(){
+    modalDownload.open();
+    return false;
+  }
+
+
+  document.observe("dom:loaded", function(){
+    modalUpload = new Control.Modal($('upload_dialog'),
+    {
+      overlayOpacity: 0.75,
+      className: 'modalUpload',
+      fade: false
+    });
+
+    modalDownload = new Control.Modal($('download_dialog'),
+    {
+      overlayOpacity: 0.75,
+      className: 'modalDownload',
+      fade: false
+    });
+  }
+</script>
 
 <div id="title_bar">
   <h1>Rubric Management:  <%= h(sanitize(@assignment.name)) %>
-<%= link_to_remote 'Add Criterion', :url => { :action => 'new', :id => @assignment.id }, :method => 'get' %>
-</h1>	
-</div>
+    <%= link_to_remote 'Add Criterion', :url => { :action => 'new', :id => @assignment.id }, :method => 'get' %>
+    <%= button_to_remote "Upload", 'upload_annotations(); return false;'%>
+    <%= button_to_remote "Download", 'download_annotations(); return false;'%>
+
+  </h1>	
+</div><!-- Title bar-->
 
 <div class="wrapLeft">
 <% if flash[:upload_notice] && flash[:invalid_lines].empty? -%>
@@ -16,10 +51,9 @@
   </div>
 <% end -%>
 <p id="criterion_error" class="warning" style="display: none;">
-  
+
 </p>
 
-<div class="colLeft">
   <div id="rubric_criteria_pane">
   <!--  Gives controller and instruction
               Views can be dynamic
@@ -38,7 +72,7 @@ h(@assignment.total_criteria_weight) %></span>)</span></li>
     </ul>  <!-- Rubric Criteria Pane -->
       <%= sortable_element("rubric_criteria_pane_list", :url => { :action => "update_positions" }) %>		
       
-</div>
+</div><!-- rubric criteria pane-->
 <!------------------------------------------------------------------- -->    
 
     <div id="rubric_levels_pane">
@@ -46,18 +80,11 @@ h(@assignment.total_criteria_weight) %></span>)</span></li>
 	<%= render :partial => 'rubric_manager_help' %>
         <div id="rubric_levels_pane_list">
         </div>
-    </div>
-  
-   <div class="clear"></div>
-  
-  </div> <!-- Edit Canvas -->
- </div>
-
+    </div><!--rubric level pane --> 
 </div>
-<div class="colRight" >
-    <div id="test-accordion" class="accordion"> 
-    <div class="accordion-toggle" id="accordion-toggle-top" >Upload Rubric File</div>
-    <div class="accordion-content">
+</div>
+<div id="upload_dialog"> 
+    <h1>Upload Rubric File</h1>
     <p>
     Select a CSV or YAML file to upload
     <!-- Need a better message
@@ -105,9 +132,8 @@ h(@assignment.total_criteria_weight) %></span>)</span></li>
     </div>
     <% end -%>
  </div> 
-  
-    <div class="accordion-toggle" id="accordion-toggle-bottom">Download Rubric File</div>
-    <div class="accordion-content">
+<div id="download_dialog">
+      <h2>Download Rubric File</h2>
     <p>What format would you like to download the rubric in?</p>
   
     <ul>
@@ -129,7 +155,5 @@ h(@assignment.total_criteria_weight) %></span>)</span></li>
       
     </div>
     <% end -%>
-  
-  </div> <!-- Download canvas -->
-</div> <!-- Tabbed Area -->
-</div>
+</div> 
+

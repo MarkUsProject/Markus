@@ -110,6 +110,7 @@ h4{
   color: #003399;
   border: none;
   font-size: 0.5em;
+  font-weight: bold;
 }
 
 .sub_title a {
@@ -559,7 +560,7 @@ tr.student_hidden{
    -webkit-border-radius: 5px;
 }
 
-#rename_group_dialog {
+#rename_group_dialog, #upload_dialog, #download_dialog {
    background: white;
    padding: 0 10px 0 10px;
    border: 1px solid #000000;
