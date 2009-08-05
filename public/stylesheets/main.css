@@ -910,7 +910,7 @@ a.icon_remove:hover {
 /* Rubric Criteria view*/
 #rubric_criteria_pane, #annotation_category_pane {
    float: left;
-   width: 30%;
+   width: 25%;
    padding: 0px 2%;
 }
 
@@ -948,8 +948,9 @@ a.icon_remove:hover {
 
 
 #rubric_levels_pane, #annotations_pane{
-   width: 65%;
+   width: 68%;
    float: right;
+   margin-right: 2em;
    border: 2px solid #ccc;
    -moz-border-radius: 9px;
    -webkit-border-radius: 9px;
@@ -977,6 +978,10 @@ a.icon_remove:hover {
 
 .criterion_holder_selected{
   background: #ccc;
+}
+
+#rubric_criteria_pane ul{
+   list-style: none;
 }
 
 #rubric_criteria_pane li{
@@ -1028,8 +1033,14 @@ input.criterion_input_name{
    font-style: italic;
 }
 
-#rubric_levels_pane_list li{
-   padding-bottom: 2em;
+#rubric_levels_pane_menu li{
+   padding-bottom: 1em;
+   list-style: none;
+}
+
+h3.title_levels{
+  padding-left: 1em;
+
 }
 
 /* Annotation category*/
