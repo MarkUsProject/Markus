@@ -31,7 +31,11 @@ class AnnotationCategoriesController < ApplicationController
   def update_annotation_category
     @annotation_category = AnnotationCategory.find(params[:id])
     @annotation_category.update_attributes(params[:annotation_category])
-    @annotation_category.save
+    if !@annotation_category.save
+      flash[:error] = @annotation_category.errors
+    else
+      flash[:success] = I18n.t('annotations.update.annotation_category_success')
+    end
   end
   
   def update_annotation

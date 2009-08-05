@@ -63,11 +63,15 @@ en:
     
     annotations:
       annotations: "Annotations"
+      update:
+        annotation_category_success: "This Annotation Category was successfully updated"
+        annotation_category_error: "Could not update Annotation Category:"
       delete:
         annotation_text: "Deleting this annotation will remove the text from any files it may be attached to.  Are you sure you want to do this?"
         annotation_category:  "Delete this annotation category will also delete its annotations.  Deleted annotations will no longer be attached to student submissions.  Are you sure you want to do this?"
       upload:
         success:  "Successfully uploaded {{annotation_category_number}} new Annotation Categories"
+
     
     submission_rules:
       submission_rule:
