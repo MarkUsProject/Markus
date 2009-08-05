@@ -41,8 +41,8 @@
 <div id="title_bar">
   <h1>Rubric Management:  <%= h(sanitize(@assignment.name)) %>
     <%= link_to_remote 'Add Criterion', :url => { :action => 'new', :id => @assignment.id }, :method => 'get' %>
-    <%= button_to_remote "Upload", 'upload_annotations(); return false;'%>
-    <%= button_to_remote "Download", 'download_annotations(); return false;'%>
+    <%= button_to_function "Upload", "upload_annotations();"%>
+    <%= button_to_function "Download", "download_annotations();"%>
 
   </h1>	
 </div><!-- Title bar-->
