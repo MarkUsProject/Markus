@@ -4,6 +4,7 @@
 <%= javascript_include_tag "livepipe/tabs.js" %>
 
 <script>
+
   var modalUpload = null;
   var modalDownload = null;
 
@@ -19,6 +20,7 @@
 
 
   document.observe("dom:loaded", function(){
+  
     modalUpload = new Control.Modal($('upload_dialog'),
     {
       overlayOpacity: 0.75,
@@ -32,7 +34,8 @@
       className: 'modalDownload',
       fade: false
     });
-  }
+    
+  });
 </script>
 
 <div id="title_bar">
