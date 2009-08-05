@@ -492,6 +492,14 @@ tr.student_hidden{
 }
 
 /* flash messages, & warning */
+.success {
+  text-align: left;
+  border: 1px solid #458B00;
+  padding: 3px 30px;
+  background: #BDFCC9 url(../images/icons/accept.png) no-repeat;
+  background-position: 7px;
+}
+
 .error, .errorExplanation{
   text-align: left;
   border: 1px solid #E6DB55;

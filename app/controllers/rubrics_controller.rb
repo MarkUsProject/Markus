@@ -10,7 +10,38 @@ class RubricsController < ApplicationController
   def index
     @assignment = Assignment.find(params[:id])
     @criteria = @assignment.rubric_criteria(:order => 'position')
-
+  end
+  
+  def edit
+    @criterion = RubricCriterion.find(params[:id])
+  end
+  
+  def update
+    @criterion = RubricCriterion.find(params[:id])
+    @criterion.update_attributes(params[:rubric_criterion])
+    if !@criterion.save
+      render :action => 'errors'
+      return
+    end
+    flash[:success] = I18n.t('criterion_saved_success')
+  end
+  
+  def new
+    @assignment = Assignment.find(params[:id])
+    if !request.post?
+      return
+    else
+      @criterion = RubricCriterion.new
+      @criterion.assignment = @assignment
+      @criterion.update_attributes(params[:rubric_criterion])
+      @criterion.weight = RubricCriterion::DEFAULT_WEIGHT
+      @criterion.set_default_levels
+      if !@criterion.save
+        flash[:error] = I18n.t('criterion_created_error')
+        render :action => 'show_help'
+      end
+        render :action => 'create_and_edit'
+    end
   end
   
   def add_criterion
@@ -51,21 +82,14 @@ class RubricsController < ApplicationController
      end      
    end
 
-   def remove_criterion
+   def delete
     return unless request.delete?
-    criterion = RubricCriterion.find(params[:criterion_id])
-
+    @criterion = RubricCriterion.find(params[:id])
      #delete all marks associated with this criterion
-    Mark.delete_all(["rubric_criterion_id = :c", {:c=>criterion.id}])
-
-    render :update do |page|
-      page.visual_effect(:fade, "criterion_#{params[:criterion_id]}", :duration => 0.5)
-      page.remove("criterion_#{params[:criterion_id]}")
-      #update the sortable criteria list
-      page.sortable 'rubric_criteria_pane_list', :constraint => false, :url => { :action => :update_positions }
-     end
-    criterion.destroy
-  end
+    Mark.delete_all(["rubric_criterion_id = :c", {:c => @criterion.id}])
+    @criterion.destroy
+    flash[:success] = I18n.t('criterion_deleted_success')
+   end
   
    def update_criterion
      return unless request.post?

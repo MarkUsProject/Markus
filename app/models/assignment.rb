@@ -132,12 +132,15 @@ class Assignment < ActiveRecord::Base
   end
 
   def total_mark
-    criteria = RubricCriterion.find_all_by_assignment_id(id)
     total = 0
-    criteria.each do |criterion|
-      total = total + criterion.weight*4
+    rubric_criteria.each do |criterion|
+      total = total + criterion.weight * 4
     end
     return total
+  end
+  
+  def total_criteria_weight
+    rubric_criteria.sum('weight')
   end
   
   def has_dependency?
