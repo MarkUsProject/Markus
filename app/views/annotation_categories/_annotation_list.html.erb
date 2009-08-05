@@ -1,5 +1,9 @@
 <div id="annotation_list_holder">
-<%=link_to_remote "Delete Annotation Category", :url => {:action => "delete_annotation_category", :id => @annotation_category.id}, :confirm => t('annotations.delete.annotation_category') %>
+  <fieldset>
+    <%= render :partial => "annotation_categories/annotation_category_edit"
+    %>
+  </fieldset>
+<h2>Annotations</h2>
 <ul id="annotation_list">
 <% @annotation_texts.each do |annotation_text| %>
   <%= render :partial => 'annotation_text', :locals => {:annotation_text => annotation_text} %> 

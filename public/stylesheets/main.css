@@ -582,7 +582,7 @@ tr.student_hidden{
 
 }
 
-#rubric_pane{
+#rubric_pane, #annotation_pane {
    float: left;
 }
 
@@ -922,8 +922,11 @@ a.icon_remove:hover {
   padding: 0px;
 }
 
+#annotation_category_pane ul{
+  padding: 1em;
+}
 
-#rubric_levels_pane_list{
+#rubric_levels_pane_list, #annotation_category_pane_list{
    padding-left: 10px;
 }
 
@@ -943,7 +946,7 @@ a.icon_remove:hover {
 }
 
 
-#rubric_levels_pane{
+#rubric_levels_pane, #annotations_pane{
    width: 65%;
    float: right;
    border: 2px solid #ccc;
@@ -951,7 +954,7 @@ a.icon_remove:hover {
    -webkit-border-radius: 9px;
 }
 
-#rubric_levels_pane h2{
+#rubric_levels_pane h2, #annotations_pane_menu h2{
   padding-left:10px;
 }
 
@@ -1026,6 +1029,12 @@ input.criterion_input_name{
 
 #rubric_levels_pane_list li{
    padding-bottom: 2em;
+}
+
+/* Annotation category*/
+
+#annotation_list_holder{
+  padding: 0 1em;
 }
 
 
