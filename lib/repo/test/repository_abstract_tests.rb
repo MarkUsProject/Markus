@@ -1,7 +1,7 @@
-module RepositoryAbstractTests
 require 'test/unit'
 require 'time'
 
+class RepositoryAbstractTests < Test::Unit::TestCase
   def basic_fixture
     transaction = @repo.get_transaction("someuser")
     transaction.add("SomeFile.java", "File contents", "text/java")
@@ -111,8 +111,8 @@ require 'time'
   
   def test_get_missing_directory
     basic_fixture
-    
   end
+end
   
 #    revision = @repo.get_revision(3)
 #    assert_not_nil revision, "Could not retrieve Revision with get_revision"
@@ -303,7 +303,3 @@ require 'time'
 #    @repo.remove_user("c6conley")
 #    assert_equal ["c6smith"], @repo.get_users, "Users do not match"
 #  end
-
-
-
-end
