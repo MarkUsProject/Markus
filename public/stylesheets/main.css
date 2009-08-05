@@ -3,6 +3,7 @@
 body {
     background-color: #fff; 
     margin: 0;
+    margin-bottom: 3em;
     padding: 0;
     font-family: "Lucida Grande", Verdana, Arial,  sans-serif;
     font-size: 0.8em;
@@ -212,8 +213,8 @@ h4{
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
   border: 2px solid #464646;
-  padding: 0 20px;
-  min-width: 150px;
+  padding: 0 11px;
+  min-width: 10em;
 }
 
 #sub_menu ul.dropdown a{
@@ -235,14 +236,11 @@ h4{
    padding: 7px 50px 0px 50px;
 }
 
-li.level2{
-}
-
 #sub_menu li.level2 a{
   display: block;
   padding: 2px;
   margin: 0;
-  width: 150px;
+  width: 10em;
   height: 14px;
   color: #464646;
 }
@@ -252,7 +250,7 @@ span#choose_an_assignment{
    -moz-border-radius: 10px;
    -webkit-border-radius: 10px;
    border: 2px solid #464646;
-   min-width: 13em;
+   min-width: 10em;
    height: 1.1em;
    padding: 0.1em 1em;
    display: inline-block;
@@ -331,9 +329,11 @@ input:focus{
 
 
 label, .label{
-   display: inline-block;
+   float: left;
+   display: block;
    min-width: 150px;
-   margin-bottom: 15px;
+   padding-top: 3px;
+   margin-top: 5px;
    padding-left: 5px;
    text-transform: capitalize;
    font-weight: bold;
@@ -343,13 +343,16 @@ fieldset {
    -moz-border-radius: 10px;
    -webkit-border-radius: 10px;
    border: 2px solid #ccc;
-   margin-bottom: 10px;
+   margin-bottom: 2.5em;
 }
 
 legend{
    color: #464646;
    font-style: italic;
    font-weight: bold;
+   margin: 0 0.5em;
+   padding: 0 0.4em;
+
 }
 
 textarea {
@@ -489,14 +492,33 @@ tr.student_hidden{
 }
 
 /* flash messages, & warning */
-.error{
+.error, .errorExplanation{
   text-align: left;
   border: 1px solid #E6DB55;
-  padding: 3px 30px;
+  padding: 3px 3em;
+  margin: 1em 4em 1em 4em;
   background: #FFFFE0 url(../images/icons/exclamation.png) no-repeat;
   background-position: 7px;
-
 }
+
+.error h2, .errorExplanation h2{
+  font-weight: bold;
+  font-size: 1em;
+  padding: 0.5em 0;
+  margin: 0px;
+}
+
+.error p, .errorExplanation p{
+  font-size: 1em;
+  padding: 0.2em 0;
+  margin: 0px;
+}
+
+.error ul, .errorExplanation ul{
+  font-size: 1em;
+  margin: 0px;
+}
+
 
 .notice, .warning {
   border: 1px solid #E6DB55;
@@ -751,6 +773,7 @@ span.info_red, span.info {
    line-height: 1.5em;
 }
 
+
 span.info_red{
   color: #ee6415;
 }
@@ -997,16 +1020,16 @@ input.criterion_input_name{
    padding-bottom: 2em;
 }
 
+
+/* Admin interface: Assignment View*/
 .disable {
   font-style: italic;
   color: #464646;
 }
 
-fieldset.period, fieldset.group_properties  {
-   margin-top: 10px;
-   margin-left: 5em;
-   padding: 10px;
-   width: 75%;
+.assignment_info{
+  font-style: italic;
+  font-size: 0.9em;
 }
 
 fieldset.period p{
@@ -1038,6 +1061,20 @@ span.due_date{
   font-size: 0.9em;
   padding-left: 5px;
   margin-bottom: 5px;
+}
+
+fieldset.period{
+  margin: 10px 0px;
+}
+
+#penalty_periods, #grace_periods {
+   margin-left: 5em;
+   width: 80%;
+}
+
+.grace_periods_link, .penalty_periods_link{
+  margin: 2em;
+  font-size: 0.9em;
 }
 
 #rubric_viewer #rubric_criteria_pane{

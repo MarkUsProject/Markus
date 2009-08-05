@@ -100,7 +100,8 @@ ActiveRecord::Schema.define(:version => 20090804183255) do
   add_index "groupings", ["group_id"], :name => "index_groupings_on_group_id"
 
   create_table "groups", :force => true do |t|
-    t.text "group_name"
+    t.text   "group_name"
+    t.string "repo_name"
   end
 
   create_table "marks", :force => true do |t|
