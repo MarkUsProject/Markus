@@ -699,7 +699,6 @@ tr.student_hidden{
 
 #login .section{
    margin: auto;
-   width: 75%;
 }
 
 #login label{
@@ -991,6 +990,14 @@ a.icon_remove:hover {
    padding: 2px 0px;
 }
 
+#annotation_category_pane_list li{
+   width: 100%;
+   border-bottom: 1px solid #ccc;
+   min-height: 25px; 
+   padding: 2px 0px;
+}
+
+
 .criterion_handle{
   padding-left: 3px;
   cursor: move;
@@ -1049,7 +1056,20 @@ h3.title_levels{
   padding: 0 1em;
 }
 
+ul#annotation_list{
+  list-style: none; 
+}
 
+#annotation_list textarea{
+   width: 90%;
+}
+
+.annotation_texts_size{
+   color: #464646;
+   font-style: italic;
+   margin-left: 5px;
+   font-size: 0.9em;
+}
 /* Admin interface: Assignment View*/
 .disable {
   font-style: italic;

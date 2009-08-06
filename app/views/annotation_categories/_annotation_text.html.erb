@@ -2,9 +2,8 @@
 <div id="annotation_text_<%=annotation_text.id%>_control">
   <p>
     <%= annotation_text.content %>
-  </p>
-  <%= link_to_function 'Edit Annotation', "$('annotation_text_#{annotation_text.id}_control').hide();$('annotation_text_#{annotation_text.id}_edit').show();" %>
-  <%= link_to_remote 'Delete Annotation', :url => {:action => 'delete_annotation_text', :id => annotation_text.id}, :confirm => t('annotations.delete.annotation_text') %>
+  <%= link_to_function 'Edit', "$('annotation_text_#{annotation_text.id}_control').hide();$('annotation_text_#{annotation_text.id}_edit').show();" %>
+  <%= link_to_remote 'Delete', :url => {:action => 'delete_annotation_text', :id => annotation_text.id}, :confirm => t('annotations.delete.annotation_text') %>
 </div>
 <div id="annotation_text_<%=annotation_text.id%>_edit" style="display:none;">
 <% remote_form_for annotation_text, :url => {:action => 'update_annotation', :id => annotation_text.id} do |f| %>

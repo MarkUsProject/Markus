@@ -28,13 +28,16 @@
  </div>
  <div id="annotation_category_controls">
    <h2><%=h(annotation_category.annotation_category_name)%></h2>
+
+<fieldset>
    <% remote_form_for :annotation_category, annotation_category, :url => {:action => 'update_annotation_category', :id => annotation_category.id } do |f| %>
    <span id="annotation_category_inputs">
      <%= f.label :annotation_category_name %>
-     <%= f.text_field :annotation_category_name %>
+     <%= f.text_field :annotation_category_name, :rows => '3' %>
    </span>
  <%= f.submit %>
  <% end %>
+</fieldset>
   </div>
 </div>
 
