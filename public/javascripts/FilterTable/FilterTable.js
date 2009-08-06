@@ -277,8 +277,7 @@ var FilterTable = Class.create({
     var me = this;
     this.table_rows.each(function(table_row) {
       if(me.pass_filters(table_row)) {
-        //var row = me.construct_row(table_row);
-        me.table_body.insert({bottom: me.retrieve_from_row_cache(table_row.id)});
+        me.table_body.insert(me.retrieve_from_row_cache(table_row.id));
       }
     });
     this.render_counts();
@@ -314,14 +313,22 @@ var FilterTable = Class.create({
         td_element.insert(checkbox_element);
         tr_element.insert({top: td_element});
       }
+      
       this.headers.each(function(column_header) {
-        var column_id = column_header.key;
-        var td_element = new Element('td').update(row[column_id]);
+        var td_element = new Element('td'); 
+        td_element.innerHTML = row[column_header.key];
         if(column_header.value['row_class'] != undefined) {
           td_element.addClassName(column_header.value['row_class']);
         }
-        tr_element.insert({bottom: td_element});
-      }); 
+       tr_element.insert(td_element);
+      });
+      
+/*      console.log(row['filter_table_row_contents']);
+      console.log(tr_element.innerHTML);
+      tr_element.innerHTML = tr_element.innerHTML + row['filter_table_row_contents'];
+      console.log(tr_element.innerHTML);*/
+//      tr_element.update("<td>TEST!</td>")
+// console.log(tr_element.innerHTML);
     }
     catch (e) {
       //TODO: More helpful error
