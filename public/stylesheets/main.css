@@ -906,6 +906,10 @@ a.icon_remove:hover {
   background: no-repeat url('../images/icons/cancel.png');
 }
 
+a img{
+  border: none;
+}
+
 /* Rubric Criteria view*/
 #rubric_criteria_pane, #annotation_category_pane {
    float: left;
