@@ -111,3 +111,7 @@ function update_due_date(new_due_date) {
   grace_periods.refresh();
   penalty_periods.refresh();
 }
+
+function refresh_due_date() {
+  update_due_date($F('assignment_due_date'));
+}
