@@ -166,6 +166,12 @@ document.observe("dom:loaded", function(){
   }
 </script>
 
+<% if @assignment.past_due_date? %>
+<div class="notice">
+  <%=t('groups.editing_past_due_date_warning')%>
+</div>
+<% end %>
+
 <div id="title_bar">
   <h1>Manage Groups
   <%= button_to_function "Use another assignment's groups", 'assignment_group_use(); return
@@ -181,7 +187,7 @@ document.observe("dom:loaded", function(){
 <div class="clear"></div>
 
 <div id="notice">
-      <div class="error" id="errors">
+      <div class="error" id="errors" style="display:none;">
         <h1>There was a problem...</h1>
         <div id="errors_title">
         </div>

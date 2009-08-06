@@ -5,12 +5,12 @@
     grace_periods = new PeriodDeltaChain({
       period_root_id: 'grace_periods',
       date_format: "",
-      due_date: new Date()
+      due_date: $F('assignment_due_date')
     });
     penalty_periods = new PeriodDeltaChain({
       period_root_id: 'penalty_periods',
       date_format: "",
-      due_date: new Date()
+      due_date: $F('assignment_due_date')
     });
 
     grace_periods.refresh();

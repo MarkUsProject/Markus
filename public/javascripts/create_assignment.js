@@ -105,3 +105,9 @@ function default_group_fields() {
   toggle_group_assignment(false);
 }
 
+function update_due_date(new_due_date) {
+  grace_periods.set_due_date(new_due_date);
+  penalty_periods.set_due_date(new_due_date);
+  grace_periods.refresh();
+  penalty_periods.refresh();
+}

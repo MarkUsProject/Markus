@@ -17,8 +17,8 @@
     <%= f.label :due_date, "Due Date:"%>
     <%= f.calendar_date_select :due_date, {
           :time => "mixed",
-          :year_range => 0.years.ago..1.years.from_now} %>
-
+          :year_range => 0.years.ago..1.years.from_now, :id => "assignment_due_date"} %>
+   <%= observe_field "assignment_due_date", :function => "update_due_date($F('assignment_due_date'));" %>
 </fieldset>
 
 <fieldset>
@@ -76,9 +76,6 @@
 
 <fieldset>
   <legend>Submission Rules</legend>
-    <div>
-      <span class="due_date">The Due Date is <b><%=Time.now%></b></span>
-    </div>
 
   <% f.fields_for :submission_rule do |rule| %>
     <h5>Choose penalty rules to apply for late submissions:</h5>

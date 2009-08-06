@@ -34,6 +34,9 @@ en:
     confirm_bulk_action: "Are you sure you want to perform this bulk action?"
     no_result:          "No marks are available for this assignment."
 
+    groups:
+      editing_past_due_date_warning: "This assignment is past its due date.  Besides assigning graders to groups, it is not recommended that any other settings be altered here at this time."
+      
     # Student's View
     hide_students:      "Hide Students"
     unhide_students:    "Unhide Students"
@@ -54,8 +57,6 @@ en:
         grace_credits:  "Grace Credits"
     assignment:
         name:           "Assignment Name"
-        has_dependency: "Assignment Builds on Top Of"
-        no_dependency:  "Nothing - It's Unique"
 
     confirm_bulk_action:  "Are you sure you want to perform this bulk action?"
     hide_students: "Hide Students"

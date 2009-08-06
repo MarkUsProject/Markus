@@ -42,6 +42,14 @@ class Assignment < ActiveRecord::Base
     end
   end
   
+  # Are we past the due date for this assignment?
+  def past_due_date?
+    return Time.now > due_date
+  end
+  
+  def past_collection_date?
+    return Time.now > submission_rule.calculate_collection_time
+  end
   
   # Returns a Submission instance for this user depending on whether this 
   # assignment is a group or individual assignment
@@ -105,6 +113,7 @@ class Assignment < ActiveRecord::Base
    return @students_list
   end
   
+  
   # Make a list of the students an inviter can invite for his grouping
   def can_invite_for(gid)
     grouping = Grouping.find(gid)
@@ -141,10 +150,6 @@ class Assignment < ActiveRecord::Base
   
   def total_criteria_weight
     rubric_criteria.sum('weight')
-  end
-  
-  def has_dependency?
-    return !assignment_dependency_id.nil?
   end
 
   def add_group(new_group_name= nil )

@@ -10,7 +10,7 @@ var PeriodDeltaChain = Class.create({
     this.hour = 3600000; // 1 hour is 3600000 milliseconds
     this.period_root_id = params.period_root_id;
     this.date_format = this.set_or_default(params.date_format, "");
-    this.due_date = this.set_or_default(params.due_date, new Date());
+    this.due_date = this.set_or_default(new Date(Date.parse(params.due_date)), new Date());
     this.period_class = this.set_or_default(params.period_class, 'period');
   },
   refresh: function() {
@@ -30,8 +30,11 @@ var PeriodDeltaChain = Class.create({
       current_time = to_time;
 
     });
-  }
-  ,
+  },
+  set_due_date: function(new_due_date) {
+    delete this.due_date;
+    this.due_date = new Date(Date.parse(new_due_date));
+  },
   set_or_default: function(value, default_value) {
     if (typeof value == 'undefined') {
       return default_value;
