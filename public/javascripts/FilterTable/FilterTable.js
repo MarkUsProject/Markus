@@ -308,7 +308,7 @@ var FilterTable = Class.create({
     try {
       var tr_element = new Element('tr', {id: this.row_prefix + row.id});
       if(this.can_select) {
-        var checkbox_element = new Element('input', {type: 'checkbox', name: this.select_name, value: row.id, id: this.select_id_prefix + row.id, class: this.selectable_class});
+        var checkbox_element = new Element('input', {type: 'checkbox', name: this.select_name, value: row.id, id: this.select_id_prefix + row.id, "class": this.selectable_class});
         var td_element = new Element('td');
         td_element.insert(checkbox_element);
         tr_element.insert({top: td_element});
