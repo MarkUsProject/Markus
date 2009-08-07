@@ -3,7 +3,7 @@
     <% if assignment.submission_rule.can_collect_now? %>
       <%= link_to h(grouping.group.group_name), :action => 'collect_and_begin_grading', :id => assignment.id, :grouping_id => grouping.id %>
     <% else %>
-      h(grouping.group.group_name)
+      <%=h(grouping.group.group_name)%>
     <% end %>
   <% else %>
     <%= link_to h(grouping.group.group_name), :controller => 'results', :action => 'edit', :id => grouping.get_submission_used.result%>
