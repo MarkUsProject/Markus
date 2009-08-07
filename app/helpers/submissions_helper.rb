@@ -47,7 +47,7 @@ module SubmissionsHelper
     table_row = {}
     table_row[:id] = file.id
     table_row[:filter_table_row_contents] = render_to_string :partial => 'submissions/table_row/filter_table_row', :locals => {:file_name => file_name, :file => file}
-
+    
     table_row[:filename] = file_name
     
     table_row[:last_modified_date] = file.last_modified_date.strftime('%d %B, %l:%M%p')
@@ -75,22 +75,22 @@ module SubmissionsHelper
     table_row[:filter_table_row_contents] = render_to_string :partial => 'submissions/submissions_table_row/filter_table_row', :locals => {:grouping => grouping, :assignment => assignment}
     
     table_row[:group_name] = grouping.group.group_name
-    #render_to_string :partial => "submissions/submissions_table_row/group_name", :locals => {:grouping => grouping}
-    
+  
     table_row[:repository] = grouping.group.repository_name
-    #render_to_string :partial => "submissions/submissions_table_row/repository", :locals => {:grouping => grouping}
 
-    table_row[:commit_date] = ''
-    #render_to_string :partial => "submissions/submissions_table_row/commit_date", :locals => {:grouping => grouping}
 
-    table_row[:marking_state] = ''
-    #render_to_string :partial => "submissions/submissions_table_row/marking_state", :locals => {:grouping => grouping, :assignment => assignment}
+    if grouping.has_submission?
+      table_row[:marking_state] = grouping.get_submission_used.result.marking_state
+      table_row[:final_grade] = grouping.get_submission_used.result.total_mark
+      table_row[:released] = grouping.get_submission_used.result.released_to_students
+      table_row[:commit_date] = grouping.get_submission_used.revision_timestamp.strftime(LONG_DATE_TIME_FORMAT)
 
-    table_row[:final_grade] = ''
-    #render_to_string :partial => "submissions/submissions_table_row/final_grade", :locals => {:grouping => grouping}
-
-    table_row[:released] = ''
-    #render_to_string :partial => "submissions/submissions_table_row/released", :locals => {:grouping => grouping}
+    else
+      table_row[:marking_state] = '-'
+      table_row[:final_grade] = '-'
+      table_row[:released] = '-'
+      table_row[:commit_date] = '-'
+    end
 
     return table_row
   end
