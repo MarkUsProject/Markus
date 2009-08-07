@@ -347,8 +347,8 @@ var FilterTable = Class.create({
     this.table_body = new Element('tbody');
     
     this.headers.each(function(header_data) {
-      var th_element_header = new Element('th', {id: me.header_id_prefix + header_data.key, class: me.header_class }).update(header_data.value.display);
-      var th_element_footer = new Element('th', {id: me.footer_id_prefix + header_data.key, class: me.footer_class} ).update(header_data.value.display);
+      var th_element_header = new Element('th', {id: me.header_id_prefix + header_data.key, "class": me.header_class }).update(header_data.value.display);
+      var th_element_footer = new Element('th', {id: me.footer_id_prefix + header_data.key, "class": me.footer_class} ).update(header_data.value.display);
            
       if(me.can_sort && header_data.value.sortable) {
         th_element_header.addClassName(me.sortable_class);
