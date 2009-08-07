@@ -313,10 +313,11 @@ var FilterTable = Class.create({
         td_element.insert(checkbox_element);
         tr_element.insert({top: td_element});
       }
+      var row_contents = row['filter_table_row_contents'].split('</td>')
       
-      this.headers.each(function(column_header) {
+      this.headers.each(function(column_header, index) {
         var td_element = new Element('td'); 
-        td_element.innerHTML = row[column_header.key];
+        td_element.innerHTML = row_contents[index]; 
         if(column_header.value['row_class'] != undefined) {
           td_element.addClassName(column_header.value['row_class']);
         }

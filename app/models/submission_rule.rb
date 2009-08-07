@@ -8,7 +8,14 @@ class SubmissionRule < ActiveRecord::Base
 #  validates_presence_of :assignment
   
   def can_collect_now?
-    return Time.now >= calculate_collection_time
+    return @can_collect_now if !@can_collect_now.nil?
+    @can_collect_now = Time.now >= get_collection_time
+  end
+  
+  # Cache that allows us to quickly get collection time
+  def get_collection_time
+    return @get_collection_time if !@get_collection_time.nil?
+    @get_collection_time = calculate_collection_time
   end
   
   # Based on the assignment's due date, return the collection time for submissions

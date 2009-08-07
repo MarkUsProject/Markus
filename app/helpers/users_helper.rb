@@ -20,7 +20,7 @@ module UsersHelper
       result[:grace_credits] = user.remaining_grace_credits.to_s + '/' + user.grace_credits.to_s
     end
     result[:hidden] = user.hidden
-    result[:edit] = render_to_string :partial => "users/table_row/edit", :locals => {:user => user, :controller => self.controller_name}
+    result[:filter_table_row_contents] = render_to_string :partial => "users/table_row/filter_table_row", :locals => {:user => user, :controller => self.controller_name}
     return result
   end
 

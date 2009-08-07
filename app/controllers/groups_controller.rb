@@ -145,7 +145,7 @@ class GroupsController < ApplicationController
     end
     grouping.invite(params[:student_user_name], set_membership_status) 
     grouping.reload
-    @grouping = construct_table_row(grouping)
+    @grouping = construct_table_row(grouping, @assignment)
   end
  
   def remove_member
@@ -192,7 +192,7 @@ class GroupsController < ApplicationController
       render :action => 'error_single'
       return 
     end
-    @new_grouping = construct_table_row(new_grouping_data)
+    @new_grouping = construct_table_row(new_grouping_data, @assignment)
   end
   
   def remove_group
@@ -264,8 +264,9 @@ class GroupsController < ApplicationController
     @table_rows = {}
     @groupings.each do |grouping|
       # construct_table_row is in the groups_helper.rb
-      @table_rows[grouping.id] = construct_table_row(grouping)     
+      @table_rows[grouping.id] = construct_table_row(grouping, @assignment) 
     end
+    
   end
 
   def manage
@@ -417,7 +418,7 @@ class GroupsController < ApplicationController
           raise "You must select at least one grader for random assignment"
         end
         randomly_assign_graders(params[:graders], @assignment.groupings)
-        @groupings_data = construct_table_rows(@assignment.groupings)
+        @groupings_data = construct_table_rows(@assignment.groupings, @assignment)
         render :action => "modify_groupings"
         return
       rescue Exception => e
@@ -455,7 +456,7 @@ class GroupsController < ApplicationController
         groupings.each do |grouping|
            grouping.invalidate_grouping
         end
-        @groupings_data = construct_table_rows(groupings)
+        @groupings_data = construct_table_rows(groupings, @assignment)
         render :action => "modify_groupings"
         return      
       
@@ -464,7 +465,7 @@ class GroupsController < ApplicationController
         groupings.each do |grouping|
            grouping.validate_grouping
         end
-        @groupings_data = construct_table_rows(groupings)
+        @groupings_data = construct_table_rows(groupings, @assignment)
         render :action => "modify_groupings"
         return
         

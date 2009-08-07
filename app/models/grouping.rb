@@ -35,6 +35,11 @@ class Grouping < ActiveRecord::Base
     return ta_memberships.count > 0
   end
   
+  #def accepted_students
+  #  return @accepted_students if !@accepted_students.nil?
+  #  @accepted_students = student_memberships.accepted_or_inviter
+  #end
+  
   # Returns an array of the user_names for any TA's assigned to mark
   # this Grouping
   def get_ta_names
@@ -142,11 +147,13 @@ class Grouping < ActiveRecord::Base
 
   # Submission Functions
   def has_submission?
-    return submissions.count > 0
+    return @has_submission if !@has_submission.nil?
+    @has_submission = submissions.count > 0
   end
 
   def get_submission_used
-    submissions.find(:first, :conditions => {:submission_version_used => true})
+    return @get_submission_used if !@get_submission_used.nil?
+    @get_submission_used = submissions.find(:first, :conditions => {:submission_version_used => true})
   end
  
 

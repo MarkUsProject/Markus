@@ -1,0 +1,31 @@
+<td>
+<%= link_to h(sanitize(file_name)), :action => 'download', :id => @assignment.id, :revision_number => @revision.revision_number, :file_name => file_name %>
+</td>
+
+<td>
+<%= h(file.last_modified_date.strftime('%d %B, %l:%M%p')) %>
+</td>
+
+<td>
+<%= h(file.user_id) %>
+</td>
+
+<td>
+<input type="hidden" id="file_revisions[<%=h file_name %>]"
+name="file_revisions[<%=h file_name %>]" value="<%= file.last_modified_revision%>"/>
+
+<input id="replace_files[<%=h file_name %>]" name="replace_files[<%=h file_name %>]" type="file" onchange="check_change_of_filename('<%=h file_name %>', this.value.escapeHTML(), this)" <%="disabled" if !@grouping.is_valid? %> size="5"/>
+
+<a href="#" onclick="$('replace_files[<%=h file_name %>]').setValue(''); return false;" >Cancel</a>
+</td>
+
+<td>
+<input name="delete_files[<%=h file_name %>]" type="checkbox"
+<%="disabled" if !@grouping.is_valid? %> onclick="if($(this).getValue()) {
+   $('replace_files[<%= h(file_name) %>]').disable();
+  } else {
+   $('replace_files[<%= h(file_name) %>]').enable(); 
+  }
+"/>
+
+</td>

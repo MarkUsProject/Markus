@@ -1,6 +1,2 @@
 <%= h(grouping.group.group_name) %>
-<% students = [] 
- grouping.accepted_students.each do |student| 
-  students.push(student.first_name + ' ' + student.last_name)  
-end %>
-(<%= h(students.join(',')) %>)
+(<%= h(grouping.accepted_students.collect{ |student| student.user_name}.join(',')) %>)

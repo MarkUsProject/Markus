@@ -43,7 +43,8 @@ class Student < User
   end
   
   def remaining_grace_credits
-    return grace_credits - grace_period_deductions.sum('deduction')
+    return @remaining_grace_credits if !@remaining_grace_credits.nil?
+    @remaining_grace_credits = grace_credits - grace_period_deductions.sum('deduction')
   end
 
   # return pending memberships for a specific assignment

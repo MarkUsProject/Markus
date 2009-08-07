@@ -1,0 +1,18 @@
+<td>
+  <%=h(user.user_name)%>
+</td>
+<td>
+  <%=h(user.last_name)%>
+</td>
+<td>
+  <%=h(user.first_name)%>
+</td>
+<% if user.student? %>
+<td>
+<%= user.remaining_grace_credits.to_s + '/' + user.grace_credits.to_s %>
+</td>
+<% end %>
+<td>
+<%= link_to I18n.t(:edit), :controller => controller, :action =>
+    'edit', :id => user.id %>
+</td>

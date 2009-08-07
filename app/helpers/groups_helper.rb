@@ -18,7 +18,7 @@ module GroupsHelper
     grouping_ids.each do |g|
       grouping = Grouping.find(g)
       grouping.add_tas(ta_id_array)
-      result[grouping.id] = construct_table_row(grouping)
+      result[grouping.id] = construct_table_row(grouping, grouping.assignment)
     end
     return result;
   end
@@ -28,32 +28,32 @@ module GroupsHelper
     grouping_ids.each do |g|
       grouping = Grouping.find(g)
       grouping.remove_tas(ta_id_array)
-      result[grouping.id] = construct_table_row(grouping)
+      result[grouping.id] = construct_table_row(grouping, grouping.assignment)
     end
     return result
   end
   
-  def construct_table_rows(groupings)
+  def construct_table_rows(groupings, assignment)
     result = {}
     groupings.each do |grouping|
-      result[grouping.id] = construct_table_row(grouping)
+      result[grouping.id] = construct_table_row(grouping, assignment)
     end
     return result
   end
   
-  def construct_table_row(grouping)
+  def construct_table_row(grouping, assignment)
       table_row = {}
 
       table_row[:id] = grouping.id
+      table_row[:filter_table_row_contents] = render_to_string :partial => 'groups/table_row/filter_table_row', :locals => {:grouping => grouping, :assignment => assignment}
       
-      table_row[:name] = render_to_string :partial => "groups/table_row/name", :locals => {:grouping => grouping, :assignment => @assignment}
+      table_row[:name] = grouping.group.group_name
       
-      table_row[:members] = render_to_string :partial => "groups/table_row/members", :locals => {:grouping => grouping}
-      
-      table_row[:graders] = render_to_string :partial => "groups/table_row/graders", :locals => {:grouping => grouping}
-      
-      table_row[:valid] = render_to_string :partial => "groups/table_row/valid", :locals => {:grouping => grouping}
-      
+      table_row[:members] = grouping.accepted_students.collect{ |student| student.user_name}.join(',')
+
+      table_row[:graders] = grouping.get_ta_names.join(',')
+
+      table_row[:valid] = grouping.is_valid?
       table_row[:filter_valid] = grouping.is_valid?
       table_row[:filter_assigned] = grouping.ta_memberships.size > 0
 

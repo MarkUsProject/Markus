@@ -45,21 +45,16 @@ module SubmissionsHelper
 
   def construct_file_manager_table_row(file_name, file)
     table_row = {}
-
     table_row[:id] = file.id
+    table_row[:filter_table_row_contents] = render_to_string :partial => 'submissions/table_row/filter_table_row', :locals => {:file_name => file_name, :file => file}
 
-    table_row[:filename] = render_to_string :partial =>
-    "submissions/table_row/filename", :locals => {:file => file,:file_name => file_name}
+    table_row[:filename] = file_name
     
-    table_row[:last_modified_date] = render_to_string :partial => "submissions/table_row/last_modified_date", :locals => {:file => file}
+    table_row[:last_modified_date] = file.last_modified_date.strftime('%d %B, %l:%M%p')
 
-    table_row[:last_modified_date_unconverted] = render_to_string :partial => "submissions/table_row/last_modified_date_for_js", :locals => {:file => file}
+    table_row[:last_modified_date_unconverted] = file.last_modified_date
 
-    table_row[:revision_by] = render_to_string :partial => "submissions/table_row/revision_by", :locals => {:file => file,:file_name => file_name}
-
-    table_row[:replace] = render_to_string :partial => "submissions/table_row/replace", :locals => {:file => file,:file_name => file_name}
-
-    table_row[:delete_file] = render_to_string :partial => "submissions/table_row/delete_file", :locals => {:file => file,:file_name => file_name}
+    table_row[:revision_by] = file.user_id
 
     return table_row
   end
@@ -74,23 +69,28 @@ module SubmissionsHelper
   end
   
   
- def construct_submissions_table_row(grouping)
+ def construct_submissions_table_row(grouping, assignment)
     table_row = {}
-
     table_row[:id] = grouping.id
-
-    table_row[:group_name] = render_to_string :partial =>
-    "submissions/submissions_table_row/group_name", :locals => {:grouping => grouping}
+    table_row[:filter_table_row_contents] = render_to_string :partial => 'submissions/submissions_table_row/filter_table_row', :locals => {:grouping => grouping, :assignment => assignment}
     
-    table_row[:repository] = render_to_string :partial => "submissions/submissions_table_row/repository", :locals => {:grouping => grouping}
+    table_row[:group_name] = grouping.group.group_name
+    #render_to_string :partial => "submissions/submissions_table_row/group_name", :locals => {:grouping => grouping}
+    
+    table_row[:repository] = grouping.group.repository_name
+    #render_to_string :partial => "submissions/submissions_table_row/repository", :locals => {:grouping => grouping}
 
-    table_row[:commit_date] = render_to_string :partial => "submissions/submissions_table_row/commit_date", :locals => {:grouping => grouping}
+    table_row[:commit_date] = ''
+    #render_to_string :partial => "submissions/submissions_table_row/commit_date", :locals => {:grouping => grouping}
 
-    table_row[:marking_state] = render_to_string :partial => "submissions/submissions_table_row/marking_state", :locals => {:grouping => grouping}
+    table_row[:marking_state] = ''
+    #render_to_string :partial => "submissions/submissions_table_row/marking_state", :locals => {:grouping => grouping, :assignment => assignment}
 
-    table_row[:final_grade] = render_to_string :partial => "submissions/submissions_table_row/final_grade", :locals => {:grouping => grouping}
+    table_row[:final_grade] = ''
+    #render_to_string :partial => "submissions/submissions_table_row/final_grade", :locals => {:grouping => grouping}
 
-    table_row[:released] = render_to_string :partial => "submissions/submissions_table_row/released", :locals => {:grouping => grouping}
+    table_row[:released] = ''
+    #render_to_string :partial => "submissions/submissions_table_row/released", :locals => {:grouping => grouping}
 
     return table_row
   end
