@@ -703,14 +703,20 @@ tr.student_hidden{
 
 #login label{
    display: inline-block;
-   padding: 20px;
+   padding: 5px;
    min-width: 100px;
+   margin-left: 30px;
 }
 
 #login input{
   display: inline-block;
   min-width: 150px; 
-  margin: 10px;
+  margin-left: 20px;
+  padding: 5px;
+}
+
+#login input.indent_button {
+  margin-left: 160px;
 }
 
 
