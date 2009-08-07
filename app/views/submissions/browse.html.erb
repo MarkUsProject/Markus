@@ -1,6 +1,6 @@
 <%= javascript_include_tag "submissions_manager" %>
 <%= javascript_include_tag "FilterTable/FilterTable.js" %>
-<%= render :partial => 'submissions_table_boot.js.erb' %>
+<%= render :partial => 'submissions_table_boot.js.erb', :locals => {:details => @details, :assignment => @assignment} %>
 
 
 <div id="title_bar">
@@ -11,6 +11,12 @@
   <h2>Grading can begin after <%= h(@assignment.submission_rule.calculate_collection_time.strftime(LONG_DATE_TIME_FORMAT))%> </h2>
   <% end %>
 </div>
+
+<div class="wrapLeft">
+  <%= link_to "Go to Normal View", :action => 'browse', :id => @assignment.id %>
+  <%= link_to "Go to Detailed View", :action => 'browse', :id => @assignment.id, :details => true %>
+</div>
+
 <div class="wrapLeft">
 <% if flash[:release_errors] %>
 <div class="error">
@@ -29,8 +35,9 @@ list...</span>
 <table id="submissions">
 
 </table>
-
+<% if @current_user.admin? %>
 <%= submit_tag "Release Marks", :name => "release_results" %>
 <%= submit_tag "Unrelease Marks", :name => "unrelease_results" %>
+<% end %>
 </form>
 </div>

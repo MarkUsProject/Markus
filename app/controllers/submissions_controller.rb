@@ -2,21 +2,59 @@ class SubmissionsController < ApplicationController
   include SubmissionsHelper
   
   before_filter    :authorize_only_for_admin, :except => [:populate_file_manager, :browse,
-  :index, :file_manager, :update_files, :hand_in, :download]
-  before_filter    :authorize_for_ta_and_admin, :only => [:browse, :index]
+  :index, :file_manager, :update_files, :hand_in, :download, :populate_submissions_table, :collect_and_begin_grading]
+  before_filter    :authorize_for_ta_and_admin, :only => [:browse, :index, :populate_submissions_table, :collect_and_begin_grading]
+ 
+  def repo_browser
+    @grouping = Grouping.find(params[:id])
+    @assignment = @grouping.assignment
+  end
+  
+  def find_revision
+    @grouping = Grouping.find(params[:id])
+    @assignment = @grouping.assignment
+    repo = @grouping.group.repo
+    begin
+      case params[:find_revision_by]
+      when "revision_timestamp"
+        @revision = repo.get_revision_by_timestamp(Time.parse(params[:revision_timestamp]))
+      when "revision_number"
+        @revision = repo.get_revision(params[:revision_number].to_i)
+      end
+      @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, '/'))
+      @files = @revision.files_at_path(File.join(@assignment.repository_folder, '/'))
+    rescue Exception => @find_revision_error
+      render :action => 'repo_browser/find_revision_error'
+      return
+    end
+    @table_rows = {} 
+    @files.sort.each do |file_name, file|
+      @table_rows[file.id] = construct_repo_browser_table_row(file_name, file)
+    end
+    render :action => 'repo_browser/populate_repo_browser'
+  end
+  
+  def populate_repo_browser
+    @grouping = Grouping.find(params[:id])
+    @assignment = @grouping.assignment
+    repo = @grouping.group.repo
+    @revision = repo.get_latest_revision
+    @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, '/'))
+    @files = @revision.files_at_path(File.join(@assignment.repository_folder, '/'))
+    @table_rows = {} 
+    @files.sort.each do |file_name, file|
+      @table_rows[file.id] = construct_repo_browser_table_row(file_name, file)
+    end
+    render :action => 'repo_browser/populate_repo_browser'
+  end
  
   def file_manager
     @assignment = Assignment.find(params[:id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
     user_group = @grouping.group
-    revision_number= params[:revision_number]
     path = params[:path] || '/'
     repo = user_group.repo
-    if revision_number.nil?
-      @revision = repo.get_latest_revision
-    else
-      @revision = repo.get_revision(revision_number.to_i)
-    end
+    @revision = repo.get_latest_revision
     @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, path))
     @files = @revision.files_at_path(File.join(@assignment.repository_folder, path))
   
@@ -31,7 +69,7 @@ class SubmissionsController < ApplicationController
   
   def populate_file_manager
     @assignment = Assignment.find(params[:id])
-    @grouping = current_user.accepted_grouping_for(@assignment.id)
+    @grouping = current_user.accepted_grouping_for(@assignment.id)   
     user_group = @grouping.group
     revision_number= params[:revision_number]
     path = params[:path] || '/'
@@ -72,6 +110,9 @@ class SubmissionsController < ApplicationController
   
   def populate_submissions_table
     assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :accepted_students, :group, {:submissions => :result}]}, {:submission_rule => :periods}]) 
+    
+    @details = params[:details]
+    
     # If the current user is a TA, then we need to get the Groupings
     # that are assigned for them to mark.  If they're an Admin, then
     # we need to give them a list of all Groupings for this Assignment.
@@ -94,15 +135,7 @@ class SubmissionsController < ApplicationController
 
   def browse
     @assignment = Assignment.find(params[:id])
-
-    if current_user.ta?
-      render :action => 'ta_browse'
-      return
-    end 
-    if current_user.admin?
-      render :action => 'admin_browse'
-      return 
-    end
+    @details = params[:details]
   end
   
   def index
@@ -288,75 +321,5 @@ class SubmissionsController < ApplicationController
     redirect_to :action => 'browse', :id => params[:id]
   end
   
-#  # Handles file submissions for a form POST, 
-#  # or displays submission page for the user
-#  def submit
-#    @assignment = Assignment.find(params[:id])
-#    sub_time = Time.now  # submission timestamp for submitted files
-#    return unless validate_submit(@assignment, sub_time)
-#    submission = @assignment.submission_by(current_user)
-#   flash[:upload] =  { :success => [], :fail => [] }
-#    
-#    # process upload
-#    if (request.post? && params[:files])
-#      # handle late submissions
-#      if @assignment.due_date < sub_time
-#        rule = @assignment.submission_rule || NullSubmissionRule.new
-#        rule.handle_late_submission(submission)
-#      end
-#      
-#      # do file upload
-#      params[:files].each_value do |file|
-#        f = file[:file]
-#        unless f.blank?
-#          subfile = submission.submit(current_user, f, sub_time)
-#          if subfile.valid?
-#            flash[:upload][:success] << subfile.filename
-#          else
-#            flash[:upload][:fail] << subfile.filename
-#          end
-#        end
-#      end
-#    end
-#      
-#    # display submitted filenames, including unsubmitted required files
-#     @files = submission.submitted_filenames || []
-#  end
-#  
-#  
-#  # Handles file viewing submitted by the user or group
-#  def view
-#    @assignment = Assignment.find(params[:id])
-#    submission = @assignment.submission_by(current_user)
-#    
-#    # check if user has a submitted file by that filename
-#    subfile = submission.submission_files.find_by_filename(params[:filename])
-#    dir = submission.submit_dir
-#    filepath = File.join(dir, params[:filename])
-#    
-#    if subfile && File.exist?(filepath)
-#      send_file filepath, :type => 'text/plain', :disposition => 'inline'
-#    else
-#      render :text => "File not found", :membership_status => 401
-#    end
-#  end
-#  
-#  # Moves a deleted file to a backup folder
-#  def remove_file
-#    return unless request.delete?
-#    # delete file
-#    assignment = Assignment.find(params[:id])
-#    submission = assignment.submission_by(current_user)
-#    submission.remove_file(params[:filename])
 
-#    # check if deleted file is a required file
-#    @reqfiles = assignment.assignment_files.map { |af| af.filename } || []
-#    render :update do |page|
-#      page["filename_#{params[:filename]}"].remove
-#      if @reqfiles.include? params[:filename]
-#        page.insert_html :after, "table_heading", :partial => 'required_file'
-#      end
-#    end
-#  end
-#  
 end

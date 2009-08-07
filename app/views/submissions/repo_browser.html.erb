@@ -1,0 +1,43 @@
+<%= javascript_include_tag "FilterTable/FilterTable.js" %>
+<%= javascript_include_tag "repo_browser.js" %>
+<%= render :partial => "repo_browser_boot.js.erb" %>
+<%= calendar_date_select_includes "silver" %>
+
+
+<div class="wrapLeft">
+  <% if flash[:submit_notice] -%>   
+     <p class="success"><%= h(flash[:submit_notice]) %> </p>
+  <% end %>
+</div>
+
+<div class="wrapLeft">
+  <div id="repo_browser_controls">
+    <fieldset>
+      <legend>Display a previous revision</legend>
+
+      <div id="find_revision_error" class="error" style="display:none;">
+      </div>
+
+      <% form_remote_tag :url => {:action => 'find_revision', :id => @grouping.id}, :method => 'get', :loading => "$('loading_list').show();", :complete => "$('loading_list').hide();" do %>
+      <input type="radio" name="find_revision_by" value="revision_timestamp" onClick="if($(this).getValue()) { $('revision_timestamp').enable(); $('revision_number').disable(); } else { $('revision_timestamp').disable(); $('revision_number').enable(); }" checked="checked">
+
+     <%= calendar_date_select_tag "revision_timestamp", nil, :time => true %>
+     <input type="radio" name="find_revision_by" value="revision_number" onClick="if($(this).getValue()) { $('revision_timestamp').disable(); $('revision_number').enable(); } else { $('revision_timestamp').enable(); $('revision_number').disable(); }"> 
+     <%= text_field_tag "revision_number", nil, :disabled => true %>
+     <%= submit_tag "Find Revision" %>
+      <% end %>
+    </fieldset>
+  </div>
+</div>
+<div class="global_actions">
+  <% form_tag :action => "manual_collect_and_grade", :id => @grouping.id do %>
+  <%= hidden_field_tag "current_revision_number", "" %>
+  <%= submit_tag "Collect and Grade This Revision" %>
+  <% end %>
+</div>
+<span id="loading_list"><%= image_tag("spinner.gif") %> Loading list...
+</span>
+<div class="wrapLeft">
+  <table class="files" id="files">
+  </table>
+</div>

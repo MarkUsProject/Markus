@@ -7,13 +7,19 @@ document.observe("dom:loaded", function() {
     table_id: $('submissions'),
     headers: {
       group_name: {display: "Group Name", sortable: true},
+      <% if details.nil? %>
       repository: {display: "Repository", sortable: true},
       commit_date: {display: "Commit Date", sortable: true},
+      <% else %>
+        <% assignment.rubric_criteria.each_with_index do |criterion, index| %>
+      criterion_<%=index%>: {display: 'C<%=index%>', sortable:true},
+        <% end %>
+      <% end %>
       marking_state: {display: "Marking State", sortable: true},
       final_grade: {display: "Final Grade", sortable: true},
       released: {display: "Released", sortable: true}
     },
-    can_select: true,
+    can_select: <%= @current_user.admin?%>,
     can_select_all: true,
     can_sort: true,
     row_prefix: "grouping_row_",
@@ -27,8 +33,12 @@ document.observe("dom:loaded", function() {
       }
     }*/
   });
-  
+  <% if details.nil? %>
   <%= remote_function :url => {:action => 'populate_submissions_table', :id => @assignment.id}, :complete => "$('loading_list').hide();" %>
+  <% else %>
+  <%= remote_function :url => {:action => 'populate_submissions_table', :id => @assignment.id, :details => true}, :complete => "$('loading_list').hide();" %>
+  <% end %>
 });
+  
 
 </script>

@@ -65,9 +65,10 @@
               :before => before the counters
               Also passing the number of critieras
         -->
+       <div><span class="criterion_title_div"><b>Criterion</b></span><span class="criterion_weight"><b>Weight</b> (<span id="rubric_total_weight"><%=
+h(@assignment.total_criteria_weight) %></span>)</span></div>
+      <div class="clear"></div>
       <ul id="rubric_criteria_pane_list">
-         <li><span class="criterion_title_div"><b>Criterion</b></span><span class="criterion_weight"><b>Weight</b> (<span id="rubric_total_weight"><%=
-h(@assignment.total_criteria_weight) %></span>)</span></li>
         <% @criteria.each do |criterion| -%>
           <%= render :partial => "rubrics/rubric_criterion", :locals => {:criterion => criterion} %>
          <% end -%>

@@ -1,0 +1,3 @@
+page.hide "find_revision_error"
+page["current_revision_number"].setValue(@revision.revision_number)
+page.call "populate", @table_rows.to_json

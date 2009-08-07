@@ -10,8 +10,24 @@
   <% end %>
     (<%= h(grouping.accepted_students.collect{ |student| student.user_name}.join(',')) %>)
   </td> 
+  <% if !@details.nil? %>
+    <% assignment.rubric_criteria.each do |criterion| %>
+      <td>
+        <% if grouping.has_submission? %>
+          <% mark = grouping.get_submission_used.result.marks.find_by_rubric_criterion_id(criterion.id) %>
+          <% if mark.nil? || mark.mark.nil?%>
+            -
+          <% else %>
+            <%= mark.mark %>
+          <% end %>
+        <% else %>
+          -
+        <% end %>
+      </td>
+    <% end %>
+  <% else %>
   <td>
-    <a href="#"><%= h(grouping.group.repository_name) %></a>
+    <%= link_to h(grouping.group.repository_name), :action => "repo_browser", :id => grouping.id %>
   </td>
   <td>
   <% if !grouping.has_submission? %>
@@ -20,6 +36,7 @@
     <%= h(grouping.get_submission_used.revision_timestamp.strftime(LONG_DATE_TIME_FORMAT)) %>
   <% end %>
   </td>
+  <% end %>
   <td>
   <% if !grouping.has_submission? %>
     <% if assignment.submission_rule.can_collect_now? %>

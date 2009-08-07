@@ -63,7 +63,7 @@ module SubmissionsHelper
   def construct_file_manager_table_rows(files)
     result = {}
     files.each do |file_name, file|
-      result[file.id] = construct_table_row(file_name, file)
+      result[file.id] = construct_file_manager_table_row(file_name, file)
     end
     return result
   end
@@ -72,19 +72,32 @@ module SubmissionsHelper
  def construct_submissions_table_row(grouping, assignment)
     table_row = {}
     table_row[:id] = grouping.id
-    table_row[:filter_table_row_contents] = render_to_string :partial => 'submissions/submissions_table_row/filter_table_row', :locals => {:grouping => grouping, :assignment => assignment}
+   table_row[:filter_table_row_contents] = render_to_string :partial => 'submissions/submissions_table_row/filter_table_row', :locals => {:grouping => grouping, :assignment => assignment}
     
     table_row[:group_name] = grouping.group.group_name
   
     table_row[:repository] = grouping.group.repository_name
 
+    if !@details.nil?
+      assignment.rubric_criteria.each_with_index do |criterion, index|
+        if grouping.has_submission?
+          mark = grouping.get_submission_used.result.marks.find_by_rubric_criterion_id(criterion.id)
+          if mark.nil? || mark.mark.nil?
+            table_row['criterion_' + index.to_s] = '0'
+          else
+            table_row['criterion_' + index.to_s] = mark.mark
+          end
+        else
+          table_row['criterion_' + index.to_s] = '0'
+        end
+      end
+    end
 
     if grouping.has_submission?
       table_row[:marking_state] = grouping.get_submission_used.result.marking_state
       table_row[:final_grade] = grouping.get_submission_used.result.total_mark
       table_row[:released] = grouping.get_submission_used.result.released_to_students
       table_row[:commit_date] = grouping.get_submission_used.revision_timestamp.strftime(LONG_DATE_TIME_FORMAT)
-
     else
       table_row[:marking_state] = '-'
       table_row[:final_grade] = '-'
@@ -95,6 +108,30 @@ module SubmissionsHelper
     return table_row
   end
 
+  def construct_repo_browser_table_row(file_name, file)
+    table_row = {}
+    table_row[:id] = file.id
+    table_row[:filter_table_row_contents] = render_to_string :partial => 'submissions/repo_browser/filter_table_row', :locals => {:file_name => file_name, :file => file}
+    
+    table_row[:filename] = file_name
+    
+    table_row[:last_modified_date] = file.last_modified_date.strftime('%d %B, %l:%M%p')
+
+    table_row[:last_modified_date_unconverted] = file.last_modified_date
+
+    table_row[:revision_by] = file.user_id
+
+    return table_row
+  end
+  
+  
+  def construct_repo_browser_table_rows(files)
+    result = {}
+    files.each do |file_name, file|
+      result[file.id] = construct_repo_browser_row(file_name, file)
+    end
+    return result
+  end
 
   def construct_submissions_table_rows(groupings)
     result = {}
@@ -103,10 +140,6 @@ module SubmissionsHelper
     end
     return result
   end
-    
-  
-  
-  
   
   def sanitize_file_name(file_name)
     # If file_name is blank, return the empty string
