@@ -148,6 +148,30 @@ class Assignment < ActiveRecord::Base
     return total
   end
   
+  # calculates the average of released results for this assignment
+  def set_results_average
+    groupings = Grouping.find_all_by_assignment_id(self.id)
+    results_count = 0
+    results_sum = 0
+    groupings.each do |grouping|
+      submission = grouping.get_submission_used
+      if !submission.nil? && submission.has_result?
+        result = submission.result
+        if result.released_to_students
+          results_sum += result.total_mark
+          results_count += 1
+        end
+      end
+    end
+    if results_count == 0
+      return false # no marks released for this assignment
+    end
+    avg_quantity = results_sum / results_count
+    # compute average in percent
+    self.results_average = (avg_quantity * 100 / self.total_mark)
+    self.save
+  end
+  
   def total_criteria_weight
     rubric_criteria.sum('weight')
   end
@@ -160,15 +184,14 @@ class Assignment < ActiveRecord::Base
       group.save
     else
       if Group.find(:first, :conditions => {:group_name => new_group_name})
-        group = Group.find(:first, :conditions => {:group_name =>
-	new_group_name})
+        group = Group.find(:first, :conditions => {:group_name =>	new_group_name})
         if !self.groupings.find_by_group_id(group.id).nil?
-	  raise "Group #{new_group_name} already exists"
-	end
+          raise "Group #{new_group_name} already exists"
+        end
       else
         group = Group.new
-	group.group_name = new_group_name
-	group.save
+        group.group_name = new_group_name
+        group.save
       end
     end
     grouping = Grouping.new

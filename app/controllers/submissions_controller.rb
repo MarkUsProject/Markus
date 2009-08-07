@@ -269,6 +269,10 @@ class SubmissionsController < ApplicationController
       end
     end
     redirect_to :action => 'browse', :id => params[:id]
+    if !params[:groupings].nil?
+      grouping = Grouping.find(params[:groupings].first)
+      grouping.assignment.set_results_average
+    end
   end
 
 

@@ -294,48 +294,68 @@ class GroupsController < ApplicationController
   def csv_upload
     if request.post? && !params[:group].blank?
       @assignment = Assignment.find(params[:id])
-   	  num_update = 0
-      flash[:invalid_lines] = []  # store lines that were not processed
-      
+      num_update = 0
+      invalid_lines = []  # store lines that were not processed
+  
       # Loop over each row, which lists the members to be added to the group.
+      line_nr = 1
+      flash[:users_not_found] = [] # contains a list of user_name(s) not found in DB
       FasterCSV.parse(params[:group][:grouplist]) do |row|
-      if add_csv_group(row, @assignment) == nil
-		    flash[:invalid_lines] << row.join(",")
-      else
-     		num_update += 1
-     	end
-	   end
-	   flash[:upload_notice] = "#{num_update} group(s) added."
-     end
+        if add_csv_group(row, @assignment) == nil
+          invalid_lines << line_nr
+        else
+          num_update += 1
+        end
+        line_nr += 1
+      end
+      msg = "#{num_update} group(s) added."
+      msg += " Line(s) " + invalid_lines.join(",") + " contained errors." if invalid_lines.length > 0
+      flash[:upload_notice] = msg
+      redirect_to :action => "manage", :id => params[:id]
+    end
   end
   
   # Helper method to add the listed members.
-  def add_csv_group (group, assignment)
-
+  def add_csv_group(group, assignment)
   	return nil if group.length <= 0
-	  @grouping = Grouping.new
-      @grouping.assignment_id = assignment.id
-      # If a group with this name already exist, link the grouping to
-      # this group. else create the group
-      if Group.find(:first, :conditions => {:group_name => group[0]})
-         @group = Group.find(:first, :conditions => {:group_name => group[0]})
-	  else
-         @group = Group.new
-         @group.group_name = group[0]	
-         @group.save
-      end
+    # If a group with this name already exists, link the grouping to
+    # this group. else create the group
+    if Group.find(:first, :conditions => {:group_name => group[0]})
+      @group = Group.find(:first, :conditions => {:group_name => group[0]})
+    else
+      @group = Group.new
+      @group.group_name = group[0]	
+      @group.save
+    end
+    
+    # Group for grouping has to exist at this point
+    @grouping = Grouping.new
+    @grouping.assignment_id = assignment.id
+    
+    # If we are not repository admin, set the repository name as provided
+    # in the csv upload file
+    if !@group.repository_admin?
+      @group.repo_name = group[1].strip # remove whitespace
+      @group.save # save new repo_name
+    end
 
-      @grouping.group_id = @group.id
-      @grouping.save
-      # Add first member to group.
-      student = Student.find(:first, :conditions => {:user_name => group[1]})
-      member = @grouping.add_member(student)
-      member.membership_status = StudentMembership::STATUSES[:inviter]
-      member.save
-      for i in 2..group.length do
-        student = Student.find(:first, :conditions => {:user_name =>group[i]})
-        @grouping.add_member(student)
+    # Form groups
+    start_index_group_members = 2 # first field is the group-name, second the repo name, so start at field 3
+    for i in start_index_group_members..(group.length-1) do
+      student = Student.find_by_user_name(group[i].strip) # remove whitespace
+      if student.nil?
+        flash[:users_not_found] << group[i].strip # use this in view to get some meaningful feedback
+        return nil
       end
+      if (i > start_index_group_members)
+        @grouping.add_member(student)
+      else
+        # Add first member as inviter to group.
+        @grouping.group_id = @group.id
+        @grouping.save # grouping has to be saved, before we can add members
+        @grouping.add_member(student, StudentMembership::STATUSES[:inviter])
+      end
+    end
   end
   
   def download_grouplist
@@ -346,8 +366,8 @@ class GroupsController < ApplicationController
 
     file_out = FasterCSV.generate do |csv|
        groupings.each do |grouping|
-         group_array = [grouping.group.group_name]
-         # csv format is group_name, user1_name, user2_name, ... etc
+         group_array = [grouping.group.group_name, grouping.group.repo_name]
+         # csv format is group_name, repo_name, user1_name, user2_name, ... etc
          grouping.memberships.all(:include => :user).each do |member|
             group_array.push(member.user.user_name);
          end

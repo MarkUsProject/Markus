@@ -7,19 +7,50 @@
   <% else %>
   
     <p>Existing assignments:</p>
-  
-    <ul>
-    
-    <% for assignment in @assignments %>
-      <li>
-        <%= link_to h(sanitize(assignment.name)), 
-            :controller => controller, 
-            :action => action, 
-            :id => assignment  %>:  <%= h(assignment.description) %>
-      </li>
-    <% end %>
-    
-    </ul>
+		
+    <table><!-- listing assignments -->
+      <tbody>
+        <% for assignment in @assignments %>
+          <tr>
+            <td>
+              <%=
+              	# assignment name
+                link_to h(sanitize(assignment.name)), 
+                :controller => controller, 
+                :action => action, 
+                :id => assignment.id
+							%>
+            </td>
+            <td>
+              <%= #description
+								h( assignment.description )
+							%>
+            </td>
+            <td>
+              <% if assignment.due_date < Time.now %>
+                <strong>Due date was:</strong> <%= assignment.due_date.strftime(LONG_DATE_TIME_FORMAT) %>.         
+              <% else %>
+                <strong>Due date:</strong> <%= assignment.due_date.strftime(LONG_DATE_TIME_FORMAT) %>
+                  <%= "("+(((assignment.due_date - Time.now)/(60 * 60 * 24)).floor).to_s %> days and <%= (((assignment.due_date - Time.now)/(60 * 60)) % 24).floor %> hours left)
+              <% end %>
+            </td>
+            <td style="width: 40%;">
+              <% if !@a_id_results.empty? && !@a_id_results[assignment.id].nil? %>
+              <strong>Your mark:</strong>
+              <%= # show results
+								("%.2f" % (@a_id_results[assignment.id].total_mark * 100 / assignment.total_mark)).to_s + "% (Class Average: " + ("%.2f" % (assignment.results_average)).to_s + "%)"
+							%>
+              <p><strong>Overall Comment:</strong><br/>
+                <%= sanitize(@a_id_results[assignment.id].overall_comment) %>
+              </p>
+              <% elsif assignment.due_date < Time.now %>
+                There are no results for this assignment, yet.
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
         
   <% end %>
 </div>

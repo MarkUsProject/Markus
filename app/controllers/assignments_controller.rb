@@ -15,7 +15,7 @@ class AssignmentsController < ApplicationController
 
     if @grouping.nil?
       if @assignment.group_max == 1
-         @student.create_group_for_working_alone_student(@assignment.id)
+        @student.create_group_for_working_alone_student(@assignment.id)
         redirect_to :action => 'student_interface', :id => @assignment.id
       else
         render :action => 'student_interface', :layout => 'no_menu_header'
@@ -73,6 +73,19 @@ class AssignmentsController < ApplicationController
   def index
     @assignments = Assignment.all(:order => :id)
     if current_user.student?
+      # get results for assignments for the current user
+      @a_id_results = Hash.new()
+      @assignments.each do |a|
+        if current_user.has_accepted_grouping_for?(a)
+          grouping = current_user.accepted_grouping_for(a)
+          if grouping.has_submission?
+            submission = grouping.get_submission_used
+            if submission.has_result?
+              @a_id_results[a.id] = submission.result
+            end
+          end 
+        end
+      end
       render :action => "student_assignment_list"
       return
     else
