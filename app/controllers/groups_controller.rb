@@ -279,15 +279,18 @@ class GroupsController < ApplicationController
   end
   
   # Assign TAs to Groupings via a csv file
-  def ta_groupings_csv_upload
-    if !request.post?
-      redirect_to :index
+  def csv_upload_grader_mapping
+    if !request.post? || params[:grader_mapping].nil?
+      flash[:error] = "You must supply a CSV file for group to grader mapping"
+      redirect_to :action => 'manage', :id => params[:id]
       return
     end
     
-    flash[:invalid_lines] = []
-    Grouping.assign_tas_by_csv(params[:ta_groupings_file], params[:assignment_id])
-    redirect_to :index   
+    invalid_lines = Grouping.assign_tas_by_csv(params[:grader_mapping].read, params[:id])
+    if invalid_lines.size > 0
+      flash[:invalid_lines] = invalid_lines
+    end
+    redirect_to :action => 'manage', :id => params[:id]
   end
   
   # Allows the user to upload a csv file listing groups.

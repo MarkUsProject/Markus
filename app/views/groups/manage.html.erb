@@ -197,6 +197,16 @@ document.observe("dom:loaded", function(){
       <% if flash[:upload_notice] -%>
           <p class="success"><%= h(flash[:upload_notice]) %></p>
       <% end -%>
+      <% if flash[:invalid_lines] -%>
+          <p class="error">
+            The following lines could not be processed:
+            <ul>
+            <% flash[:invalid_lines].each do |error| %>
+              <li><%=error%></li>
+            <% end %>
+            </ul>
+          </p>
+      <% end -%>
       
       <% if flash[:edit_notice] -%>
         <p class="success"><%= h(flash[:edit_notice]) %></p>
@@ -300,6 +310,7 @@ id=\"all_groupings_count\"></span>)", "filter('none')", :id =>
       <div class="accordion-content">
         <div id="upload">
           <p>
+            <h3>Upload Groups File</h3>
             Select a CSV file form:<br />
             <code>group_name,repository_name,user_name,user_name ... </code><br />
           </p>
@@ -313,6 +324,17 @@ id=\"all_groupings_count\"></span>)", "filter('none')", :id =>
         </div> <!-- Upload -->
         <p id="download">
           <%= link_to 'Download group list CSV Format', {:controller=>"groups", :action=>"download_grouplist", :id=> @assignment.id}%>
+        </p>
+        <p>
+          <h3>Upload Group / Grader Map</h3>
+            Select a CSV file form:<br />
+            <code>group_name,grader_user_name,grader_user_name,... </code><br />
+          </p>
+          <% form_tag({:controller=>"groups", :action => 'csv_upload_grader_mapping',:id => @assignment.id}, {:multipart => true}) do -%>
+           <p><%= file_field_tag :grader_mapping, :size => 0 %>
+              <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %></p>							
+        <% end %>
+          
         </p>
       </div>
      </div>
