@@ -127,7 +127,7 @@
 	   <% else %>
 	     Your group
 	   <% end %>
-            <% if @grouping.inviter == @current_user and !@grouping.is_valid? %>
+            <% if !@grouping.nil? && @grouping.inviter == @current_user and !@grouping.is_valid? %>
 	    <%= link_to_remote I18n.t(:delete),:url => { :action => 'deletegroup', :id => @assignment.id, :grouping_id =>  @grouping.id },
 	    :html => {:title => "Delete this group", :class => "delete"},
 	    :confirm => "Are you sure you want to delete this group?"
@@ -136,7 +136,7 @@
 	   </h3>
      
      <% # Display the URL of this group's repository if applicable %>
-     <% if @grouping.group.repository_external_commits_only? %>
+     <% if !@grouping.nil? && @grouping.group.repository_external_commits_only? %>
      <div class="sub_block"> 
        <h3>URL to your group's repository</h3>
 	     <p><%= h(@grouping.group.repository_external_access_url) %></p>
@@ -186,7 +186,7 @@
  </div>    
 </div>
 
-<% if @grouping.inviter == @current_user && !@assignment.instructor_form_groups %>
+<% if !@grouping.nil? && @grouping.inviter == @current_user && !@assignment.instructor_form_groups %>
   <div id="invite_dialog">
     <h2>Invite</h2>
     <p>
