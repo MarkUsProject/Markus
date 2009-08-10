@@ -41,5 +41,11 @@ list...</span>
 <% end %>
 </form>
 
-<%= link_to "Download CSV Report File", :action => 'download_csv_report', :id => @assignment.id %>
+<p>
+<%= link_to "Download Simple CSV Report File", :action => 'download_simple_csv_report', :id => @assignment.id %>
+
+</p>
+<p>
+<%= link_to "Download Detailed CSV Report File", :action => 'download_detailed_csv_report', :id => @assignment.id %>
+</p>
 </div>

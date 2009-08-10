@@ -306,7 +306,28 @@ class SubmissionsController < ApplicationController
     redirect_to :action => 'browse', :id => params[:id]
   end
   
-  def download_csv_report
+  def download_simple_csv_report
+    assignment = Assignment.find(params[:id])
+    students = Student.all
+    csv_string = FasterCSV.generate do |csv|
+       students.each do |student|
+         grouping = student.accepted_grouping_for(assignment.id)
+         if !grouping.nil?
+           if grouping.has_submission? 
+             final_result = []
+             submission = grouping.get_submission_used
+             final_result.push(student.user_name)
+             final_result.push(submission.result.total_mark)           
+             csv << final_result
+           end
+         end
+       end
+    end
+      
+    send_data csv_string, :disposition => 'attachment', :file_type => 'csv', :filename => "#{assignment.name} simple report.csv"
+  end
+  
+  def download_detailed_csv_report
     assignment = Assignment.find(params[:id])
     students = Student.all
     rubric_criteria = assignment.rubric_criteria
@@ -342,7 +363,7 @@ class SubmissionsController < ApplicationController
 
     end
      
-    send_data csv_string, :disposition => 'attachment', :file_type => 'csv', :filename => "#{assignment.name} report.csv"
+    send_data csv_string, :disposition => 'attachment', :file_type => 'csv', :filename => "#{assignment.name} detailed report.csv"
   end
 
 end
