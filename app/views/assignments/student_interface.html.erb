@@ -40,9 +40,9 @@
 <% end %>
 
 <div class="column_floatLeft">
- <div class="bloc">
+ <div class="block">
   <h2>Submissions</h2>
-    <div class="bloc_content">
+    <div class="block_content">
   <% if !@grouping.nil? %>
     <% if !@grouping.is_valid? %>
       <p class="notice">Your group is not valid. You can't submit
@@ -58,15 +58,15 @@
   <% end %>
   </div>
  </div>
- <div class="bloc">
+ <div class="block">
     <%= render :partial => 'read'%>
  </div>
 </div>
 
 <div class="column_floatLeft">
- <div class="bloc">
+ <div class="block">
   <h2>Group Information</h2>
-    <div class="bloc_content">
+    <div class="block_content">
 
          <% if @grouping.nil? %>
 	   <p class="notice">
@@ -84,7 +84,7 @@
 
 	   <h3>Invitations</h3>
 	     <% @pending_grouping.each do |grouping|%>
-	     <div class="sub_bloc">
+	     <div class="sub_block">
 	       <p>You have been invited by <span class="last_name"><%= grouping.inviter.last_name %></span> <%= h(grouping.inviter.first_name) %></p>  
 	    <ul>
 	    <% grouping.memberships.each do |member|%>
@@ -100,7 +100,7 @@
 	     :html => {:class => "delete"}
 	     %>
 	     </div>
-	     <div class="bloc_line"></div>
+	     <div class="block_line"></div>
 	     <% end %>
 	   <% end %>
 	   <h3>Form your own group</h3>
@@ -134,6 +134,14 @@
 	    %> 
 	    <% end %>
 	   </h3>
+     
+     <% # Display the URL of this group's repository if applicable %>
+     <% if @grouping.group.repository_external_commits_only? %>
+     <div class="sub_block"> 
+       <h3>URL to your group's repository</h3>
+	     <p><%= h(@grouping.group.repository_external_access_url) %></p>
+     </div>
+	   <% end %>
 
 	   <% # If the group not yet the right amount of members, display
 	      # the information%>
@@ -151,10 +159,7 @@
 	       {:member => member, :grouping => @grouping} %>
 	    <% end -%>
 	   </ul>
-	   <% if @grouping.group.repository_external_commits_only? %>
-	   	<p>Repository location: <%= h(@grouping.group.repository_external_access_url) %></p>
-	   <% end %>
-	   <% if @grouping.inviter == @current_user %>
+	   <% if @grouping.inviter == @current_user && !@assignment.instructor_form_groups %>
             <% if @grouping.student_membership_number != @assignment.group_max %>
              <%= button_to_function I18n.t(:invite), 'invite(); return
 	       false;' %>
@@ -162,34 +167,38 @@
 	    <% end %>
 	  <% end -%>
             </div>
-            <div class="sub_bloc"> 
+            <div class="sub_block"> 
 	     <h3> Group Properties </h3>
-              <p> The groups must be from <b><%= h(@assignment.group_min)%></b>
+       <ul>
+              <li> The groups must be from <b><%= h(@assignment.group_min)%></b>
 	      to <b><%= h(@assignment.group_max)%></b> people.
-	      </p>
+	      </li>
 	      <% if @assignment.student_form_groups %>
-	      <p> Students are allowed to form groups.</p>
+	        <li>Students can form groups.</li>
 	      <% else%>
-              <p> Instructors will form groups.</p>
+          <li>Instructor forms groups.</li>
 	      <% end %>
+        </ul>
 
             </div>
  </div>    
 </div>
 
-<div id="invite_dialog">
-  <h2>Invite</h2>
-  <p>
-    <fieldset>
-       <label> <%= I18n.t(:name)%> </label>
-       <%= text_field_tag 'invite_member'%>
-    </fieldset>
-  </p>
-  <p>
-  <%= button_to_function I18n.t(:submit),
-  "submit_invite(escape($F('invite_member')))" %>
-  <%= button_to_function "Cancel", 'invite_modal.close()'%>
-  </p>
-</div>
+<% if @grouping.inviter == @current_user && !@assignment.instructor_form_groups %>
+  <div id="invite_dialog">
+    <h2>Invite</h2>
+    <p>
+      <fieldset>
+         <label> <%= I18n.t(:name)%> </label>
+         <%= text_field_tag 'invite_member'%>
+      </fieldset>
+    </p>
+    <p>
+    <%= button_to_function I18n.t(:submit),
+    "submit_invite(escape($F('invite_member')))" %>
+    <%= button_to_function "Cancel", 'invite_modal.close()'%>
+    </p>
+  </div>
+<% end %>
 
 

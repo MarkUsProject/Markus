@@ -611,7 +611,7 @@ tr.student_hidden{
   background: #FFFFAA;
 }
 
-/* menu déroulant sur la droite */
+/* accordeon menu */
 .left_section:hover .left_section_container{
   display: block;
 }
@@ -722,7 +722,7 @@ tr.student_hidden{
 
 /* Student Interface: Assignment View*/
 
-.bloc {
+.block {
    width: 95%;
    padding: 0px;
    margin: 10px;
@@ -731,7 +731,7 @@ tr.student_hidden{
    border: 1px solid #ccc;
 }
 
-.bloc h2{
+.block h2{
    background: #DFDFDF;
    margin: 0;
    padding: 5px 10px;
@@ -740,7 +740,7 @@ tr.student_hidden{
    color: #464646;
    }
 
-.bloc h3{
+.block h3{
    font-family: "Georgia";
    font-style: italic;
    font-weight: normal;
@@ -752,18 +752,29 @@ tr.student_hidden{
    padding-left: 3px;
 }
 
-.bloc_content{
+.block_content{
   padding: 10px;
 }
 
-.bloc_line{
+.block_line{
    display: block;
    margin: 5px;
    border-top: 1px solid #ccc;
 }
 
-.sub_bloc{
+.sub_block{
   margin: 0px 15px;
+}
+
+div.sub_block span.prop_label{
+  display: block;
+  min-width: 150px;
+  float: left;
+  font-weight: bold; 
+}
+
+div.sub_block span.box{
+  display: block;
 }
 
 #member_inviter{

@@ -319,6 +319,7 @@ class GroupsController < ApplicationController
   end
   
   # Helper method to add the listed members.
+  # TODO: move this to the assignment model!!!
   def add_csv_group(group, assignment)
   	return nil if group.length <= 0
     # If a group with this name already exists, link the grouping to

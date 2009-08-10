@@ -81,10 +81,8 @@ class AssignmentsController < ApplicationController
           grouping = current_user.accepted_grouping_for(a)
           if grouping.has_submission?
             submission = grouping.get_submission_used
-            if submission.has_result?
-              if submission.result.released_to_students
+            if submission.has_result? && submission.result.released_to_students
                 @a_id_results[a.id] = submission.result
-              end
             end
           end 
         end
@@ -347,6 +345,9 @@ class AssignmentsController < ApplicationController
   def invite_member
     return unless request.post?
     @assignment = Assignment.find(params[:id])
+    # if instructor formed group return
+    return if @assignment.instructor_form_groups
+    
     @student = Student.find(session[:uid])
     @grouping = @student.accepted_grouping_for(@assignment.id)
     @invited = Student.find_by_user_name(params[:invite_member])

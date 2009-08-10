@@ -1,16 +1,24 @@
-  <h2 class="legend">Assignment Rules</h2>
-<div class="bloc_content">
-    <span class="label">Name :</span>
-    <%= h(@assignment.name) %><br />
-
-    <span class="label">Description :</span>
-    <%= h(@assignment.description) %><br />
-    
-    <span class="label">Message :</span>
-    <%= h(@assignment.message) %><br />
-    
-    <span class="label">Due date :</span>
+<h2 class="legend">Assignment Rules</h2>
+<div class="block_content">
+  <div class="sub_block">
+    <span class="prop_label">Name:</span>
+    <%= h(@assignment.name) %>
+  </div>
+  <br/>
+  <div class="sub_block">
+    <span class="prop_label">Description:</span>
+    <%= h(@assignment.description) %>
+  </div>
+  <br/>
+  <div class="sub_block">
+    <span class="prop_label">Message:</span>
+    <span class="box sub_block clear"><%= h(@assignment.message) %></span>
+  </div>
+  <br/>
+  <div class="sub_block">
+    <span class="prop_label">Due date:</span>
     <%= h(@assignment.due_date.strftime(LONG_DATE_TIME_FORMAT)) %>
+  </div>
 
   <h4>Files required for this assignment</h4>
   <ul>
