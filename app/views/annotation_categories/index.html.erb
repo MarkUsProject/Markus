@@ -91,7 +91,7 @@
           </p>
           <% form_tag({:action => 'csv_upload', :id => @assignment.id}, {:multipart => true}) do %>
            <p><%= file_field_tag :annotation_category_list, :size => 0 %>
-              <%= submit_tag("Submit") %></p>							
+             <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %></p>							
           <% end %>
     </div>
 

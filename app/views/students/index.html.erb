@@ -99,7 +99,7 @@ list...</span>
       <%= form_tag( { :controller => "students", :action => "upload_student_list" }, { :multipart => true }) %>
         <label for="userlist">CVS File</label>
         <input type="file" name="userlist" id="userlist"/>
-        <%= submit_tag "Update userlist", :disable_with => 'Processing...', :class => 'button' %>
+        <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
       </form>
     
     </div>

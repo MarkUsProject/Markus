@@ -111,7 +111,7 @@ h(@assignment.total_criteria_weight) %></span>)</span></div>
             <%= f.radio_button :file_type, "yml" %>yml
           </p>
       <p>
-        <%= submit_tag("Upload") %>
+        <%= f.submit t(:upload), :disable_with => t(:uploading_please_wait) %>
       </p>
        <% end %>
     </p>

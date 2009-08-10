@@ -20,6 +20,7 @@ en:
     not_active:         "Not active"
     download:           "Download"
     upload:             "Upload"
+    uploading_please_wait: "Uploading - please wait..."
     choose_assignment:  "Choose Assignment"
     properties:         "Properties"
     properties:         "Properties"
