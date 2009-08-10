@@ -11,6 +11,7 @@
 </div>
 
 <div class="wrapLeft">
+  <h1>Repository: <%= @repository_name %></h1>
   <div id="repo_browser_controls">
     <fieldset>
       <legend>Display a previous revision</legend>
@@ -29,14 +30,19 @@
     </fieldset>
   </div>
 </div>
+
 <div class="global_actions">
-  <% form_tag :action => "manual_collect_and_grade", :id => @grouping.id do %>
+  <h2>Viewing Revision: <span id="current_revision_number_display"></span></h2>
+  <span id="loading_list"><%= image_tag("spinner.gif") %> Loading list...
+  </span>
+  <% form_tag :action => "manually_collect_and_begin_grading", :id => @grouping.id do %>
   <%= hidden_field_tag "current_revision_number", "" %>
   <%= submit_tag "Collect and Grade This Revision" %>
   <% end %>
 </div>
-<span id="loading_list"><%= image_tag("spinner.gif") %> Loading list...
-</span>
+
+
+
 <div class="wrapLeft">
   <table class="files" id="files">
   </table>

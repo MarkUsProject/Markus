@@ -18,6 +18,16 @@ class Submission < ActiveRecord::Base
      end
      repo = grouping.group.repo
      revision = repo.get_revision_by_timestamp(timestamp)
+     return self.generate_new_submission(grouping, revision)    
+  end
+  
+  def self.create_by_revision_number(grouping, revision_number)
+    repo = grouping.group.repo
+    revision = repo.get_revision(revision_number)
+    return self.generate_new_submission(grouping, revision)
+  end
+  
+  def self.generate_new_submission(grouping, revision)
      new_submission = Submission.new
      new_submission.grouping = grouping
      new_submission.submission_version = 1
@@ -25,13 +35,16 @@ class Submission < ActiveRecord::Base
      new_submission.revision_timestamp = revision.timestamp
      new_submission.revision_number = revision.revision_number
 
-     # TODO: This next bit needs to be recursive to navigate folders, etc
+     # Bump any old Submissions down the line
      new_submission.transaction do
        if grouping.has_submission?
          old_submission = grouping.get_submission_used
          new_submission.submission_version = old_submission.submission_version + 1
          old_submission.submission_version_used = false
          old_submission.save
+         old_result = old_submission.result
+         old_result.released_to_students = false
+         old_result.save
        end
        new_submission.populate_with_submission_files(revision)
        new_submission.save

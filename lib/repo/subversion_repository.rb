@@ -364,7 +364,11 @@ class SubversionRepository < Repository::AbstractRepository
   # revision; Don't use it directly, use SubversionRevision's
   # 'files_at_path' instead
   def __get_files(path="/", revision_number=nil)
-    entries = @repos.fs.root(revision_number).dir_entries(path)
+    begin
+      entries = @repos.fs.root(revision_number).dir_entries(path)
+    rescue Exception => e
+      raise FileDoesNotExist.new("#{path} does not exist in the repository for revision #{revision_number}")
+    end
     entries.each do |key, value|
       entries[key] = (value.kind == 1) ? :file : :directory
     end

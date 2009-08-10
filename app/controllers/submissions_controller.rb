@@ -8,6 +8,7 @@ class SubmissionsController < ApplicationController
   def repo_browser
     @grouping = Grouping.find(params[:id])
     @assignment = @grouping.assignment
+    @repository_name = @grouping.group.repository_name
   end
   
   def find_revision
@@ -20,27 +21,16 @@ class SubmissionsController < ApplicationController
         @revision = repo.get_revision_by_timestamp(Time.parse(params[:revision_timestamp]))
       when "revision_number"
         @revision = repo.get_revision(params[:revision_number].to_i)
+      else
+        @revision = repo.get_latest_revision
       end
+      @revision_number = @revision.revision_number
       @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, '/'))
       @files = @revision.files_at_path(File.join(@assignment.repository_folder, '/'))
     rescue Exception => @find_revision_error
       render :action => 'repo_browser/find_revision_error'
       return
     end
-    @table_rows = {} 
-    @files.sort.each do |file_name, file|
-      @table_rows[file.id] = construct_repo_browser_table_row(file_name, file)
-    end
-    render :action => 'repo_browser/populate_repo_browser'
-  end
-  
-  def populate_repo_browser
-    @grouping = Grouping.find(params[:id])
-    @assignment = @grouping.assignment
-    repo = @grouping.group.repo
-    @revision = repo.get_latest_revision
-    @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, '/'))
-    @files = @revision.files_at_path(File.join(@assignment.repository_folder, '/'))
     @table_rows = {} 
     @files.sort.each do |file_name, file|
       @table_rows[file.id] = construct_repo_browser_table_row(file_name, file)
@@ -87,6 +77,16 @@ class SubmissionsController < ApplicationController
     end
     render :action => 'populate'
   end
+  
+  def manually_collect_and_begin_grading
+    grouping = Grouping.find(params[:id])
+    assignment = grouping.assignment
+    revision_number = params[:current_revision_number].to_i
+    new_submission = Submission.create_by_revision_number(grouping, revision_number)
+    new_submission = assignment.submission_rule.apply_submission_rule(new_submission)
+    result = new_submission.result
+    redirect_to :controller => 'results', :action => 'edit', :id => result.id
+  end
 
   def collect_and_begin_grading
     assignment = Assignment.find(params[:id])
@@ -97,10 +97,9 @@ class SubmissionsController < ApplicationController
       # A Result is automatically attached to this Submission, thanks to some callback
       # logic inside the Submission model
       new_submission = Submission.create_by_timestamp(grouping, time)
-      result = new_submission.result
-
       # Apply the SubmissionRule
       new_submission = assignment.submission_rule.apply_submission_rule(new_submission)
+      result = new_submission.result
       redirect_to :controller => 'results', :action => 'edit', :id => result.id
       return
     end
@@ -234,10 +233,11 @@ class SubmissionsController < ApplicationController
     flash[:submit_notice] = "Submission saved"
      redirect_to :action => "file_manager", :id => @assignment.id
   end
-
+  
   def download
     @assignment = Assignment.find(params[:id])
-    @grouping = current_user.accepted_grouping_for(@assignment.id)
+    # find_appropriate_grouping can be found in SubmissionsHelper
+    @grouping = find_appropriate_grouping(@assignment.id, params)
     revision_number = params[:revision_number]
     path = params[:path] || '/'
     repo = @grouping.group.repo
@@ -246,13 +246,12 @@ class SubmissionsController < ApplicationController
     else
       @revision = repo.get_revision(revision_number.to_i)
     end
+    
     begin 
      file = @revision.files_at_path(File.join(@assignment.repository_folder, path))[params[:file_name]]
      file_contents = repo.download_as_string(file)
     rescue Exception => e
-      render :update do |page|
-        page.call "alert", e.message
-      end
+      render :text => "Could not download #{params[:file_name]}: #{e.message}.  File may be missing."
       return
     end
     if SubmissionFile.is_binary?(file_contents)

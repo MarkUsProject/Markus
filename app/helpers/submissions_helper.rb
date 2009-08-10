@@ -1,5 +1,13 @@
 module SubmissionsHelper
   
+  def find_appropriate_grouping(assignment_id, params)
+    if current_user.admin?
+      return Grouping.find(params[:grouping_id])
+    else
+      return current_user.accepted_grouping_for(assignment_id)
+    end
+  end
+  
   # Declares the rules if a user can access a submit page, 
   # given an assignment instance.
   # Also responsible for the redirects if certain rules are violated

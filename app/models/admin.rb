@@ -6,7 +6,7 @@ class Admin < User
   after_destroy :revoke_repository_permissions
   
   SESSION_TIMEOUT = USER_ADMIN_SESSION_TIMEOUT
-  
+   
   private
   
   # Adds read and write permissions for each newly created admin user

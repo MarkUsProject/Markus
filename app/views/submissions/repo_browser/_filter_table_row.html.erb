@@ -1,5 +1,5 @@
 <td>
-  <%= h(file.name)%>
+  <%= link_to h(file.name), :action => 'download', :id => @assignment.id, :revision_number => @revision_number, :file_name => file.name, :grouping_id => @grouping.id %>
 </td>
 <td>
   <%= h(file.last_modified_date.strftime(LONG_DATE_TIME_FORMAT)) %>
