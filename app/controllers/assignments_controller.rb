@@ -81,7 +81,9 @@ class AssignmentsController < ApplicationController
           if grouping.has_submission?
             submission = grouping.get_submission_used
             if submission.has_result?
-              @a_id_results[a.id] = submission.result
+              if submission.result.released_to_students
+                @a_id_results[a.id] = submission.result
+              end
             end
           end 
         end
