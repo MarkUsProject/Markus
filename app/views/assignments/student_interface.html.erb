@@ -170,7 +170,7 @@
             <div class="sub_block"> 
 	     <h3> Group Properties </h3>
        <ul>
-        <% if !@assignment.instructor_form_groups %>
+        <% if !@assignment.instructor_form_groups && @assignment.group_max > 1 %>
               <li> The groups must be from <b><%= h(@assignment.group_min)%></b>
 	      to <b><%= h(@assignment.group_max)%></b> people.
 	      </li>
