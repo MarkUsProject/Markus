@@ -1,3 +1,4 @@
+require 'fastercsv'
 class AssignmentsController < ApplicationController
   before_filter      :authorize_only_for_admin, :except =>
   [:populate, :deletegroup, :delete_rejected, :disinvite_member, :invite_member, :creategroup, :join_group, :decline_invitation, :file_manager, :index, :download, :student_interface, :hand_in, :update_files]
@@ -270,6 +271,32 @@ class AssignmentsController < ApplicationController
      end
     
 
+  end
+  
+  def download_csv_grades_report
+    assignments = Assignment.all
+    students = Student.all
+    csv_string = FasterCSV.generate do |csv|
+      students.each do |student|
+        row = []
+        row.push(student.user_name)
+        assignments.each do |assignment|
+          grouping = student.accepted_grouping_for(assignment)
+          if grouping.nil?
+            row.push('Not Attempted')
+          else
+            submission = grouping.get_submission_used
+            if submission.nil?
+              row.push('No Submission Received')
+            else
+              row.push(submission.result.total_mark)
+            end
+          end
+        end
+        csv << row
+      end
+    end
+    send_data csv_string, :disposition => "attachment", :filename => "#{COURSE_NAME} grades report.csv"
   end
 
 
