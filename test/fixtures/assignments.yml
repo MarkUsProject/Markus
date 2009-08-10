@@ -34,6 +34,7 @@ assignment_1:
    updated_at: <%= Time.now.to_s(:db)%>
    repository_folder: CaptainNemo
 
+
 assignment_2:
    name: Captain Sparrow
    description: 
@@ -48,7 +49,7 @@ assignment_2:
    created_at: <%= Time.now.to_s(:db)%>
    updated_at: <%= Time.now.to_s(:db)%>
    repository_folder: CaptainSparrow
-
+   
 assignment_3:
    name: Captain Haddock
    description: 

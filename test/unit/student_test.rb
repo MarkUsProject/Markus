@@ -51,6 +51,7 @@ exist_student,USER2,USER2"
   end
 
   def test_has_accepted_grouping_for?
+      assignment = assignments(:assignment_1)
       user = Student.new({:user_name => "exist_student", :first_name => "Nelle", :last_name => "Varoquaux"})
       user.save
       assert !user.has_accepted_grouping_for?(1), "Should return no grouping
@@ -58,20 +59,21 @@ exist_student,USER2,USER2"
 
       group = Group.new({:group_name => "nelle"})
       group.save
-      grouping = Grouping.new({:group_id => group.id, :assignment_id => 1})
+      grouping = Grouping.new({:group_id => group.id, :assignment_id => assignment.id})
       grouping.save
       membership = StudentMembership.new({:user_id => user.id, :grouping_id => grouping.id, :membership_status => StudentMembership::STATUSES[:inviter]})
       membership.save
-      assert user.has_accepted_grouping_for?(1)
+      assert user.has_accepted_grouping_for?(assignment.id)
   end
 
   def test_accepted_grouping_for
+     assignment = assignments(:assignment_1)
      user = Student.new({:user_name => "exist_student", :first_name => "Nelle", :last_name => "Varoquaux"})
      user.save
 
      group = Group.new({:group_name => "nelle"})
      group.save
-     grouping = Grouping.new({:group_id => group.id, :assignment_id => 1})
+     grouping = Grouping.new({:group_id => group.id, :assignment_id => assignment.id})
      grouping.save
      membership = StudentMembership.new({:user_id => user.id, :grouping_id => grouping.id, :membership_status => StudentMembership::STATUSES[:inviter]})
      membership.save

@@ -142,7 +142,6 @@ class Student < User
 
     member = StudentMembership.new(:grouping_id => grouping.id, :membership_status => StudentMembership::STATUSES[:inviter], :user_id => self.id)
     member.save
-
     self.destroy_all_pending_memberships(aid)
   end
 

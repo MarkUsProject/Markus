@@ -5,3 +5,8 @@
 #
 # two:
 #   column: value
+
+no_late_submission:
+  assignment_id:  <%= Fixtures.identify(:assignment_1) %>
+  type: "NoLateSubmissionRule"
+
