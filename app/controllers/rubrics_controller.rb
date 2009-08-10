@@ -23,7 +23,7 @@ class RubricsController < ApplicationController
       render :action => 'errors'
       return
     end
-    flash[:success] = I18n.t('criterion_saved_success')
+    flash.now[:success] = I18n.t('criterion_saved_success')
   end
   
   def new
@@ -37,7 +37,7 @@ class RubricsController < ApplicationController
       @criterion.weight = RubricCriterion::DEFAULT_WEIGHT
       @criterion.set_default_levels
       if !@criterion.save
-        flash[:error] = I18n.t('criterion_created_error')
+        flash.now[:error] = I18n.t('criterion_created_error')
         render :action => 'show_help'
       end
         render :action => 'create_and_edit'
@@ -50,7 +50,7 @@ class RubricsController < ApplicationController
      #delete all marks associated with this criterion
     Mark.delete_all(["rubric_criterion_id = :c", {:c => @criterion.id}])
     @criterion.destroy
-    flash[:success] = I18n.t('criterion_deleted_success')
+    flash.now[:success] = I18n.t('criterion_deleted_success')
   end
    
   def download_rubric
@@ -139,14 +139,14 @@ class RubricsController < ApplicationController
       end
     end
 
-    flash[:upload_notice] = "Rubric added/updated."
+    flash.now[:upload_notice] = "Rubric added/updated."
 
     redirect_to :action => 'index', :id => @assignment.id, :activate_upload_tab => true
    end
    
    def parse_csv_rubric(file, assignment)
     num_update = 0
-    flash[:invalid_lines] = []  # store lines that were not processed
+    flash.now[:invalid_lines] = []  # store lines that were not processed
     # read each line of the file and update rubric
     # flag
     first_line = true;
@@ -157,7 +157,7 @@ class RubricsController < ApplicationController
        levels = row
        first_line = false
      elsif add_csv_criterion(row, levels, assignment) == nil
-       flash[:invalid_lines] << row.join(",")
+       flash.now[:invalid_lines] << row.join(",")
      else
        num_update += 1
      end
@@ -165,7 +165,7 @@ class RubricsController < ApplicationController
    end
 
    def parse_yml_rubric(file, assignment)
-     flash[:invalid_lines] = []
+     flash.now[:invalid_lines] = []
      rubric = YAML.load(file.read)
      level_names = rubric["levels"]
      criteria = rubric["criteria"]
@@ -182,7 +182,7 @@ class RubricsController < ApplicationController
          i+=1
        end
        if !criterion.valid? || !criterion.save
-         flash[:invalid_lines] << c.to_s
+         flash.now[:invalid_lines] << c.to_s
        else
          create_levels(criterion, level_names)
        end

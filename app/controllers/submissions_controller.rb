@@ -1,3 +1,5 @@
+require 'fastercsv'
+
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
   
@@ -218,22 +220,6 @@ class SubmissionsController < ApplicationController
     end
   end
   
-  def hand_in
-    @assignment = Assignment.find(params[:id])
-    student = Student.find(session[:uid])
-    grouping = student.accepted_grouping_for(@assignment.id)
-    # If this Grouping is invalid, they cannot hand in...
-    if !grouping.is_valid?
-      redirect_to :action => :file_manager, :id => assignment_id
-      return
-    end
-    
-    time = Time.now
-    Submission.create_by_timestamp(grouping,time)
-    flash[:submit_notice] = "Submission saved"
-     redirect_to :action => "file_manager", :id => @assignment.id
-  end
-  
   def download
     @assignment = Assignment.find(params[:id])
     # find_appropriate_grouping can be found in SubmissionsHelper
@@ -320,5 +306,43 @@ class SubmissionsController < ApplicationController
     redirect_to :action => 'browse', :id => params[:id]
   end
   
+  def download_csv_report
+    assignment = Assignment.find(params[:id])
+    students = Student.all
+    rubric_criteria = assignment.rubric_criteria
+    csv_string = FasterCSV.generate do |csv|
+       students.each do |student|
+         grouping = student.accepted_grouping_for(assignment.id)
+         if !grouping.nil?
+           if grouping.has_submission? 
+             final_result = []
+             submission = grouping.get_submission_used
+             final_result.push(student.user_name)
+             final_result.push(submission.result.total_mark)
+             rubric_criteria.each do |rubric_criterion|
+               mark = submission.result.marks.find_by_rubric_criterion_id(rubric_criterion.id)
+               # TODO:  Should this really be 0, if no mark has been set?
+               if mark.nil?
+                 final_result.push(0)
+               else
+                 final_result.push(mark.mark || 0)
+               end 
+               final_result.push(rubric_criterion.weight)
+             end
+             final_result.push(submission.result.get_total_extra_points)
+             final_result.push(submission.result.get_total_extra_percentage)
+             membership = grouping.student_memberships.find_by_user_id(student.id)
+             grace_period_deductions = student.grace_period_deductions.find_by_membership_id(membership.id)
+             final_result.push(grace_period_deductions || 0)
+             
+             csv << final_result
+           end
+         end
+       end
+
+    end
+     
+    send_data csv_string, :disposition => 'attachment', :file_type => 'csv', :filename => "#{assignment.name} report.csv"
+  end
 
 end

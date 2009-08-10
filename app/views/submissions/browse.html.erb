@@ -40,4 +40,6 @@ list...</span>
 <%= submit_tag "Unrelease Marks", :name => "unrelease_results" %>
 <% end %>
 </form>
+
+<%= link_to "Download CSV Report File", :action => 'download_csv_report', :id => @assignment.id %>
 </div>
