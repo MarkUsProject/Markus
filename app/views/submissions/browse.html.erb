@@ -43,9 +43,11 @@ list...</span>
 
 <p>
 <%= link_to "Download Simple CSV Report File", :action => 'download_simple_csv_report', :id => @assignment.id %>
-
 </p>
 <p>
 <%= link_to "Download Detailed CSV Report File", :action => 'download_detailed_csv_report', :id => @assignment.id %>
+</p>
+<p>
+<%= link_to "Download Subversion Export Batch File", :action => 'download_svn_export_commands', :id => @assignment.id %>
 </p>
 </div>
