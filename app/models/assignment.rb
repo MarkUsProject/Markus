@@ -239,6 +239,52 @@ class Assignment < ActiveRecord::Base
     end
   end
   
+  # Add a group and corresponding grouping as provided in
+  # the passed in Array (format: [ groupname, repo_name, member, member, etc ]
+  def add_csv_group(group)
+    return nil if group.length <= 0
+    # If a group with this name already exists, link the grouping to
+    # this group. else create the group
+    if Group.find(:first, :conditions => {:group_name => group[0]})
+      @group = Group.find(:first, :conditions => {:group_name => group[0]})
+    else
+      @group = Group.new
+      @group.group_name = group[0]  
+      @group.save
+    end
+    
+    # Group for grouping has to exist at this point
+    @grouping = Grouping.new
+    @grouping.assignment_id = self.id
+    
+    # If we are not repository admin, set the repository name as provided
+    # in the csv upload file
+    if !@group.repository_admin?
+      @group.repo_name = group[1].strip # remove whitespace
+      @group.save # save new repo_name
+    end
+
+    # Form groups
+    users_not_found = []
+    start_index_group_members = 2 # first field is the group-name, second the repo name, so start at field 3
+    for i in start_index_group_members..(group.length-1) do
+      student = Student.find_by_user_name(group[i].strip) # remove whitespace
+      if student.nil?
+        users_not_found << group[i].strip # use this in view to get some meaningful feedback
+        return nil
+      end
+      if (i > start_index_group_members)
+        @grouping.add_member(student)
+      else
+        # Add first member as inviter to group.
+        @grouping.group_id = @group.id
+        @grouping.save # grouping has to be saved, before we can add members
+        @grouping.add_member(student, StudentMembership::STATUSES[:inviter])
+      end
+    end
+    return true
+  end
+  
   def grouped_students
     result_students = []
     student_memberships.each do |student_membership|
@@ -275,7 +321,7 @@ class Assignment < ActiveRecord::Base
     return groupings - assigned_groupings
   end
   
-  # get a list of subversion client commands to be used for scripting
+  # Get a list of subversion client commands to be used for scripting
   def get_svn_commands
     svn_commands = [] # the commands to be exported
     groupings = Grouping.find_all_by_assignment_id(self.id)

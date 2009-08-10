@@ -170,9 +170,11 @@
             <div class="sub_block"> 
 	     <h3> Group Properties </h3>
        <ul>
+        <% if !@assignment.instructor_form_groups %>
               <li> The groups must be from <b><%= h(@assignment.group_min)%></b>
 	      to <b><%= h(@assignment.group_max)%></b> people.
 	      </li>
+        <% end %>
 	      <% if @assignment.student_form_groups %>
 	        <li>Students can form groups.</li>
 	      <% else%>

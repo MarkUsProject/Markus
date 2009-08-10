@@ -304,8 +304,14 @@ class GroupsController < ApplicationController
       line_nr = 1
       flash[:users_not_found] = [] # contains a list of user_name(s) not found in DB
       FasterCSV.parse(params[:group][:grouplist]) do |row|
-        if add_csv_group(row, @assignment) == nil
+        retval = @assignment.add_csv_group(row)
+        if retval == nil || retval.instance_of?(Array)
           invalid_lines << line_nr
+          if !retval.nil?
+            retval.each do |user|
+              flash[:users_not_found].push(user)
+            end
+          end
         else
           num_update += 1
         end
@@ -315,50 +321,6 @@ class GroupsController < ApplicationController
       msg += " Line(s) " + invalid_lines.join(",") + " contained errors." if invalid_lines.length > 0
       flash[:upload_notice] = msg
       redirect_to :action => "manage", :id => params[:id]
-    end
-  end
-  
-  # Helper method to add the listed members.
-  # TODO: move this to the assignment model!!!
-  def add_csv_group(group, assignment)
-  	return nil if group.length <= 0
-    # If a group with this name already exists, link the grouping to
-    # this group. else create the group
-    if Group.find(:first, :conditions => {:group_name => group[0]})
-      @group = Group.find(:first, :conditions => {:group_name => group[0]})
-    else
-      @group = Group.new
-      @group.group_name = group[0]	
-      @group.save
-    end
-    
-    # Group for grouping has to exist at this point
-    @grouping = Grouping.new
-    @grouping.assignment_id = assignment.id
-    
-    # If we are not repository admin, set the repository name as provided
-    # in the csv upload file
-    if !@group.repository_admin?
-      @group.repo_name = group[1].strip # remove whitespace
-      @group.save # save new repo_name
-    end
-
-    # Form groups
-    start_index_group_members = 2 # first field is the group-name, second the repo name, so start at field 3
-    for i in start_index_group_members..(group.length-1) do
-      student = Student.find_by_user_name(group[i].strip) # remove whitespace
-      if student.nil?
-        flash[:users_not_found] << group[i].strip # use this in view to get some meaningful feedback
-        return nil
-      end
-      if (i > start_index_group_members)
-        @grouping.add_member(student)
-      else
-        # Add first member as inviter to group.
-        @grouping.group_id = @group.id
-        @grouping.save # grouping has to be saved, before we can add members
-        @grouping.add_member(student, StudentMembership::STATUSES[:inviter])
-      end
     end
   end
   
