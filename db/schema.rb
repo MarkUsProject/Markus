@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090806193116) do
+ActiveRecord::Schema.define(:version => 20090811155500) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -180,11 +180,9 @@ ActiveRecord::Schema.define(:version => 20090806193116) do
   add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
 
   create_table "submission_files", :force => true do |t|
-    t.integer  "submission_id"
-    t.string   "filename"
-    t.datetime "submitted_at"
-    t.string   "submission_file_status"
-    t.string   "path",                   :default => "/", :null => false
+    t.integer "submission_id"
+    t.string  "filename"
+    t.string  "path",          :default => "/", :null => false
   end
 
   add_index "submission_files", ["filename"], :name => "index_submission_files_on_filename"

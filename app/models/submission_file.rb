@@ -3,6 +3,10 @@ class SubmissionFile < ActiveRecord::Base
   
   belongs_to  :submission
   has_many :annotations
+  validates_associated :submission
+  validates_presence_of :submission
+  validates_presence_of :filename
+  validates_presence_of :path
   
   def get_file_type
     #TODO:  Add more languages?
