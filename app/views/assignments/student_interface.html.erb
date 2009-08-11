@@ -12,17 +12,6 @@
    return false;
  }
 
- function submit_invite(invite_member){
-   //invite_modal.close();
-   $('invite_modal_spinner').show();
-   <%=
-    remote_function(
-     :url => {:action => 'invite_member', :id => @assignment.id},
-     :with => "'&invite_member=' + invite_member"
-    )
-   %>
- }
-
  document.observe("dom:loaded", function(){
     invite_modal = new Control.Modal($('invite_dialog'), {
       overlayOpacity: 0.75,
