@@ -6,12 +6,13 @@
 
 <div id="title_bar"><h1>Manage Students <%= link_to I18n.t(:add_new), :controller => 'students', :action => 'create' %> </h1></div>
 
-<%= form_remote_tag :url => {:action => "bulk_modify"}, :complete => "$('apply_bulk_action').setValue('#{t(:apply)}');$('apply_bulk_action').enable();$('apply_bulk_action2').setValue('#{t(:apply)}');$('apply_bulk_action2').enable();"
- %>
+
 
 <div class="colsLeftHeavy">
 
   <div class="colLeft"><div class="wrapLeft">
+   <%= form_remote_tag :url => {:action => "bulk_modify"}, :complete => "$('apply_bulk_action').setValue('#{t(:apply)}');$('apply_bulk_action').enable();$('apply_bulk_action2').setValue('#{t(:apply)}');$('apply_bulk_action2').enable();"
+ %>
     <div id="list">    
       <% if flash[:upload_notice] -%>
           <p class="notice"><%= h(flash[:upload_notice]) %></p>
@@ -90,20 +91,15 @@ list...</span>
       </select>
       <%= submit_tag t(:apply), :id => 'apply_bulk_action2', :name => 'commit', :onclick => "$(this).setValue('Processing...'); $(this).disable();" %>
       </div>
-      
+    </form>
   </div>
 </div>
 </div>
 <div class="colRight">  
 <div id="test-accordion" class="accordion">
-   <div class="accordion-toggle" id="accordion-toggle-top">Assign Grace Credits</div>
 
-    <div class="accordion-content">
-      <p>
-      </p>
-    </div>
-    </form>
-  <div class="accordion-toggle"> Upload</div>
+
+  <div class="accordion-toggle" id="accordion-toggle-top"> Upload</div>
   <div class="accordion-content">
     <h3>Upload a class list</h3>
       <div class="section">
@@ -120,9 +116,9 @@ list...</span>
     
     </div>
    </div> 
-    <div class="accordion-toggle">Download Student List</div>
+    <div class="accordion-toggle" id="accordion-toggle-bottom">Download Student List</div>
 
-    <div class="accordion-content" id="accordion-toggle-bottom">
+    <div class="accordion-content">
       <p><%= link_to "Download Student list in CSV format", :controller => 'students', :action => 'download_student_list', :format => "csv" %></p>
 <p><%= link_to "XML", :action => 'download_student_list', :format =>
 'xml' %></p>
