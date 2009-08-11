@@ -43,6 +43,11 @@ class SubmissionsController < ApplicationController
   def file_manager
     @assignment = Assignment.find(params[:id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
+    if @grouping.nil?
+      redirect_to :controller => 'assignments', :action => 'student_interface', :id => params[:id]
+      return
+    end
+    
     user_group = @grouping.group
     path = params[:path] || '/'
     repo = user_group.repo

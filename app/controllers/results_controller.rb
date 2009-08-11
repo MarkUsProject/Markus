@@ -193,6 +193,12 @@ class ResultsController < ApplicationController
   def view_marks
     @assignment = Assignment.find(params[:id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
+
+    if @grouping.nil?
+      redirect_to :controller => 'assignments', :action => 'student_interface', :id => params[:id]
+      return
+    end
+    
     if !@grouping.has_submission?
       render 'results/student/no_submission'
       return
