@@ -352,26 +352,28 @@ class AssignmentsController < ApplicationController
     @grouping = @student.accepted_grouping_for(@assignment.id)
     @invited = Student.find_by_user_name(params[:invite_member])
 
+    begin
+      if @invited.nil?
+        raise "This student doesn't exist"
+      end
+      if @invited == @student
+        raise "You cannot invite yourself to your own group"
+      end
+      if @invited.hidden
+        raise "Could not invite this student - this student's account has been disabled."
+      end  
+      if @grouping.pending?(@invited)
+        raise "This student is already a pending member of this group!"
+      end
 
-    if @invited.nil?
-      flash[:fail_notice] = "This student doesn't exist."
-      return
-    end
-    if @invited == @student
-      flash[:fail_notice] = "You cannot invite yourself to your own group"
-      return
-    end
-
-    if @invited.hidden
-      flash[:fail_notice] = "Could not invite this student - this student's account has been disabled."
-      return
-    end
-    if !@grouping.pending?(@invited)
       @invited.invite(@grouping.id)
-      flash[:edit_notice] = "Student invited."
-    else
-     flash[:fail_notice] = "This student is already a pending member of this group!"
+      flash[:success] = "Student #{@invited.user_name} invited."
+
+    rescue Exception => e
+      flash[:fail_notice] = e.message
     end
+
+    redirect_to :action => 'student_interface', :id => @assignment.id
   end
 
   def disinvite_member

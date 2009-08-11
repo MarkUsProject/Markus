@@ -13,7 +13,8 @@
  }
 
  function submit_invite(invite_member){
-   invite_modal.close();
+   //invite_modal.close();
+   $('invite_modal_spinner').show();
    <%=
     remote_function(
      :url => {:action => 'invite_member', :id => @assignment.id},
@@ -36,6 +37,11 @@
 <% if flash[:fail_notice] %>
   <div class="notice">
     <%=flash[:fail_notice]%>
+  </div>
+<% end %>
+<% if flash[:success] %>
+  <div class="success">
+    <%=flash[:success]%>
   </div>
 <% end %>
 
@@ -188,17 +194,21 @@
 
 <% if !@grouping.nil? && @grouping.inviter == @current_user && !@assignment.instructor_form_groups %>
   <div id="invite_dialog">
+    <% form_tag({:action => 'invite_member', :id => @assignment.id},{:onsubmit => "$('invite_modal_spinner').show();"}) do %>   
     <h2>Invite</h2>
     <p>
       <fieldset>
-         <label> <%= I18n.t(:name)%> </label>
+         <label> <%= I18n.t(:short_identifier)%> </label>
          <%= text_field_tag 'invite_member'%>
       </fieldset>
     </p>
     <p>
-    <%= button_to_function I18n.t(:submit),
-    "submit_invite(escape($F('invite_member')))" %>
-    <%= button_to_function "Cancel", 'invite_modal.close()'%>
+    <span id="invite_modal_spinner" style="display:none;">
+      <%= image_tag("spinner.gif")%> Please wait...
+    </span>
+    <%= submit_tag I18n.t(:submit) %>
+    <input type="reset" value="Cancel" onClick="invite_modal.close();" />
+    <% end %>
     </p>
   </div>
 <% end %>
