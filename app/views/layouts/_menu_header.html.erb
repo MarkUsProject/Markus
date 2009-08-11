@@ -1,6 +1,6 @@
 
 <div id="menu_header">  
-<h1 id="title_header">Assignment <%=h(sanitize(@assignment.name)) %></h1>
+<h1 id="title_header">Assignment <%=h(sanitize(@assignment.short_identifer)) %></h1>
 <% if @current_user.admin? -%>
   <div id="admin_task">
     <ul>

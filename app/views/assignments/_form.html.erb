@@ -8,11 +8,11 @@
 <%= f.error_messages%>
 <fieldset>
   <legend>Assignment Properties</legend>
-    <%= f.label :name, "Short Identifier" %>
+    <%= f.label :short_identifier, t(:short_identifier) %>
     <% if @assignment.id.nil? %>
-      <%= f.text_field :name, :onchange =>  "$('assignment_repository_folder').setValue($(this).getValue())"%><br />
+      <%= f.text_field :short_identifier, :onchange =>  "$('assignment_repository_folder').setValue($(this).getValue())"%><br />
     <% else %>
-      <%= f.text_field :name %><br />
+      <%= f.text_field :short_identifier %><br />
     <% end %>    
         
     <%= f.label :description, "Title" %>
@@ -53,7 +53,7 @@
   Persist Groups / Properties from 
   <select id="persist_groups_assignment" name="persist_groups_assignment" onChange="<%= remote_function(:url => {:action => "update_group_properties_on_persist"}, :with => "'assignment_id=' + $F('persist_groups_assignment')")%>" disabled>
     <% @assignments.each do |assignment| %>
-    <option value="<%= h(assignment.id) %>"><%= h(assignment.name)%></option>
+    <option value="<%= h(assignment.id) %>"><%= h(assignment.short_identifier)%></option>
     <% end %>
   </select>
  </p>

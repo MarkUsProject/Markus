@@ -4,7 +4,7 @@
 #
 # one:
 #    id
-#    name
+#    short_identifier
 #    description
 #    message
 #    due_date
@@ -20,7 +20,7 @@
 ################################################################################
 
 assignment_1:
-   name: Captain Nemo
+   short_identifier: Captain Nemo
    description: "Code!!" 
    message: 
    due_date: <%= 30.days.from_now.to_s(:db)%>
@@ -36,7 +36,7 @@ assignment_1:
 
 
 assignment_2:
-   name: Captain Sparrow
+   short_identifier: Captain Sparrow
    description: 
    message: 
    due_date: <%= 43.days.from_now.to_s(:db)%>
@@ -51,7 +51,7 @@ assignment_2:
    repository_folder: CaptainSparrow
    
 assignment_3:
-   name: Captain Haddock
+   short_identifier: Captain Haddock
    description: 
    message: 
    due_date: <%= 43.days.from_now.to_s(:db)%>

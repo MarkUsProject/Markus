@@ -4,7 +4,7 @@
 
 
 <div id="title_bar">
-  <h1>Workspace: <%= h(sanitize(@assignment.name)) %></h1>
+  <h1>Workspace: <%= h(sanitize(@assignment.short_identifier)) %></h1>
   <% if Time.now >= @assignment.submission_rule.calculate_collection_time %>
   <h2>Grading can begin</h2>
   <% else %>

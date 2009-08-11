@@ -383,7 +383,7 @@ id=\"all_groupings_count\"></span>)", "filter('none')", :id =>
       <select id="clone_groups_assignment_id" name="clone_groups_assignment_id">
         <% @all_assignments.each do |an_assignment| %>
           <% if an_assignment != @assignment %>
-          <option value="<%=h(an_assignment.id)%>"><%=h(an_assignment.name)%></option>
+          <option value="<%=h(an_assignment.id)%>"><%=h(an_assignment.short_identifier)%></option>
           <% end %>
         <% end %>
       </select>

@@ -96,42 +96,7 @@ class Submission < ActiveRecord::Base
   end
   
   
-  # Query functions -------------------------------------------------------
-  
-  # Returns an array of distinct submitted file names, including required 
-  # files that has not yet been submitted (with 'unsubmitted' status).
-  def submitted_filenames
-    reqfiles = assignment.assignment_files.map { |af| af.filename } || []
-    result = []
-    fnames = submission_files.maximum(:submitted_at, :group => :filename)
-    fnames.each do |filename, submitted_at|
-      result << submission_files.find_by_filename_and_submitted_at(filename, submitted_at)
-      reqfiles.delete(filename) # required file has already been submitted
-    end
-    
-    # convert required files to a SubmissionFile instance 
-    reqfiles = reqfiles.map do |af| 
-      SubmissionFile.new(:filename => af, :submission_file_status => "unsubmitted")
-    end
-    return reqfiles.concat(result)
-  end
-  
-  # Returns the last submission time with the given filename.  
-  # Returns epoch time if no such file exists.
-  def last_submission_time_by_filename(filename)
-    conditions = ["filename = ?", filename]
-    # need to convert to local time
-    ts = submission_files.maximum(:submitted_at, :conditions => conditions)
-    return ts ? ts.getlocal : ts  # return nil if no such file exists
-  end
-  
-  # Returns the submission directory for this user
-  def submit_dir(sdir=SUBMISSIONS_PATH)
-    path = File.join(sdir, assignment.name, owner.user_name)
-    FileUtils.mkdir_p(path)
-    return path
-  end
-  
+  # Query functions -------------------------------------------------------  
   # Figure out which assignment this submission is for
   def assignment
     return self.grouping.assignment

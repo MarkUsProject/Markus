@@ -39,7 +39,7 @@
 <%= render :partial => "boot.js" %>
 
 <div id="title_bar">
-  <h1>Annotations: <%=@assignment.name%>
+  <h1>Annotations: <%=@assignment.short_identifier%>
         <%= link_to_function "Add Annotation Category", %| if($('add_annotation_category_prompt') != null) {
           $('add_annotation_category_prompt').select();
           $('add_annotation_category_prompt').focus();

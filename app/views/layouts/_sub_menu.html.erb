@@ -17,7 +17,7 @@
       %>
      <span id="choose_an_assignment"><%= I18n.t(:create_new)%></span>
      <% else%>
-       <span id="choose_an_assignment"><%=h(sanitize(@assignment.name))%></span>
+       <span id="choose_an_assignment"><%=h(sanitize(@assignment.short_identifier))%></span>
      <% end %>
         <ul class="level2 dropdown">
            <%= render :partial => 'layouts/assignments_dropdown_menu'%>
@@ -98,7 +98,7 @@
        <span id="choose_an_assignment"><%= I18n.t(:choose_assignment) %></span>
      <% else %>
        <span id="choose_an_assignment"><%=
-h(sanitize(@assignment.name))%></span>
+h(sanitize(@assignment.short_identifier))%></span>
      <% end %>
         <ul class="level2 dropdown">
            <%= render :partial => 'layouts/assignments_dropdown_menu'%>
@@ -121,7 +121,7 @@ h(sanitize(@assignment.name))%></span>
        <span id="choose_an_assignment"><%= I18n.t(:choose_assignment) %></span>
      <% else %>
        <span id="choose_an_assignment"><%=
-h(sanitize(@assignment.name))%></span>
+h(sanitize(@assignment.short_identifier))%></span>
      <% end %>
         <ul class="level2 dropdown">
            <%= render :partial => 'layouts/assignments_dropdown_menu'%>

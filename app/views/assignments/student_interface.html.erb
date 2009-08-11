@@ -31,7 +31,7 @@
  } )
 </script>
 
-<div id="title_bar"><h1> Assignment <%= h(sanitize(@assignment.name)) %></h1>
+<div id="title_bar"><h1> Assignment <%= h(sanitize(@assignment.short_identifier)) %></h1>
 </div>
 <% if flash[:fail_notice] %>
   <div class="notice">

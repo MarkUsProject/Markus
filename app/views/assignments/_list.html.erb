@@ -13,7 +13,7 @@
             <td>
               <%=
               	# assignment name
-                link_to h(sanitize(assignment.name)), 
+                link_to h(sanitize(assignment.short_identifer)), 
                 :controller => controller, 
                 :action => action, 
                 :id => assignment.id

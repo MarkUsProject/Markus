@@ -2,7 +2,7 @@ en:
     markus:             "MarkUs"
     login:              "Login"
     password:           "Password"
-    name:               "Name"
+    short_identifier:   "Short Identifier"
     members:            "Members"
     graders:            "Graders"
     add_new:            "Add new"

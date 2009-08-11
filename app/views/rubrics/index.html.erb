@@ -39,7 +39,7 @@
 </script>
 
 <div id="title_bar">
-  <h1>Rubric Management:  <%= h(sanitize(@assignment.name)) %>
+  <h1>Rubric Management:  <%= h(sanitize(@assignment.short_identifier)) %>
     <%= link_to_remote 'Add Criterion', :url => { :action => 'new', :id => @assignment.id }, :method => 'get' %>
     <%= button_to_function "Upload", "upload_annotations();"%>
     <%= button_to_function "Download", "download_annotations();"%>

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090811155500) do
+ActiveRecord::Schema.define(:version => 20090811194915) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -51,7 +51,7 @@ ActiveRecord::Schema.define(:version => 20090811155500) do
   add_index "assignment_files", ["assignment_id"], :name => "index_assignment_files_on_assignment_id"
 
   create_table "assignments", :force => true do |t|
-    t.string   "name",                                    :null => false
+    t.string   "short_identifier",                        :null => false
     t.string   "description"
     t.text     "message"
     t.datetime "due_date"
@@ -67,7 +67,7 @@ ActiveRecord::Schema.define(:version => 20090811155500) do
     t.float    "results_average"
   end
 
-  add_index "assignments", ["name"], :name => "index_assignments_on_name", :unique => true
+  add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true
 
   create_table "extra_marks", :force => true do |t|
     t.integer  "result_id"

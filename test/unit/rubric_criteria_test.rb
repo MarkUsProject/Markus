@@ -35,8 +35,8 @@ class RubricCriteriaTest < ActiveSupport::TestCase
     taken_name = create_no_attr(nil)
     taken_name.rubric_criterion_name = "Algorithm Design"
     
-    assignment = Assignment.find_by_name("Captain Sparrow")
-    assert_not_nil assignment, "Expected to have an Assignment with the name Captain Sparrow in the fixtures"
+    assignment = assignments(:assignment_2)
+    assert_not_nil assignment, "Expected to find assignment_2 fixture in DB"
     
     taken_name.assignment = assignment
     assert taken_name.valid?  
