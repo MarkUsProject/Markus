@@ -60,7 +60,7 @@ namespace :markus do
     :repository_folder => "A3", :due_date => 3.week.from_now, :instructor_form_groups => true)
     req_file1 = AssignmentFile.new
     req_file1.filename = "gcd.sh"
-    req_file1.assignment = a2
+    req_file1.assignment = a3
     a3.submission_rule = rule
     a3.save
     # create groupings/groups
