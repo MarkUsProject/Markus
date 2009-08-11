@@ -33,6 +33,7 @@ en:
     disinvite:          "Disinvite"
     help:               "Help"
     confirm_bulk_action: "Are you sure you want to perform this bulk action?"
+    give_grace_credits:  "Give Grace Credits:"
     no_result:          "No marks are available for this assignment."
 
     groups:

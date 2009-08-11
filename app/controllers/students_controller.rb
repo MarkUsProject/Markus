@@ -40,6 +40,10 @@ class StudentsController < ApplicationController
         Student.unhide_students(student_ids)
         @students = construct_table_rows(Student.find(student_ids))
         return
+      when "give_grace_credits"
+        Student.give_grace_credits(student_ids, params[:number_of_grace_credits])
+        @students = construct_table_rows(Student.find(student_ids))
+        return
     end
   end
 

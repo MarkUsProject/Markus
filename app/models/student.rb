@@ -206,5 +206,13 @@ class Student < User
     end
     Student.update(update_list.keys, update_list.values)
   end
+  
+  def self.give_grace_credits(student_ids, number_of_grace_credits)
+    student_credit_hash = {}
+    student_ids.each do |student_id|
+      student_credit_hash[student_id] = {'grace_credits' => number_of_grace_credits}
+    end
+    Student.update(student_credit_hash.keys, student_credit_hash.values)
+  end
 
 end

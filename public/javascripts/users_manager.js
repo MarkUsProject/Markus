@@ -26,3 +26,14 @@ function modify_students(users_json) {
   users_table.resort_rows().render();
 }
 
+function detect_grace_credit_change() {
+  if($F('bulk_action') == 'give_grace_credits') {
+    $('grace_credit_input').show();
+    $('number_of_grace_credits').select();
+    $('number_of_grace_credits').focus();
+    
+  } else {
+    $('grace_credit_input').hide();
+  }
+}
+
