@@ -24,39 +24,17 @@
         </ul>
    </li>
 
-  <% if
-    !@assignment.nil?%>
+  <% if !@assignment.nil?%>
     <% if controller.controller_name != 'assignments' or
     (controller.controller_name == 'assignments' and 
      controller.action_name != 'new')	 %>
           <li <% if controller.controller_name == 'assignments' %> 
          id="sub_menu_active"
          <%end%>>
-	 <% if @current_user.student? %>
-            <%= link_to I18n.t(:properties), :controller => 'assignments', :action =>
-	 'student_interface', :id => @assignment.id %>
-
-	 <% elsif @current_user.ta? %>  <%= link_to I18n.t(:properties), :controller => 'assignments', :action =>
-	 'edit', :id => @assignment.id %>
-	 <% else %>
           <%= link_to I18n.t(:properties), :controller => 'assignments', :action =>
 	 'edit', :id => @assignment.id %>
-
-	 <% end %>
        </li>
-       <li <% if controller.controller_name == 'submissions' or
-       controller.controller_name == 'results' %> 
-          id="sub_menu_active"
-        <%end%>>
-	  <%= link_to I18n.t(:submissions), :controller => 'submissions', :action => 'browse', :id =>
-@assignment.id %>
-      </li>
-      <li <%if controller.controller_name == 'groups'%> 
-         id="sub_menu_active"
-      <%end%>>
-         <%= link_to I18n.t(:groups_and_graders), :controller => 'groups', :action => 'manage', :id => @assignment.id%>
-      </li>
-      <li <% if controller.controller_name == 'rubrics'%> 
+       <li <% if controller.controller_name == 'rubrics'%> 
         id="sub_menu_active"
       <% end %>>
          <%= link_to I18n.t(:rubrics), :controller => 'rubrics', :action => 'index', :id => @assignment.id%>
@@ -66,6 +44,21 @@
       <% end %>>
          <%= link_to I18n.t('annotations.annotations'), :controller => 'annotation_categories', :action => 'index', :id => @assignment.id%>
       </li>
+      <li <%if controller.controller_name == 'groups'%> 
+         id="sub_menu_active"
+      <%end%>>
+         <%= link_to I18n.t(:groups_and_graders), :controller => 'groups', :action => 'manage', :id => @assignment.id%>
+      </li>
+       <li <% if controller.controller_name == 'submissions' or
+       controller.controller_name == 'results' %> 
+          id="sub_menu_active"
+        <%end%>>
+	  <%= link_to I18n.t(:submissions), :controller => 'submissions', :action => 'browse', :id =>
+@assignment.id %>
+      </li>
+
+      
+      
 
   <% end %>
 <% end %>
