@@ -3,6 +3,14 @@ require 'test_helper'
 class TATest < ActiveSupport::TestCase
   fixtures :users, :memberships, :assignments
   
+  def setup
+    setup_group_fixture_repos
+  end
+  
+  def teardown
+    destroy_repos
+  end
+  
   # Update tests ---------------------------------------------------------
   
   # These tests are for the CSV/YML upload functions.  They're testing
@@ -31,16 +39,16 @@ newuser2,USER2,USER2"
   end
   
   def test_ta_csv_upload_with_duplicate
-    new_user = Ta.new({:user_name => "exist_student", :first_name => "Nelle", :last_name => "Varoquaux"})
+    new_user = Ta.new({:user_name => "exist_user", :first_name => "Nelle", :last_name => "Varoquaux"})
     
-    assert new_user.save, "Could not create a new student"
+    assert new_user.save, "Could not create a new User"
    
     csv_file_data = "newuser1,USER1,USER1
-exist_student,USER2,USER2"    
+exist_user,USER2,USER2"    
 
     User.upload_user_list(Ta, csv_file_data)
     
-    user = Ta.find_by_user_name("exist_student")
+    user = Ta.find_by_user_name("exist_user")
     assert_equal "USER2", user.last_name, "Last name was not properly overwritten by CSV file"
     assert_equal "USER2", user.first_name, "First name was not properly overwritten by CSV file"
     

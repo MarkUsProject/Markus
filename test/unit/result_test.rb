@@ -29,8 +29,8 @@ class ResultTest < ActiveSupport::TestCase
   def test_unreleased
     result = results(:result_4)
     result.unrelease_results
-    assert_equal('partial', result.marking_state, "makring state should
-    be partial")
+    assert_equal(Result::MARKING_STATES[:complete], result.marking_state, "marking state should be complete")
+    assert_equal(false, result.released_to_students, "released to students should be false")
   end
 
   def test_mark_as_partial

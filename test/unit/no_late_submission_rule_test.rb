@@ -22,7 +22,7 @@ class NoLateSubmissionRuleTest < ActiveSupport::TestCase
     submission = submissions(:submission_1)
     submission.revision_timestamp = Time.now
     rule = NoLateSubmissionRule.new
-    assignment.submission_rule = rule
+    assignment.replace_submission_rule(rule)
     result_extra_marks_num = submission.result.extra_marks.size
     submission = assignment.submission_rule.apply_submission_rule(submission)
     assert_equal result_extra_marks_num, submission.result.extra_marks.size

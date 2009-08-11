@@ -6,11 +6,12 @@ class PenaltyPeriodSubmissionRuleTest < ActiveSupport::TestCase
   
   context "Assignment has a single grace period of 24 hours after due date" do
     setup do
+      setup_group_fixture_repos
       @group = groups(:group_1)
       @grouping = groupings(:grouping_1)
       @assignment = @grouping.assignment
       penalty_period_submission_rule = PenaltyPeriodSubmissionRule.new
-      @assignment.submission_rule = penalty_period_submission_rule
+      @assignment.replace_submission_rule(penalty_period_submission_rule)
       penalty_period_submission_rule.save
       
       # On July 1 at 1PM, the instructor sets up the course...
@@ -23,8 +24,6 @@ class PenaltyPeriodSubmissionRuleTest < ActiveSupport::TestCase
         add_period_helper(@assignment.submission_rule, 24, 10)
         # Collect date is now after July 25 @ 5PM
         @assignment.save
-
-        @group.build_repository
       end
       # On July 15, the Student logs in, triggering repository folder
       # creation
@@ -34,7 +33,7 @@ class PenaltyPeriodSubmissionRuleTest < ActiveSupport::TestCase
     end
     
     teardown do
-      Repository.get_class(REPOSITORY_TYPE).purge_all
+      destroy_repos
     end
   
     should "add a 10% penalty to the submission result" do

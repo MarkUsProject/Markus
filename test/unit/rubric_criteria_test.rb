@@ -53,16 +53,7 @@ class RubricCriteriaTest < ActiveSupport::TestCase
     no_weight = create_no_attr(:weight)
     assert !no_weight.valid?
   end
-
-  #Test that Criteria without level_x_names are NOT OK
-  def test_no_level_names
-    for i in 0..4 do
-      no_level_name = create_no_attr("level_#{i}_name".to_sym)
-      assert !no_level_name.valid?, "Was able to not provide level_#{i}_name"
-    end
-  end
-
-  
+ 
   #Test that Criteria assigned to non-existant Assignment
   #is NOT OK
   def test_assignment_id_dne

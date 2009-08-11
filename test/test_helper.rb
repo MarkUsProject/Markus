@@ -35,4 +35,16 @@ class ActiveSupport::TestCase
   fixtures :all
 
   # Add more helper methods to be used by all tests here...
+  
+  def setup_group_fixture_repos
+    Group.all.each do |group|
+      group.set_repo_name
+      group.build_repository
+    end
+  end
+  
+  def destroy_repos
+    Repository.get_class(REPOSITORY_TYPE).purge_all
+  end
+  
 end

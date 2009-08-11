@@ -12,16 +12,16 @@ group_1:
 
 group_2:
    group_name: Ukishima Maru
-
+   
 group_3:
    group_name: Lancastria
-
+   
 group_4:
    group_name: Blanche Nef
-
+   
 group_5:
    group_name: La Meduse
-
+   
 group_6:
    group_name: Empress of Ireland
 
@@ -30,6 +30,7 @@ group1:
 
 group2:
    group_name: student2
-
+   
 group3:
    group_name: student3  
+
