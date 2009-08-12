@@ -282,13 +282,8 @@ var FilterTable = Class.create({
     });
     this.render_counts();
     this.select_all(false);
-    if(this.can_select_all) {
-      $(this.select_all_top_id).setValue(false);
-      if(this.footer) {
-        $(this.select_all_bottom_id).setValue(false);
-      }
-    }
-    
+    this.select_all_toggles(false);
+   
   },
   render_counts: function() {
     if($(this.total_count_id) != null) {
@@ -426,6 +421,14 @@ var FilterTable = Class.create({
     $$('.' + this.selectable_class).each(function(node) {
       $(node).setValue(is_selected);
     });
+  },
+  select_all_toggles: function(is_selected) {
+   if(this.can_select_all) {
+      $(this.select_all_top_id).setValue(false);
+      if(this.footer) {
+        $(this.select_all_bottom_id).setValue(false);
+      }
+    }
   },
   focus_row: function(row_id) {
     var row = $(this.select_id_prefix + row_id);
