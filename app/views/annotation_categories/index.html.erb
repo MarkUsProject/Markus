@@ -91,7 +91,11 @@
           </p>
           <% form_tag({:action => 'csv_upload', :id => @assignment.id}, {:multipart => true}) do %>
            <p><%= file_field_tag :annotation_category_list, :size => 0 %>
-             <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %></p>							
+           </p>							
+           <p>
+           <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
+           <input type="reset" value="Cancel" onClick="modalUpload.close();">
+           </p>
           <% end %>
     </div>
 
@@ -101,6 +105,7 @@
         <li><%= link_to "Download in CSV Format", {:action => 'download', :id => @assignment.id, :format => 'csv'}%></li>
         <li><%= link_to "Download in YML Format", {:action => 'download', :id => @assignment.id, :format => 'yml'}%></li>
       </ul>
+      <input type="reset" value="Cancel" onClick="modalDownload.close();">
     </div>
 
   
