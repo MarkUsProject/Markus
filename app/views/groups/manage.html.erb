@@ -318,7 +318,7 @@ id=\"all_groupings_count\"></span>)", "filter('none')", :id =>
                              :url => { :controller=>"groups",
                                        :action => 'csv_upload',
                                        :id => @assignment.id } do |f| -%>
-           <p><%= f.file_field :grouplist, :size => 0 %>
+           <p><%= f.file_field :grouplist, :size => 2 %> <br />
               <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %></p>							
         <% end %>
         </div> <!-- Upload -->
@@ -331,7 +331,7 @@ id=\"all_groupings_count\"></span>)", "filter('none')", :id =>
             <code>group_name,grader_user_name,grader_user_name,... </code><br />
           </p>
           <% form_tag({:controller=>"groups", :action => 'csv_upload_grader_mapping',:id => @assignment.id}, {:multipart => true}) do -%>
-           <p><%= file_field_tag :grader_mapping, :size => 0 %>
+           <p><%= file_field_tag :grader_mapping, :size => 2 %> <br />
               <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %></p>							
         <% end %>
           

@@ -24,7 +24,8 @@ button{
   font-weight: bold;
   color: #464646;
   padding: 3px 5px;
-  margin: 5px;  
+  margin: 5px; 
+  font-size: 1em; 
 }
 
 a {
@@ -39,6 +40,7 @@ a {
 
 h2 a, h3 a, h4 a {
    padding-left: 5px;
+   font-size: 12px;
 }
 a:hover {
    color: #ee6415;
@@ -499,6 +501,7 @@ tr.student_hidden{
   padding: 3px 30px;
   background: #BDFCC9 url(../images/icons/accept.png) no-repeat;
   background-position: 7px;
+  margin: 5px;
 }
 
 .error, .errorExplanation{
@@ -508,6 +511,7 @@ tr.student_hidden{
   margin: 1em 4em 1em 4em;
   background: #FFFFE0 url(../images/icons/exclamation.png) no-repeat;
   background-position: 7px;
+  margin: 5px;
 }
 
 .error h2, .errorExplanation h2{
@@ -688,7 +692,9 @@ tr.student_hidden{
    padding: 5px;
 }
 
-
+.accordion_label{
+  min-width: 30%;
+}
 
 /* Login */
 
@@ -1077,9 +1083,19 @@ h3.title_levels{
   padding: 0 1em;
 }
 
+#annotation_list_holder h2{
+  margin: 0;
+}
+
+
 ul#annotation_list{
   list-style: none; 
 }
+
+ul#annotation_list li{
+  border-bottom: 1px solid #ccc;
+}
+
 
 #annotation_list textarea{
    width: 90%;

@@ -109,8 +109,8 @@ list...</span>
       <p>If a student with the same student number exists, then the student's information is updated.</p>
       
       <%= form_tag( { :controller => "students", :action => "upload_student_list" }, { :multipart => true }) %>
-        <label for="userlist">CVS File</label>
-        <input type="file" name="userlist" id="userlist"/>
+        <label for="userlist" class="accordion_label">CVS File</label>
+        <input type="file" name="userlist" id="userlist" size="2"/>
         <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
       </form>
     
