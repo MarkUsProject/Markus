@@ -980,6 +980,8 @@ a img{
 }
 #annotation_category_pane ul{
   padding: 1em;
+  margin: 0;
+  list-style: none;
 }
 
 #rubric_levels_pane_list, #annotation_category_pane_list{
@@ -1001,7 +1003,7 @@ a img{
    width: 90%;
 }
 
-#rubric_list_title_bar, #annotation_categories_list_bar{
+#rubric_list_title_bar, .annotation_categories_list_bar{
   margin-bottom: 5px;
   padding-bottom: 5px;
   min-height: 15px;
@@ -1053,7 +1055,7 @@ a img{
 
 #annotation_category_pane_list li{
    width: 100%;
-   border-bottom: 1px solid #ccc;
+   border-top: 1px solid #ccc;
    min-height: 25px; 
    padding: 2px 0px;
 }
