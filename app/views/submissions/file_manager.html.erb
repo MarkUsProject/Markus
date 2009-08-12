@@ -81,15 +81,17 @@
 <% end %>
 
 <%= form_tag( {:action => "update_files", :id => @assignment.id}, {:multipart => true, :id => 'submit_form'} ) unless (!@grouping.is_valid? || @grouping.group.repository_external_commits_only?) %>
-<% if (@grouping.is_valid? && !@grouping.group.repository_external_commits_only?) %>
-<div class="global_action_left" >
-  <%=button_to_function "Add A New File", "injectFileInput();"%>
-</div>
-<% end %>
+
 
 <div class="global_action">
 <span id="loading_list"><%= image_tag("spinner.gif") %> Loading list...
 </span>
+
+<% if (@grouping.is_valid? && !@grouping.group.repository_external_commits_only?) %>
+  <%=button_to_function "Add A New File", "injectFileInput();"%>
+<% end %>
+
+
 <% if @grouping.is_valid? %>
 <%= submit_tag( I18n.t(:submit), :disabled => !@grouping.is_valid? ) unless @grouping.group.repository_external_commits_only? %>
 <%= link_to( I18n.t(:cancel), {:controller => 'submissions', :action =>
