@@ -48,7 +48,7 @@
   <%= check_box_tag "is_group_assignment", true, false, :id => "is_group_assignment", :onchange => "toggle_group_assignment($F('is_group_assignment'))"%>
     Students can work in groups
   </p>
- <p id="persist_groups_assignment_style" <%='style="display:none;"' unless @assignments.size > 0 %> class="disable">
+ <p id="persist_groups_assignment_style" <%='style="display:none;"' unless @assignments.size > 0 && @assignment.id.nil? %> class="disable">
    <%= check_box_tag "persist_groups", true, false, :id => "persist_groups", :onclick => "toggle_persist_groups($(this).getValue());", :disabled => true%>
   Persist Groups / Properties from 
   <select id="persist_groups_assignment" name="persist_groups_assignment" onChange="<%= remote_function(:url => {:action => "update_group_properties_on_persist"}, :with => "'assignment_id=' + $F('persist_groups_assignment')")%>" disabled>
