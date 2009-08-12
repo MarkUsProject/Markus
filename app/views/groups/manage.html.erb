@@ -232,7 +232,7 @@ document.observe("dom:loaded", function(){
   <div class="colLeft">
     <div class="wrapLeft">
       <div id="toggle_actions">
-       <%= link_to_function "Show All (<span
+       <%= link_to_function I18n.t(:all) + " (<span
 id=\"all_groupings_count\"></span>)", "filter('none')", :id =>
 "filter_link_none", :class => "filter_selected" %>
 	|

@@ -52,12 +52,12 @@
       
 
       <div id="toggle_actions">
-       <%= link_to_function I18n.t(:all) + " (<span id=\"all_students_count\"></span>)", "filter('none');"%>
+       <%= link_to_function I18n.t(:all) + " (<span id=\"all_students_count\"></span>)", "filter('none');", :id => "filter_link_none", :class => "filter_selected"%>
        | 
-       <%= link_to_function I18n.t(:active) + " (<span id=\"active_students_count\"></span>)", "filter('active');"%>
+       <%= link_to_function I18n.t(:active) + " (<span id=\"active_students_count\"></span>)", "filter('active');", :id => "filter_link_active"%>
 
        |
-       <%= link_to_function I18n.t(:not_active) + " (<span id=\"inactive_students_count\"></span>)", "filter('inactive');"%>
+       <%= link_to_function I18n.t(:not_active) + " (<span id=\"inactive_students_count\"></span>)", "filter('inactive');", :id => "filter_link_inactive"%>
        </div>
        <div class="global_action">
        <span id="loading_list"><%= image_tag("spinner.gif")%> Loading

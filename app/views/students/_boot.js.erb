@@ -27,6 +27,20 @@ document.observe("dom:loaded", function() {
         return row.hidden;
       }
     },
+    after_filter_only_by: function(current_filters, new_filter){
+	$('filter_link_none').removeClassName('filter_selected');
+	current_filters.each(function(filter_key) {
+	    $('filter_link_' + filter_key).removeClassName('filter_selected');
+	});
+	$('filter_link_' + new_filter).addClassName('filter_selected');
+    },
+    after_clear_filters: function(current_filters) {
+	current_filters.each(function(filter_key) {
+	    $('filter_link_' + filter_key).removeClassName('filter_selected');
+	});
+	$('filter_link_none').addClassName('filter_selected');
+    },
+
     filter_count_ids: {
       active: 'active_students_count',
       inactive: 'inactive_students_count'
