@@ -111,9 +111,21 @@ h4{
   background: none;
   color: #003399;
   border: none;
+  font-size: 0.45em;
+  font-weight: bold;
+  margin: 0;
+  padding: 0 4px;
+  font-family: Lucida;
+}
+
+#title_bar span.menu_bar{
+  background: none;
+  color: #464646;
+  border: none;
   font-size: 0.5em;
   font-weight: bold;
 }
+
 
 .sub_title a {
    font-size: 0.7em;
@@ -272,7 +284,7 @@ span#choose_an_assignment{
   padding: 20px 0px 0px 0px;
 }
 
-.global_action_bototm{
+.global_action_bottom{
   float: left;
   padding: 0px;
 }
@@ -280,6 +292,12 @@ span#choose_an_assignment{
 .global_action_left {
   float: left;
   padding: 10px 0px;
+}
+
+/* switch view*/
+.switch_view{
+  float: right;
+  padding: 20px 0px 0 0;
 }
 
 /* Toggle action */
@@ -532,8 +550,14 @@ tr.student_hidden{
   margin: 0px;
 }
 
+.notice{
+  border: 1px solid #E6DB55;
+  padding: 3px 30px;
+  background-position: 7px;
 
-.notice, .warning {
+}
+
+.warning {
   border: 1px solid #E6DB55;
   padding: 3px 30px;
   background: #FFFFE0 url(../images/icons/error.png) no-repeat;

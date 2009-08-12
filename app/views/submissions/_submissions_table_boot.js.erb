@@ -30,6 +30,10 @@ document.observe("dom:loaded", function() {
       unmarked: function(row) {
         return row.marking_state != '<%=Result::MARKING_STATES[:complete]%>' && row.marking_state != '<%=Result::MARKING_STATES[:partial]%>';
       },
+     partial: function(row) {
+        return row.marking_state != '<%=Result::MARKING_STATES[:unmarked]%>' && row.marking_state != '<%=Result::MARKING_STATES[:complete]%>';
+      },
+ 
       released: function(row){
         return row.released == 'true';
       },
@@ -53,6 +57,13 @@ document.observe("dom:loaded", function() {
         $('filter_link_' + filter_key).removeClassName('filter_selected');
       });
       $('filter_link_none').addClassName('filter_selected');
+    },
+    total_count_id: 'all_submissions_count',
+    filter_count_ids: {
+      unmarked: 'unmarked_submissions_count',
+      partial: 'partial_submissions_count',
+      complete: 'complete_submissions_count',
+      released: 'released_submissions_count'
     }
     /*
     sorts: {

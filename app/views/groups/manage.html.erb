@@ -184,8 +184,23 @@ document.observe("dom:loaded", function(){
     <% end %>
    </h1>
   </div> <!-- title_bar-->
-<div class="clear"></div>
+<div class="wrapLeft">
+      <div id="toggle_actions">
+       <%= link_to_function I18n.t(:all) + " (<span
+id=\"all_groupings_count\"></span>)", "filter('none')", :id =>
+"filter_link_none", :class => "filter_selected" %>
+	|
+        <%= link_to_function "Valid (<span id=\"valid_groupings_count\"></span>)", "filter('validated')", :id => "filter_link_validated" %>
 
+	|
+        <%= link_to_function "Not valid (<span id=\"invalid_groupings_count\"></span>)", "filter('unvalidated')", :id => "filter_link_unvalidated"%>
+	|
+        <%= link_to_function "Assigned (<span id=\"assigned_groupings_count\"></span>)", "filter('assigned')", :id => "filter_link_assigned"%>
+	|
+        <%= link_to_function "Not assigned (<span id=\"unassigned_groupings_count\"></span>)", "filter('unassigned')", :id => "filter_link_unassigned" %>
+      </div>
+</div>
+<div class="clear"></div>
 <div id="notice">
       <div class="error" id="errors" style="display:none;">
         <h1>There was a problem...</h1>
@@ -231,20 +246,6 @@ document.observe("dom:loaded", function(){
 <div class="colsLeftHeavy">
   <div class="colLeft">
     <div class="wrapLeft">
-      <div id="toggle_actions">
-       <%= link_to_function I18n.t(:all) + " (<span
-id=\"all_groupings_count\"></span>)", "filter('none')", :id =>
-"filter_link_none", :class => "filter_selected" %>
-	|
-        <%= link_to_function "Valid (<span id=\"valid_groupings_count\"></span>)", "filter('validated')", :id => "filter_link_validated" %>
-
-	|
-        <%= link_to_function "Not valid (<span id=\"invalid_groupings_count\"></span>)", "filter('unvalidated')", :id => "filter_link_unvalidated"%>
-	|
-        <%= link_to_function "Assigned (<span id=\"assigned_groupings_count\"></span>)", "filter('assigned')", :id => "filter_link_assigned"%>
-	|
-        <%= link_to_function "Not assigned (<span id=\"unassigned_groupings_count\"></span>)", "filter('unassigned')", :id => "filter_link_unassigned" %>
-      </div>
       <div class="global_action_top">
         <span id="loading_list"><%= image_tag("spinner.gif") %> Loading List...</span>
         <%= select_tag "global_actions", options_for_select([["Choose an action", ""], ["Validate", "valid"], ["Invalidate", "invalid"], ["Delete", "delete"], ["Assign Grader(s)", "assign"], ["Unassign Grader(s)", "unassign"]]), :onchange => "$('global_actions_2').setValue($(this).getValue());"%>
