@@ -282,6 +282,13 @@ var FilterTable = Class.create({
     });
     this.render_counts();
     this.select_all(false);
+    if(this.can_select_all) {
+      $(this.select_all_top_id).setValue(false);
+      if(this.footer) {
+        $(this.select_all_bottom_id).setValue(false);
+      }
+    }
+    
   },
   render_counts: function() {
     if($(this.total_count_id) != null) {
