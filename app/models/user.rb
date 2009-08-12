@@ -136,7 +136,7 @@ class User < ActiveRecord::Base
    
     user_class::CSV_UPLOAD_ORDER.zip(row) do |key, val|
       # append them to the hash that is returned by User.get_default_ta/student_attrs
-      user_attributes[key] = val unless val.blank?      
+      user_attributes[key] = val
     end
     
     # Is there already a Student with this User number?
