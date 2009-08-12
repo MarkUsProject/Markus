@@ -171,10 +171,12 @@ li.annotation_category {
     height: 700px;
   }
   #code_pane {
-    width: 536px;
+    width: 60%;
+   /* width: 536px;*/
   }
   #rubric_pane {
-    width: 370px;
+   width: 30%
+    /*width: 370px;*/
   }
   
     #rubric_viewer, #summary_viewer, #code_holder, #annotations_summary {

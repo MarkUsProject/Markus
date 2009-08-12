@@ -65,13 +65,17 @@
 </p>
 
   <div id="annotation_category_pane">
-
+    <div class="annotation_categories_fieldset">
+     <div class="annotation_categories_list_bar">
+       <span class="annotation_category_title"><b>Annotation Categorie</b></span>
+     </div>
      <ul id="annotation_category_pane_list">
         <% @annotation_categories.each do |annotation_category| %>
           <%= render :partial => 'annotation_category', :locals => {:annotation_category => annotation_category} %>
         <% end %>
       </ul>  <!-- Rubric Criteria Pane -->	
   </div>
+   </div>
 
     <div id="annotations_pane">
       <div id="annotation_list_holder">

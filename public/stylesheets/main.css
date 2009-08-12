@@ -965,7 +965,7 @@ a img{
    padding: 0px 2%;
 }
 
-#rubric_criteria_pane .rubric_fieldset, #annotation_category_pane ul{
+#rubric_criteria_pane .rubric_fieldset, #annotation_category_pane .annotation_categories_fieldset{
   -moz-border-radius: 9px;
   -webkit-border-radius: 9px;
   border: 2px solid #ccc;
@@ -1001,7 +1001,7 @@ a img{
    width: 90%;
 }
 
-#rubric_list_title_bar{
+#rubric_list_title_bar, #annotation_categories_list_bar{
   margin-bottom: 5px;
   padding-bottom: 5px;
   min-height: 15px;
@@ -1065,7 +1065,7 @@ a img{
   float:left;
 }
 
-.criterion_title_div{
+.criterion_title_div, .annotation_category_title{
    padding: 2px 2px 0 10px;
    float: left;
 }
