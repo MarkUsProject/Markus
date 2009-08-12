@@ -170,15 +170,6 @@ function focus_source_code_line(line_num) {
   }
 }
 
-/** Begin Annotation Category dropdown code **/
-
-var drop_down_menus = $A();
-function setup_annotation_categories() {
-  <% @annotation_categories.each do |annotation_category| %>
-  drop_down_menus[<%=annotation_category.id%>] = new DropDownMenu($('annotation_category_<%=annotation_category.id%>'), $('annotation_text_list_<%=annotation_category.id%>'));
-  <% end %>
-}
-
 function setup_divider(widen_target, dragger) {
     var divider = new ResizePane(widen_target, dragger);
 }
