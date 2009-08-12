@@ -15,23 +15,27 @@
 <div class="wrapLeft">
   <%= link_to "Go to Normal View", :action => 'browse', :id => @assignment.id %>
   <%= link_to "Go to Detailed View", :action => 'browse', :id => @assignment.id, :details => true %>
-</div>
 
-<div class="wrapLeft">
-<% if flash[:release_errors] %>
-<div class="error">
-  <h1>Errors</h1>
-  <ul>
-  <% flash[:release_errors].each do |error_message| %>
-    <li><%= error_message %></li>
-  <% end %>
-  </ul>
-</div>
-<% end %>
-
-<%= form_tag({:action => 'update_submissions', :id => @assignment.id}) %>
-<span id="loading_list"><%= image_tag("spinner.gif")%> Loading
-list...</span>
+  <% if flash[:release_errors] %>
+    <div class="error">
+    <h1>Errors</h1>
+    <ul>
+    <% flash[:release_errors].each do |error_message| %>
+	<li><%= error_message %></li>
+    <% end %>
+    </ul>
+    </div>
+    <% end %>
+    <div id="toggle_actions">
+    <%= link_to_function I18n.t(:all) + " (<span
+    id=\"all_submissions_count\"></span>)", "filter('none')", :id =>
+    "filter_link_none", :class => "filter_selected" %>
+            |
+    <%= link_to_function I18n.t(:unmarked) + "(<span id=\"unmarked_submissions_count\"></span>)", "filter('unmarked')", :id => "filter_link_unmarked" %>
+		    
+    <%= form_tag({:action => 'update_submissions', :id => @assignment.id}) %>
+    <span id="loading_list"><%= image_tag("spinner.gif")%> Loading
+    list...</span>
 <table id="submissions">
 
 </table>

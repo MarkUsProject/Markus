@@ -35,6 +35,7 @@ en:
     confirm_bulk_action: "Are you sure you want to perform this bulk action?"
     give_grace_credits:  "Give Grace Credits:"
     no_result:          "No marks are available for this assignment."
+    unmarked:           "unmarked"
     csv_valid_format:   "There was a problem parsing the CSV file you uploaded.  Please ensure that it's a valid CSV format, and that each line ends with a carriage-return line-feed set of characters.  No changes were made. "
     csv_upload_user_duplicate: "Detected duplicate user name: {{user_name}}"
 
