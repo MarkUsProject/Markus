@@ -35,6 +35,8 @@ en:
     confirm_bulk_action: "Are you sure you want to perform this bulk action?"
     give_grace_credits:  "Give Grace Credits:"
     no_result:          "No marks are available for this assignment."
+    csv_valid_format:   "There was a problem parsing the CSV file you uploaded.  Please ensure that it's a valid CSV format, and that each line ends with a carriage-return line-feed set of characters.  No changes were made. "
+    csv_upload_user_duplicate: "Detected duplicate user name: {{user_name}}"
 
     groups:
       editing_past_due_date_warning: "This assignment is past its due date.  Besides assigning graders to groups, it is not recommended that any other settings be altered here at this time."
@@ -47,9 +49,9 @@ en:
     students_not_successfully_added_message_3: "Student names are
     alphanumeric."
     students_not_successfully_added_message_4: "Each field is separated
-    by a coma (no spaces)."
-    students_not_successfully_added_message_5: "Each line has therequired
-    fields specified above."
+    by a comma (no spaces)."
+    students_not_successfully_added_message_5: "Each line has the required
+    fields specified near the upload form."
 
 
     user:

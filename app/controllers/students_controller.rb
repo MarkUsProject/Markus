@@ -94,11 +94,16 @@ class StudentsController < ApplicationController
   
   def upload_student_list  
     if request.post? && !params[:userlist].blank?
-      result = User.upload_user_list(Student, params[:userlist])
-      if result[:invalid_lines].size > 0
-        flash[:invalid_lines] = result[:invalid_lines]
+      begin
+        result = User.upload_user_list(Student, params[:userlist])
+        if result[:invalid_lines].size > 0
+          flash[:invalid_lines] = result[:invalid_lines]        
+        end
+        flash[:success] = result[:upload_notice]
+      rescue RuntimeError => e
+        flash[:upload_notice] = I18n.t('csv_valid_format')
       end
-      flash[:upload_notice] = result[:upload_notice]
+
     end
     redirect_to :action => 'index'
   end  
