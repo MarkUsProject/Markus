@@ -1,6 +1,6 @@
 <div id="overall_comment">
   <div id="overall_comment_controls">
-        <p><%=result.overall_comment%></p>
+        <p><%=simple_format(h(result.overall_comment))%></p>
         <%= link_to_function "Edit", "$('overall_comment_edit').show();$('overall_comment_controls').hide();" %>
       </div>
       <div id="overall_comment_edit" style="display:none;">
