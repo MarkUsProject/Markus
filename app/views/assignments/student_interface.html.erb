@@ -23,14 +23,30 @@
 
 <div id="title_bar"><h1> Assignment <%= h(sanitize(@assignment.short_identifier)) %></h1>
 </div>
-<% if flash[:fail_notice] %>
+<% if flash[:fail_notice] && !flash[:fail_notice].empty? %>
   <div class="notice">
-    <%=flash[:fail_notice]%>
+    <% if flash[:fail_notice].is_a?(Array) %>
+    <ul>
+      <% flash[:fail_notice].each do |message| %>
+      <li><%=message%></li>
+      <% end %>
+    </ul>
+    <% else %>
+      <%=flash[:fail_notice]%>
+    <% end %>
   </div>
 <% end %>
-<% if flash[:success] %>
+<% if flash[:success] && !flash[:success].empty? %>
   <div class="success">
-    <%=flash[:success]%>
+    <% if flash[:success].is_a?(Array) %>
+    <ul>
+      <% flash[:success].each do |message| %>
+      <li><%=message%></li>
+      <% end %>
+    </ul>
+    <% else %>
+      <%=flash[:success]%>
+    <% end %>
   </div>
 <% end %>
 
@@ -185,9 +201,10 @@
   <div id="invite_dialog">
     <% form_tag({:action => 'invite_member', :id => @assignment.id},{:onsubmit => "$('invite_modal_spinner').show();"}) do %>   
     <h2>Invite</h2>
+    <p><%= t(:seperate_multiple_with_commas) %></p>
     <p>
       <fieldset>
-         <label> <%= I18n.t(:short_identifier)%> </label>
+         <label for="invite_member"> <%= I18n.t('user.user_name')%> </label>
          <%= text_field_tag 'invite_member'%>
       </fieldset>
     </p>

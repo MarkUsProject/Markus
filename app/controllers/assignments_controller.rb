@@ -354,31 +354,32 @@ class AssignmentsController < ApplicationController
     # if instructor formed group return
     return if @assignment.instructor_form_groups
     
-    @student = Student.find(session[:uid])
+    @student = @current_user
     @grouping = @student.accepted_grouping_for(@assignment.id)
-    @invited = Student.find_by_user_name(params[:invite_member])
-
-    begin
-      if @invited.nil?
-        raise "This student doesn't exist"
+    to_invite = params[:invite_member].split(',')
+    flash[:fail_notice] = []
+    flash[:success] = []
+    to_invite.each do |user_name|
+      @invited = Student.find_by_user_name(user_name)
+      begin
+        if @invited.nil?
+          raise "#{user_name} doesn't exist"
+        end
+        if @invited == @student
+          raise "You cannot invite yourself to your own group"
+        end
+        if @invited.hidden
+          raise "Could not invite this student - this student's account has been disabled."
+        end
+        if @grouping.pending?(@invited)
+          raise "This student is already a pending member of this group!"
+        end
+        @invited.invite(@grouping.id)
+        flash[:success].push("Student #{@invited.user_name} invited.")
+      rescue Exception => e
+        flash[:fail_notice].push(e.message)
       end
-      if @invited == @student
-        raise "You cannot invite yourself to your own group"
-      end
-      if @invited.hidden
-        raise "Could not invite this student - this student's account has been disabled."
-      end  
-      if @grouping.pending?(@invited)
-        raise "This student is already a pending member of this group!"
-      end
-
-      @invited.invite(@grouping.id)
-      flash[:success] = "Student #{@invited.user_name} invited."
-
-    rescue Exception => e
-      flash[:fail_notice] = e.message
     end
-
     redirect_to :action => 'student_interface', :id => @assignment.id
   end
 
