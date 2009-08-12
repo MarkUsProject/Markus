@@ -106,6 +106,12 @@ class AssignmentsController < ApplicationController
     # This little conditional has to do some hack-y workarounds, since
     # accepts_nested_attributes_for is a little...dumb.
     if @assignment.submission_rule.attributes['type'] != params[:assignment][:submission_rule_attributes][:type]
+      # Some protective measures here to make sure we haven't been duped...
+      potential_rule = Module.const_get(params[:assignment][:submission_rule_attributes][:type])
+      if !potential_rule.ancestors.include?(SubmissionRule)
+        raise "#{params[:assignment][:submission_rule_attributes][:type]} is not a valid SubmissionRule"
+      end
+      
       @assignment.submission_rule.destroy
       submission_rule = SubmissionRule.new
       # A little hack to get around Rails' protection of the "type"

@@ -416,7 +416,9 @@ class GroupsController < ApplicationController
     
     grouping_ids = params[:groupings]
     if params[:groupings].nil? or params[:groupings].size ==  0
-      flash[:error] = "You need to select at least one group."
+      @error = "You need to select at least one group."
+      render :action => 'error_single'
+      return
     end
     @grouping_data = {}
     @groupings = []

@@ -12,11 +12,13 @@
     <%= f.label :hours, "After:" %>
     <%= f.text_field :hours, :size => 1, :class => "PeriodDeltaChain_Hours", :onchange => "penalty_periods.refresh();" %>
     hours...
+  </p>
+  <div>
     <span class="PeriodDeltaChain">
       From <span class="PeriodDeltaChain_FromTime"></span> to
            <span class="PeriodDeltaChain_ToTime"></span>
     </span>
-  </p>
+  </div>
  <p>
     <%= f.label :deduction, "Penalty Period Deduction:" %>
     <%= f.text_field :deduction, :size => 1 %>%

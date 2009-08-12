@@ -132,27 +132,7 @@ document.observe("dom:loaded", function(){
   });
 })
 
-  function global_action(){
-  /* is working*/
-    $('working').show();
-  /* removes the previous warnings*/
-    $$('#notice p').each(function(e){
-        e.remove();
-      });
-    /* if a grouping is selected*/
-    if($$('#groups tbody input').any(function(e){
-       return e.getValue()
-     })
-    ){
-       return true ;
-    }else{
-    /* if a grouping isn't selected*/
-      $('notice').insert("<p class=\"warning\">You need to select at list one group</p>");
-      $('global_actions').setValue("Choose an action");
-      $('working').hide();
-      return false;
-    }
-  }
+
 
 
 </script>
@@ -249,7 +229,7 @@ id=\"all_groupings_count\"></span>)", "filter('none')", :id =>
       <div class="global_action_top">
         <span id="loading_list"><%= image_tag("spinner.gif") %> Loading List...</span>
         <%= select_tag "global_actions", options_for_select([["Choose an action", ""], ["Validate", "valid"], ["Invalidate", "invalid"], ["Delete", "delete"], ["Assign Grader(s)", "assign"], ["Unassign Grader(s)", "unassign"]]), :onchange => "$('global_actions_2').setValue($(this).getValue());"%>
-	<%= submit_tag I18n.t(:apply), :confirm => t(:confirm_bulk_action), :onclick => "$('submit_type').setValue('global_action');" %>
+	<%= submit_tag I18n.t(:apply), :onclick => "$('submit_type').setValue('global_action');" %>
         <%= hidden_field_tag 'submit_type', 'global_action', :id => 'submit_type' %>
       </div>
 
@@ -261,7 +241,7 @@ id=\"all_groupings_count\"></span>)", "filter('none')", :id =>
       
       <div class="global_action_bottom">
         <%= select_tag "global_actions_2", options_for_select([["Choose an action", ""], ["Validate", "valid"], ["Invalidate", "invalid"], ["Delete", "delete"], ["Assign Grader(s)", "assign"], ["Unassign Grader(s)", "unassign"]]), :onClick => "$('global_actions').setValue($(this).getValue());"%>
-	<%= submit_tag I18n.t(:apply), :confirm => t(:confirm_bulk_action), :onchange => "$('submit_type').setValue('global_action');" %>
+	<%= submit_tag I18n.t(:apply), :onchange => "$('submit_type').setValue('global_action');" %>
       </div>
     </div>
     

@@ -1,7 +1,7 @@
 <li id="annotation_text_<%=annotation_text.id%>">
 <div id="annotation_text_<%=annotation_text.id%>_control">
   <p>
-    <%= annotation_text.content %>
+    <%= simple_format(h(annotation_text.content)) %>
   <%= link_to_function 'Edit', "$('annotation_text_#{annotation_text.id}_control').hide();$('annotation_text_#{annotation_text.id}_edit').show();" %>
   <%= link_to_remote 'Delete', :url => {:action => 'delete_annotation_text', :id => annotation_text.id}, :confirm => t('annotations.delete.annotation_text') %>
 </div>
