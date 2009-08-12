@@ -39,7 +39,7 @@
 								("%.2f" % (@a_id_results[assignment.id].total_mark * 100 / assignment.total_mark)).to_s + "% (Class Average: " + ("%.2f" % (assignment.results_average)).to_s + "%)"
 							%>
               <p><strong>Overall Comment:</strong><br/>
-                <%= sanitize(@a_id_results[assignment.id].overall_comment) %>
+                <%= simple_format(sanitize(@a_id_results[assignment.id].overall_comment)) %>
               </p>
               <% elsif assignment.due_date < Time.now %>
                 There are no results for this assignment, yet.
