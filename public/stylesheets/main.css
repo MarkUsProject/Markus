@@ -116,6 +116,7 @@ h4{
   margin: 0;
   padding: 0 4px;
   font-family: Lucida;
+  min-width: 5px;
 }
 
 #title_bar span.menu_bar{
@@ -265,7 +266,7 @@ span#choose_an_assignment{
    -moz-border-radius: 10px;
    -webkit-border-radius: 10px;
    border: 2px solid #464646;
-   min-width: 10em;
+   min-width: 11em;
    height: 1.1em;
    padding: 0.1em 1em;
    display: inline-block;
