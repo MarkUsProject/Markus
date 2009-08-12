@@ -1022,7 +1022,7 @@ a img{
   padding-left:10px;
 }
 
-#rubrics_help{
+#rubrics_help, #annotations_help{
   padding: 0 10px 10px 10px;
   font-style: italic;
   line-height: 1.6em;
