@@ -25,7 +25,35 @@ document.observe("dom:loaded", function() {
     row_prefix: "grouping_row_",
     select_name: "groupings[]",
     select_id_prefix: "grouping_select_",
-    footer: true
+    footer: true,
+    filters: {
+      unmarked: function(row) {
+        return row.marking_state != '<%=Result::MARKING_STATES[:complete]%>' && row.marking_state != '<%=Result::MARKING_STATES[:partial]%>';
+      },
+      released: function(row){
+        return row.released == 'true';
+      },
+      unreleased: function(row){
+        return row.released != 'true';
+      },
+      complete: function(row){
+         return row.markign_state == '<%=Result::MARKING_STATES[:complete]%>';
+      },
+    },
+
+    after_filter_only_by: function(current_filters, new_filter) {
+      $('filter_link_none').removeClassName('filter_selected');
+      current_filters.each(function(filter_key) {
+        $('filter_link_' + filter_key).removeClassName('filter_selected');
+      });
+      $('filter_link_' + new_filter).addClassName('filter_selected');
+    },
+    after_clear_filters: function(current_filters) {
+      current_filters.each(function(filter_key) {
+        $('filter_link_' + filter_key).removeClassName('filter_selected');
+      });
+      $('filter_link_none').addClassName('filter_selected');
+    }
     /*
     sorts: {
       last_modified_date: function(a, b) {

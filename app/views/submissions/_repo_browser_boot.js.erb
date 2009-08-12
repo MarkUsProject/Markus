@@ -18,43 +18,11 @@ document.observe("dom:loaded", function() {
     select_name: "files[]",
     select_id_prefix: "file_select_",
     footer: true,
-    filters: {
-      unmarked: function(row) {
-        return row.filter_unmarked;
-      },
-      released: function(row){
-        return row.filter_released;
-      },
-      unreleased: function(row){
-        return row.filter_unreleased;
-      },
-      complete: function(row){
-         return row.filter_complete;
-      },
-    },
-
-   after_filter_only_by: function(current_filters, new_filter) {
-      $('filter_link_none').removeClassName('filter_selected');
-      current_filters.each(function(filter_key) {
-        $('filter_link_' + filter_key).removeClassName('filter_selected');
-      });
-      $('filter_link_' + new_filter).addClassName('filter_selected');
-    },
-    after_clear_filters: function(current_filters) {
-      current_filters.each(function(filter_key) {
-        $('filter_link_' + filter_key).removeClassName('filter_selected');
-      });
-      $('filter_link_none').addClassName('filter_selected');
-    },
- sorts: {
+    sorts: {
       last_modified_date: function(a, b) {
         return new Date(a['last_modified_date_unconverted']) < new Date(b['last_modified_date_unconverted']);
       }
     }
-  },
-  total_count_id: 'all_groupings_count',
-  filter_count_ids: {
-  }
 });
 
 

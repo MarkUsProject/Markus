@@ -28,10 +28,10 @@
     <% end %>
     <div id="toggle_actions">
     <%= link_to_function I18n.t(:all) + " (<span
-    id=\"all_submissions_count\"></span>)", "filter('none')", :id =>
+    id=\"all_submissions_count\"></span>)", "submissions_table.clear_filters().render();", :id =>
     "filter_link_none", :class => "filter_selected" %>
             |
-    <%= link_to_function I18n.t(:unmarked) + "(<span id=\"unmarked_submissions_count\"></span>)", "filter('unmarked')", :id => "filter_link_unmarked" %>
+    <%= link_to_function I18n.t(:unmarked) + "(<span id=\"unmarked_submissions_count\"></span>)", "submissions_table.filter_only_by('unmarked').render();", :id => "filter_link_unmarked" %>
 		    
     <%= form_tag({:action => 'update_submissions', :id => @assignment.id}) %>
     <span id="loading_list"><%= image_tag("spinner.gif")%> Loading
