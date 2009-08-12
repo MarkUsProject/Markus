@@ -112,6 +112,7 @@ h(@assignment.total_criteria_weight) %></span>)</span></div>
           </p>
       <p>
         <%= f.submit t(:upload), :disable_with => t(:uploading_please_wait) %>
+        <input type="reset" value="Cancel" onClick="modalUpload.close();">
       </p>
        <% end %>
     </p>
