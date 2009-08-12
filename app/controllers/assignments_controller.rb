@@ -360,7 +360,7 @@ class AssignmentsController < ApplicationController
     flash[:fail_notice] = []
     flash[:success] = []
     to_invite.each do |user_name|
-      @invited = Student.find_by_user_name(user_name)
+      @invited = Student.find_by_user_name(user_name.strip)
       begin
         if @invited.nil?
           raise "#{user_name} doesn't exist"
