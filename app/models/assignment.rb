@@ -165,6 +165,11 @@ class Assignment < ActiveRecord::Base
     if results_count == 0
       return false # no marks released for this assignment
     end
+    # Need to avoid divide by zero
+    if results_sum == 0
+      self.results_average = 0
+      return self.save
+    end
     avg_quantity = results_sum / results_count
     # compute average in percent
     self.results_average = (avg_quantity * 100 / self.total_mark)
