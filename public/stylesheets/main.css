@@ -513,6 +513,11 @@ tr.student_hidden{
    width: 35%;
 }
 
+.status_inviter{
+   font-style: italic;
+   font-weight: bold;
+}
+
 /* flash messages, & warning */
 .success {
   text-align: left;

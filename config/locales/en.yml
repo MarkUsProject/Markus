@@ -109,7 +109,7 @@ en:
         extramark_description: "Late submission ({{overtime_hours}} hour(s)) resulted in automatic {{penalty_amount}}% deduction"
 
 
-    criteria_edit_total_mark:     "This criteria will be marked out of"
+    criteria_edit_total_mark:     "This criterion will be marked out of"
     criterion_saved_success:   "Criterion was successfully saved"
     criterion_deleted_success:  "Criterion, and all associated marks were successfully deleted"
     criterion_created_success:  "Criterion successfully created"
