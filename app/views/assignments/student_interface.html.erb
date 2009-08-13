@@ -107,11 +107,15 @@
 	    <% end -%>
 	   </ul>
 
-	     <%= link_to_remote I18n.t(:join), :url => { :action => 'join_group', :id => @assignment.id, :grouping_id => grouping.id} %>
+	     <%= link_to_remote I18n.t(:join),
+	           :url => { :action => 'join_group', 
+		             :id => @assignment.id,
+			     :grouping_id => grouping.id} 
+	     %>
 	     <%= link_to_remote I18n.t(:refuse), 
-	     :url => { :action => 'decline_invitation',
-	     :id => @assignment.id, :grouping_id => grouping.id },
-	     :html => {:class => "delete"}
+	         :url => { :action => 'decline_invitation',
+	         :id => @assignment.id, :grouping_id => grouping.id },
+	         :html => {:class => "delete"}
 	     %>
 	     </div>
 	     <div class="block_line"></div>
@@ -126,7 +130,18 @@
 	   <p><%= link_to_remote "Work alone", :url => {:action => 'creategroup', :id => @assignment.id, :workalone => 'true'}%></p>
 	   <% end %>
 	   <p>
-	   <%= link_to_remote I18n.t(:create), :url => {:action => 'creategroup', :id => @assignment.id} %>
+	   <% if @student.has_pending_groupings_for?(@assignment.id)%>
+	      <%= link_to_remote I18n.t(:create), 
+	          :url => {:action => 'creategroup', 
+		           :id => @assignment.id},
+		  :confirm => "This will decline the invitation you have. Are you sure?"
+	      %>
+	    <% else %>
+                <%= link_to_remote I18n.t(:create), 
+		      :url => {:action => 'creategroup', 
+		               :id => @assignment.id} 
+	      %>
+	    <% end %>
 	   </p>
          <%end %>
 	 <% else %>
