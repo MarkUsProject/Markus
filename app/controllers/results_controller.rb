@@ -131,6 +131,10 @@ class ResultsController < ApplicationController
     end
 
     @annots = Annotation.find_all_by_submission_file_id(@submission_file_id, :order => "line_start") || []
+    
+
+    @all_annots = @file.submission.annotations
+
     begin
       @file_contents = retrieve_file(@file)
     rescue Exception => e

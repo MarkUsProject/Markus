@@ -4,10 +4,10 @@
   
     #Also update the annotation_summary_list
     if @current_user.ta? || @current_user.admin?
-      page.replace_html 'annotation_summary_list', :partial => 'results/marker/annotation_summary', :locals => {:annots => @annots, :submission_file_id => @submission_file_id}
+      page.replace_html 'annotation_summary_list', :partial => 'results/marker/annotation_summary', :locals => {:annots => @all_annots, :submission_file_id => @submission_file_id}
       page.call "hide_all_annotation_content_editors"
     else
-      page.replace_html 'annotation_summary_list', :partial => 'results/student/annotation_summary', :locals => {:annots => @annots, :submission_file_id => @submission_file_id}
+      page.replace_html 'annotation_summary_list', :partial => 'results/student/annotation_summary', :locals => {:annots => @all_annots, :submission_file_id => @submission_file_id}
     end
 
   
