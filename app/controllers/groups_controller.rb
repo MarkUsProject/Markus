@@ -161,6 +161,12 @@ class GroupsController < ApplicationController
     grouping.remove_member(member)
     # Remove user from list of allowed repo users,
     # if we are required to do so
+    if inviter
+      inviter = grouping.student_memberships.find_by_membership_status(StudentMembership::STATUSES[:inviter])
+    else 
+      inviter == false
+    end
+
     if grouping.group.repository_external_commits_only?
       grouping.group.repo.remove_user(student.user_name)
     end
@@ -171,13 +177,12 @@ class GroupsController < ApplicationController
       # add members back to student list
       page.insert_html :bottom, "student_list",  
         "<li id='user_#{student.user_name}'>#{student.user_name}</li>"
-    if inviter
+     if inviter
         # find the new inviter
-        inviter = grouping.student_memberships.find_by_membership_status(StudentMembership::STATUSES[:inviter])
+ #       inviter = grouping.student_memberships.find_by_membership_status(StudentMembership::STATUSES[:inviter])
         # replace the status of the new inviter to 'inviter'
-        page.remove "mbr_#{inviter.id}"
-        page.insert_html :top, "grouping_#{grouping.id}", 
-          :partial => 'groups/manage/member', :locals => {:grouping =>
+         page.replace_html "mbr_#{inviter.id}",
+           :partial => 'groups/manage/member', :locals => {:grouping =>
           grouping, :member => inviter}
       end
     end
