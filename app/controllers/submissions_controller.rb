@@ -88,7 +88,7 @@ class SubmissionsController < ApplicationController
         @table_rows[directory.id] = construct_file_manager_dir_table_row(directory_name, directory)
       end
     end
-    render :action => 'populate'
+    render :action => 'file_manager_populate'
   end
   
   def manually_collect_and_begin_grading
@@ -142,7 +142,7 @@ class SubmissionsController < ApplicationController
       @table_rows[grouping.id] = construct_submissions_table_row(grouping, assignment)
     end
 
-    render :action => 'populate'
+    render :action => 'submission_table_populate'
   end
 
   def browse

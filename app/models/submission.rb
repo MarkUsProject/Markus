@@ -112,9 +112,8 @@ class Submission < ActiveRecord::Base
     # will be "spoofed" as root...
     if path == '/'
       path = assignment.repository_folder
-    else
-      path = File.join(assignment.repository_folder, path)
     end
+    
     # First, go through directories...
     directories = revision.directories_at_path(path)
     directories.each do |directory_name, directory|

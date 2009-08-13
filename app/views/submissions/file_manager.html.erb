@@ -60,7 +60,7 @@
 <% end %>
 <% if !@grouping.is_valid? %>
 <div class="error">
-  Your group is currently invalid.  You probably haven't met the group size minimum.  You will not be able to submit anything until you have met this minimum.
+  <%= t(:invalid_group_warning) %>
 </div>
 <% elsif @missing_assignment_files.size > 0 %>
   <div class="warning">

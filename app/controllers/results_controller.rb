@@ -121,18 +121,18 @@ class ResultsController < ApplicationController
     @assignment = Assignment.find(params[:id])
     @submission_file_id = params[:submission_file_id]
       
-    file = SubmissionFile.find(@submission_file_id)
+    @file = SubmissionFile.find(@submission_file_id)
     # Is the current user a student?
     if current_user.student?
       # The Student does not have access to this file.  Render nothing.
-      if file.submission.grouping.membership_status(current_user).nil?
+      if @file.submission.grouping.membership_status(current_user).nil?
         raise "No access to submission file with id #{@submission_file_id}"
       end
     end
 
-    annots = Annotation.find_all_by_submission_file_id(@submission_file_id, :order => "line_start") || []
+    @annots = Annotation.find_all_by_submission_file_id(@submission_file_id, :order => "line_start") || []
     begin
-      file_contents = retrieve_file(file)
+      @file_contents = retrieve_file(@file)
     rescue Exception => e
       render :update do |page|
         page.call "alert", e.message
@@ -148,26 +148,8 @@ class ResultsController < ApplicationController
 #      return
 #    end
     
-    @code_type = file.get_file_type
-    
-    render :update do |page|
-      #Render the source code for syntax highlighting...
-      begin
-        page.replace_html 'codeviewer', :partial => 'results/common/codeviewer', :locals => 
-        { :uid => params[:uid], :file_contents => file_contents, :annots => annots, :code_type => @code_type}
-      #Also update the annotation_summary_list
-        page.replace_html 'annotation_summary_list', :partial => 'annotations/annotation_summary', :locals => {:annots => annots, :submission_file_id => @submission_file_id}
-        page.call "hide_all_annotation_content_editors"
-      rescue Exception => e
-        # There's a bug in Rails as of 2.3.2 - #1112 - some binary strings
-        # will result in a "redundant UTF-8 sequence" error when attempting
-        # to convert to JSON.  This is scheduled for fixing in Rails 2.3.4.
-        # Until then, we'll just ask the user to download the file.
-        
-        # TODO:  Make this more graceful, and localized
-        page.call "alert", "Could not render this file in the code viewer.  Click on the Download button to download the file instead."
-      end
-    end    
+    @code_type = @file.get_file_type
+    render :action => 'results/common/codeviewer'
   end
   
   def update_mark

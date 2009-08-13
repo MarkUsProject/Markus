@@ -1,4 +1,4 @@
-page.replace_html 'annotation_summary_list', :partial => 'annotation_summary', :locals => {:annots => @annotations, :submission_file_id => @submission_file_id}
+page.replace_html 'annotation_summary_list', :partial => 'results/marker/annotation_summary', :locals => {:annots => @annotations, :submission_file_id => @submission_file_id}
 
 if(@text.annotation_category_id != nil) 
   page.replace_html "annotation_text_list_#{@text.annotation_category_id}", :partial => 'annotation_list', :locals => {:annotation_category => @text.annotation_category}

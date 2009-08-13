@@ -57,7 +57,7 @@ en:
     by a comma (no spaces)."
     students_not_successfully_added_message_5: "Each line has the required
     fields specified near the upload form."
-
+    invalid_group_warning: "Your group is currently invalid. You probably haven't met the group size minimum. You may not be able to submit anything, and your work may not be graded, until you have met this minimum. "
 
     user:
         user_name:      "CDF ID"
