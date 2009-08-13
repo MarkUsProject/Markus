@@ -1,1 +1,4 @@
+if REPOSITORY_EXTERNAL_SUBMITS_ONLY
+  page.replace_html 'directories_tbody', :partial => 'submissions/table_row/exit_directory'
+end
 page.call "populate", @table_rows.to_json

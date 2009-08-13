@@ -37,6 +37,8 @@ class AssignmentsController < ApplicationController
       path = '/'
       repo = @grouping.group.repo
       @revision  = repo.get_latest_revision
+      @last_modified_date = @revision.directories_at_path('/')[@assignment.repository_folder].last_modified_date
+      
       @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, path))
       @files =   @revision.files_at_path(File.join(File.join(@assignment.repository_folder, path)))
       @missing_assignment_files = []

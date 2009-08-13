@@ -60,7 +60,10 @@
       anything.</p>
     <% end %>
      <h3>Overview</h3>
-     <span class="info_number"><%=h @revision.revision_number %></span><span class="info"> revisions</span><br />
+     <p>
+       The last revision for this assignment was on: <br />
+       <%=h(@last_modified_date.strftime(LONG_DATE_TIME_FORMAT)) %>
+     </p>
      <span class="info_number"><%=h @files.length.to_s %></span><span
      class="info"> files</span><br />
      <span class="info_number"><%=h @missing_assignment_files.length.to_s%></span><span class="info_red"> missing required files</span><br />

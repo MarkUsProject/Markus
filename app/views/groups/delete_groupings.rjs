@@ -8,6 +8,8 @@ end
 
 page.replace 'student_list', :partial => 'ungrouped_students', :locals => {:students => @assignment.ungrouped_students}
 
+page.replace_html 'number_of_ungrouped_students', @assignment.ungrouped_students.length
+
 ids = []
 @removed_groupings.each do |grouping|
   ids.push(grouping.id)

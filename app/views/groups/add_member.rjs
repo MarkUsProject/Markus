@@ -1,3 +1,4 @@
 page.hide 'errors'
 page.call "modify_grouping", @grouping.to_json, false
+page.replace_html 'number_of_ungrouped_students', @assignment.ungrouped_students.length
 page.replace 'student_list', :partial => 'ungrouped_students', :locals => {:students => @assignment.ungrouped_students}

@@ -12,15 +12,22 @@
      <p class="success"><%= h(flash[:submit_notice]) %> </p>
   <% end %>
 
-<div id="directory_selector" <%='style="display:none;"' unless @directories.length > 0 %>>
-<%= form_tag({:action => 'file_manager'}, :method => :get) %>
-<select id="path" name="path" onchange="$(this).form.submit();">
-    <option>/</option>
-<% @directories.each do |directory_name, directory| %>
-    <option><%= h(directory_name) %></option>
-<% end %>
-</select>
-</form>
+
+<div id="directory_selector" <%='style="display:none;"' unless @grouping.group.repository_external_commits_only? %>>
+<p>
+  Current Path: 
+  <% path_memory = '/' 
+     links = [] 
+     @path.split('/').each do |folder| 
+     path_memory = File.join(path_memory, folder) 
+     links.push(link_to folder, :action => 'file_manager', :path => path_memory) 
+  end %>
+  <% if links.empty? %>
+   /
+  <% else %>
+    <%= links.join('/')%>
+  <% end %>
+</p>
 </div>
 
 

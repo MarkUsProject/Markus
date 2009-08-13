@@ -8,6 +8,17 @@ module SubmissionsHelper
     end
   end
   
+  def construct_file_manager_dir_table_row(directory_name, directory)
+    table_row = {}
+    table_row[:id] = directory.id
+    table_row[:filter_table_row_contents] = render_to_string :partial => 'submissions/table_row/directory_table_row', :locals => {:directory_name => directory_name, :directory => directory}
+    table_row[:filename] = directory_name
+    table_row[:last_modified_date_unconverted] = directory.last_modified_date
+    table_row[:revision_by] = directory.user_id
+    return table_row
+    
+  end
+  
   def construct_file_manager_table_row(file_name, file)
     table_row = {}
     table_row[:id] = file.id

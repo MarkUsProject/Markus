@@ -48,7 +48,7 @@ REPOSITORY_STORAGE = "/home/storage/markus/repository-root"
 # are using Subversion as a storage backend and the instructor wants his/her
 # students to submit to the repositories by command-line only. If you
 # set this to true, students won't be able to submit via the Web interface.
-REPOSITORY_EXTERNAL_SUBMITS_ONLY = false
+REPOSITORY_EXTERNAL_SUBMITS_ONLY = true
 
 ###################################################################
 # This config setting only makes sense, if you are using

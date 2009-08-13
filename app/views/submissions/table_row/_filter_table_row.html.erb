@@ -1,5 +1,6 @@
 <td>
-<%= link_to h(sanitize(file_name)), :action => 'download', :id => @assignment.id, :revision_number => @revision.revision_number, :file_name => file_name %>
+<%=image_tag('icons/page_white_text.png') %>
+<%= link_to h(sanitize(file_name)), :action => 'download', :id => @assignment.id, :revision_number => @revision.revision_number, :file_name => file_name, :path => @path %>
 </td>
 
 <td>
