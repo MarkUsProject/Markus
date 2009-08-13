@@ -41,6 +41,7 @@ en:
     released:           "released"
     seperate_multiple_with_commas:  "Seperate multiple user names with commas"
     csv_valid_format:   "There was a problem parsing the CSV file you uploaded.  Please ensure that it's a valid CSV format, and that each line ends with a carriage-return line-feed set of characters.  No changes were made. "
+    csv_invalid_lines: "The following CSV lines were invalid: "
     csv_upload_user_duplicate: "Detected duplicate user name: {{user_name}}"
 
     groups:

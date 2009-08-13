@@ -131,35 +131,49 @@ class RubricsController < ApplicationController
     file_type = params[:upload_rubric][:file_type]
     @assignment = Assignment.find(params[:id])
     if request.post? && !file.blank? && !file_type.blank?
-      case file_type
-      when "csv"
-        parse_csv_rubric(file, @assignment)
-      when "yml"
-        parse_yml_rubric(file, @assignment)
+      begin
+        RubricCriterion.transaction do
+          case file_type
+          when "csv"
+            parse_csv_rubric(file, @assignment)
+          when "yml"
+            parse_yml_rubric(file, @assignment)
+          end
+          if !flash[:invalid_lines].empty?
+            raise I18n.t('csv_invalid_lines')
+          end
+          flash[:success] = "Rubric added/updated."
+        end
+      rescue Exception => e
+        flash[:error] = I18n.t('csv_valid_format')
       end
     end
 
-    flash.now[:upload_notice] = "Rubric added/updated."
 
-    redirect_to :action => 'index', :id => @assignment.id, :activate_upload_tab => true
+
+    redirect_to :action => 'index', :id => @assignment.id
    end
    
    def parse_csv_rubric(file, assignment)
     num_update = 0
-    flash.now[:invalid_lines] = []  # store lines that were not processed
+    flash[:invalid_lines] = []  # store lines that were not processed
     # read each line of the file and update rubric
     # flag
     first_line = true;
     levels = nil;
     FasterCSV.parse(file.read) do |row|
      next if FasterCSV.generate_line(row).strip.empty?
-     if first_line #get the row of levels
-       levels = row
-       first_line = false
-     elsif add_csv_criterion(row, levels, assignment) == nil
-       flash.now[:invalid_lines] << row.join(",")
-     else
-       num_update += 1
+     begin 
+       if first_line #get the row of levels
+         levels = row
+         first_line = false
+       elsif add_csv_criterion(row, levels, assignment) == nil
+         raise row.join(',')
+       else
+         num_update += 1
+       end
+     rescue RuntimeError => e
+       flash[:invalid_lines] << e.message
      end
     end
    end
@@ -175,11 +189,11 @@ class RubricsController < ApplicationController
        criterion.assignment = assignment
        criterion.rubric_criterion_name = c["title"]
        criterion.weight = c["weight"]
+       criterion.position = assignment.rubric_criteria.maximum('position') + 1
        levels = c["levels"]
        i = 0
-       while i < NUM_LEVELS do
+       0..NUM_LEVELS do |i|
          criterion['level_' + i.to_s + '_description'] = levels[i]
-         i+=1
        end
        if !criterion.valid? || !criterion.save
          flash.now[:invalid_lines] << c.to_s
@@ -194,18 +208,15 @@ class RubricsController < ApplicationController
     return nil if values.length < 2
     criterion = RubricCriterion.new
     criterion.assignment = assignment
-    criterion.rubric_criterion_name = values[0]
-    criterion.weight = values[1]
-    criterion.position = RubricCriterion.count + 1
+    criterion.rubric_criterion_name = values.shift
+    criterion.weight = values.shift
+    criterion.position = assignment.rubric_criteria.maximum('position') + 1
     create_levels(criterion, levels)
     #the rest of the values are level descriptions
-    i = 2
-    while i < values.length do
-      criterion['level_' + (i-3).to_s + '_description'] = values[i]
-      i+=1
+    values.each_with_index do |value, index|
+      criterion['level_' + index.to_s + '_description'] = value
     end
     return nil if !criterion.valid? || !criterion.save
-
     return criterion
    end
 
