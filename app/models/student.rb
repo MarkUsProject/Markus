@@ -208,11 +208,14 @@ class Student < User
   end
   
   def self.give_grace_credits(student_ids, number_of_grace_credits)
-    student_credit_hash = {}
-    student_ids.each do |student_id|
-      student_credit_hash[student_id] = {'grace_credits' => number_of_grace_credits}
+    students = Student.find(student_ids)
+    students.each do |student|
+      student.grace_credits += number_of_grace_credits.to_i
+      if student.grace_credits < 0
+        student.grace_credits = 0
+      end
+      student.save
     end
-    Student.update(student_credit_hash.keys, student_credit_hash.values)
   end
 
 end

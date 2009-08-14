@@ -13,6 +13,9 @@
   <div class="colLeft"><div class="wrapLeft">
    <%= form_remote_tag :url => {:action => "bulk_modify"}, :complete => "$('apply_bulk_action').setValue('#{t(:apply)}');$('apply_bulk_action').enable();$('apply_bulk_action2').setValue('#{t(:apply)}');$('apply_bulk_action2').enable();"
  %>
+    <div id="ajax_error" class="error" style="display:none;">
+    
+    </div>
     <div id="list">    
       <% if flash[:upload_notice] -%>
           <p class="notice"><%= h(flash[:upload_notice]) %></p>
@@ -73,7 +76,6 @@ list...</span>
         <option value="unhide"><%= t(:unhide_students)%></option>
       </select>
       <span id="grace_credit_input" style="display:none;">
-      <%= label_tag :number_of_grace_credits, "Grace Credits:" %>
       <%= text_field_tag :number_of_grace_credits, nil, :size => 1, :id => 'number_of_grace_credits' %>
       </span>
       <%= submit_tag t(:apply), :id => 'apply_bulk_action', :name => 'commit', :onclick => "$(this).setValue('Processing...'); $(this).disable();" %>

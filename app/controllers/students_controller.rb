@@ -31,19 +31,27 @@ class StudentsController < ApplicationController
   
   def bulk_modify
     student_ids = params[:student_ids]
-    case params[:bulk_action]
-      when "hide"
-        Student.hide_students(student_ids)
-        @students = construct_table_rows(Student.find(student_ids))
-        return
-      when "unhide"
-        Student.unhide_students(student_ids)
-        @students = construct_table_rows(Student.find(student_ids))
-        return
-      when "give_grace_credits"
-        Student.give_grace_credits(student_ids, params[:number_of_grace_credits])
-        @students = construct_table_rows(Student.find(student_ids))
-        return
+    begin
+      if student_ids.nil? || student_ids.empty?
+        raise "No students were selected, so no changes were made."
+      end
+      case params[:bulk_action]
+        when "hide"
+          Student.hide_students(student_ids)
+          @students = construct_table_rows(Student.find(student_ids))
+          return
+        when "unhide"
+          Student.unhide_students(student_ids)
+          @students = construct_table_rows(Student.find(student_ids))
+          return
+        when "give_grace_credits"
+          Student.give_grace_credits(student_ids, params[:number_of_grace_credits])
+          @students = construct_table_rows(Student.find(student_ids))
+          return
+      end
+    rescue RuntimeError => e
+      @error = e.message
+      render :action => 'display_error'
     end
   end
 
