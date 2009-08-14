@@ -15,7 +15,7 @@ require File.join(File.dirname(__FILE__), 'boot')
 
 ###################################################################
 # Set the course name here
-COURSE_NAME         = "CSCxxx Summer 2008: Course Title Here"
+COURSE_NAME         = "CSC108 Fall 2009: Introduction to Computer Programming"
 
 ###################################################################
 # MarkUs relies on external user authentication: An external script

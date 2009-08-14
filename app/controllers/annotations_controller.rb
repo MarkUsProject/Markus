@@ -8,6 +8,7 @@ class AnnotationsController < ApplicationController
   def add_existing_annotation
     @text = AnnotationText.find(params[:annotation_text_id])
     @submission_file_id = params[:submission_file_id]
+    @submission_file = SubmissionFile.find(@submission_file_id)
     @annotation = Annotation.new
     @annotation.update_attributes({
       :line_start => params[:line_start], 
@@ -16,7 +17,8 @@ class AnnotationsController < ApplicationController
     })
     @annotation.annotation_text = @text
     @annotation.save
-    @annotations = Annotation.find_all_by_submission_file_id(@submission_file_id, :order => "line_start") || []
+    @submission = @submission_file.submission
+    @annotations = @submission.annotations
   end
 
   def create
@@ -25,20 +27,24 @@ class AnnotationsController < ApplicationController
       :annotation_category_id => params[:category_id]
     })
     @submission_file_id = params[:submission_file_id]
+    @submission_file = SubmissionFile.find(@submission_file_id)
     @annotation = Annotation.create({ 
       :line_start => params[:line_start], 
       :line_end => params[:line_end],
       :annotation_text_id => @text.id,
       :submission_file_id => params[:submission_file_id]
     })
-    @annotations = Annotation.find_all_by_submission_file_id(@submission_file_id, :order => "line_start") || []   
+    @submission = @submission_file.submission
+    @annotations = @submission.annotations
   end
 
   def destroy
     @annotation = Annotation.find(params[:id])
     @old_annotation = @annotation.destroy
     @submission_file_id = params[:submission_file_id]
-    @annotations = Annotation.find_all_by_submission_file_id(@submission_file_id, :order => "line_start") || []
+    @submission_file = SubmissionFile.find(@submission_file_id)
+    @submission = @submission_file.submission
+    @annotations = @submission.annotations
   end
  
   def update_annotation
@@ -49,8 +55,9 @@ class AnnotationsController < ApplicationController
     @annotation_text = AnnotationText.find(@id)
     @annotation_text.content = @content
     @annotation_text.save
- 
-    @annotations = Annotation.find_all_by_submission_file_id(@submission_file_id, :order => "line_start") || []
+    @submission_file = SubmissionFile.find(@submission_file_id)
+    @submission = @submission_file.submission
+    @annotations = @submission.annotations
   end
 
   #Updates the overall comment from the annotations tab
