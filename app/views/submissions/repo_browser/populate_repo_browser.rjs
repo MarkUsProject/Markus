@@ -1,4 +1,2 @@
-page.hide "find_revision_error"
-page["current_revision_number"].setValue(@revision_number)
-page.replace_html 'current_revision_number_display', @revision_number
+page.replace_html 'directories_tbody', :partial => 'submissions/repo_browser/exit_directory'
 page.call "populate", @table_rows.to_json

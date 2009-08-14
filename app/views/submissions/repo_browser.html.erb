@@ -4,25 +4,28 @@
 <%= calendar_date_select_includes "silver" %>
 
 
-<div class="wrapLeft">
-  <% if flash[:submit_notice] -%>   
-     <p class="success"><%= h(flash[:submit_notice]) %> </p>
-  <% end %>
+<% if flash[:error] -%>   
+<div class="error">
+  <%= h(flash[:error]) %>
 </div>
+<% end %>
+
 
 <div class="wrapLeft">
   <h1>Repository: <%= @repository_name %></h1>
   <div id="repo_browser_controls">
     <fieldset>
-      <legend>Display a previous revision</legend>
+      <legend>Find a different revision</legend>
 
       <div id="find_revision_error" class="error" style="display:none;">
       </div>
 
-      <% form_remote_tag :url => {:action => 'find_revision', :id => @grouping.id}, :method => 'get', :loading => "$('loading_list').show();", :complete => "$('loading_list').hide();" do %>
+      <% form_tag :action => 'repo_browser', :id => @grouping.id do %>
+      By Date:
       <input type="radio" name="find_revision_by" value="revision_timestamp" onClick="if($(this).getValue()) { $('revision_timestamp').enable(); $('revision_number').disable(); } else { $('revision_timestamp').disable(); $('revision_number').enable(); }" checked="checked">
 
      <%= calendar_date_select_tag "revision_timestamp", nil, :time => true %>
+     By Revision Number:
      <input type="radio" name="find_revision_by" value="revision_number" onClick="if($(this).getValue()) { $('revision_timestamp').disable(); $('revision_number').enable(); } else { $('revision_timestamp').enable(); $('revision_number').disable(); }"> 
      <%= text_field_tag "revision_number", nil, :disabled => true %>
      <%= submit_tag "Find Revision" %>
@@ -32,11 +35,27 @@
 </div>
 
 <div class="global_actions">
-  <h2>Viewing Revision: <span id="current_revision_number_display"></span></h2>
+  <h2>Viewing Revision: <span id="current_revision_number_display"><%=@revision_number%></span></h2>
   <span id="loading_list"><%= image_tag("spinner.gif") %> Loading list...
   </span>
+  
+<div id="directory_selector">
+<p>
+  Current Path: 
+  <% path_memory = '/' 
+     links = [] 
+     @path.split('/').each do |folder| 
+     path_memory = File.join(path_memory, folder) 
+     links.push(link_to folder, :action => 'repo_browser', :path => path_memory, :id => @grouping.id) 
+  end %>
+  <%= link_to '[root]', :action => 'repo_browser', :id => @grouping.id, :path => '/' %>
+  <%= links.join('/')%>
+
+</p>
+</div>
+  
   <% form_tag :action => "manually_collect_and_begin_grading", :id => @grouping.id do %>
-  <%= hidden_field_tag "current_revision_number", "" %>
+  <%= hidden_field_tag "current_revision_number", @revision_number %>
   <%= submit_tag "Collect and Grade This Revision" %>
   <% end %>
 </div>

@@ -1,0 +1,10 @@
+<td>
+  <%=image_tag('icons/folder.png') %>
+  <%= link_to h(directory.name), :action => 'repo_browser', :id => @grouping.id, :revision_number => @revision_number, :path => File.join(@path, directory.name) %>
+</td>
+<td>
+  <%= h(directory.last_modified_date.strftime(LONG_DATE_TIME_FORMAT)) %>
+</td>
+<td>
+  <%= h(directory.user_id) %>
+</td>

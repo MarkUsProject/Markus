@@ -88,18 +88,23 @@ module SubmissionsHelper
     table_row = {}
     table_row[:id] = file.id
     table_row[:filter_table_row_contents] = render_to_string :partial => 'submissions/repo_browser/filter_table_row', :locals => {:file_name => file_name, :file => file}
-    
     table_row[:filename] = file_name
-    
     table_row[:last_modified_date] = file.last_modified_date.strftime('%d %B, %l:%M%p')
-
     table_row[:last_modified_date_unconverted] = file.last_modified_date
-
     table_row[:revision_by] = file.user_id
-
     return table_row
   end
-  
+
+  def construct_repo_browser_directory_table_row(directory_name, directory)
+    table_row = {}
+    table_row[:id] = directory.id
+    table_row[:filter_table_row_contents] = render_to_string :partial => 'submissions/repo_browser/directory_row', :locals => {:directory_name => directory_name, :directory => directory}
+    table_row[:filename] = directory_name
+    table_row[:last_modified_date] = directory.last_modified_date.strftime('%d %B, %l:%M%p')
+    table_row[:last_modified_date_unconverted] = directory.last_modified_date
+    table_row[:revision_by] = directory.user_id
+    return table_row
+  end  
   
   def construct_repo_browser_table_rows(files)
     result = {}

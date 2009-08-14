@@ -22,11 +22,9 @@
      path_memory = File.join(path_memory, folder) 
      links.push(link_to folder, :action => 'file_manager', :path => path_memory) 
   end %>
-  <% if links.empty? %>
-   /
-  <% else %>
-    <%= links.join('/')%>
-  <% end %>
+  <%= link_to '[root]', :action => 'file_manager', :path => '/' %>
+  <%= links.join('/')%>
+
 </p>
 </div>
 

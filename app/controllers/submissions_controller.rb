@@ -10,25 +10,31 @@ class SubmissionsController < ApplicationController
   def repo_browser
     @grouping = Grouping.find(params[:id])
     @assignment = @grouping.assignment
+    @path = params[:path] || '/'
+    @previous_path = File.split(@path).first
     @repository_name = @grouping.group.repository_name
+    begin
+      if !params[:revision_timestamp].nil?
+        @revision_number = @grouping.group.repo.get_revision_by_timestamp(Time.parse(params[:revision_timestamp])).revision_number
+      else
+        @revision_number = params[:revision_number] || @grouping.group.repo.get_latest_revision.revision_number
+      end
+    rescue Exception => e
+      flash[:error] = e.message
+    end
   end
   
-  def find_revision
+  def populate_repo_browser
     @grouping = Grouping.find(params[:id])
     @assignment = @grouping.assignment
+    @path = params[:path] || '/'
+    @revision_number = params[:revision_number]
+    @previous_path = File.split(@path).first
     repo = @grouping.group.repo
     begin
-      case params[:find_revision_by]
-      when "revision_timestamp"
-        @revision = repo.get_revision_by_timestamp(Time.parse(params[:revision_timestamp]))
-      when "revision_number"
-        @revision = repo.get_revision(params[:revision_number].to_i)
-      else
-        @revision = repo.get_latest_revision
-      end
-      @revision_number = @revision.revision_number
-      @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, '/'))
-      @files = @revision.files_at_path(File.join(@assignment.repository_folder, '/'))
+      @revision = repo.get_revision(params[:revision_number].to_i)
+      @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, @path))
+      @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
     rescue Exception => @find_revision_error
       render :action => 'repo_browser/find_revision_error'
       return
@@ -36,6 +42,9 @@ class SubmissionsController < ApplicationController
     @table_rows = {} 
     @files.sort.each do |file_name, file|
       @table_rows[file.id] = construct_repo_browser_table_row(file_name, file)
+    end
+    @directories.sort.each do |directory_name, directory|
+      @table_rows[directory.id] = construct_repo_browser_directory_table_row(directory_name, directory)
     end
     render :action => 'repo_browser/populate_repo_browser'
   end
