@@ -289,11 +289,11 @@ class AssignmentsController < ApplicationController
         assignments.each do |assignment|
           grouping = student.accepted_grouping_for(assignment)
           if grouping.nil?
-            row.push('Not Attempted')
+            row.push('')
           else
             submission = grouping.get_submission_used
             if submission.nil?
-              row.push('No Submission Received')
+              row.push('')
             else
               row.push(submission.result.total_mark)
             end

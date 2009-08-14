@@ -322,16 +322,16 @@ class SubmissionsController < ApplicationController
     students = Student.all
     csv_string = FasterCSV.generate do |csv|
        students.each do |student|
+         final_result = []
+         final_result.push(student.user_name)         
          grouping = student.accepted_grouping_for(assignment.id)
-         if !grouping.nil?
-           if grouping.has_submission? 
-             final_result = []
-             submission = grouping.get_submission_used
-             final_result.push(student.user_name)
-             final_result.push(submission.result.total_mark)           
-             csv << final_result
-           end
+         if grouping.nil? || !grouping.has_submission?
+           final_result.push('')
+         else
+           submission = grouping.get_submission_used
+           final_result.push(submission.result.total_mark)                    
          end
+         csv << final_result
        end
     end
       
@@ -344,32 +344,39 @@ class SubmissionsController < ApplicationController
     rubric_criteria = assignment.rubric_criteria
     csv_string = FasterCSV.generate do |csv|
        students.each do |student|
+         final_result = []
+         final_result.push(student.user_name)
          grouping = student.accepted_grouping_for(assignment.id)
-         if !grouping.nil?
-           if grouping.has_submission? 
-             final_result = []
-             submission = grouping.get_submission_used
-             final_result.push(student.user_name)
-             final_result.push(submission.result.total_mark)
-             rubric_criteria.each do |rubric_criterion|
-               mark = submission.result.marks.find_by_rubric_criterion_id(rubric_criterion.id)
-               # TODO:  Should this really be 0, if no mark has been set?
-               if mark.nil?
-                 final_result.push(0)
-               else
-                 final_result.push(mark.mark || 0)
-               end 
-               final_result.push(rubric_criterion.weight)
-             end
-             final_result.push(submission.result.get_total_extra_points)
-             final_result.push(submission.result.get_total_extra_percentage)
-             membership = grouping.student_memberships.find_by_user_id(student.id)
-             grace_period_deductions = student.grace_period_deductions.find_by_membership_id(membership.id)
-             final_result.push(grace_period_deductions || 0)
-             
-             csv << final_result
+         if grouping.nil? || !grouping.has_submission?
+           final_result.push('')
+           rubric_criteria.each do |rubric_criterion|
+             final_result.push('')
+             final_result.push(rubric_criterion.weight)
            end
+           final_result.push('')
+           final_result.push('')
+           final_result.push(0)
+         else
+           submission = grouping.get_submission_used
+           final_result.push(submission.result.total_mark)
+           rubric_criteria.each do |rubric_criterion|
+             mark = submission.result.marks.find_by_rubric_criterion_id(rubric_criterion.id)
+             if mark.nil?
+               final_result.push('')
+             else
+               final_result.push(mark.mark || '')
+             end 
+             final_result.push(rubric_criterion.weight)
+           end
+    
+           final_result.push(submission.result.get_total_extra_points)
+           final_result.push(submission.result.get_total_extra_percentage)
+           membership = grouping.student_memberships.find_by_user_id(student.id)
+           grace_period_deductions = student.grace_period_deductions.find_by_membership_id(membership.id)
+           final_result.push(grace_period_deductions || 0) 
          end
+         
+         csv << final_result
        end
     end
 

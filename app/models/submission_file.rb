@@ -19,6 +19,8 @@ class SubmissionFile < ActiveRecord::Base
       return "python"
     when ".js"
       return "javascript"
+    when ".c"
+      return "c"
     else
       return "unknown"
     end
