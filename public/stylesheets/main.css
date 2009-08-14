@@ -273,7 +273,7 @@ span#choose_an_assignment{
    -moz-border-radius: 10px;
    -webkit-border-radius: 10px;
    border: 2px solid #464646;
-   min-width: 11em;
+   min-width: 12em;
    height: 1.1em;
    padding: 0.1em 1em;
    display: inline-block;
