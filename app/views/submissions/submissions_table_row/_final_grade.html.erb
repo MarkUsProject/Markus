@@ -1,9 +1,0 @@
-<% if !grouping.has_submission? %>
-  -
-<% else %>
-  <% if !grouping.get_submission_used.has_result? %>
-    -
-  <% else %>
-    <%= h(grouping.get_submission_used.result.total_mark) %>
-  <% end %>
-<% end %>
