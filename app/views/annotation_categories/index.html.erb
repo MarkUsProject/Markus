@@ -36,6 +36,12 @@
 </script>
 
 
+<%if @assignment.past_due_date?%>
+ <div class="notice">
+   <%=t('past_due_date_warning')%>
+ </div>
+<% end %>
+
 <%= render :partial => "boot.js" %>
 
 <div id="title_bar">

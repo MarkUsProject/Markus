@@ -38,6 +38,12 @@
   });
 </script>
 
+<% if @assignment.past_due_date?%>
+ <div class="notice">
+   <%=t('past_due_date_warning')%>
+ </div>
+<% end %>
+
 <div id="title_bar">
   <h1>Rubric Management:  <%= h(sanitize(@assignment.short_identifier)) %>
     

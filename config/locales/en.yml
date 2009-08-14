@@ -137,3 +137,4 @@ en:
     student_without_a_group_list_message: "These students don't have a group 
         yet:"
     no_student_without_a_group_message: "All students are in a group."
+    past_due_date_warning: "This assignment is past due date."
