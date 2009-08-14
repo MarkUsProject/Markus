@@ -13,6 +13,7 @@ body {
    clear: both;
 }
 
+
 button{
    min-width: 100px;
   background: #fff;
@@ -86,8 +87,14 @@ h4{
 
 
 #logo{
-  height: 40px;
-  display: block;
+   margin: 5px 10px 10px 10px;
+   font-size: 14px;
+}
+
+#logo a{
+  padding: 5px;
+  font-size: 14px;
+  font-family: Lucida;
 }
 
 .wrapLeft{
@@ -146,7 +153,7 @@ h4{
 #menu{
   display: block;
   padding: 0 0 0 50px;
-  margin: 0;
+  margin-top: 0px;
   border-bottom: 2px solid #464646;
 }
 

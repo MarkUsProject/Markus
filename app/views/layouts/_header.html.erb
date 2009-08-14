@@ -9,4 +9,6 @@
   <div id="course"><b><%=h COURSE_NAME %></b></div>
 </div>
 <div id="logo">
+  <%= render :partial => 'layouts/breadcrumb' unless controller.action_name == 'login' %>
 </div>
+

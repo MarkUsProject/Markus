@@ -19,6 +19,7 @@
                end %>">
    
   <%= render :partial => 'layouts/header' unless controller.action_name == 'login' %>
+
   <%= render :partial => 'layouts/menu' unless controller.action_name == 'login'%>
   <%= render :partial => 'layouts/sub_menu' unless controller.action_name == 'login'%>
 
