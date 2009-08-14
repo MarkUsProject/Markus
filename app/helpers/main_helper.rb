@@ -11,7 +11,7 @@ module MainHelper
     return "" unless blank_login || blank_password
     
     message = "Your "
-    message += "CDF login " if blank_login
+    message += "user name " if blank_login
     message += "and " if blank_login && blank_password
     message += "password " if blank_password
     

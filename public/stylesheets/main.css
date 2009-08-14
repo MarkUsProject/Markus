@@ -733,22 +733,26 @@ tr.student_hidden{
   min-width: 30%;
 }
 
-/* Login */
-
-#loggedOut{
-   margin: auto;
-   width: 50%;
-}
-
-#login .section{
-   margin: auto;
+/* Login screen styling (uses its own layout) */
+#login {
+  position: absolute;
+  left: 50%;
+  margin-left: -200px;
+  width: 400px;
+  height: 300px;
+  border: solid Black 1px;
+  top: 50%;
+  margin-top: -200px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border: 2px solid #ccc;
 }
 
 #login label{
    display: inline-block;
    padding: 5px;
    min-width: 100px;
-   margin-left: 30px;
+   margin-left: 25px;
 }
 
 #login input{
@@ -762,6 +766,34 @@ tr.student_hidden{
   margin-left: 160px;
 }
 
+div#login-greeting {
+  position: absolute;
+  font-weight: bold;
+  right: 20px;
+  margin-top: -16px;
+  background-color: #fff;
+  color: #ccc;
+  padding: 8px;
+}
+
+div#login-image img {
+  position: relative;
+  width: 250px;
+  margin-top: 20px;
+  left: 50%;
+  margin-left: -125px;
+  margin-bottom: 20px;
+}
+
+div#login div#login-content {
+  position: relative;
+  bottom: 0px;
+}
+
+div#login div.error {
+  text-align: center;
+  margin-top: -15px;
+}
 
 /* Student Interface: Assignment View*/
 

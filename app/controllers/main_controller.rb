@@ -20,8 +20,9 @@ class MainController < ApplicationController
     if logged_in? && !request.post?
       if @current_user.student?
         redirect_to :controller => 'assignments', :action => 'index'
+        return
       else
-        redirect_to :action => 'index' 
+        redirect_to :action => 'index'
         return
       end
     end
@@ -63,7 +64,7 @@ class MainController < ApplicationController
       session[:redirect_uri] = nil
       refresh_timeout
       # redirect to last visited page or to main page
-      redirect_to(uri || { :action => 'index' })
+      redirect_to( uri || { :action => 'index' } )
     else
       flash[:login_notice] = "Login failed."
     end
@@ -78,11 +79,12 @@ class MainController < ApplicationController
   end
   
   def index
-    @user = current_user
-    if @user.student? or  @user.ta?
+    @current_user = current_user
+    if @current_user.student? or  @current_user.ta?
       redirect_to :controller => 'assignments', :action => 'index'
       return
     end
+    render :action => 'index', :layout => 'content'
   end
   
 end

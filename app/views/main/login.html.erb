@@ -1,13 +1,15 @@
 <div id="login">
+  <div id="login-greeting">Welcome to <%= t(:markus) %>!</div>
 
-  <h1 id="login"><span><%= I18n.t(:markus)%></span></h1>
+  <div id="login-image">
+    <%= image_tag("markus_logo_big.png", :alt => "[Logo] Markus") %>
+  </div>
 
-  <div class="section">
-  
-    <% if flash[:login_notice] -%>
-      <div class="login-error"><%=h flash[:login_notice] %></div>
-    <% end -%>
-    
+  <% if flash[:login_notice] -%>
+    <div class="error"><%=h flash[:login_notice] %></div>
+  <% end -%>
+  <div id="login-content">
+    <!-- login form -->    
     <% form_tag({ :action => 'login', :id => nil }, :id => 'login_form') do %>
   
         <%= label_tag 'user_login', I18n.t(:login) -%>
@@ -19,13 +21,10 @@
         <%= submit_tag "Log in", :disabled_with => 'Logging in...', :tabindex => 100, :class => 'button indent_button'%>
         
     <% end %>
-    
   </div>
-  
 </div>
 
 <%# Try to put focus on the login text field on load %>
 <script type="text/javascript">
   try{ document.getElementById('user_login').focus(); } catch(e) {}
 </script>
-
