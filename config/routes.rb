@@ -36,23 +36,9 @@ ActionController::Routing::Routes.draw do |map|
   # See how all your routes lay out with "rake routes"
 
   # Install the default routes as the lowest priority.
-  map.root :controller => "main"
-  map.connect 'main', :controller => 'main'
-  map.connect 'main/login', :controller => 'main', :action => 'login'
-  map.connect 'main/logout', :controller => 'main', :action => 'logout'
-
-  map.connect 'main/tas', :controller => 'tas'
-  map.connect 'main/ta_assignments', :controller => 'ta_assignments'
+  map.root :controller => "main", :action => "login"
+  map.connect 'main', :controller => 'main', :action => 'index'
   
-  # map filenames to a nice-looking url
-  #map.connect 'checkmark/submissions/view/:id/:filename', 
-  #  :controller => 'submissions', :action => 'view', :id => /\d+/, :filename => /\w+.\w+/
-
-  # append xml to the classlist link
-  
+  # generic connects
   map.connect 'main/:controller/:action/:id'
-
-  # map.connect ':controller/:action/:id'
-  # map.connect ':controller/:action/:id.:format'
-
 end
