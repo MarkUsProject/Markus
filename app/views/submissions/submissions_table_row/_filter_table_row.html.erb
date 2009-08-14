@@ -37,24 +37,28 @@
   <% end %>
   </td>
   <% end %>
-  <td>
-  <% if !grouping.has_submission? %>
-    <% if assignment.submission_rule.can_collect_now? %>
-      <%= image_tag('icons/add.png')%>
+  <td class="marking_state">
+    <% if !grouping.has_submission? %>
+	<% if assignment.submission_rule.can_collect_now? %>
+	  <%= image_tag('icons/add.png')%>
+	<% else %>
+       	  -
+	<% end %>
     <% else %>
-      -
+	<% if !grouping.get_submission_used.has_result? %>
+	    <%= image_tag('icons/pencil.png') %>
+	<% else %>
+	    <% if grouping.get_submission_used.result.marking_state == Result::MARKING_STATES[:complete]%>
+		<% if !grouping.get_submission_used.result.released_to_students %>
+		    <%= image_tag('icons/accept.png')%>
+		<% else %>
+		    <%= image_tag('icons/email_go.png')%>
+		<% end %>
+	    <% else %>
+		<%= image_tag('icons/pencil.png')%>
+	    <% end %>
     <% end %>
-  <% else %>
-    <% if !grouping.get_submission_used.has_result? %>
-      <%= image_tag('icons/pencil.png') %>
-    <% else %>
-     <% if grouping.get_submission_used.result.marking_state == Result::MARKING_STATES[:complete]%>
-      <%= image_tag('icons/accept.png')%>
-     <% else %>
-    <%= image_tag('icons/pencil.png')%>
-     <% end %>
-  <% end %>
-<% end %>
+    <% end %>
   </td>
   <td>
   <% if !grouping.has_submission? %>
@@ -67,19 +71,3 @@
   <% end %>
 <% end %>
   </td>
-  <td>
-  <% if !grouping.has_submission? %>
-  -
-<% else %>
-  <% if !grouping.get_submission_used.has_result? %>
-    -
-  <% else %>
-    <% if grouping.get_submission_used.result.released_to_students %>
-      Released
-    <% else %>
-      Not Released
-    <% end %>
-  <% end %>
-<% end %>
-</td>
-

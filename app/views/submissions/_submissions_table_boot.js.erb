@@ -17,7 +17,6 @@ document.observe("dom:loaded", function() {
       <% end %>
       marking_state: {display: "Marking State", sortable: true},
       final_grade: {display: "Final Grade", sortable: true},
-      released: {display: "Released", sortable: true}
     },
     can_select: <%= @current_user.admin?%>,
     can_select_all: true,
@@ -31,17 +30,13 @@ document.observe("dom:loaded", function() {
         return row.marking_state != '<%=Result::MARKING_STATES[:complete]%>' && row.marking_state != '<%=Result::MARKING_STATES[:partial]%>';
       },
      partial: function(row) {
-        return row.marking_state != '<%=Result::MARKING_STATES[:unmarked]%>' && row.marking_state != '<%=Result::MARKING_STATES[:complete]%>';
+        return row.marking_state == '<%= Result::MARKING_STATES[:partial]%>';
       },
- 
       released: function(row){
-        return row.released == 'true';
-      },
-      unreleased: function(row){
-        return row.released != 'true';
+        return row.released == true;
       },
       complete: function(row){
-         return row.markign_state == '<%=Result::MARKING_STATES[:complete]%>';
+         return row.marking_state == '<%=Result::MARKING_STATES[:complete]%>' && row.released != true;
       },
     },
 
