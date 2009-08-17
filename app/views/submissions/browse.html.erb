@@ -37,6 +37,12 @@
     <%= link_to_function I18n.t(:released) + "(<span id=\"released_submissions_count\"></span>)", "submissions_table.filter_only_by('released').render();", :id => "filter_link_released" %>
 </div>
 <div class="clear"><br /></div>
+<% if flash[:error] %>
+<div class="error">
+ <%=flash[:error]%>
+</div>
+<% end %>
+
   <% if flash[:release_errors] %>
     <div class="error">
     <h1>Errors</h1>

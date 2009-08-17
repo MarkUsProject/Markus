@@ -112,8 +112,10 @@ class SubmissionsController < ApplicationController
 
   def collect_and_begin_grading
     assignment = Assignment.find(params[:id])
-    if assignment.submission_rule.can_collect_now?
-      grouping = Grouping.find(params[:grouping_id])
+    grouping = Grouping.find(params[:grouping_id])
+    if !assignment.submission_rule.can_collect_now?
+      flash[:error] = "Could not collect submission for group #{grouping.group.group_name} - the collection date has not been reached yet."
+    else
       time = assignment.submission_rule.calculate_collection_time.localtime
       # Create a new Submission by timestamp.
       # A Result is automatically attached to this Submission, thanks to some callback
