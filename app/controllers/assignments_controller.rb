@@ -364,6 +364,9 @@ class AssignmentsController < ApplicationController
     to_invite.each do |user_name|
       @invited = Student.find_by_user_name(user_name.strip)
       begin
+        if @grouping.student_membership_number >= @assignment.group_max
+          raise "Could not invite #{@invited.user_name} - group maximum has been reached"
+        end
         if @invited.nil?
           raise "#{user_name} doesn't exist"
         end
