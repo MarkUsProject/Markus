@@ -568,8 +568,16 @@ tr.student_hidden{
 }
 
 .notice{
+  background: #FFFFE0;
   border: 1px solid #E6DB55;
   padding: 3px 30px;
+  background-position: 7px;
+}
+
+.information{
+  border: 1px solid #0047FF;
+  padding: 3px 30px;
+  background: #EFEFEF url(../images/icons/information.png) no-repeat;
   background-position: 7px;
 
 }

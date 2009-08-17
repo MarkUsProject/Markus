@@ -221,7 +221,7 @@
   <div id="invite_dialog">
     <% form_tag({:action => 'invite_member', :id => @assignment.id},{:onsubmit => "$('invite_modal_spinner').show();"}) do %>   
     <h2>Invite</h2>
-    <p><%= t(:seperate_multiple_with_commas) %></p>
+    <p class="information"><%= t(:seperate_multiple_with_commas) %></p>
     <p>
       <fieldset>
          <label for="invite_member"> <%= I18n.t('user.user_name')%> </label>
