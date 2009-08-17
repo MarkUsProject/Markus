@@ -768,7 +768,6 @@ tr.student_hidden{
 }
 
 #login input{
-  display: inline-block;
   min-width: 150px; 
   margin-left: 20px;
   padding: 5px;
