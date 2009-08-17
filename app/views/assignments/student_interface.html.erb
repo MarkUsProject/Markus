@@ -164,15 +164,7 @@
 	    <% end %>
 	   </h3>
      
-     <% # Display the URL of this group's repository if applicable %>
-     <% if !@grouping.nil? && @grouping.group.repository_external_commits_only? %>
-     <div class="sub_block"> 
-       <h3>URL to your group's repository</h3>
-	     <p><%= h(@grouping.group.repository_external_access_url) %></p>
-     </div>
-	   <% end %>
-
-	   <% # If the group not yet the right amount of members, display
+     <% # If the group not yet the right amount of members, display
 	      # the information%>
 	   <% if !@grouping.is_valid?%>
 	     <p class="warning"> The group is not valid. You need to
@@ -180,7 +172,7 @@
 	   <% end %>
 
 	   <% # For each member of this group, we display the
-	      # informations we have on them 
+	      # information we have for them 
 	      %>
 	   <ul>
 	    <% @studentmemberships.each do |member|%>
@@ -189,15 +181,22 @@
 	    <% end -%>
 	   </ul>
 	   <% if !@grouping.nil? && @grouping.inviter == @current_user && ( @assignment.instructor_form_groups.nil? || !@assignment.instructor_form_groups ) %>
-            <% if @grouping.student_membership_number != @assignment.group_max %>
-             <%= button_to_function I18n.t(:invite), 'invite(); return
-	       false;' %>
-	    <% end %>
-	    <% end %>
-	  <% end -%>
-            </div>
-            <div class="sub_block"> 
-	     <h3> Group Properties </h3>
+       <% if @grouping.student_membership_number != @assignment.group_max %>
+         <%= button_to_function I18n.t(:invite), 'invite(); return false;' %>
+	     <% end %>
+	   <% end %>
+     
+     <% # Display the URL of this group's repository if applicable %>
+     <% if !@grouping.nil? && @grouping.group.repository_external_commits_only? %> 
+     <h3>URL to your group's repository</h3>
+     <div class="sub_block">
+       <p><%= h(@grouping.group.repository_external_access_url) %></p>
+     </div>
+	   <% end %>
+
+	 <% end -%>
+            
+	   <h3> Group Properties </h3>
        <ul>
         <% if !@assignment.instructor_form_groups && @assignment.group_max > 1 %>
               <li> The groups must be from <b><%= h(@assignment.group_min)%></b>
@@ -211,8 +210,8 @@
 	      <% end %>
         </ul>
 
-            </div>
- </div>    
+    </div>
+  </div>    
 </div>
 
 <% if !@grouping.nil? && @grouping.inviter == @current_user && !@assignment.instructor_form_groups %>
