@@ -211,7 +211,7 @@ h4{
 
 #sub_menu li{
    display: inline-block;
-   width: 130px;
+   width: 150px;
 }
 
 #sub_menu li li{
@@ -232,11 +232,11 @@ h4{
 #sub_menu ul.dropdown{
   visibility: hidden;
   background: #fff;
-  margin: 0px 0px 0 50px;
+  margin: 0px 0px 0 40px;
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
   border: 2px solid #464646;
-  padding: 0 11px;
+  padding: 0 15px;
   min-width: 10em;
 }
 
@@ -256,7 +256,7 @@ h4{
 }
 
 .level1{
-   padding: 7px 50px 0px 50px;
+   padding: 7px 40px 0px 40px;
 }
 
 #sub_menu li.level2 a{
