@@ -181,7 +181,7 @@
 	    <% end -%>
 	   </ul>
 	   <% if !@grouping.nil? && @grouping.inviter == @current_user && ( @assignment.instructor_form_groups.nil? || !@assignment.instructor_form_groups ) %>
-       <% if @grouping.student_membership_number >= @assignment.group_max %>
+       <% if @grouping.student_membership_number <= @assignment.group_max %>
          <%= button_to_function I18n.t(:invite), 'invite(); return false;' %>
 	     <% end %>
        <% end %>
