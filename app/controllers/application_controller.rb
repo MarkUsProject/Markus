@@ -8,12 +8,11 @@ class ApplicationController < ActionController::Base
   include SessionHandler
   
   helper :all # include all helpers, all the time
-    # exclude login/logout page so that anyone can access it (duh!)
   
   # activate i18n for renaming constants in views
   before_filter :set_locale
   # check for active session on every page
-  before_filter :authenticate, :except => [:login, :logout] 
+  before_filter :authenticate, :except => [:login] 
   
   # See ActionController::Base for details 
   # Filter the contents of submitted sensitive data parameters
