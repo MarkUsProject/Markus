@@ -5,7 +5,7 @@ class MainController < ApplicationController
   
   include MainHelper
   # check for authorization 
-  before_filter      :authorize_for_user,      :except => [:login, :logout]
+  before_filter      :authorize_for_user,      :except => [:login]
 
   #########################################################################
   # Authentication
