@@ -23,32 +23,7 @@
 
 <div id="title_bar"><h1> Assignment <%= h(sanitize(@assignment.short_identifier)) %></h1>
 </div>
-<% if flash[:fail_notice] && !flash[:fail_notice].empty? %>
-  <div class="notice">
-    <% if flash[:fail_notice].is_a?(Array) %>
-    <ul>
-      <% flash[:fail_notice].each do |message| %>
-      <li><%=message%></li>
-      <% end %>
-    </ul>
-    <% else %>
-      <%=flash[:fail_notice]%>
-    <% end %>
-  </div>
-<% end %>
-<% if flash[:success] && !flash[:success].empty? %>
-  <div class="success">
-    <% if flash[:success].is_a?(Array) %>
-    <ul>
-      <% flash[:success].each do |message| %>
-      <li><%=message%></li>
-      <% end %>
-    </ul>
-    <% else %>
-      <%=flash[:success]%>
-    <% end %>
-  </div>
-<% end %>
+
 
 <div class="column_floatLeft">
  <div class="block">
@@ -163,7 +138,35 @@
 	    %> 
 	    <% end %>
 	   </h3>
-     
+
+    <% if flash[:fail_notice] && !flash[:fail_notice].empty? %>
+     <div class="notice">
+      <% if flash[:fail_notice].is_a?(Array) %>
+       <ul>
+        <% flash[:fail_notice].each do |message| %>
+         <li><%=message%></li>
+         <% end %>
+       </ul>
+      <% else %>
+        <%=flash[:fail_notice]%>
+      <% end %>
+    </div>
+  <% end %>
+  <% if flash[:success] && !flash[:success].empty? %>
+    <div class="success">
+      <% if flash[:success].is_a?(Array) %>
+      <ul>
+        <% flash[:success].each do |message| %>
+        <li><%=message%></li>
+        <% end %>
+      </ul>
+      <% else %>
+        <%=flash[:success]%>
+    <% end %>
+    </div>
+  <% end %>
+
+
      <% # If the group not yet the right amount of members, display
 	      # the information%>
 	   <% if !@grouping.is_valid?%>
