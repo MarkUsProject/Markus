@@ -120,6 +120,7 @@ class ResultsController < ApplicationController
   def codeviewer
     @assignment = Assignment.find(params[:id])
     @submission_file_id = params[:submission_file_id]
+    @focus_line = params[:focus_line]
       
     @file = SubmissionFile.find(@submission_file_id)
     # Is the current user a student?
@@ -130,9 +131,7 @@ class ResultsController < ApplicationController
       end
     end
 
-    @annots = Annotation.find_all_by_submission_file_id(@submission_file_id, :order => "line_start") || []
-    
-
+    @annots = @file.annotations    
     @all_annots = @file.submission.annotations
 
     begin

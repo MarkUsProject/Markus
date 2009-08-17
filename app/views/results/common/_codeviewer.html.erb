@@ -11,8 +11,7 @@
     dp.SyntaxHighlighter.HighlightAll('code');
     $('standby_highlighting').hide();
     sourceCodeReady();
-
-
+    
     <% if (defined? annots) %>
         <% annots.each do |annot| %>
             add_annotation_text(<%=annot.annotation_text.id%>, 
@@ -21,6 +20,11 @@
              '<%=annot.annotation_text.id%>');
 
         <% end %>
+    <% end %>
+
+    
+    <% if !@focus_line.nil? %>
+      focus_source_code_line(<%=@focus_line%>);
     <% end %>
 
 </script>

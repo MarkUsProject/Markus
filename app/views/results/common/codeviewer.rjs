@@ -1,7 +1,7 @@
 #Render the source code for syntax highlighting...
   begin
     page.replace_html 'codeviewer', :partial => 'results/common/codeviewer', :locals => { :uid => params[:uid], :file_contents => @file_contents, :annots => @annots, :code_type => @code_type}
-  
+       
     #Also update the annotation_summary_list
     if @current_user.ta? || @current_user.admin?
       page.replace_html 'annotation_summary_list', :partial => 'results/marker/annotation_summary', :locals => {:annots => @all_annots, :submission_file_id => @submission_file_id}
@@ -9,6 +9,7 @@
     else
       page.replace_html 'annotation_summary_list', :partial => 'results/student/annotation_summary', :locals => {:annots => @all_annots, :submission_file_id => @submission_file_id}
     end
+
 
   
   rescue Exception => e

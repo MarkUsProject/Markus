@@ -51,7 +51,7 @@ class AnnotationsController < ApplicationController
     @content = params[:annotation_text][:content]
     @id = params[:annotation_text][:id]
     @submission_file_id = params[:annotation_text][:submission_file_id]
-    
+    @current_submission_file_id = params[:current_submission_file_id]
     @annotation_text = AnnotationText.find(@id)
     @annotation_text.content = @content
     @annotation_text.save

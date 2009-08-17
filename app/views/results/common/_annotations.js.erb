@@ -22,6 +22,7 @@ function sourceCodeReady() {
   var annotation_text_displayer = new AnnotationTextDisplayer($('annotation_holder'));
    
   line_annotations = new SourceCodeLineAnnotations(line_manager, annotation_text_manager, annotation_text_displayer);
+  console.info('REMOVE - source code ready!');
 }
 
 function add_annotation_text(annotation_text_id, content) {
@@ -136,12 +137,20 @@ function add_existing_annotation(annotation_text_id) {
 
 
 //Load a submitted file into the code-viewer based on file id's
-function load_submitted_file(submission_file_id) {
+function load_submitted_file(submission_file_id, focus_line) {
   $('working').show();
   line_annotations = null;
-<%= remote_function (:url =>{ :action => "codeviewer", :id => @assignment.id, :uid => @uid }, :with => "'submission_file_id='+submission_file_id", :after => "$('working').hide();")%>
+<%= remote_function (:url =>{ :action => "codeviewer", :id => @assignment.id, :uid => @uid }, :with => "'submission_file_id='+submission_file_id+'&focus_line='+focus_line", :after => "$('working').hide();")%>
 }
 
+function load_submitted_file_and_focus(submission_file_id, focus_line) {
+  if($F('select_file_id') == submission_file_id) {
+    focus_source_code_line(focus_line);
+  } else {
+    $('select_file_id').setValue(submission_file_id);
+    load_submitted_file(submission_file_id, focus_line);
+  }
+}
 
 function submit_new_annotation(content, category_id) {
   //Was any annotation text content provided?
@@ -160,6 +169,9 @@ function submit_new_annotation(content, category_id) {
 }
 
 function focus_source_code_line(line_num) {
+  if(typeof(line_num) == 'undefined' || line_num == null) {
+    return;
+  }
   //First, switch to the source code viewer tab
   code_tab_menu.setActiveTab('code_holder');
   //Next, grab the dom node that represents this source code line,
