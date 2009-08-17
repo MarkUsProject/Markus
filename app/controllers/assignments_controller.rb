@@ -91,6 +91,8 @@ class AssignmentsController < ApplicationController
       end
       render :action => "student_assignment_list"
       return
+    elsif current_user.ta?
+      render :action => "grader_index"
     else
       render :action => 'index'
     end

@@ -104,12 +104,14 @@ h(sanitize(@assignment.short_identifier))%></span>
            <%= render :partial => 'layouts/assignments_dropdown_menu'%>
         </ul>
    </li>
-
-  <% if 
-    !@assignment.nil?
-  %>
-  <%%>
-  <% end %> 
+  <% if controller.controller_name == 'submissions' or
+        controller.controller_name == 'results' %>
+  <li <% if controller.controller_name == 'submissions' or
+       controller.controller_name == 'results' %> 
+          id="sub_menu_active"<% end %>>
+ <%= link_to I18n.t(:submissions), :controller => 'submissions', :action => 'browse', :id => @assignment.id %> 
+ </li>
+ <% end %>
   </ul>
 </div> 
 <% elsif @current_user.student?%>

@@ -1,7 +1,7 @@
 <div id="student_selector">
 <span class="left">
-  <% if !@previous.nil?%>
-    <%= link_to "Previous Submission", :action => 'next', :id => @previous.id %>
+  <% if !previous_grouping.nil?%>
+    <%= link_to "Previous Submission", :action => 'next_grouping', :id => previous_grouping.id %>
   <% else %>
      <span class="disable"> Previous Submission </span>
   <% end %>
@@ -22,8 +22,8 @@ Result released to students
   </span> 
   <span class="right">
 
-<% if !@next.nil? %>
-   <%= link_to "Next Submission", :action => 'next', :id => @next.id%>
+<% if !next_grouping.nil? %>
+   <%= link_to "Next Submission", :action => 'next_grouping', :id => @next_grouping.id%>
 <% else %>
    <span class="disable">Next Submission</span>
 <% end %>

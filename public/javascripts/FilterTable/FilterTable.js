@@ -423,7 +423,7 @@ var FilterTable = Class.create({
     });
   },
   select_all_toggles: function(is_selected) {
-   if(this.can_select_all) {
+   if(this.can_select && this.can_select_all) {
       $(this.select_all_top_id).setValue(false);
       if(this.footer) {
         $(this.select_all_bottom_id).setValue(false);

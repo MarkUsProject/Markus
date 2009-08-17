@@ -12,11 +12,13 @@
 
 <div id="title_bar">
   <h1>Workspace: <%= h(sanitize(@assignment.short_identifier)) %>
-<%= link_to "CSV Report", :action => 'download_simple_csv_report', :id => @assignment.id %> 
+  <% if @current_user.admin? %>
+  <%= link_to "CSV Report", :action => 'download_simple_csv_report', :id => @assignment.id %> 
    <span class="menu_bar">|</span>
 <%= link_to "Detailed CSV Report", :action => 'download_detailed_csv_report', :id => @assignment.id %>
    <span class="menu_bar">|</span>
 <%= link_to "Subversion Export File", :action => 'download_svn_export_commands', :id => @assignment.id %>
+ <% end %>
 </h1>
 </div>
 

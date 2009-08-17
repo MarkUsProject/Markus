@@ -1,9 +1,8 @@
 class ResultsController < ApplicationController
   before_filter      :authorize_only_for_admin, :except => [:codeviewer,
-  :edit, :update_mark, :view_marks, :create, :add_extra_mark,
-  :next]
+  :edit, :update_mark, :view_marks, :create, :add_extra_mark, :next_grouping]
   before_filter      :authorize_for_ta_and_admin, :only => [:edit,
-  :update_mark, :create, :add_extra_mark, :download, :next]
+  :update_mark, :create, :add_extra_mark, :download, :next_grouping]
   before_filter      :authorize_for_user, :only => [:codeviewer]
   before_filter      :authorize_for_student, :only => [:view_marks]
 
@@ -66,45 +65,26 @@ class ResultsController < ApplicationController
     if current_user.admin?
       groupings = @assignment.groupings
     end
-
-    submissions = []
-    groupings.each do |g|
-      submission = g.get_submission_used
-      if !submission.nil?
-        submissions.push(submission)
-      end
+    
+    current_grouping_index = groupings.index(@grouping)
+    if !groupings[current_grouping_index + 1].nil?
+      @next_grouping = groupings[current_grouping_index + 1]
+    end
+    if (current_grouping_index - 1) >= 0
+      @previous_grouping = groupings[current_grouping_index - 1]
     end
 
-    i = 0
-    while i <= submissions.size do
-        if submissions[i].id == @submission.id
-          if i == 0
-            @next = submissions[i + 1]
-            i = submissions.size + 1
-          elsif i == submissions.size
-            @previous = submissions[submissions.size - 1]
-            i = submissions.size + 1
-          else
-            @previous = submissions[i - 1]
-            @next = submissions[i + 1]
-            i = submissions.size + 1
-          end
-        else 
-         i = i + 1
-        end
-    end
   end
 
-  def next
-    submission = Submission.find(params[:id])
-    if submission.result.nil?
-      redirect_to :action => 'create', :id => submission.id
+  def next_grouping
+    grouping = Grouping.find(params[:id])
+    if grouping.has_submission?
+      redirect_to :action => 'edit', :id => grouping.get_submission_used.result.id
     else
-       redirect_to :action => 'edit', :id => submission.result.id
+      redirect_to :controller => 'submissions', :action => 'collect_and_begin_grading', :id => grouping.assignment.id, :grouping_id => grouping.id
     end
   end
-
-
+  
   def download
     file = SubmissionFile.find(params[:select_file_id])
     begin

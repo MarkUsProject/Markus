@@ -19,11 +19,12 @@ document.observe("dom:loaded", function() {
       final_grade: {display: "Final Grade", sortable: true},
     },
     can_select: <%= @current_user.admin?%>,
-    can_select_all: true,
+    can_select_all: <%= @current_user.admin?%>,
     can_sort: true,
     row_prefix: "grouping_row_",
     select_name: "groupings[]",
     select_id_prefix: "grouping_select_",
+    default_sort: 'group_name',
     footer: true,
     filters: {
       unmarked: function(row) {

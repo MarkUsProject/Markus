@@ -1,4 +1,3 @@
-
 <div id="title_bar"><h1>Manage Assignments 
  </h1></div>
 
@@ -11,7 +10,7 @@
 
 
 <div class="wrapLeft">
-  <%= link_to_if @current_user.admin?, "Download CSV Grades Report", :action => "download_csv_grades_report" %>
+  <%= link_to "Download CSV Grades Report", :action => "download_csv_grades_report" unless !@current_user.admin?%>
 </div>
 
 

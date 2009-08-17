@@ -56,7 +56,7 @@
   <p class=color:red""><%=h flash[:fail_notice] %></p>
 <% end %>
 
-<%= render :partial => 'results/common/submission_selector', :locals => {:group => @group, :result => @result, :assignment => @assignment, :test => 'Mike'} %>
+<%= render :partial => 'results/common/submission_selector', :locals => {:group => @group, :result => @result, :assignment => @assignment, :previous_grouping => @previous_grouping, :next_grouping => @next_grouping} %>
 
 <%= render :partial => 'results/common/errors' %>
 
