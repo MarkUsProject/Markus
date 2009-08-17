@@ -3,6 +3,8 @@
 
 class ApplicationController < ActionController::Base
 
+  # Avoid CSRF for non-GET, HTML/JavaScript requests
+  # see http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html#M000514
   protect_from_forgery
   
   layout "content"
