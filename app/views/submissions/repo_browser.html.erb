@@ -10,9 +10,11 @@
 </div>
 <% end %>
 
+<div id="title_bar">
+  <h1>Repository: <%= @repository_name %></h1>
+</div>
 
 <div class="wrapLeft">
-  <h1>Repository: <%= @repository_name %></h1>
   <div id="repo_browser_controls">
     <fieldset>
       <legend>Find a different revision</legend>
@@ -32,8 +34,6 @@
       <% end %>
     </fieldset>
   </div>
-</div>
-
 <div class="global_actions">
   <h2>Viewing Revision: <span id="current_revision_number_display"><%=@revision_number%></span></h2>
   <span id="loading_list"><%= image_tag("spinner.gif") %> Loading list...
@@ -60,6 +60,7 @@
   <% end %>
 </div>
 
+</div>
 
 
 <div class="wrapLeft">
