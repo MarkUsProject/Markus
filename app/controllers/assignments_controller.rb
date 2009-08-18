@@ -389,7 +389,7 @@ class AssignmentsController < ApplicationController
           raise I18n.t('invite_student.fail.already_pending', :user_name => user_name)
         end
         if @invited.has_accepted_grouping_for?(@assignment.id)
-          raise I18n.t('invite_student_fail.already_grouped', :user_name => user_name)
+          raise I18n.t('invite_student.fail.already_grouped', :user_name => user_name)
         end
         
         @invited.invite(@grouping.id)

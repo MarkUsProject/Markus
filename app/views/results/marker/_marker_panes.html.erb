@@ -75,7 +75,7 @@
     <p>
       <h3>Annotation Category</h3>
       <select id="new_annotation_category">
-        <option value="">Uncategorized</option>
+        <option value=""><%=t('annotations.one_time_only')%></option>
         <% @annotation_categories.each do |annotation_category| %>
         <option value="<%=h(annotation_category.id)%>"><%=h(annotation_category.annotation_category_name)%></option>
         <% end %>

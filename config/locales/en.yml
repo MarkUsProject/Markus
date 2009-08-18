@@ -94,6 +94,7 @@ en:
         annotation_category:  "Delete this annotation category will also delete its annotations.  Deleted annotations will no longer be attached to student submissions.  Are you sure you want to do this?"
       upload:
         success:  "Successfully uploaded {{annotation_category_number}} new Annotation Categories"
+      one_time_only:  "One Time Only"
 
     
     submission_rules:
