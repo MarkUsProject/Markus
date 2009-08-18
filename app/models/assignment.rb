@@ -276,7 +276,7 @@ class Assignment < ActiveRecord::Base
       student = Student.find_by_user_name(group[i].strip) # remove whitespace
       if student.nil?
         users_not_found << group[i].strip # use this in view to get some meaningful feedback
-        return nil
+        return users_not_found
       end
       if (i > start_index_group_members)
         @grouping.add_member(student)

@@ -194,33 +194,46 @@ class GroupsController < ApplicationController
   
   # Allows the user to upload a csv file listing groups.
   def csv_upload
+    flash[:error] = nil # reset from previous errors
+    flash[:invalid_lines] = nil
+    @assignment = Assignment.find(params[:id])
     if request.post? && !params[:group].blank?
-      @assignment = Assignment.find(params[:id])
-      num_update = 0
-      invalid_lines = []  # store lines that were not processed
-  
-      # Loop over each row, which lists the members to be added to the group.
-      line_nr = 1
-      flash[:users_not_found] = [] # contains a list of user_name(s) not found in DB
-      FasterCSV.parse(params[:group][:grouplist]) do |row|
-        retval = @assignment.add_csv_group(row)
-        if retval == nil || retval.instance_of?(Array)
-          invalid_lines << line_nr
-          if !retval.nil?
-            retval.each do |user|
-              flash[:users_not_found].push(user)
-            end
-          end
-        else
-          num_update += 1
+      # make this transactional
+      ActiveRecord::Base.transaction do
+        # if there exist groupings, delete them
+        if !@assignment.groupings.nil? && @assignment.groupings.length > 0
+          @assignment.groupings.destroy_all
         end
-        line_nr += 1
+        num_update = 0
+        flash[:invalid_lines] = []  # store lines that were not processed
+        
+        begin # start unsave code
+          # Loop over each row, which lists the members to be added to the group.
+          line_nr = 1
+          flash[:users_not_found] = [] # contains a list of user_name(s) not found in DB
+          FasterCSV.parse(params[:group][:grouplist]) do |row|
+            retval = @assignment.add_csv_group(row)
+            if retval == nil || retval.instance_of?(Array)
+              if !retval.nil?
+                flash[:invalid_lines] << "Line #{line_nr}: User(s) not found: " +retval.join(", ")
+              else
+                flash[:invalid_lines] << line_nr
+              end
+            else
+              num_update += 1
+            end
+            line_nr += 1
+          end
+          msg = "#{num_update} group(s) added."
+          msg += flash[:invalid_lines].length "lines contained errors." if flash[:invalid_lines].length > 0
+          flash[:upload_notice] = msg
+        rescue Exception
+          flash[:error] = "There was an error regarding CSV upload."
+          raise ActiveRecord::Rollback
+        end
       end
-      msg = "#{num_update} group(s) added."
-      msg += " Line(s) " + invalid_lines.join(",") + " contained errors." if invalid_lines.length > 0
-      flash[:upload_notice] = msg
-      redirect_to :action => "manage", :id => params[:id]
     end
+    redirect_to :action => "manage", :id => params[:id]
   end
   
   def download_grouplist

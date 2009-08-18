@@ -181,45 +181,45 @@ id=\"all_groupings_count\"></span>)", "filter('none')", :id =>
       </div>
 </div>
 <div class="clear"></div>
-<div id="notice">
-      <div class="error" id="errors" style="display:none;">
+
+    <div id="notice">
+      <% # This is for error display injected by JavaScript 
+       %>
+      
+      <div class="error" id="errors" style="display: none; ">
         <h3>There was a problem...</h3>
         <div id="errors_title">
         </div>
         <div id="errors_contents">
         </div>
       </div>
-      <% if flash[:upload_notice] -%>
-          <p class="success"><%= h(flash[:upload_notice]) %></p>
-      <% end -%>
-      <% if flash[:invalid_lines] -%>
-          <p class="error">
+      
+      <% # if there are errors have the error message display %>
+      <% if flash[:error] || flash[:fail_notice] || flash[:invalid_lines] %>
+        <div class="error">
+          <%= h(flash[:error])+"<br/><br/>" if flash[:error] %>
+          <%= h(flash[:fail_notice])+"<br/><br/>" if flash[:fail_notice] %>
+          <% if flash[:invalid_lines] %>
             The following lines could not be processed:
             <ul>
             <% flash[:invalid_lines].each do |error| %>
               <li><%=error%></li>
             <% end %>
             </ul>
-          </p>
-      <% end -%>
+          <% end %>
+        </div>
+      <% end %>
       
-      <% if flash[:edit_notice] -%>
-        <p class="success"><%= h(flash[:edit_notice]) %></p>
-      <% end -%>
-
-      <% if flash[:success] -%>
-        <p class="success"><%= h(flash[:success]) %></p>
-      <% end -%>
-
-      <% if flash[:error] -%>
-        <p class="error"><%= h(flash[:error]) %></p>
-      <% end -%>
-
-
-      <% if flash[:fail_notice] -%>
-        <p class="error"><%= h(flash[:fail_notice]) %></p>
-      <% end -%> 
-</div><!-- Notice -->
+      <% # if there are success messages to display
+				%>
+      <% if flash[:upload_notice] || flash[:edit_notice] -%>
+        <div class="success">
+          <%= h(flash[:upload_notice])+"<br/><br/>" if flash[:upload_notice] %>
+          <%= h(flash[:edit_notice])+"<br/><br/>" if flash[:edit_notice] %>
+        </div>
+      <% end %>
+      
+    </div><!-- Notice -->
 
     <%= form_remote_tag :url => {:controller => "groups", :action => "global_actions", :id => @assignment.id}, :html => {:id => "global_action_form"}, :loading => "thinking();", :complete => "done_thinking();"%>
 <div class="clear"></div>
@@ -293,8 +293,14 @@ id=\"all_groupings_count\"></span>)", "filter('none')", :id =>
         <div id="upload">
           <p>
             <h3>Upload Groups File</h3>
-            Select a CSV file form:<br />
-            <code>group_name,repository_name,user_name,user_name ... </code><br />
+            CSV file format:<br />
+            <code>group_name,repository_name,user_name,<br />user_name ... </code><br />
+            <% if !@groupings.nil? && @groupings.length > 0 %>
+              <br/>
+              <div class="information">
+                Importing groups via CSV upload into <%= t(:markus) %> will destroy existing groups!
+              </div>
+            <% end %>
           </p>
           <% form_for :group, :html => {:multipart => true},
                              :url => { :controller=>"groups",
@@ -309,7 +315,7 @@ id=\"all_groupings_count\"></span>)", "filter('none')", :id =>
         </p>
         <p>
           <h3>Upload Group / Grader Map</h3>
-            Select a CSV file form:<br />
+            CSV file format:<br />
             <code>group_name,grader_user_name,grader_user_name,... </code><br />
           </p>
           <% form_tag({:controller=>"groups", :action => 'csv_upload_grader_mapping',:id => @assignment.id}, {:multipart => true}) do -%>

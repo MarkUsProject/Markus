@@ -602,7 +602,7 @@ input#extra_mark_description{
   background: #FFFFE0;
   border: 1px solid #E6DB55;
   padding: 3px 30px;
-  background-position: 7px;
+  margin: 5px;
 }
 
 .information{
