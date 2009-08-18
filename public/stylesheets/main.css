@@ -118,13 +118,14 @@ h4{
   background: none;
   color: #003399;
   border: none;
-  font-size: 0.45em;
+  font-size: 10px;
   font-weight: bold;
   margin: 0;
   padding: 0 4px;
   font-family: Lucida;
   min-width: 5px;
-}
+  cursor: pointer;
+  }
 
 #title_bar span.menu_bar{
   background: none;
@@ -155,6 +156,18 @@ h4{
   padding: 0 0 0 50px;
   margin-top: 0px;
   border-bottom: 2px solid #464646;
+}
+#sub_menu{
+  display: block;
+}
+
+#sub_menu li{
+   float: left;
+   width: 140px;
+}
+
+#sub_menu li.visible_dropdown {
+  width: 170px;
 }
 
 #menu a, #sub_menu a {
@@ -209,15 +222,6 @@ h4{
    color: #003366;
 }
 
-#sub_menu li{
-   display: inline-block;
-   width: 140px;
-}
-
-#sub_menu li.visible_dropdown {
-  width: 170px;
-}
-
 #sub_menu li li{
    display: block;
    text-align: center;
@@ -231,6 +235,7 @@ h4{
    padding: 0;
    min-height: 35px;
    display: block;
+   list-style: none;
 }
 
 #sub_menu ul.dropdown{
@@ -242,6 +247,11 @@ h4{
   border: 2px solid #464646;
   padding: 0 19px;
   min-width: 10em;
+}
+
+#sub_menu ul.dropdown li{
+   float: none;
+   display: block;
 }
 
 #sub_menu ul.dropdown a{
@@ -323,7 +333,7 @@ span#choose_an_assignment{
 }
 
 /* Drop down menu, select, input etc...*/
-input, .button{
+input, .button, .button_2{
   min-width: 100px;
   background: #fff;
   -moz-border-radius: 10px;
@@ -335,6 +345,12 @@ input, .button{
   color: #464646;
   padding: 3px 5px;
   margin: 5px;
+}
+
+.button_2{
+   margin-top: 0px;
+   margin-bottom: 10px;
+   padding-bottom: 50px;
 }
 
 .button{
@@ -457,7 +473,7 @@ tbody tr:hover {
 
 .table_menu a, .table_menu button{
    color: #003399;
-   font-size: 0.9em;
+   font-size: 0.8em;
    font-family: Georgia, "Times New Roman", sans-serif;
    text-decoration: none;
    cursor: pointer;
@@ -505,6 +521,11 @@ tr.student_hidden{
 #checkbox{
   width: 2em;
   padding: 0;
+}
+
+input.FilterTable_selectable, input#FilterTable_select_all_top, input#FilterTable_select_all_bottom{
+  width: 5px;
+  min-width: 5px;
 }
 
 #FilterTable_header_members{
@@ -894,8 +915,15 @@ span.info_number{
    font-family: "Georgia";
    margin-right: 5px;
    line-height: 1.5em;
-
 }
+
+span.info_date{
+   font-size: 1.2em;
+   font-family: "Georgia";
+   margin-right: 5px;
+   line-height: 1.5em;
+}
+
 
 span.title{
   font-family: Georgia;
@@ -936,12 +964,10 @@ th.FilterTable_sortable:hover
 }
 
 th.FilterTable_sorting_by{
-  background: right url(../images/asc.png) no-repeat;
   color: #000;
 }
 
 th.FilterTable_sorting_by_reverse{
-  background: right url(../images/dsc.png) no-repeat;
   color: #000;
 }
 
@@ -968,11 +994,12 @@ td.delete_row, td.marking_state {
 /* floating object */
 .column_floatRight{
    float: right;
+   width: 49%;
 }
 
 .column_floatLeft{
    float: left;
-   width: 50%;
+   width: 49%;
 }
 
 .floatLeft {

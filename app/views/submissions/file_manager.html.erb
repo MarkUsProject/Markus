@@ -98,10 +98,16 @@
 
 
 <% if @grouping.is_valid? %>
-<%= submit_tag( I18n.t(:submit), :disabled => !@grouping.is_valid? ) unless @grouping.group.repository_external_commits_only? %>
-<%= link_to( I18n.t(:cancel), {:controller => 'submissions', :action =>
-'file_manager'}, :id => @assignment.id, :disabled => !@grouping.is_valid?,
-:class => "button", :confirm => "Are you sure you want to discard your changes?") unless @grouping.group.repository_external_commits_only? %>
+<%= submit_tag( I18n.t(:submit),
+    :disabled => !@grouping.is_valid?
+    ) unless @grouping.group.repository_external_commits_only? 
+    %>
+<%= button_to_function( I18n.t(:cancel), 
+        {:controller => 'submissions', 
+           :action => 'file_manager'}, 
+	 :id => @assignment.id,
+	 :disabled => !@grouping.is_valid?,
+	 :confirm => "Are you sure you want to discard your changes?") unless @grouping.group.repository_external_commits_only? %>
 <% end %>
 </div>
 
@@ -113,9 +119,12 @@
 <% if @grouping.is_valid? %>
 <div class="global_action">
 <%= submit_tag( I18n.t(:submit), :disabled => !@grouping.is_valid? ) unless @grouping.group.repository_external_commits_only? %>
-<%= link_to( I18n.t(:cancel), {:controller => 'submissions', :action =>
-'file_manager'}, :id => @assignment.id, :disabled => !@grouping.is_valid?,
-:class => "button" ) unless @grouping.group.repository_external_commits_only? %>
+<%= button_to_function( I18n.t(:cancel), 
+      {:controller => 'submissions', 
+       :action => 'file_manager'}, 
+      :id => @assignment.id, 
+      :disabled => !@grouping.is_valid?,
+      :class => "button" ) unless @grouping.group.repository_external_commits_only? %>
 </div>
 </form>
 <% end %>
