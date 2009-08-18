@@ -345,7 +345,12 @@ var FilterTable = Class.create({
     var me = this;
     
     var thead_element = new Element('thead');
+    var thead_tr = new Element('tr');
+    thead_element.insert(thead_tr);
     var tfoot_element = new Element('tfoot');
+    var tfoot_tr = new Element('tr');
+    tfoot_element.insert(tfoot_tr);
+    
     this.table_body = new Element('tbody');
     
     this.headers.each(function(header_data) {
@@ -366,15 +371,15 @@ var FilterTable = Class.create({
           me.click_header(header_data.key);
         });
       }     
-      thead_element.insert({bottom: th_element_header});
-      tfoot_element.insert({bottom: th_element_footer});
+      thead_tr.insert({bottom: th_element_header});
+      tfoot_tr.insert({bottom: th_element_footer});
     });
     
     if(this.can_select) {
       var th_element_head = new Element('th');
       var th_element_foot = new Element('th');
-      thead_element.insert({top: th_element_head});
-      tfoot_element.insert({top: th_element_foot});
+      thead_tr.insert({top: th_element_head});
+      tfoot_tr.insert({top: th_element_foot});
     }
     
     if(this.can_select && this.can_select_all) {
