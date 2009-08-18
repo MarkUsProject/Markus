@@ -545,10 +545,20 @@ input.FilterTable_selectable, input#FilterTable_select_all_top, input#FilterTabl
    width: 35%;
 }
 
+input#extra_mark_description{
+  width: 50%;
+}
+
+#add_extra_mark_prompt label{
+  min-width: 20%;
+}
+
 .status_inviter{
    font-style: italic;
    font-weight: bold;
 }
+
+
 
 /* flash messages, & warning */
 .success {
@@ -1166,7 +1176,6 @@ a img{
 .criterion_weight {
    float: right;
    padding: 2px 4px 0 2px;
-
 }
 
 .delete_criterion a img{
