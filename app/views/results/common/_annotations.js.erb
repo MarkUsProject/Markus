@@ -38,7 +38,9 @@ function remove_annotation(annotation_id, range, annotation_text_id) {
 }
 
 function update_annotation_text(annotation_text_id, new_content) {
-  line_annotations.getAnnotationTextManager().getAnnotationText(annotation_text_id).setContent(new_content);
+  if(line_annotations.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
+    line_annotations.getAnnotationTextManager().getAnnotationText(annotation_text_id).setContent(new_content);
+  }
 }
 
 
