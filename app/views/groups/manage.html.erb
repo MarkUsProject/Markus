@@ -197,8 +197,8 @@ id=\"all_groupings_count\"></span>)", "filter('none')", :id =>
       <% # if there are errors have the error message display %>
       <% if flash[:error] || flash[:fail_notice] || flash[:invalid_lines] %>
         <div class="error">
-          <%= h(flash[:error])+"<br/><br/>" if flash[:error] %>
-          <%= h(flash[:fail_notice])+"<br/><br/>" if flash[:fail_notice] %>
+          <%= h(flash[:error])+"<br/>" if flash[:error] %>
+          <%= h(flash[:fail_notice])+"<br/>" if flash[:fail_notice] %>
           <% if flash[:invalid_lines] %>
             The following lines could not be processed:
             <ul>
@@ -214,8 +214,8 @@ id=\"all_groupings_count\"></span>)", "filter('none')", :id =>
 				%>
       <% if flash[:upload_notice] || flash[:edit_notice] -%>
         <div class="success">
-          <%= h(flash[:upload_notice])+"<br/><br/>" if flash[:upload_notice] %>
-          <%= h(flash[:edit_notice])+"<br/><br/>" if flash[:edit_notice] %>
+          <%= h(flash[:upload_notice])+"<br/>" if flash[:upload_notice] %>
+          <%= h(flash[:edit_notice])+"<br/>" if flash[:edit_notice] %>
         </div>
       <% end %>
       
