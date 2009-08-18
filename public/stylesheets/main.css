@@ -1138,6 +1138,10 @@ a img{
 
 .rubric_tools input{
    min-width: 0px;
+   font-size: 0.8em;
+   margin: 1px;
+   margin-bottom: 4px;
+   padding: 2px;
 }
 
 #annotation_category_pane_list li{
