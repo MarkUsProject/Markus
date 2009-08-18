@@ -1,10 +1,9 @@
 require File.dirname(__FILE__) + '/authenticated_controller_test'
-require 'checkmark_controller'
 
 # re-raise errors caught by controller
-class CheckmarkController; def rescue_action(e) raise e end; end
+class MainController; def rescue_action(e) raise e end; end
 
-class CheckmarkControllerTest < AuthenticatedControllerTest
+class MainControllerTest < AuthenticatedControllerTest
   
   fixtures :users
   

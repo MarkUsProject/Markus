@@ -59,6 +59,18 @@ en:
     students_not_successfully_added_message_5: "Each line has the required
     fields specified near the upload form."
     invalid_group_warning: "Your group is currently invalid. You probably haven't met the group size minimum. You may not be able to submit anything, and your work may not be graded, until you have met this minimum. "
+    rejected_invitation: "declined"
+    
+    invite_student:
+      success: "Student {{user_name}} invited."
+      fail:
+        dne:  "Could not invite {{user_name}} - this student does not exist."
+        hidden:  "Could not invite {{user_name}} - this student's account has been disabled."
+        already_pending: "Could not invite {{user_name}} - this student is already a pending member of this group."
+        group_max_reached: "Could not invite {{user_name}} - group maximum has been reached."
+        inviting_self: "You cannot invite yourself to your own group."
+        already_grouped: "Could not invite {{user_name}} - this student is already a member of another group."
+        need_to_create_group: "You must create a group before you can invite users"
 
     user:
         user_name:      "CDF ID"

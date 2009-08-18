@@ -7,6 +7,11 @@ class AdminsControllerTest < AuthenticatedControllerTest
    fixtures :users
    def setup
      @admin = users(:olm_admin_1)
+     setup_group_fixture_repos
+   end
+   
+   def teardown
+     destroy_repos
    end
 
 
@@ -23,7 +28,9 @@ class AdminsControllerTest < AuthenticatedControllerTest
 
   def test_create
     post_as(@admin, :create, :user => {:user_name => 'Essai01', :last_name => 'ESSAI', :first_name => 'essai'})
-    assert_response :success
+    assert_redirected_to :action => "index"
+    a = Admin.find_by_user_name('Essai01')
+    assert_not_nil a
   end
 
   def test_update

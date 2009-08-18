@@ -2,10 +2,13 @@
 # Erb template for inserting a member into a group for managing groups
 %>
 
-<span id="<%= "mbr_#{member.id}" %>" class="<%= h('status_' + member.membership_status) %>">
+<div id="<%= "mbr_#{member.id}" %>" class="<%= h('status_' + member.membership_status) %>">
   <%= link_to_remote "<b>x</b> ", :method => 'delete', 
     :url => { :action => 'remove_member', :id => params[:id], :grouping_id => grouping.id, :mbr_id => member.id }, 
     :html => { :title => 'Remove this member from this group' } %>
   <%= member.user.user_name %>
-</span>
+  <% if member.membership_status == StudentMembership::STATUSES[:rejected] %>
+    (<%= t(:rejected_invitation) %>)
+  <% end %>
+</div>
 

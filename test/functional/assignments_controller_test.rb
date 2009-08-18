@@ -101,8 +101,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     student = users(:student1)
     invited = users(:student5)
     post_as(student, :invite_member, {:id => assignment.id, :invite_member => invited.user_name})
-    assert_response :success
-    assert_equal("Student invited.", flash[:edit_notice])
+    assert_equal(I18n.t('invite_student.success', :user_name => invited.user_name), flash[:success].first)
+    assert_redirected_to :action => "student_interface"
   end
 
   def test_invite_member2
@@ -110,8 +110,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     student = users(:student1)
     invited = users(:hidden_student)
     post_as(student, :invite_member, {:id => assignment.id, :invite_member => invited.user_name})
-    assert_response :success
-    assert_equal("Could not invite this student - this student's account has been disable.", flash[:fail_notice])
+    assert_redirected_to :action => "student_interface"
+    assert_equal(I18n.t('invite_student.fail.hidden', :user_name => invited.user_name), flash[:fail_notice].first)
   end
 
   def test_invite_member3
@@ -119,19 +119,30 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     student = users(:student4)
     invited = users(:student5)
     post_as(student, :invite_member, {:id => assignment.id, :invite_member => invited.user_name})
-    assert_response :success
-    assert_equal("This student is already a pending member of this group!", flash[:fail_notice])
+    assert_redirected_to :action => "student_interface"
+    assert_equal(I18n.t('invite_student.fail.already_pending', :user_name => invited.user_name), flash[:fail_notice].first)
   end
 
   def test_invite_member4
     assignment = assignments(:assignment_1)
     student = users(:student4)
     post_as(student, :invite_member, {:id => assignment.id, :invite_member => "zhfbdjhzkyfg"})
-    assert_response :success
-    assert_equal("This student doesn't exist.", flash[:fail_notice])
+    assert_redirected_to :action => "student_interface"
+    assert_equal(I18n.t('invite_student.fail.dne', :user_name => 'zhfbdjhzkyfg'), flash[:fail_notice].first)
   end
-
-
+  
+  def test_multiple_members
+    assignment = assignments(:assignment_1)
+    student = users(:student4)
+    students = [users(:student1), users(:student2), users(:student3), users(:student5), users(:student6)]
+    
+    user_names = students.collect { |student| student.user_name }.join(',')
+    post_as(users(:student4), :invite_member, {:id => assignment.id, :invite_member => user_names})  
+    assert_redirected_to :action => "student_interface"
+    grouping = student.accepted_grouping_for(assignment.id)
+    assert_equal 3, grouping.pending_students.size
+    
+  end
 
   def test_disinvite_member
     assignment = assignments(:assignment_1)

@@ -29,7 +29,7 @@ h(member.user.last_name) %> (inviter)</li>
    <% if grouping.is_inviter?(@current_user) %>
 <li class="membership_status_rejected">
    <span class="last_name"><%= h(member.user.last_name) %> </span> <%=
-h(member.user.first_name) %> (rejected)
+h(member.user.first_name) %> (<%=t(:rejected_invitation)%>)
      <%= link_to_remote I18n.t(:delete), :url => {:action =>
      'delete_rejected', :id => @assignment.id, :membership => member.id} %>
 </li>
