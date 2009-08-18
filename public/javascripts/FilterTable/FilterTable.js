@@ -399,6 +399,12 @@ var FilterTable = Class.create({
 
     this.table_id.insert({top: thead_element});
     
+    if(this.footer) {
+      this.table_id.insert({bottom: tfoot_element});
+    } else {
+      delete tfoot_element;
+    }
+    
     this.above_tbodys.each(function(tbody_id) {
         me.table_id.insert({bottom: new Element('tbody', {id: tbody_id})});
     });
@@ -409,11 +415,7 @@ var FilterTable = Class.create({
         me.table_id.insert({bottom: new Element('tbody', {id: tbody_id})});
     });
     
-    if(this.footer) {
-      this.table_id.insert({bottom: tfoot_element});
-    } else {
-      delete tfoot_element
-    }
+
     
   },
   // Function to select all rows if selectable.
