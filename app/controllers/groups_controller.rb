@@ -227,7 +227,7 @@ class GroupsController < ApplicationController
           msg = "#{num_update} group(s) added."
           msg += flash[:invalid_lines].length "lines contained errors." if flash[:invalid_lines].length > 0
           flash[:upload_notice] = msg
-          flash[:invalid_lines] = nil if flash[:invalid_lines].length > 0
+          flash[:invalid_lines] = nil if flash[:invalid_lines].length == 0
         rescue Exception
           flash[:error] = "There was an error regarding CSV upload."
           raise ActiveRecord::Rollback
