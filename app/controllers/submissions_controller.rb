@@ -4,8 +4,12 @@ class SubmissionsController < ApplicationController
   include SubmissionsHelper
   
   before_filter    :authorize_only_for_admin, :except => [:populate_file_manager, :browse,
-  :index, :file_manager, :update_files, :hand_in, :download, :populate_submissions_table, :collect_and_begin_grading]
-  before_filter    :authorize_for_ta_and_admin, :only => [:browse, :index, :populate_submissions_table, :collect_and_begin_grading]
+  :index, :file_manager, :update_files, 
+  :download, :populate_submissions_table, :collect_and_begin_grading, 
+  :manually_collect_and_begin_grading, :repo_browser, :populate_repo_browser]
+  before_filter    :authorize_for_ta_and_admin, :only => [:browse, :index, :populate_submissions_table, :collect_and_begin_grading, 
+  :manually_collect_and_begin_garding, :repo_browser, :populate_repo_browser]
+  
  
   def repo_browser
     @grouping = Grouping.find(params[:id])

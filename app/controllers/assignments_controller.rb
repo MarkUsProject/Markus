@@ -381,6 +381,10 @@ class AssignmentsController < ApplicationController
         if @grouping.pending?(@invited)
           raise "This student is already a pending member of this group!"
         end
+        if @invited.has_accepted_grouping_for?(@assignment.id)
+          raise "#{user_name} is already a member of another group"
+        end
+        
         @invited.invite(@grouping.id)
         flash[:success].push("Student #{@invited.user_name} invited.")
       rescue Exception => e
