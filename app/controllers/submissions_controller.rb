@@ -23,6 +23,7 @@ class SubmissionsController < ApplicationController
       else
         @revision_number = params[:revision_number] || @grouping.group.repo.get_latest_revision.revision_number
       end
+      @revision_timestamp = @grouping.group.repo.get_latest_revision.timestamp
     rescue Exception => e
       flash[:error] = e.message
     end

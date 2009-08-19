@@ -1,8 +1,8 @@
 class ResultsController < ApplicationController
   before_filter      :authorize_only_for_admin, :except => [:codeviewer,
-  :edit, :update_mark, :view_marks, :create, :add_extra_mark, :next_grouping]
+  :edit, :update_mark, :view_marks, :create, :add_extra_mark, :next_grouping, :update_overall_comment]
   before_filter      :authorize_for_ta_and_admin, :only => [:edit,
-  :update_mark, :create, :add_extra_mark, :download, :next_grouping]
+  :update_mark, :create, :add_extra_mark, :download, :next_grouping, :update_overall_comment]
   before_filter      :authorize_for_user, :only => [:codeviewer]
   before_filter      :authorize_for_student, :only => [:view_marks]
 
@@ -103,6 +103,7 @@ class ResultsController < ApplicationController
     @focus_line = params[:focus_line]
       
     @file = SubmissionFile.find(@submission_file_id)
+    @result = @file.submission.result
     # Is the current user a student?
     if current_user.student?
       # The Student does not have access to this file.  Render nothing.
@@ -122,14 +123,6 @@ class ResultsController < ApplicationController
       end
       return
     end   
-    
-    # Is this file a binary?
-#    if SubmissionFile.is_binary?(file_contents)
-#      render :update do |page|
-#        page.redirect_to :action => 'download', :submission_file_id => @submission_file_id
-#      end
-#      return
-#    end
     
     @code_type = @file.get_file_type
     render :action => 'results/common/codeviewer'

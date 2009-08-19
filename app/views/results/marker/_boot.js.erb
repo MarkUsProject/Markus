@@ -6,7 +6,9 @@ document.observe("dom:loaded", function() {
    load_submitted_file('<%=first_file.id%>');
   <% end %>
   //Register drop down menus...
+  <% if @result.marking_state != Result::MARKING_STATES[:complete] %>
   setup_annotation_categories();
+  <% end %>
   
   //If we're in Grader view, collapse all rubric criteria
   $$('.rubric_criterion_level_container').each(function(node) {
