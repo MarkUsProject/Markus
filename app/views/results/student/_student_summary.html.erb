@@ -30,7 +30,10 @@
     <div class="clear"></div>
 
     <div class="mark_total">
-      <div class="float_left">Final Mark&nbsp;</div>
-      <div class="float_right"> /<%= h(assignment.total_mark) %>  </div>
-      <div class="float_right" id="current_total_mark_div"> <%= h(result.total_mark) %> </div>
-    </div>
+<span class="final_mark">
+       <span id="current_total_mark_div"> <%= h(result.total_mark) %> </span>
+       <span> /<%= h(assignment.total_mark) %>  </span>
+      </span>
+
+     <span>Final Mark&nbsp;</span>
+         </div>

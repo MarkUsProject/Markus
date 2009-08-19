@@ -43,11 +43,13 @@
 <%= render :partial => "results/common/annotations.js" %>
 <%= render :partial => "results/student/boot.js", :locals => {:first_file => @first_file} %>
 
+<div id="title_bar">
 <h1>Results For <%= h(sanitize(@assignment.short_identifier)) %></h1>
-
+</div>
+<div class="wrapLeft">
 <%= render :partial => 'results/common/errors' %>
 
 <%= render :partial => 'results/common/file_selector', :locals => {:files => @files, :can_download => false} %>
 
 <%= render :partial => 'results/student/student_panes', :locals => {:extra_marks_points => @extra_marks_points, :extra_marks_percentage => @extra_marks_percentage, :result => @result, :rubric_criteria => @rubric_criteria, :marks_map => @marks_map, :assignment => @assignment } %>
-
+</div>

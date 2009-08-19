@@ -589,6 +589,7 @@ input#extra_mark_description{
 
 .final_mark{  
    font-size: 1.4em;
+   float: right;
 }
 
 #current_total_mark_div {
