@@ -1,6 +1,10 @@
 require 'test_helper'
+require 'shoulda'
 
 class AnnotationCategoryTest < ActiveSupport::TestCase
+   fixtures :assignments
+   should_validate_presence_of :annotation_category_name
+   should_validate_presence_of :assignment_id
 
   # Test that an Annotations Category without name are not valid
   def test_no_name
@@ -39,6 +43,39 @@ class AnnotationCategoryTest < ActiveSupport::TestCase
     annotation.assignment_id = 1
     annotation.annotation_category_name = "test"
     assert annotation.save, "Annotation category NOT saved"
+  end
+
+  def test_add_by_row
+    row = []
+    row.push("annotation category name")
+    row.push("annotation text 1")
+    row.push("annotation text 2")
+    assignment = assignments(:assignment_1)
+    assert AnnotationCategory.add_by_row(row, assignment), "annotation saved"
+  end
+
+  def test_add_by_row_1
+    row = []
+    row.push("annotation category name 2")
+    row.push("annotation text 2 1")
+    row.push("annotation text 2 2")
+    a = AnnotationCategory.all.size
+    assignment = assignments(:assignment_1)
+    AnnotationCategory.add_by_row(row, assignment)
+    assert_not_equal(a, AnnotationCategory.all.size, "an annotation category 
+    has been created. The number of annotation category should be different")
+  end
+
+  def test_add_by_row_2
+    row = []
+    row.push("annotation category name 3")
+    row.push("annotation text 3 1")
+    row.push("annotation text 3 2")
+    a = AnnotationText.all.size
+    assignment = assignments(:assignment_1)
+    AnnotationCategory.add_by_row(row, assignment)
+    assert_not_equal(a, AnnotationText.all.size, "an annotation text 
+    has been created. The number of annotation texts should be different")
   end
 
 

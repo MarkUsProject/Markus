@@ -12,6 +12,47 @@ class AssignmentTest < ActiveSupport::TestCase
     destroy_repos
   end
   
+  def test_past_due_date?
+    assignment = assignments(:assignment_4)
+    assert assignment.past_due_date?
+  end
+
+  def test_not_past_due_date?
+    assignment = assignments(:assignment_3)
+    assert !assignment.past_due_date?
+  end
+
+  def test_past_collection_date?
+    assignment = assignments(:assignment_4)
+    assert assignment.past_collection_date?
+  end
+
+  def test_not_past_collection_date?
+    assignment = assignments(:assignment_3)
+    assert !assignment.past_collection_date?
+  end
+
+  def test_submission_by
+     user = users(:student1)
+     assignment = assignments(:assignment_1)
+     assert !assignment.submission_by(user)
+  end
+
+  def test_individual?
+    assignment = assignments(:assignment_2)
+    assert assignment.individual?
+  end
+
+  def test_not_individual?
+    assignment = assignments(:assignment_1)
+    assert !assignment.individual?
+  end
+
+  def test_total_mark
+    assignment = assignments(:assignment_1)
+    assert_equal(35.6, assignment.total_mark)
+  end
+
   # Test if assignments can fetch the group for a user
   def test_group_by
     a1 = assignments(:assignment_1)

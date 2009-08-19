@@ -17,3 +17,7 @@ no_late_submission2:
 no_late_submission3:
   assignment_id:  <%= Fixtures.identify(:assignment_3) %>
   type: "NoLateSubmissionRule"
+
+no_late_submission4:
+  assignment_id:  <%= Fixtures.identify(:assignment_4) %>
+  type: "NoLateSubmissionRule"
