@@ -93,7 +93,7 @@
 <% elsif @current_user.ta? %>
 <div id="sub_menu">
   <ul id="root" class="level1 horizontal">
-   <li class="level1">
+   <li class="level1 visible_dropdown">
      <% if @assignment.nil?%>
        <span id="choose_an_assignment"><%= I18n.t(:choose_assignment) %></span>
      <% else %>
@@ -118,7 +118,7 @@ h(sanitize(@assignment.short_identifier))%></span>
 <% if controller.controller_name != 'main'%>
 <div id="sub_menu">
   <ul id="root" class="level1 horizontal">
-   <li class="level1">
+   <li class="level1 visible_dropdown">
      <% if @assignment.nil?%>
        <span id="choose_an_assignment"><%= I18n.t(:choose_assignment) %></span>
      <% else %>
