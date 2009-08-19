@@ -1,3 +1,4 @@
+<div id="current_annotation_category" class="annotation_category_edit">
 <% if !flash[:error].nil? %>
   <div class="error">
     <p>
@@ -17,7 +18,7 @@
     <%= flash[:success] %>
   </div>
 <% end %>
-<div id="current_annotation_category" class="annotation_category_edit">
+
  <div class="float_right">
    <%= link_to_remote "Delete annotation category",
         :url => {:action => "delete_annotation_category",
