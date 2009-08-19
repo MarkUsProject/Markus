@@ -1,3 +1,6 @@
+# we need repository permission constants
+require File.join(File.dirname(__FILE__),'/../../lib/repo/repository')
+
 # Represents a collection of students working together on an assignment in a group
 class Grouping < ActiveRecord::Base
    
@@ -101,6 +104,15 @@ class Grouping < ActiveRecord::Base
     else
       member = StudentMembership.new(:user => user, :membership_status =>
       set_membership_status, :grouping => self)
+      # Add repository read and write permissions for user,
+      # if we are required to do so
+      if self.group.repository_external_commits_only?
+        begin
+          self.group.repo.add_user(user.user_name, Repository::Permission::READ_WRITE)
+        rescue UserAlreadyExistent
+          # ignore case if user has permissions already
+        end
+      end
       member.save
       return member
     end
@@ -161,17 +173,24 @@ class Grouping < ActiveRecord::Base
   # Removes the member by its membership id
   def remove_member(mbr_id)
     member = student_memberships.find(mbr_id)
-    if member.membership_status == StudentMembership::STATUSES[:inviter]
-       if member.grouping.student_membership_number > 1
-          membership = member.grouping.accepted_students[1].memberships.find_by_grouping_id(member.grouping.id) 
-          membership.membership_status = StudentMembership::STATUSES[:inviter]
-          membership.save
-          member.destroy if member
-       else
-          member.destroy if member
-       end
-    else
-      member.destroy if member
+    if member
+      if member.membership_status == StudentMembership::STATUSES[:inviter]
+         if member.grouping.student_membership_number > 1
+            membership = member.grouping.accepted_students[1].memberships.find_by_grouping_id(member.grouping.id) 
+            membership.membership_status = StudentMembership::STATUSES[:inviter]
+            membership.save
+         end
+      end
+      # Remove user from list of allowed repo users,
+      # if we are required to do so
+      if self.group.repository_external_commits_only?
+        begin
+          self.group.repo.remove_user(member.user.user_name)
+        rescue UserNotFound
+          # ignore case when user isn't there any more
+        end
+      end
+      member.destroy
     end
   end
 

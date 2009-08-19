@@ -1,7 +1,5 @@
 require 'fastercsv'
 require 'auto_complete'
-# we need repository permission constants
-require File.join(File.dirname(__FILE__),'/../../lib/repo/repository')
 
 # Manages actions relating to editing and modifying 
 # groups.
@@ -11,8 +9,8 @@ class GroupsController < ApplicationController
   # -
   before_filter      :authorize_only_for_admin
    
-   auto_complete_for :student, :user_name
-   auto_complete_for :assignment, :name
+  auto_complete_for :student, :user_name
+  auto_complete_for :assignment, :name
   # TODO filter (except index) to make sure assignment is a group assignment
  
   # Group administration functions -----------------------------------------
@@ -32,11 +30,6 @@ class GroupsController < ApplicationController
     set_membership_status = grouping.student_memberships.empty? ?
     StudentMembership::STATUSES[:inviter] :
     StudentMembership::STATUSES[:accepted]     
-    # Add repository read and write permissions for user,
-    # if we are required to do so
-    if grouping.group.repository_external_commits_only?
-      grouping.group.repo.add_user(student.user_name, Repository::Permission::READ_WRITE)
-    end
     grouping.invite(params[:student_user_name], set_membership_status) 
     grouping.reload
     @grouping = construct_table_row(grouping, @assignment)
@@ -53,16 +46,10 @@ class GroupsController < ApplicationController
     student = member.user  # need to find user name to add to student list
     
     grouping.remove_member(member)
-    # Remove user from list of allowed repo users,
-    # if we are required to do so
     if inviter
       inviter = grouping.student_memberships.find_by_membership_status(StudentMembership::STATUSES[:inviter])
     else 
       inviter == false
-    end
-
-    if grouping.group.repository_external_commits_only?
-      grouping.group.repo.remove_user(student.user_name)
     end
 
     render :update do |page|
