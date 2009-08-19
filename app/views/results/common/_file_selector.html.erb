@@ -8,8 +8,6 @@
   <select id="select_file_id" name="select_file_id" onChange="if ($(this).getValue() != '') { load_submitted_file($(this).getValue()); }">
     <% if files.empty? %>
       <option value="">[No files in repository]</option>
-    <% # else %>
-     <% # <option value="">[Select a file]</option> %>
     <% end %>
     <% files.each do |file| %>
         <option value="<%= h(file.id) %>">
@@ -18,6 +16,6 @@
     <% end %>
   </select>  
   <button onClick="bump_select($('select_file_id'), 1); return false;">-></button>
-  <%= submit_tag "Download" if can_download %>
+  <%= submit_tag "Download" if can_download && !files.empty? %>
 <%= "</form>" if can_download%>
 </div>

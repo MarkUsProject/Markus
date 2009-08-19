@@ -104,19 +104,16 @@
 	people.</p>
          <% if @assignment.student_form_groups %>
 	   <% if @assignment.group_min == 1 %>
-	   <p><%= link_to_remote "Work alone", :url => {:action => 'creategroup', :id => @assignment.id, :workalone => 'true'}%></p>
+	   <p><%= link_to "Work alone", {:action => 'creategroup', :id => @assignment.id, :workalone => 'true'}%></p>
 	   <% end %>
 	   <p>
 	   <% if @student.has_pending_groupings_for?(@assignment.id)%>
-	      <%= link_to_remote I18n.t(:create), 
-	          :url => {:action => 'creategroup', 
-		           :id => @assignment.id},
-		  :confirm => "This will decline the invitation you have. Are you sure?"
+	      <%= link_to(I18n.t(:create),{:action => 'creategroup', 
+		           :id => @assignment.id},{:confirm => "This will decline the invitation you have. Are you sure?"})
 	      %>
 	    <% else %>
-                <%= link_to_remote I18n.t(:create), 
-		      :url => {:action => 'creategroup', 
-		               :id => @assignment.id} 
+                <%= link_to(I18n.t(:create),{:action => 'creategroup', 
+		               :id => @assignment.id})
 	      %>
 	    <% end %>
 	   </p>
@@ -134,9 +131,7 @@
 	     Your group
 	   <% end %>
             <% if !@grouping.nil? && @grouping.inviter == @current_user and !@grouping.is_valid? %>
-	    <%= link_to_remote I18n.t(:delete),:url => { :action => 'deletegroup', :id => @assignment.id, :grouping_id =>  @grouping.id },
-	    :html => {:title => "Delete this group", :class => "delete"},
-	    :confirm => "Are you sure you want to delete this group?"
+	    <%= link_to(I18n.t(:delete), {:action => 'deletegroup', :id => @assignment.id},{:confirm => "Are you sure you want to delete your group?", :title => "Delete your group", :class => "delete"})
 	    %> 
 	    <% end %>
 	   </h3>

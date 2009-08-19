@@ -30,7 +30,7 @@ document.observe("dom:loaded", function() {
       unmarked: function(row) {
         return row.marking_state != '<%=Result::MARKING_STATES[:complete]%>' && row.marking_state != '<%=Result::MARKING_STATES[:partial]%>';
       },
-     partial: function(row) {
+      partial: function(row) {
         return row.marking_state == '<%= Result::MARKING_STATES[:partial]%>';
       },
       released: function(row){

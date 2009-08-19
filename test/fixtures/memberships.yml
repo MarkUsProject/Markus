@@ -43,7 +43,7 @@ membership3:
 membership4:
    user_id:            <%= Fixtures.identify(:student4) %>
    grouping_id:        <%= Fixtures.identify(:grouping_2) %>
-   membership_status: inviter
+   membership_status:  inviter
    type:               StudentMembership
    created_at:         <% Time.now.to_s(:db)%>
    updated_at:         <%Time.now.to_s(:db)%>
