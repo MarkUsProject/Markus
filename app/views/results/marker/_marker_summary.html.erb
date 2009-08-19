@@ -2,8 +2,8 @@
   <%= render :partial => "results/common/marks_summary_table", :locals => {:rubric_criteria => rubric_criteria, :marks_map => marks_map} %>
 </div>  <!-- Summary Criteria Pane -->
       
-    <div class="mark_subtotal">
-      <span">Subtotal: </span>
+    <div class="summary_block">
+      <span><b>Subtotal: </b></span>
       <span id="current_subtotal_div"> <%= h(result.get_subtotal) %></span>
       <span> /<%= h(assignment.total_mark) %>  </span>
     </div>
@@ -15,18 +15,22 @@
     <%= render :partial => 'results/marker/extra_marks_table', :locals => {:extra_marks_points => extra_marks_points, :result_id => result.id} %>
     </div>      
       <div class="clear"></div>
+      <div class="summary_block">
        <b>Positive Extra Marks:&nbsp;</b>
       <span id="positive_extra_points"><%= h(@result.get_positive_extra_points) %></span><br/>
        <b>Negative Extra Marks:&nbsp;</b>
       <span id="negative_extra_points"><%= h(result.get_negative_extra_points) %></span><br/>
-      <b>Total Extra Marks:&nbsp;</b>
+      <b class="total_extra_points_label">Total Extra Marks:&nbsp;</b>
       <span id="total_extra_points"><%= h(result.get_total_extra_points) %></span><br/>
+      </div>
+      <div class="clear"></div>
 
 
   <div id="extra_percentage_pane" class="extra_percentage_pane">
     <%= render :partial => 'results/marker/extra_percentage_table', :locals => {:extra_marks_percentage => extra_marks_percentage, :result_id => result.id} %>
   </div>      
   <div class="clear"></div>
+  <div class="summary_block">
   <b>Positive Extra Percentage:&nbsp;</b>
       <span id="positive_extra_percentage"><%= h(@result.get_positive_extra_percentage) %></span><br />
        <b>Negative Extra Percentage:&nbsp;</b>
@@ -35,12 +39,15 @@
       <span id="total_extra_percentage"><%= h(result.get_total_extra_percentage) %></span><br />
       <b>Translated to Points:</b>
       <span id="total_extra_percentage_as_points"><%= h(result.get_total_extra_percentage_as_points)%></span> <br />
+      </div>
 
     <div class="clear"></div>
 
     <div class="mark_total">
       <span>Final Mark&nbsp;</span>
-      <span id="current_total_mark_div"> <%= h(result.total_mark) %>   </span>
-      <span> / <%= h(assignment.total_mark) %>  </span>
+      <span class="final_mark">
+        <span id="current_total_mark_div"> <%= h(result.total_mark) %>   </span>
+        <span> / <%= h(assignment.total_mark) %>  </span>
+      </span>
 
 </div>
