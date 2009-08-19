@@ -276,14 +276,9 @@ id=\"all_groupings_count\"></span>)", "filter('none')", :id =>
       <div class="accordion-content">
 
        <%= submit_tag "Randomly assign Graders", :id => "random_assign_graders", :name => "random_assign_graders", :confirm => "Are you sure you want to randomly assign selected graders to all groups?", :onclick => "$('submit_type').setValue('random_assign');" %>
+       
+       <%= render :partial => 'grader_list', :locals => {:tas => @tas} %>
 
-       <ul class="invisible_list">
-       <% @tas.each do |ta| %>
-         <li>
-         <%= check_box_tag "graders[]", ta.id, false, :id => "grader_#{ta.id}" %>
-         <%= h(ta.user_name)%></li>
-       <% end %>
-       </ul>
       </div>
       </form>
       <div class="accordion-toggle" id="accordion-toggle-bottom">

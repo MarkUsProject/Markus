@@ -287,17 +287,17 @@ class SubmissionsController < ApplicationController
           grouping = Grouping.find(grouping_id)
           if !grouping.has_submission?
             # TODO:  Neaten this up...
-            flash[:release_errors].push("Grouping ID:#{grouping_id} had no submission")
+            flash[:release_errors].push("#{grouping.group.group_name} had no submission")
             next
           end
           submission = grouping.get_submission_used
           if !submission.has_result?
             # TODO:  Neaten this up...
-            flash[:release_errors].push("Grouping ID:#{grouping_id} had no result")
+            flash[:release_errors].push("#{grouping.group.group_name} had no result")
             next     
           end
           if submission.result.marking_state != Result::MARKING_STATES[:complete]
-            flash[:release_errors].push("Can not release result for grouping #{grouping.id}: the marking state is not complete")
+            flash[:release_errors].push("Can not release result for #{grouping.group.group_name}: the marking state is not complete")
             next
           end
           if flash[:release_errors].nil? or flash[:release_errors].size == 0

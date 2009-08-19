@@ -296,7 +296,7 @@ class GroupsController < ApplicationController
   # to single-responsibility?
   def global_actions 
     @assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group]}])   
-    
+    @tas = Ta.all
 
     if params[:submit_type] == 'random_assign'
       begin 
