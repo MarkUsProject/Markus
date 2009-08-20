@@ -1,5 +1,5 @@
 <a href="<%= root_url %>"><%= image_tag 'markus_logo_small_beta.png' %></a>
-<%#
+<% # TODO: The following requires restful routes, which we don't have yet
 s = ""
 url = request.path.split('?')  #remove extra query string parameters
 levels = url[0].split('/') #break up url into different levels
