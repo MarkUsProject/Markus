@@ -41,6 +41,9 @@ class ActiveSupport::TestCase
       group.set_repo_name
       group.build_repository
     end
+    Grouping.all.each do |grouping|
+      grouping.create_grouping_repository_folder
+    end
   end
   
   def destroy_repos

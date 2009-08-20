@@ -34,7 +34,6 @@ class Assignment < ActiveRecord::Base
     if Time.zone.parse(due_date.to_s).nil?
       errors.add :due_date, 'is not a valid date'
     else
-      
       if due_date_changed? && Time.zone.parse(due_date.to_s) < Time.now
         errors.add :due_date, 'cannot be in the past'
       end

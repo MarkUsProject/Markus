@@ -10,7 +10,10 @@ var ResizePane = Class.create({
     this.init_pane_node_width = $(this.getPaneNode().getWidth());
     this.init_pane_node_parent_width = this.getPaneNode().up(0).getWidth();
     this.init_pane_node_height = $(this.getPaneNode()).getHeight();
-    [this.init_pane_node_offset_left, this.init_pane_node_offset_top] = $(this.getPaneNode().cumulativeOffset());
+    
+    var offset = $(this.getPaneNode()).cumulativeOffset();
+    this.init_pane_node_offset_left = offset[0];
+    this.init_pane_node_offset_top = offset[1];
     
   },
   getPaneNode: function() {

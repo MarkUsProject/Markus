@@ -97,7 +97,7 @@ function get_mouse_positions() {
 
 function make_new_annotation() {
   //Set global variable 'positions' to current mouse positions
-  //TODO:  Refactor?  Why the global variable?
+  //TODO:  Refactor?  Why the global variable? 
   if (syntax_highlighter_adapter == null) {
     return false;
   }
@@ -186,6 +186,7 @@ function focus_source_code_line(line_num) {
 function setup_divider(widen_target, dragger) {
     var divider = new ResizePane(widen_target, dragger);
     $('rubric_pane').setStyle({'width': $('rubric_pane').getStyle('width')});
+    return;
 }
 
 function hide_all_annotation_content_editors() {

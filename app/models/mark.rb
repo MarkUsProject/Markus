@@ -14,9 +14,8 @@ class Mark < ActiveRecord::Base
 
   #return the current mark for this criterion
   def get_mark
-    criterion = RubricCriterion.find(rubric_criterion_id)
+    criterion = RubricCriterion.find(self.rubric_criterion_id)
     return mark.to_f * criterion.weight
-
   end
   
   private

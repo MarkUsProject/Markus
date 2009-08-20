@@ -1,7 +1,10 @@
 require 'fastercsv'
 class AssignmentsController < ApplicationController
-  before_filter      :authorize_only_for_admin, :except =>
-  [:populate, :deletegroup, :delete_rejected, :disinvite_member, :invite_member, :creategroup, :join_group, :decline_invitation, :file_manager, :index, :download, :student_interface, :hand_in, :update_files]
+  before_filter      :authorize_only_for_admin, :except => [:deletegroup, :delete_rejected, :disinvite_member, :invite_member, 
+  :creategroup, :join_group, :decline_invitation, :index, :student_interface]
+  before_filter      :authorize_for_student, :only => [:student_interface, :deletegroup, :delete_rejected, :disinvite_member, 
+  :invite_member, :creategroup, :join_group, :decline_invitation]
+  before_filter      :authorize_for_user, :only => [:index]
 
   auto_complete_for :assignment, :name
   # Publicly accessible actions ---------------------------------------
@@ -49,27 +52,6 @@ class AssignmentsController < ApplicationController
       end
     end
   end
-
-
-  def download
-    file_name = params[:file_name]
-    path = params[:path] || '/'
-    assignment_id = params[:id]
-    revision_number = params[:revision_number]
-    assignment = Assignment.find(assignment_id)
-    assignment_folder = assignment.repository_folder
-    user_group = current_user.accepted_grouping_for(assignment_id).group
-    repo = user_group.repo
-    revision = repo.get_revision(revision_number.to_i)
-    file = revision.files_at_path(File.join(assignment_folder, path))[file_name]
-    if file.nil?
-      @file_contents = "Could not find the file #{file_name} in the repository for group #{user_group.group_name} for revision #{revision.revision_number}"
-    else
-      @file_contents = repo.download_as_string(file)
-    end
-    # Blast the file contents
-    send_data @file_contents, :type => 'text/plain', :disposition => 'inline', :filename => file_name
-  end
   
   # Displays "Manage Assignments" page for creating and editing 
   # assignment information
@@ -111,9 +93,14 @@ class AssignmentsController < ApplicationController
     # accepts_nested_attributes_for is a little...dumb.
     if @assignment.submission_rule.attributes['type'] != params[:assignment][:submission_rule_attributes][:type]
       # Some protective measures here to make sure we haven't been duped...
-      potential_rule = Module.const_get(params[:assignment][:submission_rule_attributes][:type])
-      if !potential_rule.ancestors.include?(SubmissionRule)
+      begin
+        potential_rule = Module.const_get(params[:assignment][:submission_rule_attributes][:type])
+        if !potential_rule.ancestors.include?(SubmissionRule)
         raise "#{params[:assignment][:submission_rule_attributes][:type]} is not a valid SubmissionRule"
+        end
+      rescue Exception => e
+        @assignment.errors.add_to_base("Could not assign SubmissionRule: #{e.message}")
+        return
       end
       
       @assignment.submission_rule.destroy
@@ -125,7 +112,9 @@ class AssignmentsController < ApplicationController
       # For some reason, when we create new rule, we can't just apply
       # the params[:assignment] hash to @assignment.attributes...we have
       # to create any new periods manually, like this:
-      @assignment.submission_rule.periods_attributes = params[:assignment][:submission_rule_attributes][:periods_attributes]
+      if !params[:assignment][:submission_rule_attributes][:periods_attributes].nil?
+        @assignment.submission_rule.periods_attributes = params[:assignment][:submission_rule_attributes][:periods_attributes]
+      end
     end
 
     # Is the instructor forming groups?
@@ -145,38 +134,6 @@ class AssignmentsController < ApplicationController
       render :action => 'edit'
     end
  end
-
-  
-  # Ajax support for adding another file text field for this assignment
-  def add_assignment_file
-    @assignment = Assignment.find(params[:id])
-    new_assignment_file_name = params[:new_assignment_filename]
-    # Check to see if a file with this filename already exists
-    exist_filename = @assignment.assignment_files.find_by_filename(new_assignment_file_name)
-    if exist_filename
-      render :update do |page|
-        page.visual_effect :highlight, "assignment_file_#{exist_filename.id}"
-      end
-      return
-    end
-    @assignment_file = AssignmentFile.new
-    @assignment_file.assignment = @assignment
-    @assignment_file.filename = params[:new_assignment_filename]
-    @assignment_file.save
-    render :update do |page|
-      page.insert_html :bottom, :files, :partial => 'file_fields', :locals => {:assignment_file => @assignment_file}
-    end
-  end
-  
-  def remove_assignment_file
-    if request.post?
-      assignment_file = AssignmentFile.find(params[:id])
-      assignment_file.destroy
-      render :update do |page|
-        page.remove "assignment_file_#{assignment_file.id}"
-      end
-    end
-  end
   
 
   # Form accessible actions --------------------------------------------
@@ -229,56 +186,7 @@ class AssignmentsController < ApplicationController
   end
   
   def update_group_properties_on_persist
-    assignment = Assignment.find(params[:assignment_id])
-    render :update do |page|
-      page.call "update_group_properties", (assignment.group_max != 1), assignment.student_form_groups, assignment.group_min, assignment.group_max, assignment.group_name_autogenerated
-      
-    end
-  end
-  
-  # Called when form for updating existing assignment is submitted
-  def update
-    return unless request.post?
-    
-    @assignment = Assignment.find_by_id(params[:id])
-    @assignment.attributes = params[:assignment]
-    
-    rules = @assignment.submission_rule
-    # must be explicitly assigned, due to method conflict for "type"
-    rules[:type] = params[:submission_rule][:type]
-    rules.attributes = params[:submission_rule]
-
-    # Go back to "Edit assignment" page if unable to save
-    if (@assignment.save && @assignment.assignment_files.each(&:save) && rules.save)
-      redirect_to :action => 'edit', :id => @assignment.id
-    else
-      render :action => 'edit'
-    end
-    end
-
-  def use_another_assignment_groups
-    render :update do |page|
-      page.visual_effect(:appear, "other_assignment_groups", :duration => 0.5)
-      page.visual_effect(:fade, "group_choice", :duration => 0.5)
-    end
-  end
-
-  def new_group_properties
-    render :update do |page|
-         page.visual_effect(:appear, "group_properties", :duration => 0.5)
-         page.visual_effect(:fade, "group_choice", :duration => 0.5)
-     end    
-  end
-
-
-  def cancel
-    render :update do |page|
-         page.visual_effect(:fade, "group_properties", :duration => 0.5)
-         page.visual_effect(:appear, "group_choice", :duration => 0.5)
-         page.visual_effect(:fade, "other_assignment_groups", :duration => 0.5)
-     end
-    
-
+    @assignment = Assignment.find(params[:assignment_id])
   end
   
   def download_csv_grades_report
@@ -289,7 +197,7 @@ class AssignmentsController < ApplicationController
         row = []
         row.push(student.user_name)
         assignments.each do |assignment|
-          grouping = student.accepted_grouping_for(assignment)
+          grouping = student.accepted_grouping_for(assignment.id)
           if grouping.nil?
             row.push('')
           else
@@ -361,8 +269,7 @@ class AssignmentsController < ApplicationController
         raise "Only the inviter can delete the group"
       end
       if @grouping.has_submission?
-        raise "You already submitted something. You cannot
-      delete your group."
+        raise "You already submitted something. You cannot delete your group."
       end
       if @grouping.is_valid?
         raise "Your group is valid, and can only be deleted by instructors."

@@ -16,7 +16,7 @@ document.observe("dom:loaded", function() {
         <% end %>
       <% end %>
       marking_state: {display: "Marking State", sortable: true},
-      final_grade: {display: "Final Grade", sortable: true},
+      final_grade: {display: "Final Grade", sortable: true}
     },
     can_select: <%= @current_user.admin?%>,
     can_select_all: <%= @current_user.admin?%>,
@@ -38,7 +38,7 @@ document.observe("dom:loaded", function() {
       },
       complete: function(row){
          return row.marking_state == '<%=Result::MARKING_STATES[:complete]%>' && row.released != true;
-      },
+      }
     },
 
     after_filter_only_by: function(current_filters, new_filter) {

@@ -24,5 +24,5 @@ var SyntaxHighlighter1p5Line = Class.create(SourceCodeLine, {
     if(this.getGlowDepth() == 0 && this.has_alt) {
       this.getLineNode().addClassName('alt');
     }  
-  },
+  }
 });

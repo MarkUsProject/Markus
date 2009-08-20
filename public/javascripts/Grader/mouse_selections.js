@@ -1,5 +1,6 @@
 function get_anchor() {
   //TODO:  Get this to work for IE
+  //alert(window.getSelection());
   return window.getSelection().anchorNode;
 }
 

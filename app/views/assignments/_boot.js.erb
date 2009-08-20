@@ -1,12 +1,14 @@
 <script language="Javascript" type="text/javascript">
 
   var grace_periods = null;
+  var penalty_periods = null;
   document.observe('dom:loaded', function() {
     grace_periods = new PeriodDeltaChain({
       period_root_id: 'grace_periods',
       date_format: "",
       due_date: $F('assignment_due_date')
     });
+    
     penalty_periods = new PeriodDeltaChain({
       period_root_id: 'penalty_periods',
       date_format: "",
@@ -14,7 +16,7 @@
     });
 
     grace_periods.refresh();
-    penalty_periods.refresh();
+    //penalty_periods.refresh();
     
     default_group_fields();
     <% if !@assignment.nil? %>

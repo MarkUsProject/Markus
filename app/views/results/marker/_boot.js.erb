@@ -18,9 +18,10 @@ document.observe("dom:loaded", function() {
   //Set up the divider
   init_content_width = $('content').getWidth();
   init_code_pane_width = $('code_pane').getWidth();
-  setup_divider($('code_pane'), $('pane_divider'));
-        
   //Create the modal dialog
   modal = new Control.Modal($('create_annotation_dialog'), {fade:false});
+  setup_divider($('code_pane'), $('pane_divider'));
+ 
+
 });
 </script>

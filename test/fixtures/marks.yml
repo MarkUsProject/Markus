@@ -3,7 +3,7 @@
 mark_1:
    result_id:            <%= Fixtures.identify(:result_1)%>
    rubric_criterion_id:  <%= Fixtures.identify(:c4)%>
-   mark:                 3
+   mark:                 1
    created_at:           <%= Time.now.to_s(:db)%>
    updated_at:           <%= Time.now.to_s(:db)%>
 
