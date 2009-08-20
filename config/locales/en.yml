@@ -14,6 +14,7 @@ en:
     bulk_action:        "Bulk action"
     submit:             "Submit"
     cancel:             "Cancel"
+    filters:            "Filters"
     all:                "All"
     hidden:             "Hidden"
     active:             "Active"
@@ -28,7 +29,7 @@ en:
     groups_and_graders: "Groups & Graders"
     rubrics:            "Rubrics"
     join:               "Join"
-    refuse:             "Refuse"
+    refuse:             "Decline"
     invite:             "Invite"
     disinvite:          "Disinvite"
     help:               "Help"
@@ -150,4 +151,4 @@ en:
     student_without_a_group_list_message: "These students don't have a group 
         yet:"
     no_student_without_a_group_message: "All students are in a group."
-    past_due_date_warning: "This assignment is past due date."
+    past_due_date_warning: "Due date for this assignment is in the past."

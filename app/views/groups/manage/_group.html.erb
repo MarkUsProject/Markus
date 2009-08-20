@@ -6,10 +6,10 @@
     <span class="table_menu">
     <button class="rename_group" onClick="rename_group(<%= grouping.id %>); return false;">Rename</button>
     <% if !grouping.is_valid? %>
-      <%= link_to_remote "Valid", :url => { :action =>
+      <%= link_to_remote "Validate", :url => { :action =>
     'valid_grouping', :id => assignment.id, :grouping_id =>
     grouping.id},
-    :html => {:class => 'valid', :title => "Valid this group"}, 
+    :html => {:class => 'valid', :title => "Validate this group"}, 
     :confirm => "This will allow this group to submit without the required
     number of students. Are you sure?"
      %>

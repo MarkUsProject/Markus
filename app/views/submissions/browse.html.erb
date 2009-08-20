@@ -24,6 +24,7 @@
 
 <div class="wrapLeft">
 <div id="toggle_actions">
+    <%= I18n.t(:filters) %>:
     <%= link_to_function I18n.t(:all) + " (<span
     id=\"all_submissions_count\"></span>)", "submissions_table.clear_filters().render();", :id =>
     "filter_link_none", :class => "filter_selected" %>

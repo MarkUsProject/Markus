@@ -153,8 +153,8 @@ h4{
 /* menu */
 #menu{
   display: block;
-  padding: 0 0 0 50px;
-  margin-top: 0px;
+  padding: 0 0 0 130px;
+  margin-top: -30px;
   border-bottom: 2px solid #464646;
 }
 #sub_menu{

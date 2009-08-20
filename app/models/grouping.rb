@@ -5,6 +5,7 @@ require File.join(File.dirname(__FILE__),'/../../lib/repo/repository')
 class Grouping < ActiveRecord::Base
    
   before_create :create_grouping_repository_folder
+  before_destroy :revoke_repository_permissions_for_students
   belongs_to :assignment
   belongs_to  :group
   has_many :memberships
@@ -37,11 +38,6 @@ class Grouping < ActiveRecord::Base
   def has_ta_for_marking?
     return ta_memberships.count > 0
   end
-  
-  #def accepted_students
-  #  return @accepted_students if !@accepted_students.nil?
-  #  @accepted_students = student_memberships.accepted_or_inviter
-  #end
   
   # Returns an array of the user_names for any TA's assigned to mark
   # this Grouping
@@ -104,16 +100,9 @@ class Grouping < ActiveRecord::Base
     else
       member = StudentMembership.new(:user => user, :membership_status =>
       set_membership_status, :grouping => self)
-      # Add repository read and write permissions for user,
-      # if we are required to do so
-      if self.group.repository_external_commits_only?
-        begin
-          self.group.repo.add_user(user.user_name, Repository::Permission::READ_WRITE)
-        rescue UserAlreadyExistent
-          # ignore case if user has permissions already
-        end
-      end
       member.save
+      # adjust repo permissions
+      update_repository_permissions
       return member
     end
   end
@@ -140,12 +129,16 @@ class Grouping < ActiveRecord::Base
   def validate_grouping
     self.admin_approved = true
     self.save
+    # update repository permissions
+    update_repository_permissions
   end
   
   # Strips admin_approved privledge
   def invalidate_grouping
     self.admin_approved = false
     self.save
+    # update repository permissions
+    update_repository_permissions
   end
 
   # Grace Credit Query
@@ -174,6 +167,10 @@ class Grouping < ActiveRecord::Base
   def remove_member(mbr_id)
     member = student_memberships.find(mbr_id)
     if member
+      # Remove repository permissions first
+      #   Corner case: members are removed by admins only.
+      #   Hence, we do not require to check for validity of the group
+      revoke_repository_permissions_for_membership(member)
       if member.membership_status == StudentMembership::STATUSES[:inviter]
          if member.grouping.student_membership_number > 1
             membership = member.grouping.accepted_students[1].memberships.find_by_grouping_id(member.grouping.id) 
@@ -181,23 +178,16 @@ class Grouping < ActiveRecord::Base
             membership.save
          end
       end
-      # Remove user from list of allowed repo users,
-      # if we are required to do so
-      if self.group.repository_external_commits_only?
-        begin
-          self.group.repo.remove_user(member.user.user_name)
-        rescue UserNotFound
-          # ignore case when user isn't there any more
-        end
-      end
       member.destroy
     end
   end
 
   def delete_grouping
-     self.student_memberships.all(:include => :user).each do |member|
-       member.destroy
-     end
+    self.student_memberships.all(:include => :user).each do |member|
+      member.destroy
+    end
+    # adjust repository permissions
+    update_repository_permissions
     self.destroy
   end
   
@@ -212,6 +202,8 @@ class Grouping < ActiveRecord::Base
      membership = student.memberships.find_by_grouping_id(self.id)
      membership.membership_status = StudentMembership::STATUSES[:rejected]
      membership.save
+     # adjust repo permissions
+     update_repository_permissions
   end
   
   def add_ta_by_id(ta_id)
@@ -266,6 +258,23 @@ class Grouping < ActiveRecord::Base
     return failures
   end
   
+  # Update repository permissions for students, if we allow external commits
+  #   see: grant_repository_permissions and revoke_repository_permissions
+  def update_repository_permissions
+    # we do not need to do anything if we are not accepting external
+    # command-line commits
+    return unless self.group.repository_external_commits_only?
+    
+    self.reload # VERY IMPORTANT! Make sure grouping object is not stale
+    
+    if self.is_valid?
+      grant_repository_permissions
+    else
+      # grouping became invalid, remove repo permissions
+      revoke_repository_permissions
+    end
+  end
+  
   # When a Grouping is created, automatically create the folder for the
   # assignment in the repository, if it doesn't already exist.
   def create_grouping_repository_folder
@@ -284,4 +293,101 @@ class Grouping < ActiveRecord::Base
       end
     end
   end
-end
+  
+  private
+  
+  # Once a grouping is valid, grant (write) repository permissions for students
+  # who have accepted memberships (including the inviter)
+  #
+  # precondition: grouping is valid, self.reload has been called
+  def grant_repository_permissions
+    memberships = self.accepted_student_memberships
+    if !memberships.instance_of?(Array)
+      memberships = [memberships]
+    end
+    memberships.each do |member|
+      # Add repository read and write permissions for user,
+      # if we are required to do so
+      if self.group.repository_external_commits_only?
+        begin
+          self.group.repo.add_user(member.user.user_name, Repository::Permission::READ_WRITE)
+        rescue Repository::UserAlreadyExistent
+          # ignore case if user has permissions already
+        end
+      end
+    end
+  end
+  
+  # We need to revoke repository permissions for student users in certain cases.
+  # 
+  # For instance if the inviter has invited 2 students for a total of 3 students in
+  # that group, which in turn is the required group minimum. In that case, students
+  # who have accepted their membership, would have gotten repo permissions granted.
+  # But once one of the 2 invited students declines to be member of that group, the group
+  # becomes invalid (is below the group minimum of 3 people), and, hence, granted
+  # repo permissions for student users need to be revoked again.
+  # 
+  # precondition: grouping is invalid, self.reload has been called
+  def revoke_repository_permissions
+    memberships = self.accepted_student_memberships
+    if !memberships.instance_of?(Array)
+      memberships = [memberships]
+    end
+    memberships.each do |member|
+      # Revoke permissions for students
+      if self.group.repository_external_commits_only?
+        begin
+          # the following throws a Repository::UserNotFound
+          if self.group.repo.get_permissions(member.user.user_name) >= Repository::Permission::ANY
+            # user has some permissions, we need to remove them
+            self.group.repo.remove_user(member.user.user_name)
+          end
+        rescue Repository::UserNotFound
+          # if student has no permissions, we are safe
+        end
+      end
+    end
+  end
+  
+  # Removes repository permissions for a single StudentMembership object
+  def revoke_repository_permissions_for_membership(student_membership)
+    # Revoke permissions for student
+    if self.group.repository_external_commits_only?
+      begin
+        # the following throws a Repository::UserNotFound
+        if self.group.repo.get_permissions(student_membership.user.user_name) >= Repository::Permission::ANY
+          # user has some permissions, we need to remove them
+          self.group.repo.remove_user(student_membership.user.user_name)
+        end
+      rescue Repository::UserNotFound
+        # if student has no permissions, we are safe
+      end
+    end
+  end
+  
+  # Removes any repository permissions of students for a to be destroyed
+  # grouping object. see :before_destroy callback above
+  def revoke_repository_permissions_for_students
+    self.reload # avoid a stale object
+    
+    memberships = self.student_memberships # get any student memberships
+    if !memberships.instance_of?(Array)
+      memberships = [memberships]
+    end
+    memberships.each do |member|
+      # Revoke permissions for students
+      if self.group.repository_external_commits_only?
+        begin
+          # the following throws a Repository::UserNotFound
+          if self.group.repo.get_permissions(member.user.user_name) >= Repository::Permission::ANY
+            # user has some permissions, we need to remove them
+            self.group.repo.remove_user(member.user.user_name)
+          end
+        rescue Repository::UserNotFound
+          # if student has no permissions, we are safe
+        end
+      end
+    end
+  end
+  
+end # end class Grouping

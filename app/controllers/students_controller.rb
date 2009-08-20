@@ -108,7 +108,7 @@ class StudentsController < ApplicationController
           flash[:invalid_lines] = result[:invalid_lines]        
         end
         flash[:success] = result[:upload_notice]
-      rescue RuntimeError => e
+      rescue RuntimeError
         flash[:upload_notice] = I18n.t('csv_valid_format')
       end
 

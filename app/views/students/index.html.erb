@@ -59,6 +59,7 @@
       
 
       <div id="toggle_actions">
+       <%= I18n.t(:filters) %>:
        <%= link_to_function I18n.t(:all) + " (<span id=\"all_students_count\"></span>)", "filter('none');", :id => "filter_link_none", :class => "filter_selected"%>
        | 
        <%= link_to_function I18n.t(:active) + " (<span id=\"active_students_count\"></span>)", "filter('active');", :id => "filter_link_active"%>

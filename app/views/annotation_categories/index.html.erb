@@ -50,7 +50,7 @@
           $('add_annotation_category_prompt').select();
           $('add_annotation_category_prompt').focus();
         } else {
-        #{remote_function :url => {:action => "add_annotation_category", :id => @assignment.id}, :method => 'get'}
+        #{remote_function :url => {:action => "add_annotation_category", :id => @assignment.id}, :method => 'get', :after => "$('no_annotation_categories_info').hide();" }
         }|%>
   <span class="menu_bar">|</span>
 	<%= button_to_function "Upload", "upload_annotation_categories();" %>
@@ -77,8 +77,12 @@
      </div>
      <span class="clear"></span>
      <ul id="annotation_category_pane_list">
-        <% @annotation_categories.each do |annotation_category| %>
-          <%= render :partial => 'annotation_category', :locals => {:annotation_category => annotation_category} %>
+        <% if @annotation_categories.length > 0 %>
+          <% @annotation_categories.each do |annotation_category| %>
+            <%= render :partial => 'annotation_category', :locals => {:annotation_category => annotation_category} %>
+          <% end %>
+        <% else %>
+          <div id="no_annotation_categories_info" class="information">There are no annotation categories, yet.</div>
         <% end %>
       </ul>  <!-- Rubric Criteria Pane -->	
   </div>

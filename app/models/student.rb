@@ -1,6 +1,3 @@
-# we need repository permission constants
-require File.join(File.dirname(__FILE__),'/../../lib/repo/repository')
-
 class Student < User
   SESSION_TIMEOUT = USER_STUDENT_SESSION_TIMEOUT
   # CSV_UPLOAD_ORDER is what we expect the uploaded CSV file to be ordered with
@@ -69,20 +66,24 @@ class Student < User
      @student = self
      @memberships = StudentMembership.find(:all, :conditions => {:user_id => @student.id})
      @memberships.each do |m|
-        if m.grouping.assignment_id != aid
-          @memberships.delete(m)
-        end
+       if m.grouping.assignment_id != aid
+         @memberships.delete(m)
+       end
      end
      return @memberships
   end
 
   def invite(gid)
-    if !hidden
+    if !self.hidden
       membership = StudentMembership.new
       membership.grouping_id = gid;
       membership.membership_status = StudentMembership::STATUSES[:pending]
       membership.user_id = self.id
       membership.save
+      # update repo permissions (for accepted memberships - includes inviter)
+      # if grouping is valid
+      grouping = Grouping.find(gid)
+      grouping.update_repository_permissions
     end
   end
  
@@ -108,11 +109,8 @@ class Student < User
     @grouping.group = @group
     @grouping.save
     
-    # Add repo permissions for this student, if and only if we are
-    # required to do so
-    if @group.repository_external_commits_only?
-      @group.repo.add_user(self.user_name, Repository::Permission::READ_WRITE)
-    end
+    # write repo permissions if need be
+    @grouping.update_repository_permissions
 
     # Create the membership
     @member = StudentMembership.new(:grouping_id => @grouping.id,
@@ -138,24 +136,24 @@ class Student < User
     grouping.assignment_id = aid
     grouping.group_id = group.id
     grouping.save
-     
-    # add repo permissions for this student, if and only if we are
-    # admin of the repositories
-    if group.repository_external_commits_only?
-      group.repo.add_user(self.user_name, Repository::Permission::READ_WRITE)
-    end
+    
+    # write repo permissions if need be
+    grouping.update_repository_permissions
 
     member = StudentMembership.new(:grouping_id => grouping.id, :membership_status => StudentMembership::STATUSES[:inviter], :user_id => self.id)
     member.save
     self.destroy_all_pending_memberships(aid)
   end
 
+  # This method is called, when a student joins a group(ing)
   def join(gid)
     membership = StudentMembership.find_by_grouping_id_and_user_id(gid, self.id)
     membership.membership_status = 'accepted'
     membership.save
 
     grouping = Grouping.find(gid)
+    # write repo permissions if need be
+    grouping.update_repository_permissions
 
     other_memberships = self.pending_memberships_for(grouping.assignment_id)
     other_memberships.each do |m|
@@ -179,8 +177,12 @@ class Student < User
         student = Student.find(student_id)
         memberships.each do |membership|
           group = membership.grouping.group
-          if group.repository_external_commits_only?
-            group.repo.remove_user(student.user_name) # revoke repo permissions
+          if group.repository_external_commits_only? && membership.grouping.is_valid?
+            begin
+              group.repo.remove_user(student.user_name) # revoke repo permissions
+            rescue Repository::UserNotFound
+              # ignore case when user isn't there any more
+            end
           end
         end
       end
@@ -203,8 +205,12 @@ class Student < User
         student = Student.find(student_id)
         memberships.each do |membership|
           group = membership.grouping.group
-          if group.repository_external_commits_only?
-            group.repo.add_user(student.user_name, Repository::Permission::READ_WRITE) # grant repo permissions
+          if group.repository_external_commits_only? && membership.grouping.is_valid?
+            begin
+              group.repo.add_user(student.user_name, Repository::Permission::READ_WRITE) # grant repo permissions
+            rescue Repository::UserAlreadyExistent
+              # ignore case if user has permissions already
+            end
           end
         end
       end

@@ -14,17 +14,11 @@ class User < ActiveRecord::Base
   validates_uniqueness_of   :user_name
   
   validates_format_of       :type,          :with => /Student|Admin|Ta/
-  #validates_format_of       :last_name, :first_name,    
-  #  :with => /^(\w)+$/, :message => "should be alphanumeric"
       
   # role constants
-  # NOTE (from Severin): Names of role constants are pulled into view. 
-  #                      Naming them with correct spelling might make sense.
   STUDENT = 'Student'
   ADMIN = 'Admin'
   TA = 'Ta'
-  
-  GRACE_DAYS = 1  # TODO add to config when creating course, hardcoded for now, must be >= 0
   
   # Authentication------------------------------------------------------
   

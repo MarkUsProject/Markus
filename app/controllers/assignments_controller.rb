@@ -226,11 +226,11 @@ class AssignmentsController < ApplicationController
   end
 
   def decline_invitation
-     @assignment = Assignment.find(params[:id])
-     @grouping = Grouping.find(params[:grouping_id])
-     @user = Student.find(session[:uid])
-     @grouping.decline_invitation(@user)
-     return
+    @assignment = Assignment.find(params[:id])
+    @grouping = Grouping.find(params[:grouping_id])
+    @user = Student.find(session[:uid])
+    @grouping.decline_invitation(@user)
+    return
   end
 
   def creategroup
@@ -277,6 +277,8 @@ class AssignmentsController < ApplicationController
       @grouping.student_memberships.all(:include => :user).each do |member|
         member.destroy
       end
+      # update repository permissions
+      @grouping.update_repository_permissions
       @grouping.destroy
       flash[:edit_notice] = "Group has been deleted"
     
@@ -333,16 +335,22 @@ class AssignmentsController < ApplicationController
     redirect_to :action => 'student_interface', :id => @assignment.id
   end
 
+  # Called by clicking the cancel link in the student's interface
+  # i.e. cancels invitations
   def disinvite_member
     @assignment = Assignment.find(params[:id])
     membership = StudentMembership.find(params[:membership])
     membership.delete
     membership.save
+    # update repository permissions
+    grouping = current_user.accepted_grouping_for(@assignment.id)
+    grouping.update_repository_permissions
     flash[:edit_notice] = "Member disinvited" 
   end
 
+  # Deletes memberships which have been declined by students
   def delete_rejected
-  @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:id])
     membership = StudentMembership.find(params[:membership])
     membership.delete
     membership.save
