@@ -11,12 +11,11 @@ class AssignmentsController < ApplicationController
   
   def student_interface
     @assignment = Assignment.find(params[:id])
-    @student = Student.find(session[:uid]) 
+    @student = current_user
     @grouping = @student.accepted_grouping_for(@assignment.id)
     if @student.has_pending_groupings_for?(@assignment.id)
       @pending_grouping = @student.pending_groupings_for(@assignment.id) 
     end
-
     if @grouping.nil?
       if @assignment.group_max == 1
         @student.create_group_for_working_alone_student(@assignment.id)
@@ -25,10 +24,8 @@ class AssignmentsController < ApplicationController
         render :action => 'student_interface', :layout => 'no_menu_header'
         return
       end
-    end
-   
-    if !@grouping.nil?
-      # We look for the informations on this group
+    else
+      # We look for the information on this group...
       # The members
       @studentmemberships =  @grouping.student_memberships
       # The group name
@@ -42,8 +39,7 @@ class AssignmentsController < ApplicationController
       @revision  = repo.get_latest_revision
       @last_modified_date = @revision.directories_at_path('/')[@assignment.repository_folder].last_modified_date
       
-      @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, path))
-      @files =   @revision.files_at_path(File.join(File.join(@assignment.repository_folder, path)))
+      @files = @revision.files_at_path(File.join(File.join(@assignment.repository_folder, path)))
       @missing_assignment_files = []
       @assignment.assignment_files.each do |assignment_file|
         if !@revision.path_exists?(File.join(@assignment.repository_folder, assignment_file.filename))
@@ -223,6 +219,7 @@ class AssignmentsController < ApplicationController
     @grouping = Grouping.find(params[:grouping_id])
     @user = Student.find(session[:uid])
     @user.join(@grouping.id)
+    redirect_to :action => 'student_interface', :id => params[:id]
   end
 
   def decline_invitation
@@ -230,7 +227,7 @@ class AssignmentsController < ApplicationController
     @grouping = Grouping.find(params[:grouping_id])
     @user = Student.find(session[:uid])
     @grouping.decline_invitation(@user)
-    return
+    redirect_to :action => 'student_interface', :id => params[:id]
   end
 
   def creategroup
@@ -354,6 +351,7 @@ class AssignmentsController < ApplicationController
     membership = StudentMembership.find(params[:membership])
     membership.delete
     membership.save
+    redirect_to :action => 'student_interface', :id => params[:id]
   end  
 
 end

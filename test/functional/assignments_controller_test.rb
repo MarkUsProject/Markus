@@ -680,11 +680,36 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
   def test_student_gets_student_interface
     get_as(users(:student1), :student_interface, :id => assignments(:assignment_1).id)
     assert assigns(:assignment)
+    assert assigns(:pending_grouping).nil?
     assert_response :success
   end
   
-  def test_automatically_gets_grouping_on_solo_assignment
-    assert false
+  def test_student_gets_solo_grouping_automatically
+    # Destroy the grouping for a student
+    assignment = assignments(:assignment_1)
+    student = users(:student1)
+    grouping = student.accepted_grouping_for(assignment.id)
+    if !grouping.nil?
+      grouping.destroy
+    end
+    student.reload
+    assert !student.has_accepted_grouping_for?(assignment.id)
+    assert student.accepted_grouping_for(assignment.id).nil?
+    # Make this a solo assignment
+    assignment.group_max = 1
+    assignment.group_min = 1
+    assignment.instructor_form_groups = false
+    assignment.student_form_groups = false
+    assignment.save
+
+    get_as(users(:student1), :student_interface, :id => assignment.id)
+    student = Student.find(student.id)
+    assert student.has_accepted_grouping_for?(assignment.id)
+    assert_not_nil student.accepted_grouping_for(assignment.id)
+    assert_equal student, student.accepted_grouping_for(assignment.id).inviter
+    assert_redirected_to :action => 'student_interface'
+    
   end
+  
   
 end
