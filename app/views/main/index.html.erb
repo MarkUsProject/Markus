@@ -1,3 +1,7 @@
+<% if !@current_user.student? %>
+   <p class="notice"><%= I18n.t(:firefox_warning) %></p>
+<% end %>
+
 <div id="title_bar">
    <h1>Dashboard</h1>
 </div>

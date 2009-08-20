@@ -6,8 +6,8 @@ class AnnotationCategory < ActiveRecord::Base
   validates_presence_of :assignment_id
   validates_associated :assignment, :message => 'not strongly associated with assignment'
   
-  # Takes a row of comma separated values, and tries to assemble an Annotation
-  # Category, and associated Annotation Texts
+  # Takes an array of comma separated values, and tries to assemble an 
+  # Annotation Category, and associated Annotation Texts
   # Format:  annotation_category,annotation_text,annotation_text,...
   # Returns true on success, false on failure.
   def self.add_by_row(row, assignment)
@@ -27,5 +27,4 @@ class AnnotationCategory < ActiveRecord::Base
     end
     return true
   end
-  
 end
