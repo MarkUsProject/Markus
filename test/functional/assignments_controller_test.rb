@@ -48,23 +48,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     get_as @admin, :new
     
   end
-  
-  
-  # Test create assignment with assignment files and blank text fields
-  
-  # Test create invalid assignment
-  
-  
-  # Test update invalid assignment without file
-  
-  # Test update valid assignment without file
-  
-  # Test update 0-1 file with blank text fields
-  
-  # Test add and remove at the same time
-  
-  # Test remove all files
-  
+    
   # Student Interface Tests
   def test_join_group
     assignment = assignments(:assignment_1)
@@ -708,8 +692,32 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert_not_nil student.accepted_grouping_for(assignment.id)
     assert_equal student, student.accepted_grouping_for(assignment.id).inviter
     assert_redirected_to :action => 'student_interface'
-    
   end
   
+  def test_student_gets_list_of_pending_groupings
+    # Destroy the grouping for a student
+    assignment = assignments(:assignment_1)
+    student = users(:student1)
+    grouping = student.accepted_grouping_for(assignment.id)
+    if !grouping.nil?
+      grouping.destroy
+    end
+    student.reload
+    assert !student.has_accepted_grouping_for?(assignment.id)
+    assert student.accepted_grouping_for(assignment.id).nil?
+    # Make this a group assignment
+    assignment.group_max = 4
+    assignment.group_min = 2
+    assignment.instructor_form_groups = false
+    assignment.student_form_groups = true
+    assignment.save
+
+    get_as(users(:student1), :student_interface, :id => assignment.id)
+    student = Student.find(student.id)
+    assert student.has_accepted_grouping_for?(assignment.id)
+    assert_not_nil student.accepted_grouping_for(assignment.id)
+    assert_equal student, student.accepted_grouping_for(assignment.id).inviter
+    assert_redirected_to :action => 'student_interface'
+  end
   
 end

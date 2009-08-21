@@ -1,10 +1,23 @@
 namespace :markus do
   
-  desc "Create a single Administrator with username a"
-  task(:admin => :environment) do
-    puts "Creating Administrator with username 'a'..."
-    a = Admin.new({:user_name => 'a', :first_name => 'admin', :last_name => 'admin'})
-    a.save
+  desc "Create a single Instructor"
+  task(:instructor => :environment) do
+    user_name = ENV['user_name']
+    first_name = ENV['first_name']
+    last_name = ENV['last_name']
+    if user_name.blank? || first_name.blank? || last_name.blank?
+      raise "usage:  rake markus:admin user_name=[user name] first_name=[first name] last_name=[last name]"
+    end
+    puts "Creating Instructor #{user_name} (#{first_name} #{last_name})"
+    a = Admin.new({:user_name => user_name, :first_name => first_name, :last_name => last_name})
+    if !a.save
+      puts "Error saving record:"
+      a.errors.each do |error_message|
+        puts error_message[0] + ' ' + error_message[1]
+      end
+    else
+      puts "Instructor #{user_name} successfully created"
+    end
   end
   
   desc "Create a setup for usability testing. You have to run db:populate before this task!"
