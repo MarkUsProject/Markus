@@ -32,13 +32,13 @@ end
 
 class FileExistsConflict < Conflict
   def to_s
-    return "#{@path} could not be created - it already exists in the folder"
+    return "#{@path} could not be added - it already exists in the folder.  If you'd like to overwrite, try replacing the file instead."
   end
 end
 
 class FileDoesNotExistConflict < Conflict
   def to_s
-    return "#{@path} could not be changed - it was removed since you last saw it"
+    return "#{@path} could not be changed - it was deleted since you last saw it"
   end
 end
 

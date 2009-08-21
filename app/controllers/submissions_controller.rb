@@ -125,12 +125,16 @@ class SubmissionsController < ApplicationController
       # Create a new Submission by timestamp.
       # A Result is automatically attached to this Submission, thanks to some callback
       # logic inside the Submission model
-      new_submission = Submission.create_by_timestamp(grouping, time)
+      begin
+        new_submission = Submission.create_by_timestamp(grouping, time)
       # Apply the SubmissionRule
-      new_submission = assignment.submission_rule.apply_submission_rule(new_submission)
-      result = new_submission.result
-      redirect_to :controller => 'results', :action => 'edit', :id => result.id
-      return
+        new_submission = assignment.submission_rule.apply_submission_rule(new_submission)
+        result = new_submission.result
+        redirect_to :controller => 'results', :action => 'edit', :id => result.id
+        return
+      rescue Exception => e
+        flash[:error] = e.message
+      end
     end
     redirect_to :action => 'browse', :id => assignment.id
   end
