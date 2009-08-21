@@ -444,7 +444,7 @@ thead, tfoot{
   text-align: left;
 }
 
-th{
+th, tfoot tr td{
   margin: 0px;
   padding: 0px;
   color: #464646;
@@ -1003,33 +1003,48 @@ th#FilterTable_header_delete_file, th#FilterTable_footer_delete_file {
 th#FilterTable_header_filename:hover,
 th#FilterTable_header_revision_number:hover,
 th#FilterTable_header_revision_by:hover,
-th.FilterTable_sortable:hover
+th.FilterTable_sortable:hover,
+tfoot tr td:hover
 {
   cursor: pointer;
   color: #000;
 }
 
-th.FilterTable_sorting_by{
+th.FilterTable_sorting_by,
+tfoot tr td.FilterTable_sorting_by {
   color: #000;
+  background-image: url(../images/icons/bullet_arrow_up.png);
+  background-repeat: no-repeat;
+  background-position: left;
+  padding-left: 1.3em;
 }
 
-th.FilterTable_sorting_by_reverse{
+th.FilterTable_sorting_by_reverse,
+tfoot tr td.FilterTable_sorting_by_reverse
+{
   color: #000;
+  background-image: url(../images/icons/bullet_arrow_down.png);
+  background-repeat: no-repeat;
+  background-position: left;
+  padding-left: 1.3em;
 }
 
 
-th, td{
-    padding-left: 5px;
- }
+th, td, tfoot tr td{
+  padding-left: 5px;
+}
+
+tfoot tr td {
+  vertical-align: middle;
+}
 
 td a{
-   text-transform: none;
+  text-transform: none;
 }
 
 td.delete_row, td.marking_state {
   text-align: center;
 }
-
 
 /* Grader's view*/
 
