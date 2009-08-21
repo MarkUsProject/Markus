@@ -75,7 +75,7 @@ en:
         need_to_create_group: "You must create a group before you can invite users"
 
     user:
-        user_name:      "CDF ID"
+        user_name:      "User Name"
         first_name:     "First Name"
         last_name:      "Last Name"
         grace_credits:  "Grace Credits"
