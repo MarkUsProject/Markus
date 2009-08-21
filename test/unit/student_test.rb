@@ -136,4 +136,14 @@ exist_student,USER2,USER2"
     assert student.has_accepted_grouping_for?(assignment.id)
   end
 
+  def test_memberships_for
+    student = users(:student1)
+    a = assignments(:assignment_1)
+    assert_not_nil student.memberships_for(a.id)
+  end
+
+  def test_invite
+  
+  end
+
 end

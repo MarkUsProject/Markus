@@ -1,7 +1,9 @@
 require File.dirname(__FILE__) + '/../test_helper'
+require 'shoulda'
 
 class RubricCriteriaTest < ActiveSupport::TestCase
-#  fixtures :assignments, :rubric_criteria
+  fixtures :assignments, :rubric_criteria
+  set_fixture_class :rubric_criteria => RubricCriterion
   
   #Test that Criteria with no names are not valid
   def test_no_name_attr
@@ -115,6 +117,24 @@ class RubricCriteriaTest < ActiveSupport::TestCase
     
     new_rubric_criteria.delete(attr) if attr
     RubricCriterion.new(new_rubric_criteria)
+  end
+
+  def test_mark_for
+    result = results(:result_1)
+    rubric = rubric_criteria(:c4)
+    assert_not_nil rubric.mark_for(result.id)
+  end
+
+  def test_set_default_levels_1
+     r = RubricCriterion.new
+     assert r.set_default_levels
+  end
+
+  def test_set_default_levels_2
+     r = RubricCriterion.new
+     r.set_default_levels
+     r.save
+     assert_equal("Horrible", r.level_0_name)
   end
 
 end

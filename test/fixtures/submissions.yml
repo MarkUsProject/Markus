@@ -19,4 +19,11 @@ submission_2:
    revision_number:          1
    revision_timestamp:       <%= Time.now.to_s(:b)%>
 
+submission_4:
+   grouping_id:              <%= Fixtures.identify(:grouping3)%>
+   created_at:               <%= Time.now.to_s(:db) %>
+   submission_version:       1
+   submission_version_used:  true
+   revision_number:          1
+   revision_timestamp:       <%= Time.now.to_s(:b)%>
 

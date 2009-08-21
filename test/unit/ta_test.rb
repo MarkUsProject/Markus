@@ -57,9 +57,16 @@ exist_user,USER2,USER2"
   
   end
   
-  
   def test_get_memberships_for_assignment
-    
+    a = assignments(:assignment_1)   
+    ta = users(:ta1)
+    assert_not_nil ta.memberships_for_assignment(a.id)
   end
   
+  def test_is_assigned_to_grouping
+    ta = users(:ta1)
+    g = groupings(:grouping_2)
+    assert ta.is_assigned_to_grouping?(g.id)
+  end
+
 end

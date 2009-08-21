@@ -13,3 +13,18 @@ mark_2:
    mark:                 2
    created_at:           <%= Time.now.to_s(:db)%>
    updated_at:           <%= Time.now.to_s(:db)%>
+
+mark_3:
+   result_id:            <%= Fixtures.identify(:result_4)%>
+   rubric_criterion_id:  <%= Fixtures.identify(:c5)%>
+   mark:                 4
+   created_at:           <%= Time.now.to_s(:db)%>
+   updated_at:           <%= Time.now.to_s(:db)%>
+
+mark_4:
+   result_id:            <%= Fixtures.identify(:result_4)%>
+   rubric_criterion_id:  <%= Fixtures.identify(:c6)%>
+   mark:                 4
+   created_at:           <%= Time.now.to_s(:db)%>
+   updated_at:           <%= Time.now.to_s(:db)%>
+
