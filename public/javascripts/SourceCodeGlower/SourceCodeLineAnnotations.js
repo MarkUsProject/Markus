@@ -122,7 +122,9 @@ var SourceCodeLineAnnotations = Class.create({
   removeRelationship: function(annotation_id, line_num, annotation_text_id) {
     var relationship = this.relationshipExists(annotation_id, line_num, annotation_text_id);
     if(relationship == null) {
-      throw("Could not remove a non-existent relationship");
+      //throw("Could not remove a non-existent relationship");
+      //No relationship existed, so just return
+      return;
     }
     //Remove the found relationship from the relationships array
     this.setRelationships(this.getRelationships().without(relationship));    
