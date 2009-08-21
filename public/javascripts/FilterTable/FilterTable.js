@@ -457,10 +457,17 @@ var FilterTable = Class.create({
       if($(this.header_id_prefix + this.current_sort) != null) {
         $(this.header_id_prefix + this.current_sort).addClassName(this.sorting_reverse_class);
       }
+      if($(this.footer_id_prefix + this.current_sort) != null) {
+        $(this.footer_id_prefix + this.current_sort).addClassName(this.sorting_reverse_class);
+      }
+      
       this.reverse_rows().render();
     } else {
       if($(this.header_id_prefix + this.current_sort) != null) {
         $(this.header_id_prefix + this.current_sort).removeClassName(this.sorting_reverse_class);
+      }
+      if($(this.footer_id_prefix + this.current_sort) != null) {
+        $(this.footer_id_prefix + this.current_sort).removeClassName(this.sorting_reverse_class);
       }
       this.sort_reverse = false;
       this.sort_by(header_key).render();
