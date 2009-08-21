@@ -4,6 +4,12 @@
 <%= render :partial => 'boot.js' %>
 
 <div class="wrapLeft">
+<% if flash[:success] %>
+<div class="success">
+  <span><%=flash[:success]%></span>
+</div>
+<% end %>
+
 <% form_for :assignment, @assignment do |f| %>
 <%= f.error_messages%>
 <fieldset>
