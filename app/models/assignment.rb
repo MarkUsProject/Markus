@@ -203,8 +203,10 @@ class Assignment < ActiveRecord::Base
   # in groups.
   def create_groupings_when_students_work_alone
      @students = Student.find(:all)
-     for @student in @students do
-        @student.create_group_for_working_alone_student(self.id)
+     for student in @students do
+       if !student.has_accepted_grouping_for?(self.id) 
+        student.create_group_for_working_alone_student(self.id)
+       end
      end
   end
   
