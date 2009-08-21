@@ -152,4 +152,5 @@ en:
     student_without_a_group_list_message: "These students don't have a group 
         yet:"
     no_student_without_a_group_message: "All students are in a group."
+    firefox_warning: "Some of the features on a grading will only work with firefox"
     past_due_date_warning: "Due date for this assignment is in the past."
