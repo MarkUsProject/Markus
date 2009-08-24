@@ -46,9 +46,9 @@
      links = [] 
      @path.split('/').each do |folder| 
      path_memory = File.join(path_memory, folder) 
-     links.push(link_to folder, :action => 'repo_browser', :path => path_memory, :id => @grouping.id) 
+     links.push(link_to folder, :action => 'repo_browser', :path => path_memory, :id => @grouping.id, :revision_number => @revision_number) 
   end %>
-  <%= link_to '[root]', :action => 'repo_browser', :id => @grouping.id, :path => '/' %>
+  <%= link_to '[root]', :action => 'repo_browser', :id => @grouping.id, :path => '/', :revision_number => @revision_number %>
   <%= links.join('/')%>
 
 </p>

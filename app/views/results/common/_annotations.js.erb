@@ -10,6 +10,8 @@ var line_annotations = null;
 var syntax_highlighter_adapter = null;
 
 function sourceCodeReady() {
+  $('loading_code').hide();
+  $('select_file_id').enable();
   syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter($$('.dp-highlighter').first().getElementsBySelector('ol').first());
   
   //Apply modifications to Syntax Highlighter
@@ -142,9 +144,14 @@ function add_existing_annotation(annotation_text_id) {
 
 //Load a submitted file into the code-viewer based on file id's
 function load_submitted_file(submission_file_id, focus_line) {
-  $('working').show();
+  // Clear out any annotation_texts still on the screen
+  $$('.annotation_text_display').each(function(node) {
+    node.remove();
+  });
+  $('loading_code').show();
+  $('select_file_id').disable();
   line_annotations = null;
-<%= remote_function (:url =>{ :action => "codeviewer", :id => @assignment.id, :uid => @uid }, :with => "'submission_file_id='+submission_file_id+'&focus_line='+focus_line", :after => "$('working').hide();")%>
+<%= remote_function (:url =>{ :action => "codeviewer", :id => @assignment.id, :uid => @uid }, :with => "'submission_file_id='+submission_file_id+'&focus_line='+focus_line")%>
 }
 
 function load_submitted_file_and_focus(submission_file_id, focus_line) {

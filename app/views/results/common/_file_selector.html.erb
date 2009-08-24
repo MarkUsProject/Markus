@@ -16,6 +16,10 @@
     <% end %>
   </select>  
   <button onClick="bump_select($('select_file_id'), 1); return false;">-></button>
-  <%= submit_tag "Download" if can_download && !files.empty? %>
+  <span id="loading_code" style="display:none;">
+    <%=image_tag('spinner.gif')%> Loading Code...
+  </span>
+   <%= submit_tag "Download" if can_download && !files.empty? %>
 <%= "</form>" if can_download%>
+  
 </div>
