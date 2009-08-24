@@ -9,6 +9,7 @@ class SubmissionsController < ApplicationController
   :manually_collect_and_begin_grading, :repo_browser, :populate_repo_browser]
   before_filter    :authorize_for_ta_and_admin, :only => [:browse, :index, :populate_submissions_table, :collect_and_begin_grading, 
   :manually_collect_and_begin_garding, :repo_browser, :populate_repo_browser]
+  before_filter    :authorize_for_student, :only => [:file_manager, :populate_file_manager, :update_files, :download]
   
  
   def repo_browser
@@ -56,12 +57,14 @@ class SubmissionsController < ApplicationController
  
   def file_manager
     @assignment = Assignment.find(params[:id])
+
     @grouping = current_user.accepted_grouping_for(@assignment.id)
+
     if @grouping.nil?
       redirect_to :controller => 'assignments', :action => 'student_interface', :id => params[:id]
       return
     end
-    
+
     user_group = @grouping.group
     @path = params[:path] || '/'
     
@@ -289,8 +292,7 @@ class SubmissionsController < ApplicationController
         flash[:release_errors] = []
         params[:groupings].each do |grouping_id|
           grouping = Grouping.find(grouping_id)
-          if !grouping.has_submission?
-            # TODO:  Neaten this up...
+          if !grouping.has_submission? 
             flash[:release_errors].push("#{grouping.group.group_name} had no submission")
             next
           end
@@ -305,7 +307,7 @@ class SubmissionsController < ApplicationController
             next
           end
           if flash[:release_errors].nil? or flash[:release_errors].size == 0
-            flash[:release_errors] = nil
+            flash[:release_errors] = []
           end
           submission.result.released_to_students = true
           submission.result.save        

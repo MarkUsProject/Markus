@@ -435,12 +435,12 @@ class MemoryRevision < Repository::AbstractRevision
   
   # Return all of the files in this repository at the root directory
   def files_at_path(path="/")
-    return nil if @files.empty?
+    return Hash.new if @files.empty?
     return files_at_path_helper(path)
   end
   
   def directories_at_path(path="/")
-    return nil if @files.empty?
+    return Hash.new if @files.empty?
     return files_at_path_helper(path, false, RevisionDirectory)
   end
   
@@ -485,6 +485,7 @@ class MemoryRevision < Repository::AbstractRevision
   private
   
   def files_at_path_helper(path="/", only_changed=false, type=RevisionFile)
+    # Automatically append a root slash if not supplied
     result = Hash.new(nil)
     @files.each do |object|
       if object.instance_of?(type) && object.path == path
