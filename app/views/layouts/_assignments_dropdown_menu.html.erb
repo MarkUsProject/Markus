@@ -13,7 +13,10 @@
                <li class="level2"><%= link_to h(assignment.short_identifier), :controller =>
 'assignments', :action => 'student_interface', :id => assignment.id %>
                </li>
-            <% else %>
+	    <% elsif @current_user.ta? %>
+               <li class="level2"><%= link_to h(assignment.short_identifier), :controller =>
+'submissions', :action => 'browse', :id => assignment.id %>
+	    <% else %>
                <li class="level2"><%= link_to h(assignment.short_identifier), :controller =>
 "assignments", :action => "edit", :id => assignment.id %></li>
             <% end %>
