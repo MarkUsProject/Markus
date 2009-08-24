@@ -3,7 +3,10 @@
 
 <div class="wrapLeft">
 
-<%= link_to I18n.t(:create_new),  :controller => 'assignments', :action => 'new' %>
+<%= link_to I18n.t(:create_new),  
+     {:controller => 'assignments', 
+     :action => 'new'},
+     :class => "button" %>
 <%= render :partial => "layouts/assignments", 
   :locals => { :controller => 'assignments', :action => 'edit' } -%>
 </div>
