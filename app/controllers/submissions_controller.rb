@@ -402,7 +402,6 @@ class SubmissionsController < ApplicationController
        end
     end
 
-     
     send_data csv_string, :disposition => 'attachment', :type => 'application/vnd.ms-excel', :filename => "#{assignment.short_identifier} detailed report.csv"
   end
   
