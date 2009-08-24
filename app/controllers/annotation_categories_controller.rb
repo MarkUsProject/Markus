@@ -75,9 +75,9 @@ class AnnotationCategoriesController < ApplicationController
     @annotation_categories = @assignment.annotation_categories
     case params[:format]
     when 'csv'
-      send_data convert_to_csv(@annotation_categories), :type => 'csv', :disposition => 'attachment'
+      send_data convert_to_csv(@annotation_categories), :filename => "#{@assignment.short_identifier}_annotations.csv", :disposition => 'attachment'
     when 'yml'
-      send_data convert_to_yml(@annotation_categories), :type => 'yml', :disposition => 'attachment'
+      send_data convert_to_yml(@annotation_categories), :filename => "#{@assignment.short_identifier}_annotations.yml", :disposition => 'attachment'
     else
       flash[:error] = "Could not recognize #{params[:format]} format to download with"
       redirect_to :action => 'index', :id => params[:id]
