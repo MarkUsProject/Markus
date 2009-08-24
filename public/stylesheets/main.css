@@ -893,7 +893,7 @@ div#login div.error {
    color: #464646;
    }
 
-.block h3{
+.block h3, .section h3{
    font-family: "Georgia";
    font-style: italic;
    font-weight: normal;
@@ -970,6 +970,20 @@ span.info_date{
    line-height: 1.5em;
 }
 
+
+.section .info_date{
+   margin-left: 10px;
+   color: #464646;
+   font-style: italic;
+}
+
+.section .info_due_date{
+   margin-left: 50px;
+}
+
+a.assignment_list{
+  font-size: 1.2em;
+}
 
 span.title{
   font-family: Georgia;
