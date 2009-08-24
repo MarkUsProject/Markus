@@ -20,6 +20,18 @@ namespace :markus do
     end
   end
   
+  desc "Add more student users to database. You have to run db:populate before this task!"
+  task(:add_students => :environment) do
+    puts "Populate database with some additional students"
+    STUDENT_CSV = File.expand_path(File.join(__FILE__, '/../../../test/classlist-csvs/new_students.csv'))
+    if File.readable?(STUDENT_CSV)
+      csv_students = File.new(STUDENT_CSV)
+      User.upload_user_list(Student, csv_students.read)
+    else
+      puts "File not found or not readable: #{STUDENT_CSV}"
+    end
+  end
+  
   desc "Create a setup for usability testing. You have to run db:populate before this task!"
   task(:usability_test_setup => :environment) do
     puts "Creating a setup for usability testing"
