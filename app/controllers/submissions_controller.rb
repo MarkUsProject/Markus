@@ -412,5 +412,4 @@ class SubmissionsController < ApplicationController
     string = assignment.get_svn_commands
     send_data string, :disposition => 'attachment', :type => 'text/plain', :filename => "#{assignment.short_identifier}_svn_exports"
   end
-
 end
