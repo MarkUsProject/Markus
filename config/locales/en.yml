@@ -66,6 +66,7 @@ en:
     invite_student:
       success: "Student {{user_name}} invited."
       fail:
+        due_date_passed: "Could not invite {{user_name}} - the due date for this assignment has passed"
         dne:  "Could not invite {{user_name}} - this student does not exist."
         hidden:  "Could not invite {{user_name}} - this student's account has been disabled."
         already_pending: "Could not invite {{user_name}} - this student is already a pending member of this group."

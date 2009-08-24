@@ -140,13 +140,14 @@ class AssignmentsController < ApplicationController
   end
   
   def download_csv_grades_report
-    assignments = Assignment.all
+    assignments = Assignment.all(:order => 'id')
     students = Student.all
     csv_string = FasterCSV.generate do |csv|
       students.each do |student|
         row = []
         row.push(student.user_name)
         assignments.each do |assignment|
+          out_of = assignment.total_mark
           grouping = student.accepted_grouping_for(assignment.id)
           if grouping.nil?
             row.push('')
@@ -155,7 +156,7 @@ class AssignmentsController < ApplicationController
             if submission.nil?
               row.push('')
             else
-              row.push(submission.result.total_mark)
+              row.push(submission.result.total_mark / out_of * 100)
             end
           end
         end
@@ -258,6 +259,9 @@ class AssignmentsController < ApplicationController
       user_name = user_name.strip
       @invited = Student.find_by_user_name(user_name)
       begin
+        if @assignment.due_date < Time.now
+          raise I18n.t('invite_student.fail.due_date_passed', :user_name => user_name)
+        end
         if @grouping.student_membership_number >= @assignment.group_max
           raise I18n.t('invite_student.fail.group_max_reached', :user_name => user_name)
         end
@@ -303,6 +307,10 @@ class AssignmentsController < ApplicationController
   def delete_rejected
     @assignment = Assignment.find(params[:id])
     membership = StudentMembership.find(params[:membership])
+    grouping = membership.grouping
+    if current_user != grouping.inviter
+      raise "Only the inviter can delete a declined invitation"
+    end
     membership.delete
     membership.save
     redirect_to :action => 'student_interface', :id => params[:id]

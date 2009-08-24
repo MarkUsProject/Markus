@@ -167,6 +167,19 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert_equal(I18n.t('invite_student.fail.dne', :user_name => 'zhfbdjhzkyfg'), flash[:fail_notice].first)
   end
   
+  def test_cant_invite_student_after_due_date
+    assignment = assignments(:assignment_1)
+    assignment.due_date = 2.days.ago
+    assignment.save(false)
+    student = users(:student4)
+    target = users(:student5)
+    assert !target.has_accepted_grouping_for?(assignment.id)
+    post_as(student, :invite_member, {:id => assignment.id, :invite_member => target.user_name})
+    assert_redirected_to :action => "student_interface"
+    assert_equal(I18n.t('invite_student.fail.due_date_passed', :user_name => target.user_name), flash[:fail_notice].first)
+  
+  end
+  
   def test_invite_multiple_students
     assignment = assignments(:assignment_1)
     inviter = users(:student4)
@@ -264,12 +277,36 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
   end
 
 
-  def test_delete_rejected
-    assignment = assignments(:assignment_1)
+  def test_inviter_can_delete_rejected
     membership = memberships(:membership3)
-    user = users(:student1)
+    grouping = membership.grouping
+    assignment = grouping.assignment
+    user = grouping.inviter
+    assert_equal grouping.inviter, user
+    assert_nothing_raised do
+      post_as(user, :delete_rejected, {:id => assignment.id, :membership => membership.id})
+    end
+    assert_raises ActiveRecord::RecordNotFound do
+      membership = StudentMembership.find(membership.id)
+    end
+    assert_response :redirect
+    assert_redirected_to :action => 'student_interface'
+  end
+  
+  def test_cant_delete_rejected_if_not_inviter
+    membership = memberships(:membership3)
+    grouping = membership.grouping
+    assignment = grouping.assignment
+    user = users(:student4)
     student = users(:student3)
-    post_as(user, :delete_rejected, {:id => assignment.id, :membership => membership.id})
+    assert grouping.inviter != user
+    assert_raises RuntimeError do
+      post_as(user, :delete_rejected, {:id => assignment.id, :membership => membership.id})
+    end
+    assert_nothing_raised do
+      membership = StudentMembership.find(membership.id)
+    end
+    assert !membership.nil?
     assert_response :success
   end
 
@@ -360,7 +397,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     response_csv = get_as(@admin, :download_csv_grades_report).body
     csv_rows = FasterCSV.parse(response_csv)
     assert_equal Student.all.size, csv_rows.size
-    assignments = Assignment.all
+    assignments = Assignment.all(:order => 'id')
     csv_rows.each do |csv_row|
       student_name = csv_row.shift
       student = Student.find_by_user_name(student_name)
@@ -377,12 +414,13 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
             # column was blank
           end
         else
+          out_of = assignments[index].total_mark
           grouping = student.accepted_grouping_for(assignments[index])
           assert_not_nil grouping
           assert grouping.has_submission?
           submission = grouping.get_submission_used
           assert_not_nil submission.result
-          assert_equal final_mark.to_f, submission.result.total_mark.to_f
+          assert_equal final_mark.to_f, (submission.result.total_mark / out_of * 100).to_f
         end
       end
       
@@ -711,13 +749,20 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assignment.instructor_form_groups = false
     assignment.student_form_groups = true
     assignment.save
+    
+    # Create some pending invitations for this student
+    invitations = 0
+    assignment.groupings.each do |some_grouping|
+      if some_grouping.student_memberships.length > 0
+        invitations = invitations + 1
+        some_grouping.invite(student.user_name)
+      end
+    end
 
     get_as(users(:student1), :student_interface, :id => assignment.id)
-    student = Student.find(student.id)
-    assert student.has_accepted_grouping_for?(assignment.id)
-    assert_not_nil student.accepted_grouping_for(assignment.id)
-    assert_equal student, student.accepted_grouping_for(assignment.id).inviter
-    assert_redirected_to :action => 'student_interface'
+    assert_response :success
+    assert assigns(:pending_grouping)
+    assert_equal invitations, assigns(:pending_grouping).length
   end
   
 end

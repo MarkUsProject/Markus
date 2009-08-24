@@ -340,6 +340,7 @@ class SubmissionsController < ApplicationController
   def download_simple_csv_report
     assignment = Assignment.find(params[:id])
     students = Student.all
+    out_of = assignment.total_mark
     csv_string = FasterCSV.generate do |csv|
        students.each do |student|
          final_result = []
@@ -349,7 +350,7 @@ class SubmissionsController < ApplicationController
            final_result.push('')
          else
            submission = grouping.get_submission_used
-           final_result.push(submission.result.total_mark)                    
+           final_result.push(submission.result.total_mark / out_of * 100)                    
          end
          csv << final_result
        end
@@ -360,6 +361,7 @@ class SubmissionsController < ApplicationController
   
   def download_detailed_csv_report
     assignment = Assignment.find(params[:id])
+    out_of = assignment.total_mark
     students = Student.all
     rubric_criteria = assignment.rubric_criteria
     csv_string = FasterCSV.generate do |csv|
@@ -378,7 +380,7 @@ class SubmissionsController < ApplicationController
            final_result.push(0)
          else
            submission = grouping.get_submission_used
-           final_result.push(submission.result.total_mark)
+           final_result.push(submission.result.total_mark / out_of * 100)
            rubric_criteria.each do |rubric_criterion|
              mark = submission.result.marks.find_by_rubric_criterion_id(rubric_criterion.id)
              if mark.nil?
