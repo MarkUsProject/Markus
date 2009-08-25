@@ -249,6 +249,7 @@ class SubmissionsController < ApplicationController
       redirect_to :action => "file_manager", :id => assignment_id
       
     rescue Exception => e
+      raise e
       flash[:commit_error] = e.message
       redirect_to :action => "file_manager", :id => assignment_id
     end

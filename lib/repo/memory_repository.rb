@@ -264,7 +264,7 @@ class MemoryRepository < Repository::AbstractRepository
   # Adds a file into the provided revision
   def add_file(rev, full_path, content, mime_type="text/plain")
     if file_exists?(rev, full_path)
-      raise FileExistsConflict
+      raise FileExistsConflict.new(full_path)
     end
     # file does not exist, so add it
     file = RevisionFile.new(rev.revision_number, {

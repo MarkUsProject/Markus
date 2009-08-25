@@ -173,6 +173,9 @@ Rails::Initializer.run do |config|
 "http://gems.github.com", :version => '>= 2.0.6' 
 end
 
+ActionView::Base.field_error_proc = Proc.new { |html_tag, instance| "<span class=\"fieldWithErrors\">#{html_tag}</span>" }
+
+
 ###################################################################
 # END OF MarkUs SPECIFIC CONFIGURATION
 ###################################################################

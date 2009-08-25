@@ -64,8 +64,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
     assignment = Assignment.first
     assert @student.has_accepted_grouping_for?(assignment.id)
     grouping = @student.accepted_grouping_for(assignment.id)
-
-        
+     
     repo = grouping.group.repo
     txn = repo.get_transaction('markus')
     txn.add(File.join(assignment.repository_folder,'Shapes.java'), 'Content of Shapes.java')
@@ -101,16 +100,55 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
     
   end 
   
-  def test_student_can_delete_files
-    assert false
+  def test_students_can_delete_files
+    assignment = Assignment.first
+    assert @student.has_accepted_grouping_for?(assignment.id)
+    grouping = @student.accepted_grouping_for(assignment.id)
+     
+    repo = grouping.group.repo
+    txn = repo.get_transaction('markus')
+    txn.add(File.join(assignment.repository_folder,'Shapes.java'), 'Content of Shapes.java')
+    txn.add(File.join(assignment.repository_folder, 'TestShapes.java'), 'Content of TestShapes.java')
+    repo.commit(txn)
+    revision = repo.get_latest_revision
+    old_files = revision.files_at_path(assignment.repository_folder)
+    old_file_1 = old_files['Shapes.java']
+    old_file_2 = old_files['TestShapes.java']
+    
+    post_as(@student, :update_files, {:id => assignment.id, :delete_files => {'Shapes.java' => true}, :file_revisions => {'Shapes.java' => old_file_1.from_revision, 'TestShapes.java' => old_file_2.from_revision}})
+
+    repo = grouping.group.repo
+    revision = repo.get_latest_revision
+    files = revision.files_at_path(assignment.repository_folder)
+    assert_not_nil files['TestShapes.java']
+    assert_nil files['Shapes.java']
   end
   
   def test_student_cant_add_file_that_exists
-    assert false
-  end
+    assignment = Assignment.first
+    assert @student.has_accepted_grouping_for?(assignment.id)
+    grouping = @student.accepted_grouping_for(assignment.id)
+     
+    repo = grouping.group.repo
+    txn = repo.get_transaction('markus')
+    txn.add(File.join(assignment.repository_folder,'Shapes.java'), 'Content of Shapes.java')
+    txn.add(File.join(assignment.repository_folder, 'TestShapes.java'), 'Content of TestShapes.java')
+    repo.commit(txn)
+    original_revision = repo.get_latest_revision
   
-  def test_student_cant_add_file_if_out_of_sync
-    assert false
+    file_1 = fixture_file_upload('files/Shapes.java', 'text/java')
+    file_2 = fixture_file_upload('files/TestShapes.java', 'text/java')
+    assignment = Assignment.first
+    assert @student.has_accepted_grouping_for?(assignment.id)
+    post_as(@student, :update_files, {:id => assignment.id, :new_files => [file_1, file_2]})
+    assert_redirected_to :action => 'file_manager'
+    # Check to see if the file was added
+    grouping = @student.accepted_grouping_for(assignment.id)
+    revision = grouping.group.repo.get_latest_revision
+    files = revision.files_at_path(assignment.repository_folder)
+    assert_not_nil files['Shapes.java']
+    assert_not_nil files['TestShapes.java']
+    assert_not_nil flash[:update_conflicts]
   end
   
   def test_student_cant_replace_file_if_out_of_sync

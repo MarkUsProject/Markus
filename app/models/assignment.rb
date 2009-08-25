@@ -42,7 +42,7 @@ class Assignment < ActiveRecord::Base
   
   # Are we past the due date for this assignment?
   def past_due_date?
-    return Time.now > due_date
+    return !due_date.nil? && Time.now > due_date
   end
   
   def past_collection_date?
