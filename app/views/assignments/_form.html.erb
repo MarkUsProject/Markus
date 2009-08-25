@@ -1,5 +1,5 @@
-<%= javascript_include_tag "PeriodDeltaChain/PeriodDeltaChain" %>
 <%= calendar_date_select_includes "silver" %>
+<%= javascript_include_tag "PeriodDeltaChain/PeriodDeltaChain" %>
 
 <%= render :partial => 'boot.js' %>
 
@@ -30,7 +30,8 @@
           :time => "mixed",
           :after_close => "refresh_due_date();",
           :year_range => 0.years.ago..1.years.from_now, :id => "assignment_due_date"} %>
-   <%= observe_field "assignment_due_date", :function => "update_due_date($F('assignment_due_date'));" %>
+   <%= observe_field "assignment_due_date", :function => "update_due_date($F('assignment_due_date'));" %> YYYY-MM-DD HH:MM (24 hour)
+   <br />
 </fieldset>
 
 <fieldset>
