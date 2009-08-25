@@ -33,14 +33,14 @@ class RepositoryAbstractTests < Test::Unit::TestCase
     assert_equal 3, @repo.latest_revision_number, "Number of revisions is wrong"
     revision = @repo.get_revision(1)
     files = revision.files_at_path('/')
-    assert_equal 1, files.count, "Number of files in this revision is wrong"
+    assert_equal 1, files.length, "Number of files in this revision is wrong"
     file = files["SomeFile.java"]
     assert_not_nil file, "Could not find an expected file"
     assert_equal "SomeFile.java", file.name, "Name of file is wrong"
     
     revision = @repo.get_revision(2)
     files = revision.files_at_path('/')
-    assert_equal 2, files.count, "Number of files in this revision is wrong"
+    assert_equal 2, files.length, "Number of files in this revision is wrong"
     file = files["SomeNewFile.java"]
     assert_not_nil file, "Could not find an expected file"
     assert_equal "SomeNewFile.java", file.name, "Name of file is wrong"
@@ -186,7 +186,7 @@ end
 #  def test_get_changed_files
 #    revision = @repo.get_revision(2)
 #    
-#    assert_equal 1, revision.changed_files.count, "Did not get the right number of changed files"
+#    assert_equal 1, revision.changed_files.length, "Did not get the right number of changed files"
 #    
 #    file = revision.changed_files["TestShapes.java"]
 #    
@@ -282,7 +282,7 @@ end
 #    @repo.add_file("NewFile.java", "A brand new file!")
 #    @repo.commit   
 #    revision = @repo.get_latest_revision
-#    assert_equal 1, revision.changed_files.count, "Did not get the right number of changed files"   
+#    assert_equal 1, revision.changed_files.length, "Did not get the right number of changed files"   
 #    file = revision.changed_files["NewFile.java"]
 #    assert_equal "NewFile.java", file.name, "Did not receive the right file"
 #    assert_equal 4, file.last_modified_revision, "Did not receive the right file"

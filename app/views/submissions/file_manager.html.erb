@@ -32,14 +32,17 @@
 <% if flash[:transaction_warning] %>
   <div class="warning"><%= flash[:transaction_warning] %></div>
 <% end %>
+<% if flash[:success] %>
+  <div class="success"><%= flash[:success] %></div>
+<% end %>
 
 <% if @assignment.submission_rule.can_collect_now? %>
-  <div class="notice">
+  <div class="warning">
     <%= h(@assignment.submission_rule.after_collection_message(@grouping)) %>
   </div>
 <% else %>
   <% if @assignment.due_date < Time.now %>
-    <div class="notice">
+    <div class="warning">
       <%= h(@assignment.submission_rule.overtime_message(@grouping)) %>
     </div>
   <% end %>
@@ -56,6 +59,18 @@
     </ul>
   </div>
 <% end %>
+
+<% if flash[:commit_notice] %>
+  <div class="warning">
+    <%=flash[:commit_notice]%>
+  </div>
+<% end %>
+<% if flash[:commit_error] %>
+  <div class="warning">
+    <%=flash[:commit_error] %>
+  </div>
+<% end %>
+
 <% if !@grouping.is_valid? %>
 <div class="error">
   <%= t(:invalid_group_warning) %>
@@ -74,16 +89,7 @@
   </ul>
  </div>
 <% end %>
-<% if flash[:commit_notice] %>
-  <div class="notice">
-    <%=flash[:commit_notice]%>
-  </div>
-<% end %>
-<% if flash[:commit_error] %>
-  <div class="warning">
-    <%=flash[:commit_error] %>
-  </div>
-<% end %>
+
 
 <%= form_tag( {:action => "update_files", :id => @assignment.id}, {:multipart => true, :id => 'submit_form'} ) unless (!@grouping.is_valid? || @grouping.group.repository_external_commits_only?) %>
 
@@ -102,11 +108,12 @@
     :disabled => !@grouping.is_valid?
     ) unless @grouping.group.repository_external_commits_only? 
     %>
-<%= button_to_function( I18n.t(:cancel), 
+<%= link_to ( I18n.t(:cancel), 
         {:controller => 'submissions', 
            :action => 'file_manager'}, 
 	 :id => @assignment.id,
 	 :disabled => !@grouping.is_valid?,
+	 :class => "button",
 	 :confirm => "Are you sure you want to discard your changes?") unless @grouping.group.repository_external_commits_only? %>
 <% end %>
 </div>
@@ -119,12 +126,13 @@
 <% if @grouping.is_valid? %>
 <div class="global_action">
 <%= submit_tag( I18n.t(:submit), :disabled => !@grouping.is_valid? ) unless @grouping.group.repository_external_commits_only? %>
-<%= button_to_function( I18n.t(:cancel), 
-      {:controller => 'submissions', 
-       :action => 'file_manager'}, 
-      :id => @assignment.id, 
-      :disabled => !@grouping.is_valid?,
-      :class => "button" ) unless @grouping.group.repository_external_commits_only? %>
+<%= link_to ( I18n.t(:cancel), 
+        {:controller => 'submissions', 
+           :action => 'file_manager'}, 
+	 :id => @assignment.id,
+	 :disabled => !@grouping.is_valid?,
+	 :class => "button",
+	 :confirm => "Are you sure you want to discard your changes?") unless @grouping.group.repository_external_commits_only? %>
 </div>
 </form>
 <% end %>

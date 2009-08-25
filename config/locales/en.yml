@@ -74,6 +74,8 @@ en:
         inviting_self: "You cannot invite yourself to your own group."
         already_grouped: "Could not invite {{user_name}} - this student is already a member of another group."
         need_to_create_group: "You must create a group before you can invite users"
+    update_files:
+      success:  "Your changes have been made."
 
     user:
         user_name:      "User Name"

@@ -239,6 +239,8 @@ class SubmissionsController < ApplicationController
       end
       if !repo.commit(txn)
         flash[:update_conflicts] = txn.conflicts
+      else
+        flash[:success] = I18n.t('update_files.success')
       end
       
       # Are we past collection time?    
@@ -299,7 +301,6 @@ class SubmissionsController < ApplicationController
           end
           submission = grouping.get_submission_used
           if !submission.has_result?
-            # TODO:  Neaten this up...
             flash[:release_errors].push("#{grouping.group.group_name} had no result")
             next     
           end
@@ -326,7 +327,6 @@ class SubmissionsController < ApplicationController
       grouping.assignment.set_results_average
     end
   end
-
 
   def unrelease
     return unless request.post?

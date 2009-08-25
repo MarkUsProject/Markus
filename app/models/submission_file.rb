@@ -9,7 +9,9 @@ class SubmissionFile < ActiveRecord::Base
   validates_presence_of :path
   
   def get_file_type
-    #TODO:  Add more languages?
+    # This is where you can add more languages that SubmissionFile will
+    # recognize.  It will return the name of the language, which
+    # SyntaxHighlighter can work with.
     case File.extname(filename)
     when ".java"
       return "java"

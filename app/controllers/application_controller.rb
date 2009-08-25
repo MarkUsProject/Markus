@@ -21,8 +21,7 @@ class ApplicationController < ActionController::Base
   # See ActionController::Base for details 
   # Filter the contents of submitted sensitive data parameters
   # from your application log (in this case, all fields with names like "user"). 
-  # TODO enable on production deployment
-  # filter_parameter_logging :user
+  filter_parameter_logging :user
   
   protected
   

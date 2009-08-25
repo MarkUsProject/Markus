@@ -460,7 +460,6 @@ var FilterTable = Class.create({
       if($(this.footer_id_prefix + this.current_sort) != null) {
         $(this.footer_id_prefix + this.current_sort).addClassName(this.sorting_reverse_class);
       }
-      
       this.reverse_rows().render();
     } else {
       if($(this.header_id_prefix + this.current_sort) != null) {

@@ -11,7 +11,6 @@ class GroupsController < ApplicationController
    
   auto_complete_for :student, :user_name
   auto_complete_for :assignment, :name
-  # TODO filter (except index) to make sure assignment is a group assignment
  
   # Group administration functions -----------------------------------------
   # Verify that all functions below are included in the authorize filter above
@@ -83,8 +82,6 @@ class GroupsController < ApplicationController
   
   def remove_group
     return unless request.delete?
-    # TODO remove groups for all assignment or just for the specific assignment?
-    # TODO remove submissions in file system?
     grouping = Grouping.find(params[:grouping_id])
     @assignment = grouping.assignment
     @errors = []
@@ -292,7 +289,7 @@ class GroupsController < ApplicationController
     flash[:edit_notice] = "Groups created"
   end
 
-  # TODO:  This method is massive, and does way too much.  Whatever happened
+  # This method is massive, and does way too much.  Whatever happened
   # to single-responsibility?
   def global_actions 
     @assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group]}])   

@@ -201,66 +201,66 @@ class GroupingTest < ActiveSupport::TestCase
   def test_cant_invite_hidden_student
     grouping = groupings(:grouping_1)
     hidden = users(:hidden_student)
-    original_number_of_members = grouping.memberships.count
+    original_number_of_members = grouping.memberships.length
     grouping.invite(hidden.user_name)
-    assert_equal original_number_of_members, grouping.memberships.count
+    assert_equal original_number_of_members, grouping.memberships.length
   end
   
   def test_cant_add_member_hidden_student
     grouping = groupings(:grouping_1)
     hidden = users(:hidden_student)
-    original_number_of_members = grouping.memberships.count
+    original_number_of_members = grouping.memberships.length
     grouping.add_member(hidden)
-    assert_equal original_number_of_members, grouping.memberships.count
+    assert_equal original_number_of_members, grouping.memberships.length
   end
   
   # TA Assignment tests
   def test_assign_tas_to_grouping
     grouping = groupings(:grouping_1)
     ta = users(:ta1)
-    assert_equal 0, grouping.ta_memberships.count, "Got unexpected TA membership count"
+    assert_equal 0, grouping.ta_memberships.length, "Got unexpected TA membership count"
     grouping.add_ta_by_id(ta.id)
-    assert_equal 1, grouping.ta_memberships.count, "Got unexpected TA membership count"  
+    assert_equal 1, grouping.ta_memberships.length, "Got unexpected TA membership count"  
   end
   
   def test_cant_assign_tas_multiple_times
     grouping = groupings(:grouping_1)
     ta = users(:ta1)
-    assert_equal 0, grouping.ta_memberships.count, "Got unexpected TA membership count"
+    assert_equal 0, grouping.ta_memberships.length, "Got unexpected TA membership count"
     grouping.add_ta_by_id(ta.id)
     grouping.add_ta_by_id(ta.id)
-    assert_equal 1, grouping.ta_memberships.count, "Got unexpected TA membership count"  
+    assert_equal 1, grouping.ta_memberships.length, "Got unexpected TA membership count"  
   end
   
   def test_unassign_tas_to_grouping
     grouping = groupings(:grouping_1)
     ta = users(:ta1)
-    assert_equal 0, grouping.ta_memberships.count, "Got unexpected TA membership count"
+    assert_equal 0, grouping.ta_memberships.length, "Got unexpected TA membership count"
     grouping.add_ta_by_id(ta.id)
-    assert_equal 1, grouping.ta_memberships.count, "Got unexpected TA membership count"
+    assert_equal 1, grouping.ta_memberships.length, "Got unexpected TA membership count"
     grouping.remove_ta_by_id(ta.id)
-    assert_equal 0, grouping.ta_memberships.count, "Got unexpected TA membership count"  
+    assert_equal 0, grouping.ta_memberships.length, "Got unexpected TA membership count"  
   end
   
   def test_assign_tas_to_grouping_by_user_name_array
     grouping = groupings(:grouping_1)
     user_name_array = ['ta1', 'ta2']
-    assert_equal 0, grouping.ta_memberships.count, "Got unexpected TA membership count"
+    assert_equal 0, grouping.ta_memberships.length, "Got unexpected TA membership count"
     grouping.add_tas_by_user_name_array(user_name_array)
-    assert_equal 2, grouping.ta_memberships.count, "Got unexpected TA membership count"  
+    assert_equal 2, grouping.ta_memberships.length, "Got unexpected TA membership count"  
   end
   
   def test_ta_assignment_by_csv_file
     assignment = assignments(:assignment_1)
     
     grouping_1 = Group.find_by_group_name('Titanic').grouping_for_assignment(assignment.id)
-    grouping_1_orig_count = grouping_1.ta_memberships.count
+    grouping_1_orig_count = grouping_1.ta_memberships.length
     
     grouping_2 = Group.find_by_group_name('Ukishima Maru').grouping_for_assignment(assignment.id)
-    grouping_2_orig_count = grouping_2.ta_memberships.count
+    grouping_2_orig_count = grouping_2.ta_memberships.length
         
     grouping_3 = Group.find_by_group_name('Blanche Nef').grouping_for_assignment(assignment.id)
-    grouping_3_orig_count = grouping_3.ta_memberships.count
+    grouping_3_orig_count = grouping_3.ta_memberships.length
     
     csv_file_data = 
 '''Titanic,ta1
@@ -268,15 +268,15 @@ Ukishima Maru,ta1,ta2
 Blanche Nef,ta2'''
     failures = Grouping.assign_tas_by_csv(csv_file_data, assignment.id)
 
-    assert_equal grouping_1_orig_count + 1, grouping_1.ta_memberships.count, "Got unexpected TA membership count"
+    assert_equal grouping_1_orig_count + 1, grouping_1.ta_memberships.length, "Got unexpected TA membership count"
     
     # This should be +1 ta_memberships, because one of those TAs is already
     # assigned to Ukishima Maru in the fixtures
-    assert_equal grouping_2_orig_count + 1, grouping_2.ta_memberships.count, "Got unexpected TA membership count"
+    assert_equal grouping_2_orig_count + 1, grouping_2.ta_memberships.length, "Got unexpected TA membership count"
 
-    assert_equal grouping_3_orig_count + 1, grouping_3.ta_memberships.count, "Got unexpected TA membership count"
+    assert_equal grouping_3_orig_count + 1, grouping_3.ta_memberships.length, "Got unexpected TA membership count"
     
-    assert_equal 0, failures.count, "Received unexpected failures"
+    assert_equal 0, failures.length, "Received unexpected failures"
 
   end
 
@@ -284,13 +284,13 @@ Blanche Nef,ta2'''
     assignment = assignments(:assignment_1)
     
     grouping_1 = Group.find_by_group_name('Titanic').grouping_for_assignment(assignment.id)
-    grouping_1_orig_count = grouping_1.ta_memberships.count
+    grouping_1_orig_count = grouping_1.ta_memberships.length
     
     grouping_2 = Group.find_by_group_name('Ukishima Maru').grouping_for_assignment(assignment.id)
-    grouping_2_orig_count = grouping_2.ta_memberships.count
+    grouping_2_orig_count = grouping_2.ta_memberships.length
         
     grouping_3 = Group.find_by_group_name('Blanche Nef').grouping_for_assignment(assignment.id)
-    grouping_3_orig_count = grouping_3.ta_memberships.count
+    grouping_3_orig_count = grouping_3.ta_memberships.length
     
     csv_file_data = 
 '''Titanic,ta1
@@ -298,11 +298,11 @@ Uk125125ishima Maru,ta1,ta2
 Blanche Nef,ta2'''
     failures = Grouping.assign_tas_by_csv(csv_file_data, assignment.id)
     
-    assert_equal grouping_1_orig_count + 1, grouping_1.ta_memberships.count, "Got unexpected TA membership count"
+    assert_equal grouping_1_orig_count + 1, grouping_1.ta_memberships.length, "Got unexpected TA membership count"
 
-    assert_equal grouping_2_orig_count + 0, grouping_2.ta_memberships.count, "Got unexpected TA membership count"
+    assert_equal grouping_2_orig_count + 0, grouping_2.ta_memberships.length, "Got unexpected TA membership count"
 
-    assert_equal grouping_3_orig_count + 1, grouping_3.ta_memberships.count, "Got unexpected TA membership count"
+    assert_equal grouping_3_orig_count + 1, grouping_3.ta_memberships.length, "Got unexpected TA membership count"
     
     assert_equal failures[0], "Uk125125ishima Maru", "Didn't return correct failure"
 

@@ -35,7 +35,7 @@
 
       <p id="addmembers_error"></p>
 
-      <% ([@assignment.group_max - @group.members.count, 5].min).times do |index|  %>
+      <% ([@assignment.group_max - @group.members.length, 5].min).times do |index|  %>
         <div id="members_<%= index %>">
           <% fields_for "members[#{index}]" do |m| -%>
             <p><%= m.text_field :user_name %></p>
@@ -44,7 +44,7 @@
       <% end -%>
   
       <p><%= submit_tag "Add Members" %></p>
-    <% end if @assignment.can_invite? && @group.members.count < @assignment.group_max -%>
+    <% end if @assignment.can_invite? && @group.members.length < @assignment.group_max -%>
     
   <% end -%>
 </div>

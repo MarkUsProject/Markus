@@ -49,16 +49,6 @@ class AssignmentTest < ActiveSupport::TestCase
      assert !assignment.submission_by(user)
   end
 
-  def test_individual?
-    assignment = assignments(:assignment_2)
-    assert assignment.individual?
-  end
-
-  def test_not_individual?
-    assignment = assignments(:assignment_1)
-    assert !assignment.individual?
-  end
-
   def test_total_mark
     assignment = assignments(:assignment_1)
     assert_equal(35.6, assignment.total_mark)
@@ -108,48 +98,48 @@ class AssignmentTest < ActiveSupport::TestCase
 
   def test_no_groupings_student_list
     a = assignments(:assignment_1)
-    assert_equal(3, a.no_grouping_students_list.count, "should be equal
+    assert_equal(3, a.no_grouping_students_list.length, "should be equal
     to 3")
   end
 
   def test_can_invite_for
     a = assignments(:assignment_1)
     g = groupings(:grouping_2)
-    assert_equal(2, a.can_invite_for(g.id).count)
+    assert_equal(2, a.can_invite_for(g.id).length)
   end
 
   def test_add_group
     a = assignments(:assignment_3)
-    number = a.groupings.count + 1
+    number = a.groupings.length + 1
     a.add_group("new_group_name")
-    assert_equal(number, a.groupings.count, "should have added one
+    assert_equal(number, a.groupings.length, "should have added one
     more grouping")
   end
 
   def test_add_group_1
     a = assignments(:assignment_1)
-    number = a.groupings.count + 1
+    number = a.groupings.length + 1
     a.add_group("new_group_name")
-    assert_equal(number, a.groupings.count, "should have added one
+    assert_equal(number, a.groupings.length, "should have added one
     more grouping")
   end
 
 
   def test_add_group_with_already_existing_name_in_another_assignment_1
     a = assignments(:assignment_3)
-    number = a.groupings.count + 1
+    number = a.groupings.length + 1
     a.add_group("Titanic")
-    assert_equal(number, a.groupings.count, "should have added one
+    assert_equal(number, a.groupings.length, "should have added one
     more grouping")
   end
 
   def test_add_group_with_already_existing_name_in_another_assignment_2
     a = assignments(:assignment_3)
     group = Group.all
-    number = group.count
+    number = group.length
     a.add_group("Ukishima Maru")
     group2 = Group.all
-    assert_equal(number, group2.count, "should NOT have added a new group")
+    assert_equal(number, group2.length, "should NOT have added a new group")
   end
 
   def test_add_group_with_already_existing_name_in_this_same_assignment

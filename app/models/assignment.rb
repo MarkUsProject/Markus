@@ -8,7 +8,6 @@ class Assignment < ActiveRecord::Base
   has_many :annotation_categories
   
   has_many :groupings
-  #TODO:  Do we want these Memberships associated to Assignment?
   has_many :ta_memberships, :through => :groupings
   has_many :student_memberships, :through => :groupings
   
@@ -76,7 +75,6 @@ class Assignment < ActiveRecord::Base
     end
   end
   
-  
   # Return true if this is a group assignment; false otherwise
   def group_assignment?
     instructor_form_groups || group_min != 1 || group_max > 1
@@ -124,13 +122,7 @@ class Assignment < ActiveRecord::Base
     end
     return students_list
   end
-  
-  # TODO DEPRECATED: use group_assignment? instead
-  # Checks if an assignment is an individually-submitted assignment (no groups)
-  def individual?
-    group_min == 1 && group_max == 1  
-  end
-  
+    
   def total_mark
     total = 0
     rubric_criteria.each do |criterion|
@@ -299,7 +291,7 @@ class Assignment < ActiveRecord::Base
   def valid_groupings
     result = []
     groupings.all(:include => [{:student_memberships => :user}]).each do |grouping|
-      if grouping.admin_approved || grouping.student_memberships.count >= group_min
+      if grouping.admin_approved || grouping.student_memberships.length >= group_min
         result.push(grouping)
       end
     end

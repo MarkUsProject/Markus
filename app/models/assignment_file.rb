@@ -7,9 +7,7 @@ class AssignmentFile < ActiveRecord::Base
     :message => "must be alphanumeric, '.' or '-' only"
  
   # sanitize filename input before saving
-  def before_save
-    # TODO should have no '..' or file path separators
-    
+  def before_save    
     filename.strip!
     filename.gsub(/^(..)+/, ".")
     filename.gsub(/[^\s]/, "") # replace spaces with 

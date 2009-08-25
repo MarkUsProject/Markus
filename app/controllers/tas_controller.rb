@@ -66,7 +66,7 @@ class TasController < ApplicationController
   def upload_ta_list  
     if request.post? && !params[:userlist].blank?
       result = User.upload_user_list(Ta, params[:userlist])
-      if result[:invalid_lines].count > 0
+      if result[:invalid_lines].length > 0
         flash[:invalid_lines] = result[:invalid_lines]
       end
       flash[:upload_notice] = result[:upload_notice]

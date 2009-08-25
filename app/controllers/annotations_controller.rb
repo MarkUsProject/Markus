@@ -1,10 +1,7 @@
 class AnnotationsController < ApplicationController
   
   before_filter      :authorize_for_ta_and_admin
-  
-  # TODO: Is the assignment closed?  If so, begin generating 
-  # Submissions and SubmissionFiles
-   
+    
   def add_existing_annotation
     @text = AnnotationText.find(params[:annotation_text_id])
     @submission_file_id = params[:submission_file_id]
