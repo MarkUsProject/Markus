@@ -1379,3 +1379,11 @@ fieldset.period{
   background:#fff;
   padding: 4px;
 }
+
+.fieldWithErrors label{
+   font-style: italic;
+}
+
+.fieldWithErrors input{
+  border: 2px #E6CB55 solid;
+}
