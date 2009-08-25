@@ -1387,3 +1387,14 @@ fieldset.period{
 .fieldWithErrors input{
   border: 2px #E6CB55 solid;
 }
+
+fieldset.disabled{
+  background-color: #eee;
+  color: #464646
+  font-style: italic;
+}
+
+.disabled label, .disabled span, .disabled p{
+  font-style: italic;
+  color: #464646;
+}
