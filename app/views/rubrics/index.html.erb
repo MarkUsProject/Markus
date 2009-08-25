@@ -70,7 +70,7 @@
 <% if flash[:error] %>
   <div class="error">
     <%= h(flash[:error]) %>
-    <% if !flash[:invalid_lines].empty? %>
+    <% if !flash[:invalid_lines].nil? && !flash[:invalid_lines].empty? %>
       <ul>
         <% flash[:invalid_lines].each do |message| %>
           <li><%=h(message)%></li>
@@ -118,7 +118,7 @@ h(@assignment.total_criteria_weight) %></span>)</span></div>
 <div id="upload_dialog"> 
     <h1>Upload Rubric File</h1>
     <p>
-    Select a CSV or YAML file to upload
+    Select a CSV <!-- or YAML file to upload -->
     <!-- Need a better message
     Select a CSV file of the following form:<br /><br />
     <code>level1_name,level2_name,level3_name,level4_name,level5_name <br />
@@ -136,7 +136,8 @@ h(@assignment.total_criteria_weight) %></span>)</span></div>
       </p>
           <p> File type: &nbsp;
             <%= f.radio_button :file_type, "csv", :checked => "checked" %>csv &nbsp;
-            <%= f.radio_button :file_type, "yml" %>yml
+            <%=# f.radio_button :file_type, "yml" 
+               %>
           </p>
       <p>
         <%= f.submit t(:upload), :disable_with => t(:uploading_please_wait) %>

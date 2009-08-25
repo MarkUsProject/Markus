@@ -183,7 +183,6 @@ class RubricsController < ApplicationController
      rubric = YAML.load(file.read)
      level_names = rubric["levels"]
      criteria = rubric["criteria"]
-
      criteria.each do |c|
        criterion = RubricCriterion.new
        criterion.assignment = assignment

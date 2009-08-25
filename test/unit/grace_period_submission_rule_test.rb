@@ -242,6 +242,7 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
     
   end
   
+
   private 
   
   def add_file_helper(txn, file_name, file_contents)
@@ -256,6 +257,5 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
     period.hours = hours
     period.save
   end
-  
-  
+
 end
