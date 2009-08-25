@@ -115,3 +115,22 @@ function update_due_date(new_due_date) {
 function refresh_due_date() {
   update_due_date($F('assignment_due_date'));
 }
+
+function change_submission_rule() {
+  $$('.period').each(function(node) { node.removeClassName('disabled'); });
+  $$('.period input').each(function(node) {
+    $(node).enable();
+  });
+  
+  if($('grace_period_submission_rule').getValue() == null) {
+     // Disable any grace_period_submission_rule periods 
+    $$('#grace_periods .period').each(function(node) { node.addClassName('disabled'); });
+    $$('#grace_periods .period input').each(function(node){node.disable();});
+  }
+  if($('penalty_period_submission_rule').getValue() == null) {
+     // Disable any grace_period_submission_rule periods 
+    $$('#penalty_periods .period').each(function(node) { node.addClassName('disabled'); });
+    $$('#penalty_periods .period input').each(function(node){node.disable();});
+  }
+
+}

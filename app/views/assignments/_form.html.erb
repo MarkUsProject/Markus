@@ -93,12 +93,12 @@
     <h5>Choose penalty rules to apply for late submissions:</h5>
 
     <p>
-      <%= rule.radio_button :type, "NoLateSubmissionRule", :checked => true %>
+      <%= rule.radio_button :type, "NoLateSubmissionRule", :checked => true, :onchange => "change_submission_rule();", :id => "no_late_submission_rule" %>
       Accept no late submissions
     </p>
 
     <p>
-      <%= rule.radio_button :type, "GracePeriodSubmissionRule", :onchange => "$$('.period').each(function(node){node.remove();});" %>
+      <%= rule.radio_button :type, "GracePeriodSubmissionRule", :onchange => "change_submission_rule();", :id => "grace_period_submission_rule" %>
       Automatically deduct grace period credits
       <span class="grace_periods_link">
         <%= add_grace_period_link "Add a Grace Period", rule %>
@@ -112,7 +112,7 @@
     <% end %>
     </div>
     <p>
-      <%= rule.radio_button :type, "PenaltyPeriodSubmissionRule", :onchange => "$$('.period').each(function(node){node.remove();});" %>
+      <%= rule.radio_button :type, "PenaltyPeriodSubmissionRule", :onchange => "change_submission_rule();", :id => "penalty_period_submission_rule" %>
       Use Penalty Formula  
       <span class="penalty_periods_link">
         <%= add_penalty_period_link "Add a Penalty Period", rule %>
