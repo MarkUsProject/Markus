@@ -29,6 +29,10 @@ button{
   font-size: 1em; 
 }
 
+button:hover{
+   color: #000;
+}
+
 a {
    color: #003399;
    text-decoration: none;

@@ -94,13 +94,18 @@
 
 li.annotation_category {
 /*  margin: 0 0 0 5px;*/
-  padding: 0 10px 0 10px;
+  padding: 3px 5px;
   float:left;
-  
+  background: #fff;
+  border: 2px #ccc solid;
+  -moz-border-radius: 9px;
+  -webkit-border-radius: 9px;
+  color: #464646;
+  font-weight: bold;
 }
 .annotation_category:hover {
-  background: yellow;
   cursor: pointer;
+  color: #000;
 }
 .annotation_text_list {
   position: absolute;
@@ -117,10 +122,11 @@ li.annotation_category {
   border-top: 1px solid #AAAAAA;
   border-bottom: 1px solid #AAAAAA;
   padding: 5px;
+  color: #464646;
 }
 .annotation_text_list li:hover {
-  background: yellow;
   cursor: pointer;
+  color: #000;
 }
 
 /* =================================================================================
