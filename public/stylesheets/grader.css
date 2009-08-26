@@ -127,6 +127,7 @@ li.annotation_category {
 .annotation_text_list li:hover {
   cursor: pointer;
   color: #000;
+  background: #FFFCC4;
 }
 
 /* =================================================================================

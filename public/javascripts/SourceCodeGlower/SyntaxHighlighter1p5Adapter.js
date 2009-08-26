@@ -53,6 +53,9 @@ var SyntaxHighlighter1p5Adapter = Class.create(SourceCodeAdapter, {
     me = this;
      
     var original_commands = dp.sh.Toolbar.Commands;
+    // Get rid of copyToClipboard
+    delete original_commands['CopyToClipboard'];
+    delete original_commands['PrintSource'];
     original_commands["BoostCode"] = {
     	  label: '+A',
 	  func: function(highlighter) {
@@ -71,6 +74,11 @@ var SyntaxHighlighter1p5Adapter = Class.create(SourceCodeAdapter, {
             code.setStyle({fontSize: font_size + 'em'});
           }
         };
+    // A hack to put the About at the end
+    var about = original_commands['About'];
+    delete original_commands['About'];
+    original_commands['About'] = about;
+    
     //Attempt to replace tools menu with these new commands
     $$('.tools').first().update(dp.sh.Toolbar.Create('code').innerHTML)
     
