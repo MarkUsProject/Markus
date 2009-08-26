@@ -14,6 +14,11 @@
       <% if flash[:upload_notice] -%>
           <p class="success"><%=h flash[:upload_notice] %></p>
       <% end -%>
+      <% if flash[:success] %>
+        <div class="success">
+          <%=h(flash[:success]) %>
+        </div>
+      <% end %>
       
       <% if flash[:edit_notice] -%>
         <p class="success"><%=h flash[:edit_notice] %></p>

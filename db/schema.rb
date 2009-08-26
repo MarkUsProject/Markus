@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090811194915) do
+ActiveRecord::Schema.define(:version => 20090826182322) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -141,7 +141,7 @@ ActiveRecord::Schema.define(:version => 20090811194915) do
   create_table "results", :force => true do |t|
     t.integer  "submission_id"
     t.string   "marking_state"
-    t.string   "overall_comment"
+    t.text     "overall_comment"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "released_to_students", :default => false, :null => false

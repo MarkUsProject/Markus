@@ -1402,3 +1402,7 @@ fieldset.disabled{
   font-style: italic;
   color: #464646;
 }
+
+.invalid {
+  color: #FF0000;
+}

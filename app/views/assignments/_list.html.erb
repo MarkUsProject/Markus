@@ -7,28 +7,29 @@
   <% else %>
 		
     <table><!-- listing assignments -->
+      <thead>
+        <tr>
+          <td><%=t(:description)%></td>
+          <td><%=t(:due_date)%></td>
+          <td><%=t(:results)%></td>
+        </tr>
+      </thead>
       <tbody>
         <% for assignment in @assignments %>
           <tr>
             <td>
               <%=
               	# assignment name
-                link_to h(sanitize(assignment.short_identifier)), 
+                link_to h(sanitize(assignment.short_identifier) + ': ' + assignment.description), 
                 :controller => controller, 
                 :action => action, 
-                :id => assignment.id
-							%>
-            </td>
-            <td>
-              <%= #description
-								h( assignment.description )
-							%>
+                :id => assignment.id%>
             </td>
             <td>
               <% if assignment.due_date < Time.now %>
-                <strong>Due date was:</strong> <%= assignment.due_date.strftime(LONG_DATE_TIME_FORMAT) %>.         
+                <strong><%= assignment.due_date.strftime(LONG_DATE_TIME_FORMAT) %></strong>
               <% else %>
-                <strong>Due date:</strong> <%= assignment.due_date.strftime(LONG_DATE_TIME_FORMAT) %>
+                <strong><%= assignment.due_date.strftime(LONG_DATE_TIME_FORMAT) %></strong><br />
                   <%= "("+(((assignment.due_date - Time.now)/(60 * 60 * 24)).floor).to_s %> days and <%= (((assignment.due_date - Time.now)/(60 * 60)) % 24).floor %> hours left)
               <% end %>
             </td>
@@ -42,7 +43,7 @@
                 <%= simple_format(sanitize(@a_id_results[assignment.id].overall_comment)) %>
               </p>
               <% elsif assignment.due_date < Time.now %>
-                There are no results for this assignment, yet.
+                There are no results for this assignment yet.
               <% end %>
             </td>
           </tr>

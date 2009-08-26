@@ -39,6 +39,7 @@ class TasController < ApplicationController
     # active records--creates a new record if the model is new, otherwise
     # updates the existing record
     return unless @user.save
+    flash[:success] = "Successfully created grader #{@user.user_name}"
     redirect_to :action => 'index' # Redirect 
   end
   

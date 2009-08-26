@@ -180,6 +180,9 @@ class SubmissionsController < ApplicationController
 
   # controller handles transactional submission of files
   def update_files
+    if REPOSITORY_EXTERNAL_SUBMITS_ONLY
+      raise "MarkUs is only accepting external submits"
+    end
     assignment_id = params[:id]
     assignment = Assignment.find(assignment_id)
     path = params[:path] || '/'
@@ -414,4 +417,18 @@ class SubmissionsController < ApplicationController
     string = assignment.get_svn_commands
     send_data string, :disposition => 'attachment', :type => 'text/plain', :filename => "#{assignment.short_identifier}_svn_exports"
   end
+
+  # See Assignment.get_svn_commands for details
+  def download_svn_repo_list
+    assignment = Assignment.find(params[:id])
+    groupings = assignment.groupings
+    string = FasterCSV.generate do |csv|
+      groupings.each do |grouping|
+        group = grouping.group
+        csv << [group.repository_external_access_url,group.group_name]
+      end
+    end
+    send_data string, :disposition => 'attachment', :type => 'text/plain', :filename => "#{assignment.short_identifier}_svn_repo_list"
+  end
+
 end

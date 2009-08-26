@@ -17,7 +17,10 @@
    <span class="menu_bar">|</span>
 <%= link_to "Detailed CSV Report", :action => 'download_detailed_csv_report', :id => @assignment.id %>
    <span class="menu_bar">|</span>
+<%= link_to "Subversion Repo List", :action => 'download_svn_repo_list', :id => @assignment.id %>
+   <span class="menu_bar">|</span>
 <%= link_to "Subversion Export File", :action => 'download_svn_export_commands', :id => @assignment.id %>
+
  <% end %>
 </h1>
 </div>
@@ -44,7 +47,7 @@
 </div>
 <% end %>
 
-  <% if flash[:release_errors] %>
+  <% if !flash[:release_errors].empty? %>
     <div class="error">
     <h1>Errors</h1>
     <ul>
