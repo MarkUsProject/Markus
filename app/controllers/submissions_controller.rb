@@ -425,7 +425,7 @@ class SubmissionsController < ApplicationController
     string = FasterCSV.generate do |csv|
       groupings.each do |grouping|
         group = grouping.group
-        csv << [group.repository_external_access_url,group.group_name]
+        csv << [group.group_name,group.repository_external_access_url]
       end
     end
     send_data string, :disposition => 'attachment', :type => 'text/plain', :filename => "#{assignment.short_identifier}_svn_repo_list"

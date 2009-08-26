@@ -47,7 +47,7 @@
 </div>
 <% end %>
 
-  <% if !flash[:release_errors].empty? %>
+  <% if !flash[:release_errors].nil? && !flash[:release_errors].empty? %>
     <div class="error">
     <h1>Errors</h1>
     <ul>
