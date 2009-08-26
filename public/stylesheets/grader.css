@@ -181,10 +181,15 @@ li.annotation_category {
     width: 60%;
    /* width: 536px;*/
   }
+
   #rubric_pane {
-   width: 30%
+   width: 35%;
     /*width: 370px;*/
   }
+
+
+
+
   
     #rubric_viewer, #summary_viewer, #code_holder, #annotations_summary {
       height: 650px;
@@ -219,7 +224,7 @@ li.annotation_category {
 
 .modal {
   background-color:#fff;
-  padding:10px;
+  padding:12px;
   border:1px solid #333;
 }
 
@@ -399,7 +404,7 @@ ul#annotation_summary_list {
   }
 
   .extra_marks_pane {
-  font-size:10px;
+  font-size:12px;
   border: 1px solid #DADADA;
   }
 
@@ -412,7 +417,7 @@ ul#annotation_summary_list {
 /* criterion summary holder */
 
  .marks_summary_pane {
-  font-size:10px;
+  font-size:12px;
  }
 
   .mark_summary_holder {

@@ -567,9 +567,7 @@ input#extra_mark_description{
 }
 
 .total_extra_points_label, #total_extra_points{
-  border-top: 1px #ccc solid;
   font-style: italic;
-  font-size: 1.2em;
   margin: 2px 0;
   padding: 2px;
 }
