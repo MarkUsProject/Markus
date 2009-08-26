@@ -291,7 +291,7 @@ class Assignment < ActiveRecord::Base
   def valid_groupings
     result = []
     groupings.all(:include => [{:student_memberships => :user}]).each do |grouping|
-      if grouping.admin_approved || grouping.student_memberships.length >= group_min
+      if grouping.admin_approved || grouping.student_memberships.count >= group_min
         result.push(grouping)
       end
     end

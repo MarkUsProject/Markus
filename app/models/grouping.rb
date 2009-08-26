@@ -36,7 +36,7 @@ class Grouping < ActiveRecord::Base
    
   # Returns whether or not a TA is assigned to mark this Grouping
   def has_ta_for_marking?
-    return ta_memberships.length > 0
+    return ta_memberships.count > 0
   end
   
   # Returns an array of the user_names for any TA's assigned to mark
@@ -153,7 +153,7 @@ class Grouping < ActiveRecord::Base
   # Submission Functions
   def has_submission?
     return @has_submission if !@has_submission.nil?
-    @has_submission = submissions.length > 0
+    @has_submission = submissions.count > 0
   end
 
   def get_submission_used

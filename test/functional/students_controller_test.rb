@@ -56,7 +56,7 @@ class StudentsControllerTest < AuthenticatedControllerTest
 
   def test_filter_all2
     get_as(@admin, :filter)
-    assert_equal(Student.all.length, @students.length, "should be the same
+    assert_equal(Student.all.count, @students.count, "should be the same
     number")
   end
 
@@ -68,7 +68,7 @@ class StudentsControllerTest < AuthenticatedControllerTest
 
   def test_filter_hidden2
     get_as(@admin, :filter, :filter => "hidden")
-    assert_equal(1, @students.length, "should be equal to 1")
+    assert_equal(1, @students.count, "should be equal to 1")
   end
 
   def test_filter_visible
@@ -77,9 +77,9 @@ class StudentsControllerTest < AuthenticatedControllerTest
   end
 
   def test_filter_visible2
-    student_number = Student.all.length - 1
+    student_number = Student.all.count - 1
     get_as(@admin, :filter, :filter => "visible")
-    assert_equal(student_numner, @students.length)
+    assert_equal(student_numner, @students.count)
   end
 
   def test_create

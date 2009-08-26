@@ -98,48 +98,48 @@ class AssignmentTest < ActiveSupport::TestCase
 
   def test_no_groupings_student_list
     a = assignments(:assignment_1)
-    assert_equal(3, a.no_grouping_students_list.length, "should be equal
+    assert_equal(3, a.no_grouping_students_list.count, "should be equal
     to 3")
   end
 
   def test_can_invite_for
     a = assignments(:assignment_1)
     g = groupings(:grouping_2)
-    assert_equal(2, a.can_invite_for(g.id).length)
+    assert_equal(2, a.can_invite_for(g.id).count)
   end
 
   def test_add_group
     a = assignments(:assignment_3)
-    number = a.groupings.length + 1
+    number = a.groupings.count + 1
     a.add_group("new_group_name")
-    assert_equal(number, a.groupings.length, "should have added one
+    assert_equal(number, a.groupings.count, "should have added one
     more grouping")
   end
 
   def test_add_group_1
     a = assignments(:assignment_1)
-    number = a.groupings.length + 1
+    number = a.groupings.count + 1
     a.add_group("new_group_name")
-    assert_equal(number, a.groupings.length, "should have added one
+    assert_equal(number, a.groupings.count, "should have added one
     more grouping")
   end
 
 
   def test_add_group_with_already_existing_name_in_another_assignment_1
     a = assignments(:assignment_3)
-    number = a.groupings.length + 1
+    number = a.groupings.count + 1
     a.add_group("Titanic")
-    assert_equal(number, a.groupings.length, "should have added one
+    assert_equal(number, a.groupings.count, "should have added one
     more grouping")
   end
 
   def test_add_group_with_already_existing_name_in_another_assignment_2
     a = assignments(:assignment_3)
     group = Group.all
-    number = group.length
+    number = group.count
     a.add_group("Ukishima Maru")
     group2 = Group.all
-    assert_equal(number, group2.length, "should NOT have added a new group")
+    assert_equal(number, group2.count, "should NOT have added a new group")
   end
 
   def test_add_group_with_already_existing_name_in_this_same_assignment
@@ -152,9 +152,9 @@ class AssignmentTest < ActiveSupport::TestCase
 
   def test_create_groupings_when_students_work_alone
     a = assignments(:assignment_2)
-    number = Student.all.length
+    number = Student.all.count
     a.create_groupings_when_students_work_alone
-    number_of_groupings = a.groupings.length
+    number_of_groupings = a.groupings.count
     assert_equal(number, number_of_groupings)
    end
 
@@ -174,50 +174,50 @@ class AssignmentTest < ActiveSupport::TestCase
 
    def test_clone_groupings_from_03
      oa = assignments(:assignment_1)
-     oa_number = oa.groupings.length
+     oa_number = oa.groupings.count
      a = assignments(:assignment_build_on_top_of_1)
      a.clone_groupings_from(oa.id)
-     assert_equal(oa_number, a.groupings.length)
+     assert_equal(oa_number, a.groupings.count)
    end
 
    def test_clone_groupings_from_04
      oa = assignments(:assignment_1)
-     number = Membership.all.length
+     number = Membership.all.count
      a = assignments(:assignment_build_on_top_of_1)
      a.clone_groupings_from(oa.id)
-     assert_not_equal(number, Membership.all.length)
+     assert_not_equal(number, Membership.all.count)
    end
 
    # TODO create a test for cloning group, when groups already exist
 
    def test_grouped_students
      a = assignments(:assignment_1)
-     assert_equal(5, a.grouped_students.length)
+     assert_equal(5, a.grouped_students.count)
    end
 
    def test_ungrouped_students
      a = assignments(:assignment_1)
-     assert_equal(2, a.ungrouped_students.length)
+     assert_equal(2, a.ungrouped_students.count)
    end
 
    def test_valid_groupings
      a = assignments(:assignment_1)
-     assert_equal(2, a.valid_groupings.length)
+     assert_equal(2, a.valid_groupings.count)
    end
 
    def test_invalid_groupings
      a = assignments(:assignment_1)
-     assert_equal(2, a.invalid_groupings.length)
+     assert_equal(2, a.invalid_groupings.count)
    end
 
    def test_assigned_groupings
      a = assignments(:assignment_1)
-     assert_equal(1, a.assigned_groupings.length)
+     assert_equal(1, a.assigned_groupings.count)
    end
 
    def test_unassigned_groupings
      a = assignments(:assignment_1)
-     assert_equal(3, a.unassigned_groupings.length)
+     assert_equal(3, a.unassigned_groupings.count)
    end
 
    def test_add_csv_group_1
