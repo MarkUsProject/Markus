@@ -20,13 +20,17 @@ class SubmissionsController < ApplicationController
     @repository_name = @grouping.group.repository_name
     begin
       if !params[:revision_timestamp].nil?
+        debugger
         @revision_number = @grouping.group.repo.get_revision_by_timestamp(Time.parse(params[:revision_timestamp])).revision_number
       else
-        @revision_number = params[:revision_number] || @grouping.group.repo.get_latest_revision.revision_number
+        @revision_number = params[:revision_number].to_i || @grouping.group.repo.get_latest_revision.revision_number
       end
-      @revision_timestamp = @grouping.group.repo.get_latest_revision.timestamp
+      @revision = @grouping.group.repo.get_revision(@revision_number)
+      @revision_timestamp = Time.parse(@revision.timestamp)
     rescue Exception => e
       flash[:error] = e.message
+      @revision_number = @grouping.group.repo.get_latest_revision.revision_number
+      @revision_timestamp = Time.parse(@grouping.group.repo.get_latest_revision.timestamp)
     end
   end
   
