@@ -5,6 +5,7 @@ en:
     short_identifier:   "Short Identifier"
     description:        "Name"
     due_date:           "Due Date"
+    iso_date_format_example:    "Format:  YYYY-MM-DD HH:MM - Example:  2009-01-13 17:44"
     results:            "Results"
     members:            "Members"
     graders:            "Graders"

@@ -23,7 +23,7 @@
       </div>
 
       <% form_tag :action => 'repo_browser', :id => @grouping.id, :find_revision_by => 'revision_timestamp' do %>
-     <%= calendar_date_select_tag "revision_timestamp", nil, :time => true %>
+     <%= calendar_date_select_tag "revision_timestamp", nil, :time => true %> 
      <%= submit_tag "Find by Revision Timestamp" %>
      <% end %>
      

@@ -9,7 +9,8 @@ class SubmissionsController < ApplicationController
   :manually_collect_and_begin_grading, :repo_browser, :populate_repo_browser]
   before_filter    :authorize_for_ta_and_admin, :only => [:browse, :index, :populate_submissions_table, :collect_and_begin_grading, 
   :manually_collect_and_begin_garding, :repo_browser, :populate_repo_browser]
-  before_filter    :authorize_for_student, :only => [:file_manager, :populate_file_manager, :update_files, :download]
+  before_filter    :authorize_for_student, :only => [:file_manager, :populate_file_manager, :update_files]
+  before_filter    :authorize_for_user, :only => [:download]
   
  
   def repo_browser
@@ -268,7 +269,9 @@ class SubmissionsController < ApplicationController
   def download
     @assignment = Assignment.find(params[:id])
     # find_appropriate_grouping can be found in SubmissionsHelper
+
     @grouping = find_appropriate_grouping(@assignment.id, params)
+
     revision_number = params[:revision_number]
     path = params[:path] || '/'
     repo = @grouping.group.repo

@@ -30,7 +30,7 @@
           :time => "mixed",
           :after_close => "refresh_due_date();",
           :year_range => 0.years.ago..1.years.from_now, :id => "assignment_due_date"} %>
-   <%= observe_field "assignment_due_date", :function => "update_due_date($F('assignment_due_date'));" %> YYYY-MM-DD HH:MM (24 hour)
+   <%= observe_field "assignment_due_date", :function => "update_due_date($F('assignment_due_date'));" %> <%=t(:iso_date_format_example)%>
    <br />
 </fieldset>
 
