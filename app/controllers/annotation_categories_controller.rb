@@ -2,6 +2,9 @@ require 'fastercsv'
 
 class AnnotationCategoriesController < ApplicationController
   include AnnotationCategoriesHelper
+  
+  before_filter      :authorize_only_for_admin
+  
   def index
     @assignment = Assignment.find(params[:id])
     @annotation_categories = @assignment.annotation_categories
