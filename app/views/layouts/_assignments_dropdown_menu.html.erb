@@ -6,9 +6,10 @@
 
 <% Assignment.all.each do |assignment|%>
   <% if assignment != @assignment %>
-      <% if controller.controller_name == "assignments" &&
+      <% if (controller.controller_name == "assignments" &&
             (controller.action_name == "index" or 
-            controller.action_name == 'new') %>
+            controller.action_name == 'new')) ||
+            controller.controller_name == "results" %>
             <% if @current_user.student? %>
                <li class="level2"><%= link_to h(assignment.short_identifier), :controller =>
 'assignments', :action => 'student_interface', :id => assignment.id %>

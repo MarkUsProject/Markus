@@ -56,7 +56,7 @@
   
   <% form_tag :action => "manually_collect_and_begin_grading", :id => @grouping.id do %>
   <%= hidden_field_tag "current_revision_number", @revision_number %>
-  <%= submit_tag "Collect and Grade This Revision" %>
+  <%= submit_tag "Collect and Grade This Revision", :confirm => t(:collect_and_grade_overwrite_warning) %>
   <% end %>
 </div>
 

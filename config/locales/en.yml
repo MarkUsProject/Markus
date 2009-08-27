@@ -50,7 +50,7 @@ en:
     csv_valid_format:   "There was a problem parsing the CSV file you uploaded.  Please ensure that it's a valid CSV format, and that each line ends with a carriage-return line-feed set of characters.  No changes were made. "
     csv_invalid_lines: "The following CSV lines were invalid: "
     csv_upload_user_duplicate: "Detected duplicate user name: {{user_name}}"
-
+    collect_and_grade_overwrite_warning:  "Collecting and grading this revision will overwrite any previous collections/grading done for this group on this assignment.  Are you sure you want to do this?"
     groups:
       editing_past_due_date_warning: "This assignment is past its due date.  Besides assigning graders to groups, it is not recommended that any other settings be altered here at this time."
       
