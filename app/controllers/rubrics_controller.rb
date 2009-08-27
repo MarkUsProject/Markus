@@ -37,8 +37,9 @@ class RubricsController < ApplicationController
       @criterion.weight = RubricCriterion::DEFAULT_WEIGHT
       @criterion.set_default_levels
       if !@criterion.save
-        flash.now[:error] = I18n.t('criterion_created_error')
-        render :action => 'show_help'
+        @errors = @criterion.errors
+        render :action => 'add_criterion_error'
+        return
       end
         render :action => 'create_and_edit'
     end
