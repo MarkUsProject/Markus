@@ -1012,7 +1012,7 @@ th#FilterTable_header_revision_by{
   width: 20%;
 }
 
-th#FilterTable_header_delete_file, th#FilterTable_footer_delete_file {
+th#FilterTable_header_delete_file, td#FilterTable_footer_delete_file {
   text-align: center;
 }
 
