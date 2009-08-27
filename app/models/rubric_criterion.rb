@@ -12,11 +12,11 @@ class RubricCriterion < ActiveRecord::Base
   RUBRIC_LEVELS = 5
   DEFAULT_WEIGHT = 1.0
   DEFAULT_LEVELS = [
-    {'name'=>'Horrible', 'description'=>'This criterion was not satisfied whatsoever'}, 
-    {'name'=>'Satisfactory', 'description'=>'This criterion was satisfied'},
-    {'name'=>'Good', 'description'=>'This criterion was satisfied well'},
-    {'name'=>'Great', 'description'=>'This criterion was satisfied really well!'},
-    {'name'=>'Excellent', 'description'=>'This criterion was satisfied excellently'}
+    {'name'=>'Very Poor', 'description'=>'This criterion was not satisfied.'}, 
+    {'name'=>'Weak', 'description'=>'This criterion was partially satisfied.'},
+    {'name'=>'Passable', 'description'=>'This criterion was satisfied.'},
+    {'name'=>'Good', 'description'=>'This criterion was satisfied well.'},
+    {'name'=>'Excellent', 'description'=>'This criterion was satisfied perfectly or nearly perfectly. '}
   ]
   
   def mark_for(result_id)

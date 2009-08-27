@@ -8,7 +8,7 @@ class="rubric_criterion_title_div_level" style="float:left;">
 <div id="<%="rubric_criterion_title_#{mark.id}_mark"%>" style="padding-left:30px;">
 <% if !mark.mark.nil? -%>
   <b>
-    <%= h(mark.mark) %> &nbsp;<%= h(rubric_criterion["level_" + mark.mark.to_s + "_name"]) %>&nbsp;
+    <%= h(mark.mark) %>: <%= h(rubric_criterion["level_" + mark.mark.to_s + "_name"]) %>&nbsp;
   </b>
   <%= h(rubric_criterion["level_" + mark.mark.to_s + "_description"]) %>
 <% end -%>

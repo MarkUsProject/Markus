@@ -18,7 +18,7 @@ class="float_left rubric_criterion_expand">+ &nbsp;
         <table id="mark_<%=mark.id%>_table">
         <% num_levels = 0
         selected = "rubric_criterion_level"
-          while (num_levels < 5) 
+          while (num_levels < RubricCriterion::RUBRIC_LEVELS) 
             level_name = rubric_criterion["level_" + num_levels.to_s + "_name"]
             level_desc = rubric_criterion["level_" + num_levels.to_s + "_description"]
             if (num_levels == mark.mark)
@@ -30,7 +30,7 @@ class="float_left rubric_criterion_expand">+ &nbsp;
           <% if level_desc && !level_desc.empty? -%>
             <tr>
                <td id="mark_<%=mark.id%>_<%=num_levels%>" class="<%=td_class%>">
-                 <%= link_to_remote "<b>#{num_levels}&nbsp; #{level_name}</b> &nbsp;
+                 <%= link_to_remote "<b>#{num_levels}: &nbsp; #{level_name}</b> &nbsp;
                   #{level_desc}", {:url => {:action => 'update_mark', :mark_id=>mark.id, :mark=>num_levels}},
                  {:style => "color:#000000;background:none;"}%>
                </td>

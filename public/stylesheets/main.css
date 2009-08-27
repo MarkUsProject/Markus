@@ -527,11 +527,6 @@ tr.student_hidden{
   padding: 0;
 }
 
-input.FilterTable_selectable, input#FilterTable_select_all_top, input#FilterTable_select_all_bottom{
-  width: 5px;
-  min-width: 5px;
-}
-
 #FilterTable_header_members{
   width: 40%;
 }
