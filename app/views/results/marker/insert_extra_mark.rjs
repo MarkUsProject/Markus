@@ -1,6 +1,4 @@
 page.replace 'add_extra_mark_prompt', :partial => 'results/marker/extra_mark', :locals => {:extra_mark => @extra_mark}
-page.replace_html 'positive_extra_points', @result.get_positive_extra_points
-page.replace_html 'negative_extra_points', @result.get_negative_extra_points
 page.replace_html 'total_extra_points', @result.get_total_extra_points
 page.call "update_total_mark", @result.total_mark
 
