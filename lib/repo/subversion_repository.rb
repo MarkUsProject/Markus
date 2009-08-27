@@ -142,6 +142,7 @@ class SubversionRepository < Repository::AbstractRepository
     if !target_timestamp.kind_of?(Time)
       raise "Was expecting a timestamp of type Time"
     end
+    target_timestamp = target_timestamp.utc
     return get_revision(get_revision_number_by_timestamp(target_timestamp))
   end
   
@@ -646,6 +647,11 @@ class SubversionRevision < Repository::AbstractRevision
     @repo = repo
     begin 
       @timestamp = @repo.__get_property(:date, revision_number)
+      if @timestamp.instance_of?(String)
+        @timestamp = Time.parse(@timestamp).localtime
+      elsif @timestamp.instance_of?(Time)
+        @timestamp = @timestamp.localtime
+      end
     rescue Svn::Error::FsNoSuchRevision
       raise RevisionDoesNotExist
     end
