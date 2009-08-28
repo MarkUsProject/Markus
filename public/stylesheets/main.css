@@ -685,12 +685,37 @@ input#extra_mark_description{
    -webkit-border-radius: 5px;
 }
 
-#assignment_group_use_dialog, #add_member_dialog, #invite_dialog {
+#assignment_group_use_dialog, #add_member_dialog, #invite_dialog, #about_dialog {
    background: white;
    padding: 0 10px 0 10px;
    border: 1px solid #000000;
    -moz-border-radius: 5px;
    -webkit-border-radius: 5px;
+}
+
+#about_dialog #about_content {
+  width: 600px;
+  overflow: auto;
+  padding: 10px;
+  padding-bottom: 50px;
+}
+
+/* positioning of about action */
+#about_icon {
+  position: absolute;
+  margin-left: -20px;
+}
+
+#about_dialog div#about_close {
+  clear: both;
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  margin-left: -50px;
+}
+
+#about_dialog a {
+  text-transform: none;
 }
 
 .p_modal{

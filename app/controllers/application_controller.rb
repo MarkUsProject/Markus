@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
   
   # activate i18n for renaming constants in views
-  before_filter :set_locale
+  before_filter :set_locale, :set_markus_version
   # check for active session on every page
   before_filter :authenticate, :except => [:login] 
   
@@ -24,6 +24,12 @@ class ApplicationController < ActionController::Base
   filter_parameter_logging :user
   
   protected
+  
+  # Set version for MarkUs to be available in
+  # any view
+  def set_markus_version
+    @markus_version = "0.3.0"
+  end
   
   def set_locale
     # does not do anything for now, but might be used later

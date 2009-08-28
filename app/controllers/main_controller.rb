@@ -88,4 +88,9 @@ class MainController < ApplicationController
     render :action => 'index', :layout => 'content'
   end
   
+  def about
+    # dummy action for remote rjs calls
+    # triggered by clicking on the about icon
+  end
+  
 end

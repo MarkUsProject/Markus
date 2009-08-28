@@ -38,6 +38,7 @@ ActionController::Routing::Routes.draw do |map|
   # Install the default routes as the lowest priority.
   map.root :controller => "main", :action => "login"
   map.connect 'main', :controller => 'main', :action => 'index'
+  map.connect 'main/about', :controller => 'main', :action => 'about'
   map.connect 'main/logout', :controller => 'main', :action => 'logout'
   
   # generic connects
