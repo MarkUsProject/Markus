@@ -25,7 +25,7 @@ class ApplicationController < ActionController::Base
   # Set version for MarkUs to be available in
   # any view
   def set_markus_version
-    @markus_version = "0.3.0"
+    @markus_version = "0.5"
   end
   
   def set_locale
