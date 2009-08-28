@@ -13,7 +13,7 @@
             :action => action, 
             :id => assignment},
 	    :class => "assignment_list"%>
-        <span class="info_due_date"> due on: <span class="info_date">  <%= h(assignment.due_date.strftime(LONG_DATE_TIME_FORMAT)) %></span></span>
+        <span class="info_due_date"> due: <span class="info_date">  <%= h(assignment.due_date.strftime(LONG_DATE_TIME_FORMAT)) %></span></span>
       </li>
     <% end %>
     

@@ -23,6 +23,7 @@
   <%= render :partial => 'layouts/header' unless controller.action_name == 'login' %>
   <%= render :partial => 'layouts/menu' unless controller.action_name == 'login' %>
   <%= render :partial => 'layouts/sub_menu', :locals =>{:no_menu_header => 'true'}%>
+  <%= render :partial => 'layouts/about' %>
 
   <div id="container">
     <div id="content">

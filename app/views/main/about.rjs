@@ -1,1 +1,1 @@
-page.insert_html :bottom, 'about_dialog', :partial => 'about_content'
+page.replace_html 'about_dialog', :partial => 'about_content'
