@@ -1,0 +1,48 @@
+<td>
+<span class="link"><%= h(grouping.group.group_name)%></span>
+    <span class="table_menu">
+    <button class="rename_group" onClick="rename_group(<%= grouping.id %>); return false;">Rename Group</button>
+    |
+    <% if !grouping.is_valid? %>
+      <%= link_to_remote "Validate", :url => { :action =>
+    'valid_grouping', :id => assignment.id, :grouping_id =>
+    grouping.id},
+    :html => {:class => 'valid', :title => "Validate this group"}, 
+    :confirm => "This will allow this group to submit without the required
+    number of students. Are you sure?"
+     %>
+     |
+    <% end %>
+    <%= link_to_remote "Delete", :method => 'delete',
+    :url => { :action => 'remove_group', :id => assignment.id, :grouping_id => grouping.id }, 
+    :html => { :class => 'delete', :title => 'Delete this group' }, 
+    :confirm => 'This will remove all members in the group and delete all information associated with this group. Continue?' %>
+    |
+    <button class="add_member" onClick="add_member(<%= grouping.id %>);
+return false;">Add Member</button>
+</td>
+
+<td>
+<% grouping.student_memberships.each do |member| %> 
+   <%= render :partial => "groups/manage/member", 
+      :locals => {:member => member, :grouping => grouping } %>
+<% end -%>
+</td>
+
+<td>
+<% grouping.ta_memberships.each do |ta| %> 
+  <%= ta.user.user_name%>
+<% end -%>
+</td>
+
+<td>
+<% if grouping.is_valid?%>
+<%= image_tag "icons/tick.png",
+   :title => "Group is valid"
+%>
+<% else %>
+<%= image_tag "icons/cross.png",
+   :title => "Group is not valid" %>
+
+<% end %>
+</td>

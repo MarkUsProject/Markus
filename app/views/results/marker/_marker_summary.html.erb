@@ -1,0 +1,46 @@
+<div id="summary_criteria_pane">
+  <%= render :partial => "results/common/marks_summary_table", :locals => {:rubric_criteria => rubric_criteria, :marks_map => marks_map} %>
+</div>  <!-- Summary Criteria Pane -->
+      
+    <div class="summary_block">
+      <span><b>Subtotal: </b></span>
+      <span id="current_subtotal_div"> <%= h(result.get_subtotal) %></span>
+      <span> /<%= h(assignment.total_mark) %>  </span>
+    </div>
+
+    <div class="clear"></div><br/>
+    
+    <div id="extra_marks_pane" class="extra_marks_pane">
+      <div class="bonus_deduction"><b>Bonus/Deductions</b></div>
+    <%= render :partial => 'results/marker/extra_marks_table', :locals => {:extra_marks_points => extra_marks_points, :result_id => result.id} %>
+    </div>      
+      <div class="clear"></div>
+      <div class="summary_block">
+      <b class="total_extra_points_label">Total Extra Marks:&nbsp;</b>
+      <span id="total_extra_points"><%= h(result.get_total_extra_points) %></span><br/>
+      </div>
+      <div class="clear"></div>
+
+
+  <div id="extra_percentage_pane" class="extra_percentage_pane">
+    <%= render :partial => 'results/marker/extra_percentage_table', :locals => {:extra_marks_percentage => extra_marks_percentage, :result_id => result.id} %>
+  </div>      
+  <div class="clear"></div>
+  <div class="summary_block">
+      <b>Total Extra Percentage:&nbsp;</b>
+      <span id="total_extra_percentage"><%= h(result.get_total_extra_percentage) %></span><br />
+      <b>Translated to Points:</b>
+      <span id="total_extra_percentage_as_points"><%= h(result.get_total_extra_percentage_as_points)%></span> <br />
+      </div>
+
+    <div class="clear"></div>
+
+    <div class="mark_total">
+      <span class="final_mark">
+        <span id="current_total_mark_div"> <%= h(result.total_mark) %>   </span>
+        <span> / <%= h(assignment.total_mark) %>  </span>
+      </span>
+
+
+      <span>Final Mark&nbsp;</span>
+</div>

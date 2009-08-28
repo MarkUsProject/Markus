@@ -1,0 +1,124 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+# User schema template:
+#
+# one:
+#    id:
+#    user_name:
+#    last_name:
+#    first_name:
+#    status:
+#    role:
+#    created_at: <% Time.now.to_s(:db) %>
+#    updated_at: <% Time.now.to_s(:db) %>
+
+
+# Create some admins
+olm_admin_1:
+  user_name:         olm_admin
+  last_name:         admin
+  first_name:        some
+  type:              Admin
+  created_at:     <%= Time.now.to_s(:db) %>
+  updated_at:     <%= Time.now.to_s(:db) %>
+
+olm_admin_2:
+  user_name:         olm_admin2
+  last_name:         admin2
+  first_name:        some
+  type:              Admin
+  created_at:     <%= Time.now.to_s(:db) %>
+  updated_at:     <%= Time.now.to_s(:db) %>
+
+olm_admin_3:
+  user_name:         olm_admin3
+  last_name:         admin3
+  first_name:        some
+  type:              Admin
+  created_at:     <%= Time.now.to_s(:db) %>
+  updated_at:     <%= Time.now.to_s(:db) %>
+
+# Now some TAs...
+  
+ta1:
+    user_name:      ta1
+    last_name:      Zandt
+    first_name:     Ursula
+    type:           Ta
+    created_at:     <%= Time.now.to_s(:db) %>
+    updated_at:     <%= Time.now.to_s(:db) %>
+
+ta2:
+    user_name:      ta2
+    last_name:      Smith
+    first_name:     William
+    type:           Ta
+    created_at:     <%= Time.now.to_s(:db) %>
+    updated_at:     <%= Time.now.to_s(:db) %>
+
+# Now, let's create some students
+
+student1:
+    user_name:      student1
+    last_name:      Mason
+    first_name:     Hollis
+    grace_credits:     5
+    type:           Student
+    created_at:     <%= Time.now.to_s(:db) %>
+    updated_at:     <%= Time.now.to_s(:db) %>
+
+student2:
+    user_name:      student2
+    last_name:      Juspeckzyk
+    first_name:     Sally
+    grace_credits:     5
+    type:           Student
+    created_at:     <%= Time.now.to_s(:db) %>
+    updated_at:     <%= Time.now.to_s(:db) %>
+
+student3:
+    user_name:      student3
+    last_name:      Kovacs
+    first_name:     Walter
+    grace_credits:     5
+    type:           Student
+    created_at:     <%= Time.now.to_s(:db) %>
+    updated_at:     <%= Time.now.to_s(:db) %>
+
+student4:
+    user_name:      student4
+    last_name:      Blake
+    first_name:     Edward
+    grace_credits:     5
+    type:           Student
+    created_at:     <%= Time.now.to_s(:db) %>
+    updated_at:     <%= Time.now.to_s(:db) %>
+
+student5:
+    user_name:      student_dup
+    last_name:      Dreiberg
+    first_name:     Dan
+    grace_credits:     5
+    type:           Student
+    created_at:     <%= Time.now.to_s(:db) %>
+    updated_at:     <%= Time.now.to_s(:db) %>
+
+student6:
+    user_name:      student6
+    last_name:      Devisscher
+    first_name:     Audrey
+    grace_credits:     5
+    type:           Student
+    created_at:     <%= Time.now.to_s(:db) %>
+    updated_at:     <%= Time.now.to_s(:db) %>
+    
+hidden_student:
+    user_name:      hidden
+    last_name:      Student
+    first_name:     Hidden
+    grace_credits:     5
+    type:           Student
+    created_at:     <%= Time.now.to_s(:db) %>
+    updated_at:     <%= Time.now.to_s(:db) %>
+    hidden:         true
+

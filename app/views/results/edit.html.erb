@@ -1,0 +1,72 @@
+<%= stylesheet_link_tag("livepipe/tabs") %>
+<%= stylesheet_link_tag("SyntaxHighlighter") %>
+<%= stylesheet_link_tag("grader") %>
+
+<% # UI LIBRARIES %>
+<%= javascript_include_tag "livepipe/livepipe.js" %>
+<%= javascript_include_tag "livepipe/window.js" %>
+<%= javascript_include_tag "livepipe/tabs.js" %>
+<%= javascript_include_tag "controls.js" %>
+<%= javascript_include_tag "DropDownMenu/DropDownMenu.js"%>
+  <%= javascript_include_tag "ResizePane/ResizePane.js"%>
+
+<% # SOURCE CODE GLOWER %>
+<%= javascript_include_tag "SourceCodeGlower/AnnotationText.js"%>
+<%= javascript_include_tag "SourceCodeGlower/AnnotationTextDisplayer.js"%>
+<%= javascript_include_tag "SourceCodeGlower/AnnotationTextManager.js"%>
+<%= javascript_include_tag "SourceCodeGlower/SourceCodeLine.js"%>
+<%= javascript_include_tag "SourceCodeGlower/SourceCodeLineAnnotations.js"%>
+<%= javascript_include_tag "SourceCodeGlower/SourceCodeLineCollection.js"%>
+<%= javascript_include_tag "SourceCodeGlower/SourceCodeLineArray.js"%>
+<%= javascript_include_tag "SourceCodeGlower/SourceCodeLine.js"%>
+<%= javascript_include_tag "SourceCodeGlower/SyntaxHighlighter1p5Line.js"%>
+<%= javascript_include_tag "SourceCodeGlower/SourceCodeLineManager.js"%>
+<%= javascript_include_tag "SourceCodeGlower/SourceCodeLineFactory.js"%>
+<%= javascript_include_tag "SourceCodeGlower/SourceCodeAdapter.js"%>
+<%= javascript_include_tag "SourceCodeGlower/SyntaxHighlighter1p5Adapter.js"%>
+
+<% # SYNTAX HIGHLIGHTER %>
+<%= javascript_include_tag "syntaxhighlighter/shCore.js" %>
+<%= javascript_include_tag "syntaxhighlighter/shBrushJava.js" %>
+<%= javascript_include_tag "syntaxhighlighter/shBrushXml.js" %>
+<%= javascript_include_tag "syntaxhighlighter/shBrushRuby.js" %>
+<%= javascript_include_tag "syntaxhighlighter/shBrushPython.js" %>
+<%= javascript_include_tag "syntaxhighlighter/shBrushJScript.js" %>
+<%= javascript_include_tag "syntaxhighlighter/shBrushCpp.js" %>
+<%= javascript_include_tag "syntaxhighlighter/shBrushUnknown.js" %>
+
+<% # EDITING MARKS FUNCTIONS %>
+<%= javascript_include_tag "Grader/file_selector.js" %>
+<%= javascript_include_tag "Grader/marking.js" %>
+<%= javascript_include_tag "Grader/mouse_selections.js" %>
+
+<% # BOOT SCRIPTS %>
+<%= javascript_include_tag "Grader/tabs_boot.js" %>
+
+<%= render :partial => "results/common/annotations.js" %>
+<%= render :partial => "results/marker/setup_annotation_categories.js" %>
+
+<%= render :partial => "results/marker/boot.js", :locals => {:first_file => @first_file} %>
+<div id="title_bar">
+<h1>Grading Assignment: <%=h(@assignment.short_identifier)%>
+</h1>
+</div>
+<div class="wrapLeft">
+<% if flash[:fail_notice] %>
+  <p class=color:red""><%=h flash[:fail_notice] %></p>
+<% end %>
+
+<%= render :partial => 'results/common/submission_selector', :locals => {:group => @group, :result => @result, :assignment => @assignment, :previous_grouping => @previous_grouping, :next_grouping => @next_grouping} %>
+
+<%= render :partial => 'results/common/errors' %>
+
+<%= render :partial => 'results/common/file_selector', :locals => {:files => @files, :can_download => true} %>
+
+<% if @result.marking_state != Result::MARKING_STATES[:complete] %>
+
+<%= render :partial => 'results/marker/marker_panes', :locals => {:extra_marks_points => @extra_marks_points, :extra_marks_percentage => @extra_marks_percentage, :annotation_categories => @annotation_categories, :result => @result, :assignment => @assignment, :marks_map => @marks_map, :rubric_criteria => @rubric_criteria} %>
+<% else %>
+<%= render :partial => 'results/result_summary'%>
+
+<% end %>
+</div>

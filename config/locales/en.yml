@@ -1,0 +1,164 @@
+en:
+    markus:             "MarkUs"
+    login:              "Login"
+    password:           "Password"
+    short_identifier:   "Short Identifier"
+    description:        "Name"
+    due_date:           "Due Date"
+    iso_date_format_example:    "Format:  YYYY-MM-DD HH:MM - Example:  2009-01-13 17:44"
+    results:            "Results"
+    members:            "Members"
+    graders:            "Graders"
+    add_new:            "Add new"
+    create_new:         "Create new"
+    edit:               "Edit"
+    apply:              "Apply"
+    delete:             "Delete"
+    create:             "Create"
+    bulk_action:        "Bulk action"
+    submit:             "Submit"
+    cancel:             "Cancel"
+    filters:            "Filters"
+    all:                "All"
+    hidden:             "Hidden"
+    active:             "Active"
+    not_active:         "Not active"
+    download:           "Download"
+    upload:             "Upload"
+    uploading_please_wait: "Uploading - please wait..."
+    choose_assignment:  "Choose Assignment"
+    properties:         "Properties"
+    properties:         "Properties"
+    submissions:        "Submissions"
+    groups_and_graders: "Groups & Graders"
+    rubrics:            "Rubrics"
+    join:               "Join"
+    refuse:             "Decline"
+    invite:             "Invite"
+    disinvite:          "Disinvite"
+    help:               "Help"
+    confirm_bulk_action: "Are you sure you want to perform this bulk action?"
+    give_grace_credits:  "Give Grace Credits:"
+    no_result:          "No marks are available for this assignment."
+    unmarked:           "unmarked"
+    partial:           "partial"
+    complete:           "complete"
+    released:           "released"
+    invalid_grouping:   "(invalid)"
+    firefox_warning:    "Some functionality might only work for Mozilla Firefox users"
+    seperate_multiple_with_commas:  "Seperate multiple user names with commas"
+    csv_valid_format:   "There was a problem parsing the CSV file you uploaded.  Please ensure that it's a valid CSV format, and that each line ends with a carriage-return line-feed set of characters.  No changes were made. "
+    csv_invalid_lines: "The following CSV lines were invalid: "
+    csv_upload_user_duplicate: "Detected duplicate user name: {{user_name}}"
+    collect_and_grade_overwrite_warning:  "Collecting and grading this revision will overwrite any previous collections/grading done for this group on this assignment.  Are you sure you want to do this?"
+    groups:
+      editing_past_due_date_warning: "This assignment is past its due date.  Besides assigning graders to groups, it is not recommended that any other settings be altered here at this time."
+      
+    # Student's View
+    hide_students:      "Hide Students"
+    unhide_students:    "Unhide Students"
+    students_not_successfully_added_message_1: "The following students have not been successfully added:"
+    students_not_successfully_added_message_2: "Make sure that:"
+    students_not_successfully_added_message_3: "Student names are
+    alphanumeric."
+    students_not_successfully_added_message_4: "Each field is separated
+    by a comma (no spaces)."
+    students_not_successfully_added_message_5: "Each line has the required
+    fields specified near the upload form."
+    invalid_group_warning: "Your group is currently invalid. You probably haven't met the group size minimum. You may not be able to submit anything, and your work may not be graded, until you have met this minimum. "
+    rejected_invitation: "declined"
+    
+    invite_student:
+      success: "Student {{user_name}} invited."
+      fail:
+        due_date_passed: "Could not invite {{user_name}} - the due date for this assignment has passed"
+        dne:  "Could not invite {{user_name}} - this student does not exist."
+        hidden:  "Could not invite {{user_name}} - this student's account has been disabled."
+        already_pending: "Could not invite {{user_name}} - this student is already a pending member of this group."
+        group_max_reached: "Could not invite {{user_name}} - group maximum has been reached."
+        inviting_self: "You cannot invite yourself to your own group."
+        already_grouped: "Could not invite {{user_name}} - this student is already a member of another group."
+        need_to_create_group: "You must create a group before you can invite users"
+    update_files:
+      success:  "Your changes have been made."
+
+    user:
+        user_name:      "User Name"
+        first_name:     "First Name"
+        last_name:      "Last Name"
+        grace_credits:  "Grace Credits"
+    assignment:
+        name:           "Assignment Name"
+
+    confirm_bulk_action:  "Are you sure you want to perform this bulk action?"
+    hide_students: "Hide Students"
+    unhide_students: "Unhide Students"
+    
+    annotations:
+      annotations: "Annotations"
+      update:
+        annotation_category_success: "This Annotation Category was successfully updated"
+        annotation_category_error: "Could not update Annotation Category:"
+      delete:
+        annotation_text: "Deleting this annotation will remove the text from any files it may be attached to.  Are you sure you want to do this?"
+        annotation_category:  "Delete this annotation category will also delete its annotations.  Deleted annotations will no longer be attached to student submissions.  Are you sure you want to do this?"
+      upload:
+        success:  "Successfully uploaded {{annotation_category_number}} new Annotation Categories"
+      one_time_only:  "One Time Only"
+
+    
+    submission_rules:
+      submission_rule:
+        description: "This is the description of the SubmissionRule class.  Since only subclasses of SubmissionRule should be attached to an Assignment, this message should never be seen."
+        commit_after_collection_message: "This message is displayed when students submit code after the collection date.  Since SubmissionRule is to be subclassed, and not referenced directly by an Assignment, this particular message should never be displayed to students."
+        overtime_message:  "This message is displayed to students when they view their file manager after the assignment due date has passed."
+        
+      no_late_submission_rule:
+        description: "No penalties will be applied to late assignments"
+        commit_after_late_message: "The due date for this assignment has passed.  Your changes have been recorded, but will not be included in the grading"
+        no_late_message: "The due date for this assignment has passed.  Only what was in your folder at the due date will be graded."
+   
+      grace_period_submission_rule:
+        description: "You may submit up to {{grace_day_limit}} day(s) past the due date, and will have that number of days subtracted from your allotted grace days"
+        after_collection_message: "The maximum number of grace periods has passed for this assignment.  Any changes will be recorded, but not graded."
+        commit_after_collection_message: "The due date for this assignment, plus the maximum number of allowed grace days, has passed.  Your changes have been recorded, but will not be included in the grading."
+        overtime_message_with_days_left: "The due date for this assignment has passed.  However, you have {{grace_credits_remaining}} grace credit(s) left.  If you submit files, or make changes during this period, you will be spending {{grace_credits_to_use}} of those credits."
+        overtime_message_without_days_left: "The due date for this assignment has passed, and you are no longer able to use any grace days."
+
+      penalty_period_submission_rule:
+        description: "You may submit up to {{penalty_period_limit}} hour(s) past the due date, but will have the appropriate percentage deducted from your final result"
+        after_collection_message: "The maximum number of penalty periods has passed for this assignment.  Any changes will be recorded, but not graded."
+        commit_after_collection_message: "The due date for this assignment, plus the maximum number of allowed penalty periods, has passed.  Your changes have been recorded, but will not be included in the grading."
+        overtime_message: "The due date for this assignment has passed.  However, you are in a penalty period.  You can make changes to your submission, but will have {{potential_penalty}}% deducted from the final mark on this assignment."
+        extramark_description: "Late submission ({{overtime_hours}} hour(s)) resulted in automatic {{penalty_amount}}% deduction"
+
+
+    criteria_edit_total_mark:     "This criterion will be marked out of"
+    criterion_saved_success:   "Criterion was successfully saved"
+    criterion_deleted_success:  "Criterion, and all associated marks were successfully deleted"
+    criterion_created_success:  "Criterion successfully created"
+    criteria:           "Criteria"
+    weight:             "Weight"
+    editing_criteria:   "Editing criteria"
+    ordering_criteria:  "Ordering criteria"
+    remove_criteria_title:  "Delete this criterion"
+    remove_criteria_message:  "Are you sure you want to delete this criteria?"
+    help_editing_criteria_message: "
+	Select a criterion on the left to edit it.  Criteria descriptions, Level
+	headings and descriptions can be modified.  The weight of each criterion
+	can also be changed. To change the weight to a fractional number simply
+	type in a decimal number into the text box.
+
+	Note that the number of levels cannot be changed.  However if no 
+	description is set for a level, that level will not be used.
+	"
+    help_ordering_criteria_message: "
+	Graders will see the criteria in the order that they are displayed to
+	left.  To change the order, drag a criterion to the desired location
+	in the list.
+	"
+    student_without_a_group_list_message: "These students don't have a group 
+        yet:"
+    no_student_without_a_group_message: "All students are in a group."
+    firefox_warning: "Some of the features in the grader view will only work with Mozilla Firefox"
+    past_due_date_warning: "Due date for this assignment is in the past."

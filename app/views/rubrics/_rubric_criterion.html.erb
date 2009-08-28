@@ -1,0 +1,11 @@
+<li class="criterion_holder <%= cycle('rowA', 'rowB') %>" id="criterion_<%=h(criterion.id)%>">
+  <span class="criterion_handle">
+    <%= image_tag "handle.png" %>
+  </span> 
+  <span class="criterion_title_div link">
+    <%= link_to_remote h(truncate(criterion.rubric_criterion_name, 30, '...')), :url => {:action => 'edit', :id => criterion.id}, :html => {:id => "criterion_title_#{criterion.id}"} %>    
+ </span>
+ <span id="criterion_weight_<%=h(criterion.id)%>" class="criterion_weight">
+       <%= h(criterion.weight)%>
+ </span>
+</li> 

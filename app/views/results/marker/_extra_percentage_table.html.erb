@@ -1,0 +1,13 @@
+<table class="extra_percentage_pane_list">
+  <thead>
+    <th>Comment</th>
+    <th>Percentage</th>
+    <th></th>
+  </thead>
+  <tbody id="extra_percentage_list" >
+     <% extra_marks_percentage.each do |extra_percentage| -%>
+       <%= render :partial => "results/marker/extra_percentage", :locals => {:extra_percentage => extra_percentage, :result_id=>result_id} %>
+     <% end -%>
+   </tbody>
+</table>
+

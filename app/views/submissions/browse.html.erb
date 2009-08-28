@@ -1,0 +1,95 @@
+<%= javascript_include_tag "submissions_manager" %>
+<%= javascript_include_tag "FilterTable/FilterTable.js" %>
+<%= render :partial => 'submissions_table_boot.js.erb', :locals => {:details => @details, :assignment => @assignment} %>
+
+<div class="notice"> 
+  <% if Time.now >= @assignment.submission_rule.calculate_collection_time %>
+     Grading can begin
+  <% else %>
+     Grading can begin after <%= h(@assignment.submission_rule.calculate_collection_time.strftime(LONG_DATE_TIME_FORMAT))%>
+  <% end %>
+</div>
+
+<div id="title_bar">
+  <h1>Workspace: <%= h(sanitize(@assignment.short_identifier)) %>
+  <% if @current_user.admin? %>
+  <%= link_to "CSV Report", :action => 'download_simple_csv_report', :id => @assignment.id %> 
+   <span class="menu_bar">|</span>
+<%= link_to "Detailed CSV Report", :action => 'download_detailed_csv_report', :id => @assignment.id %>
+   <span class="menu_bar">|</span>
+<%= link_to "Subversion Repo List", :action => 'download_svn_repo_list', :id => @assignment.id %>
+   <span class="menu_bar">|</span>
+<%= link_to "Subversion Export File", :action => 'download_svn_export_commands', :id => @assignment.id %>
+
+ <% end %>
+</h1>
+</div>
+
+<div class="wrapLeft">
+<div id="toggle_actions">
+    <%= I18n.t(:filters) %>:
+    <%= link_to_function I18n.t(:all) + " (<span
+    id=\"all_submissions_count\"></span>)", "submissions_table.clear_filters().render();", :id =>
+    "filter_link_none", :class => "filter_selected" %>
+            |
+    <%= link_to_function I18n.t(:unmarked) + "(<span id=\"unmarked_submissions_count\"></span>)", "submissions_table.filter_only_by('unmarked').render();", :id => "filter_link_unmarked" %>
+		|
+    <%= link_to_function I18n.t(:partial) + "(<span id=\"partial_submissions_count\"></span>)", "submissions_table.filter_only_by('partial').render();", :id => "filter_link_partial" %>
+    |
+    <%= link_to_function I18n.t(:complete) + "(<span id=\"complete_submissions_count\"></span>)", "submissions_table.filter_only_by('complete').render();", :id => "filter_link_complete" %>
+    |
+    <%= link_to_function I18n.t(:released) + "(<span id=\"released_submissions_count\"></span>)", "submissions_table.filter_only_by('released').render();", :id => "filter_link_released" %>
+</div>
+<div class="clear"><br /></div>
+<% if flash[:error] %>
+<div class="error">
+ <%=flash[:error]%>
+</div>
+<% end %>
+
+  <% if !flash[:release_errors].nil? && !flash[:release_errors].empty? %>
+    <div class="error">
+    <h1>Errors</h1>
+    <ul>
+    <% flash[:release_errors].each do |error_message| %>
+	<li><%= error_message %></li>
+    <% end %>
+    </ul>
+    </div>
+    <% end %>
+
+    <%= form_tag({:action => 'update_submissions', :id => @assignment.id}) %>
+    <span id="loading_list"><%= image_tag("spinner.gif")%> 
+       Loading list...
+    </span>
+<div class="global_action_top">
+    <% if @current_user.admin? %>
+	<%= submit_tag "Release Marks", :name => "release_results" %>
+	<%= submit_tag "Unrelease Marks", :name => "unrelease_results" %>
+    <% end %>
+</div>
+<div class="switch_view">
+  <%= link_to image_tag('icons/application_form.png', :title => "Summary view"),
+            :action => 'browse', 
+            :id => @assignment.id
+  %>
+  <%= link_to image_tag('icons/application_view_list.png', 
+                :title => "Detailed view"), 
+            :action => 'browse',
+            :id => @assignment.id, :details => true
+  %>
+</div>
+
+<div class="clear"></div>
+<table id="submissions">
+
+</table>
+<div class="global_action_bottom">
+    <% if @current_user.admin? %>
+	<%= submit_tag "Release Marks", :name => "release_results" %>
+	<%= submit_tag "Unrelease Marks", :name => "unrelease_results" %>
+    <% end %>
+</div>
+</form>
+
+</div>

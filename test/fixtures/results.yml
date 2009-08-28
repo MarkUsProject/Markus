@@ -1,0 +1,34 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+result_1:
+   submission_id:        <%= Fixtures.identify(:submission_1)%>
+   marking_state:        unmarked
+   overall_comment:      
+   created_at:           <%= Time.now.to_s(:db) %>
+   updated_at:           <%= Time.now.to_s(:db) %>
+   released_to_students: false
+
+result_2:
+   submission_id:        <%= Fixtures.identify(:submission_2)%>
+   marking_state:        partial
+   overall_comment:      
+   created_at:           <%= Time.now.to_s(:db) %>
+   updated_at:           <%= Time.now.to_s(:db) %>
+   released_to_students: false
+
+result_3:
+   submission_id:        <%= Fixtures.identify(:submission_3)%>
+   marking_state:        complete
+   overall_comment:      
+   created_at:           <%= Time.now.to_s(:db) %>
+   updated_at:           <%= Time.now.to_s(:db) %>
+   released_to_students: false
+
+result_4:
+   submission_id:        <%= Fixtures.identify(:submission_4)%>
+   marking_state:        complete
+   overall_comment:      
+   created_at:           <%= Time.now.to_s(:db) %>
+   updated_at:           <%= Time.now.to_s(:db) %>
+   released_to_students: true
+

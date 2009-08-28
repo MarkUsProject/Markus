@@ -1,0 +1,31 @@
+<div id="standby_highlighting" >
+  Standby - Highlighting...
+</div>
+<pre id="code" name="code" class="<%=h(@code_type)%>" cols="80" rows="50">
+<% # The "h" before the filetext allows us to escape HTML/Javascript strings %>
+<%=h file_contents %>
+</pre>
+
+<script language="javascript">
+    dp.SyntaxHighlighter.ClipboardSwf = '/javascripts/syntaxhighlighter/clipboard.swf';
+    dp.SyntaxHighlighter.HighlightAll('code');
+    $('standby_highlighting').hide();
+    sourceCodeReady();
+    
+    <% if (defined? annots) %>
+        <% annots.each do |annot| %>
+            add_annotation_text(<%=annot.annotation_text.id%>, 
+            '<%=simple_format(h(escape_javascript(CGI.unescape(annot.annotation_text.content.to_s))))%>');
+            add_annotation(<%=annot.id%>, $R(<%= annot.line_start %>, <%= annot.line_end %>), 
+             '<%=annot.annotation_text.id%>');
+
+        <% end %>
+    <% end %>
+
+    
+    <% if !@focus_line.nil? %>
+      focus_source_code_line(<%=@focus_line%>);
+    <% end %>
+
+</script>
+

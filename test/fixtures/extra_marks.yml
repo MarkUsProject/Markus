@@ -1,0 +1,26 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+#e1:
+#  result: r1
+#  description: "Late Penalty"
+#  mark: -4
+
+#e2:
+#  result: r1
+#  description: "Bonus for good testing"
+#  mark: 2
+
+#e3:
+#  result: r1
+#  description: "Bonus for early submission"
+#  mark: 3
+
+#e4:
+#  result: r1
+#  description: "Bad Code Style"
+#  mark: -4
+
+#e5:
+#  result: r1
+#  description: "No Documentation"
+#  mark: -1

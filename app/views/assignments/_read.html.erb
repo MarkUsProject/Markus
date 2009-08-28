@@ -1,0 +1,34 @@
+<h2 class="legend">Assignment Rules</h2>
+<div class="block_content">
+  <div class="sub_block">
+    <span class="prop_label">Name:</span>
+    <%= h(@assignment.short_identifier) %>
+  </div>
+  <br/>
+  <div class="sub_block">
+    <span class="prop_label">Description:</span>
+    <%= h(@assignment.description) %>
+  </div>
+  <br/>
+  <div class="sub_block">
+    <span class="prop_label">Message:</span>
+    <span class="box sub_block clear"><%= simple_format(h(@assignment.message)) %></span>
+  </div>
+  <br/>
+  <div class="sub_block">
+    <span class="prop_label">Due date:</span>
+    <%= h(@assignment.due_date.strftime(LONG_DATE_TIME_FORMAT)) %>
+  </div>
+
+  <h4>Files required for this assignment</h4>
+  <ul>
+  <% if @assignment.assignment_files.length == 0%>
+   <p> There are no required files for this assignment.</p>
+  <% end %>
+  <% @assignment.assignment_files.each do |assignment_file| %>
+    <li><%= h(assignment_file.filename) %></li>
+  <% end %>
+  </ul>
+</div>
+
+

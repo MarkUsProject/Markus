@@ -1,0 +1,8 @@
+<li id="add_annotation_text">
+<% remote_form_for :annotation_text, :url => {:action => 'add_annotation_text', :id => annotation_category_id} do |f| %>
+  <%= f.text_area(:content, :rows => '2') %>
+  <div class="error" style="display:none;" id="new_annotation_text_error">
+  </div>
+  <%= f.submit %>
+<% end %>
+</li>

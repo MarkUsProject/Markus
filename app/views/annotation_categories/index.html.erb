@@ -1,0 +1,133 @@
+<%= stylesheet_link_tag("livepipe/tabs") %>
+<%= javascript_include_tag  'livepipe/livepipe' %>
+<%= javascript_include_tag  'rubrics' %>
+<%= javascript_include_tag 'livepipe/window'%>
+<%= javascript_include_tag 'livepipe/tabs'%>
+<script>
+   var modalUpload = null;
+   var modalDownload = null;
+
+   function upload_annotation_categories(){
+     modalUpload.open();
+     return false;
+   }
+
+   function download_annotation_categories(){
+      modalDownload.open();
+      return false;
+   }
+
+   document.observe("dom:loaded", function(){
+     modalUpload = new Control.Modal($('upload_dialog'),
+     {
+       overlayOpacity: 0.75,
+       className: 'modalUpload',
+       fade: false
+     });
+
+     modalDownload = new Control.Modal($('download_dialog'),
+     {
+       overlayOpacity: 0.75,
+       className: 'modalDownload',
+       fade: false
+
+     });
+   })
+</script>
+
+
+<%if @assignment.past_due_date?%>
+ <div class="notice">
+   <%=t('past_due_date_warning')%>
+ </div>
+<% end %>
+
+<%= render :partial => "boot.js" %>
+
+<div id="title_bar">
+  <h1>Annotations: <%=@assignment.short_identifier%>
+        <%= link_to_function "Add Annotation Category", %| if($('add_annotation_category_prompt') != null) {
+          $('add_annotation_category_prompt').select();
+          $('add_annotation_category_prompt').focus();
+        } else {
+        #{remote_function :url => {:action => "add_annotation_category", :id => @assignment.id}, :method => 'get', :after => "if($('no_annotation_categories_info') != null) { $('no_annotation_categories_info').hide();}" }
+        }|%>
+  <span class="menu_bar">|</span>
+	<%= button_to_function "Upload", "upload_annotation_categories();" %>
+          <span class="menu_bar">|</span>
+	<%= button_to_function "Download", "download_annotation_categories();" %>
+
+</h1>	
+</div>
+
+<div class="wrapLeft">
+<% if flash[:upload_notice] && flash[:invalid_lines].empty? -%>
+  <div>
+    <p class="success"><%= h(flash[:upload_notice]) %></p>
+  </div>
+<% end -%>
+<p id="criterion_error" class="warning" style="display: none;">
+  
+</p>
+
+  <div id="annotation_category_pane">
+    <div class="annotation_categories_fieldset">
+     <div class="annotation_categories_list_bar">
+       <span class="annotation_category_title"><b>Annotation Category</b></span>
+     </div>
+     <span class="clear"></span>
+     <ul id="annotation_category_pane_list">
+        <% if @annotation_categories.length > 0 %>
+          <% @annotation_categories.each do |annotation_category| %>
+            <%= render :partial => 'annotation_category', :locals => {:annotation_category => annotation_category} %>
+          <% end %>
+        <% else %>
+          <div id="no_annotation_categories_info" class="information">There are no annotation categories, yet.</div>
+        <% end %>
+      </ul>  <!-- Rubric Criteria Pane -->	
+  </div>
+   </div>
+
+    <div id="annotations_pane">
+      <div id="annotation_list_holder">
+       <div id="annotations_help">
+        <h1>Help</h1>
+	<p>Click on an annotation category to add annotations.</p>
+      </div>
+    </div>
+  
+   <div class="clear"></div>
+  
+  </div> <!-- Edit Canvas -->
+ </div>
+
+
+    <div id="upload_dialog" >
+    
+    <h1>Upload Annotations</h1>
+          <p>
+            Select a CSV file form:<br />
+            <code>category_name,annotation_text,annotation_text ... </code><br />
+          </p>
+          <% form_tag({:action => 'csv_upload', :id => @assignment.id}, {:multipart => true}) do %>
+           <p><%= file_field_tag :annotation_category_list, :size => 0 %>
+           </p>							
+           <p>
+           <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
+           <input type="reset" value="Cancel" onClick="modalUpload.close();">
+           </p>
+          <% end %>
+    </div>
+
+    <div id="download_dialog">
+    <h1>Download Annotations</h1>
+      <ul>
+        <li><%= link_to "Download in CSV Format", {:action => 'download', :id => @assignment.id, :format => 'csv'}%></li>
+        <li><%= link_to "Download in YML Format", {:action => 'download', :id => @assignment.id, :format => 'yml'}%></li>
+      </ul>
+      <input type="reset" value="Cancel" onClick="modalDownload.close();">
+    </div>
+
+  
+
+

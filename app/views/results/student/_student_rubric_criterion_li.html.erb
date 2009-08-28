@@ -1,0 +1,5 @@
+<li class="<%= cycle('rubric_criterion_holder_A', 'rubric_criterion_holder_B') %>" id="<%= "rubric_criterion_#{rubric_criterion.id}" %>">
+
+  <%= render :partial => 'results/common/rubric_criterion', :locals => {:rubric_criterion => rubric_criterion, :mark => mark} %>
+
+</li>

@@ -1,0 +1,35 @@
+<% # Template for Penalty Periods - uses Prototypes Template class
+   # #{hours} - The default number of hours set on this period
+   # #{deduction} - The default number of grace period credits to deduct
+   # #{period_key} - The unique key that represents this Period.  This helps to
+   #  differentiate it on submission, and connects the hours and deduction inputs
+   #  with a common value
+%>
+<fieldset class="period">
+<legend>Penalty Period</legend>
+<% pf.fields_for :periods, penalty_period do |f| %>
+  <p>
+    <%= f.label :hours, "After:" %>
+    <%= f.text_field :hours, :size => 1, :class => "PeriodDeltaChain_Hours", :onchange => "penalty_periods.refresh();" %>
+    hours...
+  </p>
+  <div>
+    <span class="PeriodDeltaChain">
+      From <span class="PeriodDeltaChain_FromTime"></span> to
+           <span class="PeriodDeltaChain_ToTime"></span>
+    </span>
+  </div>
+ <p>
+    <%= f.label :deduction, "Penalty Period Deduction:" %>
+    <%= f.text_field :deduction, :size => 1 %>%
+  </p>
+  <p>
+   <% if !f.object.nil? && !f.object.new_record? %>
+    <%= f.label :_delete, "Remove:" %>
+    <%= f.check_box :_delete %>
+  <% else %>
+    <%= link_to_function "remove", "$(this).up('.period').remove(); penalty_periods.refresh();" %>
+  <% end %>
+  </p>
+<% end %>
+</fieldset>

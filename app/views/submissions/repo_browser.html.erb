@@ -1,0 +1,69 @@
+<%= javascript_include_tag "FilterTable/FilterTable.js" %>
+<%= javascript_include_tag "repo_browser.js" %>
+<%= render :partial => "repo_browser_boot.js.erb" %>
+<%= calendar_date_select_includes "silver" %>
+
+
+<% if flash[:error] -%>   
+<div class="error">
+  <%= h(flash[:error]) %>
+</div>
+<% end %>
+
+<div id="title_bar">
+  <h1>Repository: <%= @repository_name %></h1>
+</div>
+
+<div class="wrapLeft">
+  <div id="repo_browser_controls">
+    <fieldset>
+      <legend>Find a different revision</legend>
+
+      <div id="find_revision_error" class="error" style="display:none;">
+      </div>
+
+      <% form_tag :action => 'repo_browser', :id => @grouping.id, :find_revision_by => 'revision_timestamp' do %>
+     <%= calendar_date_select_tag "revision_timestamp", @revision_timestamp, :time => true %> 
+     <%= submit_tag "Find by Revision Timestamp" %>
+     <% end %>
+     
+      <% form_tag :action => 'repo_browser', :id => @grouping.id, :find_revision_by => 'revision_number' do %>
+     
+     <%= text_field_tag "revision_number", @revision_number %>
+     <%= submit_tag "Find by Revision Number" %>
+     <% end %>
+    </fieldset>
+  </div>
+<div class="global_actions">
+  <h2>Viewing Revision: #<span id="current_revision_number_display"><%=@revision_number%></span> (<span id="current_revision_timestamp_display"><%=@revision_timestamp.strftime(LONG_DATE_TIME_FORMAT)%></span>)</h2>
+  <span id="loading_list"><%= image_tag("spinner.gif") %> Loading list...
+  </span>
+  
+<div id="directory_selector">
+<p>
+  Current Path: 
+  <% path_memory = '/' 
+     links = [] 
+     @path.split('/').each do |folder| 
+     path_memory = File.join(path_memory, folder) 
+     links.push(link_to folder, :action => 'repo_browser', :path => path_memory, :id => @grouping.id, :revision_number => @revision_number) 
+  end %>
+  <%= link_to '[root]', :action => 'repo_browser', :id => @grouping.id, :path => '/', :revision_number => @revision_number %>
+  <%= links.join('/')%>
+
+</p>
+</div>
+  
+  <% form_tag :action => "manually_collect_and_begin_grading", :id => @grouping.id do %>
+  <%= hidden_field_tag "current_revision_number", @revision_number %>
+  <%= submit_tag "Collect and Grade This Revision", :confirm => t(:collect_and_grade_overwrite_warning) %>
+  <% end %>
+</div>
+
+</div>
+
+
+<div class="wrapLeft">
+  <table class="files" id="files">
+  </table>
+</div>

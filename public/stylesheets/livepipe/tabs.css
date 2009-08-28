@@ -1,0 +1,50 @@
+/* Goes around the whole tab component, including the tabs. */
+.tabbedContainer {
+  -moz-border-radius: 5px;
+  background: #ECECEC;
+  border: 1px solid #ddd;
+  margin: 0;
+  padding: 10px;
+}
+
+/* Goes around each content area that is associated with a tab. */
+.tabbedArea {
+  -moz-border-radius-bottomleft: 5px;
+  -moz-border-radius-bottomright: 5px;
+  background: #fff;
+  padding: 10px;
+}
+
+ul.subsection_tabs {
+  border-bottom: 1px solid #fff;
+  list-style: none;
+  height: 27px;
+  padding: 0;
+  margin: 0;
+}
+
+  ul.subsection_tabs li.tab {
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+    background: #B7D3EC;
+    float: left;
+    margin: 0 2px 0 0;
+    text-align: center;
+  }
+  
+    ul.subsection_tabs li.tab a {
+      -moz-border-radius-topleft: 5px;
+      -moz-border-radius-topright: 5px;
+      display: block;
+      padding: 4px 10px 0 10px;
+      background: #B7D3EC;
+      height: 23px;
+    }
+    
+      ul.subsection_tabs li.tab a:hover { background: #fff; }
+      
+      ul.subsection_tabs li.tab a.active { 
+        background: #fff; 
+      }
+
+ul.subsection_tabs li.source_code { float: right; }

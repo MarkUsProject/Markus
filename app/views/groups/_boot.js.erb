@@ -1,0 +1,69 @@
+<script type="text/javascript" language="Javascript">
+
+var groupings_table = null;
+
+document.observe("dom:loaded", function() {
+  // Hide AJAX errors DIV
+  $('errors').hide();
+
+  groupings_table = new FilterTable({
+    table_id: $('groups'),
+    headers: {
+      name: {display: "Name", sortable: true},
+      members: {display: "Members", sortable: true, sort_with: 'nohtml'},
+      graders: {display: "Graders", sortable: true},
+      valid: {display: "", sortable: false}
+    },
+    can_select: true,
+    can_select_all: true,
+    can_sort: true,
+    row_prefix: "groupings_row_",
+    select_name: "groupings[]",
+    select_id_prefix: "grouping_select_",
+    footer: true,
+    default_sort: 'name',
+    filters: {
+      validated: function(row) {
+        return row.filter_valid;
+      },
+      unvalidated: function(row) {
+        return !row.filter_valid;
+      },
+      assigned: function(row) {
+        return row.filter_assigned;
+      },
+      unassigned: function(row) {
+        return !row.filter_assigned;
+      }
+    },
+    after_filter_only_by: function(current_filters, new_filter) {
+      $('filter_link_none').removeClassName('filter_selected');
+      current_filters.each(function(filter_key) {
+        $('filter_link_' + filter_key).removeClassName('filter_selected');
+      });
+      $('filter_link_' + new_filter).addClassName('filter_selected');
+    },
+    after_clear_filters: function(current_filters) {
+      current_filters.each(function(filter_key) {
+        $('filter_link_' + filter_key).removeClassName('filter_selected');
+      });
+      $('filter_link_none').addClassName('filter_selected');
+    },
+    sorts: {
+      nohtml: function(a, b) {
+        return a[FILTERTABLE_SORT].stripTags().toLowerCase() < b[FILTERTABLE_SORT].stripTags().toLowerCase();
+      }
+    },
+    total_count_id: 'all_groupings_count',
+    filter_count_ids: {
+      validated: 'valid_groupings_count',
+      unvalidated: 'invalid_groupings_count',
+      assigned: 'assigned_groupings_count',
+      unassigned: 'unassigned_groupings_count'
+    }
+  });
+  
+  <%= remote_function :url => {:action => 'populate', :id => @assignment.id}, :complete => "$('loading_list').hide();" %>
+});
+
+</script>

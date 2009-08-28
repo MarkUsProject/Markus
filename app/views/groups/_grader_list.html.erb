@@ -1,0 +1,5 @@
+       <ul id="grader_list" class="invisible_list">
+       <% tas.each do |ta| %>
+         <%= render :partial => 'grader', :locals => {:ta => ta} %>
+       <% end %>
+       </ul>

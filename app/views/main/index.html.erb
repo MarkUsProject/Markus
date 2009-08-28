@@ -1,0 +1,10 @@
+<% if !@current_user.student? %>
+   <p class="notice"><%= I18n.t(:firefox_warning) %></p>
+<% end %>
+
+<div id="title_bar">
+   <h1>Dashboard</h1>
+</div>
+<div class="wrapLeft">
+<p><%= h(@current_user.first_name) %>, welcome to <%= t(:markus) %>, the online marking tool.</p>
+</div>

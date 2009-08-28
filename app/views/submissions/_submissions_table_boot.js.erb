@@ -1,0 +1,79 @@
+<script type="text/javascript" language="Javascript">
+
+var submissions_table = null;
+
+document.observe("dom:loaded", function() {
+  submissions_table = new FilterTable({
+    table_id: $('submissions'),
+    headers: {
+      group_name: {display: "Group Name", sortable: true},
+      <% if details.nil? %>
+      repository: {display: "Repository", sortable: true},
+      commit_date: {display: "Commit Date", sortable: true},
+      <% else %>
+        <% assignment.rubric_criteria.each_with_index do |criterion, index| %>
+      criterion_<%=index%>: {display: 'C<%=index%>', sortable:true},
+        <% end %>
+      <% end %>
+      marking_state: {display: "Marking State", sortable: true},
+      final_grade: {display: "Final Grade", sortable: true}
+    },
+    can_select: <%= @current_user.admin?%>,
+    can_select_all: <%= @current_user.admin?%>,
+    can_sort: true,
+    row_prefix: "grouping_row_",
+    select_name: "groupings[]",
+    select_id_prefix: "grouping_select_",
+    default_sort: 'group_name',
+    footer: true,
+    filters: {
+      unmarked: function(row) {
+        return row.marking_state != '<%=Result::MARKING_STATES[:complete]%>' && row.marking_state != '<%=Result::MARKING_STATES[:partial]%>';
+      },
+      partial: function(row) {
+        return row.marking_state == '<%= Result::MARKING_STATES[:partial]%>';
+      },
+      released: function(row){
+        return row.released == true;
+      },
+      complete: function(row){
+         return row.marking_state == '<%=Result::MARKING_STATES[:complete]%>' && row.released != true;
+      }
+    },
+
+    after_filter_only_by: function(current_filters, new_filter) {
+      $('filter_link_none').removeClassName('filter_selected');
+      current_filters.each(function(filter_key) {
+        $('filter_link_' + filter_key).removeClassName('filter_selected');
+      });
+      $('filter_link_' + new_filter).addClassName('filter_selected');
+    },
+    after_clear_filters: function(current_filters) {
+      current_filters.each(function(filter_key) {
+        $('filter_link_' + filter_key).removeClassName('filter_selected');
+      });
+      $('filter_link_none').addClassName('filter_selected');
+    },
+    total_count_id: 'all_submissions_count',
+    filter_count_ids: {
+      unmarked: 'unmarked_submissions_count',
+      partial: 'partial_submissions_count',
+      complete: 'complete_submissions_count',
+      released: 'released_submissions_count'
+    }
+    /*
+    sorts: {
+      last_modified_date: function(a, b) {
+        return new Date(a['last_modified_date_unconverted']) < new Date(b['last_modified_date_unconverted']);
+      }
+    }*/
+  });
+  <% if details.nil? %>
+  <%= remote_function :url => {:action => 'populate_submissions_table', :id => @assignment.id}, :complete => "$('loading_list').hide();" %>
+  <% else %>
+  <%= remote_function :url => {:action => 'populate_submissions_table', :id => @assignment.id, :details => true}, :complete => "$('loading_list').hide();" %>
+  <% end %>
+});
+  
+
+</script>

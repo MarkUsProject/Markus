@@ -1,0 +1,46 @@
+<%= javascript_include_tag "FilterTable/FilterTable" %>
+<%= javascript_include_tag "users_manager" %>
+
+<%= render :partial => "boot.js"%>
+
+<div id="title_bar"><h1>Manage Admins <%= link_to I18n.t(:add_new), :controller => 'admins',
+:action => 'create' %></h1>
+</div>
+
+<div class="colsLeftHeavy">
+
+<div><div class="wrapLeft">
+ <div id="list">
+      <% if flash[:upload_notice] -%>
+          <p class="success"><%=h flash[:upload_notice] %></p>
+      <% end -%>
+      
+      <% if flash[:edit_notice] -%>
+        <p style="color:green"><%=h flash[:edit_notice] %></p>
+      <% end -%>
+      
+      <% # display lines in csv file that has not been successfully processed %>
+      <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? -%>
+      <div class="errorExplanation" id="errorExplanation">
+        <p>The following Admins have not been successfully added:</p>
+        <ul>
+          <% for line in flash[:invalid_lines] -%>
+          <li><%=h line %></li>
+          <% end -%>
+        </ul>
+        <p>Make sure that:</p>
+        <ul>
+          <li>Admin names are alphanumeric</li>
+          <li>Each field is separated by a comma (no spaces)</li>
+          <li>Each line has the required fields specified above</li>
+        </ul>
+      </div>
+      <% end -%>
+      
+      <table id="admins">
+      </table>
+  </div>
+  </div></div>
+  
+  <!-- Break between sections -->
+ </div> <!-- colsLeftHeavy -->

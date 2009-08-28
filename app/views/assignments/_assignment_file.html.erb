@@ -1,0 +1,15 @@
+<div class="assignment_file">
+<% form.fields_for :assignment_files, assignment_file do |f| %>
+  <p>
+    <%= f.label :filename, "Filename: " %>
+    <%= f.text_field :filename %>
+    <% if !f.object.new_record? %>
+      <span>
+        <b>Remove: </b><%= f.check_box :_delete %>
+      </span>
+    <% else %>
+      <%= link_to_function "remove", "$(this).up('.assignment_file').remove()" %>
+    <% end %>
+  </p>
+<% end %>
+</div>

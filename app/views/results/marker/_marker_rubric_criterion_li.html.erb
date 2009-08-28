@@ -1,0 +1,48 @@
+<%
+# Erb template for display rubric criterion in the grader view
+%>
+
+<li class="<%= cycle('rubric_criterion_holder_A', 'rubric_criterion_holder_B') %>" id="<%= "rubric_criterion_#{rubric_criterion.id}" %>">
+
+  <div class="criterion_title" id="<%= "rubric_criterion_title_#{rubric_criterion.id}"%>" onclick="<%="focus_rubric_criterion(#{rubric_criterion.id})"%>">
+
+<div id="<%="rubric_criterion_title_#{rubric_criterion.id}_expand"%>"
+class="float_left rubric_criterion_expand">+ &nbsp;
+</div>
+
+  <%= render :partial => 'results/common/rubric_criterion', :locals => {:rubric_criterion => rubric_criterion, :mark => mark} %>
+
+  <div id="<%="rubric_criterion_inputs_#{rubric_criterion.id}"%>" class="rubric_criterion_level_container" >
+
+    <div class="float_left">
+        <table id="mark_<%=mark.id%>_table">
+        <% num_levels = 0
+        selected = "rubric_criterion_level"
+          while (num_levels < RubricCriterion::RUBRIC_LEVELS) 
+            level_name = rubric_criterion["level_" + num_levels.to_s + "_name"]
+            level_desc = rubric_criterion["level_" + num_levels.to_s + "_description"]
+            if (num_levels == mark.mark)
+              td_class = "rubric_criterion_level_selected"
+            else
+              td_class = "rubric_criterion_level"
+            end
+        -%>
+          <% if level_desc && !level_desc.empty? -%>
+            <tr>
+               <td id="mark_<%=mark.id%>_<%=num_levels%>" class="<%=td_class%>">
+                 <%= link_to_remote "<b>#{num_levels}: &nbsp; #{level_name}</b> &nbsp;
+                  #{level_desc}", {:url => {:action => 'update_mark', :mark_id=>mark.id, :mark=>num_levels}},
+                 {:style => "color:#000000;background:none;"}%>
+               </td>
+            </tr>
+         <% end -%>
+        <% num_levels = num_levels + 1
+          end -%>
+          </table>
+    </div>
+
+    <div class="clear"></div>
+
+  </div>
+
+</li>

@@ -1,0 +1,37 @@
+<%
+   # Erb template for inserting member's of a group into the assignment
+   # view of students
+%>
+
+
+<%# If this member is an inviter%>
+<% if member.membership_status == StudentMembership::STATUSES[:inviter] %>
+<li id="member_inviter">
+   <span class="last_name"><%= h(member.user.first_name) %> </span> <%=
+h(member.user.last_name) %> (inviter)</li>
+<%# If this member is an accepted member %>
+<% elsif member.membership_status == StudentMembership::STATUSES[:accepted] %>
+<li>
+   <span class="last_name"><%= h(member.user.first_name) %> </span> <%= h(member.user.last_name) %></li>
+<%# If this member is pending%>
+<% elsif member.membership_status == StudentMembership::STATUSES[:pending] %>
+<li class="membership_status_pending">
+   <span class="last_name"><%= h(member.user.first_name) %> </span> <%= h(member.user.last_name) %> (invited)
+   <% if grouping.is_inviter?(@current_user) %>
+     <%= link_to_remote I18n.t(:cancel), :url => {:action => 'disinvite_member', :id => @assignment.id, :membership =>  member.id},
+     :html => {:title => "Cancel invitation", :class => "delete"},
+     :confirm => "Are you sure you want to cancel this invitation?"
+     %>
+   <% end %>
+</li>
+<%# If this member is rejected %>
+<% elsif member.membership_status == StudentMembership::STATUSES[:rejected] %>
+   <% if grouping.is_inviter?(@current_user) %>
+<li class="membership_status_rejected">
+   <span class="last_name"><%= h(member.user.last_name) %> </span> <%=
+h(member.user.first_name) %> (<%=t(:rejected_invitation)%>)
+     <%= link_to I18n.t(:delete), :action => 'delete_rejected', :id => @assignment.id, :membership => member.id %>
+</li>
+   <% end %>
+<% end %>
+

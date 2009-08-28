@@ -1,0 +1,234 @@
+<%= javascript_include_tag "livepipe/livepipe.js"%>
+<%= javascript_include_tag "livepipe/window.js"%>
+<script>
+ var invite_modal = null;
+
+ function invite(){
+   invite_modal.open();
+   $('invite_member').setValue('');
+   $('invite_member').focus();
+   return false;
+ }
+
+ document.observe("dom:loaded", function(){
+    invite_modal = new Control.Modal($('invite_dialog'), {
+      overlayOpacity: 0.75,
+      className: 'invite_modal',
+      fade: false
+    });
+ } )
+</script>
+
+<div id="title_bar"><h1> Assignment <%= h(sanitize(@assignment.short_identifier)) %></h1>
+</div>
+
+
+<div class="column_floatLeft">
+ <div class="block">
+  <h2>Submissions</h2>
+    <div class="block_content">
+  <% if !@grouping.nil? %>
+    <% if !@grouping.is_valid? %>
+      <p class="notice">Your group is not valid. You can't submit
+      anything.</p>
+    <% end %>
+     <h3>Overview</h3>
+     <div class="info">
+       Last Revision Date:<br />
+       <span class="info_date"><%=h(@last_modified_date.strftime(LONG_DATE_TIME_FORMAT)) %>  </span>
+     </div>   
+     <span class="info_number"><%=h @files.length.to_s %></span><span
+     class="info"> files</span><br />
+     <span class="info_number"><%=h @missing_assignment_files.length.to_s%></span><span class="info_red"> missing required files</span><br />
+  <% else %>
+    <p class="notice">You don't have any submission yet</p>
+  <% end %>
+  </div>
+ </div>
+ <div class="block">
+    <%= render :partial => 'read'%>
+ </div>
+</div>
+
+<div class="column_floatLeft">
+ <div class="block">
+  <h2>Group Information</h2>
+    <div class="block_content">
+
+         <% if @grouping.nil? %>
+	   <p class="notice">
+	     You don't have a group yet!
+	   </p>
+
+	   <% # Test if the student can form groupings or not %>
+	   <% if @assignment.student_form_groups == false %>
+	     <p>You cannot form groups for this assignment. Wait until
+	     your instructor forms the group.</p>
+	   <% end %>
+
+	   <% # test if the student has been invited %>
+	   <% if @student.has_pending_groupings_for?(@assignment.id)%>
+
+	   <h3>Invitations</h3>
+	     <% @pending_grouping.each do |grouping|%>
+	     <div class="sub_block">
+	       <p>You have been invited by <span class="last_name"><%= grouping.inviter.last_name %></span> <%= h(grouping.inviter.first_name) %></p>  
+	    <ul>
+	    <% grouping.memberships.each do |member|%>
+	       <%= render :partial => "assignments/member", :locals =>
+	       {:member => member, :grouping => grouping} %>
+	    <% end -%>
+	   </ul>
+
+	     <%= link_to I18n.t(:join), :action => 'join_group', 
+		             :id => @assignment.id,
+			     :grouping_id => grouping.id
+	     %>
+	     <%= link_to(I18n.t(:refuse),{:action => 'decline_invitation',
+	         :id => @assignment.id, :grouping_id => grouping.id},
+	         {:class => "delete",:confirm => "Are you sure you want to decline this invitation?"})
+	     %>
+	     </div>
+	     <div class="block_line"></div>
+	     <% end %>
+	   <% end %>
+	   <h3>Form your own group</h3>
+         <p> The groups must be from <b><%=
+	h(@assignment.group_min)%></b> to <b><%= h(@assignment.group_max)%></b>
+	people.</p>
+         <% if @assignment.student_form_groups %>
+	   <% if @assignment.group_min == 1 %>
+	   <p><%= link_to "Work alone", {:action => 'creategroup', :id => @assignment.id, :workalone => 'true'}%></p>
+	   <% end %>
+	   <p>
+	   <% if @student.has_pending_groupings_for?(@assignment.id)%>
+	      <%= link_to(I18n.t(:create),{:action => 'creategroup', 
+		           :id => @assignment.id},{:confirm => "This will decline the invitation you have. Are you sure?"})
+	      %>
+	    <% else %>
+                <%= link_to(I18n.t(:create),{:action => 'creategroup', 
+		               :id => @assignment.id})
+	      %>
+	    <% end %>
+	   </p>
+         <%end %>
+	 <% else %>
+	   <% # As the student already has a group, we display the
+	      # informations on this group %>
+	   <% # We check to see if the groupname is displayed
+	   %>
+
+	   <h3>
+	   <% if @assignment.group_name_displayed == true %>
+	     <%= h(@group.group_name) %>
+	   <% else %>
+	     Your group
+	   <% end %>
+            <% if !@grouping.nil? && @grouping.inviter == @current_user and !@grouping.is_valid? %>
+	    <%= link_to(I18n.t(:delete), {:action => 'deletegroup', :id => @assignment.id},{:confirm => "Are you sure you want to delete your group?", :title => "Delete your group", :class => "delete"})
+	    %> 
+	    <% end %>
+	   </h3>
+
+    <% if flash[:fail_notice] && !flash[:fail_notice].empty? %>
+     <div class="notice">
+      <% if flash[:fail_notice].is_a?(Array) %>
+       <ul>
+        <% flash[:fail_notice].each do |message| %>
+         <li><%=message%></li>
+         <% end %>
+       </ul>
+      <% else %>
+        <%=flash[:fail_notice]%>
+      <% end %>
+    </div>
+  <% end %>
+  <% if flash[:success] && !flash[:success].empty? %>
+    <div class="success">
+      <% if flash[:success].is_a?(Array) %>
+      <ul>
+        <% flash[:success].each do |message| %>
+        <li><%=message%></li>
+        <% end %>
+      </ul>
+      <% else %>
+        <%=flash[:success]%>
+    <% end %>
+    </div>
+  <% end %>
+
+
+     <% # If the group not yet the right amount of members, display
+	      # the information%>
+	   <% if !@grouping.is_valid?%>
+	     <p class="warning"> The group is not valid. You need to
+	     invite more students. </p>
+	   <% end %>
+
+	   <% # For each member of this group, we display the
+	      # information we have for them 
+	      %>
+	   <ul>
+	    <% @studentmemberships.each do |member|%>
+	       <%= render :partial => "assignments/member", :locals =>
+	       {:member => member, :grouping => @grouping} %>
+	    <% end -%>
+	   </ul>
+	   <% if !@grouping.nil? && @grouping.inviter == @current_user && @assignment.student_form_groups %>
+       <% if @grouping.student_membership_number < @assignment.group_max %>
+         <%= button_to_function I18n.t(:invite), 'invite(); return false;' %>
+	     <% end %>
+       <% end %>
+     
+     <% # Display the URL of this group's repository if applicable %>
+     <% if !@grouping.nil? && @grouping.group.repository_external_commits_only? %> 
+     <h3>URL to your group's repository</h3>
+     <div class="sub_block">
+       <p><%= h(@grouping.group.repository_external_access_url) %></p>
+     </div>
+	   <% end %>
+
+	 <% end -%>
+            
+	   <h3> Group Properties </h3>
+       <ul>
+        <% if @assignment.student_form_groups && !@assignment.instructor_form_groups && @assignment.group_max > 1 %>
+             <li>Students can form groups.</li>
+              <li> The groups must be from <b><%= h(@assignment.group_min)%></b>
+	      to <b><%= h(@assignment.group_max)%></b> people.
+	      </li>
+        <% elsif @assignment.instructor_form_groups %>
+            <li>Instructor forms groups.</li>
+        <% else%>
+            <li>Students work alone</li>
+
+        <% end %>
+        </ul>
+
+    </div>
+  </div>    
+</div>
+
+<% if !@grouping.nil? && @grouping.inviter == @current_user && !@assignment.instructor_form_groups %>
+  <div id="invite_dialog">
+    <% form_tag({:action => 'invite_member', :id => @assignment.id},{:onsubmit => "$('invite_modal_spinner').show();"}) do %>   
+    <h2>Invite</h2>
+    <p class="information"><%= t(:seperate_multiple_with_commas) %></p>
+    <p>
+      <fieldset>
+         <label for="invite_member"> <%= I18n.t('user.user_name')%> </label>
+         <%= text_field_tag 'invite_member'%>
+      </fieldset>
+    </p>
+    <p>
+    <span id="invite_modal_spinner" style="display:none;">
+      <%= image_tag("spinner.gif")%> Please wait...
+    </span>
+    <%= submit_tag I18n.t(:submit) %>
+    <input type="reset" value="Cancel" onClick="invite_modal.close();" />
+    <% end %>
+    </p>
+  </div>
+<% end %>
+
+

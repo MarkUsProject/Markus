@@ -1,0 +1,44 @@
+<div id="current_annotation_category" class="annotation_category_edit">
+<% if !flash[:error].nil? %>
+  <div class="error">
+    <p>
+      <%= t('annotations.update.annotation_category_error') %>
+
+    </p>
+    <ul>
+      <% flash[:error].each do |error_message| %>
+        <li><%= error_message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<% if !flash[:success].nil? %>
+  <div class="success">
+    <%= flash[:success] %>
+  </div>
+<% end %>
+
+ <div class="float_right">
+   <%= link_to_remote "Delete annotation category",
+        :url => {:action => "delete_annotation_category",
+	         :id => annotation_category.id},
+	:confirm => t('annotations.delete.annotation_category'),
+	:html => {:class => 'delete'}
+   %>
+ </div>
+ <div id="annotation_category_controls">
+   <h2><%=h(annotation_category.annotation_category_name)%></h2>
+
+<fieldset>
+   <% remote_form_for :annotation_category, annotation_category, :url => {:action => 'update_annotation_category', :id => annotation_category.id } do |f| %>
+   <span id="annotation_category_inputs">
+     <%= f.label :annotation_category_name %>
+     <%= f.text_field :annotation_category_name, :rows => '3' %>
+   </span>
+ <%= f.submit %>
+ <% end %>
+</fieldset>
+  </div>
+</div>
+

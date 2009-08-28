@@ -1,0 +1,10 @@
+<% annots.each do |annot| %>
+  <li class="<%= cycle('annotations1', 'annotations2') %>">
+  
+    <p class="lineNumber"><%=link_to_function "#{File.join(annot.submission_file.path, annot.submission_file.filename)}: Line #{annot.line_start} to #{annot.line_end}", "load_submitted_file_and_focus(#{annot.submission_file.id}, #{annot.line_start})"%></p>
+    <p class="annotationContent" id="annotation_text_content_display_<%=h(annot.annotation_text.id)%>">
+    <%=simple_format(h(CGI.unescape(annot.annotation_text.content)))%>
+    </p>
+    
+  </li>
+<% end %>

@@ -1,0 +1,64 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+
+c1:
+  rubric_criterion_name: "Algorithm Design"
+  assignment_id: <%= Fixtures.identify(:assignment_1) %> 
+  weight: 2
+  level_0_name: Horrible
+  level_1_name: Poor
+  level_2_name: Satisfactory
+  level_3_name: Good
+  level_4_name: Excellent
+  
+
+c2:
+  rubric_criterion_name: "Documentation"
+  assignment_id: <%= Fixtures.identify(:assignment_1) %> 
+  weight: 2.7
+  level_0_name: Horrible
+  level_1_name: Poor
+  level_2_name: Satisfactory
+  level_3_name: Good
+  level_4_name: Excellent
+
+
+c3:
+  rubric_criterion_name: "Testing"
+  assignment_id: <%= Fixtures.identify(:assignment_1) %> 
+  weight: 2.2
+  level_0_name: Horrible
+  level_1_name: Poor
+  level_2_name: Satisfactory
+  level_3_name: Good
+  level_4_name: Excellent
+
+c4:
+  rubric_criterion_name: "Correctness"
+  assignment_id: <%= Fixtures.identify(:assignment_1) %> 
+  weight: 2
+  level_0_name: Horrible
+  level_1_name: Poor
+  level_2_name: Satisfactory
+  level_3_name: Good
+  level_4_name: Excellent
+
+c5:
+  rubric_criterion_name: "Part 1 Programming"
+  assignment_id: <%= Fixtures.identify(:assignment_2) %> 
+  weight: 2
+  level_0_name: Horrible
+  level_1_name: Poor
+  level_2_name: Satisfactory
+  level_3_name: Good
+  level_4_name: Excellent
+  
+c6:
+  rubric_criterion_name: "Part 2 Programming"
+  assignment_id: <%= Fixtures.identify(:assignment_2) %> 
+  weight: 2
+  level_0_name: Horrible
+  level_1_name: Poor
+  level_2_name: Satisfactory
+  level_3_name: Good
+  level_4_name: Excellent

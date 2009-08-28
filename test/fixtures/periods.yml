@@ -1,0 +1,15 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+# one:
+#   column: value
+#
+# two:
+#   column: value
+
+#gp_24_hours_past_1:
+#  submission_rule_id: <%= Fixtures.identify(:gp_sr_1) %>
+#  hours: 24
+  
+#gp_24_hours_past_2:
+#  submission_rule_id: <%= Fixtures.identify(:gp_sr_1) %>
+#  hours: 24

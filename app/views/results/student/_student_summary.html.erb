@@ -1,0 +1,39 @@
+<div id="summary_criteria_pane">
+  <%= render :partial => "results/common/marks_summary_table", :locals => {:rubric_criteria => rubric_criteria, :marks_map => marks_map} %>
+</div>  <!-- Summary Criteria Pane -->
+      
+    <div class="mark_subtotal">
+      <div class="float_left">Subtotal&nbsp;</div>
+      <div class="float_right"> /<%= h(assignment.total_mark) %>  </div>
+      <div class="float_right" id="current_subtotal_div"> <%= h(result.get_subtotal) %> </div>
+    </div>
+
+    <div class="clear"></div><br/>
+    
+    <div id="extra_marks_pane" class="extra_marks_pane">
+      <div class="bonus_deduction"><b>Bonus/Deductions</b></div>
+
+    <%= render :partial => 'results/student/extra_marks_table', :locals => {:extra_marks_points => extra_marks_points, :result_id => result.id} %>
+      
+
+      <div>
+        <div class="float_left"><b>Bonus Marks:&nbsp;</b></div>
+        <div class="float_left" id="extra_marks_bonus"><%= h(result.get_positive_extra_points) %></div>
+      </div>
+      <div class="clear"></div>
+      <div>
+        <div class="float_left"><b>Deducted Marks:&nbsp;</b></div>
+        <div class="float_left" id="extra_marks_deducted"><%= h(@result.get_negative_extra_points) %></div>
+      </div>
+    </div>      
+    
+    <div class="clear"></div>
+
+    <div class="mark_total">
+<span class="final_mark">
+       <span id="current_total_mark_div"> <%= h(result.total_mark) %> </span>
+       <span> /<%= h(assignment.total_mark) %>  </span>
+      </span>
+
+     <span>Final Mark&nbsp;</span>
+         </div>

@@ -1,0 +1,31 @@
+<% annots.each do |annot| %>
+  <li class="<%= cycle('annotations1', 'annotations2') %>">
+  
+    <p class="lineNumber"><%=link_to_function "#{File.join(annot.submission_file.path, annot.submission_file.filename)}: Line #{annot.line_start} to #{annot.line_end}", "load_submitted_file_and_focus(#{annot.submission_file.id}, #{annot.line_start})"%></p>
+    <p class="annotationContent" id="annotation_text_content_display_<%=h(annot.annotation_text.id)%>">
+    <%=simple_format(h(CGI.unescape(annot.annotation_text.content)))%>
+    </p>
+    <p class="manageAnnotations"><%=link_to_function "Edit", "$('annotation_text_content_edit_#{annot.annotation_text.id}').show();$('annotation_text_content_display_#{annot.annotation_text.id}').hide();"%>
+    &middot;
+    <%=link_to_remote "Remove", :url => {:controller => "annotations", :action=>"destroy", :id=>annot.id, :submission_file_id=>@submission_file_id}, :confirm => "Are you sure you want to remove this annotation?"%>
+    </p>
+
+    <div id="annotation_text_content_edit_<%=annot.annotation_text.id%>" class="annotation_text_content_editor">
+    
+      <% remote_form_for :annotation_text, annot.annotation_text, :url => {:action => "update_annotation", :controller => "annotations"} do |f| %>   
+      
+        <%= f.hidden_field :id%>
+        <input type="hidden" name="annotation_text[submission_file_id]" value="<%=h(@submission_file_id)%>" />
+        <p class="manageAnnotations"><%= f.text_area :content, :cols => 60, :rows => 5 %></p>
+        
+        <p class="manageAnnotations">
+        <%= submit_tag "Submit Edit", :confirm => "This change will propogate across all submissions marked with this annotation.  Is this OK?" %>
+        <input type="reset" value="Cancel" onClick="$('annotation_text_content_edit_<%=h(annot.annotation_text.id)%>').hide();$('annotation_text_content_display_<%=h(annot.annotation_text.id)%>').show();">
+        </p>
+      
+      <% end %>
+    
+    </div>
+    
+  </li>
+<% end %>

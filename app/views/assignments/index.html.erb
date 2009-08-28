@@ -1,0 +1,19 @@
+<div id="title_bar"><h1>Manage Assignments 
+ </h1></div>
+
+<div class="wrapLeft">
+
+<%= link_to I18n.t(:create_new),  
+     {:controller => 'assignments', 
+     :action => 'new'},
+     :class => "button" %>
+<%= render :partial => "layouts/assignments", 
+  :locals => { :controller => 'assignments', :action => 'edit' } -%>
+</div>
+
+
+<div class="wrapLeft">
+  <%= link_to "Download CSV Grades Report", :action => "download_csv_grades_report" unless !@current_user.admin?%>
+</div>
+
+

@@ -1,0 +1,14 @@
+<%#
+# Erb template for display rubric criterion levels in the assignment rubric manager
+%>
+<li class="rubric_level <%= cycle('rowA', 'rowB') %>">
+  <span class="float_left">
+    <strong>Level <%=h(rubric_level_index)%></strong>
+  <%= f.text_field "level_#{rubric_level_index}_name".to_sym 
+        
+  %>
+  </span>
+  <%= f.text_area "level_#{rubric_level_index}_description".to_sym, 
+              :size => "50x3" %>
+</li>
+
