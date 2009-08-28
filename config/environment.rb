@@ -41,7 +41,7 @@ REPOSITORY_TYPE = "svn" # use Subversion as storage backend
 ###################################################################
 # Directory where Repositories will be created. Make sure MarkUs is allowed
 # to write to this directory
-REPOSITORY_STORAGE = "/home/storage/markus/repository-root"
+REPOSITORY_STORAGE = "/home/markus/svn-repos-root"
 
 ###################################################################
 # Change this to 'REPOSITORY_EXTERNAL_SUBMITS_ONLY = true' if you
@@ -169,8 +169,8 @@ Rails::Initializer.run do |config|
   # config.active_record.observers = :cacher, :garbage_collector
   
   
-  config.gem 'thoughtbot-shoulda', :lib => 'shoulda', :source  =>
-"http://gems.github.com", :version => '>= 2.0.6' 
+  #config.gem 'thoughtbot-shoulda', :lib => 'shoulda', :source  =>
+#"http://gems.github.com", :version => '>= 2.0.6' 
 end
 
 ActionView::Base.field_error_proc = Proc.new { |html_tag, instance| "<span class=\"fieldWithErrors\">#{html_tag}</span>" }
