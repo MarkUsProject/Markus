@@ -1,0 +1,2 @@
+page.replace_html 'new_rubric_criterion_errors', :partial => 'new_rubric_criterion_errors', :locals => {:errors => @errors}
+page.show 'new_rubric_criterion_errors'
