@@ -13,15 +13,17 @@
     </div> <!-- End of Code holder -->
   
     <div id="annotations_summary" class="tabbedArea">    
+
+      <h3>Overall Comments</h3>
+      
+      <p><%=simple_format(h(result.overall_comment))%></p>
+
       <h3>Current Annotations</h3>
       <p>Current annotations across all submission files. Click on the line number to jump to the location in the file.</p>
     
       <ul id="annotation_summary_list">
       </ul>
       
-      <h3>Overall Comments</h3>
-      
-      <p><%=simple_format(h(result.overall_comment))%></p>
     </div> <!-- Annotations Summary -->
   </div> <!-- Code Pane -->
   
