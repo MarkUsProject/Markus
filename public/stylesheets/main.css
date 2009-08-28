@@ -572,6 +572,11 @@ input#extra_mark_description{
    font-weight: bold;
 }
 
+.status_pending{
+   font-style: italic;
+}
+
+
 .mark_total{
    font-style: italic;
    font-weight: bold;
