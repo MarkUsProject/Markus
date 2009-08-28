@@ -999,12 +999,10 @@ span.info_date{
    font-style: italic;
 }
 
-.section .info_due_date{
-   margin-left: 50px;
-}
-
 a.assignment_list{
   font-size: 1.2em;
+  display: inline-block;
+  min-width: 15em;
 }
 
 span.title{
