@@ -51,8 +51,8 @@ assignment_build_on_top_of_1:
 
 assignment_2:
    short_identifier: Captain Sparrow
-   description: 
-   message: 
+   description: ""
+   message: ""
    due_date: <%= 43.days.from_now.to_s(:db)%>
    group_min: 1
    group_max: 1
@@ -66,8 +66,8 @@ assignment_2:
    
 assignment_3:
    short_identifier: Captain Haddock
-   description: 
-   message: 
+   description: ""
+   message: ""
    due_date: <%= 43.days.from_now.to_s(:db)%>
    group_min: 2
    group_max: 4
@@ -81,8 +81,8 @@ assignment_3:
 
 assignment_4:
    short_identifier: Captain Late
-   description: 
-   message: 
+   description: ""
+   message: ""
    due_date: <%= 2.days.ago.to_s(:db)%>
    group_min: 2
    group_max: 4

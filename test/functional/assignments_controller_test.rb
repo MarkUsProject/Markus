@@ -665,7 +665,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
   end
   
   def test_on_index_student_gets_assignment_results
-    get_as(users(:student1), :index)
+    get_as(users(:student1), :index)   
     assert assigns(:a_id_results)
     assert assigns(:assignments)
     assert_response :success
