@@ -4,6 +4,8 @@
 class MainController < ApplicationController
   
   include MainHelper
+  protect_from_forgery :except => :login
+
   # check for authorization 
   before_filter      :authorize_for_user,      :except => [:login]
 

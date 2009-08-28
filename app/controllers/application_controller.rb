@@ -2,14 +2,11 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
+  include SessionHandler
 
-  # Avoid CSRF for non-GET, HTML/JavaScript requests
-  # see http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html#M000514
-  protect_from_forgery
+  protect_from_forgery  
   
   layout "content"
-  
-  include SessionHandler
   
   helper :all # include all helpers, all the time
   
