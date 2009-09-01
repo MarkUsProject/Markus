@@ -22,7 +22,6 @@ Date.parseFormattedString = function (string) {
     if (d === null) {
         return Date.parse(string); // at least give javascript a crack at it.
     }
-    console.log(d);
     var offset = 0; 
     var date = new Date(d[1], 0, 1); 
     if (d[3]) {
