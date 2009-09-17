@@ -60,11 +60,10 @@
       
       <p>If a TA with the same user_name exists, then that TA's information is updated.</p>
       
-      <%= form_tag({ :controller => 'tas', :actions => "upload_ta_list"},
-{:multipart => true}) %>
+           <%= form_tag( { :controller => 'tas', :action => "upload_ta_list" }, { :multipart => true }) %>
         <label for="userlist" class="accordion_label">CVS File</label>
         <input type="file" name="userlist" id="userlist" size="2"/>
-        <%= submit_tag "Update userlist", :disable_with => 'Processing...', :class => 'button' %>
+		<%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
       </form> 
     </div>
 
