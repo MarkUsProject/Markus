@@ -20,7 +20,14 @@ class User < ActiveRecord::Base
   ADMIN = 'Admin'
   TA = 'Ta'
   
-  # Authentication------------------------------------------------------
+  # Authentication constants to be used as return values
+  # see self.authenticated? and main_controller for details
+  AUTHENTICATE_SUCCESS =      0   # valid username/password combination
+  AUTHENTICATE_NO_SUCH_USER = 1   # user does not exist
+  AUTHENTICATE_BAD_PASSWORD = 2   # wrong password
+  AUTHENTICATE_ERROR =        3   # generic/unknown error
+  AUTHENTICATE_BAD_CHAR =     4   # invalid character in username/password
+  AUTHENTICATE_BAD_PLATFORM = 5   # external authentication works for *NIX platforms only
   
   # Verifies if user is allowed to enter MarkUs
   # Returns user object representing the user with the given login.
@@ -31,7 +38,7 @@ class User < ActiveRecord::Base
   
   # Authenticates login against its password 
   # through a script specified by VALIDATE_FILE
-  def self.authenticated?(login, password)
+  def self.authenticate(login, password)
     # Do not allow the following characters in usernames/passwords
     # Right now, this is \n and \0 only, since username and password
     # are delimited by \n and C programs use \0 to terminate strings
@@ -40,12 +47,33 @@ class User < ActiveRecord::Base
       # Open a pipe and write to stdin of the program specified by VALIDATE_FILE. 
       # We could read something from the programs stdout, but there is no need
       # for that at the moment (you would do it by e.g. pipe.readlines)
+      
+      # External validation is supportes on *NIX only
+      if RUBY_PLATFORM =~ /(:?mswin|mingw)/ # should match for Windows only
+        return AUTHENTICATE_BAD_PLATFORM
+      end
+      
+      # In general, the external password validation program will return the
+      # following codes (other than 0):
+      #  1 means no such user
+      #  2 means bad password
+      #  3 is used for other error exits
+      
       pipe = IO.popen(VALIDATE_FILE, "w+")
       pipe.puts("#{login}\n#{password}") # write to stdin of VALIDATE_FILE
       pipe.close
-      return $?.exitstatus == 0
+      case $?.exitstatus
+        when 0
+          return AUTHENTICATE_SUCCESS
+        when 1
+          return AUTHENTICATE_NO_SUCH_USER
+        when 2
+          return AUTHENTICATE_BAD_PASSWORD
+        else
+          return AUTHENTICATE_ERROR
+      end
     else
-      return false
+      return AUTHENTICATE_BAD_CHAR
     end
   end
   
@@ -56,9 +84,6 @@ class User < ActiveRecord::Base
     self.groupings.find(:all, :conditions => ["memberships.membership_status != :u", { :u => StudentMembership::STATUSES[:rejected]}])
   end
 
-
-  # Group methods ------------------------------------------------------
-  
   # Helper methods -----------------------------------------------------
     
   def admin?

@@ -1,6 +1,7 @@
 en:
     markus:             "MarkUs"
     login:              "Login"
+    login_failed:       "Login failed"
     password:           "Password"
     short_identifier:   "Short Identifier"
     description:        "Name"

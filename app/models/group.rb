@@ -71,8 +71,8 @@ class Group < ActiveRecord::Base
     # Attempt to build the repository
     begin
       # create repositories and write permissions if and only if we are admin
-      if IS_REPOSITORY_ADMIN
-        Repository.get_class(REPOSITORY_TYPE).create(File.join(REPOSITORY_STORAGE, repository_name))
+      if repository_admin?
+        Repository.get_class(REPOSITORY_TYPE).create(File.join(REPOSITORY_STORAGE, repository_name), true, REPOSITORY_PERMISSION_FILE)
         if repository_admin?
           # Each admin user will have read and write permissions on each repo
           Admin.all.each do |admin|
@@ -93,15 +93,14 @@ class Group < ActiveRecord::Base
   # Return a repository object, if possible
   def repo
     repo_loc = File.join(REPOSITORY_STORAGE, self.repository_name)
-    if !IS_REPOSITORY_ADMIN
-
+    if !repository_admin?
       if Repository.get_class(REPOSITORY_TYPE).repository_exists?(repo_loc)
-        return Repository.get_class(REPOSITORY_TYPE).open(repo_loc, false) # use false as a second parameter, since we are not repo admin
+        return Repository.get_class(REPOSITORY_TYPE).open(repo_loc, false, REPOSITORY_PERMISSION_FILE) # use false as a second parameter, since we are not repo admin
       else
         raise "Repository not found and MarkUs not in authoritative mode!" # repository not found, and we are not repo-admin
       end
     else
-      return Repository.get_class(REPOSITORY_TYPE).open(repo_loc)
+      return Repository.get_class(REPOSITORY_TYPE).open(repo_loc, true, REPOSITORY_PERMISSION_FILE)
     end
   end
 end
