@@ -61,14 +61,13 @@
 </div>
 
 <div class="wrapLeft">
-<% if flash[:upload_notice] && flash[:invalid_lines].empty? -%>
-  <div>
-    <p class="success"><%= h(flash[:upload_notice]) %></p>
-  </div>
-<% end -%>
-<p id="criterion_error" class="warning" style="display: none;">
-  
-</p>
+	<% if flash[:annotation_upload_invalid_lines] -%>  
+		<p class="error"><%= flash[:annotation_upload_invalid_lines] %></p>  
+	<% end -%>
+	<% if flash[:annotation_upload_success] -%>  
+		<p class="success"><%= flash[:annotation_upload_success] %></p>  
+	<% end -%>
+<p id="criterion_error" class="warning" style="display: none;"></p>
 
   <div id="annotation_category_pane">
     <div class="annotation_categories_fieldset">

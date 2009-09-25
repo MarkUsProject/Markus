@@ -94,15 +94,21 @@ class AnnotationCategoriesController < ApplicationController
     end
     annotation_category_list = params[:annotation_category_list]
     annotation_category_number = 0
-    FasterCSV.parse(annotation_category_list) do |row|
-      next if FasterCSV.generate_line(row).strip.empty?
-      if !AnnotationCategory.add_by_row(row, @assignment)
-        flash[:annotation_upload_invalid_lines] << row.join(",")
-      else
-        annotation_category_number += 1
+    annotation_line = 0
+    if !annotation_category_list.nil?
+      FasterCSV.parse(annotation_category_list) do |row|
+        next if FasterCSV.generate_line(row).strip.empty?
+        annotation_line += 1
+        result = AnnotationCategory.add_by_row(row, @assignment, annotation_line)
+        if result[:annotation_upload_invalid_lines].size > 0
+          flash[:annotation_upload_invalid_lines] = result[:annotation_upload_invalid_lines]
+          break
+        else
+          annotation_category_number += 1
+        end
       end
-    end 
-    flash[:annotation_upload_success] = I18n.t('annotations.upload.success', :annotation_category_number => annotation_category_number)
+      flash[:annotation_upload_success] = annotation_category_number > 0 ? I18n.t('annotations.upload.success', :annotation_category_number => annotation_category_number) : nil
+    end
     redirect_to :action => 'index', :id => @assignment.id
   end
 end
