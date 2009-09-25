@@ -1,6 +1,5 @@
 require File.dirname(__FILE__) + '/../test_helper'
 require 'shoulda'
-require 'mocha'
 
 
 class StudentTest < ActiveSupport::TestCase
