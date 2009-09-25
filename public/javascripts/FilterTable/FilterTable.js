@@ -445,7 +445,7 @@ var FilterTable = Class.create({
   },
   // When all else fails, do the standard_sort...
   standard_sort: function(a, b) {
-    if (typeof(a[FILTERTABLE_SORT].toLowerCase()) == 'string') {
+    if (typeof(a[FILTERTABLE_SORT]) == 'string') {
       return a[FILTERTABLE_SORT].toLowerCase() > b[FILTERTABLE_SORT].toLowerCase();
     }
     return a[FILTERTABLE_SORT] > b[FILTERTABLE_SORT];

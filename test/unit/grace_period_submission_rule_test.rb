@@ -12,6 +12,7 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
       @assignment = @grouping.assignment
       grace_period_submission_rule = GracePeriodSubmissionRule.new
       @assignment.replace_submission_rule(grace_period_submission_rule)
+      GracePeriodDeduction.destroy_all
 
       grace_period_submission_rule.save
 
