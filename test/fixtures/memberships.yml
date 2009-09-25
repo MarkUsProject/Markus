@@ -1,7 +1,7 @@
 ################################################################################
 #
 # Memberships Table
-# 
+#
 # one:
 #   id
 #   user_id
@@ -15,7 +15,7 @@
 
 membership1:
    user_id:            <%= Fixtures.identify(:student1) %>
-   grouping_id:        <%= Fixtures.identify(:grouping_1) %> 
+   grouping_id:        <%= Fixtures.identify(:grouping_1) %>
    membership_status: inviter
    type:               StudentMembership
    created_at:         <% Time.now.to_s(:db)%>
@@ -52,7 +52,7 @@ membership4:
 membership5:
    user_id:            <%= Fixtures.identify(:student5) %>
    grouping_id:        <%= Fixtures.identify(:grouping_2) %>
-   membership_status: pending
+   membership_status:  pending
    type:               StudentMembership
    created_at:         <% Time.now.to_s(:db)%>
    updated_at:         <% Time.now.to_s(:db)%>
@@ -81,11 +81,18 @@ membership8:
    created_at:          <% Time.now.to_s(:db) %>
    updated_at:          <% Time.now.to_s(:db)%>
 
+membership9:
+   user_id:            <%= Fixtures.identify(:student5) %>
+   grouping_id:        <%= Fixtures.identify(:grouping_2) %>
+   membership_status:  pending
+   type:               StudentMembership
+   created_at:         <% Time.now.to_s(:db)%>
+   updated_at:         <% Time.now.to_s(:db)%>
 
 membership_1:
    user_id:            <%= Fixtures.identify(:ta1) %>
    grouping_id:        <%= Fixtures.identify(:grouping_2) %>
-   membership_status: 
+   membership_status:
    type:               TAMembership
    created_at:         <% Time.now.to_s(:db)%>
    updated_at:         <%Time.now.to_s(:db)%>
