@@ -2,19 +2,19 @@ require 'fastercsv'
 
 class AnnotationCategoriesController < ApplicationController
   include AnnotationCategoriesHelper
-  
+
   before_filter      :authorize_only_for_admin
-  
+
   def index
     @assignment = Assignment.find(params[:id])
     @annotation_categories = @assignment.annotation_categories
   end
-  
+
   def get_annotations
     @annotation_category = AnnotationCategory.find(params[:id])
     @annotation_texts = @annotation_category.annotation_texts
   end
-  
+
   def add_annotation_category
     @assignment = Assignment.find(params[:id])
     if request.post?
@@ -30,7 +30,7 @@ class AnnotationCategoriesController < ApplicationController
       return
     end
   end
-  
+
   def update_annotation_category
     @annotation_category = AnnotationCategory.find(params[:id])
     @annotation_category.update_attributes(params[:annotation_category])
@@ -40,13 +40,13 @@ class AnnotationCategoriesController < ApplicationController
       flash.now[:success] = I18n.t('annotations.update.annotation_category_success')
     end
   end
-  
+
   def update_annotation
     @annotation_text = AnnotationText.find(params[:id])
     @annotation_text.update_attributes(params[:annotation_text])
     @annotation_text.save
   end
-  
+
   def add_annotation_text
     @annotation_category = AnnotationCategory.find(params[:id])
     if request.post?
@@ -58,21 +58,21 @@ class AnnotationCategoriesController < ApplicationController
         render :action => 'new_annotation_text_error'
         return
       end
-      render :action => 'insert_new_annotation_text'
+      render :action => 'insert_new_annotation_text'   
       return
     end
   end
-  
+
   def delete_annotation_text
     @annotation_text = AnnotationText.find(params[:id])
     @annotation_text.destroy
   end
-  
+
   def delete_annotation_category
     @annotation_category = AnnotationCategory.find(params[:id])
     @annotation_category.destroy
   end
-  
+
   def download
     @assignment = Assignment.find(params[:id])
     @annotation_categories = @assignment.annotation_categories
@@ -86,11 +86,12 @@ class AnnotationCategoriesController < ApplicationController
       redirect_to :action => 'index', :id => params[:id]
     end
   end
-  
+
   def csv_upload
     @assignment = Assignment.find(params[:id])
-    if !request.post? 
+    if !request.post?
       redirect_to :action => 'index', :id => @assignment.id
+      return
     end
     annotation_category_list = params[:annotation_category_list]
     annotation_category_number = 0
