@@ -285,7 +285,7 @@ class Assignment < ActiveRecord::Base
   end
   
   def ungrouped_students
-    Student.all - grouped_students
+    Student.all(:conditions => {:hidden => false}) - grouped_students
   end
   
   def valid_groupings
