@@ -1,25 +1,26 @@
+<% if !flash[:success].nil? %>
+  <div class="success">
+    <%= flash[:success] %>
+  </div>
+<% end %>
+
 <% remote_form_for :rubric_criterion, criterion, :url => {:action => 'update', :id => criterion.id} do |f| %>
 
 <% # TODO:  Move this submit somewhere? 
 %>
-
 
 <h2>
   <span id="selected_criterion_name">
     <%= h(criterion.rubric_criterion_name)%>
   </span>
 
-
-<%= f.submit %>
-
+  <%= f.submit %>
 </h2>
-
 
 <div class="error" id="criterion_<%=criterion.id%>_error" style="display:none;">
 </div>
 
 <div class="main_rubric_criteria_edit">
-
 
 <div class="float_right">
   <%= link_to_remote I18n.t(:delete), :method => 'delete',
