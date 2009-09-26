@@ -6,10 +6,10 @@
 # two:
 #   column: value
 
-#one:
-#  content: 'You went over the 80 char limit'
-#  annotation_category_id: 1
+one:
+  content: 'You went over the 80 char limit'
+  annotation_category_id: 1
 
-#two:
-#  content: 'This is some other text'
-#  annotation_category_id: 2
+two:
+  content: 'This is some other text'
+  annotation_category_id: 2
