@@ -99,9 +99,9 @@ class AnnotationCategoriesController < ApplicationController
       FasterCSV.parse(annotation_category_list) do |row|
         next if FasterCSV.generate_line(row).strip.empty?
         annotation_line += 1
-        result = AnnotationCategory.add_by_row(row, @assignment, annotation_line)
+        result = AnnotationCategory.add_by_row(row, @assignment)
         if result[:annotation_upload_invalid_lines].size > 0
-          flash[:annotation_upload_invalid_lines] = result[:annotation_upload_invalid_lines]
+           flash[:annotation_upload_invalid_lines] = I18n.t('annotations.upload.error', :annotation_category => row, :annotation_line => annotation_line)
           break
         else
           annotation_category_number += 1

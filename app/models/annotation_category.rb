@@ -9,7 +9,7 @@ class AnnotationCategory < ActiveRecord::Base
   # Takes an array of comma separated values, and tries to assemble an 
   # Annotation Category, and associated Annotation Texts
   # Format:  annotation_category,annotation_text,annotation_text,...
-  def self.add_by_row(row, assignment, annotation_line)
+  def self.add_by_row(row, assignment)
     result = {}
     result[:annotation_upload_invalid_lines] = []
     # The first column is the annotation category name...
@@ -32,7 +32,7 @@ class AnnotationCategory < ActiveRecord::Base
         annotation_category_name = "" if annotation_category_name.nil?
         # If for some reason we are not able to update the category
         # send the respective error
-        result[:annotation_upload_invalid_lines].push(I18n.t('annotations.upload.error', :annotation_category => annotation_category_name, :annotation_line => annotation_line))
+        result[:annotation_upload_invalid_lines].push(annotation_category_name)
       end
     end
     return result
