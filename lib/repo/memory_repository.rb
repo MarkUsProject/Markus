@@ -65,14 +65,15 @@ class MemoryRepository < Repository::AbstractRepository
     return false
   end
   
-  # Open repository at specified location
-  def self.open(location, is_admin=true)
+  # Open repository at specified location (dummy permission file to unify API)
+  def self.open(location, is_admin=true, perm_file=nil)
     return @@repositories[location]
     #return MemoryRepository.new(location, is_admin)
   end
   
   # Creates memory repository at "virtual" location (they are identifiable by location)
-  def self.create(location, is_admin=true)
+  # perm_file is a parameter, which exists to conform with the API
+  def self.create(location, is_admin=true, perm_file=nil)
     MemoryRepository.new(location, is_admin, true) # want to create a repository
     return MemoryRepository.open(location, is_admin)
   end

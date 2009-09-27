@@ -1,8 +1,8 @@
 class ResultsController < ApplicationController
   before_filter      :authorize_only_for_admin, :except => [:codeviewer,
-  :edit, :update_mark, :view_marks, :create, :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria, :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria]
+  :edit, :update_mark, :view_marks, :create, :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria, :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria, :update_marking_state]
   before_filter      :authorize_for_ta_and_admin, :only => [:edit,
-  :update_mark, :create, :add_extra_mark, :download, :next_grouping, :update_overall_comment, :expand_criteria, :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria]
+  :update_mark, :create, :add_extra_mark, :download, :next_grouping, :update_overall_comment, :expand_criteria, :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria, :update_marking_state]
   before_filter      :authorize_for_user, :only => [:codeviewer]
   before_filter      :authorize_for_student, :only => [:view_marks]
 
@@ -66,6 +66,18 @@ class ResultsController < ApplicationController
       groupings = @assignment.groupings
     end
     
+    # If a grouping's submission's marking_status is complete, we're not going
+    # to include them in the next_submission/prev_submission list
+    
+    groupings.delete_if do |grouping|
+      grouping != @grouping && (!grouping.has_submission? || grouping.get_submission_used.result.marking_state == Result::MARKING_STATES[:complete])
+    end
+    
+    # We sort by Group name by default
+    groupings = groupings.sort do |a, b|
+      a.group.group_name <=> b.group.group_name
+    end
+    
     current_grouping_index = groupings.index(@grouping)
     if !groupings[current_grouping_index + 1].nil?
       @next_grouping = groupings[current_grouping_index + 1]
@@ -83,6 +95,20 @@ class ResultsController < ApplicationController
     else
       redirect_to :controller => 'submissions', :action => 'collect_and_begin_grading', :id => grouping.assignment.id, :grouping_id => grouping.id
     end
+  end
+  
+  def set_released_to_students
+    @result = Result.find(params[:id])
+    released_to_students = (params[:value] == 'true')
+    @result.released_to_students = released_to_students
+    @result.save
+  end
+  
+  #Updates the marking state
+  def update_marking_state
+    @result = Result.find(params[:id])
+    @result.marking_state = params[:value]
+    @result.save
   end
   
   def download
@@ -200,6 +226,7 @@ class ResultsController < ApplicationController
       end
       return
     end
+
     render :action => 'results/marker/add_extra_mark'
   end
 

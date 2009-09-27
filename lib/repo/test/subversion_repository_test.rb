@@ -258,22 +258,22 @@ class SubversionRepositoryTest < Test::Unit::TestCase
   
   context "A repository with an authorization file specified" do
     
-    $REPOSITORY_SVN_AUTHZ_FILE = SVN_TEST_REPOS_DIR+"/svn_authz"
+    SVN_AUTHZ_FILE = SVN_TEST_REPOS_DIR+"/svn_authz"
     
     setup do
       # have a clean authz file
-      FileUtils.cp($REPOSITORY_SVN_AUTHZ_FILE+'.orig', $REPOSITORY_SVN_AUTHZ_FILE)
+      FileUtils.cp(SVN_AUTHZ_FILE+'.orig', SVN_AUTHZ_FILE)
       # create repository first
       repo1 = SVN_TEST_REPOS_DIR+"/Testrepo1"
       repo2 = SVN_TEST_REPOS_DIR+"/Repository2"
       
-      SubversionRepository.create(repo1)
-      SubversionRepository.create(repo2)
-      SubversionRepository.create(TEST_REPO)
+      SubversionRepository.create(repo1, true, SVN_AUTHZ_FILE)
+      SubversionRepository.create(repo2, true, SVN_AUTHZ_FILE)
+      SubversionRepository.create(TEST_REPO, true, SVN_AUTHZ_FILE)
       # open the repository
-      @repo1 = SubversionRepository.new(repo1, false) # non-admin repository
-      @repo2 = SubversionRepository.new(repo2, false) # again, a non-admin repo
-      @repo = SubversionRepository.new(TEST_REPO)     # repo with admin-privs
+      @repo1 = SubversionRepository.new(repo1, false, SVN_AUTHZ_FILE) # non-admin repository
+      @repo2 = SubversionRepository.new(repo2, false, SVN_AUTHZ_FILE) # again, a non-admin repo
+      @repo = SubversionRepository.new(TEST_REPO, true, SVN_AUTHZ_FILE)     # repo with admin-privs
       # add some files
       files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
       add_some_files_helper(@repo1, files_to_add)
@@ -285,7 +285,7 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       FileUtils.remove_dir(SVN_TEST_REPOS_DIR+"/Testrepo1", true)
       FileUtils.remove_dir(SVN_TEST_REPOS_DIR+"/Repository2", true)
       FileUtils.remove_dir(TEST_REPO, true)
-      FileUtils.rm($REPOSITORY_SVN_AUTHZ_FILE, :force => true)
+      FileUtils.rm(SVN_AUTHZ_FILE, :force => true)
     end
     
     should "be able to get permissions for a user" do
@@ -439,12 +439,12 @@ class SubversionRepositoryTest < Test::Unit::TestCase
     
     should "add a user per each repository" do
       # use a different svn_authz file for this test
-      old_svn_authz = $REPOSITORY_SVN_AUTHZ_FILE
-      $REPOSITORY_SVN_AUTHZ_FILE = SVN_TEST_REPOS_DIR+"/svn_authz_bulk_stuff"
+      old_svn_authz = SVN_AUTHZ_FILE
+      new_svn_authz = SVN_TEST_REPOS_DIR+"/svn_authz_bulk_stuff"
       
       # remove authz file if it exists
-      if File.exist?($REPOSITORY_SVN_AUTHZ_FILE)
-        FileUtils.rm($REPOSITORY_SVN_AUTHZ_FILE)
+      if File.exist?(new_svn_authz)
+        FileUtils.rm(new_svn_authz)
       end
       
       # create some repositories, add some users
@@ -463,7 +463,7 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       
       repositories = []
       repository_names.each do |repo_name|
-        SubversionRepository.create(repo_name)
+        SubversionRepository.create(repo_name, true, new_svn_authz)
         repo = SubversionRepository.open(repo_name)
         repo.add_user("some_user", Repository::Permission::READ_WRITE)
         repo.add_user("another_user", Repository::Permission::READ_WRITE)
@@ -485,8 +485,6 @@ class SubversionRepositoryTest < Test::Unit::TestCase
         FileUtils.remove_dir(repo_name, true)
       end
       
-      # change back to old authz file again
-      $REPOSITORY_SVN_AUTHZ_FILE = old_svn_authz
     end
   end # end context
   

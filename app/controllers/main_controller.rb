@@ -38,19 +38,26 @@ class MainController < ApplicationController
     flash[:login_notice] = get_blank_message(blank_login, blank_pwd)
     redirect_to(:action => 'login') && return if blank_login || blank_pwd
     
-    # authenticate user
-    if User.authenticated?(params[:user_login], params[:user_password])
+    # Two stage user verification: authentication and authorization
+    authenticate_response = User.authenticate(params[:user_login], params[:user_password])
+    if authenticate_response == User::AUTHENTICATE_BAD_PLATFORM
+      flash[:login_notice] = "External authentication not supported on your platform!"
+      return
+    end
+    if authenticate_response == User::AUTHENTICATE_SUCCESS
+      # Username/password combination is valid. Check if user is allowed to use MarkUs.
+      #
       # sets this user as logged in if login is a user in MarkUs
       found_user = User.authorize(params[:user_login]) # if not nil, user authorized to enter MarkUs
       if found_user.nil?
-        # This message actually means "Username not found", but it's from a security-perspective
+        # This message actually means "User not allowed to use MarkUs", but it's from a security-perspective
         # not a good idea to report this to the outside world. It makes it easier for attempted break-ins
-        # if one can distinguish between existent and non-existent user.
-        flash[:login_notice] = "Login failed." # this is actually a "Username not found."
+        # if one can distinguish between existent and non-existent users.
+        flash[:login_notice] = I18n.t(:login_failed)
         return
       end
     else
-      flash[:login_notice] = "Username/password contains illegal characters."
+      flash[:login_notice] = I18n.t(:login_failed)
       return
     end
     
@@ -69,7 +76,7 @@ class MainController < ApplicationController
       # redirect to last visited page or to main page
       redirect_to( uri || { :action => 'index' } )
     else
-      flash[:login_notice] = "Login failed."
+      flash[:login_notice] = I18n.t(:login_failed)
     end
   end
   

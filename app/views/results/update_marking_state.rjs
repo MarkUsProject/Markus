@@ -1,0 +1,8 @@
+if @current_user.admin?
+  if @result.marking_state == Result::MARKING_STATES[:complete]
+    # Activate the checkbox to release/unrelease
+    page['released'].enable
+  else
+    page['released'].disable
+  end
+end

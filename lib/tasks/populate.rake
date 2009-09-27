@@ -1,19 +1,36 @@
 namespace :markus do
   
+  desc "Print MarkUs version"
+  task :version do
+    VERSION_FILE=File.expand_path(File.join(__FILE__, '../../../app/MARKUS_VERSION'))
+    if !File.exist?(VERSION_FILE)
+      $stderr.puts "Could not determine MarkUs version, please check your installation!"
+      exit(1)
+    end
+    content = File.new(VERSION_FILE).read
+    version_info = Hash.new
+    content.split(',').each do |token|
+      k,v = token.split('=')
+      version_info[k.downcase] = v
+    end
+    puts "MarkUs version: #{version_info["version"]}.#{version_info["patch_level"]}"
+  end
+  
   desc "Create a single Instructor"
   task(:instructor => :environment) do
     user_name = ENV['user_name']
     first_name = ENV['first_name']
     last_name = ENV['last_name']
     if user_name.blank? || first_name.blank? || last_name.blank?
-      raise "usage:  rake markus:admin user_name=[user name] first_name=[first name] last_name=[last name]"
+      $stderr.puts "usage:  rake markus:admin user_name=[user name] first_name=[first name] last_name=[last name]"
+      exit(1)
     end
     puts "Creating Instructor #{user_name} (#{first_name} #{last_name})"
     a = Admin.new({:user_name => user_name, :first_name => first_name, :last_name => last_name})
     if !a.save
-      puts "Error saving record:"
+      $stderr.puts "Error saving record:"
       a.errors.each do |error_message|
-        puts error_message[0] + ' ' + error_message[1]
+        $stderr.puts error_message[0] + ' ' + error_message[1]
       end
     else
       puts "Instructor #{user_name} successfully created"
@@ -28,7 +45,7 @@ namespace :markus do
       csv_students = File.new(STUDENT_CSV)
       User.upload_user_list(Student, csv_students.read)
     else
-      puts "File not found or not readable: #{STUDENT_CSV}"
+      $stderr.puts "File not found or not readable: #{STUDENT_CSV}"
     end
   end
   

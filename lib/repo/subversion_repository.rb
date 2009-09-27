@@ -33,17 +33,12 @@ class SubversionRepository < Repository::AbstractRepository
   # The is_admin flag indicates if we have admin privileges. If set to false,
   # the repository relies on a third party to create repositories and manage its
   # permissions.
-  def initialize(connect_string, is_admin=true)
+  def initialize(connect_string, is_admin=true, svn_authz=nil)
     begin
       super(connect_string) # dummy call to super
     rescue NotImplementedError; end
     @repos_path = connect_string
-    if !defined? $REPOSITORY_SVN_AUTHZ_FILE
-      auth_file_constant = nil
-    else
-      auth_file_constant = $REPOSITORY_SVN_AUTHZ_FILE
-    end
-    @repos_auth_file = auth_file_constant || File.dirname(connect_string)+"/svn_authz"
+    @repos_auth_file = svn_authz || File.dirname(connect_string)+"/svn_authz"
     @repos_admin = is_admin
     if (SubversionRepository.repository_exists?(@repos_path))
       @repos = Svn::Repos.open(@repos_path)
@@ -57,7 +52,9 @@ class SubversionRepository < Repository::AbstractRepository
   # The is_admin flag indicates if we have admin privileges. If set to false,
   # the repository relies on a third party to create repositories and manage its
   # permissions.
-  def self.create(connect_string, is_admin=true)
+  # svn_authz is the path to the svn_authz file which should be used, for repo
+  # management.
+  def self.create(connect_string, is_admin=true, svn_authz=nil)
     if SubversionRepository.repository_exists?(connect_string)
       raise RepositoryCollision.new("There is already a repository at #{connect_string}")
     end
@@ -68,7 +65,7 @@ class SubversionRepository < Repository::AbstractRepository
     # create the repository using the ruby bindings
     fs_config = {Svn::Fs::CONFIG_FS_TYPE => Repository::SVN_FS_TYPES[:fsfs]} 
     Svn::Repos.create(connect_string, {}, fs_config)
-    return SubversionRepository.open(connect_string, is_admin)
+    return SubversionRepository.open(connect_string, is_admin, svn_authz)
   end
   
   # Static method: Opens an existing Subversion repository
@@ -76,8 +73,8 @@ class SubversionRepository < Repository::AbstractRepository
   # The is_admin flag indicates if we have admin privileges. If set to false,
   # the repository relies on a third party to create repositories and manage its
   # permissions.
-  def self.open(connect_string, is_admin=true)
-    return SubversionRepository.new(connect_string, is_admin)
+  def self.open(connect_string, is_admin=true, svn_authz=nil)
+    return SubversionRepository.new(connect_string, is_admin, svn_authz)
   end
   
   # Static method: Reports if a Subversion repository exists

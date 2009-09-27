@@ -71,7 +71,7 @@ class AbstractRepository
   # The is_admin flag indicates if we have admin privileges. If set to false,
   # the repository relies on a third party to create repositories and manage its
   # permissions.
-  def self.open(connect_string, is_admin=true)
+  def self.open(connect_string, is_admin=true, perm_file=nil)
     raise NotImplementedError, "Repository::open Not yet implemented"
   end
   
@@ -80,7 +80,7 @@ class AbstractRepository
   # The is_admin flag indicates if we have admin privileges. If set to false,
   # the repository relies on a third party to create repositories and manage its
   # permissions.  
-  def self.create(connect_string, is_admin=true)
+  def self.create(connect_string, is_admin=true, perm_file=nil)
     raise NotImplementedError, "Repository::create Not yet implemented"
   end
   

@@ -22,9 +22,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       'group_min'     => '',
       'group_max'     => '',
       'due_date(1i)'  => '',
-      'due_date(2i)'  => '',
-      'due_date(2i)'  => '',
-      'due_date(2i)'  => '',
+      'due_date(2i)'  => ''
     }
     setup_group_fixture_repos
     
