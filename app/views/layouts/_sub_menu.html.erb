@@ -20,7 +20,7 @@
        <span id="choose_an_assignment"><%=h(sanitize(@assignment.short_identifier))%></span>
      <% end %>
         <ul class="level2 dropdown">
-           <%= render :partial => 'layouts/assignments_dropdown_menu'%>
+           <%= render :partial => 'shared/assignments_dropdown_menu'%>
         </ul>
    </li>
 
@@ -101,7 +101,7 @@
 h(sanitize(@assignment.short_identifier))%></span>
      <% end %>
         <ul class="level2 dropdown">
-           <%= render :partial => 'layouts/assignments_dropdown_menu'%>
+           <%= render :partial => 'shared/assignments_dropdown_menu'%>
         </ul>
    </li>
   <% if controller.controller_name == 'submissions' or
@@ -126,7 +126,7 @@ h(sanitize(@assignment.short_identifier))%></span>
 h(sanitize(@assignment.short_identifier))%></span>
      <% end %>
         <ul class="level2 dropdown">
-           <%= render :partial => 'layouts/assignments_dropdown_menu'%>
+           <%= render :partial => 'shared/assignments_dropdown_menu'%>
         </ul>
    </li>
 
