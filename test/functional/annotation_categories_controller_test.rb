@@ -336,16 +336,15 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         should_assign_to :annotation_category, :annotation_text
       end
 
-      #TODO wait for the bug fix
-      # context "with errors on save" do
-      #   setup do
-      #     AnnotationText.any_instance.stubs(:save).returns(false)
-      #     post_as @admin, :add_annotation_text, :id => @category.id
-      #   end
-      #   should_respond_with :success
-      #   should_render_template 'new_annotation_text_error'
-      #   should_assign_to :annotation_category, :annotation_text
-      # end
+      context "with errors on save" do
+        setup do
+          AnnotationText.any_instance.stubs(:save).returns(false)
+          post_as @admin, :add_annotation_text, :id => @category.id
+        end
+        should_respond_with :success
+        should_render_template 'new_annotation_text_error'
+        should_assign_to :annotation_category, :annotation_text
+      end
     end
     
     context "on :csv_upload" do
