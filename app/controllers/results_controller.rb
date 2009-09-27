@@ -66,6 +66,18 @@ class ResultsController < ApplicationController
       groupings = @assignment.groupings
     end
     
+    # If a grouping's submission's marking_status is complete, we're not going
+    # to include them in the next_submission/prev_submission list
+    
+    groupings.delete_if do |grouping|
+      grouping != @grouping && (!grouping.has_submission? || grouping.get_submission_used.result.marking_state == Result::MARKING_STATES[:complete])
+    end
+    
+    # We sort by Group name by default
+    groupings = groupings.sort do |a, b|
+      a.group.group_name <=> b.group.group_name
+    end
+    
     current_grouping_index = groupings.index(@grouping)
     if !groupings[current_grouping_index + 1].nil?
       @next_grouping = groupings[current_grouping_index + 1]
