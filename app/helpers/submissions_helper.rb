@@ -80,7 +80,6 @@ module SubmissionsHelper
       table_row[:released] = '-'
       table_row[:commit_date] = '-'
     end
-
     return table_row
   end
 

@@ -1,8 +1,8 @@
 class ResultsController < ApplicationController
   before_filter      :authorize_only_for_admin, :except => [:codeviewer,
-  :edit, :update_mark, :view_marks, :create, :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria, :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria]
+  :edit, :update_mark, :view_marks, :create, :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria, :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria, :update_marking_state]
   before_filter      :authorize_for_ta_and_admin, :only => [:edit,
-  :update_mark, :create, :add_extra_mark, :download, :next_grouping, :update_overall_comment, :expand_criteria, :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria]
+  :update_mark, :create, :add_extra_mark, :download, :next_grouping, :update_overall_comment, :expand_criteria, :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria, :update_marking_state]
   before_filter      :authorize_for_user, :only => [:codeviewer]
   before_filter      :authorize_for_student, :only => [:view_marks]
 
@@ -95,6 +95,20 @@ class ResultsController < ApplicationController
     else
       redirect_to :controller => 'submissions', :action => 'collect_and_begin_grading', :id => grouping.assignment.id, :grouping_id => grouping.id
     end
+  end
+  
+  def set_released_to_students
+    @result = Result.find(params[:id])
+    released_to_students = (params[:value] == 'true')
+    @result.released_to_students = released_to_students
+    @result.save
+  end
+  
+  #Updates the marking state
+  def update_marking_state
+    @result = Result.find(params[:id])
+    @result.marking_state = params[:value]
+    @result.save
   end
   
   def download
@@ -212,6 +226,7 @@ class ResultsController < ApplicationController
       end
       return
     end
+
     render :action => 'results/marker/add_extra_mark'
   end
 

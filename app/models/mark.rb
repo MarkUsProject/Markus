@@ -1,8 +1,8 @@
 class Mark < ActiveRecord::Base
   # When a mark is created, or updated, we need to make sure that that
-  # Result that it belongs to has a marking_state of "partial".
-  before_save :ensure_result_marking_state_partial
-  before_update :ensure_result_marking_state_partial
+  # Result has not been released to students
+  before_save :ensure_not_released_to_students
+  before_update :ensure_not_released_to_students
 
   belongs_to :rubric_criterion
   belongs_to :result
@@ -20,13 +20,8 @@ class Mark < ActiveRecord::Base
   
   private
   
-  def ensure_result_marking_state_partial
-    if result.marking_state == Result::MARKING_STATES[:complete]
-      return false
-    elsif result.marking_state != Result::MARKING_STATES[:partial]
-       result.marking_state = Result::MARKING_STATES[:partial]
-       result.save
-    end
+  def ensure_not_released_to_students
+    return !result.released_to_students
   end
 end
 

@@ -30,6 +30,5 @@ function select_mark(mark_id, mark) {
 function update_total_mark(total_mark) {
   $('current_mark_div').update(total_mark);
   $('current_total_mark_div').update(total_mark);
-  $('marking_state').setValue('partial');
 }
 
