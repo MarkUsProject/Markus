@@ -28,7 +28,18 @@ class ApplicationController < ActionController::Base
   # Set version for MarkUs to be available in
   # any view
   def set_markus_version
-    @markus_version = "0.5"
+    version_file=File.expand_path(File.join(RAILS_ROOT, "app/MARKUS_VERSION"))
+    if !File.exist?(version_file)
+      @markus_version = "unknown"
+      return
+    end
+    content = File.new(version_file).read
+    version_info = Hash.new
+    content.split(',').each do |token|
+      k,v = token.split('=')
+      version_info[k.downcase] = v
+    end
+    @markus_version = "#{version_info["version"]}.#{version_info["patch_level"]}"
   end
   
   def set_locale
