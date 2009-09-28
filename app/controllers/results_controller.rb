@@ -102,6 +102,7 @@ class ResultsController < ApplicationController
     released_to_students = (params[:value] == 'true')
     @result.released_to_students = released_to_students
     @result.save
+    @result.submission.assignment.set_results_average
   end
   
   #Updates the marking state
