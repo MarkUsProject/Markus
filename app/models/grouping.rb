@@ -160,7 +160,10 @@ class Grouping < ActiveRecord::Base
     return @get_submission_used if !@get_submission_used.nil?
     @get_submission_used = submissions.find(:first, :conditions => {:submission_version_used => true})
   end
- 
+  
+  def marking_completed?
+    return has_submission? && get_submission_used.result.marking_state == Result::MARKING_STATES[:complete]
+  end
 
   # EDIT METHODS 
   # Removes the member by its membership id
