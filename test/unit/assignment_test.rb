@@ -197,7 +197,7 @@ class AssignmentTest < ActiveSupport::TestCase
 
    def test_ungrouped_students
      a = assignments(:assignment_1)
-     assert_equal(2, a.ungrouped_students.count)
+     assert_equal(1, a.ungrouped_students.count)
    end
 
    def test_valid_groupings
