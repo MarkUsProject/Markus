@@ -134,7 +134,11 @@ class RubricCriteriaTest < ActiveSupport::TestCase
      r = RubricCriterion.new
      r.set_default_levels
      r.save
-     assert_equal("Horrible", r.level_0_name)
+     assert_equal("Very Poor", r.level_0_name)
+     assert_equal("Weak", r.level_1_name)
+     assert_equal("Passable", r.level_2_name)
+     assert_equal("Good", r.level_3_name)
+     assert_equal("Excellent", r.level_4_name)
   end
 
 end
