@@ -17,7 +17,7 @@ class ResultTest < ActiveSupport::TestCase
 
   def test_get_subtotal
     result = results(:result_1)
-    assert_equal(6, result.get_subtotal, "Subtotal should be equal to 6")
+    assert_equal(2, result.get_subtotal, "Subtotal should be equal to 2")
   end
   
   def test_unreleased_true
