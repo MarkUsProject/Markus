@@ -1,6 +1,6 @@
 <%=javascript_include_tag "file_manager"%>
 <%= javascript_include_tag "FilterTable/FilterTable.js" %>
-
+<%= render :partial => "submission_warning.js.erb" %>
 <%= render :partial => "file_manager_boot.js.erb" %>
 
 <div id="title_bar">
@@ -8,7 +8,7 @@
 </div>
 
 <div class="wrapLeft">
-  <% if flash[:submit_notice] -%>   
+  <% if flash[:submit_notice] -%>
      <p class="success"><%= h(flash[:submit_notice]) %> </p>
   <% end %>
 
@@ -33,6 +33,9 @@
   <div class="warning"><%= flash[:transaction_warning] %></div>
 <% end %>
 <% if flash[:success] %>
+<% javascript_tag :do_warning => 'do_warning' do -%>
+		submitted = true;
+  	<% end -%>
   <div class="success"><%= flash[:success] %></div>
 <% end %>
 
@@ -52,6 +55,9 @@
   <div class="error">
     <h2>Conflicts</h2>
     <p>Your changes have not been made.  The following file conflicts were detected:</p>
+	<% javascript_tag :do_warning => 'do_warning' do -%>
+    	submitted = false;
+  	<% end -%>
     <ul>
     <% flash[:update_conflicts].each do |conflict| %>
       <li><%= h(conflict.to_s) %></li>
@@ -67,6 +73,9 @@
 <% end %>
 <% if flash[:commit_error] %>
   <div class="warning">
+  	<% javascript_tag :do_warning => 'do_warning' do -%>
+    	submitted = false;
+  	<% end -%>
     <%=flash[:commit_error] %>
   </div>
 <% end %>
@@ -99,12 +108,12 @@
 </span>
 
 <% if (@grouping.is_valid? && !@grouping.group.repository_external_commits_only?) %>
-  <%=button_to_function "Add A New File", "injectFileInput();"%>
+  <%=button_to_function "Add A New File", "injectFileInput(); submitted = false;"%>
 <% end %>
 
 
 <% if @grouping.is_valid? %>
-<%= submit_tag( I18n.t(:submit),
+<%= submit_tag( I18n.t(:submit), :onclick =>  'disableWarning = true;' ,
     :disabled => !@grouping.is_valid?
     ) unless @grouping.group.repository_external_commits_only? 
     %>
@@ -114,7 +123,7 @@
 	 :id => @assignment.id,
 	 :disabled => !@grouping.is_valid?,
 	 :class => "button",
-	 :confirm => "Are you sure you want to discard your changes?") unless @grouping.group.repository_external_commits_only? %>
+	 :onclick => 'confirmation()') unless @grouping.group.repository_external_commits_only? %>
 <% end %>
 </div>
 
@@ -125,17 +134,16 @@
 
 <% if @grouping.is_valid? %>
 <div class="global_action">
-<%= submit_tag( I18n.t(:submit), :disabled => !@grouping.is_valid? ) unless @grouping.group.repository_external_commits_only? %>
-<%= link_to ( I18n.t(:cancel), 
+<%= submit_tag( I18n.t(:submit), :onclick => 'disableWarning = true;' , :disabled => !@grouping.is_valid? ) unless @grouping.group.repository_external_commits_only? %>
+<%= link_to ( I18n.t(:cancel),
         {:controller => 'submissions', 
-           :action => 'file_manager'}, 
+           :action => 'file_manager'},  
 	 :id => @assignment.id,
 	 :disabled => !@grouping.is_valid?,
 	 :class => "button",
-	 :confirm => "Are you sure you want to discard your changes?") unless @grouping.group.repository_external_commits_only? %>
+	 :onclick => 'confirmation()') unless @grouping.group.repository_external_commits_only? %>
 </div>
 </form>
 <% end %>
 
-</div>
-
+</div> 
