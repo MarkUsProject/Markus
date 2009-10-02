@@ -33,10 +33,6 @@ class ResultsController < ApplicationController
   def edit
     result_id = params[:id]
     @result = Result.find(result_id)
-    if @result.released_to_students == true
-       flash[:fail_notice] = "The marks have been released. You cannot
-       change the grades."
-    end
     @assignment = @result.submission.assignment
     @rubric_criteria = @assignment.rubric_criteria
     @submission = @result.submission

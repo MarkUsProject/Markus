@@ -53,8 +53,14 @@
 </div>
 <div class="wrapLeft">
 <% if flash[:fail_notice] %>
-  <p class=color:red""><%=h flash[:fail_notice] %></p>
+  <p class="error"><%=h flash[:fail_notice] %></p>
 <% end %>
+
+<% if @result.released_to_students %>
+  <p class="notice"><%=t(:marks_released_notice)%></p>
+<% end %>
+
+
 
 <%= render :partial => 'results/common/submission_selector', :locals => {:group => @group, :result => @result, :assignment => @assignment, :previous_grouping => @previous_grouping, :next_grouping => @next_grouping} %>
 
