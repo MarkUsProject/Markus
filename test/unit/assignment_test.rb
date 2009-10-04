@@ -239,6 +239,34 @@ class AssignmentTest < ActiveSupport::TestCase
      a = assignments(:assignment_3)
      assert a.add_csv_group(group)
    end
+   
+   def test_get_svn_commands
+     a = assignments(:assignment_2)
+     expected_array = []
+          
+     a.submissions.each do |submission|
+       grouping = submission.grouping
+       group = grouping.group
+       expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/group_#{group.id} \"#{group.group_name}\"")
+     end
+     assert_equal expected_array, a.get_svn_commands
+   end
 
+   def test_get_svn_commands_with_spaces_in_group_name
+     a = assignments(:assignment_2)
+     # Put " Test" after every group name"
+     Group.all.each do |group|
+       group.group_name = group.group_name + " Test"
+       group.save
+     end
+     expected_array = []
+          
+     a.submissions.each do |submission|
+       grouping = submission.grouping
+       group = grouping.group
+       expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/group_#{group.id} \"#{group.group_name}\"")
+     end
+     assert_equal expected_array, a.get_svn_commands
+   end
 
 end
