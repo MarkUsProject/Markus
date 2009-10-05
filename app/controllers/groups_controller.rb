@@ -37,34 +37,19 @@ class GroupsController < ApplicationController
   def remove_member
     return unless request.delete?
     
-    grouping = Grouping.find(params[:grouping_id])
-    member = grouping.student_memberships.find(params[:mbr_id])  # use group as scope
+    @mbr_id = params[:mbr_id]
+    @assignment = Assignment.find(params[:id])
+    @grouping = Grouping.find(params[:grouping_id])
+    member = @grouping.student_memberships.find(@mbr_id)  # use group as scope
     if member.membership_status == StudentMembership::STATUSES[:inviter]
-        inviter = true
+        @inviter = true
     end
-    student = member.user  # need to find user name to add to student list
     
-    grouping.remove_member(member)
-    if inviter
-      inviter = grouping.student_memberships.find_by_membership_status(StudentMembership::STATUSES[:inviter])
+    @grouping.remove_member(member)
+    if @inviter
+      @inviter = @grouping.student_memberships.find_by_membership_status(StudentMembership::STATUSES[:inviter])
     else 
-      inviter == false
-    end
-
-    render :update do |page|
-      page.visual_effect(:fade, "mbr_#{params[:mbr_id]}", :duration => 0.5)
-      page.delay(0.5) { page.remove "mbr_#{params[:mbr_id]}" }
-      # add members back to student list
-      page.insert_html :bottom, "student_list",  
-        "<li id='user_#{student.user_name}'>#{student.user_name}</li>"
-     if inviter
-        # find the new inviter
- #       inviter = grouping.student_memberships.find_by_membership_status(StudentMembership::STATUSES[:inviter])
-        # replace the status of the new inviter to 'inviter'
-         page.replace_html "mbr_#{inviter.id}",
-           :partial => 'groups/manage/member', :locals => {:grouping =>
-          grouping, :member => inviter}
-      end
+      @inviter = false
     end
   end
   

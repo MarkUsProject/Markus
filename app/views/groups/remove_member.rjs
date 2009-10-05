@@ -1,0 +1,15 @@
+page.visual_effect(:fade, "mbr_#{@mbr_id}", :duration => 0.5)
+page.delay(0.5) { page.remove "mbr_#{@mbr_id}" }
+
+# update the number of ungrouped students and the student list
+page.replace_html 'number_of_ungrouped_students', @assignment.ungrouped_students.length
+page.replace 'student_list', :partial => 'ungrouped_students', 
+  :locals => {:students => @assignment.ungrouped_students}      
+ 
+if @inviter
+  
+  # update the inviter
+  page.replace_html "mbr_#{@inviter.id}",
+    :partial => 'groups/manage/member', 
+    :locals => {:grouping => @grouping, :member => @inviter}
+end
