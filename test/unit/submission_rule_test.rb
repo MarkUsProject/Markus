@@ -1,4 +1,4 @@
-require 'test_helper'
+require File.dirname(__FILE__) + '/../test_helper'
 require 'shoulda'
 
 class SubmissionRuleTest < ActiveSupport::TestCase
@@ -30,9 +30,7 @@ class SubmissionRuleTest < ActiveSupport::TestCase
 
   def test_get_collection_time
     a = assignments(:assignment_4)
-    a.due_date = 2.days.ago
-    a.save
-    assert_equal(2.days.ago, a.submission_rule.get_collection_time)
+    assert_equal(a.due_date, a.submission_rule.get_collection_time)
   end
 
   # TODO test get collection time when submission rule is different than no 
