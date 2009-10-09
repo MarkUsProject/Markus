@@ -55,12 +55,20 @@ class GracePeriodSubmissionRule < SubmissionRule
    
     # And how many grace credits are available to this grouping
     available_grace_credits = submission.grouping.available_grace_credits
+    
+    # If the available_grace_creidts <= 0, simply get the submission
+    # from the due date.
     # If the deduction_amount is greater than the amount of grace
     # credits available to this grouping, then we need to destroy
     # this submission, find the date of the last valid commit, and
     # use that as a submission, and return it.
 
-    if available_grace_credits < deduction_amount
+    if available_grace_credits <= 0 
+      grouping = submission.grouping
+      submission.destroy
+      submission = Submission.create_by_timestamp(grouping, due_date.localtime)
+      return submission
+    elsif available_grace_credits < deduction_amount
       grouping = submission.grouping
       submission.destroy
       collection_time = calculate_collection_date_from_credits(available_grace_credits)
