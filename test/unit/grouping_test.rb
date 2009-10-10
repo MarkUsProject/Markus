@@ -16,12 +16,113 @@ class GroupingTest < ActiveSupport::TestCase
     assert !grouping.save, "Saved the grouping without assignment"
   end
 
+  context "A grouping" do
+
+    setup do
+      setup_group_fixture_repos
+    end
+
+    teardown do
+      destroy_repos
+    end
+
+    should "be able to report the last modified date of the assignment_folder" do
+      grouping = groupings(:grouping_1)
+      last_modified = grouping.assignment_folder_last_modified_date
+      assert_not_nil(last_modified)
+      assert_instance_of(Time, last_modified)
+      # This is not exactly accurate, but it's sufficient
+      assert_equal(Time.now.min, last_modified.min)
+    end
+
+    should "be able to report if the grouping is deletable" do
+      # should consist of inviter and another student
+      grouping = groupings(:grouping_1)
+      inviter = grouping.inviter
+      non_inviter = nil
+      # delete member to have it deletable
+      grouping.accepted_student_memberships.each do |membership|
+        student = membership.user
+        if student != inviter
+          non_inviter = student
+          grouping.remove_member(membership.id)
+        end
+      end
+      assert_equal(1, grouping.accepted_students.size)
+      # inviter should be able to delete grouping
+      assert(grouping.deletable_by?(inviter))
+      # non-inviter shouldn't be able to delete grouping
+      if non_inviter.nil?
+        raise "No members in this grouping other than the inviter!"
+      end
+      assert(!grouping.deletable_by?(non_inviter))
+    end
+
+    context "with some submitted files" do
+      
+      # submit files
+      setup do
+        grouping = groupings(:grouping_1)
+        repo = grouping.group.repo
+        txn = repo.get_transaction("markus")
+        assignment_folder = File.join(grouping.assignment.repository_folder, "/")
+        begin
+          txn.add(File.join(assignment_folder, "Shapes.java"), "shapes content",
+                "text/plain")
+          if !repo.commit(txn)
+            raise "Unable to setup test!"
+          end
+        rescue Exception => e
+          raise "Test setup failed: " + e.message
+        end
+        @grouping = grouping
+      end
+
+      should "be able to report the number of files submitted" do
+        assert(@grouping.number_of_submitted_files > 0)
+      end
+
+      should "report that grouping is not deleteable" do
+        assert(!@grouping.deletable_by?(@grouping.inviter))
+      end
+
+      should "be able to report the still missing required assignment_files" do
+        assignment = assignments(:assignment_1)
+        still_missing_file = nil
+        assignment.assignment_files.each do |file|
+          if file.filename != "Shapes.java"
+            still_missing_file = file
+          end
+        end
+        missing_files = @grouping.missing_assignment_files
+        assert_equal(1, missing_files.length)
+        assert_equal([still_missing_file], missing_files)
+        # submit another file so that we have all required files submitted
+        repo = @grouping.group.repo
+        txn = repo.get_transaction("markus")
+        begin
+          txn.add(File.join(@grouping.assignment.repository_folder, "TestShapes.java"),
+                  "ShapesTest content", "text/plain")
+          if !repo.commit(txn)
+            raise "Commit failed!"
+          end
+        rescue Exception => e
+          raise "Submitting file failed: " + e.message
+        end
+        # check again; there shouldn't be any missing files anymore
+        missing_files = @grouping.missing_assignment_files
+        assert_equal(0, missing_files.length)
+      end
+
+    end # end files submitted context
+
+  end # end grouping context
+
   def test_should_not_save_without_group
     grouping = Grouping.new
     grouping.assignment = assignments(:assignment_1)
     assert !grouping.save, "Saved the grouping without group"
   end
-
 
   def test_save_grouping
     grouping = Grouping.new
@@ -135,7 +236,7 @@ class GroupingTest < ActiveSupport::TestCase
   ############################################
   #
   # TODO: create other fixtures for the case:
-  # Group not valid by number pf memberships
+  # Group not valid by number of memberships
   # group valid by instructors validation
   #
   ###########################################

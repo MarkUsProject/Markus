@@ -33,19 +33,12 @@ class AssignmentsController < ApplicationController
       # The inviter   
       @inviter = @grouping.inviter
 
-      # We search for information on the submissions
-      path = '/'
+      # Look up submission information
       repo = @grouping.group.repo
       @revision  = repo.get_latest_revision
-      @last_modified_date = @revision.directories_at_path('/')[@assignment.repository_folder].last_modified_date
-      
-      @files = @revision.files_at_path(File.join(File.join(@assignment.repository_folder, path)))
-      @missing_assignment_files = []
-      @assignment.assignment_files.each do |assignment_file|
-        if !@revision.path_exists?(File.join(@assignment.repository_folder, assignment_file.filename))
-          @missing_assignment_files.push(assignment_file)
-        end
-      end
+      @last_modified_date = @grouping.assignment_folder_last_modified_date
+      @num_submitted_files = @grouping.number_of_submitted_files
+      @num_missing_assignment_files = @grouping.missing_assignment_files.keys.length
     end
   end
   
@@ -217,14 +210,12 @@ class AssignmentsController < ApplicationController
       if @grouping.nil?
         raise "You do not currently have a group"
       end
-      if !@grouping.is_inviter?(@current_user)
-        raise "Only the inviter can delete the group"
-      end
       if @grouping.has_submission?
         raise "You already submitted something. You cannot delete your group."
       end
-      if @grouping.is_valid?
-        raise "Your group is valid, and can only be deleted by instructors."
+      # If grouping is not deletable for @current_user for whatever reason, fail.
+      if !@grouping.deletable?(@current_user)
+        raise "You are not allowed to delete the group"
       end
       @grouping.student_memberships.all(:include => :user).each do |member|
         member.destroy

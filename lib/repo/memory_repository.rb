@@ -158,7 +158,7 @@ class MemoryRepository < Repository::AbstractRepository
     # make new_rev the latest one and create a mapping for timestamped
     # revisions
     timestamp = Time.now._dump.to_s
-    new_rev.timestamp = Time.parse(timestamp)
+    new_rev.timestamp = try_parse_time(timestamp, 0) # this throws ArgumentErrors occasionally 
     @revision_history.push(@current_revision)
     @current_revision = new_rev
     @current_revision.__increment_revision_number() # increment revision number
@@ -260,6 +260,20 @@ class MemoryRepository < Repository::AbstractRepository
     })
     rev.__add_directory(dir)
     return rev
+  end
+  
+  # Helper method to deal with "Argument out of range" errors
+  def try_parse_time(timedump, counter)
+    begin
+      return Time.parse(timedump)
+    rescue ArgumentError
+      if counter < 3
+        sleep(1)
+        return try_parse_time(timedump, counter+1)
+      else
+        return Time.now
+      end
+    end
   end
   
   # Adds a file into the provided revision
@@ -421,14 +435,9 @@ class MemoryRevision < Repository::AbstractRevision
       return true # the root in a repository always exists
     end
     @files.each do |object|
-      if object.instance_of?(RevisionDirectory)
-        object_fqpn = object.path+object.name # fqpn is: fully qualified pathname :-)
-        if object_fqpn.index("/") != 0
-          object_fqpn = "/" + object_fqpn
-        end        
-        if object_fqpn == path
-          return true
-        end
+      object_fqpn = File.join(object.path, object.name) # fqpn is: fully qualified pathname :-)
+      if object_fqpn == path
+        return true
       end
     end
     return false
@@ -489,7 +498,11 @@ class MemoryRevision < Repository::AbstractRevision
     # Automatically append a root slash if not supplied
     result = Hash.new(nil)
     @files.each do |object|
-      if object.instance_of?(type) && object.path == path
+      alt_path = ""
+      if object.path != '/'
+        alt_path = object.path + '/'
+      end
+      if object.instance_of?(type) && (object.path == path || alt_path == path)
         if (!only_changed)
           object.from_revision = @revision_number # set revision number
           result[object.name] = object

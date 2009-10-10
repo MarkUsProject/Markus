@@ -27,20 +27,20 @@
  <div class="block">
   <h2>Submissions</h2>
     <div class="block_content">
-  <% if !@grouping.nil? %>
-    <% if !@grouping.is_valid? %>
-      <p class="notice">Your group is not valid. You can't submit
-      anything.</p>
-    <% end %>
-     <h3>Overview</h3>
-     <div class="info">
-       Last Revision Date:<br />
-       <span class="info_date"><%=h(@last_modified_date.strftime(LONG_DATE_TIME_FORMAT)) %>  </span>
-     </div>   
-     <span class="info_number"><%=h @files.length.to_s %></span><span
-     class="info"> files</span><br />
-     <span class="info_number"><%=h @missing_assignment_files.length.to_s%></span><span class="info_red"> missing required files</span><br />
-  <% else %>
+    <% if !@grouping.nil? %>
+      <% if !@grouping.is_valid? %>
+        <p class="notice">Your group is not valid. You can't submit
+        anything.</p>
+      <% end %>
+       <h3>Overview</h3>
+       <div class="info">
+         Last Revision Date:<br />
+         <span class="info_date"><%=h(@last_modified_date.strftime(LONG_DATE_TIME_FORMAT)) %>  </span>
+       </div>   
+       <span class="info_number"><%=h @num_submitted_files.to_s %></span><span
+       class="info"> files</span><br />
+       <span class="info_number"><%=h @num_missing_assignment_files.to_s%></span><span class="info_red"> missing required files</span><br />
+    <% else %>
     <p class="notice">You don't have any submission yet</p>
   <% end %>
   </div>
@@ -62,8 +62,8 @@
 
 	   <% # Test if the student can form groupings or not %>
 	   <% if @assignment.student_form_groups == false %>
-	     <p>You cannot form groups for this assignment. Wait until
-	     your instructor forms the group.</p>
+	     <p>You cannot form groups for this assignment. Please wait until
+	     the instructor forms groups.</p>
 	   <% end %>
 
 	   <% # test if the student has been invited %>
@@ -73,12 +73,12 @@
 	     <% @pending_grouping.each do |grouping|%>
 	     <div class="sub_block">
 	       <p>You have been invited by <span class="last_name"><%= grouping.inviter.last_name %></span> <%= h(grouping.inviter.first_name) %></p>  
-	    <ul>
-	    <% grouping.memberships.each do |member|%>
-	       <%= render :partial => "assignments/member", :locals =>
-	       {:member => member, :grouping => grouping} %>
-	    <% end -%>
-	   </ul>
+        <ul>
+          <% grouping.student_memberships.each do |member|%>
+             <%= render :partial => "assignments/member", :locals =>
+             {:member => member, :grouping => grouping} %>
+          <% end -%>
+        </ul>
 
 	     <%= link_to I18n.t(:join), :action => 'join_group', 
 		             :id => @assignment.id,
@@ -93,29 +93,29 @@
 	     <% end %>
 	   <% end %>
 	   <h3>Form your own group</h3>
-         <p> The groups must be from <b><%=
-	h(@assignment.group_min)%></b> to <b><%= h(@assignment.group_max)%></b>
-	people.</p>
-         <% if @assignment.student_form_groups %>
-	   <% if @assignment.group_min == 1 %>
-	   <p><%= link_to "Work alone", {:action => 'creategroup', :id => @assignment.id, :workalone => 'true'}%></p>
-	   <% end %>
-	   <p>
+        <p> The groups must be from <b><%=
+	        h(@assignment.group_min)%></b> to <b><%= h(@assignment.group_max)%></b>
+	        people.</p>
+        <% if @assignment.student_form_groups %>
+	      <% if @assignment.group_min == 1 %>
+         <p><%= link_to "Work alone", {:action => 'creategroup', :id => @assignment.id, :workalone => 'true'}%></p>
+         <% end %>
+         <p>
 	   <% if @student.has_pending_groupings_for?(@assignment.id)%>
 	      <%= link_to(I18n.t(:create),{:action => 'creategroup', 
 		           :id => @assignment.id},{:confirm => "This will decline the invitation you have. Are you sure?"})
 	      %>
 	    <% else %>
-                <%= link_to(I18n.t(:create),{:action => 'creategroup', 
-		               :id => @assignment.id})
+         <%= link_to(I18n.t(:create),{:action => 'creategroup', 
+		         :id => @assignment.id})
 	      %>
 	    <% end %>
 	   </p>
          <%end %>
 	 <% else %>
-	   <% # As the student already has a group, we display the
-	      # informations on this group %>
-	   <% # We check to see if the groupname is displayed
+	   <% # As the student already has a group, we display
+	      # group information %>
+	   <% # Check if groupname is displayed
 	   %>
 
 	   <h3>
@@ -124,10 +124,16 @@
 	   <% else %>
 	     Your group
 	   <% end %>
-            <% if !@grouping.nil? && @grouping.inviter == @current_user and !@grouping.is_valid? %>
-	    <%= link_to(I18n.t(:delete), {:action => 'deletegroup', :id => @assignment.id},{:confirm => "Are you sure you want to delete your group?", :title => "Delete your group", :class => "delete"})
-	    %> 
-	    <% end %>
+           <%
+              # If a group is valid, the current user is the inviter of the group and
+              # she is the _only_ member of this group, she should be possible to delete 
+              # her group, provided there haven't been any files submitted. This is mostly
+              # relevant for courses in which group sizes up to 2 is allowed.
+           %>
+           <% if !@grouping.nil? && @grouping.deletable_by?(@current_user) %>
+	     <%= link_to(I18n.t(:delete), {:action => 'deletegroup', :id => @assignment.id},{:confirm => "Are you sure you want to delete your group?", :title => "Delete your group", :class => "delete"})
+	     %> 
+	   <% end %>
 	   </h3>
 
     <% if flash[:fail_notice] && !flash[:fail_notice].empty? %>
@@ -159,7 +165,7 @@
 
 
      <% # If the group not yet the right amount of members, display
-	      # the information%>
+	      # group is not valid warning %>
 	   <% if !@grouping.is_valid?%>
 	     <p class="warning"> The group is not valid. You need to
 	     invite more students. </p>

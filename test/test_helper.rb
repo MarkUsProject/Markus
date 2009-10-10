@@ -43,9 +43,6 @@ class ActiveSupport::TestCase
       group.set_repo_name
       group.build_repository
     end
-    # Using MemoryRepository: So we need to pause a little
-    # before we create folders in repositories
-    sleep(0.5)
     Grouping.all.each do |grouping|
       grouping.create_grouping_repository_folder
     end

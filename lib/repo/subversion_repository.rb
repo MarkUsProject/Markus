@@ -351,7 +351,7 @@ class SubversionRepository < Repository::AbstractRepository
   ####################################################################
 
   # Not (!) part of the AbstractRepository API:
-  # Check if given path exists in repository beeing member of
+  # Check if given file or path exists in repository beeing member of
   # the provided revision
   def __path_exists?(path, revision=nil)
     return @repos.fs.root(revision).check_path(path) != 0

@@ -1,9 +1,10 @@
 require File.dirname(__FILE__) + '/authenticated_controller_test'
 require 'fastercsv'
+require 'shoulda'
 
 class AssignmentsControllerTest < AuthenticatedControllerTest
   
-  fixtures  :users, :assignments, :rubric_criteria, :marks, :submission_rules
+  fixtures  :users, :assignments, :rubric_criteria, :marks, :submission_rules, :memberships
   set_fixture_class :rubric_criteria => RubricCriterion
   
   def setup
@@ -320,7 +321,43 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert_equal("Group has been deleted", flash[:edit_notice])
     assert !user.has_accepted_grouping_for?(assignment.id)
   end
-  
+ 
+  context "A valid grouping if user is the inviter" do
+
+    should "be possible to delete if inviter is the only member" do
+      student_membership = memberships(:membership6)
+      grouping = student_membership.grouping
+      assert_equal(1, grouping.accepted_students.length)
+      user = grouping.inviter
+      assignment = grouping.assignment
+      assignment.group_min = 1
+      assignment.save
+      # we don't want submissions for this test
+      grouping.submissions.destroy_all
+      assert grouping.is_valid?
+      post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
+      assert_redirected_to :action => "student_interface"
+      assert_equal("Group has been deleted", flash[:edit_notice])
+      assert !user.has_accepted_grouping_for?(assignment.id)
+    end
+
+    should "not be possible to delete if inviter is NOT the only member" do
+      student_membership = memberships(:membership1)
+      grouping = student_membership.grouping
+      assert_equal(2, grouping.accepted_students.length)
+      user = grouping.inviter
+      assignment = grouping.assignment
+      assignment.group_min = 1
+      assignment.save
+      assert grouping.is_valid?
+      post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
+      assert_redirected_to :action => "student_interface"
+      assert_not_nil(flash[:fail_notice])
+      assert user.has_accepted_grouping_for?(assignment.id)
+    end
+
+  end
+
   def test_cant_delete_group_if_not_inviter_and_pending
     user = users(:student4)
     grouping = groupings(:grouping_2)
@@ -358,19 +395,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert user.has_accepted_grouping_for?(assignment.id)
   end
 
-  
-  def test_cant_delete_if_group_valid
-    assignment = assignments(:assignment_1)
-    assignment.group_min = 1
-    assignment.save
-    user = users(:student4)
-    grouping = user.accepted_grouping_for(assignment.id)
-    assert grouping.is_valid?
-    post_as(user, :deletegroup, {:id => assignment.id})
-    assert_equal("Your group is valid, and can only be deleted by instructors.", flash[:fail_notice])
-    assert user.has_accepted_grouping_for?(assignment.id)
-  end
-  
   def test_students_cant_access_grades_report
     user = users(:student4)
     get_as(user, :download_csv_grades_report)

@@ -134,7 +134,7 @@ class MemoryRepositoryTest < Test::Unit::TestCase
       # filename should not be available in repo now
       rev = @repo.get_latest_revision()
       files = rev.files_at_path("/")
-      assert_nil(files, "File '"+filename+"' should have been removed!")
+      assert_equal({}, files, "File '"+filename+"' should have been removed!")
     end
     
     should "be able to add multiple files using a single transaction" do

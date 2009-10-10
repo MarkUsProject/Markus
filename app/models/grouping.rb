@@ -216,6 +216,47 @@ class Grouping < ActiveRecord::Base
     end
   end
   
+  # If a group is invalid OR valid and the user is the inviter of the group and
+  # she is the _only_ member of this grouping it should be deletable
+  # by this user, provided there haven't been any files submitted. This is mostly
+  # relevant for courses in which group sizes up to 2 is allowed.
+  def deletable_by?(user)
+    return false unless self.inviter == user
+    return (!self.is_valid?) || (self.is_valid? &&
+                                self.accepted_students.size == 1 &&
+                                self.number_of_submitted_files == 0 &&
+                                self.assignment.group_assignment?)
+  end
+
+  # Returns the number of files submitted by this grouping for a
+  # particular assignment.
+  def number_of_submitted_files
+    path = '/'
+    repo = self.group.repo
+    rev = repo.get_latest_revision
+    files = rev.files_at_path(File.join(File.join(self.assignment.repository_folder, path)))
+    return files.keys.length
+  end
+
+  # Returns last modified date of the assignment_folder in this grouping's repository
+  def assignment_folder_last_modified_date
+    rev = self.group.repo.get_latest_revision
+    return rev.directories_at_path('/')[self.assignment.repository_folder].last_modified_date
+  end
+
+  # Returns a list of missing assignment_files yet to be submitted
+  def missing_assignment_files
+    missing_assignment_files = []
+    rev = self.group.repo.get_latest_revision
+    assignment = self.assignment
+    assignment.assignment_files.each do |assignment_file|
+      if !rev.path_exists?(File.join(assignment.repository_folder, assignment_file.filename))
+        missing_assignment_files.push(assignment_file)
+      end
+    end
+    return missing_assignment_files
+  end
+  
   def remove_ta_by_id(ta_id)
     ta_membership = ta_memberships.find_by_user_id(ta_id)
     if !ta_membership.nil?
