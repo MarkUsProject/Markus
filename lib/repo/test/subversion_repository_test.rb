@@ -488,6 +488,68 @@ class SubversionRepositoryTest < Test::Unit::TestCase
     end
   end # end context
   
+  
+  context "Setting and deleting bulk permissions" do
+    should "Add a user and set permissions to every Group repository" do
+      # use a different svn_authz file for this test
+      new_svn_authz = SVN_TEST_REPOS_DIR + "/svn_authz_bulk_stuff2"
+      Repository::SubversionRepository::IS_REPOSITORY_ADMIN = true
+      Repository::SubversionRepository::REPOSITORY_PERMISSION_FILE = new_svn_authz
+
+      
+      # remove authz file if it exists
+      if File.exist?(new_svn_authz)
+        FileUtils.rm(new_svn_authz)
+      end
+      
+      # create some repositories, add some users
+      repo_base_name = "Group_"
+      repository_names = []
+      (1..5).each do |counter|
+        repository_names.push(repo_base_name + counter.to_s.rjust(3, "0"))
+      end
+      
+      # remove repositories, if they exist
+      repository_names.each do |repo_name|
+        if SubversionRepository.repository_exists?(SVN_TEST_REPOS_DIR + "/" + repo_name)
+          FileUtils.remove_dir(SVN_TEST_REPOS_DIR + "/" + repo_name, true)
+        end
+      end
+      
+      repositories = []
+      repository_names.each do |repo_name|
+        SubversionRepository.create(SVN_TEST_REPOS_DIR + "/" + repo_name, true, new_svn_authz)
+        repo = SubversionRepository.open(SVN_TEST_REPOS_DIR + "/" + repo_name)
+
+        repositories.push(repo)
+      end
+
+      # Ok, now lets try to add a few bulk users
+      assert SubversionRepository.set_bulk_permissions(repository_names, {"test_user" => Repository::Permission::READ})
+      assert SubversionRepository.set_bulk_permissions(repository_names, {"test_user2" => Repository::Permission::READ_WRITE})
+
+      # Test to make sure they got attached to each repository
+      repository_names.each do |repo_name|
+        repo = SubversionRepository.open(SVN_TEST_REPOS_DIR + "/" + repo_name, true, new_svn_authz)
+        assert_equal(Repository::Permission::READ, repo.get_permissions("test_user"))
+        assert_equal(Repository::Permission::READ_WRITE, repo.get_permissions("test_user2"))      
+      end
+      
+      # Ok, now let's try to remove them
+      assert SubversionRepository.delete_bulk_permissions(repository_names, ['test_user'])
+
+      # Test to make sure they got attached to each repository
+      repository_names.each do |repo_name|
+        repo = SubversionRepository.open(SVN_TEST_REPOS_DIR + "/" + repo_name, true, new_svn_authz)
+        assert_raises Repository::UserNotFound do
+          repo.get_permissions("test_user")
+        end 
+        assert_equal(Repository::Permission::READ_WRITE, repo.get_permissions("test_user2"))      
+      end
+            
+    end
+  end
+  
   private # private helper methods for this class
     
   def add_file_helper(repo, file)

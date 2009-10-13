@@ -214,7 +214,7 @@ class SubversionRepository < Repository::AbstractRepository
         if repo_permissions.key?(user_id)
           raise UserAlreadyExistent.new(user_id + " already existent")
         end
-        svn_permissions = translate_to_svn_perms(permissions)
+        svn_permissions = self.class.translate_to_svn_perms(permissions)
         repo_permissions[user_id] = svn_permissions
         # inject new permissions into file string
         write_string = inject_permissions(repo_permissions, defined?(file_content)? file_content: "")
@@ -245,7 +245,7 @@ class SubversionRepository < Repository::AbstractRepository
       end
       result_list = []
       repo_permissions.each do |user, perm|
-        if translate_perms_from_file(perm) >= permissions
+        if self.class.translate_perms_from_file(perm) >= permissions
           result_list.push(user)
         end
       end
@@ -262,6 +262,7 @@ class SubversionRepository < Repository::AbstractRepository
     if svn_auth_file_checks() # do basic file checks
       repo_permissions = {}
       File.open(@repos_auth_file) do |auth_file|
+
         auth_file.flock(File::LOCK_EX)
         file_content = auth_file.read()
         if (file_content.length != 0)
@@ -272,7 +273,7 @@ class SubversionRepository < Repository::AbstractRepository
     if !repo_permissions.key?(user_id)
       raise UserNotFound.new(user_id + " not found")
     end
-        return translate_perms_from_file(repo_permissions[user_id])
+        return self.class.translate_perms_from_file(repo_permissions[user_id])
     end
   end
   
@@ -295,7 +296,7 @@ class SubversionRepository < Repository::AbstractRepository
         if !repo_permissions.key?(user_id)
           raise UserNotFound.new(user_id + " not found")
         end
-        svn_permissions = translate_to_svn_perms(permissions)
+        svn_permissions = self.class.translate_to_svn_perms(permissions)
         repo_permissions[user_id] = svn_permissions
         # inject new permissions into file string
         write_string = inject_permissions(repo_permissions, defined?(file_content)? file_content: "")
@@ -342,6 +343,123 @@ class SubversionRepository < Repository::AbstractRepository
     else
       raise NotAuthorityError.new("Unable to modify permissions: Not in authoritative mode!")
     end
+  end
+  
+  def self.set_bulk_permissions(repo_names, user_id_permissions_map) 
+    # If we're not in authoritative mode, bail out
+    if !IS_REPOSITORY_ADMIN # Are we admin?
+      raise NotAuthorityError.new("Unable to set bulk permissions:  Not in authoritative mode!");
+    end
+
+    # Read in the authz file
+    authz_file_contents = self.read_in_authz_file()
+       
+    # Parse the file contents into to something we can work with
+    repo_permissions = self.parse_authz_file(authz_file_contents)
+    # Set / clobber permissions on each group for this user
+    repo_names.each do |repo_name|
+      user_id_permissions_map.each do |user_id, permissions|
+        if repo_permissions[repo_name].nil?
+          repo_permissions[repo_name] = {}
+        end
+        repo_permissions[repo_name][user_id] = permissions
+      end
+    end
+
+    # Translate the hash into the svn authz file format
+    authz_file_contents = self.prepare_authz_string(repo_permissions)
+    
+    # Write out the authz file
+    return self.write_out_authz_file(authz_file_contents)
+  end
+
+  def self.delete_bulk_permissions(repo_names, user_ids) 
+    # If we're not in authoritative mode, bail out
+    if !IS_REPOSITORY_ADMIN # Are we admin?
+      raise NotAuthorityError.new("Unable to delete bulk permissions:  Not in authoritative mode!");
+    end
+
+    # Read in the authz file
+    authz_file_contents = self.read_in_authz_file()
+       
+    # Parse the file contents into to something we can work with
+    repo_permissions = self.parse_authz_file(authz_file_contents)
+    
+    # Delete the user_id for each repository
+    repo_names.each do |repo_name|
+      user_ids.each do |user_id|
+        repo_permissions[repo_name].delete(user_id)
+      end
+    end
+    
+    # Translate the hash into the svn authz file format
+    authz_file_contents = self.prepare_authz_string(repo_permissions)
+    
+    # Write out the authz file
+    return self.write_out_authz_file(authz_file_contents)
+  end
+
+  
+  def self.read_in_authz_file()
+    if !File.exist?(REPOSITORY_PERMISSION_FILE)
+        File.open(REPOSITORY_PERMISSION_FILE, "w").close() # create file if not existent
+    end
+    # Load up the Permissions:
+    file_content = ""
+    File.open(REPOSITORY_PERMISSION_FILE, "r+") do |auth_file|
+      auth_file.flock(File::LOCK_EX)
+      file_content = auth_file.read()
+      auth_file.flock(File::LOCK_UN) # release lock
+    end
+    return file_content
+  end
+  
+  def self.write_out_authz_file(authz_file_contents)
+    # If we're not in authoritative mode, bail out
+    if !IS_REPOSITORY_ADMIN # Are we admin?
+      raise NotAuthorityError.new("Unable to write out repo permissions:  Not in authoritative mode!");
+    end
+
+    if !File.exist?(REPOSITORY_PERMISSION_FILE)
+        File.open(REPOSITORY_PERMISSION_FILE, "w").close() # create file if not existent
+    end
+    result = false
+    File.open(REPOSITORY_PERMISSION_FILE, "w+") do |auth_file|
+      auth_file.flock(File::LOCK_EX)
+      # Blast out the string to the file
+      result = (auth_file.write(authz_file_contents) == authz_file_contents.length)
+      auth_file.flock(File::LOCK_UN) # release lock
+    end
+    return result
+  end
+  
+  def self.parse_authz_file(authz_string)
+    permissions_mapping = {}
+
+    permissions_array = authz_string.scan(/\[(.+):\/\]\n([\w\s=]+)/)
+    permissions_array.each do |permissions_group|
+      # The first match is the group repository name
+      user_permissions = {}
+      raw_users_permissions = permissions_group[1].scan(/\s*(\w+)\s*=\s*(\w+)\s*/)
+      raw_users_permissions.each do |raw_user_permissions|
+        user_permissions[raw_user_permissions[0]] = self.translate_perms_from_file(raw_user_permissions[1])
+      end
+      permissions_mapping[permissions_group[0]] = user_permissions
+    end
+    return permissions_mapping
+  end
+  
+  def self.prepare_authz_string(permissions)
+    result = ""
+    permissions.each do |repository_name, users_permissions|
+      result += "[#{repository_name}:/]\n"
+      users_permissions.each do |user_id, user_permissions|
+        user_permissions_string = self.translate_to_svn_perms(user_permissions)
+        result += "#{user_id} = #{user_permissions_string}\n"
+      end
+      result += "\n"
+    end
+    return result
   end
   
   ####################################################################
@@ -548,7 +666,7 @@ class SubversionRepository < Repository::AbstractRepository
   
   # Helper method to translate internal permissions to Subversion
   # permissions
-  def translate_to_svn_perms(permissions)
+  def self.translate_to_svn_perms(permissions)
     case (permissions)
       when Repository::Permission::READ
         return "r"
@@ -560,7 +678,7 @@ class SubversionRepository < Repository::AbstractRepository
   
   # Helper method to translate Subversion permissions to internal
   # permissions 
-  def translate_perms_from_file(perm_string)
+  def self.translate_perms_from_file(perm_string)
     case (perm_string)
       when "r"
         return Repository::Permission::READ

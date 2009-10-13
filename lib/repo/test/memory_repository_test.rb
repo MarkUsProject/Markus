@@ -134,7 +134,7 @@ class MemoryRepositoryTest < Test::Unit::TestCase
       # filename should not be available in repo now
       rev = @repo.get_latest_revision()
       files = rev.files_at_path("/")
-      assert_nil(files, "File '"+filename+"' should have been removed!")
+      assert_equal(0, files.size, "File '"+filename+"' should have been removed!")
     end
     
     should "be able to add multiple files using a single transaction" do
@@ -367,7 +367,43 @@ class MemoryRepositoryTest < Test::Unit::TestCase
       
       @repo.remove_user(another_user)
       users_with_any_perm = @repo.get_users(Repository::Permission::ANY)
-      assert_nil(users_with_any_perm, "There are NO users with any permissions")
+      assert_nil(users_with_any_perm, "There are NO users with any permissions")  
+      
+    end
+    
+    should "be able to bulk add and delete user permissions" do
+      repo_names = ["test_repo", "test_repo2", "test_repo3", "test_repo4"]
+      # Create the repos
+      repo_names.each do |repo_name|
+        MemoryRepository.create(repo_name)
+      end
+      # Now lets try to bulk add some users
+      MemoryRepository.set_bulk_permissions(repo_names, {"test_user" => Repository::Permission::READ})
+      MemoryRepository.set_bulk_permissions(repo_names, {"test_user2" => Repository::Permission::READ_WRITE})
+      MemoryRepository.set_bulk_permissions(repo_names, {"test_user3" => Repository::Permission::READ})
+      
+      # Check to see if permissions were added
+      repo_names.each do |repo_name|
+        repo = MemoryRepository.open(repo_name)
+        assert_equal(Repository::Permission::READ, repo.get_permissions('test_user'))
+        assert_equal(Repository::Permission::READ_WRITE, repo.get_permissions('test_user2'))
+        assert_equal(Repository::Permission::READ, repo.get_permissions('test_user3'))
+      end
+      
+      # Check to see if we can bulk delete
+      MemoryRepository.delete_bulk_permissions(repo_names, ['test_user', 'test_user2'])
+      repo_names.each do |repo_name|
+        repo = MemoryRepository.open(repo_name)
+        assert_raises Repository::UserNotFound do
+          repo.get_permissions('test_user')
+        end
+        assert_raises Repository::UserNotFound do
+          repo.get_permissions('test_user2')
+        end
+        assert_equal(Repository::Permission::READ, repo.get_permissions('test_user3'))
+      end
+      
+      
     end
     
     

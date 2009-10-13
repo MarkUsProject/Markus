@@ -1,4 +1,5 @@
 # we need repository permission constants
+require File.join(File.dirname(__FILE__),'/../../lib/repo/repository_factory')
 require File.join(File.dirname(__FILE__),'/../../lib/repo/repository')
 class Admin < User
   
@@ -11,20 +12,19 @@ class Admin < User
   
   # Adds read and write permissions for each newly created admin user
   def grant_repository_permissions
-    Group.all.each do |group|
-      if group.repository_admin?
-        group.repo.add_user(self.user_name, Repository::Permission::READ_WRITE)
-      end
-    end
+    # If we're not the repository admin, bail out
+    return if !IS_REPOSITORY_ADMIN
+    repo = Repository.get_class(REPOSITORY_TYPE)
+    repo_names = Group.all.collect do |group| group.repo_name end
+    repo.set_bulk_permissions(repo_names, {self.user_name => Repository::Permission::READ_WRITE})
   end
   
   # Revokes read and write permissions for a deleted admin user
   def revoke_repository_permissions
-    Group.all.each do |group|
-      if group.repository_admin?
-        group.repo.remove_user(self.user_name)
-      end
-    end
-  end
-  
+    return if !IS_REPOSITORY_ADMIN
+    repo = Repository.get_class(REPOSITORY_TYPE)
+    repo_names = Group.all.collect do |group| group.repo_name end
+    repo.delete_bulk_permissions(repo_names, [self.user_name])  
+  end  
+ 
 end

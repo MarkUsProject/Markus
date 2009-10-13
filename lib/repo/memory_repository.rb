@@ -202,7 +202,12 @@ class MemoryRepository < Repository::AbstractRepository
     end
     @users[user_id] = permissions
   end
-  
+
+  # Semi-private - used by the bulk permissions assignments
+  def has_user?(user_id)
+    return @users.key?(user_id)
+  end    
+   
   # Removes a user from from the repository
   def remove_user(user_id)
     if !@users.key?(user_id)
@@ -243,8 +248,34 @@ class MemoryRepository < Repository::AbstractRepository
     return @users[user_id]
   end
   
-  private
+  def self.set_bulk_permissions(repo_names, user_id_permissions_map)
+    repo_names.each do |repo_name|
+      repo = @@repositories[repo_name]
+      user_id_permissions_map.each do |user_id, permissions|
+        if(!repo.has_user?(user_id)) 
+          repo.add_user(user_id, permissions)
+        else
+          repo.set_permissions(user_id, permissions)
+        end
+      end
+    end
+    return true
+  end
   
+  def self.delete_bulk_permissions(repo_names, user_ids)
+    repo_names.each do |repo_name|
+      repo = @@repositories[repo_name]
+      user_ids.each do |user_id|
+        if(repo.has_user?(user_id))
+          repo.remove_user(user_id)
+        end
+      end
+    end
+    return true
+  end
+
+  
+  private
   # Creates a directory as part of the provided revision
   def make_directory(rev, full_path)
     if rev.path_exists?(full_path)
@@ -484,6 +515,7 @@ class MemoryRevision < Repository::AbstractRevision
   end
   
   private
+  
   
   def files_at_path_helper(path="/", only_changed=false, type=RevisionFile)
     # Automatically append a root slash if not supplied

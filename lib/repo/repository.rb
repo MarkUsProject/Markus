@@ -144,6 +144,28 @@ class AbstractRepository
     raise NotImplementedError, "Repository.set_permissions: Not yet implemented"
   end
   
+  # Static method on Repository to set permissions on a set of users across a series
+  # of group repositories.  
+  # user_id_permissions_map is a hash in the form of:
+  # {user_id => Repository::Permissions::READ, user_id =>....}
+  #
+  # set_bulk_permissions will clobber pre-existing permissions, and automatically
+  # add_user to a repository permission set.
+  #
+  # set_bulk_permissions is used when creating Instructors and Graders
+  #
+  def self.set_bulk_permissions(groups, user_id_permissions_map)
+    raise NotImplementedError, "Repository.set_bulk_permissions: Not yet implemented"
+  end
+  
+  # Static method on Repository to remove permissions on an Array of users across
+  # a series of group repositories
+  # user_ids is an Array of user_ids
+  #
+  def self.delete_bulk_permissions(groups, user_ids)
+    raise NotImplementedError, "Repository.delete_bulk_permissions: Not yet implemented"  
+  end
+  
 end
 
 
