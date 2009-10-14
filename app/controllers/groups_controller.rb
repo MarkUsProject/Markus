@@ -80,6 +80,11 @@ class GroupsController < ApplicationController
       render :action => "delete_groupings"
     end
   end
+  
+  def rename_group_dialog
+    @assignment = Assignment.find(params[:id])
+    @grouping_id = params[:grouping_id]
+  end
 
   def rename_group
      @assignment = Assignment.find(params[:id])

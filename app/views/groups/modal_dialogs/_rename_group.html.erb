@@ -1,0 +1,13 @@
+	<h2>Rename group</h2>
+	<% form_remote_tag :url => { :action => 'rename_group', :id => @assignment.id, :grouping_id => @grouping_id} do %>
+	<p>
+		<fieldset>
+		Group Name
+		<input type="text" id="new_groupname" name="new_groupname"></input>
+		</fieldset>
+	</p>
+	<p class="p_margin">
+		<%= submit_tag 'Rename group' %>
+		<button onClick="modalRenameGroup.close(); return false;">Cancel</button>
+	</p>
+	<% end %>

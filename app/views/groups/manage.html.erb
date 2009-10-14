@@ -39,14 +39,6 @@ function submit_new_group(new_group_name) {
   %>
 }
 
-function rename_group(id) {
-      modalRenameGroup.open();
-      $grouping_id = id;
-      $('new_groupname').setValue('');
-      $('new_groupname').focus();
-      return false;
-}
-
 function submit_add_member(new_member, grouping_id){
   modalAddMember.close();
   <%=
@@ -54,17 +46,6 @@ function submit_add_member(new_member, grouping_id){
       :url => { :action => 'add_member', :id => @assignment.id},
       :with => "'&grouping_id=' + grouping_id + '&student_user_name=' + new_member"
     )
-  %>
-}
-
-function submit_rename_group(new_groupname, grouping_id) {
-  //close the dialog
-  modalRenameGroup.close();
-  //send AJAX request
-  <%= 
- remote_function(
-    :url  => { :action => 'rename_group', :id => @assignment.id},
-    :with => "'&grouping_id=' + grouping_id +  '&new_groupname=' + new_groupname")
   %>
 }
 
@@ -347,19 +328,6 @@ id=\"all_groupings_count\"></span>)", "filter('none')", :id =>
 </div> 
 
 <div id="rename_group_dialog">
-      <h2>Rename group</h2>
-    <p>
-      <fieldset>
-      Group Name
-      <input type="text" id="new_groupname"></input>
-      </fieldset>
-    </p>
-    <p class="p_margin">
-        <button
-	onClick="submit_rename_group(escape($F('new_groupname')),
-($grouping_id));">Rename group</button>
-        <button onClick="modalRenameGroup.close();">Cancel</button>
-      </p> 
 </div>
 <div id="assignment_group_use_dialog">
       <h2>Reuse Groups</h2>

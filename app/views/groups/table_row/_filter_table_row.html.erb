@@ -1,7 +1,8 @@
 <td>
 <span class="link"><%= h(grouping.group.group_name)%></span>
     <span class="table_menu">
-    <button class="rename_group" onClick="rename_group(<%= grouping.id %>); return false;">Rename Group</button>
+	<%= link_to_remote "Rename Group",
+	:url => { :action => 'rename_group_dialog', :id => assignment.id, :grouping_id => grouping.id } %>
     |
     <% if !grouping.is_valid? %>
       <%= link_to_remote "Validate", :url => { :action =>
