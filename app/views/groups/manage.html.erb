@@ -39,32 +39,9 @@ function submit_new_group(new_group_name) {
   %>
 }
 
-function submit_add_member(new_member, grouping_id){
-  modalAddMember.close();
-  <%=
-    remote_function(
-      :url => { :action => 'add_member', :id => @assignment.id},
-      :with => "'&grouping_id=' + grouping_id + '&student_user_name=' + new_member"
-    )
-  %>
-}
-
 function assignment_group_use() {
     modalAssignmentGroupReUse.open();
     $('clone_groups_assignment_id').setValue('');
-    return false;
- }
-
-function add_member(id) {
-    if(accordion.current != $$('.accordion-content')[0]){
-      accordion.toExpand = $$('.accordion-content')[0];
-      accordion.toExpand.show();
-      accordion.animate();
-    }
-    modalAddMember.open();
-    $grouping_id = id
-    $('new_student').setValue('');
-    $('new_student').focus();
     return false;
  }
 
@@ -240,7 +217,7 @@ id=\"all_groupings_count\"></span>)", "filter('none')", :id =>
       <div id="accordion-toggle-top" class="accordion-toggle">
         Students without a group (<span id="number_of_ungrouped_students"><%= @ungrouped_students.length%></span>)
       </div>
-      <div class="accordion-content">
+      <div class="accordion-content" id="ungrouped_students_accordion">
         <p>
         <% if @ungrouped_students.length != 0 %>
           <%= I18n.t(:student_without_a_group_list_message)%>
@@ -314,21 +291,11 @@ id=\"all_groupings_count\"></span>)", "filter('none')", :id =>
 <!-- Modal Windows -->
 
 <div id="add_member_dialog">
-      <h2>Add A Member</h2>
-    <p>
-      <fieldset>
-	 Student: <input type="text" id="new_student"></input>
-      </fieldset>
-      <p class="p_margin">
-        <button onClick="submit_add_member(escape($F('new_student')),
-($grouping_id));">Add student</button>
-        <button onClick="modalAddMember.close();">Cancel</button>
-      </p> 
-
 </div> 
 
 <div id="rename_group_dialog">
 </div>
+
 <div id="assignment_group_use_dialog">
       <h2>Reuse Groups</h2>
     <p>

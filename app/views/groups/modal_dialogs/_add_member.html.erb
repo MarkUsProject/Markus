@@ -1,0 +1,11 @@
+    <h2>Add A Member</h2>
+    <p>
+   	<% form_remote_tag :url => { :action => 'add_member', :id => @assignment.id, :grouping_id => @grouping_id} do %>
+    	<fieldset>
+			Student: <input type="text" id="new_student" name="student_user_name"></input>
+    	</fieldset>
+    	<p class="p_margin">
+        <%= submit_tag 'Add student' %>
+        <button onClick="modalAddMember.close(); return false;">Cancel</button>
+    	</p> 
+	<% end %>

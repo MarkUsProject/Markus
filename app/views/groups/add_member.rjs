@@ -1,3 +1,5 @@
+page.call 'modalAddMember.close'
+
 page.hide 'errors'
 page.call "modify_grouping", @grouping.to_json, false
 page.replace_html 'number_of_ungrouped_students', @assignment.ungrouped_students.length

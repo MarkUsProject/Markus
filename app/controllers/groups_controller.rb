@@ -33,6 +33,12 @@ class GroupsController < ApplicationController
     grouping.reload
     @grouping = construct_table_row(grouping, @assignment)
   end
+  
+  def add_member_dialog
+    @assignment = Assignment.find(params[:id])
+    @grouping_id = params[:grouping_id]
+    render :partial => "groups/modal_dialogs/add_member_dialog.rjs"
+  end
  
   def remove_member
     return unless request.delete?
@@ -84,6 +90,7 @@ class GroupsController < ApplicationController
   def rename_group_dialog
     @assignment = Assignment.find(params[:id])
     @grouping_id = params[:grouping_id]
+    render :partial => "groups/modal_dialogs/rename_group_dialog.rjs"
   end
 
   def rename_group

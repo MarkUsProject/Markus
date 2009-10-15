@@ -1,0 +1,9 @@
+page.replace_html 'add_member_dialog', :partial => 'groups/modal_dialogs/add_member'
+
+# Expand the list of students with no group
+page << "accordion.toExpand = $('ungrouped_students_accordion');"
+page.call 'accordion.toExpand.show'
+page.call 'accordion.animate'
+
+page.call 'modalAddMember.open'
+page.call("$('new_student').focus")
