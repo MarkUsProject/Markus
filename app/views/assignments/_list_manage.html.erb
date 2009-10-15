@@ -6,9 +6,9 @@
     <h3>Current assignments:</h3>
     <ul>
     
-    <% for assignment in @assignments %>
+	<% @assignments.each do |assignment| %>
       <li>
-        <%= link_to h(sanitize(assignment.short_identifier))+": "+h(sanitize(assignment.description)), 
+        <%= link_to h(assignment.short_identifier)+": "+h(assignment.description), 
             {:controller => controller, 
             :action => action, 
             :id => assignment},
