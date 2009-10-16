@@ -250,7 +250,7 @@ class MemoryRepository < Repository::AbstractRepository
   
   def self.set_bulk_permissions(repo_names, user_id_permissions_map)
     repo_names.each do |repo_name|
-      repo = @@repositories[repo_name]
+      repo = @@repositories[File.join(REPOSITORY_STORAGE, repo_name)]
       user_id_permissions_map.each do |user_id, permissions|
         if(!repo.has_user?(user_id)) 
           repo.add_user(user_id, permissions)
@@ -264,7 +264,7 @@ class MemoryRepository < Repository::AbstractRepository
   
   def self.delete_bulk_permissions(repo_names, user_ids)
     repo_names.each do |repo_name|
-      repo = @@repositories[repo_name]
+      repo = @@repositories[File.join(REPOSITORY_STORAGE, repo_name)]
       user_ids.each do |user_id|
         if(repo.has_user?(user_id))
           repo.remove_user(user_id)

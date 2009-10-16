@@ -75,13 +75,16 @@ class Group < ActiveRecord::Base
         Repository.get_class(REPOSITORY_TYPE).create(File.join(REPOSITORY_STORAGE, repository_name), true, REPOSITORY_PERMISSION_FILE)
         if repository_admin?
           # Each admin user will have read and write permissions on each repo
+          user_permissions = {}
           Admin.all.each do |admin|
-            self.repo.add_user(admin.user_name, Repository::Permission::READ_WRITE)
+            user_permissions[admin.user_name] = Repository::Permission::READ_WRITE
           end
           # Each grader will have read and write permissions on each repo
           Ta.all.each do |ta|
-            self.repo.add_user(ta.user_name, Repository::Permission::READ_WRITE)
+            user_permissions[ta.user_name] = Repository::Permission::READ_WRITE
           end
+          repo = Repository.get_class(REPOSITORY_TYPE)
+          repo.set_bulk_permissions(self.repo_name, user_permissions)          
         end
       end
     rescue Exception => e
