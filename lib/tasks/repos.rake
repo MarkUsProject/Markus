@@ -3,8 +3,8 @@ namespace :repos do
   task(:drop => :environment) do
     puts "Destroying Repositories..."
     FileUtils.rm_r Dir.glob(File.join(REPOSITORY_STORAGE, "*"))
-    if File.exist?($REPOSITORY_SVN_AUTHZ_FILE)
-      File.delete($REPOSITORY_SVN_AUTHZ_FILE)
+    if File.exist?(REPOSITORY_PERMISSION_FILE)
+      File.delete(REPOSITORY_PERMISSION_FILE)
     end
   end
   
