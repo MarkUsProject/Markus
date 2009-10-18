@@ -38,7 +38,7 @@ class AssignmentsController < ApplicationController
       @revision  = repo.get_latest_revision
       @last_modified_date = @grouping.assignment_folder_last_modified_date
       @num_submitted_files = @grouping.number_of_submitted_files
-      @num_missing_assignment_files = @grouping.missing_assignment_files.keys.length
+      @num_missing_assignment_files = @grouping.missing_assignment_files.length
     end
   end
   
