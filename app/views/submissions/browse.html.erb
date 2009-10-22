@@ -46,7 +46,11 @@
  <%=flash[:error]%>
 </div>
 <% end %>
-
+<% if flash[:success] %>
+<div class="success">
+ <%=flash[:success]%>
+</div>
+<% end %>
   <% if !flash[:release_errors].nil? && !flash[:release_errors].empty? %>
     <div class="error">
     <h1>Errors</h1>

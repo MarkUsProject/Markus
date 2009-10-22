@@ -332,6 +332,9 @@ class SubmissionsController < ApplicationController
         end
       end
     end
+    if flash[:release_errors].nil?
+      flash[:success] = I18n.t('update_files.success')
+    end
     redirect_to :action => 'browse', :id => params[:id]
     if !params[:groupings].nil?
       grouping = Grouping.find(params[:groupings].first)
