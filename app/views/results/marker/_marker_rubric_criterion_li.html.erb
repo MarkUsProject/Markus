@@ -29,10 +29,9 @@ class="float_left rubric_criterion_expand">+ &nbsp;
         -%>
           <% if level_desc && !level_desc.empty? -%>
             <tr>
-               <td id="mark_<%=mark.id%>_<%=num_levels%>" class="<%=td_class%>">
-                 <%= link_to_remote "<b>#{num_levels}: &nbsp; #{level_name}</b> &nbsp;
-                  #{level_desc}", {:url => {:action => 'update_mark', :mark_id=>mark.id, :mark=>num_levels}},
-                 {:style => "color:#000000;background:none;"}%>
+               <td id="mark_<%=mark.id%>_<%=num_levels%>" class="<%=td_class%>"
+			     onclick="<%=remote_function :url => {:action => 'update_mark', :mark_id=>mark.id, :mark=>num_levels} %>">
+                 <b><%=num_levels%>: <%=level_name%></b> &nbsp;<%=level_desc%>
                </td>
             </tr>
          <% end -%>
