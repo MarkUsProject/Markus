@@ -83,7 +83,7 @@ membership8:
 
 membership9:
    user_id:            <%= Fixtures.identify(:student5) %>
-   grouping_id:        <%= Fixtures.identify(:grouping_2) %>
+   grouping_id:        <%= Fixtures.identify(:grouping_3) %>
    membership_status:  pending
    type:               StudentMembership
    created_at:         <% Time.now.to_s(:db)%>

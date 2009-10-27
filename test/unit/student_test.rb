@@ -1,9 +1,8 @@
 require File.dirname(__FILE__) + '/../test_helper'
 require 'shoulda'
-
+require 'mocha'
 
 class StudentTest < ActiveSupport::TestCase
-  fixtures :users
 
   should_have_many :accepted_groupings
   should_have_many :pending_groupings
@@ -24,7 +23,6 @@ newuser2,USER2,USER2"
     User.upload_user_list(Student, csv_file_data)
 
     assert_equal num_users + 2, Student.all.size, "Expected a different number of users - the CSV upload didn't work"
-
 
     csv_1 = Student.find_by_user_name('newuser1')
     assert_not_nil csv_1, "Couldn't find a user uploaded by CSV"
@@ -58,19 +56,18 @@ exist_student,USER2,USER2"
   end
 
   def test_has_accepted_grouping_for?
-      assignment = assignments(:assignment_1)
-      user = Student.new({:user_name => "exist_student", :first_name => "Nelle", :last_name => "Varoquaux"})
-      user.save
-      assert !user.has_accepted_grouping_for?(1), "Should return no grouping
-      for this assignment"
+    assignment = assignments(:assignment_1)
+    user = Student.new({:user_name => "exist_student", :first_name => "Nelle", :last_name => "Varoquaux"})
+    user.save
+    assert !user.has_accepted_grouping_for?(1), "Should return no grouping for this assignment"
 
-      group = Group.new({:group_name => "nelle"})
-      group.save
-      grouping = Grouping.new({:group_id => group.id, :assignment_id => assignment.id})
-      grouping.save
-      membership = StudentMembership.new({:user_id => user.id, :grouping_id => grouping.id, :membership_status => StudentMembership::STATUSES[:inviter]})
-      membership.save
-      assert user.has_accepted_grouping_for?(assignment.id)
+    group = Group.new({:group_name => "nelle"})
+    group.save
+    grouping = Grouping.new({:group_id => group.id, :assignment_id => assignment.id})
+    grouping.save
+    membership = StudentMembership.new({:user_id => user.id, :grouping_id => grouping.id, :membership_status => StudentMembership::STATUSES[:inviter]})
+    membership.save
+    assert user.has_accepted_grouping_for?(assignment.id)
   end
 
   def test_accepted_grouping_for
@@ -173,12 +170,10 @@ exist_student,USER2,USER2"
 
 	  assert_not_nil pending_memberships
 	  assert_equal(2, pending_memberships.length)
-
-    student_membership = pending_memberships[0]
-    assert_equal(student.id, student_membership.user_id)
-
-    grouping = groupings(:grouping_2)
-    assert_equal(grouping.id, student_membership.grouping_id)
+    
+    expected_groupings = [groupings(:grouping_2), groupings(:grouping_3)]
+    assert_equal expected_groupings.map(&:id).to_set, pending_memberships.map(&:grouping_id).to_set
+    assert_equal [], pending_memberships.delete_if {|e| e.user_id == student.id}
   end
 
   def test_pending_membership_for_empty
@@ -253,7 +248,7 @@ exist_student,USER2,USER2"
     updatedStudent1 = Student.find(student1.id)
     updatedStudent2 = Student.find(student2.id)
 
-    assert_equal(expected_value, updatedStudent2.grace_credits)
+    assert_equal(expected_value, updatedStudent1.grace_credits)
     assert_equal(expected_value, updatedStudent2.grace_credits)
   end
 
