@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090826182322) do
+ActiveRecord::Schema.define(:version => 20091028213048) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -65,6 +65,7 @@ ActiveRecord::Schema.define(:version => 20090826182322) do
     t.string   "repository_folder",                       :null => false
     t.boolean  "instructor_form_groups"
     t.float    "results_average"
+    t.string   "marking_scheme_type"
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true
