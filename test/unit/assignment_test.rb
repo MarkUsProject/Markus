@@ -2,6 +2,8 @@ require File.dirname(__FILE__) + '/../test_helper'
 require 'shoulda'
 
 class AssignmentTest < ActiveSupport::TestCase
+ 
+  should_validate_presence_of :marking_scheme_type
   
   fixtures :assignments, :users, :submissions, :groups, :rubric_criteria, :marks
   set_fixture_class :rubric_criteria => RubricCriterion

@@ -1,4 +1,10 @@
 class Assignment < ActiveRecord::Base 
+  
+  MARKING_SCHEME_TYPE = {
+    :flexible => 'flexible',
+    :rubric => 'rubric'
+  }
+  
   has_many :rubric_criteria, :class_name => "RubricCriterion", :order => :position
   has_many :assignment_files
   has_one  :submission_rule 
@@ -25,7 +31,9 @@ class Assignment < ActiveRecord::Base
 
   validates_associated :submission_rule
   validates_presence_of :submission_rule
-
+  
+  validates_presence_of :marking_scheme_type
+  
   def validate
     if (group_max && group_min) && group_max < group_min
       errors.add(:group_max, "must be greater than the minimum number of groups")

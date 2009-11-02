@@ -33,6 +33,7 @@ assignment_1:
    created_at: <%= Time.now.to_s(:db)%>
    updated_at: <%= Time.now.to_s(:db)%>
    repository_folder: CaptainNemo
+   marking_scheme_type: "rubric"
 
 assignment_build_on_top_of_1:
    short_identifier: Captain CopyCat
@@ -48,6 +49,7 @@ assignment_build_on_top_of_1:
    created_at: <%= Time.now.to_s(:db)%>
    updated_at: <%= Time.now.to_s(:db)%>
    repository_folder: CaptainCopyCat
+   marking_scheme_type: "rubric"
 
 assignment_2:
    short_identifier: Captain Sparrow
@@ -63,7 +65,8 @@ assignment_2:
    created_at: <%= Time.now.to_s(:db)%>
    updated_at: <%= Time.now.to_s(:db)%>
    repository_folder: CaptainSparrow
-   
+   marking_scheme_type: "rubric"
+
 assignment_3:
    short_identifier: Captain Haddock
    description: ""
@@ -78,6 +81,7 @@ assignment_3:
    created_at: <%= Time.now.to_s(:db)%>
    updated_at: <%= Time.now.to_s(:db)%>
    repository_folder: CaptainSparrow
+   marking_scheme_type: "rubric"
 
 assignment_4:
    short_identifier: Captain Late
@@ -93,3 +97,4 @@ assignment_4:
    created_at: <%= 42.days.ago.to_s(:db)%>
    updated_at: <%= Time.now.to_s(:db)%>
    repository_folder: CaptainLate
+   marking_scheme_type: "rubric"

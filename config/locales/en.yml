@@ -92,7 +92,11 @@ en:
         grace_credits:  "Grace Credits"
     assignment:
         name:           "Assignment Name"
-
+        marking_scheme:
+            title: "Marking Scheme"
+            rubric: "Rubric"
+            flexible: "Flexible"
+        
     confirm_bulk_action:  "Are you sure you want to perform this bulk action?"
     hide_students: "Hide Students"
     unhide_students: "Unhide Students"
