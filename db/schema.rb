@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091028213048) do
+ActiveRecord::Schema.define(:version => 20091029063843) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -80,6 +80,19 @@ ActiveRecord::Schema.define(:version => 20091028213048) do
   end
 
   add_index "extra_marks", ["result_id"], :name => "index_extra_marks_on_result_id"
+
+  create_table "flexible_criteria", :force => true do |t|
+    t.string   "flexible_criterion_name", :null => false
+    t.text     "description"
+    t.integer  "position"
+    t.integer  "assignment_id",           :null => false
+    t.decimal  "max",                     :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "flexible_criteria", ["assignment_id", "flexible_criterion_name"], :name => "index_flexible_criteria_on_assignment_id_and_flexible_criterion", :unique => true
+  add_index "flexible_criteria", ["assignment_id"], :name => "index_flexible_criteria_on_assignment_id"
 
   create_table "grace_period_deductions", :force => true do |t|
     t.integer  "membership_id"

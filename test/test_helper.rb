@@ -35,6 +35,7 @@ class ActiveSupport::TestCase
   # -- they do not yet inherit this setting
   fixtures :all
   set_fixture_class :rubric_criteria => RubricCriterion
+  set_fixture_class :flexible_criteria => FlexibleCriterion
 
   # Add more helper methods to be used by all tests here...
   

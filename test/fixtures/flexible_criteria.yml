@@ -1,0 +1,15 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  flexible_criterion_name: criterion1
+  description: MyText
+  position: 1
+  assignment_id: <%= Fixtures.identify(:assignment_1) %>
+  max: 10.0
+
+two:
+  flexible_criterion_name: criterion2
+  description: MyText
+  position: 2
+  assignment_id: <%= Fixtures.identify(:assignment_1) %>
+  max: 10.0

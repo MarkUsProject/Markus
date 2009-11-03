@@ -1,5 +1,4 @@
 require File.dirname(__FILE__) + '/authenticated_controller_test'
-require 'test_helper'
 require 'shoulda'
 require 'admins_controller'
 
