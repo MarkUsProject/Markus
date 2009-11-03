@@ -64,6 +64,7 @@ namespace :markus do
     a1.message += "\nNote: You are working alone for this assignment."
     a1.group_min = 1
     a1.group_max = 1
+    a1.marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
     a1.save
     req_file1.save
     req_file2.save
@@ -76,6 +77,7 @@ namespace :markus do
     a2.group_min = 3
     a2.group_max = 5
     a2.instructor_form_groups = false
+    a2.marking_scheme_type = "rubric"
     req_file1 = AssignmentFile.new
     req_file1.filename = "Animal.java"
     req_file1.assignment = a2
@@ -104,6 +106,7 @@ namespace :markus do
     req_file1.filename = "gcd.sh"
     req_file1.assignment = a3
     a3.submission_rule = rule
+    a3.marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
     a3.save
     # create groupings/groups
     groups_csv_string.split("\n").each do |row|

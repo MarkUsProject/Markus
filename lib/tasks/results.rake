@@ -17,6 +17,7 @@ namespace :load do
     a1.repository_folder = "A1"
     a1.submission_rule = rule
     a1.instructor_form_groups = false
+    a1.marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
     a1.save(false)
 
     a2 = Assignment.new
@@ -33,6 +34,7 @@ namespace :load do
     a2.repository_folder = "A2"
     a2.submission_rule = rule
     a2.instructor_form_groups = false
+    a2.marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
     a2.save
     
     # load users

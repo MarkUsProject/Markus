@@ -21,7 +21,7 @@ namespace :markus do
     puts "Generating Assignment A1 and A2..."
     a1 = Assignment.new
     rule = NoLateSubmissionRule.new
-    a1.name = "A1"
+    a1.short_identifier = "A1"
     a1.description = "Conditionals and Loops"
     a1.message = "Learn to use conditional statements, and loops."
     a1.due_date = Time.now
@@ -33,11 +33,12 @@ namespace :markus do
     a1.repository_folder = "A1"
     a1.submission_rule = rule
     a1.instructor_form_groups = false
+    a1.marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
     a1.save
 
     a2 = Assignment.new
     rule = NoLateSubmissionRule.new
-    a2.name = "A2"
+    a2.short_identifier = "A2"
     a2.description = "Cats and Dogs!"
     a2.message = "Basic exercise in Object Oriented Programming.  Implement Animal, Cat, and Dog, as described in class."
     a2.due_date = 1.month.from_now
@@ -49,6 +50,7 @@ namespace :markus do
     a2.repository_folder = "A2"
     a2.submission_rule = rule
     a2.instructor_form_groups = false
+    a2.marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
     a2.save
     
     puts "Creating the Rubric for A1..."
