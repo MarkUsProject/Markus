@@ -104,6 +104,26 @@ SHORT_DATE_TIME_FORMAT = "%B %d, %Y"
 # Long form (displays month, day, year, hour, minute)
 LONG_DATE_TIME_FORMAT = "%B %d, %Y: %I:%M%p"
 
+###################################################################
+# Logging Options
+###################################################################
+# If set to true then the rotation of the logfiles will be defined
+# by MARKUS_LOGGING_ROTATE_INTERVAL instead of the size of the file
+MARKUS_LOGGING_ROTATE_BY_INTERVAL = false
+# Set the maximum size file that the logfiles will have before rotating
+MARKUS_LOGGING_SIZE_THRESHOLD = 1024000000
+# Sets the interval which rotations will occur if
+# MARKUS_LOGGING_ROTATE_BY_INTERVAL is set to true,
+# possible values are: 'daily', 'weekly', 'monthly'
+MARKUS_LOGGING_ROTATE_INTERVAL = 'daily'
+# Name of the logfile that will carry information, debugging and
+# warning messages
+MARKUS_LOGGING_LOGFILE = "log/info_#{RAILS_ENV}.log"
+# Name of the logfile that will carry error and fatal messages
+MARKUS_LOGGING_ERRORLOGFILE = "log/error_#{RAILS_ENV}.log"
+# This variable sets the number of old log files that will be kept
+MARKUS_LOGGING_OLDFILES = 10 
+
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence over those specified here.
   # Application configuration should go into files in config/initializers
@@ -187,3 +207,4 @@ CalendarDateSelect.format = :iso_date
 ###################################################################
 # END OF MarkUs SPECIFIC CONFIGURATION
 ###################################################################
+

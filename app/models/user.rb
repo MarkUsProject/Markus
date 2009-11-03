@@ -62,14 +62,19 @@ class User < ActiveRecord::Base
       pipe = IO.popen(VALIDATE_FILE, "w+")
       pipe.puts("#{login}\n#{password}") # write to stdin of VALIDATE_FILE
       pipe.close
+      @logger = MarkusLogger.instance
       case $?.exitstatus
         when 0
+          @logger.log("User #{login} logged in",MarkusLogger::INFO)
           return AUTHENTICATE_SUCCESS
         when 1
+          @logger.log("Wrong username/password: #{login}",MarkusLogger::ERROR)
           return AUTHENTICATE_NO_SUCH_USER
         when 2
+          @logger.log("Wrong username/password: #{login}",MarkusLogger::ERROR)
           return AUTHENTICATE_BAD_PASSWORD
         else
+          @logger.log("Error while logging in user: #{login}",MarkusLogger::ERROR)
           return AUTHENTICATE_ERROR
       end
     else
