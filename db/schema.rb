@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(:version => 20091029063843) do
     t.datetime "updated_at"
   end
 
-  add_index "flexible_criteria", ["assignment_id", "flexible_criterion_name"], :name => "index_flexible_criteria_on_assignment_id_and_flexible_criterion", :unique => true
+  add_index "flexible_criteria", ["assignment_id", "flexible_criterion_name"], :name => "index_flexible_criteria_on_assignment_id_and_name", :unique => true
   add_index "flexible_criteria", ["assignment_id"], :name => "index_flexible_criteria_on_assignment_id"
 
   create_table "grace_period_deductions", :force => true do |t|

@@ -9,7 +9,7 @@ class CreateFlexibleCriteria < ActiveRecord::Migration
 
       t.timestamps
     end
-    add_index :flexible_criteria, [:assignment_id, :flexible_criterion_name], :unique => true
+    add_index :flexible_criteria, [:assignment_id, :flexible_criterion_name], :unique => true, :name => 'index_flexible_criteria_on_assignment_id_and_name'
     add_index :flexible_criteria, :assignment_id
   end
 
