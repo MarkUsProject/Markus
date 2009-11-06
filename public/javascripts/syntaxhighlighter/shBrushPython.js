@@ -11,8 +11,8 @@ dp.sh.Brushes.Python = function()
         { regex: dp.sh.RegexLib.SingleLinePerlComments, css: 'comment' },
         { regex: new RegExp("^\\s*@\\w+", 'gm'), css: 'decorator' },
         { regex: new RegExp("(['\"]{3})([^\\1])*?\\1", 'gm'), css: 'comment' },
-        { regex: new RegExp('"(?!")(?:\\.|\\\\\\"|[^\\""\\n\\r])*"', 'gm'), css: 'string' },
-        { regex: new RegExp("'(?!')*(?:\\.|(\\\\\\')|[^\\''\\n\\r])*'", 'gm'), css: 'string' },
+        { regex: new RegExp('"(?!")(?:\\.|\\\\\\"|[^\\""\\n\\r])*"(?!")', 'gm'), css: 'string' },
+        { regex: new RegExp("'(?!')*(?:\\.|(\\\\\\')|[^\\''\\n\\r])*'(?!')", 'gm'), css: 'string' },
         { regex: new RegExp("\\b\\d+\\.?\\w*", 'g'), css: 'number' },
         { regex: new RegExp(this.GetKeywords(keywords), 'gm'), css: 'keyword' },
         { regex: new RegExp(this.GetKeywords(special), 'gm'), css: 'special' }
