@@ -37,18 +37,18 @@ class User < ActiveRecord::Base
   end
   
   # Authenticates login against its password 
-  # through a script specified by VALIDATE_FILE
+  # through a script specified by config VALIDATE_FILE
   def self.authenticate(login, password)
     # Do not allow the following characters in usernames/passwords
     # Right now, this is \n and \0 only, since username and password
     # are delimited by \n and C programs use \0 to terminate strings
     not_allowed_regexp = Regexp.new(/[\n\0]+/)
     if !(not_allowed_regexp.match(login) || not_allowed_regexp.match(password))
-      # Open a pipe and write to stdin of the program specified by VALIDATE_FILE. 
+      # Open a pipe and write to stdin of the program specified by config VALIDATE_FILE. 
       # We could read something from the programs stdout, but there is no need
       # for that at the moment (you would do it by e.g. pipe.readlines)
       
-      # External validation is supportes on *NIX only
+      # External validation is supported on *NIX only
       if RUBY_PLATFORM =~ /(:?mswin|mingw)/ # should match for Windows only
         return AUTHENTICATE_BAD_PLATFORM
       end
@@ -60,7 +60,7 @@ class User < ActiveRecord::Base
       #  3 is used for other error exits
       
       pipe = IO.popen(VALIDATE_FILE, "w+")
-      pipe.puts("#{login}\n#{password}") # write to stdin of VALIDATE_FILE
+      pipe.puts("#{login}\n#{password}") # write to stdin of markus_config_validate
       pipe.close
       @logger = MarkusLogger.instance
       case $?.exitstatus

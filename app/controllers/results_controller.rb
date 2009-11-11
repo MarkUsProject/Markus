@@ -33,10 +33,6 @@ class ResultsController < ApplicationController
   def edit
     result_id = params[:id]
     @result = Result.find(result_id)
-    if @result.released_to_students == true
-       flash[:fail_notice] = "The marks have been released. You cannot
-       change the grades."
-    end
     @assignment = @result.submission.assignment
     @rubric_criteria = @assignment.rubric_criteria
     @submission = @result.submission
@@ -69,8 +65,12 @@ class ResultsController < ApplicationController
     # If a grouping's submission's marking_status is complete, we're not going
     # to include them in the next_submission/prev_submission list
     
+    # If a grouping doesn't have a submission, and we are past the collection time, 
+    # we *DO* want to include them in the list.
+    collection_time = @assignment.submission_rule.calculate_collection_time.localtime
+    
     groupings.delete_if do |grouping|
-      grouping != @grouping && (!grouping.has_submission? || grouping.get_submission_used.result.marking_state == Result::MARKING_STATES[:complete])
+      grouping != @grouping && (grouping.marking_completed? || (!grouping.has_submission? && (Time.now < collection_time)))
     end
     
     # We sort by Group name by default
@@ -102,6 +102,7 @@ class ResultsController < ApplicationController
     released_to_students = (params[:value] == 'true')
     @result.released_to_students = released_to_students
     @result.save
+    @result.submission.assignment.set_results_average
   end
   
   #Updates the marking state

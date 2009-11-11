@@ -50,7 +50,10 @@ class ActiveSupport::TestCase
   end
   
   def destroy_repos
-    Repository.get_class(REPOSITORY_TYPE).purge_all
+    conf = Hash.new
+    conf["IS_REPOSITORY_ADMIN"] = true
+    conf["REPOSITORY_PERMISSION_FILE"] = 'dummyfile'
+    Repository.get_class(REPOSITORY_TYPE, conf).purge_all
   end
   
 end

@@ -1,7 +1,8 @@
 require File.dirname(__FILE__) + '/../test_helper'
+require "shoulda"
 
 class TATest < ActiveSupport::TestCase
-  fixtures :users, :memberships, :assignments
+  fixtures :users, :memberships, :assignments, :groups
   
   def setup
     setup_group_fixture_repos
@@ -67,6 +68,74 @@ exist_user,USER2,USER2"
     ta = users(:ta1)
     g = groupings(:grouping_2)
     assert ta.is_assigned_to_grouping?(g.id)
+  end
+  
+  context "If repo admin" do
+    
+    setup do
+      setup_group_fixture_repos
+      conf = Hash.new
+      conf["IS_REPOSITORY_ADMIN"] = true
+      conf["REPOSITORY_PERMISSION_FILE"] = markus_config_repository_permission_file
+      @repo = Repository.get_class(markus_config_repository_type, conf)
+      Ta.any_instance.stubs(:markus_config_repository_admin?).returns(true)
+    end
+    
+    teardown do
+      destroy_repos
+    end
+  
+    should "grant repository_permissions when TA is added" do
+      ta = Ta.new
+      ta.user_name = "just_another_admin"
+      ta.last_name = "doe"
+      ta.first_name = "john"
+  
+      repo_names = Group.all.collect do |group| File.join(markus_config_repository_storage, group.repository_name) end
+      @repo.expects(:set_bulk_permissions).times(1).with(repo_names, {ta.user_name => Repository::Permission::READ_WRITE})
+      assert = ta.save
+    end
+    
+    should "revoke repository permissions when destroying an TA object" do
+      ta = users(:ta1)
+      repo_names = Group.all.collect do |group| File.join(markus_config_repository_storage, group.repository_name) end
+      @repo.expects(:delete_bulk_permissions).times(1).with(repo_names, [ta.user_name])
+      ta.destroy
+    end
+  
+  end # end context
+  
+  context "If not repository admin" do
+    
+    setup do 
+      setup_group_fixture_repos
+      # set repository_admin false
+      conf = Hash.new
+      conf["IS_REPOSITORY_ADMIN"] = false
+      conf["REPOSITORY_PERMISSION_FILE"] = markus_config_repository_permission_file
+      @repo = Repository.get_class(markus_config_repository_type, conf)
+      Ta.any_instance.stubs(:markus_config_repository_admin?).returns(false)
+    end
+    
+    teardown do
+      destroy_repos
+    end
+    
+    should "not remove repository permissions when deleting an TA" do
+      ta = users(:ta1)
+      @repo.expects(:delete_bulk_permissions).never
+      ta.destroy
+    end
+    
+    should "not grant repository permissions for newly created TAs" do
+      ta = Ta.new
+      ta.user_name = "yet_another_admin"
+      ta.last_name = "doe"
+      ta.first_name = "john"
+     
+      @repo.expects(:set_bulk_permissions).never
+      assert = ta.save
+    end
   end
 
 end

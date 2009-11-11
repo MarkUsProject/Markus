@@ -106,6 +106,10 @@ function default_group_fields() {
 }
 
 function update_due_date(new_due_date) {
+  var now = new Date();
+  if(Date.parseFormattedString(new_due_date) < now) {
+    alert(past_due_date_edit_warning);
+  }
   grace_periods.set_due_date(new_due_date);
   penalty_periods.set_due_date(new_due_date);
   grace_periods.refresh();
@@ -134,3 +138,5 @@ function change_submission_rule() {
   }
 
 }
+
+

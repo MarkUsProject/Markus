@@ -47,6 +47,9 @@ en:
     released:           "released"
     invalid_grouping:   "(invalid)"
     firefox_warning:    "Some functionality might only work for Mozilla Firefox users"
+    marks_released_notice:  "The marks have been released. You cannot change the grades."
+    past_due_date_edit_warning:  "WARNING:  The due date you have selected is in the past."
+    
     seperate_multiple_with_commas:  "Seperate multiple user names with commas"
     csv_valid_format:   "There was a problem parsing the CSV file you uploaded.  Please ensure that it's a valid CSV format, and that each line ends with a carriage-return line-feed set of characters.  No changes were made. "
     csv_invalid_lines: "The following CSV lines were invalid: "
@@ -165,8 +168,8 @@ en:
 	left.  To change the order, drag a criterion to the desired location
 	in the list.
 	"
-    student_without_a_group_list_message: "These students don't have a group 
+    students_without_a_group_list_message: "These students don't have a group 
         yet:"
-    no_student_without_a_group_message: "All students are in a group."
+    no_students_without_a_group_message: "All students are in a group."
     firefox_warning: "Some of the features in the grader view will only work with Mozilla Firefox"
     past_due_date_warning: "Due date for this assignment is in the past."

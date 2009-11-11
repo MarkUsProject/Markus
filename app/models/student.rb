@@ -1,7 +1,4 @@
 class Student < User
-  SESSION_TIMEOUT = USER_STUDENT_SESSION_TIMEOUT
-  # CSV_UPLOAD_ORDER is what we expect the uploaded CSV file to be ordered with
-  CSV_UPLOAD_ORDER = USER_STUDENT_CSV_UPLOAD_ORDER
 
   has_many :accepted_groupings, :class_name => 'Grouping', :through => :memberships, :conditions => {'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]}, :source => :grouping
 
@@ -16,6 +13,8 @@ class Student < User
   validates_numericality_of :grace_credits, :only_integer => true,
     :greater_than_or_equal_to => 0
 
+  CSV_UPLOAD_ORDER = USER_STUDENT_CSV_UPLOAD_ORDER
+  SESSION_TIMEOUT = USER_STUDENT_SESSION_TIMEOUT
 
   # Returns true if this student has a Membership in a Grouping for an
   # Assignment with id 'aid', where that Membership.membership_status is either

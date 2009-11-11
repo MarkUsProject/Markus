@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__),'/../../lib/repo/repository_factory')
+require File.join(File.dirname(__FILE__),'/../../lib/repo/repository')
 # Maintains group information for a given user on a specific assignment
 class Group < ActiveRecord::Base
   
@@ -44,45 +44,47 @@ class Group < ActiveRecord::Base
   # file submissions via the Web interface are not permitted. For
   # now, this works for Subversion repositories only.
   def repository_external_commits_only?
-    if IS_REPOSITORY_ADMIN && REPOSITORY_EXTERNAL_SUBMITS_ONLY
-      case REPOSITORY_TYPE
-        when "svn"
-          retval = true
-        else
-          retval = false
-      end
-    else
-      retval = false
-    end
-    return retval
+    return markus_config_external_submits_only?
   end
   
   # Returns the URL for externally accessible repos
   def repository_external_access_url
-    return REPOSITORY_EXTERNAL_BASE_URL + "/" + repository_name
+    return markus_config_repository_external_base_url + "/" + repository_name
   end
   
-  # Returns true if we are in admin mode
   def repository_admin?
-    return IS_REPOSITORY_ADMIN
+    return markus_config_repository_admin?
+  end
+  
+  # Returns configuration for repository
+  # configuration (TODO: soon this will be a dynamic thing, i.e. per assignment config)
+  def repository_config
+    conf = Hash.new
+    conf["IS_REPOSITORY_ADMIN"] = self.repository_admin?
+    conf["REPOSITORY_PERMISSION_FILE"] = markus_config_repository_permission_file
+    conf["REPOSITORY_STORAGE"] = markus_config_repository_storage
+    return conf
   end
   
   def build_repository
     # Attempt to build the repository
     begin
       # create repositories and write permissions if and only if we are admin
-      if repository_admin?
-        Repository.get_class(REPOSITORY_TYPE).create(File.join(REPOSITORY_STORAGE, repository_name), true, REPOSITORY_PERMISSION_FILE)
-        if repository_admin?
-          # Each admin user will have read and write permissions on each repo
-          Admin.all.each do |admin|
-            self.repo.add_user(admin.user_name, Repository::Permission::READ_WRITE)
-          end
-          # Each grader will have read and write permissions on each repo
-          Ta.all.each do |ta|
-            self.repo.add_user(ta.user_name, Repository::Permission::READ_WRITE)
-          end
+      if markus_config_repository_admin?
+        Repository.get_class(markus_config_repository_type, self.repository_config).create(File.join(markus_config_repository_storage, repository_name))
+        # Each admin user will have read and write permissions on each repo
+        user_permissions = {}
+        Admin.all.each do |admin|
+          user_permissions[admin.user_name] = Repository::Permission::READ_WRITE
         end
+        # Each grader will have read and write permissions on each repo
+        Ta.all.each do |ta|
+          user_permissions[ta.user_name] = Repository::Permission::READ_WRITE
+        end
+        group_repo = Repository.get_class(markus_config_repository_type, self.repository_config)
+        group_repo.set_bulk_permissions(File.join(markus_config_repository_storage, self.repository_name), user_permissions)
+      else
+        raise "Cannot build repositories, MarkUs not in authoritative mode!"
       end
     rescue Exception => e
       raise e
@@ -92,15 +94,11 @@ class Group < ActiveRecord::Base
   
   # Return a repository object, if possible
   def repo
-    repo_loc = File.join(REPOSITORY_STORAGE, self.repository_name)
-    if !repository_admin?
-      if Repository.get_class(REPOSITORY_TYPE).repository_exists?(repo_loc)
-        return Repository.get_class(REPOSITORY_TYPE).open(repo_loc, false, REPOSITORY_PERMISSION_FILE) # use false as a second parameter, since we are not repo admin
-      else
-        raise "Repository not found and MarkUs not in authoritative mode!" # repository not found, and we are not repo-admin
-      end
+    repo_loc = File.join(markus_config_repository_storage, self.repository_name)
+    if Repository.get_class(markus_config_repository_type, self.repository_config).repository_exists?(repo_loc)
+      return Repository.get_class(markus_config_repository_type, self.repository_config).open(repo_loc)
     else
-      return Repository.get_class(REPOSITORY_TYPE).open(repo_loc, true, REPOSITORY_PERMISSION_FILE)
+      raise "Repository not found and MarkUs not in authoritative mode!" # repository not found, and we are not repo-admin
     end
   end
 end

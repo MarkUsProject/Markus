@@ -6,7 +6,7 @@ document.observe("dom:loaded", function() {
    load_submitted_file('<%=first_file.id%>');
   <% end %>
   //Register drop down menus...
-  <% if @result.marking_state != Result::MARKING_STATES[:complete] %>
+  <% if !@result.released_to_students %>
   setup_annotation_categories();
   <% end %>
   

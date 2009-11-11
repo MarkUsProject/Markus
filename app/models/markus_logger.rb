@@ -14,16 +14,27 @@ class MarkusLogger
   # we only want one instance of this class through the whole
   # program.
   include Singleton
+  
   # DEBUG: low-level information for developers
-  DEBUG = 1
+  if !defined?(DEBUG)
+    DEBUG = 1
+  end
   # INFO:  generic (useful) information about system operation
-  INFO = 2
+  if !defined?(INFO)
+    INFO = 2
+  end
   # WARN:  a warning
-  WARN = 3
+  if !defined?(WARN)
+    WARN = 3
+  end
   # ERROR: a handleable error condition
-  ERROR = 4
+  if !defined?(ERROR)
+    ERROR = 4
+  end
   # FATAL: an unhandleable error that results in a program crash
-  FATAL = 5 
+  if !defined?(FATAL)
+    FATAL = 5 
+  end
 
   #===Description
   # The singleton module makes the new method private.
@@ -32,16 +43,16 @@ class MarkusLogger
   # The variables that the loggers will use are defined in the
   # environment.rb file
   #===Exceptions
-  # If the variables MARKUS_LOGGING_ROTATE_INTERVAL, MARKUS_LOGGING_ERRORLOGFILE, MARKUS_LOGGING_LOGFILE
+  # If the configuration variables MARKUS_LOGGING_ROTATE_INTERVAL, MARKUS_LOGGING_ERRORLOGFILE, MARKUS_LOGGING_LOGFILE
   # or MARKUS_LOGGING_SIZE_THRESHOLD are not valid an exception of type MarkusLoggerConfigurationError
   # is raised
   def initialize
-    rotate_by_time = MARKUS_LOGGING_ROTATE_BY_INTERVAL
-    size = MARKUS_LOGGING_SIZE_THRESHOLD
-    error_log_file = MARKUS_LOGGING_ERRORLOGFILE
-    log_file = MARKUS_LOGGING_LOGFILE
-    interval = MARKUS_LOGGING_ROTATE_INTERVAL
-    old_files = MARKUS_LOGGING_OLDFILES
+    rotate_by_time = markus_config_logging_rotate_by_interval
+    size = markus_config_logging_size_threshold
+    error_log_file = markus_config_logging_errorlogfile
+    log_file = markus_config_logging_logfile
+    interval = markus_config_logging_rotate_interval
+    old_files = markus_config_logging_num_oldfiles
     if !(valid_file?(error_log_file) && valid_file?(log_file))
       raise MarkusLoggerConfigurationError.new('The log files are not valid')
     end

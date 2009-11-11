@@ -1,6 +1,9 @@
 require 'test/unit'
 require File.join(File.dirname(__FILE__),'/../../app/models/markus_logger')
+require 'rubygems'
 require 'shoulda'
+require 'mocha'
+require 'ruby-debug'
 
 class MarkusLoggerTest < Test::Unit::TestCase
   context "A MarkusLogger instance" do
@@ -19,12 +22,12 @@ class MarkusLoggerTest < Test::Unit::TestCase
       interval = 'daily'
       byInterval = false
       oldfiles = 10
-      MarkusLogger.const_set(:MARKUS_LOGGING_ROTATE_BY_INTERVAL, byInterval)
-      MarkusLogger.const_set(:MARKUS_LOGGING_SIZE_THRESHOLD, size)
-      MarkusLogger.const_set(:MARKUS_LOGGING_ROTATE_INTERVAL, interval)
-      MarkusLogger.const_set(:MARKUS_LOGGING_LOGFILE, @infolog)
-      MarkusLogger.const_set(:MARKUS_LOGGING_ERRORLOGFILE, @errorlog)
-      MarkusLogger.const_set(:MARKUS_LOGGING_OLDFILES, oldfiles)
+      MarkusLogger.any_instance.stubs(:markus_config_logging_rotate_by_interval).returns(byInterval)
+      MarkusLogger.any_instance.stubs(:markus_config_logging_size_threshold).returns(size)
+      MarkusLogger.any_instance.stubs(:markus_config_logging_rotate_interval).returns(interval)
+      MarkusLogger.any_instance.stubs(:markus_config_logging_logfile).returns(@infolog)
+      MarkusLogger.any_instance.stubs(:markus_config_logging_errorlogfile).returns(@errorlog)
+      MarkusLogger.any_instance.stubs(:markus_config_logging_num_oldfiles).returns(oldfiles)
     end
 
     
@@ -59,125 +62,37 @@ class MarkusLoggerTest < Test::Unit::TestCase
       rescue Exception => ex
         puts "Error while trying to remove the file #{@errorlog}: " + ex
       end
+      
+      # reset probably instantiated Singleton
+      Singleton.__init__(MarkusLogger)
     end
 
-
-    should "01raise exception if logfile is a directory" do
-      FileUtils.mkdir_p @baddir unless File.directory?(@baddir)
-      MarkusLogger.const_set(:MARKUS_LOGGING_LOGFILE, @baddir)
-      assert_raise MarkusLoggerConfigurationError do
-        logger = MarkusLogger.instance
-      end
-    end
-
-    should "01raise exception if error_logfile is a directory" do
-      FileUtils.mkdir_p @baddir unless File.directory?(@baddir)
-      MarkusLogger.const_set(:MARKUS_LOGGING_ERRORLOGFILE, @baddir)
-      assert_raise MarkusLoggerConfigurationError do
-        logger = MarkusLogger.instance
-      end
-    end
-
-    should "01raise exception if error_logfile is in a directory with no writing permissions" do
-      FileUtils.mkdir_p @baddir unless File.directory?(@baddir)
-      file = File.join(@baddir,'file');
-      FileUtils.chmod 0000, @baddir
-      MarkusLogger.const_set(:MARKUS_LOGGING_ERRORLOGFILE, file)
-      assert_raise MarkusLoggerConfigurationError do
-        logger = MarkusLogger.instance
-      end
-    end
-
-    should "01raise exception if logfile is in a directory with no writing permissions" do
-      FileUtils.mkdir_p @baddir unless File.directory?(@baddir)
-      file = File.join(@baddir,'file');
-      FileUtils.chmod 0000, @baddir
-      MarkusLogger.const_set(:MARKUS_LOGGING_LOGFILE, file)
-      assert_raise MarkusLoggerConfigurationError do
-        logger = MarkusLogger.instance
-      end
-    end
-
-    should "01raise exception if logfile is a file with no writing permissions" do
-      badfile = File.open( @badfile,'w')
-      badfile.chmod 0000
-      MarkusLogger.const_set(:MARKUS_LOGGING_LOGFILE, @badfile)
-      assert_raise MarkusLoggerConfigurationError do
-        logger = MarkusLogger.instance
-      end
-    end
-
-    should "01raise exception if error_logfile is a file with no writing permissions" do
-      badfile = File.open( @badfile,'w')
-      badfile.chmod 0000
-      MarkusLogger.const_set(:MARKUS_LOGGING_ERRORLOGFILE, @badfile)
-      assert_raise MarkusLoggerConfigurationError do
-        logger = MarkusLogger.instance
-      end
-    end
-
-    should "01raise exception when new is called" do
+    should "raise exception when new is called" do
       assert_raise NoMethodError do
         logger = MarkusLogger.new
       end
     end
 
-    should "01raise exception when the threshold size is == 0" do
-      MarkusLogger.const_set(:MARKUS_LOGGING_SIZE_THRESHOLD, 0)
-      assert_raise MarkusLoggerConfigurationError do
-         @logger = MarkusLogger.instance
-      end
-    end
-    
-    should "01raise exception when the threshold size is < 0" do
-      MarkusLogger.const_set(:MARKUS_LOGGING_SIZE_THRESHOLD, -1)
-      assert_raise MarkusLoggerConfigurationError do
-         @logger = MarkusLogger.instance
-      end
-    end
-    
-    should "01raise exception when the number of old logfiles to keep is < 0" do
-      MarkusLogger.const_set(:MARKUS_LOGGING_OLDFILES, -1)
-      assert_raise MarkusLoggerConfigurationError do
-         @logger = MarkusLogger.instance
-      end
-    end
-    
-    should "01raise exception when the number of old logfiles to keep is == 0" do
-      MarkusLogger.const_set(:MARKUS_LOGGING_OLDFILES, 0)
-      assert_raise MarkusLoggerConfigurationError do
-         @logger = MarkusLogger.instance
-      end
-    end
-
-    should "01raise exception when the rotation interval is not daily, weekly or monthly" do
-      MarkusLogger.const_set(:MARKUS_LOGGING_ROTATE_BY_INTERVAL, true)
-      MarkusLogger.const_set(:MARKUS_LOGGING_ROTATE_INTERVAL, 'lalala')
-      assert_raise MarkusLoggerConfigurationError do
-        @logger = MarkusLogger.instance
-      end
-    end
-
-    should "03only be one instance of MarkusLogger" do
+    should "only be one instance of MarkusLogger" do
       log_a = MarkusLogger.instance
       log_b = MarkusLogger.instance
       assert_same log_a, log_b
     end
 
-    should "03the valid_file? method be private" do
+    should "the valid_file? method be private" do
       logger = MarkusLogger.instance
       assert_raise NoMethodError do
         logger.valid_file?(@infolog)
       end
     end
 
-    should "03initialize correctly and raise no exceptions" do
+    should "initialize correctly and raise no exceptions" do
       assert_nothing_raised do
         logger = MarkusLogger.instance
       end
    end
 
-    should "03raise exception if log level is above the FATAL level" do
+    should "raise exception if log level is above the FATAL level" do
       log_level = MarkusLogger::FATAL + 1
       assert_raise ArgumentError do
         logger = MarkusLogger.instance
@@ -185,7 +100,7 @@ class MarkusLoggerTest < Test::Unit::TestCase
       end
     end
 
-    should "03raise exception if log level is below the DEBUG level" do
+    should "raise exception if log level is below the DEBUG level" do
       log_level = MarkusLogger::DEBUG - 1
       assert_raise ArgumentError do
         logger = MarkusLogger.instance
@@ -193,7 +108,7 @@ class MarkusLoggerTest < Test::Unit::TestCase
       end
     end
 
-    should "03rotate infologs when @size bytes of data is reached" do
+    should "rotate infologs when @size bytes of data is reached" do
       logger = MarkusLogger.instance
       current_size = File.size(@infolog)
       chars = ('a'..'z').to_a + ('A'..'Z').to_a
@@ -205,7 +120,7 @@ class MarkusLoggerTest < Test::Unit::TestCase
       assert File.file?(infolog << '.0')
     end
 
-    should "03rotate errorlogs when @size bytes of data is reached" do
+    should "rotate errorlogs when @size bytes of data is reached" do
       logger = MarkusLogger.instance
       current_size = File.size(@errorlog)
       chars = ('a'..'z').to_a + ('A'..'Z').to_a
@@ -217,5 +132,96 @@ class MarkusLoggerTest < Test::Unit::TestCase
       assert File.file?(errorlog << '.0') 
     end
 
-  end
+    should "raise exception if logfile is a directory" do
+      baddir = File.join('test','unit','baddir')
+      FileUtils.mkdir_p baddir unless File.directory?(baddir)
+      MarkusLogger.any_instance.stubs(:markus_config_logging_logfile).returns(baddir)
+      assert_raise MarkusLoggerConfigurationError do
+        logger = MarkusLogger.instance
+      end
+    end
+    
+    should "raise exception if error_logfile is a directory" do
+      FileUtils.mkdir_p @baddir unless File.directory?(@baddir)
+      MarkusLogger.any_instance.stubs(:markus_config_logging_errorlogfile).returns(@baddir)
+      assert_raise MarkusLoggerConfigurationError do
+        logger = MarkusLogger.instance
+      end
+    end
+
+    should "raise exception if error_logfile is in a directory with no writing permissions" do
+      FileUtils.mkdir_p @baddir unless File.directory?(@baddir)
+      file = File.join(@baddir,'file');
+      FileUtils.chmod 0000, @baddir
+      MarkusLogger.any_instance.stubs(:markus_config_logging_errorlogfile).returns(@baddir)
+      assert_raise MarkusLoggerConfigurationError do
+        logger = MarkusLogger.instance
+      end
+    end
+
+    should "raise exception if logfile is in a directory with no writing permissions" do
+      FileUtils.mkdir_p @baddir unless File.directory?(@baddir)
+      file = File.join(@baddir,'file');
+      FileUtils.chmod 0000, @baddir
+      MarkusLogger.any_instance.stubs(:markus_config_logging_logfile).returns(file)
+      assert_raise MarkusLoggerConfigurationError do
+        logger = MarkusLogger.instance
+      end
+    end
+
+    should "raise exception if logfile is a file with no writing permissions" do
+      badfile = File.open( @badfile,'w')
+      badfile.chmod 0000
+      MarkusLogger.any_instance.stubs(:markus_config_logging_logfile).returns(@badfile)
+      assert_raise MarkusLoggerConfigurationError do
+        logger = MarkusLogger.instance
+      end
+    end
+
+    should "raise exception if error_logfile is a file with no writing permissions" do
+      badfile = File.open( @badfile,'w')
+      badfile.chmod 0000
+      MarkusLogger.any_instance.stubs(:markus_config_logging_errorlogfile).returns(@badfile)
+      assert_raise MarkusLoggerConfigurationError do
+        logger = MarkusLogger.instance
+      end
+    end
+    
+    should "raise exception when the threshold size is == 0" do
+      MarkusLogger.any_instance.stubs(:markus_config_logging_size_threshold).returns(0)
+      assert_raise MarkusLoggerConfigurationError do
+         logger = MarkusLogger.instance
+      end
+    end
+    
+    should "raise exception when the threshold size is < 0" do
+      MarkusLogger.any_instance.stubs(:markus_config_logging_size_threshold).returns(-1)
+      assert_raise MarkusLoggerConfigurationError do
+         logger = MarkusLogger.instance
+      end
+    end
+    
+    should "raise exception when the number of old logfiles to keep is < 0" do
+      MarkusLogger.any_instance.stubs(:markus_config_logging_num_oldfiles).returns(-1)
+      assert_raise MarkusLoggerConfigurationError do
+         logger = MarkusLogger.instance
+      end
+    end
+    
+    should "raise exception when the number of old logfiles to keep is == 0" do
+      MarkusLogger.any_instance.stubs(:markus_config_logging_num_oldfiles).returns(-1)
+      assert_raise MarkusLoggerConfigurationError do
+         logger = MarkusLogger.instance
+      end
+    end
+
+    should "raise exception when the rotation interval is not daily, weekly or monthly" do
+      MarkusLogger.any_instance.stubs(:markus_config_logging_rotate_by_interval).returns(true)
+      MarkusLogger.any_instance.stubs(:markus_config_logging_rotate_interval).returns("lalala")
+      assert_raise MarkusLoggerConfigurationError do
+        logger = MarkusLogger.instance
+      end
+    end
+    
+  end # end context
 end

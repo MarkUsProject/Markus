@@ -47,10 +47,14 @@ class SubversionRepositoryTest < Test::Unit::TestCase
     
     # creates a new SVN repository at TEST_REPO
     setup do
+      # configure and create repositories
+      conf_admin = Hash.new
+      conf_admin["IS_REPOSITORY_ADMIN"] = true
+      conf_admin["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
       # create repository first
-      SubversionRepository.create(TEST_REPO)
+      Repository.get_class("svn", conf_admin).create(TEST_REPO)
       # open the repository
-      @repo = SubversionRepository.new(TEST_REPO)      
+      @repo = Repository.get_class("svn", conf_admin).open(TEST_REPO)      
     end
     
     # removes the SVN repository at TEST_REPO
@@ -266,14 +270,21 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       # create repository first
       repo1 = SVN_TEST_REPOS_DIR+"/Testrepo1"
       repo2 = SVN_TEST_REPOS_DIR+"/Repository2"
-      
-      SubversionRepository.create(repo1, true, SVN_AUTHZ_FILE)
-      SubversionRepository.create(repo2, true, SVN_AUTHZ_FILE)
-      SubversionRepository.create(TEST_REPO, true, SVN_AUTHZ_FILE)
+      conf_admin = Hash.new
+      conf_admin["IS_REPOSITORY_ADMIN"] = true
+      conf_admin["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
+      Repository.get_class("svn", conf_admin).create(repo1)
+      Repository.get_class("svn", conf_admin).create(repo2)
+      Repository.get_class("svn", conf_admin).create(TEST_REPO)
       # open the repository
-      @repo1 = SubversionRepository.new(repo1, false, SVN_AUTHZ_FILE) # non-admin repository
-      @repo2 = SubversionRepository.new(repo2, false, SVN_AUTHZ_FILE) # again, a non-admin repo
-      @repo = SubversionRepository.new(TEST_REPO, true, SVN_AUTHZ_FILE)     # repo with admin-privs
+      conf_non_admin = Hash.new
+      conf_non_admin["IS_REPOSITORY_ADMIN"] = false
+      conf_non_admin["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
+      
+      @repo1 = Repository.get_class("svn", conf_non_admin).open(repo1) # non-admin repository
+      @repo2 = Repository.get_class("svn", conf_non_admin).open(repo2) # again, a non-admin repo
+      @repo = Repository.get_class("svn", conf_admin).open(TEST_REPO)     # repo with admin-privs
+      
       # add some files
       files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
       add_some_files_helper(@repo1, files_to_add)
@@ -462,9 +473,12 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       end
       
       repositories = []
+      conf_admin = Hash.new
+      conf_admin["IS_REPOSITORY_ADMIN"] = true
+      conf_admin["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
       repository_names.each do |repo_name|
-        SubversionRepository.create(repo_name, true, new_svn_authz)
-        repo = SubversionRepository.open(repo_name)
+        Repository.get_class("svn", conf_admin).create(repo_name)
+        repo = Repository.get_class("svn", conf_admin).open(repo_name)
         repo.add_user("some_user", Repository::Permission::READ_WRITE)
         repo.add_user("another_user", Repository::Permission::READ_WRITE)
         repositories.push(repo)
@@ -487,6 +501,82 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       
     end
   end # end context
+  
+  context "SubversionRepository" do
+    should "raise an exception if not properly configured" do
+      conf = Hash.new
+      conf["REPOSITORY_PERMISSION_FILE"] = 'something'
+      assert_raise(ConfigurationError) do
+        Repository.get_class("svn", conf) # missing a required constant
+      end
+    end
+  end # end context
+  
+  context "Setting and deleting bulk permissions" do
+    setup do
+      # use a different svn_authz file for this test
+      new_svn_authz = SVN_TEST_REPOS_DIR + "/svn_authz_bulk_stuff2"
+      @conf_admin = Hash.new
+      @conf_admin["IS_REPOSITORY_ADMIN"] = true
+      @conf_admin["REPOSITORY_PERMISSION_FILE"] = new_svn_authz
+      
+      # create some repositories, add some users
+      repo_base_name = "Group_"
+      @repository_names = []
+      (1..5).each do |counter|
+        @repository_names.push(repo_base_name + counter.to_s.rjust(3, "0"))
+      end
+      
+      repositories = []
+      @repository_names.each do |repo_name|
+        Repository.get_class("svn", @conf_admin).create(SVN_TEST_REPOS_DIR + "/" + repo_name)
+        repo = Repository.get_class("svn", @conf_admin).open(SVN_TEST_REPOS_DIR + "/" + repo_name)
+        repositories.push(repo)
+      end
+    end
+    
+    teardown do
+      new_svn_authz = SVN_TEST_REPOS_DIR + "/svn_authz_bulk_stuff2"
+      # remove authz file if it exists
+      if File.exist?(new_svn_authz)
+        FileUtils.rm(new_svn_authz)
+      end
+      
+      # remove repositories, if they exist
+      @repository_names.each do |repo_name|
+        if SubversionRepository.repository_exists?(SVN_TEST_REPOS_DIR + "/" + repo_name)
+          FileUtils.remove_dir(SVN_TEST_REPOS_DIR + "/" + repo_name, true)
+        end
+      end
+    end
+    
+    should "Add a user and set permissions to every Group repository" do
+
+      # Ok, now lets try to add a few bulk users
+      assert SubversionRepository.set_bulk_permissions(@repository_names, {"test_user" => Repository::Permission::READ})
+      assert SubversionRepository.set_bulk_permissions(@repository_names, {"test_user2" => Repository::Permission::READ_WRITE})
+
+      # Test to make sure they got attached to each repository
+      @repository_names.each do |repo_name|
+        repo = Repository.get_class("svn", @conf_admin).open(SVN_TEST_REPOS_DIR + "/" + repo_name)
+        assert_equal(Repository::Permission::READ, repo.get_permissions("test_user"))
+        assert_equal(Repository::Permission::READ_WRITE, repo.get_permissions("test_user2"))      
+      end
+      
+      # Ok, now let's try to remove them
+      assert SubversionRepository.delete_bulk_permissions(@repository_names, ['test_user'])
+
+      # Test to make sure they got attached to each repository
+      @repository_names.each do |repo_name|
+        repo = repo = Repository.get_class("svn", @conf_admin).open(SVN_TEST_REPOS_DIR + "/" + repo_name)
+        assert_raises Repository::UserNotFound do
+          repo.get_permissions("test_user")
+        end 
+        assert_equal(Repository::Permission::READ_WRITE, repo.get_permissions("test_user2"))      
+      end
+            
+    end
+  end
   
   private # private helper methods for this class
     

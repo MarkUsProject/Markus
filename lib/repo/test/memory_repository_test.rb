@@ -22,11 +22,13 @@ class MemoryRepositoryTest < Test::Unit::TestCase
     end
     
     should "be able to create a new Memory repository" do
-      repo = MemoryRepository.create(REPO_LOCATION)
+      MemoryRepository.create(REPO_LOCATION)
+      repo = MemoryRepository.open(REPO_LOCATION)
       assert_not_nil(repo, "Could not create Repository")
       assert_instance_of(Repository::MemoryRepository, repo, "Repository is of wrong type")
       # and create another one :-)
-      repo2 = MemoryRepository.create(ANOTHER_REPO_LOCATION)
+      MemoryRepository.create(ANOTHER_REPO_LOCATION)
+      repo2 = MemoryRepository.open(ANOTHER_REPO_LOCATION)
       assert_not_nil(repo2, "Could not create Repository")
       assert_instance_of(Repository::MemoryRepository, repo2, "Repository is of wrong type")
     end
@@ -55,7 +57,7 @@ class MemoryRepositoryTest < Test::Unit::TestCase
     # specified in TEST_REPO_CONTENT
     setup do
       MemoryRepository.create(REPO_LOCATION) # create repository first
-      @repo = MemoryRepository.new(REPO_LOCATION)
+      @repo = MemoryRepository.open(REPO_LOCATION)
     end
     
     # destroy all repositories created
@@ -134,7 +136,7 @@ class MemoryRepositoryTest < Test::Unit::TestCase
       # filename should not be available in repo now
       rev = @repo.get_latest_revision()
       files = rev.files_at_path("/")
-      assert_equal({}, files, "File '"+filename+"' should have been removed!")
+      assert_equal(0, files.size, "File '"+filename+"' should have been removed!")
     end
     
     should "be able to add multiple files using a single transaction" do
@@ -367,10 +369,10 @@ class MemoryRepositoryTest < Test::Unit::TestCase
       
       @repo.remove_user(another_user)
       users_with_any_perm = @repo.get_users(Repository::Permission::ANY)
-      assert_nil(users_with_any_perm, "There are NO users with any permissions")
+      assert_nil(users_with_any_perm, "There are NO users with any permissions")  
+      
     end
-    
-    
+  
     should "have repositories persist" do
       files_to_add = ["MyClass.java", "MyInterface.java", "test.xml"]
       add_some_files_helper(@repo, files_to_add) # add some initial files
@@ -380,6 +382,64 @@ class MemoryRepositoryTest < Test::Unit::TestCase
       assert_equal revision1.revision_number, revision2.revision_number, "These two revision numbers should match!"
     end
     
+  end # end context
+  
+  context "MemoryRepository" do
+    
+    # setup and teardown for the current context
+    
+    # creates repositories
+    setup do
+      @repo_names = ["test_repo", "test_repo2", "test_repo3", "test_repo4"]
+      # Create the repos
+      @repo_names.each do |repo_name|
+        MemoryRepository.create(repo_name)
+      end
+    end
+    
+    # destroy all repositories created
+    teardown do
+      MemoryRepository.purge_all()
+    end
+    
+    should "raise an exception if not properly configured" do
+      conf = Hash.new
+      conf["IS_REPOSITORY_ADMIN"] = true
+      assert_raise(ConfigurationError) do
+        Repository.get_class("memory", conf) # missing required REPOSITORY_PERMISSION_FILE
+      end
+    end
+    
+    should "be able to bulk add and delete user permissions" do
+      
+      # Now lets try to bulk add some users
+      MemoryRepository.set_bulk_permissions(@repo_names, {"test_user" => Repository::Permission::READ})
+      MemoryRepository.set_bulk_permissions(@repo_names, {"test_user2" => Repository::Permission::READ_WRITE})
+      MemoryRepository.set_bulk_permissions(@repo_names, {"test_user3" => Repository::Permission::READ})
+      
+      # Check to see if permissions were added
+      @repo_names.each do |repo_name|
+        repo = MemoryRepository.open(repo_name)
+        assert_equal(Repository::Permission::READ, repo.get_permissions('test_user'))
+        assert_equal(Repository::Permission::READ_WRITE, repo.get_permissions('test_user2'))
+        assert_equal(Repository::Permission::READ, repo.get_permissions('test_user3'))
+      end
+      
+      # Check to see if we can bulk delete
+      MemoryRepository.delete_bulk_permissions(@repo_names, ['test_user', 'test_user2'])
+      @repo_names.each do |repo_name|
+        repo = MemoryRepository.open(repo_name)
+        assert_raises Repository::UserNotFound do
+          repo.get_permissions('test_user')
+        end
+        assert_raises Repository::UserNotFound do
+          repo.get_permissions('test_user2')
+        end
+        assert_equal(Repository::Permission::READ, repo.get_permissions('test_user3'))
+      end
+      
+    end
+       
   end # end context
   
   private # private helper methods for this class

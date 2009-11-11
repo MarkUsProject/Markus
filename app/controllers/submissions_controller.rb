@@ -425,8 +425,8 @@ class SubmissionsController < ApplicationController
   # See Assignment.get_svn_commands for details
   def download_svn_export_commands
     assignment = Assignment.find(params[:id])
-    string = assignment.get_svn_commands
-    send_data string, :disposition => 'attachment', :type => 'text/plain', :filename => "#{assignment.short_identifier}_svn_exports"
+    svn_commands = assignment.get_svn_commands
+    send_data svn_commands.join("\n"), :disposition => 'attachment', :type => 'text/plain', :filename => "#{assignment.short_identifier}_svn_exports"
   end
 
   # See Assignment.get_svn_commands for details

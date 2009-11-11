@@ -24,8 +24,8 @@ class MemoryRepository < Repository::AbstractRepository
   # Constructor: Connects to an existing Memory
   # repository; Note: A repository has to be created using
   # MemoryRepository.create(), if it is not yet existent
-  # Generally: Do not(!) call it with 3 parameters, use MemoryRepository.create() instead!
-  def initialize(location, is_admin=true, is_create_call=false)
+  # Generally: Do not(!) call it with 2 parameters, use MemoryRepository.create() instead!
+  def initialize(location)
     
     # variables
     @users = {}                                 # hash of users (key) with corresponding permissions (value)
@@ -37,21 +37,10 @@ class MemoryRepository < Repository::AbstractRepository
     @repository_location = location
     
     
-    # hack(ish) functionality
-    if !is_create_call
-      begin
-        super(location) # dummy super() call to be ruby conformant (in fact, does nothing but raising an exception) 
-      rescue NotImplementedError; end
-      if !self.class.repository_exists?(location)
-        raise "Could not open repository at location #{location}"
-      end
-      return @@repositories[location] # return reference in question
-    else
-      if MemoryRepository.repository_exists?(location)
-        raise RepositoryCollision.new("There is already a repository at #{location}")
-      end
-      @@repositories[location] = self             # push new MemoryRepository onto repository list
+    if MemoryRepository.repository_exists?(location)
+      raise RepositoryCollision.new("There is already a repository at #{location}")
     end
+    @@repositories[location] = self             # push new MemoryRepository onto repository list
     
   end
   
@@ -65,17 +54,20 @@ class MemoryRepository < Repository::AbstractRepository
     return false
   end
   
-  # Open repository at specified location (dummy permission file to unify API)
-  def self.open(location, is_admin=true, perm_file=nil)
-    return @@repositories[location]
-    #return MemoryRepository.new(location, is_admin)
+  # Open repository at specified location
+  def self.open(location)
+    if !self.repository_exists?(location)
+        raise "Could not open repository at location #{location}"
+      end
+    return @@repositories[location] # return reference in question
   end
   
   # Creates memory repository at "virtual" location (they are identifiable by location)
-  # perm_file is a parameter, which exists to conform with the API
-  def self.create(location, is_admin=true, perm_file=nil)
-    MemoryRepository.new(location, is_admin, true) # want to create a repository
-    return MemoryRepository.open(location, is_admin)
+  def self.create(location)
+    if !MemoryRepository.repository_exists?(location)
+      MemoryRepository.new(location) # create a repository if it doesn't exist
+    end
+    return true
   end
   
   # Destroys all repositories
@@ -202,7 +194,12 @@ class MemoryRepository < Repository::AbstractRepository
     end
     @users[user_id] = permissions
   end
-  
+
+  # Semi-private - used by the bulk permissions assignments
+  def has_user?(user_id)
+    return @users.key?(user_id)
+  end    
+   
   # Removes a user from from the repository
   def remove_user(user_id)
     if !@users.key?(user_id)
@@ -243,8 +240,36 @@ class MemoryRepository < Repository::AbstractRepository
     return @users[user_id]
   end
   
-  private
+  # Set permissions for many repositories
+  def self.set_bulk_permissions(repo_names, user_id_permissions_map)
+    repo_names.each do |repo_name|
+      repo = self.open(repo_name)
+      user_id_permissions_map.each do |user_id, permissions|
+        if(!repo.has_user?(user_id)) 
+          repo.add_user(user_id, permissions)
+        else
+          repo.set_permissions(user_id, permissions)
+        end
+      end
+    end
+    return true
+  end
   
+  # Delete permissions for many repositories
+  def self.delete_bulk_permissions(repo_names, user_ids)
+    repo_names.each do |repo_name|
+      repo = self.open(repo_name)
+      user_ids.each do |user_id|
+        if(repo.has_user?(user_id))
+          repo.remove_user(user_id)
+        end
+      end
+    end
+    return true
+  end
+
+  
+  private
   # Creates a directory as part of the provided revision
   def make_directory(rev, full_path)
     if rev.path_exists?(full_path)
@@ -493,6 +518,7 @@ class MemoryRevision < Repository::AbstractRevision
   end
   
   private
+  
   
   def files_at_path_helper(path="/", only_changed=false, type=RevisionFile)
     # Automatically append a root slash if not supplied

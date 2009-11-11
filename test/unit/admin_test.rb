@@ -5,55 +5,73 @@ require 'mocha'
 class AdminTest < ActiveSupport::TestCase
   fixtures :users
   fixtures :groups
-
-  def test_grant_repository_permissions_if_repo_admin
+  
+  context "If repo admin" do
     
-    admin = Admin.new
-    admin.user_name = "just_another_admin"
-    admin.last_name = "doe"
-    admin.first_name = "john"
-
-    mock_repo = mock('Repository')
-    Group.any_instance.stubs(:repository_admin?).returns(true)
-    Group.any_instance.stubs(:repo).returns(mock_repo)
-    mock_repo.expects(:add_user).times(Group.all.size).with(admin.user_name, Repository::Permission::READ_WRITE)
-
-    assert = admin.save
-  end
-  
-  def test_grant_repository_permissions_if_not_repo_admin
-    admin = Admin.new
-    admin.user_name = "yet_another_admin"
-    admin.last_name = "doe"
-    admin.first_name = "john"
-        
-    mock_repo = mock('Repository')
-    Group.any_instance.stubs(:repository_admin?).returns(false)
-    Group.any_instance.stubs(:repo).returns(mock_repo)
-    mock_repo.expects(:add_user).never
-
-    assert = admin.save
-  end
-  
-  def test_revoke_repository_permissions_if_admin
-    admin = users(:olm_admin_1)
-
-    mock_repo = mock('Repository')
-    Group.any_instance.stubs(:repository_admin?).returns(true)
-    Group.any_instance.stubs(:repo).returns(mock_repo)
-    mock_repo.expects(:remove_user).times(Group.all.size).with(admin.user_name)
-
-    admin.destroy
-  end
-  
-  def test_revoke_repository_permissions_if_not_repo_admin
-    admin = users(:olm_admin_1)
+    setup do
+      setup_group_fixture_repos
+      conf = Hash.new
+      conf["IS_REPOSITORY_ADMIN"] = true
+      conf["REPOSITORY_PERMISSION_FILE"] = markus_config_repository_permission_file
+      @repo = Repository.get_class(markus_config_repository_type, conf)
+      Admin.any_instance.stubs(:markus_config_repository_admin?).returns(true)
+    end
     
-    mock_repo = mock('Repository')
-    Group.any_instance.stubs(:repository_admin?).returns(false)
-    Group.any_instance.stubs(:repo).returns(mock_repo)
-    mock_repo.expects(:remove_user).never
-
-    admin.destroy
+    teardown do
+      destroy_repos
+    end
+  
+    should "grant repository_permissions when admin is added" do
+      admin = Admin.new
+      admin.user_name = "just_another_admin"
+      admin.last_name = "doe"
+      admin.first_name = "john"
+  
+      repo_names = Group.all.collect do |group| File.join(markus_config_repository_storage, group.repository_name) end
+      @repo.expects(:set_bulk_permissions).times(1).with(repo_names, {admin.user_name => Repository::Permission::READ_WRITE})
+      assert admin.save
+    end
+    
+    should "revoke repository permissions when destroying an admin object" do
+      admin = users(:olm_admin_1)
+      repo_names = Group.all.collect do |group| File.join(markus_config_repository_storage, group.repository_name) end
+      @repo.expects(:delete_bulk_permissions).times(1).with(repo_names, [admin.user_name])
+      admin.destroy
+    end
+  
+  end # end context
+  
+  context "If not repository admin" do
+    
+    setup do 
+      setup_group_fixture_repos
+      # set repository_admin false
+      conf = Hash.new
+      conf["IS_REPOSITORY_ADMIN"] = false
+      conf["REPOSITORY_PERMISSION_FILE"] = markus_config_repository_permission_file
+      @repo = Repository.get_class(markus_config_repository_type, conf)
+      Admin.any_instance.stubs(:markus_config_repository_admin?).returns(false)
+    end
+    
+    teardown do
+      destroy_repos
+    end
+    
+    should "not remove repository permissions when deleting an admin" do
+      admin = users(:olm_admin_1)
+      @repo.expects(:delete_bulk_permissions).never
+      admin.destroy
+    end
+    
+    should "not grant repository permissions for newly created admins" do
+      admin = Admin.new
+      admin.user_name = "yet_another_admin"
+      admin.last_name = "doe"
+      admin.first_name = "john"
+     
+      @repo.expects(:set_bulk_permissions).never
+      assert admin.save
+    end
   end
+  
 end
