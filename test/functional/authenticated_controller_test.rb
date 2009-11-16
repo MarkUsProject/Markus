@@ -16,4 +16,10 @@ class AuthenticatedControllerTest < ActionController::TestCase
     post action, params, session_vars, flash
   end
   
+  # Performs DELETE request as the supplied user for authentication
+  def delete_as(user, action, params=nil, flash=nil)
+    session_vars = { 'uid' => user.id, 'timeout' => 3.days.from_now }
+    delete action, params, session_vars, flash
+  end
+  
 end

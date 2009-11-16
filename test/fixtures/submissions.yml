@@ -9,7 +9,7 @@ submission_1:
    submission_version:       1
    submission_version_used:  true
    revision_number:          4
-   revision_timestamp:       <%= Time.now.to_s(:b)%>
+   revision_timestamp:       <%= Time.now.to_s(:db)%>
 
 submission_2:
    grouping_id:              <%= Fixtures.identify(:grouping2)%>
@@ -17,7 +17,7 @@ submission_2:
    submission_version:       1
    submission_version_used:  true
    revision_number:          1
-   revision_timestamp:       <%= Time.now.to_s(:b)%>
+   revision_timestamp:       <%= Time.now.to_s(:db)%>
 
 submission_4:
    grouping_id:              <%= Fixtures.identify(:grouping3)%>
@@ -25,5 +25,21 @@ submission_4:
    submission_version:       1
    submission_version_used:  true
    revision_number:          1
-   revision_timestamp:       <%= Time.now.to_s(:b)%>
+   revision_timestamp:       <%= Time.now.to_s(:db)%>
 
+sub_1:
+   grouping_id:              <%= Fixtures.identify(:grouping_5) %>
+   created_at:               <%= Time.now.to_s(:db) %>
+   submission_version:       1
+   submission_version_used:  true
+   revision_number:          1
+   revision_timestamp:       <%= Time.now.to_s(:db) %>
+   
+sub_2:
+   grouping_id:              <%= Fixtures.identify(:grouping_2) %>
+   created_at:               <%= Time.now.to_s(:db) %>
+   submission_version:       1
+   submission_version_used:  true
+   revision_number:          1
+   revision_timestamp:       <%= Time.now.to_s(:db) %>
+ 

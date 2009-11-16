@@ -337,4 +337,8 @@ class Assignment < ActiveRecord::Base
     end
   end
   
+  def next_criterion_position
+    return self.rubric_criteria.size + 1
+  end
+  
 end

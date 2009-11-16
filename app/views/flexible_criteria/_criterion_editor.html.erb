@@ -1,0 +1,58 @@
+<% if !flash[:success].nil? %>
+  <div class="success">
+    <%= flash[:success] %>
+  </div>
+<% end %>
+
+<% remote_form_for :flexible_criterion, criterion, :url => {:action => 'update', :id => criterion.id} do |f| %>
+
+<h2>
+  <span id="selected_criterion_name">
+    <%= h(criterion.flexible_criterion_name)%>
+  </span>
+  <%= f.submit %>
+</h2>
+
+<div class="error" id="criterion_<%=criterion.id%>_error" style="display:none;"></div>
+
+<div class="main_flexible_criteria_edit">
+
+  <div class="float_right">
+    <%= link_to_remote I18n.t(:delete), :method => 'delete',
+      :url => {:action => 'delete', :id => criterion.id},
+      :html => { :class => 'delete', 
+                 :title => I18n.t(:remove_criteria_title)
+	           },
+      :confirm => I18n.t(:remove_criteria_message)
+    %>
+  </div>
+
+  <span id="<%="criterion_inputs_#{criterion.id}"%>">
+    <%= f.label :flexible_criterion_name, I18n.t(:criterion)%>
+    <%= f.text_field :flexible_criterion_name %>
+  </span>
+  <br />
+  <span id="criterion_max_edit_<%= criterion.id%>" class="criterion_max_edit">
+    <%= f.label :max, I18n.t('flexible_criteria.max')%>
+    <%= f.text_field :max %>
+  </span>
+  <br />
+  <span id="criterion_description_edit_<%= criterion.id %>" class="criterion_description_edit">
+  	<%= f.label :description, I18n.t('flexible_criteria.description') %>
+	<%= f.text_area :description, :size => "50x6" %>
+  </span>
+  <br />
+  <span><%= t('flexible_criteria.description_hint') %></span>
+</div>
+
+<%= f.submit %>
+<% end %>
+
+<% if !criterion.description.nil? && !criterion.description.empty? %>
+  <div id="flexible_criteria_preview">
+    <h3><%= t(:preview) %></h3>
+    <div id="criterion_description_preview_<%= criterion.id %>" class="criterion_description_preview">
+      <%= sanitize(criterion.description) %>
+    </div>
+  </div>
+<% end %>

@@ -3,7 +3,7 @@
         text-align: right;
 }
 
-#rubric_criteria_pane, #rubric_levels_pane {
+#rubric_criteria_pane, #flexible_criteria_pane, #rubric_levels_pane {
   border: 2px solid #DADADA;
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
@@ -13,11 +13,11 @@
   width: 45%;     
 }
 
-#rubric_criteria_pane_menu, #rubric_levels_pane_menu {
+#rubric_criteria_pane_menu, #flexible_criteria_pane_menu, #rubric_levels_pane_menu, #flexible_edition_pane_menu {
    background: #ccc;
 }
 
-#rubric_criteria_pane_menu h2, #rubric_levels_pane_menu h2 {
+#rubric_criteria_pane_menu h2, #flexible_criteria_pane_menu, #rubric_levels_pane_menu h2, #flexible_edition_pane_menu h2 {
   border-bottom: 2px solid #DADADA;
   color: #000;
   margin: 0;
@@ -45,7 +45,7 @@
         padding: 3px 10px;
     }
 
-ul#rubric_criteria_pane_list, ul#rubric_levels_pane_list {
+ul#rubric_criteria_pane_list, ul#flexible_criteria_pane_list, ul#rubric_levels_pane_list {
   list-style: none;
   margin: 0;
   padding: 0;

@@ -1,6 +1,7 @@
 <% if @current_user.admin?%>
 <% if controller.controller_name == 'assignments' or
   controller.controller_name == 'rubrics' or
+  controller.controller_name == 'flexible_criteria' or
   controller.controller_name == 'submissions' or
   controller.controller_name == 'groups' or
   controller.controller_name == 'results' or
@@ -9,20 +10,20 @@
 %>
 <div id="sub_menu">
   <ul id="root" class="level1 horizontal">
-   <li class="level1 visible_dropdown">
-     <% if @assignment.nil?  %>
-       <span id="choose_an_assignment"><%= I18n.t(:choose_assignment)%></span>
-     <% elsif controller.controller_name == 'assignments' and
+    <li class="level1 visible_dropdown">
+      <% if @assignment.nil?  %>
+        <span id="choose_an_assignment"><%= I18n.t(:choose_assignment)%></span>
+      <% elsif controller.controller_name == 'assignments' and
            controller.action_name == 'new'
       %>
-     <span id="choose_an_assignment"><%= I18n.t(:create_new)%></span>
-     <% else%>
-       <span id="choose_an_assignment"><%=h(sanitize(@assignment.short_identifier))%></span>
-     <% end %>
-        <ul class="level2 dropdown">
-           <%= render :partial => 'shared/assignments_dropdown_menu'%>
-        </ul>
-   </li>
+      <span id="choose_an_assignment"><%= I18n.t(:create_new)%></span>
+      <% else%>
+        <span id="choose_an_assignment"><%=h(@assignment.short_identifier)%></span>
+      <% end %>
+      <ul class="level2 dropdown">
+        <%= render :partial => 'shared/assignments_dropdown_menu'%>
+      </ul>
+    </li>
 
   <% if !@assignment.nil?%>
     <% if controller.controller_name != 'assignments' or
@@ -34,10 +35,15 @@
           <%= link_to I18n.t(:properties), :controller => 'assignments', :action =>
 	 'edit', :id => @assignment.id %>
        </li>
-       <li <% if controller.controller_name == 'rubrics'%> 
+       <li <% if controller.controller_name == 'rubrics' or controller.controller_name == 'flexible_criteria'%> 
         id="sub_menu_active"
       <% end %>>
-         <%= link_to I18n.t(:rubrics), :controller => 'rubrics', :action => 'index', :id => @assignment.id%>
+	  <% if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric] %>
+         <%= link_to I18n.t(:marking_scheme), :controller => 'rubrics', :action => 'index', :id => @assignment.id%>
+	  <% else %>
+	     <%= link_to I18n.t(:marking_scheme), :controller => 'flexible_criteria', :action => 'index', :id => @assignment.id %>		 
+	  <% end %>
+	  
       </li>
       <li <% if controller.controller_name == 'annotation_categories'%> 
         id="sub_menu_active"

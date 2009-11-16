@@ -28,3 +28,9 @@ mark_4:
    created_at:           <%= Time.now.to_s(:db)%>
    updated_at:           <%= Time.now.to_s(:db)%>
 
+flexible_mark:
+   result_id:            <%= Fixtures.identify(:flexible_result)%>
+   rubric_criterion_id:  <%= Fixtures.identify(:flexible_criterion_1)%>
+   mark:                 4
+   created_at:           <%= Time.now.to_s(:db)%>
+   updated_at:           <%= Time.now.to_s(:db)%>

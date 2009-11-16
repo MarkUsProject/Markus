@@ -18,8 +18,8 @@ membership1:
    grouping_id:        <%= Fixtures.identify(:grouping_1) %>
    membership_status: inviter
    type:               StudentMembership
-   created_at:         <% Time.now.to_s(:db)%>
-   updated_at:         <% Time.now.to_s(:db)%>
+   created_at:         <%= Time.now.to_s(:db)%>
+   updated_at:         <%= Time.now.to_s(:db)%>
 
 
 membership2:
@@ -27,8 +27,8 @@ membership2:
    grouping_id:        <%= Fixtures.identify(:grouping_1) %>
    membership_status: accepted
    type:               StudentMembership
-   created_at:         <% Time.now.to_s(:db)%>
-   updated_at:         <%Time.now.to_s(:db)%>
+   created_at:         <%= Time.now.to_s(:db)%>
+   updated_at:         <%= Time.now.to_s(:db)%>
 
 
 membership3:
@@ -36,8 +36,8 @@ membership3:
    grouping_id:        <%= Fixtures.identify(:grouping_1) %>
    membership_status:  rejected
    type:               StudentMembership
-   created_at:         <% Time.now.to_s(:db)%>
-   updated_at:         <%Time.now.to_s(:db)%>
+   created_at:         <%= Time.now.to_s(:db)%>
+   updated_at:         <%= Time.now.to_s(:db)%>
 
 
 membership4:
@@ -45,8 +45,8 @@ membership4:
    grouping_id:        <%= Fixtures.identify(:grouping_2) %>
    membership_status:  inviter
    type:               StudentMembership
-   created_at:         <% Time.now.to_s(:db)%>
-   updated_at:         <%Time.now.to_s(:db)%>
+   created_at:         <%= Time.now.to_s(:db)%>
+   updated_at:         <%= Time.now.to_s(:db)%>
 
 
 membership5:
@@ -54,47 +54,62 @@ membership5:
    grouping_id:        <%= Fixtures.identify(:grouping_2) %>
    membership_status:  pending
    type:               StudentMembership
-   created_at:         <% Time.now.to_s(:db)%>
-   updated_at:         <% Time.now.to_s(:db)%>
+   created_at:         <%= Time.now.to_s(:db)%>
+   updated_at:         <%= Time.now.to_s(:db)%>
 
 membership6:
    user_id:             <%= Fixtures.identify(:student1)%>
    grouping_id:         <%= Fixtures.identify(:grouping1)%>
    membership_status:   inviter
    type:                StudentMembership
-   created_at:          <% Time.now.to_s(:db) %>
-   updated_at:          <% Time.now.to_s(:db)%>
+   created_at:          <%= Time.now.to_s(:db) %>
+   updated_at:          <%= Time.now.to_s(:db)%>
 
 membership7:
    user_id:             <%= Fixtures.identify(:student2)%>
    grouping_id:         <%= Fixtures.identify(:grouping2)%>
    membership_status:   inviter
    type:                StudentMembership
-   created_at:          <% Time.now.to_s(:db) %>
-   updated_at:          <% Time.now.to_s(:db)%>
+   created_at:          <%= Time.now.to_s(:db) %>
+   updated_at:          <%= Time.now.to_s(:db)%>
 
 membership8:
    user_id:             <%= Fixtures.identify(:student3)%>
    grouping_id:         <%= Fixtures.identify(:grouping3)%>
    membership_status:   inviter
    type:                StudentMembership
-   created_at:          <% Time.now.to_s(:db) %>
-   updated_at:          <% Time.now.to_s(:db)%>
+   created_at:          <%= Time.now.to_s(:db) %>
+   updated_at:          <%= Time.now.to_s(:db)%>
 
 membership9:
    user_id:            <%= Fixtures.identify(:student5) %>
    grouping_id:        <%= Fixtures.identify(:grouping_3) %>
    membership_status:  pending
    type:               StudentMembership
-   created_at:         <% Time.now.to_s(:db)%>
-   updated_at:         <% Time.now.to_s(:db)%>
+   created_at:         <%= Time.now.to_s(:db)%>
+   updated_at:         <%= Time.now.to_s(:db)%>
 
 membership_1:
    user_id:            <%= Fixtures.identify(:ta1) %>
    grouping_id:        <%= Fixtures.identify(:grouping_2) %>
    membership_status:
    type:               TAMembership
-   created_at:         <% Time.now.to_s(:db)%>
-   updated_at:         <%Time.now.to_s(:db)%>
+   created_at:         <%= Time.now.to_s(:db)%>
+   updated_at:         <%= Time.now.to_s(:db)%>
 
+membership_2:
+   user_id:            <%= Fixtures.identify(:ta3) %>
+   grouping_id:        <%= Fixtures.identify(:grouping_5) %>
+   membership_status:
+   type:               TAMembership
+   created_at:         <%= Time.now.to_s(:db)%>
+   updated_at:         <%= Time.now.to_s(:db)%>
+   
+membership_3:
+   user_id:            <%= Fixtures.identify(:student1) %>
+   grouping_id:        <%= Fixtures.identify(:grouping_5) %>
+   membership_status:  inviter
+   type:               StudentMembership
+   created_at:         <%= Time.now.to_s(:db)%>
+   updated_at:         <%= Time.now.to_s(:db)%>
 

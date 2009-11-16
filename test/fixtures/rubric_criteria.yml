@@ -3,18 +3,19 @@
 
 c1:
   rubric_criterion_name: "Algorithm Design"
-  assignment_id: <%= Fixtures.identify(:assignment_1) %> 
+  assignment_id: <%= Fixtures.identify(:assignment_1) %>
+  position: 1 
   weight: 2
   level_0_name: Horrible
   level_1_name: Poor
   level_2_name: Satisfactory
   level_3_name: Good
   level_4_name: Excellent
-  
 
 c2:
   rubric_criterion_name: "Documentation"
-  assignment_id: <%= Fixtures.identify(:assignment_1) %> 
+  assignment_id: <%= Fixtures.identify(:assignment_1) %>
+  position: 2 
   weight: 2.7
   level_0_name: Horrible
   level_1_name: Poor
@@ -26,6 +27,7 @@ c2:
 c3:
   rubric_criterion_name: "Testing"
   assignment_id: <%= Fixtures.identify(:assignment_1) %> 
+  position: 3
   weight: 2.2
   level_0_name: Horrible
   level_1_name: Poor
@@ -36,6 +38,7 @@ c3:
 c4:
   rubric_criterion_name: "Correctness"
   assignment_id: <%= Fixtures.identify(:assignment_1) %> 
+  position: 4
   weight: 2
   level_0_name: Horrible
   level_1_name: Poor
@@ -45,17 +48,24 @@ c4:
 
 c5:
   rubric_criterion_name: "Part 1 Programming"
-  assignment_id: <%= Fixtures.identify(:assignment_2) %> 
+  assignment_id: <%= Fixtures.identify(:assignment_2) %>
+  position: 1 
   weight: 2
   level_0_name: Horrible
+  level_0_description: "Makes the TA \"Shivers\""
   level_1_name: Poor
+  level_1_description: "Leaves the TA \"calm\""
   level_2_name: Satisfactory
+  level_2_description: "Makes the TA \"grin\""
   level_3_name: Good
+  level_3_description: "Makes the TA \"smile\""
   level_4_name: Excellent
+  level_4_description: "Makes, the, TA scream: \"at last, it was about time\""
   
 c6:
   rubric_criterion_name: "Part 2 Programming"
   assignment_id: <%= Fixtures.identify(:assignment_2) %> 
+  position: 2
   weight: 2
   level_0_name: Horrible
   level_1_name: Poor

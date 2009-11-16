@@ -2,15 +2,13 @@ require File.dirname(__FILE__) + '/authenticated_controller_test'
 require 'shoulda'
 require 'mocha'
 
-class RubricsControllerTest < AuthenticatedControllerTest
+class FlexibleCriteriaControllerTest < AuthenticatedControllerTest
   
-  RUBRIC_CRITERIA_CSV_STRING = "Algorithm Design,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,
-Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,
-Testing,2.2,Horrible,Poor,Satisfactory,Good,Excellent,,,,,
-Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
-  RUBRIC_CRITERIA_UPLOAD_CSV_STRING = "criterion 5,1.0,l0,l1,l2,l3,l4,d0,d1,d2,d3,d4\n"
-  RUBRIC_CRITERIA_INCOMPLETE_UPLOAD_CSV_STRING = "criterion 5\ncriterion 6\n"
-
+  FLEXIBLE_CRITERIA_CSV_STRING = "criterion1,10.0,\"description1, for criterion 1\"\ncriterion2,10.0,\"description2, \"\"with quotes\"\"\"\n"
+  FLEXIBLE_CRITERIA_UPLOAD_CSV_STRING = "criterion3,10.0,\"description3, for criterion 3\"\ncriterion4,10.0,\"description4, \"\"with quotes\"\"\"\n"
+  FLEXIBLE_CRITERIA_INCOMPLETE_UPLOAD_CSV_STRING = "criterion5\ncriterion6\n"
+  FLEXIBLE_CRITERIA_PARTIAL_UPLOAD_CSV_STRING = "criterion7,5.0\ncriterion8,7.5\n"
+  
   context "An unauthenticated and unauthorized user doing a GET" do
     
     context "on :index" do
@@ -132,12 +130,12 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
   end # An unauthenticated and unauthorized user doing a POST
   
   context "An authenticated and authorized admin doing a GET" do
-    fixtures :users, :assignments, :rubric_criteria, :marks, :results
+    fixtures :users, :assignments, :flexible_criteria, :marks, :results
     
     setup do
       @admin = users(:olm_admin_1)
-      @assignment = assignments(:assignment_1)
-      @criterion = rubric_criteria(:c1)
+      @assignment = assignments(:flexible_assignment)
+      @criterion = flexible_criteria(:flexible_criterion_1)
     end
     
     context "on :index" do
@@ -162,9 +160,9 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       
       context "with save errors" do
         setup do
-          RubricCriterion.any_instance.expects(:save).once.returns(false)
-          RubricCriterion.any_instance.expects(:errors).once.returns('error msg')
-          get_as @admin, :update, :id => @criterion.id, :rubric_criterion => {:rubric_criterion_name => 'one', :weight => 10}
+          FlexibleCriterion.any_instance.expects(:save).once.returns(false)
+          FlexibleCriterion.any_instance.expects(:errors).once.returns('error msg')
+          get_as @admin, :update, :id => @criterion.id, :flexible_criterion => {:flexible_criterion_name => 'one', :max => 10}
         end
         should_assign_to :criterion
         should_render_template 'errors'
@@ -173,7 +171,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       
       context "without save errors" do
         setup do
-          get_as @admin, :update, :id => @criterion.id, :rubric_criterion => {:rubric_criterion_name => 'one', :weight => 10}
+          get_as @admin, :update, :id => @criterion.id, :flexible_criterion => {:flexible_criterion_name => 'one', :max => 10}
         end
         should_assign_to :criterion
         should_set_the_flash_to I18n.t('criterion_saved_success')
@@ -199,13 +197,13 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       should_respond_with_content_type 'text/csv'
       should_respond_with :success
       should "respond with appropriate content" do
-        assert_equal RUBRIC_CRITERIA_CSV_STRING, @response.body
+        assert_equal FLEXIBLE_CRITERIA_CSV_STRING, @response.body
       end
     end
     
     context "on :upload" do
       setup do
-        get_as @admin, :upload, :id => @assignment.id, :upload => {:rubric => ""}
+        get_as @admin, :upload, :id => @assignment.id, :upload => {:flexible => ""}
       end
       should_assign_to :assignment
       should_respond_with :redirect
@@ -213,16 +211,16 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
     
     context "on :update_positions" do
       setup do
-        @criterion2 = rubric_criteria(:c2)
-        get_as @admin, :update_positions, :rubric_criteria_pane_list => [@criterion2.id, @criterion.id]
+        @criterion2 = flexible_criteria(:flexible_criterion_2)
+        get_as @admin, :update_positions, :flexible_criteria_pane_list => [@criterion2.id, @criterion.id]
       end
       should_render_template ''
       should_respond_with :success
       
       should "not have adjusted positions" do
-        c1 = RubricCriterion.find(@criterion.id)
+        c1 = FlexibleCriterion.find(@criterion.id)
         assert_equal 1, c1.position
-        c2 = RubricCriterion.find(@criterion2.id)
+        c2 = FlexibleCriterion.find(@criterion2.id)
         assert_equal 2, c2.position
       end
     end
@@ -230,12 +228,12 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
   end # An authenticated and authorized admin doing a GET
   
   context "An authenticated and authorized admin doing a POST" do
-    fixtures :users, :assignments, :rubric_criteria, :marks, :results
+    fixtures :users, :assignments, :flexible_criteria, :marks, :results
     
     setup do
       @admin = users(:olm_admin_1)
-      @assignment = assignments(:assignment_1)
-      @criterion = rubric_criteria(:c1)
+      @assignment = assignments(:flexible_assignment)
+      @criterion = flexible_criteria(:flexible_criterion_1)
     end
     
     context "on :index" do
@@ -259,31 +257,31 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
     context "on :new" do      
       context "with save error" do
         setup do
-          RubricCriterion.any_instance.expects(:save).once.returns(false)
-          RubricCriterion.any_instance.expects(:errors).once.returns('error msg')
-          post_as @admin, :new, :id => @assignment.id, :rubric_criterion => {:rubric_criterion_name => 'first', :weight => 10}
+          FlexibleCriterion.any_instance.expects(:save).once.returns(false)
+          FlexibleCriterion.any_instance.expects(:errors).once.returns('error msg')
+          post_as @admin, :new, :id => @assignment.id, :flexible_criterion => {:flexible_criterion_name => 'first', :max => 10}
         end
         should_assign_to :assignment, :criterion, :errors
-        should_render_template 'rubrics/add_criterion_error'
+        should_render_template 'flexible_criteria/add_criterion_error'
         should_respond_with :success
       end
       
       context "without error on an assignment as the first criterion" do
         setup do
-          assignment = assignments(:assignment_3)
-          post_as @admin, :new, :id => assignment.id, :rubric_criterion => {:rubric_criterion_name => 'first', :weight => 10}
+          assignment = assignments(:flexible_assignment_without_criterion)
+          post_as @admin, :new, :id => assignment.id, :flexible_criterion => {:flexible_criterion_name => 'first', :max => 10}
         end
         should_assign_to :assignment, :criterion
-        should_render_template 'rubrics/create_and_edit'
+        should_render_template 'flexible_criteria/create_and_edit'
         should_respond_with :success
       end
       
       context "without error on an assignment that already has criteria" do
         setup do
-          post_as @admin, :new, :id => @assignment.id, :rubric_criterion => {:rubric_criterion_name => 'first', :weight => 10}
+          post_as @admin, :new, :id => @assignment.id, :flexible_criterion => {:flexible_criterion_name => 'first', :max => 10}
         end
         should_assign_to :assignment, :criterion
-        should_render_template 'rubrics/create_and_edit'
+        should_render_template 'flexible_criteria/create_and_edit'
         should_respond_with :success
       end      
     end
@@ -296,50 +294,62 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       should_respond_with_content_type 'text/csv'
       should_respond_with :success
       should "respond with appropriate content" do
-        assert_equal RUBRIC_CRITERIA_CSV_STRING, @response.body
+        assert_equal FLEXIBLE_CRITERIA_CSV_STRING, @response.body
       end
     end
     
     context "on :upload" do      
       context "with file containing incomplete records" do
         setup do
-          tempfile = Tempfile.new('rubric_csv')
-          tempfile << RUBRIC_CRITERIA_INCOMPLETE_UPLOAD_CSV_STRING
+          tempfile = Tempfile.new('flexible_csv')
+          tempfile << FLEXIBLE_CRITERIA_INCOMPLETE_UPLOAD_CSV_STRING
           tempfile.rewind          
-          post_as @admin, :upload, :id => @assignment.id, :upload => {:rubric => tempfile}
+          post_as @admin, :upload, :id => @assignment.id, :upload => {:flexible => tempfile}
         end
         should_assign_to :assignment
         should_set_the_flash_to :error => I18n.t('csv_invalid_lines'),
-                                :invalid_lines => ["criterion 5: " + I18n.t('criteria.error.incomplete_row'),
-                                                   "criterion 6: " + I18n.t('criteria.error.incomplete_row')]
+                                :invalid_lines => ["criterion5: " + I18n.t('flexible_criteria.error.incomplete_row'),
+                                                   "criterion6: " + I18n.t('flexible_criteria.error.incomplete_row')]
         should_respond_with :redirect
       end
       
-      context "with file containing full records" do
+      context "with file containing partial records" do
         setup do
-          tempfile = Tempfile.new('rubric_csv')
-          tempfile << RUBRIC_CRITERIA_UPLOAD_CSV_STRING
+          tempfile = Tempfile.new('flexible_csv')
+          tempfile << FLEXIBLE_CRITERIA_PARTIAL_UPLOAD_CSV_STRING
           tempfile.rewind          
-          post_as @admin, :upload, :id => @assignment.id, :upload => {:rubric => tempfile}
+          post_as @admin, :upload, :id => @assignment.id, :upload => {:flexible => tempfile}
         end
         should_assign_to :assignment
-        should_set_the_flash_to I18n.t('rubric_criteria.upload.success', :nb_updates => 1)
+        should_set_the_flash_to :upload_notice => I18n.t('flexible_criteria.upload.success', :nb_updates => 2)
+        should_respond_with :redirect
+      end
+
+      context "with file containing full records" do
+        setup do
+          tempfile = Tempfile.new('flexible_csv')
+          tempfile << FLEXIBLE_CRITERIA_UPLOAD_CSV_STRING
+          tempfile.rewind          
+          post_as @admin, :upload, :id => @assignment.id, :upload => {:flexible => tempfile}
+        end
+        should_assign_to :assignment
+        should_set_the_flash_to :upload_notice => I18n.t('flexible_criteria.upload.success', :nb_updates => 2)
         should_respond_with :redirect
       end
     end
     
     context "on :update_positions" do
       setup do
-        @criterion2 = rubric_criteria(:c2)
-        post_as @admin, :update_positions, :rubric_criteria_pane_list => [@criterion2.id, @criterion.id]
+        @criterion2 = flexible_criteria(:flexible_criterion_2)
+        post_as @admin, :update_positions, :flexible_criteria_pane_list => [@criterion2.id, @criterion.id]
       end
       should_render_template ''
       should_respond_with :success
       
       should "have appropriately adjusted positions" do
-        c1 = RubricCriterion.find(@criterion.id)
+        c1 = FlexibleCriterion.find(@criterion.id)
         assert_equal 2, c1.position
-        c2 = RubricCriterion.find(@criterion2.id)
+        c2 = FlexibleCriterion.find(@criterion2.id)
         assert_equal 1, c2.position
       end
     end
@@ -347,12 +357,12 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
   end # An authenticated and authorized admin doing a POST
   
   context "An authenticated and authorized admin doing a DELETE" do
-    fixtures :users, :assignments, :rubric_criteria, :marks, :results
+    fixtures :users, :assignments, :flexible_criteria, :marks, :results
     
     setup do
       @admin = users(:olm_admin_1)
-      @assignment = assignments(:assignment_1)
-      @criterion = rubric_criteria(:c1)
+      @assignment = assignments(:flexible_assignment)
+      @criterion = flexible_criteria(:flexible_criterion_1)
     end
     
     context "on :delete" do
@@ -365,7 +375,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       
       should "effectively destroy the criterion" do
         assert_raise ActiveRecord::RecordNotFound do 
-          RubricCriterion.find(@criterion.id)
+          FlexibleCriterion.find(@criterion.id)
         end
       end
     end

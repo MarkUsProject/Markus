@@ -1142,13 +1142,13 @@ a img{
 }
 
 /* Rubric Criteria view*/
-#rubric_criteria_pane, #annotation_category_pane {
+#rubric_criteria_pane, #flexible_criteria_pane, #annotation_category_pane {
    float: left;
    width: 25%;
    padding: 0px 2%;
 }
 
-#rubric_criteria_pane .rubric_fieldset, #annotation_category_pane .annotation_categories_fieldset{
+#rubric_criteria_pane .criteria_fieldset, #flexible_criteria_pane .criteria_fieldset, #annotation_category_pane .annotation_categories_fieldset{
   -moz-border-radius: 9px;
   -webkit-border-radius: 9px;
   border: 2px solid #ccc;
@@ -1157,7 +1157,7 @@ a img{
   padding: 0px;
 }
 
-#rubric_criteria_pane ul{
+#rubric_criteria_pane ul, #flexible_criteria_pane ul{
   margin: 0;
   padding: 0;
 }
@@ -1186,13 +1186,13 @@ a img{
    width: 90%;
 }
 
-#rubric_list_title_bar, .annotation_categories_list_bar{
+#rubric_criteria_list_title_bar, #flexible_criteria_list_title_bar, .annotation_categories_list_bar{
   margin-bottom: 5px;
   padding-bottom: 5px;
   min-height: 15px;
 }
 
-#rubric_levels_pane, #annotations_pane{
+#rubric_levels_pane, #flexible_edition_pane, #annotations_pane{
    width: 66%;
    float: right;
    margin-right: 2em;
@@ -1201,7 +1201,7 @@ a img{
    -webkit-border-radius: 9px;
 }
 
-#rubric_levels_pane h2, #annotations_pane_menu h2{
+#rubric_levels_pane h2, #flexible_edition_pane h2, #annotations_pane_menu h2{
   padding-left:10px;
 }
 
@@ -1225,11 +1225,11 @@ a img{
   background: #ccc;
 }
 
-#rubric_criteria_pane ul{
+#rubric_criteria_pane ul, #flexible_criteria_pane ul{
    list-style: none;
 }
 
-#rubric_criteria_pane li{
+#rubric_criteria_pane li, #flexible_criteria_pane li{
    width: 100%;
    border-top: 1px solid #ccc;
    min-height: 35px; 
@@ -1263,7 +1263,7 @@ a img{
    float: left;
 }
 
-.criterion_weight {
+.criterion_weight, .criterion_max {
    float: right;
    padding: 2px 4px 0 2px;
 }
@@ -1273,14 +1273,33 @@ a img{
     border: none;
 }
 
-.main_rubric_criteria_edit{
+.main_rubric_criteria_edit, .main_flexible_criteria_edit, #flexible_criteria_preview{
    background: #F8F8F8;
    margin: 10px;
    padding: 10px;
    border: 2px solid #ccc;
    -moz-border-radius: 9px;
    -webkit-border-radius: 9px;
+}
 
+#flexible_criteria_preview h3 {
+   margin: 0px 0px 10px 0px;
+}
+
+#flexible_criteria_preview ul li {
+   list-style: disc outside none;
+   padding: 0px;
+}
+
+#flexible_criteria_preview ol li {
+   list-style: decimal outside none;
+   padding: 0px;
+}
+
+.criterion_description_preview {
+   background-color: #fff;
+   padding: 10px;
+   border: solid 2px #ccc;
 }
 
 input.criterion_input_name{
@@ -1293,7 +1312,7 @@ input.criterion_input_name{
    font-style: italic;
 }
 
-#rubric_levels_pane_menu li{
+#rubric_levels_pane_menu li, #flexible_edition_pane_menu li{
    padding-bottom: 1em;
    list-style: none;
 }
@@ -1389,7 +1408,7 @@ fieldset.period{
   font-size: 0.9em;
 }
 
-#rubric_viewer #rubric_criteria_pane{
+#rubric_viewer #criteria_pane{
   width: 100%;
   margin: 0px;
   padding: 0px;

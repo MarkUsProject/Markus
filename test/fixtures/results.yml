@@ -32,3 +32,11 @@ result_4:
    updated_at:           <%= Time.now.to_s(:db) %>
    released_to_students: true
 
+# The result for submission :sub_1
+result_5:
+   submission_id:        <%= Fixtures.identify(:sub_1) %>        
+   marking_state:        complete
+   overall_comment:      "nice work"
+   created_at:           <%= Time.now.to_s(:db) %>
+   updated_at:           <%= Time.now.to_s(:db) %>
+   released_to_students: true

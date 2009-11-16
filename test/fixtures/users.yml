@@ -56,6 +56,14 @@ ta2:
     created_at:     <%= Time.now.to_s(:db) %>
     updated_at:     <%= Time.now.to_s(:db) %>
 
+ta3:
+    user_name:      ta3
+    last_name:      Komo
+    first_name:     Bernie
+    type:           Ta
+    created_at:     <%= Time.now.to_s(:db) %>
+    updated_at:     <%= Time.now.to_s(:db) %>
+
 # Now, let's create some students
 
 student1:
