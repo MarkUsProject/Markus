@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091029063843) do
+ActiveRecord::Schema.define(:version => 20091116195456) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -82,13 +82,13 @@ ActiveRecord::Schema.define(:version => 20091029063843) do
   add_index "extra_marks", ["result_id"], :name => "index_extra_marks_on_result_id"
 
   create_table "flexible_criteria", :force => true do |t|
-    t.string   "flexible_criterion_name", :null => false
+    t.string   "flexible_criterion_name",                                :null => false
     t.text     "description"
     t.integer  "position"
-    t.integer  "assignment_id",           :null => false
-    t.decimal  "max",                     :null => false
+    t.integer  "assignment_id",                                          :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.decimal  "max",                     :precision => 10, :scale => 1, :null => false
   end
 
   add_index "flexible_criteria", ["assignment_id", "flexible_criterion_name"], :name => "index_flexible_criteria_on_assignment_id_and_name", :unique => true
@@ -111,13 +111,14 @@ ActiveRecord::Schema.define(:version => 20091029063843) do
     t.boolean  "admin_approved", :default => false, :null => false
   end
 
-  add_index "groupings", ["assignment_id"], :name => "index_groupings_on_assignment_id"
-  add_index "groupings", ["group_id"], :name => "index_groupings_on_group_id"
+  add_index "groupings", ["assignment_id", "group_id"], :name => "groupings_u1", :unique => true
 
   create_table "groups", :force => true do |t|
-    t.text   "group_name"
+    t.string "group_name", :limit => 30
     t.string "repo_name"
   end
+
+  add_index "groups", ["group_name"], :name => "groups_n1"
 
   create_table "marks", :force => true do |t|
     t.integer  "result_id"
@@ -139,8 +140,19 @@ ActiveRecord::Schema.define(:version => 20091029063843) do
     t.string   "type"
   end
 
-  add_index "memberships", ["grouping_id"], :name => "index_memberships_on_grouping_id"
-  add_index "memberships", ["user_id"], :name => "index_memberships_on_user_id"
+  add_index "memberships", ["grouping_id", "user_id"], :name => "memberships_u1", :unique => true
+
+  create_table "notes", :force => true do |t|
+    t.string   "message",     :null => false
+    t.integer  "creator_id",  :null => false
+    t.integer  "grouping_id", :null => false
+    t.text     "type",        :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "notes", ["creator_id"], :name => "index_notes_on_creator_id"
+  add_index "notes", ["grouping_id"], :name => "index_notes_on_grouping_id"
 
   create_table "periods", :force => true do |t|
     t.integer  "submission_rule_id"
@@ -161,10 +173,11 @@ ActiveRecord::Schema.define(:version => 20091029063843) do
     t.boolean  "released_to_students", :default => false, :null => false
   end
 
+  add_index "results", ["submission_id"], :name => "results_u1", :unique => true
+
   create_table "rubric_criteria", :force => true do |t|
     t.string   "rubric_criterion_name", :null => false
     t.integer  "assignment_id",         :null => false
-    t.decimal  "weight",                :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "position"
@@ -178,6 +191,7 @@ ActiveRecord::Schema.define(:version => 20091029063843) do
     t.text     "level_3_description"
     t.text     "level_4_name"
     t.text     "level_4_description"
+    t.float    "weight",                :null => false
   end
 
   add_index "rubric_criteria", ["assignment_id", "rubric_criterion_name"], :name => "index_rubric_criteria_on_assignment_id_and_name", :unique => true
