@@ -9,6 +9,7 @@ class GroupingTest < ActiveSupport::TestCase
   should_belong_to :assignment
   should_have_many :memberships
   should_have_many :submissions
+  should_have_many :notes
 
   def test_grouping_should_not_save_without_assignment
     grouping = Grouping.new

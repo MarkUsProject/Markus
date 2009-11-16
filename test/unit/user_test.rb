@@ -5,6 +5,7 @@ class UserTest < ActiveSupport::TestCase
   
   fixtures :users
   should_have_many :memberships
+  should_have_many :notes
   should_have_many :groupings, :through => :memberships
   should_validate_presence_of :user_name
   should_validate_presence_of :last_name

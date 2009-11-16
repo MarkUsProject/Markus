@@ -11,7 +11,7 @@ class Grouping < ActiveRecord::Base
   has_many :memberships
   has_many :student_memberships
   has_many :accepted_student_memberships, :class_name => "StudentMembership", :conditions => {'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]}
-  
+  has_many :notes, :through => :grouping_id
   has_many :ta_memberships, :class_name => "TAMembership"
   has_many :students, :through => :student_memberships, :source => :user
   has_many :accepted_students, :class_name => 'Student', :through => :student_memberships, :conditions => {'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]}, :source => :user
