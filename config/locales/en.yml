@@ -109,6 +109,8 @@ en:
             title: "Marking Scheme"
             rubric: "Rubric"
             flexible: "Flexible"
+        notice:
+            change_marking_scheme_type: "Changing marking scheme will delete your criteria and marks."
         
     confirm_bulk_action:  "Are you sure you want to perform this bulk action?"
     hide_students: "Hide Students"

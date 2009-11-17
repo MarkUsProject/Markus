@@ -136,7 +136,17 @@ function change_submission_rule() {
     $$('#penalty_periods .period').each(function(node) { node.addClassName('disabled'); });
     $$('#penalty_periods .period input').each(function(node){node.disable();});
   }
+}
 
+function notice_marking_scheme_changed(is_assignment_new, clicked_marking_scheme_type, marking_scheme_type) {
+  if(is_assignment_new != true && clicked_marking_scheme_type != marking_scheme_type) {
+	if ($('marking_scheme_notice').hasClassName('hidden')) {
+	    $('marking_scheme_notice').removeClassName('hidden');
+	}
+	$('marking_scheme_notice').show();
+  } else {
+	$('marking_scheme_notice').hide();
+  }
 }
 
 
