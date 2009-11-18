@@ -214,7 +214,7 @@ class AssignmentsController < ApplicationController
         raise "You already submitted something. You cannot delete your group."
       end
       # If grouping is not deletable for @current_user for whatever reason, fail.
-      if !@grouping.deletable?(@current_user)
+      if !@grouping.deletable_by?(@current_user)
         raise "You are not allowed to delete the group"
       end
       @grouping.student_memberships.all(:include => :user).each do |member|
