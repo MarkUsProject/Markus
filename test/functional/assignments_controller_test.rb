@@ -787,4 +787,89 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert_equal invitations, assigns(:pending_grouping).length
   end
   
+  def test_should_get_student_interface_working_in_group_student
+    student = users(:student1)
+    assignment = assignments(:assignment_1)
+    get_as(student, :student_interface, {:id => assignment.id})
+    assert_response :success
+  end
+  
+  def test_should_get_student_interface_working_alone_student
+    student = users(:student1)
+    assignment = assignments(:assignment_2)
+    get_as(student, :student_interface, {:id => assignment.id})
+    assert_response :success
+  end
+  
+  def test_should_creategroup
+    assignment = assignments(:assignment_2)
+    student = users(:student6)
+    post_as(student, :creategroup, {:id => assignment.id})
+    assert_redirected_to :action => 'student_interface', :id => assignment.id
+  end
+  
+  def test_should_creategroup_alone
+    assignment = assignments(:assignment_1)
+    student = users(:student6)
+    post_as(student, :creategroup, {:id => assignment.id, :workalone => true})
+    assert_redirected_to :action => 'student_interface', :id => assignment.id
+  end
+  
+  def test_shouldnt_invite_hidden_student
+    @student = users(:student1)
+    assignment = assignments(:assignment_1)
+    grouping = @student.accepted_grouping_for(assignment.id)
+    original_memberships = grouping.memberships
+    hidden_student = users(:hidden_student)
+    post_as(@student, :invite_member, {:id => assignment.id, :invite_member => hidden_student.user_name})
+    assert_redirected_to :action => 'student_interface', :id => assignment.id
+    assert flash[:fail_notice].include?(I18n.t('invite_student.fail.hidden', :user_name => hidden_student.user_name))
+    assert_equal 1, flash[:fail_notice].length
+    assert_equal original_memberships, grouping.memberships, "Memberships were not equal"
+  end
+  
+  def test_should_invite_someone
+    @student = users(:student1)
+    assignment = assignments(:assignment_1)
+    inviting = users(:student6)
+    post_as(@student, :invite_member, {:id => assignment.id, :invite_member => inviting.user_name})
+    assert_redirected_to :action => 'student_interface', :id => assignment.id
+    assert_equal 1, flash[:success].length
+    assert flash[:success].include?(I18n.t('invite_student.success', :user_name => inviting.user_name))
+  end
+  
+  def test_should_invite_someone_alreadyinvited
+    assignment = assignments(:assignment_1)
+    student = users(:student5)
+    inviter = users(:student4)
+    post_as(inviter, :invite_member, {:id => assignment.id, :invite_member => student.user_name})
+    assert_redirected_to :action => 'student_interface', :id => assignment.id
+    assert_equal 1, flash[:fail_notice].length
+    assert flash[:fail_notice].include?(I18n.t('invite_student.fail.already_pending', :user_name => student.user_name))
+  end
+  
+  def test_student_choose_to_join_a_group
+    assignment = assignments(:assignment_1)
+    student = users(:student5)
+    grouping = groupings(:grouping_2)
+    post_as(student, :join_group, {:id => assignment.id, :grouping_id => grouping.id})
+    assert_redirected_to :action => 'student_interface', :id => assignment.id
+  end
+  
+  def test_student_choose_to_decline_an_invitation
+    assignment = assignments(:assignment_1)
+    student = users(:student5)
+    grouping = groupings(:grouping_2)
+    post_as(student, :decline_invitation, {:id => assignment.id, :grouping_id =>  grouping.id})
+    assert_redirected_to :action => 'student_interface', :id => assignment.id
+  end
+  
+  def test_delete_rejected
+    student = users(:student1)
+    assignment = assignments(:assignment_1)
+    membership = memberships(:membership3)
+    post_as(student, :delete_rejected, {:id => assignment.id, :membership => membership.id})  
+    assert_redirected_to :action => 'student_interface', :id => assignment.id
+  end
+  
 end

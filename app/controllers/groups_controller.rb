@@ -110,7 +110,7 @@ class GroupsController < ApplicationController
         #We update the group_name
         @group.group_name = params[:new_groupname]
         @group.save
-        flash[:edit_notice] = "Group name has been updated"
+        flash[:edit_notice] = I18n.t('groups.rename_group.success')
      else
 
         # We link the grouping to the group already existing
@@ -123,11 +123,10 @@ class GroupsController < ApplicationController
         if Grouping.find(:all, :conditions => ["assignment_id =
         :assignment_id and group_id = :groupexist_id", {:groupexist_id =>
         groupexist_id, :assignment_id => @assignment.id}])
-           flash[:fail_notice] = "This name is already used for this
-           assignement"
+           flash[:fail_notice] = I18n.t('groups.rename_group.already_in_use')
         else
           @grouping.update_attribute(:group_id, groupexist_id)
-          flash[:edit_notice] = "Group name has been changed"
+          flash[:edit_notice] = I18n.t('groups.rename_group.success')
         end
      end
   end
@@ -325,10 +324,10 @@ class GroupsController < ApplicationController
         groupings.each do |grouping|
           if grouping.has_submission?
             @errors.push(grouping.group.group_name)
-	  else
+	        else
             grouping.delete_grouping
             @removed_groupings.push(grouping)
-	  end
+	        end
         end
         render :action => "delete_groupings"
         return

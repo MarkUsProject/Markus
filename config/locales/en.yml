@@ -62,6 +62,9 @@ en:
 
     groups:
       editing_past_due_date_warning: "This assignment is past its due date.  Besides assigning graders to groups, it is not recommended that any other settings be altered here at this time."
+      rename_group:
+        success: "Group name has been updated."
+        already_in_use: "This name is already in use for this assignment."
     
     results:
       editing_after_release_fail: "The marks have been released. You cannot change the grades."
@@ -69,7 +72,6 @@ en:
     mark:
       error:
         save: "Could not save this mark!: "
-    
     # Student's View
     hide_students:      "Hide Students"
     unhide_students:    "Unhide Students"

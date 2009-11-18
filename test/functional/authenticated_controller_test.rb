@@ -21,5 +21,4 @@ class AuthenticatedControllerTest < ActionController::TestCase
     session_vars = { 'uid' => user.id, 'timeout' => 3.days.from_now }
     delete action, params, session_vars, flash
   end
-  
 end
