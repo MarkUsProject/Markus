@@ -133,7 +133,7 @@ function add_existing_annotation(annotation_text_id) {
     return false;
   }
  
-  <%= remote_function (
+  <%= remote_function(
                     :url => { :controller => "annotations", :action => "add_existing_annotation" },
                     :with => "'submission_file_id='+ $('select_file_id').value +'&line_start=' + positions.line_start + '&line_end=' + positions.line_end + '&annotation_text_id='+ annotation_text_id")
                     %>
@@ -151,7 +151,7 @@ function load_submitted_file(submission_file_id, focus_line) {
   $('loading_code').show();
   $('select_file_id').disable();
   line_annotations = null;
-<%= remote_function (:url =>{ :action => "codeviewer", :id => @assignment.id, :uid => @uid }, :with => "'submission_file_id='+submission_file_id+'&focus_line='+focus_line")%>
+<%= remote_function(:url =>{ :action => "codeviewer", :id => @assignment.id, :uid => @uid }, :with => "'submission_file_id='+submission_file_id+'&focus_line='+focus_line")%>
 }
 
 function load_submitted_file_and_focus(submission_file_id, focus_line) {
@@ -173,7 +173,7 @@ function submit_new_annotation(content, category_id) {
   //Close the dialog
   modal.close();
   //Send AJAX request
-  <%= remote_function (
+  <%= remote_function(
                     :url => { :controller => "annotations", :action => "create" },
                     :with => "'submission_file_id='+ $('select_file_id').value +'&line_start=' + positions.line_start + ' &line_end=' + positions.line_end + '&content=' + encodeURIComponent(content) + '&category_id=' + category_id")
                     %>

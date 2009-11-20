@@ -1,32 +1,15 @@
 class ResultsController < ApplicationController
-  before_filter      :authorize_only_for_admin, :except => [:codeviewer,
-  :edit, :update_mark, :view_marks, :create, :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria, :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria, :update_marking_state]
-  before_filter      :authorize_for_ta_and_admin, :only => [:edit,
-  :update_mark, :create, :add_extra_mark, :download, :next_grouping, :update_overall_comment, :expand_criteria, :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria, :update_marking_state]
+  before_filter      :authorize_only_for_admin, :except => [:codeviewer, :edit, :update_mark, :view_marks,
+                        :create, :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria,
+                        :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria, :update_marking_state,
+                        :download]
+  before_filter      :authorize_for_ta_and_admin, :only => [:edit, :update_mark, :create, :add_extra_mark,
+                        :download, :next_grouping, :update_overall_comment, :expand_criteria,
+                        :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria,
+                        :update_marking_state]
   before_filter      :authorize_for_user, :only => [:codeviewer]
   before_filter      :authorize_for_student, :only => [:view_marks]
 
-  def create
-    # Create new Result for this Submission
-    @submission_id = params[:id]
-    @submission = Submission.find(@submission_id)
-    
-    # Is there already a result for this Submission?
-    if @submission.has_result?
-      # If so, our new Result needs to have a version number greater than the
-      # old result version.  We're also going to set this new result to be current.
-      old_result = @submission.get_result_used
-      old_result.result_version_used = false
-      old_result.save
-    end
-    
-    new_result = Result.new
-    new_result.submission = @submission
-    new_result.marking_state = Result::MARKING_STATES[:partial]
-    new_result.save
-    redirect_to :action => 'edit', :id => new_result.id
-  end
-  
   def index
   end
   
@@ -43,7 +26,7 @@ class ResultsController < ApplicationController
     @first_file = @files.first
     @extra_marks_points = @result.extra_marks.points
     @extra_marks_percentage = @result.extra_marks.percentage
-    @marks_map = []
+    @marks_map = Hash.new
     @rubric_criteria.each do |criterion|
       mark = Mark.find_or_create_by_result_id_and_rubric_criterion_id(@result.id, criterion.id)
       mark.save(false)
@@ -133,9 +116,11 @@ class ResultsController < ApplicationController
     @result = @file.submission.result
     # Is the current user a student?
     if current_user.student?
-      # The Student does not have access to this file.  Render nothing.
+      # The Student does not have access to this file. Display an error.
       if @file.submission.grouping.membership_status(current_user).nil?
-        raise "No access to submission file with id #{@submission_file_id}"
+        render :partial => 'shared/handle_error',
+               :locals => {:error => I18n.t('submission_file.error.no_access', :submission_file_id => @submission_file_id)}
+        return
       end
     end
 
@@ -145,9 +130,8 @@ class ResultsController < ApplicationController
     begin
       @file_contents = retrieve_file(@file)
     rescue Exception => e
-      render :update do |page|
-        page.call "alert", e.message
-      end
+      render :partial => 'shared/handle_error',
+             :locals => {:error => e.message}
       return
     end   
     
@@ -160,18 +144,10 @@ class ResultsController < ApplicationController
     mark_value = params[:mark]
     result_mark.mark = mark_value
     if !result_mark.save
-      render :update do |page|
-        page.call 'alert', 'Could not save this mark!: ' + result_mark.errors
-      end
+      render :partial => 'shared/handle_error', :locals => {:error => I18n.t('mark.error.save') + result_mark.errors}
     else
-      render :update do |page|
-        page.call 'select_mark', result_mark.id, mark_value
-        page.replace_html "rubric_criterion_title_#{result_mark.id.to_s}_mark", "<b> #{result_mark.mark}:  #{result_mark.rubric_criterion["level_" + result_mark.mark.to_s + "_name"]}</b> #{result_mark.rubric_criterion["level_" + result_mark.mark.to_s + "_description"]}"
-        page.replace_html "mark_#{result_mark.id.to_s}_summary_mark", result_mark.mark
-        page.replace_html "mark_#{result_mark.id.to_s}_summary_mark_after_weight", (result_mark.mark * result_mark.rubric_criterion.weight)
-        page.replace_html "current_subtotal_div", result_mark.result.get_subtotal
-        page.call "update_total_mark", result_mark.result.total_mark
-      end
+      render :partial => 'results/marker/update_mark',
+             :locals => { :result_mark => result_mark, :mark_value => mark_value}
     end
   end
   
@@ -183,7 +159,6 @@ class ResultsController < ApplicationController
       redirect_to :controller => 'assignments', :action => 'student_interface', :id => params[:id]
       return
     end
-    
     if !@grouping.has_submission?
       render 'results/student/no_submission'
       return
@@ -205,7 +180,7 @@ class ResultsController < ApplicationController
     @first_file = @files.first
     @extra_marks_points = @result.extra_marks.points
     @extra_marks_percentage = @result.extra_marks.percentage
-    @marks_map = []
+    @marks_map = Hash.new
     @rubric_criteria.each do |criterion|
       mark = Mark.find_or_create_by_result_id_and_rubric_criterion_id(@result.id, criterion.id)
       mark.save(false)
@@ -218,9 +193,8 @@ class ResultsController < ApplicationController
     if request.post?
       @extra_mark = ExtraMark.new
       @extra_mark.result = @result
-      @extra_mark.update_attributes(params[:extra_mark])
       @extra_mark.unit = ExtraMark::UNITS[:points]
-      if !@extra_mark.save
+      if !@extra_mark.update_attributes(params[:extra_mark])
         render :action => 'results/marker/add_extra_mark_error'
       else
         render :action => 'results/marker/insert_extra_mark'
@@ -239,45 +213,6 @@ class ResultsController < ApplicationController
     #need to recalculate total mark
     @result = @extra_mark.result
     render :action => 'results/marker/remove_extra_mark'
-  end
-
-  #update the mark and/or description of the extra mark
-  def update_extra_mark
-    extra_mark = ExtraMark.find(params[:id])
-    #the attribute to be changed - description or mark
-    type = params[:type]
-    #the new attribute value
-    val = params[:value]
-    #change the value
-    extra_mark[type] = val
-
-    #save it
-    if extra_mark.valid? && extra_mark.save
-      #need to update the total mark
-      result = Result.find(extra_mark.result_id)
-      result.calculate_total
-      render :update do |page|
-        #The following divs need to be changed
-        #1 the display of the extra mark
-        page.replace_html("extra_mark_title_#{extra_mark.id}_" + type, val)
-        #2 the display of the total mark
-        page.replace_html("current_total_mark_div", result.total_mark)
-        #3 the divs containing deductions/bonuses
-        page.replace_html("extra_marks_bonus", result.get_bonus_marks)
-        page.replace_html("extra_marks_deducted", result.get_deductions)
-        #4 the div containing the total mark at the top of the page
-        page.replace_html("current_mark_div", result.total_mark)
-      end
-    else
-      output = {'status' => 'error'}
-      render :json => output.to_json
-    end
-  end
-  
-  def update_overall_comment
-    @result = Result.find(params[:id])
-    @result.overall_comment = params[:result][:overall_comment]
-    @result.save
   end
   
   def expand_criteria
