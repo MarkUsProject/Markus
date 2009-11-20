@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091116195456) do
+ActiveRecord::Schema.define(:version => 20091118064643) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -36,7 +36,6 @@ ActiveRecord::Schema.define(:version => 20091116195456) do
     t.integer "submission_file_id"
   end
 
-  add_index "annotations", ["annotation_text_id"], :name => "index_annotations_on_annotation_text_id"
   add_index "annotations", ["submission_file_id"], :name => "index_annotations_on_assignmentfile_id"
   add_index "annotations", ["submission_file_id"], :name => "index_annotations_on_submission_file_id"
 
@@ -86,9 +85,9 @@ ActiveRecord::Schema.define(:version => 20091116195456) do
     t.text     "description"
     t.integer  "position"
     t.integer  "assignment_id",                                          :null => false
+    t.decimal  "max",                     :precision => 10, :scale => 1, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.decimal  "max",                     :precision => 10, :scale => 1, :null => false
   end
 
   add_index "flexible_criteria", ["assignment_id", "flexible_criterion_name"], :name => "index_flexible_criteria_on_assignment_id_and_name", :unique => true
@@ -143,10 +142,10 @@ ActiveRecord::Schema.define(:version => 20091116195456) do
   add_index "memberships", ["grouping_id", "user_id"], :name => "memberships_u1", :unique => true
 
   create_table "notes", :force => true do |t|
-    t.string   "message",     :null => false
-    t.integer  "creator_id",  :null => false
-    t.integer  "grouping_id", :null => false
-    t.text     "type",        :null => false
+    t.string   "notes_message",    :null => false
+    t.integer  "creator_id",       :null => false
+    t.integer  "grouping_id",      :null => false
+    t.text     "type_association", :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
