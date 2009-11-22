@@ -60,6 +60,27 @@ en:
     nochange_warning:   "No changes have been made, do you still want to continue?"
     discardchanges_message: "Are you sure you want to discard your changes?"
 
+    logger:
+        login_message: "User logged: {{user_name}}"
+        login_wrong_user_password: "Wrong username/password: {{user_name}}"
+        login_error: "Error while logging in user: {{user_name}}"
+        logout_message: "User logged out: {{user_name}}"
+        assignment_creation_success: "The assignment {{id}} with identifier {{name}} was succesfully created"
+        assignment_creation_failure: "Error while creating the assignment {{id}} with identifier {{name}}: {{error}}"
+        assignment_grouping_creation_success:  "Grouping with {{student}} for assignemt {{id}} with identifier {{name}} created"
+        assignment_edit_success: "The assignment {{id}} with identifier {{name}} was succesfully edited"
+        assignment_edit_failure: "Error while editing assignment {{id}} with identifier {{name}}: {{error}}"
+        student_joined_group: "The student {{id}} joined the group {{group_id}}"
+        group_created_succes: "The group {{group_id}} was created by {{id}}"
+        student_submitted_assignment: "The student {{id}} submitted assignment {{assignment_id}}"
+        annotation_created: "Annotation {{annotation_id}} created by {{id}}"
+        ta_annotation_used: "The annotation {{id}} was used by {{id}}"
+        ta_marked_assignment: "TA {{id}} marked assignment {{assignment_id}} submitted by {{student_id}}"
+        marks_released: "The marks were relased"
+        student_submitted_file: "Student {{id}} submitted file {{file}} for assignment {{assignment_id}}"
+        student_deleted_file: "Student {{id}} deleted file {{file}} for assignment {{assignment_id}}"
+        student_updated_assignment: "Student {{id}} updated assignment {{assignment_id}}"
+
     groups:
       editing_past_due_date_warning: "This assignment is past its due date.  Besides assigning graders to groups, it is not recommended that any other settings be altered here at this time."
       rename_group:
