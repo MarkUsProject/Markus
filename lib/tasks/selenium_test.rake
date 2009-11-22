@@ -1,7 +1,10 @@
 namespace :test do
   desc "Run the selenium tests in test/selenium and start/stop the selenium server"
   task(:selenium) do
-    RAILS_ENV = "test" 
+    if RAILS_ENV != "test"
+      $stderr.puts "Need RAILS_ENV=test to run this task"
+      exit(1)
+    end
     #Load the fixtures into the test database
     Rake::Task["db:fixtures:load"].invoke
   
