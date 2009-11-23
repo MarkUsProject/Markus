@@ -7,6 +7,8 @@ class GroupTest < ActiveSupport::TestCase
   should_have_many :submissions, :through => :groupings
   should_have_many :assignments, :through => :groupings
   should_validate_presence_of :group_name
+  should_not_allow_values_for :group_name, "group_long_name_12319302910102912010210219002", :message => "is too long"
+  should_allow_values_for :group_name, "This group n. is short enough!" # exactly 30 char limit
 
   def test_should_not_save_without_groupname
     group = Group.new
