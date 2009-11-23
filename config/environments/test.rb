@@ -21,6 +21,14 @@ config.action_controller.allow_forgery_protection    = false
 # ActionMailer::Base.deliveries array.
 config.action_mailer.delivery_method = :test
 
+# Required gems for development (we are passing :lib => false,
+# because we don't want them to be loaded just yet)
+# Install them by using "rake gems:install"
+config.gem 'selenium-client', :version => ">=1.2.15", :lib => false
+config.gem 'thoughtbot-shoulda', :version => ">=2.10.2", :source => "http://gems.github.com", :lib => false
+config.gem 'fastercsv', :lib => false
+config.gem 'ruby-debug', :lib => false
+
 ###################################################################
 # MarkUs SPECIFIC CONFIGURATION
 #   - use "/" as path separator no matter what OS server is running

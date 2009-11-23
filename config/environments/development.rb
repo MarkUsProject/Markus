@@ -1,5 +1,3 @@
-require 'ruby-debug'
-
 # Settings specified here will take precedence over those in config/environment.rb
 
 # In the development environment your application's code is reloaded on
@@ -18,6 +16,16 @@ config.action_controller.allow_forgery_protection    = true
 
 # Don't care if the mailer can't send
 config.action_mailer.raise_delivery_errors = false
+
+# Required gems for development (we are passing :lib => false,
+# because we don't want them to be loaded just yet)
+# Install them by using "rake gems:install"
+config.gem 'selenium-client', :version => ">=1.2.15", :lib => false
+config.gem 'thoughtbot-shoulda', :version => ">=2.10.2", :source => "http://gems.github.com", :lib => false
+config.gem 'fastercsv', :lib => false
+config.gem 'ruby-debug', :lib => false
+
+require 'ruby-debug'
 
 ###################################################################
 # MarkUs SPECIFIC CONFIGURATION
