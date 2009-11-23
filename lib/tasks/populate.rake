@@ -37,8 +37,9 @@ namespace :markus do
     end
   end
   
-  desc "Add more student users to database. You have to run db:populate before this task!"
-  task(:add_students => :environment) do
+  desc "Add more student users to the database"
+  # this task depends on :environment and :populate
+  task(:add_students => [:environment, :"db:populate"]) do
     puts "Populate database with some additional students"
     STUDENT_CSV = File.expand_path(File.join(__FILE__, '/../../../test/classlist-csvs/new_students.csv'))
     if File.readable?(STUDENT_CSV)
@@ -49,8 +50,9 @@ namespace :markus do
     end
   end
   
-  desc "Create a setup for usability testing. You have to run db:populate before this task!"
-  task(:usability_test_setup => :environment) do
+  desc "Create a setup for usability testing."
+  # this task depends on :environment and :populate
+  task(:usability_test_setup => [:environment, :"db:populate"]) do
     puts "Creating a setup for usability testing"
     # modify settings for A1 (solo assignment)
     a1 = Assignment.find_by_short_identifier("A1")
@@ -95,8 +97,8 @@ namespace :markus do
     
     # Create a third assignment, for which the instructor has formed groups
     groups_csv_string = "Saturn,ignored_repo,c9magnar,c6scriab,g9merika\n
-                         Mars,irgnored_repo,c9puccin,c7stanfo,g5dindyv\n
-                         Neptune,ignored_repo,c7dallap,c7guarni,c7kimear"
+Mars,irgnored_repo,c9puccin,c7stanfo,g5dindyv\n
+Neptune,ignored_repo,c7dallap,c7guarni,c7kimear\n"
     a3 = Assignment.create(:short_identifier => "A3", :description => "Shell Scripting",
     :message => "Learn how to use functions, parameter passing and proper return codes.\nNote: You have been assigned to a group by the instructor.",
     :group_min => 1, :group_max => 1, :student_form_groups => false,
