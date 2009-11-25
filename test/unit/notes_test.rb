@@ -1,8 +1,8 @@
-require 'test_helper'
+require File.dirname(__FILE__) + '/../test_helper'
 require 'shoulda'
 
 class NotesTest < ActiveSupport::TestCase
-  should_validate_presence_of :notes_message, :grouping_id, :creator_id, :type_association
-  should_belong_to :grouping, :user
+  should_validate_presence_of :notes_message, :creator_id, :noteable
+  should_belong_to :noteable, :user
   
 end

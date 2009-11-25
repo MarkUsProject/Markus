@@ -1,7 +1,7 @@
 class Notes < ActiveRecord::Base
-  belongs_to :grouping
   belongs_to :user, :foreign_key => :creator_id
+  belongs_to :noteable, :polymorphic => true
   
-  validates_presence_of :notes_message, :grouping_id, :creator_id, :type_association
-  validates_associated :grouping, :user
+  validates_presence_of :notes_message, :creator_id, :noteable
+  validates_associated :user
 end
