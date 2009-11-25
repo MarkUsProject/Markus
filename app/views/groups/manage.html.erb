@@ -97,15 +97,6 @@ document.observe("dom:loaded", function(){
 
 </script>
 
-<script type="text/javascript" language="JavaScript">
-  function clearText(id) {
-    $("student_user_name").value = "";
-  }
-  function focusText(id) {
-    $("student_user_name").focus();
-  }
-</script>
-
 <% if @assignment.past_due_date? %>
 <div class="notice">
   <%=t('groups.editing_past_due_date_warning')%>
@@ -144,6 +135,8 @@ id=\"all_groupings_count\"></span>)", "filter('none')", :id =>
 <div class="clear"></div>
 
     <div id="notice">
+    	<div class="success" id="add_success" style="display: none; ">
+   		</div>
       <% # This is for error display injected by JavaScript 
        %>
       

@@ -19,7 +19,7 @@
     :html => { :class => 'delete', :title => 'Delete this group' }, 
     :confirm => 'This will remove all members in the group and delete all information associated with this group. Continue?' %>
     |
-	<%= link_to_remote "Add Member",
+	<%= link_to_remote "Add Members",
 	:url => { :action => 'add_member_dialog', :id => assignment.id, :grouping_id => grouping.id } %>
 </td>
 

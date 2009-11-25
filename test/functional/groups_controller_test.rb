@@ -265,16 +265,381 @@ class GroupsControllerTest < AuthenticatedControllerTest
       
       context "and one is selected" do
         setup do
-          post_as @admin, :global_actions, {:id => @assignment.id, :global_actions => "delete", :groupings => [groupings(:grouping_1).id, groupings(:grouping_2).id]}
+          post_as @admin, :global_actions, {:id => @assignment.id, :global_actions => "delete", :groupings => [groupings(:grouping_1).id]}
         end
         should_assign_to :assignment, :tas
         should "assign @removed_groupings accordingly" do
-          assert_same_elements [groupings(:grouping_1), groupings(:grouping_2)], assigns(:removed_groupings)
+          assert_same_elements [groupings(:grouping_1)], assigns(:removed_groupings)
         end
         should_assign_to(:errors) { [] }
         should_render_template 'delete_groupings.rjs'
       end
       
     end
+    
+    context "POST on :add_member" do
+      
+      context "with an empty username field" do
+        setup do
+          post_add ''
+        end
+        should_assign_to :assignment, :grouping, :group_name
+        should_assign_to(:messages) { [] }
+        should_assign_to(:bad_user_names) { [] }
+        should_assign_to(:error) { false }
+        should_respond_with :success
+        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should "not change number of members" do
+          assert_equal 0, @grouping.student_memberships.size
+        end
+      end
+      
+      context "with a single user not in a group" do
+        setup do
+          @user_name = users(:student6).user_name
+          post_add @user_name
+        end
+        should_assign_to :assignment, :grouping, :group_name
+        should_assign_to(:messages) { [ I18n.t('add_student.success', :user_name => @user_name) ] }
+        should_assign_to(:bad_user_names) { [] }
+        should_assign_to(:error) { false }
+        should_respond_with :success
+        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should "increment number of members by 1" do
+          assert_equal 1, @grouping.student_memberships.size
+        end
+        should "set new student as inviter" do
+          assert_equal "inviter", @grouping.student_memberships.at(0).membership_status
+          assert_equal users(:student6).id, @grouping.student_memberships.at(0).user_id
+        end
+      end
+      
+      context "with a single invalid username" do
+        setup do
+          @user_name = users(:student6).user_name + "asjfdlskjslkfds"
+          post_add @user_name
+        end
+        should_assign_to :assignment, :grouping, :group_name
+        should_assign_to(:messages) { [ I18n.t('add_student.fail.dne', :user_name => @user_name) ] }
+        should_assign_to(:bad_user_names) { [ @user_name ] }
+        should_assign_to(:error) { true }
+        should_respond_with :success
+        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should "not change number of members" do
+          assert_equal 0, @grouping.student_memberships.size
+        end
+      end
+      
+      context "with a single user who is hidden" do
+        setup do
+          @user_name = users(:hidden_student).user_name
+          post_add @user_name
+        end
+        should_assign_to :assignment, :grouping, :group_name
+        should_assign_to(:messages) { [ I18n.t('add_student.fail.hidden', :user_name => @user_name) ] }
+        should_assign_to(:bad_user_names) { [ @user_name ] }
+        should_assign_to(:error) { true }
+        should_respond_with :success
+        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should "not change number of members" do
+          assert_equal 0, @grouping.student_memberships.size
+        end
+      end
+      
+      context "with a single user who is already grouped on this assignment" do
+        setup do
+          @user_name = users(:student1).user_name
+          post_add @user_name
+        end
+        should_assign_to :assignment, :grouping, :group_name
+        should_assign_to(:messages) { [ I18n.t('add_student.fail.already_grouped', :user_name => @user_name) ] }
+        should_assign_to(:bad_user_names) { [ @user_name ] }
+        should_assign_to(:error) { true }
+        should_respond_with :success
+        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should "not change number of members" do
+          assert_equal 0, @grouping.student_memberships.size
+        end
+      end
+      
+      context "with two valid users" do
+        setup do
+          @user_names = [users(:student6).user_name, users(:student7).user_name]
+          post_add @user_names.join(',')
+        end
+        should_assign_to :assignment, :grouping, :group_name
+        should_assign_to(:messages) {
+          [
+            I18n.t('add_student.success', :user_name => @user_names.at(0)),
+            I18n.t('add_student.success', :user_name => @user_names.at(1))
+          ]
+        }
+        should_assign_to(:bad_user_names) { [] }
+        should_assign_to(:error) { false }
+        should_respond_with :success
+        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should "increment number of members by 2" do
+          assert_equal 2, @grouping.student_memberships.size
+        end
+        should "set first new student as inviter" do
+          assert_equal "inviter", @grouping.student_memberships.at(0).membership_status
+          assert_equal users(:student6).id, @grouping.student_memberships.at(0).user_id
+        end
+        should "set second new student as accepted" do
+          assert_equal "accepted", @grouping.student_memberships.at(1).membership_status
+          assert_equal users(:student7).id, @grouping.student_memberships.at(1).user_id
+        end
+      end
+      
+      context "with two invalid users" do
+        setup do
+          @user_names = [users(:student6).user_name + "Fjdksljfkl", users(:student1).user_name]
+          post_add @user_names.join(',')
+        end
+        should_assign_to :assignment, :grouping, :group_name
+        should_assign_to(:messages) {
+          [
+            I18n.t('add_student.fail.dne', :user_name => @user_names.at(0)),
+            I18n.t('add_student.fail.already_grouped', :user_name => @user_names.at(1))
+          ]
+        }
+        should_assign_to(:bad_user_names) { @user_names }
+        should_assign_to(:error) { true }
+        should_respond_with :success
+        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should "not change number of members" do
+          assert_equal 0, @grouping.student_memberships.size
+        end
+      end
+      
+      context "with valid,invalid users" do
+        setup do
+          @user_names = [users(:student6).user_name, users(:student1).user_name]
+          post_add @user_names.join(',')
+        end
+        should_assign_to :assignment, :grouping, :group_name
+        should_assign_to(:messages) {
+          [
+            I18n.t('add_student.success', :user_name => @user_names.at(0)),
+            I18n.t('add_student.fail.already_grouped', :user_name => @user_names.at(1))
+          ]
+        }
+        should_assign_to(:bad_user_names) { [ @user_names.at(1) ] }
+        should_assign_to(:error) { true }
+        should_respond_with :success
+        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should "increment number of members by 1" do
+          assert_equal 1, @grouping.student_memberships.size
+        end
+        should "set first new student as inviter" do
+          assert_equal "inviter", @grouping.student_memberships.at(0).membership_status
+          assert_equal users(:student6).id, @grouping.student_memberships.at(0).user_id
+        end
+      end
+      
+      context "with invalid,valid users" do
+        setup do
+          @user_names = [users(:student1).user_name, users(:student6).user_name]
+          post_add @user_names.join(',')
+        end
+        should_assign_to :assignment, :grouping, :group_name
+        should_assign_to(:messages) {
+          [
+            I18n.t('add_student.fail.already_grouped', :user_name => @user_names.at(0)),
+            I18n.t('add_student.success', :user_name => @user_names.at(1))
+          ]
+        }
+        should_assign_to(:bad_user_names) { [ @user_names.at(0) ] }
+        should_assign_to(:error) { true }
+        should_respond_with :success
+        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should "increment number of members by 1" do
+          assert_equal 1, @grouping.student_memberships.size
+        end
+        should "set second new student as inviter" do
+          assert_equal "inviter", @grouping.student_memberships.at(0).membership_status
+          assert_equal users(:student6).id, @grouping.student_memberships.at(0).user_id
+        end
+      end
+      
+      context "with three valid users" do
+        setup do
+          @user_names = [users(:student6).user_name, users(:student7).user_name, users(:student8).user_name]
+          post_add @user_names.join(',')
+        end
+        should_assign_to :assignment, :grouping, :group_name
+        should_assign_to(:messages) {
+          [
+            I18n.t('add_student.success', :user_name => @user_names.at(0)),
+            I18n.t('add_student.success', :user_name => @user_names.at(1)),
+            I18n.t('add_student.success', :user_name => @user_names.at(2))
+          ]
+        }
+        should_assign_to(:bad_user_names) { [] }
+        should_assign_to(:error) { false }
+        should_respond_with :success
+        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should "increment number of members by 3" do
+          assert_equal 3, @grouping.student_memberships.size
+        end
+        should "set first new student as inviter" do
+          assert_equal "inviter", @grouping.student_memberships.at(0).membership_status
+          assert_equal users(:student6).id, @grouping.student_memberships.at(0).user_id
+        end
+        should "set second new student as accepted" do
+          assert_equal "accepted", @grouping.student_memberships.at(1).membership_status
+          assert_equal users(:student7).id, @grouping.student_memberships.at(1).user_id
+        end
+        should "set third new student as accepted" do
+          assert_equal "accepted", @grouping.student_memberships.at(2).membership_status
+          assert_equal users(:student8).id, @grouping.student_memberships.at(2).user_id
+        end
+      end
+      
+      context "with three invalid users" do
+        setup do
+          @user_names = [users(:student6).user_name + "Fjdksljfkl", users(:student1).user_name, users(:hidden_student).user_name]
+          post_add @user_names.join(',')
+        end
+        should_assign_to :assignment, :grouping, :group_name
+        should_assign_to(:messages) {
+          [
+            I18n.t('add_student.fail.dne', :user_name => @user_names.at(0)),
+            I18n.t('add_student.fail.already_grouped', :user_name => @user_names.at(1)),
+            I18n.t('add_student.fail.hidden', :user_name => @user_names.at(2))
+          ]
+        }
+        should_assign_to(:bad_user_names) { @user_names }
+        should_assign_to(:error) { true }
+        should_respond_with :success
+        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should "not change number of members" do
+          assert_equal 0, @grouping.student_memberships.size
+        end
+      end
+      
+      context "with valid,valid,invalid users" do
+        setup do
+          @user_names = [users(:student6).user_name, users(:student7).user_name, users(:student1).user_name]
+          post_add @user_names.join(',')
+        end
+        should_assign_to :assignment, :grouping, :group_name
+        should_assign_to(:messages) {
+          [
+            I18n.t('add_student.success', :user_name => @user_names.at(0)),
+            I18n.t('add_student.success', :user_name => @user_names.at(1)),
+            I18n.t('add_student.fail.already_grouped', :user_name => @user_names.at(2))
+          ]
+        }
+        should_assign_to(:bad_user_names) { [ @user_names.at(2) ] }
+        should_assign_to(:error) { true }
+        should_respond_with :success
+        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should "increment number of members by 2" do
+          assert_equal 2, @grouping.student_memberships.size
+        end
+        should "set first new student as inviter" do
+          assert_equal "inviter", @grouping.student_memberships.at(0).membership_status
+          assert_equal users(:student6).id, @grouping.student_memberships.at(0).user_id
+        end
+        should "set second new student as accepted" do
+          assert_equal "accepted", @grouping.student_memberships.at(1).membership_status
+          assert_equal users(:student7).id, @grouping.student_memberships.at(1).user_id
+        end
+      end
+      
+      context "with valid,invalid,valid users" do
+        setup do
+          @user_names = [users(:student6).user_name, users(:student1).user_name, users(:student7).user_name]
+          post_add @user_names.join(',')
+        end
+        should_assign_to :assignment, :grouping, :group_name
+        should_assign_to(:messages) {
+          [
+            I18n.t('add_student.success', :user_name => @user_names.at(0)),
+            I18n.t('add_student.fail.already_grouped', :user_name => @user_names.at(1)),
+            I18n.t('add_student.success', :user_name => @user_names.at(2))
+          ]
+        }
+        should_assign_to(:bad_user_names) { [ @user_names.at(1) ] }
+        should_assign_to(:error) { true }
+        should_respond_with :success
+        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should "increment number of members by 2" do
+          assert_equal 2, @grouping.student_memberships.size
+        end
+        should "set first new student as inviter" do
+          assert_equal "inviter", @grouping.student_memberships.at(0).membership_status
+          assert_equal users(:student6).id, @grouping.student_memberships.at(0).user_id
+        end
+        should "set third new student as accepted" do
+          assert_equal "accepted", @grouping.student_memberships.at(1).membership_status
+          assert_equal users(:student7).id, @grouping.student_memberships.at(1).user_id
+        end
+      end
+      
+      context "with invalid,valid,valid users" do
+        setup do
+          @user_names = [users(:student1).user_name, users(:student6).user_name, users(:student7).user_name]
+          post_add @user_names.join(',')
+        end
+        should_assign_to :assignment, :grouping, :group_name
+        should_assign_to(:messages) {
+          [
+            I18n.t('add_student.fail.already_grouped', :user_name => @user_names.at(0)),
+            I18n.t('add_student.success', :user_name => @user_names.at(1)),
+            I18n.t('add_student.success', :user_name => @user_names.at(2))
+          ]
+        }
+        should_assign_to(:bad_user_names) { [ @user_names.at(0) ] }
+        should_assign_to(:error) { true }
+        should_respond_with :success
+        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should "increment number of members by 2" do
+          assert_equal 2, @grouping.student_memberships.size
+        end
+        should "set second new student as inviter" do
+          assert_equal "inviter", @grouping.student_memberships.at(0).membership_status
+          assert_equal users(:student6).id, @grouping.student_memberships.at(0).user_id
+        end
+        should "set third new student as accepted" do
+          assert_equal "accepted", @grouping.student_memberships.at(1).membership_status
+          assert_equal users(:student7).id, @grouping.student_memberships.at(1).user_id
+        end
+      end
+      
+      context "with valid,invalid,invalid users" do
+        setup do
+          @user_names = [users(:student6).user_name, users(:student7).user_name + "fdjsl", users(:student1).user_name]
+          post_add @user_names.join(',')
+        end
+        should_assign_to :assignment, :grouping, :group_name
+        should_assign_to(:messages) {
+          [
+            I18n.t('add_student.success', :user_name => @user_names.at(0)),
+            I18n.t('add_student.fail.dne', :user_name => @user_names.at(1)),
+            I18n.t('add_student.fail.already_grouped', :user_name => @user_names.at(2))
+          ]
+        }
+        should_assign_to(:bad_user_names) { @user_names[1,2] }
+        should_assign_to(:error) { true }
+        should_respond_with :success
+        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should "increment number of members by " do
+          assert_equal 1, @grouping.student_memberships.size
+        end
+        should "set first new student as inviter" do
+          assert_equal "inviter", @grouping.student_memberships.at(0).membership_status
+          assert_equal users(:student6).id, @grouping.student_memberships.at(0).user_id
+        end
+      end
+      
+    end #:add_member
+    
+  end #admin context
+  
+  def post_add(user_name)
+    post_as @admin, :add_member, {:id => @assignment.id, :grouping_id => @grouping.id, :student_user_name => user_name}
+  end
 
 end

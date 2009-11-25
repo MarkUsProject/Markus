@@ -106,6 +106,13 @@ en:
     fields specified near the upload form."
     invalid_group_warning: "Your group is currently invalid. You probably haven't met the group size minimum. You may not be able to submit anything, and your work may not be graded, until you have met this minimum. "
     rejected_invitation: "declined"
+
+    add_student:
+      success: "Student {{user_name}} added."
+      fail:
+        dne:  "Could not add {{user_name}} - this student does not exist."
+        hidden:  "Could not add {{user_name}} - this student's account has been disabled."
+        already_grouped: "Could not add {{user_name}} - this student is already a member of another group."
     
     invite_student:
       success: "Student {{user_name}} invited."

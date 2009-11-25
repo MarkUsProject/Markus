@@ -15,23 +15,51 @@ class GroupsController < ApplicationController
   # Group administration functions -----------------------------------------
   # Verify that all functions below are included in the authorize filter above
     
-  def add_member
+  def add_member    
     return unless (request.post? && params[:student_user_name])
     # add member to the group with status depending if group is empty or not
     grouping = Grouping.find(params[:grouping_id])
-    @assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group]}]) 
-    student = Student.find_by_user_name(params[:student_user_name])
-    if student.nil?
-      @error = "Could not find student with user name #{params[:student_user_name]}"
-      render :action => 'error_single'
-      return
-    end
+    @assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group]}])
+    
     set_membership_status = grouping.student_memberships.empty? ?
-    StudentMembership::STATUSES[:inviter] :
-    StudentMembership::STATUSES[:accepted]     
-    grouping.invite(params[:student_user_name], set_membership_status) 
+          StudentMembership::STATUSES[:inviter] :
+          StudentMembership::STATUSES[:accepted]
+    
+    @messages = []
+    @bad_user_names = []
+    @error = false
+    
+    students = params[:student_user_name].split(',')
+    students.each do |user_name|
+      user_name = user_name.strip
+      @invited = Student.find_by_user_name(user_name)
+      begin
+        if @invited.nil?
+          raise I18n.t('add_student.fail.dne', :user_name => user_name)
+        end
+        if @invited.hidden
+          raise I18n.t('add_student.fail.hidden', :user_name => user_name)
+        end
+        if @invited.has_accepted_grouping_for?(@assignment.id)
+          raise I18n.t('add_student.fail.already_grouped', :user_name => user_name)
+        end
+        
+        grouping.invite(user_name, set_membership_status)
+        
+        @messages.push(I18n.t('add_student.success', :user_name => user_name))
+        
+        # only the first student should be the "inviter" (and only update this if it succeeded)
+        set_membership_status = StudentMembership::STATUSES[:accepted]
+      rescue Exception => e
+        @error = true
+        @messages.push(e.message)
+        @bad_user_names.push(user_name)
+      end
+    end
+
     grouping.reload
     @grouping = construct_table_row(grouping, @assignment)
+    @group_name = grouping.group.group_name
   end
   
   def add_member_dialog
