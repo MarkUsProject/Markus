@@ -64,7 +64,7 @@ ActiveRecord::Schema.define(:version => 20091125173242) do
     t.string   "repository_folder",        :default => "", :null => false
     t.boolean  "instructor_form_groups"
     t.float    "results_average"
-    t.string   "marking_scheme_type"
+    t.string   "marking_scheme_type",      :default => "rubric"
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true
