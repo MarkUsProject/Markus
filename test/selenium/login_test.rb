@@ -47,4 +47,18 @@ class LoginTest < Test::Unit::TestCase
     
   end
   
+  def test_no_csrf_on_login
+    @browser.open "/"
+    assert @browser.is_element_present("authenticity_token")
+    assert_equal "", @browser.get_eval("this.browserbot.findElement(\"name=authenticity_token\").value = ''")
+    @browser.type "user_login", "olm_admin"
+    @browser.type "user_password", "asdf"
+    @browser.click "commit"
+    @browser.wait_for_page_to_load "30000"
+    begin
+        assert @browser.is_text_present("Dashboard")
+    rescue Test::Unit::AssertionFailedError
+        @verification_errors << $!
+    end
+  end
 end
