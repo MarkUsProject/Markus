@@ -1,0 +1,35 @@
+<div class="notes_wrapper">
+    <div class="notes_wrapper_row">
+        <div class="float_left">
+            <h3>Existing Notes</h3>
+        </div>
+        <div class="float_right">
+            <h3>Your comment</h3>
+        </div>
+    </div>
+    <div class="notes_wrapper_row">
+        <div class="notes_existing">
+            <% for note in @notes %>
+            <b><%= note.user.user_name %>: </b>
+            <br>
+            <small><%=note.format_date%></small>
+            <br>
+            &nbsp; <%=note.notes_message %>
+            <br>
+            <br>
+            <% end %>
+        </div>
+        <div class="float_right">
+            <% form_remote_tag :url => {:action => 'add_note', :id => @assignment.id, :noteable_id => @noteable, 
+				:noteable_type => @cls, :user => @current_user, :action_to => @action, :controller_to => @cont} do %>
+            <%=text_area_tag(:new_notes, nil, :rows => 15, :cols=>30) %>
+            <p class="p_margin">
+                <%= submit_tag 'Save Note', :onclick=>"modalNotesGroup.close();" %>
+                <button onClick="modalNotesGroup.close(); return false;">
+                    Cancel
+                </button>
+            </p>
+            <% end %>
+        </div>
+    </div>
+</div>

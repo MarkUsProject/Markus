@@ -682,7 +682,7 @@ input#extra_mark_description{
    -webkit-border-radius: 5px;
 }
 
-#rename_group_dialog, #upload_dialog, #download_dialog {
+#rename_group_dialog, #upload_dialog, #download_dialog, #notes_dialog {
    background: white;
    padding: 0 10px 0 10px;
    border: 1px solid #000000;
@@ -778,6 +778,30 @@ input#extra_mark_description{
 .left_section_container{
   display: none;
 }
+
+#notes_dialog div.notes_existing {
+	width: 250px;
+	height: 255px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border: 2px solid #ccc;
+	overflow: auto; 
+	word-wrap: break-word;
+	float: left
+}
+#notes_dialog div.notes_wrapper {
+	display: table;
+}
+#notes_dialog div.notes_wrapper_row {
+	display: table-row-group;
+}
+div.float_right {
+	float: right;
+}
+div.float_left {
+	float: left;
+}
+
 
 .colLeft{
   float: left;

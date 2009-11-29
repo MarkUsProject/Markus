@@ -75,6 +75,14 @@ document.observe("dom:loaded", function(){
     fade:false
  
   });
+  
+  modalNotesGroup = new Control.Modal($('notes_dialog'), 
+  {
+    overlayOpacity: 0.75,
+    className: 'modalNotesGroup',
+    fade:false
+ 
+  });
 
   modalAddMember = new Control.Modal($('add_member_dialog'), 
   {
@@ -149,7 +157,7 @@ id=\"all_groupings_count\"></span>)", "filter('none')", :id =>
       </div>
       
       <% # if there are errors have the error message display %>
-      <% if flash[:error] || flash[:fail_notice] || flash[:invalid_lines] %>
+      <% if flash[:error] || flash[:fail_notice] || flash[:invalid_lines] -%>
         <div class="error">
           <%= h(flash[:error])+"<br/>" if flash[:error] %>
           <%= h(flash[:fail_notice])+"<br/>" if flash[:fail_notice] %>
@@ -287,6 +295,9 @@ id=\"all_groupings_count\"></span>)", "filter('none')", :id =>
 </div> 
 
 <div id="rename_group_dialog">
+</div>
+
+<div id="notes_dialog">
 </div>
 
 <div id="assignment_group_use_dialog">

@@ -4,4 +4,12 @@ class Note < ActiveRecord::Base
   
   validates_presence_of :notes_message, :creator_id, :noteable
   validates_associated :user
+  
+  def user_can_modify?(current_user)
+   return current_user.admin? || user == current_user
+  end
+  
+  def format_date
+    return created_at.strftime(LONG_DATE_TIME_FORMAT)
+  end
 end

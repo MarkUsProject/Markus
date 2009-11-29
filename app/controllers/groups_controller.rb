@@ -11,6 +11,15 @@ class GroupsController < ApplicationController
    
   auto_complete_for :student, :user_name
   auto_complete_for :assignment, :name
+  
+  def note_message
+    @assignment = Assignment.find(params[:id])
+    if params[:success]
+      flash[:upload_notice] = I18n.t('notes.success')
+    else
+      flash[:error] = I18n.t('notes.error')
+    end
+  end
  
   # Group administration functions -----------------------------------------
   # Verify that all functions below are included in the authorize filter above
@@ -125,7 +134,7 @@ class GroupsController < ApplicationController
      @assignment = Assignment.find(params[:id])
      @grouping = Grouping.find(params[:grouping_id]) 
      @group = @grouping.group
-
+    
      # Checking if a group with this name already exists
 
     if (@groups = Group.find(:first, :conditions => {:group_name =>

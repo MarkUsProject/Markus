@@ -21,6 +21,10 @@
     |
 	<%= link_to_remote "Add Members",
 	:url => { :action => 'add_member_dialog', :id => assignment.id, :grouping_id => grouping.id } %>
+	|
+	<%= link_to_remote "Notes", 
+	:url => { :controller => 'note' , :action => 'notes_dialog', :id => assignment.id, :noteable_id => grouping.id, :noteable_type => 'Grouping' , :action_to => 'note_message', :controller_to => 'groups'} %> 
+
 </td>
 
 <td>
