@@ -1,4 +1,4 @@
-class Notes < ActiveRecord::Base
+class Note < ActiveRecord::Base
   belongs_to :user, :foreign_key => :creator_id
   belongs_to :noteable, :polymorphic => true
   
