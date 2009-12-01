@@ -237,7 +237,11 @@ en:
         <p>where <em>level_names</em> must contains the name of each level (seperated by commas)<br />
         and <em>level_descriptions</em> could contains the description of each level (optional, also seperated
         by commas)."
-
+    
+    notes:
+        success: "Note saved succesfully"
+        error: "Unable to save the note"
+        
     criteria_edit_total_mark:     "This criterion will be marked out of"
     criterion_saved_success:   "Criterion was successfully saved"
     criterion_deleted_success:  "Criterion, and all associated marks were successfully deleted"
