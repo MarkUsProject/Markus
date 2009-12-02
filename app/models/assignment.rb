@@ -300,7 +300,6 @@ class Assignment < ActiveRecord::Base
       end
     end
     return result
-    #groupings.all(:include => [{:student_memberships => :user}], :joins => :student_memberships, :select => "groupings.*, count(memberships.id) members_count", :group => "memberships.grouping_id", :having => "members_count > 5")
   end
   
   def invalid_groupings
@@ -317,13 +316,88 @@ class Assignment < ActiveRecord::Base
   end
   
   # Get a list of subversion client commands to be used for scripting
-  def get_svn_commands
+  def get_svn_export_commands
     svn_commands = [] # the commands to be exported
     self.submissions.each do |submission|
       grouping = submission.grouping
       svn_commands.push("svn export -r #{submission.revision_number} #{grouping.group.repository_external_access_url} \"#{grouping.group.group_name}\"")
     end
     return svn_commands
+  end
+  
+  # Get a list of group_name, repo-url pairs
+  def get_svn_repo_list
+    string = FasterCSV.generate do |csv|
+      self.groupings.each do |grouping|
+        group = grouping.group
+        csv << [group.group_name,group.repository_external_access_url]
+      end
+    end
+    return string
+  end
+  
+  # Get a simple CSV report of marks for this assignment
+  def get_simple_csv_report
+    students = Student.all
+    out_of = self.total_mark
+    csv_string = FasterCSV.generate do |csv|
+       students.each do |student|
+         final_result = []
+         final_result.push(student.user_name)         
+         grouping = student.accepted_grouping_for(self.id)
+         if grouping.nil? || !grouping.has_submission?
+           final_result.push('')
+         else
+           submission = grouping.get_submission_used
+           final_result.push(submission.result.total_mark / out_of * 100)                    
+         end
+         csv << final_result
+       end
+    end
+    return csv_string
+  end
+  
+  # Get a detailed CSV report of marks (includes each criterion) for this assignment
+  def get_detailed_csv_report
+    out_of = self.total_mark
+    students = Student.all
+    rubric_criteria = self.rubric_criteria
+    csv_string = FasterCSV.generate do |csv|
+      students.each do |student|
+        final_result = []
+        final_result.push(student.user_name)
+        grouping = student.accepted_grouping_for(self.id)
+        if grouping.nil? || !grouping.has_submission?
+          final_result.push('')
+          rubric_criteria.each do |rubric_criterion|
+            final_result.push('')
+            final_result.push(rubric_criterion.weight)
+          end
+          final_result.push('')
+          final_result.push('')
+        else
+          submission = grouping.get_submission_used
+          final_result.push(submission.result.total_mark / out_of * 100)
+          rubric_criteria.each do |rubric_criterion|
+            mark = submission.result.marks.find_by_rubric_criterion_id(rubric_criterion.id)
+            if mark.nil?
+              final_result.push('')
+            else
+              final_result.push(mark.mark || '')
+            end 
+            final_result.push(rubric_criterion.weight)
+          end
+          final_result.push(submission.result.get_total_extra_points)
+          final_result.push(submission.result.get_total_extra_percentage)
+        end
+        # push grace credits info
+        grace_credits_data = student.remaining_grace_credits.to_s + "/" + student.grace_credits.to_s
+        final_result.push(grace_credits_data)
+     
+        csv << final_result
+      end
+    end
+    return csv_string
   end
   
   def replace_submission_rule(new_submission_rule)

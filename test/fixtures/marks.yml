@@ -28,6 +28,49 @@ mark_4:
    created_at:           <%= Time.now.to_s(:db)%>
    updated_at:           <%= Time.now.to_s(:db)%>
 
+# This is for result_6 the assignment test case, with csv downloads  
+mark_5:
+   result_id:            <%= Fixtures.identify(:result_6)%>
+   rubric_criterion_id:  <%= Fixtures.identify(:c6)%>
+   mark:                 4
+   created_at:           <%= Time.now.to_s(:db)%>
+   updated_at:           <%= Time.now.to_s(:db)%>
+
+mark_6:
+   result_id:            <%= Fixtures.identify(:result_6)%>
+   rubric_criterion_id:  <%= Fixtures.identify(:c5)%>
+   mark:                 4
+   created_at:           <%= Time.now.to_s(:db)%>
+   updated_at:           <%= Time.now.to_s(:db)%>
+   
+mark_7:
+   result_id:            <%= Fixtures.identify(:result_6)%>
+   rubric_criterion_id:  <%= Fixtures.identify(:c4)%>
+   mark:                 4
+   created_at:           <%= Time.now.to_s(:db)%>
+   updated_at:           <%= Time.now.to_s(:db)%>
+
+mark_8:
+   result_id:            <%= Fixtures.identify(:result_6)%>
+   rubric_criterion_id:  <%= Fixtures.identify(:c3)%>
+   mark:                 1
+   created_at:           <%= Time.now.to_s(:db)%>
+   updated_at:           <%= Time.now.to_s(:db)%>
+   
+mark_9:
+   result_id:            <%= Fixtures.identify(:result_6)%>
+   rubric_criterion_id:  <%= Fixtures.identify(:c2)%>
+   mark:                 2
+   created_at:           <%= Time.now.to_s(:db)%>
+   updated_at:           <%= Time.now.to_s(:db)%>
+
+mark_10:
+   result_id:            <%= Fixtures.identify(:result_6)%>
+   rubric_criterion_id:  <%= Fixtures.identify(:c1)%>
+   mark:                 3
+   created_at:           <%= Time.now.to_s(:db)%>
+   updated_at:           <%= Time.now.to_s(:db)%>
+
 flexible_mark:
    result_id:            <%= Fixtures.identify(:flexible_result)%>
    rubric_criterion_id:  <%= Fixtures.identify(:flexible_criterion_1)%>

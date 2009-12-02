@@ -354,92 +354,29 @@ class SubmissionsController < ApplicationController
     redirect_to :action => 'browse', :id => params[:id]
   end
   
+  # See Assignment.get_simple_csv_report for details
   def download_simple_csv_report
     assignment = Assignment.find(params[:id])
-    students = Student.all
-    out_of = assignment.total_mark
-    csv_string = FasterCSV.generate do |csv|
-       students.each do |student|
-         final_result = []
-         final_result.push(student.user_name)         
-         grouping = student.accepted_grouping_for(assignment.id)
-         if grouping.nil? || !grouping.has_submission?
-           final_result.push('')
-         else
-           submission = grouping.get_submission_used
-           final_result.push(submission.result.total_mark / out_of * 100)                    
-         end
-         csv << final_result
-       end
-    end
-      
-    send_data csv_string, :disposition => 'attachment', :type => 'application/vnd.ms-excel', :filename => "#{assignment.short_identifier} simple report.csv"
+    send_data assignment.get_simple_csv_report, :disposition => 'attachment', :type => 'application/vnd.ms-excel', :filename => "#{assignment.short_identifier} simple report.csv"
   end
   
+  # See Assignment.get_detailed_csv_report for details
   def download_detailed_csv_report
     assignment = Assignment.find(params[:id])
-    out_of = assignment.total_mark
-    students = Student.all
-    rubric_criteria = assignment.rubric_criteria
-    csv_string = FasterCSV.generate do |csv|
-       students.each do |student|
-         final_result = []
-         final_result.push(student.user_name)
-         grouping = student.accepted_grouping_for(assignment.id)
-         if grouping.nil? || !grouping.has_submission?
-           final_result.push('')
-           rubric_criteria.each do |rubric_criterion|
-             final_result.push('')
-             final_result.push(rubric_criterion.weight)
-           end
-           final_result.push('')
-           final_result.push('')
-           final_result.push(0)
-         else
-           submission = grouping.get_submission_used
-           final_result.push(submission.result.total_mark / out_of * 100)
-           rubric_criteria.each do |rubric_criterion|
-             mark = submission.result.marks.find_by_rubric_criterion_id(rubric_criterion.id)
-             if mark.nil?
-               final_result.push('')
-             else
-               final_result.push(mark.mark || '')
-             end 
-             final_result.push(rubric_criterion.weight)
-           end
-    
-           final_result.push(submission.result.get_total_extra_points)
-           final_result.push(submission.result.get_total_extra_percentage)
-           membership = grouping.student_memberships.find_by_user_id(student.id)
-           grace_period_deductions = student.grace_period_deductions.find_by_membership_id(membership.id)
-           final_result.push(grace_period_deductions || 0) 
-         end
-         
-         csv << final_result
-       end
-    end
-
-    send_data csv_string, :disposition => 'attachment', :type => 'application/vnd.ms-excel', :filename => "#{assignment.short_identifier} detailed report.csv"
+    send_data assignment.get_detailed_csv_report, :disposition => 'attachment', :type => 'application/vnd.ms-excel', :filename => "#{assignment.short_identifier} detailed report.csv"
   end
   
-  # See Assignment.get_svn_commands for details
+  # See Assignment.get_svn_export_commands for details
   def download_svn_export_commands
     assignment = Assignment.find(params[:id])
-    svn_commands = assignment.get_svn_commands
+    svn_commands = assignment.get_svn_export_commands
     send_data svn_commands.join("\n"), :disposition => 'attachment', :type => 'text/plain', :filename => "#{assignment.short_identifier}_svn_exports"
   end
 
-  # See Assignment.get_svn_commands for details
+  # See Assignment.get_svn_repo_list for details
   def download_svn_repo_list
     assignment = Assignment.find(params[:id])
-    groupings = assignment.groupings
-    string = FasterCSV.generate do |csv|
-      groupings.each do |grouping|
-        group = grouping.group
-        csv << [group.group_name,group.repository_external_access_url]
-      end
-    end
-    send_data string, :disposition => 'attachment', :type => 'text/plain', :filename => "#{assignment.short_identifier}_svn_repo_list"
+    send_data assignment.get_svn_repo_list, :disposition => 'attachment', :type => 'text/plain', :filename => "#{assignment.short_identifier}_svn_repo_list"
   end
 
 end

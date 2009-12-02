@@ -5,7 +5,7 @@ class AssignmentTest < ActiveSupport::TestCase
  
   should_validate_presence_of :marking_scheme_type
   
-  fixtures :assignments, :users, :submissions, :groups, :rubric_criteria, :marks
+  fixtures :assignments, :users, :submissions, :groups, :rubric_criteria, :marks, :results, :groupings
   set_fixture_class :rubric_criteria => RubricCriterion
  
   def setup
@@ -71,9 +71,6 @@ class AssignmentTest < ActiveSupport::TestCase
   def test_group_by
     a1 = assignments(:assignment_1)
     student1 = users(:student1)
-    student5 = users(:student5)
-    
-    # student 5 is in group 3 with inviter status
     assert_equal groups(:group_1), a1.group_by(student1.id).group
   end
    
@@ -242,7 +239,7 @@ class AssignmentTest < ActiveSupport::TestCase
      assert a.add_csv_group(group)
    end
    
-   def test_get_svn_commands
+   def test_get_svn_export_commands
      a = assignments(:assignment_2)
      expected_array = []
           
@@ -251,24 +248,99 @@ class AssignmentTest < ActiveSupport::TestCase
        group = grouping.group
        expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/group_#{group.id} \"#{group.group_name}\"")
      end
-     assert_equal expected_array, a.get_svn_commands
+     assert_equal expected_array, a.get_svn_export_commands
    end
 
-   def test_get_svn_commands_with_spaces_in_group_name
-     a = assignments(:assignment_2)
-     # Put " Test" after every group name"
-     Group.all.each do |group|
-       group.group_name = group.group_name + " Test"
-       group.save
-     end
-     expected_array = []
+  def test_get_svn_export_commands_with_spaces_in_group_name
+    a = assignments(:assignment_2)
+    # Put " Test" after every group name"
+    Group.all.each do |group|
+      group.group_name = group.group_name + " Test"
+      group.save
+    end
+    expected_array = []
           
-     a.submissions.each do |submission|
-       grouping = submission.grouping
-       group = grouping.group
-       expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/group_#{group.id} \"#{group.group_name}\"")
-     end
-     assert_equal expected_array, a.get_svn_commands
-   end
-
+    a.submissions.each do |submission|
+      grouping = submission.grouping
+      group = grouping.group
+      expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/group_#{group.id} \"#{group.group_name}\"")
+    end
+    assert_equal expected_array, a.get_svn_export_commands
+  end
+  
+  context "An assignment instance" do
+    
+    should "be able to generate a detailed CSV report of marks (including criteria)" do
+      a = assignments(:assignment_6) # we require assignment_6 here
+      assert_equal "A6", a.short_identifier, "We need assignment 6 for this test!"
+      out_of = a.total_mark
+      rubric_criteria = a.rubric_criteria
+      expected_string = ""
+      Student.all.each do |student|
+        fields = []
+        fields.push(student.user_name)
+        grouping = student.accepted_grouping_for(a.id)
+        if grouping.nil? || !grouping.has_submission?
+          fields.push('')
+          rubric_criteria.each do |rubric_criterion|
+            fields.push('')
+            fields.push(rubric_criterion.weight)
+          end
+          fields.push('')
+          fields.push('')
+        else
+          submission = grouping.get_submission_used
+          fields.push(submission.result.total_mark / out_of * 100)
+          rubric_criteria.each do |rubric_criterion|
+            mark = submission.result.marks.find_by_rubric_criterion_id(rubric_criterion.id)
+            if mark.nil?
+              fields.push('')
+            else
+              fields.push(mark.mark || '')
+            end 
+            fields.push(rubric_criterion.weight)
+          end
+          fields.push(submission.result.get_total_extra_points)
+          fields.push(submission.result.get_total_extra_percentage)
+        end
+        # push grace credits info
+        grace_credits_data = student.remaining_grace_credits.to_s + "/" + student.grace_credits.to_s
+        fields.push(grace_credits_data)
+     
+        expected_string += fields.to_csv
+      end
+      assert_equal expected_string, a.get_detailed_csv_report, "Detailed CSV report is wrong!"
+    end
+    
+    should "be able to generate a simple CSV report of marks" do
+      a = assignments(:assignment_6) # we require assignment_6 here
+      assert_equal "A6", a.short_identifier, "We need assignment 6 for this test!"
+      expected_string = ""
+      Student.all.each do |student|
+        fields = []
+        fields.push(student.user_name)         
+        grouping = student.accepted_grouping_for(a.id)
+        if grouping.nil? || !grouping.has_submission?
+          fields.push('')
+        else
+          submission = grouping.get_submission_used
+          fields.push(submission.result.total_mark / a.total_mark * 100)                    
+        end
+        expected_string += fields.to_csv
+      end
+      assert_equal expected_string, a.get_simple_csv_report, "Simple CSV report is wrong!"
+    end
+    
+    should "be able to get a list of repository access URLs for each group" do
+      expected_string = ''
+      assignment = assignments(:assignment_6)
+      assignment.groupings.each do |grouping|
+        group = grouping.group
+        expected_string += [group.group_name,group.repository_external_access_url].to_csv
+      end
+      assert_equal expected_string, assignment.get_svn_repo_list, "Repo access url list string is wrong!"
+    end
+    
+  end # end assignment instance context
+  
 end

@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + '/authenticated_controller_test'
 require 'fastercsv'
+require 'shoulda'
 
 class SubmissionsControllerTest < AuthenticatedControllerTest
 
@@ -134,7 +135,6 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
     txn.add(File.join(assignment.repository_folder,'Shapes.java'), 'Content of Shapes.java')
     txn.add(File.join(assignment.repository_folder, 'TestShapes.java'), 'Content of TestShapes.java')
     repo.commit(txn)
-    original_revision = repo.get_latest_revision
   
     file_1 = fixture_file_upload('files/Shapes.java', 'text/java')
     file_2 = fixture_file_upload('files/TestShapes.java', 'text/java')
@@ -192,18 +192,6 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
   end
   
   # TODO: TEST POPULATE REPO BROWSER HERE
- 
-  def test_get_svn_export_commands
-    assert false
-  end
-  
-  def test_get_detailed_csv_report
-    assert false
-  end
-  
-  def test_get_simple_csv_report
-    assert false
-  end
   
   def test_can_release_completed_results
     assert false
@@ -237,6 +225,152 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
     assert false
   end
   
-
+  context "A logged in student doing a GET" do
+    
+    setup do
+      @student = users(:student1)
+    end
+    
+    context "on download_simple_csv_report" do
+      setup do
+        get_as @student, :download_simple_csv_report
+      end
+      
+      should_respond_with :missing
+    end
+    
+    context "on download_detailed_csv_report" do
+      setup do
+        get_as @student, :download_detailed_csv_report
+      end
+      
+      should_respond_with :missing
+    end
+    
+    context "on download_svn_export_commands" do
+      setup do
+        get_as @student, :download_svn_export_commands
+      end
+      
+      should_respond_with :missing
+    end
+    
+    context "on download_svn_repo_list" do
+      setup do
+        get_as @student, :download_svn_repo_list
+      end
+      
+      should_respond_with :missing
+    end
+    
+  end # context logged in student
+  
+  context "An unauthenticated and unauthorized user doing a GET" do
+    
+    context "on download_simple_csv_report" do
+      setup do
+        get :download_simple_csv_report
+      end
+      should_respond_with :redirect
+    end
+    
+    context "on download_detailed_csv_report" do
+      setup do
+        get :download_detailed_csv_report
+      end
+      should_respond_with :redirect
+    end
+    
+    context "on download_svn_export_commands" do
+      setup do
+        get :download_svn_export_commands
+      end
+      should_respond_with :redirect
+    end
+    
+    context "on download_svn_repo_list" do
+      setup do
+        get :download_svn_repo_list
+      end
+      should_respond_with :redirect
+    end
+    
+  end # An unauthenticated and unauthorized user doing a POST
+  
+  context "A logged in admin doing a GET" do
+    
+    setup do
+      @admin = users(:olm_admin_1)
+      @assignment = assignments(:assignment_6)
+    end
+    
+    context "on download_simple_csv_report" do
+      setup do
+        get_as @admin, :download_simple_csv_report, :id => @assignment.id
+      end
+      should_respond_with :success
+    end
+    
+    context "on download_detailed_csv_report" do
+      setup do
+        get_as @admin, :download_detailed_csv_report, :id => @assignment.id
+      end
+      should_respond_with :success
+    end
+    
+    context "on download_svn_export_commands" do
+      setup do
+        get_as @admin, :download_svn_export_commands, :id => @assignment.id
+      end
+      
+      should_respond_with :success
+    end
+    
+    context "on download_svn_repo_list" do
+      setup do
+        get_as @admin, :download_svn_repo_list, :id => @assignment.id
+      end
+      
+      should_respond_with :success
+    end
+    
+  end # context: A logged in admin doing a GET
+  
+  
+  context "A logged in TA doing a GET" do
+    
+    setup do
+      @ta = users(:ta1)
+    end
+    
+    context "on download_simple_csv_report" do
+      setup do
+        get_as @ta, :download_simple_csv_report
+      end
+      should_respond_with :missing
+    end
+    
+    context "on download_detailed_csv_report" do
+      setup do
+        get_as @ta, :download_detailed_csv_report
+      end
+      should_respond_with :missing
+    end
+    
+    context "on download_svn_export_commands" do
+      setup do
+        get_as @ta, :download_svn_export_commands
+      end
+      should_respond_with :missing
+    end
+    
+    context "on download_svn_repo_list" do
+      setup do
+        get_as @ta, :download_svn_repo_list
+      end
+      should_respond_with :missing
+    end
+    
+  end # context: A logged in TA doing a GET
     
 end
