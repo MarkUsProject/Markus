@@ -2,15 +2,24 @@ class ResultsController < ApplicationController
   before_filter      :authorize_only_for_admin, :except => [:codeviewer, :edit, :update_mark, :view_marks,
                         :create, :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria,
                         :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria, :update_marking_state,
-                        :download]
+                        :download, :note_message]
   before_filter      :authorize_for_ta_and_admin, :only => [:edit, :update_mark, :create, :add_extra_mark,
                         :download, :next_grouping, :update_overall_comment, :expand_criteria,
                         :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria,
-                        :update_marking_state]
+                        :update_marking_state, :note_message]
   before_filter      :authorize_for_user, :only => [:codeviewer]
   before_filter      :authorize_for_student, :only => [:view_marks]
 
   def index
+  end
+
+  def note_message
+    @result = Result.find(params[:id])
+    if params[:success]
+      flash[:note_success] = I18n.t('notes.success')
+    else
+      flash[:fail_notice] = I18n.t('notes.error')
+    end
   end
   
   def edit

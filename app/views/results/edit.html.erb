@@ -42,11 +42,27 @@
 
 <% # BOOT SCRIPTS %>
 <%= javascript_include_tag "Grader/tabs_boot.js" %>
+<script>
+    var modalNotesGroup = null;
+    document.observe("dom:loaded", function(){
+  modalNotesGroup = new Control.Modal($('notes_dialog'), 
+  {
+    overlayOpacity: 0.75,
+    className: 'modalNotesGroup',
+    fade:false
+ 
+  });
+    })
+</script>
 
 <%= render :partial => "results/common/annotations.js" %>
 <%= render :partial => "results/marker/setup_annotation_categories.js" %>
 
 <%= render :partial => "results/marker/boot.js", :locals => {:first_file => @first_file} %>
+
+<div id="notes_dialog">
+</div>
+
 <div id="title_bar">
 <h1>Grading Assignment: <%=h(@assignment.short_identifier)%>
 </h1>
@@ -54,6 +70,9 @@
 <div class="wrapLeft">
 <% if flash[:fail_notice] %>
   <p class="error"><%=h flash[:fail_notice] %></p>
+<% end %>
+<% if flash[:note_success] %>
+  <p class="success"><%=h flash[:note_success] %></p>
 <% end %>
 
 <% if @result.released_to_students %>
