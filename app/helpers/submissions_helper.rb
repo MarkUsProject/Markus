@@ -1,7 +1,7 @@
 module SubmissionsHelper
   
   def find_appropriate_grouping(assignment_id, params)
-    if current_user.admin?
+    if current_user.admin? || current_user.ta?
       return Grouping.find(params[:grouping_id])
     else
       return current_user.accepted_grouping_for(assignment_id)

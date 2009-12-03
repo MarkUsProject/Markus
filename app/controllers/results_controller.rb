@@ -1,6 +1,6 @@
 class ResultsController < ApplicationController
   before_filter      :authorize_only_for_admin, :except => [:codeviewer,
-  :edit, :update_mark, :view_marks, :create, :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria, :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria, :update_marking_state]
+  :edit, :update_mark, :view_marks, :create, :download, :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria, :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria, :update_marking_state]
   before_filter      :authorize_for_ta_and_admin, :only => [:edit,
   :update_mark, :create, :add_extra_mark, :download, :next_grouping, :update_overall_comment, :expand_criteria, :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria, :update_marking_state]
   before_filter      :authorize_for_user, :only => [:codeviewer]
