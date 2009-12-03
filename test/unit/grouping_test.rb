@@ -116,6 +116,33 @@ class GroupingTest < ActiveSupport::TestCase
       end
 
     end # end files submitted context
+    
+    context "as a noteable" do
+      context "with no students in the group" do
+        should "display group name and students' usernames without seeing an exception" do
+          grouping = groupings(:grouping_4)
+          assert_nothing_raised do
+            grouping.group_name_with_student_user_names
+          end
+        end
+      end
+      
+      context "with students in the group" do
+        should "display group name and students' usernames without seeing an exception" do
+          grouping = groupings(:grouping_1)
+          assert_nothing_raised do
+            grouping.group_name_with_student_user_names
+          end
+        end
+      end
+      
+      should "display for note without seeing an exception" do
+        grouping = groupings(:grouping_1)
+        assert_nothing_raised do
+          grouping.display_for_note
+        end
+      end
+    end # end noteable context
 
   end # end grouping context
 
@@ -378,7 +405,7 @@ Blanche Nef,ta2'''
 
     assert_equal grouping_3_orig_count + 1, grouping_3.ta_memberships.count, "Got unexpected TA membership count"
     
-    assert_equal 0, failures.count, "Received unexpected failures"
+    assert_equal 0, failures.size, "Received unexpected failures"
 
   end
 

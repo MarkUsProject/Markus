@@ -6,7 +6,7 @@ class Note < ActiveRecord::Base
   validates_associated :user
   
   def user_can_modify?(current_user)
-   return current_user.admin? || user == current_user
+    return current_user.admin? || user == current_user
   end
   
   def format_date

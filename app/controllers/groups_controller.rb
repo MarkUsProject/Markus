@@ -15,7 +15,7 @@ class GroupsController < ApplicationController
   def note_message
     @assignment = Assignment.find(params[:id])
     if params[:success]
-      flash[:upload_notice] = I18n.t('notes.success')
+      flash[:upload_notice] = I18n.t('notes.create.success')
     else
       flash[:error] = I18n.t('notes.error')
     end

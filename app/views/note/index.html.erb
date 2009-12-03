@@ -1,0 +1,43 @@
+<div id="title_bar"><h1><%=I18n.t('notes.title')%> <%= link_to I18n.t('add_new'), :action => 'new' %> </h1></div>
+
+<div class="wrapLeft">
+	
+	<% # if there are errors have the error message display %>
+      <% if flash[:error] %>
+        <div class="error">
+          <%= h(flash[:error])+"<br/>" %>
+        </div>
+      <% end %>
+	
+	<% # if there are success messages to display %>
+      <% if flash[:success] -%>
+        <div class="success">
+          <%= h(flash[:success])+"<br/>" %>
+        </div>
+      <% end %>
+	
+<table id="notes">
+<% for note in @notes %>
+	<tr>
+		<td class="note">
+			<%=note.user.user_name%> on <b><%=note.noteable.display_for_note%></b><br />
+			<small><%=note.format_date%></small>
+		</td>
+		<td class="note"><%=note.notes_message%></td>
+		<td class="note">
+			<% if note.user_can_modify?(@current_user) -%>
+			<%= link_to I18n.t('edit'), { :action => 'edit', :id => note.id } %>
+			|
+			<%= link_to_remote I18n.t('delete'), :method => 'delete',
+    :url => { :action => 'delete', :id => note.id }, 
+    :html => { :class => 'delete', :title => I18n.t('notes.delete.link_title') }, 
+	:confirm => I18n.t('notes.delete.link_confirm') %>
+			<% else -%>
+			&nbsp;
+			<% end -%>
+		</td>
+	</tr>
+<% end %>
+</table>
+
+</div>

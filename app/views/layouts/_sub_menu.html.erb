@@ -96,7 +96,7 @@
 </div>
 
 <% end %>
-<% elsif @current_user.ta? %>
+<% elsif @current_user.ta? and controller.controller_name == 'assignments' %>
 <div id="sub_menu">
   <ul id="root" class="level1 horizontal">
    <li class="level1 visible_dropdown">

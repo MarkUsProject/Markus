@@ -56,4 +56,11 @@ class ActiveSupport::TestCase
     Repository.get_class(REPOSITORY_TYPE, conf).purge_all
   end
   
+  # This method allows us to use the url_for helper in our tests, to make
+  # sure that the actions are redirecting to the correct path.
+  def url_for(options)
+    url = ActionController::UrlRewriter.new(@request, nil)
+    url.rewrite(options)
+  end
+  
 end

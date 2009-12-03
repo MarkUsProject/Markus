@@ -465,6 +465,11 @@ td{
    padding: 0;
 }
 
+td.note {
+  padding: 5px;
+  text-align: left;
+}
+
 tbody tr:hover {
    background: #ECECEC;
 }

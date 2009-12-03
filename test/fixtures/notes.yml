@@ -1,0 +1,13 @@
+note_1:
+   notes_message: "A first message"
+   creator_id: <%= Fixtures.identify(:olm_admin_1) %>
+   noteable_id: <%= Fixtures.identify(:grouping_1) %>
+   noteable_type: 'Grouping'
+   created_at: <%= Time.now.to_s(:db) %>
+   
+note_2:
+   notes_message: "A second message"
+   creator_id: <%= Fixtures.identify(:ta1) %>
+   noteable_id: <%= Fixtures.identify(:grouping_2) %>
+   noteable_type: 'Grouping'
+   created_at: <%= Time.now.to_s(:db) %>

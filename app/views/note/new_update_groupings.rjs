@@ -1,0 +1,1 @@
+page.replace_html 'note_noteable_id', options_from_collection_for_select(@groupings, :id, :group_name_with_student_user_names)

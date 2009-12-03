@@ -12,6 +12,7 @@ en:
     add_new:            "Add new"
     create_new:         "Create new"
     edit:               "Edit"
+    save:               "Save"
     apply:              "Apply"
     delete:             "Delete"
     create:             "Create"
@@ -158,7 +159,6 @@ en:
         success:  "Successfully uploaded {{annotation_category_number}} Annotation Categories"
         error:  "Unable to upload category: {{annotation_category}} located in line {{annotation_line}}"
       one_time_only:  "One Time Only"
-
     
     submission_rules:
       submission_rule:
@@ -241,6 +241,24 @@ en:
     notes:
         success: "Note saved succesfully"
         error: "Unable to save the note"
+        title: "Notes"
+        note: "Note"
+        author: "Author"
+        creation_time: "Creation Time"
+        delete:
+            link_title: "Delete this note"
+            link_confirm: "This will remove this note permanently. Continue?"
+            success: "Note was deleted successfully."
+            error_permissions: "You do not have sufficient permissions to delete this note."
+        new:
+            title: "Create Note"
+            loading_groupings: "Loading Groupings..."
+        create:
+            success: "Note was successfully created."
+        edit:
+            title: "Edit Note"
+        update:
+            success: "Note was successfully updated."
         
     criteria_edit_total_mark:     "This criterion will be marked out of"
     criterion_saved_success:   "Criterion was successfully saved"

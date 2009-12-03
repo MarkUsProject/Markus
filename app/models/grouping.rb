@@ -31,6 +31,16 @@ class Grouping < ActiveRecord::Base
   def inviter?
     return membership_status == StudentMembership::STATUSES[:inviter]
   end
+  
+  def group_name_with_student_user_names
+    student_user_names = student_memberships.collect {|m| m.user.user_name }
+    return group.group_name if student_user_names.size == 0
+    return group.group_name + ": " + student_user_names.join(', ')
+  end
+  
+  def display_for_note
+    return assignment.short_identifier + ": " + group_name_with_student_user_names
+  end
 
   # Query Functions ------------------------------------------------------
    
