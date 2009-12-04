@@ -42,7 +42,6 @@ class RubricsController < ApplicationController
     return unless request.delete?
     @criterion = RubricCriterion.find(params[:id])
     #delete all marks associated with this criterion
-    Mark.delete_all(["rubric_criterion_id = :c", {:c => @criterion.id}])
     @criterion.destroy
     flash.now[:success] = I18n.t('criterion_deleted_success')
   end
