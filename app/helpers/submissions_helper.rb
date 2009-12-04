@@ -57,7 +57,7 @@ module SubmissionsHelper
     if !@details.nil?
       assignment.rubric_criteria.each_with_index do |criterion, index|
         if grouping.has_submission?
-          mark = grouping.get_submission_used.result.marks.find_by_rubric_criterion_id(criterion.id)
+          mark = grouping.get_submission_used.result.marks.find_by_markable_id_and_markable_type(criterion.id, criterion.class.name)
           if mark.nil? || mark.mark.nil?
             table_row['criterion_' + index.to_s] = '0'
           else
