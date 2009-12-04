@@ -3,8 +3,7 @@
 class FlexibleCriterion < ActiveRecord::Base
   set_table_name "flexible_criteria" # set table name correctly
   belongs_to  :assignment
-  # Not yet functional
-  #    has_many :marks
+  has_many    :marks, :as => :markable, :dependent => :destroy
   validates_associated :assignment, :message => 'association is not strong with an assignment'
   validates_uniqueness_of :flexible_criterion_name, :scope => :assignment_id, :message => 'is already taken'
   validates_presence_of :flexible_criterion_name, :assignment_id, :max
@@ -108,5 +107,9 @@ class FlexibleCriterion < ActiveRecord::Base
     return last_criterion.position + 1 unless last_criterion.nil?
     return 1
   end 
+  
+  def get_weight
+    return 1
+  end
   
 end

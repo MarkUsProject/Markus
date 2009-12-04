@@ -6,6 +6,7 @@ class Assignment < ActiveRecord::Base
   }
   
   has_many :rubric_criteria, :class_name => "RubricCriterion", :order => :position
+  has_many :flexible_criteria, :class_name => "FlexibleCriterion", :order => :position
   has_many :assignment_files
   has_one  :submission_rule 
   accepts_nested_attributes_for :submission_rule, :allow_destroy => true
@@ -413,6 +414,17 @@ class Assignment < ActiveRecord::Base
   
   def next_criterion_position
     return self.rubric_criteria.size + 1
+  end
+    
+  def get_criteria
+    if self.marking_scheme_type == 'rubric'
+       return self.rubric_criteria
+    else
+       return self.rubric_criteria    
+# Remove the line above and
+# Uncomment the following line when flexible_criteria will be implemented     
+#       return self.flexible_criteria
+    end
   end
   
 end
