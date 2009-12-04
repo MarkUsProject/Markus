@@ -15,7 +15,7 @@
     <% assignment.rubric_criteria.each do |criterion| %>
       <td>
         <% if grouping.has_submission? %>
-          <% mark = grouping.get_submission_used.result.marks.find_by_rubric_criterion_id(criterion.id) %>
+          <% mark = grouping.get_submission_used.result.marks.find_by_markable_id(criterion.id) %>
           <% if mark.nil? || mark.mark.nil?%>
             -
           <% else %>
