@@ -14,3 +14,13 @@ grouping_2_ass_1_sub_2:
     submission_id:  <%= Fixtures.identify(:sub_2) %>
     filename:       "test1.txt"
     path:           "trunk/"
+
+student1_ass_flex_1:
+    submission_id:  <%= Fixtures.identify(:submission_flexible_1) %>
+    filename:       "test1.txt"
+    path:           "trunk/"    
+    
+student1_ass_flex_2:
+    submission_id:  <%= Fixtures.identify(:submission_flexible_2) %>
+    filename:       "test1.txt"
+    path:           "trunk/"    

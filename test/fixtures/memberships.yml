@@ -112,4 +112,28 @@ membership_3:
    type:               StudentMembership
    created_at:         <%= Time.now.to_s(:db)%>
    updated_at:         <%= Time.now.to_s(:db)%>
+   
+membership_4:
+   user_id:            <%= Fixtures.identify(:ta3) %>
+   grouping_id:        <%= Fixtures.identify(:grouping_flexible_2) %>
+   membership_status:
+   type:               TAMembership
+   created_at:         <%= Time.now.to_s(:db)%>
+   updated_at:         <%= Time.now.to_s(:db)%>   
 
+membership_5:
+   user_id:            <%= Fixtures.identify(:olm_admin_1) %>
+   grouping_id:        <%= Fixtures.identify(:grouping_flexible_1) %>
+   membership_status:  inviter
+   type:               AdminMembership
+   created_at:         <%= Time.now.to_s(:db)%>
+   updated_at:         <%= Time.now.to_s(:db)%>   
+
+membership_6:
+   user_id:            <%= Fixtures.identify(:ta3) %>
+   grouping_id:        <%= Fixtures.identify(:grouping_flexible_1) %>
+   membership_status:  inviter
+   type:               TAMembership
+   created_at:         <%= Time.now.to_s(:db)%>
+   updated_at:         <%= Time.now.to_s(:db)%>   
+   
