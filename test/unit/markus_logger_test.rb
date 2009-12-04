@@ -30,7 +30,8 @@ class MarkusLoggerTest < Test::Unit::TestCase
       MarkusLogger.any_instance.stubs(:markus_config_logging_num_oldfiles).returns(oldfiles)
     end
 
-    
+    # FileUtils.remove does not work properly on Windows. 
+	  # It throws a Permission denied.
     teardown do
       begin
         if File.directory?(@baddir)
@@ -108,6 +109,7 @@ class MarkusLoggerTest < Test::Unit::TestCase
       end
     end
 
+    # Does not work properly on Windows, throws a Permission denied
     should "rotate infologs when @size bytes of data is reached" do
       logger = MarkusLogger.instance
       current_size = File.size(@infolog)
@@ -120,6 +122,7 @@ class MarkusLoggerTest < Test::Unit::TestCase
       assert File.file?(infolog << '.0')
     end
 
+    # Does not work properly on Windows, throws a Permission denied
     should "rotate errorlogs when @size bytes of data is reached" do
       logger = MarkusLogger.instance
       current_size = File.size(@errorlog)
