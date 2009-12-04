@@ -323,7 +323,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
   end # An authenticated and authorized student doing a
   
   context "An authenticated and authorized admin doing a" do
-    fixtures :users, :submissions, :submission_files, :groupings, :results, :annotations, :marks, :extra_marks
+    fixtures :users, :submissions, :submission_files, :groupings, :results, :annotations, :marks, :extra_marks, :flexible_criteria
     
     setup do
       @admin = users(:olm_admin_1)
@@ -332,13 +332,23 @@ class ResultsControllerTest < AuthenticatedControllerTest
       @assignment = assignments(:assignment_1)
       @result = results(:result_1)
       @released_result = results(:result_4)
+      @released_result_flexible = results(:result_flexible_1)
       @mark = marks(:mark_1)
       @extra_mark = extra_marks(:extra_mark_1)
     end
     
-    context "GET on :edit" do
+    context "GET on :edit with RubricCriterion" do
       setup do
         get_as @admin, :edit, :id => @released_result.id
+      end
+      should_not_set_the_flash 
+      should_render_template :edit
+      should_respond_with :success
+    end
+    
+    context "GET on :edit with FlexibleCriterion" do
+      setup do
+        get_as @admin, :edit, :id => @released_result_flexible.id
       end
       should_not_set_the_flash 
       should_render_template :edit
@@ -570,7 +580,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
       @submission = submissions(:submission_1)
       @grouping = groupings(:grouping_1)
       @assignment = assignments(:assignment_1)
+      @assignment_flexible = assignments(:flexible_assignment)
       @result = results(:result_5)
+      @result_flexible = results(:result_flexible_2)
       @released_result = results(:result_4)
       @mark = marks(:mark_1)
       @extra_mark = extra_marks(:extra_mark_1)
@@ -584,9 +596,18 @@ class ResultsControllerTest < AuthenticatedControllerTest
       should_render_template 404
     end
     
-    context "GET on :edit" do
+    context "GET on :edit with RubricCriteria" do
       setup do
         get_as @ta, :edit, :id => @result.id
+      end
+      should_not_set_the_flash 
+      should_render_template :edit
+      should_respond_with :success
+    end
+    
+    context "GET on :edit with FlexibleCriteria" do
+      setup do
+        get_as @ta, :edit, :id => @result_flexible.id
       end
       should_not_set_the_flash 
       should_render_template :edit
@@ -726,7 +747,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
       
     end 
     
-    context "GET on :view_marks" do
+    context "GET on :view_marks with RubricCriterion" do
       setup do
         get_as @ta, :view_marks, :id => @assignment.id
       end
@@ -734,6 +755,14 @@ class ResultsControllerTest < AuthenticatedControllerTest
       should_respond_with 404
     end
     
+    context "GET on :view_marks with FlexibleCriterion" do
+      setup do
+        get_as @ta, :view_marks, :id => @assignment_flexible.id
+      end
+      should_render_template '404'
+      should_respond_with 404
+    end
+
     context "GET on :add_extra_mark" do
       setup do
         unmarked_result = results(:result_1)

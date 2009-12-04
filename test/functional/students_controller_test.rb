@@ -79,7 +79,7 @@ class StudentsControllerTest < AuthenticatedControllerTest
   def test_filter_visible2
     student_number = Student.all.count - 1
     get_as(@admin, :filter, :filter => "visible")
-    assert_equal(student_numner, @students.count)
+    assert_equal(student_number, @students.count)
   end
 
   def test_create

@@ -353,6 +353,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       @admin = users(:olm_admin_1)
       @assignment = assignments(:assignment_1)
       @criterion = rubric_criteria(:c1)
+      @mark = marks(:mark_11)
     end
     
     context "on :delete" do
@@ -366,6 +367,11 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       should "effectively destroy the criterion" do
         assert_raise ActiveRecord::RecordNotFound do 
           RubricCriterion.find(@criterion.id)
+        end
+      end
+      should "effectively destroy the marks" do
+        assert_raise ActiveRecord::RecordNotFound do 
+          Mark.find(@mark.id)
         end
       end
     end
