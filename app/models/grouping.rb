@@ -152,8 +152,16 @@ class Grouping < ActiveRecord::Base
 
   # Submission Functions
   def has_submission?
-    return @has_submission if !@has_submission.nil?
-    @has_submission = submissions.count > 0
+    ret_val = (submissions.size > 0)
+    # Delete possible corrupt records 
+    if ret_val && submissions.find(:first, :conditions => {:submission_version_used => true}).nil?
+      # If there is no submission with submission_version_used set to true, this is a record we don't want
+      s = submissions.find(:first)
+      if s.delete # Using delete to keep possibly existent results (which is almost 
+        ret_val = false
+      end
+    end
+    return ret_val
   end
 
   def get_submission_used

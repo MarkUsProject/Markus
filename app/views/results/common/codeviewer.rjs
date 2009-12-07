@@ -1,6 +1,10 @@
 #Render the source code for syntax highlighting...
   begin
-    page.replace_html 'codeviewer', :partial => 'results/common/codeviewer', :locals => { :uid => params[:uid], :file_contents => @file_contents, :annots => @annots, :code_type => @code_type}
+    if !SubmissionFile.is_binary?(@file_contents)
+      page.replace_html 'codeviewer', :partial => 'results/common/codeviewer', :locals => { :uid => params[:uid], :file_contents => @file_contents, :annots => @annots, :code_type => @code_type}
+    else
+      page.replace_html 'codeviewer', :partial => 'results/common/codeviewer', :locals => { :uid => params[:uid], :file_contents => I18n.t("submission_file.error.binary_file_message"), :annots => @annots, :code_type => @code_type}
+    end
        
     #Also update the annotation_summary_list
     if (@current_user.ta? || @current_user.admin?) && @result.marking_state != Result::MARKING_STATES[:complete]

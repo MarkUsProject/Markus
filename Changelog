@@ -1,0 +1,28 @@
+Changes after revision 1021:
+
+* MarkUs 0.5.10 corresponds to revision 1118 in release_0.5 branch (g9jerboa)
+* Pump MARKUS_VERSION patch level to 10 (version is now 0.5.10) (g9jerboa)
+* Added changelog file (g9jerboa)
+* Changed has_submission? in grouping.rb to get rid of "dirty" records
+  (g9jerboa)
+* Removed application of submission rule when manually collect submissions
+  (g9jerboa)
+* Fixed Grader View bug when encountering binary files (g9jerboa)
+* Fixed Submission's NoMethodErrors (fgarces)
+* Closed CSRF bug of login screen (c6conley)
+* Fix bug regarding Python docstrings in syntax highlighter (g9jerboa)
+* Fixing bug that didn't highlight C code properly for students (c6conley)
+* change $REPOSITORY_SVN_AUTHZ_FILE to REPOSITORY_PERMISSION_FILE in rake
+  task (g9jerboa)
+* Use bulk permissions when creating a new Group (c6conley)
+* Added bulk permission controls to Repository library (c6conley)
+* Fixed GracePeriodSubmissionRule when students have 0 grace credits
+  (c6conley)
+* Fixed typo in I18n variable (c6conley)
+* Closed #419 - stack trace when downloading Subversion Export File (c6conley)
+* Warnings are now given when assignments have due dates in the past
+  (c6conley)
+* Changed/updated next/prev link behaviour (c6conley)
+* Fixed annotation_category bug, and average calculation bug (c6conley)
+* Closing #402 (c6conley)
+* Add version and patch level information to MarkUs (g9jerboa)

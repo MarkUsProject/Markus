@@ -116,10 +116,8 @@ class SubmissionsController < ApplicationController
   
   def manually_collect_and_begin_grading
     grouping = Grouping.find(params[:id])
-    assignment = grouping.assignment
     revision_number = params[:current_revision_number].to_i
     new_submission = Submission.create_by_revision_number(grouping, revision_number)
-    new_submission = assignment.submission_rule.apply_submission_rule(new_submission)
     result = new_submission.result
     redirect_to :controller => 'results', :action => 'edit', :id => result.id
   end
