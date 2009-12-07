@@ -1,0 +1,23 @@
+#############################
+# GradeEntryStudent table:
+# one:
+#   user_id
+#   grade_entry_form_id
+#   released_to_student
+#   created_at
+#   updated_at
+#############################
+
+grade_entry_student_1:
+  user_id: <%= Fixtures.identify(:student1) %>
+  grade_entry_form_id: <%= Fixtures.identify(:grade_entry_form_1) %>
+  released_to_student: false
+  created_at: <%= Time.now.to_s(:db)%>
+  updated_at: <%= Time.now.to_s(:db)%>
+
+grade_entry_student_2:
+  user_id: <%= Fixtures.identify(:student2) %>
+  grade_entry_form_id: <%= Fixtures.identify(:grade_entry_form_1) %>
+  released_to_student: false
+  created_at: <%= Time.now.to_s(:db)%>
+  updated_at: <%= Time.now.to_s(:db)%>

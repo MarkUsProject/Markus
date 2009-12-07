@@ -46,6 +46,7 @@ class AssignmentsController < ApplicationController
   # assignment information
   def index
     @assignments = Assignment.all(:order => :id)
+    @grade_entry_forms = GradeEntryForm.all(:order => :id)
     if current_user.student?
       # get results for assignments for the current user
       @a_id_results = Hash.new()

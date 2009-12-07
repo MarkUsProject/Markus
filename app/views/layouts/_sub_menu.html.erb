@@ -6,24 +6,53 @@
   controller.controller_name == 'groups' or
   controller.controller_name == 'results' or
   controller.controller_name == 'ta_assignments' or
-  controller.controller_name == 'annotation_categories'
+  controller.controller_name == 'annotation_categories' or
+  controller.controller_name == 'grade_entry_forms'
 %>
 <div id="sub_menu">
   <ul id="root" class="level1 horizontal">
     <li class="level1 visible_dropdown">
-      <% if @assignment.nil?  %>
+
+      <% # Display an appropriate message in the dropdown menu
+      %>   	
+      <% if @assignment.nil? and @grade_entry_form.nil? %>
         <span id="choose_an_assignment"><%= I18n.t(:choose_assignment)%></span>
       <% elsif controller.controller_name == 'assignments' and
            controller.action_name == 'new'
       %>
-      <span id="choose_an_assignment"><%= I18n.t(:create_new)%></span>
-      <% else%>
+        <span id="choose_an_assignment"><%= I18n.t(:create_new_assignment)%></span>
+      <% elsif controller.controller_name == 'grade_entry_forms' and
+           controller.action_name == 'new'
+      %> 
+        <span id="choose_an_assignment"><%= I18n.t(:create_new_grade_entry_form)%></span>
+      <% elsif !@assignment.nil? %>
+
+        <% # Display the assignment's short identifier
+        %>
         <span id="choose_an_assignment"><%=h(@assignment.short_identifier)%></span>
+      <% elsif !@grade_entry_form.nil? %>
+ 
+        <% # Display the grade entry form's short identifier 
+        %>  
+        <span id="choose_an_assignment"><%=h(@grade_entry_form.short_identifier)%></span>
       <% end %>
       <ul class="level2 dropdown">
         <%= render :partial => 'shared/assignments_dropdown_menu'%>
       </ul>
-    </li>
+   </li>
+
+  <% if !@grade_entry_form.nil? %>
+	
+    <% # For now, GradeEntryForms only have a Properties tab 
+    %>
+    <% if (controller.controller_name == 'grade_entry_forms' and 
+           controller.action_name != 'new') %>
+      <li id="sub_menu_active">
+        <%= link_to I18n.t(:properties), :controller => 'grade_entry_forms', 
+                    :action => 'edit', :id => @grade_entry_form.id %>
+      </li>  
+    <% end %>
+  <% end %>
 
   <% if !@assignment.nil?%>
     <% if controller.controller_name != 'assignments' or
@@ -62,10 +91,6 @@
 	  <%= link_to I18n.t(:submissions), :controller => 'submissions', :action => 'browse', :id =>
 @assignment.id %>
       </li>
-
-      
-      
-
   <% end %>
 <% end %>
     </ul>

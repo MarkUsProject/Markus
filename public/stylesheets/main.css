@@ -171,7 +171,7 @@ h4{
 }
 
 #sub_menu li.visible_dropdown {
-  width: 170px;
+  width: 170px;	
 }
 
 #menu a, #sub_menu a {
@@ -249,8 +249,8 @@ h4{
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
   border: 2px solid #464646;
-  padding: 0 19px;
-  min-width: 10em;
+  padding: 0 15px;
+  min-width: 15em;
 }
 
 #sub_menu ul.dropdown li{
@@ -274,24 +274,24 @@ h4{
 }
 
 .level1{
-   padding: 7px 40px 0px 40px;
+   padding: 7px 70px 0px 40px;
 }
 
 #sub_menu li.level2 a{
   display: block;
   padding: 2px;
   margin: 0;
-  width: 10em;
+  width: 15em;
   height: 14px;
   color: #464646;
 }
 
 span#choose_an_assignment{
    background-color: #fff;
-   -moz-border-radius: 10px;
+   -moz-border-radius: 15px;
    -webkit-border-radius: 10px;
    border: 2px solid #464646;
-   min-width: 12em;
+   min-width: 15.5em;
    height: 1.1em;
    padding: 0.1em 1em;
    display: inline-block;
@@ -1442,6 +1442,10 @@ fieldset.period{
 #penalty_periods, #grace_periods {
    margin-left: 5em;
    width: 80%;
+}
+
+#grade_entry_items {
+	width: 45%;
 }
 
 .grace_periods_link, .penalty_periods_link{

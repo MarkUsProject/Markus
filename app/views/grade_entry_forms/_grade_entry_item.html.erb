@@ -1,0 +1,23 @@
+<% # Template for adding/removing a grade entry item to/from a grade entry form
+   # #{name} - The name of the column
+   # #{out_of} - The total number of marks
+%>
+<fieldset class="grade_entry_item">
+<legend><%= t('grade_entry_forms.column') %></legend>
+<% form.fields_for :grade_entry_items, grade_entry_item do |f| %>
+  <p>   
+    <%= t('grade_entry_forms.column_name') %>
+    <%= f.text_field :name %>
+    <%= t('grade_entry_forms.column_out_of') %>
+    <%= f.text_field :out_of, :size => 5, :maxlength => 3 %>
+  
+    <% if !f.object.nil? && !f.object.new_record? %>
+      <span>
+        <b><%= t('grade_entry_forms.remove_column') + " " %></b><%= f.check_box :_delete %>
+      </span>
+    <% else %>
+      <%= link_to_function "remove", "$(this).up('.grade_entry_item').remove()" %>
+    <% end %>
+  </p> 
+<% end %>
+</fieldset>
