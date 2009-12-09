@@ -85,7 +85,6 @@ class RubricCriterionTest < ActiveSupport::TestCase
   def test_bad_weight_range
     # create valid assignment first
     a = assignments(:assignment_6)
-    a.submission_rule = NoLateSubmissionRule.new
     assert a.valid? # should be valid now
     weight_range = create_no_attr(:assignment_id)
     
