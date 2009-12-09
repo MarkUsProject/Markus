@@ -486,13 +486,9 @@ class GroupsControllerTest < AuthenticatedControllerTest
           assert_equal "inviter", @grouping.student_memberships.at(0).membership_status
           assert_equal users(:student6).id, @grouping.student_memberships.at(0).user_id
         end
-        should "set second new student as accepted" do
+        should "set other students as accepted" do
           assert_equal "accepted", @grouping.student_memberships.at(1).membership_status
-          assert_equal users(:student7).id, @grouping.student_memberships.at(1).user_id
-        end
-        should "set third new student as accepted" do
           assert_equal "accepted", @grouping.student_memberships.at(2).membership_status
-          assert_equal users(:student8).id, @grouping.student_memberships.at(2).user_id
         end
       end
       

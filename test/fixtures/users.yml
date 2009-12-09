@@ -120,6 +120,24 @@ student6:
     created_at:     <%= Time.now.to_s(:db) %>
     updated_at:     <%= Time.now.to_s(:db) %>
     
+student7:
+    user_name:      student7
+    last_name:      Jones
+    first_name:     Bill
+    grace_credits:     5
+    type:           Student
+    created_at:     <%= Time.now.to_s(:db) %>
+    updated_at:     <%= Time.now.to_s(:db) %>
+    
+student8:
+    user_name:      student8
+    last_name:      Ducrou
+    first_name:     Jon
+    grace_credits:     5
+    type:           Student
+    created_at:     <%= Time.now.to_s(:db) %>
+    updated_at:     <%= Time.now.to_s(:db) %>
+    
 hidden_student:
     user_name:      hidden
     last_name:      Student
