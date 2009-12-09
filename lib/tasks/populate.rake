@@ -67,6 +67,7 @@ namespace :markus do
     a1.group_min = 1
     a1.group_max = 1
     a1.marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
+    a1.allow_web_submits = true
     a1.save
     req_file1.save
     req_file2.save
@@ -79,7 +80,8 @@ namespace :markus do
     a2.group_min = 3
     a2.group_max = 5
     a2.instructor_form_groups = false
-    a2.marking_scheme_type = "rubric"
+    a2.marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
+    a2.allow_web_submits = true
     req_file1 = AssignmentFile.new
     req_file1.filename = "Animal.java"
     req_file1.assignment = a2
@@ -108,6 +110,7 @@ Neptune,ignored_repo,c7dallap,c7guarni,c7kimear\n"
     req_file1.filename = "gcd.sh"
     req_file1.assignment = a3
     a3.submission_rule = rule
+    a3.allow_web_submits = true
     a3.marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
     a3.save
     # create groupings/groups

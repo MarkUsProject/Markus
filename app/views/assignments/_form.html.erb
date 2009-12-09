@@ -30,7 +30,12 @@
           :time => "mixed",
           :after_close => "refresh_due_date();",
           :year_range => 0.years.ago..1.years.from_now, :id => "assignment_due_date"} %>
-   <%= observe_field "assignment_due_date", :function => "update_due_date($F('assignment_due_date'));" %> <%=t(:iso_due_date_format_example)%>
+   <%= observe_field "assignment_due_date", :function => "update_due_date($F('assignment_due_date'));" %> <%=t(:iso_due_date_format_example)%><br />
+    <%= f.label :repository_folder, "Repository Folder"%>
+    /<%= f.text_field :repository_folder%><br />
+	<%= f.label :allow_web_submits, t("assignment.allow_web_submits") %>&nbsp;&nbsp;
+    <%= t("answer_yes")%>:<%= f.radio_button :allow_web_submits, true, :checked => @assignment.allow_web_submits %>&nbsp;&nbsp;
+	<%= t("answer_no")%>:<%= f.radio_button :allow_web_submits, false, :checked => !@assignment.allow_web_submits %>
    <br />
    <br />
 
@@ -58,9 +63,7 @@
 </fieldset>
 
 <fieldset>
-  <legend>Submitted Files</legend>
-     <%= f.label :repository_folder, "Repository Folder"%>
-    /<%= f.text_field :repository_folder%>
+  <legend>Required Files</legend>
   <h4>Add filename(s) that students would be required to submit:</h4>
    <div id="assignment_files">
      <% f.fields_for :assignment_files do |assignment_file_form| %>

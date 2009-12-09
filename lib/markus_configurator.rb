@@ -23,25 +23,17 @@ module MarkusConfigurator
   end
   
   def markus_config_repository_external_submits_only?
-    if repository_admin? && (REPOSITORY_EXTERNAL_SUBMITS_ONLY || false)
-      case repository_type
-        when "svn"
-          retval = true
-        else
-          retval = false
-      end
-    else
-      retval = false
+    case markus_config_repository_type
+      when "svn"
+        retval = (REPOSITORY_EXTERNAL_SUBMITS_ONLY || false)
+      else
+        retval = false
     end
     return retval
   end
   
   def markus_config_repository_permission_file
     return REPOSITORY_PERMISSION_FILE || File.join(repository_storage, "svn_authz")
-  end
-  
-  def markus_config_external_submits_only?
-    return REPOSITORY_EXTERNAL_SUBMITS_ONLY || false
   end
   
   ######################################

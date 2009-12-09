@@ -66,6 +66,7 @@ ActiveRecord::Schema.define(:version => 20091127212046) do
     t.boolean  "instructor_form_groups"
     t.float    "results_average"
     t.string   "marking_scheme_type",      :default => "rubric"
+    t.boolean  "allow_web_submits"
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true

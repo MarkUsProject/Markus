@@ -102,8 +102,10 @@ class AssignmentsController < ApplicationController
     @assignments = Assignment.all
     @assignment = Assignment.new
     @assignment.build_submission_rule
-    #@assignment.assignment_files.build
+    
     if !request.post?
+      # set default value if web submits are allowed
+      @assignment.allow_web_submits = markus_config_repository_external_submits_only?
       render :action => 'new'
       return
     end   

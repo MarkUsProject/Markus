@@ -45,7 +45,8 @@ class Group < ActiveRecord::Base
   # file submissions via the Web interface are not permitted. For
   # now, this works for Subversion repositories only.
   def repository_external_commits_only?
-    return markus_config_external_submits_only?
+    assignment = assignments.first
+    return !assignment.allow_web_submits
   end
   
   # Returns the URL for externally accessible repos

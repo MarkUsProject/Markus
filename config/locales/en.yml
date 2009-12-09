@@ -1,4 +1,6 @@
 en:
+    answer_yes:         "Yes"
+    answer_no:          "No"
     markus:             "MarkUs"
     login:              "Login"
     login_failed:       "Login failed"
@@ -32,7 +34,6 @@ en:
     upload:             "Upload"
     uploading_please_wait: "Uploading - please wait..."
     choose_assignment:  "Choose..."
-    properties:         "Properties"
     properties:         "Properties"
     submissions:        "Submissions"
     groups_and_graders: "Groups & Graders"
@@ -170,6 +171,7 @@ en:
             flexible: "Flexible"
         notice:
             change_marking_scheme_type: "Changing marking scheme will delete your criteria and marks."
+        allow_web_submits: "Allow Web Submits?"
         
     confirm_bulk_action:  "Are you sure you want to perform this bulk action?"
     hide_students: "Hide Students"

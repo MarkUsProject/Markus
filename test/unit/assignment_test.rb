@@ -2,14 +2,24 @@ require File.dirname(__FILE__) + '/../test_helper'
 require 'shoulda'
 
 class AssignmentTest < ActiveSupport::TestCase
- 
-  should_validate_presence_of :marking_scheme_type
   
-  fixtures :assignments, :users, :submissions, :groups, :rubric_criteria, :marks, :results, :groupings
+  fixtures :assignments, :users, :submission_rules, :submissions, :groups, :rubric_criteria, :marks, :results, :groupings
   set_fixture_class :rubric_criteria => RubricCriterion
- 
+  
+  should_validate_presence_of :marking_scheme_type
+  # Should_validate_presence_of does not work for boolean value false.
+  # Using should_allow_values_for instead
+  should_allow_values_for :allow_web_submits, true, false
+  
   def setup
     setup_group_fixture_repos
+  end
+  
+  context "An assignment" do
+    setup do
+      assignment = assignments(:assignment_6) # required for should_not_allow_values_for test
+      should_not_allow_values_for :allow_web_submits, "garbage"
+    end
   end
   
   def teardown
@@ -181,10 +191,10 @@ class AssignmentTest < ActiveSupport::TestCase
 
    def test_clone_groupings_from_04
      oa = assignments(:assignment_1)
-     number = Membership.all.size
+     number = StudentMembership.all.size + TAMembership.all.size
      a = assignments(:assignment_build_on_top_of_1)
      a.clone_groupings_from(oa.id)
-     assert_not_equal(number, Membership.all.size)
+     assert_not_equal(number, StudentMembership.all.size + TAMembership.all.size)
    end
 
    # TODO create a test for cloning group, when groups already exist

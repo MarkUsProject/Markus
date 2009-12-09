@@ -33,6 +33,25 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     destroy_repos
   end
   
+  
+  context "A logged in admin doing a POST" do
+    
+    setup do
+      @admin = users(:olm_admin_1)
+      @assignment = assignments(:assignment_1)
+    end
+    
+    context "on new" do
+      setup do
+        post_as @admin, :new, :id => @assignment.id
+      end
+      
+      should_assign_to :assignment, :assignments
+      should_respond_with :success
+    end
+    
+  end # context: A logged in admin doing a GET
+  
   # Test for accessing new assignment page
   def test_get_new
     get_as @admin, :new

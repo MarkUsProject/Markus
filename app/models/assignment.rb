@@ -34,6 +34,9 @@ class Assignment < ActiveRecord::Base
   validates_presence_of :submission_rule
   
   validates_presence_of :marking_scheme_type
+  # since allow_web_submits is a boolean, validates_presence_of does not work:
+  # see the Rails API documentation for validates_presence_of (Model validations)
+  validates_inclusion_of :allow_web_submits, :in => [true, false] 
   
   def validate
     if (group_max && group_min) && group_max < group_min

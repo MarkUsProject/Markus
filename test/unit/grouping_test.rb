@@ -9,7 +9,7 @@ class GroupingTest < ActiveSupport::TestCase
   should_belong_to :assignment
   should_have_many :memberships
   should_have_many :submissions
-  should_have_many :note
+  should_have_many :notes
 
   def test_grouping_should_not_save_without_assignment
     grouping = Grouping.new
@@ -282,6 +282,10 @@ class GroupingTest < ActiveSupport::TestCase
   #
   ####################################################
 
+  def setup
+     setup_group_fixture_repos 
+  end
+  
   def test_decline_invitation
      grouping = groupings(:grouping_2)
      student = users(:student5)
@@ -322,7 +326,6 @@ class GroupingTest < ActiveSupport::TestCase
   def test_remove_member_when_member_inviter2
      grouping = groupings(:grouping_1)
      membership = memberships(:membership2)
-     student = users(:student2)
      grouping.remove_member(membership)
      assert_not_nil grouping.inviter 
   end

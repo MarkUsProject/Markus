@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 require 'shoulda'
 
 class GroupTest < ActiveSupport::TestCase
-  fixtures :users
+  fixtures :users, :groupings, :groups
   should_have_many :groupings
   should_have_many :submissions, :through => :groupings
   should_have_many :assignments, :through => :groupings
@@ -27,7 +27,7 @@ class GroupTest < ActiveSupport::TestCase
     assert group.save, "Group not saved..."
   end
 
-  def  test_is_valid_false
+  def test_is_valid_false
      grouping = groupings(:grouping_3)
      assert !grouping.is_valid?
   end
@@ -36,6 +36,15 @@ class GroupTest < ActiveSupport::TestCase
     grouping = groupings(:grouping_3)
     grouping.validate_grouping
     assert grouping.is_valid?
+  end
+  
+  context "A Group object" do
+    should "know if external submits are allowed or not" do
+      group = groups(:group_1)
+      assert_equal true, group.repository_external_commits_only?
+      group2 = groups(:group1)
+      assert_equal false, group2.repository_external_commits_only?
+    end
   end
 
 end
