@@ -23,6 +23,8 @@ class SubmissionFile < ActiveRecord::Base
       return "javascript"
     when ".c"
       return "c"
+    when ".scm"
+      return "scheme"
     else
       return "unknown"
     end
