@@ -81,24 +81,32 @@ class RubricCriterionTest < ActiveSupport::TestCase
     
   end
   
-  #Weights are restricted to a decimal value greater than 0
+  # Weights are restricted to a decimal value greater than 0
   def test_bad_weight_range
-    weight_range = create_no_attr(nil)
+    # create valid assignment first
+    a = assignments(:assignment_6)
+    a.submission_rule = NoLateSubmissionRule.new
+    assert a.valid? # should be valid now
+    weight_range = create_no_attr(:assignment_id)
+    
+    assert !weight_range.valid? # missing assignment association
+    weight_range.assignment = a
+    assert weight_range.valid? # should be valid now
+    
     weight_range.weight = 'string'
-    assert !weight_range.valid?
+    assert !weight_range.valid?, "weight is a string, it shouldn't be valid"
     
     weight_range.weight = -0.1
-    assert !weight_range.valid?
+    assert !weight_range.valid?, "weight is negative, it shouldn't be valid"
     
     weight_range.weight = 0.0
-    assert !weight_range.valid?
+    assert !weight_range.valid?, "weight is zero, it shouldn't be valid"
     
     weight_range.weight = 100.0
-    assert weight_range.valid?
+    assert weight_range.valid?, "weight is fine, it should be valid"
     
     weight_range.weight = 0.5
-    assert weight_range.valid?
-    
+    assert weight_range.valid?, "weight is fine, it should be valid"
   end
   
   # Helper method for test_validate_presence_of to create a criterion without 
@@ -116,7 +124,7 @@ class RubricCriterionTest < ActiveSupport::TestCase
     }
     
     new_rubric_criteria.delete(attr) if attr
-    RubricCriterion.new(new_rubric_criteria)
+    return RubricCriterion.new(new_rubric_criteria)
   end
   
   def test_mark_for
