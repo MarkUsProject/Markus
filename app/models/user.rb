@@ -6,8 +6,8 @@ require 'fastercsv'
 class User < ActiveRecord::Base
   # Group relationships  
   has_many :memberships
-  has_many :groupings, :through => :memberships  
-  has_many :note, :through => :creator_id
+  has_many :groupings, :through => :memberships
+  has_many :notes, :as => :noteable, :dependent => :destroy
   has_many :accepted_memberships, :class_name => "Membership", :conditions => {:membership_status => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]}
     
   validates_presence_of     :user_name, :last_name, :first_name
