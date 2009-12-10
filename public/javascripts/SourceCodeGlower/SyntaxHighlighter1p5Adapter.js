@@ -32,9 +32,6 @@ var SyntaxHighlighter1p5Adapter = Class.create(SourceCodeAdapter, {
     while(current_node != null && current_node.tagName != 'LI') {
       current_node = current_node.parentNode;
     }
-    if(current_node === some_node) {
-      return null;
-    }
     return current_node;
   },
   getFontSize: function() {
