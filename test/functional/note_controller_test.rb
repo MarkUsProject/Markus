@@ -129,13 +129,25 @@ class NoteControllerTest < AuthenticatedControllerTest
     end
     
     context "POST on :create" do
-      setup do
-        post_as @ta, :create, { :note => {:noteable_id => @grouping.id, :notes_message => @message} }
+      context "with empty note" do
+        setup do
+          post_as @ta, :create, { :note => {:noteable_id => @grouping.id} }
+        end
+        should_assign_to :note
+        should_not_set_the_flash
+        should_assign_to :assignments, :groupings
+        should_render_template 'new.html.erb'
       end
-      should_assign_to :note
-      should_set_the_flash_to I18n.t('notes.create.success')
-      should_redirect_to("notes index page") { url_for(:controller => "note") }
-      should_change("the number of notes", :by => 1) { Note.count }
+      
+      context "with good data" do
+        setup do
+          post_as @ta, :create, { :note => {:noteable_id => @grouping.id, :notes_message => @message} }
+        end
+        should_assign_to :note
+        should_set_the_flash_to I18n.t('notes.create.success')
+        should_redirect_to("notes index page") { url_for(:controller => "note") }
+        should_change("the number of notes", :by => 1) { Note.count }
+      end
     end
     
     context "GET on :new_update_groupings" do
@@ -167,14 +179,26 @@ class NoteControllerTest < AuthenticatedControllerTest
 
     context "POST on :update" do
       context "for a note belonging to itself" do
-        setup do
-          @note = notes(:note_2)
-          @new_message = "Changed message"
-          post_as @ta, :update, { :id => @note.id, :note => {:notes_message => @new_message} }
+        context "with bad data" do
+          setup do
+            @note = notes(:note_2)
+            post_as @ta, :update, { :id => @note.id, :note => {:notes_message => ''} }
+          end
+          should_assign_to :note
+          should_not_set_the_flash
+          should_render_template 'edit.html.erb'
         end
-        should_assign_to :note
-        should_set_the_flash_to I18n.t('notes.update.success')
-        should_redirect_to("notes index") { url_for(:controller => "note") }
+        
+        context "with good data" do
+          setup do
+            @note = notes(:note_2)
+            @new_message = "Changed message"
+            post_as @ta, :update, { :id => @note.id, :note => {:notes_message => @new_message} }
+          end
+          should_assign_to :note
+          should_set_the_flash_to I18n.t('notes.update.success')
+          should_redirect_to("notes index") { url_for(:controller => "note") }
+        end
       end
       
       context "for a note belonging to someone else" do
@@ -247,15 +271,25 @@ class NoteControllerTest < AuthenticatedControllerTest
     end
     
     context "POST on :create" do
-      setup do
-        @grouping = groupings(:grouping_1)
-        @message = "Testing out the note creation form"
-        post_as @admin, :create, { :note => {:noteable_id => @grouping.id, :notes_message => @message} }
+      context "with empty note" do
+        setup do
+          post_as @admin, :create, { :note => {:noteable_id => @grouping.id} }
+        end
+        should_assign_to :note
+        should_not_set_the_flash
+        should_assign_to :assignments, :groupings
+        should_render_template 'new.html.erb'
       end
-      should_assign_to :note
-      should_set_the_flash_to I18n.t('notes.create.success')
-      should_redirect_to("notes index") { url_for(:controller => "note") }
-      should_change("the number of notes", :by => 1) { Note.count }
+      
+      context "with good data" do
+        setup do
+          post_as @admin, :create, { :note => {:noteable_id => @grouping.id, :notes_message => @message} }
+        end
+        should_assign_to :note
+        should_set_the_flash_to I18n.t('notes.create.success')
+        should_redirect_to("notes index page") { url_for(:controller => "note") }
+        should_change("the number of notes", :by => 1) { Note.count }
+      end
     end
     
     context "GET on :new_update_groupings" do
@@ -288,14 +322,26 @@ class NoteControllerTest < AuthenticatedControllerTest
     
     context "POST on :update" do
       context "for a note belonging to itself" do
-        setup do
-          @note = notes(:note_1)
-          @new_message = "Changed message"
-          post_as @admin, :update, { :id => @note.id, :note => {:notes_message => @new_message} }
+        context "with bad data" do
+          setup do
+            @note = notes(:note_2)
+            post_as @admin, :update, { :id => @note.id, :note => {:notes_message => ''} }
+          end
+          should_assign_to :note
+          should_not_set_the_flash
+          should_render_template 'edit.html.erb'
         end
-        should_assign_to :note
-        should_set_the_flash_to I18n.t('notes.update.success')
-        should_redirect_to("notes index") { url_for(:controller => "note") }
+        
+        context "with good data" do
+          setup do
+            @note = notes(:note_1)
+            @new_message = "Changed message"
+            post_as @admin, :update, { :id => @note.id, :note => {:notes_message => @new_message} }
+          end
+          should_assign_to :note
+          should_set_the_flash_to I18n.t('notes.update.success')
+          should_redirect_to("notes index") { url_for(:controller => "note") }
+        end
       end
       
       context "for a note belonging to someone else" do

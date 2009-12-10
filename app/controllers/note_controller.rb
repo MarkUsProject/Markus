@@ -25,13 +25,12 @@ class NoteController < ApplicationController
   end
   
   def index
-    @notes = Note.find(:all, :order => "created_at DESC")
+    @notes = Note.find(:all, :order => "created_at DESC", :include => [:user, :noteable])
     @current_user = current_user
   end
   
   def new
-    @assignments = Assignment.all
-    @groupings = Grouping.find_all_by_assignment_id(@assignments.first.id)
+    new_retrieve
   end
   
   def create
@@ -44,12 +43,15 @@ class NoteController < ApplicationController
     if @note.save
       flash[:notice] = I18n.t('notes.create.success')
       redirect_to :action => 'index'
+    else
+      new_retrieve
+      render :action => "new"
     end
   end
   
   # Used to update the values in the groupings dropdown in the new note form
   def new_update_groupings
-    @groupings = Grouping.find_all_by_assignment_id(params[:assignment_id])
+    retrieve_groupings(params[:assignment_id])
   end
   
   def edit
@@ -61,6 +63,8 @@ class NoteController < ApplicationController
     if @note.update_attributes(params[:note])
       flash[:success] = I18n.t('notes.update.success')
       redirect_to :action => 'index'
+    else
+      render :action => 'edit'
     end
   end
   
@@ -77,6 +81,15 @@ class NoteController < ApplicationController
   end
   
   private
+    def retrieve_groupings(assignment_id)
+      @groupings = Grouping.find_all_by_assignment_id(assignment_id, :include => [:group, {:student_memberships => :user}])
+    end
+  
+    def new_retrieve
+      @assignments = Assignment.all
+      retrieve_groupings(@assignments.first.id)
+    end
+    
     # Renders a 404 error if the current user can't modify the given note.
     def ensure_can_modify
       @note = Note.find(params[:id])
