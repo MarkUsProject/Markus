@@ -16,7 +16,7 @@
   
   <p>
   	<%= f.label :noteable_id, "Grouping" %>
-	<%= f.select :noteable_id, options_from_collection_for_select(@groupings, :id, :group_name_with_student_user_names) %>
+	<%= f.select :noteable_id, @groupings.collect {|p| [p.group_name_with_student_user_names,p.id]} %>
 	<span id="loading_groupings" style="display:none">
       <%=image_tag('spinner.gif')%> <%=I18n.t('notes.new.loading_groupings')%>
     </span>
