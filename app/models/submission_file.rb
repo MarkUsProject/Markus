@@ -25,6 +25,8 @@ class SubmissionFile < ActiveRecord::Base
       return "c"
     when ".scm"
       return "scheme"
+    when ".ss"
+      return "scheme"
     else
       return "unknown"
     end
