@@ -41,7 +41,7 @@ class NoteController < ApplicationController
     @note.creator_id = @current_user.id
     
     if @note.save
-      flash[:notice] = I18n.t('notes.create.success')
+      flash[:success] = I18n.t('notes.create.success')
       redirect_to :action => 'index'
     else
       new_retrieve
