@@ -163,7 +163,7 @@ class AssignmentsController < ApplicationController
   end
 
 
-  # student interface's method
+  # Methods for the student interface
 
   def join_group
     @assignment = Assignment.find(params[:id]) 
@@ -186,6 +186,11 @@ class AssignmentsController < ApplicationController
     @student = @current_user
     
     begin
+      # We do not allow group creations by students after the due date
+      # and the grace period for an assignment
+      if @assignment.past_collection_date?
+        raise I18n.t('create_group.fail.due_date_passed')
+      end
       if !@assignment.student_form_groups || @assignment.instructor_form_groups
         raise "Assignment does not allow students to form groups"
       end
@@ -203,7 +208,7 @@ class AssignmentsController < ApplicationController
     rescue RuntimeError => e
       flash[:fail_notice] = e.message
     end
-    redirect_to :action => 'student_interface', :id => params[:id]
+    redirect_to :action => 'student_interface', :id => @assignment.id
   end
 
   def deletegroup
@@ -253,7 +258,9 @@ class AssignmentsController < ApplicationController
       user_name = user_name.strip
       @invited = Student.find_by_user_name(user_name)
       begin
-        if @assignment.due_date < Time.now
+        # we want to allow group invitations after the due date,
+        # but before the grace period time (if any)
+        if @assignment.past_collection_date?
           raise I18n.t('invite_student.fail.due_date_passed', :user_name => user_name)
         end
         if @grouping.student_membership_number >= @assignment.group_max

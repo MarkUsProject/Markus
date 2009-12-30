@@ -15,7 +15,7 @@ en:
     graders:            "Graders"
     add_new:            "Add new"
     create_new_assignment:      "Create new assignment"
-    create_new_grade_entry_form: "Create new grade entry form"
+    create_new_grade_entry_form: "Create new grades form"
     manage_course_work: "Manage Course Work"
     edit:               "Edit"
     save:               "Save"
@@ -144,10 +144,14 @@ en:
         hidden:  "Could not add {{user_name}} - this student's account has been disabled."
         already_grouped: "Could not add {{user_name}} - this student is already a member of another group."
     
+    create_group:
+      fail:
+        due_date_passed: "Could not create group - the due date for this assignment has passed and there are either no grace periods allowed, or the grace period for this assignment has also passed."
+
     invite_student:
       success: "Student {{user_name}} invited."
       fail:
-        due_date_passed: "Could not invite {{user_name}} - the due date for this assignment has passed"
+        due_date_passed: "Could not invite {{user_name}} - the due date for this assignment has passed and there are either no grace periods allowed, or the grace period for this assignment has also passed."
         dne:  "Could not invite {{user_name}} - this student does not exist."
         hidden:  "Could not invite {{user_name}} - this student's account has been disabled."
         already_pending: "Could not invite {{user_name}} - this student is already a pending member of this group."

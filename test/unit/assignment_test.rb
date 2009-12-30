@@ -107,13 +107,13 @@ class AssignmentTest < ActiveSupport::TestCase
 
   def test_no_groupings_student_list
     a = assignments(:assignment_1)
-    assert_equal(5, a.no_grouping_students_list.size, "should be equal to 5")
+    assert_equal(7, a.no_grouping_students_list.size, "should be equal to 5")
   end
 
   def test_can_invite_for
     a = assignments(:assignment_1)
     g = groupings(:grouping_2)
-    assert_equal(4, a.can_invite_for(g.id).size)
+    assert_equal(6, a.can_invite_for(g.id).size)
   end
 
   def test_add_group
@@ -205,7 +205,7 @@ class AssignmentTest < ActiveSupport::TestCase
 
    def test_ungrouped_students
      a = assignments(:assignment_1)
-     assert_equal(3, a.ungrouped_students.size)
+     assert_equal(5, a.ungrouped_students.size)
    end
 
    def test_valid_groupings
