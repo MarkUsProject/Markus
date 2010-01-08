@@ -54,7 +54,7 @@ class RubricCriterion < ActiveRecord::Base
   #
   # ===Returns:
   #
-  # A string. See new_from_csv_row for format reference.
+  # A string. See create_or_update_from_csv_row for format reference.
   def self.create_csv(assignment)
     csv_string = FasterCSV.generate do |csv|
       assignment.rubric_criteria.each do |criterion|
@@ -85,27 +85,25 @@ class RubricCriterion < ActiveRecord::Base
   #
   # ===Raises:
   #
-  # CSV::IllegalFormatError:: If the row does not contains enough information, if the weight value
-  #                           is zero (or doesn't evaluate to a float) or if the
-  #                           supplied name is not unique.
-  def self.new_from_csv_row(row, assignment)
+  # RuntimeError If the row does not contains enough information, if the weight value
+  #                           is zero (or doesn't evaluate to a float)
+  def self.create_or_update_from_csv_row(row, assignment)
     if row.length < RUBRIC_LEVELS + 2
-      raise CSV::IllegalFormatError.new(I18n.t('criteria_csv_error.incomplete_row'))
+      raise I18n.t('criteria_csv_error.incomplete_row')
     end
     working_row = row.clone
-    criterion = RubricCriterion.new
-    criterion.assignment = assignment
-    criterion.rubric_criterion_name = working_row.shift
-    # assert that no other criterion uses the same name for the same assignment.
-    if (RubricCriterion.find_all_by_assignment_id_and_rubric_criterion_name(assignment.id, criterion.rubric_criterion_name).size != 0)
-      raise CSV::IllegalFormatError.new(I18n.t('criteria_csv_error.name_not_unique')) 
-    end  
+    rubric_criterion_name = working_row.shift
+    # If a RubricCriterion of the same name exits, load it up.  Otherwise,
+    # create a new one.
+    criterion = assignment.rubric_criteria.find_or_create_by_rubric_criterion_name(rubric_criterion_name)
     criterion.weight = working_row.shift
     if criterion.weight == 0
-      raise CSV::IllegalFormatError.new(I18n.t('criteria_csv_error.weight_zero'))
+      raise I18n.t('criteria_csv_error.weight_zero')
     end
-    criterion.position = assignment.next_criterion_position
-    
+    # Only set the position if this is a new record.
+    if criterion.new_record?
+      criterion.position = assignment.next_criterion_position
+    end
     # next comes the level names.
     (0..RUBRIC_LEVELS-1).each do |i|
       criterion['level_' + i.to_s + '_name'] = working_row.shift
@@ -115,7 +113,7 @@ class RubricCriterion < ActiveRecord::Base
       criterion['level_' + i.to_s + '_description'] = desc
     end
     if !criterion.save
-      raise CSV::IllegalFormatError.new(criterion.errors)
+      raise RuntimeError.new(criterion.errors)
     end
     return criterion
   end
@@ -141,7 +139,7 @@ class RubricCriterion < ActiveRecord::Base
     FasterCSV.parse(file.read) do |row|
       next if FasterCSV.generate_line(row).strip.empty?
       begin
-        RubricCriterion.new_from_csv_row(row, assignment)
+        RubricCriterion.create_or_update_from_csv_row(row, assignment)
         nb_updates += 1
       rescue RuntimeError => e
         invalid_lines << row.join(',') + ": " + e.message unless invalid_lines.nil?
