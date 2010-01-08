@@ -9,12 +9,7 @@ document.observe("dom:loaded", function() {
   <% if !@result.released_to_students %>
   setup_annotation_categories();
   <% end %>
-  
-  //If we're in Grader view, collapse all rubric criteria
-  $$('.rubric_criterion_level_container').each(function(node) {
-    $(node).hide();
-  });
-  
+    
   //Set up the divider
   init_content_width = $('content').getWidth();
   init_code_pane_width = $('code_pane').getWidth();
