@@ -29,16 +29,15 @@ class GroupsController < ApplicationController
     # add member to the group with status depending if group is empty or not
     grouping = Grouping.find(params[:grouping_id])
     @assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group]}])
-    
     set_membership_status = grouping.student_memberships.empty? ?
           StudentMembership::STATUSES[:inviter] :
           StudentMembership::STATUSES[:accepted]
-    
     @messages = []
     @bad_user_names = []
     @error = false
     
     students = params[:student_user_name].split(',')
+
     students.each do |user_name|
       user_name = user_name.strip
       @invited = Student.find_by_user_name(user_name)
@@ -52,9 +51,8 @@ class GroupsController < ApplicationController
         if @invited.has_accepted_grouping_for?(@assignment.id)
           raise I18n.t('add_student.fail.already_grouped', :user_name => user_name)
         end
-        
         grouping.invite(user_name, set_membership_status)
-        
+
         @messages.push(I18n.t('add_student.success', :user_name => user_name))
         
         # only the first student should be the "inviter" (and only update this if it succeeded)
@@ -264,7 +262,7 @@ class GroupsController < ApplicationController
        groupings.each do |grouping|
          group_array = [grouping.group.group_name, grouping.group.repo_name]
          # csv format is group_name, repo_name, user1_name, user2_name, ... etc
-         grouping.memberships.all(:include => :user).each do |member|
+         grouping.student_memberships.all(:include => :user).each do |member|
             group_array.push(member.user.user_name);
          end
          csv << group_array
