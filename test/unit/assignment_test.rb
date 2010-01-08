@@ -182,12 +182,12 @@ class AssignmentTest < ActiveSupport::TestCase
 
    def test_clone_groupings_from_03
      oa = assignments(:assignment_1)
-     oa_number = oa.groupings.count
+     oa_number = weed_out_hidden_member_groupings(oa.groupings).size
      a = assignments(:assignment_build_on_top_of_1)
      a.clone_groupings_from(oa.id)
      assert_equal(oa_number, a.groupings.size)
    end
-
+   
    def test_clone_groupings_from_04
      oa = assignments(:assignment_1)
      number = StudentMembership.all.size + TAMembership.all.size
@@ -195,8 +195,112 @@ class AssignmentTest < ActiveSupport::TestCase
      a.clone_groupings_from(oa.id)
      assert_not_equal(number, StudentMembership.all.size + TAMembership.all.size)
    end
+   
+   # One student in a grouping is hidden, so that membership should
+   # not be cloned
+   context "a group with 3 accepted students" do
+     setup do
+       # Let's tweak student3 so that their membership_status makes them
+       # an accepted part of the group
+       memberships(:membership3).membership_status = 'accepted'
+       memberships(:membership3).save
+       @source = assignments(:assignment_1)
+       @target = assignments(:assignment_build_on_top_of_1)
+       @group = users(:student1).accepted_grouping_for(@source.id).group
+     end
 
-   # TODO create a test for cloning group, when groups already exist
+     should "clone all three members if none are hidden" do
+       # clone the groupings
+       @target.clone_groupings_from(@source.id)
+       # and let's make sure that the memberships were cloned
+       assert users(:student1).has_accepted_grouping_for?(@target.id)
+       assert users(:student2).has_accepted_grouping_for?(@target.id)
+       assert users(:student3).has_accepted_grouping_for?(@target.id)
+       @group.reload
+       assert !@group.groupings.find_by_assignment_id(@target.id).nil?
+     end
+
+     should "ignore a blocked student during cloning" do
+       student = users(:student1)
+       # hide the student
+       student.hidden = true
+       student.save
+       # clone the groupings
+       @target.clone_groupings_from(@source.id)
+       # make sure the membership wasn't created for the hidden
+       # student
+       assert !student.has_accepted_grouping_for?(@target.id)
+       # and let's make sure that the other memberships were cloned
+       assert users(:student2).has_accepted_grouping_for?(@target.id)
+       assert users(:student3).has_accepted_grouping_for?(@target.id)
+       @group.reload
+       assert !@group.groupings.find_by_assignment_id(@target.id).nil?
+     end
+     
+     should "ignore two blocked students during cloning" do
+       # hide the students
+       users(:student1).hidden = true
+       users(:student1).save
+       users(:student2).hidden = true
+       users(:student2).save
+       # clone the groupings
+       @target.clone_groupings_from(@source.id)
+       # make sure the membership wasn't created for the hidden
+       # student
+       assert !users(:student1).has_accepted_grouping_for?(@target.id)
+       assert !users(:student2).has_accepted_grouping_for?(@target.id)
+       # and let's make sure that the other membership was cloned
+       assert users(:student3).has_accepted_grouping_for?(@target.id)
+       # and that the proper grouping was created
+       @group.reload
+       assert !@group.groupings.find_by_assignment_id(@target.id).nil?       
+     end
+     
+     should "ignore grouping if all students hidden" do
+       # hide the students
+       users(:student1).hidden = true
+       users(:student1).save
+       users(:student2).hidden = true
+       users(:student2).save
+       users(:student3).hidden = true
+       users(:student3).save
+       
+       # Get the Group that these students blong to for assignment_1
+       assert users(:student1).has_accepted_grouping_for?(@source.id)
+       # clone the groupings
+       @target.clone_groupings_from(@source.id)
+       # make sure the membership wasn't created for the hidden
+       # student
+       assert !users(:student1).has_accepted_grouping_for?(@target.id)
+       assert !users(:student2).has_accepted_grouping_for?(@target.id)
+       assert !users(:student3).has_accepted_grouping_for?(@target.id)
+       # and let's make sure that the grouping wasn't cloned
+       @group.reload
+       assert @group.groupings.find_by_assignment_id(@target.id).nil?
+     end     
+
+   end
+   
+   context "an assignment with previously existing groups" do
+     setup do
+       # Let's tweak student3 so that their membership_status makes them
+       # an accepted part of the group
+       memberships(:membership3).membership_status = 'accepted'
+       memberships(:membership3).save
+       @source = assignments(:assignment_1)
+       @target = assignments(:assignment_2)
+       @group = users(:student1).accepted_grouping_for(@source.id).group     
+       assert @source.groupings.size > 0
+     end
+     should "destroy all previous groupings if cloning was successful" do
+       old_groupings = @target.groupings
+       @target.clone_groupings_from(@source.id)
+       @target.reload
+       old_groupings.each do |old_grouping|
+         assert !@target.groupings.include?(old_grouping)
+       end
+     end
+   end
 
    def test_grouped_students
      a = assignments(:assignment_1)
@@ -352,4 +456,17 @@ class AssignmentTest < ActiveSupport::TestCase
     
   end # end assignment instance context
   
+  private
+  def weed_out_hidden_member_groupings(groupings)
+    result = []
+    groupings.each do |grouping|
+      unhidden = grouping.accepted_student_memberships.select do |m|
+        !m.user.hidden
+      end
+      if !unhidden.empty?
+        result << grouping
+      end
+    end
+    return result
+  end
 end
