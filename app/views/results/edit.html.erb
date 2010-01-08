@@ -44,16 +44,34 @@
 <% # BOOT SCRIPTS %>
 <%= javascript_include_tag "Grader/tabs_boot.js" %>
 <script>
-    var modalNotesGroup = null;
-    document.observe("dom:loaded", function(){
-  modalNotesGroup = new Control.Modal($('notes_dialog'), 
-  {
-    overlayOpacity: 0.75,
-    className: 'modalNotesGroup',
-    fade:false
- 
-  });
-    })
+  var modalNotesGroup = null;
+  document.observe("dom:loaded", function(){
+    modalNotesGroup = new Control.Modal($('notes_dialog'), 
+     {
+       overlayOpacity: 0.75,
+       className: 'modalNotesGroup',
+       fade:false
+      });
+      
+  // Set up the "working" notices
+  Ajax.Responders.register({
+    onCreate: function() {
+      $('working').show();
+      window.onbeforeunload = check_working;
+    },
+    onComplete: function() {
+      $('working').hide();
+      window.onbeforeunload = null;
+    }
+  });    
+      
+ })
+  
+
+function check_working() {
+  return '<%=t(:still_working_warning)%>';
+}
+
 </script>
 
 <%= render :partial => "results/common/annotations.js" %>

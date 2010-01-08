@@ -1,7 +1,6 @@
 <script language="Javascript" text="text/javascript">
-//After DOM is loaded, load up the first submitted file
 document.observe("dom:loaded", function() {
-
+  //After DOM is loaded, load up the first submitted file
   <% if !first_file.nil? %>
    load_submitted_file('<%=first_file.id%>');
   <% end %>
@@ -16,7 +15,6 @@ document.observe("dom:loaded", function() {
   //Create the modal dialog
   modal = new Control.Modal($('create_annotation_dialog'), {fade:false});
   setup_divider($('code_pane'), $('pane_divider'));
- 
 
 });
 </script>

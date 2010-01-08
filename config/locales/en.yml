@@ -65,6 +65,8 @@ en:
     nochange_warning:   "No changes have been made, do you still want to continue?"
     discardchanges_message: "Are you sure you want to discard your changes?"
     invalid_id: "must be an id that is an integer greater than 0"
+    still_working_warning: "There are unfinished jobs still being processed.  They might not be saved if you leave now."
+
 
     grade_entry_forms:
       blank_field: "can't be blank"    
