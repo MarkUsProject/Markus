@@ -361,6 +361,15 @@ input, .button, .button_2{
   padding: 4px 25px;
 }
 
+input[disabled]{
+  background: #DDDDDD;
+  color: #AAAAAA;
+}
+input[disabled]:hover {
+  background: #DDDDDD;
+  color: #AAAAAA;
+}
+
 select{
    text-transform: capitalize;
    padding: 0 2px;

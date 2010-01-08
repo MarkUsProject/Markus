@@ -19,6 +19,7 @@ en:
     manage_course_work: "Manage Course Work"
     edit:               "Edit"
     save:               "Save"
+    save_changes:       "Save Changes"
     apply:              "Apply"
     delete:             "Delete"
     create:             "Create"
