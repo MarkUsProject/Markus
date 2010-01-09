@@ -63,8 +63,8 @@ en:
     csv_invalid_lines: "The following CSV lines were invalid: "
     csv_upload_user_duplicate: "Detected duplicate user name: {{user_name}}"
     collect_and_grade_overwrite_warning:  "Collecting and grading this revision will overwrite any previous collections/grading done for this group on this assignment.  Are you sure you want to do this?"
-    nochange_warning:   "No changes have been made, do you still want to continue?"
-    discardchanges_message: "Are you sure you want to discard your changes?"
+    uncommitted_changes_warning: "Your changes are not yet saved, do you still want to navigate away?"
+    discard_changes_message: "Are you sure you want to discard your changes?"
     invalid_id: "must be an id that is an integer greater than 0"
     still_working_warning: "There are unfinished jobs still being processed.  They might not be saved if you leave now."
 

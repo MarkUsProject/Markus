@@ -15,9 +15,9 @@
 <input type="hidden" id="file_revisions[<%=h file_name %>]"
 name="file_revisions[<%=h file_name %>]" value="<%= file.last_modified_revision%>"/>
 
-<input id="replace_files[<%=h file_name %>]" name="replace_files[<%=h file_name %>]" type="file" onchange="check_change_of_filename('<%=h file_name %>', this.value.escapeHTML(), this)" <%="disabled" if !@grouping.is_valid? %> size="5"/>
+<input id="replace_files[<%=h file_name %>]" name="replace_files[<%=h file_name %>]" type="file" onchange="check_change_of_filename('<%=h file_name %>', this.value.escapeHTML(), this); set_onbeforeunload(true);" <%="disabled" if !@grouping.is_valid? %> size="5"/>
 
-<a href="#" onclick="$('replace_files[<%=h file_name %>]').setValue(''); return false;" >Cancel</a>
+<a href="#" onclick="$('replace_files[<%=h file_name %>]').setValue(''); set_onbeforeunload(true); return false;" >Cancel</a>
 </td>
 
 <td>
@@ -26,7 +26,7 @@ name="file_revisions[<%=h file_name %>]" value="<%= file.last_modified_revision%
    $('replace_files[<%= h(file_name) %>]').disable();
   } else {
    $('replace_files[<%= h(file_name) %>]').enable(); 
-  }
+  }; set_onbeforeunload(true);
 "/>
 
 </td>
