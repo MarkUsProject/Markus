@@ -227,6 +227,9 @@ class SubmissionsController < ApplicationController
     
       # Replace files
       replace_files.each do |filename, file_object|
+	# Sometimes the file pointer of file_object is at the end of the file.
+	# In order to avoid empty uploaded files, rewind it to be save.
+	file_object.rewind
         txn.replace(File.join(assignment_folder, filename), file_object.read, file_object.content_type, file_revisions[filename])
       end
 
@@ -236,6 +239,9 @@ class SubmissionsController < ApplicationController
         if file_object.original_filename.nil?
           raise "Invalid file name on submitted file"
         end
+	# Sometimes the file pointer of file_object is at the end of the file.
+	# In order to avoid empty uploaded files, rewind it to be save.
+	file_object.rewind
         txn.add(File.join(assignment_folder, sanitize_file_name(file_object.original_filename)), file_object.read, file_object.content_type)
       end
 
