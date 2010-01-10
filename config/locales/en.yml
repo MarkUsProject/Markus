@@ -121,6 +121,8 @@ en:
     
     results:
       results_name:  "Results"
+      successfully_changed: "Successfully updated {{changed}} results"
+      must_select_a_group:  "You must select at least one group to update"
       editing_after_release_fail: "The marks have been released. You cannot change the grades."
     
     mark:

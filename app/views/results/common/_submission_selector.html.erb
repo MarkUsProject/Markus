@@ -22,7 +22,7 @@
    <% if @current_user.admin? %>
      | Released:
         <%= check_box_tag "released", true, result.released_to_students, :disabled => result.marking_state != Result::MARKING_STATES[:complete] %>
-        <%= observe_field :released, :url => {:controller => 'results', :action => 'set_released_to_students', :id => result.id}, :on => 'changed', :with => "value" %>
+        <%= observe_field :released, :url => {:controller => 'results', :action => 'set_released_to_students', :id => result.id}, :on => 'changed', :success => "window.onbeforeunload=null;",:with => "value" %>
      |
     <% end %>
   </span> 

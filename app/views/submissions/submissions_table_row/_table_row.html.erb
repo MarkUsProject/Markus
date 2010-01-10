@@ -1,3 +1,7 @@
+<tr>
+<td>
+  <input type="checkbox" name="groupings[]" class="ap_selectable" id="grouping_<%=grouping.id%>" value="<%=grouping.id%>" />
+</td>
 <td>
   <% if !grouping.has_submission? %>
     <% if assignment.submission_rule.can_collect_now? %>
@@ -72,3 +76,4 @@
   <% end %>
 <% end %>
   </td>
+</tr>

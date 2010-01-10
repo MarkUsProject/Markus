@@ -1,0 +1,8 @@
+<div style="display:none;" id="ap_select_all_div">
+  All <%=@groupings.size%> items on this page are selected.  <%= link_to_function "Click here to select all #{@groupings_total} items", "ap_select_full();" %>
+</div>
+<div style="display:none;" id="ap_select_full_div">
+  All <%=@groupings_total%> items are selected.  <%= link_to_function "Click here to clear selection.", "ap_select_none();" %>
+  <input type="hidden" name="ap_select_full" id="ap_select_full" value="false">
+</div>
+

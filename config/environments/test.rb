@@ -28,6 +28,7 @@ config.gem 'selenium-client', :version => ">=1.2.15", :lib => false
 config.gem 'thoughtbot-shoulda', :version => ">=2.10.2", :source => "http://gems.github.com", :lib => false
 config.gem 'fastercsv', :lib => false
 config.gem 'ruby-debug', :lib => false
+config.gem 'will_paginate', :lib => false
 
 ###################################################################
 # MarkUs SPECIFIC CONFIGURATION

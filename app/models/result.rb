@@ -23,6 +23,7 @@ class Result < ActiveRecord::Base
 
   #returns the sum of the marks not including bonuses/deductions
   def get_subtotal
+    return 0.0 if marks.empty?
     total = 0;
     marks.each do |m|
       total = total + m.get_mark
@@ -41,6 +42,7 @@ class Result < ActiveRecord::Base
   end
   
   def get_total_extra_points
+    return 0.0 if extra_marks.empty?
     return get_positive_extra_points + get_negative_extra_points
   end
   
@@ -53,6 +55,7 @@ class Result < ActiveRecord::Base
   end
 
   def get_total_extra_percentage
+    return 0.0 if extra_marks.empty?    
     return get_positive_extra_percentage + get_negative_extra_percentage
   end
   

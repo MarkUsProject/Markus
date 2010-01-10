@@ -2,17 +2,49 @@ require 'fastercsv'
 
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
+  include AjaxPaginationHelper
   
   before_filter    :authorize_only_for_admin, :except => [:populate_file_manager, :browse,
   :index, :file_manager, :update_files, 
-  :download, :populate_submissions_table, :collect_and_begin_grading, 
+  :download, :s_table_paginate, :collect_and_begin_grading, 
   :manually_collect_and_begin_grading, :repo_browser, :populate_repo_browser]
-  before_filter    :authorize_for_ta_and_admin, :only => [:browse, :index, :populate_submissions_table, :collect_and_begin_grading, 
-  :manually_collect_and_begin_garding, :repo_browser, :populate_repo_browser]
+  before_filter    :authorize_for_ta_and_admin, :only => [:browse, :index, :s_table_paginate, :collect_and_begin_grading, 
+  :manually_collect_and_begin_grading, :repo_browser, :populate_repo_browser]
   before_filter    :authorize_for_student, :only => [:file_manager, :populate_file_manager, :update_files]
   before_filter    :authorize_for_user, :only => [:download]
   
- 
+  S_TABLE_PARAMS = {
+             :model => Grouping, 
+             :per_pages => [15, 30, 50, 100, 150],
+             :filters => {
+               'none' => {:display => 'Show All', :proc => lambda { |params| return params[:assignment].groupings(:include => [{:student_memberships => :user, :ta_memberships => :user}, :groups, {:submissions => {:results => [:marks, :extra_marks]}}])}},
+               'unmarked' => {:display => 'Show Unmarked', :proc => lambda { |params| return params[:assignment].groupings.select{|g| !g.has_submission? || (g.has_submission? && g.get_submission_used.result.marking_state == Result::MARKING_STATES[:unmarked]) } }},
+               'partial' => {:display => 'Show Partial', :proc => lambda { |params| return params[:assignment].groupings.select{|g| g.has_submission? && g.get_submission_used.result.marking_state == Result::MARKING_STATES[:partial] } }},
+               'complete' => {:display => 'Show Complete', :proc => lambda { |params| return params[:assignment].groupings.select{|g| g.has_submission? && g.get_submission_used.result.marking_state == Result::MARKING_STATES[:complete] } }},
+               'released' => {:display => 'Show Released', :proc => lambda { |params| return params[:assignment].groupings.select{|g| g.has_submission? && g.get_submission_used.result.released_to_students} }},
+               'assigned' => {:display => 'Show Assigned to Me', :proc => lambda { |params| return params[:assignment].ta_memberships.find_all_by_user_id(params[:user_id]).collect{|m| m.grouping} }}
+             },
+             :sorts => {
+               'group_name' => lambda { |a,b| a.group.group_name.downcase <=> b.group.group_name.downcase},
+               'repo_name' => lambda { |a,b| a.group.repo_name.downcase <=> b.group.repo_name.downcase },
+               'revision_timestamp' => lambda { |a,b|
+                 return -1 if !a.has_submission?
+                 return 1 if !b.has_submission?
+                 return a.get_submission_used.revision_timestamp <=> b.get_submission_used.revision_timestamp
+               },
+               'marking_state' => lambda { |a,b|
+                 return -1 if !a.has_submission?
+                 return 1 if !b.has_submission?
+                 return a.get_submission_used.result.marking_state <=> b.get_submission_used.result.marking_state
+               },
+               'total_mark' => lambda { |a,b|
+                 return -1 if !a.has_submission?
+                 return 1 if !b.has_submission?
+                 return a.get_submission_used.result.total_mark <=> b.get_submission_used.result.total_mark
+               }
+             }
+        }
+        
   def repo_browser
     @grouping = Grouping.find(params[:id])
     @assignment = @grouping.assignment
@@ -147,35 +179,42 @@ class SubmissionsController < ApplicationController
     redirect_to :action => 'browse', :id => assignment.id
   end
   
-  
-  def populate_submissions_table
-    assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :accepted_students, :group, {:submissions => :result}]}, {:submission_rule => :periods}]) 
-    
-    @details = params[:details]
-    
-    # If the current user is a TA, then we need to get the Groupings
-    # that are assigned for them to mark.  If they're an Admin, then
-    # we need to give them a list of all Groupings for this Assignment.
-    if current_user.ta?
-      groupings = []
-      assignment.ta_memberships.find_all_by_user_id(current_user.id).each do |membership|
-        groupings.push(membership.grouping)
-      end
-    elsif current_user.admin?
-      groupings = assignment.groupings
-    end
-    
-    @table_rows = {} 
-    groupings.each do |grouping|
-      @table_rows[grouping.id] = construct_submissions_table_row(grouping, assignment)
-    end
-
-    render :action => 'submission_table_populate'
-  end
-
   def browse
     @assignment = Assignment.find(params[:id])
-    @details = params[:details]
+    @details = params[:details] #TODO: Fix for pagination
+    # Pagination defaults
+    if current_user.ta?
+      @filter = 'assigned'    
+    else
+      @filter = 'none'
+    end
+
+    @per_page = 30
+    @current_page = 1
+    @sort_by = 'group_name'
+    @desc = false
+    # S_TABLE_PARAMS is defined at the top of this controller
+    @filters = get_filters(S_TABLE_PARAMS)
+    @per_pages = S_TABLE_PARAMS[:per_pages]
+    all_groupings = get_filtered_items(S_TABLE_PARAMS, @filter, @sort_by, {:assignment => @assignment, :user_id => current_user.id})
+    @groupings = all_groupings.paginate(:per_page => @per_page, :page => @current_page)
+    @groupings_total = all_groupings.size
+  end
+  
+  def s_table_paginate
+    @assignment = Assignment.find(params[:id])
+    @groupings, @groupings_total = handle_ap_event(S_TABLE_PARAMS, {:assignment => @assignment, :user_id => current_user.id}, params)
+    @current_page = params[:page]
+    @per_page = params[:per_page]
+    @filters = get_filters(S_TABLE_PARAMS)
+    @per_pages = S_TABLE_PARAMS[:per_pages]
+    @desc = params[:desc]
+    @filter = params[:filter]
+    if !params[:sort_by].blank?
+      @sort_by = params[:sort_by]
+    else
+      @sort_by = 'group_name'
+    end
   end
   
   def index
@@ -304,49 +343,44 @@ class SubmissionsController < ApplicationController
 
   def update_submissions
     return unless request.post?
-    if params[:groupings].nil?
-      flash[:release_results] = "Select a group"
+    assignment = Assignment.find(params[:id])
+    errors = []
+    groupings = []
+    if params[:ap_select_full] == 'true'
+      # We should have been passed a filter
+      if params[:filter].blank?
+        raise "Expected a filter on select full"
+      end
+      # Get all Groupings for this filter
+      groupings = S_TABLE_PARAMS[:filters][params[:filter]][:proc].call({:assignment => assignment, :user_id => current_user.id})
     else
-      if params[:release_results]
-        flash[:release_errors] = []
-        params[:groupings].each do |grouping_id|
-          grouping = Grouping.find(grouping_id)
-          if !grouping.has_submission? 
-            flash[:release_errors].push("#{grouping.group.group_name} had no submission")
-            next
-          end
-          submission = grouping.get_submission_used
-          if !submission.has_result?
-            flash[:release_errors].push("#{grouping.group.group_name} had no result")
-            next     
-          end
-          if submission.result.marking_state != Result::MARKING_STATES[:complete]
-            flash[:release_errors].push("Can not release result for #{grouping.group.group_name}: the marking state is not complete")
-            next
-          end
-          if flash[:release_errors].nil? or flash[:release_errors].size == 0
-            flash[:release_errors] = []
-          end
-          submission.result.released_to_students = true
-          submission.result.save        
-        end
-      elsif params[:unrelease_results]
-        params[:groupings].each do |g|
-          grouping = Grouping.find(g)
-          grouping.get_submission_used.result.unrelease_results
-        end
+      # User selected particular Grouping IDs
+      if params[:groupings].nil?
+        errors.push(I18n.t('results.must_select_a_group'))
+      else
+        groupings = assignment.groupings.find(params[:groupings])
       end
     end
-    if flash[:release_errors].nil?
-      flash[:success] = I18n.t('update_files.success')
+       
+    if !params[:release_results].nil?
+      changed = set_release_on_results(groupings, true, errors)
+    elsif !params[:unrelease_results].nil?
+      changed = set_release_on_results(groupings, false, errors)
     end
-    redirect_to :action => 'browse', :id => params[:id]
-    if !params[:groupings].nil?
-      grouping = Grouping.find(params[:groupings].first)
-      grouping.assignment.set_results_average
-    end
-  end
 
+
+    if !groupings.empty?
+      assignment.set_results_average
+    end
+
+    if changed > 0
+      flash[:success] = I18n.t('results.successfully_changed', {:changed => changed})
+    end
+    flash[:errors] = errors
+    
+    redirect_to :action => 'browse', :id => params[:id]    
+  end
+  
   def unrelease
     return unless request.post?
     if params[:groupings].nil?

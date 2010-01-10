@@ -32,7 +32,7 @@ config.action_mailer.raise_delivery_errors = false
 # because we don't want them to be loaded just yet)
 # Install them by using "rake gems:install"
 config.gem 'fastercsv', :lib => false
-
+config.gem 'will_paginate', :lib => false
 
 ###################################################################
 # MarkUs SPECIFIC CONFIGURATION

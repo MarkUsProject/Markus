@@ -44,9 +44,8 @@ class ResultsController < ApplicationController
 
     # Get the previous and the next submission
     if current_user.ta?
-       groupings = []
-       @assignment.ta_memberships.find_all_by_user_id(current_user.id).each do |membership|
-         groupings.push(membership.grouping)
+       groupings = @assignment.ta_memberships.find_all_by_user_id(current_user.id).collect do |m|       
+         m.grouping
        end
     end
 
@@ -71,13 +70,17 @@ class ResultsController < ApplicationController
     end
     
     current_grouping_index = groupings.index(@grouping)
-    if !groupings[current_grouping_index + 1].nil?
-      @next_grouping = groupings[current_grouping_index + 1]
+    if current_grouping_index.nil?
+      @next_grouping = groupings.first
+      @previous_grouping = groupings.last
+    else
+      if !groupings[current_grouping_index + 1].nil?
+        @next_grouping = groupings[current_grouping_index + 1]
+      end
+      if (current_grouping_index - 1) >= 0
+        @previous_grouping = groupings[current_grouping_index - 1]
+      end
     end
-    if (current_grouping_index - 1) >= 0
-      @previous_grouping = groupings[current_grouping_index - 1]
-    end
-
   end
 
   def next_grouping
