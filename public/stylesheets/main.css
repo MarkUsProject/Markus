@@ -1571,3 +1571,23 @@ fieldset.disabled{
   display: none;
 }
 
+#api_key_box {
+  padding: 10px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border: 1px solid #ccc;
+  overflow: auto;
+}
+
+div#test_results_controls {
+  display: inline;
+  margin-left: 30px;
+}
+
+form#grader_view_file_selector_form {
+  display: inline;
+}
+
+pre#test_result_content {
+  font-size: 1.3em;
+}

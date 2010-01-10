@@ -42,6 +42,11 @@
 <% # BOOT SCRIPTS %>
 <%= javascript_include_tag "Grader/tabs_boot.js" %>
 
+<%
+# Javascript for test result window
+%>
+<%= render :partial => "results/common/test_result_window.html" %>
+
 <%= render :partial => "results/common/annotations.js" %>
 <%= render :partial => "results/student/boot.js", :locals => {:first_file => @first_file} %>
 
@@ -51,7 +56,7 @@
 <div class="wrapLeft">
 <%= render :partial => 'results/common/errors' %>
 
-<%= render :partial => 'results/common/file_selector', :locals => {:files => @files, :can_download => false} %>
+<%= render :partial => 'results/common/file_selector', :locals => {:files => @files, :can_download => false, :test_result_files => @test_result_files } %>
 
 <%= render :partial => 'results/student/student_panes', :locals => {:extra_marks_points => @extra_marks_points, :extra_marks_percentage => @extra_marks_percentage, :result => @result, :rubric_criteria => @rubric_criteria, :marks_map => @marks_map, :assignment => @assignment } %>
 </div>

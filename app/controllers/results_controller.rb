@@ -2,12 +2,12 @@ class ResultsController < ApplicationController
   before_filter      :authorize_only_for_admin, :except => [:codeviewer, :edit, :update_mark, :view_marks,
                         :create, :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria,
                         :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria, :update_marking_state,
-                        :download, :note_message]
+                        :download, :note_message, :render_test_result]
   before_filter      :authorize_for_ta_and_admin, :only => [:edit, :update_mark, :create, :add_extra_mark,
                         :download, :next_grouping, :update_overall_comment, :expand_criteria,
                         :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria,
                         :update_marking_state, :note_message]
-  before_filter      :authorize_for_user, :only => [:codeviewer]
+  before_filter      :authorize_for_user, :only => [:codeviewer, :render_test_result]
   before_filter      :authorize_for_student, :only => [:view_marks]
   
   def note_message
@@ -29,6 +29,7 @@ class ResultsController < ApplicationController
     @grouping = @result.submission.grouping
     @group = @grouping.group
     @files = @submission.submission_files
+    @test_result_files = @submission.test_results
     @first_file = @files.first
     @extra_marks_points = @result.extra_marks.points
     @extra_marks_percentage = @result.extra_marks.percentage
@@ -161,6 +162,25 @@ class ResultsController < ApplicationController
     @code_type = @file.get_file_type
     render :action => 'results/common/codeviewer'
   end
+
+  #=== Description
+  # Action called via Rails' remote_function from the test_result_window partial
+  # Prepares test result and updates content in window.
+  def render_test_result
+    @assignment = Assignment.find(params[:id])
+    @test_result = TestResult.find(params[:test_result_id])
+      
+    # Students can use this action only, when marks have been released
+    if current_user.student? &&
+        (@test_result.submission.grouping.membership_status(current_user).nil? ||
+        @test_result.submission.result.released_to_students == false)
+      render :partial => 'shared/handle_error',
+       :locals => {:error => I18n.t('test_result.error.no_access', :test_result_id => @test_result.id)}
+      return
+    end
+    
+    render :action => 'results/render_test_result', :layout => "plain"
+  end
   
   def update_mark
     result_mark = Mark.find(params[:mark_id])
@@ -212,6 +232,7 @@ class ResultsController < ApplicationController
     @annotation_categories = @assignment.annotation_categories
     @group = @grouping.group
     @files = @submission.submission_files
+    @test_result_files = @submission.test_results
     @first_file = @files.first
     @extra_marks_points = @result.extra_marks.points
     @extra_marks_percentage = @result.extra_marks.percentage

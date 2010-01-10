@@ -73,6 +73,7 @@ class MainController < ApplicationController
       uri = session[:redirect_uri]
       session[:redirect_uri] = nil
       refresh_timeout
+      current_user.set_api_key # set api key in DB for user if not yet set
       # redirect to last visited page or to main page
       redirect_to( uri || { :action => 'index' } )
     else

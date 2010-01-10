@@ -238,6 +238,12 @@ en:
       error:
         no_access: "No access to submission file with id #{{submission_file_id}}."
         binary_file_message: "Binary content: Use download button to view file!"
+    test_result:
+      error:
+        no_access: "No access to test result with id #{{test_result_id}}."
+      button:
+        load: "Load"
+      no_files_available: "[No test results available]"
     
     criteria_csv_error:
       incomplete_row: "contains too little information."

@@ -74,6 +74,11 @@ function check_working() {
 
 </script>
 
+<%
+# Javascript for test result window
+%>
+<%= render :partial => "results/common/test_result_window.html" %>
+
 <%= render :partial => "results/common/annotations.js" %>
 <%= render :partial => "results/marker/setup_annotation_categories.js" %>
 
@@ -104,7 +109,7 @@ function check_working() {
 
 <%= render :partial => 'results/common/errors' %>
 
-<%= render :partial => 'results/common/file_selector', :locals => {:files => @files, :can_download => true} %>
+<%= render :partial => 'results/common/file_selector', :locals => {:files => @files, :can_download => true, :test_result_files => @test_result_files} %>
 
 <% if !@result.released_to_students %>
 

@@ -66,3 +66,10 @@ submission_flexible_2:
    revision_number:          1
    revision_timestamp:       <%= Time.now.to_s(:db) %>
  
+test_result_submission1:
+   grouping_id:              <%= Fixtures.identify(:grouping_test_result1) %>
+   created_at:               <%= Time.now.to_s(:db) %>
+   submission_version:       1
+   submission_version_used:  true
+   revision_number:          1
+   revision_timestamp:       <%= Time.now.to_s(:db) %>
