@@ -10,9 +10,6 @@ class ResultsController < ApplicationController
   before_filter      :authorize_for_user, :only => [:codeviewer]
   before_filter      :authorize_for_student, :only => [:view_marks]
   
-  def index
-  end
-
   def note_message
     @result = Result.find(params[:id])
     if params[:success]
@@ -81,6 +78,9 @@ class ResultsController < ApplicationController
         @previous_grouping = groupings[current_grouping_index - 1]
       end
     end
+    m_logger = MarkusLogger.instance
+    m_logger.log(I18n.t("markus_logger.user_viewed_submission", :user_name => current_user.user_name, :group_name => @group.group_name, :submission_id => @submission.id, :assignment => @assignment.short_identifier))
+
   end
 
   def next_grouping
@@ -98,6 +98,17 @@ class ResultsController < ApplicationController
     @result.released_to_students = released_to_students
     @result.save
     @result.submission.assignment.set_results_average
+    m_logger = MarkusLogger.instance
+    assignment = @result.submission.assignment
+    if params[:value] == 'true'
+      m_logger.log(I18n.t("markus_logger.marks_released_for_assignment",
+                            :assignment_id => assignment.id,
+                            :assignment => assignment.short_identifier, :number_groups => 1))
+    else
+      m_logger.log(I18n.t("markus_logger.marks_unreleased_for_assignment",
+                            :assignment_id => assignment.id,
+                            :assignment => assignment.short_identifier, :number_groups => 1))
+    end
   end
   
   #Updates the marking state
@@ -155,9 +166,21 @@ class ResultsController < ApplicationController
     result_mark = Mark.find(params[:mark_id])
     mark_value = params[:mark]
     result_mark.mark = mark_value
+    submission = result_mark.result.submission  # get submission for logging
+    group = submission.grouping.group           # get group for logging
+    assignment = submission.grouping.assignment # get assignment for logging
+    m_logger = MarkusLogger.instance
     if !result_mark.save
+      m_logger.log(I18n.t('markus_logger.user_update_mark_submission_fail',
+                    { :user_name => current_user.user_name, 
+                      :submission_id => submission.id, :group_name => group.group_name,
+                      :assignment => assignment.short_identifier}), MarkusLogger::INFO)
       render :partial => 'shared/handle_error', :locals => {:error => I18n.t('mark.error.save') + result_mark.errors}
     else
+      m_logger.log(I18n.t('markus_logger.user_update_mark_submission',
+                    { :user_name => current_user.user_name, 
+                      :submission_id => submission.id, :group_name => group.group_name,
+                      :assignment => assignment.short_identifier}), MarkusLogger::ERROR)
       render :partial => 'results/marker/update_mark',
              :locals => { :result_mark => result_mark, :mark_value => mark_value}
     end
@@ -198,6 +221,9 @@ class ResultsController < ApplicationController
       mark.save(false)
       @marks_map[criterion.id] = mark
     end
+    m_logger = MarkusLogger.instance
+    m_logger.log(I18n.t('markus_logger.student_viewed_result', :user_name => current_user.user_name,
+                                                      :assignment => @assignment.short_identifier))
   end
   
   def add_extra_mark

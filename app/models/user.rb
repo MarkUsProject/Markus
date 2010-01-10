@@ -62,22 +62,23 @@ class User < ActiveRecord::Base
       pipe = IO.popen(VALIDATE_FILE, "w+")
       pipe.puts("#{login}\n#{password}") # write to stdin of markus_config_validate
       pipe.close
-      @logger = MarkusLogger.instance
+      m_logger = MarkusLogger.instance
       case $?.exitstatus
         when 0
-          @logger.log("User #{login} logged in",MarkusLogger::INFO)
+          m_logger.log(I18n.t("markus_logger.user_login_message", :user_name => login), MarkusLogger::INFO)
           return AUTHENTICATE_SUCCESS
         when 1
-          @logger.log("Wrong username/password: #{login}",MarkusLogger::ERROR)
+          m_logger.log(I18n.t("markus_logger.user_wrong_credentials", :user_name => login), MarkusLogger::ERROR)
           return AUTHENTICATE_NO_SUCH_USER
         when 2
-          @logger.log("Wrong username/password: #{login}",MarkusLogger::ERROR)
+          m_logger.log(I18n.t("markus_logger.user_wrong_credentials", :user_name => login), MarkusLogger::ERROR)
           return AUTHENTICATE_BAD_PASSWORD
         else
-          @logger.log("Error while logging in user: #{login}",MarkusLogger::ERROR)
+          m_logger.log(I18n.t("markus_logger.user_login_error", :user_name => login),MarkusLogger::ERROR)
           return AUTHENTICATE_ERROR
       end
     else
+      m_logger.log(I18n.t("markus_logger.user_login_error", :user_name => login),MarkusLogger::ERROR)
       return AUTHENTICATE_BAD_CHAR
     end
   end

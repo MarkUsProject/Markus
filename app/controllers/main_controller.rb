@@ -85,6 +85,8 @@ class MainController < ApplicationController
     clear_session
     cookies.delete :auth_token
     reset_session
+    m_logger = MarkusLogger.instance
+    m_logger.log(I18n.t("markus_logger.user_logout_message", :user_name => current_user.user_name))
     redirect_to :action => 'login'
   end
   
