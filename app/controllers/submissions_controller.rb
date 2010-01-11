@@ -224,13 +224,13 @@ class SubmissionsController < ApplicationController
 
   # controller handles transactional submission of files
   def update_files
-    if REPOSITORY_EXTERNAL_SUBMITS_ONLY
-      raise "MarkUs is only accepting external submits"
-    end
     assignment_id = params[:id]
     assignment = Assignment.find(assignment_id)
     path = params[:path] || '/'
     grouping = current_user.accepted_grouping_for(assignment_id)
+    if grouping.group.repository_external_commits_only?
+      raise "MarkUs is only accepting external submits"
+    end
     if !grouping.is_valid?
       redirect_to :action => :file_manager, :id => assignment_id
       return
