@@ -302,6 +302,12 @@ class ResultsController < ApplicationController
     render :partial => 'results/marker/expand_unmarked_criteria', :locals => {:nil_marks => @nil_marks}
   end
   
+  def delete_grace_period_deduction
+    @grouping = Grouping.find(params[:id])
+    grace_deduction = GracePeriodDeduction.find(params[:deduction_id])
+    grace_deduction.destroy
+  end
+  
   private
   
   def retrieve_file(file)

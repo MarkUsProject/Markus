@@ -216,11 +216,17 @@ en:
         overtime_message:  "This message is displayed to students when they view their file manager after the assignment due date has passed."
         
       no_late_submission_rule:
+        name: "No Late Submission Rule"
         description: "No penalties will be applied to late assignments"
         commit_after_late_message: "The due date for this assignment has passed.  Your changes have been recorded, but will not be included in the grading"
         no_late_message: "The due date for this assignment has passed.  Only what was in your folder at the due date will be graded."
    
       grace_period_submission_rule:
+        name: "Grace Period Submission Rule"
+        deductions: "Grace Period Deductions"
+        remove_deduction: "Remove Deduction"
+        credits: "Credits"
+        confirm_remove_deduction: "Are you sure you want to delete this Grace Period Deduction?"
         description: "You may submit up to {{grace_day_limit}} day(s) past the due date, and will have that number of days subtracted from your allotted grace days"
         after_collection_message: "The maximum number of grace periods has passed for this assignment.  Any changes will be recorded, but not graded."
         commit_after_collection_message: "The due date for this assignment, plus the maximum number of allowed grace days, has passed.  Your changes have been recorded, but will not be included in the grading."
@@ -228,6 +234,7 @@ en:
         overtime_message_without_days_left: "The due date for this assignment has passed, and you are no longer able to use any grace days."
 
       penalty_period_submission_rule:
+        name: "Penalty Period Submission Rule"
         description: "You may submit up to {{penalty_period_limit}} hour(s) past the due date, but will have the appropriate percentage deducted from your final result"
         after_collection_message: "The maximum number of penalty periods has passed for this assignment.  Any changes will be recorded, but not graded."
         commit_after_collection_message: "The due date for this assignment, plus the maximum number of allowed penalty periods, has passed.  Your changes have been recorded, but will not be included in the grading."

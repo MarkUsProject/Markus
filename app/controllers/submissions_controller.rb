@@ -41,6 +41,9 @@ class SubmissionsController < ApplicationController
                  return -1 if !a.has_submission?
                  return 1 if !b.has_submission?
                  return a.get_submission_used.result.total_mark <=> b.get_submission_used.result.total_mark
+               },
+               'grace_credits_used' => lambda { |a,b|
+                 return a.grace_period_deduction_sum <=> b.grace_period_deduction_sum
                }
              }
         }

@@ -16,6 +16,10 @@
     <th class="<%="ap_sorting_by" if (sort_by == 'marking_state')%> <%="ap_sorting_by_desc" if (sort_by == 'marking_state' && !desc.blank?)%>">
     <%= link_to_remote "Marking State", :url => {:action => 's_table_paginate', :id => assignment.id, :filter => filter, :page => page, :per_page => per_page, :sort_by => 'marking_state', :desc => (sort_by == 'marking_state' && desc.blank?)} %>
     </th>
+
+    <th class="<%="ap_sorting_by" if (sort_by == 'grace_credits_used')%> <%="ap_sorting_by_desc" if (sort_by == 'grace_credits_used' && !desc.blank?)%>">
+    <%= link_to_remote "Grace Credits Used", :url => {:action => 's_table_paginate', :id => assignment.id, :filter => filter, :page => page, :per_page => per_page, :sort_by => 'grace_credits_used', :desc => (sort_by == 'grace_credits_used' && desc.blank?)} %>
+    </th>
     
     <th class="<%="ap_sorting_by" if (sort_by == 'total_mark')%> <%="ap_sorting_by_desc" if (sort_by == 'total_mark' && !desc.blank?)%>">
     <%= link_to_remote "Final Grade", :url => {:action => 's_table_paginate', :id => assignment.id, :filter => filter, :page => page, :per_page => per_page, :sort_by => 'total_mark', :desc => (sort_by == 'total_mark' && desc.blank?)} %>

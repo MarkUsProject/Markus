@@ -52,6 +52,10 @@ class PenaltyPeriodSubmissionRule < SubmissionRule
   def description_of_rule
     I18n.t 'submission_rules.penalty_period_submission_rule.description'
   end
+  
+  def grader_tab_partial
+    return 'submission_rules/penalty_period/grader_tab'
+  end
 
   private 
   

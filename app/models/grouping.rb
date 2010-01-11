@@ -18,6 +18,7 @@ class Grouping < ActiveRecord::Base
   has_many :pending_students, :class_name => 'Student', :through => :student_memberships, :conditions => {'memberships.membership_status' => StudentMembership::STATUSES[:pending]}, :source => :user
   
   has_many :submissions
+  has_many :grace_period_deductions, :through => :student_memberships
   
   named_scope :approved_groupings, :conditions => {:admin_approved => true}
     
@@ -158,6 +159,10 @@ class Grouping < ActiveRecord::Base
       total.push(student.remaining_grace_credits)
     end
     return total.min
+  end
+  
+  def grace_period_deduction_sum
+    return grace_period_deductions.sum('deduction')
   end
 
   # Submission Functions

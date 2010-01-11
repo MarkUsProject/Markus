@@ -127,9 +127,9 @@
            @assignment.student_form_groups %>
 
           <h3>Form your own group</h3>
-          <p> The groups must be from <b>
-            <%= h(@assignment.group_min)%> </b>
-            to <b> <%= h(@assignment.group_max)%> </b> people.
+          <p> The groups must be from <strong>
+            <%= h(@assignment.group_min)%> </strong>
+            to <strong> <%= h(@assignment.group_max)%> </strong> people.
           </p>
 
           <% if @assignment.group_min == 1 %>
@@ -264,13 +264,16 @@
               @assignment.group_max > 1 %>
           <li> Students can form groups. </li>
           <li>
-            The groups must be from <b> <%= h(@assignment.group_min)%> </b>
-            to <b><%= h(@assignment.group_max)%></b> people.
+            The groups must be from <strong> <%= h(@assignment.group_min)%> </strong>
+            to <strong><%= h(@assignment.group_max)%></strong> people.
           </li>
         <% elsif @assignment.instructor_form_groups %>
           <li>Instructor forms groups.</li>
         <% else%>
           <li>Students work alone</li>
+        <% end %>
+        <% if !@grouping.nil? %>
+        <li>Your group has <strong><%=@grouping.available_grace_credits%></strong> available grace credits</li>
         <% end %>
       </ul>
     </div>    

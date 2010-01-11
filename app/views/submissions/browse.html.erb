@@ -79,7 +79,7 @@
   <%= render :partial => 'submissions_table_sorting_links', :locals => {:assignment => @assignment, :filter => 'none', :page => @current_page, :per_page => @per_page, :sort_by => @sort_by, :desc => @desc} %>
   </thead>
   <tbody>
-    <tr><td id="thinking_table_row" colspan="6"><%= render :partial => 'ajax_paginate/thinking' %></td></tr>
+    <tr><td id="thinking_table_row" colspan="7"><%= render :partial => 'ajax_paginate/thinking' %></td></tr>
   </tbody>
   <%= render :partial => 'submissions_table_body', :locals => {:groupings => @groupings, :assignment => @assignment} %>
   <tfoot id="submissions_table_foot">
