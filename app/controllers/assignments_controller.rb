@@ -294,8 +294,14 @@ class AssignmentsController < ApplicationController
         m_logger.log(I18n.t("markus_logger.student_invited_student", :inviter => @student.user_name, :invitee => @invited.user_name))
       rescue Exception => e
         flash[:fail_notice].push(e.message)
+	invitee = nil
+	if !@invited.nil?
+	  invitee = @invited.user_name
+	else
+	  invitee = user_name
+	end
         m_logger.log(I18n.t('markus_logger.student_invitation_failure',
-                            { :inviter => @student.user_name, :invitee => @invited.user_name,
+                            { :inviter => @student.user_name, :invitee => invitee,
                               :error => e.message }), MarkusLogger::ERROR)
       end
     end
