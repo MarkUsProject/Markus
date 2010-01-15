@@ -43,6 +43,7 @@ see http://www.markusproject.org/download/
         - fastercsv (version 1.4.0 and higher) 
         - rake (version 0.8.7 and higher)
 	- ruby-debug (in case you want to debug MarkUs)
+	- will_paginate (version 2.3.11 and higher)
     * Apache httpd (version 2.2 and higher) including the following modules:
         - mod_proxy
         - mod_rewrite
@@ -104,10 +105,10 @@ see http://www.markusproject.org/download/
 
     PostgreSQL option:
       sudo gem install rails daemons mongrel mongrel_cluster ruby-pg postgres
-      fastercsv rake ruby-debug
+      fastercsv rake ruby-debug will_paginate
     MySQL option:
       sudo gem install rails daemons mongrel mongrel_cluster mysql
-      fastercsv rake ruby-debug
+      fastercsv rake ruby-debug will_paginate
     
 3.2 INSTALLING MARKUS 
 
@@ -116,11 +117,11 @@ see http://www.markusproject.org/download/
   permissions set up.
 
   * Get a copy of the MarkUs tarball:
-      wget http://www.markusproject.org/download/markus-0.5.tar.gz
+      wget http://www.markusproject.org/download/markus-latest-stable.tar.gz
   * Extract the tarball to the desired location
-      tar -xzvf markus-0.5.tar.gz
+      tar -xzvf markus-latest-stable.tar.gz
   * Change to MarkUs' application root
-      cd markus-0.5
+      cd markus-0.6.0
   * Set environment variable RAILS_ENV
       export RAILS_ENV="production"
   * In case you are using Rails > 2.3.2 comment out the line containing
@@ -150,7 +151,7 @@ We are happy to help and would also like to hear your feedback!
 
 4. FURTHER INSTRUCTIONS, FAQ, LINKS
 
-  * https://stanley.cdf.toronto.edu/drproject/csc49x/olm_rails/wiki/InstallProd
+  * https://stanley.cdf.toronto.edu/drproject/csc49x/olm_rails/wiki/InstallProd_0.6
   * https://stanley.cdf.toronto.edu/drproject/csc49x/olm_rails/wiki/InstallProdFaq
   * https://stanley.cdf.toronto.edu/drproject/csc49x/olm_rails/wiki/MultipleHosting
   * http://www.markusproject.org/dev/markus_httpd_vhost.conf

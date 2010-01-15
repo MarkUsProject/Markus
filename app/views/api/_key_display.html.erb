@@ -1,0 +1,8 @@
+<h3>Your API Key</h3>
+<div id="api_key_box">
+  <% if !user.api_key.nil? %> 
+    <%= user.api_key %> 
+  <% else %>
+    Unavailable
+  <% end %>
+</div>

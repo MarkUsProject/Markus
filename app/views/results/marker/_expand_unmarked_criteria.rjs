@@ -1,4 +1,4 @@
 nil_marks.each do |nil_mark|
-  page.call "show_rubric_criterion", nil_mark.rubric_criterion.id
+  page.call "show_rubric_criterion", nil_mark.markable.id
 end
 

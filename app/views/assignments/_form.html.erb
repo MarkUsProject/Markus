@@ -38,28 +38,6 @@
 	<%= t("answer_no")%>:<%= f.radio_button :allow_web_submits, false, :checked => !@assignment.allow_web_submits %>
    <br />
    <br />
-
-	<fieldset>
-	  <legend><%=I18n.t('assignment.marking_scheme.title')%></legend>
-
-		<div id="marking_scheme_notice" class="warning hidden">
-		  <span><%=I18n.t('assignment.notice.change_marking_scheme_type')%></span>
-		</div>
-		
-		<p>
-		  <%= f.radio_button :marking_scheme_type, Assignment::MARKING_SCHEME_TYPE[:rubric],  
-						 	 :onchange => "notice_marking_scheme_changed(#{@assignment.id.nil?}, value,
-										  '#{@assignment.marking_scheme_type}');",
-							 :checked => true%>
-	      <%=I18n.t('assignment.marking_scheme.rubric')%>
-	    </p>
-	    <p>
-	      <%= f.radio_button :marking_scheme_type, Assignment::MARKING_SCHEME_TYPE[:flexible], 
-			 				 :onchange => "notice_marking_scheme_changed(#{@assignment.id.nil?}, value,
-										 '#{@assignment.marking_scheme_type}');"%>
-	      <%=I18n.t('assignment.marking_scheme.flexible')%>
-	    </p>
-	</fieldset>
 </fieldset>
 
 <fieldset>

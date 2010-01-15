@@ -6,10 +6,7 @@
      {:controller => 'assignments', 
      :action => 'new'},
      :class => "button" %>
-<%= link_to I18n.t(:create_new_grade_entry_form),  
-     {:controller => 'grade_entry_forms', 
-     :action => 'new'},
-     :class => "button" %>	 
+
 <%= render :partial => "assignments/list_manage", 
   :locals => { :controller => 'assignments', :action => 'edit' } -%>
 </div>
@@ -18,13 +15,3 @@
 <div class="wrapLeft">
   <%= link_to "Download CSV Grades Report", :action => "download_csv_grades_report" unless !@current_user.admin?%>
 </div>
-
-<% # For now, only allow instructors to manage grade entry forms
-%>
-<% if @current_user.admin? %>
-  <div class="wrapLeft">
-  	<br />
-	  <%= render :partial => "grade_entry_forms/list_manage", 
-               :locals => { :action => 'edit' } -%>
-  </div>
-<% end %>

@@ -58,13 +58,13 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert_response :success
   end
   
-  # TODO
   
   
   # Test create assignment with assignment files
   def test_create_assignment
     get_as @admin, :new
-    
+    # TODO
+    # make this a real test
   end
     
   # Student Interface Tests
@@ -96,7 +96,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assignment.save
     student = users(:student3)
     post_as(student, :creategroup, {:id => assignment.id, :workalone => 'true'})
-    assert_redirected_to :action => "student_interface"
+    assert_redirected_to( :action => "student_interface", :id => assignment.id)
     assert student.has_accepted_grouping_for?(assignment.id)
     grouping = student.accepted_grouping_for(assignment.id)
     assert grouping.is_valid?
@@ -108,7 +108,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assignment.save
     student = users(:student3)
     post_as(student, :creategroup, {:id => assignment.id, :workalone => 'true'})
-    assert_redirected_to :action => "student_interface"
+    assert_redirected_to :action => "student_interface", :id => assignment.id
     assert_equal("You cannot work alone for this assignment - the group size minimum is #{assignment.group_min}", flash[:fail_notice])
     assert !student.has_accepted_grouping_for?(assignment.id)
   end
@@ -117,7 +117,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assignment = assignments(:assignment_1)
     student = users(:student3)
     post_as(student, :creategroup, {:id => assignment.id})
-    assert_redirected_to :action => "student_interface"
+    assert_redirected_to :action => "student_interface", :id => assignment.id
     assert student.has_accepted_grouping_for?(assignment.id)
   end
   
@@ -135,13 +135,13 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assignment = assignments(:assignment_1)
     student = users(:student3)
     post_as(student, :creategroup, {:id => assignment.id})
-    assert_redirected_to :action => "student_interface"
+    assert_redirected_to :action => "student_interface", :id => assignment.id
     assert student.has_accepted_grouping_for?(assignment.id)
     
     grouping = student.accepted_grouping_for(assignment.id)
     
     post_as(student, :creategroup, {:id => assignment.id})
-    assert_redirected_to :action => "student_interface"
+    assert_redirected_to :action => "student_interface", :id => assignment.id
     assert_equal "You already have a group, and cannot create another", flash[:fail_notice]
     # Get past some possible caching here...
     student = Student.find(student.id)
@@ -156,7 +156,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     invited = users(:student5)
     post_as(student, :invite_member, {:id => assignment.id, :invite_member => invited.user_name})
     assert_equal(I18n.t('invite_student.success', :user_name => invited.user_name), flash[:success].first)
-    assert_redirected_to :action => "student_interface"
+    assert_redirected_to :action => "student_interface", :id => assignment.id
   end
 
   def test_cant_invite_hidden_student
@@ -164,7 +164,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     student = users(:student1)
     invited = users(:hidden_student)
     post_as(student, :invite_member, {:id => assignment.id, :invite_member => invited.user_name})
-    assert_redirected_to :action => "student_interface"
+    assert_redirected_to :action => "student_interface", :id => assignment.id
     assert_equal(I18n.t('invite_student.fail.hidden', :user_name => invited.user_name), flash[:fail_notice].first)
   end
 
@@ -173,7 +173,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     student = users(:student4)
     invited = users(:student5)
     post_as(student, :invite_member, {:id => assignment.id, :invite_member => invited.user_name})
-    assert_redirected_to :action => "student_interface"
+    assert_redirected_to :action => "student_interface", :id => assignment.id
     assert_equal(I18n.t('invite_student.fail.already_pending', :user_name => invited.user_name), flash[:fail_notice].first)
   end
 
@@ -181,7 +181,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assignment = assignments(:assignment_1)
     student = users(:student4)
     post_as(student, :invite_member, {:id => assignment.id, :invite_member => "zhfbdjhzkyfg"})
-    assert_redirected_to :action => "student_interface"
+    assert_redirected_to :action => "student_interface", :id => assignment.id
     assert_equal(I18n.t('invite_student.fail.dne', :user_name => 'zhfbdjhzkyfg'), flash[:fail_notice].first)
   end
   
@@ -193,7 +193,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     target = users(:student5)
     assert !target.has_accepted_grouping_for?(assignment.id)
     post_as(student, :invite_member, {:id => assignment.id, :invite_member => target.user_name})
-    assert_redirected_to :action => "student_interface"
+    assert_redirected_to :action => "student_interface", :id => assignment.id
     assert_equal(I18n.t('invite_student.fail.due_date_passed', :user_name => target.user_name), flash[:fail_notice].first)
   
   end
@@ -204,7 +204,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     students = [users(:student1), users(:student2), users(:student3), users(:student5), users(:student6)]
     user_names = students.collect { |student| student.user_name }.join(',')
     post_as(users(:student4), :invite_member, {:id => assignment.id, :invite_member => user_names})  
-    assert_redirected_to :action => "student_interface"
+    assert_redirected_to :action => "student_interface", :id => assignment.id
     grouping = inviter.accepted_grouping_for(assignment.id)
     assert_equal 3, grouping.pending_students.size
   end
@@ -216,7 +216,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     invalid_users = ['%(*&@#$(*#$EJDF','falsj asdlfkjasdl aslkdjasd,dasflk(*!@*@*@!!!','lkjsdlkfjsdfsdlkfjsfsdf']
     user_names = ((students.collect { |student| student.user_name }) + invalid_users).join(',')
     post_as(users(:student4), :invite_member, {:id => assignment.id, :invite_member => user_names})  
-    assert_redirected_to :action => "student_interface"
+    assert_redirected_to :action => "student_interface", :id => assignment.id
     grouping = inviter.accepted_grouping_for(assignment.id)
     assert_equal 3, grouping.pending_students.size
   end
@@ -227,7 +227,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     students = [users(:student1), users(:student2), users(:student3), users(:student5), users(:student6)]
     user_names = students.collect { |student| student.user_name }.join(' ,  ')
     post_as(users(:student4), :invite_member, {:id => assignment.id, :invite_member => user_names})  
-    assert_redirected_to :action => "student_interface"
+    assert_redirected_to :action => "student_interface", :id => assignment.id
     grouping = inviter.accepted_grouping_for(assignment.id)
     assert_equal 3, grouping.pending_students.size
   end
@@ -239,7 +239,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     students = [users(:student6), users(:student4)]
     user_names = students.collect { |student| student.user_name }.join(' ,  ')
     post_as(users(:student4), :invite_member, {:id => assignment.id, :invite_member => user_names})  
-    assert_redirected_to :action => "student_interface"
+    assert_redirected_to({:action => "student_interface", :id => assignment.id})
     grouping = inviter.accepted_grouping_for(assignment.id)
     assert_equal original_pending + 1, grouping.pending_students.size
     assert_equal(I18n.t('invite_student.fail.inviting_self'), flash[:fail_notice].first)
@@ -252,7 +252,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     admins = [users(:olm_admin_1), users(:olm_admin_2)]
     user_names = admins.collect { |admin| admin.user_name }.join(' ,  ')
     post_as(users(:student4), :invite_member, {:id => assignment.id, :invite_member => user_names})  
-    assert_redirected_to :action => "student_interface"
+    assert_redirected_to :action => "student_interface", :id => assignment.id
     grouping = inviter.accepted_grouping_for(assignment.id)
     assert_equal original_pending, grouping.pending_students.size
     assert_equal(I18n.t('invite_student.fail.dne', :user_name => users(:olm_admin_1).user_name), flash[:fail_notice][0])
@@ -266,7 +266,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     graders = [users(:ta1), users(:ta2)]
     user_names = graders.collect { |grader| grader.user_name }.join(' ,  ')
     post_as(users(:student4), :invite_member, {:id => assignment.id, :invite_member => user_names})  
-    assert_redirected_to :action => "student_interface"
+    assert_redirected_to :action => "student_interface", :id => assignment.id
     grouping = inviter.accepted_grouping_for(assignment.id)
     assert_equal original_pending, grouping.pending_students.size
     assert_equal(I18n.t('invite_student.fail.dne', :user_name => users(:ta1).user_name), flash[:fail_notice][0])
@@ -308,7 +308,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       membership = StudentMembership.find(membership.id)
     end
     assert_response :redirect
-    assert_redirected_to :action => 'student_interface'
+    assert_redirected_to :action => 'student_interface', :id => assignment.id
   end
   
   def test_cant_delete_rejected_if_not_inviter
@@ -336,7 +336,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assignment.save
     assert !grouping.is_valid?
     post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
-    assert_redirected_to :action => "student_interface"
+    assert_redirected_to :action => "student_interface", :id => assignment.id
     assert_equal("Group has been deleted", flash[:edit_notice])
     assert !user.has_accepted_grouping_for?(assignment.id)
   end
@@ -355,7 +355,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       grouping.submissions.destroy_all
       assert grouping.is_valid?
       post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
-      assert_redirected_to :action => "student_interface"
+      assert_redirected_to :action => "student_interface", :id => assignment.id
       assert_equal("Group has been deleted", flash[:edit_notice])
       assert !user.has_accepted_grouping_for?(assignment.id)
     end
@@ -370,7 +370,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       assignment.save
       assert grouping.is_valid?
       post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
-      assert_redirected_to :action => "student_interface"
+      assert_redirected_to :action => "student_interface", :id => assignment.id
       assert_not_nil(flash[:fail_notice])
       assert user.has_accepted_grouping_for?(assignment.id)
     end
@@ -770,7 +770,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert student.has_accepted_grouping_for?(assignment.id)
     assert_not_nil student.accepted_grouping_for(assignment.id)
     assert_equal student, student.accepted_grouping_for(assignment.id).inviter
-    assert_redirected_to :action => 'student_interface'
+    assert_redirected_to :action => 'student_interface', :id => assignment.id
   end
   
   def test_student_gets_list_of_pending_groupings
@@ -888,7 +888,110 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assignment = assignments(:assignment_1)
     membership = memberships(:membership3)
     post_as(student, :delete_rejected, {:id => assignment.id, :membership => membership.id})  
-    assert_redirected_to :action => 'student_interface', :id => assignment.id
+    assert_redirected_to :controller => 'assignments', :action => 'student_interface', :id => assignment.id
   end
-  
+
+  # If for an assignment the due date has passed, but the instructor has set up a grace period,
+  # group formation functionality should be still possible
+  context "For an assignment, for which the due date has passed but the collection date is
+           still in the future," do
+
+    setup do
+      @grouping = groupings(:grouping_1)
+      @assignment = @grouping.assignment
+      grace_period_submission_rule = GracePeriodSubmissionRule.new
+      @assignment.replace_submission_rule(grace_period_submission_rule)
+      GracePeriodDeduction.destroy_all
+
+      grace_period_submission_rule.save
+
+      # On July 1 at 1PM, the instructor sets up the course...
+      pretend_now_is(Time.parse("July 1 2009 1:00PM")) do
+        # Due date is on the very same day and time
+        @assignment.due_date = Time.parse("July 1 2009 1:00PM")
+        # Set 24 grace period
+        period = Period.new
+        period.submission_rule = @assignment.submission_rule
+        period.hours = 24
+        period.save
+        # Collect date is now after July 2 @ 1PM
+        @assignment.save
+      end
+    end
+
+    context "a logged in student" do
+      
+      setup do
+        # We need a student with no grouping
+        @student = users(:student_interface_controller_test_student)
+      end
+
+      should "have the create group link available" do
+        # On July 1 at 6PM, the student navigates to the student_interface, which is
+        # past the due date of the assignment, but before the grace period ends
+        # at July 2 at 1PM.
+        response = nil
+        pretend_now_is(Time.parse("July 1 2009 6:00PM")) do
+          response = get_as(@student, :student_interface, :id => @assignment.id)
+        end
+        assert_not_nil(response.body =~ /<a[^>]*>#{I18n.t(:create)}<\/a>/)
+        assert_nil(response.body =~ /#{I18n.t(:invite)}/)
+      end
+
+      should "be able to create a group" do
+        # On July 1 at 6PM, the student posts to the creategroup action, which is
+        # past the due date of the assignment, but before the grace period ends
+        # at July 2 at 1PM.
+        response = nil
+        pretend_now_is(Time.parse("July 1 2009 6:00PM")) do
+          # We should have a create link first, which should later be absent
+          response = get_as(@student, :student_interface, :id => @assignment.id)
+          assert_not_nil(response.body =~ /<a[^>]*>#{I18n.t(:create)}<\/a>/)
+          # Create the group
+          response = post_as(@student, :creategroup, :id => @assignment.id)
+          assert_equal(response.status, "302 Found", "Should get a redirect!")
+          # See if the create link has disappeared
+          response = get_as(@student, :student_interface, :id => @assignment.id)
+          assert_nil(response.body =~ /<a[^>]*>#{I18n.t(:create)}<\/a>/)
+        end
+      end 
+
+      should "be able to invite students" do
+        # On July 1 at 6PM, the student posts to the creategroup action, which is
+        # past the due date of the assignment, but before the grace period ends
+        # at July 2 at 1PM.
+        st2 = users(:student_interface_controller_test_student2)
+        response = nil
+        pretend_now_is(Time.parse("July 1 2009 6:00PM")) do
+          # We should have a create link first, which should later be absent
+          response = get_as(@student, :student_interface, :id => @assignment.id)
+          assert_not_nil(response.body =~ /<a[^>]*>#{I18n.t(:create)}<\/a>/)
+          # Create the group
+          response = post_as(@student, :creategroup, :id => @assignment.id)
+          assert_equal(response.status, "302 Found", "Should get a redirect!")
+          # See if the create link has disappeared
+          response = get_as(@student, :student_interface, :id => @assignment.id)
+          assert_nil(response.body =~ /<a[^>]*>#{I18n.t(:create)}<\/a>/)
+          assert_not_nil(response.body =~ /#{I18n.t(:invite)}/)
+          response = post_as(@student, :invite_member, {:id => @assignment.id, :invite_member => st2.user_name})
+          assert_not_nil(response.flash[:success])
+          assert_not_nil(response.flash[:success] =~ /#{st2.user_name}/)
+        end
+      end
+
+      should "not have the create group link available" do
+        # On July 1 at 6PM, the student navigates to the student_interface, which is
+        # past the due date of the assignment and after the grace period.
+        response = nil
+        pretend_now_is(Time.parse("July 2 2009 6:00PM")) do
+          response = get_as(@student, :student_interface, :id => @assignment.id)
+        end
+        assert_nil(response.body =~ /<a[^>]*>#{I18n.t(:create)}<\/a>/)
+        assert_nil(response.body =~ /#{I18n.t(:invite)}/)
+      end
+
+    end # end context logged in student
+
+  end # context assignment past due date, pre collection date
+
 end

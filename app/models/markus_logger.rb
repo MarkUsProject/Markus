@@ -9,7 +9,6 @@ require 'logger'
 
 class MarkusLogger
 
-
   # This class must use the singleton pattern since
   # we only want one instance of this class through the whole
   # program.
@@ -43,9 +42,10 @@ class MarkusLogger
   # The variables that the loggers will use are defined in the
   # environment.rb file
   #===Exceptions
-  # If the configuration variables MARKUS_LOGGING_ROTATE_INTERVAL, MARKUS_LOGGING_ERRORLOGFILE, MARKUS_LOGGING_LOGFILE
-  # or MARKUS_LOGGING_SIZE_THRESHOLD are not valid an exception of type MarkusLoggerConfigurationError
-  # is raised
+  # If the configuration variables MARKUS_LOGGING_ROTATE_INTERVAL,
+  # MARKUS_LOGGING_ERRORLOGFILE, MARKUS_LOGGING_LOGFILE
+  # or MARKUS_LOGGING_SIZE_THRESHOLD are not valid an exception of type
+  # MarkusLoggerConfigurationError is raised.
   def initialize
     rotate_by_time = markus_config_logging_rotate_by_interval
     size = markus_config_logging_size_threshold
@@ -62,8 +62,10 @@ class MarkusLogger
       end
       @__logger__ = Logger.new(log_file, interval)
       @__logger__.formatter = Logger::Formatter.new
+      @__logger__.datetime_format = "%Y-%m-%d %H:%M:%S  "
       @__errorLogger__ = Logger.new(error_log_file, interval)
       @__errorLogger__.formatter = Logger::Formatter.new
+      @__errorLogger__.datetime_format = "%Y-%m-%d %H:%M:%S  "
     else
       if size > 0
         if old_files <= 0
@@ -71,8 +73,10 @@ class MarkusLogger
         end
         @__logger__ = Logger.new(log_file, old_files, size)
         @__logger__.formatter = Logger::Formatter.new
+        @__logger__.datetime_format = "%Y-%m-%d %H:%M:%S  "
         @__errorLogger__ = Logger.new(error_log_file, old_files, size)
         @__errorLogger__.formatter = Logger::Formatter.new
+        @__errorLogger__.datetime_format = "%Y-%m-%d %H:%M:%S  "
       else
         raise MarkusLoggerConfigurationError.new('The threshold size for the logger has to be bigger than 0')
       end
@@ -80,14 +84,14 @@ class MarkusLogger
   end
 
 
-#=== Description
-#Logs a message with the given log level severity. The default log level value is INFO.
-#Any message that can be turned to a string will be logged, else the output of the inspect
-#method will be logged.
-#=== Return
-#true if successful, false otherwise.
-#=== Exceptions
-#When the log level is not known then an exception of type ArgumentError is raised
+  #=== Description
+  # Logs a message with the given log level severity. The default log level value is INFO.
+  # Any message that can be turned to a string will be logged, else the output of the inspect
+  # method will be logged.
+  #=== Return
+  # true if successful, false otherwise.
+  #=== Exceptions
+  # When the log level is not known then an exception of type ArgumentError is raised
   def log(msg, level=INFO)
     case level
     when INFO
@@ -105,11 +109,11 @@ class MarkusLogger
     end
   end
 
-#=== Description
-#Checks if the filename is valid
-#=== Return
-#true if the file exists and it is writable or if the file doesn't exist and  the
-#directory of the file is writable and it exists, false otherwise.
+  #=== Description
+  # Checks if the filename is valid
+  #=== Return
+  # true if the file exists and it is writable or if the file doesn't exist and  the
+  # directory of the file is writable and it exists, false otherwise.
   def valid_file?(f)
     dir = File.dirname(f)
     if(File.file?(f) && File.writable?(f))
@@ -127,5 +131,4 @@ end
 
 # Exception type called by MarkusLogger
 class MarkusLoggerConfigurationError < Exception
-
 end

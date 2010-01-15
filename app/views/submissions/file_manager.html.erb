@@ -33,9 +33,6 @@
   <div class="warning"><%= flash[:transaction_warning] %></div>
 <% end %>
 <% if flash[:success] %>
-<% javascript_tag :do_warning => 'do_warning' do -%>
-		submitted = true;
-  	<% end -%>
   <div class="success"><%= flash[:success] %></div>
 <% end %>
 
@@ -55,9 +52,6 @@
   <div class="error">
     <h2>Conflicts</h2>
     <p>Your changes have not been made.  The following file conflicts were detected:</p>
-	<% javascript_tag :do_warning => 'do_warning' do -%>
-    	submitted = false;
-  	<% end -%>
     <ul>
     <% flash[:update_conflicts].each do |conflict| %>
       <li><%= h(conflict.to_s) %></li>
@@ -73,9 +67,6 @@
 <% end %>
 <% if flash[:commit_error] %>
   <div class="warning">
-  	<% javascript_tag :do_warning => 'do_warning' do -%>
-    	submitted = false;
-  	<% end -%>
     <%=flash[:commit_error] %>
   </div>
 <% end %>
@@ -108,13 +99,14 @@
 </span>
 
 <% if (@grouping.is_valid? && !@grouping.group.repository_external_commits_only?) %>
-  <%=button_to_function "Add A New File", "injectFileInput(); submitted = false;"%>
+  <%=button_to_function "Add A New File", "injectFileInput(); set_onbeforeunload(true);"%>
 <% end %>
 
 
 <% if @grouping.is_valid? %>
-<%= submit_tag( I18n.t(:submit), :onclick =>  'disableWarning = true;' ,
-    :disabled => !@grouping.is_valid?
+<%= submit_tag( I18n.t(:submit),
+    :disabled => !@grouping.is_valid?,
+    :onclick => "set_onbeforeunload(false);"
     ) unless @grouping.group.repository_external_commits_only? 
     %>
 <%= link_to( I18n.t(:cancel), 
@@ -123,7 +115,8 @@
 	 :id => @assignment.id,
 	 :disabled => !@grouping.is_valid?,
 	 :class => "button",
-	 :onclick => 'confirmation()') unless @grouping.group.repository_external_commits_only? %>
+	 :onclick => "set_onbeforeunload(false); return confirm('#{I18n.t(:discard_changes_message)}');"
+	 ) unless @grouping.group.repository_external_commits_only? %>
 <% end %>
 </div>
 
@@ -134,14 +127,18 @@
 
 <% if @grouping.is_valid? %>
 <div class="global_action">
-<%= submit_tag( I18n.t(:submit), :onclick => 'disableWarning = true;' , :disabled => !@grouping.is_valid? ) unless @grouping.group.repository_external_commits_only? %>
+<%= submit_tag( I18n.t(:submit),
+    :disabled => !@grouping.is_valid?,
+    :onclick => "set_onbeforeunload(false);"
+    ) unless @grouping.group.repository_external_commits_only? %>
 <%= link_to( I18n.t(:cancel),
         {:controller => 'submissions', 
            :action => 'file_manager'},  
 	 :id => @assignment.id,
 	 :disabled => !@grouping.is_valid?,
 	 :class => "button",
-	 :onclick => 'confirmation()') unless @grouping.group.repository_external_commits_only? %>
+	 :onclick => "set_onbeforeunload(false); return confirm('#{I18n.t(:discard_changes_message)}');"
+	 ) unless @grouping.group.repository_external_commits_only? %>
 </div>
 </form>
 <% end %>

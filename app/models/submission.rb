@@ -9,8 +9,9 @@ class Submission < ActiveRecord::Base
   validates_numericality_of :submission_version, :only_integer => true
   belongs_to :grouping
   has_one    :result, :dependent => :destroy
-  has_many    :submission_files, :dependent => :destroy
-  has_many    :annotations, :through => :submission_files
+  has_many   :submission_files, :dependent => :destroy
+  has_many   :annotations, :through => :submission_files
+  has_many   :test_results, :dependent => :destroy
   
   def self.create_by_timestamp(grouping, timestamp)
      if !timestamp.kind_of? Time
@@ -127,6 +128,22 @@ class Submission < ActiveRecord::Base
       new_file.path = file.path
       new_file.save
     end 
+  end
+
+  #=== Description
+  # Helper class method to find a submission by providing a group_name and
+  # and an assignment short identifier.
+  #=== Returns
+  # nil if no such submission exists.
+  def self.get_submission_by_group_and_assignment(group_n, ass_si)
+    assignment = Assignment.find_by_short_identifier(ass_si)
+    group = Group.find_by_group_name(group_n)
+    if !assignment.nil? && !group.nil?
+      grouping = group.grouping_for_assignment(assignment.id)
+      return grouping.get_submission_used
+    else
+      return nil
+    end
   end
   
   private

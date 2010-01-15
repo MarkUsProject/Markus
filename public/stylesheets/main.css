@@ -361,6 +361,15 @@ input, .button, .button_2{
   padding: 4px 25px;
 }
 
+input[disabled]{
+  background: #DDDDDD;
+  color: #AAAAAA;
+}
+input[disabled]:hover {
+  background: #DDDDDD;
+  color: #AAAAAA;
+}
+
 select{
    text-transform: capitalize;
    padding: 0 2px;
@@ -1063,6 +1072,73 @@ span.title{
   margin-bottom: 5px;
 
 }
+/* Submissions table */
+td#thinking_table_row {
+ text-align: center;
+}
+
+
+.ap_filters {
+  float: right;
+  padding: 5px;
+}
+.ap_page_links {
+  float: right;
+}
+.ap_selector {
+  float: left;
+}
+#ap_select_all_div {
+  border: 1px solid #000000; 
+  background: #FFFFE0; 
+  text-align: center; 
+  padding: 5px;
+}
+#ap_select_full_div {
+  border: 1px solid #000000; 
+  background: #FFFFE0; 
+  text-align: center; 
+  padding: 5px;
+}
+
+.ap_prev_link {
+  margin-right: 15px;
+}
+
+.ap_next_link {
+  margin-left: 15px;
+}
+
+th.ap_sorting_by {
+  color: #000;
+  background-image: url(../images/icons/bullet_arrow_up.png);
+  background-repeat: no-repeat;
+  background-position: left;
+  padding-left: 1.3em;
+}
+
+th.ap_sorting_by a {
+  color: #000;
+  font-weight: bold;
+  background: none;
+}
+
+th.ap_sorting_by_desc {
+  color: #000;
+  background-image: url(../images/icons/bullet_arrow_down.png);
+  background-repeat: no-repeat;
+  background-position: left;
+  padding-left: 1.3em;
+}
+
+.ap_nav_box {
+  width: 100%; 
+  border: 1px solid #DDDDDD; 
+  padding: 5px 0px;
+}
+
+/* end Submissions table */
+
 /* Submission's file_manager*/
 th#FilterTable_header_filename{
   width: 30%;
@@ -1185,7 +1261,6 @@ a img{
 /* Rubric Criteria view*/
 #rubric_criteria_pane, #flexible_criteria_pane, #annotation_category_pane {
    float: left;
-   width: 25%;
    padding: 0px 2%;
 }
 
@@ -1496,3 +1571,23 @@ fieldset.disabled{
   display: none;
 }
 
+#api_key_box {
+  padding: 10px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border: 1px solid #ccc;
+  overflow: auto;
+}
+
+div#test_results_controls {
+  display: inline;
+  margin-left: 30px;
+}
+
+form#grader_view_file_selector_form {
+  display: inline;
+}
+
+pre#test_result_content {
+  font-size: 1.3em;
+}

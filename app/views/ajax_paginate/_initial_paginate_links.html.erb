@@ -1,0 +1,64 @@
+<% 
+   # Required:  :per_page, :current_page, :page_items, :total_items, :assignment, :filter
+   current_page_low = (per_page.to_i * (current_page.to_i - 1)) + 1
+   current_page_high = current_page_low + page_items.to_i - 1
+   last_page = total_items / per_page.to_i + 1
+%>
+
+<%= link_to_remote "<< First", :url => {
+      :action => 's_table_paginate', 
+      :id => assignment.id, 
+      :filter => filter, 
+      :page => 1, 
+      :per_page => per_page, 
+      :sort_by => sort_by
+    }, 
+    :before => "ap_thinking_start();", 
+    :complete => "ap_thinking_stop();" %>
+
+<span class="ap_prev_link">
+<% if current_page_low > 1 %>
+  <%= link_to_remote "< Prev", :url => {
+        :action => 's_table_paginate', 
+        :id => assignment.id, 
+        :filter => filter, 
+        :page => current_page - 1, 
+        :per_page => per_page, 
+        :sort_by => sort_by
+      }, 
+      :before => "ap_thinking_start();", 
+      :complete => "ap_thinking_stop();" %>       
+<% else %>
+  < Prev
+<% end %>
+</span>
+
+<strong><%= current_page_low %> - <%= current_page_high %> of <%= total_items %></strong>
+
+<span class="ap_next_link">
+<% if current_page_high < total_items %>
+  <%= link_to_remote "Next >", :url => {
+        :action => 's_table_paginate', 
+        :id => assignment.id, 
+        :filter => filter, 
+        :page => current_page + 1, 
+        :per_page => per_page, 
+        :sort_by => sort_by
+      }, 
+      :before => "ap_thinking_start();", 
+      :complete => "ap_thinking_stop();" %>
+<% else %>
+Next >
+<% end %>
+</span>
+
+<%= link_to_remote "Last >>", :url => {
+       :action => 's_table_paginate', 
+       :id => assignment.id, 
+       :filter => filter, 
+       :page => last_page, 
+       :per_page => per_page, 
+       :sort_by => sort_by
+    }, 
+    :before => "ap_thinking_start();", 
+    :complete => "ap_thinking_stop();" %>

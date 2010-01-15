@@ -1,11 +1,11 @@
 require File.dirname(__FILE__) + '/authenticated_controller_test'
-
 require 'shoulda'
+require 'fastercsv'
 
 class GroupsControllerTest < AuthenticatedControllerTest
   
   context "An authenticated and authorized student doing a " do
-    fixtures :users
+    fixtures :users, :assignments
     
     setup do
       @student = users(:student1)
@@ -103,6 +103,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
       @admin = users(:olm_admin_1)
       @assignment = assignments(:assignment_1)
       @grouping = groupings(:grouping_4)
+      setup_group_fixture_repos
     end
     
     context "GET on :manage" do
@@ -237,7 +238,6 @@ class GroupsControllerTest < AuthenticatedControllerTest
     
     context "POST on :use_another_assignment_groups" do
       setup do
-        setup_group_fixture_repos
         target_assignment = assignments(:assignment_3)
         post_as @admin, :use_another_assignment_groups, {:id => target_assignment.id, :clone_groups_assignment_id => @assignment.id}
       end
@@ -632,10 +632,80 @@ class GroupsControllerTest < AuthenticatedControllerTest
       
     end #:add_member
     
+    context "GET on download_grouplist" do
+      setup do
+        setup_group_fixture_repos
+        @assignment = assignments(:assignment_1)
+      end
+      
+      context "with no groups" do
+        setup do
+          @assignment.groupings.destroy_all
+          @response = get_as @admin, :download_grouplist, {:id => @assignment.id}
+        end
+        should_respond_with :success
+        should "be an empty file returned" do
+          assert @response.body.empty?
+        end
+      end # with no groups
+      
+      context "with groups, but no TAs assigned" do
+        setup do
+          # Construct the array that a parse of the returned CSV
+          # *should* return
+          @match_array = construct_group_list_array(@assignment.groupings)
+          @response = get_as @admin, :download_grouplist, {:id => @assignment.id}
+        end
+        should_respond_with :success
+        should "not be an empty file returned" do
+          assert !@response.body.empty?
+        end
+        should "return the expected CSV" do
+          assert_equal @match_array, FasterCSV.parse(@response.body)
+        end
+      end # with groups, but no TAs assigned
+      
+      context "with groups, with TAs assigned" do
+        setup do
+          @ta1 = users(:ta1)
+          @ta2 = users(:ta2)
+          # For each grouping for Assignment 1, assign 2 TAs
+          @assignment.groupings.each do |grouping|
+            grouping.add_tas_by_user_name_array([@ta1.user_name, @ta2.user_name])
+          end
+          @assignment.groupings.reload
+          @match_array = construct_group_list_array(@assignment.groupings)
+          @response = get_as @admin, :download_grouplist, {:id => @assignment.id}
+        end
+        should_respond_with :success
+        should "not be an empty file returned" do
+          assert !@response.body.empty?
+        end
+        should "return the expected CSV, without TAs included" do
+          assert_equal @match_array, FasterCSV.parse(@response.body)
+        end
+      end # with groups, with TAs assigned
+
+    end
   end #admin context
   
   def post_add(user_name)
     post_as @admin, :add_member, {:id => @assignment.id, :grouping_id => @grouping.id, :student_user_name => user_name}
   end
+
+  def construct_group_list_array(groupings)
+    match_array = Array.new
+    groupings.each do |grouping|
+      grouping_array = Array.new
+      grouping_array.push(grouping.group.group_name)
+      grouping_array.push(grouping.group.repo_name)
+      grouping.student_memberships.each do |student_membership|
+        grouping_array.push(student_membership.user.user_name)
+      end
+      match_array.push(grouping_array)
+    end
+    return match_array
+  end  
+
 
 end

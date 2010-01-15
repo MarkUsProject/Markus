@@ -7,7 +7,27 @@ module SubmissionsHelper
       return current_user.accepted_grouping_for(assignment_id)
     end
   end
-  
+
+  def set_release_on_results(groupings, release, errors)
+    changed = 0
+    groupings.each do |grouping|
+      begin
+        raise "#{grouping.group.group_name} had no submission" if !grouping.has_submission?     
+        submission = grouping.get_submission_used
+        raise "#{grouping.group.group_name} had no result" if !submission.has_result?
+        raise "Can not release result for #{grouping.group.group_name}: the marking state is not complete" if submission.result.marking_state != Result::MARKING_STATES[:complete]
+        submission.result.released_to_students = release
+        if !submission.result.save
+          raise "#{grouping.group.group_name}'s submission result could not be saved"
+        end
+        changed += 1
+      rescue Exception => e
+        errors.push(e.message)
+      end
+    end
+    return changed
+  end
+    
   def construct_file_manager_dir_table_row(directory_name, directory)
     table_row = {}
     table_row[:id] = directory.id
@@ -44,45 +64,6 @@ module SubmissionsHelper
     return result
   end
   
-  
- def construct_submissions_table_row(grouping, assignment)
-    table_row = {}
-    table_row[:id] = grouping.id
-   table_row[:filter_table_row_contents] = render_to_string :partial => 'submissions/submissions_table_row/filter_table_row', :locals => {:grouping => grouping, :assignment => assignment}
-    
-    table_row[:group_name] = grouping.group.group_name
-  
-    table_row[:repository] = grouping.group.repository_name
-
-    if !@details.nil?
-      assignment.rubric_criteria.each_with_index do |criterion, index|
-        if grouping.has_submission?
-          mark = grouping.get_submission_used.result.marks.find_by_markable_id_and_markable_type(criterion.id, criterion.class.name)
-          if mark.nil? || mark.mark.nil?
-            table_row['criterion_' + index.to_s] = '0'
-          else
-            table_row['criterion_' + index.to_s] = mark.mark
-          end
-        else
-          table_row['criterion_' + index.to_s] = '0'
-        end
-      end
-    end
-
-    if grouping.has_submission?
-      table_row[:marking_state] = grouping.get_submission_used.result.marking_state
-      table_row[:final_grade] = grouping.get_submission_used.result.total_mark
-      table_row[:released] = grouping.get_submission_used.result.released_to_students
-      table_row[:commit_date] = grouping.get_submission_used.revision_timestamp.strftime(LONG_DATE_TIME_FORMAT)
-    else
-      table_row[:marking_state] = '-'
-      table_row[:final_grade] = '-'
-      table_row[:released] = '-'
-      table_row[:commit_date] = '-'
-    end
-    return table_row
-  end
-
   def construct_repo_browser_table_row(file_name, file)
     table_row = {}
     table_row[:id] = file.id
@@ -113,13 +94,6 @@ module SubmissionsHelper
     return result
   end
 
-  def construct_submissions_table_rows(groupings)
-    result = {}
-    groupings.each do |grouping|
-      result[grouping.id] = construct_submissions_table_row(grouping)
-    end
-    return result
-  end
   
   def sanitize_file_name(file_name)
     # If file_name is blank, return the empty string

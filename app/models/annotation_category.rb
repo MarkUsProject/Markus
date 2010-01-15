@@ -20,6 +20,7 @@ class AnnotationCategory < ActiveRecord::Base
       annotation_category = AnnotationCategory.new
       annotation_category.annotation_category_name = annotation_category_name
       annotation_category.assignment = assignment
+      annotation_category.save
     end
     
     row.each do |annotation_text_content|

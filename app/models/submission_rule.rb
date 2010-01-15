@@ -63,6 +63,10 @@ class SubmissionRule < ActiveRecord::Base
     raise NotImplementedError.new("SubmissionRule:  description_of_rule not implemented")
   end
   
+  def grader_tab_partial(grouping)
+    raise NotImplementedError.new("SubmissionRule:  render_grader_tab not implemented")
+  end
+  
   private
   
   def calculate_overtime_hours_from(from_time)

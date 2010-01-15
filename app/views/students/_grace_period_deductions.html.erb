@@ -1,0 +1,26 @@
+<table>
+  <thead>
+    <th>
+      <%= t('submission_rules.grace_period_submission_rule.credits') %>
+    </th>
+    <th colspan="2">
+      <%= t('short_identifier') %>
+    </th>
+  </thead>
+  <% grace_period_deductions.each do |grace_period_deduction| %>
+  <tr>
+    <td>
+      <%= grace_period_deduction.deduction %> credits
+    </td>
+    <td>
+      <% if grace_period_deduction.membership.grouping.has_submission? %>
+        <%= link_to h(grace_period_deduction.membership.grouping.assignment.short_identifier), :controller => 'results', :action => 'edit', :id => grace_period_deduction.membership.grouping.get_submission_used.result.id%>
+      <% end %>
+    </td>
+    <td>
+      <%= link_to_remote t('submission_rules.grace_period_submission_rule.remove_deduction'), :url => {:action => 'delete_grace_period_deduction', :id => grace_period_deduction.id }, :confirm => t('submission_rules.grace_period_submission_rule.confirm_remove_deduction') %>
+    </td>
+  </tr>
+  <% end %>
+</table>
+

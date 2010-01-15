@@ -18,6 +18,7 @@ class Grouping < ActiveRecord::Base
   has_many :pending_students, :class_name => 'Student', :through => :student_memberships, :conditions => {'memberships.membership_status' => StudentMembership::STATUSES[:pending]}, :source => :user
   
   has_many :submissions
+  has_many :grace_period_deductions, :through => :student_memberships
   
   named_scope :approved_groupings, :conditions => {:admin_approved => true}
     
@@ -159,6 +160,10 @@ class Grouping < ActiveRecord::Base
     end
     return total.min
   end
+  
+  def grace_period_deduction_sum
+    return grace_period_deductions.sum('deduction')
+  end
 
   # Submission Functions
   def has_submission?
@@ -231,14 +236,15 @@ class Grouping < ActiveRecord::Base
   
   # If a group is invalid OR valid and the user is the inviter of the group and
   # she is the _only_ member of this grouping it should be deletable
-  # by this user, provided there haven't been any files submitted. This is mostly
-  # relevant for courses in which group sizes up to 2 is allowed.
+  # by this user, provided there haven't been any files submitted. Additionally,
+  # the grace period for the assignment should not have passed.
   def deletable_by?(user)
     return false unless self.inviter == user
     return (!self.is_valid?) || (self.is_valid? &&
-                                self.accepted_students.size == 1 &&
-                                self.number_of_submitted_files == 0 &&
-                                self.assignment.group_assignment?)
+                                 self.accepted_students.size == 1 &&
+                                 self.number_of_submitted_files == 0 &&
+                                 self.assignment.group_assignment? &&
+                                 !assignment.past_collection_date? )
   end
 
   # Returns the number of files submitted by this grouping for a

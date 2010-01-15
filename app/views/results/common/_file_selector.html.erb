@@ -2,7 +2,7 @@
    # file when using this partial 
 %>
 <div id="file_selector">
-<%= form_tag({:action => "download"}) if can_download %>
+<%= form_tag({:action => "download"}, {:id => "grader_view_file_selector_form"}) if can_download %>
   Submission File: 
   <input type="button" onClick="bump_select($('select_file_id'), -1); return false;" value="<-" />
   <select id="select_file_id" name="select_file_id" onChange="if ($(this).getValue() != '') { load_submitted_file($(this).getValue()); }">
@@ -21,5 +21,24 @@
   </span>
    <%= submit_tag "Download" if can_download && !files.empty? %>
 <%= "</form>" if can_download%>
+
+<div id="test_results_controls">
+  Test Results:
+  <select id="select_test_result_id" onchange="if ($(this).getValue() != '') { load_test_result($(this).getValue()); }">
+    <% if test_result_files.empty? %>
+      <option value=""><%= I18n.t("test_result.no_files_available")%></option>
+    <% end %>
+    <% test_result_files.each do |file| %>
+        <option value="<%= h(file.id) %>">
+          <%= h(file.filename) %>
+        </option>
+    <% end %>
+  </select>  
+  <input type="button" onclick="if ($('select_test_result_id').getValue() != '') { load_test_result($('select_test_result_id').getValue()); }"
+      value="<%= I18n.t("test_result.button.load")%>" />
+  <span id="loading_test_result" style="display:none;">
+    <%=image_tag('spinner.gif')%> <%= I18n.t("test_result.loading_message")%>
+  </span>
+</div>
   
 </div>

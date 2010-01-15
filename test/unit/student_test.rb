@@ -10,6 +10,10 @@ class StudentTest < ActiveSupport::TestCase
   should_have_many :student_memberships
   should_have_many :grace_period_deductions
 
+  def setup
+    setup_group_fixture_repos
+  end
+
   # Update tests ---------------------------------------------------------
 
   # These tests are for the CSV/YML upload functions.  They're testing
@@ -336,7 +340,7 @@ exist_student,USER2,USER2"
 
       student_id_list = [student1.id, student2.id]
 
-      #TODO est the repo with mocks
+      #TODO test the repo with mocks
       assert Student.unhide_students(student_id_list)
 
       students = Student.find(student_id_list)

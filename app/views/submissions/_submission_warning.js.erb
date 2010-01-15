@@ -1,21 +1,21 @@
 <script type="text/javascript" language="Javascript">
+var onbeforeunload_flag = false;
 
-var submitted = false;
-var disableWarning = false;
-
-function closeit() {
-        if (!submitted && !disableWarning) 
-            return '<%=I18n.t('nochange_warning')%>';
-	else
-	    return ;
-}                                                                                                              
-function confirmation(message){
-       var answer = confirm('<%=I18n.t('discardchanges_message')%>');	
-       disableWarning = true;
+function set_onbeforeunload(value) {
+  onbeforeunload_flag = value;
 }
 
-if (!submitted && !disableWarning) {
-   window.onbeforeunload = closeit;
+function show_confirmation(evt) {
+  if (onbeforeunload_flag) {
+    <%
+    # This sets an additional message shown to the user when
+    # he intends to navigate away and cancels the request if
+    # 'Cancel' is pressed by the user.
+    %>
+    evt.returnValue = '<%= I18n.t('uncommitted_changes_warning') %>';
+  }
 }
 
+// register basic handler
+window.onbeforeunload = show_confirmation;
 </script>
