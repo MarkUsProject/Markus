@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091127212046) do
+ActiveRecord::Schema.define(:version => 20100102142037) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -66,7 +66,7 @@ ActiveRecord::Schema.define(:version => 20091127212046) do
     t.boolean  "instructor_form_groups"
     t.float    "results_average"
     t.string   "marking_scheme_type",      :default => "rubric"
-    t.boolean  "allow_web_submits"
+    t.boolean  "allow_web_submits",        :default => true
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true
@@ -92,7 +92,7 @@ ActiveRecord::Schema.define(:version => 20091127212046) do
     t.datetime "updated_at"
   end
 
-  add_index "flexible_criteria", ["assignment_id", "flexible_criterion_name"], :name => "index_flexible_criteria_on_assignment_id_and_name", :unique => true
+  add_index "flexible_criteria", ["assignment_id", "flexible_criterion_name"], :name => "index_flexible_criteria_on_assignment_id_and_flexible_criterion", :unique => true
   add_index "flexible_criteria", ["assignment_id"], :name => "index_flexible_criteria_on_assignment_id"
 
   create_table "grace_period_deductions", :force => true do |t|
@@ -133,7 +133,7 @@ ActiveRecord::Schema.define(:version => 20091127212046) do
     t.datetime "updated_at"
   end
 
-  add_index "grade_entry_students", ["user_id", "grade_entry_form_id"], :name => "index_grade_entry_students_on_user_id_and_grade_entry_form_id", :unique => true
+  add_index "grade_entry_students", ["grade_entry_form_id", "user_id"], :name => "index_grade_entry_students_on_user_id_and_grade_entry_form_id", :unique => true
 
   create_table "grades", :force => true do |t|
     t.integer  "grade_entry_item_id"
@@ -171,7 +171,7 @@ ActiveRecord::Schema.define(:version => 20091127212046) do
     t.string   "markable_type"
   end
 
-  add_index "marks", ["markable_id", "result_id", "markable_type"], :name => "marks_u1", :unique => true
+  add_index "marks", ["markable_id", "markable_type", "result_id"], :name => "marks_u1", :unique => true
 
   create_table "memberships", :force => true do |t|
     t.integer  "user_id"
@@ -277,6 +277,17 @@ ActiveRecord::Schema.define(:version => 20091127212046) do
 
   add_index "submissions", ["grouping_id"], :name => "index_submissions_on_grouping_id"
 
+  create_table "test_results", :force => true do |t|
+    t.string   "filename"
+    t.text     "file_content"
+    t.integer  "submission_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "test_results", ["filename"], :name => "index_test_results_on_filename"
+  add_index "test_results", ["submission_id"], :name => "index_test_results_on_submission_id"
+
   create_table "users", :force => true do |t|
     t.string   "user_name",                        :null => false
     t.string   "last_name"
@@ -286,6 +297,8 @@ ActiveRecord::Schema.define(:version => 20091127212046) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "hidden",        :default => false, :null => false
+    t.string   "api_key"
+    t.string   "api_key_md5"
   end
 
   add_index "users", ["user_name"], :name => "index_users_on_user_name", :unique => true

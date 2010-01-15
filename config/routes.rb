@@ -40,7 +40,13 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'main', :controller => 'main', :action => 'index'
   map.connect 'main/about', :controller => 'main', :action => 'about'
   map.connect 'main/logout', :controller => 'main', :action => 'logout'
+
+  # API routes
+  map.namespace :api do |api|
+    api.resource :test_results
+  end
+  #map.connect 'api/test_results/:action/:id', :controller => 'test_results', :namespace => 'api'
   
-  # generic connects
+  # Generic connects
   map.connect 'main/:controller/:action/:id'
 end

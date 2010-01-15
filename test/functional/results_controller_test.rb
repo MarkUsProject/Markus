@@ -46,6 +46,13 @@ class ResultsControllerTest < AuthenticatedControllerTest
       should_respond_with :redirect
     end
     
+    context "GET on :update_overall_comment" do
+      setup do
+        get :update_overall_comment, :id => 1
+      end
+      should_respond_with :redirect
+    end
+    
     context "GET on :download" do
       setup do
         get :download, :select_file_id => 1
@@ -123,6 +130,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
     
     setup do
       @student = users(:student1)
+      @result = results(:result_5)
       @assignment = assignments(:assignment_5)
     end
     
@@ -164,6 +172,32 @@ class ResultsControllerTest < AuthenticatedControllerTest
       end
       should_respond_with :missing
       should_render_template 404
+    end
+    
+    context "GET on :update_overall_comment" do
+      setup do
+        @new_comment = 'a changed overall comment!'
+        get_as @student, :update_overall_comment, :id => @result.id, :result => {:overall_comment => @new_comment}
+      end
+      should_respond_with :missing
+      should_render_template 404
+      should "not have changed the overall comment" do
+        @result.reload
+        assert_not_equal @result.overall_comment, @new_comment
+      end
+    end
+    
+    context "POST on :update_overall_comment" do
+      setup do
+        @new_comment = 'a changed overall comment!'
+        post_as @student, :update_overall_comment, :id => @result.id, :result => {:overall_comment => @new_comment}
+      end
+      should_respond_with :missing
+      should_render_template 404
+      should "not have changed the overall comment" do
+        @result.reload
+        assert_not_equal @result.overall_comment, @new_comment
+      end
     end
     
     context "GET on :download" do
@@ -570,6 +604,18 @@ class ResultsControllerTest < AuthenticatedControllerTest
       should_respond_with :success
     end
     
+    context "POST on :update_overall_comment" do
+      setup do
+        @result = results(:result_5)
+        @overall_comment = "A new overall comment!"
+        post_as @admin, :update_overall_comment, :id => @result.id, :result => {:overall_comment => @overall_comment}
+      end
+      should "update the overall comment" do
+        @result.reload
+        assert_equal @result.overall_comment, @overall_comment
+      end
+    end
+    
   end # An authenticated and authorized admin doing a
   
   context "An authenticated and authorized TA doing a" do
@@ -838,6 +884,18 @@ class ResultsControllerTest < AuthenticatedControllerTest
       should_respond_with :success
     end
     
+    context "POST on :update_overall_comment" do
+      setup do
+        @result = results(:result_5)
+        @overall_comment = "A new overall comment!"
+        post_as @ta, :update_overall_comment, :id => @result.id, :result => {:overall_comment => @overall_comment}
+      end
+      should "update the overall comment" do
+        @result.reload
+        assert_equal @result.overall_comment, @overall_comment
+      end
+    end
+
   end # An authenticated and authorized TA doing a
   
 end

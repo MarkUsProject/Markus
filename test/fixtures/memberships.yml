@@ -136,4 +136,12 @@ membership_6:
    type:               TAMembership
    created_at:         <%= Time.now.to_s(:db)%>
    updated_at:         <%= Time.now.to_s(:db)%>   
-   
+
+membership_2:
+   user_id:            <%= Fixtures.identify(:ta3) %>
+   grouping_id:        <%= Fixtures.identify(:grouping_6) %>
+   membership_status:
+   type:               TAMembership
+   created_at:         <%= Time.now.to_s(:db)%>
+   updated_at:         <%= Time.now.to_s(:db)%>
+

@@ -7,4 +7,7 @@
 </div>
 <div class="wrapLeft">
 <p><%= h(@current_user.first_name) %>, <%= I18n.t(:welcome_to_markus) %></p>
+  <div class="section">
+    <%= render :partial => "api/key_display", :locals => { :user => @current_user } %>
+  </div>
 </div>

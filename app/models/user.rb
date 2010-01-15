@@ -1,4 +1,5 @@
 require 'fastercsv'
+require 'digest' # required for set_api_token
 
 # We always assume the following fields exists:
 # => :user_name, :last_name, :first_name
@@ -62,22 +63,23 @@ class User < ActiveRecord::Base
       pipe = IO.popen(VALIDATE_FILE, "w+")
       pipe.puts("#{login}\n#{password}") # write to stdin of markus_config_validate
       pipe.close
-      @logger = MarkusLogger.instance
+      m_logger = MarkusLogger.instance
       case $?.exitstatus
         when 0
-          @logger.log("User #{login} logged in",MarkusLogger::INFO)
+          m_logger.log(I18n.t("markus_logger.user_login_message", :user_name => login), MarkusLogger::INFO)
           return AUTHENTICATE_SUCCESS
         when 1
-          @logger.log("Wrong username/password: #{login}",MarkusLogger::ERROR)
+          m_logger.log(I18n.t("markus_logger.user_wrong_credentials", :user_name => login), MarkusLogger::ERROR)
           return AUTHENTICATE_NO_SUCH_USER
         when 2
-          @logger.log("Wrong username/password: #{login}",MarkusLogger::ERROR)
+          m_logger.log(I18n.t("markus_logger.user_wrong_credentials", :user_name => login), MarkusLogger::ERROR)
           return AUTHENTICATE_BAD_PASSWORD
         else
-          @logger.log("Error while logging in user: #{login}",MarkusLogger::ERROR)
+          m_logger.log(I18n.t("markus_logger.user_login_error", :user_name => login),MarkusLogger::ERROR)
           return AUTHENTICATE_ERROR
       end
     else
+      m_logger.log(I18n.t("markus_logger.user_login_error", :user_name => login),MarkusLogger::ERROR)
       return AUTHENTICATE_BAD_CHAR
     end
   end
@@ -151,7 +153,7 @@ class User < ActiveRecord::Base
     return result
   end
 
- def self.add_user(user_class, row)
+  def self.add_user(user_class, row)
     # convert each line to a hash with FIELDS as corresponding keys
     # and create or update a user with the hash values
     #return nil if values.length < UPLOAD_FIELDS.length
@@ -172,6 +174,41 @@ class User < ActiveRecord::Base
     end
     
     return current_user
+  end
+
+  # Set API key for user model. The key is a
+  # SHA2 512 bit long digest. The MD5 digest converted
+  # to a string is used for lookup and transfer token
+  # over the wire.
+  def set_api_key
+    if self.api_key.nil? 
+      key = generate_api_key
+      self.api_key = key
+      md5 = Digest::MD5.new
+      md5.update(key)
+      self.api_key_md5 = md5.to_s
+      return self.save
+    else
+      return true
+    end
+  end
+
+  # Resets the api key. Usually triggered, if the
+  # old md5 hash has gotten into the wrong hands.
+  def reset_api_key
+    key = generate_api_key
+    self.api_key = key
+    md5 = Digest::MD5.new
+    md5.update(key)
+    self.api_key_md5 = md5.to_s
+    return self.save
+  end
+
+  private
+  def generate_api_key
+    digest = Digest::SHA2.new(bitlen=512)
+    # generate a unique token
+    return digest.update(Time.now.to_s).to_s
   end
 end
 

@@ -2,17 +2,14 @@ class ResultsController < ApplicationController
   before_filter      :authorize_only_for_admin, :except => [:codeviewer, :edit, :update_mark, :view_marks,
                         :create, :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria,
                         :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria, :update_marking_state,
-                        :download, :note_message]
+                        :download, :note_message, :render_test_result]
   before_filter      :authorize_for_ta_and_admin, :only => [:edit, :update_mark, :create, :add_extra_mark,
                         :download, :next_grouping, :update_overall_comment, :expand_criteria,
                         :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria,
                         :update_marking_state, :note_message]
-  before_filter      :authorize_for_user, :only => [:codeviewer]
+  before_filter      :authorize_for_user, :only => [:codeviewer, :render_test_result]
   before_filter      :authorize_for_student, :only => [:view_marks]
   
-  def index
-  end
-
   def note_message
     @result = Result.find(params[:id])
     if params[:success]
@@ -32,6 +29,7 @@ class ResultsController < ApplicationController
     @grouping = @result.submission.grouping
     @group = @grouping.group
     @files = @submission.submission_files
+    @test_result_files = @submission.test_results
     @first_file = @files.first
     @extra_marks_points = @result.extra_marks.points
     @extra_marks_percentage = @result.extra_marks.percentage
@@ -44,9 +42,8 @@ class ResultsController < ApplicationController
 
     # Get the previous and the next submission
     if current_user.ta?
-       groupings = []
-       @assignment.ta_memberships.find_all_by_user_id(current_user.id).each do |membership|
-         groupings.push(membership.grouping)
+       groupings = @assignment.ta_memberships.find_all_by_user_id(current_user.id).collect do |m|       
+         m.grouping
        end
     end
 
@@ -71,12 +68,19 @@ class ResultsController < ApplicationController
     end
     
     current_grouping_index = groupings.index(@grouping)
-    if !groupings[current_grouping_index + 1].nil?
-      @next_grouping = groupings[current_grouping_index + 1]
+    if current_grouping_index.nil?
+      @next_grouping = groupings.first
+      @previous_grouping = groupings.last
+    else
+      if !groupings[current_grouping_index + 1].nil?
+        @next_grouping = groupings[current_grouping_index + 1]
+      end
+      if (current_grouping_index - 1) >= 0
+        @previous_grouping = groupings[current_grouping_index - 1]
+      end
     end
-    if (current_grouping_index - 1) >= 0
-      @previous_grouping = groupings[current_grouping_index - 1]
-    end
+    m_logger = MarkusLogger.instance
+    m_logger.log(I18n.t("markus_logger.user_viewed_submission", :user_name => current_user.user_name, :group_name => @group.group_name, :submission_id => @submission.id, :assignment => @assignment.short_identifier))
 
   end
 
@@ -95,6 +99,17 @@ class ResultsController < ApplicationController
     @result.released_to_students = released_to_students
     @result.save
     @result.submission.assignment.set_results_average
+    m_logger = MarkusLogger.instance
+    assignment = @result.submission.assignment
+    if params[:value] == 'true'
+      m_logger.log(I18n.t("markus_logger.marks_released_for_assignment",
+                            :assignment_id => assignment.id,
+                            :assignment => assignment.short_identifier, :number_groups => 1))
+    else
+      m_logger.log(I18n.t("markus_logger.marks_unreleased_for_assignment",
+                            :assignment_id => assignment.id,
+                            :assignment => assignment.short_identifier, :number_groups => 1))
+    end
   end
   
   #Updates the marking state
@@ -147,14 +162,45 @@ class ResultsController < ApplicationController
     @code_type = @file.get_file_type
     render :action => 'results/common/codeviewer'
   end
+
+  #=== Description
+  # Action called via Rails' remote_function from the test_result_window partial
+  # Prepares test result and updates content in window.
+  def render_test_result
+    @assignment = Assignment.find(params[:id])
+    @test_result = TestResult.find(params[:test_result_id])
+      
+    # Students can use this action only, when marks have been released
+    if current_user.student? &&
+        (@test_result.submission.grouping.membership_status(current_user).nil? ||
+        @test_result.submission.result.released_to_students == false)
+      render :partial => 'shared/handle_error',
+       :locals => {:error => I18n.t('test_result.error.no_access', :test_result_id => @test_result.id)}
+      return
+    end
+    
+    render :action => 'results/render_test_result', :layout => "plain"
+  end
   
   def update_mark
     result_mark = Mark.find(params[:mark_id])
     mark_value = params[:mark]
     result_mark.mark = mark_value
+    submission = result_mark.result.submission  # get submission for logging
+    group = submission.grouping.group           # get group for logging
+    assignment = submission.grouping.assignment # get assignment for logging
+    m_logger = MarkusLogger.instance
     if !result_mark.save
+      m_logger.log(I18n.t('markus_logger.user_update_mark_submission_fail',
+                    { :user_name => current_user.user_name, 
+                      :submission_id => submission.id, :group_name => group.group_name,
+                      :assignment => assignment.short_identifier}), MarkusLogger::INFO)
       render :partial => 'shared/handle_error', :locals => {:error => I18n.t('mark.error.save') + result_mark.errors}
     else
+      m_logger.log(I18n.t('markus_logger.user_update_mark_submission',
+                    { :user_name => current_user.user_name, 
+                      :submission_id => submission.id, :group_name => group.group_name,
+                      :assignment => assignment.short_identifier}), MarkusLogger::ERROR)
       render :partial => 'results/marker/update_mark',
              :locals => { :result_mark => result_mark, :mark_value => mark_value}
     end
@@ -186,6 +232,7 @@ class ResultsController < ApplicationController
     @annotation_categories = @assignment.annotation_categories
     @group = @grouping.group
     @files = @submission.submission_files
+    @test_result_files = @submission.test_results
     @first_file = @files.first
     @extra_marks_points = @result.extra_marks.points
     @extra_marks_percentage = @result.extra_marks.percentage
@@ -195,6 +242,9 @@ class ResultsController < ApplicationController
       mark.save(false)
       @marks_map[criterion.id] = mark
     end
+    m_logger = MarkusLogger.instance
+    m_logger.log(I18n.t('markus_logger.student_viewed_result', :user_name => current_user.user_name,
+                                                      :assignment => @assignment.short_identifier))
   end
   
   def add_extra_mark
@@ -224,6 +274,12 @@ class ResultsController < ApplicationController
     render :action => 'results/marker/remove_extra_mark'
   end
   
+  def update_overall_comment
+    @result = Result.find(params[:id])
+    @result.overall_comment = params[:result][:overall_comment]
+    @result.save
+  end
+  
   def expand_criteria
     @assignment = Assignment.find(params[:aid])
     @rubric_criteria = @assignment.rubric_criteria
@@ -244,6 +300,12 @@ class ResultsController < ApplicationController
     # unmarked.
     @nil_marks = @result.marks.all(:conditions => {:mark => nil})
     render :partial => 'results/marker/expand_unmarked_criteria', :locals => {:nil_marks => @nil_marks}
+  end
+  
+  def delete_grace_period_deduction
+    @grouping = Grouping.find(params[:id])
+    grace_deduction = GracePeriodDeduction.find(params[:deduction_id])
+    grace_deduction.destroy
   end
   
   private

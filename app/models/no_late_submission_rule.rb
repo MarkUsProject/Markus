@@ -35,5 +35,8 @@ class NoLateSubmissionRule < SubmissionRule
   def description_of_rule
     I18n.t 'submission_rules.no_late_submission_rule.description'
   end
-
+  
+  def grader_tab_partial
+    return 'submission_rules/no_late/grader_tab'
+  end
 end

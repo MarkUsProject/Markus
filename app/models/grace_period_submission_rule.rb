@@ -94,6 +94,10 @@ class GracePeriodSubmissionRule < SubmissionRule
     I18n.t 'submission_rules.grace_period_submission_rule.description'
   end
 
+  def grader_tab_partial
+    return 'submission_rules/grace_period/grader_tab'
+  end
+
   private 
   
   def hours_sum

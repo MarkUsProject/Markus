@@ -116,5 +116,13 @@ class StudentsController < ApplicationController
     end
     redirect_to :action => 'index'
   end  
+  
+  def delete_grace_period_deduction
+    grace_deduction = GracePeriodDeduction.find(params[:id])
+    student_id = grace_deduction.membership.user.id
+    grace_deduction.destroy
+    student = Student.find(student_id)
+    @grace_period_deductions = student.grace_period_deductions
+  end
  
 end

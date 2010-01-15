@@ -49,4 +49,8 @@ grouping_flexible_1:
 grouping_flexible_2:
    group_id: <%= Fixtures.identify(:group_6) %>
    assignment_id: <%= Fixtures.identify(:flexible_assignment_2) %>
+
+grouping_test_result1:
+   group_id: <%= Fixtures.identify(:group_test_result1) %>
+   assignment_id: <%= Fixtures.identify(:assignment_test_result1) %>
    

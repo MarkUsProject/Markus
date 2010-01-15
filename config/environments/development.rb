@@ -24,6 +24,7 @@ config.gem 'selenium-client', :version => ">=1.2.15", :lib => false
 config.gem 'thoughtbot-shoulda', :version => ">=2.10.2", :source => "http://gems.github.com", :lib => false
 config.gem 'fastercsv', :lib => false
 config.gem 'ruby-debug', :lib => false
+config.gem 'will_paginate', :lib => false
 
 require 'ruby-debug'
 
@@ -60,7 +61,7 @@ REPOSITORY_TYPE = "svn" # use Subversion as storage backend
 ###################################################################
 # Directory where Repositories will be created. Make sure MarkUs is allowed
 # to write to this directory
-REPOSITORY_STORAGE = "/home/severin/trash/markus/test-repos"
+REPOSITORY_STORAGE = "/home/markus/svn-repos-root"
 
 ###################################################################
 # Change this to 'REPOSITORY_EXTERNAL_SUBMITS_ONLY = true' if you

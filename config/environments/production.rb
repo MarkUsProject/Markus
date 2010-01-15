@@ -32,7 +32,7 @@ config.action_mailer.raise_delivery_errors = false
 # because we don't want them to be loaded just yet)
 # Install them by using "rake gems:install"
 config.gem 'fastercsv', :lib => false
-
+config.gem 'will_paginate', :lib => false
 
 ###################################################################
 # MarkUs SPECIFIC CONFIGURATION
@@ -67,7 +67,7 @@ REPOSITORY_TYPE = "svn" # use Subversion as storage backend
 ###################################################################
 # Directory where Repositories will be created. Make sure MarkUs is allowed
 # to write to this directory
-REPOSITORY_STORAGE = "/home/markus/repos"
+REPOSITORY_STORAGE = "/home/markus/svn-repos-root"
 
 ###################################################################
 # Change this to 'REPOSITORY_EXTERNAL_SUBMITS_ONLY = true' if you

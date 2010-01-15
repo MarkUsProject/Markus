@@ -37,3 +37,5 @@ group2:
 group3:
    group_name: student3  
 
+group_test_result1:
+   group_name: test_result_group

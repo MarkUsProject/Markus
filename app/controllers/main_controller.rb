@@ -73,6 +73,7 @@ class MainController < ApplicationController
       uri = session[:redirect_uri]
       session[:redirect_uri] = nil
       refresh_timeout
+      current_user.set_api_key # set api key in DB for user if not yet set
       # redirect to last visited page or to main page
       redirect_to( uri || { :action => 'index' } )
     else
@@ -85,6 +86,8 @@ class MainController < ApplicationController
     clear_session
     cookies.delete :auth_token
     reset_session
+    m_logger = MarkusLogger.instance
+    m_logger.log(I18n.t("markus_logger.user_logout_message", :user_name => current_user.user_name))
     redirect_to :action => 'login'
   end
   
