@@ -22,7 +22,7 @@ namespace :markus do
     first_name = ENV['first_name']
     last_name = ENV['last_name']
     if user_name.blank? || first_name.blank? || last_name.blank?
-      $stderr.puts "usage:  rake markus:admin user_name=[user name] first_name=[first name] last_name=[last name]"
+      $stderr.puts "usage:  rake markus:instructor user_name=[user name] first_name=[first name] last_name=[last name]"
       exit(1)
     end
     puts "Creating Instructor #{user_name} (#{first_name} #{last_name})"
