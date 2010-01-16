@@ -1,4 +1,13 @@
-<div id="title_bar"><h1><%=I18n.t('notes.title')%> <%= link_to I18n.t('add_new'), :action => 'new' %> </h1></div>
+<div id="title_bar"><h1><%=I18n.t('notes.title')  %>
+<%  
+#if there are no groupings,we can't add notes, so do not show Add New link.  
+%>
+  <% if @groupings_available %>
+    <%= link_to I18n.t('add_new'), :action => 'new' %></h1>
+	<% else %>
+    </h1><p><%= I18n.t('notes.new.no_groupings') %></p>
+	<% end %>
+</div>
 
 <div class="wrapLeft">
 	

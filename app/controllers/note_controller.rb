@@ -27,6 +27,8 @@ class NoteController < ApplicationController
   def index
     @notes = Note.find(:all, :order => "created_at DESC", :include => [:user, :noteable])
     @current_user = current_user
+    # Notes are attached to groupings, if there are no groupings, we can't make notes.
+    @groupings_available = !(Grouping.all.empty?)
   end
   
   def new
@@ -51,7 +53,7 @@ class NoteController < ApplicationController
   
   # Used to update the values in the groupings dropdown in the new note form
   def new_update_groupings
-    retrieve_groupings(params[:assignment_id])
+    retrieve_groupings(Assignment.find(params[:assignment_id]))
   end
   
   def edit
@@ -81,13 +83,17 @@ class NoteController < ApplicationController
   end
   
   private
-    def retrieve_groupings(assignment_id)
-      @groupings = Grouping.find_all_by_assignment_id(assignment_id, :include => [:group, {:student_memberships => :user}])
+    def retrieve_groupings(assignment)
+      if assignment.nil?
+        @groupings = Array.new
+        return
+      end
+      @groupings = Grouping.find_all_by_assignment_id(assignment.id, :include => [:group, {:student_memberships => :user}])
     end
   
     def new_retrieve
       @assignments = Assignment.all
-      retrieve_groupings(@assignments.first.id)
+      retrieve_groupings(@assignments.first)
     end
     
     # Renders a 404 error if the current user can't modify the given note.
