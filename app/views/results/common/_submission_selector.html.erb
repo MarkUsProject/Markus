@@ -8,7 +8,7 @@
 </span>
   <span class="middle">
   	<%= link_to_remote "Notes", 
-	:url => { :controller => 'note' , :action => 'notes_dialog', :id => @result.id, :noteable_id => group.grouping_ids, :noteable_type => 'Grouping' , :action_to => 'note_message', :controller_to => 'results'} %> 
+	:url => { :controller => 'note' , :action => 'notes_dialog', :id => @grouping.assignment_id, :noteable_id => group.grouping_ids, :noteable_type => 'Grouping' , :action_to => 'note_message', :controller_to => 'results'} %> 
 	|
     <%= h(group.group_name)%> 
     
