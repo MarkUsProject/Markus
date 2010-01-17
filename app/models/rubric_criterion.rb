@@ -1,6 +1,7 @@
 require 'fastercsv'
 
 class RubricCriterion < ActiveRecord::Base
+  before_save :truncate_weight
   set_table_name "rubric_criteria" # set table name correctly
   belongs_to  :assignment
   has_many    :marks, :as => :markable, :dependent => :destroy
@@ -9,6 +10,7 @@ class RubricCriterion < ActiveRecord::Base
   validates_presence_of :rubric_criterion_name, :weight, :assignment_id
   validates_numericality_of :assignment_id, :only_integer => true, :greater_than => 0, :message => "can only be whole number greater than 0"
   validates_numericality_of :weight, :message => "must be a number greater than 0.0", :greater_than => 0.0
+  
   
   # Just a small effort here to remove magic numbers...
   RUBRIC_LEVELS = 5
@@ -150,5 +152,10 @@ class RubricCriterion < ActiveRecord::Base
   
   def get_weight
     return self.weight
+  end
+  
+  def truncate_weight
+    factor = 10.0 ** 2
+    self.weight = (self.weight * factor).floor / factor
   end
 end

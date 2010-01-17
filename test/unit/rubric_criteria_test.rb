@@ -108,6 +108,14 @@ class RubricCriterionTest < ActiveSupport::TestCase
     assert weight_range.valid?, "weight is fine, it should be valid"
   end
   
+  should "truncate weights that have more than 2 significant digits" do
+    assert RubricCriterion.count > 0
+    criterion = RubricCriterion.first
+    criterion.weight = 0.5555555555
+    criterion.save
+    assert_equal 0.55, criterion.weight
+  end
+  
   # Helper method for test_validate_presence_of to create a criterion without 
   # the specified attribute. if attr == nil then all attributes are included
   def create_no_attr(attr)
@@ -373,5 +381,6 @@ Part 2 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
     assert_equal 0, nb_updates
     assert_equal 2, invalid_lines.length
   end
+
   
 end
