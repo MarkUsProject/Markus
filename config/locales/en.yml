@@ -2,8 +2,11 @@ en:
     answer_yes:         "Yes"
     answer_no:          "No"
     markus:             "MarkUs"
+    close:              "Close"
+
+    # app/views/main/login.html.erb
     welcome_to:         "Welcome to MarkUs!"
-    welcome_to_markus:     "welcome to MarkUs, the online marking tool." 
+    welcome_to_markus:     "{{user_name}}, welcome to MarkUs, the online marking tool." 
     log_in:             "Log in"
     logging_in:         "Logging in..."
     login:              "Login"
@@ -11,6 +14,34 @@ en:
     password_not_blank: "Your password must not be blank."
     username_not_blank: "Your username must not be blank."
     username_and_password_not_blank: "Your username and password must not be blank."
+   
+    # app/views/layouts/_header.html.erb
+    log_out:            "Log out"
+    logged_in_as:       "| Logged in as <span id=\"user_name\"><b>{{first_name}} {{last_name}}</b> ({{user_name}})</span> |"
+    working:            "Working..."
+
+    # app/views/main/_about_content.html.erb
+    about_markus:       "About MarkUs"
+    version:            "Version"
+    using_markus_version:       "You are using MarkUs version:"
+    license:            "License"
+    markus_license_OSI: "MarkUs is made available under the <a href=\"http://www.opensource.org\">OSI</a>-approved <a href=\"http://www.opensource.org/licenses/mit-license.html\">MIT license</a>."
+    markus_license_permission:  "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:"
+    markus_copyright_intro:     "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software."
+    markus_no_warranty: "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+    markus_copyright:   "Copyright (c) 2008-09 by the authors."
+    markus_credits:     "Credits"
+    markus_credits_thanks:      "Thanks to everyone who contributed to and made MarkUs possible. In particular to:"
+    fall_2008:          "Fall 2008"
+    winter_2009:        "Winter 2009"
+    summer_2009:        "Summer 2009"
+    fall_2009:          "Fall 2009"
+    industry_advisors:  "Industry Advisors"
+    supervisor:         "Supervisor"
+    contact_us:         "Contact Us"
+    email_more_info:    "E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> or <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toront   o.edu</a><br/>Please visit: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> for more information."
+
+
     dashboard:          "Dashboard"
     password:           "Password"
     short_identifier:   "Short Identifier"
@@ -323,8 +354,7 @@ en:
             error_permissions: "You do not have sufficient permissions to delete this note."
         new:
             title: "Create Note"
-            loading_groupings: "Loading Groups..."
-            no_groupings: "Notes are attached to groups, but there are no groups yet. Please create some groups first."
+            loading_groupings: "Loading Groupings..."
         create:
             success: "Note was successfully created."
         edit:
