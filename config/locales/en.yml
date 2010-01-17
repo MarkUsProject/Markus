@@ -354,8 +354,9 @@ en:
             success: "Note was deleted successfully."
             error_permissions: "You do not have sufficient permissions to delete this note."
         new:
-            title: "Create Note"
-            loading_groupings: "Loading Groupings..."
+            title: "Create Note" 
+            loading_groupings: "Loading Groups..."  
+            no_groupings: "Notes are attached to groups, but there are no groups yet. Please create some groups first."
         create:
             success: "Note was successfully created."
         edit:
