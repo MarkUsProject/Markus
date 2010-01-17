@@ -169,6 +169,7 @@ en:
         already_in_use: "This name is already in use for this assignment."
     
     results:
+      title:  "Assignment {{assignment_name}} : {{group_name}}"
       results_name:  "Results"
       successfully_changed: "Successfully updated {{changed}} results"
       must_select_a_group:  "You must select at least one group to update"
