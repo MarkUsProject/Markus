@@ -88,7 +88,7 @@ function check_working() {
 </div>
 
 <div id="title_bar">
-<h1>Grading Assignment: <%=h(@assignment.short_identifier)%>
+<h1><%= t('results.title', {:assignment_name => @assignment.short_identifier, :group_name => @group.group_name}) %>
 </h1>
 </div>
 <div class="wrapLeft">
