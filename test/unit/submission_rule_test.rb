@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 require 'shoulda'
 
 class SubmissionRuleTest < ActiveSupport::TestCase
-  fixtures :assignments, :submission_rules
+  fixtures :all
 
   def setup
     setup_group_fixture_repos

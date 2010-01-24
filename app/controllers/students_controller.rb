@@ -55,18 +55,6 @@ class StudentsController < ApplicationController
     end
   end
 
-  def filter
-  case params[:filter]
-    when "hidden"
-       @students = Student.all(:conditions => {:hidden => true}, :order => :user_name)
-    when "visible"
-       @students = Student.all(:conditions => {:hidden => false}, :order => :user_name)
-    else
-      @students = Student.all(:order => :user_name)
-    end
-
-  end
-
   def create
     return unless request.post?
     # Default attributes: role = TA or role = STUDENT

@@ -2,7 +2,8 @@ require File.dirname(__FILE__) + '/authenticated_controller_test'
 require 'shoulda'
 
 class GradeEntryFormsControllerTest < AuthenticatedControllerTest
-  fixtures :grade_entry_forms, :users
+
+  fixtures :all
   
   # Constants for :edit tests
   NEW_SHORT_IDENTIFIER = "NewSI"

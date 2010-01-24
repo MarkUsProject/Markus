@@ -2,9 +2,8 @@ require File.dirname(__FILE__) + '/../test_helper'
 require 'shoulda'
 
 class GroupingTest < ActiveSupport::TestCase
-  fixtures :groups
-  fixtures :assignments
-  fixtures :groupings
+  fixtures :all
+  
   should_belong_to :group
   should_belong_to :assignment
   should_have_many :memberships

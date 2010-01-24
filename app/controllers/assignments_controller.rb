@@ -152,7 +152,12 @@ class AssignmentsController < ApplicationController
             if submission.nil?
               row.push('')
             else
-              row.push(submission.result.total_mark / out_of * 100)
+              total_mark_percentage = submission.result.total_mark / out_of * 100
+              if total_mark_percentage.nan?
+                row.push('')
+              else
+                row.push(total_mark_percentage)
+              end
             end
           end
         end
@@ -222,12 +227,12 @@ class AssignmentsController < ApplicationController
       if @grouping.nil?
         raise "You do not currently have a group"
       end
-      if @grouping.has_submission?
-        raise "You already submitted something. You cannot delete your group."
-      end
       # If grouping is not deletable for @current_user for whatever reason, fail.
       if !@grouping.deletable_by?(@current_user)
-        raise "You are not allowed to delete the group"
+        raise I18n.t('groups.cant_delete')
+      end
+      if @grouping.has_submission?
+        raise I18n.t('groups.cant_delete_already_submitted')
       end
       @grouping.student_memberships.all(:include => :user).each do |member|
         member.destroy
@@ -240,7 +245,11 @@ class AssignmentsController < ApplicationController
     
     rescue RuntimeError => e
       flash[:fail_notice] = e.message
-      m_logger.log(I18n.t("markus_logger.student_delete_group_fail", :user_name => current_user.user_name, :group => @grouping.group.group_name, :error => e.message), MarkusLogger::ERROR)
+      if @grouping.nil?
+        m_logger.log(I18n.t("markus_logger.student_delete_group_fail_no_grouping", :user_name => current_user.user_name, :error => e.message), MarkusLogger::ERROR)
+      else
+        m_logger.log(I18n.t("markus_logger.student_delete_group_fail", :user_name => current_user.user_name, :group => @grouping.group.group_name, :error => e.message), MarkusLogger::ERROR)
+      end
     end
     redirect_to :action => 'student_interface', :id => params[:id]
   end

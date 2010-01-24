@@ -2,11 +2,12 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class AssignmentFileTest < ActiveSupport::TestCase
   # Replace this with your real tests.
+  fixtures :all
   def test_presence_of_filename
     assignmentfile = AssignmentFile.new
     assignmentfile.assignment_id = 1
     assert !assignmentfile.save
- end
+  end
 
  def test_uniqueness_of_filename
     assignmentfile = AssignmentFile.new

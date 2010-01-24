@@ -7,7 +7,6 @@ page.replace 'student_list', :partial => 'ungrouped_students',
   :locals => {:students => @assignment.ungrouped_students}      
  
 if @inviter
-  
   # update the inviter
   page.replace_html "mbr_#{@inviter.id}",
     :partial => 'groups/manage/member', 

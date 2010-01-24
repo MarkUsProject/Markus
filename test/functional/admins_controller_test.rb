@@ -3,7 +3,9 @@ require 'shoulda'
 require 'admins_controller'
 
 class AdminsControllerTest < AuthenticatedControllerTest
-   fixtures :users
+
+   fixtures :all
+
    def setup
      @admin = users(:olm_admin_1)
      setup_group_fixture_repos

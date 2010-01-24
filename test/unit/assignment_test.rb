@@ -3,7 +3,7 @@ require 'shoulda'
 
 class AssignmentTest < ActiveSupport::TestCase
   
-  fixtures :assignments, :users, :submission_rules, :submissions, :groups, :rubric_criteria, :marks, :results, :groupings
+  fixtures :all
   set_fixture_class :rubric_criteria => RubricCriterion
   
   should_validate_presence_of :marking_scheme_type

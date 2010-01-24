@@ -82,16 +82,9 @@ class GroupsController < ApplicationController
     @assignment = Assignment.find(params[:id])
     @grouping = Grouping.find(params[:grouping_id])
     member = @grouping.student_memberships.find(@mbr_id)  # use group as scope
-    if member.membership_status == StudentMembership::STATUSES[:inviter]
-        @inviter = true
-    end
-    
     @grouping.remove_member(member)
-    if @inviter
-      @inviter = @grouping.student_memberships.find_by_membership_status(StudentMembership::STATUSES[:inviter])
-    else 
-      @inviter = false
-    end
+    @grouping.reload
+    @inviter = @grouping.accepted_student_memberships.find_by_user_id(@grouping.inviter.id)
   end
   
   def add_group

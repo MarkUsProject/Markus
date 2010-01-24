@@ -3,7 +3,7 @@ require 'shoulda'
 require 'mocha'
 
 class StudentTest < ActiveSupport::TestCase
-
+  fixtures :all
   should_have_many :accepted_groupings
   should_have_many :pending_groupings
   should_have_many :rejected_groupings

@@ -4,7 +4,7 @@ require 'shoulda'
 
 class AssignmentsControllerTest < AuthenticatedControllerTest
   
-  fixtures  :users, :assignments, :rubric_criteria, :marks, :submission_rules, :memberships
+  fixtures  :all
   set_fixture_class :rubric_criteria => RubricCriterion
   
   def setup
@@ -86,8 +86,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     grouping.id} )
     assert !student.has_accepted_grouping_for?(assignment.id), "should not
     have accepted groupings for this assignment"
-    assert !student.has_pending_groupings_for?(assignment.id), "should
-    not have pending groupings for this assignment"
   end
 
   def test_create_group_working_alone
@@ -288,10 +286,12 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     membership = memberships(:membership5)
     user = users(:student4)
     student = users(:student5)
+    original_grouping_num = student.pending_groupings.length
     post_as(user, :disinvite_member, {:id => assignment.id, :membership => membership.id})
+    student.reload
     assert_response :success
     assert_equal("Member disinvited", flash[:edit_notice])
-    assert !student.has_pending_groupings_for?(assignment.id)
+    assert_equal original_grouping_num - 1, student.pending_groupings.length
   end
 
 
@@ -328,9 +328,26 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert_response :success
   end
 
-  def test_deletegroup
+  def test_cant_delete_group_if_submitted
     user = users(:student4)
     grouping = groupings(:grouping_2)
+    assignment = grouping.assignment
+    assignment.group_min = 4
+    assignment.save
+    assert grouping.has_submission?
+    assert !grouping.is_valid?
+    post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
+    assert_redirected_to :action => "student_interface", :id => assignment.id
+    assert_equal(I18n.t('groups.cant_delete_already_submitted'), flash[:fail_notice])
+    assert user.has_accepted_grouping_for?(assignment.id)
+  end
+
+  def test_can_delete_group_if_nothing_submitted
+    user = users(:student4)
+    grouping = groupings(:grouping_2)
+    # If there are any submissions for this Grouping, destroy
+    grouping.submissions.destroy_all
+    assert grouping.submissions.empty?
     assignment = grouping.assignment
     assignment.group_min = 4
     assignment.save
@@ -340,6 +357,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert_equal("Group has been deleted", flash[:edit_notice])
     assert !user.has_accepted_grouping_for?(assignment.id)
   end
+
  
   context "A valid grouping if user is the inviter" do
 
@@ -350,14 +368,34 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       user = grouping.inviter
       assignment = grouping.assignment
       assignment.group_min = 1
+      assignment.group_max = 2
       assignment.save
       # we don't want submissions for this test
       grouping.submissions.destroy_all
+      assert grouping.submissions.empty?
       assert grouping.is_valid?
       post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
       assert_redirected_to :action => "student_interface", :id => assignment.id
       assert_equal("Group has been deleted", flash[:edit_notice])
       assert !user.has_accepted_grouping_for?(assignment.id)
+    end
+    
+    should "not be possible to delete if assignment is not group assignment" do
+      student_membership = memberships(:membership6)
+      grouping = student_membership.grouping
+      user = grouping.inviter
+      assignment = grouping.assignment
+      assignment.group_min = 1
+      assignment.save
+      assignment.reload
+      assert !assignment.group_assignment?
+      # we don't want submissions for this test
+      grouping.submissions.destroy_all
+      assert grouping.is_valid?
+      post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
+      assert_redirected_to :action => "student_interface", :id => assignment.id
+      assert_equal(I18n.t('groups.cant_delete'), flash[:fail_notice])
+      assert user.has_accepted_grouping_for?(assignment.id)
     end
 
     should "not be possible to delete if inviter is NOT the only member" do
@@ -371,7 +409,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       assert grouping.is_valid?
       post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
       assert_redirected_to :action => "student_interface", :id => assignment.id
-      assert_not_nil(flash[:fail_notice])
+      assert_equal I18n.t('groups.cant_delete'), flash[:fail_notice]
       assert user.has_accepted_grouping_for?(assignment.id)
     end
 
@@ -393,7 +431,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assignment = grouping.assignment
     grouping.invite(users(:student6).user_name, set_membership_status=StudentMembership::STATUSES[:accepted])
     post_as(users(:student6), :deletegroup, {:id => assignment.id})
-    assert_equal("Only the inviter can delete the group", flash[:fail_notice])
+    assert_equal(I18n.t('groups.cant_delete'), flash[:fail_notice])
     assert user.has_accepted_grouping_for?(assignment.id)
   end  
   
@@ -401,16 +439,14 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     user = users(:student4)
     grouping = groupings(:grouping_2)
     assignment = grouping.assignment
-    assignment.group_min = 2
-    assignment.save
-    grouping.invite(users(:student6).user_name, set_membership_status=StudentMembership::STATUSES[:accepted])
     grouping.create_grouping_repository_folder
     assert grouping.is_valid?
     Submission.create_by_timestamp(grouping, Time.now)
     grouping = Grouping.find(grouping.id)
     assert grouping.has_submission?   
-    post_as(users(:student4), :deletegroup, {:id => assignment.id})
-    assert_equal("You already submitted something. You cannot delete your group.", flash[:fail_notice])
+    inviter = grouping.inviter
+    post_as(inviter, :deletegroup, {:id => assignment.id})
+    assert_equal(I18n.t('groups.cant_delete_already_submitted'), flash[:fail_notice])
     assert user.has_accepted_grouping_for?(assignment.id)
   end
 
@@ -449,7 +485,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         if final_mark.blank?
           if student.has_accepted_grouping_for?(assignments[index])
             grouping = student.accepted_grouping_for(assignments[index])
-            assert !grouping.has_submission?
+            assert !grouping.has_submission? || assignments[index].total_mark == 0
           else
             # Student didn't have a grouping, so it was OK that this
             # column was blank
@@ -461,7 +497,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           assert grouping.has_submission?
           submission = grouping.get_submission_used
           assert_not_nil submission.result
-          assert_equal final_mark.to_f, (submission.result.total_mark / out_of * 100).to_f
+          assert_equal final_mark.to_f.round, (submission.result.total_mark / out_of * 100).to_f.round
         end
       end
       
@@ -714,9 +750,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
   
   # TODO:  A test to make sure that @a_id_results from index actually
   # does proper computing of averages/etc
-  def test_student_gets_accurate_average_per_assignment
-    assert false
-  end
   
   def test_on_index_grader_gets_assignment_list
     get_as(users(:ta1), :index)
@@ -794,7 +827,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     # Create some pending invitations for this student
     invitations = 0
     assignment.groupings.each do |some_grouping|
-      if some_grouping.student_memberships.length > 0
+      if !some_grouping.inviter.nil?
         invitations = invitations + 1
         some_grouping.invite(student.user_name)
       end
@@ -803,7 +836,9 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     get_as(users(:student1), :student_interface, :id => assignment.id)
     assert_response :success
     assert assigns(:pending_grouping)
+    assert invitations > 0
     assert_equal invitations, assigns(:pending_grouping).length
+
   end
   
   def test_should_get_student_interface_working_in_group_student

@@ -3,7 +3,7 @@ require 'shoulda'
 
 # Tests for GradeEntryForms
 class GradeEntryFormTest < ActiveSupport::TestCase
-
+  fixtures :all
   # Basic validation tests
   should_have_many :grade_entry_items, :grade_entry_students
   should_validate_presence_of :short_identifier

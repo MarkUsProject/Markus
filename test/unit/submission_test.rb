@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 require 'shoulda'
 class SubmissionTest < ActiveSupport::TestCase
-  
+  fixtures :all
   should_have_many :submission_files
 
   should "automatically create a result" do

@@ -3,7 +3,7 @@ require 'shoulda'
 
 class UserTest < ActiveSupport::TestCase
   
-  fixtures :users
+  fixtures :all
   should_have_many :memberships
   should_have_many :notes
   should_have_many :groupings, :through => :memberships
