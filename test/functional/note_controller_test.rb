@@ -2,7 +2,8 @@ require File.dirname(__FILE__) + '/authenticated_controller_test'
 require 'shoulda'
 
 class NoteControllerTest < AuthenticatedControllerTest
-  fixtures :users, :assignments, :groupings
+
+  fixtures :all
   
   # Security test - these should all fail
   context "An authenticated and authorized student doing a " do    
@@ -152,7 +153,7 @@ class NoteControllerTest < AuthenticatedControllerTest
     
     context "GET on :new_update_groupings" do
       setup do
-        get_as @ta, :new_update_groupings
+        get_as @ta, :new_update_groupings, :assignment_id => @assignment.id
       end
       should_respond_with :success
       should_render_template 'new_update_groupings.rjs'
@@ -294,7 +295,7 @@ class NoteControllerTest < AuthenticatedControllerTest
     
     context "GET on :new_update_groupings" do
       setup do
-        get_as @admin, :new_update_groupings
+        get_as @admin, :new_update_groupings, :assignment_id => @assignment.id
       end
       should_respond_with :success
       should_render_template 'new_update_groupings.rjs'

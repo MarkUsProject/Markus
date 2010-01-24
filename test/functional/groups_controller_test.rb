@@ -3,9 +3,9 @@ require 'shoulda'
 require 'fastercsv'
 
 class GroupsControllerTest < AuthenticatedControllerTest
-  
+  fixtures :all
+
   context "An authenticated and authorized student doing a " do
-    fixtures :users, :assignments
     
     setup do
       @student = users(:student1)
@@ -97,7 +97,6 @@ class GroupsControllerTest < AuthenticatedControllerTest
   end #student context
   
   context "An authenticated and authorized admin doing a " do
-    fixtures :users, :assignments, :groupings, :groups, :memberships
     
     setup do
       @admin = users(:olm_admin_1)
@@ -132,14 +131,21 @@ class GroupsControllerTest < AuthenticatedControllerTest
       
       context "on inviter" do
         setup do
-          membership = memberships(:membership1)
-          delete_as @admin, :remove_member, {:id => @assignment.id, :grouping_id  => @grouping.id, :mbr_id => membership.id}
+          # Find the inviter
+          @student = @grouping.inviter
+          @membership = @grouping.student_memberships.find_by_membership_status(StudentMembership::STATUSES[:inviter])
+          assert_not_nil @membership
+          delete_as @admin, :remove_member, {:id => @assignment.id, :grouping_id  => @grouping.id, :mbr_id => @membership.id}
         end
         should_respond_with :success
         should_render_template 'remove_member.rjs'
         should_assign_to :mbr_id, :assignment, :grouping
         should "assign @inviter accordingly" do
-          assert_nil assigns(:inviter)
+          @grouping.reload
+          if @grouping.accepted_student_memberships.length > 0
+            assert assigns(:inviter)
+            assert_not_nil @grouping.inviter
+          end
         end
       end
       

@@ -307,12 +307,11 @@ class SubmissionsController < ApplicationController
           m_logger.log(msg)
         end
       end
-      
+
       # Are we past collection time?    
       if assignment.submission_rule.can_collect_now?
         flash[:commit_notice] = assignment.submission_rule.commit_after_collection_message(grouping)
       end
-      
       redirect_to :action => "file_manager", :id => assignment_id
       
     rescue Exception => e

@@ -4,6 +4,8 @@ require 'mocha'
 
 class RubricsControllerTest < AuthenticatedControllerTest
   
+  fixtures :all
+  
   RUBRIC_CRITERIA_CSV_STRING = "Algorithm Design,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,
 Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,
 Testing,2.2,Horrible,Poor,Satisfactory,Good,Excellent,,,,,

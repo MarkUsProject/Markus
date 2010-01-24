@@ -3,7 +3,7 @@ require 'shoulda'
 
 class PenaltyPeriodSubmissionRuleTest < ActiveSupport::TestCase
   # Replace this with your real tests.
-  
+  fixtures :all
   context "Assignment has a single grace period of 24 hours after due date" do
     setup do
       setup_group_fixture_repos

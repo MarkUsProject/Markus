@@ -34,7 +34,7 @@
               <% end %>
             </td>
             <td style="width: 40%;">
-              <% if !@a_id_results.empty? && !@a_id_results[assignment.id].nil? %>
+              <% if !@a_id_results.empty? && !@a_id_results[assignment.id].nil? && !assignment.results_average.nil? %>
               <strong>Your mark:</strong>
               <%= # show results
 								("%.2f" % (@a_id_results[assignment.id].total_mark * 100 / assignment.total_mark)).to_s + "% (Class Average: " + ("%.2f" % (assignment.results_average)).to_s + "%)"

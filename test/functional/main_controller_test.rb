@@ -5,14 +5,13 @@ class MainController; def rescue_action(e) raise e end; end
 
 class MainControllerTest < AuthenticatedControllerTest
   
-  fixtures :users
+  fixtures :all
   
   # TODO need to change username and password for valid logins when 
   # actual authentication is in place (i.e. when User.verify is implemented)
   
-  
   def setup
-    @controller = CheckmarkController.new
+    @controller = MainController.new
     @request = ActionController::TestRequest.new
     @response = ActionController::TestResponse.new
   end
@@ -36,14 +35,14 @@ class MainControllerTest < AuthenticatedControllerTest
   def test_blank_login
     get :login
     post :login, :user_login => "", :user_password => "afds"
-    assert_equal "Your CDF login must not be blank.", flash[:login_notice]
+    assert_equal I18n.t(:username_not_blank), flash[:login_notice]
   end
   
   # Test if users see an error regarding missing information on login
   def test_blank_pwd
     get :login
     post :login, :user_login => "afds", :user_password => ""
-    assert_equal "Your password must not be blank.", flash[:login_notice]
+    assert_equal I18n.t(:password_not_blank), flash[:login_notice]
   end
   
   # Test if users with valid username and password can login and that 
@@ -61,7 +60,7 @@ class MainControllerTest < AuthenticatedControllerTest
   def test_second_try
     admin = users(:olm_admin_1)
     post :login, :user_login => "afds", :user_password => "lala"
-    assert_not_equal "", flash[:login_notice]
+    assert_equal I18n.t(:login_failed), flash[:login_notice]
     
     post :login, :user_login => admin.user_name, :user_password => "lala"
     assert_redirected_to :action => "index"
@@ -96,20 +95,10 @@ class MainControllerTest < AuthenticatedControllerTest
     assert_redirected_to :action => "index"
   end
   
-  # Authorization tests -------------------------------------------------
-   
-  # Test to make sure students or TAs cannot access students page
-  def test_authorized
-    user = users(:student1)
-    post :login, :user_login => user.user_name, :user_password => 'asfd'
-    get :students
-    assert_response 404
-  end
-  
   def test_index
-     user = users(:student1)
-     get_as user, :index
-     assert_response :success
+    user = users(:student1)
+    get_as user, :index
+    assert_redirected_to :controller => 'assignments', :action => 'index'
   end
-  
+    
 end

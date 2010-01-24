@@ -5,6 +5,8 @@ require 'base64'
 # Tests the test results handlers (create, destroy, update, show)
 class Api::TestResultsControllerTest < ActionController::TestCase
 
+  fixtures :all
+
   context "An authenticated GET request to api/test_results" do
     setup do
       admin = users(:api_admin)

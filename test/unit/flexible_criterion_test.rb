@@ -2,6 +2,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 require 'shoulda'
 
 class FlexibleCriterionTest < ActiveSupport::TestCase
+  fixtures :all
   should_belong_to :assignment
   
   # Not yet functional

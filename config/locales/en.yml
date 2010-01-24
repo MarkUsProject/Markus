@@ -150,6 +150,8 @@ en:
         student_create_group_fail: "Failed to create group. User: '{{user_name}}', Error: '{{error}}'."
         student_deleted_group: "Student '{{user_name}}' deleted group '{{group}}'."
         student_delete_group_fail: "Failed to delete group '{{group}}'. User: '{{user_name}}', Error: '{{error}}'."
+        student_delete_group_fail_no_grouping: "Failed to delete group, since no accepted group for this user existed. User: '{{user_name}}', Error: '{{error}}'."
+
         annotation_created: "Annotation '{{annotation}}' created by '{{user_name}}'."
         ta_annotation_reused: "The annotation '{{annotation}}' was reused by '{{user_name}}'."
         user_viewed_submission: "User '{{user_name}}' viewed submission (id: {{submission_id}}) of assignment '{{assignment}}' for group '{{group_name}}'."
@@ -167,6 +169,8 @@ en:
       rename_group:
         success: "Group name has been updated."
         already_in_use: "This name is already in use for this assignment."
+      cant_delete: "You are not allowed to delete the group."
+      cant_delete_already_submitted: "You already submitted something. You cannot delete your group."
     
     results:
       title:  "Assignment {{assignment_name}} : {{group_name}}"
