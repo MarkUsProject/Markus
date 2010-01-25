@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100102142037) do
+ActiveRecord::Schema.define(:version => 20100123094855) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -36,7 +36,6 @@ ActiveRecord::Schema.define(:version => 20100102142037) do
     t.integer "submission_file_id"
   end
 
-  add_index "annotations", ["annotation_text_id"], :name => "index_annotations_on_annotation_text_id"
   add_index "annotations", ["submission_file_id"], :name => "index_annotations_on_assignmentfile_id"
   add_index "annotations", ["submission_file_id"], :name => "index_annotations_on_submission_file_id"
 
@@ -92,7 +91,7 @@ ActiveRecord::Schema.define(:version => 20100102142037) do
     t.datetime "updated_at"
   end
 
-  add_index "flexible_criteria", ["assignment_id", "flexible_criterion_name"], :name => "index_flexible_criteria_on_assignment_id_and_flexible_criterion", :unique => true
+  add_index "flexible_criteria", ["assignment_id", "flexible_criterion_name"], :name => "index_flexible_criteria_on_assignment_id_and_name", :unique => true
   add_index "flexible_criteria", ["assignment_id"], :name => "index_flexible_criteria_on_assignment_id"
 
   create_table "grace_period_deductions", :force => true do |t|
@@ -237,6 +236,12 @@ ActiveRecord::Schema.define(:version => 20100102142037) do
 
   add_index "rubric_criteria", ["assignment_id", "rubric_criterion_name"], :name => "index_rubric_criteria_on_assignment_id_and_name", :unique => true
   add_index "rubric_criteria", ["assignment_id"], :name => "index_rubric_criteria_on_assignment_id"
+
+  create_table "sections", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false
