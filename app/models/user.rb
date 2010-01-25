@@ -5,6 +5,8 @@ require 'digest' # required for set_api_token
 # => :user_name, :last_name, :first_name
 # If there are added columns, add the default values to default_values
 class User < ActiveRecord::Base
+  before_validation :strip_name   
+  
   # Group relationships  
   has_many :memberships
   has_many :groupings, :through => :memberships
@@ -14,8 +16,7 @@ class User < ActiveRecord::Base
   validates_presence_of     :user_name, :last_name, :first_name
   validates_uniqueness_of   :user_name
   
-  validates_format_of       :type,          :with => /Student|Admin|Ta/
-      
+  validates_format_of       :type,          :with => /Student|Admin|Ta/ 
   # role constants
   STUDENT = 'Student'
   ADMIN = 'Admin'
@@ -59,7 +60,7 @@ class User < ActiveRecord::Base
       #  1 means no such user
       #  2 means bad password
       #  3 is used for other error exits
-      
+      return AUTHENTICATE_SUCCESS
       pipe = IO.popen(VALIDATE_FILE, "w+")
       pipe.puts("#{login}\n#{password}") # write to stdin of markus_config_validate
       pipe.close
@@ -209,6 +210,20 @@ class User < ActiveRecord::Base
     digest = Digest::SHA2.new(bitlen=512)
     # generate a unique token
     return digest.update(Time.now.to_s).to_s
+  end
+  
+  #strip input string
+  
+  def strip_name
+    if !self.user_name.nil?
+      self.user_name.strip!
+    end
+    if !self.last_name.nil?
+      self.last_name.strip!
+    end
+    if !self.first_name.nil?
+      self.first_name.strip!
+    end
   end
 end
 

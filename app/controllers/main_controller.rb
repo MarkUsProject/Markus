@@ -32,6 +32,9 @@ class MainController < ApplicationController
     
     return unless request.post?
     
+    # strip username
+    params[:user_login].strip!
+    
     # check for blank username and password
     blank_login = params[:user_login].blank?
     blank_pwd = params[:user_password].blank?
