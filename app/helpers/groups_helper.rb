@@ -1,14 +1,14 @@
 module GroupsHelper
 
   
-  def randomly_assign_graders(graders, groupings)
-    graders = params[:graders]
+  def randomly_assign_graders(grader_ids, grouping_ids)
     # Shuffle the groupings
+    groupings = Grouping.find(:all, :conditions => { :id => grouping_ids })
     groupings = groupings.sort_by{rand}
     # Now, deal them out like cards...
     groupings.each_with_index do |grouping, index|
       # Choose the next grader to deal out to...
-      grader = graders[index % graders.size]
+      grader = grader_ids[index % grader_ids.size]
       grouping.add_ta_by_id(grader) 
     end
   end

@@ -237,7 +237,7 @@ id=\"all_groupings_count\"></span>)", "filter('none')", :id =>
       </div>
       <div class="accordion-content">
 
-       <%= submit_tag "Randomly assign Graders", :id => "random_assign_graders", :name => "random_assign_graders", :confirm => "Are you sure you want to randomly assign selected graders to all groups?", :onclick => "$('submit_type').setValue('random_assign');" %>
+       <%= submit_tag  t('groups.randomly_assign_graders'), :id => "random_assign_graders", :name => "random_assign_graders", :confirm => t('groups.confirm_random_assign_graders'), :onclick => "$('submit_type').setValue('random_assign');" %>
        
        <%= render :partial => 'grader_list', :locals => {:tas => @tas} %>
 
