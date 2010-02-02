@@ -41,8 +41,28 @@ en:
     contact_us:         "Contact Us"
     email_more_info:    "E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> or <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toront   o.edu</a><br/>Please visit: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> for more information."
 
-
+    # app/views/api/_key_display.html.erb
+    api_key:            "Your API Key"
+    api_key_unavailable:        "Unavailable"
+    
+    # app/views/layouts/_menu.html.erb
     dashboard:          "Dashboard"
+    assignments:        "Assignments"
+    users:              "Users"
+    home:               "Home"
+    
+    # app/views/main/index.html.erb
+    firefox_warning:    "Some functionality might only work for Mozilla Firefox users"
+
+    # app/views/assignments/_list_manage.html.erb
+    current_assignments:      "Current assignments:"
+    due:                       "due :"
+    no_assignments:            "There are currently no assignments."
+
+    # app/views/assignments/index.html.erb
+    download_csv_grade_report:  "Download CSV Grades Report"
+    
+     
     password:           "Password"
     short_identifier:   "Short Identifier"
     description:        "Name"
@@ -93,7 +113,6 @@ en:
     released:           "released"
     preview:            "Preview"
     invalid_grouping:   "(invalid)"
-    firefox_warning:    "Some functionality might only work for Mozilla Firefox users"
     marks_released_notice:  "The marks have been released. You cannot change the grades."
     past_due_date_edit_warning:  "WARNING:  The due date you have selected is in the past."
     
@@ -381,26 +400,25 @@ en:
     remove_criteria_title:  "Delete this criterion"
     remove_criteria_message:  "Are you sure you want to delete this criterion?"
     help_editing_rubric_criteria_message: "
-	Select a criterion on the left to edit it.  Criteria descriptions, Level
-	headings and descriptions can be modified.  The weight of each criterion
-	can also be changed. To change the weight to a fractional number simply
-	type in a decimal number into the text box.
+  Select a criterion on the left to edit it.  Criteria descriptions, Level
+  headings and descriptions can be modified.  The weight of each criterion
+  can also be changed. To change the weight to a fractional number simply
+  type in a decimal number into the text box.
 
-	Note that the number of levels cannot be changed.  However if no 
-	description is set for a level, that level will not be used.
-	"
+  Note that the number of levels cannot be changed.  However if no 
+  description is set for a level, that level will not be used.
+  "
     help_ordering_criteria_message: "
-	Graders will see the criteria in the order that they are displayed to
-	left.  To change the order, drag a criterion to the desired location
-	in the list.
-	"
+  Graders will see the criteria in the order that they are displayed to
+  left.  To change the order, drag a criterion to the desired location
+  in the list.
+  "
     help_editing_flexible_criteria_message: "
     Select a criterion on the left to edit it.  Criteria names, descriptions and
     maximum values can be modified.
     "
     students_without_a_group_list_message: "These students don't have a group yet:"
     no_students_without_a_group_message: "All students are in a group."
-    firefox_warning: "Some of the features in the grader view will only work with Mozilla Firefox"
     past_due_date_warning: "Due date for this assignment is in the past."
 
     activerecord:
@@ -410,3 +428,36 @@ en:
             attributes:
               user_name:
                 blank: "TEST"
+
+    date:
+      formats:
+        default: "%d/%m/%Y"
+        short: "%e %b"
+        long: "%e %B %Y"
+        long_ordinal: "%e %B %Y"
+        only_day: "%e"
+        #MarkUs LONG_DATE_TIME_FORMAT
+        long_date: "%B %d, %Y: %I:%M%p"
+        #MarkUs SHORT_DATE_TIME_FORMAT
+        short_date: "%B %d, %Y"
+ 
+      day_names: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
+      abbr_day_names: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
+      month_names: [~, January, February, March, April, May, June, July, August, September, October, November, December]
+      abbr_month_names: [~, Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec]
+      order: [ :year, :month, :day ]
+  
+    time:
+      formats:
+        default: "%d %B %Y %H:%M"
+        time: "%H:%M"
+        short: "%d %b %H:%M"
+        long: "%A %d %B %Y %H:%M:%S %Z"
+        long_ordinal: "%A %d %B %Y %H:%M:%S %Z"
+        only_second: "%S"
+        #MarkUs LONG_DATE_TIME_FORMAT
+        long_date: "%B %d, %Y: %I:%M%p"
+        #MarkUs SHORT_DATE_TIME_FORMAT
+        short_date: "%B %d, %Y"
+      am: 'am'
+      pm: 'pm'
