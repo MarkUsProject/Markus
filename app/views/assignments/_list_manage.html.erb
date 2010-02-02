@@ -1,9 +1,9 @@
 <div class="section">
   <% if @assignments.empty? %>
-    <p>There are currently no assignments.</p>
+  <p><%= I18n.t(:no_assignments) %></p>
   <% else %>
   
-    <h3>Current assignments:</h3>
+  <h3><%= I18n.t(:current_assignments) %></h3>
     <ul>
     
 	<% @assignments.each do |assignment| %>
@@ -13,7 +13,7 @@
             :action => action, 
             :id => assignment},
 	    :class => "assignment_list"%>
-        <span class="info_due_date"> due: <span class="info_date">  <%= h(assignment.due_date.strftime(LONG_DATE_TIME_FORMAT)) %></span></span>
+	<span class="info_due_date"><%= I18n.t(:due) %><span class="info_date">  <%= I18n.l(assignment.due_date, :format => :long_date ) %></span></span>
       </li>
     <% end %>
     
