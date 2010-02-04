@@ -100,6 +100,20 @@ class MemoryRepositoryTest < Test::Unit::TestCase
         @repo.get_revision(revision_non_existent) # raises exception
       end
     end
+   
+    should "be able to create a directory in repository" do
+      dir_single_level = "/folder1"
+      dir_multi_level = "/folder2/subfolder1"
+      
+      txn = @repo.get_transaction(TEST_USER)
+      txn.add_path(dir_single_level)
+      txn.add_path(dir_multi_level)
+      @repo.commit(txn)
+      revision = @repo.get_latest_revision()
+      
+      assert_equal(true, revision.path_exists?(dir_single_level), message = "Repository folder not created")
+      assert_equal(true, revision.path_exists?(dir_multi_level), message = "Repository folder not created")
+    end
     
     add_file_test = "add a new file to an empty repository"
     should(add_file_test) do

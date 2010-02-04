@@ -695,10 +695,23 @@ class SubversionRepository < Repository::AbstractRepository
   end
   
   # Make a directory if it's not already present.
-  def make_directory(txn, path)  
+  def make_directory(txn, path)
+    # turn "path" into absolute path
+    path = File.expand_path(path, "/")
+    # do nothiing if "path" is the root
+    return txn if path == "/"
+    
+    # get the path of parent folder
+    parent_path = File.dirname(path)
+    # and create parent folder before the current folder (recursively)
+    txn = make_directory(txn, parent_path)
+    
+    # now that the parent folder has been created,
+    # create the current folder
     if (txn.root.check_path(path) == 0)
       txn.root.make_dir(path)
     end
+    
     return txn
   end
   

@@ -256,7 +256,18 @@ class Grouping < ActiveRecord::Base
   # Returns last modified date of the assignment_folder in this grouping's repository
   def assignment_folder_last_modified_date
     rev = self.group.repo.get_latest_revision
-    return rev.directories_at_path('/')[self.assignment.repository_folder].last_modified_date
+    
+    # get the full path of repository folder
+    path = self.assignment.repository_folder
+    
+    # split "repo_folder_path" into two parts
+    parent_path = File.dirname(path)
+    folder_name = File.basename(path)
+    
+    # turn "parent_path" into absolute path
+    parent_path = File.expand_path(parent_path, "/")
+    
+    return rev.directories_at_path(parent_path)[folder_name].last_modified_date
   end
 
   # Returns a list of missing assignment_files yet to be submitted
