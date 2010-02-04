@@ -27,12 +27,16 @@ class GroupingTest < ActiveSupport::TestCase
     end
 
     should "be able to report the last modified date of the assignment_folder" do
-      grouping = groupings(:grouping_1)
-      last_modified = grouping.assignment_folder_last_modified_date
-      assert_not_nil(last_modified)
-      assert_instance_of(Time, last_modified)
-      # This is not exactly accurate, but it's sufficient
-      assert_equal(Time.now.min, last_modified.min)
+      grouping_names = [:grouping_1, :grouping_with_deep_repository_folder];
+      
+      grouping_names.each do |grouping_name|
+        grouping = groupings(grouping_name)
+        last_modified = grouping.assignment_folder_last_modified_date
+        assert_not_nil(last_modified)
+        assert_instance_of(Time, last_modified)
+        # This is not exactly accurate, but it's sufficient
+        assert_equal(Time.now.min, last_modified.min)
+      end
     end
 
     should "be able to report if the grouping is deletable" do
