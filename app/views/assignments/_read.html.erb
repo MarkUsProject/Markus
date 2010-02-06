@@ -17,7 +17,7 @@
   <br/>
   <div class="sub_block">
     <span class="prop_label">Due date:</span>
-    <%= h(@assignment.due_date.strftime(LONG_DATE_TIME_FORMAT)) %>
+    <%=h I18n.l(@assignment.due_date, :format => :long_date ) %>
   </div>
 
   <h4>Files required for this assignment</h4>

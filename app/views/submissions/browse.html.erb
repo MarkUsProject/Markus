@@ -5,7 +5,7 @@
   <% if Time.now >= @assignment.submission_rule.calculate_collection_time %>
      Grading can begin
   <% else %>
-     Grading can begin after <%= h(@assignment.submission_rule.calculate_collection_time.strftime(LONG_DATE_TIME_FORMAT))%>
+     Grading can begin after <%=h I18n.l(@assignment.submission_rule.calculate_collection_time, :format => :long_date)%>
   <% end %>
 </div>
 

@@ -117,14 +117,6 @@ USER_STUDENT_CSV_UPLOAD_ORDER = [:user_name, :last_name, :first_name]
 USER_TA_CSV_UPLOAD_ORDER  = [:user_name, :last_name, :first_name]
 
 ###################################################################
-# Date/Time display formats
-###################################################################
-# Short form (displays month, day, year)
-SHORT_DATE_TIME_FORMAT = "%B %d, %Y"
-# Long form (displays month, day, year, hour, minute)
-LONG_DATE_TIME_FORMAT = "%B %d, %Y: %I:%M%p"
-
-###################################################################
 # Logging Options
 ###################################################################
 # If set to true then the rotation of the logfiles will be defined

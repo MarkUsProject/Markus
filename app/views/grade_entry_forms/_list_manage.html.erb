@@ -14,7 +14,7 @@
         <%= link_to h(grade_entry_form.short_identifier)+": "+h(grade_entry_form.description), 
                     {:controller => 'grade_entry_forms', :action => action, :id => grade_entry_form}, 
                     :class => "assignment_list"%>
-        <span class="info_due_date"> date: <span class="info_date">  <%= h(grade_entry_form.date.strftime(SHORT_DATE_TIME_FORMAT)) %></span></span>
+        <span class="info_due_date"> date: <span class="info_date">  <%=h I18n.l(grade_entry_form.date, :format => :short_date) %></span></span>
       </li>
     <% end %>
     

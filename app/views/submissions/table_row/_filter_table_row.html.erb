@@ -1,10 +1,12 @@
 <td>
 <%=image_tag('icons/page_white_text.png') %>
-<%= link_to h(file_name), :action => 'download', :id => @assignment.id, :revision_number => @revision.revision_number, :file_name => file_name, :path => @path %>
+<%= link_to h(file_name), :action => 'download', :id => @assignment.id,
+ :revision_number => @revision.revision_number, :file_name => file_name,
+  :path => @path %>
 </td>
 
 <td>
-<%= h(file.last_modified_date.strftime(LONG_DATE_TIME_FORMAT)) %>
+<%=h I18n.l(file.last_modified_date, :format => :long_date) %>
 </td>
 
 <td>

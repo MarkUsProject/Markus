@@ -27,10 +27,12 @@
             </td>
             <td>
               <% if assignment.due_date < Time.now %>
-                <strong><%= assignment.due_date.strftime(LONG_DATE_TIME_FORMAT) %></strong>
+                <strong><%= I18n.l(assignment.due_date, :format => :long_date) %></strong>
               <% else %>
-                <strong><%= assignment.due_date.strftime(LONG_DATE_TIME_FORMAT) %></strong><br />
-                  <%= "("+(((assignment.due_date - Time.now)/(60 * 60 * 24)).floor).to_s %> days and <%= (((assignment.due_date - Time.now)/(60 * 60)) % 24).floor %> hours left)
+                <strong><%= I18n.l(assignment.due_date, :format => :long_date) %></strong><br />
+                  <%= I18n.t(:days_and_hours_left, 
+                  :days => ((((assignment.due_date - Time.now)/(60 * 60 * 24)).floor).to_s), 
+                  :hours => ((((assignment.due_date - Time.now)/(60 * 60)) % 24).floor)) %>
               <% end %>
             </td>
             <td style="width: 40%;">
