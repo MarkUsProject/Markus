@@ -62,7 +62,9 @@ en:
     # app/views/assignments/index.html.erb
     download_csv_grade_report:  "Download CSV Grades Report"
     
-     
+    #app/views/assignments/_list.html.erb
+    days_and_hours_left:      "({{days}} day(s) and {{hours}} hour(s) left)"
+    
     password:           "Password"
     short_identifier:   "Short Identifier"
     description:        "Name"

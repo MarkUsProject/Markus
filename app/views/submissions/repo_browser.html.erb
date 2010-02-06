@@ -35,7 +35,7 @@
     </fieldset>
   </div>
 <div class="global_actions">
-  <h2>Viewing Revision: #<span id="current_revision_number_display"><%=@revision_number%></span> (<span id="current_revision_timestamp_display"><%=@revision_timestamp.strftime(LONG_DATE_TIME_FORMAT)%></span>)</h2>
+  <h2>Viewing Revision: #<span id="current_revision_number_display"><%=@revision_number%></span> (<span id="current_revision_timestamp_display"><%= I18n.l(@revision_timestamp, :format => :long_date) %></span>)</h2>
   <span id="loading_list"><%= image_tag("spinner.gif") %> Loading list...
   </span>
   

@@ -10,6 +10,6 @@ class Note < ActiveRecord::Base
   end
   
   def format_date
-    return created_at.strftime(LONG_DATE_TIME_FORMAT)
+    return I18n.l(created_at, :format => :long_date)
   end
 end

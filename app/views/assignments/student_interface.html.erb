@@ -37,7 +37,7 @@
         <div class="info">
           Last Revision Date:<br />
           <span class="info_date">
-            <%=h(@last_modified_date.strftime(LONG_DATE_TIME_FORMAT)) %>
+            <%=h I18n.l(@last_modified_date, :format => :long_date) %>
           </span>
         </div>   
         <span class="info_number">

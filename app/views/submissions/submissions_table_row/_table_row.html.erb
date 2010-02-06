@@ -38,7 +38,7 @@
   <% if !grouping.has_submission? %>
   -
   <% else %>
-    <%= h(grouping.get_submission_used.revision_timestamp.strftime(LONG_DATE_TIME_FORMAT)) %>
+    <%=h I18n.l(grouping.get_submission_used.revision_timestamp :format => :long_date) %>
   <% end %>
   </td>
   <% end %>
