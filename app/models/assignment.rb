@@ -397,7 +397,7 @@ class Assignment < ActiveRecord::Base
           submission = grouping.get_submission_used
           final_result.push(submission.result.total_mark / out_of * 100)
           rubric_criteria.each do |rubric_criterion|
-            mark = submission.result.marks.find_by_rubric_criterion_id(rubric_criterion.id)
+            mark = submission.result.marks.find_by_markable_id_and_markable_type(rubric_criterion.id, "RubricCriterion")
             if mark.nil?
               final_result.push('')
             else
