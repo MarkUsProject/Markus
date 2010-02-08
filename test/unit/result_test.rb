@@ -4,6 +4,7 @@ require 'shoulda'
 class ResultTest < ActiveSupport::TestCase
   # set_fixture_class is required here, since we don't use Rails'
   # standard pluralization for rubric criteria
+  fixtures :all
   set_fixture_class :rubric_criteria => RubricCriterion 
 	# Set to false to blow away fixtures cache and ensure our fixtures are loaded
 	# and thus takes into account our set_fixture_class

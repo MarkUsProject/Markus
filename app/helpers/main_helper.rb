@@ -10,12 +10,14 @@ module MainHelper
   def get_blank_message(blank_login, blank_password)
     return "" unless blank_login || blank_password
     
-    message = "Your "
-    message += "user name " if blank_login
-    message += "and " if blank_login && blank_password
-    message += "password " if blank_password
-    
-    message + "must not be blank."
+    if blank_login && blank_password
+      message = I18n.t(:username_and_password_not_blank)
+    elsif blank_login
+      message = I18n.t(:username_not_blank)
+    elsif blank_password
+      message = I18n.t(:password_not_blank)
+    end
+  
   end
   
 end

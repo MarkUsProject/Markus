@@ -28,11 +28,7 @@ class Grouping < ActiveRecord::Base
   
   validates_presence_of   :group_id, :message => "needs an group id"
   validates_associated    :group,    :message => "associated group need to be valid"
-  
-  def inviter?
-    return membership_status == StudentMembership::STATUSES[:inviter]
-  end
-  
+    
   def group_name_with_student_user_names
     student_user_names = student_memberships.collect {|m| m.user.user_name }
     return group.group_name if student_user_names.size == 0
@@ -189,14 +185,14 @@ class Grouping < ActiveRecord::Base
       #   Corner case: members are removed by admins only.
       #   Hence, we do not require to check for validity of the group
       revoke_repository_permissions_for_membership(member)
+      member.destroy
       if member.membership_status == StudentMembership::STATUSES[:inviter]
-         if member.grouping.student_membership_number > 1
-            membership = member.grouping.accepted_students[1].memberships.find_by_grouping_id(member.grouping.id) 
+         if member.grouping.accepted_student_memberships.length > 0
+            membership = member.grouping.accepted_student_memberships.first
             membership.membership_status = StudentMembership::STATUSES[:inviter]
             membership.save
          end
       end
-      member.destroy
     end
   end
 

@@ -2,6 +2,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 require 'shoulda'
 
 class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
+  fixtures :all
   context "Assignment has two grace periods of 24 hours each after due date" do
     setup do
       setup_group_fixture_repos

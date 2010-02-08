@@ -3,7 +3,9 @@ require 'shoulda'
 require 'mocha'
 
 class ResultsControllerTest < AuthenticatedControllerTest
-  
+
+  fixtures :all
+
   SAMPLE_ERR_MSG = "sample error message"
   
   context "An unauthenticated and unauthorized user doing a" do

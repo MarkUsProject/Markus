@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 require 'shoulda'
 class NoLateSubmissionRuleTest < ActiveSupport::TestCase
-
+  fixtures :all
   should "be able to create NoLateSubmissionRule" do
     rule = NoLateSubmissionRule.new
     rule.assignment = assignments(:assignment_1)

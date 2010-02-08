@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 require "shoulda"
 
 class TATest < ActiveSupport::TestCase
-  fixtures :users, :memberships, :assignments, :groups
+  fixtures :all
   
   def setup
     setup_group_fixture_repos

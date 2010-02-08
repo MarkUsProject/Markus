@@ -1,6 +1,9 @@
 require File.dirname(__FILE__) + '/authenticated_controller_test'
 
 class StudentsControllerTest < AuthenticatedControllerTest
+
+  fixtures :all
+
   def setup
     @student = users(:student2)
     @admin = users(:olm_admin_1)
@@ -49,39 +52,6 @@ class StudentsControllerTest < AuthenticatedControllerTest
     assert_response :success
   end
 
-  def test_filter_all1
-    get_as(@admin, :filter)
-    assert_response :success
-  end
-
-  def test_filter_all2
-    get_as(@admin, :filter)
-    assert_equal(Student.all.count, @students.count, "should be the same
-    number")
-  end
-
-
-  def test_filter_hidden
-    get_as(@admin, :filter, :filter => "hidden")
-    assert_response :success
-  end
-
-  def test_filter_hidden2
-    get_as(@admin, :filter, :filter => "hidden")
-    assert_equal(1, @students.count, "should be equal to 1")
-  end
-
-  def test_filter_visible
-    get_as(@admin, :filter, :filter => "visible")
-    assert_response :success
-  end
-
-  def test_filter_visible2
-    student_number = Student.all.count - 1
-    get_as(@admin, :filter, :filter => "visible")
-    assert_equal(student_number, @students.count)
-  end
-
   def test_create
     student = users(:student1)
     post_as(@admin, :create, :user => {:user_name => 'Essai',:id => student.id, :last_name => 'ESSAI', :first_name => 'essai'})
@@ -100,6 +70,7 @@ class StudentsControllerTest < AuthenticatedControllerTest
     student = users(:student1)
     post_as(@admin, :update, :user => {:id => student.id, :last_name =>
     'ESSAI', :first_name => 'essai'})
+    student.reload
     assert_equal("ESSAI", student.last_name, 'should have been updated to ESSAI')
   end
 

@@ -3,7 +3,7 @@ require 'shoulda'
 require 'mocha'
 
 class RubricCriterionTest < ActiveSupport::TestCase
-  fixtures :assignments, :rubric_criteria
+  fixtures :all
   set_fixture_class :rubric_criteria => RubricCriterion
   
   #Test that Criteria with no names are not valid

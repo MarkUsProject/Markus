@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 require 'shoulda'
 
 class AnnotationCategoryTest < ActiveSupport::TestCase
-   fixtures :assignments
+   fixtures :all
    should_validate_presence_of :annotation_category_name
    should_validate_presence_of :assignment_id
 

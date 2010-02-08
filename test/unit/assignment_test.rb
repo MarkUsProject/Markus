@@ -3,7 +3,7 @@ require 'shoulda'
 
 class AssignmentTest < ActiveSupport::TestCase
   
-  fixtures :assignments, :users, :submission_rules, :submissions, :groups, :rubric_criteria, :marks, :results, :groupings
+  fixtures :all
   set_fixture_class :rubric_criteria => RubricCriterion
   
   should_validate_presence_of :marking_scheme_type
@@ -382,10 +382,9 @@ class AssignmentTest < ActiveSupport::TestCase
   end
   
   context "An assignment instance" do
-    
     should "be able to generate a detailed CSV report of marks (including criteria)" do
-      a = assignments(:assignment_6) # we require assignment_6 here
-      assert_equal "A6", a.short_identifier, "We need assignment 6 for this test!"
+      a = assignments(:assignment_1) # we require assignment_1 here
+      assert_equal "Captain Nemo", a.short_identifier, "We need assignment 6 for this test!"
       out_of = a.total_mark
       rubric_criteria = a.rubric_criteria
       expected_string = ""
@@ -405,7 +404,7 @@ class AssignmentTest < ActiveSupport::TestCase
           submission = grouping.get_submission_used
           fields.push(submission.result.total_mark / out_of * 100)
           rubric_criteria.each do |rubric_criterion|
-            mark = submission.result.marks.find_by_rubric_criterion_id(rubric_criterion.id)
+            mark = submission.result.marks.find_by_markable_id_and_markable_type(rubric_criterion.id, "RubricCriterion")
             if mark.nil?
               fields.push('')
             else

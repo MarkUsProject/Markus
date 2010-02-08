@@ -1,6 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class AnnotationTest < ActiveSupport::TestCase
+  fixtures :all
   # Test that Annotation without line_start are not valid
   def test_no_line_start
     no_line_start = create_no_attr(:line_start);

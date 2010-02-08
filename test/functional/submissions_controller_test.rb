@@ -4,9 +4,9 @@ require 'shoulda'
 
 class SubmissionsControllerTest < AuthenticatedControllerTest
 
-  fixtures  :users, :assignments, :rubric_criteria, :marks, :submission_rules
+  fixtures  :all
   set_fixture_class :rubric_criteria => RubricCriterion
-
+  
   def setup
     @controller = SubmissionsController.new
     @request = ActionController::TestRequest.new
@@ -37,19 +37,21 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
   end
   
   def test_students_can_use_file_manager
-    get_as(@student, :file_manager, {:id => Assignment.first.id})
+    assignment = assignments(:assignment_5)
+    get_as(@student, :file_manager, {:id => assignment.id})
     assert_response :success
   end
   
   def test_students_can_populate_file_manager
-    get_as(@student, :populate_file_manager, {:id => Assignment.first.id})
+    assignment = assignments(:assignment_5)
+    get_as(@student, :populate_file_manager, {:id => assignment.id})
     assert_response :success
   end
   
   def test_students_can_add_files
     file_1 = fixture_file_upload('files/Shapes.java', 'text/java')
     file_2 = fixture_file_upload('files/TestShapes.java', 'text/java')
-    assignment = Assignment.first
+    assignment = assignments(:assignment_5)
     assert @student.has_accepted_grouping_for?(assignment.id)
     post_as(@student, :update_files, {:id => assignment.id, :new_files => [file_1, file_2]})
     assert_redirected_to :action => 'file_manager'
@@ -62,7 +64,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
   end
   
   def test_students_can_replace_files
-    assignment = Assignment.first
+    assignment = assignments(:assignment_5)
     assert @student.has_accepted_grouping_for?(assignment.id)
     grouping = @student.accepted_grouping_for(assignment.id)
      
@@ -102,7 +104,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
   end 
   
   def test_students_can_delete_files
-    assignment = Assignment.first
+    assignment = assignments(:assignment_5)
     assert @student.has_accepted_grouping_for?(assignment.id)
     grouping = @student.accepted_grouping_for(assignment.id)
      
@@ -126,7 +128,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
   end
   
   def test_student_cant_add_file_that_exists
-    assignment = Assignment.first
+    assignment = assignments(:assignment_5)
     assert @student.has_accepted_grouping_for?(assignment.id)
     grouping = @student.accepted_grouping_for(assignment.id)
      
@@ -138,12 +140,13 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
   
     file_1 = fixture_file_upload('files/Shapes.java', 'text/java')
     file_2 = fixture_file_upload('files/TestShapes.java', 'text/java')
-    assignment = Assignment.first
+    assignment = assignments(:assignment_5)
     assert @student.has_accepted_grouping_for?(assignment.id)
     post_as(@student, :update_files, {:id => assignment.id, :new_files => [file_1, file_2]})
-    assert_redirected_to :action => 'file_manager'
     # Check to see if the file was added
+    assert_redirected_to :action => 'file_manager', :id => assignment.id
     grouping = @student.accepted_grouping_for(assignment.id)
+    assert grouping.is_valid?
     revision = grouping.group.repo.get_latest_revision
     files = revision.files_at_path(assignment.repository_folder)
     assert_not_nil files['Shapes.java']
@@ -151,14 +154,11 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
     assert_not_nil flash[:update_conflicts]
   end
   
-  def test_student_cant_replace_file_if_out_of_sync
-    assert false
-  end
+  # TODO:  Test that a student can't replace file if out of sync
   
-  def test_student_cant_replace_file_with_diff_name_file
-    assert false
-  end
-
+  # TODO:  Test that a student can't replace a file if the new file
+  # has a different name
+  
   def test_students_cant_use_repo_browser
     get_as(@student, :repo_browser, {:id => Grouping.last.id})
     assert_response :missing
@@ -191,39 +191,10 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
     assert_response :success
   end
   
-  # TODO: TEST POPULATE REPO BROWSER HERE
+  # TODO:
   
-  def test_can_release_completed_results
-    assert false
-  end
-  
-  def test_can_release_multiple_results
-    assert false
-  end
-  
-  def test_cant_release_non_completed_results
-    assert false
-  end
-  
-  def test_cant_release_non_existent_results
-    assert false
-  end
-  
-  def test_can_unrelease_any_results
-    assert false
-  end
-  
-  def test_can_download_file_from_root
-    assert false
-  end
-  
-  def test_can_download_file_from_subdirectory
-    assert false
-  end
-  
-  def test_can_download_file_from_previous_revision
-    assert false
-  end
+  # Test whether or not an Instructor can release/unrelease results correctly
+  # Test whether or not an Instructor can download files from student repos
   
   context "A logged in student doing a GET" do
     

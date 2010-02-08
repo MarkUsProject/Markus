@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 require 'shoulda'
 
 class MarkTest < ActiveSupport::TestCase
-  fixtures :rubric_criteria, :flexible_criteria, :results, :marks
+  fixtures :all
   should_belong_to :markable
   should_belong_to :result
   should_validate_presence_of :result_id, :markable_id, :markable_type

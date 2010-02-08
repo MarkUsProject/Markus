@@ -4,6 +4,8 @@ require 'mocha'
 
 class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
+  fixtures :all
+
   context "An unauthenticated and unauthorized user doing a GET" do
 
     # Since we are not authenticated and authorized, we should be redirected

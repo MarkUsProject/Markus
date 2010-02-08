@@ -3,7 +3,7 @@ require 'shoulda'
 
 class TestResultTest < ActiveSupport::TestCase
 
-  fixtures :submissions, :test_results
+  fixtures :all
 
   # Basic testing: create, delete, update
 

@@ -3,10 +3,10 @@
 <% end %>
 
 <div id="title_bar">
-   <h1>Dashboard</h1>
+   <h1><%= I18n.t(:dashboard) %></h1>
 </div>
 <div class="wrapLeft">
-  <p><%= h(@current_user.first_name) %>, welcome to <%= t(:markus) %>, the online marking tool.</p>
+  <p><%= h(@current_user.first_name) %>, <%= I18n.t(:welcome_to_markus) %></p>
   <div class="section">
     <%= render :partial => "api/key_display", :locals => { :user => @current_user } %>
   </div>

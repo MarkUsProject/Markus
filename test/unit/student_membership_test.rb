@@ -2,6 +2,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 require 'shoulda'
 
 class StudentMembershipTest < ActiveSupport::TestCase
+  fixtures :all
   should_belong_to :user
   should_belong_to :grouping
 

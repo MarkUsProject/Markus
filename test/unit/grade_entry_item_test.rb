@@ -3,7 +3,7 @@ require 'shoulda'
 
 # Tests for GradeEntryItems
 class GradeEntryItemTest < ActiveSupport::TestCase
-  
+  fixtures :all
   should_belong_to :grade_entry_form
   
   # Not yet
