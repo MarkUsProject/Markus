@@ -121,7 +121,7 @@ see http://www.markusproject.org/download/
   * Extract the tarball to the desired location
       tar -xzvf markus-latest-stable.tar.gz
   * Change to MarkUs' application root
-      cd markus-0.6.0
+      cd markus-0.6.x
   * Set environment variable RAILS_ENV
       export RAILS_ENV="production"
   * In case you are using Rails > 2.3.2 comment out the line containing
