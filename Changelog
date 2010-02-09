@@ -4,6 +4,7 @@ Changes for MarkUs 0.6.1:
 * Random TA assignment now applies only to selected groups (rburke)
 * Next/Previous Submission links in grader view no longer skip submissions marked "completed" (c6conley)
 * The student edit form now accepts input properly
+* New UI in students editor and grader view to manage grace credit penalties
 * Functional tests now all pass (c6conley)
 
 Changes for MarkUs 0.6:
