@@ -1,3 +1,11 @@
+Changes for MarkUs 0.6.1:
+
+* Fixed trace on detailed CSV download for assignments (g9jerboa)
+* Random TA assignment now applies only to selected groups (rburke)
+* Next/Previous Submission links in grader view no longer skip submissions marked "completed" (c6conley)
+* The student edit form now accepts input properly
+* Functional tests now all pass (c6conley)
+
 Changes for MarkUs 0.6:
 
 * Submissions table is now paginated (c6conley)
