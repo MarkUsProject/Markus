@@ -11,6 +11,14 @@
 <td>
 <%= user.remaining_grace_credits.to_s + '/' + user.grace_credits.to_s %>
 </td>
+<td>
+    <% if user.has_section? %>
+	<%= user.section.name %>
+    <% else %>
+     -
+    <% end %>
+</td>
+
 <% end %>
 <td>
 <%= link_to I18n.t(:edit), :controller => controller, :action =>

@@ -9,6 +9,7 @@ class StudentTest < ActiveSupport::TestCase
   should_have_many :rejected_groupings
   should_have_many :student_memberships
   should_have_many :grace_period_deductions
+  should_belong_to :section
 
   def setup
     setup_group_fixture_repos
@@ -383,6 +384,37 @@ exist_student,USER2,USER2"
     student_id_list = [student1.id, student2.id]
 
     assert Student.unhide_students(student_id_list)
+  end
+
+  should "assert student has a section" do
+    student = users(:student1)
+    assert student.has_section?
+  end
+
+  should " assert student doesn't have a section" do
+    student = users(:student2)
+    assert !student.has_section?
+  end
+
+  should "update the section of the students in the list" do 
+    student1 = users(:student2)
+    student2 = users(:student3)
+    students_ids = [student1.id, student2.id]
+    section_id = sections(:section1).id
+    Student.update_section(students_ids, section_id)
+    students = Student.find(students_ids)
+    assert_not_nil students[0].section 
+  end
+
+  should "update the section of the students in the list, setting it to no
+  section" do
+    student1 = users(:student2)
+    student2 = users(:student3)
+    students_ids = [student1.id, student2.id]
+    section_id = 0
+    Student.update_section(students_ids, section_id)
+    students = Student.find(students_ids)
+    assert_nil students[0].section 
   end
 
 end

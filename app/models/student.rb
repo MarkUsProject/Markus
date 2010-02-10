@@ -10,6 +10,8 @@ class Student < User
 
   has_many :grace_period_deductions, :through => :memberships
 
+  belongs_to :section
+
   validates_numericality_of :grace_credits, :only_integer => true,
     :greater_than_or_equal_to => 0
 
@@ -228,6 +230,18 @@ class Student < User
         student.grace_credits = 0
       end
       student.save
+    end
+  end
+
+  # Returns true when the student has a section
+  def has_section?
+    return !self.section.nil?
+  end
+
+  # Updates the section of a list of students
+  def self.update_section(students_ids, nsection)
+    students_ids.each do |sid|
+      Student.update(sid, {:section_id => nsection})
     end
   end
 

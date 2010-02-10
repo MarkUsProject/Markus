@@ -37,7 +37,11 @@ class ActiveSupport::TestCase
   set_fixture_class :flexible_criteria => FlexibleCriterion
 
   # Add more helper methods to be used by all tests here...
-  
+
+  setup {
+    Sham.reset
+  }
+
   def setup_group_fixture_repos
     Group.all.each do |group|
       group.set_repo_name
@@ -54,7 +58,24 @@ class ActiveSupport::TestCase
     conf["REPOSITORY_PERMISSION_FILE"] = 'dummyfile'
     Repository.get_class(REPOSITORY_TYPE, conf).purge_all
   end
-  
+ 
+  def clear_fixtures
+    Admin.delete_all
+    Assignment.delete_all
+    FlexibleCriterion.delete_all
+    Group.delete_all
+    Grouping.delete_all
+    NoLateSubmissionRule.delete_all
+    RubricCriterion.delete_all
+    Section.delete_all
+    Student.delete_all
+    StudentMembership.delete_all
+    Submission.delete_all
+    Ta.delete_all
+    TAMembership.delete_all
+    User.delete_all
+  end
+
   # This method allows us to use the url_for helper in our tests, to make
   # sure that the actions are redirecting to the correct path.
   def url_for(options)
@@ -64,4 +85,25 @@ class ActiveSupport::TestCase
   
 end
 
+class ActiveRecord::Base
 
+  ANSI_BOLD       = "\033[1m"
+  ANSI_RESET      = "\033[0m"
+  ANSI_LGRAY    = "\033[0;37m"
+  ANSI_GRAY     = "\033[1;30m"
+
+  def print_attributes
+    max_value = 0
+    attributes.each do |name, value|
+      max_name = [max_name, name.size].max
+      max_value = [max_value, value.to_s.size].max
+    end
+    attributes.each do |name, value|
+      print "    #{ANSI_BOLD}#{name.ljust(max_name)}#{ANSI_RESET}"
+      print ":"
+      print "#{ANSI_GRAY}#{value.to_s.ljust(max_value)}#{ANSI_RESET}"
+      print "\n"
+    end
+  end
+
+end

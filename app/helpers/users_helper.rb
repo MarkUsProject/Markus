@@ -18,6 +18,11 @@ module UsersHelper
     result[:last_name] = CGI.escapeHTML(user.last_name)
     if user.student?
       result[:grace_credits] = user.remaining_grace_credits.to_s + '/' + user.grace_credits.to_s
+      if user.has_section?
+        result[:section] = user.section.name
+      else
+        result[:section] = '-'
+      end
     end
     result[:hidden] = user.hidden
     result[:filter_table_row_contents] = render_to_string :partial => "users/table_row/filter_table_row", :locals => {:user => user, :controller => self.controller_name}
