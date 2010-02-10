@@ -1,15 +1,8 @@
 require File.dirname(__FILE__) + '/../test_helper'
 require 'shoulda'
 
-class UserTest < ActiveSupport::TestCase
+class UserTestWithouBlueprints < ActiveSupport::TestCase
   
-  fixtures :all
-  should_have_many :memberships
-  should_have_many :notes
-  should_have_many :groupings, :through => :memberships
-  should_validate_presence_of :user_name
-  should_validate_presence_of :last_name
-  should_validate_presence_of :first_name
 
   def setup
     # attributes with a user number that does not exists in db.
@@ -103,36 +96,6 @@ class UserTest < ActiveSupport::TestCase
     Admin.new(new_user)
   end
 
-  def test_admin_if_true
-     admin = users(:olm_admin1)
-     assert admin.admin?, "should return true as user is admin"
-  end
-  
-  def test_admin_if_false
-     admin = users(:student1)
-     assert !admin.admin?, "should return false as user not admin"
-  end
-
-  def test_ta_if_true
-     ta = users(:ta1)
-     assert ta.ta?, "should return true as user is ta"
-  end
-
-  def test_ta_if_false
-     ta = users(:student1)
-     assert !ta.ta?, "should return false, as user is not a ta"
-  end
-
-  def test_student_if_true
-     student = users(:student1)
-     assert student.student?, "should return true as student is a studet"
-  end
-
-  def test_student_if_false
-     student = users(:ta1)
-     assert !student.student?, "should return false as student is not a
-     student"
-  end
 
 
 end

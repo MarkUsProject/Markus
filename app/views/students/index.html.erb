@@ -70,14 +70,25 @@
        <div class="global_action">
        <span id="loading_list"><%= image_tag("spinner.gif")%> Loading
 list...</span>
-      <select name="bulk_action" id="bulk_action" onChange="$('bulk_action_2').setValue($(this).getValue()); detect_grace_credit_change();">
+      <select name="bulk_action" id="bulk_action"
+      onChange="$('bulk_action_2').setValue($(this).getValue());
+      detect_bulk_action_change();">
         <option value=""><%= t(:bulk_action)%></option>
         <option value="give_grace_credits"><%= t(:give_grace_credits)%></option>
+	<option value="add_section"><%= I18n.t(:add_section)%></option>
         <option value="hide"><%= t(:hide_students)%></option>
         <option value="unhide"><%= t(:unhide_students)%></option>
       </select>
       <span id="grace_credit_input" style="display:none;">
       <%= text_field_tag :number_of_grace_credits, nil, :size => 1, :id => 'number_of_grace_credits' %>
+      </span>
+      <span id="section_input" style="display: none;">
+	<select name="section" id="section">
+		<option value=""> - </option>
+	    <% @sections.each do |section| %>
+		<option value="<%= section.id %>"><%= section.name %></option>
+	    <% end %>
+	</select>
       </span>
       <%= submit_tag t(:apply), :id => 'apply_bulk_action', :name => 'commit', :onclick => "$(this).setValue('Processing...'); $(this).disable();" %>
       
@@ -90,9 +101,12 @@ list...</span>
       </table>
       
       <div class="global_action">
-      <select name="bulk_action_2" id="bulk_action_2" onChange="$('bulk_action').setValue($(this).getValue());detect_grace_credit_change();">
-        <option value=""><%= t(:bulk_action)%></option>
+      <select name="bulk_action_2" id="bulk_action_2"
+      onChange="$('bulk_action').setValue($(this).getValue());
+      detect_bulk_action_change(); ">
+      <option value=""><%= t(:bulk_action)%></option>
         <option value="give_grace_credits"><%= t(:give_grace_credits)%></option>
+	<option value="add_section"><%= t(:add_section) %></option>
         <option value="hide"><%= t(:hide_students)%> </option>
         <option value="unhide"><%= t(:unhide_students) %></option>
       </select>

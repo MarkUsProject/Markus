@@ -4,6 +4,7 @@ class StudentsController < ApplicationController
   
   def index
     @students = Student.find(:all, :order => "user_name")
+    @sections = Section.find(:all, :order => "name")
   end
   
   def populate
@@ -48,6 +49,9 @@ class StudentsController < ApplicationController
           Student.give_grace_credits(student_ids, params[:number_of_grace_credits])
           @students = construct_table_rows(Student.find(student_ids))
           return
+        when "add_section"
+          Student.update_section(student_ids, params[:section])
+          @students = construct_table_rows(Student.find(student_ids))
       end
     rescue RuntimeError => e
       @error = e.message

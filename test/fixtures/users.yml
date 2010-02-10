@@ -89,6 +89,7 @@ student1:
   first_name:     Hollis
   grace_credits:     5
   type:           Student
+  section_id:     <%= Fixtures.identify(:section1) %>
   created_at:     <%= Time.now.to_s(:db) %>
   updated_at:     <%= Time.now.to_s(:db) %>
   hidden: false

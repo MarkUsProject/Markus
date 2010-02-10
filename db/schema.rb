@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100123094855) do
+ActiveRecord::Schema.define(:version => 20100202151511) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -304,6 +304,7 @@ ActiveRecord::Schema.define(:version => 20100123094855) do
     t.boolean  "hidden",        :default => false, :null => false
     t.string   "api_key"
     t.string   "api_key_md5"
+    t.integer  "section_id"
   end
 
   add_index "users", ["user_name"], :name => "index_users_on_user_name", :unique => true

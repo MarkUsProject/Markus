@@ -108,6 +108,7 @@ en:
     help:               "Help"
     confirm_bulk_action: "Are you sure you want to perform this bulk action?"
     give_grace_credits:  "Give Grace Credits:"
+    add_section:        "Add section"
     no_result:          "No marks are available for this assignment."
     unmarked:           "unmarked"
     partial:           "partial"
@@ -247,6 +248,7 @@ en:
         first_name:     "First Name"
         last_name:      "Last Name"
         grace_credits:  "Grace Credits"
+        section:        "Section"
     assignment:
         name:           "Assignment Name"
         marking_scheme:
@@ -402,34 +404,34 @@ en:
     remove_criteria_title:  "Delete this criterion"
     remove_criteria_message:  "Are you sure you want to delete this criterion?"
     help_editing_rubric_criteria_message: "
-  Select a criterion on the left to edit it.  Criteria descriptions, Level
-  headings and descriptions can be modified.  The weight of each criterion
-  can also be changed. To change the weight to a fractional number simply
-  type in a decimal number into the text box.
-
-  Note that the number of levels cannot be changed.  However if no 
-  description is set for a level, that level will not be used.
-  "
+      Select a criterion on the left to edit it.  Criteria descriptions, Level
+      headings and descriptions can be modified.  The weight of each criterion
+      can also be changed. To change the weight to a fractional number simply
+      type in a decimal number into the text box.
+      Note that the number of levels cannot be changed.  However if no 
+      description is set for a level, that level will not be used."
     help_ordering_criteria_message: "
-  Graders will see the criteria in the order that they are displayed to
-  left.  To change the order, drag a criterion to the desired location
-  in the list.
-  "
+      Graders will see the criteria in the order that they are displayed to
+      left.  To change the order, drag a criterion to the desired location
+      in the list."
     help_editing_flexible_criteria_message: "
-    Select a criterion on the left to edit it.  Criteria names, descriptions and
-    maximum values can be modified.
-    "
+      Select a criterion on the left to edit it.  Criteria names, descriptions and
+      maximum values can be modified."
     students_without_a_group_list_message: "These students don't have a group yet:"
     no_students_without_a_group_message: "All students are in a group."
     past_due_date_warning: "Due date for this assignment is in the past."
-
-    activerecord:
-      errors:
-        models:
-          admin:
-            attributes:
-              user_name:
-                blank: "TEST"
+    
+    section:
+      legend: "Section"
+      create_new_section: "Add a new section"
+      update_section: "Update Section"
+      add_section: "Add a new section"
+      create:
+        success: "Section successfully created."
+        error:   "Failed to create section."
+      update: 
+        success: "Section successfully updated."
+        error:   "Failed to update section."
 
     date:
       formats:

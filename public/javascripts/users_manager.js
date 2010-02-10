@@ -26,7 +26,7 @@ function modify_students(users_json) {
   users_table.resort_rows().render();
 }
 
-function detect_grace_credit_change() {
+function detect_bulk_action_change() {
   if($F('bulk_action') == 'give_grace_credits') {
     $('grace_credit_input').show();
     $('number_of_grace_credits').select();
@@ -34,6 +34,14 @@ function detect_grace_credit_change() {
     
   } else {
     $('grace_credit_input').hide();
+  }
+
+  if($F('bulk_action') == 'add_section') {
+    $('section_input').show();
+    $('section').select();
+    $('section').focus();
+  } else {
+    $('section_input').hide();
   }
 }
 

@@ -21,14 +21,16 @@
              <%= link_to 'Assignments', :controller => 'assignments'%>
 	</span>
 
-        <span <% if controller.controller_name == 'admins' or
+        <span <% if 
+		  controller.controller_name == 'users' or
+		  controller.controller_name == 'admins' or
 	          controller.controller_name == 'students' or
 		  controller.controller_name == 'tas'
 	     %>
 	       id = "menu_active"
 	     <% end %>
 	>
-            <%= link_to 'Users', :controller => 'students' %> 
+            <%= link_to 'Users', :controller => 'users' %> 
         </span>
 
 <% else %>

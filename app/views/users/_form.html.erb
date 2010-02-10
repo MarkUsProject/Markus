@@ -1,0 +1,25 @@
+
+<div class="wrapLeft">
+  <% if flash[:success]%>
+    <div class="success">
+      <%= flash[:success]%>
+    </div>
+  <% end%>
+</div>
+
+<% form_for :section, @section do |f| %>
+<fieldset>
+  <legend><%= I18n.t('section.legend') %></legend>
+  <%= f.label :name%>
+  <%= f.text_field :name%>
+  <br />
+  <% if controller.action_name == "create_section"%>
+    <%= f.submit I18n.t(:submit) %>
+  <% else %>
+    <%= f.submit I18n.t(:save) %>
+  <% end %>
+    
+</fieldset>
+
+<% end %>
+

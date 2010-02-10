@@ -1,0 +1,27 @@
+<div id="title_bar"><h1>Manage Users</h1></div>
+
+<div class="wrapLeft">
+
+<% if !flash[:success].nil?%>
+    <div class="success">
+	<%= flash[:success] %>
+    </div>
+<% end %>
+
+<%= link_to I18n.t('section.add_section'),:controller => 'users', :action => 'create_section'%>
+<% if @sections.empty? %>
+<p>There are no sections yet.</p>
+<% else %>
+  <ul>
+  <% @sections.each do |section| %>
+    <li><%= link_to section.name, :action => 'edit_section', 
+                                  :id => section.id %> </li>
+  <% end %>
+  </ul>
+<% end %>
+
+</div>
+
+
+<div class="wrapLeft">
+</div>
