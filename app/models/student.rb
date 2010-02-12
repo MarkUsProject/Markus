@@ -103,9 +103,6 @@ class Student < User
       @group = Group.find(:first, :conditions => {:group_name => self.user_name})
     else
       @group = Group.new(:group_name => self.user_name)
-      # We want to have the user_name as repository name,
-      # so we have to set the repo_name before we save the group.
-      @group.repo_name = self.user_name
       @group.save
     end
     @grouping.group = @group
