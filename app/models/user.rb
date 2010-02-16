@@ -60,7 +60,7 @@ class User < ActiveRecord::Base
       #  1 means no such user
       #  2 means bad password
       #  3 is used for other error exits
-      pipe = IO.popen(VALIDATE_FILE, "w+")
+      pipe = IO.popen( MarkusConfigurator.markus_config_validate_file, "w+" )
       pipe.puts("#{login}\n#{password}") # write to stdin of markus_config_validate
       pipe.close
       m_logger = MarkusLogger.instance

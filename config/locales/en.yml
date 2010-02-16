@@ -185,7 +185,11 @@ en:
         student_deleted_file: "Student '{{user_name}}' deleted file '{{file_name}}' for assignment '{{assignment}}'."
         student_replaced_file: "Student '{{user_name}}' replaced content of file '{{file_name}}' for assignment '{{assignment}}'."
         student_viewed_result: "Student '{{user_name}}' viewed results for assignment '{{assignment}}'."
-
+    
+    ensure_config:
+      path_not_writable: "The setting {{constant_name}} with path {{file_name}} is not writable. Please double check the setting in {{config_location}}."
+      path_not_readable: "The setting {{constant_name}} with path {{file_name}} is not readable. Please double check the setting in {{config_location}}."
+      file_does_not_execute: "The setting {{constant_name}} with path {{file_name}} does not execute properly. Please double check the setting in {{config_location}}."
     groups:
       editing_past_due_date_warning: "This assignment is past its due date.  Besides assigning graders to groups, it is not recommended that any other settings be altered here at this time."
       rename_group:

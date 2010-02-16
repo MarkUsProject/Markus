@@ -39,6 +39,10 @@ module MarkusConfigurator
   ######################################
   # MarkusLogger configuration
   ######################################
+  def markus_config_validate_file
+    return VALIDATE_FILE || "#{RAILS_ROOT}./config/dummy_validate.sh"
+  end
+
   def markus_config_logging_rotate_by_interval
     return MARKUS_LOGGING_ROTATE_BY_INTERVAL || false
   end
