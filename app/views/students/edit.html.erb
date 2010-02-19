@@ -21,7 +21,7 @@
            
     <%= f.hidden_field :id %>
     <%= f.submit 'Submit', :name => 'submit', :class => 'button indent_button' %>
-    <%= link_to 'Cancel', {:controller => controller}, :class => "button" %>       
+    <%= link_to 'Cancel', {:controller => 'students'}, :class => "button" %>       
   <% end %>
 
 <h3><%= t('submission_rules.grace_period_submission_rule.deductions')%></h3>
