@@ -21,6 +21,8 @@ class Assignment < ActiveRecord::Base
   has_many :submissions, :through => :groupings
   has_many :groups, :through => :groupings
   
+  has_many :notes, :as => :noteable, :dependent => :destroy
+  
   validates_associated :assignment_files
   
   validates_presence_of     :repository_folder
@@ -116,7 +118,10 @@ class Assignment < ActiveRecord::Base
    end
    return @students_list
   end
-  
+
+  def display_for_note
+    return short_identifier 
+  end
   
   # Make a list of the students an inviter can invite for his grouping
   def can_invite_for(gid)

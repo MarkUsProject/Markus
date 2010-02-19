@@ -1,4 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
+require File.join(File.dirname(__FILE__),'/../blueprints/blueprints')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 require 'shoulda'
 
 class AssignmentTest < ActiveSupport::TestCase
@@ -16,10 +18,14 @@ class AssignmentTest < ActiveSupport::TestCase
   end
   
   context "An assignment" do
-    setup do
-      assignment = assignments(:assignment_6) # required for should_not_allow_values_for test
-      should_not_allow_values_for :allow_web_submits, "garbage"
-    end
+    context "as a noteable" do
+      should "display for note without seeing an exception" do
+        assignment = assignments(:assignment_4)
+        assert_nothing_raised do
+          assignment.display_for_note
+        end
+      end
+    end # end noteable context
   end
   
   def teardown

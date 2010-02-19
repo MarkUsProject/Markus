@@ -45,6 +45,10 @@ class Student < User
     @remaining_grace_credits = grace_credits - grace_period_deductions.sum('deduction')
   end
 
+  def display_for_note
+    return  user_name + ": " + last_name+", " + first_name
+  end
+
   # return pending memberships for a specific assignment
   def pending_memberships_for(aid)
     groupings = self.pending_groupings_for(aid)
