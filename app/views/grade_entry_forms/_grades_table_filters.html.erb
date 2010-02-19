@@ -1,0 +1,25 @@
+<% # Allow the user to jump to a page containing certain students
+%>
+<%= t('pagination.jump_to') %>
+<%= select_tag "alpha_category", options_for_select(alpha_pagination_options, alpha_category), 
+    :onchange => remote_function(:url => {:action => :g_table_paginate, :id => grade_entry_form.id, 
+                                          :filter => filter, :sort_by => sort_by}, 
+    :with => "'alpha_category=' + this.options[this.selectedIndex].value 
+              + '&page=' + (this.selectedIndex+1)
+              + '&per_page=' + $('per_page').options[$('per_page').selectedIndex].value
+              + '&update_alpha_pagination_options=' + false", 
+    :before => "ap_thinking_start('grades');",
+    :complete => "ap_thinking_stop();") -%> 
+<input type="hidden" name="alpha_category" value="<%=alpha_category%>">
+
+<% # Allow the user to modify the number of students displayed per page
+%>
+<%= t('pagination.show') %>
+<%= select_tag "per_page", options_for_select(per_pages, per_page.to_i), 
+    :onchange => remote_function(:url => {:action => :g_table_paginate, :id => grade_entry_form.id, 
+                                          :filter => filter, :sort_by => sort_by}, 
+    :with => "'per_page=' + this.options[this.selectedIndex].value + '&update_alpha_pagination_options=' + true",
+    :before => "ap_thinking_start('grades');", 
+    :complete => "ap_thinking_stop();") -%>
+<%= ' ' + t('pagination.per_page') %> 
+<input type="hidden" name="per_page" value="<%=per_page%>">

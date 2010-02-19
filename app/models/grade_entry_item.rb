@@ -3,9 +3,8 @@
 class GradeEntryItem < ActiveRecord::Base
   belongs_to  :grade_entry_form
   
-  # Not yet
-  #has_many   :grades
-  #has_many   :grade_entry_students, :through => :grades
+  has_many   :grades, :dependent => :destroy
+  has_many   :grade_entry_students, :through => :grades
   
   validates_presence_of   :name
   validates_presence_of   :out_of

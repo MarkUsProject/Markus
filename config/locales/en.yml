@@ -68,7 +68,7 @@ en:
     password:           "Password"
     short_identifier:   "Short Identifier"
     description:        "Name"
-    date:               "Date"  
+    shortened_date:     "Date"  
     due_date:           "Due Date"
     iso_date_format_example:    "Format:  YYYY-MM-DD - Example:  2009-01-13"
     iso_due_date_format_example:    "Format:  YYYY-MM-DD HH:MM - Example:  2009-01-13 17:44"
@@ -76,7 +76,7 @@ en:
     graders:            "Graders"
     add_new:            "Add new"
     create_new_assignment:      "Create new assignment"
-    create_new_grade_entry_form: "Create new grades form"
+    create_new_grade_entry_form: "Create new grade entry form"
     manage_course_work: "Manage Course Work"
     edit:               "Edit"
     save:               "Save"
@@ -97,6 +97,7 @@ en:
     uploading_please_wait: "Uploading - please wait..."
     choose_assignment:  "Choose..."
     properties:         "Properties"
+    grades:             "Grades"
     submissions:        "Submissions"
     groups_and_graders: "Groups & Graders"
     rubrics:            "Rubrics"
@@ -129,6 +130,14 @@ en:
     invalid_id: "must be an id that is an integer greater than 0"
     still_working_warning: "There are unfinished jobs still being processed.  They might not be saved if you leave now."
 
+    pagination:
+      first: "First"
+      prev: "Prev"
+      next: "Next"
+      last: "Last"  
+      per_page: "per page"
+      jump_to: "Jump to:"    
+      show: "Show"    
 
     grade_entry_forms:
       blank_field: "can't be blank"    
@@ -149,7 +158,12 @@ en:
         title: "Create a New Grade Entry Form"           
       edit:
         title: "Edit Grade Entry Form:"
-        success: "Successfully updated grade entry form" 
+        success: "Successfully updated grade entry form"
+      grades:
+        title: "Manage Grade Entry Form:"
+        total: "Total:"
+        no_grade_entry_items_message: "There are currently no columns for this table."
+        
     no_grade_entry_forms_message: "There are currently no grade entry forms." 
     current_grade_entry_forms_title: "Current grade entry forms:"
 

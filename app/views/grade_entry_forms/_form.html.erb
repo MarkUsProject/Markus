@@ -31,7 +31,7 @@
     <%= f.label :message %>
     <%= f.text_area :message, :rows => 8, :cols => 65 %><br />
 
-    <%= f.label :date, t(:date) %>
+    <%= f.label :date, t(:shortened_date) %>
     <%= f.calendar_date_select :date, {
           :year_range => 0.years.ago..1.years.from_now} %>
     <%= t(:iso_date_format_example)%>

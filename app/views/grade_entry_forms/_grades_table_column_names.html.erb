@@ -1,0 +1,20 @@
+<% # Column names for the grades table
+%>
+
+<tr>
+  <% # Display headings for: student ID, last name, and first name
+  %>
+  <th><%= t('user.user_name') %></th>
+  <th><%= t('user.last_name') %></th>
+  <th><%= t('user.first_name') %></th>
+    
+  <% # Display names and totals for each question
+  %>
+  <% @grade_entry_form.grade_entry_items.each do |grade_entry_item| %>
+    <th class="out_of"><%= h(grade_entry_item.name) + " / " + h(grade_entry_item.out_of) %></th>
+  <% end %>
+      
+  <% # Display the total number of marks for this grade entry form 
+  %>
+  <th><%= t('grade_entry_forms.grades.total') + " " + h(@grade_entry_form.out_of_total) %></th> 
+</tr>
