@@ -417,4 +417,13 @@ exist_student,USER2,USER2"
     assert_nil students[0].section 
   end
 
+  context "Student as a noteable" do
+    should "display for note without seeing an exception" do
+      student = users(:student2)
+      assert_nothing_raised do
+        student.display_for_note
+      end
+    end
+  end # end noteable context
+
 end
