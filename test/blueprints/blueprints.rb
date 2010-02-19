@@ -42,7 +42,7 @@ Assignment.blueprint do
   instructor_form_groups {false}
   repository_folder {"repo/#{short_identifier}"}
   marking_scheme_type {'rubric'}
-  submission_rule {NoLateSumbissionRule.make({:assignment_id => object_id})}
+  submission_rule {NoLateSubmissionRule.make({:assignment_id => object_id})}
   allow_web_submits {true}
 end
 
@@ -87,6 +87,10 @@ Grouping.blueprint do
   assignment
 end
 
+NoLateSubmissionRule.blueprint do
+  assignment_id {0}
+  type {'NoLateSubmissionRule'}
+end
 
 RubricCriterion.blueprint do
   rubric_criterion_name

@@ -1,8 +1,17 @@
+# test using MACHINIST
+
 require File.dirname(__FILE__) + '/../test_helper'
+require File.join(File.dirname(__FILE__), '/../blueprints/helper')
 require 'shoulda'
 
 class GroupTest < ActiveSupport::TestCase
-  fixtures :all
+  SHOW_GENERATED_DATA = false
+  SHOW_DEPENDENCY_GENERATED_DATA = true
+
+  def setup
+    clear_fixtures
+  end
+
   should_have_many :groupings
   should_have_many :submissions, :through => :groupings
   should_have_many :assignments, :through => :groupings
@@ -10,43 +19,42 @@ class GroupTest < ActiveSupport::TestCase
   should_not_allow_values_for :group_name, "group_long_name_12319302910102912010210219002", :message => "is too long"
   should_allow_values_for :group_name, "This group n. is short enough!" # exactly 30 char limit
 
-  def test_should_not_save_without_groupname
-    group = Group.new
-    assert !group.save, "Group saved without groupnames"
-  end
 
-  def test_groupname_should_be_unique
-    group = Group.new
-    group.group_name = "Titanic"
-    assert !group.save, "Group saved with an already existing groupname"
-  end
+  context "a group" do
+    setup do
+      @group = Group.make
+    end
 
-  def test_save_group
-    group = Group.new
-    group.group_name = "totallyNewName"
-    assert group.save, "Group not saved..."
-  end
+    should "have a unique group name" do 
+      group = Group.new
+      group.group_name = @group.group_name
+      assert !group.save
+    end
 
-  def test_is_valid_false
-     grouping = groupings(:grouping_3)
-     assert !grouping.is_valid?
-  end
- 
-  def test_validate_grouping
-    grouping = groupings(:grouping_3)
-    grouping.validate_grouping
-    assert grouping.is_valid?
-  end
-  
-  context "A Group object" do
-    should "know if external submits are allowed or not" do
-      group = groups(:group_1)
-      assert_equal true, group.repository_external_commits_only?
-      group2 = groups(:group1)
-      assert_equal false, group2.repository_external_commits_only?
+    context "linked to an assignment allowing web commits" do
+      setup do 
+        assignment = Assignment.make(:allow_web_submits => true)
+        grouping = Grouping.make(:assignment_id => assignment.id, 
+                                 :group_id => @group.id)
+      end
+
+      should "return false for external accessible repository" do
+        assert !@group.repository_external_commits_only?
+      end
+    end
+
+    context "linked to an assignment not allowing web commits" do
+      setup do 
+        assignment = Assignment.make(:allow_web_submits => false)
+        grouping = Grouping.make(:assignment_id => assignment.id, 
+                                 :group_id => @group.id)
+      end
+
+      should "return true for external accessible repository" do
+        assert @group.repository_external_commits_only?
+      end
     end
   end
-
 end
 
 
