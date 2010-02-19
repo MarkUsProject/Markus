@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(:version => 20100204135303) do
     t.integer "submission_file_id"
   end
 
+  add_index "annotations", ["annotation_text_id"], :name => "index_annotations_on_annotation_text_id"
   add_index "annotations", ["submission_file_id"], :name => "index_annotations_on_assignmentfile_id"
   add_index "annotations", ["submission_file_id"], :name => "index_annotations_on_submission_file_id"
 
@@ -133,7 +134,7 @@ ActiveRecord::Schema.define(:version => 20100204135303) do
     t.datetime "updated_at"
   end
 
-  add_index "grade_entry_students", ["grade_entry_form_id", "user_id"], :name => "index_grade_entry_students_on_user_id_and_grade_entry_form_id", :unique => true
+  add_index "grade_entry_students", ["user_id", "grade_entry_form_id"], :name => "index_grade_entry_students_on_user_id_and_grade_entry_form_id", :unique => true
 
   create_table "grades", :force => true do |t|
     t.integer  "grade_entry_item_id"
@@ -171,7 +172,7 @@ ActiveRecord::Schema.define(:version => 20100204135303) do
     t.string   "markable_type"
   end
 
-  add_index "marks", ["markable_id", "markable_type", "result_id"], :name => "marks_u1", :unique => true
+  add_index "marks", ["markable_id", "result_id", "markable_type"], :name => "marks_u1", :unique => true
 
   create_table "memberships", :force => true do |t|
     t.integer  "user_id"

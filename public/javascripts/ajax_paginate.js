@@ -26,9 +26,14 @@ function ap_select_none() {
   $('ap_select_full').setValue('false');
 }
 
-function ap_thinking_start() {
-  ap_select_none();
-  $('submissions').update('');
+function ap_thinking_start(table_name) {
+	
+  // TODO: Add Select All/None options for the grades table and then remove this if statement
+  // (This can be done once the student UI is implemented)
+  if(table_name != "grades") {  
+	  ap_select_none();
+  }
+  $(table_name).update('');
   $('ap_thinking').show();
 }
 

@@ -21,6 +21,9 @@ Sham.due_date {2.days.from_now}
 Sham.flexible_criterion_name {|i| "flexible_criterion_#{i}"}
 Sham.rubric_criterion_name {|i| "rubric_criterion_#{i}"}
 
+Sham.date {2.days.from_now}
+Sham.name {Faker::Name.name}
+
 Admin.blueprint do
   type {'Admin'}
   user_name {Sham.admin_user_name}
@@ -48,6 +51,31 @@ FlexibleCriterion.blueprint do
   description
   position {1} # override if many for the same assignment
   max{10}
+end
+
+Grade.blueprint do
+  grade_entry_item {GradeEntryItem.make}
+  grade_entry_student {GradeEntryStudent.make}
+  grade {0}
+end
+
+GradeEntryForm.blueprint do
+  short_identifier
+  description
+  message
+  date
+end
+
+GradeEntryItem.blueprint do
+  grade_entry_form
+  name
+  out_of {10}
+end
+
+GradeEntryStudent.blueprint do
+  grade_entry_form {GradeEntryForm.make}
+  user {Student.make}
+  released_to_student {false}
 end
 
 Group.blueprint do

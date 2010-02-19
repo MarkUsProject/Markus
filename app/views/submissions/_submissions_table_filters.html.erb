@@ -1,11 +1,11 @@
 Filter:
 <%= select_tag "filter", options_for_select(filters, filter) , 
  :onchange => remote_function(:url => {:action => :s_table_paginate, :id => assignment.id, :per_page => per_page }, 
- :with => "'filter=' + this.options[this.selectedIndex].value", :before => "ap_thinking_start();", :complete => "ap_thinking_stop();") -%>
+ :with => "'filter=' + this.options[this.selectedIndex].value", :before => "ap_thinking_start('submissions');", :complete => "ap_thinking_stop();") -%>
  <input type="hidden" name="filter" value="<%=filter%>">
  Show
 <%= select_tag "per_page", options_for_select(per_pages, per_page.to_i), 
  :onchange => remote_function(:url => {:action => :s_table_paginate, :id => assignment.id, :filter => filter }, 
- :with => "'per_page=' + this.options[this.selectedIndex].value",:before => "ap_thinking_start();", :complete => "ap_thinking_stop();") -%>
+ :with => "'per_page=' + this.options[this.selectedIndex].value",:before => "ap_thinking_start('submissions');", :complete => "ap_thinking_stop();") -%>
  per page
  <input type="hidden" name="per_page" value="<%=per_page%>">

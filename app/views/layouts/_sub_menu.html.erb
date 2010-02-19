@@ -46,10 +46,18 @@
     <% # For now, GradeEntryForms only have a Properties tab 
     %>
     <% if (controller.controller_name == 'grade_entry_forms' and 
-           controller.action_name != 'new') %>
-      <li id="sub_menu_active">
+          controller.action_name != 'new') %>
+      <li <% if controller.action_name == 'edit' %>
+            id="sub_menu_active"
+          <% end %>>
         <%= link_to I18n.t(:properties), :controller => 'grade_entry_forms', 
                     :action => 'edit', :id => @grade_entry_form.id %>
+      </li> 
+      <li <% if controller.action_name == 'grades' %>
+            id="sub_menu_active"
+          <% end %>>
+        <%= link_to I18n.t(:grades), :controller => 'grade_entry_forms', 
+                    :action => 'grades', :id => @grade_entry_form.id %>
       </li>  
     <% end %>
   <% end %>

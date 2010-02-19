@@ -4,9 +4,8 @@ class GradeEntryStudent < ActiveRecord::Base
   belongs_to :user
   belongs_to :grade_entry_form
   
-  # Not yet
-  #has_many  :grades
-  #has_many  :grade_entry_items, :through => :grades
+  has_many  :grades, :dependent => :destroy
+  has_many  :grade_entry_items, :through => :grades
   
   validates_associated :user
   validates_associated :grade_entry_form

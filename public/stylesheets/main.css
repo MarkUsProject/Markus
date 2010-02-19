@@ -535,6 +535,38 @@ tr.student_hidden{
   font-style: italic;
 }
 
+/* Grades table cell (user name, first name, last name) */
+td.grades_table_cell {
+  width: 10%;
+}
+
+/* Grade */
+td.grade {
+  width: 10%;
+  text-align: center;
+}
+
+/* Question total in grades table */
+th.out_of {
+  text-align: center;
+}
+
+/* A student's total mark in grades table */
+td.student_total input {
+  border: none; 
+  background-color: transparent; 
+  text-align: left;
+  color: #000000;
+
+}
+
+td.student_total input:hover {
+  border: none; 
+  background-color: transparent; 
+  text-align: left;
+  color: #000000;
+}
+
 /* groups table*/
 #checkbox{
   width: 2em;
@@ -1072,6 +1104,7 @@ span.title{
   margin-bottom: 5px;
 
 }
+
 /* Submissions table */
 td#thinking_table_row {
  text-align: center;
