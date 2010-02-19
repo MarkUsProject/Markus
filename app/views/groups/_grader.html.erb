@@ -1,4 +1,3 @@
 <li id="grader_li_<%=ta.id%>">
-         <%= check_box_tag "graders[]", ta.id, false, :id => "grader_#{ta.id}" %>
-         <%= h(ta.user_name)%> (<%=ta.memberships_for_assignment(@assignment.id).length%>)
+         <%= check_box_tag "graders[]", ta.id, false, :id => "grader_#{ta.id}" %><%= h(ta.user_name)%> <%= h(ta.first_name)%> (<%=ta.memberships_for_assignment(@assignment.id).length%>)
 </li>
