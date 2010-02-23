@@ -64,7 +64,7 @@
   </div>
   <div class="clear"></div>
   <div class="ap_page_links" id="ap_page_links_1">
-    <%= render :partial => 'ajax_paginate/initial_paginate_links', :locals => {:per_page => @per_page, :current_page => @current_page, :page_items => @groupings.size, :total_items => @groupings_total, :assignment => @assignment, :filter => @filter, :sort_by => @sort_by} %>
+    <%= render :partial => 'ajax_paginate/initial_paginate_links', :locals => {:per_page => @per_page, :current_page => @current_page, :page_items => @groupings.size, :total_items => @groupings_total, :assignment => @assignment, :filter => @filter, :sort_by => @sort_by, :table_name => 'submissions'} %>
   </div>
   <div id="ap_selector">
     <%= render :partial => 'ajax_paginate/selector' %>
@@ -89,7 +89,7 @@
 
 <div class="ap_nav_box">
   <div class="ap_page_links" id="ap_page_links_2">
-    <%= render :partial => 'ajax_paginate/initial_paginate_links', :locals => {:per_page => @per_page, :current_page => @current_page, :page_items => @groupings.size, :total_items => @groupings_total, :assignment => @assignment, :filter => @filter, :sort_by => @sort_by} %>
+    <%= render :partial => 'ajax_paginate/initial_paginate_links', :locals => {:per_page => @per_page, :current_page => @current_page, :page_items => @groupings.size, :total_items => @groupings_total, :assignment => @assignment, :filter => @filter, :sort_by => @sort_by, :table_name => 'submissions'} %>
   </div>
   <div id="ap_selector">
     <%= render :partial => 'ajax_paginate/selector'%>

@@ -13,7 +13,7 @@
       :per_page => per_page, 
       :sort_by => sort_by
     }, 
-    :before => "ap_thinking_start();", 
+    :before => "ap_thinking_start('#{table_name}');", 
     :complete => "ap_thinking_stop();" %>
 
 <span class="ap_prev_link">
@@ -26,7 +26,7 @@
         :per_page => per_page, 
         :sort_by => sort_by
       }, 
-      :before => "ap_thinking_start();", 
+      :before => "ap_thinking_start('#{table_name}');",  
       :complete => "ap_thinking_stop();" %>       
 <% else %>
   < Prev
@@ -45,7 +45,7 @@
         :per_page => per_page, 
         :sort_by => sort_by
       }, 
-      :before => "ap_thinking_start();", 
+      :before => "ap_thinking_start('#{table_name}');", 
       :complete => "ap_thinking_stop();" %>
 <% else %>
 Next >
@@ -60,5 +60,5 @@ Next >
        :per_page => per_page, 
        :sort_by => sort_by
     }, 
-    :before => "ap_thinking_start();", 
+    :before => "ap_thinking_start('#{table_name}');", 
     :complete => "ap_thinking_stop();" %>
