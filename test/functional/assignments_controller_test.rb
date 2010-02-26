@@ -45,10 +45,32 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       setup do
         post_as @admin, :new, :id => @assignment.id
       end
-      
       should_assign_to :assignment, :assignments
       should_respond_with :success
     end
+
+    context "with REPOSITORY_EXTERNAL_SUBMITS_ONLY as false" do
+      setup do
+        MarkusConfigurator.stubs(:markus_config_repository_external_submits_only?).returns(false)
+        get_as @admin, :new
+      end
+      should "set allow_web_submits accordingly" do
+        assignment = assigns(:assignment)
+        assert assignment.allow_web_submits == true
+      end      
+    end
+
+    context "with REPOSITORY_EXTERNAL_SUBMITS_ONLY as true" do
+      setup do
+        MarkusConfigurator.stubs(:markus_config_repository_external_submits_only?).returns(true)
+        get_as @admin, :new
+      end
+      should "set allow_web_submits accordingly" do
+        assignment = assigns(:assignment)
+        assert assignment.allow_web_submits == false
+      end      
+    end
+
     
   end # context: A logged in admin doing a GET
   
