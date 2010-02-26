@@ -338,7 +338,13 @@ ul#annotation_summary_list {
     font-size:10px;
     background:none;
 }
-
+.rubric_reset {
+	color:black;
+    font-size:10px;
+    background:none;
+	float:right;
+	cursor: pointer;
+}
 .rubric_criterion_level_selected {
     font-size:10px;
     background-color:#FFFFCC;

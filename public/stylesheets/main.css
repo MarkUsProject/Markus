@@ -799,7 +799,10 @@ input#extra_mark_description{
 .float_right {
    float: right;
 }
-
+.cursor_hand {
+	float: left;
+	cursor: pointer;
+}
 .bonus_deduction {
   padding: 5px;
   background-color: #B7D3EC; 
