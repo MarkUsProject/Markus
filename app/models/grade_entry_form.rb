@@ -27,25 +27,12 @@ class GradeEntryForm < ActiveRecord::Base
   
   # Determine the total mark for a particular student
   def calculate_total_mark(student_id)
-    grade_entry_items = self.grade_entry_items
-    total = 0.0
-    no_grades_entered = true
-
+    # Differentiate between a blank total mark and a total mark of 0
+    total = ""
+    
     grade_entry_student = self.grade_entry_students.find_by_user_id(student_id)
     if !grade_entry_student.nil?
-      grade_entry_items.each do |grade_entry_item|
-        grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(grade_entry_student.id, 
-                                                                             grade_entry_item.id)
-        if !grade.nil? and !grade.grade.nil?   
-          no_grades_entered = false
-          total += grade.grade
-        end
-      end
-    end
-    
-    # Differentiate between a blank total mark and a total mark of 0
-    if no_grades_entered
-      total = ""
+      total = grade_entry_student.grades.sum('grade')
     end
     
     return total
