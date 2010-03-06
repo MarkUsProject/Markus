@@ -184,26 +184,25 @@ class ResultsController < ApplicationController
   
   def update_mark
     result_mark = Mark.find(params[:mark_id])
-    mark_value = params[:mark]
-    result_mark.mark = mark_value
+    result_mark.mark = params[:mark]
     submission = result_mark.result.submission  # get submission for logging
     group = submission.grouping.group           # get group for logging
     assignment = submission.grouping.assignment # get assignment for logging
     m_logger = MarkusLogger.instance
     if !result_mark.save
-      m_logger.log(I18n.t('markus_logger.user_update_mark_submission_fail',
-                    { :user_name => current_user.user_name, 
-                      :submission_id => submission.id, :group_name => group.group_name,
-                      :assignment => assignment.short_identifier}), MarkusLogger::INFO)
-      render :partial => 'shared/handle_error', :locals => {:error => I18n.t('mark.error.save') + result_mark.errors}
+        m_logger.log(I18n.t('markus_logger.user_update_mark_submission_fail',
+                      { :user_name => current_user.user_name, 
+                        :submission_id => submission.id, :group_name => group.group_name,
+                        :assignment => assignment.short_identifier}), MarkusLogger::ERROR)
+        render :partial => 'shared/handle_error', :locals => {:error => I18n.t('mark.error.save') + result_mark.errors}
     else
-      m_logger.log(I18n.t('markus_logger.user_update_mark_submission',
-                    { :user_name => current_user.user_name, 
-                      :submission_id => submission.id, :group_name => group.group_name,
-                      :assignment => assignment.short_identifier}), MarkusLogger::ERROR)
-      render :partial => 'results/marker/update_mark',
-             :locals => { :result_mark => result_mark, :mark_value => mark_value}
-    end
+        m_logger.log(I18n.t('markus_logger.user_update_mark_submission',
+                      { :user_name => current_user.user_name, 
+                        :submission_id => submission.id, :group_name => group.group_name,
+                        :assignment => assignment.short_identifier}), MarkusLogger::INFO)
+        render :partial => 'results/marker/update_mark',
+               :locals => { :result_mark => result_mark, :mark_value => result_mark.mark}
+     end
   end
   
   def view_marks
@@ -320,5 +319,7 @@ class ResultsController < ApplicationController
     end
     return repo.download_as_string(revision.files_at_path(file.path)[file.filename])
   end
-  
+
+
+
 end

@@ -24,11 +24,12 @@ function select_mark(mark_id, mark) {
   if (typeof(original_mark) != "undefined") {
     original_mark.removeClassName('rubric_criterion_level_selected');
   }
-  $('mark_' + mark_id + '_' + mark).addClassName('rubric_criterion_level_selected');
+  if (mark != null){
+    $('mark_' + mark_id + '_' + mark).addClassName('rubric_criterion_level_selected');
+  }
 }
 
 function update_total_mark(total_mark) {
   $('current_mark_div').update(total_mark);
   $('current_total_mark_div').update(total_mark);
 }
-
