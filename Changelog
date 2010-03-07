@@ -1,3 +1,9 @@
+Changes for MarkUs 0.6.2:
+* For now, students who work alone do not have their repositories named after them
+* "Allow Web Submits?" in Assignment Properties page defaults to REPOSITORY_EXTERNAL_SUBMITS_ONLY setting now
+* Annotation Category dropdowns no longer close prematurely on mouseover-ing a tooltip
+* Added "Reset Mark" capability to grader view
+
 Changes for MarkUs 0.6.1:
 
 * Fixed trace on detailed CSV download for assignments (g9jerboa)
