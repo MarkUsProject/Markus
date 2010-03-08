@@ -17,7 +17,6 @@ class MainController < ApplicationController
   # is redirected to main page if session is still active and valid.
 
   def login
-    
     @current_user = current_user
     # redirect to main page if user is already logged in.
     if logged_in? && !request.post?

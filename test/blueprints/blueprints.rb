@@ -112,7 +112,7 @@ Student.blueprint do
 end
 
 StudentMembership.blueprint do
-  type {'StudentMemberhip'}
+  type {'StudentMembership'}
   user {Student.make}
   grouping
   membership_status {'pending'}
