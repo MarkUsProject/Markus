@@ -9,14 +9,14 @@
 </td>
 <% if user.student? %>
 <td>
-<%= user.remaining_grace_credits.to_s + '/' + user.grace_credits.to_s %>
-</td>
-<td>
     <% if user.has_section? %>
 	<%= user.section.name %>
     <% else %>
      -
     <% end %>
+</td>
+<td>
+<%= user.remaining_grace_credits.to_s + '/' + user.grace_credits.to_s %>
 </td>
 
 <% end %>
