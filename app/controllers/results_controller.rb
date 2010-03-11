@@ -59,7 +59,7 @@ class ResultsController < ApplicationController
     collection_time = @assignment.submission_rule.calculate_collection_time.localtime
     
     groupings.delete_if do |grouping|
-      grouping != @grouping && (grouping.marking_completed? || (!grouping.has_submission? && (Time.now < collection_time)))
+      grouping != @grouping && ((!grouping.has_submission? && (Time.now < collection_time)))
     end
     
     # We sort by Group name by default

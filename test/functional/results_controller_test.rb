@@ -374,12 +374,76 @@ class ResultsControllerTest < AuthenticatedControllerTest
     end
     
     context "GET on :edit with RubricCriterion" do
-      setup do
-        get_as @admin, :edit, :id => @released_result.id
+      context "with 2 partial and 1 released/completed results" do
+        setup do
+          @result_first = results(:result_1)
+          @result_second = results(:result_2)
+          # Don't ask me why the third one in the results is
+          # called result_4...I think our fixtures got messed up.
+          @result_third = results(:result_4)
+        end
+        context "when editing first result" do
+          setup do
+            get_as @admin, :edit, :id => @result_first.id
+          end
+          should "have set next_submission and prev_submission correctly" do
+            assert assigns(:next_grouping)
+            next_grouping = assigns(:next_grouping)
+            assert next_grouping.has_submission?
+            next_result = next_grouping.get_submission_used.result
+            assert_not_nil next_result
+            assert_equal next_result, @result_second
+            assert !next_result.released_to_students
+            assert_nil assigns(:previous_grouping)
+          end
+          should_not_set_the_flash 
+          should_render_template :edit
+          should_respond_with :success 
+        end
+        context "when editing second result" do
+          setup do
+            get_as @admin, :edit, :id => @result_second.id
+          end
+          should "have set next_submission and prev_submission correctly" do
+            assert assigns(:next_grouping)
+            assert assigns(:previous_grouping)
+            next_grouping = assigns(:next_grouping)
+            previous_grouping = assigns(:previous_grouping)
+            assert next_grouping.has_submission?
+            assert previous_grouping.has_submission?
+            next_result = next_grouping.get_submission_used.result
+            previous_result = previous_grouping.get_submission_used.result
+            assert_not_nil next_result
+            assert_not_nil previous_result
+            assert_equal next_result, @result_third
+            assert_equal previous_result, @result_first
+            assert next_result.released_to_students
+            assert !previous_result.released_to_students
+          end
+          should_not_set_the_flash 
+          should_render_template :edit
+          should_respond_with :success 
+        end
+        context "when editing third result" do
+          setup do
+            get_as @admin, :edit, :id => @result_third.id
+          end
+          should "have set next_submission and prev_submission correctly" do
+            assert_nil assigns(:next_grouping)
+            assert assigns(:previous_grouping)
+            previous_grouping = assigns(:previous_grouping)
+            assert previous_grouping.has_submission?
+            previous_result = previous_grouping.get_submission_used.result
+            assert_not_nil previous_result
+            assert_equal previous_result, @result_second
+            assert !previous_result.released_to_students
+          end
+          should_not_set_the_flash 
+          should_render_template :edit
+          should_respond_with :success 
+        end
+
       end
-      should_not_set_the_flash 
-      should_render_template :edit
-      should_respond_with :success
     end
     
     context "GET on :edit with FlexibleCriterion" do
