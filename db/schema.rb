@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100224150617) do
+ActiveRecord::Schema.define(:version => 20100310100552) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -67,6 +67,7 @@ ActiveRecord::Schema.define(:version => 20100224150617) do
     t.string   "marking_scheme_type",      :default => "rubric"
     t.boolean  "allow_web_submits",        :default => true
     t.boolean  "section_groups_only"
+    t.boolean  "section_due_dates",        :default => false
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true
@@ -237,6 +238,12 @@ ActiveRecord::Schema.define(:version => 20100224150617) do
 
   add_index "rubric_criteria", ["assignment_id", "rubric_criterion_name"], :name => "index_rubric_criteria_on_assignment_id_and_name", :unique => true
   add_index "rubric_criteria", ["assignment_id"], :name => "index_rubric_criteria_on_assignment_id"
+
+  create_table "section_due_dates", :force => true do |t|
+    t.integer  "sections_id"
+    t.integer  "assignments_id"
+    t.datetime "due_date"
+  end
 
   create_table "sections", :force => true do |t|
     t.string   "name"
