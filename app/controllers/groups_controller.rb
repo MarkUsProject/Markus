@@ -291,10 +291,13 @@ class GroupsController < ApplicationController
     if params[:submit_type] == 'random_assign'
       begin 
         if params[:graders].nil?
-          raise "You must select at least one grader for random assignment"
+          raise t('groups.no_graders_selected')
         end
-        randomly_assign_graders(params[:graders], @assignment.groupings)
-        @groupings_data = construct_table_rows(@assignment.groupings, @assignment)
+        if params[:groupings].nil?
+          raise t('groups.no_groups_selected')
+        end
+        randomly_assign_graders(params[:graders], params[:groupings])
+        @groupings_data = construct_table_rows(Grouping.find(params[:groupings]), @assignment)
         render :action => "modify_groupings"
         return
       rescue Exception => e

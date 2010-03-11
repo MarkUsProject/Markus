@@ -283,6 +283,113 @@ class GroupsControllerTest < AuthenticatedControllerTest
       
     end
     
+    context "POST on :global_actions on random_assign" do
+      setup do
+          # Remove TAs from all groupings used...
+          groupings(:grouping_2).remove_ta_by_id(users(:ta1).id)
+          groupings(:grouping_5).remove_ta_by_id(users(:ta3).id)
+          groupings(:grouping_6).remove_ta_by_id(users(:ta3).id)
+      end
+      
+      context "and no graders selected" do
+        setup do
+          post_as @admin, :global_actions, {:id => @assignment.id, :global_actions => "", :submit_type => "random_assign"}
+        end
+        should_assign_to(:error) { I18n.t( 'groups.no_graders_selected') }
+      end
+      
+      context "and no groups selected, at least one grader" do
+        setup do
+          post_as @admin, :global_actions, {:id => @assignment.id, :global_actions => "", :submit_type => "random_assign", :graders => [users(:ta1).id]}
+        end
+        should_assign_to(:error) { I18n.t( 'groups.no_groups_selected') }
+      end
+      
+      context "and one grader and one group is selected" do
+        setup do
+          post_as @admin, :global_actions, {:id => @assignment.id, :global_actions => "", :submit_type => "random_assign", :groupings => [groupings(:grouping_1).id], :graders => [users(:ta1).id]}
+        end
+        should "assign grader to group accordingly" do
+          assert_same_elements groupings(:grouping_1).get_ta_names, [users(:ta1).user_name]
+        end
+        should "not assign that grader to non selected groups" do
+          assert_same_elements groupings(:grouping_2).get_ta_names, []
+          assert_same_elements groupings(:grouping_3).get_ta_names, []
+          assert_same_elements groupings(:grouping_4).get_ta_names, []
+          assert_same_elements groupings(:grouping_5).get_ta_names, []
+          assert_same_elements groupings(:grouping_6).get_ta_names, []
+        end
+      end
+      
+      context "and one grader and multiple groups are selected" do
+        setup do
+          post_as @admin, :global_actions, {:id => @assignment.id, :global_actions => "", :submit_type => "random_assign", :groupings => [groupings(:grouping_1).id,groupings(:grouping_2).id,groupings(:grouping_3).id], :graders => [users(:ta1).id]}
+        end
+        should "assign that grader to all groups accordingly" do
+          assert_same_elements groupings(:grouping_1).get_ta_names, [users(:ta1).user_name]
+          assert_same_elements groupings(:grouping_2).get_ta_names, [users(:ta1).user_name]
+          assert_same_elements groupings(:grouping_3).get_ta_names, [users(:ta1).user_name]
+        end
+        should "not assign that grader to non selected groups" do
+          assert_same_elements groupings(:grouping_4).get_ta_names, []
+          assert_same_elements groupings(:grouping_5).get_ta_names, []
+          assert_same_elements groupings(:grouping_6).get_ta_names, []
+        end
+      end
+      
+      context "and two graders and one group is selected" do
+        setup do
+          post_as @admin, :global_actions, {:id => @assignment.id, :global_actions => "", :submit_type => "random_assign", :groupings => [groupings(:grouping_3).id], :graders => [users(:ta1).id,users(:ta2).id]}
+        end
+        should "assign one grader to selected group" do
+          # Getting count as graders are assigned randomly. Should only have one grader.
+          assert_equal groupings(:grouping_3).get_ta_names.size, 1
+        end
+        should "not assign that grader to non-selected groups" do
+          assert_same_elements groupings(:grouping_1).get_ta_names, []
+          assert_same_elements groupings(:grouping_2).get_ta_names, []
+          assert_same_elements groupings(:grouping_4).get_ta_names, []
+          assert_same_elements groupings(:grouping_5).get_ta_names, []
+          assert_same_elements groupings(:grouping_6).get_ta_names, []
+        end
+      end
+      
+      context "and two graders and multiple groups are selected" do
+        setup do
+          post_as @admin, :global_actions, {:id => @assignment.id, :global_actions => "", :submit_type => "random_assign", :groupings => [groupings(:grouping_2).id,groupings(:grouping_4).id,groupings(:grouping_5).id], :graders => [users(:ta1).id,users(:ta2).id]}
+        end
+        should "assign one grader to each selected group" do
+          # Getting count as graders are assigned randomly. Should only have one grader each.
+          assert_equal groupings(:grouping_2).get_ta_names.size, 1
+          assert_equal groupings(:grouping_4).get_ta_names.size, 1
+          assert_equal groupings(:grouping_5).get_ta_names.size, 1
+        end
+        should "not assign that grader to non-selected groups" do
+          assert_same_elements groupings(:grouping_1).get_ta_names, []
+          assert_same_elements groupings(:grouping_3).get_ta_names, []
+          assert_same_elements groupings(:grouping_6).get_ta_names, []
+        end
+      end
+      
+      context "and multiple graders and multiple groups are selected" do
+        setup do
+          post_as @admin, :global_actions, {:id => @assignment.id, :global_actions => "", :submit_type => "random_assign", :groupings => [groupings(:grouping_1).id,groupings(:grouping_2).id,groupings(:grouping_4).id,groupings(:grouping_5).id,groupings(:grouping_6).id], :graders => [users(:ta1).id,users(:ta2).id,users(:ta2).id]}
+        end
+        should "assign one grader to each selected group" do
+          # Getting count as graders are assigned randomly. Should only have one grader each.
+          assert_equal groupings(:grouping_1).get_ta_names.size, 1
+          assert_equal groupings(:grouping_2).get_ta_names.size, 1
+          assert_equal groupings(:grouping_4).get_ta_names.size, 1
+          assert_equal groupings(:grouping_5).get_ta_names.size, 1
+          assert_equal groupings(:grouping_6).get_ta_names.size, 1
+        end
+        should "not assign graders to non selected groups" do
+          assert_same_elements groupings(:grouping_3).get_ta_names, []
+        end
+      end
+      
+    end
+    
     context "POST on :add_member" do
       
       context "with an empty username field" do
