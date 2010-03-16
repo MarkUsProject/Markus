@@ -3,7 +3,7 @@ module AjaxPaginationHelper
   # For the hash that's passed to handle_ap_event, these are the required
   # fields.
   AP_REQUIRED_KEYS = [:model, :filters]
-  AP_DEFAULT_PER_PAGE = 1
+  AP_DEFAULT_PER_PAGE = 30
   AP_DEFAULT_PAGE = 1
     
   def handle_ap_event(hash, object_hash, params)

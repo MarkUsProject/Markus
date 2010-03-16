@@ -5,60 +5,59 @@
    last_page = total_items / per_page.to_i + 1
 %>
 
-<%= link_to_remote "<< First", :url => {
-      :action => 's_table_paginate', 
-      :id => assignment.id, 
-      :filter => filter, 
-      :page => 1, 
-      :per_page => per_page, 
-      :sort_by => sort_by
-    }, 
-    :before => "ap_thinking_start('#{table_name}');", 
-    :complete => "ap_thinking_stop();" %>
+<%=
+link_to_if(current_page_low > 1, '<< ' + I18n.t("pagination.first"),
+    :id => assignment.id, 
+    :filter => filter, 
+    :page => 1, 
+    :per_page => per_page, 
+    :sort_by => sort_by,
+    :desc => desc ) do 
+  "<< " + I18n.t("pagination.first")
+end
+%>
+
+
 
 <span class="ap_prev_link">
-<% if current_page_low > 1 %>
-  <%= link_to_remote "< Prev", :url => {
-        :action => 's_table_paginate', 
-        :id => assignment.id, 
-        :filter => filter, 
-        :page => current_page - 1, 
-        :per_page => per_page, 
-        :sort_by => sort_by
-      }, 
-      :before => "ap_thinking_start('#{table_name}');",  
-      :complete => "ap_thinking_stop();" %>       
-<% else %>
-  < Prev
-<% end %>
+<%=
+link_to_if( current_page_low > 1, '< ' + I18n.t("pagination.prev"),
+    :id => assignment.id, 
+    :filter => filter, 
+    :page => current_page - 1, 
+    :per_page => per_page, 
+    :sort_by => sort_by,
+    :desc => desc ) do
+  "< " + I18n.t("pagination.prev")
+end 
+%>
+
 </span>
 
 <strong><%= current_page_low %> - <%= current_page_high %> of <%= total_items %></strong>
 
 <span class="ap_next_link">
-<% if current_page_high < total_items %>
-  <%= link_to_remote "Next >", :url => {
-        :action => 's_table_paginate', 
-        :id => assignment.id, 
-        :filter => filter, 
-        :page => current_page + 1, 
-        :per_page => per_page, 
-        :sort_by => sort_by
-      }, 
-      :before => "ap_thinking_start('#{table_name}');", 
-      :complete => "ap_thinking_stop();" %>
-<% else %>
-Next >
-<% end %>
+<%=
+link_to_if( current_page_high < total_items, I18n.t("pagination.next") + ' >',
+    :id => assignment.id, 
+    :filter => filter, 
+    :page => current_page + 1, 
+    :per_page => per_page, 
+    :sort_by => sort_by,
+    :desc => desc ) do
+  I18n.t("pagination.next") + ' >'
+end
+%>
 </span>
 
-<%= link_to_remote "Last >>", :url => {
-       :action => 's_table_paginate', 
-       :id => assignment.id, 
-       :filter => filter, 
-       :page => last_page, 
-       :per_page => per_page, 
-       :sort_by => sort_by
-    }, 
-    :before => "ap_thinking_start('#{table_name}');", 
-    :complete => "ap_thinking_stop();" %>
+<%=
+link_to_if( current_page_high < total_items, I18n.t("pagination.last") + ' >>',
+    :id => assignment.id, 
+    :filter => filter, 
+    :page => last_page, 
+    :per_page => per_page, 
+    :sort_by => sort_by,
+    :desc => desc ) do
+  I18n.t("pagination.last") + ' >>'
+end
+%>

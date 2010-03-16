@@ -25,91 +25,141 @@
 </div>
 
 <div class="wrapLeft">
+  <% if flash[:error] %>
+    <div class="error">
+      <%=flash[:error]%>
+    </div>
+  <% end %>
+  <% if flash[:success] %>
+    <div class="success">
+      <%=flash[:success]%>
+    </div>
+  <% end %>
 
-<% if flash[:error] %>
-<div class="error">
- <%=flash[:error]%>
-</div>
-<% end %>
-<% if flash[:success] %>
-<div class="success">
- <%=flash[:success]%>
-</div>
-<% end %>
+  <% if !flash[:errors].nil? && !flash[:errors].empty? %>
+    <div class="error">
+      <h1>Errors</h1>
+      <ul>
+        <% flash[:errors].each do |error_message| %>
+	        <li><%= error_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
 
-<% if !flash[:errors].nil? && !flash[:errors].empty? %>
-<div class="error">
-  <h1>Errors</h1>
-    <ul>
-    <% flash[:errors].each do |error_message| %>
-	<li><%= error_message %></li>
-    <% end %>
-    </ul>
-</div>
-<% end %>
-
-<%= form_tag({:action => 'update_submissions', :id => @assignment.id}) %>
-
-<div class="clear"></div>
-
-<div class="ap_nav_box">
-  <div class="floatLeft">
-    <% if @current_user.admin? %>
-	<%= submit_tag "Release Marks", :name => "release_results" %>
-	<%= submit_tag "Unrelease Marks", :name => "unrelease_results" %>
-    <% end %>
-  </div>
-  <div class="ap_filters" id="ap_filters_1">
-    <%= render :partial => 'submissions_table_filters', :locals => {:filter => @filter, :sort_by => @sort_by, :assignment => @assignment, :filters => @filters, :per_page => @per_page, :per_pages => @per_pages} %>
-  </div>
-  <div class="clear"></div>
-  <div class="ap_page_links" id="ap_page_links_1">
-    <%= render :partial => 'ajax_paginate/initial_paginate_links', :locals => {:per_page => @per_page, :current_page => @current_page, :page_items => @groupings.size, :total_items => @groupings_total, :assignment => @assignment, :filter => @filter, :sort_by => @sort_by, :table_name => 'submissions'} %>
-  </div>
-  <div id="ap_selector">
-    <%= render :partial => 'ajax_paginate/selector' %>
-  </div>
-  <div class="clear"></div>
-</div>
-<div id="ap_selects">
-  <%= render :partial => 'ajax_paginate/selects' %>
-</div>
-<table>
-  <thead id="submissions_table_head">
-  <%= render :partial => 'submissions_table_sorting_links', :locals => {:assignment => @assignment, :filter => 'none', :page => @current_page, :per_page => @per_page, :sort_by => @sort_by, :desc => @desc} %>
-  </thead>
-  <tbody>
-    <tr><td id="thinking_table_row" colspan="7"><%= render :partial => 'ajax_paginate/thinking' %></td></tr>
-  </tbody>
-  <%= render :partial => 'submissions_table_body', :locals => {:groupings => @groupings, :assignment => @assignment} %>
-  <tfoot id="submissions_table_foot">
-  <%= render :partial => 'submissions_table_sorting_links', :locals => {:assignment => @assignment, :filter => 'none', :page => @current_page, :per_page => @per_page, :sort_by => @sort_by, :desc => @desc} %>
-  </tfoot>
-</table>
-
-<div class="ap_nav_box">
-  <div class="ap_page_links" id="ap_page_links_2">
-    <%= render :partial => 'ajax_paginate/initial_paginate_links', :locals => {:per_page => @per_page, :current_page => @current_page, :page_items => @groupings.size, :total_items => @groupings_total, :assignment => @assignment, :filter => @filter, :sort_by => @sort_by, :table_name => 'submissions'} %>
-  </div>
-  <div id="ap_selector">
-    <%= render :partial => 'ajax_paginate/selector'%>
-  </div>
   <div class="clear"></div>
 
-  <div class="floatLeft">
-    <% if @current_user.admin? %>
-	<%= submit_tag "Release Marks", :name => "release_results" %>
-	<%= submit_tag "Unrelease Marks", :name => "unrelease_results" %>
-    <% end %>
-  </div>
-  <div class="ap_filters" id="ap_filters_2">
-    <%= render :partial => 'submissions_table_filters', :locals => {:filter => @filter, :sort_by => @sort_by, :assignment => @assignment, :filters => @filters, :per_page => @per_page, :per_pages => @per_pages} %>
-  </div>
-  <div class="clear"></div>
-</div>
+  <%= form_tag({:action => 'update_submissions', :id => @assignment.id}) %>
+    <div class="ap_nav_box">
+      <div class="floatLeft">
+        <%= submit_tag I18n.t("browse_submissions.release_marks"), :name => "release_results" %>
+        <%= submit_tag I18n.t("browse_submissions.unrelease_marks"), :name => "unrelease_results" %>
+      </div>
+      <div class="ap_filters" id="ap_filters_1">
+        <%= render  :partial => 'submissions_table_filters',
+                    :locals => {
+                      :filter => @filter, 
+                      :page => @current_page,
+                      :desc => @desc,
+                      :sort_by => @sort_by, 
+                      :assignment => @assignment,
+                      :filters => @filters,
+                      :per_page => @per_page, 
+                      :per_pages => @per_pages } %>
+      </div>
+      <div class="clear"></div>
+      <div class="ap_page_links" id="ap_page_links_1">
+        <%= render  :partial => 'ajax_paginate/initial_paginate_links',
+                    :locals => {
+                      :per_page => @per_page,
+                      :current_page => @current_page,
+                      :page_items => @groupings.size,
+                      :total_items => @groupings_total,
+                      :assignment => @assignment,
+                      :filter => @filter,
+                      :sort_by => @sort_by,
+                      :desc => @desc } %>
+      </div>
+      <div id="ap_selector">
+        <%= render :partial => 'ajax_paginate/selector' %>
+      </div>
+      <div class="clear"></div>
+    </div>
+
+    <div id="ap_selects">
+      <%= render :partial => 'ajax_paginate/selects' %>
+    </div>
+
+    <table>
+      <thead id="submissions_table_head">
+        <%= render  :partial => 'submissions_table_sorting_links',
+                    :locals => {
+                      :assignment => @assignment, 
+                      :filter => 'none',
+                      :page => @current_page,
+                      :per_page => @per_page,
+                      :sort_by => @sort_by,
+                      :desc => @desc } %>
+      </thead>
+
+      <%= render  :partial => 'submissions_table_body', 
+                  :locals => {
+                    :groupings => @groupings,
+                    :assignment => @assignment } %>
+
+      <tfoot id="submissions_table_foot">
+        <%= render  :partial => 'submissions_table_sorting_links', 
+                    :locals => {
+                      :assignment => @assignment,
+                      :filter => 'none',
+                      :page => @current_page,
+                      :per_page => @per_page,
+                      :sort_by => @sort_by,
+                      :desc => @desc } %>
+      </tfoot>
+    </table>
 
 
+    <div class="ap_nav_box">
+      <div class="ap_page_links" id="ap_page_links_2">
+        <%= render  :partial => 'ajax_paginate/initial_paginate_links',
+                    :locals => {
+                      :per_page => @per_page,
+                      :current_page => @current_page,
+                      :page_items => @groupings.size,
+                      :total_items => @groupings_total,
+                      :assignment => @assignment,
+                      :filter => @filter,
+                      :sort_by => @sort_by,
+                      :desc => @desc } %>
+      </div>
+      <div id="ap_selector">
+        <%= render :partial => 'ajax_paginate/selector'%>
+      </div>
 
-</form>
+      <div class="clear"></div>
+
+      <div class="floatLeft">
+        <% if @current_user.admin? %>
+          <%= submit_tag I18n.t("browse_submissions.release_marks"), :name => "release_results" %>
+          <%= submit_tag I18n.t("browse_submissions.unrelease_marks"), :name => "unrelease_results" %>
+        <% end %>
+      </div>
+      <div class="ap_filters" id="ap_filters_2">
+        <%= render  :partial => 'submissions_table_filters',
+                    :locals => {
+                      :filter => @filter, 
+                      :page => @current_page,
+                      :desc => @desc,
+                      :sort_by => @sort_by, 
+                      :assignment => @assignment,
+                      :filters => @filters,
+                      :per_page => @per_page, 
+                      :per_pages => @per_pages } %>
+      </div>
+      <div class="clear"></div>
+    </div>
+  </form>
+
 
 </div>

@@ -1,11 +1,37 @@
+<%
+# this partial requires the following locals:
+# assignment
+# per_pages
+# per_page
+# filters
+# filter
+# desc
+# sort_by
+%>
+
 Filter:
-<%= select_tag "filter", options_for_select(filters, filter) , 
- :onchange => remote_function(:url => {:action => :s_table_paginate, :id => assignment.id, :per_page => per_page }, 
- :with => "'filter=' + this.options[this.selectedIndex].value", :before => "ap_thinking_start('submissions');", :complete => "ap_thinking_stop();") -%>
- <input type="hidden" name="filter" value="<%=filter%>">
+<%= select_tag  "filter", 
+                options_for_select(filters, filter), 
+                :onchange =>  "top.location.href = '#{assignment.id}" +
+                              "?desc=#{desc}" +
+                              "&sort_by=#{sort_by}" + 
+                              "&per_page=#{per_page}" +
+                              "&filter=' + $F(this); " 
+                              # prototype  ^^^^^ evaluates the selected value for you
+-%>
  Show
-<%= select_tag "per_page", options_for_select(per_pages, per_page.to_i), 
- :onchange => remote_function(:url => {:action => :s_table_paginate, :id => assignment.id, :filter => filter }, 
- :with => "'per_page=' + this.options[this.selectedIndex].value",:before => "ap_thinking_start('submissions');", :complete => "ap_thinking_stop();") -%>
+
+<%
+# for now go to page one until I figure out a formula for determining
+# the correct page that contains that first entry on the current page
+# after setting the new page size
+%>
+<%= select_tag  "per_page",
+                options_for_select(per_pages, per_page.to_i), 
+                :onchange =>  "top.location.href = '#{assignment.id}" +
+                              "?desc=#{desc}" +
+                              "&sort_by=#{sort_by}" + 
+                              "&filter=#{filter}" +
+                              "&per_page=' + $F(this); "
+-%>
  per page
- <input type="hidden" name="per_page" value="<%=per_page%>">
