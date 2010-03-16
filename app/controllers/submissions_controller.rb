@@ -14,39 +14,52 @@ class SubmissionsController < ApplicationController
   before_filter    :authorize_for_user, :only => [:download]
   
   S_TABLE_PARAMS = {
-             :model => Grouping, 
-             :per_pages => [15, 30, 50, 100, 150],
-             :filters => {
-               'none' => {:display => 'Show All', :proc => lambda { |params| return params[:assignment].groupings(:include => [{:student_memberships => :user, :ta_memberships => :user}, :groups, {:submissions => {:results => [:marks, :extra_marks]}}])}},
-               'unmarked' => {:display => 'Show Unmarked', :proc => lambda { |params| return params[:assignment].groupings.select{|g| !g.has_submission? || (g.has_submission? && g.get_submission_used.result.marking_state == Result::MARKING_STATES[:unmarked]) } }},
-               'partial' => {:display => 'Show Partial', :proc => lambda { |params| return params[:assignment].groupings.select{|g| g.has_submission? && g.get_submission_used.result.marking_state == Result::MARKING_STATES[:partial] } }},
-               'complete' => {:display => 'Show Complete', :proc => lambda { |params| return params[:assignment].groupings.select{|g| g.has_submission? && g.get_submission_used.result.marking_state == Result::MARKING_STATES[:complete] } }},
-               'released' => {:display => 'Show Released', :proc => lambda { |params| return params[:assignment].groupings.select{|g| g.has_submission? && g.get_submission_used.result.released_to_students} }},
-               'assigned' => {:display => 'Show Assigned to Me', :proc => lambda { |params| return params[:assignment].ta_memberships.find_all_by_user_id(params[:user_id]).collect{|m| m.grouping} }}
-             },
-             :sorts => {
-               'group_name' => lambda { |a,b| a.group.group_name.downcase <=> b.group.group_name.downcase},
-               'repo_name' => lambda { |a,b| a.group.repo_name.downcase <=> b.group.repo_name.downcase },
-               'revision_timestamp' => lambda { |a,b|
-                 return -1 if !a.has_submission?
-                 return 1 if !b.has_submission?
-                 return a.get_submission_used.revision_timestamp <=> b.get_submission_used.revision_timestamp
-               },
-               'marking_state' => lambda { |a,b|
-                 return -1 if !a.has_submission?
-                 return 1 if !b.has_submission?
-                 return a.get_submission_used.result.marking_state <=> b.get_submission_used.result.marking_state
-               },
-               'total_mark' => lambda { |a,b|
-                 return -1 if !a.has_submission?
-                 return 1 if !b.has_submission?
-                 return a.get_submission_used.result.total_mark <=> b.get_submission_used.result.total_mark
-               },
-               'grace_credits_used' => lambda { |a,b|
-                 return a.grace_period_deduction_sum <=> b.grace_period_deduction_sum
-               }
-             }
-        }
+    :model => Grouping, 
+    :per_pages => [15, 30, 50, 100, 150],
+    :filters => {
+      'none' => {
+        :display => 'Show All', 
+        :proc => lambda { |params|
+          return params[:assignment].groupings(:include => [{:student_memberships => :user, :ta_memberships => :user}, :groups, {:submissions => {:results => [:marks, :extra_marks]}}])}},
+      'unmarked' => {
+        :display => 'Show Unmarked', 
+        :proc => lambda { |params| return params[:assignment].groupings.select{|g| !g.has_submission? || (g.has_submission? && g.get_submission_used.result.marking_state == Result::MARKING_STATES[:unmarked]) } }},
+      'partial' => {
+        :display => 'Show Partial',
+        :proc => lambda { |params| return params[:assignment].groupings.select{|g| g.has_submission? && g.get_submission_used.result.marking_state == Result::MARKING_STATES[:partial] } }},
+      'complete' => {
+        :display => 'Show Complete',
+        :proc => lambda { |params| return params[:assignment].groupings.select{|g| g.has_submission? && g.get_submission_used.result.marking_state == Result::MARKING_STATES[:complete] } }},
+      'released' => {
+        :display => 'Show Released',
+        :proc => lambda { |params| return params[:assignment].groupings.select{|g| g.has_submission? && g.get_submission_used.result.released_to_students} }},
+      'assigned' => {
+        :display => 'Show Assigned to Me',
+        :proc => lambda { |params| return params[:assignment].ta_memberships.find_all_by_user_id(params[:user_id]).collect{|m| m.grouping} }}
+    },
+    :sorts => {
+      'group_name' => lambda { |a,b| a.group.group_name.downcase <=> b.group.group_name.downcase},
+      'repo_name' => lambda { |a,b| a.group.repo_name.downcase <=> b.group.repo_name.downcase },
+      'revision_timestamp' => lambda { |a,b|
+        return -1 if !a.has_submission?
+        return 1 if !b.has_submission?
+        return a.get_submission_used.revision_timestamp <=> b.get_submission_used.revision_timestamp
+      },
+      'marking_state' => lambda { |a,b|
+        return -1 if !a.has_submission?
+        return 1 if !b.has_submission?
+        return a.get_submission_used.result.marking_state <=> b.get_submission_used.result.marking_state
+      },
+      'total_mark' => lambda { |a,b|
+        return -1 if !a.has_submission?
+        return 1 if !b.has_submission?
+        return a.get_submission_used.result.total_mark <=> b.get_submission_used.result.total_mark
+      },
+      'grace_credits_used' => lambda { |a,b|
+        return a.grace_period_deduction_sum <=> b.grace_period_deduction_sum
+      }
+    }
+  }
         
   def repo_browser
     @grouping = Grouping.find(params[:id])
@@ -181,45 +194,30 @@ class SubmissionsController < ApplicationController
     end
     redirect_to :action => 'browse', :id => assignment.id
   end
-  
-  def browse
-    @assignment = Assignment.find(params[:id])
-    @details = params[:details] #TODO: Fix for pagination
-    # Pagination defaults
-    if current_user.ta?
-      @filter = 'assigned'    
-    else
-      @filter = 'none'
-    end
 
-    @per_page = 30
-    @current_page = 1
-    @sort_by = 'group_name'
-    @desc = false
-    # S_TABLE_PARAMS is defined at the top of this controller
-    @filters = get_filters(S_TABLE_PARAMS)
-    @per_pages = S_TABLE_PARAMS[:per_pages]
-    all_groupings = get_filtered_items(S_TABLE_PARAMS, @filter, @sort_by, {:assignment => @assignment, :user_id => current_user.id})
-    @groupings = all_groupings.paginate(:per_page => @per_page, :page => @current_page)
-    @groupings_total = all_groupings.size
-  end
-  
-  def s_table_paginate
+
+  def browse
+    if current_user.ta?
+      params[:filter] = 'assigned'    
+    else
+      if params[:filter] == nil or params[:filter].blank?
+        params[:filter] = 'none'    
+      end
+    end
+    if params[:sort_by] == nil or params[:sort_by].blank?
+      params[:sort_by] = 'group_name'
+    end 
     @assignment = Assignment.find(params[:id])
     @groupings, @groupings_total = handle_ap_event(S_TABLE_PARAMS, {:assignment => @assignment, :user_id => current_user.id}, params)
-    @current_page = params[:page]
+    @current_page = params[:page].to_i()
     @per_page = params[:per_page]
     @filters = get_filters(S_TABLE_PARAMS)
     @per_pages = S_TABLE_PARAMS[:per_pages]
     @desc = params[:desc]
     @filter = params[:filter]
-    if !params[:sort_by].blank?
-      @sort_by = params[:sort_by]
-    else
-      @sort_by = 'group_name'
-    end
-  end
-  
+    @sort_by = params[:sort_by]
+  end 
+
   def index
     @assignments = Assignment.all(:order => :id)
     render :action => 'index', :layout => 'sidebar'

@@ -137,7 +137,17 @@ en:
       last: "Last"  
       per_page: "per page"
       jump_to: "Jump to:"    
-      show: "Show"    
+      show: "Show"
+
+    browse_submissions:
+      release_marks:      "Release Marks"
+      unrelease_marks:    "Unrelease Marks"
+      group_name:         "Group Name"
+      repository:         "Repository"
+      commit_date:        "Commit Date"
+      marking_state:      "Marking State"
+      grace_credits_used: "Grace Credits Used"
+      final_grade:        "Final Grade"
 
     grade_entry_forms:
       blank_field: "can't be blank"    
