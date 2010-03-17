@@ -220,6 +220,10 @@ en:
       rename_group:
         success: "Group name has been updated."
         already_in_use: "This name is already in use for this assignment."
+      randomly_assign_graders: "Randomly assign Graders"
+      confirm_random_assign_graders: "Are you sure you want to randomly assign selected graders to selected groups?"
+      no_graders_selected: "You must select at least one grader for random assignment"
+      no_groups_selected: "You must select at least one group for random assignment"
       cant_delete: "You are not allowed to delete the group."
       cant_delete_already_submitted: "You already submitted something. You cannot delete your group."
     
