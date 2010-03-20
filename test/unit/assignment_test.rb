@@ -285,6 +285,7 @@ class AssignmentTest < ActiveSupport::TestCase
      setup do
        # Let's tweak student3 so that their membership_status makes them
        # an accepted part of the group
+
        memberships(:membership3).membership_status = 'accepted'
        memberships(:membership3).save
        @source = assignments(:assignment_1)
@@ -301,6 +302,35 @@ class AssignmentTest < ActiveSupport::TestCase
        end
      end
    end
+
+   context "an assignment with external commits only and previous groups" do
+     setup do
+       # Again, let's tweak student3 so that their membership_status makes them
+       # an accepted part of the group
+       memberships(:membership3).membership_status = 'accepted'
+       memberships(:membership3).save
+       @source = assignments(:assignment_1)
+       @target = assignments(:assignment_2)
+       assert @source.update_attributes(:allow_web_submits => false)
+       assert @target.update_attributes(:allow_web_submits => false)     
+       # And for this test, let's make sure all groupings cloned have admin approval
+       @source.groupings.each do |grouping|
+         grouping.admin_approved = true
+         grouping.save
+       end
+       assert @source.groupings.size > 0
+     end
+    should "ensure that all students have appropriate permissions on the cloned groupings" do
+       @target.clone_groupings_from(@source.id)
+       @target.reload
+       @target.groupings.each do |grouping|
+         grouping.accepted_students.each do |student|
+           assert_equal grouping.group.repo.get_permissions(student.user_name), Repository::Permission::READ_WRITE, "student should have read-write permissions on their group's repository"
+         end
+       end
+     end
+   end
+
 
    def test_grouped_students
      a = assignments(:assignment_1)
