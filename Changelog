@@ -1,3 +1,7 @@
+Changes for MarkUs 0.6.3:
+* Added rake task to automatically regenerate svn_authz in the event of corruption
+* MarkUs now ensures student read/write permissions on repositories after cloning groups
+
 Changes for MarkUs 0.6.2:
 * For now, students who work alone do not have their repositories named after them
 * "Allow Web Submits?" in Assignment Properties page defaults to REPOSITORY_EXTERNAL_SUBMITS_ONLY setting now
