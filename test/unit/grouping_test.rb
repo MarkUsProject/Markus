@@ -146,7 +146,6 @@ class GroupingTest < ActiveSupport::TestCase
         end
       end
     end # end noteable context
-
   end # end grouping context
 
   def test_should_not_save_without_group

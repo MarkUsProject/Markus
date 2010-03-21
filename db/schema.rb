@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100310100552) do
+ActiveRecord::Schema.define(:version => 20100317173407) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -240,9 +240,9 @@ ActiveRecord::Schema.define(:version => 20100310100552) do
   add_index "rubric_criteria", ["assignment_id"], :name => "index_rubric_criteria_on_assignment_id"
 
   create_table "section_due_dates", :force => true do |t|
-    t.integer  "sections_id"
-    t.integer  "assignments_id"
     t.datetime "due_date"
+    t.integer  "section_id"
+    t.integer  "assignment_id"
   end
 
   create_table "sections", :force => true do |t|

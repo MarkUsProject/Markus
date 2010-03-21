@@ -175,7 +175,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     student = users(:student1)
     invited = users(:student5)
     post_as(student, :invite_member, {:id => assignment.id, :invite_member => invited.user_name})
-    assert_equal(I18n.t('invite_student.success', :user_name => invited.user_name), flash[:success].first)
+    assert_equal(I18n.t('invite_student.success', :user_name => invited.user_name), flash[:success])
     assert_redirected_to :action => "student_interface", :id => assignment.id
   end
 
@@ -185,7 +185,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     invited = users(:hidden_student)
     post_as(student, :invite_member, {:id => assignment.id, :invite_member => invited.user_name})
     assert_redirected_to :action => "student_interface", :id => assignment.id
-    assert_equal(I18n.t('invite_student.fail.hidden', :user_name => invited.user_name), flash[:fail_notice].first)
+    assert_equal(I18n.t('invite_student.fail.hidden', :user_name => invited.user_name), flash[:fail_notice])
   end
 
   def test_cant_invite_already_pending
@@ -194,7 +194,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     invited = users(:student5)
     post_as(student, :invite_member, {:id => assignment.id, :invite_member => invited.user_name})
     assert_redirected_to :action => "student_interface", :id => assignment.id
-    assert_equal(I18n.t('invite_student.fail.already_pending', :user_name => invited.user_name), flash[:fail_notice].first)
+    assert_equal(I18n.t('invite_student.fail.already_pending', :user_name => invited.user_name), flash[:fail_notice])
   end
 
   def test_cant_invite_student_who_dne
@@ -202,7 +202,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     student = users(:student4)
     post_as(student, :invite_member, {:id => assignment.id, :invite_member => "zhfbdjhzkyfg"})
     assert_redirected_to :action => "student_interface", :id => assignment.id
-    assert_equal(I18n.t('invite_student.fail.dne', :user_name => 'zhfbdjhzkyfg'), flash[:fail_notice].first)
+    assert_equal(I18n.t('invite_student.fail.dne', :user_name => 'zhfbdjhzkyfg'), flash[:fail_notice])
   end
   
   def test_cant_invite_student_after_due_date
@@ -214,7 +214,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert !target.has_accepted_grouping_for?(assignment.id)
     post_as(student, :invite_member, {:id => assignment.id, :invite_member => target.user_name})
     assert_redirected_to :action => "student_interface", :id => assignment.id
-    assert_equal(I18n.t('invite_student.fail.due_date_passed', :user_name => target.user_name), flash[:fail_notice].first)
+    assert_equal(I18n.t('invite_student.fail.due_date_passed', :user_name => target.user_name), flash[:fail_notice])
   
   end
   
@@ -262,7 +262,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert_redirected_to({:action => "student_interface", :id => assignment.id})
     grouping = inviter.accepted_grouping_for(assignment.id)
     assert_equal original_pending + 1, grouping.pending_students.size
-    assert_equal(I18n.t('invite_student.fail.inviting_self'), flash[:fail_notice].first)
+    assert_equal(I18n.t('invite_student.fail.inviting_self'),
+    flash[:fail_notice].first)
   end
   
   def test_cannot_invite_admins
@@ -275,7 +276,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert_redirected_to :action => "student_interface", :id => assignment.id
     grouping = inviter.accepted_grouping_for(assignment.id)
     assert_equal original_pending, grouping.pending_students.size
-    assert_equal(I18n.t('invite_student.fail.dne', :user_name => users(:olm_admin_1).user_name), flash[:fail_notice][0])
+    assert_equal(I18n.t('invite_student.fail.dne', :user_name =>
+    users(:olm_admin_1).user_name), flash[:fail_notice][0])
     assert_equal(I18n.t('invite_student.fail.dne', :user_name => users(:olm_admin_2).user_name), flash[:fail_notice][1])
   end
   
@@ -900,7 +902,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     post_as(@student, :invite_member, {:id => assignment.id, :invite_member => hidden_student.user_name})
     assert_redirected_to :action => 'student_interface', :id => assignment.id
     assert flash[:fail_notice].include?(I18n.t('invite_student.fail.hidden', :user_name => hidden_student.user_name))
-    assert_equal 1, flash[:fail_notice].length
     assert_equal original_memberships, grouping.memberships, "Memberships were not equal"
   end
   
@@ -910,7 +911,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     inviting = users(:student6)
     post_as(@student, :invite_member, {:id => assignment.id, :invite_member => inviting.user_name})
     assert_redirected_to :action => 'student_interface', :id => assignment.id
-    assert_equal 1, flash[:success].length
     assert flash[:success].include?(I18n.t('invite_student.success', :user_name => inviting.user_name))
   end
   
@@ -920,7 +920,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     inviter = users(:student4)
     post_as(inviter, :invite_member, {:id => assignment.id, :invite_member => student.user_name})
     assert_redirected_to :action => 'student_interface', :id => assignment.id
-    assert_equal 1, flash[:fail_notice].length
     assert flash[:fail_notice].include?(I18n.t('invite_student.fail.already_pending', :user_name => student.user_name))
   end
   
@@ -1031,8 +1030,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           assert_nil(response.body =~ /<a[^>]*>#{I18n.t(:create)}<\/a>/)
           assert_not_nil(response.body =~ /#{I18n.t(:invite)}/)
           response = post_as(@student, :invite_member, {:id => @assignment.id, :invite_member => st2.user_name})
-          assert_not_nil(response.flash[:success])
-          assert_not_nil(response.flash[:success] =~ /#{st2.user_name}/)
+          assert_not_nil(flash[:success])
         end
       end
 
