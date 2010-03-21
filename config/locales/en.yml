@@ -263,7 +263,7 @@ en:
         due_date_passed: "Could not create group - the due date for this assignment has passed and there are either no grace periods allowed, or the grace period for this assignment has also passed."
 
     invite_student:
-      success: "Student {{user_name}} invited."
+      success: "Invitations successful"
       fail:
         due_date_passed: "Could not invite {{user_name}} - the due date for this assignment has passed and there are either no grace periods allowed, or the grace period for this assignment has also passed."
         dne:  "Could not invite {{user_name}} - this student does not exist."
@@ -273,6 +273,8 @@ en:
         inviting_self: "You cannot invite yourself to your own group."
         already_grouped: "Could not invite {{user_name}} - this student is already a member of another group."
         need_to_create_group: "You must create a group before you can invite users"
+        not_same_section: "Student {{user_name}} is outside of your section."
+        error: "Failed to invite student {{user_name}}."
     update_files:
       success:  "Your changes have been made."
 

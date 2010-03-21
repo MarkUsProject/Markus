@@ -78,6 +78,7 @@ class Student < User
      return @memberships
   end
 
+  # invites a student
   def invite(gid)
     if !self.hidden
       membership = StudentMembership.new

@@ -274,49 +274,10 @@ class AssignmentsController < ApplicationController
     flash[:fail_notice] = []
     flash[:success] = []
     m_logger = MarkusLogger.instance
-    to_invite.each do |user_name|
-      user_name = user_name.strip
-      @invited = Student.find_by_user_name(user_name)
-      begin
-        # we want to allow group invitations after the due date,
-        # but before the grace period time (if any)
-        if @assignment.past_collection_date?
-          raise I18n.t('invite_student.fail.due_date_passed', :user_name => user_name)
-        end
-        if @grouping.student_membership_number >= @assignment.group_max
-          raise I18n.t('invite_student.fail.group_max_reached', :user_name => user_name)
-        end
-        if @invited.nil?
-          raise I18n.t('invite_student.fail.dne', :user_name => user_name)
-        end
-        if @invited == @student
-          raise I18n.t('invite_student.fail.inviting_self')
-        end
-        if @invited.hidden
-          raise I18n.t('invite_student.fail.hidden', :user_name => user_name)
-        end
-        if @grouping.pending?(@invited)
-          raise I18n.t('invite_student.fail.already_pending', :user_name => user_name)
-        end
-        if @invited.has_accepted_grouping_for?(@assignment.id)
-          raise I18n.t('invite_student.fail.already_grouped', :user_name => user_name)
-        end
-        
-        @invited.invite(@grouping.id)
-        flash[:success].push(I18n.t('invite_student.success', :user_name => @invited.user_name))
-        m_logger.log(I18n.t("markus_logger.student_invited_student", :inviter => @student.user_name, :invitee => @invited.user_name))
-      rescue Exception => e
-        flash[:fail_notice].push(e.message)
-        invitee = nil
-        if !@invited.nil?
-          invitee = @invited.user_name
-        else
-          invitee = user_name
-        end
-        m_logger.log(I18n.t('markus_logger.student_invitation_failure',
-                            { :inviter => @student.user_name, :invitee => invitee,
-                              :error => e.message }), MarkusLogger::ERROR)
-      end
+    @grouping.invite(to_invite)
+    flash[:fail_notice] = @grouping.errors["base"]
+    if flash[:fail_notice].blank?
+      flash[:success] = I18n.t('invite_student.success')
     end
     redirect_to :action => 'student_interface', :id => @assignment.id
   end
