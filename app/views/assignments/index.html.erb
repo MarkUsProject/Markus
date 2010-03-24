@@ -17,7 +17,7 @@
 
 
 <div class="wrapLeft">
-  <%= link_to "Download CSV Grades Report", :action => "download_csv_grades_report" unless !@current_user.admin?%>
+<%= link_to I18n.t(:download_csv_grade_report), :action => "download_csv_grades_report" unless !@current_user.admin?%>
 </div>
 
 <% # For now, only allow instructors to manage grade entry forms

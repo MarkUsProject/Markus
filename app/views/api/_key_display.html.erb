@@ -1,8 +1,8 @@
-<h3>Your API Key</h3>
+<h3><%= I18n.t(:api_key) %></h3>
 <div id="api_key_box">
   <% if !user.api_key.nil? %> 
     <%= user.api_key %> 
   <% else %>
-    Unavailable
+  <%= I18n.t(:api_key_unavailable) %>
   <% end %>
 </div>

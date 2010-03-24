@@ -1,29 +1,29 @@
-<h2 class="legend">Assignment Rules</h2>
+<h2 class="legend"><%= t("assignment.rules") %></h2>
 <div class="block_content">
   <div class="sub_block">
-    <span class="prop_label">Name:</span>
+    <span class="prop_label"><%= t("name") %>:</span>
     <%= h(@assignment.short_identifier) %>
   </div>
   <br/>
   <div class="sub_block">
-    <span class="prop_label">Description:</span>
+    <span class="prop_label"><%= t("description") %>:</span>
     <%= h(@assignment.description) %>
   </div>
   <br/>
   <div class="sub_block">
-    <span class="prop_label">Message:</span>
+    <span class="prop_label"><%= t("message") %>:</span>
     <span class="box sub_block clear"><%= simple_format(h(@assignment.message)) %></span>
   </div>
   <br/>
   <div class="sub_block">
-    <span class="prop_label">Due date:</span>
+    <span class="prop_label"><%= t("due_date") %>:</span>
     <%=h I18n.l(@assignment.due_date, :format => :long_date ) %>
   </div>
 
-  <h4>Files required for this assignment</h4>
+  <h4><%= t("assignment.required_files_read") %></h4>
   <ul>
   <% if @assignment.assignment_files.length == 0%>
-   <p> There are no required files for this assignment.</p>
+   <p><%= t("assignment.no_required_files_read") %></p>
   <% end %>
   <% @assignment.assignment_files.each do |assignment_file| %>
     <li><%= h(assignment_file.filename) %></li>

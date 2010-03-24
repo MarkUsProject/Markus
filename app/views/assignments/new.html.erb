@@ -2,6 +2,6 @@
 <%= javascript_include_tag "PeriodLister/PeriodLister.js" %>
 
 <%= render :partial => "boot.js" %>
-<div id="title_bar"><h1>Create a New Assignment</h1>
+<div id="title_bar"><h1><%= I18n.t(:create_new_assignment) %></h1>
 </div>
 <%= render :partial => 'form' %>
