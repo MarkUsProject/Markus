@@ -2,14 +2,14 @@
 
   <% if @assignments.empty? %>
   
-    <p>There are currently no assignments.</p>
+    <p>t:(no_assignments)</p>
     
   <% else %>
 		
     <table><!-- listing assignments -->
       <thead>
         <tr>
-          <th><%=t(:description)%></th>
+          <th><%=t(:name)%></th>
           <th><%=t(:due_date)%></th>
           <th><%=t('results.results_name')%></th>
         </tr>
@@ -37,7 +37,7 @@
             </td>
             <td style="width: 40%;">
               <% if !@a_id_results.empty? && !@a_id_results[assignment.id].nil? && !assignment.results_average.nil? %>
-              <strong>Your mark:</strong>
+              <strong><%= I18n.t(:your_mark) %></strong>
               <%= # show results
 								("%.2f" % (@a_id_results[assignment.id].total_mark * 100 / assignment.total_mark)).to_s + "% (Class Average: " + ("%.2f" % (assignment.results_average)).to_s + "%)"
 							%>
@@ -45,7 +45,7 @@
                 <%= simple_format(sanitize(@a_id_results[assignment.id].overall_comment)) %>
               </p>
               <% elsif assignment.due_date < Time.now %>
-                There are no results for this assignment yet.
+                <%= I18n.t(:no_result) %>
               <% end %>
             </td>
           </tr>
