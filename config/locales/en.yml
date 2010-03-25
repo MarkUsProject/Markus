@@ -177,14 +177,20 @@ en:
       show: "Show"
 
     browse_submissions:
-      release_marks:      "Release Marks"
-      unrelease_marks:    "Unrelease Marks"
-      group_name:         "Group Name"
-      repository:         "Repository"
-      commit_date:        "Commit Date"
-      marking_state:      "Marking State"
-      grace_credits_used: "Grace Credits Used"
-      final_grade:        "Final Grade"
+      release_marks:        "Release Marks"
+      unrelease_marks:      "Unrelease Marks"
+      group_name:           "Group Name"
+      repository:           "Repository"
+      commit_date:          "Commit Date"
+      marking_state:        "Marking State"
+      grace_credits_used:   "Grace Credits Used"
+      final_grade:          "Final Grade"
+      show_all:             "Show All"
+      show_unmarked:        "Show Unmarked"
+      show_partial:         "Show Partial"
+      show_complete:        "Show Complete"
+      show_released:        "Show Released"
+      show_assigned_to_me:  "Show Assigned to Me"
 
     grade_entry_forms:
       blank_field: "can't be blank"

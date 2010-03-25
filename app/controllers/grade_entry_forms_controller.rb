@@ -1,7 +1,7 @@
 # The actions necessary for managing grade entry forms.
 
 class GradeEntryFormsController < ApplicationController
-  include AjaxPaginationHelper
+  include PaginationHelper
   
   before_filter      :authorize_only_for_admin
 
@@ -73,7 +73,7 @@ class GradeEntryFormsController < ApplicationController
   # found in grade_entry_form.rb.)
   def g_table_paginate
     @grade_entry_form = GradeEntryForm.find(params[:id])
-    @students, @students_total = handle_ap_event(G_TABLE_PARAMS, 
+    @students, @students_total = handle_paginate_event(G_TABLE_PARAMS, 
                                                  {:grade_entry_form => @grade_entry_form}, 
                                                  params)
 

@@ -1,19 +1,36 @@
 require 'will_paginate'
-module AjaxPaginationHelper
+
+=begin How to Use the Pagination Helper
+hash requires:
+  :model              * the type of data that needs pagination
+  :per_pages          * an array of integers, each integer representing
+                        a selection of pagination size for the user
+  :filters            * a list of possible filters that can be applied
+                        to the data of type :model
+    a name for each filter
+      :display        * the text the user sees
+      :proc => lambda * the processing done to each instance of the :model
+  :sorts
+    for each sort
+    "name"            * the string that will appear in the URL of a GET
+                        or AJAX request
+      => lambda       * the lambda expression that handles the sorting
+=end
+module PaginationHelper
   # For the hash that's passed to handle_ap_event, these are the required
   # fields.
   AP_REQUIRED_KEYS = [:model, :filters]
   AP_DEFAULT_PER_PAGE = 30
   AP_DEFAULT_PAGE = 1
     
-  def handle_ap_event(hash, object_hash, params)
+  def handle_paginate_event(hash, object_hash, params)
     # First, let's make sure we have the required fields.
     # I'll take the keys from the hash, and difference it from
     # the AP_REQUIRED_FIELDS.  If there are any symbols left over
     # in the difference, the hash wasn't complete, and we should bail out.
     if (AP_REQUIRED_KEYS - hash.keys).size > 0
      # Fail loud, fail proud
-      raise "handle_ap_event received an incomplete parameter hash"
+      raise "handle_paginate_event received an incomplete parameter hash"
     end
     # Ok, we have everything we need, let's get to work
     filter = params[:filter]

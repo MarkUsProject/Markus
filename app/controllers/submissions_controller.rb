@@ -2,7 +2,7 @@ require 'fastercsv'
 
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
-  include AjaxPaginationHelper
+  include PaginationHelper
   
   before_filter    :authorize_only_for_admin, :except => [:populate_file_manager, :browse,
   :index, :file_manager, :update_files, 
@@ -18,23 +18,23 @@ class SubmissionsController < ApplicationController
     :per_pages => [15, 30, 50, 100, 150],
     :filters => {
       'none' => {
-        :display => 'Show All', 
+        :display => I18n.t("browse_submissions.show_all"),
         :proc => lambda { |params|
           return params[:assignment].groupings(:include => [{:student_memberships => :user, :ta_memberships => :user}, :groups, {:submissions => {:results => [:marks, :extra_marks]}}])}},
       'unmarked' => {
-        :display => 'Show Unmarked', 
+        :display => I18n.t("browse_submissions.show_unmarked"), 
         :proc => lambda { |params| return params[:assignment].groupings.select{|g| !g.has_submission? || (g.has_submission? && g.get_submission_used.result.marking_state == Result::MARKING_STATES[:unmarked]) } }},
       'partial' => {
-        :display => 'Show Partial',
+        :display => I18n.t("browse_submissions.show_partial"),
         :proc => lambda { |params| return params[:assignment].groupings.select{|g| g.has_submission? && g.get_submission_used.result.marking_state == Result::MARKING_STATES[:partial] } }},
       'complete' => {
-        :display => 'Show Complete',
+        :display => I18n.t("browse_submissions.show_complete"),
         :proc => lambda { |params| return params[:assignment].groupings.select{|g| g.has_submission? && g.get_submission_used.result.marking_state == Result::MARKING_STATES[:complete] } }},
       'released' => {
-        :display => 'Show Released',
+        :display => I18n.t("browse_submissions.show_released"),
         :proc => lambda { |params| return params[:assignment].groupings.select{|g| g.has_submission? && g.get_submission_used.result.released_to_students} }},
       'assigned' => {
-        :display => 'Show Assigned to Me',
+        :display => I18n.t("browse_submissions.show_assigned_to_me"),
         :proc => lambda { |params| return params[:assignment].ta_memberships.find_all_by_user_id(params[:user_id]).collect{|m| m.grouping} }}
     },
     :sorts => {
@@ -208,7 +208,7 @@ class SubmissionsController < ApplicationController
       params[:sort_by] = 'group_name'
     end 
     @assignment = Assignment.find(params[:id])
-    @groupings, @groupings_total = handle_ap_event(S_TABLE_PARAMS, {:assignment => @assignment, :user_id => current_user.id}, params)
+    @groupings, @groupings_total = handle_paginate_event(S_TABLE_PARAMS, {:assignment => @assignment, :user_id => current_user.id}, params)
     @current_page = params[:page].to_i()
     @per_page = params[:per_page]
     @filters = get_filters(S_TABLE_PARAMS)
