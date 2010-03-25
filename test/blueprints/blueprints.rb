@@ -134,7 +134,6 @@ Ta.blueprint do
 end
 
 TAMembership.blueprint do
-  type {'TAMemberhip'}
   user {Ta.make}
   grouping
   membership_status {'pending'}
