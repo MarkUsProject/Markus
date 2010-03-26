@@ -1,0 +1,6 @@
+<% fields_for :note, :url => {:action => 'create'} do |f| %>
+  <p>
+  	<%= f.label :noteable_id, I18n.t("notes.noteables.Student") %>
+	<%= f.select :noteable_id, @students.collect {|p| [p.user_name,p.id]} %>
+  </p>
+<% end %>

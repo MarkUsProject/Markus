@@ -21,6 +21,10 @@
 
 <% end %>
 <td>
+  <%= # If we are rendering a student, add the notes link.
+    if render_note_link
+        link_to_remote( I18n.t('notes.title'), :url => { :controller => 'note' , :action => 'notes_dialog', :id => user.id, :noteable_id => user.id, :noteable_type => 'Student' , :action_to => 'note_message', :controller_to => 'students' }) + ' | '
+    end %>
 <%= link_to I18n.t(:edit), :controller => controller, :action =>
     'edit', :id => user.id %>
 </td>

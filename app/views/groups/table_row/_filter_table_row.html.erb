@@ -1,30 +1,28 @@
 <td>
 <span class="link"><%= h(grouping.group.group_name)%></span>
     <span class="table_menu">
-	<%= link_to_remote "Rename Group",
+	<%= link_to_remote I18n.t('groups.rename_group.link'),
 	:url => { :action => 'rename_group_dialog', :id => assignment.id, :grouping_id => grouping.id } %>
     |
     <% if !grouping.is_valid? %>
-      <%= link_to_remote "Validate", :url => { :action =>
+      <%= link_to_remote I18n.t('validate'), :url => { :action =>
     'valid_grouping', :id => assignment.id, :grouping_id =>
     grouping.id},
-    :html => {:class => 'valid', :title => "Validate this group"}, 
-    :confirm => "This will allow this group to submit without the required
-    number of students. Are you sure?"
-     %>
+    :html => {:class => 'valid', :title => I18n.t('groups.validate')},
+    :confirm =>  I18n.t('groups.validate_confirm') %>
      |
     <% end %>
-    <%= link_to_remote "Delete", :method => 'delete',
+    <%= link_to_remote I18n.t('delete'), :method => 'delete',
     :url => { :action => 'remove_group', :id => assignment.id, :grouping_id => grouping.id }, 
-    :html => { :class => 'delete', :title => 'Delete this group' }, 
-    :confirm => 'This will remove all members in the group and delete all information associated with this group. Continue?' %>
+    :html => { :class => 'delete', :title => I18n.t('groups.delete') },
+    :confirm =>  I18n.t('groups.delete_confirm')  %>
     |
-	<%= link_to_remote "Add Members",
+	<%= link_to_remote I18n.t('add_members'),
 	:url => { :action => 'add_member_dialog', :id => assignment.id, :grouping_id => grouping.id } %>
 	|
-	<%= link_to_remote "Notes", 
-	:url => { :controller => 'note' , :action => 'notes_dialog', :id => assignment.id, :noteable_id => grouping.id, :noteable_type => 'Grouping' , :action_to => 'note_message', :controller_to => 'groups'} %> 
-
+	<%= link_to_remote I18n.t('notes.title'), 
+	:url => { :controller => 'note' , :action => 'notes_dialog', :id => assignment.id, :noteable_id => grouping.id, :noteable_type => 'Grouping' , :action_to => 'note_message', :controller_to => 'groups'} %>
+    </span>
 </td>
 
 <td>
@@ -43,11 +41,11 @@
 <td>
 <% if grouping.is_valid?%>
 <%= image_tag "icons/tick.png",
-   :title => "Group is valid"
+   :title => I18n.t('groups.is_valid')
 %>
 <% else %>
 <%= image_tag "icons/cross.png",
-   :title => "Group is not valid" %>
+   :title => I18n.t('groups.is_not_valid')%>
 
 <% end %>
 </td>

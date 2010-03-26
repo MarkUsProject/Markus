@@ -5,23 +5,23 @@
   <%= f.error_messages %>
   
 <fieldset>
+
   <p>
-    <%= f.label :assignment_id %>
-    <%= select_tag "assignment_id", options_from_collection_for_select(@assignments, :id, :short_identifier),
-          :onchange => remote_function(:url => { :action => 'new_update_groupings' },
-							:with => 'Form.Element.serialize(this)',
-							:before => "Element.show('loading_groupings')",
-							:success => "Element.hide('loading_groupings')") %>
-  </p>
-  
-  <p>
-  	<%= f.label :noteable_id, "Grouping" %>
-	<%= f.select :noteable_id, @groupings.collect {|p| [p.group_name_with_student_user_names,p.id]} %>
-	<span id="loading_groupings" style="display:none">
-      <%=image_tag('spinner.gif')%> <%=I18n.t('notes.new.loading_groupings')%>
+    <%= f.label :noteable_type, I18n.t('notes.noteable')%>
+    <%= select_tag "noteable_type", options_for_select(Note::NOTEABLES.map {|item| [I18n.t('notes.noteables.'+item),item]}) %>
+    <%= observe_field :noteable_type, :on => 'onchange',:url => {:action => :noteable_object_selector},
+                                         :with => "noteable_type",
+                                         :before => "$('loading_selector').show()",
+							             :success => "$('loading_selector').hide()" %>
+    <span id="loading_selector" style="display:none">
+      <%=image_tag('spinner.gif')%> <%=I18n.t('notes.new.loading_selector')%>
     </span>
   </p>
-  
+
+  <div id="noteable_selector">
+    <%= render  :partial => 'grouping' %>
+  </div>
+
   <p>
     <%= f.label :notes_message %>
     <%= f.text_area :notes_message, :rows => 10 %>

@@ -67,6 +67,7 @@ class ActiveSupport::TestCase
     Group.delete_all
     Grouping.delete_all
     NoLateSubmissionRule.delete_all
+    Note.delete_all
     RubricCriterion.delete_all
     Section.delete_all
     Student.delete_all

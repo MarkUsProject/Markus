@@ -112,6 +112,7 @@ en:
 
 
     members:            "Members"
+    add_members:        "Add Members"
     graders:            "Graders"
     add_new:            "Add new"
     create_new_grade_entry_form: "Create new grade entry form"
@@ -154,6 +155,8 @@ en:
     released:           "released"
     preview:            "Preview"
     invalid_grouping:   "(invalid)"
+    validate:           "Validate"
+
     marks_released_notice:  "The marks have been released. You cannot change the grades."
     past_due_date_edit_warning:  "WARNING:  The due date you have selected is in the past."
     
@@ -259,7 +262,12 @@ en:
       file_does_not_execute: "The setting {{constant_name}} with path {{file_name}} does not execute properly. Please double check the setting in {{config_location}}."
     groups:
       editing_past_due_date_warning: "This assignment is past its due date.  Besides assigning graders to groups, it is not recommended that any other settings be altered here at this time."
+      validate: "Validate this group:"
+      validate_confirm: "This will allow this group to submit without the required number of students. Are you sure?"
+      is_valid: "Group is valid"
+      is_not_valid: "Group is not valid"
       rename_group:
+        link: "Rename Group"
         success: "Group name has been updated."
         already_in_use: "This name is already in use for this assignment."
       randomly_assign_graders: "Randomly assign Graders"
@@ -268,6 +276,8 @@ en:
       no_groups_selected: "You must select at least one group for random assignment"
       cant_delete: "You are not allowed to delete the group."
       cant_delete_already_submitted: "You already submitted something. You cannot delete your group."
+      delete:  'Delete this group'
+      delete_confirm: 'This will remove all members in the group and delete all information associated with this group. Continue?'
     
     results:
       title:  "Assignment {{assignment_name}} : {{group_name}}"
@@ -456,10 +466,19 @@ en:
         by commas)."
     
     notes:
+        existing: "Existing Notes"
+        comment: "Your comment"
+        save: "Save Note"
         success: "Note saved succesfully"
         error: "Unable to save the note"
         title: "Notes"
         note: "Note"
+        noteable: "Noteable"
+        # visible options for dropdown. Symbols intentionally capitalized.
+        noteables:
+            Grouping: "Group"
+            Student:  "Student"
+            Assignment: "Assignment"
         author: "Author"
         creation_time: "Creation Time"
         delete:
@@ -469,8 +488,10 @@ en:
             error_permissions: "You do not have sufficient permissions to delete this note."
         new:
             title: "Create Note" 
-            loading_groupings: "Loading Groups..."  
-            no_groupings: "Notes are attached to groups, but there are no groups yet. Please create some groups first."
+            loading_groupings: "Loading Groups..."
+            loading_selector: "Loading selector..."
+            invalid_selector: "Invalid selector chosen."
+            no_noteables: "Notes are attached to groups, assignments, or students, but there are none yet. Please create one first."
         create:
             success: "Note was successfully created."
         edit:
