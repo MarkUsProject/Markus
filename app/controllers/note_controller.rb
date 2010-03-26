@@ -3,7 +3,7 @@ class NoteController < ApplicationController
   before_filter :ensure_can_modify, :only => [:edit, :update]
   
   def notes_dialog
-    @assignment = Assignment.find(params[:id])
+    @return_id = params[:id]
     @cls = params[:noteable_type]
     @noteable = Kernel.const_get(@cls).find_by_id(params[:noteable_id])
     @cont = params[:controller_to]
@@ -17,9 +17,8 @@ class NoteController < ApplicationController
     note = Note.new
     note.creator_id = @current_user.id
     note.notes_message = params[:new_notes]
-    @cls = params[:noteable_type]
-    @noteable = Kernel.const_get(@cls).find_by_id(params[:noteable_id])
-    note.noteable = @noteable
+    note.noteable_id =  params[:noteable_id]
+    note.noteable_type =  params[:noteable_type]
     result = note.save
     redirect_to :controller => params[:controller_to], :action => params[:action_to], :id => params[:id] , :success => result
   end
@@ -27,10 +26,11 @@ class NoteController < ApplicationController
   def index
     @notes = Note.find(:all, :order => "created_at DESC", :include => [:user, :noteable])
     @current_user = current_user
-    # Notes are attached to groupings, if there are no groupings, we can't make notes.
-    @groupings_available = !(Grouping.all.empty?)
+    # Notes are attached to noteables, if there are no noteables, we can't make notes.
+    @noteables_available = Note.noteables_exist?
   end
-  
+
+  # gets the objects for groupings on first load.
   def new
     new_retrieve
   end
@@ -39,7 +39,7 @@ class NoteController < ApplicationController
     return unless request.post?
     
     @note = Note.new(params[:note])
-    @note.noteable_type = 'Grouping'
+    @note.noteable_type = params[:noteable_type]
     @note.creator_id = @current_user.id
     
     if @note.save
@@ -54,6 +54,23 @@ class NoteController < ApplicationController
   # Used to update the values in the groupings dropdown in the new note form
   def new_update_groupings
     retrieve_groupings(Assignment.find(params[:assignment_id]))
+  end
+
+  # used for RJS call
+  def noteable_object_selector
+    case params[:noteable_type]
+      when "Student"
+        @students = Student.find(:all, :order => "user_name")
+      when "Assignment"
+        @assignments = Assignment.all
+      when "Grouping"
+        new_retrieve
+      else
+        # default to groupings if all else fails.
+        params[:noteable_type] = "Grouping"
+        flash[:error] = I18n.t('notes.new.invalid_selector')
+        new_retrieve
+    end
   end
   
   def edit
@@ -90,12 +107,12 @@ class NoteController < ApplicationController
       end
       @groupings = Grouping.find_all_by_assignment_id(assignment.id, :include => [:group, {:student_memberships => :user}])
     end
-  
+
     def new_retrieve
       @assignments = Assignment.all
       retrieve_groupings(@assignments.first)
     end
-    
+
     # Renders a 404 error if the current user can't modify the given note.
     def ensure_can_modify
       @note = Note.find(params[:id])

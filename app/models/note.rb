@@ -4,6 +4,8 @@ class Note < ActiveRecord::Base
   
   validates_presence_of :notes_message, :creator_id, :noteable
   validates_associated :user
+
+  NOTEABLES = ["Grouping", "Student","Assignment"]
   
   def user_can_modify?(current_user)
     return current_user.admin? || user == current_user
@@ -11,5 +13,14 @@ class Note < ActiveRecord::Base
   
   def format_date
     return I18n.l(created_at, :format => :long_date)
+  end
+
+  def self.noteables_exist?
+    NOTEABLES.each do |classname|
+      if !(Kernel.const_get(classname).all.empty?)
+        return true
+      end
+    end
+    return false
   end
 end

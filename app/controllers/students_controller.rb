@@ -1,6 +1,15 @@
 class StudentsController < ApplicationController
   include UsersHelper
   before_filter    :authorize_only_for_admin
+
+  def note_message
+    @student = Student.find(params[:id])
+    if params[:success]
+      flash[:success] = I18n.t('notes.create.success')
+    else
+      flash[:error] = I18n.t('notes.error')
+    end
+  end
   
   def index
     @students = Student.find(:all, :order => "user_name")

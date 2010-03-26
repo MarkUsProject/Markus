@@ -4,6 +4,19 @@
 
 <%= render :partial => "boot.js.erb"%>
 
+<script>
+document.observe("dom:loaded", function(){
+
+  modalNotesGroup = new Control.Modal($('notes_dialog'),
+  {
+    overlayOpacity: 0.75,
+    className: 'modalNotesGroup',
+    fade:false
+
+  });
+})
+</script>
+
 <div id="title_bar"><h1>Manage Students <%= link_to I18n.t(:add_new), :controller => 'students', :action => 'create' %> </h1></div>
 
 
@@ -150,3 +163,8 @@ list...</span>
   </div>
 
 </div> <!-- colsLeftHeavy -->
+
+<!-- Modal Windows -->
+
+<div id="notes_dialog">
+</div>

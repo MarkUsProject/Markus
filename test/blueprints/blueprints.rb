@@ -18,6 +18,8 @@ Sham.description {Faker::Lorem.sentence(2)}
 Sham.message {Faker::Lorem.sentence(2)}
 Sham.due_date {2.days.from_now}
 
+Sham.notes_message {Faker::Lorem.paragraphs}
+
 Sham.flexible_criterion_name {|i| "flexible_criterion_#{i}"}
 Sham.rubric_criterion_name {|i| "rubric_criterion_#{i}"}
 
@@ -59,6 +61,11 @@ Grade.blueprint do
   grade {0}
 end
 
+GracePeriodDeduction.blueprint do
+  membership  {StudentMembership.make}
+  deduction {20}
+end
+
 GradeEntryForm.blueprint do
   short_identifier
   description
@@ -87,6 +94,13 @@ Grouping.blueprint do
   assignment
 end
 
+Note.blueprint do
+  noteable_type  {'Grouping'}
+  noteable_id {Grouping.make.id}
+  user {Admin.make}
+  notes_message  {Faker::Lorem.paragraphs}
+end
+
 NoLateSubmissionRule.blueprint do
   assignment_id {0}
   type {'NoLateSubmissionRule'}
@@ -109,13 +123,17 @@ Student.blueprint do
   first_name
   last_name
   section
+  grace_credits {5}
+end
+
+Student.blueprint(:hidden) do
+  hidden { true }
 end
 
 StudentMembership.blueprint do
-  type {'StudentMembership'}
   user {Student.make}
   grouping
-  membership_status {'pending'}
+  membership_status {StudentMembership::STATUSES[:pending]}
 end
 
 Submission.blueprint do 
