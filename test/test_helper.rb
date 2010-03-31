@@ -62,17 +62,26 @@ class ActiveSupport::TestCase
  
   def clear_fixtures
     Admin.delete_all
+    AnnotationCategory.delete_all
+    AnnotationText.delete_all
     Assignment.delete_all
+    AssignmentFile.delete_all
+    ExtraMark.delete_all
     FlexibleCriterion.delete_all
+    GracePeriodDeduction.delete_all
+    GracePeriodSubmissionRule.delete_all
     Group.delete_all
     Grouping.delete_all
+    Mark.delete_all
     NoLateSubmissionRule.delete_all
     Note.delete_all
+    Period.delete_all
+    Result.delete_all
     RubricCriterion.delete_all
     Section.delete_all
     Student.delete_all
     StudentMembership.delete_all
-    Submission.delete_all
+    Submission.delete_all 
     Ta.delete_all
     TAMembership.delete_all
     User.delete_all

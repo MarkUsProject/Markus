@@ -124,7 +124,7 @@ class Assignment < ActiveRecord::Base
   end
   
   # Make a list of the students an inviter can invite for his grouping
-  # TODO check if this method is ever used anywhere
+  # TODO check if this method is ever used anywhere [Not used anywhere as of 2010/03/30]
   # TODO unit tests
   def can_invite_for(gid)
     grouping = Grouping.find(gid)
@@ -184,7 +184,8 @@ class Assignment < ActiveRecord::Base
   end
   
   def total_criteria_weight
-    rubric_criteria.sum('weight')
+    factor = 10.0 ** 2
+    return (rubric_criteria.sum('weight') * factor).floor / factor
   end
 
   def add_group(new_group_name=nil)
