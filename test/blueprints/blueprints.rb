@@ -11,6 +11,7 @@ Sham.ta_user_name {|i| "ta#{i}"}
 Sham.first_name {Faker::Name.first_name}
 Sham.last_name {Faker::Name.last_name}
 
+Sham.filename { "#{Faker::Lorem.words(1)[0]}.java"}
 Sham.group_name {|i| "group#{i}"}
 
 Sham.short_identifier {|i| "A#{i}"}
@@ -19,6 +20,8 @@ Sham.message {Faker::Lorem.sentence(2)}
 Sham.due_date {2.days.from_now}
 
 Sham.notes_message {Faker::Lorem.paragraphs}
+
+Sham.overall_comment {Faker::Lorem.sentence(3)}
 
 Sham.flexible_criterion_name {|i| "flexible_criterion_#{i}"}
 Sham.rubric_criterion_name {|i| "rubric_criterion_#{i}"}
@@ -46,6 +49,11 @@ Assignment.blueprint do
   marking_scheme_type {'rubric'}
   submission_rule {NoLateSubmissionRule.make({:assignment_id => object_id})}
   allow_web_submits {true}
+end
+
+AssignmentFile.blueprint do
+  assignment
+  filename
 end
 
 FlexibleCriterion.blueprint do
@@ -94,6 +102,12 @@ Grouping.blueprint do
   assignment
 end
 
+Mark.blueprint do
+  result
+  markable {RubricCriterion.make}
+  mark {Kernel::rand(4)}
+end
+
 Note.blueprint do
   noteable_type  {'Grouping'}
   noteable_id {Grouping.make.id}
@@ -104,6 +118,13 @@ end
 NoLateSubmissionRule.blueprint do
   assignment_id {0}
   type {'NoLateSubmissionRule'}
+end
+
+Result.blueprint do
+  submission
+  marking_state {'partial'}
+  overall_comment
+  released_to_students {false}
 end
 
 RubricCriterion.blueprint do

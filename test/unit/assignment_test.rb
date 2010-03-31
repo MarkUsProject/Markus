@@ -4,474 +4,575 @@ require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 require 'shoulda'
 
 class AssignmentTest < ActiveSupport::TestCase
-  
-  fixtures :all
-  set_fixture_class :rubric_criteria => RubricCriterion
-  
+
   should_validate_presence_of :marking_scheme_type
   # Should_validate_presence_of does not work for boolean value false.
   # Using should_allow_values_for instead
   should_allow_values_for :allow_web_submits, true, false
-  
+
   def setup
-    setup_group_fixture_repos
+    clear_fixtures
   end
-  
-  context "An assignment" do
+
+  def teardown
+    destroy_repos
+  end
+
+  context "validate" do
+    should "work" do
+      a = Assignment.make
+      assert a.valid?
+    end
+
+    should "catch max group size less than min group size" do
+      a = Assignment.new(:group_min => 3,:group_max=> 2)
+      assert !a.valid?
+    end
+
+    should "catch an invalid date" do
+      a = Assignment.new(:due_date => "2020/02/31")  #31st day of february
+      assert !a.valid?
+    end
+
+    should "catch a zero group_min" do
+      a = Assignment.new(:group_min => 0)
+      assert !a.valid?
+    end
+
+    should "catch a negative group_min" do
+      a = Assignment.new(:group_min => -5)
+      assert !a.valid?
+    end
+
+    should "catch a nil group_min" do
+      a = Assignment.new(:group_min => nil)
+      assert !a.valid?
+    end
+
+  end
+
+  context "A past due assignment w/ No Late submission rule" do
+    setup do
+      @assignment = Assignment.make({:due_date => 2.days.ago})
+    end
+
+    should "return true on past_due_date? call" do
+      assert @assignment.past_due_date?
+    end
+
+    should "return true on past_collection_date? call" do
+      assert @assignment.past_collection_date?
+    end
+
+  end
+
+  context "A before due assignment w/ No Late submission rule" do
+    setup do
+      @assignment = Assignment.make({:due_date => 2.days.from_now})
+    end
+
+    should "return false on past_due_date? call" do
+      assert !@assignment.past_due_date?
+    end
+
+    should "return false on past_collection_date? call" do
+      assert !@assignment.past_collection_date?
+    end
+
+  end
+
+  context "An Assignment" do
+    setup do
+      @assignment = Assignment.make
+    end
+
+    should "return false if a student hasn't submitted" do
+      student = Student.make
+      assert !@assignment.submission_by(student)
+    end
+
     context "as a noteable" do
       should "display for note without seeing an exception" do
-        assignment = assignments(:assignment_4)
+        assignment = Assignment.make
         assert_nothing_raised do
           assignment.display_for_note
         end
       end
     end # end noteable context
-  end
-  
-  def teardown
-    destroy_repos
-  end
-  
-  def test_validate
-    a = Assignment.new
-    a.group_min = 3
-    a.group_max = 2
-    a.short_identifier = "hahaha"
-    a.due_date = 30.days.from_now
-    assert !a.valid?
-  end
 
-  def test_past_due_date?
-    assignment = assignments(:assignment_4)
-    assert assignment.past_due_date?
-  end
+    context "with a student in a group with a marked submission" do
+      setup do
+        @membership = StudentMembership.make(:grouping => Grouping.make(:assignment => @assignment),:membership_status => StudentMembership::STATUSES[:accepted])
+        @sub = Submission.make(:grouping => @membership.grouping)
+        @result = @sub.result
 
-  def test_not_past_due_date?
-    assignment = assignments(:assignment_3)
-    assert !assignment.past_due_date?
-  end
+        @sum = 0
+        [2,2.7,2.2,2].each do |weight|
+          Mark.make({:mark => 4, :result => @result, :markable => RubricCriterion.make({:assignment => @assignment,:weight => weight})})
+          @sum += weight
+        end
+        @total = @sum * 4
+      end
 
-  def test_past_collection_date?
-    assignment = assignments(:assignment_4)
-    assert assignment.past_collection_date?
-  end
+      should "return true if a student has submitted" do
+        assert @assignment.submission_by(@membership.user)
+      end
 
-  def test_not_past_collection_date?
-    assignment = assignments(:assignment_3)
-    assert !assignment.past_collection_date?
-  end
+      should "return the correct results average mark" do
+        @result.marking_state = Result::MARKING_STATES[:complete]
 
-  def test_submission_by
-     user = users(:student1)
-     assignment = assignments(:assignment_1)
-     assert !assignment.submission_by(user)
-  end
+        @result.released_to_students = true
+        @result.save
 
-  def test_total_mark
-    assignment = assignments(:assignment_1)
-    assert_equal(35.6, assignment.total_mark)
-  end
+        assert @assignment.set_results_average
+        assert_equal(100, @assignment.results_average)
+      end
 
-   def test_set_results_average
-    assignment = assignments(:assignment_2)
-    assignment.set_results_average
-    assert_equal(100, assignment.results_average)
-   end
+      should "return the correct total mark for rubric criteria" do
+        assert_equal(@total, @assignment.total_mark)
+      end
 
-  def test_total_criteria_weight
-     assignment = assignments(:assignment_2)
-     assert_equal(4, assignment.total_criteria_weight)
-  end
+      should "return the correct total criteria weight" do
+        assert_equal(@sum, @assignment.total_criteria_weight)
+      end
 
-  # Test if assignments can fetch the group for a user
-  def test_group_by
-    a1 = assignments(:assignment_1)
-    student1 = users(:student1)
-    assert_equal groups(:group_1), a1.group_by(student1.id).group
-  end
-   
- 
-  # Validation Tests -------------------------------------------------------
-  
-  # Tests if group limit validations are met
-  def test_group_limit
-    a1 = assignments(:assignment_1)
-    
-    a1.group_min = 0
-    assert !a1.valid?, "group_min cannot be 0"
-    
-    a1.group_min = -5
-    assert !a1.valid?, "group_min cannot be a negative number"
-    
-    a1.group_max = 4 # must be > group_min
-    a1.group_min = nil
-    assert !a1.valid?, "group_min cannot be nil"
-    
-    a1.group_min = 2
-    assert a1.valid?, "group_min < group_max"
-  end
-
-  def test_no_groupings_student_list
-    a = assignments(:assignment_1)
-    assert_equal(7, a.no_grouping_students_list.size, "should be equal to 5")
-  end
-
-  def test_can_invite_for
-    a = assignments(:assignment_1)
-    g = groupings(:grouping_2)
-    assert_equal(6, a.can_invite_for(g.id).size)
-  end
-
-  def test_add_group
-    a = assignments(:assignment_3)
-    number = a.groupings.count + 1
-    a.add_group("new_group_name")
-    assert_equal(number, a.groupings.count, "should have added one
-    more grouping")
-  end
-
-  def test_add_group_1
-    a = assignments(:assignment_1)
-    number = a.groupings.count + 1
-    a.add_group("new_group_name")
-    assert_equal(number, a.groupings.count, "should have added one
-    more grouping")
-  end
-
-
-  def test_add_group_with_already_existing_name_in_another_assignment_1
-    a = assignments(:assignment_3)
-    number = a.groupings.count + 1
-    a.add_group("Titanic")
-    assert_equal(number, a.groupings.count, "should have added one
-    more grouping")
-  end
-
-  def test_add_group_with_already_existing_name_in_another_assignment_2
-    a = assignments(:assignment_3)
-    group = Group.all
-    number = group.size
-    a.add_group("Ukishima Maru")
-    group2 = Group.all
-    assert_equal(number, group2.size, "should NOT have added a new group")
-  end
-
-  def test_add_group_with_already_existing_name_in_this_same_assignment
-    a = assignments(:assignment_3)
-    a.add_group("Titanic")
-    assert_raise RuntimeError do
-      a.add_group("Titanic")
+      # Test if assignments can fetch the group for a user
+      should "return the correct group for a given student" do
+        assert_equal @membership.grouping.group, @assignment.group_by(@membership.user).group
+      end
     end
-  end
 
-  def test_create_groupings_when_students_work_alone
-    a = assignments(:assignment_2)
-    number = Student.all.size
-    a.create_groupings_when_students_work_alone
-    number_of_groupings = a.groupings.size
-    assert_equal(number, number_of_groupings)
-   end
-
-   def test_clone_groupings_from_01
-     oa = assignments(:assignment_1)
-     a = assignments(:assignment_build_on_top_of_1)
-     a.clone_groupings_from(oa.id)
-     assert_equal(oa.group_min, a.group_min)
-   end
-
-   def test_clone_groupings_from_02
-     oa = assignments(:assignment_1)
-     a = assignments(:assignment_build_on_top_of_1)
-     a.clone_groupings_from(oa.id)
-     assert_equal(oa.group_max, a.group_max)
-   end
-
-   def test_clone_groupings_from_03
-     oa = assignments(:assignment_1)
-     oa_number = weed_out_hidden_member_groupings(oa.groupings).size
-     a = assignments(:assignment_build_on_top_of_1)
-     a.clone_groupings_from(oa.id)
-     assert_equal(oa_number, a.groupings.size)
-   end
-   
-   def test_clone_groupings_from_04
-     oa = assignments(:assignment_1)
-     number = StudentMembership.all.size + TAMembership.all.size
-     a = assignments(:assignment_build_on_top_of_1)
-     a.clone_groupings_from(oa.id)
-     assert_not_equal(number, StudentMembership.all.size + TAMembership.all.size)
-   end
-   
-   # One student in a grouping is hidden, so that membership should
-   # not be cloned
-   context "a group with 3 accepted students" do
-     setup do
-       # Let's tweak student3 so that their membership_status makes them
-       # an accepted part of the group
-       memberships(:membership3).membership_status = 'accepted'
-       memberships(:membership3).save
-       @source = assignments(:assignment_1)
-       @target = assignments(:assignment_build_on_top_of_1)
-       @group = users(:student1).accepted_grouping_for(@source.id).group
-     end
-
-     should "clone all three members if none are hidden" do
-       # clone the groupings
-       @target.clone_groupings_from(@source.id)
-       # and let's make sure that the memberships were cloned
-       assert users(:student1).has_accepted_grouping_for?(@target.id)
-       assert users(:student2).has_accepted_grouping_for?(@target.id)
-       assert users(:student3).has_accepted_grouping_for?(@target.id)
-       @group.reload
-       assert !@group.groupings.find_by_assignment_id(@target.id).nil?
-     end
-
-     should "ignore a blocked student during cloning" do
-       student = users(:student1)
-       # hide the student
-       student.hidden = true
-       student.save
-       # clone the groupings
-       @target.clone_groupings_from(@source.id)
-       # make sure the membership wasn't created for the hidden
-       # student
-       assert !student.has_accepted_grouping_for?(@target.id)
-       # and let's make sure that the other memberships were cloned
-       assert users(:student2).has_accepted_grouping_for?(@target.id)
-       assert users(:student3).has_accepted_grouping_for?(@target.id)
-       @group.reload
-       assert !@group.groupings.find_by_assignment_id(@target.id).nil?
-     end
-     
-     should "ignore two blocked students during cloning" do
-       # hide the students
-       users(:student1).hidden = true
-       users(:student1).save
-       users(:student2).hidden = true
-       users(:student2).save
-       # clone the groupings
-       @target.clone_groupings_from(@source.id)
-       # make sure the membership wasn't created for the hidden
-       # student
-       assert !users(:student1).has_accepted_grouping_for?(@target.id)
-       assert !users(:student2).has_accepted_grouping_for?(@target.id)
-       # and let's make sure that the other membership was cloned
-       assert users(:student3).has_accepted_grouping_for?(@target.id)
-       # and that the proper grouping was created
-       @group.reload
-       assert !@group.groupings.find_by_assignment_id(@target.id).nil?       
-     end
-     
-     should "ignore grouping if all students hidden" do
-       # hide the students
-       users(:student1).hidden = true
-       users(:student1).save
-       users(:student2).hidden = true
-       users(:student2).save
-       users(:student3).hidden = true
-       users(:student3).save
-       
-       # Get the Group that these students blong to for assignment_1
-       assert users(:student1).has_accepted_grouping_for?(@source.id)
-       # clone the groupings
-       @target.clone_groupings_from(@source.id)
-       # make sure the membership wasn't created for the hidden
-       # student
-       assert !users(:student1).has_accepted_grouping_for?(@target.id)
-       assert !users(:student2).has_accepted_grouping_for?(@target.id)
-       assert !users(:student3).has_accepted_grouping_for?(@target.id)
-       # and let's make sure that the grouping wasn't cloned
-       @group.reload
-       assert @group.groupings.find_by_assignment_id(@target.id).nil?
-     end     
-
-   end
-   
-   context "an assignment with previously existing groups" do
-     setup do
-       # Let's tweak student3 so that their membership_status makes them
-       # an accepted part of the group
-       memberships(:membership3).membership_status = 'accepted'
-       memberships(:membership3).save
-       @source = assignments(:assignment_1)
-       @target = assignments(:assignment_2)
-       @group = users(:student1).accepted_grouping_for(@source.id).group     
-       assert @source.groupings.size > 0
-     end
-     should "destroy all previous groupings if cloning was successful" do
-       old_groupings = @target.groupings
-       @target.clone_groupings_from(@source.id)
-       @target.reload
-       old_groupings.each do |old_grouping|
-         assert !@target.groupings.include?(old_grouping)
-       end
-     end
-   end
-
-   def test_grouped_students
-     a = assignments(:assignment_1)
-     assert_equal(6, a.grouped_students.size)
-   end
-
-   def test_ungrouped_students
-     a = assignments(:assignment_1)
-     assert_equal(5, a.ungrouped_students.size)
-   end
-
-   def test_valid_groupings
-     a = assignments(:assignment_1)
-     assert_equal(2, a.valid_groupings.size)
-   end
-
-   def test_invalid_groupings
-     a = assignments(:assignment_1)
-     assert_equal(2, a.invalid_groupings.size)
-   end
-
-   def test_assigned_groupings
-     a = assignments(:assignment_1)
-     assert_equal(1, a.assigned_groupings.size)
-   end
-
-   def test_unassigned_groupings
-     a = assignments(:assignment_1)
-     assert_equal(3, a.unassigned_groupings.size)
-   end
-
-   def test_add_csv_group_1
-     group = []
-     group.push("groupname", "CaptainSparrow" ,"student4", "student5")
-     a = assignments(:assignment_3)
-     assert a.add_csv_group(group)
-   end
-
-   def test_add_csv_group_with_nil_group
-     group = []
-     a = assignments(:assignment_3)
-     assert !a.add_csv_group(group)
-   end
-
-   def test_add_csv_group_with_already_existing_name
-     group = []
-     group.push("Titanic", "CaptainSparrow" ,"student4", "student5")
-     a = assignments(:assignment_3)
-     assert a.add_csv_group(group)
-   end
-   
-   def test_get_svn_export_commands
-     a = assignments(:assignment_2)
-     expected_array = []
-          
-     a.submissions.each do |submission|
-       grouping = submission.grouping
-       group = grouping.group
-       expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/group_#{group.id} \"#{group.group_name}\"")
-     end
-     assert_equal expected_array, a.get_svn_export_commands
-   end
-
-  def test_get_svn_export_commands_with_spaces_in_group_name
-    a = assignments(:assignment_2)
-    # Put " Test" after every group name"
-    Group.all.each do |group|
-      group.group_name = group.group_name + " Test"
-      group.save
+    should "know how many ungrouped students are left" do
+      assert_equal(0, @assignment.no_grouping_students_list.size)
+      (1..5).each do
+        Student.make
+      end
+      assert_equal(5, @assignment.no_grouping_students_list.size)
     end
-    expected_array = []
-          
-    a.submissions.each do |submission|
-      grouping = submission.grouping
-      group = grouping.group
-      expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/group_#{group.id} \"#{group.group_name}\"")
+
+    should "know how many ungrouped students a group can invite to it" do
+      g = Grouping.make(:assignment => @assignment)
+      assert_equal(0, @assignment.can_invite_for(g.id).size)
+      (1..5).each do
+        Student.make
+      end
+      assert_equal(5, @assignment.can_invite_for(g.id).size)
     end
-    assert_equal expected_array, a.get_svn_export_commands
-  end
-  
-  context "An assignment instance" do
-    should "be able to generate a detailed CSV report of marks (including criteria)" do
-      a = assignments(:assignment_1) # we require assignment_1 here
-      assert_equal "Captain Nemo", a.short_identifier, "We need assignment 1 for this test!"
-      out_of = a.total_mark
-      rubric_criteria = a.rubric_criteria
-      expected_string = ""
-      Student.all.each do |student|
-        fields = []
-        fields.push(student.user_name)
-        grouping = student.accepted_grouping_for(a.id)
-        if grouping.nil? || !grouping.has_submission?
-          fields.push('')
-          rubric_criteria.each do |rubric_criterion|
+
+    should "know how many grouped students exist" do
+      assert_equal(0, @assignment.grouped_students.size)
+      (1..3).each do
+        Student.make
+      end
+      assert_equal(0, @assignment.grouped_students.size)
+      g = Grouping.make(:assignment => @assignment)
+      (1..3).each do
+        StudentMembership.make(:grouping => g)
+      end
+      @assignment.reload
+      assert_equal(3, @assignment.grouped_students.size)
+    end
+
+
+    should "know how many ungrouped students exist" do
+      assert_equal(0, @assignment.ungrouped_students.size)
+      (1..3).each do
+        Student.make
+      end
+      @assignment.reload
+      assert_equal(3, @assignment.ungrouped_students.size)
+      g = Grouping.make(:assignment => @assignment)
+      (1..3).each do
+        StudentMembership.make(:grouping => g)
+      end
+      @assignment.reload
+      assert_equal(3, @assignment.ungrouped_students.size)
+    end
+
+    should "know how many valid and invalid groupings exist" do
+      assert_equal(0, @assignment.valid_groupings.size)
+      assert_equal(0, @assignment.invalid_groupings.size)
+      groupings = []
+      (1..3).each do
+        groupings.push Grouping.make(:assignment => @assignment)
+      end
+      @assignment.reload
+      assert_equal(0, @assignment.valid_groupings.size)
+      assert_equal(3, @assignment.invalid_groupings.size)
+      (0..2).each do |index|
+        StudentMembership.make(:grouping => groupings[index])
+      end
+      @assignment.reload
+      assert_equal(0, @assignment.valid_groupings.size) # invalid since group_min = 2
+      assert_equal(3, @assignment.invalid_groupings.size)
+      groupings[0].admin_approved = true
+      groupings[0].save
+      assert_equal(1, @assignment.valid_groupings.size)
+      assert_equal(2, @assignment.invalid_groupings.size)
+      (1..2).each do |index|
+        StudentMembership.make(:grouping => groupings[index])
+      end
+      @assignment.reload
+      assert_equal(3, @assignment.valid_groupings.size)
+      assert_equal(0, @assignment.invalid_groupings.size)
+    end
+
+    should "know how many groupings have TAs assigned" do
+      assert_equal(0, @assignment.assigned_groupings.size)
+      assert_equal(0, @assignment.unassigned_groupings.size)
+      groupings = []
+      (1..3).each do
+        groupings.push Grouping.make(:assignment => @assignment)
+      end
+      @assignment.reload
+      (0..2).each do |index|
+        assert_equal( index, @assignment.assigned_groupings.size)
+        assert_equal(3 - index, @assignment.unassigned_groupings.size)
+        TAMembership.make(:grouping => groupings[index])
+      end
+      assert_equal(3, @assignment.assigned_groupings.size)
+      assert_equal(0, @assignment.unassigned_groupings.size)
+    end
+
+    should "be able to add a new group when there are none already" do
+      @assignment.add_group("new_group_name")
+      assert_equal(1, @assignment.groupings.count)
+    end
+
+    should "be able to add a group with already existing name in another assignment" do
+      old_grouping = Grouping.make
+      old_group_count = Group.all.size
+
+      @assignment.add_group(old_grouping.group.group_name)
+
+      assert_equal(1, @assignment.groupings.count, "should have added one more grouping")
+      assert_equal(old_group_count,Group.all.size, "should NOT have added a new group")
+    end
+
+    should "raise when adding a group with an existing name in this assignment" do
+      @assignment.add_group("Titanic")
+      assert_raise RuntimeError do
+        @assignment.add_group("Titanic")
+      end
+    end
+
+    should "be able to create groupings when students work alone" do
+      (1..5).each do
+        Student.make
+      end
+
+      assert_equal(0, @assignment.groupings.count)
+      assert @assignment.create_groupings_when_students_work_alone
+      assert_equal(5, @assignment.groupings.count)
+    end
+
+    context "with some groupings with students and ta's assigned " do
+      setup do
+        (1..5).each do
+          grouping = Grouping.make(:assignment => @assignment)
+          (1..3).each do
+            StudentMembership.make({:grouping => grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
+          end
+          TAMembership.make({:grouping => grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
+        end
+      end
+
+      should "be able to add a new group when there are some already" do
+        @assignment.add_group("new_group_name")
+        assert_equal(6, @assignment.groupings.count)
+      end
+
+      should "be able to have it's groupings cloned correctly" do
+        clone = Assignment.make({:group_min => 1, :group_max => 1})
+        number = StudentMembership.all.size + TAMembership.all.size
+        clone.clone_groupings_from(@assignment.id)
+        assert_equal(@assignment.group_min, clone.group_min)
+        assert_equal(@assignment.group_max, clone.group_max)
+        assert_equal(@assignment.groupings.size, clone.groupings.size)
+        # Since we clear between each test, there should be twice as much as previously
+        assert_equal(2 * number, StudentMembership.all.size + TAMembership.all.size)
+      end
+    end
+
+    # One student in a grouping is hidden, so that membership should
+    # not be cloned
+    context "with a group with 3 accepted students" do
+      setup do
+        @grouping = Grouping.make(:assignment => @assignment)
+        @members = []
+        (1..3).each do
+          @members.push StudentMembership.make({:membership_status => StudentMembership::STATUSES[:accepted],:grouping => @grouping})
+        end
+        @source = @assignment
+        @group =  @grouping.group
+      end
+
+      context "with another fresh assignment" do
+        setup do
+          @target = Assignment.make({:group_min => 1, :group_max => 1})
+        end
+
+        should "clone all three members if none are hidden" do
+          # clone the groupings
+          @target.clone_groupings_from(@source.id)
+          # and let's make sure that the memberships were cloned
+          (0..2).each do |index|
+            assert @members[index].user.has_accepted_grouping_for?(@target.id)
+          end
+          @group.reload
+          assert !@group.groupings.find_by_assignment_id(@target.id).nil?
+        end
+
+        should "ignore a blocked student during cloning" do
+          student = @members[0].user
+          # hide the student
+          student.hidden = true
+          student.save
+          # clone the groupings
+          @target.clone_groupings_from(@source.id)
+          # make sure the membership wasn't created for the hidden
+          # student
+          assert !student.has_accepted_grouping_for?(@target.id)
+          # and let's make sure that the other memberships were cloned
+          assert @members[1].user.has_accepted_grouping_for?(@target.id)
+          assert @members[2].user.has_accepted_grouping_for?(@target.id)
+          @group.reload
+          assert !@group.groupings.find_by_assignment_id(@target.id).nil?
+        end
+
+        should "ignore two blocked students during cloning" do
+          # hide the students
+          @members[0].user.hidden = true
+          @members[0].user.save
+          @members[1].user.hidden = true
+          @members[1].user.save
+          # clone the groupings
+          @target.clone_groupings_from(@source.id)
+          # make sure the membership wasn't created for the hidden
+          # student
+          assert !@members[0].user.has_accepted_grouping_for?(@target.id)
+          assert !@members[1].user.has_accepted_grouping_for?(@target.id)
+          # and let's make sure that the other membership was cloned
+          assert @members[2].user.has_accepted_grouping_for?(@target.id)
+          # and that the proper grouping was created
+          @group.reload
+          assert !@group.groupings.find_by_assignment_id(@target.id).nil?
+        end
+
+        should "ignore grouping if all students hidden" do
+          # hide the students
+          (0..2).each do |index|
+            @members[index].user.hidden = true
+            @members[index].user.save
+          end
+
+          # Get the Group that these students belong to for assignment_1
+          assert @members[0].user.has_accepted_grouping_for?(@source.id)
+          # clone the groupings
+          @target.clone_groupings_from(@source.id)
+          # make sure the membership wasn't created for the hidden
+          # student
+          (0..2).each do |index|
+            assert !@members[index].user.has_accepted_grouping_for?(@target.id)
+          end
+          # and let's make sure that the grouping wasn't cloned
+          @group.reload
+          assert @group.groupings.find_by_assignment_id(@target.id).nil?
+        end
+      end
+
+      context "with an assignment with other groupings" do
+        setup do
+          @target = Assignment.make({:group_min => 1, :group_max => 1})
+          @target.create_groupings_when_students_work_alone
+        end
+        should "destroy all previous groupings if cloning was successful" do
+          old_groupings = @target.groupings
+          @target.clone_groupings_from(@source.id)
+          @target.reload
+          old_groupings.each do |old_grouping|
+            assert !@target.groupings.include?(old_grouping)
+          end
+        end
+      end
+    end
+
+    should "not add csv group with empty row" do
+      assert !@assignment.add_csv_group([])
+    end
+
+    context "with existing students" do
+      setup do
+        @student1 = Student.make
+        @student2 = Student.make
+      end
+
+      should "be able to add a group by CSV row" do
+        group = ["groupname", "CaptainSparrow" ,@student1.user_name, @student2.user_name]
+        assert @assignment.add_csv_group(group)
+      end
+
+      should "be able to add a group by CSV row with existing group name" do
+        Group.make(:group_name =>"groupname")
+        group = ["groupname", "CaptainSparrow" ,@student1.user_name, @student2.user_name]
+        assert @assignment.add_csv_group(group)
+      end
+
+    end
+
+    context "with a students in groupings setup with marking complete" do
+      setup do
+        # create the required files for the assignment
+        AssignmentFile.make(:assignment => @assignment)
+        AssignmentFile.make(:assignment => @assignment)
+
+        # create the marking criteria
+        criteria = []
+        (1..4).each do |index|
+          criteria.push RubricCriterion.make({:assignment => @assignment, :position => index})
+        end
+
+        # create the groupings and associated marks
+        (1..4).each do
+          g = Grouping.make(:assignment => @assignment)
+          (1..3).each do
+            StudentMembership.make({:grouping => g, :membership_status => StudentMembership::STATUSES[:accepted]})
+          end
+          s = Submission.make(:grouping => g)
+          r = s.result
+          (0..3).each do |index|
+            Mark.make({:result => r, :markable => criteria[index] })
+          end
+          r.reload
+          r.marking_state = Result::MARKING_STATES[:complete]
+          r.save
+        end
+      end
+
+      should "be able to generate a detailed CSV report of marks (including criteria)" do
+        a = @assignment
+        out_of = a.total_mark
+        rubric_criteria = a.rubric_criteria
+        expected_string = ""
+        Student.all.each do |student|
+          fields = []
+          fields.push(student.user_name)
+          grouping = student.accepted_grouping_for(a.id)
+          if grouping.nil? || !grouping.has_submission?
             fields.push('')
-            fields.push(rubric_criterion.weight)
-          end
-          fields.push('')
-          fields.push('')
-        else
-          submission = grouping.get_submission_used
-          fields.push(submission.result.total_mark / out_of * 100)
-          rubric_criteria.each do |rubric_criterion|
-            mark = submission.result.marks.find_by_markable_id_and_markable_type(rubric_criterion.id, "RubricCriterion")
-            if mark.nil?
+            rubric_criteria.each do |rubric_criterion|
               fields.push('')
-            else
-              fields.push(mark.mark || '')
-            end 
-            fields.push(rubric_criterion.weight)
+              fields.push(rubric_criterion.weight)
+            end
+            fields.push('')
+            fields.push('')
+          else
+            submission = grouping.get_submission_used
+            fields.push(submission.result.total_mark / out_of * 100)
+            rubric_criteria.each do |rubric_criterion|
+              mark = submission.result.marks.find_by_markable_id_and_markable_type(rubric_criterion.id, "RubricCriterion")
+              if mark.nil?
+                fields.push('')
+              else
+                fields.push(mark.mark || '')
+              end
+              fields.push(rubric_criterion.weight)
+            end
+            fields.push(submission.result.get_total_extra_points)
+            fields.push(submission.result.get_total_extra_percentage)
           end
-          fields.push(submission.result.get_total_extra_points)
-          fields.push(submission.result.get_total_extra_percentage)
+          # push grace credits info
+          grace_credits_data = student.remaining_grace_credits.to_s + "/" + student.grace_credits.to_s
+          fields.push(grace_credits_data)
+
+          expected_string += fields.to_csv
         end
-        # push grace credits info
-        grace_credits_data = student.remaining_grace_credits.to_s + "/" + student.grace_credits.to_s
-        fields.push(grace_credits_data)
-     
-        expected_string += fields.to_csv
-      end
-      assert_equal expected_string, a.get_detailed_csv_report, "Detailed CSV report is wrong!"
-    end
-    
-    should "be able to generate a simple CSV report of marks" do
-      a = assignments(:assignment_6) # we require assignment_6 here
-      assert_equal "A6", a.short_identifier, "We need assignment 6 for this test!"
-      expected_string = ""
-      Student.all.each do |student|
-        fields = []
-        fields.push(student.user_name)         
-        grouping = student.accepted_grouping_for(a.id)
-        if grouping.nil? || !grouping.has_submission?
-          fields.push('')
-        else
-          submission = grouping.get_submission_used
-          fields.push(submission.result.total_mark / a.total_mark * 100)                    
-        end
-        expected_string += fields.to_csv
-      end
-      assert_equal expected_string, a.get_simple_csv_report, "Simple CSV report is wrong!"
-    end
-    
-    should "be able to get a list of repository access URLs for each group" do
-      expected_string = ''
-      assignment = assignments(:assignment_6)
-      assignment.groupings.each do |grouping|
-        group = grouping.group
-        expected_string += [group.group_name,group.repository_external_access_url].to_csv
-      end
-      assert_equal expected_string, assignment.get_svn_repo_list, "Repo access url list string is wrong!"
-    end
-    
-  end # end assignment instance context
-  
-  private
-  def weed_out_hidden_member_groupings(groupings)
-    result = []
-    groupings.each do |grouping|
-      unhidden = grouping.accepted_student_memberships.select do |m|
-        !m.user.hidden
-      end
-      if !unhidden.empty?
-        result << grouping
+        assert_equal expected_string, a.get_detailed_csv_report, "Detailed CSV report is wrong!"
       end
     end
-    return result
   end
+
+  context "An assignment instance" do
+    setup do
+      @assignment = Assignment.make({:group_min => 1, :group_max => 1, :student_form_groups => false, :instructor_form_groups => true, :due_date => 2.days.ago, :created_at => 42.days.ago })
+    end
+
+    context "with a grouping that has a submission and a TA assigned " do
+      setup do
+        @grouping = Grouping.make(:assignment => @assignment)
+        @tamembership = TAMembership.make(:grouping => @grouping)
+        @studentmembership = StudentMembership.make(:grouping => @grouping, :membership_status => StudentMembership::STATUSES[:inviter])
+        @submission = Submission.make(:grouping => @grouping)
+      end
+      should "be able to generate a simple CSV report of marks" do
+        expected_string = ""
+        Student.all.each do |student|
+          fields = []
+          fields.push(student.user_name)
+          grouping = student.accepted_grouping_for(@assignment.id)
+          if grouping.nil? || !grouping.has_submission?
+            fields.push('')
+          else
+            submission = grouping.get_submission_used
+            fields.push(submission.result.total_mark / @assignment.total_mark * 100)
+          end
+          expected_string += fields.to_csv
+        end
+        assert_equal expected_string, @assignment.get_simple_csv_report, "Simple CSV report is wrong!"
+      end
+
+      should "be able to get a list of repository access URLs for each group" do
+        expected_string = ''
+        @assignment.groupings.each do |grouping|
+          group = grouping.group
+          expected_string += [group.group_name,group.repository_external_access_url].to_csv
+        end
+        assert_equal expected_string, @assignment.get_svn_repo_list, "Repo access url list string is wrong!"
+      end
+
+      context "with three groups of a single student each" do
+        setup do
+          (1..3).each do
+            g = Grouping.make(:assignment => @assignment)
+            StudentMembership.make({:grouping => g,:membership_status => StudentMembership::STATUSES[:inviter] } )
+            s = Submission.make(:grouping => g)
+            r = s.result
+            (1..4).each do
+              Mark.make(:result => r)
+            end
+            r.reload
+            r.marking_state = Result::MARKING_STATES[:complete]
+            r.save
+          end
+        end
+
+        should "be able to get_svn_export_commands" do
+          expected_array = []
+
+          @assignment.submissions.each do |submission|
+            grouping = submission.grouping
+            group = grouping.group
+            expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/group_#{group.id} \"#{group.group_name}\"")
+          end
+          assert_equal expected_array, @assignment.get_svn_export_commands
+        end
+
+        should "be able to get_svn_export_commands with spaces in group name " do
+          Group.all.each do |group|
+            group.group_name = group.group_name + " Test"
+            group.save
+          end
+          expected_array = []
+
+          @assignment.submissions.each do |submission|
+            grouping = submission.grouping
+            group = grouping.group
+            expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/group_#{group.id} \"#{group.group_name}\"")
+          end
+          assert_equal expected_array, @assignment.get_svn_export_commands
+        end
+      end
+    end
+
+  end # end assignment instance context
 end
