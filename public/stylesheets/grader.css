@@ -169,7 +169,7 @@ li.annotation_category {
     cursor: col-resize;
   }
 
-  #code_pane, #rubric_pane {
+  #code_pane, #mark_pane {
     -moz-border-radius: 5px;
     background: #ECECEC;
     border: 1px solid #ddd;
@@ -183,7 +183,7 @@ li.annotation_category {
    /* width: 536px;*/
   }
 
-  #rubric_pane {
+  #mark_pane {
    width: 34%;
     /*width: 370px;*/
   }
@@ -192,7 +192,7 @@ li.annotation_category {
 
 
   
-    #rubric_viewer, #summary_viewer, #code_holder, #annotations_summary {
+    #mark_viewer, #summary_viewer, #code_holder, #annotations_summary, {
       height: 650px;
       overflow: auto;
     }
@@ -218,7 +218,7 @@ li.annotation_category {
   height: 50px;
 }
 
-#rubric_criteria_pane_list {
+#mark_criteria_pane_list {
   height: 100%;
   overflow: auto;
 }
@@ -293,9 +293,10 @@ ul#annotation_summary_list {
   
 /* CSS for grading view */
 /* Rubric Criteria - TO CHANGE! defaults to original rubric css for now! */
-
-
-#rubric_criteria_pane_list {
+.padding_left {
+  padding-left:30px
+}
+#mark_criteria_pane_list {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -303,71 +304,77 @@ ul#annotation_summary_list {
   font-size: 10px;
 }
 
-.rubric_tools {
+.mark_tools {
     text-align:center;
 }
 
 /* ================ CRITERION STYLES ============== */
 
-  .rubric_criterion_holder_A {
+  .mark_criterion_holder_A {
     background: #EDEDED;
     border-bottom: 1px solid #DADADA;
     padding: 5px;
   }
 
-  .rubric_criterion_holder_B {
+  .mark_criterion_holder_B {
     background: #FFFFFF;
     border-bottom: 1px solid #DADADA;
     padding: 5px;
   }
 
-  .rubric_criterion_title {
+  .mark_criterion_title {
     cursor: pointer;
     text-transform: capitalize;
   }
 
-    .rubric_criterion_title_div_level {
+    .mark_criterion_title_div_level {
         font-size: 12px;
     }
-  .rubric_criterion_holder_selected, .rubric_level {
+  .mark_criterion_holder_selected, .mark_level {
     background: #CCCCFF;
   }
 
-.rubric_criterion_level {
+.mark_criterion_level {
     color:black;
     font-size:10px;
     background:none;
 }
-.rubric_reset {
+.mark_reset {
 	color:black;
     font-size:10px;
     background:none;
 	float:right;
 	cursor: pointer;
 }
-.rubric_criterion_level_selected {
+.mark_criterion_level_selected {
     font-size:10px;
     background-color:#FFFFCC;
 }
 
-.rubric_criterion_level_container {
+.mark_criterion_level_container {
     margin-left:20px;
     margin-top: 10px;
 }
 
-.rubric_criterion_level_container table {
+.mark_criterion_level_container table {
     border-collapse:collapse;
     border:1px solid #DADADA;
     padding: 4px;
     background: #fff;
 }
 
-.rubric_criterion_level_container td {
+.mark_criterion_level_container td {
     border-top:1px solid #DADADA;
     border-bottom:1px solid #DADADA;
     padding: 4px;
     font-size: 1.1em;
     background: #fff;
+}
+.mark_grade_input{
+	font-size:1.0em;
+	margin:1px 1px 4px;
+	min-width:0;
+	padding:2px;
 }
 
   .editing {
@@ -384,9 +391,10 @@ ul#annotation_summary_list {
 .clear {
         clear: both;
 }
+/*
 .error {
     width: 350px;
-}
+}*/
 
 /* Extra Mark holder */
 

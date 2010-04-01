@@ -31,29 +31,27 @@
   <div id="pane_divider">
   </div>
   <!-- End Divider -->
-
-  <div id="rubric_pane" class="float_left">
-    <ul id="rubric_tabs" class="subsection_tabs">
-      <li class="tab"><a href="#rubric_viewer">Rubric</a></li>
+ 
+  <div id="mark_pane" class="float_left">
+    <ul id="mark_tabs" class="subsection_tabs">
+      <li class="tab"><a href="#mark_viewer">Marks</a></li>
       <li class="tab"><a href="#summary_viewer">Summary</a></li>
     </ul>  
-    <div id="rubric_viewer" class="tabbedArea">
-      <div id="rubric_criteria_pane">
-        <ul id="rubric_criteria_pane_list">
+    <div id="mark_viewer" class="tabbedArea">
+      <div id="mark_criteria_pane">
+        <ul id="mark_criteria_pane_list">
           <%# also need to render the mark per criteria (if exist) %>
-          <% rubric_criteria.each do |rubric_criterion| -%>
-          <%= render :partial => "results/student/student_rubric_criterion_li", :locals => {:rubric_criterion => rubric_criterion, :result => result, :mark=>marks_map[rubric_criterion.id]} %>
+          <% @mark_criteria.each do |mark_criterion| -%>
+          <%= render :partial => "results/student/student_#{@assignment.marking_scheme_type}_criterion_li", :locals => {:mark_criterion => mark_criterion, :result => result, :mark=>marks_map[mark_criterion.id]} %>
             <% end -%>
-          </ul> <!-- Rubric Criteria Pane List -->
-       </div> <!-- Rubric Criteria Pane -->
+          </ul> <!-- Criteria Pane List -->
+       </div> <!-- Criteria Pane -->
        
-    </div>  <!-- Rubric Viewer -->
+    </div>  <!-- Criteria Viewer -->
   
     <div id="summary_viewer" class="marks_summary_pane tabbedArea">
-    <%= render :partial => "results/student/student_summary", :locals => {:rubric_criteria => rubric_criteria, :marks_map => marks_map, :assignment => assignment, :result => result, :extra_marks_points => extra_marks_points, :extra_marks_percentage => extra_marks_percentage}%>
-
-   </div>
-  
+    <%= render :partial => "results/student/student_summary", :locals => {:mark_criteria => @mark_criteria, :marks_map => marks_map, :assignment => assignment, :result => result, :extra_marks_points => extra_marks_points, :extra_marks_percentage => extra_marks_percentage}%>
+    </div>
   <div id="annotation_holder">
   </div>
   

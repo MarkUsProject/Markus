@@ -1,3 +1,5 @@
+require 'fastercsv'
+require 'csv'
 # Represents a flexible criterion used to mark an assignment that
 # has the marking_scheme_type attribute set to 'flexible'. 
 class FlexibleCriterion < ActiveRecord::Base

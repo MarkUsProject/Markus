@@ -72,6 +72,16 @@ class AssignmentsController < ApplicationController
   
   def edit
     @assignment = Assignment.find_by_id(params[:id])
+    if !params[:assignment].nil?
+      @oldcriteria = @assignment.marking_scheme_type
+      @newcriteria = params[:assignment][:marking_scheme_type]
+      if @oldcriteria != @newcriteria and !@assignment.get_criteria.nil?
+        #TODO use @assignment.criteria.destroy_all when the refactor of criteria structure finished
+        @assignment.get_criteria.each do |criterion|
+          criterion.destroy
+        end
+      end
+    end
     @assignments = Assignment.all
     if !request.post?
       return

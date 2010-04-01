@@ -1,17 +1,16 @@
-<div id="<%="rubric_criterion_title_#{rubric_criterion.id}_name"%>"
-class="rubric_criterion_title_div_level" style="float:left;">
-  <b><%=h(rubric_criterion.rubric_criterion_name)%></b>
+<div id="<%="mark_criterion_title_#{mark_criterion.id}_name"%>"
+class="mark_criterion_title_div_level" class="float_left">
+  <b><%=h(mark_criterion.rubric_criterion_name)%></b>       
 </div>
-
 <div class="clear"></div>
-
-<div id="<%="rubric_criterion_title_#{mark.id}_mark"%>" style="padding-left:30px;">
+<div id="<%="mark_criterion_title_#{mark.id}_mark"%>" class="padding_left">
 <% if !mark.mark.nil? -%>
   <b>
-    <%= h(mark.mark) %>: <%= h(rubric_criterion["level_" + mark.mark.to_s + "_name"]) %>&nbsp;
+    <%= h(mark.mark) %>: <%= h(mark_criterion["level_" + mark.mark.to_i.to_s + "_name"]) %>&nbsp;
   </b>
-  <%= h(rubric_criterion["level_" + mark.mark.to_s + "_description"]) %>
+  <%= h(mark_criterion["level_" + mark.mark.to_i.to_s + "_description"]) %>
 <% end -%>
+	
 </div>
 <div class="clear"></div>
 

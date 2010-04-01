@@ -1,4 +1,4 @@
-rubric_criteria.each do |criterion|
-  page.call "show_rubric_criterion", criterion.id
+mark_criteria.each do |criterion|
+  page.call "show_criterion", criterion.id
 end
 
