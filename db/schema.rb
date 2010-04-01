@@ -166,7 +166,7 @@ ActiveRecord::Schema.define(:version => 20100317173407) do
   create_table "marks", :force => true do |t|
     t.integer  "result_id"
     t.integer  "markable_id"
-    t.integer  "mark"
+    t.float  "mark"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "markable_type"
