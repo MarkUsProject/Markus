@@ -41,7 +41,24 @@
    <br />
    <br />
 </fieldset>
-
+<!--select scheme -->
+<div id='marking_scheme_notice' class="warning" style="display:none">
+	<%= t("assignment.notice.change_marking_scheme_type")%>
+</div>
+<fieldset>
+	<legend><%= t("assignment.marking_scheme.title")%></legend>
+	<% Assignment::MARKING_SCHEME_TYPE.each do |key,value| %>
+    <p>
+      <%= f.radio_button :marking_scheme_type, Assignment::MARKING_SCHEME_TYPE[key], 
+        :checked => @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[key],
+        :onclick =>"notice_marking_scheme_changed(#{@assignment.id.nil?},
+                   '#{Assignment::MARKING_SCHEME_TYPE[key]}',
+                   '#{@assignment.marking_scheme_type}')"
+        %>  
+      <%= value.to_s.capitalize%>
+	</p>
+	<% end %>
+</fieldset>
 <fieldset>
   <legend><%= t("assignment.required_files") %></legend>
   <h4><%= t("assignment.required_files_by_student") %></h4>

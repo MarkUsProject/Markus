@@ -289,6 +289,9 @@ en:
     mark:
       error:
         save: "Could not save this mark!: "
+        validate_flexible: "must be between 0 and the maximum mark of the criterion"
+        validate_rubric: "must be an integer between 0 and 4"
+        
     # Student's View
     hide_students:      "Hide Students"
     unhide_students:    "Unhide Students"
@@ -464,6 +467,13 @@ en:
         <p>where <em>level_names</em> must contains the name of each level (seperated by commas)<br />
         and <em>level_descriptions</em> could contains the description of each level (optional, also seperated
         by commas)."
+    
+    summary_table:
+      title: "Title"
+      max_value: "Maximum value"
+      grade: "Grade"
+      x_mark: "x Mark"
+      weight: "Weight"
     
     notes:
         existing: "Existing Notes"

@@ -1,4 +1,5 @@
 require 'fastercsv'
+require 'csv'
 
 class RubricCriterion < ActiveRecord::Base
   before_save :truncate_weight

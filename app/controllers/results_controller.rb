@@ -22,8 +22,7 @@ class ResultsController < ApplicationController
   def edit
     result_id = params[:id]
     @result = Result.find(result_id)
-    @assignment = @result.submission.assignment
-    @rubric_criteria = @assignment.get_criteria      
+    @assignment = @result.submission.assignment      
     @submission = @result.submission
     @annotation_categories = @assignment.annotation_categories
     @grouping = @result.submission.grouping
@@ -34,7 +33,8 @@ class ResultsController < ApplicationController
     @extra_marks_points = @result.extra_marks.points
     @extra_marks_percentage = @result.extra_marks.percentage
     @marks_map = Hash.new
-    @rubric_criteria.each do |criterion|
+    @mark_criteria = @assignment.get_criteria
+    @assignment.get_criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by_result_id(@result.id)
       mark.save(false)
       @marks_map[criterion.id] = mark
@@ -181,7 +181,7 @@ class ResultsController < ApplicationController
     
     render :action => 'results/render_test_result', :layout => "plain"
   end
-  
+
   def update_mark
     result_mark = Mark.find(params[:mark_id])
     result_mark.mark = params[:mark]
@@ -189,20 +189,26 @@ class ResultsController < ApplicationController
     group = submission.grouping.group           # get group for logging
     assignment = submission.grouping.assignment # get assignment for logging
     m_logger = MarkusLogger.instance
-    if !result_mark.save
-        m_logger.log(I18n.t('markus_logger.user_update_mark_submission_fail',
-                      { :user_name => current_user.user_name, 
-                        :submission_id => submission.id, :group_name => group.group_name,
-                        :assignment => assignment.short_identifier}), MarkusLogger::ERROR)
-        render :partial => 'shared/handle_error', :locals => {:error => I18n.t('mark.error.save') + result_mark.errors}
+    if !result_mark.valid?
+      render :partial => 'results/marker/mark_verify_result', 
+             :locals => {:mark_id => result_mark.id,:mark_error =>result_mark.errors.full_messages.join}
     else
-        m_logger.log(I18n.t('markus_logger.user_update_mark_submission',
-                      { :user_name => current_user.user_name, 
-                        :submission_id => submission.id, :group_name => group.group_name,
-                        :assignment => assignment.short_identifier}), MarkusLogger::INFO)
-        render :partial => 'results/marker/update_mark',
-               :locals => { :result_mark => result_mark, :mark_value => result_mark.mark}
-     end
+      if !result_mark.save
+          m_logger.log(I18n.t('markus_logger.user_update_mark_submission_fail',
+                        { :user_name => current_user.user_name, 
+                          :submission_id => submission.id, :group_name => group.group_name,
+                          :assignment => assignment.short_identifier}), MarkusLogger::ERROR)
+          render :partial => 'shared/handle_error', 
+                 :locals => {:error => I18n.t('mark.error.save') + result_mark.errors.full_messages.join}
+      else
+          m_logger.log(I18n.t('markus_logger.user_update_mark_submission',
+                        { :user_name => current_user.user_name, 
+                          :submission_id => submission.id, :group_name => group.group_name,
+                          :assignment => assignment.short_identifier}), MarkusLogger::INFO)
+          render :partial => 'results/marker/update_mark',
+                 :locals => { :result_mark => result_mark, :mark_value => result_mark.mark}
+      end
+    end
   end
   
   def view_marks
@@ -227,7 +233,7 @@ class ResultsController < ApplicationController
       render 'results/student/no_result'
       return
     end
-    @rubric_criteria = @assignment.get_criteria
+    
     @annotation_categories = @assignment.annotation_categories
     @group = @grouping.group
     @files = @submission.submission_files
@@ -236,7 +242,8 @@ class ResultsController < ApplicationController
     @extra_marks_points = @result.extra_marks.points
     @extra_marks_percentage = @result.extra_marks.percentage
     @marks_map = Hash.new
-    @rubric_criteria.each do |criterion|
+    @mark_criteria = @assignment.get_criteria
+    @assignment.get_criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by_result_id(@result.id)
       mark.save(false)
       @marks_map[criterion.id] = mark
@@ -281,25 +288,24 @@ class ResultsController < ApplicationController
   
   def expand_criteria
     @assignment = Assignment.find(params[:aid])
-    @rubric_criteria = @assignment.rubric_criteria
-    render :partial => 'results/marker/expand_criteria', :locals => {:rubric_criteria => @rubric_criteria}
+    @mark_criteria = @assignment.get_criteria
+    render :partial => 'results/marker/expand_criteria', :locals => {:mark_criteria => @mark_criteria} 
   end
   
   def collapse_criteria
     @assignment = Assignment.find(params[:aid])
-    @rubric_criteria = @assignment.rubric_criteria
-    render :partial => 'results/marker/collapse_criteria', :locals => {:rubric_criteria => @rubric_criteria}
+    @mark_criteria = @assignment.get_criteria
+    render :partial => 'results/marker/collapse_criteria', :locals => {:mark_criteria => @mark_criteria} 
   end
   
   def expand_unmarked_criteria
     @assignment = Assignment.find(params[:aid])
-    @rubric_criteria = @assignment.rubric_criteria
     @result = Result.find(params[:rid])
     # nil_marks are the marks that have a "nil" value for Mark.mark - so they're
     # unmarked.
     @nil_marks = @result.marks.all(:conditions => {:mark => nil})
-    render :partial => 'results/marker/expand_unmarked_criteria', :locals => {:nil_marks => @nil_marks}
-  end
+    render :partial => 'results/marker/expand_unmarked_criteria', :locals => {:nil_marks => @nil_marks} 
+ end
   
   def delete_grace_period_deduction
     @grouping = Grouping.find(params[:id])

@@ -1,2 +1,2 @@
-page.replace_html 'new_flexible_criterion_error', :partial => 'new_flexible_criterion_errors', :locals => {:errors => @errors}
-page.show 'new_flexible_criterion_error'
+page.replace_html 'new_criterion_error', :partial => 'new_flexible_criterion_errors', :locals => {:errors => @errors}
+page.show 'new_criterion_error'

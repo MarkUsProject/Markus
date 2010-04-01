@@ -148,8 +148,12 @@ class Assignment < ActiveRecord::Base
     
   def total_mark
     total = 0
-    rubric_criteria.each do |criterion|
-      total = total + criterion.weight * 4
+    if self.marking_scheme_type == 'rubric'
+      rubric_criteria.each do |criterion|
+        total = total + criterion.weight * 4
+      end
+    else 
+      total = flexible_criteria.sum('max')
     end
     return total
   end
@@ -453,10 +457,7 @@ class Assignment < ActiveRecord::Base
     if self.marking_scheme_type == 'rubric'
        return self.rubric_criteria
     else
-       return self.rubric_criteria    
-# Remove the line above and
-# Uncomment the following line when flexible_criteria will be implemented     
-#       return self.flexible_criteria
+       return self.flexible_criteria
     end
   end
   

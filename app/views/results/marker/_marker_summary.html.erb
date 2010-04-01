@@ -1,5 +1,6 @@
 <div id="summary_criteria_pane">
-  <%= render :partial => "results/common/marks_summary_table", :locals => {:rubric_criteria => rubric_criteria, :marks_map => marks_map} %>
+  <%= render :partial => "results/common/#{@assignment.marking_scheme_type}_marks_summary_table", :locals => {:mark_criteria => mark_criteria, :marks_map => marks_map} %>
+
 </div>  <!-- Summary Criteria Pane -->
       
     <div class="summary_block">
