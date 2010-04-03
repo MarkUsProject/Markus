@@ -61,6 +61,16 @@ class AssignmentsController < ApplicationController
           end 
         end
       end
+      
+      # Get the grades for grade entry forms for the current user
+      @g_id_entries = Hash.new()
+      @grade_entry_forms.each do |g|
+        grade_entry_student = g.grade_entry_students.find_by_user_id(current_user.id)
+        if !grade_entry_student.nil? && grade_entry_student.released_to_student
+          @g_id_entries[g.id] = grade_entry_student
+        end
+      end
+      
       render :action => "student_assignment_list"
       return
     elsif current_user.ta?

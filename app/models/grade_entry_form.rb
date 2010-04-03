@@ -12,6 +12,8 @@ class GradeEntryForm < ActiveRecord::Base
   
   accepts_nested_attributes_for :grade_entry_items, :allow_destroy => true
   
+  BLANK_MARK = ""
+  
   def validate
     
     # Check that the date is valid - the date is allowed to be in the past
@@ -28,14 +30,64 @@ class GradeEntryForm < ActiveRecord::Base
   # Determine the total mark for a particular student
   def calculate_total_mark(student_id)
     # Differentiate between a blank total mark and a total mark of 0
-    total = ""
+    total = BLANK_MARK
     
     grade_entry_student = self.grade_entry_students.find_by_user_id(student_id)
     if !grade_entry_student.nil?
       total = grade_entry_student.grades.sum('grade')
     end
     
+    if ((total == 0) && self.all_blank_grades?(grade_entry_student))
+      total = BLANK_MARK
+    end
     return total
+  end
+  
+  # Determine the total mark for a particular student, as a percentage
+  def calculate_total_percent(student_id)
+    total = self.calculate_total_mark(student_id)
+    percent = BLANK_MARK
+    
+    if total != BLANK_MARK
+      percent = (total / self.out_of_total) * 100
+    end
+    
+    return percent
+  end
+  
+  # Determine the average of all of the students' marks that have been
+  # released so far (return a percentage).
+  def calculate_released_average()
+    totalMarks = 0
+    numReleased = 0
+
+    grade_entry_students = self.grade_entry_students.find(:all, :conditions => { :released_to_student => true })
+    grade_entry_students.each do |grade_entry_student|
+      totalMark = self.calculate_total_mark(grade_entry_student.user_id)
+      if totalMark != BLANK_MARK
+        totalMarks += totalMark
+        numReleased += 1
+      end
+    end
+
+    # Watch out for division by 0
+    if (numReleased == 0)
+      return 0
+    end
+  
+    return ((totalMarks / numReleased) / self.out_of_total) * 100
+  end
+  
+  # Return whether or not the given student's grades are all blank
+  # (Needed because ActiveRecord's "sum" method returns 0 even if
+  #  all the grade.grade values are nil and we need to distinguish
+  #  between a total mark of 0 and a blank mark.)
+  def all_blank_grades?(grade_entry_student)
+    grades = grade_entry_student.grades
+    grades_without_nils = grades.select do |grade|
+      !grade.grade.nil?
+    end
+    return grades_without_nils.blank?
   end
    
   # Given two last names, construct an alphabetical category for pagination.
