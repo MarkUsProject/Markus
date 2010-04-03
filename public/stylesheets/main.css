@@ -541,27 +541,44 @@ td.grades_table_cell {
   width: 10%;
 }
 
+/* Grades table checkbox */
+td.grades_table_checkbox, th.student_total {
+	width: 7%;
+	text-align: center;
+}
+
 /* Grade */
 td.grade {
-  width: 10%;
+  width: 5%;
   text-align: center;
+}
+
+td.grade input {
+	min-width: 5%;
 }
 
 /* Question total in grades table */
 th.out_of {
   text-align: center;
+	min-width: 80px;
 }
 
+
 /* A student's total mark in grades table */
+td.student_total {
+  text-align: center;
+}
+
 td.student_total input {
+  min-width: 7%;
   border: none; 
   background-color: transparent; 
   text-align: left;
   color: #000000;
-
 }
 
 td.student_total input:hover {
+  min-width: 7%;
   border: none; 
   background-color: transparent; 
   text-align: left;
@@ -1237,6 +1254,14 @@ td a{
 
 td.delete_row, td.marking_state {
   text-align: center;
+}
+
+td.grade_entry_form_results_name {
+  width: 27%;
+}
+
+td.grade_entry_form_result {
+	width: 40%;
 }
 
 /* Grader's view*/

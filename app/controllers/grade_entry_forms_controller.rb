@@ -2,8 +2,10 @@
 
 class GradeEntryFormsController < ApplicationController
   include PaginationHelper
+  include GradeEntryFormsHelper
   
-  before_filter      :authorize_only_for_admin
+  before_filter      :authorize_only_for_admin, :except => [:student_interface]
+  before_filter      :authorize_for_student, :only => [:student_interface]
 
   # Filters will be added as the student UI is implemented (eg. Show Released, Show All,...)    
   G_TABLE_PARAMS = { :model => GradeEntryStudent, 
@@ -115,6 +117,69 @@ class GradeEntryFormsController < ApplicationController
     @grade.grade = updated_grade
     @grade_saved = @grade.save
     @updated_student_total = grade_entry_form.calculate_total_mark(@student_id)
+  end
+  
+  # For students
+  def student_interface
+    @grade_entry_form = GradeEntryForm.find(params[:id])
+    @student = current_user
+  end
+  
+  # Release/unrelease the marks for all the students or for a subset of students
+  def update_grade_entry_students
+    return unless request.post?
+    grade_entry_form = GradeEntryForm.find_by_id(params[:id])
+    errors = []
+    grade_entry_students = []
+
+    if params[:ap_select_full] == 'true'
+      
+      # Make sure we have a filter
+      if params[:filter].blank?
+        raise I18n.t('grade_entry_forms.grades.expected_filter')
+      end
+
+      # Find the appropriate students using this filter
+      students = G_TABLE_PARAMS[:filters][params[:filter]][:proc].call()
+      students.each do |student|
+        grade_entry_students.push(grade_entry_form.grade_entry_students.find_or_create_by_user_id(student.id))
+      end
+    else
+      # Particular students in the table were selected
+      if params[:students].nil?
+        errors.push(I18n.t('grade_entry_forms.grades.must_select_a_student'))
+      else
+        params[:students].each do |student_id|
+          grade_entry_students.push(grade_entry_form.grade_entry_students.find_or_create_by_user_id(student_id))
+        end
+      end
+    end
+
+    # Releasing/unreleasing marks should be logged
+    log_message = ""       
+    if !params[:release_results].nil?
+      numGradeEntryStudentsChanged = set_release_on_grade_entry_students(grade_entry_students, true, errors)
+      log_message = I18n.t("markus_logger.marks_released_for_grade_entry_form",
+                            :grade_entry_form_id => grade_entry_form.id,
+                            :grade_entry_form => grade_entry_form.short_identifier,
+                            :number_students => numGradeEntryStudentsChanged)
+    elsif !params[:unrelease_results].nil?
+      numGradeEntryStudentsChanged = set_release_on_grade_entry_students(grade_entry_students, false, errors)
+      log_message = I18n.t("markus_logger.marks_unreleased_for_grade_entry_form",
+                            :grade_entry_form_id => grade_entry_form.id,
+                            :grade_entry_form => grade_entry_form.short_identifier,
+                            :number_students => numGradeEntryStudentsChanged)
+    end
+
+    # Display success message
+    if numGradeEntryStudentsChanged > 0
+      flash[:success] = I18n.t('grade_entry_forms.grades.successfully_changed', {:numGradeEntryStudentsChanged => numGradeEntryStudentsChanged})
+      m_logger = MarkusLogger.instance
+      m_logger.log(log_message)
+    end
+    flash[:errors] = errors
+    
+    redirect_to :action => 'grades', :id => params[:id]    
   end
   
 end

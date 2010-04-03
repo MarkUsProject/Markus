@@ -70,6 +70,11 @@ en:
     remove:  "Remove"
     download_csv_grade_report:  "Download CSV Grades Report"
     days_and_hours_left:      "({{days}} day(s) and {{hours}} hour(s) left)"
+    
+    #app/views/grade_entry_forms/_list.html.erb
+    days_left:          "({{days}} day(s) left)"
+    
+    password:           "Password"
     short_identifier:   "Short Identifier"
     description:        "Description"
     shortened_date:     "Date"
@@ -159,6 +164,9 @@ en:
 
     marks_released_notice:  "The marks have been released. You cannot change the grades."
     past_due_date_edit_warning:  "WARNING:  The due date you have selected is in the past."
+    release_marks: "Release Marks"
+    unrelease_marks: "Unrelease Marks"
+    
     
     seperate_multiple_with_commas:  "Seperate multiple user names with commas"
     csv_valid_format:   "There was a problem parsing the CSV file you uploaded.  Please ensure that it's a valid CSV format, and that each line ends with a carriage-return line-feed set of characters.  No changes were made. "
@@ -178,6 +186,12 @@ en:
       per_page: "per page"
       jump_to: "Jump to:"
       show: "Show"
+
+    selects:
+      all_on_page: "All {{page_items}} items on this page are selected."
+      all: "All {{total_items}} items are selected."
+      select_full: "Click here to select all {{total_items}} items."
+      select_clear: "Click here to clear selection."
 
     browse_submissions:
       release_marks:        "Release Marks"
@@ -217,11 +231,25 @@ en:
         success: "Successfully updated grade entry form"
       grades:
         title: "Manage Grade Entry Form:"
+        student_title: "Grade Entry Form:"
         total: "Total:"
         no_grade_entry_items_message: "There are currently no columns for this table."
+        must_select_a_student: "You must select at least one student to update."
+        expected_filter: "Expected a filter on select full."
+        successfully_changed: "Successfully updated {{numGradeEntryStudentsChanged}} students."
+        update_error: "The marking state for {{user_name}} could not be saved."
+        errors: "Errors"
+        no_mark: "N/A"
+        marking_state: "Marking State"
+      students:
+        title: "Your Grade Entry Forms"
+        no_results: "There are no results for this grade entry form yet."
         
     no_grade_entry_forms_message: "There are currently no grade entry forms." 
     current_grade_entry_forms_title: "Current grade entry forms:"
+    mark_message: "Your mark:"
+
+    student_interface_assignments: "Your Assignments"
 
     markus_logger:
         user_login_message: "User '{{user_name}}' logged in."
@@ -255,6 +283,8 @@ en:
         student_deleted_file: "Student '{{user_name}}' deleted file '{{file_name}}' for assignment '{{assignment}}'."
         student_replaced_file: "Student '{{user_name}}' replaced content of file '{{file_name}}' for assignment '{{assignment}}'."
         student_viewed_result: "Student '{{user_name}}' viewed results for assignment '{{assignment}}'."
+        marks_released_for_grade_entry_form: "Marks released for grade entry form '{{grade_entry_form}}', ID: '{{grade_entry_form_id}}' (for {{number_students}} students)."
+        marks_unreleased_for_grade_entry_form: "Marks unreleased for grade entry form '{{grade_entry_form}}', ID: '{{grade_entry_form_id}}' (for {{number_students}} students)."
     
     ensure_config:
       path_not_writable: "The setting {{constant_name}} with path {{file_name}} is not writable. Please double check the setting in {{config_location}}."
