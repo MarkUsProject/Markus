@@ -87,7 +87,7 @@
     </div>
 
     <div id="ap_selects">
-      <%= render :partial => 'ajax_paginate/selects' %>
+      <%= render :partial => 'ajax_paginate/selects', :locals => {:page_items => @groupings.size, :total_items => @groupings_total} %>
     </div>
 
     <table>

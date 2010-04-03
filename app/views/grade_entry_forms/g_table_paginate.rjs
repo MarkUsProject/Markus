@@ -30,3 +30,5 @@ page.replace_html 'ap_filters_2', :partial => 'grades_table_filters',
                                               :alpha_pagination_options => @alpha_pagination_options,
                                               :alpha_category => @alpha_category} 
 
+page.replace_html 'ap_selects', :partial => 'ajax_paginate/selects', :locals => {:page_items => @students.size, :total_items => @students_total}
+

@@ -56,6 +56,11 @@
         <%= link_to h(grade_entry_form.short_identifier), :controller => 'grade_entry_forms',
             :action => 'edit', :id => grade_entry_form.id %>
       </li>
+    <% elsif @current_user.student? %>
+      <li class="level2">
+        <%= link_to h(grade_entry_form.short_identifier), :controller => 'grade_entry_forms',
+            :action => 'student_interface', :id => grade_entry_form.id %>
+      </li>
     <% end %>
   <% end %>
 <% end %>
