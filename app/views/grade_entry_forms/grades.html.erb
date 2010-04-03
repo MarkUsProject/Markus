@@ -8,15 +8,42 @@
 
 <div class="wrapLeft">
 
+  <% if flash[:error] %>
+    <div class="error">
+      <%=flash[:error]%>
+    </div>
+  <% end %>
+  <% if flash[:success] %>
+    <div class="success">
+      <%=flash[:success]%>
+    </div>
+  <% end %>
+
+  <% if !flash[:errors].nil? && !flash[:errors].empty? %>
+    <div class="error">
+      <h1><%= t('grade_entry_forms.grades.errors') %></h1>
+        <ul>
+          <% flash[:errors].each do |error_message| %>
+            <li><%= error_message %></li>
+          <% end %>
+        </ul>
+    </div>
+  <% end %>	
+	
+  <%= form_tag({:action => 'update_grade_entry_students', :id => @grade_entry_form.id, :filter => 'none'}) %>
   <% if @grade_entry_form.grade_entry_items.empty? %>
     <div class="wrapLeft">
       <p><%= t('grade_entry_forms.grades.no_grade_entry_items_message') %></p>
     </div>
   <% else %>
-	  
     <div class="clear"></div>
     <div class="ap_nav_box">
-      
+      <div class="floatLeft">
+        <% if @current_user.admin? %>
+          <%= submit_tag t(:release_marks), :name => "release_results" %>
+          <%= submit_tag t(:unrelease_marks), :name => "unrelease_results" %>
+        <% end %>
+      </div>
       <div class="ap_filters" id="ap_filters_1">
         <%= render :partial => 'grades_table_filters', :locals => {:filter => @filter, :sort_by => @sort_by, 
                                                                    :grade_entry_form => @grade_entry_form, :filters => @filters, 
@@ -38,9 +65,14 @@
                                                                                          :alpha_category => @alpha_category,
                                                                                          :alpha_pagination_options => @alpha_pagination_options} %>
       </div>
+      <div id="ap_selector">
+        <%= render :partial => 'ajax_paginate/selector' %>
+      </div>
       <div class="clear"></div>
     </div>
-      
+    <div id="ap_selects">
+      <%= render :partial => 'ajax_paginate/selects', :locals => {:page_items => @students.size, :total_items => @students_total} %>
+    </div>  
     <table>
       <thead>
         <%= render :partial => 'grades_table_column_names' %>
@@ -55,8 +87,7 @@
     </table>
 		
     <div class="ap_nav_box">
-      <div class="clear"></div>
-		  <div class="ap_page_links" id="ap_page_links_2">
+      <div class="ap_page_links" id="ap_page_links_2">
         <%= render :partial => 'ajax_paginate/initial_paginate_links_alpha', :locals => {:per_page => @per_page, 
                                                                                          :current_page => @current_page, 
                                                                                          :page_items => @students.size, 
@@ -69,7 +100,16 @@
                                                                                          :alpha_category => @alpha_category,
                                                                                          :alpha_pagination_options => @alpha_pagination_options} %>
       </div>
-      <div class="clear"></div>
+      <div id="ap_selector">
+        <%= render :partial => 'ajax_paginate/selector'%>
+      </div> 
+      <div class="floatLeft">
+        <% if @current_user.admin? %>
+          <%= submit_tag t(:release_marks), :name => "release_results" %>
+          <%= submit_tag t(:unrelease_marks), :name => "unrelease_results" %>
+        <% end %>
+      </div>
+		  
       <div class="ap_filters" id="ap_filters_2">
         <%= render :partial => 'grades_table_filters', :locals => {:filter => @filter, :sort_by => @sort_by, 
                                                                    :grade_entry_form => @grade_entry_form, :filters => @filters, 
@@ -80,5 +120,5 @@
       <div class="clear"></div>
     </div>
   <% end %>
-
+  </form>
 </div>

@@ -134,7 +134,7 @@
 <div id="sub_menu">
   <ul id="root" class="level1 horizontal">
    <li class="level1 visible_dropdown">
-     <% if @assignment.nil?%>
+     <% if @assignment.nil? %>
        <span id="choose_an_assignment"><%= I18n.t(:choose_assignment) %></span>
      <% else %>
        <span id="choose_an_assignment"><%=
@@ -159,17 +159,32 @@ h(sanitize(@assignment.short_identifier))%></span>
 <div id="sub_menu">
   <ul id="root" class="level1 horizontal">
    <li class="level1 visible_dropdown">
-     <% if @assignment.nil?%>
-       <span id="choose_an_assignment"><%= I18n.t(:choose_assignment) %></span>
-     <% else %>
-       <span id="choose_an_assignment"><%=
-h(sanitize(@assignment.short_identifier))%></span>
+     <% if @assignment.nil? and @grade_entry_form.nil? %>
+       <span id="choose_an_assignment"><%= t(:choose_assignment) %></span>
+     <% elsif !@assignment.nil? %>
+       <% # Display the assignment's short identifier 
+       %>
+       <span id="choose_an_assignment"><%= h(@assignment.short_identifier) %></span>
+    <% elsif !@grade_entry_form.nil? %>
+ 
+        <% # Display the grade entry form's short identifier 
+        %>  
+        <span id="choose_an_assignment"><%=h(@grade_entry_form.short_identifier)%></span>
      <% end %>
         <ul class="level2 dropdown">
            <%= render :partial => 'shared/assignments_dropdown_menu'%>
         </ul>
    </li>
-
+	 
+  <% if !@grade_entry_form.nil? %>
+    <li <% if controller.controller_name == 'grade_entry_forms' %> 
+          id="sub_menu_active"
+        <%end%>>
+      <%= link_to t(:grades), :controller => 'grade_entry_forms',
+          :action => 'student_interface', :id => @grade_entry_form.id %>
+    </li>
+	<% end %>
+	
   <% if 
     !@assignment.nil? and @current_user.has_accepted_grouping_for?(@assignment)
   %>
@@ -191,7 +206,6 @@ h(sanitize(@assignment.short_identifier))%></span>
 	  <%= link_to 'results', :controller => 'results',
 	  :action => 'view_marks', :id => @assignment.id %>
   </li>
-  
    <% end %>
    </ul>
 </div>

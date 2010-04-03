@@ -12,4 +12,4 @@ page.replace_html 'submissions_table_head', :partial => 'submissions_table_sorti
 
 page.replace_html 'submissions_table_foot', :partial => 'submissions_table_sorting_links', :locals => {:assignment => @assignment, :filter => @filter, :page => @current_page.to_i, :per_page => @per_page, :sort_by => @sort_by, :desc => @desc}
 
-page.replace_html 'ap_selects', :partial => 'ajax_paginate/selects'
+page.replace_html 'ap_selects', :partial => 'ajax_paginate/selects', :locals => {:page_items => @groupings.size, :total_items => @groupings_total}
