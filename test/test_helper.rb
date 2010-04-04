@@ -94,6 +94,9 @@ class ActiveSupport::TestCase
     url.rewrite(options)
   end
   
+  # This prevents factory data preloader from automatically loading data for each test suite 
+  FactoryDataPreloader.preload_all = false
+
 end
 
 class ActiveRecord::Base

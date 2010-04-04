@@ -5,16 +5,16 @@ require 'faker'
 Sham.section_name {Faker::Name.name}
 
 Sham.user_name {Faker::Name.name}
-Sham.admin_user_name {|i| "admin#{i}"}
-Sham.student_user_name {|i| "student#{i}"}
-Sham.ta_user_name {|i| "ta#{i}"}
+Sham.admin_user_name {|i| "machinist_admin#{i}"}
+Sham.student_user_name {|i| "machinist_student#{i}"}
+Sham.ta_user_name {|i| "machinist_ta#{i}"}
 Sham.first_name {Faker::Name.first_name}
 Sham.last_name {Faker::Name.last_name}
 
 Sham.filename { "#{Faker::Lorem.words(1)[0]}.java"}
-Sham.group_name {|i| "group#{i}"}
+Sham.group_name {|i| "machinist_group#{i}"}
 
-Sham.short_identifier {|i| "A#{i}"}
+Sham.short_identifier {|i| "machinist_A#{i}"}
 Sham.description {Faker::Lorem.sentence(2)}
 Sham.message {Faker::Lorem.sentence(2)}
 Sham.due_date {2.days.from_now}
@@ -23,17 +23,40 @@ Sham.notes_message {Faker::Lorem.paragraphs}
 
 Sham.overall_comment {Faker::Lorem.sentence(3)}
 
-Sham.flexible_criterion_name {|i| "flexible_criterion_#{i}"}
-Sham.rubric_criterion_name {|i| "rubric_criterion_#{i}"}
+Sham.flexible_criterion_name {|i| "machinist_flexible_criterion_#{i}"}
+Sham.rubric_criterion_name {|i| "machinist_rubric_criterion_#{i}"}
 
 Sham.date {2.days.from_now}
 Sham.name {Faker::Name.name}
 
+Sham.filename {|i| "file#{i}"}
+Sham.path {|i| "path#{i}"}
+
+Sham.annotation_category_name {|i| "Machinist Annotation Category #{i}"}
+
 Admin.blueprint do
-  type {'Admin'}
   user_name {Sham.admin_user_name}
   first_name
   last_name
+end
+
+Annotation.blueprint do
+  line_start {0}
+  line_end {1}
+  submission_file 
+  annotation_text {AnnotationText.make(
+    :annotation_category => AnnotationCategory.make(:assignment => submission_file.submission.grouping.assignment)
+    )}
+end
+
+AnnotationCategory.blueprint do
+  assignment 
+  annotation_category_name 
+end
+
+AnnotationText.blueprint do
+  annotation_category {AnnotationCategory.make}
+  content {'content'}
 end
 
 Assignment.blueprint do
@@ -47,7 +70,7 @@ Assignment.blueprint do
   instructor_form_groups {false}
   repository_folder {"repo/#{short_identifier}"}
   marking_scheme_type {'rubric'}
-  submission_rule {NoLateSubmissionRule.make({:assignment_id => object_id})}
+  submission_rule {NoLateSubmissionRule.make}
   allow_web_submits {true}
 end
 
@@ -56,7 +79,14 @@ AssignmentFile.blueprint do
   filename
 end
 
+ExtraMark.blueprint do
+  extra_mark {2}
+  result
+  unit{'percentage'}
+end
+
 FlexibleCriterion.blueprint do
+  Assignment.make(:marking_scheme_type => 'flexible')
   flexible_criterion_name
   description
   position {1} # override if many for the same assignment
@@ -103,9 +133,10 @@ Grouping.blueprint do
 end
 
 Mark.blueprint do
-  result
-  markable {RubricCriterion.make}
-  mark {Kernel::rand(4)}
+  markable_type {markable.class.name}
+  result {Submission.make.result}
+  markable {Kernel.const_get(markable_type).make(:assignment => result.submission.grouping.assignment)}
+  mark {1}
 end
 
 Note.blueprint do
@@ -117,17 +148,10 @@ end
 
 NoLateSubmissionRule.blueprint do
   assignment_id {0}
-  type {'NoLateSubmissionRule'}
-end
-
-Result.blueprint do
-  submission
-  marking_state {'partial'}
-  overall_comment
-  released_to_students {false}
 end
 
 RubricCriterion.blueprint do
+  Assignment.make(:marking_scheme_type => 'rubric')
   rubric_criterion_name
   position {1} # override if many for the same assignment
   assignment
@@ -139,7 +163,6 @@ Section.blueprint do
 end
 
 Student.blueprint do
-  type {'Student'}
   user_name {Sham.student_user_name}
   first_name
   last_name
@@ -165,8 +188,13 @@ Submission.blueprint do
   revision_timestamp {1.days.ago}
 end
 
+SubmissionFile.blueprint do
+  submission 
+  filename 
+  path 
+end
+
 Ta.blueprint do
-  type {'Ta'}
   user_name {Sham.ta_user_name}
   first_name
   last_name
@@ -177,4 +205,3 @@ TAMembership.blueprint do
   grouping
   membership_status {'pending'}
 end
-
