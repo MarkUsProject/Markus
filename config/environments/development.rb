@@ -25,7 +25,9 @@ config.gem 'thoughtbot-shoulda', :version => ">=2.10.2", :source => "http://gems
 config.gem 'fastercsv', :lib => false
 config.gem 'ruby-debug', :lib => false
 config.gem 'will_paginate', :lib => false
-
+config.gem 'machinist', :lib => false, :source => "http://gemcutter.org"
+config.gem 'faker', :lib => false
+config.gem 'factory_data_preloader', :source => 'http://gemcutter.org'
 require 'ruby-debug'
 
 ###################################################################
