@@ -86,7 +86,7 @@ ExtraMark.blueprint do
 end
 
 FlexibleCriterion.blueprint do
-  Assignment.make(:marking_scheme_type => 'flexible')
+  assignment {Assignment.make(:marking_scheme_type => 'flexible')}
   flexible_criterion_name
   description
   position {1} # override if many for the same assignment
@@ -151,10 +151,9 @@ NoLateSubmissionRule.blueprint do
 end
 
 RubricCriterion.blueprint do
-  Assignment.make(:marking_scheme_type => 'rubric')
+  assignment {Assignment.make(:marking_scheme_type => 'rubric')}
   rubric_criterion_name
   position {1} # override if many for the same assignment
-  assignment
   weight {1}
 end
 
