@@ -100,11 +100,18 @@ class ActiveSupport::TestCase
 end
 
 class ActiveRecord::Base
-
-  ANSI_BOLD       = "\033[1m"
-  ANSI_RESET      = "\033[0m"
-  ANSI_LGRAY    = "\033[0;37m"
-  ANSI_GRAY     = "\033[1;30m"
+  if !defined? ANSI_BOLD
+    ANSI_BOLD       = "\033[1m"
+  end
+  if !defined? ANSI_RESET
+    ANSI_RESET      = "\033[0m"
+  end
+  if !defined? ANSI_LGRAY
+    ANSI_LGRAY    = "\033[0;37m"
+  end
+  if !defined? ANSI_GRAY
+    ANSI_GRAY     = "\033[1;30m"
+  end
 
   def print_attributes
     max_value = 0
