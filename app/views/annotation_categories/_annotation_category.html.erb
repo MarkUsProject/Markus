@@ -1,5 +1,5 @@
 <li id="annotation_category_<%=annotation_category.id%>">
-<span class="float_left"><%= link_to_remote h(truncate(annotation_category.annotation_category_name, 30, '...')), :url => {:action => 'get_annotations', :id => annotation_category.id} %>
+<span class="float_left"><%= link_to_remote h(truncate(annotation_category.annotation_category_name, :length => 30)), :url => {:action => 'get_annotations', :id => annotation_category.id} %>
 </span>
 <span class="annotation_texts_size">
 (<%= annotation_category.annotation_texts.size() %>)
