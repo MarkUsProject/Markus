@@ -21,7 +21,7 @@ class MarkTest < ActiveSupport::TestCase
   
   context "A mark asociated with RubricCriterion" do   
     setup do
-      @mark = Mark.make(:markable_type => "RubricCriterion", :mark => 2)
+      @mark = Mark.make(:rubric, :mark => 2)
     end
       
     should "allow valid values" do
@@ -46,7 +46,7 @@ class MarkTest < ActiveSupport::TestCase
   context "A mark asociated with FlexibleCriterion" do   
     setup do
       # max of flexible criterion is 10 in blueprint
-      @mark = Mark.make(:markable_type => "FlexibleCriterion", :mark => 4)
+      @mark = Mark.make(:flexible, :mark => 4)
     end
        
     should "allow valid values" do

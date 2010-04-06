@@ -133,10 +133,19 @@ Grouping.blueprint do
 end
 
 Mark.blueprint do
-  markable_type {markable.class.name}
   result {Submission.make.result}
-  markable {Kernel.const_get(markable_type).make(:assignment => result.submission.grouping.assignment)}
+  markable {RubricCriterion.make(:assignment => result.submission.grouping.assignment)}
   mark {1}
+end
+
+Mark.blueprint(:rubric) do
+  result {Submission.make.result}
+  markable {RubricCriterion.make(:assignment => result.submission.grouping.assignment)}
+end
+
+Mark.blueprint(:flexible) do
+  result {Submission.make.result}
+  markable {FlexibleCriterion.make(:assignment => result.submission.grouping.assignment)}
 end
 
 Note.blueprint do
