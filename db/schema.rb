@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100401222956) do
+ActiveRecord::Schema.define(:version => 20100406002059) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -94,7 +94,7 @@ ActiveRecord::Schema.define(:version => 20100401222956) do
     t.datetime "updated_at"
   end
 
-  add_index "flexible_criteria", ["assignment_id", "flexible_criterion_name"], :name => "index_flexible_criteria_on_assignment_id_and_name", :unique => true
+  add_index "flexible_criteria", ["assignment_id", "flexible_criterion_name"], :name => "index_flexible_criteria_on_assignment_id_and_flexible_criterion", :unique => true
   add_index "flexible_criteria", ["assignment_id"], :name => "index_flexible_criteria_on_assignment_id"
 
   create_table "grace_period_deductions", :force => true do |t|
@@ -135,7 +135,7 @@ ActiveRecord::Schema.define(:version => 20100401222956) do
     t.datetime "updated_at"
   end
 
-  add_index "grade_entry_students", ["user_id", "grade_entry_form_id"], :name => "index_grade_entry_students_on_user_id_and_grade_entry_form_id", :unique => true
+  add_index "grade_entry_students", ["grade_entry_form_id", "user_id"], :name => "index_grade_entry_students_on_user_id_and_grade_entry_form_id", :unique => true
 
   create_table "grades", :force => true do |t|
     t.integer  "grade_entry_item_id"
@@ -173,7 +173,7 @@ ActiveRecord::Schema.define(:version => 20100401222956) do
     t.string   "markable_type"
   end
 
-  add_index "marks", ["markable_id", "result_id", "markable_type"], :name => "marks_u1", :unique => true
+  add_index "marks", ["markable_id", "markable_type", "result_id"], :name => "marks_u1", :unique => true
 
   create_table "memberships", :force => true do |t|
     t.integer  "user_id"
@@ -187,7 +187,7 @@ ActiveRecord::Schema.define(:version => 20100401222956) do
   add_index "memberships", ["grouping_id", "user_id"], :name => "memberships_u1", :unique => true
 
   create_table "notes", :force => true do |t|
-    t.string   "notes_message", :null => false
+    t.text     "notes_message", :null => false
     t.integer  "creator_id",    :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
