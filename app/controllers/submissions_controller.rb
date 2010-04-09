@@ -208,7 +208,11 @@ class SubmissionsController < ApplicationController
       params[:sort_by] = 'group_name'
     end 
     @assignment = Assignment.find(params[:id])
-    @groupings, @groupings_total = handle_paginate_event(S_TABLE_PARAMS, {:assignment => @assignment, :user_id => current_user.id}, params)
+    @groupings, @groupings_total = handle_paginate_event(
+      S_TABLE_PARAMS,                                     # the data structure to handle filtering and sorting
+        { :assignment => @assignment,                     # the assignment to filter by
+          :user_id => current_user.id},                   # the submissions accessable by the current user
+      params)                                             # additional parameters that affect things like sorting
     @current_page = params[:page].to_i()
     @per_page = params[:per_page]
     @filters = get_filters(S_TABLE_PARAMS)
