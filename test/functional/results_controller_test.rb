@@ -720,7 +720,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           setup do
             get_as @admin, :expand_unmarked_criteria, :aid => @assignment.id, :rid => @result.id        
           end
-          should_assign_to :assignment, :mark_criteria, :result, :nil_marks
+          should_assign_to :assignment, :result, :nil_marks
           should_render_template 'results/marker/_expand_unmarked_criteria'
           should_respond_with :success
         end
@@ -993,7 +993,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           setup do
             get_as @ta, :expand_unmarked_criteria, :aid => @assignment.id, :rid => @result.id
           end
-          should_assign_to :assignment, :mark_criteria, :result, :nil_marks
+          should_assign_to :assignment, :result, :nil_marks
           should_render_template 'results/marker/_expand_unmarked_criteria'
           should_respond_with :success
         end
