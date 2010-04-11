@@ -244,6 +244,20 @@ en:
       students:
         title: "Your Grade Entry Forms"
         no_results: "There are no results for this grade entry form yet."
+      csv:
+        incomplete_header: "Incomplete grade entry item names or totals."
+        incomplete_row: "Contains too little information."
+        invalid_user_name: "Invalid user name."
+        upload_success: "Grades table successfully uploaded: {{num_updates}} update(s)."
+        upload_title: "Upload Grades File"
+        upload_prompt: "Select a CSV file to upload"
+        upload_format_html: "<p>The file should have the following format:</p>
+                             <ul><li>two lines at the top which specify the question names and totals;</li>
+                             <li>one line for each student record;</li>
+                             <li>each line should be terminated by a carriage-return line-feed.</li></ul>
+                             <code>\"\",q1_name,q2_name,q3_name</code><br/>
+                             <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br/>
+                             <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
         
     no_grade_entry_forms_message: "There are currently no grade entry forms." 
     current_grade_entry_forms_title: "Current grade entry forms:"

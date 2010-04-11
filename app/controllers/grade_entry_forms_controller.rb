@@ -182,4 +182,35 @@ class GradeEntryFormsController < ApplicationController
     redirect_to :action => 'grades', :id => params[:id]    
   end
   
+  # Download the grades for this grade entry form as a CSV file
+  def csv_download
+    grade_entry_form = GradeEntryForm.find(params[:id])
+    send_data grade_entry_form.get_csv_grades_report, :disposition => 'attachment', :type => 'application/vnd.ms-excel', 
+                                                      :filename => "#{grade_entry_form.short_identifier}_grades_report.csv"
+  end
+  
+  # Upload the grades for this grade entry form using a CSV file
+  def csv_upload
+    @grade_entry_form = GradeEntryForm.find(params[:id])
+    grades_file = params[:upload][:grades_file]
+    if request.post? && !grades_file.blank?
+      begin
+        GradeEntryForm.transaction do
+          invalid_lines = []
+          num_updates = GradeEntryForm.parse_csv(grades_file, @grade_entry_form, invalid_lines)
+          if !invalid_lines.empty?
+            flash[:invalid_lines] = invalid_lines
+            flash[:error] = I18n.t('csv_invalid_lines')
+          end
+          if num_updates > 0
+            flash[:upload_notice] = I18n.t('grade_entry_forms.csv.upload_success', 
+                                           :num_updates => num_updates)
+          end
+        end
+      end
+    end
+    
+    redirect_to :action => 'grades', :id => @grade_entry_form.id
+  end
+  
 end
