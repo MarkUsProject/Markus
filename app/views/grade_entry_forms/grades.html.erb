@@ -1,14 +1,55 @@
 <% # Manage grades page
 %>
 <%= javascript_include_tag "ajax_paginate" %>
+<%= javascript_include_tag "livepipe/livepipe.js" %>
+<%= javascript_include_tag "livepipe/window.js" %>
+
+<script>
+
+  var modalUpload = null;
+ 
+  function upload_grades(){
+    modalUpload.open();
+    return false;
+  }
+
+  document.observe("dom:loaded", function(){
+  
+    modalUpload = new Control.Modal($('upload_dialog'),
+    {
+      overlayOpacity: 0.75,
+      className: 'modalUpload',
+      fade: false
+    });
+  });
+</script>
 
 <div id="title_bar">
-  <h1><%= t('grade_entry_forms.grades.title') + " " + h(@grade_entry_form.short_identifier)%></h1>
+  <h1><%= t('grade_entry_forms.grades.title') + " " + h(@grade_entry_form.short_identifier)%>
+    <% if @current_user.admin? %>
+      <%= button_to_function t(:upload), "upload_grades();"%>
+      <span class="menu_bar">|</span>
+      <%= link_to t(:download), :action => 'csv_download', :id => @grade_entry_form.id %> 
+    <% end %>
+  </h1>
 </div>
 
 <div class="wrapLeft">
-
-  <% if flash[:error] %>
+  <% if flash[:upload_notice] %>
+    <div class="success">
+      <p><%= h(flash[:upload_notice]) %></p>
+    </div>
+  <% end %>
+  <% if flash[:error] && !flash[:invalid_lines].nil? && !flash[:invalid_lines].empty? %>
+    <div class="error">
+      <p><%= h(flash[:error]) %></p>
+      <ul>
+        <% flash[:invalid_lines].each do |message| %>
+          <li><%=h(message)%></li>
+        <% end %>
+      </ul>
+    </div>
+  <% elsif flash[:error] %>
     <div class="error">
       <%=flash[:error]%>
     </div>
@@ -121,4 +162,20 @@
     </div>
   <% end %>
   </form>
+</div>
+
+<div id="upload_dialog"> 
+  <h1><%= t('grade_entry_forms.csv.upload_title') %></h1>
+  <p><%= t('grade_entry_forms.csv.upload_prompt') %></p>
+  <% form_for :upload, :url => {:controller=>"grade_entry_forms",
+                                :action => 'csv_upload',
+                                :id => @grade_entry_form.id},
+                                :html => {:multipart => true, :size => 1 } do |f| %>
+  <p><%= f.file_field :grades_file %></p>
+  <%= t('grade_entry_forms.csv.upload_format_html') %>
+  <p>
+    <%= f.submit t(:upload), :disable_with => t(:uploading_please_wait) %>
+    <input type="reset" value="<%= t(:cancel) %>" onClick="modalUpload.close();">
+  </p>
+  <% end %>
 </div>

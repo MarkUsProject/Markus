@@ -1,3 +1,5 @@
+require 'fastercsv'
+
 # GradeEntryForm can represent a test, lab, exam, etc.
 # A grade entry form has many columns which represent the questions and their total
 # marks (i.e. GradeEntryItems) and many rows which represent students and their
@@ -166,6 +168,110 @@ class GradeEntryForm < ActiveRecord::Base
     end
       
     return alpha_pagination
+  end
+  
+  # Get a CSV report of the grades for this grade entry form
+  def get_csv_grades_report
+    students = Student.all(:conditions => {:hidden => false}, :order => "user_name")
+    csv_string = FasterCSV.generate do |csv|
+      
+      # The first row in the CSV file will contain the question names
+      final_result = []
+      final_result.push('')
+      grade_entry_items.each do |grade_entry_item|
+        final_result.push(grade_entry_item.name)
+      end
+      csv << final_result
+      
+      # The second row in the CSV file will contain the question totals
+      final_result = []
+      final_result.push('')
+      grade_entry_items.each do |grade_entry_item|
+        final_result.push(grade_entry_item.out_of)
+      end
+      csv << final_result
+      
+      # The rest of the rows in the CSV file will contain the students' grades 
+      students.each do |student|
+        final_result = []
+        final_result.push(student.user_name)
+        grade_entry_student = self.grade_entry_students.find_by_user_id(student.id)
+
+        # Check whether or not we have grades recorded for this student
+        if grade_entry_student.nil?
+          self.grade_entry_items.each do |grade_entry_item|
+            # Blank marks for each question
+            final_result.push(BLANK_MARK)
+          end
+          # Blank total percent
+          final_result.push(BLANK_MARK)
+        else
+          self.grade_entry_items.each do |grade_entry_item|
+            grade = grade_entry_student.grades.find_by_grade_entry_item_id(grade_entry_item.id)
+            if grade.nil?
+              final_result.push(BLANK_MARK)
+            else
+              final_result.push(grade.grade || BLANK_MARK)
+            end 
+          end
+          total_percent = self.calculate_total_percent(student.id)
+          final_result.push(total_percent)
+        end
+        csv << final_result
+      end
+    end
+    return csv_string
+  end
+  
+  # Parse a grade entry form CSV file.
+  # grades_file is the CSV file to be parsed
+  # grade_entry_form is the grade entry form that is being updated
+  # invalid_lines will store all problematic lines from the CSV file
+  def self.parse_csv(grades_file, grade_entry_form, invalid_lines)
+    num_updates = 0
+    num_lines_read = 0
+    names = []
+    totals = []
+    
+    # Parse the question names
+    FasterCSV.parse(grades_file.readline) do |row|
+      if !FasterCSV.generate_line(row).strip.empty?
+        names = row
+        num_lines_read += 1
+      end
+    end
+    
+    # Parse the question totals
+    FasterCSV.parse(grades_file.readline) do |row|
+      if !FasterCSV.generate_line(row).strip.empty?
+        totals = row
+        num_lines_read += 1
+      end
+    end
+
+    # Create/update the grade entry items
+    begin
+      GradeEntryItem.create_or_update_from_csv_rows(names, totals, grade_entry_form)
+      num_updates += 1
+    rescue RuntimeError => e
+      invalid_lines << names.join(',') 
+      invalid_lines << totals.join(',') + ": " + e.message unless invalid_lines.nil?
+    end
+
+    # Parse the grades 
+    FasterCSV.parse(grades_file.read) do |row|
+      next if FasterCSV.generate_line(row).strip.empty?
+      begin
+        if num_lines_read > 1
+          GradeEntryStudent.create_or_update_from_csv_row(row, grade_entry_form)
+          num_updates += 1
+        end
+        num_lines_read += 1
+      rescue RuntimeError => e
+        invalid_lines << row.join(',') + ": " + e.message unless invalid_lines.nil?
+      end
+    end
+    return num_updates
   end
 
 end
