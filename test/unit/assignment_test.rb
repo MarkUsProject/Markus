@@ -120,10 +120,8 @@ class AssignmentTest < ActiveSupport::TestCase
 
       should "return the correct results average mark" do
         @result.marking_state = Result::MARKING_STATES[:complete]
-
         @result.released_to_students = true
         @result.save
-
         assert @assignment.set_results_average
         assert_equal(100, @assignment.results_average)
       end
@@ -393,8 +391,33 @@ class AssignmentTest < ActiveSupport::TestCase
           old_groupings.each do |old_grouping|
             assert !@target.groupings.include?(old_grouping)
           end
-        end
+        end        
       end
+          
+      context "an assignment with external commits only and previous groups" do
+        setup do
+          @assignment.allow_web_submits = false
+          @assignment.save
+          @target = Assignment.make({:allow_web_submits => false, :group_min => 1, :group_max => 1})
+          @target.create_groupings_when_students_work_alone
+          # And for this test, let's make sure all groupings cloned have admin approval
+          @assignment.groupings.each do |grouping|
+            grouping.admin_approved = true
+            grouping.save
+          end
+          assert @assignment.groupings.size > 0
+        end
+       
+        should "ensure that all students have appropriate permissions on the cloned groupings" do
+          @target.clone_groupings_from(@assignment.id)
+          @target.reload
+          @target.groupings.each do |grouping|
+            grouping.accepted_students.each do |student|
+              assert_equal grouping.group.repo.get_permissions(student.user_name), Repository::Permission::READ_WRITE, "student should have read-write permissions on their group's repository"
+            end
+          end
+        end
+      end     
     end
 
     should "not add csv group with empty row" do
@@ -552,7 +575,7 @@ class AssignmentTest < ActiveSupport::TestCase
           @assignment.submissions.each do |submission|
             grouping = submission.grouping
             group = grouping.group
-            expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/group_#{group.id} \"#{group.group_name}\"")
+            expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name} \"#{group.group_name}\"")
           end
           assert_equal expected_array, @assignment.get_svn_export_commands
         end
@@ -567,7 +590,7 @@ class AssignmentTest < ActiveSupport::TestCase
           @assignment.submissions.each do |submission|
             grouping = submission.grouping
             group = grouping.group
-            expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/group_#{group.id} \"#{group.group_name}\"")
+            expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name} \"#{group.group_name}\"")
           end
           assert_equal expected_array, @assignment.get_svn_export_commands
         end

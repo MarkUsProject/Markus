@@ -267,6 +267,8 @@ class Assignment < ActiveRecord::Base
             membership.membership_status = m.membership_status
             raise "Could not save membership" if !(grouping.memberships << membership)
           end
+          # Ensure all student members have permissions on their group repositories
+          grouping.update_repository_permissions
         end
       end
     end
