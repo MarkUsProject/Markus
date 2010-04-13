@@ -10,7 +10,7 @@ class EnsureConfigHelperTest < ActiveSupport::TestCase
   context "setting up the markus_configurator" do
 
     setup do
-      @temp_dir = "/tmp/ensure_config_helper_test_#{rand(1073741824)}"
+      @temp_dir = "./tmp/ensure_config_helper_test_#{rand(1073741824)}"
       @log_dir = "#{@temp_dir}/log"
       @log_info_file = "#{@log_dir}/log_info_file.log"
       @log_error_file = "#{@log_dir}/log_error_file.log"

@@ -1,3 +1,5 @@
+require 'open3' # required for popen3
+
 module EnsureConfigHelper
   
 =begin
@@ -79,16 +81,16 @@ module EnsureConfigHelper
   
   # checks if the given file executes succesfully
   def self.check_if_executes( filename, constant_name )
-    begin
-      p = IO.popen( filename, "w+" )
-      p.puts("test\ntest") # write to stdin of markus_config_validate
-      p.close
-      error_code = $?
-      if error_code != 0 and error_code !=1 and error_code != 2
+    p_stdin, p_stdout, p_stderr = Open3.popen3( filename )
+    p_stdin.puts("test\ntest") # write to stdin of markus_config_validate
+    p_stdin.close
+    error = p_stderr.read
+    if error.length != 0
+      if error =~ /Errno::ENOENT/
         raise I18n.t("ensure_config.file_does_not_execute", :constant_name => constant_name, :file_name => filename, :config_location => "config/environments/#{Rails.env}.rb")
+      else
+        raise I18n.t("ensure_config.error_writing_to_pipe", :error => error, :file_name => filename, :config_location => "config/environments/#{Rails.env}.rb")
       end
-    rescue Errno::EPIPE
-      raise I18n.t("ensure_config.file_does_not_execute", :constant_name => constant_name, :file_name => filename, :config_location => "config/environments/#{Rails.env}.rb")
     end
   end
 
