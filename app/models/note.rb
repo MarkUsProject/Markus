@@ -5,7 +5,7 @@ class Note < ActiveRecord::Base
   validates_presence_of :notes_message, :creator_id, :noteable
   validates_associated :user
 
-  NOTEABLES = ["Grouping", "Student","Assignment"]
+  NOTEABLES = ["Grouping", "Student", "Assignment"]
   
   def user_can_modify?(current_user)
     return current_user.admin? || user == current_user

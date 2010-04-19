@@ -114,10 +114,18 @@ class NoteControllerTest < AuthenticatedControllerTest
     end
     
     context "POST on :add_notes" do
-      setup do
-        post_as @ta, :add_note, :new_notes => @message, :noteable_type => 'Grouping', :noteable_id => @grouping.id, :controller_to => @controller_to, :action_to => @action_to
+      context "with a valid note" do
+        setup do
+          post_as @ta, :add_note, :new_notes => @message, :noteable_type => 'Grouping', :noteable_id => @grouping.id, :controller_to => @controller_to, :action_to => @action_to
+        end
+        should_render_template 'note/modal_dialogs/notes_dialog_success.rjs'
       end
-      should_redirect_to("groups manage page") { url_for(:controller => @controller_to, :action => @action_to, :success => true) }
+      context "with an invalid note" do
+        setup do
+          post_as @ta, :add_note, :new_notes => '', :noteable_type => 'Grouping', :noteable_id => @grouping.id, :controller_to => @controller_to, :action_to => @action_to   
+        end   
+        should_render_template 'note/modal_dialogs/notes_dialog_error.rjs'
+      end
     end
     
     context "GET on :index" do
@@ -295,11 +303,20 @@ class NoteControllerTest < AuthenticatedControllerTest
     end
     
     context "POST on :add_notes" do
-      setup do
-        post_as @admin, :add_note, :new_notes => @message, :noteable_type => 'Grouping', :noteable_id => @grouping.id, :controller_to => @controller_to, :action_to => @action_to
+      context "with a valid note" do
+        setup do
+          post_as @admin, :add_note, :new_notes => @message, :noteable_type => 'Grouping', :noteable_id => @grouping.id, :controller_to => @controller_to, :action_to => @action_to
+        end
+        should_render_template 'note/modal_dialogs/notes_dialog_success.rjs'
       end
-      should_redirect_to("groups manage page") { url_for(:controller => @controller_to, :action => @action_to, :success => true) }
+      context "with an invalid note" do
+        setup do
+          post_as @admin, :add_note, :new_notes => '', :noteable_type => 'Grouping', :noteable_id => @grouping.id, :controller_to => @controller_to, :action_to => @action_to   
+        end   
+        should_render_template 'note/modal_dialogs/notes_dialog_error.rjs'
+      end
     end
+
     
     context "GET on :index" do
       setup do

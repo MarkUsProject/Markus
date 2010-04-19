@@ -8,19 +8,28 @@ class NoteController < ApplicationController
     @noteable = Kernel.const_get(@cls).find_by_id(params[:noteable_id])
     @cont = params[:controller_to]
     @action = params[:action_to]
-    @notes = Note.find(:all, :conditions => { :noteable_id => @noteable.id, :noteable_type => @noteable.class.model_name})
+    @highlight_field = params[:highlight_field]
+    @number_of_notes_field = params[:number_of_notes_field]
+    
+    @notes = Note.find(:all, :conditions => { :noteable_id => @noteable.id, :noteable_type => @noteable.class.class_name})
     render :partial => "note/modal_dialogs/notes_dialog.rjs"
   end
   
   def add_note
     return unless request.post?
-    note = Note.new
-    note.creator_id = @current_user.id
-    note.notes_message = params[:new_notes]
-    note.noteable_id =  params[:noteable_id]
-    note.noteable_type =  params[:noteable_type]
-    result = note.save
-    redirect_to :controller => params[:controller_to], :action => params[:action_to], :id => params[:id] , :success => result
+    @note = Note.new
+    @note.creator_id = @current_user.id
+    @note.notes_message = params[:new_notes]
+    @note.noteable_id = params[:noteable_id]
+    @note.noteable_type = params[:noteable_type]
+    if !@note.save
+      render "note/modal_dialogs/notes_dialog_error.rjs"
+    else
+      @number_of_notes_field = params[:number_of_notes_field]
+      @highlight_field = params[:highlight_field]
+      @number_of_notes = @note.noteable.notes.size
+      render "note/modal_dialogs/notes_dialog_success.rjs"
+    end
   end
   
   def index

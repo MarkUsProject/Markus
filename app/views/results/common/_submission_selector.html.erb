@@ -7,8 +7,8 @@
   <% end %>
 </span>
   <span class="middle">
-  	<%= link_to_remote "Notes", 
-	:url => { :controller => 'note' , :action => 'notes_dialog', :id => @grouping.assignment_id, :noteable_id => group.grouping_ids, :noteable_type => 'Grouping' , :action_to => 'note_message', :controller_to => 'results'} %> 
+  	<%= link_to_remote "Notes (<span id=\"number_of_notes\">#{@grouping.notes.size}</span>)", 
+	:url => { :controller => 'note' , :action => 'notes_dialog', :id => @grouping.assignment_id, :noteable_id => group.grouping_ids, :noteable_type => 'Grouping' , :action_to => 'note_message', :controller_to => 'results', :highlight_field => 'notes_dialog_link', :number_of_notes_field => 'number_of_notes'}, :html => {:id => 'notes_dialog_link'} %> 
 	|
     (Marking Status: 
      <%=  select_tag "marking_state", options_for_select(["unmarked", "partial", "complete"],[result.marking_state]), :disabled => @result.released_to_students %>
