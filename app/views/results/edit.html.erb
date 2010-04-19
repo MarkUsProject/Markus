@@ -95,10 +95,6 @@ function check_working() {
 <% if flash[:fail_notice] %>
   <p class="error"><%=h flash[:fail_notice] %></p>
 <% end %>
-<% if flash[:note_success] %>
-  <p class="success"><%=h flash[:note_success] %></p>
-<% end %>
-
 <% if @result.released_to_students %>
   <p class="notice"><%=t(:marks_released_notice)%></p>
 <% end %>
