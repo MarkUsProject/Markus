@@ -20,8 +20,8 @@
 	<%= link_to_remote I18n.t('add_members'),
 	:url => { :action => 'add_member_dialog', :id => assignment.id, :grouping_id => grouping.id } %>
 	|
-	<%= link_to_remote I18n.t('notes.title'), 
-	:url => { :controller => 'note' , :action => 'notes_dialog', :id => assignment.id, :noteable_id => grouping.id, :noteable_type => 'Grouping' , :action_to => 'note_message', :controller_to => 'groups'} %>
+	<%= link_to_remote I18n.t('notes.title') + "(<span id=\"num_notes_#{grouping.id}\">#{grouping.notes.size}</span>)", 
+	:url => { :controller => 'note' , :action => 'notes_dialog', :id => assignment.id, :noteable_id => grouping.id, :noteable_type => 'Grouping' , :action_to => 'note_message', :controller_to => 'groups', :number_of_notes_field => "num_notes_#{grouping.id}", :highlight_field => "notes_highlight_#{grouping.id}"}, :html => {:id => "notes_highlight_#{grouping.id}"} %>
     </span>
 </td>
 
