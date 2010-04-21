@@ -9,8 +9,8 @@
     </div>
     <div class="notes_wrapper_row">
         <div class="notes_existing">
-            <% for note in @notes %>
-            <b><%= note.user.user_name %>: </b>
+            <% @notes.each do |note| %>
+            <strong><%= note.user.user_name %>: </strong>
             <br>
             <small><%=note.format_date%></small>
             <br>
@@ -19,12 +19,34 @@
             <br>
             <% end %>
         </div>
+
         <div class="float_right">
-            <% form_remote_tag :url => {:action => 'add_note', :id => @return_id, :noteable_id => @noteable,
-				:noteable_type => @cls, :user => @current_user, :action_to => @action, :controller_to => @cont} do %>
-            <%=text_area_tag(:new_notes, nil, :rows => 15, :cols=>30) %>
+            <% form_remote_tag :url => {
+                :action => 'add_note', 
+                :id => @return_id, 
+                :noteable_id => @noteable, 
+                :noteable_type => @cls, 
+                :user => @current_user, 
+                :action_to => @action, 
+                :controller_to => @cont, 
+                :highlight_field => @highlight_field, 
+                :number_of_notes_field => @number_of_notes_field}, 
+                :complete => "$('notes_submit').setValue('#{I18n.t('notes.save')}');$('notes_submit').enable();" do %>
+            <%= text_area_tag(:new_notes, nil, :rows => 15, :cols=>30) %>
             <p class="p_margin">
-                <%= submit_tag I18n.t('notes.save'), :onclick=>"modalNotesGroup.close();" %>
+
+                <div id="notes_error" class="error" style="display:none;">
+                  <p id="notes_error_message"><%= t('notes.error') %></p>
+                  <div id="notes_error_list">
+                  </div>
+                </div>
+<% 
+  # Notice that I'm using the onclick event to reset the value
+  # of the submit tag, and disable it.  I'd normally use :disable_with,
+  # but this doesn't work with the form_remote_tag.
+  # See:  http://awesomerails.wordpress.com/2007/11/08/disable_with-kills-form_remote_tags-ajaxiness/
+%>
+                <%= submit_tag I18n.t('notes.save'), :onclick => "$('notes_error').hide();$(this).setValue('#{I18n.t('working')}');$(this).disable();", :id => "notes_submit" %>
                 <button onClick="modalNotesGroup.close(); return false;">
                     Cancel
                 </button>
@@ -33,3 +55,6 @@
         </div>
     </div>
 </div>
+
+
+      
