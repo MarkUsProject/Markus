@@ -84,7 +84,13 @@ class GroupsController < ApplicationController
     member = @grouping.student_memberships.find(@mbr_id)  # use group as scope
     @grouping.remove_member(member)
     @grouping.reload
-    @inviter = @grouping.accepted_student_memberships.find_by_user_id(@grouping.inviter.id)
+    if !@grouping.inviter.nil?
+      @inviter = @grouping.accepted_student_memberships.find_by_user_id(@grouping.inviter.id)
+    else
+      # There are no group members left, so create an empty table row
+      # of FilterTable
+      @grouping_table_row = construct_table_row(@grouping, @assignment)
+    end
   end
   
   def add_group

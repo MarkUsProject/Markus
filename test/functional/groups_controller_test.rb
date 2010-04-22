@@ -148,6 +148,24 @@ class GroupsControllerTest < AuthenticatedControllerTest
           end
         end
       end
+
+      context "for all group members" do
+        setup do
+          membership_count = @grouping.student_memberships.length
+          assert membership_count > 0
+          # delete all members
+          @grouping.student_memberships.each do |membership|
+            assert_not_nil membership
+            @response = delete_as @admin, :remove_member, {:id => @assignment.id, :grouping_id  => @grouping.id, :mbr_id => membership.id}
+          end
+        end
+
+        should_respond_with :success
+        should_assign_to :assignment, :grouping, :grouping_table_row
+        should "not raise an internal server error" do
+          assert !@response.server_error?
+        end
+      end # end 'for all group members' context
       
     end #:remove_member
     
