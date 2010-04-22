@@ -354,6 +354,7 @@ en:
     add_student:
       success: "Student {{user_name}} added."
       fail:
+        general: "Something went wrong. Could not add {{user_name}}."
         dne:  "Could not add {{user_name}} - this student does not exist."
         hidden:  "Could not add {{user_name}} - this student's account has been disabled."
         already_grouped: "Could not add {{user_name}} - this student is already a member of another group."

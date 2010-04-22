@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + '/authenticated_controller_test'
 require 'shoulda'
+require 'mocha'
 require 'fastercsv'
 
 class GroupsControllerTest < AuthenticatedControllerTest
@@ -495,6 +496,37 @@ class GroupsControllerTest < AuthenticatedControllerTest
       
       context "with two valid users" do
         setup do
+          @user_names = [users(:student6).user_name, users(:student7).user_name]
+          post_add @user_names.join(',')
+        end
+        should_assign_to :assignment, :grouping, :group_name
+        should_assign_to(:messages) {
+          [
+            I18n.t('add_student.success', :user_name => @user_names.at(0)),
+            I18n.t('add_student.success', :user_name => @user_names.at(1))
+          ]
+        }
+        should_assign_to(:bad_user_names) { [] }
+        should_assign_to(:error) { false }
+        should_respond_with :success
+        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should "increment number of members by 2" do
+          assert_equal 2, @grouping.student_memberships.size
+        end
+        should "set first new student as inviter" do
+          assert_equal "inviter", @grouping.student_memberships.at(0).membership_status
+          assert_equal users(:student6).id, @grouping.student_memberships.at(0).user_id
+        end
+        should "set second new student as accepted" do
+          assert_equal "accepted", @grouping.student_memberships.at(1).membership_status
+          assert_equal users(:student7).id, @grouping.student_memberships.at(1).user_id
+        end
+      end
+
+      context "with two valid users, with assignment past collection date" do
+        setup do
+          # stub collection date
+          Assignment.any_instance.stubs(:past_collection_date?).returns(true)
           @user_names = [users(:student6).user_name, users(:student7).user_name]
           post_add @user_names.join(',')
         end
