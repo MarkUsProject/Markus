@@ -575,7 +575,7 @@ class AssignmentTest < ActiveSupport::TestCase
           @assignment.submissions.each do |submission|
             grouping = submission.grouping
             group = grouping.group
-            expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name} \"#{group.group_name}\"")
+            expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name}/#{@assignment.repository_folder} \"#{group.group_name}\"")
           end
           assert_equal expected_array, @assignment.get_svn_export_commands
         end
@@ -590,7 +590,7 @@ class AssignmentTest < ActiveSupport::TestCase
           @assignment.submissions.each do |submission|
             grouping = submission.grouping
             group = grouping.group
-            expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name} \"#{group.group_name}\"")
+            expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name}/#{@assignment.repository_folder} \"#{group.group_name}\"")
           end
           assert_equal expected_array, @assignment.get_svn_export_commands
         end
