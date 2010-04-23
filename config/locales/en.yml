@@ -446,7 +446,7 @@ en:
         overtime_message: "The due date for this assignment has passed.  However, you are in a penalty period.  You can make changes to your submission, but will have {{potential_penalty}}% deducted from the final mark on this assignment."
         extramark_description: "Late submission ({{overtime_hours}} hour(s)) resulted in automatic {{penalty_amount}}% deduction"
         form_description: "Use Penalty Formula"
-        add_penalty_period: "Add a Grace Period"
+        add_penalty_period: "Add a Penalty Period"
         hours:  "hours..."
         after:  "After"
         from:  "From"
