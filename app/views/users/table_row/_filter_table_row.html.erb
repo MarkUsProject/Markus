@@ -8,13 +8,24 @@
   <%=h(user.first_name)%>
 </td>
 <% if user.student? %>
-<td>
-    <% if user.has_section? %>
-	<%= user.section.name %>
-    <% else %>
-     -
-    <% end %>
-</td>
+<% ##################################
+   # Disable sections for release 0.7
+ %>
+<% #
+#<td>
+%>
+    <% #if user.has_section?
+    %>
+      <%= #user.section.name
+      %>
+    <% #else
+    %>
+     <% #-
+     %>
+    <% #end
+    %>
+<% #</td>
+ %>
 <td>
 <%= user.remaining_grace_credits.to_s + '/' + user.grace_credits.to_s %>
 </td>

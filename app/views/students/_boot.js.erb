@@ -7,7 +7,8 @@ document.observe("dom:loaded", function() {
       user_name: {display: "<%= I18n.t('user.user_name') %>", sortable: true},
       last_name: {display: "<%= I18n.t('user.last_name') %>", sortable: true},
       first_name: {display: "<%= I18n.t('user.first_name') %>", sortable: true},
-      section: {display: "<%= I18n.t('user.section')%>", sortable: true},
+      // Disable sections for release 0.7
+      //section: {display: "<%= I18n.t('user.section')%>", sortable: true},
       grace_credits: {display: "<%= I18n.t('user.grace_credits') %>", sortable: true},
       edit: {display: "", sortable: false}
     },
