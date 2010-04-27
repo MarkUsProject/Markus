@@ -134,7 +134,7 @@
 <div id="sub_menu">
   <ul id="root" class="level1 horizontal">
    <li class="level1 visible_dropdown">
-     <% if @assignment.nil? %>
+     <% if @assignment.nil? and @grade_entry_form.nil? %>
        <span id="choose_an_assignment"><%= I18n.t(:choose_assignment) %></span>
      <% else %>
        <span id="choose_an_assignment"><%=
