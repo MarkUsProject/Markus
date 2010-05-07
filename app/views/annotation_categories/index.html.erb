@@ -44,17 +44,17 @@
 <%= render :partial => "boot.js" %>
 
 <div id="title_bar">
-  <h1>Annotations: <%=@assignment.short_identifier%>
-        <%= link_to_function "Add Annotation Category", %| if($('add_annotation_category_prompt') != null) {
+  <h1><%= I18n.t("annotations.title", :assignment_short_identifier => @assignment.short_identifier) %>
+        <%= link_to_function t("annotations.add_annotation_category"), %| if($('add_annotation_category_prompt') != null) {
           $('add_annotation_category_prompt').select();
           $('add_annotation_category_prompt').focus();
         } else {
         #{remote_function :url => {:action => "add_annotation_category", :id => @assignment.id}, :method => 'get', :after => "if($('no_annotation_categories_info') != null) { $('no_annotation_categories_info').hide();}" }
         }|%>
   <span class="menu_bar">|</span>
-	<%= button_to_function "Upload", "upload_annotation_categories();" %>
+	<%= button_to_function t("upload"), "upload_annotation_categories();" %>
           <span class="menu_bar">|</span>
-	<%= button_to_function "Download", "download_annotation_categories();" %>
+	<%= button_to_function t("download"), "download_annotation_categories();" %>
 
 </h1>	
 </div>
@@ -71,7 +71,7 @@
   <div id="annotation_category_pane">
     <div class="annotation_categories_fieldset">
      <div class="annotation_categories_list_bar">
-       <span class="annotation_category_title"><b>Annotation Category</b></span>
+       <span class="annotation_category_title"><b><%=h t("annotations.annotation_category") %></b></span>
      </div>
      <span class="clear"></span>
      <ul id="annotation_category_pane_list">
@@ -80,7 +80,7 @@
             <%= render :partial => 'annotation_category', :locals => {:annotation_category => annotation_category} %>
           <% end %>
         <% else %>
-          <div id="no_annotation_categories_info" class="information">There are no annotation categories, yet.</div>
+          <div id="no_annotation_categories_info" class="information"><%=h t("annotations.no_annotation_categories") %></div>
         <% end %>
       </ul>  <!-- Rubric Criteria Pane -->	
   </div>
@@ -89,8 +89,8 @@
     <div id="annotations_pane">
       <div id="annotation_list_holder">
        <div id="annotations_help">
-        <h1>Help</h1>
-	<p>Click on an annotation category to add annotations.</p>
+        <h1><%= t(:help) %></h1>
+	<p><%=h t("annotations.help_message") %></p>
       </div>
     </div>
   
@@ -102,28 +102,25 @@
 
     <div id="upload_dialog" >
     
-    <h1>Upload Annotations</h1>
-          <p>
-            Select a CSV file form:<br />
-            <code>category_name,annotation_text,annotation_text ... </code><br />
-          </p>
+    <h1><%=h t("annotations.upload.upload_annotations") %></h1>
+        <%= t("annotations.upload.upload_message") %>
           <% form_tag({:action => 'csv_upload', :id => @assignment.id}, {:multipart => true}) do %>
            <p><%= file_field_tag :annotation_category_list, :size => 0 %>
            </p>							
            <p>
            <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
-           <input type="reset" value="Cancel" onClick="modalUpload.close();">
+           <input type="reset" value="<%= t(:cancel) %>" onClick="modalUpload.close();">
            </p>
           <% end %>
     </div>
 
     <div id="download_dialog">
-    <h1>Download Annotations</h1>
+    <h1><%=h t("annotations.download.download_annotations") %></h1>
       <ul>
-        <li><%= link_to "Download in CSV Format", {:action => 'download', :id => @assignment.id, :format => 'csv'}%></li>
-        <li><%= link_to "Download in YML Format", {:action => 'download', :id => @assignment.id, :format => 'yml'}%></li>
+        <li><%= link_to t("annotations.download.download_csv"), {:action => 'download', :id => @assignment.id, :format => 'csv'}%></li>
+        <li><%= link_to t("annotations.download.download_yml"), {:action => 'download', :id => @assignment.id, :format => 'yml'}%></li>
       </ul>
-      <input type="reset" value="Cancel" onClick="modalDownload.close();">
+      <input type="reset" value="<%= t(:cancel) %>" onClick="modalDownload.close();">
     </div>
 
   
