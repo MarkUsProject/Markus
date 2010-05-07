@@ -20,7 +20,7 @@
 <% end %>
 
  <div class="float_right">
-   <%= link_to_remote "Delete annotation category",
+   <%= link_to_remote t("annotations.delete.delete_message"),
         :url => {:action => "delete_annotation_category",
 	         :id => annotation_category.id},
 	:confirm => t('annotations.delete.annotation_category'),
@@ -33,10 +33,10 @@
 <fieldset>
    <% remote_form_for :annotation_category, annotation_category, :url => {:action => 'update_annotation_category', :id => annotation_category.id } do |f| %>
    <span id="annotation_category_inputs">
-     <%= f.label :annotation_category_name %>
+     <%= f.label :annotation_category_name, I18n.t("annotations.update.annotation_category_name") %>
      <%= f.text_field :annotation_category_name, :rows => '3' %>
    </span>
- <%= f.submit %>
+ <%= f.submit t(:save) %>
  <% end %>
 </fieldset>
   </div>
