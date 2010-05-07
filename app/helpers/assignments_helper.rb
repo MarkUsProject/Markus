@@ -18,7 +18,7 @@ module AssignmentsHelper
           var new_period_id = "new_" + new Date().getTime();
           $('grace_periods').insert({bottom: "#{ escape_javascript period }".replace(/(attributes_\\d+|\[\\d+\])/g, new_period_id) });
         } else {
-          alert('You must select the Grace Period Submission Rule to add a grace period.');
+          alert("#{I18n.t("submission_rules.grace_period_submission_rule.alert")}");
         }
       }
     end
@@ -32,7 +32,7 @@ module AssignmentsHelper
         var new_period_id = "new_" + new Date().getTime();
         $('penalty_periods').insert({bottom: "#{ escape_javascript period }".replace(/(attributes_\\d+|\[\\d+\])/g, new_period_id) });
       }  else {
-          alert('You must select the Penalty Period Submission Rule to add a grace period.');
+          alert("#{I18n.t("submission_rules.penalty_period_submission_rule.alert")}");
         }
      }
     end

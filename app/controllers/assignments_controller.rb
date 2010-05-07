@@ -105,7 +105,7 @@ class AssignmentsController < ApplicationController
     end
     
     if @assignment.save
-      flash[:success] = "Successfully updated assignment"
+      flash[:success] = I18n.t("assignment.update_success")
       redirect_to :action => 'edit', :id => params[:id]
       return
     else
@@ -144,7 +144,7 @@ class AssignmentsController < ApplicationController
         @assignment.clone_groupings_from(params[:persist_groups_assignment])
       end
       if @assignment.save
-        flash[:success] = "Successfully created assignment"
+        flash[:success] = I18n.t("assignment.create_success")
       end
     end
 
