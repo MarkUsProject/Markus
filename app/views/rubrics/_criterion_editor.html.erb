@@ -14,7 +14,7 @@
     <%= h(criterion.rubric_criterion_name)%>
   </span>
 
-  <%= f.submit %>
+  <%= f.submit t("rubric_criteria.save")%>
 </h2>
 
 <div class="error" id="criterion_<%=criterion.id%>_error" style="display:none;">
@@ -41,11 +41,11 @@
    <%= f.text_field :weight %>
   </span> <br />
   <span class="criteria_edit_total_mark">
-   <%= I18n.t(:criteria_edit_total_mark)%> <%= criterion.weight*4%>
+   <%= I18n.t("criteria_edit_total_mark", :criterion_total_mark => criterion.weight*4)%>
   </span>
 </div>
 
 <%= render :partial => 'rubric_criterion_levels', :locals => {:criterion => criterion, :f => f} %>
 
-<%= f.submit %>
+<%= f.submit t("rubric_criteria.save")%>
 <% end %>
