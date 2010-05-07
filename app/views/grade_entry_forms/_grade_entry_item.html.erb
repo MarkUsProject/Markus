@@ -16,7 +16,7 @@
         <b><%= t('grade_entry_forms.remove_column') + " " %></b><%= f.check_box :_delete %>
       </span>
     <% else %>
-      <%= link_to_function "remove", "$(this).up('.grade_entry_item').remove()" %>
+      <%= link_to_function I18n.t("delete"), "$(this).up('.grade_entry_item').remove()" %>
     <% end %>
   </p> 
 <% end %>
