@@ -33,7 +33,7 @@
       :before => "ap_thinking_start('#{table_name}');", 
       :complete => "ap_thinking_stop();" %>       
 <% else %>
-  < Prev
+  <%= t("pagination.no_prev") %>
 <% end %>
 </span>
 
@@ -54,7 +54,7 @@
       :before => "ap_thinking_start('#{table_name}');", 
       :complete => "ap_thinking_stop();" %>
 <% else %>
-Next >
+<%= t("pagination.no_next") %>
 <% end %>
 </span>
 

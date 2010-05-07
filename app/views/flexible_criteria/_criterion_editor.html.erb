@@ -10,7 +10,7 @@
   <span id="selected_criterion_name">
     <%= h(criterion.flexible_criterion_name)%>
   </span>
-  <%= f.submit %>
+  <%= f.submit t("flexible_criteria.save") %>
 </h2>
 
 <div class="error" id="criterion_<%=criterion.id%>_error" style="display:none;"></div>
@@ -45,7 +45,7 @@
   <span><%= t('flexible_criteria.description_hint') %></span>
 </div>
 
-<%= f.submit %>
+<%= f.submit t("flexible_criteria.save")%>
 <% end %>
 
 <% if !criterion.description.nil? && !criterion.description.empty? %>
