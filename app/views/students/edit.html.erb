@@ -1,8 +1,8 @@
 <div id="title_bar">
-<h1>Manage Students</h1>
+<h1><%=h I18n.t("students.manage_students") %></h1>
 </div>
 <div class="wrapLeft">
-<h2>Edit a Student</h2>
+<h2><%=h I18n.t("students.edit_student") %></h2>
 <% form_for :user, :url => {:controller => 'students', :action => 'update'} do |f| -%>
   
     <%= f.error_messages -%>
@@ -20,8 +20,8 @@
     <%= f.text_field :grace_credits %> <br />
            
     <%= f.hidden_field :id %>
-    <%= f.submit 'Submit', :name => 'submit', :class => 'button indent_button' %>
-    <%= link_to 'Cancel', {:controller => 'students'}, :class => "button" %>       
+    <%= f.submit t(:submit), :name => 'submit', :class => 'button indent_button' %>
+    <%= link_to t(:cancel), {:controller => 'students'}, :class => "button" %>       
   <% end %>
 
 <h3><%= t('submission_rules.grace_period_submission_rule.deductions')%></h3>

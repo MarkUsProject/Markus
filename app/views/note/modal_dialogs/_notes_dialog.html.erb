@@ -48,7 +48,7 @@
 %>
                 <%= submit_tag I18n.t('notes.save'), :onclick => "$('notes_error').hide();$(this).setValue('#{I18n.t('working')}');$(this).disable();", :id => "notes_submit" %>
                 <button onClick="modalNotesGroup.close(); return false;">
-                    Cancel
+                    <%=h I18n.t(:cancel) %>
                 </button>
             </p>
             <% end %>
