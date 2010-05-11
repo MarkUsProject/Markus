@@ -113,17 +113,17 @@
     <li <% if controller.controller_name == 'students'%> 
       id="sub_menu_active"
     <% end %>>
-      <%= link_to 'Students', :controller => 'students'%>
+      <%= link_to I18n.t("students.students") , :controller => 'students'%>
     </li>
     <li <% if controller.controller_name == 'tas'%> 
       id="sub_menu_active"
     <% end %>>
-      <%= link_to 'Graders', :controller => 'tas'%>
+      <%= link_to I18n.t("graders.graders"), :controller => 'tas'%>
     </li>
     <li <% if controller.controller_name == 'admins'%> 
       id="sub_menu_active"
     <% end %>>
-      <%= link_to 'Admins', :controller => 'admins'%>
+      <%= link_to I18n.t("admins.admins"), :controller => 'admins'%>
     </li>
 
   </ul>

@@ -4,7 +4,7 @@
 
 <%= render :partial => "boot.js" %>
 
-<div id="title_bar"><h1>Manage Graders <%= link_to I18n.t(:add_new),
+<div id="title_bar"><h1><%=h I18n.t("graders.manage_graders") %> <%= link_to I18n.t(:add_new),
 :controller => 'tas', :action => 'create' %></h1></div>
 <div class="colsLeftHeavy">
 
@@ -27,17 +27,17 @@
       <% # display lines in csv file that has not been successfully processed %>
       <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? -%>
       <div class="errorExplanation" id="errorExplanation">
-        <p>The following TAs have not been successfully added:</p>
+        <p><%=h I18n.t("graders.not_added") %></p>
         <ul>
           <% for line in flash[:invalid_lines] -%>
           <li><%= h(line) %></li>
           <% end -%>
         </ul>
-        <p>Make sure that:</p>
+        <p><%= I18n.t("graders.make_sure") %></p>
         <ul>
-          <li>TA names are alphanumeric</li>
-          <li>Each field is separated by a comma (no spaces)</li>
-          <li>Each line has the required fields specified above</li>
+          <li><%= I18n.t("graders.ta_names") %></li>
+          <li><%= I18n.t("graders.each_field") %></li>
+          <li><%= I18n.t("graders.each_line") %></li>
         </ul>
       </div>
       <% end -%>
@@ -56,12 +56,12 @@
     </div>    
     <div class="accordion-content">
       
-      <p>Select a CSV file of the following form: <code>user_name,last_name,first_name</code></p>
+      <p><%= I18n.t("graders.upload.select_csv_file") %></p>
       
-      <p>If a TA with the same user_name exists, then that TA's information is updated.</p>
+      <p><%=h I18n.t("graders.upload.grader_same_user") %></p>
       
            <%= form_tag( { :controller => 'tas', :action => "upload_ta_list" }, { :multipart => true }) %>
-        <label for="userlist" class="accordion_label">CVS File</label>
+        <label for="userlist" class="accordion_label"><%= I18n.t("graders.upload.csv_file") %></label>
         <input type="file" name="userlist" id="userlist" size="2"/>
 		<%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
       </form> 
@@ -72,7 +72,7 @@
     </div>
 
     <div class="accordion-content" >
-      <p><%= link_to "Download TA list in CSV format", :controller => 'tas', :action => 'download_ta_list', :format => "csv" %></p>
+      <p><%= link_to I18n.t("graders.download.download_list"), :controller => 'tas', :action => 'download_ta_list', :format => "csv" %></p>
     </div>
 
   </div>

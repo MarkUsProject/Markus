@@ -118,6 +118,7 @@ en:
     members:            "Members"
     add_members:        "Add Members"
     graders:            "Graders"
+    admins:             "Admins"
     add_new:            "Add new"
     create_new_grade_entry_form: "Create new grade entry form"
     edit:               "Edit"
@@ -374,6 +375,20 @@ en:
         validate_rubric: "must be an integer between 0 and 4"
         
     # Student's View
+    students:
+      manage_students: "Manage Students"
+      edit_student:    "Edit a Student"
+      create_new:      "Create a new Student"
+      students: "Students"
+      upload:
+        upload_a_class_list: "Upload a class list"
+        select_csv_file:     "Select a CSV file of the following form: <code>user_name,last_name,first_name</code>"
+        student_same_number: "If a student with the same student number exists, then the student's information is updated."
+        csv_file:            "CSV File"
+      download:
+        download_student_list: "Download Student List"
+        download_csv_format:   "Download Student list in CSV format"
+        download_xml_format:   "Download Student list in XML format"
     hide_students:      "Hide Students"
     unhide_students:    "Unhide Students"
     students_not_successfully_added_message_1: "The following students have not been successfully added:"
@@ -386,7 +401,39 @@ en:
     fields specified near the upload form."
     invalid_group_warning: "Your group is currently invalid. You probably haven't met the group size minimum. You may not be able to submit anything, and your work may not be graded, until you have met this minimum. "
     rejected_invitation: "declined"
-
+    
+    #Graders' View
+    graders:
+      create_new_grader: "Create a new Grader"
+      edit_grader:       "Edit a Grader"
+      manage_graders: "Manage Graders"
+      graders:        "Graders"
+      upload:
+        select_csv_file: "Select a CSV file of the following form: <code>user_name,last_name,first_name</code>"
+        grader_same_user: "If a TA with the same user_name exists, then that TA's information is updated."
+        csv_file:         "CVS File"
+        not_added: "The following TAs have not been successfully added:"
+        make_sure: "Make sure that:"
+        ta_names: "TA names are alphanumeric"
+        each_field: "Each field is separated by a comma (no spaces)"
+        each_line: "Each line has the required fields specified above"
+      download:
+        download_list: "Download TA list in CSV format" 
+    
+    #Admins' View
+    admins:
+      manage_admins: "Manage Admins"
+      create_new_admin: "Create a new Admin"
+      manage_admins:    "Manage Admins"
+      edit_admin:       "Edit an Admin"
+      admins: "Admins"
+      upload: 
+        not_added: "The following Admins have not been successfully added:"
+        make_sure: "Make sure that:"
+        admins_names: "Admin names are alphanumeric"
+        each_field: "Each field is separated by a comma (no spaces)"
+        each_line: "Each line has the required fields specified above"
+        
     add_student:
       success: "Student {{user_name}} added."
       fail:
