@@ -3,22 +3,22 @@
 
 <div class="notice"> 
   <% if Time.now >= @assignment.submission_rule.calculate_collection_time %>
-     Grading can begin
+     <%=h I18n.t("browse_submissions.grading_can_begin") %>
   <% else %>
-     Grading can begin after <%=h I18n.l(@assignment.submission_rule.calculate_collection_time, :format => :long_date)%>
+     <%=h I18n.t("browse_submissions.grading_can_begin_after", :time => I18n.l(@assignment.submission_rule.calculate_collection_time, :format => :long_date)) %>
   <% end %>
 </div>
 
 <div id="title_bar">
-  <h1>Workspace: <%= h(sanitize(@assignment.short_identifier)) %>
+  <h1><%= I18n.t("browse_submissions.workspace", :short_identifier => h(sanitize(@assignment.short_identifier))) %>
   <% if @current_user.admin? %>
-  <%= link_to "CSV Report", :action => 'download_simple_csv_report', :id => @assignment.id %> 
+  <%= link_to I18n.t("browse_submissions.csv_report"), :action => 'download_simple_csv_report', :id => @assignment.id %> 
    <span class="menu_bar">|</span>
-<%= link_to "Detailed CSV Report", :action => 'download_detailed_csv_report', :id => @assignment.id %>
+<%= link_to I18n.t("browse_submissions.detailled_csv_report") , :action => 'download_detailed_csv_report', :id => @assignment.id %>
    <span class="menu_bar">|</span>
-<%= link_to "Subversion Repo List", :action => 'download_svn_repo_list', :id => @assignment.id %>
+<%= link_to I18n.t("browse_submissions.subversion_repo_list"), :action => 'download_svn_repo_list', :id => @assignment.id %>
    <span class="menu_bar">|</span>
-<%= link_to "Subversion Export File", :action => 'download_svn_export_commands', :id => @assignment.id %>
+<%= link_to I18n.t("browse_submissions.subversion_export_file"), :action => 'download_svn_export_commands', :id => @assignment.id %>
 
  <% end %>
 </h1>
@@ -38,7 +38,7 @@
 
   <% if !flash[:errors].nil? && !flash[:errors].empty? %>
     <div class="error">
-      <h1>Errors</h1>
+      <h1><%=h I18n.t("browse_submissions.errors") %></h1>
       <ul>
         <% flash[:errors].each do |error_message| %>
 	        <li><%= error_message %></li>

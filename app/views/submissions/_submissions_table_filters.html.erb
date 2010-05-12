@@ -9,7 +9,7 @@
 # sort_by
 %>
 
-Filter:
+<%= I18n.t("browse_submissions.filter") %>
 <%= select_tag  "filter", 
                 options_for_select(filters, filter), 
                 :onchange =>  "top.location.href = '#{assignment.id}" +
@@ -19,7 +19,9 @@ Filter:
                               "&filter=' + $F(this); " 
                               # prototype  ^^^^^ evaluates the selected value for you
 -%>
- Show
+
+
+<%= I18n.t("browse_submissions.show") %>
 
 <%
 # for now go to page one until I figure out a formula for determining
@@ -34,4 +36,4 @@ Filter:
                               "&filter=#{filter}" +
                               "&per_page=' + $F(this); "
 -%>
- per page
+<%= I18n.t("browse_submissions.per_page") %>

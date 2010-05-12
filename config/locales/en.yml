@@ -95,6 +95,7 @@ en:
         required_files_by_student:  "Add filename(s) that students would be required to submit:"
         add_required_file:  "Add a Required File"
         type:  "Assignment type"
+        overall_comment: "Overall Comment"
         group:
             work_in_groups:  "Students can work in groups"
             persist_group_from: "Persist Groups / Properties from"
@@ -188,6 +189,8 @@ en:
       per_page: "per page"
       jump_to: "Jump to:"
       show: "Show"
+      of:   "{{low}} - {{high}} of {{total}}"
+      select: "Select: "
 
     selects:
       all_on_page: "All {{page_items}} items on this page are selected."
@@ -210,6 +213,17 @@ en:
       show_complete:        "Show Complete"
       show_released:        "Show Released"
       show_assigned_to_me:  "Show Assigned to Me"
+      grading_can_begin:    "Grading can begin"
+      grading_can_begin_after: "Grading can begin after {{time}}"
+      workspace:            "Workspace: {{short_identifier}}"
+      csv_report:           "CSV Report"
+      detailled_csv_report: "Detailed CSV Report"
+      subversion_repo_list: "Subversion Repo List"
+      subversion_export_file: "Subversion Export File"
+      errors:               "Errors"
+      filter:               "Filter :"
+      show:                 "Show"
+      per_page:             "per page"
 
     grade_entry_forms:
       blank_field: "can't be blank"
