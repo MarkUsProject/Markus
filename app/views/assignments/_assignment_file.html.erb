@@ -5,7 +5,7 @@
     <%= f.text_field :filename %>
     <% if !f.object.new_record? %>
       <span>
-        <b><%= I18n.t(:remove) %> : </b><%= f.check_box :_delete %>
+        <b><%= I18n.t(:remove) %> : </b><%= f.check_box :_destroy %>
       </span>
     <% else %>
       <%= link_to_function t(:remove), "$(this).up('.assignment_file').remove()" %>
