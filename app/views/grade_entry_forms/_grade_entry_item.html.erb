@@ -13,7 +13,7 @@
   
     <% if !f.object.nil? && !f.object.new_record? %>
       <span>
-        <b><%= t('grade_entry_forms.remove_column') + " " %></b><%= f.check_box :_delete %>
+        <b><%= t('grade_entry_forms.remove_column') + " " %></b><%= f.check_box :_destroy %>
       </span>
     <% else %>
       <%= link_to_function I18n.t("delete"), "$(this).up('.grade_entry_item').remove()" %>

@@ -20,7 +20,7 @@ class MainControllerTest < AuthenticatedControllerTest
   # are being redirected to login page.
   def test_redirect
     get :index
-    assert_redirected_to :action => "login"
+    assert_redirected_to :action => "login", :controller => "main"
     assert_not_equal "", flash[:login_notice]
   end
   
@@ -79,7 +79,7 @@ class MainControllerTest < AuthenticatedControllerTest
     
     # try to go back to a page
     get :index
-    assert_redirected_to :action => "login"
+    assert_redirected_to :action => "login", :controller => "main"
   end
   
   # Test if users are redirected to main page 

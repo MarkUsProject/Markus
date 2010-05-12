@@ -19,7 +19,7 @@ class AdminsControllerTest < AuthenticatedControllerTest
   # Replace this with your real tests.
    def test_index_without_user
     get :index
-    assert_redirected_to :action => "login"
+    assert_redirected_to :action => "login", :controller => "main"
   end
 
   def test_index

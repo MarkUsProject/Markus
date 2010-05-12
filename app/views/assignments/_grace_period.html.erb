@@ -22,8 +22,8 @@
   </div>
   <p>
    <% if !f.object.nil? && !f.object.new_record? %>
-    <%= f.label :_delete, t(:remove) %>
-    <%= f.check_box :_delete %>
+    <%= f.label :_destroy, t(:remove) %>
+    <%= f.check_box :_destroy %>
   <% else %>
     <%= link_to_function t(:remove), "$(this).up('.period').remove(); grace_periods.refresh();" %>
   <% end %>
