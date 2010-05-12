@@ -81,6 +81,26 @@ module Repository
     def self.create(connect_string)
       raise NotImplementedError, "Repository::create Not yet implemented"
     end
+
+    #Static method: Yields an existing Repository and closes it afterwards
+    def self.access(connect_string)
+      raise NotImplementedError, "Repository::create Not yet implemented"
+    end
+
+    #Static method: Deletes an existing Subversion repository
+    def self.delete(connect_string)
+      raise NotImplementedError, "Repository::create Not yet implemented"
+    end
+
+    #Closes the repository
+    def close
+      raise NotImplementedError, "Repository::create Not yet implemented"
+    end
+
+    #Tests if the repository is closed
+    def closed?
+      raise NotImplementedError, "Repository::create Not yet implemented"
+    end
     
     # Given either an array of, or a single object of class RevisionFile, 
     # return a stream of data for the user to download as the file(s).
@@ -142,6 +162,11 @@ module Repository
       raise NotImplementedError, "Repository.set_permissions: Not yet implemented"
     end
     
+    #Converts a pathname to an absolute pathname
+    def expand_path(file_name, dir_string)
+      raise NotImplementedError, "Repository.expand_path: Not yet implemented"
+    end
+    
     # Static method on Repository to set permissions on a set of users across a series
     # of group repositories.  
     # user_id_permissions_map is a hash in the form of:
@@ -195,6 +220,7 @@ module Repository
     def changed_files_at_path(path)
       raise NotImplementedError, "Revision.changed_files_at_path not yet implemented"
     end    
+    
   end
   
   # Exceptions for Files

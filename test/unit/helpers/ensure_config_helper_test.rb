@@ -50,8 +50,11 @@ class EnsureConfigHelperTest < ActiveSupport::TestCase
           FileUtils.mkdir( @source_repo_dir )
         end
         should "throw an exception because the validate file does not exist" do
-          assert_raise RuntimeError do
-            EnsureConfigHelper.check_config()
+          #MarkUs on Windows does not support external authentication so skip if Windows platform
+          if !(RUBY_PLATFORM =~ /(:?mswin|mingw)/)
+            assert_raise RuntimeError do
+              EnsureConfigHelper.check_config()
+            end
           end
         end
 
@@ -61,8 +64,11 @@ class EnsureConfigHelperTest < ActiveSupport::TestCase
             FileUtils.chmod( 0600, [ @validate_script ])
           end
           should "throw an exception because the validate file is not executable" do
-            assert_raise RuntimeError do
-              EnsureConfigHelper.check_config()
+            #MarkUs on Windows does not support external authentication so skip if Windows platform
+            if !(RUBY_PLATFORM =~ /(:?mswin|mingw)/)
+              assert_raise RuntimeError do
+                EnsureConfigHelper.check_config()
+              end
             end
           end
         end
@@ -122,8 +128,11 @@ class EnsureConfigHelperTest < ActiveSupport::TestCase
             f.close
           end
           should "not pass the check_if_executes" do
-            assert_raise RuntimeError do
-              EnsureConfigHelper.check_config()
+            #External validation is not supported on Windows so skip this test if platform is Windows
+            if !(RUBY_PLATFORM =~ /(:?mswin|mingw)/)
+              assert_raise RuntimeError do
+                EnsureConfigHelper.check_config()
+              end
             end
           end
         end

@@ -35,6 +35,7 @@ class MemoryRepository < Repository::AbstractRepository
     @timestamps_revisions = {}
     @timestamps_revisions[Time.now._dump.to_s] = @current_revision   # push first timestamp-revision mapping
     @repository_location = location
+    @opened = true
     
     
     if MemoryRepository.repository_exists?(location)
@@ -68,6 +69,11 @@ class MemoryRepository < Repository::AbstractRepository
       MemoryRepository.new(location) # create a repository if it doesn't exist
     end
     return true
+  end
+
+  # Static method: Deletes an existing memory repository
+  def self.delete(repo_path)
+     @@repositories.delete(repo_path)
   end
   
   # Destroys all repositories
@@ -268,6 +274,35 @@ class MemoryRepository < Repository::AbstractRepository
     return true
   end
 
+  # Static method: Yields an existing Memory repository and closes it afterwards
+  def self.access(connect_string)
+    repository = self.open(connect_string)
+    yield repository
+    repository.close
+  end
+  
+  # Closes the repository.
+  # This does nothing except set a proper value for the closed? function
+  # It is not important to close memory repositories (is it possible?)
+  def close
+    @opened = false
+  end
+
+  # Resturns whether or not the repository is closed.
+  # This will return a value corresponding to whether the open or close functions
+  # have been called but is otherwise meaningless in a MemoryRepository
+  def closed?
+    return !@opened
+  end
+
+  # Converts a pathname to an absolute pathname
+  def expand_path(file_name, dir_string = "/")
+    expanded = File.expand_path(file_name, dir_string)
+    if RUBY_PLATFORM =~ /(:?mswin|mingw)/ #only if the platform is Windows
+      expanded = expanded[2..-1]#remove the drive letter ('D:')
+    end
+    return expanded
+  end
   
   private
   # Creates a directory as part of the provided revision
@@ -435,7 +470,7 @@ class MemoryRepository < Repository::AbstractRepository
       return @current_revision
     end
   end
-
+  
 end # end class MemoryRepository
 
 # Class responsible for storing files in and retrieving files 

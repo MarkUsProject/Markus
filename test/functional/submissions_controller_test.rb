@@ -39,10 +39,12 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         assert @student.has_accepted_grouping_for?(@assignment.id)
         post_as(@student, :update_files, {:id => @assignment.id, :new_files => [file_1, file_2]})
         # Check to see if the file was added
-        revision = @grouping.group.repo.get_latest_revision
-        files = revision.files_at_path(@assignment.repository_folder)
-        assert_not_nil files['Shapes.java']
-        assert_not_nil files['TestShapes.java']
+        @grouping.group.access_repo do |repo|
+          revision = repo.get_latest_revision
+          files = revision.files_at_path(@assignment.repository_folder)
+          assert_not_nil files['Shapes.java']
+          assert_not_nil files['TestShapes.java']
+        end
       end
       should_redirect_to("file manager page") { 
         url_for(:controller => "submissions", 
@@ -55,41 +57,43 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       setup do 
         assert @student.has_accepted_grouping_for?(@assignment.id)
          
-        repo = @grouping.group.repo
-        txn = repo.get_transaction('markus')
-        txn.add(File.join(@assignment.repository_folder,'Shapes.java'), 'Content of Shapes.java')
-        txn.add(File.join(@assignment.repository_folder, 'TestShapes.java'), 'Content of TestShapes.java')
-        repo.commit(txn)
-        
-        revision = repo.get_latest_revision
-        old_files = revision.files_at_path(@assignment.repository_folder)
-        old_file_1 = old_files['Shapes.java']
-        old_file_2 = old_files['TestShapes.java']
+        @grouping.group.access_repo do |repo|
+          txn = repo.get_transaction('markus')
+          txn.add(File.join(@assignment.repository_folder,'Shapes.java'), 'Content of Shapes.java')
+          txn.add(File.join(@assignment.repository_folder, 'TestShapes.java'), 'Content of TestShapes.java')
+          repo.commit(txn)
 
-        file_1 = fixture_file_upload('files/Shapes.java', 'text/java')
-        file_2 = fixture_file_upload('files/TestShapes.java', 'text/java')
+          revision = repo.get_latest_revision
+          old_files = revision.files_at_path(@assignment.repository_folder)
+          old_file_1 = old_files['Shapes.java']
+          old_file_2 = old_files['TestShapes.java']
+       
 
-        post_as(@student, :update_files, { :id => @assignment.id,
-          :replace_files => { 'Shapes.java' =>      file_1,
-                              'TestShapes.java' =>  file_2},
-          :file_revisions => {'Shapes.java' =>      old_file_1.from_revision,
-                              'TestShapes.java' =>  old_file_2.from_revision}})
+          file_1 = fixture_file_upload('files/Shapes.java', 'text/java')
+          file_2 = fixture_file_upload('files/TestShapes.java', 'text/java')
+
+          post_as(@student, :update_files, { :id => @assignment.id,
+            :replace_files => { 'Shapes.java' =>      file_1,
+                                'TestShapes.java' =>  file_2},
+            :file_revisions => {'Shapes.java' =>      old_file_1.from_revision,
+                                'TestShapes.java' =>  old_file_2.from_revision}})
 
         # Check to see if the file was added
-        revision = @grouping.group.repo.get_latest_revision
-        files = revision.files_at_path(@assignment.repository_folder)
-        assert_not_nil files['Shapes.java']
-        assert_not_nil files['TestShapes.java']
-        
-        # Test to make sure that the contents were successfully updated
-        file_1.rewind
-        file_2.rewind
-        file_1_new_contents = repo.download_as_string(files['Shapes.java'])
-        file_2_new_contents = repo.download_as_string(files['TestShapes.java'])
-        
-        assert_equal file_1.read, file_1_new_contents
-        assert_equal file_2.read, file_2_new_contents
-        
+
+          revision = repo.get_latest_revision
+          files = revision.files_at_path(@assignment.repository_folder)
+          assert_not_nil files['Shapes.java']
+          assert_not_nil files['TestShapes.java']
+
+          # Test to make sure that the contents were successfully updated
+          file_1.rewind
+          file_2.rewind
+          file_1_new_contents = repo.download_as_string(files['Shapes.java'])
+          file_2_new_contents = repo.download_as_string(files['TestShapes.java'])
+
+          assert_equal file_1.read, file_1_new_contents
+          assert_equal file_2.read, file_2_new_contents
+        end
       end 
       should_redirect_to("file manager page") { 
         url_for(:controller => "submissions", 
@@ -100,26 +104,27 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       setup do
         assert @student.has_accepted_grouping_for?(@assignment.id)
          
-        repo = @grouping.group.repo
-        txn = repo.get_transaction('markus')
-        txn.add(File.join(@assignment.repository_folder,'Shapes.java'), 'Content of Shapes.java')
-        txn.add(File.join(@assignment.repository_folder, 'TestShapes.java'), 'Content of TestShapes.java')
-        repo.commit(txn)
-        revision = repo.get_latest_revision
-        old_files = revision.files_at_path(@assignment.repository_folder)
-        old_file_1 = old_files['Shapes.java']
-        old_file_2 = old_files['TestShapes.java']
-        
-        post_as(@student, :update_files, {:id => @assignment.id, 
-          :delete_files => {  'Shapes.java' => true},
-          :file_revisions => {'Shapes.java' => old_file_1.from_revision,
-                              'TestShapes.java' => old_file_2.from_revision}})
+        @grouping.group.access_repo do |repo|
+          txn = repo.get_transaction('markus')
+          txn.add(File.join(@assignment.repository_folder,'Shapes.java'), 'Content of Shapes.java')
+          txn.add(File.join(@assignment.repository_folder, 'TestShapes.java'), 'Content of TestShapes.java')
+          repo.commit(txn)
+          revision = repo.get_latest_revision
+          old_files = revision.files_at_path(@assignment.repository_folder)
+          old_file_1 = old_files['Shapes.java']
+          old_file_2 = old_files['TestShapes.java']
 
-        repo = @grouping.group.repo
-        revision = repo.get_latest_revision
-        files = revision.files_at_path(@assignment.repository_folder)
-        assert_not_nil files['TestShapes.java']
-        assert_nil files['Shapes.java']
+          post_as(@student, :update_files, {:id => @assignment.id,
+            :delete_files => {  'Shapes.java' => true},
+            :file_revisions => {'Shapes.java' => old_file_1.from_revision,
+                                'TestShapes.java' => old_file_2.from_revision}})
+
+
+          revision = repo.get_latest_revision
+          files = revision.files_at_path(@assignment.repository_folder)
+          assert_not_nil files['TestShapes.java']
+          assert_nil files['Shapes.java']
+        end
       end
       should_redirect_to("file manager page") { 
         url_for(:controller => "submissions", 
@@ -130,23 +135,25 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       setup do
         assert @student.has_accepted_grouping_for?(@assignment.id)
          
-        repo = @grouping.group.repo
-        txn = repo.get_transaction('markus')
-        txn.add(File.join(@assignment.repository_folder,'Shapes.java'), 'Content of Shapes.java')
-        txn.add(File.join(@assignment.repository_folder, 'TestShapes.java'), 'Content of TestShapes.java')
-        repo.commit(txn)
-      
-        file_1 = fixture_file_upload('files/Shapes.java', 'text/java')
-        file_2 = fixture_file_upload('files/TestShapes.java', 'text/java')
-        assert @student.has_accepted_grouping_for?(@assignment.id)
-        post_as(@student, :update_files, {:id => @assignment.id, :new_files => [file_1, file_2]})
-        # Check to see if the file was added
-        assert @grouping.is_valid?
-        revision = @grouping.group.repo.get_latest_revision
-        files = revision.files_at_path(@assignment.repository_folder)
-        assert_not_nil files['Shapes.java']
-        assert_not_nil files['TestShapes.java']
-        assert_not_nil flash[:update_conflicts]
+        @grouping.group.access_repo do |repo|
+          txn = repo.get_transaction('markus')
+          txn.add(File.join(@assignment.repository_folder,'Shapes.java'), 'Content of Shapes.java')
+          txn.add(File.join(@assignment.repository_folder, 'TestShapes.java'), 'Content of TestShapes.java')
+          repo.commit(txn)
+
+          file_1 = fixture_file_upload('files/Shapes.java', 'text/java')
+          file_2 = fixture_file_upload('files/TestShapes.java', 'text/java')
+          assert @student.has_accepted_grouping_for?(@assignment.id)
+          post_as(@student, :update_files, {:id => @assignment.id, :new_files => [file_1, file_2]})
+          # Check to see if the file was added
+          assert @grouping.is_valid?
+
+          revision = repo.get_latest_revision
+          files = revision.files_at_path(@assignment.repository_folder)
+          assert_not_nil files['Shapes.java']
+          assert_not_nil files['TestShapes.java']
+          assert_not_nil flash[:update_conflicts]
+        end
       end
       should_redirect_to("file manager page") { 
         url_for(:controller => "submissions", 

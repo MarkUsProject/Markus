@@ -19,13 +19,17 @@ class Submission < ActiveRecord::Base
      end
      repo = grouping.group.repo
      revision = repo.get_revision_by_timestamp(timestamp)
-     return self.generate_new_submission(grouping, revision)    
+     submission = self.generate_new_submission(grouping, revision)
+     repo.close
+     return submission
   end
   
   def self.create_by_revision_number(grouping, revision_number)
     repo = grouping.group.repo
     revision = repo.get_revision(revision_number)
-    return self.generate_new_submission(grouping, revision)
+    submission = self.generate_new_submission(grouping, revision)
+    repo.close
+    return submission
   end
   
   def self.generate_new_submission(grouping, revision)

@@ -413,7 +413,9 @@ class AssignmentTest < ActiveSupport::TestCase
           @target.reload
           @target.groupings.each do |grouping|
             grouping.accepted_students.each do |student|
-              assert_equal grouping.group.repo.get_permissions(student.user_name), Repository::Permission::READ_WRITE, "student should have read-write permissions on their group's repository"
+              grouping.group.access_repo do |repo|
+                assert_equal repo.get_permissions(student.user_name), Repository::Permission::READ_WRITE, "student should have read-write permissions on their group's repository"
+              end
             end
           end
         end

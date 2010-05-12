@@ -17,7 +17,7 @@ Sham.group_name {|i| "machinist_group#{i}"}
 Sham.short_identifier {|i| "machinist_A#{i}"}
 Sham.description {Faker::Lorem.sentence(2)}
 Sham.message {Faker::Lorem.sentence(2)}
-Sham.due_date {2.days.from_now}
+Sham.due_date {rand(50).days.from_now}
 
 Sham.notes_message {Faker::Lorem.paragraphs}
 
@@ -26,7 +26,7 @@ Sham.overall_comment {Faker::Lorem.sentence(3)}
 Sham.flexible_criterion_name {|i| "machinist_flexible_criterion_#{i}"}
 Sham.rubric_criterion_name {|i| "machinist_rubric_criterion_#{i}"}
 
-Sham.date {2.days.from_now}
+Sham.date {rand(50).days.from_now}
 Sham.name {Faker::Name.name}
 
 Sham.filename {|i| "file#{i}"}

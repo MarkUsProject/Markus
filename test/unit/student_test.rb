@@ -88,6 +88,7 @@ exist_student,USER2,USER2"
       # Mock the repository and expect :remove_user with the student's user_name
       mock_repo = mock('Repository::AbstractRepository')
       mock_repo.stubs(:remove_user).returns(true)
+      mock_repo.stubs(:close).returns(true)
       mock_repo.expects(:remove_user).with(any_of(@student1.user_name, @student2.user_name)).at_least(2)
       Group.any_instance.stubs(:repo).returns(mock_repo)
 
@@ -101,6 +102,7 @@ exist_student,USER2,USER2"
 
       # Mock the repository and raise Repository::UserNotFound
       mock_repo = mock('Repository::AbstractRepository')
+      mock_repo.stubs(:close).returns(true)
       mock_repo.stubs(:remove_user).raises(Repository::UserNotFound)
       Group.any_instance.stubs(:repo).returns(mock_repo)
 
@@ -149,6 +151,7 @@ exist_student,USER2,USER2"
 
       # Mock the repository and raise Repository::UserNotFound
       mock_repo = mock('Repository::AbstractRepository')
+      mock_repo.stubs(:close).returns(true)
       mock_repo.stubs(:add_user).raises(Repository::UserAlreadyExistent)
       Group.any_instance.stubs(:repo).returns(mock_repo)
 
