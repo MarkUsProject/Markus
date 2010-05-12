@@ -9,9 +9,9 @@ document.observe("dom:loaded", function() {
   groupings_table = new FilterTable({
     table_id: $('groups'),
     headers: {
-      name: {display: "Name", sortable: true},
-      members: {display: "Members", sortable: true, sort_with: 'nohtml'},
-      graders: {display: "Graders", sortable: true},
+      name: {display: "<%=h I18n.t('name') %>", sortable: true},
+      members: {display: "<%=h I18n.t('members') %>", sortable: true, sort_with: 'nohtml'},
+      graders: {display: "<%=h I18n.t('graders') %>", sortable: true},
       valid: {display: "", sortable: false}
     },
     can_select: true,

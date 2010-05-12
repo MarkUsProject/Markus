@@ -34,7 +34,7 @@ end
 
 </span>
 
-<strong><%= current_page_low %> - <%= current_page_high %> of <%= total_items %></strong>
+<strong><%= I18n.t("pagination.of", :low => current_page_low, :high => current_page_high, :total => total_items) %></strong>
 
 <span class="ap_next_link">
 <%=
