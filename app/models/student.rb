@@ -183,12 +183,15 @@ class Student < User
         student = Student.find(student_id)
         memberships.each do |membership|
           group = membership.grouping.group
-          if group.repository_external_commits_only? && membership.grouping.is_valid?
-            begin
-              group.repo.remove_user(student.user_name) # revoke repo permissions
-            rescue Repository::UserNotFound
-              # ignore case when user isn't there any more
+          group.access_repo do |repo|
+            if group.repository_external_commits_only? && membership.grouping.is_valid?
+              begin
+                repo.remove_user(student.user_name) # revoke repo permissions
+              rescue Repository::UserNotFound
+                # ignore case when user isn't there any more
+              end
             end
+
           end
         end
       end
@@ -211,11 +214,13 @@ class Student < User
         student = Student.find(student_id)
         memberships.each do |membership|
           group = membership.grouping.group
-          if group.repository_external_commits_only? && membership.grouping.is_valid?
-            begin
-              group.repo.add_user(student.user_name, Repository::Permission::READ_WRITE) # grant repo permissions
-            rescue Repository::UserAlreadyExistent
-              # ignore case if user has permissions already
+          group.access_repo do |repo|
+            if group.repository_external_commits_only? && membership.grouping.is_valid?
+              begin
+                repo.add_user(student.user_name, Repository::Permission::READ_WRITE) # grant repo permissions
+              rescue Repository::UserAlreadyExistent
+                # ignore case if user has permissions already
+              end
             end
           end
         end

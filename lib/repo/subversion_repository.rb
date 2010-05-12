@@ -64,7 +64,8 @@ class SubversionRepository < Repository::AbstractRepository
     
     # create the repository using the ruby bindings
     fs_config = {Svn::Fs::CONFIG_FS_TYPE => Repository::SVN_FS_TYPES[:fsfs]}
-    Svn::Repos.create(connect_string, {}, fs_config) #raises exception if not successful
+    repository = Svn::Repos.create(connect_string, {}, fs_config) #raises exception if not successful
+    repository.close
     return true
   end
   
@@ -72,6 +73,28 @@ class SubversionRepository < Repository::AbstractRepository
   # at location 'connect_string'
   def self.open(connect_string)
     return SubversionRepository.new(connect_string)
+  end
+
+  # Static method: Yields an existing Subversion repository and closes it afterwards
+  def self.access(connect_string)
+    repository = self.open(connect_string)
+    yield repository
+    repository.close
+  end
+  
+  # Static method: Deletes an existing Subversion repository
+  def self.delete(repo_path)
+    Svn::Repos::delete(repo_path)
+  end
+
+  # Closes the repository
+  def close
+    @repos.close
+  end
+
+  # Returns whether or not repository is closed
+  def closed?
+    @repos.closed?
   end
   
   # Static method: Reports if a Subversion repository exists
@@ -410,6 +433,15 @@ class SubversionRepository < Repository::AbstractRepository
     return self.__write_out_authz_file(authz_file_contents)
   end
   
+  #Converts a pathname to an absolute pathname
+  def expand_path(file_name, dir_string = "/")
+    expanded = File.expand_path(file_name, dir_string) 
+    if RUBY_PLATFORM =~ /(:?mswin|mingw)/ #only if the platform is Windows
+      expanded = expanded[2..-1]#remove the drive letter
+    end
+    return expanded
+  end
+  
   ####################################################################
   ##  Semi-private class methods (one should not use them from outside
   ##  this class). 
@@ -697,15 +729,15 @@ class SubversionRepository < Repository::AbstractRepository
   # Make a directory if it's not already present.
   def make_directory(txn, path)
     # turn "path" into absolute path
-    path = File.expand_path(path, "/")
+    path = expand_path(path, "/")
     # do nothiing if "path" is the root
     return txn if path == "/"
     
     # get the path of parent folder
     parent_path = File.dirname(path)
-    # and create parent folder before the current folder (recursively)
+    # and create parent folder before the current folder (recursively)    
     txn = make_directory(txn, parent_path)
-    
+
     # now that the parent folder has been created,
     # create the current folder
     if (txn.root.check_path(path) == 0)

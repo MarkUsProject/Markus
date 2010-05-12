@@ -31,6 +31,14 @@ class GroupTest < ActiveSupport::TestCase
       assert !group.save
     end
 
+    
+    should "allow access to its repository" do
+      @group.access_repo do |repo|
+        assert_not_nil(repo, "Cannot access repository")
+        assert(!repo.closed?)
+      end
+    end
+
     context "linked to an assignment allowing web commits" do
       setup do 
         assignment = Assignment.make(:allow_web_submits => true)

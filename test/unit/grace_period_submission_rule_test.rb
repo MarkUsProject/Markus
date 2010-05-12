@@ -50,10 +50,11 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
       pretend_now_is(Time.parse("July 25 2009 10:00PM")) do
         assert Time.now > @assignment.due_date
         assert Time.now > @assignment.submission_rule.calculate_collection_time
-        repo = @group.repo
-        txn = repo.get_transaction("test")
-        txn = add_file_helper(txn, "NotIncluded.java", "Should not be included in grading")
-        repo.commit(txn)
+        @group.access_repo do |repo|
+          txn = repo.get_transaction("test")
+          txn = add_file_helper(txn, "NotIncluded.java", "Should not be included in grading")
+          repo.commit(txn)
+        end
       end
       
       # An Instructor or Grader decides to begin grading
@@ -284,12 +285,13 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
     pretend_now_is(Time.parse("July 20 2009 5:00PM")) do
       assert Time.now < @assignment.due_date
       assert Time.now < @assignment.submission_rule.calculate_collection_time
-      repo = @group.repo
-      txn = repo.get_transaction("test")
-      txn = add_file_helper(txn, 'TestFile.java', 'Some contents for TestFile.java')
-      txn = add_file_helper(txn, 'Test.java', 'Some contents for Test.java')
-      txn = add_file_helper(txn, 'Driver.java', 'Some contents for Driver.java')        
-      repo.commit(txn)
+      @group.access_repo do |repo|
+        txn = repo.get_transaction("test")
+        txn = add_file_helper(txn, 'TestFile.java', 'Some contents for TestFile.java')
+        txn = add_file_helper(txn, 'Test.java', 'Some contents for Test.java')
+        txn = add_file_helper(txn, 'Driver.java', 'Some contents for Driver.java')
+        repo.commit(txn)
+      end
     end
   end
   
@@ -297,10 +299,11 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
     pretend_now_is(Time.parse(time)) do
       assert Time.now > @assignment.due_date
       assert Time.now < @assignment.submission_rule.calculate_collection_time
-      repo = @group.repo
-      txn = repo.get_transaction("test")
-      txn = add_file_helper(txn, filename, text)
-      repo.commit(txn)
+      @group.access_repo do |repo|
+        txn = repo.get_transaction("test")
+        txn = add_file_helper(txn, filename, text)
+        repo.commit(txn)
+      end
     end
   end
   
@@ -308,10 +311,11 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
     pretend_now_is(Time.parse(time)) do
       assert Time.now > @assignment.due_date
       assert Time.now > @assignment.submission_rule.calculate_collection_time
-      repo = @group.repo
-      txn = repo.get_transaction("test")
-      txn = add_file_helper(txn, filename, text)
-      repo.commit(txn)
+      @group.access_repo do |repo|
+        txn = repo.get_transaction("test")
+        txn = add_file_helper(txn, filename, text)
+        repo.commit(txn)
+      end
     end
   end
   

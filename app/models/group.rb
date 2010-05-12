@@ -103,4 +103,11 @@ class Group < ActiveRecord::Base
       raise "Repository not found and MarkUs not in authoritative mode!" # repository not found, and we are not repo-admin
     end
   end
+
+  #Yields a repository object, if possible, and closes it after it is finished
+  def access_repo
+    repository = self.repo
+    yield repository
+    repository.close()
+  end
 end
