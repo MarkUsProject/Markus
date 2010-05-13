@@ -10,7 +10,7 @@ class RubricCriterion < ActiveRecord::Base
   validates_uniqueness_of :rubric_criterion_name, :scope => :assignment_id, :message => 'is already taken'
   validates_presence_of :rubric_criterion_name, :weight, :assignment_id
   validates_numericality_of :assignment_id, :only_integer => true, :greater_than => 0, :message => "can only be whole number greater than 0"
-  validates_numericality_of :weight, :message => "must be a number greater than 0.0", :greater_than => 0.0
+  validates_numericality_of :weight, :message => "must be a number"
   
   
   # Just a small effort here to remove magic numbers...
@@ -99,9 +99,11 @@ class RubricCriterion < ActiveRecord::Base
     # If a RubricCriterion of the same name exits, load it up.  Otherwise,
     # create a new one.
     criterion = assignment.rubric_criteria.find_or_create_by_rubric_criterion_name(rubric_criterion_name)
-    criterion.weight = working_row.shift
-    if criterion.weight == 0
-      raise I18n.t('criteria_csv_error.weight_zero')
+    #Check that the weight is not a string.
+    begin
+      criterion.weight = Float(working_row.shift)
+    rescue ArgumentError => e
+      raise I18n.t('criteria_csv_error.weight_not_number')
     end
     # Only set the position if this is a new record.
     if criterion.new_record?

@@ -583,7 +583,7 @@ en:
       incomplete_row: "contains too little information."
       name_not_unique: "criterion name already used in the current assignment."
       max_zero: "maximum value is zero or not a number."
-      weight_zero: "weight is zero or not a number."
+      weight_not_number: "weight is not a number."
       
     csv_special_characters_html: "
     <p>If you wish to use a comma (,) in a CSV field, you should surround that whole field with double quotes (\").<br />
