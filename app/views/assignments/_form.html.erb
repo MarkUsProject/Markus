@@ -37,7 +37,11 @@
     /<%= f.text_field :repository_folder%><br />
 	<%= f.label :allow_web_submits, t("assignment.allow_web_submits") %>&nbsp;&nbsp;
     <%= t("answer_yes")%>:<%= f.radio_button :allow_web_submits, true, :checked => @assignment.allow_web_submits %>&nbsp;&nbsp;
-	<%= t("answer_no")%>:<%= f.radio_button :allow_web_submits, false, :checked => !@assignment.allow_web_submits %>
+	<%= t("answer_no")%>:<%= f.radio_button :allow_web_submits, false, :checked => !@assignment.allow_web_submits %><br />
+	<%= f.label :display_grader_names_to_students, t("assignment.display_grader_names_to_students") %>&nbsp;&nbsp;
+    <%= t("answer_yes")%>:<%= f.radio_button :display_grader_names_to_students, true, :checked => @assignment.display_grader_names_to_students %>&nbsp;&nbsp;
+        <%= t("answer_no")%>:<%= f.radio_button :display_grader_names_to_students, false, :checked => !@assignment.display_grader_names_to_students %>
+
    <br />
    <br />
 </fieldset>

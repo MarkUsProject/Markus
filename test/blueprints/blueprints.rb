@@ -72,6 +72,7 @@ Assignment.blueprint do
   marking_scheme_type {'rubric'}
   submission_rule {NoLateSubmissionRule.make}
   allow_web_submits {true}
+  display_grader_names_to_students {false}
 end
 
 AssignmentFile.blueprint do

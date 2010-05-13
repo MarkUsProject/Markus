@@ -114,6 +114,7 @@ en:
         notice:
             change_marking_scheme_type: "Changing marking scheme will delete your criteria and marks."
         allow_web_submits: "Allow Web Submits?"
+        display_grader_names_to_students: "Display grader names to students?"
     your_mark:  "Your mark:"
 
     members:            "Members"
@@ -482,7 +483,9 @@ en:
         grace_credits:  "Grace Credits"
         section:        "Section"
 
+        display_grader_names_to_students: "Display grader names to students?"
         
+ 
     confirm_bulk_action:  "Are you sure you want to perform this bulk action?"
     hide_students: "Hide Students"
     unhide_students: "Unhide Students"
@@ -754,6 +757,9 @@ en:
         short_date: "%B %d, %Y"
       am: 'am'
       pm: 'pm'
+      
+    #app/views/assignments/_read.html.erb
+    no_grader_assigned: "No grader assigned yet."
 
 
 #Missing Activerecord Translations for english
