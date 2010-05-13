@@ -9,7 +9,7 @@
   </p>
   
   <p>
-  	<b><%= @note.noteable_type %>:</b> <%= @note.noteable.display_for_note %>
+  	<b><%= I18n.t("notes.noteables.#{@note.noteable_type}") %>:</b> <%= @note.noteable.display_for_note %>
   </p>
   
   <p>

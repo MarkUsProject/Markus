@@ -648,6 +648,8 @@ en:
       weight: "Weight"
     
     notes:
+        note_on: "{{user_name}} on <b>{{display_for}}</b>"
+        add_new: "New"
         existing: "Existing Notes"
         comment: "Your comment"
         save: "Save Note"
@@ -669,6 +671,7 @@ en:
             success: "Note was deleted successfully."
             error_permissions: "You do not have sufficient permissions to delete this note."
         new:
+            note_message: "Notes message"
             title: "Create Note" 
             loading_groupings: "Loading Groups..."
             loading_selector: "Loading selector..."
@@ -714,10 +717,12 @@ en:
     past_due_date_warning: "Due date for this assignment is in the past."
     
     section:
+      name: "Name"
       legend: "Section"
       create_new_section: "Add a new section"
       update_section: "Update Section"
       add_section: "Add a new section"
+      manage_users: "Manage Users"
       create:
         success: "Section successfully created."
         error:   "Failed to create section."
@@ -763,11 +768,6 @@ en:
 
 
 #Missing Activerecord Translations for english
-    activerecord:
-      errors:
-        messages:
-          record_invalid: "Validation failed : {{errors}}"
-
     datetime:
       distance_in_words:
         less_than_x_seconds:

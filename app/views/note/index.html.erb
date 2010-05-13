@@ -3,7 +3,7 @@
 #if there are no noteables,we can't add notes, so do not show Add New link.  
 %>
   <% if @noteables_available %>
-    <%= link_to I18n.t('add_new'), :action => 'new' %></h1>
+    <%= link_to I18n.t('notes.add_new'), :action => 'new' %></h1>
 	<% else %>
     </h1><p><%= I18n.t('notes.new.no_noteables') %></p>
 	<% end %>
@@ -29,7 +29,7 @@
 <% for note in @notes %>
 	<tr>
 		<td class="note">
-			<%=note.user.user_name%> on <b><%=note.noteable.display_for_note%></b><br />
+			<%= I18n.t("notes.note_on", :user_name => note.user.user_name, :display_for => note.noteable.display_for_note ) %></b><br />
 			<small><%=note.format_date%></small>
 		</td>
 		<td class="note"><%=note.notes_message%></td>
