@@ -96,11 +96,11 @@ class RubricCriterionTest < ActiveSupport::TestCase
     assert !weight_range.valid?, "weight is a string, it shouldn't be valid"
     
     weight_range.weight = -0.1
-    assert !weight_range.valid?, "weight is negative, it shouldn't be valid"
-    
+    assert weight_range.valid?, "weight is fine, it should be valid"
+
     weight_range.weight = 0.0
-    assert !weight_range.valid?, "weight is zero, it shouldn't be valid"
-    
+    assert weight_range.valid?, "weight is fine, it should be valid"
+
     weight_range.weight = 100.0
     assert weight_range.valid?, "weight is fine, it should be valid"
     
@@ -275,7 +275,7 @@ Part 2 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       e = assert_raise RuntimeError do
         RubricCriterion.create_or_update_from_csv_row(row, Assignment.new)
       end
-      assert_equal I18n.t('criteria_csv_error.weight_zero'), e.message
+      assert_equal I18n.t('criteria_csv_error.weight_not_number'), e.message
     end
     
     should "raise the errors hash in case of an unpredicted error" do
