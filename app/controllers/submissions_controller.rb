@@ -67,22 +67,23 @@ class SubmissionsController < ApplicationController
     @path = params[:path] || '/'
     @previous_path = File.split(@path).first
     @repository_name = @grouping.group.repository_name
+    repo = @grouping.group.repo
     begin
-      @grouping.group.access_repo do |repo|
-        if !params[:revision_timestamp].nil?
-          @revision_number = repo.get_revision_by_timestamp(Time.parse(params[:revision_timestamp])).revision_number
-        elsif !params[:revision_number].nil?
-          @revision_number = params[:revision_number].to_i
-        else
-          @revision_number = repo.get_latest_revision.revision_number
-        end
-        @revision = repo.get_revision(@revision_number)
-        @revision_timestamp = @revision.timestamp
+      if !params[:revision_timestamp].nil?
+        @revision_number = repo.get_revision_by_timestamp(Time.parse(params[:revision_timestamp])).revision_number
+      elsif !params[:revision_number].nil?
+        @revision_number = params[:revision_number].to_i
+      else
+        @revision_number = repo.get_latest_revision.revision_number
       end
+      @revision = repo.get_revision(@revision_number)
+      @revision_timestamp = @revision.timestamp
+      repo.close
     rescue Exception => e
       flash[:error] = e.message
       @revision_number = repo.get_latest_revision.revision_number
       @revision_timestamp = repo.get_latest_revision.timestamp
+      repo.close
     end
   end
   
