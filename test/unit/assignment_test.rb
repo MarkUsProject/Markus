@@ -9,7 +9,8 @@ class AssignmentTest < ActiveSupport::TestCase
   # Should_validate_presence_of does not work for boolean value false.
   # Using should_allow_values_for instead
   should_allow_values_for :allow_web_submits, true, false
-
+  should_allow_values_for :display_grader_names_to_students, true, false
+  
   def setup
     clear_fixtures
   end

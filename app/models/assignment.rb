@@ -39,6 +39,7 @@ class Assignment < ActiveRecord::Base
   # since allow_web_submits is a boolean, validates_presence_of does not work:
   # see the Rails API documentation for validates_presence_of (Model validations)
   validates_inclusion_of :allow_web_submits, :in => [true, false] 
+  validates_inclusion_of :display_grader_names_to_students, :in => [true, false]
   
   def validate
     if (group_max && group_min) && group_max < group_min
