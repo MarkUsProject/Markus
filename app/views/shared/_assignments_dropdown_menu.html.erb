@@ -5,9 +5,9 @@
   <li class="level2">
     <%= link_to I18n.t(:create_new_grade_entry_form), :controller => 'grade_entry_forms', :action => 'new' %>
   </li>
+  <div class="clear"></div><br/>
 <% end %>
 
-<div class="clear"></div><br/>
 
 <% Assignment.all.each do |assignment|%>
   <% if assignment != @assignment %>
