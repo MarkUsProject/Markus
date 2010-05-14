@@ -36,8 +36,8 @@ Sham.annotation_category_name {|i| "Machinist Annotation Category #{i}"}
 
 Admin.blueprint do
   user_name {Sham.admin_user_name}
-  first_name
-  last_name
+  first_name {Sham.first_name}
+  last_name {Sham.last_name}
 end
 
 Annotation.blueprint do
@@ -173,8 +173,8 @@ end
 
 Student.blueprint do
   user_name {Sham.student_user_name}
-  first_name
-  last_name
+  first_name {Sham.first_name}
+  last_name {Sham.last_name}
   section
   grace_credits {5}
 end
@@ -205,8 +205,8 @@ end
 
 Ta.blueprint do
   user_name {Sham.ta_user_name}
-  first_name
-  last_name
+  first_name {Sham.first_name}
+  last_name {Sham.last_name}
 end
 
 TAMembership.blueprint do
