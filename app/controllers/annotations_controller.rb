@@ -3,6 +3,7 @@ class AnnotationsController < ApplicationController
   before_filter      :authorize_for_ta_and_admin
     
   def add_existing_annotation
+    return unless request.post?
     @text = AnnotationText.find(params[:annotation_text_id])
     @submission_file_id = params[:submission_file_id]
     @submission_file = SubmissionFile.find(@submission_file_id)
@@ -19,6 +20,7 @@ class AnnotationsController < ApplicationController
   end
 
   def create
+    return unless request.post?
     @text = AnnotationText.create({
       :content => params[:content],
       :annotation_category_id => params[:category_id]
@@ -36,6 +38,7 @@ class AnnotationsController < ApplicationController
   end
 
   def destroy
+    return unless request.post?
     @annotation = Annotation.find(params[:id])
     @old_annotation = @annotation.destroy
     @submission_file_id = params[:submission_file_id]
@@ -45,6 +48,7 @@ class AnnotationsController < ApplicationController
   end
  
   def update_annotation
+    return unless request.post?
     @content = params[:annotation_text][:content]
     @id = params[:annotation_text][:id]
     @submission_file_id = params[:annotation_text][:submission_file_id]
@@ -58,6 +62,7 @@ class AnnotationsController < ApplicationController
 
   #Updates the overall comment from the annotations tab
   def update_comment
+    return unless request.post?
     result = Result.find(params[:result_id])
     result.overall_comment = params[:overall_comment]
     result.save;
