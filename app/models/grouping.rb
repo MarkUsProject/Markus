@@ -9,7 +9,7 @@ class Grouping < ActiveRecord::Base
   belongs_to :assignment
   belongs_to  :group
   has_many :memberships
-  has_many :student_memberships
+  has_many :student_memberships, :order => 'id'
   has_many :accepted_student_memberships, :class_name => "StudentMembership", :conditions => {'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]}
   has_many :notes, :as => :noteable, :dependent => :destroy
   has_many :ta_memberships, :class_name => "TAMembership"
