@@ -242,8 +242,8 @@ document.observe("dom:loaded", function(){
 
       </div>
       </form>
-      <div class="accordion-toggle" id="accordion-toggle-bottom">
-        <%=h t("groups.upload_download") %>
+      <div class="accordion-toggle">
+        <%=h t("groups.upload.upload") %>
       </div>
       <div class="accordion-content">
         <div id="upload">
@@ -262,25 +262,28 @@ document.observe("dom:loaded", function(){
                                        :action => 'csv_upload',
                                        :id => @assignment.id } do |f| -%>
            <p><%= f.file_field :grouplist, :size => 2 %> <br />
-              <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %></p>							
+              <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %></p>
         <% end %>
         </div> <!-- Upload -->
-        <p id="download">
-          <%= link_to t("groups.download.download_csv"), {:controller=>"groups", :action=>"download_grouplist", :id=> @assignment.id}%>
-        </p>
         <p>
           <h3><%= I18n.t("groups.upload.upload_grader_map") %></h3>
             <%= I18n.t("groups.upload.description_grader_map") %>
           </p>
           <% form_tag({:controller=>"groups", :action => 'csv_upload_grader_mapping',:id => @assignment.id}, {:multipart => true}) do -%>
            <p><%= file_field_tag :grader_mapping, :size => 2 %> <br />
-              <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %></p>							
+              <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %></p>
         <% end %>
-          
-        </p>
       </div>
-     </div>
-   </div>
+
+
+	  <div class="accordion-toggle" id="accordion-toggle-bottom">
+        <%=h t("groups.download.download") %>
+      </div>
+      <div class="accordion-content">
+        <div id="download">
+          <%= link_to t("groups.download.download_csv"), {:controller=>"groups", :action=>"download_grouplist", :id=> @assignment.id}%>
+        </div>
+      </div>
     <!-- remote form tag -->
   </div> <!-- colRight -->
 </div> <!-- ColsLeftHeavy -->
@@ -289,7 +292,7 @@ document.observe("dom:loaded", function(){
 <!-- Modal Windows -->
 
 <div id="add_member_dialog">
-</div> 
+</div>
 
 <div id="rename_group_dialog">
 </div>

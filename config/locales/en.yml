@@ -352,8 +352,8 @@ en:
       cant_delete_already_submitted: "You already submitted something. You cannot delete your group."
       delete:  'Delete this group'
       delete_confirm: 'This will remove all members in the group and delete all information associated with this group. Continue?'
-      upload_download: "Upload/Download"
       upload:
+        upload: "Upload"
         upload_groups_file: "Upload Groups File"
         description: "CSV file format:<br />
             <code>group_name,repository_name,user_name,<br />user_name ... </code><br />"
@@ -362,6 +362,7 @@ en:
         description_grader_map: "CSV file format:<br />
             <code>group_name,grader_user_name,grader_user_name,... </code><br />"
       download:
+        download: "Download"
         download_csv: "Download group list CSV Format"
       reuse_groups: "Reuse Groups"
       assignment_to_use: "Which assignments groups would you like to use?"
