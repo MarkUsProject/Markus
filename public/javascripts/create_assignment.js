@@ -127,14 +127,26 @@ function change_submission_rule() {
   });
   
   if($('grace_period_submission_rule').getValue() == null) {
-     // Disable any grace_period_submission_rule periods 
+     // Disable any grace_period_submission_rule periods
     $$('#grace_periods .period').each(function(node) { node.addClassName('disabled'); });
     $$('#grace_periods .period input').each(function(node){node.disable();});
   }
+  else {
+    if ($$('#grace_periods .period').length == 0) {
+        // Auto expand add a grace period if needed
+        $("grace_period_link").onclick();
+    }
+  }
   if($('penalty_period_submission_rule').getValue() == null) {
-     // Disable any grace_period_submission_rule periods 
+     // Disable any penalty_period_submission_rule periods
     $$('#penalty_periods .period').each(function(node) { node.addClassName('disabled'); });
     $$('#penalty_periods .period input').each(function(node){node.disable();});
+  }
+  else {
+    if ($$('#penalty_periods .period').length == 0) {
+         // Auto expand add a penalty period if needed
+        $("penalty_period_link").onclick();
+    }
   }
 }
 
