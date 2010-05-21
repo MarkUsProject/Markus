@@ -327,7 +327,7 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       FileUtils.remove_dir(TEST_REPO, true)
       FileUtils.rm(SVN_AUTHZ_FILE, :force => true)
       # have a clean authz file
-      FileUtils.cp(SVN_AUTHZ_FILE +'.orig', SVN_AUTHZ_FILE)
+      FileUtils.cp(SVN_AUTHZ_FILE + '.orig', SVN_AUTHZ_FILE)
       # create repository first
       repo1 = SVN_TEST_REPOS_DIR + "/Testrepo1"
       repo2 = SVN_TEST_REPOS_DIR + "/Repository2"

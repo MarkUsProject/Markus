@@ -1,4 +1,5 @@
 require "svn/repos" # load SVN Ruby bindings
+require "svn/client"
 require "md5"
 require "rubygems"    # debugging
 require "ruby-debug"  # debugging
@@ -18,7 +19,6 @@ if !defined? SVN_FS_TYPES
   SVN_FS_TYPES = {:fsfs => Svn::Fs::TYPE_FSFS, :bdb => Svn::Fs::TYPE_BDB}
 end
 
-
 class InvalidSubversionRepository < Repository::ConnectionError; end
 
 # Implements AbstractRepository for Subversion repositories
@@ -27,6 +27,10 @@ class InvalidSubversionRepository < Repository::ConnectionError; end
 #   2. Existing repositories are opened by using either SubversionRepository.open()
 #      or SubversionRepository.new()
 class SubversionRepository < Repository::AbstractRepository
+
+  if !defined? CLOSEABLE_VERSION
+    CLOSEABLE_VERSION = "1.6.5"
+  end
 
   # Constructor: Connects to an existing Subversion
   # repository, using Ruby bindings; Note: A repository has to be
@@ -43,6 +47,7 @@ class SubversionRepository < Repository::AbstractRepository
       super(connect_string) # dummy call to super
     rescue NotImplementedError; end
     @repos_path = connect_string
+    @closed = false
     @repos_auth_file = Repository.conf[:REPOSITORY_PERMISSION_FILE] || File.dirname(connect_string) + "/svn_authz"
     @repos_admin = Repository.conf[:IS_REPOSITORY_ADMIN]
     if (SubversionRepository.repository_exists?(@repos_path))
@@ -61,14 +66,18 @@ class SubversionRepository < Repository::AbstractRepository
     if File.exists?(connect_string)
       raise IOError.new("Could not create a repository at #{connect_string}: some directory with same name exists already")
     end
-    
+
     # create the repository using the ruby bindings
     fs_config = {Svn::Fs::CONFIG_FS_TYPE => Repository::SVN_FS_TYPES[:fsfs]}
     repository = Svn::Repos.create(connect_string, {}, fs_config) #raises exception if not successful
-    repository.close
+
+    if SubversionRepository.closeable?
+      repository.close
+    end
+
     return true
   end
-  
+
   # Static method: Opens an existing Subversion repository
   # at location 'connect_string'
   def self.open(connect_string)
@@ -87,16 +96,29 @@ class SubversionRepository < Repository::AbstractRepository
     Svn::Repos::delete(repo_path)
   end
 
+  # Static method:  Returns whether or not the available Svn library supports
+  # closing
+  def self.closeable?
+    return Svn::Client.version.to_s >= CLOSEABLE_VERSION
+  end
+
   # Closes the repository
   def close
-    @repos.close
+    if self.class.closeable?
+      @repos.close
+    end
+    @closed = true
   end
 
   # Returns whether or not repository is closed
   def closed?
-    @repos.closed?
+    if self.class.closeable?
+      return @repos.closed?
+    end
+    return @closed
   end
-  
+
+
   # Static method: Reports if a Subversion repository exists
   # It's in fact a pretty hacky method checking for files typical
   # for Subversion repositories
