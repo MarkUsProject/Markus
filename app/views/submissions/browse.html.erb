@@ -51,10 +51,12 @@
 
   <%= form_tag({:action => 'update_submissions', :id => @assignment.id}) %>
     <div class="ap_nav_box">
-      <div class="floatLeft">
-        <%= submit_tag I18n.t("browse_submissions.release_marks"), :name => "release_results" %>
-        <%= submit_tag I18n.t("browse_submissions.unrelease_marks"), :name => "unrelease_results" %>
-      </div>
+      <% if @current_user.admin? %>
+        <div class="floatLeft">
+          <%= submit_tag I18n.t("browse_submissions.release_marks"), :name => "release_results" %>
+          <%= submit_tag I18n.t("browse_submissions.unrelease_marks"), :name => "unrelease_results" %>
+        </div>
+      <% end %>
       <div class="ap_filters" id="ap_filters_1">
         <%= render  :partial => 'submissions_table_filters',
                     :locals => {
