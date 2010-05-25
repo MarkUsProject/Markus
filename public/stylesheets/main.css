@@ -948,7 +948,7 @@ div.float_left {
   left: 50%;
   margin-left: -200px;
   width: 400px;
-  height: 300px;
+  height: 320px;
   border: solid Black 1px;
   top: 50%;
   margin-top: -200px;
@@ -982,6 +982,16 @@ div#login-greeting {
   background-color: #fff;
   color: #ccc;
   padding: 8px;
+}
+
+div#login-course {
+  text-align: center;
+  position: relative;
+  font-weight: bold;
+  width: 70%;
+  background-color: #fff;
+  left: 15%;
+  margin-bottom: 20px;
 }
 
 div#login-image img {

@@ -5,6 +5,8 @@
     <%= image_tag("markus_logo_big.png", :alt => "[Logo] Markus Beta") %>
   </div>
 
+  <div id="login-course"><%= MarkusConfigurator.markus_config_course_name %></div>
+
   <% if flash[:login_notice] -%>
     <div class="error"><%=h flash[:login_notice] %></div>
   <% end -%>
