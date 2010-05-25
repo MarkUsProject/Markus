@@ -7,7 +7,12 @@ module MarkusConfigurator
   # Repository configuration
   ######################################
   def markus_config_repository_admin?
-    return (IS_REPOSITORY_ADMIN == true)
+    if defined? IS_REPOSITORY_ADMIN
+      return IS_REPOSITORY_ADMIN
+    else
+      #If not defined, default to true
+      return true
+    end
   end
   
   def markus_config_repository_storage
@@ -35,7 +40,12 @@ module MarkusConfigurator
   def markus_config_repository_permission_file
     return REPOSITORY_PERMISSION_FILE || File.join(repository_storage, "svn_authz")
   end
-  
+
+  def markus_config_course_name
+    return COURSE_NAME || "CSC199: Example Course Name"
+  end
+
+
   ######################################
   # MarkusLogger configuration
   ######################################
