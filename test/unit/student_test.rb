@@ -82,7 +82,7 @@ exist_student,USER2,USER2"
 
     should "hide students and have the repo remove them" do
       # Mocks to enter into the if
-      Group.any_instance.stubs(:repository_external_commits_only?).returns(true)
+      Grouping.any_instance.stubs(:repository_external_commits_only?).returns(true)
       Grouping.any_instance.stubs(:is_valid?).returns(true)
 
       # Mock the repository and expect :remove_user with the student's user_name
@@ -97,7 +97,7 @@ exist_student,USER2,USER2"
 
     should "not error when user is not found on hide and remove" do
       # Mocks to enter into the if that leads to the call to remove the student
-      Group.any_instance.stubs(:repository_external_commits_only?).returns(true)
+      Grouping.any_instance.stubs(:repository_external_commits_only?).returns(true)
       Grouping.any_instance.stubs(:is_valid?).returns(true)
 
       # Mock the repository and raise Repository::UserNotFound
@@ -146,7 +146,7 @@ exist_student,USER2,USER2"
 
     should "unhide without error when users already exists in repo" do
       # Mocks to enter into the if
-      Group.any_instance.stubs(:repository_external_commits_only?).returns(true)
+      Grouping.any_instance.stubs(:repository_external_commits_only?).returns(true)
       Grouping.any_instance.stubs(:is_valid?).returns(true)
 
       # Mock the repository and raise Repository::UserNotFound

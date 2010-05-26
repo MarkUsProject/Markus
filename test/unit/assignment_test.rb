@@ -435,13 +435,18 @@ class AssignmentTest < ActiveSupport::TestCase
 
       should "be able to add a group by CSV row" do
         group = ["groupname", "CaptainSparrow" ,@student1.user_name, @student2.user_name]
-        assert @assignment.add_csv_group(group)
+        old_groupings_count = @assignment.groupings.length
+        assert_nil @assignment.add_csv_group(group)
+        @assignment.reload
+        assert_equal old_groupings_count + 1, @assignment.groupings.length
       end
 
       should "be able to add a group by CSV row with existing group name" do
         Group.make(:group_name =>"groupname")
         group = ["groupname", "CaptainSparrow" ,@student1.user_name, @student2.user_name]
-        assert @assignment.add_csv_group(group)
+        old_group_count = Group.all.length
+        assert_nil @assignment.add_csv_group(group)
+        assert_equal old_group_count, Group.all.length
       end
 
     end
