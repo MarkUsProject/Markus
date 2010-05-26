@@ -252,6 +252,11 @@ class GradeEntryFormTest < ActiveSupport::TestCase
           @students << student
         end
       end
+
+      should "be able to handle the case where there are 0 pages without errors" do
+        alpha_pagination_students = @grade_entry_form.alpha_paginate(@students, 12, 0);
+        assert_equal(alpha_pagination_students, [])
+      end
       
       should "construct the appropriate categories for alphabetical pagination when there is 1 page" do
         alpha_pagination_students = @grade_entry_form.alpha_paginate(@students, 12, 1);
