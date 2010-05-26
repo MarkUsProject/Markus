@@ -129,6 +129,10 @@ class GradeEntryForm < ActiveRecord::Base
   def alpha_paginate(all_grade_entry_students, per_page, total_pages)
     alpha_categories = Array.new(2 * total_pages){[]}
     alpha_pagination = []
+
+    if total_pages == 0
+      return alpha_pagination
+    end
     
     i = 0
     (1..(total_pages - 1)).each do |page|  
