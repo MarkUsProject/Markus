@@ -2,6 +2,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 require 'shoulda'
 require 'mocha'
 
+include MarkusConfigurator
 class AdminTest < ActiveSupport::TestCase
   fixtures :users
   fixtures :groups
@@ -12,9 +13,9 @@ class AdminTest < ActiveSupport::TestCase
       setup_group_fixture_repos
       conf = Hash.new
       conf["IS_REPOSITORY_ADMIN"] = true
-      conf["REPOSITORY_PERMISSION_FILE"] = markus_config_repository_permission_file
+      conf["REPOSITORY_PERMISSION_FILE"] = MarkusConfigurator.markus_config_repository_permission_file
       @repo = Repository.get_class(markus_config_repository_type, conf)
-      Admin.any_instance.stubs(:markus_config_repository_admin?).returns(true)
+      MarkusConfigurator.stubs(:markus_config_repository_admin?).returns(true)
     end
     
     teardown do
@@ -48,9 +49,9 @@ class AdminTest < ActiveSupport::TestCase
       # set repository_admin false
       conf = Hash.new
       conf["IS_REPOSITORY_ADMIN"] = false
-      conf["REPOSITORY_PERMISSION_FILE"] = markus_config_repository_permission_file
+      conf["REPOSITORY_PERMISSION_FILE"] = MarkusConfigurator.markus_config_repository_permission_file
       @repo = Repository.get_class(markus_config_repository_type, conf)
-      Admin.any_instance.stubs(:markus_config_repository_admin?).returns(false)
+      MarkusConfigurator.stubs(:markus_config_repository_admin?).returns(false)
     end
     
     teardown do

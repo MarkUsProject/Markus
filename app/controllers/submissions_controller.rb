@@ -159,7 +159,7 @@ class SubmissionsController < ApplicationController
       @files.sort.each do |file_name, file|
         @table_rows[file.id] = construct_file_manager_table_row(file_name, file)
       end
-      if @grouping.group.repository_external_commits_only?
+      if @grouping.repository_external_commits_only?
         @directories.sort.each do |directory_name, directory|
           @table_rows[directory.id] = construct_file_manager_dir_table_row(directory_name, directory)
         end
@@ -239,7 +239,7 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.find(assignment_id)
     path = params[:path] || '/'
     grouping = current_user.accepted_grouping_for(assignment_id)
-    if grouping.group.repository_external_commits_only?
+    if grouping.repository_external_commits_only?
       raise "MarkUs is only accepting external submits"
     end
     if !grouping.is_valid?

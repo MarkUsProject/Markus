@@ -42,24 +42,24 @@ class GroupTest < ActiveSupport::TestCase
     context "linked to an assignment allowing web commits" do
       setup do 
         assignment = Assignment.make(:allow_web_submits => true)
-        grouping = Grouping.make(:assignment_id => assignment.id, 
+        @grouping = Grouping.make(:assignment_id => assignment.id, 
                                  :group_id => @group.id)
       end
 
       should "return false for external accessible repository" do
-        assert !@group.repository_external_commits_only?
+        assert !@grouping.repository_external_commits_only?
       end
     end
 
     context "linked to an assignment not allowing web commits" do
       setup do 
         assignment = Assignment.make(:allow_web_submits => false)
-        grouping = Grouping.make(:assignment_id => assignment.id, 
+        @grouping = Grouping.make(:assignment_id => assignment.id, 
                                  :group_id => @group.id)
       end
 
       should "return true for external accessible repository" do
-        assert @group.repository_external_commits_only?
+        assert @grouping.repository_external_commits_only?
       end
     end
   end

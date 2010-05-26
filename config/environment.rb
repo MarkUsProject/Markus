@@ -43,6 +43,10 @@ Rails::Initializer.run do |config|
   # (create the session table with "rake db:sessions:create")
   config.action_controller.session_store = :active_record_store
 
-  # We need the api controllers loaded for all environments
-  config.load_paths += ["app/controllers/api"]
+  # We need some additional load paths (e.g. for the API)
+  #   Note for developers: in Ruby %W( a b c ) is equivalent to [ 'a', 'b', 'c' ]
+  config.load_paths += %W(  
+                            app/controllers/api
+                            lib/classes
+                         )
 end

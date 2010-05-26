@@ -450,7 +450,7 @@ class Grouping < ActiveRecord::Base
   def update_repository_permissions
     # we do not need to do anything if we are not accepting external
     # command-line commits
-    return unless self.group.repository_external_commits_only?
+    return unless self.write_repo_permissions?
     
     self.reload # VERY IMPORTANT! Make sure grouping object is not stale
     
@@ -482,6 +482,21 @@ class Grouping < ActiveRecord::Base
       end
     end
   end
+
+  # Returns true, if and only if the configured repository setup
+  # allows for externally accessible repositories, in which case
+  # file submissions via the Web interface are not permitted. For
+  # now, this works for Subversion repositories only.
+  def repository_external_commits_only?
+    assignment = self.assignment
+    return !assignment.allow_web_submits
+  end
+
+  # Should we write repository permissions for this grouping?
+  def write_repo_permissions?
+    return MarkusConfigurator.markus_config_repository_admin? &&
+           self.repository_external_commits_only?
+  end
   
   private
   
@@ -497,7 +512,7 @@ class Grouping < ActiveRecord::Base
     memberships.each do |member|
       # Add repository read and write permissions for user,
       # if we are required to do so
-      if self.group.repository_external_commits_only?
+      if self.write_repo_permissions?
         begin
           self.group.access_repo do |repo|
             repo.add_user(member.user.user_name, Repository::Permission::READ_WRITE)
@@ -526,7 +541,7 @@ class Grouping < ActiveRecord::Base
     end
     memberships.each do |member|
       # Revoke permissions for students
-      if self.group.repository_external_commits_only?
+      if self.write_repo_permissions?
         self.group.access_repo do |repo|
           begin
             # the following throws a Repository::UserNotFound
@@ -546,7 +561,7 @@ class Grouping < ActiveRecord::Base
   def revoke_repository_permissions_for_membership(student_membership)
     # Revoke permissions for student
     self.group.access_repo do |repo|
-      if self.group.repository_external_commits_only?
+      if self.write_repo_permissions?
         begin
           # the following throws a Repository::UserNotFound
           if repo.get_permissions(student_membership.user.user_name) >= Repository::Permission::ANY
@@ -572,7 +587,7 @@ class Grouping < ActiveRecord::Base
     memberships.each do |member|
       # Revoke permissions for students
       self.group.access_repo do |repo|
-        if self.group.repository_external_commits_only?
+        if self.write_repo_permissions?
           begin
             # the following throws a Repository::UserNotFound
             if repo.get_permissions(member.user.user_name) >= Repository::Permission::ANY

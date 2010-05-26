@@ -180,6 +180,12 @@ en:
     invalid_id: "must be an id that is an integer greater than 0"
     still_working_warning: "There are unfinished jobs still being processed.  They might not be saved if you leave now."
 
+    csv:
+      student_not_found: "Student '{{user_name}}' not found."
+      repo_collision_warning: "Warning: Repository '{{repo_name}}' exists already. Group name was: '{{group_name}}'."
+      line_nr_csv_file_prefix: "Line {{line_number}} of CSV file:"
+      errors_and_warnings_msg: "The following lines produced errors and/or warnings:"
+
     pagination:
       first: "First"
       prev: "Prev"
@@ -314,6 +320,7 @@ en:
         student_deleted_file: "Student '{{user_name}}' deleted file '{{file_name}}' for assignment '{{assignment}}'."
         student_replaced_file: "Student '{{user_name}}' replaced content of file '{{file_name}}' for assignment '{{assignment}}'."
         student_viewed_result: "Student '{{user_name}}' viewed results for assignment '{{assignment}}'."
+        group_repo_collision: "Creating group '{{group_name}}' caused repository collision (Repository name was: '{{repo_name}}'). Error message: '{{error}}'"
         marks_released_for_grade_entry_form: "Marks released for grade entry form '{{grade_entry_form}}', ID: '{{grade_entry_form_id}}' (for {{number_students}} students)."
         marks_unreleased_for_grade_entry_form: "Marks unreleased for grade entry form '{{grade_entry_form}}', ID: '{{grade_entry_form_id}}' (for {{number_students}} students)."
     
@@ -352,6 +359,8 @@ en:
       cant_delete_already_submitted: "You already submitted something. You cannot delete your group."
       delete:  'Delete this group'
       delete_confirm: 'This will remove all members in the group and delete all information associated with this group. Continue?'
+      use_another_assignments_groups: "Use another assignment's groups"
+      upload_download: "Upload/Download"
       upload:
         upload: "Upload"
         upload_groups_file: "Upload Groups File"
