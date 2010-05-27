@@ -37,15 +37,37 @@ class ResultTest < ActiveSupport::TestCase
   def test_mark_as_partial
     result = results(:result_3)
     result.mark_as_partial
-    assert_equal('partial', result.marking_state, "marking state should
-    e partial")
+    assert_equal(Result::MARKING_STATES[:partial], result.marking_state, "marking state should
+    be partial")
   end
 
   def test_mark_as_partial2
     result = results(:result_4)
     result.mark_as_partial
-    assert_equal('complete', result.marking_state, "marking state should
-    e partial")
+    assert_equal(Result::MARKING_STATES[:complete], result.marking_state, "marking state should
+    be complete")
   end
+
+  should "catch a valid result (for unmarked marking state)" do
+      result = results(:result_1)
+      assert result.valid?
+  end
+  
+  should "catch a valid result (for partial marking state)" do
+      result = results(:result_2)
+      assert result.valid?
+  end
+  
+  should "catch a valid result (for complete marking state)" do
+      result = results(:result_3)
+      assert result.valid?
+  end
+  
+  should "catch a invalid result (wrong marking state)" do
+      result = results(:result_1)
+      result.marking_state = 'wrong'
+      assert result.invalid?
+  end
+  
 
 end

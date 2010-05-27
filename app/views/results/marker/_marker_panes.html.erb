@@ -1,12 +1,12 @@
 <div id="pane_holders">
   <div id="code_pane">
     <ul id="code_and_annotations_tabs" class="subsection_tabs">
-       <li class="tab"><a href="#code_holder">Source Code</a></li>
-       <li class="tab"><a href="#annotations_summary">Annot. Summary</a></li>
+       <li class="tab"><a href="#code_holder"><%= I18n.t("marker.source_code") %></a></li>
+       <li class="tab"><a href="#annotations_summary"><%= I18n.t("marker.annot_summary") %></a></li>
     </ul>  
     <div id="code_holder" class="tabbedArea">
       <div id="annotation_menu">
-        <button id="new_annotation_button" onClick="make_new_annotation(); return false;">New Annot.</button>
+        <button id="new_annotation_button" onClick="make_new_annotation(); return false;"><%= I18n.t("marker.new_annot")%></button>
         <%= render :partial => "annotations/annotation_categories", :locals => {:annotation_categories => annotation_categories}%>
          <div class="clear"></div>  
       </div> <!-- End of annotation_menu -->
@@ -20,12 +20,12 @@
   
     <div id="annotations_summary" class="tabbedArea">    
 
-      <h3>Overall Comments</h3>
+      <h3><%= I18n.t("marker.overall_comments") %></h3>
 
        <%= render :partial => 'results/marker/overall_comment', :locals => {:result => result} %>
        
-      <h3>Current Annotations</h3>
-      <p>Current annotations across all submission files. Click on the line number to jump to the location in the file.</p>
+      <h3><%= I18n.t("marker.current_annotations") %></h3>
+      <p><%= I18n.t("marker.across_all_submission_files") %></p>
     
       <ul id="annotation_summary_list">
       </ul>
@@ -41,15 +41,15 @@
 
   <div id="mark_pane" class="float_left">
     <ul id="mark_tabs" class="subsection_tabs">
-      <li class="tab"><a href="#mark_viewer">Marks</a></li>
-      <li class="tab"><a href="#summary_viewer">Summary</a></li>
-      <li class="tab"><a href="#submission_rule_viewer">Submission Rule</a></li>
+      <li class="tab"><a href="#mark_viewer"><%= I18n.t("marker.marks.marks") %></a></li>
+      <li class="tab"><a href="#summary_viewer"><%= I18n.t("marker.marks.summary") %></a></li>
+      <li class="tab"><a href="#submission_rule_viewer"><%= I18n.t("marker.marks.submission_rule") %></a></li>
     </ul>  
     <div id="mark_viewer" class="tabbedArea">
       <div class="mark_tools">
-         <%= button_to_remote("Expand All", :url => {:controller => 'results', :action => 'expand_criteria', :aid => @assignment.id}) %>
-         <%= button_to_remote("Collapse All", :url => {:controller => 'results', :action => 'collapse_criteria', :aid => @assignment.id}) %>
-         <%= button_to_remote("Expand Unmarked", :url => {:controller => 'results', :action => 'expand_unmarked_criteria', :aid => assignment.id, :rid => result.id}) %>
+         <%= button_to_remote(I18n.t("marker.marks.expand_all"), :url => {:controller => 'results', :action => 'expand_criteria', :aid => @assignment.id}) %>
+         <%= button_to_remote(I18n.t("marker.marks.collapse_all"), :url => {:controller => 'results', :action => 'collapse_criteria', :aid => @assignment.id}) %>
+         <%= button_to_remote(I18n.t("marker.marks.expand_unmarked"), :url => {:controller => 'results', :action => 'expand_unmarked_criteria', :aid => assignment.id, :rid => result.id}) %>
        </div>  <!-- Criterion Tools -->
        <div id="mark_criteria">
           <ul id="mark_criteria_pane_list">
@@ -76,13 +76,13 @@
   
   <div id="create_annotation_dialog" style="display:none;">
     <p>
-      <h2>Create new annotation</h2>
+      <h2><%= I18n.t("marker.annotation.new_annotation") %></h2>
     </p>
     <p>
       <textarea id="new_annotation_content"></textarea>
     </p>
     <p>
-      <h3>Annotation Category</h3>
+      <h3><%= I18n.t("marker.annotation.annotation_category") %></h3>
       <select id="new_annotation_category">
         <option value=""><%=t('annotations.one_time_only')%></option>
         <% @annotation_categories.each do |annotation_category| %>
@@ -91,8 +91,8 @@
       </select>
       </p>
       <p style="margin-top: 5px; border-top: 1px solid #000000; padding-top: 10px;">
-        <button onClick="submit_new_annotation($F('new_annotation_content'), $F('new_annotation_category'));">Create New Annotation</button>
-        <button onClick="modal.close();">Cancel</button>
+        <button onClick="submit_new_annotation($F('new_annotation_content'), $F('new_annotation_category'));"><%= I18n.t("marker.annotation.new_annotation") %></button>
+        <button onClick="modal.close();"><%= I18n.t("cancel") %></button>
       </p>
       
 </div> <!-- pane_holders -->

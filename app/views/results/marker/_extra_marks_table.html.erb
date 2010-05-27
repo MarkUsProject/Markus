@@ -1,7 +1,7 @@
 <table class="extra_marks_pane_list">
   <thead>
-    <th>Comment</th>
-    <th>Mark</th>
+    <th><%= I18n.t("marker.marks.comment") %></th>
+    <th><%= I18n.t("marker.marks.mark") %></th>
     <th></th>
   </thead>
   <tbody id="extra_marks_list" >
@@ -11,7 +11,7 @@
    </tbody>
    <tbody>
      <tr>
-       <td colspan="3"><%= link_to_function "Add Extra Mark", %| if($('add_extra_mark_prompt') != null) {
+       <td colspan="3"><%= link_to_function I18n.t("marker.marks.add_extra_mark"), %| if($('add_extra_mark_prompt') != null) {
           $('add_extra_mark_prompt').down('input').select();
           $('add_extra_mark_prompt').down('input').focus();
         } else {

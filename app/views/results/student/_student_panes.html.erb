@@ -1,8 +1,8 @@
 <div id="pane_holders">
   <div id="code_pane">
     <ul id="code_and_annotations_tabs" class="subsection_tabs">
-       <li class="tab"><a href="#code_holder">Source Code</a></li>
-       <li class="tab"><a href="#annotations_summary">Annot. Summary</a></li>
+       <li class="tab"><a href="#code_holder"><%= I18n.t("marker.source_code") %></a></li>
+       <li class="tab"><a href="#annotations_summary"><%= I18n.t("marker.annot_summary") %></a></li>
     </ul>  
     <div id="code_holder" class="tabbedArea">
 
@@ -14,12 +14,12 @@
   
     <div id="annotations_summary" class="tabbedArea">    
 
-      <h3>Overall Comments</h3>
+      <h3><%= I18n.t("marker.overall_comments") %></h3>
       
       <p><%=simple_format(h(result.overall_comment))%></p>
 
-      <h3>Current Annotations</h3>
-      <p>Current annotations across all submission files. Click on the line number to jump to the location in the file.</p>
+      <h3><%= I18n.t("marker.current_annotations") %></h3>
+      <p><%= I18n.t("marker.across_all_submission_files") %></p>
     
       <ul id="annotation_summary_list">
       </ul>
@@ -34,8 +34,8 @@
  
   <div id="mark_pane" class="float_left">
     <ul id="mark_tabs" class="subsection_tabs">
-      <li class="tab"><a href="#mark_viewer">Marks</a></li>
-      <li class="tab"><a href="#summary_viewer">Summary</a></li>
+      <li class="tab"><a href="#mark_viewer"><%= I18n.t("marker.marks.marks") %></a></li>
+      <li class="tab"><a href="#summary_viewer"><%= I18n.t("marker.marks.summary") %></a></li>
     </ul>  
     <div id="mark_viewer" class="tabbedArea">
       <div id="mark_criteria_pane">

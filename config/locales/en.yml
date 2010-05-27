@@ -17,6 +17,8 @@ en:
     password_not_blank: "Your password must not be blank."
     username_not_blank: "Your username must not be blank."
     username_and_password_not_blank: "Your username and password must not be blank."
+    session_expired:     "Your session has expired. Please log in"
+    please_log_in:       "Please log in"
    
     # app/views/layouts/_header.html.erb
     log_out:            "Log out"
@@ -169,6 +171,58 @@ en:
     release_marks: "Release Marks"
     unrelease_marks: "Unrelease Marks"
     
+    #app/views/assignments/grader_index.html
+    grade_assignments: "Grade Assignments"
+    
+    #app/views/resluts/marker/
+    marker:
+      new_annot: "New Annot."
+      overall_comments: "Overall Comments"
+      current_annotations: "Current Annotations"
+      across_all_submission_files: "Current annotations across all submission files. Click on the line number to jump to the location in the file."
+      annot_summary: "Annot. Summary"
+      source_code: "Source Code"
+      previous_submission:  "Previous Submission"
+      next_submission:      "Next Submission"
+      marking_status:       "Marking Status:"
+      notes:                "Notes (<span id=\"number_of_notes\">{{notes}}</span>)"
+      marks:
+        total_mark: "Total Mark:"
+        released:   "Released:"
+        comment: "Comment"
+        percentage: "Percentage"
+        invalid_mark: "Invalid Mark!"
+        add_extra_mark: "Add Extra Mark"
+        mark: "Mark"
+        marks: "Marks"
+        summary: "Summary"
+        submission_rule: "Submission Rule"
+        expand_all: "Expand All"
+        collapse_all: "Collapse All"
+        expand_unmarked: "Expand Unmarked"
+        confirm_remove_mark: "Are you sure you want to remove this extra mark?"
+        confirm_remove_percentage: "Are you sure you want to remove this extra percentage?"
+        subtotal: "Subtotal: "
+        bonus_deductions: "Bonus/Deductions"
+        total_extra_marks: "Total Extra Marks:&nbsp;"
+        total_extra_percentages: "Total Extra Percentage:&nbsp;"
+        translated_to_points: "Translated to Points:"
+        final_mark: "Final Mark&nbsp;"
+      annotation:
+        from_line_to: "{{file_path}}: Line {{line_start}} to {{line_end}}"
+        no_annotation_in_this_category: "There are no annotations in this category"
+        new_annotation: "Create new annotation"
+        annotation_category: "Annotation Category"
+        sure_to_remove: "Are you sure you want to remove this annotation?"
+        submit_edit: "Submit Edit"
+        change_across_submissions: "This change will propogate across all submissions marked with this annotation.  Is this OK?"
+        
+    #app/views/results/common
+    common:
+      loading_code: "Loading Code..."
+      submission_file: "Submission File:"
+      test_results: "Test Results:"
+      no_file_in_repository: "[No files in repository]"
     
     seperate_multiple_with_commas:  "Seperate multiple user names with commas"
     csv_valid_format:   "There was a problem parsing the CSV file you uploaded.  Please ensure that it's a valid CSV format, and that each line ends with a carriage-return line-feed set of characters.  No changes were made. "
@@ -206,9 +260,17 @@ en:
       select_clear: "Click here to clear selection."
 
     browse_submissions:
+      find_different_revision: "Find a different revision"
+      find_by_revision_timestamp: "Find by Revision Timestamp"
+      find_by_revision_number:    "Find by Revision Number"
+      viewing_revision:           "Viewing Revision: #<span id=\"current_revision_number_display\">{{revision_number}}</span>"
+      current_path:         "Current Path:"
+      root:                 "[root]"
+      collect_and_grab:     "Collect and Grade This Revision"
       release_marks:        "Release Marks"
       unrelease_marks:      "Unrelease Marks"
       group_name:           "Group Name"
+      repository_name:      "Repository: {{repository}}"
       repository:           "Repository"
       commit_date:          "Commit Date"
       marking_state:        "Marking State"
@@ -231,6 +293,11 @@ en:
       filter:               "Filter :"
       show:                 "Show"
       per_page:             "per page"
+      filename:             "Filename"
+      last_revised:         "Last Revised"
+      revised_by:           "Revised By"
+      replace:              "Replace"
+      delete:               "Delete"
 
     grade_entry_forms:
       blank_field: "can't be blank"

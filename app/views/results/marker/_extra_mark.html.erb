@@ -10,6 +10,6 @@
     <%=extra_mark.extra_mark %>
   </td>
   <td>
-    <%= link_to_remote "Remove", :url => {:action => "remove_extra_mark", :id => extra_mark.id}, :confirm => "Are you sure you want to remove this extra mark?" %>
+    <%= link_to_remote I18n.t("remove"), :url => {:action => "remove_extra_mark", :id => extra_mark.id}, :confirm => I18n.t("marker.marks.confirm_remove_mark") %>
   </td>
 </tr>

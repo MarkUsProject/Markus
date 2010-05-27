@@ -1,13 +1,13 @@
 <% annots.each do |annot| %>
   <li class="<%= cycle('annotations1', 'annotations2') %>">
   
-    <p class="lineNumber"><%=link_to_function "#{File.join(annot.submission_file.path, annot.submission_file.filename)}: Line #{annot.line_start} to #{annot.line_end}", "load_submitted_file_and_focus(#{annot.submission_file.id}, #{annot.line_start})"%></p>
+    <p class="lineNumber"><%=link_to_function I18n.t("marker.annotation.from_line_to", :file_path => File.join(annot.submission_file.path, annot.submission_file.filename), :line_start =>annot.line_start, :line_end =>annot.line_end), "load_submitted_file_and_focus(#{annot.submission_file.id}, #{annot.line_start})"%></p>
     <p class="annotationContent" id="annotation_text_content_display_<%=h(annot.annotation_text.id)%>">
     <%=simple_format(h(CGI.unescape(annot.annotation_text.content)))%>
     </p>
-    <p class="manageAnnotations"><%=link_to_function "Edit", "$('annotation_text_content_edit_#{annot.annotation_text.id}').show();$('annotation_text_content_display_#{annot.annotation_text.id}').hide();"%>
+    <p class="manageAnnotations"><%=link_to_function I18n.t("edit"), "$('annotation_text_content_edit_#{annot.annotation_text.id}').show();$('annotation_text_content_display_#{annot.annotation_text.id}').hide();"%>
     &middot;
-    <%=link_to_remote "Remove", :url => {:controller => "annotations", :action=>"destroy", :id=>annot.id, :submission_file_id=>@submission_file_id}, :confirm => "Are you sure you want to remove this annotation?"%>
+    <%=link_to_remote I18n.t("remove"), :url => {:controller => "annotations", :action=>"destroy", :id=>annot.id, :submission_file_id=>@submission_file_id}, :confirm => I18n.t("marker.annotation.sure_to_remove") %>
     </p>
 
     <div id="annotation_text_content_edit_<%=annot.annotation_text.id%>" class="annotation_text_content_editor">
@@ -19,8 +19,8 @@
         <p class="manageAnnotations"><%= f.text_area :content, :cols => 60, :rows => 5 %></p>
         
         <p class="manageAnnotations">
-        <%= submit_tag "Submit Edit", :confirm => "This change will propogate across all submissions marked with this annotation.  Is this OK?" %>
-        <input type="reset" value="Cancel" onClick="$('annotation_text_content_edit_<%=h(annot.annotation_text.id)%>').hide();$('annotation_text_content_display_<%=h(annot.annotation_text.id)%>').show();">
+        <%= submit_tag I18n.t("marker.annotation.submit_edit") , :confirm => I18n.t("marker.annotation.change_across_submissions") %>
+        <input type="reset" value="<%= I18n.t("cancel") %>" onClick="$('annotation_text_content_edit_<%=h(annot.annotation_text.id)%>').hide();$('annotation_text_content_display_<%=h(annot.annotation_text.id)%>').show();">
         </p>
       
       <% end %>

@@ -6,9 +6,9 @@ document.observe("dom:loaded", function() {
   files_table = new FilterTable({
     table_id: $('files'),
     headers: {
-      filename: {display: "Filename", sortable: true},
-      last_modified_date: {display: "Last Revised", sortable: true},
-      revision_by: {display: "Revised By", sortable: true}
+      filename: {display: "<%= I18n.t('browse_submissions.filename') %>", sortable: true},
+      last_modified_date: {display: "<%= I18n.t('browse_submissions.last_revised') %>", sortable: true},
+      revision_by: {display: "<%= I18n.t('browse_submissions.revised_by') %>", sortable: true}
     },
     can_select: false,
     can_select_all: false,
