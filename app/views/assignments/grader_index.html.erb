@@ -1,4 +1,4 @@
-<div id="title_bar"><h1>Grade Assignments</h1></div>
+<div id="title_bar"><h1><%= I18n.t("grade_assignments") %></h1></div>
 <div class="wrapLeft">
   <%= render :partial => "assignments/list_manage", 
     :locals => { :controller => 'submissions', :action => 'browse' } -%>

@@ -11,44 +11,44 @@
 <% end %>
 
 <div id="title_bar">
-  <h1>Repository: <%= @repository_name %></h1>
+  <h1><%= I18n.t("browse_submissions.repository_name", :repository => @repository_name) %></h1>
 </div>
 
 <div class="wrapLeft">
   <div id="repo_browser_controls">
     <fieldset>
-      <legend>Find a different revision</legend>
+      <legend><%= I18n.t("browse_submissions.find_different_revision") %></legend>
 
       <div id="find_revision_error" class="error" style="display:none;">
       </div>
 
       <% form_tag :action => 'repo_browser', :id => @grouping.id, :find_revision_by => 'revision_timestamp' do %>
      <%= calendar_date_select_tag "revision_timestamp", @revision_timestamp, :time => true %> 
-     <%= submit_tag "Find by Revision Timestamp" %>
+     <%= submit_tag I18n.t("browse_submissions.find_by_revision_timestamp") %>
      <% end %>
      
       <% form_tag :action => 'repo_browser', :id => @grouping.id, :find_revision_by => 'revision_number' do %>
      
      <%= text_field_tag "revision_number", @revision_number %>
-     <%= submit_tag "Find by Revision Number" %>
+     <%= submit_tag I18n.t("browse_submissions.find_by_revision_number") %>
      <% end %>
     </fieldset>
   </div>
 <div class="global_actions">
-  <h2>Viewing Revision: #<span id="current_revision_number_display"><%=@revision_number%></span> (<span id="current_revision_timestamp_display"><%= I18n.l(@revision_timestamp, :format => :long_date) %></span>)</h2>
-  <span id="loading_list"><%= image_tag("spinner.gif") %> Loading list...
+  <h2><%= I18n.t("browse_submissions.viewing_revision", :revision_number => @revision_number) %> (<span id="current_revision_timestamp_display"><%= I18n.l(@revision_timestamp, :format => :long_date) %></span>)</h2>
+  <span id="loading_list"><%= image_tag("spinner.gif") %><%=h I18n.t("groups.loading_list") %>
   </span>
   
 <div id="directory_selector">
 <p>
-  Current Path: 
+  <%= I18n.t("browse_submissions.current_path") %> 
   <% path_memory = '/' 
      links = [] 
      @path.split('/').each do |folder| 
      path_memory = File.join(path_memory, folder) 
      links.push(link_to folder, :action => 'repo_browser', :path => path_memory, :id => @grouping.id, :revision_number => @revision_number) 
   end %>
-  <%= link_to '[root]', :action => 'repo_browser', :id => @grouping.id, :path => '/', :revision_number => @revision_number %>
+  <%= link_to I18n.t("browse_submissions.root"), :action => 'repo_browser', :id => @grouping.id, :path => '/', :revision_number => @revision_number %>
   <%= links.join('/')%>
 
 </p>
@@ -56,7 +56,7 @@
   
   <% form_tag :action => "manually_collect_and_begin_grading", :id => @grouping.id do %>
   <%= hidden_field_tag "current_revision_number", @revision_number %>
-  <%= submit_tag "Collect and Grade This Revision", :confirm => t(:collect_and_grade_overwrite_warning) %>
+  <%= submit_tag I18n.t("browse_submissions.collect_and_grab"), :confirm => t(:collect_and_grade_overwrite_warning) %>
   <% end %>
 </div>
 

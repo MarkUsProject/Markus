@@ -1,6 +1,6 @@
 <ul class="annotation_text_list" >
   <% if annotation_category.annotation_texts.size == 0: %>
-    There are no annotations in this category
+    <%= I18n.t("marker.annotation.no_annotation_in_this_category") %>
   <% end %>
   
   <% annotation_category.annotation_texts.each do |annotation_text| %>

@@ -10,6 +10,6 @@
     <%=extra_percentage.extra_mark %>%
   </td>
   <td>
-    <%= link_to_remote "Remove", :url => {:action => "remove_extra_mark", :id => extra_percentage.id}, :confirm => "Are you sure you want to remove this extra percentage?" %>
+    <%= link_to_remote I18n.t("remove"), :url => {:action => "remove_extra_mark", :id => extra_percentage.id}, :confirm => I18n.t("marker.marks.confirm_remove_percentage") %>
   </td>
 </tr>

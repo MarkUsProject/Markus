@@ -10,6 +10,8 @@ class Result < ActiveRecord::Base
   has_many :marks
   has_many :extra_marks
   validates_presence_of :marking_state
+  validates_inclusion_of :marking_state, :in => [Result::MARKING_STATES[:complete], 
+    Result::MARKING_STATES[:partial],   Result::MARKING_STATES[:unmarked]]
   before_update  :unrelease_partial_results
   
   # calculate the total mark for this assignment

@@ -50,9 +50,9 @@ module SessionHandler
       
       # figure out how we want to explain this to users
       if session_expired?
-        flash[:login_notice] = "Your session has expired. Please log in"
+        flash[:login_notice] = I18n.t("session_expired")
       else
-        flash[:login_notice] = "Please log in"
+        flash[:login_notice] = I18n.t("please_log_in")
       end
       
       if request.xhr?

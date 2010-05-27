@@ -6,12 +6,12 @@ document.observe("dom:loaded", function() {
   files_table = new FilterTable({
     table_id: $('files'),
     headers: {
-      filename: {display: "Filename", sortable: true},
-      last_modified_date: {display: "Last Revised", sortable: true},
-      revision_by: {display: "Revised By", sortable: true}
+      filename: {display: "<%= I18n.t('browse_submissions.filename') %>", sortable: true},
+      last_modified_date: {display: "<%= I18n.t('browse_submissions.last_revised') %>", sortable: true},
+      revision_by: {display: "<%= I18n.t('browse_submissions.revised_by') %>", sortable: true}
       <% if !@grouping.repository_external_commits_only? %>,
-      replace: {display: "Replace", sortable: false},
-      delete_file: {display: "Delete", sortable :false, row_class: "delete_row"}
+      replace: {display: "<%= I18n.t('browse_submissions.replace') %>", sortable: false},
+      delete_file: {display: "<%= I18n.t('browse_submissions.delete') %>", sortable :false, row_class: "delete_row"}
       <% end %>
     },
     can_select: false,
