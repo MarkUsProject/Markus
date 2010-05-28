@@ -33,7 +33,7 @@ module MarkusConfigurator
   end
   
   def markus_config_repository_permission_file
-    return REPOSITORY_PERMISSION_FILE || File.join(repository_storage, "svn_authz")
+    return REPOSITORY_PERMISSION_FILE || File.join(markus_config_repository_storage, "svn_authz")
   end
   
   ######################################

@@ -250,7 +250,7 @@
         <%
         # Display the URL of this group's repository if applicable
 
-        if @grouping.group.repository_external_commits_only? %> 
+        if @grouping.repository_external_commits_only? %> 
             <h3>URL to your group's repository</h3>
               <div class="sub_block">
                 <p><%= h(@grouping.group.repository_external_access_url) %></p>

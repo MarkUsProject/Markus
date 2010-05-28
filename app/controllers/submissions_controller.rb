@@ -68,19 +68,21 @@ class SubmissionsController < ApplicationController
     @previous_path = File.split(@path).first
     @repository_name = @grouping.group.repository_name
     begin
-      if !params[:revision_timestamp].nil?
-        @revision_number = @grouping.group.repo.get_revision_by_timestamp(Time.parse(params[:revision_timestamp])).revision_number
-      elsif !params[:revision_number].nil?
-        @revision_number = params[:revision_number].to_i
-      else
-        @revision_number = @grouping.group.repo.get_latest_revision.revision_number
+      @grouping.group.access_repo do |repo|
+        if !params[:revision_timestamp].nil?
+          @revision_number = repo.get_revision_by_timestamp(Time.parse(params[:revision_timestamp])).revision_number
+        elsif !params[:revision_number].nil?
+          @revision_number = params[:revision_number].to_i
+        else
+          @revision_number = repo.get_latest_revision.revision_number
+        end
+        @revision = repo.get_revision(@revision_number)
+        @revision_timestamp = @revision.timestamp
       end
-      @revision = @grouping.group.repo.get_revision(@revision_number)
-      @revision_timestamp = @revision.timestamp
     rescue Exception => e
       flash[:error] = e.message
-      @revision_number = @grouping.group.repo.get_latest_revision.revision_number
-      @revision_timestamp = @grouping.group.repo.get_latest_revision.timestamp
+      @revision_number = repo.get_latest_revision.revision_number
+      @revision_timestamp = repo.get_latest_revision.timestamp
     end
   end
   
@@ -90,23 +92,24 @@ class SubmissionsController < ApplicationController
     @path = params[:path] || '/'
     @revision_number = params[:revision_number]
     @previous_path = File.split(@path).first
-    repo = @grouping.group.repo
-    begin
-      @revision = repo.get_revision(params[:revision_number].to_i)
-      @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, @path))
-      @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
-    rescue Exception => @find_revision_error
-      render :action => 'repo_browser/find_revision_error'
-      return
+    @grouping.group.access_repo do |repo|
+      begin
+        @revision = repo.get_revision(params[:revision_number].to_i)
+        @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, @path))
+        @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
+      rescue Exception => @find_revision_error
+        render :action => 'repo_browser/find_revision_error'
+        return
+      end
+      @table_rows = {}
+      @files.sort.each do |file_name, file|
+        @table_rows[file.id] = construct_repo_browser_table_row(file_name, file)
+      end
+      @directories.sort.each do |directory_name, directory|
+        @table_rows[directory.id] = construct_repo_browser_directory_table_row(directory_name, directory)
+      end
+      render :action => 'repo_browser/populate_repo_browser'
     end
-    @table_rows = {} 
-    @files.sort.each do |file_name, file|
-      @table_rows[file.id] = construct_repo_browser_table_row(file_name, file)
-    end
-    @directories.sort.each do |directory_name, directory|
-      @table_rows[directory.id] = construct_repo_browser_directory_table_row(directory_name, directory)
-    end
-    render :action => 'repo_browser/populate_repo_browser'
   end
  
   def file_manager
@@ -122,14 +125,15 @@ class SubmissionsController < ApplicationController
     user_group = @grouping.group
     @path = params[:path] || '/'
     
-    repo = user_group.repo
-    @revision = repo.get_latest_revision
-    @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
-    @missing_assignment_files = []
-    @assignment.assignment_files.each do |assignment_file|
-      if !@revision.path_exists?(File.join(@assignment.repository_folder,
-      assignment_file.filename))
-        @missing_assignment_files.push(assignment_file)
+    user_group.access_repo do |repo|
+      @revision = repo.get_latest_revision
+      @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
+      @missing_assignment_files = []
+      @assignment.assignment_files.each do |assignment_file|
+        if !@revision.path_exists?(File.join(@assignment.repository_folder,
+        assignment_file.filename))
+          @missing_assignment_files.push(assignment_file)
+        end
       end
     end
   end
@@ -142,24 +146,25 @@ class SubmissionsController < ApplicationController
     @path = params[:path] || '/'
     @previous_path = File.split(@path).first
     
-    repo = user_group.repo
-    if revision_number.nil?
-      @revision = repo.get_latest_revision
-    else
-     @revision = repo.get_revision(revision_number.to_i)
-    end
-    @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, @path))
-    @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
-    @table_rows = {} 
-    @files.sort.each do |file_name, file|
-      @table_rows[file.id] = construct_file_manager_table_row(file_name, file)
-    end
-    if @grouping.group.repository_external_commits_only?
-      @directories.sort.each do |directory_name, directory|
-        @table_rows[directory.id] = construct_file_manager_dir_table_row(directory_name, directory)
+    user_group.access_repo do |repo|
+      if revision_number.nil?
+        @revision = repo.get_latest_revision
+      else
+       @revision = repo.get_revision(revision_number.to_i)
       end
+      @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, @path))
+      @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
+      @table_rows = {}
+      @files.sort.each do |file_name, file|
+        @table_rows[file.id] = construct_file_manager_table_row(file_name, file)
+      end
+      if @grouping.repository_external_commits_only?
+        @directories.sort.each do |directory_name, directory|
+          @table_rows[directory.id] = construct_file_manager_dir_table_row(directory_name, directory)
+        end
+      end
+      render :action => 'file_manager_populate'
     end
-    render :action => 'file_manager_populate'
   end
   
   def manually_collect_and_begin_grading
@@ -233,93 +238,94 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.find(assignment_id)
     path = params[:path] || '/'
     grouping = current_user.accepted_grouping_for(assignment_id)
-    if grouping.group.repository_external_commits_only?
+    if grouping.repository_external_commits_only?
       raise "MarkUs is only accepting external submits"
     end
     if !grouping.is_valid?
       redirect_to :action => :file_manager, :id => assignment_id
       return
     end
-    repo = grouping.group.repo
-       
-    assignment_folder = File.join(assignment.repository_folder, path)
-    
-    # Get the revision numbers for the files that we've seen - these
-    # values will be the "expected revision numbers" that we'll provide
-    # to the transaction to ensure that we don't overwrite a file that's
-    # been revised since the user last saw it.
-    file_revisions = params[:file_revisions].nil? ? [] : params[:file_revisions]
-    
-    # The files that will be replaced - just give an empty array
-    # if params[:replace_files] is nil
-    replace_files = params[:replace_files].nil? ? {} : params[:replace_files]
+    grouping.group.access_repo do |repo|
 
-    # The files that will be deleted
-    delete_files = params[:delete_files].nil? ? {} : params[:delete_files]
+      assignment_folder = File.join(assignment.repository_folder, path)
 
-    # The files that will be added
-    new_files = params[:new_files].nil? ? {} : params[:new_files]
-    
-    # Create transaction, setting the author.  Timestamp is implicit.
-    txn = repo.get_transaction(current_user.user_name)
+      # Get the revision numbers for the files that we've seen - these
+      # values will be the "expected revision numbers" that we'll provide
+      # to the transaction to ensure that we don't overwrite a file that's
+      # been revised since the user last saw it.
+      file_revisions = params[:file_revisions].nil? ? [] : params[:file_revisions]
 
-    log_messages = []
-    begin
-      # delete files marked for deletion
-      delete_files.keys.each do |filename|
-        txn.remove(File.join(assignment_folder, filename), file_revisions[filename])
-        log_messages.push(I18n.t("markus_logger.student_deleted_file", :user_name => current_user.user_name, :file_name => filename, :assignment => assignment.short_identifier))
-      end
-    
-      # Replace files
-      replace_files.each do |filename, file_object|
-        # Sometimes the file pointer of file_object is at the end of the file.
-        # In order to avoid empty uploaded files, rewind it to be save.
-        file_object.rewind
-        txn.replace(File.join(assignment_folder, filename), file_object.read, file_object.content_type, file_revisions[filename])
-        log_messages.push(I18n.t("markus_logger.student_replaced_file", :user_name => current_user.user_name, :file_name => filename, :assignment => assignment.short_identifier))
-      end
+      # The files that will be replaced - just give an empty array
+      # if params[:replace_files] is nil
+      replace_files = params[:replace_files].nil? ? {} : params[:replace_files]
 
-      # Add new files
-      new_files.each do |file_object|
-        # sanitize_file_name in SubmissionsHelper
-        if file_object.original_filename.nil?
-          raise "Invalid file name on submitted file"
+      # The files that will be deleted
+      delete_files = params[:delete_files].nil? ? {} : params[:delete_files]
+
+      # The files that will be added
+      new_files = params[:new_files].nil? ? {} : params[:new_files]
+
+      # Create transaction, setting the author.  Timestamp is implicit.
+      txn = repo.get_transaction(current_user.user_name)
+
+      log_messages = []
+      begin
+        # delete files marked for deletion
+        delete_files.keys.each do |filename|
+          txn.remove(File.join(assignment_folder, filename), file_revisions[filename])
+          log_messages.push(I18n.t("markus_logger.student_deleted_file", :user_name => current_user.user_name, :file_name => filename, :assignment => assignment.short_identifier))
         end
-        # Sometimes the file pointer of file_object is at the end of the file.
-        # In order to avoid empty uploaded files, rewind it to be save.
-        file_object.rewind
-        txn.add(File.join(assignment_folder, sanitize_file_name(file_object.original_filename)), file_object.read, file_object.content_type)
-        log_messages.push(I18n.t("markus_logger.student_submitted_file", :user_name => current_user.user_name, :file_name => file_object.original_filename, :assignment => assignment.short_identifier))
-      end
 
-      # finish transaction
-      if !txn.has_jobs?
-        flash[:transaction_warning] = "No actions were detected in the last submit.  Nothing was changed."
+        # Replace files
+        replace_files.each do |filename, file_object|
+          # Sometimes the file pointer of file_object is at the end of the file.
+          # In order to avoid empty uploaded files, rewind it to be save.
+          file_object.rewind
+          txn.replace(File.join(assignment_folder, filename), file_object.read, file_object.content_type, file_revisions[filename])
+          log_messages.push(I18n.t("markus_logger.student_replaced_file", :user_name => current_user.user_name, :file_name => filename, :assignment => assignment.short_identifier))
+        end
+
+        # Add new files
+        new_files.each do |file_object|
+          # sanitize_file_name in SubmissionsHelper
+          if file_object.original_filename.nil?
+            raise "Invalid file name on submitted file"
+          end
+          # Sometimes the file pointer of file_object is at the end of the file.
+          # In order to avoid empty uploaded files, rewind it to be save.
+          file_object.rewind
+          txn.add(File.join(assignment_folder, sanitize_file_name(file_object.original_filename)), file_object.read, file_object.content_type)
+          log_messages.push(I18n.t("markus_logger.student_submitted_file", :user_name => current_user.user_name, :file_name => file_object.original_filename, :assignment => assignment.short_identifier))
+        end
+
+        # finish transaction
+        if !txn.has_jobs?
+          flash[:transaction_warning] = "No actions were detected in the last submit.  Nothing was changed."
+          redirect_to :action => "file_manager", :id => assignment_id
+          return
+        end
+        if !repo.commit(txn)
+          flash[:update_conflicts] = txn.conflicts
+        else
+          flash[:success] = I18n.t('update_files.success')
+          # flush log messages
+          m_logger = MarkusLogger.instance
+          log_messages.each do |msg|
+            m_logger.log(msg)
+          end
+        end
+
+        # Are we past collection time?
+        if assignment.submission_rule.can_collect_now?
+          flash[:commit_notice] = assignment.submission_rule.commit_after_collection_message(grouping)
+        end
         redirect_to :action => "file_manager", :id => assignment_id
-        return
-      end
-      if !repo.commit(txn)
-        flash[:update_conflicts] = txn.conflicts
-      else
-        flash[:success] = I18n.t('update_files.success')
-        # flush log messages
-        m_logger = MarkusLogger.instance
-        log_messages.each do |msg|
-          m_logger.log(msg)
-        end
-      end
 
-      # Are we past collection time?    
-      if assignment.submission_rule.can_collect_now?
-        flash[:commit_notice] = assignment.submission_rule.commit_after_collection_message(grouping)
+      rescue Exception => e
+        raise e
+        flash[:commit_error] = e.message
+        redirect_to :action => "file_manager", :id => assignment_id
       end
-      redirect_to :action => "file_manager", :id => assignment_id
-      
-    rescue Exception => e
-      raise e
-      flash[:commit_error] = e.message
-      redirect_to :action => "file_manager", :id => assignment_id
     end
   end
   
@@ -331,26 +337,28 @@ class SubmissionsController < ApplicationController
 
     revision_number = params[:revision_number]
     path = params[:path] || '/'
-    repo = @grouping.group.repo
-    if revision_number.nil?
-      @revision = repo.get_latest_revision
-    else
-      @revision = repo.get_revision(revision_number.to_i)
-    end
+    @grouping.group.access_repo do |repo|
+      if revision_number.nil?
+        @revision = repo.get_latest_revision
+      else
+        @revision = repo.get_revision(revision_number.to_i)
+      end
+
+      begin
+       file = @revision.files_at_path(File.join(@assignment.repository_folder, path))[params[:file_name]]
+       file_contents = repo.download_as_string(file)
+      rescue Exception => e
+        render :text => "Could not download #{params[:file_name]}: #{e.message}.  File may be missing."
+        return
+      end
     
-    begin 
-     file = @revision.files_at_path(File.join(@assignment.repository_folder, path))[params[:file_name]]
-     file_contents = repo.download_as_string(file)
-    rescue Exception => e
-      render :text => "Could not download #{params[:file_name]}: #{e.message}.  File may be missing."
-      return
-    end
-    if SubmissionFile.is_binary?(file_contents)
-      # If the file appears to be binary, send it as a download
-      send_data file_contents, :disposition => 'attachment', :filename => params[:file_name]  
-    else
-      # Otherwise, blast it out to the screen
-      render :text => file_contents, :layout => 'sanitized_html'
+      if SubmissionFile.is_binary?(file_contents)
+        # If the file appears to be binary, send it as a download
+        send_data file_contents, :disposition => 'attachment', :filename => params[:file_name]
+      else
+        # Otherwise, blast it out to the screen
+        render :text => file_contents, :layout => 'sanitized_html'
+      end
     end
   end 
 

@@ -1,4 +1,4 @@
-if @grouping.group.repository_external_commits_only?
+if @grouping.repository_external_commits_only?
   page.replace_html 'directories_tbody', :partial => 'submissions/table_row/exit_directory'
 end
 page.call "populate", @table_rows.to_json

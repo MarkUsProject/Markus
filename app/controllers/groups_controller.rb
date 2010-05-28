@@ -1,5 +1,6 @@
 require 'fastercsv'
 require 'auto_complete'
+require 'csv_invalid_line_error'
 
 # Manages actions relating to editing and modifying 
 # groups.
@@ -213,47 +214,60 @@ class GroupsController < ApplicationController
     redirect_to :action => 'manage', :id => params[:id]
   end
   
-  # Allows the user to upload a csv file listing groups.
+  # Allows the user to upload a csv file listing groups. If group_name is equal
+  # to the only member of a group and the assignment is configured with
+  # allow_web_subits == false, the student's username will be used as the
+  # repository name. If MarkUs is not repository admin, the repository name as
+  # specified by the second field will be used instead.
   def csv_upload
     flash[:error] = nil # reset from previous errors
     flash[:invalid_lines] = nil
     @assignment = Assignment.find(params[:id])
     if request.post? && !params[:group].blank?
-      # make this transactional
+      # Transaction allows us to potentially roll back if something
+      # really bad happens.
       ActiveRecord::Base.transaction do
-        # if there exist groupings, delete them
+        # Old groupings get wiped out
         if !@assignment.groupings.nil? && @assignment.groupings.length > 0
           @assignment.groupings.destroy_all
         end
-        num_update = 0
-        flash[:invalid_lines] = []  # store lines that were not processed
-        
-        begin # start unsave code
+        flash[:invalid_lines] = [] # Store errors of lines in CSV file
+        begin
           # Loop over each row, which lists the members to be added to the group.
-          line_nr = 1
-          flash[:users_not_found] = [] # contains a list of user_name(s) not found in DB
-          FasterCSV.parse(params[:group][:grouplist]) do |row|
-            retval = @assignment.add_csv_group(row)
-            if retval == nil || retval.instance_of?(Array)
-              if !retval.nil?
-                flash[:invalid_lines] << "Line #{line_nr}: User(s) not found: " +retval.join(", ")
-              else
-                flash[:invalid_lines] << line_nr
+          FasterCSV.parse(params[:group][:grouplist]).each_with_index do |row, line_nr|
+            begin
+              # Potentially raises CSVInvalidLineError
+              collision_error = @assignment.add_csv_group(row)
+              if !collision_error.nil?
+                flash[:invalid_lines] << I18n.t("csv.line_nr_csv_file_prefix",
+                                          { :line_number => line_nr + 1 }) + " #{collision_error}"
               end
-            else
-              num_update += 1
+            rescue CSVInvalidLineError => e
+              flash[:invalid_lines] << I18n.t("csv.line_nr_csv_file_prefix",
+                                          { :line_number => line_nr + 1 }) + " #{e.message}"
             end
-            line_nr += 1
           end
-          msg = "#{num_update} group(s) added."
-          msg += flash[:invalid_lines].length "lines contained errors." if flash[:invalid_lines].length > 0
-          flash[:upload_notice] = msg
-          flash[:invalid_lines] = nil if flash[:invalid_lines].length == 0
-        rescue Exception
-          flash[:error] = "There was an error regarding CSV upload."
+          @assignment.reload # Need to reload to get newly created groupings
+          number_groupings_added = @assignment.groupings.length
+          invalid_lines_count = flash[:invalid_lines].length
+          if invalid_lines_count == 0
+            flash[:invalid_lines] = nil 
+          end
+          if number_groupings_added > 0
+            flash[:upload_notice] = I18n.t("csv.groups_added_msg",
+                  { :number_groups => number_groupings_added, 
+                    :number_lines => invalid_lines_count })
+          end
+        rescue Exception => e
+          # We should only get here if something *really* bad/unexpected
+          # happened.
+          flash[:error] = I18n.t("csv.groups_unrecoverable_error")
           raise ActiveRecord::Rollback
         end
       end
+      # Need to reestablish repository permissions.
+      # This is not handled by the roll back.
+      @assignment.update_repository_permissions_forall_groupings
     end
     redirect_to :action => "manage", :id => params[:id]
   end

@@ -9,7 +9,7 @@ document.observe("dom:loaded", function() {
       filename: {display: "Filename", sortable: true},
       last_modified_date: {display: "Last Revised", sortable: true},
       revision_by: {display: "Revised By", sortable: true}
-      <% if !@grouping.group.repository_external_commits_only? %>,
+      <% if !@grouping.repository_external_commits_only? %>,
       replace: {display: "Replace", sortable: false},
       delete_file: {display: "Delete", sortable :false, row_class: "delete_row"}
       <% end %>

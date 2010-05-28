@@ -366,34 +366,38 @@ class Grouping < ActiveRecord::Base
     repo = self.group.repo
     rev = repo.get_latest_revision
     files = rev.files_at_path(File.join(File.join(self.assignment.repository_folder, path)))
+    repo.close()
     return files.keys.length
   end
 
   # Returns last modified date of the assignment_folder in this grouping's repository
   def assignment_folder_last_modified_date
-    rev = self.group.repo.get_latest_revision
-    
+    repo = self.group.repo
+    rev = repo.get_latest_revision
     # get the full path of repository folder
     path = self.assignment.repository_folder
-    
+
     # split "repo_folder_path" into two parts
     parent_path = File.dirname(path)
     folder_name = File.basename(path)
-    
+
     # turn "parent_path" into absolute path
-    parent_path = File.expand_path(parent_path, "/")
-    
-    return rev.directories_at_path(parent_path)[folder_name].last_modified_date
+    parent_path = repo.expand_path(parent_path, "/")
+    last_date = rev.directories_at_path(parent_path)[folder_name].last_modified_date
+    repo.close()
+    return last_date
   end
 
   # Returns a list of missing assignment_files yet to be submitted
   def missing_assignment_files
     missing_assignment_files = []
-    rev = self.group.repo.get_latest_revision
-    assignment = self.assignment
-    assignment.assignment_files.each do |assignment_file|
-      if !rev.path_exists?(File.join(assignment.repository_folder, assignment_file.filename))
-        missing_assignment_files.push(assignment_file)
+    self.group.access_repo do |repo|
+      rev = repo.get_latest_revision
+      assignment = self.assignment
+      assignment.assignment_files.each do |assignment_file|
+        if !rev.path_exists?(File.join(assignment.repository_folder, assignment_file.filename))
+          missing_assignment_files.push(assignment_file)
+        end
       end
     end
     return missing_assignment_files
@@ -446,7 +450,7 @@ class Grouping < ActiveRecord::Base
   def update_repository_permissions
     # we do not need to do anything if we are not accepting external
     # command-line commits
-    return unless self.group.repository_external_commits_only?
+    return unless self.write_repo_permissions?
     
     self.reload # VERY IMPORTANT! Make sure grouping object is not stale
     
@@ -464,17 +468,34 @@ class Grouping < ActiveRecord::Base
 
     # create folder only if we are repo admin
     if self.group.repository_admin?
-      revision = self.group.repo.get_latest_revision
-      assignment_folder = File.join('/', assignment.repository_folder)
-      
-      if revision.path_exists?(assignment_folder)
-        return true
-      else
-        txn = self.group.repo.get_transaction("markus")
-        txn.add_path(assignment_folder)
-        return self.group.repo.commit(txn)  
+      self.group.access_repo do |repo|
+        revision = repo.get_latest_revision
+        assignment_folder = File.join('/', assignment.repository_folder)
+
+        if revision.path_exists?(assignment_folder)
+          return true
+        else
+          txn = self.group.repo.get_transaction("markus")
+          txn.add_path(assignment_folder)
+          return self.group.repo.commit(txn)
+        end
       end
     end
+  end
+
+  # Returns true, if and only if the configured repository setup
+  # allows for externally accessible repositories, in which case
+  # file submissions via the Web interface are not permitted. For
+  # now, this works for Subversion repositories only.
+  def repository_external_commits_only?
+    assignment = self.assignment
+    return !assignment.allow_web_submits
+  end
+
+  # Should we write repository permissions for this grouping?
+  def write_repo_permissions?
+    return MarkusConfigurator.markus_config_repository_admin? &&
+           self.repository_external_commits_only?
   end
   
   private
@@ -491,9 +512,11 @@ class Grouping < ActiveRecord::Base
     memberships.each do |member|
       # Add repository read and write permissions for user,
       # if we are required to do so
-      if self.group.repository_external_commits_only?
+      if self.write_repo_permissions?
         begin
-          self.group.repo.add_user(member.user.user_name, Repository::Permission::READ_WRITE)
+          self.group.access_repo do |repo|
+            repo.add_user(member.user.user_name, Repository::Permission::READ_WRITE)
+          end
         rescue Repository::UserAlreadyExistent
           # ignore case if user has permissions already
         end
@@ -518,15 +541,17 @@ class Grouping < ActiveRecord::Base
     end
     memberships.each do |member|
       # Revoke permissions for students
-      if self.group.repository_external_commits_only?
-        begin
-          # the following throws a Repository::UserNotFound
-          if self.group.repo.get_permissions(member.user.user_name) >= Repository::Permission::ANY
-            # user has some permissions, we need to remove them
-            self.group.repo.remove_user(member.user.user_name)
+      if self.write_repo_permissions?
+        self.group.access_repo do |repo|
+          begin
+            # the following throws a Repository::UserNotFound
+            if repo.get_permissions(member.user.user_name) >= Repository::Permission::ANY
+              # user has some permissions, we need to remove them
+              repo.remove_user(member.user.user_name)
+            end
+          rescue Repository::UserNotFound
+            # if student has no permissions, we are safe
           end
-        rescue Repository::UserNotFound
-          # if student has no permissions, we are safe
         end
       end
     end
@@ -535,15 +560,17 @@ class Grouping < ActiveRecord::Base
   # Removes repository permissions for a single StudentMembership object
   def revoke_repository_permissions_for_membership(student_membership)
     # Revoke permissions for student
-    if self.group.repository_external_commits_only?
-      begin
-        # the following throws a Repository::UserNotFound
-        if self.group.repo.get_permissions(student_membership.user.user_name) >= Repository::Permission::ANY
-          # user has some permissions, we need to remove them
-          self.group.repo.remove_user(student_membership.user.user_name)
+    self.group.access_repo do |repo|
+      if self.write_repo_permissions?
+        begin
+          # the following throws a Repository::UserNotFound
+          if repo.get_permissions(student_membership.user.user_name) >= Repository::Permission::ANY
+            # user has some permissions, we need to remove them
+            repo.remove_user(student_membership.user.user_name)
+          end
+        rescue Repository::UserNotFound
+          # if student has no permissions, we are safe
         end
-      rescue Repository::UserNotFound
-        # if student has no permissions, we are safe
       end
     end
   end
@@ -559,15 +586,17 @@ class Grouping < ActiveRecord::Base
     end
     memberships.each do |member|
       # Revoke permissions for students
-      if self.group.repository_external_commits_only?
-        begin
-          # the following throws a Repository::UserNotFound
-          if self.group.repo.get_permissions(member.user.user_name) >= Repository::Permission::ANY
-            # user has some permissions, we need to remove them
-            self.group.repo.remove_user(member.user.user_name)
+      self.group.access_repo do |repo|
+        if self.write_repo_permissions?
+          begin
+            # the following throws a Repository::UserNotFound
+            if repo.get_permissions(member.user.user_name) >= Repository::Permission::ANY
+              # user has some permissions, we need to remove them
+              repo.remove_user(member.user.user_name)
+            end
+          rescue Repository::UserNotFound
+            # if student has no permissions, we are safe
           end
-        rescue Repository::UserNotFound
-          # if student has no permissions, we are safe
         end
       end
     end

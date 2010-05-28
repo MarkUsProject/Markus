@@ -13,7 +13,7 @@
   <% end %>
 
 
-<div id="directory_selector" <%='style="display:none;"' unless @grouping.group.repository_external_commits_only? %>>
+<div id="directory_selector" <%='style="display:none;"' unless @grouping.repository_external_commits_only? %>>
 <p>
   Current Path: 
   <% path_memory = '/' 
@@ -91,14 +91,15 @@
 <% end %>
 
 
-<%= form_tag( {:action => "update_files", :id => @assignment.id}, {:multipart => true, :id => 'submit_form'} ) unless (!@grouping.is_valid? || @grouping.group.repository_external_commits_only?) %>
+<%= form_tag( {:action => "update_files", :id => @assignment.id},
+    {:multipart => true, :id => 'submit_form'} ) unless (!@grouping.is_valid? || @grouping.repository_external_commits_only?) %>
 
 
 <div class="global_action">
 <span id="loading_list"><%= image_tag("spinner.gif") %> Loading list...
 </span>
 
-<% if (@grouping.is_valid? && !@grouping.group.repository_external_commits_only?) %>
+<% if (@grouping.is_valid? && !@grouping.repository_external_commits_only?) %>
   <%=button_to_function "Add A New File", "injectFileInput(); set_onbeforeunload(true);"%>
 <% end %>
 
@@ -107,7 +108,7 @@
 <%= submit_tag( I18n.t(:submit),
     :disabled => !@grouping.is_valid?,
     :onclick => "set_onbeforeunload(false);"
-    ) unless @grouping.group.repository_external_commits_only? 
+    ) unless @grouping.repository_external_commits_only? 
     %>
 <%= link_to( I18n.t(:cancel), 
         {:controller => 'submissions', 
@@ -116,7 +117,7 @@
 	 :disabled => !@grouping.is_valid?,
 	 :class => "button",
 	 :onclick => "set_onbeforeunload(false); return confirm('#{I18n.t(:discard_changes_message)}');"
-	 ) unless @grouping.group.repository_external_commits_only? %>
+	 ) unless @grouping.repository_external_commits_only? %>
 <% end %>
 </div>
 
@@ -130,7 +131,7 @@
 <%= submit_tag( I18n.t(:submit),
     :disabled => !@grouping.is_valid?,
     :onclick => "set_onbeforeunload(false);"
-    ) unless @grouping.group.repository_external_commits_only? %>
+    ) unless @grouping.repository_external_commits_only? %>
 <%= link_to( I18n.t(:cancel),
         {:controller => 'submissions', 
            :action => 'file_manager'},  
@@ -138,7 +139,7 @@
 	 :disabled => !@grouping.is_valid?,
 	 :class => "button",
 	 :onclick => "set_onbeforeunload(false); return confirm('#{I18n.t(:discard_changes_message)}');"
-	 ) unless @grouping.group.repository_external_commits_only? %>
+	 ) unless @grouping.repository_external_commits_only? %>
 </div>
 </form>
 <% end %>

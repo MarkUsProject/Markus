@@ -35,10 +35,25 @@ class MemoryRepositoryTest < Test::Unit::TestCase
     
     should "be able to open an existing Memory repository" do
       MemoryRepository.create(REPO_LOCATION)
-      MemoryRepository.create(ANOTHER_REPO_LOCATION) # creat another one
+      MemoryRepository.create(ANOTHER_REPO_LOCATION) # create another one
       repo = MemoryRepository.open(REPO_LOCATION) # open repository created first
       assert_not_nil(repo, "Cannot open memory repository")
       assert_instance_of(Repository::MemoryRepository, repo, "Repository is of wrong type")
+    end
+
+    should "be able to access an existing Memory repository" do
+      MemoryRepository.create(REPO_LOCATION)
+      MemoryRepository.create(ANOTHER_REPO_LOCATION) # create another one
+      MemoryRepository.access(REPO_LOCATION) do |repo| # access repository created first
+        assert_not_nil(repo, "Cannot open memory repository")
+        assert_instance_of(Repository::MemoryRepository, repo, "Repository is of wrong type")
+      end
+    end
+
+    should "be able to delete a Memory repository" do
+      MemoryRepository.create(REPO_LOCATION)
+      MemoryRepository.delete(REPO_LOCATION)
+      assert(!MemoryRepository.repository_exists?(REPO_LOCATION), "Did not properly delete the repository")
     end
     
     should "know if a memory repository exists at some place" do
@@ -99,6 +114,12 @@ class MemoryRepositoryTest < Test::Unit::TestCase
       assert_raise(RevisionDoesNotExist) do
         @repo.get_revision(revision_non_existent) # raises exception
       end
+    end
+
+    should "know whether or not it is closed" do
+      assert(!@repo.closed?, "opened repository identified as closed")
+      @repo.close
+      assert(@repo.closed?, "closed repository identified as open")
     end
    
     should "be able to create a directory in repository" do
@@ -307,7 +328,7 @@ class MemoryRepositoryTest < Test::Unit::TestCase
       files = rev_num_by_timestamp.files_at_path("/")
       files_to_add.each do |file|
         if file == "test.xml"
-          assert_not_nil(files[file], "File '"+file+"' not found in repository")
+          assert_not_nil(files[file], "File '" + file + "' not found in repository")
           content = File.read(RESOURCE_DIR+"/"+file)
           # test stringify_files also
           assert_equal(content, @repo.stringify_files(files[file]))
@@ -362,7 +383,7 @@ class MemoryRepositoryTest < Test::Unit::TestCase
       users_with_any_perm = @repo.get_users(Repository::Permission::ANY)
       assert_not_nil(users_with_any_perm, "There are some users with some permissions")
       assert_equal([TEST_USER, another_user].sort, users_with_any_perm.sort, "There are some missing users")
-      users_with_read_perm = @repo.get_users(Repository::Permission::READ)
+      users_with_read_perm = @repo.get_users(Repository::Permission::READ).sort
       assert_not_nil(users_with_read_perm, "Some user has read permissions")
       assert_equal(another_user, users_with_read_perm.shift, another_user +" should have read permissions")
       users_with_read_write_perm = @repo.get_users(Repository::Permission::READ_WRITE)
@@ -375,7 +396,7 @@ class MemoryRepositoryTest < Test::Unit::TestCase
       users_with_any_perm = @repo.get_users(Repository::Permission::ANY)
       assert_not_nil(users_with_any_perm, "There are some users with some permissions")
       assert_equal(another_user, users_with_any_perm.shift, another_user +" still has some perms")
-      users_with_read_perm = @repo.get_users(Repository::Permission::READ)
+      users_with_read_perm = @repo.get_users(Repository::Permission::READ).sort
       assert_not_nil(users_with_read_perm, "Some user has read permissions")
       assert_equal(another_user, users_with_read_perm.shift, another_user +" should have read permissions")
       users_with_read_write_perm = @repo.get_users(Repository::Permission::READ_WRITE)

@@ -67,19 +67,20 @@ class GroupingTest < ActiveSupport::TestCase
       # submit files
       setup do
         grouping = groupings(:grouping_1)
-        repo = grouping.group.repo
-        txn = repo.get_transaction("markus")
-        assignment_folder = File.join(grouping.assignment.repository_folder, "/")
-        begin
-          txn.add(File.join(assignment_folder, "Shapes.java"), "shapes content",
-                "text/plain")
-          if !repo.commit(txn)
-            raise "Unable to setup test!"
+        grouping.group.access_repo do |repo|
+          txn = repo.get_transaction("markus")
+          assignment_folder = File.join(grouping.assignment.repository_folder, "/")
+          begin
+            txn.add(File.join(assignment_folder, "Shapes.java"), "shapes content",
+                  "text/plain")
+            if !repo.commit(txn)
+              raise "Unable to setup test!"
+            end
+          rescue Exception => e
+            raise "Test setup failed: " + e.message
           end
-        rescue Exception => e
-          raise "Test setup failed: " + e.message
+          @grouping = grouping
         end
-        @grouping = grouping
       end
 
       should "be able to report the number of files submitted" do
@@ -102,20 +103,21 @@ class GroupingTest < ActiveSupport::TestCase
         assert_equal(1, missing_files.length)
         assert_equal([still_missing_file], missing_files)
         # submit another file so that we have all required files submitted
-        repo = @grouping.group.repo
-        txn = repo.get_transaction("markus")
-        begin
-          txn.add(File.join(@grouping.assignment.repository_folder, "TestShapes.java"),
-                  "ShapesTest content", "text/plain")
-          if !repo.commit(txn)
-            raise "Commit failed!"
+        @grouping.group.access_repo do |repo|
+          txn = repo.get_transaction("markus")
+          begin
+            txn.add(File.join(@grouping.assignment.repository_folder, "TestShapes.java"),
+                    "ShapesTest content", "text/plain")
+            if !repo.commit(txn)
+              raise "Commit failed!"
+            end
+          rescue Exception => e
+            raise "Submitting file failed: " + e.message
           end
-        rescue Exception => e
-          raise "Submitting file failed: " + e.message
+          # check again; there shouldn't be any missing files anymore
+          missing_files = @grouping.missing_assignment_files
+          assert_equal(0, missing_files.length)
         end
-        # check again; there shouldn't be any missing files anymore
-        missing_files = @grouping.missing_assignment_files
-        assert_equal(0, missing_files.length)
       end
 
     end # end files submitted context

@@ -178,6 +178,12 @@ en:
     invalid_id: "must be an id that is an integer greater than 0"
     still_working_warning: "There are unfinished jobs still being processed.  They might not be saved if you leave now."
 
+    csv:
+      student_not_found: "Student '{{user_name}}' not found."
+      repo_collision_warning: "Warning: Repository '{{repo_name}}' exists already. Group name was: '{{group_name}}'."
+      line_nr_csv_file_prefix: "Line {{line_number}} of CSV file:"
+      errors_and_warnings_msg: "The following lines produced errors and/or warnings:"
+
     pagination:
       first: "First"
       prev: "Prev"
@@ -312,6 +318,7 @@ en:
       is_valid: "Group is valid"
       is_not_valid: "Group is not valid"
       rename_group:
+        group_repo_collision: "Creating group '{{group_name}}' caused repository collision (Repository name was: '{{repo_name}}'). Error message: '{{error}}'"
         link: "Rename Group"
         success: "Group name has been updated."
         already_in_use: "This name is already in use for this assignment."
@@ -350,6 +357,8 @@ en:
     fields specified near the upload form."
     invalid_group_warning: "Your group is currently invalid. You probably haven't met the group size minimum. You may not be able to submit anything, and your work may not be graded, until you have met this minimum. "
     rejected_invitation: "declined"
+    use_another_assignments_groups: "Use another assignment's groups"
+    upload_download: "Upload/Download"
 
     add_student:
       success: "Student {{user_name}} added."

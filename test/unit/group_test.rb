@@ -31,27 +31,35 @@ class GroupTest < ActiveSupport::TestCase
       assert !group.save
     end
 
+    
+    should "allow access to its repository" do
+      @group.access_repo do |repo|
+        assert_not_nil(repo, "Cannot access repository")
+        assert(!repo.closed?)
+      end
+    end
+
     context "linked to an assignment allowing web commits" do
       setup do 
         assignment = Assignment.make(:allow_web_submits => true)
-        grouping = Grouping.make(:assignment_id => assignment.id, 
+        @grouping = Grouping.make(:assignment_id => assignment.id, 
                                  :group_id => @group.id)
       end
 
       should "return false for external accessible repository" do
-        assert !@group.repository_external_commits_only?
+        assert !@grouping.repository_external_commits_only?
       end
     end
 
     context "linked to an assignment not allowing web commits" do
       setup do 
         assignment = Assignment.make(:allow_web_submits => false)
-        grouping = Grouping.make(:assignment_id => assignment.id, 
+        @grouping = Grouping.make(:assignment_id => assignment.id, 
                                  :group_id => @group.id)
       end
 
       should "return true for external accessible repository" do
-        assert @group.repository_external_commits_only?
+        assert @grouping.repository_external_commits_only?
       end
     end
   end
