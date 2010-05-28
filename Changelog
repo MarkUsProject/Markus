@@ -1,3 +1,6 @@
+Changes for MarkUs 0.7.1:
+* Bugfix for svn permissions with web submissions
+
 Changes for MarkUs 0.7.0:
 * The notes system has been polished, and users can now add notes to groups, students, and submissions.  
 * Added the flexible criterion marking scheme type 
