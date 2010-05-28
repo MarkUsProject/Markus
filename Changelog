@@ -1,3 +1,31 @@
+Changes for MarkUs 0.7.1:
+* Bugfix for svn permissions with web submissions
+
+Changes for MarkUs 0.7.0:
+* The notes system has been polished, and users can now add notes to groups, students, and submissions.  
+* Added the flexible criterion marking scheme type 
+* Added the marks spreadsheet feature
+* The table of student submissions can now be bookmarked, and the back-button works correctly
+* Minor bugfixes and usability fixes.
+
+Changes for MarkUs 0.6.3:
+* Added rake task to automatically regenerate svn_authz in the event of corruption
+* MarkUs now ensures student read/write permissions on repositories after cloning groups
+
+Changes for MarkUs 0.6.2:
+* For now, students who work alone do not have their repositories named after them
+* "Allow Web Submits?" in Assignment Properties page defaults to REPOSITORY_EXTERNAL_SUBMITS_ONLY setting now
+* Annotation Category dropdowns no longer close prematurely on mouseover-ing a tooltip
+* Added "Reset Mark" capability to grader view
+
+Changes for MarkUs 0.6.1:
+* Fixed trace on detailed CSV download for assignments (g9jerboa)
+* Random TA assignment now applies only to selected groups (rburke)
+* Next/Previous Submission links in grader view no longer skip submissions marked "completed" (c6conley)
+* The student edit form now accepts input properly
+* New UI in students editor and grader view to manage grace credit penalties
+* Functional tests now all pass (c6conley)
+
 Changes for MarkUs 0.6:
 
 * Submissions table is now paginated (c6conley)
