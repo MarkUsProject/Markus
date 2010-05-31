@@ -191,19 +191,19 @@ h(sanitize(@assignment.short_identifier))%></span>
  <li <% if controller.controller_name == 'assignments' %> 
           id="sub_menu_active"
         <%end%>>
-	  <%= link_to 'assignments', :controller => 'assignments',
+	  <%= link_to I18n.t("assignments"), :controller => 'assignments',
 	  :action => 'student_interface', :id => @assignment.id %>
   </li>
   <li <% if controller.controller_name == 'submissions' %> 
           id="sub_menu_active"
         <%end%>>
-	  <%= link_to 'Submissions', :controller => 'submissions',
+	  <%= link_to I18n.t("submissions"), :controller => 'submissions',
 	  :action => 'file_manager', :id => @assignment.id %>
   </li>
    <li <% if controller.controller_name == 'results' %> 
           id="sub_menu_active"
         <%end%>>
-	  <%= link_to 'results', :controller => 'results',
+	  <%= link_to I18n.t("results.results_name"), :controller => 'results',
 	  :action => 'view_marks', :id => @assignment.id %>
   </li>
    <% end %>

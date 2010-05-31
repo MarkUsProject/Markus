@@ -301,7 +301,7 @@ class SubmissionsController < ApplicationController
 
         # finish transaction
         if !txn.has_jobs?
-          flash[:transaction_warning] = "No actions were detected in the last submit.  Nothing was changed."
+          flash[:transaction_warning] = I18n.t("student.submission.no_action_detected")
           redirect_to :action => "file_manager", :id => assignment_id
           return
         end

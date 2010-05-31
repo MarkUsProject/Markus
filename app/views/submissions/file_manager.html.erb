@@ -4,7 +4,7 @@
 <%= render :partial => "file_manager_boot.js.erb" %>
 
 <div id="title_bar">
-<h1><%= h(sanitize(@assignment.short_identifier)) %>: File Manager</h1>
+<h1><%= I18n.t("student.submission.file_manager", :short_identifier => h(sanitize(@assignment.short_identifier))) %></h1>
 </div>
 
 <div class="wrapLeft">
@@ -15,7 +15,7 @@
 
 <div id="directory_selector" <%='style="display:none;"' unless @grouping.repository_external_commits_only? %>>
 <p>
-  Current Path: 
+  <%= I18n.t("student.submission.current_path") %> 
   <% path_memory = '/' 
      links = [] 
      @path.split('/').each do |folder| 
@@ -50,8 +50,8 @@
 
 <% if flash[:update_conflicts] %>
   <div class="error">
-    <h2>Conflicts</h2>
-    <p>Your changes have not been made.  The following file conflicts were detected:</p>
+    <h2><%= I18n.t("student.submission.conflicts") %></h2>
+    <p><%= I18n.t("student.submission.file_conflicts") %></p>
     <ul>
     <% flash[:update_conflicts].each do |conflict| %>
       <li><%= h(conflict.to_s) %></li>
@@ -77,12 +77,12 @@
 </div>
 <% elsif @missing_assignment_files.size > 0 %>
   <div class="warning">
-  <p>You still need to submit <%=@missing_assignment_files.size%> required file(s) for this assignment:
+  <p><%= I18n.t("student.submission.missing_files", :file => @missing_assignment_files.size) %>
   <% if @missing_assignment_files.size > 5 %>
-    <%= link_to_function "click here to toggle the list of missing files.", "$('missing_assignment_files_list').toggle();"%>
+    <%= link_to_function I18n.t("student.submission.toggle_file_list"), "$('missing_assignment_files_list').toggle();"%>
   <% end %>
   </p>
-  <ul id="missing_assignment_files_list" <%='style="display:none;"' if @missing_assignment_files.size > 5%>
+  <ul id="missing_assignment_files_list" <%='style="display:none;"' if @missing_assignment_files.size > 5%> >
   <% @missing_assignment_files.each do |assignment_file| %>
     <li><%= h(assignment_file.filename) %></li>
   <% end %>
@@ -96,11 +96,11 @@
 
 
 <div class="global_action">
-<span id="loading_list"><%= image_tag("spinner.gif") %> Loading list...
+<span id="loading_list"><%= image_tag("spinner.gif") %> <%= I18n.t("groups.loading_list") %>
 </span>
 
 <% if (@grouping.is_valid? && !@grouping.repository_external_commits_only?) %>
-  <%=button_to_function "Add A New File", "injectFileInput(); set_onbeforeunload(true);"%>
+  <%=button_to_function I18n.t("add_new"), "injectFileInput(); set_onbeforeunload(true);"%>
 <% end %>
 
 
