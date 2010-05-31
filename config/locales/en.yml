@@ -84,6 +84,7 @@ en:
     manage_course_work: "Manage Course Work"
     repository_folder:  "Repository Folder"
     assignment:
+        assignment: "Assignment {{short_identifier}}"
         name:           "Assignment Name"
         update_success:        "Successfully updated the assignment"
         create_success:        "Successfully created the assignment"
@@ -466,7 +467,7 @@ en:
         validate_flexible: "must be between 0 and the maximum mark of the criterion"
         validate_rubric: "must be an integer between 0 and 4"
         
-    # Student's View
+    # Student's View (admin)
     students:
       manage_students: "Manage Students"
       edit_student:    "Edit a Student"
@@ -493,6 +494,61 @@ en:
     fields specified near the upload form."
     invalid_group_warning: "Your group is currently invalid. You probably haven't met the group size minimum. You may not be able to submit anything, and your work may not be graded, until you have met this minimum. "
     rejected_invitation: "declined"
+    
+    #Sutdent's View (student)
+    student:
+      assignment: "Assignment {{short_identifier}}"
+      group_information: "Group Information"
+      group_not_valid: "Your group is not valid. You can't submit anything."
+      overview: "Overview"
+      last_revision_date: "Last Revision Date:<br /><span class=\"info_date\">{{last_modified_date}}</span>"
+      files: "files"
+      missing_required_files: "<span class=\"info_number\">{{missing_files}}</span><span class=\"info_red\"> missing required files</span>"
+      no_submission_yet: "You don't have any submission yet"
+      no_group_yet: "You don't have a group yet"
+      grace_date_passed: "and the grace period for this assignment has passed"
+      not_allowed_to_form_group: "You are not allowed to form groups yourself for this assignment.
+            Please wait until the instructor forms groups."
+      invitations: "Invitations"
+      invited_by: "You have been invited by <span class=\"last_name\">{{inviter_last_name}}</span>{{inviter_first_name}}"
+      decline_invitation: "Are you sure you want to decline this invitation?"
+      form_own_group: "Form your own group"
+      form_group: "The groups must be from <strong>{{group_min}}</strong> to <strong>{{group_max}}</strong> people."
+      decline_invitation2: "This will decline the invitation you have. Are you sure?"
+      your_group: "Your group"
+      modification_limited: "At this point modification of your group is very limited.
+            The due date and grace period (if any) have both passed."
+      invite_more_students: " The group is not valid. You need to
+            invite more students."
+      url_group_repository: "URL to your group's repository"
+      group_properties: " Group Properties "
+      students_can_form_groups: " Students can form groups. "
+      instructor_form_groups: "Instructor forms groups."
+      student_work_alone: "Students work alone"
+      group_credits: "Your group has <strong>{{available_grace_credits}}</strong> available grace credits"
+      invite: "Invite"
+      please_wait: " Please wait..."
+      work_alone: "Work alone"
+      confirm_delete_group: "Are you sure you want to delete your group?"
+      delete_your_group: "Delete your group"
+      disinvite_member: "Are you sure you want to uninvite this member?"
+      disinvite_member_title: "Uninvite this member"
+      invited: "(invited)"
+      inviter: "(inviter)"
+      disinvite: "Uninvite"
+      invitation_rejected: "<span class=\"last_name\">{{user_last_name}}</span> {{user_first_name}} <span class=\"membership_status_rejected\">
+       has decline the invitation</span>"
+      cancel_invitation: "Are you sure you want to cancel this invitation?"
+      cancel_invitation_title: "Cancel invitation"
+      submission:
+        file_manager: "{{short_identifier}}: File Manager"
+        current_path: "Current Path:"
+        conflicts: "Conflicts"
+        file_conflicts: "Your changes have not been made.  The following file conflicts were detected:"
+        missing_files: "You still need to submit {{file}} required file(s) for this assignment:"
+        toggle_file_list: "click here to toggle the list of missing files."
+        no_action_detected: "No actions were detected in the last submit.  Nothing was changed."
+        no_marks_available: "No marks are available."
     
     #Graders' View
     graders:

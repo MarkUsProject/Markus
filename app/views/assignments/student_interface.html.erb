@@ -20,36 +20,30 @@
 </script>
 
 <div id="title_bar">
-  <h1> Assignment <%= h(@assignment.short_identifier) %> </h1>
+  <h1><%=h I18n.t("student.assignment", :short_identifier => @assignment.short_identifier) %></h1>
 </div>
 
 <div class="column_floatLeft">
   <div class="block">
-    <h2>Submissions</h2>
+    <h2><%= I18n.t("submissions") %></h2>
     <div class="block_content">
       <% if !@grouping.nil? %>
         <% if !@grouping.is_valid? %>
           <p class="notice">
-            Your group is not valid. You can't submit anything.
+            <%= I18n.t("student.group_not_valid") %>
           </p>
         <% end %>
-        <h3>Overview</h3>
+        <h3><%= I18n.t("student.overview") %></h3>
         <div class="info">
-          Last Revision Date:<br />
-          <span class="info_date">
-            <%=h I18n.l(@last_modified_date, :format => :long_date) %>
-          </span>
+          <%= I18n.t("student.last_revision_date", :last_modified_date => I18n.l(@last_modified_date, :format => :long_date)) %>
         </div>   
         <span class="info_number">
           <%=h @num_submitted_files.to_s %>
         </span>
-        <span class="info">files</span> <br />
-        <span class="info_number">
-          <%=h @num_missing_assignment_files.to_s%>
-        </span>
-        <span class="info_red"> missing required files</span><br />
+        <span class="info"><%= I18n.t("student.files") %></span> <br />
+        <%= I18n.t("student.missing_required_files", :missing_files => @num_missing_assignment_files.to_s) %><br />
       <% else %>
-        <p class="notice">You don't have any submission yet</p>
+        <p class="notice"><%= I18n.t("student.no_submission_yet") %></p>
       <% end %>
     </div>
   </div>
@@ -60,13 +54,13 @@
 
 <div class="column_floatLeft">
   <div class="block">
-    <h2>Group Information</h2>
+    <h2><%= I18n.t("student.group_information") %></h2>
     <div class="block_content">
       <% if @grouping.nil? %>
         <p class="notice">
-          You don't have a group yet
+          <%= I18n.t("student.no_group_yet") %>
           <% if @assignment.past_collection_date? %>
-            and the grace period for this assignment has passed
+            <%= I18n.t("student.grace_date_passed") %>
           <% end %>!
         </p>
 
@@ -74,8 +68,7 @@
         # Test if the student can form groupings or not
         if @assignment.student_form_groups == false %>
           <p>
-            You are not allowed to form groups yourself for this assignment.
-            Please wait until the instructor forms groups.
+            <%= I18n.t("student.not_allowed_to_form_group") %>
           </p>
         <% end %>
 
@@ -83,7 +76,7 @@
         # See if the student has been invited to some group
 
         if @student.has_pending_groupings_for?(@assignment.id) %>
-          <h3>Invitations</h3>
+          <h3><%= I18n.t("student.invitations") %></h3>
 
           <% if flash[:fail_notice] && !flash[:fail_notice].empty? %>
             <div class="notice">
@@ -93,9 +86,7 @@
 
           <% @pending_grouping.each do |grouping|%>
           <div class="sub_block">
-            <p>You have been invited by <span class="last_name">
-              <%= grouping.inviter.last_name %></span>
-              <%= h(grouping.inviter.first_name) %>
+            <p><%= I18n.t("student.invited_by", :inviter_last_name => h(grouping.inviter.last_name), :inviter_first_name => h(grouping.inviter.first_name)) %>
             </p>  
             <% grouping.student_memberships.each do |member|%>
               <ul>
@@ -111,7 +102,7 @@
             <%= link_to(I18n.t(:refuse),{:action => 'decline_invitation',
               :id => @assignment.id, :grouping_id => grouping.id},
               {:class => "delete",:confirm =>
-              "Are you sure you want to decline this invitation?"})
+              I18n.t("student.decline_invitation")})
             %>
             </div>
             <div class="block_line"></div>
@@ -126,15 +117,13 @@
         if !@assignment.past_collection_date? &&
            @assignment.student_form_groups %>
 
-          <h3>Form your own group</h3>
-          <p> The groups must be from <strong>
-            <%= h(@assignment.group_min)%> </strong>
-            to <strong> <%= h(@assignment.group_max)%> </strong> people.
+          <h3><%= I18n.t("student.form_own_group") %></h3>
+          <p><%= I18n.t("student.form_group", :group_min => h(@assignment.group_min), :group_max => h(@assignment.group_max)) %>
           </p>
 
           <% if @assignment.group_min == 1 %>
             <p>
-              <%= link_to "Work alone",
+              <%= link_to I18n.t("student.work_alone"),
                 {:action => 'creategroup', :id => @assignment.id, :workalone => 'true'}%>
             </p>
           <% end %>
@@ -142,7 +131,7 @@
           <% if @student.has_pending_groupings_for?(@assignment.id)%>
             <%= link_to(I18n.t(:create),{:action => 'creategroup', 
                :id => @assignment.id},{:confirm =>
-               "This will decline the invitation you have. Are you sure?"})
+               I18n.t("student.decline_invitation2")})
             %>
           <% else %>
             <%= link_to(I18n.t(:create),{:action => 'creategroup', 
@@ -164,7 +153,7 @@
           <% if @assignment.group_name_displayed == true %>
             <%= h(@group.group_name) %>
           <% else %>
-            Your group
+            <%= I18n.t("student.your_group") %>
           <% end %>
           <%
           # If a group is valid, the current user is the inviter of the group and
@@ -175,8 +164,8 @@
               @grouping.deletable_by?(@current_user) %>
             <%= link_to(I18n.t(:delete),
               {:action => 'deletegroup', :id => @assignment.id},
-              {:confirm => "Are you sure you want to delete your group?",
-              :title => "Delete your group", :class => "delete"})
+              {:confirm => I18n.t("student.confirm_delete_group") ,
+              :title => I18n.t("student.delete_your_group"), :class => "delete"})
             %> 
           <% end %>
         </h3>
@@ -190,8 +179,7 @@
            @assignment.group_max > 1
            %>
           <p class="information">
-            At this point modification of your group is very limited.
-            The due date and grace period (if any) have both passed.
+            <%= I18n.t("student.modification_limited") %>
           </p>
         <% end %>
         <% if flash[:fail_notice] && !flash[:fail_notice].empty? %>
@@ -227,8 +215,8 @@
         # "group is not valid" warning.
             
         if !@grouping.is_valid? %>
-          <p class="warning"> The group is not valid. You need to
-            invite more students.
+          <p class="warning">
+            <%= I18n.t("student.invite_more_students") %>
           </p>
         <% end %>
         <%
@@ -251,29 +239,30 @@
         # Display the URL of this group's repository if applicable
 
         if @grouping.repository_external_commits_only? %> 
-            <h3>URL to your group's repository</h3>
+            <h3><%= I18n.t("student.url_group_repository") %></h3>
               <div class="sub_block">
                 <p><%= h(@grouping.group.repository_external_access_url) %></p>
               </div>
         <% end %>
       <% end %>
-      <h3> Group Properties </h3>
+      <h3><%= I18n.t("student.group_properties") %></h3>
       <ul>
         <% if @assignment.student_form_groups &&
               !@assignment.instructor_form_groups &&
               @assignment.group_max > 1 %>
-          <li> Students can form groups. </li>
+          <li><%= I18n.t("student.students_can_form_groups") %></li>
           <li>
-            The groups must be from <strong> <%= h(@assignment.group_min)%> </strong>
-            to <strong><%= h(@assignment.group_max)%></strong> people.
+            <%= I18n.t("student.form_group", :group_min => h(@assignment.group_min), :group_max => h(@assignment.group_max)) %>
           </li>
         <% elsif @assignment.instructor_form_groups %>
-          <li>Instructor forms groups.</li>
+          <li><%= I18n.t("student.instructor_form_groups") %></li>
         <% else%>
-          <li>Students work alone</li>
+          <li><%= I18n.t("student.student_work_alone") %></li>
         <% end %>
         <% if !@grouping.nil? %>
-        <li>Your group has <strong><%=@grouping.available_grace_credits%></strong> available grace credits</li>
+        <li>
+          <%= I18n.t("student.group_credits", :available_grace_credits => @grouping.available_grace_credits) %>
+		</li>
         <% end %>
       </ul>
     </div>    
@@ -290,7 +279,7 @@ if !@grouping.nil? &&
     <% form_tag({:action => 'invite_member',
         :id => @assignment.id},
         {:onsubmit => "$('invite_modal_spinner').show();"}) do %>   
-      <h2>Invite</h2>
+      <h2><%= I18n.t("student.invite") %></h2>
       <p class="information"><%= t(:seperate_multiple_with_commas) %></p>
       <p>
         <fieldset>
@@ -300,10 +289,10 @@ if !@grouping.nil? &&
       </p>
       <p>
         <span id="invite_modal_spinner" style="display:none;">
-          <%= image_tag("spinner.gif")%> Please wait...
+          <%= image_tag("spinner.gif")%><%= I18n.t("student.please_wait") %>
         </span>
         <%= submit_tag I18n.t(:submit) %>
-        <input type="reset" value="Cancel" onClick="invite_modal.close();" />
+        <input type="reset" value="<%= I18n.t("cancel") %>" onClick="invite_modal.close();" />
       </p>
     <% end %>
   </div>

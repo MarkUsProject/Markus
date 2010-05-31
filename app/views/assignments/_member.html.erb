@@ -8,7 +8,7 @@
 <% if member.membership_status == StudentMembership::STATUSES[:inviter] %>
 <li id="member_inviter">
    <span class="last_name"><%= h(member.user.first_name) %> </span> <%=
-h(member.user.last_name) %> (inviter)</li>
+h(member.user.last_name) %> <%= I18n.t("student.inviter") %></li>
 <%# If this member is an accepted member %>
 <% elsif member.membership_status == StudentMembership::STATUSES[:accepted] %>
 <li>
@@ -16,11 +16,11 @@ h(member.user.last_name) %> (inviter)</li>
 <%# If this member is pending%>
 <% elsif member.membership_status == StudentMembership::STATUSES[:pending] %>
 <li class="membership_status_pending">
-   <span class="last_name"><%= h(member.user.first_name) %> </span> <%= h(member.user.last_name) %> (invited)
+   <span class="last_name"><%= h(member.user.first_name) %> </span> <%= h(member.user.last_name) %> <%= I18n.t("student.invited") %>
    <% if grouping.is_inviter?(@current_user) %>
      <%= link_to_remote I18n.t(:cancel), :url => {:action => 'disinvite_member', :id => @assignment.id, :membership =>  member.id},
-     :html => {:title => "Cancel invitation", :class => "delete"},
-     :confirm => "Are you sure you want to cancel this invitation?"
+     :html => {:title => I18n.t("student.cancel_invitation_title"), :class => "delete"},
+     :confirm => I18n.t("student.cancel_invitation")
      %>
    <% end %>
 </li>
