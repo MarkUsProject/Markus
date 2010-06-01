@@ -175,7 +175,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     student = users(:student1)
     invited = users(:student5)
     post_as(student, :invite_member, {:id => assignment.id, :invite_member => invited.user_name})
-    assert_equal(I18n.t('invite_student.success', :user_name => invited.user_name), flash[:success])
+    assert_equal(I18n.t('invite_student.success'), flash[:success])
     assert_redirected_to :action => "student_interface", :id => assignment.id
   end
 
@@ -911,7 +911,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     inviting = users(:student6)
     post_as(@student, :invite_member, {:id => assignment.id, :invite_member => inviting.user_name})
     assert_redirected_to :action => 'student_interface', :id => assignment.id
-    assert flash[:success].include?(I18n.t('invite_student.success', :user_name => inviting.user_name))
+    assert flash[:success].include?(I18n.t('invite_student.success'))
   end
   
   def test_should_invite_someone_alreadyinvited
