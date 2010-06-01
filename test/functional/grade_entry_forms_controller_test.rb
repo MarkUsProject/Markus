@@ -282,7 +282,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       end
       should_assign_to :grade_entry_form
       should "verify that the error message made it to the response" do
-        assert_match Regexp.new(I18n.t('grade_entry_forms.blank_field')), @response.body
+        assert_match Regexp.new(Regexp.escape(I18n.t('grade_entry_forms.blank_field'))), @response.body
       end
       should_respond_with :success
     end
@@ -335,7 +335,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       should_respond_with :success
       
       should "verify that the error message made it to the response" do
-        assert_match Regexp.new(I18n.t('grade_entry_forms.blank_field')), @response.body
+        assert_match Regexp.new(Regexp.escape(I18n.t('grade_entry_forms.blank_field'))), @response.body
       end
       
       should "verify that the property values were not updated" do
@@ -418,7 +418,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         end
         should_assign_to :grade_entry_form
         should "verify that the error message made it to the response" do
-          assert_match Regexp.new(I18n.t('grade_entry_forms.blank_field')), @response.body
+          #Need to escape the I18n string because there is a '(e)' in French for example
+          assert_match Regexp.new(Regexp.escape(I18n.t('grade_entry_forms.blank_field'))), @response.body
         end
         should_respond_with :success
       end
@@ -513,7 +514,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         should_respond_with :success
         
         should "verify that the error message made it to the response" do
-          assert_match Regexp.new(I18n.t('grade_entry_forms.blank_field')), @response.body
+          assert_match Regexp.new(Regexp.escape(I18n.t('grade_entry_forms.blank_field'))), @response.body
         end
         
         should "verify that the property values were not updated" do
