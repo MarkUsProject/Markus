@@ -6,9 +6,12 @@ page.replace_html 'number_of_ungrouped_students', @assignment.ungrouped_students
 page.replace 'student_list', :partial => 'ungrouped_students', 
   :locals => {:students => @assignment.ungrouped_students}      
  
-if @inviter
+if !@inviter.nil?
   # update the inviter
   page.replace_html "mbr_#{@inviter.id}",
     :partial => 'groups/manage/member', 
     :locals => {:grouping => @grouping, :member => @inviter}
+else
+  # no inviter (i.e. empty group)
+  page.call 'modify_grouping', @grouping_table_row.to_json, false
 end

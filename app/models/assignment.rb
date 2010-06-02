@@ -403,7 +403,7 @@ class Assignment < ActiveRecord::Base
     svn_commands = [] # the commands to be exported
     self.submissions.each do |submission|
       grouping = submission.grouping
-      svn_commands.push("svn export -r #{submission.revision_number} #{grouping.group.repository_external_access_url} \"#{grouping.group.group_name}\"")
+      svn_commands.push("svn export -r #{submission.revision_number} #{grouping.group.repository_external_access_url}/#{self.repository_folder} \"#{grouping.group.group_name}\"")
     end
     return svn_commands
   end

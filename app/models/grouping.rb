@@ -77,7 +77,7 @@ class Grouping < ActiveRecord::Base
 
   #invites each user in 'members' by its user name, to this group
   # TODO update unit test
-  def invite(members, set_membership_status=StudentMembership::STATUSES[:pending])
+  def invite(members, set_membership_status=StudentMembership::STATUSES[:pending], invoked_by_admin=false)
     # overloading invite() to accept members arg as both a string and a array
     members = [members] if !members.instance_of?(Array) # put a string in an
                                                  # array
@@ -90,7 +90,7 @@ class Grouping < ActiveRecord::Base
         errors.add_to_base(I18n.t('invite_student.fail.dne', 
                                   :user_name => m))
       else
-        if self.can_invite?(user)
+        if self.can_invite?(user) || invoked_by_admin
           member = self.add_member(user, set_membership_status)
           if !member
             errors.add_to_base(I18n.t('invite_student.fail.error', 

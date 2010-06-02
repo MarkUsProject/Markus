@@ -7,6 +7,9 @@
 
 Thanks for using MarkUs!
 
+NOTE: If you are a MarkUs developer, please follow setup instructions here:
+      https://stanley.cdf.toronto.edu/drproject/csc49x/olm_rails#dev-setup
+
 
 1. WHAT YOU NEED TO KNOW 
 
@@ -27,7 +30,7 @@ see http://www.markusproject.org/download/
   As mentioned previously, MarkUs is a Ruby on Rails application. General
   requirements are as follows (Note: MarkUs also works using Phusion Passenger):
   
-    * Ruby (version 1.8.5 and higher)
+    * Ruby (version 1.8.7 and higher)
     * Ruby development package (required for compiling Ruby PostgreSQL drivers)
     * net/https Ruby library (libopenssl-ruby Debian package)
     * RDoc (required for Gem)
@@ -47,8 +50,8 @@ see http://www.markusproject.org/download/
     * Apache httpd (version 2.2 and higher) including the following modules:
         - mod_proxy
         - mod_rewrite
-        - mod_dav_svn
-        - mod_authz_svn
+        - mod_dav_svn (required if you want to allow SVN repository access)
+        - mod_authz_svn (required if you want to allow SVN repository access)
 
   DATABASE
   
@@ -120,9 +123,10 @@ see http://www.markusproject.org/download/
       wget http://www.markusproject.org/download/markus-latest-stable.tar.gz
   * Extract the tarball to the desired location
       tar -xzvf markus-latest-stable.tar.gz
-  * Change to MarkUs' application root
+  * You should have a directory called markus-X.Y.Z now. Change to MarkUs'
+    application root. For example:
       cd markus-0.6.0
-  * Set environment variable RAILS_ENV
+  * Set environment variable RAILS_ENV (assumes BASH)
       export RAILS_ENV="production"
   * In case you are using Rails > 2.3.2 comment out the line containing
     RAILS_GEM_VERSION="2.3.2" in config/environment.rb
@@ -131,6 +135,11 @@ see http://www.markusproject.org/download/
         cp config/database.yml.postgresql config/database.yml
       MySQL option:
         cp config/database.yml.mysql config/database.yml
+  * Configure MarkUs to match your requirements. Please have a look at
+    config/environments/production.rb. This file is well documented and
+    your instance specific configuration has to be done in there. If you
+    have questions, please feel free to get in touch with us:
+    markus-users@cs.toronto.edu
   * Create the database for MarkUs
       rake db:create
   * Load the database schema for MarkUs
@@ -147,19 +156,24 @@ see http://www.markusproject.org/download/
   * That's it!
 
 If you run into any problems please send e-mail to markus-users@cs.toronto.edu.
-We are happy to help and would also like to hear your feedback!
+We are happy to help and would also like to hear your feedback! Please include
+the version number of MarkUs you are using. You can find out about the version
+you are currently using by issuing the following command:
+  rake -s markus:version
 
 4. FURTHER INSTRUCTIONS, FAQ, LINKS
 
-  * https://stanley.cdf.toronto.edu/drproject/csc49x/olm_rails/wiki/InstallProd_0.6
+  * https://stanley.cdf.toronto.edu/drproject/csc49x/olm_rails/wiki/InstallProdStable
   * https://stanley.cdf.toronto.edu/drproject/csc49x/olm_rails/wiki/InstallProdFaq
   * https://stanley.cdf.toronto.edu/drproject/csc49x/olm_rails/wiki/MultipleHosting
   * http://www.markusproject.org/dev/markus_httpd_vhost.conf
-  * https://stanley.cdf.toronto.edu/drproject/csc49x/olm_rails/wiki/InstallationRorRadrailsDebian
-  * See available rake tasks for MarkUs: rake -T
+  * https://stanley.cdf.toronto.edu/drproject/csc49x/olm_rails#dev-setup
+  * See available rake tasks for MarkUs: "rake -T markus" or more generically
+    "rake -T"
 
 5. BUGS
 
-If you think you have found a bug, you can file a bug report here:
+If you think you have found a bug, you can file a bug report or contact
+developers at markus-dev@cs.toronto.edu. Feel free to provide a patch ;-)
   https://stanley.cdf.toronto.edu/drproject/csc49x/olm_rails/ticket?action=new (new ticket link)
   https://stanley.cdf.toronto.edu/drproject/csc49x/olm_rails/query (see existing tickets)

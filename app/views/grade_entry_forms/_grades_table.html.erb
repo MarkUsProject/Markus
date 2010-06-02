@@ -6,9 +6,11 @@
   %>
   <% @students.each do |student| %>
     <tr>
-      <td class="grades_table_checkbox">
-        <input type="checkbox" name="students[]" class="ap_selectable" id="student_<%=student.id%>" value="<%=student.id%>" />
-      </td>
+      <% if @current_user.admin? %>
+        <td class="grades_table_checkbox">
+          <input type="checkbox" name="students[]" class="ap_selectable" id="student_<%=student.id%>" value="<%=student.id%>" />
+        </td>
+      <% end %>
       <td class="grades_table_cell"><%= h(student.user_name) %></td>
       <td class="grades_table_cell"><%= h(student.last_name) %></td>
       <td class="grades_table_cell"><%= h(student.first_name) %></td>

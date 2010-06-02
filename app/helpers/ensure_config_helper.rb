@@ -84,7 +84,14 @@ module EnsureConfigHelper
     p_stdin, p_stdout, p_stderr = Open3.popen3( filename )
     p_stdin.puts("test\ntest") # write to stdin of markus_config_validate
     p_stdin.close
+    # HACKALARM:
+    # Disconnect from DB before reading from stderr. PostgreSQL gets confused
+    # if we don't do this. Since these checks run on server startup/shutdown
+    # only, this should be OK.
+    con_identifier = ActiveRecord::Base.remove_connection
     error = p_stderr.read
+    # Get DB connection back
+    ActiveRecord::Base.establish_connection(con_identifier)
     if error.length != 0
       if error =~ /Errno::ENOENT/
         raise I18n.t("ensure_config.file_does_not_execute", :constant_name => constant_name, :file_name => filename, :config_location => "config/environments/#{Rails.env}.rb")
