@@ -3,7 +3,7 @@
 %>
 <li class="rubric_level <%= cycle('rowA', 'rowB') %>">
   <span class="float_left">
-    <strong><%=h I18n.t("rubric_criteria.level.level_index", :index => rubric_level_index) %></strong>
+  <%=f.label "level_#{rubric_level_index}_name".to_sym,  h(I18n.t("rubric_criteria.level.level_index", :index => rubric_level_index)), :class => "bold_inline_label" %>
   <%= f.text_field "level_#{rubric_level_index}_name".to_sym
         
   %>
