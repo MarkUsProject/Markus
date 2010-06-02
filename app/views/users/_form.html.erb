@@ -10,7 +10,7 @@
 <% form_for :section, @section do |f| %>
 <fieldset>
   <legend><%= I18n.t('section.legend') %></legend>
-  <%= f.label t("section.name") %>
+  <%= f.label :name, t("section.name") %>
   <%= f.text_field :name%>
   <br />
   <% if controller.action_name == "create_section"%>

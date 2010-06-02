@@ -402,6 +402,27 @@ label, .label{
    font-weight: bold;
 }
 
+label.radio_label, label.checkbox_label, label.inline_label{
+   float: none;
+   display: inline;
+   min-width: 0px;
+   padding-top: 0px;
+   margin-top: 0px;
+   padding-left: 0px;
+   text-transform: capitalize;
+   font-weight: normal;
+}
+
+label.bold_inline_label{
+   float: none;
+   display: inline;
+   min-width: 0px;
+   padding-top: 0px;
+   margin-top: 0px;
+   padding-left: 0px;
+   text-transform: capitalize;
+}
+
 fieldset {
    -moz-border-radius: 10px;
    -webkit-border-radius: 10px;
