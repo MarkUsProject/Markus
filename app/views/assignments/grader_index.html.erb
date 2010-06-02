@@ -2,6 +2,8 @@
 <div class="wrapLeft">
   <%= render :partial => "assignments/list_manage", 
     :locals => { :controller => 'submissions', :action => 'browse' } -%>
+  <%= render :partial => "grade_entry_forms/list_manage", 
+             :locals => { :action => 'grades' } %>
   <div class="section">
     <%= render :partial => "api/key_display", :locals => { :user => @current_user } %>
   </div>

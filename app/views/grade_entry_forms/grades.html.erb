@@ -26,11 +26,9 @@
 
 <div id="title_bar">
   <h1><%= t('grade_entry_forms.grades.title') + " " + h(@grade_entry_form.short_identifier)%>
-    <% if @current_user.admin? %>
-      <%= button_to_function t(:upload), "upload_grades();"%>
-      <span class="menu_bar">|</span>
-      <%= link_to t(:download), :action => 'csv_download', :id => @grade_entry_form.id %> 
-    <% end %>
+    <%= button_to_function t(:upload), "upload_grades();"%>
+    <span class="menu_bar">|</span>
+    <%= link_to t(:download), :action => 'csv_download', :id => @grade_entry_form.id %> 
   </h1>
 </div>
 
@@ -107,7 +105,9 @@
                                                                                          :alpha_pagination_options => @alpha_pagination_options} %>
       </div>
       <div id="ap_selector">
-        <%= render :partial => 'ajax_paginate/selector' %>
+        <% if @current_user.admin? %>      	
+          <%= render :partial => 'ajax_paginate/selector' %>
+        <% end %>
       </div>
       <div class="clear"></div>
     </div>
@@ -142,13 +142,17 @@
                                                                                          :alpha_pagination_options => @alpha_pagination_options} %>
       </div>
       <div id="ap_selector">
-        <%= render :partial => 'ajax_paginate/selector'%>
+        <% if @current_user.admin? %>
+          <%= render :partial => 'ajax_paginate/selector'%>
+        <% else %>
+          <br />
+        <% end %>
       </div> 
       <div class="floatLeft">
         <% if @current_user.admin? %>
           <%= submit_tag t(:release_marks), :name => "release_results" %>
           <%= submit_tag t(:unrelease_marks), :name => "unrelease_results" %>
-        <% end %>
+        <% end %>	
       </div>
 		  
       <div class="ap_filters" id="ap_filters_2">

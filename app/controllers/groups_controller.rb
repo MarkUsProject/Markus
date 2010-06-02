@@ -52,9 +52,16 @@ class GroupsController < ApplicationController
         if @invited.has_accepted_grouping_for?(@assignment.id)
           raise I18n.t('add_student.fail.already_grouped', :user_name => user_name)
         end
-        grouping.invite(user_name, set_membership_status)
+        membership_count = grouping.student_memberships.length
+        grouping.invite(user_name, set_membership_status, true)
+        grouping.reload
 
-        @messages.push(I18n.t('add_student.success', :user_name => user_name))
+        # report success only if # of memberships increased
+        if membership_count < grouping.student_memberships.length
+          @messages.push(I18n.t('add_student.success', :user_name => user_name))
+        else # something clearly went wrong
+          raise I18n.t('add_student.fail.general', :user_name => user_name)
+        end
         
         # only the first student should be the "inviter" (and only update this if it succeeded)
         set_membership_status = StudentMembership::STATUSES[:accepted]
@@ -85,7 +92,13 @@ class GroupsController < ApplicationController
     member = @grouping.student_memberships.find(@mbr_id)  # use group as scope
     @grouping.remove_member(member)
     @grouping.reload
-    @inviter = @grouping.accepted_student_memberships.find_by_user_id(@grouping.inviter.id)
+    if !@grouping.inviter.nil?
+      @inviter = @grouping.accepted_student_memberships.find_by_user_id(@grouping.inviter.id)
+    else
+      # There are no group members left, so create an empty table row
+      # of FilterTable
+      @grouping_table_row = construct_table_row(@grouping, @assignment)
+    end
   end
   
   def add_group

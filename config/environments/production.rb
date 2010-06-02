@@ -10,7 +10,7 @@ config.whiny_nils = true
 # Use a different logger for distributed setups
 # config.logger = SyslogLogger.new
 #
-config.log_level = :debug	# set log-level (:debug, :info, :warn, :error, :fatal)
+config.log_level = :info	# set log-level (:debug, :info, :warn, :error, :fatal)
 
 # Full error reports are disabled and caching is turned on
 config.action_controller.consider_all_requests_local = true # set to false to turn off traces
@@ -72,9 +72,10 @@ REPOSITORY_STORAGE = "/home/markus/svn-repos-root"
 ###################################################################
 # Change this to 'REPOSITORY_EXTERNAL_SUBMITS_ONLY = true' if you
 # are using Subversion as a storage backend and the instructor wants his/her
-# students to submit to the repositories by command-line only. If you
-# set this to true, students won't be able to submit via the Web interface.
-REPOSITORY_EXTERNAL_SUBMITS_ONLY = true
+# students to submit to the repositories by command-line only. Set this
+# to true if you plan to let students submit via the standard subversion
+# client.
+REPOSITORY_EXTERNAL_SUBMITS_ONLY = false
 
 ###################################################################
 # This config setting only makes sense, if you are using
@@ -103,7 +104,7 @@ REPOSITORY_PERMISSION_FILE = REPOSITORY_STORAGE + "/svn_authz"
 # This setting configures if MarkUs is reading Subversion
 # repositories' permissions only OR is admin of the Subversion
 # repositories. In the latter case, it will write to
-# $REPOSITORY_SVN_AUTHZ_FILE, otherwise it doesn't. Change this to
+# REPOSITORY_SVN_AUTHZ_FILE, otherwise it doesn't. Change this to
 # 'false' if repositories are created by a third party. 
 IS_REPOSITORY_ADMIN = true
 

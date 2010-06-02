@@ -4,7 +4,10 @@ class GradeEntryFormsController < ApplicationController
   include PaginationHelper
   include GradeEntryFormsHelper
   
-  before_filter      :authorize_only_for_admin, :except => [:student_interface]
+  before_filter      :authorize_only_for_admin, :except => [:student_interface, :grades, :g_table_paginate, 
+                                                            :csv_download, :csv_upload, :update_grade]
+  before_filter      :authorize_for_ta_and_admin, :only => [:grades, :g_table_paginate, 
+                                                            :csv_download, :csv_upload, :update_grade]
   before_filter      :authorize_for_student, :only => [:student_interface]
 
   # Filters will be added as the student UI is implemented (eg. Show Released, Show All,...)    

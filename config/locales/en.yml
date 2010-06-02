@@ -64,7 +64,6 @@ en:
     current_assignments:      "Current assignments:"
     due:                       "due :"
     no_assignments:            "There are currently no assignments."
-    no_result:  "There are no results for this assignment yet."
 
     # app/views/assignments/
     name: "Name"
@@ -80,7 +79,7 @@ en:
     due_date:           "Due Date"
     iso_date_format_example:    "Format:  YYYY-MM-DD - Example:  2009-01-13"
     iso_due_date_format_example:    "Format:  YYYY-MM-DD HH:MM - Example:  2009-01-13 17:44"
-    create_new_assignment:      "Create new assignment"
+    create_new_assignment:      "Add Assignment"
     manage_course_work: "Manage Course Work"
     repository_folder:  "Repository Folder"
     assignment:
@@ -125,7 +124,7 @@ en:
     graders:            "Graders"
     admins:             "Admins"
     add_new:            "Add new"
-    create_new_grade_entry_form: "Create new grade entry form"
+    create_new_grade_entry_form: "Add Marks Spreadsheet"
     edit:               "Edit"
     save:               "Save"
     save_changes:       "Save Changes"
@@ -313,16 +312,16 @@ en:
       column_out_of: "Out Of"
       add_column: "Add a column"
       remove_column: "Remove:"
-      properties: "Grade Entry Form Properties"
+      properties: "Marks Spreadsheet Properties"
       create:
-        success: "Successfully created new grade entry form"
-        title: "Create a New Grade Entry Form"
+        success: "Successfully created new marks spreadsheet"
+        title: "Add Marks Spreadsheet"
       edit:
-        title: "Edit Grade Entry Form:"
-        success: "Successfully updated grade entry form"
+        title: "Edit Marks Spreadsheet:"
+        success: "Successfully updated marks spreadsheet"
       grades:
-        title: "Manage Grade Entry Form:"
-        student_title: "Grade Entry Form:"
+        title: "Manage Marks Spreadsheet:"
+        student_title: "Marks:"
         total: "Total:"
         no_grade_entry_items_message: "There are currently no columns for this table."
         must_select_a_student: "You must select at least one student to update."
@@ -333,8 +332,8 @@ en:
         no_mark: "N/A"
         marking_state: "Marking State"
       students:
-        title: "Your Grade Entry Forms"
-        no_results: "There are no results for this grade entry form yet."
+        title: "Your Term Marks"
+        no_results: "There are no marks available yet."
       csv:
         incomplete_header: "Incomplete grade entry item names or totals."
         incomplete_row: "Contains too little information."
@@ -350,8 +349,8 @@ en:
                              <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br/>
                              <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
         
-    no_grade_entry_forms_message: "There are currently no grade entry forms." 
-    current_grade_entry_forms_title: "Current grade entry forms:"
+    no_grade_entry_forms_message: "There are currently no marks spreadsheets." 
+    current_grade_entry_forms_title: "Current marks spreadsheets:"
     mark_message: "Your mark:"
 
     student_interface_assignments: "Your Assignments"
@@ -389,8 +388,8 @@ en:
         student_replaced_file: "Student '{{user_name}}' replaced content of file '{{file_name}}' for assignment '{{assignment}}'."
         student_viewed_result: "Student '{{user_name}}' viewed results for assignment '{{assignment}}'."
         group_repo_collision: "Creating group '{{group_name}}' caused repository collision (Repository name was: '{{repo_name}}'). Error message: '{{error}}'"
-        marks_released_for_grade_entry_form: "Marks released for grade entry form '{{grade_entry_form}}', ID: '{{grade_entry_form_id}}' (for {{number_students}} students)."
-        marks_unreleased_for_grade_entry_form: "Marks unreleased for grade entry form '{{grade_entry_form}}', ID: '{{grade_entry_form_id}}' (for {{number_students}} students)."
+        marks_released_for_grade_entry_form: "Marks released for marks spreadsheet '{{grade_entry_form}}', ID: '{{grade_entry_form_id}}' (for {{number_students}} students)."
+        marks_unreleased_for_grade_entry_form: "Marks unreleased for marks spreadsheet '{{grade_entry_form}}', ID: '{{grade_entry_form_id}}' (for {{number_students}} students)."
     
     ensure_config:
       path_not_writable: "The setting {{constant_name}} with path {{file_name}} is not writable. Please double check the setting in {{config_location}}."
@@ -585,6 +584,7 @@ en:
     add_student:
       success: "Student {{user_name}} added."
       fail:
+        general: "Something went wrong. Could not add {{user_name}}."
         dne:  "Could not add {{user_name}} - this student does not exist."
         hidden:  "Could not add {{user_name}} - this student's account has been disabled."
         already_grouped: "Could not add {{user_name}} - this student is already a member of another group."
