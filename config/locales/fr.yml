@@ -624,7 +624,8 @@ fr:
     annotations:
       annotation_category: "Catégories d'annotations"
       no_annotation_categories: "Il n'y a pas encore de catégories d'annotations."
-      title : "Annotations pour le projet {{assignment_short_identifier}}"
+      title: "Annotations pour le projet {{assignment_short_identifier}}"
+      name: "Nom de la catégorie"
       help_message: "Cliquer sur les catégories d'annotations pour créer des annotations."
       add_annotation_category: "Ajouter une catégorie d'annotations"
       annotations: "Annotations"

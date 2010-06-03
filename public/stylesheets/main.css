@@ -398,7 +398,6 @@ label, .label{
    padding-top: 3px;
    margin-top: 5px;
    padding-left: 5px;
-   text-transform: capitalize;
    font-weight: bold;
 }
 
@@ -409,7 +408,6 @@ label.radio_label, label.checkbox_label, label.inline_label{
    padding-top: 0px;
    margin-top: 0px;
    padding-left: 0px;
-   text-transform: capitalize;
    font-weight: normal;
 }
 
@@ -420,7 +418,6 @@ label.bold_inline_label{
    padding-top: 0px;
    margin-top: 0px;
    padding-left: 0px;
-   text-transform: capitalize;
 }
 
 fieldset {

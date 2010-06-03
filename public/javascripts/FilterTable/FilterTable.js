@@ -309,14 +309,21 @@ var FilterTable = Class.create({
   construct_row: function(row) {
     try {
       var tr_element = new Element('tr', {id: this.row_prefix + row.id});
-      if(this.can_select) {
+      var row_contents = row['filter_table_row_contents'].split('</td>')
+
+      if(this.can_select) { //Make the select box
         var checkbox_element = new Element('input', {type: 'checkbox', name: this.select_name, value: row.id, id: this.select_id_prefix + row.id, "class": this.selectable_class});
+        var label_element = new Element ('label', {"class": "inline_label", "for": checkbox_element.id});
+        //Take the first row element and make it a label for the select box
+        label_element.insert(row_contents.shift());
         var td_element = new Element('td');
         td_element.insert(checkbox_element);
         tr_element.insert({top: td_element});
+        td_element = new Element('td');
+        td_element.insert(label_element);
+        tr_element.insert({bottom: td_element});
       }
-      var row_contents = row['filter_table_row_contents'].split('</td>')
-      
+
       this.headers.each(function(column_header, index) {
         var td_element = new Element('td'); 
         td_element.innerHTML = row_contents[index]; 
@@ -325,13 +332,6 @@ var FilterTable = Class.create({
         }
        tr_element.insert(td_element);
       });
-      
-/*      console.log(row['filter_table_row_contents']);
-      console.log(tr_element.innerHTML);
-      tr_element.innerHTML = tr_element.innerHTML + row['filter_table_row_contents'];
-      console.log(tr_element.innerHTML);*/
-//      tr_element.update("<td>TEST!</td>")
-// console.log(tr_element.innerHTML);
     }
     catch (e) {
       //TODO: More helpful error

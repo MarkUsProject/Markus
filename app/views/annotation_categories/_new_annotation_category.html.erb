@@ -2,8 +2,8 @@
 <% remote_form_for :annotation_category, :url => {:action => 'add_annotation_category', :id => assignment_id} do |f| %>
   <div class="error" style="display:none;" id="new_annotation_category_error">
   </div>
-  <%= f.text_field :annotation_category_name, :id => "add_annotation_category_prompt", :size => 20 %>
-
+  <%= label_tag "add_annotation_category_prompt", t("annotations.name") %><br />
+  <%= f.text_field :annotation_category_name, :id => "add_annotation_category_prompt", :size => 20 %><br />
   <%= f.submit t(:save) %>
 <% end %>
 </li>

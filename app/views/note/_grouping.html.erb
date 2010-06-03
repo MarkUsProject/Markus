@@ -1,6 +1,6 @@
 <% fields_for :note, :url => {:action => 'create'} do |f| %>
   <p>
-    <%= f.label :assignment_id, I18n.t("notes.noteables.Assignment") %>
+    <%= label_tag "assignment_id", I18n.t("notes.noteables.Assignment") %>
     <%= select_tag "assignment_id", options_from_collection_for_select(@assignments, :id, :short_identifier),
           :onchange => remote_function(:url => { :action => 'new_update_groupings' },
 							:with => 'Form.Element.serialize(this)',

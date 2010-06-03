@@ -3,7 +3,7 @@
 %>
 <div id="file_selector">
 <%= form_tag({:action => "download"}, {:id => "grader_view_file_selector_form"}) if can_download %>
-  <%= I18n.t("common.submission_file") %>
+  <%= label_tag "select_file_id", I18n.t("common.submission_file"), :class => "inline_label" %>
   <input type="button" onClick="bump_select($('select_file_id'), -1); return false;" value="<-" />
   <select id="select_file_id" name="select_file_id" onChange="if ($(this).getValue() != '') { load_submitted_file($(this).getValue()); }">
     <% if files.empty? %>
@@ -23,7 +23,7 @@
 <%= "</form>" if can_download%>
 
 <div id="test_results_controls">
-  <%=h I18n.t("common.test_results") %>
+  <%=label_tag "select_test_result_id", h(I18n.t("common.test_results")), :class => "inline_label" %>
   <select id="select_test_result_id" onchange="if ($(this).getValue() != '') { load_test_result($(this).getValue()); }">
     <% if test_result_files.empty? %>
       <option value=""><%= I18n.t("test_result.no_files_available")%></option>

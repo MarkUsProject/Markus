@@ -7,7 +7,7 @@
 <fieldset>
 
   <p>
-    <%= f.label :noteable_type, I18n.t('notes.noteable')%>
+    <%= label_tag "noteable_type", I18n.t('notes.noteable')%>
     <%= select_tag "noteable_type", options_for_select(Note::NOTEABLES.map {|item| [I18n.t('notes.noteables.'+item),item]}) %>
     <%= observe_field :noteable_type, :on => 'onchange',:url => {:action => :noteable_object_selector},
                                          :with => "noteable_type",
