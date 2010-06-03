@@ -1,8 +1,8 @@
 <li id="new_flexible_criterion">
   <% remote_form_for :flexible_criterion, :url => {:action => 'new', :id => assignment.id} do |f| %>
     <div id="new_flexible_criterion_errors" style="display:none;" class="error"></div>
-    <%= f.label :flexible_criterion_name, t("flexible_criteria.name") %>
-    <%= f.text_field :flexible_criterion_name, :size => 15, :id => 'new_flexible_criterion_prompt' %>
+    <%= label_tag 'new_flexible_criterion_prompt', t("flexible_criteria.name") %><br />
+    <%= f.text_field :flexible_criterion_name, :size => 15, :id => 'new_flexible_criterion_prompt' %><br />
     <%= f.submit t("flexible_criteria.save")%>
   <% end %>
 </li>

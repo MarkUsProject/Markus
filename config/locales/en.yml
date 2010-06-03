@@ -624,7 +624,8 @@ en:
     annotations:
       annotation_category: "Annotation Category"
       no_annotation_categories: "There are no annotation categories, yet."
-      title : "Annotations: {{assignment_short_identifier}}"
+      title: "Annotations: {{assignment_short_identifier}}"
+      name: "Category name"
       help_message: "Click on an annotation category to add annotations."
       add_annotation_category: "Add Annotation Category"
       annotations: "Annotations"
