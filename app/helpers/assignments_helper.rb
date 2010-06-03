@@ -6,6 +6,7 @@ module AssignmentsHelper
       page << %{
         var new_assignment_file_id = "new_" + new Date().getTime();
         $('assignment_files').insert({bottom: "#{ escape_javascript assignment_file }".replace(/(attributes_\\d+|\[\\d+\])/g, new_assignment_file_id) });
+        $('assignment_assignment_files_' + new_assignment_file_id + '_filename').focus();
       }
     end
   end
@@ -17,6 +18,7 @@ module AssignmentsHelper
         if ($F('grace_period_submission_rule') != null) {
           var new_period_id = "new_" + new Date().getTime();
           $('grace_periods').insert({bottom: "#{ escape_javascript period }".replace(/(attributes_\\d+|\[\\d+\])/g, new_period_id) });
+          $('assignment_submission_rule_attributes_periods_' + new_period_id + '_hours').focus();
         } else {
           alert("#{I18n.t("submission_rules.grace_period_submission_rule.alert")}");
         }
@@ -31,6 +33,7 @@ module AssignmentsHelper
       if ($F('penalty_period_submission_rule') != null) {
         var new_period_id = "new_" + new Date().getTime();
         $('penalty_periods').insert({bottom: "#{ escape_javascript period }".replace(/(attributes_\\d+|\[\\d+\])/g, new_period_id) });
+        $('assignment_submission_rule_attributes_periods_' + new_period_id + '_hours').focus();
       }  else {
           alert("#{I18n.t("submission_rules.penalty_period_submission_rule.alert")}");
         }
