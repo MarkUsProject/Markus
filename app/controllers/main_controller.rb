@@ -4,10 +4,10 @@
 class MainController < ApplicationController
   
   include MainHelper
-  protect_from_forgery :except => :login
+  protect_from_forgery :except => [:login, :page_not_found]
 
   # check for authorization 
-  before_filter      :authorize_for_user,      :except => [:login]
+  before_filter      :authorize_for_user,      :except => [:login, :page_not_found]
 
   #########################################################################
   # Authentication
@@ -105,6 +105,12 @@ class MainController < ApplicationController
   def about
     # dummy action for remote rjs calls
     # triggered by clicking on the about icon
+  end
+
+  # Render 404 error (page not found) if no other route matches.
+  # See config/routes.rb
+  def page_not_found
+    render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
   end
   
 end
