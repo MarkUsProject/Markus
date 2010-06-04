@@ -13,7 +13,7 @@ class ApplicationController < ActionController::Base
   # activate i18n for renaming constants in views
   before_filter :set_locale, :set_markus_version
   # check for active session on every page
-  before_filter :authenticate, :except => [:login] 
+  before_filter :authenticate, :except => [:login, :page_not_found] 
   
   # See ActionController::Base for details 
   # Filter the contents of submitted sensitive data parameters

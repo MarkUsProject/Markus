@@ -45,8 +45,10 @@ ActionController::Routing::Routes.draw do |map|
   map.namespace :api do |api|
     api.resource :test_results
   end
-  #map.connect 'api/test_results/:action/:id', :controller => 'test_results', :namespace => 'api'
   
-  # Generic connects
+  # Generic connects (controller/action pages)
   map.connect 'main/:controller/:action/:id'
+
+  # Everything else should render 404.html
+  map.connect '*path', :controller => 'main', :action => 'page_not_found'
 end
