@@ -203,6 +203,11 @@ SubmissionFile.blueprint do
   path 
 end
 
+Period.blueprint do
+  submission_rule_id {0}
+  hours {rand(24)}
+end
+
 Ta.blueprint do
   user_name {Sham.ta_user_name}
   first_name {Sham.first_name}
