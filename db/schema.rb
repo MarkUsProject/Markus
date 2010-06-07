@@ -36,7 +36,6 @@ ActiveRecord::Schema.define(:version => 20100513155158) do
     t.integer "submission_file_id"
   end
 
-  add_index "annotations", ["annotation_text_id"], :name => "index_annotations_on_annotation_text_id"
   add_index "annotations", ["submission_file_id"], :name => "index_annotations_on_assignmentfile_id"
   add_index "annotations", ["submission_file_id"], :name => "index_annotations_on_submission_file_id"
 
@@ -136,7 +135,7 @@ ActiveRecord::Schema.define(:version => 20100513155158) do
     t.datetime "updated_at"
   end
 
-  add_index "grade_entry_students", ["user_id", "grade_entry_form_id"], :name => "index_grade_entry_students_on_user_id_and_grade_entry_form_id", :unique => true
+  add_index "grade_entry_students", ["grade_entry_form_id", "user_id"], :name => "index_grade_entry_students_on_user_id_and_grade_entry_form_id", :unique => true
 
   create_table "grades", :force => true do |t|
     t.integer  "grade_entry_item_id"
@@ -174,7 +173,7 @@ ActiveRecord::Schema.define(:version => 20100513155158) do
     t.string   "markable_type"
   end
 
-  add_index "marks", ["markable_id", "result_id", "markable_type"], :name => "altered_marks_u1", :unique => true
+  add_index "marks", ["markable_id", "markable_type", "result_id"], :name => "marks_u1", :unique => true
 
   create_table "memberships", :force => true do |t|
     t.integer  "user_id"
@@ -188,12 +187,12 @@ ActiveRecord::Schema.define(:version => 20100513155158) do
   add_index "memberships", ["grouping_id", "user_id"], :name => "memberships_u1", :unique => true
 
   create_table "notes", :force => true do |t|
-    t.text     "notes_message", :limit => 255, :null => false
-    t.integer  "creator_id",                   :null => false
+    t.text     "notes_message", :null => false
+    t.integer  "creator_id",    :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "noteable_id",                  :null => false
-    t.string   "noteable_type",                :null => false
+    t.integer  "noteable_id",   :null => false
+    t.string   "noteable_type", :null => false
   end
 
   add_index "notes", ["creator_id"], :name => "index_notes_on_creator_id"
