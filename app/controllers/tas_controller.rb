@@ -24,7 +24,7 @@ class TasController < ApplicationController
     if !@user.update_attributes(attrs)
       render :action => :edit
     else
-      flash[:edit_notice] = @user.user_name + " has been updated."
+      flash[:edit_notice] = I18n.t("graders.success", :user_name => @user.user_name)
       redirect_to :action => 'index'
     end
   end
@@ -39,7 +39,7 @@ class TasController < ApplicationController
     # active records--creates a new record if the model is new, otherwise
     # updates the existing record
     return unless @user.save
-    flash[:success] = "Successfully created grader #{@user.user_name}"
+    flash[:success] = I18n.t("graders.create_success", :user_name => @user.user_name)
     redirect_to :action => 'index' # Redirect 
   end
   

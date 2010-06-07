@@ -43,7 +43,7 @@ class MainController < ApplicationController
     # Two stage user verification: authentication and authorization
     authenticate_response = User.authenticate(params[:user_login], params[:user_password])
     if authenticate_response == User::AUTHENTICATE_BAD_PLATFORM
-      flash[:login_notice] = "External authentication not supported on your platform!"
+      flash[:login_notice] = I18n.t("external_authentication_not_supported")
       return
     end
     if authenticate_response == User::AUTHENTICATE_SUCCESS
@@ -65,7 +65,7 @@ class MainController < ApplicationController
     
     # Has this student been hidden?
     if found_user.student? && found_user.hidden
-      flash[:login_notice] = "This account has been disabled"
+      flash[:login_notice] = I18n.t("account_disabled")
       redirect_to(:action => 'login') && return
     end
     

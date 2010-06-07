@@ -82,7 +82,7 @@ class AnnotationCategoriesController < ApplicationController
     when 'yml'
       send_data convert_to_yml(@annotation_categories), :filename => "#{@assignment.short_identifier}_annotations.yml", :disposition => 'attachment'
     else
-      flash[:error] = "Could not recognize #{params[:format]} format to download with"
+      flash[:error] = I18n.t("annotations.upload.flash_error", :format => params[:format])
       redirect_to :action => 'index', :id => params[:id]
     end
   end

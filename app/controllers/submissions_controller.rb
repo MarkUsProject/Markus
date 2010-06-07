@@ -181,7 +181,7 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.find(params[:id])
     grouping = Grouping.find(params[:grouping_id])
     if !assignment.submission_rule.can_collect_now?
-      flash[:error] = "Could not collect submission for group #{grouping.group.group_name} - the collection date has not been reached yet."
+      flash[:error] = I18n.t("browse_submissions.could_not_collect", :group_name => grouping.group.group_name)
     else
       time = assignment.submission_rule.calculate_collection_time.localtime
       # Create a new Submission by timestamp.
@@ -240,7 +240,7 @@ class SubmissionsController < ApplicationController
     path = params[:path] || '/'
     grouping = current_user.accepted_grouping_for(assignment_id)
     if grouping.repository_external_commits_only?
-      raise "MarkUs is only accepting external submits"
+      raise I18n.t("student.submission.external_submit_only")
     end
     if !grouping.is_valid?
       redirect_to :action => :file_manager, :id => assignment_id
@@ -290,7 +290,7 @@ class SubmissionsController < ApplicationController
         new_files.each do |file_object|
           # sanitize_file_name in SubmissionsHelper
           if file_object.original_filename.nil?
-            raise "Invalid file name on submitted file"
+            raise I18n.t("student.submission.invalid_file_name")
           end
           # Sometimes the file pointer of file_object is at the end of the file.
           # In order to avoid empty uploaded files, rewind it to be save.
@@ -349,7 +349,7 @@ class SubmissionsController < ApplicationController
        file = @revision.files_at_path(File.join(@assignment.repository_folder, path))[params[:file_name]]
        file_contents = repo.download_as_string(file)
       rescue Exception => e
-        render :text => "Could not download #{params[:file_name]}: #{e.message}.  File may be missing."
+        render :text => I18n.t("student.submission.missing_file", :file_name => params[:file_name], :message => e.message)
         return
       end
     
@@ -371,7 +371,7 @@ class SubmissionsController < ApplicationController
     if params[:ap_select_full] == 'true'
       # We should have been passed a filter
       if params[:filter].blank?
-        raise "Expected a filter on select full"
+        raise I18n.t("student.submission.expect_filter")
       end
       # Get all Groupings for this filter
       groupings = S_TABLE_PARAMS[:filters][params[:filter]][:proc].call({:assignment => assignment, :user_id => current_user.id})
@@ -417,7 +417,7 @@ class SubmissionsController < ApplicationController
   def unrelease
     return unless request.post?
     if params[:groupings].nil?
-      flash[:release_results] = "Select a group"
+      flash[:release_results] = I18n.t("assignment.group.select_a_group")
     else
       params[:groupings].each do |g|
         g.unrelease_results

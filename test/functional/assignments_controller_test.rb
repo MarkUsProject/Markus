@@ -129,7 +129,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     student = users(:student3)
     post_as(student, :creategroup, {:id => assignment.id, :workalone => 'true'})
     assert_redirected_to :action => "student_interface", :id => assignment.id
-    assert_equal("You cannot work alone for this assignment - the group size minimum is #{assignment.group_min}", flash[:fail_notice])
+    assert_equal(I18n.t("create_group.fail.can_not_work_alone", :group_min => assignment.group_min), flash[:fail_notice])
     assert !student.has_accepted_grouping_for?(assignment.id)
   end
 
@@ -148,7 +148,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assignment.save
     student = users(:student3)
     post_as(student, :creategroup, {:id => assignment.id})
-    assert_equal("Assignment does not allow students to form groups", flash[:fail_notice])
+    assert_equal(I18n.t("create_group.fail.not_allow_to_form_groups"), flash[:fail_notice])
   end
   
   def test_student_cannot_create_group_if_already_grouped
@@ -162,7 +162,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     
     post_as(student, :creategroup, {:id => assignment.id})
     assert_redirected_to :action => "student_interface", :id => assignment.id
-    assert_equal "You already have a group, and cannot create another", flash[:fail_notice]
+    assert_equal I18n.t("create_group.fail.already_have_a_group"), flash[:fail_notice]
     # Get past some possible caching here...
     student = Student.find(student.id)
     assert student.has_accepted_grouping_for?(assignment.id)
@@ -314,7 +314,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     post_as(user, :disinvite_member, {:id => assignment.id, :membership => membership.id})
     student.reload
     assert_response :success
-    assert_equal("Member disinvited", flash[:edit_notice])
+    assert_equal(I18n.t("student.member_disinvited"), flash[:edit_notice])
     assert_equal original_grouping_num - 1, student.pending_groupings.length
   end
 
@@ -378,7 +378,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert !grouping.is_valid?
     post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
     assert_redirected_to :action => "student_interface", :id => assignment.id
-    assert_equal("Group has been deleted", flash[:edit_notice])
+    assert_equal(I18n.t("assignment.group.deleted"), flash[:edit_notice])
     assert !user.has_accepted_grouping_for?(assignment.id)
   end
 
@@ -400,7 +400,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       assert grouping.is_valid?
       post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
       assert_redirected_to :action => "student_interface", :id => assignment.id
-      assert_equal("Group has been deleted", flash[:edit_notice])
+      assert_equal(I18n.t("assignment.group.deleted"), flash[:edit_notice])
       assert !user.has_accepted_grouping_for?(assignment.id)
     end
     
@@ -445,7 +445,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assignment = grouping.assignment
     grouping.invite(users(:student6).user_name, set_membership_status=StudentMembership::STATUSES[:pending])
     post_as(users(:student6), :deletegroup, {:id => assignment.id})
-    assert_equal("You do not currently have a group", flash[:fail_notice])
+    assert_equal(I18n.t("create_group.fail.do_not_have_a_group"), flash[:fail_notice])
     assert user.has_accepted_grouping_for?(assignment.id)
   end  
 

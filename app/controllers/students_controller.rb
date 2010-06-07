@@ -34,7 +34,7 @@ class StudentsController < ApplicationController
     if !@user.update_attributes(attrs)
       render :action => :edit
     else
-      flash[:edit_notice] = @user.user_name + " has been updated."
+      flash[:edit_notice] = I18n.t("students.edit_success", :user_name => @user.user_name)
       redirect_to :action => 'index'
     end
   end
@@ -43,7 +43,7 @@ class StudentsController < ApplicationController
     student_ids = params[:student_ids]
     begin
       if student_ids.nil? || student_ids.empty?
-        raise "No students were selected, so no changes were made."
+        raise I18n.t("students.no_students_selected")
       end
       case params[:bulk_action]
         when "hide"
@@ -78,7 +78,7 @@ class StudentsController < ApplicationController
     # active records--creates a new record if the model is new, otherwise
     # updates the existing record
     return unless @user.save
-    flash[:success] = "Successfully created student #{@user.user_name}"
+    flash[:success] = I18n.t("students.create_success", :user_name => @user.user_name)
     redirect_to :action => 'index' # Redirect 
   end
   

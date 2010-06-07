@@ -87,6 +87,8 @@ en:
         name:           "Assignment Name"
         update_success:        "Successfully updated the assignment"
         create_success:        "Successfully created the assignment"
+        error: "Could not assign SubmissionRule: #{{message}}"
+        not_valid_submission_rule: "{{type}} is not a valid SubmissionRule"
         rules:           "Assignment Rules"
         edit:           "Edit Assignment:"
         properties:     "Assignment Properties"
@@ -99,6 +101,9 @@ en:
         type:  "Assignment type"
         overall_comment: "Overall Comment"
         group:
+            select_a_group: "Select a group"
+            select_one_group: "You need to select at least one group."
+            deleted: "Group has been deleted"
             work_in_groups:  "Students can work in groups"
             persist_group_from: "Persist Groups / Properties from"
             properties:  "Group Properties"
@@ -239,6 +244,7 @@ en:
       repo_collision_warning: "Warning: Repository '{{repo_name}}' exists already. Group name was: '{{group_name}}'."
       line_nr_csv_file_prefix: "Line {{line_number}} of CSV file:"
       errors_and_warnings_msg: "The following lines produced errors and/or warnings:"
+      group_to_grader: "You must supply a CSV file for group to grader mapping"
 
     pagination:
       first: "First"
@@ -267,6 +273,7 @@ en:
       current_path:         "Current Path:"
       root:                 "[root]"
       collect_and_grab:     "Collect and Grade This Revision"
+      could_not_collect:    "Could not collect submission for group {{group_name}} - the collection date has not been reached yet."
       release_marks:        "Release Marks"
       unrelease_marks:      "Unrelease Marks"
       group_name:           "Group Name"
@@ -452,6 +459,10 @@ en:
         delete: "Delete"
         assign_grader: "Assign Grader(s)"
         unassign_grader: "Unassign Grader(s)"
+      csv:
+        could_not_find_source: "Could not find source assignment for cloning groups"
+        could_not_find_target: "Could not find target assignment for cloning groups"
+        groups_created: "Groups created"
     
     results:
       title:  "Assignment {{assignment_name}} : {{group_name}}"
@@ -459,6 +470,7 @@ en:
       successfully_changed: "Successfully updated {{changed}} results"
       must_select_a_group:  "You must select at least one group to update"
       editing_after_release_fail: "The marks have been released. You cannot change the grades."
+      could_not_find_file: "Could not find {{filename}} in repository {{repository_name}}"
     
     mark:
       error:
@@ -470,8 +482,11 @@ en:
     students:
       manage_students: "Manage Students"
       edit_student:    "Edit a Student"
+      edit_success: "{{user_name}} has been updated."
       create_new:      "Create a new Student"
+      create_success: "Successfully created student {{user_name}}"
       students: "Students"
+      no_students_selected: "No students were selected, so no changes were made."
       upload:
         upload_a_class_list: "Upload a class list"
         select_csv_file:     "Select a CSV file of the following form: <code>user_name,last_name,first_name</code>"
@@ -532,6 +547,7 @@ en:
       delete_your_group: "Delete your group"
       disinvite_member: "Are you sure you want to uninvite this member?"
       disinvite_member_title: "Uninvite this member"
+      member_disinvited: "Member disinvited"
       invited: "(invited)"
       inviter: "(inviter)"
       disinvite: "Uninvite"
@@ -548,6 +564,10 @@ en:
         toggle_file_list: "click here to toggle the list of missing files."
         no_action_detected: "No actions were detected in the last submit.  Nothing was changed."
         no_marks_available: "No marks are available."
+        external_submit_only: "MarkUs is only accepting external submits"
+        invalid_file_name: "Invalid file name on submitted file"
+        missing_file: "Could not download {{file_name}}: {{message}}.  File may be missing."
+        expect_filter: "Expected a filter on select full"
     
     #Graders' View
     graders:
@@ -555,6 +575,8 @@ en:
       edit_grader:       "Edit a Grader"
       manage_graders: "Manage Graders"
       graders:        "Graders"
+      success: "{{user_name}} has been updated"
+      create_success: "Successfully created grader {{user_name}}"
       upload:
         select_csv_file: "Select a CSV file of the following form: <code>user_name,last_name,first_name</code>"
         grader_same_user: "If a TA with the same user_name exists, then that TA's information is updated."
@@ -573,6 +595,7 @@ en:
       create_new_admin: "Create a new Admin"
       manage_admins:    "Manage Admins"
       edit_admin:       "Edit an Admin"
+      success: "{{user_name}} has been updated"
       admins: "Admins"
       upload: 
         not_added: "The following Admins have not been successfully added:"
@@ -592,10 +615,15 @@ en:
     create_group:
       fail:
         due_date_passed: "Could not create group - the due date for this assignment has passed and there are either no grace periods allowed, or the grace period for this assignment has also passed."
+        not_allow_to_form_groups: "Assignment does not allow students to form groups"
+        already_have_a_group: "You already have a group, and cannot create another"
+        can_not_work_alone: "You cannot work alone for this assignment - the group size minimum is {{group_min}}"
+        do_not_have_a_group: "You do not currently have a group"
 
     invite_student:
       success: "Invitations successful"
       fail:
+        only_inviter: "Only the inviter can delete a declined invitation"
         due_date_passed: "Could not invite {{user_name}} - the due date for this assignment has passed and there are either no grace periods allowed, or the grace period for this assignment has also passed."
         dne:  "Could not invite {{user_name}} - this student does not exist."
         hidden:  "Could not invite {{user_name}} - this student's account has been disabled."
@@ -647,6 +675,7 @@ en:
           </p>"
         success:  "Successfully uploaded {{annotation_category_number}} Annotation Categories"
         error:  "Unable to upload category: {{annotation_category}} located in line {{annotation_line}}"
+        flash_error: "Could not recognize {{format}} format to download with"
       download:
         download_annotations: "Download Annotations"
         download_csv: "Download in CSV Format"
@@ -897,7 +926,10 @@ en:
       
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "No grader assigned yet."
-
+    
+    locale_not_available: "{{locale}} translation not available!"
+    external_authentication_not_supported: "External authentication not supported on your platform!"
+    account_disabled: "This account has been disabled"
 
 #Missing Activerecord Translations for english
     datetime:
