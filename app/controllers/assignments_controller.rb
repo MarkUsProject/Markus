@@ -101,7 +101,7 @@ class AssignmentsController < ApplicationController
     begin
       @assignment = process_assignment_form(@assignment, params)
     rescue Exception, RuntimeError => e
-      @assignment.errors.add_to_base("Could not assign SubmissionRule: #{e.message}")
+      @assignment.errors.add_to_base(I18n.t("assignment.error", :message => e.message))
       return
     end
     
@@ -223,14 +223,14 @@ class AssignmentsController < ApplicationController
         raise I18n.t('create_group.fail.due_date_passed')
       end
       if !@assignment.student_form_groups || @assignment.instructor_form_groups
-        raise "Assignment does not allow students to form groups"
+        raise I18n.t('create_group.fail.not_allow_to_form_groups')
       end
       if @student.has_accepted_grouping_for?(@assignment.id)
-        raise "You already have a group, and cannot create another"
+        raise I18n.t('create_group.fail.already_have_a_group')
       end
       if params[:workalone]
         if @assignment.group_min != 1
-          raise "You cannot work alone for this assignment - the group size minimum is #{@assignment.group_min}"
+          raise I18n.t('create_group.fail.can_not_work_alone', :group_min => @assignment.group_min)
         end
         @student.create_group_for_working_alone_student(@assignment.id)
       else
@@ -250,7 +250,7 @@ class AssignmentsController < ApplicationController
     m_logger = MarkusLogger.instance
     begin
       if @grouping.nil?
-        raise "You do not currently have a group"
+        raise I18n.t('create_group.fail.do_not_have_a_group')
       end
       # If grouping is not deletable for @current_user for whatever reason, fail.
       if !@grouping.deletable_by?(@current_user)
@@ -265,7 +265,7 @@ class AssignmentsController < ApplicationController
       # update repository permissions
       @grouping.update_repository_permissions
       @grouping.destroy
-      flash[:edit_notice] = "Group has been deleted"
+      flash[:edit_notice] = I18n.t('assignment.group.deleted')
       m_logger.log(I18n.t("markus_logger.student_deleted_group", :user_name => current_user.user_name, :group => @grouping.group.group_name), MarkusLogger::INFO)
     
     rescue RuntimeError => e
@@ -316,7 +316,7 @@ class AssignmentsController < ApplicationController
     grouping.update_repository_permissions
     m_logger = MarkusLogger.instance
     m_logger.log(I18n.t('markus_logger.student_cancelled_invitation', :inviter => current_user.user_name, :invitee => disinvited_student.user_name))
-    flash[:edit_notice] = "Member disinvited" 
+    flash[:edit_notice] = I18n.t('student.member_disinvited')
   end
 
   # Deletes memberships which have been declined by students
@@ -325,7 +325,7 @@ class AssignmentsController < ApplicationController
     membership = StudentMembership.find(params[:membership])
     grouping = membership.grouping
     if current_user != grouping.inviter
-      raise "Only the inviter can delete a declined invitation"
+      raise I18n.t('invite_student.fail.only_inviter')
     end
     membership.delete
     membership.save
@@ -344,7 +344,7 @@ class AssignmentsController < ApplicationController
       # Some protective measures here to make sure we haven't been duped...
       potential_rule = Module.const_get(params[:assignment][:submission_rule_attributes][:type])
       if !potential_rule.ancestors.include?(SubmissionRule)
-        raise "#{params[:assignment][:submission_rule_attributes][:type]} is not a valid SubmissionRule"
+        raise I18n.t("assignment.not_valid_submission_rule", :type => params[:assignment][:submission_rule_attributes][:type])
       end
       
       assignment.submission_rule.destroy

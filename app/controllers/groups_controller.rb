@@ -202,7 +202,7 @@ class GroupsController < ApplicationController
   # Assign TAs to Groupings via a csv file
   def csv_upload_grader_mapping
     if !request.post? || params[:grader_mapping].nil?
-      flash[:error] = "You must supply a CSV file for group to grader mapping"
+      flash[:error] = I18n.t("csv.group_to_grader")
       redirect_to :action => 'manage', :id => params[:id]
       return
     end
@@ -297,16 +297,16 @@ class GroupsController < ApplicationController
     source_assignment = Assignment.find(params[:clone_groups_assignment_id])
       
     if source_assignment.nil?
-      flash[:fail_notice] = "Could not find source assignment for cloning groups"
+      flash[:fail_notice] = I18n.t("groups.csv.could_not_find_source")
     end
     if @target_assignment.nil?
-      flash[:fail_notice] = "Could not find target assignment for cloning groups"
+      flash[:fail_notice] = I18n.t("groups.csv.could_not_find_target")
     end
             
     # Clone the groupings
     @target_assignment.clone_groupings_from(source_assignment.id)
 
-    flash[:edit_notice] = "Groups created"
+    flash[:edit_notice] = I18n.t("groups.csv.groups_created")
   end
 
   # This method is massive, and does way too much.  Whatever happened
@@ -336,7 +336,7 @@ class GroupsController < ApplicationController
     
     grouping_ids = params[:groupings]
     if params[:groupings].nil? or params[:groupings].size ==  0
-      @error = "You need to select at least one group."
+      @error = I18n.t("assignment.group.select_one_group")
       render :action => 'error_single'
       return
     end

@@ -282,7 +282,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
           get_as @admin, :download, :id => @assignment.id, :format => 'xml'
         end
         should_respond_with :redirect
-        should_set_the_flash_to 'Could not recognize xml format to download with'
+        should_set_the_flash_to I18n.t("annotations.upload.flash_error", :format => 'xml')
       end      
     end
 

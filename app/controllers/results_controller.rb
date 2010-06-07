@@ -321,7 +321,7 @@ class ResultsController < ApplicationController
     revision_number = file.submission.revision_number
     revision = repo.get_revision(revision_number)
     if revision.files_at_path(file.path)[file.filename].nil?
-      raise "Could not find #{file.filename} in repository #{student_group.repository_name}"
+      raise I18n.t("results.could_not_find_file", :filename => file.filename, :repository_name => student_group.repository_name)
     end
     retrieved_file = repo.download_as_string(revision.files_at_path(file.path)[file.filename])
     repo.close

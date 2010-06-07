@@ -273,7 +273,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
       
       should_assign_to :target_assignment
       should_respond_with :success
-      should_set_the_flash_to "Groups created"
+      should_set_the_flash_to I18n.t("groups.csv.groups_created")
       should_render_template 'use_another_assignment_groups.rjs'
     end
     
@@ -285,7 +285,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         end
         should_assign_to :assignment, :tas
         should_render_template 'error_single.rjs'
-        should_assign_to(:error) { "You need to select at least one group." }
+        should_assign_to(:error) { I18n.t("assignment.group.select_one_group") }
       end
       
       context "and one is selected" do
