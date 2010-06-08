@@ -1474,11 +1474,6 @@ a img{
    float: left;
 }
 
-.criterion_arrow{
-    float: right;
-    padding-left: 3px;
-}
-
 .criterion_weight, .criterion_max {
    float: right;
    padding: 2px 4px 0 2px;
