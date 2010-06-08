@@ -1,6 +1,6 @@
 <div id="<%="mark_criterion_title_#{mark_criterion.id}_name"%>"
 class="mark_criterion_title_div_level" class="float_left">
-  <b><%=h(mark_criterion.rubric_criterion_name)%></b>       
+  <b><%=link_to_function h(mark_criterion.rubric_criterion_name), "return false", :class => "rubric_criterion_link" %></b>
 </div>
 <div class="clear"></div>
 <div id="<%="mark_criterion_title_#{mark.id}_mark"%>" class="padding_left">

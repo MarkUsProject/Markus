@@ -61,6 +61,11 @@ a.delete:hover{
   color: red;
 }
 
+a.rubric_criterion_link {
+    font-weight: bold;
+    color: #000000
+}
+
 h1{
    font-family: "Myriad", "Myriad Pro", "Lucida Grande", "Lucida Sans
 Unicode", Verdana;
@@ -1467,6 +1472,11 @@ a img{
 .criterion_title_div, .annotation_category_title{
    padding: 2px 2px 0 10px;
    float: left;
+}
+
+.criterion_arrow{
+    float: right;
+    padding-left: 3px;
 }
 
 .criterion_weight, .criterion_max {
