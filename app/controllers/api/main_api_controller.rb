@@ -35,12 +35,22 @@ module Api
         return
       end
       # Find user by api_key_md5
-      @current_user = User.find_by_api_key_md5(auth_token)
+      @current_user = User.find_by_api_key(auth_token)
       if @current_user.nil?
         # Key does not exist, so bail out
         render :file => "#{RAILS_ROOT}/public/403.xml", :status => 403
         return
-      elsif @current_user.student?
+      else
+        # see if the MD5 matches
+        curr_user_md5 = Base64.decode64(@current_user.api_key)
+        if (Base64.decode64(auth_token) != curr_user_md5)
+          # MD5 mismatch, bail out
+          render :file => "#{RAILS_ROOT}/public/403.xml", :status => 403
+          return
+        end
+      end
+      # Student's aren't allowed yet
+      if @current_user.student?
         # API is available for TAs and Admins only
         render :file => "#{RAILS_ROOT}/public/403.xml", :status => 403
         return
@@ -53,17 +63,7 @@ module Api
     def parse_auth_token(token)
       return nil if token.nil?
       if !(token =~ /MarkUsAuth ([^\s,]+)/).nil?
-        ret_token = $1
-        begin
-          ret_token = Base64.decode64(ret_token).strip
-          # we expect a MD5 sum string of length 32
-          return nil unless ret_token.length == 32
-          # now we are good, so it seems to be a valid
-          # token
-          return ret_token
-        rescue Exception
-          return nil
-        end
+        return $1 # return matched part
       else
         return nil
       end

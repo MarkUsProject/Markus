@@ -50,7 +50,6 @@ api_admin:
   updated_at:     <%= Time.now.to_s(:db) %>
   hidden:         false
   api_key:        "ccbd25868a9e63ba8fa54627d03df5df0f4b0961037360f2488c5bc1bddab839e0f1cbb0858f46e75473551844910272bd7933cda809fb12262421fef6be3c19"
-  api_key_md5:    "8d62cd05fd10dd82e6bc286b61aa7428"
 
 # Now some TAs...
   
