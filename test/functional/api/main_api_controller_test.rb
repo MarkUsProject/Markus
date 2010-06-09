@@ -58,7 +58,7 @@ class Api::MainApiControllerTest < ActionController::TestCase
   context "An authenticated GET request to any API controller" do
     setup do
       admin = users(:api_admin)
-      base_encoded_md5 = Base64.encode64(admin.api_key_md5).strip
+      base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
       @res = get("index")
@@ -75,7 +75,7 @@ class Api::MainApiControllerTest < ActionController::TestCase
   context "An authenticated PUT request to any API controller" do
     setup do
       admin = users(:api_admin)
-      base_encoded_md5 = Base64.encode64(admin.api_key_md5).strip
+      base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
       @res = put("index")
@@ -91,7 +91,7 @@ class Api::MainApiControllerTest < ActionController::TestCase
   context "An authenticated DELETE request to any API controller" do
     setup do
       admin = users(:api_admin)
-      base_encoded_md5 = Base64.encode64(admin.api_key_md5).strip
+      base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
       @res = delete("index")
@@ -107,7 +107,7 @@ class Api::MainApiControllerTest < ActionController::TestCase
   context "An authenticated POST request to any API controller" do
     setup do
       admin = users(:api_admin)
-      base_encoded_md5 = Base64.encode64(admin.api_key_md5).strip
+      base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
       @res = post("index")

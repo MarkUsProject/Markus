@@ -1,5 +1,6 @@
 require 'fastercsv'
-require 'digest' # required for set_api_token
+require 'digest' # required for {set,reset}_api_token
+require 'base64' # required for {set,reset}_api_token
 
 # We always assume the following fields exists:
 # => :user_name, :last_name, :first_name
@@ -177,16 +178,21 @@ class User < ActiveRecord::Base
   end
 
   # Set API key for user model. The key is a
-  # SHA2 512 bit long digest. The MD5 digest converted
-  # to a string is used for lookup and transfer token
-  # over the wire.
+  # SHA2 512 bit long digest, which is in turn
+  # MD5 digested and Base64 encoded so that it doesn't
+  # include bad HTTP characters.
+  #
+  # TODO: If we end up
+  # using this heavily we should probably let this token
+  # expire every X days/hours/weeks. When it does, a new
+  # token should be automatically generated.
   def set_api_key
     if self.api_key.nil? 
       key = generate_api_key
-      self.api_key = key
       md5 = Digest::MD5.new
       md5.update(key)
-      self.api_key_md5 = md5.to_s
+      # base64 encode md5 hash
+      self.api_key = Base64.encode64(md5.to_s).strip
       return self.save
     else
       return true
@@ -197,22 +203,24 @@ class User < ActiveRecord::Base
   # old md5 hash has gotten into the wrong hands.
   def reset_api_key
     key = generate_api_key
-    self.api_key = key
     md5 = Digest::MD5.new
     md5.update(key)
-    self.api_key_md5 = md5.to_s
+    # base64 encode md5 hash
+    self.api_key = Base64.encode64(md5.to_s).strip
     return self.save
   end
 
   private
+  # Create some random, hard to guess SHA2 512 bit long
+  # digest.
   def generate_api_key
     digest = Digest::SHA2.new(bitlen=512)
     # generate a unique token
-    return digest.update(Time.now.to_s).to_s
+    unique_seed = SecureRandom.hex(20)
+    return digest.update("#{unique_seed} SECRET! #{Time.now.to_f}").to_s
   end
   
-  #strip input string
-  
+  # strip input string
   def strip_name
     if !self.user_name.nil?
       self.user_name.strip!

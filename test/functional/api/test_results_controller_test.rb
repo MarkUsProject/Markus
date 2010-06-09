@@ -10,7 +10,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
   context "An authenticated GET request to api/test_results" do
     setup do
       admin = users(:api_admin)
-      base_encoded_md5 = Base64.encode64(admin.api_key_md5).strip
+      base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
       # get parameters from fixtures
@@ -37,7 +37,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       @filename = "new_test_result.txt"
       @file_content = "test content\tsome more\n\rtest\n"
       admin = users(:api_admin)
-      base_encoded_md5 = Base64.encode64(admin.api_key_md5).strip
+      base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
       # get parameters from fixtures
@@ -76,7 +76,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     
     setup do
       admin = users(:api_admin)
-      base_encoded_md5 = Base64.encode64(admin.api_key_md5).strip
+      base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
       # get parameters from fixtures
@@ -116,7 +116,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       @filename = "example.rb"
       @file_content = "new content\n\n"
       admin = users(:api_admin)
-      base_encoded_md5 = Base64.encode64(admin.api_key_md5).strip
+      base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
       # get parameters from fixtures
@@ -144,7 +144,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
   context "An authenticated GET request to api/test_results with incomplete parameters" do
     setup do
       admin = users(:api_admin)
-      base_encoded_md5 = Base64.encode64(admin.api_key_md5).strip
+      base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
       # parameters
@@ -163,7 +163,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
   context "An authenticated POST request to api/test_results with incomplete parameters" do
     setup do
       admin = users(:api_admin)
-      base_encoded_md5 = Base64.encode64(admin.api_key_md5).strip
+      base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
       @res = post("create", {:filename => "some_filename"})
@@ -181,7 +181,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
   context "An authenticated PUT request to api/test_results with incomplete parameters" do
     setup do
       admin = users(:api_admin)
-      base_encoded_md5 = Base64.encode64(admin.api_key_md5).strip
+      base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
       @res = put("update", {:filename => "some_filename"})
@@ -199,7 +199,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
   context "An authenticated DELETE request to api/test_results with incomplete parameters" do
     setup do
       admin = users(:api_admin)
-      base_encoded_md5 = Base64.encode64(admin.api_key_md5).strip
+      base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
       @res = delete("destroy", {:filename => "somefilename"})
@@ -217,7 +217,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
   context "An authenticated DELETE request to api/test_results with a non-existing filename as parameter" do
     setup do
       admin = users(:api_admin)
-      base_encoded_md5 = Base64.encode64(admin.api_key_md5).strip
+      base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
       # get parameters from fixtures
@@ -241,7 +241,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
   context "An authenticated GET request to api/test_results with a non-existing filename as parameter" do
     setup do
       admin = users(:api_admin)
-      base_encoded_md5 = Base64.encode64(admin.api_key_md5).strip
+      base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
       # get parameters from fixtures
@@ -265,7 +265,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
   context "An authenticated PUT request to api/test_results with a non-existing filename as parameter" do
     setup do
       admin = users(:api_admin)
-      base_encoded_md5 = Base64.encode64(admin.api_key_md5).strip
+      base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
       # get parameters from fixtures
