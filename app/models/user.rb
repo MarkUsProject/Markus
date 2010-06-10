@@ -216,7 +216,7 @@ class User < ActiveRecord::Base
   def generate_api_key
     digest = Digest::SHA2.new(bitlen=512)
     # generate a unique token
-    unique_seed = SecureRandom.hex(20)
+    unique_seed = ActiveSupport::SecureRandom.hex(20)
     return digest.update("#{unique_seed} SECRET! #{Time.now.to_f}").to_s
   end
   
