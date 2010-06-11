@@ -102,7 +102,7 @@ class SubversionRepository < Repository::AbstractRepository
     # If libsvn-ruby raise a segfault, check the first argument of
     # Svn::Client::export which must be an URI (ex : file:///home/...)
 
-    repo_path_dir = "file://" + @repos_path
+    repo_path_dir = "file://" + expand_path(@repos_path)
     ctx = Svn::Client::Context.new
 
     # don't fail on non CA signed ssl server
