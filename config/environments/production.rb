@@ -70,6 +70,11 @@ REPOSITORY_TYPE = "svn" # use Subversion as storage backend
 REPOSITORY_STORAGE = "/home/markus/svn-repos-root"
 
 ###################################################################
+# Directory where the Automated Testing Repositories will be created.
+# Make sure MarkUs is allowed to write to this directory
+TEST_FRAMEWORK_REPOSITORY = "/home/markus/test-framework"
+
+###################################################################
 # Change this to 'REPOSITORY_EXTERNAL_SUBMITS_ONLY = true' if you
 # are using Subversion as a storage backend and the instructor wants his/her
 # students to submit to the repositories by command-line only. Set this

@@ -45,6 +45,11 @@ module MarkusConfigurator
     return COURSE_NAME || "CSC199: Example Course Name"
   end
 
+  #Repository for the test framework
+  #Students file will be compiled, executed and tested in this repository
+  def markus_config_test_framework_repository
+    return TEST_FRAMEWORK_REPOSITORY || File.join(RAILS_ROOT, "test-framework")
+  end
 
   ######################################
   # MarkusLogger configuration
