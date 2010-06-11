@@ -55,6 +55,8 @@ module Repository
     end
   end
   
+  class ExportRepositoryAlreadyExists < Exception;  end
+
   class RepositoryCollision < Exception; end
   
   class AbstractRepository

@@ -14,6 +14,7 @@ class SubversionRepositoryTest < Test::Unit::TestCase
   
   SVN_TEST_REPOS_DIR = File.expand_path(File.join(File.dirname(__FILE__),"/svn_repos"))
   TEST_REPO = SVN_TEST_REPOS_DIR + "/repo1"
+  TEST_EXPORT_REPO = SVN_TEST_REPOS_DIR + "/exported_repo1"
   RESOURCE_DIR = File.expand_path(File.join(File.dirname(__FILE__),"/input_files"))
   TEST_USER = "testuser"
   
@@ -80,9 +81,23 @@ class SubversionRepositoryTest < Test::Unit::TestCase
         @repo.close()
       end
       FileUtils.remove_dir(TEST_REPO, true)
+      FileUtils.remove_dir(TEST_EXPORT_REPO, true)
     end
 
     # beginning of tests
+
+    should "have exported the Subversion repository" do
+      assert_not_nil(@repo.export(TEST_EXPORT_REPO), "Did not properly export svn repository")
+      assert(File.exists?(TEST_EXPORT_REPO), "Did not properly export svn repository")
+      @repo.close()
+    end
+
+    should "raise an error if the repository where you want to export exists" do
+      @repo.export(TEST_EXPORT_REPO)
+      assert_raise(ExportRepositoryAlreadyExists) do
+        @repo.export(TEST_EXPORT_REPO)
+      end
+    end
 
     should "have been instanciated and a Subversion repository in the filesystem created" do
       assert_not_nil(@repo, "Could not create/open Repository: look into the tests' setup")

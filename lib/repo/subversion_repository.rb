@@ -90,10 +90,46 @@ class SubversionRepository < Repository::AbstractRepository
     yield repository
     repository.close
   end
-  
+
   # Static method: Deletes an existing Subversion repository
   def self.delete(repo_path)
     Svn::Repos::delete(repo_path)
+  end
+
+  # method : Export an existing Subversion repository to a new folder
+  def export(repo_dest_dir)
+    # Modify the path of the repository
+    # If libsvn-ruby raise a segfault, check the first argument of
+    # Svn::Client::export which must be an URI (ex : file:///home/...)
+
+    repo_path_dir = "file://" + @repos_path
+    ctx = Svn::Client::Context.new
+
+    # don't fail on non CA signed ssl server
+    ctx.add_ssl_server_trust_file_provider
+    setup_auth_baton(ctx.auth_baton)
+    ctx.add_username_provider
+
+    # username and password
+    ctx.add_simple_prompt_provider(0) do |cred, realm, username, may_save|
+      cred.username = "markus"
+      cred.password = "markus"
+      cred.may_save = false
+    end
+
+    # Raise an error if the destination repository already exists
+    if (File.exists?(repo_dest_dir))
+      raise(ExportRepositoryAlreadyExists, "Exported repository already exists")
+    end
+
+    begin
+      result = ctx.export( repo_path_dir, repo_dest_dir, nil, nil)
+    end
+
+    #To be sure the ctx object is destroyed at the end of
+    ctx.destroy
+
+    return result
   end
 
   # Static method:  Returns whether or not the available Svn library supports
@@ -662,6 +698,12 @@ class SubversionRepository < Repository::AbstractRepository
   
   private
   
+  # Function necessary for exporting the svn repository
+  def setup_auth_baton(auth_baton)
+    auth_baton[Svn::Core::AUTH_PARAM_CONFIG_DIR] = nil
+    auth_baton[Svn::Core::AUTH_PARAM_DEFAULT_USERNAME] = nil
+  end
+
   # Returns the most recent revision of the repository. If a path is specified, 
   # the youngest revision is returned for that path; if a revision is also specified,
   # the function will return the youngest revision that is equal to or older than the one passed.
