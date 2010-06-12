@@ -16,7 +16,7 @@ class Assignment < ActiveRecord::Base
   has_many :annotation_categories
   
   has_many :groupings
-  has_many :ta_memberships, :through => :groupings
+  has_many :ta_memberships, :class_name => "TaMembership", :through => :groupings
   has_many :student_memberships, :through => :groupings
   
   has_many :submissions, :through => :groupings

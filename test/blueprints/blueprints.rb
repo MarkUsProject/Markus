@@ -214,7 +214,7 @@ Ta.blueprint do
   last_name {Sham.last_name}
 end
 
-TAMembership.blueprint do
+TaMembership.blueprint do
   user {Ta.make}
   grouping
   membership_status {'pending'}
