@@ -227,7 +227,7 @@ class AssignmentTest < ActiveSupport::TestCase
       (0..2).each do |index|
         assert_equal( index, @assignment.assigned_groupings.size)
         assert_equal(3 - index, @assignment.unassigned_groupings.size)
-        TAMembership.make(:grouping => groupings[index])
+        TaMembership.make(:grouping => groupings[index])
       end
       assert_equal(3, @assignment.assigned_groupings.size)
       assert_equal(0, @assignment.unassigned_groupings.size)
@@ -272,7 +272,7 @@ class AssignmentTest < ActiveSupport::TestCase
           (1..3).each do
             StudentMembership.make({:grouping => grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
           end
-          TAMembership.make({:grouping => grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
+          TaMembership.make({:grouping => grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
         end
       end
 
@@ -283,13 +283,13 @@ class AssignmentTest < ActiveSupport::TestCase
 
       should "be able to have it's groupings cloned correctly" do
         clone = Assignment.make({:group_min => 1, :group_max => 1})
-        number = StudentMembership.all.size + TAMembership.all.size
+        number = StudentMembership.all.size + TaMembership.all.size
         clone.clone_groupings_from(@assignment.id)
         assert_equal(@assignment.group_min, clone.group_min)
         assert_equal(@assignment.group_max, clone.group_max)
         assert_equal(@assignment.groupings.size, clone.groupings.size)
         # Since we clear between each test, there should be twice as much as previously
-        assert_equal(2 * number, StudentMembership.all.size + TAMembership.all.size)
+        assert_equal(2 * number, StudentMembership.all.size + TaMembership.all.size)
       end
     end
 
@@ -531,7 +531,7 @@ class AssignmentTest < ActiveSupport::TestCase
     context "with a grouping that has a submission and a TA assigned " do
       setup do
         @grouping = Grouping.make(:assignment => @assignment)
-        @tamembership = TAMembership.make(:grouping => @grouping)
+        @tamembership = TaMembership.make(:grouping => @grouping)
         @studentmembership = StudentMembership.make(:grouping => @grouping, :membership_status => StudentMembership::STATUSES[:inviter])
         @submission = Submission.make(:grouping => @grouping)
       end

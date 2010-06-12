@@ -26,7 +26,7 @@ def make_submission(assignment, result_released, ta, group_name)
     :membership_status => 'inviter'
     }
     )
-  ta_membership = TAMembership.make(
+  ta_membership = TaMembership.make(
     {
       :user => ta,
       :grouping => grouping

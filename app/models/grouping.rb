@@ -12,7 +12,7 @@ class Grouping < ActiveRecord::Base
   has_many :student_memberships, :order => 'id'
   has_many :accepted_student_memberships, :class_name => "StudentMembership", :conditions => {'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]}
   has_many :notes, :as => :noteable, :dependent => :destroy
-  has_many :ta_memberships, :class_name => "TAMembership"
+  has_many :ta_memberships, :class_name => "TaMembership"
   has_many :students, :through => :student_memberships, :source => :user
   has_many :accepted_students, :class_name => 'Student', :through => :student_memberships, :conditions => {'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]}, :source => :user
   has_many :pending_students, :class_name => 'Student', :through => :student_memberships, :conditions => {'memberships.membership_status' => StudentMembership::STATUSES[:pending]}, :source => :user
@@ -340,7 +340,7 @@ class Grouping < ActiveRecord::Base
     # Is there a better way to make sure that there is only one
     # TA Membership per TA per Grouping?
     if ta_memberships.find_all_by_user_id(ta_id).size < 1
-      ta_membership = TAMembership.new
+      ta_membership = TaMembership.new
       ta_membership.user_id = ta_id
       ta_memberships << ta_membership
     end

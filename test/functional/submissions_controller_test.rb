@@ -215,7 +215,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
     context "and I have a grader. My grade should be able to" do
       setup do
-        @ta_membership = TAMembership.make(:membership_status => :accepted, :grouping => @grouping)
+        @ta_membership = TaMembership.make(:membership_status => :accepted, :grouping => @grouping)
         @grader = @ta_membership.user
       end
 

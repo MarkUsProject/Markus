@@ -83,7 +83,7 @@ class ActiveSupport::TestCase
     StudentMembership.delete_all
     Submission.delete_all 
     Ta.delete_all
-    TAMembership.delete_all
+    TaMembership.delete_all
     User.delete_all
   end
 

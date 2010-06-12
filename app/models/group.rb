@@ -9,7 +9,7 @@ class Group < ActiveRecord::Base
   has_many :groupings
   has_many :submissions, :through => :groupings
   has_many :student_memberships, :through => :groupings
-  has_many :ta_memberships, :class_name => "TAMembership", :through =>
+  has_many :ta_memberships, :class_name => "TaMembership", :through =>
   :groupings
   has_many :assignments, :through => :groupings
 
