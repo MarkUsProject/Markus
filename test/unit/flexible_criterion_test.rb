@@ -22,8 +22,8 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
   
   # Class methods
   
-  CSV_STRING = "criterion1,10.0,\"description1, for criterion 1\"\ncriterion2,10.0,\"description2, \"\"with quotes\"\"\"\n"
-  UPLOAD_CSV_STRING = "criterion3,10.0,\"description3, for criterion 3\"\ncriterion4,10.0,\"description4, \"\"with quotes\"\"\"\n"
+  CSV_STRING = "criterion1,10.0,\"description1, for criterion 1\"\ncriterion2,10.0,\"description2, \"\"with quotes\"\"\"\ncriterion3,1.6,description3!\n"
+  UPLOAD_CSV_STRING = "criterion4,10.0,\"description4, \"\"with quotes\"\"\"\n"
   INVALID_CSV_STRING = "criterion3\ncriterion1,10.0,\"description1, for criterion 1\"\n"
   
   context "from an assignment composed of flexible criteria" do
@@ -44,7 +44,7 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
       invalid_lines = []
       dst_assignment = assignments(:flexible_assignment_without_criterion)
       nb_updates = FlexibleCriterion.parse_csv(tempfile, dst_assignment, invalid_lines)
-      assert_equal 2, nb_updates
+      assert_equal 3, nb_updates
       assert_equal 0, invalid_lines.size
     end
 
@@ -132,7 +132,7 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
     invalid_lines = []
     
     nb_updates = FlexibleCriterion.parse_csv(tempfile, assignment, invalid_lines)
-    assert_equal nb_updates, 2
+    assert_equal nb_updates, 1
     assert invalid_lines.empty?
   end
   

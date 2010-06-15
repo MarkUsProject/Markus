@@ -1,5 +1,13 @@
-page.replace 'new_rubric_criterion', :partial => 'rubric_criterion', :locals => {:criterion => @criterion}
+if @criteria.count > 2
+  page.insert_html :bottom, 'rubric_criteria_pane_list', :partial => 'rubric_criterion', :locals => {:criterion => @criterion, :location => :last }
+  page.replace "criterion_#{@criteria[-2].id}", :partial => 'rubric_criterion', :locals => {:criterion => @criteria[-2], :location => :middle }
+elsif @criteria.count == 2
+  page.insert_html :bottom, 'rubric_criteria_pane_list', :partial => 'rubric_criterion', :locals => {:criterion => @criterion, :location => :last }
+  page.replace "criterion_#{@criteria.first.id}", :partial => 'rubric_criterion', :locals => {:criterion => @criteria.first, :location => :first }
+else
+  page.insert_html :bottom, 'rubric_criteria_pane_list', :partial => 'rubric_criterion', :locals => {:criterion => @criterion, :location => :single }
+end
+page.remove 'new_rubric_criterion'
 page.replace_html 'rubric_levels_pane_menu', :partial => 'criterion_editor', :locals => {:criterion => @criterion}
 page.replace_html "rubric_total_weight", @criterion.assignment.total_criteria_weight
-page.sortable 'rubric_criteria_pane_list', :constraint => false, :url => { :action => :update_positions }
-
+page.sortable 'rubric_criteria_pane_list', :constraint => :vertical, :url => { :action => :update_positions, :aid => @criterion.assignment.id }

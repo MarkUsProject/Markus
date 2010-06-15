@@ -25,15 +25,23 @@ class RubricsController < ApplicationController
     if !request.post?
       return
     else
+      @criteria = @assignment.rubric_criteria
+      if @criteria.length > 0
+        new_position = @criteria.last.position + 1
+      else
+        new_position = 1
+      end
       @criterion = RubricCriterion.new
       @criterion.assignment = @assignment
       @criterion.weight = RubricCriterion::DEFAULT_WEIGHT
       @criterion.set_default_levels
+      @criterion.position = new_position
       if !@criterion.update_attributes(params[:rubric_criterion])
         @errors = @criterion.errors
         render :action => 'add_criterion_error'
         return
       end
+      @criteria.reload
       render :action => 'create_and_edit'
     end
   end
@@ -41,6 +49,8 @@ class RubricsController < ApplicationController
   def delete
     return unless request.delete?
     @criterion = RubricCriterion.find(params[:id])
+    @assignment = @criterion.assignment
+    @criteria = @assignment.rubric_criteria
     #delete all marks associated with this criterion
     @criterion.destroy
     flash.now[:success] = I18n.t('criterion_deleted_success')
@@ -79,12 +89,41 @@ class RubricsController < ApplicationController
       render :nothing => true
       return
     end
+    @assignment = Assignment.find(params[:aid])
+    @criteria = @assignment.rubric_criteria
     params[:rubric_criteria_pane_list].each_with_index do |id, position|
       if id != ""
         RubricCriterion.update(id, :position => position+1)
       end
     end
-    render :nothing => true
+  end
+
+  def move_criterion
+    position = params[:position].to_i
+    unless request.post?
+      render :nothing => true
+      return
+    end
+    if params[:direction] == 'up'
+      offset = -1
+    elsif  params[:direction] == 'down'
+      offset = 1
+    else
+      render :nothing => true
+      return
+    end
+    @assignment = Assignment.find(params[:aid])
+    @criteria = @assignment.rubric_criteria
+    criterion = @criteria.find(params[:id])
+    index = @criteria.index(criterion)
+    other_criterion = @criteria[index + offset]
+    if other_criterion.nil?
+      render :nothing => true
+      return
+    end
+    RubricCriterion.update(criterion.id, :position => other_criterion.position)
+    RubricCriterion.update(other_criterion.id, :position => position)
+    @criteria.reload
   end
   
 end

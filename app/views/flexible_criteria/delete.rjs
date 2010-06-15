@@ -1,3 +1,2 @@
-page.remove "criterion_#{@criterion.id}"
-page.sortable 'flexible_criteria_pane_list', :constraint => false, :url => { :action => :update_positions }
-page.replace_html 'flexible_edition_pane_menu', :partial => 'flexible_criteria_manager_help'
+page.replace_html "flexible_criteria_pane", :partial => "flexible_criteria/flexible_criteria_pane"
+page.replace_html "flexible_edition_pane_menu", :partial => "flexible_criteria_manager_help"

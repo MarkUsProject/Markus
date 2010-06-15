@@ -759,6 +759,8 @@ en:
     flexible_criteria:
       criteria_management:         "Criteria Management: {{identifier}}"
       save: "Save changes"
+      move_up: "Move up"
+      move_down: "Move down"
       name: "Flexible criterion name"
       max: "Maximum mark"
       description: "Description"
@@ -782,6 +784,8 @@ en:
       criteria_management:         "Rubric Management: {{identifier}}"
       save: "Save changes"
       name: "Rubric criterion name"
+      move_up: "Move up"
+      move_down: "Move down"
       level: 
         levels: "Levels"
         level_index: "Level {{index}}"

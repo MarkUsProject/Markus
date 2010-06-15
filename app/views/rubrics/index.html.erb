@@ -81,24 +81,10 @@
 
 </p>
 
-  <div id="rubric_criteria_pane">
-    <div class="criteria_fieldset">
-      <div id="rubric_criteria_list_title_bar">
-      	<span class="criterion_title_div"><b><%=h I18n.t("criteria") %></b></span>
-		<span class="criterion_weight"><b><%=h I18n.t("weight") %></b> (
-		  <span id="rubric_total_weight"><%= h(@assignment.total_criteria_weight) %></span>
-		)</span>
-      </div>
-      <div class="clear"></div>
-      <ul id="rubric_criteria_pane_list">
-        <% @criteria.each do |criterion| -%>
-          <%= render :partial => "rubrics/rubric_criterion", :locals => {:criterion => criterion} %>
-        <% end -%>
-      </ul>
-    </div>
-    <%= sortable_element("rubric_criteria_pane_list", :url => { :action => "update_positions" }) %>		
-  </div>
-  
+<div id="rubric_criteria_pane">
+  <%=  render :partial => "rubrics/rubric_criteria_pane" %>
+</div>
+
 <!------------------------------------------------------------------- -->    
 
     <div id="rubric_levels_pane">

@@ -6,7 +6,7 @@ class FlexibleCriteriaControllerTest < AuthenticatedControllerTest
   
   fixtures :all
   
-  FLEXIBLE_CRITERIA_CSV_STRING = "criterion1,10.0,\"description1, for criterion 1\"\ncriterion2,10.0,\"description2, \"\"with quotes\"\"\"\n"
+  FLEXIBLE_CRITERIA_CSV_STRING = "criterion1,10.0,\"description1, for criterion 1\"\ncriterion2,10.0,\"description2, \"\"with quotes\"\"\"\ncriterion3,1.6,description3!\n"
   FLEXIBLE_CRITERIA_UPLOAD_CSV_STRING = "criterion3,10.0,\"description3, for criterion 3\"\ncriterion4,10.0,\"description4, \"\"with quotes\"\"\"\n"
   FLEXIBLE_CRITERIA_INCOMPLETE_UPLOAD_CSV_STRING = "criterion5\ncriterion6\n"
   FLEXIBLE_CRITERIA_PARTIAL_UPLOAD_CSV_STRING = "criterion7,5.0\ncriterion8,7.5\n"
@@ -68,7 +68,14 @@ class FlexibleCriteriaControllerTest < AuthenticatedControllerTest
       end
       should_respond_with :redirect
     end
-    
+
+    context "on :move_criterion" do
+      setup do
+        get :move_criterion, :id => 1
+      end
+      should_respond_with :redirect
+    end
+  
   end # An unauthenticated and unauthorized user doing a GET
   
   context "An unauthenticated and unauthorized user doing a POST" do
@@ -128,7 +135,14 @@ class FlexibleCriteriaControllerTest < AuthenticatedControllerTest
       end
       should_respond_with :redirect
     end
-    
+
+    context "on :move_criterion" do
+      setup do
+        post :move_criterion, :id => 1
+      end
+      should_respond_with :redirect
+    end
+ 
   end # An unauthenticated and unauthorized user doing a POST
   
   context "An authenticated and authorized admin doing a GET" do
@@ -214,7 +228,7 @@ class FlexibleCriteriaControllerTest < AuthenticatedControllerTest
     context "on :update_positions" do
       setup do
         @criterion2 = flexible_criteria(:flexible_criterion_2)
-        get_as @admin, :update_positions, :flexible_criteria_pane_list => [@criterion2.id, @criterion.id]
+        get_as @admin, :update_positions, :flexible_criteria_pane_list => [@criterion2.id, @criterion.id], :aid => @assignment.id
       end
       should_render_template ''
       should_respond_with :success
@@ -226,7 +240,39 @@ class FlexibleCriteriaControllerTest < AuthenticatedControllerTest
         assert_equal 2, c2.position
       end
     end
-    
+
+    context "on :move_criterion up" do
+      setup do
+        @criterion2 = flexible_criteria(:flexible_criterion_2)
+        get_as @admin, :move_criterion, :aid => @assignment.id, :id => @criterion2.id, :position => @criterion2.position, :direction => :up
+      end
+      should_render_template ''
+      should_respond_with :success
+
+      should "not have adjusted positions" do
+        c1 = FlexibleCriterion.find(@criterion.id)
+        assert_equal 1, c1.position
+        c2 = FlexibleCriterion.find(@criterion2.id)
+        assert_equal 2, c2.position
+      end
+    end
+
+    context "on :move_criterion down" do
+      setup do
+        @criterion2 = flexible_criteria(:flexible_criterion_2)
+        get_as @admin, :move_criterion, :aid => @assignment.id, :id => @criterion.id, :position => @criterion.position, :direction => :down
+      end
+      should_render_template ''
+      should_respond_with :success
+
+      should "not have adjusted positions" do
+        c1 = FlexibleCriterion.find(@criterion.id)
+        assert_equal 1, c1.position
+        c2 = FlexibleCriterion.find(@criterion2.id)
+        assert_equal 2, c2.position
+      end
+    end
+
   end # An authenticated and authorized admin doing a GET
   
   context "An authenticated and authorized admin doing a POST" do
@@ -343,7 +389,7 @@ class FlexibleCriteriaControllerTest < AuthenticatedControllerTest
     context "on :update_positions" do
       setup do
         @criterion2 = flexible_criteria(:flexible_criterion_2)
-        post_as @admin, :update_positions, :flexible_criteria_pane_list => [@criterion2.id, @criterion.id]
+        post_as @admin, :update_positions, :flexible_criteria_pane_list => [@criterion2.id, @criterion.id], :aid => @assignment.id
       end
       should_render_template ''
       should_respond_with :success
@@ -353,6 +399,114 @@ class FlexibleCriteriaControllerTest < AuthenticatedControllerTest
         assert_equal 2, c1.position
         c2 = FlexibleCriterion.find(@criterion2.id)
         assert_equal 1, c2.position
+      end
+    end
+
+    context "on :move_criterion up with 2 criteria" do
+      setup do
+        @criterion2 = flexible_criteria(:flexible_criterion_2)
+        post_as @admin, :move_criterion, :aid => @assignment.id, :id => @criterion2.id, :position => @criterion2.position, :direction => 'up'
+      end
+      should_render_template ''
+      should_respond_with :success
+
+      should "have appropriately adjusted positions" do
+        c1 = FlexibleCriterion.find(@criterion.id)
+        assert_equal 2, c1.position
+        c2 = FlexibleCriterion.find(@criterion2.id)
+        assert_equal 1, c2.position
+      end
+    end
+
+    context "on :move_criterion up with 3 criteria from bottom" do
+      setup do
+        @criterion2 = flexible_criteria(:flexible_criterion_2)
+        @criterion3 = flexible_criteria(:flexible_criterion_3)
+        post_as @admin, :move_criterion, :aid => @assignment.id, :id => @criterion3.id, :position => @criterion3.position, :direction => 'up'
+      end
+      should_render_template ''
+      should_respond_with :success
+
+      should "have appropriately adjusted positions" do
+        c1 = FlexibleCriterion.find(@criterion.id)
+        assert_equal 1, c1.position
+        c2 = FlexibleCriterion.find(@criterion2.id)
+        assert_equal 3, c2.position
+        c3 = FlexibleCriterion.find(@criterion3.id)
+        assert_equal 2, c3.position
+      end
+    end
+
+    context "on :move_criterion up with 3 criteria from middle" do
+      setup do
+        @criterion2 = flexible_criteria(:flexible_criterion_2)
+        @criterion3 = flexible_criteria(:flexible_criterion_3)
+        post_as @admin, :move_criterion, :aid => @assignment.id, :id => @criterion2.id, :position => @criterion2.position, :direction => 'up'
+      end
+      should_render_template ''
+      should_respond_with :success
+
+      should "have appropriately adjusted positions" do
+        c1 = FlexibleCriterion.find(@criterion.id)
+        assert_equal 2, c1.position
+        c2 = FlexibleCriterion.find(@criterion2.id)
+        assert_equal 1, c2.position
+        c3 = FlexibleCriterion.find(@criterion3.id)
+        assert_equal 3, c3.position
+      end
+    end
+
+    context "on :move_criterion down with 2 criteria" do
+      setup do
+        @criterion2 = flexible_criteria(:flexible_criterion_2)
+        post_as @admin, :move_criterion, :aid => @assignment.id, :id => @criterion.id, :position => @criterion.position, :direction => 'down'
+      end
+      should_render_template ''
+      should_respond_with :success
+
+      should "have appropriately adjusted positions" do
+        c1 = FlexibleCriterion.find(@criterion.id)
+        assert_equal 2, c1.position
+        c2 = FlexibleCriterion.find(@criterion2.id)
+        assert_equal 1, c2.position
+      end
+    end
+
+    context "on :move_criterion down with 3 criteria from top" do
+      setup do
+        @criterion2 = flexible_criteria(:flexible_criterion_2)
+        @criterion3 = flexible_criteria(:flexible_criterion_3)
+        post_as @admin, :move_criterion, :aid => @assignment.id, :id => @criterion.id, :position => @criterion.position, :direction => 'down'
+      end
+      should_render_template ''
+      should_respond_with :success
+
+      should "have appropriately adjusted positions" do
+        c1 = FlexibleCriterion.find(@criterion.id)
+        assert_equal 2, c1.position
+        c2 = FlexibleCriterion.find(@criterion2.id)
+        assert_equal 1, c2.position
+        c3 = FlexibleCriterion.find(@criterion3.id)
+        assert_equal 3, c3.position
+      end
+    end
+
+    context "on :move_criterion down with 3 criteria from middle" do
+      setup do
+        @criterion2 = flexible_criteria(:flexible_criterion_2)
+        @criterion3 = flexible_criteria(:flexible_criterion_3)
+        post_as @admin, :move_criterion, :aid => @assignment.id, :id => @criterion2.id, :position => @criterion2.position, :direction => 'down'
+      end
+      should_render_template ''
+      should_respond_with :success
+
+      should "have appropriately adjusted positions" do
+        c1 = FlexibleCriterion.find(@criterion.id)
+        assert_equal 1, c1.position
+        c2 = FlexibleCriterion.find(@criterion2.id)
+        assert_equal 3, c2.position
+        c3 = FlexibleCriterion.find(@criterion3.id)
+        assert_equal 2, c3.position
       end
     end
     
