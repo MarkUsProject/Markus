@@ -6,22 +6,26 @@ class RubricCriterion < ActiveRecord::Base
   set_table_name "rubric_criteria" # set table name correctly
   belongs_to  :assignment
   has_many    :marks, :as => :markable, :dependent => :destroy
-  validates_associated  :assignment, :message => 'association is not strong with an assignment'
-  validates_uniqueness_of :rubric_criterion_name, :scope => :assignment_id, :message => 'is already taken'
+  validates_associated  :assignment
+  validates_uniqueness_of :rubric_criterion_name, :scope => :assignment_id
   validates_presence_of :rubric_criterion_name, :weight, :assignment_id
-  validates_numericality_of :assignment_id, :only_integer => true, :greater_than => 0, :message => "can only be whole number greater than 0"
-  validates_numericality_of :weight, :message => "must be a number"
-  
+  validates_numericality_of :assignment_id, :only_integer => true, :greater_than => 0
+  validates_numericality_of :weight
+  validate_on_update :validate_total_weight
+
+  def validate_total_weight
+    errors.add(:assignment, I18n.t("rubric_criteria.error_total")) if self.assignment.total_mark + (4 * (self.weight - self.weight_was)) <= 0
+  end
   
   # Just a small effort here to remove magic numbers...
   RUBRIC_LEVELS = 5
   DEFAULT_WEIGHT = 1.0
   DEFAULT_LEVELS = [
-    {'name'=>'Very Poor', 'description'=>'This criterion was not satisfied.'}, 
-    {'name'=>'Weak', 'description'=>'This criterion was partially satisfied.'},
-    {'name'=>'Passable', 'description'=>'This criterion was satisfied.'},
-    {'name'=>'Good', 'description'=>'This criterion was satisfied well.'},
-    {'name'=>'Excellent', 'description'=>'This criterion was satisfied perfectly or nearly perfectly.'}
+    {'name'=> I18n.t("rubric_criteria.defaults.level_0"), 'description'=> I18n.t("rubric_criteria.defaults.description_0")},
+    {'name'=> I18n.t("rubric_criteria.defaults.level_1"), 'description'=> I18n.t("rubric_criteria.defaults.description_1")},
+    {'name'=> I18n.t("rubric_criteria.defaults.level_2"), 'description'=> I18n.t("rubric_criteria.defaults.description_2")},
+    {'name'=> I18n.t("rubric_criteria.defaults.level_3"), 'description'=> I18n.t("rubric_criteria.defaults.description_3")},
+    {'name'=> I18n.t("rubric_criteria.defaults.level_4"), 'description'=> I18n.t("rubric_criteria.defaults.description_4")}
   ]
   
   def mark_for(result_id)
