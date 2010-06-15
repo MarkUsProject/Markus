@@ -1,6 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 require 'shoulda'
 require 'mocha'
+require 'machinist'
 
 class RubricCriterionTest < ActiveSupport::TestCase
   fixtures :all
@@ -8,20 +9,16 @@ class RubricCriterionTest < ActiveSupport::TestCase
   
   #Test that Criteria with no names are not valid
   def test_no_name_attr
-    no_criteria_name = create_no_attr(:rubric_criterion_name)
-    assert !no_criteria_name.valid?
+    assert_raise ActiveRecord::RecordInvalid do
+      RubricCriterion.make(:rubric_criterion_name => nil)
+    end
   end
   
   # Test to make sure that Criteria have unique names within the scope of a
   # single assignment
   def test_unique_name
-    # First, I assume there's a fixture generating a RubricCriterion with
-    # the rubric_criteiron_name "Algorithm Design"
-    original = RubricCriterion.find_by_rubric_criterion_name("Algorithm Design")
-    assert_not_nil original, "Expected to have a RubricCriterion with the name Algorithm Design in the fixtures"
-    
-    taken_name = create_no_attr(nil)
-    taken_name.rubric_criterion_name = "Algorithm Design"
+    original = RubricCriterion.make(:rubric_criterion_name => "Algorithm Design")
+    taken_name = RubricCriterion.make(:rubric_criterion_name => "Algorithm Design")
     taken_name.assignment = original.assignment
     assert !taken_name.valid?    
   end
@@ -29,37 +26,28 @@ class RubricCriterionTest < ActiveSupport::TestCase
   # Test to make sure that Criteria can have the same names if they belong to
   # different Assignments
   def test_same_name_for_different_assignments
-    # First, I assume there's a fixture generating a RubricCriterion with
-    # the rubric_criteiron_name "Algorithm Design"
-    original = RubricCriterion.find_by_rubric_criterion_name("Algorithm Design")
-    assert_not_nil original, "Expected to have a RubricCriterion with the name Algorithm Design in the fixtures"
-    
-    taken_name = create_no_attr(nil)
-    taken_name.rubric_criterion_name = "Algorithm Design"
-    
-    assignment = assignments(:assignment_2)
-    assert_not_nil assignment, "Expected to find assignment_2 fixture in DB"
-    
-    taken_name.assignment = assignment
+    original = RubricCriterion.make(:rubric_criterion_name => "Algorithm Design")
+    taken_name = RubricCriterion.make(:rubric_criterion_name => "Algorithm Design")
     assert taken_name.valid?  
   end
   
   #Test that Criteria unassigned to Assignment are NOT OK
   def test_no_assignment_id
-    no_assignment_id = create_no_attr(:assignment_id)
-    assert !no_assignment_id.valid?
+    assert_raise ActiveRecord::RecordInvalid do
+      no_assignment_id = RubricCriterion.make(:assignment => nil)
+    end
   end
   
   #Test that Criteria without weight are NOT OK
-  def test_no_weight
-    no_weight = create_no_attr(:weight)
+  def no_weight
+    no_weight = RubricCriterion.make(:weight => nil)
     assert !no_weight.valid?
   end
   
   #Test that Criteria assigned to non-existant Assignment
   #is NOT OK
   def test_assignment_id_dne
-    assignment_id_dne = create_no_attr(nil)
+    assignment_id_dne = RubricCriterion.make()
     assignment_id_dne.assignment = Assignment.new
     assert !assignment_id_dne.save
   end
@@ -69,43 +57,64 @@ class RubricCriterionTest < ActiveSupport::TestCase
     int_only = create_no_attr(nil)
     int_only.assignment_id = 'string'
     assert !int_only.valid?
-    
+
     int_only.assignment_id = '0.1'
     assert !int_only.valid?
-    
+
     int_only.assignment_id = 0.1
     assert !int_only.valid?
-    
+
     int_only.assignment_id = -1
     assert !int_only.valid?
-    
+
   end
   
-  # Weights are restricted to a decimal value greater than 0
+  # Weights are restricted to a decimal value
   def test_bad_weight_range
     # create valid assignment first
-    a = assignments(:assignment_6)
+    a = Assignment.make(:marking_scheme_type => 'rubric')
     assert a.valid? # should be valid now
-    weight_range = create_no_attr(:assignment_id)
-    
-    assert !weight_range.valid? # missing assignment association
-    weight_range.assignment = a
+    weight_range = RubricCriterion.make(:assignment => a, :weight => 2, :position => 1)
+
     assert weight_range.valid? # should be valid now
     
     weight_range.weight = 'string'
     assert !weight_range.valid?, "weight is a string, it shouldn't be valid"
     
     weight_range.weight = -0.1
-    assert weight_range.valid?, "weight is fine, it should be valid"
-
+    weight_range.assignment.reload
+    assert !weight_range.valid?, "assignment total weight is negative, it should be invalid"
+    
     weight_range.weight = 0.0
-    assert weight_range.valid?, "weight is fine, it should be valid"
+    weight_range.assignment.reload
+    assert !weight_range.valid?, "assignment total weight is zero, it should be invalid"
 
     weight_range.weight = 100.0
+    weight_range.assignment.reload
     assert weight_range.valid?, "weight is fine, it should be valid"
-    
+
     weight_range.weight = 0.5
+    weight_range.assignment.reload
     assert weight_range.valid?, "weight is fine, it should be valid"
+
+    #now we add another criterion to make the total weight positive
+    weight_range_2 = RubricCriterion.make(:assignment => a, :weight => 100, :position => 2)
+
+    weight_range.weight = -0.1
+    weight_range.assignment.reload
+    assert weight_range.valid?, "assignment total weight is fine, it should be valid"
+
+    weight_range.weight = 0.0
+    weight_range.assignment.reload
+    assert weight_range.valid?, "assignment total weight is fine, it should be valid"
+
+    weight_range.weight = -100.0
+    weight_range.assignment.reload
+    assert !weight_range.valid?, "assignment total weight is 0, it should be invalid"
+
+    weight_range.weight = -100.1
+    weight_range.assignment.reload
+    assert !weight_range.valid?, "assignment total weight is negative, it should be invalid"
   end
   
   should "truncate weights that have more than 2 significant digits" do
@@ -116,12 +125,12 @@ class RubricCriterionTest < ActiveSupport::TestCase
     assert_equal 0.55, criterion.weight
   end
   
-  # Helper method for test_validate_presence_of to create a criterion without 
+  # Helper method for test_validate_presence_of to create a criterion without
   # the specified attribute. if attr == nil then all attributes are included
   def create_no_attr(attr)
-    new_rubric_criteria = { 
+    new_rubric_criteria = {
       :rubric_criterion_name => 'somecriteria',
-      :assignment_id => Assignment.find(:first).id, 
+      :assignment_id => Assignment.find(:first).id,
       :weight => 0.25,
       :level_0_name => 'Horrible',
       :level_1_name => 'Poor',
@@ -129,11 +138,11 @@ class RubricCriterionTest < ActiveSupport::TestCase
       :level_3_name => 'Good',
       :level_4_name => 'Excellent'
     }
-    
+
     new_rubric_criteria.delete(attr) if attr
     return RubricCriterion.new(new_rubric_criteria)
   end
-  
+
   def test_mark_for
     result = results(:result_1)
     rubric = rubric_criteria(:c4)
@@ -149,11 +158,11 @@ class RubricCriterionTest < ActiveSupport::TestCase
     r = RubricCriterion.new
     r.set_default_levels
     r.save
-    assert_equal("Very Poor", r.level_0_name)
-    assert_equal("Weak", r.level_1_name)
-    assert_equal("Passable", r.level_2_name)
-    assert_equal("Good", r.level_3_name)
-    assert_equal("Excellent", r.level_4_name)
+    assert_equal(I18n.t("rubric_criteria.defaults.level_0"), r.level_0_name)
+    assert_equal(I18n.t("rubric_criteria.defaults.level_1"), r.level_1_name)
+    assert_equal(I18n.t("rubric_criteria.defaults.level_2"), r.level_2_name)
+    assert_equal(I18n.t("rubric_criteria.defaults.level_3"), r.level_3_name)
+    assert_equal(I18n.t("rubric_criteria.defaults.level_4"), r.level_4_name)
   end
   
   should "be able to set all the level names at once" do

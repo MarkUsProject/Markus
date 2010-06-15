@@ -800,6 +800,19 @@ en:
         <p>where <em>level_names</em> must contains the name of each level (seperated by commas)<br />
         and <em>level_descriptions</em> could contains the description of each level (optional, also seperated
         by commas)."
+      error_total: "total weight must be positive"
+      defaults:
+        level_0: "Very Poor"
+        level_1: "Weak"
+        level_2: "Passable"
+        level_3: "Good"
+        level_4: "Excellent"
+        description_0: "This criterion was not satisfied."
+        description_1: "This criterion was partially satisfied."
+        description_2: "This criterion was satisfied."
+        description_3: "This criterion was satisfied well."
+        description_4: "This criterion was satisfied perfectly or nearly perfectly."
+
     
     summary_table:
       title: "Title"
