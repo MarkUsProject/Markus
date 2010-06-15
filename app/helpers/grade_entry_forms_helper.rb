@@ -13,6 +13,7 @@ module GradeEntryFormsHelper
       page << %{
       var new_grade_entry_item_id = "new_" + new Date().getTime();
       $('grade_entry_items').insert({bottom: "#{ escape_javascript grade_entry_item }".replace(/attributes_\\d+|\\d+\(?=\\]\)/g, new_grade_entry_item_id) });
+      $('grade_entry_form_grade_entry_items_' + new_grade_entry_item_id + '_name').focus();
       }
     end
   end

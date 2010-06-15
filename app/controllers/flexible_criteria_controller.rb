@@ -26,15 +26,22 @@ class FlexibleCriteriaController < ApplicationController
     if !request.post?
       return
     else
+      @criteria = @assignment.flexible_criteria
+      if @criteria.length > 0
+        new_position = @criteria.last.position + 1
+      else
+        new_position = 1
+      end
       @criterion = FlexibleCriterion.new
       @criterion.assignment = @assignment
       @criterion.max = FlexibleCriterion::DEFAULT_MAX
-      @criterion.position = FlexibleCriterion.next_criterion_position(@assignment)
+      @criterion.position = new_position
       if !@criterion.update_attributes(params[:flexible_criterion])
         @errors = @criterion.errors
         render :action => 'add_criterion_error'
         return
       end
+      @criteria.reload
       render :action => 'create_and_edit'
     end
   end
@@ -42,6 +49,8 @@ class FlexibleCriteriaController < ApplicationController
   def delete
     return unless request.delete?
     @criterion = FlexibleCriterion.find(params[:id])
+    @assignment = @criterion.assignment
+    @criteria = @assignment.flexible_criteria
     # TODO delete all marks associated with this criterion
     #      Will be possible when Mark gets its association with FlexibleCriterion.
     @criterion.destroy
@@ -81,12 +90,42 @@ class FlexibleCriteriaController < ApplicationController
       render :nothing => true
       return
     end
+    @assignment = Assignment.find(params[:aid])
+    @criteria = @assignment.flexible_criteria
     params[:flexible_criteria_pane_list].each_with_index do |id, position|
       if id != ""
         FlexibleCriterion.update(id, :position => position + 1)
       end
     end
-    render :nothing => true
+  end
+
+  #This method handles the arrows
+  def move_criterion
+    position = params[:position].to_i
+    unless request.post?
+      render :nothing => true
+      return
+    end
+    if params[:direction] == 'up'
+      offset = -1
+    elsif  params[:direction] == 'down'
+      offset = 1
+    else
+      render :nothing => true
+      return
+    end
+    @assignment = Assignment.find(params[:aid])
+    @criteria = @assignment.flexible_criteria
+    criterion = @criteria.find(params[:id])
+    index = @criteria.index(criterion)
+    other_criterion = @criteria[index + offset]
+    if other_criterion.nil?
+      render :nothing => true
+      return
+    end
+    FlexibleCriterion.update(criterion.id, :position => other_criterion.position)
+    FlexibleCriterion.update(other_criterion.id, :position => position)
+    @criteria.reload
   end
 
 end

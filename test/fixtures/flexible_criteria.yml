@@ -13,3 +13,10 @@ flexible_criterion_2:
   position: 2
   assignment_id: <%= Fixtures.identify(:flexible_assignment) %>
   max: 10.0
+
+flexible_criterion_3:
+  flexible_criterion_name: criterion3
+  description: "description3!"
+  position: 3
+  assignment_id: <%= Fixtures.identify(:flexible_assignment) %>
+  max: 1.6
