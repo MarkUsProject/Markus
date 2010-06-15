@@ -15,7 +15,7 @@
 # (c) by the authors, 2008 - 2010.
 #
 
-import httplib, urllib, sys, socket
+import httplib, urllib, sys, socket, os
 from optparse import OptionParser
 from urlparse import urlparse
 
@@ -40,7 +40,7 @@ def check_arguments(options, args, parser):
         print >> sys.stderr, "Request type is a required option."
         sys.exit(1)
     # Make sure API key is provided
-    elif options.api_key == None:
+    elif options.api_key_file == None:
         print >> sys.stderr, "API key is a required option."
         sys.exit(1)
     # Make sure an URL to post to is provided
@@ -76,8 +76,19 @@ def submit_request(options, args, parsed_url):
              arguments.
         Post: Request crafted and submitted. Response status printed to stdout. """
 
+    # Read API key from file
+    if not os.path.isfile(options.api_key_file.strip()):
+        print >> sys.stderr, "%s: File not found!" % options.api_key_file.strip()
+        sys.exit(1)
+    try:
+        api_key_file = open(options.api_key_file.strip(), "r")
+        key = api_key_file.read().strip()
+        api_key_file.close()
+    except EnvironmentError:
+        print >> sys.stderr, "%s: Error reading file!" % options.api_key_file.strip()
+        sys.exit(1)
     # Construct auth header string
-    auth_header = "MarkUsAuth %s" % options.api_key.strip()
+    auth_header = "MarkUsAuth %s" % key
 
     # Prepare header parameter for connection. MarkUs auth header, plus
     # need 'application/x-www-form-urlencoded' header for parameters to go through
@@ -155,7 +166,7 @@ def main():
     
     # Define script options
     parser.add_option("-k", "--key", action="store", type="string",
-                      dest="api_key", help="Your API key for MarkUs. Required.")
+                      dest="api_key_file", help="File containing your API key for MarkUs. Required.")
     parser.add_option("-r", "--request-type", dest="http_request_type",
                       action="store", type="string", 
                       help="The HTTP request type to generate. One of {PUT,GET,POST,DELETE}. Required.")

@@ -20,7 +20,6 @@ begin
   require 'uri'
   # in order to perform http requests
   require 'net/http'
-
 rescue LoadError => e
   $stderr.puts("Required library not found: '#{e.message}'.")
   exit(1)
@@ -30,7 +29,7 @@ OPTS = GetoptLong.new(
       [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
       [ '--request-type', '-r', GetoptLong::REQUIRED_ARGUMENT ],
       [ '--binary', '-b', GetoptLong::REQUIRED_ARGUMENT ],
-      [ '--api-key', '-k', GetoptLong::REQUIRED_ARGUMENT ],
+      [ '--api-key-file', '-k', GetoptLong::REQUIRED_ARGUMENT ],
       [ '--url', '-u', GetoptLong::REQUIRED_ARGUMENT ],
       [ '--verbose', '-v', GetoptLong::OPTIONAL_ARGUMENT ]
     )
@@ -50,7 +49,7 @@ def help
   message += "\n\n== Usage ==\n"
   message += "  -b, --binary       \t  Path to binary file. This works only for PUT and POST.\n"
   message += "  -h, --help         \t  Print this help message .\n"
-  message += "  -k, --api-key      \t  Your API key for MarkUs. Required.\n"
+  message += "  -k, --api-key-file \t  File containing your API key for MarkUs. Required.\n"
   message += "  -r, --request-type \t  The HTTP request type to generate. One of {PUT,GET,POST,DELETE}. Required.\n"
   message += "  -u, --url          \t  The url of the resource to send the HTTP request to. Required.\n"
   message += "  -v, --verbose      \t  Print response body in addition to the HTTP status code and reason.\n"
@@ -68,8 +67,8 @@ def load_params()
 	$stdout.puts usage()
         $stdout.puts help()
 	exit(0)
-    when '--api-key'
-      params[:api_key] = arg
+    when '--api-key-file'
+      params[:api_key_file] = arg
     when '--request-type'
       params[:request_type] = arg.upcase
     when '--url'
@@ -100,7 +99,7 @@ def check_params(params)
   end
 
    # Make sure API key is provided
-  if !params.has_key?( :api_key)
+  if !params.has_key?( :api_key_file )
     $stderr.puts usage()
     exit(1)
   end
@@ -139,8 +138,17 @@ def submit_request(params, uri, param_data)
   #         arguments.
   ##Post: Request crafted and submitted. Response status printed to stdout.
 
+  # Read API key from file
+  if File.readable?(params[:api_key_file].strip)
+    api_key_file = File.new(params[:api_key_file].strip, "r")
+    key = api_key_file.read.strip
+    api_key_file.close
+  else
+    $stderr.puts("#{params[:api_key_file].strip}: File not readable or does not exist!")
+    exit(1)
+  end
   # Construct auth header string
-  auth_header = "MarkUsAuth #{params[:api_key]}"
+  auth_header = "MarkUsAuth #{key}"
 
   # Prepare header parameter for connection. MarkUs auth header, plus
   # need 'application/x-www-form-urlencoded' header for parameters to go through
@@ -148,14 +156,14 @@ def submit_request(params, uri, param_data)
   headers['Authorization'] = auth_header
   headers['Content-type'] = "application/x-www-form-urlencoded"
 
-   Net::HTTP.start(uri.host, uri.port) do |http|
-     response = http.send_request(params[:request_type], uri.request_uri, param_data, headers)
-     if params[:verbose]
-       puts "#{response.body}\n#{response.code} #{response.message}"
-     else
-       puts "#{response.code} #{response.message}"
-     end
-   end
+  Net::HTTP.start(uri.host, uri.port) do |http|
+    response = http.send_request(params[:request_type], uri.request_uri, param_data, headers)
+    if params[:verbose]
+      puts "#{response.body}\n#{response.code} #{response.message}"
+    else
+      puts "#{response.code} #{response.message}"
+    end
+  end
 
  end
 
@@ -183,13 +191,12 @@ if __FILE__ == $0
   begin
     # We submit the request to MarkUs API
     submit_request(params, uri, param_data)
-
-    rescue URI::InvalidURIError => e
-      $stderr.puts "Invalid URL. Error was #{e.message}"
-      exit(1)
-    rescue Errno::ECONNREFUSED => e
-      $stderr.puts "#{uri.to_s} #{e.message}"
-      exit(1)
+  rescue URI::InvalidURIError => e
+    $stderr.puts "Invalid URL. Error was #{e.message}"
+    exit(1)
+  rescue Errno::ECONNREFUSED => e
+    $stderr.puts "#{uri.to_s} #{e.message}"
+    exit(1)
   end
 
 end
