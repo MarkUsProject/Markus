@@ -1,5 +1,6 @@
 #Render the source code for syntax highlighting...
   begin
+    page['code_pane'].onmousemove = nil
     #Non-binary files
     if !SubmissionFile.is_binary?(@file_contents)
       page.replace_html 'codeviewer', :partial => 'results/common/text_codeviewer', :locals => { :uid => params[:uid], :file_contents => @file_contents, :annots => @annots, :code_type => @code_type}

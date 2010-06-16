@@ -36,14 +36,6 @@ var ImageEventHandler = Class.create({
     get_annotation_grid: function(){
         return this.annotation_grid;
     },
-    //Get the coordinates of the mouse pointer relative to the image_preview tag
-    //and return them in an array of the form [x, y].
-    get_relative_cursor_pos: function(e){
-      // Taken from http://www.emanueleferonato.com/2006/09/02/click-image-and-get-coordinates-with-javascript/
-      var posx = e.offsetX ? (e.offsetX) : e.pageX - $("image_preview").offsetLeft + $("code_holder").scrollLeft;
-      var posy = e.offsetY ? (e.offsetY) : e.pageY - $("image_preview").offsetTop + $("code_holder").scrollTop;
-      return [posx, posy];
-    },
     //Get the coordinates of the mouse pointer relative to page
     //and return them in an array of the form [x, y].
     //Taken from http://www.quirksmode.org/js/events_properties.html#positions
@@ -168,8 +160,8 @@ var ImageEventHandler = Class.create({
         return;
       }
       var abs_xy = this.get_absolute_cursor_pos(e);
-      var xy_coords = this.get_relative_cursor_pos(e);
-      var i;
+      //xy coords relative to the image
+      var xy_coords = [abs_xy[0] - $("image_preview").offsetLeft + $("code_holder").scrollLeft, abs_xy[1] - $("image_preview").offsetTop + $("code_holder").scrollTop]
       var annot_grid = this.get_annotation_grid();
       var annots_to_display = [];
       //Check if current mouse position is annotated
