@@ -180,7 +180,6 @@ function load_submitted_file(submission_file_id, focus_line) {
   });
   $('loading_code').show();
   $('select_file_id').disable();
-  $('code_pane').onmousemove = null
   positions = null;
   annotation_manager = null;
 <%= remote_function(:url =>{ :action => "codeviewer", :id => @assignment.id, :uid => @uid }, :with => "'submission_file_id='+submission_file_id+'&focus_line='+focus_line")%>

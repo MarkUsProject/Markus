@@ -93,6 +93,7 @@ var ImageAnnotationGrid = Class.create({
       
       var new_holder = new Element('div', {'id': "annotation_holder_" + extracted_coords.id, 'style' : 'position: absolute; opacity:0.2; filter:alpha(opacity=20); cursor: crosshair; background: orange; border: solid; borderColor: black;'});
       new_holder.onmousemove = this.getImageEventHandler().check_for_annotations.bind(this.getImageEventHandler());
+      new_holder.onmousedown = this.getImageEventHandler().start_select_box.bind(this.getImageEventHandler());
       $('codeviewer').appendChild(new_holder);
     },
     remove_annotation: function(unused_param1, unused_param2, annotation_text_id){
