@@ -1,13 +1,14 @@
 class AnnotationsController < ApplicationController
   
   before_filter      :authorize_for_ta_and_admin
-    
+
+  # Not possible to do with image annotations.
   def add_existing_annotation
     return unless request.post?
     @text = AnnotationText.find(params[:annotation_text_id])
     @submission_file_id = params[:submission_file_id]
     @submission_file = SubmissionFile.find(@submission_file_id)
-    @annotation = Annotation.new
+    @annotation = TextAnnotation.new
     @annotation.update_attributes({
       :line_start => params[:line_start], 
       :line_end => params[:line_end],
@@ -27,12 +28,22 @@ class AnnotationsController < ApplicationController
     })
     @submission_file_id = params[:submission_file_id]
     @submission_file = SubmissionFile.find(@submission_file_id)
-    @annotation = Annotation.create({ 
-      :line_start => params[:line_start], 
-      :line_end => params[:line_end],
-      :annotation_text_id => @text.id,
-      :submission_file_id => params[:submission_file_id]
-    })
+    case params[:annotation_type]
+      when 'text'
+        @annotation = TextAnnotation.create({
+          :line_start => params[:line_start],
+          :line_end => params[:line_end],
+          :annotation_text_id => @text.id,
+          :submission_file_id => params[:submission_file_id]
+        })
+      when 'image'
+        @annotation = ImageAnnotation.create({
+          :annotation_text_id => @text.id,
+          :submission_file_id => params[:submission_file_id],
+          :x1 => Integer(params[:x1]), :x2 => Integer(params[:x2]),
+          :y1 => Integer(params[:y1]), :y2 => Integer(params[:y2])
+        })
+    end
     @submission = @submission_file.submission
     @annotations = @submission.annotations
   end

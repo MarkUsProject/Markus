@@ -4,10 +4,10 @@ class ResultsController < ApplicationController
                         :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria, :update_marking_state,
                         :download, :note_message, :render_test_result]
   before_filter      :authorize_for_ta_and_admin, :only => [:edit, :update_mark, :create, :add_extra_mark,
-                        :download, :next_grouping, :update_overall_comment, :expand_criteria,
+                        :next_grouping, :update_overall_comment, :expand_criteria,
                         :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria,
                         :update_marking_state, :note_message]
-  before_filter      :authorize_for_user, :only => [:codeviewer, :render_test_result]
+  before_filter      :authorize_for_user, :only => [:codeviewer, :render_test_result, :download]
   before_filter      :authorize_for_student, :only => [:view_marks]
   
   def note_message
@@ -120,6 +120,11 @@ class ResultsController < ApplicationController
   end
   
   def download
+    #Ensure student doesn't download a file not submitted by his own grouping
+    if !authorized_to_download?(params[:select_file_id])
+      render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
+      return
+    end
     file = SubmissionFile.find(params[:select_file_id])
     begin
       file_contents = retrieve_file(file)
@@ -128,9 +133,14 @@ class ResultsController < ApplicationController
       redirect_to :action => 'edit', :id => file.submission.result.id
       return
     end
-    send_data file_contents, :disposition => 'inline', :filename => file.filename
+    #Display the file in the page if it is an image, and download button was not explicitly pressed
+    if file.is_supported_image? && !params[:show_in_browser].nil?
+      send_data file_contents, :type => "image", :disposition => 'inline', :filename => file.filename
+    else
+      send_data file_contents, :filename => file.filename
+    end
   end
-  
+
   def codeviewer
     @assignment = Assignment.find(params[:id])
     @submission_file_id = params[:submission_file_id]
@@ -326,6 +336,22 @@ class ResultsController < ApplicationController
     retrieved_file = repo.download_as_string(revision.files_at_path(file.path)[file.filename])
     repo.close
     return retrieved_file
+  end
+
+  #Return true if select_file_id matches the id of a file submitted by the
+  #current_user. This is to prevent students from downloading files that they
+  #or their group have not submitted. Return false otherwise.
+  def authorized_to_download?(select_file_id)
+    #If the user is a ta or admin, return true as they are authorized.
+    if current_user.admin? || current_user.ta?
+      return true
+    end
+    sub_file = SubmissionFile.find_by_id(select_file_id)
+    if !sub_file.nil?
+      #Check that current_user is in fact in grouping that sub_file belongs to
+      return !sub_file.submission.grouping.accepted_students.find(current_user).nil?
+    end
+    return false
   end
 
 

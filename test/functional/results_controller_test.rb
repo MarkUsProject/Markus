@@ -259,10 +259,69 @@ class ResultsControllerTest < AuthenticatedControllerTest
         
         context "GET on :download" do
           setup do
-            get_as @student, :download, :select_file_id => 1
+            @file = SubmissionFile.new
           end
-          should_respond_with :missing
-          should_render_template 404
+
+          context "without file error" do
+            
+            context "with permissions to download the file" do
+              setup do
+                @file.expects(:filename).once.returns('filename')
+                @file.expects(:is_supported_image?).once.returns(false)
+                SubmissionFile.expects(:find).with('1').returns(@file)
+                ResultsController.any_instance.stubs(:retrieve_file).returns('file content')
+                ResultsController.any_instance.stubs(:authorized_to_download?).once.returns(true)
+                get_as @student, :download, :select_file_id => 1
+              end
+              should_not_set_the_flash
+              should_respond_with_content_type "application/octet-stream"
+              should_respond_with :success
+              should "respond with appropriate content" do
+                assert_equal 'file content', @response.body
+              end
+            end
+
+            context "without permissions to download the file" do
+              setup do
+                ResultsController.any_instance.stubs(:authorized_to_download?).once.returns(false)
+                get_as @student, :download, :select_file_id => 1
+              end
+              should_not_set_the_flash
+              should_respond_with :missing
+              should_render_template 404
+            end
+          end
+
+          context "with file error" do
+            setup do
+              submission = Submission.new
+              submission.expects(:result).once.returns(@result)
+              @file.expects(:submission).once.returns(submission)
+              SubmissionFile.expects(:find).with('1').returns(@file)
+              ResultsController.any_instance.expects(:authorized_to_download?).once.returns(true)
+              ResultsController.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
+              get_as @student, :download, :select_file_id => 1
+            end
+            should_set_the_flash_to SAMPLE_ERR_MSG
+            should_respond_with :redirect
+          end
+
+        context "with supported image to be displayed inside browser" do
+            setup do
+              @file.expects(:filename).once.returns('filename.supported_image')
+              @file.expects(:is_supported_image?).once.returns(true)
+              SubmissionFile.expects(:find).with('1').returns(@file)
+              ResultsController.any_instance.expects(:authorized_to_download?).once.returns(true)
+              ResultsController.any_instance.stubs(:retrieve_file).returns('file content')
+              get_as @student, :download, :select_file_id => 1, :show_in_browser => true
+            end
+            should_not_set_the_flash
+            should_respond_with_content_type "image"
+            should_respond_with :success
+            should "respond with appropriate content" do
+              assert_equal 'file content', @response.body
+            end
+          end
         end
         
         context "GET on :codeviewer" do
@@ -539,6 +598,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           context "without file error" do
             setup do
               @file.expects(:filename).once.returns('filename')
+              @file.expects(:is_supported_image?).once.returns(false)
               SubmissionFile.expects(:find).with('1').returns(@file)
               ResultsController.any_instance.stubs(:retrieve_file).returns('file content')
               get_as @admin, :download, :select_file_id => 1
@@ -563,7 +623,23 @@ class ResultsControllerTest < AuthenticatedControllerTest
             should_set_the_flash_to SAMPLE_ERR_MSG
             should_respond_with :redirect
           end
-        end
+        
+          context "with supported image to be displayed inside browser" do
+              setup do
+                @file.expects(:filename).once.returns('filename.supported_image')
+                @file.expects(:is_supported_image?).once.returns(true)
+                SubmissionFile.expects(:find).with('1').returns(@file)
+                ResultsController.any_instance.stubs(:retrieve_file).returns('file content')
+                get_as @admin, :download, :select_file_id => 1, :show_in_browser => true
+              end
+              should_not_set_the_flash
+              should_respond_with_content_type "image"
+              should_respond_with :success
+              should "respond with appropriate content" do
+                assert_equal 'file content', @response.body
+              end
+            end
+          end
         
         context "GET on :codeviewer" do
           setup do
@@ -811,6 +887,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           context "without file error" do
             setup do
               @file.expects(:filename).once.returns('filename')
+              @file.expects(:is_supported_image?).once.returns(false)
               SubmissionFile.expects(:find).with('1').returns(@file)
               ResultsController.any_instance.stubs(:retrieve_file).returns('file content')
               get_as @ta, :download, :select_file_id => 1
@@ -835,7 +912,23 @@ class ResultsControllerTest < AuthenticatedControllerTest
             should_set_the_flash_to SAMPLE_ERR_MSG
             should_respond_with :redirect
           end
-        end
+
+          context "with supported image to be displayed inside browser" do
+              setup do
+                @file.expects(:filename).once.returns('filename.supported_image')
+                @file.expects(:is_supported_image?).once.returns(true)
+                SubmissionFile.expects(:find).with('1').returns(@file)
+                ResultsController.any_instance.stubs(:retrieve_file).returns('file content')
+                get_as @ta, :download, :select_file_id => 1, :show_in_browser => true
+              end
+              should_not_set_the_flash
+              should_respond_with_content_type "image"
+              should_respond_with :success
+              should "respond with appropriate content" do
+                assert_equal 'file content', @response.body
+              end
+            end
+          end
         
         context "GET on :codeviewer" do
           setup do

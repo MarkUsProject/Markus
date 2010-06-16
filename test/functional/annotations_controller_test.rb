@@ -97,7 +97,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
      setup do
       @user = Admin.make()
       @assignment = Assignment.make() 
-      @annotation = Annotation.make() 
+      @text_annotation = TextAnnotation.make()
       @category = AnnotationCategory.make() 
       @annotation_text = AnnotationText.make()
       @submission_file = SubmissionFile.make() 
@@ -116,21 +116,33 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       should_render_template 'add_existing_annotation'
     end # End context :add_existing_annotation
 
-    context "on :create" do
+    context "on :create to make a text annotation" do
       setup do
         post_as @user, :create, {:content => @annotation_text.content,
           :category_id => @category.id,
           :submission_file_id => @submission_file.id,
-          :line_start => 1, :line_end => 1}
+          :line_start => 1, :line_end => 1, :annotation_type => 'text'}
       end
       should_respond_with :success
       should_assign_to :submission_file, :annotation
       should_render_template 'create'
-    end # End context :create
+    end # End context :create text
+
+    context "on :create to make an image annotation" do
+      setup do
+        post_as @user, :create, {:content => @annotation_text.content,
+          :category_id => @category.id,
+          :submission_file_id => @submission_file.id,
+          :coords => "0,0,1,1", :annotation_type => 'image'}
+      end
+      should_respond_with :success
+      should_assign_to :submission_file, :annotation
+      should_render_template 'create'
+    end # End context :create image
 
     context "on :destroy" do
       setup do
-         anno = Annotation.create({
+         anno = TextAnnotation.create({
         :line_start => 1, :line_end => 1,
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id})
@@ -143,7 +155,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
 
     context "on :update_annotation" do
       setup do
-         anno = Annotation.create({
+         anno = TextAnnotation.create({
         :line_start => 1, :line_end => 1,
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id})
@@ -168,7 +180,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
      setup do
       @user = Ta.make()
       @assignment = Assignment.make()
-      @annotation = Annotation.make()
+      @text_annotation = TextAnnotation.make()
       @category = AnnotationCategory.make() 
       @annotation_text = AnnotationText.make() 
       @submission_file = SubmissionFile.make()
@@ -187,21 +199,33 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       should_render_template 'add_existing_annotation'
     end # End context :add_existing_annotation
 
-    context "on :create" do
+    context "on :create to make a text annotation" do
       setup do
         post_as @user, :create, {:content => @annotation_text.content,
           :category_id => @category.id,
           :submission_file_id => @submission_file.id,
-          :line_start => 1, :line_end => 1}
+          :line_start => 1, :line_end => 1, :annotation_type => 'text'}
       end
       should_respond_with :success
       should_assign_to :submission_file, :annotation
       should_render_template 'create'
-    end # End context :create
+    end # End context :create text
+
+    context "on :create to make an image annotation" do
+      setup do
+        post_as @user, :create, {:content => @annotation_text.content,
+          :category_id => @category.id,
+          :submission_file_id => @submission_file.id,
+          :coords => "0,0,1,1", :annotation_type => 'image'}
+      end
+      should_respond_with :success
+      should_assign_to :submission_file, :annotation
+      should_render_template 'create'
+    end # End context :create image
 
     context "on :destroy" do
       setup do
-         anno = Annotation.create({
+         anno = TextAnnotation.create({
         :line_start => 1, :line_end => 1,
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id})
@@ -214,7 +238,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
 
     context "on :update_annotation" do
       setup do
-         anno = Annotation.create({
+         anno = TextAnnotation.create({
         :line_start => 1, :line_end => 1,
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id})
@@ -240,7 +264,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
      setup do
       @user = Student.make()
       @assignment = Assignment.make() 
-      @annotation = Annotation.make() 
+      @text_annotation = TextAnnotation.make()
       @category = AnnotationCategory.make() 
       @annotation_text = AnnotationText.make() 
       @submission_file = SubmissionFile.make() 
@@ -256,12 +280,22 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       should_respond_with :not_found
     end # End context :add_existing_annotation
 
-    context "on :create" do
+    context "on :create to make a text annotation" do
       setup do
         post_as @user, :create, {:content => @annotation_text.content,
           :category_id => @category.id,
           :submission_file_id => @submission_file.id,
-          :line_start => 1, :line_end => 1}
+          :line_start => 1, :line_end => 1, :annotation_type => 'text'}
+      end
+      should_respond_with :not_found
+    end # End context :create
+
+    context "on :create to make an image annotation" do
+      setup do
+        post_as @user, :create, {:content => @annotation_text.content,
+          :category_id => @category.id,
+          :submission_file_id => @submission_file.id,
+          :coords => "0,0,1,1", :annotation_type => 'image'}
       end
       should_respond_with :not_found
     end # End context :create

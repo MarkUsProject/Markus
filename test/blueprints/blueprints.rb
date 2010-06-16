@@ -40,15 +40,6 @@ Admin.blueprint do
   last_name {Sham.last_name}
 end
 
-Annotation.blueprint do
-  line_start {0}
-  line_end {1}
-  submission_file 
-  annotation_text {AnnotationText.make(
-    :annotation_category => AnnotationCategory.make(:assignment => submission_file.submission.grouping.assignment)
-    )}
-end
-
 AnnotationCategory.blueprint do
   assignment 
   annotation_category_name 
@@ -131,6 +122,19 @@ end
 Grouping.blueprint do
   group
   assignment
+end
+
+ImageAnnotation.blueprint do
+  x1 {0}
+  x2 {10}
+  y1 {0}
+  y2 {10}
+  submission_file 
+  annotation_text {AnnotationText.make(
+    :annotation_category => AnnotationCategory.make(:assignment => submission_file.submission.grouping.assignment)
+    )}
+  annotation_text_id {1}
+  submission_file_id {submission_file.id}
 end
 
 Mark.blueprint do
@@ -218,4 +222,13 @@ TaMembership.blueprint do
   user {Ta.make}
   grouping
   membership_status {'pending'}
+end
+
+TextAnnotation.blueprint do
+  line_start {0}
+  line_end {1}
+  submission_file
+  annotation_text {AnnotationText.make(
+    :annotation_category => AnnotationCategory.make(:assignment => submission_file.submission.grouping.assignment)
+    )}
 end
