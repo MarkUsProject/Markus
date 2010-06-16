@@ -14,7 +14,6 @@
  ****************************************************/
 .lineNumber { margin: 0 0 10px 0; }
   .lineNumber a { 
-    background: url('../images/goToIcon.gif') right 4px no-repeat;
     padding: 0 20px 0 0;
   }
 
@@ -178,7 +177,7 @@ li.annotation_category {
     padding: 10px;
     height: 700px;
   }
-  #code_pane {
+  #code_pane {    
     width: 60%;
    /* width: 536px;*/
   }
@@ -188,15 +187,38 @@ li.annotation_category {
     /*width: 370px;*/
   }
 
-
-
-
-  
-    #mark_viewer, #summary_viewer, #code_holder, #annotations_summary, {
+    #mark_viewer, #summary_viewer, #code_holder, #annotations_summary {
       height: 650px;
       overflow: auto;
     }
-    #code_holder { overflow: hidden; }
+    #code_holder {
+     padding: 0px;
+    }
+
+    #codeviewer {
+      height: inherit;
+    }
+    
+      #sel_box {
+       border-style: dashed;
+       border-color: red;
+       border-width: thin;
+       display: none;
+       position: absolute;
+      }
+
+      #image_preview {
+       display: block;
+      }
+
+      .annotation_holder {
+       position: absolute;
+       opacity: 0.2;
+       filter: alpha(opacity=20);
+       background: orange;
+       border: solid;
+       border-color: black;
+      }
 
 #toolbar {
   -moz-border-radius: 5px;

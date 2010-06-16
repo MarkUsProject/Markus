@@ -34,9 +34,14 @@ def make_submission(assignment, result_released, ta, group_name)
   )
   submission = Submission.make(:grouping => grouping)
   annotation_category = AnnotationCategory.make({:assignment => assignment})
-  annotation = Annotation.make({
+  text_annotation = TextAnnotation.make({
     :annotation_text => AnnotationText.make(:annotation_category => annotation_category),
     :submission_file => SubmissionFile.make(:submission => submission)
+  })
+
+  image_annotation = ImageAnnotation.make({
+  :annotation_text => AnnotationText.make(:annotation_category => annotation_category),
+  :submission_file => SubmissionFile.make(:submission => submission)
   })
   
   result = submission.result

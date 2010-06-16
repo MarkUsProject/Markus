@@ -66,7 +66,7 @@ var SourceCodeLineAnnotations = Class.create({
       me.annotateLine(annotation_id, line_num, annotation_text_id);
     });
   },
-  removeAnnotationFromLine: function(annotation_id, line_num, annotation_text_id) {
+  remove_annotation: function(annotation_id, line_num, annotation_text_id) {
     this.removeRelationship(annotation_id, line_num, annotation_text_id);
     var line = this.getLineManager().getLine(line_num);
     line.unGlow();

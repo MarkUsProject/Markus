@@ -10,19 +10,22 @@
     dp.SyntaxHighlighter.ClipboardSwf = '/javascripts/syntaxhighlighter/clipboard.swf';
     dp.SyntaxHighlighter.HighlightAll('code');
     $('standby_highlighting').hide();
-    sourceCodeReady();
-    
+    if ($('annotation_menu') != null){
+      $('annotation_menu').show();
+    }
+    source_code_ready();
+
     <% if (defined? annots) %>
         <% annots.each do |annot| %>
-            add_annotation_text(<%=annot.annotation_text.id%>, 
+            add_annotation_text(<%=annot.annotation_text.id%>,
             '<%=simple_format(h(escape_javascript(CGI.unescape(annot.annotation_text.content.to_s))))%>');
-            add_annotation(<%=annot.id%>, $R(<%= annot.line_start %>, <%= annot.line_end %>), 
+            add_annotation(<%=annot.id%>, $R(<%= annot.line_start %>, <%= annot.line_end %>),
              '<%=annot.annotation_text.id%>');
 
         <% end %>
     <% end %>
 
-    
+
     <% if !@focus_line.nil? %>
       focus_source_code_line(<%=@focus_line%>);
     <% end %>

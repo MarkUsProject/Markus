@@ -1,0 +1,24 @@
+<div id="sel_box"></div>
+  <%# Create a box for each image annotation
+  %>
+<% @annots.each do |annot| %>
+  <div id="annotation_holder_<%=annot.annotation_text.id%>" class="annotation_holder"></div>
+<%end%>
+  
+<img id="image_preview" src="<%= url_for(:action => 'download', :controller => 'results', :select_file_id => submission_file_id, :show_in_browser => true) -%>" alt="Image cannot be displayed"/>
+
+<%# Keep track of all annotations associated with file.
+%>
+<input id="annotation_grid"type="hidden" value="<%=h(@file.get_annotation_grid.to_json)%>"></input>
+<input id="enable_annotations?"type="hidden" value=<%=(@current_user.ta? || @current_user.admin?) && !@result.released_to_students%>></input>
+
+<script language="javascript">
+  source_code_ready_for_image();
+  <% if (defined? annots) %>
+    <% annots.each do |annot| %>
+        add_annotation_text(<%=annot.annotation_text.id%>,
+        '<%=simple_format(h(escape_javascript(CGI.unescape(annot.annotation_text.content.to_s))))%>');
+    <% end %>
+  <% end %>
+
+</script>

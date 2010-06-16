@@ -18,7 +18,7 @@ var TEXT_DISPLAY_Y_OFFSET = 5;
 var AnnotationTextDisplayer = Class.create({
   initialize: function(parent_node) {
     //Create the div that we will display in
-    this.display_node = new Element('div', {'class': 'annotation_text_display'});
+    this.display_node = new Element('div', {'class': 'annotation_text_display', 'onmousemove': 'hide_image_annotations()'});
     $(parent_node).appendChild(this.display_node);
     this.hide();
   },
@@ -26,9 +26,9 @@ var AnnotationTextDisplayer = Class.create({
   //x and y is the location on the screen where this collection will display
   displayCollection: function(collection, x, y) {
     //Are we already showing some Annotations?  Hide them then
-    if(this.getShowing()) {
-      this.hide();
-    }
+    this.hideShowing();
+    //Return if the collection is empty
+    if(collection.length == 0){ return;}
     //Now, compile all the annotations in this collection into a single
     //string to display.  Each text will be contained in a <p> tag
     var final_string = '';
@@ -42,6 +42,12 @@ var AnnotationTextDisplayer = Class.create({
     
     //Show the Displayer
     this.show();
+  },
+  //Hide all showing annotations.
+  hideShowing: function() {
+    if(this.getShowing()) {
+      this.hide();
+    }
   },
   updateDisplayNode: function(text, x, y) {
     var display_node = $(this.getDisplayNode());

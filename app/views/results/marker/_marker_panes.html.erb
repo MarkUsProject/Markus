@@ -75,6 +75,10 @@
   </div>
   
   <div id="create_annotation_dialog" style="display:none;">
+    <input type="hidden" id="x1" value=""></input>
+    <input type="hidden" id="x2" value=""></input>
+    <input type="hidden" id="y1" value=""></input>
+    <input type="hidden" id="y2" value=""></input>
     <p>
       <h2><%= I18n.t("marker.annotation.new_annotation") %></h2>
     </p>
@@ -91,8 +95,10 @@
       </select>
       </p>
       <p style="margin-top: 5px; border-top: 1px solid #000000; padding-top: 10px;">
-        <button onClick="submit_new_annotation($F('new_annotation_content'), $F('new_annotation_category'));"><%= I18n.t("marker.annotation.new_annotation") %></button>
+        <button onClick="submit_new_annotation($F('new_annotation_content'), $F('new_annotation_category'), $F('x1'), $F('x2'), $F('y1'), $F('y2'));"><%= I18n.t("marker.annotation.new_annotation") %></button>
         <button onClick="modal.close();"><%= I18n.t("cancel") %></button>
       </p>
-      
-</div> <!-- pane_holders -->
+
+    </div>
+  </div> <!-- pane_holders -->
+</div>

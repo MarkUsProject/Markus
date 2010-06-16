@@ -6,48 +6,70 @@ var modal = null;
 var init_content_width = 0;
 var init_code_pane_width = 0;
 
-var line_annotations = null;
+var annotation_manager = null;
 var syntax_highlighter_adapter = null;
 
-function sourceCodeReady() {
+
+function source_code_ready() {
+  annotation_manager = null;
   $('loading_code').hide();
   $('select_file_id').enable();
   syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter($$('.dp-highlighter').first().getElementsBySelector('ol').first());
-  
+
   //Apply modifications to Syntax Highlighter
   syntax_highlighter_adapter.applyMods();
-  
+
   var collection = new SourceCodeLineArray();
   var line_factory = new SourceCodeLineFactory();
   var line_manager = new SourceCodeLineManager(syntax_highlighter_adapter, line_factory, collection);
   var annotation_text_manager = new AnnotationTextManager();
   var annotation_text_displayer = new AnnotationTextDisplayer($('annotation_holder'));
-   
-  line_annotations = new SourceCodeLineAnnotations(line_manager, annotation_text_manager, annotation_text_displayer);
+
+  annotation_manager = new SourceCodeLineAnnotations(line_manager, annotation_text_manager, annotation_text_displayer);
+}
+
+//A version of source_code_ready for image files. 
+function source_code_ready_for_image() {
+  if ($('annotation_menu') != null) {
+    $('annotation_menu').hide();
+  }
+  annotation_manager = null;
+
+  var image_event_handler = new ImageEventHandler();
+  var annotation_text_manager = new AnnotationTextManager();
+  var annotation_text_displayer = new AnnotationTextDisplayer($('annotation_holder'));
+
+  annotation_manager = new ImageAnnotationGrid(image_event_handler, annotation_text_manager, annotation_text_displayer);
+  
+  $('loading_code').hide();
+  $('select_file_id').enable();
 }
 
 function add_annotation_text(annotation_text_id, content) {
   var annotation_text = new AnnotationText(annotation_text_id, 0, content);
-  line_annotations.registerAnnotationText(annotation_text);
+  annotation_manager.registerAnnotationText(annotation_text);
+}
+
+//Register an image_annotation with the image annotation_grid
+function add_to_annotation_grid(extracted_coords){
+  annotation_manager.add_to_grid(extracted_coords.evalJSON());
 }
 
 function add_annotation(annotation_id, range, annotation_text_id) {
-  line_annotations.annotateRange(annotation_id, range, annotation_text_id);
+  annotation_manager.annotateRange(annotation_id, range, annotation_text_id);
 }
 
 function remove_annotation(annotation_id, range, annotation_text_id) {
-
- if(line_annotations.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
-  line_annotations.removeAnnotationFromRange(annotation_id, range, annotation_text_id);
+  if(annotation_manager.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
+    annotation_manager.remove_annotation(annotation_id, range, annotation_text_id);
   }
 }
 
 function update_annotation_text(annotation_text_id, new_content) {
-  if(line_annotations.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
-    line_annotations.getAnnotationTextManager().getAnnotationText(annotation_text_id).setContent(new_content);
+  if(annotation_manager.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
+    annotation_manager.getAnnotationTextManager().getAnnotationText(annotation_text_id).setContent(new_content);
   }
 }
-
 
 function get_anchor() {
   //TODO:  Get this to work for IE
@@ -63,25 +85,25 @@ function get_mouse_positions() {
  //Get the start (anchor) and finish (focus) text nodes for where the mouse has selected
   var mouse_anchor = get_anchor();
   var mouse_focus = get_focus();
-  
+
   //Use the SourceCodeAdapter to get the nodes that represent source code
-  //lines.  
+  //lines.
   var anchor_node = syntax_highlighter_adapter.getRootFromSelection(mouse_anchor);
   var focus_node = syntax_highlighter_adapter.getRootFromSelection(mouse_focus);
-  
+
   //Translate these nodes to line numbers
-  var line_start = line_annotations.getLineManager().getLineNumber(anchor_node);
-  var line_end = line_annotations.getLineManager().getLineNumber(focus_node);
+  var line_start = annotation_manager.getLineManager().getLineNumber(anchor_node);
+  var line_end = annotation_manager.getLineManager().getLineNumber(focus_node);
 
   //If no source code lines were selected, bail out
   if(line_start == 0 && line_end == 0) {
     alert('You must select some source code text');
     return false;
   }
-  //If only one valid source code line was selected, we'll only highlight 
+  //If only one valid source code line was selected, we'll only highlight
   //that one.  This is for the case where you highlight the first line, and
   //then focus some text outside of the source code as well.
-  
+
   if(line_start == 0 && line_end != 0) {
     line_start = line_end;
   }
@@ -95,18 +117,19 @@ function get_mouse_positions() {
     line_start = line_end;
     line_end = temp;
   }
-  
+
   //Return positions as an object
   return {line_start: line_start, line_end: line_end};
 }
 
+//Does not work with image annotations, they get created via stop_select_box()
 function make_new_annotation() {
   //Set global variable 'positions' to current mouse positions
-  //TODO:  Refactor?  Why the global variable? 
+  //TODO:  Refactor?  Why the global variable?
   if (syntax_highlighter_adapter == null) {
     return false;
   }
-  
+
   positions = get_mouse_positions();
   if(!positions) {
     //If no text was returned, return false;
@@ -118,21 +141,28 @@ function make_new_annotation() {
   //TODO:  Refactor?
   $('new_annotation_content').setValue('');
   $('new_annotation_category').setValue('');
+  $('x1').setValue('');
+  $('x2').setValue('');
+  $('y1').setValue('');
+  $('y2').setValue('');
   $('new_annotation_content').focus();
-  
+
   return false;
 }
 
-//This function takes the ID of some annotation that already
-//exists in the database, adds the new annotation link to the
-//currently selected text, and then highlights the lines.
+<%#
+This function takes the ID of some annotation that already
+exists in the database, adds the new annotation link to the
+currently selected text, and then highlights the lines.
 
+Not supported for image annotations.
+%>
 function add_existing_annotation(annotation_text_id) {
   positions = get_mouse_positions();
   if(!positions) {
     return false;
   }
- 
+
   <%= remote_function(
                     :url => { :controller => "annotations", :action => "add_existing_annotation" },
                     :with => "'submission_file_id='+ $('select_file_id').value +'&line_start=' + positions.line_start + '&line_end=' + positions.line_end + '&annotation_text_id='+ annotation_text_id")
@@ -150,11 +180,16 @@ function load_submitted_file(submission_file_id, focus_line) {
   });
   $('loading_code').show();
   $('select_file_id').disable();
-  line_annotations = null;
+  $('code_pane').onmousemove = null
+  positions = null;
+  annotation_manager = null;
 <%= remote_function(:url =>{ :action => "codeviewer", :id => @assignment.id, :uid => @uid }, :with => "'submission_file_id='+submission_file_id+'&focus_line='+focus_line")%>
 }
 
 function load_submitted_file_and_focus(submission_file_id, focus_line) {
+  //First, switch to the source code viewer tab
+  code_tab_menu.setActiveTab('code_holder');
+  
   if($F('select_file_id') == submission_file_id) {
     focus_source_code_line(focus_line);
   } else {
@@ -163,7 +198,7 @@ function load_submitted_file_and_focus(submission_file_id, focus_line) {
   }
 }
 
-function submit_new_annotation(content, category_id) {
+function submit_new_annotation(content, category_id, x1, x2, y1, y2) {
   //Was any annotation text content provided?
   if (content == '') {
     alert('You must provide some annotation text');
@@ -173,21 +208,28 @@ function submit_new_annotation(content, category_id) {
   //Close the dialog
   modal.close();
   //Send AJAX request
-  <%= remote_function(
-                    :url => { :controller => "annotations", :action => "create" },
-                    :with => "'submission_file_id='+ $('select_file_id').value +'&line_start=' + positions.line_start + ' &line_end=' + positions.line_end + '&content=' + encodeURIComponent(content) + '&category_id=' + category_id")
-                    %>
+  //Text annotation
+  if (positions != null){
+    <%= remote_function(
+                      :url => { :controller => "annotations", :action => "create" },
+                      :with => "'annotation_type=text' + '&submission_file_id='+ $('select_file_id').value +'&line_start=' + positions.line_start + ' &line_end=' + positions.line_end + '&content=' + encodeURIComponent(content) + '&category_id=' + category_id")
+                      %>
+  }
+  else{
+    <%= remote_function(
+                      :url => { :controller => "annotations", :action => "create" },
+                      :with => "'annotation_type=image' + '&submission_file_id='+ $('select_file_id').value + '&content=' + encodeURIComponent(content) + '&category_id=' + category_id + '&x1=' + x1 + '&x2=' + x2 + '&y1=' + y1 + '&y2=' + y2")
+                      %>
+  }
 }
 
 function focus_source_code_line(line_num) {
   if(typeof(line_num) == 'undefined' || line_num == null) {
     return;
   }
-  //First, switch to the source code viewer tab
-  code_tab_menu.setActiveTab('code_holder');
-  //Next, grab the dom node that represents this source code line,
+  //Grab the dom node that represents this source code line,
   //and scroll to it.
-  var line = line_annotations.getLineManager().getLine(line_num);
+  var line = annotation_manager.getLineManager().getLine(line_num);
   if(line != null) {
     $(line.getLineNode()).scrollIntoView();
   }
@@ -205,4 +247,9 @@ function hide_all_annotation_content_editors() {
   });
 }
 
+//Hide all display boxes on the screen.
+function hide_image_annotations() {
+  if(annotation_manager == null){ return;}
+  annotation_manager.getAnnotationTextDisplayer().hideShowing();
+}
 </script>
