@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100606160859) do
+ActiveRecord::Schema.define(:version => 20100615200307) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -34,6 +34,11 @@ ActiveRecord::Schema.define(:version => 20100606160859) do
     t.integer "line_end"
     t.integer "annotation_text_id"
     t.integer "submission_file_id"
+    t.integer "x1"
+    t.integer "x2"
+    t.integer "y1"
+    t.integer "y2"
+    t.string  "type"
   end
 
   add_index "annotations", ["submission_file_id"], :name => "index_annotations_on_assignmentfile_id"
