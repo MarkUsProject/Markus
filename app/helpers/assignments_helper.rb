@@ -16,7 +16,7 @@ module AssignmentsHelper
       period = render(:partial => 'grace_period', :locals => {:pf => form, :grace_period => Period.new})
       page << %{
         if ($F('grace_period_submission_rule') != null) {
-          var new_period_id = "new_" + new Date().getTime();
+          var new_period_id = new Date().getTime();
           $('grace_periods').insert({bottom: "#{ escape_javascript period }".replace(/(attributes_\\d+|\[\\d+\])/g, new_period_id) });
           $('assignment_submission_rule_attributes_periods_' + new_period_id + '_hours').focus();
         } else {
@@ -25,13 +25,13 @@ module AssignmentsHelper
       }
     end
   end
-  
+
   def add_penalty_period_link(name, form, element_id)
     link_to_function name , nil, :id => element_id do |page|
       period = render(:partial => 'penalty_period', :locals => {:pf => form, :penalty_period => Period.new})
       page << %{
       if ($F('penalty_period_submission_rule') != null) {
-        var new_period_id = "new_" + new Date().getTime();
+        var new_period_id =  new Date().getTime();
         $('penalty_periods').insert({bottom: "#{ escape_javascript period }".replace(/(attributes_\\d+|\[\\d+\])/g, new_period_id) });
         $('assignment_submission_rule_attributes_periods_' + new_period_id + '_hours').focus();
       }  else {
@@ -40,5 +40,5 @@ module AssignmentsHelper
      }
     end
   end
-  
+
 end
