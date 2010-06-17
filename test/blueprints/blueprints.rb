@@ -96,6 +96,11 @@ GracePeriodDeduction.blueprint do
   deduction {20}
 end
 
+GracePeriodSubmissionRule.blueprint do
+  assignment_id {0}
+  type {'GracePeriodSubmissionRule'}
+end
+
 GradeEntryForm.blueprint do
   short_identifier
   description
@@ -205,6 +210,11 @@ SubmissionFile.blueprint do
   submission 
   filename 
   path 
+end
+
+PenaltyPeriodSubmissionRule.blueprint do
+  assignment_id {0}
+  type {'PenaltyPeriodSubmissionRule'}
 end
 
 Period.blueprint do
