@@ -31,6 +31,7 @@ OPTS = GetoptLong.new(
       [ '--binary', '-b', GetoptLong::REQUIRED_ARGUMENT ],
       [ '--api-key-file', '-k', GetoptLong::REQUIRED_ARGUMENT ],
       [ '--url', '-u', GetoptLong::REQUIRED_ARGUMENT ],
+      [ '--test-file', '-t', GetoptLong::OPTIONAL_ARGUMENT ],
       [ '--verbose', '-v', GetoptLong::OPTIONAL_ARGUMENT ]
     )
 
@@ -53,6 +54,7 @@ def help
   message += "  -r, --request-type \t  The HTTP request type to generate. One of {PUT,GET,POST,DELETE}. Required.\n"
   message += "  -u, --url          \t  The url of the resource to send the HTTP request to. Required.\n"
   message += "  -v, --verbose      \t  Print response body in addition to the HTTP status code and reason.\n"
+  message += "  -t, --test-file    \t  File containing your test result for MarkUs. Will be ignored if file_content='...' is provided.\n"
 
   return message
 end
@@ -73,6 +75,8 @@ def load_params()
       params[:request_type] = arg.upcase
     when '--url'
       params[:url] = arg.downcase
+    when '--test-file'
+      params[:test_file] = arg
     when '--verbose'
       params[:verbose] = true
     when '--binary'
@@ -167,9 +171,21 @@ def submit_request(params, uri, param_data)
 
  end
 
-def parse_parameters()
-  # Parses parameters passed in as arguments and returns them as Rest compliant String
+def parse_parameters(params)
   param_array = []
+  # Read File Content argument from a file
+  if params.has_key?( :test_file ) 
+    if File.readable?(params[:test_file].strip)
+      test_file = File.new(params[:test_file].strip, "r")
+      content = test_file.read.strip
+      test_file.close
+      param_array.push("file_content=" + URI.escape(content))
+    else
+      $stderr.puts("#{params[:test_file].strip}: File not readable or does not exist!")
+      exit(1)
+    end
+  end
+  # Parses parameters passed in as arguments and returns them as Rest compliant String
   ARGV.each do |argv|
     a = argv.split('=', 2)
     a.map { |item| URI.escape(item) } # uri escape items in array
@@ -186,7 +202,7 @@ if __FILE__ == $0
   # We check all parameters and return the uri
   uri = check_params(params)
   # Parse parameters (param=...)
-  param_data = parse_parameters()
+  param_data = parse_parameters(params)
 
   begin
     # We submit the request to MarkUs API
