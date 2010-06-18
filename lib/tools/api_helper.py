@@ -53,7 +53,7 @@ def check_arguments(options, args, parser):
     if (request not in ["PUT", "POST", "GET", "DELETE"]):
         print >> sys.stderr, "Bad request type. Only GET, PUT, POST, DELETE are supported."
         sys.exit(1)
-        
+
     # Binary file option only makes sense for PUT/POST
     if ( request not in ["PUT", "POST"] and
          options.binary_file != None and
@@ -68,7 +68,7 @@ def check_arguments(options, args, parser):
         sys.exit(1)
 
     return parsed_url
-        
+
 
 def submit_request(options, args, parsed_url):
     """ Construct desired HTTP request, including proper auth header.
@@ -96,7 +96,7 @@ def submit_request(options, args, parsed_url):
                 "Content-type": "application/x-www-form-urlencoded" }
 
     # Prepare parameters
-    params = urllib.urlencode(parse_parameters(args))
+    params = urllib.urlencode(parse_parameters(options, args))
 
     # HTTP or HTTPS?
     try:
@@ -129,9 +129,22 @@ def submit_request(options, args, parsed_url):
             sys.exit(1)
 
 
-def parse_parameters(raw_params):
-    """ Parses parameters passed in as arguments and returns them as a dict. """
+def parse_parameters(options, raw_params):
     params = {}
+    if (options.test_file is not None):
+      # Read test content from file
+      if not os.path.isfile(options.test_file.strip()):
+	  print >> sys.stderr, "%s: File not found!" % options.test_file.strip()
+	  sys.exit(1)
+      try:
+	  test_file = open(options.test_file.strip(), "r")
+	  content = test_file.read().strip()
+	  test_file.close()
+	  params["file_content"] = content
+      except EnvironmentError:
+	  print >> sys.stderr, "%s: Error reading file!" % options.test_file.strip()
+	  sys.exit(1)
+    """ Parses parameters passed in as arguments and returns them as a dict. """
     try:
         for param in raw_params:
             try:
@@ -146,7 +159,7 @@ def parse_parameters(raw_params):
         print >> sys.stderr, str(e)
         sys.exit(1)
     return params
-        
+
 
 def main():
     """ Setup options parser and kick off functions to carry out the actual tasks """
@@ -163,12 +176,14 @@ def main():
     parser.description = "MarkUs utility script to generate GET, PUT, POST, "
     parser.description += "DELETE HTTP requests. It automatically crafts and sends HTTP requests"
     parser.description += " to the specified MarkUs API URL."
-    
+
     # Define script options
     parser.add_option("-k", "--key", action="store", type="string",
                       dest="api_key_file", help="File containing your API key for MarkUs. Required.")
+    parser.add_option("-t", "--test-file", action="store", type="string",
+                      dest="test_file", help="File containing your test content for MarkUs. Will be ignored if file_content='...' is provided.")
     parser.add_option("-r", "--request-type", dest="http_request_type",
-                      action="store", type="string", 
+                      action="store", type="string",
                       help="The HTTP request type to generate. One of {PUT,GET,POST,DELETE}. Required.")
     parser.add_option("-u", "--url", dest="url", action="store", type="string",
                       help="The url of the resource to send the HTTP request to. Required.")
