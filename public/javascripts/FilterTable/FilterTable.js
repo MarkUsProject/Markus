@@ -21,6 +21,7 @@ var FilterTable = Class.create({
    *   },
    *   can_select: true,
    *   can_select_all: true,
+   *   select_all_header: "All"
    *   can_sort: true,
    *   row_prefix: 'student_row_',
    *   select_name: 'students[]',
@@ -43,6 +44,7 @@ var FilterTable = Class.create({
     this.table_id = $(params.table_id);
     this.can_select_all = this.set_or_default(params.can_select_all, false);
     this.can_select = this.set_or_default(params.can_select, false);
+    this.select_all_header = this.set_or_default(params.select_all_header, "");
     this.row_prefix = params.row_prefix;
     this.select_name = params.select_name;
     this.select_id_prefix = params.select_id_prefix;
@@ -383,20 +385,29 @@ var FilterTable = Class.create({
     }
     
     if(this.can_select && this.can_select_all) {
-      
-      var select_all_top = new Element('input', {type: 'checkbox', id: this.select_all_top_id});
-      
+
+      var select_all_top_div = new Element('div');
+      var select_all_top = new Element('input', {type: 'checkbox', id: this.select_all_top_id, "class": 'FilterTable_selectable'});
+      var label_select_all_top = new Element ('label', {"for": select_all_top.id, "class": 'bold_inline_label'});
+      label_select_all_top.insert(this.select_all_header);
+      select_all_top_div.insert(select_all_top);
+      select_all_top_div.insert(label_select_all_top);
+
       var select_all_function = function(event) {
         me.select_all($F(Event.element(event)));
       }
 
       select_all_top.observe('click', select_all_function);
       
-      th_element_head.insert({top: select_all_top});
+      th_element_head.insert({top: select_all_top_div});
       
-      
-      var select_all_bottom = new Element('input', {type: 'checkbox', id: this.select_all_bottom_id});
-      th_element_foot.insert({top: select_all_bottom});
+      var select_all_bottom_div = new Element('div');
+      var select_all_bottom = new Element('input', {type: 'checkbox', id: this.select_all_bottom_id, "class": 'FilterTable_selectable'});
+      var label_select_all_bottom = new Element ('label', { "for": select_all_bottom.id,  "class": 'bold_inline_label'});
+      label_select_all_bottom.insert(this.select_all_header)
+      select_all_bottom_div.insert  (select_all_bottom);
+      select_all_bottom_div.insert(label_select_all_bottom);
+        th_element_foot.insert({bottom: select_all_bottom_div});
 
       select_all_bottom.observe('click', select_all_function);
 
