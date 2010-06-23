@@ -367,6 +367,11 @@ input, .button, .button_2{
   padding: 4px 25px;
 }
 
+.FilterTable_selectable{
+  min-width: 0px;
+}
+
+
 input[disabled]{
   background: #DDDDDD;
   color: #AAAAAA;
