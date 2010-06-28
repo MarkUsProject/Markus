@@ -941,6 +941,8 @@ en:
         long_date: "%B %d, %Y: %I:%M%p"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%B %d, %Y"
+        #MarkUs ANT_LOG_DATE_TIME_FORMAT
+        ant_date: "%B-%d-%Y_%I:%M"
       am: 'am'
       pm: 'pm'
       
@@ -950,6 +952,12 @@ en:
     locale_not_available: "{{locale}} translation not available!"
     external_authentication_not_supported: "External authentication not supported on your platform!"
     account_disabled: "This account has been disabled"
+    
+    #Test Framework
+    test_framework:
+      test_framework: "Test framework"
+      enable_test:    "Enable tests for this assignment"
+      required_files_ant: "Required files needed for Ant"
 
 #Missing Activerecord Translations for english
     datetime:

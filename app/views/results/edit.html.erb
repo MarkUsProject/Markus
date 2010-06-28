@@ -109,7 +109,15 @@ function check_working() {
 
 <%= render :partial => 'results/common/errors' %>
 
-<%= render :partial => 'results/common/file_selector', :locals => {:files => @files, :can_download => true, :test_result_files => @test_result_files} %>
+<div id="file_selector">
+	<%= render :partial => 'results/common/file_selector', :locals => {:files => @files, :can_download => true} %>
+	<% if @assignment.enable_test %>
+		<div id="test_results_controls">
+			<%= render :partial => 'results/common/test_selector', :locals => {:test_result_files => @test_result_files, :result => @result} %>
+		</div>
+	<% end %>
+</div>
+
 
 <% if !@result.released_to_students %>
 

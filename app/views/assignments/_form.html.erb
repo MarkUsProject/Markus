@@ -159,10 +159,15 @@
 
     </p>
   <%- end -%>
-  
-
 </fieldset>  
 
+<fieldset>
+  <legend><%= I18n.t("test_framework.test_framework") %></legend>
+   <p id="is_testing_framework_enabled">
+ 	<%= f.check_box(:enable_test, {}, true, false)  %>
+	<%= f.label("enable_test", I18n.t("test_framework.enable_test"), :class => "checkbox_label") %>
+   </p>
+</fieldset>
 <%= f.submit t(:submit) %>
 <% end %>
 
