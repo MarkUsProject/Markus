@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100615200307) do
+ActiveRecord::Schema.define(:version => 20100628140408) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -74,6 +74,7 @@ ActiveRecord::Schema.define(:version => 20100615200307) do
     t.boolean  "section_groups_only"
     t.boolean  "section_due_dates",                :default => false
     t.boolean  "display_grader_names_to_students"
+    t.boolean  "enable_test",                      :default => false,    :null => false
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true

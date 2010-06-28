@@ -921,6 +921,8 @@ fr:
         long_date: "%d %B %Y à %H:%M"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%d %B %Y"
+        #MarkUs ANT_LOG_DATE_TIME_FORMAT
+        ant_date: "%d-%B-%Y_%H:%M"
       am: 'am'
       pm: 'pm'
 
@@ -930,6 +932,12 @@ fr:
     locale_not_available: "La traduction {{locale}} n'est pas disponible"
     external_authentication_not_supported: "L'authentification externe n'est pas supportée sur votre plateforme"
     account_disabled: "Ce compte a été désactivé"
+    
+    #Test Framework
+    test_framework:
+      test_framework: "Environnement de test"
+      enable_test:    "Activer les tests pour ce projet"
+      required_files_ant: "Fichiers nécessaires (Ant)"
 
 #Missing Activerecord Translations for french
     datetime:
