@@ -39,6 +39,9 @@ class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
     context "on an assignment with allow_web_submits set to false and group max of 1" do
 
       setup do
+        # Keep the previous working directory
+        # If not, having shell-init errors on Linux/MacOSX machines
+        @pwd = FileUtils.pwd
         FileUtils.mkdir @repository_storage
         FileUtils.touch File.join(@repository_storage, "svn_authz")
         @admin = Admin.make
@@ -68,6 +71,7 @@ class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
 
       teardown do
         FileUtils.rm_r(@repository_storage, :force => true)
+        FileUtils.cd(@pwd)
       end
 
       context "should be able to upload groups using CSV file upload, and repos" do
