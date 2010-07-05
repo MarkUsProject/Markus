@@ -19,11 +19,11 @@
     <span id="total_mark_div"><%= h(assignment.total_mark) %></span>)
    <% if @current_user.admin? %>
      | <%= label_tag "released", I18n.t("marker.marks.released"), :class => "inline_label" %>
-        <%= check_box_tag "released", true, result.released_to_students, :disabled => result.marking_state != Result::MARKING_STATES[:complete] %>
+        <%= check_box_tag "released", true, result.released_to_students, :disabled => result.marking_state != Result::MARKING_STATES[:complete], :class => 'inline_checkbox' %>
         <%= observe_field :released, :url => {:controller => 'results', :action => 'set_released_to_students', :id => result.id}, :on => 'changed', :success => "window.onbeforeunload=null;",:with => "value" %>
      |
     <% end %>
-  </span> 
+  </span>
   
   <span class="right">
 

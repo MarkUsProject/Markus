@@ -44,6 +44,7 @@ ActionController::Routing::Routes.draw do |map|
   # API routes
   map.namespace :api do |api|
     api.resource :test_results
+    api.resource :submission_downloads
   end
   
   # Generic connects (controller/action pages)

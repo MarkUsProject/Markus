@@ -32,6 +32,26 @@ class SubmissionFile < ActiveRecord::Base
     end
   end
 
+    def get_comment_syntax
+    # This is where you can add more languages that SubmissionFile will
+    # be able to insert comments into, for example when downloading annotations.
+    # It will return a list, with the first element being the syntax to start a
+    # comment and the second element being the syntax to end a comment.  Use
+    #the language's multiple line comment format.
+    case File.extname(filename)
+    when ".java", ".js", ".c"
+      return ["/*", "*/"]
+    when ".rb"
+      return ["=begin\n", "\n=end"]
+    when ".py"
+      return ['"""', '"""']
+    when ".scm", ".ss"
+      return ["#|","|#"]
+    else
+      return ["##","##"]
+    end
+  end
+
   def is_supported_image?
     #Here you can add more image types to support
     supported_formats = ['.jpeg', '.jpg', '.gif', '.png']
@@ -67,4 +87,44 @@ class SubmissionFile < ActiveRecord::Base
     end
     return all_annotations
   end
+
+  # Return the contents of this SubmissionFile.  Include annotations in the
+  # file if include_annotations is true.
+  def retrieve_file(include_annotations = false)
+    student_group = submission.grouping.group
+    repo = student_group.repo
+    revision_number = submission.revision_number
+    revision = repo.get_revision(revision_number)
+    if revision.files_at_path(path)[filename].nil?
+      raise I18n.t("results.could_not_find_file", :filename => filename, :repository_name => student_group.repository_name)
+    end
+    retrieved_file = repo.download_as_string(revision.files_at_path(path)[filename])
+    repo.close
+    if include_annotations
+      retrieved_file = add_annotations(retrieved_file)
+    end
+    return retrieved_file
+  end
+
+  private
+
+  def add_annotations(file_contents)
+    comment_syntax = get_comment_syntax
+    result = ""
+    file_contents.split("\n").each_with_index do |contents, index|
+      annotations.each do |annot|
+        if index == annot.line_start.to_i - 1
+           text = AnnotationText.find(annot.annotation_text_id).content
+           result = result.concat(I18n.t("graders.download.begin_annotation", :id => annot.id.to_s, :text => text, :comment_start => comment_syntax[0], :comment_end => comment_syntax[1]) + "\n")
+        elsif index == annot.line_end.to_i
+           result = result.concat(I18n.t("graders.download.end_annotation", :id => annot.id.to_s, :comment_start => comment_syntax[0], :comment_end => comment_syntax[1]) + "\n")
+        end
+      end
+    result = result.concat(contents + "\n")
+    end
+    return result
+  end
+
+  
 end
+

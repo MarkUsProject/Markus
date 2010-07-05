@@ -28,6 +28,7 @@ config.gem 'will_paginate', :lib => false
 config.gem 'machinist', :lib => false, :source => "http://gemcutter.org"
 config.gem 'faker', :lib => false
 config.gem 'factory_data_preloader', :source => 'http://gemcutter.org'
+config.gem 'rubyzip', :lib => false
 require 'ruby-debug'
 
 ###################################################################

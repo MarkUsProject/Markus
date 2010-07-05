@@ -127,7 +127,11 @@ class ResultsController < ApplicationController
     end
     file = SubmissionFile.find(params[:select_file_id])
     begin
-      file_contents = retrieve_file(file)
+      if params[:include_annotations] == 'true'
+        file_contents = file.retrieve_file(true)
+      else
+        file_contents = file.retrieve_file
+      end
     rescue Exception => e
       flash[:file_download_error] = e.message
       redirect_to :action => 'edit', :id => file.submission.result.id
@@ -162,7 +166,7 @@ class ResultsController < ApplicationController
     @all_annots = @file.submission.annotations
 
     begin
-      @file_contents = retrieve_file(@file)
+      @file_contents = @file.retrieve_file
     rescue Exception => e
       render :partial => 'shared/handle_error',
              :locals => {:error => e.message}
@@ -325,18 +329,6 @@ class ResultsController < ApplicationController
   
   private
   
-  def retrieve_file(file)
-    student_group = file.submission.grouping.group
-    repo = student_group.repo
-    revision_number = file.submission.revision_number
-    revision = repo.get_revision(revision_number)
-    if revision.files_at_path(file.path)[file.filename].nil?
-      raise I18n.t("results.could_not_find_file", :filename => file.filename, :repository_name => student_group.repository_name)
-    end
-    retrieved_file = repo.download_as_string(revision.files_at_path(file.path)[file.filename])
-    repo.close
-    return retrieved_file
-  end
 
   #Return true if select_file_id matches the id of a file submitted by the
   #current_user. This is to prevent students from downloading files that they
@@ -353,7 +345,5 @@ class ResultsController < ApplicationController
     end
     return false
   end
-
-
-
+  
 end

@@ -191,6 +191,7 @@ en:
       next_submission:      "Next Submission"
       marking_status:       "Marking Status:"
       notes:                "Notes (<span id=\"number_of_notes\">{{notes}}</span>)"
+      include_annotations: "Include Annotations:"
       marks:
         total_mark: "Total Mark:"
         released:   "Released:"
@@ -590,7 +591,9 @@ en:
         each_field: "Each field is separated by a comma (no spaces)"
         each_line: "Each line has the required fields specified above"
       download:
-        download_list: "Download TA list in CSV format" 
+        download_list: "Download TA list in CSV format"
+        begin_annotation: "{{comment_start}} ANNOTATION {{id}}: {{text}} {{comment_end}}"
+        end_annotation: "{{comment_start}} END ANNOTATION {{id}} {{comment_end}}"
     
     #Admins' View
     admins:
