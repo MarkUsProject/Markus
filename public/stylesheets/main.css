@@ -357,6 +357,10 @@ input, .button, .button_2{
   margin: 5px;
 }
 
+.inline_checkbox{
+      min-width: 0px;
+}
+
 .button_2{
    margin-top: 0px;
    margin-bottom: 10px;

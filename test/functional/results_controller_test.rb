@@ -268,8 +268,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
               setup do
                 @file.expects(:filename).once.returns('filename')
                 @file.expects(:is_supported_image?).once.returns(false)
+                @file.expects(:retrieve_file).returns('file content')
                 SubmissionFile.expects(:find).with('1').returns(@file)
-                ResultsController.any_instance.stubs(:retrieve_file).returns('file content')
                 ResultsController.any_instance.stubs(:authorized_to_download?).once.returns(true)
                 get_as @student, :download, :select_file_id => 1
               end
@@ -299,7 +299,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               @file.expects(:submission).once.returns(submission)
               SubmissionFile.expects(:find).with('1').returns(@file)
               ResultsController.any_instance.expects(:authorized_to_download?).once.returns(true)
-              ResultsController.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
+              @file.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
               get_as @student, :download, :select_file_id => 1
             end
             should_set_the_flash_to SAMPLE_ERR_MSG
@@ -310,9 +310,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
             setup do
               @file.expects(:filename).once.returns('filename.supported_image')
               @file.expects(:is_supported_image?).once.returns(true)
+              @file.expects(:retrieve_file).returns('file content')
               SubmissionFile.expects(:find).with('1').returns(@file)
               ResultsController.any_instance.expects(:authorized_to_download?).once.returns(true)
-              ResultsController.any_instance.stubs(:retrieve_file).returns('file content')
               get_as @student, :download, :select_file_id => 1, :show_in_browser => true
             end
             should_not_set_the_flash
@@ -322,6 +322,23 @@ class ResultsControllerTest < AuthenticatedControllerTest
               assert_equal 'file content', @response.body
             end
           end
+
+          context "with annotations included" do
+              setup do
+                @file.expects(:filename).once.returns('filename')
+                @file.expects(:is_supported_image?).once.returns(false)
+                @file.expects(:retrieve_file).returns('file content')
+                SubmissionFile.expects(:find).with('1').returns(@file)
+                ResultsController.any_instance.stubs(:authorized_to_download?).once.returns(true)
+                get_as @student, :download, :select_file_id => 1, :include_annotations => true
+              end
+              should_not_set_the_flash
+              should_respond_with_content_type "application/octet-stream"
+              should_respond_with :success
+              should "respond with appropriate content" do
+                assert_equal 'file content', @response.body
+              end
+            end
         end
         
         context "GET on :codeviewer" do
@@ -348,7 +365,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           context "with file reading error" do
             setup do
               # We simulate a file reading error.
-              ResultsController.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
+              SubmissionFile.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
               get_as @student, :codeviewer, :id => @assignment.id, :submission_file_id => @submission_file.id, :focus_line => 1
             end
             should_assign_to :assignment, :submission_file_id, :focus_line, :file, :result,
@@ -364,8 +381,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
           
           context "without error" do
             setup do
-              # We don't want to access a real file. 
-              ResultsController.any_instance.expects(:retrieve_file).once.returns('file content')
+              # We don't want to access a real file.
+              SubmissionFile.any_instance.expects(:retrieve_file).once.returns('file content')
               get_as @student, :codeviewer, :id => @assignment.id, :submission_file_id => @submission_file.id, :focus_line => 1
             end
             should_assign_to :assignment, :submission_file_id, :focus_line, :file, :result,
@@ -598,9 +615,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
           context "without file error" do
             setup do
               @file.expects(:filename).once.returns('filename')
+              @file.expects(:retrieve_file).returns('file content')
               @file.expects(:is_supported_image?).once.returns(false)
               SubmissionFile.expects(:find).with('1').returns(@file)
-              ResultsController.any_instance.stubs(:retrieve_file).returns('file content')
               get_as @admin, :download, :select_file_id => 1
             end
             should_not_set_the_flash
@@ -616,8 +633,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
               submission = Submission.new
               submission.expects(:result).once.returns(@result)
               @file.expects(:submission).once.returns(submission)
+              SubmissionFile.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
               SubmissionFile.expects(:find).with('1').returns(@file)
-              ResultsController.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
               get_as @admin, :download, :select_file_id => 1
             end
             should_set_the_flash_to SAMPLE_ERR_MSG
@@ -627,9 +644,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
           context "with supported image to be displayed inside browser" do
               setup do
                 @file.expects(:filename).once.returns('filename.supported_image')
+                @file.expects(:retrieve_file).returns('file content')
                 @file.expects(:is_supported_image?).once.returns(true)
                 SubmissionFile.expects(:find).with('1').returns(@file)
-                ResultsController.any_instance.stubs(:retrieve_file).returns('file content')
                 get_as @admin, :download, :select_file_id => 1, :show_in_browser => true
               end
               should_not_set_the_flash
@@ -653,7 +670,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           context "without file error" do
             setup do
               @file.expects(:get_file_type).once.returns('txt')
-              ResultsController.any_instance.expects(:retrieve_file).once.returns('file content')
+              SubmissionFile.any_instance.expects(:retrieve_file).once.returns('file content')
               get_as @admin, :codeviewer, :id => @assignment.id, :submission_file_id => 1, :focus_line => 1
             end
             should_not_set_the_flash
@@ -664,7 +681,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           
           context "with file error" do
             setup do
-              ResultsController.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
+              SubmissionFile.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
               get_as @admin, :codeviewer, :id => @assignment.id, :submission_file_id => 1, :focus_line => 1
             end
             should_assign_to :assignment, :submission_file_id, :focus_line, :file, :result, :annots, :all_annots
@@ -888,8 +905,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
             setup do
               @file.expects(:filename).once.returns('filename')
               @file.expects(:is_supported_image?).once.returns(false)
+              @file.expects(:retrieve_file).once.returns('file content')
               SubmissionFile.expects(:find).with('1').returns(@file)
-              ResultsController.any_instance.stubs(:retrieve_file).returns('file content')
               get_as @ta, :download, :select_file_id => 1
             end
             should_not_set_the_flash
@@ -906,7 +923,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               submission.expects(:result).once.returns(@result)
               @file.expects(:submission).once.returns(submission)
               SubmissionFile.expects(:find).with('1').returns(@file)
-              ResultsController.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
+              @file.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
               get_as @ta, :download, :select_file_id => 1
             end
             should_set_the_flash_to SAMPLE_ERR_MSG
@@ -918,7 +935,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                 @file.expects(:filename).once.returns('filename.supported_image')
                 @file.expects(:is_supported_image?).once.returns(true)
                 SubmissionFile.expects(:find).with('1').returns(@file)
-                ResultsController.any_instance.stubs(:retrieve_file).returns('file content')
+                @file.expects(:retrieve_file).returns('file content')
                 get_as @ta, :download, :select_file_id => 1, :show_in_browser => true
               end
               should_not_set_the_flash
@@ -938,7 +955,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           context "with file reading error" do
             setup do
               # We simulate a file reading error.
-              ResultsController.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
+              SubmissionFile.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
               get_as @ta, :codeviewer, :id => @assignment.id, :submission_file_id => @submission_file.id, :focus_line => 1
             end
             should_assign_to :assignment, :submission_file_id, :focus_line, :file, :result,
@@ -955,7 +972,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           context "without error" do
             setup do
               # We don't want to access a real file. 
-              ResultsController.any_instance.expects(:retrieve_file).once.returns('file content')
+              SubmissionFile.any_instance.expects(:retrieve_file).once.returns('file content')
               get_as @ta, :codeviewer, :id => @assignment.id, :submission_file_id => @submission_file.id, :focus_line => 1
             end
             should_assign_to :assignment, :submission_file_id, :focus_line, :file, :result,
