@@ -30,7 +30,7 @@ class MarkusLoggerTest < Test::Unit::TestCase
       MarkusLogger.any_instance.stubs(:markus_config_logging_num_oldfiles).returns(oldfiles)
     end
 
-    # FileUtils.remove does not work properly on Windows. 
+    # FileUtils.remove does not work properly on Windows.
 	  # It throws a Permission denied.
     teardown do
       begin
@@ -63,7 +63,7 @@ class MarkusLoggerTest < Test::Unit::TestCase
       rescue Exception => ex
         puts "Error while trying to remove the file #{@errorlog}: " + ex
       end
-      
+
       # reset probably instantiated Singleton
       Singleton.__init__(MarkusLogger)
     end
@@ -132,7 +132,7 @@ class MarkusLoggerTest < Test::Unit::TestCase
       logger.log(msg,MarkusLogger::ERROR)
       errorlog = @errorlog
       assert File.file?(errorlog)
-      assert File.file?(errorlog << '.0') 
+      assert File.file?(errorlog << '.0')
     end
 
     should "raise exception if logfile is a directory" do
@@ -143,7 +143,7 @@ class MarkusLoggerTest < Test::Unit::TestCase
         logger = MarkusLogger.instance
       end
     end
-    
+
     should "raise exception if error_logfile is a directory" do
       FileUtils.mkdir_p @baddir unless File.directory?(@baddir)
       MarkusLogger.any_instance.stubs(:markus_config_logging_errorlogfile).returns(@baddir)
@@ -189,28 +189,28 @@ class MarkusLoggerTest < Test::Unit::TestCase
         logger = MarkusLogger.instance
       end
     end
-    
+
     should "raise exception when the threshold size is == 0" do
       MarkusLogger.any_instance.stubs(:markus_config_logging_size_threshold).returns(0)
       assert_raise MarkusLoggerConfigurationError do
          logger = MarkusLogger.instance
       end
     end
-    
+
     should "raise exception when the threshold size is < 0" do
       MarkusLogger.any_instance.stubs(:markus_config_logging_size_threshold).returns(-1)
       assert_raise MarkusLoggerConfigurationError do
          logger = MarkusLogger.instance
       end
     end
-    
+
     should "raise exception when the number of old logfiles to keep is < 0" do
       MarkusLogger.any_instance.stubs(:markus_config_logging_num_oldfiles).returns(-1)
       assert_raise MarkusLoggerConfigurationError do
          logger = MarkusLogger.instance
       end
     end
-    
+
     should "raise exception when the number of old logfiles to keep is == 0" do
       MarkusLogger.any_instance.stubs(:markus_config_logging_num_oldfiles).returns(-1)
       assert_raise MarkusLoggerConfigurationError do
@@ -225,6 +225,6 @@ class MarkusLoggerTest < Test::Unit::TestCase
         logger = MarkusLogger.instance
       end
     end
-    
+
   end # end context
 end

@@ -5,12 +5,14 @@ require 'shoulda'
 
 class AssignmentTest < ActiveSupport::TestCase
 
-  should_validate_presence_of :marking_scheme_type
-  # Should_validate_presence_of does not work for boolean value false.
-  # Using should_allow_values_for instead
-  should_allow_values_for :allow_web_submits, true, false
-  should_allow_values_for :display_grader_names_to_students, true, false
-  
+  should validate_presence_of :marking_scheme_type
+  # should validate_presence_of does not work for boolean value false.
+  # Using should allow_value instead
+  should allow_value(true).for(:allow_web_submits)
+  should allow_value(false).for(:allow_web_submits)
+  should allow_value(true).for(:display_grader_names_to_students)
+  should allow_value(false).for(:display_grader_names_to_students)
+
   def setup
     clear_fixtures
   end
@@ -392,9 +394,9 @@ class AssignmentTest < ActiveSupport::TestCase
           old_groupings.each do |old_grouping|
             assert !@target.groupings.include?(old_grouping)
           end
-        end        
+        end
       end
-          
+
       context "an assignment with external commits only and previous groups" do
         setup do
           @assignment.allow_web_submits = false
@@ -408,7 +410,7 @@ class AssignmentTest < ActiveSupport::TestCase
           end
           assert @assignment.groupings.size > 0
         end
-       
+
         should "ensure that all students have appropriate permissions on the cloned groupings" do
           @target.clone_groupings_from(@assignment.id)
           @target.reload
@@ -420,7 +422,7 @@ class AssignmentTest < ActiveSupport::TestCase
             end
           end
         end
-      end     
+      end
     end
 
     should "not add csv group with empty row" do

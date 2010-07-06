@@ -7,7 +7,7 @@ class AnnotationTest < ActiveSupport::TestCase
     text_no_line_start = create_text_no_attr(:line_start);
     assert !text_no_line_start.valid?
   end
-  
+
   # Test that Annotation without line_end are not valid
   def test_no_line_end
     text_no_line_start = create_text_no_attr(:line_end);
@@ -25,7 +25,7 @@ class AnnotationTest < ActiveSupport::TestCase
         annotation_text_id_range.annotation_text_id = id
         assert !annotation_text_id_range.valid?
 
-    end    
+    end
 
   end
 
@@ -51,7 +51,7 @@ class AnnotationTest < ActiveSupport::TestCase
     annotation_text_id_dne.annotation_text = AnnotationText.new
     assert !annotation_text_id_dne.save
   end
-  
+
   #Test that Annotation assigned to non-existant File is not valid
 
   def test_submission_file_id_dne
@@ -59,13 +59,13 @@ class AnnotationTest < ActiveSupport::TestCase
     submission_file_id_dne.submission_file = SubmissionFile.new
     assert !submission_file_id_dne.save
   end
-  
-  
-  # Helper method for test_validate_presence_of to create a annotation without 
+
+
+  # Helper method for test_validate_presence_of to create a annotation without
   # the specified attribute. if attr == nil then all attributes are included
   def create_text_no_attr(attr)
     new_annotation = {
-      :line_start => 1, 
+      :line_start => 1,
       :line_end => 10,
       :annotation_text_id => 1,
       :submission_file_id => 1

@@ -33,21 +33,21 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       setup do
         get_as @student, :new
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
     
     context "GET on :edit" do
       setup do
         get_as @student, :edit, :id => 1
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
     
     context "GET on :grades" do
       setup do
         get_as @student, :grades, :id => 1
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
     
     # Test that the students can access the student_interface
@@ -55,10 +55,11 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       setup do
         get_as @student, :student_interface, :id => @grade_entry_form.id
       end
-      should_assign_to :grade_entry_form, :student
-      should_render_template :student_interface
-      should_respond_with :success
-      should_not_set_the_flash
+      should assign_to :grade_entry_form
+      should assign_to :student
+      should render_template :student_interface
+      should respond_with :success
+      should_not set_the_flash
       should "verify that the 'grade_entry_forms.students.no_results' message made it to the response" do
         assert_match Regexp.new(I18n.t('grade_entry_forms.students.no_results')), @response.body
       end
@@ -70,10 +71,11 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         @grade_entry_student.save
         get_as @student, :student_interface, :id => @grade_entry_form_with_grade_entry_items.id
       end
-      should_assign_to :grade_entry_form, :student
-      should_render_template :student_interface
-      should_respond_with :success
-      should_not_set_the_flash
+      should assign_to :grade_entry_form
+      should assign_to :student
+      should render_template :student_interface
+      should respond_with :success
+      should_not set_the_flash
       should "verify that the 'grade_entry_forms.grades.total' message and the total mark made it to the response" do
         assert_match Regexp.new(I18n.t('grade_entry_forms.grades.total')), @response.body
         assert_match Regexp.new("15"), @response.body
@@ -84,10 +86,11 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       setup do 
         get_as @student, :student_interface, :id => @grade_entry_form_with_grade_entry_items.id
       end
-      should_assign_to :grade_entry_form, :student
-      should_render_template :student_interface
-      should_respond_with :success
-      should_not_set_the_flash
+      should assign_to :grade_entry_form
+      should assign_to :student
+      should render_template :student_interface
+      should respond_with :success
+      should_not set_the_flash
       should "verify that the 'grade_entry_forms.students.no_results' message made it to the response" do
         assert_match Regexp.new(I18n.t('grade_entry_forms.students.no_results')), @response.body
       end
@@ -102,10 +105,11 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         grade_entry_student1 = @grade_entry_form.grade_entry_students.find_by_user_id(student1.id)
         get_as student1, :student_interface, :id => @grade_entry_form_with_grade_entry_items.id
       end
-      should_assign_to :grade_entry_form, :student
-      should_render_template :student_interface
-      should_respond_with :success
-      should_not_set_the_flash
+      should assign_to :grade_entry_form
+      should assign_to :student
+      should render_template :student_interface
+      should respond_with :success
+      should_not set_the_flash
       should "verify that the 'grade_entry_forms.grades.no_mark' message made it to the response" do
         assert_match Regexp.new(I18n.t('grade_entry_forms.grades.no_mark')), @response.body
       end
@@ -115,31 +119,32 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       setup do
         post_as @student, :new
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
     
     context "POST on :edit" do
       setup do
         post_as @student, :edit, :id => 1
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
     
     context "POST on :grades" do
       setup do
         post_as @student, :grades, :id => 1
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
     
     context "POST on :student_interface" do
       setup do
         post_as @student, :student_interface, :id => @grade_entry_form.id
       end
-      should_assign_to :grade_entry_form, :student
-      should_render_template :student_interface
-      should_respond_with :success
-      should_not_set_the_flash
+      should assign_to :grade_entry_form
+      should assign_to :student
+      should render_template :student_interface
+      should respond_with :success
+      should_not set_the_flash
     end
   end
   
@@ -155,42 +160,42 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       setup do
         get_as @ta, :new
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
     
     context "GET on :edit" do
       setup do
         get_as @ta, :edit, :id => 1
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
     
     context "GET on :student_interface" do
       setup do
         get_as @ta, :student_interface, :id => 1
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
     
     context "POST on :new" do
       setup do
         post_as @ta, :new 
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
     
     context "POST on :edit" do
       setup do
         post_as @ta, :edit
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
     
     context "POST on :student_interface" do
       setup do
         post_as @ta, :student_interface
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
   end
   
@@ -209,36 +214,36 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       setup do
         get_as @admin, :new
       end
-      should_assign_to :grade_entry_form
-      should_render_template :new
-      should_respond_with :success
-      should_not_set_the_flash
+      should assign_to :grade_entry_form
+      should render_template :new
+      should respond_with :success
+      should_not set_the_flash
     end
     
     context "GET on :edit" do 
       setup do
         get_as @admin, :edit, :id => @grade_entry_form.id
       end
-      should_assign_to :grade_entry_form
-      should_render_template :edit
-      should_respond_with :success
-      should_not_set_the_flash
+      should assign_to :grade_entry_form
+      should render_template :edit
+      should respond_with :success
+      should_not set_the_flash
     end
     
     context "GET on :student_interface" do
       setup do
         get_as @admin, :student_interface
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
     
     context "GET on :grades when there are no grade entry items" do 
       setup do
         get_as @admin, :grades, :id => @grade_entry_form.id
       end
-      should_assign_to :grade_entry_form
-      should_render_template :grades
-      should_respond_with :success
+      should assign_to :grade_entry_form
+      should render_template :grades
+      should respond_with :success
       should "verify that the no_grade_entry_items message made it to the response" do
         assert_match Regexp.new(I18n.t('grade_entry_forms.grades.no_grade_entry_items_message')), @response.body
       end
@@ -248,16 +253,16 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       setup do
         get_as @admin, :grades, :id => @grade_entry_form_with_grade_entry_items.id
       end
-      should_assign_to :grade_entry_form
-      should_render_template :grades
-      should_respond_with :success 
+      should assign_to :grade_entry_form
+      should render_template :grades
+      should respond_with :success 
     end
     
     context "POST on :student_interface" do
       setup do
         post_as @admin, :student_interface
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
     
     # Test valid and invalid values for basic properties for :new
@@ -268,9 +273,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                      :message => @grade_entry_form.message,
                                                      :date => @grade_entry_form.date}}
       end
-      should_assign_to :grade_entry_form
-      should_set_the_flash_to I18n.t('grade_entry_forms.create.success')
-      should_respond_with :redirect
+      should assign_to :grade_entry_form
+      should set_the_flash.to(I18n.t('grade_entry_forms.create.success'))
+      should respond_with :redirect
     end
     
     context "POST on :new with a missing required value" do 
@@ -280,11 +285,11 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                      :message => @grade_entry_form.message,
                                                      :date => @grade_entry_form.date}}
       end
-      should_assign_to :grade_entry_form
+      should assign_to :grade_entry_form
       should "verify that the error message made it to the response" do
         assert_match Regexp.new(Regexp.escape(I18n.t('grade_entry_forms.blank_field'))), @response.body
       end
-      should_respond_with :success
+      should respond_with :success
     end
    
     context "POST on :new with an invalid basic value" do 
@@ -295,11 +300,11 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                      :message => @grade_entry_form.message,
                                                      :date => "abcd"}}
       end
-      should_assign_to :grade_entry_form
+      should assign_to :grade_entry_form
       should "verify that the error message made it to the response" do
         assert_match Regexp.new(I18n.t('grade_entry_forms.invalid_date')), @response.body
       end
-      should_respond_with :success
+      should respond_with :success
     end
     
     # Test valid and invalid values for basic properties for :edit
@@ -311,9 +316,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                      :message => NEW_MESSAGE,
                                                      :date => @grade_entry_form.date}}
       end
-      should_assign_to :grade_entry_form
-      should_set_the_flash_to I18n.t('grade_entry_forms.edit.success')
-      should_respond_with :redirect
+      should assign_to :grade_entry_form
+      should set_the_flash.to(I18n.t('grade_entry_forms.edit.success'))
+      should respond_with :redirect
       
       should "verify that the property values were actually updated" do
         g = GradeEntryForm.find(@grade_entry_form.id)
@@ -331,8 +336,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                      :message => NEW_MESSAGE,
                                                      :date => NEW_DATE}}
       end
-      should_assign_to :grade_entry_form
-      should_respond_with :success
+      should assign_to :grade_entry_form
+      should respond_with :success
       
       should "verify that the error message made it to the response" do
         assert_match Regexp.new(Regexp.escape(I18n.t('grade_entry_forms.blank_field'))), @response.body
@@ -355,8 +360,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                      :message => NEW_MESSAGE,
                                                      :date => "abc"}}
       end
-      should_assign_to :grade_entry_form
-      should_respond_with :success
+      should assign_to :grade_entry_form
+      should respond_with :success
       
       should "verify that the error message made it to the response" do
         assert_match Regexp.new(I18n.t('grade_entry_forms.invalid_date')), @response.body
@@ -389,9 +394,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                         :date => @grade_entry_form.date,
                                                         :grade_entry_items => [@q1]}}
         end
-        should_assign_to :grade_entry_form
-        should_set_the_flash_to I18n.t('grade_entry_forms.create.success')
-        should_respond_with :redirect
+        should assign_to :grade_entry_form
+        should set_the_flash.to(I18n.t('grade_entry_forms.create.success'))
+        should respond_with :redirect
       end
     
       context ":new with valid properties, including multiple GradeEntryItems" do 
@@ -402,9 +407,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                        :date => @grade_entry_form.date,
                                                        :grade_entry_items => [@q1, @q2, @q3]}}
         end
-        should_assign_to :grade_entry_form
-        should_set_the_flash_to I18n.t('grade_entry_forms.create.success')
-        should_respond_with :redirect
+        should assign_to :grade_entry_form
+        should set_the_flash.to(I18n.t('grade_entry_forms.create.success'))
+        should respond_with :redirect
       end
       
       context ":new with missing GradeEntryItem name" do 
@@ -416,12 +421,12 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                        :date => @grade_entry_form.date,
                                                        :grade_entry_items => [@q1, @q2]}}
         end
-        should_assign_to :grade_entry_form
+        should assign_to :grade_entry_form
         should "verify that the error message made it to the response" do
           #Need to escape the I18n string because there is a '(e)' in French for example
           assert_match Regexp.new(Regexp.escape(I18n.t('grade_entry_forms.blank_field'))), @response.body
         end
-        should_respond_with :success
+        should respond_with :success
       end
       
       context ":new with invalid GradeEntryItem out_of" do 
@@ -433,11 +438,11 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                        :date => @grade_entry_form.date,
                                                        :grade_entry_items => [@q1, @q2]}}
         end
-        should_assign_to :grade_entry_form
+        should assign_to :grade_entry_form
         should "verify that the error message made it to the response" do
           assert_match Regexp.new(I18n.t('grade_entry_forms.invalid_column_out_of')), @response.body
         end
-        should_respond_with :success
+        should respond_with :success
       end
       
       context ":new with zero-value GradeEntryItem out_of" do 
@@ -449,11 +454,11 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                        :date => @grade_entry_form.date,
                                                        :grade_entry_items => [@q1, @q2]}}
         end
-        should_assign_to :grade_entry_form
+        should assign_to :grade_entry_form
         should "verify that the error message made it to the response" do
           assert_match Regexp.new(I18n.t('grade_entry_forms.invalid_column_out_of')), @response.body
         end
-        should_respond_with :success
+        should respond_with :success
       end
       
       context ":edit with valid properties, including an additional GradeEntryItem" do 
@@ -465,9 +470,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                         :date => @grade_entry_form.date,
                                                         :grade_entry_items => [@q1]}}
         end
-        should_assign_to :grade_entry_form
-        should_set_the_flash_to I18n.t('grade_entry_forms.edit.success')
-        should_respond_with :redirect
+        should assign_to :grade_entry_form
+        should set_the_flash.to(I18n.t('grade_entry_forms.edit.success'))
+        should respond_with :redirect
         
         should "verify that the property values were actually updated" do
           g = GradeEntryForm.find(@grade_entry_form.id)
@@ -487,9 +492,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                         :date => @grade_entry_form.date,
                                                         :grade_entry_items => [@q1, @q2, @q3]}}
         end
-        should_assign_to :grade_entry_form
-        should_set_the_flash_to I18n.t('grade_entry_forms.edit.success')
-        should_respond_with :redirect
+        should assign_to :grade_entry_form
+        should set_the_flash.to(I18n.t('grade_entry_forms.edit.success'))
+        should respond_with :redirect
         
         should "verify that the property values were actually updated" do
           g = GradeEntryForm.find(@grade_entry_form.id)
@@ -510,8 +515,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                         :date => @grade_entry_form.date,
                                                         :grade_entry_items => [@q1, @q2]}}
         end
-        should_assign_to :grade_entry_form
-        should_respond_with :success
+        should assign_to :grade_entry_form
+        should respond_with :success
         
         should "verify that the error message made it to the response" do
           assert_match Regexp.new(Regexp.escape(I18n.t('grade_entry_forms.blank_field'))), @response.body
@@ -536,8 +541,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                         :date => @grade_entry_form.date,
                                                         :grade_entry_items => [@q1, @q2]}}
         end
-        should_assign_to :grade_entry_form
-        should_respond_with :success
+        should assign_to :grade_entry_form
+        should respond_with :success
         
         should "verify that the error message made it to the response" do
           assert_match Regexp.new(I18n.t('grade_entry_forms.invalid_column_out_of')), @response.body
@@ -562,8 +567,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                         :date => @grade_entry_form.date,
                                                         :grade_entry_items => [@q1, @q2]}}
         end
-        should_assign_to :grade_entry_form
-        should_respond_with :success
+        should assign_to :grade_entry_form
+        should respond_with :success
         
         should "verify that the error message made it to the response" do
           assert_match Regexp.new(I18n.t('grade_entry_forms.invalid_column_out_of')), @response.body
@@ -595,8 +600,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                         :date => @grade_entry_form_with_dup.date,
                                                         :grade_entry_items => [@q1, @q2]}}
         end
-        should_assign_to :grade_entry_form
-        should_respond_with :success
+        should assign_to :grade_entry_form
+        should respond_with :success
         
         should "verify that the error message made it to the response" do
           assert_match Regexp.new(I18n.t('grade_entry_forms.invalid_name')), @response.body
@@ -631,9 +636,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                           :updated_grade => @new_grade,
                                           :id => @grade_entry_form_with_grade_entry_items.id}
         end
-        should_assign_to :grade
-        should_render_template :update_grade
-        should_respond_with :success
+        should assign_to :grade
+        should render_template :update_grade
+        should respond_with :success
         should "verify that the grade was actually updated" do
           grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(@grade_entry_student_with_some_grades.id,
                                                                                @grade_entry_items[0].id)
@@ -651,9 +656,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                           :updated_grade => @new_grade,
                                           :id => @grade_entry_form_with_grade_entry_items.id}
         end
-        should_assign_to :grade
-        should_render_template :update_grade
-        should_respond_with :success
+        should assign_to :grade
+        should render_template :update_grade
+        should respond_with :success
         should "verify that the grade was not updated" do
           grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(@grade_entry_student_with_some_grades.id,
                                                                                @grade_entry_items[0].id)
@@ -671,9 +676,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                           :updated_grade => @new_grade,
                                           :id => @grade_entry_form_with_grade_entry_items.id}
         end
-        should_assign_to :grade
-        should_render_template :update_grade
-        should_respond_with :success
+        should assign_to :grade
+        should render_template :update_grade
+        should respond_with :success
         should "verify that the grade was not updated" do
           grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(@grade_entry_student_with_some_grades.id,
                                                                                @grade_entry_items[0].id)
@@ -696,9 +701,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                           :updated_grade => @new_grade,
                                           :id => @grade_entry_form_with_grade_entry_items.id}
         end
-        should_assign_to :grade
-        should_render_template :update_grade
-        should_respond_with :success
+        should assign_to :grade
+        should render_template :update_grade
+        should respond_with :success
         should "verify that the grade was actually created" do
           grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(@grade_entry_student.id,
                                                                                @grade_entry_items[0].id)
@@ -714,9 +719,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                           :updated_grade => @new_grade,
                                           :id => @grade_entry_form_with_grade_entry_items.id}
         end
-        should_assign_to :grade
-        should_render_template :update_grade
-        should_respond_with :success
+        should assign_to :grade
+        should render_template :update_grade
+        should respond_with :success
         should "verify that the grade's value was not set" do
           grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(@grade_entry_student.id,
                                                                                @grade_entry_items[0].id)
@@ -732,9 +737,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                           :updated_grade => @new_grade,
                                           :id => @grade_entry_form_with_grade_entry_items.id}
         end
-        should_assign_to :grade
-        should_render_template :update_grade
-        should_respond_with :success
+        should assign_to :grade
+        should render_template :update_grade
+        should respond_with :success
         should "verify that the grade's value was not set" do
           grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(@grade_entry_student.id,
                                                                                @grade_entry_items[0].id)                                                                    
@@ -757,9 +762,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                           :updated_grade => @new_grade,
                                           :id => @grade_entry_form_with_grade_entry_items.id}
         end
-        should_assign_to :grade
-        should_render_template :update_grade
-        should_respond_with :success
+        should assign_to :grade
+        should render_template :update_grade
+        should respond_with :success
         should "verify that the GradeEntryStudent and Grade were actually created" do
           grade_entry_student = GradeEntryStudent.find_by_user_id(@student.id)
           assert_not_nil grade_entry_student
@@ -777,9 +782,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                           :updated_grade => @new_grade,
                                           :id => @grade_entry_form_with_grade_entry_items.id}
         end
-        should_assign_to :grade
-        should_render_template :update_grade
-        should_respond_with :success
+        should assign_to :grade
+        should render_template :update_grade
+        should respond_with :success
         should "verify that the Grade's value was not set" do
           grade_entry_student = GradeEntryStudent.find_by_user_id(@student.id)
           grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(grade_entry_student.id, @grade_entry_items[0].id)
@@ -795,9 +800,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                           :updated_grade => @new_grade,
                                           :id => @grade_entry_form_with_grade_entry_items.id}
         end
-        should_assign_to :grade
-        should_render_template :update_grade
-        should_respond_with :success
+        should assign_to :grade
+        should render_template :update_grade
+        should respond_with :success
         should "verify that the Grade's value was not set" do
           grade_entry_student = GradeEntryStudent.find_by_user_id(@student.id)
           grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(grade_entry_student.id, @grade_entry_items[0].id)
@@ -819,9 +824,11 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                             :per_page => 15,
                                             :desc => "false"}
       end
-      should_assign_to :alpha_pagination_options, :students, :alpha_category
-      should_render_template :g_table_paginate
-      should_respond_with :success
+      should assign_to :alpha_pagination_options
+      should assign_to :students
+      should assign_to :alpha_category
+      should render_template :g_table_paginate
+      should respond_with :success
     end
 
     # Test releasing/unreleasing the marks
@@ -848,7 +855,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                          :release_results => true,
                                                          :id => @grade_entry_form1.id}
         end
-        should_respond_with :redirect
+        should respond_with :redirect
         should "verify that the released_to_student attribute was set to true for the specified students" do
           (0..2).each do |i|
             grade_entry_student = GradeEntryStudent.find_by_user_id(@students[i].id)
@@ -875,7 +882,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                          :release_results => true,
                                                          :id => @grade_entry_form1.id}
         end
-        should_respond_with :redirect
+        should respond_with :redirect
         should "verify that the released_to_student attribute was set to true for all of the students" do
           (0..(@specific_students.size-1)).each do |i|
             grade_entry_student = GradeEntryStudent.find_by_user_id(@students[i].id)
@@ -893,7 +900,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                          :unrelease_results => false,
                                                          :id => @grade_entry_form1.id}
         end
-        should_respond_with :redirect
+        should respond_with :redirect
         should "verify that the released_to_student attribute was set to false" do
           (0..2).each do |i|
             grade_entry_student = GradeEntryStudent.find_by_user_id(@students[i].id)
@@ -913,7 +920,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                          :unrelease_results => true,
                                                          :id => @grade_entry_form1.id}
         end
-        should_respond_with :redirect
+        should respond_with :redirect
         should "verify that the released_to_student attribute was set to false for all of the students" do
           (0..(@specific_students.size-1)).each do |i|
             grade_entry_student = GradeEntryStudent.find_by_user_id(@students[i].id)

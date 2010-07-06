@@ -3,6 +3,6 @@ require 'shoulda'
 
 class ExtraMarkTest < ActiveSupport::TestCase
   fixtures :all
-  should_belong_to :result
-  should_validate_presence_of :result_id
+  should belong_to :result
+  should validate_presence_of :result_id
 end

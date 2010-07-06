@@ -3,12 +3,12 @@ require 'shoulda'
 
 class GroupingTest < ActiveSupport::TestCase
   fixtures :all
-  
-  should_belong_to :group
-  should_belong_to :assignment
-  should_have_many :memberships
-  should_have_many :submissions
-  should_have_many :notes
+
+  should belong_to :group
+  should belong_to :assignment
+  should have_many :memberships
+  should have_many :submissions
+  should have_many :notes
 
   def test_grouping_should_not_save_without_assignment
     grouping = Grouping.new
@@ -28,7 +28,7 @@ class GroupingTest < ActiveSupport::TestCase
 
     should "be able to report the last modified date of the assignment_folder" do
       grouping_names = [:grouping_1, :grouping_with_deep_repository_folder];
-      
+
       grouping_names.each do |grouping_name|
         grouping = groupings(grouping_name)
         last_modified = grouping.assignment_folder_last_modified_date
@@ -63,7 +63,7 @@ class GroupingTest < ActiveSupport::TestCase
     end
 
     context "with some submitted files" do
-      
+
       # submit files
       setup do
         grouping = groupings(:grouping_1)
@@ -121,7 +121,7 @@ class GroupingTest < ActiveSupport::TestCase
       end
 
     end # end files submitted context
-    
+
     context "as a noteable" do
       context "with no students in the group" do
         should "display group name and students' usernames without seeing an exception" do
@@ -131,7 +131,7 @@ class GroupingTest < ActiveSupport::TestCase
           end
         end
       end
-      
+
       context "with students in the group" do
         should "display group name and students' usernames without seeing an exception" do
           grouping = groupings(:grouping_1)
@@ -140,7 +140,7 @@ class GroupingTest < ActiveSupport::TestCase
           end
         end
       end
-      
+
       should "display for note without seeing an exception" do
         grouping = groupings(:grouping_1)
         assert_nothing_raised do
@@ -287,9 +287,9 @@ class GroupingTest < ActiveSupport::TestCase
   ####################################################
 
   def setup
-     setup_group_fixture_repos 
+     setup_group_fixture_repos
   end
-  
+
   def test_decline_invitation
      grouping = groupings(:grouping_2)
      student = users(:student5)
@@ -331,9 +331,9 @@ class GroupingTest < ActiveSupport::TestCase
      grouping = groupings(:grouping_1)
      membership = memberships(:membership2)
      grouping.remove_member(membership)
-     assert_not_nil grouping.inviter 
+     assert_not_nil grouping.inviter
   end
-  
+
   def test_cant_invite_hidden_student
     grouping = groupings(:grouping_1)
     hidden = users(:hidden_student)
@@ -341,7 +341,7 @@ class GroupingTest < ActiveSupport::TestCase
     grouping.invite(hidden.user_name)
     assert_equal original_number_of_members, grouping.memberships.count
   end
-  
+
   def test_cant_add_member_hidden_student
     grouping = groupings(:grouping_1)
     hidden = users(:hidden_student)
@@ -349,25 +349,25 @@ class GroupingTest < ActiveSupport::TestCase
     grouping.add_member(hidden)
     assert_equal original_number_of_members, grouping.memberships.count
   end
-  
+
   # TA Assignment tests
   def test_assign_tas_to_grouping
     grouping = groupings(:grouping_1)
     ta = users(:ta1)
     assert_equal 0, grouping.ta_memberships.count, "Got unexpected TA membership count"
     grouping.add_ta_by_id(ta.id)
-    assert_equal 1, grouping.ta_memberships.count, "Got unexpected TA membership count"  
+    assert_equal 1, grouping.ta_memberships.count, "Got unexpected TA membership count"
   end
-  
+
   def test_cant_assign_tas_multiple_times
     grouping = groupings(:grouping_1)
     ta = users(:ta1)
     assert_equal 0, grouping.ta_memberships.count, "Got unexpected TA membership count"
     grouping.add_ta_by_id(ta.id)
     grouping.add_ta_by_id(ta.id)
-    assert_equal 1, grouping.ta_memberships.count, "Got unexpected TA membership count"  
+    assert_equal 1, grouping.ta_memberships.count, "Got unexpected TA membership count"
   end
-  
+
   def test_unassign_tas_to_grouping
     grouping = groupings(:grouping_1)
     ta = users(:ta1)
@@ -375,71 +375,71 @@ class GroupingTest < ActiveSupport::TestCase
     grouping.add_ta_by_id(ta.id)
     assert_equal 1, grouping.ta_memberships.count, "Got unexpected TA membership count"
     grouping.remove_ta_by_id(ta.id)
-    assert_equal 0, grouping.ta_memberships.count, "Got unexpected TA membership count"  
+    assert_equal 0, grouping.ta_memberships.count, "Got unexpected TA membership count"
   end
-  
+
   def test_assign_tas_to_grouping_by_user_name_array
     grouping = groupings(:grouping_1)
     user_name_array = ['ta1', 'ta2']
     assert_equal 0, grouping.ta_memberships.count, "Got unexpected TA membership count"
     grouping.add_tas_by_user_name_array(user_name_array)
-    assert_equal 2, grouping.ta_memberships.count, "Got unexpected TA membership count"  
+    assert_equal 2, grouping.ta_memberships.count, "Got unexpected TA membership count"
   end
-  
+
   def test_ta_assignment_by_csv_file
     assignment = assignments(:assignment_1)
-    
+
     grouping_1 = Group.find_by_group_name('Titanic').grouping_for_assignment(assignment.id)
     grouping_1_orig_count = grouping_1.ta_memberships.count
-    
+
     grouping_2 = Group.find_by_group_name('Ukishima Maru').grouping_for_assignment(assignment.id)
     grouping_2_orig_count = grouping_2.ta_memberships.count
-        
+
     grouping_3 = Group.find_by_group_name('Blanche Nef').grouping_for_assignment(assignment.id)
     grouping_3_orig_count = grouping_3.ta_memberships.count
-    
-    csv_file_data = 
+
+    csv_file_data =
 '''Titanic,ta1
 Ukishima Maru,ta1,ta2
 Blanche Nef,ta2'''
     failures = Grouping.assign_tas_by_csv(csv_file_data, assignment.id)
 
     assert_equal grouping_1_orig_count + 1, grouping_1.ta_memberships.count, "Got unexpected TA membership count"
-    
+
     # This should be +1 ta_memberships, because one of those TAs is already
     # assigned to Ukishima Maru in the fixtures
     assert_equal grouping_2_orig_count + 1, grouping_2.ta_memberships.count, "Got unexpected TA membership count"
 
     assert_equal grouping_3_orig_count + 1, grouping_3.ta_memberships.count, "Got unexpected TA membership count"
-    
+
     assert_equal 0, failures.size, "Received unexpected failures"
 
   end
 
   def test_ta_assignment_by_bad_csv_file
     assignment = assignments(:assignment_1)
-    
+
     grouping_1 = Group.find_by_group_name('Titanic').grouping_for_assignment(assignment.id)
     grouping_1_orig_count = grouping_1.ta_memberships.count
-    
+
     grouping_2 = Group.find_by_group_name('Ukishima Maru').grouping_for_assignment(assignment.id)
     grouping_2_orig_count = grouping_2.ta_memberships.count
-        
+
     grouping_3 = Group.find_by_group_name('Blanche Nef').grouping_for_assignment(assignment.id)
     grouping_3_orig_count = grouping_3.ta_memberships.count
-    
-    csv_file_data = 
+
+    csv_file_data =
 '''Titanic,ta1
 Uk125125ishima Maru,ta1,ta2
 Blanche Nef,ta2'''
     failures = Grouping.assign_tas_by_csv(csv_file_data, assignment.id)
-    
+
     assert_equal grouping_1_orig_count + 1, grouping_1.ta_memberships.count, "Got unexpected TA membership count"
 
     assert_equal grouping_2_orig_count + 0, grouping_2.ta_memberships.count, "Got unexpected TA membership count"
 
     assert_equal grouping_3_orig_count + 1, grouping_3.ta_memberships.count, "Got unexpected TA membership count"
-    
+
     assert_equal failures[0], "Uk125125ishima Maru", "Didn't return correct failure"
 
   end

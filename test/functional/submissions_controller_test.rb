@@ -22,13 +22,13 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       setup do
         get_as(@student, :file_manager, {:id => @assignment.id})
       end
-      should_respond_with :success
+      should respond_with :success
     end
     context "and I should be able to populate file" do
       setup do
         get_as(@student, :populate_file_manager, {:id => @assignment.id})
       end
-      should_respond_with :success
+      should respond_with :success
     end
     
     #TODO Figure out how to remove fixture_file_upload
@@ -46,7 +46,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_not_nil files['TestShapes.java']
         end
       end
-      should_redirect_to("file manager page") { 
+      should redirect_to("file manager page") { 
         url_for(:controller => "submissions", 
                 :action=> 'file_manager',
                 :id => @assignment.id) }
@@ -95,7 +95,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_equal file_2.read, file_2_new_contents
         end
       end 
-      should_redirect_to("file manager page") { 
+      should redirect_to("file manager page") { 
         url_for(:controller => "submissions", 
                 :action=> 'file_manager',
                 :id => @assignment.id) }
@@ -126,7 +126,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_nil files['Shapes.java']
         end
       end
-      should_redirect_to("file manager page") { 
+      should redirect_to("file manager page") { 
         url_for(:controller => "submissions", 
                 :action=> 'file_manager',
                 :id => @assignment.id) }
@@ -155,7 +155,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_not_nil flash[:update_conflicts]
         end
       end
-      should_redirect_to("file manager page") { 
+      should redirect_to("file manager page") { 
         url_for(:controller => "submissions", 
                 :action=> 'file_manager',
                 :id => @assignment.id) }
@@ -170,14 +170,14 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       setup do
         get_as(@student, :repo_browser, {:id => Grouping.last.id})
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
     
     context "and I cannot use the populate repository browser." do
       setup do
         get_as(@student, :populate_repo_browser, {:id => Grouping.first.id})
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
 
     # Stopping a curious student
@@ -186,7 +186,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         get_as @student, :download_simple_csv_report
       end
       
-      should_respond_with :missing
+      should respond_with :missing
     end
 
     context "and I cannot access a detailed csv report." do
@@ -194,7 +194,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         get_as @student, :download_detailed_csv_report
       end
       
-      should_respond_with :missing
+      should respond_with :missing
     end
 
     context "and I cannot download svn export commands" do
@@ -202,7 +202,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         get_as @student, :download_svn_export_commands
       end
       
-      should_respond_with :missing
+      should respond_with :missing
     end
 
     context "and I cannot download the svn repository list" do
@@ -210,7 +210,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         get_as @student, :download_svn_repo_list
       end
       
-      should_respond_with :missing
+      should respond_with :missing
     end
 
     context "and I have a grader. My grade should be able to" do
@@ -223,7 +223,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         setup do
           get_as(@grader, :repo_browser, {:id => Grouping.last.id})
         end
-        should_respond_with :success
+        should respond_with :success
       end
       
 
@@ -231,35 +231,35 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         setup do
           get_as(@grader, :populate_repo_browser, {:id => Grouping.first.id})
         end
-        should_respond_with :success
+        should respond_with :success
       end
 
       context "download a simple csv report" do
         setup do
           get_as @grader, :download_simple_csv_report
         end
-        should_respond_with :missing
+        should respond_with :missing
       end
       
       context "download a detailed csv report" do
         setup do
           get_as @grader, :download_detailed_csv_report
         end
-        should_respond_with :missing
+        should respond_with :missing
       end
       
       context "download the svn export commands" do
         setup do
           get_as @grader, :download_svn_export_commands
         end
-        should_respond_with :missing
+        should respond_with :missing
       end
       
       context "download the svn repository list" do
         setup do
           get_as @grader, :download_svn_repo_list
         end
-        should_respond_with :missing
+        should respond_with :missing
       end
     end
 
@@ -275,34 +275,34 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         setup do
           get_as(@admin, :populate_repo_browser, {:id => Grouping.first.id})
         end
-        should_respond_with :success
+        should respond_with :success
       end
       context "My instructor should be able to download the simple csv report." do
         setup do
           get_as @admin, :download_simple_csv_report, :id => @assignment.id
         end
-        should_respond_with :success
+        should respond_with :success
       end
       
       context "My instructor should be able to download the detailed csv report." do
         setup do
           get_as @admin, :download_detailed_csv_report, :id => @assignment.id
         end
-        should_respond_with :success
+        should respond_with :success
       end
       
       context "My instructor should be able to download the svn export commands." do
         setup do
           get_as @admin, :download_svn_export_commands, :id => @assignment.id
         end
-        should_respond_with :success
+        should respond_with :success
       end
       
       context "My instructor should be able to download the svn repository list." do
         setup do
           get_as @admin, :download_svn_repo_list, :id => @assignment.id
         end
-        should_respond_with :success
+        should respond_with :success
       end
     end
   end
@@ -312,27 +312,27 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       setup do
         get :download_simple_csv_report
       end
-      should_respond_with :redirect
+      should respond_with :redirect
     end
     
     context "trying to download a detailed csv report" do
       setup do
         get :download_detailed_csv_report
       end
-      should_respond_with :redirect
+      should respond_with :redirect
     end
     
     context "trying to download the svn export commands" do
       setup do
         get :download_svn_export_commands end
-      should_respond_with :redirect
+      should respond_with :redirect
     end
     
     context "trying to download the svn repository list" do
       setup do
         get :download_svn_repo_list
       end
-      should_respond_with :redirect
+      should respond_with :redirect
     end
   end
   

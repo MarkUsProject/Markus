@@ -12,12 +12,12 @@ class GroupTest < ActiveSupport::TestCase
     clear_fixtures
   end
 
-  should_have_many :groupings
-  should_have_many :submissions, :through => :groupings
-  should_have_many :assignments, :through => :groupings
-  should_validate_presence_of :group_name
-  should_not_allow_values_for :group_name, "group_long_name_12319302910102912010210219002", :message => "is too long"
-  should_allow_values_for :group_name, "This group n. is short enough!" # exactly 30 char limit
+  should have_many :groupings
+  should have_many(:submissions).through(:groupings)
+  should have_many(:assignments).through(:groupings)
+  should validate_presence_of :group_name
+  should_not allow_value("group_long_name_12319302910102912010210219002").for(:group_name).with_message("is too long")
+  should allow_value("This group n. is short enough!").for(:group_name) # exactly 30 char limit
 
 
   context "a group" do
@@ -25,13 +25,13 @@ class GroupTest < ActiveSupport::TestCase
       @group = Group.make
     end
 
-    should "have a unique group name" do 
+    should "have a unique group name" do
       group = Group.new
       group.group_name = @group.group_name
       assert !group.save
     end
 
-    
+
     should "allow access to its repository" do
       @group.access_repo do |repo|
         assert_not_nil(repo, "Cannot access repository")
@@ -40,9 +40,9 @@ class GroupTest < ActiveSupport::TestCase
     end
 
     context "linked to an assignment allowing web commits" do
-      setup do 
+      setup do
         assignment = Assignment.make(:allow_web_submits => true)
-        @grouping = Grouping.make(:assignment_id => assignment.id, 
+        @grouping = Grouping.make(:assignment_id => assignment.id,
                                  :group_id => @group.id)
       end
 
@@ -52,9 +52,9 @@ class GroupTest < ActiveSupport::TestCase
     end
 
     context "linked to an assignment not allowing web commits" do
-      setup do 
+      setup do
         assignment = Assignment.make(:allow_web_submits => false)
-        @grouping = Grouping.make(:assignment_id => assignment.id, 
+        @grouping = Grouping.make(:assignment_id => assignment.id,
                                  :group_id => @group.id)
       end
 

@@ -4,21 +4,29 @@ require 'shoulda'
 # Tests for GradeEntryStudents
 class GradeEntryStudentTest < ActiveSupport::TestCase
   fixtures :all
-  
-  should_belong_to :grade_entry_form  
-  should_belong_to :user
-  
+
+  should belong_to :grade_entry_form
+  should belong_to :user
+
   # Not yet
-  #should_have_many :grades
-  
-  should_validate_numericality_of :grade_entry_form_id, :message => I18n.t('invalid_id')
-  should_validate_numericality_of :user_id, :message => I18n.t('invalid_id')
-  
-  should_allow_values_for :grade_entry_form_id, 1, 2, 100
-  should_not_allow_values_for :grade_entry_form_id, 0, -1, -100
-  
-  should_allow_values_for :user_id, 1, 2, 100
-  should_not_allow_values_for :user_id, 0, -1, -100
-  
+  #should have_many :grades
+
+  should validate_numericality_of(:grade_entry_form_id).with_message(I18n.t('invalid_id'))
+  should validate_numericality_of(:user_id).with_message(I18n.t('invalid_id'))
+
+  should allow_value(1).for(:grade_entry_form_id)
+  should allow_value(2).for(:grade_entry_form_id)
+  should allow_value(100).for(:grade_entry_form_id)
+  should_not allow_value(0).for(:grade_entry_form_id)
+  should_not allow_value(-1).for(:grade_entry_form_id)
+  should_not allow_value(-100).for(:grade_entry_form_id)
+
+  should allow_value(1).for(:user_id)
+  should allow_value(2).for(:user_id)
+  should allow_value(100).for(:user_id)
+  should_not allow_value(0).for(:user_id)
+  should_not allow_value(-1).for(:user_id)
+  should_not allow_value(-100).for(:user_id)
+
 end
 

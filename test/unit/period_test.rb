@@ -6,8 +6,8 @@ require File.join(File.dirname(__FILE__),'/../blueprints/helper')
 require 'shoulda'
 
 class PeriodTest < ActiveSupport::TestCase
-  should_validate_presence_of :hours
-  should_belong_to :submission_rule
+  should validate_presence_of :hours
+  should belong_to :submission_rule
 
   def setup
     clear_fixtures

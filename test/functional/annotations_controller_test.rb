@@ -18,35 +18,35 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       setup do
         get :add_existing_annotation, :id => 1
       end
-      should_respond_with :redirect
+      should respond_with :redirect
     end
 
     context "on :create" do
       setup do
         get :create, :id => 1
       end
-      should_respond_with :redirect
+      should respond_with :redirect
     end
 
     context "on :destroy" do
       setup do
         get :destroy, :id => 1
       end
-      should_respond_with :redirect
+      should respond_with :redirect
     end
 
     context "on :update_annotation" do
       setup do
         get :update_annotation, :id => 1
       end
-      should_respond_with :redirect
+      should respond_with :redirect
     end
 
     context "on :update_comment" do
       setup do
         get :update_comment, :id => 1
       end
-      should_respond_with :redirect
+      should respond_with :redirect
     end
 
   end # end context unauthenticated/unauthorized user GET
@@ -60,35 +60,35 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       setup do
         post :add_existing_annotation, :id => 1
       end
-      should_respond_with :redirect
+      should respond_with :redirect
     end
 
     context "on :create" do
       setup do
         post :create, :id => 1
       end
-      should_respond_with :redirect
+      should respond_with :redirect
     end
 
     context "on :destroy" do
       setup do
         post :destroy, :id => 1
       end
-      should_respond_with :redirect
+      should respond_with :redirect
     end
 
     context "on :update_annotation" do
       setup do
         post :update_annotation, :id => 1
       end
-      should_respond_with :redirect
+      should respond_with :redirect
     end
 
     context "on :update_comment" do
       setup do
         post :update_comment, :id => 1
       end
-      should_respond_with :redirect
+      should respond_with :redirect
     end
 
   end # end context unauthenticated/unauthorized user POST
@@ -111,9 +111,10 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
           :submission_file_id => @submission_file.id,
           :line_start => 1, :line_end => 1}
       end
-      should_respond_with :success
-      should_assign_to :submission_file, :annotation
-      should_render_template 'add_existing_annotation'
+      should respond_with :success
+      should assign_to :submission_file
+      should assign_to :annotation
+      should render_template 'add_existing_annotation'
     end # End context :add_existing_annotation
 
     context "on :create to make a text annotation" do
@@ -123,9 +124,10 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
           :submission_file_id => @submission_file.id,
           :line_start => 1, :line_end => 1, :annotation_type => 'text'}
       end
-      should_respond_with :success
-      should_assign_to :submission_file, :annotation
-      should_render_template 'create'
+      should respond_with :success
+      should assign_to :submission_file
+      should assign_to :annotation
+      should render_template 'create'
     end # End context :create text
 
     context "on :create to make an image annotation" do
@@ -135,9 +137,10 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
           :submission_file_id => @submission_file.id,
           :coords => "0,0,1,1", :annotation_type => 'image'}
       end
-      should_respond_with :success
-      should_assign_to :submission_file, :annotation
-      should_render_template 'create'
+      should respond_with :success
+      should assign_to :submission_file
+      should assign_to :annotation
+      should render_template 'create'
     end # End context :create image
 
     context "on :destroy" do
@@ -149,8 +152,8 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
         post_as @user, :destroy, {:id => anno.id,
           :submission_file_id => @submission_file.id}
       end
-      should_respond_with :success
-      should_render_template 'destroy'
+      should respond_with :success
+      should render_template 'destroy'
     end # End context :destroy
 
     context "on :update_annotation" do
@@ -163,8 +166,8 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
           :id => @annotation_text.id, :content => @annotation_text.content,
           :submission_file_id =>@submission_file.id}
       end
-      should_respond_with :success
-      should_render_template 'update_annotation'
+      should respond_with :success
+      should render_template 'update_annotation'
     end # End context :update_annotation
 
     context "on :update_comment" do
@@ -172,7 +175,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
          post_as @user, :update_comment, {:result_id => @result.id,
            :overall_comment => "comment"}
       end
-      should_respond_with :success
+      should respond_with :success
     end # End context :update_comment
   end #End context admin POST
 
@@ -194,9 +197,10 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
           :submission_file_id => @submission_file.id,
           :line_start => 1, :line_end => 1}
       end
-      should_respond_with :success
-      should_assign_to :submission_file, :annotation
-      should_render_template 'add_existing_annotation'
+      should respond_with :success
+      should assign_to :submission_file
+      should assign_to :annotation
+      should render_template 'add_existing_annotation'
     end # End context :add_existing_annotation
 
     context "on :create to make a text annotation" do
@@ -206,9 +210,10 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
           :submission_file_id => @submission_file.id,
           :line_start => 1, :line_end => 1, :annotation_type => 'text'}
       end
-      should_respond_with :success
-      should_assign_to :submission_file, :annotation
-      should_render_template 'create'
+      should respond_with :success
+      should assign_to :submission_file
+      should assign_to :annotation
+      should render_template 'create'
     end # End context :create text
 
     context "on :create to make an image annotation" do
@@ -218,9 +223,10 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
           :submission_file_id => @submission_file.id,
           :coords => "0,0,1,1", :annotation_type => 'image'}
       end
-      should_respond_with :success
-      should_assign_to :submission_file, :annotation
-      should_render_template 'create'
+      should respond_with :success
+      should assign_to :submission_file
+      should assign_to :annotation
+      should render_template 'create'
     end # End context :create image
 
     context "on :destroy" do
@@ -232,8 +238,8 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
         post_as @user, :destroy, {:id => anno.id,
           :submission_file_id => @submission_file.id}
       end
-      should_respond_with :success
-      should_render_template 'destroy'
+      should respond_with :success
+      should render_template 'destroy'
     end # End context :destroy
 
     context "on :update_annotation" do
@@ -246,8 +252,8 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
           :id => @annotation_text.id, :content => @annotation_text.content,
           :submission_file_id =>@submission_file.id}
       end
-      should_respond_with :success
-      should_render_template 'update_annotation'
+      should respond_with :success
+      should render_template 'update_annotation'
     end # End context :update_annotation
 
     context "on :update_comment" do
@@ -255,7 +261,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
          post_as @user, :update_comment, {:result_id => @result.id,
            :overall_comment => "comment"}
       end
-      should_respond_with :success
+      should respond_with :success
     end # End context :update_comment
   end # End context TA POST
 
@@ -277,7 +283,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
           :submission_file_id => @submission_file.id,
           :line_start => 1, :line_end => 1}
       end
-      should_respond_with :not_found
+      should respond_with :not_found
     end # End context :add_existing_annotation
 
     context "on :create to make a text annotation" do
@@ -287,7 +293,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
           :submission_file_id => @submission_file.id,
           :line_start => 1, :line_end => 1, :annotation_type => 'text'}
       end
-      should_respond_with :not_found
+      should respond_with :not_found
     end # End context :create
 
     context "on :create to make an image annotation" do
@@ -297,7 +303,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
           :submission_file_id => @submission_file.id,
           :coords => "0,0,1,1", :annotation_type => 'image'}
       end
-      should_respond_with :not_found
+      should respond_with :not_found
     end # End context :create
 
     context "on :destroy" do
@@ -309,7 +315,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
         post_as @user, :destroy, {:id => anno.id,
           :submission_file_id => @submission_file.id}
       end
-      should_respond_with :not_found
+      should respond_with :not_found
     end # End context :destroy
 
     context "on :update_annotation" do
@@ -322,7 +328,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
           :id => @annotation_text.id, :content => @annotation_text.content,
           :submission_file_id =>@submission_file.id}
       end
-      should_respond_with :not_found
+      should respond_with :not_found
     end # End context :update_annotation
     
     context "on :update_comment" do
@@ -330,7 +336,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
          post_as @user, :update_comment, {:result_id => @result.id,
            :overall_comment => "comment"}
       end
-      should_respond_with :not_found
+      should respond_with :not_found
     end # End context :update_comment
   end # End context Student POST
 end

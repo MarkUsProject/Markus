@@ -4,13 +4,13 @@ require 'shoulda'
 class MembershipTest < ActiveSupport::TestCase
   fixtures :all
 
-  should_belong_to :user
-  should_belong_to :grouping
-  # should_validate_presence_of :user_id
-  # should_validate_presence_of :grouping_id
+  should belong_to :user
+  should belong_to :grouping
+  # should validate_presence_of :user_id
+  # should validate_presence_of :grouping_id
 
 ################################################################################
-# 
+#
 # STUDENT_MEMBERSHIPS TESTS
 #
 ################################################################################

@@ -3,22 +3,22 @@ require 'shoulda'
 
 class AnnotationCategoryTest < ActiveSupport::TestCase
    fixtures :all
-   should_validate_presence_of :annotation_category_name
-   should_validate_presence_of :assignment_id
+   should validate_presence_of :annotation_category_name
+   should validate_presence_of :assignment_id
 
   # Test that an Annotations Category without name are not valid
   def test_no_name
     no_name = create_no_attr(:name);
     assert !no_name.valid?
   end
-    
-  # Helper method for test_validate_presence_of to create a category without 
+
+  # Helper method for test_validate_presence_of to create a category without
   # the specified attribute. if attr == nil then all attributes are included
   def create_no_attr(attr)
-    new_annotation_category = { 
+    new_annotation_category = {
       :name => "annotationcategory1",
     }
-    
+
     new_annotation_category.delete(attr) if attr
     AnnotationCategory.new(new_annotation_category)
   end
@@ -62,7 +62,7 @@ class AnnotationCategoryTest < ActiveSupport::TestCase
     a = AnnotationCategory.all.size
     assignment = assignments(:assignment_1)
     AnnotationCategory.add_by_row(row, assignment)
-    assert_not_equal(a, AnnotationCategory.all.size, "an annotation category 
+    assert_not_equal(a, AnnotationCategory.all.size, "an annotation category
     has been created. The number of annotation category should be different")
   end
 
@@ -74,7 +74,7 @@ class AnnotationCategoryTest < ActiveSupport::TestCase
     a = AnnotationText.all.size
     assignment = assignments(:assignment_1)
     AnnotationCategory.add_by_row(row, assignment)
-    assert_not_equal(a, AnnotationText.all.size, "an annotation text 
+    assert_not_equal(a, AnnotationText.all.size, "an annotation text
     has been created. The number of annotation texts should be different")
   end
 

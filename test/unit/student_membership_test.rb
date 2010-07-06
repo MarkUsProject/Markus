@@ -3,8 +3,8 @@ require 'shoulda'
 
 class StudentMembershipTest < ActiveSupport::TestCase
   fixtures :all
-  should_belong_to :user
-  should_belong_to :grouping
+  should belong_to :user
+  should belong_to :grouping
 
   def test_should_not_save_without_membership_status
     membership = StudentMembership.new

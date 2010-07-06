@@ -13,7 +13,7 @@ class PenaltyPeriodSubmissionRuleTest < ActiveSupport::TestCase
       penalty_period_submission_rule = PenaltyPeriodSubmissionRule.new
       @assignment.replace_submission_rule(penalty_period_submission_rule)
       penalty_period_submission_rule.save
-      
+
       # On July 1 at 1PM, the instructor sets up the course...
       pretend_now_is(Time.parse("July 1 2009 1:00PM")) do
         # Due date is July 23 @ 5PM
@@ -31,11 +31,11 @@ class PenaltyPeriodSubmissionRuleTest < ActiveSupport::TestCase
         @grouping.create_grouping_repository_folder
       end
     end
-    
+
     teardown do
       destroy_repos
     end
-  
+
     should "add a 10% penalty to the submission result" do
       # The Student submits some files before the due date...
 
@@ -50,7 +50,7 @@ class PenaltyPeriodSubmissionRuleTest < ActiveSupport::TestCase
           repo.commit(txn)
         end
       end
-      
+
       # Now we're past the due date, but before the collection date.
       pretend_now_is(Time.parse("July 23 2009 9:00PM")) do
         assert Time.now > @assignment.due_date
@@ -61,7 +61,7 @@ class PenaltyPeriodSubmissionRuleTest < ActiveSupport::TestCase
           repo.commit(txn)
         end
       end
-      
+
       # Now we're past the collection date.
       pretend_now_is(Time.parse("July 25 2009 10:00PM")) do
         assert Time.now > @assignment.due_date
@@ -72,24 +72,24 @@ class PenaltyPeriodSubmissionRuleTest < ActiveSupport::TestCase
           repo.commit(txn)
         end
       end
-      
+
       # An Instructor or Grader decides to begin grading
       pretend_now_is(Time.parse("July 28 2009 1:00PM")) do
         submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
         submission = @assignment.submission_rule.apply_submission_rule(submission)
-        
+
         # Assert that this submission got a penalty
         result = submission.result
         assert_not_nil result
         # We expect only a single extra mark is attached
         assert_equal -10, result.get_total_extra_percentage
-        assert_equal 1, result.extra_marks.size 
+        assert_equal 1, result.extra_marks.size
         penalty = result.extra_marks.first
         assert_not_nil penalty.unit
         assert_equal -10, penalty.extra_mark
         assert_equal ExtraMark::UNITS[:percentage], penalty.unit
-       
-        # We should have all files except NotIncluded.java in the repository.  
+
+        # We should have all files except NotIncluded.java in the repository.
         assert_not_nil submission.submission_files.find_by_filename("TestFile.java")
         assert_not_nil submission.submission_files.find_by_filename("Test.java")
         assert_not_nil submission.submission_files.find_by_filename("Driver.java")
@@ -99,7 +99,7 @@ class PenaltyPeriodSubmissionRuleTest < ActiveSupport::TestCase
       end
 
     end
-  
+
     should "add 20% penalty to submission" do
       # The Student submits some files before the due date...
       pretend_now_is(Time.parse("July 20 2009 5:00PM")) do
@@ -113,7 +113,7 @@ class PenaltyPeriodSubmissionRuleTest < ActiveSupport::TestCase
           repo.commit(txn)
         end
       end
-      
+
       # Now we're past the due date, but before the collection date, within the first
       # grace period
       pretend_now_is(Time.parse("July 23 2009 9:00PM")) do
@@ -137,7 +137,7 @@ class PenaltyPeriodSubmissionRuleTest < ActiveSupport::TestCase
           repo.commit(txn)
         end
       end
-      
+
       # Now we're past the collection date.
       pretend_now_is(Time.parse("July 25 2009 10:00PM")) do
         assert Time.now > @assignment.due_date
@@ -148,25 +148,25 @@ class PenaltyPeriodSubmissionRuleTest < ActiveSupport::TestCase
           repo.commit(txn)
         end
       end
-      
+
       # An Instructor or Grader decides to begin grading
       pretend_now_is(Time.parse("July 28 2009 1:00PM")) do
         submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
         submission = @assignment.submission_rule.apply_submission_rule(submission)
-        
+
         # Assert that this submission got a penalty
         result = submission.result
         assert_not_nil result
         # We expect only a single extra mark is attached
         assert_equal -20, result.get_total_extra_percentage
-        assert_equal 1, result.extra_marks.size 
+        assert_equal 1, result.extra_marks.size
         penalty = result.extra_marks.first
         assert_not_nil penalty.unit
         assert_equal -20, penalty.extra_mark
         assert_equal ExtraMark::UNITS[:percentage], penalty.unit
 
 
-        # We should have all files except NotIncluded.java in the repository.  
+        # We should have all files except NotIncluded.java in the repository.
         assert_not_nil submission.submission_files.find_by_filename("TestFile.java")
         assert_not_nil submission.submission_files.find_by_filename("Test.java")
         assert_not_nil submission.submission_files.find_by_filename("Driver.java")
@@ -174,19 +174,19 @@ class PenaltyPeriodSubmissionRuleTest < ActiveSupport::TestCase
         assert_not_nil submission.submission_files.find_by_filename("OvertimeFile2.java")
         assert_nil submission.submission_files.find_by_filename("NotIncluded.java")
         assert_not_nil submission.result
-            
+
       end
-    end   
+    end
   end
-  
-  private 
-  
+
+  private
+
   def add_file_helper(txn, file_name, file_contents)
     path = File.join(@assignment.repository_folder, file_name)
     txn.add(path, file_contents, '')
     return txn
   end
-  
+
   def add_period_helper(submission_rule, hours, deduction_amount)
     period = Period.new
     period.submission_rule = submission_rule
@@ -194,6 +194,6 @@ class PenaltyPeriodSubmissionRuleTest < ActiveSupport::TestCase
     period.deduction = deduction_amount
     period.save
   end
-  
-  
+
+
 end
