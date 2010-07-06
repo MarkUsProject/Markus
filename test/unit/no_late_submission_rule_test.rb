@@ -7,7 +7,7 @@ class NoLateSubmissionRuleTest < ActiveSupport::TestCase
     rule.assignment = assignments(:assignment_1)
     assert rule.save
   end
-  
+
   should "be able to calculate collection time" do
     assignment = assignments(:assignment_1)
     rule = NoLateSubmissionRule.new
@@ -27,5 +27,5 @@ class NoLateSubmissionRuleTest < ActiveSupport::TestCase
     submission = assignment.submission_rule.apply_submission_rule(submission)
     assert_equal result_extra_marks_num, submission.result.extra_marks.size
   end
-    
+
 end

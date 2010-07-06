@@ -6,8 +6,11 @@ require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 require 'shoulda'
 
 class NoteTest < ActiveSupport::TestCase
-  should_validate_presence_of :notes_message, :creator_id, :noteable
-  should_belong_to :noteable, :user
+  should validate_presence_of :notes_message
+  should validate_presence_of :creator_id
+  should validate_presence_of :noteable
+  should belong_to :noteable
+  should belong_to :user
 
   context "noteables_exist?"  do
     setup do
@@ -29,5 +32,5 @@ class NoteTest < ActiveSupport::TestCase
       end
     end
   end
-  
+
 end

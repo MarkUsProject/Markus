@@ -13,11 +13,11 @@ class SectionTest < ActiveSupport::TestCase
     clear_fixtures
   end
 
-  should_validate_presence_of :name
-  should_have_many :students
+  should validate_presence_of :name
+  should have_many :students
 
   context "A section with no student associated to" do
-    setup do 
+    setup do
       @section = Section.make
     end
 

@@ -23,16 +23,16 @@ class UsersControllerTest < AuthenticatedControllerTest
         get_as @student, :index
       end
 
-      should_respond_with :missing
+      should respond_with :missing
 
     end
 
     context "on create new section" do
-      setup do 
+      setup do
         get_as @student, :create_section
       end
 
-      should_respond_with :missing
+      should respond_with :missing
     end
 
     context "on update new section" do
@@ -40,12 +40,12 @@ class UsersControllerTest < AuthenticatedControllerTest
         get_as @student, :update_section
       end
 
-      should_respond_with :missing
+      should respond_with :missing
     end
   end
 
   context "A logged Admin" do
-    setup do 
+    setup do
       @admin = Admin.make
     end
 
@@ -54,15 +54,15 @@ class UsersControllerTest < AuthenticatedControllerTest
         get_as @admin, :index
       end
 
-      should_respond_with :success
+      should respond_with :success
     end
-  
+
     context "on create_section" do
       setup do
         get_as @admin, :create_section
       end
 
-      should_respond_with :success
+      should respond_with :success
     end
 
     context "creating a section" do
@@ -70,8 +70,8 @@ class UsersControllerTest < AuthenticatedControllerTest
         post_as @admin, :create_section, {:section => {:name => "section_01"}}
       end
 
-      should_respond_with :redirect
-      should_set_the_flash_to I18n.t('section.create.success')
+      should respond_with :redirect
+      should set_the_flash.to(I18n.t('section.create.success'))
 
       should "add a section name section_01" do
         assert Section.find_by_name("section_01")
@@ -84,8 +84,8 @@ class UsersControllerTest < AuthenticatedControllerTest
         post_as @admin, :create_section, {:section => {:name => section.name}}
       end
 
-      should_respond_with :success
-      should_set_the_flash_to I18n.t('section.create.error')
+      should respond_with :success
+      should set_the_flash.to(I18n.t('section.create.error'))
 
     end
 
@@ -95,18 +95,18 @@ class UsersControllerTest < AuthenticatedControllerTest
         get_as @admin, :edit_section, :id => section.id
       end
 
-      should_respond_with :success
+      should respond_with :success
     end
 
     context "edits a section name to 'nosection'" do
-      setup do 
+      setup do
         @section = Section.make
-        post_as @admin, :edit_section, {:id => @section.id, 
+        post_as @admin, :edit_section, {:id => @section.id,
           :section => {:name => "no section"}}
       end
 
-      should_respond_with :redirect
-      should_set_the_flash_to I18n.t('section.update.success')
+      should respond_with :redirect
+      should set_the_flash.to(I18n.t('section.update.success'))
 
       should "have updated the name" do
         assert_not_nil Section.find_by_name("no section")

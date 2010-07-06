@@ -10,7 +10,7 @@ class AdminsControllerTest < AuthenticatedControllerTest
      @admin = users(:olm_admin_1)
      setup_group_fixture_repos
    end
-   
+
    def teardown
      destroy_repos
    end

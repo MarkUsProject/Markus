@@ -6,44 +6,44 @@ require 'machinist'
 class RubricCriterionTest < ActiveSupport::TestCase
   fixtures :all
   set_fixture_class :rubric_criteria => RubricCriterion
-  
+
   #Test that Criteria with no names are not valid
   def test_no_name_attr
     assert_raise ActiveRecord::RecordInvalid do
       RubricCriterion.make(:rubric_criterion_name => nil)
     end
   end
-  
+
   # Test to make sure that Criteria have unique names within the scope of a
   # single assignment
   def test_unique_name
     original = RubricCriterion.make(:rubric_criterion_name => "Algorithm Design")
     taken_name = RubricCriterion.make(:rubric_criterion_name => "Algorithm Design")
     taken_name.assignment = original.assignment
-    assert !taken_name.valid?    
+    assert !taken_name.valid?
   end
-  
+
   # Test to make sure that Criteria can have the same names if they belong to
   # different Assignments
   def test_same_name_for_different_assignments
     original = RubricCriterion.make(:rubric_criterion_name => "Algorithm Design")
     taken_name = RubricCriterion.make(:rubric_criterion_name => "Algorithm Design")
-    assert taken_name.valid?  
+    assert taken_name.valid?
   end
-  
+
   #Test that Criteria unassigned to Assignment are NOT OK
   def test_no_assignment_id
     assert_raise ActiveRecord::RecordInvalid do
       no_assignment_id = RubricCriterion.make(:assignment => nil)
     end
   end
-  
+
   #Test that Criteria without weight are NOT OK
   def no_weight
     no_weight = RubricCriterion.make(:weight => nil)
     assert !no_weight.valid?
   end
-  
+
   #Test that Criteria assigned to non-existant Assignment
   #is NOT OK
   def test_assignment_id_dne
@@ -51,7 +51,7 @@ class RubricCriterionTest < ActiveSupport::TestCase
     assignment_id_dne.assignment = Assignment.new
     assert !assignment_id_dne.save
   end
-  
+
   #Test that Criteria assignment ID's can only be integers
   def test_assignment_id_int_only
     int_only = create_no_attr(nil)
@@ -68,7 +68,7 @@ class RubricCriterionTest < ActiveSupport::TestCase
     assert !int_only.valid?
 
   end
-  
+
   # Weights are restricted to a decimal value
   def test_bad_weight_range
     # create valid assignment first
@@ -77,14 +77,14 @@ class RubricCriterionTest < ActiveSupport::TestCase
     weight_range = RubricCriterion.make(:assignment => a, :weight => 2, :position => 1)
 
     assert weight_range.valid? # should be valid now
-    
+
     weight_range.weight = 'string'
     assert !weight_range.valid?, "weight is a string, it shouldn't be valid"
-    
+
     weight_range.weight = -0.1
     weight_range.assignment.reload
     assert !weight_range.valid?, "assignment total weight is negative, it should be invalid"
-    
+
     weight_range.weight = 0.0
     weight_range.assignment.reload
     assert !weight_range.valid?, "assignment total weight is zero, it should be invalid"
@@ -116,7 +116,7 @@ class RubricCriterionTest < ActiveSupport::TestCase
     weight_range.assignment.reload
     assert !weight_range.valid?, "assignment total weight is negative, it should be invalid"
   end
-  
+
   should "truncate weights that have more than 2 significant digits" do
     assert RubricCriterion.count > 0
     criterion = RubricCriterion.first
@@ -124,7 +124,7 @@ class RubricCriterionTest < ActiveSupport::TestCase
     criterion.save
     assert_equal 0.55, criterion.weight
   end
-  
+
   # Helper method for test_validate_presence_of to create a criterion without
   # the specified attribute. if attr == nil then all attributes are included
   def create_no_attr(attr)
@@ -148,12 +148,12 @@ class RubricCriterionTest < ActiveSupport::TestCase
     rubric = rubric_criteria(:c4)
     assert_not_nil rubric.mark_for(result.id)
   end
-  
+
   def test_set_default_levels_1
     r = RubricCriterion.new
     assert r.set_default_levels
   end
-  
+
   def test_set_default_levels_2
     r = RubricCriterion.new
     r.set_default_levels
@@ -164,7 +164,7 @@ class RubricCriterionTest < ActiveSupport::TestCase
     assert_equal(I18n.t("rubric_criteria.defaults.level_3"), r.level_3_name)
     assert_equal(I18n.t("rubric_criteria.defaults.level_4"), r.level_4_name)
   end
-  
+
   should "be able to set all the level names at once" do
     r = RubricCriterion.new
     levels = []
@@ -177,7 +177,7 @@ class RubricCriterionTest < ActiveSupport::TestCase
       assert_equal r['level_' + i.to_s() + '_name'], 'l' + i.to_s()
     end
   end
-  
+
   context "from an assignment composed of rubric criteria" do
     setup do
       @csv_string = "Algorithm Design,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,
@@ -186,12 +186,12 @@ Testing,2.2,Horrible,Poor,Satisfactory,Good,Excellent,,,,,
 Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       @assignment = assignments(:assignment_1)
     end
-    
+
     should "be able to get a CSV string" do
       s = RubricCriterion.create_csv(@assignment)
       assert_equal @csv_string, s
     end
-    
+
     should "be able to use a generated string for parsing" do
       csv_string = RubricCriterion.create_csv(@assignment)
       tempfile = Tempfile.new('rubric_csv')
@@ -206,19 +206,19 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       assert_equal 4, dst_assignment.rubric_criteria.size
     end
   end
-  
+
   context "from an assignment composed of rubric criteria with commas and quotes in the descriptions" do
     setup do
       @csv_string = "Part 1 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,\"Makes the TA \"\"Shivers\"\"\",\"Leaves the TA \"\"calm\"\"\",\"Makes the TA \"\"grin\"\"\",\"Makes the TA \"\"smile\"\"\",\"Makes, the, TA scream: \"\"at last, it was about time\"\"\"
 Part 2 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       @assignment = assignments(:assignment_2)
     end
-    
+
     should "be able to get a CSV string" do
       s = RubricCriterion.create_csv(@assignment)
       assert_equal @csv_string, s
     end
-    
+
     should "be able to use a generated string for parsing" do
       csv_string = RubricCriterion.create_csv(@assignment)
       tempfile = Tempfile.new('rubric_csv')
@@ -233,41 +233,41 @@ Part 2 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       assert_equal 2, dst_assignment.rubric_criteria.size
     end
   end
-  
+
   context "from an assignment without criteria" do
     setup do
       @assignment = assignments(:assignment_3)
     end
-    
+
     should "be able to get an empty CSV string" do
       csv_string = RubricCriterion.create_csv(@assignment)
       assert_equal "", csv_string
     end
   end
-  
+
   context "when parsing a CSV file" do
-    
+
     should "raise an error message on an empty row" do
       e = assert_raise RuntimeError do
         RubricCriterion.create_or_update_from_csv_row([], Assignment.new)
       end
-      assert_equal I18n.t('criteria_csv_error.incomplete_row'), e.message 
+      assert_equal I18n.t('criteria_csv_error.incomplete_row'), e.message
     end
-    
+
     should "raise an error message on a 1 element row" do
       e = assert_raise RuntimeError do
         RubricCriterion.create_or_update_from_csv_row(['name'], Assignment.new)
       end
-      assert_equal I18n.t('criteria_csv_error.incomplete_row'), e.message 
+      assert_equal I18n.t('criteria_csv_error.incomplete_row'), e.message
     end
-    
+
     should "raise an error message on a 2 element row" do
       e = assert_raise RuntimeError do
         RubricCriterion.create_or_update_from_csv_row(['name', '1.0'], Assignment.new)
       end
-      assert_equal I18n.t('criteria_csv_error.incomplete_row'), e.message 
+      assert_equal I18n.t('criteria_csv_error.incomplete_row'), e.message
     end
-    
+
     should "raise an error message on a row with any number of elements that does not include a name for every criterion" do
       row = ['name', '1.0']
       (0..RubricCriterion::RUBRIC_LEVELS - 2).each do |i|
@@ -275,10 +275,10 @@ Part 2 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
           e = assert_raise RuntimeError do
             RubricCriterion.create_or_update_from_csv_row(row, Assignment.new)
           end
-          assert_equal I18n.t('criteria_csv_error.incomplete_row'), e.message 
+          assert_equal I18n.t('criteria_csv_error.incomplete_row'), e.message
       end
     end
-    
+
     should "raise an error message on a row with an invalid weight" do
       row = ['name', 'weight', 'l0', 'l1', 'l2', 'l3', 'l4']
       e = assert_raise RuntimeError do
@@ -286,7 +286,7 @@ Part 2 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       end
       assert_equal I18n.t('criteria_csv_error.weight_not_number'), e.message
     end
-    
+
     should "raise the errors hash in case of an unpredicted error" do
       e = assert_raise RuntimeError do
         # That should fail because the assignment doesn't yet exists (in the DB)
@@ -294,9 +294,9 @@ Part 2 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       end
       assert_instance_of ActiveRecord::Errors, e.message
     end
-    
+
     context "and the row is valid" do
-      
+
       setup do
         # we'll need a valid assignment for those cases.
         @assignment = assignments(:assignment_1)
@@ -311,7 +311,7 @@ Part 2 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         end
         @csv_base_row = row
       end
-      
+
       should "be able to create a new instance without level descriptions" do
         criterion = RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
         assert_not_nil criterion
@@ -321,7 +321,7 @@ Part 2 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
           assert_equal 'name' + i.to_s, criterion['level_' + i.to_s + '_name']
         end
       end
-      
+
       context "and there is an existing rubric criterion with the same name" do
         setup do
           criterion = RubricCriterion.new
@@ -344,10 +344,10 @@ Part 2 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
             end
             assert_equal 1.0, criterion.weight
           end
-          
+
         end
       end
-      
+
       should "be able to create a new instance with level descriptions" do
         (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
           @csv_base_row << 'description' + i.to_s
@@ -362,7 +362,7 @@ Part 2 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
                        criterion['level_' + i.to_s + '_description']
         end
       end
-      
+
     end
 
   end
@@ -373,23 +373,23 @@ Part 2 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
     tempfile.rewind
     assignment = assignments(:assignment_3)
     invalid_lines = []
-    
+
     nb_updates = RubricCriterion.parse_csv(tempfile, assignment, invalid_lines)
     assert_equal nb_updates, 1
     assert invalid_lines.empty?
   end
-  
+
   should "report errors on a invalid CSV file" do
     tempfile = Tempfile.new('flexible_criteria_csv')
     tempfile << "criterion 6\n,criterion 7\n"
     tempfile.rewind
     assignment = assignments(:assignment_3)
     invalid_lines = []
-    
+
     nb_updates = RubricCriterion.parse_csv(tempfile, assignment, invalid_lines)
     assert_equal 0, nb_updates
     assert_equal 2, invalid_lines.length
   end
 
-  
+
 end

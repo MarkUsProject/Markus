@@ -16,84 +16,84 @@ class GroupsControllerTest < AuthenticatedControllerTest
       setup do
         get_as @student, :add_member
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
     
     context "GET on :remove_member" do
       setup do
         get_as @student, :remove_member
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
     
     context "GET on :add_group" do
       setup do
         get_as @student, :add_group
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
     
     context "GET on :remove_group" do
       setup do
         get_as @student, :remove_group
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
     
     context "GET on :rename_group" do
       setup do
         get_as @student, :rename_group
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
     
     context "GET on :valid_grouping" do
       setup do
         get_as @student, :valid_grouping
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
     
     context "GET on :manage" do
       setup do
         get_as @student, :manage
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
     
     context "GET on :csv_upload" do
       setup do
         get_as @student, :csv_upload
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
     
     context "GET on :add_csv_group" do
       setup do
         get_as @student, :add_csv_group
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
     
     context "GET on :download_grouplist" do
       setup do
         get_as @student, :download_grouplist
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
     
     context "GET on :use_another_assignment_groups" do
       setup do
         get_as @student, :use_another_assignment_groups
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
     
     context "GET on :create_groups_when_students_work_alone" do
       setup do
         get_as @student, :create_groups_when_students_work_alone
       end
-      should_respond_with :missing
+      should respond_with :missing
     end
   end #student context
   
@@ -110,7 +110,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
       setup do
         get_as @admin, :manage, {:id => @assignment.id}
       end
-      should_respond_with :success
+      should respond_with :success
     end
     
     context "DELETE on :remove_member" do
@@ -124,10 +124,12 @@ class GroupsControllerTest < AuthenticatedControllerTest
           membership = memberships(:membership2)
           delete_as @admin, :remove_member, {:id => @assignment.id, :grouping_id  => @grouping.id, :mbr_id => membership.id}
         end
-        should_respond_with :success
-        should_render_template 'remove_member.rjs'
-        should_assign_to :mbr_id, :assignment, :grouping
-        should_assign_to(:inviter) { false  }
+        should respond_with :success
+        should render_template 'remove_member.rjs'
+        should assign_to :mbr_id
+        should assign_to :assignment
+        should assign_to :grouping
+        should assign_to(:inviter) { false  }
       end
       
       context "on inviter" do
@@ -138,9 +140,11 @@ class GroupsControllerTest < AuthenticatedControllerTest
           assert_not_nil @membership
           delete_as @admin, :remove_member, {:id => @assignment.id, :grouping_id  => @grouping.id, :mbr_id => @membership.id}
         end
-        should_respond_with :success
-        should_render_template 'remove_member.rjs'
-        should_assign_to :mbr_id, :assignment, :grouping
+        should respond_with :success
+        should render_template 'remove_member.rjs'
+        should assign_to :mbr_id
+        should assign_to :assignment
+        should assign_to :grouping
         should "assign @inviter accordingly" do
           @grouping.reload
           if @grouping.accepted_student_memberships.length > 0
@@ -161,8 +165,10 @@ class GroupsControllerTest < AuthenticatedControllerTest
           end
         end
 
-        should_respond_with :success
-        should_assign_to :assignment, :grouping, :grouping_table_row
+        should respond_with :success
+        should assign_to :assignment
+        should assign_to :grouping
+        should assign_to :grouping_table_row
         should "not raise an internal server error" do
           assert !@response.server_error?
         end
@@ -176,20 +182,20 @@ class GroupsControllerTest < AuthenticatedControllerTest
         setup do
           post_as @admin, :add_group, {:id => @assignment.id}
         end
-        should_respond_with :success
-        should_render_template 'groups/table_row/_filter_table_row.html.erb'
-        should_assign_to(:assignment) { @assignment }
-        should_assign_to :new_grouping
+        should respond_with :success
+        should render_template 'groups/table_row/_filter_table_row.html.erb'
+        should assign_to(:assignment) { @assignment }
+        should assign_to :new_grouping
       end
       
       context "with groupname" do
         setup do
           post_as @admin, :add_group, {:id => @assignment.id, :new_group_name => "test"}
         end
-        should_respond_with :success
-        should_render_template 'groups/table_row/_filter_table_row.html.erb'
-        should_assign_to(:assignment) { @assignment }
-        should_assign_to :new_grouping
+        should respond_with :success
+        should render_template 'groups/table_row/_filter_table_row.html.erb'
+        should assign_to(:assignment) { @assignment }
+        should assign_to :new_grouping
       end
     end #:add_group
     
@@ -199,11 +205,11 @@ class GroupsControllerTest < AuthenticatedControllerTest
         setup do
           delete_as @admin, :remove_group, {:grouping_id => @grouping.id}
         end
-        should_respond_with :success
-        should_render_template 'delete_groupings.rjs'
-        should_assign_to(:assignment) { @assignment }
-        should_assign_to(:errors) { [] }
-        should_assign_to(:removed_groupings) { [@grouping] }
+        should respond_with :success
+        should render_template 'delete_groupings.rjs'
+        should assign_to(:assignment) { @assignment }
+        should assign_to(:errors) { [] }
+        should assign_to(:removed_groupings) { [@grouping] }
       end
       
       context "on group with a submission" do
@@ -211,11 +217,11 @@ class GroupsControllerTest < AuthenticatedControllerTest
           @grouping_with_submission = groupings(:grouping2)
           delete_as @admin, :remove_group, {:grouping_id => @grouping_with_submission.id}
         end
-        should_respond_with :success
-        should_render_template 'delete_groupings.rjs'
-        should_assign_to(:assignment) { assignments(:assignment_2) }
-        should_assign_to(:errors) { [@grouping_with_submission.group.group_name] }
-        should_assign_to(:removed_groupings) { [] }
+        should respond_with :success
+        should render_template 'delete_groupings.rjs'
+        should assign_to(:assignment) { assignments(:assignment_2) }
+        should assign_to(:errors) { [@grouping_with_submission.group.group_name] }
+        should assign_to(:removed_groupings) { [] }
       end
       
     end #:remove_group
@@ -227,13 +233,15 @@ class GroupsControllerTest < AuthenticatedControllerTest
           @new_name = "NeW"
           post_as @admin, :rename_group, {:id => @assignment.id, :grouping_id => @grouping.id, :new_groupname => @new_name}
         end
-        should_assign_to :assignment, :grouping, :group
+        should assign_to :assignment
+        should assign_to :grouping
+        should assign_to :group
         should "set group name accordingly" do
           assert_equal @new_name, assigns(:group).group_name
         end
-        should_respond_with :success
-        should_set_the_flash_to I18n.t('groups.rename_group.success')
-        should_render_template 'rename_group.rjs'
+        should respond_with :success
+        should set_the_flash.to(I18n.t('groups.rename_group.success'))
+        should render_template 'rename_group.rjs'
       end
       
       context "with existing name" do
@@ -241,13 +249,15 @@ class GroupsControllerTest < AuthenticatedControllerTest
           @new_name = groups(:group_3).group_name
           post_as @admin, :rename_group, {:id => @assignment.id, :grouping_id => @grouping.id, :new_groupname => @new_name}
         end
-        should_assign_to :assignment, :grouping, :group
-        should_respond_with :success
+        should assign_to :assignment
+        should assign_to :grouping
+        should assign_to :group
+        should respond_with :success
         should "not change group name" do
           assert_equal @grouping.group.group_name, assigns(:group).group_name
         end
-        should_set_the_flash_to I18n.t('groups.rename_group.already_in_use')
-        should_render_template 'rename_group.rjs'
+        should set_the_flash.to(I18n.t('groups.rename_group.already_in_use'))
+        should render_template 'rename_group.rjs'
       end
       
     end #:rename_group
@@ -256,9 +266,9 @@ class GroupsControllerTest < AuthenticatedControllerTest
       setup do
         post_as @admin, :valid_grouping, {:id => @assignment.id, :grouping_id => @grouping.id}
       end
-      should_assign_to :assignment
-      should_respond_with :success
-      should_render_template 'valid_grouping.rjs'
+      should assign_to :assignment
+      should respond_with :success
+      should render_template 'valid_grouping.rjs'
     end
     
     context "POST on :use_another_assignment_groups" do
@@ -271,10 +281,10 @@ class GroupsControllerTest < AuthenticatedControllerTest
         destroy_repos
       end
       
-      should_assign_to :target_assignment
-      should_respond_with :success
-      should_set_the_flash_to I18n.t("groups.csv.groups_created")
-      should_render_template 'use_another_assignment_groups.rjs'
+      should assign_to :target_assignment
+      should respond_with :success
+      should set_the_flash.to(I18n.t("groups.csv.groups_created"))
+      should render_template 'use_another_assignment_groups.rjs'
     end
     
     context "POST on :global_actions on delete" do
@@ -283,21 +293,23 @@ class GroupsControllerTest < AuthenticatedControllerTest
         setup do
           post_as @admin, :global_actions, {:id => @assignment.id, :global_actions => "delete"}
         end
-        should_assign_to :assignment, :tas
-        should_render_template 'error_single.rjs'
-        should_assign_to(:error) { I18n.t("assignment.group.select_one_group") }
+        should assign_to :assignment
+        should assign_to :tas
+        should render_template 'error_single.rjs'
+        should assign_to(:error) { I18n.t("assignment.group.select_one_group") }
       end
       
       context "and one is selected" do
         setup do
           post_as @admin, :global_actions, {:id => @assignment.id, :global_actions => "delete", :groupings => [groupings(:grouping_1).id]}
         end
-        should_assign_to :assignment, :tas
+        should assign_to :assignment
+        should assign_to :tas
         should "assign @removed_groupings accordingly" do
           assert_same_elements [groupings(:grouping_1)], assigns(:removed_groupings)
         end
-        should_assign_to(:errors) { [] }
-        should_render_template 'delete_groupings.rjs'
+        should assign_to(:errors) { [] }
+        should render_template 'delete_groupings.rjs'
       end
       
     end
@@ -314,14 +326,14 @@ class GroupsControllerTest < AuthenticatedControllerTest
         setup do
           post_as @admin, :global_actions, {:id => @assignment.id, :global_actions => "", :submit_type => "random_assign"}
         end
-        should_assign_to(:error) { I18n.t( 'groups.no_graders_selected') }
+        should assign_to(:error) { I18n.t( 'groups.no_graders_selected') }
       end
       
       context "and no groups selected, at least one grader" do
         setup do
           post_as @admin, :global_actions, {:id => @assignment.id, :global_actions => "", :submit_type => "random_assign", :graders => [users(:ta1).id]}
         end
-        should_assign_to(:error) { I18n.t( 'groups.no_groups_selected') }
+        should assign_to(:error) { I18n.t( 'groups.no_groups_selected') }
       end
       
       context "and one grader and one group is selected" do
@@ -415,12 +427,14 @@ class GroupsControllerTest < AuthenticatedControllerTest
         setup do
           post_add ''
         end
-        should_assign_to :assignment, :grouping, :group_name
-        should_assign_to(:messages) { [] }
-        should_assign_to(:bad_user_names) { [] }
-        should_assign_to(:error) { false }
-        should_respond_with :success
-        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should assign_to :assignment
+        should assign_to :grouping
+        should assign_to :group_name
+        should assign_to(:messages) { [] }
+        should assign_to(:bad_user_names) { [] }
+        should assign_to(:error) { false }
+        should respond_with :success
+        should render_template 'groups/table_row/_filter_table_row.html.erb'
         should "not change number of members" do
           assert_equal 0, @grouping.student_memberships.size
         end
@@ -431,12 +445,14 @@ class GroupsControllerTest < AuthenticatedControllerTest
           @user_name = users(:student6).user_name
           post_add @user_name
         end
-        should_assign_to :assignment, :grouping, :group_name
-        should_assign_to(:messages) { [ I18n.t('add_student.success', :user_name => @user_name) ] }
-        should_assign_to(:bad_user_names) { [] }
-        should_assign_to(:error) { false }
-        should_respond_with :success
-        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should assign_to :assignment
+        should assign_to :grouping
+        should assign_to :group_name
+        should assign_to(:messages) { [ I18n.t('add_student.success', :user_name => @user_name) ] }
+        should assign_to(:bad_user_names) { [] }
+        should assign_to(:error) { false }
+        should respond_with :success
+        should render_template 'groups/table_row/_filter_table_row.html.erb'
         should "increment number of members by 1" do
           assert_equal 1, @grouping.student_memberships.size
         end
@@ -451,12 +467,14 @@ class GroupsControllerTest < AuthenticatedControllerTest
           @user_name = users(:student6).user_name + "asjfdlskjslkfds"
           post_add @user_name
         end
-        should_assign_to :assignment, :grouping, :group_name
-        should_assign_to(:messages) { [ I18n.t('add_student.fail.dne', :user_name => @user_name) ] }
-        should_assign_to(:bad_user_names) { [ @user_name ] }
-        should_assign_to(:error) { true }
-        should_respond_with :success
-        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should assign_to :assignment
+        should assign_to :grouping
+        should assign_to :group_name
+        should assign_to(:messages) { [ I18n.t('add_student.fail.dne', :user_name => @user_name) ] }
+        should assign_to(:bad_user_names) { [ @user_name ] }
+        should assign_to(:error) { true }
+        should respond_with :success
+        should render_template 'groups/table_row/_filter_table_row.html.erb'
         should "not change number of members" do
           assert_equal 0, @grouping.student_memberships.size
         end
@@ -467,12 +485,14 @@ class GroupsControllerTest < AuthenticatedControllerTest
           @user_name = users(:hidden_student).user_name
           post_add @user_name
         end
-        should_assign_to :assignment, :grouping, :group_name
-        should_assign_to(:messages) { [ I18n.t('add_student.fail.hidden', :user_name => @user_name) ] }
-        should_assign_to(:bad_user_names) { [ @user_name ] }
-        should_assign_to(:error) { true }
-        should_respond_with :success
-        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should assign_to :assignment
+        should assign_to :grouping
+        should assign_to :group_name
+        should assign_to(:messages) { [ I18n.t('add_student.fail.hidden', :user_name => @user_name) ] }
+        should assign_to(:bad_user_names) { [ @user_name ] }
+        should assign_to(:error) { true }
+        should respond_with :success
+        should render_template 'groups/table_row/_filter_table_row.html.erb'
         should "not change number of members" do
           assert_equal 0, @grouping.student_memberships.size
         end
@@ -483,12 +503,14 @@ class GroupsControllerTest < AuthenticatedControllerTest
           @user_name = users(:student1).user_name
           post_add @user_name
         end
-        should_assign_to :assignment, :grouping, :group_name
-        should_assign_to(:messages) { [ I18n.t('add_student.fail.already_grouped', :user_name => @user_name) ] }
-        should_assign_to(:bad_user_names) { [ @user_name ] }
-        should_assign_to(:error) { true }
-        should_respond_with :success
-        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should assign_to :assignment
+        should assign_to :grouping
+        should assign_to :group_name
+        should assign_to(:messages) { [ I18n.t('add_student.fail.already_grouped', :user_name => @user_name) ] }
+        should assign_to(:bad_user_names) { [ @user_name ] }
+        should assign_to(:error) { true }
+        should respond_with :success
+        should render_template 'groups/table_row/_filter_table_row.html.erb'
         should "not change number of members" do
           assert_equal 0, @grouping.student_memberships.size
         end
@@ -499,17 +521,19 @@ class GroupsControllerTest < AuthenticatedControllerTest
           @user_names = [users(:student6).user_name, users(:student7).user_name]
           post_add @user_names.join(',')
         end
-        should_assign_to :assignment, :grouping, :group_name
-        should_assign_to(:messages) {
+        should assign_to :assignment
+        should assign_to :grouping
+        should assign_to :group_name
+        should assign_to(:messages) {
           [
             I18n.t('add_student.success', :user_name => @user_names.at(0)),
             I18n.t('add_student.success', :user_name => @user_names.at(1))
           ]
         }
-        should_assign_to(:bad_user_names) { [] }
-        should_assign_to(:error) { false }
-        should_respond_with :success
-        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should assign_to(:bad_user_names) { [] }
+        should assign_to(:error) { false }
+        should respond_with :success
+        should render_template 'groups/table_row/_filter_table_row.html.erb'
         should "increment number of members by 2" do
           assert_equal 2, @grouping.student_memberships.size
         end
@@ -530,17 +554,19 @@ class GroupsControllerTest < AuthenticatedControllerTest
           @user_names = [users(:student6).user_name, users(:student7).user_name]
           post_add @user_names.join(',')
         end
-        should_assign_to :assignment, :grouping, :group_name
-        should_assign_to(:messages) {
+        should assign_to :assignment
+        should assign_to :grouping
+        should assign_to :group_name
+        should assign_to(:messages) {
           [
             I18n.t('add_student.success', :user_name => @user_names.at(0)),
             I18n.t('add_student.success', :user_name => @user_names.at(1))
           ]
         }
-        should_assign_to(:bad_user_names) { [] }
-        should_assign_to(:error) { false }
-        should_respond_with :success
-        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should assign_to(:bad_user_names) { [] }
+        should assign_to(:error) { false }
+        should respond_with :success
+        should render_template 'groups/table_row/_filter_table_row.html.erb'
         should "increment number of members by 2" do
           assert_equal 2, @grouping.student_memberships.size
         end
@@ -559,17 +585,19 @@ class GroupsControllerTest < AuthenticatedControllerTest
           @user_names = [users(:student6).user_name + "Fjdksljfkl", users(:student1).user_name]
           post_add @user_names.join(',')
         end
-        should_assign_to :assignment, :grouping, :group_name
-        should_assign_to(:messages) {
+        should assign_to :assignment
+        should assign_to :grouping
+        should assign_to :group_name
+        should assign_to(:messages) {
           [
             I18n.t('add_student.fail.dne', :user_name => @user_names.at(0)),
             I18n.t('add_student.fail.already_grouped', :user_name => @user_names.at(1))
           ]
         }
-        should_assign_to(:bad_user_names) { @user_names }
-        should_assign_to(:error) { true }
-        should_respond_with :success
-        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should assign_to(:bad_user_names) { @user_names }
+        should assign_to(:error) { true }
+        should respond_with :success
+        should render_template 'groups/table_row/_filter_table_row.html.erb'
         should "not change number of members" do
           assert_equal 0, @grouping.student_memberships.size
         end
@@ -580,17 +608,19 @@ class GroupsControllerTest < AuthenticatedControllerTest
           @user_names = [users(:student6).user_name, users(:student1).user_name]
           post_add @user_names.join(',')
         end
-        should_assign_to :assignment, :grouping, :group_name
-        should_assign_to(:messages) {
+        should assign_to :assignment
+        should assign_to :grouping
+        should assign_to :group_name
+        should assign_to(:messages) {
           [
             I18n.t('add_student.success', :user_name => @user_names.at(0)),
             I18n.t('add_student.fail.already_grouped', :user_name => @user_names.at(1))
           ]
         }
-        should_assign_to(:bad_user_names) { [ @user_names.at(1) ] }
-        should_assign_to(:error) { true }
-        should_respond_with :success
-        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should assign_to(:bad_user_names) { [ @user_names.at(1) ] }
+        should assign_to(:error) { true }
+        should respond_with :success
+        should render_template 'groups/table_row/_filter_table_row.html.erb'
         should "increment number of members by 1" do
           assert_equal 1, @grouping.student_memberships.size
         end
@@ -605,17 +635,19 @@ class GroupsControllerTest < AuthenticatedControllerTest
           @user_names = [users(:student1).user_name, users(:student6).user_name]
           post_add @user_names.join(',')
         end
-        should_assign_to :assignment, :grouping, :group_name
-        should_assign_to(:messages) {
+        should assign_to :assignment
+        should assign_to :grouping
+        should assign_to :group_name
+        should assign_to(:messages) {
           [
             I18n.t('add_student.fail.already_grouped', :user_name => @user_names.at(0)),
             I18n.t('add_student.success', :user_name => @user_names.at(1))
           ]
         }
-        should_assign_to(:bad_user_names) { [ @user_names.at(0) ] }
-        should_assign_to(:error) { true }
-        should_respond_with :success
-        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should assign_to(:bad_user_names) { [ @user_names.at(0) ] }
+        should assign_to(:error) { true }
+        should respond_with :success
+        should render_template 'groups/table_row/_filter_table_row.html.erb'
         should "increment number of members by 1" do
           assert_equal 1, @grouping.student_memberships.size
         end
@@ -630,18 +662,20 @@ class GroupsControllerTest < AuthenticatedControllerTest
           @user_names = [users(:student6).user_name, users(:student7).user_name, users(:student8).user_name]
           post_add @user_names.join(',')
         end
-        should_assign_to :assignment, :grouping, :group_name
-        should_assign_to(:messages) {
+        should assign_to :assignment
+        should assign_to :grouping
+        should assign_to :group_name
+        should assign_to(:messages) {
           [
             I18n.t('add_student.success', :user_name => @user_names.at(0)),
             I18n.t('add_student.success', :user_name => @user_names.at(1)),
             I18n.t('add_student.success', :user_name => @user_names.at(2))
           ]
         }
-        should_assign_to(:bad_user_names) { [] }
-        should_assign_to(:error) { false }
-        should_respond_with :success
-        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should assign_to(:bad_user_names) { [] }
+        should assign_to(:error) { false }
+        should respond_with :success
+        should render_template 'groups/table_row/_filter_table_row.html.erb'
         should "increment number of members by 3" do
           assert_equal 3, @grouping.student_memberships.size
         end
@@ -660,18 +694,20 @@ class GroupsControllerTest < AuthenticatedControllerTest
           @user_names = [users(:student6).user_name + "Fjdksljfkl", users(:student1).user_name, users(:hidden_student).user_name]
           post_add @user_names.join(',')
         end
-        should_assign_to :assignment, :grouping, :group_name
-        should_assign_to(:messages) {
+        should assign_to :assignment
+        should assign_to :grouping
+        should assign_to :group_name
+        should assign_to(:messages) {
           [
             I18n.t('add_student.fail.dne', :user_name => @user_names.at(0)),
             I18n.t('add_student.fail.already_grouped', :user_name => @user_names.at(1)),
             I18n.t('add_student.fail.hidden', :user_name => @user_names.at(2))
           ]
         }
-        should_assign_to(:bad_user_names) { @user_names }
-        should_assign_to(:error) { true }
-        should_respond_with :success
-        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should assign_to(:bad_user_names) { @user_names }
+        should assign_to(:error) { true }
+        should respond_with :success
+        should render_template 'groups/table_row/_filter_table_row.html.erb'
         should "not change number of members" do
           assert_equal 0, @grouping.student_memberships.size
         end
@@ -682,18 +718,20 @@ class GroupsControllerTest < AuthenticatedControllerTest
           @user_names = [users(:student6).user_name, users(:student7).user_name, users(:student1).user_name]
           post_add @user_names.join(',')
         end
-        should_assign_to :assignment, :grouping, :group_name
-        should_assign_to(:messages) {
+        should assign_to :assignment
+        should assign_to :grouping
+        should assign_to :group_name
+        should assign_to(:messages) {
           [
             I18n.t('add_student.success', :user_name => @user_names.at(0)),
             I18n.t('add_student.success', :user_name => @user_names.at(1)),
             I18n.t('add_student.fail.already_grouped', :user_name => @user_names.at(2))
           ]
         }
-        should_assign_to(:bad_user_names) { [ @user_names.at(2) ] }
-        should_assign_to(:error) { true }
-        should_respond_with :success
-        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should assign_to(:bad_user_names) { [ @user_names.at(2) ] }
+        should assign_to(:error) { true }
+        should respond_with :success
+        should render_template 'groups/table_row/_filter_table_row.html.erb'
         should "increment number of members by 2" do
           assert_equal 2, @grouping.student_memberships.size
         end
@@ -712,18 +750,20 @@ class GroupsControllerTest < AuthenticatedControllerTest
           @user_names = [users(:student6).user_name, users(:student1).user_name, users(:student7).user_name]
           post_add @user_names.join(',')
         end
-        should_assign_to :assignment, :grouping, :group_name
-        should_assign_to(:messages) {
+        should assign_to :assignment
+        should assign_to :grouping
+        should assign_to :group_name
+        should assign_to(:messages) {
           [
             I18n.t('add_student.success', :user_name => @user_names.at(0)),
             I18n.t('add_student.fail.already_grouped', :user_name => @user_names.at(1)),
             I18n.t('add_student.success', :user_name => @user_names.at(2))
           ]
         }
-        should_assign_to(:bad_user_names) { [ @user_names.at(1) ] }
-        should_assign_to(:error) { true }
-        should_respond_with :success
-        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should assign_to(:bad_user_names) { [ @user_names.at(1) ] }
+        should assign_to(:error) { true }
+        should respond_with :success
+        should render_template 'groups/table_row/_filter_table_row.html.erb'
         should "increment number of members by 2" do
           assert_equal 2, @grouping.student_memberships.size
         end
@@ -742,18 +782,20 @@ class GroupsControllerTest < AuthenticatedControllerTest
           @user_names = [users(:student1).user_name, users(:student6).user_name, users(:student7).user_name]
           post_add @user_names.join(',')
         end
-        should_assign_to :assignment, :grouping, :group_name
-        should_assign_to(:messages) {
+        should assign_to :assignment
+        should assign_to :grouping
+        should assign_to :group_name
+        should assign_to(:messages) {
           [
             I18n.t('add_student.fail.already_grouped', :user_name => @user_names.at(0)),
             I18n.t('add_student.success', :user_name => @user_names.at(1)),
             I18n.t('add_student.success', :user_name => @user_names.at(2))
           ]
         }
-        should_assign_to(:bad_user_names) { [ @user_names.at(0) ] }
-        should_assign_to(:error) { true }
-        should_respond_with :success
-        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should assign_to(:bad_user_names) { [ @user_names.at(0) ] }
+        should assign_to(:error) { true }
+        should respond_with :success
+        should render_template 'groups/table_row/_filter_table_row.html.erb'
         should "increment number of members by 2" do
           assert_equal 2, @grouping.student_memberships.size
         end
@@ -772,18 +814,20 @@ class GroupsControllerTest < AuthenticatedControllerTest
           @user_names = [users(:student6).user_name, users(:student7).user_name + "fdjsl", users(:student1).user_name]
           post_add @user_names.join(',')
         end
-        should_assign_to :assignment, :grouping, :group_name
-        should_assign_to(:messages) {
+        should assign_to :assignment
+        should assign_to :grouping
+        should assign_to :group_name
+        should assign_to(:messages) {
           [
             I18n.t('add_student.success', :user_name => @user_names.at(0)),
             I18n.t('add_student.fail.dne', :user_name => @user_names.at(1)),
             I18n.t('add_student.fail.already_grouped', :user_name => @user_names.at(2))
           ]
         }
-        should_assign_to(:bad_user_names) { @user_names[1,2] }
-        should_assign_to(:error) { true }
-        should_respond_with :success
-        should_render_template 'groups/table_row/_filter_table_row.html.erb'
+        should assign_to(:bad_user_names) { @user_names[1,2] }
+        should assign_to(:error) { true }
+        should respond_with :success
+        should render_template 'groups/table_row/_filter_table_row.html.erb'
         should "increment number of members by " do
           assert_equal 1, @grouping.student_memberships.size
         end
@@ -806,7 +850,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
           @assignment.groupings.destroy_all
           @response = get_as @admin, :download_grouplist, {:id => @assignment.id}
         end
-        should_respond_with :success
+        should respond_with :success
         should "be an empty file returned" do
           assert @response.body.empty?
         end
@@ -819,7 +863,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
           @match_array = construct_group_list_array(@assignment.groupings)
           @response = get_as @admin, :download_grouplist, {:id => @assignment.id}
         end
-        should_respond_with :success
+        should respond_with :success
         should "not be an empty file returned" do
           assert !@response.body.empty?
         end
@@ -840,7 +884,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
           @match_array = construct_group_list_array(@assignment.groupings)
           @response = get_as @admin, :download_grouplist, {:id => @assignment.id}
         end
-        should_respond_with :success
+        should respond_with :success
         should "not be an empty file returned" do
           assert !@response.body.empty?
         end

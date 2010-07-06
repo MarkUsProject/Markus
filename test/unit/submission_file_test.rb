@@ -8,12 +8,12 @@ require 'shoulda'
   
   # Ensure that the the following relationship exists
   context "An existing SubmissionFile" do       
-    should_belong_to :submission
-    should_have_many :annotations
+    should belong_to :submission
+    should have_many :annotations
  
-    should_validate_presence_of :submission
-    should_validate_presence_of :filename
-    should_validate_presence_of :path
+    should validate_presence_of :submission
+    should validate_presence_of :filename
+    should validate_presence_of :path
   end
   
   context "A SubmissionFile without parameter and without id" do

@@ -6,13 +6,13 @@ require 'base64'
 class Api::MainApiControllerTest < ActionController::TestCase
 
   fixtures :users
-  
+
   context "An unauthenticated GET request on any API controller" do
     setup do
       @res = get("index")
     end
 
-    should_respond_with :forbidden
+    should respond_with :forbidden
 
     should "receive a 403 response" do
       assert_not_nil(@res =~ /<rsp.*error_message="Forbidden">/)
@@ -24,7 +24,7 @@ class Api::MainApiControllerTest < ActionController::TestCase
       @res = put("index")
     end
 
-    should_respond_with :forbidden
+    should respond_with :forbidden
 
     should "receive a 403 response" do
       assert_not_nil(@res =~ /<rsp.*error_message="Forbidden">/)
@@ -36,7 +36,7 @@ class Api::MainApiControllerTest < ActionController::TestCase
       @res = delete("index")
     end
 
-    should_respond_with :forbidden
+    should respond_with :forbidden
 
     should "receive a 403 response" do
       assert_not_nil(@res =~ /<rsp.*error_message="Forbidden">/)
@@ -48,7 +48,7 @@ class Api::MainApiControllerTest < ActionController::TestCase
       @res = post("index")
     end
 
-    should_respond_with :forbidden
+    should respond_with :forbidden
 
     should "receive a 403 response" do
       assert_not_nil(@res =~ /<rsp.*error_message="Forbidden">/)
@@ -64,11 +64,11 @@ class Api::MainApiControllerTest < ActionController::TestCase
       @res = get("index")
     end
 
-    should_assign_to :current_user
-    should_respond_with :success
+    should assign_to :current_user
+    should respond_with :success
     should "render a success response" do
       res_file = File.new("#{RAILS_ROOT}/public/200.xml")
-      assert_equal(@res.body, res_file.read) 
+      assert_equal(@res.body, res_file.read)
     end
   end
 
@@ -81,10 +81,10 @@ class Api::MainApiControllerTest < ActionController::TestCase
       @res = put("index")
     end
 
-    should_assign_to :current_user
+    should assign_to :current_user
     should "render a success response" do
       res_file = File.new("#{RAILS_ROOT}/public/200.xml")
-      assert_equal(@res.body, res_file.read) 
+      assert_equal(@res.body, res_file.read)
     end
   end
 
@@ -97,10 +97,10 @@ class Api::MainApiControllerTest < ActionController::TestCase
       @res = delete("index")
     end
 
-    should_assign_to :current_user
+    should assign_to :current_user
     should "render a success response" do
       res_file = File.new("#{RAILS_ROOT}/public/200.xml")
-      assert_equal(@res.body, res_file.read) 
+      assert_equal(@res.body, res_file.read)
     end
   end
 
@@ -113,10 +113,10 @@ class Api::MainApiControllerTest < ActionController::TestCase
       @res = post("index")
     end
 
-    should_assign_to :current_user
+    should assign_to :current_user
     should "render a success response" do
       res_file = File.new("#{RAILS_ROOT}/public/200.xml")
-      assert_equal(@res.body, res_file.read) 
+      assert_equal(@res.body, res_file.read)
     end
   end
 

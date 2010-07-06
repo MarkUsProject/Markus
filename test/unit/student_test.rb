@@ -7,12 +7,12 @@ require 'shoulda'
 require 'mocha'
 
 class StudentTest < ActiveSupport::TestCase
-  should_have_many :accepted_groupings
-  should_have_many :pending_groupings
-  should_have_many :rejected_groupings
-  should_have_many :student_memberships
-  should_have_many :grace_period_deductions
-  should_belong_to :section
+  should have_many :accepted_groupings
+  should have_many :pending_groupings
+  should have_many :rejected_groupings
+  should have_many :student_memberships
+  should have_many :grace_period_deductions
+  should belong_to :section
 
   def setup
     clear_fixtures
@@ -254,7 +254,7 @@ exist_student,USER2,USER2"
       should "assert no pending groupings after create" do
         assert !@student.has_pending_groupings_for?(@assignment.id)
       end
-      
+
       should "assert an accepted grouping exists after create" do
         assert @student.has_accepted_grouping_for?(@assignment.id)
       end

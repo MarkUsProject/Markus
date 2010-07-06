@@ -45,8 +45,9 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       setup do
         post_as @admin, :new, :id => @assignment.id
       end
-      should_assign_to :assignment, :assignments
-      should_respond_with :success
+      should assign_to :assignment
+      should assign_to :assignments
+      should respond_with :success
     end
 
     context "with REPOSITORY_EXTERNAL_SUBMITS_ONLY as false" do
