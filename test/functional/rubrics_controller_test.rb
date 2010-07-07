@@ -194,7 +194,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
           get_as @admin, :update, :id => @criterion.id, :rubric_criterion => {:rubric_criterion_name => 'one', :weight => 10}
         end
         should assign_to :criterion
-        should set_the_flash.to( I18n.t('criterion_saved_success'))
+        should_not set_the_flash
         should render_template :update
       end
     end
@@ -524,7 +524,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         delete_as @admin, :delete, :id => @criterion.id
       end
       should assign_to :criterion
-      should set_the_flash.to( I18n.t('criterion_deleted_success'))
+      should_not set_the_flash.to( I18n.t('criterion_deleted_success'))
       should respond_with :success
       
       should "effectively destroy the criterion" do
