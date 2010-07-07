@@ -191,7 +191,7 @@ class FlexibleCriteriaControllerTest < AuthenticatedControllerTest
           get_as @admin, :update, :id => @criterion.id, :flexible_criterion => {:flexible_criterion_name => 'one', :max => 10}
         end
         should assign_to :criterion
-        should set_the_flash
+        should_not set_the_flash
         should render_template :update
       end
     end
@@ -530,7 +530,7 @@ class FlexibleCriteriaControllerTest < AuthenticatedControllerTest
         delete_as @admin, :delete, :id => @criterion.id
       end
       should assign_to :criterion
-      should set_the_flash
+      should_not set_the_flash
       should respond_with :success
       
       should "effectively destroy the criterion" do

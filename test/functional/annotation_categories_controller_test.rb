@@ -209,7 +209,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
           get_as @admin, :update_annotation_category, :id => @category.id
         end
         should respond_with :success
-        should set_the_flash.to((I18n.t('annotations.update.annotation_category_success')))
+        should_not set_the_flash
         should assign_to :annotation_category
       end
 
@@ -220,7 +220,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
           get_as @admin, :update_annotation_category, :id => @category.id
         end
         should respond_with :success
-        should set_the_flash.to(("error"))
+        should_not set_the_flash
         should assign_to :annotation_category
       end
 
