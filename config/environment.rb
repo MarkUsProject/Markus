@@ -1,7 +1,7 @@
 # Be sure to restart your server when you modify this file
 
 # Specifies gem version of Rails to use when vendor/rails is not present
-RAILS_GEM_VERSION = '2.3.2' unless defined? RAILS_GEM_VERSION
+RAILS_GEM_VERSION = '2.3.8' unless defined? RAILS_GEM_VERSION
 
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
@@ -34,7 +34,7 @@ Rails::Initializer.run do |config|
   # several MarkUs instances on one machine. Also, make sure you are changing
   # the :secret string to something else than you find below.
   config.action_controller.session = {
-    :session_key => '_markus_session',
+    :key => '_markus_session',
     :secret      => '650d281667d8011a3a6ad6dd4b5d4f9ddbce14a7d78b107812dbb40b24e234256ab2c5572c8196cf6cde6b85942688b6bfd337ffa0daee648d04e1674cf1fdf6'
   }
 
@@ -50,3 +50,5 @@ Rails::Initializer.run do |config|
                             lib/classes
                          )
 end
+# For Calendar Date Select
+# CalendarDateSelect.format = :db

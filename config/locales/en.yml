@@ -823,7 +823,6 @@ en:
         description_3: "This criterion was satisfied well."
         description_4: "This criterion was satisfied perfectly or nearly perfectly."
 
-    
     summary_table:
       title: "Title"
       max_value: "Maximum value"
