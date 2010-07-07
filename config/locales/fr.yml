@@ -191,6 +191,7 @@ fr:
       next_submission:      "Envoi suivant"
       marking_status:       "État de l'évaluation : "
       notes:                "Remarques (<span id=\"number_of_notes\">{{notes}}</span>)"
+      include_annotations: "Ajouter les annotations : "
       marks:
         total_mark: "Notes totales : "
         released:   "Dévoilées : "
@@ -218,6 +219,9 @@ fr:
         no_annotation_in_this_category: "Il n'y a pas d'annotations dans cette catégorie"
         new_annotation: "Nouvelle annotation"
         annotation_category: "Catégorie de l'annotation"
+        reuse_annotation_text: "Réutiliser le texte de l'annotation"
+        choose_text_to_use: "Choisissez le texte à réutiliser"
+        image_annotation_positions_error: "Erreur : la position de l'annotation sur l'image n'a pas pu être chargée"
         sure_to_remove: "Êtes vous sûr de vouloir supprimer cette annotation ?"
         submit_edit: "Sauvegarder"
         change_across_submissions: "Ce changement sera propagé à toutes les notes comportant cette annotation, même celles déjà affichées. Êtes vous sûr de vouloir continuer ?"
@@ -588,6 +592,8 @@ fr:
         each_line: "Chaque ligne a le bon nombre de champs comme spécifié."
       download:
         download_list: "Télécharger la liste des correcteurs au format CSV"
+        begin_annotation: "{{comment_start}} ANNOTATION {{id}}: {{text}} {{comment_end}}"
+        end_annotation: "{{comment_start}} FIN ANNOTATION {{id}} {{comment_end}}"
 
     #Admins' View
     admins:
@@ -759,6 +765,8 @@ fr:
     flexible_criteria:
       criteria_management: "Édition du barème pour le projet {{identifier}}"
       save: "Sauvegarder"
+      move_up: "Monter"
+      move_down: "Descendre"
       name: "Nom du critère"
       max: "Note maximale"
       description: "Description"
@@ -782,6 +790,8 @@ fr:
       criteria_management: "Édition du barème pour le projet {{identifier}}"
       save: "Sauvegarder"
       name: "Nom du critère"
+      move_up: "Monter"
+      move_down: "Descendre"
       level:
         levels: "Niveaux"
         level_index: "Niveau {{index}}"
@@ -800,6 +810,18 @@ fr:
         <p>où <em>level_names</em> doit contenir le nom de chaque niveau (séparé par des virgules (,)<br />
         et <em>level_descriptions</em> doi contenir la description de chaque niveau (optionnel,
         séparé aussi par les virgules)."
+      error_total: "total weight must be positive"
+      defaults:
+        level_0: "Très insuffisant"
+        level_1: "Insuffisant"
+        level_2: "Passable"
+        level_3: "Bon"
+        level_4: "Excellent"
+        description_0: "Ce critère n'a pas été compris."
+        description_1: "Ce critère n'a pas été très bien compris."
+        description_2: "Ce critère a été partiellement compris."
+        description_3: "Ce critère a été compris."
+        description_4: "Ce critère a été parfaitement compris."
 
     summary_table:
       title: "Titre"
@@ -932,7 +954,7 @@ fr:
     locale_not_available: "La traduction {{locale}} n'est pas disponible"
     external_authentication_not_supported: "L'authentification externe n'est pas supportée sur votre plateforme"
     account_disabled: "Ce compte a été désactivé"
-    
+
     #Test Framework
     test_framework:
       test_framework: "Environnement de test"

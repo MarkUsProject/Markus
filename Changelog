@@ -1,3 +1,16 @@
+Changes for MarkUs 0.8.0:
+* Using Rails 2.3.8
+* MarkUs renders a 404 page error for mismatching routes
+* Bug fixes on submission dates and grace period credits
+* Python and Ruby Scripts using MarkUs API (see lib/tools)
+* Displaying and annotating images
+ A lot of accessibility features have been implemented :
+	* Missing labels & Better focus on forms
+	* Adding annotations in downloaded code from students repository
+	* Re-arrange criteria using keyboard
+* MarkUs is now completely internationalized
+* Added new translation : french
+
 Changes for MarkUs 0.7.1:
 * Bugfix for svn permissions with web submissions
 

@@ -1,12 +1,12 @@
+require "date"
 # set English as default
 I18n.default_locale = 'en'
+#I18n.locale = 'en' # Calendar Date Select
 
 # location where the language files go
 LOCALES_DIRECTORY = "#{RAILS_ROOT}/config/locales/"
 
-# not, used yet; English only for now
-#LANGUAGES = {
-#  'English' => 'en',         # English
-#  "Espa\xc3\xb1ol" => 'es',  # Spanish
-#  'Deutsch' => 'de'          # German
-#}
+# Languages available in MarkUs
+# Change the value of I18n.default_locale
+# English : 'en'
+# French : 'fr'
