@@ -87,7 +87,9 @@ document.observe("dom:loaded", function(){
       detect_bulk_action_change();">
         <option value=""><%= t(:bulk_action)%></option>
         <option value="give_grace_credits"><%= t(:give_grace_credits)%></option>
-	<option value="add_section"><%= I18n.t(:add_section)%></option>
+        <% #BEGIN Disable sections for 0.8 release
+        %>
+        <!-- <option value="add_section"><%= I18n.t(:add_section) %></option> -->
         <option value="hide"><%= t(:hide_students)%></option>
         <option value="unhide"><%= t(:unhide_students)%></option>
       </select>
