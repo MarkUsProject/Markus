@@ -125,11 +125,11 @@ see http://www.markusproject.org/download/
       tar -xzvf markus-latest-stable.tar.gz
   * You should have a directory called markus-X.Y.Z now. Change to MarkUs'
     application root. For example:
-      cd markus-0.6.0
+      cd markus-0.8.0
   * Set environment variable RAILS_ENV (assumes BASH)
       export RAILS_ENV="production"
-  * In case you are using Rails > 2.3.2 comment out the line containing
-    RAILS_GEM_VERSION="2.3.2" in config/environment.rb
+  * In case you are using Rails > 2.3.8 comment out the line containing
+    RAILS_GEM_VERSION="2.3.8" in config/environment.rb
   * Configure database connection settings to match your settings
       PostgreSQL option:
         cp config/database.yml.postgresql config/database.yml
