@@ -1,6 +1,6 @@
 <%= javascript_include_tag "livepipe/livepipe.js"%>
 <%= javascript_include_tag "livepipe/window.js"%>
-<script>
+<script type="text/javascript">
   var invite_modal = null;
 
   function invite(){
@@ -36,7 +36,7 @@
         <h3><%= I18n.t("student.overview") %></h3>
         <div class="info">
           <%= I18n.t("student.last_revision_date", :last_modified_date => I18n.l(@last_modified_date, :format => :long_date)) %>
-        </div>   
+        </div>
         <span class="info_number">
           <%=h @num_submitted_files.to_s %>
         </span>
@@ -72,7 +72,7 @@
           </p>
         <% end %>
 
-        <% 
+        <%
         # See if the student has been invited to some group
 
         if @student.has_pending_groupings_for?(@assignment.id) %>
@@ -87,7 +87,7 @@
           <% @pending_grouping.each do |grouping|%>
           <div class="sub_block">
             <p><%= I18n.t("student.invited_by", :inviter_last_name => h(grouping.inviter.last_name), :inviter_first_name => h(grouping.inviter.first_name)) %>
-            </p>  
+            </p>
             <% grouping.student_memberships.each do |member|%>
               <ul>
                   <%= render :partial => "assignments/member", :locals =>
@@ -95,7 +95,7 @@
               </ul>
             <% end -%>
 
-            <%= link_to I18n.t(:join), :action => 'join_group', 
+            <%= link_to I18n.t(:join), :action => 'join_group',
                     :id => @assignment.id,
               :grouping_id => grouping.id
             %>
@@ -110,7 +110,7 @@
         <% end %>
 
         <%
-        # If students are allowed to form groups and 
+        # If students are allowed to form groups and
         # the grace period for this assignment has not yet passed,
         # render UI elements for group creation
 
@@ -129,12 +129,12 @@
           <% end %>
           <p>
           <% if @student.has_pending_groupings_for?(@assignment.id)%>
-            <%= link_to(I18n.t(:create),{:action => 'creategroup', 
+            <%= link_to(I18n.t(:create),{:action => 'creategroup',
                :id => @assignment.id},{:confirm =>
                I18n.t("student.decline_invitation2")})
             %>
           <% else %>
-            <%= link_to(I18n.t(:create),{:action => 'creategroup', 
+            <%= link_to(I18n.t(:create),{:action => 'creategroup',
                 :id => @assignment.id})
             %>
           <% end %>
@@ -146,7 +146,7 @@
         # information about the group only
         %>
 
-        <% 
+        <%
         # Check if groupname should be displayed
         %>
         <h3>
@@ -157,7 +157,7 @@
           <% end %>
           <%
           # If a group is valid, the current user is the inviter of the group and
-          # she is the _only_ member of this group, she should be possible to delete 
+          # she is the _only_ member of this group, she should be possible to delete
           # her group, provided there haven't been any files submitted.
 
           if !@grouping.nil? &&
@@ -166,7 +166,7 @@
               {:action => 'deletegroup', :id => @assignment.id},
               {:confirm => I18n.t("student.confirm_delete_group") ,
               :title => I18n.t("student.delete_your_group"), :class => "delete"})
-            %> 
+            %>
           <% end %>
         </h3>
         <%
@@ -213,7 +213,7 @@
         <%
         # If the group does not have the right amount of members yet, display
         # "group is not valid" warning.
-            
+
         if !@grouping.is_valid? %>
           <p class="warning">
             <%= I18n.t("student.invite_more_students") %>
@@ -238,7 +238,7 @@
         <%
         # Display the URL of this group's repository if applicable
 
-        if @grouping.repository_external_commits_only? %> 
+        if @grouping.repository_external_commits_only? %>
             <h3><%= I18n.t("student.url_group_repository") %></h3>
               <div class="sub_block">
                 <p><%= h(@grouping.group.repository_external_access_url) %></p>
@@ -265,7 +265,7 @@
 		</li>
         <% end %>
       </ul>
-    </div>    
+    </div>
   </div>
 </div>
 
@@ -278,21 +278,19 @@ if !@grouping.nil? &&
   <div id="invite_dialog">
     <% form_tag({:action => 'invite_member',
         :id => @assignment.id},
-        {:onsubmit => "$('invite_modal_spinner').show();"}) do %>   
+        {:onsubmit => "$('invite_modal_spinner').show();"}) do %>
       <h2><%= I18n.t("student.invite") %></h2>
       <p class="information"><%= t(:seperate_multiple_with_commas) %></p>
-      <p>
         <fieldset>
           <label for="invite_member"> <%= I18n.t('user.user_name')%> </label>
           <%= text_field_tag 'invite_member'%>
         </fieldset>
-      </p>
       <p>
         <span id="invite_modal_spinner" style="display:none;">
           <%= image_tag("spinner.gif")%><%= I18n.t("student.please_wait") %>
         </span>
         <%= submit_tag I18n.t(:submit) %>
-        <input type="reset" value="<%= I18n.t("cancel") %>" onClick="invite_modal.close();" />
+        <input type="reset" value="<%= I18n.t("cancel") %>" onclick="invite_modal.close();" />
       </p>
     <% end %>
   </div>

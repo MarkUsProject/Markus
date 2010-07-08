@@ -116,7 +116,7 @@ h4{
    padding-left: 15px;
 }
 
-#title_bar h1{
+#title_bar h1, .title_bar h1{
    font-family: "Myriad", "Myriad Pro", "Lucida Grande", "Lucida Sans Unicode", Verdana;
    font-size: 24px;
    color: #464646;

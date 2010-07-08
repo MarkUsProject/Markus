@@ -12,7 +12,7 @@
   <br/>
   <div class="sub_block">
     <span class="prop_label"><%= t("message") %>:</span>
-    <span class="box sub_block clear"><%= simple_format(h(@assignment.message)) %></span>
+    <span class="box sub_block clear"><%= h(@assignment.message) %></span>
   </div>
   <br/>
   <div class="sub_block">
@@ -39,14 +39,15 @@
 
 
   <h4><%= t("assignment.required_files_read") %></h4>
-  <ul>
-  <% if @assignment.assignment_files.length == 0%>
-   <p><%= t("assignment.no_required_files_read") %></p>
+  <% if @assignment.assignment_files.length == 0 %>
+    <%= t("assignment.no_required_files_read") %>
+  <% else %>
+    <ul>
+      <% @assignment.assignment_files.each do |assignment_file| %>
+	<li><%= h(assignment_file.filename) %></li>
+      <% end %>
+    </ul>
   <% end %>
-  <% @assignment.assignment_files.each do |assignment_file| %>
-    <li><%= h(assignment_file.filename) %></li>
-  <% end %>
-  </ul>
 </div>
 
 
