@@ -1,7 +1,7 @@
 /* Core Elements */
 
 body {
-    background-color: #fff; 
+    background-color: #fff;
     margin: 0;
     margin-bottom: 3em;
     padding: 0;
@@ -25,8 +25,8 @@ button{
   font-weight: bold;
   color: #464646;
   padding: 3px 5px;
-  margin: 5px; 
-  font-size: 1em; 
+  margin: 5px;
+  font-size: 1em;
 }
 
 button:hover{
@@ -37,7 +37,6 @@ a {
    color: #003399;
    text-decoration: none;
    font-family: Georgia, "Times New Roman", sans-serif;
-   text-transform: capitalize;
    text-size: 1em;
    font-style: normal;
    font-weight: normal;
@@ -176,7 +175,7 @@ h4{
 }
 
 #sub_menu li.visible_dropdown {
-  width: 170px;	
+  width: 170px;
 }
 
 #menu a, #sub_menu a {
@@ -185,11 +184,10 @@ h4{
   padding-top: 7px;
   display: inline-block;
   text-align: center;
-  text-transform: capitalize;
   font-weight: bold;
   margin: -2px 0px;
   font-family: "Myriad";
-  font-size: 12px; 
+  font-size: 12px;
 }
 
 #menu a{
@@ -234,7 +232,6 @@ h4{
 #sub_menu li li{
    display: block;
    text-align: center;
-   text-transform: capitalize;
    margin: 0;
    padding: 0;
 }
@@ -386,7 +383,6 @@ input[disabled]:hover {
 }
 
 select{
-   text-transform: capitalize;
    padding: 0 2px;
    -moz-border-radius: 3px;
    -webkit-border-radius: 3px;
@@ -556,7 +552,6 @@ tr:hover .table_menu{
 .link{
    font-weight: bold;
    color: #003399;
-   text-transform: capitalize;
    cursor: pointer;
    padding: 0.1em;
 }
@@ -603,16 +598,16 @@ td.student_total {
 
 td.student_total input {
   min-width: 7%;
-  border: none; 
-  background-color: transparent; 
+  border: none;
+  background-color: transparent;
   text-align: left;
   color: #000000;
 }
 
 td.student_total input:hover {
   min-width: 7%;
-  border: none; 
-  background-color: transparent; 
+  border: none;
+  background-color: transparent;
   text-align: left;
   color: #000000;
 }
@@ -685,7 +680,7 @@ input#extra_mark_description{
    margin: 10px;
 }
 
-.final_mark{  
+.final_mark{
    font-size: 1.4em;
    float: right;
 }
@@ -855,7 +850,7 @@ input#extra_mark_description{
 }
 .bonus_deduction {
   padding: 5px;
-  background-color: #B7D3EC; 
+  background-color: #B7D3EC;
 }
 
 #standby_highlighting {
@@ -884,7 +879,7 @@ input#extra_mark_description{
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
 	border: 2px solid #ccc;
-	overflow: auto; 
+	overflow: auto;
 	word-wrap: break-word;
 	float: left
 }
@@ -911,7 +906,7 @@ div.float_left {
    float: right;
    width: 24%;
 }
-  
+
 .accordion {
   position: fixed;
   height: 75%;
@@ -997,7 +992,7 @@ div.float_left {
 }
 
 #login input{
-  min-width: 150px; 
+  min-width: 150px;
   margin-left: 20px;
   padding: 5px;
 }
@@ -1069,7 +1064,6 @@ div#login div.error {
    font-family: "Georgia";
    font-style: italic;
    font-weight: normal;
-   text-transform: capitalize;
    font-size: 0.9em;
    color: #464646;
    border-bottom: 1px solid #ccc;
@@ -1095,7 +1089,7 @@ div.sub_block span.prop_label{
   display: block;
   min-width: 150px;
   float: left;
-  font-weight: bold; 
+  font-weight: bold;
 }
 
 div.sub_block span.box{
@@ -1119,7 +1113,6 @@ div.sub_block span.box{
 span.info_red, span.info {
    font-family: "Tahoma";
    font-size: 1em;
-   text-transform: capitalize;
    line-height: 1.5em;
 }
 
@@ -1185,15 +1178,15 @@ td#thinking_table_row {
   float: left;
 }
 #ap_select_all_div {
-  border: 1px solid #000000; 
-  background: #FFFFE0; 
-  text-align: center; 
+  border: 1px solid #000000;
+  background: #FFFFE0;
+  text-align: center;
   padding: 5px;
 }
 #ap_select_full_div {
-  border: 1px solid #000000; 
-  background: #FFFFE0; 
-  text-align: center; 
+  border: 1px solid #000000;
+  background: #FFFFE0;
+  text-align: center;
   padding: 5px;
 }
 
@@ -1228,8 +1221,8 @@ th.ap_sorting_by_desc {
 }
 
 .ap_nav_box {
-  width: 100%; 
-  border: 1px solid #DDDDDD; 
+  width: 100%;
+  border: 1px solid #DDDDDD;
   padding: 5px 0px;
 }
 
@@ -1452,7 +1445,7 @@ a img{
 #rubric_criteria_pane li, #flexible_criteria_pane li{
    width: 100%;
    border-top: 1px solid #ccc;
-   min-height: 35px; 
+   min-height: 35px;
    padding: 2px 0px;
 }
 
@@ -1467,7 +1460,7 @@ a img{
 #annotation_category_pane_list li{
    width: 100%;
    border-top: 1px solid #ccc;
-   min-height: 25px; 
+   min-height: 25px;
    padding: 2px 0px;
 }
 
@@ -1559,7 +1552,7 @@ h3.title_levels{
 
 
 ul#annotation_list{
-  list-style: none; 
+  list-style: none;
 }
 
 ul#annotation_list li{

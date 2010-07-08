@@ -13,7 +13,7 @@
   Link to line number in Annotations Summary
  ****************************************************/
 .lineNumber { margin: 0 0 10px 0; }
-  .lineNumber a { 
+  .lineNumber a {
     padding: 0 20px 0 0;
   }
 
@@ -54,9 +54,9 @@
 #file_selector {
   margin: 20px 0 10px 0;
 }
-  
+
 .dp-highlighter .annotation_highlighted_text {
-  background-color: #FFFF99; 
+  background-color: #FFFF99;
   color: #000000;
 }
 .dp-highlighter .annotation_highlighted_text_overlap {
@@ -131,7 +131,7 @@ li.annotation_category {
 
 /* =================================================================================
   GENERAL LAYOUT STYLES
-  #pane_holder 
+  #pane_holder
      #code_pane
         tabs => see livepipe/tabs.css
         #code_holder
@@ -160,8 +160,8 @@ li.annotation_category {
 
   #pane_divider {
     background: #EEEEEE url(/images/handle.png) no-repeat 50%;
-    float:left; 
-    width: 4px; 
+    float:left;
+    width: 4px;
     margin: 0 2px 10px 2px;
     height: 722px;
     background-color: DDDDDD;
@@ -177,7 +177,7 @@ li.annotation_category {
     padding: 10px;
     height: 700px;
   }
-  #code_pane {    
+  #code_pane {
     width: 60%;
    /* width: 536px;*/
   }
@@ -198,7 +198,7 @@ li.annotation_category {
     #codeviewer {
       height: inherit;
     }
-    
+
       #sel_box {
        border-style: dashed;
        border-color: red;
@@ -265,11 +265,11 @@ li.annotation_category {
   min-width:150px;
   min-height:100px;
 }
-	
+
 .window .window_contents {
   margin-top:10px;
   width:100%;
-  height:100%;	
+  height:100%;
 }
 
 .window .window_header {
@@ -308,11 +308,11 @@ ul#annotation_summary_list {
     border-bottom: 1px solid #DADADA;
     padding: 5px 10px;
   }
-  
+
   #annotations_summary_list a {
     color: blue;
   }
-  
+
 /* CSS for grading view */
 /* Rubric Criteria - TO CHANGE! defaults to original rubric css for now! */
 .padding_left {
@@ -346,7 +346,6 @@ ul#annotation_summary_list {
 
   .mark_criterion_title {
     cursor: pointer;
-    text-transform: capitalize;
   }
 
     .mark_criterion_title_div_level {
@@ -406,7 +405,6 @@ ul#annotation_summary_list {
 
 
 #selected_criterion_name {
-        text-transform: capitalize;
         font-weight: bold;
 }
 
@@ -429,7 +427,6 @@ ul#annotation_summary_list {
 
   .extra_mark_title_div {
     cursor: pointer;
-    text-transform: capitalize;
   }
 
   .extra_mark_holder_selected {
