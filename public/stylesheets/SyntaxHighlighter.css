@@ -5,13 +5,13 @@
 /*	margin: 18px 0 18px 0 !important;*/
   margin: 0;
 	padding-top: 1px; /* adds a little border on top when controls are hidden */
-  width: 100%; 
+  width: 100%;
 }
 
 /* clear styles */
 .dp-highlighter ol,
 .dp-highlighter ol li,
-.dp-highlighter ol li span 
+.dp-highlighter ol li span
 {
 	margin: 0;
 	padding: 0;
@@ -186,7 +186,7 @@
 
 /*.dp-highlighter { background-color: #FFFF99; color: #000000; }  */
 .dp-highlighter .source_code_glowing_1 {
-  background-color: #FFFCC4; 
+  background-color: #FFFCC4;
   color: #000000;
 }
 .dp-highlighter .source_code_glowing_2 {
