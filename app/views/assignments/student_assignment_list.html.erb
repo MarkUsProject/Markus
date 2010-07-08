@@ -1,10 +1,10 @@
-<div id="title_bar"><h1><%= t('student_interface_assignments') %></h1></div>
+<div class="title_bar"><h1><%= t('student_interface_assignments') %></h1></div>
 <div class="wrapLeft">
-<%= render :partial => "assignments/list", 
+<%= render :partial => "assignments/list",
   :locals => { :controller => 'assignments', :action => 'student_interface' } -%>
 </div>
 
-<div id="title_bar"><h1><%= t('grade_entry_forms.students.title') %></h1></div>
+<div class="title_bar"><h1><%= t('grade_entry_forms.students.title') %></h1></div>
 <div class="wrapLeft">
   <%= render :partial => "grade_entry_forms/list" %>
 </div>
