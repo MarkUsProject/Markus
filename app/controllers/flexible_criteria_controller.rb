@@ -5,7 +5,9 @@ class FlexibleCriteriaController < ApplicationController
   def index
     @assignment = Assignment.find(params[:id])
     # TODO until Assignment gets its criteria method
-    @criteria = FlexibleCriterion.find_all_by_assignment_id(@assignment.id, :order => :position)
+    @criteria = 
+      FlexibleCriterion.find_all_by_assignment_id( @assignment.id, 
+                                                   :order => :position)
   end
   
   def edit 
@@ -52,7 +54,7 @@ class FlexibleCriteriaController < ApplicationController
     @assignment = @criterion.assignment
     @criteria = @assignment.flexible_criteria
     # TODO delete all marks associated with this criterion
-    #      Will be possible when Mark gets its association with FlexibleCriterion.
+    # Will be possible when Mark gets its association with FlexibleCriterion.
     @criterion.destroy
     flash.now[:success] = I18n.t('criterion_deleted_success')
   end
@@ -60,7 +62,10 @@ class FlexibleCriteriaController < ApplicationController
   def download
     @assignment = Assignment.find(params[:id])
     file_out = FlexibleCriterion.create_csv(@assignment)
-    send_data(file_out, :type => 'text/csv', :filename => "#{@assignment.short_identifier}_flexible_criteria.csv", :disposition => 'inline')
+    send_data(file_out, 
+              :type => 'text/csv', 
+              :filename => "#{@assignment.short_identifier}_flexible_criteria.csv", 
+              :disposition => 'inline')
   end
   
   def upload
@@ -70,13 +75,16 @@ class FlexibleCriteriaController < ApplicationController
       begin
         FlexibleCriterion.transaction do
           invalid_lines = []
-          nb_updates = FlexibleCriterion.parse_csv(file, @assignment, invalid_lines)
+          nb_updates = FlexibleCriterion.parse_csv(file, 
+                                                   @assignment, 
+                                                   invalid_lines)
           unless invalid_lines.empty? 
             flash[:invalid_lines] = invalid_lines
             flash[:error] = I18n.t('csv_invalid_lines')
           end
           if nb_updates > 0
-            flash[:upload_notice] = I18n.t('flexible_criteria.upload.success', :nb_updates => nb_updates)
+            flash[:upload_notice] = I18n.t('flexible_criteria.upload.success', 
+                                            :nb_updates => nb_updates)
           end
         end
       end
@@ -123,7 +131,8 @@ class FlexibleCriteriaController < ApplicationController
       render :nothing => true
       return
     end
-    FlexibleCriterion.update(criterion.id, :position => other_criterion.position)
+    FlexibleCriterion.update(criterion.id, 
+                             :position => other_criterion.position)
     FlexibleCriterion.update(other_criterion.id, :position => position)
     @criteria.reload
   end

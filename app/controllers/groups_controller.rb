@@ -29,7 +29,12 @@ class GroupsController < ApplicationController
     return unless (request.post? && params[:student_user_name])
     # add member to the group with status depending if group is empty or not
     grouping = Grouping.find(params[:grouping_id])
-    @assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group]}])
+    @assignment = Assignment.find(params[:id], 
+                                  :include => [{
+                                     :groupings => [{
+                                        :student_memberships => :user, 
+                                        :ta_memberships => :user}, 
+                                      :group]}])
     set_membership_status = grouping.student_memberships.empty? ?
           StudentMembership::STATUSES[:inviter] :
           StudentMembership::STATUSES[:accepted]
@@ -63,7 +68,8 @@ class GroupsController < ApplicationController
           raise I18n.t('add_student.fail.general', :user_name => user_name)
         end
         
-        # only the first student should be the "inviter" (and only update this if it succeeded)
+        # only the first student should be the "inviter" (and 
+        # only update this if it succeeded)
         set_membership_status = StudentMembership::STATUSES[:accepted]
       rescue Exception => e
         @error = true
@@ -93,7 +99,8 @@ class GroupsController < ApplicationController
     @grouping.remove_member(member)
     @grouping.reload
     if !@grouping.inviter.nil?
-      @inviter = @grouping.accepted_student_memberships.find_by_user_id(@grouping.inviter.id)
+      @inviter = @grouping.accepted_student_memberships.find_by_user_id(
+                         @grouping.inviter.id)
     else
       # There are no group members left, so create an empty table row
       # of FilterTable
@@ -162,9 +169,12 @@ class GroupsController < ApplicationController
         params[:groupexist_id] = groupexist_id
         params[:assignment_id] = @assignment.id
 
-        if Grouping.find(:all, :conditions => ["assignment_id =
-        :assignment_id and group_id = :groupexist_id", {:groupexist_id =>
-        groupexist_id, :assignment_id => @assignment.id}])
+        if Grouping.find(:all, 
+                         :conditions => [
+                      "assignment_id = :assignment_id and group_id =
+                      :groupexist_id", 
+                      {:groupexist_id => groupexist_id, 
+                       :assignment_id => @assignment.id}])
            flash[:fail_notice] = I18n.t('groups.rename_group.already_in_use')
         else
           @grouping.update_attribute(:group_id, groupexist_id)
@@ -180,7 +190,12 @@ class GroupsController < ApplicationController
   end
   
   def populate
-    @assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group]}])   
+    @assignment = Assignment.find(params[:id], 
+                                 :include => [{
+                                   :groupings => [{
+                                      :student_memberships => :user, 
+                                      :ta_memberships => :user}, 
+                                   :group]}])   
     @groupings = @assignment.groupings
     @table_rows = {}
     @groupings.each do |grouping|
@@ -192,7 +207,12 @@ class GroupsController < ApplicationController
 
   def manage
     @all_assignments = Assignment.all(:order => :id)
-    @assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group]}])   
+    @assignment = Assignment.find(params[:id], 
+                                  :include => [{
+                                     :groupings => [{
+                                        :student_memberships => :user, 
+                                        :ta_memberships => :user}, 
+                                     :group]}])   
     @groupings = @assignment.groupings
     # Returns a hash where s.id is the key, and student record is the value
     @ungrouped_students = @assignment.ungrouped_students
@@ -207,7 +227,8 @@ class GroupsController < ApplicationController
       return
     end
     
-    invalid_lines = Grouping.assign_tas_by_csv(params[:grader_mapping].read, params[:id])
+    invalid_lines = Grouping.assign_tas_by_csv(params[:grader_mapping].read, 
+                                               params[:id])
     if invalid_lines.size > 0
       flash[:invalid_lines] = invalid_lines
     end
@@ -240,11 +261,13 @@ class GroupsController < ApplicationController
               collision_error = @assignment.add_csv_group(row)
               if !collision_error.nil?
                 flash[:invalid_lines] << I18n.t("csv.line_nr_csv_file_prefix",
-                                          { :line_number => line_nr + 1 }) + " #{collision_error}"
+                                          { :line_number => line_nr + 1 }) 
+                                          + " #{collision_error}"
               end
             rescue CSVInvalidLineError => e
               flash[:invalid_lines] << I18n.t("csv.line_nr_csv_file_prefix",
-                                          { :line_number => line_nr + 1 }) + " #{e.message}"
+                                          { :line_number => line_nr + 1 }) 
+                                          + " #{e.message}"
             end
           end
           @assignment.reload # Need to reload to get newly created groupings
@@ -312,7 +335,12 @@ class GroupsController < ApplicationController
   # This method is massive, and does way too much.  Whatever happened
   # to single-responsibility?
   def global_actions 
-    @assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :group]}])   
+    @assignment = Assignment.find(params[:id], 
+                                  :include => [{
+                                     :groupings => [{
+                                        :student_memberships => :user, 
+                                        :ta_memberships => :user}, 
+                                     :group]}])   
     @tas = Ta.all
 
     if params[:submit_type] == 'random_assign'
@@ -324,7 +352,8 @@ class GroupsController < ApplicationController
           raise t('groups.no_groups_selected')
         end
         randomly_assign_graders(params[:graders], params[:groupings])
-        @groupings_data = construct_table_rows(Grouping.find(params[:groupings]), @assignment)
+        @groupings_data = construct_table_rows(Grouping.find(params[:groupings]), 
+                                               @assignment)
         render :action => "modify_groupings"
         return
       rescue Exception => e
