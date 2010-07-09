@@ -47,6 +47,7 @@ see http://www.markusproject.org/download/
         - rake (version 0.8.7 and higher)
 	- ruby-debug (in case you want to debug MarkUs)
 	- will_paginate (version 2.3.11 and higher)
+        - rubyzip (version 1.3.6 and higher)
     * Apache httpd (version 2.2 and higher) including the following modules:
         - mod_proxy
         - mod_rewrite
