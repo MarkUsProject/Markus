@@ -78,12 +78,18 @@ class AnnotationCategoriesController < ApplicationController
     @annotation_categories = @assignment.annotation_categories
     case params[:format]
     when 'csv'
-      send_data convert_to_csv(@annotation_categories), :filename => "#{@assignment.short_identifier}_annotations.csv", :disposition => 'attachment'
+      send_data convert_to_csv(@annotation_categories), 
+                :filename => "#{@assignment.short_identifier}_annotations.csv", 
+                :disposition => 'attachment'
     when 'yml'
-      send_data convert_to_yml(@annotation_categories), :filename => "#{@assignment.short_identifier}_annotations.yml", :disposition => 'attachment'
+      send_data convert_to_yml(@annotation_categories), 
+                :filename => "#{@assignment.short_identifier}_annotations.yml", 
+                :disposition => 'attachment'
     else
-      flash[:error] = I18n.t("annotations.upload.flash_error", :format => params[:format])
-      redirect_to :action => 'index', :id => params[:id]
+      flash[:error] = I18n.t("annotations.upload.flash_error", 
+                             :format => params[:format])
+      redirect_to :action => 'index', 
+                  :id => params[:id]
     end
   end
 
@@ -102,13 +108,19 @@ class AnnotationCategoriesController < ApplicationController
         annotation_line += 1
         result = AnnotationCategory.add_by_row(row, @assignment)
         if result[:annotation_upload_invalid_lines].size > 0
-           flash[:annotation_upload_invalid_lines] = I18n.t('annotations.upload.error', :annotation_category => row, :annotation_line => annotation_line)
+           flash[:annotation_upload_invalid_lines] =  
+             I18n.t('annotations.upload.error', 
+                     :annotation_category => row, 
+                     :annotation_line => annotation_line)
           break
         else
           annotation_category_number += 1
         end
       end
-      flash[:annotation_upload_success] = annotation_category_number > 0 ? I18n.t('annotations.upload.success', :annotation_category_number => annotation_category_number) : nil
+      flash[:annotation_upload_success] = annotation_category_number > 0 ? 
+            I18n.t('annotations.upload.success', 
+                    :annotation_category_number => annotation_category_number) : 
+                    nil
     end
     redirect_to :action => 'index', :id => @assignment.id
   end

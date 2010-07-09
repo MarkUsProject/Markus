@@ -7,7 +7,9 @@ class MainController < ApplicationController
   protect_from_forgery :except => [:login, :page_not_found]
 
   # check for authorization 
-  before_filter      :authorize_for_user,      :except => [:login, :page_not_found]
+  before_filter      :authorize_for_user,     
+                     :except => [:login, 
+                                 :page_not_found]
 
   #########################################################################
   # Authentication
@@ -41,19 +43,24 @@ class MainController < ApplicationController
     redirect_to(:action => 'login') && return if blank_login || blank_pwd
     
     # Two stage user verification: authentication and authorization
-    authenticate_response = User.authenticate(params[:user_login], params[:user_password])
+    authenticate_response = User.authenticate(params[:user_login], 
+                                              params[:user_password])
     if authenticate_response == User::AUTHENTICATE_BAD_PLATFORM
       flash[:login_notice] = I18n.t("external_authentication_not_supported")
       return
     end
     if authenticate_response == User::AUTHENTICATE_SUCCESS
-      # Username/password combination is valid. Check if user is allowed to use MarkUs.
+      # Username/password combination is valid. Check if user is 
+      # allowed to use MarkUs.
       #
       # sets this user as logged in if login is a user in MarkUs
-      found_user = User.authorize(params[:user_login]) # if not nil, user authorized to enter MarkUs
+      found_user = User.authorize(params[:user_login]) 
+      # if not nil, user authorized to enter MarkUs
       if found_user.nil?
-        # This message actually means "User not allowed to use MarkUs", but it's from a security-perspective
-        # not a good idea to report this to the outside world. It makes it easier for attempted break-ins
+        # This message actually means "User not allowed to use MarkUs", 
+        # but it's from a security-perspective
+        # not a good idea to report this to the outside world. It makes it 
+        # easier for attempted break-ins
         # if one can distinguish between existent and non-existent users.
         flash[:login_notice] = I18n.t(:login_failed)
         return
@@ -89,7 +96,8 @@ class MainController < ApplicationController
     cookies.delete :auth_token
     reset_session
     m_logger = MarkusLogger.instance
-    m_logger.log(I18n.t("markus_logger.user_logout_message", :user_name => current_user.user_name))
+    m_logger.log(I18n.t("markus_logger.user_logout_message", 
+                         :user_name => current_user.user_name))
     redirect_to :action => 'login'
   end
   

@@ -4,20 +4,36 @@ class GradeEntryFormsController < ApplicationController
   include PaginationHelper
   include GradeEntryFormsHelper
   
-  before_filter      :authorize_only_for_admin, :except => [:student_interface, :grades, :g_table_paginate, 
-                                                            :csv_download, :csv_upload, :update_grade]
-  before_filter      :authorize_for_ta_and_admin, :only => [:grades, :g_table_paginate, 
-                                                            :csv_download, :csv_upload, :update_grade]
-  before_filter      :authorize_for_student, :only => [:student_interface]
+  before_filter      :authorize_only_for_admin, 
+                     :except => [:student_interface, 
+                                 :grades, 
+                                 :g_table_paginate, 
+                                 :csv_download, 
+                                 :csv_upload, 
+                                 :update_grade]
+  before_filter      :authorize_for_ta_and_admin, 
+                     :only => [:grades, 
+                               :g_table_paginate, 
+                               :csv_download, 
+                               :csv_upload, 
+                               :update_grade]
+  before_filter      :authorize_for_student, 
+                      :only => [:student_interface]
 
-  # Filters will be added as the student UI is implemented (eg. Show Released, Show All,...)    
+  # Filters will be added as the student UI is implemented (eg. Show Released,
+  # Show All,...)    
   G_TABLE_PARAMS = { :model => GradeEntryStudent, 
                      :per_pages => [15, 30, 50, 100, 150],
-                     :filters => { 'none' => { :display => 'Show All', 
-                                               :proc => lambda { Student.all(:conditions => {:hidden => false}, 
-                                                                                             :order => "user_name")} }
+                     :filters => { 'none' => { 
+                                     :display => 'Show All', 
+                                     :proc => lambda { 
+                                          Student.all(:conditions => {
+                                              :hidden => false }, 
+                                          :order => "user_name")} }
                                  },
-                     :sorts => { 'last_name' => lambda { |a,b| a.last_name.downcase <=> b.last_name.downcase} }                      
+                     :sorts => { 'last_name' => lambda { 
+                                     |a,b| a.last_name.downcase <=> 
+                                        b.last_name.downcase} }                      
                    }
           
   # Create a new grade entry form
@@ -63,24 +79,30 @@ class GradeEntryFormsController < ApplicationController
     @filters = get_filters(G_TABLE_PARAMS)
     @per_pages = G_TABLE_PARAMS[:per_pages]
     
-    all_students = get_filtered_items(G_TABLE_PARAMS, @filter, @sort_by, 
+    all_students = get_filtered_items(G_TABLE_PARAMS, 
+                                      @filter, 
+                                      @sort_by, 
                                       {:grade_entry_form => @grade_entry_form})
-    @students = all_students.paginate(:per_page => @per_page, :page => @current_page)
+    @students = all_students.paginate(:per_page => @per_page, 
+                                      :page => @current_page)
     @students_total = all_students.size
-    @alpha_pagination_options = @grade_entry_form.alpha_paginate(all_students, @per_page, 
-                                                                 @students.total_pages)
+    @alpha_pagination_options = @grade_entry_form.alpha_paginate(all_students, 
+                                                        @per_page, 
+                                                        @students.total_pages)
     session[:alpha_pagination_options] = @alpha_pagination_options
     @alpha_category = @alpha_pagination_options.first   
   end
   
   # Handle pagination for grades table
-  # (The algorithm used to compute the alphabetical categories (alpha_paginate()) is
+  # (The algorithm used to compute the alphabetical categories 
+  # (alpha_paginate()) is
   # found in grade_entry_form.rb.)
   def g_table_paginate
     @grade_entry_form = GradeEntryForm.find(params[:id])
-    @students, @students_total = handle_paginate_event(G_TABLE_PARAMS, 
-                                                 {:grade_entry_form => @grade_entry_form}, 
-                                                 params)
+    @students, @students_total = handle_paginate_event(
+                                   G_TABLE_PARAMS, 
+                                   {:grade_entry_form => @grade_entry_form}, 
+                                   params)
 
     @current_page = params[:page]
     @per_page = params[:per_page]
@@ -97,10 +119,15 @@ class GradeEntryFormsController < ApplicationController
     # Only re-compute the alpha_pagination_options for the drop-down menu
     # if the number of items per page has changed
     if params[:update_alpha_pagination_options] == "true"
-      all_students = get_filtered_items(G_TABLE_PARAMS, @filter, @sort_by, 
-                                        {:grade_entry_form => @grade_entry_form})
-      @alpha_pagination_options = @grade_entry_form.alpha_paginate(all_students, @per_page, 
-                                                                   @students.total_pages)
+      all_students = get_filtered_items(
+                       G_TABLE_PARAMS,
+                       @filter, 
+                       @sort_by, 
+                       {:grade_entry_form => @grade_entry_form})
+      @alpha_pagination_options = @grade_entry_form.alpha_paginate(
+                                     all_students, 
+                                     @per_page, 
+                                     @students.total_pages)
       @alpha_category = @alpha_pagination_options.first
       session[:alpha_pagination_options] = @alpha_pagination_options
     else
@@ -115,8 +142,12 @@ class GradeEntryFormsController < ApplicationController
     @student_id = params[:student_id]
     @grade_entry_item_id = params[:grade_entry_item_id]
     updated_grade = params[:updated_grade]
-    grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by_user_id(@student_id)
-    @grade = grade_entry_student.grades.find_or_create_by_grade_entry_item_id(@grade_entry_item_id)
+    grade_entry_student = 
+        grade_entry_form.grade_entry_students.find_or_create_by_user_id(
+           @student_id)
+    @grade = 
+        grade_entry_student.grades.find_or_create_by_grade_entry_item_id(
+           @grade_entry_item_id)
     @grade.grade = updated_grade
     @grade_saved = @grade.save
     @updated_student_total = grade_entry_form.calculate_total_mark(@student_id)
@@ -161,22 +192,31 @@ class GradeEntryFormsController < ApplicationController
     # Releasing/unreleasing marks should be logged
     log_message = ""       
     if !params[:release_results].nil?
-      numGradeEntryStudentsChanged = set_release_on_grade_entry_students(grade_entry_students, true, errors)
+      numGradeEntryStudentsChanged = set_release_on_grade_entry_students(
+                                        grade_entry_students, 
+                                        true, 
+                                        errors)
       log_message = I18n.t("markus_logger.marks_released_for_grade_entry_form",
                             :grade_entry_form_id => grade_entry_form.id,
-                            :grade_entry_form => grade_entry_form.short_identifier,
+                            :grade_entry_form => 
+                                 grade_entry_form.short_identifier,
                             :number_students => numGradeEntryStudentsChanged)
     elsif !params[:unrelease_results].nil?
-      numGradeEntryStudentsChanged = set_release_on_grade_entry_students(grade_entry_students, false, errors)
-      log_message = I18n.t("markus_logger.marks_unreleased_for_grade_entry_form",
-                            :grade_entry_form_id => grade_entry_form.id,
-                            :grade_entry_form => grade_entry_form.short_identifier,
-                            :number_students => numGradeEntryStudentsChanged)
+      numGradeEntryStudentsChanged = set_release_on_grade_entry_students( 
+                                       grade_entry_students, 
+                                       false, 
+                                       errors)
+      log_message = I18n.t( 
+                        "markus_logger.marks_unreleased_for_grade_entry_form",
+                        :grade_entry_form_id => grade_entry_form.id,
+                        :grade_entry_form => grade_entry_form.short_identifier,
+                        :number_students => numGradeEntryStudentsChanged)
     end
 
     # Display success message
     if numGradeEntryStudentsChanged > 0
-      flash[:success] = I18n.t('grade_entry_forms.grades.successfully_changed', {:numGradeEntryStudentsChanged => numGradeEntryStudentsChanged})
+      flash[:success] = I18n.t('grade_entry_forms.grades.successfully_changed', 
+               {:numGradeEntryStudentsChanged => numGradeEntryStudentsChanged})
       m_logger = MarkusLogger.instance
       m_logger.log(log_message)
     end
@@ -188,8 +228,10 @@ class GradeEntryFormsController < ApplicationController
   # Download the grades for this grade entry form as a CSV file
   def csv_download
     grade_entry_form = GradeEntryForm.find(params[:id])
-    send_data grade_entry_form.get_csv_grades_report, :disposition => 'attachment', :type => 'application/vnd.ms-excel', 
-                                                      :filename => "#{grade_entry_form.short_identifier}_grades_report.csv"
+    send_data grade_entry_form.get_csv_grades_report, 
+         :disposition => 'attachment', 
+         :type => 'application/vnd.ms-excel', 
+         :filename => "#{grade_entry_form.short_identifier}_grades_report.csv"
   end
   
   # Upload the grades for this grade entry form using a CSV file
@@ -200,14 +242,17 @@ class GradeEntryFormsController < ApplicationController
       begin
         GradeEntryForm.transaction do
           invalid_lines = []
-          num_updates = GradeEntryForm.parse_csv(grades_file, @grade_entry_form, invalid_lines)
+          num_updates = GradeEntryForm.parse_csv(grades_file, 
+                                                 @grade_entry_form, 
+                                                 invalid_lines)
           if !invalid_lines.empty?
             flash[:invalid_lines] = invalid_lines
             flash[:error] = I18n.t('csv_invalid_lines')
           end
           if num_updates > 0
-            flash[:upload_notice] = I18n.t('grade_entry_forms.csv.upload_success', 
-                                           :num_updates => num_updates)
+            flash[:upload_notice] = I18n.t(
+                                 'grade_entry_forms.csv.upload_success',
+                                 :num_updates => num_updates)
           end
         end
       end

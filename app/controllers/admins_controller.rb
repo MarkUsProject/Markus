@@ -23,7 +23,8 @@ class AdminsController < ApplicationController
     if !@user.update_attributes(attrs)
       render :action => :edit
     else
-      flash[:edit_notice] = I18n.t("admins.success", :user_name => @user.user_name)
+      flash[:edit_notice] = I18n.t("admins.success", 
+                                    :user_name => @user.user_name)
       redirect_to :action => 'index'
     end
   end
