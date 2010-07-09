@@ -9,7 +9,7 @@ en:
 
     # app/views/main/login.html.erb
     welcome_to:         "Welcome to MarkUs!"
-    welcome_to_markus:     "{{user_name}}, welcome to MarkUs, the online marking tool." 
+    welcome_to_markus:     "{{user_name}}, welcome to MarkUs, the online marking tool."
     log_in:             "Log in"
     logging_in:         "Logging in..."
     login:              "Login"
@@ -19,7 +19,7 @@ en:
     username_and_password_not_blank: "Your username and password must not be blank."
     session_expired:     "Your session has expired. Please log in"
     please_log_in:       "Please log in"
-   
+
     # app/views/layouts/_header.html.erb
     log_out:            "Log out"
     logged_in_as:       "| Logged in as <span id=\"user_name\"><b>{{first_name}} {{last_name}}</b> ({{user_name}})</span> |"
@@ -50,13 +50,14 @@ en:
     # app/views/api/_key_display.html.erb
     api_key:            "Your API Key"
     api_key_unavailable:        "Unavailable"
-    
+    reset_api_key:        "Reset my API key"
+
     # app/views/layouts/_menu.html.erb
     dashboard:          "Dashboard"
     assignments:        "Assignments"
     users:              "Users"
     home:               "Home"
-    
+
     # app/views/main/index.html.erb
     firefox_warning:    "Some functionality might only work for Mozilla Firefox users"
 
@@ -175,10 +176,10 @@ en:
     past_due_date_edit_warning:  "WARNING:  The due date you have selected is in the past."
     release_marks: "Release Marks"
     unrelease_marks: "Unrelease Marks"
-    
+
     #app/views/assignments/grader_index.html
     grade_assignments: "Grade Assignments"
-    
+
     #app/views/resluts/marker/
     marker:
       new_annot: "New Annot."
@@ -225,14 +226,14 @@ en:
         sure_to_remove: "Are you sure you want to remove this annotation?"
         submit_edit: "Submit Edit"
         change_across_submissions: "This change will propogate across all submissions marked with this annotation.  Is this OK?"
-        
+
     #app/views/results/common
     common:
       loading_code: "Loading Code..."
       submission_file: "Submission File:"
       test_results: "Test Results:"
       no_file_in_repository: "[No files in repository]"
-    
+
     seperate_multiple_with_commas:  "Seperate multiple user names with commas"
     csv_valid_format:   "There was a problem parsing the CSV file you uploaded.  Please ensure that it's a valid CSV format, and that each line ends with a carriage-return line-feed set of characters.  No changes were made. "
     csv_invalid_lines: "The following CSV lines were invalid: "
@@ -359,8 +360,8 @@ en:
                              <code>\"\",q1_name,q2_name,q3_name</code><br/>
                              <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br/>
                              <code>user_name,grade_for_q1,grade_for_q2,grade_for_q3</code>"
-        
-    no_grade_entry_forms_message: "There are currently no marks spreadsheets." 
+
+    no_grade_entry_forms_message: "There are currently no marks spreadsheets."
     current_grade_entry_forms_title: "Current marks spreadsheets:"
     mark_message: "Your mark:"
 
@@ -401,7 +402,7 @@ en:
         group_repo_collision: "Creating group '{{group_name}}' caused repository collision (Repository name was: '{{repo_name}}'). Error message: '{{error}}'"
         marks_released_for_grade_entry_form: "Marks released for marks spreadsheet '{{grade_entry_form}}', ID: '{{grade_entry_form_id}}' (for {{number_students}} students)."
         marks_unreleased_for_grade_entry_form: "Marks unreleased for marks spreadsheet '{{grade_entry_form}}', ID: '{{grade_entry_form_id}}' (for {{number_students}} students)."
-    
+
     ensure_config:
       path_not_writable: "The setting {{constant_name}} with path {{file_name}} is not writable. Please double check the setting in {{config_location}}."
       path_not_readable: "The setting {{constant_name}} with path {{file_name}} is not readable. Please double check the setting in {{config_location}}."
@@ -467,7 +468,7 @@ en:
         could_not_find_source: "Could not find source assignment for cloning groups"
         could_not_find_target: "Could not find target assignment for cloning groups"
         groups_created: "Groups created"
-    
+
     results:
       title:  "Assignment {{assignment_name}} : {{group_name}}"
       results_name:  "Results"
@@ -475,13 +476,13 @@ en:
       must_select_a_group:  "You must select at least one group to update"
       editing_after_release_fail: "The marks have been released. You cannot change the grades."
       could_not_find_file: "Could not find {{filename}} in repository {{repository_name}}"
-    
+
     mark:
       error:
         save: "Could not save this mark!: "
         validate_flexible: "must be between 0 and the maximum mark of the criterion"
         validate_rubric: "must be an integer between 0 and 4"
-        
+
     # Student's View (admin)
     students:
       manage_students: "Manage Students"
@@ -512,7 +513,7 @@ en:
     fields specified near the upload form."
     invalid_group_warning: "Your group is currently invalid. You probably haven't met the group size minimum. You may not be able to submit anything, and your work may not be graded, until you have met this minimum. "
     rejected_invitation: "declined"
-    
+
     #Sutdent's View (student)
     student:
       assignment: "Assignment {{short_identifier}}"
@@ -572,7 +573,7 @@ en:
         invalid_file_name: "Invalid file name on submitted file"
         missing_file: "Could not download {{file_name}}: {{message}}.  File may be missing."
         expect_filter: "Expected a filter on select full"
-    
+
     #Graders' View
     graders:
       create_new_grader: "Create a new Grader"
@@ -594,7 +595,7 @@ en:
         download_list: "Download TA list in CSV format"
         begin_annotation: "{{comment_start}} ANNOTATION {{id}}: {{text}} {{comment_end}}"
         end_annotation: "{{comment_start}} END ANNOTATION {{id}} {{comment_end}}"
-    
+
     #Admins' View
     admins:
       manage_admins: "Manage Admins"
@@ -603,13 +604,13 @@ en:
       edit_admin:       "Edit an Admin"
       success: "{{user_name}} has been updated"
       admins: "Admins"
-      upload: 
+      upload:
         not_added: "The following Admins have not been successfully added:"
         make_sure: "Make sure that:"
         admins_names: "Admin names are alphanumeric"
         each_field: "Each field is separated by a comma (no spaces)"
         each_line: "Each line has the required fields specified above"
-        
+
     add_student:
       success: "Student {{user_name}} added."
       fail:
@@ -617,7 +618,7 @@ en:
         dne:  "Could not add {{user_name}} - this student does not exist."
         hidden:  "Could not add {{user_name}} - this student's account has been disabled."
         already_grouped: "Could not add {{user_name}} - this student is already a member of another group."
-    
+
     create_group:
       fail:
         due_date_passed: "Could not create group - the due date for this assignment has passed and there are either no grace periods allowed, or the grace period for this assignment has also passed."
@@ -654,7 +655,7 @@ en:
     confirm_bulk_action:  "Are you sure you want to perform this bulk action?"
     hide_students: "Hide Students"
     unhide_students: "Unhide Students"
-    
+
     annotations:
       annotation_category: "Annotation Category"
       no_annotation_categories: "There are no annotation categories, yet."
@@ -687,20 +688,20 @@ en:
         download_csv: "Download in CSV Format"
         download_yml: "Download in YML Format"
       one_time_only:  "One Time Only"
-    
+
     submission_rules:
       submission_rule:
         description: "This is the description of the SubmissionRule class.  Since only subclasses of SubmissionRule should be attached to an Assignment, this message should never be seen."
         commit_after_collection_message: "This message is displayed when students submit code after the collection date.  Since SubmissionRule is to be subclassed, and not referenced directly by an Assignment, this particular message should never be displayed to students."
         overtime_message:  "This message is displayed to students when they view their file manager after the assignment due date has passed."
-        
+
       no_late_submission_rule:
         name: "No Late Submission Rule"
         description: "No penalties will be applied to late assignments"
         commit_after_late_message: "The due date for this assignment has passed.  Your changes have been recorded, but will not be included in the grading"
         no_late_message: "The due date for this assignment has passed.  Only what was in your folder at the due date will be graded."
         form_description:  "Accept no late submissions"
-   
+
       grace_period_submission_rule:
         name: "Grace Period Submission Rule"
         short_name:  "Grace Period"
@@ -748,13 +749,13 @@ en:
       button:
         load: "Load"
       no_files_available: "[No test results available]"
-    
+
     criteria_csv_error:
       incomplete_row: "contains too little information."
       name_not_unique: "criterion name already used in the current assignment."
       max_zero: "maximum value is zero or not a number."
       weight_not_number: "weight is not a number."
-      
+
     csv_special_characters_html: "
     <p>If you wish to use a comma (,) in a CSV field, you should surround that whole field with double quotes (\").<br />
     If you wish to use double quotes in a CSV field, you should surround the field with double quotes and<br />
@@ -770,7 +771,7 @@ en:
       name: "Flexible criterion name"
       max: "Maximum mark"
       description: "Description"
-      description_hint: "You may use simple HTML tags in this field. Save changes to see a preview." 
+      description_hint: "You may use simple HTML tags in this field. Save changes to see a preview."
       download:
         title: "Download Flexible Criteria File"
         prompt: "Flexible criteria are currently available in CSV."
@@ -792,7 +793,7 @@ en:
       name: "Rubric criterion name"
       move_up: "Move up"
       move_down: "Move down"
-      level: 
+      level:
         levels: "Levels"
         level_index: "Level {{index}}"
       download:
@@ -829,7 +830,7 @@ en:
       grade: "Grade"
       x_mark: "x Mark"
       weight: "Weight"
-    
+
     notes:
         note_on: "{{user_name}} on <b>{{display_for}}</b>"
         add_new: "New"
@@ -855,7 +856,7 @@ en:
             error_permissions: "You do not have sufficient permissions to delete this note."
         new:
             note_message: "Notes message"
-            title: "Create Note" 
+            title: "Create Note"
             loading_groupings: "Loading Groups..."
             loading_selector: "Loading selector..."
             invalid_selector: "Invalid selector chosen."
@@ -866,7 +867,7 @@ en:
             title: "Edit Note"
         update:
             success: "Note was successfully updated."
-        
+
     add_criterion:                "Add Criterion"
     criteria_edit_total_mark:     "This criterion will be marked out of {{criterion_total_mark}}"
     criterion_saved_success:   "Criterion was successfully saved"
@@ -886,7 +887,7 @@ en:
       headings and descriptions can be modified.  The weight of each criterion
       can also be changed. To change the weight to a fractional number simply
       type in a decimal number into the text box.
-      Note that the number of levels cannot be changed.  However if no 
+      Note that the number of levels cannot be changed.  However if no
       description is set for a level, that level will not be used."
     help_ordering_criteria_message: "
       Graders will see the criteria in the order that they are displayed to
@@ -898,7 +899,7 @@ en:
     students_without_a_group_list_message: "These students don't have a group yet:"
     no_students_without_a_group_message: "All students are in a group."
     past_due_date_warning: "Due date for this assignment is in the past."
-    
+
     section:
       name: "Name"
       legend: "Section"
@@ -909,7 +910,7 @@ en:
       create:
         success: "Section successfully created."
         error:   "Failed to create section."
-      update: 
+      update:
         success: "Section successfully updated."
         error:   "Failed to update section."
 
@@ -924,13 +925,13 @@ en:
         long_date: "%B %d, %Y: %I:%M%p"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%B %d, %Y"
- 
+
       day_names: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
       abbr_day_names: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
       month_names: [~, January, February, March, April, May, June, July, August, September, October, November, December]
       abbr_month_names: [~, Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec]
       order: [ :year, :month, :day ]
-  
+
     time:
       formats:
         default: "%d %B %Y %H:%M"
@@ -947,14 +948,14 @@ en:
         ant_date: "%B-%d-%Y_%I:%M"
       am: 'am'
       pm: 'pm'
-      
+
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "No grader assigned yet."
-    
+
     locale_not_available: "{{locale}} translation not available!"
     external_authentication_not_supported: "External authentication not supported on your platform!"
     account_disabled: "This account has been disabled"
-    
+
     #Test Framework
     test_framework:
       test_framework: "Test framework"

@@ -10,6 +10,7 @@ Sham.student_user_name {|i| "machinist_student#{i}"}
 Sham.ta_user_name {|i| "machinist_ta#{i}"}
 Sham.first_name {Faker::Name.first_name}
 Sham.last_name {Faker::Name.last_name}
+Sham.api_key {|i| "API_KEY_N_#{i}"}
 
 Sham.filename { "#{Faker::Lorem.words(1)[0]}.java"}
 Sham.group_name {|i| "machinist_group#{i}"}
@@ -29,6 +30,7 @@ Sham.rubric_criterion_name {|i| "machinist_rubric_criterion_#{i}"}
 Sham.date {rand(50).days.from_now}
 Sham.name {Faker::Name.name}
 
+
 Sham.filename {|i| "file#{i}"}
 Sham.path {|i| "path#{i}"}
 
@@ -38,11 +40,12 @@ Admin.blueprint do
   user_name {Sham.admin_user_name}
   first_name {Sham.first_name}
   last_name {Sham.last_name}
+  api_key
 end
 
 AnnotationCategory.blueprint do
-  assignment 
-  annotation_category_name 
+  assignment
+  annotation_category_name
 end
 
 AnnotationText.blueprint do
@@ -122,6 +125,7 @@ end
 
 Group.blueprint do
   group_name
+  repo_name {group_name}
 end
 
 Grouping.blueprint do
@@ -134,7 +138,7 @@ ImageAnnotation.blueprint do
   x2 {10}
   y1 {0}
   y2 {10}
-  submission_file 
+  submission_file
   annotation_text {AnnotationText.make(
     :annotation_category => AnnotationCategory.make(:assignment => submission_file.submission.grouping.assignment)
     )}
@@ -198,7 +202,7 @@ StudentMembership.blueprint do
   membership_status {StudentMembership::STATUSES[:pending]}
 end
 
-Submission.blueprint do 
+Submission.blueprint do
   grouping
   submission_version {1}
   submission_version_used {true}
@@ -207,9 +211,9 @@ Submission.blueprint do
 end
 
 SubmissionFile.blueprint do
-  submission 
-  filename 
-  path 
+  submission
+  filename
+  path
 end
 
 PenaltyPeriodSubmissionRule.blueprint do
@@ -226,6 +230,7 @@ Ta.blueprint do
   user_name {Sham.ta_user_name}
   first_name {Sham.first_name}
   last_name {Sham.last_name}
+  api_key
 end
 
 TaMembership.blueprint do
