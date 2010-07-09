@@ -1060,7 +1060,7 @@ div#login div.error {
    color: #464646;
    }
 
-.block h3, .section h3{
+.block h3, .section h3, #section h3{
    font-family: "Georgia";
    font-style: italic;
    font-weight: normal;

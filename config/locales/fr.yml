@@ -50,6 +50,7 @@ fr:
     # app/views/api/_key_display.html.erb
     api_key:            "Votre clé - API"
     api_key_unavailable:        "Non disponible"
+    reset_api_key:        "Générer une nouvelle clé"
 
     # app/views/layouts/_menu.html.erb
     dashboard:          "Tableau de bord"

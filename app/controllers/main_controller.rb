@@ -1,21 +1,21 @@
 
-# Controller responsible for providing login and logout processes 
+# Controller responsible for providing login and logout processes
 # as well as displaying main page
 class MainController < ApplicationController
-  
+
   include MainHelper
   protect_from_forgery :except => [:login, :page_not_found]
 
-  # check for authorization 
+  # check for authorization
   before_filter      :authorize_for_user,     
                      :except => [:login, 
                                  :page_not_found]
 
   #########################################################################
   # Authentication
-  
-  # Handles login requests; usually redirected here when trying to access 
-  # the website and has not logged in yet, or session has expired.  User 
+
+  # Handles login requests; usually redirected here when trying to access
+  # the website and has not logged in yet, or session has expired.  User
   # is redirected to main page if session is still active and valid.
 
   def login
@@ -30,18 +30,18 @@ class MainController < ApplicationController
         return
       end
     end
-    
+
     return unless request.post?
-    
+
     # strip username
     params[:user_login].strip!
-    
+
     # check for blank username and password
     blank_login = params[:user_login].blank?
     blank_pwd = params[:user_password].blank?
     flash[:login_notice] = get_blank_message(blank_login, blank_pwd)
     redirect_to(:action => 'login') && return if blank_login || blank_pwd
-    
+
     # Two stage user verification: authentication and authorization
     authenticate_response = User.authenticate(params[:user_login], 
                                               params[:user_password])
@@ -69,15 +69,15 @@ class MainController < ApplicationController
       flash[:login_notice] = I18n.t(:login_failed)
       return
     end
-    
+
     # Has this student been hidden?
     if found_user.student? && found_user.hidden
       flash[:login_notice] = I18n.t("account_disabled")
       redirect_to(:action => 'login') && return
     end
-    
+
     self.current_user = found_user
-    
+
     if logged_in?
       uri = session[:redirect_uri]
       session[:redirect_uri] = nil
@@ -89,7 +89,7 @@ class MainController < ApplicationController
       flash[:login_notice] = I18n.t(:login_failed)
     end
   end
-  
+
   # Clear the sesssion for current user and redirect to login page
   def logout
     clear_session
@@ -100,7 +100,7 @@ class MainController < ApplicationController
                          :user_name => current_user.user_name))
     redirect_to :action => 'login'
   end
-  
+
   def index
     @current_user = current_user
     if @current_user.student? or  @current_user.ta?
@@ -109,10 +109,22 @@ class MainController < ApplicationController
     end
     render :action => 'index', :layout => 'content'
   end
-  
+
   def about
     # dummy action for remote rjs calls
     # triggered by clicking on the about icon
+  end
+
+  def reset_api_key
+    render :file => "#{RAILS_ROOT}/public/404.html", :status => 404 and return unless request.post?
+    # Students shouldn't be able to change their API key
+    if !@current_user.student?
+      @current_user.reset_api_key
+      @current_user.save
+    else
+      render :file => "#{RAILS_ROOT}/public/404.html", :status => 404 and return
+    end
+    render :action => 'api_key_replace', :locals => {:user => @current_user }
   end
 
   # Render 404 error (page not found) if no other route matches.
@@ -120,5 +132,5 @@ class MainController < ApplicationController
   def page_not_found
     render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
   end
-  
+
 end
