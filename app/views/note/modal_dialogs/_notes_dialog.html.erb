@@ -47,7 +47,7 @@
   # See:  http://awesomerails.wordpress.com/2007/11/08/disable_with-kills-form_remote_tags-ajaxiness/
 %>
                 <%= submit_tag I18n.t('notes.save'), :onclick => "$('notes_error').hide();$(this).setValue('#{I18n.t('working')}');$(this).disable();", :id => "notes_submit" %>
-                <button onClick="modalNotesGroup.close(); return false;">
+                <button onclick="modalNotesGroup.close(); return false;">
                     <%=h I18n.t(:cancel) %>
                 </button>
             </p>

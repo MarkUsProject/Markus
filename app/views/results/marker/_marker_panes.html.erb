@@ -6,7 +6,7 @@
     </ul>  
     <div id="code_holder" class="tabbedArea">
       <div id="annotation_menu">
-        <button id="new_annotation_button" onClick="make_new_annotation(); return false;"><%= I18n.t("marker.new_annot")%></button>
+        <button id="new_annotation_button" onclick="make_new_annotation(); return false;"><%= I18n.t("marker.new_annot")%></button>
         <%= render :partial => "annotations/annotation_categories", :locals => {:annotation_categories => annotation_categories}%>
          <div class="clear"></div>  
       </div> <!-- End of annotation_menu -->
@@ -95,8 +95,8 @@
       </select>
       </p>
       <p style="margin-top: 5px; border-top: 1px solid #000000; padding-top: 10px;">
-        <button onClick="submit_new_annotation($F('new_annotation_content'), $F('new_annotation_category'), $F('x1'), $F('x2'), $F('y1'), $F('y2'));"><%= I18n.t("marker.annotation.new_annotation") %></button>
-        <button onClick="modal.close();"><%= I18n.t("cancel") %></button>
+        <button onclick="submit_new_annotation($F('new_annotation_content'), $F('new_annotation_category'), $F('x1'), $F('x2'), $F('y1'), $F('y2'));"><%= I18n.t("marker.annotation.new_annotation") %></button>
+        <button onclick="modal.close();"><%= I18n.t("cancel") %></button>
       </p>
 
     </div>
