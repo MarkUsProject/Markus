@@ -12,7 +12,7 @@ Rails::Initializer.run do |config|
   # -- all .rb files in that directory are automatically loaded.
   # See Rails::Configuration for more options.
 
-  # Only load the plugins named here, in the order given. By default, all plugins 
+  # Only load the plugins named here, in the order given. By default, all plugins
   # in vendor/plugins are loaded in alphabetical order.
   # :all can be used as a placeholder for all plugins not explicitly named
   config.plugins = [ :ssl_requirement, :auto_complete, :calendar_date_select, :all ]
@@ -25,27 +25,9 @@ Rails::Initializer.run do |config|
   # which is used in the assignments_controller.rb
   config.time_zone = 'Eastern Time (US & Canada)'
 
-  # Your secret key for verifying cookie session data integrity.
-  # If you change this key, all old sessions will become invalid!
-  # Make sure the secret is at least 30 characters and all random, 
-  # no regular words or you'll be exposed to dictionary attacks.
-  #
-  # Please make sure, :session_key is named uniquely if you are hosting
-  # several MarkUs instances on one machine. Also, make sure you are changing
-  # the :secret string to something else than you find below.
-  config.action_controller.session = {
-    :key => '_markus_session',
-    :secret      => '650d281667d8011a3a6ad6dd4b5d4f9ddbce14a7d78b107812dbb40b24e234256ab2c5572c8196cf6cde6b85942688b6bfd337ffa0daee648d04e1674cf1fdf6'
-  }
-
-  # Use the database for sessions instead of the cookie-based default,
-  # which shouldn't be used to store highly confidential information
-  # (create the session table with "rake db:sessions:create")
-  config.action_controller.session_store = :active_record_store
-
   # We need some additional load paths (e.g. for the API)
   #   Note for developers: in Ruby %W( a b c ) is equivalent to [ 'a', 'b', 'c' ]
-  config.load_paths += %W(  
+  config.load_paths += %W(
                             app/controllers/api
                             lib/classes
                          )
