@@ -9,7 +9,7 @@ fr:
 
     # app/views/main/login.html.erb
     welcome_to:         "Bienvenue sur MarkUs!"
-    welcome_to_markus:     "{{user_name}}, bienvenue sur MarkUs, l'outil d'évaluation en ligne."
+    welcome_to_markus:     "%{user_name}, bienvenue sur MarkUs, l'outil d'évaluation en ligne."
     log_in:             "Se connecter"
     logging_in:         "Connexion"
     login:              "Identifiant"
@@ -22,7 +22,7 @@ fr:
 
     # app/views/layouts/_header.html.erb
     log_out:            "Déconnexion"
-    logged_in_as:       "| Connecté en tant que <span id=\"user_name\"><b>{{first_name}} {{last_name}}</b> ({{user_name}})</span> |"
+    logged_in_as:       "| Connecté en tant que <span id=\"user_name\"><b>%{first_name} %{last_name}</b> (%{user_name})</span> |"
     working:            "Chargement..."
 
     # app/views/main/_about_content.html.erb
@@ -72,8 +72,8 @@ fr:
     message:  "Informations "
     remove:  "Enlever"
     download_csv_grade_report:  "Liste des étudiants et des devoirs au format CSV"
-    days_and_hours_left:      "({{days}} jour(s) et {{hours}} heure(s))"
-    days_left:          "({{days}} jour(s) restant(s))"
+    days_and_hours_left:      "(%{days} jour(s) et %{hours} heure(s))"
+    days_left:          "(%{days} jour(s) restant(s))"
     short_identifier:   "Identifiant du projet"
     description:        "Description "
     shortened_date:     "Date"
@@ -84,12 +84,12 @@ fr:
     manage_course_work: "Gestion du Cours"
     repository_folder:  "Dossier du projet"
     assignment:
-        assignment: "Projet {{short_identifier}}"
+        assignment: "Projet %{short_identifier}"
         name:           "Nom du projet"
         update_success: "Projet mis à jour"
         create_success:        "Projet créé"
-        error: "N'a pas pu mettre en place la règle d'envoi : #{{message}}"
-        not_valid_submission_rule: "{{type}} n'est pas une règle d'envoi valide"
+        error: "N'a pas pu mettre en place la règle d'envoi : #%{message}"
+        not_valid_submission_rule: "%{type} n'est pas une règle d'envoi valide"
         rules:           "Règles du projet"
         edit:           "Edition du projet :"
         properties:     "Propriétés du projet"
@@ -191,7 +191,7 @@ fr:
       previous_submission:  "Envoi précédent"
       next_submission:      "Envoi suivant"
       marking_status:       "État de l'évaluation : "
-      notes:                "Remarques (<span id=\"number_of_notes\">{{notes}}</span>)"
+      notes:                "Remarques (<span id=\"number_of_notes\">%{notes}</span>)"
       include_annotations: "Ajouter les annotations : "
       marks:
         total_mark: "Notes totales : "
@@ -216,7 +216,7 @@ fr:
         translated_to_points: "Convertis en points : "
         final_mark: "Note finale : "
       annotation:
-        from_line_to: "{{file_path}} : Lignes {{line_start}} à {{line_end}}"
+        from_line_to: "%{file_path} : Lignes %{line_start} à %{line_end}"
         no_annotation_in_this_category: "Il n'y a pas d'annotations dans cette catégorie"
         new_annotation: "Nouvelle annotation"
         annotation_category: "Catégorie de l'annotation"
@@ -237,7 +237,7 @@ fr:
     seperate_multiple_with_commas:  "Séparer les noms d'utilisateur par des virgules."
     csv_valid_format:   "Erreur durant la lecture du fichier CSV que vous venez d'envoyer.  Assurez-vous que le fichier soit bien un fichier CSV valide et que chaque ligne finisse par un retour chariot. Aucun changement effectué."
     csv_invalid_lines: "Les lignes suivantes du fichier CSV sont invalides : "
-    csv_upload_user_duplicate: "Nom d'utilisateur déjà inscrit (conflit): {{user_name}}"
+    csv_upload_user_duplicate: "Nom d'utilisateur déjà inscrit (conflit): %{user_name}"
     collect_and_grade_overwrite_warning:  "Récupérer et noter cette révision effacera les précédentes récupération et évaluations de ce groupe sur ce projet. Êtes vous sûr de vouloir faire cela ?"
     uncommitted_changes_warning: "Les changements n'ont pas encore été enregistrés. Êtes vous sûr de vouloir continuer ?"
     discard_changes_message: "Êtes vous sûr d'annuler les changements?"
@@ -245,9 +245,9 @@ fr:
     still_working_warning: "Il y a des travaux non terminés. Ils pourraient ne pas être sauvegardés si vous quittez maintenant."
 
     csv:
-      student_not_found: "L'étudiant '{{user_name}}' n'a pas été trouvé."
-      repo_collision_warning: "Attention : le répertoire '{{repo_name}}' existe déjà. Le nom du groupe était '{{group_name}}'."
-      line_nr_csv_file_prefix: "ligne {{line_number}} du fichier csv :"
+      student_not_found: "L'étudiant '%{user_name}' n'a pas été trouvé."
+      repo_collision_warning: "Attention : le répertoire '%{repo_name}' existe déjà. Le nom du groupe était '%{group_name}'."
+      line_nr_csv_file_prefix: "ligne %{line_number} du fichier csv :"
       errors_and_warnings_msg: "Les lignes suivantes ont entraîné des erreurs et/ou des warnings :"
       group_to_grader: "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux groupes."
 
@@ -261,29 +261,29 @@ fr:
       per_page: "par page"
       jump_to: "Aller à la page : "
       show: "Afficher"
-      of:   "{{low}} - {{high}} sur {{total}}"
+      of:   "%{low} - %{high} sur %{total}"
       select: "Sélectionner : "
 
     selects:
-      all_on_page: "Les {{page_items}} éléments de cette page sont séléctionnés."
-      all: "Tous les éléments ({{total_items}} au total) ont été sélectionnés."
-      select_full: "Cliquer ici pour sélectionner tous les éléments ({{total_items}} au total)."
+      all_on_page: "Les %{page_items} éléments de cette page sont séléctionnés."
+      all: "Tous les éléments (%{total_items} au total) ont été sélectionnés."
+      select_full: "Cliquer ici pour sélectionner tous les éléments (%{total_items} au total)."
       select_clear: "Cliquer ici pour annuler la sélection."
 
     browse_submissions:
       find_different_revision: "Trouver une autre révision"
       find_by_revision_timestamp: "Par date de révision"
       find_by_revision_number:    "Par numéro de révision"
-      viewing_revision:           "Révision : #<span id=\"current_revision_number_display\">{{revision_number}}</span>"
+      viewing_revision:           "Révision : #<span id=\"current_revision_number_display\">%{revision_number}</span>"
       current_path:         "Chemin actuel : "
       root:                 "[racine]"
       collect_and_grab:     "Récupérer et évaluer cette révision"
-      could_not_collect:    "N'a pas pu récuprérer cette révision pour le groupe {{group_name}} - La date de de récupération n'a pas encore été atteinte."
+      could_not_collect:    "N'a pas pu récuprérer cette révision pour le groupe %{group_name} - La date de de récupération n'a pas encore été atteinte."
       release_marks:        "Montrer les notes"
       unrelease_marks:      "Cacher les notes"
       group_name:           "Nom du groupe"
       repository:           "Répertoire"
-      repository_name:      "Répertoire : {{repository}}"
+      repository_name:      "Répertoire : %{repository}"
       commit_date:          "Date d'envoi (commit)"
       marking_state:        "Affichage de la note"
       grace_credits_used:   "Utilisation des \"grace credits\""
@@ -295,8 +295,8 @@ fr:
       show_released:        "Notes affichées"
       show_assigned_to_me:  "Montrer les groupes qui me sont assignés"
       grading_can_begin:    "L'évaluation peut commencer"
-      grading_can_begin_after: "L'évaluation commencera à partir du {{time}}"
-      workspace:            "Projet : {{short_identifier}}"
+      grading_can_begin_after: "L'évaluation commencera à partir du %{time}"
+      workspace:            "Projet : %{short_identifier}"
       csv_report:           "Rapport CSV"
       detailled_csv_report: "Rappost CSV détaillé"
       subversion_repo_list: "Liste des dépôts Subversion"
@@ -338,8 +338,8 @@ fr:
         no_grade_entry_items_message: "Il n'y a pas de colonnes pour cette table."
         must_select_a_student: "Vous devez sélectionner au moins un étudiant."
         expected_filter: "Expected a filter on select full."
-        successfully_changed: "Mise à jour de {{numGradeEntryStudentsChanged}} étudiants."
-        update_error: "L'affichage de la note pour l'étudiant {{user_name}} n'a pas pu être enregistré."
+        successfully_changed: "Mise à jour de %{numGradeEntryStudentsChanged} étudiants."
+        update_error: "L'affichage de la note pour l'étudiant %{user_name} n'a pas pu être enregistré."
         errors: "Erreurs"
         no_mark: "NC"
         marking_state: "Affichage de la note aux étudiants"
@@ -350,7 +350,7 @@ fr:
         incomplete_header: "Totaux ou noms manquants."
         incomplete_row: "Ne contient pas assez d'informations."
         invalid_user_name: "Nom d'utilisateur invalide."
-        upload_success: "Notes mises à jour : {{num_updates}} mise(s) à jour."
+        upload_success: "Notes mises à jour : %{num_updates} mise(s) à jour."
         upload_title: "Envoyer un fichier de notes CSV"
         upload_prompt: "Sélectionner un fichier CSV à envoyer"
         upload_format_html: "<p>Le fichier devra être au format suivant : </p>
@@ -368,51 +368,51 @@ fr:
     student_interface_assignments: "Vos projets"
 
     markus_logger:
-        user_login_message: "L'utilisateur '{{user_name}}' s'est connecté."
-        user_wrong_credentials: "Mauvaise combinaison utilisateur/mot de passe pour '{{user_name}}'."
-        user_login_error: "L'utilisateur '{{user_name}}' n'a pas pu se connecter."
-        user_logout_message: "L'utilisateur '{{user_name}}' s'est déconnecté."
-        assignment_creation_success: "Le projet '{{assignment}}' a été créé."
-        assignment_creation_failure: "La création du projet '{{assignment}}' a échoué : '{{error}}' (utilisateur : '{{user_name}}')."
-        assignment_grouping_creation_success:  "Un groupe avec l'étudiant '{{student}}' pour le projet '{{id}}' ayant pour nom '{{name}}' a été créé."
-        assignment_edit_success: "Le projet '{{id}}' ayant pour nom '{{name}}' a été édité."
-        assignment_edit_failure: "Erreur durant l'édition du projet '{{id}}' ayant pour nom '{{name}}': '{{error}}'."
-        student_accepted_invitation: "L'étudiant '{{user_name}}' a rejoint le groupe '{{group}}' (invitation acceptée)."
-        student_invited_student: "L'étudiant '{{inviter}}' a invité '{{invitee}}'."
-        student_cancelled_invitation: "L'étudiant '{{inviter}}' a annulé l'inviation pour '{{invitee}}'."
-        student_declined_invitation: "L'étudiant '{{user_name}}' a décliné l'invitation pour le groupe '{{group}}'."
-        student_invitation_failure: "L'étudiant '{{inviter}}' n'a pas réussi à inviter '{{invitee}}'. Erreur : '{{error}}'."
-        student_created_group: "L'étudiant '{{user_name}}' a créé un groupe."
-        student_create_group_fail: "Échec pour la création du groupe. Utilisateur : '{{user_name}}', Erreur : '{{error}}'."
-        student_deleted_group: "L'étudiant '{{user_name}}' a supprimé le groupe '{{group}}'."
-        student_delete_group_fail: "Échec dans la suppression du groupe '{{group}}'. Utilisateur : '{{user_name}}', Erreur : '{{error}}'."
-        student_delete_group_fail_no_grouping: "Échec de la suppression du groupe, car aucun groupe n'a accepté l'étudiant. Utilisateur : '{{user_name}}', Erreur: '{{error}}'."
+        user_login_message: "L'utilisateur '%{user_name}' s'est connecté."
+        user_wrong_credentials: "Mauvaise combinaison utilisateur/mot de passe pour '%{user_name}'."
+        user_login_error: "L'utilisateur '%{user_name}' n'a pas pu se connecter."
+        user_logout_message: "L'utilisateur '%{user_name}' s'est déconnecté."
+        assignment_creation_success: "Le projet '%{assignment}' a été créé."
+        assignment_creation_failure: "La création du projet '%{assignment}' a échoué : '%{error}' (utilisateur : '%{user_name}')."
+        assignment_grouping_creation_success:  "Un groupe avec l'étudiant '%{student}' pour le projet '%{id}' ayant pour nom '%{name}' a été créé."
+        assignment_edit_success: "Le projet '%{id}' ayant pour nom '%{name}' a été édité."
+        assignment_edit_failure: "Erreur durant l'édition du projet '%{id}' ayant pour nom '%{name}': '%{error}'."
+        student_accepted_invitation: "L'étudiant '%{user_name}' a rejoint le groupe '%{group}' (invitation acceptée)."
+        student_invited_student: "L'étudiant '%{inviter}' a invité '%{invitee}'."
+        student_cancelled_invitation: "L'étudiant '%{inviter}' a annulé l'inviation pour '%{invitee}'."
+        student_declined_invitation: "L'étudiant '%{user_name}' a décliné l'invitation pour le groupe '%{group}'."
+        student_invitation_failure: "L'étudiant '%{inviter}' n'a pas réussi à inviter '%{invitee}'. Erreur : '%{error}'."
+        student_created_group: "L'étudiant '%{user_name}' a créé un groupe."
+        student_create_group_fail: "Échec pour la création du groupe. Utilisateur : '%{user_name}', Erreur : '%{error}'."
+        student_deleted_group: "L'étudiant '%{user_name}' a supprimé le groupe '%{group}'."
+        student_delete_group_fail: "Échec dans la suppression du groupe '%{group}'. Utilisateur : '%{user_name}', Erreur : '%{error}'."
+        student_delete_group_fail_no_grouping: "Échec de la suppression du groupe, car aucun groupe n'a accepté l'étudiant. Utilisateur : '%{user_name}', Erreur: '%{error}'."
 
-        annotation_created: "Annotation '{{annotation}}' créée par '{{user_name}}'."
-        ta_annotation_reused: "L'annotation '{{annotation}}' a été réutilisée par '{{user_name}}'."
-        user_viewed_submission: "L'utilisateur '{{user_name}}' a regardé l'envoi (id: {{submission_id}}) pour le projet '{{assignment}}' du groupe '{{group_name}}'."
-        user_update_mark_submission: "L'utilisateur '{{user_name}}' a mis à jour les notes pour le fichier (id: {{submission_id}}) du projet '{{assignment}}' du groupe '{{group_name}}'."
-        user_update_mark_submission_fail: "Erreur durant la mise à jour des notes pour le projet. Utilisateur : '{{user_name}}', Id de l'envoi : '{{submission_id}}', Projet : '{{assignment}}', Groupe : '{{group_name}}'."
-        marks_released_for_assignment: "Les notes sont affichées pour le projet '{{assignment}}', ID : '{{assignment_id}}' (pour  {{number_groups}} groupes)."
-        marks_unreleased_for_assignment: "Les notes ne sont pas affichées pour le projet '{{assignment}}', ID : '{{assignment_id}}' (pour {{number_groups}} groupes)."
-        student_submitted_file: "L'étudiant '{{user_name}}' a envoyé le fichier '{{file_name}}' pour le projet '{{assignment}}'."
-        student_deleted_file: "L'étudiant '{{user_name}}' a supprimé le fichier '{{file_name}}' pour le projet '{{assignment}}'."
-        student_replaced_file: "L'étudiant '{{user_name}}' a remplacé le contenu du fichier '{{file_name}}' pour le projet '{{assignment}}'."
-        student_viewed_result: "L'étudiant '{{user_name}}' a vu les résultats pour le projet '{{assignment}}'."
-        group_repo_collision: "La création du groupe '{{group_name}}' a créé un conflit dans les répertoires (Le nom du répertoire était : '{{repo_name}}'). Message d'erreur : '{{error}}'"
-        marks_released_for_grade_entry_form: "Les notes ont été affichées pour la feuille de notes '{{grade_entry_form}}', ID: '{{grade_entry_form_id}}' (pour {{number_students}} étudiants)."
-        marks_unreleased_for_grade_entry_form: "Les notes ont été cachées pour la feuille de notes '{{grade_entry_form}}', ID: '{{grade_entry_form_id}}' (pour {{number_students}} étudiants)."
+        annotation_created: "Annotation '%{annotation}' créée par '%{user_name}'."
+        ta_annotation_reused: "L'annotation '%{annotation}' a été réutilisée par '%{user_name}'."
+        user_viewed_submission: "L'utilisateur '%{user_name}' a regardé l'envoi (id: %{submission_id}) pour le projet '%{assignment}' du groupe '%{group_name}'."
+        user_update_mark_submission: "L'utilisateur '%{user_name}' a mis à jour les notes pour le fichier (id: %{submission_id}) du projet '%{assignment}' du groupe '%{group_name}'."
+        user_update_mark_submission_fail: "Erreur durant la mise à jour des notes pour le projet. Utilisateur : '%{user_name}', Id de l'envoi : '%{submission_id}', Projet : '%{assignment}', Groupe : '%{group_name}'."
+        marks_released_for_assignment: "Les notes sont affichées pour le projet '%{assignment}', ID : '%{assignment_id}' (pour  %{number_groups} groupes)."
+        marks_unreleased_for_assignment: "Les notes ne sont pas affichées pour le projet '%{assignment}', ID : '%{assignment_id}' (pour %{number_groups} groupes)."
+        student_submitted_file: "L'étudiant '%{user_name}' a envoyé le fichier '%{file_name}' pour le projet '%{assignment}'."
+        student_deleted_file: "L'étudiant '%{user_name}' a supprimé le fichier '%{file_name}' pour le projet '%{assignment}'."
+        student_replaced_file: "L'étudiant '%{user_name}' a remplacé le contenu du fichier '%{file_name}' pour le projet '%{assignment}'."
+        student_viewed_result: "L'étudiant '%{user_name}' a vu les résultats pour le projet '%{assignment}'."
+        group_repo_collision: "La création du groupe '%{group_name}' a créé un conflit dans les répertoires (Le nom du répertoire était : '%{repo_name}'). Message d'erreur : '%{error}'"
+        marks_released_for_grade_entry_form: "Les notes ont été affichées pour la feuille de notes '%{grade_entry_form}', ID: '%{grade_entry_form_id}' (pour %{number_students} étudiants)."
+        marks_unreleased_for_grade_entry_form: "Les notes ont été cachées pour la feuille de notes '%{grade_entry_form}', ID: '%{grade_entry_form_id}' (pour %{number_students} étudiants)."
 
     ensure_config:
-      path_not_writable: "The setting {{constant_name}} with path {{file_name}} is not writable. Please double check the setting in {{config_location}}."
-      path_not_readable: "The setting {{constant_name}} with path {{file_name}} is not readable. Please double check the setting in {{config_location}}."
-      file_does_not_execute: "The setting {{constant_name}} with path {{file_name}} does not execute properly. Please double check the setting in {{config_location}}."
-      error_writing_to_pipe: "Error writing to pipe. {{file_name}}, {{error}}. Please double check the setting in {{config_location}}."
+      path_not_writable: "The setting %{constant_name} with path %{file_name} is not writable. Please double check the setting in %{config_location}."
+      path_not_readable: "The setting %{constant_name} with path %{file_name} is not readable. Please double check the setting in %{config_location}."
+      file_does_not_execute: "The setting %{constant_name} with path %{file_name} does not execute properly. Please double check the setting in %{config_location}."
+      error_writing_to_pipe: "Error writing to pipe. %{file_name}, %{error}. Please double check the setting in %{config_location}."
     groups:
       manage_groups: "Gérer les groupes"
       another_assignment_group: "Utiliser les groupes d'un autre projet"
-      without_a_group: "Étudiants sans groupe (<span id=\"number_of_ungrouped_students\">{{length}}</span>)"
-      graders: "Correcteurs ({{graders}})"
+      without_a_group: "Étudiants sans groupe (<span id=\"number_of_ungrouped_students\">%{length}</span>)"
+      graders: "Correcteurs (%{graders})"
       all_grouping_counts: "Tous (<span id=\"all_groupings_count\"></span>)"
       valid_grouping_counts: "Valide(s) (<span id=\"valid_groupings_count\"></span>)"
       not_valid_grouping_counts: "Non valide(s) (<span id=\"invalid_groupings_count\"></span>)"
@@ -470,12 +470,12 @@ fr:
         groups_created: "Groupes créés"
 
     results:
-      title:  "Projet {{assignment_name}} : {{group_name}}"
+      title:  "Projet %{assignment_name} : %{group_name}"
       results_name:  "Résultats"
-      successfully_changed: "Les résultats  {{changed}} ont été mis à jour"
+      successfully_changed: "Les résultats  %{changed} ont été mis à jour"
       must_select_a_group:  "Vous devez sélectionner au moins un groupe à mettre à jour"
       editing_after_release_fail: "Les notes ont été dévoiléées, vous ne pouvez plus changer l'évaluation."
-      could_not_find_file: "N'a pas pu trouver le fichier {{filename}} dans le répertoire {{repository_name}}"
+      could_not_find_file: "N'a pas pu trouver le fichier %{filename} dans le répertoire %{repository_name}"
 
     mark:
       error:
@@ -487,9 +487,9 @@ fr:
     students:
       manage_students: "Gestion des étudiants"
       edit_student:    "Modification d'un étudiant"
-      edit_success: "{{user_name}} a été mis à jour."
+      edit_success: "%{user_name} a été mis à jour."
       create_new:      "Créer un nouvel étudiant"
-      create_success: "L'étudiant {{user_name}} a bien été créé"
+      create_success: "L'étudiant %{user_name} a bien été créé"
       students: "Étudiants"
       no_students_selected: "No students were selected, so no changes were made."
       upload:
@@ -516,23 +516,23 @@ fr:
 
     #Sutdent's View (student)
     student:
-      assignment: "Projet {{short_identifier}}"
+      assignment: "Projet %{short_identifier}"
       group_information: "Informations sur le groupe"
       group_not_valid: "Votre groupe n'est pas valide. Vous ne pouvez rien envoyer pour le moment"
       overview: "Vue d'ensemble"
-      last_revision_date: "Dernière révision : <br /><span class=\"info_date\">{{last_modified_date}}</span>"
+      last_revision_date: "Dernière révision : <br /><span class=\"info_date\">%{last_modified_date}</span>"
       files: "Fichiers"
-      missing_required_files: "<span class=\"info_number\">{{missing_files}}</span><span class=\"info_red\"> fichier(s) requis sont manquants</span>"
+      missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info_red\"> fichier(s) requis sont manquants</span>"
       no_submission_yet: "Vous n'avez encore rien envoyé"
       no_group_yet: "Vous ne faites pas encore partie d'un groupe"
       grace_date_passed: "et la période de grâce pour ce projet est terminée"
       not_allowed_to_form_group: "Vous n'êtes pas autorisé à former vous mêmes des groupes pour ce projet.
             Merci d'attendre que les correcteurs et les administrateurs forment des groupes."
       invitations: "Invitations"
-      invited_by: "Vous avez été invité par <span class=\"last_name\">{{inviter_last_name}}</span>{{inviter_first_name}}"
+      invited_by: "Vous avez été invité par <span class=\"last_name\">%{inviter_last_name}</span>%{inviter_first_name}"
       decline_invitation: "Êtes vous sûr de vouloir refuser cette invitation ?"
       form_own_group: "Former votre propre groupe"
-      form_group: "Les groupes doivent être composés de <strong>{{group_min}}</strong> à <strong>{{group_max}}</strong> étudiants."
+      form_group: "Les groupes doivent être composés de <strong>%{group_min}</strong> à <strong>%{group_max}</strong> étudiants."
       decline_invitation2: "Cela va décliner l'invitation que vous avez. Êtes vous sûr ?"
       your_group: "Votre groupe"
       modification_limited: "Pour le moment, les modifications sur le groupe sont très limitées.
@@ -544,7 +544,7 @@ fr:
       students_can_form_groups: "Les étudiants peuvent former des groupes."
       instructor_form_groups: "Les correcteurs/admins forment les groupes."
       student_work_alone: "Les étudiants travaillent seuls"
-      group_credits: "Votre groupe a <strong>{{available_grace_credits}}</strong> crédit(s) de grâce disponible"
+      group_credits: "Votre groupe a <strong>%{available_grace_credits}</strong> crédit(s) de grâce disponible"
       invite: "Inviter"
       please_wait: "Merci de patienter..."
       work_alone: "Travailleur seul"
@@ -556,22 +556,22 @@ fr:
       invited: "(invité)"
       inviter: "(créateur du groupe)"
       disinvite: "Annuler l'invitation"
-      invitation_rejected: "<span class=\"last_name\">{{user_last_name}}</span> {{user_first_name}} <span class=\"membership_status_rejected\">
+      invitation_rejected: "<span class=\"last_name\">%{user_last_name}</span> %{user_first_name} <span class=\"membership_status_rejected\">
        a décliné l'invitation</span>"
       cancel_invitation: "Êtes vous sûr de vouloir annuler l'invitation ?"
       cancel_invitation_title: "Annuler l'invitation"
       submission:
-        file_manager: "{{short_identifier}} : Gestionnaire de fichiers"
+        file_manager: "%{short_identifier} : Gestionnaire de fichiers"
         current_path: "Chemin courant : "
         conflicts: "Conflits"
         file_conflicts: "Your changes have not been made.  The following file conflicts were detected:"
-        missing_files: "You still need to submit {{file}} required file(s) for this assignment:"
+        missing_files: "You still need to submit %{file} required file(s) for this assignment:"
         toggle_file_list: "click here to toggle the list of missing files."
         no_action_detected: "No actions were detected in the last submit.  Nothing was changed."
         no_marks_available: "No marks are available."
         external_submit_only: "MarkUs n'accepte que les envois externes"
         invalid_file_name: "Le nom du fichier envoyé est invalide"
-        missing_file: "N'a pas pu télécharger {{file_name}} : {{message}}. Le fichier est sans doute manquant."
+        missing_file: "N'a pas pu télécharger %{file_name} : %{message}. Le fichier est sans doute manquant."
         expect_filter: "Attendait un filtre sur la sélection"
 
     #Graders' View
@@ -580,8 +580,8 @@ fr:
       edit_grader:       "Modifier un correcteur"
       manage_graders: "Gestion des correcteurs"
       graders:        "Correcteurs"
-      success: "{{user_name}} a été mis à jour"
-      create_success: "Création du correcteur {{user_name}}"
+      success: "%{user_name} a été mis à jour"
+      create_success: "Création du correcteur %{user_name}"
       upload:
         select_csv_file: "Sélectionner un fichier CSV formatté comme suit : <code>user_name,last_name,first_name</code>"
         grader_same_user: "Si un correcteur avec le même nom d'utilisateur existe, ses informations seront mises à jour."
@@ -593,8 +593,8 @@ fr:
         each_line: "Chaque ligne a le bon nombre de champs comme spécifié."
       download:
         download_list: "Télécharger la liste des correcteurs au format CSV"
-        begin_annotation: "{{comment_start}} ANNOTATION {{id}}: {{text}} {{comment_end}}"
-        end_annotation: "{{comment_start}} FIN ANNOTATION {{id}} {{comment_end}}"
+        begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
+        end_annotation: "%{comment_start} FIN ANNOTATION %{id} %{comment_end}"
 
     #Admins' View
     admins:
@@ -602,7 +602,7 @@ fr:
       create_new_admin: "Créer un nouvel administrateur"
       manage_admins:    "Gestion des administrateurs"
       edit_admin:       "Modification d'un administrateur"
-      success: "{{user_name}} a été mis à jour"
+      success: "%{user_name} a été mis à jour"
       admins: "Admins"
       upload:
         not_added: "Les administrateurs suivants n'ont pas été ajoutés correctements : "
@@ -612,35 +612,35 @@ fr:
         each_line: "Chaque ligne a le bon nombre de champs comme spécifié."
 
     add_student:
-      success: "L'étudiant {{user_name}} a été ajouté."
+      success: "L'étudiant %{user_name} a été ajouté."
       fail:
-        general: "Erreur inconnue. Impossible d'ajouter {{user_name}}."
-        dne:  "Ne peut ajouter {{user_name}} - cet étudiant n'existe pas."
-        hidden:  "Ne peut ajouter {{user_name}} - le compte de cet étudiant a été désactivé."
-        already_grouped: "Ne peut ajouter {{user_name}} - cet étudiant est déjà membre d'un autre groupe."
+        general: "Erreur inconnue. Impossible d'ajouter %{user_name}."
+        dne:  "Ne peut ajouter %{user_name} - cet étudiant n'existe pas."
+        hidden:  "Ne peut ajouter %{user_name} - le compte de cet étudiant a été désactivé."
+        already_grouped: "Ne peut ajouter %{user_name} - cet étudiant est déjà membre d'un autre groupe."
 
     create_group:
       fail:
         due_date_passed: "Impossible de créer le groupe - la date de retour pour ce projet est passée et il n'y a pas de temps supplémentaire alloué ou le temps supplémentaire alloué est terminé."
         not_allow_to_form_groups: "Ce projet n'autorise pas les étudiants à former des groupes."
         already_have_a_group: "Vous avez déjà un groupe, vous ne pouvez pas en créer d'autres."
-        can_not_work_alone: "Vous ne pouvez pas travailler seul pour ce projet. La taille minimum d'un groupe est {{group_min}}"
+        can_not_work_alone: "Vous ne pouvez pas travailler seul pour ce projet. La taille minimum d'un groupe est %{group_min}"
         do_not_have_a_group: "Vous n'appartenez pas à un groupe"
 
     invite_student:
       success: "L'étudiant a été invité."
       fail:
         only_inviter: "Seul celui qui a invité un autre étudiant peut supprimer une invitation déclinée"
-        due_date_passed: "Ne peut pas inviter {{user_name}} - la date de retour pour ce devoir est passée et il n'y a pas de temps supplémentaire alloué ou le temps supplémentaire alloué est terminé."
-        dne:  "Ne peut pas inviter {{user_name}} - cet étudiant n'existe pas."
-        hidden:  "Ne peut pas inviter {{user_name}} - le compte de cet étudiant a été désactivé."
-        already_pending: "Ne peut pas inviter {{user_name}} - cet étudiant est déjà en attente pour ce groupe."
-        group_max_reached: "Ne peut pas inviter {{user_name}} - la limite maximale pour ce groupe est déjà atteinte."
+        due_date_passed: "Ne peut pas inviter %{user_name} - la date de retour pour ce devoir est passée et il n'y a pas de temps supplémentaire alloué ou le temps supplémentaire alloué est terminé."
+        dne:  "Ne peut pas inviter %{user_name} - cet étudiant n'existe pas."
+        hidden:  "Ne peut pas inviter %{user_name} - le compte de cet étudiant a été désactivé."
+        already_pending: "Ne peut pas inviter %{user_name} - cet étudiant est déjà en attente pour ce groupe."
+        group_max_reached: "Ne peut pas inviter %{user_name} - la limite maximale pour ce groupe est déjà atteinte."
         inviting_self: "Vous ne pouvez pas vous inviter dans votre propre groupe."
-        already_grouped: "Ne peut pas inviter {{user_name}} - cet étudiant est déjà membre d'un autre groupe."
+        already_grouped: "Ne peut pas inviter %{user_name} - cet étudiant est déjà membre d'un autre groupe."
         need_to_create_group: "Vous devez créer un groupe avant de pouvoir inviter des étudiants."
-        not_same_section: "L'étudiant {{user_name}} n'est pas dans votre section."
-        error: "Erreur.  Impossible d'inviter {{user_name}}."
+        not_same_section: "L'étudiant %{user_name} n'est pas dans votre section."
+        error: "Erreur.  Impossible d'inviter %{user_name}."
     update_files:
       success:  "Les changements ont été enregistrés."
 
@@ -659,7 +659,7 @@ fr:
     annotations:
       annotation_category: "Catégories d'annotations"
       no_annotation_categories: "Il n'y a pas encore de catégories d'annotations."
-      title: "Annotations pour le projet {{assignment_short_identifier}}"
+      title: "Annotations pour le projet %{assignment_short_identifier}"
       name: "Nom de la catégorie"
       help_message: "Cliquer sur les catégories d'annotations pour créer des annotations."
       add_annotation_category: "Ajouter une catégorie d'annotations"
@@ -680,9 +680,9 @@ fr:
             Sélectionner un fichier CSV à envoyer : <br />
             <code>category_name,annotation_text,annotation_text … </code><br />
           </p>"
-        success:  "Envoi réussi des catégories d'annotations ({{annotation_category_number}} envoyées)."
-        error:  "Impossible d'envoyer les catégories : problème à la catégorie {{annotation_category}} située sur la ligne {{annotation_line}}"
-        flash_error: "N'a pas reconnu le format {{format}} que vous vouliez télécharger"
+        success:  "Envoi réussi des catégories d'annotations (%{annotation_category_number} envoyées)."
+        error:  "Impossible d'envoyer les catégories : problème à la catégorie %{annotation_category} située sur la ligne %{annotation_line}"
+        flash_error: "N'a pas reconnu le format %{format} que vous vouliez télécharger"
       download:
         download_annotations: "Télécharger les annotations"
         download_csv: "Télécharger au format CSV"
@@ -709,10 +709,10 @@ fr:
         remove_deduction: "Enlever la déduction"
         credits: "Crédits"
         confirm_remove_deduction: "Êtes vous sûr de vouloir supprimer cette déduction de période de grâce ?"
-        description: "Vous pouvez envoyer votre travail jusqu'à {{grace_day_limit}} jours(s) après la date de retour, et vous aurez le nombre de jours dépassés soustrait de votre crédit de jours de grâce."
+        description: "Vous pouvez envoyer votre travail jusqu'à %{grace_day_limit} jours(s) après la date de retour, et vous aurez le nombre de jours dépassés soustrait de votre crédit de jours de grâce."
         after_collection_message: "Le nombre maximum de périodes de grâce sont passées pour ce projet. Tout changement sera enregistré mais non évalué."
         commit_after_collection_message: "La date de retour pour ce projet, plus le maximum de jour de grâce autorisés sont passés.  Vos changements ont été enregistrés, mais ne seront pas inclus dans l'évaluation."
-        overtime_message_with_days_left: "La date de retour pour ce projet est passée. Cependant, il vous reste {{grace_credits_remaining}} crédits de grâce.  Si vous envoyez un/des fichiers ou faîtes des changements durant cette période, vous utiliserez {{grace_credits_to_use}} de ces crédits."
+        overtime_message_with_days_left: "La date de retour pour ce projet est passée. Cependant, il vous reste %{grace_credits_remaining} crédits de grâce.  Si vous envoyez un/des fichiers ou faîtes des changements durant cette période, vous utiliserez %{grace_credits_to_use} de ces crédits."
         overtime_message_without_days_left: "La date de retour pour ce projet est passée et vous ne pouvez plus utiliser de jours de grâce."
         form_description:  "Déduire automatiquement les \"grace period credits\" "
         add_grace_period: "Ajouter une période de grâce"
@@ -725,11 +725,11 @@ fr:
       penalty_period_submission_rule:
         name: "Règle d'envoi lors des périodes de pénalité"
         short_name:  "Période de pénalité"
-        description: "Vous pouvez envoyer votre travail jusqu'à {{penalty_period_limit}} heure(s) après la date de retour et vous aurez le pourcentage adéquat déduit de votre note finale"
+        description: "Vous pouvez envoyer votre travail jusqu'à %{penalty_period_limit} heure(s) après la date de retour et vous aurez le pourcentage adéquat déduit de votre note finale"
         after_collection_message: "Le nombre maximum de périodes de pénalité sont passées pour ce projet.  Tout changement sera enregistré mais non évalué."
         commit_after_collection_message: "La date de retour pour ce projet, plus le maximum de périodes de pénalité autorisées sont passés.  Vos changements ont été enregistrés, mais ne seront pas inclus dans l'évaluation."
-        overtime_message: "La date de retour pour ce projet est passée.  Cependant, vous êtes dans une période de pénalité. Vous pouvez changer vos fichiers envoyés, mais vous aurez {{potential_penalty}}% déduit de votre note finale sur ce projet."
-        extramark_description: "Le dernier envoi date de ({{overtime_hours}} heure(s)) après la période de fin. Conclusion : {{penalty_amount}}% seront déduis de votre note"
+        overtime_message: "La date de retour pour ce projet est passée.  Cependant, vous êtes dans une période de pénalité. Vous pouvez changer vos fichiers envoyés, mais vous aurez %{potential_penalty}% déduit de votre note finale sur ce projet."
+        extramark_description: "Le dernier envoi date de (%{overtime_hours} heure(s)) après la période de fin. Conclusion : %{penalty_amount}% seront déduis de votre note"
         form_description: "Activer les pénalités"
         add_penalty_period: "Ajouter une période de pénalité"
         hours:  "heures..."
@@ -741,11 +741,11 @@ fr:
 
     submission_file:
       error:
-        no_access: "Pas d'acces au fichier envoye avec l'id #{{submission_file_id}}." #Problème d'accents à cause de l'appel JS"
+        no_access: "Pas d'acces au fichier envoye avec l'id #%{submission_file_id}." #Problème d'accents à cause de l'appel JS"
         binary_file_message: "Fichier binaire : utiliser le bouton Télécharger pour voir Binary content: Use download button to view file!"
     test_result:
       error:
-        no_access: "Pas d'accès au résultat des test avec l'id #{{test_result_id}}."
+        no_access: "Pas d'accès au résultat des test avec l'id #%{test_result_id}."
       button:
         load: "Chargement"
       no_files_available: "[Pas de résultats de tests disponibles]"
@@ -764,7 +764,7 @@ fr:
     <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
 
     flexible_criteria:
-      criteria_management: "Édition du barème pour le projet {{identifier}}"
+      criteria_management: "Édition du barème pour le projet %{identifier}"
       save: "Sauvegarder"
       move_up: "Monter"
       move_down: "Descendre"
@@ -785,23 +785,23 @@ fr:
         <code>criteria_name,max_value,description</code>
         <p>La description est facultative. NB : Si aucune description n'est présente, la seconde virgule ne doit
         pas apparaître.</p>"
-        success: "Le fichier contenant le barème (flexible) a bien été envoyé : {{nb_updates}} mise(s) à jour."
+        success: "Le fichier contenant le barème (flexible) a bien été envoyé : %{nb_updates} mise(s) à jour."
 
     rubric_criteria:
-      criteria_management: "Édition du barème pour le projet {{identifier}}"
+      criteria_management: "Édition du barème pour le projet %{identifier}"
       save: "Sauvegarder"
       name: "Nom du critère"
       move_up: "Monter"
       move_down: "Descendre"
       level:
         levels: "Niveaux"
-        level_index: "Niveau {{index}}"
+        level_index: "Niveau %{index}"
       download:
         title: "Télécharger le fichier de barème (rubrique)"
         prompt: "Le barème (rubrique) est actuellement disponible au format CSV."
         link_csv: "Télécharger le barème (rubrique) au format CSV"
       upload:
-        success: "Le fichier contenant le barème (rubrique) a bien été envoyé : {{nb_updates}} mise(s) à jour."
+        success: "Le fichier contenant le barème (rubrique) a bien été envoyé : %{nb_updates} mise(s) à jour."
         title: "Envoyer un fichier de barème (rubrique)"
         prompt: "Choisissez un fichier CSV à envoyer"
         format_html: "
@@ -832,7 +832,7 @@ fr:
       weight: "Coefficient"
 
     notes:
-        note_on: "{{user_name}} sur <b>{{display_for}}</b>"
+        note_on: "%{user_name} sur <b>%{display_for}</b>"
         add_new: "Nouvelle remarque"
         existing: "Remarques existantes"
         comment: "Votre commentaire"
@@ -869,7 +869,7 @@ fr:
             success: "Remarque mise à jour."
 
     add_criterion:                "Ajouter un critère"
-    criteria_edit_total_mark:     "Ce critère sera noté sur {{criterion_total_mark}}"
+    criteria_edit_total_mark:     "Ce critère sera noté sur %{criterion_total_mark}"
     criterion_saved_success:   "Le critète a été sauvegardé"
     criterion_deleted_success:  "Le critère et toutes les notes associées ont été supprimés"
     criterion_created_success:  "Critère créé"
@@ -952,7 +952,7 @@ fr:
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "Pas de correcteur pour l'instant."
 
-    locale_not_available: "La traduction {{locale}} n'est pas disponible"
+    locale_not_available: "La traduction %{locale} n'est pas disponible"
     external_authentication_not_supported: "L'authentification externe n'est pas supportée sur votre plateforme"
     account_disabled: "Ce compte a été désactivé"
 
@@ -969,38 +969,38 @@ fr:
         less_than_x_seconds:
           zero: "moins d'une seconde"
           one: "moins de 1 seconde"
-          other: "moins de {{count}} secondes"
+          other: "moins de %{count} secondes"
         x_seconds:
           one: "1 seconde"
-          other: "{{count}} secondes"
+          other: "%{count} secondes"
         less_than_x_minutes:
           zero: "moins d'une minute"
           one: "moins de 1 minute"
-          other: "moins de {{count}} minutes"
+          other: "moins de %{count} minutes"
         x_minutes:
           one: "1 minute"
-          other: "{{count}} minutes"
+          other: "%{count} minutes"
         about_x_hours:
           one: "environ une heure"
-          other: "environ {{count}} heures"
+          other: "environ %{count} heures"
         x_days:
           one: "1 jour"
-          other: "{{count}} jours"
+          other: "%{count} jours"
         about_x_months:
           one: "environ un mois"
-          other: "environ {{count}} mois"
+          other: "environ %{count} mois"
         x_months:
           one: "1 mois"
-          other: "{{count}} mois"
+          other: "%{count} mois"
         about_x_years:
           one: "environ un an"
-          other: "environ {{count}} ans"
+          other: "environ %{count} ans"
         over_x_years:
           one: "plus d'un an"
-          other: "plus de {{count}} ans"
+          other: "plus de %{count} ans"
         almost_x_years:
           one:   "almost 1 year"
-          other: "almost {{count}} years"
+          other: "almost %{count} years"
       prompts:
         year: "Année"
         month: "Mois"
@@ -1062,8 +1062,8 @@ fr:
       errors:
         template:
           header:
-            one: "Impossible d'enregistrer {{model}}: 1 erreur"
-            other: "Impossible d'enregistrer {{model}}: {{count}} erreurs."
+            one: "Impossible d'enregistrer %{model}: 1 erreur"
+            other: "Impossible d'enregistrer %{model}: %{count} erreurs."
           body: "Veuillez vérifier les champs suivants :"
         messages:
           inclusion: "n'est pas inclus(e) dans la liste"
@@ -1073,19 +1073,19 @@ fr:
           accepted: "doit être accepté(e)"
           empty: "doit être rempli(e)"
           blank: "doit être rempli(e)"
-          too_long: "est trop long (pas plus de {{count}} caractères)"
-          too_short: "est trop court (au moins {{count}} caractères)"
-          wrong_length: "ne fait pas la bonne longueur (doit comporter {{count}} caractères)"
+          too_long: "est trop long (pas plus de %{count} caractères)"
+          too_short: "est trop court (au moins %{count} caractères)"
+          wrong_length: "ne fait pas la bonne longueur (doit comporter %{count} caractères)"
           taken: "n'est pas disponible"
           not_a_number: "n'est pas un nombre"
-          greater_than: "doit être supérieur à {{count}}"
-          greater_than_or_equal_to: "doit être supérieur ou égal à {{count}}"
-          equal_to: "doit être égal à {{count}}"
-          less_than: "doit être inférieur à {{count}}"
-          less_than_or_equal_to: "doit être inférieur ou égal à {{count}}"
+          greater_than: "doit être supérieur à %{count}"
+          greater_than_or_equal_to: "doit être supérieur ou égal à %{count}"
+          equal_to: "doit être égal à %{count}"
+          less_than: "doit être inférieur à %{count}"
+          less_than_or_equal_to: "doit être inférieur ou égal à %{count}"
           odd: "doit être impair"
           even: "doit être pair"
-          record_invalid: "La validation a échoué : {{errors}}"
+          record_invalid: "La validation a échoué : %{errors}"
 
         full_messages:
-          format: "{{attribute}} {{message}}"
+          format: "%{attribute} %{message}"
