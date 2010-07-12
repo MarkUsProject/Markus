@@ -105,7 +105,7 @@
   <%= t('csv_special_characters_html') %>
   <p>
     <%= f.submit t(:upload), :disable_with => t(:uploading_please_wait) %>
-    <input type="reset" value="<%= t(:cancel) %>" onClick="modalUpload.close();">
+    <input type="reset" value="<%= t(:cancel) %>" onclick="modalUpload.close();">
   </p>
   <% end %>
 </div>
@@ -119,6 +119,6 @@
     <li><%= link_to t('flexible_criteria.download.link'), {:controller=>"flexible_criteria", :action=>"download", :id=> @assignment.id}%></li>
   </ul>
   
-  <input type="reset" value="<%= t(:cancel) %>" onClick="modalDownload.close();"> 
+  <input type="reset" value="<%= t(:cancel) %>" onclick="modalDownload.close();"> 
 </div> 
 

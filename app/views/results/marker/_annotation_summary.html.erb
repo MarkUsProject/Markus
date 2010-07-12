@@ -20,7 +20,7 @@
 
         <p class="manageAnnotations">
         <%= submit_tag I18n.t("marker.annotation.submit_edit") , :confirm => I18n.t("marker.annotation.change_across_submissions") %>
-          <input type="reset" value="<%= I18n.t("cancel") %>" onClick="$('annotation_text_content_edit_<%=h(annot.annotation_text.id)%>').hide();$('annotation_text_content_display_<%=h(annot.annotation_text.id)%>').show();"></input>
+          <input type="reset" value="<%= I18n.t("cancel") %>" onclick="$('annotation_text_content_edit_<%=h(annot.annotation_text.id)%>').hide();$('annotation_text_content_display_<%=h(annot.annotation_text.id)%>').show();"></input>
         </p>
 
       <% end %>

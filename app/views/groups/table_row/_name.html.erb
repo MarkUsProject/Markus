@@ -1,6 +1,6 @@
 <span class="link"><%= h(grouping.group.group_name)%></span>
     <span class="table_menu">
-    <button class="rename_group" onClick="rename_group(<%= grouping.id %>); return false;">Rename Group</button>
+    <button class="rename_group" onclick="rename_group(<%= grouping.id %>); return false;">Rename Group</button>
     |
     <% if !grouping.is_valid? %>
       <%= link_to_remote "Valid", :url => { :action =>
@@ -17,5 +17,5 @@
     :html => { :class => 'delete', :title => 'Delete this group' }, 
     :confirm => 'This will remove all members in the group and delete all information associated with this group. Continue?' %>
     |
-    <button class="add_member" onClick="add_member(<%= grouping.id %>);
+    <button class="add_member" onclick="add_member(<%= grouping.id %>);
 return false;">Add Member</button>

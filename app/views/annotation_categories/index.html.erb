@@ -109,7 +109,7 @@
            </p>							
            <p>
            <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
-           <input type="reset" value="<%= t(:cancel) %>" onClick="modalUpload.close();">
+           <input type="reset" value="<%= t(:cancel) %>" onclick="modalUpload.close();">
            </p>
           <% end %>
     </div>
@@ -120,7 +120,7 @@
         <li><%= link_to t("annotations.download.download_csv"), {:action => 'download', :id => @assignment.id, :format => 'csv'}%></li>
         <li><%= link_to t("annotations.download.download_yml"), {:action => 'download', :id => @assignment.id, :format => 'yml'}%></li>
       </ul>
-      <input type="reset" value="<%= t(:cancel) %>" onClick="modalDownload.close();">
+      <input type="reset" value="<%= t(:cancel) %>" onclick="modalDownload.close();">
     </div>
 
   
