@@ -9,7 +9,7 @@ en:
 
     # app/views/main/login.html.erb
     welcome_to:         "Welcome to MarkUs!"
-    welcome_to_markus:     "{{user_name}}, welcome to MarkUs, the online marking tool."
+    welcome_to_markus:     "%{user_name}, welcome to MarkUs, the online marking tool."
     log_in:             "Log in"
     logging_in:         "Logging in..."
     login:              "Login"
@@ -22,7 +22,7 @@ en:
 
     # app/views/layouts/_header.html.erb
     log_out:            "Log out"
-    logged_in_as:       "| Logged in as <span id=\"user_name\"><b>{{first_name}} {{last_name}}</b> ({{user_name}})</span> |"
+    logged_in_as:       "| Logged in as <span id=\"user_name\"><b>%{first_name} %{last_name}</b> (%{user_name})</span> |"
     working:            "Working..."
 
     # app/views/main/_about_content.html.erb
@@ -72,8 +72,8 @@ en:
     message:  "Message"
     remove:  "Remove"
     download_csv_grade_report:  "Download CSV Grades Report"
-    days_and_hours_left:      "({{days}} day(s) and {{hours}} hour(s) left)"
-    days_left:          "({{days}} day(s) left)"
+    days_and_hours_left:      "(%{days} day(s) and %{hours} hour(s) left)"
+    days_left:          "(%{days} day(s) left)"
     short_identifier:   "Short Identifier"
     description:        "Description"
     shortened_date:     "Date"
@@ -84,12 +84,12 @@ en:
     manage_course_work: "Manage Course Work"
     repository_folder:  "Repository Folder"
     assignment:
-        assignment: "Assignment {{short_identifier}}"
+        assignment: "Assignment %{short_identifier}"
         name:           "Assignment Name"
         update_success:        "Successfully updated the assignment"
         create_success:        "Successfully created the assignment"
-        error: "Could not assign SubmissionRule: #{{message}}"
-        not_valid_submission_rule: "{{type}} is not a valid SubmissionRule"
+        error: "Could not assign SubmissionRule: #%{message}"
+        not_valid_submission_rule: "%{type} is not a valid SubmissionRule"
         rules:           "Assignment Rules"
         edit:           "Edit Assignment:"
         properties:     "Assignment Properties"
@@ -191,7 +191,7 @@ en:
       previous_submission:  "Previous Submission"
       next_submission:      "Next Submission"
       marking_status:       "Marking Status:"
-      notes:                "Notes (<span id=\"number_of_notes\">{{notes}}</span>)"
+      notes:                "Notes (<span id=\"number_of_notes\">%{notes}</span>)"
       include_annotations: "Include Annotations:"
       marks:
         total_mark: "Total Mark:"
@@ -216,7 +216,7 @@ en:
         translated_to_points: "Translated to Points:"
         final_mark: "Final Mark&nbsp;"
       annotation:
-        from_line_to: "{{file_path}}: Line {{line_start}} to {{line_end}}"
+        from_line_to: "%{file_path}: Line %{line_start} to %{line_end}"
         no_annotation_in_this_category: "There are no annotations in this category"
         new_annotation: "Create new annotation"
         annotation_category: "Annotation Category"
@@ -237,7 +237,7 @@ en:
     seperate_multiple_with_commas:  "Seperate multiple user names with commas"
     csv_valid_format:   "There was a problem parsing the CSV file you uploaded.  Please ensure that it's a valid CSV format, and that each line ends with a carriage-return line-feed set of characters.  No changes were made. "
     csv_invalid_lines: "The following CSV lines were invalid: "
-    csv_upload_user_duplicate: "Detected duplicate user name: {{user_name}}"
+    csv_upload_user_duplicate: "Detected duplicate user name: %{user_name}"
     collect_and_grade_overwrite_warning:  "Collecting and grading this revision will overwrite any previous collections/grading done for this group on this assignment.  Are you sure you want to do this?"
     uncommitted_changes_warning: "Your changes are not yet saved, do you still want to navigate away?"
     discard_changes_message: "Are you sure you want to discard your changes?"
@@ -245,9 +245,9 @@ en:
     still_working_warning: "There are unfinished jobs still being processed.  They might not be saved if you leave now."
 
     csv:
-      student_not_found: "Student '{{user_name}}' not found."
-      repo_collision_warning: "Warning: Repository '{{repo_name}}' exists already. Group name was: '{{group_name}}'."
-      line_nr_csv_file_prefix: "Line {{line_number}} of CSV file:"
+      student_not_found: "Student '%{user_name}' not found."
+      repo_collision_warning: "Warning: Repository '%{repo_name}' exists already. Group name was: '%{group_name}'."
+      line_nr_csv_file_prefix: "Line %{line_number} of CSV file:"
       errors_and_warnings_msg: "The following lines produced errors and/or warnings:"
       group_to_grader: "You must supply a CSV file for group to grader mapping"
 
@@ -261,28 +261,28 @@ en:
       per_page: "per page"
       jump_to: "Jump to:"
       show: "Show"
-      of:   "{{low}} - {{high}} of {{total}}"
+      of:   "%{low} - %{high} of %{total}"
       select: "Select: "
 
     selects:
-      all_on_page: "All {{page_items}} items on this page are selected."
-      all: "All {{total_items}} items are selected."
-      select_full: "Click here to select all {{total_items}} items."
+      all_on_page: "All %{page_items} items on this page are selected."
+      all: "All %{total_items} items are selected."
+      select_full: "Click here to select all %{total_items} items."
       select_clear: "Click here to clear selection."
 
     browse_submissions:
       find_different_revision: "Find a different revision"
       find_by_revision_timestamp: "Find by Revision Timestamp"
       find_by_revision_number:    "Find by Revision Number"
-      viewing_revision:           "Viewing Revision: #<span id=\"current_revision_number_display\">{{revision_number}}</span>"
+      viewing_revision:           "Viewing Revision: #<span id=\"current_revision_number_display\">%{revision_number}</span>"
       current_path:         "Current Path:"
       root:                 "[root]"
       collect_and_grab:     "Collect and Grade This Revision"
-      could_not_collect:    "Could not collect submission for group {{group_name}} - the collection date has not been reached yet."
+      could_not_collect:    "Could not collect submission for group %{group_name} - the collection date has not been reached yet."
       release_marks:        "Release Marks"
       unrelease_marks:      "Unrelease Marks"
       group_name:           "Group Name"
-      repository_name:      "Repository: {{repository}}"
+      repository_name:      "Repository: %{repository}"
       repository:           "Repository"
       commit_date:          "Commit Date"
       marking_state:        "Marking State"
@@ -295,8 +295,8 @@ en:
       show_released:        "Show Released"
       show_assigned_to_me:  "Show Assigned to Me"
       grading_can_begin:    "Grading can begin"
-      grading_can_begin_after: "Grading can begin after {{time}}"
-      workspace:            "Workspace: {{short_identifier}}"
+      grading_can_begin_after: "Grading can begin after %{time}"
+      workspace:            "Workspace: %{short_identifier}"
       csv_report:           "CSV Report"
       detailled_csv_report: "Detailed CSV Report"
       subversion_repo_list: "Subversion Repo List"
@@ -338,8 +338,8 @@ en:
         no_grade_entry_items_message: "There are currently no columns for this table."
         must_select_a_student: "You must select at least one student to update."
         expected_filter: "Expected a filter on select full."
-        successfully_changed: "Successfully updated {{numGradeEntryStudentsChanged}} students."
-        update_error: "The marking state for {{user_name}} could not be saved."
+        successfully_changed: "Successfully updated %{numGradeEntryStudentsChanged} students."
+        update_error: "The marking state for %{user_name} could not be saved."
         errors: "Errors"
         no_mark: "N/A"
         marking_state: "Marking State"
@@ -350,7 +350,7 @@ en:
         incomplete_header: "Incomplete grade entry item names or totals."
         incomplete_row: "Contains too little information."
         invalid_user_name: "Invalid user name."
-        upload_success: "Grades table successfully uploaded: {{num_updates}} update(s)."
+        upload_success: "Grades table successfully uploaded: %{num_updates} update(s)."
         upload_title: "Upload Grades File"
         upload_prompt: "Select a CSV file to upload"
         upload_format_html: "<p>The file should have the following format:</p>
@@ -368,51 +368,51 @@ en:
     student_interface_assignments: "Your Assignments"
 
     markus_logger:
-        user_login_message: "User '{{user_name}}' logged in."
-        user_wrong_credentials: "Wrong username/password: User '{{user_name}}'."
-        user_login_error: "User '{{user_name}}' failed to log in."
-        user_logout_message: "User '{{user_name}}' logged out."
-        assignment_creation_success: "Assignment '{{assignment}}' created successfully."
-        assignment_creation_failure: "Creating assignment '{{assignment}}' failed: '{{error}}' (User: '{{user_name}}')."
-        assignment_grouping_creation_success:  "Grouping with '{{student}}' for assignment '{{id}}' with identifier '{{name}}' created."
-        assignment_edit_success: "The assignment '{{id}}' with identifier '{{name}}' was successfully edited."
-        assignment_edit_failure: "Error while editing assignment '{{id}}' with identifier '{{name}}': '{{error}}'."
-        student_accepted_invitation: "Student '{{user_name}}' joined group '{{group}}' (accepted invitation)."
-        student_invited_student: "Student '{{inviter}}' invited '{{invitee}}'."
-        student_cancelled_invitation: "Student '{{inviter}}' cancelled invitation for '{{invitee}}'."
-        student_declined_invitation: "Student '{{user_name}}' declined invitation for group '{{group}}'."
-        student_invitation_failure: "Student '{{inviter}}' failed to invite '{{invitee}}'. Error: '{{error}}'."
-        student_created_group: "Student '{{user_name}}' created group."
-        student_create_group_fail: "Failed to create group. User: '{{user_name}}', Error: '{{error}}'."
-        student_deleted_group: "Student '{{user_name}}' deleted group '{{group}}'."
-        student_delete_group_fail: "Failed to delete group '{{group}}'. User: '{{user_name}}', Error: '{{error}}'."
-        student_delete_group_fail_no_grouping: "Failed to delete group, since no accepted group for this user existed. User: '{{user_name}}', Error: '{{error}}'."
+        user_login_message: "User '%{user_name}' logged in."
+        user_wrong_credentials: "Wrong username/password: User '%{user_name}'."
+        user_login_error: "User '%{user_name}' failed to log in."
+        user_logout_message: "User '%{user_name}' logged out."
+        assignment_creation_success: "Assignment '%{assignment}' created successfully."
+        assignment_creation_failure: "Creating assignment '%{assignment}' failed: '%{error}' (User: '%{user_name}')."
+        assignment_grouping_creation_success:  "Grouping with '%{student}' for assignment '%{id}' with identifier '%{name}' created."
+        assignment_edit_success: "The assignment '%{id}' with identifier '%{name}' was successfully edited."
+        assignment_edit_failure: "Error while editing assignment '%{id}' with identifier '%{name}': '%{error}'."
+        student_accepted_invitation: "Student '%{user_name}' joined group '%{group}' (accepted invitation)."
+        student_invited_student: "Student '%{inviter}' invited '%{invitee}'."
+        student_cancelled_invitation: "Student '%{inviter}' cancelled invitation for '%{invitee}'."
+        student_declined_invitation: "Student '%{user_name}' declined invitation for group '%{group}'."
+        student_invitation_failure: "Student '%{inviter}' failed to invite '%{invitee}'. Error: '%{error}'."
+        student_created_group: "Student '%{user_name}' created group."
+        student_create_group_fail: "Failed to create group. User: '%{user_name}', Error: '%{error}'."
+        student_deleted_group: "Student '%{user_name}' deleted group '%{group}'."
+        student_delete_group_fail: "Failed to delete group '%{group}'. User: '%{user_name}', Error: '%{error}'."
+        student_delete_group_fail_no_grouping: "Failed to delete group, since no accepted group for this user existed. User: '%{user_name}', Error: '%{error}'."
 
-        annotation_created: "Annotation '{{annotation}}' created by '{{user_name}}'."
-        ta_annotation_reused: "The annotation '{{annotation}}' was reused by '{{user_name}}'."
-        user_viewed_submission: "User '{{user_name}}' viewed submission (id: {{submission_id}}) of assignment '{{assignment}}' for group '{{group_name}}'."
-        user_update_mark_submission: "User '{{user_name}}' updated mark for submission (id: {{submission_id}}) of assignment '{{assignment}}' for group '{{group_name}}'."
-        user_update_mark_submission_fail: "Error while trying to update mark of submission. User: '{{user_name}}', Submission ID: '{{submission_id}}', Assignment: '{{assignment}}', Group: '{{group_name}}'."
-        marks_released_for_assignment: "Marks released for assignment '{{assignment}}', ID: '{{assignment_id}}' (for {{number_groups}} groups)."
-        marks_unreleased_for_assignment: "Marks unreleased for assignment '{{assignment}}', ID: '{{assignment_id}}' (for {{number_groups}} groups)."
-        student_submitted_file: "Student '{{user_name}}' submitted file '{{file_name}}' for assignment '{{assignment}}'."
-        student_deleted_file: "Student '{{user_name}}' deleted file '{{file_name}}' for assignment '{{assignment}}'."
-        student_replaced_file: "Student '{{user_name}}' replaced content of file '{{file_name}}' for assignment '{{assignment}}'."
-        student_viewed_result: "Student '{{user_name}}' viewed results for assignment '{{assignment}}'."
-        group_repo_collision: "Creating group '{{group_name}}' caused repository collision (Repository name was: '{{repo_name}}'). Error message: '{{error}}'"
-        marks_released_for_grade_entry_form: "Marks released for marks spreadsheet '{{grade_entry_form}}', ID: '{{grade_entry_form_id}}' (for {{number_students}} students)."
-        marks_unreleased_for_grade_entry_form: "Marks unreleased for marks spreadsheet '{{grade_entry_form}}', ID: '{{grade_entry_form_id}}' (for {{number_students}} students)."
+        annotation_created: "Annotation '%{annotation}' created by '%{user_name}'."
+        ta_annotation_reused: "The annotation '%{annotation}' was reused by '%{user_name}'."
+        user_viewed_submission: "User '%{user_name}' viewed submission (id: %{submission_id}) of assignment '%{assignment}' for group '%{group_name}'."
+        user_update_mark_submission: "User '%{user_name}' updated mark for submission (id: %{submission_id}) of assignment '%{assignment}' for group '%{group_name}'."
+        user_update_mark_submission_fail: "Error while trying to update mark of submission. User: '%{user_name}', Submission ID: '%{submission_id}', Assignment: '%{assignment}', Group: '%{group_name}'."
+        marks_released_for_assignment: "Marks released for assignment '%{assignment}', ID: '%{assignment_id}' (for %{number_groups} groups)."
+        marks_unreleased_for_assignment: "Marks unreleased for assignment '%{assignment}', ID: '%{assignment_id}' (for %{number_groups} groups)."
+        student_submitted_file: "Student '%{user_name}' submitted file '%{file_name}' for assignment '%{assignment}'."
+        student_deleted_file: "Student '%{user_name}' deleted file '%{file_name}' for assignment '%{assignment}'."
+        student_replaced_file: "Student '%{user_name}' replaced content of file '%{file_name}' for assignment '%{assignment}'."
+        student_viewed_result: "Student '%{user_name}' viewed results for assignment '%{assignment}'."
+        group_repo_collision: "Creating group '%{group_name}' caused repository collision (Repository name was: '%{repo_name}'). Error message: '%{error}'"
+        marks_released_for_grade_entry_form: "Marks released for marks spreadsheet '%{grade_entry_form}', ID: '%{grade_entry_form_id}' (for %{number_students} students)."
+        marks_unreleased_for_grade_entry_form: "Marks unreleased for marks spreadsheet '%{grade_entry_form}', ID: '%{grade_entry_form_id}' (for %{number_students} students)."
 
     ensure_config:
-      path_not_writable: "The setting {{constant_name}} with path {{file_name}} is not writable. Please double check the setting in {{config_location}}."
-      path_not_readable: "The setting {{constant_name}} with path {{file_name}} is not readable. Please double check the setting in {{config_location}}."
-      file_does_not_execute: "The setting {{constant_name}} with path {{file_name}} does not execute properly. Please double check the setting in {{config_location}}."
-      error_writing_to_pipe: "Error writing to pipe. {{file_name}}, {{error}}. Please double check the setting in {{config_location}}."
+      path_not_writable: "The setting %{constant_name} with path %{file_name} is not writable. Please double check the setting in %{config_location}."
+      path_not_readable: "The setting %{constant_name} with path %{file_name} is not readable. Please double check the setting in %{config_location}."
+      file_does_not_execute: "The setting %{constant_name} with path %{file_name} does not execute properly. Please double check the setting in %{config_location}."
+      error_writing_to_pipe: "Error writing to pipe. %{file_name}, %{error}. Please double check the setting in %{config_location}."
     groups:
       manage_groups: "Manage Groups"
       another_assignment_group: "Use another assignment's groups"
-      without_a_group: "Students without a group (<span id=\"number_of_ungrouped_students\">{{length}}</span>)"
-      graders: "Graders ({{graders}})"
+      without_a_group: "Students without a group (<span id=\"number_of_ungrouped_students\">%{length}</span>)"
+      graders: "Graders (%{graders})"
       all_grouping_counts: "All (<span id=\"all_groupings_count\"></span>)"
       valid_grouping_counts: "Valid (<span id=\"valid_groupings_count\"></span>)"
       not_valid_grouping_counts: "Not Valid (<span id=\"invalid_groupings_count\"></span>)"
@@ -470,12 +470,12 @@ en:
         groups_created: "Groups created"
 
     results:
-      title:  "Assignment {{assignment_name}} : {{group_name}}"
+      title:  "Assignment %{assignment_name} : %{group_name}"
       results_name:  "Results"
-      successfully_changed: "Successfully updated {{changed}} results"
+      successfully_changed: "Successfully updated %{changed} results"
       must_select_a_group:  "You must select at least one group to update"
       editing_after_release_fail: "The marks have been released. You cannot change the grades."
-      could_not_find_file: "Could not find {{filename}} in repository {{repository_name}}"
+      could_not_find_file: "Could not find %{filename} in repository %{repository_name}"
 
     mark:
       error:
@@ -487,9 +487,9 @@ en:
     students:
       manage_students: "Manage Students"
       edit_student:    "Edit a Student"
-      edit_success: "{{user_name}} has been updated."
+      edit_success: "%{user_name} has been updated."
       create_new:      "Create a new Student"
-      create_success: "Successfully created student {{user_name}}"
+      create_success: "Successfully created student %{user_name}"
       students: "Students"
       no_students_selected: "No students were selected, so no changes were made."
       upload:
@@ -516,23 +516,23 @@ en:
 
     #Sutdent's View (student)
     student:
-      assignment: "Assignment {{short_identifier}}"
+      assignment: "Assignment %{short_identifier}"
       group_information: "Group Information"
       group_not_valid: "Your group is not valid. You can't submit anything."
       overview: "Overview"
-      last_revision_date: "Last Revision Date:<br /><span class=\"info_date\">{{last_modified_date}}</span>"
+      last_revision_date: "Last Revision Date:<br /><span class=\"info_date\">%{last_modified_date}</span>"
       files: "files"
-      missing_required_files: "<span class=\"info_number\">{{missing_files}}</span><span class=\"info_red\"> missing required files</span>"
+      missing_required_files: "<span class=\"info_number\">%{missing_files}</span><span class=\"info_red\"> missing required files</span>"
       no_submission_yet: "You don't have any submission yet"
       no_group_yet: "You don't have a group yet"
       grace_date_passed: "and the grace period for this assignment has passed"
       not_allowed_to_form_group: "You are not allowed to form groups yourself for this assignment.
             Please wait until the instructor forms groups."
       invitations: "Invitations"
-      invited_by: "You have been invited by <span class=\"last_name\">{{inviter_last_name}}</span>{{inviter_first_name}}"
+      invited_by: "You have been invited by <span class=\"last_name\">%{inviter_last_name}</span>%{inviter_first_name}"
       decline_invitation: "Are you sure you want to decline this invitation?"
       form_own_group: "Form your own group"
-      form_group: "The groups must be from <strong>{{group_min}}</strong> to <strong>{{group_max}}</strong> people."
+      form_group: "The groups must be from <strong>%{group_min}</strong> to <strong>%{group_max}</strong> people."
       decline_invitation2: "This will decline the invitation you have. Are you sure?"
       your_group: "Your group"
       modification_limited: "At this point modification of your group is very limited.
@@ -544,7 +544,7 @@ en:
       students_can_form_groups: " Students can form groups. "
       instructor_form_groups: "Instructor forms groups."
       student_work_alone: "Students work alone"
-      group_credits: "Your group has <strong>{{available_grace_credits}}</strong> available grace credits"
+      group_credits: "Your group has <strong>%{available_grace_credits}</strong> available grace credits"
       invite: "Invite"
       please_wait: " Please wait..."
       work_alone: "Work alone"
@@ -556,22 +556,22 @@ en:
       invited: "(invited)"
       inviter: "(inviter)"
       disinvite: "Uninvite"
-      invitation_rejected: "<span class=\"last_name\">{{user_last_name}}</span> {{user_first_name}} <span class=\"membership_status_rejected\">
+      invitation_rejected: "<span class=\"last_name\">%{user_last_name}</span> %{user_first_name} <span class=\"membership_status_rejected\">
        has decline the invitation</span>"
       cancel_invitation: "Are you sure you want to cancel this invitation?"
       cancel_invitation_title: "Cancel invitation"
       submission:
-        file_manager: "{{short_identifier}}: File Manager"
+        file_manager: "%{short_identifier}: File Manager"
         current_path: "Current Path:"
         conflicts: "Conflicts"
         file_conflicts: "Your changes have not been made.  The following file conflicts were detected:"
-        missing_files: "You still need to submit {{file}} required file(s) for this assignment:"
+        missing_files: "You still need to submit %{file} required file(s) for this assignment:"
         toggle_file_list: "click here to toggle the list of missing files."
         no_action_detected: "No actions were detected in the last submit.  Nothing was changed."
         no_marks_available: "No marks are available."
         external_submit_only: "MarkUs is only accepting external submits"
         invalid_file_name: "Invalid file name on submitted file"
-        missing_file: "Could not download {{file_name}}: {{message}}.  File may be missing."
+        missing_file: "Could not download %{file_name}: %{message}.  File may be missing."
         expect_filter: "Expected a filter on select full"
 
     #Graders' View
@@ -580,8 +580,8 @@ en:
       edit_grader:       "Edit a Grader"
       manage_graders: "Manage Graders"
       graders:        "Graders"
-      success: "{{user_name}} has been updated"
-      create_success: "Successfully created grader {{user_name}}"
+      success: "%{user_name} has been updated"
+      create_success: "Successfully created grader %{user_name}"
       upload:
         select_csv_file: "Select a CSV file of the following form: <code>user_name,last_name,first_name</code>"
         grader_same_user: "If a TA with the same user_name exists, then that TA's information is updated."
@@ -593,8 +593,8 @@ en:
         each_line: "Each line has the required fields specified above"
       download:
         download_list: "Download TA list in CSV format"
-        begin_annotation: "{{comment_start}} ANNOTATION {{id}}: {{text}} {{comment_end}}"
-        end_annotation: "{{comment_start}} END ANNOTATION {{id}} {{comment_end}}"
+        begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
+        end_annotation: "%{comment_start} END ANNOTATION %{id} %{comment_end}"
 
     #Admins' View
     admins:
@@ -602,7 +602,7 @@ en:
       create_new_admin: "Create a new Admin"
       manage_admins:    "Manage Admins"
       edit_admin:       "Edit an Admin"
-      success: "{{user_name}} has been updated"
+      success: "%{user_name} has been updated"
       admins: "Admins"
       upload:
         not_added: "The following Admins have not been successfully added:"
@@ -612,35 +612,35 @@ en:
         each_line: "Each line has the required fields specified above"
 
     add_student:
-      success: "Student {{user_name}} added."
+      success: "Student %{user_name} added."
       fail:
-        general: "Something went wrong. Could not add {{user_name}}."
-        dne:  "Could not add {{user_name}} - this student does not exist."
-        hidden:  "Could not add {{user_name}} - this student's account has been disabled."
-        already_grouped: "Could not add {{user_name}} - this student is already a member of another group."
+        general: "Something went wrong. Could not add %{user_name}."
+        dne:  "Could not add %{user_name} - this student does not exist."
+        hidden:  "Could not add %{user_name} - this student's account has been disabled."
+        already_grouped: "Could not add %{user_name} - this student is already a member of another group."
 
     create_group:
       fail:
         due_date_passed: "Could not create group - the due date for this assignment has passed and there are either no grace periods allowed, or the grace period for this assignment has also passed."
         not_allow_to_form_groups: "Assignment does not allow students to form groups"
         already_have_a_group: "You already have a group, and cannot create another"
-        can_not_work_alone: "You cannot work alone for this assignment - the group size minimum is {{group_min}}"
+        can_not_work_alone: "You cannot work alone for this assignment - the group size minimum is %{group_min}"
         do_not_have_a_group: "You do not currently have a group"
 
     invite_student:
       success: "Invitations successful"
       fail:
         only_inviter: "Only the inviter can delete a declined invitation"
-        due_date_passed: "Could not invite {{user_name}} - the due date for this assignment has passed and there are either no grace periods allowed, or the grace period for this assignment has also passed."
-        dne:  "Could not invite {{user_name}} - this student does not exist."
-        hidden:  "Could not invite {{user_name}} - this student's account has been disabled."
-        already_pending: "Could not invite {{user_name}} - this student is already a pending member of this group."
-        group_max_reached: "Could not invite {{user_name}} - group maximum has been reached."
+        due_date_passed: "Could not invite %{user_name} - the due date for this assignment has passed and there are either no grace periods allowed, or the grace period for this assignment has also passed."
+        dne:  "Could not invite %{user_name} - this student does not exist."
+        hidden:  "Could not invite %{user_name} - this student's account has been disabled."
+        already_pending: "Could not invite %{user_name} - this student is already a pending member of this group."
+        group_max_reached: "Could not invite %{user_name} - group maximum has been reached."
         inviting_self: "You cannot invite yourself to your own group."
-        already_grouped: "Could not invite {{user_name}} - this student is already a member of another group."
+        already_grouped: "Could not invite %{user_name} - this student is already a member of another group."
         need_to_create_group: "You must create a group before you can invite users"
-        not_same_section: "Student {{user_name}} is outside of your section."
-        error: "Failed to invite student {{user_name}}."
+        not_same_section: "Student %{user_name} is outside of your section."
+        error: "Failed to invite student %{user_name}."
     update_files:
       success:  "Your changes have been made."
 
@@ -659,7 +659,7 @@ en:
     annotations:
       annotation_category: "Annotation Category"
       no_annotation_categories: "There are no annotation categories, yet."
-      title: "Annotations: {{assignment_short_identifier}}"
+      title: "Annotations: %{assignment_short_identifier}"
       name: "Category name"
       help_message: "Click on an annotation category to add annotations."
       add_annotation_category: "Add Annotation Category"
@@ -680,9 +680,9 @@ en:
             Select a CSV file form:<br />
             <code>category_name,annotation_text,annotation_text ... </code><br />
           </p>"
-        success:  "Successfully uploaded {{annotation_category_number}} Annotation Categories"
-        error:  "Unable to upload category: {{annotation_category}} located in line {{annotation_line}}"
-        flash_error: "Could not recognize {{format}} format to download with"
+        success:  "Successfully uploaded %{annotation_category_number} Annotation Categories"
+        error:  "Unable to upload category: %{annotation_category} located in line %{annotation_line}"
+        flash_error: "Could not recognize %{format} format to download with"
       download:
         download_annotations: "Download Annotations"
         download_csv: "Download in CSV Format"
@@ -709,10 +709,10 @@ en:
         remove_deduction: "Remove Deduction"
         credits: "Credits"
         confirm_remove_deduction: "Are you sure you want to delete this Grace Period Deduction?"
-        description: "You may submit up to {{grace_day_limit}} day(s) past the due date, and will have that number of days subtracted from your allotted grace days"
+        description: "You may submit up to %{grace_day_limit} day(s) past the due date, and will have that number of days subtracted from your allotted grace days"
         after_collection_message: "The maximum number of grace periods has passed for this assignment.  Any changes will be recorded, but not graded."
         commit_after_collection_message: "The due date for this assignment, plus the maximum number of allowed grace days, has passed.  Your changes have been recorded, but will not be included in the grading."
-        overtime_message_with_days_left: "The due date for this assignment has passed.  However, you have {{grace_credits_remaining}} grace credit(s) left.  If you submit files, or make changes during this period, you will be spending {{grace_credits_to_use}} of those credits."
+        overtime_message_with_days_left: "The due date for this assignment has passed.  However, you have %{grace_credits_remaining} grace credit(s) left.  If you submit files, or make changes during this period, you will be spending %{grace_credits_to_use} of those credits."
         overtime_message_without_days_left: "The due date for this assignment has passed, and you are no longer able to use any grace days."
         form_description:  "Automatically deduct grace period credits"
         add_grace_period: "Add a Grace Period"
@@ -725,11 +725,11 @@ en:
       penalty_period_submission_rule:
         name: "Penalty Period Submission Rule"
         short_name:  "Penalty Period"
-        description: "You may submit up to {{penalty_period_limit}} hour(s) past the due date, but will have the appropriate percentage deducted from your final result"
+        description: "You may submit up to %{penalty_period_limit} hour(s) past the due date, but will have the appropriate percentage deducted from your final result"
         after_collection_message: "The maximum number of penalty periods has passed for this assignment.  Any changes will be recorded, but not graded."
         commit_after_collection_message: "The due date for this assignment, plus the maximum number of allowed penalty periods, has passed.  Your changes have been recorded, but will not be included in the grading."
-        overtime_message: "The due date for this assignment has passed.  However, you are in a penalty period.  You can make changes to your submission, but will have {{potential_penalty}}% deducted from the final mark on this assignment."
-        extramark_description: "Late submission ({{overtime_hours}} hour(s)) resulted in automatic {{penalty_amount}}% deduction"
+        overtime_message: "The due date for this assignment has passed.  However, you are in a penalty period.  You can make changes to your submission, but will have %{potential_penalty}% deducted from the final mark on this assignment."
+        extramark_description: "Late submission (%{overtime_hours} hour(s)) resulted in automatic %{penalty_amount}% deduction"
         form_description: "Use Penalty Formula"
         add_penalty_period: "Add a Penalty Period"
         hours:  "hours..."
@@ -741,11 +741,11 @@ en:
 
     submission_file:
       error:
-        no_access: "No access to submission file with id #{{submission_file_id}}."
+        no_access: "No access to submission file with id #%{submission_file_id}."
         binary_file_message: "Binary content: Use download button to view file!"
     test_result:
       error:
-        no_access: "No access to test result with id #{{test_result_id}}."
+        no_access: "No access to test result with id #%{test_result_id}."
       button:
         load: "Load"
       no_files_available: "[No test results available]"
@@ -764,7 +764,7 @@ en:
     <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
 
     flexible_criteria:
-      criteria_management:         "Criteria Management: {{identifier}}"
+      criteria_management:         "Criteria Management: %{identifier}"
       save: "Save changes"
       move_up: "Move up"
       move_down: "Move down"
@@ -785,23 +785,23 @@ en:
         <code>criteria_name,max_value,description</code>
         <p>The description is optional. Note that if it is not present, the second
         comma should not appear.</p>"
-        success: "Flexible criteria successfully uploaded: {{nb_updates}} update(s)."
+        success: "Flexible criteria successfully uploaded: %{nb_updates} update(s)."
 
     rubric_criteria:
-      criteria_management:         "Rubric Management: {{identifier}}"
+      criteria_management:         "Rubric Management: %{identifier}"
       save: "Save changes"
       name: "Rubric criterion name"
       move_up: "Move up"
       move_down: "Move down"
       level:
         levels: "Levels"
-        level_index: "Level {{index}}"
+        level_index: "Level %{index}"
       download:
         title: "Download Rubric File"
         prompt: "Rubric criteria are currently available in CSV."
         link_csv: "Download rubric in CSV Format"
       upload:
-        success: "Rubric criteria successfully uploaded: {{nb_updates}} update(s)."
+        success: "Rubric criteria successfully uploaded: %{nb_updates} update(s)."
         title: "Upload Rubric Criteria File"
         prompt: "Select a CSV file to upload"
         format_html: "
@@ -832,7 +832,7 @@ en:
       weight: "Weight"
 
     notes:
-        note_on: "{{user_name}} on <b>{{display_for}}</b>"
+        note_on: "%{user_name} on <b>%{display_for}</b>"
         add_new: "New"
         existing: "Existing Notes"
         comment: "Your comment"
@@ -869,7 +869,7 @@ en:
             success: "Note was successfully updated."
 
     add_criterion:                "Add Criterion"
-    criteria_edit_total_mark:     "This criterion will be marked out of {{criterion_total_mark}}"
+    criteria_edit_total_mark:     "This criterion will be marked out of %{criterion_total_mark}"
     criterion_saved_success:   "Criterion was successfully saved"
     criterion_deleted_success:  "Criterion, and all associated marks were successfully deleted"
     criterion_created_success:  "Criterion successfully created"
@@ -952,7 +952,7 @@ en:
     #app/views/assignments/_read.html.erb
     no_grader_assigned: "No grader assigned yet."
 
-    locale_not_available: "{{locale}} translation not available!"
+    locale_not_available: "%{locale} translation not available!"
     external_authentication_not_supported: "External authentication not supported on your platform!"
     account_disabled: "This account has been disabled"
 
