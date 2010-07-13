@@ -36,12 +36,14 @@ def make_submission(assignment, result_released, ta, group_name)
   annotation_category = AnnotationCategory.make({:assignment => assignment})
   text_annotation = TextAnnotation.make({
     :annotation_text => AnnotationText.make(:annotation_category => annotation_category),
-    :submission_file => SubmissionFile.make(:submission => submission)
+    :submission_file => SubmissionFile.make(:submission => submission),
+    :annotation_number => submission.annotations.count + 1
   })
 
   image_annotation = ImageAnnotation.make({
-  :annotation_text => AnnotationText.make(:annotation_category => annotation_category),
-  :submission_file => SubmissionFile.make(:submission => submission)
+    :annotation_text => AnnotationText.make(:annotation_category => annotation_category),
+    :submission_file => SubmissionFile.make(:submission => submission),
+    :annotation_number => submission.annotations.count + 1
   })
   
   result = submission.result

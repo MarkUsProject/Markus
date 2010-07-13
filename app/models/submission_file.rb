@@ -96,7 +96,8 @@ class SubmissionFile < ActiveRecord::Base
     revision_number = submission.revision_number
     revision = repo.get_revision(revision_number)
     if revision.files_at_path(path)[filename].nil?
-      raise I18n.t("results.could_not_find_file", :filename => filename, :repository_name => student_group.repository_name)
+      raise I18n.t("results.could_not_find_file", :filename => filename,
+        :repository_name => student_group.repository_name)
     end
     retrieved_file = repo.download_as_string(revision.files_at_path(path)[filename])
     repo.close
@@ -115,9 +116,16 @@ class SubmissionFile < ActiveRecord::Base
       annotations.each do |annot|
         if index == annot.line_start.to_i - 1
            text = AnnotationText.find(annot.annotation_text_id).content
-           result = result.concat(I18n.t("graders.download.begin_annotation", :id => annot.id.to_s, :text => text, :comment_start => comment_syntax[0], :comment_end => comment_syntax[1]) + "\n")
+           result = result.concat(I18n.t("graders.download.begin_annotation", 
+               :id => annot.annotation_number.to_s,
+               :text => text,
+               :comment_start => comment_syntax[0],
+               :comment_end => comment_syntax[1]) + "\n")
         elsif index == annot.line_end.to_i
-           result = result.concat(I18n.t("graders.download.end_annotation", :id => annot.id.to_s, :comment_start => comment_syntax[0], :comment_end => comment_syntax[1]) + "\n")
+           result = result.concat(I18n.t("graders.download.end_annotation",
+               :id => annot.annotation_number.to_s,
+               :comment_start => comment_syntax[0],
+               :comment_end => comment_syntax[1]) + "\n")
         end
       end
     result = result.concat(contents + "\n")

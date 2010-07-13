@@ -144,6 +144,7 @@ ImageAnnotation.blueprint do
     )}
   annotation_text_id {1}
   submission_file_id {submission_file.id}
+  annotation_number {rand(1000)}
 end
 
 Mark.blueprint do
@@ -246,4 +247,5 @@ TextAnnotation.blueprint do
   annotation_text {AnnotationText.make(
     :annotation_category => AnnotationCategory.make(:assignment => submission_file.submission.grouping.assignment)
     )}
+  annotation_number {rand(1000)}
 end
