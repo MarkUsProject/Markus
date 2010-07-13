@@ -85,6 +85,7 @@ var FilterTable = Class.create({
     this.sorting_reverse_class = this.set_or_default(params.sorting_reverse_class, 'FilterTable_sorting_by_reverse');
     
     this.selectable_class = this.set_or_default(params.selectable_class, 'FilterTable_selectable');
+    this.select_onclick = this.set_or_default(params.select_onclick, '');
     
     this.select_all_top_id = this.set_or_default(params.select_all_top_id, 'FilterTable_select_all_top');
     this.select_all_bottom_id = this.set_or_default(params.select_all_bottom_id, 'FilterTable_select_all_bottom');
@@ -314,25 +315,26 @@ var FilterTable = Class.create({
       var row_contents = row['filter_table_row_contents'].split('</td>')
 
       if(this.can_select) { //Make the select box
-        var checkbox_element = new Element('input', {type: 'checkbox', name: this.select_name, value: row.id, id: this.select_id_prefix + row.id, "class": this.selectable_class});
-        var label_element = new Element ('label', {"class": "inline_label", "for": checkbox_element.id});
-        //Take the first row element and make it a label for the select box
-        label_element.insert(row_contents.shift());
+        var checkbox_element = new Element('input', {type: 'checkbox', name: this.select_name, value: row.id, id: this.select_id_prefix + row.id, "class": this.selectable_class, "onclick": this.select_onclick});
         var td_element = new Element('td');
         td_element.insert(checkbox_element);
         tr_element.insert({top: td_element});
-        td_element = new Element('td');
-        td_element.insert(label_element);
-        tr_element.insert({bottom: td_element});
       }
 
       this.headers.each(function(column_header, index) {
-        var td_element = new Element('td'); 
-        td_element.innerHTML = row_contents[index]; 
+        var td_element = new Element('td');
+        if(index > 0 && this.can_select == true){
+          var label_element = new Element ('label', {"class": "inline_label", "for": this.select_id_prefix + row.id});
+          label_element.insert(row_contents[0]);
+          td_element.insert(label_element);
+        }
+        else {
+          td_element.innerHTML = row_contents[index];
+        }
         if(column_header.value['row_class'] != undefined) {
           td_element.addClassName(column_header.value['row_class']);
         }
-       tr_element.insert(td_element);
+        tr_element.insert(td_element);
       });
     }
     catch (e) {

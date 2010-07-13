@@ -109,6 +109,26 @@ h4{
   padding: 0 1.3em;
   min-width: 75%;
 }
+.wrapRight{
+  padding: 0 1.3em;
+  min-width: 75%;
+}
+
+.wrapLeftGroups{
+  padding: 0 1.5em;
+  min-width: 75%;
+}
+.wrapRightGroups{
+  padding: 0 1.5em;
+  min-width: 75%;
+}
+
+.centreColumn{
+  position: fixed;
+  top: 300px;
+  left: 38%;
+  margin-left: -17px;
+}
 
 /* Title Bar*/
 
@@ -354,6 +374,17 @@ input, .button, .button_2{
   margin: 5px;
 }
 
+.image_input{
+  min-width: 0;
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  border: transparent;
+  font-weight: bold;
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+}
+
 .inline_checkbox{
       min-width: 0px;
 }
@@ -368,7 +399,7 @@ input, .button, .button_2{
   padding: 4px 25px;
 }
 
-.FilterTable_selectable{
+.FilterTable_selectable, .inline_checkbox, .FilterTable_students_selectable{
   min-width: 0px;
 }
 
@@ -513,8 +544,6 @@ tbody tr:hover {
 }
 
 .table_menu{
-   visibility: hidden;
-   display: block;
    padding-left: 10px;
 }
 
@@ -619,7 +648,7 @@ td.student_total input:hover {
 }
 
 #FilterTable_header_members{
-  width: 40%;
+  width: 55%;
 }
 
 #FilterTable_header_graders{
@@ -907,6 +936,56 @@ div.float_left {
    width: 24%;
 }
 
+.colLeftGroups{
+  float: left;
+  width: 38%;
+  margin-right: -17px;
+}
+
+.colRightGroups{
+  float: right;
+  width: 62%;
+  margin-left: -17px;
+}
+
+.pane{
+  -moz-border-radius: 5px;
+  background: #ECECEC;
+  border: 1px solid #ddd;
+  margin: 0 0 10px 0;
+  padding: 10px;
+}
+
+.headingButtons{
+  position: absolute;
+  right: 0px;
+  padding: 0 1.3em;
+  margin-top: -2em;
+}
+
+.globalActionIconsTop, .globalActionIconsBottom{
+  background: #DFDFDF;
+  width: 60px;
+  margin-bottom: -5px;
+  margin-top: -5px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.globalActionIconsTop{
+  -moz-border-radius-topleft: 5px;
+  -webkit-border-radius-topleft: 5px;
+  -moz-border-radius-topright: 5px;
+  -webkit-border-radius-topright: 5px;
+}
+
+.globalActionIconsBottom{
+  -moz-border-radius-bottomleft: 5px;
+  -webkit-border-radius-bottomleft: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -webkit-border-radius-bottomright: 5px;
+}
+  
 .accordion {
   position: fixed;
   height: 75%;

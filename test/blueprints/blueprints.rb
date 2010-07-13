@@ -14,6 +14,7 @@ Sham.api_key {|i| "API_KEY_N_#{i}"}
 
 Sham.filename { "#{Faker::Lorem.words(1)[0]}.java"}
 Sham.group_name {|i| "machinist_group#{i}"}
+Sham.grouping_name {|i| "machinist_grouping#{i}"}
 
 Sham.short_identifier {|i| "machinist_A#{i}"}
 Sham.description {Faker::Lorem.sentence(2)}
@@ -124,13 +125,13 @@ GradeEntryStudent.blueprint do
 end
 
 Group.blueprint do
-  group_name
+  group_name {Sham.group_name}
   repo_name {group_name}
 end
 
 Grouping.blueprint do
-  group
-  assignment
+  group {Group.make}
+  assignment {Assignment.make}
 end
 
 ImageAnnotation.blueprint do
