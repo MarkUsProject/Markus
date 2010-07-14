@@ -78,22 +78,22 @@
 
 <fieldset>
   <legend><%= t("assignment.type") %></legend>
+  <p id="persist_groups_assignment_style" <%='style="display:none;"' unless @assignments.size > 0 && @assignment.id.nil? %> class="disable">
+    <%= check_box_tag "persist_groups", true, false, :id => "persist_groups", :onclick => "toggle_persist_groups($(this).getValue());", :disabled => true%>
+    <%= label_tag "persist_groups", t("assignment.group.persist_group_from"), :class => "checkbox_label" %>
+    <select id="persist_groups_assignment" name="persist_groups_assignment" onchange="<%= remote_function(:url => {:action => "update_group_properties_on_persist"}, :with => "'assignment_id=' + $F('persist_groups_assignment')")%>" disabled>
+      <% @assignments.each do |assignment| %>
+        <option value="<%= h(assignment.id) %>"><%= h(assignment.short_identifier)%></option>
+      <% end %>
+    </select>
+  </p>
   <p id="is_group_assignment_style">
-  <%= check_box_tag "is_group_assignment", true, false, :id => "is_group_assignment", :onchange => "toggle_group_assignment($F('is_group_assignment'))"%>
+    <%= check_box_tag "is_group_assignment", true, false, :id => "is_group_assignment", :onchange => "toggle_group_assignment($F('is_group_assignment'))"%>
     <%= label_tag "is_group_assignment", t("assignment.group.work_in_groups"), :class => "checkbox_label" %>
   </p>
- <p id="persist_groups_assignment_style" <%='style="display:none;"' unless @assignments.size > 0 && @assignment.id.nil? %> class="disable">
-   <%= check_box_tag "persist_groups", true, false, :id => "persist_groups", :onclick => "toggle_persist_groups($(this).getValue());", :disabled => true%>
-  <%= label_tag "persist_groups", t("assignment.group.persist_group_from"), :class => "checkbox_label" %>
-  <select id="persist_groups_assignment" name="persist_groups_assignment" onchange="<%= remote_function(:url => {:action => "update_group_properties_on_persist"}, :with => "'assignment_id=' + $F('persist_groups_assignment')")%>" disabled>
-    <% @assignments.each do |assignment| %>
-    <option value="<%= h(assignment.id) %>"><%= h(assignment.short_identifier)%></option>
-    <% end %>
-  </select>
- </p>
   <fieldset class="group_properties">
     <legend><%= t("assignment.group.properties") %></legend>
-    <div id="group_properties" class="disabled">
+    <div id="group_properties" class="">
   <p id="student_form_groups_style" class="disable">
     <%= label_tag  "student_form_groups", t("assignment.group.students_allowed_form_groups"), :class => "checkbox_label" %>
     <%= f.check_box :student_form_groups, :id => "student_form_groups", :onchange => "toggle_student_form_groups($F('student_form_groups'))"%>
