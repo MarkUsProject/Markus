@@ -76,6 +76,7 @@ ActiveRecord::Schema.define(:version => 20100712175641) do
     t.boolean  "section_due_dates",                :default => false
     t.boolean  "display_grader_names_to_students"
     t.boolean  "enable_test",                      :default => false,    :null => false
+    t.integer  "tokens_per_day"
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true
@@ -308,6 +309,11 @@ ActiveRecord::Schema.define(:version => 20100712175641) do
 
   add_index "test_results", ["filename"], :name => "index_test_results_on_filename"
   add_index "test_results", ["submission_id"], :name => "index_test_results_on_submission_id"
+
+  create_table "tokens", :force => true do |t|
+    t.integer "grouping_id"
+    t.integer "tokens"
+  end
 
   create_table "users", :force => true do |t|
     t.string   "user_name",                        :null => false

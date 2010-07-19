@@ -41,6 +41,7 @@ class Assignment < ActiveRecord::Base
   # see the Rails API documentation for validates_presence_of (Model validations)
   validates_inclusion_of :allow_web_submits, :in => [true, false] 
   validates_inclusion_of :display_grader_names_to_students, :in => [true, false]
+  validates_inclusion_of :enable_test, :in => [true, false]
   
   def validate
     if (group_max && group_min) && group_max < group_min

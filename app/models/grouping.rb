@@ -19,7 +19,9 @@ class Grouping < ActiveRecord::Base
   
   has_many :submissions
   has_many :grace_period_deductions, :through => :student_memberships
-  
+    
+  has_many :tokens
+
   named_scope :approved_groupings, :conditions => {:admin_approved => true}
     
   # user association/validations
@@ -262,6 +264,11 @@ class Grouping < ActiveRecord::Base
     self.save
     # update repository permissions
     update_repository_permissions
+  end
+  
+  # Token Credit Query
+  def give_tokens
+    Token.create(:grouping_id => self.id, :tokens => self.assignment.tokens_per_day) if self.assignment.enable_test
   end
 
   # Grace Credit Query
