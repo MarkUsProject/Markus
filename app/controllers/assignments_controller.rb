@@ -55,6 +55,22 @@ class AssignmentsController < ApplicationController
       # Look up submission information
       repo = @grouping.group.repo
       @revision  = repo.get_latest_revision
+      @revision_number = @revision.revision_number
+
+      # For running tests
+      if params[:collect]
+        @result = manually_collect_and_prepare_test(@grouping, @revision.revision_number)
+      else
+        @result = automatically_collect_and_prepare_test(@grouping, @revision.revision_number)
+      end
+      #submission = @grouping.submissions.find_by_submission_version_used(true)
+      if @result
+        @test_result_files = @result.submission.test_results
+      else
+        @test_result_files = nil
+      end
+      @token = Token.find_by_grouping_id(@grouping.id)
+
       @last_modified_date = @grouping.assignment_folder_last_modified_date
       @num_submitted_files = @grouping.number_of_submitted_files
       @num_missing_assignment_files = @grouping.missing_assignment_files.length
@@ -244,7 +260,7 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find(params[:id])
     @student = @current_user
     m_logger = MarkusLogger.instance
-    
+
     begin
       # We do not allow group creations by students after the due date
       # and the grace period for an assignment
@@ -431,6 +447,44 @@ class AssignmentsController < ApplicationController
       assignment.group_max = 1;
     end
     return assignment
+  end
+
+  def find_submission_for_test(grouping_id, revision_number)
+    return Submission.find_by_grouping_id_and_revision_number(grouping_id, revision_number)
+  end
+
+  # Used every time a student access to the assignment page
+  # It checks if the due date is passed, and if not, it
+  # collect the last submission revision
+  def automatically_collect_and_prepare_test(grouping, revision_number)
+    # if there is no result for this grouping,
+    # do nothing, because a student of the grouping
+    # must run collec_and_test manually first
+    return if grouping.submissions.empty?
+    # Once it is time to collect files, student should'nt start to do tests
+    if !grouping.assignment.submission_rule.can_collect_now?
+      current_submission_used = grouping.submissions.find_by_submission_version_used(true)
+      if current_submission_used.revision_number < revision_number
+        new_submission = Submission.create_by_revision_number(grouping, revision_number)
+        result = new_submission.result
+      else
+        result = current_submission_used.result
+      end
+    end
+    return result
+  end
+
+  # Used the first time a student from a grouping wanted
+  # to do test on his code
+  def manually_collect_and_prepare_test(grouping, revision_number)
+    # We check if it not the time to collect files
+    # Once it is time to collect files, student should'nt start to do tests
+    # And we create a submission with the latest revision of the svn
+    if !grouping.assignment.submission_rule.can_collect_now?
+      new_submission = Submission.create_by_revision_number(grouping, revision_number)
+      result = new_submission.result
+    end
+    return result
   end
 
 end

@@ -68,6 +68,8 @@ Assignment.blueprint do
   submission_rule {NoLateSubmissionRule.make}
   allow_web_submits {true}
   display_grader_names_to_students {false}
+  enable_test {true}
+  tokens_per_day {10}
 end
 
 AssignmentFile.blueprint do
@@ -249,4 +251,9 @@ TextAnnotation.blueprint do
     :annotation_category => AnnotationCategory.make(:assignment => submission_file.submission.grouping.assignment)
     )}
   annotation_number {rand(1000)}
+end
+
+Token.blueprint do
+  grouping_id {Grouping.make.id}
+  tokens {5}
 end

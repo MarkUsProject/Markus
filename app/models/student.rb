@@ -121,6 +121,9 @@ class Student < User
     end
     @grouping.group = @group
     @grouping.save
+    
+    # We give students the tokens for the test framework
+    @grouping.give_tokens
 
     # Create the membership
     @member = StudentMembership.new(:grouping_id => @grouping.id,
@@ -170,6 +173,11 @@ class Student < User
     grouping = Grouping.find(gid)
     # write repo permissions if need be
     grouping.update_repository_permissions
+
+    if grouping.is_valid?
+      # We give students the tokens for the test framework
+      grouping.give_tokens
+    end
 
     other_memberships = self.pending_memberships_for(grouping.assignment_id)
     other_memberships.each do |m|

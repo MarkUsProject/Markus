@@ -267,6 +267,74 @@
       </ul>
     </div>
   </div>
+  
+  <% # HTML for Student Testing Interface %>
+  <% if @assignment.enable_test %>
+  <div class="block">
+  	<h2><%= I18n.t("test_framework.test") %></h2>
+	<% if @grouping.nil? %>
+          <div class="sub_block">
+            <br />
+            <%= I18n.t("test_framework.need_group_for_test") %>
+            <br />
+          </div>
+	<% else %>
+          <div class="block_content">
+            <h3><%= I18n.t("test_framework.information") %></h3>
+            <% if !@grouping.submissions.empty? %>
+              <div class="sub_block">
+                <%= I18n.t("test_framework.revision_used_for_test", :revision => @revision_number) %>
+              </div>
+            <% end %>
+            <br />
+            <div class="sub_block">
+              <br />
+              <%= I18n.t("test_framework.token.tokens_per_day", :tokens => @assignment.tokens_per_day) %>
+            </div>
+            <br />
+            <div class="sub_block">
+              <br />
+              <% if @token.nil? %>
+               <%= I18n.t("test_framework.token.tokens_not_given_yet") %>
+              <% else %>
+                <% if @token.tokens == 0 %>
+                    <%= I18n.t("test_framework.token.no_more_available") %>
+                <% else %>
+                    <%= I18n.t("test_framework.token.tokens_available", :tokens => @token.tokens) %>
+                <% end %>
+              <% end %>
+              <br />
+             </div>
+           <br />
+           <h3><%= I18n.t("test_framework.run_tests") %></h3>
+           <% if @grouping.assignment.submission_rule.can_collect_now? %>
+             <%= I18n.t("test_framework.due_date_is_passed") %>
+             <br />
+           <% else %>
+             <% if @result.nil? && @test_result_files.nil? %>
+                <%= I18n.t("test_framework.need_one_file") %>
+                <br />
+             <% else %>
+                <%
+                # Javascript for test result window
+                %>
+                <%= render :partial => "results/common/test_result_window.html" %>
+                <div id="test_results_controls">
+                   <%= render :partial => 'results/common/test_selector', :locals => {:test_result_files => @test_result_files, :result => @result} %>
+                   <br />
+                </div>
+               <br />
+             <% end %>
+             <% if @grouping.submissions.empty? %>
+               <br />
+               <%= link_to I18n.t("test_framework.collect_and_test"), {:controller => 'assignments', :action => 'student_interface', :id => @assignment.id, :grouping_id => @grouping.id , :revision_number => @revision_number, :collect => true}, :class => "button"%>
+               <br />
+             <% end %>
+           <% end %>
+    <% end %>
+  	</div>
+  </div>
+  <% end %>
 </div>
 
 <%
