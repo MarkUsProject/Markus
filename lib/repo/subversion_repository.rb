@@ -97,7 +97,7 @@ class SubversionRepository < Repository::AbstractRepository
   end
 
   # method : Export an existing Subversion repository to a new folder
-  def export(repo_dest_dir)
+  def export(repo_dest_dir, revision_number=nil)
     # Modify the path of the repository
     # If libsvn-ruby raise a segfault, check the first argument of
     # Svn::Client::export which must be an URI (ex : file:///home/...)
@@ -123,11 +123,8 @@ class SubversionRepository < Repository::AbstractRepository
     end
 
     begin
-      result = ctx.export( repo_path_dir, repo_dest_dir, nil, nil)
+      result = ctx.export( repo_path_dir, repo_dest_dir, revision_number, nil)
     end
-
-    #To be sure the ctx object is destroyed at the end of
-    ctx.destroy
 
     return result
   end
