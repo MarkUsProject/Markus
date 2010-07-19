@@ -1,9 +1,11 @@
 <%= stylesheet_link_tag("livepipe/tabs") %>
-<%= javascript_include_tag "livepipe/livepipe.js" %>
-<%= javascript_include_tag "livepipe/window.js" %>
-<%= javascript_include_tag "livepipe/tabs.js" %>
+<% # UI LIBRARIES %>
+<%= javascript_include_tag "livepipe/livepipe.js",
+	"livepipe/window.js",
+	"livepipe/tabs.js",
+	:cache => "livepipe_cache" %>
 
-<script>
+<script type="text/javascript">
 
   var modalUpload = null;
   var modalDownload = null;

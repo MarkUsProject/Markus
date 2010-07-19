@@ -1,5 +1,8 @@
-<%= javascript_include_tag "livepipe/livepipe.js"%>
-<%= javascript_include_tag "livepipe/window.js"%>
+<% # UI LIBRARIES %>
+<%= javascript_include_tag "livepipe/livepipe.js",
+	"livepipe/window.js",
+	:cache => "livepipe_cache" %>
+
 <script type="text/javascript">
   var invite_modal = null;
 
