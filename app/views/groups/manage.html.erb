@@ -1,7 +1,9 @@
 <%= stylesheet_link_tag("livepipe/tabs") %>
-<%= javascript_include_tag "livepipe/livepipe.js" %>
-<%= javascript_include_tag "livepipe/window.js" %>
-<%= javascript_include_tag "livepipe/tabs.js" %>
+<% # UI LIBRARIES %>
+<%= javascript_include_tag "livepipe/livepipe.js",
+	"livepipe/window.js",
+	"livepipe/tabs.js",
+	:cache => "livepipe_cache" %>
 <%= javascript_include_tag "16accordion.js" %>
 <%= javascript_include_tag "manage_groups.js" %>
 <%= javascript_include_tag "FilterTable/FilterTable.js" %>
