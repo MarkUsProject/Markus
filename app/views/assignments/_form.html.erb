@@ -1,4 +1,11 @@
-<%= calendar_date_select_includes "silver" %>
+<%
+  # For the internationalization of the Calendar
+%>
+<% if I18n.default_locale == :en %>
+   <%= calendar_date_select_includes "silver" %>
+<% else %>
+   <%= calendar_date_select_includes "silver", :locale => I18n.default_locale %>
+<% end %>
 <%= javascript_include_tag "PeriodDeltaChain/PeriodDeltaChain" %>
 
 <%= render :partial => 'boot.js' %>
@@ -19,9 +26,9 @@
       <%= f.text_field :short_identifier, :onchange =>  "$('assignment_repository_folder').setValue($(this).getValue())"%><br />
     <% else %>
       <%= f.text_field :short_identifier %><br />
-    <% end %>    
+    <% end %>
 
- 
+
     <%= f.label :description, t(:name) %>
     <%= f.text_field :description %><br />
     <%= f.label :message %>
@@ -53,12 +60,12 @@
 	<legend><%= t("assignment.marking_scheme.title") %></legend>
 	<% Assignment::MARKING_SCHEME_TYPE.each do |key,value| %>
     <p>
-      <%= f.radio_button :marking_scheme_type, Assignment::MARKING_SCHEME_TYPE[key], 
+      <%= f.radio_button :marking_scheme_type, Assignment::MARKING_SCHEME_TYPE[key],
         :checked => @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[key],
         :onclick =>"notice_marking_scheme_changed(#{@assignment.id.nil?},
                    '#{Assignment::MARKING_SCHEME_TYPE[key]}',
                    '#{@assignment.marking_scheme_type}')"
-        %>  
+        %>
      <%= f.label("marking_scheme_type_" + Assignment::MARKING_SCHEME_TYPE[key], h(I18n.t("assignment.marking_scheme.#{value}")), :class => "radio_label") %>
 	</p>
 	<% end %>
