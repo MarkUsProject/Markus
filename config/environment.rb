@@ -32,5 +32,3 @@ Rails::Initializer.run do |config|
                             lib/classes
                          )
 end
-# For Calendar Date Select
-# CalendarDateSelect.format = :db
