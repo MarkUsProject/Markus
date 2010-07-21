@@ -1,4 +1,6 @@
 require 'fastercsv'
+require 'ya2yaml'
+
 
 module AnnotationCategoriesHelper
 
@@ -26,7 +28,7 @@ module AnnotationCategoriesHelper
   end
   
   def convert_to_yml(annotation_categories)
-    return prepare_for_conversion(annotation_categories).to_yaml
+    return prepare_for_conversion(annotation_categories).ya2yaml
   end
 
 end

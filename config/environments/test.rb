@@ -33,6 +33,7 @@ config.gem 'machinist', :lib => false, :source => "http://gemcutter.org"
 config.gem 'faker', :lib => false
 config.gem 'factory_data_preloader', :source => 'http://gemcutter.org'
 config.gem 'rubyzip', :lib => false
+config.gem 'ya2yaml', :source => 'http://rubygems.org', :lib => false
 
 ###################################################################
 # MarkUs SPECIFIC CONFIGURATION
@@ -47,7 +48,7 @@ COURSE_NAME         = "CSC108 Fall 2009: Introduction to Computer Programming"
 # MarkUs relies on external user authentication: An external script
 # (ideally a small C program) is called with username and password
 # piped to stdin of that program (first line is username, second line
-# is password). 
+# is password).
 #
 # If and only if it exits with a return code of 0, the username/password
 # combination is considered valid and the user is authenticated. Moreover,
@@ -110,7 +111,7 @@ REPOSITORY_PERMISSION_FILE = REPOSITORY_STORAGE + "/dummy"
 # repositories' permissions only OR is admin of the Subversion
 # repositories. In the latter case, it will write to
 # $REPOSITORY_SVN_AUTHZ_FILE, otherwise it doesn't. Change this to
-# 'false' if repositories are created by a third party. 
+# 'false' if repositories are created by a third party.
 IS_REPOSITORY_ADMIN = true
 
 ###################################################################
