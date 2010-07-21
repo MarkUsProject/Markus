@@ -8,6 +8,7 @@ class Grouping < ActiveRecord::Base
   before_destroy :revoke_repository_permissions_for_students
   belongs_to :assignment
   belongs_to  :group
+  belongs_to :grouping_queue
   has_many :memberships
   has_many :student_memberships, :order => 'id'
   has_many :accepted_student_memberships, :class_name => "StudentMembership", :conditions => {'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]}
@@ -30,7 +31,9 @@ class Grouping < ActiveRecord::Base
   
   validates_presence_of   :group_id, :message => "needs an group id"
   validates_associated    :group,    :message => "associated group need to be valid"
-    
+
+  validates_inclusion_of :is_collected, :in => [true, false]
+
   def group_name_with_student_user_names
     student_user_names = student_memberships.collect {|m| m.user.user_name }
     return group.group_name if student_user_names.size == 0
@@ -42,12 +45,18 @@ class Grouping < ActiveRecord::Base
   end
 
   # Query Functions ------------------------------------------------------
-   
+
   # Returns whether or not a TA is assigned to mark this Grouping
   def has_ta_for_marking?
     return ta_memberships.count > 0
   end
-  
+
+  #Returns whether or not the submission_collector is pending to collect this
+  #grouping's newest submission
+  def is_collected?
+    return is_collected
+  end
+
   # Returns an array of the user_names for any TA's assigned to mark
   # this Grouping
   def get_ta_names

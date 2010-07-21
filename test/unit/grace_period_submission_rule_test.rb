@@ -126,10 +126,8 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
 
     end
 
-    context "2 grace credits deduction are in the database" do
-
-      should "deduct 4 grace credits" do
-
+    context "2 grace credits deduction are in the database for assignment" do
+      setup do
         # 2 grace credits deduction per student are in the database
         @grouping.accepted_student_memberships.each do |student_membership|
           deduction = GracePeriodDeduction.new
@@ -137,7 +135,50 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
           deduction.deduction = 2
           deduction.save
         end
+      end
 
+      should "deduct 1 grace credits" do
+
+        # The Student submits some files before the due date...
+        submit_files_before_due_date
+
+        # Now we're past the due date, but before the collection date, within the first
+        # grace period
+        submit_files_after_due_date_before_collection_time("July 23 2009 9:00PM", "OvertimeFile1.java", "Some overtime contents")
+
+        # Now we're past the collection date.
+        submit_files_after_due_date_after_collection_time("July 25 2009 10:00PM", "NotIncluded.java", "Should not be included in grading")
+
+        # An Instructor or Grader decides to begin grading
+        pretend_now_is(Time.parse("July 28 2009 1:00PM")) do
+          members = {}
+          @grouping.accepted_student_memberships.each do |student_membership|
+            members[student_membership.user.id] = student_membership.user.remaining_grace_credits
+          end
+          submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
+          submission = @assignment.submission_rule.apply_submission_rule(submission)
+
+          # Assert that each accepted member of this grouping got a GracePeriodDeduction
+          @grouping.reload
+          @grouping.accepted_student_memberships.each do |student_membership|
+            # The students should have 1 grace credits remaining from their 5 grace credits
+            assert_equal 4, student_membership.user.remaining_grace_credits
+          end
+
+          # We should have all files except NotIncluded.java in the repository.
+         assert_not_nil submission.submission_files.find_by_filename("TestFile.java")
+         assert_not_nil submission.submission_files.find_by_filename("Test.java")
+         assert_not_nil submission.submission_files.find_by_filename("Driver.java")
+         assert_not_nil submission.submission_files.find_by_filename("OvertimeFile1.java")
+         assert_nil submission.submission_files.find_by_filename("NotIncluded.java")
+         assert_not_nil submission.result
+
+        end
+
+      end
+
+      should "deduct 2 grace credits" do
+        
         # The Student submits some files before the due date...
         submit_files_before_due_date
 
@@ -165,7 +206,7 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
           @grouping.reload
           @grouping.accepted_student_memberships.each do |student_membership|
             # The students should have 1 grace credits remaining from their 5 grace credits
-            assert_equal 1, student_membership.user.remaining_grace_credits
+            assert_equal 3, student_membership.user.remaining_grace_credits
           end
 
           # We should have all files except NotIncluded.java in the repository.
@@ -177,9 +218,9 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
          assert_nil submission.submission_files.find_by_filename("NotIncluded.java")
          assert_not_nil submission.result
 
-       end
+        end
 
-     end
+      end
 
     end
 

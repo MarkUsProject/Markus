@@ -1,4 +1,8 @@
-<tr>
+<tr
+<% if grouping.is_collected? %>
+  style="background-color: #90EE90"
+<%end%>>
+  
 <td>
   <input type="checkbox" name="groupings[]" class="ap_selectable" id="grouping_<%=grouping.id%>" value="<%=grouping.id%>" />
 </td>
@@ -9,6 +13,8 @@
     <% else %>
       <%=h(grouping.group.group_name)%>
     <% end %>
+  <% elsif !grouping.is_collected %>
+    <%= link_to h(grouping.group.group_name), :action => 'collect_and_begin_grading', :id => assignment.id, :grouping_id => grouping.id %>
   <% else %>
     <%= link_to h(grouping.group.group_name), :controller => 'results', :action => 'edit', :id => grouping.get_submission_used.result%>
   <% end %>

@@ -4,6 +4,7 @@ require 'shoulda'
 class GroupingTest < ActiveSupport::TestCase
   fixtures :all
 
+  should belong_to :grouping_queue
   should belong_to :group
   should belong_to :assignment
   should have_many :memberships

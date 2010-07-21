@@ -23,6 +23,8 @@ module EnsureConfigHelper
     check_writable(MarkusConfigurator.markus_config_repository_storage, "REPOSITORY_STORAGE")
     check_readable(MarkusConfigurator.markus_config_repository_storage, "REPOSITORY_STORAGE")
     check_executable(MarkusConfigurator.markus_config_repository_storage, "REPOSITORY_STORAGE")
+    check_writable(MarkusConfigurator.markus_config_pdf_storage, "PDF_STORAGE")
+    check_readable(MarkusConfigurator.markus_config_pdf_storage, "PDF_STORAGE")
     check_in_writable_dir(MarkusConfigurator.markus_config_test_framework_repository, "TEST_FRAMEWORK_REPOSITORY")
     if ! ( RUBY_PLATFORM =~ /(:?mswin|mingw)/ ) # should match for Windows only
       check_if_executes( MarkusConfigurator.markus_config_validate_file, "VALIDATE_FILE")

@@ -132,6 +132,7 @@ Group.blueprint do
 end
 
 Grouping.blueprint do
+  grouping_queue { nil }
   group {Group.make}
   assignment {Assignment.make}
 end

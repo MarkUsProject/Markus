@@ -51,7 +51,10 @@ class GracePeriodSubmissionRule < SubmissionRule
     overtime_hours = calculate_overtime_hours_from(collection_time)    
     # Now we need to figure out how many Grace Credits to deduct
     deduction_amount = calculate_deduction_amount(overtime_hours)
-    
+
+    #Get rid of any previous deductions for this assignment, so as not to
+    #give duplicate deductions upon multiple calls to this method
+    remove_deductions(submission)
    
     # And how many grace credits are available to this grouping
     available_grace_credits = submission.grouping.available_grace_credits
@@ -98,6 +101,22 @@ class GracePeriodSubmissionRule < SubmissionRule
     return 'submission_rules/grace_period/grader_tab'
   end
 
+  #Remove all deductions for this assignment from all accepted members of
+  #submission, so that any new deductions for the assignemnt will not be duplicates
+  def remove_deductions(submission)
+    student_memberships = submission.grouping.accepted_student_memberships
+
+    student_memberships.each do |student_membership|
+      deductions = student_membership.user.grace_period_deductions
+      deductions.each do |deduction|
+        if deduction.membership.grouping.assignment.id == assignment.id
+          student_membership.grace_period_deductions.delete(deduction)
+          deduction.destroy
+        end
+      end
+    end
+  end
+ 
   private 
   
   def hours_sum
@@ -127,5 +146,5 @@ class GracePeriodSubmissionRule < SubmissionRule
     end
     return assignment.due_date + hours_after_due_date.hours
   end
- 
+
 end

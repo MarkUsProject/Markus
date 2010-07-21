@@ -3,21 +3,39 @@
     page['code_pane'].onmousemove = nil
     #Non-binary files
     if !SubmissionFile.is_binary?(@file_contents)
-      page.replace_html 'codeviewer', :partial => 'results/common/text_codeviewer', :locals => { :uid => params[:uid], :file_contents => @file_contents, :annots => @annots, :code_type => @code_type}
-    #Supported image files
-    elsif @file.is_supported_image?
-      page.replace_html 'codeviewer', :partial => 'results/common/image_codeviewer', :locals => { :uid => params[:uid], :file_contents => @file_contents, :annots => @annots, :code_type => @code_type, :submission_file_id => @submission_file_id}
+      page.replace_html 'codeviewer',
+        :partial => 'results/common/text_codeviewer',
+        :locals => { :uid => params[:uid], :file_contents => @file_contents,
+        :annots => @annots, :code_type => @code_type}
+    #Supported image files and pdfs
+    elsif @file.is_supported_image? || @file.is_pdf?
+      page.replace_html 'codeviewer',
+        :partial => 'results/common/image_codeviewer',
+        :locals => { :uid => params[:uid], :file_contents => @file_contents,
+        :annots => @annots, :code_type => @code_type,
+        :submission_file_id => @submission_file_id}
     #Rest of the files
     else
-      page.replace_html 'codeviewer', :partial => 'results/common/text_codeviewer', :locals => { :uid => params[:uid], :file_contents => I18n.t("submission_file.error.binary_file_message"), :annots => @annots, :code_type => @code_type}
+      page.replace_html 'codeviewer',
+        :partial => 'results/common/text_codeviewer',
+        :locals => { :uid => params[:uid],
+        :file_contents => I18n.t("submission_file.error.binary_file_message"),
+        :annots => @annots, :code_type => @code_type}
     end
        
     #Also update the annotation_summary_list
-    if (@current_user.ta? || @current_user.admin?) && @result.marking_state != Result::MARKING_STATES[:complete]
-      page.replace_html 'annotation_summary_list', :partial => 'results/marker/annotation_summary', :locals => {:annots => @all_annots, :submission_file_id => @submission_file_id}
+    if (@current_user.ta? || @current_user.admin?) &&
+        @result.marking_state != Result::MARKING_STATES[:complete]
+      page.replace_html 'annotation_summary_list',
+        :partial => 'results/marker/annotation_summary',
+        :locals => {:annots => @all_annots,
+        :submission_file_id => @submission_file_id}
       page.call "hide_all_annotation_content_editors"
     else
-      page.replace_html 'annotation_summary_list', :partial => 'results/student/annotation_summary', :locals => {:annots => @all_annots, :submission_file_id => @submission_file_id}
+      page.replace_html 'annotation_summary_list',
+        :partial => 'results/student/annotation_summary',
+        :locals => {:annots => @all_annots,
+        :submission_file_id => @submission_file_id}
     end
 
 

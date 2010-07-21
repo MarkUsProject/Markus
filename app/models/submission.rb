@@ -51,7 +51,11 @@ class Submission < ActiveRecord::Base
          old_result.released_to_students = false
          old_result.save
        end
-       new_submission.populate_with_submission_files(revision)
+       begin
+         new_submission.populate_with_submission_files(revision)
+       rescue Repository::FileDoesNotExist => e
+         #populate the submission with no files instead of raising an exception
+       end
        new_submission.save
      end
      return new_submission
@@ -131,7 +135,7 @@ class Submission < ActiveRecord::Base
       new_file.filename = file.name
       new_file.path = file.path
       new_file.save
-    end 
+    end
   end
 
   #=== Description

@@ -212,21 +212,23 @@ require 'shoulda'
     end
   end
 
-  context "A text file calling its get_annotation_grid method" do
-    setup do
-      @submissionfile = SubmissionFile.new(:filename => "filename", :path => "path")
-      @submissionfile.submission_id = 1
-    end
-    should "Return nil" do
-      assert_nil @submissionfile.get_annotation_grid
-    end
-  end
 
-  context "An image file calling its get_annotation_grid method" do
-    setup do
-      @submissionfile = SubmissionFile.new(:filename => "filename.jpeg", :path => "path")
-      @submissionfile.submission_id = 1
+  context "Calling the get_annotation_grid method" do
+    context "from a text file" do
+      setup do
+        @submissionfile = SubmissionFile.make(:filename => "filename",
+          :path => "path")
+      end
+      should "Return nil" do
+        assert_nil @submissionfile.get_annotation_grid
+      end
     end
+
+    context "from an image file" do
+      setup do
+        @submissionfile = SubmissionFile.make(:filename => "filename.jpeg",
+          :path => "path")
+      end
       context "with no annotations" do
         should "return []" do
           assert_equal [], @submissionfile.get_annotation_grid
@@ -234,21 +236,74 @@ require 'shoulda'
       end
       context "with valid annotations" do
         setup do
-          @annot1 = ImageAnnotation.new({:submission_file => @submissionfile,
-            :x1 => 0, :x2 => 10, :y1 => 0, :y2 => 10, :annotation_text => AnnotationText.new})
-          @annot2 = ImageAnnotation.new({:submission_file => @submissionfile,
-            :x1 => 57, :x2 => 73, :y1 => 2, :y2 => 100, :annotation_text => AnnotationText.new})
-          @annot1.annotation_text_id = 1
-          @annot2.annotation_text_id = 2
+          @annot1 = ImageAnnotation.make({:submission_file => @submissionfile,
+            :x1 => 0, :x2 => 10, :y1 => 0, :y2 => 10,
+            :annotation_text => AnnotationText.make({:id => 1})})
+          @annot2 = ImageAnnotation.make({:submission_file => @submissionfile,
+            :x1 => 57, :x2 => 73, :y1 => 2, :y2 => 100,
+            :annotation_text => AnnotationText.make({:id => 2})})
         end
         should "return a corresponding array" do
           @submissionfile.annotations.push(@annot1)
           @submissionfile.annotations.push(@annot2)
-          assert_equal [{:id => 1, :x_range => {:start => 0, :end => 10}, :y_range => {:start => 0, :end => 10}},
-            {:id => 2, :x_range => {:start => 57, :end => 73}, :y_range => {:start => 2, :end => 100}}], @submissionfile.get_annotation_grid
+          assert_equal [{:id => 1, :x_range => {:start => 0, :end => 10},
+              :y_range => {:start => 0, :end => 10}},
+            {:id => 2, :x_range => {:start => 57, :end => 73},
+              :y_range => {:start => 2, :end => 100}}],
+            @submissionfile.get_annotation_grid.sort { |x,y| x[:id] <=> y[:id]}
         end
       end
+    end
+
+    context "from a pdf file" do
+      setup do
+        @submissionfile = SubmissionFile.make(:filename => "filename.jpeg",
+          :path => "path")
+      end
+      context "with no annotations" do
+        should "return []" do
+          assert_equal [], @submissionfile.get_annotation_grid
+        end
+      end
+      context "with valid annotations" do
+        setup do
+          @annot1 = ImageAnnotation.make({:submission_file => @submissionfile,
+            :x1 => 0, :x2 => 10, :y1 => 0, :y2 => 10,
+            :annotation_text => AnnotationText.make({:id => 1})})
+          @annot2 = ImageAnnotation.make({:submission_file => @submissionfile,
+            :x1 => 57, :x2 => 73, :y1 => 2, :y2 => 100,
+            :annotation_text => AnnotationText.make({:id => 2})})
+        end
+        should "return a corresponding array" do
+          @submissionfile.annotations.push(@annot1)
+          @submissionfile.annotations.push(@annot2)
+          assert_equal [{:id => 1, :x_range => {:start => 0, :end => 10},
+              :y_range => {:start => 0, :end => 10}},
+            {:id => 2, :x_range => {:start => 57, :end => 73},
+              :y_range => {:start => 2, :end => 100}}],
+            @submissionfile.get_annotation_grid.sort { |x,y| x[:id] <=> y[:id]}
+        end
+      end
+    end
   end
+
+   context "Calling the convert_pdf_to_jpg method" do
+     context "from a text file" do
+       should "return nil" do
+        @submissionfile = SubmissionFile.make(:filename => "filename",
+        :path => "path")
+        assert_nil @submissionfile.convert_pdf_to_jpg
+       end
+     end
+     
+     context "from an image file" do
+       should "return nil" do
+        @submissionfile = SubmissionFile.make(:filename => "filename.jpg",
+        :path => "path")
+        assert_nil @submissionfile.convert_pdf_to_jpg
+       end
+     end
+   end
 
   context "A binary content" do
     
@@ -267,5 +322,6 @@ require 'shoulda'
   
   def teardown
     destroy_repos
+    destroy_converted_pdfs
   end
 end

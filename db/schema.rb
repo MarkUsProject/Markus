@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100712175641) do
+ActiveRecord::Schema.define(:version => 20100713172326) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -143,7 +143,7 @@ ActiveRecord::Schema.define(:version => 20100712175641) do
     t.datetime "updated_at"
   end
 
-  add_index "grade_entry_students", ["grade_entry_form_id", "user_id"], :name => "index_grade_entry_students_on_user_id_and_grade_entry_form_id", :unique => true
+  add_index "grade_entry_students", ["user_id", "grade_entry_form_id"], :name => "index_grade_entry_students_on_user_id_and_grade_entry_form_id", :unique => true
 
   create_table "grades", :force => true do |t|
     t.integer  "grade_entry_item_id"
@@ -155,15 +155,22 @@ ActiveRecord::Schema.define(:version => 20100712175641) do
 
   add_index "grades", ["grade_entry_item_id", "grade_entry_student_id"], :name => "index_grades_on_grade_entry_item_id_and_grade_entry_student_id", :unique => true
 
-  create_table "groupings", :force => true do |t|
-    t.integer  "group_id",                          :null => false
-    t.integer  "assignment_id",                     :null => false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean  "admin_approved", :default => false, :null => false
+  create_table "grouping_queues", :force => true do |t|
+    t.integer "submission_collector_id"
+    t.boolean "priority_queue",          :default => false
   end
 
-  add_index "groupings", ["assignment_id", "group_id"], :name => "groupings_u1", :unique => true
+  create_table "groupings", :force => true do |t|
+    t.integer  "group_id",                             :null => false
+    t.integer  "assignment_id",                        :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "admin_approved",    :default => false, :null => false
+    t.integer  "grouping_queue_id"
+    t.boolean  "is_collected",      :default => false
+  end
+
+  add_index "groupings", ["assignment_id", "group_id"], :name => "altered_groupings_u1", :unique => true
 
   create_table "groups", :force => true do |t|
     t.string "group_name", :limit => 30
@@ -181,7 +188,7 @@ ActiveRecord::Schema.define(:version => 20100712175641) do
     t.string   "markable_type"
   end
 
-  add_index "marks", ["markable_id", "markable_type", "result_id"], :name => "marks_u1", :unique => true
+  add_index "marks", ["markable_id", "result_id", "markable_type"], :name => "marks_u1", :unique => true
 
   create_table "memberships", :force => true do |t|
     t.integer  "user_id"
@@ -270,10 +277,17 @@ ActiveRecord::Schema.define(:version => 20100712175641) do
   add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
   add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
 
+  create_table "submission_collectors", :force => true do |t|
+    t.integer "child_pid"
+    t.boolean "stop_child",               :default => false
+    t.boolean "safely_stop_child_exited", :default => false
+  end
+
   create_table "submission_files", :force => true do |t|
     t.integer "submission_id"
     t.string  "filename"
-    t.string  "path",          :default => "/", :null => false
+    t.string  "path",          :default => "/",   :null => false
+    t.boolean "is_converted",  :default => false
   end
 
   add_index "submission_files", ["filename"], :name => "index_submission_files_on_filename"

@@ -169,38 +169,55 @@ class SubmissionsController < ApplicationController
   end
   
   def manually_collect_and_begin_grading
-    grouping = Grouping.find(params[:id])
-    assignment = grouping.assignment
-    revision_number = params[:current_revision_number].to_i
-    new_submission = Submission.create_by_revision_number(grouping, revision_number)
-    result = new_submission.result
-    redirect_to :controller => 'results', :action => 'edit', :id => result.id
+    @grouping = Grouping.find(params[:id])
+    @revision_number = params[:current_revision_number].to_i
+    SubmissionCollector.instance.manually_collect_submission(@grouping,
+      @revision_number)
+    redirect_to :action => 'update_converted_pdfs', :id => @grouping.id
   end
 
   def collect_and_begin_grading
     assignment = Assignment.find(params[:id])
     grouping = Grouping.find(params[:grouping_id])
     if !assignment.submission_rule.can_collect_now?
-      flash[:error] = I18n.t("browse_submissions.could_not_collect", :group_name => grouping.group.group_name)
+      flash[:error] = I18n.t("browse_submissions.could_not_collect",
+        :group_name => grouping.group.group_name)
     else
-      time = assignment.submission_rule.calculate_collection_time.localtime
-      # Create a new Submission by timestamp.
-      # A Result is automatically attached to this Submission, thanks to some callback
-      # logic inside the Submission model
-      begin
-        new_submission = Submission.create_by_timestamp(grouping, time)
-      # Apply the SubmissionRule
-        new_submission = assignment.submission_rule.apply_submission_rule(new_submission)
-        result = new_submission.result
-        redirect_to :controller => 'results', :action => 'edit', :id => result.id
-        return
-      rescue Exception => e
-        flash[:error] = e.message
-      end
+      #Push grouping to the priority queue
+      SubmissionCollector.instance.push_grouping_to_priority_queue(grouping)
+      flash[:success] = I18n.t("collect_submissions.priority_given")
     end
     redirect_to :action => 'browse', :id => assignment.id
   end
 
+  def collect_all_submissions
+    assignment = Assignment.find(params[:id], :include => [:groupings])
+    if !assignment.submission_rule.can_collect_now?
+      flash[:error] = I18n.t("collect_submissions.could_not_collect",
+        :assignment_identifier => assignment.short_identifier)
+    else
+      submission_collector = SubmissionCollector.instance
+      submission_collector.push_groupings_to_queue(assignment.groupings)
+      flash[:success] = I18n.t("collect_submissions.collection_job_started",
+        :assignment_identifier => assignment.short_identifier)
+    end
+    redirect_to :action => 'browse', :id => assignment.id
+  end
+
+  def update_converted_pdfs
+    @grouping = Grouping.find(params[:id])
+    @submission = @grouping.get_submission_used
+    @pdf_count= 0
+    @converted_count = 0
+    @submission.submission_files.each do |file|
+      if file.is_pdf?
+        @pdf_count += 1
+        if file.is_converted
+          @converted_count += 1
+        end
+      end
+    end
+  end
 
   def browse
     if current_user.ta?
