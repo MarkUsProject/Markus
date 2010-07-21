@@ -24,15 +24,14 @@ config.action_mailer.delivery_method = :test
 # Required gems for development (we are passing :lib => false,
 # because we don't want them to be loaded just yet)
 # Install them by using "rake gems:install"
-config.gem 'selenium-client', :version => ">=1.2.15", :lib => false
-config.gem 'shoulda', :version => ">=2.10.2", :source => "http://gems.github.com", :lib => false
-config.gem 'fastercsv', :lib => false
-config.gem 'ruby-debug', :lib => false
-config.gem 'will_paginate', :lib => false
-config.gem 'machinist', :lib => false, :source => "http://gemcutter.org"
-config.gem 'faker', :lib => false
-config.gem 'factory_data_preloader', :source => 'http://gemcutter.org'
-config.gem 'rubyzip', :lib => false
+config.gem 'selenium-client', :version => ">=1.2.15", :lib => false, :source => 'http://rubygems.org'
+config.gem 'shoulda', :version => ">=2.10.2", :source => "http://rubygems.org", :lib => false
+config.gem 'fastercsv', :lib => false, :source => 'http://rubygems.org'
+config.gem 'will_paginate', :lib => false, :source => 'http://rubygems.org'
+config.gem 'machinist', :lib => false, :source => "http://rubygems.org"
+config.gem 'faker', :lib => false, :source => 'http://rubygems.org'
+config.gem 'factory_data_preloader', :source => 'http://rubygems.org'
+config.gem 'rubyzip', :lib => false, :source => 'http://rubygems.org'
 config.gem 'ya2yaml', :source => 'http://rubygems.org', :lib => false
 
 ###################################################################

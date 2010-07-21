@@ -31,9 +31,9 @@ config.action_mailer.raise_delivery_errors = false
 # Required gems for development (we are passing :lib => false,
 # because we don't want them to be loaded just yet)
 # Install them by using "rake gems:install"
-config.gem 'fastercsv', :lib => false
-config.gem 'will_paginate', :lib => false
-config.gem 'rubyzip', :lib => false
+config.gem 'fastercsv', :lib => false, :source => 'http://rubygems.org'
+config.gem 'will_paginate', :lib => false, :source => 'http://rubygems.org'
+config.gem 'rubyzip', :lib => false, :source => 'http://rubygems.org'
 config.gem 'ya2yaml', :source => 'http://rubygems.org', :lib => false
 
 ###################################################################
