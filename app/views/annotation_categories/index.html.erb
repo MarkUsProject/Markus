@@ -1,4 +1,6 @@
-<%= stylesheet_link_tag("livepipe/tabs") %>
+<% content_for :head do %>
+  <%= stylesheet_link_tag("livepipe/tabs") %>
+<% end %>
 
 <% # UI LIBRARIES %>
 <%= javascript_include_tag "livepipe/livepipe.js",
@@ -60,15 +62,15 @@
           <span class="menu_bar">|</span>
 	<%= button_to_function t("download"), "download_annotation_categories();" %>
 
-</h1>	
+</h1>
 </div>
 
 <div class="wrapLeft">
-	<% if flash[:annotation_upload_invalid_lines] -%>  
-		<p class="error"><%= flash[:annotation_upload_invalid_lines] %></p>  
+	<% if flash[:annotation_upload_invalid_lines] -%>
+		<p class="error"><%= flash[:annotation_upload_invalid_lines] %></p>
 	<% end -%>
-	<% if flash[:annotation_upload_success] -%>  
-		<p class="success"><%= flash[:annotation_upload_success] %></p>  
+	<% if flash[:annotation_upload_success] -%>
+		<p class="success"><%= flash[:annotation_upload_success] %></p>
 	<% end -%>
 <p id="criterion_error" class="warning" style="display: none;"></p>
 
@@ -86,7 +88,7 @@
         <% else %>
           <div id="no_annotation_categories_info" class="information"><%=h t("annotations.no_annotation_categories") %></div>
         <% end %>
-      </ul>  <!-- Rubric Criteria Pane -->	
+      </ul>  <!-- Rubric Criteria Pane -->
   </div>
    </div>
 
@@ -97,20 +99,20 @@
 	<p><%=h t("annotations.help_message") %></p>
       </div>
     </div>
-  
+
    <div class="clear"></div>
-  
+
   </div> <!-- Edit Canvas -->
  </div>
 
 
     <div id="upload_dialog" >
-    
+
     <h1><%=h t("annotations.upload.upload_annotations") %></h1>
         <%= t("annotations.upload.upload_message") %>
           <% form_tag({:action => 'csv_upload', :id => @assignment.id}, {:multipart => true}) do %>
            <p><%= file_field_tag :annotation_category_list, :size => 0 %>
-           </p>							
+           </p>
            <p>
            <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
            <input type="reset" value="<%= t(:cancel) %>" onclick="modalUpload.close();">
@@ -127,6 +129,6 @@
       <input type="reset" value="<%= t(:cancel) %>" onclick="modalDownload.close();">
     </div>
 
-  
+
 
 

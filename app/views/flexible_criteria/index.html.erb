@@ -1,4 +1,6 @@
-<%= stylesheet_link_tag("livepipe/tabs") %>
+<% content_for :head do %>
+  <%= stylesheet_link_tag("livepipe/tabs") %>
+<% end %>
 
 <% # UI LIBRARIES %>
 <%= javascript_include_tag "livepipe/livepipe.js",
@@ -23,7 +25,7 @@
 
 
   document.observe("dom:loaded", function(){
-  
+
     modalUpload = new Control.Modal($('upload_dialog'),
     {
       overlayOpacity: 0.75,
@@ -37,7 +39,7 @@
       className: 'modalDownload',
       fade: false
     });
-    
+
   });
 </script>
 
@@ -49,7 +51,7 @@
 
 <div id="title_bar">
   <h1><%= I18n.t("flexible_criteria.criteria_management", :identifier => h(@assignment.short_identifier)) %>
-    
+
         <%= link_to_function t("add_criterion"), %| if($('new_flexible_criterion') != null) {
           $('flexible_criterion_flexible_criterion_name').select();
           $('flexible_criterion_flexible_criterion_name').focus();
@@ -60,7 +62,7 @@
       <%= button_to_function I18n.t("upload"), "upload_criteria();"%>
     <span class="menu_bar" >|</span>
       <%= button_to_function I18n.t("download"), "download_criteria();"%>
-  </h1>	
+  </h1>
 </div><!-- Title bar-->
 
 <div class="wrapLeft">
@@ -79,7 +81,7 @@
       </ul>
     </div>
   <% end %>
-  
+
   <p id="new_criterion_error" class="warning" style="display: none;"></p>
 
   <div id="flexible_criteria_pane">
@@ -88,15 +90,15 @@
 
   <div id="flexible_edition_pane">
     <div id="flexible_edition_pane_menu">
-      	
+
 	  <%= render :partial => 'flexible_criteria_manager_help' %>
-	  
+
     </div>
   </div>
-  
+
 </div>
 
-<div id="upload_dialog"> 
+<div id="upload_dialog">
   <h1><%= t('flexible_criteria.upload.title') %></h1>
   <p><%= t('flexible_criteria.upload.prompt') %></p>
   <% form_for :upload, :url => {:controller=>"flexible_criteria",
@@ -112,16 +114,16 @@
   </p>
   <% end %>
 </div>
- 
-  
+
+
 <div id="download_dialog">
   <h2><%= t('flexible_criteria.download.title') %></h2>
   <p><%= t('flexible_criteria.download.prompt') %></p>
-  
+
   <ul>
     <li><%= link_to t('flexible_criteria.download.link'), {:controller=>"flexible_criteria", :action=>"download", :id=> @assignment.id}%></li>
   </ul>
-  
-  <input type="reset" value="<%= t(:cancel) %>" onclick="modalDownload.close();"> 
-</div> 
+
+  <input type="reset" value="<%= t(:cancel) %>" onclick="modalDownload.close();">
+</div>
 
