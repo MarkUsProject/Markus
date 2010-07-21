@@ -1,4 +1,6 @@
-<%= stylesheet_link_tag("livepipe/tabs") %>
+<% content_for :head do %>
+  <%= stylesheet_link_tag("livepipe/tabs") %>
+<% end %>
 
 <% # UI LIBRARIES %>
 <%= javascript_include_tag "livepipe/livepipe.js",
@@ -21,7 +23,7 @@ function submit_invite(invite_member) {
   //close the dialog
   modal.close();
   //send AJAX request
- <%= 
+ <%=
  remote_function(
     :url  => { :action => 'invite_member', :id => @assignment.id },
     :with => "'&invite_member=' + invite_member")
@@ -30,12 +32,12 @@ function submit_invite(invite_member) {
 
 document.observe("dom:loaded", function(){
     //Create the modal dialog
-  modal = new Control.Modal($('invite_dialog'), 
+  modal = new Control.Modal($('invite_dialog'),
   {
     overlayOpacity: 0.75,
     className: 'modal',
     fade:false
- 
+
   });
 })
 </script>
@@ -49,7 +51,7 @@ document.observe("dom:loaded", function(){
       <% if flash[:upload_notice] -%>
           <p class="success"><%= h(flash[:upload_notice]) %></p>
       <% end -%>
-      
+
       <% if flash[:edit_notice] -%>
         <p style="color:green"><%= h(flash[:edit_notice]) %></p>
       <% end -%>
@@ -57,7 +59,7 @@ document.observe("dom:loaded", function(){
       <% if flash[:fail_notice] -%>
         <p style="color:red"><%= h(flash[:fail_notice]) %></p>
       <% end -%>
-<div class="fieldset"> 
+<div class="fieldset">
 
     <% if @grouping.nil? %>
       <p>You don't have any group yet</p>
@@ -96,7 +98,7 @@ document.observe("dom:loaded", function(){
     <% end %>
 
 
-  <%# # This dialog is displayed only when a student tries to invite  
+  <%# # This dialog is displayed only when a student tries to invite
       # someone in their group%>
     <div id="invite_dialog"i style="display:none;">
       <h2>Invite</h2>
@@ -120,28 +122,28 @@ document.observe("dom:loaded", function(){
 
   <div class="colRight">
 
-    <% # order of processing students is important. we go through each member 
-       # one by one and delete them above from the list of students 
+    <% # order of processing students is important. we go through each member
+       # one by one and delete them above from the list of students
        # if they are already in a group
        # See manage/_group.html.erb
     %>
-    
+
     <h2>Students not in group:</h2>
-    
+
     <div class="section">
 
       <div id="student_container">
-      
+
         <ul id="student_list">
           <% @students.each do |s| -%>
             <li id="user_<%= h(s.user_name) %>"><%= h(s.last_name) %> <%= h(s.first_name) %></li>
           <% end -%>
         </ul>
       </div>
-    
+
     </div>
-    
-    
+
+
   </div> <!-- colRight -->
 
 </div> <!-- ColsLeftHeavy -->

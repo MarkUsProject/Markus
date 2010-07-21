@@ -6,6 +6,7 @@
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <title>Test Result: <%= h(@test_result.filename) %></title>
   <%= stylesheet_link_tag 'main.css', :media => 'all' %>
+  <%= yield :head %>
 </head>
 <body>
   <%= yield :layout %>

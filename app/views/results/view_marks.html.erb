@@ -1,44 +1,48 @@
-<%= stylesheet_link_tag("livepipe/tabs") %>
-<%= stylesheet_link_tag("SyntaxHighlighter") %>
-<%= stylesheet_link_tag("grader") %>
+<% content_for :head do %>
+  <%= stylesheet_link_tag("livepipe/tabs") %>
+  <%= stylesheet_link_tag("SyntaxHighlighter") %>
+  <%= stylesheet_link_tag("grader") %>
+<% end %>
 
 <% # UI LIBRARIES %>
-<%= javascript_include_tag "livepipe/livepipe.js" %>
-<%= javascript_include_tag "livepipe/window.js" %>
-<%= javascript_include_tag "livepipe/tabs.js" %>
+<%= javascript_include_tag "livepipe/livepipe.js",
+	"livepipe/window.js",
+	"livepipe/tabs.js",
+	:cache => "livepipe_cache" %>
+
 <%= javascript_include_tag "controls.js" %>
 <%= javascript_include_tag "DropDownMenu/DropDownMenu.js"%>
 <%= javascript_include_tag "ResizePane/ResizePane.js"%>
 
-<% # SOURCE CODE GLOWER %>
-<%= javascript_include_tag "SourceCodeGlower/AnnotationText.js"%>
-<%= javascript_include_tag "SourceCodeGlower/AnnotationTextDisplayer.js"%>
-<%= javascript_include_tag "SourceCodeGlower/AnnotationTextManager.js"%>
-<%= javascript_include_tag "SourceCodeGlower/SourceCodeLine.js"%>
-<%= javascript_include_tag "SourceCodeGlower/SourceCodeLineAnnotations.js"%>
-<%= javascript_include_tag "SourceCodeGlower/SourceCodeLineCollection.js"%>
-<%= javascript_include_tag "SourceCodeGlower/SourceCodeLineArray.js"%>
-<%= javascript_include_tag "SourceCodeGlower/SourceCodeLine.js"%>
-<%= javascript_include_tag "SourceCodeGlower/SyntaxHighlighter1p5Line.js"%>
-<%= javascript_include_tag "SourceCodeGlower/SourceCodeLineManager.js"%>
-<%= javascript_include_tag "SourceCodeGlower/SourceCodeLineFactory.js"%>
-<%= javascript_include_tag "SourceCodeGlower/SourceCodeAdapter.js"%>
-<%= javascript_include_tag "SourceCodeGlower/SyntaxHighlighter1p5Adapter.js"%>
+<% # SOURCE CODE GLOWER AND IMAGE ANNOTATION MANAGER %>
+<%= javascript_include_tag "SourceCodeGlower/AnnotationText.js",
+	"SourceCodeGlower/AnnotationTextDisplayer.js",
+	"SourceCodeGlower/AnnotationTextManager.js",
+	"SourceCodeGlower/SourceCodeLine.js",
+	"SourceCodeGlower/SourceCodeLineAnnotations.js",
+	"SourceCodeGlower/SourceCodeLineCollection.js",
+	"SourceCodeGlower/SourceCodeLineArray.js",
+	"SourceCodeGlower/SourceCodeLine.js",
+	"SourceCodeGlower/SyntaxHighlighter1p5Line.js",
+	"SourceCodeGlower/SourceCodeLineManager.js",
+	"SourceCodeGlower/SourceCodeLineFactory.js",
+	"SourceCodeGlower/SourceCodeAdapter.js",
+	"SourceCodeGlower/SyntaxHighlighter1p5Adapter.js",
+	"SourceCodeGlower/ImageAnnotationGrid.js",
+	"SourceCodeGlower/ImageEventHandler.js",
+	:cache => "SourceCodeGlower_cache" %>
 
 <% # SYNTAX HIGHLIGHTER %>
-<%= javascript_include_tag "syntaxhighlighter/shCore.js" %>
-<%= javascript_include_tag "syntaxhighlighter/shBrushJava.js" %>
-<%= javascript_include_tag "syntaxhighlighter/shBrushXml.js" %>
-<%= javascript_include_tag "syntaxhighlighter/shBrushRuby.js" %>
-<%= javascript_include_tag "syntaxhighlighter/shBrushPython.js" %>
-<%= javascript_include_tag "syntaxhighlighter/shBrushJScript.js" %>
-<%= javascript_include_tag "syntaxhighlighter/shBrushCpp.js" %>
-<%= javascript_include_tag "syntaxhighlighter/shBrushScheme.js" %>
-<%= javascript_include_tag "syntaxhighlighter/shBrushUnknown.js" %>
-
-<% # IMAGE ANNOTATION MANAGER %>
-<%= javascript_include_tag "SourceCodeGlower/ImageAnnotationGrid.js" %>
-<%= javascript_include_tag "SourceCodeGlower/ImageEventHandler.js" %>
+<%= javascript_include_tag "syntaxhighlighter/shCore.js",
+	"syntaxhighlighter/shBrushJava.js",
+	"syntaxhighlighter/shBrushXml.js",
+	"syntaxhighlighter/shBrushRuby.js",
+	"syntaxhighlighter/shBrushPython.js",
+	"syntaxhighlighter/shBrushJScript.js",
+	"syntaxhighlighter/shBrushCpp.js",
+	"syntaxhighlighter/shBrushScheme.js",
+	"syntaxhighlighter/shBrushUnknown.js",
+	:cache => "syntaxhighlighter_cache" %>
 
 <% # VIEWING MARKS FUNCTIONS %>
 <%= javascript_include_tag "Grader/file_selector.js" %>

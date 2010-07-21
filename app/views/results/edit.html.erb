@@ -1,6 +1,8 @@
-<%= stylesheet_link_tag("livepipe/tabs") %>
-<%= stylesheet_link_tag("SyntaxHighlighter") %>
-<%= stylesheet_link_tag("grader") %>
+<% content_for :head do %>
+  <%= stylesheet_link_tag("livepipe/tabs") %>
+  <%= stylesheet_link_tag("SyntaxHighlighter") %>
+  <%= stylesheet_link_tag("grader") %>
+<% end %>
 
 <% # UI LIBRARIES %>
 <%= javascript_include_tag "livepipe/livepipe.js",
@@ -54,13 +56,13 @@
 <script type="text/javascript">
   var modalNotesGroup = null;
   document.observe("dom:loaded", function(){
-    modalNotesGroup = new Control.Modal($('notes_dialog'), 
+    modalNotesGroup = new Control.Modal($('notes_dialog'),
      {
        overlayOpacity: 0.75,
        className: 'modalNotesGroup',
        fade:false
       });
-      
+
   // Set up the "working" notices
   Ajax.Responders.register({
     onCreate: function() {
@@ -71,10 +73,10 @@
       $('working').hide();
       window.onbeforeunload = null;
     }
-  });    
-      
+  });
+
  })
-  
+
 
 function check_working() {
   return '<%=t(:still_working_warning)%>';
