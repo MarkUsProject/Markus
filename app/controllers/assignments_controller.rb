@@ -395,7 +395,11 @@ class AssignmentsController < ApplicationController
     membership.delete
     membership.save
     redirect_to :action => 'student_interface', :id => params[:id]
-  end  
+  end
+
+  def update_collected_submissions
+    @assignments = Assignment.all
+  end
   
   private 
   

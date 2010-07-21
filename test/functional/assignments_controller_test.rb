@@ -1,6 +1,8 @@
 require File.dirname(__FILE__) + '/authenticated_controller_test'
 require 'fastercsv'
 require 'shoulda'
+require 'machinist'
+require 'mocha'
 
 class AssignmentsControllerTest < AuthenticatedControllerTest
   
@@ -777,12 +779,18 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
   # does proper computing of averages/etc
   
   def test_on_index_grader_gets_assignment_list
+    @submission_rule = NoLateSubmissionRule.make
+    @submission_rule.stubs(:can_collect_now?).returns(false)
+    Assignment.any_instance.stubs(:submission_rule).returns(@submission_rule)
     get_as(users(:ta1), :index)
     assert assigns(:assignments)
     assert_response :success 
   end
 
   def test_on_index_instructor_gets_assignment_list
+    @submission_rule = NoLateSubmissionRule.make
+    @submission_rule.stubs(:can_collect_now?).returns(false)
+    Assignment.any_instance.stubs(:submission_rule).returns(@submission_rule)
     get_as(@admin, :index)
     assert assigns(:assignments)
     assert_response :success 

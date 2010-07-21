@@ -1,4 +1,3 @@
-
 class SubmissionFile < ActiveRecord::Base
   
   belongs_to  :submission
@@ -7,6 +6,8 @@ class SubmissionFile < ActiveRecord::Base
   validates_presence_of :submission
   validates_presence_of :filename
   validates_presence_of :path
+  
+  validates_inclusion_of :is_converted, :in => [true, false]
   
   def get_file_type
     # This is where you can add more languages that SubmissionFile will
@@ -58,6 +59,9 @@ class SubmissionFile < ActiveRecord::Base
     return supported_formats.include?(File.extname(filename))
   end
 
+  def is_pdf?
+    return File.extname(filename) == '.pdf'
+  end
 
   # Taken from http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/44936
   def self.is_binary?(file_contents)
@@ -76,7 +80,7 @@ class SubmissionFile < ActiveRecord::Base
   # Return nil if this SubmissionFile is not a supported image.
 
   def get_annotation_grid
-    return unless self.is_supported_image?
+    return unless self.is_supported_image? || self.is_pdf?
     all_annotations = []
     self.annotations.each do |annot|
       if annot.is_a?(ImageAnnotation)
@@ -86,6 +90,32 @@ class SubmissionFile < ActiveRecord::Base
       end
     end
     return all_annotations
+  end
+  
+  def convert_pdf_to_jpg
+    return unless MarkusConfigurator.markus_config_pdf_support && self.is_pdf?
+    m_logger = MarkusLogger.instance
+    storage_path = File.join(MarkusConfigurator.markus_config_pdf_storage,
+      self.submission.grouping.group.repository_name, self.path)
+    file_path = File.join(storage_path, self.filename.split('.')[0] + '.jpg')
+    self.export_file(storage_path)
+    #Remove any old copies of this image if they exist
+    FileUtils.remove_file(file_path, true) if File.exists?(file_path)
+
+    m_logger.log(I18n.t("markus_logger.begin_conversion"))
+    # ImageMagick can only save images with heights not exceeding 65500 pixels.
+    # Larger images result in a conversion failure.
+    begin
+      #This is an ImageMagick command, see http://www.imagemagick.org/script/convert.php for documentation
+      `convert -limit memory #{MarkusConfigurator.markus_config_pdf_conv_memory_allowance} -limit map 0 -density 150 -resize 66% #{storage_path}/#{self.filename} -append #{file_path}`
+      m_logger.log(I18n.t("markus_logger.pdf_convert_success"))
+    rescue Exception => e
+      m_logger.log(I18n.t("markus_logger.pdf_convert_failed"))
+    end
+
+    FileUtils.remove_file(File.join(storage_path, self.filename), true)
+    self.is_converted = true
+    self.save
   end
 
   # Return the contents of this SubmissionFile.  Include annotations in the
@@ -105,6 +135,26 @@ class SubmissionFile < ActiveRecord::Base
       retrieved_file = add_annotations(retrieved_file)
     end
     return retrieved_file
+  end
+
+  #Export this file from the svn repository into storage_path
+  #This will overwrite any files with the same name in the storage path.
+  def export_file(storage_path)
+    m_logger = MarkusLogger.instance
+    m_logger.log(I18n.t("markus_logger.begin_export_file", :file => self.filename))
+    temp_dir = File.join(storage_path, 'temp_export')
+    begin
+      #Create the storage directories if they dont already exist
+      FileUtils.makedirs(storage_path)
+      repo = submission.grouping.group.repo
+      revision_number = submission.revision_number
+      repo.export(temp_dir, revision_number)
+      file_path = File.join(temp_dir, self.path, self.filename)
+      FileUtils.mv(file_path, File.join(storage_path, self.filename), :force => true)
+    ensure
+      FileUtils.remove_dir(temp_dir, true) if File.exists?(temp_dir)      
+    end
+    m_logger.log(I18n.t("markus_logger.success_export_file", :file => self.filename))
   end
 
   private
@@ -132,7 +182,5 @@ class SubmissionFile < ActiveRecord::Base
     end
     return result
   end
-
-  
 end
 

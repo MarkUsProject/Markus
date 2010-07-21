@@ -13,10 +13,21 @@
             :action => action, 
             :id => assignment},
 	    :class => "assignment_list"%>
-	<span class="info_due_date"><%= I18n.t(:due) %><span class="info_date">  <%=h I18n.l(assignment.due_date, :format => :long_date ) %></span></span>
+	<span class="info_due_date"><%= I18n.t(:due) %>
+          <span class="info_date">  <%=h I18n.l(assignment.due_date,
+  :format => :long_date ) %></span>
+          <span id="collected_submissions_<%=assignment.short_identifier %>">
+            <% if assignment.submission_rule.can_collect_now? %>
+              <%=h(" | #{assignment.groupings.all(:conditions => {:is_collected => true}).size}/#{assignment.groupings.size} Submissions Collected")%>
+            <% end %>
+          </span>
+        </span>
       </li>
     <% end %>
     
     </ul>
   <% end %>
 </div>
+
+<%= periodically_call_remote(:url => {:controller => 'assignments',
+    :action => 'update_collected_submissions'}, :frequency => '4') %>

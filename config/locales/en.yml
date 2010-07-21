@@ -83,6 +83,13 @@ en:
     create_new_assignment:      "Add Assignment"
     manage_course_work: "Manage Course Work"
     repository_folder:  "Repository Folder"
+    collect_submissions:
+      collect_all: "Collect All Submissions"
+      could_not_collect: "Could not collect submissions for assignment %{assignment_identifier} - the collection date has not been reached"
+      collection_job_started: "Submission collection for assignment %{assignment_identifier} has begun. The complete process may take some time, but you can access submissions as they become available."
+      priority_given: "The submission has been given collection priority. It will be ready soon."
+      errors:               "Errors"
+      results_loss_warning: "Note: This will erase any marking and annotations already done.\n\nAre you sure you want to proceed?"
     assignment:
         assignment: "Assignment %{short_identifier}"
         name:           "Assignment Name"
@@ -234,6 +241,7 @@ en:
       submission_file: "Submission File:"
       test_results: "Test Results:"
       no_file_in_repository: "[No files in repository]"
+      cant_display_image: "Image cannot be displayed. If you are trying to view a pdf file its probably too big to display or you have turned off pdf support. Click on the Download button to download the file instead"
 
     seperate_multiple_with_commas:  "Seperate multiple user names with commas"
     csv_valid_format:   "There was a problem parsing the CSV file you uploaded.  Please ensure that it's a valid CSV format, and that each line ends with a carriage-return line-feed set of characters.  No changes were made. "
@@ -368,6 +376,9 @@ en:
 
     student_interface_assignments: "Your Assignments"
 
+    stopping_collection_process: "Now stopping collection process..."
+    converting_pdfs: "Now converting pdf files...%{converted}/%{total}"
+
     markus_logger:
         user_login_message: "User '%{user_name}' logged in."
         user_wrong_credentials: "Wrong username/password: User '%{user_name}'."
@@ -403,6 +414,23 @@ en:
         group_repo_collision: "Creating group '%{group_name}' caused repository collision (Repository name was: '%{repo_name}'). Error message: '%{error}'"
         marks_released_for_grade_entry_form: "Marks released for marks spreadsheet '%{grade_entry_form}', ID: '%{grade_entry_form_id}' (for %{number_students} students)."
         marks_unreleased_for_grade_entry_form: "Marks unreleased for marks spreadsheet '%{grade_entry_form}', ID: '%{grade_entry_form_id}' (for %{number_students} students)."
+
+        begin_export_file: "Exporting %{file} from student repository"
+        success_export_file: "Successfuly exported %{file} from student repository"
+        begin_conversion: "Beginning pdf conversion"
+        pdf_convert_success: "Successfully converted pdf file to jpg"
+        pdf_convert_failed: "Pdf file couldn't be converted"
+
+        done_collecting_submissions: "Submission collection process done"
+        collection_starting: "Now collecting: %{short_id} for grouping: '%{grouping_id}'"
+        check_for_subm_collect: "Checking to see if there is already a submission collection process running"
+        subm_collect_still_running: "Submission collection process still running, doing nothing"
+
+        subm_collect:
+          enter_block: "Submission collection process now evaluating provided code block"
+          exit_block: "Submission collection process done evaluating provided code block"
+          parent_requested_stop: "Submission collection process now exiting because it was asked to stop by its parent"
+          est_db_connection: "Submission collection process successfully established its database connection"
 
     ensure_config:
       path_not_writable: "The setting %{constant_name} with path %{file_name} is not writable. Please double check the setting in %{config_location}."

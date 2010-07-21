@@ -268,6 +268,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               setup do
                 @file.expects(:filename).once.returns('filename')
                 @file.expects(:is_supported_image?).once.returns(false)
+                @file.expects(:is_pdf?).once.returns(false)
                 @file.expects(:retrieve_file).returns('file content')
                 SubmissionFile.expects(:find).with('1').returns(@file)
                 ResultsController.any_instance.stubs(:authorized_to_download?).once.returns(true)
@@ -327,6 +328,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               setup do
                 @file.expects(:filename).once.returns('filename')
                 @file.expects(:is_supported_image?).once.returns(false)
+                @file.expects(:is_pdf?).once.returns(false)
                 @file.expects(:retrieve_file).returns('file content')
                 SubmissionFile.expects(:find).with('1').returns(@file)
                 ResultsController.any_instance.stubs(:authorized_to_download?).once.returns(true)
@@ -648,6 +650,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               @file.expects(:filename).once.returns('filename')
               @file.expects(:retrieve_file).returns('file content')
               @file.expects(:is_supported_image?).once.returns(false)
+              @file.expects(:is_pdf?).once.returns(false)
               SubmissionFile.expects(:find).with('1').returns(@file)
               get_as @admin, :download, :select_file_id => 1
             end
@@ -957,6 +960,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             setup do
               @file.expects(:filename).once.returns('filename')
               @file.expects(:is_supported_image?).once.returns(false)
+              @file.expects(:is_pdf?).once.returns(false)
               @file.expects(:retrieve_file).once.returns('file content')
               SubmissionFile.expects(:find).with('1').returns(@file)
               get_as @ta, :download, :select_file_id => 1

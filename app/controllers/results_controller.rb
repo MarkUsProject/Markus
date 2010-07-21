@@ -86,7 +86,7 @@ class ResultsController < ApplicationController
 
   def next_grouping
     grouping = Grouping.find(params[:id])
-    if grouping.has_submission?
+    if grouping.has_submission? && grouping.is_collected?
       redirect_to :action => 'edit', :id => grouping.get_submission_used.result.id
     else
       redirect_to :controller => 'submissions', :action => 'collect_and_begin_grading', :id => grouping.assignment.id, :grouping_id => grouping.id
@@ -127,7 +127,7 @@ class ResultsController < ApplicationController
     end
     file = SubmissionFile.find(params[:select_file_id])
     begin
-      if params[:include_annotations] == 'true'
+      if params[:include_annotations] == 'true' && !file.is_supported_image?
         file_contents = file.retrieve_file(true)
       else
         file_contents = file.retrieve_file
@@ -137,11 +137,19 @@ class ResultsController < ApplicationController
       redirect_to :action => 'edit', :id => file.submission.result.id
       return
     end
-    #Display the file in the page if it is an image, and download button was not explicitly pressed
+    filename = file.filename
+    #Display the file in the page if it is an image/pdf, and download button
+    #was not explicitly pressed
     if file.is_supported_image? && !params[:show_in_browser].nil?
-      send_data file_contents, :type => "image", :disposition => 'inline', :filename => file.filename
+      send_data file_contents, :type => "image", :disposition => 'inline',
+        :filename => filename
+    elsif file.is_pdf? && !params[:show_in_browser].nil?
+      send_file File.join(MarkusConfigurator.markus_config_pdf_storage,
+        file.submission.grouping.group.repository_name, file.path,
+        filename.split('.')[0] + '.jpg'), :type => "image",
+        :disposition => 'inline', :filename => filename
     else
-      send_data file_contents, :filename => file.filename
+      send_data file_contents, :filename => filename
     end
   end
 
@@ -157,7 +165,8 @@ class ResultsController < ApplicationController
       # The Student does not have access to this file. Display an error.
       if @file.submission.grouping.membership_status(current_user).nil?
         render :partial => 'shared/handle_error',
-               :locals => {:error => I18n.t('submission_file.error.no_access', :submission_file_id => @submission_file_id)}
+               :locals => {:error => I18n.t('submission_file.error.no_access',
+                 :submission_file_id => @submission_file_id)}
         return
       end
     end
@@ -172,7 +181,6 @@ class ResultsController < ApplicationController
              :locals => {:error => e.message}
       return
     end   
-    
     @code_type = @file.get_file_type
     render :action => 'results/common/codeviewer'
   end

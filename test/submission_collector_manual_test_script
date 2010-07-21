@@ -1,0 +1,120 @@
+Instructions for manually testing the functionality of the submission_collector
+model.
+
+-------------------------------------------------------------------------------
+
+Test 1 - Regular submission collection:
+
+1.Login into MarkUs as an admin
+
+2.Navigate to the submissions page for any assignment which has some submissions
+
+3.Ensure the collection date has passed, otherwise you will not be able to
+collect any submissions
+
+4.Click on the "Collect All Submissions" link and press ok when the warning pops
+up.
+
+5.A separate process is created to handle collections, when each submission is
+ready, its row in the submissions table turns from white to green. The page
+needs to be refreshed to see the change, so continue refreshing the page until
+all submissions have turned green. The process prints a message to STDOUT every
+time it begins collecting a new submission.
+
+Note: submissions containing pdf files take significantly longer to collect.
+Large, multi-paged pdf files may increase collection time to a few minutes per
+submission. (A submission with a 1 mb, 11 paged pdf file can take up to a minute
+to collect)
+
+6.When all the submission rows indicate that they are collected, the process
+should be done its work. It should print "SUBMISSION COLLECTION PROCESS DONE"
+to STDOUT. To verify that the process is indeed terminated, you should see a
+zombie process with the same name as the process running the MarkUs server.
+
+7.You can repeat steps 4-6 and re-collect all the submissions.
+
+-------------------------------------------------------------------------------
+
+Test 2 - Collecting a single submission.
+
+1.Login into MarkUs as an admin
+
+2.Navigate to the submissions page for any assignment which has some submissions
+
+3.Ensure the collection date has passed, otherwise you will not be able to
+collect any submissions
+
+4.Without clicking the "Collect All Submissions" link, click on the group name
+of any white-coloured submission row. If the row is green, it means that this
+submission has already collected.
+
+5.A process is created to collect the submission you have chosen. The row will
+turn green when the submission has been collected, however the page will have to
+be refreshed in order to see the change from white to green.
+
+6.When all the submission rows indicate that they are collected, the process
+should be done its work. It should print "SUBMISSION COLLECTION PROCESS DONE"
+to STDOUT. To verify that the process is indeed terminated, you should see a
+zombie process with the same name as the process running the MarkUs server.
+
+-------------------------------------------------------------------------------
+
+Test 3 - Collecting a single submission out of turn.
+
+1.Login into MarkUs as an admin
+
+2.Navigate to the submissions page for any assignment which has some submissions
+
+3.Ensure the collection date has passed, otherwise you will not be able to
+collect any submissions
+
+4.Click the "Collect All Submissions" link. Click on the group name
+of any white-coloured submission row. If the row is green, it means that this
+submission has already collected.
+
+5.The submission you selected will be bumped ahead in the collection queue and
+will have priority of collection.
+
+6.A process is created to collect the submission you have chosen. The row will
+turn green when the submission has been collected, however the page will have to
+be refreshed in order to see the change from white to green.
+
+7.When all the submission rows indicate that they are collected, the process
+should be done its work. It should print "SUBMISSION COLLECTION PROCESS DONE"
+to STDOUT. To verify that the process is indeed terminated, you should see a
+zombie process with the same name as the process running the MarkUs server.
+
+-------------------------------------------------------------------------------
+
+Test 4 - Manually collecting a submission
+
+1.Login into MarkUs as an admin
+
+2.Navigate to the submissions page for any assignment which has some submissions
+
+3.Ensure the collection date has passed, otherwise you will not be able to
+collect any submissions
+
+4.Click the "Collect All Submissions" link. Click on the group name
+of any white-coloured submission row.
+
+5.Click the repository column of the row you want to manually collect the
+submission for to be redirected to the repository browser view for that grouping
+
+6.Choose the revision number you want to collect, and press the "Collect and
+Grade This Revision" button.
+
+7.The server will tell the process doing all the collections to terminate as
+soon as its done collecting its current submission and restart with this manual
+collection as its first task.
+
+Important: unlike the other collection methods, manually collecting a submission
+will cause the server to wait until the submission has been collected. During
+the time its waiting on the submission,the server will be unresponsive to all
+other users. This is only significant when the submission contains pdf files,
+as then the collection process may take some time (collecting a submission with
+pdfs could take up to a minute and sometimes even longer depending on the
+size and number of pages in the pdf files)
+
+8.When the collection process is done, you will be redirected to the marking
+view for this submission.

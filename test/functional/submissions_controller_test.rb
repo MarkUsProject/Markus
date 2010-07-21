@@ -4,6 +4,7 @@ require File.join(File.dirname(__FILE__),'/../blueprints/blueprints')
 require File.join(File.dirname(__FILE__),'/../blueprints/helper')
 require 'fastercsv'
 require 'shoulda'
+require 'mocha'
 
 class SubmissionsControllerTest < AuthenticatedControllerTest
   def setup
@@ -303,6 +304,37 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           get_as @admin, :download_svn_repo_list, :id => @assignment.id
         end
         should respond_with :success
+      end
+
+      context "instructor attemps to collect all submissions at once" do
+
+        context "before assignment due date" do
+          setup do
+            Assignment.expects(:find).with('1', {:include => [:groupings]}).returns(@assignment)
+            @assignment.expects(:short_identifier).once.returns('a1')
+            @assignment.submission_rule.expects(:can_collect_now?).once.returns(false)
+            get_as @admin, :collect_all_submissions, :id => 1
+          end
+          should set_the_flash.to(I18n.t("collect_submissions.could_not_collect",
+              :assignment_identifier => 'a1'))
+          should respond_with :redirect
+        end
+
+        context "after assignment due date" do
+          setup do
+            @submission_collector = SubmissionCollector.instance
+            Assignment.expects(:find).with('1', {:include => [:groupings]}).returns(@assignment)
+            SubmissionCollector.expects(:instance).returns(@submission_collector)
+            @assignment.expects(:short_identifier).once.returns('a1')
+            @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
+            @submission_collector.expects(:push_groupings_to_queue).once
+            get_as @admin, :collect_all_submissions, :id => 1
+          end
+          should set_the_flash.to(I18n.t("collect_submissions.collection_job_started",
+              :assignment_identifier => 'a1'))
+          should respond_with :redirect
+        end
+
       end
     end
   end

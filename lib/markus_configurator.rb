@@ -18,7 +18,19 @@ module MarkusConfigurator
   def markus_config_repository_storage
     return REPOSITORY_STORAGE || File.join(RAILS_ROOT, "repositories")
   end
-  
+
+  def markus_config_pdf_storage
+    return PDF_STORAGE || File.join(RAILS_ROOT, "converted_pdf_dir")
+  end
+
+  def markus_config_pdf_conv_memory_allowance
+    return PDF_CONV_MEMORY_ALLOWANCE || 100
+  end
+
+  def markus_config_pdf_support
+    return PDF_SUPPORT || false
+  end
+
   def markus_config_repository_type
     return REPOSITORY_TYPE || "svn"
   end

@@ -93,7 +93,11 @@ class ActiveSupport::TestCase
     url = ActionController::UrlRewriter.new(@request, nil)
     url.rewrite(options)
   end
-  
+
+  def destroy_converted_pdfs
+    FileUtils.rm_rf("#{MarkusConfigurator.markus_config_pdf_storage}/*")
+  end
+
   # This prevents factory data preloader from automatically loading data for each test suite 
   FactoryDataPreloader.preload_all = false
 
