@@ -133,4 +133,29 @@ class SubmissionRuleTest < ActiveSupport::TestCase
     end
   end
 
+  context "Assignment with no late submission rule" do
+    setup do
+      @assignment = Assignment.make
+      @rule = @assignment.submission_rule
+    end
+
+    should "have collection time equal to due date" do
+      assert_equal(@assignment.due_date, @rule.get_collection_time,
+        "due date should be equal to collection time for no late submission rule")
+      # due date is two days from now, so it cannot be collected
+      assert(!@rule.can_collect_now?, "assignment cannot be collected now")
+
+      @assignment.due_date = 2.days.ago
+      @assignment.save
+
+      @rule.reload
+      @assignment.reload
+
+      assert_equal(@assignment.due_date, @rule.get_collection_time,
+        "due date should be equal to collection time for no late submission rule")
+      # due date is two days ago, so it can be collected
+      assert(@rule.can_collect_now?, "assignment can be collected now")
+    end
+  end
+
 end
