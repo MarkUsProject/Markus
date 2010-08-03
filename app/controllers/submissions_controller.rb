@@ -15,27 +15,27 @@ class SubmissionsController < ApplicationController
   
   S_TABLE_PARAMS = {
     :model => Grouping, 
-    :per_pages => [15, 30, 50, 100, 150],
+    :per_pages => [15, 30, 50, 100, 150, 500, 1000],
     :filters => {
       'none' => {
         :display => I18n.t("browse_submissions.show_all"),
-        :proc => lambda { |params|
-          return params[:assignment].groupings(:include => [{:student_memberships => :user, :ta_memberships => :user}, :groups, {:submissions => {:results => [:marks, :extra_marks]}}])}},
+        :proc => lambda { |params, to_include|
+          return params[:assignment].groupings.all(:include => to_include)}},
       'unmarked' => {
         :display => I18n.t("browse_submissions.show_unmarked"), 
-        :proc => lambda { |params| return params[:assignment].groupings.select{|g| !g.has_submission? || (g.has_submission? && g.get_submission_used.result.marking_state == Result::MARKING_STATES[:unmarked]) } }},
+        :proc => lambda { |params, to_include| return params[:assignment].groupings.all(:include => [to_include]).select{|g| !g.has_submission? || (g.has_submission? && g.current_submission_used.result.marking_state == Result::MARKING_STATES[:unmarked]) } }},
       'partial' => {
         :display => I18n.t("browse_submissions.show_partial"),
-        :proc => lambda { |params| return params[:assignment].groupings.select{|g| g.has_submission? && g.get_submission_used.result.marking_state == Result::MARKING_STATES[:partial] } }},
+        :proc => lambda { |params, to_include| return params[:assignment].groupings.all(:include => [to_include]).select{|g| g.has_submission? && g.current_submission_used.result.marking_state == Result::MARKING_STATES[:partial] } }},
       'complete' => {
         :display => I18n.t("browse_submissions.show_complete"),
-        :proc => lambda { |params| return params[:assignment].groupings.select{|g| g.has_submission? && g.get_submission_used.result.marking_state == Result::MARKING_STATES[:complete] } }},
+        :proc => lambda { |params, to_include| return params[:assignment].groupings.all(:include => [to_include]).select{|g| g.has_submission? && g.current_submission_used.result.marking_state == Result::MARKING_STATES[:complete] } }},
       'released' => {
         :display => I18n.t("browse_submissions.show_released"),
-        :proc => lambda { |params| return params[:assignment].groupings.select{|g| g.has_submission? && g.get_submission_used.result.released_to_students} }},
+        :proc => lambda { |params, to_include| return params[:assignment].groupings.all(:include => [to_include]).select{|g| g.has_submission? && g.current_submission_used.result.released_to_students} }},
       'assigned' => {
         :display => I18n.t("browse_submissions.show_assigned_to_me"),
-        :proc => lambda { |params| return params[:assignment].ta_memberships.find_all_by_user_id(params[:user_id]).collect{|m| m.grouping} }}
+        :proc => lambda { |params, to_include| return params[:assignment].ta_memberships.find_all_by_user_id(params[:user_id], :include => [:grouping => to_include]).collect{|m| m.grouping} }}
     },
     :sorts => {
       'group_name' => lambda { |a,b| a.group.group_name.downcase <=> b.group.group_name.downcase},
@@ -43,17 +43,17 @@ class SubmissionsController < ApplicationController
       'revision_timestamp' => lambda { |a,b|
         return -1 if !a.has_submission?
         return 1 if !b.has_submission?
-        return a.get_submission_used.revision_timestamp <=> b.get_submission_used.revision_timestamp
+        return a.current_submission_used.revision_timestamp <=> b.current_submission_used.revision_timestamp
       },
       'marking_state' => lambda { |a,b|
         return -1 if !a.has_submission?
         return 1 if !b.has_submission?
-        return a.get_submission_used.result.marking_state <=> b.get_submission_used.result.marking_state
+        return a.current_submission_used.result.marking_state <=> b.current_submission_used.result.marking_state
       },
       'total_mark' => lambda { |a,b|
         return -1 if !a.has_submission?
         return 1 if !b.has_submission?
-        return a.get_submission_used.result.total_mark <=> b.get_submission_used.result.total_mark
+        return a.current_submission_used.result.total_mark <=> b.current_submission_used.result.total_mark
       },
       'grace_credits_used' => lambda { |a,b|
         return a.grace_period_deduction_sum <=> b.grace_period_deduction_sum
@@ -206,7 +206,7 @@ class SubmissionsController < ApplicationController
 
   def update_converted_pdfs
     @grouping = Grouping.find(params[:id])
-    @submission = @grouping.get_submission_used
+    @submission = @grouping.current_submission_used
     @pdf_count= 0
     @converted_count = 0
     @submission.submission_files.each do |file|
@@ -236,6 +236,22 @@ class SubmissionsController < ApplicationController
         { :assignment => @assignment,                     # the assignment to filter by
           :user_id => current_user.id},                   # the submissions accessable by the current user
       params)                                             # additional parameters that affect things like sorting
+
+    #Eager load all data only for those groupings that will be displayed
+    sorted_groupings = @groupings
+    @groupings = Grouping.find(:all, :conditions => {:id => sorted_groupings},
+      :include => [:assignment, :group, :grace_period_deductions,
+        {:current_submission_used => :result},
+        {:accepted_student_memberships => :user}])
+
+    #re-sort @groupings by the previous order, because eager loading query
+    #messed up the grouping order
+    @groupings = sorted_groupings.map do |sorted_grouping|
+      @groupings.detect do |unsorted_grouping|
+        unsorted_grouping == sorted_grouping
+      end
+    end
+
     @current_page = params[:page].to_i()
     @per_page = params[:per_page]
     @filters = get_filters(S_TABLE_PARAMS)

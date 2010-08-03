@@ -13,7 +13,7 @@ module SubmissionsHelper
     groupings.each do |grouping|
       begin
         raise "#{grouping.group.group_name} had no submission" if !grouping.has_submission?     
-        submission = grouping.get_submission_used
+        submission = grouping.current_submission_used
         raise "#{grouping.group.group_name} had no result" if !submission.has_result?
         raise "Can not release result for #{grouping.group.group_name}: the marking state is not complete" if submission.result.marking_state != Result::MARKING_STATES[:complete]
         submission.result.released_to_students = release

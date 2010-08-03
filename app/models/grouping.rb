@@ -11,15 +11,16 @@ class Grouping < ActiveRecord::Base
   belongs_to :grouping_queue
   has_many :memberships
   has_many :student_memberships, :order => 'id'
+  has_many :non_rejected_student_memberships, :class_name => "StudentMembership", :conditions => ['memberships.membership_status != ?', StudentMembership::STATUSES[:rejected]]
   has_many :accepted_student_memberships, :class_name => "StudentMembership", :conditions => {'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]}
   has_many :notes, :as => :noteable, :dependent => :destroy
   has_many :ta_memberships, :class_name => "TaMembership"
   has_many :students, :through => :student_memberships, :source => :user
-  has_many :accepted_students, :class_name => 'Student', :through => :student_memberships, :conditions => {'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]}, :source => :user
   has_many :pending_students, :class_name => 'Student', :through => :student_memberships, :conditions => {'memberships.membership_status' => StudentMembership::STATUSES[:pending]}, :source => :user
   
   has_many :submissions
-  has_many :grace_period_deductions, :through => :student_memberships
+  has_one :current_submission_used, :class_name => 'Submission', :conditions => {:submission_version_used => true}
+  has_many :grace_period_deductions, :through => :non_rejected_student_memberships, :include => :non_rejected_student_memberships
     
   has_many :tokens
 
@@ -33,6 +34,13 @@ class Grouping < ActiveRecord::Base
   validates_associated    :group,    :message => "associated group need to be valid"
 
   validates_inclusion_of :is_collected, :in => [true, false]
+
+  def accepted_students
+    accepted_students = self.accepted_student_memberships.collect do |memb|
+      memb.user
+    end
+    return accepted_students
+  end
 
   def group_name_with_student_user_names
     student_user_names = student_memberships.collect {|m| m.user.user_name }
@@ -256,7 +264,7 @@ class Grouping < ActiveRecord::Base
   # Returns true if either this Grouping has met the assignment group
   # size minimum, OR has been approved by an instructor
   def is_valid?
-    return admin_approved || (student_memberships.all(:conditions => ["membership_status != ?", StudentMembership::STATUSES[:rejected]]).length >= assignment.group_min)
+    return admin_approved || (non_rejected_student_memberships.length >= assignment.group_min)
   end
 
   # Validates a group
@@ -290,22 +298,20 @@ class Grouping < ActiveRecord::Base
   end
   
   def grace_period_deduction_sum
-    return grace_period_deductions.sum('deduction')
+    total = 0
+    grace_period_deductions.each do |grace_period_deduction|
+      total += grace_period_deduction.deduction
+    end
+    return total
   end
 
   # Submission Functions
   def has_submission?
-    return @has_submission if !@has_submission.nil?
-    @has_submission = submissions.count > 0
+    return !current_submission_used.nil?
   end
 
-  def get_submission_used
-    return @get_submission_used if !@get_submission_used.nil?
-    @get_submission_used = submissions.find(:first, :conditions => {:submission_version_used => true})
-  end
-  
   def marking_completed?
-    return has_submission? && get_submission_used.result.marking_state == Result::MARKING_STATES[:complete]
+    return has_submission? && current_submission_used.result.marking_state == Result::MARKING_STATES[:complete]
   end
 
   # EDIT METHODS 

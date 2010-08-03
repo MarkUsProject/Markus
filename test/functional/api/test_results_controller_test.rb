@@ -46,7 +46,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       group_name = group.group_name
       a_short_identifier = assignment.short_identifier
       grouping = group.grouping_for_assignment(assignment.id)
-      @submission = grouping.get_submission_used
+      @submission = grouping.current_submission_used
       test_results = @submission.test_results # returns Array
       @test_results_count_pre_post = test_results.length
       # fire off request
@@ -85,7 +85,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       group_name = group.group_name
       a_short_identifier = assignment.short_identifier
       grouping = group.grouping_for_assignment(assignment.id)
-      @submission = grouping.get_submission_used
+      @submission = grouping.current_submission_used
       test_results = @submission.test_results # returns Array
       @test_results_count_pre_post = test_results.length
       @to_be_deleted_test_result = "example.rb"

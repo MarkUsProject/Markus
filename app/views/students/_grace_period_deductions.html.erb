@@ -14,7 +14,7 @@
     </td>
     <td>
       <% if grace_period_deduction.membership.grouping.has_submission? %>
-        <%= link_to h(grace_period_deduction.membership.grouping.assignment.short_identifier), :controller => 'results', :action => 'edit', :id => grace_period_deduction.membership.grouping.get_submission_used.result.id%>
+        <%= link_to h(grace_period_deduction.membership.grouping.assignment.short_identifier), :controller => 'results', :action => 'edit', :id => grace_period_deduction.membership.grouping.current_submission_used.result.id%>
       <% end %>
     </td>
     <td>

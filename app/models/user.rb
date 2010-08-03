@@ -113,7 +113,7 @@ class User < ActiveRecord::Base
     if grouping.nil?
       return nil
     end
-    return grouping.get_submission_used
+    return grouping.current_submission_used
   end
   
   # Classlist parsing --------------------------------------------------------

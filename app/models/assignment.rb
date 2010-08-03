@@ -169,7 +169,7 @@ class Assignment < ActiveRecord::Base
     results_count = 0
     results_sum = 0
     groupings.each do |grouping|
-      submission = grouping.get_submission_used
+      submission = grouping.current_submission_used
       if !submission.nil? && submission.has_result?
         result = submission.result
         if result.released_to_students
