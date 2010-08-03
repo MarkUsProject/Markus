@@ -500,7 +500,7 @@ class AssignmentTest < ActiveSupport::TestCase
             fields.push('')
             fields.push('')
           else
-            submission = grouping.get_submission_used
+            submission = grouping.current_submission_used
             fields.push(submission.result.total_mark / out_of * 100)
             rubric_criteria.each do |rubric_criterion|
               mark = submission.result.marks.find_by_markable_id_and_markable_type(rubric_criterion.id, "RubricCriterion")
@@ -546,7 +546,7 @@ class AssignmentTest < ActiveSupport::TestCase
           if grouping.nil? || !grouping.has_submission?
             fields.push('')
           else
-            submission = grouping.get_submission_used
+            submission = grouping.current_submission_used
             fields.push(submission.result.total_mark / @assignment.total_mark * 100)
           end
           expected_string += fields.to_csv

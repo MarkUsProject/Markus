@@ -53,6 +53,7 @@ class GroupingTest < ActiveSupport::TestCase
           grouping.remove_member(membership.id)
         end
       end
+      grouping.reload
       assert_equal(1, grouping.accepted_students.size)
       # inviter should be able to delete grouping
       assert(grouping.deletable_by?(inviter))

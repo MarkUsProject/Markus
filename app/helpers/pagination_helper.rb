@@ -64,7 +64,18 @@ module PaginationHelper
   end
   
   def get_filtered_items(hash, filter, sort_by, object_hash)
-    items = hash[:filters][filter][:proc].call(object_hash)
+    to_include = []
+    #eager load only the tables needed for the type of sort, eager load the rest
+    #of the tables after the groupings have been paginated
+    case sort_by
+      when "group_name" then to_include = [:group]
+      when "repo_name" then to_include = [:group]
+      when "revision_timestamp" then to_include = [:current_submission_used]
+      when "marking_state" then to_include = [{:current_submission_used => :result}]
+      when "total_mark" then to_include = [{:current_submission_used => :result}]
+      when "grace_credits_used" then to_include = [:grace_period_deductions]
+    end
+    items = hash[:filters][filter][:proc].call(object_hash, to_include)
     if !sort_by.blank?
       items = items.sort{|a,b| hash[:sorts][sort_by].call(a,b)}
     end

@@ -42,13 +42,11 @@ class ResultsController < ApplicationController
 
     # Get the previous and the next submission
     if current_user.ta?
-       groupings = @assignment.ta_memberships.find_all_by_user_id(current_user.id).collect do |m|       
+       groupings = @assignment.ta_memberships.find_all_by_user_id(current_user.id, :include => [:grouping => :group]).collect do |m|
          m.grouping
        end
-    end
-
-    if current_user.admin?
-      groupings = @assignment.groupings
+    elsif current_user.admin?
+      groupings = @assignment.groupings.find(:all, :include => :group)
     end
     
     # If a grouping's submission's marking_status is complete, we're not going
@@ -57,11 +55,11 @@ class ResultsController < ApplicationController
     # If a grouping doesn't have a submission, and we are past the collection time, 
     # we *DO* want to include them in the list.
     collection_time = @assignment.submission_rule.calculate_collection_time.localtime
-    
+
     groupings.delete_if do |grouping|
       grouping != @grouping && ((!grouping.has_submission? && (Time.now < collection_time)))
     end
-    
+
     # We sort by Group name by default
     groupings = groupings.sort do |a, b|
       a.group.group_name <=> b.group.group_name
@@ -87,7 +85,7 @@ class ResultsController < ApplicationController
   def next_grouping
     grouping = Grouping.find(params[:id])
     if grouping.has_submission? && grouping.is_collected?
-      redirect_to :action => 'edit', :id => grouping.get_submission_used.result.id
+      redirect_to :action => 'edit', :id => grouping.current_submission_used.result.id
     else
       redirect_to :controller => 'submissions', :action => 'collect_and_begin_grading', :id => grouping.assignment.id, :grouping_id => grouping.id
     end
@@ -245,7 +243,7 @@ class ResultsController < ApplicationController
       render 'results/student/no_submission'
       return
     end
-    @submission = @grouping.get_submission_used
+    @submission = @grouping.current_submission_used
     if !@submission.has_result?
       render 'results/student/no_result'
       return

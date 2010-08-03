@@ -43,7 +43,7 @@ class Submission < ActiveRecord::Base
      # Bump any old Submissions down the line
      new_submission.transaction do
        if grouping.has_submission?
-         old_submission = grouping.get_submission_used
+         old_submission = grouping.current_submission_used
          new_submission.submission_version = old_submission.submission_version + 1
          old_submission.submission_version_used = false
          old_submission.save
@@ -148,7 +148,7 @@ class Submission < ActiveRecord::Base
     group = Group.find_by_group_name(group_n)
     if !assignment.nil? && !group.nil?
       grouping = group.grouping_for_assignment(assignment.id)
-      return grouping.get_submission_used
+      return grouping.current_submission_used
     else
       return nil
     end

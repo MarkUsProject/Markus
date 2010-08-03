@@ -20,25 +20,25 @@ class PaginationHelperTest < ActiveSupport::TestCase
         :filters => {
           'none' => {
             :display => "all",
-            :proc => lambda { |params|
+            :proc => lambda { |params, to_include|
               return Oracle.get_all()
             }
           },
           'even' => {
             :display => "even", 
-            :proc => lambda { |params|
+            :proc => lambda { |params, to_include|
               return Oracle.get_even()
             }
           },
           'odd' => {
             :display => "odd",
-            :proc => lambda { |params|
+            :proc => lambda { |params, to_include|
               return  Oracle.get_odd()
             }
           },
           'prime' => {
             :display => "prime",
-            :proc => lambda { |params|
+            :proc => lambda { |params, to_include|
               return Oracle.get_prime()
             }
           }

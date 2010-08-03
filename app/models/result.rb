@@ -12,22 +12,23 @@ class Result < ActiveRecord::Base
   validates_presence_of :marking_state
   validates_inclusion_of :marking_state, :in => [Result::MARKING_STATES[:complete], 
     Result::MARKING_STATES[:partial],   Result::MARKING_STATES[:unmarked]]
+  validates_numericality_of :total_mark, :greater_than_or_equal_to => 0
   before_update  :unrelease_partial_results
   
   # calculate the total mark for this assignment
-  def total_mark
+  def update_total_mark
     total = get_subtotal + get_total_extra_points
     # added_percentage
     percentage = get_total_extra_percentage   
     total = total + (percentage * submission.assignment.total_mark / 100)
-    return total
+    self.total_mark = total
+    self.save
   end
 
   #returns the sum of the marks not including bonuses/deductions
   def get_subtotal
-    return 0.0 if marks.empty?
-    total = 0;
-    marks.each do |m|
+    total = 0.0
+    self.marks.find(:all, :include => [:markable]).each do |m|
       total = total + m.get_mark
     end
     return total

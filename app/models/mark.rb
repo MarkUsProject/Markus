@@ -3,6 +3,7 @@ class Mark < ActiveRecord::Base
   # Result has not been released to students
   before_save :ensure_not_released_to_students
   before_update :ensure_not_released_to_students
+  after_save :update_grouping_mark
 
   belongs_to :markable, :polymorphic => true
   belongs_to :result
@@ -31,6 +32,10 @@ class Mark < ActiveRecord::Base
   
   def ensure_not_released_to_students
     return !result.released_to_students
+  end
+
+  def update_grouping_mark
+    self.result.update_total_mark
   end
 end
 

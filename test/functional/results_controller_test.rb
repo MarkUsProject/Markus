@@ -548,7 +548,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                 assert assigns(:next_grouping)
                 next_grouping = assigns(:next_grouping)
                 assert next_grouping.has_submission?
-                next_result = next_grouping.get_submission_used.result
+                next_result = next_grouping.current_submission_used.result
                 assert_not_nil next_result
                 assert_equal next_result, @result_second
                 assert !next_result.released_to_students
@@ -569,8 +569,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
                 previous_grouping = assigns(:previous_grouping)
                 assert next_grouping.has_submission?
                 assert previous_grouping.has_submission?
-                next_result = next_grouping.get_submission_used.result
-                previous_result = previous_grouping.get_submission_used.result
+                next_result = next_grouping.current_submission_used.result
+                previous_result = previous_grouping.current_submission_used.result
                 assert_not_nil next_result
                 assert_not_nil previous_result
                 assert_equal next_result, @result_third
@@ -591,7 +591,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                 assert assigns(:previous_grouping)
                 previous_grouping = assigns(:previous_grouping)
                 assert previous_grouping.has_submission?
-                previous_result = previous_grouping.get_submission_used.result
+                previous_result = previous_grouping.current_submission_used.result
                 assert_not_nil previous_result
                 assert_equal previous_result, @result_second
                 assert !previous_result.released_to_students

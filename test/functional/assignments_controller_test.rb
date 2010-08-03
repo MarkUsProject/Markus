@@ -303,7 +303,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     inviter = users(:student6)
     students = [users(:student1), users(:student2), users(:student3), users(:student5)]
     user_names = students.collect { |student| student.user_name }.join(' ,  ')
-    assert_raises RuntimeError do
+    assert_raise RuntimeError do
       post_as(users(:student6), :invite_member, {:id => assignment.id, :invite_member => user_names})  
     end
   end
@@ -331,7 +331,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert_nothing_raised do
       post_as(user, :delete_rejected, {:id => assignment.id, :membership => membership.id})
     end
-    assert_raises ActiveRecord::RecordNotFound do
+    assert_raise ActiveRecord::RecordNotFound do
       membership = StudentMembership.find(membership.id)
     end
     assert_response :redirect
@@ -345,7 +345,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     user = users(:student4)
     student = users(:student3)
     assert grouping.inviter != user
-    assert_raises RuntimeError do
+    assert_raise RuntimeError do
       post_as(user, :delete_rejected, {:id => assignment.id, :membership => membership.id})
     end
     assert_nothing_raised do
@@ -361,6 +361,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assignment = grouping.assignment
     assignment.group_min = 4
     assignment.save
+    #has_submission doesn't work properly with tests due to the use of a counter cache
+#    Grouping.any_instance.stubs(:has_submission?).returns(true)
     assert grouping.has_submission?
     assert !grouping.is_valid?
     post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
@@ -520,9 +522,11 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         else
           out_of = assignments[index].total_mark
           grouping = student.accepted_grouping_for(assignments[index])
+          #has_submission doesn't work properly with tests due to the use of a counter cache
+#          grouping.stubs(:has_submission?).returns(true)
           assert_not_nil grouping
           assert grouping.has_submission?
-          submission = grouping.get_submission_used
+          submission = grouping.current_submission_used
           assert_not_nil submission.result
           assert_equal final_mark.to_f.round, (submission.result.total_mark / out_of * 100).to_f.round
         end
