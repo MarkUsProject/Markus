@@ -26,6 +26,7 @@ module EnsureConfigHelper
     check_writable(MarkusConfigurator.markus_config_pdf_storage, "PDF_STORAGE")
     check_readable(MarkusConfigurator.markus_config_pdf_storage, "PDF_STORAGE")
     check_in_writable_dir(MarkusConfigurator.markus_config_test_framework_repository, "TEST_FRAMEWORK_REPOSITORY")
+    ensure_logout_redirect_link_valid
     if ! ( RUBY_PLATFORM =~ /(:?mswin|mingw)/ ) # should match for Windows only
       check_if_executes( MarkusConfigurator.markus_config_validate_file, "VALIDATE_FILE")
     end
@@ -101,6 +102,16 @@ module EnsureConfigHelper
       else
         raise I18n.t("ensure_config.error_writing_to_pipe", :error => error, :file_name => filename, :config_location => "config/environments/#{Rails.env}.rb")
       end
+    end
+  end
+
+  def self.ensure_logout_redirect_link_valid
+    logout_redirect = MarkusConfigurator.markus_config_logout_redirect
+    if ["DEFAULT", "NONE"].include?(logout_redirect)
+      return
+    #We got a URI, ensure its of proper format <>
+    elsif logout_redirect.match('^http://|^https://').nil?
+      raise I18n.t("ensure_config.invalid_logout_redirect", :path => logout_redirect, :config_location => "config/environments/#{Rails.env}.rb")
     end
   end
 

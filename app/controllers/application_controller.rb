@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
   
   # activate i18n for renaming constants in views
-  before_filter :set_locale, :set_markus_version
+  before_filter :set_locale, :set_markus_version, :set_remote_user
   # check for active session on every page
   before_filter :authenticate, :except => [:login, :page_not_found] 
   
@@ -37,6 +37,12 @@ class ApplicationController < ActionController::Base
       version_info[k.downcase] = v
     end
     @markus_version = "#{version_info["version"]}.#{version_info["patch_level"]}"
+  end
+  
+  def set_remote_user
+    if !request.env["HTTP_X_FORWARDED_USER"].blank?
+      @markus_auth_remote_user = request.env["HTTP_X_FORWARDED_USER"]
+    end
   end
   
   def set_locale
