@@ -27,21 +27,36 @@ module Api
     # HTTP header comes a Base 64 encoded MD5 digest of the
     # user's private key.
     def authenticate
-      auth_token = parse_auth_token(request.headers["HTTP_AUTHORIZATION"])
-      # pretend resource not found if missing or wrong authentication
-      # is provided
-      if auth_token.nil?
-        render :file => "#{RAILS_ROOT}/public/403.xml", :status => 403
-        return
-      end
-      # Find user by api_key_md5
-      @current_user = User.find_by_api_key(auth_token)
-      if @current_user.nil?
-        # Key does not exist, so bail out
-        render :file => "#{RAILS_ROOT}/public/403.xml", :status => 403
-        return
+      if MarkusConfigurator.markus_config_remote_user_auth
+        #Check if authentication was already done and REMOTE_USER was set
+        markus_auth_remote_user = request.env["HTTP_X_FORWARDED_USER"]
+        if !markus_auth_remote_user.blank?
+          #REMOTE_USER authentication used, find the user and bypass regular auth
+          @current_user = User.find_by_user_name(markus_auth_remote_user)
+        else
+          #REMOTE_USER_AUTH is true, but REMOTE_USER wasn't set, bail out
+          render :file => "#{RAILS_ROOT}/public/403.xml", :status => 403
+          return
+        end
       else
-        # see if the MD5 matches
+        #REMOTE_USER authentication not used, proceed with regular auth
+        auth_token = parse_auth_token(request.headers["HTTP_AUTHORIZATION"])
+        # pretend resource not found if missing or wrong authentication
+        # is provided
+        if auth_token.nil?
+          render :file => "#{RAILS_ROOT}/public/403.xml", :status => 403
+          return
+        end
+        # Find user by api_key_md5
+        @current_user = User.find_by_api_key(auth_token)
+      end
+      
+      if @current_user.nil?
+        # Key/username does not exist, so bail out
+        render :file => "#{RAILS_ROOT}/public/403.xml", :status => 403
+        return
+      elsif markus_auth_remote_user.blank?
+        # see if the MD5 matches only if REMOTE_USER wasn't used
         curr_user_md5 = Base64.decode64(@current_user.api_key)
         if (Base64.decode64(auth_token) != curr_user_md5)
           # MD5 mismatch, bail out

@@ -57,6 +57,14 @@ module MarkusConfigurator
     return COURSE_NAME || "CSC199: Example Course Name"
   end
 
+  def markus_config_logout_redirect
+    return LOGOUT_REDIRECT || "DEFAULT"
+  end
+
+  def markus_config_remote_user_auth
+    return REMOTE_USER_AUTH || false
+  end
+
   #Repository for the test framework
   #Students file will be compiled, executed and tested in this repository
   def markus_config_test_framework_repository

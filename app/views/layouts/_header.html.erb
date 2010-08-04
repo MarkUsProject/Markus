@@ -3,7 +3,7 @@
     <%= link_to_remote( image_tag("icons/information.png", :alt => I18n.t(:about_markus), :title => I18n.t(:about_markus), :id => "about_icon"),
           :url =>{ :action => "about", :controller => "main" }, :complete => "about_modal.open();" ) %>
      <%= I18n.t(:logged_in_as, :first_name => @current_user.first_name, :last_name => @current_user.last_name, :user_name => @current_user.user_name) %>
-    <%= link_to I18n.t(:log_out), :controller => 'main', :action => 'logout' %>
+    <%= link_to(I18n.t(:log_out), :controller => 'main', :action => 'logout') unless MarkusConfigurator.markus_config_logout_redirect == "NONE" %>
   </div>
   <div id="working" style="display:none;">
     <%= I18n.t(:working) %>

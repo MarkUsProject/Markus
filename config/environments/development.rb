@@ -56,6 +56,46 @@ COURSE_NAME         = "CSC108 Fall 2009: Introduction to Computer Programming"
 VALIDATE_FILE = "#{RAILS_ROOT}/config/dummy_validate.sh"
 
 ###################################################################
+# Authentication Settings
+###################################################################
+# Set this to true/false if you want to use an external authentication scheme
+# that sets the REMOTE_USER variable.
+
+REMOTE_USER_AUTH = false
+
+###################################################################
+# This is where the logout button will redirect to when clicked.
+# Set this to one of the three following options:
+#
+# "DEFAULT" - MarkUs will use its default logout routine.
+# A logout link will be provided.
+#
+# The DEFAULT option should not be used if REMOTE_USER_AUTH is set to true,
+# as it will not result in a successful logout.
+#
+# -----------------------------------------------------------------------------
+#
+# "http://address.of.choice" - Logout will redirect to the specified URI.
+#
+# If REMOTE_USER_AUTH is set to true, it would be possible
+# to specify a custom address which would log the user out of the authentication
+# scheme.
+# Choosing this option with REMOTE_USER_AUTH is set to false will still properly
+# log the user out of MarkUs.
+#
+# -----------------------------------------------------------------------------
+# 
+# "NONE" - Logout link will be hidden.
+#
+# It only recommended that you use this if REMOTE_USER_AUTH is set to true
+# and do not have a custom logout page.
+# 
+# If you are using HTTP's basic authentication, you probably want to use this
+# option.
+
+LOGOUT_REDIRECT = "DEFAULT"
+
+###################################################################
 # File storage (Repository) settings
 ###################################################################
 # Options for Repository_type are 'svn' and 'memory' for now

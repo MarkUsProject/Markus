@@ -54,15 +54,7 @@ module SessionHandler
       else
         flash[:login_notice] = I18n.t("please_log_in")
       end
-      
-      if request.xhr?
-        session[:redirect_uri] = request.referer
-        render :update do |page|
-          page.redirect_to :controller => 'main', :action => 'login'
-        end
-      else
-        redirect_to :controller => 'main', :action => 'login'
-      end
+      redirect_to :controller => 'main', :action => 'login'
     end
   end
   
@@ -114,7 +106,16 @@ module SessionHandler
   
   # Check if this current user's session has not yet expired.
   def session_expired?
-    session[:timeout] == nil || session[:timeout] < Time.now
+    return true unless !session[:timeout].nil?
+    if MarkusConfigurator.markus_config_remote_user_auth
+      return true if @markus_auth_remote_user.nil?
+      # Expire session if remote user does not match the session's uid
+      current_user = User.find_by_id(session[:uid])
+      if !current_user.nil?
+        return true if ( current_user.user_name != @markus_auth_remote_user )
+      end
+    end
+    return session[:timeout] < Time.now
   end
   
   # Clear this current user's session set by this app

@@ -433,6 +433,7 @@ en:
           est_db_connection: "Submission collection process successfully established its database connection"
 
     ensure_config:
+      invalid_logout_redirect: "The setting LOGOUT_REDIRECT with path %{path} is invalid. Only 'DEFAULT', 'NONE' or addresses beginning with http:// or https:// are valid values. Please double check the setting in %{config_location}"
       path_not_writable: "The setting %{constant_name} with path %{file_name} is not writable. Please double check the setting in %{config_location}."
       path_not_readable: "The setting %{constant_name} with path %{file_name} is not readable. Please double check the setting in %{config_location}."
       file_does_not_execute: "The setting %{constant_name} with path %{file_name} does not execute properly. Please double check the setting in %{config_location}."
