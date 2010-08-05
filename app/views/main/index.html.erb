@@ -1,4 +1,6 @@
-<% if !@current_user.student? %>
+<% if !@current_user.student? and
+    # If not Firefox display warning
+    (request.env['HTTP_USER_AGENT'].downcase =~ /gecko/i).nil? %>
    <p class="notice"><%= I18n.t(:firefox_warning) %></p>
 <% end %>
 
