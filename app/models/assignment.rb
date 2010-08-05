@@ -282,6 +282,8 @@ class Assignment < ActiveRecord::Base
   # Add a group and corresponding grouping as provided in
   # the passed in Array.
   # Format: [ groupname, repo_name, member, member, etc ]
+  # Any member names that do not exist in the database will simply be ignored
+  # (This makes it possible to have empty groups created from a bad csv row)
   def add_csv_group(row)
     return if row.length == 0
 
@@ -304,9 +306,8 @@ class Assignment < ActiveRecord::Base
       if !Student.find_by_user_name(row[2]).nil?
         group.repo_name = row[0]
       else
-        # Bail out, student name does not exist
-        raise CSVInvalidLineError.new(
-          I18n.t("csv.student_not_found", { :user_name => row[2] }) )
+        # Student name does not exist, use provided repo_name
+        group.repo_name = row[1].strip # remove whitespace
       end
     end
 
@@ -338,18 +339,17 @@ class Assignment < ActiveRecord::Base
     start_index_group_members = 2 # first field is the group-name, second the repo name, so start at field 3
     (start_index_group_members..(row.length - 1)).each do |i|
       student = Student.find_by_user_name(row[i].strip) # remove whitespace
-      if student.nil?
-        raise CSVInvalidLineError.new(
-          I18n.t("csv.student_not_found", { :user_name => row[i] }) )
+      if !student.nil?
+        if (grouping.student_membership_number == 0)
+          # Add first valid member as inviter to group.
+          grouping.group_id = group.id
+          grouping.save # grouping has to be saved, before we can add members
+          grouping.add_member(student, StudentMembership::STATUSES[:inviter])
+        else
+          grouping.add_member(student)
+        end
       end
-      if (i > start_index_group_members)
-        grouping.add_member(student)
-      else
-        # Add first member as inviter to group.
-        grouping.group_id = group.id
-        grouping.save # grouping has to be saved, before we can add members
-        grouping.add_member(student, StudentMembership::STATUSES[:inviter])
-      end
+      
     end
     return collision_error
   end
@@ -434,7 +434,7 @@ class Assignment < ActiveRecord::Base
          if grouping.nil? || !grouping.has_submission?
            final_result.push('')
          else
-           submission = grouping.get_submission_used
+           submission = grouping.current_submission_used
            final_result.push(submission.result.total_mark / out_of * 100)
          end
          csv << final_result
@@ -462,7 +462,7 @@ class Assignment < ActiveRecord::Base
           final_result.push('')
           final_result.push('')
         else
-          submission = grouping.get_submission_used
+          submission = grouping.current_submission_used
           final_result.push(submission.result.total_mark / out_of * 100)
           rubric_criteria.each do |rubric_criterion|
             mark = submission.result.marks.find_by_markable_id_and_markable_type(rubric_criterion.id, "RubricCriterion")
