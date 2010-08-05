@@ -42,7 +42,11 @@ class Student < User
 
   def remaining_grace_credits
     return @remaining_grace_credits if !@remaining_grace_credits.nil?
-    @remaining_grace_credits = grace_credits - grace_period_deductions.sum('deduction')
+    total_deductions = 0
+    grace_period_deductions.each do |grace_period_deduction|
+      total_deductions += grace_period_deduction.deduction
+    end
+    @remaining_grace_credits = grace_credits - total_deductions
   end
 
   def display_for_note

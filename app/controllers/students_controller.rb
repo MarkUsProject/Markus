@@ -17,7 +17,7 @@ class StudentsController < ApplicationController
   end
   
   def populate
-    @students_data = Student.find(:all, :order => "user_name", :include => [:section])
+    @students_data = Student.find(:all, :order => "user_name", :include => [:section, :grace_period_deductions])
     # construct_table_rows defined in UsersHelper
     @students = construct_table_rows(@students_data)
   end
