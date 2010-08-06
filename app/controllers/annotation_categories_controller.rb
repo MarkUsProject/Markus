@@ -99,7 +99,7 @@ class AnnotationCategoriesController < ApplicationController
       redirect_to :action => 'index', :id => @assignment.id
       return
     end
-    annotation_category_list = params[:annotation_category_list]
+    annotation_category_list = params[:annotation_category_list_csv]
     annotation_category_number = 0
     annotation_line = 0
     if !annotation_category_list.nil?
@@ -118,6 +118,45 @@ class AnnotationCategoriesController < ApplicationController
         end
       end
       flash[:annotation_upload_success] = annotation_category_number > 0 ? 
+            I18n.t('annotations.upload.success', 
+                    :annotation_category_number => annotation_category_number) : 
+                    nil
+    end
+    redirect_to :action => 'index', :id => @assignment.id
+  end
+  
+  def yml_upload
+    @assignment = Assignment.find(params[:id])
+    if !request.post?
+      redirect_to :action => 'index', :id => @assignment.id
+      return
+    end
+    file = params[:annotation_category_list_yml]
+    annotation_category_number = 0
+    annotation_line = 0
+    if !file.nil? && !file.blank?
+      begin 
+        annotations = YAML::load(file)
+      rescue ArgumentError => e
+        flash[:annotation_upload_invalid_lines] =  
+             I18n.t('annotations.upload.syntax_error', :error => "#{e}")
+         redirect_to :action => 'index', :id => @assignment.id
+         return
+      end
+      annotations.each_key do |key|
+      result = AnnotationCategory.add_by_array(key, annotations.values_at(key), @assignment)
+      annotation_line += 1
+      if result[:annotation_upload_invalid_lines].size > 0
+           flash[:annotation_upload_invalid_lines] =  
+             I18n.t('annotations.upload.error', 
+                     :annotation_category => key, 
+                     :annotation_line => annotation_line)
+          break
+        else
+          annotation_category_number += 1
+        end
+     end
+     flash[:annotation_upload_success] = annotation_category_number > 0 ? 
             I18n.t('annotations.upload.success', 
                     :annotation_category_number => annotation_category_number) : 
                     nil

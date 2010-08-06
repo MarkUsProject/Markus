@@ -675,13 +675,20 @@ fr:
         annotation_category:  "Supprimer cette catégorie d'annotation va supprimer aussi toutes les annotations. Les annotations supprimées ne seront plus rattachées au devoirs des étudiants. Êtes vous sûr de vouloir faire cela ?"
       upload:
         upload_annotations: "Envoi d'annotations"
-        upload_message: "
+        upload_message_csv: "
         <p>
             Sélectionner un fichier CSV à envoyer : <br />
             <code>category_name,annotation_text,annotation_text … </code><br />
           </p>"
+        upload_message_yml: "
+        <p>
+            Sélectionner un fichier YAML à envoyer:<br />
+            <code>category_name: <br />- category_text<br />- category_text</code><br />
+            
+          </p>"
         success:  "Envoi réussi des catégories d'annotations (%{annotation_category_number} envoyées)."
         error:  "Impossible d'envoyer les catégories : problème à la catégorie %{annotation_category} située sur la ligne %{annotation_line}"
+        syntax_error: "Il y a une erreur de syntaxe dans le fichier que vous venez d'envoyer : %{error}"
         flash_error: "N'a pas reconnu le format %{format} que vous vouliez télécharger"
       download:
         download_annotations: "Télécharger les annotations"

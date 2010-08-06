@@ -713,13 +713,20 @@ en:
         annotation_category:  "Delete this annotation category will also delete its annotations.  Deleted annotations will no longer be attached to student submissions.  Are you sure you want to do this?"
       upload:
         upload_annotations: "Upload Annotations"
-        upload_message: "
+        upload_message_csv: "
         <p>
             Select a CSV file form:<br />
             <code>category_name,annotation_text,annotation_text ... </code><br />
           </p>"
+        upload_message_yml: "
+        <p>
+            Select a YAML file form:<br />
+            <code>category_name: <br />- category_text<br />- category_text</code><br />
+            
+          </p>"
         success:  "Successfully uploaded %{annotation_category_number} Annotation Categories"
         error:  "Unable to upload category: %{annotation_category} located in line %{annotation_line}"
+        syntax_error: "There is an error in the file you uploaded : %{error}"
         flash_error: "Could not recognize %{format} format to download with"
       download:
         download_annotations: "Download Annotations"
