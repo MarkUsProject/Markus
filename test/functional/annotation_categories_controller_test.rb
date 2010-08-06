@@ -357,11 +357,52 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
     context "on :csv_upload" do
       setup do
-        post_as @admin, :csv_upload, :id => @assignment.id, :annotation_category_list => 'name, text'
+        post_as @admin, :csv_upload, :id => @assignment.id, :annotation_category_list_csv => 'name, text'
       end
       should respond_with :redirect
       should set_the_flash.to((I18n.t('annotations.upload.success', :annotation_category_number => 1)))
       should assign_to :assignment
+    end
+    
+    context "Annotation Categories" do
+      setup do 
+        clear_fixtures
+        @assignment = Assignment.make
+        @admin = Admin.make
+      end
+      context "on :yml_upload" do
+        setup do
+          @old_annotation_categories =  @assignment.annotation_categories
+          # Needed, otherwise the test fail
+          @old_annotation_categories.length
+          post_as @admin, :yml_upload, :id => @assignment.id, :annotation_category_list_yml => "--- \n A:\n - A1\n - A2\n"
+        end
+        
+        should respond_with :redirect
+        should set_the_flash.to((I18n.t('annotations.upload.success', :annotation_category_number => 1)))
+        should assign_to :assignment
+        should "have added 1 annot. categories" do
+          @assignment.reload
+          new_categories_list = @assignment.annotation_categories
+          assert_equal(@old_annotation_categories.length + 1, (new_categories_list.length))
+        end
+      end
+      
+      context "on :yml_upload with an error" do
+        setup do
+          @old_annotation_categories =   @assignment.annotation_categories
+          post_as @admin, :yml_upload, :id => @assignment.id, :annotation_category_list_yml => "--- \n A:\n - A1\n A2\n"
+        end
+        
+        should respond_with :redirect
+        should set_the_flash.to((I18n.t('annotations.upload.syntax_error', :error => "syntax error on line 4, col -1: `'")))
+        should assign_to :assignment
+        should "have added 0 annot. categories" do
+          @assignment.reload
+          new_categories_list = @assignment.annotation_categories
+          assert_equal(@old_annotation_categories.length, (new_categories_list.length))
+        end
+      end
     end
   end
 

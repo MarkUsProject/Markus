@@ -106,19 +106,27 @@
  </div>
 
 
-    <div id="upload_dialog" >
-
-    <h1><%=h t("annotations.upload.upload_annotations") %></h1>
-        <%= t("annotations.upload.upload_message") %>
+      <div id="upload_dialog" >
+        <h1><%=h t("annotations.upload.upload_annotations") %></h1>
+        <%= t("annotations.upload.upload_message_csv") %>
           <% form_tag({:action => 'csv_upload', :id => @assignment.id}, {:multipart => true}) do %>
-           <p><%= file_field_tag :annotation_category_list, :size => 0 %>
-           </p>
-           <p>
-           <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
-           <input type="reset" value="<%= t(:cancel) %>" onclick="modalUpload.close();">
-           </p>
-          <% end %>
-    </div>
+          <p><%= file_field_tag :annotation_category_list_csv, :size => 0 %>
+          </p>
+          <p>
+            <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
+            <input type="reset" value="<%= t(:cancel) %>" onclick="modalUpload.close();" />
+          </p>
+        <% end %>
+        <%= t("annotations.upload.upload_message_yml") %>
+        <% form_tag({:action => 'yml_upload', :id => @assignment.id}, {:multipart => true}) do %>
+          <p><%= file_field_tag :annotation_category_list_yml, :size => 0 %>
+          </p>
+          <p>
+            <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
+            <input type="reset" value="<%= t(:cancel) %>" onclick="modalUpload.close();" />
+          </p>
+        <% end %>
+      </div>
 
     <div id="download_dialog">
     <h1><%=h t("annotations.download.download_annotations") %></h1>
