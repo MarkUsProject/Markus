@@ -1,14 +1,10 @@
 page.hide 'errors'
 
 if !@errors.empty?
-  page.replace_html 'errors_title', "Could not delete the following groups - note that groups cannot be deleted for this assignment if a submission has already been created for them for grading."
+  page.replace_html 'errors_title', I18n.t('groups.could_not_delete')
   page.replace_html 'errors_contents', :partial => 'delete_errors', :locals => {:group_names => @errors}
   page.show 'errors'
 end
-
-page.replace 'student_list', :partial => 'ungrouped_students', :locals => {:students => @assignment.ungrouped_students}
-
-page.replace_html 'number_of_ungrouped_students', @assignment.ungrouped_students.length
 
 ids = []
 @removed_groupings.each do |grouping|

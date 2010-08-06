@@ -267,7 +267,7 @@ class Grouping < ActiveRecord::Base
   # Returns true if either this Grouping has met the assignment group
   # size minimum, OR has been approved by an instructor
   def is_valid?
-    return admin_approved || (non_rejected_student_memberships.length >= assignment.group_min)
+    return admin_approved || (non_rejected_student_memberships.size >= assignment.group_min)
   end
 
   # Validates a group
