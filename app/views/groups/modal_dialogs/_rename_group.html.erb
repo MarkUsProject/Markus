@@ -1,13 +1,11 @@
-	<h2>Rename group</h2>
-	<% form_remote_tag :url => { :action => 'rename_group', :id => @assignment.id, :grouping_id => @grouping_id} do %>
-	<p>
-		<fieldset>
-		Group Name
-		<input type="text" maxlength="30" id="new_groupname" name="new_groupname"></input>
-		</fieldset>
-	</p>
-	<p class="p_margin">
-		<%= submit_tag 'Rename group' %>
-		<button onclick="modalRenameGroup.close(); return false;">Cancel</button>
-	</p>
-	<% end %>
+<h2><%= I18n.t('groups.rename_group.title') %></h2>
+<% form_remote_tag :url => { :action => 'rename_group', :id => @assignment.id, :grouping_id => @grouping_id} do %>
+  <fieldset>
+  <%= label_tag "new_groupname", I18n.t('groups.rename_group.group_name') %>
+  <input type="text" maxlength="30" id="new_groupname" name="new_groupname">
+  </fieldset>
+  <p class="p_margin">
+          <%= submit_tag I18n.t('groups.rename_group.title') %>
+          <button onclick="modalRenameGroup.close(); return false;"><%= I18n.t('cancel') %> </button>
+  </p>
+<% end %>

@@ -105,17 +105,17 @@ REPOSITORY_TYPE = "svn" # use Subversion as storage backend
 ###################################################################
 # Directory where Repositories will be created. Make sure MarkUs is allowed
 # to write to this directory
-REPOSITORY_STORAGE = "/home/markus/repo_storage"
+REPOSITORY_STORAGE = "#{RAILS_ROOT}/svn_repos"
 
 ###################################################################
 # Directory where converted PDF files will be stored as JPEGs. Make sure MarkUs
 # is allowed to write to this directory
-PDF_STORAGE = "/home/markus/converted_pdf_dir"
+PDF_STORAGE = "#{RAILS_ROOT}/converted_pdf_dir"
 
 ###################################################################
 # Directory where the Automated Testing Repositories will be created.
 # Make sure MarkUs is allowed to write to this directory
-TEST_FRAMEWORK_REPOSITORY = "/home/markus/test-framework/"
+TEST_FRAMEWORK_REPOSITORY = "#{RAILS_ROOT}/test-framework"
 
 ###################################################################
 # Set this to true or false if you want to be able to display and annotate
