@@ -4,15 +4,27 @@ require 'csv'
 # has the marking_scheme_type attribute set to 'flexible'. 
 class FlexibleCriterion < ActiveRecord::Base
   set_table_name "flexible_criteria" # set table name correctly
-  belongs_to  :assignment
+  belongs_to  :assignment, :counter_cache => true
   has_many    :marks, :as => :markable, :dependent => :destroy
+  has_many :criterion_ta_associations, :as => :criterion, :dependent => :destroy
+  has_many :tas, :through => :criterion_ta_associations
   validates_associated :assignment, :message => 'association is not strong with an assignment'
   validates_uniqueness_of :flexible_criterion_name, :scope => :assignment_id, :message => 'is already taken'
   validates_presence_of :flexible_criterion_name, :assignment_id, :max
   validates_numericality_of :assignment_id, :only_integer => true, :greater_than => 0, :message => "can only be whole number greater than 0"
   validates_numericality_of :max, :message => "must be a number greater than 0.0", :greater_than => 0.0
-  
+
+  before_save :update_assigned_groups_count
+
   DEFAULT_MAX = 1
+  
+  def update_assigned_groups_count
+    result = []
+    tas.each do |ta|
+      result = result.concat(ta.get_groupings_by_assignment(assignment))
+    end
+    self.assigned_groups_count = result.uniq.length
+  end
   
   # Creates a CSV string from all the flexible criteria related to an assignment.
   #
@@ -112,6 +124,72 @@ class FlexibleCriterion < ActiveRecord::Base
   
   def get_weight
     return 1
+  end
+
+  def all_assigned_groups
+    result = []
+    tas.each do |ta|
+      result = result.concat(ta.get_groupings_by_assignment(assignment))
+    end
+    return result.uniq
+  end
+
+  def add_ta(ta)
+    if criterion_ta_associations.find_all_by_ta_id(ta.id).size < 1
+      criterion_ta_associations.create(:ta => ta, :criterion => self, :assignment => self.assignment)
+    end
+  end
+
+
+  def add_tas(ta_array)
+    ta_array.each {|ta| add_ta(ta)}
+  end
+
+  def get_name
+    return flexible_criterion_name
+  end
+
+  def remove_ta(ta)
+    criterion_ta_association = criterion_ta_associations.find_by_ta_id(ta.id)
+    if !criterion_ta_association.nil?
+      criterion_ta_associations.delete(criterion_ta_association)
+    end
+  end
+
+  def remove_tas(ta_array)
+    ta_array.each {|ta| remove_ta(ta)}
+  end
+
+  def get_ta_names
+    return criterion_ta_associations.collect {|association| association.ta.user_name}
+  end
+
+  def has_associated_ta?(ta)
+    if !ta.ta?
+      return false
+    end
+    return !(criterion_ta_associations.find_by_ta_id(ta.id) == nil)
+  end
+
+  def add_tas_by_user_name_array(ta_user_name_array)
+    result = ta_user_name_array.map{|ta_user_name|
+      Ta.find_by_user_name(ta_user_name)}.compact
+    add_tas(result)
+  end
+
+  # Returns an array containing the criterion names that didn't exist
+  def self.assign_tas_by_csv(csv_file_contents, assignment_id)
+    failures = []
+    FasterCSV.parse(csv_file_contents) do |row|
+      criterion_name = row.shift # Knocks the first item from array
+      criterion = FlexibleCriterion.find_by_assignment_id_and_flexible_criterion_name(assignment_id, criterion_name)
+      if criterion.nil?
+        failures.push(criterion_name)
+      else
+        criterion.add_tas_by_user_name_array(row) # The rest of the array
+      end
+    end
+    return failures
   end
   
 end

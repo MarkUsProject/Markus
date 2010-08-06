@@ -6,7 +6,7 @@ class Grouping < ActiveRecord::Base
    
   before_create :create_grouping_repository_folder
   before_destroy :revoke_repository_permissions_for_students
-  belongs_to :assignment
+  belongs_to :assignment, :counter_cache => true
   belongs_to  :group
   belongs_to :grouping_queue
   has_many :memberships
@@ -15,6 +15,7 @@ class Grouping < ActiveRecord::Base
   has_many :accepted_student_memberships, :class_name => "StudentMembership", :conditions => {'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]}
   has_many :notes, :as => :noteable, :dependent => :destroy
   has_many :ta_memberships, :class_name => "TaMembership"
+  has_many :tas, :through => :ta_memberships, :source => :user
   has_many :students, :through => :student_memberships, :source => :user
   has_many :pending_students, :class_name => 'Student', :through => :student_memberships, :conditions => {'memberships.membership_status' => StudentMembership::STATUSES[:pending]}, :source => :user
   
@@ -25,7 +26,9 @@ class Grouping < ActiveRecord::Base
   has_many :tokens
 
   named_scope :approved_groupings, :conditions => {:admin_approved => true}
-    
+
+  validates_numericality_of :criteria_coverage_count, :greater_than_or_equal_to => 0
+
   # user association/validations
   validates_presence_of   :assignment_id, :message => "needs an assignment id"
   validates_associated    :assignment,    :message => "associated assignment need to be valid"
@@ -68,8 +71,8 @@ class Grouping < ActiveRecord::Base
   # Returns an array of the user_names for any TA's assigned to mark
   # this Grouping
   def get_ta_names
-    return ta_memberships.collect do |membership| 
-      membership.user.user_name 
+    return ta_memberships.collect do |membership|
+      membership.user.user_name
     end
   end
   
@@ -358,16 +361,6 @@ class Grouping < ActiveRecord::Base
      update_repository_permissions
   end
   
-  def add_ta_by_id(ta_id)
-    # Is there a better way to make sure that there is only one
-    # TA Membership per TA per Grouping?
-    if ta_memberships.find_all_by_user_id(ta_id).size < 1
-      ta_membership = TaMembership.new
-      ta_membership.user_id = ta_id
-      ta_memberships << ta_membership
-    end
-  end
-  
   # If a group is invalid OR valid and the user is the inviter of the group and
   # she is the _only_ member of this grouping it should be deletable
   # by this user, provided there haven't been any files submitted. Additionally,
@@ -424,31 +417,68 @@ class Grouping < ActiveRecord::Base
     end
     return missing_assignment_files
   end
+
+  def add_ta(ta)
+    # Is there a better way to make sure that there is only one
+    # TA Membership per TA per Grouping?
+    if ta_memberships.find_by_user_id(ta.id).nil?
+      ta_memberships.create(:user => ta)
+    end
+    self.reload
+    criteria = self.all_assigned_criteria
+    self.criteria_coverage_count = criteria.length
+    self.save
+  end
   
-  def remove_ta_by_id(ta_id)
-    ta_membership = ta_memberships.find_by_user_id(ta_id)
+  def remove_ta(ta)
+    ta_membership = ta_memberships.find_by_user_id(ta.id)
     if !ta_membership.nil?
       ta_membership.destroy
     end
+    self.reload
+    criteria = self.all_assigned_criteria
+    self.criteria_coverage_count = criteria.length
+    self.save
   end
   
-  def add_tas(ta_id_array)
-    ta_id_array.each do |ta_id|
-      add_ta_by_id(ta_id)
+  def add_tas(tas)
+    existing = self.tas
+    tas.each do |ta|
+      if !existing.include? ta
+        ta_memberships.create(:user => ta)
+      end
     end
+    self.reload
+    criteria = self.all_assigned_criteria
+    self.criteria_coverage_count = criteria.length
+    self.save
   end
   
   def remove_tas(ta_id_array)
     ta_id_array.each do |ta_id|
-      remove_ta_by_id(ta_id)
+      ta_membership = ta_memberships.find_by_user_id(ta_id)
+      if !ta_membership.nil?
+        ta_membership.destroy
+      end
     end
+    self.reload
+    criteria = self.all_assigned_criteria
+    self.criteria_coverage_count = criteria.length
+    self.save
   end
   
   def add_tas_by_user_name_array(ta_user_name_array)
     ta_user_name_array.each do |ta_user_name|
       ta = Ta.find_by_user_name(ta_user_name)
-      add_ta_by_id(ta.id)
+      if !ta.nil?
+        if ta_memberships.find_by_user_id(ta.id).nil?
+          ta_memberships.create(:user => ta)
+        end
+      end
     end
+    self.reload
+    self.criteria_coverage_count = self.all_assigned_criteria.length
+    self.save
   end
 
   # Returns an array containing the group names that didn't exist
@@ -461,7 +491,11 @@ class Grouping < ActiveRecord::Base
         failures.push(group_name)
       else
         grouping = group.grouping_for_assignment(assignment_id)
-        grouping.add_tas_by_user_name_array(row) # The rest of the array
+        if grouping.nil?
+          failures.push(group_name)
+        else
+          grouping.add_tas_by_user_name_array(row) # The rest of the array
+        end
       end
     end
     return failures
@@ -518,6 +552,28 @@ class Grouping < ActiveRecord::Base
   def write_repo_permissions?
     return MarkusConfigurator.markus_config_repository_admin? &&
            self.repository_external_commits_only?
+  end
+
+  def assigned_tas_for_criterion(criterion)
+    result = []
+    if assignment.assign_graders_to_criteria
+      tas.each do |ta|
+        if ta.criterion_ta_associations.find_by_criterion_id(criterion.id)
+          result.push(ta)
+        end
+      end
+    end
+    return result
+  end
+
+  def all_assigned_criteria
+    result = []
+    if assignment.assign_graders_to_criteria
+      tas.each do |ta|
+        result = result.concat(ta.get_criterion_associations_by_assignment(assignment))
+      end
+    end
+    return result.map{|a| a.criterion}.uniq
   end
   
   private
@@ -623,5 +679,4 @@ class Grouping < ActiveRecord::Base
       end
     end
   end
-  
 end # end class Grouping

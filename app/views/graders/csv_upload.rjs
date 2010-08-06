@@ -1,0 +1,2 @@
+page['current_table'].value = 'groups_table'
+page.reload

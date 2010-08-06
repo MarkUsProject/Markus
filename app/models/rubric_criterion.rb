@@ -4,14 +4,27 @@ require 'csv'
 class RubricCriterion < ActiveRecord::Base
   before_save :truncate_weight
   set_table_name "rubric_criteria" # set table name correctly
-  belongs_to  :assignment
+  belongs_to  :assignment, :counter_cache => true
   has_many    :marks, :as => :markable, :dependent => :destroy
+  has_many :criterion_ta_associations, :as => :criterion, :dependent => :destroy
+  has_many :tas, :through => :criterion_ta_associations
   validates_associated  :assignment
   validates_uniqueness_of :rubric_criterion_name, :scope => :assignment_id
-  validates_presence_of :rubric_criterion_name, :weight, :assignment_id
+  validates_presence_of :rubric_criterion_name, :weight, :assignment_id,
+    :assigned_groups_count
   validates_numericality_of :assignment_id, :only_integer => true, :greater_than => 0
-  validates_numericality_of :weight
+  validates_numericality_of :weight, :assigned_groups_count
   validate_on_update :validate_total_weight
+
+  before_validation :update_assigned_groups_count
+
+  def update_assigned_groups_count
+    result = []
+    criterion_ta_associations.each do |cta|
+      result = result.concat(cta.ta.get_groupings_by_assignment(assignment))
+    end
+    self.assigned_groups_count = result.uniq.length
+  end
 
   def validate_total_weight
     errors.add(:assignment, I18n.t("rubric_criteria.error_total")) if self.assignment.total_mark + (4 * (self.weight - self.weight_was)) <= 0
@@ -164,5 +177,71 @@ class RubricCriterion < ActiveRecord::Base
   def truncate_weight
     factor = 10.0 ** 2
     self.weight = (self.weight * factor).floor / factor
+  end
+
+  def all_assigned_groups
+    result = []
+    tas.each do |ta|
+      result = result.concat(ta.get_groupings_by_assignment(assignment))
+    end
+    return result.uniq
+  end
+  
+  def add_ta(ta)
+    if criterion_ta_associations.find_all_by_ta_id(ta.id).size < 1
+      criterion_ta_associations.create(:ta => ta, :criterion => self, :assignment => self.assignment)
+    end
+  end
+
+  def add_tas(ta_array)
+    ta_array.each {|ta| add_ta(ta)}
+  end
+
+
+  def get_name
+    return rubric_criterion_name
+  end
+
+  def remove_ta(ta)
+    criterion_ta_association = criterion_ta_associations.find_by_ta_id(ta.id)
+    if !criterion_ta_association.nil?
+      criterion_ta_associations.delete(criterion_ta_association)
+    end
+  end
+
+  def remove_tas(ta_array)
+    ta_array.each {|ta| remove_ta(ta)}
+  end
+
+  def get_ta_names
+    return criterion_ta_associations.collect {|association| association.ta.user_name}
+  end
+
+  def has_associated_ta?(ta)
+    if !ta.ta?
+      return false
+    end
+    return !(criterion_ta_associations.find_by_ta_id(ta.id) == nil)
+  end
+
+  def add_tas_by_user_name_array(ta_user_name_array)
+    result = ta_user_name_array.map{|ta_user_name|
+      Ta.find_by_user_name(ta_user_name)}.compact
+    add_tas(result)
+  end
+  
+  # Returns an array containing the criterion names that didn't exist
+  def self.assign_tas_by_csv(csv_file_contents, assignment_id)
+    failures = []
+    FasterCSV.parse(csv_file_contents) do |row|
+      criterion_name = row.shift # Knocks the first item from array
+      criterion = RubricCriterion.find_by_assignment_id_and_rubric_criterion_name(assignment_id, criterion_name)
+      if criterion.nil?
+        failures.push(criterion_name)
+      else
+        criterion.add_tas_by_user_name_array(row) # The rest of the array
+      end
+    end
+    return failures
   end
 end

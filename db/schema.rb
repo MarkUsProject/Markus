@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100713172326) do
+ActiveRecord::Schema.define(:version => 20100726183357) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -77,9 +77,26 @@ ActiveRecord::Schema.define(:version => 20100713172326) do
     t.boolean  "display_grader_names_to_students"
     t.boolean  "enable_test",                      :default => false,    :null => false
     t.integer  "tokens_per_day"
+    t.integer  "notes_count",                      :default => 0
+    t.boolean  "assign_graders_to_criteria",       :default => false
+    t.integer  "rubric_criterions_count"
+    t.integer  "flexible_criterions_count"
+    t.integer  "groupings_count"
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true
+
+  create_table "criterion_ta_associations", :force => true do |t|
+    t.integer  "ta_id"
+    t.integer  "criterion_id"
+    t.string   "criterion_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "assignment_id"
+  end
+
+  add_index "criterion_ta_associations", ["criterion_id"], :name => "index_criterion_ta_associations_on_criterion_id"
+  add_index "criterion_ta_associations", ["ta_id"], :name => "index_criterion_ta_associations_on_ta_id"
 
   create_table "extra_marks", :force => true do |t|
     t.integer  "result_id"
@@ -93,13 +110,14 @@ ActiveRecord::Schema.define(:version => 20100713172326) do
   add_index "extra_marks", ["result_id"], :name => "index_extra_marks_on_result_id"
 
   create_table "flexible_criteria", :force => true do |t|
-    t.string   "flexible_criterion_name",                                :null => false
+    t.string   "flexible_criterion_name",                                               :null => false
     t.text     "description"
     t.integer  "position"
-    t.integer  "assignment_id",                                          :null => false
-    t.decimal  "max",                     :precision => 10, :scale => 1, :null => false
+    t.integer  "assignment_id",                                                         :null => false
+    t.decimal  "max",                     :precision => 10, :scale => 1,                :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "assigned_groups_count",                                  :default => 0
   end
 
   add_index "flexible_criteria", ["assignment_id", "flexible_criterion_name"], :name => "index_flexible_criteria_on_assignment_id_and_name", :unique => true
@@ -161,16 +179,18 @@ ActiveRecord::Schema.define(:version => 20100713172326) do
   end
 
   create_table "groupings", :force => true do |t|
-    t.integer  "group_id",                             :null => false
-    t.integer  "assignment_id",                        :null => false
+    t.integer  "group_id",                                   :null => false
+    t.integer  "assignment_id",                              :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "admin_approved",    :default => false, :null => false
+    t.boolean  "admin_approved",          :default => false, :null => false
     t.integer  "grouping_queue_id"
-    t.boolean  "is_collected",      :default => false
+    t.boolean  "is_collected",            :default => false
+    t.integer  "notes_count",             :default => 0
+    t.integer  "criteria_coverage_count", :default => 0
   end
 
-  add_index "groupings", ["assignment_id", "group_id"], :name => "altered_groupings_u1", :unique => true
+  add_index "groupings", ["assignment_id", "group_id"], :name => "groupings_u1", :unique => true
 
   create_table "groups", :force => true do |t|
     t.string "group_name", :limit => 30
@@ -189,6 +209,7 @@ ActiveRecord::Schema.define(:version => 20100713172326) do
   end
 
   add_index "marks", ["markable_id", "result_id", "markable_type"], :name => "marks_u1", :unique => true
+  add_index "marks", ["result_id"], :name => "index_marks_on_result_id"
 
   create_table "memberships", :force => true do |t|
     t.integer  "user_id"
@@ -229,13 +250,14 @@ ActiveRecord::Schema.define(:version => 20100713172326) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "released_to_students", :default => false, :null => false
+    t.float    "total_mark",           :default => 0.0
   end
 
   add_index "results", ["submission_id"], :name => "results_u1", :unique => true
 
   create_table "rubric_criteria", :force => true do |t|
-    t.string   "rubric_criterion_name", :null => false
-    t.integer  "assignment_id",         :null => false
+    t.string   "rubric_criterion_name",                :null => false
+    t.integer  "assignment_id",                        :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "position"
@@ -249,11 +271,11 @@ ActiveRecord::Schema.define(:version => 20100713172326) do
     t.text     "level_3_description"
     t.text     "level_4_name"
     t.text     "level_4_description"
-    t.float    "weight",                :null => false
+    t.float    "weight",                               :null => false
+    t.integer  "assigned_groups_count", :default => 0
   end
 
   add_index "rubric_criteria", ["assignment_id", "rubric_criterion_name"], :name => "index_rubric_criteria_on_assignment_id_and_name", :unique => true
-  add_index "rubric_criteria", ["assignment_id"], :name => "index_rubric_criteria_on_assignment_id"
 
   create_table "section_due_dates", :force => true do |t|
     t.integer  "sections_id"
@@ -340,6 +362,7 @@ ActiveRecord::Schema.define(:version => 20100713172326) do
     t.boolean  "hidden",        :default => false, :null => false
     t.string   "api_key"
     t.integer  "section_id"
+    t.integer  "notes_count",   :default => 0
   end
 
   add_index "users", ["user_name"], :name => "index_users_on_user_name", :unique => true

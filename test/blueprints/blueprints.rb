@@ -70,11 +70,17 @@ Assignment.blueprint do
   display_grader_names_to_students {false}
   enable_test {true}
   tokens_per_day {10}
+  assign_graders_to_criteria {false}
 end
 
 AssignmentFile.blueprint do
   assignment
   filename
+end
+
+CriterionTaAssociation.blueprint do
+  criterion
+  ta
 end
 
 ExtraMark.blueprint do
@@ -89,6 +95,7 @@ FlexibleCriterion.blueprint do
   description
   position {1} # override if many for the same assignment
   max{10}
+  assigned_groups_count {0}
 end
 
 Grade.blueprint do
@@ -135,6 +142,7 @@ Grouping.blueprint do
   grouping_queue { nil }
   group {Group.make}
   assignment {Assignment.make}
+  criteria_coverage_count {0}
 end
 
 ImageAnnotation.blueprint do
@@ -183,6 +191,7 @@ RubricCriterion.blueprint do
   rubric_criterion_name {Sham.rubric_criterion_name}
   position {1} # override if many for the same assignment
   weight {1}
+  assigned_groups_count {0}
 end
 
 Section.blueprint do

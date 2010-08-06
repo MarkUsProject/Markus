@@ -6,6 +6,7 @@ en:
     password:           "Password"
     all:                "All"
     none:               "None"
+    search:             "Search:"
 
     # app/views/main/login.html.erb
     welcome_to:         "Welcome to MarkUs!"
@@ -135,7 +136,10 @@ en:
 
     members:            "Members"
     add_members:        "Add Members"
+    remove_members:     "Remove Members"
     graders:            "Graders"
+    add_graders:        "Add Graders"
+    remove_graders:     "Remove Graders"
     admins:             "Admins"
     add_new:            "Add new"
     create_new_grade_entry_form: "Add Marks Spreadsheet"
@@ -439,6 +443,7 @@ en:
       file_does_not_execute: "The setting %{constant_name} with path %{file_name} does not execute properly. Please double check the setting in %{config_location}."
       error_writing_to_pipe: "Error writing to pipe. %{file_name}, %{error}. Please double check the setting in %{config_location}."
     groups:
+      groups: "Groups"
       manage_groups: "Manage Groups"
       all_students: "All students(<span id=\"all_students_count\"></span>)"
       unassigned_students: "Unassigned(<span id=\"unassigned_students_count\"></span>)"
@@ -484,12 +489,18 @@ en:
             <code>group_name,repository_name,user_name,<br />user_name ... </code><br />"
         importing: " Importing groups via CSV upload into MarkUs will destroy existing groups!"
         upload_grader_map: "Upload Group / Grader Map"
+        upload_grader_criteria_map: "Upload Criteria / Grader Map"
         description_grader_map: "CSV file format:<br />
             <code>group_name,grader_user_name,grader_user_name,... </code><br />"
+        description_grader_criteria_map: "CSV file format:<br />
+            <code>criterion_name,grader_user_name,grader_user_name,... </code><br />"
       download:
         download: "Download"
         download_groups_file: "Download Groups File"
+        download_grader_maps: "Download Grader Maps"
         download_csv: "CSV Format"
+        download_grader_groups_csv: "Group / Grader map CSV format"
+        download_grader_criteria_csv: "Criteria / Grader map CSV format"
       reuse_groups: "Reuse Groups"
       assignment_to_use: "Which assignments groups would you like to use?"
       delete_groups_linked: "This will delete all the groups linked to this assignment. Continue?"
@@ -614,12 +625,20 @@ en:
 
     #Graders' View
     graders:
-      create_new_grader: "Create a new Grader"
-      edit_grader:       "Edit a Grader"
-      manage_graders: "Manage Graders"
-      graders:        "Graders"
+      create_new_grader:  "Create a new Grader"
+      edit_grader:        "Edit a Grader"
+      manage_graders:     "Manage Graders"
+      graders:            "Graders"
+      all_graders:        "All Graders"
+      assigned_graders:   "Assigned Graders"
+      possible_graders:   "Possible Graders"
+      unassigned_graders: "Unassigned Graders"
+      not_covered:        "Not Covered"
+      covered:            "Covered"
       success: "%{user_name} has been updated"
       create_success: "Successfully created grader %{user_name}"
+      coverage: "Coverage"
+      assign_to_criteria: "Assign Graders to Criteria"
       upload:
         select_csv_file: "Select a CSV file of the following form: <code>user_name,last_name,first_name</code>"
         grader_same_user: "If a TA with the same user_name exists, then that TA's information is updated."
@@ -686,6 +705,7 @@ en:
         user_name:      "User Name"
         first_name:     "First Name"
         last_name:      "Last Name"
+        full_name:      "Full Name"
         grace_credits:  "Grace Credits"
         section:        "Section"
         display_grader_names_to_students: "Display grader names to students?"
@@ -807,6 +827,8 @@ en:
     double each one of your double quotes (\"\").</p>
     <p>Here's an example of a CSV field containing commas and double quotes:</p>
     <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
+
+    criterion_name: "Criterion Name"
 
     flexible_criteria:
       criteria_management:         "Criteria Management: %{identifier}"

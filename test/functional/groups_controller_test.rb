@@ -317,9 +317,9 @@ class GroupsControllerTest < AuthenticatedControllerTest
     context "POST on :global_actions on random_assign" do
       setup do
           # Remove TAs from all groupings used...
-          groupings(:grouping_2).remove_ta_by_id(users(:ta1).id)
-          groupings(:grouping_5).remove_ta_by_id(users(:ta3).id)
-          groupings(:grouping_6).remove_ta_by_id(users(:ta3).id)
+          groupings(:grouping_2).remove_ta(users(:ta1))
+          groupings(:grouping_5).remove_ta(users(:ta3))
+          groupings(:grouping_6).remove_ta(users(:ta3))
       end
       
       context "and no graders selected" do

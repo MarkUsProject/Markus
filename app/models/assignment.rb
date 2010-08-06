@@ -1,6 +1,6 @@
 require 'csv_invalid_line_error'
 class Assignment < ActiveRecord::Base
-
+  
   MARKING_SCHEME_TYPE = {
     :flexible => 'flexible',
     :rubric => 'rubric'
@@ -9,7 +9,8 @@ class Assignment < ActiveRecord::Base
   has_many :rubric_criteria, :class_name => "RubricCriterion", :order => :position
   has_many :flexible_criteria, :class_name => "FlexibleCriterion", :order => :position
   has_many :assignment_files
-  has_one  :submission_rule
+  has_many :criterion_ta_associations
+  has_one  :submission_rule 
   accepts_nested_attributes_for :submission_rule, :allow_destroy => true
   accepts_nested_attributes_for :assignment_files, :allow_destroy => true
 
@@ -42,8 +43,9 @@ class Assignment < ActiveRecord::Base
   validates_inclusion_of :allow_web_submits, :in => [true, false]
   validates_inclusion_of :display_grader_names_to_students, :in => [true, false]
   validates_inclusion_of :enable_test, :in => [true, false]
-
-  before_save :reset_collection_time
+  validates_inclusion_of :assign_graders_to_criteria, :in => [true, false]
+  
+ before_save :reset_collection_time
 
   def validate
     if (group_max && group_min) && group_max < group_min
@@ -506,6 +508,14 @@ class Assignment < ActiveRecord::Base
        return self.rubric_criteria
     else
        return self.flexible_criteria
+    end
+  end
+
+  def criteria_count
+    if self.marking_scheme_type == 'rubric'
+       return self.rubric_criteria.size
+    else
+       return self.flexible_criteria.size
     end
   end
 
