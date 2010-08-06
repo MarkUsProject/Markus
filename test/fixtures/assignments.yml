@@ -36,6 +36,7 @@ assignment_1:
    marking_scheme_type: "rubric"
    allow_web_submits: false
    display_grader_names_to_students: true
+   assign_graders_to_criteria: false
 
 assignment_build_on_top_of_1:
    short_identifier: Captain CopyCat
@@ -54,6 +55,7 @@ assignment_build_on_top_of_1:
    marking_scheme_type: "rubric"
    allow_web_submits: true
    display_grader_names_to_students: false
+   assign_graders_to_criteria: false
 
 assignment_2:
    short_identifier: Captain Sparrow
@@ -72,6 +74,7 @@ assignment_2:
    marking_scheme_type: "rubric"
    allow_web_submits: true
    display_grader_names_to_students: false
+   assign_graders_to_criteria: false
 
 assignment_3:
    short_identifier: Captain Haddock
@@ -90,6 +93,7 @@ assignment_3:
    marking_scheme_type: "rubric"
    allow_web_submits: true
    display_grader_names_to_students: false
+   assign_graders_to_criteria: false
 
 assignment_4:
    short_identifier: Captain Late
@@ -108,6 +112,7 @@ assignment_4:
    marking_scheme_type: "rubric"
    allow_web_submits: true
    display_grader_names_to_students: false
+   assign_graders_to_criteria: false
    
 assignment_5:
    short_identifier: A5
@@ -126,6 +131,7 @@ assignment_5:
    marking_scheme_type: "rubric"
    allow_web_submits: true
    display_grader_names_to_students: false
+   assign_graders_to_criteria: false
 
 assignment_6:
    short_identifier: A6
@@ -144,6 +150,7 @@ assignment_6:
    marking_scheme_type: "rubric"
    allow_web_submits: true
    display_grader_names_to_students: false
+   assign_graders_to_criteria: false
 
 flexible_assignment:
    short_identifier: Flexibly yours
@@ -162,6 +169,7 @@ flexible_assignment:
    marking_scheme_type: "flexible"
    allow_web_submits: true
    display_grader_names_to_students: false
+   assign_graders_to_criteria: false
 
 flexible_assignment_without_criterion:
    short_identifier: "How flexible can you get?"
@@ -180,6 +188,7 @@ flexible_assignment_without_criterion:
    marking_scheme_type: "flexible"
    allow_web_submits: false
    display_grader_names_to_students: true
+   assign_graders_to_criteria: false
    
 flexible_assignment_2:
    short_identifier: Flex2
@@ -198,6 +207,7 @@ flexible_assignment_2:
    marking_scheme_type: "flexible"
    allow_web_submits: true
    display_grader_names_to_students: false
+   assign_graders_to_criteria: false
 
 assignment_test_result1:
    short_identifier: test_result_ass
@@ -216,6 +226,7 @@ assignment_test_result1:
    marking_scheme_type: "rubric"
    allow_web_submits: true
    display_grader_names_to_students: false
+   assign_graders_to_criteria: false
    
 assignment_with_web_submit:
    short_identifier: WS
@@ -234,6 +245,7 @@ assignment_with_web_submit:
    marking_scheme_type: "rubric"
    allow_web_submits: true
    display_grader_names_to_students: false
+   assign_graders_to_criteria: false
 
 assignment_without_web_submit:
    short_identifier: NoWS
@@ -252,6 +264,7 @@ assignment_without_web_submit:
    marking_scheme_type: "rubric"
    allow_web_submits: false
    display_grader_names_to_students: false
+   assign_graders_to_criteria: false
 
 assignment_with_display_grader_names_to_students:
    short_identifier: DisplayGN
@@ -270,6 +283,7 @@ assignment_with_display_grader_names_to_students:
    marking_scheme_type: "rubric"
    allow_web_submits: true
    display_grader_names_to_students: true
+   assign_graders_to_criteria: false
 
 assignment_without_display_grader_names_to_students:
    short_identifier: NoDisplayGN
@@ -288,6 +302,7 @@ assignment_without_display_grader_names_to_students:
    marking_scheme_type: "rubric"
    allow_web_submits: true
    display_grader_names_to_students: false
+   assign_graders_to_criteria: false
 
 
 assignment_with_deep_repository_folder:
@@ -307,3 +322,4 @@ assignment_with_deep_repository_folder:
    marking_scheme_type: "rubric"
    allow_web_submits: false
    display_grader_names_to_students: false
+   assign_graders_to_criteria: false

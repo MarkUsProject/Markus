@@ -2,22 +2,24 @@ module GroupsHelper
 
   
   def randomly_assign_graders(grader_ids, grouping_ids)
+    graders = Ta.find(grader_ids)
     # Shuffle the groupings
     groupings = Grouping.find(:all, :conditions => { :id => grouping_ids })
     groupings = groupings.sort_by{rand}
     # Now, deal them out like cards...
     groupings.each_with_index do |grouping, index|
       # Choose the next grader to deal out to...
-      grader = grader_ids[index % grader_ids.size]
-      grouping.add_ta_by_id(grader) 
+      grader = graders[index % graders.size]
+      grouping.add_ta(grader) 
     end
   end
   
   def assign_tas_to_groupings(grouping_ids, ta_id_array)
     result = {}
+    graders = Ta.find(ta_id_array)
     grouping_ids.each do |g|
       grouping = Grouping.find(g)
-      grouping.add_tas(ta_id_array)
+      grouping.add_tas(graders)
       result[grouping.id] = construct_table_row(grouping, grouping.assignment)
     end
     return result;

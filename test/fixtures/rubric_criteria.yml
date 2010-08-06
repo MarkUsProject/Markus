@@ -11,6 +11,7 @@ c1:
   level_2_name: Satisfactory
   level_3_name: Good
   level_4_name: Excellent
+  assigned_groups_count: 0
 
 c2:
   rubric_criterion_name: "Documentation"
@@ -22,6 +23,7 @@ c2:
   level_2_name: Satisfactory
   level_3_name: Good
   level_4_name: Excellent
+  assigned_groups_count: 0
 
 
 c3:
@@ -34,6 +36,7 @@ c3:
   level_2_name: Satisfactory
   level_3_name: Good
   level_4_name: Excellent
+  assigned_groups_count: 0
 
 c4:
   rubric_criterion_name: "Correctness"
@@ -45,6 +48,7 @@ c4:
   level_2_name: Satisfactory
   level_3_name: Good
   level_4_name: Excellent
+  assigned_groups_count: 0
 
 c5:
   rubric_criterion_name: "Part 1 Programming"
@@ -61,6 +65,7 @@ c5:
   level_3_description: "Makes the TA \"smile\""
   level_4_name: Excellent
   level_4_description: "Makes, the, TA scream: \"at last, it was about time\""
+  assigned_groups_count: 0
   
 c6:
   rubric_criterion_name: "Part 2 Programming"
@@ -72,3 +77,4 @@ c6:
   level_2_name: Satisfactory
   level_3_name: Good
   level_4_name: Excellent
+  assigned_groups_count: 0

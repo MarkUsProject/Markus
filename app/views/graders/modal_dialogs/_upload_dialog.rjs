@@ -1,0 +1,2 @@
+page.replace_html 'upload_dialog', :partial => 'graders/modal_dialogs/upload'
+page.call('modalUpload.open')

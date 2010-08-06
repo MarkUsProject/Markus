@@ -169,7 +169,7 @@ class AssignmentsController < ApplicationController
          !MarkusConfigurator.markus_config_repository_external_submits_only?
       render :action => 'new'
       return
-    end   
+    end
 
     @assignment.transaction do
       begin

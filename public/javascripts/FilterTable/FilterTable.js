@@ -85,7 +85,7 @@ var FilterTable = Class.create({
     this.sorting_reverse_class = this.set_or_default(params.sorting_reverse_class, 'FilterTable_sorting_by_reverse');
     
     this.selectable_class = this.set_or_default(params.selectable_class, 'FilterTable_selectable');
-    this.select_onclick = this.set_or_default(params.select_onclick, '');
+    this.select_onclick = this.set_or_default(params.select_onclick, null);
     
     this.select_all_top_id = this.set_or_default(params.select_all_top_id, 'FilterTable_select_all_top');
     this.select_all_bottom_id = this.set_or_default(params.select_all_bottom_id, 'FilterTable_select_all_bottom');
@@ -320,11 +320,12 @@ var FilterTable = Class.create({
         td_element.insert(checkbox_element);
         tr_element.insert({top: td_element});
       }
-
+      var select = this.can_select
+      var prefix = this.select_id_prefix
       this.headers.each(function(column_header, index) {
         var td_element = new Element('td');
-        if(index > 0 && this.can_select == true){
-          var label_element = new Element ('label', {"class": "inline_label", "for": this.select_id_prefix + row.id});
+        if(index == 0 && select){
+          var label_element = new Element ('label', {"class": "inline_label", "for": prefix + row.id});
           label_element.insert(row_contents[0]);
           td_element.insert(label_element);
         }
@@ -440,6 +441,9 @@ var FilterTable = Class.create({
   select_all: function(is_selected) {
     $$('.' + this.selectable_class).each(function(node) {
       $(node).setValue(is_selected);
+      if($(node).onclick != null && $(node).onclick != undefined ){
+        $(node).onclick();
+      }
     });
   },
   select_all_toggles: function(is_selected) {

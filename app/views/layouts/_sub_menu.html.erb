@@ -1,9 +1,10 @@
-<% if @current_user.admin?%>
+<% if @current_user.admin? %>
 <% if controller.controller_name == 'assignments' or
   controller.controller_name == 'rubrics' or
   controller.controller_name == 'flexible_criteria' or
   controller.controller_name == 'submissions' or
   controller.controller_name == 'groups' or
+  controller.controller_name == 'graders' or
   controller.controller_name == 'results' or
   controller.controller_name == 'ta_assignments' or
   controller.controller_name == 'annotation_categories' or
@@ -90,12 +91,12 @@
       <li <%if controller.controller_name == 'groups'%> 
          id="sub_menu_active"
       <%end%>>
-         <%= link_to I18n.t("groups.manage_groups"), :controller => 'groups', :action => 'manage', :id => @assignment.id%>
+         <%= link_to I18n.t("groups.groups"), :controller => 'groups', :action => 'manage', :id => @assignment.id%>
       </li>
       <li <%if controller.controller_name == 'graders'%>
          id="sub_menu_active"
       <%end%>>
-         <%= link_to I18n.t("graders.manage_graders"), :controller => 'graders', :action => 'manage', :id => @assignment.id%>
+         <%= link_to I18n.t("graders.graders"), :controller => 'graders', :action => 'manage', :id => @assignment.id%>
       </li>
        <li <% if controller.controller_name == 'submissions' or
        controller.controller_name == 'results' %> 

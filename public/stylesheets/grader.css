@@ -344,6 +344,10 @@ ul#annotation_summary_list {
     padding: 5px;
   }
 
+  .assigned {
+    border: 2px solid #B7D3EC;
+}
+
   .mark_criterion_title {
     cursor: pointer;
   }

@@ -1,3 +1,3 @@
 <li id="grader_li_<%=ta.id%>">
-         <%= check_box_tag "graders[]", ta.id, false, :id => "grader_#{ta.id}" %><%= label_tag "grader_#{ta.id}", h(ta.user_name), :class => 'inline_label' %> <%= h(ta.first_name)%> (<%=ta.memberships_for_assignment(@assignment.id).length%>)
+         <%= check_box_tag "graders[]", ta.id, false, :id => "grader_#{ta.id}" %><%= label_tag "grader_#{ta.id}", h(ta.user_name), :class => 'inline_label' %> <%= h(ta.first_name)%> (<%=ta.memberships_for_assignment(@assignment).length%>)
 </li>

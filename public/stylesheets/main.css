@@ -123,13 +123,6 @@ h4{
   min-width: 75%;
 }
 
-.centreColumn{
-  position: fixed;
-  top: 300px;
-  left: 38%;
-  margin-left: -17px;
-}
-
 /* Title Bar*/
 
 #title_bar{
@@ -399,7 +392,9 @@ input, .button, .button_2{
   padding: 4px 25px;
 }
 
-.FilterTable_selectable, .inline_checkbox, .FilterTable_students_selectable{
+.FilterTable_selectable, .inline_checkbox,
+.FilterTable_students_selectable, .FilterTable_graders_selectable,
+.FilterTable_groupings_selectable, .FilterTable_criteria_selectable {
   min-width: 0px;
 }
 
@@ -664,6 +659,18 @@ td.student_total input:hover {
    width: 35%;
 }
 
+#FilterTable_manage_graders_header_name{
+   width: 37%;
+}
+
+#FilterTable_manage_graders_header_members{
+  width: 45%;
+}
+
+#FilterTable_manage_graders_header_coverage, #FilterTable_header_coverage{
+  width: 8em;
+}
+
 input#extra_mark_description{
   width: 50%;
 }
@@ -802,12 +809,16 @@ input#extra_mark_description{
    -webkit-border-radius: 5px;
 }
 
-#rename_group_dialog, #upload_dialog, #download_dialog, #notes_dialog {
+#rename_group_dialog, #upload_dialog, #download_dialog, #notes_dialog,
+#groups_coverage_dialog, #grader_criteria_dialog {
    background: white;
    padding: 0 10px 0 10px;
    border: 1px solid #000000;
    -moz-border-radius: 5px;
    -webkit-border-radius: 5px;
+   max-height: 80%;
+   max-width: 80%;
+   overflow: auto;
 }
 
 #assignment_group_use_dialog, #add_member_dialog, #invite_dialog {
@@ -947,6 +958,33 @@ div.float_left {
   width: 62%;
   margin-left: -17px;
 }
+
+.colLeftGraders{
+  float: left;
+  width: 35%;
+  margin-right: -17px;
+}
+
+.colRightGraders{
+  float: right;
+  width: 65%;
+  margin-left: -17px;
+}
+
+.centreColumn{
+  position: fixed;
+  top: 300px;
+  left: 38%;
+  margin-left: -17px;
+}
+
+.centreColumnGraders{
+  position: fixed;
+  top: 280px;
+  left: 35%;
+  margin-left: -17px;
+}
+
 
 .pane{
   -moz-border-radius: 5px;
