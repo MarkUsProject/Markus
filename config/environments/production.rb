@@ -35,6 +35,7 @@ config.gem 'fastercsv', :lib => false, :source => 'http://rubygems.org'
 config.gem 'will_paginate', :lib => false, :source => 'http://rubygems.org'
 config.gem 'rubyzip', :lib => false, :source => 'http://rubygems.org'
 config.gem 'ya2yaml', :source => 'http://rubygems.org', :lib => false
+config.gem 'i18n', :source => 'http://rubygems.org', :lib => false
 
 ###################################################################
 # MarkUs SPECIFIC CONFIGURATION

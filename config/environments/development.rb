@@ -29,6 +29,7 @@ config.gem 'faker', :lib => false, :source => 'http://rubygems.org'
 config.gem 'factory_data_preloader', :source => 'http://rubygems.org'
 config.gem 'rubyzip', :lib => false, :source => 'http://rubygems.org'
 config.gem 'ya2yaml', :source => 'http://rubygems.org', :lib => false
+config.gem 'i18n', :source => 'http://rubygems.org', :lib => false
 
 require 'ruby-debug'
 
