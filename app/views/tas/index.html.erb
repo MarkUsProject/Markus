@@ -1,14 +1,40 @@
 <%= javascript_include_tag "FilterTable/FilterTable" %>
-<%= javascript_include_tag "16accordion" %>
 <%= javascript_include_tag "users_manager" %>
 
 <%= render :partial => "boot.js" %>
 
-<div id="title_bar"><h1><%=h I18n.t("graders.manage_graders") %> <%= link_to I18n.t(:add_new),
-:controller => 'tas', :action => 'create' %></h1></div>
+<script>
+document.observe("dom:loaded", function(){
+
+  modalUpload = new Control.Modal($('upload_dialog'),
+  {
+    overlayOpacity: 0.75,
+    className: 'modalUpload',
+    fade:false
+
+  });
+
+  modalDownload = new Control.Modal($('download_dialog'),
+  {
+    overlayOpacity: 0.75,
+    className: 'modalDownload',
+    fade:false
+
+  });
+})
+</script>
+
+<div id="title_bar"><h1><%=h I18n.t("graders.manage_graders") %></h1>
+  <div class="headingButtons">
+    <%= link_to I18n.t(:add_new), :controller => 'tas', :action => 'create' %>
+    | <%= link_to_function I18n.t(:upload), 'modalUpload.open()' %>
+    | <%= link_to_function I18n.t(:download), 'modalDownload.open()' %>
+  </div>
+</div>
+
 <div class="colsLeftHeavy">
 
-<div class="colLeft"><div class="wrapLeft">
+<div class="wrapLeft">
   <div id="list">
     
       <% if flash[:upload_notice] -%>
@@ -45,38 +71,31 @@
        
       </table>
   </div>
-  </div>
 </div>
-  
-  <!-- Break between sections -->
-<div class="colRight">
-  <div id="test-accordion" class="accordion">
-    <div class="accordion-toggle" id="accordion-toggle-top">
-      <%=I18n.t(:upload)%>
-    </div>    
-    <div class="accordion-content">
-      
-      <p><%= I18n.t("graders.upload.select_csv_file") %></p>
-      
-      <p><%=h I18n.t("graders.upload.grader_same_user") %></p>
-      
-           <%= form_tag( { :controller => 'tas', :action => "upload_ta_list" }, { :multipart => true }) %>
-        <label for="userlist" class="accordion_label"><%= I18n.t("graders.upload.csv_file") %></label>
-        <input type="file" name="userlist" id="userlist" size="2"/>
-		<%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
-      </form> 
-    </div>
-
-    <div class="accordion-toggle" id="accordion-toggle-bottom">
-      <%= I18n.t(:download) %>
-    </div>
-
-    <div class="accordion-content" >
-      <p><%= link_to I18n.t("graders.download.download_list"), :controller => 'tas', :action => 'download_ta_list', :format => "csv" %></p>
-    </div>
-
-  </div>
-</div>  
- 
-
 </div> <!-- colsLeftHeavy -->
+
+<!-- Modal Windows -->
+<div id="upload_dialog">
+  <h2><%=h I18n.t("upload") %></h2>
+  <p><%= I18n.t("graders.upload.select_csv_file") %></p>
+
+  <p><%=h I18n.t("graders.upload.grader_same_user") %></p>
+
+   <%= form_tag( { :controller => 'tas', :action => "upload_ta_list" }, { :multipart => true }) %>
+    <label for="userlist" class="accordion_label"><%= I18n.t("graders.upload.csv_file") %></label>
+    <input type="file" name="userlist" id="userlist"/>
+    <br />
+    <br />
+    <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
+    <%= button_to_function I18n.t(:close), 'modalUpload.close()' %>
+  </form>
+</div>
+
+
+<div id="download_dialog">
+  <h2><%=h I18n.t("download") %></h2>
+  <p><%= link_to I18n.t("graders.download.download_list"),
+  :controller => 'tas', :action => 'download_ta_list',
+  :format => "csv" %></p>
+  <%= button_to_function I18n.t(:close), 'modalDownload.close()' %>
+</div>
