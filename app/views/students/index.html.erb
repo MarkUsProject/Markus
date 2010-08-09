@@ -1,6 +1,5 @@
 <%= javascript_include_tag "FilterTable/FilterTable"%>
 <%= javascript_include_tag "users_manager"%>
-<%= javascript_include_tag "16accordion"%>
 
 <%= render :partial => "boot.js.erb"%>
 
@@ -14,16 +13,36 @@ document.observe("dom:loaded", function(){
     fade:false
 
   });
+
+  modalUpload = new Control.Modal($('upload_dialog'),
+  {
+    overlayOpacity: 0.75,
+    className: 'modalUpload',
+    fade:false
+
+  });
+
+  modalDownload = new Control.Modal($('download_dialog'),
+  {
+    overlayOpacity: 0.75,
+    className: 'modalDownload',
+    fade:false
+
+  });
 })
 </script>
 
-<div id="title_bar"><h1><%=h I18n.t("students.manage_students") %><%= link_to I18n.t(:add_new), :controller => 'students', :action => 'create' %> </h1></div>
-
-
+<div id="title_bar"><h1><%=h I18n.t("students.manage_students") %></h1>
+  <div class="headingButtons">
+  <%= link_to I18n.t(:add_new), :controller => 'students', :action => 'create' %>
+  | <%= link_to_function I18n.t(:upload), 'modalUpload.open()' %>
+  | <%= link_to_function I18n.t(:download), 'modalDownload.open()' %>
+  </div>
+</div>
 
 <div class="colsLeftHeavy">
 
-  <div class="colLeft"><div class="wrapLeft">
+  <div class="wrapLeft">
    <%= form_remote_tag :url => {:action => "bulk_modify"}, :complete => "$('apply_bulk_action').setValue('#{t(:apply)}');$('apply_bulk_action').enable();$('apply_bulk_action2').setValue('#{t(:apply)}');$('apply_bulk_action2').enable();"
  %>
     <div id="ajax_error" class="error" style="display:none;">
@@ -126,44 +145,36 @@ document.observe("dom:loaded", function(){
       </div>
     </form>
   </div>
-</div>
-</div>
-<div class="colRight">  
-<div id="test-accordion" class="accordion">
-
-
-  <div class="accordion-toggle" id="accordion-toggle-top"><%= I18n.t(:upload) %></div>
-  <div class="accordion-content">
-    <h3><%=h I18n.t("students.upload.upload_a_class_list") %></h3>
-      <div class="section">
-      
-      <p><%= I18n.t("students.upload.select_csv_file") %></p>
-      
-      <p><%=h I18n.t("students.upload.student_same_number") %></p>
-      
-      <%= form_tag( { :controller => "students", :action => "upload_student_list" }, { :multipart => true }) %>
-        <label for="userlist" class="accordion_label"><%=h I18n.t("students.upload.csv_file") %></label>
-        <input type="file" name="userlist" id="userlist" size="2"/>
-        <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
-      </form>
-    
-    </div>
-   </div> 
-    <div class="accordion-toggle" id="accordion-toggle-bottom"><%=h I18n.t("students.download.download_student_list") %></div>
-
-    <div class="accordion-content">
-      <p><%= link_to I18n.t("students.download.download_csv_format"), :controller => 'students', :action => 'download_student_list', :format => "csv" %></p>
-<p><%= link_to I18n.t("students.download.download_xml_format"), :action => 'download_student_list', :format =>
-'xml' %></p>
-    </div>
-
-  
-</div>
   </div>
-
 </div> <!-- colsLeftHeavy -->
 
 <!-- Modal Windows -->
+<div id="upload_dialog">
+  <h2><%=h I18n.t("students.upload.upload_a_class_list") %></h2>
+    <p><%= I18n.t("students.upload.select_csv_file") %></p>
+
+    <p><%=h I18n.t("students.upload.student_same_number") %></p>
+
+    <%= form_tag( { :controller => "students", :action => "upload_student_list" }, { :multipart => true }) %>
+      <label for="userlist" class="accordion_label"><%=h I18n.t("students.upload.csv_file") %></label>
+      <input type="file" name="userlist" id="userlist"/>
+      <br />
+      <br />
+      <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
+      <%= button_to_function I18n.t(:close), 'modalUpload.close()' %>
+    </form>
+</div>
+
+<div id="download_dialog">
+    <h2><%=h I18n.t("download") %></h2>
+  <p><%= link_to I18n.t("students.download.download_csv_format"),
+    :controller => 'students', :action => 'download_student_list',
+    :format => "csv" %></p>
+  <p><%= link_to I18n.t("students.download.download_xml_format"),
+    :action => 'download_student_list',
+    :format => 'xml' %></p>
+  <%= button_to_function I18n.t(:close), 'modalDownload.close()' %>
+</div>
 
 <div id="notes_dialog">
 </div>
