@@ -70,7 +70,7 @@ document.observe("dom:loaded", function(){
 <div id="title_bar">
   <h1><%=h I18n.t("graders.manage_graders") %></h1>
   <div class="colRightGroups">
-      <div class="headingButtons  ">
+      <div class="headingButtons">
       <%= button_to_remote I18n.t("download"),
         :url => { :action => 'download_dialog' , :id => @assignment.id }%>
       <span class="menu_bar">|</span>
