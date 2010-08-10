@@ -302,6 +302,17 @@ h4{
   color: #464646;
 }
 
+#drop_down_current_assignment{
+  display: block;
+  padding: 2px;
+  margin: 0;
+  width: 15em;
+  height: 14px;
+  color: #464646;
+  text-align: left;
+  font-weight: bold;
+}
+
 span#choose_an_assignment{
    background-color: #fff;
    -moz-border-radius: 15px;
