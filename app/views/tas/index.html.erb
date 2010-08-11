@@ -82,7 +82,7 @@ document.observe("dom:loaded", function(){
   <p><%=h I18n.t("graders.upload.grader_same_user") %></p>
 
    <%= form_tag( { :controller => 'tas', :action => "upload_ta_list" }, { :multipart => true }) %>
-    <label for="userlist" class="accordion_label"><%= I18n.t("graders.upload.csv_file") %></label>
+    <label for="userlist"><%= I18n.t("graders.upload.csv_file") %></label>
     <input type="file" name="userlist" id="userlist"/>
     <br />
     <br />
