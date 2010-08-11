@@ -1,8 +1,5 @@
-<h3 class="title_levels"><%=h I18n.t("rubric_criteria.level.levels") %></h3>
 <div id="rubric_levels_top"></div>
-<ul>
 <% (0...RubricCriterion::RUBRIC_LEVELS).each do |rubric_level_index| %>
   <%= render :partial => 'rubric_criterion_level', :locals => {:criterion => criterion, :rubric_level_index => rubric_level_index, :f => f} %>
 <% end %>
-</ul>
 

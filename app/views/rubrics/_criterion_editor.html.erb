@@ -6,46 +6,46 @@
 
 <% remote_form_for :rubric_criterion, criterion, :url => {:action => 'update', :id => criterion.id} do |f| %>
 
-<% # TODO:  Move this submit somewhere? 
-%>
-
 <h2>
   <span id="selected_criterion_name">
     <%= h(criterion.rubric_criterion_name)%>
   </span>
-
-  <%= f.submit t("rubric_criteria.save")%>
 </h2>
+
 
 <div class="error" id="criterion_<%=criterion.id%>_error" style="display:none;">
 </div>
 
 <div class="main_rubric_criteria_edit">
-
-<div class="float_right">
-  <%= link_to_remote I18n.t(:delete), :method => 'delete',
-    :url => {:action => 'delete', :id => criterion.id},
-    :html => { :class => 'delete', 
-               :title => I18n.t(:remove_criteria_title)
-	       },
-    :confirm => I18n.t(:remove_criteria_message)
-  %>
-</div>
+  <div class="align_text_right">
+    <%= link_to_remote I18n.t(:delete), :method => 'delete',
+      :url => {:action => 'delete', :id => criterion.id},
+      :html => { :class => 'delete',
+                 :title => I18n.t(:remove_criteria_title)
+                 },
+      :confirm => I18n.t(:remove_criteria_message)
+    %>
+  </div>
 
   <span id="<%="criterion_inputs_#{criterion.id}"%>">
-   <%= f.label :rubric_criterion_name, I18n.t(:criterion)%>
-   <%= f.text_field :rubric_criterion_name %>
+   <%= f.label :rubric_criterion_name, I18n.t(:criterion), :class => "bold_inline_label" %>
+   <%= f.text_field :rubric_criterion_name, :class => "fit_to_space" %>
   </span> <br />
   <span id="criterion_weight_edit_<%= criterion.id%>" class="criterion_weight_edit">
-   <%= f.label :weight, I18n.t(:weight)%>
-   <%= f.text_field :weight %>
+   <%= f.label :weight, I18n.t(:weight), :class => "bold_inline_label" %>
+   <%= f.text_field :weight, :class => "fit_to_space" %>
   </span> <br />
   <span class="criteria_edit_total_mark">
    <%= I18n.t("criteria_edit_total_mark", :criterion_total_mark => criterion.weight*4)%>
   </span>
+  <br />
+  <br />
+  <%= f.submit t("rubric_criteria.save")%>
 </div>
 
-<%= render :partial => 'rubric_criterion_levels', :locals => {:criterion => criterion, :f => f} %>
 
-<%= f.submit t("rubric_criteria.save")%>
+<div class="rubric_criteria_levels">
+  <%= render :partial => 'rubric_criterion_levels', :locals => {:criterion => criterion, :f => f} %>
+</div>
+
 <% end %>

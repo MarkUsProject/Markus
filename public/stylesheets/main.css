@@ -378,6 +378,17 @@ input, .button, .button_2{
   margin: 5px;
 }
 
+.rubric_level_input{
+  width: 35%;
+  margin-bottom: 1.2em;
+  margin-top: 2em;
+}
+
+.fit_to_space{
+  min-width: 0px;
+  width: 90%;
+}
+
 .image_input{
   min-width: 0;
   -moz-border-radius: 0;
@@ -488,6 +499,12 @@ textarea {
    -webkit-border-radius: 10px;
    border: 2px solid #ccc;
    padding: 5px;
+}
+
+.rubric_text_area {
+  height: 3em;
+  width: 55%;
+  min-width: 235px;
 }
 
 textarea:hover {
@@ -1034,68 +1051,7 @@ div.float_left {
   -moz-border-radius-bottomright: 5px;
   -webkit-border-radius-bottomright: 5px;
 }
-  
-.accordion {
-  position: fixed;
-  height: 75%;
-  width: 24%;
-}
 
-.accordion-toggle {
-   background: #ccc;
-   position: relative;
-   z-index: 10;
-   cursor: pointer;
-   height: 15px;
-   padding: 5px 5px 5px 10px;
-   font-family: georgia;
-   font-weight: bold;
-   font-style: italic;
-}
-
-.accordion-toggle:hover{
-   color: #ccc;
-   background: #464646;
-}
-
-#accordion-toggle-top {
-   -moz-border-radius-topleft: 10px;
-   -webkit-border-radius-topleft: 10px;
-}
-
-#accordion-toggle-bottom {
-   -moz-border-radius-bottomleft: 10px;
-   -webkit-border-radius-bottomleft: 10px;
-}
-
-#accordion-toggle-bottom.accordion-toggle-active{
-    border-bottom: none;
-}
-
-.accordion-toggle-active{
-   background: #ccc;
-   overflow: hidden;
-   background: #aaa;
-   margin-left: -10px;
-   -moz-border-radius-bottomleft: 10px;
-   -webkit-border-radius-bottomleft: 10px;
-   -moz-border-radius-topleft: 10px;
-   -webkit-border-radius-topleft: 10px;
-   padding-left: 25px;
-
-}
-
-.accordion-content {
-   background: #F8F8F8;
-   overflow: auto;
-   height: 60%;
-   border: 2px solid #ccc;
-   padding: 5px;
-}
-
-.accordion_label{
-  min-width: 30%;
-}
 
 /* Login screen styling (uses its own layout) */
 #login {
@@ -1484,8 +1440,22 @@ a img{
 }
 
 /* Rubric Criteria view*/
+
+/* Float right was causing issues */
+div.align_text_right {
+  text-align: right;
+  width: 100%;
+}
+
+.rubric_level_header {
+  margin-bottom: -3em;
+}
+
 #rubric_criteria_pane, #flexible_criteria_pane, #annotation_category_pane {
    float: left;
+}
+
+#flexible_criteria_pane, #annotation_category_pane  {
    padding: 0px 2%;
 }
 
@@ -1533,13 +1503,20 @@ a img{
   min-height: 15px;
 }
 
-#rubric_levels_pane, #flexible_edition_pane, #annotations_pane{
+#flexible_edition_pane, #annotations_pane{
    width: 66%;
    float: right;
    margin-right: 2em;
    border: 2px solid #ccc;
    -moz-border-radius: 9px;
    -webkit-border-radius: 9px;
+}
+
+#rubric_levels_pane {
+   border: 2px solid #ccc;
+   -moz-border-radius: 9px;
+   -webkit-border-radius: 9px;
+   margin-left: 300px;
 }
 
 #rubric_levels_pane h2, #flexible_edition_pane h2, #annotations_pane_menu h2{
@@ -1628,6 +1605,16 @@ a img{
    -webkit-border-radius: 9px;
 }
 
+.main_rubric_criteria_edit {
+  width: 280px;
+   margin-bottom: -16em;
+}
+
+.rubric_criteria_levels{
+   margin-right: 1em;
+   margin-left: 340px;
+}
+
 #flexible_criteria_preview h3 {
    margin: 0px 0px 10px 0px;
 }
@@ -1661,11 +1648,6 @@ input.criterion_input_name{
 #rubric_levels_pane_menu li, #flexible_edition_pane_menu li{
    padding-bottom: 1em;
    list-style: none;
-}
-
-h3.title_levels{
-  padding-left: 1em;
-
 }
 
 /* Annotation category*/
