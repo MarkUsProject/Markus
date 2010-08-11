@@ -2,13 +2,19 @@
 # If you change this key, all old sessions will become invalid!
 # Make sure the secret is at least 30 characters and all random,
 # no regular words or you'll be exposed to dictionary attacks.
-#
+
 # Please make sure, :session_key is named uniquely if you are hosting
 # several MarkUs instances on one machine. Also, make sure you are changing
 # the :secret string to something else than you find below.
 ActionController::Base.session = {
-  :key => '_markus_session',
-  :secret      => '650d281667d8011a3a6ad6dd4b5d4f9ddbce14a7d78b107812dbb40b24e234256ab2c5572c8196cf6cde6b85942688b6bfd337ffa0daee648d04e1674cf1fdf6'
+  :key => MarkusConfigurator.markus_config_session_cookie_name,
+  :secret      => MarkusConfigurator.markus_config_session_cookie_secret,
+  :path => (ActionController::Base.relative_url_root.nil? or ActionController::Base.relative_url_root.empty?) ? '/' : ActionController::Base.relative_url_root,
+  :expire_after => MarkusConfigurator.markus_config_session_cookie_expire_after,
+  :http_only => MarkusConfigurator.markus_config_session_cookie_http_only,
+  # if you use secure in Base.session, you will have to do an https connection,
+  # but https is not implemented yet in MarkUs
+  :secure => MarkusConfigurator.markus_config_session_cookie_secure
 }
 
 # Use the database for sessions instead of the cookie-based default,

@@ -17,6 +17,11 @@ Rails::Initializer.run do |config|
   # :all can be used as a placeholder for all plugins not explicitly named
   config.plugins = [ :ssl_requirement, :auto_complete, :calendar_date_select, :all ]
 
+  # Set this if MarkUs is not hosted under / of your Web-host.
+  # E.g. if MarkUs should be accessible by http://yourhost.com/markus/instance0
+  # then set the below directive to "/markus/instance0".
+  # config.action_controller.relative_url_root = ENV['RAILS_RELATIVE_URL_ROOT']
+
   # Make Time.zone default to the specified zone, and make Active Record store time values
   # in the database in UTC, and return them converted to the specified local zone.
   # Run "rake -D time" for a list of tasks for finding time zone names. Uncomment to use default local time.

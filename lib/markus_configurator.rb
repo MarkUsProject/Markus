@@ -118,7 +118,49 @@ module MarkusConfigurator
       return File.join(RAILS_ROOT, "test-framework")
     end
   end
+  
+  ###########################################
+  # Markus Session cookie configuration
+  ###########################################
+  def markus_config_session_cookie_name
+    if defined? SESSION_COOKIE_NAME
+      return SESSION_COOKIE_NAME
+    else
+      return '_markus_session'
+    end
+  end
 
+  def markus_config_session_cookie_secret
+    if defined? SESSION_COOKIE_SECRET
+      return SESSION_COOKIE_SECRET
+    else
+      return '650d281667d8011a3a6ad6dd4b5d4f9ddbce14a7d78b107812dbb40b24e234256ab2c5572c8196cf6cde6b85942688b6bfd337ffa0daee648d04e1674cf1fdf6'
+    end
+  end
+
+  def markus_config_session_cookie_expire_after
+    if defined? SESSION_COOKIE_EXPIRE_AFTER
+      return SESSION_COOKIE_EXPIRE_AFTER
+    else
+      return 3.weeks
+    end
+  end
+
+  def markus_config_session_cookie_http_only
+    if defined? SESSION_COOKIE_HTTP_ONLY
+      return SESSION_COOKIE_HTTP_ONLY
+    else
+      return true
+    end
+  end
+
+  def markus_config_session_cookie_secure
+    if defined? SESSION_COOKIE_SECURE
+      return SESSION_COOKIE_SECURE
+    else
+      return false
+    end
+  end
   ######################################
   # MarkusLogger configuration
   ######################################
