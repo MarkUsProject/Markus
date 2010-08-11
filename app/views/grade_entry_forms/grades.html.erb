@@ -119,7 +119,7 @@
         <%= render :partial => 'grades_table_column_names' %>
       </thead>
       <tbody>
-        <tr><td id="thinking_table_row" colspan="6"><%= render :partial => 'ajax_paginate/thinking' %></td></tr>
+        <tr><td id="thinking_table_row" colspan="<%= 6 + @grade_entry_form.grade_entry_items.length %>"><%= render :partial => 'ajax_paginate/thinking' %></td></tr>
       </tbody>        
 			<%= render :partial => 'grades_table' %>
       <tfoot>
