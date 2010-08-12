@@ -310,6 +310,9 @@ class Grouping < ActiveRecord::Base
 
   # Submission Functions
   def has_submission?
+    #Return whether there is a submission whose submission_version_used
+    #column is true, i.e. a grouping can have many submissions, but if none of
+    #them have submission_version_used == true, then return false.
     return !current_submission_used.nil?
   end
 
