@@ -187,16 +187,12 @@ li.annotation_category {
     /*width: 370px;*/
   }
 
-    #mark_viewer, #summary_viewer, #code_holder, #annotations_summary {
+    #mark_viewer, #summary_viewer, #annotations_summary {
       height: 650px;
       overflow: auto;
     }
     #code_holder {
      padding: 0px;
-    }
-
-    #codeviewer {
-      height: inherit;
     }
 
       #sel_box {
@@ -232,6 +228,12 @@ li.annotation_category {
   overflow: auto;
   margin: 0;
   padding: 0 0 0 50px !important;
+}
+
+.image_container {
+  overflow: auto;
+  height: 650px;
+  width: auto;
 }
 
 
