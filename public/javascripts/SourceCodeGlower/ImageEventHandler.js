@@ -91,8 +91,8 @@ var ImageEventHandler = Class.create({
       var i;
       var annot_grid = this.get_annotation_grid();
       box.style.display = "none";
-      var x1 = parseInt(box.style.left) - $("image_preview").offsetLeft + $("code_holder").scrollLeft;
-      var y1 = parseInt(box.style.top) - $("image_preview").offsetTop + $("code_holder").scrollTop;
+      var x1 = parseInt(box.style.left) - $("image_preview").offsetLeft + $("image_container").scrollLeft;
+      var y1 = parseInt(box.style.top) - $("image_preview").offsetTop + $("image_container").scrollTop;
       var x2 = x1 + parseInt(box.style.width);
       var y2 = y1 + parseInt(box.style.height);
       box.style.width = "0";
@@ -161,7 +161,7 @@ var ImageEventHandler = Class.create({
       }
       var abs_xy = this.get_absolute_cursor_pos(e);
       //xy coords relative to the image
-      var xy_coords = [abs_xy[0] - $("image_preview").offsetLeft + $("code_holder").scrollLeft, abs_xy[1] - $("image_preview").offsetTop + $("code_holder").scrollTop]
+      var xy_coords = [abs_xy[0] - $("image_preview").offsetLeft + $("image_container").scrollLeft, abs_xy[1] - $("image_preview").offsetTop + $("image_container").scrollTop]
       var annot_grid = this.get_annotation_grid();
       var annots_to_display = [];
       //Check if current mouse position is annotated

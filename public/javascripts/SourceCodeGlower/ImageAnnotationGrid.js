@@ -51,10 +51,10 @@ var ImageAnnotationGrid = Class.create({
       var holder, annot_text_id, horiz_range, vert_range, holder_width, holder_height, holder_left, holder_top;
 
       //Edges of the image.
-      var top_edge = $("image_preview").offsetTop + $("code_holder").scrollTop;
-      var left_edge = $("image_preview").offsetLeft + $("code_holder").scrollLeft;
-      var right_edge = $("image_preview").offsetLeft + $("code_holder").scrollLeft + $('codeviewer').offsetWidth;
-      var bottom_edge = $("image_preview").offsetTop + $("code_holder").scrollTop + $('codeviewer').offsetHeight;
+      var top_edge = $("image_preview").offsetTop + $("image_container").scrollTop;
+      var left_edge = $("image_preview").offsetLeft + $("image_container").scrollLeft;
+      var right_edge = $("image_preview").offsetLeft + $("image_container").scrollLeft + $('codeviewer').offsetWidth;
+      var bottom_edge = $("image_preview").offsetTop + $("image_container").scrollTop + $('codeviewer').offsetHeight;
 
       annot_grid.each(function(grid_element) {
         annot_text_id = grid_element.id;
