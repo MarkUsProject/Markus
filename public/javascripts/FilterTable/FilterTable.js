@@ -11,13 +11,13 @@ var FilterTable = Class.create({
    *
    * The FilterTable constructor takes a Javascript object as its parameter.  So, for
    * example:
-   * 
+   *
    * var my_table = new FilterTable({
    *   table_id: 'student_table',
    *   headers: {
    *     user_name: {display: 'User Name', sortable: true},
    *     first_name: {display: 'First Name', sortable: true},
-   *     last_name: {display: 'Last Name', sortable: true}    
+   *     last_name: {display: 'Last Name', sortable: true}
    *   },
    *   can_select: true,
    *   can_select_all: true,
@@ -56,7 +56,7 @@ var FilterTable = Class.create({
     // By default, we'll sort by id
     this.default_sort = this.set_or_default(params.default_sort, 'id');
     this.filters = $H(this.set_or_default(params.filters, null));
-    
+
     // If we want extra TBODY elements above the main TBODY that FilterTable
     // uses, supply those IDs here, in order
     this.above_tbodys = $A(this.set_or_default(params.above_tbodys, null));
@@ -65,28 +65,28 @@ var FilterTable = Class.create({
     // uses, supply those IDs here, in order
     this.below_tbodys = $A(this.set_or_default(params.below_tbodys, null));
 
-    
+
     // Filter callbacks
     this.after_clear_filters = this.set_or_default(params.after_clear_filters, null);
     this.after_filter_only_by = this.set_or_default(params.after_filter_only_by, null);
-    
+
     this.sorts = $H(this.set_or_default(params.sorts, null));
     this.default_filters = $A(this.set_or_default(params.default_filters, null));
-    
+
     // Default parameters can be overridden...
     this.header_id_prefix = this.set_or_default(params.header_id_prefix, 'FilterTable_header_');
     this.header_class = this.set_or_default(params.header_class, 'FilterTable_header');
     this.footer_id_prefix = this.set_or_default(params.footer_id_prefix, 'FilterTable_footer_');
     this.footer_class = this.set_or_default(params.footer_class, 'FilterTable_footer');
-    
+
     this.sortable_class = this.set_or_default(params.sortable_class, 'FilterTable_sortable');
     this.sorting_by_class = this.set_or_default(params.sorting_by_class, 'FilterTable_sorting_by');
 
     this.sorting_reverse_class = this.set_or_default(params.sorting_reverse_class, 'FilterTable_sorting_by_reverse');
-    
+
     this.selectable_class = this.set_or_default(params.selectable_class, 'FilterTable_selectable');
     this.select_onclick = this.set_or_default(params.select_onclick, null);
-    
+
     this.select_all_top_id = this.set_or_default(params.select_all_top_id, 'FilterTable_select_all_top');
     this.select_all_bottom_id = this.set_or_default(params.select_all_bottom_id, 'FilterTable_select_all_bottom');
 
@@ -127,22 +127,22 @@ var FilterTable = Class.create({
     return this;
   },
   // Helper method for sort_by - actually does the sorting
-  perform_sort: function(sort_by) {      
+  perform_sort: function(sort_by) {
     // If we're not sorting by the same thing we were already sorting by, try to remove
     // the sorting_by and sorting_reverse classes from those HTML elements
     if(this.current_sort != sort_by) {
       if($(this.header_id_prefix + this.current_sort) != null) {
         $(this.header_id_prefix + this.current_sort).removeClassName(this.sorting_by_class);
-        $(this.header_id_prefix + this.current_sort).removeClassName(this.sorting_reverse_class);  
+        $(this.header_id_prefix + this.current_sort).removeClassName(this.sorting_reverse_class);
       }
       if($(this.footer_id_prefix + this.current_sort) != null) {
         $(this.footer_id_prefix + this.current_sort).removeClassName(this.sorting_by_class);
-        $(this.footer_id_prefix + this.current_sort).removeClassName(this.sorting_reverse_class);  
+        $(this.footer_id_prefix + this.current_sort).removeClassName(this.sorting_reverse_class);
       }
     }
     // We're now sorting by this new header key
     this.current_sort = sort_by;
-  
+
     // If possible, add the sorting_by class to the header
     if ($(this.header_id_prefix + this.current_sort) != null) {
       $(this.header_id_prefix + sort_by).addClassName(this.sorting_by_class);
@@ -151,25 +151,25 @@ var FilterTable = Class.create({
       $(this.footer_id_prefix + sort_by).addClassName(this.sorting_by_class);
     }
 
-    
+
     var sorting_function_key = sort_by;
-    
+
     // Was there a general custom sort for this column?
     if(typeof this.headers.get(sort_by) != "undefined") {
       if(typeof this.headers.get(sort_by).sort_with != "undefined") {
         sorting_function_key = this.headers.get(sort_by).sort_with;
       }
     }
-    
+
     FILTERTABLE_SORT = this.current_sort;
     // Was there a specific custom sort function for this column?
     if(typeof this.sorts.get(sorting_function_key) != "undefined") {
       this.table_rows.sort(this.sorts.get(sorting_function_key));
     } else {
-      // Use some hackery to run Array.sort on our table data     
+      // Use some hackery to run Array.sort on our table data
       this.table_rows.sort(this.standard_sort);
-    } 
-    FILTERTABLE_SORT = null;  
+    }
+    FILTERTABLE_SORT = null;
   },
   // Add a filter to the current_filters collection
   add_filter: function(filter_key) {
@@ -252,20 +252,20 @@ var FilterTable = Class.create({
   pass_filters: function(table_row) {
     try {
       var me = this;
-      
+
       // First, recalcuate for each filters count
       this.filters.each(function(filter_data) {
         if(filter_data.value.call(me, table_row)) {
           me.filter_counts.set(filter_data.key, me.filter_counts.get(filter_data.key) + 1);
         }
       });
-      
+
       var pass_filters = true;
       this.current_filters.each(function(filter_key) {
         if(!me.filters.get(filter_key).call(me, table_row)) {
           pass_filters = false;
           throw $break;
-        } 
+        }
       });
       return pass_filters;
     } catch (e) {
@@ -286,7 +286,7 @@ var FilterTable = Class.create({
     this.render_counts();
     this.select_all(false);
     this.select_all_toggles(false);
-   
+
   },
   render_counts: function() {
     if($(this.total_count_id) != null) {
@@ -348,20 +348,20 @@ var FilterTable = Class.create({
   // On initialization, this function constructs the table
   construct_table: function() {
     var me = this;
-    
+
     var thead_element = new Element('thead');
     var thead_tr = new Element('tr');
     thead_element.insert(thead_tr);
     var tfoot_element = new Element('tfoot');
     var tfoot_tr = new Element('tr');
     tfoot_element.insert(tfoot_tr);
-    
+
     this.table_body = new Element('tbody');
-    
+
     this.headers.each(function(header_data) {
       var th_element_header = new Element('th', {id: me.header_id_prefix + header_data.key, "class": me.header_class }).update(header_data.value.display);
       var th_element_footer = new Element('td', {id: me.footer_id_prefix + header_data.key, "class": me.footer_class} ).update(header_data.value.display);
-           
+
       if(me.can_sort && header_data.value.sortable) {
         th_element_header.addClassName(me.sortable_class);
         th_element_footer.addClassName(me.sortable_class);
@@ -375,18 +375,18 @@ var FilterTable = Class.create({
         th_element_footer.observe('click', function() {
           me.click_header(header_data.key);
         });
-      }     
+      }
       thead_tr.insert({bottom: th_element_header});
       tfoot_tr.insert({bottom: th_element_footer});
     });
-    
+
     if(this.can_select) {
       var th_element_head = new Element('th');
       var th_element_foot = new Element('th');
       thead_tr.insert({top: th_element_head});
       tfoot_tr.insert({top: th_element_foot});
     }
-    
+
     if(this.can_select && this.can_select_all) {
 
       var select_all_top_div = new Element('div');
@@ -401,9 +401,9 @@ var FilterTable = Class.create({
       }
 
       select_all_top.observe('click', select_all_function);
-      
+
       th_element_head.insert({top: select_all_top_div});
-      
+
       var select_all_bottom_div = new Element('div');
       var select_all_bottom = new Element('input', {type: 'checkbox', id: this.select_all_bottom_id, "class": 'FilterTable_selectable'});
       var label_select_all_bottom = new Element ('label', { "for": select_all_bottom.id,  "class": 'bold_inline_label'});
@@ -417,25 +417,25 @@ var FilterTable = Class.create({
     }
 
     this.table_id.insert({top: thead_element});
-    
+
     if(this.footer) {
       this.table_id.insert({bottom: tfoot_element});
     } else {
       delete tfoot_element;
     }
-    
+
     this.above_tbodys.each(function(tbody_id) {
         me.table_id.insert({bottom: new Element('tbody', {id: tbody_id})});
     });
-    
+
     this.table_id.insert({bottom: this.table_body});
-    
+
     this.below_tbodys.each(function(tbody_id) {
         me.table_id.insert({bottom: new Element('tbody', {id: tbody_id})});
     });
-    
 
-    
+
+
   },
   // Function to select all rows if selectable.
   select_all: function(is_selected) {
@@ -461,11 +461,12 @@ var FilterTable = Class.create({
     }
   },
   // When all else fails, do the standard_sort...
+  // Return 1 if a > b, or -1 if a < b.
   standard_sort: function(a, b) {
     if (typeof(a[FILTERTABLE_SORT]) == 'string') {
-      return a[FILTERTABLE_SORT].toLowerCase() > b[FILTERTABLE_SORT].toLowerCase();
+      return (a[FILTERTABLE_SORT].toLowerCase() > b[FILTERTABLE_SORT].toLowerCase()) ? 1 : -1;
     }
-    return a[FILTERTABLE_SORT] > b[FILTERTABLE_SORT];
+    return (a[FILTERTABLE_SORT] > b[FILTERTABLE_SORT]) ? 1 : -1;
   },
   // The click handler for headers
   click_header: function(header_key) {
