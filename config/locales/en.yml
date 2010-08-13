@@ -84,6 +84,11 @@ en:
     create_new_assignment:      "Add Assignment"
     manage_course_work: "Manage Course Work"
     repository_folder:  "Repository Folder"
+    marking_state:
+      not_collected: "Not Collected"
+      in_progress: "In Progress"
+      completed: "Completed"
+      released: "Released"
     collect_submissions:
       collect_all: "Collect All Submissions"
       could_not_collect: "Could not collect submissions for assignment %{assignment_identifier} - the collection date has not been reached"

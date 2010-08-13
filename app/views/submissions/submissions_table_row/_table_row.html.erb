@@ -51,22 +51,32 @@
   <td class="marking_state">
     <% if !grouping.has_submission? %>
 	<% if assignment.submission_rule.can_collect_now? %>
-	  <%= image_tag('icons/shape_square.png')%>
+	  <%= image_tag('icons/shape_square.png',
+            :alt => I18n.t('marking_state.not_collected'),
+            :title => I18n.t('marking_state.not_collected')) %>
 	<% else %>
        	  -
 	<% end %>
     <% else %>
 	<% if !grouping.current_submission_used.has_result? %>
-	    <%= image_tag('icons/pencil.png') %>
+	    <%= image_tag('icons/pencil.png',
+            :alt => I18n.t('marking_state.in_progress'),
+            :title => I18n.t('marking_state.in_progress')) %>
 	<% else %>
 	    <% if grouping.current_submission_used.result.marking_state == Result::MARKING_STATES[:complete]%>
 		<% if !grouping.current_submission_used.result.released_to_students %>
-		    <%= image_tag('icons/accept.png')%>
+		    <%= image_tag('icons/accept.png',
+            :alt => I18n.t('marking_state.completed'),
+            :title => I18n.t('marking_state.completed'))%>
 		<% else %>
-		    <%= image_tag('icons/email_go.png')%>
+		    <%= image_tag('icons/email_go.png',
+            :alt => I18n.t('marking_state.released'),
+            :title => I18n.t('marking_state.released'))%>
 		<% end %>
 	    <% else %>
-		<%= image_tag('icons/pencil.png')%>
+		<%= image_tag('icons/pencil.png',
+            :alt => I18n.t('marking_state.in_progress'),
+            :title => I18n.t('marking_state.in_progress'))%>
 	    <% end %>
     <% end %>
     <% end %>
