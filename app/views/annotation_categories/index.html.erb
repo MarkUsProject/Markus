@@ -131,8 +131,8 @@
     <div id="download_dialog">
     <h1><%=h t("annotations.download.download_annotations") %></h1>
       <ul>
-        <li><%= link_to t("annotations.download.download_csv"), {:action => 'download', :id => @assignment.id, :format => 'csv'}%></li>
-        <li><%= link_to t("annotations.download.download_yml"), {:action => 'download', :id => @assignment.id, :format => 'yml'}%></li>
+        <li><%= link_to t("annotations.download.download_csv"), {:action => 'download', :id => @assignment.id, :format => 'csv'}, :onclick => "modalDownload.close();" %></li>
+        <li><%= link_to t("annotations.download.download_yml"), {:action => 'download', :id => @assignment.id, :format => 'yml'}, :onclick => "modalDownload.close();" %></li>
       </ul>
       <input type="reset" value="<%= t(:cancel) %>" onclick="modalDownload.close();">
     </div>

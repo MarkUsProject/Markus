@@ -120,7 +120,7 @@
   <p><%= t('rubric_criteria.download.prompt') %></p>
   
   <ul>
-    <li><%= link_to t('rubric_criteria.download.link_csv'), {:controller=>"rubrics", :action=>"download", :id=> @assignment.id}%></li>
+    <li><%= link_to t('rubric_criteria.download.link_csv'), {:controller=>"rubrics", :action=>"download", :id=> @assignment.id}, :onclick => "modalDownload.close();" %></li>
   </ul>
   <input type="reset" value="<%=t('cancel')%>" onclick="modalDownload.close();"> 
 </div> 
