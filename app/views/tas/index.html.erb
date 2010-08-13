@@ -95,7 +95,7 @@ document.observe("dom:loaded", function(){
 <div id="download_dialog">
   <h2><%=h I18n.t("download") %></h2>
   <p><%= link_to I18n.t("graders.download.download_list"),
-  :controller => 'tas', :action => 'download_ta_list',
-  :format => "csv" %></p>
+  {:controller => 'tas', :action => 'download_ta_list',
+  :format => "csv"}, :onclick => "modalDownload.close();" %></p>
   <%= button_to_function I18n.t(:close), 'modalDownload.close()' %>
 </div>
