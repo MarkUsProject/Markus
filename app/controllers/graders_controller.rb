@@ -188,7 +188,7 @@ class GradersController < ApplicationController
       when "groups_table"
         if params[:groupings].nil? or params[:groupings].size ==  0
       #don't do anything if no groupings
-          render :action => "modify_groupings"
+          render :nothing => true
           return
         end
         groupings = Grouping.find(grouping_ids, :include => [:students, :tas, 
@@ -197,7 +197,7 @@ class GradersController < ApplicationController
           when "assign"
           if params[:graders].nil? or params[:graders].size ==  0
             #don't do anything if no graders
-            render :action => "modify_groupings"
+            render :nothing => true
             return
           end
             add_graders(groupings, grader_ids)
@@ -208,7 +208,7 @@ class GradersController < ApplicationController
           when "random_assign"
             if params[:graders].nil? or params[:graders].size ==  0
               #don't do anything if no graders
-              render :action => "modify_groupings"
+              render :nothing => true
               return
             end
             randomly_assign_graders(groupings, grader_ids)
@@ -217,7 +217,7 @@ class GradersController < ApplicationController
       when "criteria_table"
         if params[:criteria].nil? or params[:criteria].size ==  0
       #don't do anything if no criteria
-          render :action => "modify_groupings"
+          render :nothing => true
           return
         end
         if @assignment.marking_scheme_type == "rubric"
@@ -231,7 +231,7 @@ class GradersController < ApplicationController
           when "assign"
           if params[:graders].nil? or params[:graders].size ==  0
             #don't do anything if no graders
-            render :action => "modify_groupings"
+            render :nothing => true
             return
           end
             graders = Ta.find(grader_ids)
@@ -243,7 +243,7 @@ class GradersController < ApplicationController
           when "random_assign"
             if params[:graders].nil? or params[:graders].size ==  0
               #don't do anything if no graders
-              render :action => "modify_groupings"
+              render :nothing => true
               return
             end
             randomly_assign_graders_to_criteria(criteria, grader_ids)
