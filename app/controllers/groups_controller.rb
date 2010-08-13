@@ -256,7 +256,7 @@ class GroupsController < ApplicationController
     
     if params[:groupings].nil? or params[:groupings].size ==  0
       #Just do nothing
-      render :action => "modify_groupings"
+      render :nothing => true
       return
     end
 
@@ -282,7 +282,7 @@ class GroupsController < ApplicationController
           add_members(student_ids, grouping_ids[0], @assignment)
           return
         else
-          render :action => "modify_groupings"
+          render :nothing => true
           return
         end
       when "unassign"

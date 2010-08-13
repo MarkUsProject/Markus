@@ -346,7 +346,6 @@ class GroupsControllerTest < AuthenticatedControllerTest
         end
         should assign_to :assignment
         should assign_to :tas
-        should render_template 'modify_groupings.rjs'
         should "not change number of members" do
           assert_equal 0, @grouping.student_memberships.size
         end
