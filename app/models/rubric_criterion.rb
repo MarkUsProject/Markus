@@ -2,7 +2,7 @@ require 'fastercsv'
 require 'csv'
 
 class RubricCriterion < ActiveRecord::Base
-  before_save :truncate_weight
+  before_save :round_weight
   set_table_name "rubric_criteria" # set table name correctly
   belongs_to  :assignment, :counter_cache => true
   has_many    :marks, :as => :markable, :dependent => :destroy
@@ -29,7 +29,7 @@ class RubricCriterion < ActiveRecord::Base
   def validate_total_weight
     errors.add(:assignment, I18n.t("rubric_criteria.error_total")) if self.assignment.total_mark + (4 * (self.weight - self.weight_was)) <= 0
   end
-  
+
   # Just a small effort here to remove magic numbers...
   RUBRIC_LEVELS = 5
   DEFAULT_WEIGHT = 1.0
@@ -40,18 +40,18 @@ class RubricCriterion < ActiveRecord::Base
     {'name'=> I18n.t("rubric_criteria.defaults.level_3"), 'description'=> I18n.t("rubric_criteria.defaults.description_3")},
     {'name'=> I18n.t("rubric_criteria.defaults.level_4"), 'description'=> I18n.t("rubric_criteria.defaults.description_4")}
   ]
-  
+
   def mark_for(result_id)
     return marks.find_by_result_id(result_id)
   end
-  
+
   def set_default_levels
     DEFAULT_LEVELS.each_with_index do |level, index|
       self['level_' + index.to_s + '_name'] = level['name']
       self['level_' + index.to_s + '_description'] = level['description']
     end
   end
-  
+
   # Set all the level names at once and saves the object.
   #
   # ===Params:
@@ -69,7 +69,7 @@ class RubricCriterion < ActiveRecord::Base
     end
     save
   end
-  
+
   # Create a CSV string from all the rubric criteria related to an assignment.
   #
   # ===Returns:
@@ -90,7 +90,7 @@ class RubricCriterion < ActiveRecord::Base
     end
     return csv_string
   end
-    
+
   # Instantiate a RubricCriterion from a CSV row and attach it to the supplied
   # assignment.
   #
@@ -139,7 +139,7 @@ class RubricCriterion < ActiveRecord::Base
     end
     return criterion
   end
-    
+
   # Parse a rubric criteria CSV file.
   #
   # ===Params:
@@ -150,7 +150,7 @@ class RubricCriterion < ActiveRecord::Base
   #                 Strings representing the faulty line followed by
   #                 a human readable error message are appended to the object
   #                 via the << operator.
-  # 
+  #
   #                 *Hint*: An array allows for an easy
   #                 access of single invalid lines.
   # ===Returns:
@@ -169,14 +169,14 @@ class RubricCriterion < ActiveRecord::Base
     end
     return nb_updates
   end
-  
+
   def get_weight
     return self.weight
   end
-  
-  def truncate_weight
-    factor = 10.0 ** 2
-    self.weight = (self.weight * factor).floor / factor
+
+  def round_weight
+    factor = 10.0 ** 3
+    self.weight = (self.weight * factor).round.to_f / factor
   end
 
   def all_assigned_groups

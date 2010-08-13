@@ -117,12 +117,12 @@ class RubricCriterionTest < ActiveSupport::TestCase
     assert !weight_range.valid?, "assignment total weight is negative, it should be invalid"
   end
 
-  should "truncate weights that have more than 2 significant digits" do
+  should "round weights that have more than 3 significant digits" do
     assert RubricCriterion.count > 0
     criterion = RubricCriterion.first
     criterion.weight = 0.5555555555
     criterion.save
-    assert_equal 0.55, criterion.weight
+    assert_equal 0.556, criterion.weight
   end
 
   # Helper method for test_validate_presence_of to create a criterion without
