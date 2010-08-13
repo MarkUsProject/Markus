@@ -25,6 +25,7 @@ class NoteController < ApplicationController
     if !@note.save
       render "note/modal_dialogs/notes_dialog_error.rjs"
     else
+      @note.reload
       @number_of_notes_field = params[:number_of_notes_field]
       @highlight_field = params[:highlight_field]
       @number_of_notes = @note.noteable.notes.size
