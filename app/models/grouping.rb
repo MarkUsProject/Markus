@@ -31,7 +31,7 @@ class Grouping < ActiveRecord::Base
 
   # user association/validations
   validates_presence_of   :assignment_id, :message => "needs an assignment id"
-  validates_associated    :assignment,    :message => "associated assignment need to be valid"
+  validates_associated    :assignment, :on => :create,    :message => "associated assignment need to be valid"
   
   validates_presence_of   :group_id, :message => "needs an group id"
   validates_associated    :group,    :message => "associated group need to be valid"
@@ -420,57 +420,59 @@ class Grouping < ActiveRecord::Base
     end
     return missing_assignment_files
   end
-
-  def add_ta(ta)
-    # Is there a better way to make sure that there is only one
-    # TA Membership per TA per Grouping?
-    if ta_memberships.find_by_user_id(ta.id).nil?
-      ta_memberships.create(:user => ta)
-    end
-    self.reload
-    criteria = self.all_assigned_criteria
-    self.criteria_coverage_count = criteria.length
-    self.save
-  end
-  
-  def remove_ta(ta)
-    ta_membership = ta_memberships.find_by_user_id(ta.id)
-    if !ta_membership.nil?
-      ta_membership.destroy
-    end
-    self.reload
-    criteria = self.all_assigned_criteria
-    self.criteria_coverage_count = criteria.length
-    self.save
-  end
   
   def add_tas(tas)
-    existing = self.tas
+    #this check was previously done every time a ta_membership was created,
+    #however since the assignment is the same, validating it once for every new
+    #membership is a huge waste, so validate once and only proceed if true.
+    return unless self.assignment.valid?
+    grouping_tas = self.tas
+    tas = Array(tas)
     tas.each do |ta|
-      if !existing.include? ta
-        ta_memberships.create(:user => ta)
+      if !grouping_tas.include? ta
+        #due to the membership's validates_associated :grouping attribute, only
+        #call its validation for the first grader as the grouping is constant
+        #and all the tas are ensured to be valid in the add_graders action in
+        #graders_controller
+        if ta == tas.first
+          #perform validation first time.
+          ta_memberships.create(:user => ta)
+        else
+          #skip validation to increase performance (all aspects of validation
+          #have already been performed elsewhere)
+          member = ta_memberships.build(:user => ta)
+          member.save(false)
+        end
+        grouping_tas += [ta]
       end
     end
-    self.reload
-    criteria = self.all_assigned_criteria
+    criteria = self.all_assigned_criteria(grouping_tas | tas)
     self.criteria_coverage_count = criteria.length
-    self.save
+    if self.criteria_coverage_count >= 0
+      #skip validation on save. grouping already gets validated on creation of
+      #ta_membership. Ensure criteria_coverage_count >= 0 as this is the only
+      #attribute that gets changed between the validation above and the save
+      #below. This is done to improve performance, as any validations of the
+      #grouping result in 5 extra database queries
+      self.save(false)
+    end
   end
   
   def remove_tas(ta_id_array)
-    ta_id_array.each do |ta_id|
-      ta_membership = ta_memberships.find_by_user_id(ta_id)
-      if !ta_membership.nil?
-        ta_membership.destroy
-      end
+    #if no tas to remove, return.
+    return if ta_id_array == []
+    ta_memberships_to_remove = ta_memberships.find_all_by_user_id(ta_id_array, :include => :user)
+    ta_memberships_to_remove.each do |ta_membership|
+      ta_membership.destroy
+      ta_memberships.delete(ta_membership)
     end
-    self.reload
-    criteria = self.all_assigned_criteria
+    criteria = self.all_assigned_criteria(self.tas - ta_memberships_to_remove.collect{|mem| mem.user})
     self.criteria_coverage_count = criteria.length
     self.save
   end
   
   def add_tas_by_user_name_array(ta_user_name_array)
+    grouping_tas = []
     ta_user_name_array.each do |ta_user_name|
       ta = Ta.find_by_user_name(ta_user_name)
       if !ta.nil?
@@ -478,9 +480,9 @@ class Grouping < ActiveRecord::Base
           ta_memberships.create(:user => ta)
         end
       end
+      grouping_tas += Array(ta)
     end
-    self.reload
-    self.criteria_coverage_count = self.all_assigned_criteria.length
+    self.criteria_coverage_count = self.all_assigned_criteria(grouping_tas).length
     self.save
   end
 
@@ -569,10 +571,10 @@ class Grouping < ActiveRecord::Base
     return result
   end
 
-  def all_assigned_criteria
+  def all_assigned_criteria(ta_array)
     result = []
     if assignment.assign_graders_to_criteria
-      tas.each do |ta|
+      ta_array.each do |ta|
         result = result.concat(ta.get_criterion_associations_by_assignment(assignment))
       end
     end

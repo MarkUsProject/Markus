@@ -133,13 +133,9 @@ class GroupsController < ApplicationController
   end
 
   def populate_students
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:id], :include => [:groupings])
     @students = Student.find(:all)
-    @table_rows = {}
-    @students.each do |student|
-      # construct_student_table_row is in the groups_helper.rb
-      @table_rows[student.id] = construct_student_table_row(student, @assignment)
-    end
+    @table_rows = construct_student_table_rows(@students, @assignment)
   end
 
   def manage

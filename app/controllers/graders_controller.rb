@@ -38,21 +38,13 @@ class GradersController < ApplicationController
                                           :students, :tas,
                                         :group]}])
     @groupings = @assignment.groupings
-    @table_rows = {}
-    @groupings.each do |grouping|
-      # construct_table_row is in the graders_helper.rb
-      @table_rows[grouping.id] = construct_table_row(grouping, @assignment)
-    end
+    @table_rows = construct_table_rows(@groupings, @assignment)
   end
 
   def populate_graders
     @assignment = Assignment.find(params[:id])
     @graders = Ta.find(:all)
-    @table_rows = {}
-    @graders.each do |grader|
-      # construct_grader_table_row is in the graders_helper.rb
-      @table_rows[grader.id] = construct_grader_table_row(grader, @assignment)
-    end
+    @table_rows = construct_grader_table_rows(@graders, @assignment)
   end
 
   def populate_criteria
@@ -63,11 +55,7 @@ class GradersController < ApplicationController
                                     {:flexible_criteria => 
                                         :criterion_ta_associations}])
     @criteria = @assignment.get_criteria
-    @table_rows = {}
-    @criteria.each do |criterion|
-      # construct_criterion_table_row is in the graders_helper.rb
-      @table_rows[criterion.id] = construct_criterion_table_row(criterion, @assignment)
-    end
+    @table_rows = construct_criterion_table_rows(@criteria, @assignment)
   end
 
   def set_assign_criteria
@@ -167,8 +155,8 @@ class GradersController < ApplicationController
     @grouping = Grouping.find(params[:grouping_id], 
                                 :include => [:students, :tas, :group])
     grader = Ta.find(params[:grader_id])
-    @grouping.add_ta(grader)
-    @groupings_data = construct_table_rows([@grouping],@assignment)
+    @grouping.add_tas(grader)
+    @groupings_data = construct_table_rows([@grouping.reload],@assignment)
     @graders_data = construct_grader_table_rows([grader], @assignment)
     criteria = grader.get_criterion_associations_by_assignment(@assignment).map{|c| c.criterion}
     criteria.each do |criterion|
@@ -179,20 +167,22 @@ class GradersController < ApplicationController
 
   #These actions act on all currently selected graders & groups
   def global_actions
-    @assignment = Assignment.find(params[:id])
     grouping_ids = params[:groupings]
     grader_ids = params[:graders]
     criteria_ids = params[:criteria]
 
     case params[:current_table]
       when "groups_table"
+        @assignment = Assignment.find(params[:id],
+          :include => [{:rubric_criteria => :criterion_ta_associations},
+            {:flexible_criteria => :criterion_ta_associations}])
         if params[:groupings].nil? or params[:groupings].size ==  0
       #don't do anything if no groupings
           render :nothing => true
           return
         end
-        groupings = Grouping.find(grouping_ids, :include => [:students, :tas, 
-                                        :group])
+        groupings = Grouping.find(grouping_ids, :include => [:assignment,
+            :students, {:tas => :criterion_ta_associations}, :group])
         case params[:global_actions]
           when "assign"
           if params[:graders].nil? or params[:graders].size ==  0
@@ -215,6 +205,9 @@ class GradersController < ApplicationController
             return
         end
       when "criteria_table"
+        @assignment = Assignment.find(params[:id],
+          :include => [{:groupings => [:students,
+                {:tas => :criterion_ta_associations}, :group]}])
         if params[:criteria].nil? or params[:criteria].size ==  0
       #don't do anything if no criteria
           render :nothing => true
@@ -263,7 +256,7 @@ class GradersController < ApplicationController
     criteria.each_with_index do |criterion, index|
       # Choose the next grader to deal out to...
       grader = graders[index % graders.size]
-      criterion.add_ta(grader)
+      criterion.add_tas(grader)
       criterion.save
     end
     groupings = []
@@ -276,14 +269,14 @@ class GradersController < ApplicationController
   end
 
   def randomly_assign_graders(groupings, grader_ids)
-    graders = Ta.find(grader_ids)
+    graders = Ta.find(grader_ids, :include => [:criterion_ta_associations])
     # Shuffle the groupings
     groupings = groupings.sort_by{rand}
     # Now, deal them out like cards...
     groupings.each_with_index do |grouping, index|
       # Choose the next grader to deal out to...
       grader = graders[index % graders.size]
-      grouping.add_ta(grader)
+      grouping.add_tas(grader)
     end
     criteria = @assignment.get_criteria
     criteria.each do |criterion|
@@ -294,7 +287,9 @@ class GradersController < ApplicationController
   end
 
   def add_graders(groupings, grader_ids)
-    graders = Ta.find(grader_ids)
+    graders = Ta.find(grader_ids, :include => [:criterion_ta_associations])
+    #only want valid graders
+    graders = graders.collect {|grader| grader if grader.valid?}
     groupings.each do |grouping|
       grouping.add_tas(graders)
     end
@@ -316,6 +311,11 @@ class GradersController < ApplicationController
       groupings.concat(grader.get_groupings_by_assignment(@assignment))
     end
     groupings = groupings.uniq
+    groupings.each do |grouping|
+      covered_criteria = grouping.all_assigned_criteria(grouping.tas)
+      grouping.criteria_coverage_count = covered_criteria.length
+      grouping.save
+    end
     construct_all_rows(groupings, graders, criteria)
     render :action => "modify_criteria"
   end
@@ -336,6 +336,11 @@ class GradersController < ApplicationController
       groupings.concat(grader.get_groupings_by_assignment(@assignment))
     end
     groupings = groupings.uniq
+    groupings.each do |grouping|
+      covered_criteria = grouping.all_assigned_criteria(grouping.tas)
+      grouping.criteria_coverage_count = covered_criteria.length
+      grouping.save
+    end
     construct_all_rows(groupings , all_graders, criteria)
     render :action => "modify_criteria"
   end
@@ -351,7 +356,7 @@ class GradersController < ApplicationController
       if grader_params != []
         members = grouping.tas.delete_if do |grader|
                     !params["#{grouping.id}_#{grader.user_name}"]
-                  end
+        end
         grouping.remove_tas(members.map{|member| member.id})
       end
     end

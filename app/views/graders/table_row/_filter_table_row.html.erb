@@ -6,17 +6,15 @@
 </td>
 
 <td>
-<% grouping.ta_memberships.each do |member| %>
-   <%= render :partial => "graders/manage/member",
-      :locals => {:member => member, :grouping => grouping } %>
-<% end -%>
+<%= render :partial => "graders/manage/member",
+  :locals => {:grouping => grouping } %>
 </td>
 
 <td>
   <% if @assignment.assign_graders_to_criteria %>
     <span class="table_menu">
       <% assigned_count = grouping.criteria_coverage_count %>
-      <% if assigned_count == assignment.criteria_count %>
+      <% if assigned_count == total_criteria_count %>
         <%= link_to_remote image_tag("icons/tick.png", :alt => I18n.t('graders.covered'),
           :title => I18n.t('graders.covered')),
           :url => { :action => 'groups_coverage_dialog', :id => @assignment.id, :grouping => grouping.id } %>
@@ -26,16 +24,8 @@
           :url => { :action => 'groups_coverage_dialog', :id => @assignment.id, :grouping => grouping.id }  %>
       <% end %>
     </span>
-      (<%= assigned_count %>/<%=  assignment.criteria_count %>)
+      (<%= assigned_count %>/<%=  total_criteria_count %>)
   <% else %>
       
-    <%#= I18n.t('all') %>
-    <%# if grouping.tas.count > 0 %>
-      <%#= image_tag("icons/tick.png", :alt => I18n.t('groups.is_valid'),
-        :title => I18n.t('groups.is_valid')) %>
-    <%# else %>
-      <%#= image_tag("icons/cross.png", :alt => I18n.t('groups.is_not_valid'),
-        :title => I18n.t('groups.is_not_valid')) %>
-    <%# end %>
   <% end %>
 </td>
