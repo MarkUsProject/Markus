@@ -1,6 +1,8 @@
 require 'fastercsv'
 require 'digest' # required for {set,reset}_api_token
 require 'base64' # required for {set,reset}_api_token
+# required for repository actions
+require File.join(File.dirname(__FILE__),'/../../lib/repo/repository')
 
 # We always assume the following fields exists:
 # => :user_name, :last_name, :first_name
@@ -177,6 +179,16 @@ class User < ActiveRecord::Base
     return current_user
   end
 
+  # Convenience method which returns a configuration Hash for the
+  # repository lib
+  def self.repo_config
+    # create config
+    conf = Hash.new
+    conf["IS_REPOSITORY_ADMIN"] = MarkusConfigurator.markus_config_repository_admin?
+    conf["REPOSITORY_PERMISSION_FILE"] = MarkusConfigurator.markus_config_repository_permission_file
+    return conf
+  end
+
   # Set API key for user model. The key is a
   # SHA2 512 bit long digest, which is in turn
   # MD5 digested and Base64 encoded so that it doesn't
@@ -230,6 +242,38 @@ class User < ActiveRecord::Base
     end
     if !self.first_name.nil?
       self.first_name.strip!
+    end
+  end
+
+  # Adds read and write permissions for each newly created Admin or Ta user
+  def grant_repository_permissions
+    # If we're not the repository admin, bail out
+    return if(self.student? or !MarkusConfigurator.markus_config_repository_admin?)
+
+    conf = User.repo_config
+    repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type, conf)
+    repo_names = Group.all.collect do |group| File.join(MarkusConfigurator.markus_config_repository_storage, group.repository_name) end
+    repo.set_bulk_permissions(repo_names, {self.user_name => Repository::Permission::READ_WRITE})
+  end
+
+  # Revokes read and write permissions for a deleted admin user
+  def revoke_repository_permissions
+    return if(self.student? or !MarkusConfigurator.markus_config_repository_admin?)
+
+    conf = User.repo_config
+    repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type, conf)
+    repo_names = Group.all.collect do |group| File.join(MarkusConfigurator.markus_config_repository_storage, group.repository_name) end
+    repo.delete_bulk_permissions(repo_names, [self.user_name])
+  end
+
+  def maintain_repository_permissions
+    return if(self.student? or !MarkusConfigurator.markus_config_repository_admin?)
+    if self.user_name_changed?
+      conf = User.repo_config
+      repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type, conf)
+      repo_names = Group.all.collect do |group| File.join(MarkusConfigurator.markus_config_repository_storage, group.repository_name) end
+      repo.delete_bulk_permissions(repo_names, [self.user_name_was])
+      repo.set_bulk_permissions(repo_names, {self.user_name => Repository::Permission::READ_WRITE})
     end
   end
 end
