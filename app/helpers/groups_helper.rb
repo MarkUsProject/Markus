@@ -17,9 +17,13 @@ module GroupsHelper
   # Called whenever it is necessary to update the students table with multiple
   # changes.
   def construct_student_table_rows(students, assignment)
+    student_memberships = StudentMembership.all(:conditions => {:grouping_id => assignment.groupings, :user_id => students})
+    students_in_assignment = student_memberships.collect do |membership|
+      membership.user
+    end
     result = {}
     students.each do |student|
-      result[student.id] = construct_student_table_row(student, assignment)
+      result[student.id] = construct_student_table_row(student, students_in_assignment)
     end
     return result
   end
@@ -46,10 +50,11 @@ module GroupsHelper
       return table_row
   end
 
-  # Given a student and an assignment, constructs a table row to be insterted
+  # Given a student and all students belonging to an assignment
+  # (assignment_memberships), constructs a table row to be insterted
   # into the students FilterTable in the groups view.  Called whenever it
   # is necessary to update the students table.
-  def construct_student_table_row(student, assignment)
+  def construct_student_table_row(student, students_in_assignment)
     table_row = {}
 
     table_row[:id] = student.id
@@ -58,7 +63,7 @@ module GroupsHelper
     table_row[:user_name] = student.user_name
     table_row[:first_name] = student.first_name
     table_row[:last_name] = student.last_name
-    table_row[:filter_student_assigned] = !assignment.student_memberships.find_by_user_id(student.id).nil?
+    table_row[:filter_student_assigned] = students_in_assignment.include?(student)
 
     return table_row
 end

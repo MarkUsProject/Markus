@@ -357,7 +357,7 @@ class GroupingTest < ActiveSupport::TestCase
     grouping = groupings(:grouping_1)
     ta = users(:ta1)
     assert_equal 0, grouping.ta_memberships.count, "Got unexpected TA membership count"
-    grouping.add_ta(ta)
+    grouping.add_tas(ta)
     assert_equal 1, grouping.ta_memberships.count, "Got unexpected TA membership count"
   end
 
@@ -365,8 +365,8 @@ class GroupingTest < ActiveSupport::TestCase
     grouping = groupings(:grouping_1)
     ta = users(:ta1)
     assert_equal 0, grouping.ta_memberships.count, "Got unexpected TA membership count"
-    grouping.add_ta(ta)
-    grouping.add_ta(ta)
+    grouping.add_tas(ta)
+    grouping.add_tas(ta)
     assert_equal 1, grouping.ta_memberships.count, "Got unexpected TA membership count"
   end
 
@@ -374,9 +374,9 @@ class GroupingTest < ActiveSupport::TestCase
     grouping = groupings(:grouping_1)
     ta = users(:ta1)
     assert_equal 0, grouping.ta_memberships.count, "Got unexpected TA membership count"
-    grouping.add_ta(ta)
+    grouping.add_tas(ta)
     assert_equal 1, grouping.ta_memberships.count, "Got unexpected TA membership count"
-    grouping.remove_ta(ta)
+    grouping.remove_tas(ta.id)
     assert_equal 0, grouping.ta_memberships.count, "Got unexpected TA membership count"
   end
 

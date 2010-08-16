@@ -193,22 +193,24 @@ class RubricCriterionTest < ActiveSupport::TestCase
 
     should "assign a TA by id" do
       assert_equal 0, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
-      @criterion.add_ta(@ta)
+      @criterion.add_tas(@ta)
       assert_equal 1, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
     end
 
     should "not assign the same TA multiple times" do
       assert_equal 0, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
-      @criterion.add_ta(@ta)
-      @criterion.add_ta(@ta)
+      @criterion.add_tas(@ta)
+      @ta.reload
+      @criterion.add_tas(@ta)
       assert_equal 1, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
     end
 
     should "unassign a TA by id" do
       assert_equal 0, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
-      @criterion.add_ta(@ta)
+      @criterion.add_tas(@ta)
       assert_equal 1, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
-      @criterion.remove_ta(@ta)
+      @ta.reload
+      @criterion.remove_tas(@ta)
       assert_equal 0, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
     end
 
@@ -229,6 +231,7 @@ class RubricCriterionTest < ActiveSupport::TestCase
       assert_equal 0, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
       @criterion.add_tas([@ta1, @ta2, @ta3])
       assert_equal 3, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
+      @ta1.reload; @ta2.reload; @ta3.reload
       @criterion.remove_tas([@ta1, @ta3])
       assert_equal 1, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
       @criterion.reload
@@ -238,8 +241,8 @@ class RubricCriterionTest < ActiveSupport::TestCase
     should "get the names of TAs assigned to it" do
       @ta1 = Ta.make(:user_name => 'g9browni')
       @ta2 = Ta.make(:user_name => 'c7benjam')
-      @criterion.add_ta(@ta1)
-      @criterion.add_ta(@ta2)
+      @criterion.add_tas(@ta1)
+      @criterion.add_tas(@ta2)
       assert_contains @criterion.get_ta_names, 'g9browni'
       assert_contains @criterion.get_ta_names, 'c7benjam'
     end

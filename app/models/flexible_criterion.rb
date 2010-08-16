@@ -14,7 +14,7 @@ class FlexibleCriterion < ActiveRecord::Base
   validates_numericality_of :assignment_id, :only_integer => true, :greater_than => 0, :message => "can only be whole number greater than 0"
   validates_numericality_of :max, :message => "must be a number greater than 0.0", :greater_than => 0.0
 
-  before_save :update_assigned_groups_count
+#  before_save :update_assigned_groups_count
 
   DEFAULT_MAX = 1
   
@@ -134,30 +134,31 @@ class FlexibleCriterion < ActiveRecord::Base
     return result.uniq
   end
 
-  def add_ta(ta)
-    if criterion_ta_associations.find_all_by_ta_id(ta.id).size < 1
-      criterion_ta_associations.create(:ta => ta, :criterion => self, :assignment => self.assignment)
-    end
-  end
-
-
   def add_tas(ta_array)
-    ta_array.each {|ta| add_ta(ta)}
+    ta_array = Array(ta_array)
+    associations = criterion_ta_associations.all(:conditions => {:ta_id => ta_array})
+    ta_array.each do |ta|
+      if (ta.criterion_ta_associations & associations).size < 1
+        criterion_ta_associations.create(:ta => ta, :criterion => self, :assignment => self.assignment)
+      end
+    end
   end
 
   def get_name
     return flexible_criterion_name
   end
 
-  def remove_ta(ta)
-    criterion_ta_association = criterion_ta_associations.find_by_ta_id(ta.id)
-    if !criterion_ta_association.nil?
-      criterion_ta_associations.delete(criterion_ta_association)
-    end
-  end
-
   def remove_tas(ta_array)
-    ta_array.each {|ta| remove_ta(ta)}
+    ta_array = Array(ta_array)
+    associations_for_criteria = criterion_ta_associations.all(:conditions => {:ta_id => ta_array})
+    ta_array.each do |ta|
+      # & is the mathematical set intersection operator between two arrays
+      assoc_to_remove = (ta.criterion_ta_associations & associations_for_criteria)
+      if assoc_to_remove.size > 0
+        criterion_ta_associations.delete(assoc_to_remove)
+        assoc_to_remove.first.destroy
+      end
+    end
   end
 
   def get_ta_names

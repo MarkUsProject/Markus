@@ -7,7 +7,7 @@ module GradersHelper
   def construct_criterion_table_rows(criteria, assignment)
     result = {}
     criteria.each do |criterion|
-      result[criterion.id] = construct_criterion_table_row(criterion.reload, assignment)
+      result[criterion.id] = construct_criterion_table_row(criterion, assignment)
     end
     return result
   end
@@ -30,19 +30,20 @@ module GradersHelper
   # changes.
   def construct_table_rows(groupings, assignment)
     result = {}
+    total_criteria_count = assignment.criteria_count
     groupings.each do |grouping|
-      result[grouping.id] = construct_table_row(grouping.reload, assignment)
+      result[grouping.id] = construct_table_row(grouping, assignment, total_criteria_count)
     end
     return result
   end
   
-  def construct_table_row(grouping, assignment)
+  def construct_table_row(grouping, assignment, total_criteria_count)
       table_row = {}
 
       table_row[:id] = grouping.id
       table_row[:filter_table_row_contents] =
         render_to_string :partial => 'graders/table_row/filter_table_row',
-        :locals => {:grouping => grouping, :assignment => assignment}
+        :locals => {:grouping => grouping, :assignment => assignment, :total_criteria_count => total_criteria_count}
 
       #These are used for sorting
       table_row[:name] = grouping.group.group_name

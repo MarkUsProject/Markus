@@ -1,6 +1,6 @@
 <h2><%= @grouping.group.group_name %>
     <%= I18n.t('graders.coverage') %></h2>
-<% assigned = @grouping.all_assigned_criteria %>
+<% assigned = @grouping.all_assigned_criteria(@grouping.tas) %>
 <% all =  @assignment.get_criteria %>
 <% all.each do |criterion| %>
   <% if assigned.include?(criterion) %>

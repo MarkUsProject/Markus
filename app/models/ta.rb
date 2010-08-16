@@ -12,7 +12,7 @@ class Ta < User
   has_many :criterion_ta_associations, :dependent => :delete_all
   
   def memberships_for_assignment(assignment)
-    return assignment.ta_memberships.find_all_by_user_id(id)
+    return assignment.ta_memberships.find_all_by_user_id(id, :include => {:grouping => :group})
   end
    
   def is_assigned_to_grouping?(grouping_id)
@@ -33,12 +33,12 @@ class Ta < User
   def get_criterion_associations_by_assignment(assignment)
     if assignment.assign_graders_to_criteria
       return criterion_ta_associations.map do |association|
-      if association.assignment == assignment
-        association
-      else
-        nil
-      end
-    end.compact
+        if association.assignment == assignment
+          association
+        else
+          nil
+        end
+      end.compact
     else
       return []
     end
@@ -55,7 +55,8 @@ class Ta < User
   end
 
   def get_groupings_by_assignment(assignment)
-    return groupings.all(:conditions => {:assignment_id => assignment.id})
+    return groupings.all(:conditions => {:assignment_id => assignment.id},
+      :include => [:students, :tas, :group, :assignment])
   end
   
   private
