@@ -9,7 +9,8 @@ class AssignmentsController < ApplicationController
                                  :join_group, 
                                  :decline_invitation, 
                                  :index, 
-                                 :student_interface]
+                                 :student_interface,
+                                 :update_collected_submissions]
   
   before_filter      :authorize_for_student, 
                      :only => [:student_interface, 
