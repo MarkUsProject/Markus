@@ -1,5 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 require 'shoulda'
+require 'machinist'
+require 'mocha'
 
 class GroupingTest < ActiveSupport::TestCase
   fixtures :all
@@ -150,6 +152,99 @@ class GroupingTest < ActiveSupport::TestCase
         end
       end
     end # end noteable context
+
+    context "calling has_submission? with many submissions, all with submission_version_used == false" do
+      setup do
+        clear_fixtures
+        @grouping = Grouping.make
+        @submission1 = Submission.make(:submission_version_used => false, :grouping => @grouping)
+        @submission2 = Submission.make(:submission_version_used => false, :grouping => @grouping)
+        @submission3 = Submission.make(:submission_version_used => false, :grouping => @grouping)
+        @grouping.reload
+      end
+      should "behave like theres no submission and return false" do
+        #sort only to ensure same order of arrays
+        assert_equal [@submission1, @submission2, @submission3].sort{|a,b| a.id <=> b.id},
+          @grouping.submissions.sort{|a,b| a.id <=> b.id}
+        assert_nil @grouping.current_submission_used
+        assert !@grouping.has_submission?
+      end
+    end
+
+    #The order in which submissions are added to the grouping matters because
+    #after a submission is created, it ensures that all other submissions have
+    #submission_version_used set to false.
+    context "calling has_submission? with many submissions, with the last submission added to the grouping having submission_version_used == false" do
+      setup do
+        clear_fixtures
+        @grouping = Grouping.make
+        @submission1 = Submission.make(:submission_version_used => true, :grouping => @grouping)
+        @submission2 = Submission.make(:submission_version_used => false, :grouping => @grouping)
+        @submission3 = Submission.make(:submission_version_used => true, :grouping => @grouping)
+        @submission4 = Submission.make(:submission_version_used => false, :grouping => @grouping)
+        @grouping.reload
+      end
+      should "behave like there is no submission" do
+        #sort only to ensure same order of arrays
+        assert_equal [@submission1, @submission2, @submission3, @submission4].sort{|a,b| a.id <=> b.id},
+          @grouping.submissions.sort{|a,b| a.id <=> b.id}
+        assert_nil @grouping.current_submission_used
+        assert !@grouping.has_submission?
+      end
+    end
+
+    context "calling has_submission? with many submissions, with the last submission added to the grouping having submission_version_used == true" do
+      setup do
+        clear_fixtures
+        @grouping = Grouping.make
+        @submission1 = Submission.make(:submission_version_used => false, :grouping => @grouping)
+        @submission2 = Submission.make(:submission_version_used => true, :grouping => @grouping)
+        @submission3 = Submission.make(:submission_version_used => true, :grouping => @grouping)
+        @grouping.reload
+      end
+      should "behave like there is a submission" do
+        #sort only to ensure same order of arrays
+        assert_equal [@submission1, @submission2, @submission3].sort{|a,b| a.id <=> b.id},
+          @grouping.submissions.sort{|a,b| a.id <=> b.id}
+        assert !@submission2.reload.submission_version_used
+        assert_equal @submission3, @grouping.current_submission_used
+        assert @grouping.has_submission?
+      end
+    end
+
+    context "containing multiple submissions with submission_version_used == true" do
+      setup do
+        clear_fixtures
+        @grouping = Grouping.make
+        #Dont use machinist in order to bypass validation
+        @submission1 = @grouping.submissions.build(:submission_version_used => false,
+          :revision_number => 1, :revision_timestamp => 1.days.ago, :submission_version => 1)
+        @submission1.save(false)
+        @submission2 = @grouping.submissions.build(:submission_version_used => true,
+          :revision_number => 1, :revision_timestamp => 1.days.ago, :submission_version => 2)
+        @submission2.save(false)
+        @submission3 = @grouping.submissions.build(:submission_version_used => true,
+          :revision_number => 1, :revision_timestamp => 1.days.ago, :submission_version => 3)
+        @submission3.save(false)
+        @grouping.reload
+      end
+      should "set all the submissions' submission_version_used columns to false upon creation of a new submission" do
+        #sort only to ensure same order of arrays
+        assert_equal [@submission1, @submission2, @submission3].sort{|a,b| a.id <=> b.id},
+          @grouping.submissions.sort{|a,b| a.id <=> b.id}
+        assert @grouping.has_submission?
+        #Make sure current_submission_used returns a single Submission, not an array
+        assert @grouping.current_submission_used.is_a?(Submission)
+        @submission4 = Submission.make(:submission_version_used => false, :grouping => @grouping)
+        @grouping.reload
+        assert !@grouping.has_submission?
+        assert_equal 4, @submission4.submission_version
+        @submission5 = Submission.make(:submission_version_used => true, :grouping => @grouping)
+        @grouping.reload
+        assert @grouping.has_submission?
+        assert_equal @submission5, @grouping.current_submission_used
+      end
+    end
   end # end grouping context
 
   def test_should_not_save_without_group
