@@ -5,6 +5,7 @@ require 'fileutils' # FileUtils used here
 # Use Assignment.submission_by(user) to retrieve the correct submission.
 class Submission < ActiveRecord::Base
   after_create :create_result
+  before_validation_on_create :bump_old_submissions
 
   validates_numericality_of :submission_version, :only_integer => true
   belongs_to :grouping
@@ -39,18 +40,8 @@ class Submission < ActiveRecord::Base
      new_submission.submission_version_used = true
      new_submission.revision_timestamp = revision.timestamp
      new_submission.revision_number = revision.revision_number
-
-     # Bump any old Submissions down the line
+     
      new_submission.transaction do
-       if grouping.has_submission?
-         old_submission = grouping.current_submission_used
-         new_submission.submission_version = old_submission.submission_version + 1
-         old_submission.submission_version_used = false
-         old_submission.save
-         old_result = old_submission.result
-         old_result.released_to_students = false
-         old_result.save
-       end
        begin
          new_submission.populate_with_submission_files(revision)
        rescue Repository::FileDoesNotExist => e
@@ -161,6 +152,22 @@ class Submission < ActiveRecord::Base
     self.result = result
     result.marking_state = Result::MARKING_STATES[:unmarked]
     result.save
+  end
+
+  # Bump any old Submissions down the line and ensure no submission has
+  # submission_version_used == true
+  def bump_old_submissions
+     while grouping.reload.has_submission?
+       old_submission = grouping.current_submission_used
+       if self.submission_version.nil? or self.submission_version <= old_submission.submission_version
+         self.submission_version = old_submission.submission_version + 1
+       end
+       old_submission.submission_version_used = false
+       old_submission.save
+       old_result = old_submission.result
+       old_result.released_to_students = false
+       old_result.save
+     end
   end
 
 end

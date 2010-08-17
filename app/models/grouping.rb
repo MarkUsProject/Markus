@@ -20,6 +20,8 @@ class Grouping < ActiveRecord::Base
   has_many :pending_students, :class_name => 'Student', :through => :student_memberships, :conditions => {'memberships.membership_status' => StudentMembership::STATUSES[:pending]}, :source => :user
   
   has_many :submissions
+  #The first submission found that satisfies submission_version_used == true.
+  #If there are multiple such submissions, one is chosen randomly.
   has_one :current_submission_used, :class_name => 'Submission', :conditions => {:submission_version_used => true}
   has_many :grace_period_deductions, :through => :non_rejected_student_memberships, :include => :non_rejected_student_memberships
     
@@ -310,9 +312,8 @@ class Grouping < ActiveRecord::Base
 
   # Submission Functions
   def has_submission?
-    #Return whether there is a submission whose submission_version_used
-    #column is true, i.e. a grouping can have many submissions, but if none of
-    #them have submission_version_used == true, then return false.
+    #Return true if and only if this grouping has at least one submission
+    #with attribute submission_version_used == true.
     return !current_submission_used.nil?
   end
 
