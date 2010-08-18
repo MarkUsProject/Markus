@@ -54,6 +54,9 @@ see http://www.markusproject.org/download/
         - mod_rewrite
         - mod_dav_svn (required if you want to allow SVN repository access)
         - mod_authz_svn (required if you want to allow SVN repository access)
+    * ImageMagick (known to work with >=6.5.7, older versions should be ok too)
+      Only required if you plan to be able to view and annotate pdfs within
+      the browser (PDF_SUPPORT setting in config files) 
 
   DATABASE
 
@@ -115,6 +118,14 @@ see http://www.markusproject.org/download/
       sudo gem install rails daemons mongrel mongrel_cluster mysql
       fastercsv rake ruby-debug will_paginate
 
+  ImageMagick:
+
+  You most likely already have this installed, to make sure you do, simply run
+  `identify --version` to see if ImageMagick is installed on your machine.
+
+  Otherwise, http://www.imagemagick.org/script/install-source.php#unix
+  has detailed instructions on installing ImageMagick.
+
 3.2 INSTALLING MARKUS
 
   Once you have the required software installed, it should be pretty straight-
@@ -127,7 +138,7 @@ see http://www.markusproject.org/download/
       tar -xzvf markus-latest-stable.tar.gz
   * You should have a directory called markus-X.Y.Z now. Change to MarkUs'
     application root. For example:
-      cd markus-0.8.0
+      cd markus-0.9.0
   * Set environment variable RAILS_ENV (assumes BASH)
       export RAILS_ENV="production"
   * In case you are using Rails > 2.3.8 comment out the line containing
@@ -179,3 +190,4 @@ If you think you have found a bug, you can file a bug report or contact
 developers at markus-dev@cs.toronto.edu. Feel free to provide a patch ;-)
   https://stanley.cdf.toronto.edu/drproject/csc49x/olm_rails/ticket?action=new (new ticket link)
   https://stanley.cdf.toronto.edu/drproject/csc49x/olm_rails/query (see existing tickets)
+
