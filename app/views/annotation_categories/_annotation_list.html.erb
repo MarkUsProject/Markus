@@ -12,8 +12,10 @@
 <div id="add_annotation_text_control">
 </div>
 <ul id="annotation_list">
-<% @annotation_texts.each do |annotation_text| %>
-  <%= render :partial => 'annotation_text', :locals => {:annotation_text => annotation_text} %> 
+<% if @annotation_texts %>
+  <% @annotation_texts.each do |annotation_text| %>
+    <%= render :partial => 'annotation_text', :locals => {:annotation_text => annotation_text} %>
+  <% end %>
 <% end %>
 </ul>
 </div>
