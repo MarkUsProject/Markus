@@ -11,6 +11,8 @@
 .tabbedArea {
   -moz-border-radius-bottomleft: 5px;
   -moz-border-radius-bottomright: 5px;
+  -webkit-border-bottom-left-radius: 5px;
+  -webkit-border-bottom-right-radius: 5px;
   background: #fff;
   padding: 10px;
 }
@@ -26,6 +28,8 @@ ul.subsection_tabs {
 ul.subsection_tabs li.tab{
   -moz-border-radius-topleft: 5px;
   -moz-border-radius-topright: 5px;
+  -webkit-border-top-left-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
   background: #B7D3EC;
   float: left;
   margin: 0 2px 0 0;
@@ -35,6 +39,8 @@ ul.subsection_tabs li.tab{
 ul.subsection_tabs li.tab_selected {
   -moz-border-radius-topleft: 5px;
   -moz-border-radius-topright: 5px;
+  -webkit-border-top-left-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
   float: left;
   margin: 0 2px 0 0;
   text-align: center;
@@ -51,6 +57,8 @@ ul.subsection_tabs li.button_tab {
 ul.subsection_tabs li.tab a {
   -moz-border-radius-topleft: 5px;
   -moz-border-radius-topright: 5px;
+  -webkit-border-top-left-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
   display: block;
   padding: 4px 10px 0 10px;
   background: #B7D3EC;

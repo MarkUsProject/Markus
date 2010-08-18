@@ -206,8 +206,8 @@ h4{
 #menu a{
   -moz-border-radius-topleft: 10px;
   -moz-border-radius-topright: 10px;
-  -webkit-border-radius-topleft: 10px;
-  -webkit-border-radius-topright: 10px;
+  -webkit-border-top-left-radius: 10px;
+  -webkit-border-top-right-radius: 10px;
   background: #ccc;
   color: #003366;
 }
@@ -217,8 +217,8 @@ h4{
    background-color: white;
   -moz-border-radius-topleft: 10px;
   -moz-border-radius-topright: 10px;
-  -webkit-border-radius-topleft: 10px;
-  -webkit-border-radius-topright: 10px;
+  -webkit-border-top-left-radius: 10px;
+  -webkit-border-top-right-radius: 10px;
 
 }
 
@@ -1016,6 +1016,7 @@ div.float_left {
 
 .pane{
   -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
   background: #ECECEC;
   border: 1px solid #ddd;
   margin: 0 0 10px 0;
@@ -1040,16 +1041,16 @@ div.float_left {
 
 .globalActionIconsTop{
   -moz-border-radius-topleft: 5px;
-  -webkit-border-radius-topleft: 5px;
+  -webkit-border-top-left-radius: 5px;
   -moz-border-radius-topright: 5px;
-  -webkit-border-radius-topright: 5px;
+  -webkit-border-top-right-radius: 5px;
 }
 
 .globalActionIconsBottom{
   -moz-border-radius-bottomleft: 5px;
-  -webkit-border-radius-bottomleft: 5px;
+  -webkit-border-bottom-left-radius: 5px;
   -moz-border-radius-bottomright: 5px;
-  -webkit-border-radius-bottomright: 5px;
+  -webkit-border-bottom-right-radius: 5px;
 }
 
 
