@@ -1,3 +1,12 @@
+Changes for MarkUs 0.9.0:
+* Multiple bug fixes
+* REMOTE_USER authentication support
+* Redesigned manage groups and graders pages
+* Added in-browser pdf display and annotation
+* New batch submission collection
+* Improved loading speed of submissions table
+* Added ability to assign graders to individual criteria
+
 Changes for MarkUs 0.8.0:
 * Using Rails 2.3.8
 * MarkUs renders a 404 page error for mismatching routes
