@@ -62,6 +62,53 @@ function toggle_student_form_groups(student_form_groups) {
   }
 }
 
+function toggle_test_framework(is_testing_framework_enabled) {
+
+  $('is_testing_framework_enabled').setValue(is_testing_framework_enabled);
+
+  if(is_testing_framework_enabled) {
+    $('tokens').removeClassName('disable');
+    $('tokens_per_day').enable();
+
+    $$('#antbuildfile_style').each(function(node) { node.removeClassName('disable'); });
+    $$('#antbuildfile_style input').each(function(node) {
+      $(node).enable();
+    });
+    $$('#antbuildprop_style').each(function(node) { node.removeClassName('disable'); });
+    $$('#antbuildprop_style input').each(function(node) {
+      $(node).enable();
+	});
+    $$('#test_files .test_file').each(function(node) { node.removeClassName('disabled'); });
+    $$('#test_files .test_file input').each(function(node) {
+      $(node).enable();
+    });
+    $$('#lib_files .test_file').each(function(node) { node.removeClassName('disabled'); });
+    $$('#lib_files .test_file input').each(function(node) {
+      $(node).enable();
+    });
+  } else {
+    $('tokens').addClassName('disable');
+    $('tokens_per_day').disable();
+
+    $$('#antbuildfile_style').each(function(node) { node.addClassName('disable'); });
+    $$('#antbuildfile_style input').each(function(node) {
+      $(node).disable();
+    });
+    $$('#antbuildprop_style').each(function(node) { node.addClassName('disable'); });
+    $$('#antbuildprop_style input').each(function(node) {
+      $(node).disable();
+    });
+    $$('#test_files .test_file').each(function(node) { node.addClassName('disabled'); });
+    $$('#test_files .test_file input').each(function(node) {
+      $(node).disable();
+    });
+    $$('#lib_files .test_file').each(function(node) { node.addClassName('disabled'); });
+    $$('#lib_files .test_file input').each(function(node) {
+      $(node).disable();
+    });
+  }
+}
+
 function request_group_properties(assignment_id) {
 /*  new Ajax.Request('update_group_properties_on_dependency', {asynchronous:true, evalScripts:true, parameters:'assignment_id=' + $F('assignment_dependency_list')}*/
 }

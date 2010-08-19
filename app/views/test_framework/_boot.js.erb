@@ -1,0 +1,10 @@
+<script language="Javascript" type="text/javascript">
+
+  document.observe('dom:loaded', function() {
+
+    <% if @assignment %>
+      toggle_test_framework(<%= @assignment.enable_test %>);
+    <% end %>
+
+  });
+</script>

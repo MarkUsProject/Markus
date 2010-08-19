@@ -9,10 +9,12 @@ class Assignment < ActiveRecord::Base
   has_many :rubric_criteria, :class_name => "RubricCriterion", :order => :position
   has_many :flexible_criteria, :class_name => "FlexibleCriterion", :order => :position
   has_many :assignment_files
+  has_many :test_files
   has_many :criterion_ta_associations
   has_one  :submission_rule 
   accepts_nested_attributes_for :submission_rule, :allow_destroy => true
   accepts_nested_attributes_for :assignment_files, :allow_destroy => true
+  accepts_nested_attributes_for :test_files, :allow_destroy => true
 
   has_many :annotation_categories
 
@@ -33,6 +35,7 @@ class Assignment < ActiveRecord::Base
 
   validates_numericality_of :group_min, :only_integer => true,  :greater_than => 0
   validates_numericality_of :group_max, :only_integer => true
+  validates_numericality_of :tokens_per_day, :only_integer => true,  :greater_than_or_equal_to => 0
 
   validates_associated :submission_rule
   validates_presence_of :submission_rule

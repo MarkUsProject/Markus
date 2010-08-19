@@ -52,6 +52,10 @@ class AssignmentTest < ActiveSupport::TestCase
       assert !a.valid?
     end
 
+    should "catch a negative tokens_per_day value" do
+      a = Assignment.new(:tokens_per_day => '-10')
+      assert !a.valid?, "assignment expected to be invalid when tokens_per_day is < 0"
+    end
   end
 
   context "A past due assignment w/ No Late submission rule" do

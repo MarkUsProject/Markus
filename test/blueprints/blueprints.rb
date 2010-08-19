@@ -253,6 +253,13 @@ TaMembership.blueprint do
   membership_status {'pending'}
 end
 
+TestFile.blueprint do
+  assignment_id {0}
+  filename
+  filetype
+  is_private {false}
+end
+
 TextAnnotation.blueprint do
   line_start {0}
   line_end {1}
