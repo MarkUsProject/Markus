@@ -42,6 +42,7 @@ en:
     winter_2009:        "Winter 2009"
     winter_2010:        "Winter 2010"
     summer_2009:        "Summer 2009"
+    summer_2010:        "Summer 2010"
     fall_2009:          "Fall 2009"
     industry_advisors:  "Industry Advisors"
     supervisor:         "Supervisor"
@@ -1030,7 +1031,7 @@ en:
 
     #Test Framework
     test_framework:
-      test_framework: "Test framework"
+      test_framework: "Test Framework"
       enable_test:    "Enable tests for this assignment"
       required_files_ant: "Required files needed for Ant"
       need_group_for_test: "You must have a group to run a test"
@@ -1043,6 +1044,21 @@ en:
       need_one_file: "You need at least one file submitted in order to run tests.<br />
                       If you already submitted one file and you want to run tests on it, use the \"Collect and Prepare Test\" button below."
       collect_and_test: "Collect and Prepare Test"
+      build_xml: "build.xml"
+      build_prop: "build.properties"
+      add_test_file_link: "Add Test File"
+      add_lib_file_link: "Add Library File"
+      add_test_file_alert: "You must enable tests for this assignment to add a test file."
+      add_lib_file_alert: "You must enable tests for this assignment to add a library file."
+      assignment_test_files: "Associated Test Files"
+      assignment_lib_files: "Associated Library Files"
+      private: "private?"
+      replace: "Replace"
+      filename_exists: "has already been taken"
+      duplicate_filename: "Attempted to upload the following filename more than once: "
+      invalid_buildxml: "Ant build.xml file must be named build.xml"
+      invalid_buildproperties: "Ant build.properties file must be named build.properties"
+      invalid_filename: "Test and Library files cannot be named build.xml or build.properties"
       token:
         tokens_form: "Tokens available per group"
         tokens_per_day: "<span class=\"prop_label\">Tokens per day:</span> %{tokens}"
