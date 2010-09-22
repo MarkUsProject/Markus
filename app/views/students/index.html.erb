@@ -2,6 +2,7 @@
 <%= javascript_include_tag "users_manager"%>
 
 <%= render :partial => "boot.js.erb"%>
+<%= render :partial => "student_form_actions.js.erb"%>
 
 <script>
 document.observe("dom:loaded", function(){
@@ -43,8 +44,9 @@ document.observe("dom:loaded", function(){
 <div class="colsLeftHeavy">
 
   <div class="wrapLeft">
-   <%= form_remote_tag :url => {:action => "bulk_modify"}, :complete => "$('apply_bulk_action').setValue('#{t(:apply)}');$('apply_bulk_action').enable();$('apply_bulk_action2').setValue('#{t(:apply)}');$('apply_bulk_action2').enable();"
- %>
+   <% form_remote_tag :url => {:action => "bulk_modify"},
+     :before => "before_form_submit();",
+     :complete => "after_form_submit();" do %>
     <div id="ajax_error" class="error" style="display:none;">
     
     </div>
@@ -121,7 +123,7 @@ document.observe("dom:loaded", function(){
 	    <% end %>
 	</select>
       </span>
-      <%= submit_tag t(:apply), :id => 'apply_bulk_action', :name => 'commit', :onclick => "$(this).setValue('Processing...'); $(this).disable();" %>
+      <%= submit_tag t(:apply), :id => 'apply_bulk_action', :name => 'commit' %>
       
 
       
@@ -141,9 +143,9 @@ document.observe("dom:loaded", function(){
         <option value="hide"><%= t(:hide_students)%> </option>
         <option value="unhide"><%= t(:unhide_students) %></option>
       </select>
-      <%= submit_tag t(:apply), :id => 'apply_bulk_action2', :name => 'commit', :onclick => "$(this).setValue('Processing...'); $(this).disable();" %>
+      <%= submit_tag t(:apply), :id => 'apply_bulk_action2', :name => 'commit' %>
       </div>
-    </form>
+    <% end %> <!-- remote form tag -->
   </div>
   </div>
 </div> <!-- colsLeftHeavy -->
