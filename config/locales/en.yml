@@ -540,6 +540,7 @@ en:
 
     # Student's View (admin)
     students:
+      processing: "Processing..."
       manage_students: "Manage Students"
       edit_student:    "Edit a Student"
       edit_success: "%{user_name} has been updated."
