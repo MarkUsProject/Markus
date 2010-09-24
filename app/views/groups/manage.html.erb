@@ -361,7 +361,7 @@ document.observe("dom:loaded", function(){
   </fieldset>
   <p class="p_modal">
     <%= button_to_function t(:submit),
-     "if (confirm(I18n.t('groups.delete_groups_linked'))) submit_assignment_group_use(escape($F('clone_groups_assignment_id')))" %>
+     "if (confirm(\"#{I18n.t('groups.delete_groups_linked')}\")) submit_assignment_group_use(escape($F('clone_groups_assignment_id')))" %>
     <%= button_to_function t(:cancel), 'modalAssignmentGroupReUse.close()'%>
   </p>
 </div> <!-- Assignement reuse groups modal-->
