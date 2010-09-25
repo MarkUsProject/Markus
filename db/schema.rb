@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100726183357) do
+ActiveRecord::Schema.define(:version => 20100816213841) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -76,12 +76,12 @@ ActiveRecord::Schema.define(:version => 20100726183357) do
     t.boolean  "section_due_dates",                :default => false
     t.boolean  "display_grader_names_to_students"
     t.boolean  "enable_test",                      :default => false,    :null => false
-    t.integer  "tokens_per_day"
     t.integer  "notes_count",                      :default => 0
     t.boolean  "assign_graders_to_criteria",       :default => false
     t.integer  "rubric_criterions_count"
     t.integer  "flexible_criterions_count"
     t.integer  "groupings_count"
+    t.integer  "tokens_per_day",                   :default => 0,        :null => false
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true
@@ -334,6 +334,17 @@ ActiveRecord::Schema.define(:version => 20100726183357) do
   end
 
   add_index "submissions", ["grouping_id"], :name => "index_submissions_on_grouping_id"
+
+  create_table "test_files", :force => true do |t|
+    t.string   "filename"
+    t.integer  "assignment_id"
+    t.string   "filetype"
+    t.boolean  "is_private"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "test_files", ["assignment_id", "filename"], :name => "index_test_files_on_assignment_id_and_filename", :unique => true
 
   create_table "test_results", :force => true do |t|
     t.string   "filename"

@@ -206,7 +206,7 @@ class GradersControllerTest < AuthenticatedControllerTest
       @assignment = Assignment.make(:marking_scheme_type => "rubric")
     end
     
-    context "doing a GET on :manage" do
+    context "doing a GET on :manage (graders_controller)" do
       setup do
         get_as @admin, :manage, {:id => @assignment.id}
       end

@@ -103,7 +103,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
       setup_group_fixture_repos
     end
     
-    context "GET on :manage" do
+    context "GET on :manage (groups_controller)" do
       setup do
         get_as @admin, :manage, {:id => @assignment.id}
       end
