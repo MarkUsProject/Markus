@@ -1,0 +1,15 @@
+##############################################
+# MarkUs PAM configuration
+#   See man 7 pam for more info.
+##############################################
+# Delay failed authentication attempts for 3
+# seconds.
+#auth optional pam_faildelay.so delay=3000000
+
+# Default MarkUs pam config. Deny everybody.
+auth required pam_deny.so
+
+# Comment out the above line and uncomment
+# the following line if you want to authenticate
+# local Linux/UNIX users.
+#auth required pam_unix.so

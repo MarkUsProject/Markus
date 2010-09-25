@@ -1,0 +1,52 @@
+MarkUs PAM Authentication Helper
+-------------------------------------------------------------------
+
+This program allows you to use Linux PAM for MarkUs authentication.
+Note: At the moment only Linux is supported. It shouldn't be too
+hard to support openpam platforms such as Mac OSX though.
+
+Installation:
+-------------------------------------------------------------------
+
+  1. Make sure you have PAM development files installed. E.g. on
+     a Debian based system install them by:
+     	#> aptitude install libpam0g-dev
+  2. Compile by
+        $> make
+  3. Install binary and default configuration by
+        #> make -s install
+     Note: You have to do this step as root.
+  4. Change MarkUs PAM configuration as desired.
+     MarkUs pam configuration is in /etc/pam.d/markus_pam 
+
+Basic Testing:
+-------------------------------------------------------------------
+
+  $> echo -e 'username\npassword' | /usr/local/bin/markus_pam; \
+     echo "Return code was: $?"
+
+  If there were PAM authentication failures, an error message
+  will be printed to stderr and "Return code was 1" printed to
+  stdout. Conversely, if everything went fine you should see
+  "Return code was 0".
+
+  You may want to put the following line into /etc/pam.d/markus_pam:
+    auth required pam_permit.so
+  Note this will always succeed if your Linux PAM is properly in
+  place.
+
+
+MarkUs Configuration:
+-------------------------------------------------------------------
+
+  Once you are sure markus_pam works as desired, set
+    VALIDATE_FILE = "/usr/local/bin/markus_pam"
+  and you should be all set.
+
+
+Feedback/Bugs?
+-------------------------------------------------------------------
+
+  Let us know: markus-users@cs.toronto.edu
+
+
