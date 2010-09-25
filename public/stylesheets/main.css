@@ -212,7 +212,7 @@ h4{
   color: #003366;
 }
 
- #sub_menu #sub_menu_active a{
+#sub_menu #sub_menu_active a{
    color: #003366;
    background-color: white;
   -moz-border-radius-topleft: 10px;
@@ -230,7 +230,6 @@ h4{
 #sub_menu a:hover{
    color: #EE6415;
 }
-
 
 #menu_active a{
    background: #464646;
@@ -287,6 +286,8 @@ h4{
 #sub_menu{
    background: #464646;
    padding-left: 10px;
+   overflow: hidden;
+   white-space: nowrap;
 }
 
 .level1{
@@ -1803,4 +1804,16 @@ form#grader_view_file_selector_form {
 
 pre#test_result_content {
   font-size: 1.3em;
+}
+
+/* For the passed due date in dashboard. */
+.red {
+  color: Red;
+}
+
+.graph_layout{
+    margin-top:20px;
+    margin-left:20px;
+    width:500px;
+    height:350px;
 }
