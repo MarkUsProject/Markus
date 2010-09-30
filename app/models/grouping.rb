@@ -23,7 +23,7 @@ class Grouping < ActiveRecord::Base
   #The first submission found that satisfies submission_version_used == true.
   #If there are multiple such submissions, one is chosen randomly.
   has_one :current_submission_used, :class_name => 'Submission', :conditions => {:submission_version_used => true}
-  has_many :grace_period_deductions, :through => :non_rejected_student_memberships, :include => :non_rejected_student_memberships
+  has_many :grace_period_deductions, :through => :non_rejected_student_memberships
     
   has_many :tokens
 
