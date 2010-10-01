@@ -82,4 +82,21 @@ class TokenTest < ActiveSupport::TestCase
     end
   end
 
+  context "Token" do
+    setup do
+      @token = Token.make{}
+    end
+    should "be found" do
+      assert_equal(@token, Token.find_by_grouping_id(@token.grouping_id))
+    end
+  end
+
+  context "Token" do
+    setup do
+      @token = Token.make
+    end
+    should "not be found (wrong grouping_id)" do
+      assert_nil(Token.find_by_grouping_id(0))
+    end
+  end
 end
