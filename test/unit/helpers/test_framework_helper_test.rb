@@ -16,7 +16,7 @@ class TestFrameworkHelperTest < ActiveSupport::TestCase
   def teardown
   end
 
-  context "A user allowed to do test" do
+  context "An admin allowed to do test" do
     setup do
       @admin = Admin.make
       @current_user = @admin
@@ -36,7 +36,7 @@ class TestFrameworkHelperTest < ActiveSupport::TestCase
     end
   end
 
-  context "A user allowed to do test" do
+  context "A student with sufficient tokens" do
     setup do
       @student = Student.make
       @token = Token.make
@@ -50,7 +50,7 @@ class TestFrameworkHelperTest < ActiveSupport::TestCase
     end
   end
 
-  context "A user not allowed to do test" do
+  context "A student without any tokens" do
     setup do
       @student = Student.make
       @token = Token.make
