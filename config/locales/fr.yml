@@ -307,6 +307,7 @@ fr:
       marking_state:        "Affichage de la note"
       grace_credits_used:   "Utilisation des \"grace credits\""
       final_grade:          "Note finale"
+      class_average:        "Moyenne: %{short_identifier}"
       show_all:             "Tous"
       show_unmarked:        "Non notés"
       show_partial:         "Partiellement notés"
