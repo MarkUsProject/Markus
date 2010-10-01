@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100816213841) do
+ActiveRecord::Schema.define(:version => 20100830154126) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -352,6 +352,8 @@ ActiveRecord::Schema.define(:version => 20100816213841) do
     t.integer  "submission_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "status"
+    t.integer  "user_id"
   end
 
   add_index "test_results", ["filename"], :name => "index_test_results_on_filename"
