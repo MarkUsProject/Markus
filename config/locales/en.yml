@@ -307,6 +307,7 @@ en:
       marking_state:        "Marking State"
       grace_credits_used:   "Grace Credits Used"
       final_grade:          "Final Grade"
+      class_average:        "Class Average: %{short_identifier}"
       show_all:             "Show All"
       show_unmarked:        "Show Unmarked"
       show_partial:         "Show Partial"
