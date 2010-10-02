@@ -67,6 +67,7 @@ fr:
     current_assignments:      "Projets existants"
     due:                       "à rendre pour le :"
     no_assignments:            "Aucun devoir pour le moment."
+    class_average:             "Moyenne: %{results_average}"
 
     # app/views/assignments/
     name: "Nom "
@@ -307,7 +308,7 @@ fr:
       marking_state:        "Affichage de la note"
       grace_credits_used:   "Utilisation des \"grace credits\""
       final_grade:          "Note finale"
-      class_average:        "Moyenne: %{short_identifier}"
+      class_average:        "Moyenne: %{results_average}"
       show_all:             "Tous"
       show_unmarked:        "Non notés"
       show_partial:         "Partiellement notés"
