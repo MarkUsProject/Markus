@@ -21,6 +21,9 @@
               <%=h(" | #{assignment.groupings.all(:conditions => {:is_collected => true}).size}/#{assignment.groupings.size} Submissions Collected")%>
             <% end %>
           </span>
+          <span id="class_average__<%=assignment.short_identifier %>">
+            | <%= I18n.t(:class_average, :results_average => h(assignment.results_average)) %>
+          </span>
         </span>
       </li>
     <% end %>

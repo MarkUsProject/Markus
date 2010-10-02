@@ -70,7 +70,7 @@
           <%= submit_tag I18n.t("browse_submissions.unrelease_marks"),
             :name => "unrelease_results" %>
           <%= I18n.t("browse_submissions.class_average",
-            :short_identifier => h(@assignment.results_average)) %>
+            :results_average => h(@assignment.results_average)) %>
         </div>
       <% end %>
       <div class="ap_filters" id="ap_filters_1">
