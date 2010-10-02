@@ -38,6 +38,7 @@ var AnnotationTextDisplayer = Class.create({
     
     //Update the Display node (a div, in this case) to be in the right
     //position, and to have the right contents
+    final_string = final_string.replace(/\n/g, '<br/>');
     this.updateDisplayNode(final_string, x, y);
     
     //Show the Displayer
