@@ -3,6 +3,7 @@ require 'csv'
 
 class RubricCriterion < ActiveRecord::Base
   before_save :round_weight
+  after_save :update_existing_results
   set_table_name "rubric_criteria" # set table name correctly
   belongs_to  :assignment, :counter_cache => true
   has_many    :marks, :as => :markable, :dependent => :destroy
@@ -247,4 +248,10 @@ class RubricCriterion < ActiveRecord::Base
     end
     return failures
   end
+
+  # Updates results already entered with new criteria
+  def update_existing_results
+    self.assignment.submissions.each { |submission| submission.result.update_total_mark }
+  end
+
 end
