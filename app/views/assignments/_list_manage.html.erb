@@ -22,7 +22,9 @@
             <% end %>
           </span>
           <span id="class_average__<%=assignment.short_identifier %>">
-            | <%= I18n.t(:class_average, :results_average => h(assignment.results_average)) %>
+            <% if !assignment.results_average.nil? %>
+              | <%= I18n.t(:class_average, :results_average => h(assignment.results_average)) %>
+            <% end %>
           </span>
         </span>
       </li>
