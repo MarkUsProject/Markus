@@ -67,6 +67,7 @@ en:
     current_assignments:      "Current assignments:"
     due:                       "due :"
     no_assignments:            "There are currently no assignments."
+    class_average:             "Class Average: %{results_average}"
 
     # app/views/assignments/
     name: "Name"
@@ -307,6 +308,7 @@ en:
       marking_state:        "Marking State"
       grace_credits_used:   "Grace Credits Used"
       final_grade:          "Final Grade"
+      class_average:        "Class Average: %{results_average}"
       show_all:             "Show All"
       show_unmarked:        "Show Unmarked"
       show_partial:         "Show Partial"
