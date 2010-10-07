@@ -44,8 +44,8 @@
            else
              target_controller = controller.controller_name
            end %>
-        <% # If the current controller action is repo_browser, the drop down menu for assignments 
-           # should go to browse, and not repo_browser
+        <% # If the current controller action is repo_browser, the drop down 
+           # menu for assignments should go to browse, and not repo_browser
            if controller.action_name == 'repo_browser'
              controller.action_name = 'browse'
            end %> 
