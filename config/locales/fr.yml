@@ -117,6 +117,7 @@ fr:
         type:  "Type du projet"
         overall_comment: "Commentaire général : "
         group:
+            assign_over_limit: "Vous avez dépassé le nombre d'étudiant maximal pour le groupe %{group}"
             select_a_group: "Sélectionner un groupe"
             select_one_group: "Vous devez sélectionner au moins un groupe"
             select_only_one_group: "Vous ne pouvez assigner un étudiant qu'à un seul groupe."
@@ -465,6 +466,7 @@ fr:
       assigned_grouping_counts: "Assigné(s) (<span id=\"assigned_groupings_count\"></span>)"
       not_assigned_grouping_counts: "Non Assigné(s) (<span id=\"unassigned_groupings_count\"></span>)"
       problem: "Il y a un problème…"
+      warning: "Attention"
       lines_not_processed: "Les lignes suivantes n'ont pas pu être traitées : "
       loading_list: "Chargement de la liste…"
       editing_past_due_date_warning: " La date de retour de ce projet est passée. En conséquence, à part ajouter des correteurs aux groupes, il n'est pas recommendé d'effectuer d'autres modifications."
