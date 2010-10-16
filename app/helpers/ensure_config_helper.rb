@@ -121,9 +121,9 @@ module EnsureConfigHelper
       return
     #We got a URI, ensure its of proper format <>
     elsif logout_redirect.match('^http://|^https://').nil?
-      raise ( "The setting LOGOUT_REDIRECT with path %{path} is invalid. Only 'DEFAULT', " +
+      raise ( "LOGOUT_REDIRECT value #{logout_redirect} is invalid. Only 'DEFAULT', " +
               "'NONE' or addresses beginning with http:// or https:// are valid values. " +
-              "Please double check the setting in config/environments/#{Rails.env}.rb" )
+              "Please double check configuration in config/environments/#{Rails.env}.rb" )
     end
   end
 
