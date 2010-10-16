@@ -97,7 +97,7 @@ module EnsureConfigHelper
     # Get DB connection back
     ActiveRecord::Base.establish_connection(con_identifier)
     if error.length != 0
-      if error =~ /Errno::ENOENT/
+      if error =~ /(Errno::ENOENT)|(Permission denied)/
         raise I18n.t("ensure_config.file_does_not_execute", :constant_name => constant_name, :file_name => filename, :config_location => "config/environments/#{Rails.env}.rb")
       else
         # This may not indicate an error (maybe just authentication failed and something
