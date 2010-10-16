@@ -80,7 +80,9 @@ class ResultsController < ApplicationController
       end
     end
     m_logger = MarkusLogger.instance
-    m_logger.log(I18n.t("markus_logger.user_viewed_submission", :user_name => current_user.user_name, :group_name => @group.group_name, :submission_id => @submission.id, :assignment => @assignment.short_identifier))
+    m_logger.log("User '#{current_user.user_name}' viewed submission (id: #{@submission.id})" +
+                 "of assignment '#{@assignment.short_identifier}' for group '" +
+                 "#{@group.group_name}'")
 
   end
 
@@ -102,13 +104,11 @@ class ResultsController < ApplicationController
     m_logger = MarkusLogger.instance
     assignment = @result.submission.assignment
     if params[:value] == 'true'
-      m_logger.log(I18n.t("markus_logger.marks_released_for_assignment",
-                            :assignment_id => assignment.id,
-                            :assignment => assignment.short_identifier, :number_groups => 1))
+      m_logger.log("Marks released for assignment '#{assignment.short_identifier}', ID: '" +
+                   "#{assignment.id}' (for 1 group).")
     else
-      m_logger.log(I18n.t("markus_logger.marks_unreleased_for_assignment",
-                            :assignment_id => assignment.id,
-                            :assignment => assignment.short_identifier, :number_groups => 1))
+      m_logger.log("Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" +
+                   "#{assignment.id}' (for 1 group).")
     end
   end
   
@@ -216,17 +216,16 @@ class ResultsController < ApplicationController
              :locals => {:mark_id => result_mark.id,:mark_error =>result_mark.errors.full_messages.join}
     else
       if !result_mark.save
-          m_logger.log(I18n.t('markus_logger.user_update_mark_submission_fail',
-                        { :user_name => current_user.user_name, 
-                          :submission_id => submission.id, :group_name => group.group_name,
-                          :assignment => assignment.short_identifier}), MarkusLogger::ERROR)
+          m_logger.log("Error while trying to update mark of submission. User: '" +
+                       "#{current_user.user_name}', Submission ID: '#{submission.id}'," +
+                       " Assignment: '#{assignment.short_identifier}', Group: '#{group.group_name}'.",
+                       MarkusLogger::ERROR)
           render :partial => 'shared/handle_error', 
                  :locals => {:error => I18n.t('mark.error.save') + result_mark.errors.full_messages.join}
       else
-          m_logger.log(I18n.t('markus_logger.user_update_mark_submission',
-                        { :user_name => current_user.user_name, 
-                          :submission_id => submission.id, :group_name => group.group_name,
-                          :assignment => assignment.short_identifier}), MarkusLogger::INFO)
+          m_logger.log("User '#{current_user.user_name}' updated mark for submission (id: " +
+                       "#{submission.id}) of assignment '#{assignment.short_identifier}' for group" +
+                       " '#{group.group_name}'.", MarkusLogger::INFO)
           render :partial => 'results/marker/update_mark',
                  :locals => { :result_mark => result_mark, :mark_value => result_mark.mark}
       end
@@ -271,8 +270,8 @@ class ResultsController < ApplicationController
       @marks_map[criterion.id] = mark
     end
     m_logger = MarkusLogger.instance
-    m_logger.log(I18n.t('markus_logger.student_viewed_result', :user_name => current_user.user_name,
-                                                      :assignment => @assignment.short_identifier))
+    m_logger.log("Student '#{current_user.user_name}' viewed results for assignment " +
+                 "'#{@assignment.short_identifier}'.")
   end
   
   def add_extra_mark

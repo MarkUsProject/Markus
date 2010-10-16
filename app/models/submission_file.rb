@@ -102,15 +102,15 @@ class SubmissionFile < ActiveRecord::Base
     #Remove any old copies of this image if they exist
     FileUtils.remove_file(file_path, true) if File.exists?(file_path)
 
-    m_logger.log(I18n.t("markus_logger.begin_conversion"))
+    m_logger.log("Starting pdf conversion")
     # ImageMagick can only save images with heights not exceeding 65500 pixels.
     # Larger images result in a conversion failure.
     begin
       #This is an ImageMagick command, see http://www.imagemagick.org/script/convert.php for documentation
       `convert -limit memory #{MarkusConfigurator.markus_config_pdf_conv_memory_allowance} -limit map 0 -density 150 -resize 66% #{storage_path}/#{self.filename} -append #{file_path}`
-      m_logger.log(I18n.t("markus_logger.pdf_convert_success"))
+      m_logger.log("Successfully converted pdf file to jpg")
     rescue Exception => e
-      m_logger.log(I18n.t("markus_logger.pdf_convert_failed"))
+      m_logger.log("Pdf file couldn't be converted")
     end
 
     FileUtils.remove_file(File.join(storage_path, self.filename), true)
@@ -141,7 +141,7 @@ class SubmissionFile < ActiveRecord::Base
   #This will overwrite any files with the same name in the storage path.
   def export_file(storage_path)
     m_logger = MarkusLogger.instance
-    m_logger.log(I18n.t("markus_logger.begin_export_file", :file => self.filename))
+    m_logger.log("Exporting #{self.filename} from student repository")
     temp_dir = File.join(storage_path, 'temp_export')
     begin
       #Create the storage directories if they dont already exist
@@ -154,7 +154,7 @@ class SubmissionFile < ActiveRecord::Base
     ensure
       FileUtils.remove_dir(temp_dir, true) if File.exists?(temp_dir)      
     end
-    m_logger.log(I18n.t("markus_logger.success_export_file", :file => self.filename))
+    m_logger.log("Successfuly exported #{self.filename} from student repository")
   end
 
   private
