@@ -1,3 +1,6 @@
+# Required for filtering locale prefixed requests
+require 'routing_filter'
+
 ActionController::Routing::Routes.draw do |map|
   # The priority is based upon order of creation: first created -> highest priority.
 
@@ -32,6 +35,10 @@ ActionController::Routing::Routes.draw do |map|
 
   # You can have the root of your site routed with map.root -- just remember to delete public/index.html.
   # map.root :controller => "welcome"
+
+  # Requests are prefixed with a locale. This
+  # makes sure that it doesn't confuse controllers.
+  map.filter :locale
 
   # See how all your routes lay out with "rake routes"
 
