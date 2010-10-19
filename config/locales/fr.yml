@@ -540,6 +540,7 @@ fr:
 
     # Student's View
     students:
+      processing: "Chargement..."
       manage_students: "Gestion des étudiants"
       edit_student:    "Modification d'un étudiant"
       edit_success: "%{user_name} a été mis à jour."
