@@ -88,21 +88,6 @@ h4{
   border-bottom: 1px solid #000;
 }
 
-#lang_chooser {
-  float: left;
-  display: inline;
-  margin-right: 35px;
-  border-right: 1px solid #000;
-  border-left: 1px solid #000;
-  padding-left: 3px;
-}
-
-#lang_chooser select {
-  height: 15px;
-  border: none;
-  font-size: smaller;
-}
-
 #user_info{
   float: right;
   margin-right: 3px;
