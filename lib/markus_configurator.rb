@@ -220,4 +220,12 @@ module MarkusConfigurator
     end
   end
 
+  def markus_config_default_language
+    if defined? MARKUS_DEFAULT_LANGUAGE
+      return MARKUS_DEFAULT_LANGUAGE
+    else
+      return 'en'
+    end
+  end
+
 end
