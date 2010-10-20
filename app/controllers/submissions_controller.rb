@@ -6,10 +6,11 @@ class SubmissionsController < ApplicationController
   
   before_filter    :authorize_only_for_admin, :except => [:populate_file_manager, :browse,
   :index, :file_manager, :update_files, 
-  :download, :s_table_paginate, :collect_and_begin_grading, 
-  :manually_collect_and_begin_grading, :repo_browser, :populate_repo_browser, :update_converted_pdfs]
+  :download, :s_table_paginate, :collect_and_begin_grading,
+  :manually_collect_and_begin_grading, :collect_ta_submissions, :repo_browser,
+  :populate_repo_browser, :update_converted_pdfs]
   before_filter    :authorize_for_ta_and_admin, :only => [:browse, :index, :s_table_paginate, :collect_and_begin_grading, 
-  :manually_collect_and_begin_grading, :repo_browser, :populate_repo_browser, :update_converted_pdfs]
+  :manually_collect_and_begin_grading, :collect_ta_submissions, :repo_browser, :populate_repo_browser, :update_converted_pdfs]
   before_filter    :authorize_for_student, :only => [:file_manager, :populate_file_manager, :update_files]
   before_filter    :authorize_for_user, :only => [:download]
   
@@ -198,6 +199,25 @@ class SubmissionsController < ApplicationController
     else
       submission_collector = SubmissionCollector.instance
       submission_collector.push_groupings_to_queue(assignment.groupings)
+      flash[:success] = I18n.t("collect_submissions.collection_job_started",
+        :assignment_identifier => assignment.short_identifier)
+    end
+    redirect_to :action => 'browse', :id => assignment.id
+  end
+
+  def collect_ta_submissions
+    assignment = Assignment.find(params[:id])
+    if !assignment.submission_rule.can_collect_now?
+      flash[:error] = I18n.t("collect_submissions.could_not_collect",
+        :assignment_identifies => assignment.short_identifier)
+    else
+      memberships = assignment.ta_memberships.find_all_by_user_id(current_user.id)
+      groupings = Array.new
+      memberships.each do |membership|
+        groupings.push Grouping.find(membership.grouping_id)
+      end
+      submission_collector = SubmissionCollector.instance
+      submission_collector.push_groupings_to_queue(groupings)
       flash[:success] = I18n.t("collect_submissions.collection_job_started",
         :assignment_identifier => assignment.short_identifier)
     end
