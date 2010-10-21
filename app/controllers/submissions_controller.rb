@@ -211,11 +211,8 @@ class SubmissionsController < ApplicationController
       flash[:error] = I18n.t("collect_submissions.could_not_collect",
         :assignment_identifies => assignment.short_identifier)
     else
-      memberships = assignment.ta_memberships.find_all_by_user_id(current_user.id)
-      groupings = Array.new
-      memberships.each do |membership|
-        groupings.push Grouping.find(membership.grouping_id)
-      end
+
+      groupings = assignment.groupings.find(:all, :include => :tas, :conditions => ["users.id = ?", current_user.id])
       submission_collector = SubmissionCollector.instance
       submission_collector.push_groupings_to_queue(groupings)
       flash[:success] = I18n.t("collect_submissions.collection_job_started",

@@ -34,7 +34,7 @@
 
  <% end %>
 
-  <% if @current_user.ta? and @assignment.past_due_date? %>
+  <% if @current_user.ta? and @assignment.past_collection_date? %>
   <%= link_to I18n.t("collect_submissions.collect_ta"),
     {:controller => 'submissions', :action => 'collect_ta_submissions',
     :id => @assignment.id},
