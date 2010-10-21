@@ -24,5 +24,6 @@ group :development, :test do
   gem "factory_data_preloader"
   gem "time-warp"
   gem "ruby-debug"
+  gem "mocha"
   gem 'sqlite3-ruby', :require => 'sqlite3'
 end
