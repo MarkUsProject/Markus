@@ -69,20 +69,21 @@ class User < ActiveRecord::Base
       m_logger = MarkusLogger.instance
       case $?.exitstatus
         when 0
-          m_logger.log(I18n.t("markus_logger.user_login_message", :user_name => login), MarkusLogger::INFO)
+          m_logger.log("User '#{login}' logged in.", MarkusLogger::INFO)
           return AUTHENTICATE_SUCCESS
         when 1
-          m_logger.log(I18n.t("markus_logger.user_wrong_credentials", :user_name => login), MarkusLogger::ERROR)
+          m_logger.log("Login failed. Reason: No such user '#{login}'.", MarkusLogger::ERROR)
           return AUTHENTICATE_NO_SUCH_USER
         when 2
-          m_logger.log(I18n.t("markus_logger.user_wrong_credentials", :user_name => login), MarkusLogger::ERROR)
+          m_logger.log("Wrong username/password: User '#{login}'.", MarkusLogger::ERROR)
           return AUTHENTICATE_BAD_PASSWORD
         else
-          m_logger.log(I18n.t("markus_logger.user_login_error", :user_name => login),MarkusLogger::ERROR)
+          m_logger.log("User '#{login}' failed to log in.", MarkusLogger::ERROR)
           return AUTHENTICATE_ERROR
       end
     else
-      m_logger.log(I18n.t("markus_logger.user_login_error", :user_name => login),MarkusLogger::ERROR)
+      m_logger.log("User '#{login}' failed to log in. Username/password contained " +
+                   "illegal characters", MarkusLogger::ERROR)
       return AUTHENTICATE_BAD_CHAR
     end
   end

@@ -37,7 +37,8 @@ module EnsureConfigHelper
   def self.check_in_writable_dir( filename, constant_name )
     dir = Pathname.new( filename ).dirname
     if ! File.writable?(dir)
-      raise I18n.t("ensure_config.path_not_writable", :constant_name => constant_name, :file_name => dir, :config_location => "config/environments/#{Rails.env}.rb")
+      raise ( "The setting #{constant_name} with path #{dir} is not writable. Please double" +
+              " check the setting in config/environments/#{Rails.env}.rb" )
     end
   end
   
@@ -46,7 +47,8 @@ module EnsureConfigHelper
   def self.check_in_readable_dir( filename, constant_name )
     dir = Pathname.new( filename ).dirname
     if ! File.readable?( dir )
-      raise I18n.t("ensure_config.path_not_readable", :constant_name => constant_name, :file_name => dir, :config_location => "config/environments/#{Rails.env}.rb")
+      raise ( "The setting #{constant_name} with path #{dir} is not readable. Please double" +
+              " check the setting in config/environments/#{Rails.env}.rb" )
     end
   end
   
@@ -55,7 +57,8 @@ module EnsureConfigHelper
   def self.check_in_executable_dir( filename, constant_name )
     dir = Pathname.new( filename ).dirname
     if ! File.executable?( dir )
-      raise I18n.t("ensure_config.path_not_executable", :constant_name => constant_name, :file_name => dir, :config_location => "config/environments/#{Rails.env}.rb")
+      raise ( "The setting #{constant_name} with path #{dir} is not executable. Please double " +
+              "check the setting in config/environments/#{Rails.env}.rb" )
     end
   end
 
@@ -63,7 +66,8 @@ module EnsureConfigHelper
   # an exception if it is not
   def self.check_writable( filename, constant_name )
     if ! File.writable?(filename)
-      raise I18n.t("ensure_config.path_not_writable", :constant_name => constant_name, :file_name => filename, :config_location => "config/environments/#{Rails.env}.rb")
+      raise ( "The setting #{constant_name} with path #{filename} is not writable. Please double" +
+              " check the setting in config/environments/#{Rails.env}.rb" )
     end
   end
   
@@ -71,7 +75,8 @@ module EnsureConfigHelper
   # an exception if it is not
   def self.check_readable( filename, constant_name )
     if ! File.readable?(filename)
-      raise I18n.t("ensure_config.path_not_readable", :constant_name => constant_name, :file_name => filename, :config_location => "config/environments/#{Rails.env}.rb")
+      raise ( "The setting #{constant_name} with path #{filename} is not readable. Please double" +
+              " check the setting in config/environments/#{Rails.env}.rb" )
     end
   end
   
@@ -79,7 +84,8 @@ module EnsureConfigHelper
   # an exception if it is not.
   def self.check_executable( filename, constant_name )
     if ! File.executable?(filename)
-      raise I18n.t("ensure_config.path_not_executable", :constant_name => constant_name, :file_name => filename, :config_location => "config/environments/#{Rails.env}.rb")
+      raise ( "The setting #{constant_name} with path #{filename} is not executable. Please double " +
+              "check the setting in config/environments/#{Rails.env}.rb" )
     end
   end
   
@@ -98,11 +104,13 @@ module EnsureConfigHelper
     ActiveRecord::Base.establish_connection(con_identifier)
     if error.length != 0
       if error =~ /(Errno::ENOENT)|(Permission denied)/
-        raise I18n.t("ensure_config.file_does_not_execute", :constant_name => constant_name, :file_name => filename, :config_location => "config/environments/#{Rails.env}.rb")
+        raise ( "The setting #{constant_name} with path #{filename} is not executable. Please double " +
+                "check the setting in config/environments/#{Rails.env}.rb" )
       else
         # This may not indicate an error (maybe just authentication failed and something
         # was printed to stderr). Log this, but do no more.
-        $stderr.puts I18n.t("ensure_config.error_writing_to_pipe", :error => error, :file_name => filename, :config_location => "config/environments/#{Rails.env}.rb")
+        $stderr.puts "Error writing to pipe. #{filename}, #{error}. Please double check the" +
+                     " setting in config/environments/#{Rails.env}.rb"
       end
     end
   end
@@ -113,7 +121,9 @@ module EnsureConfigHelper
       return
     #We got a URI, ensure its of proper format <>
     elsif logout_redirect.match('^http://|^https://').nil?
-      raise I18n.t("ensure_config.invalid_logout_redirect", :path => logout_redirect, :config_location => "config/environments/#{Rails.env}.rb")
+      raise ( "LOGOUT_REDIRECT value #{logout_redirect} is invalid. Only 'DEFAULT', " +
+              "'NONE' or addresses beginning with http:// or https:// are valid values. " +
+              "Please double check configuration in config/environments/#{Rails.env}.rb" )
     end
   end
 

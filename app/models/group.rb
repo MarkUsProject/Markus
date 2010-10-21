@@ -86,8 +86,9 @@ class Group < ActiveRecord::Base
       # log the collision
       errors.add_to_base(self.repo_name)
       m_logger = MarkusLogger.instance
-      m_logger.log(I18n.t("markus_logger.group_repo_collision", :group_name => self.group_name,
-                                :repo_name => self.repo_name, :error => e.message ), MarkusLogger::ERROR)
+      m_logger.log("Creating group '#{self.group_name}' caused repository collision " +
+                   "(Repository name was: '#{self.repo_name}'). Error message: '#{e.message}'",
+                   MarkusLogger::ERROR)
     end
 
     # Each admin user will have read and write permissions on each repo
