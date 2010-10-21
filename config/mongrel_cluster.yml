@@ -1,8 +1,0 @@
-# mongrel_cluster configuration
-#
-log_file: log/mongrel.log
-port: "8000"
-environment: production
-address: localhost
-pid_file: tmp/pids/mongrel.pid
-servers: 3
