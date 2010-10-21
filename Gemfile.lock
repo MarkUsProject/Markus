@@ -23,6 +23,8 @@ GEM
     i18n (0.4.1)
     linecache (0.43)
     machinist (1.0.6)
+    mocha (0.9.8)
+      rake
     mongrel (1.1.5)
       cgi_multipart_eof_fix (>= 2.4)
       daemons (>= 1.0.3)
@@ -63,6 +65,7 @@ DEPENDENCIES
   fastercsv
   i18n
   machinist
+  mocha
   mongrel_cluster
   rails (= 2.3.8)
   ruby-debug
