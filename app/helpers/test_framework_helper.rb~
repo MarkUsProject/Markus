@@ -145,6 +145,7 @@ module TestFrameworkHelper
       if not @current_user.accepted_groupings.include?(@grouping)
         return false
       end
+debugger
       t = @grouping.token
       if t == nil
         raise I18n.t("test_framework.missing_tokens")
