@@ -15,7 +15,7 @@ Rails::Initializer.run do |config|
   # Only load the plugins named here, in the order given. By default, all plugins
   # in vendor/plugins are loaded in alphabetical order.
   # :all can be used as a placeholder for all plugins not explicitly named
-  config.plugins = [ :ssl_requirement, :auto_complete, :calendar_date_select, :all ]
+  config.plugins = [ :ssl_requirement, :auto_complete, :calendar_date_select ]
 
   # Set this if MarkUs is not hosted under / of your Web-host.
   # E.g. if MarkUs should be accessible by http://yourhost.com/markus/instance0
@@ -29,6 +29,9 @@ Rails::Initializer.run do |config|
   # Having a default time-zone configured is required, in order to have Time.zone available,
   # which is used in the assignments_controller.rb
   config.time_zone = 'Eastern Time (US & Canada)'
+
+  # Bundler handles our gem dependencies
+  config.gem 'bundler', :version => ">=1.0.0", :source => "http://rubygems.org"
 
   # We need some additional load paths (e.g. for the API)
   #   Note for developers: in Ruby %W( a b c ) is equivalent to [ 'a', 'b', 'c' ]

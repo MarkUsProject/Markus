@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 require 'shoulda'
+require 'time-warp'
 
 class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
   fixtures :all
