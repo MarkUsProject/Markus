@@ -23,6 +23,11 @@ function injectFileInput() {
 }
 
 function check_change_of_filename(file_name, new_file_name, file_input) {
+  /* new_file_name may include device identifiers and other things */
+  slash = new_file_name.lastIndexOf("/");
+  if (slash != -1) {
+    new_file_name = new_file_name.substring(slash);
+  }
   if(file_name != new_file_name) {
     alert("You cannot replace " + file_name + " with " + new_file_name + ".  You must replace a file with a file with the same name.");
     $(file_input).setValue('');
