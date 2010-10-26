@@ -332,6 +332,16 @@ class GroupsController < ApplicationController
     end
     @groupings_data = construct_table_rows([grouping], @assignment)
     @students_data = construct_student_table_rows(students, @assignment)
+    
+    # Generate warning if the number of people assigned to a group exceeds
+    # the maximum size of a group
+    students_in_group = grouping.student_membership_number
+    group_name = grouping.group.group_name
+    if students_in_group > assignment.group_max
+      @warning = I18n.t("assignment.group.assign_over_limit",
+        :group => group_name)
+    end
+    
     render :action => "add_members"
     return
   end

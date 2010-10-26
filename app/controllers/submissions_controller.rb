@@ -307,7 +307,7 @@ class SubmissionsController < ApplicationController
         # delete files marked for deletion
         delete_files.keys.each do |filename|
           txn.remove(File.join(assignment_folder, filename), file_revisions[filename])
-          log_messages.push(I18n.t("markus_logger.student_deleted_file", :user_name => current_user.user_name, :file_name => filename, :assignment => assignment.short_identifier))
+          log_messages.push("Student '#{current_user.user_name}' deleted file '#{filename}' for assignment '#{assignment.short_identifier}'.")
         end
 
         # Replace files
@@ -316,7 +316,7 @@ class SubmissionsController < ApplicationController
           # In order to avoid empty uploaded files, rewind it to be save.
           file_object.rewind
           txn.replace(File.join(assignment_folder, filename), file_object.read, file_object.content_type, file_revisions[filename])
-          log_messages.push(I18n.t("markus_logger.student_replaced_file", :user_name => current_user.user_name, :file_name => filename, :assignment => assignment.short_identifier))
+          log_messages.push("Student '#{current_user.user_name}' replaced content of file '#{filename}' for assignment '#{assignment.short_identifier}'.")
         end
 
         # Add new files
@@ -329,7 +329,7 @@ class SubmissionsController < ApplicationController
           # In order to avoid empty uploaded files, rewind it to be save.
           file_object.rewind
           txn.add(File.join(assignment_folder, sanitize_file_name(file_object.original_filename)), file_object.read, file_object.content_type)
-          log_messages.push(I18n.t("markus_logger.student_submitted_file", :user_name => current_user.user_name, :file_name => file_object.original_filename, :assignment => assignment.short_identifier))
+          log_messages.push("Student '#{current_user.user_name}' submitted file '#{file_object.original_filename}' for assignment '#{assignment.short_identifier}'.")
         end
 
         # finish transaction
@@ -420,16 +420,12 @@ class SubmissionsController < ApplicationController
     log_message = ""       
     if !params[:release_results].nil?
       changed = set_release_on_results(groupings, true, errors)
-      log_message = I18n.t("markus_logger.marks_released_for_assignment",
-                            :assignment_id => assignment.id,
-                            :assignment => assignment.short_identifier,
-                            :number_groups => changed)
+      log_message = "Marks released for assignment '#{assignment.short_identifier}', ID: '" + 
+                    "#{assignment.id}' (for #{changed} groups)."
     elsif !params[:unrelease_results].nil?
       changed = set_release_on_results(groupings, false, errors)
-      log_message = I18n.t("markus_logger.marks_unreleased_for_assignment",
-                            :assignment_id => assignment.id,
-                            :assignment => assignment.short_identifier,
-                            :number_groups => changed)
+      log_message = "Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" + 
+                    "#{assignment.id}' (for #{changed} groups)."
     end
 
 
@@ -457,10 +453,8 @@ class SubmissionsController < ApplicationController
       end
       m_logger = MarkusLogger.instance
       assignment = Assignment.find(params[:id])
-      m_logger.log(I18n.t("markus_logger.marks_unreleased_for_assignment",
-                  :assignment_id => assignment.id,
-                  :assignment => assignment.short_identifier,
-                  :number_groups => params[:groupings].length))
+      m_logger.log("Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" +
+                   "#{assignment.id}' (for #{params[:groupings].length} groups).")
     end
     redirect_to :action => 'browse', :id => params[:id]
   end

@@ -117,6 +117,7 @@ fr:
         type:  "Type du projet"
         overall_comment: "Commentaire général : "
         group:
+            assign_over_limit: "Vous avez dépassé le nombre d'étudiant maximal pour le groupe %{group}"
             select_a_group: "Sélectionner un groupe"
             select_one_group: "Vous devez sélectionner au moins un groupe"
             select_only_one_group: "Vous ne pouvez assigner un étudiant qu'à un seul groupe."
@@ -391,65 +392,6 @@ fr:
     stopping_collection_process: "Arrêt du processus de récupération..."
     converting_pdfs: "Conversion des PDFS...%{converted}/%{total}"
 
-    markus_logger:
-        user_login_message: "L'utilisateur '%{user_name}' s'est connecté."
-        user_wrong_credentials: "Mauvaise combinaison utilisateur/mot de passe pour '%{user_name}'."
-        user_login_error: "L'utilisateur '%{user_name}' n'a pas pu se connecter."
-        user_logout_message: "L'utilisateur '%{user_name}' s'est déconnecté."
-        assignment_creation_success: "Le projet '%{assignment}' a été créé."
-        assignment_creation_failure: "La création du projet '%{assignment}' a échoué : '%{error}' (utilisateur : '%{user_name}')."
-        assignment_grouping_creation_success:  "Un groupe avec l'étudiant '%{student}' pour le projet '%{id}' ayant pour nom '%{name}' a été créé."
-        assignment_edit_success: "Le projet '%{id}' ayant pour nom '%{name}' a été édité."
-        assignment_edit_failure: "Erreur durant l'édition du projet '%{id}' ayant pour nom '%{name}': '%{error}'."
-        student_accepted_invitation: "L'étudiant '%{user_name}' a rejoint le groupe '%{group}' (invitation acceptée)."
-        student_invited_student: "L'étudiant '%{inviter}' a invité '%{invitee}'."
-        student_cancelled_invitation: "L'étudiant '%{inviter}' a annulé l'inviation pour '%{invitee}'."
-        student_declined_invitation: "L'étudiant '%{user_name}' a décliné l'invitation pour le groupe '%{group}'."
-        student_invitation_failure: "L'étudiant '%{inviter}' n'a pas réussi à inviter '%{invitee}'. Erreur : '%{error}'."
-        student_created_group: "L'étudiant '%{user_name}' a créé un groupe."
-        student_create_group_fail: "Échec pour la création du groupe. Utilisateur : '%{user_name}', Erreur : '%{error}'."
-        student_deleted_group: "L'étudiant '%{user_name}' a supprimé le groupe '%{group}'."
-        student_delete_group_fail: "Échec dans la suppression du groupe '%{group}'. Utilisateur : '%{user_name}', Erreur : '%{error}'."
-        student_delete_group_fail_no_grouping: "Échec de la suppression du groupe, car aucun groupe n'a accepté l'étudiant. Utilisateur : '%{user_name}', Erreur: '%{error}'."
-
-        annotation_created: "Annotation '%{annotation}' créée par '%{user_name}'."
-        ta_annotation_reused: "L'annotation '%{annotation}' a été réutilisée par '%{user_name}'."
-        user_viewed_submission: "L'utilisateur '%{user_name}' a regardé l'envoi (id: %{submission_id}) pour le projet '%{assignment}' du groupe '%{group_name}'."
-        user_update_mark_submission: "L'utilisateur '%{user_name}' a mis à jour les notes pour le fichier (id: %{submission_id}) du projet '%{assignment}' du groupe '%{group_name}'."
-        user_update_mark_submission_fail: "Erreur durant la mise à jour des notes pour le projet. Utilisateur : '%{user_name}', Id de l'envoi : '%{submission_id}', Projet : '%{assignment}', Groupe : '%{group_name}'."
-        marks_released_for_assignment: "Les notes sont affichées pour le projet '%{assignment}', ID : '%{assignment_id}' (pour  %{number_groups} groupes)."
-        marks_unreleased_for_assignment: "Les notes ne sont pas affichées pour le projet '%{assignment}', ID : '%{assignment_id}' (pour %{number_groups} groupes)."
-        student_submitted_file: "L'étudiant '%{user_name}' a envoyé le fichier '%{file_name}' pour le projet '%{assignment}'."
-        student_deleted_file: "L'étudiant '%{user_name}' a supprimé le fichier '%{file_name}' pour le projet '%{assignment}'."
-        student_replaced_file: "L'étudiant '%{user_name}' a remplacé le contenu du fichier '%{file_name}' pour le projet '%{assignment}'."
-        student_viewed_result: "L'étudiant '%{user_name}' a vu les résultats pour le projet '%{assignment}'."
-        group_repo_collision: "La création du groupe '%{group_name}' a créé un conflit dans les répertoires (Le nom du répertoire était : '%{repo_name}'). Message d'erreur : '%{error}'"
-        marks_released_for_grade_entry_form: "Les notes ont été affichées pour la feuille de notes '%{grade_entry_form}', ID: '%{grade_entry_form_id}' (pour %{number_students} étudiants)."
-        marks_unreleased_for_grade_entry_form: "Les notes ont été cachées pour la feuille de notes '%{grade_entry_form}', ID: '%{grade_entry_form_id}' (pour %{number_students} étudiants)."
-
-        begin_export_file: "Exporter le fichier %{file} du répertoire de l'étudiant"
-        success_export_file: "%{file} a bien été exporté du répertoire de l'étudiant"
-        begin_conversion: "Commencer la conversion"
-        pdf_convert_success: "Le PDF a bien été converti en jpg"
-        pdf_convert_failed: "Le PDF n'a pas pu être converti"
-
-        done_collecting_submissions: "Récupération achevée"
-        collection_starting: "Récupération en cours : %{short_id} pour le groupe '%{grouping_id}'"
-        check_for_subm_collect: "Vérifier si une récupération est déjà en cours."
-        subm_collect_still_running: "Processus de récupération encore actif, ne rien faire !"
-
-        subm_collect:
-          enter_block: "Le processus de récupération va maintenant exécuter le bloc de code donné"
-          exit_block: "Le processus de récupération a fini d'exécuter le bloc de code donné"
-          parent_requested_stop: "Le processus de récupération va mainteant s'arrêter par order du processus parent."
-          est_db_connection: "Le processus de récupération s'est connecté à la base de données"
-
-    ensure_config:
-      invalid_logout_redirect: "The setting LOGOUT_REDIRECT with path %{path} is invalid. Only 'DEFAULT', 'NONE' or addresses beginning with http:// or https:// are valid values. Please double check the setting in %{config_location}"
-      path_not_writable: "The setting %{constant_name} with path %{file_name} is not writable. Please double check the setting in %{config_location}."
-      path_not_readable: "The setting %{constant_name} with path %{file_name} is not readable. Please double check the setting in %{config_location}."
-      file_does_not_execute: "The setting %{constant_name} with path %{file_name} does not execute properly. Please double check the setting in %{config_location}."
-      error_writing_to_pipe: "Erreur lors de l'écriture dans le pipe. %{file_name}, %{error}. Veuillez vérifier les paramètres dans %{config_location}."
     groups:
       groups: "Groupes"
       manage_groups: "Gérer les groupes"
@@ -465,6 +407,7 @@ fr:
       assigned_grouping_counts: "Assigné(s) (<span id=\"assigned_groupings_count\"></span>)"
       not_assigned_grouping_counts: "Non Assigné(s) (<span id=\"unassigned_groupings_count\"></span>)"
       problem: "Il y a un problème…"
+      warning: "Attention"
       lines_not_processed: "Les lignes suivantes n'ont pas pu être traitées : "
       loading_list: "Chargement de la liste…"
       editing_past_due_date_warning: " La date de retour de ce projet est passée. En conséquence, à part ajouter des correteurs aux groupes, il n'est pas recommendé d'effectuer d'autres modifications."
@@ -542,6 +485,7 @@ fr:
 
     # Student's View
     students:
+      processing: "Chargement..."
       manage_students: "Gestion des étudiants"
       edit_student:    "Modification d'un étudiant"
       edit_success: "%{user_name} a été mis à jour."
