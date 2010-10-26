@@ -1,7 +1,8 @@
 <% content_for :head do %>
-	<%= javascript_include_tag "Bluff/js-class.js" %>
-	<%= javascript_include_tag "Bluff/bluff.js" %>
-	<%= javascript_include_tag "Bluff/excanvas.js" %>
+	<%= javascript_include_tag "Bluff/js-class.js",
+ 		"Bluff/bluff.js",
+		"Bluff/excanvas.js",
+		:cache => "bluff_cache"	%>
 <% end %>
 
 <% if !@current_user.student? and
