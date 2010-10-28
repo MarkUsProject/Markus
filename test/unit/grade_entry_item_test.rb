@@ -19,6 +19,7 @@ class GradeEntryItemTest < ActiveSupport::TestCase
 
   should validate_numericality_of(:out_of).with_message(I18n.t('grade_entry_forms.invalid_column_out_of'))
 
+  should allow_value(0).for(:out_of)
   should allow_value(1).for(:out_of)
   should allow_value(2).for(:out_of)
   should allow_value(100).for(:out_of)

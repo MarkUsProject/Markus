@@ -11,7 +11,7 @@ class GradeEntryItem < ActiveRecord::Base
   
   validates_associated    :grade_entry_form
   
-  validates_numericality_of :out_of, :greater_than => 0, 
+  validates_numericality_of :out_of, :greater_than_or_equal_to => 0, 
                             :message => I18n.t('grade_entry_forms.invalid_column_out_of')                          
   validates_uniqueness_of   :name, :scope => :grade_entry_form_id, 
                             :message => I18n.t('grade_entry_forms.invalid_name')
