@@ -969,7 +969,7 @@ en:
       pm: 'pm'
 
     #app/views/assignments/_read.html.erb
-    no_grader_assigned: "No grader assigned yet."
+    no_grader_assigned: "Default grader: Course instructor(s)"
 
     locale_not_available: "%{locale} translation not available!"
     external_authentication_not_supported: "External authentication not supported on your platform!"
