@@ -455,10 +455,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                        :grade_entry_items => [@q1, @q2]}}
         end
         should assign_to :grade_entry_form
-        should "verify that the error message made it to the response" do
-          assert_match Regexp.new(I18n.t('grade_entry_forms.invalid_column_out_of')), @response.body
-        end
-        should respond_with :success
+        should set_the_flash.to(I18n.t('grade_entry_forms.create.success'))
+        should respond_with :redirect
       end
       
       context ":edit with valid properties, including an additional GradeEntryItem" do 
@@ -568,18 +566,15 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                         :grade_entry_items => [@q1, @q2]}}
         end
         should assign_to :grade_entry_form
-        should respond_with :success
+        should set_the_flash.to(I18n.t('grade_entry_forms.edit.success'))
+        should respond_with :redirect
         
-        should "verify that the error message made it to the response" do
-          assert_match Regexp.new(I18n.t('grade_entry_forms.invalid_column_out_of')), @response.body
-        end
-        
-        should "verify that the property values were not updated" do
+        should "verify that the property values were actually updated" do
           g = GradeEntryForm.find(@grade_entry_form.id)
-          assert_equal @original.short_identifier, g.short_identifier
-          assert_equal @original.description, g.description
-          assert_equal @original.message, g.message
-          assert_equal @original.grade_entry_items, g.grade_entry_items
+          assert_equal NEW_SHORT_IDENTIFIER, g.short_identifier
+          assert_equal NEW_DESCRIPTION, g.description
+          assert_equal NEW_MESSAGE, g.message
+          assert_equal [@q1, @q2], g.grade_entry_items
         end
       end
       
