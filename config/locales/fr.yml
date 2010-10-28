@@ -969,7 +969,7 @@ fr:
       pm: 'pm'
 
     #app/views/assignments/_read.html.erb
-    no_grader_assigned: "Pas de correcteur pour l'instant."
+    no_grader_assigned: "Correcteur par défaut : Enseignant chargé du cours."
 
     locale_not_available: "La traduction %{locale} n'est pas disponible"
     external_authentication_not_supported: "L'authentification externe n'est pas supportée sur votre plateforme"
