@@ -209,9 +209,8 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.find(params[:id])
     if !assignment.submission_rule.can_collect_now?
       flash[:error] = I18n.t("collect_submissions.could_not_collect",
-        :assignment_identifies => assignment.short_identifier)
+        :assignment_identifier => assignment.short_identifier)
     else
-
       groupings = assignment.groupings.find(:all, :include => :tas, :conditions => ["users.id = ?", current_user.id])
       submission_collector = SubmissionCollector.instance
       submission_collector.push_groupings_to_queue(groupings)
