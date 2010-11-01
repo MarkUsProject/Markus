@@ -1,3 +1,6 @@
+Changes for MarkUs 0.7.2:
+* Fix JavaScript replace file check
+
 Changes for MarkUs 0.7.1:
 * Bugfix for svn permissions with web submissions
 
