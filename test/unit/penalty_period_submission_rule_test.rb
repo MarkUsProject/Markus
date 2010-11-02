@@ -36,6 +36,37 @@ class PenaltyPeriodSubmissionRuleTest < ActiveSupport::TestCase
       destroy_repos
     end
 
+    should "not add any penalty to the submission result" do
+      pretend_now_is(Time.parse("July 20 2009 5:00PM")) do
+        assert Time.now < @assignment.due_date
+        assert Time.now < @assignment.submission_rule.calculate_collection_time
+        @group.access_repo do |repo|
+          txn = repo.get_transaction("test")
+          txn = add_file_helper(txn, 'TestFile.java', 'Some contents for TestFile.java')
+          txn = add_file_helper(txn, 'Test.java', 'Some contents for Test.java')
+          txn = add_file_helper(txn, 'Driver.java', 'Some contents for Driver.java')
+          repo.commit(txn)
+        end
+      end
+      # An Instructor or Grader decides to begin grading
+      pretend_now_is(Time.parse("July 28 2009 1:00PM")) do
+        submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
+        submission = @assignment.submission_rule.apply_submission_rule(submission)
+
+        # Assert that this submission did not get a penalty
+        result = submission.result
+        assert_not_nil result
+        assert result.extra_marks.empty?
+        assert_equal 0, result.get_total_extra_percentage
+
+        # We should have collected all files in the repository.
+        assert_not_nil submission.submission_files.find_by_filename("TestFile.java")
+        assert_not_nil submission.submission_files.find_by_filename("Test.java")
+        assert_not_nil submission.submission_files.find_by_filename("Driver.java")
+      end
+
+    end
+
     should "add a 10% penalty to the submission result" do
       # The Student submits some files before the due date...
 
