@@ -23,6 +23,22 @@ function injectFileInput() {
 }
 
 function check_change_of_filename(file_name, new_file_name, file_input) {
+  /************************************************************************
+   * Note: new_file_name may include device identifiers and may be preceded
+   *       by the full path to the file on the user's local system.
+   * Examples:
+   *     C:\\data\\folder\\file.txt  // '\' is a special char in JS
+   *     D:/data/school/program.py
+   *     /home/user/Documents/Class.java
+   *     core.c
+   ***********************************************************************/
+  // Unify path separator
+  new_file_name = new_file_name.replace(/\\/g, "/");
+  slash = new_file_name.lastIndexOf("/");
+  if (slash != -1) {
+    // Absolute path given, strip off preceding parts
+    new_file_name = new_file_name.substring(slash + 1);
+  }
   if(file_name != new_file_name) {
     alert("You cannot replace " + file_name + " with " + new_file_name + ".  You must replace a file with a file with the same name.");
     $(file_input).setValue('');
