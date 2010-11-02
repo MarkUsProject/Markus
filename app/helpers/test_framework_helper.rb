@@ -244,12 +244,20 @@ module TestFrameworkHelper
           FileUtils.cp(File.join(assignment_test_dir, file.filename), repo_assignment_test_dir)
         end
       else
-        FileUtils.cp_r(File.join(assignment_dir, "test"), File.join(repo_assignment_dir, "test"))
+        if (File.exists?(File.join(assignment_dir, "test")))
+          FileUtils.cp_r(File.join(assignment_dir, "test"), File.join(repo_assignment_dir, "test"))
+        end
       end
+
       # Copy the lib folder
-      FileUtils.cp_r(File.join(assignment_dir, "lib"), repo_assignment_dir)
+      if (File.exists?(File.join(assignment_dir, "lib")))
+        FileUtils.cp_r(File.join(assignment_dir, "lib"), repo_assignment_dir)
+      end
+
       # Copy the parse folder
-      FileUtils.cp_r(File.join(assignment_dir, "parse"), repo_assignment_dir)
+      if (File.exists?(File.join(assignment_dir, "parse")))
+        FileUtils.cp_r(File.join(assignment_dir, "parse"), repo_assignment_dir)
+      end
     else
       raise I18n.t("test_framework.dir_not_exist", {:dir => assignment_dir})
     end
