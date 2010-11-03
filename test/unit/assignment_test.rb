@@ -527,6 +527,108 @@ class AssignmentTest < ActiveSupport::TestCase
         assert_equal expected_string, a.get_detailed_csv_report, "Detailed CSV report is wrong!"
       end
     end
+
+    context "which is graded, with all grades under 100%" do
+      setup do
+        totals = [16.5, 16.0, 16.1, 15.5, 5.0, 7.0, 17.5, 17.0, 18.9, 28.0, 8.1, 25.2, 25.7, 4.3, 0, 10, 19.5, 27.0, 26.6, 0]
+
+        # create rubric creteria
+        rubric_criteria = [{:rubric_criterion_name => "Uses Conditionals", :weight => 1}, 
+          {:rubric_criterion_name => "Code Clarity", :weight => 2},
+          {:rubric_criterion_name => "Code Is Documented", :weight => 3},
+          {:rubric_criterion_name => "Uses For Loop", :weight => 1}]
+        default_levels = {:level_0_name => "Quite Poor",
+          :level_0_description => "This criterion was not satisifed whatsoever", 
+          :level_1_name => "Satisfactory",
+          :level_1_description => "This criterion was satisfied",
+          :level_2_name => "Good",
+          :level_2_description => "This criterion was satisfied well",
+          :level_3_name => "Great",
+          :level_3_description => "This criterion was satisfied really well!", 
+          :level_4_name => "Excellent", 
+          :level_4_description => "This criterion was satisfied excellently"}
+
+        rubric_criteria.each do |rubric_criteria|
+          rc = RubricCriterion.new
+          rc.update_attributes(rubric_criteria)
+          rc.update_attributes(default_levels)
+          rc.assignment = @assignment
+          rc.save
+        end
+
+        # create the groupings for each student in the assignment
+        (1..20).each do |index|
+          g = Grouping.make(:assignment => @assignment)
+          (1..3).each do
+            StudentMembership.make({:grouping => g, :membership_status => StudentMembership::STATUSES[:accepted]})
+          end
+          s = Submission.make(:grouping => g)
+          r = s.result
+          r.total_mark = totals[index - 1]
+          r.marking_state = Result::MARKING_STATES[:complete]
+          r.save
+        end
+      end
+
+      should "generate a correct grade distribution as percentage" do
+        a = @assignment
+        expected_distribution = [2,0,0,2,1,1,0,1,0,0,0,4,2,2,0,0,0,1,2,2]
+        expected_distribution_ten_intervals = [2,2,2,1,0,4,4,0,1,4]
+        assert_equal expected_distribution, a.grade_distribution_as_percentage, "Default grade distribution is wrong!"
+        assert_equal expected_distribution_ten_intervals, a.grade_distribution_as_percentage(10), "Grade distribution for ten intervals is wrong!"
+      end
+    end
+
+    context "which is graded, with some grades over 100%" do
+      setup do
+        totals = [16.5, 16.0, 16.1, 15.5, 5.0, 37.0, 17.5, 17.0, 18.9, 29.0, 8.1, 25.2, 25.7, 4.3, 0, 10, 19.5, 27.0, 26.6, 0]
+
+        # create rubric criteria
+        rubric_criteria = [{:rubric_criterion_name => "Uses Conditionals", :weight => 1}, 
+          {:rubric_criterion_name => "Code Clarity", :weight => 2},
+          {:rubric_criterion_name => "Code Is Documented", :weight => 3},
+          {:rubric_criterion_name => "Uses For Loop", :weight => 1}]
+        default_levels = {:level_0_name => "Quite Poor",
+          :level_0_description => "This criterion was not satisifed whatsoever", 
+          :level_1_name => "Satisfactory",
+          :level_1_description => "This criterion was satisfied",
+          :level_2_name => "Good",
+          :level_2_description => "This criterion was satisfied well",
+          :level_3_name => "Great",
+          :level_3_description => "This criterion was satisfied really well!", 
+          :level_4_name => "Excellent", 
+          :level_4_description => "This criterion was satisfied excellently"}
+
+        rubric_criteria.each do |rubric_criteria|
+          rc = RubricCriterion.new
+          rc.update_attributes(rubric_criteria)
+          rc.update_attributes(default_levels)
+          rc.assignment = @assignment
+          rc.save
+        end
+
+        # create the groupings for each student in the assignment
+        (1..20).each do |index|
+          g = Grouping.make(:assignment => @assignment)
+          (1..3).each do
+            StudentMembership.make({:grouping => g, :membership_status => StudentMembership::STATUSES[:accepted]})
+          end
+          s = Submission.make(:grouping => g)
+          r = s.result
+          r.total_mark = totals[index - 1]
+          r.marking_state = Result::MARKING_STATES[:complete]
+          r.save
+        end
+      end
+
+      should "generate a correct grade distribution as percentage" do
+        a = @assignment
+        expected_distribution = [2,0,0,2,0,1,0,1,0,0,0,4,2,2,0,0,0,1,2,3]
+        expected_distribution_ten_intervals = [2,2,1,1,0,4,4,0,1,5]
+        assert_equal expected_distribution, a.grade_distribution_as_percentage, "Default grade distribution is wrong!"
+        assert_equal expected_distribution_ten_intervals, a.grade_distribution_as_percentage(10), "Grade distribution for ten intervals is wrong!"
+      end
+    end
   end
 
   context "An assignment instance" do
