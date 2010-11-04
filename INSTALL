@@ -36,18 +36,9 @@ see http://www.markusproject.org/download/
     * Debian 'build-essential' equivalent packages (gcc, make, libc6-dev, etc.)
       These packages are required for building PostgreSQL/MySQL gem packages
     * Subversion including Ruby bindings
-    * Gem (version 1.3 and higher)
+    * Gem (version 1.3.7 and higher)
     * The following Ruby gems:
-        - rails (version 2.3.8)
-        - daemons (version 1.0.10 and higher)
-        - mongrel (version 1.1.5 and higher)
-        - mongrel_cluster (version 1.0.5 and higher)
-        - fastercsv (version 1.4.0 and higher)
-        - rake (version 0.8.7 and higher)
-	- ruby-debug (in case you want to debug MarkUs)
-	- will_paginate (version 2.3.11 and higher)
-        - rubyzip (version 0.9.4 and higher)
-        - ya2yaml (version 0.29.2 and higher)
+        - bundler (1.0.3 and higher)
     * Apache httpd (version 2.2 and higher) including the following modules:
         - mod_proxy
         - mod_rewrite
@@ -57,7 +48,7 @@ see http://www.markusproject.org/download/
       Only required if you plan to be able to view and annotate pdfs within
       the browser (PDF_SUPPORT setting in config files) 
 
-  DATABASE
+  DATABASE THINGS
 
   We know that MarkUs works with either PostgreSQL or MySQL databases.
 
@@ -67,7 +58,7 @@ see http://www.markusproject.org/download/
 
       * PostgreSQL
       * Development package(s) for PostgreSQL
-      * Ruby gems:
+      * Ruby gems (Bundler will handle those):
           - ruby-pg (version 0.7.9.2008.01.28 and higher)
           - postgres (version 0.7.9.2008.01.28 and higher)
 
@@ -75,9 +66,9 @@ see http://www.markusproject.org/download/
     If you plan to use MarkUs with a MySQL database, you need the following
     software
 
-      * MySQL
+      * MySQL (Bundler will handle those):
       * Development package(s) for MySQL
-      * Ruby gems:
+      * Ruby gems (Bundler will handle those):
           - mysql (version 2.8.1 and higher)
 
   If you are using a Debian based Linux distribution (such as Ubuntu) you could
@@ -94,7 +85,7 @@ see http://www.markusproject.org/download/
     sudo aptitude install ruby ruby-dev rdoc mysql-server libmysqlclient15-dev \
     subversion libsvn-ruby libopenssl-ruby apache2 libapache2-svn
 
-  Installing gem (version 1.3 and higher) on Debian based systems (see
+  Installing gem (version 1.3.7 and higher) on Debian based systems (see
     http://github.com/MarkUsProject/Markus/wiki/RailsDebianUpdate)
 
       Download rubygems from rubyforge.org (see
@@ -107,25 +98,33 @@ see http://www.markusproject.org/download/
         sudo mv /usr/bin/gem /usr/bin/gem.old # if you have an older gem version
                                                 installed
         sudo ln -s /usr/bin/gem1.8 /usr/bin/gem
+        gem -v                                # for confirmation
 
-  The above required Ruby gems can, then, be installed like so:
+  Install MySQL/PostgreSQL Ruby database driver gems:
 
     PostgreSQL option:
-      sudo gem install rails daemons mongrel mongrel_cluster ruby-pg postgres
-      fastercsv rake ruby-debug will_paginate
+      
+      sudo gem install ruby-pg postgres
+  
     MySQL option:
-      sudo gem install rails daemons mongrel mongrel_cluster mysql
-      fastercsv rake ruby-debug will_paginate
 
-  ImageMagick:
+      sudo gem install mysql
 
-  You most likely already have this installed, to make sure you do, simply run
-  `identify --version` to see if ImageMagick is installed on your machine.
 
-  Otherwise, http://www.imagemagick.org/script/install-source.php#unix
+3.2 IMAGEMAGICK (OPTIONAL)
+
+  If you plan on using MarkUs' PDF conversion feature so that you can annotate
+  them using a browser, you need ImageMagick installed.
+
+  To make sure you have ImageMagick installed, run:
+
+    identify --version
+
+  If you don't http://www.imagemagick.org/script/install-source.php#unix
   has detailed instructions on installing ImageMagick.
 
-3.2 INSTALLING MARKUS
+
+3.3 INSTALLING MARKUS
 
   Once you have the required software installed, it should be pretty straight-
   forward to install MarkUs. We assume you have a database user with appropriate
@@ -138,10 +137,10 @@ see http://www.markusproject.org/download/
   * You should have a directory called markus-X.Y.Z now. Change to MarkUs'
     application root. For example:
       cd markus-0.9.0
+  * Install Rails and required Ruby gems: see section 3.4 "GETTING RAILS
+    AND RUBYGEMS".
   * Set environment variable RAILS_ENV (assumes BASH)
       export RAILS_ENV="production"
-  * In case you are using Rails > 2.3.8 comment out the line containing
-    RAILS_GEM_VERSION="2.3.8" in config/environment.rb
   * Configure database connection settings to match your settings
       PostgreSQL option:
         cp config/database.yml.postgresql config/database.yml
@@ -172,6 +171,32 @@ We are happy to help and would also like to hear your feedback! Please include
 the version number of MarkUs you are using. You can find out about the version
 you are currently using by issuing the following command:
   rake -s markus:version
+
+
+3.4 GETTING RAILS AND RUBYGEMS
+
+  Bundler and required rubygems (including rails) can be installed like
+  so:
+
+    sudo gem install bundler
+ 
+  Make sure "bundle" is in $PATH (assuming BASH). We need to find the
+  installation location of bundler for this. The following commands may
+  be helpful:
+
+    gem env | grep -A3 'GEM PATHS'     # shows path to gems
+
+  An example for setting PATH is shown below:
+
+    export PATH=$PATH:/usr/lib/ruby/gems/1.8/gems/bundler-1.0.3/bin
+
+  Consider adding the above export to your ~/.bashrc.
+
+  To get all required gems for MarkUs in one shot (this should take care of
+  versions too) use the command below. You may choose to do this as non-root
+  user.
+
+    bundle install --without development test
 
 4. FURTHER INSTRUCTIONS, FAQ, LINKS
 
