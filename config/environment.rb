@@ -35,7 +35,7 @@ Rails::Initializer.run do |config|
 
   # We need some additional load paths (e.g. for the API)
   #   Note for developers: in Ruby %W( a b c ) is equivalent to [ 'a', 'b', 'c' ]
-  config.load_paths += %W(
+  config.autoload_paths += %W(
                             app/controllers/api
                             lib/classes
                          )
