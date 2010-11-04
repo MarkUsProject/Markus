@@ -372,14 +372,31 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       
       context "with file containing full records" do
         setup do
+          # Destroy any existing criteria
+          RubricCriterion.destroy_all
           tempfile = Tempfile.new('rubric_csv')
-          tempfile << RUBRIC_CRITERIA_UPLOAD_CSV_STRING
-          tempfile.rewind          
+          tempfile << RUBRIC_CRITERIA_CSV_STRING
+          tempfile.rewind
           post_as @admin, :upload, :id => @assignment.id, :upload => {:rubric => tempfile}
+          @assignment.reload
+          @rubric_criteria = @assignment.rubric_criteria
         end
         should assign_to :assignment
-        should set_the_flash.to( I18n.t('rubric_criteria.upload.success', :nb_updates => 1))
+        should set_the_flash.to( I18n.t('rubric_criteria.upload.success', :nb_updates => 4))
         should respond_with :redirect
+        should "have successfully uploaded criteria" do
+            assert_equal 4, @assignment.rubric_criteria.size
+        end
+        should "keep ordering of uploaded criteria" do
+            assert_equal "Algorithm Design", @rubric_criteria[0].rubric_criterion_name
+            assert_equal 1, @rubric_criteria[0].position
+            assert_equal "Documentation", @rubric_criteria[1].rubric_criterion_name
+            assert_equal 2, @rubric_criteria[1].position
+            assert_equal "Testing", @rubric_criteria[2].rubric_criterion_name
+            assert_equal 3, @rubric_criteria[2].position
+            assert_equal "Correctness", @rubric_criteria[3].rubric_criterion_name
+            assert_equal 4, @rubric_criteria[3].position
+        end
       end
     end
     

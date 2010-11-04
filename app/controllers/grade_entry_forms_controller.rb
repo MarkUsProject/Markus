@@ -196,21 +196,17 @@ class GradeEntryFormsController < ApplicationController
                                         grade_entry_students, 
                                         true, 
                                         errors)
-      log_message = I18n.t("markus_logger.marks_released_for_grade_entry_form",
-                            :grade_entry_form_id => grade_entry_form.id,
-                            :grade_entry_form => 
-                                 grade_entry_form.short_identifier,
-                            :number_students => numGradeEntryStudentsChanged)
+      log_message = "Marks released for marks spreadsheet '" +
+                    "#{grade_entry_form.short_identifier}', ID: '#{grade_entry_form.id}' " +
+                    "(for #{numGradeEntryStudentsChanged} students)."
     elsif !params[:unrelease_results].nil?
       numGradeEntryStudentsChanged = set_release_on_grade_entry_students( 
                                        grade_entry_students, 
                                        false, 
                                        errors)
-      log_message = I18n.t( 
-                        "markus_logger.marks_unreleased_for_grade_entry_form",
-                        :grade_entry_form_id => grade_entry_form.id,
-                        :grade_entry_form => grade_entry_form.short_identifier,
-                        :number_students => numGradeEntryStudentsChanged)
+      log_message = "Marks unreleased for marks spreadsheet '" +
+                    "#{grade_entry_form.short_identifier}', ID: '#{grade_entry_form.id}' " +
+                    "(for #{numGradeEntryStudentsChanged} students)."
     end
 
     # Display success message

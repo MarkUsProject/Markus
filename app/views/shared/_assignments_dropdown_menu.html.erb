@@ -44,6 +44,11 @@
            else
              target_controller = controller.controller_name
            end %>
+        <% # If the current controller action is repo_browser, the drop down 
+           # menu for assignments should go to browse, and not repo_browser
+           if controller.action_name == 'repo_browser'
+             controller.action_name = 'browse'
+           end %> 
 		<%= link_to h(assignment.short_identifier), :controller => target_controller, :action => controller.action_name, :id => assignment.id %>
       </li>
     <% end %>

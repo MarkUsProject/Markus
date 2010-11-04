@@ -38,42 +38,45 @@ class PenaltyPeriodSubmissionRule < SubmissionRule
     result = submission.result
     overtime_hours = calculate_overtime_hours_from(submission.revision_timestamp)
     penalty_amount = calculate_penalty(overtime_hours)
-    penalty = ExtraMark.new
-    penalty.result = result
-    penalty.extra_mark = penalty_amount
-    penalty.unit = ExtraMark::UNITS[:percentage]
+    if penalty_amount > 0
+      penalty = ExtraMark.new
+      penalty.result = result
+      penalty.extra_mark = -penalty_amount
+      penalty.unit = ExtraMark::UNITS[:percentage]
 
-    penalty.description = I18n.t 'submission_rules.penalty_period_submission_rule.extramark_description', :overtime_hours => overtime_hours, :penalty_amount => penalty_amount
-    penalty.save
-    
+      penalty.description = I18n.t 'submission_rules.penalty_period_submission_rule.extramark_description', :overtime_hours => overtime_hours, :penalty_amount => penalty_amount
+      penalty.save
+    end
+
     return submission
   end
-  
+
   def description_of_rule
     I18n.t 'submission_rules.penalty_period_submission_rule.description'
   end
-  
+
   def grader_tab_partial
     return 'submission_rules/penalty_period/grader_tab'
   end
 
-  private 
-  
+  private
+
   def hours_sum
     return periods.sum('hours')
   end
-  
+
   def maximum_penalty
     return periods.sum('deduction')
   end
-  
+
   # Given a number of overtime_hours, calculate the penalty percentage that
   # a student should get
   def calculate_penalty(overtime_hours)
+    return 0 if overtime_hours <= 0
     total_penalty = 0
     periods.each do |period|
       deduction = period.deduction
-      if deduction > 0
+      if deduction < 0
         deduction = -deduction
       end
       total_penalty = total_penalty + deduction
@@ -82,7 +85,7 @@ class PenaltyPeriodSubmissionRule < SubmissionRule
     end
     return total_penalty
   end
-  
+
 end
 
 

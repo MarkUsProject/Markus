@@ -3,7 +3,15 @@ if @error
   page.replace_html 'errors_contents', (@bad_user_names.join(','))
   page.show('errors')
 else
-  page.hide 'errors'
+  page.hide('errors')
 end
+
+if @warning
+  page.replace_html 'warnings_msg', @warning
+  page.show('warnings')
+else
+  page.hide('warnings')
+end
+
 page.call 'modify_students', @students_data.to_json
 page.call "modify_groupings", @groupings_data.to_json

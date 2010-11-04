@@ -503,7 +503,9 @@ class Assignment < ActiveRecord::Base
   end
 
   def next_criterion_position
-    return self.rubric_criteria.size + 1
+    # We're using count here because this fires off a DB query, thus
+    # grabbing the most up-to-date count of the rubric criteria.
+    return self.rubric_criteria.count + 1 
   end
 
   def get_criteria

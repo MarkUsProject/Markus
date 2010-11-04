@@ -117,6 +117,7 @@ en:
         type:  "Assignment type"
         overall_comment: "Overall Comment"
         group:
+            assign_over_limit: "You have assigned more than the maximum number of students to group %{group}"
             select_a_group: "Select a group"
             select_one_group: "You need to select at least one group."
             select_only_one_group: "You may only assign each student to one group."
@@ -390,66 +391,7 @@ en:
 
     stopping_collection_process: "Now stopping collection process..."
     converting_pdfs: "Now converting pdf files...%{converted}/%{total}"
-
-    markus_logger:
-        user_login_message: "User '%{user_name}' logged in."
-        user_wrong_credentials: "Wrong username/password: User '%{user_name}'."
-        user_login_error: "User '%{user_name}' failed to log in."
-        user_logout_message: "User '%{user_name}' logged out."
-        assignment_creation_success: "Assignment '%{assignment}' created successfully."
-        assignment_creation_failure: "Creating assignment '%{assignment}' failed: '%{error}' (User: '%{user_name}')."
-        assignment_grouping_creation_success:  "Grouping with '%{student}' for assignment '%{id}' with identifier '%{name}' created."
-        assignment_edit_success: "The assignment '%{id}' with identifier '%{name}' was successfully edited."
-        assignment_edit_failure: "Error while editing assignment '%{id}' with identifier '%{name}': '%{error}'."
-        student_accepted_invitation: "Student '%{user_name}' joined group '%{group}' (accepted invitation)."
-        student_invited_student: "Student '%{inviter}' invited '%{invitee}'."
-        student_cancelled_invitation: "Student '%{inviter}' cancelled invitation for '%{invitee}'."
-        student_declined_invitation: "Student '%{user_name}' declined invitation for group '%{group}'."
-        student_invitation_failure: "Student '%{inviter}' failed to invite '%{invitee}'. Error: '%{error}'."
-        student_created_group: "Student '%{user_name}' created group."
-        student_create_group_fail: "Failed to create group. User: '%{user_name}', Error: '%{error}'."
-        student_deleted_group: "Student '%{user_name}' deleted group '%{group}'."
-        student_delete_group_fail: "Failed to delete group '%{group}'. User: '%{user_name}', Error: '%{error}'."
-        student_delete_group_fail_no_grouping: "Failed to delete group, since no accepted group for this user existed. User: '%{user_name}', Error: '%{error}'."
-
-        annotation_created: "Annotation '%{annotation}' created by '%{user_name}'."
-        ta_annotation_reused: "The annotation '%{annotation}' was reused by '%{user_name}'."
-        user_viewed_submission: "User '%{user_name}' viewed submission (id: %{submission_id}) of assignment '%{assignment}' for group '%{group_name}'."
-        user_update_mark_submission: "User '%{user_name}' updated mark for submission (id: %{submission_id}) of assignment '%{assignment}' for group '%{group_name}'."
-        user_update_mark_submission_fail: "Error while trying to update mark of submission. User: '%{user_name}', Submission ID: '%{submission_id}', Assignment: '%{assignment}', Group: '%{group_name}'."
-        marks_released_for_assignment: "Marks released for assignment '%{assignment}', ID: '%{assignment_id}' (for %{number_groups} groups)."
-        marks_unreleased_for_assignment: "Marks unreleased for assignment '%{assignment}', ID: '%{assignment_id}' (for %{number_groups} groups)."
-        student_submitted_file: "Student '%{user_name}' submitted file '%{file_name}' for assignment '%{assignment}'."
-        student_deleted_file: "Student '%{user_name}' deleted file '%{file_name}' for assignment '%{assignment}'."
-        student_replaced_file: "Student '%{user_name}' replaced content of file '%{file_name}' for assignment '%{assignment}'."
-        student_viewed_result: "Student '%{user_name}' viewed results for assignment '%{assignment}'."
-        group_repo_collision: "Creating group '%{group_name}' caused repository collision (Repository name was: '%{repo_name}'). Error message: '%{error}'"
-        marks_released_for_grade_entry_form: "Marks released for marks spreadsheet '%{grade_entry_form}', ID: '%{grade_entry_form_id}' (for %{number_students} students)."
-        marks_unreleased_for_grade_entry_form: "Marks unreleased for marks spreadsheet '%{grade_entry_form}', ID: '%{grade_entry_form_id}' (for %{number_students} students)."
-
-        begin_export_file: "Exporting %{file} from student repository"
-        success_export_file: "Successfuly exported %{file} from student repository"
-        begin_conversion: "Beginning pdf conversion"
-        pdf_convert_success: "Successfully converted pdf file to jpg"
-        pdf_convert_failed: "Pdf file couldn't be converted"
-
-        done_collecting_submissions: "Submission collection process done"
-        collection_starting: "Now collecting: %{short_id} for grouping: '%{grouping_id}'"
-        check_for_subm_collect: "Checking to see if there is already a submission collection process running"
-        subm_collect_still_running: "Submission collection process still running, doing nothing"
-
-        subm_collect:
-          enter_block: "Submission collection process now evaluating provided code block"
-          exit_block: "Submission collection process done evaluating provided code block"
-          parent_requested_stop: "Submission collection process now exiting because it was asked to stop by its parent"
-          est_db_connection: "Submission collection process successfully established its database connection"
-
-    ensure_config:
-      invalid_logout_redirect: "The setting LOGOUT_REDIRECT with path %{path} is invalid. Only 'DEFAULT', 'NONE' or addresses beginning with http:// or https:// are valid values. Please double check the setting in %{config_location}"
-      path_not_writable: "The setting %{constant_name} with path %{file_name} is not writable. Please double check the setting in %{config_location}."
-      path_not_readable: "The setting %{constant_name} with path %{file_name} is not readable. Please double check the setting in %{config_location}."
-      file_does_not_execute: "The setting %{constant_name} with path %{file_name} does not execute properly. Please double check the setting in %{config_location}."
-      error_writing_to_pipe: "Error writing to pipe. %{file_name}, %{error}. Please double check the setting in %{config_location}."
+    
     groups:
       groups: "Groups"
       manage_groups: "Manage Groups"
@@ -465,6 +407,7 @@ en:
       assigned_grouping_counts: "Assigned (<span id=\"assigned_groupings_count\"></span>)"
       not_assigned_grouping_counts: "Not assigned (<span id=\"unassigned_groupings_count\"></span>)"
       problem: "There was a problem..."
+      warning: "Warning"
       lines_not_processed: "The following lines could not be processed:"
       loading_list: "Loading List..."
       editing_past_due_date_warning: "This assignment is past its due date.  Besides assigning graders to groups, it is not recommended that any other settings be altered here at this time."
@@ -1026,7 +969,7 @@ en:
       pm: 'pm'
 
     #app/views/assignments/_read.html.erb
-    no_grader_assigned: "No grader assigned yet."
+    no_grader_assigned: "Default grader: Course instructor(s)"
 
     locale_not_available: "%{locale} translation not available!"
     external_authentication_not_supported: "External authentication not supported on your platform!"
