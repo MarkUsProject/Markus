@@ -379,14 +379,26 @@ class FlexibleCriteriaControllerTest < AuthenticatedControllerTest
 
       context "with file containing full records" do
         setup do
+          FlexibleCriterion.destroy_all
           tempfile = Tempfile.new('flexible_csv')
           tempfile << FLEXIBLE_CRITERIA_UPLOAD_CSV_STRING
           tempfile.rewind          
           post_as @admin, :upload, :id => @assignment.id, :upload => {:flexible => tempfile}
+          @assignment.reload
+          @flexible_criteria = @assignment.flexible_criteria
         end
         should assign_to :assignment
         should set_the_flash
         should respond_with :redirect
+        should "have successfully uploaded criteria" do
+            assert_equal 2, @assignment.flexible_criteria.size
+        end
+        should "keep ordering of uploaded criteria" do
+            assert_equal "criterion3", @flexible_criteria[0].flexible_criterion_name
+            assert_equal 1, @flexible_criteria[0].position
+            assert_equal "criterion4", @flexible_criteria[1].flexible_criterion_name
+            assert_equal 2, @flexible_criteria[1].position
+        end
       end
     end
     

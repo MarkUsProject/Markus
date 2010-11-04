@@ -10,11 +10,11 @@
 
     <%= @current_user.first_name %> <%= @current_user.last_name %>
      ( <b><%= @current_user.user_name %></b> )
-    <%= link_to (I18n.t(:log_out),
-                :controller => 'main',
-		:action => 'logout') unless
-		MarkusConfigurator.markus_config_logout_redirect == "NONE"
-		%>
+    <%= link_to(I18n.t(:log_out),
+               :controller => 'main',
+	       :action => 'logout') unless
+	       MarkusConfigurator.markus_config_logout_redirect == "NONE"
+	       %>
   </div>
   <div id="working" style="display:none;">
     <%= I18n.t(:working) %>

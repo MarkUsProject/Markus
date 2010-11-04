@@ -22,7 +22,7 @@
   <br/>
   <% if @assignment.display_grader_names_to_students%>
   <div class="sub_block">
-    <span class="prop_label"><%=t("graders.graders") %>:</span>
+    <span class="prop_label"><%=t("graders.assigned_graders") %>:</span>
     <% if !@grouping.nil?%>
       <% @grouping.ta_memberships.each do |ta| %>
         <%= ta.user.last_name%>

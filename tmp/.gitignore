@@ -1,0 +1,4 @@
+# Temporary storage - ignore everything except .gitignore
+*
+!.gitignore
+
