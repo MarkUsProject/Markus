@@ -88,6 +88,26 @@ class AssignmentTest < ActiveSupport::TestCase
 
   end
 
+  context "after remarks are due assignment" do
+    setup do
+      @assignment = Assignment.make({:remark_due_date => 2.days.ago})
+    end
+
+    should "return true on past_remark_due_date? call" do
+      assert @assignment.past_remark_due_date?
+    end
+  end
+
+  context "before remarks are due assignment" do
+    setup do
+      @assignment = Assignment.make({:remark_due_date => 2.days.from_now})
+    end
+
+    should "return false on past_remark_due_date? call" do
+      assert !@assignment.past_remark_due_date?
+    end
+  end
+
   context "An Assignment" do
     setup do
       @assignment = Assignment.make

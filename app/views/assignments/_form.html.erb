@@ -165,6 +165,26 @@
 </fieldset>  
 
 <fieldset>
+  <legend><%= t("assignment.remark.rules")%></legend>
+  <p id="allow_remark_requests">
+    <%= f.check_box(:allow_remarks, {:id => "allow_remarks", :onchange => "toggle_remark_requests($F('allow_remarks'))", :checked => true}, true, false) %>
+    <%= f.label("allow_remarks", I18n.t("assignment.remark.allow"), :class => "checkbox_label") %>
+  </p>
+  <p id="remark_properties">
+    <%= label_tag "remark_due_date", t("assignment.remark.due_date") %>
+    <%= f.calendar_date_select :remark_due_date, {
+        :time => "mixed",
+        :locale => I18n.default_locale,
+        :after_close => "check_due_date($F('remark_due_date'))",
+        :year_range => 0.years.ago..1.years.from_now, :id => "remark_due_date"} %>
+    <%= observe_field "remark_due_date", :function => "check_due_date($F('remark_due_date'));" %>
+    <%=t(:iso_due_date_format_example)%><br />
+    <%= label_tag "remark_message", t("assignment.remark.message") %>
+    <%= f.text_area :remark_message, :rows => 8, :cols => 65 %>
+  </p>
+</fieldset>
+
+<fieldset>
   <legend><%= I18n.t("test_framework.test_framework") %></legend>
    <p id="is_testing_framework_enabled">
  	<%= f.check_box(:enable_test, {}, true, false)  %>
