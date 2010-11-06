@@ -1817,3 +1817,18 @@ pre#test_result_content {
     width:500px;
     height:350px;
 }
+
+/* Language chooser styles */
+#lang_chooser {
+  margin-right: 25px;
+  border-right: 1px solid #000;
+  border-left: 1px solid #000;
+  padding-left: 5px;
+}
+
+#lang_chooser select {
+  height: 15px;
+  border: none;
+  font-size: smaller;
+}
+
