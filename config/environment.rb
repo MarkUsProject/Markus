@@ -39,4 +39,9 @@ Rails::Initializer.run do |config|
                             app/controllers/api
                             lib/classes
                          )
+  # Load any local configuration that is kept out of source control
+  # (e.g. gems, patches).
+  if File.exists?(File.join(File.dirname(__FILE__), 'local_environment_override.rb'))
+   instance_eval File.read(File.join(File.dirname(__FILE__), 'local_environment_override.rb'))
+  end
 end
