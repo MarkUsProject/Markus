@@ -93,6 +93,7 @@ en:
       released: "Released"
     collect_submissions:
       collect_all: "Collect All Submissions"
+      collect_ta: "Collect all your assigned submissions"
       could_not_collect: "Could not collect submissions for assignment %{assignment_identifier} - the collection date has not been reached"
       collection_job_started: "Submission collection for assignment %{assignment_identifier} has begun. The complete process may take some time, but you can access submissions as they become available."
       priority_given: "The submission has been given collection priority. It will be ready soon."
@@ -502,8 +503,8 @@ en:
         download_student_list: "Download Student List"
         download_csv_format:   "Download Student list in CSV format"
         download_xml_format:   "Download Student list in XML format"
-    hide_students:      "Hide Students"
-    unhide_students:    "Unhide Students"
+    hide_students:      "Mark as inactive"
+    unhide_students:    "Mark as active"
     students_not_successfully_added_message_1: "The following students have not been successfully added:"
     students_not_successfully_added_message_2: "Make sure that:"
     students_not_successfully_added_message_3: "Student names are
@@ -663,8 +664,8 @@ en:
         display_grader_names_to_students: "Display grader names to students?"
 
     confirm_bulk_action:  "Are you sure you want to perform this bulk action?"
-    hide_students: "Hide Students"
-    unhide_students: "Unhide Students"
+    hide_students: "Mark as inactive"
+    unhide_students: "Mark as active"
 
     annotations:
       annotation_category: "Annotation Category"
