@@ -1,0 +1,23 @@
+# Files ignored by git
+
+config/database.yml
+config/local_environment_override.rb
+
+# Data, bundle and log folder
+data/
+log/
+.bundle/
+
+# Patch
+*.diff
+*.patch
+
+# Sqlite databases
+*.db
+*.sqlite3
+
+# Vim swap files
+*.swp
+
+# Temporary and backup files
+*~

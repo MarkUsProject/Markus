@@ -15,7 +15,7 @@ Rails::Initializer.run do |config|
   # Only load the plugins named here, in the order given. By default, all plugins
   # in vendor/plugins are loaded in alphabetical order.
   # :all can be used as a placeholder for all plugins not explicitly named
-  config.plugins = [ :ssl_requirement, :auto_complete, :calendar_date_select, :all ]
+  config.plugins = [ :ssl_requirement, :auto_complete, :calendar_date_select ]
 
   # Set this if MarkUs is not hosted under / of your Web-host.
   # E.g. if MarkUs should be accessible by http://yourhost.com/markus/instance0
@@ -30,10 +30,18 @@ Rails::Initializer.run do |config|
   # which is used in the assignments_controller.rb
   config.time_zone = 'Eastern Time (US & Canada)'
 
+  # Bundler handles our gem dependencies
+  config.gem 'bundler', :version => ">=1.0.0", :source => "http://rubygems.org"
+
   # We need some additional load paths (e.g. for the API)
   #   Note for developers: in Ruby %W( a b c ) is equivalent to [ 'a', 'b', 'c' ]
   config.load_paths += %W(
                             app/controllers/api
                             lib/classes
                          )
+  # Load any local configuration that is kept out of source control
+  # (e.g. gems, patches).
+  if File.exists?(File.join(File.dirname(__FILE__), 'local_environment_override.rb'))
+   instance_eval File.read(File.join(File.dirname(__FILE__), 'local_environment_override.rb'))
+  end
 end
