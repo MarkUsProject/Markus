@@ -350,18 +350,18 @@ Part 2 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
       should "raise an error message on a row with an invalid weight" do
         row = ['name', 'weight', 'l0', 'l1', 'l2', 'l3', 'l4']
-        e = assert_raise RuntimeError do
+        e = assert_raise ActiveRecord::RecordNotSaved do
           RubricCriterion.create_or_update_from_csv_row(row, Assignment.new)
         end
-        assert_equal I18n.t('criteria_csv_error.weight_not_number'), e.message
+        assert_instance_of ActiveRecord::RecordNotSaved, e
       end
 
       should "raise the errors hash in case of an unpredicted error" do
-        e = assert_raise RuntimeError do
+        e = assert_raise ActiveRecord::RecordNotSaved do
           # That should fail because the assignment doesn't yet exists (in the DB)
           RubricCriterion.create_or_update_from_csv_row(['name', 10, 'l0', 'l1', 'l2', 'l3', 'l4'], Assignment.new)
         end
-        assert_instance_of ActiveRecord::Errors, e.message
+        assert_instance_of ActiveRecord::RecordNotSaved, e
       end
 
       context "and the row is valid" do
