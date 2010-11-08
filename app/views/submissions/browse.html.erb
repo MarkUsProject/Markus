@@ -33,6 +33,14 @@
   :action => 'download_svn_export_commands', :id => @assignment.id %>
 
  <% end %>
+
+  <% if @current_user.ta? and @assignment.past_collection_date? %>
+  <%= link_to I18n.t("collect_submissions.collect_ta"),
+    {:controller => 'submissions', :action => 'collect_ta_submissions',
+    :id => @assignment.id},
+    :confirm => I18n.t("collect_submissions.results_loss_warning") %>
+ <% end %>
+
 </h1>
 </div>
 
