@@ -1,4 +1,5 @@
-<script language="Javascript" text="text/javascript">
+<script type="text/javascript">
+//<![CDATA[
 document.observe("dom:loaded", function() {
   //After DOM is loaded, load up the first submitted file
   <% if !first_file.nil? %>
@@ -26,4 +27,5 @@ Event.observe(window, 'load', function() {
   <% end %>
 <% end %>
 });
+//]]>
 </script>
