@@ -1,4 +1,5 @@
-<script type="text/javascript" language="Javascript">
+<script type="text/javascript">
+//<![CDATA[
 document.observe("dom:loaded", function() {
 
   users_table = new FilterTable({
@@ -53,4 +54,5 @@ document.observe("dom:loaded", function() {
   <%= remote_function :url => {:action => 'populate'}, :complete => "$('loading_list').hide();"%>
 });
 
+//]]>
 </script>

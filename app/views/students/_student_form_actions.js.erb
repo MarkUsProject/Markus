@@ -1,4 +1,5 @@
-<script type="text/javascript" language="Javascript">
+<script type="text/javascript">
+//<![CDATA[
   function before_form_submit()
   {
     $('apply_bulk_action').setValue('<%= I18n.t('students.processing') %>');
@@ -14,4 +15,5 @@
     $('apply_bulk_action2').setValue('<%= I18n.t('apply') %>');
     $('apply_bulk_action2').enable();
   }
+//]]>
 </script>
