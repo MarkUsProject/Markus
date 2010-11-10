@@ -4,9 +4,9 @@ require 'mocha'
 require 'machinist'
 
 class RubricsControllerTest < AuthenticatedControllerTest
-  
+
   fixtures :all
-  
+
   RUBRIC_CRITERIA_CSV_STRING = "Algorithm Design,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,
 Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,
 Testing,2.2,Horrible,Poor,Satisfactory,Good,Excellent,,,,,
@@ -15,56 +15,56 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
   RUBRIC_CRITERIA_INCOMPLETE_UPLOAD_CSV_STRING = "criterion 5\ncriterion 6\n"
 
   context "An unauthenticated and unauthorized user doing a GET" do
-    
+
     context "on :index" do
       setup do
         get :index, :id => 1
       end
       should respond_with :redirect
     end
-    
+
     context "on :edit" do
       setup do
         get :edit, :id => 1
       end
       should respond_with :redirect
     end
-    
+
     context "on :update" do
       setup do
         get :update, :id => 1
       end
       should respond_with :redirect
     end
-    
+
     context "on :new" do
       setup do
         get :new, :id => 1
       end
       should respond_with :redirect
     end
-    
+
     context "on :delete" do
       setup do
         get :delete, :id => 1
       end
       should respond_with :redirect
     end
-    
+
     context "on :download" do
       setup do
         get :download, :id => 1
       end
       should respond_with :redirect
     end
-    
+
     context "on :upload" do
       setup do
         get :upload, :id => 1
       end
       should respond_with :redirect
     end
-    
+
     context "on :update_positions" do
       setup do
         get :update_positions, :id => 1
@@ -80,58 +80,58 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
     end
 
   end # An unauthenticated and unauthorized user doing a GET
-  
+
   context "An unauthenticated and unauthorized user doing a POST" do
-    
+
     context "on :index" do
       setup do
         post :index, :id => 1
       end
       should respond_with :redirect
     end
-    
+
     context "on :edit" do
       setup do
         post :edit, :id => 1
       end
       should respond_with :redirect
     end
-    
+
     context "on :update" do
       setup do
         post :update, :id => 1
       end
       should respond_with :redirect
     end
-    
+
     context "on :new" do
       setup do
         post :new, :id => 1
       end
       should respond_with :redirect
     end
-    
+
     context "on :delete" do
       setup do
         post :delete, :id => 1
       end
       should respond_with :redirect
     end
-    
+
     context "on :download" do
       setup do
         post :download, :id => 1
       end
       should respond_with :redirect
     end
-    
+
     context "on :upload" do
       setup do
         post :upload, :id => 1
       end
       should respond_with :redirect
     end
-    
+
     context "on :update_positions" do
       setup do
         post :update_positions, :id => 1
@@ -147,16 +147,16 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
     end
 
   end # An unauthenticated and unauthorized user doing a POST
-  
+
   context "An authenticated and authorized admin doing a GET" do
     fixtures :users, :assignments, :rubric_criteria, :marks, :results
-    
+
     setup do
       @admin = users(:olm_admin_1)
       @assignment = assignments(:assignment_1)
       @criterion = rubric_criteria(:c1)
     end
-    
+
     context "on :index" do
       setup do
         get_as @admin, :index, :id => @assignment.id
@@ -166,7 +166,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       should render_template :index
       should respond_with :success
     end
-    
+
     context "on :edit" do
       setup do
         get_as @admin, :edit, :id => @criterion.id
@@ -175,9 +175,9 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       should render_template :edit
       should respond_with :success
     end
-    
+
     context "on :update" do
-      
+
       context "with save errors" do
         setup do
           RubricCriterion.any_instance.expects(:save).once.returns(false)
@@ -188,7 +188,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         should render_template 'errors'
         should respond_with :success
       end
-      
+
       context "without save errors" do
         setup do
           get_as @admin, :update, :id => @criterion.id, :rubric_criterion => {:rubric_criterion_name => 'one', :weight => 10}
@@ -198,7 +198,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         should render_template :update
       end
     end
-    
+
     context "on :new" do
       setup do
         get_as @admin, :new, :id => @assignment.id
@@ -208,7 +208,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       should render_template :new
       should respond_with :success
     end
-    
+
     context "on: download" do
       setup do
         get_as @admin, :download, :id => @assignment.id
@@ -220,7 +220,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         assert_equal RUBRIC_CRITERIA_CSV_STRING, @response.body
       end
     end
-    
+
     context "on :upload" do
       setup do
         get_as @admin, :upload, :id => @assignment.id, :upload => {:rubric => ""}
@@ -228,7 +228,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       should assign_to :assignment
       should respond_with :redirect
     end
-    
+
     context "on :update_positions" do
       setup do
         @criterion2 = rubric_criteria(:c2)
@@ -236,7 +236,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       end
       should render_template ''
       should respond_with :success
-      
+
       should "not have adjusted positions" do
         c1 = RubricCriterion.find(@criterion.id)
         assert_equal 1, c1.position
@@ -276,18 +276,18 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         assert_equal 2, c2.position
       end
     end
-    
+
   end # An authenticated and authorized admin doing a GET
-  
+
   context "An authenticated and authorized admin doing a POST" do
     fixtures :users, :assignments, :rubric_criteria, :marks, :results
-    
+
     setup do
       @admin = users(:olm_admin_1)
       @assignment = assignments(:assignment_1)
       @criterion = rubric_criteria(:c1)
     end
-    
+
     context "on :index" do
       setup do
         post_as @admin, :index, :id => @assignment.id
@@ -297,7 +297,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       should render_template :index
       should respond_with :success
     end
-    
+
     context "on :edit" do
       setup do
         post_as @admin, :edit, :id => @criterion.id
@@ -306,7 +306,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       should render_template :edit
       should respond_with :success
     end
-    
+
     context "on :new" do      
       context "with save error" do
         setup do
@@ -320,7 +320,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         should render_template 'rubrics/add_criterion_error'
         should respond_with :success
       end
-      
+
       context "without error on an assignment as the first criterion" do
         setup do
           assignment = assignments(:assignment_3)
@@ -331,7 +331,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         should render_template 'rubrics/create_and_edit'
         should respond_with :success
       end
-      
+
       context "without error on an assignment that already has criteria" do
         setup do
           post_as @admin, :new, :id => @assignment.id, :rubric_criterion => {:rubric_criterion_name => 'first', :weight => 10}
@@ -342,7 +342,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         should respond_with :success
       end      
     end
-    
+
     context "on: download" do
       setup do
         post_as @admin, :download, :id => @assignment.id
@@ -354,7 +354,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         assert_equal RUBRIC_CRITERIA_CSV_STRING, @response.body
       end
     end
-    
+
     context "on :upload" do      
       context "with file containing incomplete records" do
         setup do
@@ -369,7 +369,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
                                                    "criterion 6: " + I18n.t('criteria.error.incomplete_row')])
         should respond_with :redirect
       end
-      
+
       context "with file containing full records" do
         setup do
           # Destroy any existing criteria
@@ -399,7 +399,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         end
       end
     end
-    
+
     context "on :update_positions" do
       setup do
         @criterion2 = rubric_criteria(:c2)
@@ -407,7 +407,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       end
       should render_template ''
       should respond_with :success
-      
+
       should "have appropriately adjusted positions" do
         c1 = RubricCriterion.find(@criterion.id)
         assert_equal 2, c1.position
@@ -523,19 +523,125 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         assert_equal 2, c3.position
       end
     end
-    
+
+    context "on :yml_upload" do
+      setup do 
+        clear_fixtures
+        @assignment = Assignment.make
+        @admin = Admin.make
+      end
+
+      context "with no problems and no preexisting criteria" do
+        setup do
+          post_as @admin, :yml_upload, :id => @assignment.id, :yml_upload => {:rubric =>
+           "cr1:\n  weight: 5\n  level_0:\n    name: what?\n    description: fail\n  level_1:\n    name: hmm\n    description: almost fail\n  level_2:\n    name: average\n    description: average joe\n  level_3:\n    name: good\n    description: alright\n  level_4:\n    name: poor\n    description: I expected more\ncr2:\n  weight: 2\n"}
+        end
+
+        should respond_with :redirect
+        should set_the_flash.to((I18n.t('rubric_criteria.upload.success', :nb_updates => 2)))
+        should assign_to :assignment
+        should "have added 2 criteria" do
+          @assignment.reload
+          assert_equal(@assignment.rubric_criteria.length, 2)
+        end
+        should "have got the weights right" do
+          @assignment.reload
+          assert_equal(@assignment.rubric_criteria[0].weight, 5)
+          assert_equal(@assignment.rubric_criteria[1].weight, 2)
+        end
+        should "have got names and descriptions right" do
+          @assignment.reload
+          assert_equal(@assignment.rubric_criteria[0].level_0_name, "what?")
+          assert_equal(@assignment.rubric_criteria[0].level_0_description, "fail")
+          assert_equal(@assignment.rubric_criteria[0].level_1_name, "hmm")
+          assert_equal(@assignment.rubric_criteria[0].level_1_description, "almost fail")
+          assert_equal(@assignment.rubric_criteria[0].level_2_name, "average")
+          assert_equal(@assignment.rubric_criteria[0].level_2_description, "average joe")
+          assert_equal(@assignment.rubric_criteria[0].level_3_name, "good")
+          assert_equal(@assignment.rubric_criteria[0].level_3_description, "alright")
+          assert_equal(@assignment.rubric_criteria[0].level_4_name, "poor")
+          assert_equal(@assignment.rubric_criteria[0].level_4_description, "I expected more")
+        end
+      end
+
+      context "with preexisting criteria" do
+        setup do
+          RubricCriterion.make(:assignment => @assignment, :rubric_criterion_name => "cr2", :weight => 7)
+          post_as @admin, :yml_upload, :id => @assignment.id, :yml_upload => {:rubric =>
+           "cr1:\n  weight: 5\ncr2:\n  weight: 2\n"}
+        end
+
+        should respond_with :redirect
+        should set_the_flash.to((I18n.t('rubric_criteria.upload.success', :nb_updates => 2)))
+        should assign_to :assignment
+        should "now have 2 criteria" do
+          @assignment.reload
+          assert_equal(@assignment.rubric_criteria.length, 2)
+        end
+        should "have updated the already existing criterion" do
+          @assignment.reload
+          assert_equal(@assignment.rubric_criteria[0].weight, 2)
+        end
+      end
+
+      context "with bad weight" do
+        setup do
+          post_as @admin, :yml_upload, :id => @assignment.id, :yml_upload => {:rubric =>
+           "cr1:\n  weight: monstrously heavy\n"}
+        end
+
+        should respond_with :redirect
+        should set_the_flash.to(I18n.t('rubric_criteria.upload.error') + "  " +  I18n.t('rubric_criteria.upload.syntax_error', :error => I18n.t('criteria_csv_error.weight_not_number')))
+        should assign_to :assignment
+        should "have added 0 criteria" do
+          @assignment.reload
+          new_categories_list = @assignment.annotation_categories
+          assert_equal(@assignment.rubric_criteria.length, 0)
+        end
+      end
+      context "with syntax error" do
+        setup do
+          post_as @admin, :yml_upload, :id => @assignment.id, :yml_upload => {:rubric =>
+           "cr1:\n  weight: 5\na"}
+        end
+
+        should respond_with :redirect
+        should set_the_flash.to(I18n.t('rubric_criteria.upload.error') + "  " + I18n.t('rubric_criteria.upload.syntax_error', :error => "syntax error on line 2, col 1: `'"))
+        should assign_to :assignment
+        should "have added 0 criteria" do
+          @assignment.reload
+          new_categories_list = @assignment.annotation_categories
+          assert_equal(@assignment.rubric_criteria.length, 0)
+        end
+      end
+      context "with empty file" do
+        setup do
+          post_as @admin, :yml_upload, :id => @assignment.id, :yml_upload => {:rubric =>
+           ""}
+        end
+
+        should respond_with :redirect
+        should set_the_flash.to(I18n.t('rubric_criteria.upload.error') + "  " +  I18n.t('rubric_criteria.upload.empty_error'))
+        should assign_to :assignment
+        should "have added 0 criteria" do
+          @assignment.reload
+          new_categories_list = @assignment.annotation_categories
+          assert_equal(@assignment.rubric_criteria.length, 0)
+        end
+      end
+    end#YML Upload
   end # An authenticated and authorized admin doing a POST
-  
+
   context "An authenticated and authorized admin doing a DELETE" do
     fixtures :users, :assignments, :rubric_criteria, :marks, :results
-    
+
     setup do
       @admin = users(:olm_admin_1)
       @assignment = assignments(:assignment_1)
       @criterion = rubric_criteria(:c1)
       @mark = marks(:mark_11)
     end
-    
+
     context "on :delete" do
       setup do
         delete_as @admin, :delete, :id => @criterion.id
@@ -543,7 +649,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       should assign_to :criterion
       should_not set_the_flash.to( I18n.t('criterion_deleted_success'))
       should respond_with :success
-      
+
       should "effectively destroy the criterion" do
         assert_raise ActiveRecord::RecordNotFound do 
           RubricCriterion.find(@criterion.id)
@@ -555,7 +661,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         end
       end
     end
-    
+
   end
 
 end

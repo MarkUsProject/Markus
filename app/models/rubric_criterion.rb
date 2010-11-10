@@ -141,6 +141,58 @@ class RubricCriterion < ActiveRecord::Base
     return criterion
   end
 
+  # Instantiate a RubricCriterion from a YML key
+  #
+  # ===Params:
+  #
+  # key::      key corresponding to a single RubricCriterion in the
+  #               following format:
+  #               criterion_name:
+  #                 weight: #
+  #                 level_0:
+  #                   name: level_name
+  #                   description: level_description
+  #                 level_1:
+  #                   [...]
+  # assignment::  The assignment to which the newly created criterion should belong.
+  #
+  # ===Raises:
+  #
+  # RuntimeError If there is not enough information, if the weight value
+  #                           is zero (or doesn't evaluate to a float)
+  def self.create_or_update_from_yml_key(key, assignment)
+    rubric_criterion_name = key[0]
+    # If a RubricCriterion of the same name exits, load it up.  Otherwise,
+    # create a new one.
+    criterion = assignment.rubric_criteria.find_or_create_by_rubric_criterion_name(rubric_criterion_name)
+    #Check that the weight is not a string.
+    begin
+      criterion.weight = Float(key[1]["weight"])
+    rescue ArgumentError => e
+      raise I18n.t('criteria_csv_error.weight_not_number')
+    rescue TypeError => e
+      raise I18n.t('criteria_csv_error.weight_not_number')
+    rescue NoMethodError => e
+      raise I18n.t('rubric_criteria.upload.empty_error')
+    end
+    # Only set the position if this is a new record.
+    if criterion.new_record?
+      criterion.position = assignment.next_criterion_position
+    end
+    # next comes the level names.
+    (0..RUBRIC_LEVELS-1).each do |i|
+      if key[1]["level_" + i.to_s]
+        criterion['level_' + i.to_s + '_name'] = key[1]["level_" + i.to_s]["name"]
+        criterion['level_' + i.to_s + '_description'] = 
+          key[1]["level_" + i.to_s]["description"]
+      end
+    end
+    if !criterion.save
+      raise RuntimeError.new(criterion.errors)
+    end
+    return criterion
+  end
+
   # Parse a rubric criteria CSV file.
   #
   # ===Params:
