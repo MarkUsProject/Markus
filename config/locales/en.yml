@@ -876,15 +876,30 @@ en:
         link_csv: "Download rubric in CSV Format"
       upload:
         success: "Rubric criteria successfully uploaded: %{nb_updates} update(s)."
-        title: "Upload Rubric Criteria File"
-        prompt: "Select a CSV file to upload"
-        format_html: "
+        csv_title: "Upload CSV File"
+        yml_title: "Upload YML File"
+        csv_prompt: "Select a CSV file to upload"
+        yml_prompt: "Select a YML file to upload"
+        format_csv_html: "
         <p>The file should have the following format:</p>
         <ul><li>one record per line;</li><li>each line should be terminated by a carriage-return line-feed.</li></ul>
         <code>criteria_name,weight,<em>level_names</em>,<em>level_descriptions</em></code>
         <p>where <em>level_names</em> must contains the name of each level (seperated by commas)<br />
         and <em>level_descriptions</em> could contains the description of each level (optional, also seperated
         by commas)."
+        format_yml_html: "
+          <p>The file should have the following format:<br />
+              <code>criterion_name:<br />
+                    &nbsp;&nbsp;weight: weight<br />
+                    &nbsp;&nbsp;level_0:<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br />
+                    &nbsp;&nbsp;level_1:<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;[...]
+          </p>"
+        error: "Some rubric criteria were not successfully uploaded."
+        syntax_error: "There is an error in the file you uploaded : %{error}"
+        empty_error: "No criteria were found in the file you uploaded."
       error_total: "total weight must be positive"
       defaults:
         level_0: "Very Poor"

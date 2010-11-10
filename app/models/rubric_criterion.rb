@@ -1,6 +1,7 @@
 require 'fastercsv'
 require 'csv'
 
+
 class RubricCriterion < ActiveRecord::Base
   before_save :round_weight
   after_save :update_existing_results
@@ -18,6 +19,7 @@ class RubricCriterion < ActiveRecord::Base
   validate_on_update :validate_total_weight
 
   before_validation :update_assigned_groups_count
+
 
   def update_assigned_groups_count
     result = []
@@ -92,6 +94,36 @@ class RubricCriterion < ActiveRecord::Base
     return csv_string
   end
 
+  def self.create_yml(assignment)
+    @temp = assignment.rubric_criteria
+    @my_hash = {"#{@temp[0]["rubric_criterion_name"]}" => {
+                   "weight"=>  @temp[0]["weight"],
+                   "level_0" => {
+                      "name"=>  @temp[0]["level_0_name"] ,
+                      "description"=>  @temp[0]["level_0_description"]
+                   },
+                   "level_1" => {
+                      "name"=>  @temp[0]["level_1_name"] ,
+                      "description"=>  @temp[0]["level_1_description"]
+                   },
+                   "level_2" => {
+                      "name"=>  @temp[0]["level_2_name"] ,
+                      "description"=>  @temp[0]["level_2_description"]
+                   },
+                   "level_3" => {
+                      "name"=>  @temp[0]["level_3_name"] ,
+                      "description"=>  @temp[0]["level_3_description"]
+                   },
+                   "level_4" => {
+                      "name"=>  @temp[0]["level_4_name"] ,
+                      "description"=>  @temp[0]["level_4_description"]
+                   }
+                  }
+                 }
+     return @my_hash.to_yaml
+  end
+
+      
   # Instantiate a RubricCriterion from a CSV row and attach it to the supplied
   # assignment.
   #
@@ -134,6 +166,58 @@ class RubricCriterion < ActiveRecord::Base
     # the rest of the values are level descriptions.
     working_row.each_with_index do |desc, i|
       criterion['level_' + i.to_s + '_description'] = desc
+    end
+    if !criterion.save
+      raise RuntimeError.new(criterion.errors)
+    end
+    return criterion
+  end
+
+  # Instantiate a RubricCriterion from a YML key
+  #
+  # ===Params:
+  #
+  # key::      key corresponding to a single RubricCriterion in the
+  #               following format:
+  #               criterion_name:
+  #                 weight: #
+  #                 level_0:
+  #                   name: level_name
+  #                   description: level_description
+  #                 level_1:
+  #                   [...]
+  # assignment::  The assignment to which the newly created criterion should belong.
+  #
+  # ===Raises:
+  #
+  # RuntimeError If there is not enough information, if the weight value
+  #                           is zero (or doesn't evaluate to a float)
+  def self.create_or_update_from_yml_key(key, assignment)
+    rubric_criterion_name = key[0]
+    # If a RubricCriterion of the same name exits, load it up.  Otherwise,
+    # create a new one.
+    criterion = assignment.rubric_criteria.find_or_create_by_rubric_criterion_name(rubric_criterion_name)
+    #Check that the weight is not a string.
+    begin
+      criterion.weight = Float(key[1]["weight"])
+    rescue ArgumentError => e
+      raise I18n.t('criteria_csv_error.weight_not_number')
+    rescue TypeError => e
+      raise I18n.t('criteria_csv_error.weight_not_number')
+    rescue NoMethodError => e
+      raise I18n.t('rubric_criteria.upload.empty_error')
+    end
+    # Only set the position if this is a new record.
+    if criterion.new_record?
+      criterion.position = assignment.next_criterion_position
+    end
+    # next comes the level names.
+    (0..RUBRIC_LEVELS-1).each do |i|
+      if key[1]["level_" + i.to_s]
+        criterion['level_' + i.to_s + '_name'] = key[1]["level_" + i.to_s]["name"]
+        criterion['level_' + i.to_s + '_description'] = 
+          key[1]["level_" + i.to_s]["description"]
+      end
     end
     if !criterion.save
       raise RuntimeError.new(criterion.errors)
