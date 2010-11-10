@@ -12,7 +12,8 @@
   <input id="annotation_grid"type="hidden" value="<%=h(@file.get_annotation_grid.to_json)%>"></input>
   <input id="enable_annotations?"type="hidden" value=<%=(@current_user.ta? || @current_user.admin?) && !@result.released_to_students%>></input>
 
-  <script language="javascript">
+  <script type="text/javascript">
+  //<![CDATA[
     source_code_ready_for_image();
     <% if (defined? annots) %>
       <% annots.each do |annot| %>
@@ -20,6 +21,6 @@
           '<%=simple_format(h(escape_javascript(CGI.unescape(annot.annotation_text.content.to_s))))%>');
       <% end %>
     <% end %>
-
+  //]]>
   </script>
 </div>

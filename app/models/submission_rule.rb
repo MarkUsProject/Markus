@@ -75,7 +75,10 @@ class SubmissionRule < ActiveRecord::Base
   private
 
   def calculate_overtime_hours_from(from_time)
-    return ((from_time - assignment.due_date) / 1.hour).ceil
+    overtime_hours = ((from_time - assignment.due_date) / 1.hour).ceil
+    # If the overtime is less than 0, that means it was submitted early, so
+    # just return 0 - otherwise, return overtime_hours.
+    return [0, overtime_hours].max
   end
 
 end

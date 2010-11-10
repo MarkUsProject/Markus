@@ -17,10 +17,13 @@ class="mark_criterion_title_div_level float_left">
     <%= text_field_tag('mark_' + mark.id.to_s, mark.mark,:size=>4, :class=>'mark_grade_input') %>
 	/&nbsp; <span id="mark_flexible_max_<%=mark.id%>"><%= mark_criterion.max.to_s%> </span>
 	<script type="text/javascript">
+	//<![CDATA[
+
 	  // Prevents click from expanding/collapsing Criterion
 	  $('mark_<%=mark.id.to_s%>').observe('click', function(event){
 	    event.stop();
 	  });
+        //]]>
 	</script>
     <%= observe_field 'mark_' + mark.id.to_s,
                           :url => {:action => :update_mark, :mark_id=>mark.id},

@@ -3,6 +3,7 @@ require 'fastercsv'
 require 'shoulda'
 require 'machinist'
 require 'mocha'
+require 'time-warp'
 
 class AssignmentsControllerTest < AuthenticatedControllerTest
   
