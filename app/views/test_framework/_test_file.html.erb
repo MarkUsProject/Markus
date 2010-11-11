@@ -24,8 +24,10 @@
 
   <% if file_type == "test" %>
     <%= f.hidden_field :filetype, :value => "test" %>
-  <% else %>
+  <% elsif file_type == "lib" %>
     <%= f.hidden_field :filetype, :value => "lib" %>
+  <% elsif file_type == "parse" %>
+    <%= f.hidden_field :filetype, :value => "parse" %>
   <% end %>
 
 <% end %>

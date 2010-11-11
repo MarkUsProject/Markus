@@ -26,4 +26,11 @@ class Token < ActiveRecord::Base
     self.save
   end
 
+  # Update the number of tokens based on the old and new token limits
+  def update_tokens(old_limit, new_limit)
+    difference = new_limit - old_limit
+    self.tokens = [self.tokens + difference, 0].max
+    self.save
+  end
+
 end

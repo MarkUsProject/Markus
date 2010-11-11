@@ -34,6 +34,11 @@ class TestFileTest < ActiveSupport::TestCase
       @libfile = TestFile.make(:filetype => 'lib', :filename => 'ValidLibraryFile')
       assert @libfile.valid?
     end
+
+    should "return true when a valid parse file is created" do
+      @parsefile = TestFile.make(:filetype => 'parse', :filename => 'ValidParseFile')
+      assert @parsefile.valid?
+    end
   end
 
   context "An invalid ant file" do
@@ -104,6 +109,33 @@ class TestFileTest < ActiveSupport::TestCase
     should "return false when library file is named build.properties" do
       @invalidlibfile.filename = 'build.properties'
       assert !@invalidlibfile.valid?, "lib file expected to be invalid when filename is build.xml or build.properties"
+    end
+  end
+
+  context "An invalid parser file" do
+    setup do
+      @validparsefile = TestFile.make(:filetype => 'parse', :filename => 'SomeValidParseFile')
+      @invalidparsefile = TestFile.make(:filetype => 'parse', :filename => 'ParseFile')
+    end
+
+    should "return false when a parser file is created with a blank filename" do
+      @invalidparsefile.filename = ''
+      assert !@invalidparsefile.valid?, "parser file expected to be invalid when filename is blank"
+    end
+
+    should "return false when the parser filename already exists" do
+      @invalidparsefile.filename = 'SomeValidParseFile'
+      assert !@invalidparsefile.valid?, "parser file expected to be invalid when filename already exists"
+    end
+
+    should "return false when parser file is named build.xml" do
+      @invalidparsefile.filename = 'build.xml'
+      assert !@invalidparsefile.valid?, "parser file expected to be invalid when filename is build.xml or build.properties"
+    end
+
+    should "return false when parser file is named build.properties" do
+      @invalidparsefile.filename = 'build.properties'
+      assert !@invalidparsefile.valid?, "parser file expected to be invalid when filename is build.xml or build.properties"
     end
   end
 end

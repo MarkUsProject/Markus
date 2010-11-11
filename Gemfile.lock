@@ -12,7 +12,7 @@ GEM
       activesupport (= 2.3.10)
     activesupport (2.3.10)
     cgi_multipart_eof_fix (2.5.0)
-    columnize (0.3.1)
+    columnize (0.3.2)
     daemons (1.1.0)
     db_populate (0.2.6)
     factory_data_preloader (0.5.2)
@@ -33,6 +33,8 @@ GEM
     mongrel_cluster (1.0.5)
       gem_plugin (>= 0.2.3)
       mongrel (>= 1.0.2)
+    mysql (2.8.1)
+    pg (0.9.0)
     rack (1.1.0)
     rails (2.3.10)
       actionmailer (= 2.3.10)
@@ -42,10 +44,12 @@ GEM
       activesupport (= 2.3.10)
       rake (>= 0.8.3)
     rake (0.8.7)
-    ruby-debug (0.10.3)
+    routing-filter (0.2.0)
+      actionpack
+    ruby-debug (0.10.4)
       columnize (>= 0.1)
-      ruby-debug-base (~> 0.10.3.0)
-    ruby-debug-base (0.10.3)
+      ruby-debug-base (~> 0.10.4.0)
+    ruby-debug-base (0.10.4)
       linecache (>= 0.3)
     rubyzip (0.9.4)
     selenium-client (1.2.18)
@@ -67,7 +71,10 @@ DEPENDENCIES
   machinist
   mocha
   mongrel_cluster
+  mysql
+  pg
   rails (= 2.3.10)
+  routing-filter
   ruby-debug
   rubyzip
   selenium-client (~> 1.2.15)
