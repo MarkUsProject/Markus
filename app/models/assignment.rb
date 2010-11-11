@@ -535,7 +535,7 @@ class Assignment < ActiveRecord::Base
       return distribution
     end
 
-    steps = 100/intervals # number of percentage steps in each interval
+    steps = 100 / intervals # number of percentage steps in each interval
     groupings = self.groupings.all(:include => [{:current_submission_used => :result}])
 
     groupings.each do |grouping|
@@ -547,14 +547,14 @@ class Assignment < ActiveRecord::Base
           if percentage == 0
             distribution[0] += 1
           elsif percentage >= 100
-            distribution[intervals-1] += 1
+            distribution[intervals - 1] += 1
           elsif (percentage % steps) == 0
-            distribution[percentage/steps - 1] += 1
+            distribution[percentage / steps - 1] += 1
           else
-            distribution[percentage/steps] += 1
+            distribution[percentage / steps] += 1
           end
         end
-      end 
+      end
     end # end of groupings loop
 
     return distribution

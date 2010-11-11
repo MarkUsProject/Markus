@@ -533,8 +533,21 @@ class AssignmentTest < ActiveSupport::TestCase
         totals = [16.5, 16.0, 16.1, 15.5, 5.0, 7.0, 17.5, 17.0, 18.9, 28.0, 8.1, 25.2, 25.7, 4.3, 0, 10, 19.5, 27.0, 26.6, 0]
 
         # create rubric creteria
-        rubric_criteria = [{:rubric_criterion_name => "Uses Conditionals", :weight => 1}, {:rubric_criterion_name => "Code Clarity", :weight => 2}, {:rubric_criterion_name => "Code Is Documented", :weight => 3}, {:rubric_criterion_name => "Uses For Loop", :weight => 1}]
-        default_levels = {:level_0_name => "Quite Poor", :level_0_description => "This criterion was not satisifed whatsoever", :level_1_name => "Satisfactory", :level_1_description => "This criterion was satisfied", :level_2_name => "Good", :level_2_description => "This criterion was satisfied well", :level_3_name => "Great", :level_3_description => "This criterion was satisfied really well!", :level_4_name => "Excellent", :level_4_description => "This criterion was satisfied excellently"}
+        rubric_criteria = [{:rubric_criterion_name => "Uses Conditionals", :weight => 1}, 
+          {:rubric_criterion_name => "Code Clarity", :weight => 2},
+          {:rubric_criterion_name => "Code Is Documented", :weight => 3},
+          {:rubric_criterion_name => "Uses For Loop", :weight => 1}]
+        default_levels = {:level_0_name => "Quite Poor",
+          :level_0_description => "This criterion was not satisifed whatsoever", 
+          :level_1_name => "Satisfactory",
+          :level_1_description => "This criterion was satisfied",
+          :level_2_name => "Good",
+          :level_2_description => "This criterion was satisfied well",
+          :level_3_name => "Great",
+          :level_3_description => "This criterion was satisfied really well!", 
+          :level_4_name => "Excellent", 
+          :level_4_description => "This criterion was satisfied excellently"}
+
         rubric_criteria.each do |rubric_criteria|
           rc = RubricCriterion.new
           rc.update_attributes(rubric_criteria)
@@ -551,7 +564,7 @@ class AssignmentTest < ActiveSupport::TestCase
           end
           s = Submission.make(:grouping => g)
           r = s.result
-          r.total_mark = totals[index-1]
+          r.total_mark = totals[index - 1]
           r.marking_state = Result::MARKING_STATES[:complete]
           r.save
         end
@@ -570,9 +583,22 @@ class AssignmentTest < ActiveSupport::TestCase
       setup do
         totals = [16.5, 16.0, 16.1, 15.5, 5.0, 37.0, 17.5, 17.0, 18.9, 29.0, 8.1, 25.2, 25.7, 4.3, 0, 10, 19.5, 27.0, 26.6, 0]
 
-        # create rubric creteria
-        rubric_criteria = [{:rubric_criterion_name => "Uses Conditionals", :weight => 1}, {:rubric_criterion_name => "Code Clarity", :weight => 2}, {:rubric_criterion_name => "Code Is Documented", :weight => 3}, {:rubric_criterion_name => "Uses For Loop", :weight => 1}]
-        default_levels = {:level_0_name => "Quite Poor", :level_0_description => "This criterion was not satisifed whatsoever", :level_1_name => "Satisfactory", :level_1_description => "This criterion was satisfied", :level_2_name => "Good", :level_2_description => "This criterion was satisfied well", :level_3_name => "Great", :level_3_description => "This criterion was satisfied really well!", :level_4_name => "Excellent", :level_4_description => "This criterion was satisfied excellently"}
+        # create rubric criteria
+        rubric_criteria = [{:rubric_criterion_name => "Uses Conditionals", :weight => 1}, 
+          {:rubric_criterion_name => "Code Clarity", :weight => 2},
+          {:rubric_criterion_name => "Code Is Documented", :weight => 3},
+          {:rubric_criterion_name => "Uses For Loop", :weight => 1}]
+        default_levels = {:level_0_name => "Quite Poor",
+          :level_0_description => "This criterion was not satisifed whatsoever", 
+          :level_1_name => "Satisfactory",
+          :level_1_description => "This criterion was satisfied",
+          :level_2_name => "Good",
+          :level_2_description => "This criterion was satisfied well",
+          :level_3_name => "Great",
+          :level_3_description => "This criterion was satisfied really well!", 
+          :level_4_name => "Excellent", 
+          :level_4_description => "This criterion was satisfied excellently"}
+
         rubric_criteria.each do |rubric_criteria|
           rc = RubricCriterion.new
           rc.update_attributes(rubric_criteria)
@@ -589,7 +615,7 @@ class AssignmentTest < ActiveSupport::TestCase
           end
           s = Submission.make(:grouping => g)
           r = s.result
-          r.total_mark = totals[index-1]
+          r.total_mark = totals[index - 1]
           r.marking_state = Result::MARKING_STATES[:complete]
           r.save
         end
