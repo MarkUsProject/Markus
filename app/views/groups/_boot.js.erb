@@ -1,4 +1,5 @@
-<script type="text/javascript" language="Javascript">
+<script type="text/javascript">
+//<![CDATA[
 
 var groupings_table = null;
 
@@ -128,4 +129,5 @@ document.observe("dom:loaded", function() {
   <%= remote_function :url => {:action => 'populate_students', :id => @assignment.id}, :complete => "$('loading_students_list').hide();"%>
 });
 
+//]]>
 </script>

@@ -80,6 +80,19 @@
       <p id="lib_file_add_link">
         <%= add_lib_file_link t("test_framework.add_lib_file_link"), f %>
       </p>
+
+      <h4><%= t("test_framework.assignment_parser_files") %></h4>
+      <div id="parser_files">
+        <% f.fields_for :test_files do |tf| %>
+          <% if tf.object.filetype.to_s == "parse" %>
+            <%= render :partial => 'test_file', :locals => {:test_file => tf.object, :form => f, :file_type => "parse"} %>
+          <% end %>
+        <% end %>
+      </div>
+      <p id="parser_file_add_link">
+        <%= add_parser_file_link t("test_framework.add_parser_file_link"), f %>
+      </p>
+
     </div>
     </div>
   </fieldset>

@@ -1,4 +1,5 @@
 en:
+    choose_language:    "Choose Language:"
     answer_yes:         "Yes"
     answer_no:          "No"
     markus:             "MarkUs"
@@ -255,6 +256,7 @@ en:
       test_results: "Test Results:"
       no_file_in_repository: "[No files in repository]"
       cant_display_image: "Image cannot be displayed. If you are trying to view a pdf file its probably too big to display or you have turned off pdf support. Click on the Download button to download the file instead"
+      test_code: "Test Code"
 
     seperate_multiple_with_commas:  "Seperate multiple user names with commas"
     csv_valid_format:   "There was a problem parsing the CSV file you uploaded.  Please ensure that it's a valid CSV format, and that each line ends with a carriage-return line-feed set of characters.  No changes were made. "
@@ -767,6 +769,11 @@ en:
       button:
         load: "Load"
       no_files_available: "[No test results available]"
+      loading_results: "Loading results..."
+      running_tests: "Running Tests..."
+      build_successful: "Tests Completed. View '%{logfile}' for details."
+      build_failed: "Build Failed. View '%{logfile}' to investigate."
+      build_error: "Unknown error with Ant. Is Ant correctly installed? View '%{logfile}' to investigate."
 
     criteria_csv_error:
       incomplete_row: "contains too little information."
@@ -995,17 +1002,22 @@ en:
       build_prop: "build.properties"
       add_test_file_link: "Add Test File"
       add_lib_file_link: "Add Library File"
+      add_parser_file_link: "Add Parser File"
       add_test_file_alert: "You must enable tests for this assignment to add a test file."
       add_lib_file_alert: "You must enable tests for this assignment to add a library file."
+      add_parser_file_alert: "You must enable tests for this assignment to add a parser file."
       assignment_test_files: "Associated Test Files"
       assignment_lib_files: "Associated Library Files"
+      assignment_parser_files: "Associated Parser Files"
       private: "private?"
       replace: "Replace"
       filename_exists: "has already been taken"
       duplicate_filename: "Attempted to upload the following filename more than once: "
       invalid_buildxml: "Ant build.xml file must be named build.xml"
       invalid_buildproperties: "Ant build.properties file must be named build.properties"
-      invalid_filename: "Test and Library files cannot be named build.xml or build.properties"
+      invalid_filename: "Test, Library and Parser files cannot be named build.xml or build.properties"
+      missing_tokens: "No tokens were found for this student and for this assignment"
+      dir_not_exist: "The directory %{dir} required for Ant does not exist"
       token:
         tokens_form: "Tokens available per group"
         tokens_per_day: "<span class=\"prop_label\">Tokens per day:</span> %{tokens}"

@@ -3,7 +3,9 @@
 
 <%= render :partial => "boot.js" %>
 
-<script>
+<script type="text/javascript">
+//<![CDATA[
+
 document.observe("dom:loaded", function(){
 
   modalUpload = new Control.Modal($('upload_dialog'),
@@ -21,7 +23,8 @@ document.observe("dom:loaded", function(){
     fade:false
 
   });
-})
+});
+//]]>
 </script>
 
 <div id="title_bar"><h1><%=h I18n.t("graders.manage_graders") %></h1>

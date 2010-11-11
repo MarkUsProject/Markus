@@ -183,6 +183,13 @@ REPOSITORY_PERMISSION_FILE = REPOSITORY_STORAGE + "/svn_authz"
 IS_REPOSITORY_ADMIN = true
 
 ###################################################################
+# Set this to the desired default language MarkUs should load if
+# nothing else tells it otherwise. At the moment valid values are
+# 'en', 'fr'. Please make sure that proper locale files are present
+# in config/locales.
+MARKUS_DEFAULT_LANGUAGE = 'en'
+
+###################################################################
 # Session Timeouts
 ###################################################################
 USER_STUDENT_SESSION_TIMEOUT        = 1800 # Timeout for student users

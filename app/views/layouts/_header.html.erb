@@ -1,5 +1,11 @@
 <div id="header">
   <div id="user_info">
+    <span id="lang_chooser">
+      <%= I18n.t(:choose_language) %>
+      <%= select_tag( :locale, options_for_select( @available_locales, :selected => "#{I18n.locale}" ),
+                    { :onchange => "javascript:window.location.href = " +
+                      "'#{request.request_uri}'.replace(/#{I18n.locale}/, this.options[this.selectedIndex].value);" } ) %>
+    </span>
     <%= link_to_remote( image_tag("icons/information.png",
 				  :alt => I18n.t(:about_markus),
 				  :title => I18n.t(:about_markus),

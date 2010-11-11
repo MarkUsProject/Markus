@@ -33,10 +33,10 @@ class TestFile < ActiveRecord::Base
     t_id = record.id
     f_type = record.filetype
 
-    # Case 1: test and lib files cannot be called 'build.xml' or 'build.properties'
-    # (need to check this in case the user uploads test or lib files before uploading ant files
+    # Case 1: test, lib and parse type files cannot be called 'build.xml' or 'build.properties'
+    # (need to check this in case the user uploads test, lib or parse files before uploading ant files
     #  in which case the build.xml and build.properties will not exist yet)
-    if (f_type == "test" || f_type == "lib") && (f_name == "build.xml" || f_name == "build.properties")
+    if (f_type != "build.xml" && f_type != "build.properties") && (f_name == "build.xml" || f_name == "build.properties")
       record.errors.add_to_base(I18n.t("test_framework.invalid_filename"))
     end
 
@@ -96,19 +96,22 @@ class TestFile < ActiveRecord::Base
       name =  self.filename
       test_dir = File.join(MarkusConfigurator.markus_config_test_framework_repository, assignment.short_identifier)
 
-      # Folders for test and lib files:
+      # Folders for test, lib and parse files:
       # Test Files Folder
       if self.filetype == "test"
         test_dir = File.join(test_dir, 'test')
       # Lib Files Folder
       elsif self.filetype == "lib"
         test_dir = File.join(test_dir, 'lib')
+      # Parser Files Folder
+      elsif self.filetype == "parse"
+        test_dir = File.join(test_dir, 'parse')
       end
 
       # Create the file path
       path = File.join(test_dir, name)
 
-      # Create the test and lib folders if necessary
+      # Create the test, lib and parse folders if necessary
       FileUtils.makedirs(test_dir)
 
       # Read and write the file (overwrite if it exists)
@@ -123,6 +126,8 @@ class TestFile < ActiveRecord::Base
       test_dir = File.join(test_dir, 'test')
     elsif self.filetype == "lib"
       test_dir = File.join(test_dir, 'lib')
+    elsif self.filetype == "parse"
+      test_dir = File.join(test_dir, 'parse')
     end
 
     # Delete file if it exists

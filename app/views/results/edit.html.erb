@@ -54,6 +54,8 @@
 <%= javascript_include_tag "Grader/tabs_boot.js"%>
 
 <script type="text/javascript">
+//<![CDATA[
+
   var modalNotesGroup = null;
   document.observe("dom:loaded", function(){
     modalNotesGroup = new Control.Modal($('notes_dialog'),
@@ -82,6 +84,7 @@ function check_working() {
   return '<%=t(:still_working_warning)%>';
 }
 
+//]]>
 </script>
 
 <%
