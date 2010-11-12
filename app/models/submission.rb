@@ -13,7 +13,8 @@ class Submission < ActiveRecord::Base
   has_many   :submission_files, :dependent => :destroy
   has_many   :annotations, :through => :submission_files
   has_many   :test_results, :dependent => :destroy
-  has_one    :remark_result, :class_name => "Result", :foreign_key => "remark_result_id"
+  belongs_to :remark_result, :class_name => "Result"
+
   validates_associated :remark_result
   
   def self.create_by_timestamp(grouping, timestamp)
