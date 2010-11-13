@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100830154126) do
+ActiveRecord::Schema.define(:version => 20101112001211) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -362,6 +362,7 @@ ActiveRecord::Schema.define(:version => 20100830154126) do
   create_table "tokens", :force => true do |t|
     t.integer "grouping_id"
     t.integer "tokens"
+    t.date    "last_token_used_date"
   end
 
   create_table "users", :force => true do |t|
