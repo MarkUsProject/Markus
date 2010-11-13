@@ -331,6 +331,8 @@ ActiveRecord::Schema.define(:version => 20101112001211) do
     t.boolean  "submission_version_used"
     t.integer  "revision_number",         :null => false
     t.datetime "revision_timestamp",      :null => false
+    t.integer  "remark_result_id"
+    t.text     "remark_request"
   end
 
   add_index "submissions", ["grouping_id"], :name => "index_submissions_on_grouping_id"
