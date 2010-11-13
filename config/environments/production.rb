@@ -28,15 +28,6 @@ config.action_controller.allow_forgery_protection    = true
 # Disable delivery errors, bad email addresses will be ignored
 config.action_mailer.raise_delivery_errors = false
 
-# Required gems for development (we are passing :lib => false,
-# because we don't want them to be loaded just yet)
-# Install them by using "rake gems:install"
-config.gem 'fastercsv', :lib => false, :source => 'http://rubygems.org'
-config.gem 'will_paginate', :lib => false, :source => 'http://rubygems.org'
-config.gem 'rubyzip', :lib => false, :source => 'http://rubygems.org'
-config.gem 'ya2yaml', :source => 'http://rubygems.org', :lib => false
-config.gem 'i18n', :source => 'http://rubygems.org', :lib => false
-
 ###################################################################
 # MarkUs SPECIFIC CONFIGURATION
 #   - use "/" as path separator no matter what OS server is running
@@ -190,6 +181,13 @@ REPOSITORY_PERMISSION_FILE = REPOSITORY_STORAGE + "/svn_authz"
 # REPOSITORY_SVN_AUTHZ_FILE, otherwise it doesn't. Change this to
 # 'false' if repositories are created by a third party.
 IS_REPOSITORY_ADMIN = true
+
+###################################################################
+# Set this to the desired default language MarkUs should load if
+# nothing else tells it otherwise. At the moment valid values are
+# 'en', 'fr'. Please make sure that proper locale files are present
+# in config/locales.
+MARKUS_DEFAULT_LANGUAGE = 'en'
 
 ###################################################################
 # Session Timeouts

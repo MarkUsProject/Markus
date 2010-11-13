@@ -82,4 +82,39 @@ class TokenTest < ActiveSupport::TestCase
     end
   end
 
+  context "update_tokens" do
+    setup do
+      @token = Token.make(:tokens => '5')
+    end
+    should "update token count properly when it is being increased" do
+      @token.update_tokens(6, 9)
+      assert_equal(8, @token.tokens)
+    end
+    should "update token count properly when it is being decreased" do
+      @token.update_tokens(6, 3)
+      assert_equal(2, @token.tokens)
+    end
+    should "not allow token count to go below 0" do
+      @token.update_tokens(6, 0)
+      assert_equal(0, @token.tokens)
+    end
+  end
+
+  context "Token" do
+    setup do
+      @token = Token.make{}
+    end
+    should "be found" do
+      assert_equal(@token, Token.find_by_grouping_id(@token.grouping_id))
+    end
+  end
+
+  context "Token" do
+    setup do
+      @token = Token.make
+    end
+    should "not be found (wrong grouping_id)" do
+      assert_nil(Token.find_by_grouping_id(0))
+    end
+  end
 end

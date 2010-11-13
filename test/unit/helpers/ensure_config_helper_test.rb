@@ -6,6 +6,20 @@ include EnsureConfigHelper
 include MarkusConfigurator
 
 class EnsureConfigHelperTest < ActiveSupport::TestCase
+
+  context "A configured default language with language file present in config/locales" do
+    should "not raise an exception" do
+      EnsureConfigHelper.check_configured_default_language('en')
+    end
+  end
+
+  context "A configured default language with language file not present in config/locales" do
+    should "raise an exception" do
+      assert_raise RuntimeError do
+        EnsureConfigHelper.check_configured_default_language('es')
+      end
+    end
+  end
   
   context "setting up the markus_configurator" do
 

@@ -21,6 +21,7 @@ class Assignment < ActiveRecord::Base
   has_many :groupings
   has_many :ta_memberships, :class_name => "TaMembership", :through => :groupings
   has_many :student_memberships, :through => :groupings
+  has_many :tokens, :through => :groupings
 
   has_many :submissions, :through => :groupings
   has_many :groups, :through => :groupings
@@ -48,7 +49,8 @@ class Assignment < ActiveRecord::Base
   validates_inclusion_of :enable_test, :in => [true, false]
   validates_inclusion_of :assign_graders_to_criteria, :in => [true, false]
   
- before_save :reset_collection_time
+  before_save :reset_collection_time
+  after_save  :update_assigned_tokens
 
   def validate
     if (group_max && group_min) && group_max < group_min
@@ -528,6 +530,42 @@ class Assignment < ActiveRecord::Base
     end
   end
 
+  # Returns an array with the number of groupings who scored between
+  # certain percentage ranges [0-5%, 6-10%, ...]
+  # intervals defaults to 20
+  def grade_distribution_as_percentage(intervals=20)
+    distribution = Array.new(intervals, 0)
+    out_of = self.total_mark
+
+    if out_of == 0
+      return distribution
+    end
+
+    steps = 100 / intervals # number of percentage steps in each interval
+    groupings = self.groupings.all(:include => [{:current_submission_used => :result}])
+
+    groupings.each do |grouping|
+      submission = grouping.current_submission_used
+      if !submission.nil? && submission.has_result?
+        result = submission.result
+        if result.marking_state == Result::MARKING_STATES[:complete]
+          percentage = (result.total_mark / out_of * 100).ceil
+          if percentage == 0
+            distribution[0] += 1
+          elsif percentage >= 100
+            distribution[intervals - 1] += 1
+          elsif (percentage % steps) == 0
+            distribution[percentage / steps - 1] += 1
+          else
+            distribution[percentage / steps] += 1
+          end
+        end
+      end
+    end # end of groupings loop
+
+    return distribution
+  end
+
   private
 
   # Returns true if we are safe to set the repository name
@@ -550,6 +588,12 @@ class Assignment < ActiveRecord::Base
 
   def reset_collection_time
     submission_rule.reset_collection_time
+  end
+
+  def update_assigned_tokens
+    self.tokens.each do |t|
+      t.update_tokens(self.tokens_per_day_was, self.tokens_per_day)
+    end
   end
 
 end

@@ -17,20 +17,8 @@ config.action_controller.allow_forgery_protection    = true
 # Don't care if the mailer can't send
 config.action_mailer.raise_delivery_errors = false
 
-# Required gems for development (we are passing :lib => false,
-# because we don't want them to be loaded just yet)
-# Install them by using "rake gems:install"
-config.gem 'selenium-client', :version => ">=1.2.15", :lib => false, :source  => 'http://rubygems.org'
-config.gem 'shoulda', :version => ">=2.10.2", :source => 'http://rubygems.org', :lib => false
-config.gem 'fastercsv', :lib => false, :source => 'http://rubygems.org'
-config.gem 'will_paginate', :lib => false, :source => 'http://rubygems.org'
-config.gem 'machinist', :lib => false, :source => 'http://rubygems.org'
-config.gem 'faker', :lib => false, :source => 'http://rubygems.org'
-config.gem 'factory_data_preloader', :source => 'http://rubygems.org'
-config.gem 'rubyzip', :lib => false, :source => 'http://rubygems.org'
-config.gem 'ya2yaml', :source => 'http://rubygems.org', :lib => false
-config.gem 'i18n', :source => 'http://rubygems.org', :lib => false
-
+require 'rubygems'
+require 'bundler'
 require 'ruby-debug'
 
 ###################################################################
@@ -185,6 +173,13 @@ REPOSITORY_PERMISSION_FILE = REPOSITORY_STORAGE + "/svn_authz"
 # $REPOSITORY_SVN_AUTHZ_FILE, otherwise it doesn't. Change this to
 # 'false' if repositories are created by a third party.
 IS_REPOSITORY_ADMIN = true
+
+###################################################################
+# Set this to the desired default language MarkUs should load if
+# nothing else tells it otherwise. At the moment valid values are
+# 'en', 'fr'. Please make sure that proper locale files are present
+# in config/locales.
+MARKUS_DEFAULT_LANGUAGE = 'en'
 
 ###################################################################
 # Session Timeouts

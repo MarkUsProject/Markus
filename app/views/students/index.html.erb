@@ -4,7 +4,9 @@
 <%= render :partial => "boot.js.erb"%>
 <%= render :partial => "student_form_actions.js.erb"%>
 
-<script>
+<script type="text/javascript">
+//<![CDATA[
+
 document.observe("dom:loaded", function(){
 
   modalNotesGroup = new Control.Modal($('notes_dialog'),
@@ -30,7 +32,8 @@ document.observe("dom:loaded", function(){
     fade:false
 
   });
-})
+});
+//]]>
 </script>
 
 <div id="title_bar"><h1><%=h I18n.t("students.manage_students") %></h1>

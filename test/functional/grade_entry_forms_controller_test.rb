@@ -586,7 +586,6 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
           @q2.name = "Q1"
           @grade_entry_form_with_dup.grade_entry_items.make(:name => @q1.name)
           @grade_entry_form_before = @grade_entry_form_with_dup
-
           
           post_as @admin, :edit, {:id => @grade_entry_form_with_dup.id, 
                                   :grade_entry_form => {:short_identifier => NEW_SHORT_IDENTIFIER, 
@@ -594,6 +593,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                         :message => NEW_MESSAGE,
                                                         :date => @grade_entry_form_with_dup.date,
                                                         :grade_entry_items => [@q1, @q2]}}
+          @grade_entry_form_before.reload
         end
         should assign_to :grade_entry_form
         should respond_with :success

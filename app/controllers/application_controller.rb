@@ -19,6 +19,11 @@ class ApplicationController < ActionController::Base
   # Filter the contents of submitted sensitive data parameters
   # from your application log (in this case, all fields with names like "user"). 
   filter_parameter_logging :user
+
+  # Define default URL options to include the locale
+  def default_url_options(options={})
+    { :locale => I18n.locale }
+  end
   
   protected
   
@@ -45,14 +50,15 @@ class ApplicationController < ActionController::Base
     end
   end
   
+  # Set locale according to URL parameter. If unknown parameter is
+  # requested, fall back to default locale.
   def set_locale
-    # does not do anything for now, but might be used later
-    session[:locale] = params[:locale] if params[:locale]
-    I18n.locale = session[:locale] || I18n.default_locale # for now, always 
+    @available_locales = AVAILABLE_LANGS if @available_locales.nil?
+    I18n.locale = params[:locale] || I18n.default_locale # for now, always 
                                                           # resorts to 
                                                           # I18n.default_locale
     
-    locale_path = "#{LOCALES_DIRECTORY}#{I18n.locale}.yml"
+    locale_path = File.join(LOCALES_DIRECTORY, "#{I18n.locale}.yml")
     
     unless I18n.load_path.include? locale_path
       I18n.load_path << locale_path
@@ -65,6 +71,6 @@ class ApplicationController < ActionController::Base
     flash.now[:notice] = I18n.t("locale_not_available", :locale => I18n.locale)
     
     I18n.load_path -= [locale_path]
-    I18n.locale = session[:locale] = I18n.default_locale
+    I18n.locale = I18n.default_locale
   end
 end

@@ -1,3 +1,5 @@
+<% if grouping.non_rejected_student_memberships.size > 0 %>
+
 <tr
 <% if grouping.is_collected? %>
   style="background-color: #90EE90"
@@ -63,18 +65,18 @@
             :alt => I18n.t('marking_state.in_progress'),
             :title => I18n.t('marking_state.in_progress')) %>
 	<% else %>
-	    <% if grouping.current_submission_used.result.marking_state == Result::MARKING_STATES[:complete]%>
-		<% if !grouping.current_submission_used.result.released_to_students %>
-		    <%= image_tag('icons/accept.png',
-            :alt => I18n.t('marking_state.completed'),
-            :title => I18n.t('marking_state.completed'))%>
-		<% else %>
-		    <%= image_tag('icons/email_go.png',
-            :alt => I18n.t('marking_state.released'),
-            :title => I18n.t('marking_state.released'))%>
-		<% end %>
-	    <% else %>
-		<%= image_tag('icons/pencil.png',
+      <% if grouping.current_submission_used.result.marking_state == Result::MARKING_STATES[:complete]%>
+        <% if !grouping.current_submission_used.result.released_to_students %>
+		      <%= image_tag('icons/accept.png',
+              :alt => I18n.t('marking_state.completed'),
+              :title => I18n.t('marking_state.completed'))%>
+		    <% else %>
+		      <%= image_tag('icons/email_go.png',
+              :alt => I18n.t('marking_state.released'),
+              :title => I18n.t('marking_state.released'))%>
+		    <% end %>
+      <% else %>
+		     <%= image_tag('icons/pencil.png',
             :alt => I18n.t('marking_state.in_progress'),
             :title => I18n.t('marking_state.in_progress'))%>
 	    <% end %>
@@ -96,3 +98,5 @@
   <% end %>
   </td>
 </tr>
+
+<% end %>

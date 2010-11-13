@@ -1,4 +1,5 @@
 fr:
+    choose_language:    "Choisir langue:"
     answer_yes:         "Oui"
     answer_no:          "Non"
     markus:             "MarkUs"
@@ -93,6 +94,7 @@ fr:
       released: "Affiché"
     collect_submissions:
       collect_all: "Récupérer tous les envois"
+      collect_ta: "Récupérer tous les envois qui me sont assignés"
       could_not_collect: "N'a pas pu récupérer les envois pour le projet %{assignment_identifier} - la date de récupération n'a pas encore passée"
       collection_job_started: "La récupération des envois pour le projet %{assignment_identifier} a débuté.  Cela peut peut prendre du temps, mais vous avez accès aux envois dès qu'ils sont disponibles."
       priority_given: "Une priorité importante a été donné à cet envoi.  Il va bientot être prêt."

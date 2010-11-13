@@ -99,6 +99,10 @@ function toggle_test_framework(is_testing_framework_enabled) {
     $$('#lib_files .test_file input').each(function(node) {
       $(node).enable();
     });
+    $$('#parser_files .test_file').each(function(node) { node.removeClassName('disabled'); });
+    $$('#parser_files .test_file input').each(function(node) {
+      $(node).enable();
+    });
   } else {
     $('tokens').addClassName('disable');
     $('tokens_per_day').disable();
@@ -117,6 +121,10 @@ function toggle_test_framework(is_testing_framework_enabled) {
     });
     $$('#lib_files .test_file').each(function(node) { node.addClassName('disabled'); });
     $$('#lib_files .test_file input').each(function(node) {
+      $(node).disable();
+    });
+    $$('#parser_files .test_file').each(function(node) { node.addClassName('disabled'); });
+    $$('#parser_files .test_file input').each(function(node) {
       $(node).disable();
     });
   }
