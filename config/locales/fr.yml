@@ -142,6 +142,10 @@ fr:
             change_marking_scheme_type: "Changer le barème effacera vos critères et vos évaluations."
         allow_web_submits: "Envois via l'interface web ?"
         display_grader_names_to_students: "Afficher le nom du correcteur aux étudiants ?"
+        section_due_date_not_displayed: "Les dates de retour sont spécifiques aux sections." 
+        section_due_date_type: "Les dates de retour sont spécifiées par section." 
+        section_due_date_option:  "Si l'option date de retour par section est sélectionnée, les groupes seront restreints aux sections"
+        section_due_dates_info:  "<b>Important</b> La date de retour «globale» doit être indiquée. Si une section n'a pas de date de retour spécifique, la date «globale» sera utilisée. Si certains étudiants ne font partie d'aucune section, ce sera aussi cette date «globale» qui sera utilisée. Ces étudiants ne pourront se mettre qu'avec d'autres étudiants n'appartenant pas à des sections."
     your_mark:  "Votre note : "
 
     members:            "Membres"
@@ -563,6 +567,7 @@ fr:
        a décliné l'invitation</span>"
       cancel_invitation: "Êtes vous sûr de vouloir annuler l'invitation ?"
       cancel_invitation_title: "Annuler l'invitation"
+      section_groups_only: "Vous ne pouvez invité que des étudiants de votre section"
       submission:
         file_manager: "%{short_identifier} : Gestionnaire de fichiers"
         current_path: "Chemin courant : "
