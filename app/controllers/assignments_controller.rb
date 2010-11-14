@@ -397,6 +397,26 @@ class AssignmentsController < ApplicationController
     # Periods, and switch the type of the SubmissionRule.
     # This little conditional has to do some hack-y workarounds, since
     # accepts_nested_attributes_for is a little...dumb.
+    
+
+    if params[:assignment][:section_due_dates_type]
+      # create the section_due_dates
+      for section in @sections
+        if params["section_due_date_#{section.id}"][:due_date]
+          s = 
+            SectionDueDate.find_by_assignment_id_and_section_id(assignment.id,
+                                                                section.id)
+          if s.nil?
+            s = SectionDueDate.new(params["section_due_date_#{section.id}"])
+            s.assignment = assignment
+          end
+          s.due_date = params["section_due_date_#{section.id}"][:due_date]
+          s.save
+        end # if we have a due date for this section
+      end # for each sections
+      assignment.section_due_dates_type = true
+      assignment.section_groups_only = true
+    end
     if assignment.submission_rule.attributes['type'] != 
          params[:assignment][:submission_rule_attributes][:type]
       # Some protective measures here to make sure we haven't been duped...
