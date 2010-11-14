@@ -1832,3 +1832,13 @@ pre#test_result_content {
   font-size: smaller;
 }
 
+#section_due_dates_type_form {
+    margin-top: 10px;
+}
+
+.section_due_date_form {
+    margin-left: 60px;
+}
+
+
+
