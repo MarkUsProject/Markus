@@ -10,7 +10,8 @@
 </td>
 <td>
   <% if !grouping.has_submission? %>
-    <% if assignment.submission_rule.can_collect_now? %>
+    <% if Time.now >=
+    assignment.submission_rule.calculate_grouping_collection_time(grouping) %>
       <%= link_to h(grouping.group.group_name), :action => 'collect_and_begin_grading', :id => assignment.id, :grouping_id => grouping.id %>
     <% else %>
       <%=h(grouping.group.group_name)%>
@@ -96,6 +97,13 @@
       <%= h(grouping.current_submission_used.result.total_mark) %>
     <% end %>
   <% end %>
+  </td>
+  <td>
+    <% if Time.now >= assignment.submission_rule.calculate_grouping_collection_time(grouping) %>
+      <%= image_tag('icons/tick.png') %>
+    <% else %>
+      <%= image_tag('icons/cross.png') %>
+    <% end %>
   </td>
 </tr>
 
