@@ -33,6 +33,15 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find(params[:id])
     @student = current_user
     @grouping = @student.accepted_grouping_for(@assignment.id)
+
+    if @student.section &&
+       !@student.section.section_due_date_for(@assignment.id).nil?
+      @due_date =
+        @student.section.section_due_date_for(@assignment.id).due_date
+    end
+    if @due_date.nil?
+      @due_date = @assignment.due_date
+    end
     if @student.has_pending_groupings_for?(@assignment.id)
       @pending_grouping = @student.pending_groupings_for(@assignment.id) 
     end
@@ -133,15 +142,16 @@ class AssignmentsController < ApplicationController
       end
     end
     @assignments = Assignment.all
+    @sections = Section.all
     if !request.post?
       return
     end
   
     begin
       @assignment = process_assignment_form(@assignment, params)
-    rescue Exception, RuntimeError => e
-      @assignment.errors.add_to_base(I18n.t("assignment.error", 
-                                            :message => e.message))
+      rescue Exception, RuntimeError => e
+        @assignment.errors.add_to_base(I18n.t("assignment.error", 
+                                              :message => e.message))
       return
     end
     
@@ -162,6 +172,7 @@ class AssignmentsController < ApplicationController
   def new
     @assignments = Assignment.all
     @assignment = Assignment.new
+    @sections = Section.all
     @assignment.build_submission_rule
     
     if !request.post?
