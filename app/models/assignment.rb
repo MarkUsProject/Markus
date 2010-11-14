@@ -28,6 +28,8 @@ class Assignment < ActiveRecord::Base
 
   has_many :notes, :as => :noteable, :dependent => :destroy
 
+  has_many :section_due_dates
+
   validates_associated :assignment_files
 
   validates_presence_of     :repository_folder
@@ -61,10 +63,56 @@ class Assignment < ActiveRecord::Base
     end
   end
 
-  # Are we past the due date for this assignment?
+  # Are we past all the due dates for this assignment?
   def past_due_date?
-    return !due_date.nil? && Time.now > due_date
+    if !self.section_due_dates_type && self.section_due_dates.empty?
+      return !due_date.nil? && Time.now > due_date
+    else
+      self.section_due_dates.each do |d|
+        if !d.due_date.nil? && Time.now > d.due_date
+          return true
+        end
+      end
+      return false
+    end
   end
+
+  # Are we past the due date for this assignment, for this grouping ?
+  # TODO unit tests
+  def section_past_due_date?(grouping)
+    if self.section_due_dates_type
+        section_due_date =
+    SectionDueDate.due_date?(grouping.inviter.section, self)
+        return !section_due_date.nil? && Time.now > section_due_date
+    else
+      self.past_due_date?
+    end
+  end
+
+  # return the due date for a grouping
+  # TODO unit test
+  def section_due_date(section)
+    if self.section_due_dates_type
+      if !section.nil?
+        return SectionDueDate.due_date?(section, self)
+      end
+    end
+    return self.due_date
+  end
+
+  def last_due_date
+    if !self.section_due_dates_type
+      return self.due_date
+    else
+      due_date = self.due_date
+      self.section_due_dates.each do |d|
+        if !d.due_date.nil? && due_date < d.due_date
+          due_date = d.due_date
+        end
+      end
+      return due_date
+    end
+   end
 
   def past_collection_date?
     return Time.now > submission_rule.calculate_collection_time
