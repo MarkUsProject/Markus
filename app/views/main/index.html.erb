@@ -1,3 +1,10 @@
+<% content_for :head do %>
+	<%= javascript_include_tag "Bluff/js-class.js",
+ 		"Bluff/bluff.js",
+		"Bluff/excanvas.js",
+		:cache => "bluff_cache"	%>
+<% end %>
+
 <% if !@current_user.student? and
     # If not Firefox display warning
     (request.env['HTTP_USER_AGENT'].downcase =~ /gecko/i).nil? %>
