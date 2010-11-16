@@ -92,6 +92,7 @@ en:
       in_progress: "In Progress"
       completed: "Completed"
       released: "Released"
+      remark_requested: "Remark Requested"
     collect_submissions:
       collect_all: "Collect All Submissions"
       collect_ta: "Collect all your assigned submissions"
