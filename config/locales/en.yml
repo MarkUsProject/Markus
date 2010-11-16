@@ -134,6 +134,11 @@ en:
         submission:
             rules:  "Submission Rules"
             penalty_rules:  "Choose penalty rules to apply for late submissions:"
+        remark:
+            rules:  "Remark Request Rules"
+            allow:  "Allow remark requests"
+            due_date:  "Remark Due Date"
+            message:   "Remark Message"
         marking_scheme:
             title: "Marking Scheme"
             rubric: "Rubric"

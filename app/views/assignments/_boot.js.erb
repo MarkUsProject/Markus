@@ -23,6 +23,7 @@
     default_group_fields();
     <% if !@assignment.nil? %>
     toggle_group_assignment(<%= @assignment.group_assignment? %>);
+    toggle_remark_requests(<%= @assignment.allow_remarks? %>);
     <% end %>
     
   });
