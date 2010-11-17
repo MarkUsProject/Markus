@@ -92,6 +92,7 @@ fr:
       in_progress: "En cours"
       completed: "Terminé"
       released: "Affiché"
+      remark_requested: "Réévaluation exigée"
     collect_submissions:
       collect_all: "Récupérer tous les envois"
       collect_ta: "Récupérer tous les envois qui me sont assignés"
