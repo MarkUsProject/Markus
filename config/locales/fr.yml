@@ -134,6 +134,11 @@ fr:
         submission:
             rules:  "Règles d'envoi"
             penalty_rules:  "Choisissez les pénalités à appliquer en cas de retard :"
+        remark:
+            rules:  "Règles de révisions"
+            allow:  "Autoriser les révisions"
+            due_date:  "Révision date de retour"
+            message:   "Révision Informations"
         marking_scheme:
             title: "Barème"
             rubric: "Rubrique (pré-défini)"

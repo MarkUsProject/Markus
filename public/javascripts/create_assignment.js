@@ -62,6 +62,19 @@ function toggle_student_form_groups(student_form_groups) {
   }
 }
 
+function toggle_remark_requests(allow_remark_requests) {
+  $('allow_remarks').setValue(allow_remark_requests);
+  if (allow_remark_requests) {
+    $('remark_due_date').enable();
+    $('assignment_remark_message').enable();
+    $('remark_properties').removeClassName('disable');
+  } else {
+    $('remark_due_date').disable();
+    $('assignment_remark_message').disable();
+    $('remark_properties').addClassName('disable');
+  }
+}
+
 function toggle_test_framework(is_testing_framework_enabled) {
 
   $('is_testing_framework_enabled').setValue(is_testing_framework_enabled);
@@ -162,13 +175,11 @@ function add_assignment_file() {
 function default_group_fields() {
   toggle_persist_groups(false);
   toggle_group_assignment(false);
+  toggle_remark_requests(true);
 }
 
 function update_due_date(new_due_date) {
-  var now = new Date();
-  if(Date.parseFormattedString(new_due_date) < now) {
-    alert(past_due_date_edit_warning);
-  }
+  check_due_date(new_due_date);
   grace_periods.set_due_date(new_due_date);
   penalty_periods.set_due_date(new_due_date);
   grace_periods.refresh();
@@ -184,6 +195,12 @@ function toggle_sections_due_date( section_due_dates_type ) {
     $('section_due_dates_information').show();
   } else {
     $('section_due_dates_information').hide();
+}
+
+function check_due_date(new_due_date) {
+  var now = new Date();
+  if(Date.parseFormattedString(new_due_date) < now) {
+    alert(past_due_date_edit_warning);
   }
 }
 
