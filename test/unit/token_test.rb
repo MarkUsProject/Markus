@@ -108,10 +108,10 @@ class TokenTest < ActiveSupport::TestCase
     end
   end
 
-context "reassign_tokens_if_new_day" do
+  context "reassign_tokens_if_new_day" do
     setup do
       @token = Token.make(:tokens => '3')
-      a = @token.grouping.assignment 
+      a = @token.grouping.assignment
       a.tokens_per_day = 5
       a.save
     end
@@ -125,7 +125,7 @@ context "reassign_tokens_if_new_day" do
       @token.reassign_tokens_if_new_day()
       assert_equal(3, @token.tokens)
     end
-end
+  end
 
   context "Token" do
     setup do

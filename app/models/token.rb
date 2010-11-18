@@ -24,7 +24,7 @@ class Token < ActiveRecord::Base
   end
 
   def reassign_tokens_if_new_day()
-    if self.last_token_used_date and  self.last_token_used_date < Date.today
+    if self.last_token_used_date and self.last_token_used_date < Date.today
       self.reassign_tokens()
     end
   end
