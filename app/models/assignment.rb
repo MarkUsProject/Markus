@@ -70,6 +70,10 @@ class Assignment < ActiveRecord::Base
     return Time.now > submission_rule.calculate_collection_time
   end
 
+  def past_remark_due_date?
+    return !remark_due_date.nil? && Time.now > remark_due_date
+  end
+
   # Returns a Submission instance for this user depending on whether this
   # assignment is a group or individual assignment
   def submission_by(user) #FIXME: needs schema updates

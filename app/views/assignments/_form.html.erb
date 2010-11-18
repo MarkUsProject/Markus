@@ -164,6 +164,26 @@
   <%- end -%>
 </fieldset>  
 
+<fieldset>
+  <legend><%= t("assignment.remark.rules")%></legend>
+  <p id="allow_remark_requests">
+    <%= f.check_box(:allow_remarks, {:id => "allow_remarks", :onchange => "toggle_remark_requests($F('allow_remarks'))"}, true, false) %>
+    <%= f.label("allow_remarks", I18n.t("assignment.remark.allow"), :class => "checkbox_label") %>
+  </p>
+  <p id="remark_properties">
+    <%= f.label("remark_due_date", I18n.t("assignment.remark.due_date"), :class => "inline_label") %>
+    <%= f.calendar_date_select :remark_due_date, {
+        :time => "mixed",
+        :locale => I18n.default_locale,
+        :after_close => "check_due_date($F('remark_due_date'))",
+        :year_range => 0.years.ago..1.years.from_now, :id => "remark_due_date"} %>
+    <%= observe_field "remark_due_date", :function => "check_due_date($F('remark_due_date'));" %>
+    <%=t(:iso_due_date_format_example)%><br />
+    <%= f.label("remark_message", I18n.t("assignment.remark.message"), :class => "textbox_label") %>
+    <%= f.text_area :remark_message, :rows => 8, :cols => 65 %>
+  </p>
+</fieldset>
+
 <%= f.submit t(:submit) %>
 <% end %>
 
