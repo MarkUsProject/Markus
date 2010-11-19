@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101112160622) do
+ActiveRecord::Schema.define(:version => 20101113165920) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -82,6 +82,9 @@ ActiveRecord::Schema.define(:version => 20101112160622) do
     t.integer  "flexible_criterions_count"
     t.integer  "groupings_count"
     t.integer  "tokens_per_day",                   :default => 0,        :null => false
+    t.boolean  "allow_remarks",                    :default => true,     :null => false
+    t.datetime "remark_due_date"
+    t.text     "remark_message"
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true

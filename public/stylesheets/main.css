@@ -470,6 +470,17 @@ label.radio_label, label.checkbox_label, label.inline_label{
    font-weight: normal;
 }
 
+label.textbox_label{
+   float: none;
+   display: inline;
+   min-width: 0px;
+   padding-top: 0px;
+   margin-top: 0px;
+   padding-left: 0px;
+   font-weight: normal;
+   vertical-align: top;
+}
+
 label.bold_inline_label{
    float: none;
    display: inline;
