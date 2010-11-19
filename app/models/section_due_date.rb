@@ -8,7 +8,7 @@ class SectionDueDate < ActiveRecord::Base
   def self.due_date?(section, assignment)
      d = SectionDueDate.find_by_assignment_id_and_section_id(assignment.id,
      section.id);
-     if !d.nil? && !d.due_date.nil?
+     if assignment.section_due_dates_type && !d.nil? && !d.due_date.nil?
        return d.due_date
     else
       return assignment.due_date

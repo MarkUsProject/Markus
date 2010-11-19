@@ -198,6 +198,12 @@ Section.blueprint do
   name {Sham.section_name}
 end
 
+SectionDueDate.blueprint do
+  section {Section.make}
+  assignment {Assignment.make}
+  due_date 
+end
+
 Student.blueprint do
   user_name {Sham.student_user_name}
   first_name {Sham.first_name}
