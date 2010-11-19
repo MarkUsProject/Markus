@@ -405,7 +405,6 @@ class Assignment < ActiveRecord::Base
 
   def assigned_groupings
     return groupings.all(:joins => :ta_memberships, :include => [{:ta_memberships => :user}]).uniq
-
   end
 
   def unassigned_groupings
@@ -566,6 +565,19 @@ class Assignment < ActiveRecord::Base
     return distribution
   end
 
+  def tas
+    ids = self.ta_memberships.map { |m| m.user_id }
+    return Ta.find(ids)
+  end
+  
+  def submitted
+    return self.groupings.all(:conditions => {:is_collected => true})
+  end
+  
+  def graded
+    return self.submissions.each { |submission| submission.has_result? }
+  end
+  
   private
 
   # Returns true if we are safe to set the repository name
@@ -595,5 +607,4 @@ class Assignment < ActiveRecord::Base
       t.update_tokens(self.tokens_per_day_was, self.tokens_per_day)
     end
   end
-
 end

@@ -1,0 +1,29 @@
+<p class="due_date">
+  Due Date:
+  <span style="color:<%= due_date_color(assignment) %>">
+    <%=h I18n.l(assignment.due_date, :format => :long_date ) %>
+  </span>
+</p>
+
+<table>
+  <tr>
+    <td>Assignment Average:</td>
+    <td>
+      <%= h("#{assignment.results_average || '0'}") %>%
+    </td>
+  </tr>
+
+  <tr>
+    <td>Number of Assignments Submitted:</td>
+    <td>
+      <%= h( "#{assignment.submitted.size}/#{assignment.groupings.size}" ) %>
+    </td>
+  </tr>
+
+  <tr>
+    <td>Number of Assignments Graded:</td>
+    <td>
+      <%= h( "#{assignment.graded.size}/#{assignment.groupings.size}" ) %>
+    </td>
+  </tr>
+</table>

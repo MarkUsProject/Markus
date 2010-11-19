@@ -16,6 +16,11 @@
 </div>
 <div class="wrapLeft">
 <p><%= I18n.t(:welcome_to_markus, {:user_name => @current_user.first_name}) %></p>
+
+  <% @assignments.each do |a| %>
+    <%= render :partial => "assignment_summary", :locals => { :assignment => a } %>
+  <% end %>
+  
   <div id="section">
     <%= render :partial => "api/key_display", :locals => { :user => @current_user } %>
   </div>

@@ -1,0 +1,14 @@
+<p class="grader_distribution">Grader Distribution:</p>
+
+<% if assignment.tas.empty? %>    
+  <%= link_to "Assign Graders", 
+      :controller => 'graders', 
+      :action => 'manage', 
+      :id => assignment.id %>
+<% else %>
+  <ul>
+    <% assignment.tas.each do |ta| %>
+      <li><%= "#{ta.first_name} #{ta.last_name}" %></li>
+    <% end %>
+  </ul>
+<% end %>
