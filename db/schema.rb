@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100726183357) do
+ActiveRecord::Schema.define(:version => 20101120195153) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -197,7 +197,7 @@ ActiveRecord::Schema.define(:version => 20100726183357) do
     t.string "repo_name"
   end
 
-  add_index "groups", ["group_name"], :name => "groups_n1"
+  add_index "groups", ["group_name"], :name => "groups_name_unique", :unique => true
 
   create_table "marks", :force => true do |t|
     t.integer  "result_id"
