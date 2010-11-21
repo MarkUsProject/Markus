@@ -69,7 +69,7 @@
         <% if grouping.current_submission_used.remark_result and grouping.current_submission_used.remark_result.marking_state == Result::MARKING_STATES[:unmarked]%>
           <%= image_tag('icons/double_exclamation.png',
               :alt => I18n.t('marking_state.remark_requested'),
-              :title => I18n.t('marking_state.remark_reuqested'))%>
+              :title => I18n.t('marking_state.remark_requested'))%>
         <% else %>
           <% if !grouping.current_submission_used.result.released_to_students %>
 		        <%= image_tag('icons/accept.png',
