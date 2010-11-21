@@ -71,7 +71,7 @@
               :alt => I18n.t('marking_state.remark_requested'),
               :title => I18n.t('marking_state.remark_requested'))%>
         <% else %>
-          <% if !grouping.current_submission_used.result.released_to_students %>
+          <% if !grouping.current_submission_used.result.released_to_students or (grouping.current_submission_used.remark_result and !grouping.current_submission_used.remark_result.released_to_students) %>
 		        <%= image_tag('icons/accept.png',
                 :alt => I18n.t('marking_state.completed'),
                 :title => I18n.t('marking_state.completed'))%>
