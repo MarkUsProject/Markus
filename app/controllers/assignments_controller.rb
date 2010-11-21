@@ -47,7 +47,12 @@ class AssignmentsController < ApplicationController
     end
     if @grouping.nil?
       if @assignment.group_max == 1
-        @student.create_group_for_working_alone_student(@assignment.id)
+        begin
+          @student.create_group_for_working_alone_student(@assignment.id)
+        rescue RuntimeError => @error
+          render 'shared/generic_error', :layout => 'error'
+          return
+        end
         redirect_to :action => 'student_interface', :id => @assignment.id
       else
         render :action => 'student_interface', :layout => 'no_menu_header'
