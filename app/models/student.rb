@@ -124,16 +124,16 @@ class Student < User
         end
         if !@group.save
           m_logger = MarkusLogger.instance
-          m_logger.log("User '#{current_user.user_name}' failed to create the following group:  #{@group.to_s} - errors: #{@group.errors}")
-          raise "Group could not be created.  Please check the logs for details."
+          m_logger.log("User '#{current_user.user_name}' failed to create the following group:  #{@group.to_s} - errors: #{@group.errors}", MarkusLogger::ERROR)
+          raise "Sorry!  For some reason, your group could not be created.  Please go back, hit refresh, and try again.  If you come back to this page, you should inform the course instructor."
         end
       end
 
       @grouping.group = @group
       if !@grouping.save
         m_logger = MarkusLogger.instance
-        m_logger.log("User '#{current_user.user_name}' failed to create the following grouping:  #{@grouping.to_s} - errors: #{@grouping.errors}")
-        raise "Grouping could not be created.  Please check the logs for details."
+        m_logger.log("User '#{current_user.user_name}' failed to create the following grouping:  #{@grouping.to_s} - errors: #{@grouping.errors}", MarkusLogger::ERROR)
+        raise "Sorry!  For some reason, your grouping could not be created.  Please go back, hit refresh, and try again.  If you come back to this page, you should inform the course instructor."
       end
     
       # We give students the tokens for the test framework
