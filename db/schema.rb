@@ -55,6 +55,11 @@ ActiveRecord::Schema.define(:version => 20101113165920) do
   add_index "assignment_files", ["assignment_id", "filename"], :name => "index_assignment_files_on_assignment_id_and_filename", :unique => true
   add_index "assignment_files", ["assignment_id"], :name => "index_assignment_files_on_assignment_id"
 
+  create_table "assignment_stats", :force => true do |t|
+    t.integer "assignment_id"
+    t.text    "grade_distribution_percentage", :default => "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0\n"
+  end
+
   create_table "assignments", :force => true do |t|
     t.string   "short_identifier",                                       :null => false
     t.string   "description"
