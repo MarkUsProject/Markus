@@ -565,17 +565,15 @@ class Assignment < ActiveRecord::Base
     return distribution
   end
 
+  # Returns all the TAs associated with the assignment
   def tas
     ids = self.ta_memberships.map { |m| m.user_id }
     return Ta.find(ids)
   end
   
-  def submitted
-    return self.groupings.all(:conditions => {:is_collected => true})
-  end
-  
+  # Returns all the submissions that have been graded
   def graded
-    return self.submissions.each { |submission| submission.has_result? }
+    return self.submissions.select { |submission| submission.has_result? }
   end
   
   private

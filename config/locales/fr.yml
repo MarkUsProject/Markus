@@ -985,11 +985,11 @@ fr:
 
     #app/views/main/_assignment_info_summary.erb
     assignment_average:        "Moyenne:"
-    assignments_submitted:     "Affectations Soumis:"
-    assignments_graded:        "Travaux pratiques corrigés"
+    assignments_submitted:     "Projets envoyés:"
+    assignments_graded:        "Projets corrigés:"
     
     #app/views/main/_grader_summary.erb
-    grader_distribution:       "Distribution Correcteur:"
+    grader_distribution:       "Correcteurs assignés:"
     assign_graders:            "Attribuer Correcteurs"
         
     #Test Framework
