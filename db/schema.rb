@@ -365,6 +365,7 @@ ActiveRecord::Schema.define(:version => 20101113165920) do
   create_table "tokens", :force => true do |t|
     t.integer "grouping_id"
     t.integer "tokens"
+    t.date    "last_token_used_date"
   end
 
   create_table "users", :force => true do |t|
