@@ -1,7 +1,7 @@
-<p class="grader_distribution">Grader Distribution:</p>
+<p class="grader_distribution"><%= I18n.t(:grader_distribution ) %></p>
 
 <% if assignment.tas.empty? %>    
-  <%= link_to "Assign Graders", 
+  <%= link_to I18n.t(:assign_graders), 
       :controller => 'graders', 
       :action => 'manage', 
       :id => assignment.id %>

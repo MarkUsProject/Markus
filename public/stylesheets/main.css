@@ -1876,6 +1876,14 @@ pre#test_result_content {
 	font-weight: bold;
 }
 
+.assignment_summary .due_date .after {
+	color: red;
+}
+
+.assignment_summary .due_date .before {
+	color: green;
+}
+
 .assignment_summary table tr td {
 	padding-right: 10px;
 	border-bottom: none;

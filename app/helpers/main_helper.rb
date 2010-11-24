@@ -21,7 +21,7 @@ module MainHelper
   end
   
   def due_date_color(assignment)
-    return assignment.past_collection_date? ? 'red' : 'green'
+    return assignment.past_collection_date? ? 'after' : 'before'
   end
   
 end
