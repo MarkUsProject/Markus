@@ -470,6 +470,17 @@ label.radio_label, label.checkbox_label, label.inline_label{
    font-weight: normal;
 }
 
+label.textbox_label{
+   float: none;
+   display: inline;
+   min-width: 0px;
+   padding-top: 0px;
+   margin-top: 0px;
+   padding-left: 0px;
+   font-weight: normal;
+   vertical-align: top;
+}
+
 label.bold_inline_label{
    float: none;
    display: inline;
@@ -1817,3 +1828,18 @@ pre#test_result_content {
     width:500px;
     height:350px;
 }
+
+/* Language chooser styles */
+#lang_chooser {
+  margin-right: 25px;
+  border-right: 1px solid #000;
+  border-left: 1px solid #000;
+  padding-left: 5px;
+}
+
+#lang_chooser select {
+  height: 15px;
+  border: none;
+  font-size: smaller;
+}
+

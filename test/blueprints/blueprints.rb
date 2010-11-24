@@ -222,6 +222,7 @@ Submission.blueprint do
   submission_version_used {true}
   revision_number {1}
   revision_timestamp {1.days.ago}
+  remark_result_id {nil}
 end
 
 SubmissionFile.blueprint do

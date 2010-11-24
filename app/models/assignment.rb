@@ -21,6 +21,7 @@ class Assignment < ActiveRecord::Base
   has_many :groupings
   has_many :ta_memberships, :class_name => "TaMembership", :through => :groupings
   has_many :student_memberships, :through => :groupings
+  has_many :tokens, :through => :groupings
 
   has_many :submissions, :through => :groupings
   has_many :groups, :through => :groupings
@@ -48,7 +49,8 @@ class Assignment < ActiveRecord::Base
   validates_inclusion_of :enable_test, :in => [true, false]
   validates_inclusion_of :assign_graders_to_criteria, :in => [true, false]
   
- before_save :reset_collection_time
+  before_save :reset_collection_time
+  after_save  :update_assigned_tokens
 
   def validate
     if (group_max && group_min) && group_max < group_min
@@ -66,6 +68,10 @@ class Assignment < ActiveRecord::Base
 
   def past_collection_date?
     return Time.now > submission_rule.calculate_collection_time
+  end
+
+  def past_remark_due_date?
+    return !remark_due_date.nil? && Time.now > remark_due_date
   end
 
   # Returns a Submission instance for this user depending on whether this
@@ -582,6 +588,12 @@ class Assignment < ActiveRecord::Base
 
   def reset_collection_time
     submission_rule.reset_collection_time
+  end
+
+  def update_assigned_tokens
+    self.tokens.each do |t|
+      t.update_tokens(self.tokens_per_day_was, self.tokens_per_day)
+    end
   end
 
 end

@@ -1,4 +1,5 @@
-<script type="text/javascript" language="Javascript">
+<script type="text/javascript">
+//<![CDATA[
 
 var files_table = null;
 
@@ -31,5 +32,5 @@ document.observe("dom:loaded", function() {
   <%= remote_function :url => {:action => 'populate_repo_browser', :id => @grouping.id, :path => @path, :revision_number => @revision_number}, :complete => "$('loading_list').hide();" %>
 
 });
-
+//]]>
 </script>

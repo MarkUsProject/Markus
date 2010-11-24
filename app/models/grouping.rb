@@ -25,7 +25,7 @@ class Grouping < ActiveRecord::Base
   has_one :current_submission_used, :class_name => 'Submission', :conditions => {:submission_version_used => true}
   has_many :grace_period_deductions, :through => :non_rejected_student_memberships
     
-  has_many :tokens
+  has_one :token
 
   named_scope :approved_groupings, :conditions => {:admin_approved => true}
 

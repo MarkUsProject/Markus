@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100816213841) do
+ActiveRecord::Schema.define(:version => 20101113165920) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -82,6 +82,9 @@ ActiveRecord::Schema.define(:version => 20100816213841) do
     t.integer  "flexible_criterions_count"
     t.integer  "groupings_count"
     t.integer  "tokens_per_day",                   :default => 0,        :null => false
+    t.boolean  "allow_remarks",                    :default => true,     :null => false
+    t.datetime "remark_due_date"
+    t.text     "remark_message"
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true
@@ -253,8 +256,6 @@ ActiveRecord::Schema.define(:version => 20100816213841) do
     t.float    "total_mark",           :default => 0.0
   end
 
-  add_index "results", ["submission_id"], :name => "results_u1", :unique => true
-
   create_table "rubric_criteria", :force => true do |t|
     t.string   "rubric_criterion_name",                :null => false
     t.integer  "assignment_id",                        :null => false
@@ -331,6 +332,8 @@ ActiveRecord::Schema.define(:version => 20100816213841) do
     t.boolean  "submission_version_used"
     t.integer  "revision_number",         :null => false
     t.datetime "revision_timestamp",      :null => false
+    t.integer  "remark_result_id"
+    t.text     "remark_request"
   end
 
   add_index "submissions", ["grouping_id"], :name => "index_submissions_on_grouping_id"
@@ -352,6 +355,8 @@ ActiveRecord::Schema.define(:version => 20100816213841) do
     t.integer  "submission_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "status"
+    t.integer  "user_id"
   end
 
   add_index "test_results", ["filename"], :name => "index_test_results_on_filename"
