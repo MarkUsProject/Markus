@@ -45,6 +45,10 @@ class TokenTest < ActiveSupport::TestCase
       should "decrease number of tokens" do
         assert_equal(4, @token.tokens)
       end
+
+      should "update the token used date" do
+        assert_equal(@token.last_token_used_date, Date.today)
+      end
     end
 
     context "when number of tokens is equal to 0" do
@@ -55,6 +59,10 @@ class TokenTest < ActiveSupport::TestCase
 
       should "not decrease numbre of tokens (not enough tokens)" do
         assert_equal(0, @token.tokens)
+      end
+
+      should "not update the token used date" do
+        assert_nil(@token.last_token_used_date)
       end
     end
   end
@@ -97,6 +105,25 @@ class TokenTest < ActiveSupport::TestCase
     should "not allow token count to go below 0" do
       @token.update_tokens(6, 0)
       assert_equal(0, @token.tokens)
+    end
+  end
+
+  context "reassign_tokens_if_new_day" do
+    setup do
+      @token = Token.make(:tokens => '3')
+      a = @token.grouping.assignment
+      a.tokens_per_day = 5
+      a.save
+    end
+    should "reassign tokens if it is a new day" do
+      @token.last_token_used_date = 5.days.ago
+      @token.reassign_tokens_if_new_day()
+      assert_equal(5, @token.tokens)
+    end
+    should "not reassign tokens if it is not a new day" do
+      @token.last_token_used_date = Date.today
+      @token.reassign_tokens_if_new_day()
+      assert_equal(3, @token.tokens)
     end
   end
 
