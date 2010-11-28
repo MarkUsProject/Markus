@@ -120,7 +120,7 @@ class ResultsController < ApplicationController
 
     # If marking_state is complete, update the cached distribution
     if params[:value] == Result::MARKING_STATES[:complete]
-      @result.submission.assignment.assignment_stats.refresh_grade_distribution
+      @result.submission.assignment.assignment_stat.refresh_grade_distribution
     end
   end
   
