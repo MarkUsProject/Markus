@@ -1,5 +1,5 @@
 require 'fastercsv'
-class AssignmentStats < ActiveRecord::Base
+class AssignmentStat < ActiveRecord::Base
 
   belongs_to  :assignment
 

@@ -28,7 +28,7 @@ class Assignment < ActiveRecord::Base
 
   has_many :notes, :as => :noteable, :dependent => :destroy
 
-  has_one  :assignment_stats 
+  has_one  :assignment_stat
 
   validates_associated :assignment_files
 
