@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101113165920) do
+ActiveRecord::Schema.define(:version => 20101116004008) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -260,6 +260,8 @@ ActiveRecord::Schema.define(:version => 20101113165920) do
     t.boolean  "released_to_students", :default => false, :null => false
     t.float    "total_mark",           :default => 0.0
   end
+
+  add_index "results", ["submission_id"], :name => "results_u1", :unique => true
 
   create_table "rubric_criteria", :force => true do |t|
     t.string   "rubric_criterion_name",                :null => false
