@@ -1,6 +1,6 @@
 require 'migration_helpers'
 
-class CreateAssignmentStats < ActiveRecord::Migration
+class CreateAssignmentStat < ActiveRecord::Migration
   extend MigrationHelpers
 
   def self.up
@@ -11,8 +11,6 @@ class CreateAssignmentStats < ActiveRecord::Migration
     end
 
     foreign_key :assignment_stats, :assignment_id, :assignments
-    # Create stats models for all existing assignments
-    Assignment.all.each { |assignment| assignment.create_assignment_stats if assignment.assignment_stats == nil }
   end
 
   def self.down
