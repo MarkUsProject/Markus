@@ -66,12 +66,12 @@
             :title => I18n.t('marking_state.in_progress')) %>
 	<% else %>
       <% if grouping.current_submission_used.result.marking_state == Result::MARKING_STATES[:complete]%>
-        <% if grouping.current_submission_used.remark_result and grouping.current_submission_used.remark_result.marking_state == Result::MARKING_STATES[:partial]%>
+        <% if grouping.current_submission_used.remark_in_progress%>
           <%= image_tag('icons/double_exclamation.png',
               :alt => I18n.t('marking_state.remark_requested'),
               :title => I18n.t('marking_state.remark_requested'))%>
         <% else %>
-          <% if !grouping.current_submission_used.result.released_to_students or (grouping.current_submission_used.remark_result and !grouping.current_submission_used.remark_result.released_to_students) %>
+          <% if !grouping.current_submission_used.result.released_to_students or (grouping.current_submission_used.remark_complete_but_unreleased) %>
 		        <%= image_tag('icons/accept.png',
                 :alt => I18n.t('marking_state.completed'),
                 :title => I18n.t('marking_state.completed'))%>
