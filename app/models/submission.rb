@@ -98,6 +98,7 @@ class Submission < ActiveRecord::Base
     FileUtils.mv(source_file, dest_file, :force => true)
   end
   
+  
   # Query functions -------------------------------------------------------  
   # Figure out which assignment this submission is for
   def assignment
