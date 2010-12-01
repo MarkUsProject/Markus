@@ -71,7 +71,9 @@ class AssignmentsController < ApplicationController
         @test_result_files = nil
       end
       @token = Token.find_by_grouping_id(@grouping.id)
-
+      if @token
+        @token.reassign_tokens_if_new_day()
+      end
       @last_modified_date = @grouping.assignment_folder_last_modified_date
       @num_submitted_files = @grouping.number_of_submitted_files
       @num_missing_assignment_files = @grouping.missing_assignment_files.length
