@@ -1,7 +1,7 @@
 class NoteController < ApplicationController
   before_filter :authorize_for_ta_and_admin
   before_filter :ensure_can_modify, :only => [:edit, :update]
-  
+
   def notes_dialog
     @return_id = params[:id]
     @cls = params[:noteable_type]
@@ -10,11 +10,11 @@ class NoteController < ApplicationController
     @action = params[:action_to]
     @highlight_field = params[:highlight_field]
     @number_of_notes_field = params[:number_of_notes_field]
-    
-    @notes = Note.find(:all, :conditions => { :noteable_id => @noteable.id, :noteable_type => @noteable.class.class_name})
+
+    @notes = Note.find(:all, :conditions => { :noteable_id => @noteable.id, :noteable_type => @noteable.class.name})
     render :partial => "note/modal_dialogs/notes_dialog.rjs"
   end
-  
+
   def add_note
     return unless request.post?
     @note = Note.new
@@ -32,7 +32,7 @@ class NoteController < ApplicationController
       render "note/modal_dialogs/notes_dialog_success.rjs"
     end
   end
-  
+
   def index
     @notes = Note.find(:all, :order => "created_at DESC", :include => [:user, :noteable])
     @current_user = current_user
@@ -44,14 +44,14 @@ class NoteController < ApplicationController
   def new
     new_retrieve
   end
-  
+
   def create
     return unless request.post?
-    
+
     @note = Note.new(params[:note])
     @note.noteable_type = params[:noteable_type]
     @note.creator_id = @current_user.id
-    
+
     if @note.save
       flash[:success] = I18n.t('notes.create.success')
       redirect_to :action => 'index'
@@ -60,7 +60,7 @@ class NoteController < ApplicationController
       render :action => "new"
     end
   end
-  
+
   # Used to update the values in the groupings dropdown in the new note form
   def new_update_groupings
     retrieve_groupings(Assignment.find(params[:assignment_id]))
@@ -82,13 +82,13 @@ class NoteController < ApplicationController
         new_retrieve
     end
   end
-  
+
   def edit
   end
-  
+
   def update
     return unless request.post?
-    
+
     if @note.update_attributes(params[:note])
       flash[:success] = I18n.t('notes.update.success')
       redirect_to :action => 'index'
@@ -96,10 +96,10 @@ class NoteController < ApplicationController
       render :action => 'edit'
     end
   end
-  
+
   def delete
     return unless request.delete?
-    
+
     @note = Note.find(params[:id])
     if @note.user_can_modify?(current_user)
       @note.destroy
@@ -108,7 +108,7 @@ class NoteController < ApplicationController
       flash[:error] = I18n.t('notes.delete.error_permissions')
     end
   end
-  
+
   private
     def retrieve_groupings(assignment)
       if assignment.nil?
@@ -126,9 +126,9 @@ class NoteController < ApplicationController
     # Renders a 404 error if the current user can't modify the given note.
     def ensure_can_modify
       @note = Note.find(params[:id])
-      
+
       unless @note.user_can_modify?(current_user)
-        render :file => "#{RAILS_ROOT}/public/404.html",  
+        render :file => "#{RAILS_ROOT}/public/404.html",
           :status => 404
         return
       end
