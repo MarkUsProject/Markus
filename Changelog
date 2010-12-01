@@ -1,3 +1,6 @@
+Changes for MarkUs 0.9.3:
+* Added UI for students to view their test results.
+
 Changes for MarkUs 0.9.2:
 * Issue #180: Infinite redirect loop caused by duplicate group records in the
   database in turn possibly caused by races in a multi-mongrels-setup.
