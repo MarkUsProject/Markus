@@ -101,4 +101,14 @@ module SubmissionsHelper
     return File.basename(file_name).gsub(/[^\w\.\-]/, '_')
   end
   
+  
+  # Helper methods to determine remark request status on a submission
+  def remark_in_progress(submission)
+    return (submission.remark_result and submission.remark_result.marking_state == Result::MARKING_STATES[:partial])
+  end
+  
+  def remark_complete_but_unreleased(submission)
+    return (submission.remark_result and submission.remark_result.marking_state == Result::MARKING_STATES[:complete] and !submission.remark_result.released_to_students)
+  end
+  
 end

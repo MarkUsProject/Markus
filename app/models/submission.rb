@@ -131,15 +131,6 @@ class Submission < ActiveRecord::Base
       new_file.save
     end
   end
-  
-  # Helper methods to determine remark request status on a submission
-  def remark_in_progress
-    return (self.remark_result and self.remark_result.marking_state == Result::MARKING_STATES[:partial])
-  end
-  
-  def remark_complete_but_unreleased
-    return (self.remark_result and self.remark_result.marking_state == Result::MARKING_STATES[:complete] and !self.remark_result.released_to_students)
-  end
 
   #=== Description
   # Helper class method to find a submission by providing a group_name and
