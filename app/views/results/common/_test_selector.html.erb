@@ -2,8 +2,6 @@
    # file when using this partial 
 %>
   <%=label_tag "select_test_result_id", h(I18n.t("common.test_results")), :class => "inline_label" %> 
-<%= link_to_remote( image_tag("icons/cog_go.png", :alt => "Test Student's code", :title => "Test Student code", :id => "test_icon"), 
-{:url => {:action => "index", :controller => "test_framework", :result => @result}}) %> 
   <select id="select_test_result_id" onchange="if ($(this).getValue() != '') { load_test_result($(this).getValue()); }">
     <% if test_result_files.empty? %>
       <option value=""><%= I18n.t("test_result.no_files_available")%></option>
