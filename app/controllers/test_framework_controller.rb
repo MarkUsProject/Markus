@@ -13,13 +13,14 @@ class TestFrameworkController < ApplicationController
     @group = @grouping.group
     @test_result_files = @submission.test_results
     if can_run_test?
-      # Ant Execution (Enhancement: Fork another process here to handle this)
       export_repository(@group, File.join(MarkusConfigurator.markus_config_test_framework_repository, @group.repo_name))
       copy_ant_files(@assignment, File.join(MarkusConfigurator.markus_config_test_framework_repository, @group.repo_name))
       export_configuration_files(@assignment, @group, File.join(MarkusConfigurator.markus_config_test_framework_repository, @group.repo_name))
-      fork {
+      child_pid = fork {
         run_ant_file(@result, @assignment, File.join(MarkusConfigurator.markus_config_test_framework_repository, @group.repo_name))
+        Process.exit!(0)
       }
+      Process.detach(child_pid) unless child_pid.nil?
     end
     render :action => 'test_replace', :locals => {:test_result_files => @test_result_files, :result => @result}
   end
