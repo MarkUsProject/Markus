@@ -634,7 +634,16 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         context "GET on :update_marking_state" do
           setup do
-            get_as @admin, :update_marking_state, :id => @result.id, :marking_state => 'complete'
+            @assignment.assignment_stat.refresh_grade_distribution
+            @grade_distribution = @assignment.assignment_stat.grade_distribution_percentage
+            # the result will add another correct mark, so do this as well:
+            @grade_distribution['1'] = '2'
+
+            get_as @admin, :update_marking_state, {:id => @result.id, :value => 'complete'}
+          end
+          should "refresh the cached grade distribution data" do
+            @assignment.reload
+            assert_equal @assignment.assignment_stat.grade_distribution_percentage, @grade_distribution
           end
           should respond_with :success
           should assign_to :result
