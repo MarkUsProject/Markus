@@ -67,14 +67,20 @@
             :title => I18n.t('marking_state.in_progress')) %>
 	<% else %>
       <% if grouping.current_submission_used.result.marking_state == Result::MARKING_STATES[:complete]%>
-        <% if !grouping.current_submission_used.result.released_to_students %>
-		      <%= image_tag('icons/accept.png',
-              :alt => I18n.t('marking_state.completed'),
-              :title => I18n.t('marking_state.completed'))%>
-		    <% else %>
-		      <%= image_tag('icons/email_go.png',
-              :alt => I18n.t('marking_state.released'),
-              :title => I18n.t('marking_state.released'))%>
+        <% if remark_in_progress(grouping.current_submission_used)%>
+          <%= image_tag('icons/double_exclamation.png',
+              :alt => I18n.t('marking_state.remark_requested'),
+              :title => I18n.t('marking_state.remark_requested'))%>
+        <% else %>
+          <% if !grouping.current_submission_used.result.released_to_students or remark_complete_but_unreleased(grouping.current_submission_used) %>
+		        <%= image_tag('icons/accept.png',
+                :alt => I18n.t('marking_state.completed'),
+                :title => I18n.t('marking_state.completed'))%>
+		      <% else %>
+		        <%= image_tag('icons/email_go.png',
+                :alt => I18n.t('marking_state.released'),
+                :title => I18n.t('marking_state.released'))%>
+          <% end %>
 		    <% end %>
       <% else %>
 		     <%= image_tag('icons/pencil.png',
