@@ -634,9 +634,15 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         context "GET on :update_marking_state" do
           setup do
+            # refresh the grade distribution - there's already a completed mark so far
+            # so a given grade range will have one grouping in it at this point
             @assignment.assignment_stat.refresh_grade_distribution
             @grade_distribution = @assignment.assignment_stat.grade_distribution_percentage
-            # the result will add another correct mark, so do this as well:
+            # after we call get_as, a second result with the same grade will be complete
+            # therefore we have to update the grading distribution to reflect this
+            # there will now be 2 groupings at the given grade range
+            # note: the grade range is determined by the grade for the results, which
+            # in these tests is always the same
             @grade_distribution['1'] = '2'
 
             get_as @admin, :update_marking_state, {:id => @result.id, :value => 'complete'}
