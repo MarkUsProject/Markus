@@ -98,6 +98,11 @@ class ResultsController < ApplicationController
   def set_released_to_students
     @result = Result.find(params[:id])
     released_to_students = (params[:value] == 'true')
+    if (params[:remark_id] != -1)
+      @remark_result = Result.find(params[:remark_id])
+      @remark_result.released_to_students = released_to_students
+      @remark_result.save
+    end
     @result.released_to_students = released_to_students
     @result.save
     @result.submission.assignment.set_results_average
@@ -250,9 +255,14 @@ class ResultsController < ApplicationController
       return
     end
     @result = @submission.result
-    if !@result.released_to_students
+    @remark_result = @submission.remark_result
+    if (@remark_result)
+      if (!@remark_result.released_to_students or
+              @remark_result.marking_state != Result::MARKING_STATES[:unmarked])
+        render 'results/student/no_remark_result'
+      end
+    elsif !@result.released_to_students
       render 'results/student/no_result'
-      return
     end
     
     @annotation_categories = @assignment.annotation_categories

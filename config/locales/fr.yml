@@ -216,6 +216,8 @@ fr:
       across_all_submission_files: "Annnotations en cours sur tous les fichiers envoyés. Cliquer sur le numéro de ligne pour vous rendre directement au bon endroit sur le fichier."
       annot_summary: "Liste Annot."
       source_code: "Code Source"
+      remark_request: "Demande pour réévaluation"
+      remark_instructions: "Instructions pour demander une réévaluation"
       previous_submission:  "Envoi précédent"
       next_submission:      "Envoi suivant"
       marking_status:       "État de l'évaluation : "

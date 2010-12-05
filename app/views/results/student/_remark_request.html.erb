@@ -1,0 +1,23 @@
+<div id="remark_request">
+  <% if student_can_edit_remark_request(submission) %>
+    <div id="remark_request_edit">
+      Placeholder and reminder: once the student submits request, the marking state of the remark result will be 'partial.'
+      <p class='information'><%= I18n.t("marker.about_remark_save") %></p>
+      <p class='information'><%= I18n.t("marker.about_remark_submission") %>
+            <%= I18n.t("marker.cancel_remark_to_change") %></p>
+    </div>
+  <% else %>
+    <div id="remark_request_show">
+      <%= submission.remark_request %>
+      <% if student_can_cancel_remark_request(submission) %>
+        <p><em><%= I18n.t("marker.remark_submitted") %>
+               <%= I18n.t("marker.cancel_remark_to_change") %></em></p>
+      <% else %>
+        <div id="overall_comments_show">
+          <h3><%= I18n.t("marker.overall_comments") %></h3>
+            Instructor comments shown here.
+        </div>
+      <% end %>
+    </div>  
+  <% end %>
+</div>
