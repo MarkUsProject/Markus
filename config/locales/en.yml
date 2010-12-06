@@ -93,6 +93,7 @@ en:
       completed: "Completed"
       released: "Released"
       remark_requested: "Remark Requested"
+      not_complete: "Can not release result for %{group_name}: the marking state is not complete"
     collect_submissions:
       collect_all: "Collect All Submissions"
       collect_ta: "Collect all your assigned submissions"

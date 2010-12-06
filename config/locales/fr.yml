@@ -93,6 +93,7 @@ fr:
       completed: "Terminé"
       released: "Affiché"
       remark_requested: "Réévaluation demandée"
+      not_complete: "N'a pas affiché les notes pour le groupe %{group_name} : l'évalutation n'est pas indiquée comme étant terminée."
     collect_submissions:
       collect_all: "Récupérer tous les envois"
       collect_ta: "Récupérer tous les envois qui me sont assignés"
