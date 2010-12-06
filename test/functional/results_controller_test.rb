@@ -3,6 +3,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 require File.dirname(__FILE__) + '/../blueprints/helper'
 require 'shoulda'
 require 'mocha'
+require 'fastercsv'
 
 class ResultsControllerTest < AuthenticatedControllerTest
   fixtures :all
@@ -635,21 +636,34 @@ class ResultsControllerTest < AuthenticatedControllerTest
         context "GET on :update_marking_state" do
           setup do
             # refresh the grade distribution - there's already a completed mark so far
-            # so a given grade range will have one grouping in it at this point
+            # for each rubric type, in the following grade range:
+            # flexible: 6-10%
+            # rubric: 21-25%
             @assignment.assignment_stat.refresh_grade_distribution
             @grade_distribution = @assignment.assignment_stat.grade_distribution_percentage
-            # after we call get_as, a second result with the same grade will be complete
-            # therefore we have to update the grading distribution to reflect this
-            # there will now be 2 groupings at the given grade range
-            # note: the grade range is determined by the grade for the results, which
-            # in these tests is always the same
-            @grade_distribution['1'] = '2'
+
+            # convert @grade_distribution csv to an array
+            @grade_distribution = @grade_distribution.parse_csv.map{ |x| x.to_i }
+
+            # after the call to get_as, a second result for each marking scheme type
+            # will be marked as complete, a result which will be in the same grade range
+            # therefore we must increment the number of groupings at the given range for
+            # each marking scheme type
+            if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:flexible]
+              # increment the 6-10% range
+              @grade_distribution[1] += 1
+            end
+            if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
+              # increment the 21-25% range
+              @grade_distribution[4] += 1
+            end
 
             get_as @admin, :update_marking_state, {:id => @result.id, :value => 'complete'}
           end
-          should "refresh the cached grade distribution data" do
+          should "refresh the cached grade distribution data when the marking state is set to complete" do
             @assignment.reload
-            assert_equal @assignment.assignment_stat.grade_distribution_percentage, @grade_distribution
+            actual_distribution = @assignment.assignment_stat.grade_distribution_percentage.parse_csv.map{ |x| x.to_i }
+            assert_equal actual_distribution, @grade_distribution
           end
           should respond_with :success
           should assign_to :result
