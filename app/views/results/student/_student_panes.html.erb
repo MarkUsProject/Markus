@@ -37,7 +37,7 @@
       <% if @current_user.student? and assignment.allow_remarks%> 
         <%= render :partial => 'results/student/remark_request', :locals => {:old_result => old_result, :result => result, :submission => submission, :assignment => assignment} %>       
       <% elsif submission.has_remark? %>
-        <%= render :partial => 'results/marker/remark_request', :locals => {:result => result, :submission => submission} %>       
+        <%= render :partial => 'results/marker/remark_request', :locals => {:result => result, :submission => submission, :assignment => assignment} %>       
       <% end %>         
     </div> <!-- Remark Request -->
   </div> <!-- Code Pane -->

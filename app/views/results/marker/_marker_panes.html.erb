@@ -43,7 +43,7 @@
   
     <div id="remark_request_tab" class="tabbedArea">          
       <% if @submission.has_remark? %>
-        <%= render :partial => 'results/marker/remark_request', :locals => {:result => result, :submission => submission} %>
+        <%= render :partial => 'results/marker/remark_request', :locals => {:result => result, :submission => submission, :assignment => assignment} %>
       <% end %>
     </div> <!-- Remark Request -->
   </div> <!-- Code Pane -->
