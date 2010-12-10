@@ -1,1 +1,5 @@
-page.redirect_to :action => 'edit', :id => @result.id
+page.if(@old_result) {
+  page.redirect_to :action => 'edit', :id => @old_result.id
+}.else {
+  page.redirect_to :action => 'edit', :id => @result.id
+}

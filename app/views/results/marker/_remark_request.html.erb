@@ -1,16 +1,17 @@
 <div id="remark_request">
+  <h3><%= I18n.t("marker.remark_instructions") %></h3>
+  <%= h(assignment.remark_message) %>
+  <h3><%= I18n.t("marker.remark_request") %></h3>
   <div id="remark_request_text">
     <%= h(submission.remark_request) %>
   </div>
-  <div id="overall_comments">
+  <div id="overall_remark_comment">
     <h3><%= I18n.t("marker.overall_comments") %></h3>
-    <% if !submission.remark_result.released_to_students %>
-      <div id="overall_comments_edit">
-        <%= render :partial => 'results/marker/overall_comment', :locals => {:result => submission.remark_result} %>
-      </div>
+    <% if !result.released_to_students %>
+      <%= render :partial => 'results/marker/overall_remark_comment', :locals => {:result => result} %>
     <% else %>
-      <div id="overall_comments_show">
-        <%= h(submission.remark_result.overall_comment) %>
+      <div id="overall_remark_comment_show">
+        <%= h(result.overall_comment) %>
       </div>
     <% end %>
   </div>

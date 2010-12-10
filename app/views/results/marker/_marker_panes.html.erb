@@ -4,7 +4,7 @@
        <li class="tab"><a href="#code_holder"><%= I18n.t("marker.source_code") %></a></li>
        <li class="tab"><a href="#annotations_summary"><%= I18n.t("marker.annot_summary") %></a></li>
        <% if can_show_remark_request_tab_in_marker_pane(submission) %>
-          <li class="tab"><a href="#remark_request"><%= I18n.t("marker.remark_request") %></a></li>
+          <li class="tab"><a href="#remark_request_tab"><%= I18n.t("marker.remark_request") %></a></li>
        <% end %>
     </ul>  
     <div id="code_holder" class="tabbedArea">
@@ -24,8 +24,13 @@
     <div id="annotations_summary" class="tabbedArea">    
 
       <h3><%= I18n.t("marker.overall_comments") %></h3>
+      
+        <% result_to_pass = result %>
+        <% if old_result %>
+          <% result_to_pass = old_result %>
+        <% end %>
 
-       <%= render :partial => 'results/marker/overall_comment', :locals => {:result => result} %>
+       <%= render :partial => 'results/marker/overall_comment', :locals => {:result => result_to_pass} %>
        
       <h3><%= I18n.t("marker.current_annotations") %></h3>
       <p><%= I18n.t("marker.across_all_submission_files") %></p>
@@ -36,19 +41,10 @@
 
     </div> <!-- Remark Request -->
   
-    <div id="remark_request" class="tabbedArea">    
-
-      <h3><%= I18n.t("marker.remark_instructions") %></h3>
-      
-      <%= h(assignment.remark_message) %>
-      
-      <h3><%= I18n.t("marker.remark_request") %></h3>
-      
-      <% if submission.remark_result %>
-        <%= render :partial => 'results/marker/remark_request', :locals => {:submission => submission, :assignment => assignment} %>
-       
+    <div id="remark_request_tab" class="tabbedArea">          
+      <% if @submission.has_remark? %>
+        <%= render :partial => 'results/marker/remark_request', :locals => {:result => result, :submission => submission} %>
       <% end %>
-
     </div> <!-- Remark Request -->
   </div> <!-- Code Pane -->
   

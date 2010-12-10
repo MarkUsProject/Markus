@@ -2,7 +2,7 @@ class ResultsController < ApplicationController
   before_filter      :authorize_only_for_admin, :except => [:codeviewer, :edit, :update_mark, :view_marks,
                         :create, :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria,
                         :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria, :update_marking_state,
-                        :download, :note_message, :render_test_result]
+                        :download, :note_message, :render_test_result, :update_remark_request]
   before_filter      :authorize_for_ta_and_admin, :only => [:edit, :update_mark, :create, :add_extra_mark,
                         :next_grouping, :update_overall_comment, :expand_criteria,
                         :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria,
@@ -24,6 +24,13 @@ class ResultsController < ApplicationController
     @result = Result.find(result_id)
     @assignment = @result.submission.assignment      
     @submission = @result.submission
+    
+    @old_result = nil
+    if @submission.has_remark? and @result.marking_state != Result::MARKING_STATES[:unmarked]
+      @old_result = @submission.result
+      @result = @submission.remark_result
+    end
+    
     @annotation_categories = @assignment.annotation_categories
     @grouping = @result.submission.grouping
     @group = @grouping.group
@@ -41,7 +48,6 @@ class ResultsController < ApplicationController
       mark.save(false)
       @marks_map[criterion.id] = mark
     end
-
     # Get the previous and the next submission
     if current_user.ta?
        groupings = @assignment.ta_memberships.find_all_by_user_id(current_user.id, :include => [:grouping => :group]).collect do |m|
@@ -98,10 +104,10 @@ class ResultsController < ApplicationController
   def set_released_to_students
     @result = Result.find(params[:id])
     released_to_students = (params[:value] == 'true')
-    if (params[:remark_id] != -1)
-      @remark_result = Result.find(params[:remark_id])
-      @remark_result.released_to_students = released_to_students
-      @remark_result.save
+    if (params[:old_id])
+      @old_result = Result.find(params[:old_id])
+      @old_result.released_to_students = released_to_students
+      @old_result.save
     end
     @result.released_to_students = released_to_students
     @result.save
@@ -255,12 +261,15 @@ class ResultsController < ApplicationController
       return
     end
     @result = @submission.result
+    @old_result = nil
     @remark_result = @submission.remark_result
     if (@remark_result)
-      if (!@remark_result.released_to_students or
+      if (!@remark_result.released_to_students and
               @remark_result.marking_state != Result::MARKING_STATES[:unmarked])
         render 'results/student/no_remark_result'
       end
+      @old_result = @result
+      @result = @remark_result
     elsif !@result.released_to_students
       render 'results/student/no_result'
     end
@@ -277,7 +286,7 @@ class ResultsController < ApplicationController
     @assignment.get_criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by_result_id(@result.id)
       mark.save(false)
-      @marks_map[criterion.id] = mark
+      @marks_map[criterion.id] = mark    
     end
     m_logger = MarkusLogger.instance
     m_logger.log("Student '#{current_user.user_name}' viewed results for assignment " +
@@ -315,6 +324,29 @@ class ResultsController < ApplicationController
     @result = Result.find(params[:id])
     @result.overall_comment = params[:result][:overall_comment]
     @result.save
+  end
+  
+  def update_overall_remark_comment
+    @result = Result.find(params[:id])
+    @result.overall_comment = params[:result][:overall_comment]
+    @result.save
+  end
+  
+  def update_remark_request
+    @assignment = Assignment.find(params[:assignment_id])
+    if !@assignment.past_remark_due_date?
+      @submission = Submission.find(params[:id])
+      @submission.remark_request = params[:submission][:remark_request]
+      @submission.save
+      @old_result = @submission.result
+      if (params[:submission][:submit_request] == "1")
+        @result = @submission.remark_result
+        @result.marking_state = 'partial'
+        @old_result.released_to_students = 'f'
+        @result.save
+        @old_result.save
+      end
+    end
   end
   
   def expand_criteria

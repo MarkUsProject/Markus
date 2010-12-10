@@ -108,7 +108,7 @@ function check_working() {
 <% if flash[:fail_notice] %>
   <p class="error"><%=h flash[:fail_notice] %></p>
 <% end %>
-<% if results_released_to_students(@result) %>
+<% if @result.released_to_students %>
   <p class="notice"><%=t(:marks_released_notice)%></p>
 <% end %>
 
@@ -128,7 +128,7 @@ function check_working() {
 </div>
 
 
-<% if can_show_marker_panes(@result) %>
+<% if !@result.released_to_students %>
 
 <%= render :partial => 'results/marker/marker_panes', 
            :locals => {:extra_marks_points => @extra_marks_points, 
@@ -138,7 +138,8 @@ function check_working() {
                        :assignment => @assignment, 
                        :marks_map => @marks_map, 
                        :mark_criteria =>@mark_criteria, 
-                       :submission => @submission} %>
+                       :submission => @submission,
+                       :old_result => @old_result} %>
 <% else %>
 <%= render :partial => 'results/result_summary'%>
 
