@@ -68,6 +68,7 @@ Assignment.blueprint do
   submission_rule {NoLateSubmissionRule.make}
   allow_web_submits {true}
   display_grader_names_to_students {false}
+  section_due_dates_type(false)
   enable_test {true}
   tokens_per_day {10}
   assign_graders_to_criteria {false}
