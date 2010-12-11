@@ -732,6 +732,54 @@ class AssignmentTest < ActiveSupport::TestCase
         end
       end
     end
-
   end # end assignment instance context
+
+  context "An assignment with section due dates" do
+    setup do
+      @assignment = Assignment.make(:section_due_dates_type => true,
+                                    :section_groups_only => true,
+                                    :due_date => 3.days.ago)
+      @section_01 = Section.make
+      @section_02 = Section.make
+      student_01 = Student.make(:section => @section_01)
+      student_02 = Student.make(:section => @section_02)
+      (1..3).each do 
+        Student.make(:section => @section_01)
+      end
+      @grouping_1 = Grouping.make(:assignment => @assignment)
+      @grouping_2 = Grouping.make(:assignment => @assignment)
+      StudentMembership.make(:grouping => @grouping_1,
+                   :user => student_01,
+                   :membership_status => StudentMembership::STATUSES[:inviter])
+      StudentMembership.make(:grouping => @grouping_2,
+                   :user => student_02,
+                   :membership_status => StudentMembership::STATUSES[:inviter])
+
+      SectionDueDate.make(:section => @section_01,
+                          :assignment => @assignment,
+                          :due_date => 3.days.from_now)
+
+    end
+
+    should "return the section due date for a specific section" do
+      assert_equal (3.days.from_now).day(),
+                   @assignment.section_due_date(@section_01).day()
+    end
+
+    should "return the section due date for a specific section that has not
+            section due date" do
+      assert_equal (3.days.ago).day(),
+                   @assignment.section_due_date(@section_02).day()
+    end
+
+
+    should "not be past due date" do
+      assert !@assignment.section_past_due_date?(@grouping_1)
+    end
+
+    should "be in the past" do
+      assert @assignment.section_past_due_date?(@grouping_2)
+    end
+
+  end
 end
