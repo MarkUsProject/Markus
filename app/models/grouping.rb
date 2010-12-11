@@ -643,12 +643,3 @@ class Grouping < ActiveRecord::Base
     end
   end
 end # end class Grouping
-
-
-  # return the section of the inviter
-  # TODO unit test
-  def inviter_section 
-    return self.inviter.section
-  end
-
-
