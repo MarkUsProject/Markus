@@ -153,6 +153,15 @@ class Submission < ActiveRecord::Base
     end
   end
   
+  def create_remark_result
+    remark_result = Result.new
+    self.remark_result = remark_result
+    remark_result.marking_state = Result::MARKING_STATES[:unmarked]
+    remark_result.submission_id = self.id
+    remark_result.save
+    self.save
+  end
+  
   private
   
   def create_result

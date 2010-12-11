@@ -2,7 +2,7 @@ class ResultsController < ApplicationController
   before_filter      :authorize_only_for_admin, :except => [:codeviewer, :edit, :update_mark, :view_marks,
                         :create, :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria,
                         :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria, :update_marking_state,
-                        :download, :note_message, :render_test_result, :update_remark_request]
+                        :download, :note_message, :render_test_result, :update_remark_request, :cancel_remark_request]
   before_filter      :authorize_for_ta_and_admin, :only => [:edit, :update_mark, :create, :add_extra_mark,
                         :next_grouping, :update_overall_comment, :expand_criteria,
                         :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria,
@@ -267,9 +267,9 @@ class ResultsController < ApplicationController
       if (!@remark_result.released_to_students and
               @remark_result.marking_state != Result::MARKING_STATES[:unmarked])
         render 'results/student/no_remark_result'
+        @old_result = @result
+        @result = @remark_result
       end
-      @old_result = @result
-      @result = @remark_result
     elsif !@result.released_to_students
       render 'results/student/no_result'
     end
@@ -339,14 +339,33 @@ class ResultsController < ApplicationController
       @submission.remark_request = params[:submission][:remark_request]
       @submission.save
       @old_result = @submission.result
+      if !(@submission.remark_result)
+        @submission.create_remark_result
+      end
       if (params[:submission][:submit_request] == "1")
         @result = @submission.remark_result
-        @result.marking_state = 'partial'
+        @result.marking_state = Result::MARKING_STATES[:partial]
         @old_result.released_to_students = 'f'
         @result.save
         @old_result.save
       end
     end
+  end
+  
+  def cancel_remark_request
+    @submission = Submission.find(params[:submission_id])
+    @result = @submission.result
+    @remark_result = @submission.remark_result
+    @result.released_to_students = 't'
+    @remark_result.marking_state = Result::MARKING_STATES[:unmarked]
+    @remark_result.submission_id = nil
+    @submission.remark_result_id = nil
+    @submission.remark_request = nil
+    @result.save
+    @remark_result.save
+    @submission.save
+    
+    redirect_to :controller => 'results', :action => 'view_marks', :id => params[:id]
   end
   
   def expand_criteria
