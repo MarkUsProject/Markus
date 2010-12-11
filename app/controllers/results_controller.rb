@@ -268,7 +268,6 @@ class ResultsController < ApplicationController
               @remark_result.marking_state != Result::MARKING_STATES[:unmarked])
         render 'results/student/no_remark_result'
         @old_result = @result
-        @result = @remark_result
       end
     elsif !@result.released_to_students
       render 'results/student/no_result'
@@ -354,16 +353,18 @@ class ResultsController < ApplicationController
   
   def cancel_remark_request
     @submission = Submission.find(params[:submission_id])
-    @result = @submission.result
+
     @remark_result = @submission.remark_result
-    @result.released_to_students = 't'
-    @remark_result.marking_state = Result::MARKING_STATES[:unmarked]
     @remark_result.submission_id = nil
-    @submission.remark_result_id = nil
-    @submission.remark_request = nil
-    @result.save
     @remark_result.save
+       
+    @submission.remark_result_id = nil
+    @submission.remark_request = nil    
     @submission.save
+    
+    @result = @submission.result
+    @result.released_to_students = 't'
+    @result.save
     
     redirect_to :controller => 'results', :action => 'view_marks', :id => params[:id]
   end

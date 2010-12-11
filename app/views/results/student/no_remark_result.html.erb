@@ -2,9 +2,6 @@
 <div class="wrapLeft">
 <p class="notice"><%= I18n.t(:no_remark_result)%></p>
 <p><em><%= I18n.t("marker.remark_submitted") %>
-<%= @submission.id %>
-<%= @submission.remark_result.id %>
-<%= @submission.result.id %>
 <%= I18n.t("marker.cancel_remark_to_change") %></em></p>
 <%= link_to( I18n.t(:cancel_remark), 
         {:controller => 'results', 
