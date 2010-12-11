@@ -185,29 +185,6 @@ class Assignment < ActiveRecord::Base
     return short_identifier
   end
 
-  # Make a list of the students an inviter can invite for his grouping
-  # TODO check if this method is ever used anywhere [Not used anywhere as of 2010/03/30]
-  # TODO unit tests
-  def can_invite_for(gid)
-    grouping = Grouping.find(gid)
-    students = self.no_grouping_students_list
-    students_list = []
-    students.each do |s|
-      if !grouping.pending?(s)
-        # if assignment doesn't restrict groups member per sections
-        if !self.section_groups_only
-          students_list.push(s)
-        else
-          # if assignment restricts groupmembers per section
-          if students.section == grouping.inviter.section
-            students_list.push(s)
-          end
-        end
-      end
-    end
-    return students_list
-  end
-
   def total_mark
     total = 0
     if self.marking_scheme_type == 'rubric'
