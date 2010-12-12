@@ -20,7 +20,7 @@ class TestFrameworkController < ApplicationController
         run_ant_file(@result, @assignment, File.join(MarkusConfigurator.markus_config_test_framework_repository, @group.repo_name))
         Process.exit!(0)
       }
-      Process.detach(child_pid)
+      Process.detach(child_pid) unless child_pid.nil?
     end
     render :action => 'test_replace', :locals => {:test_result_files => @test_result_files, :result => @result}
   end
