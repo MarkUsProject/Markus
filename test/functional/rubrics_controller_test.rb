@@ -58,9 +58,9 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       should respond_with :redirect
     end
 
-    context "on :upload" do
+    context "on :csv_upload" do
       setup do
-        get :upload, :id => 1
+        get :csv_upload, :id => 1
       end
       should respond_with :redirect
     end
@@ -125,9 +125,9 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       should respond_with :redirect
     end
 
-    context "on :upload" do
+    context "on :csv_upload" do
       setup do
-        post :upload, :id => 1
+        post :csv_upload, :id => 1
       end
       should respond_with :redirect
     end
@@ -221,9 +221,9 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       end
     end
 
-    context "on :upload" do
+    context "on :csv_upload" do
       setup do
-        get_as @admin, :upload, :id => @assignment.id, :upload => {:rubric => ""}
+        get_as @admin, :csv_upload, :id => @assignment.id, :csv_upload => {:rubric => ""}
       end
       should assign_to :assignment
       should respond_with :redirect
@@ -355,13 +355,13 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       end
     end
 
-    context "on :upload" do      
+    context "on :csv_upload" do      
       context "with file containing incomplete records" do
         setup do
           tempfile = Tempfile.new('rubric_csv')
           tempfile << RUBRIC_CRITERIA_INCOMPLETE_UPLOAD_CSV_STRING
           tempfile.rewind          
-          post_as @admin, :upload, :id => @assignment.id, :upload => {:rubric => tempfile}
+          post_as @admin, :csv_upload, :id => @assignment.id, :csv_upload => {:rubric => tempfile}
         end
         should assign_to :assignment
         should set_the_flash.to( :error => I18n.t('csv_invalid_lines'),
@@ -377,7 +377,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
           tempfile = Tempfile.new('rubric_csv')
           tempfile << RUBRIC_CRITERIA_CSV_STRING
           tempfile.rewind
-          post_as @admin, :upload, :id => @assignment.id, :upload => {:rubric => tempfile}
+          post_as @admin, :csv_upload, :id => @assignment.id, :csv_upload => {:rubric => tempfile}
           @assignment.reload
           @rubric_criteria = @assignment.rubric_criteria
         end
@@ -621,7 +621,6 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         end
 
         should respond_with :redirect
-        should set_the_flash.to(I18n.t('rubric_criteria.upload.error') + "  " +  I18n.t('rubric_criteria.upload.empty_error'))
         should assign_to :assignment
         should "have added 0 criteria" do
           @assignment.reload
