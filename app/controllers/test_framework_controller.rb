@@ -13,7 +13,6 @@ class TestFrameworkController < ApplicationController
     @group = @grouping.group
     @test_result_files = @submission.test_results
     if can_run_test?
-      # Ant Execution (Enhancement: Fork another process here to handle this)
       export_repository(@group, File.join(MarkusConfigurator.markus_config_test_framework_repository, @group.repo_name))
       copy_ant_files(@assignment, File.join(MarkusConfigurator.markus_config_test_framework_repository, @group.repo_name))
       export_configuration_files(@assignment, @group, File.join(MarkusConfigurator.markus_config_test_framework_repository, @group.repo_name))
