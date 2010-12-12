@@ -118,15 +118,15 @@ class RubricsController < ApplicationController
       end
 
       if successes < rubrics.length
-  
+
         flash[:error] = I18n.t('rubric_criteria.upload.error') + "  " + flash[:error]
-  
+
       end
-  
+
       if successes > 0
-  
+
         flash[:upload_notice] = I18n.t('rubric_criteria.upload.success', :nb_updates => successes)
-  
+
       end
     end
 
