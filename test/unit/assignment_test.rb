@@ -61,14 +61,32 @@ class AssignmentTest < ActiveSupport::TestCase
   context "A past due assignment w/ No Late submission rule" do
     setup do
       @assignment = Assignment.make({:due_date => 2.days.ago})
+      @section = Section.make
+      student = Student.make
+      @grouping = Grouping.make(:assignment => @assignment)
+      StudentMembership.make(:grouping => @grouping,
+                :user => student,
+                :membership_status => StudentMembership::STATUSES[:inviter])
     end
 
     should "return true on past_due_date? call" do
       assert @assignment.past_due_date?
     end
 
+    should "return true on section_past_due_date? call" do
+      assert @assignment.section_past_due_date?(@grouping)
+    end
+
+    should "return the last due date" do
+      assert_equal 2.days.ago.day(), @assignment.last_due_date.day()
+    end
+
     should "return true on past_collection_date? call" do
       assert @assignment.past_collection_date?
+    end
+
+    should "return the normal due date for section due date" do
+      assert @assignment.section_due_date(@section)
     end
 
   end
@@ -175,14 +193,14 @@ class AssignmentTest < ActiveSupport::TestCase
       assert_equal(5, @assignment.no_grouping_students_list.size)
     end
 
-    should "know how many ungrouped students a group can invite to it" do
-      g = Grouping.make(:assignment => @assignment)
-      assert_equal(0, @assignment.can_invite_for(g.id).size)
-      (1..5).each do
-        Student.make
-      end
-      assert_equal(5, @assignment.can_invite_for(g.id).size)
-    end
+#    should "know how many ungrouped students a group can invite to it" do
+#      g = Grouping.make(:assignment => @assignment)
+#      assert_equal(0, @assignment.can_invite_for(g.id).size)
+#      (1..5).each do
+#        Student.make
+#      end
+#      assert_equal(5, @assignment.can_invite_for(g.id).size)
+#    end
 
     should "know how many grouped students exist" do
       assert_equal(0, @assignment.grouped_students.size)
@@ -755,9 +773,9 @@ class AssignmentTest < ActiveSupport::TestCase
                    :user => student_02,
                    :membership_status => StudentMembership::STATUSES[:inviter])
 
-      SectionDueDate.make(:section => @section_01,
-                          :assignment => @assignment,
-                          :due_date => 3.days.from_now)
+      @section_due_date = SectionDueDate.make(:section => @section_01,
+                                              :assignment => @assignment,
+                                              :due_date => 3.days.from_now)
 
     end
 
@@ -772,7 +790,6 @@ class AssignmentTest < ActiveSupport::TestCase
                    @assignment.section_due_date(@section_02).day()
     end
 
-
     should "not be past due date" do
       assert !@assignment.section_past_due_date?(@grouping_1)
     end
@@ -781,5 +798,23 @@ class AssignmentTest < ActiveSupport::TestCase
       assert @assignment.section_past_due_date?(@grouping_2)
     end
 
+    should "not be past due date as there is one section not past due date" do
+      assert !@assignment.past_due_date?
+    end
+
+    should "return last due date" do
+      assert_equal 3.days.from_now.day(), @assignment.last_due_date.day()
+    end
+
+    context "With all section due dates past now" do
+      setup do
+        @section_due_date.due_date = 2.days.ago 
+        @section_due_date.save
+      end
+
+      should "be past due date as all the sections are past due date" do
+        assert @assignment.past_due_date?
+      end
+    end
   end
 end
