@@ -23,12 +23,10 @@ class SectionTest < ActiveSupport::TestCase
     end
 
     should "return the due date for that section and assignment" do
-      assert_equal 3.days.from_now,
-                    SectionDueDate.due_date?(@section, @assignment)
+      assert_equal 3.days.from_now.day(),
+                    SectionDueDate.due_date?(@section, @assignment).day()
     end
   end
-
-
 
 end
 
