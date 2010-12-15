@@ -1,13 +1,32 @@
-<div id="summary_criteria_pane">
-  <%= render :partial => "results/common/#{@assignment.marking_scheme_type}_marks_summary_table", :locals => {:mark_criteria => mark_criteria, :marks_map => marks_map} %>
+<% if old_result %>
+  <p>
+    <a href=# onclick='return false;' onmouseover='show_old_marks();' onmouseout='hide_old_marks();'>Show Old Mark Summary</a>
+  </p>
+  <div id="old_summary_criteria_pane" style="display:none;">
+  
+    <%= render :partial => "results/common/#{@assignment.marking_scheme_type}_marks_summary_table", 
+               :locals => {:mark_criteria => mark_criteria, :marks_map => old_marks_map} %>
+      
+      <div class="mark_subtotal">
+        <div class="float_left"><%= I18n.t("marker.marks.old_subtotal") %></div>
+        <div class="float_right"> /<%= h(assignment.total_mark) %>  </div>
+        <div class="float_right" id="old_subtotal_div"> <%= h(old_result.get_subtotal) %> </div>
+      </div>
+  </div>
+<% end %>
 
-</div>  <!-- Summary Criteria Pane -->
+<div id="summary_criteria_pane">
+  <%= render :partial => "results/common/#{@assignment.marking_scheme_type}_marks_summary_table", 
+             :locals => {:mark_criteria => mark_criteria, :marks_map => marks_map} %>
+
+    <!-- Summary Criteria Pane -->
       
     <div class="mark_subtotal">
-      <div class="float_left">Subtotal&nbsp;</div>
+      <div class="float_left"><%= I18n.t("marker.marks.subtotal") %></div>
       <div class="float_right"> /<%= h(assignment.total_mark) %>  </div>
       <div class="float_right" id="current_subtotal_div"> <%= h(result.get_subtotal) %> </div>
     </div>
+</div>
 
     <div class="clear"></div><br/>
     
@@ -29,6 +48,17 @@
     </div>      
     
     <div class="clear"></div>
+
+    <% if old_result %>
+      <div class="mark_total">
+        <span class="final_mark">
+          <span id="old_total_mark_div"> <%= h(old_result.total_mark) %>   </span>
+          <span> / <%= h(assignment.total_mark) %>  </span>
+        </span>
+
+        <span><%= I18n.t("marker.marks.previous_mark") %></span>
+      </div>
+    <% end %>
 
     <div class="mark_total">
 <span class="final_mark">

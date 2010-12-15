@@ -25,12 +25,19 @@ class ResultsController < ApplicationController
     @result = Result.find(result_id)
     @assignment = @result.submission.assignment
     @submission = @result.submission
-
+    
     @old_result = nil
     if @submission.remark_submitted?
       @old_result = @submission.result
     end
-
+    
+    @old_result = nil
+    # remark_results in 'unmarked' state are not submitted by the student yet
+    if @submission.has_remark? && @submission.remark_result.marking_state != Result::MARKING_STATES[:unmarked]
+      @old_result = @submission.result
+    end
+    
+>>>>>>> Implemented remark summaries: mark summaries now show old marks and the new remarked marks
     @annotation_categories = @assignment.annotation_categories
     @grouping = @result.submission.grouping
     @group = @grouping.group
@@ -42,11 +49,18 @@ class ResultsController < ApplicationController
     @extra_marks_points = @result.extra_marks.points
     @extra_marks_percentage = @result.extra_marks.percentage
     @marks_map = Hash.new
+    @old_marks_map = Hash.new
     @mark_criteria = @assignment.get_criteria
     @assignment.get_criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by_result_id(@result.id)
       mark.save(false)
       @marks_map[criterion.id] = mark
+
+      if @old_result
+        oldmark = criterion.marks.find_or_create_by_result_id(@old_result.id)
+        oldmark.save(false)
+        @old_marks_map[criterion.id] = oldmark
+      end
     end
     # Get the previous and the next submission
     if current_user.ta?
@@ -267,6 +281,7 @@ class ResultsController < ApplicationController
       render 'results/student/no_result'
       return
     end
+    
     @result = @submission.result
     @old_result = nil
     if @submission.has_remark?
@@ -297,6 +312,12 @@ class ResultsController < ApplicationController
       mark = criterion.marks.find_or_create_by_result_id(@result.id)
       mark.save(false)
       @marks_map[criterion.id] = mark
+
+      if @old_result
+        oldmark = criterion.marks.find_or_create_by_result_id(@old_result.id)
+        oldmark.save(false)
+        @old_marks_map[criterion.id] = oldmark
+      end
     end
     m_logger = MarkusLogger.instance
     m_logger.log("Student '#{current_user.user_name}' viewed results for assignment " +

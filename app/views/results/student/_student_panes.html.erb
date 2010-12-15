@@ -54,7 +54,11 @@
         <ul id="mark_criteria_pane_list">
           <%# also need to render the mark per criteria (if exist) %>
           <% @mark_criteria.each do |mark_criterion| -%>
-          <%= render :partial => "results/student/student_#{@assignment.marking_scheme_type}_criterion_li", :locals => {:mark_criterion => mark_criterion, :result => result, :mark=>marks_map[mark_criterion.id]} %>
+          <%= render :partial => "results/student/student_#{@assignment.marking_scheme_type}_criterion_li", 
+                     :locals => {:mark_criterion => mark_criterion, 
+                                 :result => result, 
+                                 :mark => marks_map[mark_criterion.id], 
+                                 :old_mark => @old_marks_map[mark_criterion.id]} %>
             <% end -%>
           </ul> <!-- Criteria Pane List -->
        </div> <!-- Criteria Pane -->
@@ -62,7 +66,15 @@
     </div>  <!-- Criteria Viewer -->
   
     <div id="summary_viewer" class="marks_summary_pane tabbedArea">
-    <%= render :partial => "results/student/student_summary", :locals => {:mark_criteria => @mark_criteria, :marks_map => marks_map, :assignment => assignment, :result => result, :extra_marks_points => extra_marks_points, :extra_marks_percentage => extra_marks_percentage}%>
+    <%= render :partial => "results/student/student_summary", 
+               :locals => {:mark_criteria => @mark_criteria, 
+                           :marks_map => marks_map, 
+                           :old_marks_map => @old_marks_map, 
+                           :assignment => assignment, 
+                           :result => result, 
+                           :old_result => @old_result, 
+                           :extra_marks_points => extra_marks_points, 
+                           :extra_marks_percentage => extra_marks_percentage}%>
     </div>
   <div id="annotation_holder">
   </div>

@@ -3,7 +3,20 @@ class="mark_criterion_title_div_level" class="float_left">
   <b><%=link_to_function h(mark_criterion.rubric_criterion_name), "return false", :class => "rubric_criterion_link" %></b>
 </div>
 <div class="clear"></div>
+
+<% if old_mark and !old_mark.mark.nil? %>
+<div id="<%="mark_criterion_title_#{mark.id}_oldmark"%>" class="padding_left" style="background-color:#FDFEBC">
+  <b>
+    <%= I18n.t("marker.marks.old") %>
+    <%= h(old_mark.mark) %>: <%= h(mark_criterion["level_" + old_mark.mark.to_i.to_s + "_name"]) %>&nbsp;
+  </b>
+  <%= h(mark_criterion["level_" + old_mark.mark.to_i.to_s + "_description"]) %>
+  <br/>
+</div>
+<% end %>
+
 <div id="<%="mark_criterion_title_#{mark.id}_mark"%>" class="padding_left">
+
 <% if !mark.mark.nil? -%>
   <b>
     <%= h(mark.mark) %>: <%= h(mark_criterion["level_" + mark.mark.to_i.to_s + "_name"]) %>&nbsp;
