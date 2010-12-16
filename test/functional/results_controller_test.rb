@@ -3,6 +3,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 require File.dirname(__FILE__) + '/../blueprints/helper'
 require 'shoulda'
 require 'mocha'
+require 'fastercsv'
 
 class ResultsControllerTest < AuthenticatedControllerTest
   fixtures :all
@@ -634,7 +635,35 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         context "GET on :update_marking_state" do
           setup do
-            get_as @admin, :update_marking_state, :id => @result.id, :marking_state => 'complete'
+            # refresh the grade distribution - there's already a completed mark so far
+            # for each rubric type, in the following grade range:
+            # flexible: 6-10%
+            # rubric: 21-25%
+            @assignment.assignment_stat.refresh_grade_distribution
+            @grade_distribution = @assignment.assignment_stat.grade_distribution_percentage
+
+            # convert @grade_distribution csv to an array
+            @grade_distribution = @grade_distribution.parse_csv.map{ |x| x.to_i }
+
+            # after the call to get_as, a second result for each marking scheme type
+            # will be marked as complete, a result which will be in the same grade range
+            # therefore we must increment the number of groupings at the given range for
+            # each marking scheme type
+            if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:flexible]
+              # increment the 6-10% range
+              @grade_distribution[1] += 1
+            end
+            if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
+              # increment the 21-25% range
+              @grade_distribution[4] += 1
+            end
+
+            get_as @admin, :update_marking_state, {:id => @result.id, :value => 'complete'}
+          end
+          should "refresh the cached grade distribution data when the marking state is set to complete" do
+            @assignment.reload
+            actual_distribution = @assignment.assignment_stat.grade_distribution_percentage.parse_csv.map{ |x| x.to_i }
+            assert_equal actual_distribution, @grade_distribution
           end
           should respond_with :success
           should assign_to :result
