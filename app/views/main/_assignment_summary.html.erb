@@ -6,7 +6,7 @@
   </h2>
   
   <div class="left">
-  	<canvas width="400" height="300"></canvas>
+    <%= render :partial => "grade_distribution_graph", :locals => { :assignment => assignment } %>
   </div>
 
   <div class="right">
