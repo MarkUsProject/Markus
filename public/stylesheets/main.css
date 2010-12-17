@@ -1863,6 +1863,7 @@ pre#test_result_content {
 	float: left;
 	display: inline-block;
 	width: auto;
+    margin-left: 15px;
 }
 
 .assignment_summary .title {
@@ -1905,5 +1906,27 @@ pre#test_result_content {
     margin-left: 60px;
 }
 
+.bluff-tooltip {
+    background: #fff;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #000;
+}
 
+.bluff-tooltip span.label {
+    display: inline;
+    float: none;
+    margin: 0;
+    padding: 0;
+}
 
+.bluff-tooltip span.data {
+    display: inline;
+    float: none;
+    margin: 0;
+    padding: 0;
+}
+
+.bluff-tooltip span {
+    display: none;
+}
