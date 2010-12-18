@@ -23,7 +23,7 @@
   <tr>
     <td><%= I18n.t(:assignments_graded) %></td>
     <td>
-      <%= h( "#{assignment.graded.size}/#{assignment.groupings.size}" ) %>
+      <%= h( "#{assignment.graded_submissions.size}/#{assignment.groupings.size}" ) %>
     </td>
   </tr>
 </table>

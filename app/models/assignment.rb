@@ -574,8 +574,8 @@ class Assignment < ActiveRecord::Base
   end
   
   # Returns all the submissions that have been graded
-  def graded
-    return self.submissions.select { |submission| submission.has_result? }
+  def graded_submissions
+    return self.submissions.select { |submission| submission.result.marking_state == Result::MARKING_STATES[:complete] }
   end
   
   private
