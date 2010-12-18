@@ -1869,7 +1869,7 @@ pre#test_result_content {
 
 .assignment_summary .title {
 	padding: 0px;
-	margin: 0px;
+	margin: 0px 0px 15px 0px;
 	color: #0a67ad;
 }
 
