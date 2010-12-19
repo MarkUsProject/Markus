@@ -1,5 +1,6 @@
 ENV["RAILS_ENV"] = "test"
-require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
+require File.expand_path('../../config/environment', __FILE__)
+require 'rails/test_help'
 require 'test_help'
 require 'mocha'
 require 'sham'
@@ -18,7 +19,7 @@ class ActiveSupport::TestCase
   # don't care one way or the other, switching from MyISAM to InnoDB tables
   # is recommended.
   #
-  # The only drawback to using transactional fixtures is when you actually 
+  # The only drawback to using transactional fixtures is when you actually
   # need to test transactions.  Since your test is bracketed by a transaction,
   # any transactions started in your code will be automatically rolled back.
   self.use_transactional_fixtures = true
@@ -30,10 +31,11 @@ class ActiveSupport::TestCase
   # then set this back to true.
   self.use_instantiated_fixtures  = false
 
-  # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.
+  # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in
+  # alphabetical order.
   #
-  # Note: You'll currently still have to declare fixtures explicitly in integration tests
-  # -- they do not yet inherit this setting
+  # Note: You'll currently still have to declare fixtures explicitly in
+  # integration tests -- they do not yet inherit this setting
   set_fixture_class :rubric_criteria => RubricCriterion
   set_fixture_class :flexible_criteria => FlexibleCriterion
 
@@ -52,14 +54,14 @@ class ActiveSupport::TestCase
       grouping.create_grouping_repository_folder
     end
   end
-  
+
   def destroy_repos
     conf = Hash.new
     conf["IS_REPOSITORY_ADMIN"] = true
     conf["REPOSITORY_PERMISSION_FILE"] = 'dummyfile'
     Repository.get_class(REPOSITORY_TYPE, conf).purge_all
   end
- 
+
   def clear_fixtures
     Admin.delete_all
     AnnotationCategory.delete_all
@@ -81,7 +83,7 @@ class ActiveSupport::TestCase
     Section.delete_all
     Student.delete_all
     StudentMembership.delete_all
-    Submission.delete_all 
+    Submission.delete_all
     Ta.delete_all
     TaMembership.delete_all
     User.delete_all
@@ -98,7 +100,8 @@ class ActiveSupport::TestCase
     FileUtils.rm_rf("#{MarkusConfigurator.markus_config_pdf_storage}/*")
   end
 
-  # This prevents factory data preloader from automatically loading data for each test suite 
+  # This prevents factory data preloader from automatically loading data for
+  # each test suite
   FactoryDataPreloader.preload_all = false
 
 end

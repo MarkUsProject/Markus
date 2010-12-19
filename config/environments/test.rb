@@ -1,5 +1,5 @@
 # Settings specified here will take precedence over those in config/environment.rb
-
+Markus::Application.configure do
 # The test environment is used exclusively to run your application's
 # test suite.  You never need to work with it otherwise.  Remember that
 # your test database is "scratch space" for the test suite and is wiped
@@ -23,7 +23,7 @@ config.action_mailer.delivery_method = :test
 
 # We need this early require. Otherwise factory_data_preloader
 # is reporting a _LOT_ of errors. Please keep this.
-require 'factory_data_preloader'
+#require 'factory_data_preloader'
 
 ###################################################################
 # MarkUs SPECIFIC CONFIGURATION
@@ -234,3 +234,4 @@ SESSION_COOKIE_SECURE = false
 ###################################################################
 # END OF MarkUs SPECIFIC CONFIGURATION
 ###################################################################
+end
