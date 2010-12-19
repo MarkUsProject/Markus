@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101114195814) do
+ActiveRecord::Schema.define(:version => 20101117195814) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -54,6 +54,11 @@ ActiveRecord::Schema.define(:version => 20101114195814) do
 
   add_index "assignment_files", ["assignment_id", "filename"], :name => "index_assignment_files_on_assignment_id_and_filename", :unique => true
   add_index "assignment_files", ["assignment_id"], :name => "index_assignment_files_on_assignment_id"
+
+  create_table "assignment_stats", :force => true do |t|
+    t.integer "assignment_id"
+    t.text    "grade_distribution_percentage", :default => "'0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0\n'"
+  end
 
   create_table "assignments", :force => true do |t|
     t.string   "short_identifier",                                       :null => false
@@ -255,6 +260,8 @@ ActiveRecord::Schema.define(:version => 20101114195814) do
     t.boolean  "released_to_students", :default => false, :null => false
     t.float    "total_mark",           :default => 0.0
   end
+
+  add_index "results", ["submission_id"], :name => "results_u1", :unique => true
 
   create_table "rubric_criteria", :force => true do |t|
     t.string   "rubric_criterion_name",                :null => false

@@ -176,6 +176,7 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.new
     @sections = Section.all
     @assignment.build_submission_rule
+    @assignment.build_assignment_stat
     
     if !request.post?
       # set default value if web submits are allowed
