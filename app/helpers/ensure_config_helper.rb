@@ -1,7 +1,7 @@
 require 'open3' # required for popen3
 
 module EnsureConfigHelper
-  
+
 =begin
 - repository directory exists
   - is writable/readable
@@ -44,8 +44,8 @@ module EnsureConfigHelper
               "config/environments/#{Rails.env}.rb and language file is present." )
     end
   end
-  
-  # checks if the given file's directory is writable 
+
+  # checks if the given file's directory is writable
   # and raises an exception if it is not
   def self.check_in_writable_dir( filename, constant_name )
     dir = Pathname.new( filename ).dirname
@@ -54,8 +54,8 @@ module EnsureConfigHelper
               " check the setting in config/environments/#{Rails.env}.rb" )
     end
   end
-  
-  # checks if the given file's directory is readable 
+
+  # checks if the given file's directory is readable
   # and raises an exception if it is not
   def self.check_in_readable_dir( filename, constant_name )
     dir = Pathname.new( filename ).dirname
@@ -64,7 +64,7 @@ module EnsureConfigHelper
               " check the setting in config/environments/#{Rails.env}.rb" )
     end
   end
-  
+
   # checks if the given file's directory is executable
   # and raises an exception if it is not
   def self.check_in_executable_dir( filename, constant_name )
@@ -83,7 +83,7 @@ module EnsureConfigHelper
               " check the setting in config/environments/#{Rails.env}.rb" )
     end
   end
-  
+
   # checks if the given file is readable and raises
   # an exception if it is not
   def self.check_readable( filename, constant_name )
@@ -92,7 +92,7 @@ module EnsureConfigHelper
               " check the setting in config/environments/#{Rails.env}.rb" )
     end
   end
-  
+
   # checks if the given file is executable and raises
   # an exception if it is not.
   def self.check_executable( filename, constant_name )
@@ -101,7 +101,7 @@ module EnsureConfigHelper
               "check the setting in config/environments/#{Rails.env}.rb" )
     end
   end
-  
+
   # checks if the given file executes succesfully
   def self.check_if_executes( filename, constant_name )
     p_stdin, p_stdout, p_stderr = Open3.popen3( filename )
