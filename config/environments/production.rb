@@ -1,5 +1,5 @@
 # Settings specified here will take precedence over those in config/environment.rb
-
+Markus::Application.configure do
 # The production environment is meant for finished, "live" apps.
 # Code is not reloaded between requests
 config.cache_classes = true # set this to false, if you want automatic reload of changed code
@@ -237,3 +237,4 @@ SESSION_COOKIE_SECURE = false
 ###################################################################
 # END OF MarkUs SPECIFIC CONFIGURATION
 ###################################################################
+end
