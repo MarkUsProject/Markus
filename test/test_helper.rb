@@ -99,10 +99,6 @@ class ActiveSupport::TestCase
     FileUtils.rm_rf("#{MarkusConfigurator.markus_config_pdf_storage}/*")
   end
 
-  # This prevents factory data preloader from automatically loading data for
-  # each test suite
-  FactoryDataPreloader.preload_all = false
-
 end
 
 class ActiveRecord::Base
