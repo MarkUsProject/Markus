@@ -1,5 +1,5 @@
 # Settings specified here will take precedence over those in config/environment.rb
-
+Markus::Application.configure do
 # In the development environment your application's code is reloaded on
 # every request.  This slows down response time but is perfect for development
 # since you don't have to restart the webserver when you make code changes.
@@ -229,3 +229,4 @@ SESSION_COOKIE_SECURE = false
 ###################################################################
 # END OF MarkUs SPECIFIC CONFIGURATION
 ###################################################################
+end
