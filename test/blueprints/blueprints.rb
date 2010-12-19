@@ -71,6 +71,7 @@ Assignment.blueprint do
   enable_test {true}
   tokens_per_day {10}
   assign_graders_to_criteria {false}
+  assignment_stat {AssignmentStat.make}
 end
 
 AssignmentFile.blueprint do
@@ -274,4 +275,8 @@ end
 Token.blueprint do
   grouping_id {Grouping.make.id}
   tokens {5}
+end
+
+AssignmentStat.blueprint do
+  assignment_id {0}
 end
