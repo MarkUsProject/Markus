@@ -66,8 +66,10 @@ class Assignment < ActiveRecord::Base
 
   # Are we past all the due dates for this assignment?
   def past_due_date?
+    # If no section due dates
     if !self.section_due_dates_type && self.section_due_dates.empty?
       return !due_date.nil? && Time.now > due_date
+    # If section due dates
     else
       self.section_due_dates.each do |d|
         if !d.due_date.nil? && Time.now > d.due_date
