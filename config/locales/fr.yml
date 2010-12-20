@@ -987,10 +987,14 @@ fr:
     assignment_average:        "Moyenne:"
     assignments_submitted:     "Projets envoyés:"
     assignments_graded:        "Projets corrigés:"
+    refresh_graph:             "Refresh the graph"
     
     #app/views/main/_grader_summary.erb
     grader_distribution:       "Correcteurs assignés:"
     assign_graders:            "Attribuer Correcteurs"
+
+    #app/views/main/_grade_distribution_graph.html.erb
+    grade_distribution:         "Grade Distribution"
         
     #Test Framework
     test_framework:

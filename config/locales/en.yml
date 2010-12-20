@@ -992,10 +992,15 @@ en:
     assignment_average:        "Assignment Average:"
     assignments_submitted:     "Assignments Submitted:"
     assignments_graded:        "Assignments Graded:"
+    refresh_graph:             "Refresh the graph"
     
     #app/views/main/_grader_summary.erb
     grader_distribution:       "Grader Distribution:"
     assign_graders:            "Assign Graders"
+
+    #app/views/main/_grade_distribution_graph.html.erb
+    grade_distribution:         "Grade Distribution"
+
     #Test Framework
     test_framework:
       test_framework: "Test Framework"
