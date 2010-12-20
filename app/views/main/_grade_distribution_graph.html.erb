@@ -3,12 +3,25 @@
 <script type="text/javascript">
     // Set-up the graph
     var g = new Bluff.SideBar('assignment_<%= assignment.id %>', '400x350');
-    g.title = 'Grade Distribution';
+    g.title = '<%= I18n.t(:grade_distribution) %>';
     g.tooltips = true;
-    g.theme_pastel();
+
+    // Set-up the theme
+    g.set_theme({
+        colors: ['#0a67ad'],
+        marker_color: '#aea9a9',
+        font_color: '#000',
+        background_colors: '#fff'
+    });
 
     // Build the data
-    g.data('Groupings',
+    var legend = '';
+    <% if assignment.group_assignment? %>
+        legend = '<%= I18n.t("groups.groups") %>'
+    <% else %>
+        legend = '<%= I18n.t("students.students") %>'
+    <% end %>
+    g.data(legend,
         <% assignment.assignment_stat.grade_distribution_array.each do |d| -%>
             <%= d -%>,
         <% end -%>

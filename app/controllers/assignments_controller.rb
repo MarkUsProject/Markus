@@ -402,6 +402,13 @@ class AssignmentsController < ApplicationController
   def update_collected_submissions
     @assignments = Assignment.all
   end
+
+  # Refreshes the grade distribution graphs and reloads the page
+  def refresh_graph
+    assignment = Assignment.find(params[:id])
+    assignment.assignment_stat.refresh_grade_distribution
+    redirect_to :controller => 'main'
+  end
   
   private 
   
