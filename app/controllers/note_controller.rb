@@ -128,7 +128,7 @@ class NoteController < ApplicationController
       @note = Note.find(params[:id])
 
       unless @note.user_can_modify?(current_user)
-        render :file => "#{RAILS_ROOT}/public/404.html",
+        render :file => "#{::Rails.root.to_s}/public/404.html",
           :status => 404
         return
       end

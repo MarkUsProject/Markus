@@ -30,7 +30,7 @@ class ApplicationController < ActionController::Base
   # Set version for MarkUs to be available in
   # any view
   def set_markus_version
-    version_file=File.expand_path(File.join(RAILS_ROOT, "app/MARKUS_VERSION"))
+    version_file=File.expand_path(File.join(::Rails.root.to_s, "app/MARKUS_VERSION"))
     if !File.exist?(version_file)
       @markus_version = "unknown"
       return

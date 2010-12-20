@@ -20,12 +20,12 @@ module Api
     def show
       if !request.get?
         # pretend this URL does not exist
-        render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
+        render :file => "#{::Rails.root.to_s}/public/404.html", :status => 404
         return
       end
       if !has_required_http_params?(params)
         # incomplete/invalid HTTP params
-        render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
+        render :file => "#{::Rails.root.to_s}/public/422.xml", :status => 422
         return
       end
 
@@ -35,7 +35,7 @@ module Api
 
       if submission.nil?
         # no such submission
-        render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
+        render :file => "#{::Rails.root.to_s}/public/422.xml", :status => 422
         return
       end
 
@@ -53,7 +53,7 @@ module Api
       files.each do |file|
         if file.nil?
           # no such submission file
-          render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
+          render :file => "#{::Rails.root.to_s}/public/422.xml", :status => 422
           return
         end
 
@@ -66,7 +66,7 @@ module Api
           end
         rescue Exception => e
             # could not retrieve file
-            render :file => "#{RAILS_ROOT}/public/500.xml", :status => 500
+            render :file => "#{::Rails.root.to_s}/public/500.xml", :status => 500
           return
         end
 

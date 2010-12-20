@@ -43,7 +43,7 @@ COURSE_NAME         = "CSC108 Fall 2009: Introduction to Computer Programming"
 #
 # That is why MarkUs does not allow usernames/passwords which contain
 # \n or \0. These are the only restrictions.
-VALIDATE_FILE = "#{RAILS_ROOT}/config/dummy_validate.sh"
+VALIDATE_FILE = "#{::Rails.root.to_s}/config/dummy_validate.sh"
 
 ###################################################################
 # File storage (Repository) settings
