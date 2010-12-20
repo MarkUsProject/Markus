@@ -221,9 +221,9 @@ Markus::Application.configure do
   MARKUS_LOGGING_ROTATE_INTERVAL = 'daily'
   # Name of the logfile that will carry information, debugging and
   # warning messages
-  MARKUS_LOGGING_LOGFILE = "log/info_#{RAILS_ENV}.log"
+  MARKUS_LOGGING_LOGFILE = "log/info_#{::Rails.env}.log"
   # Name of the logfile that will carry error and fatal messages
-  MARKUS_LOGGING_ERRORLOGFILE = "log/error_#{RAILS_ENV}.log"
+  MARKUS_LOGGING_ERRORLOGFILE = "log/error_#{::Rails.env}.log"
   # This variable sets the number of old log files that will be kept
   MARKUS_LOGGING_OLDFILES = 10
 

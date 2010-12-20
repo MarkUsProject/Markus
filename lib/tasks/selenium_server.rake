@@ -1,8 +1,8 @@
 require 'rubygems'
-require 'selenium/rake/tasks' if RAILS_ENV == "test" # use selenium rc rake tasks that are bundled with the selenium-client gem
+require 'selenium/rake/tasks' if ::Rails.env == "test" # use selenium rc rake tasks that are bundled with the selenium-client gem
 
 namespace :selenium do
-  if RAILS_ENV == "test"
+  if ::Rails.env == "test"
     SELENIUM_RC_JAR = 'vendor/selenium-rc/selenium-server-1.0.1.jar'
 
     # Start selenium server task

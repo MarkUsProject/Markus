@@ -200,7 +200,7 @@ module MarkusConfigurator
     if defined? MARKUS_LOGGING_LOGFILE
       return MARKUS_LOGGING_LOGFILE
     else
-      return File.join(::Rails.root.to_s, "log", "#{RAILS_ENV}_info.log")
+      return File.join(::Rails.root.to_s, "log", "#{::Rails.env}_info.log")
     end
   end
   
@@ -208,7 +208,7 @@ module MarkusConfigurator
     if defined? MARKUS_LOGGING_ERRORLOGFILE
       return MARKUS_LOGGING_ERRORLOGFILE
     else
-      return File.join(::Rails.root.to_s, "log", "#{RAILS_ENV}_error.log")
+      return File.join(::Rails.root.to_s, "log", "#{::Rails.env}_error.log")
     end
   end
   
