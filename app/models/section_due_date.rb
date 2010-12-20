@@ -4,7 +4,6 @@ class SectionDueDate < ActiveRecord::Base
 
 
   # returns the dute date for a section and an assignment
-  # TODO unit test
   def self.due_date?(section, assignment)
      d = SectionDueDate.find_by_assignment_id_and_section_id(assignment.id,
      section.id);

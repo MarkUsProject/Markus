@@ -6,8 +6,6 @@ require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 require 'shoulda'
 
 class SectionTest < ActiveSupport::TestCase
-  SHOW_GENERATED_DATA = false
-  SHOW_DEPENDENCY_GENERATED_DATA = true
 
   def setup
     clear_fixtures

@@ -78,7 +78,7 @@ class AssignmentTest < ActiveSupport::TestCase
     end
 
     should "return the last due date" do
-      assert_equal 2.days.ago.day(), @assignment.last_due_date.day()
+      assert_equal 2.days.ago.day(), @assignment.latest_due_date.day()
     end
 
     should "return true on past_collection_date? call" do
@@ -192,15 +192,6 @@ class AssignmentTest < ActiveSupport::TestCase
       end
       assert_equal(5, @assignment.no_grouping_students_list.size)
     end
-
-#    should "know how many ungrouped students a group can invite to it" do
-#      g = Grouping.make(:assignment => @assignment)
-#      assert_equal(0, @assignment.can_invite_for(g.id).size)
-#      (1..5).each do
-#        Student.make
-#      end
-#      assert_equal(5, @assignment.can_invite_for(g.id).size)
-#    end
 
     should "know how many grouped students exist" do
       assert_equal(0, @assignment.grouped_students.size)
@@ -802,8 +793,8 @@ class AssignmentTest < ActiveSupport::TestCase
       assert !@assignment.past_due_date?
     end
 
-    should "return last due date" do
-      assert_equal 3.days.from_now.day(), @assignment.last_due_date.day()
+    should "return latest due date" do
+      assert_equal 3.days.from_now.day(), @assignment.latest_due_date.day()
     end
 
     context "With all section due dates past now" do

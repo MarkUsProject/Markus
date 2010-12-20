@@ -4,7 +4,7 @@
 class NoLateSubmissionRule < SubmissionRule
 
   def calculate_collection_time
-    return assignment.last_due_date
+    return assignment.latest_due_date
   end
   
   # When Students commit code after the collection time, MarkUs should warn

@@ -559,7 +559,7 @@ Blanche Nef,ta2'''
       assert @grouping.can_invite?(@student_can_invite)
     end
 
-  should "return false to can invite for students of different section" do
+    should "return false to can invite for students of different section" do
       assert !@grouping.can_invite?(@student_cannot_invite)
     end
 
