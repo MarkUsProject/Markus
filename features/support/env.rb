@@ -4,7 +4,7 @@
 # Consider adding your own code to a new file instead of editing this one.
 
 # Sets up the Rails environment for Cucumber
-ENV["RAILS_ENV"] ||= "cucumber"
+ENV["::Rails.env"] ||= "cucumber"
 require File.expand_path(File.dirname(__FILE__) + '/../../config/environment')
 require 'cucumber/rails/world'
 

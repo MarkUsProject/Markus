@@ -1,8 +1,8 @@
 namespace :test do
   desc "Run the selenium tests in test/selenium and start/stop the selenium server"
   task(:selenium) do
-    if RAILS_ENV != "test"
-      $stderr.puts "Need RAILS_ENV=test to run this task"
+    if ::Rails.env != "test"
+      $stderr.puts "Need ::Rails.env=test to run this task"
       exit(1)
     end
     #Load the fixtures into the test database
