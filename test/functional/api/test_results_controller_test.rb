@@ -67,7 +67,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       assert_not_nil(new_test_result)
       assert_equal(@file_content, new_test_result.file_content)
       # check if a proper response has been sent
-      res_file = File.new("#{RAILS_ROOT}/public/200.xml")
+      res_file = File.new("#{::Rails.root.to_s}/public/200.xml")
       assert_equal(res_file.read, @res.body)
     end
   end
@@ -105,7 +105,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       deleted_test_result = TestResult.find_by_filename(@to_be_deleted_test_result)
       assert_nil(deleted_test_result)
       # check if a proper response has been sent
-      res_file = File.new("#{RAILS_ROOT}/public/200.xml")
+      res_file = File.new("#{::Rails.root.to_s}/public/200.xml")
       assert_equal(res_file.read, @res.body)
     end
   end
@@ -136,7 +136,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       assert_not_nil(updated_test_result)
       assert_equal(@file_content, updated_test_result.file_content)
       # check if a proper response has been sent
-      res_file = File.new("#{RAILS_ROOT}/public/200.xml")
+      res_file = File.new("#{::Rails.root.to_s}/public/200.xml")
       assert_equal(res_file.read, @res.body)
     end
   end
@@ -155,7 +155,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     should respond_with 422
     should "return a 422 (Unprocessable Entity) response" do
       # check if a proper response has been sent
-      res_file = File.new("#{RAILS_ROOT}/public/422.xml")
+      res_file = File.new("#{::Rails.root.to_s}/public/422.xml")
       assert_equal(res_file.read, @res.body)
     end
   end
@@ -173,7 +173,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     should respond_with 422
     should "return a 422 (Unprocessable Entity) response" do
       # check if a proper response has been sent
-      res_file = File.new("#{RAILS_ROOT}/public/422.xml")
+      res_file = File.new("#{::Rails.root.to_s}/public/422.xml")
       assert_equal(res_file.read, @res.body)
     end
   end
@@ -191,7 +191,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     should respond_with 422
     should "return a 422 (Unprocessable Entity) response" do
       # check if a proper response has been sent
-      res_file = File.new("#{RAILS_ROOT}/public/422.xml")
+      res_file = File.new("#{::Rails.root.to_s}/public/422.xml")
       assert_equal(res_file.read, @res.body)
     end
   end
@@ -209,7 +209,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     should respond_with 422
     should "return a 422 (Unprocessable Entity) response" do
       # check if a proper response has been sent
-      res_file = File.new("#{RAILS_ROOT}/public/422.xml")
+      res_file = File.new("#{::Rails.root.to_s}/public/422.xml")
       assert_equal(res_file.read, @res.body)
     end
   end
@@ -233,7 +233,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     should respond_with 404
     should "return a 404 (Not Found) response" do
       # check if a proper response has been sent
-      res_file = File.new("#{RAILS_ROOT}/public/404.xml")
+      res_file = File.new("#{::Rails.root.to_s}/public/404.xml")
       assert_equal(res_file.read, @res.body)
     end
   end
@@ -257,7 +257,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     should respond_with 404
     should "return a 404 (Not Found) response" do
       # check if a proper response has been sent
-      res_file = File.new("#{RAILS_ROOT}/public/404.xml")
+      res_file = File.new("#{::Rails.root.to_s}/public/404.xml")
       assert_equal(res_file.read, @res.body)
     end
   end
@@ -281,7 +281,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     should respond_with 404
     should "return a 404 (Not Found) response" do
       # check if a proper response has been sent
-      res_file = File.new("#{RAILS_ROOT}/public/404.xml")
+      res_file = File.new("#{::Rails.root.to_s}/public/404.xml")
       assert_equal(res_file.read, @res.body)
     end
   end

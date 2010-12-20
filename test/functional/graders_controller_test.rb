@@ -243,7 +243,7 @@ class GradersControllerTest < AuthenticatedControllerTest
     context "doing a POST on :csv_upload_grader_groups_mapping" do
 
       setup do
-        csv_dir = File.join(RAILS_ROOT, "test", "group_csvs")
+        csv_dir = File.join(::Rails.root.to_s, "test", "group_csvs")
         # Contents: test_group,g9browni,g9younas
         #           second_test_group,g9browni
         #           Group 3,c7benjam
@@ -327,7 +327,7 @@ class GradersControllerTest < AuthenticatedControllerTest
     context "doing a POST on :csv_upload_grader_criteria_mapping" do
 
       setup do
-        csv_dir = File.join(RAILS_ROOT, "test", "group_csvs")
+        csv_dir = File.join(::Rails.root.to_s, "test", "group_csvs")
         # Contents: correctness,g9browni,g9younas
         #           style,g9browni
         #           class design,c7benjam

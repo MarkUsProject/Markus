@@ -17,12 +17,12 @@ module Api
     def create
       if !request.post?
         # pretend this URL does not exist
-        render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
+        render :file => "#{::Rails.root.to_s}/public/404.html", :status => 404
         return
       end
       if !has_required_http_params_including_file_content?(params)
         # incomplete/invalid HTTP params
-        render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
+        render :file => "#{::Rails.root.to_s}/public/422.xml", :status => 422
         return
       end
       # check if there's a valid submission
@@ -30,7 +30,7 @@ module Api
                                                                       params[:assignment])
       if submission.nil?
         # no such submission
-        render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
+        render :file => "#{::Rails.root.to_s}/public/422.xml", :status => 422
         return
       end
       # Request seems good. Check if filename already exists.
@@ -41,22 +41,22 @@ module Api
            :file_content => params[:file_content],
            :submission_id => submission.id)
           # All good, so return a success response
-          render :file => "#{RAILS_ROOT}/public/200.xml", :status => 200
+          render :file => "#{::Rails.root.to_s}/public/200.xml", :status => 200
           return
         else
           # Some other error occurred
-          render :file => "#{RAILS_ROOT}/public/500.xml", :status => 500
+          render :file => "#{::Rails.root.to_s}/public/500.xml", :status => 500
           return
         end
       else
         new_test_result.file_content = params[:file_content]
         if new_test_result.save
           # All good, so return a success response
-          render :file => "#{RAILS_ROOT}/public/200.xml", :status => 200
+          render :file => "#{::Rails.root.to_s}/public/200.xml", :status => 200
           return
         else
           # Some other error occurred
-          render :file => "#{RAILS_ROOT}/public/500.xml", :status => 500
+          render :file => "#{::Rails.root.to_s}/public/500.xml", :status => 500
           return
         end
       end
@@ -73,12 +73,12 @@ module Api
     def destroy
       if !request.delete?
         # pretend this URL does not exist
-        render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
+        render :file => "#{::Rails.root.to_s}/public/404.html", :status => 404
         return
       end
       if !has_required_http_params?(params)
         # incomplete/invalid HTTP params
-        render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
+        render :file => "#{::Rails.root.to_s}/public/422.xml", :status => 422
         return
       end
       # check if there's a valid submission
@@ -86,7 +86,7 @@ module Api
                                                                       params[:assignment])
       if submission.nil?
         # no such submission
-        render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
+        render :file => "#{::Rails.root.to_s}/public/422.xml", :status => 422
         return
       end
       # request seems good
@@ -94,16 +94,16 @@ module Api
       if !test_result.nil?
         if test_result.destroy
           # Everything went fine; report success
-          render :file => "#{RAILS_ROOT}/public/200.xml", :status => 200
+          render :file => "#{::Rails.root.to_s}/public/200.xml", :status => 200
           return
         else
           # Some other error occurred
-          render :file => "#{RAILS_ROOT}/public/500.xml", :status => 500
+          render :file => "#{::Rails.root.to_s}/public/500.xml", :status => 500
           return
         end
       end
       # The test result in question does not exist
-      render :file => "#{RAILS_ROOT}/public/404.xml", :status => 404
+      render :file => "#{::Rails.root.to_s}/public/404.xml", :status => 404
       return
     end
 
@@ -119,12 +119,12 @@ module Api
     def update
       if !request.put?
         # pretend this URL does not exist
-        render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
+        render :file => "#{::Rails.root.to_s}/public/404.html", :status => 404
         return
       end
       if !has_required_http_params_including_file_content?(params)
         # incomplete/invalid HTTP params
-        render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
+        render :file => "#{::Rails.root.to_s}/public/422.xml", :status => 422
         return
       end
       # check if there's a valid submission
@@ -132,7 +132,7 @@ module Api
                                                                       params[:assignment])
       if submission.nil?
         # no such submission
-        render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
+        render :file => "#{::Rails.root.to_s}/public/422.xml", :status => 422
         return
       end
       # request seems good
@@ -140,16 +140,16 @@ module Api
       if !test_result.nil?
         if test_result.update_file_content(params[:file_content])
           # Everything went fine; report success
-          render :file => "#{RAILS_ROOT}/public/200.xml", :status => 200
+          render :file => "#{::Rails.root.to_s}/public/200.xml", :status => 200
           return
         else
           # Some other error occurred
-          render :file => "#{RAILS_ROOT}/public/500.xml", :status => 500
+          render :file => "#{::Rails.root.to_s}/public/500.xml", :status => 500
           return
         end
       end
       # The test result in question does not exist
-      render :file => "#{RAILS_ROOT}/public/404.xml", :status => 404
+      render :file => "#{::Rails.root.to_s}/public/404.xml", :status => 404
       return
     end
 
@@ -164,12 +164,12 @@ module Api
     def show
       if !request.get?
         # pretend this URL does not exist
-        render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
+        render :file => "#{::Rails.root.to_s}/public/404.html", :status => 404
         return
       end
       if !has_required_http_params?(params)
         # incomplete/invalid HTTP params
-        render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
+        render :file => "#{::Rails.root.to_s}/public/422.xml", :status => 422
         return
       end
       # check if there's a valid submission
@@ -177,7 +177,7 @@ module Api
                                                                       params[:assignment])
       if submission.nil?
         # no such submission
-        render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
+        render :file => "#{::Rails.root.to_s}/public/422.xml", :status => 422
         return
       end
       # request seems good
@@ -189,7 +189,7 @@ module Api
         return
       end
       # The test result in question does not exist
-      render :file => "#{RAILS_ROOT}/public/404.xml", :status => 404
+      render :file => "#{::Rails.root.to_s}/public/404.xml", :status => 404
       return
     end
 

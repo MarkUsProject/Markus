@@ -19,7 +19,7 @@ module MarkusConfigurator
     if defined? REPOSITORY_STORAGE
       return REPOSITORY_STORAGE
     else
-      return File.join(RAILS_ROOT, "repositories")
+      return File.join(::Rails.root.to_s, "repositories")
     end
   end
 
@@ -27,7 +27,7 @@ module MarkusConfigurator
     if defined? PDF_STORAGE
       return PDF_STORAGE
     else
-      return File.join(RAILS_ROOT, "converted_pdf_dir")
+      return File.join(::Rails.root.to_s, "converted_pdf_dir")
     end
   end
 
@@ -115,7 +115,7 @@ module MarkusConfigurator
     if defined? TEST_FRAMEWORK_REPOSITORY
       return TEST_FRAMEWORK_REPOSITORY
     else
-      return File.join(RAILS_ROOT, "test-framework")
+      return File.join(::Rails.root.to_s, "test-framework")
     end
   end
   
@@ -168,7 +168,7 @@ module MarkusConfigurator
     if defined? VALIDATE_FILE
       return VALIDATE_FILE
     else
-      return "#{RAILS_ROOT}./config/dummy_validate.sh"
+      return "#{::Rails.root.to_s}./config/dummy_validate.sh"
     end
   end
 
@@ -200,7 +200,7 @@ module MarkusConfigurator
     if defined? MARKUS_LOGGING_LOGFILE
       return MARKUS_LOGGING_LOGFILE
     else
-      return File.join(RAILS_ROOT, "log", "#{RAILS_ENV}_info.log")
+      return File.join(::Rails.root.to_s, "log", "#{RAILS_ENV}_info.log")
     end
   end
   
@@ -208,7 +208,7 @@ module MarkusConfigurator
     if defined? MARKUS_LOGGING_ERRORLOGFILE
       return MARKUS_LOGGING_ERRORLOGFILE
     else
-      return File.join(RAILS_ROOT, "log", "#{RAILS_ENV}_error.log")
+      return File.join(::Rails.root.to_s, "log", "#{RAILS_ENV}_error.log")
     end
   end
   

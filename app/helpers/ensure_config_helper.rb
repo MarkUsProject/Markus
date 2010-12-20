@@ -36,7 +36,7 @@ module EnsureConfigHelper
   # Checks if language file for configured default
   # language is present.
   def self.check_configured_default_language( lang )
-    available_languages = Dir.glob(File.join( RAILS_ROOT, "config", "locales", "*.yml" ))
+    available_languages = Dir.glob(File.join( ::Rails.root.to_s, "config", "locales", "*.yml" ))
     available_languages = available_languages.collect{ |file| File.basename(file).chomp(".yml") }
     if !available_languages.include?( lang )
       raise ( "Language file #{lang}.yml does not exist in config/locales. Please " +

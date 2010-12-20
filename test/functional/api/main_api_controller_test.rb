@@ -67,7 +67,7 @@ class Api::MainApiControllerTest < ActionController::TestCase
     should assign_to :current_user
     should respond_with :success
     should "render a success response" do
-      res_file = File.new("#{RAILS_ROOT}/public/200.xml")
+      res_file = File.new("#{::Rails.root.to_s}/public/200.xml")
       assert_equal(@res.body, res_file.read)
     end
   end
@@ -83,7 +83,7 @@ class Api::MainApiControllerTest < ActionController::TestCase
 
     should assign_to :current_user
     should "render a success response" do
-      res_file = File.new("#{RAILS_ROOT}/public/200.xml")
+      res_file = File.new("#{::Rails.root.to_s}/public/200.xml")
       assert_equal(@res.body, res_file.read)
     end
   end
@@ -99,7 +99,7 @@ class Api::MainApiControllerTest < ActionController::TestCase
 
     should assign_to :current_user
     should "render a success response" do
-      res_file = File.new("#{RAILS_ROOT}/public/200.xml")
+      res_file = File.new("#{::Rails.root.to_s}/public/200.xml")
       assert_equal(@res.body, res_file.read)
     end
   end
@@ -115,7 +115,7 @@ class Api::MainApiControllerTest < ActionController::TestCase
 
     should assign_to :current_user
     should "render a success response" do
-      res_file = File.new("#{RAILS_ROOT}/public/200.xml")
+      res_file = File.new("#{::Rails.root.to_s}/public/200.xml")
       assert_equal(@res.body, res_file.read)
     end
   end

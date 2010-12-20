@@ -46,7 +46,7 @@ Markus::Application.configure do
   #
   # That is why MarkUs does not allow usernames/passwords which contain
   # \n or \0. These are the only restrictions.
-  VALIDATE_FILE = "#{RAILS_ROOT}/config/dummy_validate.sh"
+  VALIDATE_FILE = "#{::Rails.root.to_s}/config/dummy_validate.sh"
 
   ###################################################################
   # Authentication Settings
@@ -98,17 +98,17 @@ Markus::Application.configure do
   ###################################################################
   # Directory where Repositories will be created. Make sure MarkUs is allowed
   # to write to this directory
-  REPOSITORY_STORAGE = "#{RAILS_ROOT}/data/test/dummy" # unused, because of type memory
+  REPOSITORY_STORAGE = "#{::Rails.root.to_s}/data/test/dummy" # unused, because of type memory
 
   ###################################################################
   # Directory where converted PDF files will be stored as JPEGs. Make sure MarkUs
   # is allowed to write to this directory
-  PDF_STORAGE = "#{RAILS_ROOT}/data/test/pdfs"
+  PDF_STORAGE = "#{::Rails.root.to_s}/data/test/pdfs"
 
   ###################################################################
   # Directory where the Automated Testing Repositories will be created.
   # Make sure MarkUs is allowed to write to this directory
-  TEST_FRAMEWORK_REPOSITORY = "#{RAILS_ROOT}/data/test/automated_tests"
+  TEST_FRAMEWORK_REPOSITORY = "#{::Rails.root.to_s}/data/test/automated_tests"
 
   ###################################################################
   # Set this to true or false if you want to be able to display and annotate
