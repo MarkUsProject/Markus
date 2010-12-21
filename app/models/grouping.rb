@@ -27,7 +27,7 @@ class Grouping < ActiveRecord::Base
     
   has_one :token
 
-  named_scope :approved_groupings, :conditions => {:admin_approved => true}
+  scope :approved_groupings, :conditions => {:admin_approved => true}
 
   validates_numericality_of :criteria_coverage_count, :greater_than_or_equal_to => 0
 
