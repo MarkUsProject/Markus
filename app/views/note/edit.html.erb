@@ -1,7 +1,7 @@
 <div id="title_bar"><h1><%=I18n.t('notes.edit.title')%></h1></div>
 
 <div class="wrapLeft">
-<% form_for :note, @note, :url => {:action => 'update', :id => @note.id} do |f| %>
+<%= form_for :note, @note, :url => {:action => 'update', :id => @note.id} do |f| %>
   <%= f.error_messages %>
   
   <p>

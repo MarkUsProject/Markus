@@ -103,7 +103,7 @@
 <div id="upload_dialog"> 
   <h1><%= t('rubric_criteria.upload.title') %></h1>
   <p><%= t('rubric_criteria.upload.prompt') %></p>
-  <% form_for :upload, :url => {:controller=>"rubrics",
+  <%= form_for :upload, :url => {:controller=>"rubrics",
                                 :action => 'upload',
                                 :id => @assignment.id},
                                 :html => {:multipart => true, :size => 1 } do |f| %>
