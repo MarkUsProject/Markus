@@ -7,7 +7,7 @@
   <% end%>
 </div>
 
-<% form_for :section, @section do |f| %>
+<%= form_for :section, @section do |f| %>
 <fieldset>
   <legend><%= I18n.t('section.legend') %></legend>
   <%= f.label :name, t("section.name") %>

@@ -174,7 +174,7 @@
 <div id="upload_dialog"> 
   <h1><%= t('grade_entry_forms.csv.upload_title') %></h1>
   <p><%= t('grade_entry_forms.csv.upload_prompt') %></p>
-  <% form_for :upload, :url => {:controller=>"grade_entry_forms",
+  <%= form_for :upload, :url => {:controller=>"grade_entry_forms",
                                 :action => 'csv_upload',
                                 :id => @grade_entry_form.id},
                                 :html => {:multipart => true, :size => 1 } do |f| %>

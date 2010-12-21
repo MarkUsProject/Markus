@@ -9,7 +9,7 @@
       </div>
     <% end %>
   </p>
-  <% form_for :group, :html => {:multipart => true},
+  <%= form_for :group, :html => {:multipart => true},
                      :url => { :controller=>"groups",
                                :action => 'csv_upload',
                                :id => @assignment.id } do |f| -%>
