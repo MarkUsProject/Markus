@@ -2,7 +2,7 @@
 # All descendants have the following methods available
 
 module MarkusConfigurator
-  
+
   ######################################
   # Repository configuration
   ######################################
@@ -14,7 +14,7 @@ module MarkusConfigurator
       return true
     end
   end
-  
+
   def markus_config_repository_storage
     if defined? REPOSITORY_STORAGE
       return REPOSITORY_STORAGE
@@ -54,7 +54,7 @@ module MarkusConfigurator
       return "svn"
     end
   end
-  
+
   def markus_config_repository_external_base_url
     if defined? REPOSITORY_EXTERNAL_BASE_URL
       return REPOSITORY_EXTERNAL_BASE_URL
@@ -62,7 +62,7 @@ module MarkusConfigurator
       return "http://www.example.com/svn"
     end
   end
-  
+
   def markus_config_repository_external_submits_only?
     case markus_config_repository_type
       when "svn"
@@ -76,7 +76,7 @@ module MarkusConfigurator
     end
     return retval
   end
-  
+
   def markus_config_repository_permission_file
     if defined? REPOSITORY_PERMISSION_FILE
       return REPOSITORY_PERMISSION_FILE
@@ -118,7 +118,7 @@ module MarkusConfigurator
       return File.join(::Rails.root.to_s, "test-framework")
     end
   end
-  
+
   ###########################################
   # Markus Session cookie configuration
   ###########################################
@@ -179,7 +179,7 @@ module MarkusConfigurator
       return false
     end
   end
-  
+
   def markus_config_logging_size_threshold
     if defined? MARKUS_LOGGING_SIZE_THRESHOLD
       return MARKUS_LOGGING_SIZE_THRESHOLD
@@ -187,7 +187,7 @@ module MarkusConfigurator
       return (1024 * 10**6)
     end
   end
-  
+
   def markus_config_logging_rotate_interval
     if defined? MARKUS_LOGGING_ROTATE_INTERVAL
       return MARKUS_LOGGING_ROTATE_INTERVAL
@@ -195,7 +195,7 @@ module MarkusConfigurator
       return 'daily'
     end
   end
-  
+
   def markus_config_logging_logfile
     if defined? MARKUS_LOGGING_LOGFILE
       return MARKUS_LOGGING_LOGFILE
@@ -203,7 +203,7 @@ module MarkusConfigurator
       return File.join(::Rails.root.to_s, "log", "#{::Rails.env}_info.log")
     end
   end
-  
+
   def markus_config_logging_errorlogfile
     if defined? MARKUS_LOGGING_ERRORLOGFILE
       return MARKUS_LOGGING_ERRORLOGFILE
@@ -211,7 +211,7 @@ module MarkusConfigurator
       return File.join(::Rails.root.to_s, "log", "#{::Rails.env}_error.log")
     end
   end
-  
+
   def markus_config_logging_num_oldfiles
     if defined? MARKUS_LOGGING_OLDFILES
       return MARKUS_LOGGING_OLDFILES
