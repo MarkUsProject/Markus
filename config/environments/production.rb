@@ -15,7 +15,7 @@ Markus::Application.configure do
   # set log-level (:debug, :info, :warn, :error, :fatal)
 
   # Full error reports are disabled and caching is turned on
-  config.action_controller.consider_all_requests_local = true
+  config.consider_all_requests_local = true
   # set to false to turn off traces
   config.action_view.debug_rjs                         = true
   config.action_controller.perform_caching             = true
