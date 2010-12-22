@@ -1,12 +1,12 @@
 /* Core Elements */
 
 body {
-    background-color: #fff;
-    margin: 0;
-    margin-bottom: 3em;
-    padding: 0;
-    font-family: "Lucida Grande", Verdana, Arial,  sans-serif;
-    font-size: 0.8em;
+	background-color: #fff;
+	margin: 0;
+	margin-bottom: 3em;
+	padding: 0;
+	font-family: "Lucida Grande", Verdana, Arial,  sans-serif;
+	font-size: 0.8em;
 }
 
 .clear {
@@ -53,7 +53,7 @@ a:hover {
 }
 
 a.delete{
-    color: #ee6415;
+	color: #ee6415;
 }
 
 a.delete:hover{
@@ -61,8 +61,8 @@ a.delete:hover{
 }
 
 a.rubric_criterion_link {
-    font-weight: bold;
-    color: #000000
+	font-weight: bold;
+	color: #000000
 }
 
 h1{
@@ -168,7 +168,7 @@ h4{
 }
 
 #new_files input{
-    width: 300px;
+	width: 300px;
 }
 
 /* menu */
@@ -279,8 +279,8 @@ h4{
 }
 
 #sub_menu ul.dropdown a:hover{
-    text-decoration: underline;
-    color: #003399;
+	text-decoration: underline;
+	color: #003399;
 }
 
 #sub_menu{
@@ -402,7 +402,7 @@ input, .button, .button_2{
 }
 
 .inline_checkbox{
-      min-width: 0px;
+	  min-width: 0px;
 }
 
 .button_2{
@@ -1468,7 +1468,7 @@ div.align_text_right {
    float: left;
 }
 
-#flexible_criteria_pane, #annotation_category_pane  {
+#flexible_criteria_pane, #annotation_category_pane	{
    padding: 0px 2%;
 }
 
@@ -1595,8 +1595,8 @@ div.align_text_right {
 }
 
 .criterion_arrow{
-    float: right;
-    padding-left: 3px;
+	float: right;
+	padding-left: 3px;
 }
 
 .criterion_weight, .criterion_max {
@@ -1605,8 +1605,8 @@ div.align_text_right {
 }
 
 .delete_criterion a img{
-    color: none;
-    border: none;
+	color: none;
+	border: none;
 }
 
 .main_rubric_criteria_edit, .main_flexible_criteria_edit, #flexible_criteria_preview{
@@ -1823,10 +1823,10 @@ pre#test_result_content {
 }
 
 .graph_layout{
-    margin-top:20px;
-    margin-left:20px;
-    width:500px;
-    height:350px;
+	margin-top:20px;
+	margin-left:20px;
+	width:500px;
+	height:350px;
 }
 
 /* Language chooser styles */
@@ -1864,7 +1864,7 @@ pre#test_result_content {
 	float: left;
 	display: inline-block;
 	width: auto;
-    margin-left: 15px;
+	margin-left: 15px;
 }
 
 .assignment_summary .title {
@@ -1900,27 +1900,27 @@ pre#test_result_content {
 }
 
 .bluff-tooltip {
-    background: #fff;
-    margin: 0;
-    padding: 0;
-    border: 1px solid #000;
+	background: #fff;
+	margin: 0;
+	padding: 0;
+	border: 1px solid #000;
 }
 
 .bluff-tooltip span.label {
-    display: inline;
-    float: none;
-    margin: 0;
-    padding: 0;
+	display: inline;
+	float: none;
+	margin: 0;
+	padding: 0;
 }
 
 .bluff-tooltip span.data {
-    display: inline;
-    float: none;
-    margin: 0;
-    padding: 0;
+	display: inline;
+	float: none;
+	margin: 0;
+	padding: 0;
 }
 
 .bluff-tooltip span {
-    display: none;
+	display: none;
 }
 
