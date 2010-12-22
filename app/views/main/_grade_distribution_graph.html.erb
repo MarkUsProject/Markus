@@ -1,6 +1,7 @@
 <canvas id="assignment_<%= assignment.id %>" width="400" height="350"></canvas>
 
 <script type="text/javascript">
+//<![CDATA[
     // Set-up the graph
     var g = new Bluff.SideBar('assignment_<%= assignment.id %>', '400x350');
     g.title = '<%= I18n.t(:grade_distribution) %>';
@@ -40,4 +41,5 @@
 
     // Draw the graph
     g.draw();
+//]]>
 </script>
