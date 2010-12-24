@@ -18,6 +18,9 @@ module Markus
   # :all can be used as a placeholder for all plugins not explicitly named
   config.plugins = [ :ssl_requirement, :auto_complete, :calendar_date_select ]
 
+  # Javascripts files always loaded in views
+  config.action_view.javascript_expansions[:defaults] = %w(rails application prototype)
+
   # Set this if MarkUs is not hosted under / of your Web-host.
   # E.g. if MarkUs should be accessible by http://yourhost.com/markus/instance0
   # then set the below directive to "/markus/instance0".
