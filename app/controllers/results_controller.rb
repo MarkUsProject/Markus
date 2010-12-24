@@ -117,6 +117,11 @@ class ResultsController < ApplicationController
     @result = Result.find(params[:id])
     @result.marking_state = params[:value]
     @result.save
+
+    # If marking_state is complete, update the cached distribution
+    if params[:value] == Result::MARKING_STATES[:complete]
+      @result.submission.assignment.assignment_stat.refresh_grade_distribution
+    end
   end
   
   def download
