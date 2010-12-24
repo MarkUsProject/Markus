@@ -1,7 +1,7 @@
 # Required for filtering locale prefixed requests
 require 'routing_filter'
 
-Markus::Application.routes.draw do |map|
+Markus::Application.routes.draw do
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
@@ -61,9 +61,9 @@ Markus::Application.routes.draw do |map|
 
 
   # API routes
-  map.namespace :api do |api|
-    api.resource :test_results
-    api.resource :submission_downloads
+  namespace :api do
+    resources :test_results
+    resources :submission_downloads
   end
 
   # This is a legacy wild controller route that's not recommended for RESTful applications.
@@ -71,6 +71,5 @@ Markus::Application.routes.draw do |map|
   match ':controller(/:action(/:id(.:format)))'
 
   # Return a 404 when no route is match
-  match "*path" => redirect("/404.html")
-
+  match '*path', :controller => 'main', :action => 'page_not_found'
 end
