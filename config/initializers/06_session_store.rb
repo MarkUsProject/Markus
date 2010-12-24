@@ -11,7 +11,7 @@
 Rails.application.config.session_store :cookie_store,
   :key => MarkusConfigurator.markus_config_session_cookie_name,
   :secret      => MarkusConfigurator.markus_config_session_cookie_secret,
-  :path => (ActionController::Base.relative_url_root.nil? or ActionController::Base.relative_url_root.empty?) ? '/' : ActionController::Base.relative_url_root,
+  :path => '/',
   :expire_after => MarkusConfigurator.markus_config_session_cookie_expire_after,
   :http_only => MarkusConfigurator.markus_config_session_cookie_http_only,
   # if you use secure in Base.session, you will have to do an https connection,
