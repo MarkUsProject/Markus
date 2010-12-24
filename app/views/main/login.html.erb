@@ -11,17 +11,17 @@
     <div class="error"><%=h flash[:login_notice] %></div>
   <% end -%>
   <div id="login-content">
-    <!-- login form -->    
-    <% form_tag({ :action => 'login', :id => nil }, :id => 'login_form') do %>
-  
+    <!-- login form -->
+    <%= form_tag({ :action => 'login', :id => nil }, :id => 'login_form') do %>
+
         <%= label_tag 'user_login', I18n.t(:login) -%>
         <%= text_field_tag 'user_login', nil, :tabindex => 10 %><br />
-  
+
         <%= label_tag 'user_password', I18n.t(:password) %>
         <%= password_field_tag 'user_password', nil, :tabindex => 20 %><br />
-  
+
         <%= submit_tag I18n.t(:log_in), :disable_with => I18n.t(:logging_in), :tabindex => 100, :class => 'button indent_button'%>
-        
+
     <% end %>
   </div>
 </div>
