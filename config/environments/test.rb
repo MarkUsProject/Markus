@@ -21,6 +21,9 @@ Markus::Application.configure do
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
 
+  # Show Deprecated Warnings (to :log or to :stderr)
+  config.active_support.deprecation = :stderr
+
   # We need this early require. Otherwise factory_data_preloader
   # is reporting a _LOT_ of errors. Please keep this.
   #require 'factory_data_preloader'

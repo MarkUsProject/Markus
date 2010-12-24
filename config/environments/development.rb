@@ -14,8 +14,8 @@ Markus::Application.configure do
   config.action_controller.perform_caching             = false
   config.action_controller.allow_forgery_protection    = true
 
-  # Show Deprecated Warnings (to :log or )
-  #config.active_support.deprecation = :log
+  # Show Deprecated Warnings (to :log or to :stderr)
+  config.active_support.deprecation = :stderr
 
   # Don't care if the mailer can't send
   config.action_mailer.raise_delivery_errors = false
