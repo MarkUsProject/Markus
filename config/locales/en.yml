@@ -95,6 +95,9 @@ en:
       released: "Released"
       remark_requested: "Remark Requested"
       not_complete: "Can not release result for %{group_name}: the marking state is not complete"
+      no_submission: "%{group_name} had no submission"
+      no_result: "%{group_name} had no result"
+      result_not_saved: "%{group_name}'s submission result could not be saved"
     collect_submissions:
       collect_all: "Collect All Submissions"
       collect_ta: "Collect all your assigned submissions"
