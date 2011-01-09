@@ -152,7 +152,7 @@ en:
         section_due_date_not_displayed: "Due dates are specific to sections." 
         section_due_date_type: "Due dates are specified per section." 
         section_due_date_option:  "If the section due dates option is checked, students can only form groups within their section."
-        section_due_dates_info:  "<b>Important</b> The global due date needs to be filled in. If a section has no due date specified, it will used the global due date. Students not assigned to any section will only be allowed to form groups with students without section either."
+        section_due_dates_info:  "<b>Important</b> The global due date needs to be filled in. If a section has no due date specified, the global due date will be used instead. Students not assigned to any section will only be allowed to form groups with students without section either."
     your_mark:  "Your mark:"
 
     members:            "Members"
