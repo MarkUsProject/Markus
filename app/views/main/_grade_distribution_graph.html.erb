@@ -32,10 +32,13 @@
     var intervals = 20;
     var steps = 100 / intervals; // number of percentage steps in each interval
     g.labels = {}
-    for(i=0; i<intervals; i++){
-        if(i == 0) lower = 0;
-        else lower = 1 + i*steps;
-        upper = (i+1) * steps;
+    for(i = 0; i < intervals; i++){
+        if(i == 0) {
+            lower = 0;
+        } else {
+            lower = 1 + i * steps;
+        }
+        upper = (i + 1) * steps;
         g.labels[i] = lower + '%-' + upper + '%';
     }
 
