@@ -84,7 +84,7 @@ class Assignment < ActiveRecord::Base
   def section_past_due_date?(grouping)
     if self.section_due_dates_type
         section_due_date =
-    SectionDueDate.due_date?(grouping.inviter.section, self)
+    SectionDueDate.due_date_for(grouping.inviter.section, self)
         return !section_due_date.nil? && Time.now > section_due_date
     else
       self.past_due_date?
@@ -95,7 +95,7 @@ class Assignment < ActiveRecord::Base
   def section_due_date(section)
     if self.section_due_dates_type
       if !section.nil?
-        return SectionDueDate.due_date?(section, self)
+        return SectionDueDate.due_date_for(section, self)
       end
     end
     return self.due_date
