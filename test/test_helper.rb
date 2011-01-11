@@ -101,6 +101,20 @@ class ActiveSupport::TestCase
   # This prevents factory data preloader from automatically loading data for each test suite 
   FactoryDataPreloader.preload_all = false
 
+  def equal_dates(date_1, date_2)
+    date_1 = date_1.in_time_zone
+    date_2 = date_2.in_time_zone
+    if date_1.year == date_2.year and 
+      date_1.month == date_2.month and
+      date_1.day == date_2.day and
+      date_1.hour == date_2.hour and
+      date_1.min == date_2.min
+      print date_1
+      print date_2
+      return true
+    end
+    return false
+  end
 end
 
 class ActiveRecord::Base
