@@ -253,6 +253,9 @@
       <% end %>
       <h3><%= I18n.t("student.group_properties") %></h3>
       <ul>
+        <% if @assignment.section_groups_only %>
+	    <li><%= I18n.t("student.section_groups_only") %></li>
+	<% end %>
         <% if @assignment.student_form_groups &&
               !@assignment.instructor_form_groups &&
               @assignment.group_max > 1 %>

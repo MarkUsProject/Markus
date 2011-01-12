@@ -1843,6 +1843,7 @@ pre#test_result_content {
   font-size: smaller;
 }
 
+<<<<<<< .merge_file_9W2rtp
 
 /* Dashboard Assignment Summary */
 .assignment_summary {
@@ -1896,4 +1897,12 @@ pre#test_result_content {
 
 .assignment_summary .grader_distribution {
 	margin-bottom: 0px;
+}
+
+#section_due_dates_type_form {
+    margin-top: 10px;
+}
+
+.section_due_date_form {
+    margin-left: 60px;
 }

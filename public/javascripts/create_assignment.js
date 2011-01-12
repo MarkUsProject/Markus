@@ -190,6 +190,14 @@ function refresh_due_date() {
   update_due_date($F('assignment_due_date'));
 }
 
+function toggle_sections_due_date( section_due_dates_type ) {
+  if( section_due_dates_type ) {
+    $('section_due_dates_information').show();
+  } else {
+    $('section_due_dates_information').hide();
+  }
+}
+
 function check_due_date(new_due_date) {
   var now = new Date();
   if(Date.parseFormattedString(new_due_date) < now) {
@@ -202,7 +210,7 @@ function change_submission_rule() {
   $$('.period input').each(function(node) {
     $(node).enable();
   });
-  
+
   if($('grace_period_submission_rule').getValue() == null) {
      // Disable any grace_period_submission_rule periods
     $$('#grace_periods .period').each(function(node) { node.addClassName('disabled'); });
