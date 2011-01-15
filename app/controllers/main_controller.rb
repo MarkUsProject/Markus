@@ -132,10 +132,12 @@ class MainController < ApplicationController
 
   def index
     @current_user = current_user
-    if @current_user.student? or  @current_user.ta?
+    if @current_user.student? or @current_user.ta?
       redirect_to :controller => 'assignments', :action => 'index'
       return
     end
+    
+    @assignments = Assignment.find(:all)
     render :action => 'index', :layout => 'content'
   end
 

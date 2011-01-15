@@ -13,4 +13,9 @@ class Section < ActiveRecord::Base
     return students.size
   end
 
+  def section_due_date_for(aid)
+    return SectionDueDate.find_by_assignment_id_and_section_id(aid, self.id)
+  end
+
+
 end

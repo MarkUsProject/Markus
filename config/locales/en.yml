@@ -149,6 +149,10 @@ en:
             change_marking_scheme_type: "Changing marking scheme will delete your criteria and marks."
         allow_web_submits: "Allow Web Submits?"
         display_grader_names_to_students: "Display grader names to students?"
+        section_due_date_not_displayed: "Due dates are specific to sections." 
+        section_due_date_type: "Due dates are specified per section." 
+        section_due_date_option:  "If the section due dates option is checked, students can only form groups within their section."
+        section_due_dates_info:  "<b>Important</b> The global due date needs to be filled in. If a section has no due date specified, the global due date will be used instead. Students not assigned to any section will only be allowed to form groups with students without section either."
     your_mark:  "Your mark:"
 
     members:            "Members"
@@ -571,6 +575,7 @@ en:
        has decline the invitation</span>"
       cancel_invitation: "Are you sure you want to cancel this invitation?"
       cancel_invitation_title: "Cancel invitation"
+      section_groups_only: "You can invite only students of your section"
       submission:
         file_manager: "%{short_identifier}: File Manager"
         current_path: "Current Path:"
@@ -989,7 +994,15 @@ en:
     locale_not_available: "%{locale} translation not available!"
     external_authentication_not_supported: "External authentication not supported on your platform!"
     account_disabled: "This account has been disabled"
-
+    
+    #app/views/main/_assignment_info_summary.erb
+    assignment_average:        "Assignment Average:"
+    assignments_submitted:     "Assignments Submitted:"
+    assignments_graded:        "Assignments Graded:"
+    
+    #app/views/main/_grader_summary.erb
+    grader_distribution:       "Grader Distribution:"
+    assign_graders:            "Assign Graders"
     #Test Framework
     test_framework:
       test_framework: "Test Framework"

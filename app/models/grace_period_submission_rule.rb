@@ -1,7 +1,7 @@
 class GracePeriodSubmissionRule < SubmissionRule
      
   def calculate_collection_time
-    return assignment.due_date + hours_sum.hours
+    return assignment.latest_due_date + hours_sum.hours
   end
   
   # When Students commit code after the collection time, MarkUs should warn

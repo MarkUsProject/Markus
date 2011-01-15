@@ -100,7 +100,6 @@ class Grouping < ActiveRecord::Base
   end
 
   #invites each user in 'members' by its user name, to this group
-  # TODO update unit test
   def invite(members, set_membership_status=StudentMembership::STATUSES[:pending], invoked_by_admin=false)
     # overloading invite() to accept members arg as both a string and a array
     members = [members] if !members.instance_of?(Array) # put a string in an
@@ -143,7 +142,6 @@ class Grouping < ActiveRecord::Base
   end
 
   # define whether user can be invited in this grouping
-  # TODO unit test
   def can_invite?(user)
     m_logger = MarkusLogger.instance
     if user && user.student?

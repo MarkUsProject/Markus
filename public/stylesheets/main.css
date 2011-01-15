@@ -1843,3 +1843,64 @@ pre#test_result_content {
   font-size: smaller;
 }
 
+/* Dashboard Assignment Summary */
+.assignment_summary {
+	display: table;
+	margin-bottom: 20px;
+	margin-top: 20px;
+	padding: 20px;
+	border-style: none;
+	background-color: #f4f4f4;
+}
+
+.assignment_summary .left {
+	float: left;
+	display: block;
+	width: 400px;
+}
+
+.assignment_summary .right {
+	float: left;
+	display: inline-block;
+	width: auto;
+}
+
+.assignment_summary .title {
+	padding: 0px;
+	margin: 0px;
+	color: #0a67ad;
+}
+
+.assignment_summary .due_date {
+	font-weight: bold;
+}
+
+.assignment_summary .due_date .after {
+	color: red;
+}
+
+.assignment_summary .due_date .before {
+	color: green;
+}
+
+.assignment_summary table tr td {
+	padding-right: 10px;
+	border-bottom: none;
+}
+
+.assignment_summary ul {
+	margin-top: 0px;
+	list-style-type: square;
+}
+
+.assignment_summary .grader_distribution {
+	margin-bottom: 0px;
+}
+
+#section_due_dates_type_form {
+    margin-top: 10px;
+}
+
+.section_due_date_form {
+    margin-left: 60px;
+}

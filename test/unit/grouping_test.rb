@@ -541,6 +541,30 @@ Blanche Nef,ta2'''
 
   end
 
+  context "A grouping with students in section" do
+    setup do
+      @section = Section.make
+      student  = Student.make(:section => @section)
+      @student_can_invite = Student.make(:section => @section)
+      @student_cannot_invite = Student.make
+
+      assignment = Assignment.make(:section_groups_only => true)
+      @grouping = Grouping.make(:assignment => assignment)
+      StudentMembership.make(:user => student,
+              :grouping => @grouping,
+              :membership_status => StudentMembership::STATUSES[:inviter])
+    end
+
+    should "return true to can invite for students of same section" do
+      assert @grouping.can_invite?(@student_can_invite)
+    end
+
+    should "return false to can invite for students of different section" do
+      assert !@grouping.can_invite?(@student_cannot_invite)
+    end
+
+
+  end
   #########################################################
   #
   # TODO: create test for create_grouping_repository_factory

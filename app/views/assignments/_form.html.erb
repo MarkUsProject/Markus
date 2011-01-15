@@ -28,18 +28,60 @@
       <%= f.text_field :short_identifier %><br />
     <% end %>
 
-
     <%= f.label :description, t(:name) %>
     <%= f.text_field :description %><br />
     <%= f.label :message %>
     <%= f.text_area :message, :rows => 8, :cols => 65 %><br />
+
+    <% if !@sections.empty? %>
+      <div id="section_due_dates_type_form_right" class="information">
+	<p>
+	<%= t("assignment.section_due_date_option") %>
+	</p>
+      </div>
+
+      <div id="section_due_dates_type_form">
+        <%= f.label :section_due_dates_type %> :
+        <%= f.check_box :section_due_dates_type,
+                        :checked => @assignment.section_due_dates_type %>
+      </div>
+
+      <%= observe_field "assignment_section_due_dates_type",
+	  :function => "toggle_sections_due_date( 
+	                    $F('assignment_section_due_dates_type' ));" %>
+
+      <% if @assignment.section_due_dates_type %>
+      <div id="section_due_dates_information">
+
+      <% else %>
+
+      <div id="section_due_dates_information" style="display: none;">
+      <% end %>
+        <p class="information"> 
+	  <%= t("assignment.section_due_dates_info") %>
+	</p>
+        <% for section in @sections %>
+          <%= render :partial => 'section_due_date_form',
+                     :locals => {:section => section } %> 
+        <% end %>
+
+      </div>
+    <% end %>
     <%= f.label :due_date, t(:due_date)%>
+
+    <%# TODO update the global due date with the first due date added. %>
+
     <%= f.calendar_date_select :due_date, {
           :time => "mixed",
           :locale => I18n.default_locale,
           :after_close => "refresh_due_date();",
-          :year_range => 0.years.ago..1.years.from_now, :id => "assignment_due_date"} %>
+          :year_range => 0.years.ago..1.years.from_now,
+	  :id => "assignment_due_date"} %>
+
+    <%# TODO The following code seriously needs some clean up  !!!!  %>
+
    <%= observe_field "assignment_due_date", :function => "update_due_date($F('assignment_due_date'));" %> <%=t(:iso_due_date_format_example)%><br />
+
     <%= f.label :repository_folder, t(:repository_folder)%>
     /<%= f.text_field :repository_folder%><br />
 	<%= f.label :allow_web_submits, t("assignment.allow_web_submits") %>&nbsp;&nbsp;
@@ -48,6 +90,7 @@
     <%= f.label :display_grader_names_to_students, t("assignment.display_grader_names_to_students") %>&nbsp;&nbsp;
         <%= f.radio_button :display_grader_names_to_students, true, :checked => @assignment.display_grader_names_to_students %><%= f.label :display_grader_names_to_students_true, t("answer_yes"), :class => "radio_label"%>&nbsp;&nbsp;
         <%= f.radio_button :display_grader_names_to_students, false, :checked => !@assignment.display_grader_names_to_students %><%= f.label :display_grader_names_to_students_false, t("answer_no"), :class => "radio_label"%>
+
 
    <br />
    <br />
