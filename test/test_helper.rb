@@ -102,16 +102,9 @@ class ActiveSupport::TestCase
   FactoryDataPreloader.preload_all = false
 
   def equal_dates(date_1, date_2)
-    date_1 = date_1.in_time_zone
-    date_2 = date_2.in_time_zone
-    if date_1.year == date_2.year and 
-      date_1.month == date_2.month and
-      date_1.day == date_2.day and
-      date_1.hour == date_2.hour and
-      date_1.min == date_2.min
-      return true
-    end
-    return false
+    date_1 = Time.parse(date_1.to_s)
+    date_2 = Time.parse(date_2.to_s)
+    return date_1.eql?(date_2)
   end
 end
 
