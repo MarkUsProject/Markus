@@ -4,7 +4,7 @@ class GracePeriodSubmissionRule < SubmissionRule
     return assignment.latest_due_date + hours_sum.hours
   end
 
-  def calculate_grouping_collection_time
+  def calculate_grouping_collection_time(grouping)
     return SectionDueDate.due_date_for(grouping.inviter.section,
                                        assignment) + hours_sum.hours
   end
