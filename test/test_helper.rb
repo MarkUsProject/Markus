@@ -109,8 +109,6 @@ class ActiveSupport::TestCase
       date_1.day == date_2.day and
       date_1.hour == date_2.hour and
       date_1.min == date_2.min
-      print date_1
-      print date_2
       return true
     end
     return false
