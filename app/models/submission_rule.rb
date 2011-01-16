@@ -7,15 +7,6 @@ class SubmissionRule < ActiveRecord::Base
 #  validates_associated :assignment
 #  validates_presence_of :assignment
 
-  def calculate_grouping_collection_time(grouping)
-    if !grouping.inviter.section.nil?
-      return SectionDueDate.due_date_for(grouping.inviter.section,
-                                         assignment)
-    else
-      return assignment.due_date + hours_sum.hours
-    end
-  end
-
   def can_collect_now?
     return @can_collect_now if !@can_collect_now.nil?
     @can_collect_now = Time.now >= get_collection_time
@@ -26,6 +17,21 @@ class SubmissionRule < ActiveRecord::Base
     return @get_collection_time if !@get_collection_time.nil?
     @get_collection_time = calculate_collection_time
   end
+
+  def calculate_collection_time
+    return assignment.latest_due_date + hours_sum.hours
+  end
+
+  def calculate_grouping_collection_time(grouping)
+    if !grouping.inviter.section.nil?
+      return SectionDueDate.due_date_for(grouping.inviter.section,
+                                         assignment)
+    else
+      return assignment.due_date + hours_sum.hours
+    end
+  end
+
+
 
   # Based on the assignment's due date, return the collection time for submissions
   # Return a value of type Time

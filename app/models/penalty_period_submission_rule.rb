@@ -1,9 +1,5 @@
 class PenaltyPeriodSubmissionRule < SubmissionRule
 
-  def calculate_collection_time
-    return assignment.latest_due_date + hours_sum.hours
-  end
-
   # the Students with a message saying that the due date has passed, and the
   # work they're submitting will probably not be graded
   def commit_after_collection_message(grouping)
