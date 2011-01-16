@@ -135,7 +135,74 @@ class AssignmentTest < ActiveSupport::TestCase
       student = Student.make
       assert !@assignment.submission_by(student)
     end
-
+    
+    should "return 0 if no tas have been assigned" do
+      assert @assignment.tas.size == 0
+    end
+    
+    context "with multiple tas assigned" do
+      setup do
+        ta1 = Ta.make
+        5.times do
+          grouping = Grouping.make(:assignment => @assignment)
+          StudentMembership.make({:grouping => grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
+          TaMembership.make({:user_id => ta1.id, :grouping => grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
+        end
+        
+        ta2 = Ta.make
+        5.times do
+          grouping = Grouping.make(:assignment => @assignment)
+          StudentMembership.make({:grouping => grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
+          TaMembership.make({:user_id => ta2.id, :grouping => grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
+        end
+      end
+      
+      should "return 2 tas assigned" do
+        assert @assignment.tas.size == 2
+      end
+    end
+    
+    should "return 0 if no submissions have been graded" do
+      assert @assignment.graded_submissions.size == 0
+    end
+    
+    context "with some assignments graded" do
+      setup do
+        3.times do
+          membership = StudentMembership.make(:grouping => Grouping.make(:assignment => @assignment),:membership_status => StudentMembership::STATUSES[:accepted])
+          sub = Submission.make(:grouping => membership.grouping)
+        end
+        
+        5.times do
+          membership = StudentMembership.make(:grouping => Grouping.make(:assignment => @assignment),:membership_status => StudentMembership::STATUSES[:accepted])
+          sub = Submission.make(:grouping => membership.grouping)
+          result = sub.result
+          result.marking_state = Result::MARKING_STATES[:complete]
+          result.save
+        end
+      end
+      
+      should "have 5 result completed" do
+        assert @assignment.graded_submissions.size == 5
+      end
+    end
+    
+    context "with all assignments graded" do
+      setup do
+        5.times do
+          membership = StudentMembership.make(:grouping => Grouping.make(:assignment => @assignment),:membership_status => StudentMembership::STATUSES[:accepted])
+          sub = Submission.make(:grouping => membership.grouping)
+          result = sub.result
+          result.marking_state = Result::MARKING_STATES[:complete]
+          result.save
+        end
+      end
+      
+      should "have 5 result completed" do
+        assert @assignment.graded_submissions.size == 5
+      end
+    end
+    
     context "as a noteable" do
       should "display for note without seeing an exception" do
         assignment = Assignment.make

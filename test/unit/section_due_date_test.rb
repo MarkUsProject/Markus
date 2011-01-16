@@ -25,9 +25,8 @@ class SectionTest < ActiveSupport::TestCase
       assert equal_dates(@now + 3,
                          SectionDueDate.due_date_for(@section,
                                                      @assignment))
-      end
+    end
   end
-
 end
 
 
