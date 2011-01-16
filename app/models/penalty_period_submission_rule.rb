@@ -4,12 +4,6 @@ class PenaltyPeriodSubmissionRule < SubmissionRule
     return assignment.latest_due_date + hours_sum.hours
   end
 
-  def calculate_grouping_collection_time(grouping)
-    return SectionDueDate.due_date_for(grouping.inviter.section,
-                                       assignment) + hours_sum.hours
-  end
-  
-  # When Students commit code after the collection time, MarkUs should warn
   # the Students with a message saying that the due date has passed, and the
   # work they're submitting will probably not be graded
   def commit_after_collection_message(grouping)

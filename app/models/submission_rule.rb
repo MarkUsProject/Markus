@@ -7,6 +7,15 @@ class SubmissionRule < ActiveRecord::Base
 #  validates_associated :assignment
 #  validates_presence_of :assignment
 
+  def calculate_grouping_collection_time(grouping)
+    if !grouping.inviter.section.nil?
+      return SectionDueDate.due_date_for(grouping.inviter.section,
+                                         assignment)
+    else
+      return assignment.due_date + hours_sum.hours
+    end
+  end
+
   def can_collect_now?
     return @can_collect_now if !@can_collect_now.nil?
     @can_collect_now = Time.now >= get_collection_time
@@ -79,6 +88,10 @@ class SubmissionRule < ActiveRecord::Base
     # If the overtime is less than 0, that means it was submitted early, so
     # just return 0 - otherwise, return overtime_hours.
     return [0, overtime_hours].max
+  end
+
+  def hours_sum
+    return 0
   end
 
 end
