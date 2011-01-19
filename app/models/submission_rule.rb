@@ -31,14 +31,6 @@ class SubmissionRule < ActiveRecord::Base
     end
   end
 
-
-
-  # Based on the assignment's due date, return the collection time for submissions
-  # Return a value of type Time
-  def calculate_collection_time
-    raise NotImplementedError.new("SubmissionRule:  calculate_collection_time not implemented")
-  end
-
   # When Students commit code after the collection time, MarkUs should warn
   # the Students with a message saying that the due date has passed, and the
   # work they're submitting will probably not be graded
