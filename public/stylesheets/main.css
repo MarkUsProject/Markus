@@ -1930,3 +1930,7 @@ pre#test_result_content {
 .bluff-tooltip span {
 	display: none;
 }
+
+#curent_time{
+  padding: 10px 0px 10px 0px; 
+}

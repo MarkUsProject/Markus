@@ -4,8 +4,13 @@
 <%= render :partial => "file_manager_boot.js.erb" %>
 
 <div id="title_bar">
-<h1><%= I18n.t("student.submission.file_manager", :short_identifier => h(sanitize(@assignment.short_identifier))) %></h1>
+  <h1><%= I18n.t("student.submission.file_manager", :short_identifier => h(sanitize(@assignment.short_identifier))) %></h1>
+  <div id="curent_time">
+    <%= @current_time %>
+  </div>
 </div>
+
+
 
 <div class="wrapLeft">
   <% if flash[:submit_notice] -%>
