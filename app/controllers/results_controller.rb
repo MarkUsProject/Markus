@@ -2,13 +2,14 @@ class ResultsController < ApplicationController
   before_filter      :authorize_only_for_admin, :except => [:codeviewer, :edit, :update_mark, :view_marks,
                         :create, :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria,
                         :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria, :update_marking_state,
-                        :download, :note_message, :render_test_result, :update_remark_request, :cancel_remark_request]
+                        :download, :note_message, :render_test_result,
+                        :update_overall_comment, :update_remark_request, :cancel_remark_request]
   before_filter      :authorize_for_ta_and_admin, :only => [:edit, :update_mark, :create, :add_extra_mark,
                         :next_grouping, :update_overall_comment, :expand_criteria,
                         :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria,
-                        :update_marking_state, :note_message]
+                        :update_marking_state, :note_message, :update_overall_comment]
   before_filter      :authorize_for_user, :only => [:codeviewer, :render_test_result, :download]
-  before_filter      :authorize_for_student, :only => [:view_marks]
+  before_filter      :authorize_for_student, :only => [:view_marks, :update_remark_request, :cancel_remark_request]
   
   def note_message
     @result = Result.find(params[:id])
@@ -25,10 +26,11 @@ class ResultsController < ApplicationController
     @assignment = @result.submission.assignment      
     @submission = @result.submission
     
+    # remark_results in 'unmarked' state are not submitted by the student yet (just saved)
+    # so the marker should not be aware that there is a remark request
     @old_result = nil
-    if @submission.has_remark? and @result.marking_state != Result::MARKING_STATES[:unmarked]
+    if @submission.has_remark? and @submission.remark_result.marking_state != Result::MARKING_STATES[:unmarked]
       @old_result = @submission.result
-      @result = @submission.remark_result
     end
     
     @annotation_categories = @assignment.annotation_categories
@@ -94,7 +96,10 @@ class ResultsController < ApplicationController
 
   def next_grouping
     grouping = Grouping.find(params[:id])
-    if grouping.has_submission? && grouping.is_collected?
+    if grouping.has_submission? && grouping.is_collected? && grouping.current_submission_used.has_remark? &&
+      grouping.current_submission_used.remark_result.marking_state != Result::MARKING_STATES[:unmarked]
+        redirect_to :action => 'edit', :id => grouping.current_submission_used.remark_result.id
+    elsif grouping.has_submission? && grouping.is_collected?
       redirect_to :action => 'edit', :id => grouping.current_submission_used.result.id
     else
       redirect_to :controller => 'submissions', :action => 'collect_and_begin_grading', :id => grouping.assignment.id, :grouping_id => grouping.id
@@ -262,15 +267,18 @@ class ResultsController < ApplicationController
     end
     @result = @submission.result
     @old_result = nil
-    @remark_result = @submission.remark_result
-    if (@remark_result)
-      if (!@remark_result.released_to_students and
-              @remark_result.marking_state != Result::MARKING_STATES[:unmarked])
+    if @submission.has_remark?
+      @old_result = @result
+      @result = @submission.remark_result
+      # if remark result's marking state is 'unmarked' then the student has
+      # saved a remark request but not submitted it yet, therefore, still editable
+      if (@result.marking_state != Result::MARKING_STATES[:unmarked])
         render 'results/student/no_remark_result'
-        @old_result = @result
+        return
       end
     elsif !@result.released_to_students
       render 'results/student/no_result'
+      return
     end
     
     @annotation_categories = @assignment.annotation_categories
@@ -281,6 +289,7 @@ class ResultsController < ApplicationController
     @extra_marks_points = @result.extra_marks.points
     @extra_marks_percentage = @result.extra_marks.percentage
     @marks_map = Hash.new
+    @old_marks_map = Hash.new
     @mark_criteria = @assignment.get_criteria
     @assignment.get_criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by_result_id(@result.id)
@@ -344,7 +353,7 @@ class ResultsController < ApplicationController
       if (params[:submission][:submit_request] == "1")
         @result = @submission.remark_result
         @result.marking_state = Result::MARKING_STATES[:partial]
-        @old_result.released_to_students = 'f'
+        @old_result.released_to_students = (params[:value] == 'false')
         @result.save
         @old_result.save
       end
@@ -363,7 +372,7 @@ class ResultsController < ApplicationController
     @submission.save
     
     @result = @submission.result
-    @result.released_to_students = 't'
+    @result.released_to_students = (params[:value] == 'true')
     @result.save
     
     redirect_to :controller => 'results', :action => 'view_marks', :id => params[:id]

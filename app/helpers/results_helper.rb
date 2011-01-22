@@ -4,15 +4,6 @@ module ResultsHelper
     return (remark_result.marking_state == Result::MARKING_STATES[:unmarked] or
             remark_result.released_to_students)
   end
-
-  def results_released_to_students(result)
-    submission = result.submission
-    if (submission.remark_result)
-      return remark_result_unsubmitted_or_released(submission.remark_result)
-    else
-      return result.released_to_students
-    end
-  end
   
   def can_show_remark_request_tab_in_student_pane(assignment, current_user, submission)
     if (assignment.allow_remarks)

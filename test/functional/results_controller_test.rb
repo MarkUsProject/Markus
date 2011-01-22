@@ -110,6 +110,27 @@ class ResultsControllerTest < AuthenticatedControllerTest
       should respond_with :redirect
     end
 
+    context "GET on :update_overall_remark_comment" do
+      setup do
+        get :update_overall_remark_comment, :id => 1
+      end
+      should respond_with :redirect
+    end
+
+    context "GET on :update_remark_request" do
+      setup do
+        get :update_remark_request, :id => 1
+      end
+      should respond_with :redirect
+    end
+
+    context "GET on :cancel_remark_request" do
+      setup do
+        get :cancel_remark_request, :id => 1
+      end
+      should respond_with :redirect
+    end
+
     context "GET on :download" do
       setup do
         get :download, :select_file_id => 1
@@ -252,6 +273,32 @@ class ResultsControllerTest < AuthenticatedControllerTest
           should respond_with :missing
           should render_template 404
           should "not have changed the overall comment" do
+            @result.reload
+            assert_not_equal @result.overall_comment, @new_comment
+          end
+        end
+
+        context "GET on :update_overall_remark_comment" do
+          setup do
+            @new_comment = 'a changed overall remark comment!'
+            get_as @student, :update_overall_remark_comment, :id => @result.id, :result => {:overall_comment => @new_comment}
+          end
+          should respond_with :missing
+          should render_template 404
+          should "not have changed the overall remark comment" do
+            @result.reload
+            assert_not_equal @result.overall_comment, @new_comment
+          end
+        end
+
+        context "POST on :update_overall_remark_comment" do
+          setup do
+            @new_comment = 'a changed overall remark comment!'
+            post_as @student, :update_overall_remark_comment, :id => @result.id, :result => {:overall_comment => @new_comment}
+          end
+          should respond_with :missing
+          should render_template 404
+          should "not have changed the overall remark comment" do
             @result.reload
             assert_not_equal @result.overall_comment, @new_comment
           end
@@ -884,6 +931,18 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_equal @result.overall_comment, @overall_comment
           end
         end
+        
+        context "POST on :update_overall_remark_comment" do
+          setup do
+#            @result = results(:result_5)
+            @overall_comment = "A new overall remark comment!"
+            post_as @admin, :update_overall_remark_comment, :id => @result.id, :result => {:overall_comment => @overall_comment}
+          end
+          should "update the overall remark comment" do
+            @result.reload
+            assert_equal @result.overall_comment, @overall_comment
+          end
+        end
       end
     end
   end # An authenticated and authorized admin doing a
@@ -1189,6 +1248,17 @@ class ResultsControllerTest < AuthenticatedControllerTest
             post_as @ta, :update_overall_comment, :id => @result.id, :result => {:overall_comment => @overall_comment}
           end
           should "update the overall comment" do
+            @result.reload
+            assert_equal @result.overall_comment, @overall_comment
+          end
+        end
+
+        context "POST on :update_overall_remark_comment" do
+          setup do
+            @overall_comment = "A new overall remark comment!"
+            post_as @ta, :update_overall_remark_comment, :id => @result.id, :result => {:overall_comment => @overall_comment}
+          end
+          should "update the overall remark comment" do
             @result.reload
             assert_equal @result.overall_comment, @overall_comment
           end
