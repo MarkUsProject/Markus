@@ -50,6 +50,7 @@ group :development, :test do
   gem "selenium-client", "~>1.2.15"
   gem "machinist"
   gem "faker"
+  gem "railroady"
 #  gem "factory_data_preloader"
   gem "time-warp"
   gem "ruby-debug"
