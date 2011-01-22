@@ -6,7 +6,12 @@ class NoLateSubmissionRule < SubmissionRule
   def calculate_collection_time
     return assignment.latest_due_date
   end
-  
+
+  def calculate_grouping_collection_time(grouping)
+    return SectionDueDate.due_date_for(grouping.inviter.section,
+                                       assignment)
+  end
+
   # When Students commit code after the collection time, MarkUs should warn
   # the Students with a message saying that the due date has passed, and the
   # work they're submitting will probably not be graded

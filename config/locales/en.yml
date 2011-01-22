@@ -346,6 +346,7 @@ en:
       revised_by:           "Revised By"
       replace:              "Replace"
       delete:               "Delete"
+      can_begin_grading: "Can begin grading"
 
     grade_entry_forms:
       blank_field: "can't be blank"
