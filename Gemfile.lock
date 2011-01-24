@@ -118,7 +118,7 @@ DEPENDENCIES
   mysql
   pg
   railroady
-  rails
+  rails (~> 3.0.0)
   routing-filter
   ruby-debug
   rubyzip

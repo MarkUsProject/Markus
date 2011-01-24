@@ -9,7 +9,7 @@
 source 'http://rubygems.org'
 
 # Bundler requires these gems in all environments
-gem "rails"
+gem "rails", "~>3.0.0"
 gem "db_populate"
 gem "rubyzip"
 gem "ya2yaml"
