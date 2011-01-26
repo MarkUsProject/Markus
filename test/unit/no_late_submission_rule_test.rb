@@ -1,18 +1,33 @@
 require File.dirname(__FILE__) + '/../test_helper'
 require 'shoulda'
+
 class NoLateSubmissionRuleTest < ActiveSupport::TestCase
   fixtures :all
+
   should "be able to create NoLateSubmissionRule" do
     rule = NoLateSubmissionRule.new
     rule.assignment = assignments(:assignment_1)
     assert rule.save
   end
 
-  should "be able to calculate collection time" do
-    assignment = assignments(:assignment_1)
-    rule = NoLateSubmissionRule.new
-    rule.assignment = assignment
-    assert_equal assignment.due_date, rule.calculate_collection_time
+  context "A section with no_late_submission rules" do
+    setup do
+      @grouping = Grouping.make
+      sm = StudentMembership.make(
+               :grouping => @grouping,
+               :membership_status => StudentMembership::STATUSES[:inviter])
+      @assignment = @grouping.assignment
+      @rule = @assignment.submission_rule
+    end
+
+    should "be able to calculate collection time" do
+      assert_equal @assignment.due_date, @rule.calculate_collection_time
+    end
+
+    should "be able to calculate collection time for a grouping" do
+      assert_equal @assignment.due_date,
+                   @rule.calculate_grouping_collection_time(@grouping)
+    end
   end
 
   # Shouldn't apply any penalties if Submission collection date was after due date
@@ -27,5 +42,7 @@ class NoLateSubmissionRuleTest < ActiveSupport::TestCase
     submission = assignment.submission_rule.apply_submission_rule(submission)
     assert_equal result_extra_marks_num, submission.result.extra_marks.size
   end
+
+
 
 end
