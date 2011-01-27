@@ -117,7 +117,7 @@ class SubmissionsController < ApplicationController
   def file_manager
     # Figure out the current time of the server Markus is residing on and
     # and display it to the user.
-    @current_time = "<b>Server time:</b> #{Time.now.ctime}"  
+    @current_time = Time.now.ctime 
     @assignment = Assignment.find(params[:id])
 
     @grouping = current_user.accepted_grouping_for(@assignment.id)
