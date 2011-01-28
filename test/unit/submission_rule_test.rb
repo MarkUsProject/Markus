@@ -42,10 +42,6 @@ class SubmissionRuleTest < ActiveSupport::TestCase
     rule.assignment = assignments(:assignment_1)
 
     assert_raise NotImplementedError do
-      rule.calculate_collection_time
-    end
-
-    assert_raise NotImplementedError do
       rule.commit_after_collection_message
     end
 
