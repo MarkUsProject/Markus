@@ -25,16 +25,6 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
     (1..10).each do |i|
       @groupings.push(Grouping.make)
     end
-#    GroupingQueue.stubs(:find_by_priority_queue).with(false).returns(@regular_queue)
-#    GroupingQueue.stubs(:find_by_priority_queue).with(true).returns(@priority_queue)
-#    @regular_queue_groupings = @regular_queue.groupings
-#    @priority_queue_groupings = @priority_queue.groupings
-#
-#    @regular_queue.stubs(:groupings).returns(@regular_queue_groupings)
-#    @priority_queue.stubs(:groupings).returns(@priority_queue_groupings)
-#    @regular_queue = @regular_queue.groupings
-#    @priority_queue = @priority_queue.groupings
-
   end
 
   context "A submission_collector calling its push_groupings_to_queue" do
