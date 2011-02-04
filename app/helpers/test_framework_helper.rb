@@ -53,13 +53,13 @@ module TestFrameworkHelper
       @ant_build_file.assignment = assignment
       @ant_build_file.filetype = 'build.xml'
       @ant_build_file.filename = 'tempbuild.xml'        # temporary placeholder for now
-      @ant_build_file.save(false)
+      @ant_build_file.save(:validate => false)
 
       @ant_build_prop = TestFile.new
       @ant_build_prop.assignment = assignment
       @ant_build_prop.filetype = 'build.properties'
       @ant_build_prop.filename = 'tempbuild.properties' # temporary placeholder for now
-      @ant_build_prop.save(false)
+      @ant_build_prop.save(:validate => false)
 
       # Setup Testing Framework repository
       test_dir = File.join(MarkusConfigurator.markus_config_test_framework_repository, assignment.short_identifier)

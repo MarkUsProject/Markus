@@ -397,7 +397,7 @@ class Grouping < ActiveRecord::Base
           #skip validation to increase performance (all aspects of validation
           #have already been performed elsewhere)
           member = ta_memberships.build(:user => ta)
-          member.save(false)
+          member.save(:validate => false)
         end
         grouping_tas += [ta]
       end
@@ -410,7 +410,7 @@ class Grouping < ActiveRecord::Base
       #attribute that gets changed between the validation above and the save
       #below. This is done to improve performance, as any validations of the
       #grouping result in 5 extra database queries
-      self.save(false)
+      self.save(:validate => false)
     end
   end
   

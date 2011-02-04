@@ -38,7 +38,7 @@ class ResultsController < ApplicationController
     @mark_criteria = @assignment.get_criteria
     @assignment.get_criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by_result_id(@result.id)
-      mark.save(false)
+      mark.save(:validate => false)
       @marks_map[criterion.id] = mark
     end
 
@@ -271,7 +271,7 @@ class ResultsController < ApplicationController
     @mark_criteria = @assignment.get_criteria
     @assignment.get_criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by_result_id(@result.id)
-      mark.save(false)
+      mark.save(:validate => false)
       @marks_map[criterion.id] = mark
     end
     m_logger = MarkusLogger.instance

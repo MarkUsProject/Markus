@@ -219,13 +219,13 @@ class GroupingTest < ActiveSupport::TestCase
         #Dont use machinist in order to bypass validation
         @submission1 = @grouping.submissions.build(:submission_version_used => false,
           :revision_number => 1, :revision_timestamp => 1.days.ago, :submission_version => 1)
-        @submission1.save(false)
+        @submission1.save(:validate => false)
         @submission2 = @grouping.submissions.build(:submission_version_used => true,
           :revision_number => 1, :revision_timestamp => 1.days.ago, :submission_version => 2)
-        @submission2.save(false)
+        @submission2.save(:validate => false)
         @submission3 = @grouping.submissions.build(:submission_version_used => true,
           :revision_number => 1, :revision_timestamp => 1.days.ago, :submission_version => 3)
-        @submission3.save(false)
+        @submission3.save(:validate => false)
         @grouping.reload
       end
       should "set all the submissions' submission_version_used columns to false upon creation of a new submission" do

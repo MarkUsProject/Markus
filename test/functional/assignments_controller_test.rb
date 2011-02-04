@@ -212,7 +212,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
   def test_cant_invite_student_after_due_date
     assignment = assignments(:assignment_1)
     assignment.due_date = 2.days.ago
-    assignment.save(false)
+    assignment.save(:validate => false)
     student = users(:student4)
     target = users(:student5)
     assert !target.has_accepted_grouping_for?(assignment.id)
