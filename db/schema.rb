@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101117195814) do
+ActiveRecord::Schema.define(:version => 20110204023647) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -57,7 +57,11 @@ ActiveRecord::Schema.define(:version => 20101117195814) do
 
   create_table "assignment_stats", :force => true do |t|
     t.integer "assignment_id"
+<<<<<<< HEAD:db/schema.rb
     t.text    "grade_distribution_percentage", :default => "'0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0\n'"
+=======
+    t.text    "grade_distribution_percentage"
+>>>>>>> Fix MySQL problem with default value:db/schema.rb
   end
 
   create_table "assignments", :force => true do |t|
