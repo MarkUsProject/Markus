@@ -135,11 +135,6 @@ class Assignment < ActiveRecord::Base
     # create a new submission for the owner
     # linked to this assignment, if it doesn't exist yet
 
-    # submission = owner.submissions.find_or_initialize_by_assignment_id(id)
-    # submission.save if submission.new_record?
-    # return submission
-
-
     assignment_groupings = user.active_groupings.delete_if {|grouping|
       grouping.assignment.id != self.id
     }

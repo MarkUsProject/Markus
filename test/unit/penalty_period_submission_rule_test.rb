@@ -41,6 +41,7 @@ class PenaltyPeriodSubmissionRuleTest < ActiveSupport::TestCase
       pretend_now_is(Time.parse("July 20 2009 5:00PM")) do
         assert Time.now < @assignment.due_date
         assert Time.now < @assignment.submission_rule.calculate_collection_time
+        assert Time.now < @assignment.submission_rule.calculate_grouping_collection_time(@grouping)
         @group.access_repo do |repo|
           txn = repo.get_transaction("test")
           txn = add_file_helper(txn, 'TestFile.java', 'Some contents for TestFile.java')
