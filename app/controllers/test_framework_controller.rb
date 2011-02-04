@@ -41,7 +41,7 @@ class TestFrameworkController < ApplicationController
         # Process testing framework form for validation
         @assignment = process_test_form(@assignment, params)
       rescue Exception, RuntimeError => e
-        @assignment.errors.add_to_base(I18n.t("assignment.error", :message => e.message))
+        @assignment.errors.add(:base, I18n.t("assignment.error", :message => e.message))
         return
       end
 

@@ -152,7 +152,7 @@ class AssignmentsController < ApplicationController
     begin
       @assignment = process_assignment_form(@assignment, params)
       rescue Exception, RuntimeError => e
-        @assignment.errors.add_to_base(I18n.t("assignment.error", 
+        @assignment.errors.add(:base, I18n.t("assignment.error", 
                                               :message => e.message))
       return
     end
@@ -190,7 +190,7 @@ class AssignmentsController < ApplicationController
       begin
         @assignment = process_assignment_form(@assignment, params)
       rescue Exception, RuntimeError => e
-        @assignment.errors.add_to_base(e.message)
+        @assignment.errors.add(:base, e.message)
       end
       if !@assignment.save
         render :action => :new

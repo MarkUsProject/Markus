@@ -84,7 +84,7 @@ class Group < ActiveRecord::Base
       Repository.get_class(MarkusConfigurator.markus_config_repository_type, self.repository_config).create(File.join(MarkusConfigurator.markus_config_repository_storage, repository_name))
     rescue Repository::RepositoryCollision => e
       # log the collision
-      errors.add_to_base(self.repo_name)
+      errors.add(:base, self.repo_name)
       m_logger = MarkusLogger.instance
       m_logger.log("Creating group '#{self.group_name}' caused repository collision " +
                    "(Repository name was: '#{self.repo_name}'). Error message: '#{e.message}'",

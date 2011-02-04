@@ -37,14 +37,14 @@ class TestFile < ActiveRecord::Base
     # (need to check this in case the user uploads test, lib or parse files before uploading ant files
     #  in which case the build.xml and build.properties will not exist yet)
     if (f_type != "build.xml" && f_type != "build.properties") && (f_name == "build.xml" || f_name == "build.properties")
-      record.errors.add_to_base(I18n.t("test_framework.invalid_filename"))
+      record.errors.add(:base, I18n.t("test_framework.invalid_filename"))
     end
 
     # Case 2: build.xml and build.properties must be named correctly
     if f_type == "build.xml" && f_name != "build.xml"
-      record.errors.add_to_base(I18n.t("test_framework.invalid_buildxml"))
+      record.errors.add(:base, I18n.t("test_framework.invalid_buildxml"))
     elsif f_type == "build.properties" && f_name != "build.properties"
-      record.errors.add_to_base(I18n.t("test_framework.invalid_buildproperties"))
+      record.errors.add(:base, I18n.t("test_framework.invalid_buildproperties"))
     end
 
     # Case 3: validates_uniqueness_of filename for this assignment
