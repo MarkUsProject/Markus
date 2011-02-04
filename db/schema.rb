@@ -57,7 +57,7 @@ ActiveRecord::Schema.define(:version => 20110123035536) do
 
   create_table "assignment_stats", :force => true do |t|
     t.integer "assignment_id"
-    t.text    "grade_distribution_percentage", :default => "'"
+    t.text    "grade_distribution_percentage"
   end
 
   create_table "assignments", :force => true do |t|
