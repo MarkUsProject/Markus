@@ -57,11 +57,7 @@ ActiveRecord::Schema.define(:version => 20110204023647) do
 
   create_table "assignment_stats", :force => true do |t|
     t.integer "assignment_id"
-<<<<<<< HEAD:db/schema.rb
-    t.text    "grade_distribution_percentage", :default => "'0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0\n'"
-=======
     t.text    "grade_distribution_percentage"
->>>>>>> Fix MySQL problem with default value:db/schema.rb
   end
 
   create_table "assignments", :force => true do |t|
