@@ -5,11 +5,12 @@
 
 <div id="title_bar">
   <h1><%= I18n.t("student.submission.file_manager", :short_identifier => h(sanitize(@assignment.short_identifier))) %></h1>
-  <div id="current_time">
-    <%= "<b>Server time:</b>" + @current_time %>
+  <div id="current_time">  
+  <%= render :partial => "server_time" %>
+  <%= periodically_call_remote(:url => {:controller => 'submissions',
+    :action => 'server_time', :id => @current_time}, :frequency => '60', :update => "current_time" ) %>
   </div>
 </div>
-
 
 
 <div class="wrapLeft">

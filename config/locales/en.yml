@@ -1098,3 +1098,5 @@ en:
       array:
         sentence_connector: "and"
         skip_last_comma: true
+
+    server_time: "Server Time:"
