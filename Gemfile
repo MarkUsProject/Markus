@@ -47,7 +47,6 @@ end
 # for production.
 group :development, :test do
   gem "shoulda"
-  gem "selenium-client", "~>1.2.15"
   gem "machinist"
   gem "faker"
   gem "railroady"
