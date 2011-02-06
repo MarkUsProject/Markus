@@ -18,8 +18,7 @@
   <% elsif !grouping.is_collected %>
     <%= link_to h(grouping.group.group_name), :action => 'collect_and_begin_grading', :id => assignment.id, :grouping_id => grouping.id %>
   
-  <% elsif grouping.current_submission_used.has_remark? and 
-    grouping.current_submission_used.remark_result.marking_state != Result::MARKING_STATES[:unmarked] %>
+  <% elsif grouping.current_submission_used.remark_submitted? %>
     <%= link_to h(grouping.group.group_name), :controller => 'results', :action => 'edit', :id => grouping.current_submission_used.remark_result%>
 
   <% else %>
@@ -104,8 +103,7 @@
     <% if !grouping.current_submission_used.has_result? %>
       -
     <% else %>
-      <% if grouping.current_submission_used.has_remark? and 
-        grouping.current_submission_used.remark_result.marking_state != Result::MARKING_STATES[:unmarked] %>
+      <% if grouping.current_submission_used.remark_submitted? %>
         <%= h(grouping.current_submission_used.remark_result.total_mark) %>
       <% else %>
         <%= h(grouping.current_submission_used.result.total_mark) %>

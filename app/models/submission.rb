@@ -114,6 +114,12 @@ class Submission < ActiveRecord::Base
     return !remark_result.nil?
   end
   
+  # Does this submission have a remark request submitted?
+  # remark_results in 'unmarked' state have not been submitted by the student yet (just saved)
+  def remark_submitted?
+    return (self.has_remark? && remark_result.marking_state != Result::MARKING_STATES[:unmarked])
+  end
+  
   # Helper methods
   def populate_with_submission_files(revision, path="/") 
     # Remember that assignments have folders within repositories - these

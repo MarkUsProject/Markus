@@ -26,10 +26,8 @@ class ResultsController < ApplicationController
     @assignment = @result.submission.assignment      
     @submission = @result.submission
     
-    # remark_results in 'unmarked' state are not submitted by the student yet (just saved)
-    # so the marker should not be aware that there is a remark request
     @old_result = nil
-    if @submission.has_remark? and @submission.remark_result.marking_state != Result::MARKING_STATES[:unmarked]
+    if @submission.remark_submitted?
       @old_result = @submission.result
     end
     
@@ -96,8 +94,7 @@ class ResultsController < ApplicationController
 
   def next_grouping
     grouping = Grouping.find(params[:id])
-    if grouping.has_submission? && grouping.is_collected? && grouping.current_submission_used.has_remark? &&
-      grouping.current_submission_used.remark_result.marking_state != Result::MARKING_STATES[:unmarked]
+    if grouping.has_submission? && grouping.is_collected? && grouping.current_submission_used.remark_submitted?
         redirect_to :action => 'edit', :id => grouping.current_submission_used.remark_result.id
     elsif grouping.has_submission? && grouping.is_collected?
       redirect_to :action => 'edit', :id => grouping.current_submission_used.result.id
