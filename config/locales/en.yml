@@ -194,7 +194,7 @@ en:
     give_grace_credits:  "Give Grace Credits:"
     add_section:        "Add section"
     no_result:          "No marks are available for this assignment."
-    no_remark_result:   "Remarking is not yet finished for this assignment."
+    no_remark_result:   "Remark results are not yet available for this assignment."
     unmarked:           "unmarked"
     partial:           "partial"
     complete:           "complete"

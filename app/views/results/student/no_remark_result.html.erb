@@ -1,9 +1,18 @@
 
 <div class="wrapLeft">
 <p class="notice"><%= I18n.t(:no_remark_result)%></p>
-<p><em><%= I18n.t("marker.remark_submitted") %>
-<%= I18n.t("marker.cancel_remark_to_change") %></em></p>
-<%= link_to( I18n.t(:cancel_remark), 
+<p><em><%= I18n.t("marker.remark_submitted") %></em></p>
+<div id="remark_request">
+  <h3><%= I18n.t("marker.remark_instructions") %></h3>
+  <%= h(@assignment.remark_message) %>
+  <h3><%= I18n.t("marker.remark_request") %></h3>
+  <div id="remark_request_text">
+    <%= h(@submission.remark_request) %>
+  </div>
+<br/>
+<div>
+<p class="notice"><%= I18n.t("marker.cancel_remark_to_change") %></p>
+<p><%= link_to( I18n.t(:cancel_remark), 
         {:controller => 'results', 
            :action => 'cancel_remark_request',
            :id => @assignment.id,
@@ -11,5 +20,5 @@
    :disabled => false,
    :class => "button",
    :onclick => "return confirm('#{I18n.t(:cancel_remark_request)}');"
-   ) %>
+   ) %></p>
 </div>
