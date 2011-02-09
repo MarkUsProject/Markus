@@ -33,12 +33,26 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find(params[:id])
     @student = current_user
     @grouping = @student.accepted_grouping_for(@assignment.id)
+
+    if @student.section &&
+       !@student.section.section_due_date_for(@assignment.id).nil?
+      @due_date =
+        @student.section.section_due_date_for(@assignment.id).due_date
+    end
+    if @due_date.nil?
+      @due_date = @assignment.due_date
+    end
     if @student.has_pending_groupings_for?(@assignment.id)
       @pending_grouping = @student.pending_groupings_for(@assignment.id) 
     end
     if @grouping.nil?
       if @assignment.group_max == 1
-        @student.create_group_for_working_alone_student(@assignment.id)
+        begin
+          @student.create_group_for_working_alone_student(@assignment.id)
+        rescue RuntimeError => @error
+          render 'shared/generic_error', :layout => 'error'
+          return
+        end
         redirect_to :action => 'student_interface', :id => @assignment.id
       else
         render :action => 'student_interface', :layout => 'no_menu_header'
@@ -135,15 +149,16 @@ class AssignmentsController < ApplicationController
       end
     end
     @assignments = Assignment.all
+    @sections = Section.all
     if !request.post?
       return
     end
   
     begin
       @assignment = process_assignment_form(@assignment, params)
-    rescue Exception, RuntimeError => e
-      @assignment.errors.add_to_base(I18n.t("assignment.error", 
-                                            :message => e.message))
+      rescue Exception, RuntimeError => e
+        @assignment.errors.add_to_base(I18n.t("assignment.error", 
+                                              :message => e.message))
       return
     end
     
@@ -164,6 +179,7 @@ class AssignmentsController < ApplicationController
   def new
     @assignments = Assignment.all
     @assignment = Assignment.new
+    @sections = Section.all
     @assignment.build_submission_rule
     @assignment.build_assignment_stat
     
@@ -391,6 +407,13 @@ class AssignmentsController < ApplicationController
   def update_collected_submissions
     @assignments = Assignment.all
   end
+
+  # Refreshes the grade distribution graphs and reloads the page
+  def refresh_graph
+    assignment = Assignment.find(params[:id])
+    assignment.assignment_stat.refresh_grade_distribution
+    redirect_to :controller => 'main'
+  end
   
   private 
   
@@ -400,6 +423,26 @@ class AssignmentsController < ApplicationController
     # Periods, and switch the type of the SubmissionRule.
     # This little conditional has to do some hack-y workarounds, since
     # accepts_nested_attributes_for is a little...dumb.
+    
+
+    if params[:assignment][:section_due_dates_type]
+      # create the section_due_dates
+      for section in @sections
+        if params["section_due_date_#{section.id}"][:due_date]
+          s = 
+            SectionDueDate.find_by_assignment_id_and_section_id(assignment.id,
+                                                                section.id)
+          if s.nil?
+            s = SectionDueDate.new(params["section_due_date_#{section.id}"])
+            s.assignment = assignment
+          end
+          s.due_date = params["section_due_date_#{section.id}"][:due_date]
+          s.save
+        end # if we have a due date for this section
+      end # for each sections
+      assignment.section_due_dates_type = true
+      assignment.section_groups_only = true
+    end
     if assignment.submission_rule.attributes['type'] != 
          params[:assignment][:submission_rule_attributes][:type]
       # Some protective measures here to make sure we haven't been duped...

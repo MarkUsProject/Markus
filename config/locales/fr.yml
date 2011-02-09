@@ -94,10 +94,6 @@ fr:
       completed: "Terminé"
       released: "Affiché"
       remark_requested: "Réévaluation demandée"
-      not_complete: "N'a pas affiché les notes pour le groupe %{group_name} : l'évalutation n'est pas indiquée comme étant terminée."
-      no_submission: "%{group_name} n'a pas d'envoi"
-      no_result: "%{group_name} n'a pas de résultat"
-      result_not_saved: "Le résultat du groupe %{group_name} n'a pas pu être sauvegardé"
     collect_submissions:
       collect_all: "Récupérer tous les envois"
       collect_ta: "Récupérer tous les envois qui me sont assignés"
@@ -153,6 +149,10 @@ fr:
             change_marking_scheme_type: "Changer le barème effacera vos critères et vos évaluations."
         allow_web_submits: "Envois via l'interface web ?"
         display_grader_names_to_students: "Afficher le nom du correcteur aux étudiants ?"
+        section_due_date_not_displayed: "Les dates de retour sont spécifiques aux sections." 
+        section_due_date_type: "Les dates de retour sont spécifiées par section." 
+        section_due_date_option:  "Si l'option date de retour par section est sélectionnée, les groupes seront restreints aux sections"
+        section_due_dates_info:  "<b>Important</b> La date de retour «globale» doit être indiquée. Si une section n'a pas de date de retour spécifique, la date «globale» sera utilisée. Si certains étudiants ne font partie d'aucune section, ce sera aussi cette date «globale» qui sera utilisée. Ces étudiants ne pourront se mettre qu'avec d'autres étudiants n'appartenant pas à des sections."
     your_mark:  "Votre note : "
 
     members:            "Membres"
@@ -323,6 +323,7 @@ fr:
       marking_state:        "Affichage de la note"
       grace_credits_used:   "Utilisation des \"grace credits\""
       final_grade:          "Note finale"
+      assignment_average:   "Moyenne"
       class_average:        "Moyenne: %{results_average}"
       show_all:             "Tous"
       show_unmarked:        "Non notés"
@@ -575,6 +576,7 @@ fr:
        a décliné l'invitation</span>"
       cancel_invitation: "Êtes vous sûr de vouloir annuler l'invitation ?"
       cancel_invitation_title: "Annuler l'invitation"
+      section_groups_only: "Vous ne pouvez invité que des étudiants de votre section"
       submission:
         file_manager: "%{short_identifier} : Gestionnaire de fichiers"
         current_path: "Chemin courant : "
@@ -994,6 +996,19 @@ fr:
     external_authentication_not_supported: "L'authentification externe n'est pas supportée sur votre plateforme"
     account_disabled: "Ce compte a été désactivé"
 
+    #app/views/main/_assignment_info_summary.erb
+    assignment_average:        "Moyenne:"
+    assignments_submitted:     "Projets envoyés:"
+    assignments_graded:        "Projets corrigés:"
+    refresh_graph:             "Actualiser le graphique"
+    
+    #app/views/main/_grader_summary.erb
+    grader_distribution:       "Correcteurs assignés:"
+    assign_graders:            "Attribuer Correcteurs"
+
+    #app/views/main/_grade_distribution_graph.html.erb
+    grade_distribution:        "Répartition des notes"
+        
     #Test Framework
     test_framework:
       test_framework: "Tests"
