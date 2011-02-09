@@ -137,7 +137,7 @@ class SubmissionsController < ApplicationController
 
 
   def populate_submissions_table
-    assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :accepted_students, :group, {:submissions => :result}]}, {:submission_rule => :periods}]) 
+    assignment = Assignment.find(params[:id], :include => [{:groupings => [{:student_memberships => :user, :ta_memberships => :user}, :accepted_students, :group, {:submissions => :result}]}, {:submission_rule => :periods}])
 
     @details = params[:details]
 
@@ -269,7 +269,7 @@ class SubmissionsController < ApplicationController
     end
     if SubmissionFile.is_binary?(file_contents)
       # If the file appears to be binary, send it as a download
-      send_data file_contents, :disposition => 'attachment', :filename => params[:file_name]  
+      send_data file_contents, :disposition => 'attachment', :filename => params[:file_name]
     else
       # Otherwise, blast it out to the screen
       render :text => file_contents, :layout => 'sanitized_html'
