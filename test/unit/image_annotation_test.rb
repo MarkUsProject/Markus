@@ -42,12 +42,12 @@ class ImageAnnotationTest < ActiveSupport::TestCase
     end
 
     should "render add_annotation_js_string" do
-      assert @annotation.add_annotation_js_string, 
+      assert @annotation.add_annotation_js_string,
         "add_to_annotation_grid('#{@annotation.extract_coords.to_json()}')"
     end
 
     should "render remove_annotation_js_string" do
-      assert @annotation.remove_annotation_js_string, 
+      assert @annotation.remove_annotation_js_string,
         "remove_annotation(null, null, #{@annotation.annotation_text.id});"
     end
 

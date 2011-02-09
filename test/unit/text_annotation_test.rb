@@ -11,13 +11,13 @@ class TextAnnotationTest < ActiveSupport::TestCase
     should validate_presence_of :line_start
     should validate_presence_of :line_end
 
-    should allow_value(rand(100)).for(:line_start)
-    should allow_value(rand(100)).for(:line_end)
+    should allow_value(10).for(:line_start)
+    should allow_value(10).for(:line_end)
 
     #TODO Change Model.
     #We should not allow negative values vor lines
-    #should_not allow_value(-rand(100)-1).for(:line_start)
-    #should_not allow_value(-rand(100)-1).for(:line_end)
+    #should_not allow_value(-1).for(:line_start)
+    #should_not allow_value(-1).for(:line_end)
 
   end
 

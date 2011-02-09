@@ -18,9 +18,9 @@ class AnnotationTest < ActiveSupport::TestCase
     should validate_numericality_of :submission_file_id
     should validate_numericality_of :annotation_number
 
-    should_not allow_value(-rand(100)-1).for(:annotation_text_id)
-    should_not allow_value(-rand(100)-1).for(:submission_file_id)
-    should_not allow_value(-rand(100)-1).for(:annotation_number)
+    should_not allow_value(-1).for(:annotation_text_id)
+    should_not allow_value(-1).for(:submission_file_id)
+    should_not allow_value(-1).for(:annotation_number)
 
     should allow_value("ImageAnnotation").for(:type)
     should allow_value("TextAnnotation").for(:type)
