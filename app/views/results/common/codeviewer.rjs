@@ -24,8 +24,7 @@
     end
        
     #Also update the annotation_summary_list
-    if (@current_user.ta? || @current_user.admin?) &&
-        @result.marking_state != Result::MARKING_STATES[:complete]
+    if @current_user.ta? || @current_user.admin?
       page.replace_html 'annotation_summary_list',
         :partial => 'results/marker/annotation_summary',
         :locals => {:annots => @all_annots,
