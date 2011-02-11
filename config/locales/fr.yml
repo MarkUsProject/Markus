@@ -94,6 +94,10 @@ fr:
       completed: "Terminé"
       released: "Affiché"
       remark_requested: "Réévaluation demandée"
+      not_complete: "N'a pas affiché les notes pour le groupe %{group_name} : l'évalutation n'est pas indiquée comme étant terminée."
+      no_submission: "%{group_name} n'a pas d'envoi"
+      no_result: "%{group_name} n'a pas de résultat"
+      result_not_saved: "Le résultat du groupe %{group_name} n'a pas pu être sauvegardé"
     collect_submissions:
       collect_all: "Récupérer tous les envois"
       collect_ta: "Récupérer tous les envois qui me sont assignés"
@@ -1000,10 +1004,14 @@ fr:
     assignment_average:        "Moyenne:"
     assignments_submitted:     "Projets envoyés:"
     assignments_graded:        "Projets corrigés:"
+    refresh_graph:             "Actualiser le graphique"
     
     #app/views/main/_grader_summary.erb
     grader_distribution:       "Correcteurs assignés:"
     assign_graders:            "Attribuer Correcteurs"
+
+    #app/views/main/_grade_distribution_graph.html.erb
+    grade_distribution:        "Répartition des notes"
         
     #Test Framework
     test_framework:

@@ -94,6 +94,10 @@ en:
       completed: "Completed"
       released: "Released"
       remark_requested: "Remark Requested"
+      not_complete: "Can not release result for %{group_name}: the marking state is not complete"
+      no_submission: "%{group_name} has no submissions"
+      no_result: "%{group_name} has no results"
+      result_not_saved: "%{group_name}'s submission result could not be saved"
     collect_submissions:
       collect_all: "Collect All Submissions"
       collect_ta: "Collect all your assigned submissions"
@@ -1000,10 +1004,15 @@ en:
     assignment_average:        "Assignment Average:"
     assignments_submitted:     "Assignments Submitted:"
     assignments_graded:        "Assignments Graded:"
+    refresh_graph:             "Refresh the graph"
     
     #app/views/main/_grader_summary.erb
     grader_distribution:       "Grader Distribution:"
     assign_graders:            "Assign Graders"
+
+    #app/views/main/_grade_distribution_graph.html.erb
+    grade_distribution:         "Grade Distribution"
+
     #Test Framework
     test_framework:
       test_framework: "Test Framework"

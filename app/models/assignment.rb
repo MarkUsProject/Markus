@@ -1,6 +1,6 @@
 require 'csv_invalid_line_error'
 class Assignment < ActiveRecord::Base
-  
+
   MARKING_SCHEME_TYPE = {
     :flexible => 'flexible',
     :rubric => 'rubric'
@@ -11,7 +11,7 @@ class Assignment < ActiveRecord::Base
   has_many :assignment_files
   has_many :test_files
   has_many :criterion_ta_associations
-  has_one  :submission_rule 
+  has_one  :submission_rule
   accepts_nested_attributes_for :submission_rule, :allow_destroy => true
   accepts_nested_attributes_for :assignment_files, :allow_destroy => true
   accepts_nested_attributes_for :test_files, :allow_destroy => true
@@ -51,7 +51,7 @@ class Assignment < ActiveRecord::Base
   validates_inclusion_of :display_grader_names_to_students, :in => [true, false]
   validates_inclusion_of :enable_test, :in => [true, false]
   validates_inclusion_of :assign_graders_to_criteria, :in => [true, false]
-  
+
   before_save :reset_collection_time
   after_save  :update_assigned_tokens
 
@@ -138,7 +138,6 @@ class Assignment < ActiveRecord::Base
     # submission = owner.submissions.find_or_initialize_by_assignment_id(id)
     # submission.save if submission.new_record?
     # return submission
-
 
     assignment_groupings = user.active_groupings.delete_if {|grouping|
       grouping.assignment.id != self.id
@@ -387,7 +386,7 @@ class Assignment < ActiveRecord::Base
           grouping.add_member(student)
         end
       end
-      
+
     end
     return collision_error
   end
@@ -537,7 +536,7 @@ class Assignment < ActiveRecord::Base
   def next_criterion_position
     # We're using count here because this fires off a DB query, thus
     # grabbing the most up-to-date count of the rubric criteria.
-    return self.rubric_criteria.count + 1 
+    return self.rubric_criteria.count + 1
   end
 
   def get_criteria
@@ -597,12 +596,12 @@ class Assignment < ActiveRecord::Base
     ids = self.ta_memberships.map { |m| m.user_id }
     return Ta.find(ids)
   end
-  
+
   # Returns all the submissions that have been graded
   def graded_submissions
     return self.submissions.select { |submission| submission.result.marking_state == Result::MARKING_STATES[:complete] }
   end
-  
+
   private
 
   # Returns true if we are safe to set the repository name
