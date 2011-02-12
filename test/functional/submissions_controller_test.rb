@@ -367,9 +367,21 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         end
 
       end
+
+      context "instructor tries to release submissions" do
+
+        setup do
+          Assignment.expects(:find).with('1').returns(@assignment)
+          @assignment.groupings.expects(:all).returns([@grouping])
+          post_as @admin, :update_submissions, :id => 1, :ap_select_full => 'true', :filter => 'none', :release_results => 'true'
+        end
+        should respond_with :redirect
+
+      end
     end
+
   end
-  
+
   context "I am an unauthenticated or unauthorized user" do
     context "trying to download a simple csv report" do
       setup do
