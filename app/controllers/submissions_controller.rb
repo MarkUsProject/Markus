@@ -407,7 +407,7 @@ class SubmissionsController < ApplicationController
         raise I18n.t("student.submission.expect_filter")
       end
       # Get all Groupings for this filter
-      groupings = S_TABLE_PARAMS[:filters][params[:filter]][:proc].call({:assignment => assignment, :user_id => current_user.id})
+      groupings = S_TABLE_PARAMS[:filters][params[:filter]][:proc].call({:assignment => assignment, :user_id => current_user.id}, {})
     else
       # User selected particular Grouping IDs
       if params[:groupings].nil?
