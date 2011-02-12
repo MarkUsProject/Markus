@@ -247,6 +247,45 @@ class GroupingTest < ActiveSupport::TestCase
     end
   end # end grouping context
 
+  context "A grouping without students (ie created by an admin)" do
+    setup do
+      @grouping = Grouping.make
+      @student_01 = Student.make
+      @student_02 = Student.make
+    end
+
+    should "accept to add students in any scenario possible when invoked by
+            admin" do
+      members = [@student_01.user_name, @student_02.user_name]
+      @grouping.invite(members, 
+                       StudentMembership::STATUSES[:accepted],
+                       true)
+      assert_equal 2, @grouping.accepted_student_memberships.count
+    end
+  end
+
+  context "A grouping without students (ie created by an admin)" do
+    setup do
+      @assignment = Assignment.make(:section_due_dates_true)
+      @grouping = Grouping.make(:assignment => @assignment)
+      section_01 = Section.make
+      section_02 = Section.make
+      @student_01 = Student.make(:section => section_01)
+      @student_02 = Student.make(:section => section_02)
+    end
+
+    should "accept to add students in any scenario possible when invoked by
+            admin" do
+      members = [@student_01.user_name, @student_02.user_name]
+      @grouping.invite(members, 
+                       StudentMembership::STATUSES[:accepted],
+                       true)
+      assert_equal 2, @grouping.accepted_student_memberships.count
+    end
+  end
+
+
+
   def test_should_not_save_without_group
     grouping = Grouping.new
     grouping.assignment = assignments(:assignment_1)
