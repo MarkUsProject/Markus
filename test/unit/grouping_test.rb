@@ -264,7 +264,8 @@ class GroupingTest < ActiveSupport::TestCase
     end
   end
 
-  context "A grouping without students (ie created by an admin)" do
+  context "A grouping without students (ie created by an admin) for a
+           assignment with section restriction" do
     setup do
       @assignment = Assignment.make(:section_due_dates_true)
       @grouping = Grouping.make(:assignment => @assignment)
@@ -274,8 +275,7 @@ class GroupingTest < ActiveSupport::TestCase
       @student_02 = Student.make(:section => section_02)
     end
 
-    should "accept to add students in any scenario possible when invoked by
-            admin" do
+    should "accept to add students to groups without checking their sections" do
       members = [@student_01.user_name, @student_02.user_name]
       @grouping.invite(members, 
                        StudentMembership::STATUSES[:accepted],
