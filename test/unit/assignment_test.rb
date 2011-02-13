@@ -746,7 +746,7 @@ class AssignmentTest < ActiveSupport::TestCase
       end
 
       should "be in the past" do
-        @assignment.section_past_due_date?(@grouping)
+        assert @assignment.section_past_due_date?(@grouping)
       end
 
       should "be able to generate a simple CSV report of marks" do
