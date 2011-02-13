@@ -1,7 +1,7 @@
 <div id="overall_comment">
       <div id="overall_comment_edit">
       <% remote_form_for result, :url => {:action => 'update_overall_comment', :id => result.id } do |f| %>
-       <%= f.text_area :overall_comment, :cols => 50, :rows => 5, :id => 'overall_comment_text_area', :onkeydown => "$('overall_comment_submit').enable();" %>
+       <%= f.text_area :overall_comment, :cols => 50, :rows => 5, :id => 'overall_comment_text_area', :onkeypress => "$('overall_comment_submit').enable();" %>
        <div>
          <%= f.submit t(:save_changes), :disabled => true, :id => "overall_comment_submit" %>
        </div>
