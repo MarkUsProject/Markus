@@ -1,6 +1,6 @@
 Changes for MarkUs 0.9.4:
-* Fixed releasing and unreleasing students using the select-all-across-pages
-feature in the submissions table. 
+* Fixed releasing and unreleasing marks for students using 
+  select-all-across-pages feature in the submissions table. 
 
 Changes for MarkUs 0.9.3:
 * Added UI for students to view their test results.
