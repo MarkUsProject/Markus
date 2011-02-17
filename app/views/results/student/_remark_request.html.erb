@@ -6,7 +6,12 @@
     <%= h(assignment.remark_message) %>
     <h3><%= I18n.t("marker.remark_request") %></h3>
     <% if student_can_edit_remark_request(submission) %>
-      <%= I18n.t("marker.remark_due_date") %>: <%= I18n.l(assignment.remark_due_date, :format => :long_date) %>
+      <%= I18n.t("marker.remark_due_date") %>: 
+      <% if assignment.remark_due_date %>
+        <%= I18n.l(assignment.remark_due_date, :format => :long_date) %>
+      <% else %>
+        <%= I18n.t("marker.no_remark_due_date") %>
+      <% end %>
       <%= render :partial => 'results/student/remark_request_form', :locals => {:submission => submission, :assignment => assignment} %>
       <p class='information'><%= I18n.t("marker.about_remark_save") %>
             <%= I18n.t("marker.about_remark_submission") %>

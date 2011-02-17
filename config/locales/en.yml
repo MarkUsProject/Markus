@@ -222,6 +222,7 @@ en:
       remark_request: "Remark Request"
       remark_instructions: "Instructions for Remark Requests"
       remark_due_date:  "Remark Due Date"
+      no_remark_due_date: "No due date assigned"
       past_remark_due_date: "It is already past the remark due date."
       about_remark_save: "Please note that the instructor will be unaware of your saved request unless it has been submitted."
       about_remark_submission: "Once a remark request has been submitted, you will not be able to see your original results until remark results are available.  You will also not be able to edit the request."
