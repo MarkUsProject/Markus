@@ -922,7 +922,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         context "POST on :update_overall_comment" do
           setup do
-#            @result = results(:result_5)
             @overall_comment = "A new overall comment!"
             post_as @admin, :update_overall_comment, :id => @result.id, :result => {:overall_comment => @overall_comment}
           end
@@ -934,7 +933,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
         
         context "POST on :update_overall_remark_comment" do
           setup do
-#            @result = results(:result_5)
             @overall_comment = "A new overall remark comment!"
             post_as @admin, :update_overall_remark_comment, :id => @result.id, :result => {:overall_comment => @overall_comment}
           end

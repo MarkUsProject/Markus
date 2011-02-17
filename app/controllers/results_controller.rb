@@ -3,11 +3,11 @@ class ResultsController < ApplicationController
                         :create, :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria,
                         :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria, :update_marking_state,
                         :download, :note_message, :render_test_result,
-                        :update_overall_comment, :update_remark_request, :cancel_remark_request]
+                        :update_overall_remark_comment, :update_remark_request, :cancel_remark_request]
   before_filter      :authorize_for_ta_and_admin, :only => [:edit, :update_mark, :create, :add_extra_mark,
                         :next_grouping, :update_overall_comment, :expand_criteria,
                         :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria,
-                        :update_marking_state, :note_message, :update_overall_comment]
+                        :update_marking_state, :note_message, :update_overall_remark_comment]
   before_filter      :authorize_for_user, :only => [:codeviewer, :render_test_result, :download]
   before_filter      :authorize_for_student, :only => [:view_marks, :update_remark_request, :cancel_remark_request]
   
@@ -269,7 +269,7 @@ class ResultsController < ApplicationController
       @result = @submission.remark_result
       # if remark result's marking state is 'unmarked' then the student has
       # saved a remark request but not submitted it yet, therefore, still editable
-      if (@result.marking_state != Result::MARKING_STATES[:unmarked])
+      if (@result.marking_state != Result::MARKING_STATES[:unmarked] && !@result.released_to_students)
         render 'results/student/no_remark_result'
         return
       end
@@ -345,7 +345,7 @@ class ResultsController < ApplicationController
       @submission.save
       @old_result = @submission.result
       if !(@submission.remark_result)
-        @submission.create_remark_result
+        @submission.create_remark_result_object
       end
       if (params[:submission][:submit_request] == "1")
         @result = @submission.remark_result
@@ -369,7 +369,7 @@ class ResultsController < ApplicationController
     @submission.save
     
     @result = @submission.result
-    @result.released_to_students = (params[:value] == 'true')
+    @result.released_to_students = true
     @result.save
     
     redirect_to :controller => 'results', :action => 'view_marks', :id => params[:id]

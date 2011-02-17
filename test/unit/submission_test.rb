@@ -29,8 +29,7 @@ class SubmissionTest < ActiveSupport::TestCase
   
   should "create a remark result" do
     s = submissions(:submission_1)
-    s.save
-    s.create_remark_result
+    s.create_remark_result_object
     assert_not_nil s.remark_result, "Remark result was supposed to be created"
     assert_equal s.remark_result.marking_state, Result::MARKING_STATES[:unmarked], "Remark result marking_state should have been automatically set to unmarked"
   end
