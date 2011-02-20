@@ -29,7 +29,7 @@ config.gem 'shoulda', :version => ">=2.10.2", :source => "http://rubygems.org", 
 config.gem 'fastercsv', :lib => false, :source => 'http://rubygems.org'
 config.gem 'will_paginate', :lib => false, :source => 'http://rubygems.org'
 config.gem 'machinist', :lib => false, :source => "http://rubygems.org"
-config.gem 'faker', :lib => false, :source => 'http://rubygems.org'
+config.gem 'faker', :version => "0.3.1", :lib => false, :source => 'http://rubygems.org'
 config.gem 'factory_data_preloader', :source => 'http://rubygems.org'
 config.gem 'rubyzip', :lib => false, :source => 'http://rubygems.org'
 config.gem 'ya2yaml', :source => 'http://rubygems.org', :lib => false
