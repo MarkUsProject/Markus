@@ -36,9 +36,53 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     destroy_repos
   end
   
-  
+  context "A logged in admin" do
+    setup do
+      clear_fixtures # don't want fixtures for this test
+      admin = Admin.make
+      @first_assignment_file = AssignmentFile.make
+      @second_assignment_file = AssignmentFile.make
+      @assignment = Assignment.make
+      # Make sure both have the correct assignment associated
+      @first_assignment_file.assignment = @assignment
+      @first_assignment_file.save
+      @second_assignment_file.assignment = @assignment
+      @second_assignment_file.save
+
+      assert_equal 2, @assignment.assignment_files.count
+
+      post_as(admin, :edit, :id => @assignment.id,
+        :assignment => {
+          :short_identifier => @assignment.short_identifier,
+          :description => @assignment.description,
+          :message => @assignment.message,
+          :due_date => @assignment.due_date,
+          :assignment_files_attributes => {
+            "1" => { :id => @first_assignment_file.id,
+                     :filename => @first_assignment_file.filename,
+                     :_destroy => "0" },
+            "2" => { :id => @second_assignment_file.id,
+                     :filename => @second_assignment_file.filename,
+                     :_destroy => "1" }, # i.e. this one should get deleted
+          },
+          :submission_rule_attributes => {
+            :type => @assignment.submission_rule.type.to_s,
+            :id => @assignment.submission_rule.id
+          }
+        })
+    end
+
+    should "be able to remove required assignment files using rails >= 2.3.8" do
+      @assignment.reload
+      assert_equal 1, @assignment.assignment_files.count
+      assignment_file = @assignment.assignment_files.first
+      assert_equal @first_assignment_file, assignment_file
+    end
+
+  end
+ 
   context "A logged in admin doing a POST" do
-    
+
     setup do
       @admin = users(:olm_admin_1)
       @assignment = assignments(:assignment_1)
@@ -680,6 +724,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert_not_nil assigns(:assignment)
     assert assigns(:assignment).errors.empty?
   end
+
   
   def test_can_change_submission_rule_class_with_periods
     original_assignment = assignments(:assignment_1)
