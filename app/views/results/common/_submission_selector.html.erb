@@ -1,4 +1,11 @@
 <div id="student_selector">
+
+  <div id="criterion_incomplete_error" style="display:none">
+    <span class="error">
+      <%=t('common.criterion_incomplete_error')%>
+    </span>
+  </div>
+
 <span class="left">
   <% if !previous_grouping.nil?%>
     <%= link_to I18n.t("marker.previous_submission"), :action => 'next_grouping', :id => previous_grouping.id %>

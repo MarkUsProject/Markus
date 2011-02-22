@@ -135,12 +135,24 @@ class ResultsController < ApplicationController
   #Updates the marking state
   def update_marking_state
     @result = Result.find(params[:id])
-    @result.marking_state = params[:value]
-    @result.save
 
-    # If marking_state is complete, update the cached distribution
-    if params[:value] == Result::MARKING_STATES[:complete]
-      @result.submission.assignment.assignment_stat.refresh_grade_distribution
+    # Marking state set to complete but there is at least one nil mark
+    if params[:value] == Result::MARKING_STATES[:complete] && @result.marks.find_by_mark(nil)
+      render :update do |page|
+        page.show 'criterion_incomplete_error'
+      end
+    else # Hide message (if any) and then continue as normal.
+      render :update do |page|
+        page.hide 'criterion_incomplete_error'
+      end
+
+      @result.marking_state = params[:value]
+      @result.save
+
+      # If marking_state is complete, update the cached distribution
+      if params[:value] == Result::MARKING_STATES[:complete]
+        @result.submission.assignment.assignment_stat.refresh_grade_distribution
+      end
     end
   end
 
