@@ -11,8 +11,13 @@ class Grouping < ActiveRecord::Base
   belongs_to :grouping_queue
   has_many :memberships
   has_many :student_memberships, :order => 'id'
-  has_many :non_rejected_student_memberships, :class_name => "StudentMembership", :conditions => ['memberships.membership_status != ?', StudentMembership::STATUSES[:rejected]]
-  has_many :accepted_student_memberships, :class_name => "StudentMembership", :conditions => {'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]}
+  has_many :non_rejected_student_memberships,
+           :class_name => "StudentMembership",
+           :conditions => ['memberships.membership_status != ?',
+                           StudentMembership::STATUSES[:rejected]]
+  has_many :accepted_student_memberships,
+           :class_name => "StudentMembership",
+           :conditions => {'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]}
   has_many :notes, :as => :noteable, :dependent => :destroy
   has_many :ta_memberships, :class_name => "TaMembership"
   has_many :tas, :through => :ta_memberships, :source => :user
@@ -94,13 +99,18 @@ class Grouping < ActiveRecord::Base
   def pending?(user)
     return membership_status(user) == StudentMembership::STATUSES[:pending]
   end
- 
+
+  # returns whether the user is the inviter of this group or not.
   def is_inviter?(user)
     return membership_status(user) ==  StudentMembership::STATUSES[:inviter]
   end
 
-  #invites each user in 'members' by its user name, to this group
-  def invite(members, set_membership_status=StudentMembership::STATUSES[:pending], invoked_by_admin=false)
+  # invites each user in 'members' by its user name, to this group
+  # If the method is invoked by an admin, checks on whether the students can
+  # be part of the group are skipped.
+  def invite(members,
+             set_membership_status=StudentMembership::STATUSES[:pending],
+             invoked_by_admin=false)
     # overloading invite() to accept members arg as both a string and a array
     members = [members] if !members.instance_of?(Array) # put a string in an
                                                  # array
@@ -113,12 +123,13 @@ class Grouping < ActiveRecord::Base
         errors.add(:base, I18n.t('invite_student.fail.dne', 
                                   :user_name => m))
       else
-        if self.can_invite?(user) || invoked_by_admin
+        if invoked_by_admin || self.can_invite?(user)
           member = self.add_member(user, set_membership_status)
           if !member
             errors.add(:base, I18n.t('invite_student.fail.error', 
                                       :user_name => user.user_name))
-            m_logger.log("Student failed to invite '#{user.user_name}'", MarkusLogger::ERROR)
+            m_logger.log("Student failed to invite '#{user.user_name}'",
+                          MarkusLogger::ERROR)
           else
             m_logger.log("Student invited '#{user.user_name}'.")
           end

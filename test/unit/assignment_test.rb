@@ -729,7 +729,12 @@ class AssignmentTest < ActiveSupport::TestCase
 
   context "An assignment instance" do
     setup do
-      @assignment = Assignment.make({:group_min => 1, :group_max => 1, :student_form_groups => false, :instructor_form_groups => true, :due_date => 2.days.ago, :created_at => 42.days.ago })
+      @assignment = Assignment.make({:group_min => 1,
+                                     :group_max => 1,
+                                     :student_form_groups => false,
+                                     :instructor_form_groups => true,
+                                     :due_date => 2.days.ago,
+                                     :created_at => 42.days.ago })
     end
 
     context "with a grouping that has a submission and a TA assigned " do
@@ -739,6 +744,11 @@ class AssignmentTest < ActiveSupport::TestCase
         @studentmembership = StudentMembership.make(:grouping => @grouping, :membership_status => StudentMembership::STATUSES[:inviter])
         @submission = Submission.make(:grouping => @grouping)
       end
+
+      should "be in the past" do
+        assert @assignment.section_past_due_date?(@grouping)
+      end
+
       should "be able to generate a simple CSV report of marks" do
         expected_string = ""
         Student.all.each do |student|
