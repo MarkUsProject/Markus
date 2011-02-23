@@ -19,10 +19,7 @@
 
       <h3><%= I18n.t("marker.overall_comments") %></h3>
       
-      <% comment = result.overall_comment %>
-      <% if old_result %>
-         <% comment = old_result.overall_comment %>
-      <% end %>
+      <% comment = ( old_result ? old_result.overall_comment : result.overall_comment )%>
       <p><%=simple_format(h(comment))%></p>
 
       <h3><%= I18n.t("marker.current_annotations") %></h3>
