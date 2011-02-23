@@ -11,7 +11,7 @@ class SubmissionsController < ApplicationController
   :populate_repo_browser, :update_converted_pdfs]
   before_filter    :authorize_for_ta_and_admin, :only => [:browse, :index, :s_table_paginate, :collect_and_begin_grading, 
   :manually_collect_and_begin_grading, :collect_ta_submissions, :repo_browser, :populate_repo_browser, :update_converted_pdfs]
-  before_filter    :authorize_for_student, :only => [:file_manager, :populate_file_manager, :update_files, :server_time]
+  before_filter    :authorize_for_student, :only => [:file_manager, :populate_file_manager, :update_files]
   before_filter    :authorize_for_user, :only => [:download]
   
   S_TABLE_PARAMS = {
@@ -499,7 +499,8 @@ class SubmissionsController < ApplicationController
     send_data assignment.get_svn_repo_list, :disposition => 'attachment', :type => 'text/plain', :filename => "#{assignment.short_identifier}_svn_repo_list"
   end
 
+  #This action is called periodically from file_manager.
   def server_time
-    render :partial => 'server_time' 
+    render :partial => 'server_time'
   end
 end

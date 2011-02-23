@@ -8,7 +8,7 @@
   <div id="current_time">  
   <%= render :partial => "server_time" %>
   <%= periodically_call_remote(:url => {:controller => 'submissions',
-    :action => 'server_time', :id => @current_time}, :frequency => '60', :update => "current_time" ) %>
+    :action => 'server_time'}, :frequency => '60', :update => "current_time" ) %>
   </div>
 </div>
 

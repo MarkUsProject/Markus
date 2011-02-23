@@ -1,2 +1,2 @@
   <strong><%= I18n.t("server_time") %></strong>
-  <%= Time.now.ctime %>
+  <%= I18n.l(Time.now, :format => :long_date)%>
