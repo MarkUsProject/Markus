@@ -130,7 +130,16 @@ function check_working() {
 
 <% if !@result.released_to_students %>
 
-<%= render :partial => 'results/marker/marker_panes', :locals => {:extra_marks_points => @extra_marks_points, :extra_marks_percentage => @extra_marks_percentage, :annotation_categories => @annotation_categories, :result => @result, :assignment => @assignment, :marks_map => @marks_map, :mark_criteria =>@mark_criteria } %>
+<%= render :partial => 'results/marker/marker_panes', 
+           :locals => {:extra_marks_points => @extra_marks_points, 
+                       :extra_marks_percentage => @extra_marks_percentage, 
+                       :annotation_categories => @annotation_categories, 
+                       :result => @result, 
+                       :assignment => @assignment, 
+                       :marks_map => @marks_map, 
+                       :mark_criteria =>@mark_criteria, 
+                       :submission => @submission,
+                       :old_result => @old_result} %>
 <% else %>
 <%= render :partial => 'results/result_summary'%>
 

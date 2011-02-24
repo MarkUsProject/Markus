@@ -3,6 +3,9 @@
     <ul id="code_and_annotations_tabs" class="subsection_tabs">
        <li class="tab"><a href="#code_holder"><%= I18n.t("marker.source_code") %></a></li>
        <li class="tab"><a href="#annotations_summary"><%= I18n.t("marker.annot_summary") %></a></li>
+       <% if can_show_remark_request_tab_in_student_pane(assignment, @current_user, submission) %>
+          <li class="tab"><a href="#remark_request_tab"><%= I18n.t("marker.remark_request") %></a></li>
+       <% end %>       
     </ul>  
     <div id="code_holder" class="tabbedArea">
 
@@ -16,7 +19,8 @@
 
       <h3><%= I18n.t("marker.overall_comments") %></h3>
       
-      <p><%=simple_format(h(result.overall_comment))%></p>
+      <% comment = ( old_result ? old_result.overall_comment : result.overall_comment )%>
+      <p><%=simple_format(h(comment))%></p>
 
       <h3><%= I18n.t("marker.current_annotations") %></h3>
       <p><%= I18n.t("marker.across_all_submission_files") %></p>
@@ -25,6 +29,14 @@
       </ul>
       
     </div> <!-- Annotations Summary -->
+    
+    <div id="remark_request_tab" class="tabbedArea">    
+      <% if @current_user.student? and assignment.allow_remarks%> 
+        <%= render :partial => 'results/student/remark_request', :locals => {:old_result => old_result, :result => result, :submission => submission, :assignment => assignment} %>       
+      <% elsif submission.has_remark? %>
+        <%= render :partial => 'results/marker/remark_request', :locals => {:result => result, :submission => submission, :assignment => assignment} %>       
+      <% end %>         
+    </div> <!-- Remark Request -->
   </div> <!-- Code Pane -->
   
   <!-- Divider  -->
