@@ -26,14 +26,18 @@
                 :id => assignment.id%>
             </td>
             <td>
-              <% if assignment.due_date < Time.now %>
-                <strong><%= I18n.l(assignment.due_date, :format => :long_date) %></strong>
-              <% else %>
-                <strong><%= I18n.l(assignment.due_date, :format => :long_date) %></strong><br />
-                  <%= I18n.t(:days_and_hours_left, 
-                  :days => ((((assignment.due_date - Time.now)/(60 * 60 * 24)).floor).to_s), 
-                  :hours => ((((assignment.due_date - Time.now)/(60 * 60)) % 24).floor)) %>
-              <% end %>
+              <% if !assignment.section_due_dates_type %>
+                <% if assignment.due_date < Time.now %>
+                  <strong><%= I18n.l(assignment.due_date, :format => :long_date) %></strong>
+                <% else %>
+                  <strong><%= I18n.l(assignment.due_date, :format => :long_date) %></strong><br />
+                    <%= I18n.t(:days_and_hours_left, 
+                    :days => ((((assignment.due_date - Time.now)/(60 * 60 * 24)).floor).to_s), 
+                    :hours => ((((assignment.due_date - Time.now)/(60 * 60)) % 24).floor)) %>
+                <% end %>
+	      <% else %>
+                <%= I18n.t('assignment.section_due_date_type')%>
+	      <% end %>
             </td>
             <td style="width: 40%;">
               <% if !@a_id_results.empty? && !@a_id_results[assignment.id].nil? && !assignment.results_average.nil? %>

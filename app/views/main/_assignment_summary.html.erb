@@ -1,0 +1,18 @@
+<div class="assignment_summary">
+  
+  <h2 class="title">
+    <%= h(assignment.short_identifier)+": 
+        "+h(assignment.description) %>
+  </h2>
+  
+  <div class="left">
+    <%= render :partial => "grade_distribution_graph", :locals => { :assignment => assignment } %>
+  </div>
+
+  <div class="right">
+    <%= render :partial => "assignment_info_summary", :locals => { :assignment => assignment } %>
+    <%= render :partial => "grader_summary", :locals => { :assignment => assignment } %>
+    <p><%= link_to I18n.t(:refresh_graph), :controller => 'assignments',
+        :action => 'refresh_graph', :id => assignment.id %></p>
+  </div>
+</div>

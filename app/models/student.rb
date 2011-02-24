@@ -107,40 +107,51 @@ class Student < User
   # creates a group and a grouping for a student to work alone, for
   # assignment aid
   def create_group_for_working_alone_student(aid)
-    @assignment = Assignment.find(aid)
-    @grouping = Grouping.new
-    @grouping.assignment_id = @assignment.id
-    if !Group.find(:first, :conditions => {:group_name => self.user_name}).nil?
-      @group = Group.find(:first, :conditions => {:group_name => self.user_name})
-    else
-      @group = Group.new(:group_name => self.user_name)
-      # We want to have the user_name as repository name,
-      # so we have to set the repo_name before we save the group.
-      # We do that only if the assignment is set up to be a
-      # non-web-submit assignment.
-      if @assignment.allow_web_submits == false
-        @group.repo_name = self.user_name
+    ActiveRecord::Base.transaction do
+      @assignment = Assignment.find(aid)
+      @grouping = Grouping.new
+      @grouping.assignment_id = @assignment.id
+      if !Group.find(:first, :conditions => {:group_name => self.user_name}).nil?
+        @group = Group.find(:first, :conditions => {:group_name => self.user_name})
+      else
+        @group = Group.new(:group_name => self.user_name)
+        # We want to have the user_name as repository name,
+        # so we have to set the repo_name before we save the group.
+        # We do that only if the assignment is set up to be a
+        # non-web-submit assignment.
+        if @assignment.allow_web_submits == false
+          @group.repo_name = self.user_name
+        end
+        if !@group.save
+          m_logger = MarkusLogger.instance
+          m_logger.log("Could not create a group for Student '#{self.user_name}'. The group was #{@group.inspect} - errors: #{@group.errors.inspect}", MarkusLogger::ERROR)
+          raise "Sorry!  For some reason, your group could not be created.  Please wait a few seconds, then hit refresh to try again.  If you come back to this page, you should inform the course instructor."
+        end
       end
-      @group.save
-    end
-    @grouping.group = @group
-    @grouping.save
-    
-    # We give students the tokens for the test framework
-    @grouping.give_tokens
 
-    # Create the membership
-    @member = StudentMembership.new(:grouping_id => @grouping.id,
+      @grouping.group = @group
+      if !@grouping.save
+        m_logger = MarkusLogger.instance
+        m_logger.log("Could not create a grouping for Student '#{self.user_name}'. The grouping was:  #{@grouping.inspect} - errors: #{@grouping.errors.inspect}", MarkusLogger::ERROR)
+        raise "Sorry!  For some reason, your grouping could not be created.  Please wait a few seconds, and hit refresh to try again.  If you come back to this page, you should inform the course instructor."
+      end
+
+      # We give students the tokens for the test framework
+      @grouping.give_tokens
+
+      # Create the membership
+      @member = StudentMembership.new(:grouping_id => @grouping.id,
               :membership_status => StudentMembership::STATUSES[:inviter],
               :user_id => self.id)
-    @member.save
+      @member.save
 
-    # Destroy all the other memebrships for this assignment
-    self.destroy_all_pending_memberships(@assignment.id)
+      # Destroy all the other memebrships for this assignment
+      self.destroy_all_pending_memberships(@assignment.id)
 
-    # Update repo permissions if need be. This has to happen
-    # after memberships have been established.
-    @grouping.update_repository_permissions
+      # Update repo permissions if need be. This has to happen
+      # after memberships have been established.
+      @grouping.update_repository_permissions
+    end
     return true
   end
 

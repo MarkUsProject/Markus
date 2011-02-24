@@ -1,3 +1,35 @@
+Changes for MarkUs 0.9.4:
+* Fixed releasing and unreleasing marks for students using
+  select-all-across-pages feature in submissions table.
+
+Changes for MarkUs 0.9.3:
+* Added UI for students to view their test results.
+
+Changes for MarkUs 0.9.2:
+* Issue #180: Infinite redirect loop caused by duplicate group records in the
+  database in turn possibly caused by races in a multi-mongrels-setup.
+  (commits: 6552f28bf7, 19933b7f65, e39c542a4d, c226371823, ac0e348bb6,
+  3cee403b9d)
+* Issue #158: Default for Students page shows all Students, and bulk actions
+  renamed. (commit: 1e13630914)
+* Issue #143: Fixing penalty calculation for PenaltyPeriodSubmissionRule.
+  (commit: 537d6c3068)
+* Issue #141: Fix replace file JavaScript check (commits: 7f395605a8,
+  e8150454b3)
+* Issue #129: Uploaded criteria ordering preserved for flexible and rubric
+  criteria (commit: b76a9a896f)
+* Issues #34, #133: Don't use i18n for MarkusLogger and
+  ensure_config_helper.rb (commits: a00a41e1a6, f652c919ed)
+* Issue #693: Fixing confirm dialog for cloning groups (commit: 87e4d826f0)
+* Issue #691: Adding Grace Credits using the bulk actions gets stuck
+  in "processing" (commit: e0f78dd873)
+* Fixed INSTALL file due to switch to Github (commits: cfd72b09bb, c0bc922434)
+* I18n fixes (commits: bc791a4f21, 232384e05a, 8e2fcb6d61, 95c27db874)
+
+Changes for MarkUs 0.9.1:
+* Submission collection problem due to erroneous eager loading
+  expression (commit: a1d380b60e).
+
 Changes for MarkUs 0.9.0:
 * Multiple bug fixes
 * REMOTE_USER authentication support

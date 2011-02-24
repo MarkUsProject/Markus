@@ -61,14 +61,32 @@ class AssignmentTest < ActiveSupport::TestCase
   context "A past due assignment w/ No Late submission rule" do
     setup do
       @assignment = Assignment.make({:due_date => 2.days.ago})
+      @section = Section.make
+      student = Student.make
+      @grouping = Grouping.make(:assignment => @assignment)
+      StudentMembership.make(:grouping => @grouping,
+                :user => student,
+                :membership_status => StudentMembership::STATUSES[:inviter])
     end
 
     should "return true on past_due_date? call" do
       assert @assignment.past_due_date?
     end
 
+    should "return true on section_past_due_date? call" do
+      assert @assignment.section_past_due_date?(@grouping)
+    end
+
+    should "return the last due date" do
+      assert_equal 2.days.ago.day(), @assignment.latest_due_date.day()
+    end
+
     should "return true on past_collection_date? call" do
       assert @assignment.past_collection_date?
+    end
+
+    should "return the normal due date for section due date" do
+      assert @assignment.section_due_date(@section)
     end
 
   end
@@ -117,7 +135,74 @@ class AssignmentTest < ActiveSupport::TestCase
       student = Student.make
       assert !@assignment.submission_by(student)
     end
-
+    
+    should "return 0 if no tas have been assigned" do
+      assert @assignment.tas.size == 0
+    end
+    
+    context "with multiple tas assigned" do
+      setup do
+        ta1 = Ta.make
+        5.times do
+          grouping = Grouping.make(:assignment => @assignment)
+          StudentMembership.make({:grouping => grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
+          TaMembership.make({:user_id => ta1.id, :grouping => grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
+        end
+        
+        ta2 = Ta.make
+        5.times do
+          grouping = Grouping.make(:assignment => @assignment)
+          StudentMembership.make({:grouping => grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
+          TaMembership.make({:user_id => ta2.id, :grouping => grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
+        end
+      end
+      
+      should "return 2 tas assigned" do
+        assert @assignment.tas.size == 2
+      end
+    end
+    
+    should "return 0 if no submissions have been graded" do
+      assert @assignment.graded_submissions.size == 0
+    end
+    
+    context "with some assignments graded" do
+      setup do
+        3.times do
+          membership = StudentMembership.make(:grouping => Grouping.make(:assignment => @assignment),:membership_status => StudentMembership::STATUSES[:accepted])
+          sub = Submission.make(:grouping => membership.grouping)
+        end
+        
+        5.times do
+          membership = StudentMembership.make(:grouping => Grouping.make(:assignment => @assignment),:membership_status => StudentMembership::STATUSES[:accepted])
+          sub = Submission.make(:grouping => membership.grouping)
+          result = sub.result
+          result.marking_state = Result::MARKING_STATES[:complete]
+          result.save
+        end
+      end
+      
+      should "have 5 result completed" do
+        assert @assignment.graded_submissions.size == 5
+      end
+    end
+    
+    context "with all assignments graded" do
+      setup do
+        5.times do
+          membership = StudentMembership.make(:grouping => Grouping.make(:assignment => @assignment),:membership_status => StudentMembership::STATUSES[:accepted])
+          sub = Submission.make(:grouping => membership.grouping)
+          result = sub.result
+          result.marking_state = Result::MARKING_STATES[:complete]
+          result.save
+        end
+      end
+      
+      should "have 5 result completed" do
+        assert @assignment.graded_submissions.size == 5
+      end
+    end
+    
     context "as a noteable" do
       should "display for note without seeing an exception" do
         assignment = Assignment.make
@@ -173,15 +258,6 @@ class AssignmentTest < ActiveSupport::TestCase
         Student.make
       end
       assert_equal(5, @assignment.no_grouping_students_list.size)
-    end
-
-    should "know how many ungrouped students a group can invite to it" do
-      g = Grouping.make(:assignment => @assignment)
-      assert_equal(0, @assignment.can_invite_for(g.id).size)
-      (1..5).each do
-        Student.make
-      end
-      assert_equal(5, @assignment.can_invite_for(g.id).size)
     end
 
     should "know how many grouped students exist" do
@@ -653,7 +729,12 @@ class AssignmentTest < ActiveSupport::TestCase
 
   context "An assignment instance" do
     setup do
-      @assignment = Assignment.make({:group_min => 1, :group_max => 1, :student_form_groups => false, :instructor_form_groups => true, :due_date => 2.days.ago, :created_at => 42.days.ago })
+      @assignment = Assignment.make({:group_min => 1,
+                                     :group_max => 1,
+                                     :student_form_groups => false,
+                                     :instructor_form_groups => true,
+                                     :due_date => 2.days.ago,
+                                     :created_at => 42.days.ago })
     end
 
     context "with a grouping that has a submission and a TA assigned " do
@@ -663,6 +744,11 @@ class AssignmentTest < ActiveSupport::TestCase
         @studentmembership = StudentMembership.make(:grouping => @grouping, :membership_status => StudentMembership::STATUSES[:inviter])
         @submission = Submission.make(:grouping => @grouping)
       end
+
+      should "be in the past" do
+        assert @assignment.section_past_due_date?(@grouping)
+      end
+
       should "be able to generate a simple CSV report of marks" do
         expected_string = ""
         Student.all.each do |student|
@@ -732,6 +818,71 @@ class AssignmentTest < ActiveSupport::TestCase
         end
       end
     end
-
   end # end assignment instance context
+
+  context "An assignment with section due dates" do
+    setup do
+      @assignment = Assignment.make(:section_due_dates_type => true,
+                                    :section_groups_only => true,
+                                    :due_date => 3.days.ago)
+      @section_01 = Section.make
+      @section_02 = Section.make
+      student_01 = Student.make(:section => @section_01)
+      student_02 = Student.make(:section => @section_02)
+      (1..3).each do 
+        Student.make(:section => @section_01)
+      end
+      @grouping_1 = Grouping.make(:assignment => @assignment)
+      @grouping_2 = Grouping.make(:assignment => @assignment)
+      StudentMembership.make(:grouping => @grouping_1,
+                   :user => student_01,
+                   :membership_status => StudentMembership::STATUSES[:inviter])
+      StudentMembership.make(:grouping => @grouping_2,
+                   :user => student_02,
+                   :membership_status => StudentMembership::STATUSES[:inviter])
+
+      @section_due_date = SectionDueDate.make(:section => @section_01,
+                                              :assignment => @assignment,
+                                              :due_date => 3.days.from_now)
+
+    end
+
+    should "return the section due date for a specific section" do
+      assert_equal (3.days.from_now).day(),
+                   @assignment.section_due_date(@section_01).day()
+    end
+
+    should "return the section due date for a specific section that has not
+            section due date" do
+      assert_equal (3.days.ago).day(),
+                   @assignment.section_due_date(@section_02).day()
+    end
+
+    should "not be past due date" do
+      assert !@assignment.section_past_due_date?(@grouping_1)
+    end
+
+    should "be in the past" do
+      assert @assignment.section_past_due_date?(@grouping_2)
+    end
+
+    should "not be past due date as there is one section not past due date" do
+      assert !@assignment.past_due_date?
+    end
+
+    should "return latest due date" do
+      assert_equal 3.days.from_now.day(), @assignment.latest_due_date.day()
+    end
+
+    context "With all section due dates past now" do
+      setup do
+        @section_due_date.due_date = 2.days.ago 
+        @section_due_date.save
+      end
+
+      should "be past due date as all the sections are past due date" do
+        assert @assignment.past_due_date?
+      end
+    end
+  end
 end

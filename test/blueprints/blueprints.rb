@@ -68,9 +68,11 @@ Assignment.blueprint do
   submission_rule {NoLateSubmissionRule.make}
   allow_web_submits {true}
   display_grader_names_to_students {false}
+  section_due_dates_type(false)
   enable_test {true}
   tokens_per_day {10}
   assign_graders_to_criteria {false}
+  assignment_stat {AssignmentStat.make}
 end
 
 AssignmentFile.blueprint do
@@ -198,6 +200,12 @@ Section.blueprint do
   name {Sham.section_name}
 end
 
+SectionDueDate.blueprint do
+  section {Section.make}
+  assignment {Assignment.make}
+  due_date 
+end
+
 Student.blueprint do
   user_name {Sham.student_user_name}
   first_name {Sham.first_name}
@@ -274,4 +282,8 @@ end
 Token.blueprint do
   grouping_id {Grouping.make.id}
   tokens {5}
+end
+
+AssignmentStat.blueprint do
+  assignment_id {0}
 end

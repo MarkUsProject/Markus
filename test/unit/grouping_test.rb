@@ -247,6 +247,45 @@ class GroupingTest < ActiveSupport::TestCase
     end
   end # end grouping context
 
+  context "A grouping without students (ie created by an admin)" do
+    setup do
+      @grouping = Grouping.make
+      @student_01 = Student.make
+      @student_02 = Student.make
+    end
+
+    should "accept to add students in any scenario possible when invoked by
+            admin" do
+      members = [@student_01.user_name, @student_02.user_name]
+      @grouping.invite(members, 
+                       StudentMembership::STATUSES[:accepted],
+                       true)
+      assert_equal 2, @grouping.accepted_student_memberships.count
+    end
+  end
+
+  context "A grouping without students (ie created by an admin) for a
+           assignment with section restriction" do
+    setup do
+      @assignment = Assignment.make(:section_due_dates_true)
+      @grouping = Grouping.make(:assignment => @assignment)
+      section_01 = Section.make
+      section_02 = Section.make
+      @student_01 = Student.make(:section => section_01)
+      @student_02 = Student.make(:section => section_02)
+    end
+
+    should "accept to add students to groups without checking their sections" do
+      members = [@student_01.user_name, @student_02.user_name]
+      @grouping.invite(members, 
+                       StudentMembership::STATUSES[:accepted],
+                       true)
+      assert_equal 2, @grouping.accepted_student_memberships.count
+    end
+  end
+
+
+
   def test_should_not_save_without_group
     grouping = Grouping.new
     grouping.assignment = assignments(:assignment_1)
@@ -541,6 +580,30 @@ Blanche Nef,ta2'''
 
   end
 
+  context "A grouping with students in section" do
+    setup do
+      @section = Section.make
+      student  = Student.make(:section => @section)
+      @student_can_invite = Student.make(:section => @section)
+      @student_cannot_invite = Student.make
+
+      assignment = Assignment.make(:section_groups_only => true)
+      @grouping = Grouping.make(:assignment => assignment)
+      StudentMembership.make(:user => student,
+              :grouping => @grouping,
+              :membership_status => StudentMembership::STATUSES[:inviter])
+    end
+
+    should "return true to can invite for students of same section" do
+      assert @grouping.can_invite?(@student_can_invite)
+    end
+
+    should "return false to can invite for students of different section" do
+      assert !@grouping.can_invite?(@student_cannot_invite)
+    end
+
+
+  end
   #########################################################
   #
   # TODO: create test for create_grouping_repository_factory

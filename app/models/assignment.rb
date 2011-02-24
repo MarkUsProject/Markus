@@ -28,6 +28,9 @@ class Assignment < ActiveRecord::Base
 
   has_many :notes, :as => :noteable, :dependent => :destroy
 
+  has_many :section_due_dates
+  has_one  :assignment_stat
+
   validates_associated :assignment_files
 
   validates_presence_of     :repository_folder
@@ -61,10 +64,57 @@ class Assignment < ActiveRecord::Base
     end
   end
 
-  # Are we past the due date for this assignment?
+  # Are we past all the due dates for this assignment?
   def past_due_date?
-    return !due_date.nil? && Time.now > due_date
+    # If no section due dates
+    if !self.section_due_dates_type && self.section_due_dates.empty?
+      return !due_date.nil? && Time.now > due_date
+    # If section due dates
+    else
+      self.section_due_dates.each do |d|
+        if !d.due_date.nil? && Time.now > d.due_date
+          return true
+        end
+      end
+      return false
+    end
   end
+
+  # Are we past the due date for this assignment, for this grouping ?
+  def section_past_due_date?(grouping)
+    if self.section_due_dates_type and !grouping.inviter.section.nil?
+        section_due_date =
+    SectionDueDate.due_date_for(grouping.inviter.section, self)
+        return !section_due_date.nil? && Time.now > section_due_date
+    else
+      self.past_due_date?
+    end
+  end
+
+  # return the due date for a section
+  def section_due_date(section)
+    if self.section_due_dates_type
+      if !section.nil?
+        return SectionDueDate.due_date_for(section, self)
+      end
+    end
+    return self.due_date
+  end
+
+  # Calculate the latest due date. Used to calculate the collection time
+  def latest_due_date
+    if !self.section_due_dates_type
+      return self.due_date
+    else
+      due_date = self.due_date
+      self.section_due_dates.each do |d|
+        if !d.due_date.nil? && due_date < d.due_date
+          due_date = d.due_date
+        end
+      end
+      return due_date
+    end
+   end
 
   def past_collection_date?
     return Time.now > submission_rule.calculate_collection_time
@@ -84,11 +134,6 @@ class Assignment < ActiveRecord::Base
 
     # create a new submission for the owner
     # linked to this assignment, if it doesn't exist yet
-
-    # submission = owner.submissions.find_or_initialize_by_assignment_id(id)
-    # submission.save if submission.new_record?
-    # return submission
-
 
     assignment_groupings = user.active_groupings.delete_if {|grouping|
       grouping.assignment.id != self.id
@@ -137,29 +182,6 @@ class Assignment < ActiveRecord::Base
 
   def display_for_note
     return short_identifier
-  end
-
-  # Make a list of the students an inviter can invite for his grouping
-  # TODO check if this method is ever used anywhere [Not used anywhere as of 2010/03/30]
-  # TODO unit tests
-  def can_invite_for(gid)
-    grouping = Grouping.find(gid)
-    students = self.no_grouping_students_list
-    students_list = []
-    students.each do |s|
-      if !grouping.pending?(s)
-        # if assignment doesn't restrict groups member per sections
-        if !self.section_groups_only
-          students_list.push(s)
-        else
-          # if assignment restricts groupmembers per section
-          if student.section == grouping.inviter.section
-            students_list.push(s)
-          end
-        end
-      end
-    end
-    return students_list
   end
 
   def total_mark
@@ -405,7 +427,6 @@ class Assignment < ActiveRecord::Base
 
   def assigned_groupings
     return groupings.all(:joins => :ta_memberships, :include => [{:ta_memberships => :user}]).uniq
-
   end
 
   def unassigned_groupings
@@ -566,6 +587,17 @@ class Assignment < ActiveRecord::Base
     return distribution
   end
 
+  # Returns all the TAs associated with the assignment
+  def tas
+    ids = self.ta_memberships.map { |m| m.user_id }
+    return Ta.find(ids)
+  end
+  
+  # Returns all the submissions that have been graded
+  def graded_submissions
+    return self.submissions.select { |submission| submission.result.marking_state == Result::MARKING_STATES[:complete] }
+  end
+  
   private
 
   # Returns true if we are safe to set the repository name
@@ -595,5 +627,4 @@ class Assignment < ActiveRecord::Base
       t.update_tokens(self.tokens_per_day_was, self.tokens_per_day)
     end
   end
-
 end
