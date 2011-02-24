@@ -181,8 +181,10 @@ function default_group_fields() {
 function update_due_date(new_due_date) {
   check_due_date(new_due_date);
   grace_periods.set_due_date(new_due_date);
+  penalty_decay_periods.set_due_date(new_due_date);
   penalty_periods.set_due_date(new_due_date);
   grace_periods.refresh();
+  penalty_decay_periods.refresh();
   penalty_periods.refresh();
 }
 
@@ -220,6 +222,17 @@ function change_submission_rule() {
     if ($$('#grace_periods .period').length == 0) {
         // Auto expand add a grace period if needed
         $("grace_period_link").onclick();
+    }
+  }
+  if($('penalty_decay_period_submission_rule').getValue() == null) {
+     // Disable any penalty_decay_period_submission_rule periods
+    $$('#penalty_decay_periods .period').each(function(node) { node.addClassName('disabled'); });
+    $$('#penalty_decay_periods .period input').each(function(node){node.disable();});
+  }
+  else {
+    if ($$('#penalty_decay_periods .period').length == 0) {
+         // Auto expand add a penalty period if needed
+        $("penalty_decay_period_link").onclick();
     }
   }
   if($('penalty_period_submission_rule').getValue() == null) {

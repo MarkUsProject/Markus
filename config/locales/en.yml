@@ -773,6 +773,21 @@ en:
         to:  "to"
         alert: "You must select the Grace Period Submission Rule to add a grace period."
 
+      penalty_decay_period_submission_rule:
+        name: "Penalty Period Submission Rule"
+        short_name: "Penalty Decay"
+        description: "HERE BE A DECAY PERIOD DESCRIPTION"
+        form_description: "Use Penalty Decay Formula"
+        add_penalty_decay: "Add a Decay Period"
+        alert: "You must select the Penalty Decay Submission Rule to add a decay period."
+        from: "From"
+        to: "to"
+        hours: "hours..."
+        after: "After"
+        each: "each"
+        deduct: "Deduct:"
+        for: "for"
+
       penalty_period_submission_rule:
         name: "Penalty Period Submission Rule"
         short_name:  "Penalty Period"
