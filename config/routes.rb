@@ -20,7 +20,7 @@ ActionController::Routing::Routes.draw do |map|
 
   # Sample resource route with sub-resources:
   #   map.resources :products, :has_many => [ :comments, :sales ], :has_one => :seller
-  
+
   # Sample resource route with more complex sub-resources
   #   map.resources :products do |products|
   #     products.resources :comments
@@ -53,7 +53,7 @@ ActionController::Routing::Routes.draw do |map|
     api.resource :test_results
     api.resource :submission_downloads
   end
-  
+
   # Generic connects (controller/action pages)
   map.connect 'main/:controller/:action/:id'
 
