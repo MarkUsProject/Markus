@@ -352,7 +352,7 @@ class ResultsController < ApplicationController
       if !(@submission.remark_result)
         @submission.create_remark_result_object
       end
-      if (params[:submission][:submit_request] == "1")
+      if (params[:real_commit] == "Submit")
         @result = @submission.remark_result
         @result.marking_state = Result::MARKING_STATES[:partial]
         @old_result.released_to_students = (params[:value] == 'false')
