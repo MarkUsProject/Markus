@@ -243,6 +243,11 @@ SubmissionFile.blueprint do
   path
 end
 
+PenaltyDecayPeriodSubmissionRule.blueprint do
+  assignment_id {0}
+  type {'PenaltyDecayPeriodSubmissionRule'}
+end
+
 PenaltyPeriodSubmissionRule.blueprint do
   assignment_id {0}
   type {'PenaltyPeriodSubmissionRule'}

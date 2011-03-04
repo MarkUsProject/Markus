@@ -64,6 +64,17 @@ class PenaltyDecayPeriodSubmissionRule < SubmissionRule
     total_penalty = 0
     periods.each do |period|
       deduction = period.deduction
+      if deduction < 0
+        deduction = -deduction
+      end
+      interval = period.interval
+      if(overtime_hours / interval < 1)
+        total_penalty = total_penalty + deduction
+      else
+        total_penalty = total_penalty + (overtime_hours/interval).to_i * deduction
+      end
+      overtime_hours = overtime_hours - period.hours
+      break if overtime_hours <= 0
     end
     return total_penalty
   end
