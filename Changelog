@@ -1,3 +1,7 @@
+Changes for MarkUs 0.9.5:
+* Fixed bug which prohibited removal of required assignment
+  files. 
+
 Changes for MarkUs 0.9.4:
 * Fixed releasing and unreleasing marks for students using 
   select-all-across-pages feature in the submissions table. 
