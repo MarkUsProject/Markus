@@ -11,6 +11,7 @@ module Api
         render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
         return
       end
+
       if !has_required_http_params?(params)
         # incomplete/invalid HTTP params
         render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
@@ -69,7 +70,8 @@ module Api
         render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
         return
       end
-      if !has_required_http_params?(params)
+
+      if !has_required_http_param_user_name?(params)
         # incomplete/invalid HTTP params
         render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
         return
@@ -84,16 +86,17 @@ module Api
       end
 
       # Everything went fine; send file_content
-      details = "Username: " + user.user_name +
-          " First: " + user.first_name +
-          " Last: " + user.last_name
+      details = "\nUsername: " + user.user_name +
+          "\nType: " + user.type +
+          "\nFirst Name: " + user.first_name +
+          "\nLast Name: " + user.last_name
       send_data details, :disposition => 'inline', :filename => user.user_name
     end
 
     private
 
     # Helper method to check for required HTTP parameters
-    def has_required_http_user_name_param?(param_hash)
+    def has_required_http_param_user_name?(param_hash)
       # Note: The blank? method is a Rails extension.
       # Specific keys have to be present, and their values
       # must not be blank.
@@ -101,15 +104,10 @@ module Api
     end
 
     def has_required_http_params?(param_hash)
-      return has_required_http_user_name_param?(param_hash) &&
+      return has_required_http_param_user_name?(param_hash) &&
           !param_hash[:first_name].blank? &&
-          !param_hash[:last_name].blank?
-    end
-
-    def has_required_http_params_and_user_class?(param_hash)
-      return  has_required_http_params?(param_hash) &&
+          !param_hash[:last_name].blank? &&
           !param_hash[:user_class].blank?
     end
-
   end # end TestResultsController
 end
