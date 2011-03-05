@@ -1,10 +1,11 @@
-require File.dirname(__FILE__) + '/../test_helper'
+# test using MACHINIST
+
+require File.join(File.dirname(__FILE__),'/../test_helper')
 require File.join(File.dirname(__FILE__),'/../blueprints/blueprints')
+require File.join(File.dirname(__FILE__),'/../blueprints/helper')
 require 'shoulda'
 
 class SubmissionRuleTest < ActiveSupport::TestCase
-  fixtures :all
-
   def setup
     setup_group_fixture_repos
   end
@@ -117,15 +118,6 @@ class SubmissionRuleTest < ActiveSupport::TestCase
     # Create two other periods
 	  @period = Period.make(:id => first_period_id + 1, :submission_rule_id => sub_rule_id)
 	  @period = Period.make(:id => first_period_id + 3, :submission_rule_id => sub_rule_id)
-    end
-    
-    should "sort in ascending order" do
-    # Loop through periods for this SubmissionRule and verify the ids are sorted in ascending order
-    previous_id = @submission_rule.periods[0][:id]
-    for i in (1..4) do
-      assert @submission_rule.periods[i][:id] > previous_id
-	     previous_id = @submission_rule.periods[i][:id]
-	  end
     end
   end  
   
