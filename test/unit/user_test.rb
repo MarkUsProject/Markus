@@ -1,33 +1,38 @@
-require File.dirname(__FILE__) + '/../test_helper'
+# Context architecture
+#
+# TODO: Complete contexts
+#
+# - Tests on database structure and model
+# - User Creation validations
+
+require File.join(File.dirname(__FILE__),'/../test_helper')
+require File.join(File.dirname(__FILE__),'/../blueprints/blueprints')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 require 'shoulda'
 
-class UserTestWithouBlueprints < ActiveSupport::TestCase
+class UserTest < ActiveSupport::TestCase
 
+  context "A good User model" do
 
-  def setup
-    # attributes with a user number that does not exists in db.
-    @attr_no_dup = {
-      :user_name => 'admin__not_dup',
-      :last_name => 'De Niro',
-      :first_name => 'Robert',
-      :type => 'Admin'
-    }
+    should have_many(:memberships)
+    should have_many(:groupings).through(:memberships)
+    should have_many(:notes).dependent(:destroy)
+    should have_many(:accepted_memberships)
 
-    # attributes with a user name that exists in db.
-    # same as the student
-    @attr_dup = {
-      :user_name => 'student_dup',
-      :last_name => 'De Niro',
-      :first_name => 'Robert',
-      :type => 'Student'
-    }
+    should validate_uniqueness_of   :user_name
+    should validate_presence_of     :user_name
+    should validate_presence_of     :last_name
+    should validate_presence_of     :first_name
+
+    should allow_value("Student").for(:type)
+    should allow_value("Admin").for(:type)
+    should allow_value("Ta").for(:type)
+    should_not allow_value("OtherTypeOfUser").for(:type)
 
   end
 
-  # User creation validations --------------------------------------------
-
   # test if user_name, last_name, first_name are stripped correctly
-  context "a user" do
+  context "User creation validations" do
     setup do
       @unspaceduser_name = 'ausername'
       @unspacedfirst_name = 'afirstname'
@@ -50,52 +55,5 @@ class UserTestWithouBlueprints < ActiveSupport::TestCase
       assert_equal @user.last_name, @unspacedlast_name
     end
   end
-
-
-  # test if User validates uniqueness of user_name and user_number
-  def test_validates_uniq
-    new_user = {
-      :user_name => 'adminotdup',
-      :last_name => 'De Niro',
-      :first_name => 'Robert',
-      :type => 'Admin'
-    }
-
-    user = User.new(new_user)
-    user.user_name = 'olm_admin'
-    assert !user.valid?  # username already exists in users.yml
-  end
-
-  # test validation for role
-  def test_invalid_role
-    new_user = {
-      :user_name => 'adminotdup',
-      :last_name => 'De Niro',
-      :first_name => 'Robert'
-    }
-    user = Admin.new(new_user)
-    assert user.valid?
-    user.type = 'invalid'
-    assert !user.valid?
-  end
-
-  # Helper method tests --------------------------------------------------
-
-  private
-
-  # Helper method for test_validate_presence_of to create a user without
-  # the specified attribute. if attr == nil then all attributes are included
-  def create_no_attr(attr)
-    new_user = {
-      :user_name => 'adminotdup',
-      :last_name => 'De Niro',
-      :first_name => 'Robert'
-    }
-
-    new_user.delete(attr) if attr
-    Admin.new(new_user)
-  end
-
-
 
 end
