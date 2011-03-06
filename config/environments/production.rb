@@ -10,11 +10,11 @@ config.whiny_nils = true
 # Use a different logger for distributed setups
 # config.logger = SyslogLogger.new
 #
-config.log_level = :info	# set log-level (:debug, :info, :warn, :error, :fatal)
+config.log_level = :info  # set log-level (:debug, :info, :warn, :error, :fatal)
 
 # Full error reports are disabled and caching is turned on
 config.action_controller.consider_all_requests_local = true # set to false to turn off traces
-config.action_view.debug_rjs			     = true
+config.action_view.debug_rjs                         = true
 config.action_controller.perform_caching             = true
 config.action_view.cache_template_loading            = true
 
@@ -200,7 +200,7 @@ USER_ADMIN_SESSION_TIMEOUT          = 1800 # Timeout for admin users
 # CSV upload order of fields (usually you don't want to change this)
 ###################################################################
 # Order of student CSV uploads
-USER_STUDENT_CSV_UPLOAD_ORDER = [:user_name, :last_name, :first_name]
+USER_STUDENT_CSV_UPLOAD_ORDER = [:user_name, :last_name, :first_name, :section_name]
 # Order of graders CSV uploads
 USER_TA_CSV_UPLOAD_ORDER  = [:user_name, :last_name, :first_name]
 

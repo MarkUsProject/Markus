@@ -10,12 +10,12 @@ class StudentsController < ApplicationController
       flash[:error] = I18n.t('notes.error')
     end
   end
-  
+
   def index
     @students = Student.find(:all, :order => "user_name")
     @sections = Section.find(:all, :order => "name")
   end
-  
+
   def populate
     @students_data = Student.find(:all, :order => "user_name", :include => [:section, :grace_period_deductions])
     # construct_table_rows defined in UsersHelper
@@ -23,8 +23,8 @@ class StudentsController < ApplicationController
   end
 
   def edit
-    @user = Student.find_by_id(params[:id]) 
-  end 
+    @user = Student.find_by_id(params[:id])
+  end
 
   def update
     return unless request.post?
@@ -38,7 +38,7 @@ class StudentsController < ApplicationController
       redirect_to :action => 'index'
     end
   end
-  
+
   def bulk_modify
     student_ids = params[:student_ids]
     begin
@@ -71,7 +71,7 @@ class StudentsController < ApplicationController
   def create
     return unless request.post?
     # Default attributes: role = TA or role = STUDENT
-    # params[:user] is a hash of values passed to the controller 
+    # params[:user] is a hash of values passed to the controller
     # by the HTML form with the help of ActiveView::Helper::
     @user = Student.new(params[:user])
     # Return unless the save is successful; save inherted from
@@ -79,9 +79,9 @@ class StudentsController < ApplicationController
     # updates the existing record
     return unless @user.save
     flash[:success] = I18n.t("students.create_success", :user_name => @user.user_name)
-    redirect_to :action => 'index' # Redirect 
+    redirect_to :action => 'index' # Redirect
   end
-  
+
 
   #downloads users with the given role as a csv list
   def download_student_list
@@ -101,13 +101,13 @@ class StudentsController < ApplicationController
     end
     send_data(output, :type => format, :disposition => "inline")
   end
-  
-  def upload_student_list  
+
+  def upload_student_list
     if request.post? && !params[:userlist].blank?
       begin
         result = User.upload_user_list(Student, params[:userlist])
         if result[:invalid_lines].size > 0
-          flash[:invalid_lines] = result[:invalid_lines]        
+          flash[:invalid_lines] = result[:invalid_lines]
         end
         flash[:success] = result[:upload_notice]
       rescue RuntimeError
@@ -116,8 +116,8 @@ class StudentsController < ApplicationController
 
     end
     redirect_to :action => 'index'
-  end  
-  
+  end
+
   def delete_grace_period_deduction
     grace_deduction = GracePeriodDeduction.find(params[:id])
     student_id = grace_deduction.membership.user.id
@@ -125,5 +125,5 @@ class StudentsController < ApplicationController
     student = Student.find(student_id)
     @grace_period_deductions = student.grace_period_deductions
   end
- 
+
 end
