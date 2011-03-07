@@ -3,6 +3,7 @@ require File.join(File.dirname(__FILE__),'/../blueprints/blueprints')
 require File.join(File.dirname(__FILE__),'/../blueprints/helper')
 require 'shoulda'
 require 'time-warp'
+require 'machinist'
 
 class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
 
@@ -12,17 +13,19 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
     assert rule.save
   end
   
-  context "A section with penalty_decay_period_submission rules" do
+  context "A section with penalty_decay_period_submission rules." do
+  
     setup do
-      @grouping = Grouping.make
-      sm = StudentMembership.make(:grouping => @grouping, :membership_status => StudentMembership::STATUSES[:inviter])
+      @group = Group.make
+      @grouping = Grouping.make(:group => @group)
+      @membership = StudentMembership.make(:grouping => @grouping, :membership_status => StudentMembership::STATUSES[:inviter])
       @assignment = @grouping.assignment
       @rule = PenaltyDecayPeriodSubmissionRule.new
       @assignment.replace_submission_rule(@rule)
       PenaltyDecayPeriodSubmissionRule.destroy_all
       @rule.save
       
-      # Instructor sets up a course.
+      # An Instructor sets up a course.
       @assignment.due_date = Time.now + 2.days
       
       # Add two 24 hour penalty decay periods
@@ -31,40 +34,58 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
       add_period_helper(@assignment.submission_rule,24,10,12)
       # Collection date is in 4 days.
       @assignment.save
-    end
     
-    # A student logs in, triggering the repo folder
+      @grouping.create_grouping_repository_folder
+    end
     
     teardown do
       destroy_repos
     end
     
     should "be able to calculate collection time" do
-      assert_equal @assignment.due_date, @rule.calculate_collection_time
+      assert Time.now < @assignment.submission_rule.calculate_collection_time
     end
     
     should "be able to calculate collection time for a grouping" do
-      assert_equal @assignment.due_date, @rule.calculate_grouping_collection_time(@grouping)
+      assert Time.now <  @assignment.due_date, @rule.calculate_grouping_collection_time(@membership.grouping)
     end
-  end
+    
+    should "not apply decay period deductions for on-time submissions" do
+      # Student hands in some files on time.
+      pretend_now_is(Time.now + 1.days) do
+        assert Time.now < @assignment.due_date
+        assert Time.now < @assignment.submission_rule.calculate_collection_time
+        assert Time.now < @assignment.submission_rule.calculate_grouping_collection_time(@membership.grouping)
+      
+        @group.access_repo do |repo|
+          txn = repo.get_transaction("test")
+          txn = add_file_helper(txn, 'TestFile.java', 'Some contents for TestFile.java')
+          txn = add_file_helper(txn, 'Test.java', 'Some contents for Test.java')
+          txn = add_file_helper(txn, 'Driver.java', 'Some contents for Driver.java')
+          repo.commit(txn)
+        end
+      end
+      
+      # An instructor begins grading
+      pretend_now_is(Time.now + 7.days) do
+        submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
+        submission = @assignment.submission_rule.apply_submission_rule(submission)
+        
+        # Assert that this submission did not get a penalty
+        result = submission.result
+        assert_not_nil result
+        assert result.extra_marks.empty?
+        assert_equal 0, result.get_total_extra_percentage
+        
+        # We should have collected all files in the repository.
+        assert_not_nil submission.submission_files.find_by_filename("TestFile.java")
+        assert_not_nil submission.submission_files.find_by_filename("Test.java")
+        assert_not_nil submission.submission_files.find_by_filename("Driver.java")
+      end
+    end
 
-  # Should not apply penalties if Submission collection date is before the due date.
-  should "not apply penalties to on time submission." do
-    assignment = Assignment.make
-    assignment.due_date = Time.now + 1.days
-    submission = Submission.make
-    submission.revision_timestamp = Time.now
-    rule = PenaltyDecayPeriodSubmissionRule.new
-    assignment.replace_submission_rule(rule)
-    result_extra_marks_num = submission.result.extra_marks.size
-    submission = assignment.submission_rule.apply_submission_rule(submission)
-    assert_equal result_extra_marks_num, submission.result.extra_marks.size
-  end
-
-  should "add a 10% penalty to the submission result" do
-    # Student submits some files before the due date...
-  end
-
+  end #context
+  
   private
 
   def add_file_helper(txn, file_name, file_contents)
@@ -81,4 +102,5 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
     period.interval = interval
     period.save
   end
+  
 end
