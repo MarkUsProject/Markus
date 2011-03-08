@@ -26,12 +26,12 @@ module Api
       end
 
       # No user found so create new one
-
-      if params[:user_type].downcase == "student"
+      param_user_type = params[:user_type].downcase
+      if param_user_type == "student"
         user_type = Student
-      elsif params[:user_type].downcase == "ta" || params[:user_type].downcase == "grader"
+      elsif param_user_type == "ta" || param_user_type == "grader"
         user_type = Ta
-      elsif params[:user_type].downcase == "admin"
+      elsif param_user_type == "admin"
         user_type = Admin
       else # Unkown user_type, Invalid HTTP params.
         render :file => "#{RAILS_ROOT}/public/422.xml", :status => 409
