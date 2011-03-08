@@ -4,7 +4,7 @@ module Api
   # Allows for pushing of test results into MarkUs (e.g. from automated test runs).
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class UsersController < MainApiController
-    # Requires user_name, last_name, first_name, user_class
+    # Requires user_name, last_name, first_name, user_type
     def create
       if !request.post?
         # pretend this URL does not exist
@@ -12,7 +12,7 @@ module Api
         return
       end
 
-      if !has_required_http_params?(params)
+      if !has_required_http_params_and_user_type?(params)
         # incomplete/invalid HTTP params
         render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
         return
@@ -26,30 +26,33 @@ module Api
       end
 
       # No user found so create new one
-      row = [params[:user_name], params[:last_name], params[:first_name]]
 
-      if params[:user_class] == "Student"
-        user_class = Student
-      elsif params[:user_class] == "Ta"
-        user_class = Ta
-      elsif params[:user_class] == "Admin"
-        user_class = Admin
-      else # Unkown user_class, Invalid HTTP params.
+      if params[:user_type].downcase == "student"
+        user_type = Student
+      elsif params[:user_type].downcase == "ta" || params[:user_type].downcase == "grader"
+        user_type = Ta
+      elsif params[:user_type].downcase == "admin"
+        user_type = Admin
+      else # Unkown user_type, Invalid HTTP params.
         render :file => "#{RAILS_ROOT}/public/422.xml", :status => 409
         return
-
       end
 
-      if(User.add_user(user_class, row))
-          render :file => "#{RAILS_ROOT}/public/200.xml", :status => 200
-          return
+      attributes = {:user_name => params[:user_name],
+                    :last_name => params[:last_name],
+                    :first_name => params[:first_name]}
+
+      new_user = user_type.new(attributes)
+      if !new_user.save
+        # Some error occurred
+        render :file => "#{RAILS_ROOT}/public/500.xml", :status => 500
+        return
       end
 
-      # Some other error occurred
-      render :file => "#{RAILS_ROOT}/public/500.xml", :status => 500
+      # Otherwise everything went alright.
+      render :file => "#{RAILS_ROOT}/public/200.xml", :status => 200
       return
     end
-
 
     # Requires nothing, does nothing.
     def destroy
@@ -59,10 +62,45 @@ module Api
     end
 
     # Requires user_name, first_name, last_name [, new_user_name]
-    # TEMPORARY: Have not implemented yet.
     def update
-      # pretend this URL does not exist
-      render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
+      if !request.put?
+        # pretend this URL does not exist
+        render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
+        return
+      end
+
+      if !has_required_http_params?(params)
+        # incomplete/invalid HTTP params
+        render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
+        return
+      end
+
+      # If no user is found, render an error.
+      # SEE: render will change to a view with a more meaningful message.
+      user = User.find_by_user_name(params[:user_name])
+      if user.nil?
+        render :file => "#{RAILS_ROOT}/public/422.xml", :status => 409
+        return
+      end
+
+      updated_user_name = params[:user_name]
+      if !params[:new_user_name].blank?
+        updated_user_name = params[:new_user_name]
+      end
+
+      attributes = {:user_name => updated_user_name,
+                    :last_name => params[:last_name],
+                    :first_name => params[:first_name]}
+
+      user.attributes = attributes
+      if !user.save
+        # Some error occurred
+        render :file => "#{RAILS_ROOT}/public/500.xml", :status => 500
+        return
+      end
+
+      # Otherwise everything went alright.
+      render :file => "#{RAILS_ROOT}/public/200.xml", :status => 200
       return
     end
 
@@ -110,7 +148,10 @@ module Api
       return has_required_http_param_user_name?(param_hash) &&
           !param_hash[:first_name].blank? &&
           !param_hash[:last_name].blank? &&
-          !param_hash[:user_class].blank?
     end
+
+    def has_required_http_params_and_user_type?(param_hash)
+      return has_required_http_params &&
+          !param_hash[:user_type].blank?
   end # end TestResultsController
 end
