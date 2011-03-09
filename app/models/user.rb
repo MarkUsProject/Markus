@@ -176,12 +176,8 @@ class User < ActiveRecord::Base
       if key == :section_name
         if !val.nil?
           # check if the section already exist
-          section = Section.find_by_name(val)
-          if section.nil?
-            section = Section.new
-            section.name = val
-            section.save
-          end
+          section = Section.find_or_create_by_name(val)
+          section.save
           user_attributes["section_id"] = section.id
         end
       else
