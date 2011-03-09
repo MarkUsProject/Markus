@@ -34,7 +34,7 @@ module Api
       elsif param_user_type == "admin"
         user_type = Admin
       else # Unkown user_type, Invalid HTTP params.
-        render :file => "#{RAILS_ROOT}/public/422.xml", :status => 409
+        render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
         return
       end
 
@@ -76,15 +76,20 @@ module Api
       end
 
       # If no user is found, render an error.
-      # SEE: render will change to a view with a more meaningful message.
+      # Note: render will change to a view with a more meaningful message.
       user = User.find_by_user_name(params[:user_name])
       if user.nil?
-        render :file => "#{RAILS_ROOT}/public/422.xml", :status => 409
+        render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
         return
       end
 
       updated_user_name = params[:user_name]
       if !params[:new_user_name].blank?
+        # Make sure new user_name does not exist
+        if !User.find_by_user_name(params[:new_user_name]).nil?
+          render :file => "#{RAILS_ROOT}/public/409.xml", :status => 409
+          return
+        end
         updated_user_name = params[:new_user_name]
       end
 
@@ -144,14 +149,17 @@ module Api
       return !param_hash[:user_name].blank?
     end
 
+    # Checks user_name, first_name, last_name.
     def has_required_http_params?(param_hash)
       return has_required_http_param_user_name?(param_hash) &&
           !param_hash[:first_name].blank? &&
-          !param_hash[:last_name].blank? &&
+          !param_hash[:last_name].blank?
     end
 
+    # Checks user_name, first_name, last_name, user_type.
     def has_required_http_params_and_user_type?(param_hash)
-      return has_required_http_params &&
+      return has_required_http_params?(param_hash) &&
           !param_hash[:user_type].blank?
-  end # end TestResultsController
+    end
+  end # end UsersController
 end
