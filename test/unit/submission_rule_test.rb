@@ -4,6 +4,8 @@ require File.join(File.dirname(__FILE__),'/../blueprints/helper')
 require 'shoulda'
 
 class SubmissionRuleTest < ActiveSupport::TestCase
+  fixtures :all
+
   def setup
     setup_group_fixture_repos
   end
@@ -14,7 +16,7 @@ class SubmissionRuleTest < ActiveSupport::TestCase
 
   def test_can_create
     rule = SubmissionRule.new
-    rule.assignment = assignments(:assignment_1)
+    rule.assignment = Assignment.make
     assert rule.save
   end
 
@@ -29,7 +31,7 @@ class SubmissionRuleTest < ActiveSupport::TestCase
   end
 
   def test_get_collection_time
-    a = assignments(:assignment_4)
+    a = Assignment.make
     assert_equal(a.due_date, a.submission_rule.get_collection_time)
   end
 
@@ -38,7 +40,7 @@ class SubmissionRuleTest < ActiveSupport::TestCase
 
   def test_has_required_methods
     rule = SubmissionRule.new
-    rule.assignment = assignments(:assignment_1)
+    rule.assignment = Assignment.make
 
     assert_raise NotImplementedError do
       rule.commit_after_collection_message
