@@ -4,7 +4,7 @@ require 'faker'
 
 Sham.section_name {Faker::Name.name}
 
-Sham.user_name {Faker::Name.name}
+Sham.user_name {Faker::Internet.user_name}
 Sham.admin_user_name {|i| "machinist_admin#{i}"}
 Sham.student_user_name {|i| "machinist_student#{i}"}
 Sham.ta_user_name {|i| "machinist_ta#{i}"}
@@ -78,6 +78,10 @@ end
 AssignmentFile.blueprint do
   assignment
   filename
+end
+
+AssignmentStat.blueprint do
+  assignment_id {0}
 end
 
 CriterionTaAssociation.blueprint do
@@ -203,7 +207,7 @@ end
 SectionDueDate.blueprint do
   section {Section.make}
   assignment {Assignment.make}
-  due_date 
+  due_date
 end
 
 Student.blueprint do
@@ -282,8 +286,4 @@ end
 Token.blueprint do
   grouping_id {Grouping.make.id}
   tokens {5}
-end
-
-AssignmentStat.blueprint do
-  assignment_id {0}
 end

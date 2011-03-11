@@ -195,7 +195,7 @@ Markus::Application.configure do
   # CSV upload order of fields (usually you don't want to change this)
   ###################################################################
   # Order of student CSV uploads
-  USER_STUDENT_CSV_UPLOAD_ORDER = [:user_name, :last_name, :first_name]
+  USER_STUDENT_CSV_UPLOAD_ORDER = [:user_name, :last_name, :first_name, :section_name]
   # Order of graders CSV uploads
   USER_TA_CSV_UPLOAD_ORDER  = [:user_name, :last_name, :first_name]
 

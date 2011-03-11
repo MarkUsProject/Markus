@@ -1,0 +1,17 @@
+<div id="remark_request_edit">
+  <% remote_form_for submission, :url => {:action => 'update_remark_request',
+                                          :id => submission.id,
+                                          :assignment_id => assignment.id} do |f| %>
+    <%= f.text_area :remark_request, :cols => 50, :rows => 5,
+                    :id => 'remark_request_text_area',
+                    :onkeydown => "enableRemarkRequestButtons();" %>
+    <div>
+      <%= hidden_field_tag "real_commit", "Submit" %>
+      <%= f.submit t(:save_changes), :OnClick => "$('real_commit').value='Save'",
+                   :disabled => true, :id => "remark_request_save" %>
+      <%= f.submit t(:submit_request),
+                   :disabled => true, :id => "remark_request_submit",
+                   :confirm => t(:confirm_remark_submit) %>
+    </div>
+  <% end -%>
+</div>

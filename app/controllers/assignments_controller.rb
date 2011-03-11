@@ -419,6 +419,18 @@ class AssignmentsController < ApplicationController
   
   def process_assignment_form(assignment, params)
     assignment.attributes = params[:assignment]
+    # Work around rails' (v2.3.8 and potentially v2.3.9)
+    # accept_nested_attributes_for bug, which do not allow
+    # us to remove assignment files. We do not support rails
+    # < 2.3.8.
+    if ["2.3.8", "2.3.9"].include?(Rails.version) && !params[:assignment][:assignment_files_attributes].nil?
+      params[:assignment][:assignment_files_attributes].each do |key,assignment_file|
+        if assignment_file[:_destroy] == "1"
+          file_to_destroy = assignment.assignment_files.find_by_id(assignment_file[:id])
+          file_to_destroy.destroy
+        end
+      end
+    end
     # Was the SubmissionRule changed?  If so, wipe out any existing
     # Periods, and switch the type of the SubmissionRule.
     # This little conditional has to do some hack-y workarounds, since

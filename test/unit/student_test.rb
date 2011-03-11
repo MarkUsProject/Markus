@@ -1,64 +1,205 @@
-# test using MACHINIST
+# Context architecture
+#
+# TODO: Complete contexts
+#
+# - Tests on database structure and model
+# - CSV and YML upload
+#  - with no duplicates and no sections
+#  - with duplicates and no sections
+#  - with no duplicates and sections
+#  - with duplicates and sections
+#  - with no duplicates and one section
+#  - with duplicates and sections and update of a section
+#  - with an invalid file
 
-require File.dirname(__FILE__) + '/../test_helper'
-require File.join(File.dirname(__FILE__), '/../blueprints/blueprints')
+require File.join(File.dirname(__FILE__),'/../test_helper')
+require File.join(File.dirname(__FILE__),'/../blueprints/blueprints')
 require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 require 'shoulda'
 require 'mocha'
 
 class StudentTest < ActiveSupport::TestCase
-  should have_many :accepted_groupings
-  should have_many :pending_groupings
-  should have_many :rejected_groupings
-  should have_many :student_memberships
-  should have_many :grace_period_deductions
-  should belong_to :section
+
+  context "A good Student model" do
+
+    should have_many(:accepted_groupings).through(:memberships)
+    should have_many(:pending_groupings).through(:memberships)
+    should have_many(:rejected_groupings).through(:memberships)
+    should have_many :student_memberships
+    should have_many :grace_period_deductions
+    should belong_to :section
+
+    should validate_numericality_of :grace_credits
+
+  end
 
   def setup
     clear_fixtures
   end
 
-  # Update tests ---------------------------------------------------------
+  context "CSV and YML upload" do
 
-  # These tests are for the CSV/YML upload functions.  They're testing
-  # to make sure we can easily create/update users based on their user_name
+    # Update tests ---------------------------------------------------------
 
-  # Test if user with a unique user number has been added to database
-  def test_student_csv_upload_with_no_duplicates
-    csv_file_data = "newuser1,USER1,USER1
+    # These tests are for the CSV/YML upload functions.  They're testing
+    # to make sure we can easily create/update users based on their user_name
+
+    # Test if user with a unique user number has been added to database
+
+    context "with no duplicates and no sections" do
+
+      setup do
+        csv_file_data = "newuser1,USER1,USER1
 newuser2,USER2,USER2"
-    num_users = Student.all.size
-    User.upload_user_list(Student, csv_file_data)
 
-    assert_equal num_users + 2, Student.all.size, "Expected a different number of users - the CSV upload didn't work"
+        @num_users = Student.all.size
 
-    csv_1 = Student.find_by_user_name('newuser1')
-    assert_not_nil csv_1, "Couldn't find a user uploaded by CSV"
-    assert_equal "USER1", csv_1.last_name, "Last name did not match"
-    assert_equal "USER1", csv_1.first_name, "First name did not match"
+        User.upload_user_list(Student, csv_file_data)
 
-    csv_2 = Student.find_by_user_name('newuser2')
-    assert_not_nil csv_2, "Couldn't find a user uploaded by CSV"
-    assert_equal "USER2", csv_2.last_name, "Last name did not match"
-    assert_equal "USER2", csv_2.first_name, "First name did not match"
-  end
+        @csv_1 = Student.find_by_user_name('newuser1')
+        @csv_2 = Student.find_by_user_name('newuser2')
+      end
 
-  def test_student_csv_upload_with_duplicate
-    new_user = Student.new({:user_name => "exist_student", :first_name => "Nelle", :last_name => "Varoquaux"})
+      should "have no duplicates" do
+        assert_equal @num_users + 2, Student.all.size, "Expected a different number of users - the CSV upload didn't work"
 
-    assert new_user.save, "Could not create a new student"
+        assert_not_nil @csv_1, "Couldn't find a user uploaded by CSV"
+        assert_equal "USER1", @csv_1.last_name, "Last name did not match"
+        assert_equal "USER1", @csv_1.first_name, "First name did not match"
 
-    csv_file_data = "newuser1,USER1,USER1
+        assert_not_nil @csv_2, "Couldn't find a user uploaded by CSV"
+        assert_equal "USER2", @csv_2.last_name, "Last name did not match"
+        assert_equal "USER2", @csv_2.first_name, "First name did not match"
+      end
+    end
+
+    context "with duplicates and no sections" do
+
+      setup do
+
+      end
+
+      should "have no duplicates" do
+        new_user = Student.new({:user_name => "exist_student", :first_name => "Nelle", :last_name => "Varoquaux"})
+
+        assert new_user.save, "Could not create a new student"
+
+        csv_file_data = "newuser1,USER1,USER1
 exist_student,USER2,USER2"
 
-    User.upload_user_list(Student, csv_file_data)
+        User.upload_user_list(Student, csv_file_data)
 
-    user = Student.find_by_user_name("exist_student")
-    assert_equal "USER2", user.last_name, "Last name was not properly overwritten by CSV file"
-    assert_equal "USER2", user.first_name, "First name was not properly overwritten by CSV file"
+        user = Student.find_by_user_name("exist_student")
+        assert_equal "USER2", user.last_name, "Last name was not properly overwritten by CSV file"
+        assert_equal "USER2", user.first_name, "First name was not properly overwritten by CSV file"
 
-    other_user = Student.find_by_user_name("newuser1")
-    assert_not_nil other_user, "Could not find the other user uploaded by CSV"
+        other_user = Student.find_by_user_name("newuser1")
+        assert_not_nil other_user, "Could not find the other user uploaded by CSV"
+      end
+    end
+
+    context "with no duplicates and sections" do
+
+      setup do
+        csv_file_data = "newuser1,USER1,USER1,SECTION1
+newuser2,USER2,USER2,SECTION2"
+
+        @num_users = Student.all.size
+
+        User.upload_user_list(Student, csv_file_data)
+
+        @csv_1 = Student.find_by_user_name('newuser1')
+        @csv_2 = Student.find_by_user_name('newuser2')
+      end
+
+      should "have no duplicates and correct sections" do
+        assert_equal @num_users + 2, Student.all.size, "Expected a different number of users - the CSV upload didn't work"
+
+        assert_not_nil @csv_1, "Couldn't find a user uploaded by CSV"
+        assert_equal "USER1", @csv_1.last_name, "Last name did not match"
+        assert_equal "SECTION1", @csv_1.section.name, "Section did not match"
+        assert_equal "USER1", @csv_1.first_name, "First name did not match"
+
+        assert_not_nil @csv_2, "Couldn't find a user uploaded by CSV"
+        assert_equal "USER2", @csv_2.last_name, "Last name did not match"
+        assert_equal "SECTION2", @csv_2.section.name, "Section did not match"
+        assert_equal "USER2", @csv_2.first_name, "First name did not match"
+      end
+    end
+
+    context "with no duplicates and only one section" do
+
+      setup do
+        csv_file_data = "newuser1,USER1,USER1,SECTION1
+newuser2,USER2,USER2"
+
+        @num_users = Student.all.size
+
+        User.upload_user_list(Student, csv_file_data)
+
+        @csv_1 = Student.find_by_user_name('newuser1')
+        @csv_2 = Student.find_by_user_name('newuser2')
+      end
+
+      should "have no duplicates and correct sections" do
+        assert_equal @num_users + 2, Student.all.size, "Expected a different number of users - the CSV upload didn't work"
+
+        assert_not_nil @csv_1, "Couldn't find a user uploaded by CSV"
+        assert_equal "USER1", @csv_1.last_name, "Last name did not match"
+        assert_equal "SECTION1", @csv_1.section.name, "Section did not match"
+        assert_equal "USER1", @csv_1.first_name, "First name did not match"
+
+        assert_not_nil @csv_2, "Couldn't find a user uploaded by CSV"
+        assert_equal "USER2", @csv_2.last_name, "Last name did not match"
+        assert_nil @csv_2.section, "Section should be nil"
+        assert_equal "USER2", @csv_2.first_name, "First name did not match"
+      end
+    end
+
+    context "with duplicates and sections and update of a section" do
+
+      setup do
+        @section = Section.create(:name => 'SECTION0')
+      end
+
+      should "have no duplicates" do
+        new_user = Student.new(:user_name => "exist_student",
+                               :first_name => "Nelle",
+                               :last_name => "Varoquaux",
+                               :section => @section)
+
+        assert new_user.save, "Could not create a new student"
+
+        csv_file_data = "newuser1,USER1,USER1,SECTION1
+exist_student,USER2,USER2,SECTION2"
+
+        User.upload_user_list(Student, csv_file_data)
+
+        user = Student.find_by_user_name("exist_student")
+        assert_equal "USER2", user.last_name, "Last name was not properly overwritten by CSV file"
+        assert_equal "SECTION2", user.section.name, "Section was not properly overwritten by CSV file"
+        assert_equal "USER2", user.first_name, "First name was not properly overwritten by CSV file"
+
+        other_user = Student.find_by_user_name("newuser1")
+        assert_not_nil other_user, "Could not find the other user uploaded by CSV"
+      end
+    end
+
+    context "with an invalid file" do
+
+      setup do
+        @csv_file_data = "newuser1USER1USER1,
+newuser2,USER2,USER2"
+
+        @num_users = Student.all.size
+        @result = User.upload_user_list(Student, @csv_file_data)
+      end
+
+      should "not add any student to the database" do
+        assert @result[:invalid_lines],["newuser1USER1USER1,"]
+        assert Student.all.size, @num_users + 1
+      end
+    end
   end
 
   context "A pair of students in the same group" do

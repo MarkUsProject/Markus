@@ -1,0 +1,3 @@
+page.replace 'overall_remark_comment', :partial => 'results/marker/overall_remark_comment', :locals => {:result => @result}
+page.visual_effect(:highlight, 'overall_remark_comment_text_area', :startcolor => '#BDFCC9')
+

@@ -26,5 +26,12 @@ class SubmissionTest < ActiveSupport::TestCase
       assert_nil(Submission.get_submission_by_group_and_assignment("group_name_not_there", "A_not_there"))
     end
   end
+  
+  should "create a remark result" do
+    s = submissions(:submission_1)
+    s.create_remark_result_object
+    assert_not_nil s.remark_result, "Remark result was supposed to be created"
+    assert_equal s.remark_result.marking_state, Result::MARKING_STATES[:unmarked], "Remark result marking_state should have been automatically set to unmarked"
+  end
 
 end
