@@ -782,10 +782,10 @@ en:
         alert: "You must select the Penalty Decay Submission Rule to add a decay period."
         from: "From"
         to: "to"
-        hours: "hours..."
+        hours: "hour(s)..."
         after: "After"
         each: "each"
-        deduct: "Deduct:"
+        deduct: "Deduct"
         for: "for"
 
       penalty_period_submission_rule:

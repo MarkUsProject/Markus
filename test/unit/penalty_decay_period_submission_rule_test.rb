@@ -136,7 +136,7 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
         assert_equal -10, penalty.extra_mark
         assert_equal ExtraMark::UNITS[:percentage], penalty.unit
         
-        # We should have all files except NotLincluded.java in the repository.
+        # We should have all files except NotIncluded.java in the repository.
         assert_not_nil submission.submission_files.find_by_filename("TestFile.java")
         assert_not_nil submission.submission_files.find_by_filename("Test.java")
         assert_not_nil submission.submission_files.find_by_filename("Driver.java")
