@@ -191,7 +191,7 @@
     </div>
     <p>
       <%= rule.radio_button :type, "PenaltyDecayPeriodSubmissionRule", :onchange => "change_submission_rule();", :id => "penalty_decay_period_submission_rule" %>
-      <%= label_tag "penalty_decay_period_submission_rule", t ("submission_rules.penalty_decay_period_submission_rule.form_description"), :class => "radio_label" %>
+      <%= label_tag "penalty_decay_period_submission_rule", t("submission_rules.penalty_decay_period_submission_rule.form_description"), :class => "radio_label" %>
       <span class="penalty_decay_period_link">
         <%= add_penalty_decay_period_link(t("submission_rules.penalty_decay_period_submission_rule.add_penalty_decay"), rule, "penalty_decay_period_link") %>
       </span>
