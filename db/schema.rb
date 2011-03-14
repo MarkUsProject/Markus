@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110204023647) do
+ActiveRecord::Schema.define(:version => 20110313200240) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -335,10 +335,11 @@ ActiveRecord::Schema.define(:version => 20110204023647) do
     t.datetime "created_at"
     t.integer  "submission_version"
     t.boolean  "submission_version_used"
-    t.integer  "revision_number",         :null => false
-    t.datetime "revision_timestamp",      :null => false
+    t.integer  "revision_number",          :null => false
+    t.datetime "revision_timestamp",       :null => false
     t.integer  "remark_result_id"
     t.text     "remark_request"
+    t.datetime "remark_request_timestamp"
   end
 
   add_index "submissions", ["grouping_id"], :name => "index_submissions_on_grouping_id"
