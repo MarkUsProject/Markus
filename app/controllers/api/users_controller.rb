@@ -1,7 +1,7 @@
 module Api
 
   #=== Description
-  # Allows for pushing of test results into MarkUs (e.g. from automated test runs).
+  # Allows for adding, modifying and showing users into MarkUs.
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class UsersController < MainApiController
     # Requires user_name, last_name, first_name, user_type
@@ -122,7 +122,7 @@ module Api
         render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
         return
       end
-      # check if there's a valid submission
+      # check if there's a valid user.
       user = User.find_by_user_name(params[:user_name])
 
       if user.nil?
@@ -161,5 +161,5 @@ module Api
       return has_required_http_params?(param_hash) &&
           !param_hash[:user_type].blank?
     end
-  end # end UsersController
+    end # end UsersController
 end
