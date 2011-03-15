@@ -364,7 +364,7 @@ en:
       revised_by:           "Revised By"
       replace:              "Replace"
       delete:               "Delete"
-      can_begin_grading: "Can begin grading"
+      can_begin_grading:    "Can begin grading"
 
     grade_entry_forms:
       blank_field: "can't be blank"
@@ -980,6 +980,7 @@ en:
       update_section: "Update Section"
       add_section: "Add a new section"
       manage_users: "Manage Users"
+      due_dates_type: "Section due dates type: "
       create:
         success: "Section successfully created."
         error:   "Failed to create section."

@@ -327,7 +327,6 @@ fr:
       marking_state:        "Affichage de la note"
       grace_credits_used:   "Utilisation des \"grace credits\""
       final_grade:          "Note finale"
-      assignment_average:   "Moyenne"
       class_average:        "Moyenne: %{results_average}"
       show_all:             "Tous"
       show_unmarked:        "Non notés"
@@ -351,6 +350,7 @@ fr:
       revised_by:           "Révision par"
       replace:              "Remplace"
       delete:               "Supprimer"
+      can_begin_grading:    "Peut être évaluée"
 
     grade_entry_forms:
       blank_field: "doit être rempli(e)"
@@ -951,6 +951,7 @@ fr:
       update_section: "Édition de la section"
       add_section: "Ajouter une section"
       manage_users: "Gestion des utilisateurs"
+      due_dates_type: "Activer les dates de rendu par section : "
       create:
         success: "Section créée."
         error:   "Section non créée."
