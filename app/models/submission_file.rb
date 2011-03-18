@@ -140,15 +140,9 @@ class SubmissionFile < ActiveRecord::Base
 
   # Export this file from the svn repository into storage_path
   # This will overwrite any files with the same name in the storage path.
-  # FIXME That whole hack with the temporary directory surely should *not*
-  #
-  # exist. This needs to be reimplemented using a proper svn export of the
-  # file directly, and not the whole repository. Note that this will also
-  # improve the speed of the process by *a lot* and decrease the disk access 
   def export_file(storage_path)
     m_logger = MarkusLogger.instance
     m_logger.log("Exporting #{self.filename} from student repository")
-    temp_dir = File.join(storage_path, 'temp_export')
     begin
       #Create the storage directories if they dont already exist
       FileUtils.makedirs(storage_path)
@@ -157,8 +151,6 @@ class SubmissionFile < ActiveRecord::Base
       repo.export(File.join(storage_path, self.filename),
                   self.filename,
                   revision_number)
-    ensure
-      FileUtils.remove_dir(temp_dir, true) if File.exists?(temp_dir)      
     end
 
     # a force true is used on the copy of the file, so let's check that files
