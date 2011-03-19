@@ -139,7 +139,8 @@ class SubmissionFile < ActiveRecord::Base
   end
 
   # Export this file from the svn repository into storage_path
-  # This will overwrite any files with the same name in the storage path.
+  # If a file of the same name as the one we are trying to export exists in
+  # the given repository, it will be overwritten by the svn exports
   def export_file(storage_path)
     m_logger = MarkusLogger.instance
     m_logger.log("Exporting #{self.filename} from student repository")
@@ -153,9 +154,9 @@ class SubmissionFile < ActiveRecord::Base
                   revision_number)
     end
 
-    # a force true is used on the copy of the file, so let's check that files
-    # does exist before claiming the export has been successful
-    if File.exists?(file_path)
+    # Let's check the file exists befor claiming the file has been exported
+    # properly
+    if File.exists?(File.join(storage_path, self.filename))
       m_logger.log("Successfuly exported #{self.filename} from student repository")
     else
       m_logger.error("Failed to export #{self.filename} from student
