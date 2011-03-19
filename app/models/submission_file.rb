@@ -150,7 +150,7 @@ class SubmissionFile < ActiveRecord::Base
       repo = submission.grouping.group.repo
       revision_number = submission.revision_number
       repo.export(File.join(storage_path, self.filename),
-                  self.filename,
+                  File.join(path,self.filename),
                   revision_number)
     end
 
@@ -159,7 +159,7 @@ class SubmissionFile < ActiveRecord::Base
     if File.exists?(File.join(storage_path, self.filename))
       m_logger.log("Successfuly exported #{self.filename} from student repository")
     else
-      m_logger.error("Failed to export #{self.filename} from student
+      m_logger.log("Failed to export #{self.filename} from student
                       repository")
     end
   end
