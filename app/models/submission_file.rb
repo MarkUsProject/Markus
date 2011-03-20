@@ -150,7 +150,7 @@ class SubmissionFile < ActiveRecord::Base
       repo = submission.grouping.group.repo
       revision_number = submission.revision_number
       repo.export(File.join(storage_path, self.filename),
-                  File.join(path,self.filename),
+                  File.join(self.path, self.filename),
                   revision_number)
     end
 
