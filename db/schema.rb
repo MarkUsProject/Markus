@@ -247,6 +247,7 @@ ActiveRecord::Schema.define(:version => 20110313200240) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.float    "hours"
+    t.integer  "interval"
   end
 
   add_index "periods", ["submission_rule_id"], :name => "index_periods_on_submission_rule_id"
