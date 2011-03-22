@@ -96,7 +96,8 @@ class SubmissionFile < ActiveRecord::Base
     return unless MarkusConfigurator.markus_config_pdf_support && self.is_pdf?
     m_logger = MarkusLogger.instance
     storage_path = File.join(MarkusConfigurator.markus_config_pdf_storage,
-      self.submission.grouping.group.repository_name, self.path)
+      self.submission.grouping.group.repository_name,
+      self.path)
     file_path = File.join(storage_path, self.filename.split('.')[0] + '.jpg')
     self.export_file(storage_path)
     #Remove any old copies of this image if they exist
@@ -137,24 +138,30 @@ class SubmissionFile < ActiveRecord::Base
     return retrieved_file
   end
 
-  #Export this file from the svn repository into storage_path
-  #This will overwrite any files with the same name in the storage path.
+  # Export this file from the svn repository into storage_path
+  # If a file of the same name as the one we are trying to export exists in
+  # the given repository, it will be overwritten by the svn exports
   def export_file(storage_path)
     m_logger = MarkusLogger.instance
     m_logger.log("Exporting #{self.filename} from student repository")
-    temp_dir = File.join(storage_path, 'temp_export')
     begin
       #Create the storage directories if they dont already exist
       FileUtils.makedirs(storage_path)
       repo = submission.grouping.group.repo
       revision_number = submission.revision_number
-      repo.export(temp_dir, revision_number)
-      file_path = File.join(temp_dir, self.path, self.filename)
-      FileUtils.mv(file_path, File.join(storage_path, self.filename), :force => true)
-    ensure
-      FileUtils.remove_dir(temp_dir, true) if File.exists?(temp_dir)      
+      repo.export(File.join(storage_path, self.filename),
+                  File.join(self.path, self.filename),
+                  revision_number)
     end
-    m_logger.log("Successfuly exported #{self.filename} from student repository")
+
+    # Let's check the file exists befor claiming the file has been exported
+    # properly
+    if File.exists?(File.join(storage_path, self.filename))
+      m_logger.log("Successfuly exported #{self.filename} from student repository")
+    else
+      m_logger.log("Failed to export #{self.filename} from student
+                      repository")
+    end
   end
 
   private

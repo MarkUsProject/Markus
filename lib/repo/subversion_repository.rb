@@ -97,12 +97,21 @@ class SubversionRepository < Repository::AbstractRepository
   end
 
   # method : Export an existing Subversion repository to a new folder
-  def export(repo_dest_dir, revision_number=nil)
+  #
+  # If a filepath is given, the repo_dest_dir needs to point to a file, and
+  # all the repository on that path need to exist, or the export will fail.
+  def export(repo_dest_dir, filepath=nil, revision_number=nil)
     # Modify the path of the repository
     # If libsvn-ruby raise a segfault, check the first argument of
     # Svn::Client::export which must be an URI (ex : file:///home/...)
 
-    repo_path_dir = "file://" + expand_path(@repos_path)
+    if !filepath.nil?
+      repo_path_dir = "file://" + File.join(expand_path(@repos_path),
+                                                        filepath)
+    else
+      repo_path_dir = "file://" + expand_path(@repos_path)
+    end
+
     ctx = Svn::Client::Context.new
 
     # don't fail on non CA signed ssl server
@@ -119,11 +128,12 @@ class SubversionRepository < Repository::AbstractRepository
 
     # Raise an error if the destination repository already exists
     if (File.exists?(repo_dest_dir))
-      raise(ExportRepositoryAlreadyExists, "Exported repository already exists")
+      raise(ExportRepositoryAlreadyExists,
+            "Exported repository already exists")
     end
 
     begin
-      result = ctx.export( repo_path_dir, repo_dest_dir, revision_number, nil)
+      result = ctx.export(repo_path_dir, repo_dest_dir, revision_number, nil)
     end
 
     return result
@@ -488,7 +498,7 @@ class SubversionRepository < Repository::AbstractRepository
     return self.__write_out_authz_file(authz_file_contents)
   end
   
-  #Converts a pathname to an absolute pathname
+  # Converts a pathname to an absolute pathname
   def expand_path(file_name, dir_string = "/")
     expanded = File.expand_path(file_name, dir_string) 
     if RUBY_PLATFORM =~ /(:?mswin|mingw)/ #only if the platform is Windows
