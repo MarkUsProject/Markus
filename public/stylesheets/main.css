@@ -1137,6 +1137,47 @@ div#login div.error {
   margin-top: -15px;
 }
 
+/* Role Switching Interface */
+#role-switch {
+  position: absolute;
+  left: 90%;
+  margin-left: -200px;
+  width: 350px;
+  height: 170px;
+  border: solid Black 1px;
+  top: 10%;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border: 2px solid #ccc;
+}
+
+div#role-switch div#role-switch-content {
+  position: absolute;
+  bottom: 10px;
+}
+
+
+div#role-switch-greeting {
+  position: absolute;
+  font-weight: bold;
+  font-size: 20px;
+  right: 20px;
+  margin-top: -20px;
+  background-color: #fff;
+  color: #111;
+  padding: 8px;
+}
+
+
+#role-switch input.indent_button {
+  margin-left: 38%;
+}
+
+div#role-switch div.error {
+  position: relative;
+  text-align: center;
+  margin-top: 15px;
+}
 /* Student Interface: Assignment View*/
 
 .block {

@@ -19,6 +19,9 @@ class MainController < ApplicationController
   # is redirected to main page if session is still active and valid.
 
   def login
+    #The real_uid field of session keeps track of the uid of the original
+    # user that is logged in if there is a role switch
+    session[:real_uid] = nil
     # external auth has been done, skip markus authorization
     if MarkusConfigurator.markus_config_remote_user_auth
       if @markus_auth_remote_user.nil?
@@ -116,8 +119,14 @@ class MainController < ApplicationController
       return
     end
     m_logger = MarkusLogger.instance
-    m_logger.log("User '#{current_user.user_name}' logged out.")
-
+    if !session[:real_uid].nil? && !session[:uid].nil?
+      #An admin was logged in as a student or grader
+      m_logger.log("Admin '#{current_user.user_name}' logged out from '#{User.find_by_id(session[:uid]).get_user_name}'.")
+    else 
+      #The user was not assuming another role 
+      m_logger.log("User '#{current_user.user_name}' logged out.")
+    end    
+    
     clear_session
     cookies.delete :auth_token
     reset_session
@@ -136,7 +145,6 @@ class MainController < ApplicationController
       redirect_to :controller => 'assignments', :action => 'index'
       return
     end
-
     @assignments = Assignment.find(:all)
     render :action => 'index', :layout => 'content'
   end
@@ -162,6 +170,85 @@ class MainController < ApplicationController
   # See config/routes.rb
   def page_not_found
     render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
+  end
+
+
+#ROLE SWITCHING CODE
+  #Calls view in order for the admin to login as a user with a "lesser" privileges
+  def role_switching
+  end
+
+  #Authenticates the admin given the user that the admin will like to login as 
+  # and the password of the admin
+  def login_as
+
+    #if the current user already recorded matches the password just entered in
+    # grant the current user(admin) access to the account of the user name typed
+
+    # check for blank admin password. We know the admin login name already so 
+    #just pass that in
+
+    blank_login = params[:effective_user_login].blank?    
+    blank_pwd = params[:admin_password].blank?
+    flash[:role_switch_notice] = get_blank_message(blank_login, blank_pwd)
+    #check if admin login to switch roles was incorrect. Redirect admin to index
+    #invalid user name or password typed for a role with lesser privileges
+    redirect_to(:action => 'role_switching') && return if blank_login || blank_pwd
+
+    #Authenticate the admin that is trying to assume a different role
+    authenticate_response = User.authenticate(params[:user_login], 
+                                              params[:admin_password])
+    if authenticate_response == User::AUTHENTICATE_BAD_PLATFORM
+      flash[:role_switch_notice] = I18n.t("external_authentication_not_supported")
+      return
+    end
+    
+    if authenticate_response == User::AUTHENTICATE_SUCCESS
+      #The admin just verified his or her password
+      found_user = User.authorize(params[:effective_user_login]) 
+      # if not nil, user authorized to enter MarkUs
+      if found_user.nil?
+        # User not allowed to use MarkUs
+        flash[:role_switch_notice] = I18n.t(:login_failed)
+        redirect_to (:action => 'role_switching') 
+        return
+      end
+    else
+      flash[:role_switch_notice] = I18n.t(:login_failed)
+      return
+    end
+    
+    #Check if an admin is trying to login as another admin. Should not be allowed   
+    if found_user.admin?
+      flash[:role_switch_notice] = I18n.t(:cannot_login_as_another_admin)
+      redirect_to (:action => 'role_switching')
+      return
+    end
+   
+    #Log the admin that assumed the role of another user together with the time
+    #and date that the role switch occurred
+    m_logger = MarkusLogger.instance
+    m_logger.log("Admin '#{current_user.user_name}' logged in as '#{params[:effective_user_login]}'.")
+
+    #Get the name of the admin that is switching roles
+    session[:admin_first_name] = current_user.get_first_name
+    #Save the uid of the admin that is switching roles
+    session[:real_uid] = session[:uid]
+    #Change the uid of the current user
+    self.current_user = found_user
+
+    if logged_in?
+      uri = session[:redirect_uri]
+      session[:redirect_uri] = nil
+      refresh_timeout
+      current_user.set_api_key # set api key in DB for user if not yet set
+      # redirect to the main page of the viewer
+      redirect_to(:action => 'index')
+    else
+      flash[:role_switch_notice] = I18n.t(:login_failed)
+    end
+
+    #else thrown an error as the admin was not authenticated
   end
 
 private

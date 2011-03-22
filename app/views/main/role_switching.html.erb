@@ -1,0 +1,28 @@
+<div id="role-switch">
+
+  <div id="role-switch-greeting"><%= I18n.t(:switch_role) %></div>
+
+  <% if flash[:role_switch_notice] -%>
+    <div class="error"><%=h flash[:role_switch_notice] %></div>
+  <% end -%>
+  <div id="role-switch-content">
+    <!-- Role switching form -->    
+    <% form_tag({ :action => 'login_as', :id => nil }, :id => 'role_switch_form') do %>
+  
+        <%= label_tag 'effective_user_login', I18n.t(:login_as) -%>
+        <%= text_field_tag 'effective_user_login', nil, :tabindex => 10 %><br />
+
+        <%= label_tag 'admin_password', I18n.t(:admin_password) %>
+        <%= password_field_tag 'admin_password', nil, :tabindex => 20 %><br />
+  
+        <%= submit_tag I18n.t(:log_in), :disable_with => I18n.t(:logging_in), :tabindex => 100, :class => 'button indent_button'%>
+    <% end %>
+  </div>
+</div>
+
+<%# Try to put focus on the login text field on load %>
+<script type="text/javascript">
+//<![CDATA[
+  try{ document.getElementById('user_login').focus(); } catch(e) {}
+//]]>
+</script>

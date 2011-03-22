@@ -108,7 +108,14 @@ class User < ActiveRecord::Base
   def student?
     self.class == Student
   end
+  
+  def get_first_name
+    return self.first_name
+  end
 
+  def get_user_name
+    return self.user_name
+  end
   # Submission helper methods -------------------------------------------------
 
   def submission_for(aid)
