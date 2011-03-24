@@ -15,7 +15,7 @@
 		        :complete => "about_modal.open();" ) %>
 
     <% if !session[:real_uid].nil?%>
-      <b><%= session[:admin_first_name]%></b> <%= I18n.t(:is_logged_in_as)%> 
+      <b><%= User.find_by_id(session[:real_uid]).first_name %></b> <%= I18n.t(:is_logged_in_as)%> 
     <% end %>
 
     <%= @current_user.first_name %> <%= @current_user.last_name %>

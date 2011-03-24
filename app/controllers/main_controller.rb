@@ -19,9 +19,6 @@ class MainController < ApplicationController
   # is redirected to main page if session is still active and valid.
 
   def login
-    #The real_uid field of session keeps track of the uid of the original
-    # user that is logged in if there is a role switch
-    session[:real_uid] = nil
     # external auth has been done, skip markus authorization
     if MarkusConfigurator.markus_config_remote_user_auth
       if @markus_auth_remote_user.nil?
@@ -56,39 +53,12 @@ class MainController < ApplicationController
 
     # strip username
     params[:user_login].strip!
-
-    # check for blank username and password
-    blank_login = params[:user_login].blank?
-    blank_pwd = params[:user_password].blank?
-    flash[:login_notice] = get_blank_message(blank_login, blank_pwd)
-    redirect_to(:action => 'login') && return if blank_login || blank_pwd
-
-    # Two stage user verification: authentication and authorization
-    authenticate_response = User.authenticate(params[:user_login],
-                                              params[:user_password])
-    if authenticate_response == User::AUTHENTICATE_BAD_PLATFORM
-      flash[:login_notice] = I18n.t("external_authentication_not_supported")
-      return
-    end
-    if authenticate_response == User::AUTHENTICATE_SUCCESS
-      # Username/password combination is valid. Check if user is
-      # allowed to use MarkUs.
-      #
-      # sets this user as logged in if login is a user in MarkUs
-      found_user = User.authorize(params[:user_login])
-      # if not nil, user authorized to enter MarkUs
-      if found_user.nil?
-        # This message actually means "User not allowed to use MarkUs",
-        # but it's from a security-perspective
-        # not a good idea to report this to the outside world. It makes it
-        # easier for attempted break-ins
-        # if one can distinguish between existent and non-existent users.
-        flash[:login_notice] = I18n.t(:login_failed)
-        return
-      end
-    else
-      flash[:login_notice] = I18n.t(:login_failed)
-      return
+    
+    #Get information of the user that is trying to login if his or her 
+    #authentication is valid
+    found_user = get_user(params[:user_login], params[:user_login], params[:user_password], :login_notice, 'login')
+    if found_user.nil?
+      return 
     end
 
     # Has this student been hidden?
@@ -111,6 +81,47 @@ class MainController < ApplicationController
     end
   end
 
+  #Returns the user with user name "login" from the database given that the user
+  # with user name "login2" is authenticated. This function is called both by 
+  # function login and login_as.
+  def get_user(login, login2, password, notice, action)
+    # check for blank username and password
+    blank_login = login.blank?
+    blank_pwd = password.blank?
+    flash[notice] = get_blank_message(blank_login, blank_pwd)
+    redirect_to(:action => action) && return if blank_login || blank_pwd
+
+    # Two stage user verification: authentication and authorization
+    authenticate_response = User.authenticate(login2, 
+                                              password)
+    if authenticate_response == User::AUTHENTICATE_BAD_PLATFORM
+      flash[notice] = I18n.t("external_authentication_not_supported")
+      return
+    end
+    if authenticate_response == User::AUTHENTICATE_SUCCESS
+      # Username/password combination is valid. Check if user is
+      # allowed to use MarkUs.
+      #
+      # sets this user as logged in if login is a user in MarkUs
+      found_user = User.authorize(login) 
+      # if not nil, user authorized to enter MarkUs
+      if found_user.nil?
+        # This message actually means "User not allowed to use MarkUs",
+        # but it's from a security-perspective
+        # not a good idea to report this to the outside world. It makes it
+        # easier for attempted break-ins
+        # if one can distinguish between existent and non-existent users.
+        flash[notice] = I18n.t(:login_failed)
+        return
+      end
+    else
+      flash[notice] = I18n.t(:login_failed)
+      return
+    end
+
+    return found_user
+  end
+  
   # Clear the sesssion for current user and redirect to login page
   def logout
     logout_redirect = MarkusConfigurator.markus_config_logout_redirect
@@ -119,9 +130,12 @@ class MainController < ApplicationController
       return
     end
     m_logger = MarkusLogger.instance
+
+    #The real_uid field of session keeps track of the uid of the original
+    # user that is logged in if there is a role switch
     if !session[:real_uid].nil? && !session[:uid].nil?
       #An admin was logged in as a student or grader
-      m_logger.log("Admin '#{current_user.user_name}' logged out from '#{User.find_by_id(session[:uid]).get_user_name}'.")
+      m_logger.log("Admin '#{User.find_by_id(session[:real_uid]).get_user_name}' logged out from '#{User.find_by_id(session[:uid]).get_user_name}'.")
     else 
       #The user was not assuming another role 
       m_logger.log("User '#{current_user.user_name}' logged out.")
@@ -188,36 +202,12 @@ class MainController < ApplicationController
     # check for blank admin password. We know the admin login name already so 
     #just pass that in
 
-    blank_login = params[:effective_user_login].blank?    
-    blank_pwd = params[:admin_password].blank?
-    flash[:role_switch_notice] = get_blank_message(blank_login, blank_pwd)
-    #check if admin login to switch roles was incorrect. Redirect admin to index
-    #invalid user name or password typed for a role with lesser privileges
-    redirect_to(:action => 'role_switching') && return if blank_login || blank_pwd
+    found_user = get_user(params[:effective_user_login], params[:user_login], params[:admin_password], :role_switch_notice, 'role_switching')
 
-    #Authenticate the admin that is trying to assume a different role
-    authenticate_response = User.authenticate(params[:user_login], 
-                                              params[:admin_password])
-    if authenticate_response == User::AUTHENTICATE_BAD_PLATFORM
-      flash[:role_switch_notice] = I18n.t("external_authentication_not_supported")
-      return
+    if found_user.nil?
+      return 
     end
-    
-    if authenticate_response == User::AUTHENTICATE_SUCCESS
-      #The admin just verified his or her password
-      found_user = User.authorize(params[:effective_user_login]) 
-      # if not nil, user authorized to enter MarkUs
-      if found_user.nil?
-        # User not allowed to use MarkUs
-        flash[:role_switch_notice] = I18n.t(:login_failed)
-        redirect_to (:action => 'role_switching') 
-        return
-      end
-    else
-      flash[:role_switch_notice] = I18n.t(:login_failed)
-      return
-    end
-    
+
     #Check if an admin is trying to login as another admin. Should not be allowed   
     if found_user.admin?
       flash[:role_switch_notice] = I18n.t(:cannot_login_as_another_admin)
@@ -230,8 +220,6 @@ class MainController < ApplicationController
     m_logger = MarkusLogger.instance
     m_logger.log("Admin '#{current_user.user_name}' logged in as '#{params[:effective_user_login]}'.")
 
-    #Get the name of the admin that is switching roles
-    session[:admin_first_name] = current_user.get_first_name
     #Save the uid of the admin that is switching roles
     session[:real_uid] = session[:uid]
     #Change the uid of the current user
@@ -247,8 +235,6 @@ class MainController < ApplicationController
     else
       flash[:role_switch_notice] = I18n.t(:login_failed)
     end
-
-    #else thrown an error as the admin was not authenticated
   end
 
 private
