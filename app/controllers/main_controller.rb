@@ -135,7 +135,7 @@ class MainController < ApplicationController
     # user that is logged in if there is a role switch
     if !session[:real_uid].nil? && !session[:uid].nil?
       #An admin was logged in as a student or grader
-      m_logger.log("Admin '#{User.find_by_id(session[:real_uid]).get_user_name}' logged out from '#{User.find_by_id(session[:uid]).get_user_name}'.")
+      m_logger.log("Admin '#{User.find_by_id(session[:real_uid]).user_name}' logged out from '#{User.find_by_id(session[:uid]).user_name}'.")
     else 
       #The user was not assuming another role 
       m_logger.log("User '#{current_user.user_name}' logged out.")
