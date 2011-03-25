@@ -135,8 +135,12 @@ class ResultsController < ApplicationController
   #Updates the marking state
   def update_marking_state
     @result = Result.find(params[:id])
+    # Marking state set to complete but there is at least one nil mark
+    if params[:value] == Result::MARKING_STATES[:complete] && @result.marks.find_by_mark(nil)
+      render :action => "results/marker/show_criteria_error"
+      return
+    else # Hide message (if any) and then continue as normal.
 
-    if !@result.marks.find_by_mark(nil)
       @result.marking_state = params[:value]
       @result.save
 
@@ -144,9 +148,10 @@ class ResultsController < ApplicationController
       if params[:value] == Result::MARKING_STATES[:complete]
         @result.submission.assignment.assignment_stat.refresh_grade_distribution
       end
-    end
+      render :action => "results/marker/hide_criteria_error"
+      return
 
-    render :action => 'results/marker/update_criteria_message'
+    end
   end
 
   def download
