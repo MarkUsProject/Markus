@@ -100,16 +100,23 @@ class SubmissionFile < ActiveRecord::Base
       self.path)
     file_path = File.join(storage_path, self.filename.split('.')[0] + '.jpg')
     self.export_file(storage_path)
-    #Remove any old copies of this image if they exist
+    # Remove any old copies of this image if they exist
     FileUtils.remove_file(file_path, true) if File.exists?(file_path)
-
-    m_logger.log("Starting pdf conversion")
+    m_logger.log("Starting pdf conversion from #{File.join(storage_path, self.filename)} to #{file_path}")
     # ImageMagick can only save images with heights not exceeding 65500 pixels.
     # Larger images result in a conversion failure.
     begin
-      #This is an ImageMagick command, see http://www.imagemagick.org/script/convert.php for documentation
-      `convert -limit memory #{MarkusConfigurator.markus_config_pdf_conv_memory_allowance} -limit map 0 -density 150 -resize 66% #{storage_path}/#{self.filename} -append #{file_path}`
-      m_logger.log("Successfully converted pdf file to jpg")
+      # This is an ImageMagick command, see http://www.imagemagick.org/script/convert.php for documentation
+      # For some reason, ImageMagick seemed to fail silently when not
+      # redirecting the output to a log file. Let's redirect the output to
+      # "something"
+      `convert -limit memory #{MarkusConfigurator.markus_config_pdf_conv_memory_allowance} -limit map 0 -density 150 -resize 66% #{File.join(storage_path, self.filename)} -append #{file_path} >> #{File.join(RAILS_ROOT, "log", "export-pdf.log")}`
+      # Sometimes, ImageMagick fails silently
+      if File.exists?(file_path)
+        m_logger.log("Successfully converted pdf file to jpg")
+      else
+        m_logger.log("Problem in PDF conversion")
+      end
     rescue Exception => e
       m_logger.log("Pdf file couldn't be converted")
     end
@@ -145,8 +152,12 @@ class SubmissionFile < ActiveRecord::Base
     m_logger = MarkusLogger.instance
     m_logger.log("Exporting #{self.filename} from student repository")
     begin
-      #Create the storage directories if they dont already exist
+      # Create the storage directories if they dont already exist
       FileUtils.makedirs(storage_path)
+      # but deleted the file if it already exists
+      if File.exists?(File.join(storage_path, self.filename))
+        FileUtils.rm(File.join(storage_path, self.filename))
+      end
       repo = submission.grouping.group.repo
       revision_number = submission.revision_number
       repo.export(File.join(storage_path, self.filename),
@@ -157,7 +168,7 @@ class SubmissionFile < ActiveRecord::Base
     # Let's check the file exists befor claiming the file has been exported
     # properly
     if File.exists?(File.join(storage_path, self.filename))
-      m_logger.log("Successfuly exported #{self.filename} from student repository")
+      m_logger.log("Successfuly exported #{self.filename} from student repository to #{File.join(storage_path, self.filename)}")
     else
       m_logger.log("Failed to export #{self.filename} from student
                       repository")
