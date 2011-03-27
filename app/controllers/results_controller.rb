@@ -347,6 +347,7 @@ class ResultsController < ApplicationController
     if !@assignment.past_remark_due_date?
       @submission = Submission.find(params[:id])
       @submission.remark_request = params[:submission][:remark_request]
+      @submission.remark_request_timestamp = Time.now
       @submission.save
       @old_result = @submission.result
       if !(@submission.remark_result)

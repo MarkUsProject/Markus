@@ -1,7 +1,11 @@
 
 <div class="wrapLeft">
 <p class="notice"><%= I18n.t(:no_remark_result)%></p>
-<p><em><%= I18n.t("marker.remark_submitted") %></em></p>
+<p><em><%= I18n.t("marker.remark_submitted") %></em>
+<% if @submission.remark_request_timestamp %>
+  <%= I18n.l(@submission.remark_request_timestamp, :format => :long_date) %>
+<% end %>
+</p>
 <div id="remark_request">
   <h3><%= I18n.t("marker.remark_instructions") %></h3>
   <%= h(@assignment.remark_message) %>

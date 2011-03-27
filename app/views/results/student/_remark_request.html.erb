@@ -1,6 +1,16 @@
 <div id="remark_request">
   <% if assignment.past_remark_due_date? %>
-     <p class='notice'><%= I18n.t("marker.past_remark_due_date") %></p>
+     <% if student_can_edit_remark_request(submission) %>
+       <p class='notice'><%= I18n.t("marker.past_remark_due_date") %></p>
+     <% else %>
+      <div id="remark_request_show_results">
+        <%= h(submission.remark_request) %>
+          <div id="overall_comments_show">
+            <h3><%= I18n.t("marker.overall_comments") %></h3>
+              <%= h(result.overall_comment) %>
+          </div>
+      </div> 
+     <% end %>
   <% else %>
     <h3><%= I18n.t("marker.remark_instructions") %></h3>
     <%= h(assignment.remark_message) %>

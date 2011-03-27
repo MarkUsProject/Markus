@@ -70,12 +70,11 @@
             :alt => I18n.t('marking_state.in_progress'),
             :title => I18n.t('marking_state.in_progress')) %>
 	<% else %>
-      <% if grouping.current_submission_used.result.marking_state == Result::MARKING_STATES[:complete]%>
-        <% if remark_in_progress(grouping.current_submission_used)%>
+      <% if remark_in_progress(grouping.current_submission_used)%>
           <%= image_tag('icons/double_exclamation.png',
               :alt => I18n.t('marking_state.remark_requested'),
               :title => I18n.t('marking_state.remark_requested'))%>
-        <% else %>
+      <% elsif grouping.current_submission_used.result.marking_state == Result::MARKING_STATES[:complete]%>
           <% if !grouping.current_submission_used.result.released_to_students or remark_complete_but_unreleased(grouping.current_submission_used) %>
 		        <%= image_tag('icons/accept.png',
                 :alt => I18n.t('marking_state.completed'),
@@ -85,7 +84,6 @@
                 :alt => I18n.t('marking_state.released'),
                 :title => I18n.t('marking_state.released'))%>
           <% end %>
-		    <% end %>
       <% else %>
 		     <%= image_tag('icons/pencil.png',
             :alt => I18n.t('marking_state.in_progress'),
