@@ -139,18 +139,18 @@ class ResultsController < ApplicationController
     if params[:value] == Result::MARKING_STATES[:complete] && @result.marks.find_by_mark(nil)
       render :action => "results/marker/show_criteria_error"
       return
-    else # Hide message (if any) and then continue as normal.
+    end
 
-      @result.marking_state = params[:value]
-      @result.save
+    # Else, Hide message (if any) and then continue as normal.
 
-      # If marking_state is complete, update the cached distribution
-      if params[:value] == Result::MARKING_STATES[:complete]
-        @result.submission.assignment.assignment_stat.refresh_grade_distribution
-      end
+    @result.marking_state = params[:value]
+    @result.save
+
+    # If marking_state is complete, update the cached distribution
+    if params[:value] == Result::MARKING_STATES[:complete]
+      @result.submission.assignment.assignment_stat.refresh_grade_distribution
       render :action => "results/marker/hide_criteria_error"
       return
-
     end
   end
 
