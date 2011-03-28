@@ -137,11 +137,10 @@ class ResultsController < ApplicationController
     @result = Result.find(params[:id])
     # Marking state set to complete but there is at least one nil mark
     if params[:value] == Result::MARKING_STATES[:complete] && @result.marks.find_by_mark(nil)
+      # Show error message
       render :action => "results/marker/show_criteria_error"
       return
     end
-
-    # Else, Hide message (if any) and then continue as normal.
 
     @result.marking_state = params[:value]
     @result.save
@@ -149,6 +148,7 @@ class ResultsController < ApplicationController
     # If marking_state is complete, update the cached distribution
     if params[:value] == Result::MARKING_STATES[:complete]
       @result.submission.assignment.assignment_stat.refresh_grade_distribution
+      # Hide error message if it is displayed.
       render :action => "results/marker/hide_criteria_error"
       return
     end
@@ -375,13 +375,12 @@ class ResultsController < ApplicationController
     if !@assignment.past_remark_due_date?
       @submission = Submission.find(params[:id])
       @submission.remark_request = params[:submission][:remark_request]
-      @submission.remark_request_timestamp = Time.now
       @submission.save
       @old_result = @submission.result
       if !(@submission.remark_result)
         @submission.create_remark_result_object
       end
-      if (params[:real_commit] == "Submit")
+      if (params[:submission][:submit_request] == "1")
         @result = @submission.remark_result
         @result.marking_state = Result::MARKING_STATES[:partial]
         @old_result.released_to_students = (params[:value] == 'false')
