@@ -137,11 +137,10 @@ class ResultsController < ApplicationController
     @result = Result.find(params[:id])
     # Marking state set to complete but there is at least one nil mark
     if params[:value] == Result::MARKING_STATES[:complete] && @result.marks.find_by_mark(nil)
+      # Show error message
       render :action => "results/marker/show_criteria_error"
       return
     end
-
-    # Else, Hide message (if any) and then continue as normal.
 
     @result.marking_state = params[:value]
     @result.save
@@ -149,6 +148,7 @@ class ResultsController < ApplicationController
     # If marking_state is complete, update the cached distribution
     if params[:value] == Result::MARKING_STATES[:complete]
       @result.submission.assignment.assignment_stat.refresh_grade_distribution
+      # Hide error message if it is displayed.
       render :action => "results/marker/hide_criteria_error"
       return
     end

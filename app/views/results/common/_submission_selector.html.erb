@@ -1,7 +1,7 @@
 <div id="student_selector">
 
-  <div id="criterion_incomplete_error" style="display:none">
-    <span class="error">
+  <div id="criterion_incomplete_error" class="error" style="display:none">
+    <span>
       <%=t('common.criterion_incomplete_error')%>
     </span>
   </div>
@@ -14,9 +14,9 @@
   <% end %>
 </span>
   <span class="middle">
-  	<%= link_to_remote I18n.t("marker.notes", :notes => @grouping.notes.size) , 
-	:url => { :controller => 'note' , :action => 'notes_dialog', :id => @grouping.assignment_id, :noteable_id => group.grouping_ids, :noteable_type => 'Grouping' , :action_to => 'note_message', :controller_to => 'results', :highlight_field => 'notes_dialog_link', :number_of_notes_field => 'number_of_notes'}, :html => {:id => 'notes_dialog_link'} %> 
-	|
+    <%= link_to_remote I18n.t("marker.notes", :notes => @grouping.notes.size) ,
+  :url => { :controller => 'note' , :action => 'notes_dialog', :id => @grouping.assignment_id, :noteable_id => group.grouping_ids, :noteable_type => 'Grouping' , :action_to => 'note_message', :controller_to => 'results', :highlight_field => 'notes_dialog_link', :number_of_notes_field => 'number_of_notes'}, :html => {:id => 'notes_dialog_link'} %>
+  |
     (<%=label_tag "marking_state", h(I18n.t("marker.marking_status")), :class => "inline_label" %>
      <% old_result_id = nil %>
      <% if @old_result %>
@@ -27,9 +27,9 @@
      <% end %>
      <%=  select_tag "marking_state", options_for_select(possible_states,[result.marking_state]), :disabled => @result.released_to_students %>
      <%= observe_field :marking_state, :url => {:controller => 'results', :action => 'update_marking_state', :id => @result.id}, :on => 'changed', :with => "value", :frequency => 0.5%>
-     
+
     <em><%= I18n.t("marker.marks.total_mark") %></em>
-    <span id="current_mark_div"><%= h(result.total_mark) %></span> / 
+    <span id="current_mark_div"><%= h(result.total_mark) %></span> /
     <span id="total_mark_div"><%= h(assignment.total_mark) %></span>)
    <% if @current_user.admin? %>
      | <%= label_tag "released", I18n.t("marker.marks.released"), :class => "inline_label" %>
@@ -38,7 +38,7 @@
      |
     <% end %>
   </span>
-  
+
   <span class="right">
 
 <% if !next_grouping.nil? %>
