@@ -1,2 +1,2 @@
-# Hide message (if any) and then continue as normal.
+# Hide error message (if any)
 page.hide 'criterion_incomplete_error'
