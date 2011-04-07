@@ -1,6 +1,7 @@
 require 'fastercsv'
 require 'csv'
 
+
 class RubricCriterion < ActiveRecord::Base
   before_save :round_weight
   after_save :update_existing_results
@@ -18,6 +19,7 @@ class RubricCriterion < ActiveRecord::Base
   validate_on_update :validate_total_weight
 
   before_validation :update_assigned_groups_count
+
 
   def update_assigned_groups_count
     result = []
@@ -91,7 +93,38 @@ class RubricCriterion < ActiveRecord::Base
     end
     return csv_string
   end
+  
+  def self.create_yml(assignment)
+    @temp = assignment.rubric_criteria
+    @my_hash = {"#{@temp[0]["rubric_criterion_name"]}" => {
+                   "weight"=>  @temp[0]["weight"],            
+                   "level_0" => {
+                      "name"=>  @temp[0]["level_0_name"] ,
+                      "description"=>  @temp[0]["level_0_description"]
+                   },
+                   "level_1" => {
+                      "name"=>  @temp[0]["level_1_name"] ,
+                      "description"=>  @temp[0]["level_1_description"]
+                   },
+                   "level_2" => {
+                      "name"=>  @temp[0]["level_2_name"] ,
+                      "description"=>  @temp[0]["level_2_description"]
+                   },
+                   "level_3" => {
+                      "name"=>  @temp[0]["level_3_name"] ,
+                      "description"=>  @temp[0]["level_3_description"]
+                   },
+                   "level_4" => {
+                      "name"=>  @temp[0]["level_4_name"] ,
+                      "description"=>  @temp[0]["level_4_description"]
+                   }
+                  }
+                 }
+     return @my_hash.to_yaml
+  end
 
+    
+          
   # Instantiate a RubricCriterion from a CSV row and attach it to the supplied
   # assignment.
   #

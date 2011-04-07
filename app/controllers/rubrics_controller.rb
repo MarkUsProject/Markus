@@ -62,6 +62,12 @@ class RubricsController < ApplicationController
     send_data(file_out, :type => "text/csv", :filename => "#{@assignment.short_identifier}_rubric_criteria.csv", :disposition => "inline")
   end
 
+  def download_yml
+     @assignment = Assignment.find(params[:id])
+     file_out = RubricCriterion.create_yml(@assignment)
+     send_data(file_out, :type => "text/myl", :filename => "#{@assignment.short_identifier}_rubric_criteria.yml", :disposition => "inline")
+  end
+
   def csv_upload
     file = params[:csv_upload][:rubric]
     @assignment = Assignment.find(params[:id])
@@ -107,9 +113,10 @@ class RubricsController < ApplicationController
         redirect_to :action => 'index', :id => @assignment.id
         return
       end
-      successes = 0
+      successes = 0   
       rubrics.each do |key|
         begin
+        puts key
           RubricCriterion.create_or_update_from_yml_key(key, @assignment)
           successes += 1
         rescue RuntimeError => e
