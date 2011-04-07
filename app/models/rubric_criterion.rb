@@ -93,11 +93,11 @@ class RubricCriterion < ActiveRecord::Base
     end
     return csv_string
   end
-  
+
   def self.create_yml(assignment)
     @temp = assignment.rubric_criteria
     @my_hash = {"#{@temp[0]["rubric_criterion_name"]}" => {
-                   "weight"=>  @temp[0]["weight"],            
+                   "weight"=>  @temp[0]["weight"],
                    "level_0" => {
                       "name"=>  @temp[0]["level_0_name"] ,
                       "description"=>  @temp[0]["level_0_description"]
@@ -123,8 +123,7 @@ class RubricCriterion < ActiveRecord::Base
      return @my_hash.to_yaml
   end
 
-    
-          
+      
   # Instantiate a RubricCriterion from a CSV row and attach it to the supplied
   # assignment.
   #

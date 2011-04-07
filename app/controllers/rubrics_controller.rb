@@ -113,7 +113,7 @@ class RubricsController < ApplicationController
         redirect_to :action => 'index', :id => @assignment.id
         return
       end
-      successes = 0   
+      successes = 0
       rubrics.each do |key|
         begin
         puts key
