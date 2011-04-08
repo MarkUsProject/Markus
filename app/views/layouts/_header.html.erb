@@ -1,3 +1,37 @@
+<% content_for :head do %>
+  <%= stylesheet_link_tag("livepipe/tabs") %>
+<% end %>
+
+<% # UI LIBRARIES %>
+<%= javascript_include_tag "livepipe/livepipe.js",
+	"livepipe/window.js",
+	"livepipe/tabs.js",
+	:cache => "livepipe_cache" %>
+
+<script type="text/javascript">
+//<![CDATA[
+
+var modal = null;
+
+function switch_role() {
+      modal.open();
+      return false;
+}
+
+document.observe("dom:loaded", function(){
+    //Create the modal dialog
+  modal = new Control.Modal($('role_switch_dialog'),
+  {
+    overlayOpacity: 0.75,
+    className: 'modal',
+    fade:false
+
+  });
+});
+//]]>
+</script>
+
+
 <div id="header">
   <div id="user_info">
     <span id="lang_chooser">
@@ -18,10 +52,29 @@
       <b><%= User.find_by_id(session[:real_uid]).first_name %></b> <%= I18n.t(:is_logged_in_as)%> 
     <% end %>
 
+    <div id="role_switch_dialog" style="display:none;">
+    <!-- Role switching form -->   
+    <% form_tag({ :action => 'login_as', :id => nil }, :id => 'role_switch_form') do %>
+   
+      <fieldset>
+      <h2 align="center">Switch Role</h2>
+       <%= label_tag 'effective_user_login', I18n.t(:login_as) -%>
+        <%= text_field_tag 'effective_user_login', nil, :tabindex => 10 %><br />
+
+        <%= label_tag 'admin_password', I18n.t(:admin_password) %>
+        <%= password_field_tag 'admin_password', nil, :tabindex => 20 %><br />
+ 
+        <%= submit_tag I18n.t(:log_in), :disable_with => I18n.t(:logging_in), :tabindex => 100, :class => 'button indent_button'%>
+        <%= button_to_function "Cancel", 'modal.close()'%>
+      <% end %>
+      </fieldset>
+    </div>
+
+
     <%= @current_user.first_name %> <%= @current_user.last_name %>
      ( <b><%= @current_user.user_name %></b> )
     <% if @current_user.admin? %>
-      <b><%= link_to(I18n.t(:switch_role), :controller => 'main', :action =>'role_switching')%></b>
+      <b><%= link_to_function(I18n.t(:switch_role), 'switch_role()')%></b>
     <% end %>
 
 

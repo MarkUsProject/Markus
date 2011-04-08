@@ -188,10 +188,6 @@ class MainController < ApplicationController
 
 
 #ROLE SWITCHING CODE
-  #Calls view in order for the admin to login as a user with a "lesser" privileges
-  def role_switching
-  end
-
   #Authenticates the admin given the user that the admin will like to login as 
   # and the password of the admin
   def login_as
@@ -202,7 +198,7 @@ class MainController < ApplicationController
     # check for blank admin password. We know the admin login name already so 
     #just pass that in
 
-    found_user = get_user(params[:effective_user_login], params[:user_login], params[:admin_password], :role_switch_notice, 'role_switching')
+    found_user = get_user(params[:effective_user_login], params[:user_login], params[:admin_password], :role_switch_notice, 'index')
 
     if found_user.nil?
       return 
@@ -211,7 +207,7 @@ class MainController < ApplicationController
     #Check if an admin is trying to login as another admin. Should not be allowed   
     if found_user.admin?
       flash[:role_switch_notice] = I18n.t(:cannot_login_as_another_admin)
-      redirect_to (:action => 'role_switching')
+      redirect_to (:action => 'index')
       return
     end
    
