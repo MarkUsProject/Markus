@@ -162,7 +162,7 @@ ImageAnnotation.blueprint do
     )}
   annotation_text_id {1}
   submission_file_id {submission_file.id}
-  annotation_number {rand(1000)}
+  annotation_number {rand(1000)+1}
 end
 
 Mark.blueprint do
