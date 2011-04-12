@@ -872,8 +872,9 @@ en:
         level_index: "Level %{index}"
       download:
         title: "Download Rubric File"
-        prompt: "Rubric criteria are currently available in CSV."
+        prompt: "Rubric criteria are currently available in CSV and YAML."
         link_csv: "Download rubric in CSV Format"
+        link_yml: "Download rubric in YAML Format"        
       upload:
         success: "Rubric criteria successfully uploaded: %{nb_updates} update(s)."
         csv_title: "Upload CSV File"
