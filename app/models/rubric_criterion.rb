@@ -120,8 +120,8 @@ class RubricCriterion < ActiveRecord::Base
         "name"=>  @temp["level_4_name"] ,
         "description"=> @temp["level_4_description"]
       }                     
-      @my_hash = {"#{@temp["rubric_criterion_name"]}" => @inner}
-      @final = @final.merge(@my_hash)
+      @criteria_yml = {"#{@temp["rubric_criterion_name"]}" => @inner}
+      @final = @final.merge(@criteria_yml)
     end
     return @final.to_yaml
   end

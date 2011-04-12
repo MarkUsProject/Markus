@@ -116,7 +116,6 @@ class RubricsController < ApplicationController
       successes = 0
       rubrics.each do |key|
         begin
-        puts key
           RubricCriterion.create_or_update_from_yml_key(key, @assignment)
           successes += 1
         rescue RuntimeError => e
