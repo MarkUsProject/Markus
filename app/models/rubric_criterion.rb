@@ -1,7 +1,6 @@
 require 'fastercsv'
 require 'csv'
 
-
 class RubricCriterion < ActiveRecord::Base
   before_save :round_weight
   after_save :update_existing_results
@@ -94,36 +93,39 @@ class RubricCriterion < ActiveRecord::Base
     return csv_string
   end
 
-  def self.create_yml(assignment)
-    @temp = assignment.rubric_criteria
-    @my_hash = {"#{@temp[0]["rubric_criterion_name"]}" => {
-                   "weight"=>  @temp[0]["weight"],
-                   "level_0" => {
-                      "name"=>  @temp[0]["level_0_name"] ,
-                      "description"=>  @temp[0]["level_0_description"]
-                   },
-                   "level_1" => {
-                      "name"=>  @temp[0]["level_1_name"] ,
-                      "description"=>  @temp[0]["level_1_description"]
-                   },
-                   "level_2" => {
-                      "name"=>  @temp[0]["level_2_name"] ,
-                      "description"=>  @temp[0]["level_2_description"]
-                   },
-                   "level_3" => {
-                      "name"=>  @temp[0]["level_3_name"] ,
-                      "description"=>  @temp[0]["level_3_description"]
-                   },
-                   "level_4" => {
-                      "name"=>  @temp[0]["level_4_name"] ,
-                      "description"=>  @temp[0]["level_4_description"]
-                   }
-                  }
-                 }
-     return @my_hash.to_yaml
+ def self.create_yml(assignment)
+    @criterias = assignment.rubric_criteria
+    @final = Hash.new
+    @criterias.each do |@temp|
+      @inner = ActiveSupport::OrderedHash.new
+      @inner["weight"] =  @temp["weight"]
+      @inner["level_0"] = {
+        "name"=>  @temp["level_0_name"] ,
+        "description"=>  @temp["level_0_description"]
+      }
+      @inner["level_1"] = {
+        "name"=>  @temp["level_1_name"] ,
+        "description"=>  @temp["level_1_description"]
+      }
+      @inner["level_2"] = {
+        "name"=>  @temp["level_2_name"] ,
+        "description"=>  @temp["level_2_description"]
+      }
+      @inner["level_3"] = {
+        "name"=>  @temp["level_3_name"] ,
+        "description"=>  @temp["level_3_description"]
+      }
+      @inner["level_4"] = {
+        "name"=>  @temp["level_4_name"] ,
+        "description"=> @temp["level_4_description"]
+      }
+      @criteria_yml = {"#{@temp["rubric_criterion_name"]}" => @inner}
+      @final = @final.merge(@criteria_yml)
+    end
+    return @final.to_yaml
   end
 
-      
+
   # Instantiate a RubricCriterion from a CSV row and attach it to the supplied
   # assignment.
   #

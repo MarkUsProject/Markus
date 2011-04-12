@@ -56,7 +56,7 @@ class RubricsController < ApplicationController
     flash.now[:success] = I18n.t('criterion_deleted_success')
   end
 
-  def download
+  def download_csv
     @assignment = Assignment.find(params[:id])
     file_out = RubricCriterion.create_csv(@assignment)
     send_data(file_out, :type => "text/csv", :filename => "#{@assignment.short_identifier}_rubric_criteria.csv", :disposition => "inline")
@@ -116,7 +116,6 @@ class RubricsController < ApplicationController
       successes = 0
       rubrics.each do |key|
         begin
-        puts key
           RubricCriterion.create_or_update_from_yml_key(key, @assignment)
           successes += 1
         rescue RuntimeError => e
