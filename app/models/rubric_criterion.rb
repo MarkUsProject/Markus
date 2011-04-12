@@ -1,7 +1,6 @@
 require 'fastercsv'
 require 'csv'
 
-
 class RubricCriterion < ActiveRecord::Base
   before_save :round_weight
   after_save :update_existing_results
@@ -94,9 +93,9 @@ class RubricCriterion < ActiveRecord::Base
     return csv_string
   end
 
- def self.create_yml(assignment)    
+ def self.create_yml(assignment)
     @criterias = assignment.rubric_criteria
-    @final = Hash.new 
+    @final = Hash.new
     @criterias.each do |@temp|
       @inner = ActiveSupport::OrderedHash.new
       @inner["weight"] =  @temp["weight"]
@@ -119,7 +118,7 @@ class RubricCriterion < ActiveRecord::Base
       @inner["level_4"] = {
         "name"=>  @temp["level_4_name"] ,
         "description"=> @temp["level_4_description"]
-      }                     
+      }
       @criteria_yml = {"#{@temp["rubric_criterion_name"]}" => @inner}
       @final = @final.merge(@criteria_yml)
     end
@@ -127,7 +126,6 @@ class RubricCriterion < ActiveRecord::Base
   end
 
 
-      
   # Instantiate a RubricCriterion from a CSV row and attach it to the supplied
   # assignment.
   #
