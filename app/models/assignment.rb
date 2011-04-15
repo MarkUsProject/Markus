@@ -51,7 +51,7 @@ class Assignment < ActiveRecord::Base
   validates_inclusion_of :display_grader_names_to_students, :in => [true, false]
   validates_inclusion_of :enable_test, :in => [true, false]
   validates_inclusion_of :assign_graders_to_criteria, :in => [true, false]
-  
+
   before_save :reset_collection_time
   after_save  :update_assigned_tokens
 
@@ -86,7 +86,7 @@ class Assignment < ActiveRecord::Base
     end
     return @final.to_yaml
   end
-  
+
   def validate
     if (group_max && group_min) && group_max < group_min
       errors.add(:group_max, "must be greater than the minimum number of groups")
