@@ -211,7 +211,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
     context "on: download" do
       setup do
-        get_as @admin, :download, :id => @assignment.id
+        get_as @admin, :download_csv, :id => @assignment.id
       end
       should assign_to :assignment
       should respond_with_content_type 'text/csv'
@@ -345,7 +345,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
     context "on: download" do
       setup do
-        post_as @admin, :download, :id => @assignment.id
+        post_as @admin, :download_csv, :id => @assignment.id
       end
       should assign_to :assignment
       should respond_with_content_type 'text/csv'
@@ -539,7 +539,6 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
         should respond_with :redirect
         should set_the_flash.to((I18n.t('rubric_criteria.upload.success', :nb_updates => 2)))
-        should assign_to :assignment
         should "have added 2 criteria" do
           @assignment.reload
           assert_equal(@assignment.rubric_criteria.length, 2)
@@ -573,7 +572,6 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
         should respond_with :redirect
         should set_the_flash.to((I18n.t('rubric_criteria.upload.success', :nb_updates => 2)))
-        should assign_to :assignment
         should "now have 2 criteria" do
           @assignment.reload
           assert_equal(@assignment.rubric_criteria.length, 2)
@@ -591,8 +589,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         end
 
         should respond_with :redirect
-        should set_the_flash.to(I18n.t('rubric_criteria.upload.error') + "  " +  I18n.t('rubric_criteria.upload.syntax_error', :error => I18n.t('criteria_csv_error.weight_not_number')))
-        should assign_to :assignment
+        should set_the_flash.to(I18n.t('rubric_criteria.upload.error') + " " + "cr1")
         should "have added 0 criteria" do
           @assignment.reload
           new_categories_list = @assignment.annotation_categories
@@ -607,7 +604,6 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
         should respond_with :redirect
         should set_the_flash.to(I18n.t('rubric_criteria.upload.error') + "  " + I18n.t('rubric_criteria.upload.syntax_error', :error => "syntax error on line 2, col 1: `'"))
-        should assign_to :assignment
         should "have added 0 criteria" do
           @assignment.reload
           new_categories_list = @assignment.annotation_categories
@@ -621,7 +617,6 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         end
 
         should respond_with :redirect
-        should assign_to :assignment
         should "have added 0 criteria" do
           @assignment.reload
           new_categories_list = @assignment.annotation_categories

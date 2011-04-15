@@ -898,9 +898,9 @@ en:
                     &nbsp;&nbsp;level_1:<br />
                     &nbsp;&nbsp;&nbsp;&nbsp;[...]
           </p>"
-        error: "Some rubric criteria were not successfully uploaded."
+        error: "Some rubric criteria were invalid:"
         syntax_error: "There is an error in the file you uploaded : %{error}"
-        empty_error: "No criteria were found in the file you uploaded."
+        empty_error: "No criteria were found in the provided file."
       error_total: "total weight must be positive"
       defaults:
         level_0: "Very Poor"
