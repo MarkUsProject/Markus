@@ -64,7 +64,7 @@ class RubricsController < ApplicationController
 
   def download_yml
      @assignment = Assignment.find(params[:id])
-     file_out = RubricCriterion.create_yml(@assignment)
+     file_out = @assignment.export_rubric_criteria_yml
      send_data(file_out, :type => "text/myl", :filename => "#{@assignment.short_identifier}_rubric_criteria.yml", :disposition => "inline")
   end
 
