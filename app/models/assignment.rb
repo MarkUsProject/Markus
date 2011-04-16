@@ -56,35 +56,35 @@ class Assignment < ActiveRecord::Base
   after_save  :update_assigned_tokens
 
  def export_rubric_criteria_yml
-    @criterias = self.rubric_criteria
-    @final = Hash.new
-    @criterias.each do |@temp|
-      @inner = ActiveSupport::OrderedHash.new
-      @inner["weight"] =  @temp["weight"]
-      @inner["level_0"] = {
-        "name"=>  @temp["level_0_name"] ,
-        "description"=>  @temp["level_0_description"]
+    criteria = self.rubric_criteria
+    final = Hash.new
+    criteria.each do |criterion|
+      inner = ActiveSupport::OrderedHash.new
+      inner["weight"] =  criterion["weight"]
+      inner["level_0"] = {
+        "name"=>  criterion["level_0_name"] ,
+        "description"=>  criterion["level_0_description"]
       }
-      @inner["level_1"] = {
-        "name"=>  @temp["level_1_name"] ,
-        "description"=>  @temp["level_1_description"]
+      inner["level_1"] = {
+        "name"=>  criterion["level_1_name"] ,
+        "description"=>  criterion["level_1_description"]
       }
-      @inner["level_2"] = {
-        "name"=>  @temp["level_2_name"] ,
-        "description"=>  @temp["level_2_description"]
+      inner["level_2"] = {
+        "name"=>  criterion["level_2_name"] ,
+        "description"=>  criterion["level_2_description"]
       }
-      @inner["level_3"] = {
-        "name"=>  @temp["level_3_name"] ,
-        "description"=>  @temp["level_3_description"]
+      inner["level_3"] = {
+        "name"=>  criterion["level_3_name"] ,
+        "description"=>  criterion["level_3_description"]
       }
-      @inner["level_4"] = {
-        "name"=>  @temp["level_4_name"] ,
-        "description"=> @temp["level_4_description"]
+      inner["level_4"] = {
+        "name"=>  criterion["level_4_name"] ,
+        "description"=> criterion["level_4_description"]
       }
-      @criteria_yml = {"#{@temp["rubric_criterion_name"]}" => @inner}
-      @final = @final.merge(@criteria_yml)
+      criteria_yml = {"#{criterion["rubric_criterion_name"]}" => inner}
+      final = final.merge(criteria_yml)
     end
-    return @final.to_yaml
+    return final.to_yaml
   end
 
   def validate

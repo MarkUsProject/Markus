@@ -57,15 +57,15 @@ class RubricsController < ApplicationController
   end
 
   def download_csv
-    @assignment = Assignment.find(params[:id])
-    file_out = RubricCriterion.create_csv(@assignment)
-    send_data(file_out, :type => "text/csv", :filename => "#{@assignment.short_identifier}_rubric_criteria.csv", :disposition => "inline")
+    assignment = Assignment.find(params[:id])
+    file_out = RubricCriterion.create_csv(assignment)
+    send_data(file_out, :type => "text/csv", :filename => "#{assignment.short_identifier}_rubric_criteria.csv", :disposition => "inline")
   end
 
   def download_yml
-     @assignment = Assignment.find(params[:id])
-     file_out = @assignment.export_rubric_criteria_yml
-     send_data(file_out, :type => "text/myl", :filename => "#{@assignment.short_identifier}_rubric_criteria.yml", :disposition => "inline")
+     assignment = Assignment.find(params[:id])
+     file_out = assignment.export_rubric_criteria_yml
+     send_data(file_out, :type => "text/plain", :filename => "#{assignment.short_identifier}_rubric_criteria.yml", :disposition => "inline")
   end
 
   def csv_upload
