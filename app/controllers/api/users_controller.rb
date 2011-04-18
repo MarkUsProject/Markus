@@ -123,7 +123,8 @@ module Api
         return
       end
       # check if there's a valid user.
-      user = User.find_by_user_name(params[:user_name])
+      user = User.find_by_user_name(params[:user_name],
+                          :select => "user_name, type, first_name, last_name")
 
       if user.nil?
         # no such user
@@ -131,12 +132,17 @@ module Api
         return
       end
 
-      # Everything went fine; send file_content
-      details = "\nUsername: " + user.user_name +
-          "\nType: " + user.type +
-          "\nFirst Name: " + user.first_name +
-          "\nLast Name: " + user.last_name
-      send_data details, :disposition => 'inline', :filename => user.user_name
+      # Everything went fine, send the response according the .
+      respond_to do |format|
+        format.json{render :json => user.to_json}
+        format.xml{render :xml => user.to_xml}
+
+        format.all{send_data  "\nUsername: " + user.user_name +
+                              "\nType: " + user.type +
+                              "\nFirst Name: " + user.first_name +
+                              "\nLast Name: " + user.last_name,
+                    :disposition => 'inline', :filename => user.user_name}
+      end
     end
 
     private
