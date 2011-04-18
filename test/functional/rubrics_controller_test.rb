@@ -211,7 +211,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
     context "on: download" do
       setup do
-        get_as @admin, :download, :id => @assignment.id
+        get_as @admin, :download_csv, :id => @assignment.id
       end
       should assign_to :assignment
       should respond_with_content_type 'text/csv'
@@ -345,7 +345,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
     context "on: download" do
       setup do
-        post_as @admin, :download, :id => @assignment.id
+        post_as @admin, :download_csv, :id => @assignment.id
       end
       should assign_to :assignment
       should respond_with_content_type 'text/csv'

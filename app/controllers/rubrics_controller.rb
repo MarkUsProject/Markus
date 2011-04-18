@@ -57,9 +57,9 @@ class RubricsController < ApplicationController
   end
 
   def download_csv
-    assignment = Assignment.find(params[:id])
-    file_out = RubricCriterion.create_csv(assignment)
-    send_data(file_out, :type => "text/csv", :filename => "#{assignment.short_identifier}_rubric_criteria.csv", :disposition => "inline")
+    @assignment = Assignment.find(params[:id])
+    file_out = RubricCriterion.create_csv(@assignment)
+    send_data(file_out, :type => "text/csv", :filename => "#{@assignment.short_identifier}_rubric_criteria.csv", :disposition => "inline")
   end
 
   def download_yml
@@ -91,6 +91,7 @@ class RubricsController < ApplicationController
 
 
   def yml_upload
+    @criteria_with_errors = ActiveSupport::OrderedHash.new
     @assignment = Assignment.find(params[:id])
     if !request.post?
       redirect_to :action => 'index', :id => @assignment.id
@@ -114,30 +115,42 @@ class RubricsController < ApplicationController
         return
       end
       successes = 0
-      rubrics.each do |key|
+      i = 1 ; 
+      rubrics.each do |key|      
         begin
           RubricCriterion.create_or_update_from_yml_key(key, @assignment)
           successes += 1
         rescue RuntimeError => e
+          #collect the names of the criterion that contains an error in it.         
+          @criteria_with_errors[i] = key.at(0)
+          i = i + 1
           flash[:error] = I18n.t('rubric_criteria.upload.syntax_error', :error => "#{e}")
         end
       end
 
+      bad_criteria_names = ""
+      i = 0
+      # Create a String from the OrderedHash of bad criteria seperated by commas.
+      @criteria_with_errors.each_value do |keys|
+        if (i == 0)
+          bad_criteria_names = keys
+          i = i + 1
+        else
+          bad_criteria_names = bad_criteria_names + ", " + keys
+        end
+      end
+
       if successes < rubrics.length
-
-        flash[:error] = I18n.t('rubric_criteria.upload.error') + "  " + flash[:error]
-
+        #flash[:error] = I18n.t('rubric_criteria.upload.error') + "  " + flash[:error]
+        flash[:error] = I18n.t('rubric_criteria.upload.error') + " " +
+             I18n.t('rubric_criteria.upload.criteria_with_error') + bad_criteria_names
       end
 
       if successes > 0
-
         flash[:upload_notice] = I18n.t('rubric_criteria.upload.success', :nb_updates => successes)
-
       end
     end
-
     redirect_to :action => 'index', :id => @assignment.id
-
   end
 
 
