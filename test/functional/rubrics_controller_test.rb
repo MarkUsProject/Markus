@@ -591,7 +591,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         end
 
         should respond_with :redirect
-        should set_the_flash.to(I18n.t('rubric_criteria.upload.error') + "  " +  I18n.t('rubric_criteria.upload.syntax_error', :error => I18n.t('criteria_csv_error.weight_not_number')))
+        should set_the_flash.to(I18n.t('rubric_criteria.upload.error') + " " + I18n.t('rubric_criteria.upload.criteria_with_error') + "cr1")
         should assign_to :assignment
         should "have added 0 criteria" do
           @assignment.reload
