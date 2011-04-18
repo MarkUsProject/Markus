@@ -115,13 +115,13 @@ class RubricsController < ApplicationController
         return
       end
       successes = 0
-      i = 1 ; 
-      rubrics.each do |key|      
+      i = 1 ;
+      rubrics.each do |key|
         begin
           RubricCriterion.create_or_update_from_yml_key(key, @assignment)
           successes += 1
         rescue RuntimeError => e
-          #collect the names of the criterion that contains an error in it.         
+          #collect the names of the criterion that contains an error in it.
           @criteria_with_errors[i] = key.at(0)
           i = i + 1
           flash[:error] = I18n.t('rubric_criteria.upload.syntax_error', :error => "#{e}")
