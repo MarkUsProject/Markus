@@ -89,12 +89,11 @@ class RubricsController < ApplicationController
     redirect_to :action => 'index', :id => @assignment.id
   end
 
-
   def yml_upload
-    @criteria_with_errors = ActiveSupport::OrderedHash.new
-    @assignment = Assignment.find(params[:id])
+    criteria_with_errors = ActiveSupport::OrderedHash.new
+    assignment = Assignment.find(params[:id])
     if !request.post?
-      redirect_to :action => 'index', :id => @assignment.id
+      redirect_to :action => 'index', :id => assignment.id
       return
     end
     file = params[:yml_upload][:rubric]
@@ -105,24 +104,24 @@ class RubricsController < ApplicationController
         flash[:error] =
            I18n.t('rubric_criteria.upload.error') + "  " +
            I18n.t('rubric_criteria.upload.syntax_error', :error => "#{e}")
-        redirect_to :action => 'index', :id => @assignment.id
+        redirect_to :action => 'index', :id => assignment.id
         return
       end
       if not rubrics
         flash[:error] = I18n.t('rubric_criteria.upload.error') + 
           "  " + I18n.t('rubric_criteria.upload.empty_error')
-        redirect_to :action => 'index', :id => @assignment.id
+        redirect_to :action => 'index', :id => assignment.id
         return
       end
       successes = 0
       i = 1 ;
       rubrics.each do |key|
         begin
-          RubricCriterion.create_or_update_from_yml_key(key, @assignment)
+          RubricCriterion.create_or_update_from_yml_key(key, assignment)
           successes += 1
         rescue RuntimeError => e
           #collect the names of the criterion that contains an error in it.
-          @criteria_with_errors[i] = key.at(0)
+          criteria_with_errors[i] = key.at(0)
           i = i + 1
           flash[:error] = I18n.t('rubric_criteria.upload.syntax_error', :error => "#{e}")
         end
@@ -131,7 +130,7 @@ class RubricsController < ApplicationController
       bad_criteria_names = ""
       i = 0
       # Create a String from the OrderedHash of bad criteria seperated by commas.
-      @criteria_with_errors.each_value do |keys|
+      criteria_with_errors.each_value do |keys|
         if (i == 0)
           bad_criteria_names = keys
           i = i + 1
@@ -141,16 +140,14 @@ class RubricsController < ApplicationController
       end
 
       if successes < rubrics.length
-        #flash[:error] = I18n.t('rubric_criteria.upload.error') + "  " + flash[:error]
-        flash[:error] = I18n.t('rubric_criteria.upload.error') + " " +
-             I18n.t('rubric_criteria.upload.criteria_with_error') + bad_criteria_names
+        flash[:error] = I18n.t('rubric_criteria.upload.error') + " " + bad_criteria_names
       end
 
       if successes > 0
         flash[:upload_notice] = I18n.t('rubric_criteria.upload.success', :nb_updates => successes)
       end
     end
-    redirect_to :action => 'index', :id => @assignment.id
+    redirect_to :action => 'index', :id => assignment.id
   end
 
 

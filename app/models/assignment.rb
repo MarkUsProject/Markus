@@ -55,7 +55,8 @@ class Assignment < ActiveRecord::Base
   before_save :reset_collection_time
   after_save  :update_assigned_tokens
 
- def export_rubric_criteria_yml
+  # Export a YAML formatted string created from the assignment rubric criteria.
+  def export_rubric_criteria_yml
     criteria = self.rubric_criteria
     final = Hash.new
     criteria.each do |criterion|
