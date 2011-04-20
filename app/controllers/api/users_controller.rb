@@ -137,10 +137,10 @@ module Api
         format.json{render :json => user.to_json}
         format.xml{render :xml => user.to_xml}
 
-        format.all{send_data  "\nUsername: " + user.user_name +
-                              "\nType: " + user.type +
-                              "\nFirst Name: " + user.first_name +
-                              "\nLast Name: " + user.last_name,
+        format.all{send_data  t('user.user_name') + ": " + user.user_name + "\n" +
+                              t('user.user_type') + ": " + user.type + "\n" +
+                              t('user.first_name') + ": " + user.first_name + "\n" +
+                              t('user.last_name') + ": " + user.last_name + "\n",
                     :disposition => 'inline', :filename => user.user_name}
       end
     end

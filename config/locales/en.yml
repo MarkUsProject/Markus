@@ -145,8 +145,8 @@ en:
             change_marking_scheme_type: "Changing marking scheme will delete your criteria and marks."
         allow_web_submits: "Allow Web Submits?"
         display_grader_names_to_students: "Display grader names to students?"
-        section_due_date_not_displayed: "Due dates are specific to sections." 
-        section_due_date_type: "Due dates are specified per section." 
+        section_due_date_not_displayed: "Due dates are specific to sections."
+        section_due_date_type: "Due dates are specified per section."
         section_due_date_option:  "If the section due dates option is checked, students can only form groups within their section."
         section_due_dates_info:  "<b>Important</b> The global due date needs to be filled in. If a section has no due date specified, the global due date will be used instead. Students not assigned to any section will only be allowed to form groups with students without section either."
     your_mark:  "Your mark:"
@@ -423,7 +423,7 @@ en:
 
     stopping_collection_process: "Now stopping collection process..."
     converting_pdfs: "Now converting pdf files...%{converted}/%{total}"
-    
+
     groups:
       groups: "Groups"
       manage_groups: "Manage Groups"
@@ -691,6 +691,7 @@ en:
         first_name:     "First Name"
         last_name:      "Last Name"
         full_name:      "Full Name"
+        user_type:      "Type"
         grace_credits:  "Grace Credits"
         section:        "Section"
         display_grader_names_to_students: "Display grader names to students?"
@@ -727,7 +728,7 @@ en:
         <p>
             Select a YAML file form:<br />
             <code>category_name: <br />- category_text<br />- category_text</code><br />
-            
+
           </p>"
         success:  "Successfully uploaded %{annotation_category_number} Annotation Categories"
         error:  "Unable to upload category: %{annotation_category} located in line %{annotation_line}"
@@ -1044,13 +1045,13 @@ en:
     locale_not_available: "%{locale} translation not available!"
     external_authentication_not_supported: "External authentication not supported on your platform!"
     account_disabled: "This account has been disabled"
-    
+
     #app/views/main/_assignment_info_summary.erb
     assignment_average:        "Assignment Average:"
     assignments_submitted:     "Assignments Submitted:"
     assignments_graded:        "Assignments Graded:"
     refresh_graph:             "Refresh the graph"
-    
+
     #app/views/main/_grader_summary.erb
     grader_distribution:       "Grader Distribution:"
     assign_graders:            "Assign Graders"
