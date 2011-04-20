@@ -47,12 +47,13 @@ class MarkusLogger
   # or MARKUS_LOGGING_SIZE_THRESHOLD are not valid an exception of type
   # MarkusLoggerConfigurationError is raised.
   def initialize
-    rotate_by_time = markus_config_logging_rotate_by_interval
-    size = markus_config_logging_size_threshold
-    error_log_file = markus_config_logging_errorlogfile
-    log_file = markus_config_logging_logfile
-    interval = markus_config_logging_rotate_interval
-    old_files = markus_config_logging_num_oldfiles
+    my_pid = Process.pid
+    rotate_by_time = MarkusConfigurator.markus_config_logging_rotate_by_interval
+    size = MarkusConfigurator.markus_config_logging_size_threshold
+    error_log_file = "#{MarkusConfigurator.markus_config_logging_errorlogfile}.#{my_pid}"
+    log_file = "#{MarkusConfigurator.markus_config_logging_logfile}.#{my_pid}"
+    interval = MarkusConfigurator.markus_config_logging_rotate_interval
+    old_files = MarkusConfigurator.markus_config_logging_num_oldfiles
     if !(valid_file?(error_log_file) && valid_file?(log_file))
       raise MarkusLoggerConfigurationError.new('The log files are not valid')
     end

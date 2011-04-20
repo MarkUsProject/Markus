@@ -39,15 +39,7 @@ fr:
     markus_copyright:   "Copyright (c) 2008-2010 par les auteurs."
     markus_credits:     "Crédits"
     markus_credits_thanks:      "Merci à tous ceux qui ont contribué à MarkUs et rendu cela possible. Remerciements particuliers à :"
-    fall_2008:          "Automne 2008"
-    winter_2009:        "Hiver 2009"
-    winter_2010:        "Hiver 2010"
-    summer_2009:        "Été 2009"
-    fall_2009:          "Automne 2009"
-    fall_2010:          "Automne 2010"
-    summer_2010:        "Été 2010"
-    industry_advisors:  "Conseillers Industriels"
-    supervisor:         "Chef de projet"
+    supervisors:        "Chefs de projet"
     contact_us:         "Contactez nous"
     email_more_info:    "E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> ou <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toronto.edu</a><br/>N'hésitez pas à visiter: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> pour plus d'informations."
 
@@ -327,7 +319,6 @@ fr:
       marking_state:        "Affichage de la note"
       grace_credits_used:   "Utilisation des \"grace credits\""
       final_grade:          "Note finale"
-      assignment_average:   "Moyenne"
       class_average:        "Moyenne: %{results_average}"
       show_all:             "Tous"
       show_unmarked:        "Non notés"
@@ -351,6 +342,7 @@ fr:
       revised_by:           "Révision par"
       replace:              "Remplace"
       delete:               "Supprimer"
+      can_begin_grading:    "Peut être évaluée"
 
     grade_entry_forms:
       blank_field: "doit être rempli(e)"
@@ -842,8 +834,9 @@ fr:
         level_index: "Niveau %{index}"
       download:
         title: "Télécharger le fichier de barème (rubrique)"
-        prompt: "Le barème (rubrique) est actuellement disponible au format CSV."
+        prompt: "Le barème (rubrique) est actuellement disponible au format CSV et YAML."
         link_csv: "Télécharger le barème (rubrique) au format CSV"
+        link_yml: "Télécharger le barème (rubrique) au format YAML"
       upload:
         success: "Le fichier contenant le barème (rubrique) a bien été envoyé : %{nb_updates} mise(s) à jour."
         title: "Envoyer un fichier de barème (rubrique)"
@@ -951,6 +944,7 @@ fr:
       update_section: "Édition de la section"
       add_section: "Ajouter une section"
       manage_users: "Gestion des utilisateurs"
+      due_dates_type: "Activer les dates de rendu par section : "
       create:
         success: "Section créée."
         error:   "Section non créée."
@@ -1182,3 +1176,4 @@ fr:
 
         full_messages:
           format: "%{attribute} %{message}"
+    server_time: "Heure du serveur:"

@@ -55,6 +55,39 @@ class Assignment < ActiveRecord::Base
   before_save :reset_collection_time
   after_save  :update_assigned_tokens
 
+  # Export a YAML formatted string created from the assignment rubric criteria.
+  def export_rubric_criteria_yml
+    criteria = self.rubric_criteria
+    final = Hash.new
+    criteria.each do |criterion|
+      inner = ActiveSupport::OrderedHash.new
+      inner["weight"] =  criterion["weight"]
+      inner["level_0"] = {
+        "name"=>  criterion["level_0_name"] ,
+        "description"=>  criterion["level_0_description"]
+      }
+      inner["level_1"] = {
+        "name"=>  criterion["level_1_name"] ,
+        "description"=>  criterion["level_1_description"]
+      }
+      inner["level_2"] = {
+        "name"=>  criterion["level_2_name"] ,
+        "description"=>  criterion["level_2_description"]
+      }
+      inner["level_3"] = {
+        "name"=>  criterion["level_3_name"] ,
+        "description"=>  criterion["level_3_description"]
+      }
+      inner["level_4"] = {
+        "name"=>  criterion["level_4_name"] ,
+        "description"=> criterion["level_4_description"]
+      }
+      criteria_yml = {"#{criterion["rubric_criterion_name"]}" => inner}
+      final = final.merge(criteria_yml)
+    end
+    return final.to_yaml
+  end
+
   def validate
     if (group_max && group_min) && group_max < group_min
       errors.add(:group_max, "must be greater than the minimum number of groups")

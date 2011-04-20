@@ -15,6 +15,7 @@ class SubversionRepositoryTest < Test::Unit::TestCase
   SVN_TEST_REPOS_DIR = File.expand_path(File.join(File.dirname(__FILE__),"/svn_repos"))
   TEST_REPO = SVN_TEST_REPOS_DIR + "/repo1"
   TEST_EXPORT_REPO = SVN_TEST_REPOS_DIR + "/exported_repo1"
+  TEST_EXPORT_REPO_2 = SVN_TEST_REPOS_DIR + "/exported_repo2"
   RESOURCE_DIR = File.expand_path(File.join(File.dirname(__FILE__),"/input_files"))
   TEST_USER = "testuser"
   
@@ -26,14 +27,18 @@ class SubversionRepositoryTest < Test::Unit::TestCase
 
     should "be able to create a new Subversion repository" do
        SubversionRepository.create(TEST_REPO)
-      assert_equal(File.exists?(TEST_REPO), true, "Unable to creat a Subversion repository")
+      assert_equal(File.exists?(TEST_REPO),
+                   true,
+                   "Unable to creat a Subversion repository")
     end
 
     should "be able to open an existing Subversion repository" do
       SubversionRepository.create(TEST_REPO)
       repo = SubversionRepository.open(TEST_REPO)
       assert_not_nil(repo, "Cannot open supversion repository")
-      assert_instance_of(Repository::SubversionRepository, repo, "Repository is of wrong type")
+      assert_instance_of(Repository::SubversionRepository,
+                         repo,
+                         "Repository is of wrong type")
       repo.close()
     end
 
@@ -41,13 +46,17 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       SubversionRepository.create(TEST_REPO)
       SubversionRepository.access(TEST_REPO) do |repo|
         assert_not_nil(repo, "Cannot access supversion repository")
-        assert_instance_of(Repository::SubversionRepository, repo, "Repository is of wrong type")
+        assert_instance_of(Repository::SubversionRepository,
+                           repo,
+                           "Repository is of wrong type")
       end
     end
 
     should "know if a Subversion repository exists at some place" do
       SubversionRepository.create(TEST_REPO)
-      assert_equal(SubversionRepository.repository_exists?(TEST_REPO), true, "A SVN repository should exist at: '" + TEST_REPO + "'")
+      assert_equal(SubversionRepository.repository_exists?(TEST_REPO),
+                   true,
+                   "A SVN repository should exist at: '" + TEST_REPO + "'")
     end
 
     should "be able to delete a Subversion repository" do
@@ -65,6 +74,7 @@ class SubversionRepositoryTest < Test::Unit::TestCase
     setup do
       #make sure there is not a leftover directory here from a previous run
       FileUtils.remove_dir(TEST_REPO, true)
+      FileUtils.mkdir_p(TEST_EXPORT_REPO_2)
       # configure and create repositories
       conf_admin = Hash.new
       conf_admin["IS_REPOSITORY_ADMIN"] = true
@@ -82,15 +92,47 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       end
       FileUtils.remove_dir(TEST_REPO, true)
       FileUtils.remove_dir(TEST_EXPORT_REPO, true)
+      FileUtils.remove_dir(TEST_EXPORT_REPO_2, true)
     end
 
     # beginning of tests
 
     should "have exported the Subversion repository" do
-      assert_not_nil(@repo.export(TEST_EXPORT_REPO), "Did not properly export svn repository")
-      assert(File.exists?(TEST_EXPORT_REPO), "Did not properly export svn repository")
+      assert_not_nil(@repo.export(TEST_EXPORT_REPO),
+                     "Did not properly export svn repository")
+      assert(File.exists?(TEST_EXPORT_REPO),
+             "Did not properly export svn repository")
       @repo.close()
     end
+
+    should "export one file of the Subversion repository into a file" do
+      file = "not-on-the-shelves-2009.pdf"
+
+      # Let's start by adding the file to the svn repository
+      add_file_helper(@repo, file) 
+      assert_not_nil(@repo.export("myfile.pdf",
+                                  file),
+                     "Did not properly export the file from the svn repo")
+      assert(File.exists?("myfile.pdf"),
+             "The file does not exist in the destination repository")
+
+      FileUtils.remove_file("myfile.pdf", true)
+      @repo.close()
+    end
+
+    should "export one file of the Subversion repository into a repository" do
+      file = "not-on-the-shelves-2009.pdf"
+      repo_to_export_to = File.join(TEST_EXPORT_REPO_2, file)
+      # Let's start by adding the file to the svn repository
+      add_file_helper(@repo, file) 
+      assert_not_nil(@repo.export(repo_to_export_to,
+                                  file),
+                     "Did not properly export the file from the svn repo")
+      assert(File.exists?(repo_to_export_to),
+             "The file does not exist in the destination repository")
+      @repo.close()
+    end
+
 
     should "raise an error if the repository where you want to export exists" do
       @repo.export(TEST_EXPORT_REPO)
@@ -184,7 +226,9 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       files = svn_rev.files_at_path("/")
       assert_not_nil(files[filename], "Could not find file '" + filename + "'")
       # test download_as_string
-      assert_equal(@repo.download_as_string(files[filename]), file_contents, "Mismatching content")
+      assert_equal(@repo.download_as_string(files[filename]),
+                   file_contents,
+                   "Mismatching content")
       @repo.close()
     end
 

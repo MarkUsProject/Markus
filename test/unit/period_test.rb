@@ -6,6 +6,7 @@ require 'shoulda'
 
 class PeriodTest < ActiveSupport::TestCase
   should validate_presence_of :hours
+  should have_db_column :interval
   should belong_to :submission_rule
 
   def setup

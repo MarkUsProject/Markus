@@ -6,9 +6,9 @@
 
 <% # UI LIBRARIES %>
 <%= javascript_include_tag "livepipe/livepipe.js",
-	"livepipe/window.js",
-	"livepipe/tabs.js",
-	:cache => "livepipe_cache" %>
+  "livepipe/window.js",
+  "livepipe/tabs.js",
+  :cache => "livepipe_cache" %>
 
 <%= javascript_include_tag "controls.js" %>
 <%= javascript_include_tag "DropDownMenu/DropDownMenu.js"%>
@@ -16,39 +16,40 @@
 
 <% # SOURCE CODE GLOWER AND IMAGE ANNOTATION MANAGER %>
 <%= javascript_include_tag "SourceCodeGlower/AnnotationText.js",
-	"SourceCodeGlower/AnnotationTextDisplayer.js",
-	"SourceCodeGlower/AnnotationTextManager.js",
-	"SourceCodeGlower/SourceCodeLine.js",
-	"SourceCodeGlower/SourceCodeLineAnnotations.js",
-	"SourceCodeGlower/SourceCodeLineCollection.js",
-	"SourceCodeGlower/SourceCodeLineArray.js",
-	"SourceCodeGlower/SourceCodeLine.js",
-	"SourceCodeGlower/SyntaxHighlighter1p5Line.js",
-	"SourceCodeGlower/SourceCodeLineManager.js",
-	"SourceCodeGlower/SourceCodeLineFactory.js",
-	"SourceCodeGlower/SourceCodeAdapter.js",
-	"SourceCodeGlower/SyntaxHighlighter1p5Adapter.js",
-	"SourceCodeGlower/ImageAnnotationGrid.js",
-	"SourceCodeGlower/ImageEventHandler.js",
-	:cache => "SourceCodeGlower_cache" %>
+  "SourceCodeGlower/AnnotationTextDisplayer.js",
+  "SourceCodeGlower/AnnotationTextManager.js",
+  "SourceCodeGlower/SourceCodeLine.js",
+  "SourceCodeGlower/SourceCodeLineAnnotations.js",
+  "SourceCodeGlower/SourceCodeLineCollection.js",
+  "SourceCodeGlower/SourceCodeLineArray.js",
+  "SourceCodeGlower/SourceCodeLine.js",
+  "SourceCodeGlower/SyntaxHighlighter1p5Line.js",
+  "SourceCodeGlower/SourceCodeLineManager.js",
+  "SourceCodeGlower/SourceCodeLineFactory.js",
+  "SourceCodeGlower/SourceCodeAdapter.js",
+  "SourceCodeGlower/SyntaxHighlighter1p5Adapter.js",
+  "SourceCodeGlower/ImageAnnotationGrid.js",
+  "SourceCodeGlower/ImageEventHandler.js",
+  :cache => "SourceCodeGlower_cache" %>
 
 <% # SYNTAX HIGHLIGHTER %>
 <%= javascript_include_tag "syntaxhighlighter/shCore.js",
-	"syntaxhighlighter/shBrushJava.js",
-	"syntaxhighlighter/shBrushXml.js",
-	"syntaxhighlighter/shBrushRuby.js",
-	"syntaxhighlighter/shBrushPython.js",
-	"syntaxhighlighter/shBrushJScript.js",
-	"syntaxhighlighter/shBrushCpp.js",
-	"syntaxhighlighter/shBrushScheme.js",
-	"syntaxhighlighter/shBrushUnknown.js",
-	:cache => "syntaxhighlighter_cache" %>
+  "syntaxhighlighter/shBrushJava.js",
+  "syntaxhighlighter/shBrushXml.js",
+  "syntaxhighlighter/shBrushRuby.js",
+  "syntaxhighlighter/shBrushPython.js",
+  "syntaxhighlighter/shBrushJScript.js",
+  "syntaxhighlighter/shBrushCpp.js",
+  "syntaxhighlighter/shBrushScheme.js",
+  "syntaxhighlighter/shBrushScilab.js",
+  "syntaxhighlighter/shBrushUnknown.js",
+  :cache => "syntaxhighlighter_cache" %>
 
 <% # EDITING MARKS FUNCTIONS AND BOOT SCRIPTS%>
 <%= javascript_include_tag "Grader/file_selector.js",
-	"Grader/marking.js",
-	"Grader/mouse_selections.js",
-	:cache => "Grader_cache" %>
+  "Grader/marking.js",
+  "Grader/mouse_selections.js",
+  :cache => "Grader_cache" %>
 
 <% # This file can't be cached %>
 <%= javascript_include_tag "Grader/tabs_boot.js"%>
@@ -119,12 +120,12 @@ function check_working() {
 <%= render :partial => 'results/common/errors' %>
 
 <div id="file_selector">
-	<%= render :partial => 'results/common/file_selector', :locals => {:files => @files, :can_download => true} %>
-	<% if @assignment.enable_test %>
-		<div id="test_results_controls">
-			<%= render :partial => 'results/common/test_selector', :locals => {:test_result_files => @test_result_files, :result => @result} %>
-		</div>
-	<% end %>
+  <%= render :partial => 'results/common/file_selector', :locals => {:files => @files, :can_download => true} %>
+  <% if @assignment.enable_test %>
+    <div id="test_results_controls">
+      <%= render :partial => 'results/common/test_selector', :locals => {:test_result_files => @test_result_files, :result => @result} %>
+    </div>
+  <% end %>
 </div>
 
 

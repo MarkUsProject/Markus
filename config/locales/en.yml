@@ -39,15 +39,7 @@ en:
     markus_copyright:   "Copyright (c) 2008-2010 by the authors."
     markus_credits:     "Credits"
     markus_credits_thanks:      "Thanks to everyone who contributed to and made MarkUs possible. In particular to:"
-    fall_2008:          "Fall 2008"
-    winter_2009:        "Winter 2009"
-    winter_2010:        "Winter 2010"
-    summer_2009:        "Summer 2009"
-    summer_2010:        "Summer 2010"
-    fall_2009:          "Fall 2009"
-    fall_2010:          "Fall 2010"
-    industry_advisors:  "Industry Advisors"
-    supervisor:         "Supervisor"
+    supervisors:        "Supervisors:"
     contact_us:         "Contact Us"
     email_more_info:    "E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> or <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toront   o.edu</a><br/>Please visit: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> for more information."
 
@@ -229,6 +221,7 @@ en:
       annot_summary: "Annot. Summary"
       source_code: "Source Code"
       remark_request: "Remark Request"
+      remark_submitted_on: "Remark Request Submitted On"
       remark_instructions: "Instructions for Remark Requests"
       remark_due_date:  "Remark Due Date"
       no_remark_due_date: "No due date assigned"
@@ -236,7 +229,7 @@ en:
       about_remark_save: "Please note that the instructor will be unaware of your saved request unless it has been submitted."
       about_remark_submission: "Once a remark request has been submitted, you will not be able to see your original results until remark results are available.  You will also not be able to edit the request."
       cancel_remark_to_change: "In order to change your request, you must cancel your existing request and create a new one."
-      remark_submitted: "Your remark request has been submitted."
+      remark_submitted: "Your remark request has been submitted:"
       previous_submission:  "Previous Submission"
       next_submission:      "Next Submission"
       marking_status:       "Marking Status:"
@@ -364,7 +357,7 @@ en:
       revised_by:           "Revised By"
       replace:              "Replace"
       delete:               "Delete"
-      can_begin_grading: "Can begin grading"
+      can_begin_grading:    "Can begin grading"
 
     grade_entry_forms:
       blank_field: "can't be blank"
@@ -773,6 +766,21 @@ en:
         to:  "to"
         alert: "You must select the Grace Period Submission Rule to add a grace period."
 
+      penalty_decay_period_submission_rule:
+        name: "Penalty Period Submission Rule"
+        short_name: "Penalty Decay"
+        description: "You may submit up to %{penalty_decay_period_limit} hour(s) past the due date, but will have the appropriate percentage deducted from your final result"
+        form_description: "Use Penalty Decay Formula"
+        add_penalty_decay: "Add a Decay Period"
+        alert: "You must select the Penalty Decay Submission Rule to add a decay period."
+        from: "From"
+        to: "to"
+        hours: "hour(s)..."
+        after: "After"
+        each: "each"
+        deduct: "Deduct"
+        for: "for"
+
       penalty_period_submission_rule:
         name: "Penalty Period Submission Rule"
         short_name:  "Penalty Period"
@@ -856,19 +864,35 @@ en:
         level_index: "Level %{index}"
       download:
         title: "Download Rubric File"
-        prompt: "Rubric criteria are currently available in CSV."
+        prompt: "Rubric criteria are currently available in CSV and YAML."
         link_csv: "Download rubric in CSV Format"
+        link_yml: "Download rubric in YAML Format"
       upload:
         success: "Rubric criteria successfully uploaded: %{nb_updates} update(s)."
-        title: "Upload Rubric Criteria File"
-        prompt: "Select a CSV file to upload"
-        format_html: "
+        csv_title: "Upload CSV File"
+        yml_title: "Upload YML File"
+        csv_prompt: "Select a CSV file to upload"
+        yml_prompt: "Select a YML file to upload"
+        format_csv_html: "
         <p>The file should have the following format:</p>
         <ul><li>one record per line;</li><li>each line should be terminated by a carriage-return line-feed.</li></ul>
         <code>criteria_name,weight,<em>level_names</em>,<em>level_descriptions</em></code>
         <p>where <em>level_names</em> must contains the name of each level (seperated by commas)<br />
         and <em>level_descriptions</em> could contains the description of each level (optional, also seperated
         by commas)."
+        format_yml_html: "
+          <p>The file should have the following format:<br />
+              <code>criterion_name:<br />
+                    &nbsp;&nbsp;weight: weight<br />
+                    &nbsp;&nbsp;level_0:<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br />
+                    &nbsp;&nbsp;level_1:<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;[...]
+          </p>"
+        error: "Some rubric criteria were invalid:"
+        syntax_error: "There is an error in the file you uploaded : %{error}"
+        empty_error: "No criteria were found in the provided file."
       error_total: "total weight must be positive"
       defaults:
         level_0: "Very Poor"
@@ -965,6 +989,7 @@ en:
       update_section: "Update Section"
       add_section: "Add a new section"
       manage_users: "Manage Users"
+      due_dates_type: "Section due dates type: "
       create:
         success: "Section successfully created."
         error:   "Failed to create section."
@@ -1081,3 +1106,5 @@ en:
       array:
         sentence_connector: "and"
         skip_last_comma: true
+
+    server_time: "Server Time:"

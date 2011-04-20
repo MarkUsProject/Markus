@@ -1739,7 +1739,7 @@ fieldset.period{
   margin: 10px 0px;
 }
 
-#penalty_periods, #grace_periods {
+#penalty_periods, #grace_periods, #penalty_decay_periods {
    margin-left: 5em;
    width: 80%;
 }
@@ -1748,7 +1748,7 @@ fieldset.period{
 	width: 45%;
 }
 
-.grace_periods_link, .penalty_periods_link{
+.grace_periods_link, .penalty_decay_periods_lin, .penalty_periods_link{
   margin: 2em;
   font-size: 0.9em;
 }
@@ -1929,4 +1929,8 @@ pre#test_result_content {
 
 .bluff-tooltip span {
 	display: none;
+}
+
+#curent_time{
+  padding: 10px 0px 10px 0px; 
 }

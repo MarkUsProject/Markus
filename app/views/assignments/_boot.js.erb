@@ -3,10 +3,17 @@
   var past_due_date_edit_warning = "<%= t(:past_due_date_edit_warning) %>";
 
   var grace_periods = null;
+  var penalty_decay_periods = null;
   var penalty_periods = null;
   document.observe('dom:loaded', function() {
     grace_periods = new PeriodDeltaChain({
       period_root_id: 'grace_periods',
+      date_format: "",
+      due_date: $F('assignment_due_date')
+    });
+    
+    penalty_decay_periods = new PeriodDeltaChain({
+      period_root_id: 'penalty_decay_periods',
       date_format: "",
       due_date: $F('assignment_due_date')
     });
@@ -18,6 +25,7 @@
     });
 
     grace_periods.refresh();
+    penalty_decay_periods.refresh();
     penalty_periods.refresh();
     
     default_group_fields();

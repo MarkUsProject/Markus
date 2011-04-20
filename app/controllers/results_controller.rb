@@ -10,7 +10,7 @@ class ResultsController < ApplicationController
                         :update_marking_state, :note_message, :update_overall_remark_comment]
   before_filter      :authorize_for_user, :only => [:codeviewer, :render_test_result, :download]
   before_filter      :authorize_for_student, :only => [:view_marks, :update_remark_request, :cancel_remark_request]
-  
+
   def note_message
     @result = Result.find(params[:id])
     if params[:success]
@@ -19,18 +19,18 @@ class ResultsController < ApplicationController
       flash[:fail_notice] = I18n.t('notes.error')
     end
   end
-  
+
   def edit
     result_id = params[:id]
     @result = Result.find(result_id)
-    @assignment = @result.submission.assignment      
+    @assignment = @result.submission.assignment
     @submission = @result.submission
-    
+
     @old_result = nil
     if @submission.remark_submitted?
       @old_result = @submission.result
     end
-    
+
     @annotation_categories = @assignment.annotation_categories
     @grouping = @result.submission.grouping
     @group = @grouping.group
@@ -56,11 +56,11 @@ class ResultsController < ApplicationController
     elsif current_user.admin?
       groupings = @assignment.groupings.find(:all, :include => :group)
     end
-    
+
     # If a grouping's submission's marking_status is complete, we're not going
     # to include them in the next_submission/prev_submission list
-    
-    # If a grouping doesn't have a submission, and we are past the collection time, 
+
+    # If a grouping doesn't have a submission, and we are past the collection time,
     # we *DO* want to include them in the list.
     collection_time = @assignment.submission_rule.calculate_collection_time.localtime
 
@@ -72,7 +72,7 @@ class ResultsController < ApplicationController
     groupings = groupings.sort do |a, b|
       a.group.group_name <=> b.group.group_name
     end
-    
+
     current_grouping_index = groupings.index(@grouping)
     if current_grouping_index.nil?
       @next_grouping = groupings.first
@@ -102,7 +102,7 @@ class ResultsController < ApplicationController
       redirect_to :controller => 'submissions', :action => 'collect_and_begin_grading', :id => grouping.assignment.id, :grouping_id => grouping.id
     end
   end
-  
+
   def set_released_to_students
     @result = Result.find(params[:id])
     released_to_students = (params[:value] == 'true')
@@ -124,7 +124,7 @@ class ResultsController < ApplicationController
                    "#{assignment.id}' (for 1 group).")
     end
   end
-  
+
   #Updates the marking state
   def update_marking_state
     @result = Result.find(params[:id])
@@ -136,7 +136,7 @@ class ResultsController < ApplicationController
       @result.submission.assignment.assignment_stat.refresh_grade_distribution
     end
   end
-  
+
   def download
     #Ensure student doesn't download a file not submitted by his own grouping
     if !authorized_to_download?(params[:select_file_id])
@@ -175,7 +175,7 @@ class ResultsController < ApplicationController
     @assignment = Assignment.find(params[:id])
     @submission_file_id = params[:submission_file_id]
     @focus_line = params[:focus_line]
-      
+
     @file = SubmissionFile.find(@submission_file_id)
     @result = @file.submission.result
     # Is the current user a student?
@@ -189,7 +189,7 @@ class ResultsController < ApplicationController
       end
     end
 
-    @annots = @file.annotations    
+    @annots = @file.annotations
     @all_annots = @file.submission.annotations
 
     begin
@@ -198,7 +198,7 @@ class ResultsController < ApplicationController
       render :partial => 'shared/handle_error',
              :locals => {:error => e.message}
       return
-    end   
+    end
     @code_type = @file.get_file_type
     render :action => 'results/common/codeviewer'
   end
@@ -209,7 +209,7 @@ class ResultsController < ApplicationController
   def render_test_result
     @assignment = Assignment.find(params[:id])
     @test_result = TestResult.find(params[:test_result_id])
-      
+
     # Students can use this action only, when marks have been released
     if current_user.student? &&
         (@test_result.submission.grouping.membership_status(current_user).nil? ||
@@ -218,7 +218,7 @@ class ResultsController < ApplicationController
        :locals => {:error => I18n.t('test_result.error.no_access', :test_result_id => @test_result.id)}
       return
     end
-    
+
     render :action => 'results/render_test_result', :layout => "plain"
   end
 
@@ -230,7 +230,7 @@ class ResultsController < ApplicationController
     assignment = submission.grouping.assignment # get assignment for logging
     m_logger = MarkusLogger.instance
     if !result_mark.valid?
-      render :partial => 'results/marker/mark_verify_result', 
+      render :partial => 'results/marker/mark_verify_result',
              :locals => {:mark_id => result_mark.id,:mark_error =>result_mark.errors.full_messages.join}
     else
       if !result_mark.save
@@ -238,7 +238,7 @@ class ResultsController < ApplicationController
                        "#{current_user.user_name}', Submission ID: '#{submission.id}'," +
                        " Assignment: '#{assignment.short_identifier}', Group: '#{group.group_name}'.",
                        MarkusLogger::ERROR)
-          render :partial => 'shared/handle_error', 
+          render :partial => 'shared/handle_error',
                  :locals => {:error => I18n.t('mark.error.save') + result_mark.errors.full_messages.join}
       else
           m_logger.log("User '#{current_user.user_name}' updated mark for submission (id: " +
@@ -249,7 +249,7 @@ class ResultsController < ApplicationController
       end
     end
   end
-  
+
   def view_marks
     @assignment = Assignment.find(params[:id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
@@ -282,7 +282,7 @@ class ResultsController < ApplicationController
       render 'results/student/no_result'
       return
     end
-    
+
     @annotation_categories = @assignment.annotation_categories
     @group = @grouping.group
     @files = @submission.submission_files
@@ -302,7 +302,7 @@ class ResultsController < ApplicationController
     m_logger.log("Student '#{current_user.user_name}' viewed results for assignment " +
                  "'#{@assignment.short_identifier}'.")
   end
-  
+
   def add_extra_mark
     @result = Result.find(params[:id])
     if request.post?
@@ -329,24 +329,25 @@ class ResultsController < ApplicationController
     @result = @extra_mark.result
     render :action => 'results/marker/remove_extra_mark'
   end
-  
+
   def update_overall_comment
     @result = Result.find(params[:id])
     @result.overall_comment = params[:result][:overall_comment]
     @result.save
   end
-  
+
   def update_overall_remark_comment
     @result = Result.find(params[:id])
     @result.overall_comment = params[:result][:overall_comment]
     @result.save
   end
-  
+
   def update_remark_request
     @assignment = Assignment.find(params[:assignment_id])
     if !@assignment.past_remark_due_date?
       @submission = Submission.find(params[:id])
       @submission.remark_request = params[:submission][:remark_request]
+      @submission.remark_request_timestamp = Time.now
       @submission.save
       @old_result = @submission.result
       if !(@submission.remark_result)
@@ -361,54 +362,54 @@ class ResultsController < ApplicationController
       end
     end
   end
-  
+
   def cancel_remark_request
     @submission = Submission.find(params[:submission_id])
 
     @remark_result = @submission.remark_result
     @remark_result.submission_id = nil
     @remark_result.save
-       
+
     @submission.remark_result_id = nil
-    @submission.remark_request = nil    
+    @submission.remark_request = nil
     @submission.save
-    
+
     @result = @submission.result
     @result.released_to_students = true
     @result.save
-    
+
     redirect_to :controller => 'results', :action => 'view_marks', :id => params[:id]
   end
-  
+
   def expand_criteria
     @assignment = Assignment.find(params[:aid])
     @mark_criteria = @assignment.get_criteria
-    render :partial => 'results/marker/expand_criteria', :locals => {:mark_criteria => @mark_criteria} 
+    render :partial => 'results/marker/expand_criteria', :locals => {:mark_criteria => @mark_criteria}
   end
-  
+
   def collapse_criteria
     @assignment = Assignment.find(params[:aid])
     @mark_criteria = @assignment.get_criteria
-    render :partial => 'results/marker/collapse_criteria', :locals => {:mark_criteria => @mark_criteria} 
+    render :partial => 'results/marker/collapse_criteria', :locals => {:mark_criteria => @mark_criteria}
   end
-  
+
   def expand_unmarked_criteria
     @assignment = Assignment.find(params[:aid])
     @result = Result.find(params[:rid])
     # nil_marks are the marks that have a "nil" value for Mark.mark - so they're
     # unmarked.
     @nil_marks = @result.marks.all(:conditions => {:mark => nil})
-    render :partial => 'results/marker/expand_unmarked_criteria', :locals => {:nil_marks => @nil_marks} 
+    render :partial => 'results/marker/expand_unmarked_criteria', :locals => {:nil_marks => @nil_marks}
  end
-  
+
   def delete_grace_period_deduction
     @grouping = Grouping.find(params[:id])
     grace_deduction = GracePeriodDeduction.find(params[:deduction_id])
     grace_deduction.destroy
   end
-  
+
   private
-  
+
 
   #Return true if select_file_id matches the id of a file submitted by the
   #current_user. This is to prevent students from downloading files that they
@@ -425,5 +426,5 @@ class ResultsController < ApplicationController
     end
     return false
   end
-  
+
 end

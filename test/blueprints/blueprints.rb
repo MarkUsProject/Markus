@@ -162,7 +162,7 @@ ImageAnnotation.blueprint do
     )}
   annotation_text_id {1}
   submission_file_id {submission_file.id}
-  annotation_number {rand(1000)}
+  annotation_number {rand(1000)+1}
 end
 
 Mark.blueprint do
@@ -243,6 +243,11 @@ SubmissionFile.blueprint do
   path
 end
 
+PenaltyDecayPeriodSubmissionRule.blueprint do
+  assignment_id {0}
+  type {'PenaltyDecayPeriodSubmissionRule'}
+end
+
 PenaltyPeriodSubmissionRule.blueprint do
   assignment_id {0}
   type {'PenaltyPeriodSubmissionRule'}
@@ -280,7 +285,7 @@ TextAnnotation.blueprint do
   annotation_text {AnnotationText.make(
     :annotation_category => AnnotationCategory.make(:assignment => submission_file.submission.grouping.assignment)
     )}
-  annotation_number {rand(1000)}
+  annotation_number {rand(1000)+1}
 end
 
 Token.blueprint do

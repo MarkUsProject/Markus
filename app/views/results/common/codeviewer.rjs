@@ -22,7 +22,7 @@
         :file_contents => I18n.t("submission_file.error.binary_file_message"),
         :annots => @annots, :code_type => @code_type}
     end
-       
+
     #Also update the annotation_summary_list
     if @current_user.ta? || @current_user.admin?
       page.replace_html 'annotation_summary_list',
@@ -38,13 +38,13 @@
     end
 
 
-  
+
   rescue Exception => e
     # There's a bug in Rails as of 2.3.2 - #1112 - some binary strings
     # will result in a "redundant UTF-8 sequence" error when attempting
     # to convert to JSON.  This is scheduled for fixing in Rails 2.3.4.
     # Until then, we'll just ask the user to download the file.
-        
+
     # TODO:  Make this more graceful, and localized
     page.call "alert", "Could not render this file in the code viewer.  Click on the Download button to download the file instead."
     page.alert e.message
