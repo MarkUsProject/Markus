@@ -93,6 +93,10 @@ h4{
   margin-right: 3px;
 }
 
+#user_name{
+  margin-right: 30px;
+  margin-left: -5px;
+}
 
 #logo{
    margin: 5px 10px 10px 10px;
@@ -905,13 +909,25 @@ input#extra_mark_description{
 /* positioning of about action */
 #about_icon {
   position: absolute;
-  margin-left: -20px;
+  margin-left: -27px;
+  margin-right: -8px;
+}
+
+/* positioning of role switching icon */
+#switch_role_icon {
+  position: absolute;
+  margin-left: -25px;
 }
 
 #about_dialog a {
   text-transform: none;
 }
 
+/* positioning of the logout link */
+#logout_link {
+  position: absolute;
+  margin-left: -3px
+}
 .p_modal{
   margin-top: 5px;
   border-top: 1px solid #000000;
@@ -1837,7 +1853,7 @@ pre#test_result_content {
 
 /* Language chooser styles */
 #lang_chooser {
-  margin-right: 25px;
+  margin-right: 36px;
   border-right: 1px solid #000;
   border-left: 1px solid #000;
   padding-left: 5px;

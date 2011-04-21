@@ -136,11 +136,10 @@ class MainController < ApplicationController
     if !session[:real_uid].nil? && !session[:uid].nil?
       #An admin was logged in as a student or grader
       m_logger.log("Admin '#{User.find_by_id(session[:real_uid]).user_name}' logged out from '#{User.find_by_id(session[:uid]).user_name}'.")
-    else 
-      #The user was not assuming another role 
+    else
+      #The user was not assuming another role
       m_logger.log("User '#{current_user.user_name}' logged out.")
-    end    
-    
+    end
     clear_session
     cookies.delete :auth_token
     reset_session
@@ -231,6 +230,11 @@ class MainController < ApplicationController
     else
       flash[:role_switch_notice] = I18n.t(:login_failed)
     end
+  end
+
+  def role_switch
+    # dummy action for remote rjs calls
+    # triggered by clicking on the "Switch role" link
   end
 
 private
