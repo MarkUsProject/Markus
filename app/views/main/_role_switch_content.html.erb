@@ -1,0 +1,17 @@
+<div id="role_switch_text">
+    <% form_tag({ :action => 'login_as', :id => nil }, :id => 'role_switch_form') do %>
+   
+      <fieldset>
+      <h2 align="center"><%= I18n.t(:switch_role)%></h2>
+       <%= label_tag 'effective_user_login', I18n.t(:login_as) -%>
+        <%= text_field_tag 'effective_user_login', nil, :tabindex => 10 %><br />
+
+        <%= label_tag 'admin_password', I18n.t(:admin_password) %>
+        <%= password_field_tag 'admin_password', nil, :tabindex => 20 %><br />
+ 
+        <%= submit_tag I18n.t(:log_in), :disable_with => I18n.t(:logging_in), :tabindex => 100, :class => 'button indent_button'%>
+        <%= button_to_function "Cancel", 'role_switch_modal.close()'%>
+      <% end %>
+      </fieldset>
+</div>
+
