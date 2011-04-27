@@ -498,7 +498,7 @@ fr:
     results:
       title:  "Projet %{assignment_name} : %{group_name}"
       results_name:  "Résultats"
-      successfully_changed: "Les résultats  %{changed} ont été mis à jour"
+      successfully_changed: "Les %{changed} résultats ont été mis à jour"
       must_select_a_group:  "Vous devez sélectionner au moins un groupe à mettre à jour"
       editing_after_release_fail: "Les notes ont été dévoiléées, vous ne pouvez plus changer l'évaluation."
       could_not_find_file: "N'a pas pu trouver le fichier %{filename} dans le répertoire %{repository_name}"
