@@ -864,8 +864,9 @@ fr:
         level_index: "Niveau %{index}"
       download:
         title: "Télécharger le fichier de barème (rubrique)"
-        prompt: "Le barème (rubrique) est actuellement disponible au format CSV."
+        prompt: "Le barème (rubrique) est actuellement disponible au format CSV et YAML."
         link_csv: "Télécharger le barème (rubrique) au format CSV"
+        link_yml: "Télécharger le barème (rubrique) au format YAML"
       upload:
         success: "Le fichier contenant le barème (rubrique) a bien été envoyé : %{nb_updates} mise(s) à jour."
         title: "Envoyer un fichier de barème (rubrique)"
