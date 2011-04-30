@@ -1,8 +1,8 @@
 # test using MACHINIST
 
-require File.join(File.dirname(__FILE__),'/../test_helper')
-require File.join(File.dirname(__FILE__),'/../blueprints/blueprints')
-require File.join(File.dirname(__FILE__),'/../blueprints/helper')
+require File.join(File.dirname(__FILE__), '..', 'test_helper')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 require 'shoulda'
 
 class PeriodTest < ActiveSupport::TestCase
