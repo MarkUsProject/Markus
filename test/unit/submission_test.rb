@@ -1,5 +1,6 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require File.join(File.dirname(__FILE__), '..', 'test_helper')
 require 'shoulda'
+
 class SubmissionTest < ActiveSupport::TestCase
   fixtures :all
   should have_many :submission_files
