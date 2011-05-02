@@ -3,8 +3,8 @@
 # - A section with no student associated to
 # - A section with student associated to
 
-require File.join(File.dirname(__FILE__),'/../test_helper')
-require File.join(File.dirname(__FILE__),'/../blueprints/blueprints')
+require File.join(File.dirname(__FILE__), '..', 'test_helper')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints')
 require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 require 'shoulda'
 
