@@ -18,7 +18,7 @@ class ActiveSupport::TestCase
   # don't care one way or the other, switching from MyISAM to InnoDB tables
   # is recommended.
   #
-  # The only drawback to using transactional fixtures is when you actually 
+  # The only drawback to using transactional fixtures is when you actually
   # need to test transactions.  Since your test is bracketed by a transaction,
   # any transactions started in your code will be automatically rolled back.
   self.use_transactional_fixtures = true
@@ -52,14 +52,14 @@ class ActiveSupport::TestCase
       grouping.create_grouping_repository_folder
     end
   end
-  
+
   def destroy_repos
     conf = Hash.new
     conf["IS_REPOSITORY_ADMIN"] = true
     conf["REPOSITORY_PERMISSION_FILE"] = 'dummyfile'
     Repository.get_class(REPOSITORY_TYPE, conf).purge_all
   end
- 
+
   def clear_fixtures
     Admin.delete_all
     AnnotationCategory.delete_all
@@ -81,7 +81,7 @@ class ActiveSupport::TestCase
     Section.delete_all
     Student.delete_all
     StudentMembership.delete_all
-    Submission.delete_all 
+    Submission.delete_all
     Ta.delete_all
     TaMembership.delete_all
     User.delete_all
@@ -98,7 +98,7 @@ class ActiveSupport::TestCase
     FileUtils.rm_rf("#{MarkusConfigurator.markus_config_pdf_storage}/*")
   end
 
-  # This prevents factory data preloader from automatically loading data for each test suite 
+  # This prevents factory data preloader from automatically loading data for each test suite
   FactoryDataPreloader.preload_all = false
 
   def equal_dates(date_1, date_2)

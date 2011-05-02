@@ -5,8 +5,8 @@ class AnnotationCategory < ActiveRecord::Base
   validates_uniqueness_of :annotation_category_name, :scope => :assignment_id, :message => 'is already taken'
   validates_presence_of :assignment_id
   validates_associated :assignment, :message => 'not strongly associated with assignment'
-  
-  # Takes an array of comma separated values, and tries to assemble an 
+
+  # Takes an array of comma separated values, and tries to assemble an
   # Annotation Category, and associated Annotation Texts
   # Format:  annotation_category,annotation_text,annotation_text,...
   def self.add_by_row(row, assignment)
@@ -22,7 +22,7 @@ class AnnotationCategory < ActiveRecord::Base
       annotation_category.assignment = assignment
       annotation_category.save
     end
-    
+
     row.each do |annotation_text_content|
       annotation_text = AnnotationText.new
       annotation_text.content = annotation_text_content
@@ -38,8 +38,8 @@ class AnnotationCategory < ActiveRecord::Base
     end
     return result
   end
-   
-  # Takes two arrays, one with annotation catogies names and one 
+
+  # Takes two arrays, one with annotation catogies names and one
   # with associated annotation texts
   # It is used with the Yaml format
   # Format :
