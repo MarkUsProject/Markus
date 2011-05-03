@@ -132,10 +132,11 @@ module Api
         return
       end
 
-      # Everything went fine, send the response according the .
+      # Everything went fine, send the response according to the user's format.
+      #NOTE: not completed yet. Defaults to text.
       respond_to do |format|
-        format.json{render :json => user.to_json}
-        format.xml{render :xml => user.to_xml}
+#         format.json{render :json => user.to_json}
+#         format.xml{render :xml => user.to_xml}
 
         format.all{send_data  t('user.user_name') + ": " + user.user_name + "\n" +
                               t('user.user_type') + ": " + user.type + "\n" +
