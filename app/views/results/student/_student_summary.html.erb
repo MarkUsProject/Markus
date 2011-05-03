@@ -1,12 +1,12 @@
 <% if old_result %>
   <p>
-    <a href=# onclick='return false;' onmouseover='show_old_marks();' onmouseout='hide_old_marks();'>Show Old Mark Summary</a>
+    <a href='#' onclick='return false;' onmouseover='show_old_marks();' onmouseout='hide_old_marks();'><%= I18n.t("marker.marks.show_old_marks") %></a>
   </p>
-  <div id="old_summary_criteria_pane" style="display:none;">
-  
-    <%= render :partial => "results/common/#{@assignment.marking_scheme_type}_marks_summary_table", 
+  <div id="old_summary_criteria_pane">
+
+    <%= render :partial => "results/common/#{@assignment.marking_scheme_type}_marks_summary_table",
                :locals => {:mark_criteria => mark_criteria, :marks_map => old_marks_map} %>
-      
+
       <div class="mark_subtotal">
         <div class="float_left"><%= I18n.t("marker.marks.old_subtotal") %></div>
         <div class="float_right"> /<%= h(assignment.total_mark) %>  </div>
@@ -16,11 +16,11 @@
 <% end %>
 
 <div id="summary_criteria_pane">
-  <%= render :partial => "results/common/#{@assignment.marking_scheme_type}_marks_summary_table", 
+  <%= render :partial => "results/common/#{@assignment.marking_scheme_type}_marks_summary_table",
              :locals => {:mark_criteria => mark_criteria, :marks_map => marks_map} %>
 
     <!-- Summary Criteria Pane -->
-      
+
     <div class="mark_subtotal">
       <div class="float_left"><%= I18n.t("marker.marks.subtotal") %></div>
       <div class="float_right"> /<%= h(assignment.total_mark) %>  </div>
@@ -29,24 +29,24 @@
 </div>
 
     <div class="clear"></div><br/>
-    
-    <div id="extra_marks_pane" class="extra_marks_pane">
-      <div class="bonus_deduction"><b>Bonus/Deductions</b></div>
 
-    <%= render :partial => 'results/student/extra_marks_table', :locals => {:extra_marks_points => extra_marks_points, :result_id => result.id} %>
-      
+    <div id="extra_marks_pane" class="extra_marks_pane">
+      <div class="bonus_deduction"><strong><%= I18n.t("marker.marks.bonus_deductions") %></strong></div>
+
+    <%= render :partial => 'results/student/extra_marks_table',
+               :locals => {:extra_marks_points => extra_marks_points, :result_id => result.id} %>
 
       <div>
-        <div class="float_left"><b>Bonus Marks:&nbsp;</b></div>
+        <div class="float_left"><strong><%= I18n.t("marker.marks.bonus_marks") %></strong></div>
         <div class="float_left" id="extra_marks_bonus"><%= h(result.get_positive_extra_points) %></div>
       </div>
       <div class="clear"></div>
       <div>
-        <div class="float_left"><b>Deducted Marks:&nbsp;</b></div>
+        <div class="float_left"><strong><%= I18n.t("marker.marks.deducted_marks") %></strong></div>
         <div class="float_left" id="extra_marks_deducted"><%= h(@result.get_negative_extra_points) %></div>
       </div>
-    </div>      
-    
+    </div>
+
     <div class="clear"></div>
 
     <% if old_result %>
@@ -66,5 +66,5 @@
        <span> /<%= h(assignment.total_mark) %>  </span>
       </span>
 
-     <span>Final Mark&nbsp;</span>
+     <span><%= I18n.t("marker.marks.final_mark") %></span>
          </div>

@@ -113,10 +113,10 @@ class AssignmentsController < ApplicationController
             elsif submission.has_result? && submission.result.released_to_students
               @a_id_results[a.id] = submission.result
             end
-          end 
+          end
         end
       end
-      
+
       # Get the grades for grade entry forms for the current user
       @g_id_entries = Hash.new()
       @grade_entry_forms.each do |g|

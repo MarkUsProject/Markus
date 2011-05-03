@@ -25,19 +25,12 @@ class ResultsController < ApplicationController
     @result = Result.find(result_id)
     @assignment = @result.submission.assignment
     @submission = @result.submission
-    
+
     @old_result = nil
     if @submission.remark_submitted?
       @old_result = @submission.result
     end
-    
-    @old_result = nil
-    # remark_results in 'unmarked' state are not submitted by the student yet
-    if @submission.has_remark? && @submission.remark_result.marking_state != Result::MARKING_STATES[:unmarked]
-      @old_result = @submission.result
-    end
-    
->>>>>>> Implemented remark summaries: mark summaries now show old marks and the new remarked marks
+
     @annotation_categories = @assignment.annotation_categories
     @grouping = @result.submission.grouping
     @group = @grouping.group
@@ -281,10 +274,10 @@ class ResultsController < ApplicationController
       render 'results/student/no_result'
       return
     end
-    
+
     @result = @submission.result
     @old_result = nil
-    if @submission.has_remark?
+    if @submission.remark_submitted?
       @old_result = @result
       @result = @submission.remark_result
       # if remark result's marking state is 'unmarked' then the student has
@@ -293,7 +286,9 @@ class ResultsController < ApplicationController
         render 'results/student/no_remark_result'
         return
       end
-    elsif !@result.released_to_students
+    end
+
+    if !@result.released_to_students
       render 'results/student/no_result'
       return
     end

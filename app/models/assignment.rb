@@ -241,6 +241,7 @@ class Assignment < ActiveRecord::Base
           result = submission.remark_result
         elsif submission.has_result?
           result = submission.result
+        end
         if result.released_to_students
           results_sum += result.total_mark
           results_count += 1

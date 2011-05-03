@@ -113,13 +113,13 @@ class Submission < ActiveRecord::Base
   def has_remark?
     return !remark_result.nil?
   end
-  
+
   # Does this submission have a remark request submitted?
   # remark_results in 'unmarked' state have not been submitted by the student yet (just saved)
-  # submitted means that the remark request can be viewed by instructors and TAs and is no 
-  # longer editable by the student.
-  # saved means that the remark request cannot be viewed by instructors or TAs yet and
-  # the student can still make changes to the request details.
+  # Submitted means that the remark request can be viewed by instructors and TAs and is no 
+  #   longer editable by the student.
+  # Saved means that the remark request cannot be viewed by instructors or TAs yet and
+  #   the student can still make changes to the request details.
   def remark_submitted?
     return (self.has_remark? && remark_result.marking_state != Result::MARKING_STATES[:unmarked])
   end
@@ -164,7 +164,6 @@ class Submission < ActiveRecord::Base
   end
   
   def create_remark_result
-    debugger
     remark_result = Result.new
     self.remark_result = remark_result
     remark_result.marking_state = Result::MARKING_STATES[:unmarked]
