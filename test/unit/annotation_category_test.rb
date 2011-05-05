@@ -4,11 +4,6 @@ require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 require 'shoulda'
 
 class AnnotationCategoryTest < ActiveSupport::TestCase
-   should validate_presence_of :annotation_category_name
-   should validate_presence_of :assignment_id
-   should have_many :annotation_texts
-   should belong_to :assignment
-   should validate_uniqueness_of(:annotation_category_name).scoped_to(:assignment_id).with_message('is already taken')
 
   context "Test annotation add by row" do
     context ", when no annotation categorie exists" do
@@ -35,6 +30,11 @@ class AnnotationCategoryTest < ActiveSupport::TestCase
         @assignment = Assignment.make
         AnnotationCategory.add_by_row(@row, @assignment)
       end
+      should validate_presence_of :annotation_category_name
+      should validate_presence_of :assignment_id
+      should have_many :annotation_texts
+      should belong_to :assignment
+      should validate_uniqueness_of(:annotation_category_name).scoped_to(:assignment_id).with_message('is already taken')
 
       # an annotation category has been created.
       # the number of annotation category should be different
