@@ -1932,5 +1932,9 @@ pre#test_result_content {
 }
 
 #curent_time{
+<<<<<<< HEAD
   padding: 10px 0px 10px 0px; 
+=======
+  padding: 10px 0px 10px 0px;
+>>>>>>> Moved CSS class for error from span tag to div tag. Reverted main.css to master copy as my changes are now useless.
 }
