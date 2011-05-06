@@ -76,7 +76,7 @@ module Api
       end
 
       # If no user is found, render an error.
-      # Note: render will change to a view with a more meaningful message.
+      # TODO: render will change to a view with a more meaningful message.
       user = User.find_by_user_name(params[:user_name])
       if user.nil?
         render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
@@ -133,7 +133,7 @@ module Api
       end
 
       # Everything went fine, send the response according to the user's format.
-      #NOTE: not completed yet. Defaults to text.
+      # FIXME: not completed yet. Defaults to text.
       respond_to do |format|
 #         format.json{render :json => user.to_json}
 #         format.xml{render :xml => user.to_xml}
@@ -168,5 +168,5 @@ module Api
       return has_required_http_params?(param_hash) &&
           !param_hash[:user_type].blank?
     end
-    end # end UsersController
+  end # end UsersController
 end
