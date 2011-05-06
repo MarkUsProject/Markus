@@ -1,5 +1,6 @@
 class AssignmentFile < ActiveRecord::Base
   belongs_to  :assignment
+  before_save :strip_filename
   
   validates_presence_of   :filename
   validates_uniqueness_of :filename, :scope => :assignment_id
@@ -7,7 +8,7 @@ class AssignmentFile < ActiveRecord::Base
     :message => "must be alphanumeric, '.' or '-' only"
  
   # sanitize filename input before saving
-  def before_save    
+  def strip_filename 
     filename.strip!
     filename.gsub(/^(..)+/, ".")
     filename.gsub(/[^\s]/, "") # replace spaces with 
