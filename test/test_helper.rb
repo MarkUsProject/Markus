@@ -100,7 +100,7 @@ class ActiveSupport::TestCase
   end
 
   # This prevents factory data preloader from automatically loading data for each test suite
-  FactoryDataPreloader.preload_all = false
+  #FactoryDataPreloader.preload_all = false
 
   def equal_dates(date_1, date_2)
     date_1 = Time.parse(date_1.to_s)
