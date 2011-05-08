@@ -1,6 +1,8 @@
   // add new row of input 
 function injectFileInput() {
-  var new_file_field = new Element('input', {type: 'file', name: 'new_files[]'});
+  var new_file_field = new Element('input', {type: 'file',
+                    name: 'new_files[]',
+                    onchange: 'sanitized_filename_check(this); return false;'});
   var new_file_field_row = new Element('tr');
   var new_file_field_input_column = new Element('td', {colspan: 4});
   
@@ -22,7 +24,11 @@ function injectFileInput() {
   new_file_field.focus();
 }
 
-function check_change_of_filename(file_name, new_file_name, file_input) {
+/*
+ * Strip off some local file-path garbage potentially passed by the browser.
+ * Called from app/views/submissions/_file_manager_boot.js.erb
+ */
+function normalize_filename(new_file_name) {
   /************************************************************************
    * Note: new_file_name may include device identifiers and may be preceded
    *       by the full path to the file on the user's local system.
@@ -39,11 +45,7 @@ function check_change_of_filename(file_name, new_file_name, file_input) {
     // Absolute path given, strip off preceding parts
     new_file_name = new_file_name.substring(slash + 1);
   }
-  if(file_name != new_file_name) {
-    alert("You cannot replace " + file_name + " with " + new_file_name + ".  You must replace a file with a file with the same name.");
-    $(file_input).setValue('');
-  }
-
+  return new_file_name;
 }
 
 function populate(files_json){

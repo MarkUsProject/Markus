@@ -1,5 +1,12 @@
 class SubmissionFile < ActiveRecord::Base
 
+  # Only allow alphanumeric characters, '.', '-', and '_' as
+  # character set for submission files.
+  FILENAME_SANITATION_REGEXP = Regexp.new('[^0-9a-zA-Z\.\-_]')
+  # Character to be used as a replacement for all characters
+  # matching the regular expression above
+  SUBSTITUTION_CHAR = '_'
+
   belongs_to  :submission
   has_many :annotations
   validates_associated :submission
@@ -35,7 +42,7 @@ class SubmissionFile < ActiveRecord::Base
     end
   end
 
-    def get_comment_syntax
+  def get_comment_syntax
     # This is where you can add more languages that SubmissionFile will
     # be able to insert comments into, for example when downloading annotations.
     # It will return a list, with the first element being the syntax to start a
