@@ -2,7 +2,7 @@ class Mark < ActiveRecord::Base
   # When a mark is created, or updated, we need to make sure that that
   # Result has not been released to students
   before_save :ensure_not_released_to_students
-  before_validation :valid_mark
+  validate    :valid_mark
   before_update :ensure_not_released_to_students
   after_save :update_grouping_mark
 

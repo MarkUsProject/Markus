@@ -12,7 +12,7 @@ class StudentMembership < Membership
   named_scope :pending, :conditions => {:membership_status => STATUSES[:pending]}
   named_scope :rejected, :conditions => {:membership_status => STATUSES[:rejected]}
   named_scope :accepted_or_inviter, :conditions => {:membership_status => [STATUSES[:accepted], STATUSES[:inviter]]}
-  before_validation :must_be_valid_student
+  validate    :must_be_valid_student
 
   validates_presence_of :membership_status
   validates_format_of :membership_status, :with => /inviter|pending|accepted|rejected/

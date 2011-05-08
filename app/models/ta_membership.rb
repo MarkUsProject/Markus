@@ -1,5 +1,5 @@
 class TaMembership < Membership
-  before_validation :must_be_a_ta
+  validate :must_be_a_ta
 
  def must_be_a_ta
    if user && !user.is_a?(Ta)

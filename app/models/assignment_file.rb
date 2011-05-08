@@ -1,4 +1,7 @@
 class AssignmentFile < ActiveRecord::Base
+  # needed to have sanitization of filename
+  include SubmissionsHelper
+
   belongs_to  :assignment
   before_save :strip_filename
 
@@ -8,12 +11,9 @@ class AssignmentFile < ActiveRecord::Base
     :message => "must be alphanumeric, '.' or '-' only"
 
   # sanitize filename input before saving
+  # using the function in Submission Helper
   def strip_filename
-    filename.strip!
-    filename.gsub(/^(..)+/, ".")
-    filename.gsub(/[^\s]/, "") # replace spaces with
-    # replace all non alphanumeric, underscore or periods with underscore
-    filename.gsub(/^[\W]+$/, '_')
+    filename = sanitize_file_name(filename)
   end
 
 end

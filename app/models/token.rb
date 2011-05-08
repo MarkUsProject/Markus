@@ -1,7 +1,7 @@
 class Token < ActiveRecord::Base
 
   belongs_to :grouping
-  before_validation :last_used_date
+  validate   :last_used_date
 
   validates_presence_of :grouping_id, :tokens
   validates_numericality_of :tokens, :only_integer => true,  :greater_than_or_equal_to => 0
