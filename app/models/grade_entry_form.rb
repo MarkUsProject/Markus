@@ -8,7 +8,7 @@ class GradeEntryForm < ActiveRecord::Base
   has_many                  :grade_entry_items, :dependent => :destroy
   has_many                  :grade_entry_students, :dependent => :destroy
   has_many                  :grades, :through => :grade_entry_items
-  before_validation         :check_timezone
+  validate                  :check_timezone
 
   validates_presence_of     :short_identifier
   validates_uniqueness_of   :short_identifier, :case_sensitive => true

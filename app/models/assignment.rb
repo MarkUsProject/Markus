@@ -53,7 +53,7 @@ class Assignment < ActiveRecord::Base
   validates_inclusion_of :assign_graders_to_criteria, :in => [true, false]
 
   before_save :reset_collection_time
-  before_validation :minimum_number_of_groups, :check_timezone
+  validate    :minimum_number_of_groups, :check_timezone
   after_save  :update_assigned_tokens
 
   # Export a YAML formatted string created from the assignment rubric criteria.
