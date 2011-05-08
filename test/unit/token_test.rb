@@ -9,10 +9,6 @@ class TokenTest < ActiveSupport::TestCase
     clear_fixtures
   end
 
-  def teardown
-    
-  end
-
   subject { @token }
   context "valid Token" do
     setup do
@@ -24,17 +20,17 @@ class TokenTest < ActiveSupport::TestCase
       assert @token.valid?
     end
   end
-  
+
   context "valid Token" do
     setup do
        @token = Token.make(:tokens => '0')
     end
-    
+
     should "be valid (tokens can be equal to 0)" do
       assert @token.valid?
     end
   end
-   
+
   context "function decrease_tokens" do
     context "when number of tokens is greater than 0" do
       setup do
@@ -80,7 +76,7 @@ class TokenTest < ActiveSupport::TestCase
   context "function reassign_tokens" do
     setup do
       @token = Token.make(:tokens => '2')
-      a = @token.grouping.assignment 
+      a = @token.grouping.assignment
       a.tokens_per_day = nil
       a.save
       @token.reassign_tokens
