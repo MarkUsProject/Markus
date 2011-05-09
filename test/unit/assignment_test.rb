@@ -5,7 +5,42 @@ require 'shoulda'
 
 class AssignmentTest < ActiveSupport::TestCase
 
+  should have_many :rubric_criteria
+  should have_many :flexible_criteria
+  should have_many :assignment_files
+  should have_many :test_files
+  should have_many :criterion_ta_associations
+  should have_one  :submission_rule
+
+  should have_many :annotation_categories
+
+  should have_many :groupings
+  should have_many(:ta_memberships).through(:groupings)
+  should have_many(:student_memberships).through(:groupings)
+  should have_many(:tokens).through(:groupings)
+
+  should have_many(:submissions).through(:groupings)
+  should have_many(:groups).through(:groupings)
+
+  should have_many :notes
+
+  should have_many :section_due_dates
+  should have_one  :assignment_stat
+
+  should validate_presence_of     :repository_folder
+  should validate_presence_of     :group_min
+
+  should validate_numericality_of :group_min
+  should validate_numericality_of :group_max
+  should validate_numericality_of :tokens_per_day
+
+  should validate_presence_of :submission_rule
+
   should validate_presence_of :marking_scheme_type
+
+  # since allow_web_submits is a boolean, should validate_presence_of does
+  # not work: see the Rails API documentation for should validate_presence_of
+  # (Model validations)
   # should validate_presence_of does not work for boolean value false.
   # Using should allow_value instead
   should allow_value(true).for(:allow_web_submits)
@@ -22,9 +57,15 @@ class AssignmentTest < ActiveSupport::TestCase
   end
 
   context "validate" do
+    setup do
+      @a = Assignment.make
+    end
+
+    should validate_presence_of     :short_identifier
+    should validate_uniqueness_of   :short_identifier
+
     should "work" do
-      a = Assignment.make
-      assert a.valid?
+      assert @a.valid?
     end
 
     should "catch max group size less than min group size" do
