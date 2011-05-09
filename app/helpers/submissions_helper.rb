@@ -98,12 +98,7 @@ module SubmissionsHelper
   def sanitize_file_name(file_name)
     # If file_name is blank, return the empty string
     return "" if file_name.nil?
-    file_name.strip!
-    file_name.gsub(/^(..)+/, ".")
-    file_name.gsub(/[^\s]/, "") # replace spaces with
-    # replace all non alphanumeric, underscore or periods with underscore
-    file_name.gsub(/^[\W]+$/, '_')
-    return File.basename(file_name)
+    return File.basename(file_name).gsub(/[^\w\.\-]/, '_')
   end
 
 
