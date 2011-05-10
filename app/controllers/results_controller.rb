@@ -42,11 +42,18 @@ class ResultsController < ApplicationController
     @extra_marks_points = @result.extra_marks.points
     @extra_marks_percentage = @result.extra_marks.percentage
     @marks_map = Hash.new
+    @old_marks_map = Hash.new
     @mark_criteria = @assignment.get_criteria
     @assignment.get_criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by_result_id(@result.id)
       mark.save(false)
       @marks_map[criterion.id] = mark
+
+      if @old_result
+        oldmark = criterion.marks.find_or_create_by_result_id(@old_result.id)
+        oldmark.save(false)
+        @old_marks_map[criterion.id] = oldmark
+      end
     end
     # Get the previous and the next submission
     if current_user.ta?
@@ -267,9 +274,10 @@ class ResultsController < ApplicationController
       render 'results/student/no_result'
       return
     end
+
     @result = @submission.result
     @old_result = nil
-    if @submission.has_remark?
+    if @submission.remark_submitted?
       @old_result = @result
       @result = @submission.remark_result
       # if remark result's marking state is 'unmarked' then the student has
@@ -278,7 +286,9 @@ class ResultsController < ApplicationController
         render 'results/student/no_remark_result'
         return
       end
-    elsif !@result.released_to_students
+    end
+
+    if !@result.released_to_students
       render 'results/student/no_result'
       return
     end
@@ -297,6 +307,12 @@ class ResultsController < ApplicationController
       mark = criterion.marks.find_or_create_by_result_id(@result.id)
       mark.save(false)
       @marks_map[criterion.id] = mark
+
+      if @old_result
+        oldmark = criterion.marks.find_or_create_by_result_id(@old_result.id)
+        oldmark.save(false)
+        @old_marks_map[criterion.id] = oldmark
+      end
     end
     m_logger = MarkusLogger.instance
     m_logger.log("Student '#{current_user.user_name}' viewed results for assignment " +
