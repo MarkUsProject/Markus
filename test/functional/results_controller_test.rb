@@ -898,24 +898,48 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
           context "without save error" do
             setup do
+              @result.update_total_mark
+              @old_total_mark = @result.total_mark
               post_as @admin, :add_extra_mark, :id => @result.id, :extra_mark => { :extra_mark => 1 }
             end
             should assign_to :result
             should assign_to :extra_mark
             should render_template 'results/marker/insert_extra_mark'
             should respond_with :success
+
+            should "have added the extra mark and updated total mark accordingly" do
+              @result.reload
+              assert_equal @old_total_mark + 1, @result.total_mark
+            end
           end
 
         end
 
         context "GET on :remove_extra_mark" do
           setup do
+            # clear any existing extra marks
+            @result.extra_marks.map{ |mark| mark.destroy }
+            # create and save extra marks
+            (3..4).each do |extra_mark_value|
+              @extra_mark = ExtraMark.new
+              @extra_mark.unit = ExtraMark::UNITS[:points]
+              @extra_mark.result = @result
+              @extra_mark.extra_mark = extra_mark_value
+              assert @extra_mark.save
+            end
+            @result.update_total_mark
+            @old_total_mark = @result.total_mark
             get_as @admin, :remove_extra_mark, :id => @extra_mark.id
           end
           should_not set_the_flash
           should assign_to :result
           should render_template 'results/marker/remove_extra_mark'
           should respond_with :success
+
+          should "have removed the extra mark in question and updated the total mark accordingly" do
+            @result.reload
+            assert_equal @old_total_mark - @extra_mark.extra_mark, @result.total_mark
+          end
         end
 
         context "GET on :expand_criteria" do
@@ -1218,24 +1242,48 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
           context "without save error" do
             setup do
+              @unmarked_result.update_total_mark
+              @old_total_mark = @unmarked_result.total_mark
               post_as @ta, :add_extra_mark, :id => @unmarked_result.id, :extra_mark => { :extra_mark => 1 }
             end
             should assign_to :result
             should assign_to :extra_mark
             should render_template 'results/marker/insert_extra_mark'
             should respond_with :success
+
+            should "have added the extra mark and updated total mark accordingly" do
+              @unmarked_result.reload
+              assert_equal @old_total_mark + 1, @unmarked_result.total_mark
+            end
           end
 
         end
 
         context "GET on :remove_extra_mark" do
           setup do
+            # clear any existing extra marks
+            @result.extra_marks.map{ |mark| mark.destroy }
+            # create and save extra marks
+            (3..4).each do |extra_mark_value|
+              @extra_mark = ExtraMark.new
+              @extra_mark.unit = ExtraMark::UNITS[:points]
+              @extra_mark.result = @result
+              @extra_mark.extra_mark = extra_mark_value
+              assert @extra_mark.save
+            end
+            @result.update_total_mark
+            @old_total_mark = @result.total_mark
             get_as @ta, :remove_extra_mark, :id => @extra_mark.id
           end
           should_not set_the_flash
           should assign_to :result
           should render_template 'results/marker/remove_extra_mark'
           should respond_with :success
+
+          should "have removed the extra mark in question and updated the total mark accordingly" do
+            @result.reload
+            assert_equal @old_total_mark - @extra_mark.extra_mark, @result.total_mark
+          end
         end
 
         context "GET on :expand_criteria" do
