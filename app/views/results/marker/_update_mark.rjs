@@ -10,8 +10,7 @@ end
 if result_mark.markable_type == 'FlexibleCriterion'
   page.hide "mark_verify_result_#{result_mark.id.to_s}"
 end
-  page.replace_html "mark_#{result_mark.id.to_s}_summary_mark", result_mark.mark
-  page.replace_html "current_subtotal_div", result_mark.result.get_subtotal
-  page['marking_state'].setValue(Result::MARKING_STATES[:partial])
-  page.call "update_total_mark", result_mark.result.total_mark
-
+page.replace_html "mark_#{result_mark.id.to_s}_summary_mark", result_mark.mark
+page.replace_html "current_subtotal_div", result_mark.result.get_subtotal
+page['marking_state'].setValue(Result::MARKING_STATES[:partial])
+page.call "update_total_mark", result_mark.result.total_mark

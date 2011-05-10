@@ -312,11 +312,12 @@ class ResultsController < ApplicationController
       if !@extra_mark.update_attributes(params[:extra_mark])
         render :action => 'results/marker/add_extra_mark_error'
       else
+        # need to re-calculate total mark
+        @result.update_total_mark
         render :action => 'results/marker/insert_extra_mark'
       end
       return
     end
-
     render :action => 'results/marker/add_extra_mark'
   end
 
@@ -327,6 +328,7 @@ class ResultsController < ApplicationController
     @extra_mark.destroy
     #need to recalculate total mark
     @result = @extra_mark.result
+    @result.update_total_mark
     render :action => 'results/marker/remove_extra_mark'
   end
 
