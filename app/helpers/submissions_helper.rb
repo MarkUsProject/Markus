@@ -99,7 +99,7 @@ module SubmissionsHelper
     # If file_name is blank, return the empty string
     return "" if file_name.nil?
     return File.basename(file_name).gsub(
-                  SubmissionFile::FILENAME_SANITATION_REGEXP,
+                  SubmissionFile::FILENAME_SANITIZATION_REGEXP,
                   SubmissionFile::SUBSTITUTION_CHAR)
   end
 

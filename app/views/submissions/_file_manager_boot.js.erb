@@ -43,10 +43,10 @@ document.observe("dom:loaded", function() {
  */
 function sanitized_filename_check(file_input) {
   file_name = file_input.value;
-  sanitized_filename = file_name.replace(/<%= SubmissionFile::FILENAME_SANITATION_REGEXP.source %>/g,
+  sanitized_filename = file_name.replace(/<%= SubmissionFile::FILENAME_SANITIZATION_REGEXP.source %>/g,
   <%= "'#{SubmissionFile::SUBSTITUTION_CHAR}'" %>);
   if (file_name != sanitized_filename) {
-    msg = <%= I18n.t('student.submission.filename_sanitation_js_warning') %>;
+    msg = <%= I18n.t('student.submission.filename_sanitization_js_warning') %>;
     if( !confirm(msg) ) {
       $(file_input).setValue('');
     };

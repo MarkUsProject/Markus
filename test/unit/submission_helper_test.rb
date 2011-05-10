@@ -5,13 +5,16 @@ class SubmissionHelperTest < ActiveSupport::TestCase
 
   include SubmissionsHelper
 
-  # Put some confidence in our submission filename sanitation
+  # Put some confidence in our submission filename sanitization
   context "A new file when submitted" do
     context "containing characters outside what's allowed in a filename" do
       setup do
         @filenames_to_be_sanitized = [ { :expected => "llll_", :orig => "llllé" },
                                        { :expected => "________", :orig => "öä*?`ßÜÄ" },
                                        { :expected => "", :orig => nil },
+                                       { :expected => "garbage-__.txt", :orig => "garbage-éæ.txt" },
+                                       { :expected => "space_space.txt", :orig => "space space.txt" },
+                                       { :expected => "______.txt", :orig => "      .txt" },
                                        { :expected => "garbage-__.txt", :orig => "garbage-éæ.txt" } ]
       end
 
