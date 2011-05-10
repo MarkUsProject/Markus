@@ -108,13 +108,15 @@ class AssignmentsController < ApplicationController
           grouping = current_user.accepted_grouping_for(a)
           if grouping.has_submission?
             submission = grouping.current_submission_used
-            if submission.has_result? && submission.result.released_to_students
-                @a_id_results[a.id] = submission.result
+            if submission.has_remark? && submission.remark_result.released_to_students
+              @a_id_results[a.id] = submission.remark_result
+            elsif submission.has_result? && submission.result.released_to_students
+              @a_id_results[a.id] = submission.result
             end
-          end 
+          end
         end
       end
-      
+
       # Get the grades for grade entry forms for the current user
       @g_id_entries = Hash.new()
       @grade_entry_forms.each do |g|
