@@ -10,24 +10,50 @@ class Api::UsersControllerTest < ActionController::TestCase
   end
 
   # Testing UNauthenticated requests
-  context "An unauthenticated request to api/users testing all 3 functions" do
+  context "An unauthenticated request to api/users" do
     setup do
       # Set garbage HTTP header
       @request.env['HTTP_AUTHORIZATION'] = "garbage http_header"
-
-      # Make empty HTTP requests
-      @res_show = get("show")
-      @res_create = post("create")
-      @res_update = put("update")
-      @res_destroy = delete("destory")
-
     end
 
-    should "fail to authenticate all requests" do
-      assert_equal("403 Forbidden", @res_show.status)
-      assert_equal("403 Forbidden", @res_create.status)
-      assert_equal("403 Forbidden", @res_update.status)
-      assert_equal("403 Forbidden", @res_destroy.status)
+    context "/show" do
+      setup do
+        @res_show = get("show")
+      end
+
+      should "fail to authenticate the GET request" do
+        assert_equal("403 Forbidden", @res_show.status)
+      end
+    end
+
+    context "/create" do
+      setup do
+        @res_create = post("create")
+      end
+
+      should "fail to authenticate the GET request" do
+        assert_equal("403 Forbidden", @res_create.status)
+      end
+    end
+
+    context "/update" do
+      setup do
+        @res_update = put("update")
+      end
+
+      should "fail to authenticate the GET request" do
+        assert_equal("403 Forbidden", @res_update.status)
+      end
+    end
+
+    context "/destroy" do
+      setup do
+        @res_destroy = delete("destory")
+      end
+
+      should "fail to authenticate the GET request" do
+        assert_equal("403 Forbidden", @res_destroy.status)
+      end
     end
   end
 
