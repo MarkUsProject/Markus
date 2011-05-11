@@ -6,190 +6,181 @@ require 'base64'
 
 class Api::UsersControllerTest < ActionController::TestCase
   def setup
-      clear_fixtures # In case there are any left over.
+    clear_fixtures
+  end
+
+  # Testing UNauthenticated requests
+  context "An unauthenticated request to api/users testing all 3 functions" do
+    setup do
+      # Set garbage HTTP header
+      @request.env['HTTP_AUTHORIZATION'] = "garbage http_header"
+
+      # Make empty HTTP requests
+      @res_show = get("show")
+      @res_create = post("create")
+      @res_update = put("update")
+      @res_destroy = delete("destory")
+
+    end
+
+    should "fail to authenticate all requests" do
+      assert_equal("403 Forbidden", @res_show.status)
+      assert_equal("403 Forbidden", @res_create.status)
+      assert_equal("403 Forbidden", @res_update.status)
+      assert_equal("403 Forbidden", @res_destroy.status)
+    end
+  end
+
+  # Testing authenticated requests
+  context "An authenticated request to api/users" do
+    setup do
       # Creates admin from blueprints.
       @admin = Admin.make
-      # API key does not come set as nil, it is just a string so reset it.
       @admin.reset_api_key
       base_encoded_md5 = @admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
-  end
-
-  context "An authenticated GET request to api/users" do
-    setup do
-      # Create dummy user to display
-      @user = Student.make
-      # fire off request, after setup has been called again, reseting API key.
-      @res = get("show", {:user_name => @user.user_name})
     end
 
-    context "but with authentication changed to garbage" do
+    # Testing GET
+    context "testing the show function with a user that exists" do
       setup do
-        # Replace HTTP Header with garbage
-        @request.env['HTTP_AUTHORIZATION'] = "garbage_auth_http_header"
-
-        # fire off request
+        # Create dummy user to display
+        @user = Student.make
+        # fire off request, after setup has been called again, reseting API key.
         @res = get("show", {:user_name => @user.user_name})
       end
 
-      should "fail to authenticate" do
-        assert_equal("403 Forbidden", @res.status)
+      should "send the user details in question" do
+        assert_equal("200 OK", @res.status)
+        assert(@res.body.include?(@user.user_name))
+        assert(@res.body.include?(@user.type))
+        assert(@res.body.include?(@user.first_name))
+        assert(@res.body.include?(@user.last_name))
       end
     end
 
-    context "but with a garbage user_name" do
+    context "testing the show function with a user that does not exist" do
       setup do
-        # fire off request
-        @res = get("show", {:user_name => @user.user_name + "garbage"})
+        @res = get("show", {:user_name => "garbage fake user "})
       end
 
-      should "fail to find the user" do
+      should "fail to find the user, 'garbage fake name'" do
         assert_equal("422 Unprocessable Entity", @res.status)
       end
     end
 
-    should "send the user details in question" do
-      # change this to international
-      exp_body = I18n.t('user.user_name') + ": " + @user.user_name + "\n" +
-                 I18n.t('user.user_type') + ": " + @user.type + "\n" +
-                 I18n.t('user.first_name') + ": " + @user.first_name + "\n" +
-                 I18n.t('user.last_name') + ": " + @user.last_name + "\n"
-      assert_equal("200 OK", @res.status)
-      assert_equal(exp_body, @res.body)
-    end
-  end
-
-  context "An authenticated POST request to api/users creating a dummy user" do
-    setup do
-      # Create paramters for request
-      @attr = {}
-      @attr['user_name'] = "ApiTestUser"
-      @attr['last_name'] = "Tester"
-      @attr['first_name'] = "Api"
-      @attr['user_type'] = "admin"
-
-      # fire off request
-      @res = post("create", { :user_name => @attr['user_name'],
-                              :last_name => @attr['last_name'],
-                              :first_name => @attr['first_name'],
-                              :user_type => @attr['user_type']})
-    end
-
-    context "and then recreating it to cause an error" do
+    # Testing POST
+    context "testing the create function with valid attributes" do
       setup do
+        # Create paramters for request
+        @attr = {:user_name => "ApiTestUser", :last_name => "Tester",
+                 :first_name => "Api", :user_type =>"admin" }
         # fire off request
-        @res = post("create", {:user_name => @attr['user_name'],
-                               :last_name => "garbage",
-                               :first_name => "garbage",
-                               :user_type => "garbage"})
+        @res = post("create", @attr)
       end
 
-      should "find an existing user and cause conflict" do
-        assert !User.find_by_user_name(@attr['user_name']).nil?
+      context "and then recreating the same user to cause an error" do
+        setup do
+          @res = post("create", @attr)
+        end
+        should "find an existing user and cause conflict" do
+          assert !User.find_by_user_name(@attr[:user_name]).nil?
+          assert_equal("409 Conflict", @res.status)
+        end
+      end
+
+      should "create the new user specified" do
+        assert_equal("200 OK", @res.status)
+        @new_user = User.find_by_user_name(@attr[:user_name])
+        assert !@new_user.nil?
+        assert_equal(@new_user.last_name, @attr[:last_name])
+        assert_equal(@new_user.first_name, @attr[:first_name])
+        assert_equal(@new_user.type.downcase, @attr[:user_type])
+      end
+    end
+
+    context "testing the create function with user_type set to garbage" do
+      setup do
+        @attr = {:user_name => "ApiTestUser", :last_name => "Tester",
+                 :first_name => "Api", :user_type =>"garbage" }
+        @res = post("create", @attr)
+      end
+
+      should "not be able to process user_type" do
+        assert_equal("422 Unprocessable Entity", @res.status)
+      end
+    end
+
+    # Testing PUT
+    context "testing the update function with a new first name, last name" do
+      setup do
+        @user = Student.make
+        @new_attr = {:user_name => @user.user_name, :last_name => "TesterChanged",
+                     :first_name => "UpdatedApi"}
+        @res = put("update", @new_attr)
+      end
+
+      context "and a non-existing user name" do
+        setup do
+          @new_attr[:new_user_name] = "ApiTestUser2"
+          @res = put("update", @new_attr)
+        end
+        should "update the user's user_name, first and last name" do
+          # Try to find old user_name
+          assert User.find_by_user_name(@user.user_name).nil?
+          # Find user by new user_name
+          @updated_user2 = User.find_by_user_name(@new_attr[:new_user_name])
+          assert !@updated_user2.nil?
+          assert_equal(@updated_user2.last_name, @new_attr[:last_name])
+          assert_equal(@updated_user2.first_name, @new_attr[:first_name])
+        end
+      end
+
+      should "update the user's first and last name only" do
+        @updated_user = User.find_by_user_name(@user.user_name)
+        assert !@updated_user.nil?
+        assert_equal(@updated_user.last_name, @new_attr[:last_name])
+        assert_equal(@updated_user.first_name, @new_attr[:first_name])
+      end
+    end
+
+    context "testing the update function with a user_name that does not exist" do
+      setup do
+        @res = put("update", {:user_name => "garbage", :last_name => "garbage",
+                              :first_name => "garbage"})
+      end
+
+      should "not be able to find the user_name to update" do
+        assert User.find_by_user_name("garbage").nil?
+        assert_equal("422 Unprocessable Entity", @res.status)
+      end
+    end
+
+    context "testing the update function with a new_user_name that already exists" do
+      setup do
+        @user_to_update = Student.make
+        @existing_user = Student.make
+        # fire off request
+        @res = put("update", {:user_name => @user_to_update.user_name,
+                              :last_name => "garbage",
+                              :first_name => "garbage",
+                              :new_user_name => @existing_user.user_name,})
+      end
+
+      should "find the new user_name as existing and cause conflict" do
         assert_equal("409 Conflict", @res.status)
       end
     end
 
-    context "and updating it using a PUT request to api/users, changing its first and last name" do
+    context "testing the destory function is disabled" do
       setup do
-        # Create paramters for request
-        @new_attr = {}
-        @new_attr['last_name'] = "Tester2"
-        @new_attr['first_name'] = "UpdatedApi"
-
-        # fire off request
-        @res = put("update", {:user_name => @attr['user_name'],
-                              :last_name => @new_attr['last_name'],
-                              :first_name => @new_attr['first_name']})
+        @res = delete("destroy")
       end
 
-      context "as well as the user name to one that does not exist" do
-        setup do
-          @new_attr['new_user_name'] = "ApiTestUser2"
-
-          # fire off request
-          @res = put("update", {:user_name => @attr['user_name'],
-                                :last_name => @new_attr['last_name'],
-                                :first_name => @new_attr['first_name'],
-                                :new_user_name => @new_attr['new_user_name']})
-        end
-
-        should "update the dummy user's user_name, first and last name" do
-          assert User.find_by_user_name(@attr['user_name']).nil?
-
-          @updated_user2 = User.find_by_user_name(@new_attr['new_user_name'])
-          assert !@updated_user2.nil?
-          assert_equal(@updated_user2.last_name, @new_attr['last_name'])
-          assert_equal(@updated_user2.first_name, @new_attr['first_name'])
-        end
+      should "pretend the function doesn't exist" do
+        assert_equal("404 Not Found", @res.status)
       end
-
-      should "update the dummy user's first and last name only" do
-        @updated_user = User.find_by_user_name(@attr['user_name'])
-        assert !@updated_user.nil?
-        assert_equal(@updated_user.last_name, @new_attr['last_name'])
-        assert_equal(@updated_user.first_name, @new_attr['first_name'])
-      end
-    end
-
-    should "create a new dummy user" do
-      @new_user = User.find_by_user_name(@attr['user_name'])
-      assert !@new_user.nil?
-      assert_equal(@new_user.last_name, @attr['last_name'])
-      assert_equal(@new_user.first_name, @attr['first_name'])
-      assert_equal(@new_user.type.downcase, @attr['user_type'])
-    end
-  end
-
-  context "An authenticated POST request to api/users creating a dummy user with an incorrect user_type" do
-    setup do
-      # Create paramters for request
-      @attr = {}
-      @attr['user_name'] = "ApiTestUser"
-      @attr['last_name'] = "Tester"
-      @attr['first_name'] = "Api"
-      @attr['user_type'] = "garbage"
-
-      # fire off request
-      @res = post("create", { :user_name => @attr['user_name'],
-                              :last_name => @attr['last_name'],
-                              :first_name => @attr['first_name'],
-                              :user_type => @attr['user_type']})
-    end
-
-    should "not be able to process user_type" do
-      assert_equal("422 Unprocessable Entity", @res.status)
-    end
-  end
-
-  context "An authenticated PUT request to api/users updating a user that does not exist" do
-    setup do
-      # fire off request
-      @res = put("update", {:user_name => "garbage",
-                            :last_name => "garbage",
-                            :first_name => "garbage"})
-    end
-
-    should "not be able to find the user_name to update" do
-      assert User.find_by_user_name("garbage").nil?
-      assert_equal("422 Unprocessable Entity", @res.status)
-    end
-  end
-
-  context "An authenticated PUT request to api/users updating a user with an existing new user_name" do
-    setup do
-      @user = Student.make
-      @new_user = Student.make
-      # fire off request
-      @res = put("update", {:user_name => @user.user_name,
-                            :last_name => "garbage",
-                            :first_name => "garbage",
-                            :new_user_name => @new_user.user_name,})
-    end
-
-    should "find the new user_name as existing and cause conflict" do
-      assert_equal("409 Conflict", @res.status)
     end
   end
 end
