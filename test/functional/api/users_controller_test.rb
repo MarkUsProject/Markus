@@ -1,13 +1,10 @@
-require File.join(File.dirname(__FILE__), '../../test_helper')
-require File.join(File.dirname(__FILE__), '/../../blueprints/blueprints')
-require File.join(File.dirname(__FILE__), '../..', 'blueprints', 'helper')
+require File.join(File.dirname(__FILE__), '..', '..', 'test_helper')
+require File.join(File.dirname(__FILE__), '..', '..', 'blueprints', 'blueprints')
+require File.join(File.dirname(__FILE__), '..', '..', 'blueprints', 'helper')
 require 'shoulda'
 require 'base64'
 
 class Api::UsersControllerTest < ActionController::TestCase
-  def setup
-    clear_fixtures
-  end
 
   # Testing UNauthenticated requests
   context "An unauthenticated request to api/users" do
@@ -60,6 +57,9 @@ class Api::UsersControllerTest < ActionController::TestCase
   # Testing authenticated requests
   context "An authenticated request to api/users" do
     setup do
+      # Fixtures have manipulated the DB, clear them off.
+      clear_fixtures
+
       # Creates admin from blueprints.
       @admin = Admin.make
       @admin.reset_api_key

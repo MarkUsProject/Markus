@@ -122,10 +122,9 @@ module Api
         render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
         return
       end
-      # check if there's a valid user.
-      user = User.find_by_user_name(params[:user_name],
-                          :select => "user_name, type, first_name, last_name")
 
+      # check if there's a valid user.
+      user = User.find_by_user_name(params[:user_name])
       if user.nil?
         # no such user
         render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
