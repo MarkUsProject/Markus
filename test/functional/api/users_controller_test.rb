@@ -106,16 +106,6 @@ class Api::UsersControllerTest < ActionController::TestCase
         @res = post("create", @attr)
       end
 
-      context "and then recreating the same user to cause an error" do
-        setup do
-          @res = post("create", @attr)
-        end
-        should "find an existing user and cause conflict" do
-          assert !User.find_by_user_name(@attr[:user_name]).nil?
-          assert_equal("409 Conflict", @res.status)
-        end
-      end
-
       should "create the new user specified" do
         assert_equal("200 OK", @res.status)
         @new_user = User.find_by_user_name(@attr[:user_name])
@@ -123,6 +113,19 @@ class Api::UsersControllerTest < ActionController::TestCase
         assert_equal(@new_user.last_name, @attr[:last_name])
         assert_equal(@new_user.first_name, @attr[:first_name])
         assert_equal(@new_user.type.downcase, @attr[:user_type])
+      end
+    end
+
+    context "testing the create function with an existing user_name to cause error" do
+      setup do
+        @user = Student.make
+        @attr = {:user_name => @user.user_name, :last_name => "Tester",
+                 :first_name => "Api", :user_type =>"admin" }
+        @res = post("create", @attr)
+      end
+      should "find an existing user and cause conflict" do
+        assert !User.find_by_user_name(@attr[:user_name]).nil?
+        assert_equal("409 Conflict", @res.status)
       end
     end
 
@@ -147,7 +150,7 @@ class Api::UsersControllerTest < ActionController::TestCase
         @res = put("update", @new_attr)
       end
 
-      context "and a non-existing user name" do
+      context "and a new, non-existing user name" do
         setup do
           @new_attr[:new_user_name] = "ApiTestUser2"
           @res = put("update", @new_attr)
