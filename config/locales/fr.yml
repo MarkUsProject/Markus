@@ -691,7 +691,7 @@ fr:
         first_name:     "Prénom"
         last_name:      "Nom"
         full_name:      "Nom complet"
-        user_type:      "Type (Translate me please)"
+        user_type:      "Type"
         grace_credits:  "Crédits de grâce"
         section:        "Section"
         display_grader_names_to_students: "Afficher le nom du correcteur aux étudiants ?"
