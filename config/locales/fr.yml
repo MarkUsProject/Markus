@@ -56,7 +56,7 @@ fr:
 
     # app/models/assignment_file.rb
     validation_messages:
-      format_of_assignment_file: "must be alphanumeric, '.', '-' or '_' only"
+      format_of_assignment_file: "doit être un caractère alphanumérique, « . », « - », ou « _ » uniquement."
 
     # app/views/main/index.html.erb
     firefox_warning:    "Certaines fonctionnalités ne fonctionnent qu'avec Mozilla Firefox"
