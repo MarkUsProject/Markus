@@ -54,6 +54,10 @@ en:
     users:              "Users"
     home:               "Home"
 
+    # app/models/assignment_file.rb
+    validation_messages:
+      format_of_assignment_file: "must be alphanumeric, '.', '-' or '_' only"
+
     # app/views/main/index.html.erb
     firefox_warning:    "Some functionality might only work for Mozilla Firefox users"
 
@@ -607,7 +611,12 @@ en:
         invalid_file_name: "Invalid file name on submitted file"
         missing_file: "Could not download %{file_name}: %{message}.  File may be missing."
         expect_filter: "Expected a filter on select full"
-
+        # DO NOT change 'file_name' and 'sanitized_filename' in the following message.
+        # See app/views/submissions/_file_manager_boot.js.erb
+        filename_sanitization_js_warning: "\"After you submit the filename will change from '\" + file_name + \"' to '\" + sanitized_filename + \"'. Is that OK?\""
+        # DO NOT change 'file_name' and 'new_file_name' in the following message.
+        # See app/views/submissions/_file_manager_boot.js.erb
+        replace_file_js_error: "\"You cannot replace '\" + file_name + \"' with '\" + new_file_name + \"'. You must replace a file with a file which has the same name.\""
     #Graders' View
     graders:
       create_new_grader:  "Create a new Grader"
