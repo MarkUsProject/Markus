@@ -145,8 +145,8 @@ fr:
             change_marking_scheme_type: "Changer le barème effacera vos critères et vos évaluations."
         allow_web_submits: "Envois via l'interface web ?"
         display_grader_names_to_students: "Afficher le nom du correcteur aux étudiants ?"
-        section_due_date_not_displayed: "Les dates de retour sont spécifiques aux sections." 
-        section_due_date_type: "Les dates de retour sont spécifiées par section." 
+        section_due_date_not_displayed: "Les dates de retour sont spécifiques aux sections."
+        section_due_date_type: "Les dates de retour sont spécifiées par section."
         section_due_date_option:  "Si l'option date de retour par section est sélectionnée, les groupes seront restreints aux sections"
         section_due_dates_info:  "<b>Important</b> La date de retour «globale» doit être indiquée. Si une section n'a pas de date de retour spécifique, la date «globale» sera utilisée. Si certains étudiants ne font partie d'aucune section, ce sera aussi cette date «globale» qui sera utilisée. Ces étudiants ne pourront se mettre qu'avec d'autres étudiants n'appartenant pas à des sections."
     your_mark:  "Votre note : "
@@ -691,6 +691,7 @@ fr:
         first_name:     "Prénom"
         last_name:      "Nom"
         full_name:      "Nom complet"
+        user_type:      "Type"
         grace_credits:  "Crédits de grâce"
         section:        "Section"
         display_grader_names_to_students: "Afficher le nom du correcteur aux étudiants ?"
@@ -727,7 +728,7 @@ fr:
         <p>
             Sélectionner un fichier YAML à envoyer:<br />
             <code>category_name: <br />- category_text<br />- category_text</code><br />
-            
+
           </p>"
         success:  "Envoi réussi des catégories d'annotations (%{annotation_category_number} envoyées)."
         error:  "Impossible d'envoyer les catégories : problème à la catégorie %{annotation_category} située sur la ligne %{annotation_line}"
@@ -1035,14 +1036,14 @@ fr:
     assignments_submitted:     "Projets envoyés:"
     assignments_graded:        "Projets corrigés:"
     refresh_graph:             "Actualiser le graphique"
-    
+
     #app/views/main/_grader_summary.erb
     grader_distribution:       "Correcteurs assignés:"
     assign_graders:            "Attribuer Correcteurs"
 
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:        "Répartition des notes"
-        
+
     #Test Framework
     test_framework:
       test_framework: "Tests"

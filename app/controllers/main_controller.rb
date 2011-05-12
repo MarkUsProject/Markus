@@ -7,8 +7,8 @@ class MainController < ApplicationController
   protect_from_forgery :except => [:login, :page_not_found]
 
   # check for authorization
-  before_filter      :authorize_for_user,     
-                     :except => [:login, 
+  before_filter      :authorize_for_user,
+                     :except => [:login,
                                  :page_not_found]
 
   #########################################################################
@@ -61,23 +61,23 @@ class MainController < ApplicationController
     redirect_to(:action => 'login') && return if blank_login || blank_pwd
 
     # Two stage user verification: authentication and authorization
-    authenticate_response = User.authenticate(params[:user_login], 
+    authenticate_response = User.authenticate(params[:user_login],
                                               params[:user_password])
     if authenticate_response == User::AUTHENTICATE_BAD_PLATFORM
       flash[:login_notice] = I18n.t("external_authentication_not_supported")
       return
     end
     if authenticate_response == User::AUTHENTICATE_SUCCESS
-      # Username/password combination is valid. Check if user is 
+      # Username/password combination is valid. Check if user is
       # allowed to use MarkUs.
       #
       # sets this user as logged in if login is a user in MarkUs
-      found_user = User.authorize(params[:user_login]) 
+      found_user = User.authorize(params[:user_login])
       # if not nil, user authorized to enter MarkUs
       if found_user.nil?
-        # This message actually means "User not allowed to use MarkUs", 
+        # This message actually means "User not allowed to use MarkUs",
         # but it's from a security-perspective
-        # not a good idea to report this to the outside world. It makes it 
+        # not a good idea to report this to the outside world. It makes it
         # easier for attempted break-ins
         # if one can distinguish between existent and non-existent users.
         flash[:login_notice] = I18n.t(:login_failed)
@@ -136,7 +136,7 @@ class MainController < ApplicationController
       redirect_to :controller => 'assignments', :action => 'index'
       return
     end
-    
+
     @assignments = Assignment.find(:all)
     render :action => 'index', :layout => 'content'
   end
