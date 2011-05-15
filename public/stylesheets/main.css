@@ -913,7 +913,7 @@ input#extra_mark_description{
 
 }
 
-#rubric_pane, #annotation_pane {
+#mark_pane, #annotation_pane {
    float: left;
 }
 
