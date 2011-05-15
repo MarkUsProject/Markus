@@ -246,8 +246,12 @@ class Assignment < ActiveRecord::Base
     results_sum = 0
     groupings.each do |grouping|
       submission = grouping.current_submission_used
-      if !submission.nil? && submission.has_result?
-        result = submission.result
+      if !submission.nil? 
+        if submission.has_result? && submission.remark_submitted?
+          result = submission.remark_result
+        elsif submission.has_result?
+          result = submission.result
+        end
         if result.released_to_students
           results_sum += result.total_mark
           results_count += 1

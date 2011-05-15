@@ -54,6 +54,10 @@ en:
     users:              "Users"
     home:               "Home"
 
+    # app/models/assignment_file.rb
+    validation_messages:
+      format_of_assignment_file: "must be alphanumeric, '.', '-' or '_' only"
+
     # app/views/main/index.html.erb
     firefox_warning:    "Some functionality might only work for Mozilla Firefox users"
 
@@ -145,8 +149,8 @@ en:
             change_marking_scheme_type: "Changing marking scheme will delete your criteria and marks."
         allow_web_submits: "Allow Web Submits?"
         display_grader_names_to_students: "Display grader names to students?"
-        section_due_date_not_displayed: "Due dates are specific to sections." 
-        section_due_date_type: "Due dates are specified per section." 
+        section_due_date_not_displayed: "Due dates are specific to sections."
+        section_due_date_type: "Due dates are specified per section."
         section_due_date_option:  "If the section due dates option is checked, students can only form groups within their section."
         section_due_dates_info:  "<b>Important</b> The global due date needs to be filled in. If a section has no due date specified, the global due date will be used instead. Students not assigned to any section will only be allowed to form groups with students without section either."
     your_mark:  "Your mark:"
@@ -252,11 +256,17 @@ en:
         confirm_remove_mark: "Are you sure you want to remove this extra mark?"
         confirm_remove_percentage: "Are you sure you want to remove this extra percentage?"
         subtotal: "Subtotal: "
+        old_subtotal: "Old Subtotal: "
         bonus_deductions: "Bonus/Deductions"
+        bonus_marks: "Bonus Marks:&nbsp;"
+        deducted_marks: "Deducted Marks:&nbsp;"
         total_extra_marks: "Total Extra Marks:&nbsp;"
         total_extra_percentages: "Total Extra Percentage:&nbsp;"
         translated_to_points: "Translated to Points:"
         final_mark: "Final Mark&nbsp;"
+        previous_mark: "Previous Mark&nbsp;"
+        old: "Old:&nbsp;"
+        show_old_marks: "Show Old Mark Summary"
       annotation:
         from_line_to: "%{file_path}: Line %{line_start} to %{line_end}"
         no_annotation_in_this_category: "There are no annotations in this category"
@@ -417,7 +427,7 @@ en:
 
     stopping_collection_process: "Now stopping collection process..."
     converting_pdfs: "Now converting pdf files...%{converted}/%{total}"
-    
+
     groups:
       groups: "Groups"
       manage_groups: "Manage Groups"
@@ -601,7 +611,12 @@ en:
         invalid_file_name: "Invalid file name on submitted file"
         missing_file: "Could not download %{file_name}: %{message}.  File may be missing."
         expect_filter: "Expected a filter on select full"
-
+        # DO NOT change 'file_name' and 'sanitized_filename' in the following message.
+        # See app/views/submissions/_file_manager_boot.js.erb
+        filename_sanitization_js_warning: "\"After you submit the filename will change from '\" + file_name + \"' to '\" + sanitized_filename + \"'. Is that OK?\""
+        # DO NOT change 'file_name' and 'new_file_name' in the following message.
+        # See app/views/submissions/_file_manager_boot.js.erb
+        replace_file_js_error: "\"You cannot replace '\" + file_name + \"' with '\" + new_file_name + \"'. You must replace a file with a file which has the same name.\""
     #Graders' View
     graders:
       create_new_grader:  "Create a new Grader"
@@ -685,6 +700,7 @@ en:
         first_name:     "First Name"
         last_name:      "Last Name"
         full_name:      "Full Name"
+        user_type:      "Type"
         grace_credits:  "Grace Credits"
         section:        "Section"
         display_grader_names_to_students: "Display grader names to students?"
@@ -721,7 +737,7 @@ en:
         <p>
             Select a YAML file form:<br />
             <code>category_name: <br />- category_text<br />- category_text</code><br />
-            
+
           </p>"
         success:  "Successfully uploaded %{annotation_category_number} Annotation Categories"
         error:  "Unable to upload category: %{annotation_category} located in line %{annotation_line}"
@@ -1038,13 +1054,13 @@ en:
     locale_not_available: "%{locale} translation not available!"
     external_authentication_not_supported: "External authentication not supported on your platform!"
     account_disabled: "This account has been disabled"
-    
+
     #app/views/main/_assignment_info_summary.erb
     assignment_average:        "Assignment Average:"
     assignments_submitted:     "Assignments Submitted:"
     assignments_graded:        "Assignments Graded:"
     refresh_graph:             "Refresh the graph"
-    
+
     #app/views/main/_grader_summary.erb
     grader_distribution:       "Grader Distribution:"
     assign_graders:            "Assign Graders"

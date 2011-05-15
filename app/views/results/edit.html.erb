@@ -89,6 +89,11 @@ function check_working() {
 </script>
 
 <%
+# Javascript for showing/hiding old marks
+%>
+<%= render :partial => "results/common/old_marks_view_functions.html"%>
+
+<%
 # Javascript for test result window
 %>
 <%= render :partial => "results/common/test_result_window.html" %>

@@ -54,6 +54,10 @@ fr:
     users:              "Utilisateurs"
     home:               "Accueil"
 
+    # app/models/assignment_file.rb
+    validation_messages:
+      format_of_assignment_file: "doit être un caractère alphanumérique, « . », « - », ou « _ » uniquement."
+
     # app/views/main/index.html.erb
     firefox_warning:    "Certaines fonctionnalités ne fonctionnent qu'avec Mozilla Firefox"
 
@@ -145,8 +149,8 @@ fr:
             change_marking_scheme_type: "Changer le barème effacera vos critères et vos évaluations."
         allow_web_submits: "Envois via l'interface web ?"
         display_grader_names_to_students: "Afficher le nom du correcteur aux étudiants ?"
-        section_due_date_not_displayed: "Les dates de retour sont spécifiques aux sections." 
-        section_due_date_type: "Les dates de retour sont spécifiées par section." 
+        section_due_date_not_displayed: "Les dates de retour sont spécifiques aux sections."
+        section_due_date_type: "Les dates de retour sont spécifiées par section."
         section_due_date_option:  "Si l'option date de retour par section est sélectionnée, les groupes seront restreints aux sections"
         section_due_dates_info:  "<b>Important</b> La date de retour «globale» doit être indiquée. Si une section n'a pas de date de retour spécifique, la date «globale» sera utilisée. Si certains étudiants ne font partie d'aucune section, ce sera aussi cette date «globale» qui sera utilisée. Ces étudiants ne pourront se mettre qu'avec d'autres étudiants n'appartenant pas à des sections."
     your_mark:  "Votre note : "
@@ -252,11 +256,17 @@ fr:
         confirm_remove_mark: "Êtes vous sur de vouloir enlever cette note supplémentaire ?"
         confirm_remove_percentage: "Êtes vous sur de vouloir enlever ce pourcentage supplémentaire?"
         subtotal: "Sous-total: "
+        old_subtotal: "Sous-total précédent : "
         bonus_deductions: "Bonus/Déductions"
+        bonus_marks: "Notes bonus"
+        deducted_marks: "Notes déduits"
         total_extra_marks: "Total notes supplémentaires : "
         total_extra_percentages: "Total pourcentages supplémentaires : "
         translated_to_points: "Convertis en points : "
         final_mark: "Note finale : "
+        previous_mark: "Note précédente : "
+        old: "Précédent : "
+        show_old_marks: "Afficher la note précédente "
       annotation:
         from_line_to: "%{file_path} : Lignes %{line_start} à %{line_end}"
         no_annotation_in_this_category: "Il n'y a pas d'annotations dans cette catégorie"
@@ -601,6 +611,12 @@ fr:
         invalid_file_name: "Le nom du fichier envoyé est invalide"
         missing_file: "N'a pas pu télécharger %{file_name} : %{message}. Le fichier est sans doute manquant."
         expect_filter: "Attendait un filtre sur la sélection"
+        # DO NOT change 'file_name' and 'sanitized_filename' in the following message.
+        # See app/views/submissions/_file_manager_boot.js.erb
+        filename_sanitization_js_warning: "\"Après avoir envoyé le fichier, son nom ne sera plus '\" + file_name + \"' mais '\" sanitized_filename + \"'. Êtes-vous sûr de vouloir continuer ?\""
+        # DO NOT change 'file_name' and 'new_file_name' in the following message.
+        # See app/views/submissions/_file_manager_boot.js.erb
+        replace_file_js_error: "\"Vous ne pouvez pas remplacer '\" + file_name + \"' par '\" + new_file_name + \"'. Vous devez remplacer le fichier par un fichier ayant le même nom.\""
 
     #Graders' View
     graders:
@@ -685,6 +701,7 @@ fr:
         first_name:     "Prénom"
         last_name:      "Nom"
         full_name:      "Nom complet"
+        user_type:      "Type"
         grace_credits:  "Crédits de grâce"
         section:        "Section"
         display_grader_names_to_students: "Afficher le nom du correcteur aux étudiants ?"
@@ -721,7 +738,7 @@ fr:
         <p>
             Sélectionner un fichier YAML à envoyer:<br />
             <code>category_name: <br />- category_text<br />- category_text</code><br />
-            
+
           </p>"
         success:  "Envoi réussi des catégories d'annotations (%{annotation_category_number} envoyées)."
         error:  "Impossible d'envoyer les catégories : problème à la catégorie %{annotation_category} située sur la ligne %{annotation_line}"
@@ -1029,14 +1046,14 @@ fr:
     assignments_submitted:     "Projets envoyés:"
     assignments_graded:        "Projets corrigés:"
     refresh_graph:             "Actualiser le graphique"
-    
+
     #app/views/main/_grader_summary.erb
     grader_distribution:       "Correcteurs assignés:"
     assign_graders:            "Attribuer Correcteurs"
 
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:        "Répartition des notes"
-        
+
     #Test Framework
     test_framework:
       test_framework: "Tests"
