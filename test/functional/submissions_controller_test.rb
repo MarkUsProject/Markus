@@ -24,6 +24,14 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         get_as(@student, :file_manager, {:id => @assignment.id})
       end
       should respond_with :success
+      # file_manager action should assign to various instance variables.
+      # These are crucial for the file_manager view to work properly.
+      should assign_to :assignment
+      should assign_to :grouping
+      should assign_to :path
+      should assign_to :revision
+      should assign_to :files
+      should assign_to :missing_assignment_files
     end
     context "and I should be able to populate file" do
       setup do
@@ -39,6 +47,22 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         file_2 = fixture_file_upload('files/TestShapes.java', 'text/java')
         assert @student.has_accepted_grouping_for?(@assignment.id)
         post_as(@student, :update_files, {:id => @assignment.id, :new_files => [file_1, file_2]})
+      end
+
+      # must not respond with redirect_to (see comment in
+      # app/controllers/submission_controller.rb#update_files)
+      should respond_with :success
+
+      # update_files action should assign to various instance variables.
+      # These are crucial for the file_manager view to work properly.
+      should assign_to :assignment
+      should assign_to :grouping
+      should assign_to :path
+      should assign_to :revision
+      should assign_to :files
+      should assign_to :missing_assignment_files
+
+      should "have added files accordingly" do
         # Check to see if the file was added
         @grouping.group.access_repo do |repo|
           revision = repo.get_latest_revision
@@ -47,11 +71,8 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_not_nil files['TestShapes.java']
         end
       end
-      should redirect_to("file manager page") { 
-        url_for(:controller => "submissions", 
-                :action=> 'file_manager',
-                :id => @assignment.id) }
     end
+
     #TODO figure out how to test this test into the one above
     #TODO Figure out how to remove fixture_file_upload
     context "and I should be able to replace files" do
@@ -70,36 +91,48 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           old_file_2 = old_files['TestShapes.java']
        
 
-          file_1 = fixture_file_upload('files/Shapes.java', 'text/java')
-          file_2 = fixture_file_upload('files/TestShapes.java', 'text/java')
+          @file_1 = fixture_file_upload('files/Shapes.java', 'text/java')
+          @file_2 = fixture_file_upload('files/TestShapes.java', 'text/java')
 
           post_as(@student, :update_files, { :id => @assignment.id,
-            :replace_files => { 'Shapes.java' =>      file_1,
-                                'TestShapes.java' =>  file_2},
+            :replace_files => { 'Shapes.java' =>      @file_1,
+                                'TestShapes.java' =>  @file_2},
             :file_revisions => {'Shapes.java' =>      old_file_1.from_revision,
                                 'TestShapes.java' =>  old_file_2.from_revision}})
 
-        # Check to see if the file was added
+        end
+      end 
 
+      # must not respond with redirect_to (see comment in
+      # app/controllers/submission_controller.rb#update_files)
+      should respond_with :success
+
+      # update_files action should assign to various instance variables.
+      # These are crucial for the file_manager view to work properly.
+      should assign_to :assignment
+      should assign_to :grouping
+      should assign_to :path
+      should assign_to :revision
+      should assign_to :files
+      should assign_to :missing_assignment_files
+
+      should "have replaced files accordingly" do
+        @grouping.group.access_repo do |repo|
           revision = repo.get_latest_revision
           files = revision.files_at_path(@assignment.repository_folder)
           assert_not_nil files['Shapes.java']
           assert_not_nil files['TestShapes.java']
 
           # Test to make sure that the contents were successfully updated
-          file_1.rewind
-          file_2.rewind
+          @file_1.rewind
+          @file_2.rewind
           file_1_new_contents = repo.download_as_string(files['Shapes.java'])
           file_2_new_contents = repo.download_as_string(files['TestShapes.java'])
 
-          assert_equal file_1.read, file_1_new_contents
-          assert_equal file_2.read, file_2_new_contents
+          assert_equal @file_1.read, file_1_new_contents
+          assert_equal @file_2.read, file_2_new_contents
         end
-      end 
-      should redirect_to("file manager page") { 
-        url_for(:controller => "submissions", 
-                :action=> 'file_manager',
-                :id => @assignment.id) }
+      end
     end
     context "and I should be able to delete files" do
       setup do
@@ -119,18 +152,30 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
             :delete_files => {  'Shapes.java' => true},
             :file_revisions => {'Shapes.java' => old_file_1.from_revision,
                                 'TestShapes.java' => old_file_2.from_revision}})
+        end
+      end
 
+      # must not respond with redirect_to (see comment in
+      # app/controllers/submission_controller.rb#update_files)
+      should respond_with :success
 
+      # update_files action should assign to various instance variables.
+      # These are crucial for the file_manager view to work properly.
+      should assign_to :assignment
+      should assign_to :grouping
+      should assign_to :path
+      should assign_to :revision
+      should assign_to :files
+      should assign_to :missing_assignment_files
+
+      should "have deleted files accordingly" do
+        @grouping.group.access_repo do |repo|
           revision = repo.get_latest_revision
           files = revision.files_at_path(@assignment.repository_folder)
           assert_not_nil files['TestShapes.java']
           assert_nil files['Shapes.java']
         end
       end
-      should redirect_to("file manager page") { 
-        url_for(:controller => "submissions", 
-                :action=> 'file_manager',
-                :id => @assignment.id) }
     end
     context "and I cannot add a file that exists" do
       setup do
@@ -146,6 +191,26 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           file_2 = fixture_file_upload('files/TestShapes.java', 'text/java')
           assert @student.has_accepted_grouping_for?(@assignment.id)
           post_as(@student, :update_files, {:id => @assignment.id, :new_files => [file_1, file_2]})
+        end
+      end
+
+      # must not respond with redirect_to (see comment in
+      # app/controllers/submission_controller.rb#update_files)
+      should respond_with :success
+
+      # update_files action should assign to various instance variables.
+      # These are crucial for the file_manager view to work properly.
+      should assign_to :assignment
+      should assign_to :grouping
+      should assign_to :path
+      should assign_to :revision
+      should assign_to :files
+      should assign_to :missing_assignment_files
+      should assign_to :file_manager_errors
+
+      should "not have added the file and set the file_manager_errors hash properly" do
+        file_manager_errors = assigns["file_manager_errors"]
+        @grouping.group.access_repo do |repo|
           # Check to see if the file was added
           assert @grouping.is_valid?
 
@@ -153,13 +218,9 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           files = revision.files_at_path(@assignment.repository_folder)
           assert_not_nil files['Shapes.java']
           assert_not_nil files['TestShapes.java']
-          assert_not_nil flash[:update_conflicts]
+          assert_not_nil file_manager_errors[:update_conflicts]
         end
       end
-      should redirect_to("file manager page") { 
-        url_for(:controller => "submissions", 
-                :action=> 'file_manager',
-                :id => @assignment.id) }
     end
     # TODO:  Test that a student can't replace file if out of sync
     # TODO:  Test that a student can't replace a file if the new file
