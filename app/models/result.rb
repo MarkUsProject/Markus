@@ -11,20 +11,21 @@ class Result < ActiveRecord::Base
   has_many :extra_marks
   has_one :remarked_submission, :foreign_key => :remark_result_id
 
-
-  validate :check_criterion_filled
   validates_presence_of :marking_state
   validates_inclusion_of :marking_state, :in => [Result::MARKING_STATES[:complete],
     Result::MARKING_STATES[:partial],   Result::MARKING_STATES[:unmarked]]
   validates_numericality_of :total_mark, :greater_than_or_equal_to => 0
   before_update  :unrelease_partial_results
 
-  def check_criterion_filled
+  def validate
     # Check that the marking state is not no mark is nil or
-    return @result.nil? ||
-    @result.marking_state != Result::MARKING_STATES[:complete] ||
-        !@result.marks.find_by_mark(nil)
+    if self.marks.find_by_mark(nil) &&
+          self.marking_state == Result::MARKING_STATES[:complete]
+      errors.add_to_base("Mark unfilled but marking state was set to compelte")
+      return false
+    end
   end
+
   # calculate the total mark for this assignment
   def update_total_mark
     total = get_subtotal + get_total_extra_points

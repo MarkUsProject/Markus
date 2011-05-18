@@ -136,7 +136,6 @@ class ResultsController < ApplicationController
   def update_marking_state
     @result = Result.find(params[:id])
     @result.marking_state = params[:value]
-    debugger
     if @result.save
       # If marking_state is complete, update the cached distribution
       if params[:value] == Result::MARKING_STATES[:complete]
