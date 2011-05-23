@@ -7,8 +7,7 @@
 <% # UI LIBRARIES %>
 <%= javascript_include_tag "livepipe/livepipe.js",
   "livepipe/window.js",
-  "livepipe/tabs.js",
-  :cache => "livepipe_cache" %>
+  "livepipe/tabs.js" %>
 
 <%= javascript_include_tag "controls.js" %>
 <%= javascript_include_tag "DropDownMenu/DropDownMenu.js"%>
@@ -29,8 +28,7 @@
   "SourceCodeGlower/SourceCodeAdapter.js",
   "SourceCodeGlower/SyntaxHighlighter1p5Adapter.js",
   "SourceCodeGlower/ImageAnnotationGrid.js",
-  "SourceCodeGlower/ImageEventHandler.js",
-  :cache => "SourceCodeGlower_cache" %>
+  "SourceCodeGlower/ImageEventHandler.js" %>
 
 <% # SYNTAX HIGHLIGHTER %>
 <%= javascript_include_tag "syntaxhighlighter/shCore.js",
@@ -42,14 +40,12 @@
   "syntaxhighlighter/shBrushCpp.js",
   "syntaxhighlighter/shBrushScheme.js",
   "syntaxhighlighter/shBrushScilab.js",
-  "syntaxhighlighter/shBrushUnknown.js",
-  :cache => "syntaxhighlighter_cache" %>
+  "syntaxhighlighter/shBrushUnknown.js" %>
 
 <% # EDITING MARKS FUNCTIONS AND BOOT SCRIPTS%>
 <%= javascript_include_tag "Grader/file_selector.js",
   "Grader/marking.js",
-  "Grader/mouse_selections.js",
-  :cache => "Grader_cache" %>
+  "Grader/mouse_selections.js" %>
 
 <% # This file can't be cached %>
 <%= javascript_include_tag "Grader/tabs_boot.js"%>
