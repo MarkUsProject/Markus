@@ -141,7 +141,7 @@ li.annotation_category {
             #annotation_summary_list
                 #annotations1, #annotations2
      #pane_divider
-     #rubric_pane
+     #mark_pane
         tabs => see livelipe/tabs.css
         #rubric_viewer
             #rubric_tools
@@ -155,7 +155,7 @@ li.annotation_category {
 ===================================================================================*/
 
 #pane_holders {
-  overflow: auto;
+  overflow: hidden;
 }
 
   #pane_divider {
