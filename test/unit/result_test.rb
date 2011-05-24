@@ -6,11 +6,10 @@ class ResultTest < ActiveSupport::TestCase
   # standard pluralization for rubric criteria
   fixtures :all
   set_fixture_class :rubric_criteria => RubricCriterion
-	# Set to false to blow away fixtures cache and ensure our fixtures are loaded
-	# and thus takes into account our set_fixture_class
-	self.use_transactional_fixtures = false
-  fixtures :assignments, :rubric_criteria ,  :submissions, :marks, :results, :extra_marks
-	# fixtures :special_foos set_fixture_class :special_foos => Foo
+  # Set to false to blow away fixtures cache and ensure our fixtures are loaded
+  # and thus takes into account our set_fixture_class
+  self.use_transactional_fixtures = false
+  fixtures :assignments, :rubric_criteria ,  :submissions, :marks, :results
 
   should have_many :marks
   should have_many :extra_marks
