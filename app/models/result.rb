@@ -95,8 +95,9 @@ class Result < ActiveRecord::Base
     # Check that the marking state is not no mark is nil or
     if self.marks.find_by_mark(nil) &&
           self.marking_state == Result::MARKING_STATES[:complete]
-      errors.add_to_base(I18n.t('common.criterion_base_error'))
+      errors.add_to_base(I18n.t('common.criterion_incomplete_error'))
       return false
     end
+    return true
   end
 end
