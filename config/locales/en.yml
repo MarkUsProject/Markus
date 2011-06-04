@@ -284,7 +284,7 @@ en:
       cant_display_image: "Image cannot be displayed. If you are trying to view a pdf file its probably too big to display or you have turned off pdf support. Click on the Download button to download the file instead"
       test_code: "Test Code"
       criterion_incomplete_error: "The marking status could not be updated because one or more of the criteria have not been entered."
-
+      criterion_base_error: "Mark unfilled but marking state was set to complete"
     seperate_multiple_with_commas:  "Seperate multiple user names with commas"
     csv_valid_format:   "There was a problem parsing the CSV file you uploaded.  Please ensure that it's a valid CSV format, and that each line ends with a carriage-return line-feed set of characters.  No changes were made. "
     csv_invalid_lines: "The following CSV lines were invalid: "
