@@ -15,16 +15,8 @@ class Result < ActiveRecord::Base
   validates_inclusion_of :marking_state, :in => [Result::MARKING_STATES[:complete],
     Result::MARKING_STATES[:partial],   Result::MARKING_STATES[:unmarked]]
   validates_numericality_of :total_mark, :greater_than_or_equal_to => 0
-  before_update  :unrelease_partial_results
-
-  def validate
-    # Check that the marking state is not no mark is nil or
-    if self.marks.find_by_mark(nil) &&
-          self.marking_state == Result::MARKING_STATES[:complete]
-      errors.add_to_base("Mark unfilled but marking state was set to compelte")
-      return false
-    end
-  end
+  before_update :unrelease_partial_results
+  before_save :check_for_nil_marks
 
   # calculate the total mark for this assignment
   def update_total_mark
@@ -99,5 +91,13 @@ class Result < ActiveRecord::Base
     return true
   end
 
-
+  def check_for_nil_marks
+    # Check that the marking state is not no mark is nil or
+    if self.marks.find_by_mark(nil) &&
+          self.marking_state == Result::MARKING_STATES[:complete]
+      errors.add_to_base(I18n.t('common.criterion_incomplete_error'))
+      return false
+    end
+    return true
+  end
 end

@@ -90,6 +90,10 @@ en:
       completed: "Completed"
       released: "Released"
       remark_requested: "Remark Requested"
+      not_complete: "Can not release result for %{group_name}: the marking state is not complete"
+      no_submission: "%{group_name} has no submissions"
+      no_result: "%{group_name} has no results"
+      result_not_saved: "%{group_name}'s submission result could not be saved"
     collect_submissions:
       collect_all: "Collect All Submissions"
       collect_ta: "Collect all your assigned submissions"
@@ -283,7 +287,7 @@ en:
       no_file_in_repository: "[No files in repository]"
       cant_display_image: "Image cannot be displayed. If you are trying to view a pdf file its probably too big to display or you have turned off pdf support. Click on the Download button to download the file instead"
       test_code: "Test Code"
-      criterion_incomplete_error: "The marking status could not be updated because one or more of the criteria have not been entered."
+      criterion_incomplete_error: "Mark unfilled but marking state was set to complete"
 
     seperate_multiple_with_commas:  "Seperate multiple user names with commas"
     csv_valid_format:   "There was a problem parsing the CSV file you uploaded.  Please ensure that it's a valid CSV format, and that each line ends with a carriage-return line-feed set of characters.  No changes were made. "
