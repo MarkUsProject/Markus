@@ -90,6 +90,10 @@ en:
       completed: "Completed"
       released: "Released"
       remark_requested: "Remark Requested"
+      not_complete: "Can not release result for %{group_name}: the marking state is not complete"
+      no_submission: "%{group_name} has no submissions"
+      no_result: "%{group_name} has no results"
+      result_not_saved: "%{group_name}'s submission result could not be saved"
     collect_submissions:
       collect_all: "Collect All Submissions"
       collect_ta: "Collect all your assigned submissions"
@@ -285,6 +289,7 @@ en:
       test_code: "Test Code"
       criterion_incomplete_error: "The marking status could not be updated because one or more of the criteria have not been entered."
       criterion_base_error: "Mark unfilled but marking state was set to complete"
+
     seperate_multiple_with_commas:  "Seperate multiple user names with commas"
     csv_valid_format:   "There was a problem parsing the CSV file you uploaded.  Please ensure that it's a valid CSV format, and that each line ends with a carriage-return line-feed set of characters.  No changes were made. "
     csv_invalid_lines: "The following CSV lines were invalid: "
