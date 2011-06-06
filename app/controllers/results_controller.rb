@@ -136,11 +136,16 @@ class ResultsController < ApplicationController
   def update_marking_state
     @result = Result.find(params[:id])
     @result.marking_state = params[:value]
-    @result.save
-
-    # If marking_state is complete, update the cached distribution
-    if params[:value] == Result::MARKING_STATES[:complete]
-      @result.submission.assignment.assignment_stat.refresh_grade_distribution
+    if @result.save
+      # If marking_state is complete, update the cached distribution
+      if params[:value] == Result::MARKING_STATES[:complete]
+        @result.submission.assignment.assignment_stat.refresh_grade_distribution
+      end
+      render :action => "results/update_marking_state"
+    else # Failed to pass validations
+      # Show error message
+      render :action => "results/marker/show_result_error"
+      return
     end
   end
 
@@ -418,7 +423,7 @@ class ResultsController < ApplicationController
     # unmarked.
     @nil_marks = @result.marks.all(:conditions => {:mark => nil})
     render :partial => 'results/marker/expand_unmarked_criteria', :locals => {:nil_marks => @nil_marks}
- end
+  end
 
   def delete_grace_period_deduction
     @grouping = Grouping.find(params[:id])
@@ -444,5 +449,4 @@ class ResultsController < ApplicationController
     end
     return false
   end
-
 end
