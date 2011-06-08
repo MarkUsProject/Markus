@@ -43,22 +43,11 @@ GEM
     gem_plugin (0.2.3)
     i18n (0.6.0)
     linecache (0.43)
+    linecache19 (0.5.12)
+      ruby_core_source (>= 0.1.4)
     machinist (1.0.6)
-    mail (2.2.19)
-      activesupport (>= 2.3.6)
-      i18n (>= 0.4.0)
-      mime-types (~> 1.16)
-      treetop (~> 1.4.8)
-    mime-types (1.16)
-    mocha (0.9.12)
-    mongrel (1.1.5)
-      cgi_multipart_eof_fix (>= 2.4)
-      daemons (>= 1.0.3)
-      fastthread (>= 1.0.1)
-      gem_plugin (>= 0.2.3)
-    mongrel_cluster (1.0.5)
-      gem_plugin (>= 0.2.3)
-      mongrel (>= 1.0.2)
+    mocha (0.9.10)
+      rake
     mysql (2.8.1)
     pg (0.11.0)
     polyglot (0.3.1)
@@ -89,6 +78,16 @@ GEM
       ruby-debug-base (~> 0.10.4.0)
     ruby-debug-base (0.10.4)
       linecache (>= 0.3)
+    ruby-debug-base19 (0.11.25)
+      columnize (>= 0.3.1)
+      linecache19 (>= 0.5.11)
+      ruby_core_source (>= 0.1.4)
+    ruby-debug19 (0.11.6)
+      columnize (>= 0.3.1)
+      linecache19 (>= 0.5.11)
+      ruby-debug-base19 (>= 0.11.19)
+    ruby_core_source (0.1.5)
+      archive-tar-minitar (>= 0.5.2)
     rubyzip (0.9.4)
     shoulda (2.11.3)
     sqlite3 (1.3.3)
@@ -112,13 +111,13 @@ DEPENDENCIES
   i18n
   machinist
   mocha
-  mongrel_cluster
   mysql
   pg
   railroady
   rails
   routing-filter
   ruby-debug
+  ruby-debug19
   rubyzip
   shoulda
   sqlite3-ruby
