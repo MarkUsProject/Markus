@@ -11,29 +11,20 @@ GEM
     activeresource (2.3.10)
       activesupport (= 2.3.10)
     activesupport (2.3.10)
-    cgi_multipart_eof_fix (2.5.0)
+    archive-tar-minitar (0.5.2)
     columnize (0.3.2)
-    daemons (1.1.0)
     db_populate (0.2.6)
     factory_data_preloader (0.5.2)
     faker (0.9.4)
       i18n (~> 0.4)
     fastercsv (1.5.4)
-    fastthread (1.0.7)
-    gem_plugin (0.2.3)
     i18n (0.5.0)
     linecache (0.43)
+    linecache19 (0.5.12)
+      ruby_core_source (>= 0.1.4)
     machinist (1.0.6)
     mocha (0.9.10)
       rake
-    mongrel (1.1.5)
-      cgi_multipart_eof_fix (>= 2.4)
-      daemons (>= 1.0.3)
-      fastthread (>= 1.0.1)
-      gem_plugin (>= 0.2.3)
-    mongrel_cluster (1.0.5)
-      gem_plugin (>= 0.2.3)
-      mongrel (>= 1.0.2)
     mysql (2.8.1)
     pg (0.10.1)
     rack (1.1.0)
@@ -52,6 +43,16 @@ GEM
       ruby-debug-base (~> 0.10.4.0)
     ruby-debug-base (0.10.4)
       linecache (>= 0.3)
+    ruby-debug-base19 (0.11.25)
+      columnize (>= 0.3.1)
+      linecache19 (>= 0.5.11)
+      ruby_core_source (>= 0.1.4)
+    ruby-debug19 (0.11.6)
+      columnize (>= 0.3.1)
+      linecache19 (>= 0.5.11)
+      ruby-debug-base19 (>= 0.11.19)
+    ruby_core_source (0.1.5)
+      archive-tar-minitar (>= 0.5.2)
     rubyzip (0.9.4)
     selenium-client (1.2.18)
     shoulda (2.11.3)
@@ -73,12 +74,12 @@ DEPENDENCIES
   i18n
   machinist
   mocha
-  mongrel_cluster
   mysql
   pg
   rails (= 2.3.10)
   routing-filter
   ruby-debug
+  ruby-debug19
   rubyzip
   selenium-client (~> 1.2.15)
   shoulda

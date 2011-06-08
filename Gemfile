@@ -16,7 +16,6 @@ gem "ya2yaml"
 gem "i18n" 
 gem "will_paginate"
 gem "fastercsv"
-gem "mongrel_cluster"
 gem "routing-filter"
 
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
@@ -52,6 +51,7 @@ group :development, :test do
   gem "faker"
   gem "factory_data_preloader"
   gem "time-warp"
-  gem "ruby-debug"
+  gem 'ruby-debug', :platforms => :mri_18
+  gem 'ruby-debug19', :require => 'ruby-debug', :platforms => :mri_19
   gem "mocha"
 end
