@@ -49,8 +49,7 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     mime-types (1.16)
-    mocha (0.9.10)
-      rake
+    mocha (0.9.12)
     mysql (2.8.1)
     pg (0.11.0)
     polyglot (0.3.1)
