@@ -1,4 +1,5 @@
-require File.join(File.dirname(__FILE__),'/../subversion_repository')
+require File.expand_path(File.join(File.dirname(__FILE__),
+                                   '..', 'subversion_repository'))
 require 'test/unit' # load Test::Unit
 require 'rubygems'
 require 'fileutils'

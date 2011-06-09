@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__),'/../memory_repository')
+require File.expand_path(File.join(File.dirname(__FILE__),'..', 'memory_repository'))
 require 'test/unit'
 require 'rubygems'
 require 'ruby-debug'
