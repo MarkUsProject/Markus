@@ -1,7 +1,11 @@
 <div id="role_switch_text">
-    <% form_tag({ :action => 'login_as', :id => nil }, :id => 'role_switch_form') do %>
+    <% form_tag(:action => 'login_as', :id => 'role_switch_form') do %>
    
       <fieldset>
+      
+      <% if flash[:role_switch_notice] -%>
+        <div class="error"><%=h flash[:role_switch_notice] %></div>
+      <% end -%>
       <h2 align="center"><%= I18n.t(:switch_role)%></h2>
        <%= label_tag 'effective_user_login', I18n.t(:login_as) -%>
         <%= text_field_tag 'effective_user_login', nil, :tabindex => 10 %><br />
@@ -14,4 +18,3 @@
       <% end %>
       </fieldset>
 </div>
-
