@@ -15,7 +15,7 @@ gem "rubyzip"
 gem "ya2yaml"
 gem "i18n"
 gem "will_paginate"
-gem "fastercsv"
+gem 'fastercsv', :platforms => :ruby_18
 gem "routing-filter"
 
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
