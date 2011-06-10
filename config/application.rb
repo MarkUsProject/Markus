@@ -40,10 +40,10 @@ module Markus
   # We need some additional load paths (e.g. for the API)
   # Note for developers: in Ruby %W( a b c ) is equivalent to [ 'a', 'b', 'c' ]
   config.autoload_paths += %W(
-                              app
-                              app/controllers/api
-                              lib
-                              lib/classes
+                              #{::Rails.root}/lib
+                              #{::Rails.root}/app
+                              #{::Rails.root}/controllers/api
+                              #{::Rails.root}/lib/classes
                               )
   # Load any local configuration that is kept out of source control
   # (e.g. gems, patches).
