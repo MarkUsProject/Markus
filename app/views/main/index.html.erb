@@ -16,9 +16,6 @@
 <div class="wrapLeft">
 <p><%= I18n.t(:welcome_to_markus, {:user_name => @current_user.first_name}) %></p>
 
-  <% if flash[:role_switch_notice] -%>
-    <div class="error"><%=h flash[:role_switch_notice] %></div>
-  <% end -%> 
   <% @assignments.each do |a| %>
     <%= render :partial => "assignment_summary", :locals => { :assignment => a } %>
   <% end %>
