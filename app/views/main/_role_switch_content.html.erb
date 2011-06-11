@@ -6,9 +6,15 @@
     </h2>
     <%= label_tag 'effective_user_login', I18n.t(:login_as) -%>
     <%= text_field_tag 'effective_user_login', nil, :tabindex => 10 %><br />
-    <%= label_tag 'admin_password', I18n.t(:admin_password) %>
-    <%= password_field_tag 'admin_password', nil, :tabindex => 20 %><br />
-   
+    <% 
+      # For REMOTE_USER we have no way to check a password, so don't
+      # provide UI for entering it.
+    %>
+    <% if !MarkusConfigurator.markus_config_remote_user_auth %>
+      <%= label_tag 'admin_password', I18n.t(:admin_password) %>
+      <%= password_field_tag 'admin_password', nil, :tabindex => 20 %>
+    <% end %>
+    <br />
     <%= submit_tag I18n.t(:log_in), :disable_with => I18n.t(:logging_in), :tabindex => 100, :class => 'button indent_button'%>
     <%= button_to_function "Cancel", 'role_switch_modal.close()'%>
   <% end %>
