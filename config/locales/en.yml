@@ -24,6 +24,7 @@ en:
 
     # app/views/layouts/_header.html.erb
     log_out:            "Log out"
+    clear_role_switch_session_link: "Cancel role switch"
     logged_in_as:       "| Logged in as <span id=\"user_name\"><b>%{first_name} %{last_name}</b> (%{user_name})</span> |"
     working:            "Working..."
     login_as:           "Login as"

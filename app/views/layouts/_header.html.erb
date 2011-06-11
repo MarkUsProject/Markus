@@ -50,6 +50,12 @@
 	       :action => 'logout') unless
 	       MarkusConfigurator.markus_config_logout_redirect == "NONE"
 	       %>
+    <% if MarkusConfigurator.markus_config_remote_user_auth &&
+          session[:switched_role] %>
+    <%= link_to(I18n.t(:clear_role_switch_session_link),
+               :controller => 'main',
+               :action => 'clear_role_switch_session') %>
+    <% end %>
   </div>
   <div id="working" style="display:none;">
     <%= I18n.t(:working) %>

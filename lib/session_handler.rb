@@ -108,8 +108,15 @@ module SessionHandler
   def session_expired?
     return true unless !session[:timeout].nil?
     if MarkusConfigurator.markus_config_remote_user_auth
+      # expire session if there is not REMOTE_USER anymore.
       return true if @markus_auth_remote_user.nil?
-      # Expire session if remote user does not match the session's uid
+      # If somebody switched role this state should be recorded
+      # in the session. Don't expire it immediately again. We
+      # need to do this, since when we first switch role the
+      # session has not yet been updated. This should be OK to do.
+      return false if session[:switched_role]
+      # Expire session if remote user does not match the session's uid.
+      # We cannot have switched role at this point.
       current_user = User.find_by_id(session[:uid])
       if !current_user.nil?
         return true if ( current_user.user_name != @markus_auth_remote_user )

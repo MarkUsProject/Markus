@@ -179,7 +179,7 @@ class MainController < ApplicationController
       return 
     end
 
-    #Check if an admin is trying to login as another admin. Should not be allowed   
+    # Check if an admin is trying to login as another admin. Should not be allowed   
     if found_user.admin?
       # error
       render :partial => "role_switch_handler", :locals =>
@@ -202,6 +202,11 @@ class MainController < ApplicationController
       session[:redirect_uri] = nil
       refresh_timeout
       current_user.set_api_key # set api key in DB for user if not yet set
+      # For REMOTE_USER we need to set some extra state, so as to not
+      # expire the session immediately again
+      if MarkusConfigurator.markus_config_remote_user_auth
+        session[:switched_role] = true
+      end
       # All good, redirect to the main page of the viewer, discard
       # role switch modal
       render :partial => "role_switch_handler", :locals =>
@@ -218,6 +223,29 @@ class MainController < ApplicationController
     # dummy action for remote rjs calls
     # triggered by clicking on the "Switch role" link
     # please keep.
+  end
+
+  # Action only relevant if REMOTE_USER config is on and if an
+  # admin switched role. Since there might not be a logout link
+  # provide a vehicle to expire the session (I.e. cancel the
+  # role switch).
+  def clear_role_switch_session
+    m_logger = MarkusLogger.instance
+
+    # The real_uid field of session keeps track of the uid of the original
+    # user that is logged in if there is a role switch
+    if !session[:real_uid].nil? && !session[:uid].nil?
+      # An admin was logged in as a student or grader
+      m_logger.log("Admin '#{User.find_by_id(session[:real_uid]).user_name}' logged out from '#{User.find_by_id(session[:uid]).user_name}'.")
+    else
+      #The user was not assuming another role
+      m_logger.log("WARNING: Possible break in attempt from '#{current_user.user_name}'.")
+    end
+    clear_session
+    cookies.delete :auth_token
+    reset_session
+    redirect_to :action => 'login'
+    return
   end
 
 private
@@ -241,7 +269,16 @@ private
       return false
     end
 
-    self.current_user = found_user
+    # For admins we have a possibility of role switches,
+    # so check if the real_user is set in the session.
+    if found_user.admin? && !session[:real_user].nil? &&
+       session[:real_user] != session[:uid]
+      self.current_user = User.find_by_id(session[:uid])
+      m_logger = MarkusLogger.instance
+      m_logger.log("Admin '#{found_user.user_name}' logged in as '#{current_user.user_name}'.")
+    else
+      self.current_user = found_user
+    end
 
     if logged_in?
       return true
