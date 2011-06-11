@@ -1384,7 +1384,7 @@ td a{
   text-transform: none;
 }
 
-td.delete_row, td.marking_state {
+td.delete_row {
   text-align: center;
 }
 
