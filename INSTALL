@@ -86,8 +86,9 @@ see http://www.markusproject.org/download/
     sudo aptitude install ruby ruby-dev rdoc mysql-server libmysqlclient15-dev \
     subversion libsvn-ruby libopenssl-ruby apache2 libapache2-svn
 
-  Installing gem (version 1.3.7 and higher) on Debian based systems (see
-    http://github.com/MarkUsProject/Markus/wiki/RailsDebianUpdate)
+  INSTALLING RUBYGEMS
+
+  Installing gem (version 1.3.7 and higher) on Debian based systems:
 
       Use rubygems package on your system (for Debian/Ubuntu) :
         sudo aptitude install rubygems
@@ -105,6 +106,16 @@ see http://www.markusproject.org/download/
                                                 installed
         sudo ln -s /usr/bin/gem1.8 /usr/bin/gem
         gem -v                                # for confirmation
+
+      Once you've installed rubygems, you'll want to tell Ruby to load rubygems
+      automatically.  This is done by setting the RUBYOPT environment variable
+      to rubygems.  Example (assuming BASH shell):
+
+      export RUBYOPT=rubygems
+
+      You'll probably want to put this in your .bashrc (or equivalent) as well.
+
+      See http://docs.rubygems.org/read/chapter/3 for further details.
 
 
 3.2 IMAGEMAGICK (OPTIONAL)
@@ -171,9 +182,9 @@ you are currently using by issuing the following command:
   rake -s markus:version
 
 
-3.4 GETTING RAILS AND RUBYGEMS
+3.4 GETTING RAILS AND REQUIRED GEMS
 
-  Bundler and required rubygems (including rails) can be installed like
+  Bundler and required ruby gems (including rails) can be installed like
   so:
 
     sudo gem install bundler
@@ -190,11 +201,26 @@ you are currently using by issuing the following command:
 
   Consider adding the above export to your ~/.bashrc.
 
-  To get all required gems for MarkUs in one shot (this should take care of
-  versions too) use the command below. You may choose to do this as non-root
-  user.
+  Note that you may have to do a similar export for the rake command in
+  order for it to work.
 
-    bundle install --without development test
+  To get all required gems for MarkUs in one shot (this should take care of
+  versions too) you'll want to use the bundle install command. However, you'll
+  probably want to tell bundler to skip over development and test environment
+  gems, as well as gems for databases that you're not using.
+
+  For example, if you were setting up a production version of MarkUs using
+  a PostgreSQL database backend, you'd want to execute:
+
+  bundle install --without development test sqlite mysql
+
+  Similarly, if you were setting up a production version of MarkUs using
+  a MySQL database backend, you'd want to execute:
+
+  bundle install --without development test sqlite postgresql
+
+  Note that these commands may be executed as a non-root user.
+
 
 4. FURTHER INSTRUCTIONS, FAQ, LINKS
 
