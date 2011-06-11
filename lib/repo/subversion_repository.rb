@@ -2,7 +2,6 @@ require "svn/repos" # load SVN Ruby bindings
 require "svn/client"
 require "md5"
 require "rubygems"    # debugging
-require "ruby-debug"  # debugging
 require File.join(File.dirname(__FILE__),'/repository') # load repository module
 
 module Repository
