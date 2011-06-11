@@ -54,9 +54,16 @@ class MainController < ApplicationController
     # strip username
     params[:user_login].strip!
     
-    #Get information of the user that is trying to login if his or her 
-    #authentication is valid
-    found_user = get_user(params[:user_login], params[:user_login], params[:user_password], :login_notice, 'login')
+    # Get information of the user that is trying to login if his or her 
+    # authentication is valid
+    validation_result = validate_user(params[:user_login], params[:user_login], params[:user_password])
+    if !validation_result[:error].nil?
+      flash[:login_notice] = validation_result[:error]
+      redirect_to :action => 'login'
+      return
+    end
+    # validation worked
+    found_user = validation_result[:user]
     if found_user.nil?
       return 
     end
@@ -81,46 +88,6 @@ class MainController < ApplicationController
     end
   end
 
-  #Returns the user with user name "login" from the database given that the user
-  # with user name "login2" is authenticated. This function is called both by 
-  # function login and login_as.
-  def get_user(login, login2, password, notice, action)
-    # check for blank username and password
-    blank_login = login.blank?
-    blank_pwd = password.blank?
-    flash[notice] = get_blank_message(blank_login, blank_pwd)
-    redirect_to(:action => action) && return if blank_login || blank_pwd
-
-    # Two stage user verification: authentication and authorization
-    authenticate_response = User.authenticate(login2, 
-                                              password)
-    if authenticate_response == User::AUTHENTICATE_BAD_PLATFORM
-      flash[notice] = I18n.t("external_authentication_not_supported")
-      return
-    end
-    if authenticate_response == User::AUTHENTICATE_SUCCESS
-      # Username/password combination is valid. Check if user is
-      # allowed to use MarkUs.
-      #
-      # sets this user as logged in if login is a user in MarkUs
-      found_user = User.authorize(login) 
-      # if not nil, user authorized to enter MarkUs
-      if found_user.nil?
-        # This message actually means "User not allowed to use MarkUs",
-        # but it's from a security-perspective
-        # not a good idea to report this to the outside world. It makes it
-        # easier for attempted break-ins
-        # if one can distinguish between existent and non-existent users.
-        flash[notice] = I18n.t(:login_failed)
-        return
-      end
-    else
-      flash[notice] = I18n.t(:login_failed)
-      return
-    end
-
-    return found_user
-  end
   
   # Clear the sesssion for current user and redirect to login page
   def logout
@@ -185,39 +152,49 @@ class MainController < ApplicationController
     render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
   end
 
-
-#ROLE SWITCHING CODE
-  #Authenticates the admin given the user that the admin will like to login as 
-  # and the password of the admin
+  # Authenticates the admin (i.e. validates her password). Given the user, that
+  # the admin would like to login as and the admin's password switch to the
+  # desired user on success.
+  # 
+  # If the current user already recorded, matches the password entered in the
+  # form, grant the current user (an admin) access to the account of the user
+  # name entered in the form.
+  #
+  # Relevant partials:
+  #   role_switch_handler
+  #   role_switch_error
+  #   role_switch_content
+  #   role_switch
   def login_as
-
-    #if the current user already recorded matches the password just entered in
-    # grant the current user(admin) access to the account of the user name typed
-
-    # check for blank admin password. We know the admin login name already so 
-    #just pass that in
-
-    found_user = get_user(params[:effective_user_login], params[:user_login], params[:admin_password], :role_switch_notice, 'index')
-
+    validation_result = validate_user(params[:effective_user_login], params[:user_login], params[:admin_password])
+    if !validation_result[:error].nil?
+      # There were validation errors
+      render :partial => "role_switch_handler",
+        :locals => { :error => validation_result[:error], :success => false }
+      return
+    end
+    
+    found_user = validation_result[:user]
     if found_user.nil?
       return 
     end
 
     #Check if an admin is trying to login as another admin. Should not be allowed   
     if found_user.admin?
-      flash[:role_switch_notice] = I18n.t(:cannot_login_as_another_admin)
-      redirect_to (:action => 'index')
+      # error
+      render :partial => "role_switch_handler", :locals =>
+            { :error => I18n.t(:cannot_login_as_another_admin), :success => false }
       return
     end
    
-    #Log the admin that assumed the role of another user together with the time
-    #and date that the role switch occurred
+    # Log the admin that assumed the role of another user together with the time
+    # and date that the role switch occurred
     m_logger = MarkusLogger.instance
     m_logger.log("Admin '#{current_user.user_name}' logged in as '#{params[:effective_user_login]}'.")
 
-    #Save the uid of the admin that is switching roles
+    # Save the uid of the admin that is switching roles
     session[:real_uid] = session[:uid]
-    #Change the uid of the current user
+    # Change the uid of the current user
     self.current_user = found_user
 
     if logged_in?
@@ -225,16 +202,22 @@ class MainController < ApplicationController
       session[:redirect_uri] = nil
       refresh_timeout
       current_user.set_api_key # set api key in DB for user if not yet set
-      # redirect to the main page of the viewer
-      redirect_to(:action => 'index')
+      # All good, redirect to the main page of the viewer, discard
+      # role switch modal
+      render :partial => "role_switch_handler", :locals =>
+            { :success => true }
+      return
     else
-      flash[:role_switch_notice] = I18n.t(:login_failed)
+      render :partial => "role_switch_handler", :locals =>
+            { :error => I18n.t(:login_failed), :success => false }
+      return
     end
   end
 
   def role_switch
     # dummy action for remote rjs calls
     # triggered by clicking on the "Switch role" link
+    # please keep.
   end
 
 private
@@ -267,4 +250,54 @@ private
       return false
     end
   end
+
+  # Returns the user with user name "effective_user" from the database given that the user
+  # with user name "real_user" is authenticated. Effective and real users might are the
+  # same for regular logins and are different on an assume role call.
+  # 
+  # This function is called both by the login and login_as actions.
+  def validate_user(effective_user, real_user, password)
+    validation_result = Hash.new
+    validation_result[:user] = nil # Let's be explicit
+    # check for blank username and password
+    blank_login = effective_user.blank?
+    blank_pwd = password.blank?
+    validation_result[:error] = get_blank_message(blank_login, blank_pwd)
+    return validation_result if blank_login || blank_pwd
+
+    # Two stage user verification: authentication and authorization
+    authenticate_response = User.authenticate(real_user, 
+                                              password)
+    if authenticate_response == User::AUTHENTICATE_BAD_PLATFORM
+      validation_result[:error] = I18n.t("external_authentication_not_supported")
+      return validation_result
+    end
+    if authenticate_response == User::AUTHENTICATE_SUCCESS
+      # Username/password combination is valid. Check if user is
+      # allowed to use MarkUs.
+      #
+      # sets this user as logged in if effective_user is a user in MarkUs
+      found_user = User.authorize(effective_user) 
+      # if not nil, user authorized to enter MarkUs
+      if found_user.nil?
+        # This message actually means "User not allowed to use MarkUs",
+        # but it's from a security-perspective
+        # not a good idea to report this to the outside world. It makes it
+        # easier for attempted break-ins
+        # if one can distinguish between existent and non-existent users.
+        validation_result[:error] = I18n.t(:login_failed)
+        return validation_result
+      end
+    else
+      validation_result[:error] = I18n.t(:login_failed)
+      return validation_result
+    end
+
+    # All good, set error to nil. Let's be explicit.
+    # Also, set the user key to found_user
+    validation_result[:error] = nil
+    validation_result[:user] = found_user
+    return validation_result
+  end
+
 end
