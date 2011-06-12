@@ -53,8 +53,8 @@ class MainController < ApplicationController
 
     # strip username
     params[:user_login].strip!
-    
-    # Get information of the user that is trying to login if his or her 
+
+    # Get information of the user that is trying to login if his or her
     # authentication is valid
     validation_result = validate_user(params[:user_login], params[:user_login], params[:user_password])
     if !validation_result[:error].nil?
@@ -65,7 +65,7 @@ class MainController < ApplicationController
     # validation worked
     found_user = validation_result[:user]
     if found_user.nil?
-      return 
+      return
     end
 
     # Has this student been hidden?
@@ -88,7 +88,7 @@ class MainController < ApplicationController
     end
   end
 
-  
+
   # Clear the sesssion for current user and redirect to login page
   def logout
     logout_redirect = MarkusConfigurator.markus_config_logout_redirect
@@ -155,7 +155,7 @@ class MainController < ApplicationController
   # Authenticates the admin (i.e. validates her password). Given the user, that
   # the admin would like to login as and the admin's password switch to the
   # desired user on success.
-  # 
+  #
   # If the current user already recorded, matches the password entered in the
   # form, grant the current user (an admin) access to the account of the user
   # name entered in the form.
@@ -189,20 +189,20 @@ class MainController < ApplicationController
         :locals => { :error => validation_result[:error], :success => false }
       return
     end
-    
+
     found_user = validation_result[:user]
     if found_user.nil?
-      return 
+      return
     end
 
-    # Check if an admin is trying to login as another admin. Should not be allowed   
+    # Check if an admin is trying to login as another admin. Should not be allowed
     if found_user.admin?
       # error
       render :partial => "role_switch_handler", :locals =>
             { :error => I18n.t(:cannot_login_as_another_admin), :success => false }
       return
     end
-   
+
     # Log the admin that assumed the role of another user together with the time
     # and date that the role switch occurred
     m_logger = MarkusLogger.instance
@@ -302,7 +302,7 @@ private
   # Returns the user with user name "effective_user" from the database given that the user
   # with user name "real_user" is authenticated. Effective and real users might be the
   # same for regular logins and are different on an assume role call.
-  # 
+  #
   # This function is called both by the login and login_as actions.
   def validate_user(effective_user, real_user, password)
     validation_result = Hash.new
@@ -314,7 +314,7 @@ private
     return validation_result if blank_login || blank_pwd
 
     # Two stage user verification: authentication and authorization
-    authenticate_response = User.authenticate(real_user, 
+    authenticate_response = User.authenticate(real_user,
                                               password)
     if authenticate_response == User::AUTHENTICATE_BAD_PLATFORM
       validation_result[:error] = I18n.t("external_authentication_not_supported")
@@ -325,7 +325,7 @@ private
       # allowed to use MarkUs.
       #
       # sets this user as logged in if effective_user is a user in MarkUs
-      found_user = User.authorize(effective_user) 
+      found_user = User.authorize(effective_user)
       # if not nil, user authorized to enter MarkUs
       if found_user.nil?
         # This message actually means "User not allowed to use MarkUs",
@@ -361,7 +361,7 @@ private
 
     # Can't do user authentication, for a remote user setup, so
     # only do authorization (i.e. valid user) checks.
-    found_user = User.authorize(effective_user) 
+    found_user = User.authorize(effective_user)
     # if not nil, user authorized to enter MarkUs
     if found_user.nil?
       # This message actually means "User not allowed to use MarkUs",

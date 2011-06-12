@@ -8,7 +8,11 @@ class RoleSwitchingTest < AuthenticatedControllerTest
 
   # Required for REMOTE_USER config mocking
   include MarkusConfigurator
-  
+
+  def setup
+    clear_fixtures
+  end
+
   context "A valid admin" do
     setup do
       # Tests apply to  main controller
@@ -105,7 +109,7 @@ class RoleSwitchingTest < AuthenticatedControllerTest
       post_as @student, :login_as, :effective_user_login => @student.user_name,
           :user_login => @admin.user_name, :admin_password => "adfadsf"
     end
-    
+
     should respond_with :redirect
     should redirect_to :action => "page_not_found"
 
@@ -125,7 +129,7 @@ class RoleSwitchingTest < AuthenticatedControllerTest
       post_as @ta, :login_as, :effective_user_login => @ta.user_name,
           :user_login => @admin.user_name, :admin_password => "adfadsf"
     end
-    
+
     should respond_with :redirect
     should redirect_to :action => "page_not_found"
 
@@ -237,7 +241,7 @@ class RoleSwitchingTest < AuthenticatedControllerTest
       post_as @student, :login_as, :effective_user_login => @student.user_name,
           :user_login => @admin.user_name
     end
-    
+
     should respond_with :redirect
     should redirect_to :action => "page_not_found"
 
@@ -264,7 +268,7 @@ class RoleSwitchingTest < AuthenticatedControllerTest
       post_as @ta, :login_as, :effective_user_login => @ta.user_name,
           :user_login => @admin.user_name
     end
-    
+
     should respond_with :redirect
     should redirect_to :action => "page_not_found"
 
