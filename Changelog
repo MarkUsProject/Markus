@@ -1,30 +1,32 @@
 Changes for MarkUs 0.10.0:
-* Added Role Switching
-* Fixed UI bugs (marking state, released checkbox)
-* Fixed bug with javascript cache
-* Fixed bug when uploading twice the same file
-* Improved filename sanitization
-* Added Review Board API scripts (developers only)
-* Issue #355: Marking state icon on Submissions page is shifted
+* Use of Bundler to manage Gems dependencies.
+* Fixed UI bugs (marking state, released checkbox).
+* Fixed bug with javascript cache.
+* Fixed bug when uploading the same file twice.
+* Improved filename sanitization.
+* Added Review Board API scripts (developers only).
+* Added Remark Request feature.
+* Issue #355: Marking state icon on Submissions page is shifted.
 * Issue #341: File name sanitation does not sanitize enough problematic
-  characters
-* Issue #321: Detailed CSV download for Flexible Grading Scheme is broken
+  characters.
+* Issue #321: Detailed CSV download for Flexible Grading Scheme is broken.
+* Issue #306: Added Role Switching.
 * Issue #302: Submit Remark Request Button should not be enabled/disabled, but
-  should stay always on
+  should stay always on.
 * Issue #294: rake load:results not creating assignment_stat/ta_stat
-  associations
-* Issue #233: MySQL database issue with grade_distribution_percentage
+  associations.
+* Issue #233: MySQL database issue with grade_distribution_percentage.
 * Issue #200: Students have no UI for accessing their test results.
 * Issue #199: Select all submissions for release is broken when student spread
   across multiple pages.
 * Issue #189: MarkusLogger needs to be adapted so that log files are unique to
-  each mongrel
+  each mongrel.
 * Issue #156: Adding an extra mark doesn't show up until navigating away from
-  the page
-* Issue #151: REST api request to add users
-* Issue #122: Annotations with hex escape patterns stripped
+  the page.
+* Issue #151: REST api request to add users.
+* Issue #122: Annotations with hex escape patterns stripped.
 * Issue #107: Non-active students don't show up with the default "All" filter
-  during initialization
+  during initialization.
 * Issue #6: Results should not be able to be marked "complete" if one or more
   of the criteria aren't filled in.
 * Issue #3: Diplaying server's time on student view.
