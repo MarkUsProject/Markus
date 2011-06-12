@@ -1,6 +1,5 @@
 require File.join(File.dirname(__FILE__),'/repository')
 require "rubygems"
-require "ruby-debug"
 module Repository
 
 # Implements AbstractRepository for memory repositories
