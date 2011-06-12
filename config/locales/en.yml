@@ -24,8 +24,10 @@ en:
 
     # app/views/layouts/_header.html.erb
     log_out:            "Log out"
+    clear_role_switch_session_link: "Cancel role switch"
     logged_in_as:       "| Logged in as <span id=\"user_name\"><b>%{first_name} %{last_name}</b> (%{user_name})</span> |"
     working:            "Working..."
+    login_as:           "Login as"
 
     # app/views/main/_about_content.html.erb
     about_markus:       "About MarkUs"
@@ -60,6 +62,10 @@ en:
 
     # app/views/main/index.html.erb
     firefox_warning:    "Some functionality might only work for Mozilla Firefox users"
+    switch_role:         "Switch Role"
+    admin_password:      "Admin Password"
+    is_logged_in_as:     "is logged in as:"
+    cannot_login_as_another_admin: "You cannot log in as another admin."
 
     # app/views/assignments/_list_manage.html.erb
     current_assignments:      "Current assignments:"

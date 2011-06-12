@@ -24,8 +24,10 @@ fr:
 
     # app/views/layouts/_header.html.erb
     log_out:            "Déconnexion"
+    clear_role_switch_session_link: "Annuler le changement d'utilisateur"
     logged_in_as:       "| Connecté en tant que <span id=\"user_name\"><b>%{first_name} %{last_name}</b> (%{user_name})</span> |"
     working:            "Chargement..."
+    login_as:           "Connexion en tant que"
 
     # app/views/main/_about_content.html.erb
     about_markus:       "À propos de MarkUs"
@@ -60,6 +62,10 @@ fr:
 
     # app/views/main/index.html.erb
     firefox_warning:    "Certaines fonctionnalités ne fonctionnent qu'avec Mozilla Firefox"
+    switch_role:         "Changer d'utilisateur"
+    admin_password:      "Mot de passe Admin"
+    is_logged_in_as:     "connecté en tant que :"
+    cannot_login_as_another_admin: "Vous ne pouvez vous connecter à la place d'un autre admin"
 
     # app/views/assignments/_list_manage.html.erb
     current_assignments:      "Projets existants"
