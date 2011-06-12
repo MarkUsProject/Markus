@@ -7,8 +7,14 @@
 
 Thanks for using MarkUs!
 
-NOTE: If you are a MarkUs developer, please follow setup instructions here:
+NOTE: These are production install instructions.  If you are a MarkUs 
+  developer, please follow setup instructions here:
   http://github.com/MarkUsProject/Markus/wiki
+
+ALSO NOTE: You may find the install instructions on our Wiki page easier to
+           read than this text file.  The install instructions on our Wiki
+           can be found here:
+           https://github.com/MarkUsProject/Markus/wiki/InstallProdStable
 
 1. WHAT YOU NEED TO KNOW
 
@@ -155,15 +161,19 @@ see http://www.markusproject.org/download/
         cp config/database.yml.mysql config/database.yml
   * Configure MarkUs to match your requirements. Please have a look at
     config/environments/production.rb. This file is well documented and
-    your instance specific configuration has to be done in there. If you
-    have questions, please feel free to get in touch with us:
+    your instance specific configuration has to be done in there. Further
+    information can be found here:
+
+    https://github.com/MarkUsProject/Markus/wiki/InstallProdStable
+
+    If you have questions, please feel free to get in touch with us:
     markus-users@cs.toronto.edu
   * Create the database for MarkUs
-      rake db:create
+      bundle exec rake db:create
   * Load the database schema for MarkUs
-      rake db:schema:load
+      bundle exec rake db:schema:load
   * Create an instructor (for initial login)
-      rake markus:instructor first_name="test" last_name="test" \
+      bundle exec rake markus:instructor first_name="test" last_name="test" \
       user_name="markus"
   * Configure Apache httpd (optional, see example config below)
   * Configure Mongrel or Passenger servers (config/mongrel_cluster.yml)
@@ -179,7 +189,7 @@ If you run into any problems please send e-mail to markus-users@cs.toronto.edu.
 We are happy to help and would also like to hear your feedback! Please include
 the version number of MarkUs you are using. You can find out about the version
 you are currently using by issuing the following command:
-  rake -s markus:version
+  bundle exec rake -s markus:version
 
 
 3.4 GETTING RAILS AND REQUIRED GEMS
@@ -200,9 +210,6 @@ you are currently using by issuing the following command:
     export PATH=$PATH:/usr/lib/ruby/gems/1.8/gems/bundler-1.0.3/bin
 
   Consider adding the above export to your ~/.bashrc.
-
-  Note that you may have to do a similar export for the rake command in
-  order for it to work.
 
   To get all required gems for MarkUs in one shot (this should take care of
   versions too) you'll want to use the bundle install command. However, you'll
@@ -228,8 +235,9 @@ you are currently using by issuing the following command:
   * http://github.com/MarkUsProject/Markus/wiki/InstallProdStable
   * http://github.com/MarkUsProject/Markus/wiki/MultipleHosting
   * http://www.markusproject.org/dev/markus_httpd_vhost.conf
-  * See available rake tasks for MarkUs: "rake -T markus" or more generically
-    "rake -T"
+  * See available rake tasks for MarkUs: "bundle exec rake -T markus" or 
+    more generically
+    "bundle exec rake -T"
 
 5. BUGS
 
