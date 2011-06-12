@@ -11,11 +11,11 @@ class MarkusLoggerTest < Test::Unit::TestCase
   context "A MarkusLogger instance" do
     setup do
       pid = Process.pid
-      @infolog = File.join('test','unit','info.log')
-      @errorlog = File.join('test','unit','error.log')
-      @badfile = File.join('test','unit','badfile')
+      @infolog = File.join('tmp','info.log')
+      @errorlog = File.join('tmp','error.log')
+      @badfile = File.join('tmp','badfile')
       @badfile_w_pid = "#{@badfile}.#{pid}"
-      @baddir = File.join('test','unit','baddir')
+      @baddir = File.join('tmp','baddir')
       @baddir_w_pid = "#{@baddir}.#{pid}"
       @size = 1024
       interval = 'daily'
@@ -39,8 +39,16 @@ class MarkusLoggerTest < Test::Unit::TestCase
     end
 
     # FileUtils.remove does not work properly on Windows.
-	  # It throws a Permission denied.
+    # It throws a Permission denied.
     teardown do
+      begin
+        if File.directory?(@baddir)
+          FileUtils.chmod 0777 , @baddir # Return writing permissions
+          FileUtils.remove_dir @baddir, :force => false
+        end
+     rescue Exception => ex
+        $stderr.puts "Error while trying to remove the directory #{@baddir}: " + ex
+      end
       begin
         if File.directory?(@baddir_w_pid)
           FileUtils.chmod 0777 , @baddir_w_pid # Return writing permissions
