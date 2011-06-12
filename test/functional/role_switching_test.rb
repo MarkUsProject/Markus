@@ -110,8 +110,7 @@ class RoleSwitchingTest < AuthenticatedControllerTest
           :user_login => @admin.user_name, :admin_password => "adfadsf"
     end
 
-    should respond_with :redirect
-    should redirect_to :action => "page_not_found"
+    should respond_with 404
 
     should "render a 404 page and not touch the session" do
       assert_equal @student.id, session[:uid]
@@ -130,8 +129,7 @@ class RoleSwitchingTest < AuthenticatedControllerTest
           :user_login => @admin.user_name, :admin_password => "adfadsf"
     end
 
-    should respond_with :redirect
-    should redirect_to :action => "page_not_found"
+    should respond_with 404
 
     should "render a 404 page and not touch the session" do
       assert_equal @ta.id, session[:uid]
@@ -242,8 +240,7 @@ class RoleSwitchingTest < AuthenticatedControllerTest
           :user_login => @admin.user_name
     end
 
-    should respond_with :redirect
-    should redirect_to :action => "page_not_found"
+    should respond_with 404
 
     should "render a 404 page and not touch the session" do
       assert_equal @student.id, session[:uid]
@@ -269,8 +266,7 @@ class RoleSwitchingTest < AuthenticatedControllerTest
           :user_login => @admin.user_name
     end
 
-    should respond_with :redirect
-    should redirect_to :action => "page_not_found"
+    should respond_with 404
 
     should "render a 404 page and not touch the session" do
       assert_equal @ta.id, session[:uid]

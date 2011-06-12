@@ -10,6 +10,7 @@ class MainController < ApplicationController
   before_filter      :authorize_for_user,
                      :except => [:login,
                                  :page_not_found]
+  before_filter :authorize_only_for_admin, :only => [:login_as]
 
   #########################################################################
   # Authentication
@@ -166,14 +167,6 @@ class MainController < ApplicationController
   #   role_switch_content
   #   role_switch
   def login_as
-    # Render a 404 page if the current user is not an admin, or the
-    # we've got a tinkered with session.
-    current_user = User.find_by_id(session[:uid])
-    if current_user.nil? || !current_user.admin?
-      redirect_to :action => "page_not_found"
-      return
-    end
-
     validation_result = nil
     if MarkusConfigurator.markus_config_remote_user_auth
       validation_result = validate_user_without_login(params[:effective_user_login],
