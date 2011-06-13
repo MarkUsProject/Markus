@@ -99,9 +99,6 @@ class ActiveSupport::TestCase
     FileUtils.rm_rf("#{MarkusConfigurator.markus_config_pdf_storage}/*")
   end
 
-  # This prevents factory data preloader from automatically loading data for each test suite
-  #FactoryDataPreloader.preload_all = false
-
   def equal_dates(date_1, date_2)
     date_1 = Time.parse(date_1.to_s)
     date_2 = Time.parse(date_2.to_s)
