@@ -17,8 +17,6 @@ config.action_controller.allow_forgery_protection    = true
 # Don't care if the mailer can't send
 config.action_mailer.raise_delivery_errors = false
 
-require 'rubygems'
-require 'bundler'
 require 'ruby-debug'
 
 ###################################################################
