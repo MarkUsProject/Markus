@@ -39,12 +39,12 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       end
       should respond_with :success
     end
-    
+
     #TODO Figure out how to remove fixture_file_upload
     context "and I should be able to add files" do
-      setup do 
-        file_1 = fixture_file_upload('files/Shapes.java', 'text/java')
-        file_2 = fixture_file_upload('files/TestShapes.java', 'text/java')
+      setup do
+        file_1 = fixture_file_upload(File.join('..', 'files', 'Shapes.java'), 'text/java')
+        file_2 = fixture_file_upload(File.join('..', 'files', 'TestShapes.java'), 'text/java')
         assert @student.has_accepted_grouping_for?(@assignment.id)
         post_as(@student, :update_files, {:id => @assignment.id, :new_files => [file_1, file_2]})
       end
@@ -76,9 +76,9 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
     #TODO figure out how to test this test into the one above
     #TODO Figure out how to remove fixture_file_upload
     context "and I should be able to replace files" do
-      setup do 
+      setup do
         assert @student.has_accepted_grouping_for?(@assignment.id)
-         
+
         @grouping.group.access_repo do |repo|
           txn = repo.get_transaction('markus')
           txn.add(File.join(@assignment.repository_folder,'Shapes.java'), 'Content of Shapes.java')
@@ -89,10 +89,9 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           old_files = revision.files_at_path(@assignment.repository_folder)
           old_file_1 = old_files['Shapes.java']
           old_file_2 = old_files['TestShapes.java']
-       
 
-          @file_1 = fixture_file_upload('files/Shapes.java', 'text/java')
-          @file_2 = fixture_file_upload('files/TestShapes.java', 'text/java')
+          @file_1 = fixture_file_upload(File.join('..', 'files', 'Shapes.java'), 'text/java')
+          @file_2 = fixture_file_upload(File.join('..', 'files', 'TestShapes.java'), 'text/java')
 
           post_as(@student, :update_files, { :id => @assignment.id,
             :replace_files => { 'Shapes.java' =>      @file_1,
@@ -101,7 +100,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                                 'TestShapes.java' =>  old_file_2.from_revision}})
 
         end
-      end 
+      end
 
       # must not respond with redirect_to (see comment in
       # app/controllers/submission_controller.rb#update_files)
@@ -137,7 +136,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
     context "and I should be able to delete files" do
       setup do
         assert @student.has_accepted_grouping_for?(@assignment.id)
-         
+
         @grouping.group.access_repo do |repo|
           txn = repo.get_transaction('markus')
           txn.add(File.join(@assignment.repository_folder,'Shapes.java'), 'Content of Shapes.java')
@@ -180,15 +179,15 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
     context "and I cannot add a file that exists" do
       setup do
         assert @student.has_accepted_grouping_for?(@assignment.id)
-         
+
         @grouping.group.access_repo do |repo|
           txn = repo.get_transaction('markus')
           txn.add(File.join(@assignment.repository_folder,'Shapes.java'), 'Content of Shapes.java')
           txn.add(File.join(@assignment.repository_folder, 'TestShapes.java'), 'Content of TestShapes.java')
           repo.commit(txn)
 
-          file_1 = fixture_file_upload('files/Shapes.java', 'text/java')
-          file_2 = fixture_file_upload('files/TestShapes.java', 'text/java')
+          file_1 = fixture_file_upload(File.join('..', 'files', 'Shapes.java'), 'text/java')
+          file_2 = fixture_file_upload(File.join('..', 'files', 'TestShapes.java'), 'text/java')
           assert @student.has_accepted_grouping_for?(@assignment.id)
           post_as(@student, :update_files, {:id => @assignment.id, :new_files => [file_1, file_2]})
         end
@@ -234,7 +233,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       end
       should respond_with :missing
     end
-    
+
     context "and I cannot use the populate repository browser." do
       setup do
         get_as(@student, :populate_repo_browser, {:id => Grouping.first.id})
@@ -247,7 +246,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       setup do
         get_as @student, :download_simple_csv_report
       end
-      
+
       should respond_with :missing
     end
 
@@ -255,7 +254,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       setup do
         get_as @student, :download_detailed_csv_report
       end
-      
+
       should respond_with :missing
     end
 
@@ -263,7 +262,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       setup do
         get_as @student, :download_svn_export_commands
       end
-      
+
       should respond_with :missing
     end
 
@@ -271,7 +270,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       setup do
         get_as @student, :download_svn_repo_list
       end
-      
+
       should respond_with :missing
     end
 
@@ -287,7 +286,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         end
         should respond_with :success
       end
-      
+
 
       context "access the populate repository browser." do
         setup do
@@ -302,21 +301,21 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         end
         should respond_with :missing
       end
-      
+
       context "download a detailed csv report" do
         setup do
           get_as @grader, :download_detailed_csv_report
         end
         should respond_with :missing
       end
-      
+
       context "download the svn export commands" do
         setup do
           get_as @grader, :download_svn_export_commands
         end
         should respond_with :missing
       end
-      
+
       context "download the svn repository list" do
         setup do
           get_as @grader, :download_svn_repo_list
@@ -358,7 +357,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
     context "and I have an instructor." do
       # TODO:
-      
+
       # Test whether or not an Instructor can release/unrelease results correctly
       # Test whether or not an Instructor can download files from student repos
       setup do
@@ -376,21 +375,21 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         end
         should respond_with :success
       end
-      
+
       context "My instructor should be able to download the detailed csv report." do
         setup do
           get_as @admin, :download_detailed_csv_report, :id => @assignment.id
         end
         should respond_with :success
       end
-      
+
       context "My instructor should be able to download the svn export commands." do
         setup do
           get_as @admin, :download_svn_export_commands, :id => @assignment.id
         end
         should respond_with :success
       end
-      
+
       context "My instructor should be able to download the svn repository list." do
         setup do
           get_as @admin, :download_svn_repo_list, :id => @assignment.id
@@ -450,20 +449,20 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       end
       should respond_with :redirect
     end
-    
+
     context "trying to download a detailed csv report" do
       setup do
         get :download_detailed_csv_report
       end
       should respond_with :redirect
     end
-    
+
     context "trying to download the svn export commands" do
       setup do
         get :download_svn_export_commands end
       should respond_with :redirect
     end
-    
+
     context "trying to download the svn repository list" do
       setup do
         get :download_svn_repo_list
@@ -471,9 +470,9 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       should respond_with :redirect
     end
   end
-  
+
   def teardown
     destroy_repos
   end
-  
+
 end

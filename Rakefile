@@ -5,4 +5,16 @@ require File.expand_path('../config/application', __FILE__)
 require 'rake'
 require 'db_populate'
 
+# TODO REMOVE THIS FIX WITH RAKE 0.9:0
+module ::Markus
+  class Application
+    include Rake::DSL
+  end
+end
+
+module ::RakeFileUtils
+  extend Rake::FileUtilsExt
+end
+######## END OF FIX
+
 Markus::Application.load_tasks
