@@ -1,6 +1,6 @@
-require File.join(File.dirname(__FILE__),'/../subversion_repository')
-require 'test/unit' # load Test::Unit
+require File.join(File.dirname(__FILE__), '..', 'subversion_repository')
 require 'rubygems'
+require 'test/unit' # load Test::Unit
 require 'fileutils'
 require 'shoulda'   # load Thoughtbot Shoulda (used as testing framework)
 require 'time'
@@ -8,17 +8,17 @@ require 'time'
 # bring Repository::SubversionRepository into current namespace
 include Repository
 
-# Test suite for testing proper functioning of 
+# Test suite for testing proper functioning of
 # SubversionRepository, an implementation of AbstractRepository
 class SubversionRepositoryTest < Test::Unit::TestCase
-  
+
   SVN_TEST_REPOS_DIR = File.expand_path(File.join(File.dirname(__FILE__),"/svn_repos"))
   TEST_REPO = SVN_TEST_REPOS_DIR + "/repo1"
   TEST_EXPORT_REPO = SVN_TEST_REPOS_DIR + "/exported_repo1"
   TEST_EXPORT_REPO_2 = SVN_TEST_REPOS_DIR + "/exported_repo2"
   RESOURCE_DIR = File.expand_path(File.join(File.dirname(__FILE__),"/input_files"))
   TEST_USER = "testuser"
-  
+
   context "SubversionRepository class" do
 
     teardown do
@@ -65,7 +65,7 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       assert(!File.exists?(TEST_REPO), "Did not properly delete the repository")
     end
   end
-  
+
   context "A SubversionRepository instance" do
 
     # setup and teardown for the current context
@@ -109,7 +109,7 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       file = "not-on-the-shelves-2009.pdf"
 
       # Let's start by adding the file to the svn repository
-      add_file_helper(@repo, file) 
+      add_file_helper(@repo, file)
       assert_not_nil(@repo.export("myfile.pdf",
                                   file),
                      "Did not properly export the file from the svn repo")
@@ -124,7 +124,7 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       file = "not-on-the-shelves-2009.pdf"
       repo_to_export_to = File.join(TEST_EXPORT_REPO_2, file)
       # Let's start by adding the file to the svn repository
-      add_file_helper(@repo, file) 
+      add_file_helper(@repo, file)
       assert_not_nil(@repo.export(repo_to_export_to,
                                   file),
                      "Did not properly export the file from the svn repo")
@@ -195,7 +195,7 @@ class SubversionRepositoryTest < Test::Unit::TestCase
     should "be able to create a directory in repository" do
       dir_single_level = "/folder1"
       dir_multi_level = "/folder2/subfolder1"
-      
+
       txn = @repo.get_transaction(TEST_USER)
       txn.add_path(dir_single_level)
       txn.add_path(dir_multi_level)
@@ -374,7 +374,7 @@ class SubversionRepositoryTest < Test::Unit::TestCase
     end
 
   end # end context
-  
+
   context "A repository with an authorization file specified" do
 
     SVN_AUTHZ_FILE = SVN_TEST_REPOS_DIR + "/svn_authz"
@@ -590,7 +590,7 @@ class SubversionRepositoryTest < Test::Unit::TestCase
     end
 
   end # end context
-  
+
   context "Looping over several repositories" do
 
     should "add a user per each repository" do
@@ -660,7 +660,7 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       end
     end
   end # end context
-  
+
   context "Setting and deleting bulk permissions" do
     setup do
       # use a different svn_authz file for this test
@@ -730,16 +730,16 @@ class SubversionRepositoryTest < Test::Unit::TestCase
       end
     end
   end#end context
-  
+
   private # private helper methods for this class
-    
+
   def add_file_helper(repo, file)
     txn = repo.get_transaction(TEST_USER)
     file_contents = File.read(RESOURCE_DIR + "/" + file)
     txn.add(file, file_contents)
     repo.commit(txn)
   end
-  
+
   def add_some_files_helper(repo, files)
     txn = repo.get_transaction(TEST_USER)
     files.each do |file|
@@ -747,10 +747,10 @@ class SubversionRepositoryTest < Test::Unit::TestCase
     end
     repo.commit(txn)
   end
-  
+
 end # end class SubversionRepositoryTest
 
-# Test suite for testing proper functioning of 
+# Test suite for testing proper functioning of
 # SubversionRevision, an implementation of AbstractRevision
 
 #class SubversionRevisionTest < Test::Unit::TestCase

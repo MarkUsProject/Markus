@@ -24,6 +24,7 @@ config.action_mailer.delivery_method = :test
 # We need this early require. Otherwise factory_data_preloader
 # is reporting a _LOT_ of errors. Please keep this.
 require 'factory_data_preloader'
+require 'ruby-debug'
 
 ###################################################################
 # MarkUs SPECIFIC CONFIGURATION
