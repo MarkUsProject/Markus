@@ -5,7 +5,42 @@ require 'shoulda'
 
 class AssignmentTest < ActiveSupport::TestCase
 
+  should have_many :rubric_criteria
+  should have_many :flexible_criteria
+  should have_many :assignment_files
+  should have_many :test_files
+  should have_many :criterion_ta_associations
+  should have_one  :submission_rule
+
+  should have_many :annotation_categories
+
+  should have_many :groupings
+  should have_many(:ta_memberships).through(:groupings)
+  should have_many(:student_memberships).through(:groupings)
+  should have_many(:tokens).through(:groupings)
+
+  should have_many(:submissions).through(:groupings)
+  should have_many(:groups).through(:groupings)
+
+  should have_many :notes
+
+  should have_many :section_due_dates
+  should have_one  :assignment_stat
+
+  should validate_presence_of     :repository_folder
+  should validate_presence_of     :group_min
+
+  should validate_numericality_of :group_min
+  should validate_numericality_of :group_max
+  should validate_numericality_of :tokens_per_day
+
+  should validate_presence_of :submission_rule
+
   should validate_presence_of :marking_scheme_type
+
+  # since allow_web_submits is a boolean, should validate_presence_of does
+  # not work: see the Rails API documentation for should validate_presence_of
+  # (Model validations)
   # should validate_presence_of does not work for boolean value false.
   # Using should allow_value instead
   should allow_value(true).for(:allow_web_submits)
@@ -22,9 +57,15 @@ class AssignmentTest < ActiveSupport::TestCase
   end
 
   context "validate" do
+    setup do
+      @a = Assignment.make
+    end
+
+    should validate_presence_of     :short_identifier
+    should validate_uniqueness_of   :short_identifier
+
     should "work" do
-      a = Assignment.make
-      assert a.valid?
+      assert @a.valid?
     end
 
     should "catch max group size less than min group size" do
@@ -553,7 +594,7 @@ class AssignmentTest < ActiveSupport::TestCase
 
     end
 
-    context "with a students in groupings setup with marking complete" do
+    context "with a students in groupings setup with marking complete (rubric marking)" do
       setup do
         # create the required files for the assignment
         AssignmentFile.make(:assignment => @assignment)
@@ -582,7 +623,7 @@ class AssignmentTest < ActiveSupport::TestCase
         end
       end
 
-      should "be able to generate a detailed CSV report of marks (including criteria)" do
+      should "be able to generate a detailed CSV report of rubrics based marks (including criteria)" do
         a = @assignment
         out_of = a.total_mark
         rubric_criteria = a.rubric_criteria
@@ -610,6 +651,80 @@ class AssignmentTest < ActiveSupport::TestCase
                 fields.push(mark.mark || '')
               end
               fields.push(rubric_criterion.weight)
+            end
+            fields.push(submission.result.get_total_extra_points)
+            fields.push(submission.result.get_total_extra_percentage)
+          end
+          # push grace credits info
+          grace_credits_data = student.remaining_grace_credits.to_s + "/" + student.grace_credits.to_s
+          fields.push(grace_credits_data)
+
+          expected_string += fields.to_csv
+        end
+        assert_equal expected_string, a.get_detailed_csv_report, "Detailed CSV report is wrong!"
+      end
+    end
+
+    context "with a students in groupings setup with marking complete (flexible marking)" do
+      setup do
+        # Want an assignment with flexible criteria as marking scheme.
+        @flexible_assignment = Assignment.make(:marking_scheme_type =>
+                                               Assignment::MARKING_SCHEME_TYPE[:flexible])
+        # create the required files for the assignment
+        AssignmentFile.make(:assignment => @flexible_assignment)
+        AssignmentFile.make(:assignment => @flexible_assignment)
+
+        # create 4 flexible marking criteria
+        criteria = []
+        (1..4).each do |index|
+          criteria.push FlexibleCriterion.make({:assignment => @flexible_assignment, :position => index})
+        end
+
+        # create the groupings and associated marks
+        (1..4).each do
+          g = Grouping.make(:assignment => @flexible_assignment)
+          (1..3).each do
+            StudentMembership.make({:grouping => g, :membership_status => StudentMembership::STATUSES[:accepted]})
+          end
+          s = Submission.make(:grouping => g)
+          r = s.result
+          (0..3).each do |index|
+            Mark.make({:result => r, :markable => criteria[index] })
+          end
+          r.reload
+          r.marking_state = Result::MARKING_STATES[:complete]
+          r.save
+        end
+      end
+
+      should "be able to generate a detailed CSV report of flexible based marks (including criteria)" do
+        a = @flexible_assignment
+        out_of = a.total_mark
+        flexible_criteria = a.flexible_criteria
+        expected_string = ""
+        Student.all.each do |student|
+          fields = []
+          fields.push(student.user_name)
+          grouping = student.accepted_grouping_for(a.id)
+          if grouping.nil? || !grouping.has_submission?
+            fields.push('')
+            flexible_criteria.each do |criterion|
+              fields.push('')
+              fields.push(criterion.max)
+            end
+            fields.push('')
+            fields.push('')
+          else
+            submission = grouping.current_submission_used
+            fields.push(submission.result.total_mark / out_of * 100)
+            flexible_criteria.each do |criterion|
+              mark = submission.result.marks.find_by_markable_id_and_markable_type(criterion.id, "FlexibleCriterion")
+              if mark.nil?
+                fields.push('')
+              else
+                fields.push(mark.mark || '')
+              end
+              fields.push(criterion.max)
             end
             fields.push(submission.result.get_total_extra_points)
             fields.push(submission.result.get_total_extra_percentage)

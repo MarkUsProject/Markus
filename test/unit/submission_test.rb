@@ -1,5 +1,6 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require File.join(File.dirname(__FILE__), '..', 'test_helper')
 require 'shoulda'
+
 class SubmissionTest < ActiveSupport::TestCase
   fixtures :all
   should have_many :submission_files
@@ -9,6 +10,60 @@ class SubmissionTest < ActiveSupport::TestCase
     s.save
     assert_not_nil s.result, "Result was supposed to be created automatically"
     assert_equal s.result.marking_state, Result::MARKING_STATES[:unmarked], "Result marking_state should have been automatically set to unmarked"
+  end
+  
+  should "create a remark result" do
+    s = submissions(:submission_1)
+    s.save
+    s.create_remark_result
+    assert_not_nil s.remark_result, "Remark result was supposed to be created"
+    assert_equal s.remark_result.marking_state, Result::MARKING_STATES[:unmarked], "Remark result marking_state should have been automatically set to unmarked"
+  end
+
+  context "A submission with a remark result submitted" do
+    setup do
+      @submission = submissions(:submission_1)
+      @submission.save
+      @submission.create_remark_result
+      @submission.remark_result.marking_state = Result::MARKING_STATES[:partial]
+    end
+
+    should "return true on has_remark? call" do
+      assert @submission.has_remark?
+    end
+
+    should "return true on remark_submitted? call" do
+      assert @submission.remark_submitted?
+    end
+  end
+
+  context "A submission with a remark result not submitted" do
+    setup do
+      @submission = submissions(:submission_1)
+      @submission.save
+      @submission.create_remark_result
+    end
+
+    should "return true on has_remark? call" do
+      assert @submission.has_remark?
+    end
+
+    should "return false on remark_submitted? call" do
+      assert !@submission.remark_submitted?
+    end
+  end
+
+  context "A submission with no remark results" do
+    setup do
+      @submission = submissions(:submission_1)
+      @submission.save
+    end
+    should "return false on has_remark? call" do
+      assert !@submission.has_remark?
+    end
+    should "return false on remark_submitted? call" do
+      assert !@submission.remark_submitted?
+    end
   end
 
   context "The Submission class" do

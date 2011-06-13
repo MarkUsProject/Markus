@@ -7,8 +7,14 @@
 
 Thanks for using MarkUs!
 
-NOTE: If you are a MarkUs developer, please follow setup instructions here:
+NOTE: These are production install instructions.  If you are a MarkUs 
+  developer, please follow setup instructions here:
   http://github.com/MarkUsProject/Markus/wiki
+
+ALSO NOTE: You may find the install instructions on our Wiki page easier to
+           read than this text file.  The install instructions on our Wiki
+           can be found here:
+           https://github.com/MarkUsProject/Markus/wiki/InstallProdStable
 
 1. WHAT YOU NEED TO KNOW
 
@@ -29,7 +35,7 @@ see http://www.markusproject.org/download/
   As mentioned previously, MarkUs is a Ruby on Rails application. General
   requirements are as follows (Note: MarkUs also works using Phusion Passenger):
 
-    * Ruby (version 1.8.7 and higher)
+    * Ruby (version 1.8.7) (version 1.9.x are not supported yet)
     * Ruby development package (required for compiling Ruby PostgreSQL drivers)
     * net/https Ruby library (libopenssl-ruby Debian package)
     * RDoc (required for Gem)
@@ -46,7 +52,9 @@ see http://www.markusproject.org/download/
         - mod_authz_svn (required if you want to allow SVN repository access)
     * ImageMagick (known to work with >=6.5.7, older versions should be ok too)
       Only required if you plan to be able to view and annotate pdfs within
-      the browser (PDF_SUPPORT setting in config files) 
+      the browser (PDF_SUPPORT setting in config files)
+    * Ant, if you plan to use the MarkUs built in testing framework (still in
+      alpha)
 
   DATABASE THINGS
 
@@ -59,8 +67,7 @@ see http://www.markusproject.org/download/
       * PostgreSQL
       * Development package(s) for PostgreSQL
       * Ruby gems (Bundler will handle those):
-          - ruby-pg (version 0.7.9.2008.01.28 and higher)
-          - postgres (version 0.7.9.2008.01.28 and higher)
+          - pg (version 0.10.1 and higher)
 
     MarkUs/MySQL:
     If you plan to use MarkUs with a MySQL database, you need the following
@@ -85,8 +92,14 @@ see http://www.markusproject.org/download/
     sudo aptitude install ruby ruby-dev rdoc mysql-server libmysqlclient15-dev \
     subversion libsvn-ruby libopenssl-ruby apache2 libapache2-svn
 
-  Installing gem (version 1.3.7 and higher) on Debian based systems (see
-    http://github.com/MarkUsProject/Markus/wiki/RailsDebianUpdate)
+  INSTALLING RUBYGEMS
+
+  Installing gem (version 1.3.7 and higher) on Debian based systems:
+
+      Use rubygems package on your system (for Debian/Ubuntu) :
+        sudo aptitude install rubygems
+
+      or
 
       Download rubygems from rubyforge.org (see
       http://rubyforge.org/projects/rubygems/); We show the steps for version
@@ -100,15 +113,15 @@ see http://www.markusproject.org/download/
         sudo ln -s /usr/bin/gem1.8 /usr/bin/gem
         gem -v                                # for confirmation
 
-  Install MySQL/PostgreSQL Ruby database driver gems:
+      Once you've installed rubygems, you'll want to tell Ruby to load rubygems
+      automatically.  This is done by setting the RUBYOPT environment variable
+      to rubygems.  Example (assuming BASH shell):
 
-    PostgreSQL option:
-      
-      sudo gem install ruby-pg postgres
-  
-    MySQL option:
+      export RUBYOPT=rubygems
 
-      sudo gem install mysql
+      You'll probably want to put this in your .bashrc (or equivalent) as well.
+
+      See http://docs.rubygems.org/read/chapter/3 for further details.
 
 
 3.2 IMAGEMAGICK (OPTIONAL)
@@ -148,18 +161,24 @@ see http://www.markusproject.org/download/
         cp config/database.yml.mysql config/database.yml
   * Configure MarkUs to match your requirements. Please have a look at
     config/environments/production.rb. This file is well documented and
-    your instance specific configuration has to be done in there. If you
-    have questions, please feel free to get in touch with us:
+    your instance specific configuration has to be done in there. Further
+    information can be found here:
+
+    https://github.com/MarkUsProject/Markus/wiki/InstallProdStable
+
+    If you have questions, please feel free to get in touch with us:
     markus-users@cs.toronto.edu
   * Create the database for MarkUs
-      rake db:create
+      bundle exec rake db:create
   * Load the database schema for MarkUs
-      rake db:schema:load
+      bundle exec rake db:schema:load
   * Create an instructor (for initial login)
-      rake markus:instructor first_name="test" last_name="test" \
+      bundle exec rake markus:instructor first_name="test" last_name="test" \
       user_name="markus"
   * Configure Apache httpd (optional, see example config below)
-  * Configure Mongrel servers (config/mongrel_cluster.yml)
+  * Configure Mongrel or Passenger servers (config/mongrel_cluster.yml)
+    see http://github.com/MarkUsProject/Markus/wiki/ApacheMongrel
+    or http://github.com/MarkUsProject/Markus/wiki/ApachePassenger
   * Once MarkUs boots up fine (script/server runs without errors), you can start
     the mongrel cluster
       mongrel_rails cluster::start
@@ -170,16 +189,16 @@ If you run into any problems please send e-mail to markus-users@cs.toronto.edu.
 We are happy to help and would also like to hear your feedback! Please include
 the version number of MarkUs you are using. You can find out about the version
 you are currently using by issuing the following command:
-  rake -s markus:version
+  bundle exec rake -s markus:version
 
 
-3.4 GETTING RAILS AND RUBYGEMS
+3.4 GETTING RAILS AND REQUIRED GEMS
 
-  Bundler and required rubygems (including rails) can be installed like
+  Bundler and required ruby gems (including rails) can be installed like
   so:
 
     sudo gem install bundler
- 
+
   Make sure "bundle" is in $PATH (assuming BASH). We need to find the
   installation location of bundler for this. The following commands may
   be helpful:
@@ -193,10 +212,22 @@ you are currently using by issuing the following command:
   Consider adding the above export to your ~/.bashrc.
 
   To get all required gems for MarkUs in one shot (this should take care of
-  versions too) use the command below. You may choose to do this as non-root
-  user.
+  versions too) you'll want to use the bundle install command. However, you'll
+  probably want to tell bundler to skip over development and test environment
+  gems, as well as gems for databases that you're not using.
 
-    bundle install --without development test
+  For example, if you were setting up a production version of MarkUs using
+  a PostgreSQL database backend, you'd want to execute:
+
+  bundle install --without development test sqlite mysql
+
+  Similarly, if you were setting up a production version of MarkUs using
+  a MySQL database backend, you'd want to execute:
+
+  bundle install --without development test sqlite postgresql
+
+  Note that these commands may be executed as a non-root user.
+
 
 4. FURTHER INSTRUCTIONS, FAQ, LINKS
 
@@ -204,8 +235,9 @@ you are currently using by issuing the following command:
   * http://github.com/MarkUsProject/Markus/wiki/InstallProdStable
   * http://github.com/MarkUsProject/Markus/wiki/MultipleHosting
   * http://www.markusproject.org/dev/markus_httpd_vhost.conf
-  * See available rake tasks for MarkUs: "rake -T markus" or more generically
-    "rake -T"
+  * See available rake tasks for MarkUs: "bundle exec rake -T markus" or 
+    more generically
+    "bundle exec rake -T"
 
 5. BUGS
 
@@ -213,4 +245,3 @@ If you think you have found a bug, you can file a bug report or contact
 developers at markus-dev@cs.toronto.edu. Feel free to provide a patch ;-)
 
   http://github.com/MarkUsProject/Markus/issues
-

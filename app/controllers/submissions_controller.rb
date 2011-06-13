@@ -126,17 +126,9 @@ class SubmissionsController < ApplicationController
     user_group = @grouping.group
     @path = params[:path] || '/'
     
-    user_group.access_repo do |repo|
-      @revision = repo.get_latest_revision
-      @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
-      @missing_assignment_files = []
-      @assignment.assignment_files.each do |assignment_file|
-        if !@revision.path_exists?(File.join(@assignment.repository_folder,
-        assignment_file.filename))
-          @missing_assignment_files.push(assignment_file)
-        end
-      end
-    end
+    # Some vars need to be set in update_files too, so do this in a
+    # helper. See update_files action where this is used as well.
+    set_filebrowser_vars(user_group, @assignment)
   end
   
   def populate_file_manager
@@ -281,22 +273,36 @@ class SubmissionsController < ApplicationController
     render :action => 'index', :layout => 'sidebar'
   end
 
-  # controller handles transactional submission of files
+  # update_files action handles transactional submission of files.
+  #
+  # Note that you shouldn't use redirect_to in this action. This
+  # is due to @file_manager_errors, which carries over some state
+  # to the file_manager view (via render calls). We need to do
+  # this, because we were storing transaction errors in the flash
+  # hash (i.e. they were stored in the browser's cookie), and in
+  # some circumstances, this produces a cookie overflow error
+  # when the state stored in the cookie exceeds 4k in serialized
+  # form. This was happening prior to the fix of Github issue #30.
   def update_files
+    # We'll use this hash to carry over some error state to the
+    # file_manager view.
+    @file_manager_errors = Hash.new
     assignment_id = params[:id]
-    assignment = Assignment.find(assignment_id)
-    path = params[:path] || '/'
-    grouping = current_user.accepted_grouping_for(assignment_id)
-    if grouping.repository_external_commits_only?
+    @assignment = Assignment.find(assignment_id)
+    @path = params[:path] || '/'
+    @grouping = current_user.accepted_grouping_for(assignment_id)
+    if @grouping.repository_external_commits_only?
       raise I18n.t("student.submission.external_submit_only")
     end
-    if !grouping.is_valid?
-      redirect_to :action => :file_manager, :id => assignment_id
+    if !@grouping.is_valid?
+      # can't use redirect_to here. See comment of this action for more details.
+      set_filebrowser_vars(@grouping.group, @assignment)
+      render :action => "file_manager", :id => assignment_id
       return
     end
-    grouping.group.access_repo do |repo|
+    @grouping.group.access_repo do |repo|
 
-      assignment_folder = File.join(assignment.repository_folder, path)
+      assignment_folder = File.join(@assignment.repository_folder, @path)
 
       # Get the revision numbers for the files that we've seen - these
       # values will be the "expected revision numbers" that we'll provide
@@ -322,7 +328,7 @@ class SubmissionsController < ApplicationController
         # delete files marked for deletion
         delete_files.keys.each do |filename|
           txn.remove(File.join(assignment_folder, filename), file_revisions[filename])
-          log_messages.push("Student '#{current_user.user_name}' deleted file '#{filename}' for assignment '#{assignment.short_identifier}'.")
+          log_messages.push("Student '#{current_user.user_name}' deleted file '#{filename}' for assignment '#{@assignment.short_identifier}'.")
         end
 
         # Replace files
@@ -331,7 +337,7 @@ class SubmissionsController < ApplicationController
           # In order to avoid empty uploaded files, rewind it to be save.
           file_object.rewind
           txn.replace(File.join(assignment_folder, filename), file_object.read, file_object.content_type, file_revisions[filename])
-          log_messages.push("Student '#{current_user.user_name}' replaced content of file '#{filename}' for assignment '#{assignment.short_identifier}'.")
+          log_messages.push("Student '#{current_user.user_name}' replaced content of file '#{filename}' for assignment '#{@assignment.short_identifier}'.")
         end
 
         # Add new files
@@ -344,17 +350,19 @@ class SubmissionsController < ApplicationController
           # In order to avoid empty uploaded files, rewind it to be save.
           file_object.rewind
           txn.add(File.join(assignment_folder, sanitize_file_name(file_object.original_filename)), file_object.read, file_object.content_type)
-          log_messages.push("Student '#{current_user.user_name}' submitted file '#{file_object.original_filename}' for assignment '#{assignment.short_identifier}'.")
+          log_messages.push("Student '#{current_user.user_name}' submitted file '#{file_object.original_filename}' for assignment '#{@assignment.short_identifier}'.")
         end
 
         # finish transaction
         if !txn.has_jobs?
           flash[:transaction_warning] = I18n.t("student.submission.no_action_detected")
-          redirect_to :action => "file_manager", :id => assignment_id
+          # can't use redirect_to here. See comment of this action for more details.
+          set_filebrowser_vars(@grouping.group, @assignment)
+          render :action => "file_manager", :id => assignment_id
           return
         end
         if !repo.commit(txn)
-          flash[:update_conflicts] = txn.conflicts
+          @file_manager_errors[:update_conflicts] = txn.conflicts
         else
           flash[:success] = I18n.t('update_files.success')
           # flush log messages
@@ -365,15 +373,20 @@ class SubmissionsController < ApplicationController
         end
 
         # Are we past collection time?
-        if assignment.submission_rule.can_collect_now?
-          flash[:commit_notice] = assignment.submission_rule.commit_after_collection_message(grouping)
+        if @assignment.submission_rule.can_collect_now?
+          flash[:commit_notice] = @assignment.submission_rule.commit_after_collection_message(@grouping)
         end
-        redirect_to :action => "file_manager", :id => assignment_id
+        # can't use redirect_to here. See comment of this action for more details.
+        set_filebrowser_vars(@grouping.group, @assignment)
+        render :action => "file_manager", :id => assignment_id
 
       rescue Exception => e
-        raise e
-        flash[:commit_error] = e.message
-        redirect_to :action => "file_manager", :id => assignment_id
+        m_logger = MarkusLogger.instance
+        m_logger.log(e.message)
+        # can't use redirect_to here. See comment of this action for more details.
+        @file_manager_errors[:commit_error] = e.message
+        set_filebrowser_vars(@grouping.group, @assignment)
+        render :action => "file_manager", :id => assignment_id
       end
     end
   end
@@ -499,8 +512,25 @@ class SubmissionsController < ApplicationController
     send_data assignment.get_svn_repo_list, :disposition => 'attachment', :type => 'text/plain', :filename => "#{assignment.short_identifier}_svn_repo_list"
   end
 
-  #This action is called periodically from file_manager.
+  # This action is called periodically from file_manager.
   def server_time
     render :partial => 'server_time'
+  end
+
+  private
+
+  # Used in update_files and file_manager actions
+  def set_filebrowser_vars(user_group, assignment)
+    user_group.access_repo do |repo|
+      @revision = repo.get_latest_revision
+      @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
+      @missing_assignment_files = []
+      assignment.assignment_files.each do |assignment_file|
+        if !@revision.path_exists?(File.join(assignment.repository_folder,
+        assignment_file.filename))
+          @missing_assignment_files.push(assignment_file)
+        end
+      end
+    end
   end
 end

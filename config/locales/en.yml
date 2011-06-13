@@ -24,8 +24,10 @@ en:
 
     # app/views/layouts/_header.html.erb
     log_out:            "Log out"
+    clear_role_switch_session_link: "Cancel role switch"
     logged_in_as:       "| Logged in as <span id=\"user_name\"><b>%{first_name} %{last_name}</b> (%{user_name})</span> |"
     working:            "Working..."
+    login_as:           "Login as"
 
     # app/views/main/_about_content.html.erb
     about_markus:       "About MarkUs"
@@ -36,7 +38,7 @@ en:
     markus_license_permission:  "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:"
     markus_copyright_intro:     "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software."
     markus_no_warranty: "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
-    markus_copyright:   "Copyright (c) 2008-2010 by the authors."
+    markus_copyright:   "Copyright (c) 2008-2011 by the authors."
     markus_credits:     "Credits"
     markus_credits_thanks:      "Thanks to everyone who contributed to and made MarkUs possible. In particular to:"
     supervisors:        "Supervisors:"
@@ -54,8 +56,16 @@ en:
     users:              "Users"
     home:               "Home"
 
+    # app/models/assignment_file.rb
+    validation_messages:
+      format_of_assignment_file: "must be alphanumeric, '.', '-' or '_' only"
+
     # app/views/main/index.html.erb
     firefox_warning:    "Some functionality might only work for Mozilla Firefox users"
+    switch_role:         "Switch Role"
+    admin_password:      "Admin Password"
+    is_logged_in_as:     "is logged in as:"
+    cannot_login_as_another_admin: "You cannot log in as another admin."
 
     # app/views/assignments/_list_manage.html.erb
     current_assignments:      "Current assignments:"
@@ -145,8 +155,8 @@ en:
             change_marking_scheme_type: "Changing marking scheme will delete your criteria and marks."
         allow_web_submits: "Allow Web Submits?"
         display_grader_names_to_students: "Display grader names to students?"
-        section_due_date_not_displayed: "Due dates are specific to sections." 
-        section_due_date_type: "Due dates are specified per section." 
+        section_due_date_not_displayed: "Due dates are specific to sections."
+        section_due_date_type: "Due dates are specified per section."
         section_due_date_option:  "If the section due dates option is checked, students can only form groups within their section."
         section_due_dates_info:  "<b>Important</b> The global due date needs to be filled in. If a section has no due date specified, the global due date will be used instead. Students not assigned to any section will only be allowed to form groups with students without section either."
     your_mark:  "Your mark:"
@@ -227,7 +237,7 @@ en:
       no_remark_due_date: "No due date assigned"
       past_remark_due_date: "It is already past the remark due date."
       about_remark_save: "Please note that the instructor will be unaware of your saved request unless it has been submitted."
-      about_remark_submission: "Once a remark request has been submitted, you will not be able to see your original results until remark results are available.  You will also not be able to edit the request."
+      about_remark_submission: "Once a remark request has been submitted, you will not be able to see your original results until remark results are available. You will also not be able to edit the request."
       cancel_remark_to_change: "In order to change your request, you must cancel your existing request and create a new one."
       remark_submitted: "Your remark request has been submitted:"
       previous_submission:  "Previous Submission"
@@ -252,11 +262,17 @@ en:
         confirm_remove_mark: "Are you sure you want to remove this extra mark?"
         confirm_remove_percentage: "Are you sure you want to remove this extra percentage?"
         subtotal: "Subtotal: "
+        old_subtotal: "Old Subtotal: "
         bonus_deductions: "Bonus/Deductions"
+        bonus_marks: "Bonus Marks:&nbsp;"
+        deducted_marks: "Deducted Marks:&nbsp;"
         total_extra_marks: "Total Extra Marks:&nbsp;"
         total_extra_percentages: "Total Extra Percentage:&nbsp;"
         translated_to_points: "Translated to Points:"
         final_mark: "Final Mark&nbsp;"
+        previous_mark: "Previous Mark&nbsp;"
+        old: "Old:&nbsp;"
+        show_old_marks: "Show Old Mark Summary"
       annotation:
         from_line_to: "%{file_path}: Line %{line_start} to %{line_end}"
         no_annotation_in_this_category: "There are no annotations in this category"
@@ -277,6 +293,7 @@ en:
       no_file_in_repository: "[No files in repository]"
       cant_display_image: "Image cannot be displayed. If you are trying to view a pdf file its probably too big to display or you have turned off pdf support. Click on the Download button to download the file instead"
       test_code: "Test Code"
+      criterion_incomplete_error: "Mark unfilled but marking state was set to complete"
 
     seperate_multiple_with_commas:  "Seperate multiple user names with commas"
     csv_valid_format:   "There was a problem parsing the CSV file you uploaded.  Please ensure that it's a valid CSV format, and that each line ends with a carriage-return line-feed set of characters.  No changes were made. "
@@ -417,7 +434,7 @@ en:
 
     stopping_collection_process: "Now stopping collection process..."
     converting_pdfs: "Now converting pdf files...%{converted}/%{total}"
-    
+
     groups:
       groups: "Groups"
       manage_groups: "Manage Groups"
@@ -601,7 +618,12 @@ en:
         invalid_file_name: "Invalid file name on submitted file"
         missing_file: "Could not download %{file_name}: %{message}.  File may be missing."
         expect_filter: "Expected a filter on select full"
-
+        # DO NOT change 'file_name' and 'sanitized_filename' in the following message.
+        # See app/views/submissions/_file_manager_boot.js.erb
+        filename_sanitization_js_warning: "\"After you submit the filename will change from '\" + file_name + \"' to '\" + sanitized_filename + \"'. Is that OK?\""
+        # DO NOT change 'file_name' and 'new_file_name' in the following message.
+        # See app/views/submissions/_file_manager_boot.js.erb
+        replace_file_js_error: "\"You cannot replace '\" + file_name + \"' with '\" + new_file_name + \"'. You must replace a file with a file which has the same name.\""
     #Graders' View
     graders:
       create_new_grader:  "Create a new Grader"
@@ -685,6 +707,7 @@ en:
         first_name:     "First Name"
         last_name:      "Last Name"
         full_name:      "Full Name"
+        user_type:      "Type"
         grace_credits:  "Grace Credits"
         section:        "Section"
         display_grader_names_to_students: "Display grader names to students?"
@@ -721,7 +744,7 @@ en:
         <p>
             Select a YAML file form:<br />
             <code>category_name: <br />- category_text<br />- category_text</code><br />
-            
+
           </p>"
         success:  "Successfully uploaded %{annotation_category_number} Annotation Categories"
         error:  "Unable to upload category: %{annotation_category} located in line %{annotation_line}"
@@ -1038,13 +1061,13 @@ en:
     locale_not_available: "%{locale} translation not available!"
     external_authentication_not_supported: "External authentication not supported on your platform!"
     account_disabled: "This account has been disabled"
-    
+
     #app/views/main/_assignment_info_summary.erb
     assignment_average:        "Assignment Average:"
     assignments_submitted:     "Assignments Submitted:"
     assignments_graded:        "Assignments Graded:"
     refresh_graph:             "Refresh the graph"
-    
+
     #app/views/main/_grader_summary.erb
     grader_distribution:       "Grader Distribution:"
     assign_graders:            "Assign Graders"

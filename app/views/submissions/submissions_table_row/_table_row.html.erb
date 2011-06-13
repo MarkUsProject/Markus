@@ -18,10 +18,8 @@
     <% end %>
   <% elsif !grouping.is_collected %>
     <%= link_to h(grouping.group.group_name), :action => 'collect_and_begin_grading', :id => assignment.id, :grouping_id => grouping.id %>
-  
   <% elsif grouping.current_submission_used.remark_submitted? %>
     <%= link_to h(grouping.group.group_name), :controller => 'results', :action => 'edit', :id => grouping.current_submission_used.remark_result%>
-
   <% else %>
     <%= link_to h(grouping.group.group_name), :controller => 'results', :action => 'edit', :id => grouping.current_submission_used.result%>
   <% end %>

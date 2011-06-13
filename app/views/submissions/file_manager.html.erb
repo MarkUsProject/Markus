@@ -54,12 +54,13 @@
   <% end %>
 <% end %>
 
-<% if flash[:update_conflicts] %>
+<% if !@file_manager_errors.nil? && @file_manager_errors[:update_conflicts]
+%>
   <div class="error">
     <h2><%= I18n.t("student.submission.conflicts") %></h2>
     <p><%= I18n.t("student.submission.file_conflicts") %></p>
     <ul>
-    <% flash[:update_conflicts].each do |conflict| %>
+    <% @file_manager_errors[:update_conflicts].each do |conflict| %>
       <li><%= h(conflict.to_s) %></li>
     <% end %>
     </ul>
@@ -71,9 +72,9 @@
     <%=flash[:commit_notice]%>
   </div>
 <% end %>
-<% if flash[:commit_error] %>
+<% if !@file_manager_errors.nil? && @file_manager_errors[:commit_error] %>
   <div class="warning">
-    <%=flash[:commit_error] %>
+    <%=@file_manager_errors[:commit_error] %>
   </div>
 <% end %>
 

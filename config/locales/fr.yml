@@ -24,8 +24,10 @@ fr:
 
     # app/views/layouts/_header.html.erb
     log_out:            "Déconnexion"
+    clear_role_switch_session_link: "Annuler le changement d'utilisateur"
     logged_in_as:       "| Connecté en tant que <span id=\"user_name\"><b>%{first_name} %{last_name}</b> (%{user_name})</span> |"
     working:            "Chargement..."
+    login_as:           "Connexion en tant que"
 
     # app/views/main/_about_content.html.erb
     about_markus:       "À propos de MarkUs"
@@ -36,7 +38,7 @@ fr:
     markus_license_permission:  "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:"
     markus_copyright_intro:     "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software."
     markus_no_warranty: "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
-    markus_copyright:   "Copyright (c) 2008-2010 par les auteurs."
+    markus_copyright:   "Copyright (c) 2008-2011 par les auteurs."
     markus_credits:     "Crédits"
     markus_credits_thanks:      "Merci à tous ceux qui ont contribué à MarkUs et rendu cela possible. Remerciements particuliers à :"
     supervisors:        "Chefs de projet"
@@ -54,8 +56,16 @@ fr:
     users:              "Utilisateurs"
     home:               "Accueil"
 
+    # app/models/assignment_file.rb
+    validation_messages:
+      format_of_assignment_file: "doit être un caractère alphanumérique, « . », « - », ou « _ » uniquement."
+
     # app/views/main/index.html.erb
     firefox_warning:    "Certaines fonctionnalités ne fonctionnent qu'avec Mozilla Firefox"
+    switch_role:         "Changer d'utilisateur"
+    admin_password:      "Mot de passe Admin"
+    is_logged_in_as:     "connecté en tant que :"
+    cannot_login_as_another_admin: "Vous ne pouvez vous connecter à la place d'un autre admin"
 
     # app/views/assignments/_list_manage.html.erb
     current_assignments:      "Projets existants"
@@ -145,8 +155,8 @@ fr:
             change_marking_scheme_type: "Changer le barème effacera vos critères et vos évaluations."
         allow_web_submits: "Envois via l'interface web ?"
         display_grader_names_to_students: "Afficher le nom du correcteur aux étudiants ?"
-        section_due_date_not_displayed: "Les dates de retour sont spécifiques aux sections." 
-        section_due_date_type: "Les dates de retour sont spécifiées par section." 
+        section_due_date_not_displayed: "Les dates de retour sont spécifiques aux sections."
+        section_due_date_type: "Les dates de retour sont spécifiées par section."
         section_due_date_option:  "Si l'option date de retour par section est sélectionnée, les groupes seront restreints aux sections"
         section_due_dates_info:  "<b>Important</b> La date de retour «globale» doit être indiquée. Si une section n'a pas de date de retour spécifique, la date «globale» sera utilisée. Si certains étudiants ne font partie d'aucune section, ce sera aussi cette date «globale» qui sera utilisée. Ces étudiants ne pourront se mettre qu'avec d'autres étudiants n'appartenant pas à des sections."
     your_mark:  "Votre note : "
@@ -167,8 +177,10 @@ fr:
     delete:             "Supprimer"
     create:             "Créer"
     bulk_action:        "Actions…"
+    submit_request:     "Envoyer la demande au correcteur"
     submit:             "Envoyer"
     cancel:             "Annuler"
+    cancel_remark:      "Annuler la demande"
     filters:            "Filtres"
     all:                "Tous"
     hidden:             "Caché"
@@ -193,6 +205,7 @@ fr:
     give_grace_credits:  "Donner du temps supplémentaire : "
     add_section:        "Ajouter à une section"
     no_result:          "Les notes pour ce projet ne sont pas encore disponibles."
+    no_remark_result:   "Les retours des remarques pour ce projet ne sont pas encore disponibles"
     unmarked:           "non noté"
     partial:           "incomplet"
     complete:           "complet"
@@ -217,6 +230,16 @@ fr:
       across_all_submission_files: "Annnotations en cours sur tous les fichiers envoyés. Cliquer sur le numéro de ligne pour vous rendre directement au bon endroit sur le fichier."
       annot_summary: "Liste Annot."
       source_code: "Code Source"
+      remark_request: "Demande de retour"
+      remark_submitted_on: "Demande de retour activée"
+      remark_instructions: "Instructions pour les demandes de retour"
+      remark_due_date:  "Date limite des retours"
+      no_remark_due_date: "Pas de date limite pour les retours"
+      past_remark_due_date: "La date limite pour des demandes de retour est passée."
+      about_remark_save: "Veuillez noter que le correcteur ne sera pas au courant de votre demande de retour (même sauvegardée) tant qu'elle n'aura pas été envoyée."
+      about_remark_submission: "Une fois qu'une demande de retour a été envoyée, vous ne pourrez pas voir les résultats initiaux tant que la demande de retour est toujours disponible. De plus, vous ne pourrez plus changer votre demande de retour."
+      cancel_remark_to_change: "Pour changer votre demande de retour, vous devez annuler celle en cours et en créer une nouvelle."
+      remark_submitted: "Votre demande de retour a été envoyée."
       previous_submission:  "Envoi précédent"
       next_submission:      "Envoi suivant"
       marking_status:       "État de l'évaluation : "
@@ -239,11 +262,17 @@ fr:
         confirm_remove_mark: "Êtes vous sur de vouloir enlever cette note supplémentaire ?"
         confirm_remove_percentage: "Êtes vous sur de vouloir enlever ce pourcentage supplémentaire?"
         subtotal: "Sous-total: "
+        old_subtotal: "Sous-total précédent : "
         bonus_deductions: "Bonus/Déductions"
+        bonus_marks: "Notes bonus"
+        deducted_marks: "Notes déduits"
         total_extra_marks: "Total notes supplémentaires : "
         total_extra_percentages: "Total pourcentages supplémentaires : "
         translated_to_points: "Convertis en points : "
         final_mark: "Note finale : "
+        previous_mark: "Note précédente : "
+        old: "Précédent : "
+        show_old_marks: "Afficher la note précédente "
       annotation:
         from_line_to: "%{file_path} : Lignes %{line_start} à %{line_end}"
         no_annotation_in_this_category: "Il n'y a pas d'annotations dans cette catégorie"
@@ -262,8 +291,9 @@ fr:
       submission_file: "Fichier envoyé : "
       test_results: "Résultat des tests : "
       no_file_in_repository: "[Pas de fichiers dans le dépôt]"
-      cant_display_image: "L'image ne peut pas être affichée. Si vous essayez d'afficher un PDF, ou le fichier est trop grand pour être affiché, ou l'option permettant d'afficher les PDF est désactivé. Vous pouvez télécharger le fichier."
+      cant_display_image: "L'image ne peut pas être affichée. Si vous essayez d'afficher un PDF, ou le fichier est trop grand pour être affiché, ou l'option permettant d'afficher les PDF est désactivée. Vous pouvez télécharger manuellement le fichier."
       test_code: "Code pour les tests"
+      criterion_incomplete_error: "Note non remplie, mais état fixé comme terminé"
 
     seperate_multiple_with_commas:  "Séparer les noms d'utilisateur par des virgules."
     csv_valid_format:   "Erreur durant la lecture du fichier CSV que vous venez d'envoyer.  Assurez-vous que le fichier soit bien un fichier CSV valide et que chaque ligne finisse par un retour chariot. Aucun changement effectué."
@@ -271,6 +301,8 @@ fr:
     csv_upload_user_duplicate: "Nom d'utilisateur déjà inscrit (conflit): %{user_name}"
     collect_and_grade_overwrite_warning:  "Récupérer et noter cette révision effacera les précédentes récupération et évaluations de ce groupe sur ce projet. Êtes vous sûr de vouloir faire cela ?"
     uncommitted_changes_warning: "Les changements n'ont pas encore été enregistrés. Êtes vous sûr de vouloir continuer ?"
+    cancel_remark_request: "Êtes-vous sûr de vouloir annuler votre demande de retour ? Votre demande de retour sera supprimée (opération irréversible)."
+    confirm_remark_submit: "Êtes-vous sûr de vouloir envoyer votre demande de retour ? Vous ne verez pas les résultats avant que la ré-évaluation ne soit terminée."
     discard_changes_message: "Êtes vous sûr d'annuler les changements?"
     invalid_id: "doit être un identifiant (entier supérieur à 0)"
     still_working_warning: "Il y a des travaux non terminés. Ils pourraient ne pas être sauvegardés si vous quittez maintenant."
@@ -483,7 +515,7 @@ fr:
     results:
       title:  "Projet %{assignment_name} : %{group_name}"
       results_name:  "Résultats"
-      successfully_changed: "Les résultats  %{changed} ont été mis à jour"
+      successfully_changed: "Les %{changed} résultats ont été mis à jour"
       must_select_a_group:  "Vous devez sélectionner au moins un groupe à mettre à jour"
       editing_after_release_fail: "Les notes ont été dévoiléées, vous ne pouvez plus changer l'évaluation."
       could_not_find_file: "N'a pas pu trouver le fichier %{filename} dans le répertoire %{repository_name}"
@@ -586,6 +618,12 @@ fr:
         invalid_file_name: "Le nom du fichier envoyé est invalide"
         missing_file: "N'a pas pu télécharger %{file_name} : %{message}. Le fichier est sans doute manquant."
         expect_filter: "Attendait un filtre sur la sélection"
+        # DO NOT change 'file_name' and 'sanitized_filename' in the following message.
+        # See app/views/submissions/_file_manager_boot.js.erb
+        filename_sanitization_js_warning: "\"Après avoir envoyé le fichier, son nom ne sera plus '\" + file_name + \"' mais '\" sanitized_filename + \"'. Êtes-vous sûr de vouloir continuer ?\""
+        # DO NOT change 'file_name' and 'new_file_name' in the following message.
+        # See app/views/submissions/_file_manager_boot.js.erb
+        replace_file_js_error: "\"Vous ne pouvez pas remplacer '\" + file_name + \"' par '\" + new_file_name + \"'. Vous devez remplacer le fichier par un fichier ayant le même nom.\""
 
     #Graders' View
     graders:
@@ -670,6 +708,7 @@ fr:
         first_name:     "Prénom"
         last_name:      "Nom"
         full_name:      "Nom complet"
+        user_type:      "Type"
         grace_credits:  "Crédits de grâce"
         section:        "Section"
         display_grader_names_to_students: "Afficher le nom du correcteur aux étudiants ?"
@@ -706,7 +745,7 @@ fr:
         <p>
             Sélectionner un fichier YAML à envoyer:<br />
             <code>category_name: <br />- category_text<br />- category_text</code><br />
-            
+
           </p>"
         success:  "Envoi réussi des catégories d'annotations (%{annotation_category_number} envoyées)."
         error:  "Impossible d'envoyer les catégories : problème à la catégorie %{annotation_category} située sur la ligne %{annotation_line}"
@@ -750,6 +789,21 @@ fr:
         from:  "Du"
         to:  "au"
         alert: "Vous devez activer les temps supplémentaires pour pouvoir ajouter du temps supplémentaire."
+
+      penalty_decay_period_submission_rule:
+        name: "Penalty Period Submission Rule"
+        short_name: "Penalty Decay"
+        description: "You may submit up to %{penalty_decay_period_limit} hour(s) past the due date, but will have the appropriate percentage deducted from your final result"
+        form_description: "Use Penalty Decay Formula"
+        add_penalty_decay: "Add a Decay Period"
+        alert: "You must select the Penalty Decay Submission Rule to add a decay period."
+        from: "De"
+        to: "au"
+        hours: "heure(s)..."
+        after: "Après"
+        each: "chaque"
+        deduct: "déduction"
+        for: "pour"
 
       penalty_period_submission_rule:
         name: "Règle d'envoi lors des périodes de pénalité"
@@ -999,14 +1053,14 @@ fr:
     assignments_submitted:     "Projets envoyés:"
     assignments_graded:        "Projets corrigés:"
     refresh_graph:             "Actualiser le graphique"
-    
+
     #app/views/main/_grader_summary.erb
     grader_distribution:       "Correcteurs assignés:"
     assign_graders:            "Attribuer Correcteurs"
 
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:        "Répartition des notes"
-        
+
     #Test Framework
     test_framework:
       test_framework: "Tests"

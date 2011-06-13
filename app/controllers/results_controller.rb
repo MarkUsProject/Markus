@@ -42,11 +42,18 @@ class ResultsController < ApplicationController
     @extra_marks_points = @result.extra_marks.points
     @extra_marks_percentage = @result.extra_marks.percentage
     @marks_map = Hash.new
+    @old_marks_map = Hash.new
     @mark_criteria = @assignment.get_criteria
     @assignment.get_criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by_result_id(@result.id)
       mark.save(:validate => false)
       @marks_map[criterion.id] = mark
+
+      if @old_result
+        oldmark = criterion.marks.find_or_create_by_result_id(@old_result.id)
+        oldmark.save(false)
+        @old_marks_map[criterion.id] = oldmark
+      end
     end
     # Get the previous and the next submission
     if current_user.ta?
@@ -129,11 +136,16 @@ class ResultsController < ApplicationController
   def update_marking_state
     @result = Result.find(params[:id])
     @result.marking_state = params[:value]
-    @result.save
-
-    # If marking_state is complete, update the cached distribution
-    if params[:value] == Result::MARKING_STATES[:complete]
-      @result.submission.assignment.assignment_stat.refresh_grade_distribution
+    if @result.save
+      # If marking_state is complete, update the cached distribution
+      if params[:value] == Result::MARKING_STATES[:complete]
+        @result.submission.assignment.assignment_stat.refresh_grade_distribution
+      end
+      render :action => "results/update_marking_state"
+    else # Failed to pass validations
+      # Show error message
+      render :action => "results/marker/show_result_error"
+      return
     end
   end
 
@@ -267,9 +279,10 @@ class ResultsController < ApplicationController
       render 'results/student/no_result'
       return
     end
+
     @result = @submission.result
     @old_result = nil
-    if @submission.has_remark?
+    if @submission.remark_submitted?
       @old_result = @result
       @result = @submission.remark_result
       # if remark result's marking state is 'unmarked' then the student has
@@ -278,7 +291,9 @@ class ResultsController < ApplicationController
         render 'results/student/no_remark_result'
         return
       end
-    elsif !@result.released_to_students
+    end
+
+    if !@result.released_to_students
       render 'results/student/no_result'
       return
     end
@@ -297,6 +312,12 @@ class ResultsController < ApplicationController
       mark = criterion.marks.find_or_create_by_result_id(@result.id)
       mark.save(:validate => false)
       @marks_map[criterion.id] = mark
+
+      if @old_result
+        oldmark = criterion.marks.find_or_create_by_result_id(@old_result.id)
+        oldmark.save(false)
+        @old_marks_map[criterion.id] = oldmark
+      end
     end
     m_logger = MarkusLogger.instance
     m_logger.log("Student '#{current_user.user_name}' viewed results for assignment " +
@@ -312,11 +333,12 @@ class ResultsController < ApplicationController
       if !@extra_mark.update_attributes(params[:extra_mark])
         render :action => 'results/marker/add_extra_mark_error'
       else
+        # need to re-calculate total mark
+        @result.update_total_mark
         render :action => 'results/marker/insert_extra_mark'
       end
       return
     end
-
     render :action => 'results/marker/add_extra_mark'
   end
 
@@ -327,6 +349,7 @@ class ResultsController < ApplicationController
     @extra_mark.destroy
     #need to recalculate total mark
     @result = @extra_mark.result
+    @result.update_total_mark
     render :action => 'results/marker/remove_extra_mark'
   end
 
@@ -400,7 +423,7 @@ class ResultsController < ApplicationController
     # unmarked.
     @nil_marks = @result.marks.all(:conditions => {:mark => nil})
     render :partial => 'results/marker/expand_unmarked_criteria', :locals => {:nil_marks => @nil_marks}
- end
+  end
 
   def delete_grace_period_deduction
     @grouping = Grouping.find(params[:id])
@@ -426,5 +449,4 @@ class ResultsController < ApplicationController
     end
     return false
   end
-
 end

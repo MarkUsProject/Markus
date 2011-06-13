@@ -53,6 +53,7 @@ class Assignment < ActiveRecord::Base
   validates_inclusion_of :assign_graders_to_criteria, :in => [true, false]
 
   before_save :reset_collection_time
+  validate    :minimum_number_of_groups, :check_timezone
   after_save  :update_assigned_tokens
 
   # Export a YAML formatted string created from the assignment rubric criteria.
@@ -88,12 +89,17 @@ class Assignment < ActiveRecord::Base
     return final.to_yaml
   end
 
-  def validate
+  def minimum_number_of_groups
     if (group_max && group_min) && group_max < group_min
       errors.add(:group_max, "must be greater than the minimum number of groups")
+      return false
     end
+  end
+
+  def check_timezone
     if Time.zone.parse(due_date.to_s).nil?
       errors.add :due_date, 'is not a valid date'
+      return false
     end
   end
 
@@ -240,8 +246,12 @@ class Assignment < ActiveRecord::Base
     results_sum = 0
     groupings.each do |grouping|
       submission = grouping.current_submission_used
-      if !submission.nil? && submission.has_result?
-        result = submission.result
+      if !submission.nil? 
+        if submission.has_result? && submission.remark_submitted?
+          result = submission.remark_result
+        elsif submission.has_result?
+          result = submission.result
+        end
         if result.released_to_students
           results_sum += result.total_mark
           results_count += 1
@@ -512,8 +522,27 @@ class Assignment < ActiveRecord::Base
     return csv_string
   end
 
-  # Get a detailed CSV report of marks (includes each criterion) for this assignment
+  # Get a detailed CSV report of marks (includes each criterion)
+  # for this assignment. Produces slightly different reports, depending
+  # on which criteria type has been used the this assignment.
   def get_detailed_csv_report
+    # which marking scheme do we have?
+    if self.marking_scheme_type == MARKING_SCHEME_TYPE[:flexible]
+      return get_detailed_csv_report_flexible
+    else
+      # default to rubric
+      return get_detailed_csv_report_rubric
+    end
+  end
+
+  # Get a detailed CSV report of rubric based marks
+  # (includes each criterion) for this assignment.
+  # Produces CSV rows such as the following:
+  #   student_name,95.22222,3,4,2,5,5,4,0/2
+  # Criterion values should be read in pairs. I.e. 2,3 means
+  # a student scored 2 for a criterion with weight 3.
+  # Last column are grace-credits.
+  def get_detailed_csv_report_rubric
     out_of = self.total_mark
     students = Student.all
     rubric_criteria = self.rubric_criteria
@@ -523,13 +552,14 @@ class Assignment < ActiveRecord::Base
         final_result.push(student.user_name)
         grouping = student.accepted_grouping_for(self.id)
         if grouping.nil? || !grouping.has_submission?
-          final_result.push('')
+          # No grouping/no submission
+          final_result.push('')                         # total percentage
           rubric_criteria.each do |rubric_criterion|
-            final_result.push('')
-            final_result.push(rubric_criterion.weight)
+            final_result.push('')                       # mark
+            final_result.push(rubric_criterion.weight)  # weight
           end
-          final_result.push('')
-          final_result.push('')
+          final_result.push('')                         # extra-mark
+          final_result.push('')                         # extra-percentage
         else
           submission = grouping.current_submission_used
           final_result.push(submission.result.total_mark / out_of * 100)
@@ -541,6 +571,57 @@ class Assignment < ActiveRecord::Base
               final_result.push(mark.mark || '')
             end
             final_result.push(rubric_criterion.weight)
+          end
+          final_result.push(submission.result.get_total_extra_points)
+          final_result.push(submission.result.get_total_extra_percentage)
+        end
+        # push grace credits info
+        grace_credits_data = student.remaining_grace_credits.to_s + "/" + student.grace_credits.to_s
+        final_result.push(grace_credits_data)
+
+        csv << final_result
+      end
+    end
+    return csv_string
+  end
+
+  # Get a detailed CSV report of flexible criteria based marks
+  # (includes each criterion, with it's out-of value) for this assignment.
+  # Produces CSV rows such as the following:
+  #   student_name,95.22222,3,4,2,5,5,4,0/2
+  # Criterion values should be read in pairs. I.e. 2,3 means 2 out-of 3.
+  # Last column are grace-credits.
+  def get_detailed_csv_report_flexible
+    out_of = self.total_mark
+    students = Student.all
+    flexible_criteria = self.flexible_criteria
+    csv_string = FasterCSV.generate do |csv|
+      students.each do |student|
+        final_result = []
+        final_result.push(student.user_name)
+        grouping = student.accepted_grouping_for(self.id)
+        if grouping.nil? || !grouping.has_submission?
+          # No grouping/no submission
+          final_result.push('')                 # total percentage
+          flexible_criteria.each do |criterion| ##  empty criteria
+            final_result.push('')               # mark
+            final_result.push(criterion.max)    # out-of
+          end
+          final_result.push('')                 # extra-marks
+          final_result.push('')                 # extra-percentage
+        else
+          # Fill in actual values, since we have a grouping
+          # and a submission.
+          submission = grouping.current_submission_used
+          final_result.push(submission.result.total_mark / out_of * 100)
+          flexible_criteria.each do |criterion|
+            mark = submission.result.marks.find_by_markable_id_and_markable_type(criterion.id, "FlexibleCriterion")
+            if mark.nil?
+              final_result.push('')
+            else
+              final_result.push(mark.mark || '')
+            end
+            final_result.push(criterion.max)
           end
           final_result.push(submission.result.get_total_extra_points)
           final_result.push(submission.result.get_total_extra_percentage)
