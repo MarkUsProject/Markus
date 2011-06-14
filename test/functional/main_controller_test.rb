@@ -53,7 +53,9 @@ class MainControllerTest < AuthenticatedControllerTest
   def test_correct_login
     admin = users(:olm_admin_1)
     post :login, :user_login => admin.user_name, :user_password => 'asfd'
-    assert_equal "", flash[:login_notice]
+    # on successful logins there shouldn't be a :login_notice
+    # in the flash
+    assert_equal nil, flash[:login_notice]
     assert_redirected_to :action => "index"
     assert_equal admin.id, session[:uid]
     assert_not_nil session[:timeout]
