@@ -31,15 +31,15 @@
 	       id = "menu_active"
 	     <% end %>>
 
-	<%= link_to I18n.t(:users), :controller => 'students' %> 
+	<%= link_to I18n.t(:users), :controller => 'students' %>
 
         </span>
-        <span <% if 
+        <span <% if
 		  controller.controller_name == 'users'
-	     %>
+	      %>
 	       id = "menu_active"
 	     <% end %>>
-            <%= link_to 'Sections', :controller => 'users' %> 
+            <%= link_to 'Sections', :controller => 'users' %>
         </span>
 
 
