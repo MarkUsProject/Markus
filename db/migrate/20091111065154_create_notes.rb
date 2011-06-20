@@ -11,11 +11,11 @@ class CreateNotes < ActiveRecord::Migration
     add_index :notes, :grouping_id
     add_index :notes, :creator_id
  end
-  
+
 
   def self.down
     remove_index :notes, :grouping_id
-    remove_index :notes, :creator_id 
+    remove_index :notes, :creator_id
     drop_table :notes
   end
 end

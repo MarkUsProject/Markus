@@ -307,7 +307,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       should respond_with :success
     end
 
-    context "on :new" do      
+    context "on :new" do
       context "with save error" do
         setup do
           RubricCriterion.any_instance.expects(:save).once.returns(false)
@@ -340,7 +340,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         should assign_to :criterion
         should render_template 'rubrics/create_and_edit'
         should respond_with :success
-      end      
+      end
     end
 
     context "on: download" do
@@ -355,12 +355,12 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       end
     end
 
-    context "on :csv_upload" do      
+    context "on :csv_upload" do
       context "with file containing incomplete records" do
         setup do
           tempfile = Tempfile.new('rubric_csv')
           tempfile << RUBRIC_CRITERIA_INCOMPLETE_UPLOAD_CSV_STRING
-          tempfile.rewind          
+          tempfile.rewind
           post_as @admin, :csv_upload, :id => @assignment.id, :csv_upload => {:rubric => tempfile}
         end
         should assign_to :assignment
@@ -525,7 +525,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
     end
 
     context "on :yml_upload" do
-      setup do 
+      setup do
         clear_fixtures
         @assignment = Assignment.make
         @admin = Admin.make
@@ -645,12 +645,12 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       should respond_with :success
 
       should "effectively destroy the criterion" do
-        assert_raise ActiveRecord::RecordNotFound do 
+        assert_raise ActiveRecord::RecordNotFound do
           RubricCriterion.find(@criterion.id)
         end
       end
       should "effectively destroy the marks" do
-        assert_raise ActiveRecord::RecordNotFound do 
+        assert_raise ActiveRecord::RecordNotFound do
           Mark.find(@mark.id)
         end
       end

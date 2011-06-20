@@ -2,7 +2,7 @@ require 'migration_helpers'
 
 class CreateAssignmentsGroups < ActiveRecord::Migration
   extend MigrationHelpers
-  
+
   def self.up
     create_table(:assignments_groups, :id => false) do |t|
       t.column  :group_id,        :int

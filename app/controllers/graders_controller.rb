@@ -50,9 +50,9 @@ class GradersController < ApplicationController
   def populate_criteria
     @assignment = Assignment.find(params[:id],
                                   :include => [
-                                    {:rubric_criteria => 
+                                    {:rubric_criteria =>
                                         :criterion_ta_associations},
-                                    {:flexible_criteria => 
+                                    {:flexible_criteria =>
                                         :criterion_ta_associations}])
     @criteria = @assignment.get_criteria
     @table_rows = construct_criterion_table_rows(@criteria, @assignment)
@@ -129,7 +129,7 @@ class GradersController < ApplicationController
 
     send_data(file_out, :type => "text/csv", :disposition => "inline")
   end
-  
+
   def download_grader_criteria_mapping
     assignment = Assignment.find(params[:id])
 
@@ -149,10 +149,10 @@ class GradersController < ApplicationController
 
     send_data(file_out, :type => "text/csv", :disposition => "inline")
   end
-  
+
   def add_grader_to_grouping
     @assignment = Assignment.find(params[:id])
-    @grouping = Grouping.find(params[:grouping_id], 
+    @grouping = Grouping.find(params[:grouping_id],
                                 :include => [:students, :tas, :group])
     grader = Ta.find(params[:grader_id])
     @grouping.add_tas(grader)

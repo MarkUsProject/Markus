@@ -17,7 +17,7 @@ include MarkusConfigurator
 # SubversionRepository instead of MemoryRepository.
 class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
   context "An authenticated and authorized admin" do
-    
+
     # We need to use SubversionRepository for this test suite
     setup do
 

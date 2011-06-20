@@ -5,7 +5,7 @@ require File.dirname(__FILE__) + '/../blueprints/helper'
 
 def make_assignment(marking_scheme_type)
   assignment = Assignment.make({:group_min => 1, :group_max => 1, :marking_scheme_type => marking_scheme_type})
-  
+
   criterion_class_name = marking_scheme_type.capitalize + 'Criterion'
   criterion_class = Kernel.const_get(criterion_class_name)
   criterion = criterion_class.make(:assignment => assignment)
@@ -13,7 +13,7 @@ def make_assignment(marking_scheme_type)
   make_submission(assignment, true, ta, 'group_c' + marking_scheme_type)
   make_submission(assignment, false, ta, 'group_b' + marking_scheme_type)
   make_submission(assignment, false, ta, 'group_a' + marking_scheme_type)
-  
+
   return assignment
 end
 
@@ -45,12 +45,12 @@ def make_submission(assignment, result_released, ta, group_name)
     :submission_file => SubmissionFile.make(:submission => submission),
     :annotation_number => submission.annotations.count + 1
   })
-  
+
   result = submission.result
   SubmissionFile.make(:submission => submission)
   mark = Mark.make({:result => result, :markable => criterion})
   extra_mark = ExtraMark.make(:result => result)
-  
+
   if (result_released)
     result.marking_state = 'complete'
     result.released_to_students = true

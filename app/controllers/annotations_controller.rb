@@ -1,5 +1,5 @@
 class AnnotationsController < ApplicationController
-  
+
   before_filter      :authorize_for_ta_and_admin
 
   # Not possible to do with image annotations.
@@ -11,7 +11,7 @@ class AnnotationsController < ApplicationController
     submission= @submission_file.submission
     @annotation = TextAnnotation.new
     @annotation.update_attributes({
-      :line_start => params[:line_start], 
+      :line_start => params[:line_start],
       :line_end => params[:line_end],
       :submission_file_id => params[:submission_file_id],
       :annotation_number => submission.annotations.count + 1
@@ -69,7 +69,7 @@ class AnnotationsController < ApplicationController
     end
 
   end
- 
+
   def update_annotation
     return unless request.post?
     @content = params[:annotation_text][:content]

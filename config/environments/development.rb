@@ -73,12 +73,12 @@ REMOTE_USER_AUTH = false
 # log the user out of MarkUs.
 #
 # -----------------------------------------------------------------------------
-# 
+#
 # "NONE" - Logout link will be hidden.
 #
 # It only recommended that you use this if REMOTE_USER_AUTH is set to true
 # and do not have a custom logout page.
-# 
+#
 # If you are using HTTP's basic authentication, you probably want to use this
 # option.
 
@@ -108,7 +108,7 @@ TEST_FRAMEWORK_REPOSITORY = "#{RAILS_ROOT}/data/dev/automated_tests"
 
 ###################################################################
 # Set this to true or false if you want to be able to display and annotate
-# PDF documents within the browser. 
+# PDF documents within the browser.
 PDF_SUPPORT = false
 
 ###################################################################

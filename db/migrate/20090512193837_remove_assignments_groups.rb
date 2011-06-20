@@ -3,7 +3,7 @@ require 'migration_helpers'
 class RemoveAssignmentsGroups < ActiveRecord::Migration
   extend MigrationHelpers
 
-  def self.up  
+  def self.up
     drop_table :assignments_groups
   end
 

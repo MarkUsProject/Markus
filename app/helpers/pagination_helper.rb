@@ -22,7 +22,7 @@ module PaginationHelper
   AP_REQUIRED_KEYS = [:model, :filters]
   AP_DEFAULT_PER_PAGE = 30
   AP_DEFAULT_PAGE = 1
-    
+
   def handle_paginate_event(hash, object_hash, params)
     # First, let's make sure we have the required fields.
     # I'll take the keys from the hash, and difference it from
@@ -54,7 +54,7 @@ module PaginationHelper
     return items.paginate(:per_page => params[:per_page], :page => params[:page]).clone, items.size
 
   end
-  
+
   def get_filters(params)
     result = {}
     params[:filters].each do |filter_key, filter|
@@ -62,7 +62,7 @@ module PaginationHelper
     end
     return result
   end
-  
+
   def get_filtered_items(hash, filter, sort_by, object_hash)
     to_include = []
     #eager load only the tables needed for the type of sort, eager load the rest
@@ -81,6 +81,6 @@ module PaginationHelper
     end
     return items
   end
-    
+
 end
 
