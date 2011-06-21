@@ -1,11 +1,11 @@
 class TasController < ApplicationController
   include UsersHelper
   before_filter  :authorize_only_for_admin
-  
+
   def index
     @tas = Ta.find(:all, :order => "user_name")
   end
-  
+
   def populate
     @tas_data = Ta.find(:all, :order => "user_name")
     # construct_table_rows defined in UsersHelper
@@ -13,8 +13,8 @@ class TasController < ApplicationController
   end
 
   def edit
-    @user = Ta.find_by_id(params[:id]) 
-  end 
+    @user = Ta.find_by_id(params[:id])
+  end
 
   def update
     return unless request.post?
@@ -32,7 +32,7 @@ class TasController < ApplicationController
   def create
     return unless request.post?
     # Default attributes: role = TA or role = STUDENT
-    # params[:user] is a hash of values passed to the controller 
+    # params[:user] is a hash of values passed to the controller
     # by the HTML form with the help of ActiveView::Helper::
     @user = Ta.new(params[:user])
     # Return unless the save is successful; save inherted from
@@ -40,9 +40,9 @@ class TasController < ApplicationController
     # updates the existing record
     return unless @user.save
     flash[:success] = I18n.t("graders.create_success", :user_name => @user.user_name)
-    redirect_to :action => 'index' # Redirect 
+    redirect_to :action => 'index' # Redirect
   end
-  
+
 
   #downloads users with the given role as a csv list
   def download_ta_list
@@ -62,9 +62,9 @@ class TasController < ApplicationController
     end
     send_data(output, :type => format, :disposition => "inline")
   end
-  
-  
-  def upload_ta_list  
+
+
+  def upload_ta_list
     if request.post? && !params[:userlist].blank?
       result = User.upload_user_list(Ta, params[:userlist])
       if result[:invalid_lines].length > 0

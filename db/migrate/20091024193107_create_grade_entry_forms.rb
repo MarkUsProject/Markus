@@ -9,7 +9,7 @@ class CreateGradeEntryForms < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :grade_entry_forms, :short_identifier, :unique => true 
+    add_index :grade_entry_forms, :short_identifier, :unique => true
   end
 
   def self.down

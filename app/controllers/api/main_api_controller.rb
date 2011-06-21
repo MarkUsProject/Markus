@@ -50,7 +50,7 @@ module Api
         # Find user by api_key_md5
         @current_user = User.find_by_api_key(auth_token)
       end
-      
+
       if @current_user.nil?
         # Key/username does not exist, so bail out
         render :file => "#{RAILS_ROOT}/public/403.xml", :status => 403

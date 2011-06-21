@@ -363,9 +363,9 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       should set_the_flash.to((I18n.t('annotations.upload.success', :annotation_category_number => 1)))
       should assign_to :assignment
     end
-    
+
     context "Annotation Categories" do
-      setup do 
+      setup do
         clear_fixtures
         @assignment = Assignment.make
         @admin = Admin.make
@@ -377,7 +377,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
           @old_annotation_categories.length
           post_as @admin, :yml_upload, :id => @assignment.id, :annotation_category_list_yml => "--- \n A:\n - A1\n - A2\n"
         end
-        
+
         should respond_with :redirect
         should set_the_flash.to((I18n.t('annotations.upload.success', :annotation_category_number => 1)))
         should assign_to :assignment
@@ -387,13 +387,13 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
           assert_equal(@old_annotation_categories.length + 1, (new_categories_list.length))
         end
       end
-      
+
       context "on :yml_upload with an error" do
         setup do
           @old_annotation_categories =   @assignment.annotation_categories
           post_as @admin, :yml_upload, :id => @assignment.id, :annotation_category_list_yml => "--- \n A:\n - A1\n A2\n"
         end
-        
+
         should respond_with :redirect
         should set_the_flash.to((I18n.t('annotations.upload.syntax_error', :error => "syntax error on line 4, col -1: `'")))
         should assign_to :assignment

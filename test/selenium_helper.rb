@@ -1,4 +1,4 @@
-require 'test_helper' 
+require 'test_helper'
 require 'rubygems'
 gem "selenium-client", ">=1.2.15"
 require 'selenium/client'

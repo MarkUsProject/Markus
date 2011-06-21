@@ -15,7 +15,7 @@ module AnnotationCategoriesHelper
     end
     return result
   end
-  
+
   def convert_to_csv(annotation_categories)
     annotation_categories = prepare_for_conversion(annotation_categories)
     csv_out = FasterCSV.generate do |csv|
@@ -26,7 +26,7 @@ module AnnotationCategoriesHelper
      end
      return csv_out
   end
-  
+
   def convert_to_yml(annotation_categories)
     return prepare_for_conversion(annotation_categories).ya2yaml
   end

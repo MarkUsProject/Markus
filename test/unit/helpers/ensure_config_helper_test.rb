@@ -20,7 +20,7 @@ class EnsureConfigHelperTest < ActiveSupport::TestCase
       end
     end
   end
-  
+
   context "setting up the markus_configurator" do
 
     setup do
@@ -48,7 +48,7 @@ class EnsureConfigHelperTest < ActiveSupport::TestCase
         end
       end
     end
-    
+
     context "with a log dir" do
       setup do
         FileUtils.mkdir( @log_dir )
@@ -58,7 +58,7 @@ class EnsureConfigHelperTest < ActiveSupport::TestCase
           EnsureConfigHelper.check_config()
         end
       end
-      
+
       context "with a repo dir" do
         setup do
           FileUtils.mkdir( @source_repo_dir )
@@ -116,7 +116,7 @@ class EnsureConfigHelperTest < ActiveSupport::TestCase
             f.write( "read password\n" )
             f.write( "exit 0" )
             f.close
-            
+
             # escaping
             @validate_script = "#{@temp_dir}/validate\\ script.sh"
             MarkusConfigurator.stubs(:markus_config_validate_file).returns(@validate_script)
@@ -150,7 +150,7 @@ class EnsureConfigHelperTest < ActiveSupport::TestCase
             end
           end
         end
-        
+
       end
     end
   end

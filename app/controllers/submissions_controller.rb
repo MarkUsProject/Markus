@@ -3,19 +3,19 @@ require 'fastercsv'
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
   include PaginationHelper
-  
+
   before_filter    :authorize_only_for_admin, :except => [:server_time, :populate_file_manager, :browse,
-  :index, :file_manager, :update_files, 
+  :index, :file_manager, :update_files,
   :download, :s_table_paginate, :collect_and_begin_grading,
   :manually_collect_and_begin_grading, :collect_ta_submissions, :repo_browser,
   :populate_repo_browser, :update_converted_pdfs]
-  before_filter    :authorize_for_ta_and_admin, :only => [:browse, :index, :s_table_paginate, :collect_and_begin_grading, 
+  before_filter    :authorize_for_ta_and_admin, :only => [:browse, :index, :s_table_paginate, :collect_and_begin_grading,
   :manually_collect_and_begin_grading, :collect_ta_submissions, :repo_browser, :populate_repo_browser, :update_converted_pdfs]
   before_filter    :authorize_for_student, :only => [:file_manager, :populate_file_manager, :update_files]
   before_filter    :authorize_for_user, :only => [:download]
-  
+
   S_TABLE_PARAMS = {
-    :model => Grouping, 
+    :model => Grouping,
     :per_pages => [15, 30, 50, 100, 150, 500, 1000],
     :filters => {
       'none' => {
@@ -23,7 +23,7 @@ class SubmissionsController < ApplicationController
         :proc => lambda { |params, to_include|
           return params[:assignment].groupings.all(:include => to_include)}},
       'unmarked' => {
-        :display => I18n.t("browse_submissions.show_unmarked"), 
+        :display => I18n.t("browse_submissions.show_unmarked"),
         :proc => lambda { |params, to_include| return params[:assignment].groupings.all(:include => [to_include]).select{|g| !g.has_submission? || (g.has_submission? && g.current_submission_used.result.marking_state == Result::MARKING_STATES[:unmarked]) } }},
       'partial' => {
         :display => I18n.t("browse_submissions.show_partial"),
@@ -61,7 +61,7 @@ class SubmissionsController < ApplicationController
       }
     }
   }
-        
+
   def repo_browser
     @grouping = Grouping.find(params[:id])
     @assignment = @grouping.assignment
@@ -87,7 +87,7 @@ class SubmissionsController < ApplicationController
       repo.close
     end
   end
-  
+
   def populate_repo_browser
     @grouping = Grouping.find(params[:id])
     @assignment = @grouping.assignment
@@ -113,7 +113,7 @@ class SubmissionsController < ApplicationController
       render :action => 'repo_browser/populate_repo_browser'
     end
   end
- 
+
   def file_manager
     @assignment = Assignment.find(params[:id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
@@ -125,20 +125,20 @@ class SubmissionsController < ApplicationController
 
     user_group = @grouping.group
     @path = params[:path] || '/'
-    
+
     # Some vars need to be set in update_files too, so do this in a
     # helper. See update_files action where this is used as well.
     set_filebrowser_vars(user_group, @assignment)
   end
-  
+
   def populate_file_manager
     @assignment = Assignment.find(params[:id])
-    @grouping = current_user.accepted_grouping_for(@assignment.id)   
+    @grouping = current_user.accepted_grouping_for(@assignment.id)
     user_group = @grouping.group
     revision_number= params[:revision_number]
     @path = params[:path] || '/'
     @previous_path = File.split(@path).first
-    
+
     user_group.access_repo do |repo|
       if revision_number.nil?
         @revision = repo.get_latest_revision
@@ -159,7 +159,7 @@ class SubmissionsController < ApplicationController
       render :action => 'file_manager_populate'
     end
   end
-  
+
   def manually_collect_and_begin_grading
     @grouping = Grouping.find(params[:id])
     @revision_number = params[:current_revision_number].to_i
@@ -231,12 +231,12 @@ class SubmissionsController < ApplicationController
       params[:filter] = 'assigned'
     else
       if params[:filter] == nil or params[:filter].blank?
-        params[:filter] = 'none'    
+        params[:filter] = 'none'
       end
     end
     if params[:sort_by] == nil or params[:sort_by].blank?
       params[:sort_by] = 'group_name'
-    end 
+    end
     @assignment = Assignment.find(params[:id])
     @groupings, @groupings_total = handle_paginate_event(
       S_TABLE_PARAMS,                                     # the data structure to handle filtering and sorting
@@ -266,7 +266,7 @@ class SubmissionsController < ApplicationController
     @desc = params[:desc]
     @filter = params[:filter]
     @sort_by = params[:sort_by]
-  end 
+  end
 
   def index
     @assignments = Assignment.all(:order => :id)
@@ -390,7 +390,7 @@ class SubmissionsController < ApplicationController
       end
     end
   end
-  
+
   def download
     @assignment = Assignment.find(params[:id])
     # find_appropriate_grouping can be found in SubmissionsHelper
@@ -413,7 +413,7 @@ class SubmissionsController < ApplicationController
         render :text => I18n.t("student.submission.missing_file", :file_name => params[:file_name], :message => e.message)
         return
       end
-    
+
       if SubmissionFile.is_binary?(file_contents)
         # If the file appears to be binary, send it as a download
         send_data file_contents, :disposition => 'attachment', :filename => params[:file_name]
@@ -422,7 +422,7 @@ class SubmissionsController < ApplicationController
         render :text => file_contents, :layout => 'sanitized_html'
       end
     end
-  end 
+  end
 
   def update_submissions
     return unless request.post?
@@ -445,14 +445,14 @@ class SubmissionsController < ApplicationController
       end
     end
 
-    log_message = ""       
+    log_message = ""
     if !params[:release_results].nil?
       changed = set_release_on_results(groupings, true, errors)
-      log_message = "Marks released for assignment '#{assignment.short_identifier}', ID: '" + 
+      log_message = "Marks released for assignment '#{assignment.short_identifier}', ID: '" +
                     "#{assignment.id}' (for #{changed} groups)."
     elsif !params[:unrelease_results].nil?
       changed = set_release_on_results(groupings, false, errors)
-      log_message = "Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" + 
+      log_message = "Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" +
                     "#{assignment.id}' (for #{changed} groups)."
     end
 
@@ -467,10 +467,10 @@ class SubmissionsController < ApplicationController
       m_logger.log(log_message)
     end
     flash[:errors] = errors
-    
-    redirect_to :action => 'browse', :id => params[:id]    
+
+    redirect_to :action => 'browse', :id => params[:id]
   end
-  
+
   def unrelease
     return unless request.post?
     if params[:groupings].nil?
@@ -486,19 +486,19 @@ class SubmissionsController < ApplicationController
     end
     redirect_to :action => 'browse', :id => params[:id]
   end
-  
+
   # See Assignment.get_simple_csv_report for details
   def download_simple_csv_report
     assignment = Assignment.find(params[:id])
     send_data assignment.get_simple_csv_report, :disposition => 'attachment', :type => 'application/vnd.ms-excel', :filename => "#{assignment.short_identifier} simple report.csv"
   end
-  
+
   # See Assignment.get_detailed_csv_report for details
   def download_detailed_csv_report
     assignment = Assignment.find(params[:id])
     send_data assignment.get_detailed_csv_report, :disposition => 'attachment', :type => 'application/vnd.ms-excel', :filename => "#{assignment.short_identifier} detailed report.csv"
   end
-  
+
   # See Assignment.get_svn_export_commands for details
   def download_svn_export_commands
     assignment = Assignment.find(params[:id])
