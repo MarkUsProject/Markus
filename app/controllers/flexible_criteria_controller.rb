@@ -1,19 +1,19 @@
 class FlexibleCriteriaController < ApplicationController
-  
+
   before_filter      :authorize_only_for_admin
-  
+
   def index
     @assignment = Assignment.find(params[:id])
     # TODO until Assignment gets its criteria method
-    @criteria = 
-      FlexibleCriterion.find_all_by_assignment_id( @assignment.id, 
+    @criteria =
+      FlexibleCriterion.find_all_by_assignment_id( @assignment.id,
                                                    :order => :position)
   end
-  
-  def edit 
+
+  def edit
     @criterion = FlexibleCriterion.find(params[:id])
   end
-  
+
   def update
     @criterion = FlexibleCriterion.find(params[:id])
     if !@criterion.update_attributes(params[:flexible_criterion])
@@ -22,7 +22,7 @@ class FlexibleCriteriaController < ApplicationController
     end
     flash.now[:success] = I18n.t('criterion_saved_success')
   end
-  
+
   def new
     @assignment = Assignment.find(params[:id])
     if !request.post?
@@ -47,7 +47,7 @@ class FlexibleCriteriaController < ApplicationController
       render :action => 'create_and_edit'
     end
   end
-  
+
   def delete
     return unless request.delete?
     @criterion = FlexibleCriterion.find(params[:id])
@@ -58,16 +58,16 @@ class FlexibleCriteriaController < ApplicationController
     @criterion.destroy
     flash.now[:success] = I18n.t('criterion_deleted_success')
   end
-  
+
   def download
     @assignment = Assignment.find(params[:id])
     file_out = FlexibleCriterion.create_csv(@assignment)
-    send_data(file_out, 
-              :type => 'text/csv', 
-              :filename => "#{@assignment.short_identifier}_flexible_criteria.csv", 
+    send_data(file_out,
+              :type => 'text/csv',
+              :filename => "#{@assignment.short_identifier}_flexible_criteria.csv",
               :disposition => 'inline')
   end
-  
+
   def upload
     file = params[:upload][:flexible]
     @assignment = Assignment.find(params[:id])
@@ -75,15 +75,15 @@ class FlexibleCriteriaController < ApplicationController
       begin
         FlexibleCriterion.transaction do
           invalid_lines = []
-          nb_updates = FlexibleCriterion.parse_csv(file, 
-                                                   @assignment, 
+          nb_updates = FlexibleCriterion.parse_csv(file,
+                                                   @assignment,
                                                    invalid_lines)
-          unless invalid_lines.empty? 
+          unless invalid_lines.empty?
             flash[:invalid_lines] = invalid_lines
             flash[:error] = I18n.t('csv_invalid_lines')
           end
           if nb_updates > 0
-            flash[:upload_notice] = I18n.t('flexible_criteria.upload.success', 
+            flash[:upload_notice] = I18n.t('flexible_criteria.upload.success',
                                             :nb_updates => nb_updates)
           end
         end
@@ -91,7 +91,7 @@ class FlexibleCriteriaController < ApplicationController
     end
     redirect_to :action => 'index', :id => @assignment.id
   end
-  
+
   # This method handles the drag/drop criteria sorting
   def update_positions
     unless request.post?
@@ -131,7 +131,7 @@ class FlexibleCriteriaController < ApplicationController
       render :nothing => true
       return
     end
-    FlexibleCriterion.update(criterion.id, 
+    FlexibleCriterion.update(criterion.id,
                              :position => other_criterion.position)
     FlexibleCriterion.update(other_criterion.id, :position => position)
     @criteria.reload

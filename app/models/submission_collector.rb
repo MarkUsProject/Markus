@@ -42,11 +42,11 @@ class SubmissionCollector < ActiveRecord::Base
     self.grouping_queues.create(:priority_queue => true)
   end
 
-  #Add all the groupings belonging to assignment to the grouping queue 
+  #Add all the groupings belonging to assignment to the grouping queue
   def push_groupings_to_queue(groupings)
     priority_queue = grouping_queues.find_by_priority_queue(true).groupings
     regular_queue = grouping_queues.find_by_priority_queue(false).groupings
-    
+
     groupings.each do |grouping|
       unless regular_queue.include?(grouping) ||
           priority_queue.include?(grouping)
@@ -116,7 +116,7 @@ class SubmissionCollector < ActiveRecord::Base
           self.save
         end
       end
-      
+
     #If for some reason there is no process with id self.child_pid, simply
     #proceed by forking a new process as usual.
     rescue Errno::ESRCH, Errno::ECHILD => e
@@ -211,7 +211,7 @@ class SubmissionCollector < ActiveRecord::Base
     grouping.is_collected = false
     remove_grouping_from_queue(grouping)
     grouping.save
-    
+
     new_submission = Submission.create_by_revision_number(grouping, rev_num)
 
     #This is to help determine the progress of the method.
@@ -235,7 +235,7 @@ class SubmissionCollector < ActiveRecord::Base
       grouping.is_collected = true
       grouping.save
     end
-    
+
   end
 
   def safely_stop_child

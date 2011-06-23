@@ -1,7 +1,7 @@
 class CreateGradesSimpleGradeEntry < ActiveRecord::Migration
   def self.up
     create_table :grades do |t|
-      t.integer :grade_entry_item_id 
+      t.integer :grade_entry_item_id
       t.integer :grade_entry_student_id
       t.float :grade
 
