@@ -3,7 +3,7 @@ require 'migration_helpers'
 class ChangeAnnotationLabelToAnnotationText < ActiveRecord::Migration
   extend MigrationHelpers
   def self.up
-    delete_foreign_key :annotations, :annotation_labels 
+    delete_foreign_key :annotations, :annotation_labels
     #Rename the table annotation_labels to annotation_text
     rename_table :annotation_labels, :annotation_texts
     #Next, change the column name from annotations from annotation_label_id

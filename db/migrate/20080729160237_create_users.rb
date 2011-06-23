@@ -7,10 +7,10 @@ class CreateUsers < ActiveRecord::Migration
       t.column  :first_name,      :string
       t.column  :grace_days,      :int,     :null => true
       t.column  :role,            :string
-      
+
       t.timestamps
     end
-    
+
     add_index :users, :user_number, :unique => true
     add_index :users, :user_name, :unique => true
   end

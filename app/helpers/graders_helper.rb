@@ -36,7 +36,7 @@ module GradersHelper
     end
     return result
   end
-  
+
   def construct_table_row(grouping, assignment, total_criteria_count)
       table_row = {}
 
@@ -64,7 +64,7 @@ module GradersHelper
     table_row = {}
 
     table_row[:id] = grader.id
-    table_row[:filter_table_row_contents] = 
+    table_row[:filter_table_row_contents] =
       render_to_string :partial => 'graders/table_row/filter_table_grader_row',
       :locals => {:grader => grader}
 
@@ -88,7 +88,7 @@ module GradersHelper
     table_row = {}
 
     table_row[:id] = criterion.id
-    table_row[:filter_table_row_contents] = 
+    table_row[:filter_table_row_contents] =
       render_to_string :partial => 'graders/table_row/filter_table_criterion_row',
       :locals => {:criterion => criterion, :assignment => assignment}
 

@@ -14,6 +14,6 @@ class RemoveUnneededColumnsFromSubmissionRules < ActiveRecord::Migration
     add_column :submission_rules, :penalty_limit, :integer
     add_column :submission_rules, :penalty_increment, :integer
     add_column :submission_rules, :penalty_interval, :integer
-    add_column :submission_rules, :penalty_interval_unit, :string      
+    add_column :submission_rules, :penalty_interval_unit, :string
   end
 end

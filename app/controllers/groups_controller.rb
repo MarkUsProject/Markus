@@ -2,17 +2,17 @@ require 'fastercsv'
 require 'auto_complete'
 require 'csv_invalid_line_error'
 
-# Manages actions relating to editing and modifying 
+# Manages actions relating to editing and modifying
 # groups.
 class GroupsController < ApplicationController
   include GroupsHelper
   # Administrator
   # -
   before_filter      :authorize_only_for_admin
-   
+
   auto_complete_for :student, :user_name
   auto_complete_for :assignment, :name
-  
+
   def note_message
     @assignment = Assignment.find(params[:id])
     if params[:success]
@@ -21,10 +21,10 @@ class GroupsController < ApplicationController
       flash[:error] = I18n.t('notes.error')
     end
   end
- 
+
   # Group administration functions -----------------------------------------
   # Verify that all functions below are included in the authorize filter above
-  
+
   def add_group
     @assignment = Assignment.find(params[:id])
     begin
@@ -32,11 +32,11 @@ class GroupsController < ApplicationController
     rescue Exception => e
       @error = e.message
       render :action => 'error_single'
-      return 
+      return
     end
     @new_grouping = construct_table_row(new_grouping_data, @assignment)
   end
-  
+
   def remove_group
     return unless request.delete?
     grouping = Grouping.find(params[:grouping_id])
@@ -119,7 +119,7 @@ class GroupsController < ApplicationController
     @grouping.invalidate_grouping
     @grouping_data = construct_table_row(@grouping, @assignment)
   end
-  
+
   def populate
     @assignment = Assignment.find(params[:id],
                                   :include => [{
@@ -142,7 +142,7 @@ class GroupsController < ApplicationController
     @all_assignments = Assignment.all(:order => :id)
     @assignment = Assignment.find(params[:id])
   end
-  
+
   # Allows the user to upload a csv file listing groups. If group_name is equal
   # to the only member of a group and the assignment is configured with
   # allow_web_subits == false, the student's username will be used as the
@@ -182,11 +182,11 @@ class GroupsController < ApplicationController
           number_groupings_added = @assignment.groupings.length
           invalid_lines_count = flash[:invalid_lines].length
           if invalid_lines_count == 0
-            flash[:invalid_lines] = nil 
+            flash[:invalid_lines] = nil
           end
           if number_groupings_added > 0
             flash[:upload_notice] = I18n.t("csv.groups_added_msg",
-                  { :number_groups => number_groupings_added, 
+                  { :number_groups => number_groupings_added,
                     :number_lines => invalid_lines_count })
           end
         rescue Exception => e
@@ -202,7 +202,7 @@ class GroupsController < ApplicationController
     end
     redirect_to :action => "manage", :id => params[:id]
   end
-  
+
   def download_grouplist
     assignment = Assignment.find(params[:id])
 
@@ -226,14 +226,14 @@ class GroupsController < ApplicationController
   def use_another_assignment_groups
     @target_assignment = Assignment.find(params[:id])
     source_assignment = Assignment.find(params[:clone_groups_assignment_id])
-      
+
     if source_assignment.nil?
       flash[:fail_notice] = I18n.t("groups.csv.could_not_find_source")
     end
     if @target_assignment.nil?
       flash[:fail_notice] = I18n.t("groups.csv.could_not_find_target")
     end
-            
+
     # Clone the groupings
     @target_assignment.clone_groupings_from(source_assignment.id)
   end
@@ -249,7 +249,7 @@ class GroupsController < ApplicationController
     @tas = Ta.all
     grouping_ids = params[:groupings]
     student_ids = params[:students]
-    
+
     if params[:groupings].nil? or params[:groupings].size ==  0
       #Just do nothing
       render :nothing => true
@@ -332,7 +332,7 @@ class GroupsController < ApplicationController
     end
     @groupings_data = construct_table_rows([grouping], @assignment)
     @students_data = construct_student_table_rows(students, @assignment)
-    
+
     # Generate warning if the number of people assigned to a group exceeds
     # the maximum size of a group
     students_in_group = grouping.student_membership_number
@@ -341,7 +341,7 @@ class GroupsController < ApplicationController
       @warning = I18n.t("assignment.group.assign_over_limit",
         :group => group_name)
     end
-    
+
     render :action => "add_members"
     return
   end

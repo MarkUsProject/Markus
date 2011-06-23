@@ -7,7 +7,7 @@ class CreateGradeEntryItems < ActiveRecord::Migration
 
       t.timestamps
     end
-  
+
     add_index :grade_entry_items, [:grade_entry_form_id, :name], :unique => true
 
   end

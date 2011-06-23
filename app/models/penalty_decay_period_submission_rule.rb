@@ -6,22 +6,22 @@ class PenaltyDecayPeriodSubmissionRule < SubmissionRule
   def commit_after_collection_message(grouping)
     I18n.t 'submission_rules.penalty_decay_period_submission_rule.commit_after_collection_message'
   end
-  
+
   def after_collection_message(grouping)
     I18n.t 'submission_rules.penalty_decay_period_submission_rule.after_collection_message'
   end
-  
+
   # This message will be dislayed to Students on viewing their file manager
   # after the due date has passed, but before the calculated collection date.
   def overtime_message(grouping)
     # How far are we into overtime?
-    overtime_hours = calculate_overtime_hours_from(Time.now)  
+    overtime_hours = calculate_overtime_hours_from(Time.now)
     # Calculate the penalty that the grouping will suffer
     potential_penalty = calculate_penalty(overtime_hours)
 
     return I18n.t 'submission_rules.penalty_decay_period_submission_rule.overtime_message', :potential_penalty => potential_penalty
   end
-  
+
   def apply_submission_rule(submission)
     # Calculate the appropriate penalty, and attach the ExtraMark to the
     # submission Result
@@ -40,7 +40,7 @@ class PenaltyDecayPeriodSubmissionRule < SubmissionRule
 
     return submission
   end
-  
+
   def description_of_rule
     I18n.t 'submission_rules.penalty_decy_period_submission_rule.description'
   end

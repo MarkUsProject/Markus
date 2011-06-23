@@ -108,7 +108,7 @@ class RubricsController < ApplicationController
         return
       end
       if not rubrics
-        flash[:error] = I18n.t('rubric_criteria.upload.error') + 
+        flash[:error] = I18n.t('rubric_criteria.upload.error') +
           "  " + I18n.t('rubric_criteria.upload.empty_error')
         redirect_to :action => 'index', :id => assignment.id
         return
@@ -193,5 +193,5 @@ class RubricsController < ApplicationController
     RubricCriterion.update(other_criterion.id, :position => position)
     @criteria.reload
   end
-  
+
 end

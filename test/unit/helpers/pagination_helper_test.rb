@@ -14,8 +14,8 @@ class PaginationHelperTest < ActiveSupport::TestCase
       if defined?(Oracle).nil?
         Oracle = mock()
       end
-      @point_table_params = { 
-        :model => nil, 
+      @point_table_params = {
+        :model => nil,
         :per_pages => nil,
         :filters => {
           'none' => {
@@ -25,7 +25,7 @@ class PaginationHelperTest < ActiveSupport::TestCase
             }
           },
           'even' => {
-            :display => "even", 
+            :display => "even",
             :proc => lambda { |params, to_include|
               return Oracle.get_even()
             }
@@ -42,14 +42,14 @@ class PaginationHelperTest < ActiveSupport::TestCase
               return Oracle.get_prime()
             }
           }
-        },  
+        },
         :sorts => {
           'x_cord' => lambda { |a,b| return Oracle.x_sort() } ,
           'y_cord' => lambda { |a,b| return Oracle.y_sort() }
         }
       }
     end
-    
+
     should "display all points, and sort by the x coordinate" do
       params = { :filter => 'none', :sort_by => 'x_cord' }
 
@@ -67,7 +67,7 @@ class PaginationHelperTest < ActiveSupport::TestCase
       Oracle.expects( :y_sort ).never
       PaginationHelper.handle_paginate_event( @point_table_params, nil, params )
     end
-    
+
     should "display prime points, and sort by the y coordinate" do
       params = { :filter => 'prime', :sort_by => 'y_cord' }
 

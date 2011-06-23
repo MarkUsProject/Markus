@@ -176,11 +176,11 @@ class AssignmentTest < ActiveSupport::TestCase
       student = Student.make
       assert !@assignment.submission_by(student)
     end
-    
+
     should "return 0 if no tas have been assigned" do
       assert @assignment.tas.size == 0
     end
-    
+
     context "with multiple tas assigned" do
       setup do
         ta1 = Ta.make
@@ -189,7 +189,7 @@ class AssignmentTest < ActiveSupport::TestCase
           StudentMembership.make({:grouping => grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
           TaMembership.make({:user_id => ta1.id, :grouping => grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
         end
-        
+
         ta2 = Ta.make
         5.times do
           grouping = Grouping.make(:assignment => @assignment)
@@ -197,23 +197,23 @@ class AssignmentTest < ActiveSupport::TestCase
           TaMembership.make({:user_id => ta2.id, :grouping => grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
         end
       end
-      
+
       should "return 2 tas assigned" do
         assert @assignment.tas.size == 2
       end
     end
-    
+
     should "return 0 if no submissions have been graded" do
       assert @assignment.graded_submissions.size == 0
     end
-    
+
     context "with some assignments graded" do
       setup do
         3.times do
           membership = StudentMembership.make(:grouping => Grouping.make(:assignment => @assignment),:membership_status => StudentMembership::STATUSES[:accepted])
           sub = Submission.make(:grouping => membership.grouping)
         end
-        
+
         5.times do
           membership = StudentMembership.make(:grouping => Grouping.make(:assignment => @assignment),:membership_status => StudentMembership::STATUSES[:accepted])
           sub = Submission.make(:grouping => membership.grouping)
@@ -222,12 +222,12 @@ class AssignmentTest < ActiveSupport::TestCase
           result.save
         end
       end
-      
+
       should "have 5 result completed" do
         assert @assignment.graded_submissions.size == 5
       end
     end
-    
+
     context "with all assignments graded" do
       setup do
         5.times do
@@ -238,12 +238,12 @@ class AssignmentTest < ActiveSupport::TestCase
           result.save
         end
       end
-      
+
       should "have 5 result completed" do
         assert @assignment.graded_submissions.size == 5
       end
     end
-    
+
     context "as a noteable" do
       should "display for note without seeing an exception" do
         assignment = Assignment.make
@@ -744,19 +744,19 @@ class AssignmentTest < ActiveSupport::TestCase
         totals = [16.5, 16.0, 16.1, 15.5, 5.0, 7.0, 17.5, 17.0, 18.9, 28.0, 8.1, 25.2, 25.7, 4.3, 0, 10, 19.5, 27.0, 26.6, 0]
 
         # create rubric creteria
-        rubric_criteria = [{:rubric_criterion_name => "Uses Conditionals", :weight => 1}, 
+        rubric_criteria = [{:rubric_criterion_name => "Uses Conditionals", :weight => 1},
           {:rubric_criterion_name => "Code Clarity", :weight => 2},
           {:rubric_criterion_name => "Code Is Documented", :weight => 3},
           {:rubric_criterion_name => "Uses For Loop", :weight => 1}]
         default_levels = {:level_0_name => "Quite Poor",
-          :level_0_description => "This criterion was not satisifed whatsoever", 
+          :level_0_description => "This criterion was not satisifed whatsoever",
           :level_1_name => "Satisfactory",
           :level_1_description => "This criterion was satisfied",
           :level_2_name => "Good",
           :level_2_description => "This criterion was satisfied well",
           :level_3_name => "Great",
-          :level_3_description => "This criterion was satisfied really well!", 
-          :level_4_name => "Excellent", 
+          :level_3_description => "This criterion was satisfied really well!",
+          :level_4_name => "Excellent",
           :level_4_description => "This criterion was satisfied excellently"}
 
         rubric_criteria.each do |rubric_criteria|
@@ -795,19 +795,19 @@ class AssignmentTest < ActiveSupport::TestCase
         totals = [16.5, 16.0, 16.1, 15.5, 5.0, 37.0, 17.5, 17.0, 18.9, 29.0, 8.1, 25.2, 25.7, 4.3, 0, 10, 19.5, 27.0, 26.6, 0]
 
         # create rubric criteria
-        rubric_criteria = [{:rubric_criterion_name => "Uses Conditionals", :weight => 1}, 
+        rubric_criteria = [{:rubric_criterion_name => "Uses Conditionals", :weight => 1},
           {:rubric_criterion_name => "Code Clarity", :weight => 2},
           {:rubric_criterion_name => "Code Is Documented", :weight => 3},
           {:rubric_criterion_name => "Uses For Loop", :weight => 1}]
         default_levels = {:level_0_name => "Quite Poor",
-          :level_0_description => "This criterion was not satisifed whatsoever", 
+          :level_0_description => "This criterion was not satisifed whatsoever",
           :level_1_name => "Satisfactory",
           :level_1_description => "This criterion was satisfied",
           :level_2_name => "Good",
           :level_2_description => "This criterion was satisfied well",
           :level_3_name => "Great",
-          :level_3_description => "This criterion was satisfied really well!", 
-          :level_4_name => "Excellent", 
+          :level_3_description => "This criterion was satisfied really well!",
+          :level_4_name => "Excellent",
           :level_4_description => "This criterion was satisfied excellently"}
 
         rubric_criteria.each do |rubric_criteria|
@@ -944,7 +944,7 @@ class AssignmentTest < ActiveSupport::TestCase
       @section_02 = Section.make
       student_01 = Student.make(:section => @section_01)
       student_02 = Student.make(:section => @section_02)
-      (1..3).each do 
+      (1..3).each do
         Student.make(:section => @section_01)
       end
       @grouping_1 = Grouping.make(:assignment => @assignment)
@@ -991,7 +991,7 @@ class AssignmentTest < ActiveSupport::TestCase
 
     context "With all section due dates past now" do
       setup do
-        @section_due_date.due_date = 2.days.ago 
+        @section_due_date.due_date = 2.days.ago
         @section_due_date.save
       end
 

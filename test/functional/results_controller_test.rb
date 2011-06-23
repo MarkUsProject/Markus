@@ -983,7 +983,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_equal @result.overall_comment, @overall_comment
           end
         end
-        
+
         context "POST on :update_overall_remark_comment" do
           setup do
             @overall_comment = "A new overall remark comment!"
