@@ -5,7 +5,7 @@ class Section < ActiveRecord::Base
 
   # Returns true when students are part of this section
   def has_students?
-    return !students.empty?  
+    return !students.empty?
   end
 
   # returns the number of students in this section

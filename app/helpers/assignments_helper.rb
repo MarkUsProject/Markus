@@ -25,7 +25,7 @@ module AssignmentsHelper
       }
     end
   end
-  
+
   def add_penalty_decay_period_link(name, form, element_id)
     link_to_function name , nil, :id => element_id do |page|
       period = render(:partial => 'penalty_decay_period', :locals => {:pf => form, :penalty_decay_period => Period.new})

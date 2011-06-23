@@ -7,12 +7,12 @@ class CreateGradeEntryStudents < ActiveRecord::Migration
 
       t.timestamps
     end
- 
+
     add_index :grade_entry_students, [:user_id, :grade_entry_form_id], :unique => true
-    
+
   end
 
-  def self.down  
+  def self.down
     remove_index :grade_entry_students, [:user_id, :grade_entry_form_id]
     drop_table :grade_entry_students
   end

@@ -1,34 +1,34 @@
 require 'fastercsv'
 class AssignmentsController < ApplicationController
-  before_filter      :authorize_only_for_admin, 
-                     :except => [:deletegroup, 
-                                 :delete_rejected, 
-                                 :disinvite_member, 
-                                 :invite_member, 
-                                 :creategroup, 
-                                 :join_group, 
-                                 :decline_invitation, 
-                                 :index, 
+  before_filter      :authorize_only_for_admin,
+                     :except => [:deletegroup,
+                                 :delete_rejected,
+                                 :disinvite_member,
+                                 :invite_member,
+                                 :creategroup,
+                                 :join_group,
+                                 :decline_invitation,
+                                 :index,
                                  :student_interface,
                                  :update_collected_submissions]
-  
-  before_filter      :authorize_for_student, 
-                     :only => [:student_interface, 
-                              :deletegroup, 
-                              :delete_rejected, 
-                              :disinvite_member, 
-                              :invite_member, 
-                              :creategroup, 
-                              :join_group, 
+
+  before_filter      :authorize_for_student,
+                     :only => [:student_interface,
+                              :deletegroup,
+                              :delete_rejected,
+                              :disinvite_member,
+                              :invite_member,
+                              :creategroup,
+                              :join_group,
                               :decline_invitation]
-  
-  before_filter      :authorize_for_user, 
+
+  before_filter      :authorize_for_user,
                      :only => [:index]
 
-  auto_complete_for  :assignment, 
+  auto_complete_for  :assignment,
                      :name
   # Publicly accessible actions ---------------------------------------
-  
+
   def student_interface
     @assignment = Assignment.find(params[:id])
     @student = current_user
@@ -43,7 +43,7 @@ class AssignmentsController < ApplicationController
       @due_date = @assignment.due_date
     end
     if @student.has_pending_groupings_for?(@assignment.id)
-      @pending_grouping = @student.pending_groupings_for(@assignment.id) 
+      @pending_grouping = @student.pending_groupings_for(@assignment.id)
     end
     if @grouping.nil?
       if @assignment.group_max == 1
@@ -64,7 +64,7 @@ class AssignmentsController < ApplicationController
       @studentmemberships =  @grouping.student_memberships
       # The group name
       @group = @grouping.group
-      # The inviter   
+      # The inviter
       @inviter = @grouping.inviter
 
       # Look up submission information
@@ -94,8 +94,8 @@ class AssignmentsController < ApplicationController
       repo.close
     end
   end
-  
-  # Displays "Manage Assignments" page for creating and editing 
+
+  # Displays "Manage Assignments" page for creating and editing
   # assignment information
   def index
     @assignments = Assignment.all(:order => :id)
@@ -120,14 +120,14 @@ class AssignmentsController < ApplicationController
       # Get the grades for grade entry forms for the current user
       @g_id_entries = Hash.new()
       @grade_entry_forms.each do |g|
-        grade_entry_student = g.grade_entry_students.find_by_user_id( 
+        grade_entry_student = g.grade_entry_students.find_by_user_id(
                                     current_user.id )
-        if !grade_entry_student.nil? && 
+        if !grade_entry_student.nil? &&
              grade_entry_student.released_to_student
           @g_id_entries[g.id] = grade_entry_student
         end
       end
-      
+
       render :action => "student_assignment_list"
       return
     elsif current_user.ta?
@@ -136,14 +136,14 @@ class AssignmentsController < ApplicationController
       render :action => 'index'
     end
   end
-  
+
   def edit
     @assignment = Assignment.find_by_id(params[:id])
     if !params[:assignment].nil?
       @oldcriteria = @assignment.marking_scheme_type
       @newcriteria = params[:assignment][:marking_scheme_type]
       if @oldcriteria != @newcriteria and !@assignment.get_criteria.nil?
-        #TODO use @assignment.criteria.destroy_all when the refactor of 
+        #TODO use @assignment.criteria.destroy_all when the refactor of
         # criteria structure finished
         @assignment.get_criteria.each do |criterion|
           criterion.destroy
@@ -155,15 +155,15 @@ class AssignmentsController < ApplicationController
     if !request.post?
       return
     end
-  
+
     begin
       @assignment = process_assignment_form(@assignment, params)
       rescue Exception, RuntimeError => e
-        @assignment.errors.add(:base, I18n.t("assignment.error", 
+        @assignment.errors.add(:base, I18n.t("assignment.error",
                                               :message => e.message))
       return
     end
-    
+
     if @assignment.save
       flash[:success] = I18n.t("assignment.update_success")
       redirect_to :action => 'edit', :id => params[:id]
@@ -172,11 +172,11 @@ class AssignmentsController < ApplicationController
       render :action => 'edit'
     end
  end
-  
+
 
   # Form accessible actions --------------------------------------------
   # Post actions that we expect only forms to access them
-  
+
   # Called when form for creating a new assignment is submitted
   def new
     @assignments = Assignment.all
@@ -184,10 +184,10 @@ class AssignmentsController < ApplicationController
     @sections = Section.all
     @assignment.build_submission_rule
     @assignment.build_assignment_stat
-    
+
     if !request.post?
       # set default value if web submits are allowed
-      @assignment.allow_web_submits = 
+      @assignment.allow_web_submits =
          !MarkusConfigurator.markus_config_repository_external_submits_only?
       render :action => 'new'
       return
@@ -213,11 +213,11 @@ class AssignmentsController < ApplicationController
 
     redirect_to :action => "edit", :id => @assignment.id
   end
-  
+
   def update_group_properties_on_persist
     @assignment = Assignment.find(params[:assignment_id])
   end
-  
+
   def download_csv_grades_report
     assignments = Assignment.all(:order => 'id')
     students = Student.all
@@ -247,7 +247,7 @@ class AssignmentsController < ApplicationController
         csv << row
       end
     end
-    send_data csv_string, :disposition => "attachment", 
+    send_data csv_string, :disposition => "attachment",
                           :filename => "#{COURSE_NAME} grades report.csv"
   end
 
@@ -255,7 +255,7 @@ class AssignmentsController < ApplicationController
   # Methods for the student interface
 
   def join_group
-    @assignment = Assignment.find(params[:id]) 
+    @assignment = Assignment.find(params[:id])
     @grouping = Grouping.find(params[:grouping_id])
     @user = Student.find(session[:uid])
     @user.join(@grouping.id)
@@ -287,7 +287,7 @@ class AssignmentsController < ApplicationController
       if @assignment.past_collection_date?
         raise I18n.t('create_group.fail.due_date_passed')
       end
-      if !@assignment.student_form_groups || 
+      if !@assignment.student_form_groups ||
            @assignment.instructor_form_groups
         raise I18n.t('create_group.fail.not_allow_to_form_groups')
       end
@@ -296,7 +296,7 @@ class AssignmentsController < ApplicationController
       end
       if params[:workalone]
         if @assignment.group_min != 1
-          raise I18n.t('create_group.fail.can_not_work_alone', 
+          raise I18n.t('create_group.fail.can_not_work_alone',
                         :group_min => @assignment.group_min)
         end
         @student.create_group_for_working_alone_student(@assignment.id)
@@ -337,7 +337,7 @@ class AssignmentsController < ApplicationController
       flash[:edit_notice] = I18n.t('assignment.group.deleted')
       m_logger.log("Student '#{current_user.user_name}' deleted group '" +
                    "#{@grouping.group.group_name}'.", MarkusLogger::INFO)
-    
+
     rescue RuntimeError => e
       flash[:fail_notice] = e.message
       if @grouping.nil?
@@ -357,13 +357,13 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find(params[:id])
     # if instructor formed group return
     return if @assignment.instructor_form_groups
-    
+
     @student = @current_user
     @grouping = @student.accepted_grouping_for(@assignment.id)
     if @grouping.nil?
       raise I18n.t('invite_student.fail.need_to_create_group')
     end
-    
+
     to_invite = params[:invite_member].split(',')
     flash[:fail_notice] = []
     flash[:success] = []
@@ -416,9 +416,9 @@ class AssignmentsController < ApplicationController
     assignment.assignment_stat.refresh_grade_distribution
     redirect_to :controller => 'main'
   end
-  
-  private 
-  
+
+  private
+
   def process_assignment_form(assignment, params)
     assignment.attributes = params[:assignment]
     # Work around rails' (v2.3.8 and potentially v2.3.9)
@@ -437,13 +437,13 @@ class AssignmentsController < ApplicationController
     # Periods, and switch the type of the SubmissionRule.
     # This little conditional has to do some hack-y workarounds, since
     # accepts_nested_attributes_for is a little...dumb.
-    
+
 
     if params[:assignment][:section_due_dates_type]
       # create the section_due_dates
       for section in @sections
         if params["section_due_date_#{section.id}"][:due_date]
-          s = 
+          s =
             SectionDueDate.find_by_assignment_id_and_section_id(assignment.id,
                                                                 section.id)
           if s.nil?
@@ -457,28 +457,28 @@ class AssignmentsController < ApplicationController
       assignment.section_due_dates_type = true
       assignment.section_groups_only = true
     end
-    if assignment.submission_rule.attributes['type'] != 
+    if assignment.submission_rule.attributes['type'] !=
          params[:assignment][:submission_rule_attributes][:type]
       # Some protective measures here to make sure we haven't been duped...
-      potential_rule = 
+      potential_rule =
          Module.const_get(params[:assignment][:submission_rule_attributes][:type])
       if !potential_rule.ancestors.include?(SubmissionRule)
-        raise I18n.t("assignment.not_valid_submission_rule", 
+        raise I18n.t("assignment.not_valid_submission_rule",
           :type => params[:assignment][:submission_rule_attributes][:type])
       end
-      
+
       assignment.submission_rule.destroy
       submission_rule = SubmissionRule.new
       # A little hack to get around Rails' protection of the "type"
       # attribute
-      submission_rule.type = 
+      submission_rule.type =
          params[:assignment][:submission_rule_attributes][:type]
       assignment.submission_rule = submission_rule
       # For some reason, when we create new rule, we can't just apply
       # the params[:assignment] hash to @assignment.attributes...we have
       # to create any new periods manually, like this:
       if !params[:assignment][:submission_rule_attributes][:periods_attributes].nil?
-        assignment.submission_rule.periods_attributes = 
+        assignment.submission_rule.periods_attributes =
            params[:assignment][:submission_rule_attributes][:periods_attributes]
       end
     end
