@@ -1,14 +1,11 @@
-require 'rubygems'
-require 'ruby-debug'
-require File.dirname(__FILE__) + '/authenticated_controller_test'
+require File.join(File.dirname(__FILE__),  'authenticated_controller_test')
+require File.join(File.dirname(__FILE__), '..', 'test_helper')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 require 'shoulda'
 require 'fastercsv'
 require 'mocha'
 require 'fileutils'
-# Using Machinist
-require File.dirname(__FILE__) + '/../test_helper'
-require File.join(File.dirname(__FILE__), '/../blueprints/blueprints')
-require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 
 include MarkusConfigurator
 
