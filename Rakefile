@@ -3,6 +3,7 @@
 
 require File.expand_path('../config/application', __FILE__)
 require 'rake'
+require 'rdoc/task'
 require 'db_populate'
 
 # TODO REMOVE THIS FIX WITH RAKE 0.9:0
