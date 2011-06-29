@@ -404,7 +404,7 @@ class Assignment < ActiveRecord::Base
     # shouldn't happen anyway, because the lookup earlier should prevent
     # repo collisions e.g. when uploading the same CSV file twice.
     group.save
-    if !group.errors.on_base.nil?
+    if !group.errors[:base].blank?
       collision_error = I18n.t("csv.repo_collision_warning",
                           { :repo_name => group.errors.on_base,
                             :group_name => row[0] })

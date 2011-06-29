@@ -19,11 +19,11 @@ class StudentMembership < Membership
 
   def must_be_valid_student
     if user && !user.is_a?(Student)
-      errors.add_to_base("User must be a student")
+      errors.add("base", "User must be a student")
       return false
     end
     if !STATUSES.values.include?(membership_status)
-      errors.add_to_base("Invalid membership status")
+      errors.add("base", "Invalid membership status")
       return false
     end
   end
