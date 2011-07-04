@@ -12,7 +12,7 @@ class SubmissionTest < ActiveSupport::TestCase
     assert_equal s.result.marking_state, Result::MARKING_STATES[:unmarked], "Result marking_state should have been automatically set to unmarked"
   end
 
-  should "create a remark result" do
+  should "create a new remark result" do
     s = submissions(:submission_1)
     s.save
     s.create_remark_result
