@@ -616,7 +616,7 @@ fr:
         expect_filter: "Un filtre sur la sélection est attendu."
         # DO NOT change 'file_name' and 'sanitized_filename' in the following message.
         # See app/views/submissions/_file_manager_boot.js.erb
-        filename_sanitization_js_warning: "\"Après avoir envoyé le fichier, son nom ne sera plus '\" + file_name + \"' mais '\" + sanitized_filename + \"'. Êtes-vous sûr de vouloir continuer ?\""
+        filename_sanitization_js_warning: "\"Après avoir envoyé le fichier, son nom ne sera plus '\" + file_name + \"' mais '\" + sanitized_filename + \"'. Êtes-vous sûr de vouloir continuer ?\""
         # DO NOT change 'file_name' and 'new_file_name' in the following message.
         # See app/views/submissions/_file_manager_boot.js.erb
         replace_file_js_error: "\"Vous ne pouvez pas remplacer '\" + file_name + \"' par '\" + new_file_name + \"'. Vous devez remplacer le fichier par un fichier ayant le même nom.\""
