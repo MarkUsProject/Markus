@@ -130,7 +130,7 @@ fr:
             assign_over_limit: "Vous avez dépassé le nombre maximal d'étudiants pour le groupe %{group}"
             select_a_group: "Sélectionner un groupe"
             select_one_group: "Vous devez sélectionner au moins un groupe"
-            select_only_one_group: "Vous ne pouvez assigner un étudiant qu'à un seul groupe."
+            select_only_one_group: "Vous ne pouvez assigner un(e) étudiant(e) qu'à un seul groupe."
             deleted: "Le groupe a été supprimé"
             work_in_groups:  "Les étudiants peuvent travailler en groupe"
             persist_group_from: "Garder les groupes et les propriétés de"
@@ -308,7 +308,7 @@ fr:
     still_working_warning: "Il y a des travaux non terminés. Ils pourraient ne pas être sauvegardés si vous quittez maintenant."
 
     csv:
-      student_not_found: "L'étudiant '%{user_name}' n'a pas été trouvé."
+      student_not_found: "L'étudiant(e) '%{user_name}' n'a pas été trouvé(e)."
       repo_collision_warning: "Attention : le répertoire '%{repo_name}' existe déjà. Le nom du groupe était '%{group_name}'."
       line_nr_csv_file_prefix: "ligne %{line_number} du fichier CSV :"
       errors_and_warnings_msg: "Les lignes suivantes ont entraîné des erreurs ou des warnings :"
@@ -401,10 +401,10 @@ fr:
         student_title: "Feuille de notes : "
         total: "Total : "
         no_grade_entry_items_message: "Il n'y a pas de colonne pour cette table."
-        must_select_a_student: "Vous devez sélectionner au moins un étudiant."
+        must_select_a_student: "Vous devez sélectionner au moins un(e) étudiant(e)."
         expected_filter: "Expected a filter on select full." #TODO: À traduire
         successfully_changed: "Mise à jour de %{numGradeEntryStudentsChanged} étudiant(s)."
-        update_error: "L'affichage de la note de l'étudiant %{user_name} n'a pas pu être enregistrée."
+        update_error: "L'affichage de la note de l'étudiant(e) %{user_name} n'a pas pu être enregistrée."
         errors: "Erreurs"
         no_mark: "NC"
         marking_state: "Affichage de la note aux étudiants"
@@ -420,7 +420,7 @@ fr:
         upload_prompt: "Sélectionner un fichier CSV à envoyer"
         upload_format_html: "<p>Le fichier devra être au format suivant : </p>
                              <ul><li>les deux lignes du haut spécifient le nom de la note et le total ;</li>
-                             <li>une ligne pour chaque étudiant ;</li>
+                             <li>une ligne pour chaque étudiant(e) ;</li>
                              <li>chaque ligne doit être terminée par un retour charriot.</li></ul>
                              <code>\"\",q1_name,q2_name,q3_name</code><br/>
                              <code>\"\",q1_out_of,q2_out_of,q3_out_of</code><br/>
@@ -530,16 +530,16 @@ fr:
     students:
       processing: "Chargement…"
       manage_students: "Gestion des étudiants"
-      edit_student:    "Modification d'un étudiant"
-      edit_success: "%{user_name} a été mis à jour."
-      create_new:      "Créer un nouvel étudiant"
-      create_success: "L'étudiant %{user_name} a bien été créé."
+      edit_student:    "Modification d'un(e) étudiant(e)"
+      edit_success: "%{user_name} a été mis(e) à jour."
+      create_new:      "Créer un(e) nouvel(le) étudiant(e)"
+      create_success: "L'étudiant(e) %{user_name} a bien été créé(e)."
       students: "Étudiants"
-      no_students_selected: "Aucun étudiant n'étant sélectionné, aucun changement n'a été effectué."
+      no_students_selected: "Aucun(e) étudiant(e) n'étant sélectionné(e), aucun changement n'a été effectué."
       upload:
         upload_a_class_list: "Envoyer une liste d'étudiants"
         select_csv_file:     "Sélectionner un fichier CSV formaté comme suit : <code>user_name,last_name,first_name(,section)</code>"
-        student_same_number: "Si un étudiant avec le même nom d'utilisateur existe, ses informations seront mises à jour."
+        student_same_number: "Si un(e) étudiant(e) avec le même nom d'utilisateur existe, ses informations seront mises à jour."
         csv_file:            "Fichier CSV"
       download:
         download_student_list: "Télécharger la liste des étudiants"
@@ -633,7 +633,7 @@ fr:
       unassigned_graders: "Correcteurs non assignés"
       not_covered:        "Pas couvert"
       covered:            "Couvert"
-      success: "%{user_name} a été mis à jour"
+      success: "%{user_name} a été mis(e) à jour"
       create_success: "Création du correcteur %{user_name}"
       coverage: "Couverture"
       assign_to_criteria: "Attribuer les correcteurs aux critères"
@@ -657,7 +657,7 @@ fr:
       create_new_admin: "Créer un nouvel administrateur"
       manage_admins:    "Gestion des administrateurs"
       edit_admin:       "Modification d'un administrateur"
-      success: "%{user_name} a été mis à jour"
+      success: "%{user_name} a été mis(e) à jour"
       admins: "Administrateurs"
       upload:
         not_added: "Les administrateurs suivants n'ont pas été ajoutés correctement : "
@@ -667,12 +667,12 @@ fr:
         each_line: "Chaque ligne a le bon nombre de champs comme spécifié."
 
     add_student:
-      success: "L'étudiant %{user_name} a été ajouté."
+      success: "L'étudiant(e) %{user_name} a été ajouté(e)."
       fail:
         general: "Erreur inconnue. Impossible d'ajouter %{user_name}."
-        dne:  "%{user_name} n'a pas été ajouté : cet étudiant n'existe pas."
-        hidden:  "%{user_name} n'a pas été ajouté : le compte de cet étudiant a été désactivé."
-        already_grouped: "%{user_name} n'a pas été ajouté : cet étudiant est déjà membre d'un autre groupe."
+        dne:  "%{user_name} n'a pas été ajouté(e) : cet(te) étudiant(e) n'existe pas."
+        hidden:  "%{user_name} n'a pas été ajouté(e) : le compte de cet(te) étudiant(e) a été désactivé(e)."
+        already_grouped: "%{user_name} n'a pas été ajouté(e) : cet(te) étudiant(e) est déjà membre d'un autre groupe."
 
     create_group:
       fail:
@@ -683,18 +683,18 @@ fr:
         do_not_have_a_group: "Vous n'appartenez pas à un groupe."
 
     invite_student:
-      success: "L'étudiant a été invité."
+      success: "L'étudiant(e) a été invité(e)."
       fail:
-        only_inviter: "Seul celui qui a invité un autre étudiant peut supprimer une invitation déclinée"
-        due_date_passed: "%{user_name} ne peut pas être invité : la date de retour pour ce devoir est passée et il n'y a pas de temps supplémentaire alloué ou le temps supplémentaire alloué est terminé."
-        dne:  "%{user_name}ne peut pas être invité : cet étudiant n'existe pas."
-        hidden:  "%{user_name} ne peut pas être invité : le compte de cet étudiant a été désactivé."
-        already_pending: "%{user_name} ne peut pas être invité : cet étudiant est déjà en attente pour ce groupe."
-        group_max_reached: "%{user_name} ne peut pas être invité : la limite maximale pour ce groupe est déjà atteinte."
+        only_inviter: "Seul(e) celui (celle) qui a invité un(e) autre étudiant(e) peut supprimer une invitation déclinée"
+        due_date_passed: "%{user_name} ne peut pas être invité(e) : la date de retour pour ce devoir est passée et il n'y a pas de temps supplémentaire alloué ou le temps supplémentaire alloué est terminé."
+        dne:  "%{user_name}ne peut pas être invité(e) : cet(te) étudiant(e) n'existe pas."
+        hidden:  "%{user_name} ne peut pas être invité(e) : le compte de cet(te) étudiant(e) a été désactivé."
+        already_pending: "%{user_name} ne peut pas être invité(e) : cet(te) étudiant(e) est déjà en attente pour ce groupe."
+        group_max_reached: "%{user_name} ne peut pas être invité(e) : la limite maximale pour ce groupe est déjà atteinte."
         inviting_self: "Vous ne pouvez pas vous inviter dans votre propre groupe."
-        already_grouped: "%{user_name} ne peut pas être invité : cet étudiant est déjà membre d'un autre groupe."
+        already_grouped: "%{user_name} ne peut pas être invité(e) : cet(te) étudiant(e) est déjà membre d'un autre groupe."
         need_to_create_group: "Vous devez créer un groupe avant de pouvoir inviter des étudiants."
-        not_same_section: "L'étudiant %{user_name} n'est pas dans votre section."
+        not_same_section: "L'étudiant(e) %{user_name} n'est pas dans votre section."
         error: "Erreur. Impossible d'inviter %{user_name}."
     update_files:
       success:  "Les changements ont été enregistrés."
@@ -932,7 +932,7 @@ fr:
         # visible options for dropdown. Symbols intentionally capitalized.
         noteables:
             Grouping: "Groupe"
-            Student:  "Étudiant"
+            Student:  "Étudiant(e)"
             Assignment: "Projet"
         author: "Auteur"
         creation_time: "Date de création"
@@ -1067,7 +1067,7 @@ fr:
       revision_used_for_test: "<span class=\"prop_label\">Révision utilisée:</span> %{revision}"
       due_date_is_passed: "Vous ne pouvez pas exécuter de test après la date de retour."
       information: "Information"
-      test_student_code: "Tester le code de l'étudiant"
+      test_student_code: "Tester le code de l'étudiant(e)"
       run_tests: "Exécuter les tests."
       need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test.<br />
                       Si vous avez envoyé un fichier et vous voulez exécuter un test, veuillez cliquer sur \"Récuperer et préparer test\"."
@@ -1090,7 +1090,7 @@ fr:
       invalid_buildxml: "Le fichier Ant build.xml doit obligatoirement être nommé build.xml"
       invalid_buildproperties: "Le fcihier Ant build.properties doit obligatoirement être nommé build.properties"
       invalid_filename: "Les fichiers de test et les bibliothèques ne peuvent être appelées build.xml et build.properties"
-      missing_tokens: "Aucun jeton trouvé pour cet étudiant et pour ce projet"
+      missing_tokens: "Aucun jeton trouvé pour cet(te) étudiant(e) et pour ce projet"
       dir_not_exist: "Le dossier %{dir} requis par Ant n'existe pas."
       token:
         tokens_form: "Jetons disponibles par groupe"
