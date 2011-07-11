@@ -44,6 +44,7 @@ GEM
       activesupport (= 2.3.10)
       rake (>= 0.8.3)
     rake (0.9.0)
+    rcov (0.9.9)
     rdoc (3.6.1)
     routing-filter (0.2.3)
       actionpack
@@ -77,6 +78,7 @@ DEPENDENCIES
   mysql
   pg
   rails (= 2.3.10)
+  rcov
   rdoc
   routing-filter
   ruby-debug
