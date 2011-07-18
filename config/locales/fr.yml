@@ -701,6 +701,7 @@ fr:
 
     user:
         user_name:      "Nom d'utilisateur"
+        user_names:     "Nom(s) d'utilisateur"
         first_name:     "Prénom"
         last_name:      "Nom"
         full_name:      "Nom complet"
