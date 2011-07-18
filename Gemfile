@@ -47,6 +47,7 @@ end
 # for production.
 group :development, :test do
   gem "rdoc"
+  gem "rcov"
   gem "shoulda"
   gem "machinist"
   gem "faker"
