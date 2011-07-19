@@ -1,6 +1,6 @@
 <% # UI LIBRARIES %>
 <%= javascript_include_tag "livepipe/livepipe.js",
-	"livepipe/window.js" %>
+  "livepipe/window.js" %>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -253,8 +253,8 @@
       <h3><%= I18n.t("student.group_properties") %></h3>
       <ul>
         <% if @assignment.section_groups_only %>
-	    <li><%= I18n.t("student.section_groups_only") %></li>
-	<% end %>
+      <li><%= I18n.t("student.section_groups_only") %></li>
+  <% end %>
         <% if @assignment.student_form_groups &&
               !@assignment.instructor_form_groups &&
               @assignment.group_max > 1 %>
@@ -270,23 +270,23 @@
         <% if !@grouping.nil? %>
         <li>
           <%= I18n.t("student.group_credits", :available_grace_credits => @grouping.available_grace_credits) %>
-		</li>
+    </li>
         <% end %>
       </ul>
     </div>
   </div>
-  
+
   <% # HTML for Student Testing Interface %>
   <% if @assignment.enable_test %>
   <div class="block">
-  	<h2><%= I18n.t("test_framework.test") %></h2>
-	<% if @grouping.nil? %>
+    <h2><%= I18n.t("test_framework.test") %></h2>
+  <% if @grouping.nil? %>
           <div class="sub_block">
             <br />
             <%= I18n.t("test_framework.need_group_for_test") %>
             <br />
           </div>
-	<% else %>
+  <% else %>
           <div class="block_content">
             <h3><%= I18n.t("test_framework.information") %></h3>
             <% if !@grouping.submissions.empty? %>
@@ -340,7 +340,7 @@
              <% end %>
            <% end %>
     <% end %>
-  	</div>
+    </div>
   </div>
   <% end %>
 </div>
@@ -358,7 +358,7 @@ if !@grouping.nil? &&
       <h2><%= I18n.t("student.invite") %></h2>
       <p class="information"><%= t(:seperate_multiple_with_commas) %></p>
         <fieldset>
-          <label for="invite_member"> <%= I18n.t('user.user_name')%> </label>
+          <label for="invite_member"> <%= I18n.t('user.user_names')%> </label>
           <%= text_field_tag 'invite_member'%>
         </fieldset>
       <p>
