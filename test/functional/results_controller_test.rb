@@ -372,7 +372,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         context "GET on :codeviewer" do
           setup do
-            # FIXME: no submission file
             SubmissionFile.make(:submission => @submission)
             @submission_file = @result.submission.submission_files.first
           end
@@ -507,22 +506,30 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
           context "and the result is available" do
             setup do
+              SubmissionFile.make(:submission => @submission)
+              Mark.make(:result => @result)
+              AnnotationCategory.make(:assignment => @assignment)
+              @submission_file = @result.submission.submission_files.first
+              @result.marking_state = Result::MARKING_STATES[:complete]
+              @result.released_to_students = true
+              @result.save
+
               get_as @student, :view_marks, :id => @assignment.id
             end
             should assign_to :assignment
             should assign_to :grouping
             should assign_to :submission
             should assign_to :result
-#            should assign_to :mark_criteria
-#            should assign_to :annotation_categories
-#            should assign_to :group
-#            should assign_to :files
-#            should assign_to :first_file
-#            should assign_to :extra_marks_points
-#            should assign_to:extra_marks_percentage
-#            should assign_to :marks_map
-#            should respond_with :success
-#            should render_template :view_marks
+            should assign_to :mark_criteria
+            should assign_to :annotation_categories
+            should assign_to :group
+            should assign_to :files
+            should assign_to :first_file
+            should assign_to :extra_marks_points
+            should assign_to:extra_marks_percentage
+            should assign_to :marks_map
+            should respond_with :success
+            should render_template :view_marks
           end
         end
 
@@ -584,10 +591,19 @@ class ResultsControllerTest < AuthenticatedControllerTest
           context "with 2 partial and 1 released/completed results" do
             setup do
               @results = []
-              5.times do |time|
+              3.times do |time|
                 g = Grouping.make(:assignment => @assignment)
                 s = Submission.make(:grouping => g)
-                @results.push(Result.make(:submission => s))
+                if time == 2
+                  @results.push(Result.make(
+                        :id => time,
+                        :submission => s,
+                        :marking_state => Result::MARKING_STATES[:complete],
+                        :released_to_students => true))
+                else
+                  @results.push(Result.make(:id => time,
+                                            :submission => s))
+                end
               end
             end
 
@@ -603,7 +619,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                 assert next_grouping.has_submission?
                 next_result = next_grouping.current_submission_used.result
                 assert_not_nil next_result
-                # assert_equal next_result, @result_second
+                assert_equal next_result, @results[1]
                 assert !next_result.released_to_students
                 assert_nil assigns(:previous_grouping)
               end
@@ -630,9 +646,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
                 previous_result = previous_grouping.current_submission_used.result
                 assert_not_nil next_result
                 assert_not_nil previous_result
-#                assert_equal next_result, @result_third
-#                assert_equal previous_result, @result_first
-#                assert next_result.released_to_students
+                assert_equal next_result, @results[2]
+                assert_equal previous_result, @results[0]
+                assert next_result.released_to_students
                 assert !previous_result.released_to_students
               end
 
@@ -644,7 +660,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             context "when editing third result" do
 
               setup do
-                @result = @results[4]
+                @result = @results[2]
                 get_as @admin, :edit, :id => @result.id
               end
 
@@ -655,8 +671,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
                 assert previous_grouping.has_submission?
                 previous_result = previous_grouping.current_submission_used.result
                 assert_not_nil previous_result
-#                assert_equal previous_result, @result_second
-#                assert !previous_result.released_to_students
+                assert_equal previous_result, @results[1]
+                assert !previous_result.released_to_students
               end
 
               should_not set_the_flash
@@ -723,23 +739,23 @@ class ResultsControllerTest < AuthenticatedControllerTest
             # will be marked as complete, a result which will be in the same grade range
             # therefore we must increment the number of groupings at the given range for
             # each marking scheme type
-#            if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:flexible]
-#              # increment the 6-10% range
-#              @grade_distribution[1] += 1
-#            end
-#
-#            if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
-#              # increment the 21-25% range
-#              @grade_distribution[4] += 1
-#            end
-#
+            if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:flexible]
+              # increment the 6-10% range
+              @grade_distribution[1] += 1
+            end
+
+            if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
+              # increment the 21-25% range
+              @grade_distribution[4] += 1
+            end
+
             get_as @admin, :update_marking_state, {:id => @result.id, :value => 'complete'}
           end
 
           should "refresh the cached grade distribution data when the marking state is set to complete" do
             @assignment.reload
             actual_distribution = @assignment.assignment_stat.grade_distribution_percentage.parse_csv.map{ |x| x.to_i }
-#            assert_equal actual_distribution, @grade_distribution
+            assert_equal actual_distribution, @grade_distribution
           end
           should respond_with :success
           should assign_to :result
@@ -767,19 +783,16 @@ class ResultsControllerTest < AuthenticatedControllerTest
             end
           end
 
-#          context "with file error" do
-#            setup do
-#              submission = Submission.new
-#              submission.expects(:result).once.returns(@result)
-#              @file.expects(:submission).once.returns(submission)
-#              SubmissionFile.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
-#              SubmissionFile.expects(:find).with('1').returns(@file)
-#              get_as @admin, :download, :select_file_id => @file.id
-#            end
-#            should set_the_flash.to(SAMPLE_ERR_MSG)
-#            should respond_with :redirect
-#          end
-#
+          context "with file error" do
+            setup do
+              submission = Submission.new
+              SubmissionFile.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
+              get_as @admin, :download, :select_file_id => @file.id
+            end
+            should set_the_flash.to(SAMPLE_ERR_MSG)
+            should respond_with :redirect
+          end
+
           context "with supported image to be displayed inside browser" do
               setup do
                 @file.expects(:filename).once.returns(
@@ -1158,82 +1171,91 @@ class ResultsControllerTest < AuthenticatedControllerTest
             end
           end
 
-#          context "with file error" do
-#            setup do
-#              submission = Submission.new
-#              submission.expects(:result).once.returns(@result)
-#              @file.expects(:submission).once.returns(submission)
-#              SubmissionFile.expects(:find).with('1').returns(@file)
-#              @file.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
-#              get_as @ta, :download, :select_file_id => 1
-#            end
-#            should set_the_flash.to(SAMPLE_ERR_MSG)
-#            should respond_with :redirect
-#          end
-#
-#          context "with supported image to be displayed inside browser" do
-#              setup do
-#                @file.expects(:filename).once.returns('filename.supported_image')
-#                @file.expects(:is_supported_image?).once.returns(true)
-#                SubmissionFile.expects(:find).with('1').returns(@file)
-#                @file.expects(:retrieve_file).returns('file content')
-#                get_as @ta, :download, :select_file_id => 1, :show_in_browser => true
-#              end
-#              should_not set_the_flash
-#              should respond_with_content_type "image"
-#              should respond_with :success
-#              should "respond with appropriate content" do
-#                assert_equal 'file content', @response.body
-#              end
-#            end
-#          end
-#
-#        context "GET on :codeviewer" do
-#          setup do
-#            @submission_file = FactoryData.submission_files_for_result_controller_test(:no_access_submission_file) # submission_files(:student1_ass_5_sub_1)
-#          end
-#
-#          context "with file reading error" do
-#            setup do
-#              # We simulate a file reading error.
-#              SubmissionFile.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
-#              get_as @ta, :codeviewer, :id => @assignment.id, :submission_file_id => @submission_file.id, :focus_line => 1
-#            end
-#            should assign_to :assignment
-#            should assign_to :submission_file_id
-#            should assign_to :focus_line
-#            should assign_to :file
-#            should assign_to :result
-#            should assign_to :annots
-#            should assign_to :all_annots
-#            should_not assign_to :file_contents
-#            should_not assign_to :code_type
-#            should render_template 'shared/_handle_error.rjs'
-#            should respond_with :success
-#            should "pass along the exception's message" do
-#              # Workaround to assert that the error message made its way to the response
-#              assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
-#            end
-#          end
-#
-#          context "without error" do
-#            setup do
-#              # We don't want to access a real file.
-#              SubmissionFile.any_instance.expects(:retrieve_file).once.returns('file content')
-#              get_as @ta, :codeviewer, :id => @assignment.id, :submission_file_id => @submission_file.id, :focus_line => 1
-#            end
-#            should assign_to :assignment
-#            should assign_to :submission_file_id
-#            should assign_to :focus_line
-#            should assign_to :file
-#            should assign_to :result
-#            should assign_to :annots
-#            should assign_to :all_annots
-#            should assign_to :file_contents
-#            should assign_to :code_type
-#            should render_template 'results/common/codeviewer'
-#            should respond_with :success
-#          end
+          context "with file error" do
+            setup do
+              submission = Submission.new
+              result = Result.new
+              submission.expects(:result).once.returns(result)
+              @file.expects(:submission).once.returns(submission)
+              @file.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
+              SubmissionFile.expects(:find).with('1').returns(@file)
+              get_as @ta, :download, :select_file_id => @file.id
+            end
+            should set_the_flash.to(SAMPLE_ERR_MSG)
+            should respond_with :redirect
+          end
+
+          context "with supported image to be displayed inside browser" do
+              setup do
+                @file.expects(:filename).once.returns('filename.supported_image')
+                @file.expects(:is_supported_image?).once.returns(true)
+                SubmissionFile.expects(:find).with('1').returns(@file)
+                @file.expects(:retrieve_file).returns('file content')
+                get_as @ta, :download, :select_file_id => @file.id, :show_in_browser => true
+              end
+              should_not set_the_flash
+              should respond_with_content_type "image"
+              should respond_with :success
+              should "respond with appropriate content" do
+                assert_equal 'file content', @response.body
+              end
+            end
+          end
+
+        context "GET on :codeviewer" do
+          setup do
+            @submission_file = SubmissionFile.make
+          end
+
+          context "with file reading error" do
+            setup do
+              # We simulate a file reading error.
+              SubmissionFile.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
+              get_as @ta,
+                     :codeviewer,
+                     :id => @assignment.id,
+                     :submission_file_id => @submission_file.id,
+                     :focus_line => 1
+            end
+            should assign_to :assignment
+            should assign_to :submission_file_id
+            should assign_to :focus_line
+            should assign_to :file
+            should assign_to :result
+            should assign_to :annots
+            should assign_to :all_annots
+            should_not assign_to :file_contents
+            should_not assign_to :code_type
+            should render_template 'shared/_handle_error.rjs'
+            should respond_with :success
+            should "pass along the exception's message" do
+              # Workaround to assert that the error message made its way to the response
+              assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
+            end
+          end
+
+          context "without error" do
+            setup do
+              # We don't want to access a real file.
+              SubmissionFile.any_instance.expects(:retrieve_file).once.returns('file content')
+              get_as @ta,
+                     :codeviewer,
+                     :id => @assignment.id,
+                     :submission_file_id => @submission_file.id,
+                     :focus_line => 1
+            end
+            should assign_to :assignment
+            should assign_to :submission_file_id
+            should assign_to :focus_line
+            should assign_to :file
+            should assign_to :result
+            should assign_to :annots
+            should assign_to :all_annots
+            should assign_to :file_contents
+            should assign_to :code_type
+            should render_template 'results/common/codeviewer'
+            should respond_with :success
+          end
 
         end
 

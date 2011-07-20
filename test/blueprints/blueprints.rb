@@ -45,8 +45,8 @@ Admin.blueprint do
 end
 
 AnnotationCategory.blueprint do
-  assignment
-  annotation_category_name
+  assignment {Assignment.make}
+  annotation_category_name {Sham.name}
 end
 
 AnnotationText.blueprint do
