@@ -854,7 +854,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
             @mark = Mark.make(:result => @submission.result)
           end
-        
+
           context "fails validation" do
             setup do
               #Mark.expects(:find).with('1').returns(@mark)
@@ -1004,7 +1004,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             g = Grouping.make(:assignment => @assignment)
             s = Submission.make(:grouping => g)
             @result = Result.make(:submission => s)
-  
+
             get_as @admin,
                    :expand_unmarked_criteria,
                    :aid => @assignment.id,
@@ -1019,7 +1019,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         context "POST on :update_overall_comment" do
           setup do
-            @result = Result.make 
+            @result = Result.make
             @overall_comment = "A new overall comment!"
             post_as @admin,
                     :update_overall_comment,
