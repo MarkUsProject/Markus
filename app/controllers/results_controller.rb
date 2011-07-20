@@ -1,6 +1,11 @@
 class ResultsController < ApplicationController
-  before_filter      :authorize_only_for_admin, :except => [:codeviewer, :edit, :update_mark, :view_marks,
-                        :create, :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria,
+  before_filter :authorize_only_for_admin,
+                :except => [:codeviewer,
+                            :edit,
+                            :update_mark,
+                            :view_marks,
+                            :create,
+                            :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria,
                         :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria, :update_marking_state,
                         :download, :note_message, :render_test_result,
                         :update_overall_remark_comment, :update_remark_request, :cancel_remark_request]
@@ -267,7 +272,9 @@ class ResultsController < ApplicationController
     @grouping = current_user.accepted_grouping_for(@assignment.id)
 
     if @grouping.nil?
-      redirect_to :controller => 'assignments', :action => 'student_interface', :id => params[:id]
+      redirect_to :controller => 'assignments',
+                  :action => 'student_interface',
+                  :id => params[:id]
       return
     end
     if !@grouping.has_submission?
