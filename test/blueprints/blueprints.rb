@@ -192,6 +192,12 @@ NoLateSubmissionRule.blueprint do
   assignment_id {0}
 end
 
+Result.blueprint do
+  submission {Submission.make}
+  marking_state {Result::MARKING_STATES[:partial]}
+  total_mark {0}
+end
+
 RubricCriterion.blueprint do
   assignment {Assignment.make(:marking_scheme_type => 'rubric')}
   rubric_criterion_name {Sham.rubric_criterion_name}
@@ -229,7 +235,7 @@ StudentMembership.blueprint do
 end
 
 Submission.blueprint do
-  grouping
+  grouping {Grouping.make}
   submission_version {1}
   submission_version_used {true}
   revision_number {1}
