@@ -373,76 +373,90 @@ class ResultsControllerTest < AuthenticatedControllerTest
         context "GET on :codeviewer" do
           setup do
             # FIXME: no submission file
+            SubmissionFile.make(:submission => @submission)
             @submission_file = @result.submission.submission_files.first
           end
 
-#          context "and the student has no access to that file" do
-#            setup do
-#              @no_access_submission_file = FactoryData.submission_files_for_result_controller_test(:no_access_submission_file)
-#              get_as @student, :codeviewer, :id => @assignment.id, :submission_file_id => @no_access_submission_file.id, :focus_line => 1
-#            end
+          context "and the student has no access to that file" do
+            setup do
+              @no_access_submission_file = SubmissionFile.make
+              get_as @student,
+                     :codeviewer,
+                     :id => @assignment.id,
+                     :submission_file_id => @no_access_submission_file.id,
+                     :focus_line => 1
+            end
 
-#            should assign_to :assignment
-#            should assign_to :submission_file_id
-#            should assign_to :focus_line
-#            should_not assign_to :file_contents
-#            should_not assign_to :annots
-#            should_not assign_to :all_annots
-#            should render_template 'shared/_handle_error.rjs'
-#            should respond_with :success
-#            should "set an appropriate error message" do
-#              # Workaround to assert that the error message made its way to the response
-#              r = Regexp.new(I18n.t('submission_file.error.no_access', :submission_file_id => @no_access_submission_file.id))
-#              assert_match r, @response.body
-#            end
-#          end
-#
-#          context "with file reading error" do
-#            setup do
-#              # We simulate a file reading error.
-#              SubmissionFile.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
-#              get_as @student, :codeviewer, :id => @assignment.id, :submission_file_id => @submission_file.id, :focus_line => 1
-#            end
-#            should assign_to :assignment
-#            should assign_to :submission_file_id
-#            should assign_to :focus_line
-#            should assign_to :file
-#            should assign_to :result
-#            should assign_to :annots
-#            should assign_to :all_annots
-#            should_not assign_to :file_contents
-#            should_not assign_to :code_type
-#            should render_template 'shared/_handle_error.rjs'
-#            should respond_with :success
-#            should "pass along the exception's message" do
-#              # Workaround to assert that the error message made its way to the response
-#              assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
-#            end
-#          end
-#
-#          context "without error" do
-#            setup do
-#              # We don't want to access a real file.
-#              SubmissionFile.any_instance.expects(:retrieve_file).once.returns('file content')
-#              get_as @student,
-#                     :codeviewer,
-#                     :id => @assignment.id,
-#                     :submission_file_id => @submission_file.id,
-#                     :focus_line => 1
-#            end
-#            should assign_to :assignment
-#            should assign_to :submission_file_id
-#            should assign_to :focus_line
-#            should assign_to :file
-#            should assign_to :result
-#            should assign_to :annots
-#            should assign_to :all_annots
-#            should assign_to :file_contents
-#            should assign_to :code_type
-#            should render_template 'results/common/codeviewer'
-#            should respond_with :success
-#          end
-#
+            should assign_to :assignment
+            should assign_to :submission_file_id
+            should assign_to :focus_line
+            should_not assign_to :file_contents
+            should_not assign_to :annots
+            should_not assign_to :all_annots
+            should render_template 'shared/_handle_error.rjs'
+            should respond_with :success
+            should "set an appropriate error message" do
+              # Workaround to assert that the error message made its way to
+              # the response
+              r = Regexp.new(I18n.t(
+                      'submission_file.error.no_access',
+                      :submission_file_id => @no_access_submission_file.id))
+              assert_match r, @response.body
+            end
+
+            context "with file reading error" do
+              setup do
+                # We simulate a file reading error.
+                SubmissionFile.any_instance.expects(
+                  :retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
+                get_as @student,
+                      :codeviewer,
+                      :id => @assignment.id,
+                      :submission_file_id => @submission_file.id,
+                      :focus_line => 1
+              end
+              should assign_to :assignment
+              should assign_to :submission_file_id
+              should assign_to :focus_line
+              should assign_to :file
+              should assign_to :result
+              should assign_to :annots
+              should assign_to :all_annots
+              should_not assign_to :file_contents
+              should_not assign_to :code_type
+              should render_template 'shared/_handle_error.rjs'
+              should respond_with :success
+              should "pass along the exception's message" do
+                # Workaround to assert that the error message made its way to
+                # the response
+                assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
+              end
+            end
+
+            context "without error" do
+              setup do
+                # We don't want to access a real file.
+                SubmissionFile.any_instance.expects(
+                  :retrieve_file).once.returns('file content')
+                get_as @student,
+                      :codeviewer,
+                      :id => @assignment.id,
+                      :submission_file_id => @submission_file.id,
+                      :focus_line => 1
+              end
+              should assign_to :assignment
+              should assign_to :submission_file_id
+              should assign_to :focus_line
+              should assign_to :file
+              should assign_to :result
+              should assign_to :annots
+              should assign_to :all_annots
+              should assign_to :file_contents
+              should assign_to :code_type
+              should render_template 'results/common/codeviewer'
+              should respond_with :success
+            end
+          end
         end
 
         context "GET on :update_mark" do
@@ -953,32 +967,30 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end
         end
 
-#        context "GET on :remove_extra_mark" do
-#          setup do
-#            # clear any existing extra marks
-#            @result.extra_marks.map{ |mark| mark.destroy }
-#            # create and save extra marks
-#            (3..4).each do |extra_mark_value|
-#              @extra_mark = ExtraMark.new
-#              @extra_mark.unit = ExtraMark::UNITS[:points]
-#              @extra_mark.result = @result
-#              @extra_mark.extra_mark = extra_mark_value
-#              assert @extra_mark.save
-#            end
-#            @result.update_total_mark
-#            @old_total_mark = @result.total_mark
-#            get_as @admin, :remove_extra_mark, :id => @extra_mark.id
-#          end
-#          should_not set_the_flash
-#          should assign_to :result
-#          should render_template 'results/marker/remove_extra_mark'
-#          should respond_with :success
-#
-#          should "have removed the extra mark in question and updated the total mark accordingly" do
-#            @result.reload
-#            assert_equal @old_total_mark - @extra_mark.extra_mark, @result.total_mark
-#          end
-#        end
+        context "GET on :remove_extra_mark" do
+          setup do
+            @result = Result.make
+            (3..4).each do |extra_mark_value|
+              @extra_mark = ExtraMark.new
+              @extra_mark.unit = ExtraMark::UNITS[:points]
+              @extra_mark.result = @result
+              @extra_mark.extra_mark = extra_mark_value
+              assert @extra_mark.save
+            end
+            @result.update_total_mark
+            @old_total_mark = @result.total_mark
+            get_as @admin, :remove_extra_mark, :id => @extra_mark.id
+          end
+          should_not set_the_flash
+          should assign_to :result
+          should render_template 'results/marker/remove_extra_mark'
+          should respond_with :success
+
+          should "have removed the extra mark in question and updated the total mark accordingly" do
+            @result.reload
+            assert_equal @old_total_mark - @extra_mark.extra_mark, @result.total_mark
+          end
+        end
 
         context "GET on :expand_criteria" do
           setup do

@@ -245,8 +245,8 @@ end
 
 SubmissionFile.blueprint do
   submission
-  filename
-  path
+  filename {Sham.name}
+  path {Sham.filename}
 end
 
 PenaltyDecayPeriodSubmissionRule.blueprint do
