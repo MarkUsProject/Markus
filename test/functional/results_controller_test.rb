@@ -857,12 +857,13 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
           context "fails validation" do
             setup do
-              #Mark.expects(:find).with('1').returns(@mark)
-              @mark.expects(:valid?).once.returns(false)
               ActiveRecord::Errors.any_instance.stubs(
                       :full_messages).returns([SAMPLE_ERR_MSG])
 
-              get_as @admin, :update_mark, :mark_id => @mark.id, :mark => 1
+              get_as @admin,
+                     :update_mark,
+                     :mark_id => @mark.id,
+                     :mark => "something"
             end
 
             should render_template 'mark_verify_result.rjs'
@@ -1231,27 +1232,13 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
           context "fails validation" do
              setup do
-              Mark.expects(:find).with('1').returns(@mark)
-              @mark.expects(:valid?).once.returns(false)
               ActiveRecord::Errors.any_instance.stubs(:full_messages).returns([SAMPLE_ERR_MSG])
-              get_as @ta, :update_mark, :mark_id => @mark.id, :mark => 1
+              get_as @ta,
+                     :update_mark,
+                     :mark_id => @mark.id,
+                     :mark => "something"
             end
             should render_template 'mark_verify_result.rjs'
-            should respond_with :success
-            should "pass along the \"error hash\"" do
-              # Workaround to assert that the error message made its way to the response
-              assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
-            end
-          end
-
-          context "with save error" do
-            setup do
-              Mark.expects(:find).with('1').returns(@mark)
-              @mark.expects(:save).once.returns(false)
-              ActiveRecord::Errors.any_instance.stubs(:full_messages).returns([SAMPLE_ERR_MSG])
-              get_as @ta, :update_mark, :mark_id => @mark.id, :mark => 1
-            end
-            should render_template 'shared/_handle_error.rjs'
             should respond_with :success
             should "pass along the \"error hash\"" do
               # Workaround to assert that the error message made its way to the response

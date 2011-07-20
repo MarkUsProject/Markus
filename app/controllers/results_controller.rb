@@ -246,9 +246,14 @@ class ResultsController < ApplicationController
     group = submission.grouping.group           # get group for logging
     assignment = submission.grouping.assignment # get assignment for logging
     m_logger = MarkusLogger.instance
+
+    # FIXME checking both that result_mark is valid and correctly saved is
+    # useless. The validation is done automatically before saving unless
+    # specified otherwise.
     if !result_mark.valid?
       render :partial => 'results/marker/mark_verify_result',
-             :locals => {:mark_id => result_mark.id,:mark_error =>result_mark.errors.full_messages.join}
+             :locals => {:mark_id => result_mark.id,
+                         :mark_error => result_mark.errors.full_messages.join}
     else
       if !result_mark.save
           m_logger.log("Error while trying to update mark of submission. User: '" +
