@@ -51,7 +51,7 @@
     <% # Display the column names and totals
     %>
     <div id="grade_entry_items">
-      <% f.fields_for :grade_entry_items do |entry_item| %>
+      <%= f.fields_for :grade_entry_items do |entry_item| %>
         <%= render :partial => 'grade_entry_item', :locals => {:grade_entry_item => entry_item.object,
                                                                :form => f} %>
       <% end %>
