@@ -30,7 +30,7 @@
     <legend><%= I18n.t("test_framework.required_files_ant") %></legend>
 
     <div id="test_properties" class="disabled" >
-      <% f.fields_for :test_files do |tf| %>
+      <%= f.fields_for :test_files do |tf| %>
         <p id="antbuildfile_style">
           <% if tf.object.filetype.to_s == "build.xml" %>
             <%= label_tag "antbuildxmlfile", I18n.t("test_framework.build_xml"), :class=>"accordian_label" %>
@@ -59,7 +59,7 @@
 
       <h4><%= t("test_framework.assignment_test_files") %></h4>
       <div id="test_files">
-        <% f.fields_for :test_files do |tf| %>
+        <%= f.fields_for :test_files do |tf| %>
           <% if tf.object.filetype.to_s == "test" %>
             <%= render :partial => 'test_file', :locals => {:test_file => tf.object, :form => f, :file_type => "test"} %>
           <% end %>
@@ -71,7 +71,7 @@
 
       <h4><%= t("test_framework.assignment_lib_files") %></h4>
       <div id="lib_files">
-        <% f.fields_for :test_files do |tf| %>
+        <%= f.fields_for :test_files do |tf| %>
           <% if tf.object.filetype.to_s == "lib" %>
             <%= render :partial => 'test_file', :locals => {:test_file => tf.object, :form => f, :file_type => "lib"} %>
           <% end %>
@@ -83,7 +83,7 @@
 
       <h4><%= t("test_framework.assignment_parser_files") %></h4>
       <div id="parser_files">
-        <% f.fields_for :test_files do |tf| %>
+        <%= f.fields_for :test_files do |tf| %>
           <% if tf.object.filetype.to_s == "parse" %>
             <%= render :partial => 'test_file', :locals => {:test_file => tf.object, :form => f, :file_type => "parse"} %>
           <% end %>
