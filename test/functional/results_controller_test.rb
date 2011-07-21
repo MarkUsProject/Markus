@@ -743,7 +743,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             # after the call to get_as, a second result for each marking scheme type
             # will be marked as complete, a result which will be in the same grade range
             # therefore we must increment the number of groupings at the given range for
-            # each marking schieme type
+            # each marking scheme type
             if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
               @grade_distribution[4] += 1
             else
