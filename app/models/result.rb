@@ -12,8 +12,10 @@ class Result < ActiveRecord::Base
   has_one :remarked_submission, :foreign_key => :remark_result_id
 
   validates_presence_of :marking_state
-  validates_inclusion_of :marking_state, :in => [Result::MARKING_STATES[:complete],
-    Result::MARKING_STATES[:partial],   Result::MARKING_STATES[:unmarked]]
+  validates_inclusion_of :marking_state,
+                         :in => [Result::MARKING_STATES[:complete],
+                                 Result::MARKING_STATES[:partial],
+                                 Result::MARKING_STATES[:unmarked]]
   validates_numericality_of :total_mark, :greater_than_or_equal_to => 0
   before_update :unrelease_partial_results
   before_save :check_for_nil_marks
