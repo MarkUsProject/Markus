@@ -16,13 +16,14 @@
                       { :onchange => "javascript:window.location.href = " +
                         "'#{request.fullpath}'.replace(/#{I18n.locale}/, this.options[this.selectedIndex].value);" } ) %>
       </span>
-      <%= link_to_remote( image_tag("icons/information.png",
-            :alt => I18n.t(:about_markus),
-            :title => I18n.t(:about_markus),
-            :id => "about_icon" ),
-                          :url => { :action => "about",
-                        :controller => "main" },
-              :complete => "about_modal.open();" ) %>
+      <%= link_to(image_tag("icons/information.png",
+			    :alt => I18n.t(:about_markus),
+			    :title => I18n.t(:about_markus),
+			    :id => "about_icon"),
+                  :url => {:action => "about",
+                           :controller => "main"},
+		  :complete => "about_modal.open();",
+		  :remote => true) %>
 
       <span id="admin_logged_in_as">
         <% if !session[:real_uid].nil?%>
@@ -35,13 +36,14 @@
         ( <b><%= @current_user.user_name %></b> )
       </span>
       <% if @current_user.admin? %>
-        <%= link_to_remote( image_tag("icons/group_go.png",
-            :alt => I18n.t(:switch_role),
-            :title => I18n.t(:switch_role),
-            :id => "switch_role_icon" ),
-                          :url => { :action => "role_switch",
-                             :controller => "main" },
-                          :complete => "role_switch_modal.open();" ) %>
+        <%= link_to(image_tag("icons/group_go.png",
+			      :alt => I18n.t(:switch_role),
+			      :title => I18n.t(:switch_role),
+			      :id => "switch_role_icon"),
+		    :url => {:action => "role_switch",
+			    :controller => "main" },
+		    :complete => "role_switch_modal.open();",
+		    :remote => true) %>
       <% end %>
 
       <%= link_to(I18n.t(:log_out),
