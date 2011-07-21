@@ -21,7 +21,7 @@
 </div>
 <% end %>
 
-<%= form_for :grade_entry_form, @grade_entry_form do |f| %>
+<%= form_for(@grade_entry_form, :as => :grade_entry_form) do |f| %>
 <%= f.error_messages%>
 <fieldset>
   <legend><%= t('grade_entry_forms.properties') %></legend>
