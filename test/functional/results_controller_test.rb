@@ -727,7 +727,12 @@ class ResultsControllerTest < AuthenticatedControllerTest
             # rubric: 21-25%
             g = Grouping.make(:assignment => @assignment)
             s = Submission.make(:grouping => g)
-            @result = Result.make(:submission => s)
+            @result = s.result
+            if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
+              Mark.make(:rubric, :result => @result)
+            else
+              Mark.make(:flexible, :result => @result)
+            end
 
             @assignment.assignment_stat.refresh_grade_distribution
             @grade_distribution = @assignment.assignment_stat.grade_distribution_percentage
@@ -738,15 +743,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
             # after the call to get_as, a second result for each marking scheme type
             # will be marked as complete, a result which will be in the same grade range
             # therefore we must increment the number of groupings at the given range for
-            # each marking scheme type
-            if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:flexible]
-              # increment the 6-10% range
-              @grade_distribution[1] += 1
-            end
-
+            # each marking schieme type
             if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
-              # increment the 21-25% range
               @grade_distribution[4] += 1
+            else
+              @grade_distribution[1] += 1
             end
 
             get_as @admin, :update_marking_state, {:id => @result.id, :value => 'complete'}
