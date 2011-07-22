@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/authenticated_controller_test'
+require File.join(File.dirname(__FILE__), 'authenticated_controller_test')
 require File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints')
 require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 
@@ -422,12 +422,14 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
             submission = Submission.make(:grouping => @grouping)
           end
 
-          post_as @student,
-                  :deletegroup,
-                  {:id => @assignment.id}
-          assert_equal I18n.t('groups.cant_delete_already_submitted'),
-                       flash[:fail_notice]
-          assert @student.has_accepted_grouping_for?(@assignment.id)
+          should "not be able to delete assignment" do
+            post_as @student,
+                    :deletegroup,
+                    {:id => @assignment.id}
+            assert_equal I18n.t('groups.cant_delete_already_submitted'),
+                        flash[:fail_notice]
+            assert @student.has_accepted_grouping_for?(@assignment.id)
+          end
         end
 
       end  # -- Inviter of a group
@@ -487,13 +489,16 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     context "with an assignment where instructors creates groups" do
       setup do
         @assignment = Assignment.make(:student_form_groups => False)
+      end
+
+      should "not be able to allow to form groups" do
         post_as @student,
                 :creategroup,
                 {:id => @assignment.id}
-      end
 
-      assert_equal I18n.t("create_group.fail.not_allow_to_form_groups"),
-                   flash[:fail_notice]
+        assert_equal I18n.t("create_group.fail.not_allow_to_form_groups"),
+                    flash[:fail_notice]
+      end
     end
   end  # -- A student
 
