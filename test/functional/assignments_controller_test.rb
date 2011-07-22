@@ -39,98 +39,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     destroy_repos
   end
 
-  context "A logged in admin" do
-    setup do
-      clear_fixtures # don't want fixtures for this test
-
-      # FIXME that context should be *much simpler*
-      admin = Admin.make
-      @first_assignment_file = AssignmentFile.make
-      @second_assignment_file = AssignmentFile.make
-      @assignment = Assignment.make
-      # Make sure both have the correct assignment associated
-      @first_assignment_file.assignment = @assignment
-      @first_assignment_file.save
-      @second_assignment_file.assignment = @assignment
-      @second_assignment_file.save
-
-      assert_equal 2, @assignment.assignment_files.count
-
-      post_as(admin, :edit, :id => @assignment.id,
-        :assignment => {
-          :short_identifier => @assignment.short_identifier,
-          :description => @assignment.description,
-          :message => @assignment.message,
-          :due_date => @assignment.due_date,
-          :assignment_files_attributes => {
-            "1" => { :id => @first_assignment_file.id,
-                     :filename => @first_assignment_file.filename,
-                     :_destroy => "0" },
-            "2" => { :id => @second_assignment_file.id,
-                     :filename => @second_assignment_file.filename,
-                     :_destroy => "1" }, # i.e. this one should get deleted
-          },
-          :submission_rule_attributes => {
-            :type => @assignment.submission_rule.type.to_s,
-            :id => @assignment.submission_rule.id
-          }
-        })
-    end
-
-    should "get new assignment page" do
-      get_as @admin, :new
-      assert_response :success
-    end
-
-    should "be able to remove required assignment files using rails >= 2.3.8" do
-      @assignment.reload
-      assert_equal 1, @assignment.assignment_files.count
-      assignment_file = @assignment.assignment_files.first
-      assert_equal @first_assignment_file, assignment_file
-    end
-  end
-
-  context "A logged in admin doing a POST" do
-
-    setup do
-      @admin = users(:olm_admin_1)
-      @assignment = assignments(:assignment_1)
-    end
-
-    context "on new" do
-      setup do
-        post_as @admin, :new, :id => @assignment.id
-      end
-      should assign_to :assignment
-      should assign_to :assignments
-      should respond_with :success
-    end
-
-    context "with REPOSITORY_EXTERNAL_SUBMITS_ONLY as false" do
-      setup do
-        MarkusConfigurator.stubs(:markus_config_repository_external_submits_only?).returns(false)
-        get_as @admin, :new
-      end
-      should "set allow_web_submits accordingly" do
-        assignment = assigns(:assignment)
-        assert assignment.allow_web_submits == true
-      end
-    end
-
-    context "with REPOSITORY_EXTERNAL_SUBMITS_ONLY as true" do
-      setup do
-        MarkusConfigurator.stubs(
-          :markus_config_repository_external_submits_only?).returns(true)
-        get_as @admin, :new
-      end
-
-      should "set allow_web_submits accordingly" do
-        assignment = assigns(:assignment)
-        assert assignment.allow_web_submits == false
-      end
-    end
-  end # context: A logged in admin doing a GET
-
   context "A student" do
     setup do
       @student = Student.make
@@ -488,7 +396,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
     context "with an assignment where instructors creates groups" do
       setup do
-        @assignment = Assignment.make(:student_form_groups => False)
+        @assignment = Assignment.make(:student_form_groups => false)
       end
 
       should "not be able to allow to form groups" do
@@ -502,99 +410,9 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     end
   end  # -- A student
 
-  def test_cant_invite_student_after_due_date
-    assignment = assignments(:assignment_1)
-    assignment.due_date = 2.days.ago
-    assignment.save(false)
-    student = users(:student4)
-    target = users(:student5)
-    assert !target.has_accepted_grouping_for?(assignment.id)
-    post_as(student, :invite_member, {:id => assignment.id, :invite_member => target.user_name})
-    assert_redirected_to :action => "student_interface", :id => assignment.id
-    assert_equal(I18n.t('invite_student.fail.due_date_passed', :user_name => target.user_name), flash[:fail_notice])
+  ############   Admin  ###########
 
-  end
-
-  def test_cant_delete_group_if_submitted
-    user = users(:student4)
-    grouping = groupings(:grouping_2)
-    assignment = grouping.assignment
-    assignment.group_min = 4
-    assignment.save
-    #has_submission doesn't work properly with tests due to the use of a counter cache
-#    Grouping.any_instance.stubs(:has_submission?).returns(true)
-    assert grouping.has_submission?
-    assert !grouping.is_valid?
-    post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
-    assert_redirected_to :action => "student_interface", :id => assignment.id
-    assert_equal(I18n.t('groups.cant_delete_already_submitted'), flash[:fail_notice])
-    assert user.has_accepted_grouping_for?(assignment.id)
-  end
-
-  context "A valid grouping if user is the inviter" do
-
-    should "be possible to delete if inviter is the only member" do
-      student_membership = memberships(:membership6)
-      grouping = student_membership.grouping
-      assert_equal(1, grouping.accepted_students.length)
-      user = grouping.inviter
-      assignment = grouping.assignment
-      assignment.group_min = 1
-      assignment.group_max = 2
-      assignment.save
-      # we don't want submissions for this test
-      grouping.submissions.destroy_all
-      assert grouping.submissions.empty?
-      assert grouping.is_valid?
-      post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
-      assert_redirected_to :action => "student_interface", :id => assignment.id
-      assert_equal(I18n.t("assignment.group.deleted"), flash[:edit_notice])
-      assert !user.has_accepted_grouping_for?(assignment.id)
-    end
-
-    should "not be possible to delete if assignment is not group assignment" do
-      student_membership = memberships(:membership6)
-      grouping = student_membership.grouping
-      user = grouping.inviter
-      assignment = grouping.assignment
-      assignment.group_min = 1
-      assignment.save
-      assignment.reload
-      assert !assignment.group_assignment?
-      # we don't want submissions for this test
-      grouping.submissions.destroy_all
-      assert grouping.is_valid?
-      post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
-      assert_redirected_to :action => "student_interface", :id => assignment.id
-      assert_equal(I18n.t('groups.cant_delete'), flash[:fail_notice])
-      assert user.has_accepted_grouping_for?(assignment.id)
-    end
-
-    should "not be possible to delete if inviter is NOT the only member" do
-      student_membership = memberships(:membership1)
-      grouping = student_membership.grouping
-      assert_equal(2, grouping.accepted_students.length)
-      user = grouping.inviter
-      assignment = grouping.assignment
-      assignment.group_min = 1
-      assignment.save
-      assert grouping.is_valid?
-      post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
-      assert_redirected_to :action => "student_interface", :id => assignment.id
-      assert_equal I18n.t('groups.cant_delete'), flash[:fail_notice]
-      assert user.has_accepted_grouping_for?(assignment.id)
-    end
-
-  end
-
-
-
-  def test_graders_cant_access_grades_report
-    user = users(:ta1)
-    get_as(user, :download_csv_grades_report)
-    assert_response :missing
-  end
-
+  # Admin test
   def test_admins_can_get_csv_grades_report
     # Insert a student that won't have a grouping
     s = Student.new
@@ -641,13 +459,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert_response :success
   end
 
-
-  def test_cannot_get_group_properties_if_grader
-    get_as(users(:ta1), :update_group_properties_on_persist, :assignment_id => assignments(:assignment_1).id)
-    assert_response :missing
-
-  end
-
+  # Admin test
   def test_update_group_properties_on_persist
     assignment = assignments(:assignment_1)
     get_as(@admin, :update_group_properties_on_persist, :assignment_id => assignment.id)
@@ -655,18 +467,16 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert_equal assignment, assigns(:assignment)
   end
 
-
-  def test_cannot_edit_if_grader
-    get_as(users(:ta1), :edit, :id => assignments(:assignment_1).id)
-    assert_response :missing
-  end
-
+  # Admin test
   def test_get_edit_form_if_not_post
     get_as(@admin, :edit, :id => assignments(:assignment_1).id)
     assert_response :success
     assert assigns(:assignment)
   end
 
+
+
+  # Admin test
   def test_edit_basic_params
     post_as(@admin, :edit, :id => assignments(:assignment_1).id,
       :assignment => {
@@ -686,6 +496,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert ((3.days.from_now - a.due_date).abs < 5)
   end
 
+  # Admin test
   def test_cant_edit_with_invalid_params
     original_assignment = assignments(:assignment_1)
     post_as(@admin, :edit, :id => assignments(:assignment_1).id,
@@ -708,6 +519,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert !assigns(:assignment).errors.empty?
   end
 
+  # Admin test
   def test_cant_pass_non_submission_rule_class
     original_assignment = assignments(:assignment_1)
     post_as(@admin, :edit, :id => assignments(:assignment_1).id,
@@ -731,6 +543,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert !assigns(:assignment).errors.empty?
   end
 
+  # Admin test
   def test_cant_pass_non_submission_rule_class_2
     original_assignment = assignments(:assignment_1)
     post_as(@admin, :edit, :id => assignments(:assignment_1).id,
@@ -754,6 +567,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert !assigns(:assignment).errors.empty?
   end
 
+  # Admin test
   def test_can_change_submission_rule_class_without_periods
     original_assignment = assignments(:assignment_1)
     post_as(@admin, :edit, :id => assignments(:assignment_1).id,
@@ -776,7 +590,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert assigns(:assignment).errors.empty?
   end
 
-
+  # Admin test
   def test_can_change_submission_rule_class_with_periods
     original_assignment = assignments(:assignment_1)
     post_as(@admin, :edit, :id => assignments(:assignment_1).id,
@@ -812,7 +626,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
   end
 
-
+  # Admin test
   def test_setting_instructor_forms_groups
     original_assignment = assignments(:assignment_1)
     post_as(@admin, :edit, {:id => assignments(:assignment_1).id,
@@ -841,6 +655,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert assigns(:assignment).errors.empty?
   end
 
+  # Admin test
   def test_setting_students_forms_groups
     original_assignment = assignments(:assignment_1)
     post_as(@admin, :edit, {:id => assignments(:assignment_1).id,
@@ -869,25 +684,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert assigns(:assignment).errors.empty?
   end
 
-  def test_on_index_student_gets_assignment_results
-    get_as(users(:student1), :index)
-    assert assigns(:a_id_results)
-    assert assigns(:assignments)
-    assert_response :success
-  end
-
-  # TODO:  A test to make sure that @a_id_results from index actually
-  # does proper computing of averages/etc
-
-  def test_on_index_grader_gets_assignment_list
-    @submission_rule = NoLateSubmissionRule.make
-    @submission_rule.stubs(:can_collect_now?).returns(false)
-    Assignment.any_instance.stubs(:submission_rule).returns(@submission_rule)
-    get_as(users(:ta1), :index)
-    assert assigns(:assignments)
-    assert_response :success
-  end
-
+  # Admin test
   def test_on_index_instructor_gets_assignment_list
     @submission_rule = NoLateSubmissionRule.make
     @submission_rule.stubs(:can_collect_now?).returns(false)
@@ -897,16 +694,101 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert_response :success
   end
 
+  # Admin test
   def test_instructor_bounced_from_student_interface
     get_as(@admin, :student_interface, :id => assignments(:assignment_1).id)
     assert_response :missing
   end
 
+
+  ############   Grader  ###########
+
+  # Grader test
+  def test_on_index_grader_gets_assignment_list
+    @submission_rule = NoLateSubmissionRule.make
+    @submission_rule.stubs(:can_collect_now?).returns(false)
+    Assignment.any_instance.stubs(:submission_rule).returns(@submission_rule)
+    get_as(users(:ta1), :index)
+    assert assigns(:assignments)
+    assert_response :success
+  end
+
+
+  # Grader test
   def test_grader_bounced_from_student_interface
     get_as(users(:ta1), :student_interface, :id => assignments(:assignment_1).id)
     assert_response :missing
   end
 
+  # Graders test
+  def test_graders_cant_access_grades_report
+    user = users(:ta1)
+    get_as(user, :download_csv_grades_report)
+    assert_response :missing
+  end
+
+  # Grader test
+  def test_cannot_get_group_properties_if_grader
+    get_as(users(:ta1), :update_group_properties_on_persist, :assignment_id => assignments(:assignment_1).id)
+    assert_response :missing
+
+  end
+
+  # Grader test
+  def test_cannot_edit_if_grader
+    get_as(users(:ta1), :edit, :id => assignments(:assignment_1).id)
+    assert_response :missing
+  end
+
+
+
+  ############   Student  ###########
+
+  # Student test
+  def test_cant_invite_student_after_due_date
+    assignment = assignments(:assignment_1)
+    assignment.due_date = 2.days.ago
+    assignment.save(false)
+    student = users(:student4)
+    target = users(:student5)
+    assert !target.has_accepted_grouping_for?(assignment.id)
+    post_as(student, :invite_member, {:id => assignment.id, :invite_member => target.user_name})
+    assert_redirected_to :action => "student_interface", :id => assignment.id
+    assert_equal(I18n.t('invite_student.fail.due_date_passed', :user_name => target.user_name), flash[:fail_notice])
+
+  end
+
+  # Student test
+  def test_cant_delete_group_if_submitted
+    user = users(:student4)
+    grouping = groupings(:grouping_2)
+    assignment = grouping.assignment
+    assignment.group_min = 4
+    assignment.save
+    #has_submission doesn't work properly with tests due to the use of a counter cache
+#    Grouping.any_instance.stubs(:has_submission?).returns(true)
+    assert grouping.has_submission?
+    assert !grouping.is_valid?
+    post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
+    assert_redirected_to :action => "student_interface", :id => assignment.id
+    assert_equal(I18n.t('groups.cant_delete_already_submitted'), flash[:fail_notice])
+    assert user.has_accepted_grouping_for?(assignment.id)
+  end
+
+
+  # Student test
+  def test_on_index_student_gets_assignment_results
+    get_as(users(:student1), :index)
+    assert assigns(:a_id_results)
+    assert assigns(:assignments)
+    assert_response :success
+  end
+
+
+  # TODO:  A test to make sure that @a_id_results from index actually
+  # does proper computing of averages/etc
+
+  # Student test
   def test_student_gets_student_interface
     get_as(users(:student1), :student_interface, :id => assignments(:assignment_1).id)
     assert assigns(:assignment)
@@ -914,6 +796,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert_response :success
   end
 
+  # Student test
   def test_student_gets_solo_grouping_automatically
     # Destroy the grouping for a student
     assignment = assignments(:assignment_1)
@@ -940,6 +823,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert_redirected_to :action => 'student_interface', :id => assignment.id
   end
 
+  # Student test
   def test_student_gets_list_of_pending_groupings
     # Destroy the grouping for a student
     assignment = assignments(:assignment_1)
@@ -975,6 +859,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
   end
 
+  # Student test
   def test_should_get_student_interface_working_in_group_student
     student = users(:student1)
     assignment = assignments(:assignment_1)
@@ -982,6 +867,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert_response :success
   end
 
+  # Student test
   def test_should_get_student_interface_working_alone_student
     student = users(:student1)
     assignment = assignments(:assignment_2)
@@ -989,6 +875,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert_response :success
   end
 
+  # Student test
   def test_should_creategroup
     assignment = assignments(:assignment_2)
     student = users(:student6)
@@ -996,6 +883,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert_redirected_to :action => 'student_interface', :id => assignment.id
   end
 
+  # Student test
   def test_should_creategroup_alone
     assignment = assignments(:assignment_1)
     student = users(:student6)
@@ -1003,6 +891,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert_redirected_to :action => 'student_interface', :id => assignment.id
   end
 
+  # Student test
   def test_shouldnt_invite_hidden_student
     @student = users(:student1)
     assignment = assignments(:assignment_1)
@@ -1015,6 +904,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert_equal original_memberships, grouping.memberships, "Memberships were not equal"
   end
 
+  # Student test
   def test_should_invite_someone
     @student = users(:student1)
     assignment = assignments(:assignment_1)
@@ -1024,6 +914,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert flash[:success].include?(I18n.t('invite_student.success'))
   end
 
+  # Student test
   def test_should_invite_someone_alreadyinvited
     assignment = assignments(:assignment_1)
     student = users(:student5)
@@ -1033,6 +924,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert flash[:fail_notice].include?(I18n.t('invite_student.fail.already_pending', :user_name => student.user_name))
   end
 
+  # Student test
   def test_student_choose_to_join_a_group
     assignment = assignments(:assignment_1)
     student = users(:student5)
@@ -1041,6 +933,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert_redirected_to :action => 'student_interface', :id => assignment.id
   end
 
+  # Student test
   def test_student_choose_to_decline_an_invitation
     assignment = assignments(:assignment_1)
     student = users(:student5)
@@ -1049,6 +942,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert_redirected_to :action => 'student_interface', :id => assignment.id
   end
 
+  # Student test
   def test_delete_rejected
     student = users(:student1)
     assignment = assignments(:assignment_1)
@@ -1056,6 +950,102 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     post_as(student, :delete_rejected, {:id => assignment.id, :membership => membership.id})
     assert_redirected_to :controller => 'assignments', :action => 'student_interface', :id => assignment.id
   end
+
+  ################## Refactor the following tests
+
+  context "A logged in admin" do
+    setup do
+      clear_fixtures # don't want fixtures for this test
+
+      # FIXME that context should be *much simpler*
+      admin = Admin.make
+      @first_assignment_file = AssignmentFile.make
+      @second_assignment_file = AssignmentFile.make
+      @assignment = Assignment.make
+      # Make sure both have the correct assignment associated
+      @first_assignment_file.assignment = @assignment
+      @first_assignment_file.save
+      @second_assignment_file.assignment = @assignment
+      @second_assignment_file.save
+
+      assert_equal 2, @assignment.assignment_files.count
+
+      post_as(admin, :edit, :id => @assignment.id,
+        :assignment => {
+          :short_identifier => @assignment.short_identifier,
+          :description => @assignment.description,
+          :message => @assignment.message,
+          :due_date => @assignment.due_date,
+          :assignment_files_attributes => {
+            "1" => { :id => @first_assignment_file.id,
+                     :filename => @first_assignment_file.filename,
+                     :_destroy => "0" },
+            "2" => { :id => @second_assignment_file.id,
+                     :filename => @second_assignment_file.filename,
+                     :_destroy => "1" }, # i.e. this one should get deleted
+          },
+          :submission_rule_attributes => {
+            :type => @assignment.submission_rule.type.to_s,
+            :id => @assignment.submission_rule.id
+          }
+        })
+    end
+
+    should "get new assignment page" do
+      get_as @admin, :new
+      assert_response :success
+    end
+
+    should "be able to remove required assignment files using rails >= 2.3.8" do
+      @assignment.reload
+      assert_equal 1, @assignment.assignment_files.count
+      assignment_file = @assignment.assignment_files.first
+      assert_equal @first_assignment_file, assignment_file
+    end
+  end
+
+  context "A logged in admin doing a POST" do
+
+    setup do
+      @admin = users(:olm_admin_1)
+      @assignment = assignments(:assignment_1)
+    end
+
+    context "on new" do
+      setup do
+        post_as @admin, :new, :id => @assignment.id
+      end
+      should assign_to :assignment
+      should assign_to :assignments
+      should respond_with :success
+    end
+
+    context "with REPOSITORY_EXTERNAL_SUBMITS_ONLY as false" do
+      setup do
+        MarkusConfigurator.stubs(:markus_config_repository_external_submits_only?).returns(false)
+        get_as @admin, :new
+      end
+      should "set allow_web_submits accordingly" do
+        assignment = assigns(:assignment)
+        assert assignment.allow_web_submits == true
+      end
+    end
+
+    context "with REPOSITORY_EXTERNAL_SUBMITS_ONLY as true" do
+      setup do
+        MarkusConfigurator.stubs(
+          :markus_config_repository_external_submits_only?).returns(true)
+        get_as @admin, :new
+      end
+
+      should "set allow_web_submits accordingly" do
+        assignment = assigns(:assignment)
+        assert assignment.allow_web_submits == false
+      end
+    end
+  end # context: A logged in admin doing a GET
+
+
 
   # If for an assignment the due date has passed, but the instructor has set up a grace period,
   # group formation functionality should be still possible
@@ -1158,5 +1148,63 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     end # end context logged in student
 
   end # context assignment past due date, pre collection date
+
+  context "A valid grouping if user is the inviter" do
+
+    should "be possible to delete if inviter is the only member" do
+      student_membership = memberships(:membership6)
+      grouping = student_membership.grouping
+      assert_equal(1, grouping.accepted_students.length)
+      user = grouping.inviter
+      assignment = grouping.assignment
+      assignment.group_min = 1
+      assignment.group_max = 2
+      assignment.save
+      # we don't want submissions for this test
+      grouping.submissions.destroy_all
+      assert grouping.submissions.empty?
+      assert grouping.is_valid?
+      post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
+      assert_redirected_to :action => "student_interface", :id => assignment.id
+      assert_equal(I18n.t("assignment.group.deleted"), flash[:edit_notice])
+      assert !user.has_accepted_grouping_for?(assignment.id)
+    end
+
+    should "not be possible to delete if assignment is not group assignment" do
+      student_membership = memberships(:membership6)
+      grouping = student_membership.grouping
+      user = grouping.inviter
+      assignment = grouping.assignment
+      assignment.group_min = 1
+      assignment.save
+      assignment.reload
+      assert !assignment.group_assignment?
+      # we don't want submissions for this test
+      grouping.submissions.destroy_all
+      assert grouping.is_valid?
+      post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
+      assert_redirected_to :action => "student_interface", :id => assignment.id
+      assert_equal(I18n.t('groups.cant_delete'), flash[:fail_notice])
+      assert user.has_accepted_grouping_for?(assignment.id)
+    end
+
+    should "not be possible to delete if inviter is NOT the only member" do
+      student_membership = memberships(:membership1)
+      grouping = student_membership.grouping
+      assert_equal(2, grouping.accepted_students.length)
+      user = grouping.inviter
+      assignment = grouping.assignment
+      assignment.group_min = 1
+      assignment.save
+      assert grouping.is_valid?
+      post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
+      assert_redirected_to :action => "student_interface", :id => assignment.id
+      assert_equal I18n.t('groups.cant_delete'), flash[:fail_notice]
+      assert user.has_accepted_grouping_for?(assignment.id)
+    end
+
+  end
+
+
 
 end
