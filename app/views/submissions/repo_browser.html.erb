@@ -22,12 +22,12 @@
       <div id="find_revision_error" class="error" style="display:none;">
       </div>
 
-      <% form_tag :action => 'repo_browser', :id => @grouping.id, :find_revision_by => 'revision_timestamp' do %>
+     <%= form_tag :action => 'repo_browser', :id => @grouping.id, :find_revision_by => 'revision_timestamp' do %>
      <%= calendar_date_select_tag "revision_timestamp", @revision_timestamp, :time => true %>
      <%= submit_tag I18n.t("browse_submissions.find_by_revision_timestamp") %>
      <% end %>
 
-      <% form_tag :action => 'repo_browser', :id => @grouping.id, :find_revision_by => 'revision_number' do %>
+      <%= form_tag :action => 'repo_browser', :id => @grouping.id, :find_revision_by => 'revision_number' do %>
 
      <%= text_field_tag "revision_number", @revision_number %>
      <%= submit_tag I18n.t("browse_submissions.find_by_revision_number") %>

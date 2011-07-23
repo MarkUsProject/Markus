@@ -25,8 +25,8 @@
   <%= render :partial => 'layouts/role_switch' %>
 <div id="container">
   <div id="content">
-<%= render :partial => 'layouts/noscript'%>
-    <%= @content_for_layout %>
+    <%= render :partial => 'layouts/noscript'%>
+    <%= content_for?(:content) ? yield(:content) : yield %>
   </div> <!-- content -->
 </div> <!-- container -->
 </div>

@@ -51,7 +51,6 @@ group :development, :test do
   gem "machinist"
   gem "faker"
   gem "railroady"
-#  gem "factory_data_preloader"
   gem "time-warp"
   gem 'ruby-debug', :platforms => :mri_18
   gem 'ruby-debug19', :require => 'ruby-debug', :platforms => :mri_19

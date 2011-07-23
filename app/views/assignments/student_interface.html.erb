@@ -352,7 +352,7 @@ if !@grouping.nil? &&
    @grouping.inviter == @current_user &&
    !@assignment.instructor_form_groups %>
   <div id="invite_dialog">
-    <% form_tag({:action => 'invite_member',
+    <%= form_tag({:action => 'invite_member',
         :id => @assignment.id},
         {:onsubmit => "$('invite_modal_spinner').show();"}) do %>
       <h2><%= I18n.t("student.invite") %></h2>
