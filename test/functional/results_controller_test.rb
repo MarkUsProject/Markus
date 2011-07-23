@@ -595,15 +595,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
                 g = Grouping.make(:assignment => @assignment)
                 s = Submission.make(:grouping => g)
                 if time == 2
-                  @results.push(Result.make(
-                        :id => time,
-                        :submission => s,
-                        :marking_state => Result::MARKING_STATES[:complete],
-                        :released_to_students => true))
-                else
-                  @results.push(Result.make(:id => time,
-                                            :submission => s))
+                  s.result.marking_state = Result::MARKING_STATES[:complete]
+                  s.result.released_to_students = true
+                  s.result.save
                 end
+                @results = Result.all
               end
             end
 
