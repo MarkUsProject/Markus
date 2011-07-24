@@ -39,6 +39,191 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     destroy_repos
   end
 
+  context "An admin" do
+    setup do
+      @admin = Admin.make
+    end
+
+    context "with an assignment" do
+      setup do
+        @assignment = Assignment.make
+      end
+
+      should "get edit form if not post" do
+        get_as @admin,
+              :edit,
+              :id => @assignment.id
+        assert_response :success
+        assert assigns :assignment
+      end
+
+      should "bounced off from student interface" do
+        get_as @admin,
+               :student_interface,
+               :id => @assignment.id
+        assert_response :missing
+      end
+
+      should "update group properties on persist" do
+        get_as  @admin,
+                :update_group_properties_on_persist,
+                :assignment_id => @assignment.id
+        assert assigns(:assignment)
+        assert_equal @assignment, assigns(:assignment)
+      end
+
+      should "edit basic paramaters" do
+        post_as @admin,
+                :edit,
+                :id => @assignment.id,
+                :assignment => {
+                  :short_identifier => 'New SI',
+                  :description => 'New Description',
+                  :message => 'New Message',
+                  :due_date => 3.days.from_now,
+                  :submission_rule_attributes => {
+                    :type => @assignment.submission_rule.type.to_s,
+                    :id => @assignment.submission_rule.id
+                  }
+                }
+        @assignment.reload
+        assert_equal 'New SI', @assignment.short_identifier
+        assert_equal 'New Description', @assignment.description
+        assert_equal 'New Message', @assignment.message
+        assert ((3.days.from_now - @assignment.due_date).abs < 5)
+      end
+
+      should "not be able to edit with invalid assignment" do
+
+        post_as @admin,
+                :edit,
+                :id => @assignment.id,
+                :assignment => {
+                  :short_identifier => '',
+                  :description => 'New Description',
+                  :message => 'New Message',
+                  :due_date => 3.days.from_now,
+                  :submission_rule_attributes => {
+                    :type => @assignment.submission_rule.type.to_s,
+                    :id => @assignment.submission_rule.id}}
+        a = Assignment.find(@assignment.id)
+        assert_equal @assignment.short_identifier, a.short_identifier
+        assert_equal @assignment.description, a.description
+        assert_equal @assignment.message, a.message
+        assert_equal @assignment.due_date, a.due_date
+        assert_not_nil assigns(:assignment)
+        assert !assigns(:assignment).errors.empty?
+      end
+
+      should "be able to set instructor forms groups" do
+        post_as @admin,
+                :edit,
+                {:id => @assignment.id,
+                 :assignment => {
+                   :description => 'New Description',
+                   :message => 'New Message',
+                   :due_date => 3.days.from_now,
+                   :student_form_groups => false,
+                   :submission_rule_attributes => {
+                     :type => 'NoLateSubmissionRule',
+                     :id => @assignment.submission_rule.id},
+                   :is_group_assignment => true}}
+
+        a = Assignment.find(@assignment.id)
+        assert_equal 'New Description', a.description
+        assert_equal 'New Message', a.message
+        assert_equal @assignment.submission_rule.type.to_s,
+                     a.submission_rule.type.to_s
+        assert !a.student_form_groups
+        assert_not_nil assigns(:assignment)
+        assert assigns(:assignment).errors.empty?
+      end
+
+      should "be able to set students to form groups" do
+        post_as @admin,
+                :edit,
+                {:id => @assignment.id,
+                 :assignment => {
+                   :description => 'New Description',
+                   :message => 'New Message',
+                   :due_date => 3.days.from_now,
+                   :student_form_groups => '0',
+                   :is_group_assignment => "true",
+                   :submission_rule_attributes => {
+                     :type => 'NoLateSubmissionRule',
+                     :id => @assignment.submission_rule.id}}}
+
+        @assignment.reload
+        assert I18n.t("assignment.update_success"),
+               flash[:success]
+
+        assert_not_nil assigns(:assignment)
+        assert assigns(:assignment).errors.empty?
+        assert @assignment.student_form_groups, true
+      end
+
+      should "get assignments list" do
+        submission_rule = NoLateSubmissionRule.make
+        submission_rule.stubs(:can_collect_now?).returns(false)
+        Assignment.any_instance.stubs(
+            :submission_rule).returns(submission_rule)
+        get_as @admin, :index
+        assert assigns(:assignments)
+        assert_response :success
+      end
+
+    end  # -- with an assignment
+  end  # -- an Admin
+
+  context "An grader" do
+    setup do
+      @grader = Ta.make
+    end
+
+    should "not be able to CSV graders report" do
+      get_as @grader, :download_csv_grades_report
+      assert_response :missing
+    end
+
+    context "with an assignment" do
+      setup do
+        @assignment = Assignment.make
+      end
+
+      should "not be able to edit" do
+          get_as @grader,
+                 :edit,
+                 :id => @assignment.id
+          assert_response :missing
+      end
+
+      should "bounced from student interface" do
+        get_as @grader,
+               :student_interface,
+               :id => @assignment.id
+        assert_response :missing
+      end
+
+      should "not be able to get group properties" do
+        get_as @grader,
+               :update_group_properties_on_persist,
+               :assignment_id => @assignment.id
+        assert_response :missing
+      end
+
+      should "gets assignment list on the graders" do
+        submission_rule = NoLateSubmissionRule.make
+        submission_rule.stubs(:can_collect_now?).returns(false)
+        Assignment.any_instance.stubs(:submission_rule).returns(
+                submission_rule)
+        get_as @grader, :index
+        assert assigns(:assignments)
+        assert_response :success
+      end
+
+    end  # -- with an Assignment
+  end  # -- with a Grader
+
   context "A student" do
     setup do
       @student = Student.make
@@ -57,7 +242,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
       should "not be able to access grades report" do
-        user = users(:student4)
         get_as @student, :download_csv_grades_report
         assert_response :missing
       end
@@ -65,6 +249,15 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       should "not be able to edit assignment" do
         get_as @student, :edit, :id => @assignment.id
         assert_response :missing
+      end
+
+      should "be able to get the student interface" do
+        get_as @student,
+               :student_interface,
+               :id => @assignment.id
+        assert assigns(:assignment)
+        assert assigns(:pending_grouping).nil?
+        assert_response :success
       end
 
       should "be able to create a group" do
@@ -291,7 +484,9 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           assert_raise ActiveRecord::RecordNotFound do
             StudentMembership.find(sm.id)
           end
-
+          assert_redirected_to :controller => 'assignments',
+                               :action => 'student_interface',
+                               :id => @assignment.id
           assert_response :redirect
         end
 
@@ -309,7 +504,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                        flash[:edit_notice]
           assert_equal 1,
                        @grouping.memberships.length
-
         end
 
         should "be able to delete an not valid group " do
@@ -330,7 +524,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
             submission = Submission.make(:grouping => @grouping)
           end
 
-          should "not be able to delete assignment" do
+          should "not be able to delete a group" do
             post_as @student,
                     :deletegroup,
                     {:id => @assignment.id}
@@ -408,6 +602,26 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                     flash[:fail_notice]
       end
     end
+
+    context "with an assignment, with a past due date" do
+      setup do
+        @assignment = Assignment.make(:due_date => 3.days.ago)
+      end
+
+      should "not be able to invite" do
+        student = Student.make
+        post_as @student,
+                :invite_member,
+                {:id => @assignment.id,
+                 :invite_member => student.user_name}
+        assert_redirected_to :action => "student_interface",
+                             :id => @assignment.id
+        assert_equal I18n.t('invite_student.fail.due_date_passed',
+                            :user_name => student.user_name),
+                     flash[:fail_notice]
+      end
+
+    end
   end  # -- A student
 
   ############   Admin  ###########
@@ -457,66 +671,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     end
 
     assert_response :success
-  end
-
-  # Admin test
-  def test_update_group_properties_on_persist
-    assignment = assignments(:assignment_1)
-    get_as(@admin, :update_group_properties_on_persist, :assignment_id => assignment.id)
-    assert assigns(:assignment)
-    assert_equal assignment, assigns(:assignment)
-  end
-
-  # Admin test
-  def test_get_edit_form_if_not_post
-    get_as(@admin, :edit, :id => assignments(:assignment_1).id)
-    assert_response :success
-    assert assigns(:assignment)
-  end
-
-
-
-  # Admin test
-  def test_edit_basic_params
-    post_as(@admin, :edit, :id => assignments(:assignment_1).id,
-      :assignment => {
-        :short_identifier => 'New SI',
-        :description => 'New Description',
-        :message => 'New Message',
-        :due_date => 3.days.from_now,
-        :submission_rule_attributes => {
-          :type => assignments(:assignment_1).submission_rule.type.to_s,
-          :id => assignments(:assignment_1).submission_rule.id
-        }
-      })
-    a = Assignment.find(assignments(:assignment_1).id)
-    assert_equal 'New SI', a.short_identifier
-    assert_equal 'New Description', a.description
-    assert_equal 'New Message', a.message
-    assert ((3.days.from_now - a.due_date).abs < 5)
-  end
-
-  # Admin test
-  def test_cant_edit_with_invalid_params
-    original_assignment = assignments(:assignment_1)
-    post_as(@admin, :edit, :id => assignments(:assignment_1).id,
-      :assignment => {
-        :short_identifier => '',
-        :description => 'New Description',
-        :message => 'New Message',
-        :due_date => 3.days.from_now,
-        :submission_rule_attributes => {
-          :type => assignments(:assignment_1).submission_rule.type.to_s,
-          :id => assignments(:assignment_1).submission_rule.id
-        }
-      })
-    a = Assignment.find(assignments(:assignment_1).id)
-    assert_equal original_assignment.short_identifier, a.short_identifier
-    assert_equal original_assignment.description, a.description
-    assert_equal original_assignment.message, a.message
-    assert_equal original_assignment.due_date, a.due_date
-    assert_not_nil assigns(:assignment)
-    assert !assigns(:assignment).errors.empty?
   end
 
   # Admin test
@@ -626,155 +780,26 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
   end
 
-  # Admin test
-  def test_setting_instructor_forms_groups
-    original_assignment = assignments(:assignment_1)
-    post_as(@admin, :edit, {:id => assignments(:assignment_1).id,
-      :assignment => {
-        :short_identifier => 'New SI',
-        :description => 'New Description',
-        :message => 'New Message',
-        :due_date => 3.days.from_now,
-        :student_form_groups => '0',
-        :submission_rule_attributes => {
-          :type => 'NoLateSubmissionRule',
-          :id => assignments(:assignment_1).submission_rule.id
-        }
-        },
-      :is_group_assignment => 'true'
-
-      })
-    a = Assignment.find(assignments(:assignment_1).id)
-    assert_equal 'New SI', a.short_identifier
-    assert_equal 'New Description', a.description
-    assert_equal 'New Message', a.message
-    assert_equal original_assignment.submission_rule.type.to_s, a.submission_rule.type.to_s
-    assert a.instructor_form_groups
-    assert !a.student_form_groups
-    assert_not_nil assigns(:assignment)
-    assert assigns(:assignment).errors.empty?
-  end
-
-  # Admin test
-  def test_setting_students_forms_groups
-    original_assignment = assignments(:assignment_1)
-    post_as(@admin, :edit, {:id => assignments(:assignment_1).id,
-      :assignment => {
-        :short_identifier => 'New SI',
-        :description => 'New Description',
-        :message => 'New Message',
-        :due_date => 3.days.from_now,
-        :student_form_groups => 'true',
-        :submission_rule_attributes => {
-          :type => 'NoLateSubmissionRule',
-          :id => assignments(:assignment_1).submission_rule.id
-        }
-        },
-      :is_group_assignment => 'true'
-
-      })
-    a = Assignment.find(assignments(:assignment_1).id)
-    assert_equal 'New SI', a.short_identifier
-    assert_equal 'New Description', a.description
-    assert_equal 'New Message', a.message
-    assert_equal original_assignment.submission_rule.type.to_s, a.submission_rule.type.to_s
-    assert a.student_form_groups
-    assert !a.instructor_form_groups
-    assert_not_nil assigns(:assignment)
-    assert assigns(:assignment).errors.empty?
-  end
-
-  # Admin test
-  def test_on_index_instructor_gets_assignment_list
-    @submission_rule = NoLateSubmissionRule.make
-    @submission_rule.stubs(:can_collect_now?).returns(false)
-    Assignment.any_instance.stubs(:submission_rule).returns(@submission_rule)
-    get_as(@admin, :index)
-    assert assigns(:assignments)
-    assert_response :success
-  end
-
-  # Admin test
-  def test_instructor_bounced_from_student_interface
-    get_as(@admin, :student_interface, :id => assignments(:assignment_1).id)
-    assert_response :missing
-  end
-
-
-  ############   Grader  ###########
-
-  # Grader test
-  def test_on_index_grader_gets_assignment_list
-    @submission_rule = NoLateSubmissionRule.make
-    @submission_rule.stubs(:can_collect_now?).returns(false)
-    Assignment.any_instance.stubs(:submission_rule).returns(@submission_rule)
-    get_as(users(:ta1), :index)
-    assert assigns(:assignments)
-    assert_response :success
-  end
-
-
-  # Grader test
-  def test_grader_bounced_from_student_interface
-    get_as(users(:ta1), :student_interface, :id => assignments(:assignment_1).id)
-    assert_response :missing
-  end
-
-  # Graders test
-  def test_graders_cant_access_grades_report
-    user = users(:ta1)
-    get_as(user, :download_csv_grades_report)
-    assert_response :missing
-  end
-
-  # Grader test
-  def test_cannot_get_group_properties_if_grader
-    get_as(users(:ta1), :update_group_properties_on_persist, :assignment_id => assignments(:assignment_1).id)
-    assert_response :missing
-
-  end
-
-  # Grader test
-  def test_cannot_edit_if_grader
-    get_as(users(:ta1), :edit, :id => assignments(:assignment_1).id)
-    assert_response :missing
-  end
-
-
-
   ############   Student  ###########
 
-  # Student test
-  def test_cant_invite_student_after_due_date
-    assignment = assignments(:assignment_1)
-    assignment.due_date = 2.days.ago
-    assignment.save(false)
-    student = users(:student4)
-    target = users(:student5)
-    assert !target.has_accepted_grouping_for?(assignment.id)
-    post_as(student, :invite_member, {:id => assignment.id, :invite_member => target.user_name})
-    assert_redirected_to :action => "student_interface", :id => assignment.id
-    assert_equal(I18n.t('invite_student.fail.due_date_passed', :user_name => target.user_name), flash[:fail_notice])
-
-  end
-
-  # Student test
-  def test_cant_delete_group_if_submitted
-    user = users(:student4)
-    grouping = groupings(:grouping_2)
-    assignment = grouping.assignment
-    assignment.group_min = 4
-    assignment.save
-    #has_submission doesn't work properly with tests due to the use of a counter cache
-#    Grouping.any_instance.stubs(:has_submission?).returns(true)
-    assert grouping.has_submission?
-    assert !grouping.is_valid?
-    post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
-    assert_redirected_to :action => "student_interface", :id => assignment.id
-    assert_equal(I18n.t('groups.cant_delete_already_submitted'), flash[:fail_notice])
-    assert user.has_accepted_grouping_for?(assignment.id)
-  end
-
+# TODO this is already tested
+#  # Student test
+#  def test_cant_delete_group_if_submitted
+#    user = users(:student4)
+#    grouping = groupings(:grouping_2)
+#    assignment = grouping.assignment
+#    assignment.group_min = 4
+#    assignment.save
+#    #has_submission doesn't work properly with tests due to the use of a counter cache
+##    Grouping.any_instance.stubs(:has_submission?).returns(true)
+#    assert grouping.has_submission?
+#    assert !grouping.is_valid?
+#    post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
+#    assert_redirected_to :action => "student_interface", :id => assignment.id
+#    assert_equal(I18n.t('groups.cant_delete_already_submitted'), flash[:fail_notice])
+#    assert user.has_accepted_grouping_for?(assignment.id)
+#  end
+#
 
   # Student test
   def test_on_index_student_gets_assignment_results
@@ -787,14 +812,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
   # TODO:  A test to make sure that @a_id_results from index actually
   # does proper computing of averages/etc
-
-  # Student test
-  def test_student_gets_student_interface
-    get_as(users(:student1), :student_interface, :id => assignments(:assignment_1).id)
-    assert assigns(:assignment)
-    assert assigns(:pending_grouping).nil?
-    assert_response :success
-  end
 
   # Student test
   def test_student_gets_solo_grouping_automatically
@@ -948,7 +965,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assignment = assignments(:assignment_1)
     membership = memberships(:membership3)
     post_as(student, :delete_rejected, {:id => assignment.id, :membership => membership.id})
-    assert_redirected_to :controller => 'assignments', :action => 'student_interface', :id => assignment.id
   end
 
   ################## Refactor the following tests
@@ -1204,7 +1220,5 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     end
 
   end
-
-
 
 end
