@@ -68,7 +68,7 @@ class ResultsController < ApplicationController
        groupings = @assignment.ta_memberships.find_all_by_user_id(
                       current_user.id,
                       :include => [:grouping => :group],
-                      :order_by => 'id ASC').collect do |m|
+                      :order => 'id ASC').collect do |m|
          m.grouping
        end
     elsif current_user.admin?
