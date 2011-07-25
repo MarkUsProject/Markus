@@ -245,7 +245,7 @@ Submission.blueprint do
 end
 
 SubmissionFile.blueprint do
-  submission
+  submission {Submission.make}
   filename {Sham.name}
   path {Sham.filename}
 end
