@@ -94,7 +94,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
       should "not be able to edit with invalid assignment" do
-
         post_as @admin,
                 :edit,
                 :id => @assignment.id,
@@ -111,6 +110,29 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         assert_equal @assignment.description, a.description
         assert_equal @assignment.message, a.message
         assert_equal @assignment.due_date, a.due_date
+        assert_not_nil assigns(:assignment)
+        assert !assigns(:assignment).errors.empty?
+      end
+
+      should "not be able to edit with invalid submission rules" do
+        post_as @admin,
+                :edit,
+                :id => @assignment.id,
+                :assignment => {
+                  :short_identifier => 'New SI',
+                  :description => 'New Description',
+                  :message => 'New Message',
+                  :due_date => 3.days.from_now,
+                  :submission_rule_attributes => {
+                    :type => 'UnknownClass',
+                    :id => @assignment.submission_rule.id}}
+        a = Assignment.find(@assignment.id)
+        assert_equal @assignment.short_identifier, a.short_identifier
+        assert_equal @assignment.description, a.description
+        assert_equal @assignment.message, a.message
+        assert_equal @assignment.due_date, a.due_date
+        assert_equal @assignment.submission_rule.type.to_s,
+                     a.submission_rule.type.to_s
         assert_not_nil assigns(:assignment)
         assert !assigns(:assignment).errors.empty?
       end
@@ -232,6 +254,13 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     context "with an assignment" do
       setup do
         @assignment = Assignment.make(:group_min => 2)
+      end
+
+      should "get assignment's index" do
+        get_as @student, :index
+        assert assigns(:a_id_results)
+        assert assigns(:assignments)
+        assert_response :success
       end
 
       should "not be able to get group properties" do
@@ -682,54 +711,31 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert_response :success
   end
 
+# TODO already done
   # Admin test
-  def test_cant_pass_non_submission_rule_class
-    original_assignment = assignments(:assignment_1)
-    post_as(@admin, :edit, :id => assignments(:assignment_1).id,
-      :assignment => {
-        :short_identifier => 'New SI',
-        :description => 'New Description',
-        :message => 'New Message',
-        :due_date => 3.days.from_now,
-        :submission_rule_attributes => {
-          :type => 'UnknownClass',
-          :id => assignments(:assignment_1).submission_rule.id
-        }
-      })
-    a = Assignment.find(assignments(:assignment_1).id)
-    assert_equal original_assignment.short_identifier, a.short_identifier
-    assert_equal original_assignment.description, a.description
-    assert_equal original_assignment.message, a.message
-    assert_equal original_assignment.due_date, a.due_date
-    assert_equal original_assignment.submission_rule.type.to_s, a.submission_rule.type.to_s
-    assert_not_nil assigns(:assignment)
-    assert !assigns(:assignment).errors.empty?
-  end
-
-  # Admin test
-  def test_cant_pass_non_submission_rule_class_2
-    original_assignment = assignments(:assignment_1)
-    post_as(@admin, :edit, :id => assignments(:assignment_1).id,
-      :assignment => {
-        :short_identifier => 'New SI',
-        :description => 'New Description',
-        :message => 'New Message',
-        :due_date => 3.days.from_now,
-        :submission_rule_attributes => {
-          :type => 'Student',
-          :id => assignments(:assignment_1).submission_rule.id
-        }
-      })
-    a = Assignment.find(assignments(:assignment_1).id)
-    assert_equal original_assignment.short_identifier, a.short_identifier
-    assert_equal original_assignment.description, a.description
-    assert_equal original_assignment.message, a.message
-    assert_equal original_assignment.due_date, a.due_date
-    assert_equal original_assignment.submission_rule.type.to_s, a.submission_rule.type.to_s
-    assert_not_nil assigns(:assignment)
-    assert !assigns(:assignment).errors.empty?
-  end
-
+#  def test_cant_pass_non_submission_rule_class_2
+#    original_assignment = assignments(:assignment_1)
+#    post_as(@admin, :edit, :id => assignments(:assignment_1).id,
+#      :assignment => {
+#        :short_identifier => 'New SI',
+#        :description => 'New Description',
+#        :message => 'New Message',
+#        :due_date => 3.days.from_now,
+#        :submission_rule_attributes => {
+#          :type => 'Student',
+#          :id => assignments(:assignment_1).submission_rule.id
+#        }
+#      })
+#    a = Assignment.find(assignments(:assignment_1).id)
+#    assert_equal original_assignment.short_identifier, a.short_identifier
+#    assert_equal original_assignment.description, a.description
+#    assert_equal original_assignment.message, a.message
+#    assert_equal original_assignment.due_date, a.due_date
+#    assert_equal original_assignment.submission_rule.type.to_s, a.submission_rule.type.to_s
+#    assert_not_nil assigns(:assignment)
+#    assert !assigns(:assignment).errors.empty?
+#  end
+#
   # Admin test
   def test_can_change_submission_rule_class_without_periods
     original_assignment = assignments(:assignment_1)
@@ -809,14 +815,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 #    assert user.has_accepted_grouping_for?(assignment.id)
 #  end
 #
-
-  # Student test
-  def test_on_index_student_gets_assignment_results
-    get_as(users(:student1), :index)
-    assert assigns(:a_id_results)
-    assert assigns(:assignments)
-    assert_response :success
-  end
 
 
   # TODO:  A test to make sure that @a_id_results from index actually
