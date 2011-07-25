@@ -6,12 +6,16 @@ class Assignment < ActiveRecord::Base
     :rubric => 'rubric'
   }
 
-  has_many :rubric_criteria, :class_name => "RubricCriterion", :order => :position
-  has_many :flexible_criteria, :class_name => "FlexibleCriterion", :order => :position
+  has_many :rubric_criteria,
+           :class_name => "RubricCriterion",
+           :order => :position
+  has_many :flexible_criteria,
+           :class_name => "FlexibleCriterion",
+           :order => :position
   has_many :assignment_files
   has_many :test_files
   has_many :criterion_ta_associations
-  has_one  :submission_rule
+  has_one :submission_rule
   accepts_nested_attributes_for :submission_rule, :allow_destroy => true
   accepts_nested_attributes_for :assignment_files, :allow_destroy => true
   accepts_nested_attributes_for :test_files, :allow_destroy => true
@@ -19,7 +23,9 @@ class Assignment < ActiveRecord::Base
   has_many :annotation_categories
 
   has_many :groupings
-  has_many :ta_memberships, :class_name => "TaMembership", :through => :groupings
+  has_many :ta_memberships,
+           :class_name => "TaMembership",
+           :through => :groupings
   has_many :student_memberships, :through => :groupings
   has_many :tokens, :through => :groupings
 
@@ -29,32 +35,38 @@ class Assignment < ActiveRecord::Base
   has_many :notes, :as => :noteable, :dependent => :destroy
 
   has_many :section_due_dates
-  has_one  :assignment_stat
+  has_one :assignment_stat
 
   validates_associated :assignment_files
 
-  validates_presence_of     :repository_folder
-  validates_presence_of     :short_identifier, :group_min
-  validates_uniqueness_of   :short_identifier, :case_sensitive => true
+  validates_presence_of :repository_folder
+  validates_presence_of :short_identifier, :group_min
+  validates_uniqueness_of :short_identifier, :case_sensitive => true
 
-  validates_numericality_of :group_min, :only_integer => true,  :greater_than => 0
+  validates_numericality_of :group_min,
+                            :only_integer => true,
+                            :greater_than => 0
   validates_numericality_of :group_max, :only_integer => true
-  validates_numericality_of :tokens_per_day, :only_integer => true,  :greater_than_or_equal_to => 0
+  validates_numericality_of :tokens_per_day,
+                            :only_integer => true,
+                            :greater_than_or_equal_to => 0
 
   validates_associated :submission_rule
   validates_presence_of :submission_rule
 
   validates_presence_of :marking_scheme_type
+
   # since allow_web_submits is a boolean, validates_presence_of does not work:
-  # see the Rails API documentation for validates_presence_of (Model validations)
+  # see the Rails API documentation for validates_presence_of (Model
+  # validations)
   validates_inclusion_of :allow_web_submits, :in => [true, false]
   validates_inclusion_of :display_grader_names_to_students, :in => [true, false]
   validates_inclusion_of :enable_test, :in => [true, false]
   validates_inclusion_of :assign_graders_to_criteria, :in => [true, false]
 
   before_save :reset_collection_time
-  validate    :minimum_number_of_groups, :check_timezone
-  after_save  :update_assigned_tokens
+  validate :minimum_number_of_groups, :check_timezone
+  after_save :update_assigned_tokens
 
   # Export a YAML formatted string created from the assignment rubric criteria.
   def export_rubric_criteria_yml
