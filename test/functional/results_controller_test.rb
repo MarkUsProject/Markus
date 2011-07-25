@@ -1,9 +1,8 @@
-require File.dirname(__FILE__) + '/authenticated_controller_test'
-require File.dirname(__FILE__) + '/../test_helper'
-require File.dirname(__FILE__) + '/../blueprints/helper'
+require File.join(File.dirname(__FILE__), 'authenticated_controller_test')
+require File.join(File.dirname(__FILE__), '..', 'test_helper')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 require 'shoulda'
 require 'mocha'
-require 'fastercsv'
 
 class ResultsControllerTest < AuthenticatedControllerTest
 
@@ -14,7 +13,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
   def teardown
       destroy_repos
   end
-
 
   SAMPLE_ERR_MSG = "sample error message"
 
@@ -301,38 +299,41 @@ class ResultsControllerTest < AuthenticatedControllerTest
                 ResultsController.any_instance.stubs(:authorized_to_download?).once.returns(true)
                 get_as @student, :download, :select_file_id => 1
               end
+
               should_not set_the_flash
               should respond_with_content_type "application/octet-stream"
               should respond_with :success
               should "respond with appropriate content" do
                 assert_equal 'file content', @response.body
               end
-            end
+            end  # -- with permissions to download the file
 
             context "without permissions to download the file" do
               setup do
                 ResultsController.any_instance.stubs(:authorized_to_download?).once.returns(false)
-                get_as @student, :download, :select_file_id => @file.id
+                get_as @student, :download, :select_file_id => 1
               end
+
               should_not set_the_flash
               should respond_with :missing
               should render_template 404
-            end
+            end  # -- without permissions to download the file
+          end # -- without file error
+
+        context "with file error" do
+          setup do
+            @file.expects(:submission).once.returns(@result.submission)
+            SubmissionFile.expects(:find).with('1').returns(@file)
+            ResultsController.any_instance.expects(:authorized_to_download?).once.returns(true)
+            @file.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
+            get_as @student,
+                    :download,
+                    :select_file_id => 1
           end
 
-          context "with file error" do
-            setup do
-              submission = Submission.new
-              submission.expects(:result).once.returns(@result)
-              @file.expects(:submission).once.returns(submission)
-              SubmissionFile.expects(:find).with('1').returns(@file)
-              ResultsController.any_instance.expects(:authorized_to_download?).once.returns(true)
-              @file.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
-              get_as @student, :download, :select_file_id => 1
-            end
-            should set_the_flash.to(SAMPLE_ERR_MSG)
-            should respond_with :redirect
-          end
+          should set_the_flash.to(SAMPLE_ERR_MSG)
+          should respond_with :redirect
+        end
 
         context "with supported image to be displayed inside browser" do
             setup do
@@ -394,6 +395,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             should_not assign_to :all_annots
             should render_template 'shared/_handle_error.rjs'
             should respond_with :success
+
             should "set an appropriate error message" do
               # Workaround to assert that the error message made its way to
               # the response
@@ -595,15 +597,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
                 g = Grouping.make(:assignment => @assignment)
                 s = Submission.make(:grouping => g)
                 if time == 2
-                  @results.push(Result.make(
-                        :id => time,
-                        :submission => s,
-                        :marking_state => Result::MARKING_STATES[:complete],
-                        :released_to_students => true))
-                else
-                  @results.push(Result.make(:id => time,
-                                            :submission => s))
+                  s.result.marking_state = Result::MARKING_STATES[:complete]
+                  s.result.released_to_students = true
+                  s.result.save
                 end
+                @results = Result.all
               end
             end
 
@@ -709,7 +707,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           setup do
             g = Grouping.make(:assignment => @assignment)
             s = Submission.make(:grouping => g)
-            @result = Result.make(:submission => s)
+            @result = s.result
             get_as @admin,
                    :set_released_to_students,
                    :id => @result.id,
@@ -764,7 +762,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         context "GET on :download" do
           setup do
-            @file = SubmissionFile.make
+            @file = SubmissionFile.new
           end
 
           context "without file error" do
@@ -774,7 +772,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               @file.expects(:is_supported_image?).once.returns(false)
               @file.expects(:is_pdf?).once.returns(false)
               SubmissionFile.expects(:find).with('1').returns(@file)
-              get_as @admin, :download, :select_file_id => @file.id
+              get_as @admin, :download, :select_file_id => 1
             end
             should_not set_the_flash
             should respond_with_content_type "application/octet-stream"
@@ -782,17 +780,23 @@ class ResultsControllerTest < AuthenticatedControllerTest
             should "respond with appropriate content" do
               assert_equal 'file content', @response.body
             end
-          end
+          end  # -- without file error
 
           context "with file error" do
             setup do
-              submission = Submission.new
+              submission = Submission.make
               SubmissionFile.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
-              get_as @admin, :download, :select_file_id => @file.id
+              SubmissionFile.expects(:find).with('1').returns(@file)
+              @file.expects(:submission).once.returns(
+                  submission)
+              get_as @admin,
+                     :download,
+                     :select_file_id => 1
             end
+
             should set_the_flash.to(SAMPLE_ERR_MSG)
             should respond_with :redirect
-          end
+          end  # -- with file error
 
           context "with supported image to be displayed inside browser" do
               setup do
@@ -801,27 +805,29 @@ class ResultsControllerTest < AuthenticatedControllerTest
                 @file.expects(:retrieve_file).returns('file content')
                 @file.expects(:is_supported_image?).once.returns(true)
                 SubmissionFile.expects(:find).with('1').returns(@file)
-                get_as @admin, :download, :select_file_id => @file.id, :show_in_browser => true
+                get_as @admin,
+                       :download,
+                       :select_file_id => 1,
+                       :show_in_browser => true
               end
+
               should_not set_the_flash
               should respond_with_content_type "image"
               should respond_with :success
               should "respond with appropriate content" do
                 assert_equal 'file content', @response.body
               end
-            end
+            end  # -- with supported image to be displayed in browser
           end
 
         context "GET on :codeviewer" do
           setup do
             g = Grouping.make(:assignment => @assignment)
             @submission = Submission.make(:grouping => g)
-
             @file = SubmissionFile.make(:submission => @submission)
             annotation = Annotation.new
-            SubmissionFile.expects(:find).once.with('1').returns(@file)
-            @file.expects(:submission).twice.returns(@submission)
             @file.expects(:annotations).once.returns(annotation)
+            SubmissionFile.expects(:find).with('1').returns(@file)
           end
 
           context "without file error" do
@@ -831,9 +837,10 @@ class ResultsControllerTest < AuthenticatedControllerTest
               get_as @admin,
                      :codeviewer,
                      :id => @assignment.id,
-                     :submission_file_id => @file.id,
+                     :submission_file_id => 1,
                      :focus_line => 1
             end
+
             should_not set_the_flash
             should assign_to :assignment
             should assign_to :submission_file_id
@@ -846,7 +853,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             should assign_to :code_type
             should render_template 'results/common/codeviewer'
             should respond_with :success
-          end
+          end  # -- without file error
 
           context "with file error" do
             setup do
@@ -854,9 +861,10 @@ class ResultsControllerTest < AuthenticatedControllerTest
               get_as @admin,
                      :codeviewer,
                      :id => @assignment.id,
-                     :submission_file_id => @file.id,
+                     :submission_file_id => 1,
                      :focus_line => 1
             end
+
             should assign_to :assignment
             should assign_to :submission_file_id
             should assign_to :focus_line
@@ -872,7 +880,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               # Workaround to assert that the error message made its way to the response
               assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
             end
-          end
+          end  # --with file error
         end
 
         context "GET on :update_mark" do
@@ -1030,7 +1038,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           setup do
             g = Grouping.make(:assignment => @assignment)
             s = Submission.make(:grouping => g)
-            @result = Result.make(:submission => s)
+            @result = s.result
 
             get_as @admin,
                    :expand_unmarked_criteria,
@@ -1152,7 +1160,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         context "GET on :download" do
           setup do
-            @file = SubmissionFile.make
+            @file = SubmissionFile.new
           end
 
           context "without file error" do
@@ -1162,7 +1170,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               @file.expects(:is_pdf?).once.returns(false)
               @file.expects(:retrieve_file).once.returns('file content')
               SubmissionFile.expects(:find).with('1').returns(@file)
-              get_as @ta, :download, :select_file_id => @file.id
+              get_as @ta, :download, :select_file_id => 1
             end
             should_not set_the_flash
             should respond_with_content_type "application/octet-stream"
@@ -1180,7 +1188,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               @file.expects(:submission).once.returns(submission)
               @file.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
               SubmissionFile.expects(:find).with('1').returns(@file)
-              get_as @ta, :download, :select_file_id => @file.id
+              get_as @ta, :download, :select_file_id => 1
             end
             should set_the_flash.to(SAMPLE_ERR_MSG)
             should respond_with :redirect
@@ -1192,7 +1200,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
                 @file.expects(:is_supported_image?).once.returns(true)
                 SubmissionFile.expects(:find).with('1').returns(@file)
                 @file.expects(:retrieve_file).returns('file content')
-                get_as @ta, :download, :select_file_id => @file.id, :show_in_browser => true
+
+                get_as @ta,
+                       :download,
+                       :select_file_id => 1,
+                       :show_in_browser => true
               end
               should_not set_the_flash
               should respond_with_content_type "image"
@@ -1233,7 +1245,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               # Workaround to assert that the error message made its way to the response
               assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
             end
-          end
+          end  # -- with file reading error
 
           context "without error" do
             setup do
@@ -1256,8 +1268,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             should assign_to :code_type
             should render_template 'results/common/codeviewer'
             should respond_with :success
-          end
-
+          end  # -- without error
         end
 
         context "GET on :update_mark" do
@@ -1289,7 +1300,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             should respond_with :success
           end
 
-        end
+        end  # -- GET on :update_mark
 
         context "GET on :view_marks" do
           setup do
@@ -1297,7 +1308,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end
           should render_template '404'
           should respond_with 404
-        end
+        end  # -- GET on :view_marks
 
         context "GET on :add_extra_mark" do
           setup do
@@ -1325,7 +1336,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             should assign_to :extra_mark
             should render_template 'results/marker/add_extra_mark_error'
             should respond_with :success
-          end
+          end  # -- with save error
 
           context "without save error" do
             setup do
@@ -1343,7 +1354,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
               assert_equal @old_total_mark + 1, @unmarked_result.total_mark
             end
           end
-
         end
 
         context "GET on :remove_extra_mark" do
