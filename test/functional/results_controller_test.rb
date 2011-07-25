@@ -592,7 +592,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
         context "GET on :edit" do
           context "with 2 partial and 1 released/completed results" do
             setup do
-              @results = []
               3.times do |time|
                 g = Grouping.make(:assignment => @assignment)
                 s = Submission.make(:grouping => g)
@@ -601,13 +600,13 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   s.result.released_to_students = true
                   s.result.save
                 end
-                @results = Result.all
               end
+              @groupings = @assignment.groupings.all(:order => 'id ASC')
             end
 
             context "when editing first result" do
               setup do
-                @result = @results.first
+                @result = @groupings[0].current_submission_used.result
                 get_as @admin, :edit, :id => @result.id
               end
 
@@ -617,7 +616,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                 assert next_grouping.has_submission?
                 next_result = next_grouping.current_submission_used.result
                 assert_not_nil next_result
-                assert_equal next_result, @results[1]
+                assert_equal next_grouping, @groupings[1]
                 assert !next_result.released_to_students
                 assert_nil assigns(:previous_grouping)
               end
@@ -629,7 +628,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             context "when editing second result" do
 
               setup do
-                @result = @results[1]
+                @result = @groupings[1].current_submission_used.result
                 get_as @admin, :edit, :id => @result.id
               end
 
@@ -644,8 +643,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
                 previous_result = previous_grouping.current_submission_used.result
                 assert_not_nil next_result
                 assert_not_nil previous_result
-                assert_equal next_result, @results[2]
-                assert_equal previous_result, @results[0]
+                assert_equal next_grouping, @groupings[2]
+                assert_equal previous_grouping, @groupings[0]
                 assert next_result.released_to_students
                 assert !previous_result.released_to_students
               end
@@ -658,7 +657,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             context "when editing third result" do
 
               setup do
-                @result = @results[2]
+                @result = @groupings[2].current_submission_used.result
                 get_as @admin, :edit, :id => @result.id
               end
 
@@ -669,7 +668,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                 assert previous_grouping.has_submission?
                 previous_result = previous_grouping.current_submission_used.result
                 assert_not_nil previous_result
-                assert_equal previous_result, @results[1]
+                assert_equal previous_grouping, @groupings[1]
                 assert !previous_result.released_to_students
               end
 

@@ -60,13 +60,22 @@ class ResultsController < ApplicationController
         @old_marks_map[criterion.id] = oldmark
       end
     end
+
     # Get the previous and the next submission
+    # FIXME right now, the groupings are ordered by grouping's id. Having a
+    # more natural grouping order would be nice.
     if current_user.ta?
-       groupings = @assignment.ta_memberships.find_all_by_user_id(current_user.id, :include => [:grouping => :group]).collect do |m|
+       groupings = @assignment.ta_memberships.find_all_by_user_id(
+                      current_user.id,
+                      :include => [:grouping => :group],
+                      :order_by => 'id ASC').collect do |m|
          m.grouping
        end
     elsif current_user.admin?
-      groupings = @assignment.groupings.find(:all, :include => :group)
+      groupings = @assignment.groupings.find(
+                      :all,
+                      :include => :group,
+                      :order => 'id ASC')
     end
 
     # If a grouping's submission's marking_status is complete, we're not going
