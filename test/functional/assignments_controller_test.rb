@@ -137,6 +137,40 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         assert !assigns(:assignment).errors.empty?
       end
 
+      should "be able to add periods to submission rule class" do
+        post_as @admin,
+                :edit,
+                {:id => @assignment.id,
+                 :assignment => {
+                   :short_identifier => 'New SI',
+                   :description => 'New Description',
+                   :message => 'New Message',
+                   :due_date => 3.days.from_now,
+                   :submission_rule_attributes => {
+                     :type => 'PenaltyPeriodSubmissionRule',
+                     :id => @assignment.submission_rule.id,
+                     :periods_attributes => [
+                       {:deduction => '10', :hours => '24'},
+                       {:deduction => '20', :hours => '24'}
+                     ]}}}
+        @assignment.reload
+        assert_equal 'New SI', @assignment.short_identifier
+        assert_equal 'New Description', @assignment.description
+        assert_equal 'New Message', @assignment.message
+        assert_equal "PenaltyPeriodSubmissionRule",
+                     @assignment.submission_rule.type.to_s
+        assert_equal 2, @assignment.submission_rule.periods.length
+        first_period = @assignment.submission_rule.periods.first
+        last_period = @assignment.submission_rule.periods.last
+        assert_equal 10, first_period.deduction
+        assert_equal 24, first_period.hours
+        assert_equal 20, last_period.deduction
+        assert_equal 24, last_period.hours
+
+        assert_not_nil assigns(:assignment)
+        assert assigns(:assignment).errors.empty?
+      end
+
       should "be able to set instructor forms groups" do
         post_as @admin,
                 :edit,
@@ -194,6 +228,40 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         assert_response :success
       end
 
+      should "be able to get a csv grade report" do
+        student = Student.make
+        response_csv = get_as(@admin, :download_csv_grades_report).body
+        csv_rows = FasterCSV.parse(response_csv)
+        assert_equal Student.all.size, csv_rows.size
+        assignments = Assignment.all(:order => 'id')
+        csv_rows.each do |csv_row|
+          student_name = csv_row.shift
+          student = Student.find_by_user_name(student_name)
+          assert_not_nil student
+          assert_equal assignments.size, csv_row.size
+
+          csv_row.each_with_index do |final_mark,index|
+            if final_mark.blank?
+              if student.has_accepted_grouping_for?(assignments[index])
+                grouping = student.accepted_grouping_for(assignments[index])
+                assert (!grouping.has_submission? ||
+                        assignments[index].total_mark == 0)
+              end
+            else
+              out_of = assignments[index].total_mark
+              grouping = student.accepted_grouping_for(assignments[index])
+              assert_not_nil grouping
+              assert grouping.has_submission?
+              submission = grouping.current_submission_used
+              assert_not_nil submission.result
+              assert_equal final_mark.to_f.round,
+                           (submission.result.total_mark / out_of * 100
+                           ).to_f.round
+            end
+          end
+        end
+        assert_response :success
+      end
     end  # -- with an assignment
   end  # -- an Admin
 
@@ -322,18 +390,42 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         assert !@student.has_accepted_grouping_for?(@assignment.id)
       end
 
-      context "invited in a group" do
+      context "invited in several group" do
         setup do
           @grouping = Grouping.make(:assignment => @assignment)
-          StudentMembership.make(:grouping => @grouping,
-                                 :user => @student)
+          StudentMembership.make(
+              :grouping => @grouping,
+              :user => @student,
+              :membership_status => StudentMembership::STATUSES[:pending])
+          StudentMembership.make(
+              :grouping => @grouping,
+              :membership_status => StudentMembership::STATUSES[:inviter])
+
+          g = Grouping.make(:assignment => @assignment)
+          StudentMembership.make(
+              :grouping => g,
+              :user => @student,
+              :membership_status => StudentMembership::STATUSES[:pending])
+          StudentMembership.make(
+              :grouping => g,
+              :membership_status => StudentMembership::STATUSES[:inviter])
+
         end
 
         should "be able to join a group" do
-          post_as(@student, :join_group, {:id => @assignment.id,
-                                          :grouping_id => @grouping.id})
+          post_as @student, :join_group, {:id => @assignment.id,
+                                          :grouping_id => @grouping.id}
           assert @student.has_accepted_grouping_for?(@assignment.id),
                 "should have accepted grouping for this assignment"
+          assert_redirected_to :action => 'student_interface',
+                               :id => @assignment.id
+        end
+
+        should "see all the pending invitations" do
+          get_as @student, :student_interface, :id => @assignment.id
+          assert_response :success
+          assert assigns(:pending_grouping)
+          assert_equal 2, assigns(:pending_grouping).length
         end
 
         should "be able to decline an invitation" do
@@ -548,6 +640,29 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           assert !@student.has_accepted_grouping_for?(@assignment.id)
         end
 
+        context "with pending invitations" do
+          setup do
+            @invited = Student.make
+            sm = StudentMembership.make(
+                  :grouping => @grouping,
+                  :membership_status => StudentMembership::STATUSES[:pending],
+                  :user => @invited)
+
+          end
+
+          should "not be able to invite someone already invited" do
+            post_as @student,
+                    :invite_member,
+                    {:id => @assignment.id,
+                     :invite_member => @invited.user_name}
+            assert_redirected_to :action => 'student_interface',
+                                 :id => @assignment.id
+            assert flash[:fail_notice].include?(
+                      I18n.t('invite_student.fail.already_pending',
+                             :user_name => @invited.user_name))
+          end
+        end  # -- with pending invitations
+
         context "with a submission" do
           setup do
             submission = Submission.make(:grouping => @grouping)
@@ -561,8 +676,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                         flash[:fail_notice]
             assert @student.has_accepted_grouping_for?(@assignment.id)
           end
-        end
-
+        end  # -- with pending invitations
       end  # -- Inviter of a group
 
       context "in a group" do
@@ -593,9 +707,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           assert_equal I18n.t('groups.cant_delete'), flash[:fail_notice]
           assert @student.has_accepted_grouping_for?(@assignment.id)
         end
-
       end  # -- in a group
-
     end  # -- with an assignment
 
     context "with an assignment with group = 1" do
@@ -614,7 +726,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         grouping = @student.accepted_grouping_for(@assignment.id)
         assert grouping.is_valid?
       end
-
     end  # -- with an assignment with group_min = 1
 
     context "with an assignment where instructors creates groups" do
@@ -630,7 +741,24 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         assert_equal I18n.t("create_group.fail.not_allow_to_form_groups"),
                     flash[:fail_notice]
       end
-    end
+    end  # -- with an assignment where instructors creates groups
+
+    context "with an assignment where students have to work alone" do
+      setup do
+        @assignment = Assignment.make(:group_min => 1,
+                                      :group_max => 1)
+      end
+
+      should "create group automatically" do
+        get_as @student, :student_interface, :id => @assignment.id
+        assert @student.has_accepted_grouping_for?(@assignment.id)
+        assert_not_nil @student.accepted_grouping_for(@assignment.id)
+        assert_equal @student,
+                     @student.accepted_grouping_for(@assignment.id).inviter
+        assert_redirected_to :action => 'student_interface',
+                             :id => @assignment.id
+      end
+    end  # -- with an assignment where students have to work alone
 
     context "with an assignment, with a past due date" do
       setup do
@@ -659,327 +787,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                       flash[:fail_notice]
         end
       end
-    end
+    end  # -- with an assignment, with a past due date
   end  # -- A student
-
-  ############   Admin  ###########
-
-  # Admin test
-  def test_admins_can_get_csv_grades_report
-    # Insert a student that won't have a grouping
-    s = Student.new
-    s.first_name = 'Test'
-    s.last_name = 'Test'
-    s.user_name = 'Test'
-    assert s.valid?
-    s.save
-
-    response_csv = get_as(@admin, :download_csv_grades_report).body
-    csv_rows = FasterCSV.parse(response_csv)
-    assert_equal Student.all.size, csv_rows.size
-    assignments = Assignment.all(:order => 'id')
-    csv_rows.each do |csv_row|
-      student_name = csv_row.shift
-      student = Student.find_by_user_name(student_name)
-      assert_not_nil student
-      assert_equal assignments.size, csv_row.size
-
-      csv_row.each_with_index do |final_mark,index|
-        if final_mark.blank?
-          if student.has_accepted_grouping_for?(assignments[index])
-            grouping = student.accepted_grouping_for(assignments[index])
-            assert !grouping.has_submission? || assignments[index].total_mark == 0
-          else
-            # Student didn't have a grouping, so it was OK that this
-            # column was blank
-          end
-        else
-          out_of = assignments[index].total_mark
-          grouping = student.accepted_grouping_for(assignments[index])
-          #has_submission doesn't work properly with tests due to the use of a counter cache
-#          grouping.stubs(:has_submission?).returns(true)
-          assert_not_nil grouping
-          assert grouping.has_submission?
-          submission = grouping.current_submission_used
-          assert_not_nil submission.result
-          assert_equal final_mark.to_f.round, (submission.result.total_mark / out_of * 100).to_f.round
-        end
-      end
-
-    end
-
-    assert_response :success
-  end
-
-# TODO already done
-  # Admin test
-#  def test_cant_pass_non_submission_rule_class_2
-#    original_assignment = assignments(:assignment_1)
-#    post_as(@admin, :edit, :id => assignments(:assignment_1).id,
-#      :assignment => {
-#        :short_identifier => 'New SI',
-#        :description => 'New Description',
-#        :message => 'New Message',
-#        :due_date => 3.days.from_now,
-#        :submission_rule_attributes => {
-#          :type => 'Student',
-#          :id => assignments(:assignment_1).submission_rule.id
-#        }
-#      })
-#    a = Assignment.find(assignments(:assignment_1).id)
-#    assert_equal original_assignment.short_identifier, a.short_identifier
-#    assert_equal original_assignment.description, a.description
-#    assert_equal original_assignment.message, a.message
-#    assert_equal original_assignment.due_date, a.due_date
-#    assert_equal original_assignment.submission_rule.type.to_s, a.submission_rule.type.to_s
-#    assert_not_nil assigns(:assignment)
-#    assert !assigns(:assignment).errors.empty?
-#  end
-#
-  # Admin test
-  def test_can_change_submission_rule_class_without_periods
-    original_assignment = assignments(:assignment_1)
-    post_as(@admin, :edit, :id => assignments(:assignment_1).id,
-      :assignment => {
-        :short_identifier => 'New SI',
-        :description => 'New Description',
-        :message => 'New Message',
-        :due_date => 3.days.from_now,
-        :submission_rule_attributes => {
-          :type => 'PenaltyPeriodSubmissionRule',
-          :id => assignments(:assignment_1).submission_rule.id
-        }
-      })
-    a = Assignment.find(assignments(:assignment_1).id)
-    assert_equal 'New SI', a.short_identifier
-    assert_equal 'New Description', a.description
-    assert_equal 'New Message', a.message
-    assert_equal "PenaltyPeriodSubmissionRule", a.submission_rule.type.to_s
-    assert_not_nil assigns(:assignment)
-    assert assigns(:assignment).errors.empty?
-  end
-
-  # Admin test
-  def test_can_change_submission_rule_class_with_periods
-    original_assignment = assignments(:assignment_1)
-    post_as(@admin, :edit, :id => assignments(:assignment_1).id,
-      :assignment => {
-        :short_identifier => 'New SI',
-        :description => 'New Description',
-        :message => 'New Message',
-        :due_date => 3.days.from_now,
-        :submission_rule_attributes => {
-          :type => 'PenaltyPeriodSubmissionRule',
-          :id => assignments(:assignment_1).submission_rule.id,
-          :periods_attributes => [
-            {:deduction => '10', :hours => '24'},
-            {:deduction => '20', :hours => '24'}
-          ]
-        }
-      })
-    a = Assignment.find(assignments(:assignment_1).id)
-    assert_equal 'New SI', a.short_identifier
-    assert_equal 'New Description', a.description
-    assert_equal 'New Message', a.message
-    assert_equal "PenaltyPeriodSubmissionRule", a.submission_rule.type.to_s
-    assert_equal 2, a.submission_rule.periods.length
-    first_period = a.submission_rule.periods.first
-    last_period = a.submission_rule.periods.last
-    assert_equal 10, first_period.deduction
-    assert_equal 24, first_period.hours
-    assert_equal 20, last_period.deduction
-    assert_equal 24, last_period.hours
-
-    assert_not_nil assigns(:assignment)
-    assert assigns(:assignment).errors.empty?
-
-  end
-
-  ############   Student  ###########
-
-# TODO this is already tested
-#  # Student test
-#  def test_cant_delete_group_if_submitted
-#    user = users(:student4)
-#    grouping = groupings(:grouping_2)
-#    assignment = grouping.assignment
-#    assignment.group_min = 4
-#    assignment.save
-#    #has_submission doesn't work properly with tests due to the use of a counter cache
-##    Grouping.any_instance.stubs(:has_submission?).returns(true)
-#    assert grouping.has_submission?
-#    assert !grouping.is_valid?
-#    post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
-#    assert_redirected_to :action => "student_interface", :id => assignment.id
-#    assert_equal(I18n.t('groups.cant_delete_already_submitted'), flash[:fail_notice])
-#    assert user.has_accepted_grouping_for?(assignment.id)
-#  end
-#
-
-
-  # TODO:  A test to make sure that @a_id_results from index actually
-  # does proper computing of averages/etc
-
-  # Student test
-  def test_student_gets_solo_grouping_automatically
-    # Destroy the grouping for a student
-    assignment = assignments(:assignment_1)
-    student = users(:student1)
-    grouping = student.accepted_grouping_for(assignment.id)
-    if !grouping.nil?
-      grouping.destroy
-    end
-    student.reload
-    assert !student.has_accepted_grouping_for?(assignment.id)
-    assert student.accepted_grouping_for(assignment.id).nil?
-    # Make this a solo assignment
-    assignment.group_max = 1
-    assignment.group_min = 1
-    assignment.instructor_form_groups = false
-    assignment.student_form_groups = false
-    assignment.save
-
-    get_as(users(:student1), :student_interface, :id => assignment.id)
-    student = Student.find(student.id)
-    assert student.has_accepted_grouping_for?(assignment.id)
-    assert_not_nil student.accepted_grouping_for(assignment.id)
-    assert_equal student, student.accepted_grouping_for(assignment.id).inviter
-    assert_redirected_to :action => 'student_interface', :id => assignment.id
-  end
-
-  # Student test
-  def test_student_gets_list_of_pending_groupings
-    # Destroy the grouping for a student
-    assignment = assignments(:assignment_1)
-    student = users(:student1)
-    grouping = student.accepted_grouping_for(assignment.id)
-    if !grouping.nil?
-      grouping.destroy
-    end
-    student.reload
-    assert !student.has_accepted_grouping_for?(assignment.id)
-    assert student.accepted_grouping_for(assignment.id).nil?
-    # Make this a group assignment
-    assignment.group_max = 4
-    assignment.group_min = 2
-    assignment.instructor_form_groups = false
-    assignment.student_form_groups = true
-    assignment.save
-
-    # Create some pending invitations for this student
-    invitations = 0
-    assignment.groupings.each do |some_grouping|
-      if !some_grouping.inviter.nil?
-        invitations = invitations + 1
-        some_grouping.invite(student.user_name)
-      end
-    end
-
-    get_as(users(:student1), :student_interface, :id => assignment.id)
-    assert_response :success
-    assert assigns(:pending_grouping)
-    assert invitations > 0
-    assert_equal invitations, assigns(:pending_grouping).length
-
-  end
-
-  # Student test
-  def test_should_get_student_interface_working_in_group_student
-    student = users(:student1)
-    assignment = assignments(:assignment_1)
-    get_as(student, :student_interface, {:id => assignment.id})
-    assert_response :success
-  end
-
-# FIXME useless
-#  # Student test
-#  def test_should_get_student_interface_working_alone_student
-#    student = users(:student1)
-#    assignment = assignments(:assignment_2)
-#    get_as(student, :student_interface, {:id => assignment.id})
-#    assert_response :success
-#  end
-#
-# TODO this is already tested
-#  # Student test
-#  def test_should_creategroup
-#    assignment = assignments(:assignment_2)
-#    student = users(:student6)
-#    post_as(student, :creategroup, {:id => assignment.id})
-#    assert_redirected_to :action => 'student_interface', :id => assignment.id
-#  end
-#
- # TODO this is already tested
- # Student test
-#  def test_should_creategroup_alone
-#    assignment = assignments(:assignment_1)
-#    student = users(:student6)
-#    post_as(student, :creategroup, {:id => assignment.id, :workalone => true})
-#    assert_redirected_to :action => 'student_interface', :id => assignment.id
-#  end
-#
-  # TODO this is already tested
-# Student test
-#  def test_shouldnt_invite_hidden_student
-#    @student = users(:student1)
-#    assignment = assignments(:assignment_1)
-#    grouping = @student.accepted_grouping_for(assignment.id)
-#    original_memberships = grouping.memberships
-#    hidden_student = users(:hidden_student)
-#    post_as(@student, :invite_member, {:id => assignment.id, :invite_member => hidden_student.user_name})
-#    assert_redirected_to :action => 'student_interface', :id => assignment.id
-#    assert flash[:fail_notice].include?(I18n.t('invite_student.fail.hidden', :user_name => hidden_student.user_name))
-#    assert_equal original_memberships, grouping.memberships, "Memberships were not equal"
-#  end
-
-# # TODO this is already tested
-# Student test
-#  def test_should_invite_someone
-#    @student = users(:student1)
-#    assignment = assignments(:assignment_1)
-#    inviting = users(:student6)
-#    post_as(@student, :invite_member, {:id => assignment.id, :invite_member => inviting.user_name})
-#    assert_redirected_to :action => 'student_interface', :id => assignment.id
-#    assert flash[:success].include?(I18n.t('invite_student.success'))
-#  end
-
-  # Student test
-  def test_should_invite_someone_alreadyinvited
-    assignment = assignments(:assignment_1)
-    student = users(:student5)
-    inviter = users(:student4)
-    post_as(inviter, :invite_member, {:id => assignment.id, :invite_member => student.user_name})
-    assert_redirected_to :action => 'student_interface', :id => assignment.id
-    assert flash[:fail_notice].include?(I18n.t('invite_student.fail.already_pending', :user_name => student.user_name))
-  end
-
-  # Student test
-  def test_student_choose_to_join_a_group
-    assignment = assignments(:assignment_1)
-    student = users(:student5)
-    grouping = groupings(:grouping_2)
-    post_as(student, :join_group, {:id => assignment.id, :grouping_id => grouping.id})
-    assert_redirected_to :action => 'student_interface', :id => assignment.id
-  end
-
-  # Student test
-  def test_student_choose_to_decline_an_invitation
-    assignment = assignments(:assignment_1)
-    student = users(:student5)
-    grouping = groupings(:grouping_2)
-    post_as(student, :decline_invitation, {:id => assignment.id, :grouping_id =>  grouping.id})
-    assert_redirected_to :action => 'student_interface', :id => assignment.id
-  end
-
-  # Student test
-#  def test_delete_rejected
-#    student = users(:student1)
-#    assignment = assignments(:assignment_1)
-#    membership = memberships(:membership3)
-#    post_as(student, :delete_rejected, {:id => assignment.id, :membership => membership.id})
-#  end
-
-  ################## Refactor the following tests
 
   context "A logged in admin" do
     setup do
