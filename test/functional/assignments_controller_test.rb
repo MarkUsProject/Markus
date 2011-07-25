@@ -126,8 +126,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                    :student_form_groups => false,
                    :submission_rule_attributes => {
                      :type => 'NoLateSubmissionRule',
-                     :id => @assignment.submission_rule.id},
-                   :is_group_assignment => true}}
+                     :id => @assignment.submission_rule.id}},
+                   :is_group_assignment => true}
 
         a = Assignment.find(@assignment.id)
         assert_equal 'New Description', a.description
@@ -147,11 +147,11 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                    :description => 'New Description',
                    :message => 'New Message',
                    :due_date => 3.days.from_now,
-                   :student_form_groups => '0',
-                   :is_group_assignment => "true",
+                   :student_form_groups => "true",
                    :submission_rule_attributes => {
                      :type => 'NoLateSubmissionRule',
-                     :id => @assignment.submission_rule.id}}}
+                     :id => @assignment.submission_rule.id}},
+                   :is_group_assignment => "true"}
 
         @assignment.reload
         assert I18n.t("assignment.update_success"),
@@ -608,19 +608,28 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         @assignment = Assignment.make(:due_date => 3.days.ago)
       end
 
-      should "not be able to invite" do
-        student = Student.make
-        post_as @student,
-                :invite_member,
-                {:id => @assignment.id,
-                 :invite_member => student.user_name}
-        assert_redirected_to :action => "student_interface",
-                             :id => @assignment.id
-        assert_equal I18n.t('invite_student.fail.due_date_passed',
-                            :user_name => student.user_name),
-                     flash[:fail_notice]
-      end
+      context "inviter of a group" do
+        setup do
+          @grouping = Grouping.make(:assignment => @assignment)
+          sm = StudentMembership.make(
+                 :grouping => @grouping,
+                 :membership_status => StudentMembership::STATUSES[:inviter],
+                 :user => @student)
+        end
 
+        should "not be able to invite" do
+          student = Student.make
+          post_as @student,
+                  :invite_member,
+                  {:id => @assignment.id,
+                  :invite_member => student.user_name}
+          assert_redirected_to :action => "student_interface",
+                              :id => @assignment.id
+          assert_equal I18n.t('invite_student.fail.due_date_passed',
+                              :user_name => student.user_name),
+                      flash[:fail_notice]
+        end
+      end
     end
   end  # -- A student
 
@@ -884,52 +893,57 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     assert_response :success
   end
 
-  # Student test
-  def test_should_get_student_interface_working_alone_student
-    student = users(:student1)
-    assignment = assignments(:assignment_2)
-    get_as(student, :student_interface, {:id => assignment.id})
-    assert_response :success
-  end
+# FIXME useless
+#  # Student test
+#  def test_should_get_student_interface_working_alone_student
+#    student = users(:student1)
+#    assignment = assignments(:assignment_2)
+#    get_as(student, :student_interface, {:id => assignment.id})
+#    assert_response :success
+#  end
+#
+# TODO this is already tested
+#  # Student test
+#  def test_should_creategroup
+#    assignment = assignments(:assignment_2)
+#    student = users(:student6)
+#    post_as(student, :creategroup, {:id => assignment.id})
+#    assert_redirected_to :action => 'student_interface', :id => assignment.id
+#  end
+#
+ # TODO this is already tested
+ # Student test
+#  def test_should_creategroup_alone
+#    assignment = assignments(:assignment_1)
+#    student = users(:student6)
+#    post_as(student, :creategroup, {:id => assignment.id, :workalone => true})
+#    assert_redirected_to :action => 'student_interface', :id => assignment.id
+#  end
+#
+  # TODO this is already tested
+# Student test
+#  def test_shouldnt_invite_hidden_student
+#    @student = users(:student1)
+#    assignment = assignments(:assignment_1)
+#    grouping = @student.accepted_grouping_for(assignment.id)
+#    original_memberships = grouping.memberships
+#    hidden_student = users(:hidden_student)
+#    post_as(@student, :invite_member, {:id => assignment.id, :invite_member => hidden_student.user_name})
+#    assert_redirected_to :action => 'student_interface', :id => assignment.id
+#    assert flash[:fail_notice].include?(I18n.t('invite_student.fail.hidden', :user_name => hidden_student.user_name))
+#    assert_equal original_memberships, grouping.memberships, "Memberships were not equal"
+#  end
 
-  # Student test
-  def test_should_creategroup
-    assignment = assignments(:assignment_2)
-    student = users(:student6)
-    post_as(student, :creategroup, {:id => assignment.id})
-    assert_redirected_to :action => 'student_interface', :id => assignment.id
-  end
-
-  # Student test
-  def test_should_creategroup_alone
-    assignment = assignments(:assignment_1)
-    student = users(:student6)
-    post_as(student, :creategroup, {:id => assignment.id, :workalone => true})
-    assert_redirected_to :action => 'student_interface', :id => assignment.id
-  end
-
-  # Student test
-  def test_shouldnt_invite_hidden_student
-    @student = users(:student1)
-    assignment = assignments(:assignment_1)
-    grouping = @student.accepted_grouping_for(assignment.id)
-    original_memberships = grouping.memberships
-    hidden_student = users(:hidden_student)
-    post_as(@student, :invite_member, {:id => assignment.id, :invite_member => hidden_student.user_name})
-    assert_redirected_to :action => 'student_interface', :id => assignment.id
-    assert flash[:fail_notice].include?(I18n.t('invite_student.fail.hidden', :user_name => hidden_student.user_name))
-    assert_equal original_memberships, grouping.memberships, "Memberships were not equal"
-  end
-
-  # Student test
-  def test_should_invite_someone
-    @student = users(:student1)
-    assignment = assignments(:assignment_1)
-    inviting = users(:student6)
-    post_as(@student, :invite_member, {:id => assignment.id, :invite_member => inviting.user_name})
-    assert_redirected_to :action => 'student_interface', :id => assignment.id
-    assert flash[:success].include?(I18n.t('invite_student.success'))
-  end
+# # TODO this is already tested
+# Student test
+#  def test_should_invite_someone
+#    @student = users(:student1)
+#    assignment = assignments(:assignment_1)
+#    inviting = users(:student6)
+#    post_as(@student, :invite_member, {:id => assignment.id, :invite_member => inviting.user_name})
+#    assert_redirected_to :action => 'student_interface', :id => assignment.id
+#    assert flash[:success].include?(I18n.t('invite_student.success'))
+#  end
 
   # Student test
   def test_should_invite_someone_alreadyinvited
@@ -960,12 +974,12 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
   end
 
   # Student test
-  def test_delete_rejected
-    student = users(:student1)
-    assignment = assignments(:assignment_1)
-    membership = memberships(:membership3)
-    post_as(student, :delete_rejected, {:id => assignment.id, :membership => membership.id})
-  end
+#  def test_delete_rejected
+#    student = users(:student1)
+#    assignment = assignments(:assignment_1)
+#    membership = memberships(:membership3)
+#    post_as(student, :delete_rejected, {:id => assignment.id, :membership => membership.id})
+#  end
 
   ################## Refactor the following tests
 
