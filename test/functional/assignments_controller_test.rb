@@ -10,29 +10,11 @@ require 'time-warp'
 
 class AssignmentsControllerTest < AuthenticatedControllerTest
 
-  fixtures  :all
-  set_fixture_class :rubric_criteria => RubricCriterion
-
   def setup
     @controller = AssignmentsController.new
     @request = ActionController::TestRequest.new
     @response = ActionController::TestResponse.new
-
-    # login before testing
-    @admin = users(:olm_admin_1)
-    @request.session['uid'] = @admin.id
-
-    # stub assignment
-    @new_assignment = {
-      'name'          => '',
-      'message'       => '',
-      'group_min'     => '',
-      'group_max'     => '',
-      'due_date(1i)'  => '',
-      'due_date(2i)'  => ''
-    }
-    setup_group_fixture_repos
-
+    clear_fixtures
   end
 
   def teardown
@@ -43,6 +25,38 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     setup do
       @admin = Admin.make
     end
+
+    should "be able to get new" do
+      post_as @admin, :new
+      assert assign_to :assignment
+      assert assign_to :assignments
+      assert respond_with :success
+    end
+
+    context "with REPOSITORY_EXTERNAL_SUBMITS_ONLY as false" do
+      setup do
+        MarkusConfigurator.stubs(
+          :markus_config_repository_external_submits_only?).returns(false)
+        get_as @admin, :new
+      end
+      should "set allow_web_submits accordingly" do
+        assignment = assigns(:assignment)
+        assert assignment.allow_web_submits == true
+      end
+    end  # -- with REPOSITORY_EXTERNAL_SUBMITS_ONLY as false
+
+    context "with REPOSITORY_EXTERNAL_SUBMITS_ONLY as true" do
+      setup do
+        MarkusConfigurator.stubs(
+          :markus_config_repository_external_submits_only?).returns(true)
+        get_as @admin, :new
+      end
+
+      should "set allow_web_submits accordingly" do
+        assignment = assigns(:assignment)
+        assert assignment.allow_web_submits == false
+      end
+    end  # -- with REPOSITORY_EXTERNAL_SUBMITS_ONLY as true
 
     context "with an assignment" do
       setup do
@@ -262,10 +276,41 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         end
         assert_response :success
       end
+
+      context "with required files" do
+        setup do
+          @file_1 = AssignmentFile.make(:assignment => @assignment)
+          @file_2 = AssignmentFile.make(:assignment => @assignment)
+        end
+
+        should "be able to remove required files" do
+          post_as @admin,
+                  :edit,
+                  :id => @assignment.id,
+                  :assignment => {
+                      :short_identifier => @assignment.short_identifier,
+                      :description => @assignment.description,
+                      :message => @assignment.message,
+                      :due_date => @assignment.due_date,
+                      :assignment_files_attributes => {
+                        "1" => { :id => @file_1.id,
+                                :filename => @file_1.filename,
+                                :_destroy => "0" },
+                        "2" => { :id => @file_2.id,
+                                :filename => @file_2.filename,
+                                :_destroy => "1" }},
+                      :submission_rule_attributes => {
+                        :type => @assignment.submission_rule.type.to_s,
+                        :id => @assignment.submission_rule.id}}
+          @assignment.reload
+          assert_equal 1, @assignment.assignment_files.count
+          assert_equal @file_1, @assignment.assignment_files.first
+        end
+      end  # -- with required files
     end  # -- with an assignment
   end  # -- an Admin
 
-  context "An grader" do
+  context "A grader" do
     setup do
       @grader = Ta.make
     end
@@ -663,6 +708,31 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           end
         end  # -- with pending invitations
 
+        context "which is valid" do
+          setup do
+             sm = StudentMembership.make(
+                :grouping => @grouping,
+                :membership_status => StudentMembership::STATUSES[:accepted])
+             sm = StudentMembership.make(
+                :grouping => @grouping,
+                :membership_status => StudentMembership::STATUSES[:accepted])
+
+          end
+
+          should "not be able to delete the group" do
+            assert @grouping.is_valid?
+            post_as @student,
+                    :deletegroup,
+                    {:id => @assignment.id,
+                     :grouping_id => @grouping.id}
+            assert_redirected_to :action => "student_interface",
+                                 :id => @assignment.id
+            assert_equal I18n.t('groups.cant_delete'), flash[:fail_notice]
+            assert @student.has_accepted_grouping_for?(@assignment.id)
+
+          end
+        end
+
         context "with a submission" do
           setup do
             submission = Submission.make(:grouping => @grouping)
@@ -741,6 +811,29 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         assert_equal I18n.t("create_group.fail.not_allow_to_form_groups"),
                     flash[:fail_notice]
       end
+
+      context "with a group" do
+        setup do
+          @grouping = Grouping.make(:assignment => @assignment)
+          StudentMembership.make(
+              :grouping => @grouping,
+              :membership_status => StudentMembership::STATUSES[:accepted],
+              :user => @student)
+
+        end
+
+        should "not be able to delete grouping" do
+          post_as @student,
+                  :deletegroup,
+                  {:id => @assignment.id,
+                   :grouping_id => @grouping.id}
+          assert_redirected_to :action => "student_interface",
+                               :id => @assignment.id
+          assert_equal(I18n.t('groups.cant_delete'), flash[:fail_notice])
+          assert @student.has_accepted_grouping_for?(@assignment.id)
+
+        end
+      end
     end  # -- with an assignment where instructors creates groups
 
     context "with an assignment where students have to work alone" do
@@ -788,258 +881,52 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         end
       end
     end  # -- with an assignment, with a past due date
-  end  # -- A student
 
-  context "A logged in admin" do
-    setup do
-      clear_fixtures # don't want fixtures for this test
-
-      # FIXME that context should be *much simpler*
-      admin = Admin.make
-      @first_assignment_file = AssignmentFile.make
-      @second_assignment_file = AssignmentFile.make
-      @assignment = Assignment.make
-      # Make sure both have the correct assignment associated
-      @first_assignment_file.assignment = @assignment
-      @first_assignment_file.save
-      @second_assignment_file.assignment = @assignment
-      @second_assignment_file.save
-
-      assert_equal 2, @assignment.assignment_files.count
-
-      post_as(admin, :edit, :id => @assignment.id,
-        :assignment => {
-          :short_identifier => @assignment.short_identifier,
-          :description => @assignment.description,
-          :message => @assignment.message,
-          :due_date => @assignment.due_date,
-          :assignment_files_attributes => {
-            "1" => { :id => @first_assignment_file.id,
-                     :filename => @first_assignment_file.filename,
-                     :_destroy => "0" },
-            "2" => { :id => @second_assignment_file.id,
-                     :filename => @second_assignment_file.filename,
-                     :_destroy => "1" }, # i.e. this one should get deleted
-          },
-          :submission_rule_attributes => {
-            :type => @assignment.submission_rule.type.to_s,
-            :id => @assignment.submission_rule.id
-          }
-        })
-    end
-
-    should "get new assignment page" do
-      get_as @admin, :new
-      assert_response :success
-    end
-
-    should "be able to remove required assignment files using rails >= 2.3.8" do
-      @assignment.reload
-      assert_equal 1, @assignment.assignment_files.count
-      assignment_file = @assignment.assignment_files.first
-      assert_equal @first_assignment_file, assignment_file
-    end
-  end
-
-  context "A logged in admin doing a POST" do
-
-    setup do
-      @admin = users(:olm_admin_1)
-      @assignment = assignments(:assignment_1)
-    end
-
-    context "on new" do
+    context "with an assignmt, with past due date but collection in future" do
       setup do
-        post_as @admin, :new, :id => @assignment.id
-      end
-      should assign_to :assignment
-      should assign_to :assignments
-      should respond_with :success
-    end
-
-    context "with REPOSITORY_EXTERNAL_SUBMITS_ONLY as false" do
-      setup do
-        MarkusConfigurator.stubs(:markus_config_repository_external_submits_only?).returns(false)
-        get_as @admin, :new
-      end
-      should "set allow_web_submits accordingly" do
-        assignment = assigns(:assignment)
-        assert assignment.allow_web_submits == true
-      end
-    end
-
-    context "with REPOSITORY_EXTERNAL_SUBMITS_ONLY as true" do
-      setup do
-        MarkusConfigurator.stubs(
-          :markus_config_repository_external_submits_only?).returns(true)
-        get_as @admin, :new
-      end
-
-      should "set allow_web_submits accordingly" do
-        assignment = assigns(:assignment)
-        assert assignment.allow_web_submits == false
-      end
-    end
-  end # context: A logged in admin doing a GET
-
-
-
-  # If for an assignment the due date has passed, but the instructor has set up a grace period,
-  # group formation functionality should be still possible
-  context "For an assignment, for which the due date has passed but the collection date is
-           still in the future," do
-
-    setup do
-      @grouping = groupings(:grouping_1)
-      @assignment = @grouping.assignment
-      grace_period_submission_rule = GracePeriodSubmissionRule.new
-      @assignment.replace_submission_rule(grace_period_submission_rule)
-      GracePeriodDeduction.destroy_all
-
-      grace_period_submission_rule.save
-
-      # On July 1 at 1PM, the instructor sets up the course...
-      pretend_now_is(Time.parse("July 1 2009 1:00PM")) do
-        # Due date is on the very same day and time
-        @assignment.due_date = Time.parse("July 1 2009 1:00PM")
-        # Set 24 grace period
-        period = Period.new
-        period.submission_rule = @assignment.submission_rule
-        period.hours = 24
-        period.save
-        # Collect date is now after July 2 @ 1PM
+        @assignment = Assignment.make(:due_date => 1.days.ago)
+        grace_period_submission_rule = GracePeriodSubmissionRule.new
+        @assignment.replace_submission_rule(grace_period_submission_rule)
         @assignment.save
-      end
-    end
-
-    context "a logged in student" do
-
-      setup do
-        # We need a student with no grouping
-        @student = users(:student_interface_controller_test_student)
+        period = Period.make(:submission_rule => @assignment.submission_rule,
+                             :hours => 62)
       end
 
       should "have the create group link available" do
-        # On July 1 at 6PM, the student navigates to the student_interface, which is
-        # past the due date of the assignment, but before the grace period ends
-        # at July 2 at 1PM.
-        response = nil
-        pretend_now_is(Time.parse("July 1 2009 6:00PM")) do
-          response = get_as(@student, :student_interface, :id => @assignment.id)
-        end
-        assert_not_nil(response.body =~ /<a[^>]*>#{I18n.t(:create)}<\/a>/)
-        assert_nil(response.body =~ /#{I18n.t(:invite)}/)
+        get_as @student, :student_interface, :id => @assignment.id
+        assert_not_nil (@response.body =~ /<a[^>]*>#{I18n.t(:create)}<\/a>/)
       end
 
       should "be able to create a group" do
-        # On July 1 at 6PM, the student posts to the creategroup action, which is
-        # past the due date of the assignment, but before the grace period ends
-        # at July 2 at 1PM.
-        response = nil
-        pretend_now_is(Time.parse("July 1 2009 6:00PM")) do
-          # We should have a create link first, which should later be absent
-          response = get_as(@student, :student_interface, :id => @assignment.id)
-          assert_not_nil(response.body =~ /<a[^>]*>#{I18n.t(:create)}<\/a>/)
-          # Create the group
-          response = post_as(@student, :creategroup, :id => @assignment.id)
-          assert_equal(response.status, "302 Found", "Should get a redirect!")
-          # See if the create link has disappeared
-          response = get_as(@student, :student_interface, :id => @assignment.id)
-          assert_nil(response.body =~ /<a[^>]*>#{I18n.t(:create)}<\/a>/)
-        end
+        post_as @student, :creategroup, :id => @assignment.id
+        assert_redirected_to :action => "student_interface",
+                             :id => @assignment.id
+        assert @student.has_accepted_grouping_for?(@assignment.id)
       end
 
-      should "be able to invite students" do
-        # On July 1 at 6PM, the student posts to the creategroup action, which is
-        # past the due date of the assignment, but before the grace period ends
-        # at July 2 at 1PM.
-        st2 = users(:student_interface_controller_test_student2)
-        response = nil
-        pretend_now_is(Time.parse("July 1 2009 6:00PM")) do
-          # We should have a create link first, which should later be absent
-          response = get_as(@student, :student_interface, :id => @assignment.id)
-          assert_not_nil(response.body =~ /<a[^>]*>#{I18n.t(:create)}<\/a>/)
-          # Create the group
-          response = post_as(@student, :creategroup, :id => @assignment.id)
-          assert_equal(response.status, "302 Found", "Should get a redirect!")
-          # See if the create link has disappeared
-          response = get_as(@student, :student_interface, :id => @assignment.id)
-          assert_nil(response.body =~ /<a[^>]*>#{I18n.t(:create)}<\/a>/)
-          assert_not_nil(response.body =~ /#{I18n.t(:invite)}/)
-          response = post_as(@student, :invite_member, {:id => @assignment.id, :invite_member => st2.user_name})
-          assert_not_nil(flash[:success])
+      context "with a grouping" do
+        setup do
+          @grouping = Grouping.make(:assignment => @assignment)
+          StudentMembership.make(
+              :grouping => @grouping,
+              :membership_status => StudentMembership::STATUSES[:inviter],
+              :user => @student)
+
+        end
+
+        should "be able to invite a student" do
+          student = Student.make
+          post_as @student,
+                  :invite_member,
+                  {:id => @assignment.id,
+                   :invite_member => student.user_name}
+          assert_equal(I18n.t('invite_student.success'), flash[:success])
+          assert_redirected_to :action => "student_interface",
+                               :id => @assignment.id
+
         end
       end
-
-      should "not have the create group link available" do
-        # On July 1 at 6PM, the student navigates to the student_interface, which is
-        # past the due date of the assignment and after the grace period.
-        response = nil
-        pretend_now_is(Time.parse("July 2 2009 6:00PM")) do
-          response = get_as(@student, :student_interface, :id => @assignment.id)
-        end
-        assert_nil(response.body =~ /<a[^>]*>#{I18n.t(:create)}<\/a>/)
-        assert_nil(response.body =~ /#{I18n.t(:invite)}/)
-      end
-
-    end # end context logged in student
-
-  end # context assignment past due date, pre collection date
-
-  context "A valid grouping if user is the inviter" do
-
-    should "be possible to delete if inviter is the only member" do
-      student_membership = memberships(:membership6)
-      grouping = student_membership.grouping
-      assert_equal(1, grouping.accepted_students.length)
-      user = grouping.inviter
-      assignment = grouping.assignment
-      assignment.group_min = 1
-      assignment.group_max = 2
-      assignment.save
-      # we don't want submissions for this test
-      grouping.submissions.destroy_all
-      assert grouping.submissions.empty?
-      assert grouping.is_valid?
-      post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
-      assert_redirected_to :action => "student_interface", :id => assignment.id
-      assert_equal(I18n.t("assignment.group.deleted"), flash[:edit_notice])
-      assert !user.has_accepted_grouping_for?(assignment.id)
     end
-
-    should "not be possible to delete if assignment is not group assignment" do
-      student_membership = memberships(:membership6)
-      grouping = student_membership.grouping
-      user = grouping.inviter
-      assignment = grouping.assignment
-      assignment.group_min = 1
-      assignment.save
-      assignment.reload
-      assert !assignment.group_assignment?
-      # we don't want submissions for this test
-      grouping.submissions.destroy_all
-      assert grouping.is_valid?
-      post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
-      assert_redirected_to :action => "student_interface", :id => assignment.id
-      assert_equal(I18n.t('groups.cant_delete'), flash[:fail_notice])
-      assert user.has_accepted_grouping_for?(assignment.id)
-    end
-
-    should "not be possible to delete if inviter is NOT the only member" do
-      student_membership = memberships(:membership1)
-      grouping = student_membership.grouping
-      assert_equal(2, grouping.accepted_students.length)
-      user = grouping.inviter
-      assignment = grouping.assignment
-      assignment.group_min = 1
-      assignment.save
-      assert grouping.is_valid?
-      post_as(user, :deletegroup, {:id => assignment.id, :grouping_id => grouping.id})
-      assert_redirected_to :action => "student_interface", :id => assignment.id
-      assert_equal I18n.t('groups.cant_delete'), flash[:fail_notice]
-      assert user.has_accepted_grouping_for?(assignment.id)
-    end
-
-  end
+  end  # -- A student
 
 end
