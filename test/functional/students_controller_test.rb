@@ -1,78 +1,94 @@
-require File.dirname(__FILE__) + '/authenticated_controller_test'
+require File.join(File.dirname(__FILE__), 'authenticated_controller_test')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 
 class StudentsControllerTest < AuthenticatedControllerTest
 
-  fixtures :all
 
   def setup
-    @student = users(:student2)
-    @admin = users(:olm_admin_1)
+    clear_fixtures
   end
 
-  # Students should never be able to access any of the functions of this controller
-  def test_student_locked_out
-    # Index
-    get_as @student, :index
-    assert_response :missing
+  context "A student" do
+    setup do
+      @student = Student.make
+    end
 
-    # Edit
-    get_as @student, :edit
-    assert_response :missing
+    should "not be able to go on :index" do
+      get_as @student, :index
+      assert_response :missing
+    end
 
-    # Update
-    get_as @student, :update
-    assert_response :missing
+    should "not be able to :edit" do
+      get_as @student, :edit
+      assert_response :missing
+    end
 
-    # Create
-    get_as @student, :create
-    assert_response :missing
+    should "not be able to :update" do
+      get_as @student, :update
+      assert_response :missing
+    end
 
-    # Download Student List
-    get_as @student, :download_student_list
-    assert_response :missing
+    should "not be able to :create" do
+      get_as @student, :create
+      assert_response :missing
+    end
 
-    # Upload Student List (Get)
-    get_as @student, :index
-    assert_response :missing
+    should "not be able to :download_student_list" do
+      get_as @student, :download_student_list
+      assert_response :missing
+    end
+  end  # -- A student
 
-    # Upload Student List (Post)
-    post_as @student, :index
-    assert_response :missing
+  context "An admin" do
+    setup do
+      @admin = Admin.make
+    end
 
-  end
+    should "be able to get :index" do
+      get_as @admin, :index
+      assert_response :success
+    end
 
-  def test_index
-    get_as(@admin, :index)
-    assert_response :success
-  end
+    should "be able to create a student" do
+      post_as @admin,
+              :create,
+              :user => {:user_name => 'jdoe',
+                        :last_name => 'Doe',
+                        :first_name => 'John'}
+      assert_response :redirect
+      assert_not_nil Student.find_by_user_name('jdoe')
+    end
 
-  def test_edit
-    student = users(:student1)
-    get_as(@admin, :edit, :id => student.id)
-    assert_response :success
-  end
+    context "with a student" do
+      setup do
+        @student = Student.make
+      end
 
-  def test_create
-    student = users(:student1)
-    post_as(@admin, :create, :user => {:user_name => 'Essai',:id => student.id, :last_name => 'ESSAI', :first_name => 'essai'})
-    assert_response :redirect
-  end
+      should "be able to edit a student" do
+        get_as @admin,
+               :edit,
+               :id => @student.id
+        assert_response :success
+      end
 
+      should "be able to update student" do
+        post_as @admin,
+                :update,
+                :user => {:id => @student.id,
+                          :last_name => 'Doe',
+                          :first_name => 'John'}
+        assert_response :redirect
+        assert_equal I18n.t("students.edit_success",
+                            :user_name => @student.user_name),
+                     flash[:edit_notice]
 
-  def test_update1
-    student = users(:student1)
-    post_as(@admin, :update, :user => {:id => student.id, :last_name =>
-    'ESSAI', :first_name => 'essai'})
-    assert_response :redirect
-  end
+        @student.reload
+        assert_equal "Doe",
+                     @student.last_name,
+                     'should have been updated to Doe'
 
-  def test_update2
-    student = users(:student1)
-    post_as(@admin, :update, :user => {:id => student.id, :last_name =>
-    'ESSAI', :first_name => 'essai'})
-    student.reload
-    assert_equal("ESSAI", student.last_name, 'should have been updated to ESSAI')
-  end
-
+      end
+    end  # -- with a student
+  end  # -- An admin
 end
 
