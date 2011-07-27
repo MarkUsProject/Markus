@@ -34,13 +34,19 @@
 		</td>
 		<td class="note"><%=note.notes_message%></td>
 		<td class="note">
-			<% if note.user_can_modify?(@current_user) -%>
-			<%= link_to I18n.t('edit'), { :action => 'edit', :id => note.id } %>
+		<% if note.user_can_modify?(@current_user) -%>
+		  <%= link_to I18n.t('edit'),
+			      {:action => 'edit', :id => note.id} %>
 			|
-			<%= link_to_remote I18n.t('delete'), :method => 'delete',
-    :url => { :action => 'delete', :id => note.id }, 
-    :html => { :class => 'delete', :title => I18n.t('notes.delete.link_title') }, 
-	:confirm => I18n.t('notes.delete.link_confirm') %>
+		  <%= link_to I18n.t('delete'),
+			      :method => 'delete',
+			      :url => {:action => 'delete',
+				       :id => note.id},
+			      :html => {
+				  :class => 'delete',
+				  :title => I18n.t('notes.delete.link_title')},
+			      :confirm => I18n.t('notes.delete.link_confirm'),
+			      :remote => true %>
 			<% else -%>
 			&nbsp;
 			<% end -%>
