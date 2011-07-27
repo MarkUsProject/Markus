@@ -104,7 +104,7 @@
 <div id="upload_dialog"> 
   <h1><%= t('rubric_criteria.upload.csv_title') %></h1>
   <p><%= t('rubric_criteria.upload.csv_prompt') %></p>
-  <% form_for :csv_upload, :url => {:controller=>"rubrics",
+  <%= form_for :csv_upload, :url => {:controller=>"rubrics",
                                 :action => 'csv_upload',
                                 :id => @assignment.id},
                                 :html => {:multipart => true, :size => 1 } do |f| %>
@@ -119,7 +119,7 @@
 
   <h1><%= t('rubric_criteria.upload.yml_title') %></h1>
   <p><%= t('rubric_criteria.upload.yml_prompt') %></p>
-  <% form_for :yml_upload, :url => {:controller=>"rubrics",
+  <%= form_for :yml_upload, :url => {:controller=>"rubrics",
                                 :action => 'yml_upload',
                                 :id => @assignment.id},
                                 :html => {:multipart => true, :size => 1 } do |f| %>
