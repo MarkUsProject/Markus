@@ -39,11 +39,10 @@ class AdminsControllerTest < AuthenticatedControllerTest
                :user => {:user_name => 'jdoe',
                          :last_name => 'Doe',
                          :first_name => 'Jane'})
-       assert_redirected_to :action => "index"
        a = Admin.find_by_user_name('jdoe')
-       assert_not_nil a
+       assert_redirected_to :action => "index"
     end
-    
+
     context "with a second user" do
       setup do
         @admin2 = Admin.make
@@ -55,12 +54,16 @@ class AdminsControllerTest < AuthenticatedControllerTest
                 :user => {:id => @admin2.id,
                           :last_name => 'John',
                           :first_name => 'Doe'})
-        assert_response :redirect
+        assert_redirected_to :action => "index"
+        assert_equal I18n.t("admins.success",
+                            :user_name => @admin2.user_name),
+                     flash[:edit_notice]
       end
 
       should "be able to edit" do
-        get_as(@admin, :edit, :id => @admin2.id)
+        get_as @admin, :edit, :id => @admin2.id
         assert_response :success
+        assert_not_nil assigns(:user)
       end
     end
   end
