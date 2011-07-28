@@ -1,6 +1,7 @@
 <%
   # For the internationalization of the Calendar
 %>
+
 <% if I18n.default_locale == :en %>
    <%= calendar_date_select_includes "silver" %>
 <% else %>
@@ -17,7 +18,7 @@
 </div>
 <% end %>
 
-<%= form_for(@assignment, :as => :assignment) do |f| %>
+<%= form_for @assignment, :as => :assignment do |f| %>
 <%= f.error_messages%>
 <fieldset>
   <legend><%= t("assignment.properties") %></legend>

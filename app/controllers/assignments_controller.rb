@@ -173,7 +173,6 @@ class AssignmentsController < ApplicationController
     end
  end
 
-
   # Form accessible actions --------------------------------------------
   # Post actions that we expect only forms to access them
 
