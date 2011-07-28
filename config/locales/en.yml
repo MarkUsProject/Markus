@@ -55,6 +55,7 @@ en:
     assignments:        "Assignments"
     users:              "Users"
     home:               "Home"
+    settings:           "Settings"
 
     # app/models/assignment_file.rb
     validation_messages:
