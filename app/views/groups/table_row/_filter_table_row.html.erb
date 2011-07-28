@@ -2,30 +2,61 @@
 <span class="link"><%= h(grouping.group.group_name)%></span>
     <span class="table_menu">
       <% if grouping.is_valid?%>
-        <%= link_to_remote image_tag("icons/tick.png", :alt => I18n.t('groups.is_valid'),
-          :title => I18n.t('groups.is_valid')), :url => { :action =>
-          'invalid_grouping', :id => assignment.id, :grouping_id => grouping.id},
-          :confirm =>  I18n.t('groups.invalidate_confirm')
+        <%= link_to image_tag("icons/tick.png",
+			      :alt => I18n.t('groups.is_valid'),
+			      :title => I18n.t('groups.is_valid')),
+		    :url => {:action => 'invalid_grouping',
+			     :id => assignment.id,
+			     :grouping_id => grouping.id},
+		    :confirm =>  I18n.t('groups.invalidate_confirm'),
+		    :remote => true
         %>
       <% else %>
-        <%= link_to_remote image_tag("icons/cross.png", :alt => I18n.t('groups.is_not_valid'), :title => I18n.t('groups.is_not_valid')), :url => { :action =>
-          'valid_grouping', :id => assignment.id, :grouping_id => grouping.id},
-          :confirm =>  I18n.t('groups.validate_confirm') %>
+        <%= link_to image_tag("icons/cross.png",
+			      :alt => I18n.t('groups.is_not_valid'),
+			      :title => I18n.t('groups.is_not_valid')),
+		    :url => {:action => 'valid_grouping',
+			     :id => assignment.id,
+			     :grouping_id => grouping.id},
+	            :confirm =>  I18n.t('groups.validate_confirm'),
+		    :remote => true %>
       <% end %>
-      <%= link_to_remote image_tag("icons/pencil.png", :alt => I18n.t('groups.rename_group.link'), :title => I18n.t('groups.rename_group.link')),
-	:url => { :action => 'rename_group_dialog', :id => assignment.id, :grouping_id => grouping.id } %>
-      <%= link_to_remote image_tag("icons/note.png", :alt => I18n.t('notes.title'), :title => I18n.t('notes.title')),
-	:url => { :controller => 'note' , :action => 'notes_dialog', :id => assignment.id, :noteable_id => grouping.id, :noteable_type => 'Grouping' , :action_to => 'note_message', :controller_to => 'groups'}, :html => {:id => "notes_highlight_#{grouping.id}"} %>
-      <%= link_to_remote image_tag("icons/bin_closed.png", :alt => I18n.t('groups.delete')), :method => 'delete',
-        :url => { :action => 'remove_group', :id => assignment.id, :grouping_id => grouping.id },
-        :html => { :class => 'delete', :title => I18n.t('groups.delete') },
-        :confirm =>  I18n.t('groups.delete_confirm')  %>
+      <%= link_to image_tag("icons/pencil.png",
+			    :alt => I18n.t('groups.rename_group.link'),
+			    :title => I18n.t('groups.rename_group.link')),
+		  :url => {:action => 'rename_group_dialog',
+			   :id => assignment.id,
+			   :grouping_id => grouping.id},
+		  :remote => true %>
+      <%= link_to image_tag("icons/note.png",
+			    :alt => I18n.t('notes.title'),
+			    :title => I18n.t('notes.title')),
+		  :url => {:controller => 'note',
+			   :action => 'notes_dialog',
+			   :id => assignment.id,
+			   :noteable_id => grouping.id,
+			   :noteable_type => 'Grouping',
+			   :action_to => 'note_message',
+			   :controller_to => 'groups'},
+		  :html => {:id => "notes_highlight_#{grouping.id}"},
+		  :remote => true %>
+      <%= link_to image_tag("icons/bin_closed.png",
+			    :alt => I18n.t('groups.delete')),
+		  :method => 'delete',
+		  :url => {:action => 'remove_group',
+			   :id => assignment.id,
+			   :grouping_id => grouping.id},
+	          :html => {:class => 'delete',
+			    :title => I18n.t('groups.delete')},
+	          :confirm =>  I18n.t('groups.delete_confirm'),
+		  :remote => true %>
     </span>
 </td>
 
 <td>
 <% grouping.student_memberships.each do |member| %>
    <%= render :partial => "groups/manage/member",
-      :locals => {:member => member, :grouping => grouping } %>
+	      :locals => {:member => member,
+			  :grouping => grouping } %>
 <% end -%>
 </td>

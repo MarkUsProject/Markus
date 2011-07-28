@@ -20,20 +20,26 @@
 <% end %>
 
  <div class="float_right">
-   <%= link_to_remote t("annotations.delete.delete_message"),
-        :url => {:action => "delete_annotation_category",
-	         :id => annotation_category.id},
-	:confirm => t('annotations.delete.annotation_category'),
-	:html => {:class => 'delete'}
+   <%= link_to t("annotations.delete.delete_message"),
+	       :url => {:action => "delete_annotation_category",
+	   	        :id => annotation_category.id},
+	        :confirm => t('annotations.delete.annotation_category'),
+	        :html => {:class => 'delete'},
+		:remote => true
    %>
  </div>
  <div id="annotation_category_controls">
    <h2><%=h(annotation_category.annotation_category_name)%></h2>
 
 <fieldset>
-   <% remote_form_for :annotation_category, annotation_category, :url => {:action => 'update_annotation_category', :id => annotation_category.id } do |f| %>
+   <%= form_for :annotation_category,
+		annotation_category,
+		:url => {:action => 'update_annotation_category',
+			 :id => annotation_category.id},
+		:remote => true do |f| %>
    <span id="annotation_category_inputs">
-     <%= f.label :annotation_category_name, I18n.t("annotations.update.annotation_category_name") %>
+     <%= f.label :annotation_category_name,
+		 I18n.t("annotations.update.annotation_category_name") %>
      <%= f.text_field :annotation_category_name, :rows => '3' %>
    </span>
  <%= f.submit t(:save) %>

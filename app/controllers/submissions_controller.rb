@@ -100,7 +100,7 @@ class SubmissionsController < ApplicationController
         @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, @path))
         @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
       rescue Exception => @find_revision_error
-        render :action => 'repo_browser/find_revision_error'
+        render :template => 'submissions/repo_browser/find_revision_error'
         return
       end
       @table_rows = {}
@@ -110,7 +110,7 @@ class SubmissionsController < ApplicationController
       @directories.sort.each do |directory_name, directory|
         @table_rows[directory.id] = construct_repo_browser_directory_table_row(directory_name, directory)
       end
-      render :action => 'repo_browser/populate_repo_browser'
+      render :template => 'submissions/repo_browser/populate_repo_browser'
     end
   end
 
@@ -119,7 +119,9 @@ class SubmissionsController < ApplicationController
     @grouping = current_user.accepted_grouping_for(@assignment.id)
 
     if @grouping.nil?
-      redirect_to :controller => 'assignments', :action => 'student_interface', :id => params[:id]
+      redirect_to :controller => 'assignments',
+                  :action => 'student_interface',
+                  :id => params[:id]
       return
     end
 

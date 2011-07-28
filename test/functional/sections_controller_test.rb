@@ -7,7 +7,7 @@ require File.join(File.dirname(__FILE__),'/../blueprints/helper')
 require 'shoulda'
 
 
-class UsersControllerTest < AuthenticatedControllerTest
+class SectionsControllerTest < AuthenticatedControllerTest
 
   def setup
     clear_fixtures

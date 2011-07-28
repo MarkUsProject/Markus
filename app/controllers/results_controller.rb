@@ -116,11 +116,16 @@ class ResultsController < ApplicationController
   def next_grouping
     grouping = Grouping.find(params[:id])
     if grouping.has_submission? && grouping.is_collected? && grouping.current_submission_used.remark_submitted?
-        redirect_to :action => 'edit', :id => grouping.current_submission_used.remark_result.id
+        redirect_to :action => 'edit',
+                    :id => grouping.current_submission_used.remark_result.id
     elsif grouping.has_submission? && grouping.is_collected?
-      redirect_to :action => 'edit', :id => grouping.current_submission_used.result.id
+      redirect_to :action => 'edit',
+                  :id => grouping.current_submission_used.result.id
     else
-      redirect_to :controller => 'submissions', :action => 'collect_and_begin_grading', :id => grouping.assignment.id, :grouping_id => grouping.id
+      redirect_to :controller => 'submissions',
+                  :action => 'collect_and_begin_grading',
+                  :id => grouping.assignment.id,
+                  :grouping_id => grouping.id
     end
   end
 
@@ -155,10 +160,10 @@ class ResultsController < ApplicationController
       if params[:value] == Result::MARKING_STATES[:complete]
         @result.submission.assignment.assignment_stat.refresh_grade_distribution
       end
-      render :action => "results/update_marking_state"
+      render :template => "results/update_marking_state"
     else # Failed to pass validations
       # Show error message
-      render :action => "results/marker/show_result_error"
+      render :template => "results/marker/show_result_error"
       return
     end
   end
@@ -226,7 +231,7 @@ class ResultsController < ApplicationController
       return
     end
     @code_type = @file.get_file_type
-    render :action => 'results/common/codeviewer'
+    render :template => 'results/common/codeviewer'
   end
 
   #=== Description
@@ -245,7 +250,7 @@ class ResultsController < ApplicationController
       return
     end
 
-    render :action => 'results/render_test_result', :layout => "plain"
+    render :template => 'results/render_test_result', :layout => "plain"
   end
 
   def update_mark
@@ -352,15 +357,15 @@ class ResultsController < ApplicationController
       @extra_mark.result = @result
       @extra_mark.unit = ExtraMark::UNITS[:points]
       if !@extra_mark.update_attributes(params[:extra_mark])
-        render :action => 'results/marker/add_extra_mark_error'
+        render :template => 'results/marker/add_extra_mark_error'
       else
         # need to re-calculate total mark
         @result.update_total_mark
-        render :action => 'results/marker/insert_extra_mark'
+        render :template => 'results/marker/insert_extra_mark'
       end
       return
     end
-    render :action => 'results/marker/add_extra_mark'
+    render :template => 'results/marker/add_extra_mark'
   end
 
   #Deletes an extra mark from the database and removes it from the html
@@ -371,7 +376,7 @@ class ResultsController < ApplicationController
     #need to recalculate total mark
     @result = @extra_mark.result
     @result.update_total_mark
-    render :action => 'results/marker/remove_extra_mark'
+    render :template => 'results/marker/remove_extra_mark'
   end
 
   def update_overall_comment
@@ -422,7 +427,9 @@ class ResultsController < ApplicationController
     @result.released_to_students = true
     @result.save
 
-    redirect_to :controller => 'results', :action => 'view_marks', :id => params[:id]
+    redirect_to :controller => 'results',
+                :action => 'view_marks',
+                :id => params[:id]
   end
 
   def expand_criteria

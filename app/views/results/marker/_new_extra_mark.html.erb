@@ -1,6 +1,9 @@
 <tr id="add_extra_mark_prompt">
 <td colspan="3">
-<% remote_form_for :extra_mark, :url => {:action => 'add_extra_mark', :id => result.id} do |f| %>
+<%= form_for :extra_mark,
+	     :url => {:action => 'add_extra_mark',
+		      :id => result.id},
+	      :remote => true do |f| %>
   <%= f.label :description, I18n.t("marker.marks.comment") %>
   <%= f.text_field :description %><br />
   <%= f.label :extra_mark, I18n.t("marker.marks.mark") %>
