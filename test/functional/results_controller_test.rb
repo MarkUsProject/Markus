@@ -320,19 +320,19 @@ class ResultsControllerTest < AuthenticatedControllerTest
             end  # -- without permissions to download the file
           end # -- without file error
 
-        context "with file error" do
-          setup do
-            @file.expects(:submission).once.returns(@result.submission)
-            SubmissionFile.expects(:find).with('1').returns(@file)
-            ResultsController.any_instance.expects(:authorized_to_download?).once.returns(true)
-            @file.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
-            get_as @student,
-                    :download,
-                    :select_file_id => 1
-          end
+        should "be able to retrieve_file with file error" do
+          @file.expects(:submission).once.returns(@result.submission)
+          SubmissionFile.expects(:find).with('1').returns(@file)
+          ResultsController.any_instance.expects(
+                      :authorized_to_download?).once.returns(true)
+          @file.expects(
+              :retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
+          get_as @student,
+                  :download,
+                  :select_file_id => 1
 
-          should set_the_flash.to(SAMPLE_ERR_MSG)
-          should respond_with :redirect
+          assert set_the_flash.to(SAMPLE_ERR_MSG)
+          assert respond_with :redirect
         end
 
         context "with supported image to be displayed inside browser" do
@@ -764,60 +764,54 @@ class ResultsControllerTest < AuthenticatedControllerTest
             @file = SubmissionFile.new
           end
 
-          context "without file error" do
-            setup do
-              @file.expects(:filename).once.returns('filename')
-              @file.expects(:retrieve_file).returns('file content')
-              @file.expects(:is_supported_image?).once.returns(false)
-              @file.expects(:is_pdf?).once.returns(false)
-              SubmissionFile.expects(:find).with('1').returns(@file)
-              get_as @admin, :download, :select_file_id => 1
-            end
-            should_not set_the_flash
-            should respond_with_content_type "application/octet-stream"
-            should respond_with :success
-            should "respond with appropriate content" do
-              assert_equal 'file content', @response.body
-            end
+          should "download without file error" do
+            @file.expects(:filename).once.returns('filename')
+            @file.expects(:retrieve_file).returns('file content')
+            @file.expects(:is_supported_image?).once.returns(false)
+            @file.expects(:is_pdf?).once.returns(false)
+            SubmissionFile.expects(:find).with('1').returns(@file)
+            get_as @admin, :download, :select_file_id => 1
+            assert_not set_the_flash
+            assert respond_with_content_type "application/octet-stream"
+            assert respond_with :success
+            assert_equal 'file content', @response.body
           end  # -- without file error
 
-          context "with file error" do
-            setup do
-              submission = Submission.make
-              SubmissionFile.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
-              SubmissionFile.expects(:find).with('1').returns(@file)
-              @file.expects(:submission).once.returns(
-                  submission)
-              get_as @admin,
-                     :download,
-                     :select_file_id => 1
-            end
+          should "download with file error" do
+            submission = Submission.make
+            SubmissionFile.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
+            SubmissionFile.expects(:find).with('1').returns(@file)
+            @file.expects(:submission).once.returns(
+                submission)
+            get_as @admin,
+                    :download,
+                    :select_file_id => 1
 
-            should set_the_flash.to(SAMPLE_ERR_MSG)
-            should respond_with :redirect
+            assert set_the_flash.to(SAMPLE_ERR_MSG)
+            assert respond_with :redirect
           end  # -- with file error
 
           context "with supported image to be displayed inside browser" do
-              setup do
-                @file.expects(:filename).once.returns(
-                  'filename.supported_image')
-                @file.expects(:retrieve_file).returns('file content')
-                @file.expects(:is_supported_image?).once.returns(true)
-                SubmissionFile.expects(:find).with('1').returns(@file)
-                get_as @admin,
-                       :download,
-                       :select_file_id => 1,
-                       :show_in_browser => true
-              end
+            setup do
+              @file.expects(:filename).once.returns(
+                'filename.supported_image')
+              @file.expects(:retrieve_file).returns('file content')
+              @file.expects(:is_supported_image?).once.returns(true)
+              SubmissionFile.expects(:find).with('1').returns(@file)
+            end
 
-              should_not set_the_flash
-              should respond_with_content_type "image"
-              should respond_with :success
-              should "respond with appropriate content" do
-                assert_equal 'file content', @response.body
-              end
-            end  # -- with supported image to be displayed in browser
-          end
+            should "respond with appropriate content" do
+              get_as @admin,
+                      :download,
+                      :select_file_id => 1,
+                      :show_in_browser => true
+
+              assert respond_with_content_type "image"
+              assert respond_with :success
+              assert_equal 'file content', @response.body
+            end
+          end  # -- with supported image to be displayed in browser
+        end
 
         context "GET on :codeviewer" do
           setup do
@@ -1219,31 +1213,29 @@ class ResultsControllerTest < AuthenticatedControllerTest
             @submission_file = SubmissionFile.make
           end
 
-          context "with file reading error" do
-            setup do
-              # We simulate a file reading error.
-              SubmissionFile.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
-              get_as @ta,
-                     :codeviewer,
-                     :id => @assignment.id,
-                     :submission_file_id => @submission_file.id,
-                     :focus_line => 1
-            end
-            should assign_to :assignment
-            should assign_to :submission_file_id
-            should assign_to :focus_line
-            should assign_to :file
-            should assign_to :result
-            should assign_to :annots
-            should assign_to :all_annots
-            should_not assign_to :file_contents
-            should_not assign_to :code_type
-            should render_template 'shared/_handle_error.rjs'
-            should respond_with :success
-            should "pass along the exception's message" do
-              # Workaround to assert that the error message made its way to the response
-              assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
-            end
+          should "be able to codeviewer with file reading error" do
+            # We simulate a file reading error.
+            SubmissionFile.any_instance.expects(:retrieve_file
+                      ).once.raises(Exception.new(SAMPLE_ERR_MSG))
+            get_as @ta,
+                    :codeviewer,
+                    :id => @assignment.id,
+                    :submission_file_id => @submission_file.id,
+                    :focus_line => 1
+            assert assign_to :assignment
+            assert assign_to :submission_file_id
+            assert assign_to :focus_line
+            assert assign_to :file
+            assert assign_to :result
+            assert assign_to :annots
+            assert assign_to :all_annots
+            assert_not assign_to :file_contents
+            assert_not assign_to :code_type
+            assert render_template 'shared/_handle_error.rjs'
+            assert respond_with :success
+            # Workaround to assert that the error message made its way to the
+            # response
+            assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
           end  # -- with file reading error
 
           context "without error" do
@@ -1392,14 +1384,12 @@ class ResultsControllerTest < AuthenticatedControllerTest
           should respond_with :success
         end
 
-        context "GET on :collapse_criteria" do
-          setup do
-            get_as @ta, :collapse_criteria, :aid => @assignment.id
-          end
-          should assign_to :assignment
-          should assign_to :mark_criteria
-          should render_template 'results/marker/_collapse_criteria.rjs'
-          should respond_with :success
+        should "be able to collapse_criteria" do
+          get_as @ta, :collapse_criteria, :aid => @assignment.id
+          assert assign_to :assignment
+          assert assign_to :mark_criteria
+          assert render_template 'results/marker/_collapse_criteria.rjs'
+          assert respond_with :success
         end
 
         context "GET on :expand_unmarked_criteria" do
