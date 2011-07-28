@@ -1,4 +1,4 @@
-class UsersController < ApplicationController
+class SectionsController < ApplicationController
 
   before_filter :authorize_only_for_admin
 
