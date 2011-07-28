@@ -208,24 +208,26 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
     context "on :update_annotation_category" do
 
-      context "without errors" do
-        setup do
-          get_as @admin, :update_annotation_category, :id => @category.id
-        end
-        should respond_with :success
-        should_not set_the_flash
-        should assign_to :annotation_category
+      should "update properly" do
+        get_as @admin, :update_annotation_category, :id => @category.id
+        assert respond_with :success
+        assert assign_to :annotation_category
+        assert_equal I18n.t('annotations.update.annotation_category_success'),
+                     flash[:success]
       end
 
       context "with an error on save" do
         setup do
           AnnotationCategory.any_instance.stubs(:save).returns(false)
           AnnotationCategory.any_instance.stubs(:errors).returns("error")
-          get_as @admin, :update_annotation_category, :id => @category.id
         end
-        should respond_with :success
-        should_not set_the_flash
-        should assign_to :annotation_category
+
+        should "give error messages properly" do
+          get_as @admin, :update_annotation_category, :id => @category.id
+          assert respond_with :success
+          assert_equal flash[:error], "error"
+          assert assign_to :annotation_category
+        end
       end
 
     end

@@ -170,7 +170,7 @@ class NoteControllerTest < AuthenticatedControllerTest
           end
           should assign_to :note
           should set_the_flash.to(I18n.t('notes.create.success'))
-          should redirect_to("notes index page") { url_for(:controller => "note") }
+          should redirect_to(:controller => "note")
           should "Change the number of notes by 1" do
 	    assert_equal(@notes + 1,  Note.count )
 	  end
@@ -255,7 +255,7 @@ class NoteControllerTest < AuthenticatedControllerTest
           end
           should assign_to :note
           should set_the_flash.to(I18n.t('notes.update.success'))
-          should redirect_to("notes index") { url_for(:controller => "note") }
+          should redirect_to(:controller => "note")
         end
       end
 
@@ -360,7 +360,7 @@ class NoteControllerTest < AuthenticatedControllerTest
           end
           should assign_to :note
           should set_the_flash.to(I18n.t('notes.create.success'))
-          should redirect_to("notes index page") { url_for(:controller => "note") }
+          should redirect_to(:controller => "note")
           should "Change the number of notes by 1" do
 	    assert_equal(@notes + 1,  Note.count )
 	  end
@@ -463,7 +463,7 @@ class NoteControllerTest < AuthenticatedControllerTest
           end
           should assign_to :note
           should set_the_flash.to(I18n.t('notes.update.success'))
-          should redirect_to("notes index") { url_for(:controller => "note") }
+          should redirect_to(:controller => "note")
         end
       end
 
@@ -475,7 +475,7 @@ class NoteControllerTest < AuthenticatedControllerTest
         end
         should assign_to :note
         should set_the_flash.to(I18n.t('notes.update.success'))
-        should redirect_to("notes index") { url_for(:controller => "note") }
+        should redirect_to(:controller => "note")
       end
     end
 
