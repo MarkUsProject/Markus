@@ -186,13 +186,15 @@ class FlexibleCriteriaControllerTest < AuthenticatedControllerTest
         should respond_with :success
       end
 
-      context "without save errors" do
-        setup do
-          get_as @admin, :update, :id => @criterion.id, :flexible_criterion => {:flexible_criterion_name => 'one', :max => 10}
-        end
-        should assign_to :criterion
-        should_not set_the_flash
-        should render_template :update
+      should "be able to save" do
+        get_as @admin,
+               :update,
+               :id => @criterion.id,
+               :flexible_criterion => {:flexible_criterion_name => 'one',
+                                       :max => 10}
+        assert flash[:success], I18n.t('criterion_saved_success')
+        assert assign_to :criterion
+        assert render_template :update
       end
     end
 
@@ -537,18 +539,15 @@ class FlexibleCriteriaControllerTest < AuthenticatedControllerTest
       @criterion = flexible_criteria(:flexible_criterion_1)
     end
 
-    context "on :delete" do
-      setup do
-        delete_as @admin, :delete, :id => @criterion.id
-      end
-      should assign_to :criterion
-      should_not set_the_flash
-      should respond_with :success
 
-      should "effectively destroy the criterion" do
-        assert_raise ActiveRecord::RecordNotFound do
-          FlexibleCriterion.find(@criterion.id)
-        end
+    should "be able to delete the criterion" do
+      delete_as @admin, :delete, :id => @criterion.id
+      assert assign_to :criterion
+      assert I18n.t('criterion_deleted_success'), flash[:success]
+      assert respond_with :success
+
+      assert_raise ActiveRecord::RecordNotFound do
+        FlexibleCriterion.find(@criterion.id)
       end
     end
 

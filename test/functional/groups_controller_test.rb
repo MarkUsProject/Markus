@@ -142,7 +142,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
           post_as @admin, :add_group, {:id => @assignment.id}
         end
         should respond_with :success
-        should render_template 'groups/table_row/_filter_table_row.html.erb'
+        should render_template 'groups/table_row/_filter_table_row'
         should assign_to(:assignment) { @assignment }
         should assign_to :new_grouping
       end
@@ -165,7 +165,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
           delete_as @admin, :remove_group, {:grouping_id => @grouping.id}
         end
         should respond_with :success
-        should render_template 'delete_groupings.rjs'
+        should render_template 'groups/delete_groupings'
         should assign_to(:assignment) { @assignment }
         should assign_to(:errors) { [] }
         should assign_to(:removed_groupings) { [@grouping] }
@@ -177,7 +177,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
           delete_as @admin, :remove_group, {:grouping_id => @grouping_with_submission.id}
         end
         should respond_with :success
-        should render_template 'delete_groupings.rjs'
+        should render_template 'groups/delete_groupings'
         should assign_to(:assignment) { Assignment.make }
         should assign_to(:errors) { [@grouping_with_submission.group.group_name] }
         should assign_to(:removed_groupings) { [] }

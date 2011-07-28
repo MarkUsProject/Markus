@@ -74,9 +74,8 @@ class RoleSwitchingTest < AuthenticatedControllerTest
       should "be able to switch to a role with lesser privileges" do
         # redirect is done by JS, so match that we get a response
         # window.location.href = <index_url>
-        index_url = url_for(:action => "index", :only_path => true)
+        assert redirect_to :action => "index"
         assert_not_nil @response.body.match("window.location.href")
-        assert_not_nil @response.body.match(index_url)
         # should have set real_uid in the session
         assert_equal @admin.id , session[:real_uid]
         assert_not_equal session[:uid], session[:real_uid]
@@ -194,9 +193,8 @@ class RoleSwitchingTest < AuthenticatedControllerTest
       should "be able to switch to a role with lesser privileges" do
         # redirect is done by JS, so match that we get a response
         # window.location.href = <index_url>
-        index_url = url_for(:action => "index", :only_path => true)
+        assert redirect_to :action => "index"
         assert_not_nil @response.body.match("window.location.href")
-        assert_not_nil @response.body.match(index_url)
         # should have set real_uid in the session
         assert_equal @admin.id , session[:real_uid]
         assert_not_equal session[:uid], session[:real_uid]

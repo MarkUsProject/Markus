@@ -8,20 +8,20 @@ module Api
     def create
       if !request.post?
         # pretend this URL does not exist
-        render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
+        render :file => ::Rails.root.to_s + "/public/404.html", :status => 404
         return
       end
 
       if !has_required_http_params_and_user_type?(params)
         # incomplete/invalid HTTP params
-        render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
+        render :file => ::Rails.root.to_s + "/public/422.xml", :status => 422
         return
       end
 
       # check if there is an existing user
       user = User.find_by_user_name(params[:user_name])
       if !user.nil?
-        render :file => "#{RAILS_ROOT}/public/409.xml", :status => 409
+        render :file => ::Rails.root.to_s + "/public/409.xml", :status => 409
         return
       end
 
@@ -34,7 +34,7 @@ module Api
       elsif param_user_type == "admin"
         user_type = Admin
       else # Unkown user_type, Invalid HTTP params.
-        render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
+        render :file => ::Rails.root.to_s + "/public/422.xml", :status => 422
         return
       end
 
@@ -45,19 +45,19 @@ module Api
       new_user = user_type.new(attributes)
       if !new_user.save
         # Some error occurred
-        render :file => "#{RAILS_ROOT}/public/500.xml", :status => 500
+        render :file => ::Rails.root.to_s + "/public/500.xml", :status => 500
         return
       end
 
       # Otherwise everything went alright.
-      render :file => "#{RAILS_ROOT}/public/200.xml", :status => 200
+      render :file => ::Rails.root.to_s + "/public/200.xml", :status => 200
       return
     end
 
     # Requires nothing, does nothing.
     def destroy
       # Admins should not be deleting users at all so pretend this URL does not exist
-      render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
+      render :file => ::Rails.root.to_s + "/public/404.html", :status => 404
       return
     end
 
@@ -65,13 +65,13 @@ module Api
     def update
       if !request.put?
         # pretend this URL does not exist
-        render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
+        render :file => ::Rails.root.to_s + "/public/404.html", :status => 404
         return
       end
 
       if !has_required_http_params?(params)
         # incomplete/invalid HTTP params
-        render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
+        render :file => ::Rails.root.to_s + "/public/422.xml", :status => 422
         return
       end
 
@@ -79,7 +79,7 @@ module Api
       # TODO: render will change to a view with a more meaningful message.
       user = User.find_by_user_name(params[:user_name])
       if user.nil?
-        render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
+        render :file => Rails.root.to_s + "/public/422.xml", :status => 422
         return
       end
 
@@ -87,7 +87,7 @@ module Api
       if !params[:new_user_name].blank?
         # Make sure new user_name does not exist
         if !User.find_by_user_name(params[:new_user_name]).nil?
-          render :file => "#{RAILS_ROOT}/public/409.xml", :status => 409
+          render :file => ::Rails.root.to_s + "/public/409.xml", :status => 409
           return
         end
         updated_user_name = params[:new_user_name]
@@ -100,12 +100,12 @@ module Api
       user.attributes = attributes
       if !user.save
         # Some error occurred
-        render :file => "#{RAILS_ROOT}/public/500.xml", :status => 500
+        render :file => ::Rails.root.to_s + "/public/500.xml", :status => 500
         return
       end
 
       # Otherwise everything went alright.
-      render :file => "#{RAILS_ROOT}/public/200.xml", :status => 200
+      render :file => ::Rails.root.to_s + "/public/200.xml", :status => 200
       return
     end
 
@@ -113,13 +113,13 @@ module Api
     def show
       if !request.get?
         # pretend this URL does not exist
-        render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
+        render :file => ::Rails.root.to_s + "/public/404.html", :status => 404
         return
       end
 
       if !has_required_http_param_user_name?(params)
         # incomplete/invalid HTTP params
-        render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
+        render :file => ::Rails.root.to_s + "/public/422.xml", :status => 422
         return
       end
 
@@ -127,7 +127,7 @@ module Api
       user = User.find_by_user_name(params[:user_name])
       if user.nil?
         # no such user
-        render :file => "#{RAILS_ROOT}/public/422.xml", :status => 422
+        render :file => ::Rails.root.to_s + "/public/422.xml", :status => 422
         return
       end
 
