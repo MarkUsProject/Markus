@@ -740,11 +740,12 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert assign_to :result
             assert assign_to :annots
             assert assign_to :all_annots
-            assert_not assign_to :file_contents
-            assert_not assign_to :code_type
+            assert_nil assigns :file_contents
+            assert_nil assigns :code_type
             assert render_template 'shared/_handle_error.rjs'
             assert respond_with :success
-            # Workaround to assert that the error message made its way to the response
+            # Workaround to assert that the error message made its way to the
+            # response
             assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
           end  # --with file error
         end
