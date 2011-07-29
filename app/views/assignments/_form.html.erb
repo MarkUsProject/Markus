@@ -18,7 +18,9 @@
 </div>
 <% end %>
 
-<%= form_for @assignment, :as => :assignment do |f| %>
+<%= form_for @assignment,
+	     :as => :assignment,
+	     :url => {:action => :edit} do |f| %>
 <%= f.error_messages%>
 <fieldset>
   <legend><%= t("assignment.properties") %></legend>
@@ -118,7 +120,7 @@
   <legend><%= t("assignment.required_files") %></legend>
   <h4><%= t("assignment.required_files_by_student") %></h4>
    <div id="assignment_files">
-     <% f.fields_for :assignment_files do |assignment_file_form| %>
+     <%= f.fields_for :assignment_files do |assignment_file_form| %>
        <%= render :partial => 'assignment_file', :locals => {:assignment_file => assignment_file_form.object, :form => f} %>
      <% end %>
    </div>

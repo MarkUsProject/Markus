@@ -1,5 +1,5 @@
 <div class="assignment_file">
-<% form.fields_for :assignment_files, assignment_file do |f| %>
+<%= form.fields_for :assignment_files, assignment_file do |f| %>
   <p>
     <%= f.label :filename, t(:filename) %>
     <%= f.text_field :filename %>
