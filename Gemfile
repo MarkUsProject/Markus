@@ -16,7 +16,6 @@ gem "ya2yaml"
 gem "i18n"
 gem "will_paginate"
 gem "fastercsv"
-gem "mongrel_cluster"
 gem "routing-filter"
 gem "dynamic_form"
 
