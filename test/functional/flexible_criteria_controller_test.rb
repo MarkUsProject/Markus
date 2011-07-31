@@ -228,52 +228,47 @@ class FlexibleCriteriaControllerTest < AuthenticatedControllerTest
       should respond_with :redirect
     end
 
-    context "on :update_positions" do
-      setup do
-        @criterion2 = flexible_criteria(:flexible_criterion_2)
-        get_as @admin, :update_positions, :flexible_criteria_pane_list => [@criterion2.id, @criterion.id], :aid => @assignment.id
-      end
-      should render_template ''
-      should respond_with :success
+    should "be able to update_positions" do
+      @criterion2 = flexible_criteria(:flexible_criterion_2)
+      get_as @admin,
+             :update_positions,
+             :flexible_criteria_pane_list => [@criterion2.id,
+                                              @criterion.id],
+             :aid => @assignment.id
+      assert render_template ''
+      assert respond_with :success
 
-      should "not have adjusted positions" do
-        c1 = FlexibleCriterion.find(@criterion.id)
-        assert_equal 1, c1.position
-        c2 = FlexibleCriterion.find(@criterion2.id)
-        assert_equal 2, c2.position
-      end
+      c1 = FlexibleCriterion.find(@criterion.id)
+      assert_equal 1, c1.position
+      c2 = FlexibleCriterion.find(@criterion2.id)
+      assert_equal 2, c2.position
     end
 
-    context "on :move_criterion up" do
-      setup do
-        @criterion2 = flexible_criteria(:flexible_criterion_2)
-        get_as @admin, :move_criterion, :aid => @assignment.id, :id => @criterion2.id, :position => @criterion2.position, :direction => :up
-      end
-      should render_template ''
-      should respond_with :success
-
-      should "not have adjusted positions" do
-        c1 = FlexibleCriterion.find(@criterion.id)
-        assert_equal 1, c1.position
-        c2 = FlexibleCriterion.find(@criterion2.id)
-        assert_equal 2, c2.position
-      end
+    should "be able to move_criterion up" do
+      @criterion2 = flexible_criteria(:flexible_criterion_2)
+      get_as @admin,
+             :move_criterion,
+             :aid => @assignment.id,
+             :id => @criterion2.id,
+             :position => @criterion2.position,
+             :direction => :up
+      assert render_template ''
+      assert respond_with :success
+      @criterion.reload
+      @criterion2.reload
+      assert_equal 1, @criterion.position
+      assert_equal 2, @criterion2.position
     end
 
-    context "on :move_criterion down" do
-      setup do
-        @criterion2 = flexible_criteria(:flexible_criterion_2)
-        get_as @admin, :move_criterion, :aid => @assignment.id, :id => @criterion.id, :position => @criterion.position, :direction => :down
-      end
-      should render_template ''
-      should respond_with :success
-
-      should "not have adjusted positions" do
-        c1 = FlexibleCriterion.find(@criterion.id)
-        assert_equal 1, c1.position
-        c2 = FlexibleCriterion.find(@criterion2.id)
-        assert_equal 2, c2.position
-      end
+    should "be able to move_criterion down" do
+      @criterion2 = flexible_criteria(:flexible_criterion_2)
+      get_as @admin, :move_criterion, :aid => @assignment.id, :id => @criterion.id, :position => @criterion.position, :direction => :down
+      assert render_template ''
+      assert respond_with :success
+      @criterion.reload
+      @criterion2.reload
+      assert_equal 1, @criterion.position
+      assert_equal 2, @criterion2.position
     end
 
   end # An authenticated and authorized admin doing a GET
@@ -404,20 +399,20 @@ class FlexibleCriteriaControllerTest < AuthenticatedControllerTest
       end
     end
 
-    context "on :update_positions" do
-      setup do
-        @criterion2 = flexible_criteria(:flexible_criterion_2)
-        post_as @admin, :update_positions, :flexible_criteria_pane_list => [@criterion2.id, @criterion.id], :aid => @assignment.id
-      end
-      should render_template ''
-      should respond_with :success
+    should "be able to update_positions" do
+      @criterion2 = flexible_criteria(:flexible_criterion_2)
+      post_as @admin,
+              :update_positions,
+              :flexible_criteria_pane_list => [@criterion2.id,
+                                               @criterion.id],
+              :aid => @assignment.id
+      assert render_template ''
+      assert respond_with :success
 
-      should "have appropriately adjusted positions" do
-        c1 = FlexibleCriterion.find(@criterion.id)
-        assert_equal 2, c1.position
-        c2 = FlexibleCriterion.find(@criterion2.id)
-        assert_equal 1, c2.position
-      end
+      c1 = FlexibleCriterion.find(@criterion.id)
+      assert_equal 2, c1.position
+      c2 = FlexibleCriterion.find(@criterion2.id)
+      assert_equal 1, c2.position
     end
 
     context "on :move_criterion up with 2 criteria" do

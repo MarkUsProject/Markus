@@ -247,12 +247,13 @@ class GradersControllerTest < AuthenticatedControllerTest
     context "doing a POST on :csv_upload_grader_groups_mapping" do
 
       setup do
-        csv_dir = File.join(::Rails.root.to_s, "test", "group_csvs")
         # Contents: test_group,g9browni,g9younas
         #           second_test_group,g9browni
         #           Group 3,c7benjam
-        @group_grader_map_file = ActionController::TestUploadedFile.new(
-                                 File.join( csv_dir, "group_grader_map.csv"), "text/plain")
+        @group_grader_map_file = fixture_file_upload(
+                                    File.join("..",
+                                              "group_csvs",
+                                              "group_grader_map.csv"))
       end
 
       context "and all graders and groups are valid" do
@@ -331,12 +332,13 @@ class GradersControllerTest < AuthenticatedControllerTest
     context "doing a POST on :csv_upload_grader_criteria_mapping" do
 
       setup do
-        csv_dir = File.join(::Rails.root.to_s, "test", "group_csvs")
         # Contents: correctness,g9browni,g9younas
         #           style,g9browni
         #           class design,c7benjam
-        @ctieria_grader_map_file = ActionController::TestUploadedFile.new(
-                                   File.join( csv_dir, "criteria_grader_map.csv"), "text/plain")
+        @ctieria_grader_map_file = fixture_file_upload(
+                                      File.join("..",
+                                                "group_csvs",
+                                                "criteria_grader_map.csv"))
       end
 
       context "with rubric criteria" do

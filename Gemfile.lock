@@ -1,3 +1,9 @@
+GIT
+  remote: https://github.com/rails/prototype_legacy_helper.git
+  revision: a2cd95c3e3c1a4f7a9566efdab5ce59c886cb05f
+  specs:
+    prototype_legacy_helper (0.0.0)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -30,17 +36,14 @@ GEM
     activesupport (3.0.5)
     arel (2.0.10)
     builder (2.1.2)
-    cgi_multipart_eof_fix (2.5.0)
     columnize (0.3.3)
-    daemons (1.1.4)
     db_populate (0.2.6)
+    dynamic_form (1.1.4)
     erubis (2.6.6)
       abstract (>= 1.0.0)
     faker (0.9.5)
       i18n (~> 0.4)
     fastercsv (1.5.4)
-    fastthread (1.0.7)
-    gem_plugin (0.2.3)
     i18n (0.6.0)
     linecache (0.46)
       rbx-require-relative (> 0.0.4)
@@ -52,14 +55,6 @@ GEM
       treetop (~> 1.4.8)
     mime-types (1.16)
     mocha (0.9.12)
-    mongrel (1.1.5)
-      cgi_multipart_eof_fix (>= 2.4)
-      daemons (>= 1.0.3)
-      fastthread (>= 1.0.1)
-      gem_plugin (>= 0.2.3)
-    mongrel_cluster (1.0.5)
-      gem_plugin (>= 0.2.3)
-      mongrel (>= 1.0.2)
     mysql (2.8.1)
     pg (0.11.0)
     polyglot (0.3.1)
@@ -111,14 +106,15 @@ PLATFORMS
 
 DEPENDENCIES
   db_populate
+  dynamic_form
   faker
   fastercsv
   i18n
   machinist
   mocha
-  mongrel_cluster
   mysql
   pg
+  prototype_legacy_helper (= 0.0.0)!
   railroady
   rails
   rcov

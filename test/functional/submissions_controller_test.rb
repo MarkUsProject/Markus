@@ -327,7 +327,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
         context "before collection date" do
           setup do
-            Assignment.expects(:find).with('1').returns(@assignment)
+            Assignment.stubs(:find).returns(@assignment)
             @assignment.expects(:short_identifier).once.returns('a1')
             @assignment.submission_rule.expects(:can_collect_now?).once.returns(false)
             get_as @grader, :collect_ta_submissions, :id => 1
@@ -340,7 +340,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         context "after assignment due date" do
           setup do
             @submission_collector = SubmissionCollector.instance
-            Assignment.expects(:find).with('1').returns(@assignment)
+            Assignment.stubs(:find).returns(@assignment)
             SubmissionCollector.expects(:instance).returns(@submission_collector)
             @assignment.expects(:short_identifier).once.returns('a1')
             @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
@@ -401,7 +401,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
         context "before assignment due date" do
           setup do
-            Assignment.expects(:find).with('1', {:include => [:groupings]}).returns(@assignment)
+            Assignment.stubs(:find).returns(@assignment)
             @assignment.expects(:short_identifier).once.returns('a1')
             @assignment.submission_rule.expects(:can_collect_now?).once.returns(false)
             get_as @admin, :collect_all_submissions, :id => 1
@@ -414,7 +414,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         context "after assignment due date" do
           setup do
             @submission_collector = SubmissionCollector.instance
-            Assignment.expects(:find).with('1', {:include => [:groupings]}).returns(@assignment)
+            Assignment.stubs(:find).returns(@assignment)
             SubmissionCollector.expects(:instance).returns(@submission_collector)
             @assignment.expects(:short_identifier).once.returns('a1')
             @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
@@ -428,14 +428,17 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
       end
 
-      context "instructor tries to release submissions" do
+      should "instructor tries to release submissions" do
 
-        setup do
-          Assignment.expects(:find).with('1').returns(@assignment)
-          @assignment.groupings.expects(:all).returns([@grouping])
-          post_as @admin, :update_submissions, :id => 1, :ap_select_full => 'true', :filter => 'none', :release_results => 'true'
-        end
-        should respond_with :redirect
+        Assignment.stubs(:find).returns(@assignment)
+        @assignment.groupings.expects(:all).returns([@grouping])
+        post_as @admin,
+                :update_submissions,
+                :id => 1,
+                :ap_select_full => 'true',
+                :filter => 'none',
+                :release_results => 'true'
+        assert respond_with :redirect
 
       end
     end
