@@ -1,4 +1,8 @@
-require File.dirname(__FILE__) + '/authenticated_controller_test'
+require File.join(File.dirname(__FILE__), 'authenticated_controller_test')
+require File.join(File.dirname(__FILE__), '..', 'test_helper')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
+
 require 'shoulda'
 require 'mocha'
 
@@ -204,24 +208,26 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
     context "on :update_annotation_category" do
 
-      context "without errors" do
-        setup do
-          get_as @admin, :update_annotation_category, :id => @category.id
-        end
-        should respond_with :success
-        should_not set_the_flash
-        should assign_to :annotation_category
+      should "update properly" do
+        get_as @admin, :update_annotation_category, :id => @category.id
+        assert respond_with :success
+        assert assign_to :annotation_category
+        assert_equal I18n.t('annotations.update.annotation_category_success'),
+                     flash[:success]
       end
 
       context "with an error on save" do
         setup do
           AnnotationCategory.any_instance.stubs(:save).returns(false)
           AnnotationCategory.any_instance.stubs(:errors).returns("error")
-          get_as @admin, :update_annotation_category, :id => @category.id
         end
-        should respond_with :success
-        should_not set_the_flash
-        should assign_to :annotation_category
+
+        should "give error messages properly" do
+          get_as @admin, :update_annotation_category, :id => @category.id
+          assert respond_with :success
+          assert_equal flash[:error], "error"
+          assert assign_to :annotation_category
+        end
       end
 
     end
@@ -363,9 +369,9 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       should set_the_flash.to((I18n.t('annotations.upload.success', :annotation_category_number => 1)))
       should assign_to :assignment
     end
-    
+
     context "Annotation Categories" do
-      setup do 
+      setup do
         clear_fixtures
         @assignment = Assignment.make
         @admin = Admin.make
@@ -377,7 +383,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
           @old_annotation_categories.length
           post_as @admin, :yml_upload, :id => @assignment.id, :annotation_category_list_yml => "--- \n A:\n - A1\n - A2\n"
         end
-        
+
         should respond_with :redirect
         should set_the_flash.to((I18n.t('annotations.upload.success', :annotation_category_number => 1)))
         should assign_to :assignment
@@ -387,13 +393,13 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
           assert_equal(@old_annotation_categories.length + 1, (new_categories_list.length))
         end
       end
-      
+
       context "on :yml_upload with an error" do
         setup do
           @old_annotation_categories =   @assignment.annotation_categories
           post_as @admin, :yml_upload, :id => @assignment.id, :annotation_category_list_yml => "--- \n A:\n - A1\n A2\n"
         end
-        
+
         should respond_with :redirect
         should set_the_flash.to((I18n.t('annotations.upload.syntax_error', :error => "syntax error on line 4, col -1: `'")))
         should assign_to :assignment

@@ -13,7 +13,7 @@ gem "rails"
 gem "db_populate"
 gem "rubyzip"
 gem "ya2yaml"
-gem "i18n" 
+gem "i18n"
 gem "will_paginate"
 gem "fastercsv"
 gem "mongrel_cluster"
@@ -46,11 +46,12 @@ end
 # Other development related required gems. You don't need them
 # for production.
 group :development, :test do
+  gem "rdoc"
+  gem "rcov"
   gem "shoulda"
   gem "machinist"
   gem "faker"
   gem "railroady"
-#  gem "factory_data_preloader"
   gem "time-warp"
   gem "ruby-debug"
   gem "mocha"

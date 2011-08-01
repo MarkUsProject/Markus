@@ -1,4 +1,7 @@
-require File.dirname(__FILE__) + '/authenticated_controller_test'
+require File.join(File.dirname(__FILE__), 'authenticated_controller_test')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
+
 require 'shoulda'
 require 'mocha'
 require 'machinist'
@@ -189,13 +192,11 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         should respond_with :success
       end
 
-      context "without save errors" do
-        setup do
-          get_as @admin, :update, :id => @criterion.id, :rubric_criterion => {:rubric_criterion_name => 'one', :weight => 10}
-        end
-        should assign_to :criterion
-        should_not set_the_flash
-        should render_template :update
+      should "be able to  save without errors" do
+        get_as @admin, :update, :id => @criterion.id, :rubric_criterion => {:rubric_criterion_name => 'one', :weight => 10}
+        assert assign_to :criterion
+        assert_equal I18n.t('criterion_saved_success'), flash[:success]
+        assert render_template :update
       end
     end
 
@@ -307,7 +308,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       should respond_with :success
     end
 
-    context "on :new" do      
+    context "on :new" do
       context "with save error" do
         setup do
           RubricCriterion.any_instance.expects(:save).once.returns(false)
@@ -340,7 +341,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         should assign_to :criterion
         should render_template 'rubrics/create_and_edit'
         should respond_with :success
-      end      
+      end
     end
 
     context "on: download" do
@@ -355,12 +356,12 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       end
     end
 
-    context "on :csv_upload" do      
+    context "on :csv_upload" do
       context "with file containing incomplete records" do
         setup do
           tempfile = Tempfile.new('rubric_csv')
           tempfile << RUBRIC_CRITERIA_INCOMPLETE_UPLOAD_CSV_STRING
-          tempfile.rewind          
+          tempfile.rewind
           post_as @admin, :csv_upload, :id => @assignment.id, :csv_upload => {:rubric => tempfile}
         end
         should assign_to :assignment
@@ -525,7 +526,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
     end
 
     context "on :yml_upload" do
-      setup do 
+      setup do
         clear_fixtures
         @assignment = Assignment.make
         @admin = Admin.make
@@ -636,23 +637,18 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       @mark = marks(:mark_11)
     end
 
-    context "on :delete" do
-      setup do
-        delete_as @admin, :delete, :id => @criterion.id
-      end
-      should assign_to :criterion
-      should_not set_the_flash.to( I18n.t('criterion_deleted_success'))
-      should respond_with :success
+    should "be able to delete a criterion" do
+      delete_as @admin, :delete, :id => @criterion.id
 
-      should "effectively destroy the criterion" do
-        assert_raise ActiveRecord::RecordNotFound do 
-          RubricCriterion.find(@criterion.id)
-        end
+      assert assign_to :criterion
+      assert_equal flash[:success], I18n.t('criterion_deleted_success')
+      assert respond_with :success
+
+      assert_raise ActiveRecord::RecordNotFound do
+        RubricCriterion.find(@criterion.id)
       end
-      should "effectively destroy the marks" do
-        assert_raise ActiveRecord::RecordNotFound do 
-          Mark.find(@mark.id)
-        end
+      assert_raise ActiveRecord::RecordNotFound do
+        Mark.find(@mark.id)
       end
     end
 

@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require File.join(File.dirname(__FILE__), '..', 'test_helper')
 require 'shoulda'
 require 'mocha'
 
@@ -146,7 +146,7 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
     end
   end
 
-  context "Calling the submission collector's remove_grouping_form_queue 
+  context "Calling the submission collector's remove_grouping_form_queue
   method" do
 
     context "when the grouping doesn't belong to any queue" do

@@ -8,9 +8,9 @@ module UsersHelper
     end
     return result
   end
-  
+
   # Construct a single table row
-  def construct_table_row(user) 
+  def construct_table_row(user)
     result = {}
     result[:id] = user.id
     result[:user_name] = CGI.escapeHTML(user.user_name)

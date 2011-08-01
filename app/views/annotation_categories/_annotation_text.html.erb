@@ -2,11 +2,19 @@
 <div id="annotation_text_<%=annotation_text.id%>_control">
   <p>
     <%= simple_format(h(annotation_text.content)) %>
-  <%= link_to_function t(:edit), "$('annotation_text_#{annotation_text.id}_control').hide();$('annotation_text_#{annotation_text.id}_edit').show();" %>
-  <%= link_to_remote t(:delete), :url => {:action => 'delete_annotation_text', :id => annotation_text.id}, :confirm => t('annotations.delete.annotation_text') %>
+  <%= link_to_function t(:edit),
+	    "$('annotation_text_#{annotation_text.id}_control').hide();$('annotation_text_#{annotation_text.id}_edit').show();" %>
+  <%= link_to t(:delete),
+	      :url => {:action => 'delete_annotation_text',
+		       :id => annotation_text.id},
+	      :confirm => t('annotations.delete.annotation_text'),
+	      :remote => true %>
 </div>
 <div id="annotation_text_<%=annotation_text.id%>_edit" style="display:none;">
-<% remote_form_for annotation_text, :url => {:action => 'update_annotation', :id => annotation_text.id} do |f| %>
+<%= form_for annotation_text,
+	     :url => {:action => 'update_annotation',
+		      :id => annotation_text.id},
+	     :remote => true do |f| %>
   <%= f.text_area(:content, :size => "50x5") %>
   <%= f.submit t(:save) %><input type="reset" value="<%=h t(:cancel) %>" onclick="$('annotation_text_<%=annotation_text.id%>_edit').hide();$('annotation_text_<%=annotation_text.id%>_control').show();">
 <% end %>

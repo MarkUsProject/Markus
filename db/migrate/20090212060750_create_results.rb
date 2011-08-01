@@ -11,7 +11,7 @@ class CreateResults < ActiveRecord::Migration
     end
 
     foreign_key :results, :submission_id,  :submissions
-      
+
   end
 
   def self.down

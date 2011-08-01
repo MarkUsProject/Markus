@@ -203,7 +203,7 @@ module Api
       if !param_hash[:filename].blank? &&
    !param_hash[:assignment].blank? &&
    !param_hash[:group_name].blank?
-  return true  
+  return true
       else
         return false
       end

@@ -6,12 +6,16 @@ class Assignment < ActiveRecord::Base
     :rubric => 'rubric'
   }
 
-  has_many :rubric_criteria, :class_name => "RubricCriterion", :order => :position
-  has_many :flexible_criteria, :class_name => "FlexibleCriterion", :order => :position
+  has_many :rubric_criteria,
+           :class_name => "RubricCriterion",
+           :order => :position
+  has_many :flexible_criteria,
+           :class_name => "FlexibleCriterion",
+           :order => :position
   has_many :assignment_files
   has_many :test_files
   has_many :criterion_ta_associations
-  has_one  :submission_rule
+  has_one :submission_rule
   accepts_nested_attributes_for :submission_rule, :allow_destroy => true
   accepts_nested_attributes_for :assignment_files, :allow_destroy => true
   accepts_nested_attributes_for :test_files, :allow_destroy => true
@@ -19,7 +23,9 @@ class Assignment < ActiveRecord::Base
   has_many :annotation_categories
 
   has_many :groupings
-  has_many :ta_memberships, :class_name => "TaMembership", :through => :groupings
+  has_many :ta_memberships,
+           :class_name => "TaMembership",
+           :through => :groupings
   has_many :student_memberships, :through => :groupings
   has_many :tokens, :through => :groupings
 
@@ -29,31 +35,38 @@ class Assignment < ActiveRecord::Base
   has_many :notes, :as => :noteable, :dependent => :destroy
 
   has_many :section_due_dates
-  has_one  :assignment_stat
+  has_one :assignment_stat
 
   validates_associated :assignment_files
 
-  validates_presence_of     :repository_folder
-  validates_presence_of     :short_identifier, :group_min
-  validates_uniqueness_of   :short_identifier, :case_sensitive => true
+  validates_presence_of :repository_folder
+  validates_presence_of :short_identifier, :group_min
+  validates_uniqueness_of :short_identifier, :case_sensitive => true
 
-  validates_numericality_of :group_min, :only_integer => true,  :greater_than => 0
+  validates_numericality_of :group_min,
+                            :only_integer => true,
+                            :greater_than => 0
   validates_numericality_of :group_max, :only_integer => true
-  validates_numericality_of :tokens_per_day, :only_integer => true,  :greater_than_or_equal_to => 0
+  validates_numericality_of :tokens_per_day,
+                            :only_integer => true,
+                            :greater_than_or_equal_to => 0
 
   validates_associated :submission_rule
   validates_presence_of :submission_rule
 
   validates_presence_of :marking_scheme_type
+
   # since allow_web_submits is a boolean, validates_presence_of does not work:
-  # see the Rails API documentation for validates_presence_of (Model validations)
+  # see the Rails API documentation for validates_presence_of (Model
+  # validations)
   validates_inclusion_of :allow_web_submits, :in => [true, false]
   validates_inclusion_of :display_grader_names_to_students, :in => [true, false]
   validates_inclusion_of :enable_test, :in => [true, false]
   validates_inclusion_of :assign_graders_to_criteria, :in => [true, false]
 
   before_save :reset_collection_time
-  after_save  :update_assigned_tokens
+  validate :minimum_number_of_groups, :check_timezone
+  after_save :update_assigned_tokens
 
   # Export a YAML formatted string created from the assignment rubric criteria.
   def export_rubric_criteria_yml
@@ -88,12 +101,17 @@ class Assignment < ActiveRecord::Base
     return final.to_yaml
   end
 
-  def validate
+  def minimum_number_of_groups
     if (group_max && group_min) && group_max < group_min
       errors.add(:group_max, "must be greater than the minimum number of groups")
+      return false
     end
+  end
+
+  def check_timezone
     if Time.zone.parse(due_date.to_s).nil?
       errors.add :due_date, 'is not a valid date'
+      return false
     end
   end
 
@@ -240,8 +258,12 @@ class Assignment < ActiveRecord::Base
     results_sum = 0
     groupings.each do |grouping|
       submission = grouping.current_submission_used
-      if !submission.nil? && submission.has_result?
-        result = submission.result
+      if !submission.nil?
+        if submission.has_result? && submission.remark_submitted?
+          result = submission.remark_result
+        elsif submission.has_result?
+          result = submission.result
+        end
         if result.released_to_students
           results_sum += result.total_mark
           results_count += 1
@@ -394,7 +416,7 @@ class Assignment < ActiveRecord::Base
     # shouldn't happen anyway, because the lookup earlier should prevent
     # repo collisions e.g. when uploading the same CSV file twice.
     group.save
-    if !group.errors.on_base.nil?
+    if !group.errors[:base].blank?
       collision_error = I18n.t("csv.repo_collision_warning",
                           { :repo_name => group.errors.on_base,
                             :group_name => row[0] })
@@ -512,8 +534,27 @@ class Assignment < ActiveRecord::Base
     return csv_string
   end
 
-  # Get a detailed CSV report of marks (includes each criterion) for this assignment
+  # Get a detailed CSV report of marks (includes each criterion)
+  # for this assignment. Produces slightly different reports, depending
+  # on which criteria type has been used the this assignment.
   def get_detailed_csv_report
+    # which marking scheme do we have?
+    if self.marking_scheme_type == MARKING_SCHEME_TYPE[:flexible]
+      return get_detailed_csv_report_flexible
+    else
+      # default to rubric
+      return get_detailed_csv_report_rubric
+    end
+  end
+
+  # Get a detailed CSV report of rubric based marks
+  # (includes each criterion) for this assignment.
+  # Produces CSV rows such as the following:
+  #   student_name,95.22222,3,4,2,5,5,4,0/2
+  # Criterion values should be read in pairs. I.e. 2,3 means
+  # a student scored 2 for a criterion with weight 3.
+  # Last column are grace-credits.
+  def get_detailed_csv_report_rubric
     out_of = self.total_mark
     students = Student.all
     rubric_criteria = self.rubric_criteria
@@ -523,13 +564,14 @@ class Assignment < ActiveRecord::Base
         final_result.push(student.user_name)
         grouping = student.accepted_grouping_for(self.id)
         if grouping.nil? || !grouping.has_submission?
-          final_result.push('')
+          # No grouping/no submission
+          final_result.push('')                         # total percentage
           rubric_criteria.each do |rubric_criterion|
-            final_result.push('')
-            final_result.push(rubric_criterion.weight)
+            final_result.push('')                       # mark
+            final_result.push(rubric_criterion.weight)  # weight
           end
-          final_result.push('')
-          final_result.push('')
+          final_result.push('')                         # extra-mark
+          final_result.push('')                         # extra-percentage
         else
           submission = grouping.current_submission_used
           final_result.push(submission.result.total_mark / out_of * 100)
@@ -541,6 +583,57 @@ class Assignment < ActiveRecord::Base
               final_result.push(mark.mark || '')
             end
             final_result.push(rubric_criterion.weight)
+          end
+          final_result.push(submission.result.get_total_extra_points)
+          final_result.push(submission.result.get_total_extra_percentage)
+        end
+        # push grace credits info
+        grace_credits_data = student.remaining_grace_credits.to_s + "/" + student.grace_credits.to_s
+        final_result.push(grace_credits_data)
+
+        csv << final_result
+      end
+    end
+    return csv_string
+  end
+
+  # Get a detailed CSV report of flexible criteria based marks
+  # (includes each criterion, with it's out-of value) for this assignment.
+  # Produces CSV rows such as the following:
+  #   student_name,95.22222,3,4,2,5,5,4,0/2
+  # Criterion values should be read in pairs. I.e. 2,3 means 2 out-of 3.
+  # Last column are grace-credits.
+  def get_detailed_csv_report_flexible
+    out_of = self.total_mark
+    students = Student.all
+    flexible_criteria = self.flexible_criteria
+    csv_string = FasterCSV.generate do |csv|
+      students.each do |student|
+        final_result = []
+        final_result.push(student.user_name)
+        grouping = student.accepted_grouping_for(self.id)
+        if grouping.nil? || !grouping.has_submission?
+          # No grouping/no submission
+          final_result.push('')                 # total percentage
+          flexible_criteria.each do |criterion| ##  empty criteria
+            final_result.push('')               # mark
+            final_result.push(criterion.max)    # out-of
+          end
+          final_result.push('')                 # extra-marks
+          final_result.push('')                 # extra-percentage
+        else
+          # Fill in actual values, since we have a grouping
+          # and a submission.
+          submission = grouping.current_submission_used
+          final_result.push(submission.result.total_mark / out_of * 100)
+          flexible_criteria.each do |criterion|
+            mark = submission.result.marks.find_by_markable_id_and_markable_type(criterion.id, "FlexibleCriterion")
+            if mark.nil?
+              final_result.push('')
+            else
+              final_result.push(mark.mark || '')
+            end
+            final_result.push(criterion.max)
           end
           final_result.push(submission.result.get_total_extra_points)
           final_result.push(submission.result.get_total_extra_percentage)

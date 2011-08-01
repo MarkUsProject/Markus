@@ -1,6 +1,11 @@
 class ResultsController < ApplicationController
-  before_filter      :authorize_only_for_admin, :except => [:codeviewer, :edit, :update_mark, :view_marks,
-                        :create, :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria,
+  before_filter :authorize_only_for_admin,
+                :except => [:codeviewer,
+                            :edit,
+                            :update_mark,
+                            :view_marks,
+                            :create,
+                            :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria,
                         :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria, :update_marking_state,
                         :download, :note_message, :render_test_result,
                         :update_overall_remark_comment, :update_remark_request, :cancel_remark_request]
@@ -42,19 +47,35 @@ class ResultsController < ApplicationController
     @extra_marks_points = @result.extra_marks.points
     @extra_marks_percentage = @result.extra_marks.percentage
     @marks_map = Hash.new
+    @old_marks_map = Hash.new
     @mark_criteria = @assignment.get_criteria
     @assignment.get_criteria.each do |criterion|
       mark = criterion.marks.find_or_create_by_result_id(@result.id)
       mark.save(:validate => false)
       @marks_map[criterion.id] = mark
+
+      if @old_result
+        oldmark = criterion.marks.find_or_create_by_result_id(@old_result.id)
+        oldmark.save(false)
+        @old_marks_map[criterion.id] = oldmark
+      end
     end
+
     # Get the previous and the next submission
+    # FIXME right now, the groupings are ordered by grouping's id. Having a
+    # more natural grouping order would be nice.
     if current_user.ta?
-       groupings = @assignment.ta_memberships.find_all_by_user_id(current_user.id, :include => [:grouping => :group]).collect do |m|
+       groupings = @assignment.ta_memberships.find_all_by_user_id(
+                      current_user.id,
+                      :include => [:grouping => :group],
+                      :order => 'id ASC').collect do |m|
          m.grouping
        end
     elsif current_user.admin?
-      groupings = @assignment.groupings.find(:all, :include => :group)
+      groupings = @assignment.groupings.find(
+                      :all,
+                      :include => :group,
+                      :order => 'id ASC')
     end
 
     # If a grouping's submission's marking_status is complete, we're not going
@@ -95,11 +116,16 @@ class ResultsController < ApplicationController
   def next_grouping
     grouping = Grouping.find(params[:id])
     if grouping.has_submission? && grouping.is_collected? && grouping.current_submission_used.remark_submitted?
-        redirect_to :action => 'edit', :id => grouping.current_submission_used.remark_result.id
+        redirect_to :action => 'edit',
+                    :id => grouping.current_submission_used.remark_result.id
     elsif grouping.has_submission? && grouping.is_collected?
-      redirect_to :action => 'edit', :id => grouping.current_submission_used.result.id
+      redirect_to :action => 'edit',
+                  :id => grouping.current_submission_used.result.id
     else
-      redirect_to :controller => 'submissions', :action => 'collect_and_begin_grading', :id => grouping.assignment.id, :grouping_id => grouping.id
+      redirect_to :controller => 'submissions',
+                  :action => 'collect_and_begin_grading',
+                  :id => grouping.assignment.id,
+                  :grouping_id => grouping.id
     end
   end
 
@@ -129,11 +155,16 @@ class ResultsController < ApplicationController
   def update_marking_state
     @result = Result.find(params[:id])
     @result.marking_state = params[:value]
-    @result.save
-
-    # If marking_state is complete, update the cached distribution
-    if params[:value] == Result::MARKING_STATES[:complete]
-      @result.submission.assignment.assignment_stat.refresh_grade_distribution
+    if @result.save
+      # If marking_state is complete, update the cached distribution
+      if params[:value] == Result::MARKING_STATES[:complete]
+        @result.submission.assignment.assignment_stat.refresh_grade_distribution
+      end
+      render :template => "results/update_marking_state"
+    else # Failed to pass validations
+      # Show error message
+      render :template => "results/marker/show_result_error"
+      return
     end
   end
 
@@ -200,7 +231,7 @@ class ResultsController < ApplicationController
       return
     end
     @code_type = @file.get_file_type
-    render :action => 'results/common/codeviewer'
+    render :template => 'results/common/codeviewer'
   end
 
   #=== Description
@@ -219,7 +250,7 @@ class ResultsController < ApplicationController
       return
     end
 
-    render :action => 'results/render_test_result', :layout => "plain"
+    render :template => 'results/render_test_result', :layout => "plain"
   end
 
   def update_mark
@@ -229,9 +260,14 @@ class ResultsController < ApplicationController
     group = submission.grouping.group           # get group for logging
     assignment = submission.grouping.assignment # get assignment for logging
     m_logger = MarkusLogger.instance
+
+    # FIXME checking both that result_mark is valid and correctly saved is
+    # useless. The validation is done automatically before saving unless
+    # specified otherwise.
     if !result_mark.valid?
       render :partial => 'results/marker/mark_verify_result',
-             :locals => {:mark_id => result_mark.id,:mark_error =>result_mark.errors.full_messages.join}
+             :locals => {:mark_id => result_mark.id,
+                         :mark_error => result_mark.errors.full_messages.join}
     else
       if !result_mark.save
           m_logger.log("Error while trying to update mark of submission. User: '" +
@@ -255,7 +291,9 @@ class ResultsController < ApplicationController
     @grouping = current_user.accepted_grouping_for(@assignment.id)
 
     if @grouping.nil?
-      redirect_to :controller => 'assignments', :action => 'student_interface', :id => params[:id]
+      redirect_to :controller => 'assignments',
+                  :action => 'student_interface',
+                  :id => params[:id]
       return
     end
     if !@grouping.has_submission?
@@ -267,9 +305,10 @@ class ResultsController < ApplicationController
       render 'results/student/no_result'
       return
     end
+
     @result = @submission.result
     @old_result = nil
-    if @submission.has_remark?
+    if @submission.remark_submitted?
       @old_result = @result
       @result = @submission.remark_result
       # if remark result's marking state is 'unmarked' then the student has
@@ -278,7 +317,9 @@ class ResultsController < ApplicationController
         render 'results/student/no_remark_result'
         return
       end
-    elsif !@result.released_to_students
+    end
+
+    if !@result.released_to_students
       render 'results/student/no_result'
       return
     end
@@ -297,6 +338,12 @@ class ResultsController < ApplicationController
       mark = criterion.marks.find_or_create_by_result_id(@result.id)
       mark.save(:validate => false)
       @marks_map[criterion.id] = mark
+
+      if @old_result
+        oldmark = criterion.marks.find_or_create_by_result_id(@old_result.id)
+        oldmark.save(false)
+        @old_marks_map[criterion.id] = oldmark
+      end
     end
     m_logger = MarkusLogger.instance
     m_logger.log("Student '#{current_user.user_name}' viewed results for assignment " +
@@ -310,14 +357,15 @@ class ResultsController < ApplicationController
       @extra_mark.result = @result
       @extra_mark.unit = ExtraMark::UNITS[:points]
       if !@extra_mark.update_attributes(params[:extra_mark])
-        render :action => 'results/marker/add_extra_mark_error'
+        render :template => 'results/marker/add_extra_mark_error'
       else
-        render :action => 'results/marker/insert_extra_mark'
+        # need to re-calculate total mark
+        @result.update_total_mark
+        render :template => 'results/marker/insert_extra_mark'
       end
       return
     end
-
-    render :action => 'results/marker/add_extra_mark'
+    render :template => 'results/marker/add_extra_mark'
   end
 
   #Deletes an extra mark from the database and removes it from the html
@@ -327,7 +375,8 @@ class ResultsController < ApplicationController
     @extra_mark.destroy
     #need to recalculate total mark
     @result = @extra_mark.result
-    render :action => 'results/marker/remove_extra_mark'
+    @result.update_total_mark
+    render :template => 'results/marker/remove_extra_mark'
   end
 
   def update_overall_comment
@@ -378,7 +427,9 @@ class ResultsController < ApplicationController
     @result.released_to_students = true
     @result.save
 
-    redirect_to :controller => 'results', :action => 'view_marks', :id => params[:id]
+    redirect_to :controller => 'results',
+                :action => 'view_marks',
+                :id => params[:id]
   end
 
   def expand_criteria
@@ -400,7 +451,7 @@ class ResultsController < ApplicationController
     # unmarked.
     @nil_marks = @result.marks.all(:conditions => {:mark => nil})
     render :partial => 'results/marker/expand_unmarked_criteria', :locals => {:nil_marks => @nil_marks}
- end
+  end
 
   def delete_grace_period_deduction
     @grouping = Grouping.find(params[:id])
@@ -426,5 +477,4 @@ class ResultsController < ApplicationController
     end
     return false
   end
-
 end

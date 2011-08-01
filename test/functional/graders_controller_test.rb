@@ -1,4 +1,8 @@
-require File.dirname(__FILE__) + '/authenticated_controller_test'
+require File.join(File.dirname(__FILE__), 'authenticated_controller_test')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
+
+
 require 'shoulda'
 require 'mocha'
 require 'fastercsv'
@@ -10,18 +14,18 @@ class GradersControllerTest < AuthenticatedControllerTest
   end
 
   context "An authenticated and authorized student doing a " do
-    
+
     setup do
       @student = Student.make
     end
-    
+
     context "GET on :upload_dialog" do
       setup do
         get_as @student, :upload_dialog
       end
       should respond_with :missing
     end
-    
+
     context "GET on :download_dialog" do
       setup do
         get_as @student, :download_dialog
@@ -77,7 +81,7 @@ class GradersControllerTest < AuthenticatedControllerTest
       end
       should respond_with :missing
     end
-    
+
     context "GET on :csv_upload_grader_mapping" do
       setup do
         get_as @student, :csv_upload_grader_mapping
@@ -198,14 +202,14 @@ class GradersControllerTest < AuthenticatedControllerTest
     end
 
   end #student context
-  
+
   context "An authenticated and authorized admin" do
-    
+
     setup do
       @admin = Admin.make
       @assignment = Assignment.make(:marking_scheme_type => "rubric")
     end
-    
+
     context "doing a GET on :manage (graders_controller)" do
       setup do
         get_as @admin, :manage, {:id => @assignment.id}
@@ -239,7 +243,7 @@ class GradersControllerTest < AuthenticatedControllerTest
         end
       end
     end
-    
+
     context "doing a POST on :csv_upload_grader_groups_mapping" do
 
       setup do
@@ -849,7 +853,7 @@ class GradersControllerTest < AuthenticatedControllerTest
             assert @grouping3.tas == []
           end
         end
-        
+
         context "and all graders from one grouping are selected" do
           setup do
             TaMembership.make(:user => @ta1, :grouping => @grouping1)
@@ -873,7 +877,7 @@ class GradersControllerTest < AuthenticatedControllerTest
             assert @grouping3.tas == [@ta3]
           end
         end
-        
+
         context "and all groupings from one grader are selected" do
           setup do
             TaMembership.make(:user => @ta1, :grouping => @grouping1)
@@ -1919,6 +1923,6 @@ class GradersControllerTest < AuthenticatedControllerTest
 
       end #flexible scheme
     end #criteria table
- 
+
   end #admin context
 end

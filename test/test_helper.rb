@@ -1,10 +1,11 @@
-ENV["::Rails.env"] = "test"
+ENV["RAILS_ENV"] = "test"
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 require 'mocha'
 require 'sham'
 
 class ActiveSupport::TestCase
+
   # Transactional fixtures accelerate your tests by wrapping each test method
   # in a transaction that's rolled back on completion.  This ensures that the
   # test database remains unchanged so your fixtures don't have to be reloaded
@@ -86,13 +87,6 @@ class ActiveSupport::TestCase
     Ta.delete_all
     TaMembership.delete_all
     User.delete_all
-  end
-
-  # This method allows us to use the url_for helper in our tests, to make
-  # sure that the actions are redirecting to the correct path.
-  def url_for(options)
-    url = ActionController::UrlRewriter.new(@request, nil)
-    url.rewrite(options)
   end
 
   def destroy_converted_pdfs

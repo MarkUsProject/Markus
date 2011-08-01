@@ -267,8 +267,12 @@ class User < ActiveRecord::Base
     return if(self.student? or !MarkusConfigurator.markus_config_repository_admin?)
 
     conf = User.repo_config
-    repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type, conf)
-    repo_names = Group.all.collect do |group| File.join(MarkusConfigurator.markus_config_repository_storage, group.repository_name) end
+    repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type,
+                                conf)
+    repo_names = Group.all.collect do |group|
+                   File.join(MarkusConfigurator.markus_config_repository_storage,
+                             group.repository_name)
+                 end
     repo.set_bulk_permissions(repo_names, {self.user_name => Repository::Permission::READ_WRITE})
   end
 

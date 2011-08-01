@@ -1,5 +1,12 @@
 class SubmissionFile < ActiveRecord::Base
 
+  # Only allow alphanumeric characters, '.', '-', and '_' as
+  # character set for submission files.
+  FILENAME_SANITIZATION_REGEXP = Regexp.new('[^0-9a-zA-Z\.\-_]')
+  # Character to be used as a replacement for all characters
+  # matching the regular expression above
+  SUBSTITUTION_CHAR = '_'
+
   belongs_to  :submission
   has_many :annotations
   validates_associated :submission
@@ -35,7 +42,7 @@ class SubmissionFile < ActiveRecord::Base
     end
   end
 
-    def get_comment_syntax
+  def get_comment_syntax
     # This is where you can add more languages that SubmissionFile will
     # be able to insert comments into, for example when downloading annotations.
     # It will return a list, with the first element being the syntax to start a
@@ -130,14 +137,15 @@ class SubmissionFile < ActiveRecord::Base
 
   # Return the contents of this SubmissionFile.  Include annotations in the
   # file if include_annotations is true.
-  def retrieve_file(include_annotations = false)
+  def retrieve_file(include_annotations=false)
     student_group = submission.grouping.group
     repo = student_group.repo
     revision_number = submission.revision_number
     revision = repo.get_revision(revision_number)
     if revision.files_at_path(path)[filename].nil?
-      raise I18n.t("results.could_not_find_file", :filename => filename,
-        :repository_name => student_group.repository_name)
+      raise I18n.t("results.could_not_find_file",
+                   :filename => filename,
+                   :repository_name => student_group.repository_name)
     end
     retrieved_file = repo.download_as_string(revision.files_at_path(path)[filename])
     repo.close

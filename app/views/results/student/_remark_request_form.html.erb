@@ -1,7 +1,9 @@
 <div id="remark_request_edit">
-  <% remote_form_for submission, :url => {:action => 'update_remark_request',
-                                          :id => submission.id,
-                                          :assignment_id => assignment.id} do |f| %>
+  <%= form_for submission,
+	       :url => {:action => 'update_remark_request',
+                        :id => submission.id,
+                        :assignment_id => assignment.id},
+	       :remote => true do |f| %>
     <%= f.text_area :remark_request, :cols => 50, :rows => 5,
                     :id => 'remark_request_text_area',
                     :onkeydown => "enableRemarkRequestButtons();" %>

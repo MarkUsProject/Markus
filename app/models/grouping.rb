@@ -3,7 +3,7 @@ require File.join(File.dirname(__FILE__),'/../../lib/repo/repository')
 
 # Represents a collection of students working together on an assignment in a group
 class Grouping < ActiveRecord::Base
-   
+
   before_create :create_grouping_repository_folder
   before_destroy :revoke_repository_permissions_for_students
   belongs_to :assignment, :counter_cache => true
@@ -23,13 +23,13 @@ class Grouping < ActiveRecord::Base
   has_many :tas, :through => :ta_memberships, :source => :user
   has_many :students, :through => :student_memberships, :source => :user
   has_many :pending_students, :class_name => 'Student', :through => :student_memberships, :conditions => {'memberships.membership_status' => StudentMembership::STATUSES[:pending]}, :source => :user
-  
+
   has_many :submissions
   #The first submission found that satisfies submission_version_used == true.
   #If there are multiple such submissions, one is chosen randomly.
   has_one :current_submission_used, :class_name => 'Submission', :conditions => {:submission_version_used => true}
   has_many :grace_period_deductions, :through => :non_rejected_student_memberships
-    
+
   has_one :token
 
   scope :approved_groupings, :conditions => {:admin_approved => true}
@@ -39,7 +39,7 @@ class Grouping < ActiveRecord::Base
   # user association/validations
   validates_presence_of   :assignment_id, :message => "needs an assignment id"
   validates_associated    :assignment, :on => :create,    :message => "associated assignment need to be valid"
-  
+
   validates_presence_of   :group_id, :message => "needs an group id"
   validates_associated    :group,    :message => "associated group need to be valid"
 
@@ -57,7 +57,7 @@ class Grouping < ActiveRecord::Base
     return group.group_name if student_user_names.size == 0
     return group.group_name + ": " + student_user_names.join(', ')
   end
-  
+
   def display_for_note
     return assignment.short_identifier + ": " + group_name_with_student_user_names
   end
@@ -82,7 +82,7 @@ class Grouping < ActiveRecord::Base
       membership.user.user_name
     end
   end
-  
+
   # Returns the member with 'inviter' status for this group
   def inviter
    member = student_memberships.find_by_membership_status(StudentMembership::STATUSES[:inviter])
@@ -94,7 +94,7 @@ class Grouping < ActiveRecord::Base
   end
 
 
-  # Returns true if this user has a pending status for this group; 
+  # Returns true if this user has a pending status for this group;
   # false otherwise, or if user is not in this group.
   def pending?(user)
     return membership_status(user) == StudentMembership::STATUSES[:pending]
@@ -120,13 +120,13 @@ class Grouping < ActiveRecord::Base
       user = User.find_by_user_name(m)
       m_logger = MarkusLogger.instance
       if !user
-        errors.add(:base, I18n.t('invite_student.fail.dne', 
+        errors.add(:base, I18n.t('invite_student.fail.dne',
                                   :user_name => m))
       else
         if invoked_by_admin || self.can_invite?(user)
           member = self.add_member(user, set_membership_status)
           if !member
-            errors.add(:base, I18n.t('invite_student.fail.error', 
+            errors.add(:base, I18n.t('invite_student.fail.error',
                                       :user_name => user.user_name))
             m_logger.log("Student failed to invite '#{user.user_name}'",
                           MarkusLogger::ERROR)
@@ -157,7 +157,7 @@ class Grouping < ActiveRecord::Base
     m_logger = MarkusLogger.instance
     if user && user.student?
       if user.hidden
-        errors.add(:base, I18n.t('invite_student.fail.hidden', 
+        errors.add(:base, I18n.t('invite_student.fail.hidden',
                                   :user_name => user.user_name))
         m_logger.log("Student failed to invite '#{user.user_name}' (account has been " +
                      "disabled).", MarkusLogger::ERROR)
@@ -165,7 +165,7 @@ class Grouping < ActiveRecord::Base
         return false
       end
       if self.inviter == user
-        errors.add(:base, I18n.t('invite_student.fail.inviting_self', 
+        errors.add(:base, I18n.t('invite_student.fail.inviting_self',
                                   :user_name => user.user_name))
         m_logger.log("Student failed to invite '#{user.user_name}'. Tried to invite " +
                      "himself.", MarkusLogger::ERROR)
@@ -173,7 +173,7 @@ class Grouping < ActiveRecord::Base
 
       end
       if self.assignment.past_collection_date?
-        errors.add(:base, I18n.t('invite_student.fail.due_date_passed', 
+        errors.add(:base, I18n.t('invite_student.fail.due_date_passed',
                                   :user_name => user.user_name))
         m_logger.log("Student failed to invite '#{user.user_name}'. Current time past " +
                      "collection date.", MarkusLogger::ERROR)
@@ -181,15 +181,15 @@ class Grouping < ActiveRecord::Base
         return false
       end
       if self.student_membership_number >= self.assignment.group_max
-        errors.add(:base, I18n.t('invite_student.fail.group_max_reached', 
+        errors.add(:base, I18n.t('invite_student.fail.group_max_reached',
                                   :user_name => user.user_name))
         m_logger.log("Student failed to invite '#{user.user_name}'. Group maximum" +
                      " reached.", MarkusLogger::ERROR)
         return false
       end
-      if self.assignment.section_groups_only && 
+      if self.assignment.section_groups_only &&
         user.section != self.inviter.section
-        errors.add(:base, I18n.t('invite_student.fail.not_same_section', 
+        errors.add(:base, I18n.t('invite_student.fail.not_same_section',
                                   :user_name => user.user_name))
         m_logger.log("Student failed to invite '#{user.user_name}'. Students not in" +
                      " same section.", MarkusLogger::ERROR)
@@ -197,21 +197,21 @@ class Grouping < ActiveRecord::Base
         return false
       end
       if user.has_accepted_grouping_for?(self.assignment.id)
-        errors.add(:base, I18n.t('invite_student.fail.already_grouped', 
+        errors.add(:base, I18n.t('invite_student.fail.already_grouped',
                                   :user_name => user.user_name))
         m_logger.log("Student failed to invite '#{user.user_name}'. Invitee already part" +
                      " of another group.", MarkusLogger::ERROR)
         return false
       end
       if self.pending?(user)
-        errors.add(:base, I18n.t('invite_student.fail.already_pending', 
+        errors.add(:base, I18n.t('invite_student.fail.already_pending',
                                   :user_name => user.user_name))
         m_logger.log("Student failed to invite '#{user.user_name}'. Invitee is already " +
                      " pending member of this group.", MarkusLogger::ERROR)
         return false
       end
     else
-      errors.add(:base, I18n.t('invite_student.fail.dne', 
+      errors.add(:base, I18n.t('invite_student.fail.dne',
                                 :user_name => user.user_name))
       m_logger.log("Student failed to invite '#{user.user_name}'. Invitee does not " +
                    " exist.", MarkusLogger::ERROR)
@@ -219,19 +219,19 @@ class Grouping < ActiveRecord::Base
     end
     return true
   end
-  
+
   # Returns the status of this user, or nil if user is not a member
   def membership_status(user)
     member = student_memberships.find_by_user_id(user.id)
     member ? member.membership_status : nil  # return nil if user is not a member
   end
- 
+
   # returns the numbers of memberships, all includ (inviter, pending,
   # accepted
   def student_membership_number
-     return accepted_students.size + pending_students.size 
+     return accepted_students.size + pending_students.size
   end
-  
+
   # Returns true if either this Grouping has met the assignment group
   # size minimum, OR has been approved by an instructor
   def is_valid?
@@ -245,7 +245,7 @@ class Grouping < ActiveRecord::Base
     # update repository permissions
     update_repository_permissions
   end
-  
+
   # Strips admin_approved privledge
   def invalidate_grouping
     self.admin_approved = false
@@ -253,7 +253,7 @@ class Grouping < ActiveRecord::Base
     # update repository permissions
     update_repository_permissions
   end
-  
+
   # Token Credit Query
   def give_tokens
     Token.create(:grouping_id => self.id, :tokens => self.assignment.tokens_per_day) if self.assignment.enable_test
@@ -267,7 +267,7 @@ class Grouping < ActiveRecord::Base
     end
     return total.min
   end
-  
+
   def grace_period_deduction_sum
     total = 0
     grace_period_deductions.each do |grace_period_deduction|
@@ -287,7 +287,7 @@ class Grouping < ActiveRecord::Base
     return has_submission? && current_submission_used.result.marking_state == Result::MARKING_STATES[:complete]
   end
 
-  # EDIT METHODS 
+  # EDIT METHODS
   # Removes the member by its membership id
   def remove_member(mbr_id)
     member = student_memberships.find(mbr_id)
@@ -315,13 +315,13 @@ class Grouping < ActiveRecord::Base
     update_repository_permissions
     self.destroy
   end
-  
+
   # Removes the member rejected by its membership id
   # Used as safeguard when student deletes the record
   def remove_rejected(mbr_id)
     member = memberships.find(mbr_id)
     member.destroy if member && member.membership_status == StudentMembership::STATUSES[:rejected]
-  end 
+  end
 
   def decline_invitation(student)
      membership = student.memberships.find_by_grouping_id(self.id)
@@ -330,7 +330,7 @@ class Grouping < ActiveRecord::Base
      # adjust repo permissions
      update_repository_permissions
   end
-  
+
   # If a group is invalid OR valid and the user is the inviter of the group and
   # she is the _only_ member of this grouping it should be deletable
   # by this user, provided there haven't been any files submitted. Additionally,
@@ -387,7 +387,7 @@ class Grouping < ActiveRecord::Base
     end
     return missing_assignment_files
   end
-  
+
   def add_tas(tas)
     #this check was previously done every time a ta_membership was created,
     #however since the assignment is the same, validating it once for every new
@@ -424,7 +424,7 @@ class Grouping < ActiveRecord::Base
       self.save(:validate => false)
     end
   end
-  
+
   def remove_tas(ta_id_array)
     #if no tas to remove, return.
     return if ta_id_array == []
@@ -437,7 +437,7 @@ class Grouping < ActiveRecord::Base
     self.criteria_coverage_count = criteria.length
     self.save
   end
-  
+
   def add_tas_by_user_name_array(ta_user_name_array)
     grouping_tas = []
     ta_user_name_array.each do |ta_user_name|
@@ -472,16 +472,16 @@ class Grouping < ActiveRecord::Base
     end
     return failures
   end
-  
+
   # Update repository permissions for students, if we allow external commits
   #   see: grant_repository_permissions and revoke_repository_permissions
   def update_repository_permissions
     # we do not need to do anything if we are not accepting external
     # command-line commits
     return unless self.write_repo_permissions?
-    
+
     self.reload # VERY IMPORTANT! Make sure grouping object is not stale
-    
+
     if self.is_valid?
       grant_repository_permissions
     else
@@ -489,7 +489,7 @@ class Grouping < ActiveRecord::Base
       revoke_repository_permissions
     end
   end
-  
+
   # When a Grouping is created, automatically create the folder for the
   # assignment in the repository, if it doesn't already exist.
   def create_grouping_repository_folder
@@ -547,9 +547,9 @@ class Grouping < ActiveRecord::Base
     end
     return result.map{|a| a.criterion}.uniq
   end
-  
+
   private
-  
+
   # Once a grouping is valid, grant (write) repository permissions for students
   # who have accepted memberships (including the inviter)
   #
@@ -573,16 +573,16 @@ class Grouping < ActiveRecord::Base
       end
     end
   end
-  
+
   # We need to revoke repository permissions for student users in certain cases.
-  # 
+  #
   # For instance if the inviter has invited 2 students for a total of 3 students in
   # that group, which in turn is the required group minimum. In that case, students
   # who have accepted their membership, would have gotten repo permissions granted.
   # But once one of the 2 invited students declines to be member of that group, the group
   # becomes invalid (is below the group minimum of 3 people), and, hence, granted
   # repo permissions for student users need to be revoked again.
-  # 
+  #
   # precondition: grouping is invalid, self.reload has been called
   def revoke_repository_permissions
     memberships = self.accepted_student_memberships
@@ -606,7 +606,7 @@ class Grouping < ActiveRecord::Base
       end
     end
   end
-  
+
   # Removes repository permissions for a single StudentMembership object
   def revoke_repository_permissions_for_membership(student_membership)
     # Revoke permissions for student
@@ -624,12 +624,12 @@ class Grouping < ActiveRecord::Base
       end
     end
   end
-  
+
   # Removes any repository permissions of students for a to be destroyed
   # grouping object. see :before_destroy callback above
   def revoke_repository_permissions_for_students
     self.reload # avoid a stale object
-    
+
     memberships = self.student_memberships # get any student memberships
     if !memberships.instance_of?(Array)
       memberships = [memberships]

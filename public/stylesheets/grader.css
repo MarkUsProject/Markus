@@ -141,7 +141,7 @@ li.annotation_category {
             #annotation_summary_list
                 #annotations1, #annotations2
      #pane_divider
-     #rubric_pane
+     #mark_pane
         tabs => see livelipe/tabs.css
         #rubric_viewer
             #rubric_tools
@@ -155,7 +155,7 @@ li.annotation_category {
 ===================================================================================*/
 
 #pane_holders {
-  overflow: auto;
+  overflow: hidden;
 }
 
   #pane_divider {
@@ -320,6 +320,12 @@ ul#annotation_summary_list {
 .padding_left {
   padding-left:30px
 }
+
+.padding_left_old {
+  padding-left:30px;
+  background-color:#FDFEBC;	
+}
+
 #mark_criteria_pane_list {
   list-style: none;
   margin: 0;
@@ -333,6 +339,9 @@ ul#annotation_summary_list {
 }
 
 /* ================ CRITERION STYLES ============== */
+    #old_summary_criteria_pane {
+      display: none;	
+    }
 
   .mark_criterion_holder_A {
     background: #EDEDED;

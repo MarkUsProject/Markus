@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require File.join(File.dirname(__FILE__), '..', 'test_helper')
 require 'shoulda'
 require 'time-warp'
 
@@ -180,7 +180,7 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
       end
 
       should "deduct 2 grace credits" do
-        
+
         # The Student submits some files before the due date...
         submit_files_before_due_date
 

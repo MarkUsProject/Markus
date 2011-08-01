@@ -21,11 +21,13 @@
   <%= render :partial => 'layouts/header' %>
   <%= render :partial => 'layouts/menu' %>
   <%= render :partial => 'layouts/sub_menu' %>
+  <%= render :partial => 'layouts/sub_sub_menu' %>
   <%= render :partial => 'layouts/about' %>
+  <%= render :partial => 'layouts/role_switch' %>
 <div id="container">
   <div id="content">
-<%= render :partial => 'layouts/noscript'%>
-    <%= @content_for_layout %>
+    <%= render :partial => 'layouts/noscript'%>
+    <%= content_for?(:content) ? yield(:content) : yield %>
   </div> <!-- content -->
 </div> <!-- container -->
 </div>

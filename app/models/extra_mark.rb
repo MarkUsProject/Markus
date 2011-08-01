@@ -5,14 +5,13 @@ class ExtraMark < ActiveRecord::Base
     :percentage => 'percentage',
     :points => 'points'
   }
-  
+
   scope :points, :conditions => {:unit => ExtraMark::UNITS[:points]}
   scope :percentage, :conditions => {:unit => ExtraMark::UNITS[:percentage]}
-  
+
   scope :positive, :conditions => ['extra_mark > 0']
   scope :negative, :conditions => ['extra_mark < 0']
 
-  
   before_save :ensure_not_released_to_students
   before_update :ensure_not_released_to_students
 
@@ -22,7 +21,7 @@ class ExtraMark < ActiveRecord::Base
   validates_presence_of :result_id
   validates_numericality_of :extra_mark, :message => "Mark must be an number"
   validates_numericality_of :result_id, :only_integer => true, :greater_than => 0, :message => "result_id must be an id that is an integer greater than 0"
-    
+
   def ensure_not_released_to_students
     return !result.released_to_students
   end

@@ -24,6 +24,14 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         get_as(@student, :file_manager, {:id => @assignment.id})
       end
       should respond_with :success
+      # file_manager action should assign to various instance variables.
+      # These are crucial for the file_manager view to work properly.
+      should assign_to :assignment
+      should assign_to :grouping
+      should assign_to :path
+      should assign_to :revision
+      should assign_to :files
+      should assign_to :missing_assignment_files
     end
     context "and I should be able to populate file" do
       setup do
@@ -31,14 +39,30 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       end
       should respond_with :success
     end
-    
+
     #TODO Figure out how to remove fixture_file_upload
     context "and I should be able to add files" do
-      setup do 
-        file_1 = fixture_file_upload('files/Shapes.java', 'text/java')
-        file_2 = fixture_file_upload('files/TestShapes.java', 'text/java')
+      setup do
+        file_1 = fixture_file_upload(File.join('..', 'files', 'Shapes.java'), 'text/java')
+        file_2 = fixture_file_upload(File.join('..', 'files', 'TestShapes.java'), 'text/java')
         assert @student.has_accepted_grouping_for?(@assignment.id)
         post_as(@student, :update_files, {:id => @assignment.id, :new_files => [file_1, file_2]})
+      end
+
+      # must not respond with redirect_to (see comment in
+      # app/controllers/submission_controller.rb#update_files)
+      should respond_with :success
+
+      # update_files action should assign to various instance variables.
+      # These are crucial for the file_manager view to work properly.
+      should assign_to :assignment
+      should assign_to :grouping
+      should assign_to :path
+      should assign_to :revision
+      should assign_to :files
+      should assign_to :missing_assignment_files
+
+      should "have added files accordingly" do
         # Check to see if the file was added
         @grouping.group.access_repo do |repo|
           revision = repo.get_latest_revision
@@ -47,17 +71,14 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_not_nil files['TestShapes.java']
         end
       end
-      should redirect_to("file manager page") { 
-        url_for(:controller => "submissions", 
-                :action=> 'file_manager',
-                :id => @assignment.id) }
     end
+
     #TODO figure out how to test this test into the one above
     #TODO Figure out how to remove fixture_file_upload
     context "and I should be able to replace files" do
-      setup do 
+      setup do
         assert @student.has_accepted_grouping_for?(@assignment.id)
-         
+
         @grouping.group.access_repo do |repo|
           txn = repo.get_transaction('markus')
           txn.add(File.join(@assignment.repository_folder,'Shapes.java'), 'Content of Shapes.java')
@@ -68,43 +89,54 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           old_files = revision.files_at_path(@assignment.repository_folder)
           old_file_1 = old_files['Shapes.java']
           old_file_2 = old_files['TestShapes.java']
-       
 
-          file_1 = fixture_file_upload('files/Shapes.java', 'text/java')
-          file_2 = fixture_file_upload('files/TestShapes.java', 'text/java')
+          @file_1 = fixture_file_upload(File.join('..', 'files', 'Shapes.java'), 'text/java')
+          @file_2 = fixture_file_upload(File.join('..', 'files', 'TestShapes.java'), 'text/java')
 
           post_as(@student, :update_files, { :id => @assignment.id,
-            :replace_files => { 'Shapes.java' =>      file_1,
-                                'TestShapes.java' =>  file_2},
+            :replace_files => { 'Shapes.java' =>      @file_1,
+                                'TestShapes.java' =>  @file_2},
             :file_revisions => {'Shapes.java' =>      old_file_1.from_revision,
                                 'TestShapes.java' =>  old_file_2.from_revision}})
 
-        # Check to see if the file was added
+        end
+      end
 
+      # must not respond with redirect_to (see comment in
+      # app/controllers/submission_controller.rb#update_files)
+      should respond_with :success
+
+      # update_files action should assign to various instance variables.
+      # These are crucial for the file_manager view to work properly.
+      should assign_to :assignment
+      should assign_to :grouping
+      should assign_to :path
+      should assign_to :revision
+      should assign_to :files
+      should assign_to :missing_assignment_files
+
+      should "have replaced files accordingly" do
+        @grouping.group.access_repo do |repo|
           revision = repo.get_latest_revision
           files = revision.files_at_path(@assignment.repository_folder)
           assert_not_nil files['Shapes.java']
           assert_not_nil files['TestShapes.java']
 
           # Test to make sure that the contents were successfully updated
-          file_1.rewind
-          file_2.rewind
+          @file_1.rewind
+          @file_2.rewind
           file_1_new_contents = repo.download_as_string(files['Shapes.java'])
           file_2_new_contents = repo.download_as_string(files['TestShapes.java'])
 
-          assert_equal file_1.read, file_1_new_contents
-          assert_equal file_2.read, file_2_new_contents
+          assert_equal @file_1.read, file_1_new_contents
+          assert_equal @file_2.read, file_2_new_contents
         end
-      end 
-      should redirect_to("file manager page") { 
-        url_for(:controller => "submissions", 
-                :action=> 'file_manager',
-                :id => @assignment.id) }
+      end
     end
     context "and I should be able to delete files" do
       setup do
         assert @student.has_accepted_grouping_for?(@assignment.id)
-         
+
         @grouping.group.access_repo do |repo|
           txn = repo.get_transaction('markus')
           txn.add(File.join(@assignment.repository_folder,'Shapes.java'), 'Content of Shapes.java')
@@ -119,33 +151,65 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
             :delete_files => {  'Shapes.java' => true},
             :file_revisions => {'Shapes.java' => old_file_1.from_revision,
                                 'TestShapes.java' => old_file_2.from_revision}})
+        end
+      end
 
+      # must not respond with redirect_to (see comment in
+      # app/controllers/submission_controller.rb#update_files)
+      should respond_with :success
 
+      # update_files action should assign to various instance variables.
+      # These are crucial for the file_manager view to work properly.
+      should assign_to :assignment
+      should assign_to :grouping
+      should assign_to :path
+      should assign_to :revision
+      should assign_to :files
+      should assign_to :missing_assignment_files
+
+      should "have deleted files accordingly" do
+        @grouping.group.access_repo do |repo|
           revision = repo.get_latest_revision
           files = revision.files_at_path(@assignment.repository_folder)
           assert_not_nil files['TestShapes.java']
           assert_nil files['Shapes.java']
         end
       end
-      should redirect_to("file manager page") { 
-        url_for(:controller => "submissions", 
-                :action=> 'file_manager',
-                :id => @assignment.id) }
     end
     context "and I cannot add a file that exists" do
       setup do
         assert @student.has_accepted_grouping_for?(@assignment.id)
-         
+
         @grouping.group.access_repo do |repo|
           txn = repo.get_transaction('markus')
           txn.add(File.join(@assignment.repository_folder,'Shapes.java'), 'Content of Shapes.java')
           txn.add(File.join(@assignment.repository_folder, 'TestShapes.java'), 'Content of TestShapes.java')
           repo.commit(txn)
 
-          file_1 = fixture_file_upload('files/Shapes.java', 'text/java')
-          file_2 = fixture_file_upload('files/TestShapes.java', 'text/java')
+          file_1 = fixture_file_upload(File.join('..', 'files', 'Shapes.java'), 'text/java')
+          file_2 = fixture_file_upload(File.join('..', 'files', 'TestShapes.java'), 'text/java')
           assert @student.has_accepted_grouping_for?(@assignment.id)
           post_as(@student, :update_files, {:id => @assignment.id, :new_files => [file_1, file_2]})
+        end
+      end
+
+      # must not respond with redirect_to (see comment in
+      # app/controllers/submission_controller.rb#update_files)
+      should respond_with :success
+
+      # update_files action should assign to various instance variables.
+      # These are crucial for the file_manager view to work properly.
+      should assign_to :assignment
+      should assign_to :grouping
+      should assign_to :path
+      should assign_to :revision
+      should assign_to :files
+      should assign_to :missing_assignment_files
+      should assign_to :file_manager_errors
+
+      should "not have added the file and set the file_manager_errors hash properly" do
+        file_manager_errors = assigns["file_manager_errors"]
+        @grouping.group.access_repo do |repo|
           # Check to see if the file was added
           assert @grouping.is_valid?
 
@@ -153,13 +217,9 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           files = revision.files_at_path(@assignment.repository_folder)
           assert_not_nil files['Shapes.java']
           assert_not_nil files['TestShapes.java']
-          assert_not_nil flash[:update_conflicts]
+          assert_not_nil file_manager_errors[:update_conflicts]
         end
       end
-      should redirect_to("file manager page") { 
-        url_for(:controller => "submissions", 
-                :action=> 'file_manager',
-                :id => @assignment.id) }
     end
     # TODO:  Test that a student can't replace file if out of sync
     # TODO:  Test that a student can't replace a file if the new file
@@ -173,7 +233,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       end
       should respond_with :missing
     end
-    
+
     context "and I cannot use the populate repository browser." do
       setup do
         get_as(@student, :populate_repo_browser, {:id => Grouping.first.id})
@@ -186,7 +246,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       setup do
         get_as @student, :download_simple_csv_report
       end
-      
+
       should respond_with :missing
     end
 
@@ -194,7 +254,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       setup do
         get_as @student, :download_detailed_csv_report
       end
-      
+
       should respond_with :missing
     end
 
@@ -202,7 +262,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       setup do
         get_as @student, :download_svn_export_commands
       end
-      
+
       should respond_with :missing
     end
 
@@ -210,7 +270,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       setup do
         get_as @student, :download_svn_repo_list
       end
-      
+
       should respond_with :missing
     end
 
@@ -226,7 +286,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         end
         should respond_with :success
       end
-      
+
 
       context "access the populate repository browser." do
         setup do
@@ -241,21 +301,21 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         end
         should respond_with :missing
       end
-      
+
       context "download a detailed csv report" do
         setup do
           get_as @grader, :download_detailed_csv_report
         end
         should respond_with :missing
       end
-      
+
       context "download the svn export commands" do
         setup do
           get_as @grader, :download_svn_export_commands
         end
         should respond_with :missing
       end
-      
+
       context "download the svn repository list" do
         setup do
           get_as @grader, :download_svn_repo_list
@@ -297,7 +357,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
     context "and I have an instructor." do
       # TODO:
-      
+
       # Test whether or not an Instructor can release/unrelease results correctly
       # Test whether or not an Instructor can download files from student repos
       setup do
@@ -315,21 +375,21 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         end
         should respond_with :success
       end
-      
+
       context "My instructor should be able to download the detailed csv report." do
         setup do
           get_as @admin, :download_detailed_csv_report, :id => @assignment.id
         end
         should respond_with :success
       end
-      
+
       context "My instructor should be able to download the svn export commands." do
         setup do
           get_as @admin, :download_svn_export_commands, :id => @assignment.id
         end
         should respond_with :success
       end
-      
+
       context "My instructor should be able to download the svn repository list." do
         setup do
           get_as @admin, :download_svn_repo_list, :id => @assignment.id
@@ -389,20 +449,20 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       end
       should respond_with :redirect
     end
-    
+
     context "trying to download a detailed csv report" do
       setup do
         get :download_detailed_csv_report
       end
       should respond_with :redirect
     end
-    
+
     context "trying to download the svn export commands" do
       setup do
         get :download_svn_export_commands end
       should respond_with :redirect
     end
-    
+
     context "trying to download the svn repository list" do
       setup do
         get :download_svn_repo_list
@@ -410,9 +470,9 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       should respond_with :redirect
     end
   end
-  
+
   def teardown
     destroy_repos
   end
-  
+
 end
