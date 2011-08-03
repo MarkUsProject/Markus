@@ -25,14 +25,15 @@ var DropDownMenu = Class.create({
         me.hide();
       }
     });
-    
   },
+
   refreshPositions: function() {
     //Get cumulative position offsets of trigger_node...
     var offset_left, offset_top, offset_height;
-    [offset_left, offset_top] = $(this.getTriggerNode()).cumulativeOffset();
+    offset_left = $(this.getTriggerNode()).cumulativeOffset()[0];
+    offset_top = $(this.getTriggerNode()).cumulativeOffset()[1];
     offset_height = $(this.getTriggerNode()).getHeight();
-    
+
     //Position menu node so that it's directly under the trigger node, and
     //hide it
     $(this.getMenuNode()).setStyle({
@@ -41,26 +42,32 @@ var DropDownMenu = Class.create({
       top: (offset_top + offset_height) + 'px',
       zIndex: 1
     });
-
   },
+
   getTriggerNode: function() {
     return this.trigger_node;
   },
+
   setTriggerNode: function(trigger_node) {
     this.trigger_node = trigger_node;
   },
+
   getMenuNode: function() {
     return this.menu_node;
   },
+
   setMenuNode: function(menu_node) {
     this.menu_node = menu_node;
   },
+
   show: function() {
     $(this.menu_node).show();
   },
+
   hide: function() {
     $(this.menu_node).hide();
   },
+
   getRelatedTarget: function(event) {
     if(event.toElement) {
       return event.toElement;
