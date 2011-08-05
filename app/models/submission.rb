@@ -1,6 +1,6 @@
 require 'fileutils' # FileUtils used here
 
-# Handle for getting student submissions.  Actual instance depend 
+# Handle for getting student submissions.  Actual instance depend
 # on whether an assignment is a group or individual assignment.
 # Use Assignment.submission_by(user) to retrieve the correct submission.
 class Submission < ActiveRecord::Base
@@ -56,7 +56,7 @@ class Submission < ActiveRecord::Base
   end
 
   # For group submissions, actions here must only be accessible to members
-  # that has inviter or accepted status. This check is done when fetching 
+  # that has inviter or accepted status. This check is done when fetching
   # the user or group submission from an assignment (see controller).
 
   # Handles file submissions. Late submissions have a status of "late"
@@ -108,18 +108,22 @@ class Submission < ActiveRecord::Base
   def has_result?
     return !result.nil?
   end
-  
+
   # Does this submission have a remark result?
   def has_remark?
     return !remark_result.nil?
   end
-  
+
   # Does this submission have a remark request submitted?
   # remark_results in 'unmarked' state have not been submitted by the student yet (just saved)
+  # Submitted means that the remark request can be viewed by instructors and TAs and is no
+  #   longer editable by the student.
+  # Saved means that the remark request cannot be viewed by instructors or TAs yet and
+  #   the student can still make changes to the request details.
   def remark_submitted?
     return (self.has_remark? && remark_result.marking_state != Result::MARKING_STATES[:unmarked])
   end
-  
+
   # Helper methods
   def populate_with_submission_files(revision, path="/")
     # Remember that assignments have folders within repositories - these
@@ -158,9 +162,8 @@ class Submission < ActiveRecord::Base
       return nil
     end
   end
-  
+
   def create_remark_result
-    debugger
     remark_result = Result.new
     self.remark_result = remark_result
     remark_result.marking_state = Result::MARKING_STATES[:unmarked]
@@ -168,7 +171,7 @@ class Submission < ActiveRecord::Base
     remark_result.save
     self.save
   end
-  
+
   def create_remark_result_object
     remark_result = Result.new
     self.remark_result = remark_result
@@ -177,7 +180,7 @@ class Submission < ActiveRecord::Base
     remark_result.save
     self.save
   end
-  
+
   private
 
   def create_result

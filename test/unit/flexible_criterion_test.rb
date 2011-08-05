@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require File.join(File.dirname(__FILE__), '..', 'test_helper')
 require 'shoulda'
 
 class FlexibleCriterionTest < ActiveSupport::TestCase
@@ -99,7 +99,7 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
         # That should fail because the assignment doesn't yet exists (in the DB)
         FlexibleCriterion.new_from_csv_row(['name', 10], Assignment.new)
       end
-      assert_instance_of ActiveRecord::Errors, e.message
+      assert_instance_of ActiveModel::Errors, e.message
     end
 
     context "and the row is valid" do

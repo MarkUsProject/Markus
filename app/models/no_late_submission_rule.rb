@@ -9,15 +9,15 @@ class NoLateSubmissionRule < SubmissionRule
   def commit_after_collection_message(grouping)
     I18n.t 'submission_rules.no_late_submission_rule.commit_after_late_message'
   end
-  
+
   def after_collection_message(grouping)
     I18n.t 'submission_rules.no_late_submission_rule.no_late_message'
   end
-  
+
   def overtime_message(grouping)
     I18n.t 'submission_rules.no_late_submission_rule.no_late_message'
   end
-  
+
   # NoLateSubmissionRule works with all Assignments
   def assignment_valid?
     return !assignment.nil?
@@ -31,7 +31,7 @@ class NoLateSubmissionRule < SubmissionRule
   def description_of_rule
     I18n.t 'submission_rules.no_late_submission_rule.description'
   end
-  
+
   def grader_tab_partial
     return 'submission_rules/no_late/grader_tab'
   end

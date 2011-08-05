@@ -23,7 +23,7 @@
 	   <%= link_to I18n.t(:assignments), :controller => 'assignments'%>
 	</span>
 
-        <span <% if 
+        <span <% if
 		  controller.controller_name == 'admins' or
 	          controller.controller_name == 'students' or
 		  controller.controller_name == 'tas'
@@ -31,15 +31,15 @@
 	       id = "menu_active"
 	     <% end %>>
 
-	<%= link_to I18n.t(:users), :controller => 'students' %> 
+	<%= link_to I18n.t(:users), :controller => 'students' %>
 
         </span>
-        <span <% if 
-		  controller.controller_name == 'users'
+        <span <% if
+		  controller.controller_name == 'sections'
 	     %>
 	       id = "menu_active"
 	     <% end %>>
-            <%= link_to 'Sections', :controller => 'users' %> 
+            <%= link_to 'Sections', :controller => 'sections' %>
         </span>
 
 

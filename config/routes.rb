@@ -64,6 +64,7 @@ Markus::Application.routes.draw do
   namespace :api do
     resources :test_results
     resources :submission_downloads
+    resources :users
   end
 
   # This is a legacy wild controller route that's not recommended for RESTful applications.

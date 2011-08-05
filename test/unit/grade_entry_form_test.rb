@@ -1,6 +1,6 @@
-require File.dirname(__FILE__) + '/../test_helper'
-require File.join(File.dirname(__FILE__),'/../blueprints/blueprints')
-require File.join(File.dirname(__FILE__), '/../blueprints/helper')
+require File.join(File.dirname(__FILE__), '..', 'test_helper')
+require File.join(File.dirname(__FILE__),'..', 'blueprints', 'blueprints')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 require 'shoulda'
 require 'will_paginate'
 
@@ -14,6 +14,7 @@ class GradeEntryFormTest < ActiveSupport::TestCase
   # Basic validation tests
   should have_many :grade_entry_items
   should have_many :grade_entry_students
+  should have_many :grades
   should validate_presence_of :short_identifier
   should validate_uniqueness_of(:short_identifier).with_message(I18n.t('grade_entry_forms.invalid_identifier'))
 
@@ -26,25 +27,19 @@ class GradeEntryFormTest < ActiveSupport::TestCase
 
   # Make sure validate works appropriately when the date is valid
   def test_validate_valid_date
-    g = GradeEntryForm.new
-    g.short_identifier = "T1"
-    g.date = 1.day.from_now
+    g = GradeEntryForm.new(:short_identifier => "T1", :date => 1.day.from_now)
     assert g.valid?
   end
 
   # Make sure validate works appropriately when the date is invalid
   def test_validate_invalid_date
-    g = GradeEntryForm.new
-    g.short_identifier = "T1"
-    g.date = "2009-"
+    g = GradeEntryForm.new(:short_identifier => "T1", :date => "2009-")
     assert !g.valid?
   end
 
   # Make sure that validate allows dates to be set in the past
   def test_validate_date_in_the_past
-    g = GradeEntryForm.new
-    g.short_identifier = "T1"
-    g.date = 1.day.ago
+    g = GradeEntryForm.new(:short_identifier => "T1", :date => 1.day.ago)
     assert g.valid?
   end
 

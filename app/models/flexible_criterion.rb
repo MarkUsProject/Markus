@@ -1,7 +1,7 @@
 require 'fastercsv'
 require 'csv'
 # Represents a flexible criterion used to mark an assignment that
-# has the marking_scheme_type attribute set to 'flexible'. 
+# has the marking_scheme_type attribute set to 'flexible'.
 class FlexibleCriterion < ActiveRecord::Base
   set_table_name "flexible_criteria" # set table name correctly
   belongs_to  :assignment, :counter_cache => true
@@ -17,7 +17,7 @@ class FlexibleCriterion < ActiveRecord::Base
 #  before_save :update_assigned_groups_count
 
   DEFAULT_MAX = 1
-  
+
   def update_assigned_groups_count
     result = []
     tas.each do |ta|
@@ -25,7 +25,7 @@ class FlexibleCriterion < ActiveRecord::Base
     end
     self.assigned_groups_count = result.uniq.length
   end
-  
+
   # Creates a CSV string from all the flexible criteria related to an assignment.
   #
   # ===Returns:
@@ -42,7 +42,7 @@ class FlexibleCriterion < ActiveRecord::Base
     end
     return csv_string
   end
-  
+
   # Instantiate a FlexibleCriterion from a CSV row and attach it to the supplied
   # assignment.
   #
@@ -66,8 +66,8 @@ class FlexibleCriterion < ActiveRecord::Base
     criterion.flexible_criterion_name = row[0]
     # assert that no other criterion uses the same name for the same assignment.
     if (FlexibleCriterion.find_all_by_assignment_id_and_flexible_criterion_name(assignment.id, criterion.flexible_criterion_name).size != 0)
-      raise CSV::IllegalFormatError.new(I18n.t('criteria_csv_error.name_not_unique')) 
-    end  
+      raise CSV::IllegalFormatError.new(I18n.t('criteria_csv_error.name_not_unique'))
+    end
     criterion.max = row[1]
     if (criterion.max == 0)
       raise CSV::IllegalFormatError.new(I18n.t('criteria_csv_error.max_zero'))
@@ -75,11 +75,11 @@ class FlexibleCriterion < ActiveRecord::Base
     criterion.description = row[2] if !row[2].nil?
     criterion.position = next_criterion_position(assignment)
     if !criterion.save
-      raise CSV::IllegalFormatError.new(criterion.errors) 
+      raise CSV::IllegalFormatError.new(criterion.errors)
     end
     return criterion
   end
-  
+
   # Parse a flexible criteria CSV file.
   #
   # ===Params:
@@ -90,7 +90,7 @@ class FlexibleCriterion < ActiveRecord::Base
   #                 Strings representing the faulty line followed by
   #                 a human readable error message are appended to the object
   #                 via the << operator.
-  # 
+  #
   #                 *Hint*: An array allows for easy
   #                 access to single invalid lines.
   #
@@ -110,7 +110,7 @@ class FlexibleCriterion < ActiveRecord::Base
     end
     return nb_updates
   end
-  
+
   # ===Returns:
   #
   # The position that should receive the next criterion for an assignment.
@@ -120,8 +120,8 @@ class FlexibleCriterion < ActiveRecord::Base
     last_criterion = FlexibleCriterion.find_last_by_assignment_id(assignment.id, :order => :position)
     return last_criterion.position + 1 unless last_criterion.nil?
     return 1
-  end 
-  
+  end
+
   def get_weight
     return 1
   end
@@ -192,5 +192,5 @@ class FlexibleCriterion < ActiveRecord::Base
     end
     return failures
   end
-  
+
 end

@@ -184,7 +184,7 @@ class RubricCriterion < ActiveRecord::Base
     (0..RUBRIC_LEVELS-1).each do |i|
       if key[1]["level_" + i.to_s]
         criterion['level_' + i.to_s + '_name'] = key[1]["level_" + i.to_s]["name"]
-        criterion['level_' + i.to_s + '_description'] = 
+        criterion['level_' + i.to_s + '_description'] =
           key[1]["level_" + i.to_s]["description"]
       end
     end
@@ -286,7 +286,7 @@ class RubricCriterion < ActiveRecord::Base
       Ta.find_by_user_name(ta_user_name)}.compact
     add_tas(result)
   end
-  
+
   # Returns an array containing the criterion names that didn't exist
   def self.assign_tas_by_csv(csv_file_contents, assignment_id)
     failures = []

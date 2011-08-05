@@ -17,7 +17,7 @@
 </div>
 <% end %>
 
-<%= form_for :assignment, @assignment do |f| %>
+<%= form_for(@assignment, :as => :assignment) do |f| %>
 <%= f.error_messages%>
 <fieldset>
   <legend><%= t("assignment.properties") %></legend>

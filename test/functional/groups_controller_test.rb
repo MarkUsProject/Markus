@@ -1,4 +1,6 @@
-require File.dirname(__FILE__) + '/authenticated_controller_test'
+require File.join(File.dirname(__FILE__), 'authenticated_controller_test')
+require File.join(File.dirname(__FILE__), '..', 'test_helper')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 require 'shoulda'
 require 'mocha'
 require 'fastercsv'
@@ -10,33 +12,33 @@ class GroupsControllerTest < AuthenticatedControllerTest
   end
 
   context "An authenticated and authorized student doing a " do
-    
+
     setup do
       @student = Student.make
       @assignment = Assignment.make
     end
-    
+
     context "GET on :add_group" do
       setup do
         get_as @student, :add_group
       end
       should respond_with :missing
     end
-    
+
     context "GET on :remove_group" do
       setup do
         get_as @student, :remove_group
       end
       should respond_with :missing
     end
-    
+
     context "GET on :rename_group" do
       setup do
         get_as @student, :rename_group
       end
       should respond_with :missing
     end
-    
+
     context "GET on :valid_grouping" do
       setup do
         get_as @student, :valid_grouping
@@ -50,42 +52,42 @@ class GroupsControllerTest < AuthenticatedControllerTest
       end
       should respond_with :missing
     end
-    
+
     context "GET on :manage" do
       setup do
         get_as @student, :manage
       end
       should respond_with :missing
     end
-    
+
     context "GET on :csv_upload" do
       setup do
         get_as @student, :csv_upload
       end
       should respond_with :missing
     end
-    
+
     context "GET on :add_csv_group" do
       setup do
         get_as @student, :add_csv_group
       end
       should respond_with :missing
     end
-    
+
     context "GET on :download_grouplist" do
       setup do
         get_as @student, :download_grouplist
       end
       should respond_with :missing
     end
-    
+
     context "GET on :use_another_assignment_groups" do
       setup do
         get_as @student, :use_another_assignment_groups
       end
       should respond_with :missing
     end
-    
+
     context "GET on :create_groups_when_students_work_alone" do
       setup do
         get_as @student, :create_groups_when_students_work_alone
@@ -93,16 +95,16 @@ class GroupsControllerTest < AuthenticatedControllerTest
       should respond_with :missing
     end
   end #student context
-  
+
   context "An authenticated and authorized admin doing a " do
-    
+
     setup do
       @admin = Admin.make
       @grouping = Grouping.make
       @assignment = Assignment.make(:groupings => [@grouping])
       setup_group_fixture_repos
     end
-    
+
     context "GET on :manage (groups_controller)" do
       setup do
         get_as @admin, :manage, {:id => @assignment.id}
@@ -130,9 +132,9 @@ class GroupsControllerTest < AuthenticatedControllerTest
       end
       should respond_with :success
     end
-    
+
     context "POST on :add_group" do
-      
+
       context "without groupname" do
         setup do
           @assignment = Assignment.make
@@ -140,11 +142,11 @@ class GroupsControllerTest < AuthenticatedControllerTest
           post_as @admin, :add_group, {:id => @assignment.id}
         end
         should respond_with :success
-        should render_template 'groups/table_row/_filter_table_row.html.erb'
+        should render_template 'groups/table_row/_filter_table_row'
         should assign_to(:assignment) { @assignment }
         should assign_to :new_grouping
       end
-      
+
       context "with groupname" do
         setup do
           post_as @admin, :add_group, {:id => @assignment.id, :new_group_name => "test"}
@@ -155,36 +157,36 @@ class GroupsControllerTest < AuthenticatedControllerTest
         should assign_to :new_grouping
       end
     end #:add_group
-    
+
     context "DELETE on :remove_group" do
-      
+
       context "on group without a submission" do
         setup do
           delete_as @admin, :remove_group, {:grouping_id => @grouping.id}
         end
         should respond_with :success
-        should render_template 'delete_groupings.rjs'
+        should render_template 'groups/delete_groupings'
         should assign_to(:assignment) { @assignment }
         should assign_to(:errors) { [] }
         should assign_to(:removed_groupings) { [@grouping] }
       end
-      
+
       context "on group with a submission" do
         setup do
           @grouping_with_submission = Grouping.make
           delete_as @admin, :remove_group, {:grouping_id => @grouping_with_submission.id}
         end
         should respond_with :success
-        should render_template 'delete_groupings.rjs'
+        should render_template 'groups/delete_groupings'
         should assign_to(:assignment) { Assignment.make }
         should assign_to(:errors) { [@grouping_with_submission.group.group_name] }
         should assign_to(:removed_groupings) { [] }
       end
-      
+
     end #:remove_group
-    
+
     context "POST on :rename_group" do
-      
+
       context "with unique, new name" do
         setup do
           @new_name = "NeW"
@@ -199,7 +201,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         end
         should respond_with :success
       end
-      
+
       context "with existing name" do
         setup do
           @new_name = Grouping.make.group.group_name
@@ -215,9 +217,9 @@ class GroupsControllerTest < AuthenticatedControllerTest
         end
         should set_the_flash.to(I18n.t('groups.rename_group.already_in_use'))
       end
-      
+
     end #:rename_group
-    
+
     context "POST on :valid_grouping" do
       setup do
         post_as @admin, :valid_grouping, {:id => @assignment.id,
@@ -235,26 +237,26 @@ class GroupsControllerTest < AuthenticatedControllerTest
       should assign_to :assignment
       should respond_with :success
     end
-    
+
     context "POST on :use_another_assignment_groups" do
       setup do
         target_assignment = Assignment.make
-        post_as @admin, :use_another_assignment_groups, 
+        post_as @admin, :use_another_assignment_groups,
           {:id => target_assignment.id,
            :clone_groups_assignment_id => @assignment.id}
       end
-      
+
       teardown do
         destroy_repos
       end
-      
+
       should assign_to :target_assignment
       should respond_with :success
       should render_template 'use_another_assignment_groups.rjs'
     end
-    
+
     context "POST on :global_actions on delete" do
-      
+
       context "and none selected" do
         setup do
           post_as @admin, :global_actions, {:id => @assignment.id,
@@ -263,7 +265,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         should assign_to :assignment
         should assign_to :tas
       end
-      
+
       context "and one is selected" do
         setup do
           post_as @admin, :global_actions, {:id => @assignment.id,
@@ -277,7 +279,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         should assign_to(:errors) { [] }
         should render_template 'delete_groupings.rjs'
       end
-      
+
     end
 
     context "POST on :global_actions on invalid" do
@@ -678,16 +680,16 @@ class GroupsControllerTest < AuthenticatedControllerTest
           @grouping.reload
           assert_equal 0, @grouping.student_memberships.size
         end
-      end 
+      end
     end#POST on global_actions on unassign
-    
-    
+
+
     context "GET on download_grouplist" do
       setup do
         setup_group_fixture_repos
         @assignment = Assignment.make
       end
-      
+
       context "with no groups" do
         setup do
           @assignment.groupings.destroy_all
@@ -698,7 +700,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
           assert @response.body.empty?
         end
       end # with no groups
-      
+
       context "with groups, but no TAs assigned" do
         setup do
           # Construct the array that a parse of the returned CSV
@@ -715,7 +717,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
           assert_equal @match_array, FasterCSV.parse(@response.body)
         end
       end # with groups, but no TAs assigned
-      
+
       context "with groups, with TAs assigned" do
         setup do
           @assignment = Assignment.make(:groupings => [Grouping.make])
@@ -740,9 +742,9 @@ class GroupsControllerTest < AuthenticatedControllerTest
 
     end
   end #admin context
-  
+
   def post_add(students)
-    post_as @admin, :global_actions, {:id => @assignment.id, 
+    post_as @admin, :global_actions, {:id => @assignment.id,
       :global_actions => "assign",
       :groupings => [@grouping.id], :students => students}
   end
@@ -759,7 +761,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
       match_array.push(grouping_array)
     end
     return match_array
-  end  
+  end
 
 
 end

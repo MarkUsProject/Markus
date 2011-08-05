@@ -1,10 +1,13 @@
-require File.dirname(__FILE__) + '/authenticated_controller_test'
+require File.join(File.dirname(__FILE__), 'authenticated_controller_test')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
+
 require 'shoulda'
 require 'machinist'
 
 
 class AnnotationsControllerTest < AuthenticatedControllerTest
-  
+
   def setup
     clear_fixtures
   end
@@ -96,12 +99,12 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
   context "An authenticated and authorized admin doing a POST" do
      setup do
       @user = Admin.make()
-      @assignment = Assignment.make() 
+      @assignment = Assignment.make()
       @text_annotation = TextAnnotation.make()
-      @category = AnnotationCategory.make() 
+      @category = AnnotationCategory.make()
       @annotation_text = AnnotationText.make()
-      @submission_file = SubmissionFile.make() 
-      @result = Submission.make.result 
+      @submission_file = SubmissionFile.make()
+      @result = Submission.make.result
     end
 
     context "on :add_existing_annotation" do
@@ -185,10 +188,10 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       @user = Ta.make()
       @assignment = Assignment.make()
       @text_annotation = TextAnnotation.make()
-      @category = AnnotationCategory.make() 
-      @annotation_text = AnnotationText.make() 
+      @category = AnnotationCategory.make()
+      @annotation_text = AnnotationText.make()
       @submission_file = SubmissionFile.make()
-      @result = Submission.make.result 
+      @result = Submission.make.result
      end
 
     context "on :add_existing_annotation" do
@@ -271,12 +274,12 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
    # A student should get a 404 even if they do everything right
      setup do
       @user = Student.make()
-      @assignment = Assignment.make() 
+      @assignment = Assignment.make()
       @text_annotation = TextAnnotation.make()
-      @category = AnnotationCategory.make() 
-      @annotation_text = AnnotationText.make() 
-      @submission_file = SubmissionFile.make() 
-      @result = Submission.make.result 
+      @category = AnnotationCategory.make()
+      @annotation_text = AnnotationText.make()
+      @submission_file = SubmissionFile.make()
+      @result = Submission.make.result
     end
     context "on :add_existing_annotation" do
       setup do
@@ -333,7 +336,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       end
       should respond_with :not_found
     end # End context :update_annotation
-    
+
     context "on :update_comment" do
       setup do
          post_as @user, :update_comment, {:result_id => @result.id,

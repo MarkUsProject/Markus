@@ -3,7 +3,7 @@ namespace :load do
   task(:results => :environment) do
     
     if ENV['short_id'].nil?
-      puts "Usage: rake load:results short_id=string"
+      $stderr.puts "Usage: rake load:results short_id=string\n\nNOTE: Assignment must not exist."
       exit(1)
     end
 
@@ -25,10 +25,11 @@ namespace :load do
     a1.instructor_form_groups = false
     a1.marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
     a1.display_grader_names_to_students = false
+    a1.build_assignment_stat
     a1.save!
-    
+
     # load users
-    STUDENT_CSV = File.expand_path(File.join(File.dirname(__FILE__),'../../db/populate/students.csv'))
+    STUDENT_CSV = File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'db', 'populate', 'students.csv'))
     if File.readable?(STUDENT_CSV)
       csv_students = File.new(STUDENT_CSV)
       User.upload_user_list(Student, csv_students.read)
@@ -45,7 +46,7 @@ namespace :load do
         puts "Caught exception on #{student.user_name}: #{e.message}" # ignore exceptions
       end
     end
-    
+
     # create rubric criteria for a1
     rubric_criteria = [{:rubric_criterion_name => "Uses Conditionals", :weight => 1}, {:rubric_criterion_name => "Code Clarity", :weight => 2}, {:rubric_criterion_name => "Code Is Documented", :weight => 3}, {:rubric_criterion_name => "Uses For Loop", :weight => 1}]
     default_levels = {:level_0_name => "Quite Poor", :level_0_description => "This criterion was not satisifed whatsoever", :level_1_name => "Satisfactory", :level_1_description => "This criterion was satisfied", :level_2_name => "Good", :level_2_description => "This criterion was satisfied well", :level_3_name => "Great", :level_3_description => "This criterion was satisfied really well!", :level_4_name => "Excellent", :level_4_description => "This criterion was satisfied excellently"}
@@ -63,7 +64,7 @@ namespace :load do
         grouping = student.accepted_grouping_for(a1.id)
         group = grouping.group
         #commit some files into the group repository
-        file_dir = File.join(File.dirname(__FILE__), '/../sample_files')
+        file_dir = File.join(File.dirname(__FILE__), '..', '..', 'db', 'sample_submission_files')
         Dir.foreach(file_dir) do |filename|
           unless File.directory?(File.join(file_dir, filename))
             file_contents = File.open(File.join(file_dir, filename))
