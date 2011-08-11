@@ -759,7 +759,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end
 
           should "fails validation" do
-            ActiveRecord::Errors.any_instance.stubs(
+            ActiveModel::Errors.any_instance.stubs(
                     :full_messages).returns([SAMPLE_ERR_MSG])
 
             get_as @admin,
@@ -776,7 +776,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           should "with save error" do
             Mark.expects(:find).with('1').returns(@mark)
             @mark.expects(:save).once.returns(false)
-            ActiveRecord::Errors.any_instance.stubs(:full_messages).returns([SAMPLE_ERR_MSG])
+            ActiveModel::Errors.any_instance.stubs(:full_messages).returns([SAMPLE_ERR_MSG])
             get_as @admin, :update_mark, :mark_id => 1, :mark => 1
             assert render_template 'shared/_handle_error.rjs'
             assert respond_with :success
@@ -1083,7 +1083,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end
 
           should "fails validation" do
-            ActiveRecord::Errors.any_instance.stubs(:full_messages).returns([SAMPLE_ERR_MSG])
+            ActiveModel::Errors.any_instance.stubs(:full_messages).returns([SAMPLE_ERR_MSG])
             get_as @ta,
                     :update_mark,
                     :mark_id => @mark.id,
