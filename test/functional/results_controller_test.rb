@@ -37,7 +37,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
     end
 
     should "not be able to set_released to student" do
-      get :set_released_to_student, :id => 1
+      get :set_released_to_students, :id => 1
       assert respond_with :redirect
     end
 
@@ -154,7 +154,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
         end
 
         should "GET on :set_released_to_student" do
-          get_as @student, :set_released_to_student, :id => @result.id
+          get_as @student, :set_released_to_students, :id => @result.id
           assert respond_with :missing
           assert render_template 404
         end
@@ -958,9 +958,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end
         end
 
-        should "GET on :set_released_to_student" do
+        should "GET on :set_released_to_students" do
           result = Result.make
-          get_as @ta, :set_released_to_student, :id => result.id
+          get_as @ta, :set_released_to_students, :id => result.id
           assert respond_with :missing
           assert render_template 404
         end
