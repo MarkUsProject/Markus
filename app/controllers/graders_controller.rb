@@ -181,8 +181,10 @@ class GradersController < ApplicationController
           render :nothing => true
           return
         end
-        groupings = Grouping.find(grouping_ids, :include => [:assignment,
-            :students, {:tas => :criterion_ta_associations}, :group])
+        groupings = Grouping.where(:id => grouping_ids).includes(:assignment,
+                                                                 :students,
+                                                                 {:tas => :criterion_ta_associations},
+                                                                 :group)
         case params[:global_actions]
           when "assign"
           if params[:graders].nil? or params[:graders].size ==  0
@@ -214,11 +216,9 @@ class GradersController < ApplicationController
           return
         end
         if @assignment.marking_scheme_type == "rubric"
-          criteria = RubricCriterion.find(criteria_ids, :include =>
-                                            :criterion_ta_associations)
+          criteria = RubricCriterion.where(:id => criteria_ids).includes(:criterion_ta_associations)
         else
-          criteria = FlexibleCriterion.find(criteria_ids, :include =>
-                                              :criterion_ta_associations)
+          criteria = FlexibleCriterion.where(:id => criteria_ids).includes(:criterion_ta_associations)
         end
         case params[:global_actions]
           when "assign"
@@ -227,7 +227,7 @@ class GradersController < ApplicationController
             render :nothing => true
             return
           end
-            graders = Ta.find(grader_ids)
+            graders = Ta.where(:id => grader_ids)
             add_graders_to_criteria(criteria, graders)
             return
           when "unassign"
@@ -249,7 +249,7 @@ class GradersController < ApplicationController
   #These methods are called through global actions
 
   def randomly_assign_graders_to_criteria(criteria, grader_ids)
-    graders = Ta.find(grader_ids)
+    graders = Ta.where(:id => grader_ids)
     # Shuffle the criteria
     criteria = criteria.sort_by{rand}
     # Now, deal them out like cards...
@@ -269,7 +269,7 @@ class GradersController < ApplicationController
   end
 
   def randomly_assign_graders(groupings, grader_ids)
-    graders = Ta.find(grader_ids, :include => [:criterion_ta_associations])
+    graders = Ta.where(:id => grader_ids).includes(:criterion_ta_associations)
     # Shuffle the groupings
     groupings = groupings.sort_by{rand}
     # Now, deal them out like cards...
@@ -287,7 +287,7 @@ class GradersController < ApplicationController
   end
 
   def add_graders(groupings, grader_ids)
-    graders = Ta.find(grader_ids, :include => [:criterion_ta_associations])
+    graders = Ta.where(:id => grader_ids).includes(:criterion_ta_associations)
     #only want valid graders
     graders = graders.collect {|grader| grader if grader.valid?}
     groupings.each do |grouping|

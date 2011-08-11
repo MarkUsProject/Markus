@@ -37,7 +37,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
     end
 
     should "not be able to set_released to student" do
-      get :set_released_to_student, :id => 1
+      get :set_released_to_students, :id => 1
       assert respond_with :redirect
     end
 
@@ -154,7 +154,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
         end
 
         should "GET on :set_released_to_student" do
-          get_as @student, :set_released_to_student, :id => @result.id
+          get_as @student, :set_released_to_students, :id => @result.id
           assert respond_with :missing
           assert render_template 404
         end
@@ -759,7 +759,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end
 
           should "fails validation" do
-            ActiveRecord::Errors.any_instance.stubs(
+            ActiveModel::Errors.any_instance.stubs(
                     :full_messages).returns([SAMPLE_ERR_MSG])
 
             get_as @admin,
@@ -776,7 +776,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           should "with save error" do
             Mark.expects(:find).with('1').returns(@mark)
             @mark.expects(:save).once.returns(false)
-            ActiveRecord::Errors.any_instance.stubs(:full_messages).returns([SAMPLE_ERR_MSG])
+            ActiveModel::Errors.any_instance.stubs(:full_messages).returns([SAMPLE_ERR_MSG])
             get_as @admin, :update_mark, :mark_id => 1, :mark => 1
             assert render_template 'shared/_handle_error.rjs'
             assert respond_with :success
@@ -958,9 +958,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end
         end
 
-        should "GET on :set_released_to_student" do
+        should "GET on :set_released_to_students" do
           result = Result.make
-          get_as @ta, :set_released_to_student, :id => result.id
+          get_as @ta, :set_released_to_students, :id => result.id
           assert respond_with :missing
           assert render_template 404
         end
@@ -1083,7 +1083,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end
 
           should "fails validation" do
-            ActiveRecord::Errors.any_instance.stubs(:full_messages).returns([SAMPLE_ERR_MSG])
+            ActiveModel::Errors.any_instance.stubs(:full_messages).returns([SAMPLE_ERR_MSG])
             get_as @ta,
                     :update_mark,
                     :mark_id => @mark.id,
