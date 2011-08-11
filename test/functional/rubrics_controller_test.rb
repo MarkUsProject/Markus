@@ -1,4 +1,7 @@
-require File.dirname(__FILE__) + '/authenticated_controller_test'
+require File.join(File.dirname(__FILE__), 'authenticated_controller_test')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
+
 require 'shoulda'
 require 'mocha'
 require 'machinist'
@@ -176,27 +179,24 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       should respond_with :success
     end
 
-    context "on :update" do
+    should "be able to save with errors" do
+      RubricCriterion.any_instance.expects(:save).once.returns(false)
+      RubricCriterion.any_instance.expects(:errors).once.returns('error msg')
+      get_as @admin,
+             :update,
+             :id => @criterion.id,
+             :rubric_criterion => {:rubric_criterion_name => 'one',
+                                   :weight => 10}
+      assert assign_to :criterion
+      assert render_template 'errors'
+      assert respond_with :success
+    end
 
-      context "with save errors" do
-        setup do
-          RubricCriterion.any_instance.expects(:save).once.returns(false)
-          RubricCriterion.any_instance.expects(:errors).once.returns('error msg')
-          get_as @admin, :update, :id => @criterion.id, :rubric_criterion => {:rubric_criterion_name => 'one', :weight => 10}
-        end
-        should assign_to :criterion
-        should render_template 'errors'
-        should respond_with :success
-      end
-
-      context "without save errors" do
-        setup do
-          get_as @admin, :update, :id => @criterion.id, :rubric_criterion => {:rubric_criterion_name => 'one', :weight => 10}
-        end
-        should assign_to :criterion
-        should_not set_the_flash
-        should render_template :update
-      end
+    should "be able to  save without errors" do
+      get_as @admin, :update, :id => @criterion.id, :rubric_criterion => {:rubric_criterion_name => 'one', :weight => 10}
+      assert assign_to :criterion
+      assert_equal I18n.t('criterion_saved_success'), flash[:success]
+      assert render_template :update
     end
 
     context "on :new" do
@@ -229,52 +229,54 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       should respond_with :redirect
     end
 
-    context "on :update_positions" do
-      setup do
-        @criterion2 = rubric_criteria(:c2)
-        get_as @admin, :update_positions, :rubric_criteria_pane_list => [@criterion2.id, @criterion.id], :aid => @assignment.id
-      end
-      should render_template ''
-      should respond_with :success
+    should "be able to update_positions" do
+      @criterion2 = rubric_criteria(:c2)
+      get_as @admin,
+             :update_positions,
+             :rubric_criteria_pane_list => [@criterion2.id,
+                                            @criterion.id],
+             :aid => @assignment.id
+      assert render_template ''
+      assert respond_with :success
 
-      should "not have adjusted positions" do
-        c1 = RubricCriterion.find(@criterion.id)
-        assert_equal 1, c1.position
-        c2 = RubricCriterion.find(@criterion2.id)
-        assert_equal 2, c2.position
-      end
+      c1 = RubricCriterion.find(@criterion.id)
+      assert_equal 1, c1.position
+      c2 = RubricCriterion.find(@criterion2.id)
+      assert_equal 2, c2.position
     end
 
-    context "on :move_criterion up" do
-      setup do
-        @criterion2 = rubric_criteria(:c2)
-        get_as @admin, :move_criterion, :aid => @assignment.id, :id => @criterion2.id, :position => @criterion2.position, :direction => :up
-      end
-      should render_template ''
-      should respond_with :success
+    should "be able to move_criterion up" do
+      @criterion2 = rubric_criteria(:c2)
+      get_as @admin,
+             :move_criterion,
+             :aid => @assignment.id,
+             :id => @criterion2.id,
+             :position => @criterion2.position,
+             :direction => :up
+      assert render_template ''
+      assert respond_with :success
 
-      should "not have adjusted positions" do
-        c1 = RubricCriterion.find(@criterion.id)
-        assert_equal 1, c1.position
-        c2 = RubricCriterion.find(@criterion2.id)
-        assert_equal 2, c2.position
-      end
+      c1 = RubricCriterion.find(@criterion.id)
+      assert_equal 1, c1.position
+      c2 = RubricCriterion.find(@criterion2.id)
+      assert_equal 2, c2.position
     end
 
-    context "on :move_criterion down" do
-      setup do
-        @criterion2 = rubric_criteria(:c2)
-        get_as @admin, :move_criterion, :aid => @assignment.id, :id => @criterion.id, :position => @criterion.position, :direction => :up
-      end
-      should render_template ''
-      should respond_with :success
+    should "be able to move_criterion down" do
+      @criterion2 = rubric_criteria(:c2)
+      get_as @admin,
+             :move_criterion,
+             :aid => @assignment.id,
+             :id => @criterion.id,
+             :position => @criterion.position,
+             :direction => :up
+      assert render_template ''
+      assert respond_with :success
 
-      should "not have adjusted positions" do
-        c1 = RubricCriterion.find(@criterion.id)
-        assert_equal 1, c1.position
-        c2 = RubricCriterion.find(@criterion2.id)
-        assert_equal 2, c2.position
-      end
+      c1 = RubricCriterion.find(@criterion.id)
+      assert_equal 1, c1.position
+      c2 = RubricCriterion.find(@criterion2.id)
+      assert_equal 2, c2.position
     end
 
   end # An authenticated and authorized admin doing a GET
@@ -400,20 +402,20 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       end
     end
 
-    context "on :update_positions" do
-      setup do
-        @criterion2 = rubric_criteria(:c2)
-        post_as @admin, :update_positions, :rubric_criteria_pane_list => [@criterion2.id, @criterion.id], :aid => @assignment.id
-      end
-      should render_template ''
-      should respond_with :success
+   should "be able to update_positions" do
+      @criterion2 = rubric_criteria(:c2)
+      post_as @admin,
+              :update_positions,
+              :rubric_criteria_pane_list => [@criterion2.id,
+                                             @criterion.id],
+              :aid => @assignment.id
+      assert render_template ''
+      assert respond_with :success
 
-      should "have appropriately adjusted positions" do
-        c1 = RubricCriterion.find(@criterion.id)
-        assert_equal 2, c1.position
-        c2 = RubricCriterion.find(@criterion2.id)
-        assert_equal 1, c2.position
-      end
+      c1 = RubricCriterion.find(@criterion.id)
+      assert_equal 2, c1.position
+      c2 = RubricCriterion.find(@criterion2.id)
+      assert_equal 1, c2.position
     end
 
     context "on :move_criterion up with 2 criteria" do
@@ -636,23 +638,18 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       @mark = marks(:mark_11)
     end
 
-    context "on :delete" do
-      setup do
-        delete_as @admin, :delete, :id => @criterion.id
-      end
-      should assign_to :criterion
-      should_not set_the_flash.to( I18n.t('criterion_deleted_success'))
-      should respond_with :success
+    should "be able to delete a criterion" do
+      delete_as @admin, :delete, :id => @criterion.id
 
-      should "effectively destroy the criterion" do
-        assert_raise ActiveRecord::RecordNotFound do
-          RubricCriterion.find(@criterion.id)
-        end
+      assert assign_to :criterion
+      assert_equal flash[:success], I18n.t('criterion_deleted_success')
+      assert respond_with :success
+
+      assert_raise ActiveRecord::RecordNotFound do
+        RubricCriterion.find(@criterion.id)
       end
-      should "effectively destroy the marks" do
-        assert_raise ActiveRecord::RecordNotFound do
-          Mark.find(@mark.id)
-        end
+      assert_raise ActiveRecord::RecordNotFound do
+        Mark.find(@mark.id)
       end
     end
 

@@ -6,7 +6,7 @@
 
     </p>
     <ul>
-      <% flash[:error].each do |error_message| %>
+      <%= flash[:error].each do |error_message| %>
         <li><%= error_message %></li>
       <% end %>
     </ul>
@@ -32,8 +32,8 @@
    <h2><%=h(annotation_category.annotation_category_name)%></h2>
 
 <fieldset>
-   <%= form_for :annotation_category,
-		annotation_category,
+   <%= form_for annotation_category,
+		:as => :annotation_category,
 		:url => {:action => 'update_annotation_category',
 			 :id => annotation_category.id},
 		:remote => true do |f| %>

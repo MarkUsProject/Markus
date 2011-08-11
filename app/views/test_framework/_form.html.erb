@@ -7,7 +7,10 @@
 </div>
 <% end %>
 
-<%= form_for @assignment, :as => :assignment, :html => {:multipart => true} do |f| %>
+<%= form_for @assignment,
+	     :as => :assignment,
+	     :url => {:action => :manage},
+	     :html => {:multipart => true} do |f| %>
 <%= f.error_messages%>
 
 <fieldset>

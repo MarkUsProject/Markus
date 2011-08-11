@@ -512,7 +512,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                                :id => @assignment.id
           assert_equal(I18n.t('invite_student.fail.dne',
                               :user_name => 'zhfbdjhzkyfg'),
-                       flash[:fail_notice])
+                       flash[:fail_notice].first)
         end
 
         should "not be able to invite a hidden student" do
@@ -525,7 +525,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                                :id => @assignment.id
           assert_equal(I18n.t('invite_student.fail.hidden',
                               :user_name => student.user_name),
-                       flash[:fail_notice])
+                       flash[:fail_notice].first)
         end
 
         should "not be able to invite an already invited student" do
@@ -538,7 +538,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                                :id => @assignment.id
           assert_equal(I18n.t('invite_student.fail.already_pending',
                               :user_name => sm.user.user_name),
-                       flash[:fail_notice])
+                       flash[:fail_notice].first)
         end
 
         should "be able to invite multiple students" do
@@ -605,7 +605,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           assert_equal 0, @grouping.pending_students.size
           assert_equal(I18n.t('invite_student.fail.dne',
                               :user_name => admin.user_name),
-                      flash[:fail_notice])
+                      flash[:fail_notice].first)
         end
 
         should "not be able to invite graders" do
@@ -619,7 +619,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           assert_equal 0, @grouping.pending_students.size
           assert_equal(I18n.t('invite_student.fail.dne',
                               :user_name => grader.user_name),
-                       flash[:fail_notice])
+                       flash[:fail_notice].first)
         end
 
         should "not be able to create another group" do
@@ -877,7 +877,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                               :id => @assignment.id
           assert_equal I18n.t('invite_student.fail.due_date_passed',
                               :user_name => student.user_name),
-                      flash[:fail_notice]
+                      flash[:fail_notice].first
         end
       end
     end  # -- with an assignment, with a past due date
@@ -894,7 +894,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
       should "have the create group link available" do
         get_as @student, :student_interface, :id => @assignment.id
-        assert_not_nil (@response.body =~ /<a[^>]*>#{I18n.t(:create)}<\/a>/)
+        assert_not_nil (response.body =~ /<a[^>]*>#{I18n.t(:create)}<\/a>/)
       end
 
       should "be able to create a group" do

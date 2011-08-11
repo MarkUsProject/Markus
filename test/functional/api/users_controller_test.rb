@@ -19,7 +19,7 @@ class Api::UsersControllerTest < ActionController::TestCase
       end
 
       should "fail to authenticate the GET request" do
-        assert_equal("403 Forbidden", @res_show.status)
+        assert_response 403
       end
     end
 
@@ -29,7 +29,7 @@ class Api::UsersControllerTest < ActionController::TestCase
       end
 
       should "fail to authenticate the GET request" do
-        assert_equal("403 Forbidden", @res_create.status)
+        assert_response 403
       end
     end
 
@@ -39,17 +39,17 @@ class Api::UsersControllerTest < ActionController::TestCase
       end
 
       should "fail to authenticate the GET request" do
-        assert_equal("403 Forbidden", @res_update.status)
+        assert_response 403
       end
     end
 
     context "/destroy" do
       setup do
-        @res_destroy = delete("destory")
+        @res_destroy = delete("destroy")
       end
 
       should "fail to authenticate the GET request" do
-        assert_equal("403 Forbidden", @res_destroy.status)
+        assert_response 403
       end
     end
   end
@@ -78,7 +78,7 @@ class Api::UsersControllerTest < ActionController::TestCase
       end
 
       should "send the user details in question" do
-        assert_equal("200 OK", @res.status)
+        assert_response :success
         assert(@res.body.include?(@user.user_name))
         assert(@res.body.include?(@user.type))
         assert(@res.body.include?(@user.first_name))
@@ -92,7 +92,7 @@ class Api::UsersControllerTest < ActionController::TestCase
       end
 
       should "fail to find the user, 'garbage fake name'" do
-        assert_equal("422 Unprocessable Entity", @res.status)
+        assert_response 422
       end
     end
 
@@ -107,7 +107,7 @@ class Api::UsersControllerTest < ActionController::TestCase
       end
 
       should "create the new user specified" do
-        assert_equal("200 OK", @res.status)
+        assert_response :success
         @new_user = User.find_by_user_name(@attr[:user_name])
         assert !@new_user.nil?
         assert_equal(@new_user.last_name, @attr[:last_name])
@@ -123,9 +123,10 @@ class Api::UsersControllerTest < ActionController::TestCase
                  :first_name => "Api", :user_type =>"admin" }
         @res = post("create", @attr)
       end
+
       should "find an existing user and cause conflict" do
         assert !User.find_by_user_name(@attr[:user_name]).nil?
-        assert_equal("409 Conflict", @res.status)
+        assert_response :conflict
       end
     end
 
@@ -137,7 +138,7 @@ class Api::UsersControllerTest < ActionController::TestCase
       end
 
       should "not be able to process user_type" do
-        assert_equal("422 Unprocessable Entity", @res.status)
+        assert_response 422
       end
     end
 
@@ -182,7 +183,7 @@ class Api::UsersControllerTest < ActionController::TestCase
 
       should "not be able to find the user_name to update" do
         assert User.find_by_user_name("garbage").nil?
-        assert_equal("422 Unprocessable Entity", @res.status)
+        assert_response 422
       end
     end
 
@@ -198,7 +199,7 @@ class Api::UsersControllerTest < ActionController::TestCase
       end
 
       should "find the new user_name as existing and cause conflict" do
-        assert_equal("409 Conflict", @res.status)
+        assert_response 409
       end
     end
 
@@ -208,7 +209,7 @@ class Api::UsersControllerTest < ActionController::TestCase
       end
 
       should "pretend the function doesn't exist" do
-        assert_equal("404 Not Found", @res.status)
+        assert_response :missing
       end
     end
   end

@@ -21,7 +21,9 @@
 </div>
 <% end %>
 
-<%= form_for(@grade_entry_form, :as => :grade_entry_form) do |f| %>
+<%= form_for @grade_entry_form,
+	     :as => :grade_entry_form,
+	     :url => {:action => :edit} do |f| %>
 <%= f.error_messages%>
 <fieldset>
   <legend><%= t('grade_entry_forms.properties') %></legend>
@@ -52,8 +54,9 @@
     %>
     <div id="grade_entry_items">
       <%= f.fields_for :grade_entry_items do |entry_item| %>
-        <%= render :partial => 'grade_entry_item', :locals => {:grade_entry_item => entry_item.object,
-                                                               :form => f} %>
+        <%= render :partial => 'grade_entry_item',
+		   :locals => {:grade_entry_item => entry_item.object,
+                               :form => f} %>
       <% end %>
     </div>
 

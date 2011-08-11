@@ -4,8 +4,8 @@
   </div>
 <% end %>
 
-<%= form_for :flexible_criterion,
-	     criterion,
+<%= form_for criterion,
+	     :as => :flexible_criterion,
 	     :url => {:action => 'update',
 		      :id => criterion.id},
 	     :remote => true do |f| %>

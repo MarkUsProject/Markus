@@ -130,7 +130,7 @@ document.observe("dom:loaded", function(){
 
 </div><!-- Notice -->
 
-<% form_remote_tag :url => {:controller => "graders",
+<%= form_remote_tag :url => {:controller => "graders",
   :action => "global_actions", :id => @assignment.id},
   :html => {:id => "global_action_form"}, :loading => "thinking();",
   :complete => "done_thinking();" do %>

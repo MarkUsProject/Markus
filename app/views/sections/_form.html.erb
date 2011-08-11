@@ -7,7 +7,9 @@
   <% end%>
 </div>
 
-<%= form_for :section, @section do |f| %>
+<%= form_for @section,
+	     :as => :section,
+	     :url => {:action => :edit} do |f| %>
 <fieldset>
   <legend><%= I18n.t('section.legend') %></legend>
   <%= f.label :name, t("section.name") %>
@@ -18,7 +20,7 @@
   <% else %>
     <%= f.submit I18n.t(:save) %>
   <% end %>
-    
+
 </fieldset>
 
 <% end %>

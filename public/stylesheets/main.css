@@ -228,8 +228,8 @@ h4{
 }
 
 #sub_menu_active a {
-   background-color: #003366;
-   color: white;
+   background-color: White;
+   color: #464646;
   -moz-border-radius-topleft: 10px;
   -moz-border-radius-topright: 10px;
   -webkit-border-top-left-radius: 10px;
@@ -239,11 +239,11 @@ h4{
 
 #sub_menu a, #sub_sub_menu a {
    margin-top: 5px;
-   color: #fff;
+   color: #464646;
 }
 
-#sub_menu a:hover {
-   color: #EE6415;
+#sub_menu a {
+   color: White;
 }
 
 #menu_active a{
@@ -253,19 +253,18 @@ h4{
 }
 
 #sub_menu_active a{
-   background: #003366;
+   background: White;
+   color: #464646;
 }
 
 #sub_sub_menu_active a{
-   color: #003366;
-   background: white;
+   background: #464646;
+   color: White;
    -moz-border-radius-topleft: 10px;
    -moz-border-radius-topright: 10px;
    -webkit-border-top-left-radius: 10px;
    -webkit-border-top-right-radius: 10px;
-
 }
-
 
 #sub_menu li li, #sub_sub_menu li li{
    display: block;
@@ -317,7 +316,8 @@ h4{
 }
 
 #sub_sub_menu {
-  background: #003366;
+  background: White;
+  border-bottom: 2px solid #464646;
 }
 
 .level1{

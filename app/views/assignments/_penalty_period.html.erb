@@ -7,7 +7,7 @@
 %>
 <fieldset class="period">
 <legend><%= t("submission_rules.penalty_period_submission_rule.short_name") %></legend>
-<% pf.fields_for :periods, penalty_period do |f| %>
+<%= pf.fields_for :periods, penalty_period do |f| %>
   <p>
     <%= f.label :hours, t("submission_rules.penalty_period_submission_rule.after") %>
     <%= f.text_field :hours, :size => 1, :class => "PeriodDeltaChain_Hours", :onchange => "penalty_periods.refresh();" %>
