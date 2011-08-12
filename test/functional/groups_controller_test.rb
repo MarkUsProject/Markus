@@ -401,7 +401,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         @grouping2 = Grouping.make(:assignment => @assignment)
         @grouping2.add_member(@student1)
         post_add [@student1.id, @student2.id]
-        
+
         assert assign_to :assignment
         assert assign_to(:messages) {
           [

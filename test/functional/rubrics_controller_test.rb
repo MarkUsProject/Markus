@@ -54,9 +54,16 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       should respond_with :redirect
     end
 
-    context "on :download" do
+    context "on :download_csv" do
       setup do
-        get :download, :id => 1
+        get :download_csv, :id => 1
+      end
+      should respond_with :redirect
+    end
+
+    context "on :download_yml" do
+      setup do
+        get :download_yml, :id => 1
       end
       should respond_with :redirect
     end
@@ -121,9 +128,16 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       should respond_with :redirect
     end
 
-    context "on :download" do
+    context "on :download_csv" do
       setup do
-        post :download, :id => 1
+        post :download_csv, :id => 1
+      end
+      should respond_with :redirect
+    end
+
+    context "on :download_yml" do
+      setup do
+        post :download_yml, :id => 1
       end
       should respond_with :redirect
     end

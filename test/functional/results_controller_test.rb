@@ -251,12 +251,13 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
           should "be able to retrieve_file with file error" do
             @file.expects(:submission).once.returns(@result.submission)
+
+            @file.expects(
+                :retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
             ResultsController.any_instance.stubs(
                         :authorized_to_download?).once.returns(true)
             SubmissionFile.stubs(:find).once.returns(@file)
 
-            @file.expects(
-                :retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
             get_as @student,
                   :download,
                   :select_file_id => 1
@@ -774,8 +775,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end
 
           should "with save error" do
-            Mark.expects(:find).with('1').returns(@mark)
             @mark.expects(:save).once.returns(false)
+
+            Mark.stubs(:find).once.returns(@mark)
             ActiveModel::Errors.any_instance.stubs(:full_messages).returns([SAMPLE_ERR_MSG])
             get_as @admin, :update_mark, :mark_id => 1, :mark => 1
             assert render_template 'shared/_handle_error.rjs'

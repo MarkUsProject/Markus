@@ -411,14 +411,14 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
       should "not be able to invite without a group" do
         students = [Student.make, Student.make]
-        user_names = students.collect{ 
+        user_names = students.collect{
                           |student| student.user_name
                         }.join(', ')
         assert_raise RuntimeError do
           post_as(@student,
                   :invite_member,
                   {:id => @assignment.id,
-                   :invite_member => user_names})  
+                   :invite_member => user_names})
         end
       end
 
@@ -574,12 +574,12 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         should "be able to invite students with spacing" do
           students = [Student.make, Student.make]
           user_names = students.collect{
-                          |student| student.user_name 
+                          |student| student.user_name
                         }.join(' ,  ')
           post_as(@student,
                   :invite_member,
                   {:id => @assignment.id,
-                   :invite_member => user_names})  
+                   :invite_member => user_names})
           assert_redirected_to :action => "student_interface",
                                :id => @assignment.id
           assert_equal 2, @grouping.pending_students.size
