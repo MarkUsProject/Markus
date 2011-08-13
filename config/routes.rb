@@ -2,77 +2,96 @@
 require 'routing_filter'
 
 Markus::Application.routes.draw do
-  # The priority is based upon order of creation:
-  # first created -> highest priority.
-
-  # Sample of regular route:
-  #   match 'products/:id' => 'catalog#view'
-  # Keep in mind you can assign values other than :controller and :action
-
-  # Sample of named route:
-  #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
-  # This route can be invoked with purchase_url(:id => product.id)
-
-  # Sample resource route (maps HTTP verbs to controller actions automatically):
-  #   resources :products
-
-  # Sample resource route with options:
-  #   resources :products do
-  #     member do
-  #       get :short
-  #       post :toggle
-  #     end
-  #
-  #     collection do
-  #       get :sold
-  #     end
-  #   end
-
-  # Sample resource route with sub-resources:
-  #   resources :products do
-  #     resources :comments, :sales
-  #     resource :seller
-  #   end
-
-  # Sample resource route with more complex sub-resources
-  #   resources :products do
-  #     resources :comments
-  #     resources :sales do
-  #       get :recent, :on => :collection
-  #     end
-  #   end
-
-  # Sample resource route within a namespace:
-  #   namespace :admin do
-  #     # Directs /admin/products/* to Admin::ProductsController
-  #     # (app/controllers/admin/products_controller.rb)
-  #     resources :products
-  #   end
-
-  # See how all your routes lay out with "rake routes"
-
   filter :locale
 
   # Install the default routes as the lowest priority.
   root :controller => "main", :action => "login"
-  match 'main', :controller => 'main', :action => 'index'
-  match 'main/about', :controller => 'main', :action => 'about'
-  match 'main/logout', :controller => 'main', :action => 'logout'
-
-  #FIXME: Need to fix all routes
-
-
-  # API routes
+   # API routes
   namespace :api do
     resources :test_results
     resources :submission_downloads
     resources :users
   end
 
-  #TODO: Remove this 4 lines
-  # This is a legacy wild controller route that's not recommended for RESTful applications.
-  # Note: This route will make all actions in every controller accessible via GET requests.
-  #match ':controller(/:action(/:id(.:format)))'
+  resources :admins do
+    get 'populate'
+  end
+
+  resources :annotation_categories do
+    member do
+      get 'get_annotations'
+      get 'add_annotation_category'
+      get 'add_annotation_text'
+      get 'csv_upload'
+      get 'delete_annotation_category'
+      get 'download'
+      get 'yml_upload'
+      post 'delete_annotation_text'
+      post 'update_annotation_category'
+      post 'update_annotation'
+    end
+  end
+
+  resources :annotations do
+    member do
+      post 'update_comment'
+    end
+  end
+
+  resources :assignments do
+    member do
+      get 'refresh_graph'
+    end
+  end
+
+  resources :flexible_criteria
+
+  resources :grade_entry_forms do
+    member do
+      post 'student_interface'
+    end
+  end
+
+  resources :graders do
+    member do
+      get 'manage'
+    end
+  end
+
+  resources :groups do
+    member do
+      get 'manage'
+    end
+  end
+
+  resources :note
+
+  resources :results
+
+  resources :rubric
+
+  resources :sections
+
+  resources :students do
+    get 'populate'
+    get 'manage'
+    get 'download_student_list'
+  end
+
+  resources :submissions do
+    member do
+      get 'browse'
+    end
+  end
+
+  resources :tas
+
+  resources :test_framework
+
+  match 'main', :controller => 'main', :action => 'index'
+  match 'main/about', :controller => 'main', :action => 'about'
+  match 'main/logout', :controller => 'main', :action => 'logout'
+
 
   # Return a 404 when no route is match
   match '*path', :controller => 'main', :action => 'page_not_found'

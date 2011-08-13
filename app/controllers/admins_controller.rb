@@ -16,22 +16,20 @@ class AdminsController < ApplicationController
   end
 
   def update
-    return unless request.post?
-    @user = Admin.find_by_id(params[:user][:id])
+    @user = Admin.find(params[:id])
     attrs = params[:user]
     # update_attributes supplied by ActiveRecords
     if !@user.update_attributes(attrs)
       render :action => :edit
     else
       flash[:edit_notice] = I18n.t("admins.success",
-                                    :user_name => @user.user_name)
+                                   :user_name => @user.user_name)
       redirect_to :action => 'index'
     end
   end
 
   # Create a new Admin
   def create
-    return unless request.post?
     # Default attributes: role = TA or role = STUDENT
     # params[:user] is a hash of values passed to the controller
     # by the HTML form with the help of ActiveView::Helper::
