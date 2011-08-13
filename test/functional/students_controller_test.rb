@@ -19,12 +19,12 @@ class StudentsControllerTest < AuthenticatedControllerTest
     end
 
     should "not be able to :edit" do
-      get_as @student, :edit
+      get_as @student, :edit, :id => 178
       assert_response :missing
     end
 
     should "not be able to :update" do
-      put_as @student, :update
+      put_as @student, :update, :id => 178
       assert_response :missing
     end
 

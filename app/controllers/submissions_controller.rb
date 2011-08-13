@@ -4,15 +4,36 @@ class SubmissionsController < ApplicationController
   include SubmissionsHelper
   include PaginationHelper
 
-  before_filter    :authorize_only_for_admin, :except => [:server_time, :populate_file_manager, :browse,
-  :index, :file_manager, :update_files,
-  :download, :s_table_paginate, :collect_and_begin_grading,
-  :manually_collect_and_begin_grading, :collect_ta_submissions, :repo_browser,
-  :populate_repo_browser, :update_converted_pdfs]
-  before_filter    :authorize_for_ta_and_admin, :only => [:browse, :index, :s_table_paginate, :collect_and_begin_grading,
-  :manually_collect_and_begin_grading, :collect_ta_submissions, :repo_browser, :populate_repo_browser, :update_converted_pdfs]
-  before_filter    :authorize_for_student, :only => [:file_manager, :populate_file_manager, :update_files]
-  before_filter    :authorize_for_user, :only => [:download]
+  before_filter :authorize_only_for_admin,
+                :except => [:server_time,
+                            :populate_file_manager,
+                            :browse,
+                            :index,
+                            :file_manager,
+                            :update_files,
+                            :download,
+                            :s_table_paginate,
+                            :collect_and_begin_grading,
+                            :manually_collect_and_begin_grading,
+                            :collect_ta_submissions,
+                            :repo_browser,
+                            :populate_repo_browser,
+                            :update_converted_pdfs]
+  before_filter :authorize_for_ta_and_admin,
+                :only => [:browse,
+                          :index,
+                          :s_table_paginate,
+                          :collect_and_begin_grading,
+                          :manually_collect_and_begin_grading,
+                          :collect_ta_submissions,
+                          :repo_browser,
+                          :populate_repo_browser,
+                          :update_converted_pdfs]
+  before_filter :authorize_for_student,
+                :only => [:file_manager,
+                          :populate_file_manager,
+                          :update_files]
+  before_filter :authorize_for_user, :only => [:download]
 
   S_TABLE_PARAMS = {
     :model => Grouping,
@@ -115,7 +136,7 @@ class SubmissionsController < ApplicationController
   end
 
   def file_manager
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
 
     if @grouping.nil?

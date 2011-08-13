@@ -14,7 +14,9 @@ Markus::Application.routes.draw do
   end
 
   resources :admins do
-    get 'populate'
+    collection do
+      get 'populate'
+    end
   end
 
   resources :annotation_categories do
@@ -39,16 +41,61 @@ Markus::Application.routes.draw do
   end
 
   resources :assignments do
+
+    collection do
+      get 'download_csv_grades_report'
+      get 'update_group_properties_on_persist'
+    end
+
     member do
       get 'refresh_graph'
+      get 'student_interface'
+      get 'update_group_properties_on_persist'
+      get 'invite_member'
+      get 'creategroup'
     end
+
+    resources :rubrics
+    resources :flexible_criteria
+    resources :test_framework
+
+    resources :groups do
+      collection do
+        get 'populate'
+        get 'populate_students'
+        get 'add_group'
+      end
+    end
+
+    resources :submissions do
+      collection do
+        get 'file_manager'
+        get 'browse'
+      end
+    end
+
+   resources :results do
+      collection do
+        get 'view_marks'
+      end
+    end
+
   end
 
   resources :flexible_criteria
 
   resources :grade_entry_forms do
-    member do
+    collection do
       post 'student_interface'
+    end
+
+    member do
+      get 'grades'
+      get 'g_table_paginate'
+      get 'csv_download'
+      post 'update_grade'
+      post 'student_interface'
+      post 'update_grade_entry_students'
     end
   end
 
@@ -58,33 +105,37 @@ Markus::Application.routes.draw do
     end
   end
 
-  resources :groups do
+  resources :note do
+    collection do
+      get 'noteable_object_selector'
+    end
     member do
-      get 'manage'
+      get 'student_interface'
+      post 'grades'
     end
   end
-
-  resources :note
-
-  resources :results
 
   resources :rubric
 
   resources :sections
 
   resources :students do
-    get 'populate'
-    get 'manage'
-    get 'download_student_list'
-  end
-
-  resources :submissions do
-    member do
-      get 'browse'
+    collection do
+      get 'populate'
+      get 'manage'
+      get 'download_student_list'
+      get 'upload_student_list'
     end
   end
 
-  resources :tas
+    resources :tas  do
+    collection do
+      get 'populate'
+      get 'upload_ta_list'
+      get 'download_ta_list'
+    end
+  end
+
 
   resources :test_framework
 

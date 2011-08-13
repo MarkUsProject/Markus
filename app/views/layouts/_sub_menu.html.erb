@@ -57,8 +57,8 @@
       <li <% if controller.action_name == 'grades' %>
             id="sub_menu_active"
           <% end %>>
-        <%= link_to I18n.t(:grades), :controller => 'grade_entry_forms',
-                    :action => 'grades', :id => @grade_entry_form.id %>
+        <%= link_to I18n.t(:grades),
+                    grades_grade_entry_form_path(@grade_entry_form) %>
       </li>
     <% end %>
   <% end %>
@@ -85,9 +85,7 @@
          id="sub_menu_active"
       <%end%>>
          <%= link_to I18n.t("groups.groups"),
-		     :controller => 'groups',
-		     :action => 'manage',
-		     :id => @assignment.id %>
+		     assignment_groups_path(@assignment) %>
       </li>
       <li <%if controller.controller_name == 'graders'%>
          id="sub_menu_active"
@@ -98,8 +96,8 @@
        controller.controller_name == 'results' %>
           id="sub_menu_active"
         <%end%>>
-	  <%= link_to I18n.t(:submissions), :controller => 'submissions', :action => 'browse', :id =>
-@assignment.id %>
+	  <%= link_to I18n.t(:submissions),
+		      browse_assignment_submissions_path(@assignment) %>
       </li>
   <% end %>
 <% end %>
@@ -199,14 +197,14 @@ h(sanitize(@assignment.short_identifier))%></span>
   <li <% if controller.controller_name == 'submissions' %>
           id="sub_menu_active"
         <%end%>>
-	  <%= link_to I18n.t("submissions"), :controller => 'submissions',
-	  :action => 'file_manager', :id => @assignment.id %>
+	  <%= link_to I18n.t("submissions"),
+		      file_manager_assignment_submissions_path(@assignment) %>
   </li>
    <li <% if controller.controller_name == 'results' %>
           id="sub_menu_active"
         <%end%>>
-	  <%= link_to I18n.t("results.results_name"), :controller => 'results',
-	  :action => 'view_marks', :id => @assignment.id %>
+	  <%= link_to I18n.t("results.results_name"),
+		      view_marks_assignment_results_path(@assignment) %>
   </li>
    <% end %>
    </ul>

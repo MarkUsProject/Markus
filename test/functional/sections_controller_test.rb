@@ -18,29 +18,19 @@ class SectionsControllerTest < AuthenticatedControllerTest
       @student = Student.make
     end
 
-    context "on index" do
-      setup do
-        get_as @student, :index
-      end
-
-      should respond_with :missing
-
+    should "on index" do
+      get_as @student, :index
+      assert respond_with :missing
     end
 
-    context "on create new section" do
-      setup do
-        get_as @student, :create_section
-      end
-
-      should respond_with :missing
+    should "on create new section" do
+      post_as @student, :create
+      assert respond_with :missing
     end
 
-    context "on update new section" do
-      setup do
-        get_as @student, :update_section
-      end
-
-      should respond_with :missing
+    should "on update new section" do
+      put_as @student, :update, :id => Section.make.id
+      assert respond_with :missing
     end
   end
 
@@ -49,68 +39,43 @@ class SectionsControllerTest < AuthenticatedControllerTest
       @admin = Admin.make
     end
 
-    context "on index" do
-      setup do
-        get_as @admin, :index
-      end
-
-      should respond_with :success
+    should "on index" do
+      get_as @admin, :index
+      assert respond_with :success
     end
 
-    context "on create_section" do
-      setup do
-        get_as @admin, :create_section
-      end
+    should "creating a section" do
+      post_as @admin, :create, {:section => {:name => "section_01"}}
 
-      should respond_with :success
+      assert respond_with :redirect
+      assert set_the_flash.to(I18n.t('section.create.success'))
+      assert Section.find_by_name("section_01")
     end
 
-    context "creating a section" do
-      setup do
-        post_as @admin, :create_section, {:section => {:name => "section_01"}}
-      end
-
-      should respond_with :redirect
-      should set_the_flash.to(I18n.t('section.create.success'))
-
-      should "add a section name section_01" do
-        assert Section.find_by_name("section_01")
-      end
+   should "tries to create a section with the same name as a existing one" do
+      section = Section.make
+      post_as @admin, :create, {:section => {:name => section.name}}
+      assert respond_with :success
+      assert set_the_flash.to(I18n.t('section.create.error'))
     end
 
-    context "tries to create a section with the same name as a existing one" do
-      setup do
-        section = Section.make
-        post_as @admin, :create_section, {:section => {:name => section.name}}
-      end
-
-      should respond_with :success
-      should set_the_flash.to(I18n.t('section.create.error'))
-
+    should "edits a section" do
+      section = Section.make
+      get_as @admin, :edit, :id => section.id
+      assert respond_with :success
     end
 
-    context "edits a section" do
-      setup do
-        section = Section.make
-        get_as @admin, :edit_section, :id => section.id
-      end
+    should "edits a section name to 'nosection'" do
+      @section = Section.make
+      put_as @admin,
+              :update,
+              :id => @section.id,
+              :section => {:name => "no section"}
 
-      should respond_with :success
-    end
+      assert respond_with :redirect
+      assert set_the_flash.to(I18n.t('section.update.success'))
 
-    context "edits a section name to 'nosection'" do
-      setup do
-        @section = Section.make
-        post_as @admin, :edit_section, {:id => @section.id,
-          :section => {:name => "no section"}}
-      end
-
-      should respond_with :redirect
-      should set_the_flash.to(I18n.t('section.update.success'))
-
-      should "have updated the name" do
-        assert_not_nil Section.find_by_name("no section")
-      end
+      assert_not_nil Section.find_by_name("no section")
     end
   end
 

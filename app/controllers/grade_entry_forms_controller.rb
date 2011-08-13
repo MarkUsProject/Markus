@@ -22,24 +22,25 @@ class GradeEntryFormsController < ApplicationController
 
   # Filters will be added as the student UI is implemented (eg. Show Released,
   # Show All,...)
-  G_TABLE_PARAMS = { :model => GradeEntryStudent,
-                     :per_pages => [15, 30, 50, 100, 150],
-                     :filters => { 'none' => {
+  G_TABLE_PARAMS = {:model => GradeEntryStudent,
+                    :per_pages => [15, 30, 50, 100, 150],
+                    :filters => {'none' => {
                                      :display => 'Show All',
                                      :proc => lambda {
                                           Student.all(:conditions => {
-                                              :hidden => false },
-                                          :order => "user_name")} }
-                                 },
-                     :sorts => { 'last_name' => lambda {
+                                              :hidden => false},
+                                          :order => "user_name")}}},
+                     :sorts => {'last_name' => lambda {
                                      |a,b| a.last_name.downcase <=>
-                                        b.last_name.downcase} }
-                   }
+                                        b.last_name.downcase}}}
 
   # Create a new grade entry form
   def new
     @grade_entry_form = GradeEntryForm.new
-    return unless request.post?
+  end
+
+  def create
+    @grade_entry_form = GradeEntryForm.new
 
     # Process input properties
     @grade_entry_form.transaction do
@@ -54,8 +55,10 @@ class GradeEntryFormsController < ApplicationController
   # Edit the properties of a grade entry form
   def edit
     @grade_entry_form = GradeEntryForm.find_by_id(params[:id])
-    return unless request.post?
+  end
 
+  def update
+    @grade_entry_form = GradeEntryForm.find_by_id(params[:id])
     # Process changes to input properties
     @grade_entry_form.transaction do
       if @grade_entry_form.update_attributes(params[:grade_entry_form])
@@ -68,7 +71,7 @@ class GradeEntryFormsController < ApplicationController
 
   # View/modify the grades for this grade entry form
   def grades
-    @grade_entry_form = GradeEntryForm.find_by_id(params[:id])
+    @grade_entry_form = GradeEntryForm.find(params[:id])
     @filter = 'none'
 
     # Pagination options
