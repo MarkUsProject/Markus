@@ -41,18 +41,45 @@ Markus::Application.routes.draw do
   end
 
   resources :assignments do
+
     collection do
       get 'download_csv_grades_report'
       get 'update_group_properties_on_persist'
     end
+
     member do
       get 'refresh_graph'
+      get 'student_interface'
       get 'update_group_properties_on_persist'
+      get 'invite_member'
+      get 'creategroup'
     end
 
     resources :rubrics
     resources :flexible_criteria
     resources :test_framework
+
+    resources :groups do
+      collection do
+        get 'populate'
+        get 'populate_students'
+        get 'add_group'
+      end
+    end
+
+    resources :submissions do
+      collection do
+        get 'file_manager'
+        get 'browse'
+      end
+    end
+
+   resources :results do
+      collection do
+        get 'view_marks'
+      end
+    end
+
   end
 
   resources :flexible_criteria
@@ -61,8 +88,11 @@ Markus::Application.routes.draw do
     collection do
       post 'student_interface'
     end
+
     member do
-      post 'grades'
+      get 'grades'
+      get 'g_table_paginate'
+      get 'csv_download'
       post 'update_grade'
       post 'student_interface'
       post 'update_grade_entry_students'
@@ -70,12 +100,6 @@ Markus::Application.routes.draw do
   end
 
   resources :graders do
-    member do
-      get 'manage'
-    end
-  end
-
-  resources :groups do
     member do
       get 'manage'
     end
@@ -91,8 +115,6 @@ Markus::Application.routes.draw do
     end
   end
 
-  resources :results
-
   resources :rubric
 
   resources :sections
@@ -106,13 +128,7 @@ Markus::Application.routes.draw do
     end
   end
 
-  resources :submissions do
-    member do
-      get 'browse'
-    end
-  end
-
-  resources :tas  do
+    resources :tas  do
     collection do
       get 'populate'
       get 'upload_ta_list'

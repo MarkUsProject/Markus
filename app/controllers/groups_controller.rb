@@ -25,7 +25,7 @@ class GroupsController < ApplicationController
   # Group administration functions -----------------------------------------
   # Verify that all functions below are included in the authorize filter above
 
-  def add_group
+  def new 
     @assignment = Assignment.find(params[:id])
     begin
       new_grouping_data = @assignment.add_group(params[:new_group_name])
@@ -138,9 +138,9 @@ class GroupsController < ApplicationController
     @table_rows = construct_student_table_rows(@students, @assignment)
   end
 
-  def manage
+  def index
     @all_assignments = Assignment.all(:order => :id)
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
   end
 
   # Allows the user to upload a csv file listing groups. If group_name is equal

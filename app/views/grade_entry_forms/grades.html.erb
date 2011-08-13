@@ -31,7 +31,8 @@
   <h1><%= t('grade_entry_forms.grades.title') + " " + h(@grade_entry_form.short_identifier)%>
     <%= button_to_function t(:upload), "upload_grades();"%>
     <span class="menu_bar">|</span>
-    <%= link_to t(:download), :action => 'csv_download', :id => @grade_entry_form.id %> 
+    <%= link_to t(:download),
+                csv_download_grade_entry_form_path(@grade_entry_form) %> 
   </h1>
 </div>
 
