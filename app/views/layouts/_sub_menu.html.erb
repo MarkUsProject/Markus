@@ -90,7 +90,8 @@
       <li <%if controller.controller_name == 'graders'%>
          id="sub_menu_active"
       <%end%>>
-         <%= link_to I18n.t("graders.graders"), :controller => 'graders', :action => 'manage', :id => @assignment.id%>
+         <%= link_to I18n.t("graders.graders"),
+                     assignment_graders_path(@assignment) %>
       </li>
        <li <% if controller.controller_name == 'submissions' or
        controller.controller_name == 'results' %>

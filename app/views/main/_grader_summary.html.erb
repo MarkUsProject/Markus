@@ -2,9 +2,7 @@
 
 <% if assignment.tas.empty? %>    
   <%= link_to I18n.t(:assign_graders), 
-      :controller => 'graders', 
-      :action => 'manage', 
-      :id => assignment.id %>
+              assignment_graders_path(assignment) %>
 <% else %>
   <ul>
     <% assignment.tas.each do |ta| %>

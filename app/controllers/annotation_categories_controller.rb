@@ -6,12 +6,12 @@ class AnnotationCategoriesController < ApplicationController
   before_filter      :authorize_only_for_admin
 
   def index
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     @annotation_categories = @assignment.annotation_categories
   end
 
   def get_annotations
-    @annotation_category = AnnotationCategory.find(params[:id])
+    @annotation_category = AnnotationCategory.find(params[:assignment_id])
     @annotation_texts = @annotation_category.annotation_texts
   end
 
@@ -94,7 +94,7 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   def csv_upload
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     if !request.post?
       redirect_to :action => 'index', :id => @assignment.id
       return

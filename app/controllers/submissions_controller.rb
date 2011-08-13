@@ -260,7 +260,7 @@ class SubmissionsController < ApplicationController
     if params[:sort_by] == nil or params[:sort_by].blank?
       params[:sort_by] = 'group_name'
     end
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     @groupings, @groupings_total = handle_paginate_event(
       S_TABLE_PARAMS,                                     # the data structure to handle filtering and sorting
         { :assignment => @assignment,                     # the assignment to filter by

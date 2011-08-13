@@ -68,8 +68,8 @@ class GradersController < ApplicationController
     @assignment.save
   end
 
-  def manage
-    @assignment = Assignment.find(params[:id])
+  def index 
+    @assignment = Assignment.find(params[:assignment_id])
   end
 
   # Assign TAs to Groupings via a csv file
