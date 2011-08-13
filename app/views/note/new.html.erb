@@ -1,20 +1,25 @@
-<div id="title_bar"><h1><%=I18n.t('notes.new.title')%></h1></div>
+<div id="title_bar"><h1><%= I18n.t('notes.new.title') %></h1></div>
 
 <div class="wrapLeft">
-<%= form_for :note, :url => {:action => 'create'} do |f| %>
+<%= form_for :note  do |f| %>
   <%= f.error_messages %>
   
 <fieldset>
 
   <p>
-    <%= label_tag "noteable_type", I18n.t('notes.noteable')%>
-    <%= select_tag "noteable_type", options_for_select(Note::NOTEABLES.map {|item| [I18n.t('notes.noteables.'+item),item]}) %>
-    <%= observe_field :noteable_type, :on => 'onchange',:url => {:action => :noteable_object_selector},
-                                         :with => "noteable_type",
-                                         :before => "$('loading_selector').show()",
-							             :success => "$('loading_selector').hide()" %>
+    <%= label_tag "noteable_type", I18n.t('notes.noteable') %>
+    <%= select_tag "noteable_type",
+		   options_for_select(
+		      Note::NOTEABLES.map {|item| [I18n.t('notes.noteables.' + item),
+						   item]}) %>
+    <%= observe_field :noteable_type,
+		      :on => 'onchange',
+		      :url => {:action => :noteable_object_selector},
+                      :with => "noteable_type",
+                      :before => "$('loading_selector').show()",
+		      :success => "$('loading_selector').hide()" %>
     <span id="loading_selector" style="display:none">
-      <%=image_tag('spinner.gif')%> <%=I18n.t('notes.new.loading_selector')%>
+      <%= image_tag('spinner.gif') %> <%= I18n.t('notes.new.loading_selector') %>
     </span>
   </p>
 
@@ -29,6 +34,6 @@
 </fieldset>
   
   <%= f.submit I18n.t('save') %>
-  <%= link_to I18n.t('cancel'), {:controller => 'note'}, :class => "button" %>       
+  <%= link_to I18n.t('cancel'), {:controller => 'note'}, :class => "button" %> 
 <% end %>
 </div>

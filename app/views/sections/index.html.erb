@@ -8,16 +8,13 @@
     </div>
 <% end %>
 
-<%= link_to I18n.t('section.add_section'),
-	    :controller => 'sections',
-	    :action => 'create_section'%>
+<%= link_to I18n.t('section.add_section'), new_section_path %>
 <% if @sections.empty? %>
 <p>There are no sections yet.</p>
 <% else %>
   <ul>
   <% @sections.each do |section| %>
-    <li><%= link_to section.name, :action => 'edit_section',
-                                  :id => section.id %> </li>
+    <li><%= link_to section.name, edit_section_path(section) %> </li>
   <% end %>
   </ul>
 <% end %>
