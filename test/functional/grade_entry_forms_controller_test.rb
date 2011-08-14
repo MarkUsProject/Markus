@@ -184,9 +184,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       should respond_with :missing
     end
 
-    should "POST on :edit" do
-      get_as @ta, :edit
-      should respond_with :missing
+    should "get on :edit" do
+      get_as @ta, :edit, :id => 1
+      assert respond_with :missing
     end
 
     should "POST on :student_interface" do
@@ -286,7 +286,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert respond_with :success
     end
 
-    should "POST on :new with an invalid basic value" do
+    should "POST on :create with an invalid basic value" do
       post_as @admin,
               :create,
               :grade_entry_form => {

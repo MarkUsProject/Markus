@@ -50,7 +50,11 @@ Markus::Application.routes.draw do
       end
     end
     resources :flexible_criteria
-    resources :test_framework
+    resources :test_framework do
+      collection do
+        get 'manage'
+      end
+    end
 
     resources :groups do
       collection do
@@ -77,10 +81,13 @@ Markus::Application.routes.draw do
         get 'repo_browser'
         get 'populate_repo_browser'
         get 'update_converted_pdfs'
+        get 'updated_files'
+        post 'updated_files'
+        get 'server_time'
       end
 
       member do
-        get 'collect_and_begin_grading'
+        post 'collect_and_begin_grading'
       end
     end
 
@@ -129,6 +136,7 @@ Markus::Application.routes.draw do
       get 'grades'
       get 'g_table_paginate'
       get 'csv_download'
+      get 'csv_upload'
       post 'update_grade'
       post 'student_interface'
       post 'update_grade_entry_students'

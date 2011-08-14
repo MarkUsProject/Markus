@@ -276,13 +276,13 @@ class NotesControllerTest < AuthenticatedControllerTest
       @admin = Admin.make
     end
 
-    should "GET on :index" do
+    should "be able to get the index" do
       get_as @admin, :index
       assert respond_with :success
       assert render_template 'index.html.erb'
     end
 
-    should "GET on :new" do
+    should "to go on new" do
       get_as @admin, :new
       assert respond_with :success
     end
