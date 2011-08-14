@@ -50,8 +50,8 @@
   <% else %>
     <td>
       <%= link_to h(grouping.group.repository_name),
-                  repo_browser_assignment_submissions_path(assignment.id,
-                                                           grouping.id) %>
+                  repo_browser_assignment_submissions_path(assignment,
+                                                           grouping) %>
     </td>
     <td>
     <% if !grouping.has_submission? %>

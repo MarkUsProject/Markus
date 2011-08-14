@@ -32,7 +32,9 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   def update_annotation_category
+    @assignment = Assignment.find(params[:assignment_id])
     @annotation_category = AnnotationCategory.find(params[:id])
+
     @annotation_category.update_attributes(params[:annotation_category])
     if !@annotation_category.save
       flash.now[:error] = @annotation_category.errors

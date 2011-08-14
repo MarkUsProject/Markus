@@ -40,7 +40,15 @@ Markus::Application.routes.draw do
       get 'creategroup'
     end
 
-    resources :rubrics
+    resources :rubrics do
+      collection do
+        get 'update_positions'
+        get 'csv_upload'
+        get 'yml_upload'
+        get 'download_csv'
+        get 'download_yml'
+      end
+    end
     resources :flexible_criteria
     resources :test_framework
 
@@ -67,6 +75,8 @@ Markus::Application.routes.draw do
         get 'collect_ta_submissions'
         get 'update_submissions'
         get 'repo_browser'
+        get 'populate_repo_browser'
+        get 'update_converted_pdfs'
       end
 
       member do

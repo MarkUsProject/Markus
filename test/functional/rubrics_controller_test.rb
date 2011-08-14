@@ -21,14 +21,14 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
     context "on :index" do
       setup do
-        get :index, :id => 1
+        get :index, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :edit" do
       setup do
-        get :edit, :id => 1
+        get :edit, :assignment_id => 1
       end
       should respond_with :redirect
     end
@@ -95,35 +95,35 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
     context "on :index" do
       setup do
-        post :index, :id => 1
+        post :index, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :edit" do
       setup do
-        post :edit, :id => 1
+        post :edit, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :update" do
       setup do
-        post :update, :id => 1
+        put :update, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :new" do
       setup do
-        post :new, :id => 1
+        get :new, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :delete" do
       setup do
-        post :delete, :id => 1
+        post :delete, :assignment_id => 1
       end
       should respond_with :redirect
     end
@@ -151,7 +151,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
     context "on :update_positions" do
       setup do
-        post :update_positions, :id => 1
+        post :update_positions, :assignment_id => 1
       end
       should respond_with :redirect
     end
@@ -304,32 +304,33 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       @criterion = rubric_criteria(:c1)
     end
 
-    context "on :index" do
-      setup do
-        post_as @admin, :index, :id => @assignment.id
-      end
-      should assign_to :assignment
-      should assign_to :criteria
-      should render_template :index
-      should respond_with :success
+    should "on :index" do
+      post_as @admin, :index, :assignment_id => @assignment.id
+      assert assign_to :assignment
+      assert assign_to :criteria
+      assert render_template :index
+      assert respond_with :success
     end
 
-    context "on :edit" do
-      setup do
-        post_as @admin, :edit, :id => @criterion.id
-      end
-      should assign_to :criterion
-      should render_template :edit
-      should respond_with :success
+    should "on :edit" do
+      post_as @admin,
+              :edit,
+              :assignment_id => @assignment.id,
+              :id => @criterion.id
+      assert assign_to :criterion
+      assert render_template :edit
+      assert respond_with :success
     end
 
     context "on :new" do
-      context "with save error" do
-        setup do
-          RubricCriterion.any_instance.expects(:save).once.returns(false)
-          RubricCriterion.any_instance.expects(:errors).once.returns('error msg')
-          post_as @admin, :new, :id => @assignment.id, :rubric_criterion => {:rubric_criterion_name => 'first', :weight => 10}
-        end
+      should "with save error" do
+        RubricCriterion.any_instance.expects(:save).once.returns(false)
+        RubricCriterion.any_instance.expects(:errors).once.returns('error msg')
+        post_as @admin,
+                :new,
+                :assignment_id => @assignment.id,
+                :rubric_criterion => {:rubric_criterion_name => 'first',
+                                      :weight => 10}
         should assign_to :assignment
         should assign_to :criterion
         should assign_to :errors
@@ -422,7 +423,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
               :update_positions,
               :rubric_criteria_pane_list => [@criterion2.id,
                                              @criterion.id],
-              :aid => @assignment.id
+              :assignment_id => @assignment.id
       assert render_template ''
       assert respond_with :success
 
