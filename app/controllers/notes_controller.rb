@@ -1,4 +1,4 @@
-class NoteController < ApplicationController
+class NotesController < ApplicationController
   before_filter :authorize_for_ta_and_admin
   before_filter :ensure_can_modify, :only => [:edit, :update]
 
@@ -11,8 +11,10 @@ class NoteController < ApplicationController
     @highlight_field = params[:highlight_field]
     @number_of_notes_field = params[:number_of_notes_field]
 
-    @notes = Note.find(:all, :conditions => { :noteable_id => @noteable.id, :noteable_type => @noteable.class.name})
-    render :partial => "note/modal_dialogs/notes_dialog.rjs"
+    @notes = Note.find(:all,
+                       :conditions => {:noteable_id => @noteable.id,
+                                       :noteable_type => @noteable.class.name})
+    render :partial => "notes/modal_dialogs/notes_dialog.rjs"
   end
 
   def add_note
@@ -23,13 +25,13 @@ class NoteController < ApplicationController
     @note.noteable_id = params[:noteable_id]
     @note.noteable_type = params[:noteable_type]
     if !@note.save
-      render "note/modal_dialogs/notes_dialog_error.rjs"
+      render "notes/modal_dialogs/notes_dialog_error.rjs"
     else
       @note.reload
       @number_of_notes_field = params[:number_of_notes_field]
       @highlight_field = params[:highlight_field]
       @number_of_notes = @note.noteable.notes.size
-      render "note/modal_dialogs/notes_dialog_success.rjs"
+      render "notes/modal_dialogs/notes_dialog_success.rjs"
     end
   end
 
@@ -46,8 +48,6 @@ class NoteController < ApplicationController
   end
 
   def create
-    return unless request.post?
-
     @note = Note.new(params[:note])
     @note.noteable_type = params[:noteable_type]
     @note.creator_id = @current_user.id
@@ -87,8 +87,6 @@ class NoteController < ApplicationController
   end
 
   def update
-    return unless request.post?
-
     if @note.update_attributes(params[:note])
       flash[:success] = I18n.t('notes.update.success')
       redirect_to :action => 'index'
@@ -97,9 +95,8 @@ class NoteController < ApplicationController
     end
   end
 
-  def delete
-    return unless request.delete?
-
+  def destroy
+    debugger
     @note = Note.find(params[:id])
     if @note.user_can_modify?(current_user)
       @note.destroy

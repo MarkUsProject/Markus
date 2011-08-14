@@ -6,7 +6,7 @@ require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 require File.dirname(__FILE__) + '/authenticated_controller_test'
 require 'shoulda'
 
-class NoteControllerTest < AuthenticatedControllerTest
+class NotesControllerTest < AuthenticatedControllerTest
 
   def setup
     clear_fixtures
@@ -68,8 +68,8 @@ class NoteControllerTest < AuthenticatedControllerTest
       assert respond_with :missing
     end
 
-    should "DELETE on :delete" do
-      get_as @student, :delete
+    should "DELETE on :destroy" do
+      delete_as @student, :destroy, :id => 1
       assert respond_with :missing
     end
   end # student context
@@ -252,17 +252,19 @@ class NoteControllerTest < AuthenticatedControllerTest
       end
     end
 
-    context "DELETE on :delete" do
+    context "DELETE on :destroy" do
       should "for a note belonging to themselves" do
         @note = Note.make( :creator_id => @ta.id )
-        delete_as @ta, :delete, {:id => @note.id}
+        delete_as @ta, :destroy, :id => @note.id
         assert assign_to :note
         assert set_the_flash.to(I18n.t('notes.delete.success'))
       end
 
       should "for a note belonging to someone else" do
         @note = Note.make
-        delete_as @ta, :delete, {:id => @note.id}
+        delete_as @ta,
+                  :destroy,
+                  :id => @note.id
         assert assign_to :note
         assert set_the_flash.to(I18n.t('notes.delete.error_permissions'))
       end
@@ -459,11 +461,11 @@ class NoteControllerTest < AuthenticatedControllerTest
       end
     end
 
-    context "DELETE on :delete" do
+    context "DELETE on :destroy" do
       context "for a note belonging to themselves" do
         setup do
           @note = Note.make( :creator_id => @admin.id  )
-          delete_as @admin, :delete, {:id => @note.id}
+          delete_as @admin, :destroy, {:id => @note.id}
         end
         should assign_to :note
         should set_the_flash.to(I18n.t('notes.delete.success'))
@@ -471,8 +473,8 @@ class NoteControllerTest < AuthenticatedControllerTest
 
       context "for a note belonging to someone else" do
         setup do
-          @note = Note.make( :creator_id => Ta.make.id  )
-          delete_as @admin, :delete, {:id => @note.id}
+          @note = Note.make(:creator_id => Ta.make.id)
+          delete_as @admin, :destroy, {:id => @note.id}
         end
         should assign_to :note
         should set_the_flash.to(I18n.t('notes.delete.success'))

@@ -58,9 +58,9 @@
 <% end %>
 
 <% if @current_user.admin? || @current_user.ta? %>
-	  <span<% if controller.controller_name == 'note'%>
+	  <span<% if controller.controller_name == 'notes'%>
       id="menu_active"<%end%>>
-          <%= link_to I18n.t('notes.title'), :controller => 'note'%>
+          <%= link_to I18n.t('notes.title'), notes_path() %>
       </span>
 <% end %>
 
