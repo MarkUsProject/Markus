@@ -8,7 +8,6 @@ class RubricsController < ApplicationController
   end
 
   def edit
-    debugger
     @criterion = RubricCriterion.find(params[:id])
   end
 

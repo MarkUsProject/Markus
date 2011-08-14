@@ -138,10 +138,12 @@ Markus::Application.routes.draw do
   resources :note do
     collection do
       get 'noteable_object_selector'
+      get 'add_note'
     end
 
     member do
       get 'student_interface'
+      get 'new_update_groupings'
       get 'notes_dialog'
       post 'grades'
     end
