@@ -29,18 +29,20 @@
 <% for note in @notes %>
 	<tr>
 		<td class="note">
-			<%= I18n.t("notes.note_on", :user_name => note.user.user_name, :display_for => note.noteable.display_for_note ) %></b><br />
+			<%= I18n.t("notes.note_on",
+				   :user_name => note.user.user_name,
+				   :display_for => note.noteable.display_for_note ) %></b><br />
 			<small><%=note.format_date%></small>
 		</td>
 		<td class="note"><%=note.notes_message%></td>
 		<td class="note">
 		<% if note.user_can_modify?(@current_user) -%>
 		  <%= link_to I18n.t('edit'),
-			      {:action => 'edit', :id => note.id} %>
+			      edit_note_path(note.id) %>
 			|
 		  <%= link_to I18n.t('delete'),
 			      :method => 'delete',
-			      :url => {:action => 'delete',
+			      :url => {:action => 'destroy',
 				       :id => note.id},
 			      :html => {
 				  :class => 'delete',
