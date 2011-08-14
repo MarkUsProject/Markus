@@ -64,13 +64,13 @@ class GroupsController < ApplicationController
   end
 
   def rename_group_dialog
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     @grouping_id = params[:grouping_id]
     render :partial => "groups/modal_dialogs/rename_group_dialog.rjs"
   end
 
   def rename_group
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     @grouping = Grouping.find(params[:grouping_id])
     @group = @grouping.group
 
@@ -107,24 +107,26 @@ class GroupsController < ApplicationController
   end
 
   def valid_grouping
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     @grouping = Grouping.find(params[:grouping_id])
     @grouping.validate_grouping
     @grouping_data = construct_table_row(@grouping, @assignment)
   end
 
   def invalid_grouping
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     @grouping = Grouping.find(params[:grouping_id])
     @grouping.invalidate_grouping
     @grouping_data = construct_table_row(@grouping, @assignment)
   end
 
   def populate
-    @assignment = Assignment.find(params[:id],
+    @assignment = Assignment.find(params[:assignment_id],
                                   :include => [{
-                                      :groupings => [:students, :non_rejected_student_memberships,
-                                        :group]}])
+                                      :groupings => [
+                                          :students,
+                                          :non_rejected_student_memberships,
+                                          :group]}])
     @groupings = @assignment.groupings
     @table_rows = {}
     @groupings.each do |grouping|
@@ -133,7 +135,8 @@ class GroupsController < ApplicationController
   end
 
   def populate_students
-    @assignment = Assignment.find(params[:id], :include => [:groupings])
+    @assignment = Assignment.find(params[:assignment_id],
+                                  :include => [:groupings])
     @students = Student.find(:all)
     @table_rows = construct_student_table_rows(@students, @assignment)
   end
@@ -151,7 +154,7 @@ class GroupsController < ApplicationController
   def csv_upload
     flash[:error] = nil # reset from previous errors
     flash[:invalid_lines] = nil
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     if request.post? && !params[:group].blank?
       # Transaction allows us to potentially roll back if something
       # really bad happens.
@@ -204,7 +207,7 @@ class GroupsController < ApplicationController
   end
 
   def download_grouplist
-    assignment = Assignment.find(params[:id])
+    assignment = Assignment.find(params[:assignment_id])
 
     #get all the groups
     groupings = assignment.groupings #FIXME: optimize with eager loading
@@ -224,7 +227,7 @@ class GroupsController < ApplicationController
   end
 
   def use_another_assignment_groups
-    @target_assignment = Assignment.find(params[:id])
+    @target_assignment = Assignment.find(params[:assignment_id])
     source_assignment = Assignment.find(params[:clone_groups_assignment_id])
 
     if source_assignment.nil?
@@ -240,7 +243,7 @@ class GroupsController < ApplicationController
 
   #These actions act on all currently selected students & groups
   def global_actions
-    @assignment = Assignment.find(params[:id],
+    @assignment = Assignment.find(params[:assignment_id],
                                   :include => [{
                                       :groupings => [{
                                           :student_memberships => :user,
