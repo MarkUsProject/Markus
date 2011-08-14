@@ -156,7 +156,7 @@ class SubmissionsController < ApplicationController
   end
 
   def populate_file_manager
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
     user_group = @grouping.group
     revision_number= params[:revision_number]
@@ -513,27 +513,39 @@ class SubmissionsController < ApplicationController
 
   # See Assignment.get_simple_csv_report for details
   def download_simple_csv_report
-    assignment = Assignment.find(params[:id])
-    send_data assignment.get_simple_csv_report, :disposition => 'attachment', :type => 'application/vnd.ms-excel', :filename => "#{assignment.short_identifier} simple report.csv"
+    assignment = Assignment.find(params[:assignment_id])
+    send_data assignment.get_simple_csv_report,
+              :disposition => 'attachment',
+              :type => 'application/vnd.ms-excel',
+              :filename => "#{assignment.short_identifier} simple report.csv"
   end
 
   # See Assignment.get_detailed_csv_report for details
   def download_detailed_csv_report
-    assignment = Assignment.find(params[:id])
-    send_data assignment.get_detailed_csv_report, :disposition => 'attachment', :type => 'application/vnd.ms-excel', :filename => "#{assignment.short_identifier} detailed report.csv"
+    assignment = Assignment.find(params[:assignment_id])
+    send_data assignment.get_detailed_csv_report,
+              :disposition => 'attachment',
+              :type => 'application/vnd.ms-excel',
+              :filename => "#{assignment.short_identifier} detailed report.csv"
   end
 
   # See Assignment.get_svn_export_commands for details
   def download_svn_export_commands
-    assignment = Assignment.find(params[:id])
+    assignment = Assignment.find(params[:assignment_id])
     svn_commands = assignment.get_svn_export_commands
-    send_data svn_commands.join("\n"), :disposition => 'attachment', :type => 'text/plain', :filename => "#{assignment.short_identifier}_svn_exports"
+    send_data svn_commands.join("\n"),
+              :disposition => 'attachment',
+              :type => 'text/plain',
+              :filename => "#{assignment.short_identifier}_svn_exports"
   end
 
   # See Assignment.get_svn_repo_list for details
   def download_svn_repo_list
-    assignment = Assignment.find(params[:id])
-    send_data assignment.get_svn_repo_list, :disposition => 'attachment', :type => 'text/plain', :filename => "#{assignment.short_identifier}_svn_repo_list"
+    assignment = Assignment.find(params[:assignment_id])
+    send_data assignment.get_svn_repo_list,
+              :disposition => 'attachment',
+              :type => 'text/plain',
+              :filename => "#{assignment.short_identifier}_svn_repo_list"
   end
 
   # This action is called periodically from file_manager.

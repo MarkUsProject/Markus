@@ -40,9 +40,10 @@
       </li>
        <li <% if controller.controller_name == 'test_framework'%>
          id="sub_sub_menu_active"
-	  <%end%>>
-		  <%#
-	 <%= link_to I18n.t("test_framework.test_framework"), :controller => 'test_framework', :action => 'manage', :id => @assignment.id%>
+	  <% end %>>
+    <%#
+	  <%= link_to I18n.t("test_framework.test_framework"),
+                manage_test_framework_path(@assignment) %>
       </li>
   <% end %>
 <% end %>
