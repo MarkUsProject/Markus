@@ -62,6 +62,18 @@ Markus::Application.routes.draw do
         get 'populate_students'
         get 'add_group'
         get 'use_another_assignment_groups'
+        get 'manage'
+        get 'csv_upload'
+        get 'add_csv_group'
+        get 'download_grouplist'
+        get 'create_groups_when_students_work_alone'
+        get 'valid_grouping'
+        get 'invalid_grouping'
+        get 'global_actions'
+        get 'remove_group'
+        get 'rename_group'
+        post 'add_group'
+        post 'global_actions'
       end
     end
 
