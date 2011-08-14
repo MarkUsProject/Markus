@@ -3,7 +3,7 @@ class RubricsController < ApplicationController
   before_filter      :authorize_only_for_admin
 
   def index
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     @criteria = @assignment.rubric_criteria(:order => 'position')
   end
 
@@ -157,11 +157,11 @@ class RubricsController < ApplicationController
       render :nothing => true
       return
     end
-    @assignment = Assignment.find(params[:aid])
+    @assignment = Assignment.find(params[:assignment_id])
     @criteria = @assignment.rubric_criteria
     params[:rubric_criteria_pane_list].each_with_index do |id, position|
       if id != ""
-        RubricCriterion.update(id, :position => position+1)
+        RubricCriterion.update(id, :position => position + 1)
       end
     end
   end

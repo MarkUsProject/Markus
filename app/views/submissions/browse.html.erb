@@ -16,29 +16,32 @@
   :short_identifier => h(sanitize(@assignment.short_identifier))) %>
   <% if @current_user.admin? %>
   <%= link_to I18n.t("collect_submissions.collect_all"),
-    {:controller => 'submissions', :action => 'collect_all_submissions',
-    :id => @assignment.id},
-    :confirm => I18n.t("collect_submissions.results_loss_warning") %>
+              collect_all_submissions_assignment_submissions_path(
+                  @assignment.id),
+              :confirm => I18n.t("collect_submissions.results_loss_warning") %>
   <span class="menu_bar">|</span>
   <%= link_to I18n.t("browse_submissions.csv_report"),
-    :action => 'download_simple_csv_report', :id => @assignment.id %>
-   <span class="menu_bar">|</span>
-<%= link_to I18n.t("browse_submissions.detailled_csv_report") ,
-  :action => 'download_detailed_csv_report', :id => @assignment.id %>
-   <span class="menu_bar">|</span>
-<%= link_to I18n.t("browse_submissions.subversion_repo_list"),
-  :action => 'download_svn_repo_list', :id => @assignment.id %>
+              download_simple_csv_report_assignment_submissions_path(@assignment) %>
+  <span class="menu_bar">|</span>
+  <%= link_to I18n.t("browse_submissions.detailled_csv_report"),
+              download_detailed_csv_report_assignment_submissions_path(
+                  @assignment) %>
+  <span class="menu_bar">|</span>
+  <%= link_to I18n.t("browse_submissions.subversion_repo_list"),
+              download_svn_repo_list_assignment_submissions_path(
+                  @assignment) %>
    <span class="menu_bar">|</span>
 <%= link_to I18n.t("browse_submissions.subversion_export_file"),
-  :action => 'download_svn_export_commands', :id => @assignment.id %>
+            download_svn_export_commands_assignment_submissions_path(
+                @assignment) %>
 
  <% end %>
 
   <% if @current_user.ta? and @assignment.past_collection_date? %>
   <%= link_to I18n.t("collect_submissions.collect_ta"),
-    {:controller => 'submissions', :action => 'collect_ta_submissions',
-    :id => @assignment.id},
-    :confirm => I18n.t("collect_submissions.results_loss_warning") %>
+              collect_ta_submissions_assignment_submissions_path(
+                  @assignment),
+              :confirm => I18n.t("collect_submissions.results_loss_warning") %>
  <% end %>
 
 </h1>
@@ -69,7 +72,7 @@
 
   <div class="clear"></div>
 
-  <%= form_tag({:action => 'update_submissions', :id => @assignment.id}) %>
+  <%= form_tag update_submissions_assignment_submissions_path(@assignment) %>
     <div class="ap_nav_box">
       <% if @current_user.admin? %>
         <div class="floatLeft">

@@ -84,7 +84,8 @@ class SubmissionsController < ApplicationController
   }
 
   def repo_browser
-    @grouping = Grouping.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
+    @grouping = Grouping.find(params[:format])
     @assignment = @grouping.assignment
     @path = params[:path] || '/'
     @previous_path = File.split(@path).first
@@ -192,8 +193,8 @@ class SubmissionsController < ApplicationController
   end
 
   def collect_and_begin_grading
-    assignment = Assignment.find(params[:id])
-    grouping = Grouping.find(params[:grouping_id])
+    assignment = Assignment.find(params[:assignment_id])
+    grouping = Grouping.find(params[:id])
     if !assignment.submission_rule.can_collect_now?
       flash[:error] = I18n.t("browse_submissions.could_not_collect",
         :group_name => grouping.group.group_name)
@@ -260,7 +261,7 @@ class SubmissionsController < ApplicationController
     if params[:sort_by] == nil or params[:sort_by].blank?
       params[:sort_by] = 'group_name'
     end
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     @groupings, @groupings_total = handle_paginate_event(
       S_TABLE_PARAMS,                                     # the data structure to handle filtering and sorting
         { :assignment => @assignment,                     # the assignment to filter by

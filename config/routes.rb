@@ -15,22 +15,7 @@ Markus::Application.routes.draw do
 
   resources :admins do
     collection do
-      get 'populate'
-    end
-  end
-
-  resources :annotation_categories do
-    member do
-      get 'get_annotations'
-      get 'add_annotation_category'
-      get 'add_annotation_text'
-      get 'csv_upload'
-      get 'delete_annotation_category'
-      get 'download'
-      get 'yml_upload'
-      post 'delete_annotation_text'
-      post 'update_annotation_category'
-      post 'update_annotation'
+      post 'populate'
     end
   end
 
@@ -55,7 +40,15 @@ Markus::Application.routes.draw do
       get 'creategroup'
     end
 
-    resources :rubrics
+    resources :rubrics do
+      collection do
+        get 'update_positions'
+        get 'csv_upload'
+        get 'yml_upload'
+        get 'download_csv'
+        get 'download_yml'
+      end
+    end
     resources :flexible_criteria
     resources :test_framework
 
@@ -64,6 +57,7 @@ Markus::Application.routes.draw do
         get 'populate'
         get 'populate_students'
         get 'add_group'
+        get 'use_another_assignment_groups'
       end
     end
 
@@ -71,6 +65,22 @@ Markus::Application.routes.draw do
       collection do
         get 'file_manager'
         get 'browse'
+        get 'populate_file_manager'
+        get 'collect_all_submissions'
+        get 'download_simple_csv_report'
+        get 'download_detailed_csv_report'
+        get 'download_svn_export_list'
+        get 'download_svn_export_commands'
+        get 'download_svn_repo_list'
+        get 'collect_ta_submissions'
+        get 'update_submissions'
+        get 'repo_browser'
+        get 'populate_repo_browser'
+        get 'update_converted_pdfs'
+      end
+
+      member do
+        get 'collect_and_begin_grading'
       end
     end
 
@@ -80,9 +90,35 @@ Markus::Application.routes.draw do
       end
     end
 
-  end
+    resources :graders do
+      collection do
+        get 'populate_graders'
+        get 'populate'
+        get 'populate_criteria'
+        get 'download_dialog'
+        get 'upload_dialog'
+        get 'global_actions'
+        get 'set_assign_criteria'
+      end
+    end
 
-  resources :flexible_criteria
+    resources :annotation_categories do
+      collection do
+        get 'get_annotations'
+        get 'add_annotation_category'
+        get 'add_annotation_text'
+        get 'csv_upload'
+        get 'delete_annotation_category'
+        get 'download'
+        get 'yml_upload'
+        post 'delete_annotation_text'
+        post 'update_annotation_category'
+        post 'update_annotation'
+      end
+    end
+
+    resources :flexible_criteria
+  end
 
   resources :grade_entry_forms do
     collection do
@@ -99,18 +135,16 @@ Markus::Application.routes.draw do
     end
   end
 
-  resources :graders do
-    member do
-      get 'manage'
-    end
-  end
-
   resources :note do
     collection do
       get 'noteable_object_selector'
+      get 'add_note'
     end
+
     member do
       get 'student_interface'
+      get 'new_update_groupings'
+      get 'notes_dialog'
       post 'grades'
     end
   end
@@ -121,16 +155,16 @@ Markus::Application.routes.draw do
 
   resources :students do
     collection do
-      get 'populate'
+      post 'populate'
       get 'manage'
       get 'download_student_list'
       get 'upload_student_list'
     end
   end
 
-    resources :tas  do
+  resources :tas  do
     collection do
-      get 'populate'
+      post 'populate'
       get 'upload_ta_list'
       get 'download_ta_list'
     end

@@ -18,81 +18,59 @@ class NoteControllerTest < AuthenticatedControllerTest
       @student = Student.make
     end
 
-    context "GET on :notes_dialog" do
-      setup do
-        get_as @student, :notes_dialog
-      end
-      should respond_with :missing
+    should "get on notes_dialog" do
+      get_as @student, :notes_dialog, :id => 1
+      assert respond_with :missing
     end
 
-    context "POST on :notes_dialog" do
-      setup do
-        post_as @student, :notes_dialog
-      end
-      should respond_with :missing
+    should " on notes_dialog" do
+      post_as @student, :notes_dialog, :id => 1
+      assert respond_with :missing
     end
 
-    context "GET on :add_note" do
-      setup do
-        get_as @student, :add_note
-      end
-      should respond_with :missing
+    should "GET on :add_note" do
+      get_as @student, :add_note
+      assert respond_with :missing
     end
 
-    context "POST on :add_note" do
-      setup do
-        post_as @student, :add_note
-      end
-      should respond_with :missing
+    should "POST on :add_note" do
+      post_as @student, :add_note
+      assert respond_with :missing
     end
 
-    context "GET on :index" do
-      setup do
-        get_as @student, :index
-      end
-      should respond_with :missing
+    should "GET on :index" do
+      get_as @student, :index
+      assert respond_with :missing
     end
 
-    context "GET on :new" do
-      setup do
-        get_as @student, :new
-      end
-      should respond_with :missing
+    should "GET on :new" do
+      get_as @student, :new
+      assert respond_with :missing
     end
 
-    context "POST on :create" do
-      setup do
-        post_as @student, :create
-      end
-      should respond_with :missing
+    should "POST on :create" do
+      post_as @student, :create
+      assert respond_with :missing
     end
 
-    context "GET on :new_update_groupings" do
-      setup do
-        get_as @student, :new_update_groupings
-      end
-      should respond_with :missing
+    should "GET on :new_update_groupings" do
+      get_as @student, :new_update_groupings
+      assert respond_with :missing
     end
 
-    context "GET on :edit" do
-      setup do
-        get_as @student, :edit
-      end
-      should respond_with :missing
+    should "GET on :edit" do
+      get_as @student, :edit, :id => 1
+      assert respond_with :missing
     end
 
-    context "POST on :update" do
-      setup do
-        post_as @student, :update
-      end
-      should respond_with :missing
+    should "POST on :update" do
+      put_as @student, :update, :id => 1
+      assert respond_with :missing
     end
 
-    context "DELETE on :delete" do
-      setup do
-        get_as @student, :delete
-      end
-      should respond_with :missing
+    should "DELETE on :delete" do
+      get_as @student, :delete
+      assert respond_with :missing
     end
   end # student context
 
@@ -125,7 +103,7 @@ class NoteControllerTest < AuthenticatedControllerTest
               :noteable_id => @grouping.id,
               :controller_to => @controller_to,
               :action_to => @action_to
-     assert render_template 'note/modal_dialogs/notes_dialog_success.rjs'
+      assert render_template 'note/modal_dialogs/notes_dialog_success.rjs'
     end
 
     should "be able to add new notes with an invalid note" do
@@ -383,7 +361,7 @@ class NoteControllerTest < AuthenticatedControllerTest
     end
 
     should "GET on :new_update_groupings" do
-      get_as @admin, :new_update_groupings, :assignment_id => @assignment.id
+      get_as @admin, :new_update_groupings, :id => @assignment.id
       assert respond_with :success
       assert render_template 'new_update_groupings.rjs'
     end

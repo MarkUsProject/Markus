@@ -65,7 +65,7 @@ function submit_assignment_group_use(clone_groups_assignment_id) {
   //send AJAX request
   <%=
  remote_function(
-    :url  => { :action => 'use_another_assignment_groups', :id => @assignment.id},
+    :url  => use_another_assignment_groups_assignment_groups_path(@assignment),
     :with => "'&clone_groups_assignment_id=' + clone_groups_assignment_id")
   %>
 

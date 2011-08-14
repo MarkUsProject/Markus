@@ -54,7 +54,7 @@
           $('rubric_criterion_rubric_criterion_name').select();
           $('rubric_criterion_rubric_criterion_name').focus();
         } else {
-        #{remote_function :url => {:action => "new", :id => @assignment.id}, :method => 'get'}
+        #{remote_function :url => new_assignment_rubric_path(@assignment)}
         }|%>
    <span class="menu_bar" >|</span>
     <%= button_to_function I18n.t("upload"), "upload_criteria();"%>
@@ -119,10 +119,9 @@
 
   <h1><%= t('rubric_criteria.upload.yml_title') %></h1>
   <p><%= t('rubric_criteria.upload.yml_prompt') %></p>
-  <%= form_for :yml_upload, :url => {:controller=>"rubrics",
-                                :action => 'yml_upload',
-                                :id => @assignment.id},
-                                :html => {:multipart => true, :size => 1 } do |f| %>
+  <%= form_for :yml_upload,
+	       :url => yml_upload_assignment_rubrics_path(@assignment),
+               :html => {:multipart => true, :size => 1 } do |f| %>
     <p><%= f.file_field :rubric %></p>
     <%= t('rubric_criteria.upload.format_yml_html') %>
     <p>
@@ -138,8 +137,12 @@
   <p><%= t('rubric_criteria.download.prompt') %></p>
 
   <ul>
-    <li><%= link_to t('rubric_criteria.download.link_csv'), {:controller=>"rubrics", :action=>"download_csv", :id=> @assignment.id}, :onclick => "modalDownload.close();" %></li>
-    <li><%= link_to t('rubric_criteria.download.link_yml'), {:controller=>"rubrics", :action=>"download_yml", :id=> @assignment.id}, :onclick => "modalDownload.close();" %></li>
+    <li><%= link_to t('rubric_criteria.download.link_csv'),
+		    download_csv_assignment_rubrics_path(@assignment),
+		    :onclick => "modalDownload.close();" %></li>
+    <li><%= link_to t('rubric_criteria.download.link_yml'),
+		    download_yml_assignment_rubrics_path(@assignment),
+		    :onclick => "modalDownload.close();" %></li>
   </ul>
   <input type="reset" value="<%=t('cancel')%>" onclick="modalDownload.close();">
 </div>
