@@ -80,7 +80,8 @@
   </table>
 </div>
 
-<%= periodically_call_remote(:url => update_converted_pdfs_assignment_submissions_path(
-                                        @assignment,
-                                        :grouping_id => @grouping.id),
-                             :frequency => '3') %>
+<%= periodically_call_remote(
+        :url => update_converted_pdfs_assignment_submissions_path(
+                      @assignment,
+                      :grouping_id => @grouping.id),
+        :frequency => '3') %>

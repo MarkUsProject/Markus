@@ -15,7 +15,7 @@ Markus::Application.routes.draw do
 
   resources :admins do
     collection do
-      get 'populate'
+      post 'populate'
     end
   end
 
@@ -142,6 +142,7 @@ Markus::Application.routes.draw do
 
     member do
       get 'student_interface'
+      get 'notes_dialog'
       post 'grades'
     end
   end
@@ -152,7 +153,7 @@ Markus::Application.routes.draw do
 
   resources :students do
     collection do
-      get 'populate'
+      post 'populate'
       get 'manage'
       get 'download_student_list'
       get 'upload_student_list'
@@ -161,7 +162,7 @@ Markus::Application.routes.draw do
 
   resources :tas  do
     collection do
-      get 'populate'
+      post 'populate'
       get 'upload_ta_list'
       get 'download_ta_list'
     end
