@@ -325,7 +325,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       context "without errors" do
         setup do
           AnnotationCategory.any_instance.stubs(:save).returns(true)
-          post_as @admin, :add_annotation_category, :id => @assignment.id
+          post_as @admin, :add_annotation_category, :assignment_id => @assignment.id
         end
         should respond_with :success
         should assign_to :assignment
@@ -336,7 +336,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       context "with error on save" do
         setup do
           AnnotationCategory.any_instance.stubs(:save).returns(false)
-          post_as @admin, :add_annotation_category, :id => @assignment.id
+          post_as @admin, :add_annotation_category, :assignment_id => @assignment.id
         end
         should respond_with :success
         should assign_to :assignment
@@ -393,7 +393,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
           @old_annotation_categories =  @assignment.annotation_categories
           # Needed, otherwise the test fail
           @old_annotation_categories.length
-          post_as @admin, :yml_upload, :id => @assignment.id, :annotation_category_list_yml => "--- \n A:\n - A1\n - A2\n"
+          post_as @admin, :yml_upload, :assignment_id => @assignment.id, :annotation_category_list_yml => "--- \n A:\n - A1\n - A2\n"
         end
 
         should respond_with :redirect
@@ -409,7 +409,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       context "on :yml_upload with an error" do
         setup do
           @old_annotation_categories =   @assignment.annotation_categories
-          post_as @admin, :yml_upload, :id => @assignment.id, :annotation_category_list_yml => "--- \n A:\n - A1\n A2\n"
+          post_as @admin, :yml_upload, :assignment_id => @assignment.id, :annotation_category_list_yml => "--- \n A:\n - A1\n A2\n"
         end
 
         should respond_with :redirect

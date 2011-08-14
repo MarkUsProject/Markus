@@ -16,7 +16,7 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   def add_annotation_category
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     if request.post?
       # Attempt to add Annotation Category
       @annotation_category = AnnotationCategory.new
