@@ -96,7 +96,6 @@ class NotesController < ApplicationController
   end
 
   def destroy
-    debugger
     @note = Note.find(params[:id])
     if @note.user_can_modify?(current_user)
       @note.destroy
