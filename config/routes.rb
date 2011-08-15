@@ -113,13 +113,20 @@ Markus::Application.routes.draw do
 
     resources :graders do
       collection do
+        get 'add_grader_to_grouping'
+        get 'csv_upload_grader_mapping'
+        get 'download_dialog'
+        get 'download_grouplist'
+        get 'grader_criteria_dialog'
+        get 'global_actions'
+        get 'groups_coverage_dialog'
         get 'populate_graders'
         get 'populate'
         get 'populate_criteria'
-        get 'download_dialog'
-        get 'upload_dialog'
-        get 'global_actions'
         get 'set_assign_criteria'
+        get 'random_assign'
+        get 'upload_dialog'
+        get 'unassign'
       end
     end
 
