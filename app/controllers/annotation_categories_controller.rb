@@ -76,7 +76,7 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   def download
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     @annotation_categories = @assignment.annotation_categories
     case params[:format]
     when 'csv'
