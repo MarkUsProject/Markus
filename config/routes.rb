@@ -47,8 +47,10 @@ Markus::Application.routes.draw do
         get 'yml_upload'
         get 'download_csv'
         get 'download_yml'
+        get 'move_criterion'
       end
     end
+
     resources :flexible_criteria
     resources :test_framework do
       collection do
@@ -191,8 +193,14 @@ Markus::Application.routes.draw do
     end
   end
 
-
-  resources :test_framework
+  resources :main do
+    collection do
+      get 'logout'
+      get 'about'
+      get 'login_as'
+      get 'clear_role_switch_session'
+    end
+  end
 
   match 'main', :controller => 'main', :action => 'index'
   match 'main/about', :controller => 'main', :action => 'about'
