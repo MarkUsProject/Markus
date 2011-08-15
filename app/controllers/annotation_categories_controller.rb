@@ -11,7 +11,7 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   def get_annotations
-    @annotation_category = AnnotationCategory.find(params[:assignment_id])
+    @annotation_category = AnnotationCategory.find(params[:id])
     @annotation_texts = @annotation_category.annotation_texts
   end
 
