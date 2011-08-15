@@ -191,8 +191,14 @@ Markus::Application.routes.draw do
     end
   end
 
-
-  resources :test_framework
+  resources :main do
+    collection do
+      get 'logout'
+      get 'about'
+      get 'login_as'
+      get 'clear_role_switch_session'
+    end
+  end
 
   match 'main', :controller => 'main', :action => 'index'
   match 'main/about', :controller => 'main', :action => 'about'
