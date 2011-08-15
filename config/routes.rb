@@ -47,8 +47,10 @@ Markus::Application.routes.draw do
         get 'yml_upload'
         get 'download_csv'
         get 'download_yml'
+        get 'move_criterion'
       end
     end
+
     resources :flexible_criteria
     resources :test_framework do
       collection do
