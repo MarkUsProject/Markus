@@ -93,7 +93,7 @@ class GradersController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     if !request.post? || params[:grader_criteria_mapping].nil?
       flash[:error] = I18n.t("csv.criteria_to_grader")
-      redirect_to :action => 'manage', :assignment_id => params[:assignment_id]
+      redirect_to :action => 'index', :assignment_id => params[:assignment_id]
       return
     end
 
@@ -107,7 +107,7 @@ class GradersController < ApplicationController
     if invalid_lines.size > 0
       flash[:invalid_lines] = invalid_lines
     end
-    redirect_to :action => 'manage', :assignment_id => params[:assignment_id]
+    redirect_to :action => 'index', :assignment_id => params[:assignment_id]
   end
 
   def download_grader_groupings_mapping
@@ -207,7 +207,7 @@ class GradersController < ApplicationController
             return
         end
       when "criteria_table"
-        @assignment = Assignment.find(params[:id],
+        @assignment = Assignment.find(params[:assignment_id],
           :include => [{:groupings => [:students,
                 {:tas => :criterion_ta_associations}, :group]}])
         if params[:criteria].nil? or params[:criteria].size ==  0

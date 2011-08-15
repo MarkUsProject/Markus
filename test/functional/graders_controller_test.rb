@@ -82,16 +82,9 @@ class GradersControllerTest < AuthenticatedControllerTest
       should respond_with :missing
     end
 
-    context "GET on :csv_upload_grader_mapping" do
+    context "GET on :csv_upload_grader_groups_mapping" do
       setup do
-        get_as @student, :csv_upload_grader_mapping, :assignment_id => 1
-      end
-      should respond_with :missing
-    end
-
-    context "GET on :download_grouplist" do
-      setup do
-        get_as @student, :download_grouplist, :assignment_id => 2
+        get_as @student, :csv_upload_grader_groups_mapping, :assignment_id => 1
       end
       should respond_with :missing
     end
@@ -105,7 +98,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
     context "GET on :global_actions" do
       setup do
-        get_as @student, :global_action, :assignment_id => 1
+        get_as @student, :global_actions, :assignment_id => 1
       end
       should respond_with :missing
     end
@@ -166,16 +159,9 @@ class GradersControllerTest < AuthenticatedControllerTest
       should respond_with :missing
     end
 
-    context "POST on :csv_upload_grader_mapping" do
+    context "POST on :csv_upload_grader_groups_mapping" do
       setup do
-        post_as @student, :csv_upload_grader_mapping, :assignment_id => 1
-      end
-      should respond_with :missing
-    end
-
-    context "POST on :download_grouplist" do
-      setup do
-        post_as @student, :download_grouplist, :assignment_id => 1
+        post_as @student, :csv_upload_grader_groups_mapping, :assignment_id => 1
       end
       should respond_with :missing
     end
@@ -473,7 +459,7 @@ class GradersControllerTest < AuthenticatedControllerTest
             @criterion2 = FlexibleCriterion.make(:assignment => @assignment, :flexible_criterion_name => "professor's whim")
             @criterion3 = FlexibleCriterion.make(:assignment => @assignment, :flexible_criterion_name => "class design")
             post_as @admin, :csv_upload_grader_criteria_mapping, {
-                :id => @assignment.id,
+                :assignment_id => @assignment.id,
                 :grader_criteria_mapping => @ctieria_grader_map_file}
           end
 
@@ -495,7 +481,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           @grouping2 = Grouping.make(:assignment => @assignment)
           @ta = Ta.make
           @ta2 = Ta.make
-          post_as @admin, :add_grader_to_grouping, {:id => @assignment.id,
+          post_as @admin, :add_grader_to_grouping, {:assignment_id => @assignment.id,
               :grouping_id => @grouping.id,
               :grader_id => @ta.id}
         end
@@ -525,7 +511,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
         context "and no graders selected" do
           setup do
-            post_as @admin, :global_actions, {:id => @assignment.id,
+            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => "random_assign", :current_table => "groups_table"}
           end
           should respond_with :success
@@ -538,7 +524,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
         context "and no groups selected, at least one grader" do
           setup do
-            post_as @admin, :global_actions, {:id => @assignment.id,
+            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => "random_assign", :graders => [@ta1], :current_table => "groups_table"}
           end
           should respond_with :success
@@ -551,7 +537,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
         context "and no graders are selected, at least one grouping" do
           setup do
-            post_as @admin, :global_actions, {:id => @assignment.id,
+            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => "random_assign", :groupings => [@grouping1], :current_table => "groups_table"}
           end
           should respond_with :success
@@ -564,7 +550,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
         context "and one grader and one grouping is selected" do
           setup do
-            post_as @admin, :global_actions, {:id => @assignment.id,
+            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => "random_assign", :groupings => [@grouping1],
               :graders => [@ta1], :current_table => "groups_table"}
           end
@@ -580,7 +566,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
         context "and one grader and multiple groupings are selected" do
           setup do
-            post_as @admin, :global_actions, {:id => @assignment.id,
+            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => "random_assign",
               :groupings => [@grouping1, @grouping2],
               :graders => [@ta1],
@@ -598,7 +584,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
         context "and two graders and one grouping is selected" do
           setup do
-            post_as @admin, :global_actions, {:id => @assignment.id,
+            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => "random_assign",
               :groupings => [@grouping1],
               :graders => [@ta1, @ta2],
@@ -616,7 +602,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
         context "and two graders and two groupings are selected" do
           setup do
-            post_as @admin, :global_actions, {:id => @assignment.id,
+            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => "random_assign",
               :groupings => [@grouping1, @grouping2],
               :graders => [@ta1, @ta2],
@@ -636,7 +622,7 @@ class GradersControllerTest < AuthenticatedControllerTest
         context "and multiple graders and multiple groupings are selected" do
           setup do
             @ta3 = Ta.make
-            post_as @admin, :global_actions, {:id => @assignment.id,
+            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => "random_assign",
               :groupings => [@grouping1, @grouping2, @grouping3],
               :graders => [@ta1, @ta2, @ta3],
@@ -663,7 +649,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
         context "and no graders selected" do
           setup do
-            post_as @admin, :global_actions, {:id => @assignment.id,
+            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => "assign", :current_table => "groups_table"}
           end
           should respond_with :success
@@ -676,7 +662,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
         context "and no groupings selected, at least one grader" do
           setup do
-            post_as @admin, :global_actions, {:id => @assignment.id,
+            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => "assign", :graders => [@ta1], :current_table => "groups_table"}
           end
           should respond_with :success
@@ -689,7 +675,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
         context "and no graders are selected, at least one grouping" do
           setup do
-            post_as @admin, :global_actions, {:id => @assignment.id,
+            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => "assign", :groupings => [@grouping1], :current_table => "groups_table"}
           end
           should respond_with :success
@@ -702,7 +688,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
         context "and one grader and one grouping is selected" do
           setup do
-            post_as @admin, :global_actions, {:id => @assignment.id,
+            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => "assign", :groupings => [@grouping1],
               :graders => [@ta1], :current_table => "groups_table"}
           end
@@ -718,7 +704,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
         context "and one grader and two groupings are selected" do
           setup do
-            post_as @admin, :global_actions, {:id => @assignment.id,
+            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => "assign",
               :groupings => [@grouping1, @grouping2],
               :graders => [@ta1],
@@ -736,7 +722,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
         context "and two graders and one grouping is selected" do
           setup do
-            post_as @admin, :global_actions, {:id => @assignment.id,
+            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => "assign",
               :groupings => [@grouping1],
               :graders => [@ta1, @ta2],
@@ -756,7 +742,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
         context "and two graders and two groupings are selected" do
           setup do
-            post_as @admin, :global_actions, {:id => @assignment.id,
+            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => "assign",
               :groupings => [@grouping1, @grouping2],
               :graders => [@ta1, @ta2],
@@ -779,7 +765,7 @@ class GradersControllerTest < AuthenticatedControllerTest
         context "and multiple graders and multiple groupings are selected" do
           setup do
             @ta3 = Ta.make
-            post_as @admin, :global_actions, {:id => @assignment.id,
+            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => "assign",
               :groupings => [@grouping1, @grouping2, @grouping3],
               :graders => [@ta1, @ta2, @ta3],
@@ -802,7 +788,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           setup do
             TaMembership.make(:user => @ta1, :grouping => @grouping2)
             TaMembership.make(:user => @ta2, :grouping => @grouping1)
-            post_as @admin, :global_actions, {:id => @assignment.id,
+            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => "assign",
               :groupings => [@grouping1, @grouping2],
               :graders => [@ta1.id.to_s, @ta2.id.to_s],
@@ -837,7 +823,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           setup do
             TaMembership.make(:user => @ta1, :grouping => @grouping1)
             TaMembership.make(:user => @ta2, :grouping => @grouping2)
-            post_as @admin, :global_actions, {:id => @assignment.id,
+            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => "unassign",
               :current_table => "groups_table"}
           end
@@ -855,7 +841,7 @@ class GradersControllerTest < AuthenticatedControllerTest
             TaMembership.make(:user => @ta2, :grouping => @grouping1)
             TaMembership.make(:user => @ta3, :grouping => @grouping1)
             TaMembership.make(:user => @ta3, :grouping => @grouping3)
-            post_as @admin, :global_actions, {:id => @assignment.id,
+            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => "unassign",
               :groupings => [@grouping1],
               "#{@grouping1.id}_#{@ta1.user_name}" => true,
@@ -880,7 +866,7 @@ class GradersControllerTest < AuthenticatedControllerTest
             TaMembership.make(:user => @ta3, :grouping => @grouping1)
             TaMembership.make(:user => @ta3, :grouping => @grouping2)
             TaMembership.make(:user => @ta3, :grouping => @grouping3)
-            post_as @admin, :global_actions, {:id => @assignment.id,
+            post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => "unassign",
               :groupings => [@grouping1, @grouping2, @grouping3],
               "#{@grouping1.id}_#{@ta3.user_name}" => true,
@@ -1418,7 +1404,7 @@ class GradersControllerTest < AuthenticatedControllerTest
               CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion3)
               CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion3)
               CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion3)
-              post_as @admin, :global_actions, {:id => @assignment.id,
+              post_as @admin, :global_actions, {:assignment_id => @assignment.id,
                 :global_actions => "unassign",
                 :criteria => [@criterion1, @criterion2, @criterion3],
                 "#{@criterion1.id}_#{@ta1.user_name}" => true,
@@ -1458,7 +1444,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
           context "and no graders selected" do
             setup do
-              post_as @admin, :global_actions, {:id => @assignment.id,
+              post_as @admin, :global_actions, {:assignment_id => @assignment.id,
                 :global_actions => "random_assign", :current_table => "criteria_table"}
             end
             should respond_with :success
@@ -1471,7 +1457,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
           context "and no criteria selected, at least one grader" do
             setup do
-              post_as @admin, :global_actions, {:id => @assignment.id,
+              post_as @admin, :global_actions, {:assignment_id => @assignment.id,
                 :global_actions => "random_assign", :graders => [@ta1], :current_table => "criteria_table"}
             end
             should respond_with :success
@@ -1484,7 +1470,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
           context "and no graders are selected, at least one criterion" do
             setup do
-              post_as @admin, :global_actions, {:id => @assignment.id,
+              post_as @admin, :global_actions, {:assignment_id => @assignment.id,
                 :global_actions => "random_assign", :criteria => [@criterion1], :current_table => "criteria_table"}
             end
             should respond_with :success
@@ -1497,7 +1483,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
           context "and one grader and one criterion is selected" do
             setup do
-              post_as @admin, :global_actions, {:id => @assignment.id,
+              post_as @admin, :global_actions, {:assignment_id => @assignment.id,
                 :global_actions => "random_assign", :criteria => [@criterion1],
                 :graders => [@ta1], :current_table => "criteria_table"}
             end
@@ -1513,7 +1499,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
           context "and one grader and multiple criteria are selected" do
             setup do
-              post_as @admin, :global_actions, {:id => @assignment.id,
+              post_as @admin, :global_actions, {:assignment_id => @assignment.id,
                 :global_actions => "random_assign",
                 :criteria => [@criterion1, @criterion2],
                 :graders => [@ta1],
@@ -1531,7 +1517,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
           context "and two graders and one criterion is selected" do
             setup do
-              post_as @admin, :global_actions, {:id => @assignment.id,
+              post_as @admin, :global_actions, {:assignment_id => @assignment.id,
                 :global_actions => "random_assign",
                 :criteria => [@criterion1],
                 :graders => [@ta1, @ta2],
@@ -1549,7 +1535,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
           context "and two graders and two criteria are selected" do
             setup do
-              post_as @admin, :global_actions, {:id => @assignment.id,
+              post_as @admin, :global_actions, {:assignment_id => @assignment.id,
                 :global_actions => "random_assign",
                 :criteria => [@criterion1, @criterion2],
                 :graders => [@ta1, @ta2],
@@ -1569,7 +1555,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           context "and multiple graders and multiple criteria are selected" do
             setup do
               @ta3 = Ta.make
-              post_as @admin, :global_actions, {:id => @assignment.id,
+              post_as @admin, :global_actions, {:assignment_id => @assignment.id,
                 :global_actions => "random_assign",
                 :criteria => [@criterion1, @criterion2, @criterion3],
                 :graders => [@ta1, @ta2, @ta3],
@@ -1596,7 +1582,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
           context "and no graders selected" do
             setup do
-              post_as @admin, :global_actions, {:id => @assignment.id,
+              post_as @admin, :global_actions, {:assignment_id => @assignment.id,
                 :global_actions => "assign", :current_table => "criteria_table"}
             end
             should respond_with :success
@@ -1609,7 +1595,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
           context "and no criteria selected, at least one grader" do
             setup do
-              post_as @admin, :global_actions, {:id => @assignment.id,
+              post_as @admin, :global_actions, {:assignment_id => @assignment.id,
                 :global_actions => "assign", :graders => [@ta1], :current_table => "criteria_table"}
             end
             should respond_with :success
@@ -1622,7 +1608,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
           context "and no graders are selected, at least one criterion" do
             setup do
-              post_as @admin, :global_actions, {:id => @assignment.id,
+              post_as @admin, :global_actions, {:assignment_id => @assignment.id,
                 :global_actions => "assign", :criteria => [@criterion1], :current_table => "criteria_table"}
             end
             should respond_with :success
@@ -1635,7 +1621,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
           context "and one grader and one criterion is selected" do
             setup do
-              post_as @admin, :global_actions, {:id => @assignment.id,
+              post_as @admin, :global_actions, {:assignment_id => @assignment.id,
                 :global_actions => "assign", :criteria => [@criterion1],
                 :graders => [@ta1], :current_table => "criteria_table"}
             end
@@ -1651,7 +1637,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
           context "and one grader and two criteria are selected" do
             setup do
-              post_as @admin, :global_actions, {:id => @assignment.id,
+              post_as @admin, :global_actions, {:assignment_id => @assignment.id,
                 :global_actions => "assign",
                 :criteria => [@criterion1, @criterion2],
                 :graders => [@ta1],
@@ -1669,7 +1655,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
           context "and two graders and one criterion is selected" do
             setup do
-              post_as @admin, :global_actions, {:id => @assignment.id,
+              post_as @admin, :global_actions, {:assignment_id => @assignment.id,
                 :global_actions => "assign",
                 :criteria => [@criterion1],
                 :graders => [@ta1, @ta2],
@@ -1689,7 +1675,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
           context "and two graders and two criteria are selected" do
             setup do
-              post_as @admin, :global_actions, {:id => @assignment.id,
+              post_as @admin, :global_actions, {:assignment_id => @assignment.id,
                 :global_actions => "assign",
                 :criteria => [@criterion1, @criterion2],
                 :graders => [@ta1, @ta2],
@@ -1712,7 +1698,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           context "and multiple graders and multiple criteria are selected" do
             setup do
               @ta3 = Ta.make
-              post_as @admin, :global_actions, {:id => @assignment.id,
+              post_as @admin, :global_actions, {:assignment_id => @assignment.id,
                 :global_actions => "assign",
                 :criteria => [@criterion1, @criterion2, @criterion3],
                 :graders => [@ta1, @ta2, @ta3],
@@ -1735,7 +1721,7 @@ class GradersControllerTest < AuthenticatedControllerTest
             setup do
               CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion2)
               CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion1)
-              post_as @admin, :global_actions, {:id => @assignment.id,
+              post_as @admin, :global_actions, {:assignment_id => @assignment.id,
                 :global_actions => "assign",
                 :criteria => [@criterion1, @criterion2],
                 :graders => [@ta1, @ta2],
@@ -1772,7 +1758,7 @@ class GradersControllerTest < AuthenticatedControllerTest
             setup do
               CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion1)
               CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion2)
-              post_as @admin, :global_actions, {:id => @assignment.id,
+              post_as @admin, :global_actions, {:assignment_id => @assignment.id,
                 :global_actions => "unassign",
                 :current_table => "criteria_table"}
             end
@@ -1793,7 +1779,7 @@ class GradersControllerTest < AuthenticatedControllerTest
               CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion1)
               CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion1)
               CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion3)
-              post_as @admin, :global_actions, {:id => @assignment.id,
+              post_as @admin, :global_actions, {:assignment_id => @assignment.id,
                 :global_actions => "unassign",
                 :criteria => [@criterion1],
                 "#{@criterion1.id}_#{@ta1.user_name}" => true,
@@ -1821,7 +1807,7 @@ class GradersControllerTest < AuthenticatedControllerTest
               CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion1)
               CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion2)
               CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion3)
-              post_as @admin, :global_actions, {:id => @assignment.id,
+              post_as @admin, :global_actions, {:assignment_id => @assignment.id,
                 :global_actions => "unassign",
                 :criteria => [@criterion1, @criterion2, @criterion3],
                 "#{@criterion1.id}_#{@ta3.user_name}" => true,
@@ -1856,7 +1842,7 @@ class GradersControllerTest < AuthenticatedControllerTest
               CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion3)
               CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion3)
               CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion3)
-              post_as @admin, :global_actions, {:id => @assignment.id,
+              post_as @admin, :global_actions, {:assignment_id => @assignment.id,
                 :global_actions => "unassign",
                 :criteria => [@criterion2],
                 "#{@criterion2.id}_#{@ta1.user_name}" => true,
@@ -1893,7 +1879,7 @@ class GradersControllerTest < AuthenticatedControllerTest
               CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion3)
               CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion3)
               CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion3)
-              post_as @admin, :global_actions, {:id => @assignment.id,
+              post_as @admin, :global_actions, {:assignment_id => @assignment.id,
                 :global_actions => "unassign",
                 :criteria => [@criterion1, @criterion2, @criterion3],
                 "#{@criterion1.id}_#{@ta1.user_name}" => true,
