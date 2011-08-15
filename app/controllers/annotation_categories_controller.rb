@@ -128,9 +128,9 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   def yml_upload
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     if !request.post?
-      redirect_to :action => 'index', :id => @assignment.id
+      redirect_to :action => 'index', :assignment_id => @assignment.id
       return
     end
     file = params[:annotation_category_list_yml]
@@ -142,7 +142,7 @@ class AnnotationCategoriesController < ApplicationController
       rescue ArgumentError => e
         flash[:annotation_upload_invalid_lines] =
              I18n.t('annotations.upload.syntax_error', :error => "#{e}")
-         redirect_to :action => 'index', :id => @assignment.id
+         redirect_to :action => 'index', :assignment_id => @assignment.id
          return
       end
       annotations.each_key do |key|
@@ -163,6 +163,6 @@ class AnnotationCategoriesController < ApplicationController
                     :annotation_category_number => annotation_category_number) :
                     nil
     end
-    redirect_to :action => 'index', :id => @assignment.id
+    redirect_to :action => 'index', :assignment_id => @assignment.id
   end
 end
