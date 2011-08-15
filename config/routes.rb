@@ -60,8 +60,8 @@ Markus::Application.routes.draw do
 
     resources :groups do
       collection do
-        get 'populate'
-        get 'populate_students'
+        post 'populate'
+        post 'populate_students'
         get 'add_group'
         get 'use_another_assignment_groups'
         get 'manage'
@@ -83,7 +83,7 @@ Markus::Application.routes.draw do
       collection do
         get 'file_manager'
         get 'browse'
-        get 'populate_file_manager'
+        post 'populate_file_manager'
         get 'collect_all_submissions'
         get 'download_simple_csv_report'
         get 'download_detailed_csv_report'
@@ -92,8 +92,7 @@ Markus::Application.routes.draw do
         get 'download_svn_repo_list'
         get 'collect_ta_submissions'
         get 'update_submissions'
-        get 'repo_browser'
-        get 'populate_repo_browser'
+        post 'populate_repo_browser'
         get 'update_converted_pdfs'
         get 'updated_files'
         post 'updated_files'
@@ -101,13 +100,23 @@ Markus::Application.routes.draw do
       end
 
       member do
-        post 'collect_and_begin_grading'
+        get 'collect_and_begin_grading'
+        get 'repo_browser'
       end
-    end
 
-   resources :results do
-      collection do
-        get 'view_marks'
+      resources :results do
+        collection do
+          get 'update_mark'
+          get 'add_extra_mark'
+        end
+
+        member do
+          get 'download'
+          get 'next_grouping'
+          get 'remove_extra_mark'
+          get 'expand_unmarked_criteria'
+          get 'update_overall_remark_comment'
+        end
       end
     end
 
@@ -121,9 +130,9 @@ Markus::Application.routes.draw do
         get 'grader_criteria_dialog'
         get 'global_actions'
         get 'groups_coverage_dialog'
-        get 'populate_graders'
-        get 'populate'
-        get 'populate_criteria'
+        post 'populate_graders'
+        post 'populate'
+        post 'populate_criteria'
         get 'set_assign_criteria'
         get 'random_assign'
         get 'upload_dialog'

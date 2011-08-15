@@ -85,7 +85,7 @@ class SubmissionsController < ApplicationController
 
   def repo_browser
     @assignment = Assignment.find(params[:assignment_id])
-    @grouping = Grouping.find(params[:format])
+    @grouping = Grouping.find(params[:id])
     @assignment = @grouping.assignment
     @path = params[:path] || '/'
     @previous_path = File.split(@path).first

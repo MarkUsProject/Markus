@@ -6,7 +6,7 @@ require 'fastercsv'
 require 'shoulda'
 require 'mocha'
 
-class SubmissionsControllerTest < AuthenticatedControllerTest
+ass SubmissionsControllerTest < AuthenticatedControllerTest
   def setup
     clear_fixtures
   end
@@ -142,7 +142,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         old_file_1 = old_files['Shapes.java']
         old_file_2 = old_files['TestShapes.java']
 
-        post_as(@student, :update_files, {:id => @assignment.id,
+        post_as(@student, :update_files, {:assignment_id => @assignment.id,
           :delete_files => {  'Shapes.java' => true},
           :file_revisions => {'Shapes.java' => old_file_1.from_revision,
                               'TestShapes.java' => old_file_2.from_revision}})
@@ -181,7 +181,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         file_1 = fixture_file_upload(File.join('..', 'files', 'Shapes.java'), 'text/java')
         file_2 = fixture_file_upload(File.join('..', 'files', 'TestShapes.java'), 'text/java')
         assert @student.has_accepted_grouping_for?(@assignment.id)
-        post_as(@student, :update_files, {:id => @assignment.id, :new_files => [file_1, file_2]})
+        post_as(@student, :update_files, {:assignment_id => @assignment.id, :new_files => [file_1, file_2]})
       end
 
       # must not respond with redirect_to (see comment in
