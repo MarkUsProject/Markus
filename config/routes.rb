@@ -25,6 +25,8 @@ Markus::Application.routes.draw do
     collection do
       get 'download_csv_grades_report'
       get 'update_group_properties_on_persist'
+      get 'delete_rejected'
+      post 'update_collected_submissions'
     end
 
     member do

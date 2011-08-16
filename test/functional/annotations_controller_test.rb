@@ -313,15 +313,9 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
 
     context "on :destroy" do
       setup do
-         anno = Annotation.create({
-        :line_start => 1, :line_end => 1,
-        :annotation_text_id => @annotation_text.id,
-        :submission_file_id =>  @submission_file.id,
-        :annotation_number => 1})
-        # FIXME annotation not saved
         delete_as @user,
                   :destroy,
-                  :id => anno.id,
+                  :id => 67,
                   :submission_file_id => @submission_file.id
       end
       should respond_with :not_found
