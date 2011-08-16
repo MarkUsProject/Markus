@@ -21,11 +21,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
     # Since we are not authenticated and authorized, we should be redirected
     # to the login page
 
-    should "be redirected from the index" do
-      get :index, :assignment_id => 1, :submission_id => 1
-      assert respond_with :redirect
-    end
-
     should "be redirected from edit" do
       get :edit,
           :assignment_id => 1,
@@ -195,16 +190,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
               :membership_status => StudentMembership::STATUSES[:inviter])
           @submission = Submission.make(:grouping => @grouping)
           @result = @grouping.submissions.first.result
-        end
-
-        should "not be able to get index" do
-          get_as @student,
-                 :index,
-                 :assignment_id => 1,
-                 :submission_id => 1,
-                 :id => @result.id
-          assert respond_with :missing
-          assert render_template 404
         end
 
         should "not be able to get edit" do
@@ -1167,15 +1152,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @assignment = Assignment.make(:marking_scheme_type => scheme_type)
         end
 
-        should "GET on :index" do
-          get_as @ta,
-                 :index,
-                 :assignment_id => 1,
-                 :submission_id => 1
-          assert respond_with :missing
-          assert render_template 404
-        end
-
         should "GET on :edit" do
           result = Result.make
           get_as @ta,
@@ -1266,7 +1242,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
             result = Result.new
             submission.expects(:result).once.returns(result)
             @file.expects(:submission).twice.returns(submission)
-            @file.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
+            @file.expects(:retrieve_file).once.raises(
+                    Exception.new(SAMPLE_ERR_MSG))
             SubmissionFile.stubs(:find).returns(@file)
 
             get_as @ta,
