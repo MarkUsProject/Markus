@@ -349,7 +349,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end # -- without file error
 
           should "be able to retrieve_file with file error" do
-            @file.expects(:submission).once.returns(@result.submission)
+            @file.expects(:submission).twice.returns(@result.submission)
 
             @file.expects(
                 :retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
@@ -361,6 +361,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :download,
                   :assignment_id => 1,
                   :submission_id => 1,
+                  :id => 1,
                   :select_file_id => 1
 
             assert set_the_flash.to(SAMPLE_ERR_MSG)
@@ -850,7 +851,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             SubmissionFile.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
             SubmissionFile.stubs(:find).returns(@file)
 
-            @file.expects(:submission).once.returns(
+            @file.expects(:submission).twice.returns(
                 submission)
             get_as @admin,
                    :download,
@@ -1264,7 +1265,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             submission = Submission.new
             result = Result.new
             submission.expects(:result).once.returns(result)
-            @file.expects(:submission).once.returns(submission)
+            @file.expects(:submission).twice.returns(submission)
             @file.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
             SubmissionFile.stubs(:find).returns(@file)
 
