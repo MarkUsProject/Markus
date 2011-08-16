@@ -23,7 +23,6 @@ class AnnotationsController < ApplicationController
   end
 
   def create
-    return unless request.post?
     @text = AnnotationText.create({
       :content => params[:content],
       :annotation_category_id => params[:category_id]
@@ -54,7 +53,6 @@ class AnnotationsController < ApplicationController
   end
 
   def destroy
-    return unless request.post?
     @annotation = Annotation.find(params[:id])
     @old_annotation = @annotation.destroy
     @submission_file_id = params[:submission_file_id]
@@ -88,7 +86,7 @@ class AnnotationsController < ApplicationController
     return unless request.post?
     result = Result.find(params[:result_id])
     result.overall_comment = params[:overall_comment]
-    result.save;
+    result.save
     render :update do |page|
     end
   end

@@ -267,7 +267,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         get_as @grader,
                :repo_browser,
                :assignment_id => @assignment.id,
-               :format => Grouping.last.id
+               :id => Grouping.last.id
         assert respond_with :success
       end
 

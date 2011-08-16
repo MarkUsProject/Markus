@@ -22,14 +22,14 @@ class FlexibleCriteriaControllerTest < AuthenticatedControllerTest
 
     context "on :edit" do
       setup do
-        get :edit, :assignment_id => 1
+        get :edit, :assignment_id => 1, :id => 1
       end
       should respond_with :redirect
     end
 
     context "on :update" do
       setup do
-        put :update, :assignment_id => 1
+        put :update, :assignment_id => 1, :id => 1
       end
       should respond_with :redirect
     end
@@ -89,14 +89,14 @@ class FlexibleCriteriaControllerTest < AuthenticatedControllerTest
 
     context "on :edit" do
       setup do
-        post :edit, :assignment_id => 1
+        post :edit, :assignment_id => 1, :id => 1
       end
       should respond_with :redirect
     end
 
     context "on :update" do
       setup do
-        put :update, :assignment_id => 1
+        put :update, :assignment_id => 1, :id => 1
       end
       should respond_with :redirect
     end

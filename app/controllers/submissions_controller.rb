@@ -311,7 +311,7 @@ class SubmissionsController < ApplicationController
     # We'll use this hash to carry over some error state to the
     # file_manager view.
     @file_manager_errors = Hash.new
-    assignment_id = params[:id]
+    assignment_id = params[:assignment_id]
     @assignment = Assignment.find(assignment_id)
     @path = params[:path] || '/'
     @grouping = current_user.accepted_grouping_for(assignment_id)
