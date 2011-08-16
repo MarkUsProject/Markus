@@ -392,7 +392,7 @@ class NotesControllerTest < AuthenticatedControllerTest
       end
 
       should "GET on :new_update_groupings" do
-        get_as @admin, :new_update_groupings, :id => @assignment.id
+        get_as @admin, :new_update_groupings, :assignment_id => @assignment.id
         assert respond_with :success
         assert render_template 'new_update_groupings.rjs'
       end

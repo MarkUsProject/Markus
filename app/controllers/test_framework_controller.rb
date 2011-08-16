@@ -26,7 +26,7 @@ class TestFrameworkController < ApplicationController
   end
 
   def manage
-    @assignment = Assignment.find_by_id(params[:id])
+    @assignment = Assignment.find_by_id(params[:assignment_id])
 
     # Create ant test files required by Testing Framework
     create_ant_test_files(@assignment)
@@ -48,7 +48,7 @@ class TestFrameworkController < ApplicationController
       # Save assignment and associated test files
       if @assignment.save
         flash[:success] = I18n.t("assignment.update_success")
-        redirect_to :action => 'manage', :id => params[:id]
+        redirect_to :action => 'manage', :assignment_id => params[:assignment_id]
       else
         render :action => 'manage'
       end

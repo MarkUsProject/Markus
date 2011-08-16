@@ -3,7 +3,7 @@ class FlexibleCriteriaController < ApplicationController
   before_filter      :authorize_only_for_admin
 
   def index
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     # TODO until Assignment gets its criteria method
     @criteria =
       FlexibleCriterion.find_all_by_assignment_id( @assignment.id,
@@ -24,7 +24,7 @@ class FlexibleCriteriaController < ApplicationController
   end
 
   def new
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     if !request.post?
       return
     else
@@ -48,7 +48,7 @@ class FlexibleCriteriaController < ApplicationController
     end
   end
 
-  def delete
+  def destroy
     return unless request.delete?
     @criterion = FlexibleCriterion.find(params[:id])
     @assignment = @criterion.assignment
@@ -60,7 +60,7 @@ class FlexibleCriteriaController < ApplicationController
   end
 
   def download
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     file_out = FlexibleCriterion.create_csv(@assignment)
     send_data(file_out,
               :type => 'text/csv',
@@ -70,7 +70,7 @@ class FlexibleCriteriaController < ApplicationController
 
   def upload
     file = params[:upload][:flexible]
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     if request.post? && !file.blank?
       begin
         FlexibleCriterion.transaction do
@@ -89,7 +89,7 @@ class FlexibleCriteriaController < ApplicationController
         end
       end
     end
-    redirect_to :action => 'index', :id => @assignment.id
+    redirect_to :action => 'index', :assignment_id => @assignment.id
   end
 
   # This method handles the drag/drop criteria sorting
@@ -98,7 +98,7 @@ class FlexibleCriteriaController < ApplicationController
       render :nothing => true
       return
     end
-    @assignment = Assignment.find(params[:aid])
+    @assignment = Assignment.find(params[:assignment_id])
     @criteria = @assignment.flexible_criteria
     params[:flexible_criteria_pane_list].each_with_index do |id, position|
       if id != ""
@@ -122,7 +122,7 @@ class FlexibleCriteriaController < ApplicationController
       render :nothing => true
       return
     end
-    @assignment = Assignment.find(params[:aid])
+    @assignment = Assignment.find(params[:assignment_id])
     @criteria = @assignment.flexible_criteria
     criterion = @criteria.find(params[:id])
     index = @criteria.index(criterion)

@@ -45,8 +45,8 @@ class GroupsControllerTest < AuthenticatedControllerTest
       assert respond_with :missing
     end
 
-    should "GET on :manage" do
-      get_as @student, :manage, :assignment_id => @assignment.id
+    should "GET on :index" do
+      get_as @student, :index, :assignment_id => @assignment.id
       assert respond_with :missing
     end
 
@@ -89,9 +89,9 @@ class GroupsControllerTest < AuthenticatedControllerTest
       setup_group_fixture_repos
     end
 
-    should "GET on :manage (groups_controller)" do
+    should "GET on :index(groups_controller)" do
       get_as @admin,
-             :manage,
+             :index,
              :assignment_id => @assignment.id
       assert respond_with :success
     end
