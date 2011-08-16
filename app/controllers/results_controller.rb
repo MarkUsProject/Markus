@@ -183,7 +183,9 @@ class ResultsController < ApplicationController
       end
     rescue Exception => e
       flash[:file_download_error] = e.message
-      redirect_to :action => 'edit', :id => file.submission.result.id
+      redirect_to :action => 'edit',
+                  :assignment_id => params[:assignment_id],
+                  :id => file.submission.result.id
       return
     end
     filename = file.filename

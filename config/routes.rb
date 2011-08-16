@@ -11,6 +11,7 @@ Markus::Application.routes.draw do
     resources :test_results
     resources :submission_downloads
     resources :users
+    resources :main_api
   end
 
   resources :admins do
@@ -24,6 +25,8 @@ Markus::Application.routes.draw do
     collection do
       get 'download_csv_grades_report'
       get 'update_group_properties_on_persist'
+      get 'delete_rejected'
+      post 'update_collected_submissions'
     end
 
     member do
@@ -121,10 +124,10 @@ Markus::Application.routes.draw do
         collection do
           get 'update_mark'
           get 'expand_criteria'
-          get 'view_marks'
         end
 
         member do
+          get 'add_extra_marks'
           get 'add_extra_mark'
           get 'download'
           get 'cancel_remark_request'
@@ -143,9 +146,9 @@ Markus::Application.routes.draw do
           get 'update_positions'
           get 'update_mark'
           get 'expand_criteria'
+          get 'view_marks'
         end
       end
-
     end
 
     resources :graders do
@@ -225,8 +228,6 @@ Markus::Application.routes.draw do
       post 'update_comment'
     end
   end
-
-
 
   resources :students do
     collection do

@@ -450,7 +450,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
             get_as @student,
                   :codeviewer,
                   :assignment_id => @assignment.id,
-                  :submission_id => @submission_file.id,
+                  :submission_id => 1,
+                  :submission_file_id => @submission_file.id,
+                  :id => 1,
                   :focus_line => 1
             assert assign_to :assignment
             assert assign_to :submission_file_id
@@ -475,7 +477,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
             get_as @student,
                   :codeviewer,
                   :assignment_id => @assignment.id,
-                  :submission_id => @submission_file.id,
+                  :submission_id => 1,
+                  :submission_file_id => @submission_file.id,
+                  :id => 1,
                   :focus_line => 1
             assert assign_to :assignment
             assert assign_to :submission_file_id

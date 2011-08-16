@@ -57,6 +57,7 @@ class FlexibleCriteriaController < ApplicationController
     # Will be possible when Mark gets its association with FlexibleCriterion.
     @criterion.destroy
     flash.now[:success] = I18n.t('criterion_deleted_success')
+    redirect_to :action => 'index', :id => @assignment
   end
 
   def download
