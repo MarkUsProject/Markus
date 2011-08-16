@@ -6,7 +6,7 @@ require 'fastercsv'
 require 'shoulda'
 require 'mocha'
 
-ass SubmissionsControllerTest < AuthenticatedControllerTest
+class SubmissionsControllerTest < AuthenticatedControllerTest
   def setup
     clear_fixtures
   end
