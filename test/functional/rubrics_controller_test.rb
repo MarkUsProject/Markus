@@ -102,7 +102,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
     context "on :edit" do
       setup do
-        get :edit, :assignment_id => 1, :submission_id, :id => 1
+        get :edit, :assignment_id => 1, :submission_id => 1
       end
       should respond_with :redirect
     end
