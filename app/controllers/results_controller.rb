@@ -238,7 +238,7 @@ class ResultsController < ApplicationController
   # Action called via Rails' remote_function from the test_result_window partial
   # Prepares test result and updates content in window.
   def render_test_result
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     @test_result = TestResult.find(params[:test_result_id])
 
     # Students can use this action only, when marks have been released
@@ -287,7 +287,7 @@ class ResultsController < ApplicationController
   end
 
   def view_marks
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
 
     if @grouping.nil?
@@ -433,20 +433,21 @@ class ResultsController < ApplicationController
   end
 
   def expand_criteria
-    @assignment = Assignment.find(params[:aid])
+    @assignment = Assignment.find(params[:assignment_id])
     @mark_criteria = @assignment.get_criteria
-    render :partial => 'results/marker/expand_criteria', :locals => {:mark_criteria => @mark_criteria}
+    render :partial => 'results/marker/expand_criteria',
+           :locals => {:mark_criteria => @mark_criteria}
   end
 
   def collapse_criteria
-    @assignment = Assignment.find(params[:aid])
+    @assignment = Assignment.find(params[:assignment_id])
     @mark_criteria = @assignment.get_criteria
     render :partial => 'results/marker/collapse_criteria', :locals => {:mark_criteria => @mark_criteria}
   end
 
   def expand_unmarked_criteria
-    @assignment = Assignment.find(params[:aid])
-    @result = Result.find(params[:rid])
+    @assignment = Assignment.find(params[:assignment_id])
+    @result = Result.find(params[:id])
     # nil_marks are the marks that have a "nil" value for Mark.mark - so they're
     # unmarked.
     @nil_marks = @result.marks.all(:conditions => {:mark => nil})

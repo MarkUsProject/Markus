@@ -19,12 +19,6 @@ Markus::Application.routes.draw do
     end
   end
 
-  resources :annotations do
-    member do
-      post 'update_comment'
-    end
-  end
-
   resources :assignments do
 
     collection do
@@ -51,10 +45,20 @@ Markus::Application.routes.draw do
       end
     end
 
-    resources :flexible_criteria
+    resources :flexible_criteria do
+      collection do
+        get 'upload'
+      end
+    end
+
     resources :test_framework do
       collection do
         get 'manage'
+        post 'update_positions'
+        get 'update_positions'
+        get 'upload'
+        get 'download'
+        get 'move_criterion'
       end
     end
 
@@ -107,17 +111,41 @@ Markus::Application.routes.draw do
       resources :results do
         collection do
           get 'update_mark'
-          get 'add_extra_mark'
+          get 'expand_criteria'
         end
 
         member do
+          get 'add_extra_marks'
           get 'download'
+          get 'cancel_remark_request'
+          get 'codeviewer'
+          get 'collapse_criteria'
+          get 'add_extra_mark'
           get 'next_grouping'
           get 'remove_extra_mark'
           get 'expand_unmarked_criteria'
+          get 'set_released_to_students'
+          get 'update_overall_comment'
           get 'update_overall_remark_comment'
+          get 'update_marking_state'
+          get 'render_test_result'
+          get 'update_positions'
+          get 'update_mark'
+          get 'expand_criteria'
+          get 'view_marks'
         end
       end
+
+      resources :annotations do
+        collection do
+          get 'add_existing_annotation'
+        end
+
+        member do
+          post 'update_comment'
+        end
+      end
+
     end
 
     resources :graders do
