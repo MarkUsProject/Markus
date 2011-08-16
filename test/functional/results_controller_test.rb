@@ -27,7 +27,10 @@ class ResultsControllerTest < AuthenticatedControllerTest
     end
 
     should "be redirected from edit" do
-      get :edit, :assignment_id => 1, :submission_id => 1
+      get :edit,
+          :assignment_id => 1,
+          :submission_id => 1,
+          :id => 1
       assert respond_with :redirect
     end
 
@@ -50,7 +53,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
     should "not be able to update marking state" do
       get :update_marking_state,
           :assignment_id => 1,
-          :submssion_id => 1,
+          :submission_id => 1,
           :id => 1,
           :value => 1
       assert respond_with :redirect
@@ -137,7 +140,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
     should "not be able to add extra mark" do
       post :add_extra_mark,
            :assignment_id => 1,
-           :submission_if => 1,
+           :submission_id => 1,
            :id => 1,
            :extra_mark => 1
       assert respond_with :redirect
@@ -336,7 +339,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
                      :download,
                      :assignment_id => 1,
                      :submission_id => 1,
-                     :select_file_id => 1
+                     :select_file_id => 1,
+                     :id => 1
 
               assert_equal 0, flash.size
               assert respond_with :missing
@@ -376,6 +380,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :assignment_id => 1,
                   :submission_id => 1,
                   :select_file_id => 1,
+                  :id => 1,
                   :show_in_browser => true
             assert_equal 0, flash.size
             assert respond_with_content_type "image"
@@ -396,6 +401,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :assignment_id => 1,
                   :submission_id => 1,
                   :select_file_id => 1,
+                  :id => 1,
                   :include_annotations => true
             assert_equal 0, flash.size
             assert respond_with_content_type "application/octet-stream"
@@ -416,6 +422,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                     :codeviewer,
                     :assignment_id => @assignment.id,
                     :submission_id => 1,
+                    :id => 1,
                     :submission_file_id => @no_access_submission_file.id,
                     :focus_line => 1
 
@@ -443,7 +450,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
             get_as @student,
                   :codeviewer,
                   :assignment_id => @assignment.id,
-                  :submission_id => @submission_file.id,
+                  :submission_id => 1,
+                  :submission_file_id => @submission_file.id,
+                  :id => 1,
                   :focus_line => 1
             assert assign_to :assignment
             assert assign_to :submission_file_id
@@ -468,7 +477,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
             get_as @student,
                   :codeviewer,
                   :assignment_id => @assignment.id,
-                  :submission_id => @submission_file.id,
+                  :submission_id => 1,
+                  :submission_file_id => @submission_file.id,
+                  :id => 1,
                   :focus_line => 1
             assert assign_to :assignment
             assert assign_to :submission_file_id
@@ -485,7 +496,12 @@ class ResultsControllerTest < AuthenticatedControllerTest
         end
 
         should "GET on :update_mark" do
-          get_as @student, :update_mark, :mark_id => 1, :mark => 0
+          get_as @student,
+                 :update_mark,
+                 :assignment_id => 1,
+                 :submission_id => 1,
+                 :mark_id => 1,
+                 :mark => 0
           assert respond_with :missing
           assert render_template 404
         end
@@ -607,7 +623,12 @@ class ResultsControllerTest < AuthenticatedControllerTest
         end
 
         should "GET on :expand_unmarked_criteria" do
-          get_as @student, :expand_unmarked_criteria, :assignment_id => 1, :rid => 1
+          get_as @student,
+                 :expand_unmarked_criteria,
+                 :assignment_id => 1,
+                 :submission_id => 1,
+                 :id => 1,
+                 :rid => 1
           assert respond_with :missing
           assert render_template 404
         end

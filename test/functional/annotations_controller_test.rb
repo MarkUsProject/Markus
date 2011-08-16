@@ -19,7 +19,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
 
     context "on :add_existing_annotation" do
       setup do
-        get :add_existing_annotation, :id => 1
+        get :add_existing_annotation, :submission_file_id => 1
       end
       should respond_with :redirect
     end
@@ -33,7 +33,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
 
     context "on :destroy" do
       setup do
-        get :destroy, :id => 1
+        delete :destroy, :id => 1
       end
       should respond_with :redirect
     end
@@ -318,8 +318,11 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id,
         :annotation_number => 1})
-        post_as @user, :destroy, {:id => anno.id,
-          :submission_file_id => @submission_file.id}
+        # FIXME annotation not saved
+        delete_as @user,
+                  :destroy,
+                  :id => anno.id,
+                  :submission_file_id => @submission_file.id
       end
       should respond_with :not_found
     end # End context :destroy

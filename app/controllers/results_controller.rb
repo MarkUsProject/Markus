@@ -183,7 +183,9 @@ class ResultsController < ApplicationController
       end
     rescue Exception => e
       flash[:file_download_error] = e.message
-      redirect_to :action => 'edit', :id => file.submission.result.id
+      redirect_to :action => 'edit',
+                  :assignment_id => params[:assignment_id],
+                  :id => file.submission.result.id
       return
     end
     filename = file.filename
@@ -203,7 +205,7 @@ class ResultsController < ApplicationController
   end
 
   def codeviewer
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     @submission_file_id = params[:submission_file_id]
     @focus_line = params[:focus_line]
 

@@ -2,101 +2,101 @@ require File.join(File.dirname(__FILE__), 'authenticated_controller_test')
 require 'shoulda'
 require 'mocha'
 
-class FlexibleCriteriaControllerTest < AuthenticatedControllerTest
+  class FlexibleCriteriaControllerTest < AuthenticatedControllerTest
 
-  fixtures :all
+    fixtures :all
 
-  FLEXIBLE_CRITERIA_CSV_STRING = "criterion1,10.0,\"description1, for criterion 1\"\ncriterion2,10.0,\"description2, \"\"with quotes\"\"\"\ncriterion3,1.6,description3!\n"
-  FLEXIBLE_CRITERIA_UPLOAD_CSV_STRING = "criterion3,10.0,\"description3, for criterion 3\"\ncriterion4,10.0,\"description4, \"\"with quotes\"\"\"\n"
-  FLEXIBLE_CRITERIA_INCOMPLETE_UPLOAD_CSV_STRING = "criterion5\ncriterion6\n"
-  FLEXIBLE_CRITERIA_PARTIAL_UPLOAD_CSV_STRING = "criterion7,5.0\ncriterion8,7.5\n"
+    FLEXIBLE_CRITERIA_CSV_STRING = "criterion1,10.0,\"description1, for criterion 1\"\ncriterion2,10.0,\"description2, \"\"with quotes\"\"\"\ncriterion3,1.6,description3!\n"
+    FLEXIBLE_CRITERIA_UPLOAD_CSV_STRING = "criterion3,10.0,\"description3, for criterion 3\"\ncriterion4,10.0,\"description4, \"\"with quotes\"\"\"\n"
+    FLEXIBLE_CRITERIA_INCOMPLETE_UPLOAD_CSV_STRING = "criterion5\ncriterion6\n"
+    FLEXIBLE_CRITERIA_PARTIAL_UPLOAD_CSV_STRING = "criterion7,5.0\ncriterion8,7.5\n"
 
-  context "An unauthenticated and unauthorized user doing a GET" do
+    context "An unauthenticated and unauthorized user doing a GET" do
 
-    context "on :index" do
-      setup do
-        get :index, :assignment_id => 1
+      context "on :index" do
+        setup do
+          get :index, :assignment_id => 1
+        end
+        should respond_with :redirect
       end
-      should respond_with :redirect
-    end
 
-    context "on :edit" do
-      setup do
-        get :edit, :assignment_id => 1
+      context "on :edit" do
+        setup do
+          get :edit, :assignment_id => 1, :id => 1
+        end
+        should respond_with :redirect
       end
-      should respond_with :redirect
-    end
 
-    context "on :update" do
-      setup do
-        put :update, :assignment_id => 1
+      context "on :update" do
+        setup do
+          put :update, :assignment_id => 1, :id => 1
+        end
+        should respond_with :redirect
       end
-      should respond_with :redirect
-    end
 
-    context "on :new" do
-      setup do
-        get :new, :assignment_id => 1
+      context "on :new" do
+        setup do
+          get :new, :assignment_id => 1
+        end
+        should respond_with :redirect
       end
-      should respond_with :redirect
-    end
 
-    context "on :destroy" do
-      setup do
-        delete :destroy, :assignment_id => 1, :id => 1
+      context "on :destroy" do
+        setup do
+          delete :destroy, :assignment_id => 1, :id => 1
+        end
+        should respond_with :redirect
       end
-      should respond_with :redirect
-    end
 
-    context "on :download" do
-      setup do
-        get :download, :assignment_id => 1
+      context "on :download" do
+        setup do
+          get :download, :assignment_id => 1
+        end
+        should respond_with :redirect
       end
-      should respond_with :redirect
-    end
 
-    context "on :upload" do
-      setup do
-        get :upload, :assignment_id => 1
+      context "on :upload" do
+        setup do
+          get :upload, :assignment_id => 1
+        end
+        should respond_with :redirect
       end
-      should respond_with :redirect
-    end
 
-    context "on :update_positions" do
-      setup do
-        get :update_positions, :assignment_id => 1
+      context "on :update_positions" do
+        setup do
+          get :update_positions, :assignment_id => 1
+        end
+        should respond_with :redirect
       end
-      should respond_with :redirect
-    end
 
-    context "on :move_criterion" do
-      setup do
-        get :move_criterion, :assignment_id => 1
+      context "on :move_criterion" do
+        setup do
+          get :move_criterion, :assignment_id => 1
+        end
+        should respond_with :redirect
       end
-      should respond_with :redirect
-    end
 
-  end # An unauthenticated and unauthorized user doing a GET
+    end # An unauthenticated and unauthorized user doing a GET
 
-  context "An unauthenticated and unauthorized user doing a POST" do
+    context "An unauthenticated and unauthorized user doing a POST" do
 
-    context "on :index" do
-      setup do
-        post :index, :assignment_id => 1
+      context "on :index" do
+        setup do
+          post :index, :assignment_id => 1
+        end
+        should respond_with :redirect
       end
-      should respond_with :redirect
-    end
 
-    context "on :edit" do
-      setup do
-        post :edit, :assignment_id => 1
+      context "on :edit" do
+        setup do
+          post :edit, :assignment_id => 1, :id => 1
+        end
+        should respond_with :redirect
       end
-      should respond_with :redirect
-    end
 
-    context "on :update" do
-      setup do
-        put :update, :assignment_id => 1
+      context "on :update" do
+        setup do
+          put :update, :assignment_id => 1, :id => 1
       end
       should respond_with :redirect
     end

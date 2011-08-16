@@ -11,6 +11,7 @@ Markus::Application.routes.draw do
     resources :test_results
     resources :submission_downloads
     resources :users
+    resources :main_api
   end
 
   resources :admins do
@@ -32,6 +33,10 @@ Markus::Application.routes.draw do
       get 'update_group_properties_on_persist'
       get 'invite_member'
       get 'creategroup'
+      get 'join_group'
+      get 'deletegroup'
+      get 'decline_invitation'
+      get 'disinvite_member'
     end
 
     resources :rubrics do
@@ -48,6 +53,9 @@ Markus::Application.routes.draw do
     resources :flexible_criteria do
       collection do
         get 'upload'
+        get 'update_positions'
+        get 'move_criterion'
+        get 'download'
       end
     end
 
@@ -99,7 +107,9 @@ Markus::Application.routes.draw do
         post 'populate_repo_browser'
         get 'update_converted_pdfs'
         get 'updated_files'
-        post 'updated_files'
+        get 'replace_files'
+        get 'delete_files'
+        post 'update_files'
         get 'server_time'
       end
 
@@ -116,6 +126,7 @@ Markus::Application.routes.draw do
 
         member do
           get 'add_extra_marks'
+          get 'add_extra_mark'
           get 'download'
           get 'cancel_remark_request'
           get 'codeviewer'
@@ -128,6 +139,7 @@ Markus::Application.routes.draw do
           get 'update_overall_comment'
           get 'update_overall_remark_comment'
           get 'update_marking_state'
+          get 'update_remark_request'
           get 'render_test_result'
           get 'update_positions'
           get 'update_mark'
@@ -135,17 +147,6 @@ Markus::Application.routes.draw do
           get 'view_marks'
         end
       end
-
-      resources :annotations do
-        collection do
-          get 'add_existing_annotation'
-        end
-
-        member do
-          post 'update_comment'
-        end
-      end
-
     end
 
     resources :graders do
@@ -183,8 +184,6 @@ Markus::Application.routes.draw do
         post 'update_annotation'
       end
     end
-
-    resources :flexible_criteria
   end
 
   resources :grade_entry_forms do
@@ -218,9 +217,15 @@ Markus::Application.routes.draw do
     end
   end
 
-  resources :rubric
-
   resources :sections
+
+  resources :annotations do
+    collection do
+      post 'add_existing_annotation'
+      post 'update_annotation'
+      post 'update_comment'
+    end
+  end
 
   resources :students do
     collection do
@@ -245,6 +250,7 @@ Markus::Application.routes.draw do
       get 'about'
       get 'login_as'
       get 'clear_role_switch_session'
+      get 'reset_api_key'
     end
   end
 

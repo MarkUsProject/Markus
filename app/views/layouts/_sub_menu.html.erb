@@ -204,8 +204,10 @@ h(sanitize(@assignment.short_identifier))%></span>
    <li <% if controller.controller_name == 'results' %>
           id="sub_menu_active"
         <%end%>>
+    <%# FIXME should add the real submission %>
+
 	  <%= link_to I18n.t("results.results_name"),
-		      view_marks_assignment_results_path(@assignment) %>
+		      view_marks_assignment_submission_result_path(@assignment, 1, 1) %>
   </li>
    <% end %>
    </ul>
