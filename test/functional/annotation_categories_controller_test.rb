@@ -188,7 +188,10 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
     context "on :get_annotations" do
       setup do
-        get_as @admin, :get_annotations, :id => @category.id
+         get_as @admin,
+                :get_annotations,
+                :assignment_id => @assignment.id,
+                :id => @category.id
       end
       should_not set_the_flash
       should respond_with :success
@@ -211,7 +214,10 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     context "on :update_annotation_category" do
 
       should "update properly" do
-        get_as @admin, :update_annotation_category, :id => @category.id
+        get_as @admin,
+               :update_annotation_category,
+               :assignment_id => @assignment.id,
+               :id => @category.id
         assert respond_with :success
         assert assign_to :annotation_category
         assert_equal I18n.t('annotations.update.annotation_category_success'),
@@ -225,7 +231,10 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         end
 
         should "give error messages properly" do
-          get_as @admin, :update_annotation_category, :id => @category.id
+          get_as @admin,
+                 :update_annotation_category,
+                 :assignment_id => @assignment.id,
+                 :id => @category.id
           assert respond_with :success
           assert_equal flash[:error], "error"
           assert assign_to :annotation_category
@@ -241,6 +250,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         AnnotationText.any_instance.expects(:save).once
         get_as @admin,
                :update_annotation,
+               :assignment_id => 1,
                :id => @annotation_text.id,
                :annotation_text => @annotation_text
       end
@@ -250,7 +260,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     context "on :add_annotation_text" do
       setup do
         AnnotationText.any_instance.expects(:save).never
-        get_as @admin, :add_annotation_text, :id => @category.id
+        get_as @admin, :add_annotation_text, :assignment_id => 1, :id => @category.id
       end
       should respond_with :success
       should assign_to :annotation_category
@@ -260,7 +270,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     context "on :delete_annotation_text" do
       setup do
         AnnotationText.any_instance.expects(:destroy).once
-        get_as @admin, :delete_annotation_text, :id => @annotation_text.id
+        get_as @admin, :delete_annotation_text, :assignment_id => 1, :id => @annotation_text.id
       end
       should respond_with :success
     end
@@ -268,7 +278,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     context "on :delete_annotation_category" do
       setup do
         AnnotationCategory.any_instance.expects(:destroy).once
-        get_as @admin, :delete_annotation_category, :id => @category.id
+        get_as @admin, :delete_annotation_category, :assignment_id => 1, :id => @category.id
       end
       should respond_with :success
     end
@@ -288,7 +298,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
       context "in yml" do
         setup do
-          get_as @admin, :download, :id => @assignment.id, :format => 'yml'
+          get_as @admin, :download, :assignment_id => @assignment.id, :format => 'yml'
         end
         should respond_with :success
         should respond_with_content_type 'application/octet-stream'
@@ -296,7 +306,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
       context "in error" do
         setup do
-          get_as @admin, :download, :id => @assignment.id, :format => 'xml'
+          get_as @admin, :download, :assignment_id => @assignment.id, :format => 'xml'
         end
         should respond_with :redirect
         should set_the_flash.to((I18n.t("annotations.upload.flash_error", :format => 'xml')))
@@ -350,7 +360,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       context "without errors" do
         setup do
           AnnotationText.any_instance.stubs(:save).returns(true)
-          post_as @admin, :add_annotation_text, :id => @category.id
+          post_as @admin, :add_annotation_text, :assignment_id => 1, :id => @category.id
         end
         should respond_with :success
         should render_template 'insert_new_annotation_text'
@@ -361,7 +371,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       context "with errors on save" do
         setup do
           AnnotationText.any_instance.stubs(:save).returns(false)
-          post_as @admin, :add_annotation_text, :id => @category.id
+          post_as @admin, :add_annotation_text, :assignment_id => 1, :id => @category.id
         end
         should respond_with :success
         should render_template 'new_annotation_text_error'

@@ -9,30 +9,30 @@ class GradersController < ApplicationController
   before_filter      :authorize_only_for_admin
 
   def upload_dialog
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     render :partial => "graders/modal_dialogs/upload_dialog.rjs"
   end
 
   def download_dialog
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     render :partial => "graders/modal_dialogs/download_dialog.rjs"
   end
 
   def groups_coverage_dialog
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     @grouping = Grouping.find(params[:grouping])
     render :partial => "graders/modal_dialogs/groups_coverage_dialog.rjs"
   end
 
   def grader_criteria_dialog
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     @grader = Ta.find(params[:grader])
     render :partial => "graders/modal_dialogs/grader_criteria_dialog.rjs"
   end
 
 
   def populate
-    @assignment = Assignment.find(params[:id],
+    @assignment = Assignment.find(params[:assignment_id],
                                   :include => [{
                                       :groupings => [
                                           :students, :tas,
@@ -42,13 +42,13 @@ class GradersController < ApplicationController
   end
 
   def populate_graders
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     @graders = Ta.find(:all)
     @table_rows = construct_grader_table_rows(@graders, @assignment)
   end
 
   def populate_criteria
-    @assignment = Assignment.find(params[:id],
+    @assignment = Assignment.find(params[:assignment_id],
                                   :include => [
                                     {:rubric_criteria =>
                                         :criterion_ta_associations},
@@ -59,7 +59,7 @@ class GradersController < ApplicationController
   end
 
   def set_assign_criteria
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     if params[:value] == 'true'
       @assignment.assign_graders_to_criteria = true
     else
@@ -76,42 +76,42 @@ class GradersController < ApplicationController
   def csv_upload_grader_groups_mapping
     if !request.post? || params[:grader_mapping].nil?
       flash[:error] = I18n.t("csv.group_to_grader")
-      redirect_to :action => 'manage', :id => params[:id]
+      redirect_to :action => 'index', :assignment_id => params[:assignment_id]
       return
     end
 
     invalid_lines = Grouping.assign_tas_by_csv(params[:grader_mapping].read,
-                                               params[:id])
+                                               params[:assignment_id])
     if invalid_lines.size > 0
       flash[:invalid_lines] = invalid_lines
     end
-    redirect_to :action => 'manage', :id => params[:id]
+    redirect_to :action => 'index', :assignment_id => params[:assignment_id]
   end
 
   # Assign TAs to Criteria via a csv file
   def csv_upload_grader_criteria_mapping
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     if !request.post? || params[:grader_criteria_mapping].nil?
       flash[:error] = I18n.t("csv.criteria_to_grader")
-      redirect_to :action => 'manage', :id => params[:id]
+      redirect_to :action => 'index', :assignment_id => params[:assignment_id]
       return
     end
 
     if @assignment.marking_scheme_type == 'rubric'
       invalid_lines = RubricCriterion.assign_tas_by_csv(
-      params[:grader_criteria_mapping].read, params[:id])
+      params[:grader_criteria_mapping].read, params[:assignment_id])
     else
       invalid_lines = FlexibleCriterion.assign_tas_by_csv(
-      params[:grader_criteria_mapping].read, params[:id])
+      params[:grader_criteria_mapping].read, params[:assignment_id])
     end
     if invalid_lines.size > 0
       flash[:invalid_lines] = invalid_lines
     end
-    redirect_to :action => 'manage', :id => params[:id]
+    redirect_to :action => 'index', :assignment_id => params[:assignment_id]
   end
 
   def download_grader_groupings_mapping
-    assignment = Assignment.find(params[:id], :include => [{:groupings => :group}])
+    assignment = Assignment.find(params[:assignment_id], :include => [{:groupings => :group}])
 
     #get all the groups
     groupings = assignment.groupings
@@ -131,7 +131,7 @@ class GradersController < ApplicationController
   end
 
   def download_grader_criteria_mapping
-    assignment = Assignment.find(params[:id])
+    assignment = Assignment.find(params[:assignment_id])
 
     #get all the criteria
     criteria = assignment.get_criteria
@@ -151,7 +151,7 @@ class GradersController < ApplicationController
   end
 
   def add_grader_to_grouping
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     @grouping = Grouping.find(params[:grouping_id],
                                 :include => [:students, :tas, :group])
     grader = Ta.find(params[:grader_id])
@@ -173,7 +173,7 @@ class GradersController < ApplicationController
 
     case params[:current_table]
       when "groups_table"
-        @assignment = Assignment.find(params[:id],
+        @assignment = Assignment.find(params[:assignment_id],
           :include => [{:rubric_criteria => :criterion_ta_associations},
             {:flexible_criteria => :criterion_ta_associations}])
         if params[:groupings].nil? or params[:groupings].size ==  0
@@ -207,7 +207,7 @@ class GradersController < ApplicationController
             return
         end
       when "criteria_table"
-        @assignment = Assignment.find(params[:id],
+        @assignment = Assignment.find(params[:assignment_id],
           :include => [{:groupings => [:students,
                 {:tas => :criterion_ta_associations}, :group]}])
         if params[:criteria].nil? or params[:criteria].size ==  0

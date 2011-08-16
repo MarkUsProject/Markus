@@ -7,7 +7,7 @@
   <% else %>
      <%=h I18n.t("browse_submissions.grading_can_begin_after",
        :time => I18n.l(@assignment.submission_rule.calculate_collection_time,
-         :format => :long_date)) %>
+                       :format => :long_date)) %>
   <% end %>
 </div>
 
@@ -50,12 +50,12 @@
 <div class="wrapLeft">
   <% if flash[:error] %>
     <div class="error">
-      <%=flash[:error]%>
+      <%= flash[:error] %>
     </div>
   <% end %>
   <% if flash[:success] %>
     <div class="success">
-      <%=flash[:success]%>
+      <%= flash[:success] %>
     </div>
   <% end %>
 
@@ -82,7 +82,7 @@
             :name => "unrelease_results" %>
           <% if !@assignment.results_average.nil? %>
             <%= I18n.t("browse_submissions.class_average",
-              :results_average => h(@assignment.results_average)) %>
+                       :results_average => h(@assignment.results_average)) %>
           <% end %>
         </div>
       <% end %>
@@ -120,7 +120,7 @@
     <div id="ap_selects">
       <%= render :partial => 'ajax_paginate/selects',
         :locals => {:page_items => @groupings.size,
-        :total_items => @groupings_total} %>
+                    :total_items => @groupings_total} %>
     </div>
 
     <table>
@@ -167,7 +167,7 @@
                       :desc => @desc } %>
       </div>
       <div id="ap_selector">
-        <%= render :partial => 'ajax_paginate/selector'%>
+        <%= render :partial => 'ajax_paginate/selector' %>
       </div>
 
       <div class="clear"></div>
@@ -175,9 +175,9 @@
       <div class="floatLeft">
         <% if @current_user.admin? %>
           <%= submit_tag I18n.t("browse_submissions.release_marks"),
-            :name => "release_results" %>
+                                :name => "release_results" %>
           <%= submit_tag I18n.t("browse_submissions.unrelease_marks"),
-            :name => "unrelease_results" %>
+                                :name => "unrelease_results" %>
         <% end %>
       </div>
       <div class="ap_filters" id="ap_filters_2">

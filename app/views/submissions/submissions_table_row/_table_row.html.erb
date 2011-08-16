@@ -3,10 +3,14 @@
 <tr
 <% if grouping.is_collected? %>
   style="background-color: #90EE90"
-<%end%>>
+<% end %>>
   
 <td>
-  <input type="checkbox" name="groupings[]" class="ap_selectable" id="grouping_<%=grouping.id%>" value="<%=grouping.id%>" />
+  <input type="checkbox"
+         name="groupings[]"
+         class="ap_selectable"
+         id="grouping_<%= grouping.id %>"
+         value="<%= grouping.id %>" />
 </td>
 <td>
   <% if !grouping.has_submission? %>
@@ -17,7 +21,7 @@
                       assignment.id,
                       grouping.id) %>
     <% else %>
-      <%=h(grouping.group.group_name)%>
+      <%= h(grouping.group.group_name) %>
     <% end %>
   <% elsif !grouping.is_collected %>
     <%= link_to h(grouping.group.group_name),
@@ -25,9 +29,15 @@
                       assignment.id,
                       grouping.id) %>
   <% elsif grouping.current_submission_used.remark_submitted? %>
-    <%= link_to h(grouping.group.group_name), :controller => 'results', :action => 'edit', :id => grouping.current_submission_used.remark_result%>
+    <%= link_to h(grouping.group.group_name),
+                :controller => 'results',
+                :action => 'edit',
+                :id => grouping.current_submission_used.remark_result %>
   <% else %>
-    <%= link_to h(grouping.group.group_name), :controller => 'results', :action => 'edit', :id => grouping.current_submission_used.result%>
+    <%= link_to h(grouping.group.group_name),
+                :controller => 'results',
+                :action => 'edit',
+                :id => grouping.current_submission_used.result %>
   <% end %>
     (<%= h(grouping.accepted_students.collect{ |student| student.user_name}.join(',')) %>)
   <%='<span class="invalid">' + t(:invalid_grouping) + '</span>' if !grouping.is_valid? %>
@@ -50,8 +60,8 @@
   <% else %>
     <td>
       <%= link_to h(grouping.group.repository_name),
-                  repo_browser_assignment_submissions_path(assignment,
-                                                           grouping) %>
+                  repo_browser_assignment_submission_path(assignment,
+                                                          grouping) %>
     </td>
     <td>
     <% if !grouping.has_submission? %>
@@ -76,24 +86,24 @@
             :alt => I18n.t('marking_state.in_progress'),
             :title => I18n.t('marking_state.in_progress')) %>
 	<% else %>
-      <% if remark_in_progress(grouping.current_submission_used)%>
+      <% if remark_in_progress(grouping.current_submission_used) %>
           <%= image_tag('icons/double_exclamation.png',
               :alt => I18n.t('marking_state.remark_requested'),
-              :title => I18n.t('marking_state.remark_requested'))%>
-      <% elsif grouping.current_submission_used.result.marking_state == Result::MARKING_STATES[:complete]%>
+              :title => I18n.t('marking_state.remark_requested')) %>
+      <% elsif grouping.current_submission_used.result.marking_state == Result::MARKING_STATES[:complete] %>
           <% if !grouping.current_submission_used.result.released_to_students or remark_complete_but_unreleased(grouping.current_submission_used) %>
 		        <%= image_tag('icons/accept.png',
                 :alt => I18n.t('marking_state.completed'),
-                :title => I18n.t('marking_state.completed'))%>
+                :title => I18n.t('marking_state.completed')) %>
 		      <% else %>
 		        <%= image_tag('icons/email_go.png',
                 :alt => I18n.t('marking_state.released'),
-                :title => I18n.t('marking_state.released'))%>
+                :title => I18n.t('marking_state.released')) %>
           <% end %>
       <% else %>
 		     <%= image_tag('icons/pencil.png',
             :alt => I18n.t('marking_state.in_progress'),
-            :title => I18n.t('marking_state.in_progress'))%>
+            :title => I18n.t('marking_state.in_progress')) %>
 	    <% end %>
     <% end %>
     <% end %>
