@@ -296,7 +296,7 @@
 
     <div id="penalty_periods">
     <% if rule.object.type.to_s == "PenaltyPeriodSubmissionRule" %>
-     <% rule.fields_for :periods do |period_form| %>
+     <%= rule.fields_for :periods do |period_form| %>
        <%= render :partial => 'penalty_period',
                   :locals => {:penalty_period => period_form.object,
                               :pf => rule} %>

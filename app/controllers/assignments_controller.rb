@@ -137,8 +137,20 @@ class AssignmentsController < ApplicationController
     end
   end
 
-  def edit
+def edit
     @assignment = Assignment.find_by_id(params[:id])
+
+    @assignments = Assignment.all
+    @sections = Section.all
+
+  end
+
+  def update
+    @assignment = Assignment.find_by_id(params[:id])
+    @assignments = Assignment.all
+    @sections = Section.all
+
+
     if !params[:assignment].nil?
       @oldcriteria = @assignment.marking_scheme_type
       @newcriteria = params[:assignment][:marking_scheme_type]
@@ -150,26 +162,22 @@ class AssignmentsController < ApplicationController
         end
       end
     end
-    @assignments = Assignment.all
-    @sections = Section.all
-    if !request.post?
-      return
-    end
 
     begin
       @assignment = process_assignment_form(@assignment, params)
       rescue Exception, RuntimeError => e
         @assignment.errors.add(:base, I18n.t("assignment.error",
                                               :message => e.message))
+        render :action => 'edit', :id => @assignment.id
       return
     end
 
     if @assignment.save
       flash[:success] = I18n.t("assignment.update_success")
-      redirect_to :action => 'edit', :id => params[:id]
+      render :action => 'edit', :id => params[:id]
       return
     else
-      render :action => 'edit'
+      render :action => 'edit', :id => @assignment.id
     end
  end
 
@@ -184,14 +192,13 @@ class AssignmentsController < ApplicationController
     @assignment.build_submission_rule
     @assignment.build_assignment_stat
 
-    if !request.post?
-      # set default value if web submits are allowed
-      @assignment.allow_web_submits =
-         !MarkusConfigurator.markus_config_repository_external_submits_only?
-      render :action => 'new'
-      return
-    end
+    # set default value if web submits are allowed
+    @assignment.allow_web_submits =
+        !MarkusConfigurator.markus_config_repository_external_submits_only?
+    render :action => 'new'
+  end
 
+  def create
     @assignment.transaction do
       begin
         @assignment = process_assignment_form(@assignment, params)
@@ -211,6 +218,7 @@ class AssignmentsController < ApplicationController
     end
 
     redirect_to :action => "edit", :id => @assignment.id
+
   end
 
   def update_group_properties_on_persist
