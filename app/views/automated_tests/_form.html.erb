@@ -14,33 +14,33 @@
 <%= f.error_messages%>
 
 <fieldset>
-  <legend><%= I18n.t("test_framework.test_framework") %></legend>
+  <legend><%= I18n.t("automated_tests.automated_tests") %></legend>
 
   <p id="testing_framework_style">
-    <%= f.check_box :enable_test, :id => "is_testing_framework_enabled", :onchange => "toggle_test_framework($F('is_testing_framework_enabled'))" %>
-    <%= label_tag "is_testing_framework_enabled", I18n.t("test_framework.enable_test"), :class => "checkbox_label" %>
+    <%= f.check_box :enable_test, :id => "is_testing_framework_enabled", :onchange => "toggle_automated_tests($F('is_testing_framework_enabled'))" %>
+    <%= label_tag "is_testing_framework_enabled", I18n.t("automated_tests.enable_test"), :class => "checkbox_label" %>
   </p>
 
   <div id="testing_framework_tokens">
     <p id="tokens">
-      <%= label_tag :tokens_per_day, I18n.t("test_framework.token.tokens_form"), :class => "inline_label" %>
+      <%= label_tag :tokens_per_day, I18n.t("automated_tests.token.tokens_form"), :class => "inline_label" %>
       <%= f.text_field :tokens_per_day, :id=>"tokens_per_day", :size => 5, :maxlength => 3 %>
     </p>
   </div>
 
   <fieldset>
     <div class="wrapLeft">
-    <legend><%= I18n.t("test_framework.required_files_ant") %></legend>
+    <legend><%= I18n.t("automated_tests.required_files_ant") %></legend>
 
     <div id="test_properties" class="disabled" >
       <%= f.fields_for :test_files do |tf| %>
         <p id="antbuildfile_style">
           <% if tf.object.filetype.to_s == "build.xml" %>
-            <%= label_tag "antbuildxmlfile", I18n.t("test_framework.build_xml"), :class=>"accordian_label" %>
+            <%= label_tag "antbuildxmlfile", I18n.t("automated_tests.build_xml"), :class=>"accordian_label" %>
 
             <% if tf.object.filename.to_s != "" && tf.object.filetype == tf.object.filename %>
               <%= text_field_tag 'test_file_' + tf.id.to_s, tf.object.filename, :id=>"antxmlfilename", :readonly => "true" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <%= label_tag "replacebuildxmlfile", I18n.t("test_framework.replace"), :class => "inline_label" %>
+              <%= label_tag "replacebuildxmlfile", I18n.t("automated_tests.replace"), :class => "inline_label" %>
             <% end %>
 
             <%= tf.file_field :filename, :id=>"antbuildxmlfile", :size=>"30" %>
@@ -48,11 +48,11 @@
         </p>
         <p id="antbuildprop_style">
           <% if tf.object.filetype.to_s == "build.properties" %>
-            <%= label_tag "antbuildpropfile", I18n.t("test_framework.build_prop"), :class=>"accordian_label" %>
+            <%= label_tag "antbuildpropfile", I18n.t("automated_tests.build_prop"), :class=>"accordian_label" %>
 
             <% if tf.object.filename.to_s != "" && tf.object.filetype == tf.object.filename %>
               <%= text_field_tag 'test_file_' + tf.id.to_s, tf.object.filename, :id=>"antpropfilename", :readonly => "true" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <%= label_tag "replacebuildpropfile", I18n.t("test_framework.replace"), :class => "inline_label" %>
+              <%= label_tag "replacebuildpropfile", I18n.t("automated_tests.replace"), :class => "inline_label" %>
             <% end %>
 
             <%= tf.file_field :filename, :id=>"antbuildpropfile", :size=>"30" %>
@@ -60,7 +60,7 @@
         </p>
       <% end %>
 
-      <h4><%= t("test_framework.assignment_test_files") %></h4>
+      <h4><%= t("automated_tests.assignment_test_files") %></h4>
       <div id="test_files">
         <%= f.fields_for :test_files do |tf| %>
           <% if tf.object.filetype.to_s == "test" %>
@@ -69,10 +69,10 @@
         <% end %>
       </div>
       <p id="test_file_add_link">
-        <%= add_test_file_link t("test_framework.add_test_file_link"), f %>
+        <%= add_test_file_link t("automated_tests.add_test_file_link"), f %>
       </p>
 
-      <h4><%= t("test_framework.assignment_lib_files") %></h4>
+      <h4><%= t("automated_tests.assignment_lib_files") %></h4>
       <div id="lib_files">
         <%= f.fields_for :test_files do |tf| %>
           <% if tf.object.filetype.to_s == "lib" %>
@@ -81,10 +81,10 @@
         <% end %>
       </div>
       <p id="lib_file_add_link">
-        <%= add_lib_file_link t("test_framework.add_lib_file_link"), f %>
+        <%= add_lib_file_link t("automated_tests.add_lib_file_link"), f %>
       </p>
 
-      <h4><%= t("test_framework.assignment_parser_files") %></h4>
+      <h4><%= t("automated_tests.assignment_parser_files") %></h4>
       <div id="parser_files">
         <%= f.fields_for :test_files do |tf| %>
           <% if tf.object.filetype.to_s == "parse" %>
@@ -93,7 +93,7 @@
         <% end %>
       </div>
       <p id="parser_file_add_link">
-        <%= add_parser_file_link t("test_framework.add_parser_file_link"), f %>
+        <%= add_parser_file_link t("automated_tests.add_parser_file_link"), f %>
       </p>
 
     </div>

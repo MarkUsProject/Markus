@@ -5,13 +5,13 @@
 
   <% if f.object.id %>
     <%= text_field_tag 'test_file_' + f.object_id.to_s, f.object.filename, :readonly => "true" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <%= label_tag "replace_filename", I18n.t("test_framework.replace"), :class => "inline_label" %>
+    <%= label_tag "replace_filename", I18n.t("automated_tests.replace"), :class => "inline_label" %>
   <% end %>
 
   <%= f.file_field :filename, :size=>"30" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
   <% if file_type == "test" %>
-    <%= f.label :is_private, I18n.t("test_framework.private"), :class => "checkbox_label" %>
+    <%= f.label :is_private, I18n.t("automated_tests.private"), :class => "checkbox_label" %>
     <%= f.check_box :is_private %>
   <% end %>
 
