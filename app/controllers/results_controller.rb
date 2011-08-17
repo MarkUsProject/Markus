@@ -185,7 +185,8 @@ class ResultsController < ApplicationController
       flash[:file_download_error] = e.message
       redirect_to :action => 'edit',
                   :assignment_id => params[:assignment_id],
-                  :id => file.submission.result.id
+                  :submission_id => file.submission,
+                  :id => file.submission.result
       return
     end
     filename = file.filename

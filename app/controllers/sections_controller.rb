@@ -20,8 +20,10 @@ class SectionsController < ApplicationController
     if @section.save
       flash[:success] = I18n.t('section.create.success')
       redirect_to :action => 'index'
+      return
     else
       flash[:error] = I18n.t('section.create.error')
+      redirect_to 'new'
     end
   end
 

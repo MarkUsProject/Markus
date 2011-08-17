@@ -55,11 +55,6 @@ class GroupsControllerTest < AuthenticatedControllerTest
       assert respond_with :missing
     end
 
-    should "GET on :add_csv_group" do
-      get_as @student, :add_csv_group, :assignment_id => @assignment.id
-      assert respond_with :missing
-    end
-
     should "GET on :download_grouplist" do
       get_as @student, :download_grouplist, :assignment_id => @assignment.id
       assert respond_with :missing
@@ -72,12 +67,6 @@ class GroupsControllerTest < AuthenticatedControllerTest
       assert respond_with :missing
     end
 
-    should "GET on :create_groups_when_students_work_alone" do
-      get_as @student,
-             :create_groups_when_students_work_alone,
-             :assignment_id => @assignment.id
-      assert respond_with :missing
-    end
   end #student context
 
   context "An authenticated and authorized admin doing a " do
@@ -110,9 +99,9 @@ class GroupsControllerTest < AuthenticatedControllerTest
       assert respond_with :success
     end
 
-    should "GET on :manage" do
+    should "GET on :index" do
       get_as @admin,
-             :manage,
+             :index,
              :assignment_id => @assignment.id
       assert respond_with :success
     end

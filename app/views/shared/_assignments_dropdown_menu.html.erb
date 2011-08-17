@@ -1,9 +1,13 @@
 <% if @current_user.admin? %>
   <li class="level2">
-    <%= link_to I18n.t(:create_new_assignment), :controller => 'assignments', :action => 'new' %>
+    <%= link_to I18n.t(:create_new_assignment),
+		:controller => 'assignments',
+		:action => 'new' %>
   </li>
   <li class="level2">
-    <%= link_to I18n.t(:create_new_grade_entry_form), :controller => 'grade_entry_forms', :action => 'new' %>
+    <%= link_to I18n.t(:create_new_grade_entry_form),
+	        :controller => 'grade_entry_forms',
+		:action => 'new' %>
   </li>
   <li class="level2">
     <div class="clear"></div><br></br>
@@ -24,7 +28,10 @@
         </li>
       <% elsif @current_user.ta? %>
         <li class="level2">
-          <%= link_to h(assignment.short_identifier), :controller => 'submissions', :action => 'browse', :id => assignment.id %>
+          <%= link_to h(assignment.short_identifier),
+		      :controller => 'submissions',
+		      :action => 'browse',
+		      :assignment_id => assignment.id %>
 		</li>
       <% else %>
         <li class="level2">
