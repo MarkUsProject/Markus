@@ -26,7 +26,7 @@ class TestFrameworkController < ApplicationController
   end
 
   def manage
-    @assignment = Assignment.find_by_id(params[:assignment_id])
+    @assignment = Assignment.find(params[:assignment_id])
 
     # Create ant test files required by Testing Framework
     create_ant_test_files(@assignment)

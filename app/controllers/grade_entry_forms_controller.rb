@@ -56,11 +56,11 @@ class GradeEntryFormsController < ApplicationController
 
   # Edit the properties of a grade entry form
   def edit
-    @grade_entry_form = GradeEntryForm.find_by_id(params[:id])
+    @grade_entry_form = GradeEntryForm.find(params[:id])
   end
 
   def update
-    @grade_entry_form = GradeEntryForm.find_by_id(params[:id])
+    @grade_entry_form = GradeEntryForm.find(params[:id])
     # Process changes to input properties
     @grade_entry_form.transaction do
       if @grade_entry_form.update_attributes(params[:grade_entry_form])
