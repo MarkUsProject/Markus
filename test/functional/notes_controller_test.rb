@@ -201,14 +201,14 @@ class NotesControllerTest < AuthenticatedControllerTest
     end
 
     context "GET on :edit" do
-      should "for a note belonging to themselves" do
+      should "for a note belonging to themselves (get as TA)" do
         @note = Note.make(:creator_id => @ta.id)
         get_as @ta, :edit, {:id => @note.id}
         assert respond_with :success
         assert render_template 'edit.html.erb'
       end
 
-      should "for a note belonging to someone else" do
+      should "for a note belonging to someone else (get as TA)" do
         @note = Note.make
         get_as @ta, :edit, {:id => @note.id}
         assert respond_with :missing
@@ -241,7 +241,7 @@ class NotesControllerTest < AuthenticatedControllerTest
         end
       end
 
-      should "for a note belonging to someone else" do
+      should "for a note belonging to someone else (post as TA)" do
         @note = Note.make
         @new_message = "Changed message"
         post_as @ta,
@@ -260,7 +260,7 @@ class NotesControllerTest < AuthenticatedControllerTest
         assert set_the_flash.to(I18n.t('notes.delete.success'))
       end
 
-      should "for a note belonging to someone else" do
+      should "for a note belonging to someone else (delete as TA)" do
         @note = Note.make
         delete_as @ta,
                   :destroy,
@@ -406,14 +406,14 @@ class NotesControllerTest < AuthenticatedControllerTest
         assert render_template 'noteable_object_selector.rjs'
       end
 
-      should "for a note belonging to themselves" do
+      should "for a note belonging to themselves (get as Admin)" do
         @note = Note.make(:creator_id => @admin.id)
         get_as @admin, :edit, {:id => @note.id}
         assert respond_with :success
         assert render_template 'edit.html.erb'
       end
 
-      should "for a note belonging to someone else" do
+      should "for a note belonging to someone else (get as Admin)" do
         @note = Note.make( :creator_id => Ta.make.id  )
         get_as @admin, :edit, {:id => @note.id}
         assert respond_with :success
@@ -441,7 +441,7 @@ class NotesControllerTest < AuthenticatedControllerTest
         assert redirect_to(:controller => "note")
       end
 
-      should "for a note belonging to someone else" do
+      should "for a note belonging to someone else (post as Admin)" do
         @note = Note.make( :creator_id => Ta.make.id  )
         @new_message = "Changed message"
         post_as @admin,
@@ -452,14 +452,14 @@ class NotesControllerTest < AuthenticatedControllerTest
         assert redirect_to(:controller => "note")
       end
 
-      should "for a note belonging to themselves" do
+      should "for a note belonging to themselves (delete as Admin)" do
         @note = Note.make( :creator_id => @admin.id  )
         delete_as @admin, :destroy, {:id => @note.id}
         assert assign_to :note
         assert set_the_flash.to(I18n.t('notes.delete.success'))
       end
 
-      should "for a note belonging to someone else" do
+      should "for a note belonging to someone else (delete as Admin)" do
         @note = Note.make(:creator_id => Ta.make.id)
         delete_as @admin, :destroy, {:id => @note.id}
         assert assign_to :note

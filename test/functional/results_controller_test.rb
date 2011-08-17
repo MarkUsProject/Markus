@@ -132,15 +132,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
       assert respond_with :redirect
     end
 
-    should "not be able to add extra mark" do
-      post :add_extra_mark,
-           :assignment_id => 1,
-           :submission_id => 1,
-           :id => 1,
-           :extra_mark => 1
-      assert respond_with :redirect
-    end
-
     should "not be able to remove extra marks" do
       get :remove_extra_mark,
           :assignment_id => 1,
