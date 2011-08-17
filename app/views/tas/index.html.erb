@@ -29,7 +29,7 @@ document.observe("dom:loaded", function(){
 
 <div id="title_bar"><h1><%=h I18n.t("graders.manage_graders") %></h1>
   <div class="headingButtons">
-    <%= link_to I18n.t(:add_new), upload_ta_list_tas_path() %>
+    <%= link_to I18n.t(:add_new), new_ta_path() %>
     | <%= link_to_function I18n.t(:upload), 'modalUpload.open()' %>
     | <%= link_to_function I18n.t(:download), 'modalDownload.open()' %>
   </div>
