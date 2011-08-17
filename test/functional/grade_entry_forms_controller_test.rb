@@ -280,9 +280,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                       :message => @grade_entry_form.message,
                       :date => @grade_entry_form.date}}
       assert assign_to :grade_entry_form
-      assert_match Regexp.new(Regexp.escape(
-                        I18n.t('grade_entry_forms.blank_field'))),
-                        @response.body
+      assert set_the_flash.to(
+                        I18n.t('grade_entry_forms.blank_field'))
       assert respond_with :success
     end
 
@@ -295,78 +294,61 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                   :message => @grade_entry_form.message,
                   :date => "abcd"}
       assert assign_to :grade_entry_form
-      assert_match Regexp.new(I18n.t('grade_entry_forms.invalid_date')),
-                   @response.body
+      assert set_the_flash.to(I18n.t('grade_entry_forms.edit.success'))
       assert respond_with :success
     end
 
     # Test valid and invalid values for basic properties for :edit
-    context "POST on :edit with basic valid properties" do
-      setup do
-        post_as @admin, :edit, {:id => @grade_entry_form.id,
-                                :grade_entry_form => {:short_identifier => NEW_SHORT_IDENTIFIER,
-                                                     :description => NEW_DESCRIPTION,
-                                                     :message => NEW_MESSAGE,
-                                                     :date => @grade_entry_form.date}}
-      end
-      should assign_to :grade_entry_form
-      should set_the_flash.to(I18n.t('grade_entry_forms.edit.success'))
-      should respond_with :redirect
+    should "POST on :edit with basic valid properties" do
+      put_as @admin, :update, {:id => @grade_entry_form.id,
+                              :grade_entry_form => {:short_identifier => NEW_SHORT_IDENTIFIER,
+                                                    :description => NEW_DESCRIPTION,
+                                                    :message => NEW_MESSAGE,
+                                                    :date => @grade_entry_form.date}}
+      assert assign_to :grade_entry_form
+      assert set_the_flash.to(I18n.t('grade_entry_forms.edit.success'))
+      assert respond_with :redirect
 
-      should "verify that the property values were actually updated" do
-        g = GradeEntryForm.find(@grade_entry_form.id)
-        assert_equal NEW_SHORT_IDENTIFIER, g.short_identifier
-        assert_equal NEW_DESCRIPTION, g.description
-        assert_equal NEW_MESSAGE, g.message
-      end
+      g = GradeEntryForm.find(@grade_entry_form.id)
+      assert_equal NEW_SHORT_IDENTIFIER, g.short_identifier
+      assert_equal NEW_DESCRIPTION, g.description
+      assert_equal NEW_MESSAGE, g.message
     end
 
-    context "POST on :edit with missing required value" do
-      setup do
-        post_as @admin, :edit, {:id => @grade_entry_form.id,
-                                :grade_entry_form => {:short_identifier => "",
-                                                     :description => NEW_DESCRIPTION,
-                                                     :message => NEW_MESSAGE,
-                                                     :date => NEW_DATE}}
-      end
-      should assign_to :grade_entry_form
-      should respond_with :success
+    should "POST on :edit with missing required value" do
+      post_as @admin, :edit, {:id => @grade_entry_form.id,
+                              :grade_entry_form => {:short_identifier => "",
+                                                    :description => NEW_DESCRIPTION,
+                                                    :message => NEW_MESSAGE,
+                                                    :date => NEW_DATE}}
+      assert assign_to :grade_entry_form
+      assert respond_with :success
 
-      should "verify that the error message made it to the response" do
-        assert_match Regexp.new(Regexp.escape(I18n.t('grade_entry_forms.blank_field'))), @response.body
-      end
+      assert set_the_flash.to(I18n.t('grade_entry_forms.blank_field'))
 
-      should "verify that the property values were not updated" do
-        g = GradeEntryForm.find(@grade_entry_form.id)
-        assert_equal @original.short_identifier, g.short_identifier
-        assert_equal @original.description, g.description
-        assert_equal @original.message, g.message
-        assert_equal @original.date, g.date
-      end
+      g = GradeEntryForm.find(@grade_entry_form.id)
+      assert_equal @original.short_identifier, g.short_identifier
+      assert_equal @original.description, g.description
+      assert_equal @original.message, g.message
+      assert_equal @original.date, g.date
     end
 
-    context "POST on :edit with invalid basic value" do
-      setup do
-        post_as @admin, :edit, {:id => @grade_entry_form.id,
-                                :grade_entry_form => {:short_identifier => NEW_SHORT_IDENTIFIER,
-                                                     :description => NEW_DESCRIPTION,
-                                                     :message => NEW_MESSAGE,
-                                                     :date => "abc"}}
-      end
-      should assign_to :grade_entry_form
-      should respond_with :success
+    should "POST on :edit with invalid basic value" do
+      post_as @admin, :edit, {:id => @grade_entry_form.id,
+                              :grade_entry_form => {:short_identifier => NEW_SHORT_IDENTIFIER,
+                                                    :description => NEW_DESCRIPTION,
+                                                    :message => NEW_MESSAGE,
+                                                    :date => "abc"}}
+      assert assign_to :grade_entry_form
+      assert respond_with :success
 
-      should "verify that the error message made it to the response" do
-        assert_match Regexp.new(I18n.t('grade_entry_forms.invalid_date')), @response.body
-      end
-
-      should "verify that the property values were not updated" do
-        g = GradeEntryForm.find(@grade_entry_form.id)
-        assert_equal @original.short_identifier, g.short_identifier
-        assert_equal @original.description, g.description
-        assert_equal @original.message, g.message
-        assert_equal @original.date, g.date
-      end
+      assert set_the_flash.to(
+                I18n.t('grade_entry_forms.invalid_date'))
+      g = GradeEntryForm.find(@grade_entry_form.id)
+      assert_equal @original.short_identifier, g.short_identifier
+      assert_equal @original.description, g.description
+      assert_equal @original.message, g.message
+      assert_equal @original.date, g.date
     end
 
     # Test valid and invalid values for GradeEntryItems for :new
@@ -379,30 +361,26 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         @q3 = GradeEntryItem.new(:name => grade_entry_items[2].name, :out_of => grade_entry_items[2].out_of)
       end
 
-      context ":new with valid properties, including 1 GradeEntryItem" do
-        setup do
-          post_as @admin, :new, { :grade_entry_form => {:short_identifier => "NT",
-                                                        :description => @grade_entry_form.description,
-                                                        :message => @grade_entry_form.message,
-                                                        :date => @grade_entry_form.date,
-                                                        :grade_entry_items => [@q1]}}
-        end
-        should assign_to :grade_entry_form
-        should set_the_flash.to(I18n.t('grade_entry_forms.create.success'))
-        should respond_with :redirect
+      should ":new with valid properties, including 1 GradeEntryItem" do
+        post_as @admin, :create, { :grade_entry_form => {:short_identifier => "NT",
+                                                      :description => @grade_entry_form.description,
+                                                      :message => @grade_entry_form.message,
+                                                      :date => @grade_entry_form.date,
+                                                      :grade_entry_items => [@q1]}}
+        assert assign_to :grade_entry_form
+        assert set_the_flash.to(I18n.t('grade_entry_forms.create.success'))
+        assert respond_with :redirect
       end
 
-      context ":new with valid properties, including multiple GradeEntryItems" do
-        setup do
-          post_as @admin, :new, {:grade_entry_form => {:short_identifier => "NT",
-                                                       :description => @grade_entry_form.description,
-                                                       :message => @grade_entry_form.message,
-                                                       :date => @grade_entry_form.date,
-                                                       :grade_entry_items => [@q1, @q2, @q3]}}
-        end
-        should assign_to :grade_entry_form
-        should set_the_flash.to(I18n.t('grade_entry_forms.create.success'))
-        should respond_with :redirect
+      should ":new with valid properties, including multiple GradeEntryItems" do
+        post_as @admin, :create, {:grade_entry_form => {:short_identifier => "NT",
+                                                      :description => @grade_entry_form.description,
+                                                      :message => @grade_entry_form.message,
+                                                      :date => @grade_entry_form.date,
+                                                      :grade_entry_items => [@q1, @q2, @q3]}}
+        assert assign_to :grade_entry_form
+        assert set_the_flash.to(I18n.t('grade_entry_forms.create.success'))
+        assert respond_with :redirect
       end
 
       should ":new with missing GradeEntryItem name" do
@@ -419,9 +397,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
 
         # Need to escape the I18n string because there is a '(e)' in French for
         # example
-        assert_match Regexp.new(Regexp.escape(
-                          I18n.t('grade_entry_forms.blank_field'))),
-                     @response.body
+        assert set_the_flash.to(I18n.t('grade_entry_forms.blank_field'))
         assert respond_with :success
       end
 
@@ -436,9 +412,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                         :date => @grade_entry_form.date,
                         :grade_entry_items => [@q1, @q2]}}
         assert assign_to :grade_entry_form
-        assert_match Regexp.new(
-                        I18n.t('grade_entry_forms.invalid_column_out_of')),
-                     @response.body
+        assert set_the_flash.to(
+                        I18n.t('grade_entry_forms.invalid_column_out_of'))
         assert respond_with :success
       end
 
@@ -480,7 +455,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
 
       should ":edit with valid properties, including multiple GradeEntryItems" do
         put_as @admin,
-              :create,
+              :update,
               :id => @grade_entry_form.id,
               :grade_entry_form => {
                     :short_identifier => NEW_SHORT_IDENTIFIER,
@@ -499,56 +474,46 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         assert_equal [@q1, @q2, @q3], g.grade_entry_items
       end
 
-      context ":edit with missing GradeEntryItem name" do
-        setup do
-          @q1.name = ""
-          post_as @admin, :edit, {:id => @grade_entry_form.id,
-                                  :grade_entry_form => {:short_identifier => NEW_SHORT_IDENTIFIER,
-                                                        :description => NEW_DESCRIPTION,
-                                                        :message => NEW_MESSAGE,
-                                                        :date => @grade_entry_form.date,
-                                                        :grade_entry_items => [@q1, @q2]}}
-        end
-        should assign_to :grade_entry_form
-        should respond_with :success
+      should ":edit with missing GradeEntryItem name" do
+        @q1.name = ""
+        post_as @admin, :edit, {:id => @grade_entry_form.id,
+                                :grade_entry_form => {:short_identifier => NEW_SHORT_IDENTIFIER,
+                                                      :description => NEW_DESCRIPTION,
+                                                      :message => NEW_MESSAGE,
+                                                      :date => @grade_entry_form.date,
+                                                      :grade_entry_items => [@q1, @q2]}}
+        assert assign_to :grade_entry_form
+        assert respond_with :success
 
-        should "verify that the error message made it to the response" do
-          assert_match Regexp.new(Regexp.escape(I18n.t('grade_entry_forms.blank_field'))), @response.body
-        end
+        assert set_the_flash.to(
+                    I18n.t('grade_entry_forms.blank_field'))
 
-        should "verify that the property values were not updated" do
-          g = GradeEntryForm.find(@grade_entry_form.id)
-          assert_equal @original.short_identifier, g.short_identifier
-          assert_equal @original.description, g.description
-          assert_equal @original.message, g.message
-          assert_equal [], g.grade_entry_items
-        end
+        g = GradeEntryForm.find(@grade_entry_form.id)
+        assert_equal @original.short_identifier, g.short_identifier
+        assert_equal @original.description, g.description
+        assert_equal @original.message, g.message
+        assert_equal [], g.grade_entry_items
       end
 
-      context ":edit with invalid GradeEntryItem out_of" do
-        setup do
-          @q1.out_of = -10
-          post_as @admin, :edit, {:id => @grade_entry_form.id,
-                                  :grade_entry_form => {:short_identifier => NEW_SHORT_IDENTIFIER,
-                                                        :description => NEW_DESCRIPTION,
-                                                        :message => NEW_MESSAGE,
-                                                        :date => @grade_entry_form.date,
-                                                        :grade_entry_items => [@q1, @q2]}}
-        end
-        should assign_to :grade_entry_form
-        should respond_with :success
+      should ":edit with invalid GradeEntryItem out_of" do
+        @q1.out_of = -10
+        post_as @admin, :edit, {:id => @grade_entry_form.id,
+                                :grade_entry_form => {:short_identifier => NEW_SHORT_IDENTIFIER,
+                                                      :description => NEW_DESCRIPTION,
+                                                      :message => NEW_MESSAGE,
+                                                      :date => @grade_entry_form.date,
+                                                      :grade_entry_items => [@q1, @q2]}}
+        assert assign_to :grade_entry_form
+        assert respond_with :success
 
-        should "verify that the error message made it to the response" do
-          assert_match Regexp.new(I18n.t('grade_entry_forms.invalid_column_out_of')), @response.body
-        end
+        assert set_the_flash.to(
+                  I18n.t('grade_entry_forms.invalid_column_out_of'))
 
-        should "verify that the property values were not updated" do
-          g = GradeEntryForm.find(@grade_entry_form.id)
-          assert_equal @original.short_identifier, g.short_identifier
-          assert_equal @original.description, g.description
-          assert_equal @original.message, g.message
-          assert_equal @original.grade_entry_items, g.grade_entry_items
-        end
+        g = GradeEntryForm.find(@grade_entry_form.id)
+        assert_equal @original.short_identifier, g.short_identifier
+        assert_equal @original.description, g.description
+        assert_equal @original.message, g.message
+        assert_equal @original.grade_entry_items, g.grade_entry_items
       end
 
       should ":edit with zero-value GradeEntryItem out_of" do
@@ -594,7 +559,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         should respond_with :success
 
         should "verify that the error message made it to the response" do
-          assert_match Regexp.new(I18n.t('grade_entry_forms.invalid_name')), @response.body
+          assert set_the_flash.to(
+                    I18n.t('grade_entry_forms.invalid_name'))
         end
 
         should "verify that the property values were not updated" do
