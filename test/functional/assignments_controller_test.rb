@@ -87,8 +87,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
       should "edit basic paramaters" do
-        post_as @admin,
-                :edit,
+        put_as @admin,
+                :update,
                 :id => @assignment.id,
                 :assignment => {
                   :short_identifier => 'New SI',
@@ -108,10 +108,10 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
       should "not be able to edit with invalid assignment" do
-        post_as @admin,
-                :edit,
-                :id => @assignment.id,
-                :assignment => {
+        put_as @admin,
+               :update,
+               :id => @assignment.id,
+               :assignment => {
                   :short_identifier => '',
                   :description => 'New Description',
                   :message => 'New Message',
@@ -129,8 +129,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
       should "not be able to edit with invalid submission rules" do
-        post_as @admin,
-                :edit,
+        put_as @admin,
+                :update,
                 :id => @assignment.id,
                 :assignment => {
                   :short_identifier => 'New SI',
@@ -152,8 +152,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
       should "be able to add periods to submission rule class" do
-        post_as @admin,
-                :edit,
+        put_as @admin,
+                :update,
                 {:id => @assignment.id,
                  :assignment => {
                    :short_identifier => 'New SI',
@@ -186,8 +186,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
       should "be able to set instructor forms groups" do
-        post_as @admin,
-                :edit,
+        put_as @admin,
+                :update,
                 {:id => @assignment.id,
                  :assignment => {
                    :description => 'New Description',
@@ -284,8 +284,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         end
 
         should "be able to remove required files" do
-          post_as @admin,
-                  :edit,
+          put_as @admin,
+                  :update,
                   :id => @assignment.id,
                   :assignment => {
                       :short_identifier => @assignment.short_identifier,
@@ -762,7 +762,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           assert_raise RuntimeError do
             post_as @student,
                     :delete_rejected,
-                    {:id => @assignment.id, :membership => @sm.id}
+                    :id => @assignment.id,
+                    :membership => @sm.id
           end
           assert_nothing_raised do
             membership = StudentMembership.find(@sm.id)
@@ -893,7 +894,9 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
       should "have the create group link available" do
-        get_as @student, :student_interface, :id => @assignment.id
+        get_as @student,
+               :student_interface,
+               :id => @assignment.id
         assert_not_nil (response.body =~ /<a[^>]*>#{I18n.t(:create)}<\/a>/)
       end
 

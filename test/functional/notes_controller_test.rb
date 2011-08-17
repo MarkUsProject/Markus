@@ -1,12 +1,12 @@
 # test using MACHINIST
 
-require File.dirname(__FILE__) + '/../test_helper'
-require File.join(File.dirname(__FILE__), '/../blueprints/blueprints')
+require File.join(File.dirname(__FILE__), '..', 'test_helper')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints')
 require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
-require File.dirname(__FILE__) + '/authenticated_controller_test'
+require File.join(File.dirname(__FILE__), 'authenticated_controller_test')
 require 'shoulda'
 
-class NoteControllerTest < AuthenticatedControllerTest
+class NotesControllerTest < AuthenticatedControllerTest
 
   def setup
     clear_fixtures
@@ -18,81 +18,59 @@ class NoteControllerTest < AuthenticatedControllerTest
       @student = Student.make
     end
 
-    context "GET on :notes_dialog" do
-      setup do
-        get_as @student, :notes_dialog
-      end
-      should respond_with :missing
+    should "get on notes_dialog" do
+      get_as @student, :notes_dialog, :id => 1
+      assert respond_with :missing
     end
 
-    context "POST on :notes_dialog" do
-      setup do
-        post_as @student, :notes_dialog
-      end
-      should respond_with :missing
+    should " on notes_dialog" do
+      post_as @student, :notes_dialog, :id => 1
+      assert respond_with :missing
     end
 
-    context "GET on :add_note" do
-      setup do
-        get_as @student, :add_note
-      end
-      should respond_with :missing
+    should "GET on :add_note" do
+      get_as @student, :add_note
+      assert respond_with :missing
     end
 
-    context "POST on :add_note" do
-      setup do
-        post_as @student, :add_note
-      end
-      should respond_with :missing
+    should "POST on :add_note" do
+      post_as @student, :add_note
+      assert respond_with :missing
     end
 
-    context "GET on :index" do
-      setup do
-        get_as @student, :index
-      end
-      should respond_with :missing
+    should "GET on :index" do
+      get_as @student, :index
+      assert respond_with :missing
     end
 
-    context "GET on :new" do
-      setup do
-        get_as @student, :new
-      end
-      should respond_with :missing
+    should "GET on :new" do
+      get_as @student, :new
+      assert respond_with :missing
     end
 
-    context "POST on :create" do
-      setup do
-        post_as @student, :create
-      end
-      should respond_with :missing
+    should "POST on :create" do
+      post_as @student, :create
+      assert respond_with :missing
     end
 
-    context "GET on :new_update_groupings" do
-      setup do
-        get_as @student, :new_update_groupings
-      end
-      should respond_with :missing
+    should "GET on :new_update_groupings" do
+      get_as @student, :new_update_groupings
+      assert respond_with :missing
     end
 
-    context "GET on :edit" do
-      setup do
-        get_as @student, :edit
-      end
-      should respond_with :missing
+    should "GET on :edit" do
+      get_as @student, :edit, :id => 1
+      assert respond_with :missing
     end
 
-    context "POST on :update" do
-      setup do
-        post_as @student, :update
-      end
-      should respond_with :missing
+    should "POST on :update" do
+      put_as @student, :update, :id => 1
+      assert respond_with :missing
     end
 
-    context "DELETE on :delete" do
-      setup do
-        get_as @student, :delete
-      end
-      should respond_with :missing
+    should "DELETE on :destroy" do
+      delete_as @student, :destroy, :id => 1
+      assert respond_with :missing
     end
   end # student context
 
@@ -125,7 +103,7 @@ class NoteControllerTest < AuthenticatedControllerTest
               :noteable_id => @grouping.id,
               :controller_to => @controller_to,
               :action_to => @action_to
-     assert render_template 'note/modal_dialogs/notes_dialog_success.rjs'
+      assert render_template 'note/modal_dialogs/notes_dialog_success.rjs'
     end
 
     should "be able to add new notes with an invalid note" do
@@ -223,14 +201,14 @@ class NoteControllerTest < AuthenticatedControllerTest
     end
 
     context "GET on :edit" do
-      should "for a note belonging to themselves" do
+      should "for a note belonging to themselves (get as TA)" do
         @note = Note.make(:creator_id => @ta.id)
         get_as @ta, :edit, {:id => @note.id}
         assert respond_with :success
         assert render_template 'edit.html.erb'
       end
 
-      should "for a note belonging to someone else" do
+      should "for a note belonging to someone else (get as TA)" do
         @note = Note.make
         get_as @ta, :edit, {:id => @note.id}
         assert respond_with :missing
@@ -263,7 +241,7 @@ class NoteControllerTest < AuthenticatedControllerTest
         end
       end
 
-      should "for a note belonging to someone else" do
+      should "for a note belonging to someone else (post as TA)" do
         @note = Note.make
         @new_message = "Changed message"
         post_as @ta,
@@ -274,17 +252,19 @@ class NoteControllerTest < AuthenticatedControllerTest
       end
     end
 
-    context "DELETE on :delete" do
+    context "DELETE on :destroy" do
       should "for a note belonging to themselves" do
         @note = Note.make( :creator_id => @ta.id )
-        delete_as @ta, :delete, {:id => @note.id}
+        delete_as @ta, :destroy, :id => @note.id
         assert assign_to :note
         assert set_the_flash.to(I18n.t('notes.delete.success'))
       end
 
-      should "for a note belonging to someone else" do
+      should "for a note belonging to someone else (delete as TA)" do
         @note = Note.make
-        delete_as @ta, :delete, {:id => @note.id}
+        delete_as @ta,
+                  :destroy,
+                  :id => @note.id
         assert assign_to :note
         assert set_the_flash.to(I18n.t('notes.delete.error_permissions'))
       end
@@ -293,26 +273,70 @@ class NoteControllerTest < AuthenticatedControllerTest
 
   context "An authenticated and authorized admin doing a " do
     setup do
-      @grouping = Grouping.make
-      @assignment = @grouping.assignment
-      @controller_to = 'groups'
-      @action_to = 'manage'
-      @message = "This is a note"
       @admin = Admin.make
     end
 
-    should "GET on :notes_dialog" do
-      get_as @admin,
-             :notes_dialog,
-             :id => @assignment.id,
-             :noteable_type => 'Grouping',
-             :noteable_id => @grouping.id,
-             :controller_to => @controller_to,
-             :action_to => @action_to
+    should "be able to get the index" do
+      get_as @admin, :index
+      assert respond_with :success
+      assert render_template 'index.html.erb'
+    end
+
+    should "to go on new" do
+      get_as @admin, :new
       assert respond_with :success
     end
 
-    context "POST on :add_notes" do
+    should "for Students" do
+      get_as @admin, :noteable_object_selector, :noteable_type => 'Student'
+      assert assign_to :students
+      assert_nil assigns(:assignments)
+      assert_nil assigns(:groupings)
+      assert respond_with :success
+      assert render_template 'noteable_object_selector.rjs'
+    end
+
+    should "for Assignments" do
+      get_as @admin,
+              :noteable_object_selector,
+              :noteable_type => 'Assignment'
+      assert assign_to :assignments
+      assert_nil assigns(:students)
+      assert_nil assigns :groupings
+      assert respond_with :success
+      assert render_template 'noteable_object_selector.rjs'
+    end
+
+    should "for invalid type" do
+      get_as @admin, :noteable_object_selector, :noteable_type => 'gibberish'
+      assert set_the_flash.to(I18n.t('notes.new.invalid_selector'))
+      assert assign_to :assignments
+      assert assign_to :groupings
+      assert_nil assigns :students
+      assert respond_with :success
+      assert render_template 'noteable_object_selector.rjs'
+    end
+
+    context "with an assignment" do
+      setup do
+        @grouping = Grouping.make
+        @assignment = @grouping.assignment
+        @controller_to = 'groups'
+        @action_to = 'manage'
+        @message = "This is a note"
+      end
+
+      should "GET on :notes_dialog" do
+        get_as @admin,
+              :notes_dialog,
+              :id => @assignment.id,
+              :noteable_type => 'Grouping',
+              :noteable_id => @grouping.id,
+              :controller_to => @controller_to,
+              :action_to => @action_to
+        assert respond_with :success
+      end
+
       should "with a valid note" do
         post_as @admin,
                 :add_note,
@@ -324,7 +348,7 @@ class NoteControllerTest < AuthenticatedControllerTest
         assert render_template 'note/modal_dialogs/notes_dialog_success.rjs'
       end
 
-     should "with an invalid note" do
+      should "with an invalid note" do
         post_as @admin,
                 :add_note,
                 :new_notes => '',
@@ -334,26 +358,12 @@ class NoteControllerTest < AuthenticatedControllerTest
                 :action_to => @action_to
         assert render_template 'note/modal_dialogs/notes_dialog_error.rjs'
       end
-    end
 
-
-    should "GET on :index" do
-      get_as @admin, :index
-      assert respond_with :success
-      assert render_template 'index.html.erb'
-    end
-
-    should "GET on :new" do
-      get_as @admin, :new
-      assert respond_with :success
-    end
-
-    context "POST on :create" do
       should "with empty note" do
         post_as @admin,
                 :create,
                 {:noteable_type => 'Grouping',
-                 :note => {:noteable_id => @grouping.id}}
+                  :note => {:noteable_id => @grouping.id}}
         assert_not_nil assigns :note
         assert_equal 0, flash.size
         assert assign_to :assignments
@@ -363,7 +373,7 @@ class NoteControllerTest < AuthenticatedControllerTest
       end
 
 
-     {:Grouping => lambda {Grouping.make},
+      {:Grouping => lambda {Grouping.make},
       :Student => lambda {Student.make},
       :Assignment => lambda {Assignment.make} }.each_pair do |type, noteable|
 
@@ -372,23 +382,21 @@ class NoteControllerTest < AuthenticatedControllerTest
           post_as @admin,
                   :create,
                   {:noteable_type => type.to_s,
-                   :note => {:noteable_id => noteable.call().id,
-                             :notes_message => @message}}
+                    :note => {:noteable_id => noteable.call().id,
+                              :notes_message => @message}}
           assert assign_to :note
           assert set_the_flash.to(I18n.t('notes.create.success'))
           assert redirect_to(:controller => "note")
-	        assert_equal(@notes + 1,  Note.count )
+          assert_equal(@notes + 1,  Note.count )
         end
       end
-    end
 
-    should "GET on :new_update_groupings" do
-      get_as @admin, :new_update_groupings, :assignment_id => @assignment.id
-      assert respond_with :success
-      assert render_template 'new_update_groupings.rjs'
-    end
+      should "GET on :new_update_groupings" do
+        get_as @admin, :new_update_groupings, :assignment_id => @assignment.id
+        assert respond_with :success
+        assert render_template 'new_update_groupings.rjs'
+      end
 
-    context "GET on :noteable_object_selector" do
       should "for Groupings" do
         get_as @admin, :noteable_object_selector, :noteable_type => 'Grouping'
         assert assign_to :assignments
@@ -398,78 +406,42 @@ class NoteControllerTest < AuthenticatedControllerTest
         assert render_template 'noteable_object_selector.rjs'
       end
 
-      should "for Students" do
-        get_as @admin, :noteable_object_selector, :noteable_type => 'Student'
-        assert assign_to :students
-        assert_nil assigns(:assignments)
-        assert_nil assigns(:groupings)
-        assert respond_with :success
-        assert render_template 'noteable_object_selector.rjs'
-      end
-
-      should "for Assignments" do
-        get_as @admin,
-                :noteable_object_selector,
-                :noteable_type => 'Assignment'
-        assert assign_to :assignments
-        assert_nil assigns(:students)
-        assert_nil assigns :groupings
-        assert respond_with :success
-        assert render_template 'noteable_object_selector.rjs'
-      end
-
-      should "for invalid type" do
-        get_as @admin, :noteable_object_selector, :noteable_type => 'gibberish'
-        assert set_the_flash.to(I18n.t('notes.new.invalid_selector'))
-        assert assign_to :assignments
-        assert assign_to :groupings
-        assert_nil assigns :students
-        assert respond_with :success
-        assert render_template 'noteable_object_selector.rjs'
-      end
-    end
-
-    context "GET on :edit" do
-      should "for a note belonging to themselves" do
+      should "for a note belonging to themselves (get as Admin)" do
         @note = Note.make(:creator_id => @admin.id)
         get_as @admin, :edit, {:id => @note.id}
         assert respond_with :success
         assert render_template 'edit.html.erb'
       end
 
-      should "for a note belonging to someone else" do
+      should "for a note belonging to someone else (get as Admin)" do
         @note = Note.make( :creator_id => Ta.make.id  )
         get_as @admin, :edit, {:id => @note.id}
         assert respond_with :success
         assert render_template 'edit.html.erb'
       end
-    end
 
-    context "POST on :update" do
-      context "for a note belonging to themselves" do
-        should "with bad data" do
-          @note = Note.make(:creator_id => @admin.id)
-          post_as @admin,
-                  :update, {:id => @note.id, :note => {:notes_message => ''}}
-          assert assign_to :note
-          assert_equal 0, flash.size
-          assert render_template 'edit.html.erb'
-        end
-
-        should "with good data" do
-          @note = Note.make( :creator_id => @admin.id  )
-          @new_message = "Changed message"
-          post_as @admin,
-                  :update,
-                  {:id => @note.id,
-                   :note => {:notes_message => @new_message}}
-          assert assign_to :note
-          assert set_the_flash.to(I18n.t('notes.update.success'))
-          assert redirect_to(:controller => "note")
-        end
+      should "with bad data" do
+        @note = Note.make(:creator_id => @admin.id)
+        post_as @admin,
+                :update, {:id => @note.id, :note => {:notes_message => ''}}
+        assert assign_to :note
+        assert_equal 0, flash.size
+        assert render_template 'edit.html.erb'
       end
 
-      should "for a note belonging to someone else" do
+      should "with good data" do
+        @note = Note.make( :creator_id => @admin.id  )
+        @new_message = "Changed message"
+        post_as @admin,
+                :update,
+                {:id => @note.id,
+                  :note => {:notes_message => @new_message}}
+        assert assign_to :note
+        assert set_the_flash.to(I18n.t('notes.update.success'))
+        assert redirect_to(:controller => "note")
+      end
+
+      should "for a note belonging to someone else (post as Admin)" do
         @note = Note.make( :creator_id => Ta.make.id  )
         @new_message = "Changed message"
         post_as @admin,
@@ -479,27 +451,20 @@ class NoteControllerTest < AuthenticatedControllerTest
         assert set_the_flash.to(I18n.t('notes.update.success'))
         assert redirect_to(:controller => "note")
       end
-    end
 
-    context "DELETE on :delete" do
-      context "for a note belonging to themselves" do
-        setup do
-          @note = Note.make( :creator_id => @admin.id  )
-          delete_as @admin, :delete, {:id => @note.id}
-        end
-        should assign_to :note
-        should set_the_flash.to(I18n.t('notes.delete.success'))
+      should "for a note belonging to themselves (delete as Admin)" do
+        @note = Note.make( :creator_id => @admin.id  )
+        delete_as @admin, :destroy, {:id => @note.id}
+        assert assign_to :note
+        assert set_the_flash.to(I18n.t('notes.delete.success'))
       end
 
-      context "for a note belonging to someone else" do
-        setup do
-          @note = Note.make( :creator_id => Ta.make.id  )
-          delete_as @admin, :delete, {:id => @note.id}
-        end
-        should assign_to :note
-        should set_the_flash.to(I18n.t('notes.delete.success'))
+      should "for a note belonging to someone else (delete as Admin)" do
+        @note = Note.make(:creator_id => Ta.make.id)
+        delete_as @admin, :destroy, {:id => @note.id}
+        assert assign_to :note
+        assert set_the_flash.to(I18n.t('notes.delete.success'))
       end
     end
   end # admin context
-
 end

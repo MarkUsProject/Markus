@@ -63,12 +63,6 @@ module Api
 
     # Requires user_name, first_name, last_name [, new_user_name]
     def update
-      if !request.put?
-        # pretend this URL does not exist
-        render :file => ::Rails.root.to_s + "/public/404.html", :status => 404
-        return
-      end
-
       if !has_required_http_params?(params)
         # incomplete/invalid HTTP params
         render :file => ::Rails.root.to_s + "/public/422.xml", :status => 422

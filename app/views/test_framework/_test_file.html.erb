@@ -4,7 +4,7 @@
   <%= f.label :filename, t(:filename) %>
 
   <% if f.object.id %>
-    <%= text_field_tag 'test_file_' + f.id.to_s, f.object.filename, :readonly => "true" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <%= text_field_tag 'test_file_' + f.object_id.to_s, f.object.filename, :readonly => "true" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <%= label_tag "replace_filename", I18n.t("test_framework.replace"), :class => "inline_label" %>
   <% end %>
 
@@ -17,7 +17,7 @@
 
   <% if !f.object.new_record? %>
     <%= f.label :_destroy, I18n.t(:remove), :class => "checkbox_label" %>
-	<%= f.check_box :_destroy %>
+    <%= f.check_box :_destroy %>
   <% else %>
     <%= link_to_function I18n.t(:remove), "$(this).up('.test_file').remove()" %>
   <% end %>

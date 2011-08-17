@@ -19,7 +19,7 @@ Markus::Application.configure do
   # set to false to turn off traces
   config.action_view.debug_rjs                         = true
   config.action_controller.perform_caching             = true
-  config.action_view.cache_template_loading            = true
+  config.cache_classes                                 = true
 
   # Use a different cache store in production
   # config.cache_store = :mem_cache_store # place where to put cached files is configured in config/environment.rb

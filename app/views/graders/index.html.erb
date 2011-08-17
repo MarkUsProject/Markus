@@ -74,10 +74,10 @@ document.observe("dom:loaded", function(){
   <div class="colRightGroups">
       <div class="headingButtons">
       <%= button_to_remote I18n.t("download"),
-        :url => { :action => 'download_dialog' , :id => @assignment.id }%>
+        :url => download_dialog_assignment_graders_path(@assignment) %>
       <span class="menu_bar">|</span>
       <%= button_to_remote I18n.t("upload"),
-        :url => { :action => 'upload_dialog', :id => @assignment.id }%>
+        :url => upload_dialog_assignment_graders_path(@assignment) %>
     </div> <!-- rightjustify-->
   </div> <!-- colrightgroups-->
 
@@ -130,10 +130,11 @@ document.observe("dom:loaded", function(){
 
 </div><!-- Notice -->
 
-<%= form_remote_tag :url => {:controller => "graders",
-  :action => "global_actions", :id => @assignment.id},
-  :html => {:id => "global_action_form"}, :loading => "thinking();",
-  :complete => "done_thinking();" do %>
+<%= form_remote_tag :url => global_actions_assignment_graders_path(
+                                @assignment),
+                    :html => {:id => "global_action_form"},
+                    :loading => "thinking();",
+                    :complete => "done_thinking();" do %>
 
 <%= hidden_field_tag 'submit_type', 'global_action', :id => 'submit_type' %>
 <%= hidden_field_tag 'current_table', 'groups_table', :id => 'current_table' %>

@@ -187,15 +187,22 @@ document.observe("dom:loaded", function() {
     }
   });
 
-  <%= remote_function :url => {:action => 'populate_graders', :id => @assignment.id}, :complete => "$('loading_graders_list').hide();"%>
+  <%= remote_function :url => populate_graders_assignment_graders_path(
+                                  @assignment),
+                      :complete => "$('loading_graders_list').hide();" %>
   <% if !@assignment.assign_graders_to_criteria %>
     $('criteria').hide();
     $('search_criteria').hide();
     $('search_criteria_label').hide();
-    <%= remote_function :url => {:action => 'populate', :id => @assignment.id}, :complete => "$('loading_list').hide();" %>
+    <%= remote_function :url => populate_assignment_graders_path(
+                                    @assignment),
+                        :complete => "$('loading_list').hide();" %>
   <% else %>
-    <%= remote_function :url => {:action => 'populate', :id => @assignment.id}, :complete => "$('loading_list').hide();"  %>
-    <%= remote_function :url => {:action => 'populate_criteria', :id => @assignment.id}%>
+    <%= remote_function populate_assignment_graders_path(
+                                    @assignment),
+                        :complete => "$('loading_list').hide();"  %>
+    <%= remote_function populate_criteria_assignment_graderspath(
+                                    @assignment) %>
   <% end %>
 });
 

@@ -25,7 +25,7 @@ function make_new_group() {
       return false;
    } else {
      <%= remote_function(
-       :url  => { :action => 'add_group', :id => @assignment.id})
+       :url => new_assignment_group_path(@assignment.id))
      %>
    }
 }
@@ -37,7 +37,7 @@ function submit_new_group(new_group_name) {
   //send AJAX request
   <%=
  remote_function(
-    :url  => { :action => 'add_group', :id => @assignment.id},
+    :url  => new_assignment_group_path(@assignment),
     :with => "'&new_group_name=' + new_group_name")
   %>
 }
@@ -65,7 +65,7 @@ function submit_assignment_group_use(clone_groups_assignment_id) {
   //send AJAX request
   <%=
  remote_function(
-    :url  => { :action => 'use_another_assignment_groups', :id => @assignment.id},
+    :url  => use_another_assignment_groups_assignment_groups_path(@assignment),
     :with => "'&clone_groups_assignment_id=' + clone_groups_assignment_id")
   %>
 

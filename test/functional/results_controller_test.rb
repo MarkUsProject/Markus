@@ -21,98 +21,146 @@ class ResultsControllerTest < AuthenticatedControllerTest
     # Since we are not authenticated and authorized, we should be redirected
     # to the login page
 
-    should "be redirected from the index" do
-      get :index, :id => 1
-      assert respond_with :redirect
-    end
-
     should "be redirected from edit" do
-      get :edit, :id => 1
+      get :edit,
+          :assignment_id => 1,
+          :submission_id => 1,
+          :id => 1
       assert respond_with :redirect
     end
 
     should "not be able to get the next_grouping" do
-      get :next_grouping, :id => 1
+      get :next_grouping,
+          :assignment_id => 1,
+          :submission_id => 1,
+          :id => 1
       assert respond_with :redirect
     end
 
     should "not be able to set_released to student" do
-      get :set_released_to_students, :id => 1
+      get :set_released_to_students,
+          :assignment_id => 1,
+          :submission_id => 1,
+          :id => 1
       assert respond_with :redirect
     end
 
     should "not be able to update marking state" do
-      get :update_marking_state, :id => 1, :value => 1
+      get :update_marking_state,
+          :assignment_id => 1,
+          :submission_id => 1,
+          :id => 1,
+          :value => 1
       assert respond_with :redirect
     end
 
     should "not be able to update overall comment" do
-      get :update_overall_comment, :id => 1
+      get :update_overall_comment,
+          :assignment_id => 1,
+          :submission_id => 1,
+          :id => 1
       assert respond_with :redirect
     end
 
     should "not be able to update overall remark comment" do
-      get :update_overall_remark_comment, :id => 1
+      get :update_overall_remark_comment,
+          :assignment_id => 1,
+          :submission_id => 1,
+          :id => 1
+
       assert respond_with :redirect
     end
 
     should "not be able to update remark request" do
-      get :update_remark_request, :id => 1
+      get :update_remark_request,
+          :assignment_id => 1,
+          :submission_id => 1,
+          :id => 1
       assert respond_with :redirect
     end
 
     should "not be able to cancel remark request" do
-      get :cancel_remark_request, :id => 1
+      get :cancel_remark_request,
+          :assignment_id => 1,
+          :submission_id => 1,
+          :id => 1
       assert respond_with :redirect
     end
 
     should "not be able to download a file" do
-      get :download, :select_file_id => 1
+      get :download,
+          :assignment_id => 1,
+          :submission_id => 1,
+          :id => 1,
+          :select_file_id => 1
       assert respond_with :redirect
     end
 
     should "not be able to get codeviewer" do
-      get :codeviewer, :id => 1, :submission_file_id => 1, :focus_line => 1
+      get :codeviewer,
+          :assignment_id => 1,
+          :submission_id => 1,
+          :id => 1,
+          :focus_line => 1
       assert respond_with :redirect
     end
 
     should "not be able to update mark" do
-      get :update_mark, :mark_id => 1, :mark => 0
+      get :update_mark,
+          :assignment_id => 1,
+          :submission_id => 1,
+          :id => 1,
+          :mark_id => 1,
+          :mark => 0
       assert respond_with :redirect
     end
 
     should "not be able to view marks" do
-      get :view_marks, :id => 1
+      get :view_marks,
+          :assignment_id => 1,
+          :submission_id => 1,
+          :id => 1
       assert respond_with :redirect
     end
 
     should "not be able to add extra mark" do
-      get :add_extra_mark, :id => 1, :extra_mark => 1
-      assert respond_with :redirect
-    end
-
-    should "not be able to add extra mark" do
-      post :add_extra_mark, :id => 1, :extra_mark => 1
+      get :add_extra_mark,
+          :assignment_id => 1,
+          :submission_id => 1,
+          :id => 1,
+          :extra_mark => 1
       assert respond_with :redirect
     end
 
     should "not be able to remove extra marks" do
-      get :remove_extra_mark, :id => 1
+      get :remove_extra_mark,
+          :assignment_id => 1,
+          :submission_id => 1,
+          :id => 1
       assert respond_with :redirect
     end
 
     should "not be able to expand criteria" do
-      get :expand_criteria, :aid => 1
+      get :expand_criteria,
+          :assignment_id => 1,
+          :submission_id => 1,
+          :id => 1
       assert respond_with :redirect
     end
 
     should "not be able to collaps criteria" do
-      get :collapse_criteria, :aid => 1
+      get :collapse_criteria,
+          :assignment_id => 1,
+          :submission_id => 1,
+          :id => 1
       assert respond_with :redirect
     end
 
     should "not be able to expand unmarked criteria" do
-      get :expand_unmarked_criteria, :aid => 1, :rid => 1
+      get :expand_unmarked_criteria,
+          :assignment_id => 1,
+          :submission_id => 1,
+          :id => 1
       assert respond_with :redirect
     end
   end # unauthenticated and unauthorized user doing
@@ -135,26 +183,32 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @result = @grouping.submissions.first.result
         end
 
-        should "not be able to get index" do
-          get_as @student, :index, :id => @result.id
-          assert respond_with :missing
-          assert render_template 404
-        end
-
         should "not be able to get edit" do
-          get_as @student, :edit, :id => @result.id
+          get_as @student,
+                 :edit,
+                 :assignment_id => 1,
+                 :submission_id => 1,
+                 :id => @result.id
           assert respond_with :missing
           assert render_template 404
         end
 
         should "not be able to get next_grouping" do
-          get_as @student, :next_grouping, :id => @grouping.id
+          get_as @student,
+                 :next_grouping,
+                 :assignment_id => 1,
+                 :submission_id => 1,
+                 :id => @grouping.id
           assert respond_with :missing
           assert render_template 404
         end
 
         should "GET on :set_released_to_student" do
-          get_as @student, :set_released_to_students, :id => @result.id
+          get_as @student,
+                 :set_released_to_students,
+                 :assignment_id => 1,
+                 :submission_id => 1,
+                 :id => @result.id
           assert respond_with :missing
           assert render_template 404
         end
@@ -162,6 +216,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
         should "GET on :update_marking_state" do
           get_as @student,
                   :update_marking_state,
+                  :assignment_id => 1,
+                  :submission_id => 1,
                   :id => @result.id,
                   :value => 1
           assert respond_with :missing
@@ -172,6 +228,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @new_comment = 'a changed overall comment!'
           get_as @student,
                   :update_overall_comment,
+                  :assignment_id => 1,
+                  :submission_id => 1,
                   :id => @result.id,
                   :result => {:overall_comment => @new_comment}
           assert respond_with :missing
@@ -184,6 +242,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @new_comment = 'a changed overall comment!'
           post_as @student,
                   :update_overall_comment,
+                  :assignment_id => 1,
+                  :submission_id => 1,
                   :id => @result.id,
                   :result => {:overall_comment => @new_comment}
           assert respond_with :missing
@@ -196,6 +256,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @new_comment = 'a changed overall remark comment!'
           get_as @student,
                   :update_overall_remark_comment,
+                  :assignment_id => 1,
+                  :submission_id => 1,
                   :id => @result.id,
                   :result => {:overall_comment => @new_comment}
           assert respond_with :missing
@@ -208,6 +270,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @new_comment = 'a changed overall remark comment!'
           post_as @student,
                   :update_overall_remark_comment,
+                  :assignment_id => 1,
+                  :submission_id => 1,
                   :id => @result.id,
                   :result => {:overall_comment => @new_comment}
           assert respond_with :missing
@@ -228,9 +292,15 @@ class ResultsControllerTest < AuthenticatedControllerTest
               @file.expects(:is_supported_image?).once.returns(false)
               @file.expects(:is_pdf?).once.returns(false)
               @file.expects(:retrieve_file).returns('file content')
-              ResultsController.any_instance.stubs(:authorized_to_download?).once.returns(true)
+              ResultsController.any_instance.stubs(
+                    :authorized_to_download?).once.returns(true)
               SubmissionFile.stubs(:find).once.returns(@file)
-              get_as @student, :download, :select_file_id => 1
+              get_as @student,
+                     :download,
+                     :assignment_id => 1,
+                     :submission_id => 1,
+                     :select_file_id => 1,
+                     :id => 1
 
               assert_equal 0, flash.size
               assert respond_with_content_type "application/octet-stream"
@@ -241,7 +311,12 @@ class ResultsControllerTest < AuthenticatedControllerTest
             should "without permissions to download the file" do
               ResultsController.any_instance.stubs(
                   :authorized_to_download?).once.returns(false)
-              get_as @student, :download, :select_file_id => 1
+              get_as @student,
+                     :download,
+                     :assignment_id => 1,
+                     :submission_id => 1,
+                     :select_file_id => 1,
+                     :id => 1
 
               assert_equal 0, flash.size
               assert respond_with :missing
@@ -250,7 +325,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end # -- without file error
 
           should "be able to retrieve_file with file error" do
-            @file.expects(:submission).once.returns(@result.submission)
+            @file.expects(:submission).twice.returns(@result.submission)
 
             @file.expects(
                 :retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
@@ -260,6 +335,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
             get_as @student,
                   :download,
+                  :assignment_id => 1,
+                  :submission_id => 1,
+                  :id => 1,
                   :select_file_id => 1
 
             assert set_the_flash.to(SAMPLE_ERR_MSG)
@@ -276,7 +354,10 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
             get_as @student,
                   :download,
+                  :assignment_id => 1,
+                  :submission_id => 1,
                   :select_file_id => 1,
+                  :id => 1,
                   :show_in_browser => true
             assert_equal 0, flash.size
             assert respond_with_content_type "image"
@@ -294,7 +375,10 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
             get_as @student,
                   :download,
+                  :assignment_id => 1,
+                  :submission_id => 1,
                   :select_file_id => 1,
+                  :id => 1,
                   :include_annotations => true
             assert_equal 0, flash.size
             assert respond_with_content_type "application/octet-stream"
@@ -302,6 +386,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_equal 'file content', @response.body
           end
         end
+
         context "GET on :codeviewer" do
           setup do
             SubmissionFile.make(:submission => @submission)
@@ -312,7 +397,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
             @no_access_submission_file = SubmissionFile.make
             get_as @student,
                     :codeviewer,
-                    :id => @assignment.id,
+                    :assignment_id => @assignment.id,
+                    :submission_id => 1,
+                    :id => 1,
                     :submission_file_id => @no_access_submission_file.id,
                     :focus_line => 1
 
@@ -339,8 +426,10 @@ class ResultsControllerTest < AuthenticatedControllerTest
               :retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
             get_as @student,
                   :codeviewer,
-                  :id => @assignment.id,
+                  :assignment_id => @assignment.id,
+                  :submission_id => 1,
                   :submission_file_id => @submission_file.id,
+                  :id => 1,
                   :focus_line => 1
             assert assign_to :assignment
             assert assign_to :submission_file_id
@@ -364,8 +453,10 @@ class ResultsControllerTest < AuthenticatedControllerTest
               :retrieve_file).once.returns('file content')
             get_as @student,
                   :codeviewer,
-                  :id => @assignment.id,
+                  :assignment_id => @assignment.id,
+                  :submission_id => 1,
                   :submission_file_id => @submission_file.id,
+                  :id => 1,
                   :focus_line => 1
             assert assign_to :assignment
             assert assign_to :submission_file_id
@@ -382,7 +473,12 @@ class ResultsControllerTest < AuthenticatedControllerTest
         end
 
         should "GET on :update_mark" do
-          get_as @student, :update_mark, :mark_id => 1, :mark => 0
+          get_as @student,
+                 :update_mark,
+                 :assignment_id => 1,
+                 :submission_id => 1,
+                 :mark_id => 1,
+                 :mark => 0
           assert respond_with :missing
           assert render_template 404
         end
@@ -390,7 +486,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
         context "GET on :view_marks" do
           should "and his grouping has no submission" do
             Grouping.any_instance.expects(:has_submission?).once.returns(false)
-            get_as @student, :view_marks, :id => @assignment.id
+            get_as @student,
+                   :view_marks,
+                   :assignment_id => @assignment.id,
+                   :submission_id => 1,
+                   :id => 1
             assert assign_to :assignment
             assert assign_to :grouping
             assert render_template 'results/student/no_submission'
@@ -399,7 +499,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
           should "and his submission has no result" do
             Submission.any_instance.expects(:has_result?).once.returns(false)
-            get_as @student, :view_marks, :id => @assignment.id
+            get_as @student,
+                   :view_marks,
+                   :assignment_id => @assignment.id,
+                   :submission_id => 1,
+                   :id => 1
             assert assign_to :assignment
             assert assign_to :grouping
             assert assign_to :submission
@@ -410,7 +514,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
           should "and the result has not been released" do
             Result.any_instance.expects(
                 :released_to_students).once.returns(false)
-            get_as @student, :view_marks, :id => @assignment.id
+            get_as @student,
+                   :view_marks,
+                   :assignment_id => @assignment.id,
+                   :submission_id => 1,
+                   :id => 1
             assert assign_to :assignment
             assert assign_to :grouping
             assert assign_to :submission
@@ -428,7 +536,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
             @result.released_to_students = true
             @result.save
 
-            get_as @student, :view_marks, :id => @assignment.id
+            get_as @student,
+                   :view_marks,
+                   :assignment_id => @assignment.id,
+                   :submission_id => 1,
+                   :id => 1
             assert assign_to :assignment
             assert assign_to :grouping
             assert assign_to :submission
@@ -449,6 +561,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
         should "GET on :add_extra_mark" do
           get_as @student,
                 :add_extra_mark,
+                :assignment_id => 1,
+                :submission_id => 1,
                 :id => @result.id,
                 :extra_mark => 1
           assert respond_with :missing
@@ -456,25 +570,42 @@ class ResultsControllerTest < AuthenticatedControllerTest
         end
 
         should "GET on :remove_extra_mark" do
-          get_as @student, :remove_extra_mark, :id => @result.id
+          get_as @student,
+                 :remove_extra_mark,
+                 :assignment_id => 1,
+                 :submission_id => 1,
+                 :id => @result.id
           assert respond_with :missing
           assert render_template 404
         end
 
         should "GET on :expand_criteria" do
-          get_as @student, :expand_criteria, :aid => @assignment.id
+          get_as @student,
+                 :expand_criteria,
+                 :assignment_id => @assignment.id,
+                 :submission_id => 1,
+                 :id => 1
           assert respond_with :missing
           assert render_template 404
         end
 
         should "GET on :collapse_criteria" do
-          get_as @student, :collapse_criteria, :aid => 1
+          get_as @student,
+                 :collapse_criteria,
+                 :assignment_id => 1,
+                 :submission_id => 1,
+                 :id => 1
           assert respond_with :missing
           assert render_template 404
         end
 
         should "GET on :expand_unmarked_criteria" do
-          get_as @student, :expand_unmarked_criteria, :aid => 1, :rid => 1
+          get_as @student,
+                 :expand_unmarked_criteria,
+                 :assignment_id => 1,
+                 :submission_id => 1,
+                 :id => 1,
+                 :rid => 1
           assert respond_with :missing
           assert render_template 404
         end
@@ -511,7 +642,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
             should "edit third result" do
 
               @result = @groupings[0].current_submission_used.result
-              get_as @admin, :edit, :id => @result.id
+              get_as @admin,
+                     :edit,
+                     :assignment_id => 1,
+                     :submission_id => 1,
+                     :id => @result.id
               assert assigns(:next_grouping)
               next_grouping = assigns(:next_grouping)
               assert next_grouping.has_submission?
@@ -527,7 +662,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
             should "edit second result correctly" do
               @result = @groupings[1].current_submission_used.result
-              get_as @admin, :edit, :id => @result.id
+              get_as @admin,
+                     :edit,
+                     :assignment_id => 1,
+                     :submission_id => 1,
+                     :id => @result.id
 
               assert assigns(:next_grouping)
               assert assigns(:previous_grouping)
@@ -552,7 +691,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
             should "when editing third result" do
 
               @result = @groupings[2].current_submission_used.result
-              get_as @admin, :edit, :id => @result.id
+              get_as @admin,
+                     :edit,
+                     :assignment_id => 1,
+                     :submission_id => 1,
+                     :id => @result.id
 
               assert_nil assigns(:next_grouping)
               assert assigns(:previous_grouping)
@@ -574,14 +717,22 @@ class ResultsControllerTest < AuthenticatedControllerTest
           should "when current grouping has submission" do
             grouping = Grouping.make
             Grouping.any_instance.stubs(:has_submission).returns(true)
-            get_as @admin, :next_grouping, :id => grouping.id
+            get_as @admin,
+                   :next_grouping,
+                   :assignment_id => 1,
+                   :submission_id => 1,
+                   :id => grouping.id
             assert respond_with :redirect
           end
 
           should "when current grouping has no submission" do
             grouping = Grouping.make
             Grouping.any_instance.stubs(:has_submission).returns(false)
-            get_as @admin, :next_grouping, :id => grouping.id
+            get_as @admin,
+                   :next_grouping,
+                   :assignment_id => 1,
+                   :submission_id => 1,
+                   :id => grouping.id
             assert respond_with :redirect
           end
         end
@@ -592,6 +743,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @result = s.result
           get_as @admin,
                   :set_released_to_students,
+                  :assignment_id => @assignment,
+                  :submission_id => 1,
                   :id => @result.id,
                   :value => 'true'
           assert respond_with :success
@@ -629,7 +782,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
               @grade_distribution[1] += 1
             end
 
-            get_as @admin, :update_marking_state, {:id => @result.id, :value => 'complete'}
+            get_as @admin,
+                   :update_marking_state,
+                   {:assignment_id => @assignment.id,
+                    :submission_id => 1,
+                    :id => @result.id, :value => 'complete'}
           end
 
           should "refresh the cached grade distribution data when the marking state is set to complete" do
@@ -653,7 +810,12 @@ class ResultsControllerTest < AuthenticatedControllerTest
             @file.expects(:is_pdf?).once.returns(false)
             SubmissionFile.stubs(:find).returns(@file)
 
-            get_as @admin, :download, :select_file_id => 1
+            get_as @admin,
+                   :download,
+                   :assignment_id => 1,
+                   :submission_id => 1,
+                   :select_file_id => 1,
+                   :id => 1
             assert_equal 0, flash.size
             assert respond_with_content_type "application/octet-stream"
             assert respond_with :success
@@ -665,11 +827,14 @@ class ResultsControllerTest < AuthenticatedControllerTest
             SubmissionFile.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
             SubmissionFile.stubs(:find).returns(@file)
 
-            @file.expects(:submission).once.returns(
+            @file.expects(:submission).twice.returns(
                 submission)
             get_as @admin,
-                    :download,
-                    :select_file_id => 1
+                   :download,
+                   :assignment_id => 1,
+                   :submission_id => 1,
+                   :select_file_id => 1,
+                   :id => 1
 
             assert set_the_flash.to(SAMPLE_ERR_MSG)
             assert respond_with :redirect
@@ -684,6 +849,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
             get_as @admin,
                     :download,
+                    :assignment_id => 1,
+                    :submission_id => 1,
+                    :id => 1,
                     :select_file_id => 1,
                     :show_in_browser => true
 
@@ -708,8 +876,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
             SubmissionFile.any_instance.expects(:retrieve_file).once.returns('file content')
             get_as @admin,
                     :codeviewer,
-                    :id => @assignment.id,
-                    :submission_file_id => 1,
+                    :assignment_id => @assignment.id,
+                    :submission_id => 1,
+                    :id => 1,
                     :focus_line => 1
 
             assert_equal 0, flash.size
@@ -729,10 +898,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
           should "with file error" do
             SubmissionFile.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
             get_as @admin,
-                    :codeviewer,
-                    :id => @assignment.id,
-                    :submission_file_id => 1,
-                    :focus_line => 1
+                   :codeviewer,
+                   :assignment_id => @assignment.id,
+                   :submission_id => 1,
+                   :id => 1,
+                   :focus_line => 1
 
             assert assign_to :assignment
             assert assign_to :submission_file_id
@@ -765,6 +935,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
             get_as @admin,
                     :update_mark,
+                    :assignment_id => 1,
+                    :submission_id => 1,
+                    :id => 1,
                     :mark_id => @mark.id,
                     :mark => "something"
 
@@ -779,7 +952,13 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
             Mark.stubs(:find).once.returns(@mark)
             ActiveModel::Errors.any_instance.stubs(:full_messages).returns([SAMPLE_ERR_MSG])
-            get_as @admin, :update_mark, :mark_id => 1, :mark => 1
+            get_as @admin,
+                   :update_mark,
+                   :assignment_id => 1,
+                   :submission_id => 1,
+                   :id => 1,
+                   :mark_id => 1,
+                   :mark => 1
             assert render_template 'shared/_handle_error.rjs'
             assert respond_with :success
             # Workaround to assert that the error message made its way to the response
@@ -787,19 +966,33 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end
 
           should "without save error" do
-            get_as @admin, :update_mark, :mark_id => @mark.id, :mark => 1
+            get_as @admin,
+                   :update_mark,
+                   :assignment_id => 1,
+                   :submission_id => 1,
+                   :id => 1,
+                   :mark_id => @mark.id,
+                   :mark => 1
             assert render_template 'results/marker/_update_mark.rjs'
             assert respond_with :success
           end
 
           should "GET on :view_marks" do
-            get_as @admin, :view_marks, :id => @assignment.id
+            get_as @admin,
+                   :view_marks,
+                   :assignment_id => @assignment.id,
+                   :submission_id => 1,
+                   :id => 1
             assert render_template '404'
             assert respond_with 404
           end
 
           should "GET on :add_extra_mark" do
-            get_as @admin, :add_extra_mark, :id => @submission.result.id
+            get_as @admin,
+                   :add_extra_mark,
+                   :assignment_id => 1,
+                   :submission_id => @submission.id,
+                   :id => @submission.result.id
             assert assign_to :result
             assert render_template 'results/marker/add_extra_mark'
             assert respond_with :success
@@ -812,6 +1005,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
               extra_mark.expects(:save).once.returns(false)
               post_as @admin,
                       :add_extra_mark,
+                      :assignment_id => 1,
+                      :submission_id => @submission.id,
                       :id => @submission.result.id,
                       :extra_mark => { :extra_mark => 1 }
               assert assign_to :result
@@ -825,6 +1020,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
               @old_total_mark = @submission.result.total_mark
               post_as @admin,
                       :add_extra_mark,
+                      :assignment_id => 1,
+                      :submission_id => @submission.id,
                       :id => @submission.result.id,
                       :extra_mark => { :extra_mark => 1 }
               assert assign_to :result
@@ -849,7 +1046,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end
           @result.update_total_mark
           @old_total_mark = @result.total_mark
-          get_as @admin, :remove_extra_mark, :id => @extra_mark.id
+          get_as @admin,
+                 :remove_extra_mark,
+                 :assignment_id => 1,
+                 :submission_id => 1,
+                 :id => @extra_mark.id
 
           assert_equal 0, flash.size
           assert assign_to :result
@@ -861,7 +1062,10 @@ class ResultsControllerTest < AuthenticatedControllerTest
         end
 
         should "GET on :expand_criteria" do
-          get_as @admin, :expand_criteria, :aid => @assignment.id
+          get_as @admin,
+                 :expand_criteria,
+                 :assignment_id => @assignment.id,
+                 :submission_id => 1
           assert assign_to :assignment
           assert assign_to :mark_criteria
           assert render_template 'results/marker/_expand_criteria.rjs'
@@ -869,7 +1073,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
         end
 
         should "GET on :collapse_criteria" do
-          get_as @admin, :collapse_criteria, :aid => @assignment.id
+          get_as @admin,
+                 :collapse_criteria,
+                 :assignment_id => @assignment.id,
+                 :submission_id => 1,
+                 :id => 1
           assert assign_to :assignment
           assert assign_to :mark_criteria
           assert render_template 'results/marker/_collapse_criteria.rjs'
@@ -883,8 +1091,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
           get_as @admin,
                   :expand_unmarked_criteria,
-                  :aid => @assignment.id,
-                  :rid => @result.id
+                  :assignment_id => @assignment.id,
+                  :submission_id => 1,
+                  :id => @result.id
           assert assign_to :assignment
           assert assign_to :result
           assert assign_to :nil_marks
@@ -897,6 +1106,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @overall_comment = "A new overall comment!"
           post_as @admin,
                   :update_overall_comment,
+                  :assignment_id => 1,
+                  :submission_id => 1,
                   :id => @result.id,
                   :result => {:overall_comment => @overall_comment}
           @result.reload
@@ -908,6 +1119,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @overall_comment = "A new overall remark comment!"
           post_as @admin,
                   :update_overall_remark_comment,
+                  :assignment_id => 1,
+                  :submission_id => 1,
                   :id => @result.id,
                   :result => {:overall_comment => @overall_comment}
 
@@ -930,15 +1143,14 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @assignment = Assignment.make(:marking_scheme_type => scheme_type)
         end
 
-        should "GET on :index" do
-          get_as @ta, :index, :id => 1
-          assert respond_with :missing
-          assert render_template 404
-        end
-
         should "GET on :edit" do
           result = Result.make
-          get_as @ta, :edit, :id => result.id
+          get_as @ta,
+                 :edit,
+                 :assignment_id => 1,
+                 :submission_id => 1,
+                 :id => result.id
+                 
           assert_equal 0, flash.size
           assert render_template :edit
           assert respond_with :success
@@ -948,21 +1160,34 @@ class ResultsControllerTest < AuthenticatedControllerTest
           should "when current grouping has submission" do
             grouping = Grouping.make
             Grouping.any_instance.stubs(:has_submission).returns(true)
-            get_as @ta, :next_grouping, :id => grouping.id
+            get_as @ta,
+                   :next_grouping,
+                   :assignment_id => 1,
+                   :submission_id => 1,
+                   :id => grouping.id
+
             assert respond_with :redirect
           end
 
           should "when current grouping has no submission" do
             grouping = Grouping.make
             Grouping.any_instance.stubs(:has_submission).returns(false)
-            get_as @ta, :next_grouping, :id => grouping.id
+            get_as @ta,
+                   :next_grouping,
+                   :assignment_id => 1,
+                   :submission_id => 1,
+                   :id => grouping.id
             assert respond_with :redirect
           end
         end
 
         should "GET on :set_released_to_students" do
           result = Result.make
-          get_as @ta, :set_released_to_students, :id => result.id
+          get_as @ta,
+                 :set_released_to_students,
+                 :assignment_id => 1,
+                 :submission_id => 1,
+                 :id => result.id
           assert respond_with :missing
           assert render_template 404
         end
@@ -971,6 +1196,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
           result = Result.make
           get_as @ta,
                   :update_marking_state,
+                  :assignment_id => 1,
+                  :submission_id => 1,
                   :id => result.id,
                   :marking_state => 'complete'
           assert respond_with :success
@@ -989,7 +1216,12 @@ class ResultsControllerTest < AuthenticatedControllerTest
             @file.expects(:retrieve_file).once.returns('file content')
             SubmissionFile.stubs(:find).returns(@file)
 
-            get_as @ta, :download, :select_file_id => 1
+            get_as @ta,
+                   :download,
+                   :assignment_id => 1,
+                   :submission_id => 1,
+                   :id => 1,
+                   :select_file_id => 1
             assert_equal 0, flash.size
             assert respond_with_content_type "application/octet-stream"
             assert respond_with :success
@@ -997,14 +1229,20 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end
 
           should "with file error" do
-            submission = Submission.new
-            result = Result.new
+            submission = Submission.make
+            result = Result.make
             submission.expects(:result).once.returns(result)
-            @file.expects(:submission).once.returns(submission)
-            @file.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
+            @file.expects(:submission).twice.returns(submission)
+            @file.expects(:retrieve_file).once.raises(
+                    Exception.new(SAMPLE_ERR_MSG))
             SubmissionFile.stubs(:find).returns(@file)
 
-            get_as @ta, :download, :select_file_id => 1
+            get_as @ta,
+                   :download,
+                   :assignment_id => 1,
+                   :submission_id => 1,
+                   :id => 1,
+                   :select_file_id => 1
             assert set_the_flash.to(SAMPLE_ERR_MSG)
             assert respond_with :redirect
           end
@@ -1017,6 +1255,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
             get_as @ta,
                     :download,
+                    :assignment_id => 1,
+                    :submission_id => 1,
+                    :id => 1,
                     :select_file_id => 1,
                     :show_in_browser => true
             assert_equal 0, flash.size
@@ -1037,8 +1278,10 @@ class ResultsControllerTest < AuthenticatedControllerTest
                       ).once.raises(Exception.new(SAMPLE_ERR_MSG))
             get_as @ta,
                     :codeviewer,
-                    :id => @assignment.id,
+                    :assignment_id => @assignment.id,
+                    :submission_id => 1,
                     :submission_file_id => @submission_file.id,
+                    :id => 1,
                     :focus_line => 1
             assert assign_to :assignment
             assert assign_to :submission_file_id
@@ -1061,8 +1304,10 @@ class ResultsControllerTest < AuthenticatedControllerTest
             SubmissionFile.stubs(:find).returns(@submission_file)
             get_as @ta,
                     :codeviewer,
-                    :id => @assignment.id,
+                    :assignment_id => @assignment.id,
+                    :submission_id => 1,
                     :submission_file_id => @submission_file.id,
+                    :id => 1,
                     :focus_line => 1
 
             assert assign_to :assignment
@@ -1088,6 +1333,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
             ActiveModel::Errors.any_instance.stubs(:full_messages).returns([SAMPLE_ERR_MSG])
             get_as @ta,
                     :update_mark,
+                    :assignment_id => 1,
+                    :submission_id => 1,
+                    :id => 1,
                     :mark_id => @mark.id,
                     :mark => "something"
             assert render_template 'mark_verify_result.rjs'
@@ -1097,21 +1345,34 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end
 
           should "without save error" do
-            get_as @ta, :update_mark, :mark_id => @mark.id, :mark => 1
+            get_as @ta,
+                   :update_mark,
+                   :assignment_id => 1,
+                   :submission_id => 1,
+                   :mark_id => @mark.id,
+                   :mark => 1
             assert render_template 'results/marker/_update_mark.rjs'
             assert respond_with :success
           end
         end  # -- GET on :update_mark
 
         should "GET on :view_marks" do
-          get_as @ta, :view_marks, :id => @assignment.id
+          get_as @ta,
+                 :view_marks,
+                 :assignment_id => @assignment.id,
+                 :submission_id => 1,
+                 :id => 1
           assert render_template '404'
           assert respond_with 404
         end  # -- GET on :view_marks
 
         should "GET on :add_extra_mark" do
           unmarked_result = Result.make
-          get_as @ta, :add_extra_mark, :id => unmarked_result.id
+          get_as @ta,
+                 :add_extra_mark,
+                 :assignment_id => 1,
+                 :submission_id => 1,
+                 :id => unmarked_result.id
           assert assign_to :result
           assert render_template 'results/marker/add_extra_mark'
           assert respond_with :success
@@ -1126,7 +1387,12 @@ class ResultsControllerTest < AuthenticatedControllerTest
             extra_mark = ExtraMark.new
             ExtraMark.expects(:new).once.returns(extra_mark)
             extra_mark.expects(:save).once.returns(false)
-            post_as @ta, :add_extra_mark, :id => @unmarked_result.id, :extra_mark => { :extra_mark => 1 }
+            post_as @ta,
+                    :add_extra_mark,
+                    :assignment_id => 1,
+                    :submission_id => 1,
+                    :id => @unmarked_result.id,
+                    :extra_mark => {:extra_mark => 1}
             assert assign_to :result
             assert assign_to :extra_mark
             assert render_template 'results/marker/add_extra_mark_error'
@@ -1136,7 +1402,12 @@ class ResultsControllerTest < AuthenticatedControllerTest
           should "without save error" do
             @unmarked_result.update_total_mark
             @old_total_mark = @unmarked_result.total_mark
-            post_as @ta, :add_extra_mark, :id => @unmarked_result.id, :extra_mark => { :extra_mark => 1 }
+            post_as @ta,
+                    :add_extra_mark,
+                    :assignment_id => 1,
+                    :submission_id => 1,
+                    :id => @unmarked_result.id,
+                    :extra_mark => {:extra_mark => 1}
             assert assign_to :result
             assert assign_to :extra_mark
             assert render_template 'results/marker/insert_extra_mark'
@@ -1159,7 +1430,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end
           @result.update_total_mark
           @old_total_mark = @result.total_mark
-          get_as @ta, :remove_extra_mark, :id => @extra_mark.id
+          get_as @ta,
+                 :remove_extra_mark,
+                 :assignment_id => 1,
+                 :submission_id => 1,
+                 :id => @extra_mark.id
           assert_equal 0, flash.size
           assert assign_to :result
           assert render_template 'results/marker/remove_extra_mark'
@@ -1171,7 +1446,10 @@ class ResultsControllerTest < AuthenticatedControllerTest
         end
 
         should "GET on :expand_criteria" do
-          get_as @ta, :expand_criteria, :aid => @assignment.id
+          get_as @ta,
+                 :expand_criteria,
+                 :assignment_id => @assignment.id,
+                 :submission_id => 1
           assert assign_to :assignment
           assert assign_to :mark_criteria
           assert render_template 'results/marker/_expand_criteria.rjs'
@@ -1179,7 +1457,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
         end
 
         should "be able to collapse_criteria" do
-          get_as @ta, :collapse_criteria, :aid => @assignment.id
+          get_as @ta,
+                 :collapse_criteria,
+                 :assignment_id => @assignment.id,
+                 :submission_id => 1,
+                 :id => 1
           assert assign_to :assignment
           assert assign_to :mark_criteria
           assert render_template 'results/marker/_collapse_criteria.rjs'
@@ -1192,8 +1474,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
           get_as @ta,
                   :expand_unmarked_criteria,
-                  :aid => @assignment.id,
-                  :rid => s.result.id
+                  :assignment_id => @assignment.id,
+                  :submission_id => 1,
+                  :id => s.result.id
           assert assign_to :assignment
           assert assign_to :result
           assert assign_to :nil_marks
@@ -1206,6 +1489,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @result = Result.make
           post_as @ta,
                   :update_overall_comment,
+                  :assignment_id => 1,
+                  :submission_id => 1,
                   :id => @result.id,
                   :result => {:overall_comment => @overall_comment}
           @result.reload
@@ -1217,6 +1502,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
           @overall_comment = "A new overall remark comment!"
           post_as @ta,
                   :update_overall_remark_comment,
+                  :assignment_id => 1,
+                  :submission_id => 1,
                   :id => @result.id,
                   :result => {:overall_comment => @overall_comment}
           @result.reload

@@ -6,6 +6,7 @@
   controller.controller_name == 'annotation_categories' or
   controller.controller_name == 'test_framework'
 %>
+
 <div id="sub_sub_menu">
   <ul id="root" class="level1 horizontal">
     <% if !@assignment.nil?%>
@@ -15,28 +16,34 @@
           <li <% if controller.controller_name == 'assignments' %> 
          id="sub_sub_menu_active"
          <%end%>>
-          <%= link_to I18n.t(:properties), :controller => 'assignments', :action =>
-	 'edit', :id => @assignment.id %>
+        <%= link_to I18n.t(:properties), edit_assignment_path(@assignment) %>
        </li>
-       <li <% if controller.controller_name == 'rubrics' or controller.controller_name == 'flexible_criteria'%> 
+       <li <% if controller.controller_name == 'rubrics' or
+                 controller.controller_name == 'flexible_criteria'%> 
         id="sub_sub_menu_active"
       <% end %>>
 	  <% if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric] %>
-         <%= link_to I18n.t(:marking_scheme), :controller => 'rubrics', :action => 'index', :id => @assignment.id%>
+         <%= link_to I18n.t(:marking_scheme),
+                    assignment_rubrics_path(@assignment) %>
 	  <% else %>
-	     <%= link_to I18n.t(:marking_scheme), :controller => 'flexible_criteria', :action => 'index', :id => @assignment.id %>		 
+     <%= link_to I18n.t(:marking_scheme),
+                 assignment_flexible_criteria_path(@assignment) %>		 
 	  <% end %>
 	  
       </li>
       <li <% if controller.controller_name == 'annotation_categories'%> 
         id="sub_sub_menu_active"
       <% end %>>
-         <%= link_to I18n.t('annotations.annotations'), :controller => 'annotation_categories', :action => 'index', :id => @assignment.id%>
+        <%= link_to I18n.t('annotations.annotations'),
+		    assignment_annotation_categories_path(
+			@assignment)%>
       </li>
        <li <% if controller.controller_name == 'test_framework'%>
          id="sub_sub_menu_active"
-	  <%end%>>
-		 <%= link_to I18n.t("test_framework.test_framework"), :controller => 'test_framework', :action => 'manage', :id => @assignment.id%>
+	  <% end %>>
+    <%#
+	  <%= link_to I18n.t("test_framework.test_framework"),
+                manage_test_framework_path(@assignment) %>
       </li>
   <% end %>
 <% end %>

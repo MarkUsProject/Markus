@@ -4,15 +4,36 @@ class SubmissionsController < ApplicationController
   include SubmissionsHelper
   include PaginationHelper
 
-  before_filter    :authorize_only_for_admin, :except => [:server_time, :populate_file_manager, :browse,
-  :index, :file_manager, :update_files,
-  :download, :s_table_paginate, :collect_and_begin_grading,
-  :manually_collect_and_begin_grading, :collect_ta_submissions, :repo_browser,
-  :populate_repo_browser, :update_converted_pdfs]
-  before_filter    :authorize_for_ta_and_admin, :only => [:browse, :index, :s_table_paginate, :collect_and_begin_grading,
-  :manually_collect_and_begin_grading, :collect_ta_submissions, :repo_browser, :populate_repo_browser, :update_converted_pdfs]
-  before_filter    :authorize_for_student, :only => [:file_manager, :populate_file_manager, :update_files]
-  before_filter    :authorize_for_user, :only => [:download]
+  before_filter :authorize_only_for_admin,
+                :except => [:server_time,
+                            :populate_file_manager,
+                            :browse,
+                            :index,
+                            :file_manager,
+                            :update_files,
+                            :download,
+                            :s_table_paginate,
+                            :collect_and_begin_grading,
+                            :manually_collect_and_begin_grading,
+                            :collect_ta_submissions,
+                            :repo_browser,
+                            :populate_repo_browser,
+                            :update_converted_pdfs]
+  before_filter :authorize_for_ta_and_admin,
+                :only => [:browse,
+                          :index,
+                          :s_table_paginate,
+                          :collect_and_begin_grading,
+                          :manually_collect_and_begin_grading,
+                          :collect_ta_submissions,
+                          :repo_browser,
+                          :populate_repo_browser,
+                          :update_converted_pdfs]
+  before_filter :authorize_for_student,
+                :only => [:file_manager,
+                          :populate_file_manager,
+                          :update_files]
+  before_filter :authorize_for_user, :only => [:download]
 
   S_TABLE_PARAMS = {
     :model => Grouping,
@@ -63,6 +84,7 @@ class SubmissionsController < ApplicationController
   }
 
   def repo_browser
+    @assignment = Assignment.find(params[:assignment_id])
     @grouping = Grouping.find(params[:id])
     @assignment = @grouping.assignment
     @path = params[:path] || '/'
@@ -115,7 +137,7 @@ class SubmissionsController < ApplicationController
   end
 
   def file_manager
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
 
     if @grouping.nil?
@@ -134,7 +156,7 @@ class SubmissionsController < ApplicationController
   end
 
   def populate_file_manager
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
     user_group = @grouping.group
     revision_number= params[:revision_number]
@@ -171,8 +193,8 @@ class SubmissionsController < ApplicationController
   end
 
   def collect_and_begin_grading
-    assignment = Assignment.find(params[:id])
-    grouping = Grouping.find(params[:grouping_id])
+    assignment = Assignment.find(params[:assignment_id])
+    grouping = Grouping.find(params[:id])
     if !assignment.submission_rule.can_collect_now?
       flash[:error] = I18n.t("browse_submissions.could_not_collect",
         :group_name => grouping.group.group_name)
@@ -239,7 +261,7 @@ class SubmissionsController < ApplicationController
     if params[:sort_by] == nil or params[:sort_by].blank?
       params[:sort_by] = 'group_name'
     end
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     @groupings, @groupings_total = handle_paginate_event(
       S_TABLE_PARAMS,                                     # the data structure to handle filtering and sorting
         { :assignment => @assignment,                     # the assignment to filter by
@@ -289,7 +311,7 @@ class SubmissionsController < ApplicationController
     # We'll use this hash to carry over some error state to the
     # file_manager view.
     @file_manager_errors = Hash.new
-    assignment_id = params[:id]
+    assignment_id = params[:assignment_id]
     @assignment = Assignment.find(assignment_id)
     @path = params[:path] || '/'
     @grouping = current_user.accepted_grouping_for(assignment_id)
@@ -491,27 +513,39 @@ class SubmissionsController < ApplicationController
 
   # See Assignment.get_simple_csv_report for details
   def download_simple_csv_report
-    assignment = Assignment.find(params[:id])
-    send_data assignment.get_simple_csv_report, :disposition => 'attachment', :type => 'application/vnd.ms-excel', :filename => "#{assignment.short_identifier} simple report.csv"
+    assignment = Assignment.find(params[:assignment_id])
+    send_data assignment.get_simple_csv_report,
+              :disposition => 'attachment',
+              :type => 'application/vnd.ms-excel',
+              :filename => "#{assignment.short_identifier} simple report.csv"
   end
 
   # See Assignment.get_detailed_csv_report for details
   def download_detailed_csv_report
-    assignment = Assignment.find(params[:id])
-    send_data assignment.get_detailed_csv_report, :disposition => 'attachment', :type => 'application/vnd.ms-excel', :filename => "#{assignment.short_identifier} detailed report.csv"
+    assignment = Assignment.find(params[:assignment_id])
+    send_data assignment.get_detailed_csv_report,
+              :disposition => 'attachment',
+              :type => 'application/vnd.ms-excel',
+              :filename => "#{assignment.short_identifier} detailed report.csv"
   end
 
   # See Assignment.get_svn_export_commands for details
   def download_svn_export_commands
-    assignment = Assignment.find(params[:id])
+    assignment = Assignment.find(params[:assignment_id])
     svn_commands = assignment.get_svn_export_commands
-    send_data svn_commands.join("\n"), :disposition => 'attachment', :type => 'text/plain', :filename => "#{assignment.short_identifier}_svn_exports"
+    send_data svn_commands.join("\n"),
+              :disposition => 'attachment',
+              :type => 'text/plain',
+              :filename => "#{assignment.short_identifier}_svn_exports"
   end
 
   # See Assignment.get_svn_repo_list for details
   def download_svn_repo_list
-    assignment = Assignment.find(params[:id])
-    send_data assignment.get_svn_repo_list, :disposition => 'attachment', :type => 'text/plain', :filename => "#{assignment.short_identifier}_svn_repo_list"
+    assignment = Assignment.find(params[:assignment_id])
+    send_data assignment.get_svn_repo_list,
+              :disposition => 'attachment',
+              :type => 'text/plain',
+              :filename => "#{assignment.short_identifier}_svn_repo_list"
   end
 
   # This action is called periodically from file_manager.

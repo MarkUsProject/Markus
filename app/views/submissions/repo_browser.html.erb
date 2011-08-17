@@ -11,7 +11,8 @@
 <% end %>
 
 <div id="title_bar">
-  <h1><%= I18n.t("browse_submissions.repository_name", :repository => @repository_name) %></h1>
+  <h1><%= I18n.t("browse_submissions.repository_name",
+                 :repository => @repository_name) %></h1>
 </div>
 
 <div class="wrapLeft">
@@ -22,12 +23,18 @@
       <div id="find_revision_error" class="error" style="display:none;">
       </div>
 
-     <%= form_tag :action => 'repo_browser', :id => @grouping.id, :find_revision_by => 'revision_timestamp' do %>
+     <%= form_tag repo_browser_assignment_submission_path(
+                      @assignment.id,
+                      @grouping.id,
+                      :find_revision_by => 'revision_timestamp') do %>
      <%= calendar_date_select_tag "revision_timestamp", @revision_timestamp, :time => true %>
      <%= submit_tag I18n.t("browse_submissions.find_by_revision_timestamp") %>
      <% end %>
 
-      <%= form_tag :action => 'repo_browser', :id => @grouping.id, :find_revision_by => 'revision_number' do %>
+      <%= form_tag repo_browser_assignment_submission_path(
+                      @assignment,
+                      @grouping),
+                   :find_revision_by => 'revision_number' do %>
 
      <%= text_field_tag "revision_number", @revision_number %>
      <%= submit_tag I18n.t("browse_submissions.find_by_revision_number") %>
@@ -77,5 +84,8 @@
   </table>
 </div>
 
-<%= periodically_call_remote(:url => {:controller => 'submissions',
-    :action => 'update_converted_pdfs', :id => @grouping.id}, :frequency => '3') %>
+<%= periodically_call_remote(
+        :url => update_converted_pdfs_assignment_submissions_path(
+                      @assignment,
+                      :grouping_id => @grouping.id),
+        :frequency => '3') %>

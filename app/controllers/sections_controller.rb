@@ -10,28 +10,36 @@ class SectionsController < ApplicationController
     @sections = Section.find(:all)
   end
 
+  def new
+    @section = Section.new
+  end
+
   # Creates a new section
-  def create_section
-    return unless request.post?
+  def create
     @section = Section.new(params[:section])
     if @section.save
       flash[:success] = I18n.t('section.create.success')
       redirect_to :action => 'index'
+      return
     else
       flash[:error] = I18n.t('section.create.error')
+      redirect_to 'new'
     end
   end
 
   # edit a section
   # TODO test
-  def edit_section
-    @section = Section.find_by_id(params[:id])
-    return unless request.post?
-      if @section.update_attributes(params[:section])
-        flash[:success] = I18n.t('section.update.success')
-        redirect_to :action => 'index'
-      else
-        flash[:error] = I18n.t('section.update.error')
-      end
+  def edit
+    @section = Section.find(params[:id])
+  end
+
+  def update
+    @section = Section.find(params[:id])
+    if @section.update_attributes(params[:section])
+      flash[:success] = I18n.t('section.update.success')
+      redirect_to :action => 'index'
+    else
+      flash[:error] = I18n.t('section.update.error')
+    end
   end
 end

@@ -17,70 +17,70 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
     context "on :index" do
       setup do
-        get :index, :id => 1
+        get :index, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :get_annotations" do
       setup do
-        get :get_annotations, :id => 1
+        get :get_annotations, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :add_annotation_category" do
       setup do
-        get :add_annotation_category, :id => 1
+        get :add_annotation_category, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :update_annotation_category" do
       setup do
-        get :update_annotation_category, :id => 1
+        get :update_annotation_category, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :update_annotation" do
       setup do
-        get :update_annotation, :id => 1
+        get :update_annotation, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :add_annotation_text" do
       setup do
-        get :add_annotation_text, :id => 1
+        get :add_annotation_text, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :delete_annotation_text" do
       setup do
-        get :delete_annotation_text, :id => 1
+        get :delete_annotation_text, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :delete_annotation_category" do
       setup do
-        get :delete_annotation_category, :id => 1
+        get :delete_annotation_category, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :download" do
       setup do
-        get :download, :id => 1
+        get :download, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :csv_upload" do
       setup do
-        get :csv_upload, :id => 1
+        get :csv_upload, :assignment_id => 1
       end
       should respond_with :redirect
     end
@@ -94,70 +94,70 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
     context "on :index" do
       setup do
-        post :index, :id => 1
+        post :index, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :get_annotations" do
       setup do
-        post :get_annotations, :id => 1
+        post :get_annotations, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :add_annotation_category" do
       setup do
-        post :add_annotation_category, :id => 1
+        post :add_annotation_category, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :update_annotation_category" do
       setup do
-        post :update_annotation_category, :id => 1
+        post :update_annotation_category, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :update_annotation" do
       setup do
-        post :update_annotation, :id => 1
+        post :update_annotation, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :add_annotation_text" do
       setup do
-        post :add_annotation_text, :id => 1
+        post :add_annotation_text, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :delete_annotation_text" do
       setup do
-        post :delete_annotation_text, :id => 1
+        post :delete_annotation_text, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :delete_annotation_category" do
       setup do
-        post :delete_annotation_category, :id => 1
+        post :delete_annotation_category, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :download" do
       setup do
-        post :download, :id => 1
+        post :download, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :csv_upload" do
       setup do
-        post :csv_upload, :id => 1
+        post :csv_upload, :assignment_id => 1
       end
       should respond_with :redirect
     end
@@ -176,7 +176,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
     context "on :index" do
       setup do
-        get_as @admin, :index, :id => @assignment.id
+        get_as @admin, :index, :assignment_id => @assignment.id
       end
       should_not set_the_flash
       should render_with_layout :content
@@ -188,7 +188,10 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
     context "on :get_annotations" do
       setup do
-        get_as @admin, :get_annotations, :id => @category.id
+         get_as @admin,
+                :get_annotations,
+                :assignment_id => @assignment.id,
+                :id => @category.id
       end
       should_not set_the_flash
       should respond_with :success
@@ -198,7 +201,9 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
     context "on :add_annotation_category" do
       setup do
-        get_as @admin, :add_annotation_category, :id => @assignment.id
+        get_as @admin,
+               :add_annotation_category,
+               :assignment_id => @assignment.id
       end
       should respond_with :success
       should render_template :add_annotation_category #this makes sure it didn't call another action
@@ -209,7 +214,10 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     context "on :update_annotation_category" do
 
       should "update properly" do
-        get_as @admin, :update_annotation_category, :id => @category.id
+        get_as @admin,
+               :update_annotation_category,
+               :assignment_id => @assignment.id,
+               :id => @category.id
         assert respond_with :success
         assert assign_to :annotation_category
         assert_equal I18n.t('annotations.update.annotation_category_success'),
@@ -223,7 +231,10 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         end
 
         should "give error messages properly" do
-          get_as @admin, :update_annotation_category, :id => @category.id
+          get_as @admin,
+                 :update_annotation_category,
+                 :assignment_id => @assignment.id,
+                 :id => @category.id
           assert respond_with :success
           assert_equal flash[:error], "error"
           assert assign_to :annotation_category
@@ -234,9 +245,14 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
     context "on :update_annotation" do
       setup do
-        AnnotationText.any_instance.expects(:update_attributes).with(@annotation_text)
+        AnnotationText.any_instance.expects(:update_attributes).with(
+              @annotation_text)
         AnnotationText.any_instance.expects(:save).once
-        get_as @admin, :update_annotation, :id => @annotation_text.id, :annotation_text => @annotation_text
+        get_as @admin,
+               :update_annotation,
+               :assignment_id => 1,
+               :id => @annotation_text.id,
+               :annotation_text => @annotation_text
       end
       should respond_with :success
     end
@@ -244,7 +260,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     context "on :add_annotation_text" do
       setup do
         AnnotationText.any_instance.expects(:save).never
-        get_as @admin, :add_annotation_text, :id => @category.id
+        get_as @admin, :add_annotation_text, :assignment_id => 1, :id => @category.id
       end
       should respond_with :success
       should assign_to :annotation_category
@@ -254,7 +270,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     context "on :delete_annotation_text" do
       setup do
         AnnotationText.any_instance.expects(:destroy).once
-        get_as @admin, :delete_annotation_text, :id => @annotation_text.id
+        get_as @admin, :delete_annotation_text, :assignment_id => 1, :id => @annotation_text.id
       end
       should respond_with :success
     end
@@ -262,7 +278,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     context "on :delete_annotation_category" do
       setup do
         AnnotationCategory.any_instance.expects(:destroy).once
-        get_as @admin, :delete_annotation_category, :id => @category.id
+        get_as @admin, :delete_annotation_category, :assignment_id => 1, :id => @category.id
       end
       should respond_with :success
     end
@@ -271,7 +287,10 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
       context "in csv" do
         setup do
-          get_as @admin, :download, :id => @assignment.id, :format => 'csv'
+          get_as @admin,
+                 :download,
+                 :assignment_id => @assignment.id,
+                 :format => 'csv'
         end
         should respond_with :success
         should respond_with_content_type 'application/octet-stream'
@@ -279,7 +298,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
       context "in yml" do
         setup do
-          get_as @admin, :download, :id => @assignment.id, :format => 'yml'
+          get_as @admin, :download, :assignment_id => @assignment.id, :format => 'yml'
         end
         should respond_with :success
         should respond_with_content_type 'application/octet-stream'
@@ -287,7 +306,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
       context "in error" do
         setup do
-          get_as @admin, :download, :id => @assignment.id, :format => 'xml'
+          get_as @admin, :download, :assignment_id => @assignment.id, :format => 'xml'
         end
         should respond_with :redirect
         should set_the_flash.to((I18n.t("annotations.upload.flash_error", :format => 'xml')))
@@ -296,7 +315,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
     context "on :csv_upload" do
       setup do
-        get_as @admin, :csv_upload, :id => @assignment.id
+        get_as @admin, :csv_upload, :assignment_id => @assignment.id
       end
       should respond_with :redirect
     end
@@ -316,7 +335,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       context "without errors" do
         setup do
           AnnotationCategory.any_instance.stubs(:save).returns(true)
-          post_as @admin, :add_annotation_category, :id => @assignment.id
+          post_as @admin, :add_annotation_category, :assignment_id => @assignment.id
         end
         should respond_with :success
         should assign_to :assignment
@@ -327,7 +346,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       context "with error on save" do
         setup do
           AnnotationCategory.any_instance.stubs(:save).returns(false)
-          post_as @admin, :add_annotation_category, :id => @assignment.id
+          post_as @admin, :add_annotation_category, :assignment_id => @assignment.id
         end
         should respond_with :success
         should assign_to :assignment
@@ -341,7 +360,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       context "without errors" do
         setup do
           AnnotationText.any_instance.stubs(:save).returns(true)
-          post_as @admin, :add_annotation_text, :id => @category.id
+          post_as @admin, :add_annotation_text, :assignment_id => 1, :id => @category.id
         end
         should respond_with :success
         should render_template 'insert_new_annotation_text'
@@ -352,7 +371,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       context "with errors on save" do
         setup do
           AnnotationText.any_instance.stubs(:save).returns(false)
-          post_as @admin, :add_annotation_text, :id => @category.id
+          post_as @admin, :add_annotation_text, :assignment_id => 1, :id => @category.id
         end
         should respond_with :success
         should render_template 'new_annotation_text_error'
@@ -363,7 +382,10 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
     context "on :csv_upload" do
       setup do
-        post_as @admin, :csv_upload, :id => @assignment.id, :annotation_category_list_csv => 'name, text'
+        post_as @admin,
+                :csv_upload,
+                :assignment_id => @assignment.id,
+                :annotation_category_list_csv => 'name, text'
       end
       should respond_with :redirect
       should set_the_flash.to((I18n.t('annotations.upload.success', :annotation_category_number => 1)))
@@ -381,7 +403,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
           @old_annotation_categories =  @assignment.annotation_categories
           # Needed, otherwise the test fail
           @old_annotation_categories.length
-          post_as @admin, :yml_upload, :id => @assignment.id, :annotation_category_list_yml => "--- \n A:\n - A1\n - A2\n"
+          post_as @admin, :yml_upload, :assignment_id => @assignment.id, :annotation_category_list_yml => "--- \n A:\n - A1\n - A2\n"
         end
 
         should respond_with :redirect
@@ -397,7 +419,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       context "on :yml_upload with an error" do
         setup do
           @old_annotation_categories =   @assignment.annotation_categories
-          post_as @admin, :yml_upload, :id => @assignment.id, :annotation_category_list_yml => "--- \n A:\n - A1\n A2\n"
+          post_as @admin, :yml_upload, :assignment_id => @assignment.id, :annotation_category_list_yml => "--- \n A:\n - A1\n A2\n"
         end
 
         should respond_with :redirect

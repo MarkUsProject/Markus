@@ -19,17 +19,17 @@ class StudentsControllerTest < AuthenticatedControllerTest
     end
 
     should "not be able to :edit" do
-      get_as @student, :edit
+      get_as @student, :edit, :id => 178
       assert_response :missing
     end
 
     should "not be able to :update" do
-      get_as @student, :update
+      put_as @student, :update, :id => 178
       assert_response :missing
     end
 
     should "not be able to :create" do
-      get_as @student, :create
+      put_as @student, :create
       assert_response :missing
     end
 
@@ -72,11 +72,11 @@ class StudentsControllerTest < AuthenticatedControllerTest
       end
 
       should "be able to update student" do
-        post_as @admin,
-                :update,
-                :user => {:id => @student.id,
-                          :last_name => 'Doe',
-                          :first_name => 'John'}
+        put_as @admin,
+               :update,
+               :id => @student.id,
+               :user => {:last_name => 'Doe',
+                         :first_name => 'John'}
         assert_response :redirect
         assert_equal I18n.t("students.edit_success",
                             :user_name => @student.user_name),
