@@ -10,6 +10,7 @@ source 'http://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem "rails"
+#gem "prototype-rails" Will be needed with Rails3.1
 gem "db_populate"
 gem "rubyzip"
 gem "ya2yaml"
