@@ -111,9 +111,9 @@ module MarkusConfigurator
 
   #Repository for the test framework
   #Students file will be compiled, executed and tested in this repository
-  def markus_config_test_framework_repository
-    if defined? TEST_FRAMEWORK_REPOSITORY
-      return TEST_FRAMEWORK_REPOSITORY
+  def markus_config_automated_tests_repository
+    if defined? automated_tests_REPOSITORY
+      return automated_tests_REPOSITORY
     else
       return File.join(::Rails.root.to_s, "test-framework")
     end

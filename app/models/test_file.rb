@@ -37,14 +37,14 @@ class TestFile < ActiveRecord::Base
     # (need to check this in case the user uploads test, lib or parse files before uploading ant files
     #  in which case the build.xml and build.properties will not exist yet)
     if (f_type != "build.xml" && f_type != "build.properties") && (f_name == "build.xml" || f_name == "build.properties")
-      record.errors.add(:base, I18n.t("test_framework.invalid_filename"))
+      record.errors.add(:base, I18n.t("automated_tests.invalid_filename"))
     end
 
     # Case 2: build.xml and build.properties must be named correctly
     if f_type == "build.xml" && f_name != "build.xml"
-      record.errors.add(:base, I18n.t("test_framework.invalid_buildxml"))
+      record.errors.add(:base, I18n.t("automated_tests.invalid_buildxml"))
     elsif f_type == "build.properties" && f_name != "build.properties"
-      record.errors.add(:base, I18n.t("test_framework.invalid_buildproperties"))
+      record.errors.add(:base, I18n.t("automated_tests.invalid_buildproperties"))
     end
 
     # Case 3: validates_uniqueness_of filename for this assignment
@@ -52,7 +52,7 @@ class TestFile < ActiveRecord::Base
     if f_name && a_id
       dup_file = TestFile.find_by_assignment_id_and_filename(a_id, f_name)
       if dup_file && dup_file.id != t_id
-        record.errors.add attr, ' ' + f_name + ' ' + I18n.t("test_framework.filename_exists")
+        record.errors.add attr, ' ' + f_name + ' ' + I18n.t("automated_tests.filename_exists")
       end
     end
   end
@@ -94,7 +94,7 @@ class TestFile < ActiveRecord::Base
     # Execute if the full file path exists (indicating a new File object)
     if @file_path
       name =  self.filename
-      test_dir = File.join(MarkusConfigurator.markus_config_test_framework_repository, assignment.short_identifier)
+      test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
 
       # Folders for test, lib and parse files:
       # Test Files Folder
@@ -121,7 +121,7 @@ class TestFile < ActiveRecord::Base
 
   def delete_file
     # Test Framework repository to delete from
-    test_dir = File.join(MarkusConfigurator.markus_config_test_framework_repository, assignment.short_identifier)
+    test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
     if self.filetype == "test"
       test_dir = File.join(test_dir, 'test')
     elsif self.filetype == "lib"

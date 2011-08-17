@@ -106,8 +106,8 @@ Markus::Application.configure do
 
   ###################################################################
   # Directory where the Automated Testing Repositories will be created.
-  # Make sure MarkUs is allowed to write to this directory
-  TEST_FRAMEWORK_REPOSITORY = "#{::Rails.root.to_s}/data/dev/automated_tests"
+  # make sure markus is allowed to write to this directory
+  AUTOMATED_TESTS_REPOSITORY = "#{::Rails.root.to_s}/data/dev/automated_tests"
 
   ###################################################################
   # Set this to true or false if you want to be able to display and annotate
