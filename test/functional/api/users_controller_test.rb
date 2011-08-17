@@ -154,7 +154,13 @@ class Api::UsersControllerTest < ActionController::TestCase
 
       should "and a new, non-existing user name" do
         @new_attr[:new_user_name] = "apitestuser2"
-        put "update", :id => 1, :user_name => "apitestuser2"
+        put "update",
+            :id => 1,
+            :user_name => @user.user_name,
+            :new_user_name => 'apitestuser2',
+            :last_name => "TesterChanged",
+            :first_name => "UpdatedApi"
+
         # Try to find old user_name
         assert User.find_by_user_name(@user.user_name).nil?
         # Find user by new user_name
