@@ -65,6 +65,7 @@ class TestFrameworkControllerTest < AuthenticatedControllerTest
         tfile = TestFile.find_by_assignment_id_and_filename("#{@assignment.id}", "validtestfile")
         post_as @admin, :manage, {:assignment_id => @assignment.id, :assignment => {:enable_test => "1", :test_files_attributes => {"1" => {:assignment_id => "#{tfile.id}", :filename => "newvalidtestfile"}}}}
         assert TestFile.find_by_id_and_filename("#{tfile.id}", "newvalidtestfile")
+        assert !TestFile.find_by_id_and_filename("#{tfile.id}", "validtestfile")
       end
     end
 
