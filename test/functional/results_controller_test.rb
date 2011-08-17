@@ -1229,8 +1229,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end
 
           should "with file error" do
-            submission = Submission.new
-            result = Result.new
+            submission = Submission.make
+            result = Result.make
             submission.expects(:result).once.returns(result)
             @file.expects(:submission).twice.returns(submission)
             @file.expects(:retrieve_file).once.raises(
