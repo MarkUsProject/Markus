@@ -29,7 +29,15 @@ class TestFrameworkControllerTest < AuthenticatedControllerTest
 
     context "creating a test file" do
       setup do
-        post_as @admin, :manage, {:assignment_id => @assignment.id, :assignment => {:enable_test => "1", :test_files_attributes => {"1" => {:assignment_id => nil, :filename => "validtestfile", :filetype => "test", :is_private => "0"}}}}
+        post_as @admin,
+                :manage, {:assignment_id => @assignment.id,
+                          :assignment => {
+                                :enable_test => "1",
+                                 :test_files_attributes => {
+                                    "1" => {
+                                          :id => nil,
+                                          :filename => "validtestfile",
+                                          :filetype => "test", :is_private => "0"}}}}
       end
 
       should assign_to :assignment
@@ -37,13 +45,24 @@ class TestFrameworkControllerTest < AuthenticatedControllerTest
       should set_the_flash.to(I18n.t('assignment.update_success'))
 
       should "add a test file named validtestfile" do
-        assert TestFile.find_by_assignment_id_and_filename("#{@assignment.id}", "validtestfile")
+        assert TestFile.find_by_assignment_id_and_filename(
+                  "#{@assignment.id}",
+               "validtestfile")
       end
     end
 
     context "creating an invalid test file" do
       setup do
-        post_as @admin, :manage, {:assignment_id => @assignment.id, :assignment => {:enable_test => "1", :test_files_attributes => {"1" => {:assignment_id => nil, :filename => "build.xml", :filetype => "test", :is_private => "0"}}}}
+        post_as @admin,
+                :manage,
+                {:assignment_id => @assignment.id,
+                 :assignment => {
+                      :enable_test => "1",
+                      :test_files_attributes => {
+                            "1" => {:id => nil,
+                                    :filename => "build.xml",
+                                    :filetype => "test",
+                                    :is_private => "0"}}}}
       end
 
       should render_template 'manage'
@@ -55,15 +74,33 @@ class TestFrameworkControllerTest < AuthenticatedControllerTest
 
     context "updating a test file" do
       setup do
-        post_as @admin, :manage, {:assignment_id => @assignment.id, :assignment => {:enable_test => "1", :test_files_attributes => {"1" => {:assignment_id => nil, :filename => "validtestfile", :filetype => "test", :is_private => "0"}}}}
+        post_as @admin,
+                :manage,
+                {:assignment_id => @assignment.id,
+                 :assignment => {
+                      :enable_test => "1",
+                      :test_files_attributes => {
+                          "1" => {:assignment_id => nil,
+                                  :filename => "validtestfile",
+                                  :filetype => "test",
+                                  :is_private => "0"}}}}
       end
 
       should respond_with :redirect
       should set_the_flash.to(I18n.t('assignment.update_success'))
 
       should "update test file named validtestfile to newvalidtestfile" do
-        tfile = TestFile.find_by_assignment_id_and_filename("#{@assignment.id}", "validtestfile")
-        post_as @admin, :manage, {:assignment_id => @assignment.id, :assignment => {:enable_test => "1", :test_files_attributes => {"1" => {:assignment_id => "#{tfile.id}", :filename => "newvalidtestfile"}}}}
+        tfile = TestFile.find_by_assignment_id_and_filename(
+                    "#{@assignment.id}",
+                    "validtestfile")
+        post_as @admin,
+                :manage,
+                {:assignment_id => @assignment.id,
+                 :assignment => {
+                      :enable_test => "1",
+                      :test_files_attributes => {
+                          "1" => {:id => "#{tfile.id}",
+                                  :filename => "newvalidtestfile"}}}}
         assert TestFile.find_by_id_and_filename("#{tfile.id}", "newvalidtestfile")
         assert !TestFile.find_by_id_and_filename("#{tfile.id}", "validtestfile")
       end
@@ -71,7 +108,16 @@ class TestFrameworkControllerTest < AuthenticatedControllerTest
 
     context "deleting a test file" do
       setup do
-        post_as @admin, :manage, {:assignment_id => @assignment.id, :assignment => {:enable_test => "1", :test_files_attributes => {"1" => {:assignment_id => nil, :filename => "validtestfile", :filetype => "test", :is_private => "0"}}}}
+        post_as @admin,
+                :manage,
+                {:assignment_id => @assignment.id,
+                 :assignment => {
+                      :enable_test => "1",
+                      :test_files_attributes => {
+                            "1" => {:id => nil,
+                                    :filename => "validtestfile",
+                                    :filetype => "test",
+                                    :is_private => "0"}}}}
       end
 
       should respond_with :redirect
@@ -79,8 +125,15 @@ class TestFrameworkControllerTest < AuthenticatedControllerTest
 
       should "delete test file named validtestfile" do
         tfile = TestFile.find_by_assignment_id_and_filename("#{@assignment.id}", "validtestfile")
-        post_as @admin, :manage, {:assignment_id => @assignment.id, :assignment => {:enable_test => "1", :test_files_attributes => {"1" => {:assignment_id => "#{tfile.id}", :_destroy => "1"}}}}
+        post_as @admin,
+                :manage,
+                {:assignment_id => @assignment.id,
+                 :assignment => {:enable_test => "1",
+                                 :test_files_attributes => {
+                                    "1" => {:id => "#{tfile.id}",
+                                            :_destroy => "1"}}}}
         assert !TestFile.find_by_id_and_filename("#{tfile.id}", "validtestfile")
+
       end
     end
   end
