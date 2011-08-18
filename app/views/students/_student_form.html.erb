@@ -1,8 +1,7 @@
 <div class="section">
 
-  <%= form_for :user,
-	       :url => {:controller => 'students',
-			:action => action} do |f| -%>
+  <%= form_for @user,
+	       :as => :user do |f| %>
 
     <%= f.error_messages -%>
 
