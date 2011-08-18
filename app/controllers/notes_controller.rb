@@ -2,6 +2,7 @@ class NotesController < ApplicationController
   before_filter :authorize_for_ta_and_admin
   before_filter :ensure_can_modify, :only => [:edit, :update]
 
+  # TODO this method needs explaining ! What is return_id ?
   def notes_dialog
     @return_id = params[:id]
     @cls = params[:noteable_type]
