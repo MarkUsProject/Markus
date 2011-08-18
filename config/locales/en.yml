@@ -1078,8 +1078,8 @@ en:
     grade_distribution:         "Grade Distribution"
 
     #Test Framework
-    test_framework:
-      test_framework: "Test Framework"
+    automated_tests:
+      automated_tests: "Test Framework"
       enable_test:    "Enable tests for this assignment"
       required_files_ant: "Required files needed for Ant"
       need_group_for_test: "You must have a group to run a test"

@@ -75,7 +75,7 @@ function toggle_remark_requests(allow_remark_requests) {
   }
 }
 
-function toggle_test_framework(is_testing_framework_enabled) {
+function toggle_automated_tests(is_testing_framework_enabled) {
 
   $('is_testing_framework_enabled').setValue(is_testing_framework_enabled);
 

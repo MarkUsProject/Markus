@@ -1,16 +1,19 @@
 # Helper methods for Testing Framework forms
-module TestFrameworkHelper
+module AutomatedTestsHelper
 
   def add_test_file_link(name, form)
     link_to_function name do |page|
-      test_file = render(:partial => 'test_file', :locals => {:form => form, :test_file => TestFile.new, :file_type => "test"})
+      test_file = render(:partial => 'test_file',
+                         :locals => {:form => form,
+                                     :test_file => TestFile.new,
+                                     :file_type => "test"})
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_file_id = new Date().getTime();
           $('test_files').insert({bottom: "#{ escape_javascript test_file }".replace(/(attributes_\\d+|\\[\\d+\\])/g, new_test_file_id) });
           $('assignment_test_files_' + new_test_file_id + '_filename').focus();
         } else {
-          alert("#{I18n.t("test_framework.add_test_file_alert")}");
+          alert("#{I18n.t("automated_tests.add_test_file_alert")}");
         }
       }
     end
@@ -18,14 +21,17 @@ module TestFrameworkHelper
 
   def add_lib_file_link(name, form)
     link_to_function name do |page|
-      test_file = render(:partial => 'test_file', :locals => {:form => form, :test_file => TestFile.new, :file_type => "lib"})
+      test_file = render(:partial => 'test_file',
+                         :locals => {:form => form,
+                                     :test_file => TestFile.new,
+                                     :file_type => "lib"})
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_file_id = new Date().getTime();
           $('lib_files').insert({bottom: "#{ escape_javascript test_file }".replace(/(attributes_\\d+|\\[\\d+\\])/g, new_test_file_id) });
           $('assignment_test_files_' + new_test_file_id + '_filename').focus();
         } else {
-          alert("#{I18n.t("test_framework.add_lib_file_alert")}");
+          alert("#{I18n.t("automated_tests.add_lib_file_alert")}");
         }
       }
     end
@@ -33,14 +39,17 @@ module TestFrameworkHelper
 
   def add_parser_file_link(name, form)
     link_to_function name do |page|
-      test_file = render(:partial => 'test_file', :locals => {:form => form, :test_file => TestFile.new, :file_type => "parse"})
+      test_file = render(:partial => 'test_file',
+                         :locals => {:form => form,
+                                     :test_file => TestFile.new,
+                                     :file_type => "parse"})
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_file_id = new Date().getTime();
           $('parser_files').insert({bottom: "#{ escape_javascript test_file }".replace(/(attributes_\\d+|\\[\\d+\\])/g, new_test_file_id) });
           $('assignment_test_files_' + new_test_file_id + '_filename').focus();
         } else {
-          alert("#{I18n.t("test_framework.add_parser_file_alert")}");
+          alert("#{I18n.t("automated_tests.add_parser_file_alert")}");
         }
       }
     end
@@ -62,7 +71,9 @@ module TestFrameworkHelper
       @ant_build_prop.save(:validate => false)
 
       # Setup Testing Framework repository
-      test_dir = File.join(MarkusConfigurator.markus_config_test_framework_repository, assignment.short_identifier)
+      test_dir = File.join(
+                  MarkusConfigurator.markus_config_automated_tests_repository,
+                  assignment.short_identifier)
       FileUtils.makedirs(test_dir)
 
       assignment.reload
@@ -88,7 +99,7 @@ module TestFrameworkHelper
         if !filename_array.include?(fname)
           filename_array << fname
         else
-          raise I18n.t("test_framework.duplicate_filename") + fname
+          raise I18n.t("automated_tests.duplicate_filename") + fname
         end
       end
     end
@@ -147,7 +158,7 @@ module TestFrameworkHelper
       end
       t = @grouping.token
       if t == nil
-        raise I18n.t("test_framework.missing_tokens")
+        raise I18n.t("automated_tests.missing_tokens")
       end
       if t.tokens > 0
         t.decrease_tokens
@@ -161,12 +172,12 @@ module TestFrameworkHelper
   # Export group repository for testing
   def export_repository(group, repo_dest_dir)
     # Create the test framework repository
-    if !(File.exists?(MarkusConfigurator.markus_config_test_framework_repository))
-      FileUtils.mkdir(MarkusConfigurator.markus_config_test_framework_repository)
+    if !(File.exists?(MarkusConfigurator.markus_config_automated_tests_repository))
+      FileUtils.mkdir(MarkusConfigurator.markus_config_automated_tests_repository)
     end
 
     # Delete student's assignment repository if it already exists
-    repo_dir = File.join(MarkusConfigurator.markus_config_test_framework_repository, group.repo_name)
+    repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, group.repo_name)
     if (File.exists?(repo_dir))
       FileUtils.rm_rf(repo_dir)
     end
@@ -178,7 +189,7 @@ module TestFrameworkHelper
 
   # Export configuration files for testing
   def export_configuration_files(assignment, group, repo_dest_dir)
-    assignment_dir = File.join(MarkusConfigurator.markus_config_test_framework_repository, assignment.short_identifier)
+    assignment_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
     repo_assignment_dir = File.join(repo_dest_dir, assignment.short_identifier)
 
     # Store the Api key of the grader or the admin in the api.txt file in the exported repository
@@ -197,7 +208,7 @@ module TestFrameworkHelper
 
   # Delete test repository directory
   def delete_test_repo(group, repo_dest_dir)
-    repo_dir = File.join(MarkusConfigurator.markus_config_test_framework_repository, group.repo_name)
+    repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, group.repo_name)
     # Delete student's assignment repository if it exists
     if (File.exists?(repo_dir))
       FileUtils.rm_rf(repo_dir)
@@ -208,11 +219,11 @@ module TestFrameworkHelper
   def copy_ant_files(assignment, repo_dest_dir)
     # Check if the repository where you want to copy Ant files to exists
     if !(File.exists?(repo_dest_dir))
-      raise I18n.t("test_framework.dir_not_exist", {:dir => repo_dest_dir})
+      raise I18n.t("automated_tests.dir_not_exist", {:dir => repo_dest_dir})
     end
 
     # Create the src repository to put student's files
-    assignment_dir = File.join(MarkusConfigurator.markus_config_test_framework_repository, assignment.short_identifier)
+    assignment_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
     repo_assignment_dir = File.join(repo_dest_dir, assignment.short_identifier)
     FileUtils.mkdir(File.join(repo_assignment_dir, "src"))
 
@@ -259,7 +270,7 @@ module TestFrameworkHelper
         FileUtils.cp_r(File.join(assignment_dir, "parse"), repo_assignment_dir)
       end
     else
-      raise I18n.t("test_framework.dir_not_exist", {:dir => assignment_dir})
+      raise I18n.t("automated_tests.dir_not_exist", {:dir => assignment_dir})
     end
   end
 
@@ -267,7 +278,7 @@ module TestFrameworkHelper
   def run_ant_file(result, assignment, repo_dest_dir)
     # Check if the repository where you want to copy Ant files to exists
     if !(File.exists?(repo_dest_dir))
-      raise I18n.t("test_framework.dir_not_exist", {:dir => repo_dest_dir})
+      raise I18n.t("automated_tests.dir_not_exist", {:dir => repo_dest_dir})
     end
 
     # Go to the directory where the Ant program must be run

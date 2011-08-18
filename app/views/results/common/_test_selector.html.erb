@@ -3,7 +3,7 @@
 %>
   <%=label_tag "select_test_result_id", h(I18n.t("common.test_results")), :class => "inline_label" %>
 <%= link_to_remote( image_tag("icons/cog_go.png", :alt => I18n.t("common.test_code"), :title => I18n.t("common.test_code"), :id => "test_icon"),
-{:url => {:action => "index", :controller => "test_framework", :result => @result},
+{:url => {:action => "index", :controller => "automated_tests", :result => @result},
  :before => "$('running_tests').show();",
  :complete => "$('running_tests').hide();$('tests_complete').show()"}) %>
   <select id="select_test_result_id" onchange="if ($(this).getValue() != '') { load_test_result($(this).getValue()); }">

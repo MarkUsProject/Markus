@@ -23,7 +23,7 @@ class SectionsController < ApplicationController
       return
     else
       flash[:error] = I18n.t('section.create.error')
-      redirect_to 'new'
+      redirect_to :action => 'new'
     end
   end
 

@@ -4,7 +4,7 @@
   document.observe('dom:loaded', function() {
 
     <% if @assignment %>
-      toggle_test_framework(<%= @assignment.enable_test %>);
+      toggle_automated_tests(<%= @assignment.enable_test %>);
     <% end %>
 
   });
