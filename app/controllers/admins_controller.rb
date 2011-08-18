@@ -15,6 +15,9 @@ class AdminsController < ApplicationController
     @user = Admin.find_by_id(params[:id])
   end
 
+  def new
+  end
+
   def update
     @user = Admin.find(params[:id])
     attrs = params[:user]

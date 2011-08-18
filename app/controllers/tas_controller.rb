@@ -12,17 +12,21 @@ class TasController < ApplicationController
     @tas = construct_table_rows(@tas_data)
   end
 
+  def new
+    @user = Ta.new
+  end
+
   def edit
     @user = Ta.find_by_id(params[:id])
   end
 
   def update
-    return unless request.post?
     @user = Ta.find_by_id(params[:user][:id])
     attrs = params[:user]
     # update_attributes supplied by ActiveRecords
     if !@user.update_attributes(attrs)
       render :action => :edit
+      return
     else
       flash[:edit_notice] = I18n.t("graders.success",
                                    :user_name => @user.user_name)
@@ -31,7 +35,6 @@ class TasController < ApplicationController
   end
 
   def create
-    return unless request.post?
     # Default attributes: role = TA or role = STUDENT
     # params[:user] is a hash of values passed to the controller
     # by the HTML form with the help of ActiveView::Helper::
@@ -40,7 +43,8 @@ class TasController < ApplicationController
     # active records--creates a new record if the model is new, otherwise
     # updates the existing record
     return unless @user.save
-    flash[:success] = I18n.t("graders.create_success", :user_name => @user.user_name)
+    flash[:success] = I18n.t("graders.create_success",
+                             :user_name => @user.user_name)
     redirect_to :action => 'index' # Redirect
   end
 
