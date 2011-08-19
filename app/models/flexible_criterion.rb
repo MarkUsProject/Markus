@@ -3,16 +3,31 @@ require 'csv'
 # Represents a flexible criterion used to mark an assignment that
 # has the marking_scheme_type attribute set to 'flexible'.
 class FlexibleCriterion < ActiveRecord::Base
+
   set_table_name "flexible_criteria" # set table name correctly
-  belongs_to  :assignment, :counter_cache => true
-  has_many    :marks, :as => :markable, :dependent => :destroy
-  has_many :criterion_ta_associations, :as => :criterion, :dependent => :destroy
+  belongs_to :assignment, :counter_cache => true
+
+  has_many :marks, :as => :markable, :dependent => :destroy
+
+  has_many :criterion_ta_associations,
+           :as => :criterion,
+           :dependent => :destroy
+
   has_many :tas, :through => :criterion_ta_associations
-  validates_associated :assignment, :message => 'association is not strong with an assignment'
-  validates_uniqueness_of :flexible_criterion_name, :scope => :assignment_id, :message => 'is already taken'
+
+  validates_associated :assignment,
+                  :message => 'association is not strong with an assignment'
+  validates_uniqueness_of :flexible_criterion_name,
+                          :scope => :assignment_id,
+                          :message => 'is already taken'
   validates_presence_of :flexible_criterion_name, :assignment_id, :max
-  validates_numericality_of :assignment_id, :only_integer => true, :greater_than => 0, :message => "can only be whole number greater than 0"
-  validates_numericality_of :max, :message => "must be a number greater than 0.0", :greater_than => 0.0
+  validates_numericality_of :assignment_id,
+                        :only_integer => true,
+                        :greater_than => 0,
+                        :message => "can only be whole number greater than 0"
+  validates_numericality_of :max,
+                            :message => "must be a number greater than 0.0",
+                            :greater_than => 0.0
 
 #  before_save :update_assigned_groups_count
 

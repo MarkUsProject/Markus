@@ -61,7 +61,7 @@ Markus::Application.routes.draw do
       end
     end
 
-    resources :test_framework do
+    resources :automated_tests do
       collection do
         get 'manage'
         post 'update_positions'

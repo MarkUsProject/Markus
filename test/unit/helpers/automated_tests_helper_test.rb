@@ -1,8 +1,8 @@
 require File.dirname(__FILE__) + '/../../test_helper'
-include TestFrameworkHelper
+include AutomatedTestsHelper
 require 'shoulda'
 
-class TestFrameworkHelperTest < ActiveSupport::TestCase
+class AutomatedTestsHelperTest < ActiveSupport::TestCase
 
   def setup
     clear_fixtures

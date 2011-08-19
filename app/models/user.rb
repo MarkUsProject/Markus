@@ -126,7 +126,7 @@ class User < ActiveRecord::Base
          # csv format is user_name,last_name,first_name
          # We check for user's section
          # If the user has a section, we had it to the CSV
-         if user.section.nil?
+         if !user.student? or user.section.nil?
            user_array = [user.user_name,user.last_name,user.first_name]
          else
            user_array = [user.user_name,user.last_name,user.first_name, user.section.name]

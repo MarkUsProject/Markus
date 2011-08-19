@@ -72,7 +72,6 @@ class StudentsController < ApplicationController
   end
 
   def create
-    return unless request.post?
     # Default attributes: role = TA or role = STUDENT
     # params[:user] is a hash of values passed to the controller
     # by the HTML form with the help of ActiveView::Helper::

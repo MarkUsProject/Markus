@@ -1,10 +1,16 @@
 
 <div class="wrapLeft">
-  <% if flash[:success]%>
+  <% if flash[:success] %>
     <div class="success">
-      <%= flash[:success]%>
+      <%= flash[:success] %>
     </div>
   <% end%>
+  <% if flash[:error] %>
+    <div class="error">
+      <%= flash[:error] %>
+    </div>
+  <% end%>
+
 </div>
 
 <%= form_for @section,
