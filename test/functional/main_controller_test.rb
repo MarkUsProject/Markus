@@ -1,5 +1,5 @@
 require File.join(File.dirname(__FILE__), 'authenticated_controller_test')
-require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 require 'shoulda'
 require 'machinist'
 

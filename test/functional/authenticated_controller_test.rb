@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), '..', 'test_helper')
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 
 # Test class to extend when creating tests for this application;
 # overrides common request types with authentication
