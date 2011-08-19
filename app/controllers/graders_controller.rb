@@ -1,5 +1,4 @@
-require 'fastercsv'
-require 'csv_invalid_line_error'
+include CsvHelper
 
 # Manages actions relating to assigning graders.
 class GradersController < ApplicationController

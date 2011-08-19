@@ -1,5 +1,4 @@
-require 'fastercsv'
-require 'csv'
+include CsvHelper
 
 class RubricCriterion < ActiveRecord::Base
   before_save :round_weight

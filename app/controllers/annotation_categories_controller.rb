@@ -1,5 +1,4 @@
-require 'fastercsv'
-
+include CsvHelper
 class AnnotationCategoriesController < ApplicationController
   include AnnotationCategoriesHelper
 

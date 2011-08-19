@@ -1,4 +1,4 @@
-require 'fastercsv'
+include CsvHelper
 require 'auto_complete'
 require 'csv_invalid_line_error'
 
@@ -25,7 +25,7 @@ class GroupsController < ApplicationController
   # Group administration functions -----------------------------------------
   # Verify that all functions below are included in the authorize filter above
 
-  def new 
+  def new
     @assignment = Assignment.find(params[:id])
     begin
       new_grouping_data = @assignment.add_group(params[:new_group_name])

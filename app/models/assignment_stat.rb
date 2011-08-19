@@ -1,4 +1,4 @@
-require 'fastercsv'
+include CsvHelper
 class AssignmentStat < ActiveRecord::Base
 
   belongs_to  :assignment

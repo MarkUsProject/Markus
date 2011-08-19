@@ -1,6 +1,5 @@
-require 'fastercsv'
+include CsvHelper
 require 'ya2yaml'
-
 
 module AnnotationCategoriesHelper
 

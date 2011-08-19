@@ -1,5 +1,4 @@
-require 'fastercsv'
-
+include CsvHelper
 # GradeEntryForm can represent a test, lab, exam, etc.
 # A grade entry form has many columns which represent the questions and their total
 # marks (i.e. GradeEntryItems) and many rows which represent students and their

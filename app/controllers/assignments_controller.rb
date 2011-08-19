@@ -1,4 +1,4 @@
-require 'fastercsv'
+include CsvHelper
 class AssignmentsController < ApplicationController
   before_filter      :authorize_only_for_admin,
                      :except => [:deletegroup,

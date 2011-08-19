@@ -1,4 +1,4 @@
-require 'fastercsv'
+include CsvHelper
 
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
