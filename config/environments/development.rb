@@ -17,11 +17,12 @@ Markus::Application.configure do
   # Show Deprecated Warnings (to :log or to :stderr)
   config.active_support.deprecation = :stderr
 
+  config.log_level = :debug
+  # set log-level (:debug, :info, :warn, :error, :fatal)
+
   # Don't care if the mailer can't send
   config.action_mailer.raise_delivery_errors = false
 
-  require 'rubygems'
-  require 'bundler'
   require 'ruby-debug'
 
   ###################################################################

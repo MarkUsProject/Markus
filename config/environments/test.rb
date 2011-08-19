@@ -16,6 +16,9 @@ Markus::Application.configure do
   # Disable request forgery protection in test environment
   config.action_controller.allow_forgery_protection = false
 
+  config.log_level = :debug
+  # set log-level (:debug, :info, :warn, :error, :fatal)
+
   # Tell Action Mailer not to deliver emails to the real world.
   # The :test delivery method accumulates sent emails in the
   # ActionMailer::Base.deliveries array.
@@ -24,9 +27,7 @@ Markus::Application.configure do
   # Show Deprecated Warnings (to :log or to :stderr)
   config.active_support.deprecation = :stderr
 
-  # We need this early require. Otherwise factory_data_preloader
-  # is reporting a _LOT_ of errors. Please keep this.
-  #require 'factory_data_preloader'
+  require 'ruby-debug'
 
   ###################################################################
   # MarkUs SPECIFIC CONFIGURATION
