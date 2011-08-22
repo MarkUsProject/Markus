@@ -1,11 +1,14 @@
 require File.join(File.dirname(__FILE__), '..', 'test_helper')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
+
 require 'shoulda'
 require 'mocha'
 
 include MarkusConfigurator
 class AdminTest < ActiveSupport::TestCase
-  fixtures :users
-  fixtures :groups
+  setup do
+    clear_fixtures
+  end
 
   context "If repo admin" do
 
@@ -34,7 +37,7 @@ class AdminTest < ActiveSupport::TestCase
     end
 
     should "revoke repository permissions when destroying an admin object" do
-      admin = users(:olm_admin_1)
+      admin = Admin.make 
       repo_names = Group.all.collect do |group| File.join(markus_config_repository_storage, group.repository_name) end
       @repo.expects(:delete_bulk_permissions).times(1).with(repo_names, [admin.user_name])
       admin.destroy
@@ -59,7 +62,7 @@ class AdminTest < ActiveSupport::TestCase
     end
 
     should "not remove repository permissions when deleting an admin" do
-      admin = users(:olm_admin_1)
+      admin = Admin.make 
       @repo.expects(:delete_bulk_permissions).never
       admin.destroy
     end

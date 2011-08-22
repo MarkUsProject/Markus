@@ -7,7 +7,7 @@ class Grouping < ActiveRecord::Base
   before_create :create_grouping_repository_folder
   before_destroy :revoke_repository_permissions_for_students
   belongs_to :assignment, :counter_cache => true
-  belongs_to  :group
+  belongs_to :group
   belongs_to :grouping_queue
   has_many :memberships
   has_many :student_memberships, :order => 'id'
@@ -17,18 +17,29 @@ class Grouping < ActiveRecord::Base
                            StudentMembership::STATUSES[:rejected]]
   has_many :accepted_student_memberships,
            :class_name => "StudentMembership",
-           :conditions => {'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]}
+           :conditions => {
+              'memberships.membership_status' => [
+                    StudentMembership::STATUSES[:accepted],
+                    StudentMembership::STATUSES[:inviter]]}
   has_many :notes, :as => :noteable, :dependent => :destroy
   has_many :ta_memberships, :class_name => "TaMembership"
   has_many :tas, :through => :ta_memberships, :source => :user
   has_many :students, :through => :student_memberships, :source => :user
-  has_many :pending_students, :class_name => 'Student', :through => :student_memberships, :conditions => {'memberships.membership_status' => StudentMembership::STATUSES[:pending]}, :source => :user
+  has_many :pending_students,
+           :class_name => 'Student',
+           :through => :student_memberships,
+           :conditions => {
+            'memberships.membership_status' => StudentMembership::STATUSES[:pending]},
+           :source => :user
 
   has_many :submissions
   #The first submission found that satisfies submission_version_used == true.
   #If there are multiple such submissions, one is chosen randomly.
-  has_one :current_submission_used, :class_name => 'Submission', :conditions => {:submission_version_used => true}
-  has_many :grace_period_deductions, :through => :non_rejected_student_memberships
+  has_one :current_submission_used,
+          :class_name => 'Submission',
+          :conditions => {:submission_version_used => true}
+  has_many :grace_period_deductions,
+           :through => :non_rejected_student_memberships
 
   has_one :token
 
@@ -36,12 +47,12 @@ class Grouping < ActiveRecord::Base
 
   validates_numericality_of :criteria_coverage_count, :greater_than_or_equal_to => 0
 
-  # user association/validations
-  validates_presence_of   :assignment_id, :message => "needs an assignment id"
-  validates_associated    :assignment, :on => :create,    :message => "associated assignment need to be valid"
+  # user association/validation
+  validates_presence_of :assignment_id
+  validates_associated :assignment, :on => :create, :message => "associated assignment need to be valid"
 
-  validates_presence_of   :group_id, :message => "needs an group id"
-  validates_associated    :group,    :message => "associated group need to be valid"
+  validates_presence_of :group_id
+  validates_associated :group, :message => "associated group need to be valid"
 
   validates_inclusion_of :is_collected, :in => [true, false]
 
