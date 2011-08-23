@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__),'../../test_helper')
+require File.join(File.dirname(__FILE__), '..', '..', 'test_helper')
 require 'shoulda'
 require 'base64'
 
@@ -21,7 +21,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       a_short_identifier = assignment.short_identifier
       filename = @test_result.filename
       # fire off request
-      @res = get("show", {:group_name => group_name, :assignment => a_short_identifier,
+      @res = get("show", {:id => 1, :group_name => group_name, :assignment => a_short_identifier,
                           :filename => filename})
     end
 
@@ -67,7 +67,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       assert_not_nil(new_test_result)
       assert_equal(@file_content, new_test_result.file_content)
       # check if a proper response has been sent
-      res_file = File.new("#{RAILS_ROOT}/public/200.xml")
+      res_file = File.new("#{::Rails.root.to_s}/public/200.xml")
       assert_equal(res_file.read, @res.body)
     end
   end
@@ -89,7 +89,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       test_results = @submission.test_results # returns Array
       @test_results_count_pre_post = test_results.length
       @to_be_deleted_test_result = "example.rb"
-      @res = delete("destroy", {:group_name => group_name, :assignment => a_short_identifier,
+      @res = delete("destroy", {:id => 1, :group_name => group_name, :assignment => a_short_identifier,
                                 :filename => @to_be_deleted_test_result})
     end
 
@@ -105,7 +105,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       deleted_test_result = TestResult.find_by_filename(@to_be_deleted_test_result)
       assert_nil(deleted_test_result)
       # check if a proper response has been sent
-      res_file = File.new("#{RAILS_ROOT}/public/200.xml")
+      res_file = File.new("#{::Rails.root.to_s}/public/200.xml")
       assert_equal(res_file.read, @res.body)
     end
   end
@@ -125,7 +125,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       group_name = group.group_name
       a_short_identifier = assignment.short_identifier
       grouping = group.grouping_for_assignment(assignment.id)
-      @res = put("update", {:group_name => group_name, :assignment => a_short_identifier,
+      @res = put("update", {:id => 1, :group_name => group_name, :assignment => a_short_identifier,
                             :filename => @filename, :file_content => @file_content})
     end
 
@@ -136,7 +136,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       assert_not_nil(updated_test_result)
       assert_equal(@file_content, updated_test_result.file_content)
       # check if a proper response has been sent
-      res_file = File.new("#{RAILS_ROOT}/public/200.xml")
+      res_file = File.new("#{::Rails.root.to_s}/public/200.xml")
       assert_equal(res_file.read, @res.body)
     end
   end
@@ -148,14 +148,14 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
       # parameters
-      @res = get("show", {:filename => "some_filename"})
+      @res = get("show", {:id => 1, :filename => "some_filename"})
     end
 
     should assign_to :current_user
     should respond_with 422
     should "return a 422 (Unprocessable Entity) response" do
       # check if a proper response has been sent
-      res_file = File.new("#{RAILS_ROOT}/public/422.xml")
+      res_file = File.new("#{::Rails.root.to_s}/public/422.xml")
       assert_equal(res_file.read, @res.body)
     end
   end
@@ -173,7 +173,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     should respond_with 422
     should "return a 422 (Unprocessable Entity) response" do
       # check if a proper response has been sent
-      res_file = File.new("#{RAILS_ROOT}/public/422.xml")
+      res_file = File.new("#{::Rails.root.to_s}/public/422.xml")
       assert_equal(res_file.read, @res.body)
     end
   end
@@ -184,14 +184,14 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
-      @res = put("update", {:filename => "some_filename"})
+      @res = put("update", {:id => 1, :filename => "some_filename"})
     end
 
     should assign_to :current_user
     should respond_with 422
     should "return a 422 (Unprocessable Entity) response" do
       # check if a proper response has been sent
-      res_file = File.new("#{RAILS_ROOT}/public/422.xml")
+      res_file = File.new("#{::Rails.root.to_s}/public/422.xml")
       assert_equal(res_file.read, @res.body)
     end
   end
@@ -202,14 +202,14 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
-      @res = delete("destroy", {:filename => "somefilename"})
+      @res = delete("destroy", {:id => 1, :filename => "somefilename"})
     end
 
     should assign_to :current_user
     should respond_with 422
     should "return a 422 (Unprocessable Entity) response" do
       # check if a proper response has been sent
-      res_file = File.new("#{RAILS_ROOT}/public/422.xml")
+      res_file = File.new("#{::Rails.root.to_s}/public/422.xml")
       assert_equal(res_file.read, @res.body)
     end
   end
@@ -225,7 +225,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       assignment = assignments(:assignment_test_result1)
       group_name = group.group_name
       a_short_identifier = assignment.short_identifier
-      @res = delete("destroy", {:group_name => group_name, :assignment => a_short_identifier,
+      @res = delete("destroy", {:id => 1, :group_name => group_name, :assignment => a_short_identifier,
                                 :filename => "does_not_exist"})
     end
 
@@ -233,7 +233,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     should respond_with 404
     should "return a 404 (Not Found) response" do
       # check if a proper response has been sent
-      res_file = File.new("#{RAILS_ROOT}/public/404.xml")
+      res_file = File.new("#{::Rails.root.to_s}/public/404.xml")
       assert_equal(res_file.read, @res.body)
     end
   end
@@ -249,7 +249,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       assignment = assignments(:assignment_test_result1)
       group_name = group.group_name
       a_short_identifier = assignment.short_identifier
-      @res = get("show", {:group_name => group_name, :assignment => a_short_identifier,
+      @res = get("show", {:id => 1, :group_name => group_name, :assignment => a_short_identifier,
                           :filename => "does_not_exist"})
     end
 
@@ -257,7 +257,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     should respond_with 404
     should "return a 404 (Not Found) response" do
       # check if a proper response has been sent
-      res_file = File.new("#{RAILS_ROOT}/public/404.xml")
+      res_file = File.new("#{::Rails.root.to_s}/public/404.xml")
       assert_equal(res_file.read, @res.body)
     end
   end
@@ -273,7 +273,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       assignment = assignments(:assignment_test_result1)
       group_name = group.group_name
       a_short_identifier = assignment.short_identifier
-      @res = put("update", {:group_name => group_name, :assignment => a_short_identifier,
+      @res = put("update", {:id => 1, :group_name => group_name, :assignment => a_short_identifier,
                             :filename => "does_not_exist", :file_content => "irrelevant"})
     end
 
@@ -281,7 +281,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     should respond_with 404
     should "return a 404 (Not Found) response" do
       # check if a proper response has been sent
-      res_file = File.new("#{RAILS_ROOT}/public/404.xml")
+      res_file = File.new("#{::Rails.root.to_s}/public/404.xml")
       assert_equal(res_file.read, @res.body)
     end
   end

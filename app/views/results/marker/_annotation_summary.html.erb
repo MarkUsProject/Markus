@@ -3,16 +3,26 @@
 
     <p class="lineNumber">#<%= annot.annotation_number %> - <%= render :partial => annot.annotation_list_link_partial, :locals => {:annot => annot} %></p>
     <div class="annotationContent" id="annotation_text_content_display_<%=h(annot.annotation_text.id)%>">
-      <%=simple_format(h(annot.annotation_text.content))%>
+      <%= simple_format(h(annot.annotation_text.content)) %>
     </div>
-    <p class="manageAnnotations"><%=link_to_function I18n.t("edit"), "$('annotation_text_content_edit_#{annot.annotation_text.id}').show();$('annotation_text_content_display_#{annot.annotation_text.id}').hide();"%>
+    <p class="manageAnnotations"><%= link_to_function I18n.t("edit"), "$('annotation_text_content_edit_#{annot.annotation_text.id}').show();$('annotation_text_content_display_#{annot.annotation_text.id}').hide();" %>
     &middot;
-    <%=link_to_remote I18n.t("remove"), :url => {:controller => "annotations", :action=>"destroy", :id=>annot.id, :submission_file_id=>@submission_file_id}, :confirm => I18n.t("marker.annotation.sure_to_remove") %>
+    <%= link_to I18n.t("remove"),
+	       :url => {:controller => "annotations",
+			:action=>"destroy",
+			:id=>annot.id,
+			:submission_file_id => @submission_file_id},
+	       :confirm => I18n.t("marker.annotation.sure_to_remove"),
+	       :remote => true %>
     </p>
 
-    <div id="annotation_text_content_edit_<%=annot.annotation_text.id%>" class="annotation_text_content_editor">
+    <div id="annotation_text_content_edit_<%= annot.annotation_text.id %>" class="annotation_text_content_editor">
 
-      <% remote_form_for :annotation_text, annot.annotation_text, :url => {:action => "update_annotation", :controller => "annotations"} do |f| %>
+      <%= form_for annot.annotation_text,
+		   :as => :annotation_text,
+		   :url => {:action => "update_annotation",
+			    :controller => "annotations"},
+		   :remote => true do |f| %>
 
         <%= f.hidden_field :id%>
         <input type="hidden" name="annotation_text[submission_file_id]" value="<%=h(@submission_file_id)%>" />

@@ -6,12 +6,11 @@ class ExtraMark < ActiveRecord::Base
     :points => 'points'
   }
 
-  named_scope :points, :conditions => {:unit => ExtraMark::UNITS[:points]}
-  named_scope :percentage, :conditions => {:unit => ExtraMark::UNITS[:percentage]}
+  scope :points, :conditions => {:unit => ExtraMark::UNITS[:points]}
+  scope :percentage, :conditions => {:unit => ExtraMark::UNITS[:percentage]}
 
-  named_scope :positive, :conditions => ['extra_mark > 0']
-  named_scope :negative, :conditions => ['extra_mark < 0']
-
+  scope :positive, :conditions => ['extra_mark > 0']
+  scope :negative, :conditions => ['extra_mark < 0']
 
   before_save :ensure_not_released_to_students
   before_update :ensure_not_released_to_students

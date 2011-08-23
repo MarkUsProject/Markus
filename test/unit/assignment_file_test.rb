@@ -1,30 +1,18 @@
 require File.join(File.dirname(__FILE__), '..', 'test_helper')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 
 class AssignmentFileTest < ActiveSupport::TestCase
-  # Replace this with your real tests.
-  fixtures :all
-  def test_presence_of_filename
-    assignmentfile = AssignmentFile.new
-    assignmentfile.assignment_id = 1
-    assert !assignmentfile.save
+  def setup
+    clear_fixtures
   end
 
- def test_uniqueness_of_filename
-    assignmentfile = AssignmentFile.new
-    assignmentfile.assignment_id = 1
-    assignmentfile.filename = "test"
-    assert assignmentfile.save
+  should "A good AssignmentFile model" do
+    AssignmentFile.make
+    assert validate_uniqueness_of(:filename).scoped_to(:assignment_id)
+  end
 
-    assignmentfile2 = AssignmentFile.new
-    assignmentfile2.assignment_id = 1
-    assignmentfile2.filename = "test"
-    assert !assignmentfile2.save
- end
- def test_format_of_filename
-    assignmentfile = AssignmentFile.new
-    assignmentfile.assignment_id = 1
-    assignmentfile.filename = "test*"
-    assert !assignmentfile.save
-
- end
+  should belong_to :assignment
+  should validate_presence_of :filename
+  should allow_value('est.java').for(:filename)
+  should_not allow_value('"éàç_(*8').for(:filename)
 end

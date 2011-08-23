@@ -7,15 +7,15 @@ class StudentMembership < Membership
     :rejected => 'rejected'
   }
 
-  named_scope :accepted,
+  scope :accepted,
               :conditions => {:membership_status => STATUSES[:accepted]}
-  named_scope :inviter,
+  scope :inviter,
               :conditions => {:membership_status => STATUSES[:inviter]}
-  named_scope :pending,
+  scope :pending,
               :conditions => {:membership_status => STATUSES[:pending]}
-  named_scope :rejected,
+  scope :rejected,
               :conditions => {:membership_status => STATUSES[:rejected]}
-  named_scope :accepted_or_inviter,
+  scope :accepted_or_inviter,
               :conditions => {:membership_status => [STATUSES[:accepted],
                                                      STATUSES[:inviter]]}
   validate :must_be_valid_student
@@ -26,11 +26,11 @@ class StudentMembership < Membership
 
   def must_be_valid_student
     if user && !user.is_a?(Student)
-      errors.add("User must be a student")
+      errors.add("base", "User must be a student")
       return false
     end
     if !STATUSES.values.include?(membership_status)
-      errors.add("Invalid membership status")
+      errors.add("base", "Invalid membership status")
       return false
     end
   end

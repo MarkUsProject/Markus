@@ -87,8 +87,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
       should "edit basic paramaters" do
-        post_as @admin,
-                :edit,
+        put_as @admin,
+                :update,
                 :id => @assignment.id,
                 :assignment => {
                   :short_identifier => 'New SI',
@@ -108,10 +108,10 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
       should "not be able to edit with invalid assignment" do
-        post_as @admin,
-                :edit,
-                :id => @assignment.id,
-                :assignment => {
+        put_as @admin,
+               :update,
+               :id => @assignment.id,
+               :assignment => {
                   :short_identifier => '',
                   :description => 'New Description',
                   :message => 'New Message',
@@ -129,8 +129,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
       should "not be able to edit with invalid submission rules" do
-        post_as @admin,
-                :edit,
+        put_as @admin,
+                :update,
                 :id => @assignment.id,
                 :assignment => {
                   :short_identifier => 'New SI',
@@ -152,8 +152,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
       should "be able to add periods to submission rule class" do
-        post_as @admin,
-                :edit,
+        put_as @admin,
+                :update,
                 {:id => @assignment.id,
                  :assignment => {
                    :short_identifier => 'New SI',
@@ -186,8 +186,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
       should "be able to set instructor forms groups" do
-        post_as @admin,
-                :edit,
+        put_as @admin,
+                :update,
                 {:id => @assignment.id,
                  :assignment => {
                    :description => 'New Description',
@@ -284,8 +284,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         end
 
         should "be able to remove required files" do
-          post_as @admin,
-                  :edit,
+          put_as @admin,
+                  :update,
                   :id => @assignment.id,
                   :assignment => {
                       :short_identifier => @assignment.short_identifier,
@@ -411,14 +411,14 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
       should "not be able to invite without a group" do
         students = [Student.make, Student.make]
-        user_names = students.collect{ 
+        user_names = students.collect{
                           |student| student.user_name
                         }.join(', ')
         assert_raise RuntimeError do
           post_as(@student,
                   :invite_member,
                   {:id => @assignment.id,
-                   :invite_member => user_names})  
+                   :invite_member => user_names})
         end
       end
 
@@ -512,7 +512,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                                :id => @assignment.id
           assert_equal(I18n.t('invite_student.fail.dne',
                               :user_name => 'zhfbdjhzkyfg'),
-                       flash[:fail_notice])
+                       flash[:fail_notice].first)
         end
 
         should "not be able to invite a hidden student" do
@@ -525,7 +525,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                                :id => @assignment.id
           assert_equal(I18n.t('invite_student.fail.hidden',
                               :user_name => student.user_name),
-                       flash[:fail_notice])
+                       flash[:fail_notice].first)
         end
 
         should "not be able to invite an already invited student" do
@@ -538,7 +538,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                                :id => @assignment.id
           assert_equal(I18n.t('invite_student.fail.already_pending',
                               :user_name => sm.user.user_name),
-                       flash[:fail_notice])
+                       flash[:fail_notice].first)
         end
 
         should "be able to invite multiple students" do
@@ -574,12 +574,12 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         should "be able to invite students with spacing" do
           students = [Student.make, Student.make]
           user_names = students.collect{
-                          |student| student.user_name 
+                          |student| student.user_name
                         }.join(' ,  ')
           post_as(@student,
                   :invite_member,
                   {:id => @assignment.id,
-                   :invite_member => user_names})  
+                   :invite_member => user_names})
           assert_redirected_to :action => "student_interface",
                                :id => @assignment.id
           assert_equal 2, @grouping.pending_students.size
@@ -605,7 +605,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           assert_equal 0, @grouping.pending_students.size
           assert_equal(I18n.t('invite_student.fail.dne',
                               :user_name => admin.user_name),
-                      flash[:fail_notice])
+                      flash[:fail_notice].first)
         end
 
         should "not be able to invite graders" do
@@ -619,7 +619,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           assert_equal 0, @grouping.pending_students.size
           assert_equal(I18n.t('invite_student.fail.dne',
                               :user_name => grader.user_name),
-                       flash[:fail_notice])
+                       flash[:fail_notice].first)
         end
 
         should "not be able to create another group" do
@@ -762,7 +762,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           assert_raise RuntimeError do
             post_as @student,
                     :delete_rejected,
-                    {:id => @assignment.id, :membership => @sm.id}
+                    :id => @assignment.id,
+                    :membership => @sm.id
           end
           assert_nothing_raised do
             membership = StudentMembership.find(@sm.id)
@@ -877,7 +878,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                               :id => @assignment.id
           assert_equal I18n.t('invite_student.fail.due_date_passed',
                               :user_name => student.user_name),
-                      flash[:fail_notice]
+                      flash[:fail_notice].first
         end
       end
     end  # -- with an assignment, with a past due date
@@ -893,8 +894,10 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
       should "have the create group link available" do
-        get_as @student, :student_interface, :id => @assignment.id
-        assert_not_nil (@response.body =~ /<a[^>]*>#{I18n.t(:create)}<\/a>/)
+        get_as @student,
+               :student_interface,
+               :id => @assignment.id
+        assert_not_nil (response.body =~ /<a[^>]*>#{I18n.t(:create)}<\/a>/)
       end
 
       should "be able to create a group" do

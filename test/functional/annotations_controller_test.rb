@@ -1,4 +1,7 @@
-require File.dirname(__FILE__) + '/authenticated_controller_test'
+require File.join(File.dirname(__FILE__), 'authenticated_controller_test')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
+
 require 'shoulda'
 require 'machinist'
 
@@ -16,7 +19,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
 
     context "on :add_existing_annotation" do
       setup do
-        get :add_existing_annotation, :id => 1
+        get :add_existing_annotation, :submission_file_id => 1
       end
       should respond_with :redirect
     end
@@ -30,7 +33,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
 
     context "on :destroy" do
       setup do
-        get :destroy, :id => 1
+        delete :destroy, :id => 1
       end
       should respond_with :redirect
     end
@@ -310,13 +313,10 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
 
     context "on :destroy" do
       setup do
-         anno = Annotation.create({
-        :line_start => 1, :line_end => 1,
-        :annotation_text_id => @annotation_text.id,
-        :submission_file_id =>  @submission_file.id,
-        :annotation_number => 1})
-        post_as @user, :destroy, {:id => anno.id,
-          :submission_file_id => @submission_file.id}
+        delete_as @user,
+                  :destroy,
+                  :id => 67,
+                  :submission_file_id => @submission_file.id
       end
       should respond_with :not_found
     end # End context :destroy

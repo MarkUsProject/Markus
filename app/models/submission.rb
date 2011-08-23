@@ -5,7 +5,7 @@ require 'fileutils' # FileUtils used here
 # Use Assignment.submission_by(user) to retrieve the correct submission.
 class Submission < ActiveRecord::Base
   after_create :create_result
-  before_validation_on_create :bump_old_submissions
+  before_validation(:bump_old_submissions, :on => :create)
 
   validates_numericality_of :submission_version, :only_integer => true
   belongs_to :grouping

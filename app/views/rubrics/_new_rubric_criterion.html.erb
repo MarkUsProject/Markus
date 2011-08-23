@@ -1,5 +1,8 @@
 <li id="new_rubric_criterion">
-<% remote_form_for :rubric_criterion, :url => {:action => 'new', :id => assignment.id} do |f| %>
+<%= form_for :rubric_criterion,
+	     :url => {:action => 'new',
+		      :id => assignment.id},
+	     :remote => true do |f| %>
   <div id="new_rubric_criterion_errors" style="display:none;" class="error"></div>
   <%=label_tag 'new_rubric_criterion_prompt', t("rubric_criteria.name") %><br />
   <%= f.text_field :rubric_criterion_name, :size => 15, :id => 'new_rubric_criterion_prompt' %><br />

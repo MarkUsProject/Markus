@@ -3,7 +3,7 @@ class RubricsController < ApplicationController
   before_filter      :authorize_only_for_admin
 
   def index
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     @criteria = @assignment.rubric_criteria(:order => 'position')
   end
 
@@ -21,7 +21,7 @@ class RubricsController < ApplicationController
   end
 
   def new
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     if !request.post?
       return
     else
@@ -46,8 +46,7 @@ class RubricsController < ApplicationController
     end
   end
 
-  def delete
-    return unless request.delete?
+  def destroy
     @criterion = RubricCriterion.find(params[:id])
     @assignment = @criterion.assignment
     @criteria = @assignment.rubric_criteria
@@ -57,20 +56,20 @@ class RubricsController < ApplicationController
   end
 
   def download_csv
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     file_out = RubricCriterion.create_csv(@assignment)
     send_data(file_out, :type => "text/csv", :filename => "#{@assignment.short_identifier}_rubric_criteria.csv", :disposition => "inline")
   end
 
   def download_yml
-     assignment = Assignment.find(params[:id])
+     assignment = Assignment.find(params[:assignment_id])
      file_out = assignment.export_rubric_criteria_yml
      send_data(file_out, :type => "text/plain", :filename => "#{assignment.short_identifier}_rubric_criteria.yml", :disposition => "inline")
   end
 
   def csv_upload
     file = params[:csv_upload][:rubric]
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     if request.post? && !file.blank?
       begin
         RubricCriterion.transaction do
@@ -91,7 +90,7 @@ class RubricsController < ApplicationController
 
   def yml_upload
     criteria_with_errors = ActiveSupport::OrderedHash.new
-    assignment = Assignment.find(params[:id])
+    assignment = Assignment.find(params[:assignment_id])
     if !request.post?
       redirect_to :action => 'index', :id => assignment.id
       return
@@ -147,7 +146,7 @@ class RubricsController < ApplicationController
         flash[:upload_notice] = I18n.t('rubric_criteria.upload.success', :nb_updates => successes)
       end
     end
-    redirect_to :action => 'index', :id => assignment.id
+    redirect_to :action => 'index', :assignment_id => assignment.id
   end
 
 
@@ -157,11 +156,11 @@ class RubricsController < ApplicationController
       render :nothing => true
       return
     end
-    @assignment = Assignment.find(params[:aid])
+    @assignment = Assignment.find(params[:assignment_id])
     @criteria = @assignment.rubric_criteria
     params[:rubric_criteria_pane_list].each_with_index do |id, position|
       if id != ""
-        RubricCriterion.update(id, :position => position+1)
+        RubricCriterion.update(id, :position => position + 1)
       end
     end
   end
@@ -180,7 +179,7 @@ class RubricsController < ApplicationController
       render :nothing => true
       return
     end
-    @assignment = Assignment.find(params[:aid])
+    @assignment = Assignment.find(params[:assignment_id])
     @criteria = @assignment.rubric_criteria
     criterion = @criteria.find(params[:id])
     index = @criteria.index(criterion)

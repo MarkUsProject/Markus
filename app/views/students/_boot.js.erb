@@ -51,7 +51,8 @@ document.observe("dom:loaded", function() {
     total_count_id: 'all_students_count'
   });
   
-  <%= remote_function :url => {:action => 'populate'}, :complete => "$('loading_list').hide();"%>
+  <%= remote_function :url => populate_students_path(),
+                      :complete => "$('loading_list').hide();" %>
 });
 
 //]]>

@@ -95,7 +95,7 @@ class AssignmentsController < ApplicationController
         raise "#{params[:assignment][:submission_rule_attributes][:type]} is not a valid SubmissionRule"
         end
       rescue Exception => e
-        @assignment.errors.add_to_base("Could not assign SubmissionRule: #{e.message}")
+        @assignment.errors.add(:base, "Could not assign SubmissionRule: #{e.message}")
         return
       end
       

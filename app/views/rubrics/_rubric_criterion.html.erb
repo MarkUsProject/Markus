@@ -1,18 +1,36 @@
-<li class="criterion_holder <%= cycle('rowA', 'rowB') %>" id="criterion_<%=h(criterion.id)%>">
+<li class="criterion_holder <%= cycle('rowA', 'rowB') %>"
+    id="criterion_<%=h(criterion.id)%>">
   <span class="criterion_handle">
     <%= image_tag "handle.png" %>
   </span>
   <span class="criterion_title_div link">
-    <%= link_to_remote h(truncate(criterion.rubric_criterion_name, :length => 30, :omission => '...')),
-      :url => {:action => 'edit', :id => criterion.id}, :html => {:id => "criterion_title_#{criterion.id}"} %>
+    <%= link_to h(truncate(criterion.rubric_criterion_name,
+			   :length => 30,
+			   :omission => '...')),
+		:url => {:action => 'edit',
+			 :id => criterion.id},
+		:html => {:id => "criterion_title_#{criterion.id}"},
+		:remote => true %>
   </span>
   <span class="criterion_arrow">
     <% if location != :first and location != :single %>
-    <%=  link_to_remote image_tag("icons/bullet_arrow_up.png", :alt => t('rubric_criteria.move_up')),
-      :url => { :action => "move_criterion", :aid => @assignment.id, :id => criterion.id, :position => criterion.position, :direction => :up}%>
+    <%=  link_to image_tag("icons/bullet_arrow_up.png",
+			   :alt => t('rubric_criteria.move_up')),
+		 :url => {:action => "move_criterion",
+			  :aid => @assignment.id,
+			  :id => criterion.id,
+			  :position => criterion.position,
+			  :direction => :up},
+		  :remote => true %>
     <% end %> <br /> <% if  location != :last and location != :single %>
-    <%= link_to_remote image_tag("icons/bullet_arrow_down.png", :alt =>  t('rubric_criteria.move_down')),
-      :url => { :action => "move_criterion", :aid => @assignment.id, :id => criterion.id, :position => criterion.position, :direction => :down} %>
+    <%= link_to image_tag("icons/bullet_arrow_down.png",
+		:alt =>  t('rubric_criteria.move_down')),
+		:url => {:action => "move_criterion",
+			 :aid => @assignment.id,
+			 :id => criterion.id,
+			 :position => criterion.position,
+			 :direction => :down},
+		:remote => true %>
     <% end %>
   </span>
   <span id="criterion_weight_<%=h(criterion.id)%>" class="criterion_weight">

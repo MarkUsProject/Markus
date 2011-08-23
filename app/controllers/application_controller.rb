@@ -15,11 +15,6 @@ class ApplicationController < ActionController::Base
   # check for active session on every page
   before_filter :authenticate, :except => [:login, :page_not_found]
 
-  # See ActionController::Base for details
-  # Filter the contents of submitted sensitive data parameters
-  # from your application log (in this case, all fields with names like "user").
-  filter_parameter_logging :user
-
   # Define default URL options to include the locale
   def default_url_options(options={})
     { :locale => I18n.locale }
@@ -30,7 +25,7 @@ class ApplicationController < ActionController::Base
   # Set version for MarkUs to be available in
   # any view
   def set_markus_version
-    version_file=File.expand_path(File.join(RAILS_ROOT, "app/MARKUS_VERSION"))
+    version_file=File.expand_path(File.join(::Rails.root.to_s, "app/MARKUS_VERSION"))
     if !File.exist?(version_file)
       @markus_version = "unknown"
       return

@@ -1060,8 +1060,8 @@ fr:
     grade_distribution:        "Répartition des notes"
 
     #Test Framework
-    test_framework:
-      test_framework: "Tests"
+    automated_tests:
+      automated_tests: "Tests"
       enable_test:    "Activer les tests pour ce projet"
       required_files_ant: "Fichiers requis par Ant"
       need_group_for_test: "Vous devez avoir un groupe pour exécuter un test"

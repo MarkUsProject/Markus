@@ -279,48 +279,48 @@
   <% # HTML for Student Testing Interface %>
   <% if @assignment.enable_test %>
   <div class="block">
-    <h2><%= I18n.t("test_framework.test") %></h2>
+    <h2><%= I18n.t("automated_tests.test") %></h2>
   <% if @grouping.nil? %>
           <div class="sub_block">
             <br />
-            <%= I18n.t("test_framework.need_group_for_test") %>
+            <%= I18n.t("automated_tests.need_group_for_test") %>
             <br />
           </div>
   <% else %>
           <div class="block_content">
-            <h3><%= I18n.t("test_framework.information") %></h3>
+            <h3><%= I18n.t("automated_tests.information") %></h3>
             <% if !@grouping.submissions.empty? %>
               <div class="sub_block">
-                <%= I18n.t("test_framework.revision_used_for_test", :revision => @revision_number) %>
+                <%= I18n.t("automated_tests.revision_used_for_test", :revision => @revision_number) %>
               </div>
             <% end %>
             <br />
             <div class="sub_block">
               <br />
-              <%= I18n.t("test_framework.token.tokens_per_day", :tokens => @assignment.tokens_per_day) %>
+              <%= I18n.t("automated_tests.token.tokens_per_day", :tokens => @assignment.tokens_per_day) %>
             </div>
             <br />
             <div class="sub_block">
               <br />
               <% if @token.nil? %>
-               <%= I18n.t("test_framework.token.tokens_not_given_yet") %>
+               <%= I18n.t("automated_tests.token.tokens_not_given_yet") %>
               <% else %>
                 <% if @token.tokens == 0 %>
-                    <%= I18n.t("test_framework.token.tokens_no_more_available") %>
+                    <%= I18n.t("automated_tests.token.tokens_no_more_available") %>
                 <% else %>
-                    <%= I18n.t("test_framework.token.tokens_available", :tokens => @token.tokens) %>
+                    <%= I18n.t("automated_tests.token.tokens_available", :tokens => @token.tokens) %>
                 <% end %>
               <% end %>
               <br />
              </div>
            <br />
-           <h3><%= I18n.t("test_framework.run_tests") %></h3>
+           <h3><%= I18n.t("automated_tests.run_tests") %></h3>
            <% if @grouping.assignment.submission_rule.can_collect_now? %>
-             <%= I18n.t("test_framework.due_date_is_passed") %>
+             <%= I18n.t("automated_tests.due_date_is_passed") %>
              <br />
            <% else %>
              <% if @result.nil? && @test_result_files.nil? %>
-                <%= I18n.t("test_framework.need_one_file") %>
+                <%= I18n.t("automated_tests.need_one_file") %>
                 <br />
              <% else %>
                 <%
@@ -335,7 +335,7 @@
              <% end %>
              <% if @grouping.submissions.empty? %>
                <br />
-               <%= link_to I18n.t("test_framework.collect_and_test"), {:controller => 'assignments', :action => 'student_interface', :id => @assignment.id, :grouping_id => @grouping.id , :revision_number => @revision_number, :collect => true}, :class => "button"%>
+               <%= link_to I18n.t("automated_tests.collect_and_test"), {:controller => 'assignments', :action => 'student_interface', :id => @assignment.id, :grouping_id => @grouping.id , :revision_number => @revision_number, :collect => true}, :class => "button"%>
                <br />
              <% end %>
            <% end %>
@@ -352,7 +352,7 @@ if !@grouping.nil? &&
    @grouping.inviter == @current_user &&
    !@assignment.instructor_form_groups %>
   <div id="invite_dialog">
-    <% form_tag({:action => 'invite_member',
+    <%= form_tag({:action => 'invite_member',
         :id => @assignment.id},
         {:onsubmit => "$('invite_modal_spinner').show();"}) do %>
       <h2><%= I18n.t("student.invite") %></h2>

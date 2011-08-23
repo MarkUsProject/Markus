@@ -1,4 +1,7 @@
-require File.dirname(__FILE__) + '/authenticated_controller_test'
+require File.join(File.dirname(__FILE__), 'authenticated_controller_test')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
+
 require 'shoulda'
 require 'mocha'
 require 'machinist'
@@ -18,63 +21,70 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
     context "on :index" do
       setup do
-        get :index, :id => 1
+        get :index, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :edit" do
       setup do
-        get :edit, :id => 1
+        get :edit, :assignment_id => 1, :submission_id => 1, :id => 1
       end
       should respond_with :redirect
     end
 
     context "on :update" do
       setup do
-        get :update, :id => 1
+        get :update, :assignment_id => 1, :id => 1
       end
       should respond_with :redirect
     end
 
     context "on :new" do
       setup do
-        get :new, :id => 1
+        get :new, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :delete" do
       setup do
-        get :delete, :id => 1
+        delete :destroy, :assignment_id => 1, :id => 1
       end
       should respond_with :redirect
     end
 
-    context "on :download" do
+    context "on :download_csv" do
       setup do
-        get :download, :id => 1
+        get :download_csv, :assignment_id => 1
+      end
+      should respond_with :redirect
+    end
+
+    context "on :download_yml" do
+      setup do
+        get :download_yml, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :csv_upload" do
       setup do
-        get :csv_upload, :id => 1
+        get :csv_upload, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :update_positions" do
       setup do
-        get :update_positions, :id => 1
+        get :update_positions, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :move_criterion" do
       setup do
-        get :move_criterion, :id => 1
+        get :move_criterion, :assignment_id => 1, :id => 1
       end
       should respond_with :redirect
     end
@@ -85,63 +95,70 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
     context "on :index" do
       setup do
-        post :index, :id => 1
+        post :index, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :edit" do
       setup do
-        post :edit, :id => 1
+        get :edit, :assignment_id => 1, :submission_id => 1, :id => 1
       end
       should respond_with :redirect
     end
 
     context "on :update" do
       setup do
-        post :update, :id => 1
+        put :update, :assignment_id => 1, :id => 1
       end
       should respond_with :redirect
     end
 
     context "on :new" do
       setup do
-        post :new, :id => 1
+        get :new, :assignment_id => 1, :submission_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :delete" do
       setup do
-        post :delete, :id => 1
+        delete :destroy, :assignment_id => 1, :submission_id => 1, :id => 1
       end
       should respond_with :redirect
     end
 
-    context "on :download" do
+    context "on :download_csv" do
       setup do
-        post :download, :id => 1
+        post :download_csv, :assignment_id => 1
+      end
+      should respond_with :redirect
+    end
+
+    context "on :download_yml" do
+      setup do
+        post :download_yml, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :csv_upload" do
       setup do
-        post :csv_upload, :id => 1
+        post :csv_upload, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :update_positions" do
       setup do
-        post :update_positions, :id => 1
+        post :update_positions, :assignment_id => 1
       end
       should respond_with :redirect
     end
 
     context "on :move_criterion" do
       setup do
-        post :move_criterion, :id => 1
+        post :move_criterion,:assignment_id => 1, :id => 1
       end
       should respond_with :redirect
     end
@@ -159,7 +176,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
     context "on :index" do
       setup do
-        get_as @admin, :index, :id => @assignment.id
+        get_as @admin, :index, :assignment_id => @assignment.id
       end
       should assign_to :assignment
       should assign_to :criteria
@@ -169,39 +186,41 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
     context "on :edit" do
       setup do
-        get_as @admin, :edit, :id => @criterion.id
+        get_as @admin, :edit, :assignment_id => 1, :id => @criterion.id
       end
       should assign_to :criterion
       should render_template :edit
       should respond_with :success
     end
 
-    context "on :update" do
+    should "be able to save with errors" do
+      RubricCriterion.any_instance.expects(:save).once.returns(false)
+      RubricCriterion.any_instance.expects(:errors).once.returns('error msg')
+      get_as @admin,
+             :update,
+             :assignment_id => 1,
+             :id => @criterion.id,
+             :rubric_criterion => {:rubric_criterion_name => 'one',
+                                   :weight => 10}
+      assert assign_to :criterion
+      assert render_template 'errors'
+      assert respond_with :success
+    end
 
-      context "with save errors" do
-        setup do
-          RubricCriterion.any_instance.expects(:save).once.returns(false)
-          RubricCriterion.any_instance.expects(:errors).once.returns('error msg')
-          get_as @admin, :update, :id => @criterion.id, :rubric_criterion => {:rubric_criterion_name => 'one', :weight => 10}
-        end
-        should assign_to :criterion
-        should render_template 'errors'
-        should respond_with :success
-      end
-
-      context "without save errors" do
-        setup do
-          get_as @admin, :update, :id => @criterion.id, :rubric_criterion => {:rubric_criterion_name => 'one', :weight => 10}
-        end
-        should assign_to :criterion
-        should_not set_the_flash
-        should render_template :update
-      end
+    should "be able to  save without errors" do
+      get_as @admin,
+             :update,
+             :assignment_id => 1,
+             :id => @criterion.id,
+             :rubric_criterion => {:rubric_criterion_name => 'one', :weight => 10}
+      assert assign_to :criterion
+      assert_equal I18n.t('criterion_saved_success'), flash[:success]
+      assert render_template :update
     end
 
     context "on :new" do
       setup do
-        get_as @admin, :new, :id => @assignment.id
+        get_as @admin, :new, :assignment_id => @assignment.id
       end
       should assign_to :assignment
       should_not assign_to :criterion
@@ -211,7 +230,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
     context "on: download" do
       setup do
-        get_as @admin, :download_csv, :id => @assignment.id
+        get_as @admin, :download_csv, :assignment_id => @assignment.id
       end
       should assign_to :assignment
       should respond_with_content_type 'text/csv'
@@ -223,58 +242,60 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
     context "on :csv_upload" do
       setup do
-        get_as @admin, :csv_upload, :id => @assignment.id, :csv_upload => {:rubric => ""}
+        get_as @admin, :csv_upload, :assignment_id => @assignment.id, :csv_upload => {:rubric => ""}
       end
       should assign_to :assignment
       should respond_with :redirect
     end
 
-    context "on :update_positions" do
-      setup do
-        @criterion2 = rubric_criteria(:c2)
-        get_as @admin, :update_positions, :rubric_criteria_pane_list => [@criterion2.id, @criterion.id], :aid => @assignment.id
-      end
-      should render_template ''
-      should respond_with :success
+    should "be able to update_positions" do
+      @criterion2 = rubric_criteria(:c2)
+      get_as @admin,
+             :update_positions,
+             :rubric_criteria_pane_list => [@criterion2.id,
+                                            @criterion.id],
+             :assignment_id => @assignment.id
+      assert render_template ''
+      assert respond_with :success
 
-      should "not have adjusted positions" do
-        c1 = RubricCriterion.find(@criterion.id)
-        assert_equal 1, c1.position
-        c2 = RubricCriterion.find(@criterion2.id)
-        assert_equal 2, c2.position
-      end
+      c1 = RubricCriterion.find(@criterion.id)
+      assert_equal 1, c1.position
+      c2 = RubricCriterion.find(@criterion2.id)
+      assert_equal 2, c2.position
     end
 
-    context "on :move_criterion up" do
-      setup do
-        @criterion2 = rubric_criteria(:c2)
-        get_as @admin, :move_criterion, :aid => @assignment.id, :id => @criterion2.id, :position => @criterion2.position, :direction => :up
-      end
-      should render_template ''
-      should respond_with :success
+    should "be able to move_criterion up" do
+      @criterion2 = rubric_criteria(:c2)
+      get_as @admin,
+             :move_criterion,
+             :assignment_id => @assignment.id,
+             :id => @criterion2.id,
+             :position => @criterion2.position,
+             :direction => :up
+      assert render_template ''
+      assert respond_with :success
 
-      should "not have adjusted positions" do
-        c1 = RubricCriterion.find(@criterion.id)
-        assert_equal 1, c1.position
-        c2 = RubricCriterion.find(@criterion2.id)
-        assert_equal 2, c2.position
-      end
+      c1 = RubricCriterion.find(@criterion.id)
+      assert_equal 1, c1.position
+      c2 = RubricCriterion.find(@criterion2.id)
+      assert_equal 2, c2.position
     end
 
-    context "on :move_criterion down" do
-      setup do
-        @criterion2 = rubric_criteria(:c2)
-        get_as @admin, :move_criterion, :aid => @assignment.id, :id => @criterion.id, :position => @criterion.position, :direction => :up
-      end
-      should render_template ''
-      should respond_with :success
+    should "be able to move_criterion down" do
+      @criterion2 = rubric_criteria(:c2)
+      get_as @admin,
+             :move_criterion,
+             :assignment_id => @assignment.id,
+             :id => @criterion.id,
+             :position => @criterion.position,
+             :direction => :up
+      assert render_template ''
+      assert respond_with :success
 
-      should "not have adjusted positions" do
-        c1 = RubricCriterion.find(@criterion.id)
-        assert_equal 1, c1.position
-        c2 = RubricCriterion.find(@criterion2.id)
-        assert_equal 2, c2.position
-      end
+      c1 = RubricCriterion.find(@criterion.id)
+      assert_equal 1, c1.position
+      c2 = RubricCriterion.find(@criterion2.id)
+      assert_equal 2, c2.position
     end
 
   end # An authenticated and authorized admin doing a GET
@@ -288,43 +309,47 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       @criterion = rubric_criteria(:c1)
     end
 
-    context "on :index" do
-      setup do
-        post_as @admin, :index, :id => @assignment.id
-      end
-      should assign_to :assignment
-      should assign_to :criteria
-      should render_template :index
-      should respond_with :success
+    should "on :index" do
+      post_as @admin, :index, :assignment_id => @assignment.id
+      assert assign_to :assignment
+      assert assign_to :criteria
+      assert render_template :index
+      assert respond_with :success
     end
 
-    context "on :edit" do
-      setup do
-        post_as @admin, :edit, :id => @criterion.id
-      end
-      should assign_to :criterion
-      should render_template :edit
-      should respond_with :success
+    should "on :edit" do
+      post_as @admin,
+              :edit,
+              :assignment_id => @assignment.id,
+              :id => @criterion.id
+      assert assign_to :criterion
+      assert render_template :edit
+      assert respond_with :success
     end
 
     context "on :new" do
-      context "with save error" do
-        setup do
-          RubricCriterion.any_instance.expects(:save).once.returns(false)
-          RubricCriterion.any_instance.expects(:errors).once.returns('error msg')
-          post_as @admin, :new, :id => @assignment.id, :rubric_criterion => {:rubric_criterion_name => 'first', :weight => 10}
-        end
-        should assign_to :assignment
-        should assign_to :criterion
-        should assign_to :errors
-        should render_template 'rubrics/add_criterion_error'
-        should respond_with :success
+      should "with save error" do
+        RubricCriterion.any_instance.expects(:save).once.returns(false)
+        RubricCriterion.any_instance.expects(:errors).once.returns('error msg')
+        post_as @admin,
+                :new,
+                :assignment_id => @assignment.id,
+                :rubric_criterion => {:rubric_criterion_name => 'first',
+                                      :weight => 10}
+        assert assign_to :assignment
+        assert assign_to :criterion
+        assert assign_to :errors
+        assert render_template 'rubrics/add_criterion_error'
+        assert respond_with :success
       end
 
       context "without error on an assignment as the first criterion" do
         setup do
           assignment = assignments(:assignment_3)
-          post_as @admin, :new, :id => assignment.id, :rubric_criterion => {:rubric_criterion_name => 'first', :weight => 10}
+          post_as @admin,
+                  :new,
+                  :assignment_id => assignment.id,
+                  :rubric_criterion => {:rubric_criterion_name => 'first', :weight => 10}
         end
         should assign_to :assignment
         should assign_to :criterion
@@ -334,7 +359,10 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
       context "without error on an assignment that already has criteria" do
         setup do
-          post_as @admin, :new, :id => @assignment.id, :rubric_criterion => {:rubric_criterion_name => 'first', :weight => 10}
+          post_as @admin,
+                  :new,
+                  :assignment_id => @assignment.id,
+                  :rubric_criterion => {:rubric_criterion_name => 'first', :weight => 10}
         end
         should assign_to :assignment
         should assign_to :criterion
@@ -345,7 +373,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
     context "on: download" do
       setup do
-        post_as @admin, :download_csv, :id => @assignment.id
+        post_as @admin, :download_csv, :assignment_id => @assignment.id
       end
       should assign_to :assignment
       should respond_with_content_type 'text/csv'
@@ -361,7 +389,10 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
           tempfile = Tempfile.new('rubric_csv')
           tempfile << RUBRIC_CRITERIA_INCOMPLETE_UPLOAD_CSV_STRING
           tempfile.rewind
-          post_as @admin, :csv_upload, :id => @assignment.id, :csv_upload => {:rubric => tempfile}
+          post_as @admin,
+                  :csv_upload,
+                  :assignment_id => @assignment.id,
+                  :csv_upload => {:rubric => tempfile}
         end
         should assign_to :assignment
         should set_the_flash.to( :error => I18n.t('csv_invalid_lines'),
@@ -377,7 +408,10 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
           tempfile = Tempfile.new('rubric_csv')
           tempfile << RUBRIC_CRITERIA_CSV_STRING
           tempfile.rewind
-          post_as @admin, :csv_upload, :id => @assignment.id, :csv_upload => {:rubric => tempfile}
+          post_as @admin,
+                  :csv_upload,
+                  :assignment_id => @assignment.id,
+                  :csv_upload => {:rubric => tempfile}
           @assignment.reload
           @rubric_criteria = @assignment.rubric_criteria
         end
@@ -387,6 +421,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         should "have successfully uploaded criteria" do
             assert_equal 4, @assignment.rubric_criteria.size
         end
+
         should "keep ordering of uploaded criteria" do
             assert_equal "Algorithm Design", @rubric_criteria[0].rubric_criterion_name
             assert_equal 1, @rubric_criteria[0].position
@@ -400,26 +435,30 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       end
     end
 
-    context "on :update_positions" do
-      setup do
-        @criterion2 = rubric_criteria(:c2)
-        post_as @admin, :update_positions, :rubric_criteria_pane_list => [@criterion2.id, @criterion.id], :aid => @assignment.id
-      end
-      should render_template ''
-      should respond_with :success
+   should "be able to update_positions" do
+      @criterion2 = rubric_criteria(:c2)
+      post_as @admin,
+              :update_positions,
+              :rubric_criteria_pane_list => [@criterion2.id,
+                                             @criterion.id],
+              :assignment_id => @assignment.id
+      assert render_template ''
+      assert respond_with :success
 
-      should "have appropriately adjusted positions" do
-        c1 = RubricCriterion.find(@criterion.id)
-        assert_equal 2, c1.position
-        c2 = RubricCriterion.find(@criterion2.id)
-        assert_equal 1, c2.position
-      end
+      c1 = RubricCriterion.find(@criterion.id)
+      assert_equal 2, c1.position
+      c2 = RubricCriterion.find(@criterion2.id)
+      assert_equal 1, c2.position
     end
 
     context "on :move_criterion up with 2 criteria" do
       setup do
         @criterion2 = rubric_criteria(:c2)
-        post_as @admin, :move_criterion, :aid => @assignment.id, :id => @criterion2.id, :position => @criterion2.position, :direction => 'up'
+        post_as @admin,
+                :move_criterion,
+                :assignment_id => @assignment.id,
+                :id => @criterion2.id,
+                :position => @criterion2.position, :direction => 'up'
       end
       should render_template ''
       should respond_with :success
@@ -436,7 +475,11 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       setup do
         @criterion2 = rubric_criteria(:c2)
         @criterion3 = rubric_criteria(:c3)
-        post_as @admin, :move_criterion, :aid => @assignment.id, :id => @criterion3.id, :position => @criterion3.position, :direction => 'up'
+        post_as @admin,
+                :move_criterion,
+                :assignment_id => @assignment.id,
+                :id => @criterion3.id,
+                :position => @criterion3.position, :direction => 'up'
       end
       should render_template ''
       should respond_with :success
@@ -455,7 +498,12 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       setup do
         @criterion2 = rubric_criteria(:c2)
         @criterion3 = rubric_criteria(:c3)
-        post_as @admin, :move_criterion, :aid => @assignment.id, :id => @criterion2.id, :position => @criterion2.position, :direction => 'up'
+        post_as @admin,
+                :move_criterion,
+                :assignment_id => @assignment.id,
+                :id => @criterion2.id,
+                :position => @criterion2.position,
+                :direction => 'up'
       end
       should render_template ''
       should respond_with :success
@@ -473,7 +521,11 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
     context "on :move_criterion down with 2 criteria" do
       setup do
         @criterion2 = rubric_criteria(:c2)
-        post_as @admin, :move_criterion, :aid => @assignment.id, :id => @criterion.id, :position => @criterion.position, :direction => 'down'
+        post_as @admin,
+                :move_criterion,
+                :assignment_id => @assignment.id,
+                :id => @criterion.id,
+                :position => @criterion.position, :direction => 'down'
       end
       should render_template ''
       should respond_with :success
@@ -490,7 +542,12 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       setup do
         @criterion2 = rubric_criteria(:c2)
         @criterion3 = rubric_criteria(:c3)
-        post_as @admin, :move_criterion, :aid => @assignment.id, :id => @criterion.id, :position => @criterion.position, :direction => 'down'
+        post_as @admin,
+                :move_criterion,
+                :assignment_id => @assignment.id,
+                :id => @criterion.id,
+                :position => @criterion.position,
+                :direction => 'down'
       end
       should render_template ''
       should respond_with :success
@@ -509,7 +566,12 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       setup do
         @criterion2 = rubric_criteria(:c2)
         @criterion3 = rubric_criteria(:c3)
-        post_as @admin, :move_criterion, :aid => @assignment.id, :id => @criterion2.id, :position => @criterion2.position, :direction => 'down'
+        post_as @admin,
+                :move_criterion,
+                :assignment_id => @assignment.id,
+                :id => @criterion2.id,
+                :position => @criterion2.position,
+                :direction => 'down'
       end
       should render_template ''
       should respond_with :success
@@ -533,7 +595,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
       context "with no problems and no preexisting criteria" do
         setup do
-          post_as @admin, :yml_upload, :id => @assignment.id, :yml_upload => {:rubric =>
+          post_as @admin, :yml_upload, :assignment_id => @assignment.id, :yml_upload => {:rubric =>
            "cr1:\n  weight: 5\n  level_0:\n    name: what?\n    description: fail\n  level_1:\n    name: hmm\n    description: almost fail\n  level_2:\n    name: average\n    description: average joe\n  level_3:\n    name: good\n    description: alright\n  level_4:\n    name: poor\n    description: I expected more\ncr2:\n  weight: 2\n"}
         end
 
@@ -566,7 +628,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       context "with preexisting criteria" do
         setup do
           RubricCriterion.make(:assignment => @assignment, :rubric_criterion_name => "cr2", :weight => 7)
-          post_as @admin, :yml_upload, :id => @assignment.id, :yml_upload => {:rubric =>
+          post_as @admin, :yml_upload, :assignment_id => @assignment.id, :yml_upload => {:rubric =>
            "cr1:\n  weight: 5\ncr2:\n  weight: 2\n"}
         end
 
@@ -584,7 +646,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
       context "with bad weight" do
         setup do
-          post_as @admin, :yml_upload, :id => @assignment.id, :yml_upload => {:rubric =>
+          post_as @admin, :yml_upload, :assignment_id => @assignment.id, :yml_upload => {:rubric =>
            "cr1:\n  weight: monstrously heavy\n"}
         end
 
@@ -598,7 +660,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       end
       context "with syntax error" do
         setup do
-          post_as @admin, :yml_upload, :id => @assignment.id, :yml_upload => {:rubric =>
+          post_as @admin, :yml_upload, :assignment_id => @assignment.id, :yml_upload => {:rubric =>
            "cr1:\n  weight: 5\na"}
         end
 
@@ -612,7 +674,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       end
       context "with empty file" do
         setup do
-          post_as @admin, :yml_upload, :id => @assignment.id, :yml_upload => {:rubric =>
+          post_as @admin, :yml_upload, :assignment_id => @assignment.id, :yml_upload => {:rubric =>
            ""}
         end
 
@@ -636,23 +698,18 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       @mark = marks(:mark_11)
     end
 
-    context "on :delete" do
-      setup do
-        delete_as @admin, :delete, :id => @criterion.id
-      end
-      should assign_to :criterion
-      should_not set_the_flash.to( I18n.t('criterion_deleted_success'))
-      should respond_with :success
+    should "be able to delete a criterion" do
+      delete_as @admin, :destroy, :assignment_id => 1, :id => @criterion.id
 
-      should "effectively destroy the criterion" do
-        assert_raise ActiveRecord::RecordNotFound do
-          RubricCriterion.find(@criterion.id)
-        end
+      assert assign_to :criterion
+      assert_equal flash[:success], I18n.t('criterion_deleted_success')
+      assert respond_with :success
+
+      assert_raise ActiveRecord::RecordNotFound do
+        RubricCriterion.find(@criterion.id)
       end
-      should "effectively destroy the marks" do
-        assert_raise ActiveRecord::RecordNotFound do
-          Mark.find(@mark.id)
-        end
+      assert_raise ActiveRecord::RecordNotFound do
+        Mark.find(@mark.id)
       end
     end
 

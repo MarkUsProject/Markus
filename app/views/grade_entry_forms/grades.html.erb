@@ -31,7 +31,8 @@
   <h1><%= t('grade_entry_forms.grades.title') + " " + h(@grade_entry_form.short_identifier)%>
     <%= button_to_function t(:upload), "upload_grades();"%>
     <span class="menu_bar">|</span>
-    <%= link_to t(:download), :action => 'csv_download', :id => @grade_entry_form.id %> 
+    <%= link_to t(:download),
+                csv_download_grade_entry_form_path(@grade_entry_form) %> 
   </h1>
 </div>
 
@@ -174,7 +175,7 @@
 <div id="upload_dialog"> 
   <h1><%= t('grade_entry_forms.csv.upload_title') %></h1>
   <p><%= t('grade_entry_forms.csv.upload_prompt') %></p>
-  <% form_for :upload, :url => {:controller=>"grade_entry_forms",
+  <%= form_for :upload, :url => {:controller=>"grade_entry_forms",
                                 :action => 'csv_upload',
                                 :id => @grade_entry_form.id},
                                 :html => {:multipart => true, :size => 1 } do |f| %>

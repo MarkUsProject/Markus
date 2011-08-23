@@ -1,6 +1,7 @@
 <div class="section">
 
-  <% form_for :user, :url => {:controller => 'students', :action => action} do |f| -%>
+  <%= form_for @user,
+	       :as => :user do |f| %>
 
     <%= f.error_messages -%>
 
@@ -19,7 +20,7 @@
     <%= f.hidden_field :id %>
     <%= f.submit t(:submit), :name => 'submit', :class => 'button indent_button' %>
     <%= link_to t(:cancel), {:controller => 'students'}, :class => "button" %>
+
   <% end %>
 
 </div>
-

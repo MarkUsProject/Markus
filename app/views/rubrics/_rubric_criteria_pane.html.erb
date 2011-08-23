@@ -9,15 +9,21 @@
   <ul id="rubric_criteria_pane_list">
     <% @criteria.each do |criterion| -%>
       <% if @criteria.length == 1 %>
-      <%= render :partial => "rubrics/rubric_criterion", :locals => {:criterion => criterion, :location => :single} %>
+      <%= render :partial => "rubrics/rubric_criterion",
+                 :locals => {:criterion => criterion, :location => :single} %>
       <% elsif criterion == @criteria.first %>
-      <%= render :partial => "rubrics/rubric_criterion", :locals => {:criterion => criterion, :location => :first} %>
+      <%= render :partial => "rubrics/rubric_criterion",
+                 :locals => {:criterion => criterion, :location => :first} %>
       <% elsif criterion == @criteria.last %>
-      <%= render :partial => "rubrics/rubric_criterion", :locals => {:criterion => criterion, :location => :last} %>
+      <%= render :partial => "rubrics/rubric_criterion",
+                 :locals => {:criterion => criterion, :location => :last} %>
       <% else %>
-      <%= render :partial => "rubrics/rubric_criterion", :locals => {:criterion => criterion, :location => :middle} %>
+      <%= render :partial => "rubrics/rubric_criterion",
+                 :locals => {:criterion => criterion, :location => :middle} %>
      <% end %>
     <% end %>
   </ul>
 </div>
-<%= sortable_element("rubric_criteria_pane_list", :url => { :action => "update_positions", :aid => @assignment.id }) %>
+<%= sortable_element("rubric_criteria_pane_list",
+		     :url => update_positions_assignment_rubrics_path(
+				  @assignment)) %>

@@ -1,8 +1,10 @@
 <% # Allow the user to jump to a page containing certain students
 %>
 <%= label_tag "alpha_category", t('pagination.jump_to'), :class => "inline_label" %>
-<%= select_tag "alpha_category", options_for_select(alpha_pagination_options, alpha_category), 
-    :onchange => remote_function(:url => {:action => :g_table_paginate, :id => grade_entry_form.id, 
+<%= select_tag "alpha_category",
+                options_for_select(alpha_pagination_options,
+                                   alpha_category),
+                :onchange => remote_function(:url => {:action => :g_table_paginate, :id => grade_entry_form.id, 
                                           :filter => filter, :sort_by => sort_by}, 
     :with => "'alpha_category=' + this.options[this.selectedIndex].value 
               + '&page=' + (this.selectedIndex+1)

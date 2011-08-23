@@ -3,7 +3,6 @@ require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 require 'shoulda'
 
 class MarkTest < ActiveSupport::TestCase
-  fixtures :all
   should belong_to :markable
   should belong_to :result
   should validate_presence_of :result_id
