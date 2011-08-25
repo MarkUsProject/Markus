@@ -13,9 +13,10 @@ class CriterionTaAssociation < ActiveRecord::Base
 
   validates_presence_of   :assignment_id
 
-  before_validation_on_create :add_assignment_reference
+  before_validation(:add_assignment_reference, :on => :create)
 
   def add_assignment_reference
     self.assignment = criterion.assignment
   end
+
 end

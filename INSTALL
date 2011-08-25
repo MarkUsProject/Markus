@@ -152,8 +152,8 @@ see http://www.markusproject.org/download/
       cd markus-0.9.0
   * Install Rails and required Ruby gems: see section 3.4 "GETTING RAILS
     AND RUBYGEMS".
-  * Set environment variable RAILS_ENV (assumes BASH)
-      export RAILS_ENV="production"
+  * Set environment variable ::Rails.env (assumes BASH)
+      export ::Rails.env="production"
   * Configure database connection settings to match your settings
       PostgreSQL option:
         cp config/database.yml.postgresql config/database.yml

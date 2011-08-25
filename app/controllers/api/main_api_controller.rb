@@ -16,7 +16,7 @@ module Api
     # Dummy action (for authentication testing)
     # No public route matches this action.
     def index
-      render :file => "#{RAILS_ROOT}/public/200.xml", :status => 200
+      render :file => "#{::Rails.root.to_s}/public/200.xml", :status => 200
     end
 
     private
@@ -35,7 +35,7 @@ module Api
           @current_user = User.find_by_user_name(markus_auth_remote_user)
         else
           #REMOTE_USER_AUTH is true, but REMOTE_USER wasn't set, bail out
-          render :file => "#{RAILS_ROOT}/public/403.xml", :status => 403
+          render :file => "#{::Rails.root.to_s}/public/403.xml", :status => 403
           return
         end
       else
@@ -44,7 +44,7 @@ module Api
         # pretend resource not found if missing or wrong authentication
         # is provided
         if auth_token.nil?
-          render :file => "#{RAILS_ROOT}/public/403.xml", :status => 403
+          render :file => "#{::Rails.root.to_s}/public/403.xml", :status => 403
           return
         end
         # Find user by api_key_md5
@@ -53,21 +53,21 @@ module Api
 
       if @current_user.nil?
         # Key/username does not exist, so bail out
-        render :file => "#{RAILS_ROOT}/public/403.xml", :status => 403
+        render :file => "#{::Rails.root.to_s}/public/403.xml", :status => 403
         return
       elsif markus_auth_remote_user.blank?
         # see if the MD5 matches only if REMOTE_USER wasn't used
         curr_user_md5 = Base64.decode64(@current_user.api_key)
         if (Base64.decode64(auth_token) != curr_user_md5)
           # MD5 mismatch, bail out
-          render :file => "#{RAILS_ROOT}/public/403.xml", :status => 403
+          render :file => "#{::Rails.root.to_s}/public/403.xml", :status => 403
           return
         end
       end
       # Student's aren't allowed yet
       if @current_user.student?
         # API is available for TAs and Admins only
-        render :file => "#{RAILS_ROOT}/public/403.xml", :status => 403
+        render :file => "#{::Rails.root.to_s}/public/403.xml", :status => 403
         return
       end
     end

@@ -1,4 +1,6 @@
 require File.join(File.dirname(__FILE__), '..', 'test_helper')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 require 'shoulda'
 require 'mocha'
 
@@ -214,6 +216,7 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
       setup do
         setup_collector
         @submission_collector.stubs(:start_collection_process)
+        #puts @groupings.slice(0..4).inspect
         @submission_collector.push_groupings_to_queue(@groupings.slice(0..4))
       end
 

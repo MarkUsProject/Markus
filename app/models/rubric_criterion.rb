@@ -15,7 +15,7 @@ class RubricCriterion < ActiveRecord::Base
     :assigned_groups_count
   validates_numericality_of :assignment_id, :only_integer => true, :greater_than => 0
   validates_numericality_of :weight, :assigned_groups_count
-  validate_on_update :validate_total_weight
+  validate(:validate_total_weight, :on => :update)
 
   before_validation :update_assigned_groups_count
 

@@ -3,10 +3,10 @@ namespace :markus do
   desc "Resets a MarkUs installation. Useful for developers. This is just a rake repos:drop && rake db:reset && rake db:populate"
   task(:reset => :environment) do
     if ENV['environment'].nil?
-      RAILS_ENV = 'development'
+      ::Rails.env = 'development'
       puts("Default environment is development, run the task with environment='development/production/test' to specify environment.")
     else
-      RAILS_ENV = ENV['environment']
+      ::Rails.env = ENV['environment']
     end
     Rake::Task['repos:drop'].invoke   # drop repositories
     Rake::Task['db:reset'].invoke     # reset the DB

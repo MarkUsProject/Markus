@@ -25,7 +25,7 @@ module EnsureConfigHelper
     check_executable(MarkusConfigurator.markus_config_repository_storage, "REPOSITORY_STORAGE")
     check_writable(MarkusConfigurator.markus_config_pdf_storage, "PDF_STORAGE")
     check_readable(MarkusConfigurator.markus_config_pdf_storage, "PDF_STORAGE")
-    check_in_writable_dir(MarkusConfigurator.markus_config_test_framework_repository, "TEST_FRAMEWORK_REPOSITORY")
+    check_in_writable_dir(MarkusConfigurator.markus_config_automated_tests_repository, "automated_tests_REPOSITORY")
     check_configured_default_language(MarkusConfigurator.markus_config_default_language)
     ensure_logout_redirect_link_valid
     if ! ( RUBY_PLATFORM =~ /(:?mswin|mingw)/ ) # should match for Windows only
@@ -36,7 +36,7 @@ module EnsureConfigHelper
   # Checks if language file for configured default
   # language is present.
   def self.check_configured_default_language( lang )
-    available_languages = Dir.glob(File.join( RAILS_ROOT, "config", "locales", "*.yml" ))
+    available_languages = Dir.glob(File.join( ::Rails.root.to_s, "config", "locales", "*.yml" ))
     available_languages = available_languages.collect{ |file| File.basename(file).chomp(".yml") }
     if !available_languages.include?( lang )
       raise ( "Language file #{lang}.yml does not exist in config/locales. Please " +

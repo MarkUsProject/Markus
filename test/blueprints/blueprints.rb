@@ -285,6 +285,12 @@ TestFile.blueprint do
   is_private {false}
 end
 
+TestResult.blueprint do
+  submission
+  filename {Sham.filename}
+  file_content {Sham.message}
+end
+
 TextAnnotation.blueprint do
   line_start {0}
   line_end {1}

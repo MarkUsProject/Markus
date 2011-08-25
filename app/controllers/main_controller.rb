@@ -23,7 +23,7 @@ class MainController < ApplicationController
     # external auth has been done, skip markus authorization
     if MarkusConfigurator.markus_config_remote_user_auth
       if @markus_auth_remote_user.nil?
-        render :file => "#{RAILS_ROOT}/public/403.html",
+        render :file => "#{::Rails.root.to_s}/public/403.html",
           :status => 403
         return
       else
@@ -136,13 +136,13 @@ class MainController < ApplicationController
   end
 
   def reset_api_key
-    render :file => "#{RAILS_ROOT}/public/404.html", :status => 404 and return unless request.post?
+    render :file => "#{::Rails.root.to_s}/public/404.html", :status => 404 and return unless request.post?
     # Students shouldn't be able to change their API key
     if !@current_user.student?
       @current_user.reset_api_key
       @current_user.save
     else
-      render :file => "#{RAILS_ROOT}/public/404.html", :status => 404 and return
+      render :file => "#{::Rails.root.to_s}/public/404.html", :status => 404 and return
     end
     render :action => 'api_key_replace', :locals => {:user => @current_user }
   end
@@ -150,7 +150,7 @@ class MainController < ApplicationController
   # Render 404 error (page not found) if no other route matches.
   # See config/routes.rb
   def page_not_found
-    render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
+    render :file => "#{::Rails.root.to_s}/public/404.html", :status => 404
   end
 
   # Authenticates the admin (i.e. validates her password). Given the user, that

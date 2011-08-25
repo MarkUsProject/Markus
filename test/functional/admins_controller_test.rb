@@ -29,16 +29,16 @@ class AdminsControllerTest < AuthenticatedControllerTest
     end
 
     should "respond with success on index" do
-      get_as(@admin, :index)
+      get_as @admin, :index
       assert_response :success
     end
 
     should "be able to create Admin" do
-       post_as(@admin,
+       post_as @admin,
                :create,
                :user => {:user_name => 'jdoe',
                          :last_name => 'Doe',
-                         :first_name => 'Jane'})
+                         :first_name => 'Jane'}
        a = Admin.find_by_user_name('jdoe')
        assert_redirected_to :action => "index"
     end
@@ -49,11 +49,12 @@ class AdminsControllerTest < AuthenticatedControllerTest
       end
 
       should "be able to update" do
-        post_as(@admin,
-                :update,
-                :user => {:id => @admin2.id,
-                          :last_name => 'John',
-                          :first_name => 'Doe'})
+        put_as @admin,
+               :update,
+               :id => @admin2.id,
+               :user => {:last_name => 'John',
+                         :first_name => 'Doe'}
+
         assert_redirected_to :action => "index"
         assert_equal I18n.t("admins.success",
                             :user_name => @admin2.user_name),

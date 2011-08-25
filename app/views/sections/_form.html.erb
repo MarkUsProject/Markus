@@ -1,13 +1,20 @@
 
 <div class="wrapLeft">
-  <% if flash[:success]%>
+  <% if flash[:success] %>
     <div class="success">
-      <%= flash[:success]%>
+      <%= flash[:success] %>
     </div>
   <% end%>
+  <% if flash[:error] %>
+    <div class="error">
+      <%= flash[:error] %>
+    </div>
+  <% end%>
+
 </div>
 
-<% form_for :section, @section do |f| %>
+<%= form_for @section,
+	     :as => :section do |f| %>
 <fieldset>
   <legend><%= I18n.t('section.legend') %></legend>
   <%= f.label :name, t("section.name") %>
@@ -18,7 +25,7 @@
   <% else %>
     <%= f.submit I18n.t(:save) %>
   <% end %>
-    
+
 </fieldset>
 
 <% end %>

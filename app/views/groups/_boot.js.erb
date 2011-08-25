@@ -125,8 +125,11 @@ document.observe("dom:loaded", function() {
     }
   });
   
-  <%= remote_function :url => {:action => 'populate', :id => @assignment.id}, :complete => "$('loading_list').hide();" %>
-  <%= remote_function :url => {:action => 'populate_students', :id => @assignment.id}, :complete => "$('loading_students_list').hide();"%>
+  <%= remote_function :url => populate_assignment_groups_path(@assignment.id),
+                      :complete => "$('loading_list').hide();" %>
+  <%= remote_function :url => populate_students_assignment_groups_path(
+                                @assignment.id),
+                      :complete => "$('loading_students_list').hide();"%>
 });
 
 //]]>

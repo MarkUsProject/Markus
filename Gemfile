@@ -9,15 +9,22 @@
 source 'http://rubygems.org'
 
 # Bundler requires these gems in all environments
-gem "rails", "2.3.10"
+gem "rails"
+gem 'exception_notification'
+#gem "prototype-rails" Will be needed with Rails3.1
 gem "db_populate"
 gem "rubyzip"
 gem "ya2yaml"
 gem "i18n"
 gem "will_paginate"
 gem "fastercsv"
-gem "mongrel_cluster"
 gem "routing-filter"
+gem "dynamic_form"
+
+# To be removed
+gem "prototype_legacy_helper",
+    "0.0.0",
+    :git => "https://github.com/rails/prototype_legacy_helper.git"
 
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
 # PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).
@@ -49,9 +56,9 @@ group :development, :test do
   gem "rdoc"
   gem "rcov"
   gem "shoulda"
-  gem "selenium-client", "~>1.2.15"
   gem "machinist"
   gem "faker"
+  gem "railroady"
   gem "time-warp"
   gem "ruby-debug"
   gem "mocha"

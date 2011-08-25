@@ -102,7 +102,7 @@
 <div id="upload_dialog">
   <h1><%= t('flexible_criteria.upload.title') %></h1>
   <p><%= t('flexible_criteria.upload.prompt') %></p>
-  <% form_for :upload, :url => {:controller=>"flexible_criteria",
+  <%= form_for :upload, :url => {:controller=>"flexible_criteria",
                                 :action => 'upload',
                                 :id => @assignment.id},
                                 :html => {:multipart => true, :size => 1 } do |f| %>

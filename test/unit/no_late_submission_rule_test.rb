@@ -1,12 +1,12 @@
 require File.join(File.dirname(__FILE__), '..', 'test_helper')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 require 'shoulda'
 
 class NoLateSubmissionRuleTest < ActiveSupport::TestCase
-  fixtures :all
 
   should "be able to create NoLateSubmissionRule" do
     rule = NoLateSubmissionRule.new
-    rule.assignment = assignments(:assignment_1)
+    rule.assignment = Assignment.make 
     assert rule.save
   end
 
@@ -32,9 +32,10 @@ class NoLateSubmissionRuleTest < ActiveSupport::TestCase
 
   # Shouldn't apply any penalties if Submission collection date was after due date
   should "not change the assignment at all when applied" do
-    assignment = assignments(:assignment_1)
+    assignment = Assignment.make
+    grouping = Grouping.make(:assignment => assignment)
     assignment.due_date = Time.now - 2.days
-    submission = submissions(:submission_1)
+    submission = Submission.make(:grouping => grouping)
     submission.revision_timestamp = Time.now
     rule = NoLateSubmissionRule.new
     assignment.replace_submission_rule(rule)
