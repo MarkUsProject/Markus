@@ -1,44 +1,14 @@
 require File.join(File.dirname(__FILE__), '..', 'test_helper')
-require File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints')
 require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 require 'shoulda'
 
 class SubmissionRuleTest < ActiveSupport::TestCase
-  fixtures :all
-
-  def setup
-    setup_group_fixture_repos
-  end
 
   def teardown
     destroy_repos
   end
 
-  def test_can_create
-    rule = SubmissionRule.new
-    rule.assignment = Assignment.make
-    assert rule.save
-  end
-
-  def test_can_collect_now_false
-    a = assignments(:assignment_1)
-    assert !a.submission_rule.can_collect_now?
-  end
-
-  def test_can_collect_now_true
-    a = assignments(:assignment_4)
-    assert a.submission_rule.can_collect_now?
-  end
-
-  def test_get_collection_time
-    a = Assignment.make
-    assert_equal(a.due_date, a.submission_rule.get_collection_time)
-  end
-
-  # TODO test get collection time when submission rule is different than no
-  # submission rules
-
-  def test_has_required_methods
+  should "raise a whole bunch of NotImplemented errors" do
     rule = SubmissionRule.new
     rule.assignment = Assignment.make
 
@@ -66,7 +36,6 @@ class SubmissionRuleTest < ActiveSupport::TestCase
 
   context "Grace period ids" do
     setup do
-	  clear_fixtures
 
 	  # Create SubmissionRule with default type 'GracePeriodSubmissionRule'
 	  @submission_rule = GracePeriodSubmissionRule.make
@@ -88,7 +57,8 @@ class SubmissionRuleTest < ActiveSupport::TestCase
     end
 
     should "sort in ascending order" do
-	  # Loop through periods for this SubmissionRule and verify the ids are sorted in ascending order
+    # Loop through periods for this SubmissionRule and verify the ids are
+    # sorted in ascending order
 	  previous_id = @submission_rule.periods[0][:id]
 	  for i in (1..4) do
 	     assert @submission_rule.periods[i][:id] > previous_id
@@ -99,7 +69,6 @@ class SubmissionRuleTest < ActiveSupport::TestCase
 
   context "Penalty period ids" do
     setup do
-	  clear_fixtures
 
 	  # Create SubmissionRule with default type 'PenaltyPeriodSubmissionRule'
 	  @submission_rule = PenaltyPeriodSubmissionRule.make
@@ -130,28 +99,33 @@ class SubmissionRuleTest < ActiveSupport::TestCase
     end
   end
 
-  context "Assignment with no late submission rule" do
+  context "Assignment with a due date in 2 days" do
     setup do
       @assignment = Assignment.make
-      @rule = @assignment.submission_rule
     end
 
-    should "have collection time equal to due date" do
-      assert_equal(@assignment.due_date, @rule.get_collection_time,
-        "due date should be equal to collection time for no late submission rule")
-      # due date is two days from now, so it cannot be collected
-      assert(!@rule.can_collect_now?, "assignment cannot be collected now")
+    should "have not be able to collect" do
+      assert !@assignment.submission_rule.can_collect_now?,
+             "assignment cannot be collected now"
+    end
 
-      @assignment.due_date = 2.days.ago
-      @assignment.save
+    should "be able to get due date" do
+      assert_equal @assignment.due_date,
+                   @assignment.submission_rule.get_collection_time
+    end
+  end
 
-      @rule.reload
-      @assignment.reload
+  context "Assignment with a past due date" do
+    setup do
+      @assignment = Assignment.make(:due_date => 2.days.ago)
+    end
 
-      assert_equal(@assignment.due_date, @rule.get_collection_time,
+    should "should be able to collect" do
+      assert_equal(@assignment.due_date, @assignment.submission_rule.get_collection_time,
         "due date should be equal to collection time for no late submission rule")
       # due date is two days ago, so it can be collected
-      assert(@rule.can_collect_now?, "assignment can be collected now")
+      assert @assignment.submission_rule.can_collect_now?,
+             "assignment can be collected now"
     end
   end
 

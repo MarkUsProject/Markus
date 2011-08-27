@@ -205,6 +205,11 @@ RubricCriterion.blueprint do
   position {1} # override if many for the same assignment
   weight {1}
   assigned_groups_count {0}
+  level_0_name {'Horrible'}
+  level_1_name {'Poor'}
+  level_2_name {'Satisfactory'}
+  level_3_name {'Good'}
+  level_4_name {'Excellent'}
 end
 
 Section.blueprint do

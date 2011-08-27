@@ -1,19 +1,22 @@
 require File.join(File.dirname(__FILE__), '..', 'test_helper')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 require 'shoulda'
 
 class StudentMembershipTest < ActiveSupport::TestCase
-  fixtures :all
+
   should belong_to :user
   should belong_to :grouping
 
-  def test_should_not_save_without_membership_status
-    membership = StudentMembership.new
-    membership.grouping_id = 1
-    membership.user_id = 1
-    assert !membership.save, "saved without a status"
+  context "A good Student Membership model" do
+    setup do
+      StudentMembership.make
+    end
+
+    should validate_presence_of :membership_status
   end
 
-  def test_validates_format_of_membership_status
+  should "valide format of membership status" do
+    # FIXME ? should probably be done using some magic should methods !
     membership = StudentMembership.new
     membership.grouping_id = 1
     membership.user_id = 1
@@ -22,31 +25,15 @@ class StudentMembershipTest < ActiveSupport::TestCase
     membership_status"
   end
 
-  def test_save_studentmembership
-    membership = StudentMembership.new
-    membership.grouping_id = 1
-    membership.user_id = 1
-    membership.membership_status = StudentMembership::STATUSES[:inviter]
-    assert membership.save, "didn't save anything!!!"
+  should "be able to spot an inviter" do
+    membership = StudentMembership.make(
+                  :membership_status => StudentMembership::STATUSES[:inviter])
+    assert membership.inviter?
   end
 
-  def test_inviter_if_student_is_inviter
-    membership = StudentMembership.new
-    membership.grouping_id = 1
-    membership.user_id = 1
-    membership.membership_status = StudentMembership::STATUSES[:inviter]
-    membership.save
-    assert membership.inviter?, "returns false even if student is
-    inviter"
-  end
-
-  def test_inviter_if_student_is_not_inviter
-    membership = StudentMembership.new
-    membership.grouping_id = 1
-    membership.user_id = 1
-    membership.membership_status = StudentMembership::STATUSES[:accepted]
-    membership.save
-    assert !membership.inviter?, "returns false even if student is
-    inviter"
+  should "be able to spot an non inviter" do
+    membership = StudentMembership.make(
+                  :membership_status => StudentMembership::STATUSES[:accepted])
+    assert !membership.inviter?
   end
 end
