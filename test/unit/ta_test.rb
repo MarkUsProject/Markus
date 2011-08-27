@@ -1,13 +1,14 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
+
 require "shoulda"
 
 include MarkusConfigurator
 
 class TATest < ActiveSupport::TestCase
-  fixtures :all
 
   def setup
-    setup_group_fixture_repos
+    clear_fixtures
   end
 
   def teardown
@@ -20,14 +21,14 @@ class TATest < ActiveSupport::TestCase
   # to make sure we can easily create/update users based on their user_name
 
   # Test if user with a unique user number has been added to database
-  def test_ta_csv_upload_with_no_duplicates
+  should "be able to upload a csv vile" do
     csv_file_data = "newuser1,USER1,USER1
 newuser2,USER2,USER2"
-    num_users = Ta.all.size
     Ta.upload_user_list(Ta, csv_file_data)
 
-    assert_equal num_users + 2, Ta.all.size, "Expected a different number of users - the CSV upload didn't work"
-
+    assert_equal 2,
+                 Ta.all.size,
+                 "Expected a different number of users - the CSV upload didn't work"
 
     csv_1 = Ta.find_by_user_name('newuser1')
     assert_not_nil csv_1, "Couldn't find a user uploaded by CSV"
@@ -38,11 +39,12 @@ newuser2,USER2,USER2"
     assert_not_nil csv_2, "Couldn't find a user uploaded by CSV"
     assert_equal "USER2", csv_2.last_name, "Last name did not match"
     assert_equal "USER2", csv_2.first_name, "First name did not match"
-
   end
 
-  def test_ta_csv_upload_with_duplicate
-    new_user = Ta.new({:user_name => "exist_user", :first_name => "Nelle", :last_name => "Varoquaux"})
+  should "ignore duplicates in the CSV file" do
+    new_user = Ta.new({:user_name => "exist_user",
+                       :first_name => "Nelle",
+                       :last_name => "Varoquaux"})
 
     assert new_user.save, "Could not create a new User"
 
@@ -60,31 +62,33 @@ exist_user,USER2,USER2"
 
   end
 
-  def test_get_memberships_for_assignment
-    a = assignments(:assignment_1)
-    ta = users(:ta1)
-    assert_not_nil ta.memberships_for_assignment(a)
-  end
+  context "A ta with a membership" do
+    setup do
+      @assignment = Assignment.make
+      @ta = Ta.make
+      @grouping = Grouping.make(:assignment => @assignment)
+      TaMembership.make(:grouping => @grouping,
+                        :user => @ta)
+    end
 
-  def test_is_assigned_to_grouping
-    ta = users(:ta1)
-    g = groupings(:grouping_2)
-    assert ta.is_assigned_to_grouping?(g.id)
+
+    should "get TA's memberships for one assignment" do
+      assert_not_nil @ta.memberships_for_assignment(@assignment)
+    end
+
+    should "already be assigned to a grouping" do
+      assert @ta.is_assigned_to_grouping?(@grouping.id)
+    end
   end
 
   context "If repo admin" do
 
     setup do
-      setup_group_fixture_repos
       conf = Hash.new
       conf["IS_REPOSITORY_ADMIN"] = true
       conf["REPOSITORY_PERMISSION_FILE"] = MarkusConfigurator.markus_config_repository_permission_file
       @repo = Repository.get_class(markus_config_repository_type, conf)
       MarkusConfigurator.stubs(:markus_config_repository_admin?).returns(true)
-    end
-
-    teardown do
-      destroy_repos
     end
 
     should "grant repository_permissions when TA is added" do
@@ -93,13 +97,15 @@ exist_user,USER2,USER2"
       ta.last_name = "doe"
       ta.first_name = "john"
 
-      repo_names = Group.all.collect do |group| File.join(markus_config_repository_storage, group.repository_name) end
+      repo_names = Group.all.collect do |group|
+                     File.join(markus_config_repository_storage, group.repository_name)
+                   end
       @repo.expects(:set_bulk_permissions).times(1).with(repo_names, {ta.user_name => Repository::Permission::READ_WRITE})
       assert = ta.save
     end
 
     should "revoke repository permissions when destroying an TA object" do
-      ta = users(:ta1)
+      ta = Ta.make
       repo_names = Group.all.collect do |group| File.join(markus_config_repository_storage, group.repository_name) end
       @repo.expects(:delete_bulk_permissions).times(1).with(repo_names, [ta.user_name])
       ta.destroy
@@ -110,7 +116,6 @@ exist_user,USER2,USER2"
   context "If not repository admin" do
 
     setup do
-      setup_group_fixture_repos
       # set repository_admin false
       conf = Hash.new
       conf["IS_REPOSITORY_ADMIN"] = false
@@ -124,7 +129,7 @@ exist_user,USER2,USER2"
     end
 
     should "not remove repository permissions when deleting an TA" do
-      ta = users(:ta1)
+      ta =  Ta.make
       @repo.expects(:delete_bulk_permissions).never
       ta.destroy
     end

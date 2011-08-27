@@ -1,15 +1,20 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
+
 require 'shoulda'
 require 'time-warp'
 
 class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
-  fixtures :all
   context "Assignment has two grace periods of 24 hours each after due date" do
     setup do
-      setup_group_fixture_repos
-      @group = groups(:group_1)
-      @grouping = groupings(:grouping_1)
-      @assignment = @grouping.assignment
+      @assignment = Assignment.make 
+      @group = Group.make
+      @grouping = Grouping.make(:assignment => @assignment,
+                                :group => @group) 
+
+      StudentMembership.make(:grouping => @grouping,
+                             :membership_status => "inviter",
+                             :user => Student.make)
       grace_period_submission_rule = GracePeriodSubmissionRule.new
       @assignment.replace_submission_rule(grace_period_submission_rule)
       GracePeriodDeduction.destroy_all
@@ -320,7 +325,6 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
     end
 
   end
-
 
   private
 
