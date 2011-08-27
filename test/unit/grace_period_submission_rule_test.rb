@@ -5,10 +5,6 @@ require 'shoulda'
 require 'time-warp'
 
 class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
-  def setup
-    clear_fixtures
-  end
-
   context "Assignment has two grace periods of 24 hours each after due date" do
     setup do
       @assignment = Assignment.make 
@@ -329,7 +325,6 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
     end
 
   end
-
 
   private
 
