@@ -3,6 +3,7 @@ require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 require 'shoulda'
 
 class MarkTest < ActiveSupport::TestCase
+  
   should belong_to :markable
   should belong_to :result
   should validate_presence_of :result_id
@@ -28,7 +29,12 @@ class MarkTest < ActiveSupport::TestCase
   should_not allow_value("").for(:markable_type)
   should_not allow_value(nil).for(:markable_type)
 
-  should validate_uniqueness_of(:markable_id).scoped_to([:result_id, :markable_type])
+  context "A good Mark model" do
+    setup do
+      Mark.make
+    end
+    should validate_uniqueness_of(:markable_id).scoped_to([:result_id, :markable_type])
+  end
 
   context "A mark asociated with RubricCriterion" do
     setup do

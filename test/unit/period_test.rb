@@ -8,10 +8,6 @@ class PeriodTest < ActiveSupport::TestCase
   should have_db_column :interval
   should belong_to :submission_rule
 
-  def setup
-    clear_fixtures
-  end
-
   context "A valid grace period" do
     setup do
       @period = Period.make
