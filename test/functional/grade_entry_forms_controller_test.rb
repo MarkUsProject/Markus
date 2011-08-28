@@ -1,6 +1,5 @@
-require File.dirname(__FILE__) + '/authenticated_controller_test'
-require File.join(File.dirname(__FILE__),'/../blueprints/blueprints')
-require File.join(File.dirname(__FILE__), '/../blueprints/helper')
+require File.join(File.dirname(__FILE__), 'authenticated_controller_test')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 require 'shoulda'
 require 'will_paginate'
 
@@ -29,122 +28,92 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
     end
 
     # Students are not allowed to create or edit grade entry form properties
-    context "GET on :new" do
-      setup do
-        get_as @student, :new
-      end
-      should respond_with :missing
+    should "GET on :new" do
+      get_as @student, :new
+      assert respond_with :missing
     end
 
-    context "GET on :edit" do
-      setup do
-        get_as @student, :edit, :id => 1
-      end
-      should respond_with :missing
+    should "GET on :edit" do
+      get_as @student, :edit, :id => 1
+      assert respond_with :missing
     end
 
-    context "GET on :grades" do
-      setup do
-        get_as @student, :grades, :id => 1
-      end
-      should respond_with :missing
+    should "GET on :grades" do
+      get_as @student, :grades, :id => 1
+      assert respond_with :missing
     end
 
     # Test that the students can access the student_interface
-    context "GET on :student_interface when no marks have been entered for this student" do
-      setup do
-        get_as @student, :student_interface, :id => @grade_entry_form.id
-      end
-      should assign_to :grade_entry_form
-      should assign_to :student
-      should render_template :student_interface
-      should respond_with :success
-      should_not set_the_flash
-      should "verify that the 'grade_entry_forms.students.no_results' message made it to the response" do
-        assert_match Regexp.new(I18n.t('grade_entry_forms.students.no_results')), @response.body
-      end
+    should "GET on :student_interface when no marks have been entered for this student" do
+      get_as @student, :student_interface, :id => @grade_entry_form.id
+      assert assign_to :grade_entry_form
+      assert assign_to :student
+      assert render_template :student_interface
+      assert respond_with :success
+      assert 0, flash.size
+      assert_match Regexp.new(I18n.t('grade_entry_forms.students.no_results')), @response.body
     end
 
-    context "GET on :student_interface when marks have been entered for this student and have been released" do
-      setup do
-        @grade_entry_student.released_to_student = true
-        @grade_entry_student.save
-        get_as @student, :student_interface, :id => @grade_entry_form_with_grade_entry_items.id
-      end
-      should assign_to :grade_entry_form
-      should assign_to :student
-      should render_template :student_interface
-      should respond_with :success
-      should_not set_the_flash
-      should "verify that the 'grade_entry_forms.grades.total' message and the total mark made it to the response" do
-        assert_match Regexp.new(I18n.t('grade_entry_forms.grades.total')), @response.body
-        assert_match Regexp.new("15"), @response.body
-      end
+    should "GET on :student_interface when marks have been entered for this student and have been released" do
+      @grade_entry_student.released_to_student = true
+      @grade_entry_student.save
+      get_as @student, :student_interface, :id => @grade_entry_form_with_grade_entry_items.id
+      assert assign_to :grade_entry_form
+      assert assign_to :student
+      assert render_template :student_interface
+      assert respond_with :success
+      assert 0, flash.size
+      assert_match Regexp.new(I18n.t('grade_entry_forms.grades.total')), @response.body
+      assert_match Regexp.new("15"), @response.body
     end
 
-    context "GET on :student_interface when marks have been entered for this student but have not been released" do
-      setup do
-        get_as @student, :student_interface, :id => @grade_entry_form_with_grade_entry_items.id
-      end
-      should assign_to :grade_entry_form
-      should assign_to :student
-      should render_template :student_interface
-      should respond_with :success
-      should_not set_the_flash
-      should "verify that the 'grade_entry_forms.students.no_results' message made it to the response" do
-        assert_match Regexp.new(I18n.t('grade_entry_forms.students.no_results')), @response.body
-      end
+    should "GET on :student_interface when marks have been entered for this student but have not been released" do
+      get_as @student, :student_interface, :id => @grade_entry_form_with_grade_entry_items.id
+      assert assign_to :grade_entry_form
+      assert assign_to :student
+      assert render_template :student_interface
+      assert respond_with :success
+      assert 0, flash.size
+      assert_match Regexp.new(I18n.t('grade_entry_forms.students.no_results')), @response.body
     end
 
-    context "GET on :student_interface when the student's mark has been released and it is a blank mark" do
-      setup do
-        student1 = Student.make
-        grade_entry_student1 = @grade_entry_form_with_grade_entry_items.grade_entry_students.make(:user => student1)
-        grade_entry_student1.released_to_student=true
-        grade_entry_student1.save
-        grade_entry_student1 = @grade_entry_form.grade_entry_students.find_by_user_id(student1.id)
-        get_as student1, :student_interface, :id => @grade_entry_form_with_grade_entry_items.id
-      end
-      should assign_to :grade_entry_form
-      should assign_to :student
-      should render_template :student_interface
-      should respond_with :success
-      should_not set_the_flash
-      should "verify that the 'grade_entry_forms.grades.no_mark' message made it to the response" do
-        assert_match Regexp.new(I18n.t('grade_entry_forms.grades.no_mark')), @response.body
-      end
+    should "GET on :student_interface when the student's mark has been released and it is a blank mark" do
+      student1 = Student.make
+      grade_entry_student1 = @grade_entry_form_with_grade_entry_items.grade_entry_students.make(:user => student1)
+      grade_entry_student1.released_to_student=true
+      grade_entry_student1.save
+      grade_entry_student1 = @grade_entry_form.grade_entry_students.find_by_user_id(student1.id)
+      get_as student1, :student_interface, :id => @grade_entry_form_with_grade_entry_items.id
+      assert assign_to :grade_entry_form
+      assert assign_to :student
+      assert render_template :student_interface
+      assert respond_with :success
+      assert 0, flash.size
+      assert_match Regexp.new(I18n.t('grade_entry_forms.grades.no_mark')), @response.body
     end
 
-    context "POST on :new" do
-      setup do
-        post_as @student, :new
-      end
-      should respond_with :missing
+    should "POST on :new" do
+      post_as @student, :new
+      assert respond_with :missing
     end
 
-    context "POST on :edit" do
-      setup do
-        post_as @student, :edit, :id => 1
-      end
-      should respond_with :missing
+    should "POST on :edit" do
+      post_as @student, :edit, :id => 1
+      assert respond_with :missing
     end
 
-    context "POST on :grades" do
-      setup do
-        post_as @student, :grades, :id => 1
-      end
-      should respond_with :missing
+    should "POST on :grades" do
+      post_as @student, :grades, :id => 1
+      assert respond_with :missing
     end
 
-    context "POST on :student_interface" do
-      setup do
-        post_as @student, :student_interface, :id => @grade_entry_form.id
-      end
-      should assign_to :grade_entry_form
-      should assign_to :student
-      should render_template :student_interface
-      should respond_with :success
-      should_not set_the_flash
+    should "POST on :student_interface" do
+      post_as @student, :student_interface, :id => @grade_entry_form.id
+      assert assign_to :grade_entry_form
+      assert assign_to :student
+      assert render_template :student_interface
+      assert respond_with :success
+      assert_equal 0, flash.size
     end
   end
 
@@ -156,32 +125,24 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
 
     # TAs are not allowed to create or edit grade entry form properties or access
     # the student interface
-    context "GET on :new" do
-      setup do
-        get_as @ta, :new
-      end
-      should respond_with :missing
+    should "GET on :new" do
+      get_as @ta, :new
+      assert respond_with :missing
     end
 
-    context "GET on :edit" do
-      setup do
-        get_as @ta, :edit, :id => 1
-      end
-      should respond_with :missing
+    should "GET on :edit" do
+      get_as @ta, :edit, :id => 1
+      assert respond_with :missing
     end
 
-    context "GET on :student_interface" do
-      setup do
-        get_as @ta, :student_interface, :id => 1
-      end
-      should respond_with :missing
+    should "GET on :student_interface" do
+      get_as @ta, :student_interface, :id => 1
+      assert respond_with :missing
     end
 
-    context "POST on :new" do
-      setup do
-        post_as @ta, :new
-      end
-      should respond_with :missing
+    should "POST on :new" do
+      post_as @ta, :new
+      assert respond_with :missing
     end
 
     should "get on :edit" do
@@ -206,43 +167,33 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       10.times {Student.make}
     end
 
-    context "GET on :new" do
-      setup do
-        get_as @admin, :new
-      end
-      should assign_to :grade_entry_form
-      should render_template :new
-      should respond_with :success
-      should_not set_the_flash
+    should "GET on :new" do
+      get_as @admin, :new
+      assert assign_to :grade_entry_form
+      assert render_template :new
+      assert respond_with :success
+      assert_equal 0, flash.size
     end
 
-    context "GET on :edit" do
-      setup do
-        get_as @admin, :edit, :id => @grade_entry_form.id
-      end
-      should assign_to :grade_entry_form
-      should render_template :edit
-      should respond_with :success
-      should_not set_the_flash
+    should "GET on :edit" do
+      get_as @admin, :edit, :id => @grade_entry_form.id
+      assert assign_to :grade_entry_form
+      assert render_template :edit
+      assert respond_with :success
+      assert_equal 0, flash.size
     end
 
-    context "GET on :student_interface" do
-      setup do
-        get_as @admin, :student_interface
-      end
-      should respond_with :missing
+    should "GET on :student_interface" do
+      get_as @admin, :student_interface
+      assert respond_with :missing
     end
 
-    context "GET on :grades when there are no grade entry items" do
-      setup do
-        get_as @admin, :grades, :id => @grade_entry_form.id
-      end
-      should assign_to :grade_entry_form
-      should render_template :grades
-      should respond_with :success
-      should "verify that the no_grade_entry_items message made it to the response" do
-        assert_match Regexp.new(I18n.t('grade_entry_forms.grades.no_grade_entry_items_message')), @response.body
-      end
+    should "GET on :grades when there are no grade entry items" do
+      get_as @admin, :grades, :id => @grade_entry_form.id
+      assert assign_to :grade_entry_form
+      assert render_template :grades
+      assert respond_with :success
+      assert_match Regexp.new(I18n.t('grade_entry_forms.grades.no_grade_entry_items_message')), @response.body
     end
 
     should "GET on :grades when there are grade entry items" do
@@ -538,38 +489,30 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         assert_equal [@q1, @q2], g.grade_entry_items
       end
 
+      should ":edit with duplicate GradeEntryItem name" do
+        @grade_entry_form_with_dup = GradeEntryForm.make
+        @q1.name = "Q1"
+        @q2.name = "Q1"
+        @grade_entry_form_with_dup.grade_entry_items.make(:name => @q1.name)
+        @grade_entry_form_before = @grade_entry_form_with_dup
 
-      context ":edit with duplicate GradeEntryItem name" do
-        setup do
-          @grade_entry_form_with_dup = GradeEntryForm.make
-          @q1.name = "Q1"
-          @q2.name = "Q1"
-          @grade_entry_form_with_dup.grade_entry_items.make(:name => @q1.name)
-          @grade_entry_form_before = @grade_entry_form_with_dup
+        post_as @admin, :edit, {:id => @grade_entry_form_with_dup.id,
+                                :grade_entry_form => {:short_identifier => NEW_SHORT_IDENTIFIER,
+                                                      :description => NEW_DESCRIPTION,
+                                                      :message => NEW_MESSAGE,
+                                                      :date => @grade_entry_form_with_dup.date,
+                                                      :grade_entry_items => [@q1, @q2]}}
+        @grade_entry_form_before.reload
+        assert assign_to :grade_entry_form
+        assert respond_with :success
 
-          post_as @admin, :edit, {:id => @grade_entry_form_with_dup.id,
-                                  :grade_entry_form => {:short_identifier => NEW_SHORT_IDENTIFIER,
-                                                        :description => NEW_DESCRIPTION,
-                                                        :message => NEW_MESSAGE,
-                                                        :date => @grade_entry_form_with_dup.date,
-                                                        :grade_entry_items => [@q1, @q2]}}
-          @grade_entry_form_before.reload
-        end
-        should assign_to :grade_entry_form
-        should respond_with :success
-
-        should "verify that the error message made it to the response" do
-          assert set_the_flash.to(
-                    I18n.t('grade_entry_forms.invalid_name'))
-        end
-
-        should "verify that the property values were not updated" do
-          g = GradeEntryForm.find(@grade_entry_form_with_dup.id)
-          assert_equal @grade_entry_form_before.short_identifier, g.short_identifier
-          assert_equal @grade_entry_form_before.description, g.description
-          assert_equal @grade_entry_form_before.message, g.message
-          assert_equal @grade_entry_form_before.grade_entry_items, g.grade_entry_items
-        end
+        assert set_the_flash.to(
+                  I18n.t('grade_entry_forms.invalid_name'))
+        g = GradeEntryForm.find(@grade_entry_form_with_dup.id)
+        assert_equal @grade_entry_form_before.short_identifier, g.short_identifier
+        assert_equal @grade_entry_form_before.description, g.description
+        assert_equal @grade_entry_form_before.message, g.message
+        assert_equal @grade_entry_form_before.grade_entry_items, g.grade_entry_items
       end
     end
 
@@ -584,62 +527,50 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                           :grade => 7)
       end
 
-      context "change the existing value to a valid value" do
-        setup do
-          @new_grade = 4
-          post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
-                                          :student_id => @grade_entry_student_with_some_grades.user_id,
-                                          :updated_grade => @new_grade,
-                                          :id => @grade_entry_form_with_grade_entry_items.id}
-        end
-        should assign_to :grade
-        should render_template :update_grade
-        should respond_with :success
-        should "verify that the grade was actually updated" do
-          grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(@grade_entry_student_with_some_grades.id,
-                                                                               @grade_entry_items[0].id)
-          assert_equal @new_grade, grade.grade
-        end
+      should "change the existing value to a valid value" do
+        @new_grade = 4
+        post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
+                                        :student_id => @grade_entry_student_with_some_grades.user_id,
+                                        :updated_grade => @new_grade,
+                                        :id => @grade_entry_form_with_grade_entry_items.id}
+        assert assign_to :grade
+        assert render_template :update_grade
+        assert respond_with :success
+        grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(@grade_entry_student_with_some_grades.id,
+                                                                              @grade_entry_items[0].id)
+        assert_equal @new_grade, grade.grade
       end
 
-      context "attempt to change the existing value to a string" do
-        setup do
-          @new_grade = "abc"
-          @original_grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(@grade_entry_student_with_some_grades.id,
-                                                                                         @grade_entry_items[0].id).grade
-          post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
-                                          :student_id => @grade_entry_student_with_some_grades.user_id,
-                                          :updated_grade => @new_grade,
-                                          :id => @grade_entry_form_with_grade_entry_items.id}
-        end
-        should assign_to :grade
-        should render_template :update_grade
-        should respond_with :success
-        should "verify that the grade was not updated" do
-          grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(@grade_entry_student_with_some_grades.id,
-                                                                               @grade_entry_items[0].id)
-          assert_equal @original_grade, grade.grade
-        end
+      should "attempt to change the existing value to a string" do
+        @new_grade = "abc"
+        @original_grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(@grade_entry_student_with_some_grades.id,
+                                                                                        @grade_entry_items[0].id).grade
+        post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
+                                        :student_id => @grade_entry_student_with_some_grades.user_id,
+                                        :updated_grade => @new_grade,
+                                        :id => @grade_entry_form_with_grade_entry_items.id}
+        assert assign_to :grade
+        assert render_template :update_grade
+        assert respond_with :success
+        grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(@grade_entry_student_with_some_grades.id,
+                                                                              @grade_entry_items[0].id)
+        assert_equal @original_grade, grade.grade
       end
 
-      context "attempt to change the value of an existing grade to a negative number" do
-        setup do
-          @new_grade = -5
-          @original_grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(@grade_entry_student_with_some_grades.id,
-                                                                                         @grade_entry_items[0].id).grade
-          post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
-                                          :student_id => @grade_entry_student_with_some_grades.user_id,
-                                          :updated_grade => @new_grade,
-                                          :id => @grade_entry_form_with_grade_entry_items.id}
-        end
-        should assign_to :grade
-        should render_template :update_grade
-        should respond_with :success
-        should "verify that the grade was not updated" do
-          grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(@grade_entry_student_with_some_grades.id,
-                                                                               @grade_entry_items[0].id)
-          assert_equal @original_grade, grade.grade
-        end
+      should "attempt to change the value of an existing grade to a negative number" do
+        @new_grade = -5
+        @original_grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(@grade_entry_student_with_some_grades.id,
+                                                                                        @grade_entry_items[0].id).grade
+        post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
+                                        :student_id => @grade_entry_student_with_some_grades.user_id,
+                                        :updated_grade => @new_grade,
+                                        :id => @grade_entry_form_with_grade_entry_items.id}
+        assert assign_to :grade
+        assert render_template :update_grade
+        assert respond_with :success
+        grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(@grade_entry_student_with_some_grades.id,
+                                                                              @grade_entry_items[0].id)
+        assert_equal @original_grade, grade.grade
       end
     end
 
@@ -649,58 +580,46 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         @grade_entry_student = @grade_entry_form_with_grade_entry_items.grade_entry_students.make
       end
 
-      context "set an empty grade to a valid value" do
-        setup do
-          @new_grade = 2.5
-          post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
-                                          :student_id => @grade_entry_student.user_id,
-                                          :updated_grade => @new_grade,
-                                          :id => @grade_entry_form_with_grade_entry_items.id}
-        end
-        should assign_to :grade
-        should render_template :update_grade
-        should respond_with :success
-        should "verify that the grade was actually created" do
-          grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(@grade_entry_student.id,
-                                                                               @grade_entry_items[0].id)
-          assert_equal @new_grade, grade.grade
-        end
+      should "set an empty grade to a valid value" do
+        @new_grade = 2.5
+        post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
+                                        :student_id => @grade_entry_student.user_id,
+                                        :updated_grade => @new_grade,
+                                        :id => @grade_entry_form_with_grade_entry_items.id}
+        assert assign_to :grade
+        assert render_template :update_grade
+        assert respond_with :success
+        grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(@grade_entry_student.id,
+                                                                              @grade_entry_items[0].id)
+        assert_equal @new_grade, grade.grade
       end
 
-      context "attempt to set an empty grade to a string" do
-        setup do
-          @new_grade = "abc"
-          post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
-                                          :student_id => @grade_entry_student.user_id,
-                                          :updated_grade => @new_grade,
-                                          :id => @grade_entry_form_with_grade_entry_items.id}
-        end
-        should assign_to :grade
-        should render_template :update_grade
-        should respond_with :success
-        should "verify that the grade's value was not set" do
-          grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(@grade_entry_student.id,
-                                                                               @grade_entry_items[0].id)
-          assert_nil grade.grade
-        end
+      should "attempt to set an empty grade to a string" do
+        @new_grade = "abc"
+        post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
+                                        :student_id => @grade_entry_student.user_id,
+                                        :updated_grade => @new_grade,
+                                        :id => @grade_entry_form_with_grade_entry_items.id}
+        assert assign_to :grade
+        assert render_template :update_grade
+        assert respond_with :success
+        grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(@grade_entry_student.id,
+                                                                              @grade_entry_items[0].id)
+        assert_nil grade.grade
       end
 
-      context "attempt to set an empty grade to a negative number" do
-        setup do
-          @new_grade = -7
-          post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
-                                          :student_id => @grade_entry_student.user_id,
-                                          :updated_grade => @new_grade,
-                                          :id => @grade_entry_form_with_grade_entry_items.id}
-        end
-        should assign_to :grade
-        should render_template :update_grade
-        should respond_with :success
-        should "verify that the grade's value was not set" do
-          grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(@grade_entry_student.id,
-                                                                               @grade_entry_items[0].id)
-          assert_nil grade.grade
-        end
+      should "attempt to set an empty grade to a negative number" do
+        @new_grade = -7
+        post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
+                                        :student_id => @grade_entry_student.user_id,
+                                        :updated_grade => @new_grade,
+                                        :id => @grade_entry_form_with_grade_entry_items.id}
+        assert assign_to :grade
+        assert render_template :update_grade
+        assert respond_with :success
+        grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(@grade_entry_student.id,
+                                                                              @grade_entry_items[0].id)
+        assert_nil grade.grade
       end
     end
 
@@ -710,81 +629,67 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         @student = Student.make
       end
 
-      context "set an empty grade to a valid value" do
-        setup do
-          @new_grade = 2.5
-          post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
-                                          :student_id => @student.id,
-                                          :updated_grade => @new_grade,
-                                          :id => @grade_entry_form_with_grade_entry_items.id}
-        end
-        should assign_to :grade
-        should render_template :update_grade
-        should respond_with :success
-        should "verify that the GradeEntryStudent and Grade were actually created" do
-          grade_entry_student = GradeEntryStudent.find_by_user_id(@student.id)
-          assert_not_nil grade_entry_student
-          grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(grade_entry_student.id,
-                                                                               @grade_entry_items[0].id)
-          assert_equal @new_grade, grade.grade
-        end
+      should "set an empty grade to a valid value" do
+        @new_grade = 2.5
+        post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
+                                        :student_id => @student.id,
+                                        :updated_grade => @new_grade,
+                                        :id => @grade_entry_form_with_grade_entry_items.id}
+        assert assign_to :grade
+        assert render_template :update_grade
+        assert respond_with :success
+        grade_entry_student = GradeEntryStudent.find_by_user_id(@student.id)
+        assert_not_nil grade_entry_student
+        grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(grade_entry_student.id,
+                                                                              @grade_entry_items[0].id)
+        assert_equal @new_grade, grade.grade
       end
 
-      context "attempt to set an empty grade to a string" do
-        setup do
-          @new_grade = "abc"
-          post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
-                                          :student_id => @student.id,
-                                          :updated_grade => @new_grade,
-                                          :id => @grade_entry_form_with_grade_entry_items.id}
-        end
-        should assign_to :grade
-        should render_template :update_grade
-        should respond_with :success
-        should "verify that the Grade's value was not set" do
-          grade_entry_student = GradeEntryStudent.find_by_user_id(@student.id)
-          grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(grade_entry_student.id, @grade_entry_items[0].id)
-          assert_nil grade.grade
-        end
+      should "attempt to set an empty grade to a string" do
+        @new_grade = "abc"
+        post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
+                                        :student_id => @student.id,
+                                        :updated_grade => @new_grade,
+                                        :id => @grade_entry_form_with_grade_entry_items.id}
+        assert assign_to :grade
+        assert render_template :update_grade
+        assert respond_with :success
+        grade_entry_student = GradeEntryStudent.find_by_user_id(@student.id)
+        grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(grade_entry_student.id, @grade_entry_items[0].id)
+        assert_nil grade.grade
       end
 
-      context "attempt to set an empty grade to a negative number" do
-        setup do
-          @new_grade = -7
-          post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
-                                          :student_id => @student.id,
-                                          :updated_grade => @new_grade,
-                                          :id => @grade_entry_form_with_grade_entry_items.id}
-        end
-        should assign_to :grade
-        should render_template :update_grade
-        should respond_with :success
-        should "verify that the Grade's value was not set" do
-          grade_entry_student = GradeEntryStudent.find_by_user_id(@student.id)
-          grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(grade_entry_student.id, @grade_entry_items[0].id)
-          assert_nil grade.grade
-        end
+      should "attempt to set an empty grade to a negative number" do
+        @new_grade = -7
+        post_as @admin, :update_grade, {:grade_entry_item_id => @grade_entry_items[0].id,
+                                        :student_id => @student.id,
+                                        :updated_grade => @new_grade,
+                                        :id => @grade_entry_form_with_grade_entry_items.id}
+        assert assign_to :grade
+        assert render_template :update_grade
+        assert respond_with :success
+        grade_entry_student = GradeEntryStudent.find_by_user_id(@student.id)
+        grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(grade_entry_student.id, @grade_entry_items[0].id)
+        assert_nil grade.grade
       end
     end
 
     # Test g_table_paginate
-    context "POST on :g_table_paginate " do
-      setup do
-        get_as @admin, :grades, :id => @grade_entry_form.id
-        post_as @admin, :g_table_paginate, {:id => @grade_entry_form.id,
-                                            :alpha_category => "J-K",
-                                            :filter => "none",
-                                            :sort_by => "last_name",
-                                            :page => 1,
-                                            :update_alpha_pagination_options => "true",
-                                            :per_page => 15,
-                                            :desc => "false"}
-      end
-      should assign_to :alpha_pagination_options
-      should assign_to :students
-      should assign_to :alpha_category
-      should render_template :g_table_paginate
-      should respond_with :success
+    should "POST on :g_table_paginate " do
+      get_as @admin, :grades, :id => @grade_entry_form.id
+      post_as @admin, :g_table_paginate, {:id => @grade_entry_form.id,
+                                          :alpha_category => "J-K",
+                                          :filter => "none",
+                                          :sort_by => "last_name",
+                                          :page => 1,
+                                          :update_alpha_pagination_options => "true",
+                                          :per_page => 15,
+                                          :desc => "false"}
+      assert assign_to :alpha_pagination_options
+      assert assign_to :students
+      assert assign_to :alpha_category
+      assert render_template :g_table_paginate
+      assert respond_with :success
     end
 
     # Test releasing/unreleasing the marks
@@ -802,86 +707,68 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         end
       end
 
-      context "release the marks for particular students" do
-        setup do
-          @specific_students = [@students[0].id, @students[1].id, @students[2].id]
-          post_as @admin, :update_grade_entry_students, {:students => @specific_students,
-                                                         :filter => 'none',
-                                                         :ap_select_full => false,
-                                                         :release_results => true,
-                                                         :id => @grade_entry_form1.id}
-        end
-        should respond_with :redirect
-        should "verify that the released_to_student attribute was set to true for the specified students" do
-          (0..2).each do |i|
-            grade_entry_student = GradeEntryStudent.find_by_user_id(@students[i].id)
-            assert_equal true, grade_entry_student.released_to_student
-          end
+      should "release the marks for particular students" do
+        @specific_students = [@students[0].id, @students[1].id, @students[2].id]
+        post_as @admin, :update_grade_entry_students, {:students => @specific_students,
+                                                        :filter => 'none',
+                                                        :ap_select_full => false,
+                                                        :release_results => true,
+                                                        :id => @grade_entry_form1.id}
+        assert respond_with :redirect
+        (0..2).each do |i|
+          grade_entry_student = GradeEntryStudent.find_by_user_id(@students[i].id)
+          assert_equal true, grade_entry_student.released_to_student
         end
 
-        should "verify that the released_to_student attribute was not set to true for the other students" do
-          (3..(@students.size-1)).each do |i|
-            grade_entry_student = GradeEntryStudent.find_by_user_id(@students[i].id)
-            assert_equal false, grade_entry_student.released_to_student
-          end
+        (3..(@students.size-1)).each do |i|
+          grade_entry_student = GradeEntryStudent.find_by_user_id(@students[i].id)
+          assert_equal false, grade_entry_student.released_to_student
         end
       end
 
-      context "release the marks for all of the students" do
-        setup do
-          (0..(@students.size-1)).each do |i|
-            @specific_students << @students[i].id
-          end
-          post_as @admin, :update_grade_entry_students, {:students => @specific_students,
-                                                         :filter => 'none',
-                                                         :ap_select_full => true,
-                                                         :release_results => true,
-                                                         :id => @grade_entry_form1.id}
+      should "release the marks for all of the students" do
+        (0..(@students.size-1)).each do |i|
+          @specific_students << @students[i].id
         end
-        should respond_with :redirect
-        should "verify that the released_to_student attribute was set to true for all of the students" do
-          (0..(@specific_students.size-1)).each do |i|
-            grade_entry_student = GradeEntryStudent.find_by_user_id(@students[i].id)
-            assert_equal true, grade_entry_student.released_to_student
-          end
+        post_as @admin, :update_grade_entry_students, {:students => @specific_students,
+                                                        :filter => 'none',
+                                                        :ap_select_full => true,
+                                                        :release_results => true,
+                                                        :id => @grade_entry_form1.id}
+        assert respond_with :redirect
+        (0..(@specific_students.size-1)).each do |i|
+          grade_entry_student = GradeEntryStudent.find_by_user_id(@students[i].id)
+          assert_equal true, grade_entry_student.released_to_student
         end
       end
 
-      context "unrelease the marks for particular students" do
-        setup do
-          @specific_students = [@students[0].id, @students[1].id, @students[2].id]
-          post_as @admin, :update_grade_entry_students, {:students => @specific_students,
-                                                         :filter => 'none',
-                                                         :ap_select_full => false,
-                                                         :unrelease_results => false,
-                                                         :id => @grade_entry_form1.id}
-        end
-        should respond_with :redirect
-        should "verify that the released_to_student attribute was set to false" do
-          (0..2).each do |i|
-            grade_entry_student = GradeEntryStudent.find_by_user_id(@students[i].id)
-            assert_equal false, grade_entry_student.released_to_student
-          end
+      should "unrelease the marks for particular students" do
+        @specific_students = [@students[0].id, @students[1].id, @students[2].id]
+        post_as @admin, :update_grade_entry_students, {:students => @specific_students,
+                                                        :filter => 'none',
+                                                        :ap_select_full => false,
+                                                        :unrelease_results => false,
+                                                        :id => @grade_entry_form1.id}
+        assert respond_with :redirect
+        (0..2).each do |i|
+          grade_entry_student = GradeEntryStudent.find_by_user_id(@students[i].id)
+          assert_equal false, grade_entry_student.released_to_student
         end
       end
 
-      context "unrelease the marks for all of the students" do
-        setup do
-          (0..(@students.size-1)).each do |i|
-            @specific_students << @students[i].id
-          end
-          post_as @admin, :update_grade_entry_students, {:students => @specific_students,
-                                                         :filter => 'none',
-                                                         :ap_select_full => true,
-                                                         :unrelease_results => true,
-                                                         :id => @grade_entry_form1.id}
+      should "unrelease the marks for all of the students" do
+        (0..(@students.size-1)).each do |i|
+          @specific_students << @students[i].id
         end
-        should respond_with :redirect
-        should "verify that the released_to_student attribute was set to false for all of the students" do
-          (0..(@specific_students.size-1)).each do |i|
-            grade_entry_student = GradeEntryStudent.find_by_user_id(@students[i].id)
-            assert_equal false, grade_entry_student.released_to_student
-          end
+        post_as @admin, :update_grade_entry_students, {:students => @specific_students,
+                                                        :filter => 'none',
+                                                        :ap_select_full => true,
+                                                        :unrelease_results => true,
+                                                        :id => @grade_entry_form1.id}
+        assert respond_with :redirect
+        (0..(@specific_students.size-1)).each do |i|
+          grade_entry_student = GradeEntryStudent.find_by_user_id(@students[i].id)
+          assert_equal false, grade_entry_student.released_to_student
         end
       end
     end
