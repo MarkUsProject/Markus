@@ -5,20 +5,28 @@ class RubricCriterion < ActiveRecord::Base
   before_save :round_weight
   after_save :update_existing_results
   set_table_name "rubric_criteria" # set table name correctly
-  belongs_to  :assignment, :counter_cache => true
-  has_many    :marks, :as => :markable, :dependent => :destroy
-  has_many :criterion_ta_associations, :as => :criterion, :dependent => :destroy
+  belongs_to :assignment, :counter_cache => true
+  has_many :marks, :as => :markable, :dependent => :destroy
+  has_many :criterion_ta_associations,
+           :as => :criterion,
+           :dependent => :destroy
   has_many :tas, :through => :criterion_ta_associations
+
   validates_associated  :assignment, :on => :create
-  validates_uniqueness_of :rubric_criterion_name, :scope => :assignment_id
-  validates_presence_of :rubric_criterion_name, :weight, :assignment_id,
-    :assigned_groups_count
-  validates_numericality_of :assignment_id, :only_integer => true, :greater_than => 0
-  validates_numericality_of :weight, :assigned_groups_count
+  validates_uniqueness_of :rubric_criterion_name,
+                          :scope => :assignment_id
+  validates_presence_of :rubric_criterion_name
+  validates_presence_of :weight
+  validates_presence_of :assignment_id
+  validates_presence_of :assigned_groups_count
+  validates_numericality_of :assignment_id,
+                            :only_integer => true,
+                            :greater_than => 0
+  validates_numericality_of :weight
+  validates_numericality_of :assigned_groups_count
   validate(:validate_total_weight, :on => :update)
 
   before_validation :update_assigned_groups_count
-
 
   def update_assigned_groups_count
     result = []
