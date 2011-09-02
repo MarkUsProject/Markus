@@ -8,7 +8,7 @@
 #
 # Logfiles go to log/mongrel_<portnumber>.log
 #
-log_file: /home/markus/sandbox/markus_trunk/log/mongrel.log
+log_file: log/mongrel.log
 #
 # Use port 8000 and upwards for the number of mongrels
 # to start
@@ -21,7 +21,7 @@ environment: production
 address: 127.0.0.1
 #
 # Location and filenames as to where to put PID files
-pid_file: /home/markus/sandbox/markus_trunk/tmp/pids/mongrel.pid
+pid_file: tmp/pids/mongrel.pid
 #
 # Number of mongrel servers to start
 servers: 3
@@ -33,8 +33,8 @@ user: markus
 group: markus
 # 
 # Document root of static HTML files (you shouldn't change this)
-docroot: /home/markus/sandbox/markus_trunk/public
+docroot: public
 #
 # Directory into which to change before starting mongrel servers
 # This shouldn't be changed.
-chdir: /home/markus/sandbox/markus_trunk
+chdir: ./
