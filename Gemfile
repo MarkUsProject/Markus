@@ -63,3 +63,10 @@ group :development, :test do
   gem "ruby-debug"
   gem "mocha"
 end
+
+# If you  plan to use clustered mongrel servers for production
+# make sure that this group is included. You don't need this
+# group if you are using Phusion Passenger.
+group :mongrel do
+  gem "mongrel_cluster"
+end
