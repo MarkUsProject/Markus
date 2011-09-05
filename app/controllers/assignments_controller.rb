@@ -168,16 +168,16 @@ def edit
       rescue Exception, RuntimeError => e
         @assignment.errors.add(:base, I18n.t("assignment.error",
                                               :message => e.message))
-        render :action => 'edit', :id => @assignment.id
+        redirect_to :action => 'edit', :id => @assignment.id
       return
     end
 
     if @assignment.save
       flash[:success] = I18n.t("assignment.update_success")
-      render :action => 'edit', :id => params[:id]
+      redirect_to :action => 'edit', :id => params[:id]
       return
     else
-      render :action => 'edit', :id => @assignment.id
+      redirect_to :action => 'edit', :id => @assignment.id
     end
  end
 
