@@ -33,6 +33,14 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       assert respond_with :success
     end
 
+    should "be able to get a new assignment form with submission rules HTML present" do
+      post_as @admin, :new
+      assert_not_nil response.body.to_s.match("NoLateSubmissionRule")
+      assert_not_nil response.body.to_s.match("GracePeriodSubmissionRule")
+      assert_not_nil response.body.to_s.match("PenaltyDecayPeriodSubmissionRule")
+      assert_not_nil response.body.to_s.match("PenaltyPeriodSubmissionRule")
+    end
+
     context "with REPOSITORY_EXTERNAL_SUBMITS_ONLY as false" do
       setup do
         MarkusConfigurator.stubs(
