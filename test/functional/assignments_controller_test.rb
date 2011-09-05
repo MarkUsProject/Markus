@@ -27,10 +27,18 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     end
 
     should "be able to get new" do
-      post_as @admin, :new
+      get_as @admin, :new
       assert assign_to :assignment
       assert assign_to :assignments
       assert respond_with :success
+    end
+
+    should "be able to get a new assignment form with submission rules HTML present" do
+      get_as @admin, :new
+      assert_not_nil response.body.to_s.match("NoLateSubmissionRule")
+      assert_not_nil response.body.to_s.match("GracePeriodSubmissionRule")
+      assert_not_nil response.body.to_s.match("PenaltyDecayPeriodSubmissionRule")
+      assert_not_nil response.body.to_s.match("PenaltyPeriodSubmissionRule")
     end
 
     context "with REPOSITORY_EXTERNAL_SUBMITS_ONLY as false" do
@@ -69,6 +77,16 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
               :id => @assignment.id
         assert_response :success
         assert assigns :assignment
+      end
+
+      should "be able to edit a new assignment form with submission rules HTML present" do
+        get_as @admin,
+              :edit,
+              :id => @assignment.id
+        assert_not_nil response.body.to_s.match("NoLateSubmissionRule")
+        assert_not_nil response.body.to_s.match("GracePeriodSubmissionRule")
+        assert_not_nil response.body.to_s.match("PenaltyDecayPeriodSubmissionRule")
+        assert_not_nil response.body.to_s.match("PenaltyPeriodSubmissionRule")
       end
 
       should "bounced off from student interface" do
