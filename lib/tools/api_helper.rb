@@ -160,13 +160,26 @@ def submit_request(params, uri, param_data)
   headers['Authorization'] = auth_header
   headers['Content-type'] = "application/x-www-form-urlencoded"
 
-  Net::HTTP.start(uri.host, uri.port) do |http|
-    response = http.send_request(params[:request_type], uri.request_uri, param_data, headers)
-    if params[:verbose]
-      puts "#{response.body}\n#{response.code} #{response.message}"
-    else
-      puts "#{response.code} #{response.message}"
+  http = Net::HTTP.new(uri.host, uri.port)
+
+  # Enable SSL if uri.scheme indicates so
+  if (uri.scheme == "https")
+    begin
+      # in order to perform https requests
+      require 'net/https'
+    rescue LoadError => e
+      $stderr.puts("Required library not found: '#{e.message}'.")
+      exit(1)
     end
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+  end
+
+  response = http.send_request(params[:request_type], uri.request_uri, param_data, headers)
+  if params[:verbose]
+    puts "#{response.body}\n#{response.code} #{response.message}"
+  else
+    puts "#{response.code} #{response.message}"
   end
 
  end
