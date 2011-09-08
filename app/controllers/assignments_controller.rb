@@ -200,6 +200,7 @@ class AssignmentsController < ApplicationController
   # Called after a new assignment form is submitted.
   def create
     @assignment = Assignment.new
+    @assignment.build_assignment_stat
     @assignment.transaction do
       begin
         @assignment = process_assignment_form(@assignment, params)
