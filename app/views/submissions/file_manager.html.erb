@@ -21,7 +21,7 @@
   <% end %>
 
 
-<div id="directory_selector" <%='style="display:none;"' unless @grouping.repository_external_commits_only? %>>
+<div id="directory_selector" <%=raw('style="display:none;"') unless @grouping.repository_external_commits_only? %>>
 <p>
   <%= I18n.t("student.submission.current_path") %> 
   <% path_memory = '/' 
@@ -99,7 +99,7 @@
  </div>
 <% end %>
 
-<%= form_tag updated_files_assignment_submissions_path(@assignment.id),
+<%= form_tag update_files_assignment_submissions_path(@assignment.id),
             {:multipart => true,
              :id => 'submit_form'} unless (!@grouping.is_valid? || @grouping.repository_external_commits_only?) %>
 
