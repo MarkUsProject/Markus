@@ -107,7 +107,7 @@ Markus::Application.routes.draw do
         get 'collect_ta_submissions'
         get 'update_submissions'
         post 'populate_repo_browser'
-        get 'update_converted_pdfs'
+        post 'update_converted_pdfs'
         get 'updated_files'
         get 'replace_files'
         get 'delete_files'
