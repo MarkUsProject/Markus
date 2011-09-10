@@ -16,7 +16,6 @@ class GradeEntryFormTest < ActiveSupport::TestCase
   should have_many :grade_entry_students
   should have_many :grades
   should validate_presence_of :short_identifier
-  should validate_uniqueness_of(:short_identifier).with_message(I18n.t('grade_entry_forms.invalid_identifier'))
 
 
   # Dates in the past should also be allowed
@@ -51,6 +50,10 @@ class GradeEntryFormTest < ActiveSupport::TestCase
       @grade_entry_form.grade_entry_items.make(:out_of => 50)
       @grade_entry_form.grade_entry_items.make(:out_of => 10)
     end
+
+    # Need at least one GradeEntryForm object created for this
+    # test to pass.
+    should validate_uniqueness_of(:short_identifier).with_message(I18n.t('grade_entry_forms.invalid_identifier'))
 
     should "verify that the total number of marks is calculated correctly" do
       assert_equal(85, @grade_entry_form.out_of_total)
