@@ -1,6 +1,7 @@
 <% if @current_user.admin? %>
 <% if (controller.controller_name == 'assignments' and
-       controller.action_name != 'index') or
+        (controller.action_name != 'index' and
+         controller.action_name != 'new') ) or
   controller.controller_name == 'rubrics' or
   controller.controller_name == 'flexible_criteria' or
   controller.controller_name == 'annotation_categories' or
@@ -9,11 +10,11 @@
 
 <div id="sub_sub_menu">
   <ul id="root" class="level1 horizontal">
-    <% if !@assignment.nil?%>
+    <% if !@assignment.nil? && !@assignment.id.nil? %>
     <% if controller.controller_name != 'assignments' or
-    (controller.controller_name == 'assignments' and 
-     controller.action_name != 'new')	 %>
-          <li <% if controller.controller_name == 'assignments' %> 
+    (controller.controller_name == 'assignments' and
+     controller.action_name != 'new' ) %>
+          <li <% if controller.controller_name == 'assignments' %>
          id="sub_sub_menu_active"
          <%end%>>
         <%= link_to I18n.t(:properties), edit_assignment_path(@assignment) %>
