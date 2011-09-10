@@ -1,21 +1,21 @@
 <td>
-<%=image_tag('icons/page_white_text.png') %>
-<%= link_to h(file_name), :action => 'download', :id => @assignment.id,
+<%=raw( image_tag('icons/page_white_text.png') )%>
+<%=raw( link_to h(file_name), :action => 'download', :id => @assignment.id,
  :revision_number => @revision.revision_number, :file_name => file_name,
-  :path => @path %>
+  :path => @path )%>
 </td>
 
 <td>
-<%=h I18n.l(file.last_modified_date, :format => :long_date) %>
+<%=I18n.l(file.last_modified_date, :format => :long_date) %>
 </td>
 
 <td>
-<%= h(file.user_id) %>
+<%= file.user_id %>
 </td>
 
 <td>
-<input type="hidden" id="file_revisions[<%=h file_name %>]"
-name="file_revisions[<%=h file_name %>]" value="<%= file.last_modified_revision%>"/>
+<input type="hidden" id="file_revisions[<%= file_name %>]"
+name="file_revisions[<%= file_name %>]" value="<%= file.last_modified_revision%>"/>
 
 <input id="replace_files[<%=h file_name %>]" name="replace_files[<%=h file_name %>]" type="file" onchange="check_change_of_filename('<%=h file_name %>', this.value.escapeHTML(), this); set_onbeforeunload(true);" <%="disabled" if !@grouping.is_valid? %> size="5"/>
 

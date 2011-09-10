@@ -1,4 +1,5 @@
-require File.join(File.dirname(__FILE__),'/../../lib/repo/repository')
+require File.join(File.dirname(__FILE__), '..', '..',
+                  'lib', 'repo', 'repository')
 require 'csv_invalid_line_error'
 
 # Maintains group information for a given user on a specific assignment
