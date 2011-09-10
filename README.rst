@@ -64,7 +64,7 @@ If you are interested in MarkUs and would like to try it out, there is a MarkUs 
 4. System Requirements
 ================================================================================
 
-* Rails 2.3.10/Ruby 1.8.7
+* Rails 3/Ruby 1.8.7
 * Mongrel/Passenger
 * PostgreSQL/MySQL
 * Subversion
