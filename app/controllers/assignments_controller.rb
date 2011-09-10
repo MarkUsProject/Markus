@@ -137,14 +137,15 @@ class AssignmentsController < ApplicationController
     end
   end
 
-def edit
+  # Called on editing assignments (GET)
+  def edit
     @assignment = Assignment.find_by_id(params[:id])
 
     @assignments = Assignment.all
     @sections = Section.all
-
   end
 
+  # Called when editing assignments form is submitted (PUT).
   def update
     @assignment = Assignment.find_by_id(params[:id])
     @assignments = Assignment.all
@@ -168,23 +169,21 @@ def edit
       rescue Exception, RuntimeError => e
         @assignment.errors.add(:base, I18n.t("assignment.error",
                                               :message => e.message))
-        render :action => 'edit', :id => @assignment.id
+        redirect_to :action => 'edit', :id => @assignment.id
       return
     end
 
     if @assignment.save
       flash[:success] = I18n.t("assignment.update_success")
-      render :action => 'edit', :id => params[:id]
+      redirect_to :action => 'edit', :id => params[:id]
       return
     else
-      render :action => 'edit', :id => @assignment.id
+      redirect_to :action => 'edit', :id => @assignment.id
     end
- end
+  end
 
-  # Form accessible actions --------------------------------------------
-  # Post actions that we expect only forms to access them
-
-  # Called when form for creating a new assignment is submitted
+  # Called in order to generate a form for creating a new assignment.
+  # i.e. GET request on assignments/new
   def new
     @assignments = Assignment.all
     @assignment = Assignment.new
@@ -198,7 +197,10 @@ def edit
     render :action => 'new'
   end
 
+  # Called after a new assignment form is submitted.
   def create
+    @assignment = Assignment.new
+    @assignment.build_assignment_stat
     @assignment.transaction do
       begin
         @assignment = process_assignment_form(@assignment, params)
@@ -206,6 +208,8 @@ def edit
         @assignment.errors.add(:base, e.message)
       end
       if !@assignment.save
+        @assignments = Assignment.all
+        @sections = Section.all
         render :action => :new
         return
       end

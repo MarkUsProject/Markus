@@ -236,15 +236,17 @@ class SubmissionsController < ApplicationController
   end
 
   def update_converted_pdfs
-    @grouping = Grouping.find(params[:id])
+    @grouping = Grouping.find(params[:grouping_id])
     @submission = @grouping.current_submission_used
     @pdf_count= 0
     @converted_count = 0
-    @submission.submission_files.each do |file|
-      if file.is_pdf?
-        @pdf_count += 1
-        if file.is_converted
-          @converted_count += 1
+    if !@submission.nil?
+      @submission.submission_files.each do |file|
+        if file.is_pdf?
+          @pdf_count += 1
+          if file.is_converted
+            @converted_count += 1
+          end
         end
       end
     end

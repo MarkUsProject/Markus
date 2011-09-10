@@ -31,7 +31,10 @@ document.observe("dom:loaded", function() {
     }
   });
   
-  <%= remote_function :url => {:action => 'populate_file_manager', :id => @assignment.id, :path => @path}, :complete => "$('loading_list').hide();" %> 
+  <%= remote_function :url => {:action => 'populate_file_manager',
+                               :id => @assignment.id,
+                               :path => @path},
+                      :complete => "$('loading_list').hide();" %> 
 
 });
 
@@ -46,7 +49,7 @@ function sanitized_filename_check(file_input) {
   sanitized_filename = file_name.replace(/<%= SubmissionFile::FILENAME_SANITIZATION_REGEXP.source %>/g,
   <%= "'#{SubmissionFile::SUBSTITUTION_CHAR}'" %>);
   if (file_name != sanitized_filename) {
-    msg = <%= I18n.t('student.submission.filename_sanitization_js_warning') %>;
+    msg = <%=raw( I18n.t('student.submission.filename_sanitization_js_warning') )%>;
     if( !confirm(msg) ) {
       $(file_input).setValue('');
     };
@@ -62,7 +65,7 @@ function sanitized_filename_check(file_input) {
 function check_change_of_filename(file_name, new_file_name, file_input) {
   new_file_name = normalize_filename(new_file_name);
   if(file_name != new_file_name) {
-    alert(<%= I18n.t('student.submission.replace_file_js_error') %>);
+    alert(<%=raw( I18n.t('student.submission.replace_file_js_error') )%>);
     $(file_input).setValue('');
   }
 }

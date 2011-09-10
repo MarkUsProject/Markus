@@ -16,9 +16,11 @@ class Assignment < ActiveRecord::Base
   has_many :test_files
   has_many :criterion_ta_associations
   has_one :submission_rule
+  has_one :assignment_stat
   accepts_nested_attributes_for :submission_rule, :allow_destroy => true
   accepts_nested_attributes_for :assignment_files, :allow_destroy => true
   accepts_nested_attributes_for :test_files, :allow_destroy => true
+  accepts_nested_attributes_for :assignment_stat, :allow_destroy => true
 
   has_many :annotation_categories
 
@@ -35,7 +37,6 @@ class Assignment < ActiveRecord::Base
   has_many :notes, :as => :noteable, :dependent => :destroy
 
   has_many :section_due_dates
-  has_one :assignment_stat
 
   validates_associated :assignment_files
 
@@ -52,6 +53,7 @@ class Assignment < ActiveRecord::Base
                             :greater_than_or_equal_to => 0
 
   validates_associated :submission_rule
+  validates_associated :assignment_stat
   validates_presence_of :submission_rule
 
   validates_presence_of :marking_scheme_type

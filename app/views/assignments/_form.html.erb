@@ -18,25 +18,24 @@
 </div>
 <% end %>
 
-<%= form_for @assignment,
-	     :as => :assignment do |f| %>
+<%= form_for @assignment do |f| %>
 <%= f.error_messages%>
 <fieldset>
   <legend><%= t("assignment.properties") %></legend>
-    <%= f.label :short_identifier, t(:short_identifier) %>
+    <%= raw( f.label :short_identifier, t(:short_identifier) ) %>
     <% if @assignment.id.nil? %>
-      <%= f.text_field :short_identifier,
+      <%=raw( f.text_field :short_identifier,
                        :onchange =>  "$(
                             'assignment_repository_folder').setValue(
-                                    $(this).getValue())" %><br />
+                                    $(this).getValue())" )%><br />
     <% else %>
-      <%= f.text_field :short_identifier %><br />
+      <%= raw( f.text_field :short_identifier ) %><br />
     <% end %>
 
-    <%= f.label :description, t(:name) %>
-    <%= f.text_field :description %><br />
-    <%= f.label :message %>
-    <%= f.text_area :message, :rows => 8, :cols => 65 %><br />
+    <%= raw( f.label :description, t(:name) ) %>
+    <%= raw( f.text_field :description ) %><br />
+    <%= raw( f.label :message ) %>
+    <%= raw( f.text_area :message, :rows => 8, :cols => 65 ) %><br />
 
     <% if !@sections.empty? %>
       <div id="section_due_dates_type_form_right" class="information">
@@ -46,9 +45,9 @@
       </div>
 
       <div id="section_due_dates_type_form">
-        <%= f.label :section_due_dates_type, t("section.due_dates_type") %>
-        <%= f.check_box :section_due_dates_type,
-                        :checked => @assignment.section_due_dates_type %>
+        <%= raw( f.label :section_due_dates_type, t("section.due_dates_type") ) %>
+        <%= raw( f.check_box :section_due_dates_type,
+                        :checked => @assignment.section_due_dates_type ) %>
       </div>
 
       <%= observe_field "assignment_section_due_dates_type",
@@ -72,16 +71,16 @@
 
       </div>
     <% end %>
-    <%= f.label :due_date, t(:due_date)%>
+    <%= raw( f.label :due_date, t(:due_date) ) %>
 
     <%# TODO update the global due date with the first due date added. %>
 
-    <%= f.calendar_date_select :due_date, {
+    <%=raw( f.calendar_date_select :due_date, {
           :time => "mixed",
           :locale => I18n.default_locale,
           :after_close => "refresh_due_date();",
           :year_range => 0.years.ago..1.years.from_now,
-          :id => "assignment_due_date"} %>
+          :id => "assignment_due_date"} )%>
 
     <%# TODO The following code seriously needs some clean up  !!!!  %>
 
@@ -90,34 +89,34 @@
                                       $F('assignment_due_date'));" %>
    <%= t(:iso_due_date_format_example) %><br />
 
-   <%= f.label :repository_folder, t(:repository_folder)%>
-   /<%= f.text_field :repository_folder%><br />
-   <%= f.label :allow_web_submits, t("assignment.allow_web_submits") %>&nbsp;&nbsp;
-   <%= f.radio_button :allow_web_submits,
+   <%= raw( f.label :repository_folder, t(:repository_folder) ) %>
+   /<%= raw( f.text_field :repository_folder ) %><br />
+   <%= raw( f.label :allow_web_submits, t("assignment.allow_web_submits") ) %>&nbsp;&nbsp;
+   <%= raw( f.radio_button :allow_web_submits,
                       true,
-                      :checked => @assignment.allow_web_submits %>
-   <%= f.label :allow_web_submits_true,
-               t("answer_yes"), :class => "radio_label"%>&nbsp;&nbsp;
-   <%= f.radio_button :allow_web_submits,
+                      :checked => @assignment.allow_web_submits ) %>
+   <%= raw( f.label :allow_web_submits_true,
+               t("answer_yes"), :class => "radio_label" ) %>&nbsp;&nbsp;
+   <%= raw( f.radio_button :allow_web_submits,
                       false,
-                      :checked => !@assignment.allow_web_submits %>
-   <%= f.label :allow_web_submits_false,
+                      :checked => !@assignment.allow_web_submits ) %>
+   <%= raw( f.label :allow_web_submits_false,
                t("answer_no"),
-               :class => "radio_label" %><br />
-    <%= f.label :display_grader_names_to_students,
-                t("assignment.display_grader_names_to_students") %>&nbsp;&nbsp;
-    <%= f.radio_button :display_grader_names_to_students,
+               :class => "radio_label" )  %><br />
+    <%= raw( f.label :display_grader_names_to_students,
+                t("assignment.display_grader_names_to_students") ) %>&nbsp;&nbsp;
+    <%= raw( f.radio_button :display_grader_names_to_students,
                        true,
-                       :checked => @assignment.display_grader_names_to_students %>
-    <%= f.label :display_grader_names_to_students_true,
+                       :checked => @assignment.display_grader_names_to_students ) %>
+    <%= raw( f.label :display_grader_names_to_students_true,
                 t("answer_yes"),
-                :class => "radio_label"%>&nbsp;&nbsp;
-    <%= f.radio_button :display_grader_names_to_students,
+                :class => "radio_label" ) %>&nbsp;&nbsp;
+    <%= raw( f.radio_button :display_grader_names_to_students,
                        false,
-                       :checked => !@assignment.display_grader_names_to_students %>
-    <%= f.label :display_grader_names_to_students_false,
+                       :checked => !@assignment.display_grader_names_to_students ) %>
+    <%= raw( f.label :display_grader_names_to_students_false,
                 t("answer_no"),
-                :class => "radio_label"%>
+                :class => "radio_label" ) %>
 
    <br />
    <br />
@@ -130,15 +129,15 @@
   <legend><%= t("assignment.marking_scheme.title") %></legend>
   <% Assignment::MARKING_SCHEME_TYPE.each do |key,value| %>
     <p>
-      <%= f.radio_button :marking_scheme_type, Assignment::MARKING_SCHEME_TYPE[key],
+      <%= raw( f.radio_button :marking_scheme_type, Assignment::MARKING_SCHEME_TYPE[key],
         :checked => @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[key],
         :onclick =>"notice_marking_scheme_changed(#{@assignment.id.nil?},
                    '#{Assignment::MARKING_SCHEME_TYPE[key]}',
                    '#{@assignment.marking_scheme_type}')"
-                 %>
-      <%= f.label("marking_scheme_type_" + Assignment::MARKING_SCHEME_TYPE[key],
+                ) %>
+      <%= raw( f.label("marking_scheme_type_" + Assignment::MARKING_SCHEME_TYPE[key],
           h(I18n.t("assignment.marking_scheme.#{value}")),
-          :class => "radio_label") %>
+          :class => "radio_label") ) %>
     </p>
   <% end %>
 </fieldset>
@@ -177,37 +176,43 @@
     </select>
   </p>
   <p id="is_group_assignment_style">
-    <%= check_box_tag "is_group_assignment", true, false, :id => "is_group_assignment", :onchange => "toggle_group_assignment($F('is_group_assignment'))"%>
-    <%= label_tag "is_group_assignment", t("assignment.group.work_in_groups"), :class => "checkbox_label" %>
+    <%= raw( check_box_tag "is_group_assignment", true, false,
+                           :id => "is_group_assignment",
+                           :onchange => "toggle_group_assignment($F('is_group_assignment'))" ) %>
+    <%= raw( label_tag "is_group_assignment", t("assignment.group.work_in_groups"), :class => "checkbox_label" ) %>
   </p>
   <fieldset class="group_properties">
     <legend><%= t("assignment.group.properties") %></legend>
     <div id="group_properties" class="">
   <p id="student_form_groups_style" class="disable">
-    <%= f.check_box :student_form_groups, :id => "student_form_groups", :onchange => "toggle_student_form_groups($F('student_form_groups'))"%>
-    <%= label_tag  "student_form_groups", t("assignment.group.students_allowed_form_groups"), :class => "checkbox_label" %>
+    <%= raw( f.check_box :student_form_groups, :id => "student_form_groups",
+                         :onchange =>
+                         "toggle_student_form_groups($F('student_form_groups'))" ) %>
+    <%= raw( label_tag "student_form_groups",
+                        t("assignment.group.students_allowed_form_groups"),
+                        :class => "checkbox_label" ) %>
   </p>
 
   <p id="group_limit_style" class="disable">
-    <%= f.label :group_min,
-                t("assignment.group.limit_min"),
-                :class => "inline_label" %>
-    <%= f.text_field :group_min,
+    <%= raw( f.label :group_min,
+                t("assignment.group.limit_min").html_safe,
+                :class => "inline_label") %>
+    <%= raw( f.text_field :group_min,
                      :size => 5,
-                     :maxlength => 3 %>
-    <%= f.label :group_max,
+                     :maxlength => 3) %>
+    <%= raw( f.label :group_max,
                 t("assignment.group.limit_max"),
-                :class => "inline_label" %>
-    <%= f.text_field :group_max,
+                :class => "inline_label") %>
+    <%= raw( f.text_field :group_max,
                      :size => 5,
-                     :maxlength => 3 %>
+                     :maxlength => 3) %>
   </p>
 
   <p id="group_name_autogenerated_style" class="disable">
-    <%= f.check_box :group_name_autogenerated %>
-    <%= f.label :group_name_autogenerated,
+    <%= raw( f.check_box :group_name_autogenerated ) %>
+    <%= raw( f.label :group_name_autogenerated,
                 t("assignment.group.name_autogenerated"),
-                :class => "checkbox_label" %>
+                :class => "checkbox_label") %>
   </p>
 </div>
   </fieldset>
@@ -216,7 +221,7 @@
 <fieldset>
   <legend><%= t("assignment.submission_rules") %></legend>
 
-  <% f.fields_for :submission_rule do |rule| %>
+  <%= f.fields_for :submission_rule do |rule| %>
     <h5><%= t("assignment.submission.penalty_rules") %></h5>
 
     <p>
@@ -248,7 +253,7 @@
     </p>
     <div id="grace_periods">
     <% if rule.object.type.to_s == "GracePeriodSubmissionRule" %>
-     <% rule.fields_for :periods do |period_form| %>
+     <%= rule.fields_for :periods do |period_form| %>
        <%= render :partial => 'grace_period',
                   :locals => {:grace_period => period_form.object,
                               :pf => rule} %>
@@ -272,7 +277,7 @@
     </p>
     <div id="penalty_decay_periods">
       <% if rule.object.type.to_s == "PenaltyDecayPeriodSubmissionRule" %>
-        <% rule.fields_for :periods do |period_form| %>
+        <%= rule.fields_for :periods do |period_form| %>
           <%= render :partial => 'penalty_decay_period',
                      :locals => {:penalty_decay_period => period_form.object,
                                  :pf => rule} %>
@@ -309,33 +314,33 @@
 <fieldset>
   <legend><%= t("assignment.remark.rules")%></legend>
   <p id="allow_remark_requests">
-    <%= f.check_box(:allow_remarks,
+    <%= raw( f.check_box(:allow_remarks,
                     {:id => "allow_remarks",
                     :onchange => "toggle_remark_requests($F('allow_remarks'))"},
                     true,
-                    false) %>
-    <%= f.label("allow_remarks",
+                    false) ) %>
+    <%= raw( f.label("allow_remarks",
                 I18n.t("assignment.remark.allow"),
-                :class => "checkbox_label") %>
+                :class => "checkbox_label") ) %>
   </p>
   <p id="remark_properties">
-    <%= f.label("remark_due_date",
+    <%= raw( f.label("remark_due_date",
                 I18n.t("assignment.remark.due_date"),
-                :class => "inline_label") %>
-    <%= f.calendar_date_select :remark_due_date,
+                :class => "inline_label") ) %>
+    <%= raw( f.calendar_date_select :remark_due_date,
                                {:time => "mixed",
                                 :locale => I18n.default_locale,
                                 :after_close => "check_due_date(
                                                     $F('remark_due_date'))",
                                 :year_range => 0.years.ago..1.years.from_now,
-                                :id => "remark_due_date"} %>
+                                :id => "remark_due_date"} ) %>
     <%= observe_field "remark_due_date",
                       :function => "check_due_date($F('remark_due_date'));" %>
     <%=t(:iso_due_date_format_example)%><br />
-    <%= f.label("remark_message",
+    <%= raw( f.label("remark_message",
                 I18n.t("assignment.remark.message"),
-                :class => "textbox_label") %>
-    <%= f.text_area :remark_message, :rows => 8, :cols => 65 %>
+                :class => "textbox_label") ) %>
+    <%= raw( f.text_area :remark_message, :rows => 8, :cols => 65 ) %>
   </p>
 </fieldset>
 

@@ -69,7 +69,7 @@ If you are interested in MarkUs and would like to try it out, there is a MarkUs 
 * PostgreSQL/MySQL
 * Subversion
 
-Note: As of now, the latest stable version is MarkUs 0.9.5. Here is our current
+Note: As of now, the latest stable version is MarkUs 0.10.0. Here is our current
 deployment/configuration documentation. Please send us email if you have any
 trouble installing MarkUs---we'd be happy to help you out.
 

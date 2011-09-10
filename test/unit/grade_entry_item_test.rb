@@ -15,7 +15,6 @@ class GradeEntryItemTest < ActiveSupport::TestCase
 
   should validate_presence_of :name
   should validate_presence_of :out_of
-  should validate_uniqueness_of(:name).scoped_to(:grade_entry_form_id).with_message(I18n.t('grade_entry_forms.invalid_name'))
 
   should validate_numericality_of(:out_of).with_message(I18n.t('grade_entry_forms.invalid_column_out_of'))
 
@@ -40,6 +39,16 @@ class GradeEntryItemTest < ActiveSupport::TestCase
     dup_column.grade_entry_form = grade_entry_form_2
 
     assert dup_column.valid?
+  end
+
+  context "A GradeEntryItem" do
+    setup do
+      GradeEntryItem.make
+    end
+
+    # Need at least one GradeEntryItem created for this test to
+    # pass.
+    should validate_uniqueness_of(:name).scoped_to(:grade_entry_form_id).with_message(I18n.t('grade_entry_forms.invalid_name'))
   end
 
 end

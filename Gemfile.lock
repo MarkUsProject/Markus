@@ -37,7 +37,9 @@ GEM
     archive-tar-minitar (0.5.2)
     arel (2.0.10)
     builder (2.1.2)
+    cgi_multipart_eof_fix (2.5.0)
     columnize (0.3.4)
+    daemons (1.1.4)
     db_populate (0.2.6)
     dynamic_form (1.1.4)
     erubis (2.6.6)
@@ -46,6 +48,8 @@ GEM
     faker (0.9.5)
       i18n (~> 0.4)
     fastercsv (1.5.4)
+    fastthread (1.0.7)
+    gem_plugin (0.2.3)
     i18n (0.5.0)
     linecache (0.46)
       rbx-require-relative (> 0.0.4)
@@ -59,6 +63,14 @@ GEM
       treetop (~> 1.4.8)
     mime-types (1.16)
     mocha (0.9.12)
+    mongrel (1.1.5)
+      cgi_multipart_eof_fix (>= 2.4)
+      daemons (>= 1.0.3)
+      fastthread (>= 1.0.1)
+      gem_plugin (>= 0.2.3)
+    mongrel_cluster (1.0.5)
+      gem_plugin (>= 0.2.3)
+      mongrel (>= 1.0.2)
     mysql (2.8.1)
     pg (0.11.0)
     polyglot (0.3.2)
@@ -129,6 +141,7 @@ DEPENDENCIES
   i18n
   machinist
   mocha
+  mongrel_cluster
   mysql
   pg
   prototype_legacy_helper (= 0.0.0)!

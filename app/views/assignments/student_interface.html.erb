@@ -40,13 +40,17 @@
         <% end %>
         <h3><%= I18n.t("student.overview") %></h3>
         <div class="info">
-          <%= I18n.t("student.last_revision_date", :last_modified_date => I18n.l(@last_modified_date, :format => :long_date)) %>
+          <%=raw( I18n.t("student.last_revision_date",
+                        :last_modified_date => I18n.l(@last_modified_date,
+                        :format => :long_date)) )%>
         </div>
         <span class="info_number">
           <%=h @num_submitted_files.to_s %>
         </span>
         <span class="info"><%= I18n.t("student.files") %></span> <br />
-        <%= I18n.t("student.missing_required_files", :missing_files => @num_missing_assignment_files.to_s) %><br />
+        <%=raw( I18n.t("student.missing_required_files",
+                    :missing_files => @num_missing_assignment_files.to_s) )%>
+        <br />
       <% else %>
         <p class="notice"><%= I18n.t("student.no_submission_yet") %></p>
       <% end %>
@@ -260,7 +264,9 @@
               @assignment.group_max > 1 %>
           <li><%= I18n.t("student.students_can_form_groups") %></li>
           <li>
-            <%= I18n.t("student.form_group", :group_min => h(@assignment.group_min), :group_max => h(@assignment.group_max)) %>
+            <%=raw( I18n.t("student.form_group",
+                      :group_min => h(@assignment.group_min),
+                      :group_max => h(@assignment.group_max)) )%>
           </li>
         <% elsif @assignment.instructor_form_groups %>
           <li><%= I18n.t("student.instructor_form_groups") %></li>
@@ -269,7 +275,9 @@
         <% end %>
         <% if !@grouping.nil? %>
         <li>
-          <%= I18n.t("student.group_credits", :available_grace_credits => @grouping.available_grace_credits) %>
+          <%=raw( I18n.t("student.group_credits",
+                          :available_grace_credits =>
+                              @grouping.available_grace_credits) )%>
     </li>
         <% end %>
       </ul>

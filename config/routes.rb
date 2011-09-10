@@ -33,12 +33,12 @@ Markus::Application.routes.draw do
       get 'refresh_graph'
       get 'student_interface'
       get 'update_group_properties_on_persist'
-      get 'invite_member'
+      post 'invite_member'
       get 'creategroup'
       get 'join_group'
       get 'deletegroup'
       get 'decline_invitation'
-      get 'disinvite_member'
+      post 'disinvite_member'
     end
 
     resources :rubrics do
@@ -107,12 +107,13 @@ Markus::Application.routes.draw do
         get 'collect_ta_submissions'
         get 'update_submissions'
         post 'populate_repo_browser'
-        get 'update_converted_pdfs'
+        post 'update_converted_pdfs'
         get 'updated_files'
         get 'replace_files'
         get 'delete_files'
         post 'update_files'
-        get 'server_time'
+        post 'server_time'
+        get 'download'
       end
 
       member do

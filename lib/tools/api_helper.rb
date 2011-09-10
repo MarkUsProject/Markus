@@ -32,7 +32,7 @@ OPTS = GetoptLong.new(
       [ '--api-key-file', '-k', GetoptLong::REQUIRED_ARGUMENT ],
       [ '--url', '-u', GetoptLong::REQUIRED_ARGUMENT ],
       [ '--test-file', '-t', GetoptLong::OPTIONAL_ARGUMENT ],
-      [ '--verbose', '-v', GetoptLong::OPTIONAL_ARGUMENT ]
+      [ '--verbose', '-v', GetoptLong::NO_ARGUMENT ]
     )
 
 # In case people don't know what they're doing...
@@ -66,23 +66,23 @@ def load_params()
   OPTS.each do |opt, arg|
     case opt
       when '--help'
-	$stdout.puts usage()
+        $stdout.puts usage()
         $stdout.puts help()
-	exit(0)
-    when '--api-key-file'
-      params[:api_key_file] = arg
-    when '--request-type'
-      params[:request_type] = arg.upcase
-    when '--url'
-      params[:url] = arg.downcase
-    when '--test-file'
-      params[:test_file] = arg
-    when '--verbose'
-      params[:verbose] = true
-    when '--binary'
-      params[:binary] = true
-      $stdout.puts "The binary option is not enabled"
-    end
+        exit(0)
+      when '--api-key-file'
+        params[:api_key_file] = arg
+      when '--request-type'
+        params[:request_type] = arg.upcase
+      when '--url'
+        params[:url] = arg.downcase
+      when '--test-file'
+        params[:test_file] = arg
+      when '--verbose'
+        params[:verbose] = true
+      when '--binary'
+        params[:binary] = true
+        $stdout.puts "The binary option is not enabled"
+      end
   end
   return params
 end
@@ -160,13 +160,26 @@ def submit_request(params, uri, param_data)
   headers['Authorization'] = auth_header
   headers['Content-type'] = "application/x-www-form-urlencoded"
 
-  Net::HTTP.start(uri.host, uri.port) do |http|
-    response = http.send_request(params[:request_type], uri.request_uri, param_data, headers)
-    if params[:verbose]
-      puts "#{response.body}\n#{response.code} #{response.message}"
-    else
-      puts "#{response.code} #{response.message}"
+  http = Net::HTTP.new(uri.host, uri.port)
+
+  # Enable SSL if uri.scheme indicates so
+  if (uri.scheme == "https")
+    begin
+      # in order to perform https requests
+      require 'net/https'
+    rescue LoadError => e
+      $stderr.puts("Required library not found: '#{e.message}'.")
+      exit(1)
     end
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+  end
+
+  response = http.send_request(params[:request_type], uri.request_uri, param_data, headers)
+  if params[:verbose]
+    puts "#{response.body}\n#{response.code} #{response.message}"
+  else
+    puts "#{response.code} #{response.message}"
   end
 
  end
