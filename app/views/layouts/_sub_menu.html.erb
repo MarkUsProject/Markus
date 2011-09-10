@@ -20,11 +20,11 @@
       <% if @assignment.nil? and @grade_entry_form.nil? %>
         <span id="choose_an_assignment"><%= I18n.t(:choose_assignment)%></span>
       <% elsif controller.controller_name == 'assignments' and
-           controller.action_name == 'new'
+           (controller.action_name == 'new' or controller.action_name == 'create')
       %>
         <span id="choose_an_assignment"><%= I18n.t(:create_new_assignment)%></span>
       <% elsif controller.controller_name == 'grade_entry_forms' and
-           controller.action_name == 'new'
+           (controller.action_name == 'new' or controller.action_name == 'create')
       %>
         <span id="choose_an_assignment"><%= I18n.t(:create_new_grade_entry_form)%></span>
       <% elsif !@assignment.nil? %>
@@ -66,7 +66,8 @@
   <% if !@assignment.nil?%>
     <% if controller.controller_name != 'assignments' or
     (controller.controller_name == 'assignments' and
-     controller.action_name != 'new')	 %>
+     controller.action_name != 'new' and
+     controller.action_name != 'create') %>
       <li <% if ['assignments',
                  'rubrics',
 		 'flexible_criteria',
