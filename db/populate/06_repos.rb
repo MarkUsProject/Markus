@@ -1,7 +1,7 @@
 # Let's populate students repository with nice data
 
 groups = Group.all
-assignment = Assignment.first
+assignment = Assignment.find_by_short_identifier("A1")
 
 file_dir  = File.join(File.dirname(__FILE__), '/data')
 groups.each do |group|
