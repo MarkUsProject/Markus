@@ -7,10 +7,6 @@ include MarkusConfigurator
 
 class TATest < ActiveSupport::TestCase
 
-  def setup
-    clear_fixtures
-  end
-
   def teardown
     destroy_repos
   end

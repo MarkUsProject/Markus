@@ -8,10 +8,6 @@ class GroupTest < ActiveSupport::TestCase
   SHOW_GENERATED_DATA = false
   SHOW_DEPENDENCY_GENERATED_DATA = true
 
-  def setup
-    clear_fixtures
-  end
-
   should have_many :groupings
   should have_many(:submissions).through(:groupings)
   should have_many(:assignments).through(:groupings)

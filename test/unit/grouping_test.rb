@@ -7,10 +7,6 @@ require 'mocha'
 
 class GroupingTest < ActiveSupport::TestCase
 
-  def setup
-    clear_fixtures
-  end
-
   should belong_to :grouping_queue
   should belong_to :group
   should belong_to :assignment
@@ -55,6 +51,7 @@ class GroupingTest < ActiveSupport::TestCase
       assert_not_nil(last_modified)
       assert_instance_of(Time, last_modified)
       # This is not exactly accurate, but it's sufficient
+      # FIXME actually, it sometimes isn't sufficient...
       assert_equal(Time.now.min, last_modified.min)
     end
 

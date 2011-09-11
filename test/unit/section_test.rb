@@ -4,17 +4,10 @@
 # - A section with student associated to
 
 require File.join(File.dirname(__FILE__), '..', 'test_helper')
-require File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints')
 require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 require 'shoulda'
 
 class SectionTest < ActiveSupport::TestCase
-  SHOW_GENERATED_DATA = false
-  SHOW_DEPENDENCY_GENERATED_DATA = true
-
-  def setup
-    clear_fixtures
-  end
 
   should validate_presence_of :name
   should have_many :students
