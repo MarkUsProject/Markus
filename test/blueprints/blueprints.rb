@@ -202,7 +202,7 @@ end
 RubricCriterion.blueprint do
   assignment {Assignment.make(:marking_scheme_type => 'rubric')}
   rubric_criterion_name {Sham.rubric_criterion_name}
-  position {1} # override if many for the same assignment
+  position {1}  # override if many for the same assignment
   weight {1}
   assigned_groups_count {0}
   level_0_name {'Horrible'}

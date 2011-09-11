@@ -3,8 +3,6 @@ require 'shoulda'
 
 # Tests for GradeEntryStudents
 class GradeEntryStudentTest < ActiveSupport::TestCase
-  fixtures :all
-
   should belong_to :grade_entry_form
   should belong_to :user
 

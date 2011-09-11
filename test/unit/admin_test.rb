@@ -6,14 +6,9 @@ require 'mocha'
 
 include MarkusConfigurator
 class AdminTest < ActiveSupport::TestCase
-  setup do
-    clear_fixtures
-  end
-
   context "If repo admin" do
 
     setup do
-      setup_group_fixture_repos
       conf = Hash.new
       conf["IS_REPOSITORY_ADMIN"] = true
       conf["REPOSITORY_PERMISSION_FILE"] = MarkusConfigurator.markus_config_repository_permission_file
@@ -48,7 +43,6 @@ class AdminTest < ActiveSupport::TestCase
   context "If not repository admin" do
 
     setup do
-      setup_group_fixture_repos
       # set repository_admin false
       conf = Hash.new
       conf["IS_REPOSITORY_ADMIN"] = false

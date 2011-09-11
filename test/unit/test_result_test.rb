@@ -3,9 +3,6 @@ require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 require 'shoulda'
 
 class TestResultTest < ActiveSupport::TestCase
-  def setup
-    clear_fixtures
-  end
   # Basic testing: create, delete, update
 
   context "MarkUs" do
