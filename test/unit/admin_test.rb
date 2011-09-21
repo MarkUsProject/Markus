@@ -32,7 +32,7 @@ class AdminTest < ActiveSupport::TestCase
     end
 
     should "revoke repository permissions when destroying an admin object" do
-      admin = Admin.make 
+      admin = Admin.make
       repo_names = Group.all.collect do |group| File.join(markus_config_repository_storage, group.repository_name) end
       @repo.expects(:delete_bulk_permissions).times(1).with(repo_names, [admin.user_name])
       admin.destroy
@@ -56,7 +56,7 @@ class AdminTest < ActiveSupport::TestCase
     end
 
     should "not remove repository permissions when deleting an admin" do
-      admin = Admin.make 
+      admin = Admin.make
       @repo.expects(:delete_bulk_permissions).never
       admin.destroy
     end

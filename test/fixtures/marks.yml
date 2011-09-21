@@ -32,7 +32,7 @@ mark_4:
    created_at:           <%= Time.now.to_s(:db)%>
    updated_at:           <%= Time.now.to_s(:db)%>
 
-# This is for result_6 the assignment test case, with csv downloads  
+# This is for result_6 the assignment test case, with csv downloads
 mark_5:
    result_id:            <%= Fixtures.identify(:result_5)%>
    markable_id:          <%= Fixtures.identify(:c6)%>
@@ -44,15 +44,15 @@ mark_5:
 mark_6:
    result_id:            <%= Fixtures.identify(:result_5)%>
    markable_id:          <%= Fixtures.identify(:c5)%>
-   markable_type:        RubricCriterion   
+   markable_type:        RubricCriterion
    mark:                 4
    created_at:           <%= Time.now.to_s(:db)%>
    updated_at:           <%= Time.now.to_s(:db)%>
-   
+
 mark_7:
    result_id:            <%= Fixtures.identify(:result_5)%>
    markable_id:          <%= Fixtures.identify(:c4)%>
-   markable_type:        RubricCriterion   
+   markable_type:        RubricCriterion
    mark:                 4
    created_at:           <%= Time.now.to_s(:db)%>
    updated_at:           <%= Time.now.to_s(:db)%>
@@ -60,11 +60,11 @@ mark_7:
 mark_8:
    result_id:            <%= Fixtures.identify(:result_5)%>
    markable_id:          <%= Fixtures.identify(:c3)%>
-   markable_type:        RubricCriterion   
+   markable_type:        RubricCriterion
    mark:                 1
    created_at:           <%= Time.now.to_s(:db)%>
    updated_at:           <%= Time.now.to_s(:db)%>
-   
+
 mark_9:
    result_id:            <%= Fixtures.identify(:result_5)%>
    markable_id:          <%= Fixtures.identify(:c2)%>
@@ -88,7 +88,7 @@ mark_11:
    mark:                 1
    created_at:           <%= Time.now.to_s(:db)%>
    updated_at:           <%= Time.now.to_s(:db)%>
-  
+
 flexible_mark:
    result_id:            <%= Fixtures.identify(:flexible_result)%>
    markable_id:         <%= Fixtures.identify(:flexible_criterion_1)%>

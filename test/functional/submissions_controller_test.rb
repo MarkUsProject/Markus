@@ -218,7 +218,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
     # TODO:  TEST REPO BROWSER HERE
     should "and I cannot use the repository browser" do
       get_as @student,
-             :repo_browser, 
+             :repo_browser,
              :assignment_id => 1,
              :id => Grouping.last.id
       assert respond_with :missing

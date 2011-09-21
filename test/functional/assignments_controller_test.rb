@@ -66,7 +66,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       should respond_with :redirect
       should set_the_flash
 
-      should "set the flash's success message" do 
+      should "set the flash's success message" do
         assert_equal flash[:success], "Successfully created the assignment"
       end
     end

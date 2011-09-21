@@ -953,7 +953,7 @@ class AssignmentTest < ActiveSupport::TestCase
 
     end
 
- 
+
     should "return the section due date for a specific section that has not
             section due date" do
       assert_equal (3.days.ago).day(),
@@ -974,7 +974,7 @@ class AssignmentTest < ActiveSupport::TestCase
                     :user => student_02,
                     :membership_status => StudentMembership::STATUSES[:inviter])
 
-            
+
       end
 
       should "return the section due date for a specific section" do

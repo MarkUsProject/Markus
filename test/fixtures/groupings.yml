@@ -7,13 +7,13 @@
 ################################################################################
 
 grouping_1:
-   group_id: <%= Fixtures.identify(:group_1) %> 
+   group_id: <%= Fixtures.identify(:group_1) %>
    assignment_id: <%= Fixtures.identify(:assignment_1) %>
    criteria_coverage_count: 0
 
 grouping_2:
    group_id: <%= Fixtures.identify(:group_2) %>
-   assignment_id: <%= Fixtures.identify(:assignment_1) %> 
+   assignment_id: <%= Fixtures.identify(:assignment_1) %>
    criteria_coverage_count: 0
 
 grouping_3:
@@ -25,7 +25,7 @@ grouping_4:
    group_id: <%= Fixtures.identify(:group_4) %>
    assignment_id: <%= Fixtures.identify(:assignment_1) %>
    criteria_coverage_count: 0
-   
+
 grouping_5:
    group_id: <%= Fixtures.identify(:group_6) %>
    assignment_id: <%= Fixtures.identify(:assignment_5) %>
@@ -37,7 +37,7 @@ grouping_6:
    criteria_coverage_count: 0
 
 grouping1:
-   group_id: <%= Fixtures.identify(:group1) %> 
+   group_id: <%= Fixtures.identify(:group1) %>
    assignment_id: <%= Fixtures.identify(:assignment_2) %>
    criteria_coverage_count: 0
 
@@ -50,12 +50,12 @@ grouping3:
    group_id: <%= Fixtures.identify(:group3)%>
    assignment_id: <%= Fixtures.identify(:assignment_2)%>
    criteria_coverage_count: 0
-   
+
 grouping_flexible_1:
    group_id: <%= Fixtures.identify(:group1)%>
    assignment_id: <%= Fixtures.identify(:flexible_assignment)%>
    criteria_coverage_count: 0
-   
+
 grouping_flexible_2:
    group_id: <%= Fixtures.identify(:group_6) %>
    assignment_id: <%= Fixtures.identify(:flexible_assignment_2) %>
@@ -65,7 +65,7 @@ grouping_test_result1:
    group_id: <%= Fixtures.identify(:group_test_result1) %>
    assignment_id: <%= Fixtures.identify(:assignment_test_result1) %>
    criteria_coverage_count: 0
-   
+
 grouping_with_deep_repository_folder:
    group_id: <%= Fixtures.identify(:group_6) %>
    assignment_id: <%= Fixtures.identify(:assignment_with_deep_repository_folder) %>

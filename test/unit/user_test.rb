@@ -31,7 +31,7 @@ class UserTest < ActiveSupport::TestCase
     end
 
     should validate_uniqueness_of :user_name
-    
+
   end
 
   # test if user_name, last_name, first_name are stripped correctly
