@@ -29,7 +29,7 @@ function source_code_ready() {
   annotation_manager = new SourceCodeLineAnnotations(line_manager, annotation_text_manager, annotation_text_displayer);
 }
 
-//A version of source_code_ready for image files. 
+//A version of source_code_ready for image files.
 function source_code_ready_for_image() {
   if ($('annotation_menu') != null) {
     $('annotation_menu').hide();
@@ -41,7 +41,7 @@ function source_code_ready_for_image() {
   var annotation_text_displayer = new AnnotationTextDisplayer($('annotation_holder'));
 
   annotation_manager = new ImageAnnotationGrid(image_event_handler, annotation_text_manager, annotation_text_displayer);
-  
+
   $('loading_code').hide();
   $('select_file_id').enable();
 }
@@ -189,7 +189,7 @@ function load_submitted_file(submission_file_id, focus_line) {
 function load_submitted_file_and_focus(submission_file_id, focus_line) {
   //First, switch to the source code viewer tab
   code_tab_menu.setActiveTab('code_holder');
-  
+
   if($F('select_file_id') == submission_file_id) {
     focus_source_code_line(focus_line);
   } else {

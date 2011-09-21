@@ -188,13 +188,13 @@ document.observe("dom:loaded", function(){
               :id => 'search_groupings_label' %>
             <%= text_field_tag 'search_groupings', nil,
               :onkeyup => "groupings_table.add_filter('search'); groupings_table.render();",
-              :onkeypress => "stop_submit(event);" %>            
+              :onkeypress => "stop_submit(event);" %>
             <table class="groups" id="groups">
             </table>
           </div><!-- group container -->
         </div>
       </div>
-    </div>    
+    </div>
   </div> <!-- colRightGroups -->
 
   <div class="colLeftGraders">
@@ -252,7 +252,7 @@ document.observe("dom:loaded", function(){
         :title => I18n.t('remove_graders'),
         :class =>'image_input' %>
   </div>
-  
+
 </div> <!-- ColsLeftHeavy -->
 <% end %> <!-- remote form tag -->
 

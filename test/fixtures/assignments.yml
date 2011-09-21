@@ -1,5 +1,5 @@
 ################################################################################
-# 
+#
 # Assignments Table
 #
 # one:
@@ -21,8 +21,8 @@
 
 assignment_1:
    short_identifier: Captain Nemo
-   description: "Code!!" 
-   message: 
+   description: "Code!!"
+   message:
    due_date: <%= 30.days.from_now.to_s(:db)%>
    group_min: 2
    group_max: 4
@@ -40,8 +40,8 @@ assignment_1:
 
 assignment_build_on_top_of_1:
    short_identifier: Captain CopyCat
-   description: "Code even more!!" 
-   message: 
+   description: "Code even more!!"
+   message:
    due_date: <%= 30.days.from_now.to_s(:db)%>
    group_min: 1
    group_max: 1
@@ -113,7 +113,7 @@ assignment_4:
    allow_web_submits: true
    display_grader_names_to_students: false
    assign_graders_to_criteria: false
-   
+
 assignment_5:
    short_identifier: A5
    description: "I'm here to test the results_controller"
@@ -189,7 +189,7 @@ flexible_assignment_without_criterion:
    allow_web_submits: false
    display_grader_names_to_students: true
    assign_graders_to_criteria: false
-   
+
 flexible_assignment_2:
    short_identifier: Flex2
    description: "I'm here to test the rubric_controller while flexible is not totally implemented"
@@ -227,11 +227,11 @@ assignment_test_result1:
    allow_web_submits: true
    display_grader_names_to_students: false
    assign_graders_to_criteria: false
-   
+
 assignment_with_web_submit:
    short_identifier: WS
-   description: "With Web Submit" 
-   message: 
+   description: "With Web Submit"
+   message:
    due_date: <%= 30.days.from_now.to_s(:db)%>
    group_min: 1
    group_max: 1
@@ -249,8 +249,8 @@ assignment_with_web_submit:
 
 assignment_without_web_submit:
    short_identifier: NoWS
-   description: "Without Web Submit" 
-   message: 
+   description: "Without Web Submit"
+   message:
    due_date: <%= 30.days.from_now.to_s(:db)%>
    group_min: 1
    group_max: 1
@@ -307,8 +307,8 @@ assignment_without_display_grader_names_to_students:
 
 assignment_with_deep_repository_folder:
    short_identifier: DeepFolder
-   description: "The repository folder is deeper than one level" 
-   message: 
+   description: "The repository folder is deeper than one level"
+   message:
    due_date: <%= 30.days.from_now.to_s(:db)%>
    group_min: 1
    group_max: 1

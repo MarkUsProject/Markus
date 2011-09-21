@@ -3,7 +3,7 @@
     </th>
     <th class="<%="ap_sorting_by" if (sort_by == 'group_name')%>
                 <%="ap_sorting_by_desc" if (sort_by == 'group_name' && !desc.blank?)%>">
-      <%= link_to I18n.t("browse_submissions.group_name"), 
+      <%= link_to I18n.t("browse_submissions.group_name"),
               :id => assignment.id,
               :filter => filter,
               :page => page,
@@ -11,7 +11,7 @@
               :sort_by => 'group_name',
               :desc => (sort_by == 'group_name' && desc.blank?) %>
     </th>
-    
+
     <th class="<%="ap_sorting_by" if (sort_by == 'repo_name')%>
                 <%="ap_sorting_by_desc" if (sort_by == 'repo_name' && !desc.blank?)%>">
       <%= link_to I18n.t("browse_submissions.repository"),
@@ -22,7 +22,7 @@
               :sort_by => 'repo_name',
               :desc => (sort_by == 'repo_name' && desc.blank?) %>
     </th>
-    
+
     <th class="<%="ap_sorting_by" if (sort_by == 'revision_timestamp')%>
                 <%="ap_sorting_by_desc" if (sort_by == 'revision_timestamp' && !desc.blank?)%>">
       <%= link_to I18n.t("browse_submissions.commit_date"),
@@ -33,7 +33,7 @@
               :sort_by => 'revision_timestamp',
               :desc => (sort_by == 'revision_timestamp' && desc.blank?) %>
     </th>
-    
+
     <th class="<%="ap_sorting_by" if (sort_by == 'marking_state')%>
                 <%="ap_sorting_by_desc" if (sort_by == 'marking_state' && !desc.blank?)%>">
       <%= link_to I18n.t("browse_submissions.marking_state"),
@@ -55,7 +55,7 @@
               :sort_by => 'grace_credits_used',
               :desc => (sort_by == 'grace_credits_used' && desc.blank?) %>
     </th>
-    
+
     <th class="<%="ap_sorting_by" if (sort_by == 'total_mark')%>
                 <%="ap_sorting_by_desc" if (sort_by == 'total_mark' && !desc.blank?)%>">
       <%= link_to I18n.t("browse_submissions.final_grade"),

@@ -124,7 +124,7 @@ document.observe("dom:loaded", function() {
       unassigned: 'unassigned_students_count'
     }
   });
-  
+
   <%= remote_function :url => populate_assignment_groups_path(@assignment.id),
                       :complete => "$('loading_list').hide();" %>
   <%= remote_function :url => populate_students_assignment_groups_path(

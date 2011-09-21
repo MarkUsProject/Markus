@@ -17,7 +17,7 @@ no_late_submission_1:
 no_late_submission2:
   assignment_id:  <%= Fixtures.identify(:assignment_2) %>
   type: "NoLateSubmissionRule"
-  
+
 no_late_submission3:
   assignment_id:  <%= Fixtures.identify(:assignment_3) %>
   type: "NoLateSubmissionRule"
@@ -25,7 +25,7 @@ no_late_submission3:
 no_late_submission4:
   assignment_id:  <%= Fixtures.identify(:assignment_4) %>
   type: "NoLateSubmissionRule"
-  
+
 no_late_submission5:
   assignment_id:  <%= Fixtures.identify(:assignment_5) %>
   type: "NoLateSubmissionRule"
@@ -41,8 +41,8 @@ no_late_submission_5:
 no_late_submission_6:
   assignment_id: <%= Fixtures.identify(:flexible_assignment_without_criterion) %>
   type: "NoLateSubmissionRule"
-  
+
 no_late_submission_7:
   assignment_id:  <%= Fixtures.identify(:flexible_assignment_2) %>
   type: "NoLateSubmissionRule"
-  
+

@@ -5,7 +5,7 @@ url = request.path.split('?')  #remove extra query string parameters
 levels = url[0].split('/') #break up url into different levels
 levels.each_with_index do |level, index|
   unless level.blank?
-    if index == levels.size-1 || 
+    if index == levels.size-1 ||
        (level == levels[levels.size-2] && levels[levels.size-1].to_i > 0)
 	s += "#{level.gsub(/_/, ' ')} \n" unless level.to_i > 0
     else

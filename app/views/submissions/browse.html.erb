@@ -1,7 +1,7 @@
 <%= javascript_include_tag "submissions_manager" %>
 <%= javascript_include_tag "ajax_paginate" %>
 
-<div class="notice"> 
+<div class="notice">
   <% if Time.now >= @assignment.submission_rule.calculate_collection_time %>
      <%=h I18n.t("browse_submissions.grading_can_begin") %>
   <% else %>
@@ -89,13 +89,13 @@
       <div class="ap_filters" id="ap_filters_1">
         <%= render  :partial => 'submissions_table_filters',
                     :locals => {
-                      :filter => @filter, 
+                      :filter => @filter,
                       :page => @current_page,
                       :desc => @desc,
-                      :sort_by => @sort_by, 
+                      :sort_by => @sort_by,
                       :assignment => @assignment,
                       :filters => @filters,
-                      :per_page => @per_page, 
+                      :per_page => @per_page,
                       :per_pages => @per_pages } %>
       </div>
       <div class="clear"></div>
@@ -127,7 +127,7 @@
       <thead id="submissions_table_head">
         <%= render  :partial => 'submissions_table_sorting_links',
                     :locals => {
-                      :assignment => @assignment, 
+                      :assignment => @assignment,
                       :filter => 'none',
                       :page => @current_page,
                       :per_page => @per_page,
@@ -135,13 +135,13 @@
                       :desc => @desc } %>
       </thead>
 
-      <%= render  :partial => 'submissions_table_body', 
+      <%= render  :partial => 'submissions_table_body',
                   :locals => {
                     :groupings => @groupings,
                     :assignment => @assignment } %>
 
       <tfoot id="submissions_table_foot">
-        <%= render  :partial => 'submissions_table_sorting_links', 
+        <%= render  :partial => 'submissions_table_sorting_links',
                     :locals => {
                       :assignment => @assignment,
                       :filter => 'none',
@@ -183,13 +183,13 @@
       <div class="ap_filters" id="ap_filters_2">
         <%= render  :partial => 'submissions_table_filters',
                     :locals => {
-                      :filter => @filter, 
+                      :filter => @filter,
                       :page => @current_page,
                       :desc => @desc,
-                      :sort_by => @sort_by, 
+                      :sort_by => @sort_by,
                       :assignment => @assignment,
                       :filters => @filters,
-                      :per_page => @per_page, 
+                      :per_page => @per_page,
                       :per_pages => @per_pages } %>
       </div>
       <div class="clear"></div>

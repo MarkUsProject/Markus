@@ -3,7 +3,7 @@
   <%= h(assignment.remark_message) %>
   <h3><%= I18n.t("marker.remark_request") %></h3>
 	<div id="remark_request_text">
-    <%= I18n.t("marker.remark_submitted_on") %>: 
+    <%= I18n.t("marker.remark_submitted_on") %>:
     <% if submission.remark_request_timestamp %>
       <%= I18n.l(submission.remark_request_timestamp, :format => :long_date) %>
     <% end %><br><br>

@@ -87,7 +87,7 @@ document.observe("dom:loaded", function(){
      fade: false
 
    });
-  modalCreate = new Control.Modal($('create_group_dialog'), 
+  modalCreate = new Control.Modal($('create_group_dialog'),
   {
     overlayOpacity: 0.75,
     className: 'modalCreate',
@@ -257,7 +257,7 @@ document.observe("dom:loaded", function(){
 			  :complete => "$('loading_list').hide();",
 			  :remote => true %>
           <% else %>
-            <%= button_to_function t(:add_new), "make_new_group();", 
+            <%= button_to_function t(:add_new), "make_new_group();",
               :before => "$('loading_list').show();groupings_table.clear_filters().render();groups_tab_menu.setActiveTab('none');",
               :complete => "$('loading_list').hide();"  %>
           <% end %>
@@ -300,7 +300,7 @@ document.observe("dom:loaded", function(){
           </div>
         </div><!-- group container -->
       </div>
-    </div>    
+    </div>
   </div> <!-- colRightGroups -->
 
   <div class="colLeftGroups">
@@ -357,7 +357,7 @@ document.observe("dom:loaded", function(){
         :title => I18n.t('remove_members'),
         :class =>'image_input' %>
   </div>
-  
+
 </div> <!-- ColsLeftHeavy -->
 <% end %> <!-- remote form tag -->
 
@@ -383,7 +383,7 @@ document.observe("dom:loaded", function(){
     <%= button_to_function t(:cancel), 'modalAssignmentGroupReUse.close()'%>
   </p>
 </div> <!-- Assignement reuse groups modal-->
- 
+
 <div id="create_group_dialog">
   <h2><%= I18n.t("groups.create_new_group") %></h2>
   <fieldset>
@@ -395,7 +395,7 @@ document.observe("dom:loaded", function(){
   "submit_new_group(escape($F('new_group_name')));" %>
     <%= button_to_function t(:cancel), 'modalCreate.close()'%>
   </p>
-      
+
 </div>
 
 <div id="rename_group_dialog">

@@ -20,7 +20,7 @@ document.observe("dom:loaded", function() {
     default_sort: 'user_name',
     footer: true,
   });
-  
+
   <%= remote_function :url => populate_admins_path(), :complete => "$('loading_list').hide();"%>
 });
 

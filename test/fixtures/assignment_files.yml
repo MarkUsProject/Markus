@@ -13,8 +13,8 @@ shapes:
 testshapes:
     assignment_id:      <%= Fixtures.identify(:assignment_1)%>
     filename:           "TestShapes.java"
-    
+
 assignment_file1:
     assignment_id:      <%= Fixtures.identify(:flexible_assignment)%>
     filename:           "TestShapes.java"
-    
+

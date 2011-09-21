@@ -26,7 +26,7 @@
    <% grouping.student_memberships.each do |member|%>
        <%= render :partial => "groups/student_manage/member", :locals => {:grouping => grouping, :member => member} %>
        <% @students.delete(member.user.id) if @students %>
-   <% end -%> 
+   <% end -%>
  </ul>
 
 <% # if the student is the inviter, and the student can still
@@ -37,4 +37,4 @@ grouping.student_membership_number < @assignment.group_max%>
      <%= button_to_function "Invite", 'invite(); return false;'%>
   <% end %>
 <% end %>
-	 
+

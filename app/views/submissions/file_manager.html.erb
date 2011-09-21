@@ -5,7 +5,7 @@
 
 <div id="title_bar">
   <h1><%= I18n.t("student.submission.file_manager", :short_identifier => h(sanitize(@assignment.short_identifier))) %></h1>
-  <div id="current_time">  
+  <div id="current_time">
   <%= render :partial => "server_time" %>
   <%= periodically_call_remote(
         :url => server_time_assignment_submissions_path(@assignment.id),
@@ -23,12 +23,12 @@
 
 <div id="directory_selector" <%=raw('style="display:none;"') unless @grouping.repository_external_commits_only? %>>
 <p>
-  <%= I18n.t("student.submission.current_path") %> 
-  <% path_memory = '/' 
-     links = [] 
-     @path.split('/').each do |folder| 
-     path_memory = File.join(path_memory, folder) 
-     links.push(link_to folder, :action => 'file_manager', :path => path_memory) 
+  <%= I18n.t("student.submission.current_path") %>
+  <% path_memory = '/'
+     links = []
+     @path.split('/').each do |folder|
+     path_memory = File.join(path_memory, folder)
+     links.push(link_to folder, :action => 'file_manager', :path => path_memory)
   end %>
   <%= link_to '[root]', :action => 'file_manager', :path => '/' %>
   <%= links.join('/')%>
@@ -117,11 +117,11 @@
 <%= submit_tag( I18n.t(:submit),
     :disabled => !@grouping.is_valid?,
     :onclick => "set_onbeforeunload(false);"
-    ) unless @grouping.repository_external_commits_only? 
+    ) unless @grouping.repository_external_commits_only?
     %>
-<%= link_to( I18n.t(:cancel), 
-        {:controller => 'submissions', 
-           :action => 'file_manager'}, 
+<%= link_to( I18n.t(:cancel),
+        {:controller => 'submissions',
+           :action => 'file_manager'},
 	 :id => @assignment.id,
 	 :disabled => !@grouping.is_valid?,
 	 :class => "button",
@@ -142,8 +142,8 @@
     :onclick => "set_onbeforeunload(false);"
     ) unless @grouping.repository_external_commits_only? %>
 <%= link_to( I18n.t(:cancel),
-        {:controller => 'submissions', 
-           :action => 'file_manager'},  
+        {:controller => 'submissions',
+           :action => 'file_manager'},
 	 :id => @assignment.id,
 	 :disabled => !@grouping.is_valid?,
 	 :class => "button",
@@ -153,4 +153,4 @@
 </form>
 <% end %>
 
-</div> 
+</div>

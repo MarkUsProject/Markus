@@ -4,7 +4,7 @@ one:
   id: 1
   annotation_category_name: "Documentation"
   assignment_id: 1
-  
+
 two:
   id: 2
   annotation_category_name: "Forking"

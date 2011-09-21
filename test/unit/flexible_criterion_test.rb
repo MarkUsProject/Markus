@@ -72,7 +72,7 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
     end
 
   end
-  
+
   context "An assignment, of type flexible criteria" do
     setup do
       @assignment = Assignment.make(:marking_scheme_type => 'flexible')

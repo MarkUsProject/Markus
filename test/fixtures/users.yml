@@ -52,7 +52,7 @@ api_admin:
   api_key:        "ccbd25868a9e63ba8fa54627d03df5df0f4b0961037360f2488c5bc1bddab839e0f1cbb0858f46e75473551844910272bd7933cda809fb12262421fef6be3c19"
 
 # Now some TAs...
-  
+
 ta1:
   user_name:      ta1
   last_name:      Zandt
@@ -142,7 +142,7 @@ student6:
   created_at:     <%= Time.now.to_s(:db) %>
   updated_at:     <%= Time.now.to_s(:db) %>
   hidden: false
-    
+
 student7:
   user_name:      student7
   last_name:      Jones
@@ -152,7 +152,7 @@ student7:
   created_at:     <%= Time.now.to_s(:db) %>
   updated_at:     <%= Time.now.to_s(:db) %>
   hidden: false
-    
+
 student8:
   user_name:      student8
   last_name:      Ducrou
@@ -162,7 +162,7 @@ student8:
   created_at:     <%= Time.now.to_s(:db) %>
   updated_at:     <%= Time.now.to_s(:db) %>
   hidden: false
-    
+
 hidden_student:
   user_name:      hidden
   last_name:      Student

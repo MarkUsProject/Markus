@@ -332,13 +332,13 @@ class IProcess(Interface):
         """
         An C{int} giving the user id as which the process should run (or
         C{None} to leave the UID alone).
-        """)    
+        """)
 
     gid = Attribute(
         """
         An C{int} giving the group id as which the process should run (or
         C{None} to leave the GID alone).
-        """)    
+        """)
 
 
 

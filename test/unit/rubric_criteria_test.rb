@@ -21,7 +21,7 @@ class RubricCriterionTest < ActiveSupport::TestCase
 #    setup do
 #      RubricCriterion.make
 #    end
-#    
+#
 #    should validate_uniqueness_of(
 #                :rubric_criterion_name).scope(:assignment_d)
 #  end
