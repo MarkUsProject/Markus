@@ -8,14 +8,14 @@
 //<![CDATA[
 
   var modalUpload = null;
- 
+
   function upload_grades(){
     modalUpload.open();
     return false;
   }
 
   document.observe("dom:loaded", function(){
-  
+
     modalUpload = new Control.Modal($('upload_dialog'),
     {
       overlayOpacity: 0.75,
@@ -32,7 +32,7 @@
     <%= button_to_function t(:upload), "upload_grades();"%>
     <span class="menu_bar">|</span>
     <%= link_to t(:download),
-                csv_download_grade_entry_form_path(@grade_entry_form) %> 
+                csv_download_grade_entry_form_path(@grade_entry_form) %>
   </h1>
 </div>
 
@@ -88,20 +88,20 @@
         <% end %>
       </div>
       <div class="ap_filters" id="ap_filters_1">
-        <%= render :partial => 'grades_table_filters', :locals => {:filter => @filter, :sort_by => @sort_by, 
-                                                                   :grade_entry_form => @grade_entry_form, :filters => @filters, 
+        <%= render :partial => 'grades_table_filters', :locals => {:filter => @filter, :sort_by => @sort_by,
+                                                                   :grade_entry_form => @grade_entry_form, :filters => @filters,
                                                                    :per_page => @per_page, :per_pages => @per_pages,
                                                                    :alpha_pagination_options => @alpha_pagination_options,
                                                                    :alpha_category => @alpha_category}  %>
       </div>
       <div class="clear"></div>
       <div class="ap_page_links" id="ap_page_links_1">
-        <%= render :partial => 'ajax_paginate/initial_paginate_links_alpha', :locals => {:per_page => @per_page, 
-                                                                                         :current_page => @current_page, 
-                                                                                         :page_items => @students.size, 
-                                                                                         :total_items => @students_total, 
-                                                                                         :assignment => @grade_entry_form, 
-                                                                                         :filter => @filter, 
+        <%= render :partial => 'ajax_paginate/initial_paginate_links_alpha', :locals => {:per_page => @per_page,
+                                                                                         :current_page => @current_page,
+                                                                                         :page_items => @students.size,
+                                                                                         :total_items => @students_total,
+                                                                                         :assignment => @grade_entry_form,
+                                                                                         :filter => @filter,
                                                                                          :sort_by => @sort_by,
                                                                                          :action => 'g_table_paginate',
                                                                                          :table_name => 'grades',
@@ -117,14 +117,14 @@
     </div>
     <div id="ap_selects">
       <%= render :partial => 'ajax_paginate/selects', :locals => {:page_items => @students.size, :total_items => @students_total} %>
-    </div>  
+    </div>
     <table>
       <thead>
         <%= render :partial => 'grades_table_column_names' %>
       </thead>
       <tbody>
         <tr><td id="thinking_table_row" colspan="<%= 6 + @grade_entry_form.grade_entry_items.length %>"><%= render :partial => 'ajax_paginate/thinking' %></td></tr>
-      </tbody>        
+      </tbody>
 			<%= render :partial => 'grades_table' %>
       <tfoot>
         <%= render :partial => 'grades_table_column_names' %>
@@ -133,12 +133,12 @@
 		
     <div class="ap_nav_box">
       <div class="ap_page_links" id="ap_page_links_2">
-        <%= render :partial => 'ajax_paginate/initial_paginate_links_alpha', :locals => {:per_page => @per_page, 
-                                                                                         :current_page => @current_page, 
-                                                                                         :page_items => @students.size, 
-                                                                                         :total_items => @students_total, 
-                                                                                         :assignment => @grade_entry_form, 
-                                                                                         :filter => @filter, 
+        <%= render :partial => 'ajax_paginate/initial_paginate_links_alpha', :locals => {:per_page => @per_page,
+                                                                                         :current_page => @current_page,
+                                                                                         :page_items => @students.size,
+                                                                                         :total_items => @students_total,
+                                                                                         :assignment => @grade_entry_form,
+                                                                                         :filter => @filter,
                                                                                          :sort_by => @sort_by,
                                                                                          :action => 'g_table_paginate',
                                                                                          :table_name => 'grades',
@@ -151,17 +151,17 @@
         <% else %>
           <br />
         <% end %>
-      </div> 
+      </div>
       <div class="floatLeft">
         <% if @current_user.admin? %>
           <%= submit_tag t(:release_marks), :name => "release_results" %>
           <%= submit_tag t(:unrelease_marks), :name => "unrelease_results" %>
         <% end %>	
       </div>
-		  
+		
       <div class="ap_filters" id="ap_filters_2">
-        <%= render :partial => 'grades_table_filters', :locals => {:filter => @filter, :sort_by => @sort_by, 
-                                                                   :grade_entry_form => @grade_entry_form, :filters => @filters, 
+        <%= render :partial => 'grades_table_filters', :locals => {:filter => @filter, :sort_by => @sort_by,
+                                                                   :grade_entry_form => @grade_entry_form, :filters => @filters,
                                                                    :per_page => @per_page, :per_pages => @per_pages,
                                                                    :alpha_pagination_options => @alpha_pagination_options,
                                                                    :alpha_category => @alpha_category}  %>
@@ -172,7 +172,7 @@
   </form>
 </div>
 
-<div id="upload_dialog"> 
+<div id="upload_dialog">
   <h1><%= t('grade_entry_forms.csv.upload_title') %></h1>
   <p><%= t('grade_entry_forms.csv.upload_prompt') %></p>
   <%= form_for :upload, :url => {:controller=>"grade_entry_forms",

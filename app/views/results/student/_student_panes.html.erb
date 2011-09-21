@@ -5,57 +5,57 @@
        <li class="tab"><a href="#annotations_summary"><%= I18n.t("marker.annot_summary") %></a></li>
        <% if can_show_remark_request_tab_in_student_pane(assignment, @current_user, submission) %>
           <li class="tab"><a href="#remark_request_tab"><%= I18n.t("marker.remark_request") %></a></li>
-       <% end %>       
-    </ul>  
+       <% end %>
+    </ul>
     <div id="code_holder" class="tabbedArea">
 
       <div class="clear"></div>
       <div id="codeviewer">
-      </div> <!-- codeviewer --> 
-      
+      </div> <!-- codeviewer -->
+
     </div> <!-- End of Code holder -->
-  
-    <div id="annotations_summary" class="tabbedArea">    
+
+    <div id="annotations_summary" class="tabbedArea">
 
       <h3><%= I18n.t("marker.overall_comments") %></h3>
-      
+
       <% comment = ( old_result ? old_result.overall_comment : result.overall_comment )%>
       <p><%=simple_format(h(comment))%></p>
 
       <h3><%= I18n.t("marker.current_annotations") %></h3>
       <p><%= I18n.t("marker.across_all_submission_files") %></p>
-    
+
       <ul id="annotation_summary_list">
       </ul>
-      
+
     </div> <!-- Annotations Summary -->
-    
-    <div id="remark_request_tab" class="tabbedArea">    
-      <% if @current_user.student? and assignment.allow_remarks%> 
+
+    <div id="remark_request_tab" class="tabbedArea">
+      <% if @current_user.student? and assignment.allow_remarks%>
         <%= render :partial => 'results/student/remark_request',
                    :locals => {:old_result => old_result,
                                :result => result,
                                :submission => submission,
-                               :assignment => assignment} %>       
+                               :assignment => assignment} %>
       <% elsif submission.has_remark? %>
         <%= render :partial => 'results/marker/remark_request',
                    :locals => {:result => result,
                                :submission => submission,
-                               :assignment => assignment} %>       
-      <% end %>         
+                               :assignment => assignment} %>
+      <% end %>
     </div> <!-- Remark Request -->
   </div> <!-- Code Pane -->
-  
+
   <!-- Divider  -->
   <div id="pane_divider">
   </div>
   <!-- End Divider -->
- 
+
   <div id="mark_pane" class="float_left">
     <ul id="mark_tabs" class="subsection_tabs">
       <li class="tab"><a href="#mark_viewer"><%= I18n.t("marker.marks.marks") %></a></li>
       <li class="tab"><a href="#summary_viewer"><%= I18n.t("marker.marks.summary") %></a></li>
-    </ul>  
+    </ul>
     <div id="mark_viewer" class="tabbedArea">
       <div id="mark_criteria_pane">
         <ul id="mark_criteria_pane_list">

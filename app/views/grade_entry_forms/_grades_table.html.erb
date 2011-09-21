@@ -24,16 +24,16 @@
         <% gid = student.id.to_s + '_' + grade_entry_item.id.to_s %>
 				
         <td class="grade"><%= text_field_tag 'grade_' + gid, grade.grade, :size => 4 %></td>
-        <%= observe_field 'grade_' + gid, 
+        <%= observe_field 'grade_' + gid,
                           :url => {:action => :update_grade},
-                          :with => "'updated_grade=' + encodeURIComponent(value) 
-                                   + '&student_id=' + #{student.id} 
+                          :with => "'updated_grade=' + encodeURIComponent(value)
+                                   + '&student_id=' + #{student.id}
                                    + '&grade_entry_item_id=' + #{grade_entry_item.id}
-                                   + '&id=' + #{@grade_entry_form.id}" %>            
+                                   + '&id=' + #{@grade_entry_form.id}" %>
       <% end %>	
 	
-      <td class="student_total"><%= text_field_tag 'total_' + student.id.to_s, 
-                                    h(@grade_entry_form.calculate_total_mark(student.id)), 
+      <td class="student_total"><%= text_field_tag 'total_' + student.id.to_s,
+                                    h(@grade_entry_form.calculate_total_mark(student.id)),
                                     :size => 4, :disabled => true %></td>
       <td>
         <% if grade_entry_student.released_to_student %>
@@ -41,8 +41,7 @@
         <% end %>
       </td>
     </tr>
-  <% end %> 
+  <% end %>
 </tbody>
 
 	
-    

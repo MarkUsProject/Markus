@@ -1,9 +1,9 @@
 <% students.each do |student|%>
-  <tr id="students[<%= student.id%>]" 
+  <tr id="students[<%= student.id%>]"
     <% if student.hidden %>
        class="student_hidden"
     <% end %>
-  > 
+  >
     <td><%= check_box_tag 'student_ids[]', student.id, false, :id =>
     "student_#{student.id}_checkbox" %>
     </td>

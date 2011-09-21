@@ -30,11 +30,11 @@ document.observe("dom:loaded", function() {
       }
     }
   });
-  
+
   <%= remote_function :url => {:action => 'populate_file_manager',
                                :id => @assignment.id,
                                :path => @path},
-                      :complete => "$('loading_list').hide();" %> 
+                      :complete => "$('loading_list').hide();" %>
 
 });
 
@@ -56,7 +56,7 @@ function sanitized_filename_check(file_input) {
   }
 }
 
-/* 
+/*
  * Check that new_file_name is the same as file_name. Otherwise
  * refuse to accept the new filename. Note that this is called
  * on the replace file upload button.

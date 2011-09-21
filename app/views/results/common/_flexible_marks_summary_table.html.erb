@@ -5,14 +5,14 @@
   <th>=&nbsp;<%=t("summary_table.grade")%></th>
 </thead>
 <% @mark_criteria.each do |criterion| -%>
-<% 
+<%
    mark = marks_map[criterion.id]
    if mark.nil? or mark.mark.nil?
      mark_value = 0
    else
      mark_value = mark.mark
    end
-   
+
 %>
 
 <tr class="<%= cycle('mark_summary_holderA', 'mark_summary_holderB') %>" id="<%= "mark_#{mark.id}_summary" %>">
@@ -20,7 +20,7 @@
     <td><%= h(criterion.max) %></td>
     <td><span id="mark_<%= h(mark.id)%>_summary_mark"><%= h(mark_value) %></span> / <%=  h(criterion.max) %></td>
 
-</tr>   
+</tr>
 
 <% end -%>
 </table>  <!-- Summary Criteria Pane List -->

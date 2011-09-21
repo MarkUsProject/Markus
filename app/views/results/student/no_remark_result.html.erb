@@ -16,8 +16,8 @@
 <br/>
 <div>
 <p class="notice"><%= I18n.t("marker.cancel_remark_to_change") %></p>
-<p><%= link_to( I18n.t(:cancel_remark), 
-        {:controller => 'results', 
+<p><%= link_to( I18n.t(:cancel_remark),
+        {:controller => 'results',
            :action => 'cancel_remark_request',
            :id => @assignment.id,
            :submission_id => @submission.id},

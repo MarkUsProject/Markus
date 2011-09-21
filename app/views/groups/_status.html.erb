@@ -8,7 +8,7 @@
 
   <% elsif @group.pending?(@current_user) -%>
     <%= render :partial => 'groups/join' %>
-    
+
   <% else -%>
     <table>
       <% @group.memberships.each do |mbr| -%>
@@ -17,17 +17,17 @@
           <td><%= h(mbr.user.user_name) %></td>
           <td><span class="<%= h('status ' + mbr.membership_status) %>"><%= h(mbr.status) %></span></td>
           <% if mbr.status == StudentMembership::STATUSES[:rejected] -%>
-            <td><%= link_to_remote "x", :method => "delete", :url => { 
-              :controller => 'groups', :action => 'remove_rejected', 
+            <td><%= link_to_remote "x", :method => "delete", :url => {
+              :controller => 'groups', :action => 'remove_rejected',
               :id => @assignment.id, :member_id => mbr.id} %></td>
           <% end -%>
         </tr>
       <% end -%>
     </table>
 
-    <% form_remote_tag(:url => {:controller => 'groups', 
+    <% form_remote_tag(:url => {:controller => 'groups',
             :action => 'add_members', :id => @assignment.id}) do %>
-    
+
       <p id="message">
         <%= @group ? "Invite other members in the group " : "Create a new group " %>
          by typing their CDF username(s) for each field and click 'Add Members'
@@ -42,9 +42,9 @@
           <% end -%>
         </div>
       <% end -%>
-  
+
       <p><%= submit_tag "Add Members" %></p>
     <% end if @assignment.can_invite? && @group.members.count < @assignment.group_max -%>
-    
+
   <% end -%>
 </div>

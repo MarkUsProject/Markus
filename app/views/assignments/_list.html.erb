@@ -1,9 +1,9 @@
 <div class="section">
 
   <% if @assignments.empty? %>
-  
+
     <p>t:(no_assignments)</p>
-    
+
   <% else %>
 		
     <table><!-- listing assignments -->
@@ -20,9 +20,9 @@
             <td>
               <%=
               	# assignment name
-                link_to h(sanitize(assignment.short_identifier) + ': ' + assignment.description), 
-                :controller => controller, 
-                :action => action, 
+                link_to h(sanitize(assignment.short_identifier) + ': ' + assignment.description),
+                :controller => controller,
+                :action => action,
                 :id => assignment.id%>
             </td>
             <td>
@@ -31,8 +31,8 @@
                   <strong><%= I18n.l(assignment.due_date, :format => :long_date) %></strong>
                 <% else %>
                   <strong><%= I18n.l(assignment.due_date, :format => :long_date) %></strong><br />
-                    <%= I18n.t(:days_and_hours_left, 
-                    :days => ((((assignment.due_date - Time.now)/(60 * 60 * 24)).floor).to_s), 
+                    <%= I18n.t(:days_and_hours_left,
+                    :days => ((((assignment.due_date - Time.now)/(60 * 60 * 24)).floor).to_s),
                     :hours => ((((assignment.due_date - Time.now)/(60 * 60)) % 24).floor)) %>
                 <% end %>
 	      <% else %>
@@ -57,6 +57,6 @@
         <% end %>
       </tbody>
     </table>
-        
+
   <% end %>
 </div>

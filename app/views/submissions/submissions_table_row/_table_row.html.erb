@@ -4,7 +4,7 @@
 <% if grouping.is_collected? %>
   style="background-color: #90EE90"
 <% end %>>
-  
+
 <td>
   <input type="checkbox"
          name="groupings[]"
@@ -41,7 +41,7 @@
   <% end %>
     (<%= h(grouping.accepted_students.collect{ |student| student.user_name}.join(',')) %>)
   <%='<span class="invalid">' + t(:invalid_grouping) + '</span>' if !grouping.is_valid? %>
-  </td> 
+  </td>
   <% if !@details.nil? %>
     <% assignment.rubric_criteria.each do |criterion| %>
       <td>

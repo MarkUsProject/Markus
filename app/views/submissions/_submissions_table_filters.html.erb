@@ -10,13 +10,13 @@
 %>
 
 <%= label_tag "filter", " " + I18n.t("browse_submissions.filter"), :class => "inline_label" %>
-<%= select_tag  "filter", 
-                options_for_select(filters, filter), 
+<%= select_tag  "filter",
+                options_for_select(filters, filter),
                 :onchange =>  "top.location.href = '#{assignment.id}" +
                               "?desc=#{desc}" +
-                              "&sort_by=#{sort_by}" + 
+                              "&sort_by=#{sort_by}" +
                               "&per_page=#{per_page}" +
-                              "&filter=' + $F(this); " 
+                              "&filter=' + $F(this); "
                               # prototype  ^^^^^ evaluates the selected value for you
 -%>
 
@@ -29,10 +29,10 @@
 # after setting the new page size
 %>
 <%= select_tag  "per_page",
-                options_for_select(per_pages, per_page.to_i), 
+                options_for_select(per_pages, per_page.to_i),
                 :onchange =>  "top.location.href = '#{assignment.id}" +
                               "?desc=#{desc}" +
-                              "&sort_by=#{sort_by}" + 
+                              "&sort_by=#{sort_by}" +
                               "&filter=#{filter}" +
                               "&per_page=' + $F(this); "
 -%>
