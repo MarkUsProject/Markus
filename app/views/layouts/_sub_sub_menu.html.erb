@@ -28,9 +28,9 @@
                     assignment_rubrics_path(@assignment) %>
 	  <% else %>
      <%= link_to I18n.t(:marking_scheme),
-                 assignment_flexible_criteria_path(@assignment) %>		
+                 assignment_flexible_criteria_path(@assignment) %>
 	  <% end %>
-	
+
       </li>
       <li <% if controller.controller_name == 'annotation_categories'%>
         id="sub_sub_menu_active"

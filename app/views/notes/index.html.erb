@@ -10,21 +10,21 @@
 </div>
 
 <div class="wrapLeft">
-	
+
 	<% # if there are errors have the error message display %>
       <% if flash[:error] %>
         <div class="error">
           <%= h(flash[:error])+"<br/>" %>
         </div>
       <% end %>
-	
+
 	<% # if there are success messages to display %>
       <% if flash[:success] -%>
         <div class="success">
           <%= h(flash[:success])+"<br/>" %>
         </div>
       <% end %>
-	
+
 <table id="notes">
 <% for note in @notes %>
 	<tr>
