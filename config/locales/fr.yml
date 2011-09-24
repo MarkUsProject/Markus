@@ -109,6 +109,7 @@ fr:
       errors:               "Erreurs"
       results_loss_warning: "Attention : Cette action effacera vos annotations et évaluations.\n\n!Êtes vous sûr de vouloir continuer ?"
     assignment:
+        hidden: "%{assignment_text} (hidden)"
         assignment: "Projet %{short_identifier}"
         name:           "Nom du projet"
         update_success: "Projet mis à jour"
@@ -154,6 +155,7 @@ fr:
         notice:
             change_marking_scheme_type: "Changer le barème effacera vos critères et vos évaluations."
         allow_web_submits: "Envois via l'interface web ?"
+        is_hidden: "Cacher le projet aux étudiants ?"
         display_grader_names_to_students: "Afficher le nom du correcteur aux étudiants ?"
         section_due_date_not_displayed: "Les dates de retour sont spécifiques aux sections."
         section_due_date_type: "Les dates de retour sont spécifiées par section."

@@ -109,6 +109,7 @@ en:
       errors:               "Errors"
       results_loss_warning: "Note: This will erase any marking and annotations already done.\n\nAre you sure you want to proceed?"
     assignment:
+        hidden: "%{assignment_text} (hidden)"
         assignment: "Assignment %{short_identifier}"
         name:           "Assignment Name"
         update_success:        "Successfully updated the assignment"
@@ -153,7 +154,8 @@ en:
             flexible: "Flexible"
         notice:
             change_marking_scheme_type: "Changing marking scheme will delete your criteria and marks."
-        allow_web_submits: "Allow Web Submits?"
+        allow_web_submits: "Allow Web submits?"
+        is_hidden: "Hide assignment from students?"
         display_grader_names_to_students: "Display grader names to students?"
         section_due_date_not_displayed: "Due dates are specific to sections."
         section_due_date_type: "Due dates are specified per section."
