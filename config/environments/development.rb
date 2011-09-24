@@ -14,6 +14,11 @@ Markus::Application.configure do
   config.action_controller.perform_caching             = false
   config.action_controller.allow_forgery_protection    = true
 
+  # Load any local configuration that is kept out of source control
+  if File.exists?(File.join(File.dirname(__FILE__), 'local_environment_override.rb'))
+    instance_eval File.read(File.join(File.dirname(__FILE__), 'local_environment_override.rb'))
+  end
+
   # Show Deprecated Warnings (to :log or to :stderr)
   config.active_support.deprecation = :stderr
 
