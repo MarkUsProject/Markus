@@ -57,6 +57,14 @@ class SectionsControllerTest < AuthenticatedControllerTest
       post_as @admin, :create, {:section => {:name => section.name}}
       assert respond_with :success
       assert set_the_flash.to(I18n.t('section.create.error'))
+      assert set_the_flash.to('has already been taken')
+    end
+
+    should "tries to create a section with a blank name" do
+      section = Section.make
+      post_as @admin, :create, {:section => {:name => section.name}}
+      assert respond_with :success
+      assert set_the_flash.to('can\'t be blank')
     end
 
     should "edits a section" do
