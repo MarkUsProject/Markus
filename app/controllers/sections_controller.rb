@@ -23,6 +23,7 @@ class SectionsController < ApplicationController
       return
     else
       flash[:error] = I18n.t('section.create.error')
+      flash[:error_object] = @section.errors
       redirect_to :action => 'new'
     end
   end
@@ -40,6 +41,7 @@ class SectionsController < ApplicationController
       redirect_to :action => 'index'
     else
       flash[:error] = I18n.t('section.update.error')
+      flash[:error_object] = @section.errors
     end
   end
 end

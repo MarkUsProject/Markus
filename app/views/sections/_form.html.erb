@@ -7,7 +7,11 @@
   <% end%>
   <% if flash[:error] %>
     <div class="error">
-      <%= flash[:error] %>
+    	<% if flash[:error_object] %>
+      		<%= flash[:error].to_s + ' ' + reason_for_error(flash[:error_object]) %>
+  		<% else %>
+  			<%= flash[:error] %>
+		<% end %>
     </div>
   <% end%>
 
