@@ -73,6 +73,7 @@ Assignment.blueprint do
   tokens_per_day {10}
   assign_graders_to_criteria {false}
   assignment_stat {AssignmentStat.make}
+  is_hidden {false}
 end
 
 AssignmentFile.blueprint do
