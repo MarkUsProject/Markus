@@ -11,6 +11,7 @@ class Student < User
   has_many :grace_period_deductions, :through => :memberships
 
   belongs_to :section
+  accepts_nested_attributes_for :section
 
   validates_numericality_of :grace_credits, :only_integer => true,
     :greater_than_or_equal_to => 0
