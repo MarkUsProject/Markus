@@ -45,6 +45,11 @@ class StudentsControllerTest < AuthenticatedControllerTest
       @section = Section.make
     end
 
+    should "be able to get :new" do
+      get_as @admin, :new
+      assert_response :success
+    end
+
     should "be able to get :index" do
       get_as @admin, :index
       assert_response :success
