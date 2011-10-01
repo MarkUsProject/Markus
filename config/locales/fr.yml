@@ -109,7 +109,7 @@ fr:
       errors:               "Erreurs"
       results_loss_warning: "Attention : Cette action effacera vos annotations et évaluations.\n\n!Êtes vous sûr de vouloir continuer ?"
     assignment:
-        hidden: "%{assignment_text} (hidden)"
+        hidden: "%{assignment_text} (masqué)"
         assignment: "Projet %{short_identifier}"
         name:           "Nom du projet"
         update_success: "Projet mis à jour"
