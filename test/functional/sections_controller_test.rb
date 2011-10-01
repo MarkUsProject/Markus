@@ -84,6 +84,17 @@ class SectionsControllerTest < AuthenticatedControllerTest
 
       assert_not_nil Section.find_by_name("no section")
     end
+
+    should "edits a section name to an existing name" do
+      @section = Section.make
+      @section2 = Section.make
+      put_as @admin,
+              :update,
+              :id => @section.id,
+              :section => {:name => @section2.name}
+      assert_response :redirect
+      assert_equal flash[:error], I18n.t('section.update.error') + ' Name has already been taken.'
+    end
   end
 
 end
