@@ -1,9 +1,9 @@
 <div class="section">
 
   <% if @assignments.empty? %>
-  
-    <p>t:(no_assignments)</p>
-    
+
+    <p><%= I18n.t(:no_assignments) %></p>
+
   <% else %>
 		
     <table><!-- listing assignments -->
