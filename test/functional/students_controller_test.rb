@@ -68,8 +68,9 @@ class StudentsControllerTest < AuthenticatedControllerTest
                         :first_name => 'John',
                         :section_id => @section.id,}
       assert_response :redirect
-      assert_not_nil Student.find_by_user_name('jsmith')
-      assert Student.find_by_user_name('jsmith').section.id = @section.id
+      jsmith = Student.find_by_user_name('jsmith')
+      assert_not_nil jsmith
+      assert jsmith.section.id = @section.id
     end
 
     context "with a student" do
