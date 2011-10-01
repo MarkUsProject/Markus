@@ -27,6 +27,7 @@ class StudentsController < ApplicationController
 
   def edit
     @user = Student.find_by_id(params[:id])
+    @sections = Section.find(:all)
   end
 
   def update
