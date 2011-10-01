@@ -1108,4 +1108,91 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
   end # context assignment past due date, pre collection date
 
+  # MarkUs 0.11.0 tests (hidden assignments)
+  context "On a setup with hidden and visible assignments" do
+    setup do
+      clear_fixtures
+      @hidden_assignment = Assignment.make( :is_hidden => true )
+      @visible_assignment = Assignment.make
+      @third_assignment = Assignment.make
+      @drop_down_raw_regexp = String.new('<li class="level2">\s*' +
+                '<a href="[^"]*">\s*%s\s*</a>\s*</li>')
+    end
+
+    context "a logged in admin" do
+      setup do
+        @admin = Admin.make
+      end
+      should "see hidden assignments flagged as such" do
+        assert_not_nil @hidden_assignment.submission_rule
+        assert_not_nil @visible_assignment.submission_rule
+        response = get_as(@admin, :index)
+        # inject match-token where %s was in raw_regexp
+        match_regexp = @drop_down_raw_regexp % Regexp.escape(
+                                        I18n.t("assignment.hidden",
+                                          :assignment_text =>
+                                          @hidden_assignment.short_identifier) )
+        no_match_regexp = @drop_down_raw_regexp % Regexp.escape( 
+                                            @hidden_assignment.short_identifier )
+        # regexp in order to make sure the JS drop-down menu contains
+        # the "(hidden)" suffix
+        drop_down_regexp_match = Regexp.new( match_regexp )
+        assert_not_nil drop_down_regexp_match.match(response.body)
+        # sanity check for regexp (i.e. should not match response without
+        # the "(hidden)" suffix
+        drop_down_regexp_no_match = Regexp.new( no_match_regexp )
+        assert_nil drop_down_regexp_no_match.match(response.body)
+        # in the assignment list hidden assignments should be suffixed
+        # with "(hidden)"
+        assignment_list_regexp = Regexp.new( Regexp.escape(I18n.t("assignment.hidden",
+                :assignment_text =>
+                  "#{@hidden_assignment.short_identifier}: " +
+                  "#{@hidden_assignment.description}") ))
+        assert_not_nil assignment_list_regexp.match(response.body)
+      end
+    end
+
+    context "a logged in student" do
+      setup do
+        @student = Student.make
+      end
+
+      should "not be able to see hidden assignments" do
+        response = get_as(@student, :index)
+        # Sanity check for regexp. I.e. we don't want to not match
+        # due to a broken regexp.
+        do_match = @drop_down_raw_regexp %
+                Regexp.escape(@third_assignment.short_identifier)
+        drop_down_regexp_match = Regexp.new( do_match )
+        assert_not_nil drop_down_regexp_match.match(response.body)
+
+        # Hidden assignments should not show up in the drop-down
+        no_match = @drop_down_raw_regexp %
+                Regexp.escape(@hidden_assignment.short_identifier)
+        drop_down_regexp_no_match = Regexp.new( no_match )
+        assert_nil drop_down_regexp_no_match.match(response.body)
+
+        # In the assignment list hidden assignments should
+        # not show up as well.
+        assignment_list_regexp = Regexp.new(
+                  "#{@hidden_assignment.short_identifier}: " +
+                  "#{@hidden_assignment.description}" )
+        assert_nil assignment_list_regexp.match(response.body)
+
+        # Make sure the JS drop-down menu does not contain
+        # hidden assignments when looking at another non-hidden
+        # assignment.
+        response = get_as(@student, :student_interface,
+                            :id => @visible_assignment.id)
+        assert_not_nil drop_down_regexp_match.match(response.body)
+        assert_nil drop_down_regexp_no_match.match(response.body)
+      end
+
+      should "not be able to access a hidden assignment via its id" do
+        get_as(@student, :student_interface, :id => @hidden_assignment.id)
+        assert_response :not_found
+      end
+    end
+  end
+
 end
