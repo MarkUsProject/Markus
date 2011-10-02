@@ -244,7 +244,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                   :message => @grade_entry_form.message,
                   :date => "abcd"}
       assert assign_to :grade_entry_form
-      assert_equal flash[:error], I18n.t('grade_entry_forms.:error')
+      assert_equal flash[:error], I18n.t('grade_entry_forms.invalid_date')
       assert_response :redirect
     end
 
