@@ -31,7 +31,7 @@ gem "prototype_legacy_helper",
 # Then install your bundle by:
 #   bundle install --without mysql sqlite
 group :postgresql do
-  gem "pg"
+  gem "pg","0.10.0"
 end
 
 # If you are a MarkUs developer and use MySQL, make sure you have
