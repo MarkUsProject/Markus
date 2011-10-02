@@ -1,9 +1,14 @@
 <div class="section">
 
+  <% if flash[:error] %>
+    <div class="error">
+      <%= flash[:error] %>
+    </div>
+  <% end%>
+
+
   <%= form_for @user,
 	       :as => :user do |f| %>
-
-    <%= f.error_messages -%>
 
     <%= f.label(:user_name, I18n.t("user.user_name")) %>
     <%= f.text_field :user_name %><br />
