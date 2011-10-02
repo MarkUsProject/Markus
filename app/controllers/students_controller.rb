@@ -72,6 +72,10 @@ class StudentsController < ApplicationController
     end
   end
 
+  def new
+    @user = Student.new(params[:user])
+  end
+
   def create
     # Default attributes: role = TA or role = STUDENT
     # params[:user] is a hash of values passed to the controller
