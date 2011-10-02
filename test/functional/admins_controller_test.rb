@@ -28,6 +28,11 @@ class AdminsControllerTest < AuthenticatedControllerTest
       @admin = Admin.make
     end
 
+    should "be able to get :new" do
+      get_as @admin, :new
+      assert_response :success
+    end
+
     should "respond with success on index" do
       get_as @admin, :index
       assert_response :success
