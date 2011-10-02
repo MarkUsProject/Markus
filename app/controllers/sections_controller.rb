@@ -40,6 +40,7 @@ class SectionsController < ApplicationController
       redirect_to :action => 'index'
     else
       flash[:error] = reason_for_error(@section.errors, I18n.t('section.update.error'))
+      redirect_to :action => 'edit'
     end
   end
 end
