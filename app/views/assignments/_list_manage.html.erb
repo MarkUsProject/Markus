@@ -8,12 +8,22 @@
     
 	    <% @assignments.each do |assignment| %>
         <li>
-          <%= link_to h(assignment.short_identifier)+": 
-              "+h(assignment.description), 
-              {:controller => controller, 
-               :action => action, 
-               :id => assignment},
-	             :class => "assignment_list"%>
+          <% if assignment.is_hidden %>
+            <%= link_to t("assignment.hidden",
+                            :assignment_text =>
+                            "#{h(assignment.short_identifier)}: #{h(assignment.description)}" ),
+                {:controller => controller, 
+                 :action => action, 
+                 :id => assignment},
+                 :class => "assignment_list"%>
+          <% else %>
+            <%= link_to h(assignment.short_identifier)+": 
+                "+h(assignment.description), 
+                {:controller => controller, 
+                 :action => action, 
+                 :id => assignment},
+                 :class => "assignment_list"%>
+          <% end %>
 	        <span class="info_due_date"><%= I18n.t(:due) %>
           <span class="info_date">  
             <%=h I18n.l(assignment.due_date, :format => :long_date ) %>
