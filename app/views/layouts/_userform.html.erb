@@ -1,9 +1,12 @@
 <div class="section">
+  <% if flash[:error] %>
+    <div class="error">
+      <%= flash[:error] %>
+    </div>
+  <% end%>
 
   <%= form_for @user,
-         :as => :user do |f| -%>
-
-    <%= f.error_messages -%>
+               :as => :user do |f| %>
 
     <%= f.label(:user_name, I18n.t("user.user_name")) %>
     <%= f.text_field :user_name %><br />
@@ -15,8 +18,8 @@
     <%= f.text_field :first_name %><br />
     <%= f.hidden_field :id %>
     <%= f.submit t(:submit),
-     :name => 'submit',
-     :class => 'button indent_button' %>
+		 :name => 'submit',
+		 :class => 'button indent_button' %>
     <%= link_to t(:cancel), :class => "button" %>
   <% end %>
 
