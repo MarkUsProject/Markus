@@ -7,7 +7,9 @@
   <title><%= t(:markus) %> - <%= controller.action_name %></title>
   <%= stylesheet_link_tag 'main.css', :media => 'all' %>
   <%= stylesheet_link_tag "livepipe/tabs.css", :media => 'all' %>
-  <%= javascript_include_tag :defaults -%>
+  <%= javascript_include_tag 'application.js' -%>
+  <%= javascript_include_tag 'prototype.js' -%>
+  <%= javascript_include_tag 'rails.js' -%>
   <%= javascript_include_tag 'menu.js' -%>
   <%= yield :head %>
 </head>
