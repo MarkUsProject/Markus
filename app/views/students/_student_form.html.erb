@@ -10,17 +10,17 @@
   <%= form_for @user,
 	       :as => :user do |f| %>
 
-    <%= f.label(:user_name, I18n.t("user.user_name")) %>
-    <%= f.text_field :user_name %><br />
+    <%= raw(f.label(:user_name, I18n.t("user.user_name"))) %>
+    <%= raw(f.text_field :user_name) %><br />
 
-    <%= f.label(:last_name, I18n.t("user.last_name") ) %>
-    <%= f.text_field :last_name %><br />
+    <%= raw(f.label(:last_name, I18n.t("user.last_name"))) %>
+    <%= raw(f.text_field :last_name) %><br />
 
-    <%= f.label(:first_name, I18n.t("user.first_name") ) %>
-    <%= f.text_field :first_name %><br />
+    <%= raw(f.label(:first_name, I18n.t("user.first_name"))) %>
+    <%= raw(f.text_field :first_name) %><br />
 
-    <%= f.label(:grace_credits, I18n.t("user.grace_credits") ) %>
-    <%= f.text_field :grace_credits %> <br />
+    <%= raw(f.label(:grace_credits, I18n.t("user.grace_credits"))) %>
+    <%= raw(f.text_field :grace_credits) %> <br />
 
     <% if !@sections.empty? %>
 

@@ -24,9 +24,10 @@ class AdminsController < ApplicationController
     attrs = params[:user]
     # update_attributes supplied by ActiveRecords
     if !@user.update_attributes(attrs)
+      flash[:error] = I18n.t("admins.update.error")
       render :action => :edit
     else
-      flash[:edit_notice] = I18n.t("admins.success",
+      flash[:success] = I18n.t("admins.update.success",
                                    :user_name => @user.user_name)
       redirect_to :action => 'index'
     end
@@ -41,8 +42,16 @@ class AdminsController < ApplicationController
     # Return unless the save is successful; save inherted from
     # active records--creates a new record if the model is new, otherwise
     # updates the existing record
-    return unless @user.save
+    if @user.save
+      flash[:success] = I18n.t("admins.create.success",
+                               :user_name => @user.user_name)
 
-    redirect_to :action => 'index'
+      redirect_to :action => 'index'
+    else
+      flash[:error] = reason_for_error(
+                        @user.errors,
+                        I18n.t('admins.create.error'))
+      render "new"
+    end
   end
 end

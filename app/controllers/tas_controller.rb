@@ -25,12 +25,13 @@ class TasController < ApplicationController
     attrs = params[:user]
     # update_attributes supplied by ActiveRecords
     if !@user.update_attributes(attrs)
+      flash[:error] = I18n.t("tas.update.error")
       render :action => :edit
-      return
     else
-      flash[:edit_notice] = I18n.t("graders.success",
-                                   :user_name => @user.user_name)
-      redirect_to :action => 'index'
+      flash[:success] = I18n.t("tas.update.success",
+                               :user_name => @user.user_name)
+
+      redirect_to :action => :index
     end
   end
 
@@ -42,12 +43,15 @@ class TasController < ApplicationController
     # Return unless the save is successful; save inherted from
     # active records--creates a new record if the model is new, otherwise
     # updates the existing record
-    return unless @user.save
-    flash[:success] = I18n.t("graders.create_success",
-                             :user_name => @user.user_name)
-    redirect_to :action => 'index' # Redirect
+    if @user.save
+      flash[:success] = I18n.t("tas.create.success",
+                               :user_name => @user.user_name)
+      redirect_to :action => 'index' # Redirect
+    else
+      flash[:error] = I18n.t("tas.create.error")
+      render :action => 'new'
+    end
   end
-
 
   #downloads users with the given role as a csv list
   def download_ta_list
@@ -67,7 +71,6 @@ class TasController < ApplicationController
     end
     send_data(output, :type => format, :disposition => "inline")
   end
-
 
   def upload_ta_list
     if request.post? && !params[:userlist].blank?
