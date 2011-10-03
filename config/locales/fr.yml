@@ -531,9 +531,15 @@ fr:
     students:
       processing: "Chargement…"
       manage_students: "Gestion des étudiants"
-      edit_student:    "Modification d'un(e) étudiant(e)"
+      edit_student: "Modification d'un(e) étudiant(e)"
       edit_success: "%{user_name} a été mis(e) à jour."
-      create_new:      "Créer un(e) nouvel(le) étudiant(e)"
+      create_new: "Créer un(e) nouvel(le) étudiant(e)"
+      create:
+        success: "Création de l'étudiant(e) %{user_name}"
+        error: "Erreur dans la création de l'étudiant(e)"
+      update:
+        success: "Mise à jour de l'étudiant(e) %{user_name}"
+        error: "Erreur dans la mise à jour de l'étudiant(e)"
       create_success: "L'étudiant(e) %{user_name} a bien été créé(e)."
       students: "Étudiants"
       no_students_selected: "Aucun(e) étudiant(e) n'étant sélectionné(e), aucun changement n'a été effectué."
@@ -622,6 +628,14 @@ fr:
         # See app/views/submissions/_file_manager_boot.js.erb
         replace_file_js_error: "\"Vous ne pouvez pas remplacer '\" + file_name + \"' par '\" + new_file_name + \"'. Vous devez remplacer le fichier par un fichier ayant le même nom.\""
 
+    tas:
+      create:
+        success: "Création de le correcteur %{user_name}"
+        error: "Erreur dans la création de le correcteur"
+      update:
+        success: "Mise à jour de le correcteur %{user_name}"
+        error: "Erreur dans la mise à jour de le correcteur"
+
     #Graders' View
     graders:
       create_new_grader: "Créer un nouveau correcteur"
@@ -634,8 +648,6 @@ fr:
       unassigned_graders: "Correcteurs non assignés"
       not_covered:        "Pas couvert"
       covered:            "Couvert"
-      success: "%{user_name} a été mis(e) à jour"
-      create_success: "Création du correcteur %{user_name}"
       coverage: "Couverture"
       assign_to_criteria: "Attribuer les correcteurs aux critères"
       upload:
@@ -666,6 +678,12 @@ fr:
         admins_names: "Les noms des administrateurs sont en caractères alphanumériques."
         each_field: "Chaque champ est séparé par une virgule (pas d'espace)."
         each_line: "Chaque ligne a le bon nombre de champs comme spécifié."
+      create:
+        success: "Création de l'administrateur %{user_name}"
+        error: "Erreur dans la création de l'administrateur"
+      update:
+        success: "Mise à jour de l'administrateur %{user_name}"
+        error: "Erreur dans la mise à jour de l'administrateur"
 
     add_student:
       success: "L'étudiant(e) %{user_name} a été ajouté(e)."
