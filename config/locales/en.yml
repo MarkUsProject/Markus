@@ -393,9 +393,11 @@ en:
       properties: "Marks Spreadsheet Properties"
       create:
         success: "Successfully created new marks spreadsheet"
+        error: "Invalid entry. Could not create new marks spreadsheet"
         title: "Add Marks Spreadsheet"
       edit:
         title: "Edit Marks Spreadsheet:"
+        error: "Invalid entry. Could not update marks spreadsheet"
         success: "Successfully updated marks spreadsheet"
       grades:
         title: "Manage Marks Spreadsheet:"

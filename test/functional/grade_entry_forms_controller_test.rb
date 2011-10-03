@@ -231,7 +231,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                       :message => @grade_entry_form.message,
                       :date => @grade_entry_form.date}}
       assert assign_to :grade_entry_form
-      assert_equal flash[:error], I18n.t('grade_entry_forms.blank_field')
+      assert_equal flash[:error], I18n.t('grade_entry_forms.create.error')
       assert_response :redirect
     end
 
@@ -244,8 +244,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                   :message => @grade_entry_form.message,
                   :date => "abcd"}
       assert assign_to :grade_entry_form
-      #assert_equal flash[:error], I18n.t('grade_entry_forms.invalid_date')
-      assert_equal flash[:error], I18n.t('grade_entry_forms.blank_field')
+      assert_equal flash[:error], I18n.t('grade_entry_forms.create.error')
       assert_response :redirect
     end
 
@@ -274,8 +273,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                     :date => NEW_DATE}}
       assert assign_to :grade_entry_form
       assert_response :redirect
-
-      assert_equal flash[:error], I18n.t('grade_entry_forms.blank_field')
+      assert_equal flash[:error], I18n.t('grade_entry_forms.edit.error')
 
       g = GradeEntryForm.find(@grade_entry_form.id)
       assert_equal @original.short_identifier, g.short_identifier
@@ -293,8 +291,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert assign_to :grade_entry_form
       assert_response :redirect
 
-      #assert_equal flash[:error], I18n.t('grade_entry_forms.invalid_date')
-      assert_equal flash[:error], I18n.t('grade_entry_forms.blank_field')
+      assert_equal flash[:error], I18n.t('grade_entry_forms.edit.error')
       g = GradeEntryForm.find(@grade_entry_form.id)
       assert_equal @original.short_identifier, g.short_identifier
       assert_equal @original.description, g.description
@@ -348,7 +345,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
 
         # Need to escape the I18n string because there is a '(e)' in French for
         # example
-        assert_equal flash[:error], I18n.t('grade_entry_forms.blank_field')
+        assert_equal flash[:error], I18n.t('grade_entry_forms.create.error')
         assert_response :redirect
       end
 
@@ -363,8 +360,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                         :date => @grade_entry_form.date,
                         :grade_entry_items => [@q1, @q2]}}
         assert assign_to :grade_entry_form
-        #assert_equal flash[:error], I18n.t('grade_entry_forms.invalid_column_out_of')
-        assert_equal flash[:error], I18n.t('grade_entry_forms.blank_field')
+        assert_equal flash[:error], I18n.t('grade_entry_forms.create.error')
         assert_response :redirect
       end
 
@@ -435,8 +431,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                       :grade_entry_items => [@q1, @q2]}}
         assert assign_to :grade_entry_form
         assert_response :redirect
-
-        assert_equal flash[:error], I18n.t('grade_entry_forms.blank_field')
+        assert_equal flash[:error], I18n.t('grade_entry_forms.edit.error')
 
         g = GradeEntryForm.find(@grade_entry_form.id)
         assert_equal @original.short_identifier, g.short_identifier
@@ -455,9 +450,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                       :grade_entry_items => [@q1, @q2]}}
         assert assign_to :grade_entry_form
         assert_response :redirect
-
-        assert_equal flash[:error], I18n.t('grade_entry_forms.blank_field')
-        #assert_equal flash[:error], I18n.t('grade_entry_forms.invalid_column_out_of')
+        assert_equal flash[:error], I18n.t('grade_entry_forms.edit.error')
 
         g = GradeEntryForm.find(@grade_entry_form.id)
         assert_equal @original.short_identifier, g.short_identifier
@@ -504,8 +497,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         @grade_entry_form_before.reload
         assert assign_to :grade_entry_form
         assert_response :redirect
-
-        assert_equal flash[:error], I18n.t('grade_entry_forms.blank_field')
+        assert_equal flash[:error], I18n.t('grade_entry_forms.edit.error')
         g = GradeEntryForm.find(@grade_entry_form_with_dup.id)
         assert_equal @grade_entry_form_before.short_identifier, g.short_identifier
         assert_equal @grade_entry_form_before.description, g.description
