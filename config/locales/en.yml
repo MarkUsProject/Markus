@@ -409,6 +409,7 @@ en:
         errors: "Errors"
         no_mark: "N/A"
         marking_state: "Marking State"
+
       students:
         title: "Your Term Marks"
         no_results: "There are no marks available yet."
@@ -561,6 +562,13 @@ en:
 
     #Sutdent's View (student)
     student:
+      create:
+        success: "Successfully created student %{user_name}."
+        error:   "Failed to create student."
+      update:
+        success: "Successfully updated student %{user_name}."
+        error:   "Failed to update student."
+
       assignment: "Assignment %{short_identifier}"
       group_information: "Group Information"
       group_not_valid: "Your group is not valid. You can't submit anything."
@@ -625,6 +633,16 @@ en:
         # DO NOT change 'file_name' and 'new_file_name' in the following message.
         # See app/views/submissions/_file_manager_boot.js.erb
         replace_file_js_error: "\"You cannot replace '\" + file_name + \"' with '\" + new_file_name + \"'. You must replace a file with a file which has the same name.\""
+
+
+    tas:
+      create:
+        success: "Successfully created grader %{user_name}."
+        error:   "Failed to create grader."
+      update:
+        success: "Successfully updated grader %{user_name}."
+        error:   "Failed to update grader."
+
     #Graders' View
     graders:
       create_new_grader:  "Create a new Grader"
@@ -637,8 +655,6 @@ en:
       unassigned_graders: "Unassigned Graders"
       not_covered:        "Not Covered"
       covered:            "Covered"
-      success: "%{user_name} has been updated"
-      create_success: "Successfully created grader %{user_name}"
       coverage: "Coverage"
       assign_to_criteria: "Assign Graders to Criteria"
       upload:
@@ -661,7 +677,6 @@ en:
       create_new_admin: "Create a new Admin"
       manage_admins:    "Manage Admins"
       edit_admin:       "Edit an Admin"
-      success: "%{user_name} has been updated"
       admins: "Admins"
       upload:
         not_added: "The following Admins have not been successfully added:"
@@ -669,6 +684,12 @@ en:
         admins_names: "Admin names are alphanumeric"
         each_field: "Each field is separated by a comma (no spaces)"
         each_line: "Each line has the required fields specified above"
+      create:
+        success: "Successfully created admin %{user_name}."
+        error:   "Failed to create admin."
+      update:
+        success: "Successfully updated admin %{user_name}."
+        error:   "Failed to update admin."
 
     add_student:
       success: "Student %{user_name} added."
@@ -1016,10 +1037,10 @@ en:
       manage_users: "Manage Users"
       due_dates_type: "Section due dates type: "
       create:
-        success: "Section successfully created."
+        success: "Successfully created section %{name}."
         error:   "Failed to create section."
       update:
-        success: "Section successfully updated."
+        success: "Successfully updated section %{name}."
         error:   "Failed to update section."
 
     date:
