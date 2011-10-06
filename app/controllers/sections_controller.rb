@@ -18,7 +18,8 @@ class SectionsController < ApplicationController
   def create
     @section = Section.new(params[:section])
     if @section.save
-      flash[:success] = I18n.t('section.create.success')
+      flash[:success] = I18n.t('section.create.success',
+                               :name => @section.name)
       redirect_to :action => 'index'
       return
     else
@@ -36,7 +37,8 @@ class SectionsController < ApplicationController
   def update
     @section = Section.find(params[:id])
     if @section.update_attributes(params[:section])
-      flash[:success] = I18n.t('section.update.success')
+      flash[:success] = I18n.t('section.update.success',
+                               :name => @section.name)
       redirect_to :action => 'index'
     else
       flash[:error] = reason_for_error(@section.errors, I18n.t('section.update.error'))
