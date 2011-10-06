@@ -35,10 +35,11 @@ class StudentsController < ApplicationController
     attrs = params[:user]
     # update_attributes supplied by ActiveRecords
     if !@user.update_attributes(attrs)
+      flash[:error] = I18n.t("students.update.error")
       render :action => :edit
     else
-      flash[:edit_notice] = I18n.t("students.update.success",
-                                   :user_name => @user.user_name)
+      flash[:success] = I18n.t("students.update.success",
+                               :user_name => @user.user_name)
       redirect_to :action => 'index'
     end
   end
@@ -83,14 +84,14 @@ class StudentsController < ApplicationController
     # by the HTML form with the help of ActiveView::Helper::
     @user = Student.new(params[:user])
     if @user.save
-      flash[:success] = I18n.t("student.create.success",
+      flash[:success] = I18n.t("students.create.success",
                                :user_name => @user.user_name)
       redirect_to :action => 'index' # Redirect
     else
       @sections = Section.find(:all, :order => "name")
       flash[:error] = reason_for_error(
                           @user.errors,
-                          I18n.t('student.create.error'))
+                          I18n.t('students.create.error'))
       render :action => 'new'
     end
   end

@@ -61,9 +61,9 @@ class AdminsControllerTest < AuthenticatedControllerTest
                          :first_name => 'Doe'}
 
         assert_redirected_to :action => "index"
-        assert_equal I18n.t("admins.success",
+        assert_equal I18n.t("admins.update.success",
                             :user_name => @admin2.user_name),
-                     flash[:edit_notice]
+                     flash[:success]
       end
 
       should "be able to edit" do

@@ -535,7 +535,6 @@ en:
       edit_student:    "Edit a Student"
       edit_success: "%{user_name} has been updated."
       create_new:      "Create a new Student"
-      create_success: "Successfully created student %{user_name}"
       students: "Students"
       no_students_selected: "No students were selected, so no changes were made."
       upload:
@@ -547,6 +546,12 @@ en:
         download_student_list: "Download Student List"
         download_csv_format:   "Download Student list in CSV format"
         download_xml_format:   "Download Student list in XML format"
+      create:
+        success: "Successfully created student %{user_name}."
+        error: "Failed to create student."
+      update:
+        success: "Successfully updated student %{user_name}."
+        error: "Failed to update student."
     hide_students:      "Mark as inactive"
     unhide_students:    "Mark as active"
     students_not_successfully_added_message_1: "The following students have not been successfully added:"

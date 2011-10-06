@@ -65,6 +65,18 @@ class StudentsControllerTest < AuthenticatedControllerTest
       assert_not_nil Student.find_by_user_name('jdoe')
     end
 
+    should "not be able to create a student with missing data" do
+      post_as @admin,
+              :create,
+              :user => {:user_name => 'jdoe',
+                        :first_name => 'John'}
+      assert_response :success
+      assert_nil Student.find_by_user_name('jdoe')
+      assert_equal flash[:error],
+              I18n.t('student.create.error') + " Last_name can't be blank."
+    end
+
+
     should "be able to create a student with a section" do
       post_as @admin,
               :create,
@@ -98,9 +110,9 @@ class StudentsControllerTest < AuthenticatedControllerTest
                :user => {:last_name => 'Doe',
                          :first_name => 'John'}
         assert_response :redirect
-        assert_equal I18n.t("students.edit_success",
+        assert_equal I18n.t("students.update.success",
                             :user_name => @student.user_name),
-                     flash[:edit_notice]
+                     flash[:success]
 
         @student.reload
         assert_equal "Doe",
@@ -117,9 +129,9 @@ class StudentsControllerTest < AuthenticatedControllerTest
                          :first_name => 'John',
                          :section_id => @section.id }
         assert_response :redirect
-        assert_equal I18n.t("students.edit_success",
+        assert_equal I18n.t("students.update.success",
                             :user_name => @student.user_name),
-                     flash[:edit_notice]
+                     flash[:success]
 
         @student.reload
         assert_equal @section,

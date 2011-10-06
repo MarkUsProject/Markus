@@ -64,10 +64,6 @@ document.observe("dom:loaded", function(){
           <p class="success"><%= h(flash[:success]) %></p>
       <% end -%>
 
-      <% if flash[:edit_notice] -%>
-        <p class="notice"><%= h(flash[:edit_notice]) %></p>
-      <% end -%>
-
       <% # display lines in csv file that has not been successfully processed %>
       <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? -%>
       <div class="errorExplanation" id="errorExplanation">
