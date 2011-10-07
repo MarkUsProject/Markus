@@ -28,12 +28,15 @@
 </script>
 
 <div id="title_bar">
-  <h1><%= t('grade_entry_forms.grades.title') + " " + h(@grade_entry_form.short_identifier)%>
+  <h1>
+    <%= t('grade_entry_forms.grades.title') + " " + @grade_entry_form.short_identifier %>
+  </h1>
+  <div class="headingButtons">
     <%= button_to_function t(:upload), "upload_grades();"%>
     <span class="menu_bar">|</span>
     <%= link_to t(:download),
                 csv_download_grade_entry_form_path(@grade_entry_form) %>
-  </h1>
+  </div>
 </div>
 
 <div class="wrapLeft">
