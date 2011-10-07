@@ -226,13 +226,13 @@ document.observe("dom:loaded", function(){
         <ul id="groups_tabs"class="subsection_tabs">
           <li class="tab">
             <a href="#none" id="filter_link_none" class="filter_selected">
-              <%= I18n.t("groups.all_grouping_counts") %></a></li>
+              <%= raw(I18n.t("groups.all_grouping_counts")) %></a></li>
           <li class="tab">
             <a href="#validated" id="filter_link_validated">
-              <%= I18n.t("groups.valid_grouping_counts") %></a></li>
+              <%= raw(I18n.t("groups.valid_grouping_counts")) %></a></li>
           <li class="tab">
             <a href="#unvalidated" id="filter_link_unvalidated">
-              <%= I18n.t("groups.not_valid_grouping_counts") %></a></li>
+              <%= raw(I18n.t("groups.not_valid_grouping_counts")) %></a></li>
           <li class="button_tab">
 
           </li>
@@ -316,12 +316,12 @@ document.observe("dom:loaded", function(){
         <ul id="students_tabs" class="subsection_tabs">
           <li class="tab">
             <a href="#students_none" id="filter_link_students_none">
-              <%= I18n.t("groups.all_students") %></a></li>
+              <%= raw(I18n.t("groups.all_students")) %></a></li>
           <li class="tab">
             <a href="#unassigned" id="filter_link_students_unassigned" class="filter_selected">
-              <%= I18n.t("groups.unassigned_students") %></a></li>
+              <%= raw(I18n.t("groups.unassigned_students")) %></a></li>
           <li class="tab"><a href="#assigned" id="filter_link_students_assigned">
-            <%= I18n.t("groups.assigned_students") %></a></li>
+            <%= raw(I18n.t("groups.assigned_students")) %></a></li>
         </ul>
 
         <div id="students_none"></div>
