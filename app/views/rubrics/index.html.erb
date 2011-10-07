@@ -50,12 +50,14 @@
 <div id="title_bar">
   <h1><%= I18n.t("rubric_criteria.criteria_management", :identifier => h(@assignment.short_identifier)) %>
 
-        <%= link_to_function t("add_criterion"), %| if($('new_rubric_criterion') != null) {
-          $('rubric_criterion_rubric_criterion_name').select();
-          $('rubric_criterion_rubric_criterion_name').focus();
-        } else {
-        #{remote_function :url => new_assignment_rubric_path(@assignment)}
-        }|%>
+        <%= link_to_function t("add_criterion"),
+            %| if($('new_rubric_criterion') != null) {
+              $('rubric_criterion_rubric_criterion_name').select();
+              $('rubric_criterion_rubric_criterion_name').focus();
+            } else {
+              #{remote_function :url => new_assignment_rubric_path(@assignment),
+                                :method => 'get'}
+            }|%>
    <span class="menu_bar" >|</span>
     <%= button_to_function I18n.t("upload"), "upload_criteria();"%>
    <span class="menu_bar" >|</span>
