@@ -43,7 +43,7 @@
       </ul>
    </li>
 
-  <% if !@grade_entry_form.nil? %>
+  <% if !@grade_entry_form.id.nil? %>
     <% # For now, GradeEntryForms only have a Properties tab
     %>
     <% if (controller.controller_name == 'grade_entry_forms' and
@@ -51,8 +51,8 @@
       <li <% if controller.action_name == 'edit' %>
             id="sub_menu_active"
           <% end %>>
-        <%= link_to I18n.t(:properties), :controller => 'grade_entry_forms',
-                    :action => 'edit', :id => @grade_entry_form.id %>
+        <%= link_to I18n.t(:properties),
+                    edit_grade_entry_form_path(@grade_entry_form) %>
       </li>
       <li <% if controller.action_name == 'grades' %>
             id="sub_menu_active"
@@ -107,7 +107,7 @@
   </div>
 <% elsif
 	 controller.controller_name == 'admins' or
-         controller.controller_name == 'students' or
+   controller.controller_name == 'students' or
 	 controller.controller_name == 'tas'
 %>
 <div id="sub_menu">
