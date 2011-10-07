@@ -33,10 +33,10 @@
 
 <fieldset>
    <%= form_for annotation_category,
-		:as => :annotation_category,
-		:url => {:action => 'update_annotation_category',
-			 :id => annotation_category.id},
-		:remote => true do |f| %>
+		            :as => :annotation_category,
+		            :url => {:action => 'update_annotation_category',
+			                   :id => annotation_category.id},
+		            :remote => true do |f| %>
    <span id="annotation_category_inputs">
      <%= f.label :annotation_category_name,
 		 I18n.t("annotations.update.annotation_category_name") %>
