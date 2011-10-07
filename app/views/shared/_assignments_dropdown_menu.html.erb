@@ -24,18 +24,18 @@
           controller.controller_name == "grade_entry_forms" %>
       <% if @current_user.student? %>
         <li class="level2">
-          <%= link_to h(assignment.short_identifier), :controller => 'assignments', :action => 'student_interface', :id => assignment.id %>
+          <%= link_to assignment.short_identifier,
+		      student_interface_assignment_path(assignment) %>
         </li>
       <% elsif @current_user.ta? %>
         <li class="level2">
-          <%= link_to h(assignment.short_identifier),
-		      :controller => 'submissions',
-		      :action => 'browse',
-		      :assignment_id => assignment.id %>
+          <%= link_to assignment.short_identifier,
+		      browse_assignment_submissions_path(assignment) %>
 		</li>
       <% else %>
         <li class="level2">
-          <%= link_to h(assignment.short_identifier), :controller => 'assignments', :action => "edit", :id => assignment.id %>
+          <%= link_to assignment.short_identifier,
+		      edit_assignment_path(assignment) %>
 		</li>
       <% end %>
     <% else %>
@@ -56,7 +56,11 @@
            if controller.action_name == 'repo_browser'
              controller.action_name = 'browse'
            end %>
-		<%= link_to h(assignment.short_identifier), :controller => target_controller, :action => controller.action_name, :id => assignment.id %>
+		<%= link_to assignment.short_identifier,
+			    :controller => target_controller,
+			    :action => controller.action_name,
+			    :id => assignment.id,
+			    :assignment_id => assignment.id %>
       </li>
     <% end %>
   <% else %>
@@ -75,18 +79,18 @@
   <% if grade_entry_form != @grade_entry_form %>
     <% if @current_user.admin? %>
       <li class="level2">
-        <%= link_to h(grade_entry_form.short_identifier), :controller => 'grade_entry_forms',
-            :action => 'edit', :id => grade_entry_form.id %>
+        <%= link_to grade_entry_form.short_identifier,
+		    edit_grade_entry_form_path(grade_entry_form) %>
       </li>
     <% elsif @current_user.ta? %>
       <li class="level2">
-        <%= link_to h(grade_entry_form.short_identifier), :controller => 'grade_entry_forms',
-            :action => 'grades', :id => grade_entry_form.id %>
+        <%= link_to grade_entry_form.short_identifier,
+		    grades_grade_entry_form_path(grade_entry_form) %>
       </li>
     <% elsif @current_user.student? %>
       <li class="level2">
-        <%= link_to h(grade_entry_form.short_identifier), :controller => 'grade_entry_forms',
-            :action => 'student_interface', :id => grade_entry_form.id %>
+        <%= link_to grade_entry_form.short_identifier,
+		  student_interface_grade_entry_form_path(grade_entry_form) %>
       </li>
     <% end %>
   <% end %>
