@@ -1,2 +1,5 @@
-page.replace 'annotation_list_holder', :partial => "annotation_list", :locals => {:annotation_texts => @annotation_texts, :annotation_category => @annotation_category}
+page.replace 'annotation_list_holder',
+             :partial => "annotation_list",
+             :locals => {:annotation_texts => @annotation_texts,
+                         :annotation_category => @annotation_category}
 

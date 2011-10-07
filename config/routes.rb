@@ -174,8 +174,11 @@ Markus::Application.routes.draw do
     end
 
     resources :annotation_categories do
-      collection do
+      member do
         get 'get_annotations'
+      end
+
+      collection do
         get 'add_annotation_category'
         get 'add_annotation_text'
         get 'csv_upload'
