@@ -42,13 +42,16 @@ Markus::Application.routes.draw do
     end
 
     resources :rubrics do
+      member do
+        get 'move_criterion'
+      end
+
       collection do
         get 'update_positions'
         get 'csv_upload'
         get 'yml_upload'
         get 'download_csv'
         get 'download_yml'
-        get 'move_criterion'
       end
     end
 

@@ -166,11 +166,8 @@ class RubricsController < ApplicationController
   end
 
   def move_criterion
+    debugger
     position = params[:position].to_i
-    unless request.post?
-      render :nothing => true
-      return
-    end
     if params[:direction] == 'up'
       offset = -1
     elsif  params[:direction] == 'down'
@@ -188,8 +185,10 @@ class RubricsController < ApplicationController
       render :nothing => true
       return
     end
-    RubricCriterion.update(criterion.id, :position => other_criterion.position)
-    RubricCriterion.update(other_criterion.id, :position => position)
+    RubricCriterion.update(criterion.id,
+                          :position => other_criterion.position)
+    RubricCriterion.update(other_criterion.id,
+                           :position => position)
     @criteria.reload
   end
 
