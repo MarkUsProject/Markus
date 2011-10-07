@@ -49,7 +49,7 @@ class GradeEntryFormsController < ApplicationController
         flash[:success] = I18n.t('grade_entry_forms.create.success')
         redirect_to :action => "edit", :id => @grade_entry_form.id
       else
-        redirect_to :action => "new"
+        render "new"
       end
     end
   end
@@ -67,6 +67,8 @@ class GradeEntryFormsController < ApplicationController
         # Success message
         flash[:success] = I18n.t('grade_entry_forms.edit.success')
         redirect_to :action => "edit", :id => @grade_entry_form.id
+      else
+        render "edit", :id => @grade_entry_form.id
       end
     end
   end

@@ -43,7 +43,7 @@
       </ul>
    </li>
 
-  <% if !@grade_entry_form.nil? %>
+  <% if !@grade_entry_form.nil? and !@grade_entry_form.id.nil? %>
     <% # For now, GradeEntryForms only have a Properties tab
     %>
     <% if (controller.controller_name == 'grade_entry_forms' and
@@ -51,8 +51,8 @@
       <li <% if controller.action_name == 'edit' %>
             id="sub_menu_active"
           <% end %>>
-        <%= link_to I18n.t(:properties), :controller => 'grade_entry_forms',
-                    :action => 'edit', :id => @grade_entry_form.id %>
+        <%= link_to I18n.t(:properties),
+                    edit_grade_entry_form_path(@grade_entry_form) %>
       </li>
       <li <% if controller.action_name == 'grades' %>
             id="sub_menu_active"
@@ -107,7 +107,7 @@
   </div>
 <% elsif
 	 controller.controller_name == 'admins' or
-         controller.controller_name == 'students' or
+   controller.controller_name == 'students' or
 	 controller.controller_name == 'tas'
 %>
 <div id="sub_menu">
@@ -139,8 +139,8 @@
      <% if @assignment.nil? and @grade_entry_form.nil? %>
        <span id="choose_an_assignment"><%= I18n.t(:choose_assignment) %></span>
      <% else %>
-       <span id="choose_an_assignment"><%=
-h(sanitize(@assignment.short_identifier))%></span>
+       <span id="choose_an_assignment">
+         <%= @assignment.short_identifier %></span>
      <% end %>
         <ul class="level2 dropdown">
            <%= render :partial => 'shared/assignments_dropdown_menu'%>
@@ -151,7 +151,10 @@ h(sanitize(@assignment.short_identifier))%></span>
   <li <% if controller.controller_name == 'submissions' or
        controller.controller_name == 'results' %>
           id="sub_menu_active"<% end %>>
- <%= link_to I18n.t(:submissions), :controller => 'submissions', :action => 'browse', :id => @assignment.id %>
+ <%= link_to I18n.t(:submissions),
+             :controller => 'submissions',
+             :action => 'browse',
+             :id => @assignment.id %>
  </li>
  <% end %>
   </ul>
@@ -182,8 +185,10 @@ h(sanitize(@assignment.short_identifier))%></span>
     <li <% if controller.controller_name == 'grade_entry_forms' %>
           id="sub_menu_active"
         <%end%>>
-      <%= link_to t(:grades), :controller => 'grade_entry_forms',
-          :action => 'student_interface', :id => @grade_entry_form.id %>
+      <%= link_to t(:grades),
+                  :controller => 'grade_entry_forms',
+                  :action => 'student_interface',
+                  :id => @grade_entry_form.id %>
     </li>
 	<% end %>
 
@@ -193,14 +198,16 @@ h(sanitize(@assignment.short_identifier))%></span>
  <li <% if controller.controller_name == 'assignments' %>
           id="sub_menu_active"
         <%end%>>
-	  <%= link_to I18n.t("assignments"), :controller => 'assignments',
-	  :action => 'student_interface', :id => @assignment.id %>
+	  <%= link_to I18n.t("assignments"),
+                :controller => 'assignments',
+	              :action => 'student_interface',
+                :id => @assignment.id %>
   </li>
   <li <% if controller.controller_name == 'submissions' %>
           id="sub_menu_active"
         <%end%>>
 	  <%= link_to I18n.t("submissions"),
-		      file_manager_assignment_submissions_path(@assignment) %>
+		            file_manager_assignment_submissions_path(@assignment) %>
   </li>
    <li <% if controller.controller_name == 'results' %>
           id="sub_menu_active"
