@@ -1,6 +1,6 @@
 class RubricsController < ApplicationController
 
-  before_filter      :authorize_only_for_admin
+  before_filter :authorize_only_for_admin
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
@@ -166,7 +166,6 @@ class RubricsController < ApplicationController
   end
 
   def move_criterion
-    debugger
     position = params[:position].to_i
     if params[:direction] == 'up'
       offset = -1
@@ -185,10 +184,12 @@ class RubricsController < ApplicationController
       render :nothing => true
       return
     end
-    RubricCriterion.update(criterion.id,
-                          :position => other_criterion.position)
-    RubricCriterion.update(other_criterion.id,
-                           :position => position)
+    position = criterion.position
+    criterion.position = index + offset
+    other_criterion.position = index
+    if !(criterion.save and other_criterion.save)
+      flash[:error] = I18n.t("rubrics.move_criterion.error")
+    end
     @criteria.reload
   end
 

@@ -48,8 +48,10 @@
 <% end %>
 
 <div id="title_bar">
-  <h1><%= I18n.t("rubric_criteria.criteria_management", :identifier => h(@assignment.short_identifier)) %>
-
+  <h1><%= I18n.t("rubric_criteria.criteria_management",
+                 :identifier => @assignment.short_identifier) %>
+  </h1>
+  <div class="headingButtons">
         <%= link_to_function t("add_criterion"),
             %| if($('new_rubric_criterion') != null) {
               $('rubric_criterion_rubric_criterion_name').select();
@@ -63,7 +65,7 @@
    <span class="menu_bar" >|</span>
     <%= button_to_function I18n.t("download"), "download_criteria();"%>
 
-  </h1>
+  </div>
 </div><!-- Title bar-->
 
 <div class="wrapLeft">
@@ -84,6 +86,13 @@
   <% end %>
   </div>
 <% end %>
+
+<% if !flash[:success].nil? %>
+  <div class="success">
+    <%= flash[:success] %>
+  </div>
+<% end %>
+
 <p id="new_criterion_error" class="warning" style="display: none;">
 
 </p>

@@ -1,9 +1,3 @@
-<% if !flash[:success].nil? %>
-  <div class="success">
-    <%= flash[:success] %>
-  </div>
-<% end %>
-
 <%= form_for criterion,
 	     :as => :rubric_criterion,
 	     :url => {:action => 'update',

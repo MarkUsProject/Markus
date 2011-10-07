@@ -685,6 +685,10 @@ fr:
         success: "Mise à jour de l'administrateur %{user_name}"
         error: "Erreur dans la mise à jour de l'administrateur"
 
+    rubrics:
+      move_criterion:
+        error: "Erreur: impossible de déplacer cette rubric."
+
     add_student:
       success: "L'étudiant(e) %{user_name} a été ajouté(e)."
       fail:

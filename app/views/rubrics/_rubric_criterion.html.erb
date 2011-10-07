@@ -14,23 +14,23 @@
   </span>
   <span class="criterion_arrow">
     <% if location != :first and location != :single %>
-    <%= link_to image_tag("icons/bullet_arrow_up.png",
+    <%= link_to_remote image_tag("icons/bullet_arrow_up.png",
 			                    :alt => t('rubric_criteria.move_up')),
-          		  move_criterion_assignment_rubric_path(
-                  @assignment,
-                  criterion,
-                  :position => criterion.position,
-                  :direction => :up),
-          		  :remote => true %>
+          	       :url => move_criterion_assignment_rubric_path(
+				  @assignment,
+				  criterion,
+				  :position => criterion.position,
+				  :direction => :up),
+          	      :method => 'get' %>
     <% end %> <br /> <% if  location != :last and location != :single %>
-    <%= link_to image_tag("icons/bullet_arrow_down.png",
-		                      :alt =>  t('rubric_criteria.move_down')),
-                move_criterion_assignment_rubric_path(
-                    @assignment,
-                    criterion,
-    			          :position => criterion.position,
+    <%= link_to_remote image_tag("icons/bullet_arrow_down.png",
+		                 :alt =>  t('rubric_criteria.move_down')),
+		       :url => move_criterion_assignment_rubric_path(
+				  @assignment,
+				  criterion,
+				  :position => criterion.position,
 		    	          :direction => :down),
-		            :remote => true %>
+		      :method => 'get' %>
     <% end %>
   </span>
   <span id="criterion_weight_<%= criterion.id %>" class="criterion_weight">
