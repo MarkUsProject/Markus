@@ -52,19 +52,21 @@
 <%= render :partial => "boot.js" %>
 
 <div id="title_bar">
-  <h1><%= I18n.t("annotations.title", :assignment_short_identifier => @assignment.short_identifier) %>
-        <%= link_to_function t("annotations.add_annotation_category"), %| if($('add_annotation_category_prompt') != null) {
-          $('add_annotation_category_prompt').select();
-          $('add_annotation_category_prompt').focus();
-        } else {
-        #{remote_function :url => {:action => "add_annotation_category", :id => @assignment.id}, :method => 'get', :after => "if($('no_annotation_categories_info') != null) { $('no_annotation_categories_info').hide();}" }
-        }|%>
-  <span class="menu_bar">|</span>
-	<%= button_to_function t("upload"), "upload_annotation_categories();" %>
-          <span class="menu_bar">|</span>
-	<%= button_to_function t("download"), "download_annotation_categories();" %>
-
-</h1>
+  <h1><%= I18n.t("annotations.title",
+		 :assignment_short_identifier => @assignment.short_identifier) %>
+  </h1>
+  <div class="headingButtons">
+    <%= link_to_function t("annotations.add_annotation_category"), %| if($('add_annotation_category_prompt') != null) {
+      $('add_annotation_category_prompt').select();
+      $('add_annotation_category_prompt').focus();
+    } else {
+    #{remote_function :url => {:action => "add_annotation_category", :id => @assignment.id}, :method => 'get', :after => "if($('no_annotation_categories_info') != null) { $('no_annotation_categories_info').hide();}" }
+    }|%>
+    <span class="menu_bar">|</span>
+    <%= button_to_function t("upload"), "upload_annotation_categories();" %>
+    <span class="menu_bar">|</span>
+    <%= button_to_function t("download"), "download_annotation_categories();" %>
+  </div>
 </div>
 
 <div class="wrapLeft">
