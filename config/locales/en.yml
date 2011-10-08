@@ -696,6 +696,10 @@ en:
         success: "Successfully updated admin %{user_name}."
         error:   "Failed to update admin."
 
+    rubrics:
+      move_criterion:
+        error: "Failed to move rubric."
+
     add_student:
       success: "Student %{user_name} added."
       fail:
