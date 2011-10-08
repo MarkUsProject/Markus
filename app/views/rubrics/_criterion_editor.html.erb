@@ -1,14 +1,7 @@
-<% if !flash[:success].nil? %>
-  <div class="success">
-    <%= flash[:success] %>
-  </div>
-<% end %>
-
-<%= form_for criterion,
+<%= remote_form_for criterion,
 	     :as => :rubric_criterion,
 	     :url => {:action => 'update',
-		      :id => criterion.id},
-	      :remote => true do |f| %>
+		      :id => criterion.id} do |f| %>
 
 <h2>
   <span id="selected_criterion_name">
@@ -22,13 +15,14 @@
 
 <div class="main_rubric_criteria_edit">
   <div class="align_text_right">
-    <%= link_to I18n.t(:delete),
-		:method => 'delete',
-		:url => {:action => 'delete', :id => criterion.id},
-		:html => {:class => 'delete',
-			  :title => I18n.t(:remove_criteria_title)},
-		:confirm => I18n.t(:remove_criteria_message),
-		:remote => true %>
+    <%= link_to_remote I18n.t(:delete),
+		       :url => {:action => 'destroy',
+				:id => criterion.id},
+		       :method => 'delete',
+		       :html => {:class => 'delete',
+		  		 :title => I18n.t(:remove_criteria_title)},
+		       :confirm => I18n.t(:remove_criteria_message),
+		       :remote => true %>
   </div>
 
   <span id="<%="criterion_inputs_#{criterion.id}"%>">

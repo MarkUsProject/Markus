@@ -2,13 +2,15 @@
 # Erb template for display rubric criterion levels in the assignment rubric manager
 %>
 <div class="rubric_level_header">
-  <%=f.label "level_#{rubric_level_index}_name".to_sym,
-    h(I18n.t("rubric_criteria.level.level_index",
-    :index => rubric_level_index)),
-    :class => "bold_inline_label" %>
+  <%= f.label "level_#{rubric_level_index}_name".to_sym,
+              I18n.t("rubric_criteria.level.level_index",
+		     :index => rubric_level_index),
+	      :class => "bold_inline_label" %>
 </div>
 <br />
-  <%= f.text_field "level_#{rubric_level_index}_name".to_sym, :class => "rubric_level_input"%>
-  <%= f.text_area "level_#{rubric_level_index}_description".to_sym, :class => "rubric_text_area"%>
+  <%= f.text_field "level_#{rubric_level_index}_name".to_sym,
+		   :class => "rubric_level_input"%>
+  <%= f.text_area "level_#{rubric_level_index}_description".to_sym,
+		  :class => "rubric_text_area"%>
 <br />
 <br />
