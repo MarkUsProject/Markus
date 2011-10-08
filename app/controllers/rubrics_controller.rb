@@ -22,28 +22,29 @@ class RubricsController < ApplicationController
 
   def new
     @assignment = Assignment.find(params[:assignment_id])
-    if !request.post?
-      return
+    @criterion = RubricCriterion.new
+  end
+
+  def create
+    @assignment = Assignment.find(params[:assignment_id])
+    @criteria = @assignment.rubric_criteria
+    if @criteria.length > 0
+      new_position = @criteria.last.position + 1
     else
-      @criteria = @assignment.rubric_criteria
-      if @criteria.length > 0
-        new_position = @criteria.last.position + 1
-      else
-        new_position = 1
-      end
-      @criterion = RubricCriterion.new
-      @criterion.assignment = @assignment
-      @criterion.weight = RubricCriterion::DEFAULT_WEIGHT
-      @criterion.set_default_levels
-      @criterion.position = new_position
-      if !@criterion.update_attributes(params[:rubric_criterion])
-        @errors = @criterion.errors
-        render :action => 'add_criterion_error'
-        return
-      end
-      @criteria.reload
-      render :action => 'create_and_edit'
+      new_position = 1
     end
+    @criterion = RubricCriterion.new
+    @criterion.assignment = @assignment
+    @criterion.weight = RubricCriterion::DEFAULT_WEIGHT
+    @criterion.set_default_levels
+    @criterion.position = new_position
+    if !@criterion.update_attributes(params[:rubric_criterion])
+      @errors = @criterion.errors
+      render :action => 'add_criterion_error'
+      return
+    end
+    @criteria.reload
+    render :action => 'create_and_edit'
   end
 
   def destroy

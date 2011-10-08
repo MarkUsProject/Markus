@@ -16,7 +16,8 @@
 <div class="main_rubric_criteria_edit">
   <div class="align_text_right">
     <%= link_to_remote I18n.t(:delete),
-		       :url => assignment_rubric_path(criterion),
+		       :url => {:action => 'destroy',
+				:id => criterion.id},
 		       :method => 'delete',
 		       :html => {:class => 'delete',
 		  		 :title => I18n.t(:remove_criteria_title)},

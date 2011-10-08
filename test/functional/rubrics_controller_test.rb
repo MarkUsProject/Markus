@@ -223,7 +223,6 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         get_as @admin, :new, :assignment_id => @assignment.id
       end
       should assign_to :assignment
-      should_not assign_to :criterion
       should render_template :new
       should respond_with :success
     end
@@ -411,9 +410,8 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
     context "on :new" do
       should "with save error" do
         RubricCriterion.any_instance.expects(:save).once.returns(false)
-        RubricCriterion.any_instance.expects(:errors).once.returns('error msg')
         post_as @admin,
-                :new,
+                :create,
                 :assignment_id => @assignment.id,
                 :rubric_criterion => {:rubric_criterion_name => 'first',
                                       :weight => 10}
@@ -428,7 +426,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         setup do
           assignment = assignments(:assignment_3)
           post_as @admin,
-                  :new,
+                  :create,
                   :assignment_id => assignment.id,
                   :rubric_criterion => {:rubric_criterion_name => 'first', :weight => 10}
         end
@@ -441,7 +439,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       context "without error on an assignment that already has criteria" do
         setup do
           post_as @admin,
-                  :new,
+                  :create,
                   :assignment_id => @assignment.id,
                   :rubric_criterion => {:rubric_criterion_name => 'first', :weight => 10}
         end
