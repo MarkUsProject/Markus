@@ -21,8 +21,8 @@
 
  <div class="float_right">
    <%= link_to t("annotations.delete.delete_message"),
-	       :url => {:action => "delete_annotation_category",
-	   	        :id => annotation_category.id},
+                :url => delete_annotation_category_assignment_annotation_category_path(
+                      :id => annotation_category.id),
 	        :confirm => t('annotations.delete.annotation_category'),
 	        :html => {:class => 'delete'},
 		:remote => true

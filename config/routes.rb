@@ -179,6 +179,7 @@ Markus::Application.routes.draw do
     resources :annotation_categories do
       member do
         get 'get_annotations'
+        post 'delete_annotation_category'
       end
 
       collection do
