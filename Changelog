@@ -1,3 +1,12 @@
+Changes for MarkUs 0.11.0:
+* Add simple hiding assignments from students
+  feature.
+
+Changes for MarkUs 0.10.1:
+* API helper script fixes (Ruby version).
+* I18n fixes.
+* JavaScript error fixing (quoting).
+
 Changes for MarkUs 0.10.0:
 * Use of Bundler to manage Gems dependencies.
 * Fixed UI bugs (marking state, released checkbox).
