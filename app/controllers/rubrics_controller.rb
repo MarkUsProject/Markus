@@ -1,6 +1,6 @@
 class RubricsController < ApplicationController
 
-  before_filter      :authorize_only_for_admin
+  before_filter :authorize_only_for_admin
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
@@ -22,28 +22,29 @@ class RubricsController < ApplicationController
 
   def new
     @assignment = Assignment.find(params[:assignment_id])
-    if !request.post?
-      return
+    @criterion = RubricCriterion.new
+  end
+
+  def create
+    @assignment = Assignment.find(params[:assignment_id])
+    @criteria = @assignment.rubric_criteria
+    if @criteria.length > 0
+      new_position = @criteria.last.position + 1
     else
-      @criteria = @assignment.rubric_criteria
-      if @criteria.length > 0
-        new_position = @criteria.last.position + 1
-      else
-        new_position = 1
-      end
-      @criterion = RubricCriterion.new
-      @criterion.assignment = @assignment
-      @criterion.weight = RubricCriterion::DEFAULT_WEIGHT
-      @criterion.set_default_levels
-      @criterion.position = new_position
-      if !@criterion.update_attributes(params[:rubric_criterion])
-        @errors = @criterion.errors
-        render :action => 'add_criterion_error'
-        return
-      end
-      @criteria.reload
-      render :action => 'create_and_edit'
+      new_position = 1
     end
+    @criterion = RubricCriterion.new
+    @criterion.assignment = @assignment
+    @criterion.weight = RubricCriterion::DEFAULT_WEIGHT
+    @criterion.set_default_levels
+    @criterion.position = new_position
+    if !@criterion.update_attributes(params[:rubric_criterion])
+      @errors = @criterion.errors
+      render :action => 'add_criterion_error'
+      return
+    end
+    @criteria.reload
+    render :action => 'create_and_edit'
   end
 
   def destroy
@@ -167,10 +168,6 @@ class RubricsController < ApplicationController
 
   def move_criterion
     position = params[:position].to_i
-    unless request.post?
-      render :nothing => true
-      return
-    end
     if params[:direction] == 'up'
       offset = -1
     elsif  params[:direction] == 'down'
@@ -188,8 +185,12 @@ class RubricsController < ApplicationController
       render :nothing => true
       return
     end
-    RubricCriterion.update(criterion.id, :position => other_criterion.position)
-    RubricCriterion.update(other_criterion.id, :position => position)
+    position = criterion.position
+    criterion.position = index + offset
+    other_criterion.position = index
+    if !(criterion.save and other_criterion.save)
+      flash[:error] = I18n.t("rubrics.move_criterion.error")
+    end
     @criteria.reload
   end
 

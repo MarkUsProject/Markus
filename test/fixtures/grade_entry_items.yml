@@ -21,10 +21,10 @@ grade_entry_item_2:
   out_of: 50
   created_at: <%= Time.now.to_s(:db)%>
   updated_at: <%= Time.now.to_s(:db)%>
-  
+
 grade_entry_item_3:
   grade_entry_form_id: <%= Fixtures.identify(:grade_entry_form_1) %>
   name: Q3
   out_of: 10
   created_at: <%= Time.now.to_s(:db)%>
-  updated_at: <%= Time.now.to_s(:db)%>  
+  updated_at: <%= Time.now.to_s(:db)%>

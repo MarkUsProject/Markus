@@ -1,18 +1,22 @@
 <div class="section">
+  <% if flash[:error] %>
+    <div class="error">
+      <%= flash[:error] %>
+    </div>
+  <% end%>
 
   <%= form_for @user,
-	       :as => :user do |f| -%>
+               :as => :user do |f| %>
 
-    <%= f.error_messages -%>
+    <%= raw(f.label(:user_name, I18n.t("user.user_name"))) %>
+    <%= raw(f.text_field :user_name) %><br />
 
-    <%= f.label(:user_name, I18n.t("user.user_name")) %>
-    <%= f.text_field :user_name %><br />
+    <%= raw(f.label(:user_name, I18n.t("user.last_name"))) %>
+    <%= raw(f.text_field :last_name) %><br />
 
-    <%= f.label(:user_name, I18n.t("user.last_name") ) %>
-    <%= f.text_field :last_name %><br />
+    <%= raw(f.label(:user_name, I18n.t("user.first_name"))) %>
+    <%= raw(f.text_field :first_name) %><br />
 
-    <%= f.label(:user_name, I18n.t("user.first_name") ) %>
-    <%= f.text_field :first_name %><br />
     <%= f.hidden_field :id %>
     <%= f.submit t(:submit),
 		 :name => 'submit',
@@ -21,5 +25,3 @@
   <% end %>
 
 </div>
-
-

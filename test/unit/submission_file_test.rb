@@ -1,11 +1,10 @@
 # encoding: utf-8
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
+
 require 'shoulda'
 
  class SubmissionFileTest < ActiveSupport::TestCase
-   def setup
-     setup_group_fixture_repos
-   end
 
   # Ensure that the the following relationship exists
   context "An existing SubmissionFile" do

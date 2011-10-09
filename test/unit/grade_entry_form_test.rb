@@ -1,15 +1,10 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
-require File.expand_path(File.join(File.dirname(__FILE__),'..', 'blueprints', 'blueprints'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 require 'shoulda'
 require 'will_paginate'
 
 # Tests for GradeEntryForms
 class GradeEntryFormTest < ActiveSupport::TestCase
-
-  def setup
-    clear_fixtures
-  end
 
   # Basic validation tests
   should have_many :grade_entry_items
@@ -23,6 +18,16 @@ class GradeEntryFormTest < ActiveSupport::TestCase
   should allow_value(1.day.from_now).for(:date)
   should_not allow_value("100-10").for(:date)
   should_not allow_value("abcd").for(:date)
+
+  context " A good Grade entry model" do
+    setup do
+      GradeEntryForm.make
+    end
+
+    should validate_uniqueness_of(
+        :short_identifier).with_message(
+            I18n.t('grade_entry_forms.invalid_identifier'))
+  end
 
   # Make sure validate works appropriately when the date is valid
   def test_validate_valid_date

@@ -6,28 +6,31 @@
 # - User Creation validations
 
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 require 'shoulda'
 
 class UserTest < ActiveSupport::TestCase
 
+  should have_many(:memberships)
+  should have_many(:groupings).through(:memberships)
+  should have_many(:notes).dependent(:destroy)
+  should have_many(:accepted_memberships)
+  should validate_presence_of :user_name
+  should validate_presence_of :last_name
+  should validate_presence_of :first_name
+  should allow_value("Student").for(:type)
+  should allow_value("Admin").for(:type)
+  should allow_value("Ta").for(:type)
+  should_not allow_value("OtherTypeOfUser").for(:type)
+
+
   context "A good User model" do
+    setup do
+      # Any users will do
+      Student.make
+    end
 
-    should have_many(:memberships)
-    should have_many(:groupings).through(:memberships)
-    should have_many(:notes).dependent(:destroy)
-    should have_many(:accepted_memberships)
-
-    should validate_uniqueness_of   :user_name
-    should validate_presence_of     :user_name
-    should validate_presence_of     :last_name
-    should validate_presence_of     :first_name
-
-    should allow_value("Student").for(:type)
-    should allow_value("Admin").for(:type)
-    should allow_value("Ta").for(:type)
-    should_not allow_value("OtherTypeOfUser").for(:type)
+    should validate_uniqueness_of :user_name
 
   end
 

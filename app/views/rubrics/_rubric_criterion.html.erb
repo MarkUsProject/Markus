@@ -4,36 +4,36 @@
     <%= image_tag "handle.png" %>
   </span>
   <span class="criterion_title_div link">
-    <%= link_to h(truncate(criterion.rubric_criterion_name,
-			   :length => 30,
-			   :omission => '...')),
-		:url => {:action => 'edit',
-			 :id => criterion.id},
-		:html => {:id => "criterion_title_#{criterion.id}"},
-		:remote => true %>
+    <%= link_to_remote truncate(criterion.rubric_criterion_name,
+                               :length => 30,
+                               :omission => '...'),
+                       :url => edit_assignment_rubric_path(@assignment,
+                                                           criterion),
+		       :method => 'get',
+                       :html => {:id => "criterion_title_#{criterion.id}"} %>
   </span>
   <span class="criterion_arrow">
     <% if location != :first and location != :single %>
-    <%=  link_to image_tag("icons/bullet_arrow_up.png",
-			   :alt => t('rubric_criteria.move_up')),
-		 :url => {:action => "move_criterion",
-			  :aid => @assignment.id,
-			  :id => criterion.id,
-			  :position => criterion.position,
-			  :direction => :up},
-		  :remote => true %>
+    <%= link_to_remote image_tag("icons/bullet_arrow_up.png",
+			                    :alt => t('rubric_criteria.move_up')),
+          	       :url => move_criterion_assignment_rubric_path(
+				  @assignment,
+				  criterion,
+				  :position => criterion.position,
+				  :direction => :up),
+          	      :method => 'get' %>
     <% end %> <br /> <% if  location != :last and location != :single %>
-    <%= link_to image_tag("icons/bullet_arrow_down.png",
-		:alt =>  t('rubric_criteria.move_down')),
-		:url => {:action => "move_criterion",
-			 :aid => @assignment.id,
-			 :id => criterion.id,
-			 :position => criterion.position,
-			 :direction => :down},
-		:remote => true %>
+    <%= link_to_remote image_tag("icons/bullet_arrow_down.png",
+		                 :alt =>  t('rubric_criteria.move_down')),
+		       :url => move_criterion_assignment_rubric_path(
+				  @assignment,
+				  criterion,
+				  :position => criterion.position,
+		    	          :direction => :down),
+		      :method => 'get' %>
     <% end %>
   </span>
-  <span id="criterion_weight_<%=h(criterion.id)%>" class="criterion_weight">
-    <%= h(criterion.weight)%>
+  <span id="criterion_weight_<%= criterion.id %>" class="criterion_weight">
+    <%= criterion.weight %>
   </span>
-</li> 
+</li>

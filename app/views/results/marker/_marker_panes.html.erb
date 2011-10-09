@@ -6,39 +6,39 @@
        <% if can_show_remark_request_tab_in_marker_pane(submission) %>
           <li class="tab"><a href="#remark_request_tab"><%= I18n.t("marker.remark_request") %></a></li>
        <% end %>
-    </ul>  
+    </ul>
     <div id="code_holder" class="tabbedArea">
       <div id="annotation_menu">
         <button id="new_annotation_button" onclick="make_new_annotation(); return false;"><%= I18n.t("marker.new_annot")%></button>
         <%= render :partial => "annotations/annotation_categories",
                    :locals => {:annotation_categories => annotation_categories}%>
-         <div class="clear"></div>  
+         <div class="clear"></div>
       </div> <!-- End of annotation_menu -->
 
       <div class="clear"></div>
       <div id="codeviewer">
 
-      </div> <!-- codeviewer --> 
-      
+      </div> <!-- codeviewer -->
+
     </div> <!-- End of Code holder -->
-  
-    <div id="annotations_summary" class="tabbedArea">    
+
+    <div id="annotations_summary" class="tabbedArea">
 
       <h3><%= I18n.t("marker.overall_comments") %></h3>
-      
-        <%= render :partial => 'results/marker/overall_comment', 
+
+        <%= render :partial => 'results/marker/overall_comment',
                    :locals => {:result => old_result ? old_result : result } %>
-       
+
       <h3><%= I18n.t("marker.current_annotations") %></h3>
       <p><%= I18n.t("marker.across_all_submission_files") %></p>
-    
+
       <ul id="annotation_summary_list">
       </ul>
-      
+
 
     </div> <!-- Remark Request -->
-  
-    <div id="remark_request_tab" class="tabbedArea">          
+
+    <div id="remark_request_tab" class="tabbedArea">
       <% if @submission.has_remark? %>
         <%= render :partial => 'results/marker/remark_request',
                    :locals => {:result => result,
@@ -47,7 +47,7 @@
       <% end %>
     </div> <!-- Remark Request -->
   </div> <!-- Code Pane -->
-  
+
   <!-- Divider  -->
   <div id="pane_divider">
   </div>
@@ -58,7 +58,7 @@
       <li class="tab"><a href="#mark_viewer"><%= I18n.t("marker.marks.marks") %></a></li>
       <li class="tab"><a href="#summary_viewer"><%= I18n.t("marker.marks.summary") %></a></li>
       <li class="tab"><a href="#submission_rule_viewer"><%= I18n.t("marker.marks.submission_rule") %></a></li>
-    </ul>  
+    </ul>
     <div id="mark_viewer" class="tabbedArea">
       <div class="mark_tools">
          <%= button_to_remote(I18n.t("marker.marks.expand_all"),
@@ -105,11 +105,11 @@
   <div id="submission_rule_viewer" class="tabbedArea">
     <%= render :partial => assignment.submission_rule.grader_tab_partial, :locals => {:grouping => result.submission.grouping} %>
   </div>
-  
+
   <!-- Annotation pane-->
   <div id="annotation_holder">
   </div>
-  
+
   <div id="create_annotation_dialog" style="display:none;">
     <input type="hidden" id="x1" value=""></input>
     <input type="hidden" id="x2" value=""></input>

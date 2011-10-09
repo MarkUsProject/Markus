@@ -22,7 +22,7 @@
 
 
   document.observe("dom:loaded", function(){
-  
+
     modalUpload = new Control.Modal($('upload_dialog'),
     {
       overlayOpacity: 0.75,
@@ -36,7 +36,7 @@
       className: 'modalDownload',
       fade: false
     });
-    
+
   });
 //]]>
 </script>
@@ -48,20 +48,24 @@
 <% end %>
 
 <div id="title_bar">
-  <h1><%= I18n.t("rubric_criteria.criteria_management", :identifier => h(@assignment.short_identifier)) %>
-    
-        <%= link_to_function t("add_criterion"), %| if($('new_rubric_criterion') != null) {
-          $('rubric_criterion_rubric_criterion_name').select();
-          $('rubric_criterion_rubric_criterion_name').focus();
-        } else {
-        #{remote_function :url => new_assignment_rubric_path(@assignment)}
-        }|%>
+  <h1><%= I18n.t("rubric_criteria.criteria_management",
+                 :identifier => @assignment.short_identifier) %>
+  </h1>
+  <div class="headingButtons">
+        <%= link_to_function t("add_criterion"),
+            %| if($('new_rubric_criterion') != null) {
+              $('rubric_criterion_rubric_criterion_name').select();
+              $('rubric_criterion_rubric_criterion_name').focus();
+            } else {
+              #{remote_function :url => new_assignment_rubric_path(@assignment),
+                                :method => 'get'}
+            }|%>
    <span class="menu_bar" >|</span>
     <%= button_to_function I18n.t("upload"), "upload_criteria();"%>
    <span class="menu_bar" >|</span>
     <%= button_to_function I18n.t("download"), "download_criteria();"%>
 
-  </h1>	
+  </div>
 </div><!-- Title bar-->
 
 <div class="wrapLeft">
@@ -82,6 +86,13 @@
   <% end %>
   </div>
 <% end %>
+
+<% if !flash[:success].nil? %>
+  <div class="success">
+    <%= flash[:success] %>
+  </div>
+<% end %>
+
 <p id="new_criterion_error" class="warning" style="display: none;">
 
 </p>
@@ -90,18 +101,18 @@
   <%=  render :partial => "rubrics/rubric_criteria_pane" %>
 </div>
 
-<!------------------------------------------------------------------- -->    
+<!------------------------------------------------------------------- -->
 
     <div id="rubric_levels_pane">
       <div id="rubric_levels_pane_menu">
 	<%= render :partial => 'rubric_manager_help' %>
         <div id="rubric_levels_pane_list">
         </div>
-    </div><!--rubric level pane --> 
+    </div><!--rubric level pane -->
 </div>
 </div>
 
-<div id="upload_dialog"> 
+<div id="upload_dialog">
   <h1><%= t('rubric_criteria.upload.csv_title') %></h1>
   <p><%= t('rubric_criteria.upload.csv_prompt') %></p>
   <%= form_for :csv_upload, :url => {:controller=>"rubrics",

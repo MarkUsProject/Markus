@@ -21,3 +21,6 @@ log/
 
 # Temporary and backup files
 *~
+
+# MarkUs Review poster tool credentials file
+.markusdev-creds

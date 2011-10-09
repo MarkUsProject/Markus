@@ -7,10 +7,6 @@ require 'shoulda'
 
 class SectionTest < ActiveSupport::TestCase
 
-  def setup
-    clear_fixtures
-  end
-
   context "An assignment with section due dates" do
     setup do
       @section = Section.make

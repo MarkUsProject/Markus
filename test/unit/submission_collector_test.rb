@@ -1,6 +1,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
+
 require 'shoulda'
 require 'mocha'
 
@@ -24,7 +24,7 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
     @priority_queue = @submission_collector.grouping_queues.find_by_priority_queue(true).groupings
     @regular_queue = @submission_collector.grouping_queues.find_by_priority_queue(false).groupings
     @groupings = []
-    (1..10).each do |i|
+    (1..3).each do |i|
       @groupings.push(Grouping.make)
     end
   end
@@ -60,23 +60,21 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
         should "only push the groupings that were missing" do
           assert_equal @groupings, (@regular_queue).sort { |x,y| x.id <=> y.id}
           assert @priority_queue.empty?
-          @groupings.slice(2..9).each do |grouping| assert !grouping.is_collected? end
+          assert !@groupings[2].is_collected?
         end
       end
 
       context "and some in the priority_queue" do
         setup do
           setup_collector
-          @regular_queue.push(@groupings[0])
-          @priority_queue.push(@groupings[8])
-          @priority_queue.push(@groupings[9])
+          @priority_queue.push(@groupings[2])
           @submission_collector.stubs(:start_collection_process)
           @submission_collector.push_groupings_to_queue(@groupings)
         end
 
         should "only push the groupings that were in neither queue" do
-          assert_equal @groupings.slice(0..7), @regular_queue.sort { |x,y| x.id <=> y.id}
-          assert_equal @groupings.slice(8..9), @priority_queue.sort { |x,y| x.id <=> y.id}
+          assert_equal @groupings.slice(0..1), @regular_queue.sort { |x,y| x.id <=> y.id}
+          assert_equal [@groupings[2]], @priority_queue.sort { |x,y| x.id <=> y.id}
           @groupings.slice(1..7).each do |grouping| assert !grouping.is_collected? end
         end
       end
@@ -103,16 +101,17 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
     grouping" do
       setup do
         setup_collector
-        @groupings.slice(0..4).each do |grouping| @regular_queue.push(grouping) end
-        @groupings.slice(5..8).each do |grouping| @priority_queue.push(grouping) end
+        @groupings.slice(0..1).each do
+          |grouping| @regular_queue.push(grouping)
+        end
         @submission_collector.stubs(:start_collection_process)
-        @submission_collector.push_grouping_to_priority_queue(@groupings[9])
+        @submission_collector.push_grouping_to_priority_queue(@groupings[2])
       end
 
       should "add that grouping to the priority queue" do
-        assert_equal @groupings.slice(5..9), @priority_queue.sort { |x,y| x.id <=> y.id}
-        assert_equal @groupings.slice(0..4), @regular_queue.sort { |x,y| x.id <=> y.id}
-        assert !@groupings[9].is_collected?
+        assert_equal [@groupings[2]], @priority_queue.sort { |x,y| x.id <=> y.id}
+        assert_equal @groupings.slice(0..1), @regular_queue.sort { |x,y| x.id <=> y.id}
+        assert !@groupings[2].is_collected?
       end
     end
 
@@ -167,15 +166,15 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
       setup do
         setup_collector
         @submission_collector.stubs(:start_collection_process)
-        @submission_collector.push_groupings_to_queue(@groupings.slice(0..4))
-        @submission_collector.push_grouping_to_priority_queue(@groupings[5])
-        @submission_collector.remove_grouping_from_queue(@groupings[4])
+        @submission_collector.push_groupings_to_queue(@groupings.slice(0..1))
+        @submission_collector.push_grouping_to_priority_queue(@groupings[2])
+        @submission_collector.remove_grouping_from_queue(@groupings[2])
       end
 
       should "remove the grouping from the regular queue" do
-        assert_nil @groupings[4].grouping_queue
-        assert_equal @groupings.slice(0..3), @regular_queue.sort { |x,y| x.id <=> y.id}
-        assert_equal [@groupings[5]], @priority_queue
+        assert_nil @groupings[2].grouping_queue
+        assert_equal @groupings.slice(0..1), @regular_queue.sort { |x,y| x.id <=> y.id}
+        assert_equal [], @priority_queue
       end
     end
 
@@ -183,16 +182,14 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
       setup do
         setup_collector
         @submission_collector.stubs(:start_collection_process)
-        @submission_collector.push_groupings_to_queue(@groupings.slice(0..4))
-        @submission_collector.push_grouping_to_priority_queue(@groupings[5])
-        @submission_collector.push_grouping_to_priority_queue(@groupings[6])
-        @submission_collector.remove_grouping_from_queue(@groupings[5])
+        @submission_collector.push_groupings_to_queue(@groupings.slice(0..1))
+        @submission_collector.push_grouping_to_priority_queue(@groupings[2])
+        @submission_collector.remove_grouping_from_queue(@groupings[2])
       end
 
       should "remove the grouping from the priority queue" do
-        assert_nil @groupings[5].grouping_queue
-        assert_equal @groupings.slice(0..4), @regular_queue.sort { |x,y| x.id <=> y.id}
-        assert_equal [@groupings[6]], @priority_queue
+        assert_nil @groupings[2].grouping_queue
+        assert_equal @groupings.slice(0..1), @regular_queue.sort { |x,y| x.id <=> y.id}
       end
     end
   end
@@ -232,16 +229,15 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
       setup do
         setup_collector
         @submission_collector.stubs(:start_collection_process)
-        @submission_collector.push_groupings_to_queue(@groupings.slice(0..4))
-        @submission_collector.push_grouping_to_priority_queue(@groupings[5])
-        @submission_collector.push_grouping_to_priority_queue(@groupings[6])
+        @submission_collector.push_groupings_to_queue(@groupings.slice(0..1))
+        @submission_collector.push_grouping_to_priority_queue(@groupings[2])
       end
 
       should "return the first grouping of the priority queue" do
-        assert_equal @groupings[5],
+        assert_equal @groupings[2],
           @submission_collector.get_next_grouping_for_collection
-        assert_equal @groupings.slice(0..4), @regular_queue.sort { |x,y| x.id <=> y.id}
-        assert_equal @groupings.slice(5..6), @priority_queue.sort { |x,y| x.id <=> y.id}
+        assert_equal @groupings.slice(0..1), @regular_queue.sort { |x,y| x.id <=> y.id}
+        assert_equal [@groupings[2]], @priority_queue.sort { |x,y| x.id <=> y.id}
       end
     end
   end
@@ -265,16 +261,16 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
       setup do
         setup_collector
         @submission_collector.stubs(:start_collection_process)
-        @submission_collector.expects(:get_next_grouping_for_collection).returns(@groupings[5])
-        @submission_collector.push_groupings_to_queue(@groupings.slice(0..4))
-        @submission_collector.push_grouping_to_priority_queue(@groupings[5])
+        @submission_collector.expects(:get_next_grouping_for_collection).returns(@groupings[2])
+        @submission_collector.push_groupings_to_queue(@groupings.slice(0..1))
+        @submission_collector.push_grouping_to_priority_queue(@groupings[2])
         @submission_collector.collect_next_submission
       end
 
       should "collect that submission and remove it from the queue" do
-        assert @groupings[5].is_collected?
-        assert_nil @groupings[5].grouping_queue
-        assert_equal @groupings.slice(0..4), @regular_queue.sort { |x,y| x.id <=> y.id}
+        assert @groupings[2].is_collected?
+        assert_nil @groupings[2].grouping_queue
+        assert_equal @groupings.slice(0..1), @regular_queue.sort { |x,y| x.id <=> y.id}
         assert @priority_queue.empty?
       end
     end

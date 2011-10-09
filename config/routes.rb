@@ -42,13 +42,16 @@ Markus::Application.routes.draw do
     end
 
     resources :rubrics do
+      member do
+        get 'move_criterion'
+      end
+
       collection do
         get 'update_positions'
         get 'csv_upload'
         get 'yml_upload'
         get 'download_csv'
         get 'download_yml'
-        get 'move_criterion'
       end
     end
 
@@ -174,8 +177,11 @@ Markus::Application.routes.draw do
     end
 
     resources :annotation_categories do
-      collection do
+      member do
         get 'get_annotations'
+      end
+
+      collection do
         get 'add_annotation_category'
         get 'add_annotation_text'
         get 'csv_upload'
@@ -253,7 +259,7 @@ Markus::Application.routes.draw do
       get 'about'
       get 'login_as'
       get 'clear_role_switch_session'
-      get 'reset_api_key'
+      post 'reset_api_key'
     end
   end
 

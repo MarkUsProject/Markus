@@ -1,48 +1,30 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
+
 require 'shoulda'
 require 'mocha'
 require 'machinist'
 
 class RubricCriterionTest < ActiveSupport::TestCase
-  fixtures :all
-  set_fixture_class :rubric_criteria => RubricCriterion
 
-  #Test that Criteria with no names are not valid
-  def test_no_name_attr
-    assert_raise ActiveRecord::RecordInvalid do
-      RubricCriterion.make(:rubric_criterion_name => nil)
-    end
-  end
+  should validate_presence_of :assignment_id
+  should validate_numericality_of :assignment_id
+  should validate_numericality_of :weight
+  should validate_presence_of :weight
 
-  # Test to make sure that Criteria have unique names within the scope of a
-  # single assignment
-  def test_unique_name
-    original = RubricCriterion.make(:rubric_criterion_name => "Algorithm Design")
-    taken_name = RubricCriterion.make(:rubric_criterion_name => "Algorithm Design")
-    taken_name.assignment = original.assignment
-    assert !taken_name.valid?
-  end
+  should validate_presence_of :rubric_criterion_name
 
-  # Test to make sure that Criteria can have the same names if they belong to
-  # different Assignments
-  def test_same_name_for_different_assignments
-    original = RubricCriterion.make(:rubric_criterion_name => "Algorithm Design")
-    taken_name = RubricCriterion.make(:rubric_criterion_name => "Algorithm Design")
-    assert taken_name.valid?
-  end
+# FIXME there should be an easy "default" shoulda way to test the uniqueness
+# on the name on a specific scope
 
-  #Test that Criteria unassigned to Assignment are NOT OK
-  def test_no_assignment_id
-    assert_raise ActiveRecord::RecordInvalid do
-      no_assignment_id = RubricCriterion.make(:assignment => nil)
-    end
-  end
-
-  #Test that Criteria without weight are NOT OK
-  def no_weight
-    no_weight = RubricCriterion.make(:weight => nil)
-    assert !no_weight.valid?
-  end
+#  context "a valid Rubric Criterion model" do
+#    setup do
+#      RubricCriterion.make
+#    end
+#
+#    should validate_uniqueness_of(
+#                :rubric_criterion_name).scope(:assignment_d)
+#  end
 
   #Test that Criteria assigned to non-existant Assignment
   #is NOT OK
@@ -52,72 +34,8 @@ class RubricCriterionTest < ActiveSupport::TestCase
     assert !assignment_id_dne.save
   end
 
-  #Test that Criteria assignment ID's can only be integers
-  def test_assignment_id_int_only
-    int_only = create_no_attr(nil)
-    int_only.assignment_id = 'string'
-    assert !int_only.valid?
-
-    int_only.assignment_id = '0.1'
-    assert !int_only.valid?
-
-    int_only.assignment_id = 0.1
-    assert !int_only.valid?
-
-    int_only.assignment_id = -1
-    assert !int_only.valid?
-
-  end
-
-  # Weights are restricted to a decimal value
-  def test_bad_weight_range
-    # create valid assignment first
-    a = Assignment.make(:marking_scheme_type => 'rubric')
-    assert a.valid? # should be valid now
-    weight_range = RubricCriterion.make(:assignment => a, :weight => 2, :position => 1)
-
-    assert weight_range.valid? # should be valid now
-
-    weight_range.weight = 'string'
-    assert !weight_range.valid?, "weight is a string, it shouldn't be valid"
-
-    weight_range.weight = -0.1
-    weight_range.assignment.reload
-    assert !weight_range.valid?, "assignment total weight is negative, it should be invalid"
-
-    weight_range.weight = 0.0
-    weight_range.assignment.reload
-    assert !weight_range.valid?, "assignment total weight is zero, it should be invalid"
-
-    weight_range.weight = 100.0
-    weight_range.assignment.reload
-    assert weight_range.valid?, "weight is fine, it should be valid"
-
-    weight_range.weight = 0.5
-    weight_range.assignment.reload
-    assert weight_range.valid?, "weight is fine, it should be valid"
-
-    #now we add another criterion to make the total weight positive
-    weight_range_2 = RubricCriterion.make(:assignment => a, :weight => 100, :position => 2)
-
-    weight_range.weight = -0.1
-    weight_range.assignment.reload
-    assert weight_range.valid?, "assignment total weight is fine, it should be valid"
-
-    weight_range.weight = 0.0
-    weight_range.assignment.reload
-    assert weight_range.valid?, "assignment total weight is fine, it should be valid"
-
-    weight_range.weight = -100.0
-    weight_range.assignment.reload
-    assert !weight_range.valid?, "assignment total weight is 0, it should be invalid"
-
-    weight_range.weight = -100.1
-    weight_range.assignment.reload
-    assert !weight_range.valid?, "assignment total weight is negative, it should be invalid"
-  end
-
   should "round weights that have more than 3 significant digits" do
+    RubricCriterion.make
     assert RubricCriterion.count > 0
     criterion = RubricCriterion.first
     criterion.weight = 0.5555555555
@@ -125,38 +43,22 @@ class RubricCriterionTest < ActiveSupport::TestCase
     assert_equal 0.556, criterion.weight
   end
 
-  # Helper method for test_validate_presence_of to create a criterion without
-  # the specified attribute. if attr == nil then all attributes are included
-  def create_no_attr(attr)
-    new_rubric_criteria = {
-      :rubric_criterion_name => 'somecriteria',
-      :assignment_id => Assignment.find(:first).id,
-      :weight => 0.25,
-      :level_0_name => 'Horrible',
-      :level_1_name => 'Poor',
-      :level_2_name => 'Satisfactory',
-      :level_3_name => 'Good',
-      :level_4_name => 'Excellent'
-    }
+  should "find a mark for a specific rubric and result" do
+    assignment = Assignment.make
+    grouping = Grouping.make(:assignment => assignment)
+    submission = Submission.make(:grouping => grouping)
+    result = Result.make(:submission => submission)
 
-    new_rubric_criteria.delete(attr) if attr
-    return RubricCriterion.new(new_rubric_criteria)
-  end
+    rubric = RubricCriterion.make(:assignment => assignment)
 
-  def test_mark_for
-    result = results(:result_1)
-    rubric = rubric_criteria(:c4)
+    mark = Mark.make(:result => result,
+                    :markable => rubric)
     assert_not_nil rubric.mark_for(result.id)
   end
 
-  def test_set_default_levels_1
+  should "Set default levels" do
     r = RubricCriterion.new
     assert r.set_default_levels
-  end
-
-  def test_set_default_levels_2
-    r = RubricCriterion.new
-    r.set_default_levels
     r.save
     assert_equal(I18n.t("rubric_criteria.defaults.level_0"), r.level_0_name)
     assert_equal(I18n.t("rubric_criteria.defaults.level_1"), r.level_1_name)
@@ -214,7 +116,6 @@ class RubricCriterionTest < ActiveSupport::TestCase
       assert_equal 0, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
     end
 
-
     should "assign multiple TAs" do
       @ta1 = Ta.make
       @ta2 = Ta.make
@@ -251,10 +152,15 @@ class RubricCriterionTest < ActiveSupport::TestCase
   context "from an assignment composed of rubric criteria" do
     setup do
       @csv_string = "Algorithm Design,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,
-Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,
-Testing,2.2,Horrible,Poor,Satisfactory,Good,Excellent,,,,,
-Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
-      @assignment = assignments(:assignment_1)
+Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
+      @assignment = Assignment.make(:marking_scheme_type => 'rubric')
+      RubricCriterion.make(:assignment => @assignment,
+                           :rubric_criterion_name => "Algorithm Design",
+                           :weight => 2.0)
+      RubricCriterion.make(:assignment => @assignment,
+                           :rubric_criterion_name => "Documentation",
+                           :weight => 2.7)
+
     end
 
     should "be able to get a CSV string" do
@@ -268,34 +174,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       tempfile << csv_string
       tempfile.rewind
       invalid_lines = []
-      dst_assignment = assignments(:assignment_3)
-      nb_updates = RubricCriterion.parse_csv(tempfile, dst_assignment, invalid_lines)
-      assert_equal 4, nb_updates
-      assert_equal 0, invalid_lines.size
-      dst_assignment.reload
-      assert_equal 4, dst_assignment.rubric_criteria.size
-    end
-  end
-
-  context "from an assignment composed of rubric criteria with commas and quotes in the descriptions" do
-    setup do
-      @csv_string = "Part 1 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,\"Makes the TA \"\"Shivers\"\"\",\"Leaves the TA \"\"calm\"\"\",\"Makes the TA \"\"grin\"\"\",\"Makes the TA \"\"smile\"\"\",\"Makes, the, TA scream: \"\"at last, it was about time\"\"\"
-Part 2 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
-      @assignment = assignments(:assignment_2)
-    end
-
-    should "be able to get a CSV string" do
-      s = RubricCriterion.create_csv(@assignment)
-      assert_equal @csv_string, s
-    end
-
-    should "be able to use a generated string for parsing" do
-      csv_string = RubricCriterion.create_csv(@assignment)
-      tempfile = Tempfile.new('rubric_csv')
-      tempfile << csv_string
-      tempfile.rewind
-      invalid_lines = []
-      dst_assignment = assignments(:assignment_3)
+      dst_assignment =  Assignment.make(:marking_scheme_type => 'rubric')
       nb_updates = RubricCriterion.parse_csv(tempfile, dst_assignment, invalid_lines)
       assert_equal 2, nb_updates
       assert_equal 0, invalid_lines.size
@@ -304,9 +183,44 @@ Part 2 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
     end
   end
 
+  context "from an assignment composed of rubric criteria with commas and quotes in the descriptions" do
+    setup do
+      @csv_string = "Part 1 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,\"Makes the TA \"\"Shivers\"\"\",\"Leaves the TA \"\"calm\"\"\",\"Makes the TA \"\"grin\"\"\",\"Makes the TA \"\"smile\"\"\",\"Makes, the TA scream: \"\"at last, it was about time\"\"\"\n"
+      @assignment = Assignment.make
+      RubricCriterion.make(:assignment => @assignment,
+                           :rubric_criterion_name => "Part 1 Programming",
+                           :weight => 2.0,
+                           :level_0_description => 'Makes the TA "Shivers"',
+                           :level_1_description => 'Leaves the TA "calm"',
+                           :level_2_description => 'Makes the TA "grin"',
+                           :level_3_description => 'Makes the TA "smile"',
+                           :level_4_description => 'Makes, the TA scream: "at last, it was about time"'
+                           )
+    end
+
+    should "be able to get a CSV string" do
+      s = RubricCriterion.create_csv(@assignment)
+      assert_equal @csv_string, s
+    end
+
+    should "be able to use a generated string for parsing" do
+      csv_string = RubricCriterion.create_csv(@assignment)
+      tempfile = Tempfile.new('rubric_csv')
+      tempfile << csv_string
+      tempfile.rewind
+      invalid_lines = []
+      dst_assignment = Assignment.make
+      nb_updates = RubricCriterion.parse_csv(tempfile, dst_assignment, invalid_lines)
+      assert_equal 1, nb_updates
+      assert_equal 0, invalid_lines.size
+      dst_assignment.reload
+      assert_equal 1, dst_assignment.rubric_criteria.size
+    end
+  end
+
   context "from an assignment without criteria" do
     setup do
-      @assignment = assignments(:assignment_3)
+      @assignment = Assignment.make
     end
 
     should "be able to get an empty CSV string" do
@@ -368,7 +282,7 @@ Part 2 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
         setup do
           # we'll need a valid assignment for those cases.
-          @assignment = assignments(:assignment_1)
+          @assignment = Assignment.make
           # and a valid csv row...
           row = ['criterion 5', '1.0']
           (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
@@ -440,7 +354,7 @@ Part 2 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       tempfile = Tempfile.new('rubric_criteria_csv')
       tempfile << "criterion 6,1.0,l0,l1,l2,l3,l4,d0,d1,d2,d3,d4\n"
       tempfile.rewind
-      assignment = assignments(:assignment_3)
+      assignment = Assignment.make
       invalid_lines = []
 
       nb_updates = RubricCriterion.parse_csv(tempfile, assignment, invalid_lines)
@@ -452,7 +366,7 @@ Part 2 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       tempfile = Tempfile.new('flexible_criteria_csv')
       tempfile << "criterion 6\n,criterion 7\n"
       tempfile.rewind
-      assignment = assignments(:assignment_3)
+      assignment = Assignment.make
       invalid_lines = []
 
       nb_updates = RubricCriterion.parse_csv(tempfile, assignment, invalid_lines)
@@ -460,6 +374,27 @@ Part 2 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       assert_equal 2, invalid_lines.length
     end
   end
+
+  ####################   HELPERS    #################################
+
+  # Helper method for test_validate_presence_of to create a criterion without
+  # the specified attribute. if attr == nil then all attributes are included
+  def create_no_attr(attr)
+    new_rubric_criteria = {
+      :rubric_criterion_name => 'somecriteria',
+      :assignment_id => Assignment.make,
+      :weight => 0.25,
+      :level_0_name => 'Horrible',
+      :level_1_name => 'Poor',
+      :level_2_name => 'Satisfactory',
+      :level_3_name => 'Good',
+      :level_4_name => 'Excellent'
+    }
+
+    new_rubric_criteria.delete(attr) if attr
+    return RubricCriterion.new(new_rubric_criteria)
+  end
+
 
 
 end

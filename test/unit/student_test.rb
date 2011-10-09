@@ -33,10 +33,6 @@ class StudentTest < ActiveSupport::TestCase
 
   end
 
-  def setup
-    clear_fixtures
-  end
-
   context "CSV and YML upload" do
 
     # Update tests ---------------------------------------------------------

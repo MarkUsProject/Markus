@@ -8,7 +8,7 @@
 test_result_example:
   filename: "test.txt"
   file_content: "some text and some ...... :-)"
-  submission_id: <%= Fixtures.identify(:submission_1) %> 
+  submission_id: <%= Fixtures.identify(:submission_1) %>
 
 test_result_controller_test1:
   filename: "example.rb"

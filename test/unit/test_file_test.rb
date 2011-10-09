@@ -1,17 +1,12 @@
 # test using MACHINIST
 
 require File.join(File.dirname(__FILE__),'..', 'test_helper')
-require File.join(File.dirname(__FILE__),'..', 'blueprints', 'blueprints')
 require File.join(File.dirname(__FILE__),'..', 'blueprints', 'helper')
 require 'shoulda'
 
 class TestFileTest < ActiveSupport::TestCase
   should validate_presence_of :filename
   should belong_to :assignment
-
-  def setup
-    clear_fixtures
-  end
 
   context "A valid test file" do
 

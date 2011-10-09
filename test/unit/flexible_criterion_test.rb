@@ -9,10 +9,6 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
   UPLOAD_CSV_STRING = "criterion4,10.0,\"description4, \"\"with quotes\"\"\"\n"
   INVALID_CSV_STRING = "criterion3\n"
 
-  def setup
-    clear_fixtures
-  end
-
   context "A good FlexiableCriterion model" do
     setup do
       FlexibleCriterion.make
@@ -76,7 +72,7 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
     end
 
   end
-  
+
   context "An assignment, of type flexible criteria" do
     setup do
       @assignment = Assignment.make(:marking_scheme_type => 'flexible')

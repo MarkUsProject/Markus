@@ -3,7 +3,7 @@
 result_1:
    submission_id:        <%= Fixtures.identify(:submission_1)%>
    marking_state:        unmarked
-   overall_comment:      
+   overall_comment:
    created_at:           <%= Time.now.to_s(:db) %>
    updated_at:           <%= Time.now.to_s(:db) %>
    released_to_students: false
@@ -11,7 +11,7 @@ result_1:
 result_2:
    submission_id:        <%= Fixtures.identify(:submission_2)%>
    marking_state:        partial
-   overall_comment:      
+   overall_comment:
    created_at:           <%= Time.now.to_s(:db) %>
    updated_at:           <%= Time.now.to_s(:db) %>
    released_to_students: false
@@ -19,7 +19,7 @@ result_2:
 result_3:
    submission_id:        <%= Fixtures.identify(:submission_3)%>
    marking_state:        complete
-   overall_comment:      
+   overall_comment:
    created_at:           <%= Time.now.to_s(:db) %>
    updated_at:           <%= Time.now.to_s(:db) %>
    released_to_students: false
@@ -27,13 +27,13 @@ result_3:
 result_4:
    submission_id:        <%= Fixtures.identify(:submission_4)%>
    marking_state:        complete
-   overall_comment:      
+   overall_comment:
    created_at:           <%= Time.now.to_s(:db) %>
    updated_at:           <%= Time.now.to_s(:db) %>
    released_to_students: true
 
 result_5:
-   submission_id:        <%= Fixtures.identify(:sub_3) %>        
+   submission_id:        <%= Fixtures.identify(:sub_3) %>
    marking_state:        complete
    overall_comment:      "nice work"
    created_at:           <%= Time.now.to_s(:db) %>
@@ -42,7 +42,7 @@ result_5:
 
 # The result for submission :sub_1
 result_6:
-   submission_id:        <%= Fixtures.identify(:sub_1) %>        
+   submission_id:        <%= Fixtures.identify(:sub_1) %>
    marking_state:        complete
    overall_comment:      "sumission_6"
    created_at:           <%= Time.now.to_s(:db) %>
@@ -50,27 +50,27 @@ result_6:
    released_to_students: true
 
 result_7:
-   submission_id:        <%= Fixtures.identify(:sub_2) %>        
+   submission_id:        <%= Fixtures.identify(:sub_2) %>
    marking_state:        complete
    overall_comment:      "nice work"
    created_at:           <%= Time.now.to_s(:db) %>
    updated_at:           <%= Time.now.to_s(:db) %>
    released_to_students: true
-   
+
 result_flexible_1:
    submission_id:        <%= Fixtures.identify(:submission_flexible_1)%>
    marking_state:        complete
-   overall_comment:      
+   overall_comment:
    created_at:           <%= Time.now.to_s(:db) %>
    updated_at:           <%= Time.now.to_s(:db) %>
    released_to_students: true
 
 result_flexible_2:
-   submission_id:        <%= Fixtures.identify(:submission_flexible_2) %>        
+   submission_id:        <%= Fixtures.identify(:submission_flexible_2) %>
    marking_state:        complete
    overall_comment:      "nice work 2"
    created_at:           <%= Time.now.to_s(:db) %>
    updated_at:           <%= Time.now.to_s(:db) %>
    released_to_students: true
-   
+
 

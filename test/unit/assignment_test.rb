@@ -1,5 +1,4 @@
-require File.dirname(__FILE__) + '/../test_helper'
-require File.join(File.dirname(__FILE__),'/../blueprints/blueprints')
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 require 'shoulda'
 
@@ -27,8 +26,8 @@ class AssignmentTest < ActiveSupport::TestCase
   should have_many :section_due_dates
   should have_one  :assignment_stat
 
-  should validate_presence_of     :repository_folder
-  should validate_presence_of     :group_min
+  should validate_presence_of :repository_folder
+  should validate_presence_of :group_min
 
   should validate_numericality_of :group_min
   should validate_numericality_of :group_max
@@ -48,10 +47,6 @@ class AssignmentTest < ActiveSupport::TestCase
   should allow_value(true).for(:display_grader_names_to_students)
   should allow_value(false).for(:display_grader_names_to_students)
 
-  def setup
-    clear_fixtures
-  end
-
   def teardown
     destroy_repos
   end
@@ -67,57 +62,47 @@ class AssignmentTest < ActiveSupport::TestCase
     should "work" do
       assert @a.valid?
     end
+  end
 
-    should "catch max group size less than min group size" do
-      a = Assignment.new(:group_min => 3,:group_max=> 2)
-      assert !a.valid?
-    end
 
-    should "catch an invalid date" do
-      a = Assignment.new(:due_date => "2020/02/31")  #31st day of february
-      assert !a.valid?
-    end
+  should "catch max group size less than min group size" do
+    a = Assignment.new(:group_min => 3,:group_max=> 2)
+    assert !a.valid?
+  end
 
-    should "catch a zero group_min" do
-      a = Assignment.new(:group_min => 0)
-      assert !a.valid?
-    end
+  should "catch an invalid date" do
+    a = Assignment.new(:due_date => "2020/02/31")  #31st day of february
+    assert !a.valid?
+  end
 
-    should "catch a negative group_min" do
-      a = Assignment.new(:group_min => -5)
-      assert !a.valid?
-    end
+  should "catch a zero group_min" do
+    a = Assignment.new(:group_min => 0)
+    assert !a.valid?
+  end
 
-    should "catch a nil group_min" do
-      a = Assignment.new(:group_min => nil)
-      assert !a.valid?
-    end
+  should "catch a negative group_min" do
+    a = Assignment.new(:group_min => -5)
+    assert !a.valid?
+  end
 
-    should "catch a negative tokens_per_day value" do
-      a = Assignment.new(:tokens_per_day => '-10')
-      assert !a.valid?, "assignment expected to be invalid when tokens_per_day is < 0"
-    end
+  should "catch a nil group_min" do
+    a = Assignment.new(:group_min => nil)
+    assert !a.valid?
+  end
+
+  should "catch a negative tokens_per_day value" do
+    a = Assignment.new(:tokens_per_day => '-10')
+    assert !a.valid?, "assignment expected to be invalid when tokens_per_day is < 0"
   end
 
   context "A past due assignment w/ No Late submission rule" do
     setup do
       @assignment = Assignment.make({:due_date => 2.days.ago})
-      @section = Section.make
-      student = Student.make
-      @grouping = Grouping.make(:assignment => @assignment)
-      StudentMembership.make(:grouping => @grouping,
-                :user => student,
-                :membership_status => StudentMembership::STATUSES[:inviter])
     end
 
     should "return true on past_due_date? call" do
       assert @assignment.past_due_date?
     end
-
-    should "return true on section_past_due_date? call" do
-      assert @assignment.section_past_due_date?(@grouping)
-    end
-
     should "return the last due date" do
       assert_equal 2.days.ago.day(), @assignment.latest_due_date.day()
     end
@@ -126,10 +111,25 @@ class AssignmentTest < ActiveSupport::TestCase
       assert @assignment.past_collection_date?
     end
 
-    should "return the normal due date for section due date" do
-      assert @assignment.section_due_date(@section)
-    end
+    context "with a section" do
+      setup do
+        @section = Section.make
+        student = Student.make
+        @grouping = Grouping.make(:assignment => @assignment)
+        StudentMembership.make(:grouping => @grouping,
+                  :user => student,
+                  :membership_status => StudentMembership::STATUSES[:inviter])
 
+      end
+
+      should "return the normal due date for section due date" do
+        assert @assignment.section_due_date(@section)
+      end
+
+      should "return true on section_past_due_date? call" do
+        assert @assignment.section_past_due_date?(@grouping)
+      end
+    end
   end
 
   context "A before due assignment w/ No Late submission rule" do
@@ -184,18 +184,19 @@ class AssignmentTest < ActiveSupport::TestCase
     context "with multiple tas assigned" do
       setup do
         ta1 = Ta.make
-        5.times do
-          grouping = Grouping.make(:assignment => @assignment)
-          StudentMembership.make({:grouping => grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
-          TaMembership.make({:user_id => ta1.id, :grouping => grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
-        end
+        grouping = Grouping.make(:assignment => @assignment)
+        StudentMembership.make({:grouping => grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
+        TaMembership.make({:user_id => ta1.id, :grouping => grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
 
         ta2 = Ta.make
-        5.times do
-          grouping = Grouping.make(:assignment => @assignment)
-          StudentMembership.make({:grouping => grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
-          TaMembership.make({:user_id => ta2.id, :grouping => grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
-        end
+        grouping = Grouping.make(:assignment => @assignment)
+        StudentMembership.make(
+              {:grouping => grouping,
+               :membership_status => StudentMembership::STATUSES[:accepted]})
+        TaMembership.make(
+              {:user_id => ta2.id,
+               :grouping => grouping,
+               :membership_status => StudentMembership::STATUSES[:accepted]})
       end
 
       should "return 2 tas assigned" do
@@ -209,14 +210,13 @@ class AssignmentTest < ActiveSupport::TestCase
 
     context "with some assignments graded" do
       setup do
-        3.times do
-          membership = StudentMembership.make(:grouping => Grouping.make(:assignment => @assignment),:membership_status => StudentMembership::STATUSES[:accepted])
-          sub = Submission.make(:grouping => membership.grouping)
-        end
+        grouping = Grouping.make(:assignment => @assignment)
+        sub = Submission.make(:grouping => grouping)
 
-        5.times do
-          membership = StudentMembership.make(:grouping => Grouping.make(:assignment => @assignment),:membership_status => StudentMembership::STATUSES[:accepted])
-          sub = Submission.make(:grouping => membership.grouping)
+        2.times do
+          grouping = Grouping.make(:assignment => @assignment)
+
+          sub = Submission.make(:grouping => grouping)
           result = sub.result
           result.marking_state = Result::MARKING_STATES[:complete]
           result.save
@@ -224,15 +224,15 @@ class AssignmentTest < ActiveSupport::TestCase
       end
 
       should "have 5 result completed" do
-        assert @assignment.graded_submissions.size == 5
+        assert @assignment.graded_submissions.size == 2
       end
     end
 
     context "with all assignments graded" do
       setup do
-        5.times do
-          membership = StudentMembership.make(:grouping => Grouping.make(:assignment => @assignment),:membership_status => StudentMembership::STATUSES[:accepted])
-          sub = Submission.make(:grouping => membership.grouping)
+        2.times do
+          grouping = Grouping.make(:assignment => @assignment)
+          sub = Submission.make(:grouping => grouping)
           result = sub.result
           result.marking_state = Result::MARKING_STATES[:complete]
           result.save
@@ -240,7 +240,7 @@ class AssignmentTest < ActiveSupport::TestCase
       end
 
       should "have 5 result completed" do
-        assert @assignment.graded_submissions.size == 5
+        assert @assignment.graded_submissions.size == 2
       end
     end
 
@@ -256,8 +256,8 @@ class AssignmentTest < ActiveSupport::TestCase
     context "with a student in a group with a marked submission" do
       setup do
         @membership = StudentMembership.make(:grouping => Grouping.make(:assignment => @assignment),:membership_status => StudentMembership::STATUSES[:accepted])
-        @sub = Submission.make(:grouping => @membership.grouping)
-        @result = @sub.result
+        sub = Submission.make(:grouping => @membership.grouping)
+        @result = sub.result
 
         @sum = 0
         [2,2.7,2.2,2].each do |weight|
@@ -295,39 +295,39 @@ class AssignmentTest < ActiveSupport::TestCase
 
     should "know how many ungrouped students are left" do
       assert_equal(0, @assignment.no_grouping_students_list.size)
-      (1..5).each do
+      (1..2).each do
         Student.make
       end
-      assert_equal(5, @assignment.no_grouping_students_list.size)
+      assert_equal(2, @assignment.no_grouping_students_list.size)
     end
 
     should "know how many grouped students exist" do
       assert_equal(0, @assignment.grouped_students.size)
-      (1..3).each do
+      (1..2).each do
         Student.make
       end
       assert_equal(0, @assignment.grouped_students.size)
       g = Grouping.make(:assignment => @assignment)
-      (1..3).each do
+      (1..2).each do
         StudentMembership.make(:grouping => g)
       end
       @assignment.reload
-      assert_equal(3, @assignment.grouped_students.size)
+      assert_equal(2, @assignment.grouped_students.size)
     end
 
     should "know how many ungrouped students exist" do
       assert_equal(0, @assignment.ungrouped_students.size)
-      (1..3).each do
+      (1..2).each do
         Student.make
       end
       @assignment.reload
-      assert_equal(3, @assignment.ungrouped_students.size)
+      assert_equal(2, @assignment.ungrouped_students.size)
       g = Grouping.make(:assignment => @assignment)
-      (1..3).each do
+      (1..2).each do
         StudentMembership.make(:grouping => g)
       end
       @assignment.reload
-      assert_equal(3, @assignment.ungrouped_students.size)
+      assert_equal(2, @assignment.ungrouped_students.size)
     end
 
     should "know how many valid and invalid groupings exist" do
@@ -746,7 +746,7 @@ class AssignmentTest < ActiveSupport::TestCase
 
     context "which is graded, with all grades under 100%" do
       setup do
-        totals = [16.5, 16.0, 16.1, 15.5, 5.0, 7.0, 17.5, 17.0, 18.9, 28.0, 8.1, 25.2, 25.7, 4.3, 0, 10, 19.5, 27.0, 26.6, 0]
+        totals = [16.5, 10, 19.5, 27.0, 0]
 
         # create rubric creteria
         rubric_criteria = [{:rubric_criterion_name => "Uses Conditionals", :weight => 1},
@@ -773,11 +773,8 @@ class AssignmentTest < ActiveSupport::TestCase
         end
 
         # create the groupings for each student in the assignment
-        (1..20).each do |index|
+        (1..5).each do |index|
           g = Grouping.make(:assignment => @assignment)
-          (1..3).each do
-            StudentMembership.make({:grouping => g, :membership_status => StudentMembership::STATUSES[:accepted]})
-          end
           s = Submission.make(:grouping => g)
           r = s.result
           r.total_mark = totals[index - 1]
@@ -788,16 +785,20 @@ class AssignmentTest < ActiveSupport::TestCase
 
       should "generate a correct grade distribution as percentage" do
         a = @assignment
-        expected_distribution = [2,0,0,2,1,1,0,1,0,0,0,4,2,2,0,0,0,1,2,2]
-        expected_distribution_ten_intervals = [2,2,2,1,0,4,4,0,1,4]
-        assert_equal expected_distribution, a.grade_distribution_as_percentage, "Default grade distribution is wrong!"
-        assert_equal expected_distribution_ten_intervals, a.grade_distribution_as_percentage(10), "Grade distribution for ten intervals is wrong!"
+        expected_distribution = [1,0,0,0,0,0,0,1,0,0,0,1,0,1,0,0,0,0,0,1]
+        expected_distribution_ten_intervals = [1, 0, 0, 1, 0, 1, 1, 0, 0, 1]
+        assert_equal expected_distribution,
+                     a.grade_distribution_as_percentage,
+                     "Default grade distribution is wrong!"
+        assert_equal expected_distribution_ten_intervals,
+                     a.grade_distribution_as_percentage(10),
+                     "Grade distribution for ten intervals is wrong!"
       end
     end
 
     context "which is graded, with some grades over 100%" do
       setup do
-        totals = [16.5, 16.0, 16.1, 15.5, 5.0, 37.0, 17.5, 17.0, 18.9, 29.0, 8.1, 25.2, 25.7, 4.3, 0, 10, 19.5, 27.0, 26.6, 0]
+        totals = [16.1, 15.5, 5.0, 37.0, 0]
 
         # create rubric criteria
         rubric_criteria = [{:rubric_criterion_name => "Uses Conditionals", :weight => 1},
@@ -824,11 +825,8 @@ class AssignmentTest < ActiveSupport::TestCase
         end
 
         # create the groupings for each student in the assignment
-        (1..20).each do |index|
+        (1..5).each do |index|
           g = Grouping.make(:assignment => @assignment)
-          (1..3).each do
-            StudentMembership.make({:grouping => g, :membership_status => StudentMembership::STATUSES[:accepted]})
-          end
           s = Submission.make(:grouping => g)
           r = s.result
           r.total_mark = totals[index - 1]
@@ -839,8 +837,9 @@ class AssignmentTest < ActiveSupport::TestCase
 
       should "generate a correct grade distribution as percentage" do
         a = @assignment
-        expected_distribution = [2,0,0,2,0,1,0,1,0,0,0,4,2,2,0,0,0,1,2,3]
-        expected_distribution_ten_intervals = [2,2,1,1,0,4,4,0,1,5]
+        expected_distribution = [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0,
+                                 0, 0, 0, 0, 0, 1]
+        expected_distribution_ten_intervals = [1, 1, 0, 0, 0, 2, 0, 0, 0, 1]
         assert_equal expected_distribution, a.grade_distribution_as_percentage, "Default grade distribution is wrong!"
         assert_equal expected_distribution_ten_intervals, a.grade_distribution_as_percentage(10), "Grade distribution for ten intervals is wrong!"
       end
@@ -895,14 +894,14 @@ class AssignmentTest < ActiveSupport::TestCase
         assert_equal expected_string, @assignment.get_svn_repo_list, "Repo access url list string is wrong!"
       end
 
-      context "with three groups of a single student each" do
+      context "with two groups of a single student each" do
         setup do
-          (1..3).each do
+          (1..2).each do
             g = Grouping.make(:assignment => @assignment)
-            StudentMembership.make({:grouping => g,:membership_status => StudentMembership::STATUSES[:inviter] } )
+            # StudentMembership.make({:grouping => g,:membership_status => StudentMembership::STATUSES[:inviter] } )
             s = Submission.make(:grouping => g)
             r = s.result
-            (1..4).each do
+            (1..2).each do
               Mark.make(:result => r)
             end
             r.reload
@@ -940,37 +939,20 @@ class AssignmentTest < ActiveSupport::TestCase
     end
   end # end assignment instance context
 
-  context "An assignment with section due dates" do
+  context "An assignment" do
     setup do
       @assignment = Assignment.make(:section_due_dates_type => true,
                                     :section_groups_only => true,
                                     :due_date => 3.days.ago)
       @section_01 = Section.make
       @section_02 = Section.make
-      student_01 = Student.make(:section => @section_01)
-      student_02 = Student.make(:section => @section_02)
-      (1..3).each do
-        Student.make(:section => @section_01)
-      end
-      @grouping_1 = Grouping.make(:assignment => @assignment)
-      @grouping_2 = Grouping.make(:assignment => @assignment)
-      StudentMembership.make(:grouping => @grouping_1,
-                   :user => student_01,
-                   :membership_status => StudentMembership::STATUSES[:inviter])
-      StudentMembership.make(:grouping => @grouping_2,
-                   :user => student_02,
-                   :membership_status => StudentMembership::STATUSES[:inviter])
-
       @section_due_date = SectionDueDate.make(:section => @section_01,
-                                              :assignment => @assignment,
-                                              :due_date => 3.days.from_now)
+                                                :assignment => @assignment,
+                                                :due_date => 3.days.from_now)
+
 
     end
 
-    should "return the section due date for a specific section" do
-      assert_equal (3.days.from_now).day(),
-                   @assignment.section_due_date(@section_01).day()
-    end
 
     should "return the section due date for a specific section that has not
             section due date" do
@@ -978,12 +960,33 @@ class AssignmentTest < ActiveSupport::TestCase
                    @assignment.section_due_date(@section_02).day()
     end
 
-    should "not be past due date" do
-      assert !@assignment.section_past_due_date?(@grouping_1)
-    end
+    context "with section due dates" do
+      setup do
+        student_01 = Student.make(:section => @section_01)
+        student_02 = Student.make(:section => @section_02)
 
-    should "be in the past" do
-      assert @assignment.section_past_due_date?(@grouping_2)
+        @grouping_1 = Grouping.make(:assignment => @assignment)
+        @grouping_2 = Grouping.make(:assignment => @assignment)
+        StudentMembership.make(:grouping => @grouping_1,
+                    :user => student_01,
+                    :membership_status => StudentMembership::STATUSES[:inviter])
+        StudentMembership.make(:grouping => @grouping_2,
+                    :user => student_02,
+                    :membership_status => StudentMembership::STATUSES[:inviter])
+
+
+      end
+
+      should "return the section due date for a specific section" do
+        assert_equal (3.days.from_now).day(),
+                    @assignment.section_due_date(@section_01).day()
+      end
+
+      should "differentiate section due dates to normal due date" do
+        assert !@assignment.section_past_due_date?(@grouping_1)
+        assert @assignment.section_past_due_date?(@grouping_2)
+      end
+
     end
 
     should "not be past due date as there is one section not past due date" do

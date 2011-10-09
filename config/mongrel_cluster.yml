@@ -1,5 +1,5 @@
 # Example mongrel_cluster configuration
-# 
+#
 # Please test if a single mongrel starts first.
 # If it does, use:
 #       mongrel_cluster_ctl start -v -c `pwd`
@@ -31,7 +31,7 @@ user: markus
 #
 # System group under which mongrels will be started
 group: markus
-# 
+#
 # Document root of static HTML files (you shouldn't change this)
 docroot: public
 #

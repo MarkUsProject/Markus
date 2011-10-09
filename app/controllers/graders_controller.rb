@@ -67,7 +67,7 @@ class GradersController < ApplicationController
     @assignment.save
   end
 
-  def index 
+  def index
     @assignment = Assignment.find(params[:assignment_id])
   end
 

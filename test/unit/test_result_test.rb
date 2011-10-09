@@ -3,14 +3,11 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', '
 require 'shoulda'
 
 class TestResultTest < ActiveSupport::TestCase
-  def setup
-    clear_fixtures
-  end
   # Basic testing: create, delete, update
 
   context "MarkUs" do
     should "be able to create and save a TestResult instance" do
-      sub = Submission.make 
+      sub = Submission.make
       test_r = TestResult.new
       test_r.filename = "this is my filename.txt"
       test_r.file_content = "Some test content."
@@ -30,7 +27,7 @@ class TestResultTest < ActiveSupport::TestCase
       FILENAME = "some value with_some text.txt"
       FILE_CONTENT = "a aba asdkalfdjl adklajf dadflkaj fafjla fda\nalkdafl a\n print\t\nslfjd \n"
 
-      test_res = TestResult.make 
+      test_res = TestResult.make
       # pre-update sanity checks
       # update some values
       test_res.filename = FILENAME

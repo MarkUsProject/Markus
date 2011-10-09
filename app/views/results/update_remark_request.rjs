@@ -1,6 +1,6 @@
 if(!@old_result.released_to_students)
   page.reload
-else 
+else
   page.replace 'remark_request_edit', :partial => 'results/student/remark_request_form', :locals => {:submission => @submission, :assignment => @assignment}
   page.visual_effect(:highlight, 'remark_request_text_area', :startcolor => '#BDFCC9')
 end

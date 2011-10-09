@@ -223,7 +223,6 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         get_as @admin, :new, :assignment_id => @assignment.id
       end
       should assign_to :assignment
-      should_not assign_to :criterion
       should render_template :new
       should respond_with :success
     end
@@ -300,6 +299,87 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
   end # An authenticated and authorized admin doing a GET
 
+  context "An admin, with an assignment" do
+    setup do
+      clear_fixtures
+      @admin = Admin.make
+      @assignment = Assignment.make
+    end
+
+    context "with several rubric" do
+      setup do
+        3.times do |i|
+          criterion = RubricCriterion.make(:assignment => @assignment)
+          criterion.position = i
+          criterion.save
+        end
+        @criteria = @assignment.rubric_criteria
+      end
+
+      should "be able to move down a criteria" do
+        criterion = @criteria[1]
+        other_criterion = @criteria[2]
+        post_as @admin,
+                :move_criterion,
+                :assignment_id => @assignment,
+                :id => criterion,
+                :position => criterion.position,
+                :direction => 'down'
+        @criteria.reload
+        assert_equal criterion, @criteria[criterion.position + 1]
+        assert_equal other_criterion, @criteria[criterion.position]
+        assert render_template ''
+        assert_response :success
+      end
+
+      should "be able to move up a criteria" do
+        criterion = @criteria[1]
+        other_criterion = @criteria[criterion.position - 1]
+        post_as @admin,
+                :move_criterion,
+                :assignment_id => @assignment,
+                :id => criterion,
+                :position => criterion.position,
+                :direction => 'up'
+        @criteria.reload
+        assert_equal criterion, @criteria[criterion.position - 1]
+        assert_equal other_criterion, @criteria[criterion.position]
+        assert render_template ''
+        assert_response :success
+      end
+
+      should "not be able to move up top criteria" do
+        criterion = @criteria[0]
+        post_as @admin,
+                :move_criterion,
+                :assignment_id => @assignment,
+                :id => criterion,
+                :position => criterion.position,
+                :direction => 'up'
+        @criteria.reload
+        assert_equal 0, criterion.position
+        assert render_template ''
+        assert_response :success
+      end
+
+      should "not be able to move down top criteria" do
+        criterion = @criteria.last
+        position = criterion.position
+        post_as @admin,
+                :move_criterion,
+                :assignment_id => @assignment,
+                :id => criterion,
+                :position => criterion.position,
+                :direction => 'down'
+        @criteria.reload
+        assert_equal position, criterion.position
+        assert render_template ''
+        assert_response :success
+      end
+
+    end
+  end  # An admin, with an assignment
+
   context "An authenticated and authorized admin doing a POST" do
     fixtures :users, :assignments, :rubric_criteria, :marks, :results
 
@@ -330,9 +410,8 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
     context "on :new" do
       should "with save error" do
         RubricCriterion.any_instance.expects(:save).once.returns(false)
-        RubricCriterion.any_instance.expects(:errors).once.returns('error msg')
         post_as @admin,
-                :new,
+                :create,
                 :assignment_id => @assignment.id,
                 :rubric_criterion => {:rubric_criterion_name => 'first',
                                       :weight => 10}
@@ -347,7 +426,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         setup do
           assignment = assignments(:assignment_3)
           post_as @admin,
-                  :new,
+                  :create,
                   :assignment_id => assignment.id,
                   :rubric_criterion => {:rubric_criterion_name => 'first', :weight => 10}
         end
@@ -360,7 +439,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       context "without error on an assignment that already has criteria" do
         setup do
           post_as @admin,
-                  :new,
+                  :create,
                   :assignment_id => @assignment.id,
                   :rubric_criterion => {:rubric_criterion_name => 'first', :weight => 10}
         end
@@ -449,141 +528,6 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       assert_equal 2, c1.position
       c2 = RubricCriterion.find(@criterion2.id)
       assert_equal 1, c2.position
-    end
-
-    context "on :move_criterion up with 2 criteria" do
-      setup do
-        @criterion2 = rubric_criteria(:c2)
-        post_as @admin,
-                :move_criterion,
-                :assignment_id => @assignment.id,
-                :id => @criterion2.id,
-                :position => @criterion2.position, :direction => 'up'
-      end
-      should render_template ''
-      should respond_with :success
-
-      should "have appropriately adjusted positions" do
-        c1 = RubricCriterion.find(@criterion.id)
-        assert_equal 2, c1.position
-        c2 = RubricCriterion.find(@criterion2.id)
-        assert_equal 1, c2.position
-      end
-    end
-
-    context "on :move_criterion up with 3 criteria from bottom" do
-      setup do
-        @criterion2 = rubric_criteria(:c2)
-        @criterion3 = rubric_criteria(:c3)
-        post_as @admin,
-                :move_criterion,
-                :assignment_id => @assignment.id,
-                :id => @criterion3.id,
-                :position => @criterion3.position, :direction => 'up'
-      end
-      should render_template ''
-      should respond_with :success
-
-      should "have appropriately adjusted positions" do
-        c1 = RubricCriterion.find(@criterion.id)
-        assert_equal 1, c1.position
-        c2 = RubricCriterion.find(@criterion2.id)
-        assert_equal 3, c2.position
-        c3 = RubricCriterion.find(@criterion3.id)
-        assert_equal 2, c3.position
-      end
-    end
-
-    context "on :move_criterion up with 3 criteria from middle" do
-      setup do
-        @criterion2 = rubric_criteria(:c2)
-        @criterion3 = rubric_criteria(:c3)
-        post_as @admin,
-                :move_criterion,
-                :assignment_id => @assignment.id,
-                :id => @criterion2.id,
-                :position => @criterion2.position,
-                :direction => 'up'
-      end
-      should render_template ''
-      should respond_with :success
-
-      should "have appropriately adjusted positions" do
-        c1 = RubricCriterion.find(@criterion.id)
-        assert_equal 2, c1.position
-        c2 = RubricCriterion.find(@criterion2.id)
-        assert_equal 1, c2.position
-        c3 = RubricCriterion.find(@criterion3.id)
-        assert_equal 3, c3.position
-      end
-    end
-
-    context "on :move_criterion down with 2 criteria" do
-      setup do
-        @criterion2 = rubric_criteria(:c2)
-        post_as @admin,
-                :move_criterion,
-                :assignment_id => @assignment.id,
-                :id => @criterion.id,
-                :position => @criterion.position, :direction => 'down'
-      end
-      should render_template ''
-      should respond_with :success
-
-      should "have appropriately adjusted positions" do
-        c1 = RubricCriterion.find(@criterion.id)
-        assert_equal 2, c1.position
-        c2 = RubricCriterion.find(@criterion2.id)
-        assert_equal 1, c2.position
-      end
-    end
-
-    context "on :move_criterion down with 3 criteria from top" do
-      setup do
-        @criterion2 = rubric_criteria(:c2)
-        @criterion3 = rubric_criteria(:c3)
-        post_as @admin,
-                :move_criterion,
-                :assignment_id => @assignment.id,
-                :id => @criterion.id,
-                :position => @criterion.position,
-                :direction => 'down'
-      end
-      should render_template ''
-      should respond_with :success
-
-      should "have appropriately adjusted positions" do
-        c1 = RubricCriterion.find(@criterion.id)
-        assert_equal 2, c1.position
-        c2 = RubricCriterion.find(@criterion2.id)
-        assert_equal 1, c2.position
-        c3 = RubricCriterion.find(@criterion3.id)
-        assert_equal 3, c3.position
-      end
-    end
-
-    context "on :move_criterion down with 3 criteria from middle" do
-      setup do
-        @criterion2 = rubric_criteria(:c2)
-        @criterion3 = rubric_criteria(:c3)
-        post_as @admin,
-                :move_criterion,
-                :assignment_id => @assignment.id,
-                :id => @criterion2.id,
-                :position => @criterion2.position,
-                :direction => 'down'
-      end
-      should render_template ''
-      should respond_with :success
-
-      should "have appropriately adjusted positions" do
-        c1 = RubricCriterion.find(@criterion.id)
-        assert_equal 1, c1.position
-        c2 = RubricCriterion.find(@criterion2.id)
-        assert_equal 3, c2.position
-        c3 = RubricCriterion.find(@criterion3.id)
-        assert_equal 2, c3.position
-      end
     end
 
     context "on :yml_upload" do

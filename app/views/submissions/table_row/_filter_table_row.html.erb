@@ -27,7 +27,7 @@ name="file_revisions[<%= file_name %>]" value="<%= file.last_modified_revision%>
 <%="disabled" if !@grouping.is_valid? %> onclick="if($(this).getValue()) {
    $('replace_files[<%= h(file_name) %>]').disable();
   } else {
-   $('replace_files[<%= h(file_name) %>]').enable(); 
+   $('replace_files[<%= h(file_name) %>]').enable();
   }; set_onbeforeunload(true);
 "/>
 

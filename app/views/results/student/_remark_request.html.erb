@@ -9,14 +9,14 @@
             <h3><%= I18n.t("marker.overall_comments") %></h3>
               <%= h(result.overall_comment) %>
           </div>
-      </div> 
+      </div>
      <% end %>
   <% else %>
     <h3><%= I18n.t("marker.remark_instructions") %></h3>
     <%= h(assignment.remark_message) %>
     <h3><%= I18n.t("marker.remark_request") %></h3>
     <% if student_can_edit_remark_request(submission) %>
-      <%= I18n.t("marker.remark_due_date") %>: 
+      <%= I18n.t("marker.remark_due_date") %>:
       <% if assignment.remark_due_date %>
         <%= I18n.l(assignment.remark_due_date, :format => :long_date) %>
       <% else %>
@@ -33,7 +33,7 @@
             <h3><%= I18n.t("marker.overall_comments") %></h3>
               <%= h(result.overall_comment) %>
           </div>
-      </div>  
+      </div>
     <% end %>
   <% end %>
 </div>

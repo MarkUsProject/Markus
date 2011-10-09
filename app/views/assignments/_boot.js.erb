@@ -11,13 +11,13 @@
       date_format: "",
       due_date: $F('assignment_due_date')
     });
-    
+
     penalty_decay_periods = new PeriodDeltaChain({
       period_root_id: 'penalty_decay_periods',
       date_format: "",
       due_date: $F('assignment_due_date')
     });
-    
+
     penalty_periods = new PeriodDeltaChain({
       period_root_id: 'penalty_periods',
       date_format: "",
@@ -27,13 +27,13 @@
     grace_periods.refresh();
     penalty_decay_periods.refresh();
     penalty_periods.refresh();
-    
+
     default_group_fields();
     <% if !@assignment.nil? %>
     toggle_group_assignment(<%= @assignment.group_assignment? %>);
     toggle_remark_requests(<%= @assignment.allow_remarks? %>);
     <% end %>
-    
+
   });
 //]]>
 </script>

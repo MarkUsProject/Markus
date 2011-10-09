@@ -27,6 +27,7 @@ class StudentsController < ApplicationController
 
   def edit
     @user = Student.find_by_id(params[:id])
+    @sections = Section.find(:all, :order => "name")
   end
 
   def update
@@ -34,10 +35,11 @@ class StudentsController < ApplicationController
     attrs = params[:user]
     # update_attributes supplied by ActiveRecords
     if !@user.update_attributes(attrs)
+      flash[:error] = I18n.t("students.update.error")
       render :action => :edit
     else
-      flash[:edit_notice] = I18n.t("students.edit_success",
-                                   :user_name => @user.user_name)
+      flash[:success] = I18n.t("students.update.success",
+                               :user_name => @user.user_name)
       redirect_to :action => 'index'
     end
   end
@@ -71,18 +73,27 @@ class StudentsController < ApplicationController
     end
   end
 
+  def new
+    @user = Student.new(params[:user])
+    @sections = Section.find(:all, :order => "name")
+  end
+
   def create
     # Default attributes: role = TA or role = STUDENT
     # params[:user] is a hash of values passed to the controller
     # by the HTML form with the help of ActiveView::Helper::
     @user = Student.new(params[:user])
-    # Return unless the save is successful; save inherted from
-    # active records--creates a new record if the model is new, otherwise
-    # updates the existing record
-    return unless @user.save
-    flash[:success] = I18n.t("students.create_success",
-                             :user_name => @user.user_name)
-    redirect_to :action => 'index' # Redirect
+    if @user.save
+      flash[:success] = I18n.t("students.create.success",
+                               :user_name => @user.user_name)
+      redirect_to :action => 'index' # Redirect
+    else
+      @sections = Section.find(:all, :order => "name")
+      flash[:error] = reason_for_error(
+                          @user.errors,
+                          I18n.t('students.create.error'))
+      render :action => 'new'
+    end
   end
 
 

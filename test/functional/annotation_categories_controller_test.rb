@@ -24,7 +24,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
     context "on :get_annotations" do
       setup do
-        get :get_annotations, :assignment_id => 1
+        get :get_annotations, :assignment_id => 1,:id => 1
       end
       should respond_with :redirect
     end
@@ -101,7 +101,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
     context "on :get_annotations" do
       setup do
-        post :get_annotations, :assignment_id => 1
+        get :get_annotations, :assignment_id => 1, :id => 1
       end
       should respond_with :redirect
     end
@@ -335,12 +335,10 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       context "without errors" do
         setup do
           AnnotationCategory.any_instance.stubs(:save).returns(true)
-          post_as @admin, :add_annotation_category, :assignment_id => @assignment.id
+          get_as @admin, :add_annotation_category, :assignment_id => @assignment.id
         end
         should respond_with :success
         should assign_to :assignment
-        should assign_to :annotation_category
-        should render_template 'insert_new_annotation_category'
       end
 
       context "with error on save" do
@@ -360,12 +358,10 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       context "without errors" do
         setup do
           AnnotationText.any_instance.stubs(:save).returns(true)
-          post_as @admin, :add_annotation_text, :assignment_id => 1, :id => @category.id
+          get_as @admin, :add_annotation_text, :assignment_id => 1, :id => @category.id
         end
         should respond_with :success
-        should render_template 'insert_new_annotation_text'
         should assign_to :annotation_category
-        should assign_to :annotation_text
       end
 
       context "with errors on save" do

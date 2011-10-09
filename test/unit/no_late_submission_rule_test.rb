@@ -6,7 +6,7 @@ class NoLateSubmissionRuleTest < ActiveSupport::TestCase
 
   should "be able to create NoLateSubmissionRule" do
     rule = NoLateSubmissionRule.new
-    rule.assignment = Assignment.make 
+    rule.assignment = Assignment.make
     assert rule.save
   end
 

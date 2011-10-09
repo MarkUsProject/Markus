@@ -68,7 +68,7 @@ function create_diff {
 		echo "done."
 	fi
 	DIFF_FILE_TEMP=".current_feature.$$.diff"
-	exec_safe "git diff --full-index master $FEATURE_BRANCH" > $DIFF_FILE_TEMP
+	exec_safe "git diff --full-index master $FEATURE_BRANCH --" > $DIFF_FILE_TEMP
 }
 
 

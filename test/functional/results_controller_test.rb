@@ -1150,7 +1150,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                  :assignment_id => 1,
                  :submission_id => 1,
                  :id => result.id
-                 
+
           assert_equal 0, flash.size
           assert render_template :edit
           assert respond_with :success

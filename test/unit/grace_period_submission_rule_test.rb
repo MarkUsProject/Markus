@@ -7,10 +7,10 @@ require 'time-warp'
 class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
   context "Assignment has two grace periods of 24 hours each after due date" do
     setup do
-      @assignment = Assignment.make 
+      @assignment = Assignment.make
       @group = Group.make
       @grouping = Grouping.make(:assignment => @assignment,
-                                :group => @group) 
+                                :group => @group)
 
       StudentMembership.make(:grouping => @grouping,
                              :membership_status => "inviter",

@@ -17,7 +17,7 @@
 <li class="membership_status_pending">
    <span class="last_name"><%= h(member.user.last_name) %> </span> <%= h(member.user.first_name)%> <%= I18n.t("student.invited")%>
    <% if grouping.inviter.id == @student.id  %>
-     <%= link_to_remote I18n.t("student.disinvite") , 
+     <%= link_to_remote I18n.t("student.disinvite") ,
      :url => {:action => 'disinvite_member', :id => @assignment.id,
      :membership => member.id},
      :html => { :class => 'disinvite_member', :title => I18n.t("student:disinvite_member_title")},

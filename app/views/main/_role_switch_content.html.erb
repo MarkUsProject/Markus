@@ -6,7 +6,7 @@
     </h2>
     <%= label_tag 'effective_user_login', I18n.t(:login_as) -%>
     <%= text_field_tag 'effective_user_login', nil, :tabindex => 10 %><br />
-    <% 
+    <%
       # For REMOTE_USER we have no way to check a password, so don't
       # provide UI for entering it.
     %>

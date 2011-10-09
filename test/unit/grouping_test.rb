@@ -7,10 +7,6 @@ require 'mocha'
 
 class GroupingTest < ActiveSupport::TestCase
 
-  def setup
-    clear_fixtures
-  end
-
   should belong_to :grouping_queue
   should belong_to :group
   should belong_to :assignment
@@ -55,6 +51,7 @@ class GroupingTest < ActiveSupport::TestCase
       assert_not_nil(last_modified)
       assert_instance_of(Time, last_modified)
       # This is not exactly accurate, but it's sufficient
+      # FIXME actually, it sometimes isn't sufficient...
       assert_equal(Time.now.min, last_modified.min)
     end
 
@@ -73,7 +70,7 @@ class GroupingTest < ActiveSupport::TestCase
         user_name_array = [@ta1.user_name, @ta2.user_name]
         assert_equal 0, @grouping.ta_memberships.count
         @grouping.add_tas_by_user_name_array(user_name_array)
-        assert_equal 2, @grouping.ta_memberships.count   
+        assert_equal 2, @grouping.ta_memberships.count
       end
     end
 
@@ -87,7 +84,7 @@ class GroupingTest < ActiveSupport::TestCase
         @inviter_membership = StudentMembership.make(
           :grouping => @grouping,
           :membership_status => StudentMembership::STATUSES[:inviter])
-        @inviter = @inviter_membership.user 
+        @inviter = @inviter_membership.user
 
       end
 
@@ -142,7 +139,7 @@ class GroupingTest < ActiveSupport::TestCase
       end
 
       should "be able to report if the grouping is deletable" do
-        
+
         non_inviter = @membership.user
         # delete member to have it deletable
         @grouping.remove_member(@membership.id)

@@ -11,7 +11,7 @@ class="float_left flexible_criterion_expand expanded" >- &nbsp;
 </div>
 <div id="<%="mark_criterion_title_#{mark_criterion.id}_name"%>"
 class="mark_criterion_title_div_level float_left">
-  <b><%=h(mark_criterion.flexible_criterion_name)%></b>       
+  <b><%=h(mark_criterion.flexible_criterion_name)%></b>
 </div>
 <div id="mark_flexible_<%=mark.id%>" class="float_right" >
     <%= text_field_tag('mark_' + mark.id.to_s, mark.mark,:size=>4, :class=>'mark_grade_input') %>
@@ -34,9 +34,9 @@ class="mark_criterion_title_div_level float_left">
   <div id="<%="mark_criterion_inputs_#{mark_criterion.id}"%>" class="mark_criterion_level_container" >
     <div class="float_left" >
       <%=mark_criterion.description %>
-    </div>    
+    </div>
   </div>
-<div class="clear"></div>  
+<div class="clear"></div>
 </div>
 
 </li>

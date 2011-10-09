@@ -3,10 +3,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 
 class AssignmentFileTest < ActiveSupport::TestCase
-  def setup
-    clear_fixtures
-  end
-
   should "A good AssignmentFile model" do
     AssignmentFile.make
     assert validate_uniqueness_of(:filename).scoped_to(:assignment_id)

@@ -1,6 +1,6 @@
 <div id="title_bar"><h1><%=I18n.t('notes.title')  %>
-<%  
-#if there are no noteables,we can't add notes, so do not show Add New link.  
+<%
+#if there are no noteables,we can't add notes, so do not show Add New link.
 %>
   <% if @noteables_available %>
     <%= link_to I18n.t('notes.add_new'), :action => 'new' %></h1>
@@ -10,28 +10,28 @@
 </div>
 
 <div class="wrapLeft">
-	
+
 	<% # if there are errors have the error message display %>
       <% if flash[:error] %>
         <div class="error">
           <%= h(flash[:error])+"<br/>" %>
         </div>
       <% end %>
-	
+
 	<% # if there are success messages to display %>
       <% if flash[:success] -%>
         <div class="success">
           <%= h(flash[:success])+"<br/>" %>
         </div>
       <% end %>
-	
+
 <table id="notes">
 <% for note in @notes %>
 	<tr>
 		<td class="note">
-			<%= I18n.t("notes.note_on",
+			<%= raw(I18n.t("notes.note_on",
 				   :user_name => note.user.user_name,
-				   :display_for => note.noteable.display_for_note ) %></b><br />
+				   :display_for => note.noteable.display_for_note )) %></b><br />
 			<small><%=note.format_date%></small>
 		</td>
 		<td class="note"><%=note.notes_message%></td>

@@ -6,14 +6,9 @@ require 'mocha'
 
 include MarkusConfigurator
 class AdminTest < ActiveSupport::TestCase
-  setup do
-    clear_fixtures
-  end
-
   context "If repo admin" do
 
     setup do
-      setup_group_fixture_repos
       conf = Hash.new
       conf["IS_REPOSITORY_ADMIN"] = true
       conf["REPOSITORY_PERMISSION_FILE"] = MarkusConfigurator.markus_config_repository_permission_file
@@ -37,7 +32,7 @@ class AdminTest < ActiveSupport::TestCase
     end
 
     should "revoke repository permissions when destroying an admin object" do
-      admin = Admin.make 
+      admin = Admin.make
       repo_names = Group.all.collect do |group| File.join(markus_config_repository_storage, group.repository_name) end
       @repo.expects(:delete_bulk_permissions).times(1).with(repo_names, [admin.user_name])
       admin.destroy
@@ -48,7 +43,6 @@ class AdminTest < ActiveSupport::TestCase
   context "If not repository admin" do
 
     setup do
-      setup_group_fixture_repos
       # set repository_admin false
       conf = Hash.new
       conf["IS_REPOSITORY_ADMIN"] = false
@@ -62,7 +56,7 @@ class AdminTest < ActiveSupport::TestCase
     end
 
     should "not remove repository permissions when deleting an admin" do
-      admin = Admin.make 
+      admin = Admin.make
       @repo.expects(:delete_bulk_permissions).never
       admin.destroy
     end
