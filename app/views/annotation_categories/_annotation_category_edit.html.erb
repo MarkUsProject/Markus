@@ -20,7 +20,7 @@
 <% end %>
 
  <div class="float_right">
-   <%= link_to t("annotations.delete.delete_message"),
+   <%= button_to t("annotations.delete.delete_message"),
                 delete_annotation_category_assignment_annotation_category_path(
                       :id => annotation_category.id),
                 :method => 'delete',
