@@ -259,7 +259,7 @@ Markus::Application.routes.draw do
       get 'about'
       get 'login_as'
       get 'clear_role_switch_session'
-      get 'reset_api_key'
+      post 'reset_api_key'
     end
   end
 
