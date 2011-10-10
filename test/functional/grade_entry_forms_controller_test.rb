@@ -231,8 +231,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                       :message => @grade_entry_form.message,
                       :date => @grade_entry_form.date}}
       assert assign_to :grade_entry_form
-      assert_equal flash[:error], I18n.t('grade_entry_forms.create.error')
-      assert_response :redirect
+      assert_nil flash[:error]
+      assert_equal assigns(:grade_entry_form).errors[:short_identifier][0], I18n.t('grade_entry_forms.blank_field')
+      assert_response :ok
     end
 
     should "POST on :create with an invalid basic value" do
@@ -244,8 +245,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                   :message => @grade_entry_form.message,
                   :date => "abcd"}
       assert assign_to :grade_entry_form
-      assert_equal flash[:error], I18n.t('grade_entry_forms.create.error')
-      assert_response :redirect
+      assert_equal assigns(:grade_entry_form).errors[:date][0], I18n.t('grade_entry_forms.invalid_date')
+      assert_response :ok
     end
 
     # Test valid and invalid values for basic properties for :edit
@@ -272,8 +273,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                     :message => NEW_MESSAGE,
                                                     :date => NEW_DATE}}
       assert assign_to :grade_entry_form
-      assert_response :redirect
-      assert_equal flash[:error], I18n.t('grade_entry_forms.edit.error')
+      assert_response :ok
+      assert_nil flash[:error]
+      assert_equal assigns(:grade_entry_form).errors[:short_identifier][0], I18n.t('grade_entry_forms.blank_field')
 
       g = GradeEntryForm.find(@grade_entry_form.id)
       assert_equal @original.short_identifier, g.short_identifier
@@ -289,9 +291,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                     :message => NEW_MESSAGE,
                                                     :date => "abc"}}
       assert assign_to :grade_entry_form
-      assert_response :redirect
-
-      assert_equal flash[:error], I18n.t('grade_entry_forms.edit.error')
+      assert_response :ok
+      assert_equal assigns(:grade_entry_form).errors[:date][0], I18n.t('grade_entry_forms.invalid_date')
+      
       g = GradeEntryForm.find(@grade_entry_form.id)
       assert_equal @original.short_identifier, g.short_identifier
       assert_equal @original.description, g.description
@@ -345,8 +347,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
 
         # Need to escape the I18n string because there is a '(e)' in French for
         # example
-        assert_equal flash[:error], I18n.t('grade_entry_forms.create.error')
-        assert_response :redirect
+        
+        assert_equal @q2.errors[:name][0], I18n.t('grade_entry_forms.blank_field')
+        assert_response :ok
       end
 
       should ":new with invalid GradeEntryItem out_of" do
@@ -360,8 +363,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                         :date => @grade_entry_form.date,
                         :grade_entry_items => [@q1, @q2]}}
         assert assign_to :grade_entry_form
-        assert_equal flash[:error], I18n.t('grade_entry_forms.create.error')
-        assert_response :redirect
+        #assert_equal flash[:error], I18n.t('grade_entry_forms.create.error')
+        assert_equal @q2.errors[:out_of][0], I18n.t('grade_entry_forms.invalid_column_out_of')
+        assert_response :ok
       end
 
       should ":new with zero-value GradeEntryItem out_of" do
@@ -430,8 +434,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                       :date => @grade_entry_form.date,
                                                       :grade_entry_items => [@q1, @q2]}}
         assert assign_to :grade_entry_form
-        assert_response :redirect
-        assert_equal flash[:error], I18n.t('grade_entry_forms.edit.error')
+        assert_response :ok
+        #assert_equal flash[:error], I18n.t('grade_entry_forms.edit.error')
+        assert_equal @q1.errors[:name][0], I18n.t('grade_entry_forms.blank_field')
 
         g = GradeEntryForm.find(@grade_entry_form.id)
         assert_equal @original.short_identifier, g.short_identifier
@@ -449,8 +454,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                       :date => @grade_entry_form.date,
                                                       :grade_entry_items => [@q1, @q2]}}
         assert assign_to :grade_entry_form
-        assert_response :redirect
-        assert_equal flash[:error], I18n.t('grade_entry_forms.edit.error')
+        assert_response :ok
+        #assert_equal flash[:error], I18n.t('grade_entry_forms.edit.error')
+        assert_equal @q1.errors[:out_of][0], I18n.t('grade_entry_forms.invalid_column_out_of')
 
         g = GradeEntryForm.find(@grade_entry_form.id)
         assert_equal @original.short_identifier, g.short_identifier
@@ -496,8 +502,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                       :grade_entry_items => [@q1, @q2]}}
         @grade_entry_form_before.reload
         assert assign_to :grade_entry_form
-        assert_response :redirect
-        assert_equal flash[:error], I18n.t('grade_entry_forms.edit.error')
+        assert_response :ok
+        assert_nil flash[:error]
+        assert_equal @q2.errors[:name][0], I18n.t('grade_entry_forms.invalid_name')
         g = GradeEntryForm.find(@grade_entry_form_with_dup.id)
         assert_equal @grade_entry_form_before.short_identifier, g.short_identifier
         assert_equal @grade_entry_form_before.description, g.description
