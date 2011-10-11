@@ -245,6 +245,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                   :message => @grade_entry_form.message,
                   :date => "abcd"}
       assert assign_to :grade_entry_form
+      assert_nil flash[:error]
       assert_equal assigns(:grade_entry_form).errors[:date][0], I18n.t('grade_entry_forms.invalid_date')
       assert_response :ok
     end
@@ -292,6 +293,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                     :date => "abc"}}
       assert assign_to :grade_entry_form
       assert_response :ok
+      assert_nil flash[:error]
       assert_equal assigns(:grade_entry_form).errors[:date][0], I18n.t('grade_entry_forms.invalid_date')
 
       g = GradeEntryForm.find(@grade_entry_form.id)
@@ -347,6 +349,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
 
         # Need to escape the I18n string because there is a '(e)' in French for
         # example
+        assert_nil flash[:error]
         assert_equal @q2.errors[:name][0], I18n.t('grade_entry_forms.blank_field')
         assert_response :ok
       end
@@ -362,6 +365,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                         :date => @grade_entry_form.date,
                         :grade_entry_items => [@q1, @q2]}}
         assert assign_to :grade_entry_form
+        assert_nil flash[:error]
         assert_equal @q2.errors[:out_of][0], I18n.t('grade_entry_forms.invalid_column_out_of')
         assert_response :ok
       end
@@ -452,6 +456,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                       :grade_entry_items => [@q1, @q2]}}
         assert assign_to :grade_entry_form
         assert_response :ok
+        assert_nil flash[:error]
         assert_equal @q1.errors[:out_of][0], I18n.t('grade_entry_forms.invalid_column_out_of')
 
         g = GradeEntryForm.find(@grade_entry_form.id)
