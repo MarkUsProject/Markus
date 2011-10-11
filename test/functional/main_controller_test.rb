@@ -93,7 +93,7 @@ class MainControllerTest < AuthenticatedControllerTest
       admin_key = @admin.api_key
       post_as @admin, :reset_api_key, {:current_user => @admin}
 
-      assert respond_with :success
+      assert_response :success
       @admin.reload
       assert_not_equal(User.find_by_id(@admin.id).api_key, admin_key)
     end
@@ -101,7 +101,7 @@ class MainControllerTest < AuthenticatedControllerTest
     should "not do anything when doing a get on reset_api_key " do
       admin_key = @admin.api_key
       get_as @admin, :reset_api_key
-      assert respond_with :not_found
+      assert_response :not_found
       assert_equal @admin.api_key, admin_key
     end
 

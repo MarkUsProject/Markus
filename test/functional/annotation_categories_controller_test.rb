@@ -218,7 +218,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
                :update_annotation_category,
                :assignment_id => @assignment.id,
                :id => @category.id
-        assert respond_with :success
+        assert_response :success
         assert assign_to :annotation_category
         assert_equal I18n.t('annotations.update.annotation_category_success'),
                      flash[:success]
@@ -235,7 +235,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
                  :update_annotation_category,
                  :assignment_id => @assignment.id,
                  :id => @category.id
-          assert respond_with :success
+          assert_response :success
           assert_equal flash[:error], "error"
           assert assign_to :annotation_category
         end
