@@ -20,11 +20,6 @@
   <span><%=flash[:success]%></span>
 </div>
 <% end %>
-<% if flash[:error] %>
-  <div class="error">
-    <span><%= flash[:error] %></span>
-  </div>
-<% end%>
 
 <%= form_for @grade_entry_form, :as => :grade_entry_form do |f| %>
   <%= render :partial => "shared/error_explanation", :locals => { :model => @grade_entry_form } %>
