@@ -223,7 +223,6 @@ Markus::Application.routes.draw do
       get 'student_interface'
       get 'notes_dialog'
       post 'grades'
-      delete 'delete_note'
     end
   end
 
