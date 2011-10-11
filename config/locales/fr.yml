@@ -393,11 +393,9 @@ fr:
       properties: "Propriétés de la feuille de note"
       create:
         success: "Feuille de notes créée"
-        error: "N'est pas une entrée valide. N'a pas de créer une nouvelle feuille de notes"
         title: "Créer une nouvelle feuille de notes"
       edit:
         title: "Modification de la feuille de notes : "
-        error: "N'est pas une entrée valide. N'a pas modifié la feuille de notes"
         success: "Feuille de notes mise à jour"
       grades:
         title: "Édition de la feuille de notes :"
