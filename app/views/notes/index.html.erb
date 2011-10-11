@@ -36,21 +36,21 @@
 		</td>
 		<td class="note"><%=note.notes_message%></td>
 		<td class="note">
-		<% if note.user_can_modify?(@current_user) -%>
-		<%= button_to I18n.t('edit'),
-		              edit_note_path(note.id),
-		              :method => 'get',
-		              :html => {:class => 'edit'} %>
-		<%= button_to I18n.t('delete'),
-		              { :action => 'destroy', :id => note.id },
-		              :html =>
-		              { :class => 'delete',
-		                :title => I18n.t('notes.delete.link_title') },
-                      :confirm => I18n.t('notes.delete.link_confirm'),
-                      :method => 'delete',
-                      :remote => true %>
+			<% if note.user_can_modify?(@current_user) -%>
+				<%= button_to I18n.t('edit'),
+				              edit_note_path(note.id),
+				              :method => 'get',
+				              :html => {:class => 'edit'} %>
+				<%= button_to I18n.t('delete'),
+				              { :action => 'destroy', :id => note.id },
+				              :html =>
+				              { :class => 'delete',
+				                :title => I18n.t('notes.delete.link_title') },
+		                      :confirm => I18n.t('notes.delete.link_confirm'),
+		                      :method => 'delete',
+		                      :remote => true %>
 			<% else -%>
-			&nbsp;
+				&nbsp;
 			<% end -%>
 		</td>
 	</tr>
