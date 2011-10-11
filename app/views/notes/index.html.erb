@@ -14,14 +14,14 @@
 	<% # if there are errors have the error message display %>
       <% if flash[:error] %>
         <div class="error">
-          <%= h(flash[:error])+"<br/>" %>
+          <%= h(flash[:error]) %>
         </div>
       <% end %>
 
 	<% # if there are success messages to display %>
       <% if flash[:success] -%>
         <div class="success">
-          <%= h(flash[:success])+"<br/>" %>
+          <%= h(flash[:success]) %>
         </div>
       <% end %>
 
@@ -37,18 +37,18 @@
 		<td class="note"><%=note.notes_message%></td>
 		<td class="note">
 		<% if note.user_can_modify?(@current_user) -%>
-		  <%= link_to I18n.t('edit'),
-			      edit_note_path(note.id) %>
-			|
-		  <%= link_to I18n.t('delete'),
-			      :method => 'delete',
-			      :url => {:action => 'destroy',
-				       :id => note.id},
-			      :html => {
-				  :class => 'delete',
-				  :title => I18n.t('notes.delete.link_title')},
-			      :confirm => I18n.t('notes.delete.link_confirm'),
-			      :remote => true %>
+		<%= button_to I18n.t('edit'),
+		              edit_note_path(note.id),
+		              :method => 'get',
+		              :html => {:class => 'edit'} %>
+		<%= button_to I18n.t('delete'),
+		              { :action => 'destroy', :id => note.id },
+		              :html =>
+		              { :class => 'delete',
+		                :title => I18n.t('notes.delete.link_title') },
+                      :confirm => I18n.t('notes.delete.link_confirm'),
+                      :method => 'delete', 
+                      :remote => true %>
 			<% else -%>
 			&nbsp;
 			<% end -%>
