@@ -55,7 +55,7 @@ class SectionsControllerTest < AuthenticatedControllerTest
       post_as @admin, :create, {:section => {:name => "section_01"}}
 
       assert_response :redirect
-      assert_equal flash[:success], I18n.t('section.create.success')
+      assert_equal flash[:success], I18n.t('section.create.success', :name => "section_01")
       assert Section.find_by_name("section_01")
     end
 
@@ -91,7 +91,7 @@ class SectionsControllerTest < AuthenticatedControllerTest
               :section => {:name => "no section"}
 
       assert_response :redirect
-      assert_equal flash[:success], I18n.t('section.update.success')
+      assert_equal flash[:success], I18n.t('section.update.success', :name => "no section")
 
       assert_not_nil Section.find_by_name("no section")
     end
