@@ -293,7 +293,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert assign_to :grade_entry_form
       assert_response :ok
       assert_equal assigns(:grade_entry_form).errors[:date][0], I18n.t('grade_entry_forms.invalid_date')
-      
+
       g = GradeEntryForm.find(@grade_entry_form.id)
       assert_equal @original.short_identifier, g.short_identifier
       assert_equal @original.description, g.description
@@ -347,7 +347,6 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
 
         # Need to escape the I18n string because there is a '(e)' in French for
         # example
-        
         assert_equal @q2.errors[:name][0], I18n.t('grade_entry_forms.blank_field')
         assert_response :ok
       end
@@ -363,7 +362,6 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                         :date => @grade_entry_form.date,
                         :grade_entry_items => [@q1, @q2]}}
         assert assign_to :grade_entry_form
-        #assert_equal flash[:error], I18n.t('grade_entry_forms.create.error')
         assert_equal @q2.errors[:out_of][0], I18n.t('grade_entry_forms.invalid_column_out_of')
         assert_response :ok
       end
@@ -435,7 +433,6 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                       :grade_entry_items => [@q1, @q2]}}
         assert assign_to :grade_entry_form
         assert_response :ok
-        #assert_equal flash[:error], I18n.t('grade_entry_forms.edit.error')
         assert_equal @q1.errors[:name][0], I18n.t('grade_entry_forms.blank_field')
 
         g = GradeEntryForm.find(@grade_entry_form.id)
@@ -455,7 +452,6 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                       :grade_entry_items => [@q1, @q2]}}
         assert assign_to :grade_entry_form
         assert_response :ok
-        #assert_equal flash[:error], I18n.t('grade_entry_forms.edit.error')
         assert_equal @q1.errors[:out_of][0], I18n.t('grade_entry_forms.invalid_column_out_of')
 
         g = GradeEntryForm.find(@grade_entry_form.id)
