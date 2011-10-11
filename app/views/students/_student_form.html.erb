@@ -1,14 +1,17 @@
 <div class="section">
+  <%= form_for @user, :as => :user do |f| %>
 
-  <% if flash[:error] %>
-    <div class="error">
-      <%= flash[:error] %>
-    </div>
-  <% end%>
-
-
-  <%= form_for @user,
-	       :as => :user do |f| %>
+    <% if @user.errors.any? %>
+      <div class="errorExplanation" id="errorExplanation" >
+        <h2><%= flash[:error] %></h2>
+  
+        <ul>
+        <% @user.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+        </ul>
+      </div>
+    <% end %>
 
     <%= raw(f.label(:user_name, I18n.t("user.user_name"))) %>
     <%= raw(f.text_field :user_name) %><br />

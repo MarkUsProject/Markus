@@ -69,20 +69,4 @@ class ApplicationController < ActionController::Base
     I18n.load_path -= [locale_path]
     I18n.locale = I18n.default_locale
   end
-
-  # Given an error object returned from a failed database update/save, returns
-  # a nicely formatted string listing the errors. Prepends msg if set.
-  # Example: {:name => "can't be blank", :random => "is too random"} results in
-  #          "Name can't be blank, and Random is too random."
-  def reason_for_error(errors, msg='')
-    if errors.empty?
-      return msg
-    else
-      reasons = []
-      errors.each do |key, value|
-        reasons << "#{key}".capitalize + " #{value}"
-      end
-      return msg.empty? ? "#{reasons.to_sentence}." : "#{msg} #{reasons.to_sentence}."
-    end
-  end
 end
