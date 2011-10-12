@@ -4,9 +4,9 @@
     <%= simple_format(h(annotation_text.content)) %>
   <%= link_to_function t(:edit),
 	    "$('annotation_text_#{annotation_text.id}_control').hide();$('annotation_text_#{annotation_text.id}_edit').show();" %>
-  <%= link_to t(:delete),
-	      :url => {:action => 'delete_annotation_text',
-		       :id => annotation_text.id},
+  <%= button_to t(:delete),
+              delete_annotation_text_assignment_annotation_category_path(:id => annotation_text.id),
+              :method => 'delete',
 	      :confirm => t('annotations.delete.annotation_text'),
 	      :remote => true %>
 </div>
