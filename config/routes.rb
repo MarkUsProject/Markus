@@ -181,6 +181,7 @@ Markus::Application.routes.draw do
       member do
         get 'get_annotations'
         delete 'delete_annotation_category'
+        delete 'delete_annotation_text'
       end
 
       collection do
