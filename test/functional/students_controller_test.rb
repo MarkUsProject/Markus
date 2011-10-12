@@ -76,6 +76,16 @@ class StudentsControllerTest < AuthenticatedControllerTest
               I18n.t('student.create.error') + " Last_name can't be blank."
     end
 
+    should "be able to create a student without a section" do
+      post_as @admin,
+              :create,
+              :user => {:user_name => 'jsmith',
+                        :last_name => 'Smith',
+                        :first_name => 'John'}
+      assert_response :redirect
+      jsmith = Student.find_by_user_name('jsmith')
+      assert_not_nil jsmith
+    end
 
     should "be able to create a student with a section" do
       post_as @admin,
