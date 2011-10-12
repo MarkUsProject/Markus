@@ -5,28 +5,21 @@
       <%= flash[:success] %>
     </div>
   <% end%>
-  <% if flash[:error] %>
-    <div class="error">
-      <%= flash[:error] %>
-    </div>
-  <% end%>
-
 </div>
 
-<%= form_for @section,
-	     :as => :section do |f| %>
-<fieldset>
-  <legend><%= I18n.t('section.legend') %></legend>
-  <%= f.label :name, t("section.name") %>
-  <%= f.text_field :name%>
-  <br />
-  <% if controller.action_name == "create_section"%>
-    <%= f.submit I18n.t(:submit) %>
-  <% else %>
-    <%= f.submit I18n.t(:save) %>
-  <% end %>
-
-</fieldset>
-
+<%= form_for @section, :as => :section do |f| %>
+  <%= render :partial => "shared/error_explanation",
+      :locals => { :model => @section, :flash_message => flash[:error] } %>
+  <fieldset>
+    <legend><%= I18n.t('section.legend') %></legend>
+    <%= raw(f.label :name, t("section.name")) %>
+    <%= raw(f.text_field :name) %>
+    <br />
+    <% if controller.action_name == "create_section"%>
+      <%= f.submit I18n.t(:submit) %>
+    <% else %>
+      <%= f.submit I18n.t(:save) %>
+    <% end %>
+  </fieldset>
 <% end %>
 

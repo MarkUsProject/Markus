@@ -1,7 +1,7 @@
 <% #requires locals: model - the object that may have an error and flash_message (optional) %>
 <% if model.errors.any? %>
   <div class="errorExplanation" id="errorExplanation" >
-    <% if flash_message %>
+    <% unless defined?(flash_message) == nil %>
       <h2><%= flash_message %></h2>
     <% end %>
     <ul>

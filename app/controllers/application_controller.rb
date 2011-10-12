@@ -8,7 +8,6 @@ class ApplicationController < ActionController::Base
 
   layout "content"
 
-  helper_method :reason_for_error #include this helper in both controllers and views
   helper :all # include all helpers in the views, all the time
 
   # activate i18n for renaming constants in views

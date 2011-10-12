@@ -2,25 +2,25 @@
 
 <div class="wrapLeft">
   <%= form_for @note, :as => :note, :url => {:action => 'update', :id => @note.id} do |f| %>
-  <%= f.error_messages %>
+    <%= render :partial => "shared/error_explanation", :locals => { :model => @note } %>
 
-  <p>
-    <b><%=I18n.t('notes.author')%>:</b> <%= h @note.user.user_name %>
-  </p>
+    <p>
+      <b><%=I18n.t('notes.author')%>:</b> <%= h @note.user.user_name %>
+    </p>
 
-  <p>
-    <b><%= I18n.t("notes.noteables.#{@note.noteable_type}") %>:</b> <%= @note.noteable.display_for_note %>
-  </p>
+    <p>
+      <b><%= I18n.t("notes.noteables.#{@note.noteable_type}") %>:</b> <%= @note.noteable.display_for_note %>
+    </p>
 
-  <p>
-    <b><%=I18n.t('notes.creation_time')%>:</b> <%= @note.format_date %>
-  </p>
+    <p>
+      <b><%=I18n.t('notes.creation_time')%>:</b> <%= @note.format_date %>
+    </p>
 
-  <%= f.label :notes_message, I18n.t('notes.note')+":" %>
-  <%= f.text_area :notes_message, :rows => 8, :cols => 50 %>
+    <%= f.label :notes_message, I18n.t('notes.note')+":" %>
+    <%= f.text_area :notes_message, :rows => 8, :cols => 50 %>
 
-  <p>
-    <%= f.submit I18n.t('save') %>
-  </p>
-<% end %>
+    <p>
+      <%= f.submit I18n.t('save') %>
+    </p>
+  <% end %>
 </div>

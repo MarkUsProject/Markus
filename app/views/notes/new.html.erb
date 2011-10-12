@@ -1,39 +1,37 @@
 <div id="title_bar"><h1><%= I18n.t('notes.new.title') %></h1></div>
 
 <div class="wrapLeft">
-<%= form_for :note, :url => notes_path() do |f| %>
-  <%= f.error_messages %>
+  <%= form_for @note, :as => :note, :url => notes_path() do |f| %>
+    <%= render :partial => "shared/error_explanation", :locals => { :model => @note } %>
+    <fieldset>
+      <p>
+        <%= label_tag "noteable_type", I18n.t('notes.noteable') %>
+        <%= select_tag "noteable_type",
+           options_for_select(
+              Note::NOTEABLES.map {|item| [I18n.t('notes.noteables.' + item),
+                 item]}) %>
+        <%= observe_field :noteable_type,
+              :on => 'onchange',
+              :url => noteable_object_selector_notes_path(),
+                          :with => "noteable_type",
+                          :before => "$('loading_selector').show()",
+              :success => "$('loading_selector').hide()" %>
+        <span id="loading_selector" style="display:none">
+          <%= image_tag('spinner.gif') %> <%= I18n.t('notes.new.loading_selector') %>
+        </span>
+      </p>
 
-<fieldset>
+      <div id="noteable_selector">
+        <%= render  :partial => 'grouping' %>
+      </div>
 
-  <p>
-    <%= label_tag "noteable_type", I18n.t('notes.noteable') %>
-    <%= select_tag "noteable_type",
-		   options_for_select(
-		      Note::NOTEABLES.map {|item| [I18n.t('notes.noteables.' + item),
-						   item]}) %>
-    <%= observe_field :noteable_type,
-		      :on => 'onchange',
-		      :url => noteable_object_selector_notes_path(),
-                      :with => "noteable_type",
-                      :before => "$('loading_selector').show()",
-		      :success => "$('loading_selector').hide()" %>
-    <span id="loading_selector" style="display:none">
-      <%= image_tag('spinner.gif') %> <%= I18n.t('notes.new.loading_selector') %>
-    </span>
-  </p>
+      <p>
+        <%= raw(f.label :notes_message, I18n.t("notes.note")) %>
+        <%= raw(f.text_area :notes_message, :rows => 10) %>
+      </p>
+    </fieldset>
 
-  <div id="noteable_selector">
-    <%= render  :partial => 'grouping' %>
-  </div>
-
-  <p>
-    <%= f.label :notes_message, I18n.t("notes.note") %>
-    <%= f.text_area :notes_message, :rows => 10 %>
-  </p>
-</fieldset>
-
-  <%= f.submit I18n.t('save') %>
-  <%= link_to I18n.t('cancel'), notes_path(), :class => "button" %>
-<% end %>
+    <%= f.submit I18n.t('save') %>
+    <%= link_to I18n.t('cancel'), notes_path(), :class => "button" %>
+  <% end %>
 </div>
