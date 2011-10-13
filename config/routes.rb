@@ -180,6 +180,8 @@ Markus::Application.routes.draw do
       member do
         get 'get_annotations'
         delete 'delete_annotation_text'
+        post 'add_annotation_text'
+        post 'update_annotation'
       end
 
       collection do
@@ -191,7 +193,6 @@ Markus::Application.routes.draw do
         get 'yml_upload'
         post 'delete_annotation_text'
         post 'update_annotation_category'
-        post 'update_annotation'
       end
     end
   end
