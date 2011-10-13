@@ -183,7 +183,7 @@ Markus::Application.routes.draw do
         delete 'delete_annotation_category'
         delete 'delete_annotation_text'
         post 'add_annotation_text'
-        post 'update_annotation'
+        put 'update_annotation'
       end
 
       collection do
@@ -193,7 +193,6 @@ Markus::Application.routes.draw do
         get 'delete_annotation_category'
         get 'download'
         get 'yml_upload'
-        post 'delete_annotation_text'
         post 'update_annotation_category'
       end
     end
