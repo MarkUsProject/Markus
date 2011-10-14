@@ -48,9 +48,7 @@ class AdminsController < ApplicationController
 
       redirect_to :action => 'index'
     else
-      flash[:error] = reason_for_error(
-                        @user.errors,
-                        I18n.t('admins.create.error'))
+      flash[:error] = I18n.t('admins.create.error')
       render "new"
     end
   end

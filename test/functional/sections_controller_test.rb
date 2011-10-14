@@ -52,18 +52,19 @@ class SectionsControllerTest < AuthenticatedControllerTest
       assert Section.find_by_name("section_01")
     end
 
-   should "be able to create a section with the same name as a existing one" do
+   should "not be able to create a section with the same name as a existing one" do
       section = Section.make
       post_as @admin, :create, {:section => {:name => section.name}}
-      assert respond_with :success
-      assert_equal flash[:error], I18n.t('section.create.error') + ' Name has already been taken.'
+      assert_response :success
+      assert_equal I18n.t('section.create.error'), flash[:error]
     end
 
-    should "be able to create a section with a blank name" do
+    should "not be able to create a section with a blank name" do
       section = Section.make
       post_as @admin, :create, {:section => {:name => ''}}
       assert respond_with :success
-      assert_equal flash[:error], I18n.t('section.create.error') + ' Name can\'t be blank.'
+      assert_nil Section.find_by_name('')
+      assert_equal I18n.t('section.create.error'), flash[:error]
     end
 
     should "be able to edit a section" do
@@ -92,8 +93,8 @@ class SectionsControllerTest < AuthenticatedControllerTest
               :update,
               :id => @section.id,
               :section => {:name => @section2.name}
-      assert_response :redirect
-      assert_equal flash[:error], I18n.t('section.update.error') + ' Name has already been taken.'
+      assert_response :success
+      assert_equal I18n.t('section.update.error'), flash[:error]
     end
   end
 

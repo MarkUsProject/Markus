@@ -19,7 +19,8 @@
 <% end %>
 
 <%= form_for @assignment do |f| %>
-<%= f.error_messages%>
+  <%= render :partial => "shared/error_explanation",
+      :locals => { :model => @assignment } %>
 <fieldset>
   <legend><%= t("assignment.properties") %></legend>
     <%= raw( f.label :short_identifier, t(:short_identifier) ) %>
