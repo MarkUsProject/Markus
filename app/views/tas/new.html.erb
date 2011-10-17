@@ -2,6 +2,8 @@
 <h1><%= I18n.t("graders.create_new_grader") %></h1>
 </div>
 <div class="wrapLeft">
-<%= render :partial => "layouts/userform" %>
+
+<%= render :partial => "layouts/userform", 
+    :locals => { :controller => 'tas', :action => 'create'} %>
 
 </div>
