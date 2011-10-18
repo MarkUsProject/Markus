@@ -27,12 +27,12 @@ class TasControllerTest < AuthenticatedControllerTest
     end
 
     should "not be able to :edit" do
-      get_as @ta, :edit, :id => 178
+      get_as @ta, :edit, :id => @ta.id
       assert_response :missing
     end
 
     should "not be able to :update" do
-      put_as @ta, :update, :id => 178
+      put_as @ta, :update, :id => @ta.id
       assert_response :missing
     end
 
