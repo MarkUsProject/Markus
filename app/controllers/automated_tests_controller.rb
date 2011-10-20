@@ -61,9 +61,6 @@ class AutomatedTestsController < ApplicationController
     # Create ant test files required by Testing Framework
     create_ant_test_files(@assignment)
 
-    if !request.post?
-      return
-    end
   end
 
 end
