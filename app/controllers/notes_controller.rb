@@ -46,6 +46,7 @@ class NotesController < ApplicationController
   # gets the objects for groupings on first load.
   def new
     new_retrieve
+    @note = Note.new
   end
 
   def create

@@ -21,9 +21,8 @@
 </div>
 <% end %>
 
-<%= form_for @grade_entry_form,
-	     :as => :grade_entry_form do |f| %>
-<%= f.error_messages%>
+<%= form_for @grade_entry_form, :as => :grade_entry_form do |f| %>
+  <%= render :partial => "shared/error_explanation", :locals => { :model => @grade_entry_form } %>
 <fieldset>
   <legend><%= t('grade_entry_forms.properties') %></legend>
 

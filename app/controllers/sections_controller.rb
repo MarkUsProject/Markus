@@ -23,8 +23,8 @@ class SectionsController < ApplicationController
       redirect_to :action => 'index'
       return
     else
-      flash[:error] = reason_for_error(@section.errors, I18n.t('section.create.error'))
-      redirect_to :action => 'new'
+      flash[:error] = I18n.t('section.create.error')
+      render :action => 'new'
     end
   end
 
@@ -41,8 +41,8 @@ class SectionsController < ApplicationController
                                :name => @section.name)
       redirect_to :action => 'index'
     else
-      flash[:error] = reason_for_error(@section.errors, I18n.t('section.update.error'))
-      redirect_to :action => 'edit'
+      flash[:error] = I18n.t('section.update.error')
+      render :action => 'edit'
     end
   end
 end

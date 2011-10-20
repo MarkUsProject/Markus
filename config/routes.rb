@@ -179,6 +179,7 @@ Markus::Application.routes.draw do
     resources :annotation_categories do
       member do
         get 'get_annotations'
+        delete 'delete_annotation_category'
       end
 
       collection do
@@ -223,7 +224,6 @@ Markus::Application.routes.draw do
       get 'student_interface'
       get 'notes_dialog'
       post 'grades'
-      delete 'delete_note'
     end
   end
 
