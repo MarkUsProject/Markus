@@ -36,6 +36,7 @@ class StudentsController < ApplicationController
     # update_attributes supplied by ActiveRecords
     if !@user.update_attributes(attrs)
       flash[:error] = I18n.t("students.update.error")
+      @sections = Section.find(:all, :order => "name")
       render :action => :edit
     else
       flash[:success] = I18n.t("students.update.success",
@@ -89,9 +90,7 @@ class StudentsController < ApplicationController
       redirect_to :action => 'index' # Redirect
     else
       @sections = Section.find(:all, :order => "name")
-      flash[:error] = reason_for_error(
-                          @user.errors,
-                          I18n.t('students.create.error'))
+      flash[:error] = I18n.t('students.create.error')
       render :action => 'new'
     end
   end
