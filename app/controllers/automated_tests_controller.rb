@@ -27,6 +27,39 @@ class AutomatedTestsController < ApplicationController
                        :result => @result}
   end
 
+
+
+#------------------------------------------------------------
+  #Update function called when files are added to the assigment
+def update
+   @assignment = Assignment.find(params[:assignment_id])
+
+   @assignment.transaction do
+
+      begin
+        # Process testing framework form for validation
+        @assignment = process_test_form(@assignment, params)
+      rescue Exception, RuntimeError => e
+        @assignment.errors.add(:base, I18n.t("assignment.error",
+                                             :message => e.message))
+        return
+      end
+
+      # Save assignment and associated test files
+      if @assignment.save
+        flash[:success] = I18n.t("assignment.update_success")
+        redirect_to :action => 'manage',
+                    :assignment_id => params[:assignment_id]
+      else
+        render :action => 'manage'
+      end
+    end
+  end
+
+  #------------------------------------------------------------
+
+
+
   def manage
     @assignment = Assignment.find(params[:assignment_id])
 
