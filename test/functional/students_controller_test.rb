@@ -72,10 +72,8 @@ class StudentsControllerTest < AuthenticatedControllerTest
                         :first_name => 'John'}
       assert_response :success
       assert_nil Student.find_by_user_name('jdoe')
-      assert_equal flash[:error],
-              I18n.t('student.create.error') + " Last_name can't be blank."
+      assert_equal I18n.t('student.create.error'), flash[:error]
     end
-
 
     should "be able to create a student with a section" do
       post_as @admin,
