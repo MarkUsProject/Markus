@@ -64,9 +64,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         post_as @admin, :create, @attributes
         new_assignment = Assignment.find_by_short_identifier(@short_identifier)
         assert_not_nil new_assignment.assignment_stat
-      end
-
-      should "redirect and set flash" do
         assert respond_with :redirect
         assert set_the_flash
       end
@@ -76,50 +73,53 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         new_assignment = Assignment.find_by_short_identifier(@short_identifier)
         assert_equal flash[:success], "Successfully created the assignment"
       end
-      
+
       context "with section due dates" do
         setup do
-          @attributes["section_due_dates_type"] = "1"
-          @attributes["section_due_dates_attributes"] =
-              {"0"=>{"section_id"=>"2", "due_date"=>"2011-10-27 00:00"},
-               "1"=>{"section_id"=>"3", "due_date"=>"2011-10-27 00:00"}}
           @section1 = Section.make
           @section2 = Section.make
-          @due_date_attributes = {"0"=>{"section_id"=>"#{@section1.id}", "due_date"=>"2011-10-27 00:00"},
-                                  "1"=>{"section_id"=>"#{@section2.id}", "due_date"=>"2011-10-29 00:00"}}
-          @attributes["assignment"]["section_due_dates_attributes"] = @due_date_attributes
         end
-          
-        context "with section_due_dates_type selected" do
-          should "save assignment with correct parameters" do
-            post_as @admin, :create, @attributes
-            new_assignment = Assignment.find_by_short_identifier(@short_identifier)
-            assert_not_nil new_assignment
-            assert_equal true, new_assignment.section_due_dates_type
-            @due_date_attributes.each do |key, value|
-              assert new_assignment.section_due_dates[Integer(key)].due_date.to_s.include?( value["due_date"] )
-            end
-            assert redirect_to(:action => "edit", :id => new_assignment)
+
+        should "be able to create assignment with section due dates" do
+          @attributes["section_due_dates_type"] = "1"
+          due_date_attributes = {
+              "0" => {"section_id" => "#{@section1.id}",
+                      "due_date" => "2011-10-27 00:00"},
+              "1" => {"section_id" => "#{@section2.id}",
+                      "due_date"=>"2011-10-29 00:00"}}
+          @attributes["assignment"]["section_due_dates_attributes"] = due_date_attributes
+
+          post_as @admin, :create, @attributes
+          new_assignment = Assignment.find_by_short_identifier(@short_identifier)
+          assert_not_nil new_assignment
+          assert_equal true, new_assignment.section_due_dates_type
+          due_date_attributes.each do |key, value|
+            assert new_assignment.section_due_dates[Integer(
+                      key)].due_date.to_s.include?(value["due_date"])
           end
-          
-          context "with one section due date not specified" do
-            setup do
-              @attributes["assignment"]["section_due_dates_attributes"]["0"]["due_date"] = nil
-              @due_date_attributes["0"]["due_date"] = nil
-            end
-            
-            should "save assignment with correct parameters" do
-              post_as @admin, :create, @attributes
-              new_assignment = Assignment.find_by_short_identifier(@short_identifier)
-              assert_not_nil new_assignment
-              assert_equal true, new_assignment.section_due_dates_type
-              assert_nil new_assignment.section_due_dates[0].due_date
-              assert new_assignment.section_due_dates[1].due_date.to_s.include? @due_date_attributes["1"]["due_date"]
-              assert redirect_to(:action => "edit", :id => new_assignment)
-            end
-          end
+          assert redirect_to(:action => "edit", :id => new_assignment)
         end
-      end
+
+        should "be able to create assignment due date with some section due dates set" do
+          # A section due date can be nil
+          # That section then uses the main due_date
+          @attributes["section_due_dates_type"] = "1"
+          due_date_attributes = {
+              "0" => {"section_id" => "#{@section1.id}",
+                      "due_date" => nil},
+              "1" => {"section_id" => "#{@section2.id}",
+                      "due_date"=>"2011-10-29 00:00"}}
+          @attributes["assignment"]["section_due_dates_attributes"] = due_date_attributes
+
+          post_as @admin, :create, @attributes
+          new_assignment = Assignment.find_by_short_identifier(@short_identifier)
+          assert_not_nil new_assignment
+          assert_equal true, new_assignment.section_due_dates_type
+          assert_nil new_assignment.section_due_dates[0].due_date
+          assert new_assignment.section_due_dates[1].due_date.to_s.include? due_date_attributes["1"]["due_date"]
+          assert redirect_to(:action => "edit", :id => new_assignment)
+        end
+      end  # With some sections
     end #creating new assignment
 
     should "be able to get a new assignment form with submission rules HTML present" do
