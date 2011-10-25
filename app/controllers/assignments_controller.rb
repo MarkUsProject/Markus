@@ -143,6 +143,13 @@ class AssignmentsController < ApplicationController
 
     @assignments = Assignment.all
     @sections = Section.all
+    
+    # build section_due_dates for each section that doesn't already have a due date
+    Section.all.each do |s|
+      unless SectionDueDate.find_by_assignment_id_and_section_id(@assignment.id, s.id)
+        @assignment.section_due_dates.build(:section => s)
+      end
+    end
   end
 
   # Called when editing assignments form is submitted (PUT).
@@ -150,7 +157,6 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find_by_id(params[:id])
     @assignments = Assignment.all
     @sections = Section.all
-
 
     if !params[:assignment].nil?
       @oldcriteria = @assignment.marking_scheme_type
@@ -190,6 +196,9 @@ class AssignmentsController < ApplicationController
     @sections = Section.all
     @assignment.build_submission_rule
     @assignment.build_assignment_stat
+    
+    # build section_due_dates for each section
+    Section.all.each { |s| @assignment.section_due_dates.build(:section => s)}
 
     # set default value if web submits are allowed
     @assignment.allow_web_submits =
@@ -444,30 +453,21 @@ class AssignmentsController < ApplicationController
         end
       end
     end
+    
+    # if there are no section due dates, destroy the objects that were created
+    if params[:assignment][:section_due_dates_type] == "0"
+      assignment.section_due_dates.each { |s| s.destroy }
+      assignment.section_due_dates_type = false
+      assignment.section_groups_only = false
+    else
+      assignment.section_due_dates_type = true
+      assignment.section_groups_only = true
+    end
+    
     # Was the SubmissionRule changed?  If so, wipe out any existing
     # Periods, and switch the type of the SubmissionRule.
     # This little conditional has to do some hack-y workarounds, since
     # accepts_nested_attributes_for is a little...dumb.
-
-
-    if params[:assignment][:section_due_dates_type]
-      # create the section_due_dates
-      for section in @sections
-        if params["section_due_date_#{section.id}"][:due_date]
-          s =
-            SectionDueDate.find_by_assignment_id_and_section_id(assignment.id,
-                                                                section.id)
-          if s.nil?
-            s = SectionDueDate.new(params["section_due_date_#{section.id}"])
-            s.assignment = assignment
-          end
-          s.due_date = params["section_due_date_#{section.id}"][:due_date]
-          s.save
-        end # if we have a due date for this section
-      end # for each sections
-      assignment.section_due_dates_type = true
-      assignment.section_groups_only = true
-    end
     if assignment.submission_rule.attributes['type'] !=
          params[:assignment][:submission_rule_attributes][:type]
       # Some protective measures here to make sure we haven't been duped...
