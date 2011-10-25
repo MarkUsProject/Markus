@@ -316,7 +316,7 @@ class NotesControllerTest < AuthenticatedControllerTest
       assert respond_with :success
       assert render_template 'noteable_object_selector.rjs'
     end
-    
+
     context "with an assignment" do
       setup do
         @grouping = Grouping.make
@@ -464,7 +464,7 @@ class NotesControllerTest < AuthenticatedControllerTest
         assert assign_to :note
         assert set_the_flash.to(I18n.t('notes.delete.success'))
       end
-      
+
       should "have noteable options for selection when viewing noteable_type Grouping" do
         @note = Note.make( :creator_id => @admin.id )
         post_as @admin,
@@ -474,7 +474,7 @@ class NotesControllerTest < AuthenticatedControllerTest
                     :notes_message => @message}}
         assert_tag :tag => 'select', :attributes => { :id => 'note_noteable_id' }
       end
-      
+
       should "have noteable options for selection when viewing noteable_type Student" do
         @note = Note.make( :creator_id => @admin.id )
         post_as @admin,
@@ -484,7 +484,7 @@ class NotesControllerTest < AuthenticatedControllerTest
                     :notes_message => @message}}
         assert_tag :tag => 'select', :attributes => { :id => 'note_noteable_id' }
       end
-      
+
       should "have noteable options for selection when viewing noteable_type Assignment" do
         @note = Note.make( :creator_id => @admin.id )
         post_as @admin,
