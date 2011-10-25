@@ -372,6 +372,7 @@ class NotesControllerTest < AuthenticatedControllerTest
         assert render_template 'new.html.erb'
       end
 
+
       {:Grouping => lambda {Grouping.make},
       :Student => lambda {Student.make},
       :Assignment => lambda {Assignment.make} }.each_pair do |type, noteable|
