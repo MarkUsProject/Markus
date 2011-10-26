@@ -37,6 +37,7 @@ class Assignment < ActiveRecord::Base
   has_many :notes, :as => :noteable, :dependent => :destroy
 
   has_many :section_due_dates
+  accepts_nested_attributes_for :section_due_dates
 
   validates_associated :assignment_files
 
