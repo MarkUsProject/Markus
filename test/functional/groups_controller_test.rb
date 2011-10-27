@@ -584,7 +584,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
           assert !@response.body.empty?
         end
         should "return the expected CSV" do
-          assert_equal @match_array, FasterCSV.parse(@response.body)
+          assert_equal @match_array, CSV.parse(@response.body)
         end
       end # with groups, but no TAs assigned
 
@@ -606,7 +606,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
           assert !@response.body.empty?
         end
         should "return the expected CSV, without TAs included" do
-          assert_equal @match_array, FasterCSV.parse(@response.body)
+          assert_equal @match_array, CSV.parse(@response.body)
         end
       end # with groups, with TAs assigned
 
