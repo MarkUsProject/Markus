@@ -104,8 +104,8 @@ class AnnotationCategoriesController < ApplicationController
     annotation_category_number = 0
     annotation_line = 0
     if !annotation_category_list.nil?
-      FasterCSV.parse(annotation_category_list) do |row|
-        next if FasterCSV.generate_line(row).strip.empty?
+      CSV.parse(annotation_category_list) do |row|
+        next if CSV.generate_line(row).strip.empty?
         annotation_line += 1
         result = AnnotationCategory.add_by_row(row, @assignment)
         if result[:annotation_upload_invalid_lines].size > 0
