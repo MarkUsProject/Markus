@@ -6,7 +6,7 @@
           $('add_annotation_text_prompt').select();
           $('add_annotation_text_prompt').focus();
         } else {
-        #{remote_function :url => {:action => "add_annotation_text", :id => @annotation_category.id}, :method => 'get'}
+        #{remote_function :url => add_annotation_text_assignment_annotation_category_path(:id => @annotation_category.id), :method => 'post'}
         }|%>
   </h2>
 <div id="add_annotation_text_control">
