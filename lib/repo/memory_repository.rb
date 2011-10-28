@@ -422,24 +422,24 @@ module Repository
 
     # gets the "closest matching" revision from the revision-timestamp
     # mapping
-    def get_revision_number_by_timestamp(wanted_timestamp)
+    def get_revision_number_by_timestamp(wanted_time)
       if @timestamps_revisions.empty?
         raise "No revisions, so no timestamps."
       end
 
       timestamps_list = []
       @timestamps_revisions.keys().each do |time_dump|
-        timestamps_list.push(Time.at(time_dump))
+        timestamps_list.push(time_dump)
       end
 
       # find closest matching timestamp
       best_match = timestamps_list.shift()
-      old_diff = wanted_timestamp - best_match
+      old_diff = wanted_time.to_i - best_match
       mapping = {}
       mapping[old_diff.to_s] = best_match
       if !timestamps_list.empty?
         timestamps_list.each do |curr_timestamp|
-          new_diff = wanted_timestamp - curr_timestamp
+          new_diff = wanted_time - curr_timestamp
           mapping[new_diff.to_s] = curr_timestamp
           if (old_diff <= 0 && new_diff <= 0) ||
             (old_diff <= 0 && new_diff > 0) ||
@@ -449,8 +449,8 @@ module Repository
             old_diff = [old_diff, new_diff].min
           end
         end
-        wanted_timestamp = mapping[old_diff.to_s]
-        return @timestamps_revisions[wanted_timestamp.to_i]
+        wanted_time = mapping[old_diff.to_s]
+        return @timestamps_revisions[wanted_time]
       else
         return @current_revision
       end
