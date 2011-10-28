@@ -60,6 +60,7 @@ class AnnotationCategoriesController < ApplicationController
         render :action => 'new_annotation_text_error'
         return
       end
+      @assignment = Assignment.find(params[:assignment_id])
       render :action => 'insert_new_annotation_text'
       return
     end
