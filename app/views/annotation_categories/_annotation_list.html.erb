@@ -2,14 +2,9 @@
     <%= render :partial => "annotation_categories/annotation_category_edit", :locals => {:annotation_category => annotation_category}
     %>
 <h2>Annotations
-   <%=link_to t("annotations.update.add_annotation"), %| if($('add_annotation_text_prompt') != null) {
-         $('add_annotation_text_prompt').select();
-         $('add_annotation_text_prompt').focus();
-       } else { 
-         #{add_annotation_text_assignment_annotation_categories_path(:id => @annotation_category.id)}
-       }|,
-         :remote => true
-   %>
+   <%=link_to t("annotations.update.add_annotation"), 
+         add_annotation_text_assignment_annotation_categories_path(:id => @annotation_category.id),
+         :remote => true %>
   </h2>
 <div id="add_annotation_text_control">
 </div>
