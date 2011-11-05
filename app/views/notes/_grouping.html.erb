@@ -1,4 +1,4 @@
-<% fields_for :note, :url => {:action => 'create'} do |f| %>
+<%= fields_for :note, :url => {:action => 'create'} do |f| %>
   <p>
     <%= label_tag "assignment_id", I18n.t("notes.noteables.Assignment") %>
     <%= select_tag "assignment_id",

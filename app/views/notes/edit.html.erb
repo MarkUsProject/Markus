@@ -16,8 +16,8 @@
       <b><%=I18n.t('notes.creation_time')%>:</b> <%= @note.format_date %>
     </p>
 
-    <%= f.label :notes_message, I18n.t('notes.note')+":" %>
-    <%= f.text_area :notes_message, :rows => 8, :cols => 50 %>
+    <%= raw(f.label :notes_message, I18n.t('notes.note')+":") %>
+    <%= raw(f.text_area :notes_message, :rows => 8, :cols => 50) %>
 
     <p>
       <%= f.submit I18n.t('save') %>

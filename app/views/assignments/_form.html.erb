@@ -55,21 +55,24 @@
         :function => "toggle_sections_due_date(
                       $F('assignment_section_due_dates_type' ));" %>
 
-      <% if @assignment.section_due_dates_type %>
-      <div id="section_due_dates_information">
-
-      <% else %>
-
-      <div id="section_due_dates_information" style="display: none;">
-      <% end %>
-      <p class="information">
-        <%= t("assignment.section_due_dates_info") %>
-      </p>
-        <% for section in @sections %>
-          <%= render :partial => 'section_due_date_form',
-                     :locals => {:section => section } %>
-        <% end %>
-
+      <div id="section_due_dates_information" style="<%= 'display: none' unless @assignment.section_due_dates_type %>">
+        <p class="information">
+          <%= raw t("assignment.section_due_dates_info") %>
+        </p>
+        <div class="section_due_date_form">
+          <%= f.fields_for :section_due_dates do |due_date_f| %>
+            <p>
+              <%= label 'section', t("section.legend") %> <%= Section.find(due_date_f.object.section_id).name %> 
+              <br />
+              <%= due_date_f.text_field :section_id, :class => 'hidden'%>
+              <br />
+              <%= due_date_f.label :due_date, t("due_date") %>
+              <%= due_date_f.calendar_date_select :due_date, { :time => "mixed",
+                                          :after_close => "refresh_due_date();",
+                                          :year_range => 0.years.ago..1.years.from_now } %>
+            </p>
+          <% end %>
+        </div>
       </div>
     <% end %>
     <%= raw( f.label :due_date, t(:due_date) ) %>
