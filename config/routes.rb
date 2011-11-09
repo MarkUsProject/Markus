@@ -182,13 +182,13 @@ Markus::Application.routes.draw do
         get 'get_annotations'
         delete 'delete_annotation_category'
         delete 'delete_annotation_text'
+        get 'add_annotation_text'
         post 'add_annotation_text'
         put 'update_annotation'
       end
 
       collection do
         get 'add_annotation_category'
-        get 'add_annotation_text'
         get 'csv_upload'
         get 'delete_annotation_category'
         get 'download'
