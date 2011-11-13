@@ -127,7 +127,9 @@
            @assignment.student_form_groups %>
 
           <h3><%= I18n.t("student.form_own_group") %></h3>
-          <p><%= I18n.t("student.form_group", :group_min => h(@assignment.group_min), :group_max => h(@assignment.group_max)) %>
+          <p><%= raw(I18n.t("student.form_group", 
+                    :group_min => h(@assignment.group_min), 
+                    :group_max => h(@assignment.group_max))) %>
           </p>
 
           <% if @assignment.group_min == 1 %>
