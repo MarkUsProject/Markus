@@ -21,7 +21,7 @@ class AutomatedTestsControllerTest < AuthenticatedControllerTest
 
     context "on manage" do
       setup do
-        get_as @admin, :manage, {:assignment_id => @assignment.id}
+        get_as @admin, :update, {:assignment_id => @assignment.id}
       end
 
       should respond_with :success
@@ -30,7 +30,7 @@ class AutomatedTestsControllerTest < AuthenticatedControllerTest
     context "creating a test file" do
       setup do
         post_as @admin,
-                :manage, {:assignment_id => @assignment.id,
+                :update, {:assignment_id => @assignment.id,
                           :assignment => {
                                 :enable_test => "1",
                                  :test_files_attributes => {
@@ -54,7 +54,7 @@ class AutomatedTestsControllerTest < AuthenticatedControllerTest
     context "creating an invalid test file" do
       setup do
         post_as @admin,
-                :manage,
+                :update,
                 {:assignment_id => @assignment.id,
                  :assignment => {
                       :enable_test => "1",
@@ -75,7 +75,7 @@ class AutomatedTestsControllerTest < AuthenticatedControllerTest
     context "updating a test file" do
       setup do
         post_as @admin,
-                :manage,
+                :update,
                 {:assignment_id => @assignment.id,
                  :assignment => {
                       :enable_test => "1",
@@ -94,7 +94,7 @@ class AutomatedTestsControllerTest < AuthenticatedControllerTest
                     "#{@assignment.id}",
                     "validtestfile")
         post_as @admin,
-                :manage,
+                :update,
                 {:assignment_id => @assignment.id,
                  :assignment => {
                       :enable_test => "1",
@@ -109,7 +109,7 @@ class AutomatedTestsControllerTest < AuthenticatedControllerTest
     context "deleting a test file" do
       setup do
         post_as @admin,
-                :manage,
+                :update,
                 {:assignment_id => @assignment.id,
                  :assignment => {
                       :enable_test => "1",
@@ -126,7 +126,7 @@ class AutomatedTestsControllerTest < AuthenticatedControllerTest
       should "delete test file named validtestfile" do
         tfile = TestFile.find_by_assignment_id_and_filename("#{@assignment.id}", "validtestfile")
         post_as @admin,
-                :manage,
+                :update,
                 {:assignment_id => @assignment.id,
                  :assignment => {:enable_test => "1",
                                  :test_files_attributes => {
