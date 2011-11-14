@@ -320,7 +320,6 @@ class MemoryRepositoryTest < Test::Unit::TestCase
       latest_rev = @repo.get_latest_revision()
       assert_instance_of(Repository::MemoryRevision, rev_num_by_timestamp, "Revision number is of wrong type")
       assert_instance_of(Repository::MemoryRevision, latest_rev, "Revision number is of wrong type")
-      #FIXME: Problem HERE
       assert_equal(rev_num_by_timestamp.revision_number, latest_rev.revision_number, "Revision number (int values) do not match")
 
       # test.xml should be in the repository for the timestamp "repo_timestamp"
