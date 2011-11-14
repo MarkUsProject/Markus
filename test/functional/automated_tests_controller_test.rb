@@ -21,7 +21,7 @@ class AutomatedTestsControllerTest < AuthenticatedControllerTest
 
     context "on manage" do
       setup do
-        get_as @admin, :update, {:assignment_id => @assignment.id}
+        get_as @admin, :manage, {:assignment_id => @assignment.id}
       end
 
       should respond_with :success
