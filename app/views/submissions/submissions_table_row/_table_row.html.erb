@@ -29,15 +29,15 @@
                       assignment.id,
                       grouping.id) %>
   <% elsif grouping.current_submission_used.remark_submitted? %>
-    <%= link_to h(grouping.group.group_name),
-                :controller => 'results',
-                :action => 'edit',
-                :id => grouping.current_submission_used.remark_result %>
+    <%= link_to h(grouping.group.group_name),:url=>{
+                :controller => :results,
+                :action => :edit,
+                :id => grouping.current_submission_used.remark_result} %>
   <% else %>
-    <%= link_to h(grouping.group.group_name),
-                :controller => 'results',
-                :action => 'edit',
-                :id => grouping.current_submission_used.result %>
+    <%= link_to h(grouping.group.group_name),:url=>{
+                :controller => :results,
+                :action => :edit,
+                :id => grouping.current_submission_used.result} %>
   <% end %>
     (<%= h(grouping.accepted_students.collect{ |student| student.user_name}.join(',')) %>)
   <%='<span class="invalid">' + t(:invalid_grouping) + '</span>' if !grouping.is_valid? %>
