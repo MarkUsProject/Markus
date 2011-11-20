@@ -209,12 +209,23 @@ document.observe("dom:loaded", function(){
 
 </div><!-- Notice -->
 
-<%= form_tag :url => {:controller => "groups",
-	     :action => "global_actions", :id => @assignment.id},
-	     :html => {:id => "global_action_form"},
-			:loading => "thinking();",
-	     :complete => "done_thinking();",
-	     :remote => true do %>
+
+
+<%= form_tag url_for(global_actions_assignment_groups_path(@assignment)),
+             :id => "global_action_form",
+             :remote => true do %>
+
+<script type='text/javascript'>
+$("global_action_form").observe('ajax:after', function(evt, status, data, xhr) {
+  thinking();
+});
+
+$("global_action_form").observe('ajax:complete', function(evt, status, data, xhr) {
+  done_thinking();
+});
+</script>
+
+
 
 <div class="clear"></div>
 <div class="colsLeftHeavy">
