@@ -67,6 +67,7 @@ Markus::Application.routes.draw do
     resources :automated_tests do
       collection do
         get 'manage'
+        post 'update' # because of collection
         post 'update_positions'
         get 'update_positions'
         get 'upload'
