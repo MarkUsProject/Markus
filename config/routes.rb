@@ -81,7 +81,6 @@ Markus::Application.routes.draw do
       collection do
         post 'populate'
         post 'populate_students'
-        get 'add_group'
         get 'use_another_assignment_groups'
         get 'manage'
         post 'csv_upload'
@@ -93,7 +92,6 @@ Markus::Application.routes.draw do
         get 'global_actions'
         get 'remove_group'
         get 'rename_group'
-        post 'add_group'
         post 'global_actions'
       end
     end
