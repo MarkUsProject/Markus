@@ -18,7 +18,6 @@ class Section < ActiveRecord::Base
   end
 
   def user_can_modify?(current_user)
-    #TODO: copied from note.rb, not sure of function of user == current_user
-    return current_user.admin? || user == current_user
+    return current_user.admin?
   end
 end
