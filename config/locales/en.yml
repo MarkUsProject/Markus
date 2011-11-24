@@ -1051,6 +1051,11 @@ en:
       update:
         success: "Successfully updated section %{name}."
         error:   "Failed to update section."
+      delete:
+        success: "Section was deleted successfully."
+        link_confirm: "This will remove this section permanently. Continue?"
+        error_permissions: "You do not have sufficient permissions to delete this section."
+        not_empty: "You cannot delete this section because it has students in it."
 
     date:
       formats:

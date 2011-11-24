@@ -1025,6 +1025,11 @@ fr:
       update:
         success: "Section mise à jour."
         error:   "Échec des modifications de la section."
+      delete:
+        success: "La section a bien été supprimée."
+        link_confirm: "Cela supprimera définitivement la section. Êtes-vous sûr de vouloir continuer?"
+        error_permissions: "Vous n'avez pas les permissions suffisantes pour supprimer cette section."
+        not_empty: "Vous ne pouvez pas supprimer cette section car elle a en elle les étudiants."
 
     date:
       formats:

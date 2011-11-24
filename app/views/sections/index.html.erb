@@ -2,21 +2,35 @@
 
 <div class="wrapLeft">
 
-<% if !flash[:success].nil?%>
-    <div class="success">
-	<%= flash[:success] %>
-    </div>
+<% if flash[:error] %>
+  <div class="error">
+    <%= flash[:error] %>
+  </div>
+<% end %>
+<% unless flash[:success].nil? %>
+  <div class="success">
+	 <%= flash[:success] %>
+  </div>
 <% end %>
 
 <%= link_to I18n.t('section.add_section'), new_section_path %>
 <% if @sections.empty? %>
-<p>There are no sections yet.</p>
+  <p>There are no sections yet.</p>
 <% else %>
-  <ul>
+  <table>
   <% @sections.each do |section| %>
-    <li><%= link_to section.name, edit_section_path(section) %> </li>
+    <tr>
+      <td><%= link_to section.name, edit_section_path(section) %></td>
+      <td><%= button_to I18n.t('delete'), { :action => 'destroy', :id => section.id },
+              :html => { :class => 'delete', :title => I18n.t('section.delete.link_title') },
+              :confirm => I18n.t('section.delete.link_confirm'),
+              :method => 'delete',
+              :remote => true
+          %>
+      </td>
+      </tr>
   <% end %>
-  </ul>
+  </table>
 <% end %>
 
 </div>
