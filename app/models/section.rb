@@ -18,6 +18,6 @@ class Section < ActiveRecord::Base
   end
 
   def user_can_modify?(current_user)
-    return current_user.admin?
+    current_user.admin?
   end
 end

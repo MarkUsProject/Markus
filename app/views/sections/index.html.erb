@@ -7,7 +7,7 @@
     <%= flash[:error] %>
   </div>
 <% end %>
-<% unless flash[:success].nil? %>
+<% if flash[:success] %>
   <div class="success">
 	 <%= flash[:success] %>
   </div>
@@ -15,21 +15,21 @@
 
 <%= link_to I18n.t('section.add_section'), new_section_path %>
 <% if @sections.empty? %>
-  <p>There are no sections yet.</p>
+  <p><%= I18n.t('section.no_sections') %></p>
 <% else %>
   <table>
-  <% @sections.each do |section| %>
-    <tr>
-      <td><%= link_to section.name, edit_section_path(section) %></td>
-      <td><%= button_to I18n.t('delete'), { :action => 'destroy', :id => section.id },
-              :html => { :class => 'delete', :title => I18n.t('section.delete.link_title') },
-              :confirm => I18n.t('section.delete.link_confirm'),
-              :method => 'delete',
-              :remote => true
-          %>
-      </td>
+    <% @sections.each do |section| %>
+      <tr>
+        <td><%= link_to section.name, edit_section_path(section) %></td>
+        <td><%= button_to I18n.t('delete'), { :action => 'destroy', :id => section.id },
+                :class => 'delete',
+                :confirm => I18n.t('section.delete.link_confirm'),
+                :method => 'delete',
+                :remote => true
+            %>
+        </td>
       </tr>
-  <% end %>
+    <% end %>
   </table>
 <% end %>
 

@@ -1045,6 +1045,7 @@ en:
       add_section: "Add a new section"
       manage_users: "Manage Users"
       due_dates_type: "Section due dates type: "
+      no_sections: "There are no sections yet."
       create:
         success: "Successfully created section %{name}."
         error:   "Failed to create section."
