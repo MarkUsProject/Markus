@@ -809,11 +809,14 @@ fr:
         from:  "Du"
         to:  "au"
         alert: "Vous devez activer les temps supplémentaires pour pouvoir ajouter du temps supplémentaire."
-
+        
       penalty_decay_period_submission_rule:
         name: "Penalty Period Submission Rule" #TODO Translation
         short_name: "Penalty Decay" #TODO Translation
         description: "You may submit up to %{penalty_decay_period_limit} hour(s) past the due date, but will have the appropriate percentage deducted from your final result" #TODO Translation
+        after_collection_message: "Le nombre maximal de heures de pénalité est passé pour ce projet. Tout changement sera enregistré mais non évalué."
+        commit_after_collection_message: "La date de retour pour ce projet, plus le maximum de heures de pénalité autorisées sont passés. Vos changements ont été enregistrés, mais ne seront pas inclus dans l'évaluation."
+        overtime_message: "La date de retour pour ce projet est passée.  Cependant, vous êtes dans une période de pénalité. Vous pouvez changer vos fichiers envoyés mais vous aurez %{penalty_amount}% déduit de votre note finale sur ce projet."
         form_description: "Use Penalty Decay Formula" #TODO Translation
         add_penalty_decay: "Add a Decay Period" #TODO Translation
         alert: "You must select the Penalty Decay Submission Rule to add a decay period." #TODO Translation
@@ -832,7 +835,7 @@ fr:
         after_collection_message: "Le nombre maximal de périodes de pénalité est passé pour ce projet. Tout changement sera enregistré mais non évalué."
         commit_after_collection_message: "La date de retour pour ce projet, plus le maximum de périodes de pénalité autorisées sont passés. Vos changements ont été enregistrés, mais ne seront pas inclus dans l'évaluation."
         overtime_message: "La date de retour pour ce projet est passée.  Cependant, vous êtes dans une période de pénalité. Vous pouvez changer vos fichiers envoyés mais vous aurez %{potential_penalty} % déduit de votre note finale sur ce projet."
-        extramark_description: "Le dernier envoi date de (%{overtime_hours} heure(s)) après la période de fin. Conclusion : %{penalty_amount} % sera déduit de votre note."
+        extramark_description: "Le dernier envoi date de (%{overtime_hours} heure(s)) après la période de fin. Conclusion : %{penalty_amount}% sera déduit de votre note."
         form_description: "Activer les pénalités"
         add_penalty_period: "Ajouter une période de pénalité"
         hours:  "heures…"
