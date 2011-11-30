@@ -221,7 +221,7 @@ class SubmissionsController < ApplicationController
   end
 
   def collect_ta_submissions
-    assignment = Assignment.find(params[:id])
+    assignment = Assignment.find(params[:assignment_id])
     if !assignment.submission_rule.can_collect_now?
       flash[:error] = I18n.t("collect_submissions.could_not_collect",
         :assignment_identifier => assignment.short_identifier)
