@@ -122,6 +122,7 @@ Markus::Application.routes.draw do
 
       member do
         get 'collect_and_begin_grading'
+        get 'manually_collect_and_begin_grading'
         get 'repo_browser'
       end
 
