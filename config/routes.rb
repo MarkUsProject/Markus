@@ -67,6 +67,7 @@ Markus::Application.routes.draw do
     resources :automated_tests do
       collection do
         get 'manage'
+        post 'update' # because of collection
         post 'update_positions'
         get 'update_positions'
         get 'upload'
@@ -121,6 +122,7 @@ Markus::Application.routes.draw do
 
       member do
         get 'collect_and_begin_grading'
+        get 'manually_collect_and_begin_grading'
         get 'repo_browser'
       end
 
@@ -180,18 +182,19 @@ Markus::Application.routes.draw do
       member do
         get 'get_annotations'
         delete 'delete_annotation_category'
+        delete 'delete_annotation_text'
+        get 'add_annotation_text'
+        post 'add_annotation_text'
+        put 'update_annotation'
       end
 
       collection do
         get 'add_annotation_category'
-        get 'add_annotation_text'
         get 'csv_upload'
         get 'delete_annotation_category'
         get 'download'
         get 'yml_upload'
-        post 'delete_annotation_text'
         post 'update_annotation_category'
-        post 'update_annotation'
       end
     end
   end
