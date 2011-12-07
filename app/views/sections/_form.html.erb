@@ -21,25 +21,25 @@
       <%= f.submit I18n.t(:save) %>
     <% end %>
 
-<ul id="section_student_list">
-<% if @section %>
-  <% if @students %>
-    <table>
-    	<% @students.each do |student| %>
-    	  <tr>
-    	  	<td>
-              <td><%= h(student.user_name)%></td>
-              <td><%= h(student.last_name)%></td>
-              <td><%= h(student.first_name)%></td>
-              <td><%= link_to I18n.t(:edit), :controller => 'students', :action =>
-                'edit', :id => student%></td>
-    	  	</td>
-    	  </tr>
-    	<% end %>
-    </table>
-  <% end %>
-<% end %>
-</ul>
+    <ul id="section_student_list">
+    <% if @section %>
+      <% if @students %>
+        <table>
+    	    <% @students.each do |student| %>
+        	  <tr>
+        	  	<td>
+                  <td><%= h(student.user_name)%></td>
+                  <td><%= h(student.last_name)%></td>
+                  <td><%= h(student.first_name)%></td>
+                  <td><%= link_to I18n.t(:edit), :controller => 'students', :action =>
+                    'edit', :id => student%></td>
+    	      	</td>
+        	  </tr>
+        	<% end %>
+        </table>
+      <% end %>
+    <% end %>
+    </ul>
 
   </fieldset>
 <% end %>
