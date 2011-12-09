@@ -168,7 +168,7 @@ class Assignment < ActiveRecord::Base
       end
       return due_date
     end
-   end
+  end
 
   def past_collection_date?
     return Time.now > submission_rule.calculate_collection_time

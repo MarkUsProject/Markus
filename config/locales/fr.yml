@@ -784,7 +784,7 @@ fr:
         overtime_message:  "Ce message est affiché aux étudiants quand ils sont dans le gestionnaire de fichiers après que la date de retour du projet est passée."
 
       no_late_submission_rule:
-        name: "No Late Submission Rule" #TODO
+        name: "Pas De Règle Pour Les Travaux En Retards"
         description: "Aucune pénalité ne sera appliquée aux projets en retard."
         commit_after_late_message: "La date de retour pour ce projet est passée. Vos changements ont été enregistrés, mais ils ne seront pas inclus pour l'évaluation."
         no_late_message: "La date de retour pour ce projet est passée. Seront évalués les fichiers qui étaient dans votre répertoire à la date de retour."
@@ -802,21 +802,24 @@ fr:
         commit_after_collection_message: "La date de retour pour ce projet, plus le maximum de jour de grâce autorisés sont passés. Vos changements ont été enregistrés, mais ne seront pas inclus dans l'évaluation."
         overtime_message_with_days_left: "La date de retour pour ce projet est passée. Cependant, il vous reste %{grace_credits_remaining} crédit(s) de grâce.  Si vous envoyez un (des) fichier(s) ou faites des changements durant cette période, vous utiliserez %{grace_credits_to_use} de ces crédits."
         overtime_message_without_days_left: "La date de retour pour ce projet est passée et vous ne pouvez plus utiliser de jours de grâce."
-        form_description:  "Déduire automatiquement les \"grace period credits\" " #TODO 'grace period' —> "Période d'indulgence" ?
-        add_grace_period: "Ajouter une période de grâce" #TODO
+        form_description:  "Déduire automatiquement les crédits de grâce"
+        add_grace_period: "Ajouter une période de grâce"
         hours:  "heures…"
         after:  "Après"
         from:  "Du"
         to:  "au"
         alert: "Vous devez activer les temps supplémentaires pour pouvoir ajouter du temps supplémentaire."
-
+        
       penalty_decay_period_submission_rule:
-        name: "Penalty Period Submission Rule" #TODO Translation
-        short_name: "Penalty Decay" #TODO Translation
-        description: "You may submit up to %{penalty_decay_period_limit} hour(s) past the due date, but will have the appropriate percentage deducted from your final result" #TODO Translation
-        form_description: "Use Penalty Decay Formula" #TODO Translation
-        add_penalty_decay: "Add a Decay Period" #TODO Translation
-        alert: "You must select the Penalty Decay Submission Rule to add a decay period." #TODO Translation
+        name: "Période De Pénalité"
+        short_name: "Pénalité dépendant du retard"
+        description: "Vous pouvez envoyer votre travail jusqu'à %{penalty_period_limit} heure(s) après la date de retour, mais vous aurez une pénalité sur votre note finale."
+        after_collection_message: "Le nombre maximal d'heures de pénalité est passé pour ce projet. Tout changement sera enregistré mais non évalué."
+        commit_after_collection_message : "La date de retour pour ce projet et le nombre maximum d'heures de retard sont passés. Vos changements ont été enregistrés, mais ne seront pas inclus dans l'évaluation."
+        overtime_message: "La date de retour pour ce projet est passée.  Cependant, vous êtes dans une période de pénalité. Vous pouvez changer vos fichiers envoyés mais vous aurez %{penalty_amount}% déduit de votre note finale sur ce projet."
+        form_description: "Utiliser une pénalité dépendant du retard"
+        add_penalty_decay: "Ajouter une période pénalité"
+        alert: "Vous devez activer les pénalités pour pouvoir ajouter une période de pénalité dépendant du retard."
         from: "De"
         to: "au"
         hours: "heure(s)…"
@@ -825,14 +828,14 @@ fr:
         deduct: "déduction"
         for: "pour"
 
-      penalty_period_submission_rule: #TODO To review!
+      penalty_period_submission_rule:
         name: "Règle d'envoi lors des périodes de pénalité"
         short_name:  "Période de pénalité"
         description: "Vous pouvez envoyer votre travail jusqu'à %{penalty_period_limit} heure(s) après la date de retour et vous aurez le pourcentage adéquat déduit de votre note finale."
         after_collection_message: "Le nombre maximal de périodes de pénalité est passé pour ce projet. Tout changement sera enregistré mais non évalué."
-        commit_after_collection_message: "La date de retour pour ce projet, plus le maximum de périodes de pénalité autorisées sont passés. Vos changements ont été enregistrés, mais ne seront pas inclus dans l'évaluation."
+        commit_after_collection_message: "La date de retour et la période de pénalité maximale sont dépassées pour ce projet. Vos changements ont été enregistrés, mais ne seront pas inclus dans l'évaluation."
         overtime_message: "La date de retour pour ce projet est passée.  Cependant, vous êtes dans une période de pénalité. Vous pouvez changer vos fichiers envoyés mais vous aurez %{potential_penalty} % déduit de votre note finale sur ce projet."
-        extramark_description: "Le dernier envoi date de (%{overtime_hours} heure(s)) après la période de fin. Conclusion : %{penalty_amount} % sera déduit de votre note."
+        extramark_description: "Le dernier envoi date de (%{overtime_hours} heure(s)) après la période de fin. Par conséquent,  %{penalty_amount}% sera déduit de votre note."
         form_description: "Activer les pénalités"
         add_penalty_period: "Ajouter une période de pénalité"
         hours:  "heures…"
