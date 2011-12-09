@@ -32,6 +32,13 @@ class SectionsControllerTest < AuthenticatedControllerTest
       put_as @student, :update, :id => Section.make.id
       assert respond_with :missing
     end
+    
+    should "not be able to delete a section" do
+      section = Section.make
+      delete_as @student, :destroy, :id => section
+      assert respond_with :missing
+      assert_not_nil Section.find(section.id)
+    end
   end
 
   context "A logged Admin" do
@@ -95,6 +102,29 @@ class SectionsControllerTest < AuthenticatedControllerTest
               :section => {:name => @section2.name}
       assert_response :success
       assert_equal I18n.t('section.update.error'), flash[:error]
+    end
+    
+    context "with an already created section" do
+      setup do
+        @section = Section.make
+      end
+      
+      should "be able to delete a section with no students" do
+        assert_difference('Section.count', -1) do
+          delete_as @admin, :destroy, :id => @section.id
+        end
+        assert_response :success
+        assert_equal I18n.t('section.delete.success'), flash[:success]
+      end
+      
+      should "not be able to delete a section with students in it" do
+        @student = Student.make
+        @section.students << @student
+        delete_as @admin, :destroy, :id => @section.id
+        assert_response :success
+        assert_equal I18n.t('section.delete.not_empty'), flash[:error]
+        assert_not_nil Section.find(@section.id)
+      end
     end
   end
 
