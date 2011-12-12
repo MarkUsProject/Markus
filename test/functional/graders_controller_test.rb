@@ -388,6 +388,34 @@ class GradersControllerTest < AuthenticatedControllerTest
       end # flexible criteria
     end # criteria csv upload
 
+    context "doing a GET on :download_grader_groupings_mapping" do
+      setup do
+        @assignment = Assignment.make(:marking_scheme_type => 'rubric', :assign_graders_to_criteria => true)
+      end
+
+      should "routing properly" do
+          post_as @admin, :download_grader_groupings_mapping,
+                          :assignment_id => @assignment.id
+          assert_response :success
+          assert_recognizes({:controller => "graders", :assignment_id => "1", :action => "download_grader_groupings_mapping" },
+            {:path => "assignments/1/graders/download_grader_groupings_mapping", :method => :get})
+      end
+    end
+
+    context "doing a GET on :download_grader_criteria_mapping" do
+      setup do
+        @assignment = Assignment.make(:marking_scheme_type => 'rubric', :assign_graders_to_criteria => true)
+      end
+
+      should "routing properly" do
+          post_as @admin, :download_grader_criteria_mapping,
+                          :assignment_id => @assignment.id
+          assert_response :success
+          assert_recognizes({:controller => "graders", :assignment_id => "1", :action => "download_grader_criteria_mapping" },
+            {:path => "assignments/1/graders/download_grader_criteria_mapping", :method => :get})
+      end
+    end
+
     should "doing a POST on :add_grader_to_grouping" do
         @grouping = Grouping.make(:assignment => @assignment)
         @grouping2 = Grouping.make(:assignment => @assignment)
