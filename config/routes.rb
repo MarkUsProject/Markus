@@ -83,7 +83,7 @@ Markus::Application.routes.draw do
         get 'add_group'
         get 'use_another_assignment_groups'
         get 'manage'
-        get 'csv_upload'
+        post 'csv_upload'
         get 'add_csv_group'
         get 'download_grouplist'
         get 'create_groups_when_students_work_alone'

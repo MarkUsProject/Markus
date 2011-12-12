@@ -142,15 +142,9 @@ document.observe("dom:loaded", function(){
           'assignment_group_use(); return false;', :class => "button" %>
         <span class="menu_bar">|</span>
       <% end %>
-      <%= button_to I18n.t("download"),
-		    :url => {:action => 'download_dialog',
-			     :id => @assignment.id},
-		    :remote => true %>
+      <%= button_to_function I18n.t("download"), "download_groups();" %>
       <span class="menu_bar">|</span>
-      <%= button_to I18n.t("upload"),
-		    :url => {:action => 'upload_dialog',
-			     :id => @assignment.id},
-		    :remote => true %>
+      <%= button_to_function I18n.t("upload"), "upload_groups();" %>
     </div> <!-- rightjustify-->
   </div> <!-- colrightgroups-->
 
@@ -416,7 +410,35 @@ $("global_action_form").observe('ajax:complete', function(evt, status, data, xhr
 </div>
 
 <div id="download_dialog">
+  <h2><%=h I18n.t("groups.download.download_groups_file") %></h2>
+  <%= link_to t("groups.download.download_csv"),
+    {:controller=>"groups", :action=>"download_grouplist", :id=> @assignment.id}, :onclick => "modalDownload.close();" %>
+  <br />
+  <br />
+  <button onclick="modalDownload.close(); return false;"><%= I18n.t('cancel') %>
+  </button>
 </div>
 
 <div id="upload_dialog">
+  <h2><%=h I18n.t("groups.upload.upload_groups_file") %></h2>
+  <p>
+    <%= I18n.t("groups.upload.description") %>
+    <% if !@assignment.groupings.nil? && @assignment.groupings.length > 0 %>
+      <br/>
+      <div class="information">
+        <%= I18n.t("groups.upload.importing") %>
+      </div>
+    <% end %>
+  </p>
+  <%= form_for :group, :html => {:multipart => true},
+                       :url => { :controller=>"groups",
+                               :action => 'csv_upload',
+                               :id => @assignment.id } do |f| %>
+  <p>
+    <%= f.file_field :grouplist, :size => 2 %> <br />
+    <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
+    <button onclick="modalUpload.close(); return false;"><%= I18n.t('cancel') %>
+    </button>
+  </p>
+  <% end %>
 </div>
