@@ -569,6 +569,10 @@ class GroupsControllerTest < AuthenticatedControllerTest
         should "be an empty file returned" do
           assert @response.body.empty?
         end
+        should "route properly" do
+          assert_recognizes({:controller => "groups", :assignment_id => "1", :action => "download_grouplist" },
+            {:path => "assignments/1/groups/download_grouplist", :method => :get})
+        end
       end # with no groups
 
       context "with groups, but no TAs assigned" do
@@ -585,6 +589,10 @@ class GroupsControllerTest < AuthenticatedControllerTest
         end
         should "return the expected CSV" do
           assert_equal @match_array, FasterCSV.parse(@response.body)
+        end
+        should "route properly" do
+          assert_recognizes({:controller => "groups", :assignment_id => "1", :action => "download_grouplist" },
+            {:path => "assignments/1/groups/download_grouplist", :method => :get})
         end
       end # with groups, but no TAs assigned
 
@@ -607,6 +615,10 @@ class GroupsControllerTest < AuthenticatedControllerTest
         end
         should "return the expected CSV, without TAs included" do
           assert_equal @match_array, FasterCSV.parse(@response.body)
+        end
+        should "route properly" do
+          assert_recognizes({:controller => "groups", :assignment_id => "1", :action => "download_grouplist" },
+            {:path => "assignments/1/groups/download_grouplist", :method => :get})
         end
       end # with groups, with TAs assigned
 
