@@ -197,6 +197,8 @@ class GradersControllerTest < AuthenticatedControllerTest
         assert @grouping2.tas.include? @ta1
         assert @grouping3.tas.count == 1
         assert @grouping3.tas.include? @ta3
+        assert_recognizes({:controller => "graders", :assignment_id => "1", :action => "csv_upload_grader_groups_mapping" },
+          {:path => "assignments/1/graders/csv_upload_grader_groups_mapping", :method => :post})
       end
 
       should "and some graders are invalid" do
@@ -275,6 +277,8 @@ class GradersControllerTest < AuthenticatedControllerTest
           assert @criterion2.tas.include? @ta1
           assert @criterion3.tas.count == 1
           assert @criterion3.tas.include? @ta3
+          assert_recognizes({:controller => "graders", :assignment_id => "1", :action => "csv_upload_grader_criteria_mapping" },
+            {:path => "assignments/1/graders/csv_upload_grader_criteria_mapping", :method => :post})
         end
 
         should "and some graders are invalid" do
