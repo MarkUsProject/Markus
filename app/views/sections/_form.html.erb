@@ -15,15 +15,11 @@
     <%= raw(f.label :name, t("section.name")) %>
     <%= raw(f.text_field :name) %>
     <br />
-    <% if controller.action_name == "create_section"%>
-      <%= f.submit I18n.t(:submit) %>
-    <% else %>
-      <%= f.submit I18n.t(:save) %>
-    <% end %>
+    <%= f.submit I18n.t(:save) %>
 
-    <ul id="section_student_list">
-    <% if @section %>
-      <% if @students %>
+    <% if controller.action_name == "edit" %>
+      <% unless @students.empty? %>
+      <ul id="section_student_list">
         <table id="section_students">
           <thead>
           <tr>
@@ -43,9 +39,9 @@
             </tr>
           <% end %>
         </table>
+      </ul>
       <% end %>
     <% end %>
-    </ul>
 
   </fieldset>
 <% end %>

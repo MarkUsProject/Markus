@@ -80,7 +80,7 @@ class SectionsControllerTest < AuthenticatedControllerTest
       assert_response :success
       assert_equal flash[:error],
                    I18n.t('section.create.error')
-      end
+    end
 
     should "be able to edit a section" do
       section = Section.make
