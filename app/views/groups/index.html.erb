@@ -415,8 +415,7 @@ $("global_action_form").observe('ajax:complete', function(evt, status, data, xhr
     {:controller=>"groups", :action=>"download_grouplist", :id=> @assignment.id}, :onclick => "modalDownload.close();" %>
   <br />
   <br />
-  <button onclick="modalDownload.close(); return false;"><%= I18n.t('cancel') %>
-  </button>
+  <%= button_to_function I18n.t('cancel'), "modalDownload.close(); return false;" %>
 </div>
 
 <div id="upload_dialog">
@@ -437,8 +436,7 @@ $("global_action_form").observe('ajax:complete', function(evt, status, data, xhr
   <p>
     <%= f.file_field :grouplist, :size => 2 %> <br />
     <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
-    <button onclick="modalUpload.close(); return false;"><%= I18n.t('cancel') %>
-    </button>
+    <%= button_to_function I18n.t('cancel'), "modalUpload.close(); return false;" %>
   </p>
   <% end %>
 </div>
