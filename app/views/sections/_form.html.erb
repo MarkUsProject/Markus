@@ -24,18 +24,24 @@
     <ul id="section_student_list">
     <% if @section %>
       <% if @students %>
-        <table>
-    	    <% @students.each do |student| %>
-        	  <tr>
-        	  	<td>
-                  <td><%= h(student.user_name)%></td>
-                  <td><%= h(student.last_name)%></td>
-                  <td><%= h(student.first_name)%></td>
-                  <td><%= link_to I18n.t(:edit), :controller => 'students', :action =>
-                    'edit', :id => student%></td>
-    	      	</td>
-        	  </tr>
-        	<% end %>
+        <table id="section_students">
+          <thead>
+          <tr>
+            <th><%= I18n.t('user.user_name') %></th>
+            <th><%= I18n.t('user.first_name') %></th>
+            <th><%= I18n.t('user.last_name') %></th>
+            <th></th>
+          </tr>
+          </thead>
+          <% @students.each do |student| %>
+            <tr>
+              <td><%= h(student.user_name)%></td>
+              <td><%= h(student.last_name)%></td>
+              <td><%= h(student.first_name)%></td>
+              <td><%= link_to I18n.t(:edit), :controller => 'students', :action =>
+                'edit', :id => student%></td>
+            </tr>
+          <% end %>
         </table>
       <% end %>
     <% end %>
