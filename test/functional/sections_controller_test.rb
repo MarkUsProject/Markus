@@ -27,6 +27,11 @@ class SectionsControllerTest < AuthenticatedControllerTest
       post_as @student, :create
       assert respond_with :missing
     end
+    
+    should "on edit section" do
+      get_as @student, :edit, :id => Section.make.id
+      assert respond_with :missing
+    end
 
     should "on update new section" do
       put_as @student, :update, :id => Section.make.id
