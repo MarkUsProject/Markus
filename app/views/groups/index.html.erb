@@ -4,6 +4,7 @@
 <%= javascript_include_tag "manage_groups.js" %>
 <%= javascript_include_tag "FilterTable/FilterTable.js" %>
 <%= javascript_include_tag "Groups/tabs_boot.js" %>
+<%= csrf_meta_tag %>
 
 <%= render :partial => "boot.js.erb" %>
 <script type="text/javascript">
@@ -216,6 +217,10 @@ $("global_action_form").observe('ajax:after', function(evt, status, data, xhr) {
 });
 
 $("global_action_form").observe('ajax:complete', function(evt, status, data, xhr) {
+  done_thinking();
+});
+
+$("global_action_form").observe('ajax:success', function(evt, status, data, xhr) {
   done_thinking();
 });
 </script>
