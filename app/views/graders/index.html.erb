@@ -266,7 +266,7 @@ document.observe("dom:loaded", function(){
 		    download_grader_criteria_mapping_assignment_graders_path(@assignment),
 		    :onclick => "modalDownload.close();" %></li>
   </ul>
-  <input type="reset" value="<%=t('cancel')%>" onclick="modalDownload.close();">
+  <%= button_to_function I18n.t('cancel'), "modalDownload.close(); return false;" %>
 </div>
 
 <div id="upload_dialog">
@@ -277,8 +277,7 @@ document.observe("dom:loaded", function(){
     {:multipart => true}) do %>
     <p><%= file_field_tag :grader_mapping, :size => 2 %> <br />
       <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
-      <button onclick="modalUpload.close(); return false;"><%= I18n.t('cancel') %>
-      </button>
+      <%= button_to_function I18n.t('cancel'), "modalUpload.close(); return false;" %>
     </p>
   <% end %>
 
@@ -290,8 +289,7 @@ document.observe("dom:loaded", function(){
       {:multipart => true}) do %>
       <p><%= file_field_tag :grader_criteria_mapping, :size => 2 %> <br />
         <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
-        <button onclick="modalUpload.close(); return false;"><%= I18n.t('cancel') %>
-        </button>
+        <%= button_to_function I18n.t('cancel'), "modalUpload.close(); return false;" %>
       </p>
     <% end %>
   <% end %>
