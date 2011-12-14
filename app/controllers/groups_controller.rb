@@ -166,7 +166,7 @@ class GroupsController < ApplicationController
         flash[:invalid_lines] = [] # Store errors of lines in CSV file
         begin
           # Loop over each row, which lists the members to be added to the group.
-          FasterCSV.parse(params[:group][:grouplist]).each_with_index do |row, line_nr|
+          FasterCSV.parse(params[:group][:grouplist].read).each_with_index do |row, line_nr|
             begin
               # Potentially raises CSVInvalidLineError
               collision_error = @assignment.add_csv_group(row)
@@ -203,7 +203,7 @@ class GroupsController < ApplicationController
       # This is not handled by the roll back.
       @assignment.update_repository_permissions_forall_groupings
     end
-    redirect_to :action => "manage", :id => params[:id]
+    redirect_to :action => "index", :id => params[:id]
   end
 
   def download_grouplist
