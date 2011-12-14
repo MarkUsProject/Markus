@@ -825,6 +825,9 @@ en:
         name: "Penalty Period Submission Rule"
         short_name: "Penalty Decay"
         description: "You may submit up to %{penalty_decay_period_limit} hour(s) past the due date, but will have the appropriate percentage deducted from your final result"
+        after_collection_message: "The maximum number of penalty hours has passed for this assignment. Any changes will be recorded, but not graded."
+        commit_after_collection_message: "The due date for this assignment, plus the maximum number of allowed penalty hours, has passed. Your changes have been recorded, but will not be included in the grading."
+        overtime_message: "The due date for this assignment has passed and you are now in a penalty period. You can make changes to your submission, but will have %{potential_penalty}% deducted from the final mark on this assignment."
         form_description: "Use Penalty Decay Formula"
         add_penalty_decay: "Add a Decay Period"
         alert: "You must select the Penalty Decay Submission Rule to add a decay period."
@@ -840,9 +843,9 @@ en:
         name: "Penalty Period Submission Rule"
         short_name:  "Penalty Period"
         description: "You may submit up to %{penalty_period_limit} hour(s) past the due date, but will have the appropriate percentage deducted from your final result"
-        after_collection_message: "The maximum number of penalty periods has passed for this assignment.  Any changes will be recorded, but not graded."
+        after_collection_message: "The maximum number of penalty periods has passed for this assignment. Any changes will be recorded, but not graded."
         commit_after_collection_message: "The due date for this assignment, plus the maximum number of allowed penalty periods, has passed.  Your changes have been recorded, but will not be included in the grading."
-        overtime_message: "The due date for this assignment has passed.  However, you are in a penalty period.  You can make changes to your submission, but will have %{potential_penalty}% deducted from the final mark on this assignment."
+        overtime_message: "The due date for this assignment has passed and you are now in a penalty period. You can make changes to your submission, but will have %{potential_penalty}% deducted from the final mark on this assignment."
         extramark_description: "Late submission (%{overtime_hours} hour(s)) resulted in automatic %{penalty_amount}% deduction"
         form_description: "Use Penalty Formula"
         add_penalty_period: "Add a Penalty Period"
@@ -1045,12 +1048,18 @@ en:
       add_section: "Add a new section"
       manage_users: "Manage Users"
       due_dates_type: "Section due dates type: "
+      no_sections: "There are no sections yet."
       create:
         success: "Successfully created section %{name}."
         error:   "Failed to create section."
       update:
         success: "Successfully updated section %{name}."
         error:   "Failed to update section."
+      delete:
+        success: "Section was deleted successfully."
+        link_confirm: "This will remove this section permanently. Continue?"
+        error_permissions: "You do not have sufficient permissions to delete this section."
+        not_empty: "You cannot delete this section because it has students in it."
 
     date:
       formats:

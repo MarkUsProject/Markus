@@ -23,7 +23,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
     should "and I should be able to access the file manager page" do
       get_as @student, :file_manager, :assignment_id => @assignment.id
 
-      assert respond_with :success
+      assert_response :success
       # file_manager action assert assign to various instance variables.
       # These are crucial for the file_manager view to work properly.
       assert assign_to :assignment
@@ -36,7 +36,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
     should "and I should be able to populate file" do
       get_as @student, :populate_file_manager, :assignment_id => @assignment.id
-      assert respond_with :success
+      assert_response :success
     end
 
     #TODO Figure out how to remove fixture_file_upload
@@ -51,7 +51,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
       # must not respond with redirect_to (see comment in
       # app/controllers/submission_controller.rb#update_files)
-      assert respond_with :success
+      assert_response :success
 
       # update_files action assert assign to various instance variables.
       # These are crucial for the file_manager view to work properly.
@@ -101,7 +101,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
       # must not respond with redirect_to (see comment in
       # app/controllers/submission_controller.rb#update_files)
-      assert respond_with :success
+      assert_response :success
 
       # update_files action assert assign to various instance variables.
       # These are crucial for the file_manager view to work properly.
@@ -150,7 +150,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
       # must not respond with redirect_to (see comment in
       # app/controllers/submission_controller.rb#update_files)
-      assert respond_with :success
+      assert_response :success
 
       # update_files action assert assign to various instance variables.
       # These are crucial for the file_manager view to work properly.
@@ -186,7 +186,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
       # must not respond with redirect_to (see comment in
       # app/controllers/submission_controller.rb#update_files)
-      assert respond_with :success
+      assert_response :success
 
       # update_files action should assign to various instance variables.
       # These are crucial for the file_manager view to work properly.
@@ -221,7 +221,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
              :repo_browser,
              :assignment_id => 1,
              :id => Grouping.last.id
-      assert respond_with :missing
+      assert_response :missing
     end
 
     should "and I cannot use the populate repository browser." do
@@ -229,32 +229,32 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
              :populate_repo_browser,
              :assignment_id => 1,
              :id => Grouping.first.id
-      assert respond_with :missing
+      assert_response :missing
     end
 
     # Stopping a curious student
     should "and I cannot access a simple csv report" do
       get_as @student, :download_simple_csv_report, :assignment_id => 1
 
-      assert respond_with :missing
+      assert_response :missing
     end
 
     should "and I cannot access a detailed csv report." do
       get_as @student, :download_detailed_csv_report, :assignment_id => 1
 
-      assert respond_with :missing
+      assert_response :missing
     end
 
     should "and I cannot download svn export commands" do
       get_as @student, :download_svn_export_commands, :assignment_id => 1
 
-      assert respond_with :missing
+      assert_response :missing
     end
 
     should "and I cannot download the svn repository list" do
       get_as @student, :download_svn_repo_list, :assignment_id => 1
 
-      assert respond_with :missing
+      assert_response :missing
     end
 
     context "and I have a grader. My grade should be able to" do
@@ -268,7 +268,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                :repo_browser,
                :assignment_id => @assignment.id,
                :id => Grouping.last.id
-        assert respond_with :success
+        assert_response :success
       end
 
       should "access the populate repository browser." do
@@ -276,7 +276,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                :populate_repo_browser,
                :assignment_id => 1,
                :id => Grouping.first.id
-        assert respond_with :success
+        assert_response :success
       end
 
       should "download a simple csv report" do
@@ -284,22 +284,22 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                :download_simple_csv_report,
                :assignment_id => 1
 
-        assert respond_with :missing
+        assert_response :missing
       end
 
       should "download a detailed csv report" do
         get_as @grader, :download_detailed_csv_report, :assignment_id => 1
-        assert respond_with :missing
+        assert_response :missing
       end
 
       should "download the svn export commands" do
         get_as @grader, :download_svn_export_commands, :assignment_id => 1
-        assert respond_with :missing
+        assert_response :missing
       end
 
       should "download the svn repository list" do
         get_as @grader, :download_svn_repo_list, :assignment_id => 1
-        assert respond_with :missing
+        assert_response :missing
       end
 
       context "to collect all their assigned submissions at once" do
@@ -309,9 +309,9 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           @assignment.expects(:short_identifier).once.returns('a1')
           @assignment.submission_rule.expects(:can_collect_now?).once.returns(false)
           get_as @grader, :collect_ta_submissions, :assignment_id => 1, :id => 1
-          assert set_the_flash.to(I18n.t("collect_submissions.could_not_collect",
-              :assignment_identifier => 'a1'))
-          assert respond_with :redirect
+          assert_equal flash[:error], I18n.t("collect_submissions.could_not_collect",
+              :assignment_identifier => 'a1')
+          assert_response :redirect
         end
 
         should "after assignment due date" do
@@ -323,9 +323,9 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           @submission_collector.expects(:push_groupings_to_queue).once
           get_as @grader, :collect_ta_submissions, :assignment_id => 1, :id => 1
 
-          assert set_the_flash.to(I18n.t("collect_submissions.collection_job_started",
-              :assignment_identifier => 'a1'))
-          assert respond_with :redirect
+          assert_equal flash[:success], I18n.t("collect_submissions.collection_job_started",
+              :assignment_identifier => 'a1')
+          assert_response :redirect
         end
 
       end
@@ -345,35 +345,35 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                :populate_repo_browser,
                :assignment_id => 1,
                :id => Grouping.first.id
-        assert respond_with :success
+        assert_response :success
       end
 
       should "My instructor should be able to download the simple csv report." do
         get_as @admin,
                :download_simple_csv_report,
                :assignment_id => @assignment.id
-        assert respond_with :success
+        assert_response :success
       end
 
       should "My instructor should be able to download the detailed csv report." do
         get_as @admin,
                :download_detailed_csv_report,
                :assignment_id => @assignment.id
-        assert respond_with :success
+        assert_response :success
       end
 
       should "My instructor should be able to download the svn export commands." do
         get_as @admin,
                :download_svn_export_commands,
                :assignment_id => @assignment.id
-        assert respond_with :success
+        assert_response :success
       end
 
       should "My instructor should be able to download the svn repository list." do
         get_as @admin,
                :download_svn_repo_list,
                :assignment_id => @assignment.id
-        assert respond_with :success
+        assert_response :success
       end
 
       context "instructor attempts to collect all submissions at once" do
@@ -385,9 +385,9 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           get_as @admin,
                  :collect_all_submissions,
                  :assignment_id => 1
-          assert set_the_flash.to(I18n.t("collect_submissions.could_not_collect",
-              :assignment_identifier => 'a1'))
-          assert respond_with :redirect
+          assert_equal flash[:error], I18n.t("collect_submissions.could_not_collect",
+              :assignment_identifier => 'a1')
+          assert_response :redirect
         end
 
         should "after assignment due date" do
@@ -398,9 +398,9 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
           @submission_collector.expects(:push_groupings_to_queue).once
           get_as @admin, :collect_all_submissions, :assignment_id => 1, :id => 1
-          assert set_the_flash.to(I18n.t("collect_submissions.collection_job_started",
-              :assignment_identifier => 'a1'))
-          assert respond_with :redirect
+          assert_equal flash[:success], I18n.t("collect_submissions.collection_job_started",
+              :assignment_identifier => 'a1')
+          assert_response :redirect
         end
 
       end
@@ -416,7 +416,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                 :ap_select_full => 'true',
                 :filter => 'none',
                 :release_results => 'true'
-        assert respond_with :redirect
+        assert_response :redirect
 
       end
     end
@@ -426,22 +426,22 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
   context "I am an unauthenticated or unauthorized user" do
     should "trying to download a simple csv report" do
       get :download_simple_csv_report, :assignment_id => 1
-      assert respond_with :redirect
+      assert_response :redirect
     end
 
     should "trying to download a detailed csv report" do
       get :download_detailed_csv_report, :assignment_id => 1
-      assert respond_with :redirect
+      assert_response :redirect
     end
 
     should "trying to download the svn export commands" do
       get :download_svn_export_commands, :assignment_id => 1
-      assert respond_with :redirect
+      assert_response :redirect
     end
 
     should "trying to download the svn repository list" do
       get :download_svn_repo_list, :assignment_id => 1
-      assert respond_with :redirect
+      assert_response :redirect
     end
   end
 
