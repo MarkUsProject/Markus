@@ -27,7 +27,7 @@ class SectionsControllerTest < AuthenticatedControllerTest
       post_as @student, :create
       assert_response :missing
     end
-    
+
     should "on edit section" do
       get_as @student, :edit, :id => Section.make.id
       assert respond_with :missing
@@ -106,7 +106,7 @@ class SectionsControllerTest < AuthenticatedControllerTest
       get_as @admin, :edit, :id => section.id
       assert_nil response.body.to_s.match("section_students")
     end
-    
+
     should "see a table if the section has students in it" do
       section = Section.make
       student = Student.make
