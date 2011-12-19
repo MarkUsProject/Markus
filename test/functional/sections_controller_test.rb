@@ -101,6 +101,20 @@ class SectionsControllerTest < AuthenticatedControllerTest
       assert_not_nil Section.find_by_name("no section")
     end
 
+    should "not see a table if no students in this section" do
+      section = Section.make
+      get_as @admin, :edit, :id => section.id
+      assert_nil response.body.to_s.match("section_students")
+    end
+    
+    should "see a table if the section has students in it" do
+      section = Section.make
+      student = Student.make
+      section.students << student
+      get_as @admin, :edit, :id => section.id
+      assert_not_nil response.body.to_s.match("section_students")
+    end
+
     should "not be able to edit a section name to an existing name" do
       @section = Section.make
       @section2 = Section.make
