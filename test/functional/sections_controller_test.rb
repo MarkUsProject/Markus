@@ -37,7 +37,7 @@ class SectionsControllerTest < AuthenticatedControllerTest
       put_as @student, :update, :id => Section.make.id
       assert_response :missing
     end
-    
+
     should "not be able to delete a section" do
       section = Section.make
       delete_as @student, :destroy, :id => section
