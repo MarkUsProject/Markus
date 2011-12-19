@@ -19,7 +19,6 @@
 
     <% if controller.action_name == "edit" %>
       <% unless @students.empty? %>
-      <ul id="section_student_list">
         <table id="section_students">
           <thead>
           <tr>
@@ -39,7 +38,6 @@
             </tr>
           <% end %>
         </table>
-      </ul>
       <% end %>
     <% end %>
 
