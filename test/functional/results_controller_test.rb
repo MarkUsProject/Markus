@@ -551,7 +551,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert assign_to :files
             assert assign_to :first_file
             assert assign_to :extra_marks_points
-            assert assign_to:extra_marks_percentage
+            assert assign_to :extra_marks_percentage
             assert assign_to :marks_map
             assert_response :success
             assert render_template :view_marks
