@@ -45,4 +45,20 @@ class SectionsController < ApplicationController
       render :action => 'edit'
     end
   end
+
+  def destroy
+    @section = Section.find(params[:id])
+
+    # only destroy section if this user is allowed to do so and the section has no students
+    if @section.user_can_modify?(current_user)
+      unless @section.has_students?
+        @section.destroy
+        flash[:success] = I18n.t('section.delete.success')
+      else
+        flash[:error] = I18n.t('section.delete.not_empty')
+      end
+    else
+      flash[:error] = I18n.t('section.delete.error_permissions')
+    end
+  end
 end

@@ -43,23 +43,9 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       should respond_with :redirect
     end
 
-    context "on :update_annotation" do
-      setup do
-        get :update_annotation, :assignment_id => 1
-      end
-      should respond_with :redirect
-    end
-
     context "on :add_annotation_text" do
       setup do
-        get :add_annotation_text, :assignment_id => 1
-      end
-      should respond_with :redirect
-    end
-
-    context "on :delete_annotation_text" do
-      setup do
-        get :delete_annotation_text, :assignment_id => 1
+        get :add_annotation_text, :assignment_id => 1, :id => 1
       end
       should respond_with :redirect
     end
@@ -101,7 +87,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
     context "on :get_annotations" do
       setup do
-        get :get_annotations, :assignment_id => 1, :id => 1
+        post :get_annotations, :assignment_id => 1, :id => 1
       end
       should respond_with :redirect
     end
@@ -122,21 +108,21 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
     context "on :update_annotation" do
       setup do
-        post :update_annotation, :assignment_id => 1
+        post :update_annotation, :assignment_id => 1, :id => 1
       end
       should respond_with :redirect
     end
 
     context "on :add_annotation_text" do
       setup do
-        post :add_annotation_text, :assignment_id => 1
+        post :add_annotation_text, :assignment_id => 1, :id => 1
       end
       should respond_with :redirect
     end
 
     context "on :delete_annotation_text" do
       setup do
-        post :delete_annotation_text, :assignment_id => 1
+        post :delete_annotation_text, :assignment_id => 1, :id => 1
       end
       should respond_with :redirect
     end
@@ -163,7 +149,29 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     end
 
   end # end unauthenticated/unauthorized user POST
+  
+  context "An unauthenticated and unauthorized user doing a PUT" do
+  
+    context "on :update_annotation" do
+      setup do
+        put :update_annotation, :assignment_id => 1, :id => 1
+      end
+      should respond_with :redirect
+    end
+    
+  end # end unauthenticated/unauthorized user PUT
+  
+  context "An unauthenticated and unauthorized user doing a DELETE" do
+  
+    context "on :delete_annotation_text" do
+      setup do
+        delete :delete_annotation_text, :assignment_id => 1, :id => 1
+      end
+      should respond_with :redirect
+    end
 
+  end # end unauthenticated/unauthorized user DELETE
+  
   context "An authorized and authenticated user doing a GET" do
     fixtures  :users, :assignments, :annotation_categories, :annotation_texts
 
@@ -218,7 +226,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
                :update_annotation_category,
                :assignment_id => @assignment.id,
                :id => @category.id
-        assert respond_with :success
+        assert_response :success
         assert assign_to :annotation_category
         assert_equal I18n.t('annotations.update.annotation_category_success'),
                      flash[:success]
@@ -235,7 +243,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
                  :update_annotation_category,
                  :assignment_id => @assignment.id,
                  :id => @category.id
-          assert respond_with :success
+          assert_response :success
           assert_equal flash[:error], "error"
           assert assign_to :annotation_category
         end

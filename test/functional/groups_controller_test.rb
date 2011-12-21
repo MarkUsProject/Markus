@@ -22,49 +22,49 @@ class GroupsControllerTest < AuthenticatedControllerTest
 
     should "GET on :add_group" do
       get_as @student, :add_group, :assignment_id => @assignment.id
-      assert respond_with :missing
+      assert_response :missing
     end
 
     should "GET on :remove_group" do
       get_as @student, :remove_group, :assignment_id => @assignment.id
-      assert respond_with :missing
+      assert_response :missing
     end
 
     should "GET on :rename_group" do
       get_as @student, :rename_group, :assignment_id => @assignment.id
-      assert respond_with :missing
+      assert_response :missing
     end
 
     should "GET on :valid_grouping" do
       get_as @student, :valid_grouping, :assignment_id => @assignment.id
-      assert respond_with :missing
+      assert_response :missing
     end
 
     should "GET on :invalid_grouping" do
       get_as @student, :invalid_grouping, :assignment_id => @assignment.id
-      assert respond_with :missing
+      assert_response :missing
     end
 
     should "GET on :index" do
       get_as @student, :index, :assignment_id => @assignment.id
-      assert respond_with :missing
+      assert_response :missing
     end
 
     should "GET on :csv_upload" do
       get_as @student, :csv_upload, :assignment_id => @assignment.id
-      assert respond_with :missing
+      assert_response :missing
     end
 
     should "GET on :download_grouplist" do
       get_as @student, :download_grouplist, :assignment_id => @assignment.id
-      assert respond_with :missing
+      assert_response :missing
     end
 
     should "GET on :use_another_assignment_groups" do
       get_as @student,
              :use_another_assignment_groups,
              :assignment_id => @assignment.id
-      assert respond_with :missing
+      assert_response :missing
     end
 
   end #student context
@@ -82,28 +82,28 @@ class GroupsControllerTest < AuthenticatedControllerTest
       get_as @admin,
              :index,
              :assignment_id => @assignment.id
-      assert respond_with :success
+      assert_response :success
     end
 
     should "GET on :populate" do
       get_as @admin,
              :populate,
              :assignment_id => @assignment.id
-      assert respond_with :success
+      assert_response :success
     end
 
     should "GET on :populate_students" do
       get_as @admin,
              :populate_students,
              :assignment_id => @assignment.id
-      assert respond_with :success
+      assert_response :success
     end
 
     should "GET on :index" do
       get_as @admin,
              :index,
              :assignment_id => @assignment.id
-      assert respond_with :success
+      assert_response :success
     end
 
     context "POST on :add_group" do
@@ -114,7 +114,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         post_as @admin,
                 :add_group,
                 :assignment_id => @assignment.id
-        assert respond_with :success
+        assert_response :success
         assert render_template 'groups/table_row/_filter_table_row'
         assert assign_to(:assignment) { @assignment }
         assert assign_to :new_grouping
@@ -124,7 +124,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         post_as @admin,
                 :add_group,
                 {:assignment_id => @assignment.id, :new_group_name => "test"}
-        assert respond_with :success
+        assert_response :success
         assert render_template 'groups/table_row/_filter_table_row.html.erb'
         assert assign_to(:assignment) { @assignment }
         assert assign_to :new_grouping
@@ -138,7 +138,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
                  :remove_group,
                  {:assignment_id => @assignment.id,
                   :grouping_id => @grouping.id}
-        assert respond_with :success
+        assert_response :success
         assert render_template 'groups/delete_groupings'
         assert assign_to(:assignment) { @assignment }
         assert assign_to(:errors) { [] }
@@ -151,7 +151,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
                   :remove_group,
                   {:assignment_id => @assignment.id,
                    :grouping_id => @grouping_with_submission.id}
-        assert respond_with :success
+        assert_response :success
         assert render_template 'groups/delete_groupings'
         assert assign_to(:assignment) { Assignment.make }
         assert assign_to(:errors) { [@grouping_with_submission.group.group_name] }
@@ -171,7 +171,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         assert assign_to :grouping
         assert assign_to :group
         assert_equal @new_name, assigns(:group).group_name
-        assert respond_with :success
+        assert_response :success
       end
 
       should "with existing name" do
@@ -181,9 +181,9 @@ class GroupsControllerTest < AuthenticatedControllerTest
         assert assign_to :assignment
         assert assign_to :grouping
         assert assign_to :group
-        assert respond_with :success
+        assert_response :success
         assert_equal @grouping.group.group_name, assigns(:group).group_name
-        assert set_the_flash.to(I18n.t('groups.rename_group.already_in_use'))
+        assert_equal flash[:fail_notice], I18n.t('groups.rename_group.already_in_use')
       end
 
     end #:rename_group
@@ -192,14 +192,14 @@ class GroupsControllerTest < AuthenticatedControllerTest
       post_as @admin, :valid_grouping, {:assignment_id => @assignment.id,
         :grouping_id => @grouping.id}
       assert assign_to :assignment
-      assert respond_with :success
+      assert_response :success
     end
 
     should "POST on :invalid_grouping" do
       post_as @admin, :invalid_grouping, {:assignment_id => @assignment.id,
         :grouping_id => @grouping.id}
       assert assign_to :assignment
-      assert respond_with :success
+      assert_response :success
     end
 
     should "be able to clone groups from another assignment" do
@@ -210,7 +210,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
                :clone_groups_assignment_id => @assignment.id}
 
       assert assign_to :target_assignment
-      assert respond_with :success
+      assert_response :success
       assert render_template 'use_another_assignment_groups.rjs'
     end
 
@@ -289,7 +289,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         @grouping = Grouping.make
         post_add [@student.id]
         assert assign_to :assignment
-        assert respond_with :success
+        assert_response :success
         assert render_template 'groups/table_row/_filter_table_row.html.erb'
         assert_equal 1, @grouping.student_memberships.size
         assert_equal "inviter",
@@ -306,7 +306,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         assert assign_to(:messages) {
           [ I18n.t('add_student.fail.already_grouped', :user_name => @user_name) ] }
         assert assign_to(:error) { true }
-        assert respond_with :success
+        assert_response :success
         assert render_template 'groups/table_row/_filter_table_row.html.erb'
         assert_equal 1, @grouping.student_memberships.size
       end
@@ -318,7 +318,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         post_add [@student1.id, @student2.id]
         assert assign_to :assignment
         assert assign_to(:error) { false }
-        assert respond_with :success
+        assert_response :success
         assert render_template 'groups/table_row/_filter_table_row.html.erb'
         assert_equal 2,
                      @grouping.student_memberships.size
@@ -339,7 +339,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         post_add [@student1.id, @student2.id]
         assert assign_to :assignment
         assert assign_to(:error) { false }
-        assert respond_with :success
+        assert_response :success
         assert render_template 'groups/table_row/_filter_table_row.html.erb'
         assert_equal 2, @grouping.student_memberships.size
         assert_equal "inviter",
@@ -365,7 +365,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
           ]
         }
         assert assign_to(:error) { true }
-        assert respond_with :success
+        assert_response :success
         assert render_template 'groups/table_row/_filter_table_row.html.erb'
         assert_equal 1, @grouping.student_memberships.size
         assert_equal "inviter",
@@ -389,7 +389,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
           ]
         }
         assert assign_to(:error) { true }
-        assert respond_with :success
+        assert_response :success
         assert render_template 'groups/table_row/_filter_table_row.html.erb'
         assert_equal 1, @grouping.student_memberships.size
         assert_equal "inviter", @grouping.student_memberships.at(0).membership_status
@@ -404,7 +404,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         post_add [@student1.id, @student2.id, @student3.id]
         assert assign_to :assignment
         assert assign_to(:error) { true }
-        assert respond_with :success
+        assert_response :success
         assert render_template 'groups/table_row/_filter_table_row.html.erb'
         assert_equal 3, @grouping.student_memberships.size
         assert_equal "inviter",
@@ -434,7 +434,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
           ]
         }
         assert assign_to(:error) { true }
-        assert respond_with :success
+        assert_response :success
         assert render_template 'groups/table_row/_filter_table_row.html.erb'
         assert_equal 2, @grouping.student_memberships.size
         assert_equal "inviter",
@@ -461,7 +461,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
           ]
         }
         assert assign_to(:error) { true }
-        assert respond_with :success
+        assert_response :success
         assert render_template 'groups/table_row/_filter_table_row.html.erb'
         assert_equal 2, @grouping.student_memberships.size
         assert_equal "inviter",
@@ -487,7 +487,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
           ]
         }
         assert assign_to(:error) { true }
-        assert respond_with :success
+        assert_response :success
         assert render_template 'groups/table_row/_filter_table_row.html.erb'
         assert_equal 2, @grouping.student_memberships.size
         assert_equal "inviter",
@@ -528,7 +528,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         post_as @admin, :global_actions, {:assignment_id => @assignment.id,
           :global_actions => "unassign", :groupings => [@grouping.id],
           "#{@grouping.id}_#{@student1.user_name}" => true}
-        assert respond_with :success
+        assert_response :success
         assert render_template 'groups/table_row/_filter_table_student_row.erb'
         assert assign_to :assignment
         @grouping.reload
@@ -545,7 +545,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
           :students => [@student1.id, @student2.id],
           "#{@grouping.id}_#{@student1.user_name}" => true,
           "#{@grouping.id}_#{@student2.user_name}" => true}
-        assert respond_with :success
+        assert_response :success
         assert render_template 'groups/table_row/_filter_table_student_row.erb'
         assert assign_to :assignment
         @grouping.reload
@@ -569,6 +569,10 @@ class GroupsControllerTest < AuthenticatedControllerTest
         should "be an empty file returned" do
           assert @response.body.empty?
         end
+        should "route properly" do
+          assert_recognizes({:controller => "groups", :assignment_id => "1", :action => "download_grouplist" },
+            {:path => "assignments/1/groups/download_grouplist", :method => :get})
+        end
       end # with no groups
 
       context "with groups, but no TAs assigned" do
@@ -585,6 +589,10 @@ class GroupsControllerTest < AuthenticatedControllerTest
         end
         should "return the expected CSV" do
           assert_equal @match_array, CSV.parse(@response.body)
+        end
+        should "route properly" do
+          assert_recognizes({:controller => "groups", :assignment_id => "1", :action => "download_grouplist" },
+            {:path => "assignments/1/groups/download_grouplist", :method => :get})
         end
       end # with groups, but no TAs assigned
 
@@ -607,6 +615,10 @@ class GroupsControllerTest < AuthenticatedControllerTest
         end
         should "return the expected CSV, without TAs included" do
           assert_equal @match_array, CSV.parse(@response.body)
+        end
+        should "route properly" do
+          assert_recognizes({:controller => "groups", :assignment_id => "1", :action => "download_grouplist" },
+            {:path => "assignments/1/groups/download_grouplist", :method => :get})
         end
       end # with groups, with TAs assigned
 

@@ -17,5 +17,7 @@ class Section < ActiveRecord::Base
     return SectionDueDate.find_by_assignment_id_and_section_id(aid, self.id)
   end
 
-
+  def user_can_modify?(current_user)
+    current_user.admin?
+  end
 end

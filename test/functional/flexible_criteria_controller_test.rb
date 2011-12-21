@@ -241,7 +241,7 @@ require 'mocha'
                                               @criterion.id],
              :assignment_id => @assignment.id
       assert render_template ''
-      assert respond_with :success
+      assert_response :success
 
       c1 = FlexibleCriterion.find(@criterion.id)
       assert_equal 1, c1.position
@@ -258,7 +258,7 @@ require 'mocha'
              :position => @criterion2.position,
              :direction => :up
       assert render_template ''
-      assert respond_with :success
+      assert_response :success
       @criterion.reload
       @criterion2.reload
       assert_equal 1, @criterion.position
@@ -269,7 +269,7 @@ require 'mocha'
       @criterion2 = flexible_criteria(:flexible_criterion_2)
       get_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion.id, :position => @criterion.position, :direction => :down
       assert render_template ''
-      assert respond_with :success
+      assert_response :success
       @criterion.reload
       @criterion2.reload
       assert_equal 1, @criterion.position
@@ -412,7 +412,7 @@ require 'mocha'
                                                @criterion.id],
               :assignment_id => @assignment.id
       assert render_template ''
-      assert respond_with :success
+      assert_response :success
 
       c1 = FlexibleCriterion.find(@criterion.id)
       assert_equal 2, c1.position
@@ -544,7 +544,7 @@ require 'mocha'
       delete_as @admin, :destroy, :assignment_id => 1, :id => @criterion.id
       assert assign_to :criterion
       assert I18n.t('criterion_deleted_success'), flash[:success]
-      assert respond_with :success
+      assert_response :redirect
 
       assert_raise ActiveRecord::RecordNotFound do
         FlexibleCriterion.find(@criterion.id)
