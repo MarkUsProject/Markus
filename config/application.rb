@@ -37,9 +37,6 @@ module Markus
   # which is used in the assignments_controller.rb
   config.time_zone = 'Eastern Time (US & Canada)'
 
-  # Bundler handles our gem dependencies
-  config.gem 'bundler', :version => ">=1.0.0", :source => "http://rubygems.org"
-
   # We need some additional load paths (e.g. for the API)
   # Note for developers: in Ruby %W( a b c ) is equivalent to [ 'a', 'b', 'c' ]
   config.autoload_paths += %W(

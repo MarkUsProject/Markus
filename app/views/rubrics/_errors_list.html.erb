@@ -1,5 +1,5 @@
 <ul>
-<%= criterion.errors.each do |error| %>
+<%= criterion.errors.each_line do |error| %>
   <li><%=error[0]%> <%=error[1]%></li>
 <% end %>
 </ul>

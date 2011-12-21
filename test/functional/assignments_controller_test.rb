@@ -30,7 +30,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       get_as @admin, :new
       assert assign_to :assignment
       assert assign_to :assignments
-      assert respond_with :success
+      assert_response :success
     end
 
     context "creating a new assignment" do

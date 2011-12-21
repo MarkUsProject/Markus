@@ -103,7 +103,7 @@ class Group < ActiveRecord::Base
       user_permissions[ta.user_name] = Repository::Permission::READ_WRITE
     end
     group_repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type, self.repository_config)
-    group_repo.set_bulk_permissions(File.join(MarkusConfigurator.markus_config_repository_storage, self.repository_name), user_permissions)
+    group_repo.set_bulk_permissions([File.join(MarkusConfigurator.markus_config_repository_storage, self.repository_name)], user_permissions)
     return true
   end
 

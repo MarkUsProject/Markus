@@ -31,7 +31,7 @@ module Repository
       @revision_history = []                      # a list (array) of old revisions (i.e. < @current_revision)
       # mapping (hash) of timestamps and revisions
       @timestamps_revisions = {}
-      @timestamps_revisions[Time.now._dump.to_s] = @current_revision   # push first timestamp-revision mapping
+      @timestamps_revisions[Time.now.to_i] = @current_revision   # push first timestamp-revision mapping
       @repository_location = location
       @opened = true
 
@@ -153,8 +153,8 @@ module Repository
       # everything went fine, so push old revision to history revisions,
       # make new_rev the latest one and create a mapping for timestamped
       # revisions
-      timestamp = Time.now._dump.to_s
-      new_rev.timestamp = try_parse_time(timestamp, 0) # this throws ArgumentErrors occasionally
+      timestamp = Time.now
+      new_rev.timestamp = timestamp
       @revision_history.push(@current_revision)
       @current_revision = new_rev
       @current_revision.__increment_revision_number() # increment revision number
@@ -320,20 +320,6 @@ module Repository
       return rev
     end
 
-    # Helper method to deal with "Argument out of range" errors
-    def try_parse_time(timedump, counter)
-      begin
-        return Time.parse(timedump)
-      rescue ArgumentError
-        if counter < 3
-          sleep(1)
-          return try_parse_time(timedump, counter+1)
-        else
-          return Time.now
-        end
-      end
-    end
-
     # Adds a file into the provided revision
     def add_file(rev, full_path, content, mime_type="text/plain")
       if file_exists?(rev, full_path)
@@ -435,24 +421,24 @@ module Repository
 
     # gets the "closest matching" revision from the revision-timestamp
     # mapping
-    def get_revision_number_by_timestamp(wanted_timestamp)
+    def get_revision_number_by_timestamp(wanted_time)
       if @timestamps_revisions.empty?
         raise "No revisions, so no timestamps."
       end
 
       timestamps_list = []
       @timestamps_revisions.keys().each do |time_dump|
-        timestamps_list.push(Time._load(time_dump))
+        timestamps_list.push(time_dump)
       end
 
       # find closest matching timestamp
       best_match = timestamps_list.shift()
-      old_diff = wanted_timestamp - best_match
+      old_diff = wanted_time.to_i - best_match
       mapping = {}
       mapping[old_diff.to_s] = best_match
       if !timestamps_list.empty?
         timestamps_list.each do |curr_timestamp|
-          new_diff = wanted_timestamp - curr_timestamp
+          new_diff = wanted_time - curr_timestamp
           mapping[new_diff.to_s] = curr_timestamp
           if (old_diff <= 0 && new_diff <= 0) ||
             (old_diff <= 0 && new_diff > 0) ||
@@ -462,8 +448,8 @@ module Repository
             old_diff = [old_diff, new_diff].min
           end
         end
-        wanted_timestamp = mapping[old_diff.to_s]
-        return @timestamps_revisions[wanted_timestamp._dump]
+        wanted_time = mapping[old_diff.to_s]
+        return @timestamps_revisions[wanted_time]
       else
         return @current_revision
       end
