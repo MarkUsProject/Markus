@@ -440,6 +440,23 @@ input, .button, .button_2{
    padding-bottom: 50px;
 }
 
+.link_button{
+  position: relative;
+  top: 11px;
+  min-width: 100px;
+  background: #fff;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border: 2px solid #ccc;
+  text-align: center;
+  font-family: "Lucida Grande", Verdana, Arial, sans-serif;
+  font-weight: bold;
+  color: #464646;
+  padding: 4px 25px;
+  margin: 5px;
+  font-size: 0.85em;
+}
+
 .button{
   padding: 4px 25px;
 }

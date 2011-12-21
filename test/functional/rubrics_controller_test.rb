@@ -204,7 +204,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
                                    :weight => 10}
       assert assign_to :criterion
       assert render_template 'errors'
-      assert respond_with :success
+      assert_response :success
     end
 
     should "be able to  save without errors" do
@@ -255,7 +255,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
                                             @criterion.id],
              :assignment_id => @assignment.id
       assert render_template ''
-      assert respond_with :success
+      assert_response :success
 
       c1 = RubricCriterion.find(@criterion.id)
       assert_equal 1, c1.position
@@ -272,7 +272,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
              :position => @criterion2.position,
              :direction => :up
       assert render_template ''
-      assert respond_with :success
+      assert_response :success
 
       c1 = RubricCriterion.find(@criterion.id)
       assert_equal 1, c1.position
@@ -289,7 +289,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
              :position => @criterion.position,
              :direction => :up
       assert render_template ''
-      assert respond_with :success
+      assert_response :success
 
       c1 = RubricCriterion.find(@criterion.id)
       assert_equal 1, c1.position
@@ -394,7 +394,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       assert assign_to :assignment
       assert assign_to :criteria
       assert render_template :index
-      assert respond_with :success
+      assert_response :success
     end
 
     should "on :edit" do
@@ -404,7 +404,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
               :id => @criterion.id
       assert assign_to :criterion
       assert render_template :edit
-      assert respond_with :success
+      assert_response :success
     end
 
     context "on :new" do
@@ -419,7 +419,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         assert assign_to :criterion
         assert assign_to :errors
         assert render_template 'rubrics/add_criterion_error'
-        assert respond_with :success
+        assert_response :success
       end
 
       context "without error on an assignment as the first criterion" do
@@ -522,7 +522,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
                                              @criterion.id],
               :assignment_id => @assignment.id
       assert render_template ''
-      assert respond_with :success
+      assert_response :success
 
       c1 = RubricCriterion.find(@criterion.id)
       assert_equal 2, c1.position
@@ -647,7 +647,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
       assert assign_to :criterion
       assert_equal flash[:success], I18n.t('criterion_deleted_success')
-      assert respond_with :success
+      assert_response :success
 
       assert_raise ActiveRecord::RecordNotFound do
         RubricCriterion.find(@criterion.id)

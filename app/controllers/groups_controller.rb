@@ -203,7 +203,7 @@ class GroupsController < ApplicationController
       # This is not handled by the roll back.
       @assignment.update_repository_permissions_forall_groupings
     end
-    redirect_to :action => "manage", :id => params[:id]
+    redirect_to :action => "index", :id => params[:id]
   end
 
   def download_grouplist
