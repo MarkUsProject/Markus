@@ -50,7 +50,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert assign_to :student
       assert render_template :student_interface
       assert_response :success
-      assert 0, flash.size
+      assert_equal 0, flash.size
       assert_match Regexp.new(I18n.t('grade_entry_forms.students.no_results')), @response.body
     end
 
@@ -62,7 +62,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert assign_to :student
       assert render_template :student_interface
       assert_response :success
-      assert 0, flash.size
+      assert_equal 0, flash.size
       assert_match Regexp.new(I18n.t('grade_entry_forms.grades.total')), @response.body
       assert_match Regexp.new("15"), @response.body
     end
@@ -73,7 +73,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert assign_to :student
       assert render_template :student_interface
       assert_response :success
-      assert 0, flash.size
+      assert_equal 0, flash.size
       assert_match Regexp.new(I18n.t('grade_entry_forms.students.no_results')), @response.body
     end
 
@@ -88,7 +88,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert assign_to :student
       assert render_template :student_interface
       assert_response :success
-      assert 0, flash.size
+      assert_equal 0, flash.size
       assert_match Regexp.new(I18n.t('grade_entry_forms.grades.no_mark')), @response.body
     end
 
