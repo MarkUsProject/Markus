@@ -513,7 +513,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         post_as @admin, :global_actions, {:assignment_id => @assignment.id,
           :global_actions => "unassign", :groupings => [@grouping.id],
           "#{@grouping.id}_#{@student2.user_name}" => true}
-        assert respond_with:success
+        assert respond_with :success
         assert render_template 'groups/table_row/_filter_table_student_row.erb'
         assert assign_to :assignment
         @grouping.reload
