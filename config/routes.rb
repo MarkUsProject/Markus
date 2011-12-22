@@ -97,6 +97,7 @@ Markus::Application.routes.draw do
         get 'valid_grouping'
         get 'invalid_grouping'
         get 'global_actions'
+        get 'rename_group'
         delete 'remove_group'
         post 'add_group'
         post 'global_actions'
