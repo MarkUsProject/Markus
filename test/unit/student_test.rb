@@ -192,7 +192,7 @@ newuser2,USER2,USER2"
       end
 
       should "not add any student to the database" do
-        assert @result[:invalid_lines],["newuser1USER1USER1,"]
+        assert_equal @result[:invalid_lines].to_s, ["newuser1USER1USER1,"].to_s
         assert Student.all.size, @num_users + 1
       end
     end

@@ -433,7 +433,7 @@ module Repository
 
       # find closest matching timestamp
       best_match = timestamps_list.shift()
-      old_diff = wanted_time.to_i - best_match
+      old_diff = wanted_time.to_i - best_match.to_i
       mapping = {}
       mapping[old_diff.to_s] = best_match
       if !timestamps_list.empty?

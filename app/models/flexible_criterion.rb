@@ -68,28 +68,31 @@ class FlexibleCriterion < ActiveRecord::Base
   #
   # ===Raises:
   #
-  # CSV::IllegalFormatError:: If the row does not contains enough information, if the max value
+  # CSV::IllegalFormatError:: DEPRECATED in Ruby 1.8.7
+  #                           REMOVED in Ruby 1.9.2
+  #
+  # CSV::MalformedCSVError::  If the row does not contains enough information, if the max value
   #                           is zero (or doesn't evaluate to a float) or if the
   #                           supplied name is not unique.
   def self.new_from_csv_row(row, assignment)
     if row.length < 2
-      raise CSV::IllegalFormatError.new(I18n.t('criteria_csv_error.incomplete_row'))
+      raise CSV::MalformedCSVError.new(I18n.t('criteria_csv_error.incomplete_row'))
     end
     criterion = FlexibleCriterion.new
     criterion.assignment = assignment
     criterion.flexible_criterion_name = row[0]
     # assert that no other criterion uses the same name for the same assignment.
     if (FlexibleCriterion.find_all_by_assignment_id_and_flexible_criterion_name(assignment.id, criterion.flexible_criterion_name).size != 0)
-      raise CSV::IllegalFormatError.new(I18n.t('criteria_csv_error.name_not_unique'))
+      raise CSV::MalformedCSVError.new(I18n.t('criteria_csv_error.name_not_unique'))
     end
     criterion.max = row[1]
     if (criterion.max == 0)
-      raise CSV::IllegalFormatError.new(I18n.t('criteria_csv_error.max_zero'))
+      raise CSV::MalformedCSVError.new(I18n.t('criteria_csv_error.max_zero'))
     end
     criterion.description = row[2] if !row[2].nil?
     criterion.position = next_criterion_position(assignment)
     if !criterion.save
-      raise CSV::IllegalFormatError.new(criterion.errors)
+      raise CSV::MalformedCSVError.new(criterion.errors)
     end
     return criterion
   end
@@ -118,7 +121,7 @@ class FlexibleCriterion < ActiveRecord::Base
       begin
         FlexibleCriterion.new_from_csv_row(row, assignment)
         nb_updates += 1
-      rescue CSV::IllegalFormatError => e
+      rescue CSV::MalformedCSVError => e
         invalid_lines << row.join(',') + ": " + e.message unless invalid_lines.nil?
       end
     end
