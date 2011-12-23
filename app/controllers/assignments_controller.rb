@@ -241,7 +241,7 @@ class AssignmentsController < ApplicationController
   def download_csv_grades_report
     assignments = Assignment.all(:order => 'id')
     students = Student.all
-    csv_string = CSV.generate do |csv|
+    csv_string = CsvHelper::Csv.generate do |csv|
       students.each do |student|
         row = []
         row.push(student.user_name)

@@ -1,3 +1,4 @@
+include CsvHelper
 require 'csv_invalid_line_error'
 class Assignment < ActiveRecord::Base
 
@@ -507,7 +508,7 @@ class Assignment < ActiveRecord::Base
 
   # Get a list of group_name, repo-url pairs
   def get_svn_repo_list
-    string = CSV.generate do |csv|
+    string = CsvHelper::Csv.generate do |csv|
       self.groupings.each do |grouping|
         group = grouping.group
         csv << [group.group_name,group.repository_external_access_url]
@@ -520,7 +521,7 @@ class Assignment < ActiveRecord::Base
   def get_simple_csv_report
     students = Student.all
     out_of = self.total_mark
-    csv_string = CSV.generate do |csv|
+    csv_string = CsvHelper::Csv.generate do |csv|
        students.each do |student|
          final_result = []
          final_result.push(student.user_name)
@@ -561,7 +562,7 @@ class Assignment < ActiveRecord::Base
     out_of = self.total_mark
     students = Student.all
     rubric_criteria = self.rubric_criteria
-    csv_string = CSV.generate do |csv|
+    csv_string = CsvHelper::Csv.generate do |csv|
       students.each do |student|
         final_result = []
         final_result.push(student.user_name)
@@ -610,7 +611,7 @@ class Assignment < ActiveRecord::Base
     out_of = self.total_mark
     students = Student.all
     flexible_criteria = self.flexible_criteria
-    csv_string = CSV.generate do |csv|
+    csv_string = CsvHelper::Csv.generate do |csv|
       students.each do |student|
         final_result = []
         final_result.push(student.user_name)
