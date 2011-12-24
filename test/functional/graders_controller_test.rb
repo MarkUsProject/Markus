@@ -197,6 +197,8 @@ class GradersControllerTest < AuthenticatedControllerTest
         assert @grouping2.tas.include? @ta1
         assert @grouping3.tas.count == 1
         assert @grouping3.tas.include? @ta3
+        assert_recognizes({:controller => "graders", :assignment_id => "1", :action => "csv_upload_grader_groups_mapping" },
+          {:path => "assignments/1/graders/csv_upload_grader_groups_mapping", :method => :post})
       end
 
       should "and some graders are invalid" do
@@ -275,6 +277,8 @@ class GradersControllerTest < AuthenticatedControllerTest
           assert @criterion2.tas.include? @ta1
           assert @criterion3.tas.count == 1
           assert @criterion3.tas.include? @ta3
+          assert_recognizes({:controller => "graders", :assignment_id => "1", :action => "csv_upload_grader_criteria_mapping" },
+            {:path => "assignments/1/graders/csv_upload_grader_criteria_mapping", :method => :post})
         end
 
         should "and some graders are invalid" do
@@ -383,6 +387,34 @@ class GradersControllerTest < AuthenticatedControllerTest
         end
       end # flexible criteria
     end # criteria csv upload
+
+    context "doing a GET on :download_grader_groupings_mapping" do
+      setup do
+        @assignment = Assignment.make(:marking_scheme_type => 'rubric', :assign_graders_to_criteria => true)
+      end
+
+      should "routing properly" do
+          post_as @admin, :download_grader_groupings_mapping,
+                          :assignment_id => @assignment.id
+          assert_response :success
+          assert_recognizes({:controller => "graders", :assignment_id => "1", :action => "download_grader_groupings_mapping" },
+            {:path => "assignments/1/graders/download_grader_groupings_mapping", :method => :get})
+      end
+    end
+
+    context "doing a GET on :download_grader_criteria_mapping" do
+      setup do
+        @assignment = Assignment.make(:marking_scheme_type => 'rubric', :assign_graders_to_criteria => true)
+      end
+
+      should "routing properly" do
+          post_as @admin, :download_grader_criteria_mapping,
+                          :assignment_id => @assignment.id
+          assert_response :success
+          assert_recognizes({:controller => "graders", :assignment_id => "1", :action => "download_grader_criteria_mapping" },
+            {:path => "assignments/1/graders/download_grader_criteria_mapping", :method => :get})
+      end
+    end
 
     should "doing a POST on :add_grader_to_grouping" do
         @grouping = Grouping.make(:assignment => @assignment)
