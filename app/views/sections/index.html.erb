@@ -25,7 +25,8 @@
                 :class => 'delete',
                 :confirm => I18n.t('section.delete.link_confirm'),
                 :method => 'delete',
-                :remote => true
+                :remote => true,
+                :disabled => !section.students.empty?
             %>
         </td>
       </tr>
