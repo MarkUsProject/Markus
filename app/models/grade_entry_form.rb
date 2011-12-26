@@ -177,7 +177,7 @@ class GradeEntryForm < ActiveRecord::Base
   # Get a CSV report of the grades for this grade entry form
   def get_csv_grades_report
     students = Student.all(:conditions => {:hidden => false}, :order => "user_name")
-    csv_string = CSV.generate do |csv|
+    csv_string = CsvHelper::Csv.generate do |csv|
 
       # The first row in the CSV file will contain the question names
       final_result = []
@@ -238,16 +238,16 @@ class GradeEntryForm < ActiveRecord::Base
     totals = []
 
     # Parse the question names
-    CSV.parse(grades_file.readline) do |row|
-      if !CSV.generate_line(row).strip.empty?
+    CsvHelper::Csv.parse(grades_file.readline) do |row|
+      if !CsvHelper::Csv.generate_line(row).strip.empty?
         names = row
         num_lines_read += 1
       end
     end
 
     # Parse the question totals
-    CSV.parse(grades_file.readline) do |row|
-      if !CSV.generate_line(row).strip.empty?
+    CsvHelper::Csv.parse(grades_file.readline) do |row|
+      if !CsvHelper::Csv.generate_line(row).strip.empty?
         totals = row
         num_lines_read += 1
       end
@@ -263,8 +263,8 @@ class GradeEntryForm < ActiveRecord::Base
     end
 
     # Parse the grades
-    CSV.parse(grades_file.read) do |row|
-      next if CSV.generate_line(row).strip.empty?
+    CsvHelper::Csv.parse(grades_file.read) do |row|
+      next if CsvHelper::Csv.generate_line(row).strip.empty?
       begin
         if num_lines_read > 1
           GradeEntryStudent.create_or_update_from_csv_row(row, grade_entry_form)

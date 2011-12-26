@@ -588,7 +588,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
           assert !@response.body.empty?
         end
         should "return the expected CSV" do
-          assert_equal @match_array, CSV.parse(@response.body)
+          assert_equal @match_array, CsvHelper::Csv.parse(@response.body)
         end
         should "route properly" do
           assert_recognizes({:controller => "groups", :assignment_id => "1", :action => "download_grouplist" },
@@ -614,7 +614,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
           assert !@response.body.empty?
         end
         should "return the expected CSV, without TAs included" do
-          assert_equal @match_array, CSV.parse(@response.body)
+          assert_equal @match_array, CsvHelper::Csv.parse(@response.body)
         end
         should "route properly" do
           assert_recognizes({:controller => "groups", :assignment_id => "1", :action => "download_grouplist" },

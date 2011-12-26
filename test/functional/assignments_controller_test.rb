@@ -352,7 +352,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       should "be able to get a csv grade report" do
         student = Student.make
         response_csv = get_as(@admin, :download_csv_grades_report).body
-        csv_rows = CSV.parse(response_csv)
+        csv_rows = CsvHelper::Csv.parse(response_csv)
         assert_equal Student.all.size, csv_rows.size
         assignments = Assignment.all(:order => 'id')
         csv_rows.each do |csv_row|
