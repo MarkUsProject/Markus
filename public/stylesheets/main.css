@@ -35,7 +35,6 @@ button:hover{
 a {
    color: #003399;
    text-decoration: none;
-   font-family: Georgia, "Times New Roman", sans-serif;
    text-size: 1em;
    font-style: normal;
    font-weight: normal;
@@ -213,7 +212,6 @@ h4{
   text-align: center;
   font-weight: bold;
   margin: -2px 0px;
-  font-family: "Myriad";
   font-size: 12px;
 }
 
