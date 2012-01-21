@@ -740,7 +740,7 @@ en:
         last_name:      "Last Name"
         full_name:      "Full Name"
         user_type:      "Type"
-        grace_credits:  "Grace Credits"
+        grace_credits:  "Grace Credits Remaining"
         section:        "Section"
         display_grader_names_to_students: "Display grader names to students?"
 
