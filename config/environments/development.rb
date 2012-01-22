@@ -148,8 +148,9 @@ Markus::Application.configure do
   ###################################################################
   # Change this to 'REPOSITORY_EXTERNAL_SUBMITS_ONLY = true' if you
   # are using Subversion as a storage backend and the instructor wants his/her
-  # students to submit to the repositories by command-line only. If you
-  # set this to true, students won't be able to submit via the Web interface.
+  # students to submit to the repositories Subversion clients only. Set this
+  # to true if you intend to force students to submit via Subversion
+  # clients only. The MarkUs Web interface for submissions will be read-only.
   REPOSITORY_EXTERNAL_SUBMITS_ONLY = false
 
   ###################################################################
