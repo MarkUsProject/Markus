@@ -115,9 +115,9 @@ class AssignmentsController < ApplicationController
 
     # Is the instructor forming groups?
     if params[:is_group_assignment] == "true" && params[:assignment][:student_form_groups] == "0"
-      params[:assignment][:instructor_form_groups] = true
+      params[:assignment][:invalid_override] = true
     else
-      params[:assignment][:instructor_form_groups] = false
+      params[:assignment][:invalid_override] = false
     end
     
     @assignment.attributes = params[:assignment]
@@ -147,9 +147,9 @@ class AssignmentsController < ApplicationController
     end
     # Is the instructor forming groups?
     if params[:is_group_assignment] == "true" && params[:assignment][:student_form_groups] == "0"
-      params[:assignment][:instructor_form_groups] = true
+      params[:assignment][:invalid_override] = true
     else
-      params[:assignment][:instructor_form_groups] = false
+      params[:assignment][:invalid_override] = false
     end
     
     @assignment = Assignment.new(params[:assignment])
@@ -235,7 +235,7 @@ class AssignmentsController < ApplicationController
     @student = @current_user
     
     begin
-      if !@assignment.student_form_groups || @assignment.instructor_form_groups
+      if !@assignment.student_form_groups || @assignment.invalid_override
         raise "Assignment does not allow students to form groups"
       end
       if @student.has_accepted_grouping_for?(@assignment.id)
@@ -289,7 +289,7 @@ class AssignmentsController < ApplicationController
     return unless request.post?
     @assignment = Assignment.find(params[:id])
     # if instructor formed group return
-    return if @assignment.instructor_form_groups
+    return if @assignment.invalid_override
     
     @student = @current_user
     @grouping = @student.accepted_grouping_for(@assignment.id)

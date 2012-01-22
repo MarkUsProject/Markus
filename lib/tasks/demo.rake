@@ -32,7 +32,7 @@ namespace :markus do
     a1.group_name_displayed = false
     a1.repository_folder = "A1"
     a1.submission_rule = rule
-    a1.instructor_form_groups = false
+    a1.invalid_override = false
     a1.marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
     a1.save
 
@@ -49,7 +49,7 @@ namespace :markus do
     a2.group_name_displayed = false
     a2.repository_folder = "A2"
     a2.submission_rule = rule
-    a2.instructor_form_groups = false
+    a2.invalid_override = false
     a2.marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
     a2.save
     
