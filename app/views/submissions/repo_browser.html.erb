@@ -12,11 +12,13 @@
 
 <div id="title_bar">
   <h1><%= I18n.t("browse_submissions.repository_name",
-                 :repository => @repository_name) %>
- 	  <%= debugger %>
+                 :repository => @repository_name)	 %>
+	<% if @grouping.get_all_students_in_group != ""-%>
+		(<%= @grouping.get_all_students_in_group %>)
+	<% end -%>
   </h1>
 </div>
-
+	
 <div class="wrapLeft">
   <div id="repo_browser_controls">
     <fieldset>
