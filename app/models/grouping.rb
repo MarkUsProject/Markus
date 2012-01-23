@@ -65,7 +65,7 @@ class Grouping < ActiveRecord::Base
 
   def get_all_students_in_group
     student_user_names = student_memberships.collect {|m| m.user.user_name }
-    return "" if student_user_names.size == 0
+    return I18n.t("Empty Group") if student_user_names.size == 0
 	return student_user_names.join(', ')
   end
 
