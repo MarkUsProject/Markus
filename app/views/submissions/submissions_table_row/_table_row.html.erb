@@ -137,6 +137,9 @@
   </td>
   <% end %>
   <td>
+  	<%= h(grouping.grouping_section) %>
+  </td>
+  <td>
     <% if Time.now >= assignment.submission_rule.calculate_grouping_collection_time(grouping) %>
       <%= image_tag('icons/tick.png') %>
     <% else %>

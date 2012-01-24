@@ -567,6 +567,16 @@ class Grouping < ActiveRecord::Base
     end
     return result.map{|a| a.criterion}.uniq
   end
+  
+  def grouping_section
+    section = nil
+    self.students.each do |student|
+      if student.has_section?
+        section = student.section.name
+      end
+    end
+    return section
+  end
 
   # Get the section for this group. If assignment restricts member of a groupe
   # to a section, all students are in the same section. Therefore, return only
