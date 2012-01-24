@@ -1082,6 +1082,7 @@ fr:
     assignments_submitted:     "Projets envoyés :"
     assignments_graded:        "Projets corrigés :"
     refresh_graph:             "Actualiser le graphique"
+    percentage_sign:           " %"
 
     #app/views/main/_grader_summary.erb
     grader_distribution:       "Correcteurs assignés :"

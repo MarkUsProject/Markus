@@ -1108,6 +1108,7 @@ en:
     assignments_submitted:     "Assignments Submitted:"
     assignments_graded:        "Assignments Graded:"
     refresh_graph:             "Refresh the graph"
+    percentage_sign:           "%"
 
     #app/views/main/_grader_summary.erb
     grader_distribution:       "Grader Distribution:"
