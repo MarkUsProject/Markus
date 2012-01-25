@@ -166,7 +166,7 @@ module Repository
     def self.repository_exists?(repos_path)
       repos_meta_files_exist = false
       if File.exist?(File.join(repos_path, "conf"))
-        if File.exist?(File.join(repos_path, "conf", "svnserve.conf"))
+        if File.exist?(File.join(repos_path, "conf/svnserve.conf"))
           if File.exist?(File.join(repos_path, "format"))
             repos_meta_files_exist = true
           end
