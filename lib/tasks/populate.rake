@@ -2,7 +2,7 @@ namespace :markus do
   
   desc "Print MarkUs version"
   task :version do
-    VERSION_FILE=File.expand_path(File.join(__FILE__, '../../../app/MARKUS_VERSION'))
+    VERSION_FILE=File.expand_path(File.join(__FILE__, '..', '..', '..', 'app', 'MARKUS_VERSION'))
     if !File.exist?(VERSION_FILE)
       $stderr.puts "Could not determine MarkUs version, please check your installation!"
       exit(1)
@@ -41,7 +41,7 @@ namespace :markus do
   # this task depends on :environment and :populate
   task(:add_students => [:environment, :"db:populate"]) do
     puts "Populate database with some additional students"
-    STUDENT_CSV = File.expand_path(File.join(__FILE__, '/../../../test/classlist-csvs/new_students.csv'))
+    STUDENT_CSV = File.expand_path(File.join(__FILE__, '..', '..', '..', 'test', 'classlist-csvs', 'new_students.csv'))
     if File.readable?(STUDENT_CSV)
       csv_students = File.new(STUDENT_CSV)
       User.upload_user_list(Student, csv_students.read)

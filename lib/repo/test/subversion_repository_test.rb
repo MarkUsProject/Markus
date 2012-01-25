@@ -12,11 +12,11 @@ include Repository
 # SubversionRepository, an implementation of AbstractRepository
 class SubversionRepositoryTest < Test::Unit::TestCase
 
-  SVN_TEST_REPOS_DIR = File.expand_path(File.join(File.dirname(__FILE__),"/svn_repos"))
+  SVN_TEST_REPOS_DIR = File.expand_path(File.join(File.dirname(__FILE__),"svn_repos"))
   TEST_REPO = SVN_TEST_REPOS_DIR + "/repo1"
   TEST_EXPORT_REPO = SVN_TEST_REPOS_DIR + "/exported_repo1"
   TEST_EXPORT_REPO_2 = SVN_TEST_REPOS_DIR + "/exported_repo2"
-  RESOURCE_DIR = File.expand_path(File.join(File.dirname(__FILE__),"/input_files"))
+  RESOURCE_DIR = File.expand_path(File.join(File.dirname(__FILE__), "input_files"))
   TEST_USER = "testuser"
 
   context "SubversionRepository class" do
