@@ -1,6 +1,6 @@
 # Using machinist
 
-require File.dirname(__FILE__) + '/authenticated_controller_test'
+require File.join(File.dirname(__FILE__), 'authenticated_controller_test')
 require File.join(File.dirname(__FILE__),'..', 'test_helper')
 require File.join(File.dirname(__FILE__),'..', 'blueprints', 'blueprints')
 require File.join(File.dirname(__FILE__),'..', 'blueprints', 'helper')
