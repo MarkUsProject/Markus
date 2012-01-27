@@ -1105,7 +1105,7 @@ en:
 
     #app/views/main/_assignment_info_summary.erb
 
-    assignment_average:        "Assignment Average:%{results_average}%"
+    assignment_average:        "Assignment Average: %{results_average}%"
     assignments_submitted:     "Assignments Submitted:"
     assignments_graded:        "Assignments Graded:"
     refresh_graph:             "Refresh the graph"
