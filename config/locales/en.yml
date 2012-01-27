@@ -72,7 +72,7 @@ en:
     current_assignments:      "Current assignments:"
     due:                       "due :"
     no_assignments:            "There are currently no assignments."
-    class_average:             "Class Average: %{results_average}%"
+    class_average:             "Class Average: %{results_average}"
 
     # app/views/assignments/
     name: "Name"
