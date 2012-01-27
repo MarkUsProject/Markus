@@ -78,7 +78,7 @@ class SubmissionsController < ApplicationController
         return a.current_submission_used.result.total_mark <=> b.current_submission_used.result.total_mark
       },
       'grace_credits_used' => lambda { |a,b|
-        return a.grace_period_deduction_sum <=> b.grace_period_deduction_sum
+        return a.grace_period_deduction_single <=> b.grace_period_deduction_single
       },
       'section' => lambda { |a,b|
         return -1 if !a.section
