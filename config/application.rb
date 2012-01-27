@@ -1,4 +1,4 @@
-require File.expand_path(File.join('..', 'boot'), __FILE__)
+require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
 require 'active_support/all'

@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), '..', 'spec_helper')
+require File.dirname(__FILE__) + '/../spec_helper'
 
 describe CalendarDateSelect do
   it "should detect presence of time in a string" do
