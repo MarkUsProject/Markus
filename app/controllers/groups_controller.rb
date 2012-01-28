@@ -26,7 +26,7 @@ class GroupsController < ApplicationController
   # Verify that all functions below are included in the authorize filter above
 
   def new
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     begin
       new_grouping_data = @assignment.add_group(params[:new_group_name])
     rescue Exception => e
@@ -35,6 +35,7 @@ class GroupsController < ApplicationController
       return
     end
     @new_grouping = construct_table_row(new_grouping_data, @assignment)
+    render :add_group
   end
 
   def remove_group

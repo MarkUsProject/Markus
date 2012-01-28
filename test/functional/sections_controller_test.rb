@@ -28,11 +28,16 @@ class SectionsControllerTest < AuthenticatedControllerTest
       assert_response :missing
     end
 
+    should "on edit section" do
+      get_as @student, :edit, :id => Section.make.id
+      assert respond_with :missing
+    end
+
     should "on update new section" do
       put_as @student, :update, :id => Section.make.id
       assert_response :missing
     end
-    
+
     should "not be able to delete a section" do
       section = Section.make
       delete_as @student, :destroy, :id => section
@@ -75,7 +80,7 @@ class SectionsControllerTest < AuthenticatedControllerTest
       assert_response :success
       assert_equal flash[:error],
                    I18n.t('section.create.error')
-      end
+    end
 
     should "be able to edit a section" do
       section = Section.make
@@ -94,6 +99,20 @@ class SectionsControllerTest < AuthenticatedControllerTest
       assert_equal flash[:success], I18n.t('section.update.success', :name => "no section")
 
       assert_not_nil Section.find_by_name("no section")
+    end
+
+    should "not see a table if no students in this section" do
+      section = Section.make
+      get_as @admin, :edit, :id => section.id
+      assert_nil response.body.to_s.match("section_students")
+    end
+
+    should "see a table if the section has students in it" do
+      section = Section.make
+      student = Student.make
+      section.students << student
+      get_as @admin, :edit, :id => section.id
+      assert_not_nil response.body.to_s.match("section_students")
     end
 
     should "not be able to edit a section name to an existing name" do

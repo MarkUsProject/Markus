@@ -15,11 +15,31 @@
     <%= raw(f.label :name, t("section.name")) %>
     <%= raw(f.text_field :name) %>
     <br />
-    <% if controller.action_name == "create_section"%>
-      <%= f.submit I18n.t(:submit) %>
-    <% else %>
-      <%= f.submit I18n.t(:save) %>
+    <%= f.submit I18n.t(:save) %>
+
+    <% if controller.action_name == "edit" %>
+      <% unless @students.empty? %>
+        <table id="section_students">
+          <thead>
+          <tr>
+            <th><%= I18n.t('user.user_name') %></th>
+            <th><%= I18n.t('user.first_name') %></th>
+            <th><%= I18n.t('user.last_name') %></th>
+            <th></th>
+          </tr>
+          </thead>
+          <% @students.each do |student| %>
+            <tr>
+              <td><%= h(student.user_name)%></td>
+              <td><%= h(student.last_name)%></td>
+              <td><%= h(student.first_name)%></td>
+              <td><%= link_to I18n.t(:edit), :controller => 'students', :action =>
+                'edit', :id => student%></td>
+            </tr>
+          <% end %>
+        </table>
+      <% end %>
     <% end %>
+
   </fieldset>
 <% end %>
-

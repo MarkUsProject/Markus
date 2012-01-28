@@ -29,9 +29,9 @@ class SectionsController < ApplicationController
   end
 
   # edit a section
-  # TODO test
   def edit
     @section = Section.find(params[:id])
+    @students = @section.students
   end
 
   def update
