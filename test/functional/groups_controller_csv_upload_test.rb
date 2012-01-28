@@ -144,7 +144,7 @@ class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
         setup do
           # We do *not* want to be admin
           MarkusConfigurator.stubs(:markus_config_repository_admin?).returns(false)
-          @assignment = Assignment.make(:instructor_form_groups => true,
+          @assignment = Assignment.make(:invalid_override => true,
                                         :group_min => 1, :group_max => 3,
                                         :student_form_groups => false)
           @res = post_as @admin, :csv_upload, { :assignment_id => @assignment.id, :group => { :grouplist=> @non_admin_repos_csv_file } }
