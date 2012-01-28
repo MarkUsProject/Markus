@@ -567,7 +567,7 @@ class Grouping < ActiveRecord::Base
         return student.section.name
       end
     end
-    return nil
+    return '-'
   end
 
   private
