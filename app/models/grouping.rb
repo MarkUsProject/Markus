@@ -575,16 +575,6 @@ class Grouping < ActiveRecord::Base
         section = student.section.name
       end
     end
-    return section
-  end
-
-  # Get the section for this group. If assignment restricts member of a groupe
-  # to a section, all students are in the same section. Therefore, return only
-  # the inviters section
-  def section
-    if !self.inviter.nil? and self.inviter.has_section?
-      return self.inviter.section.name
-    end
     return '-'
   end
 
