@@ -559,14 +559,15 @@ class Grouping < ActiveRecord::Base
     return result.map{|a| a.criterion}.uniq
   end
   
-  def grouping_section
-    section = nil
+  # Get the section for this group. Since all students must be in the same section to
+  # be in the same group, return the section name for the first student with a section.
+  def section
     self.students.each do |student|
       if student.has_section?
-        section = student.section.name
+        return student.section.name
       end
     end
-    return section
+    return nil
   end
 
   private
