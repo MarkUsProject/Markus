@@ -271,6 +271,7 @@ Markus::Application.routes.draw do
 
   match 'main', :controller => 'main', :action => 'index'
   match 'main/about', :controller => 'main', :action => 'about'
+  match 'main/role_switch', :contoller => 'main', :action => 'logn_as'
   match 'main/logout', :controller => 'main', :action => 'logout'
 
 
