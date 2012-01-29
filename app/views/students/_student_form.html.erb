@@ -16,8 +16,6 @@
     <%= raw(f.label(:grace_credits, I18n.t("user.grace_credits"))) %>
     <%= raw(f.text_field :grace_credits) %> <br />
 
-    <% if !@sections.empty? %>
-
     <%= f.select :section_id,
       options_for_select(
         ["−"] + @sections.map {|s| [s.name, s.id] },
@@ -29,8 +27,6 @@
     <%= link_to t(:cancel), 
         {:controller => 'students'}, 
         :class => "button button_link" %>
-
-    <% end %>
 
   <% end %>
 
