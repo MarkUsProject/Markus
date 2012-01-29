@@ -589,7 +589,7 @@ fr:
       url_group_repository: "L'adresse du répertoire de votre groupe"
       group_properties: "Propriétés du groupe"
       students_can_form_groups: "Les étudiants peuvent former des groupes."
-      instructor_form_groups: "Les correcteurs/administrateurs forment les groupes."
+      invalid_override: "Les correcteurs/administrateurs forment les groupes."
       student_work_alone: "Les étudiants travaillent seuls"
       group_credits: "Votre groupe a <strong>%{available_grace_credits}</strong> crédit(s) de grâce disponible(s)"
       invite: "Inviter"

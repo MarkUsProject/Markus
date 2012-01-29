@@ -600,7 +600,7 @@ en:
       url_group_repository: "URL to your group's repository"
       group_properties: " Group Properties "
       students_can_form_groups: " Students can form groups. "
-      instructor_form_groups: "Instructor forms groups."
+      invalid_override: "Instructor forms groups."
       student_work_alone: "Students work alone"
       group_credits: "Your group has <strong>%{available_grace_credits}</strong> available grace credits"
       invite: "Invite"
