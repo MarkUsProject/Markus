@@ -22,7 +22,7 @@ namespace :load do
     a1.group_name_displayed = false
     a1.repository_folder = a1.short_identifier
     a1.submission_rule = rule
-    a1.instructor_form_groups = false
+    a1.invalid_override = false
     a1.marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
     a1.display_grader_names_to_students = false
     a1.build_assignment_stat

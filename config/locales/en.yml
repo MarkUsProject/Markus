@@ -587,7 +587,7 @@ en:
       not_allowed_to_form_group: "You are not allowed to form groups yourself for this assignment.
             Please wait until the instructor forms groups."
       invitations: "Invitations"
-      invited_by: "You have been invited by <span class=\"last_name\">%{inviter_last_name}</span>%{inviter_first_name}"
+      invited_by: "You have been invited by %{inviter_first_name} <span class=\"last_name\">%{inviter_last_name}</span>"
       decline_invitation: "Are you sure you want to decline this invitation?"
       form_own_group: "Form your own group"
       form_group: "The groups must be from <strong>%{group_min}</strong> to <strong>%{group_max}</strong> people."
@@ -600,7 +600,7 @@ en:
       url_group_repository: "URL to your group's repository"
       group_properties: " Group Properties "
       students_can_form_groups: " Students can form groups. "
-      instructor_form_groups: "Instructor forms groups."
+      invalid_override: "Instructor forms groups."
       student_work_alone: "Students work alone"
       group_credits: "Your group has <strong>%{available_grace_credits}</strong> available grace credits"
       invite: "Invite"
@@ -740,7 +740,7 @@ en:
         last_name:      "Last Name"
         full_name:      "Full Name"
         user_type:      "Type"
-        grace_credits:  "Grace Credits"
+        grace_credits:  "Grace Credits Left"
         section:        "Section"
         display_grader_names_to_students: "Display grader names to students?"
 
