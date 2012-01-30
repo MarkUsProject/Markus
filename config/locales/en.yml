@@ -588,7 +588,7 @@ en:
       not_allowed_to_form_group: "You are not allowed to form groups yourself for this assignment.
             Please wait until the instructor forms groups."
       invitations: "Invitations"
-      invited_by: "You have been invited by <span class=\"last_name\">%{inviter_last_name}</span>%{inviter_first_name}"
+      invited_by: "You have been invited by %{inviter_first_name} <span class=\"last_name\">%{inviter_last_name}</span>"
       decline_invitation: "Are you sure you want to decline this invitation?"
       form_own_group: "Form your own group"
       form_group: "The groups must be from <strong>%{group_min}</strong> to <strong>%{group_max}</strong> people."
