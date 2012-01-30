@@ -751,11 +751,15 @@ td.student_total input:hover {
 }
 
 #FilterTable_manage_graders_header_name{
-   width: 37%;
+   width: 32%;
 }
 
 #FilterTable_manage_graders_header_members{
-  width: 45%;
+  width: 40%;
+}
+
+#FilterTable_manage_graders_header_section{
+  width: 12%;
 }
 
 #FilterTable_manage_graders_header_coverage, #FilterTable_header_coverage{
