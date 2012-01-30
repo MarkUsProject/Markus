@@ -14,7 +14,7 @@ begin
   # Set up load paths for all bundled gems
   if ENV["BUNDLE_GEMFILE"].nil?
     # Use default Gemfile
-    ENV["BUNDLE_GEMFILE"] = File.expand_path("../../Gemfile", __FILE__)
+    ENV["BUNDLE_GEMFILE"] = File.expand_path(File.join('..', '..', 'Gemfile'), __FILE__)
   end
   Bundler.setup
 rescue Bundler::GemNotFound
