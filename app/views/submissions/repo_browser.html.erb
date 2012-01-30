@@ -42,7 +42,7 @@
     </fieldset>
   </div>
 <div class="global_actions">
-  <h2><%= I18n.t("browse_submissions.viewing_revision", :revision_number => @revision_number) %>
+  <h2><%= raw(I18n.t("browse_submissions.viewing_revision", :revision_number => @revision_number)) %>
       (<span id="current_revision_timestamp_display">
          <%= I18n.l(@revision_timestamp, :format => :long_date) %>
       </span>)
