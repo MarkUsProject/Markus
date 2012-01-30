@@ -50,6 +50,11 @@ class MainController < ApplicationController
     if !cookies_enabled
       flash[:login_notice] = I18n.t(:cookies_off)
       return
+    else
+      if !params[:cookieTest].nil?
+      # remove the :cookieTest => "currentlyTesting" parameter after testing for cookies by redirecting
+      redirect_to :controller => "main", :action => "login"
+      end
     end
 
     @current_user = current_user
