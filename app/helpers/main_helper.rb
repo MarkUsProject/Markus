@@ -1,7 +1,6 @@
 module MainHelper
 
   protected
-
   # Sets current user for this session
   def current_user=(user)
     session[:uid] = (user.blank? || !user.kind_of?(User)) ? nil : user.id

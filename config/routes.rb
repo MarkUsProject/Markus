@@ -2,6 +2,8 @@
 require 'routing_filter'
 
 Markus::Application.routes.draw do
+  match 'cookie_test', :controller => "main", :action => "cookie_test"
+
   filter :locale
 
   # Install the default routes as the lowest priority.
@@ -272,7 +274,6 @@ Markus::Application.routes.draw do
   match 'main', :controller => 'main', :action => 'index'
   match 'main/about', :controller => 'main', :action => 'about'
   match 'main/logout', :controller => 'main', :action => 'logout'
-
 
   # Return a 404 when no route is match
   match '*path', :controller => 'main', :action => 'page_not_found'

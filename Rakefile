@@ -6,7 +6,7 @@ require 'rake'
 require 'rdoc/task'
 require 'db_populate'
 
-# TODO REMOVE THIS FIX WITH RAKE 0.9:0
+# TODO REMOVE THIS FIX WITH RAKE 0.9:0
 module ::Markus
   class Application
     include Rake::DSL
@@ -16,6 +16,6 @@ end
 module ::RakeFileUtils
   extend Rake::FileUtilsExt
 end
-######## END OF FIX
+######## END OF FIX
 
 Markus::Application.load_tasks

@@ -4,6 +4,7 @@
 class MainController < ApplicationController
 
   include MainHelper
+   
   protect_from_forgery :except => [:login, :page_not_found]
 
   # check for authorization
