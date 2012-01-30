@@ -16,6 +16,7 @@ fr:
     logging_in:         "Connexion"
     login:              "Identifiant"
     login_failed:       "L'établissement de la connexion a échoué."
+    cookies_off:        "Veuillez configurer votre navigateur afin d'accepter les cookies."
     password_not_blank: "Veuillez entrer votre mot de passe."
     username_not_blank: "Veuillez entrer votre nom d'utilisateur."
     username_and_password_not_blank: "Veuillez entrer vos nom d'utilisateur et mot de passe."
