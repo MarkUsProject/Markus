@@ -95,7 +95,7 @@
 
           <% @pending_grouping.each do |grouping|%>
           <div class="sub_block">
-            <p><%= I18n.t("student.invited_by", :inviter_last_name => h(grouping.inviter.last_name), :inviter_first_name => h(grouping.inviter.first_name)) %>
+            <p><%= raw(I18n.t("student.invited_by", :inviter_last_name => h(grouping.inviter.last_name), :inviter_first_name => h(grouping.inviter.first_name))) %>
             </p>
             <% grouping.student_memberships.each do |member|%>
               <ul>
