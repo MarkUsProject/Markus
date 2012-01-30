@@ -376,6 +376,7 @@ en:
       replace:              "Replace"
       delete:               "Delete"
       can_begin_grading:    "Can begin grading"
+      section:              "Section"
 
     grade_entry_forms:
       blank_field: "can't be blank"
@@ -654,6 +655,7 @@ en:
       edit_grader:        "Edit a Grader"
       manage_graders:     "Manage Graders"
       graders:            "Graders"
+      section:            "Section"
       all_graders:        "All Graders"
       assigned_graders:   "Assigned Graders"
       possible_graders:   "Possible Graders"
