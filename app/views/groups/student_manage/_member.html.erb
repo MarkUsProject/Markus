@@ -30,11 +30,11 @@
 <% elsif member.membership_status == StudentMembership::STATUSES[:rejected] %>
     <% if grouping.inviter.id == @student.id %>
       <li>
-      	<%= I18n.t("student.invitation_rejected", :user_last_name => h(member.user.last_name), :user_first_name => h(member.user.first_name)) %>
-	   	<%= link_to_remote "<b>x</b>", :method => :delete,
-	      :url => {:action => 'delete_rejected', :id => @assignment.id,
-	      :membership => member.id}%>
-	  </li>
+        <%= raw(I18n.t("student.invitation_rejected", :user_last_name => h(member.user.last_name), :user_first_name => h(member.user.first_name))) %>
+        <%= link_to_remote "<b>x</b>", :method => :delete,
+        :url => {:action => 'delete_rejected', :id => @assignment.id,
+        :membership => member.id}%>
+      </li>
     <% end %>
 <% end %>
 
