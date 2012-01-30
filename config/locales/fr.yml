@@ -577,7 +577,7 @@ fr:
       not_allowed_to_form_group: "Vous n'êtes pas autorisé à former vous-même des groupes pour ce projet.
             Merci d'attendre que les correcteurs et les administrateurs forment des groupes."
       invitations: "Invitations"
-      invited_by: "Vous avez été invité par <span class=\"last_name\">%{inviter_last_name}</span>%{inviter_first_name}"
+      invited_by: "Vous avez été invité par %{inviter_first_name} <span class=\"last_name\">%{inviter_last_name}</span>"
       decline_invitation: "Êtes-vous sûr de vouloir refuser cette invitation ?"
       form_own_group: "Former votre propre groupe"
       form_group: "Les groupes doivent être composés de <strong>%{group_min}</strong> à <strong>%{group_max}</strong> étudiants."
