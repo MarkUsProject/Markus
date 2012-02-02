@@ -1,5 +1,5 @@
 # we need repository and permission constants
-require File.join(File.dirname(__FILE__),'/../../lib/repo/repository')
+require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'repo', 'repository')
 
 class Ta < User
 
