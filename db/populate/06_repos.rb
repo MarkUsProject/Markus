@@ -3,7 +3,7 @@
 groups = Group.all
 assignment = Assignment.find_by_short_identifier("A1")
 
-file_dir  = File.join(File.dirname(__FILE__), '/data')
+file_dir  = File.join(File.dirname(__FILE__), 'data')
 groups.each do |group|
   Dir.foreach(file_dir) do |filename|
     unless File.directory?(File.join(file_dir, filename))
