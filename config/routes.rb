@@ -196,6 +196,7 @@ Markus::Application.routes.draw do
         get 'delete_annotation_category'
         get 'download'
         get 'yml_upload'
+        post 'add_annotation_category'
         post 'update_annotation_category'
       end
     end

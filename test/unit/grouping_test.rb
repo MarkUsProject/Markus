@@ -235,7 +235,7 @@ class GroupingTest < ActiveSupport::TestCase
         @grouping = Grouping.make(:assignment => @assignment)
         @grouping.group.access_repo do |repo|
           txn = repo.get_transaction("markus")
-          assignment_folder = File.join(@assignment.repository_folder, "/")
+          assignment_folder = File.join(@assignment.repository_folder, File::SEPARATOR)
           begin
             txn.add(File.join(assignment_folder,
                               "Shapes.java"),

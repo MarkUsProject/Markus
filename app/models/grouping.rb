@@ -558,14 +558,13 @@ class Grouping < ActiveRecord::Base
     end
     return result.map{|a| a.criterion}.uniq
   end
-  
-  # Get the section for this group. Since all students must be in the same section to
-  # be in the same group, return the section name for the first student with a section.
+
+  # Get the section for this group. If assignment restricts member of a groupe
+  # to a section, all students are in the same section. Therefore, return only
+  # the inviters section
   def section
-    self.students.each do |student|
-      if student.has_section?
-        return student.section.name
-      end
+    if !self.inviter.nil? and self.inviter.has_section?
+      return self.inviter.section.name
     end
     return '-'
   end
