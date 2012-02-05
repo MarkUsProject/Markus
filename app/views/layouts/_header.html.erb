@@ -38,9 +38,7 @@
             :alt => I18n.t(:switch_role),
             :title => I18n.t(:switch_role),
             :id => "switch_role_icon"),
-        :url => {:action => "role_switch",
-          :controller => "main" },
-        :complete => "role_switch_modal.open();",
+          role_switch_main_index_path(),
         :remote => true) %>
       <% end %>
 
