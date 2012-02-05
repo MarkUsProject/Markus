@@ -265,7 +265,8 @@ Markus::Application.routes.draw do
     collection do
       get 'logout'
       get 'about'
-      get 'login_as'
+      post 'login_as'
+      get 'role_switch'
       get 'clear_role_switch_session'
       post 'reset_api_key'
     end
@@ -274,7 +275,6 @@ Markus::Application.routes.draw do
   match 'main', :controller => 'main', :action => 'index'
   match 'main/about', :controller => 'main', :action => 'about'
   match 'main/logout', :controller => 'main', :action => 'logout'
-
 
   # Return a 404 when no route is match
   match '*path', :controller => 'main', :action => 'page_not_found'
