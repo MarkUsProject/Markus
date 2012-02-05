@@ -47,7 +47,6 @@ Markus::Application.routes.draw do
       end
 
       collection do
-        get 'update_positions'
         post 'update_positions'
         get 'csv_upload'
         get 'yml_upload'
