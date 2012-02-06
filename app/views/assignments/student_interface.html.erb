@@ -95,7 +95,7 @@
 
           <% @pending_grouping.each do |grouping|%>
           <div class="sub_block">
-            <p><%= I18n.t("student.invited_by", :inviter_last_name => h(grouping.inviter.last_name), :inviter_first_name => h(grouping.inviter.first_name)) %>
+            <p><%= raw(I18n.t("student.invited_by", :inviter_last_name => h(grouping.inviter.last_name), :inviter_first_name => h(grouping.inviter.first_name))) %>
             </p>
             <% grouping.student_memberships.each do |member|%>
               <ul>
@@ -186,7 +186,7 @@
         # passed.
         if @assignment.past_collection_date? &&
            @assignment.student_form_groups &&
-           !@assignment.instructor_form_groups &&
+           !@assignment.invalid_override &&
            @assignment.group_max > 1
            %>
           <p class="information">
@@ -262,7 +262,7 @@
       <li><%= I18n.t("student.section_groups_only") %></li>
   <% end %>
         <% if @assignment.student_form_groups &&
-              !@assignment.instructor_form_groups &&
+              !@assignment.invalid_override &&
               @assignment.group_max > 1 %>
           <li><%= I18n.t("student.students_can_form_groups") %></li>
           <li>
@@ -270,8 +270,8 @@
                       :group_min => h(@assignment.group_min),
                       :group_max => h(@assignment.group_max)) )%>
           </li>
-        <% elsif @assignment.instructor_form_groups %>
-          <li><%= I18n.t("student.instructor_form_groups") %></li>
+        <% elsif @assignment.invalid_override %>
+          <li><%= I18n.t("student.invalid_override") %></li>
         <% else%>
           <li><%= I18n.t("student.student_work_alone") %></li>
         <% end %>
@@ -363,7 +363,7 @@
 
 if !@grouping.nil? &&
    @grouping.inviter == @current_user &&
-   !@assignment.instructor_form_groups %>
+   !@assignment.invalid_override %>
   <div id="invite_dialog">
     <%= form_tag({:action => 'invite_member',
         :id => @assignment.id},

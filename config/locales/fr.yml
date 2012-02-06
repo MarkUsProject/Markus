@@ -577,7 +577,7 @@ fr:
       not_allowed_to_form_group: "Vous n'êtes pas autorisé à former vous-même des groupes pour ce projet.
             Merci d'attendre que les correcteurs et les administrateurs forment des groupes."
       invitations: "Invitations"
-      invited_by: "Vous avez été invité par <span class=\"last_name\">%{inviter_last_name}</span>%{inviter_first_name}"
+      invited_by: "Vous avez été invité par %{inviter_first_name} <span class=\"last_name\">%{inviter_last_name}</span>"
       decline_invitation: "Êtes-vous sûr de vouloir refuser cette invitation ?"
       form_own_group: "Former votre propre groupe"
       form_group: "Les groupes doivent être composés de <strong>%{group_min}</strong> à <strong>%{group_max}</strong> étudiants."
@@ -589,7 +589,7 @@ fr:
       url_group_repository: "L'adresse du répertoire de votre groupe"
       group_properties: "Propriétés du groupe"
       students_can_form_groups: "Les étudiants peuvent former des groupes."
-      instructor_form_groups: "Les correcteurs/administrateurs forment les groupes."
+      invalid_override: "Les correcteurs/administrateurs forment les groupes."
       student_work_alone: "Les étudiants travaillent seuls"
       group_credits: "Votre groupe a <strong>%{available_grace_credits}</strong> crédit(s) de grâce disponible(s)"
       invite: "Inviter"
@@ -1078,7 +1078,7 @@ fr:
     account_disabled: "Ce compte a été désactivé"
 
     #app/views/main/_assignment_info_summary.erb
-    assignment_average:        "Moyenne :"
+    assignment_average:        "Moyenne : %{results_average} %"
     assignments_submitted:     "Projets envoyés :"
     assignments_graded:        "Projets corrigés :"
     refresh_graph:             "Actualiser le graphique"
