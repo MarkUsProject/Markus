@@ -70,6 +70,7 @@ module PaginationHelper
     case sort_by
       when "group_name" then to_include = [:group]
       when "repo_name" then to_include = [:group]
+      when "section" then to_include = [:group]
       when "revision_timestamp" then to_include = [:current_submission_used]
       when "marking_state" then to_include = [{:current_submission_used => :result}]
       when "total_mark" then to_include = [{:current_submission_used => :result}]

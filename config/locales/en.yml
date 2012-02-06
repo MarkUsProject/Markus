@@ -376,6 +376,7 @@ en:
       replace:              "Replace"
       delete:               "Delete"
       can_begin_grading:    "Can begin grading"
+      section:              "Section"
 
     grade_entry_forms:
       blank_field: "can't be blank"
@@ -654,6 +655,7 @@ en:
       edit_grader:        "Edit a Grader"
       manage_graders:     "Manage Graders"
       graders:            "Graders"
+      section:            "Section"
       all_graders:        "All Graders"
       assigned_graders:   "Assigned Graders"
       possible_graders:   "Possible Graders"
@@ -1104,7 +1106,8 @@ en:
     account_disabled: "This account has been disabled"
 
     #app/views/main/_assignment_info_summary.erb
-    assignment_average:        "Assignment Average:"
+
+    assignment_average:        "Assignment Average: %{results_average}%"
     assignments_submitted:     "Assignments Submitted:"
     assignments_graded:        "Assignments Graded:"
     refresh_graph:             "Refresh the graph"

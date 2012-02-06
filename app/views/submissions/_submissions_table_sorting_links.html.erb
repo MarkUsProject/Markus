@@ -66,6 +66,18 @@
               :sort_by => 'total_mark',
               :desc => (sort_by == 'total_mark' && desc.blank?) %>
     </th>
+    <% if assignment.section_groups_only %>
+    <th class="<%="ap_sorting_by" if (sort_by == 'section')%>
+    	        <%="ap_sorting_by_desc" if (sort_by == 'section' && !desc.blank?)%>">
+      <%= link_to I18n.t("browse_submissions.section"),
+              :id => assignment.id,
+              :filter => filter,
+              :page => page,
+              :per_page => per_page,
+              :sort_by => 'section',
+              :desc => (sort_by == 'section' && desc.blank?) %>
+    </th>
+    <% end %>
     <th>
       <%= I18n.t("browse_submissions.can_begin_grading") %>
     </th>
