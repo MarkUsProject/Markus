@@ -851,7 +851,7 @@ class AssignmentTest < ActiveSupport::TestCase
       @assignment = Assignment.make({:group_min => 1,
                                      :group_max => 1,
                                      :student_form_groups => false,
-                                     :instructor_form_groups => true,
+                                     :invalid_override => true,
                                      :due_date => 2.days.ago,
                                      :created_at => 42.days.ago })
     end
