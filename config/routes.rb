@@ -2,7 +2,6 @@
 require 'routing_filter'
 
 Markus::Application.routes.draw do
-  match 'cookie_test', :controller => "main", :action => "cookie_test"
 
   filter :locale
 

@@ -4,7 +4,8 @@
 class MainController < ApplicationController
 
   include MainHelper
-   
+  include CookieDetection
+  
   protect_from_forgery :except => [:login, :page_not_found]
 
   # check for authorization
@@ -21,6 +22,7 @@ class MainController < ApplicationController
   # is redirected to main page if session is still active and valid.
 
   def login
+    
     # external auth has been done, skip markus authorization
     if MarkusConfigurator.markus_config_remote_user_auth
       if @markus_auth_remote_user.nil?
@@ -44,7 +46,13 @@ class MainController < ApplicationController
         end
       end
     end
-
+  
+    #check cookies
+    if !cookies_enabled
+      flash[:login_notice] = "Please enable cookies."
+      @login_error = flash[:login_notice]
+      return
+    end
     @current_user = current_user
     # redirect to main page if user is already logged in.
     if logged_in? && !request.post?

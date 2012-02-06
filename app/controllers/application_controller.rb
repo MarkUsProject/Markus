@@ -2,7 +2,6 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
-  include CookieDetection
   include SessionHandler
 
   protect_from_forgery
