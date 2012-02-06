@@ -48,7 +48,7 @@ Markus::Application.routes.draw do
       end
 
       collection do
-        get 'update_positions'
+        post 'update_positions'
         get 'csv_upload'
         get 'yml_upload'
         get 'download_csv'
@@ -139,6 +139,7 @@ Markus::Application.routes.draw do
           get 'download'
           get 'cancel_remark_request'
           get 'codeviewer'
+          post 'codeviewer'
           get 'collapse_criteria'
           get 'add_extra_mark'
           get 'next_grouping'
@@ -197,6 +198,7 @@ Markus::Application.routes.draw do
         get 'delete_annotation_category'
         get 'download'
         get 'yml_upload'
+        post 'add_annotation_category'
         post 'update_annotation_category'
       end
     end
@@ -264,7 +266,8 @@ Markus::Application.routes.draw do
     collection do
       get 'logout'
       get 'about'
-      get 'login_as'
+      post 'login_as'
+      get 'role_switch'
       get 'clear_role_switch_session'
       post 'reset_api_key'
     end
