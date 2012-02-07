@@ -372,7 +372,7 @@ newuser2,USER2,USER2"
       end
     end
 
-    context "and a grouping" do     
+    context "and a grouping" do
       should "can be invited to a grouping" do
         grouping = Grouping.make
         #Test that grouping.update_repository_permissions is called at least once
