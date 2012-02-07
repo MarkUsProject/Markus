@@ -50,10 +50,11 @@ class MainController < ApplicationController
     #check cookies
     if !cookies_enabled
       flash[:login_notice] = I18n.t(:cookies_off)
-      @login_error = flash[:login_notice]
+      #@login_error = flash[:login_notice]
+      #redirect_to :action => 'login'
       return
     end
-    
+        
     @current_user = current_user
     # redirect to main page if user is already logged in.
     if logged_in? && !request.post?
