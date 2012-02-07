@@ -131,7 +131,7 @@ class Student < User
       end
 
       @grouping.group = @group
-  
+
       begin
         if !@grouping.save
           m_logger = MarkusLogger.instance
@@ -140,9 +140,10 @@ class Student < User
         end
       # This exception will only be thrown when we try to save to a grouping that already exists
       rescue ActiveRecord::RecordNotUnique => e 
-          
+        
+        # See Github issue #627
         # If grouping.save fails then the @grouping.id will not be set properly, but we need it to set the membership bellow
-        @grouping.id= Grouping.find_by_group_id(@grouping.group_id).id
+        @grouping.id = Grouping.find_by_group_id(@grouping.group_id).id
        end
 
       # We give students the tokens for the test framework
@@ -152,12 +153,11 @@ class Student < User
       @member = StudentMembership.new(:grouping_id => @grouping.id,
               :membership_status => StudentMembership::STATUSES[:inviter],
               :user_id => self.id)
-              
+
        if !@member.save
           m_logger = MarkusLogger.instance
           m_logger.log("Could not create a membership for Student '#{self.user_name}'. The membership was:  #{@member.inspect} - errors: #{@member.errors.inspect}", MarkusLogger::ERROR)
-       end
-      
+      end
 
       # Destroy all the other memebrships for this assignment
       self.destroy_all_pending_memberships(@assignment.id)
