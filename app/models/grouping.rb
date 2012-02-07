@@ -282,9 +282,9 @@ class Grouping < ActiveRecord::Base
   # The grace credits used by each student in the group.
   def grace_period_deduction_single
     single = 0
-    #Since students in a group will always use same number of grace
-    #credits, it is safe to pick any of them.
-    if !grace_period_deductions.nil? && !grace_period_deductions.first.nil? 
+    # Since students in a group will always use same number of grace
+    # credits, it is safe to pick any of them.
+    if !grace_period_deductions.nil? && !grace_period_deductions.first.nil?
       single = grace_period_deductions.first.deduction
     end
     return single
