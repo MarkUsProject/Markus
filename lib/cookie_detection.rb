@@ -4,8 +4,7 @@ module CookieDetection
  
 protected
  
-  # checks for presence of "cookie_test" cookie.
-  # If not present, redirects to cookies_test action
+  # true if cookies are enabled, false otherwise.
   def cookies_enabled
     return true unless cookies["cookieTest"].blank?
     cookies["cookieTest"] = Time.now
