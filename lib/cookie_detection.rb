@@ -1,8 +1,8 @@
-# detects if cookies are enabled in the user's browser, by attempting to reading/writing a cookie.
+# detects if cookies are enabled in the user's browser, by attempting to read/write a cookie.
 
 module CookieDetection
  
-protected
+  protected
  
   # true if cookies are enabled, false otherwise.
   def cookies_enabled

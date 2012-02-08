@@ -50,8 +50,6 @@ class MainController < ApplicationController
     #check cookies
     if !cookies_enabled
       flash[:login_notice] = I18n.t(:cookies_off)
-      #@login_error = flash[:login_notice]
-      #redirect_to :action => 'login'
       return
     end
         
