@@ -17,6 +17,7 @@ class MainControllerTest < AuthenticatedControllerTest
 
   def setup
     clear_fixtures
+    @request.cookies["cookieTest"] = "fake cookie bypasses filter"
   end
 
   context "A not authenticated user" do

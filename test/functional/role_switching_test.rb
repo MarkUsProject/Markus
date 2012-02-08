@@ -11,6 +11,7 @@ class RoleSwitchingTest < AuthenticatedControllerTest
 
   def setup
     clear_fixtures
+    @request.cookies["cookieTest"] = "fake cookie bypasses filter"
   end
 
   context "A valid admin" do
