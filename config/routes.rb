@@ -2,7 +2,6 @@
 require 'routing_filter'
 
 Markus::Application.routes.draw do
-
   filter :locale
 
   # Install the default routes as the lowest priority.
