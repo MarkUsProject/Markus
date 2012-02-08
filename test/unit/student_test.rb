@@ -360,15 +360,14 @@ newuser2,USER2,USER2"
         end
       end
       
-        #regression test for #627
+        # regression test for #627
         should "allow the student to join an existing empty grouping when working alone" do
-        @student.create_group_for_working_alone_student(@assignment.id)
-        Membership.find_by_user_id(@student.id).delete
-         
-        assert_nothing_raised(ActiveRecord::RecordNotUnique) do
-          @student.create_group_for_working_alone_student(@assignment.id) 
-        end
-        
+          @student.create_group_for_working_alone_student(@assignment.id)
+          Membership.find_by_user_id(@student.id).delete
+
+          assert_nothing_raised(ActiveRecord::RecordNotUnique) do
+            @student.create_group_for_working_alone_student(@assignment.id)
+          end
       end
     end
 

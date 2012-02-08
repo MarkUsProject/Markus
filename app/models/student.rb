@@ -154,9 +154,9 @@ class Student < User
               :membership_status => StudentMembership::STATUSES[:inviter],
               :user_id => self.id)
 
-       if !@member.save
-          m_logger = MarkusLogger.instance
-          m_logger.log("Could not create a membership for Student '#{self.user_name}'. The membership was:  #{@member.inspect} - errors: #{@member.errors.inspect}", MarkusLogger::ERROR)
+      if !@member.save
+        m_logger = MarkusLogger.instance
+        m_logger.log("Could not create a membership for Student '#{self.user_name}'. The membership was:  #{@member.inspect} - errors: #{@member.errors.inspect}", MarkusLogger::ERROR)
       end
 
       # Destroy all the other memebrships for this assignment
