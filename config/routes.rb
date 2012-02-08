@@ -138,6 +138,7 @@ Markus::Application.routes.draw do
           get 'download'
           get 'cancel_remark_request'
           get 'codeviewer'
+          post 'codeviewer'
           get 'collapse_criteria'
           get 'add_extra_mark'
           get 'next_grouping'
