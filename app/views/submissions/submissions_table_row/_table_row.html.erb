@@ -44,6 +44,16 @@
     (<%= h(grouping.accepted_students.collect{ |student| student.user_name}.join(',')) %>)
   <%='<span class="invalid">' + t(:invalid_grouping) + '</span>' if !grouping.is_valid? %>
   </td>
+<td>
+<% grouping.students.each do |student| %>
+   <%= student.first_name %>
+<% end %>
+</td>
+<td>
+<% grouping.students.each do |student| %>
+   <%= student.last_name %>
+<% end %>
+</td>
   <% if !@details.nil? %>
     <% assignment.rubric_criteria.each do |criterion| %>
       <td>

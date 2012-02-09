@@ -61,8 +61,8 @@ class SubmissionsController < ApplicationController
     },
     :sorts => {
       'group_name' => lambda { |a,b| a.group.group_name.downcase <=> b.group.group_name.downcase},
-      'first_name' => lambda { |a,b| a.group.first_name.downcase <=> b.group.first_name.downcase},
-      'last_name' => lambda { |a,b| a.group.last_name.downcase <=> b.group.last_name.downcase},
+      'first_name' => lambda { |a,b| a.group.group_name.downcase <=> b.group.group_name.downcase},
+      'last_name' => lambda { |a,b| a.group.group_name.downcase <=> b.group.group.group_name.downcase},
       'repo_name' => lambda { |a,b| a.group.repo_name.downcase <=> b.group.repo_name.downcase },
       'revision_timestamp' => lambda { |a,b|
         return -1 if !a.has_submission?
