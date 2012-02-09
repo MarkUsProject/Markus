@@ -377,6 +377,8 @@ en:
       delete:               "Delete"
       can_begin_grading:    "Can begin grading"
       section:              "Section"
+      first_name:           "First Name"
+      last_name:            "Last Name"
 
     grade_entry_forms:
       blank_field: "can't be blank"
