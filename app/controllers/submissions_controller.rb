@@ -62,7 +62,7 @@ class SubmissionsController < ApplicationController
     :sorts => {
       'group_name' => lambda { |a,b| a.group.group_name.downcase <=> b.group.group_name.downcase},
       'first_name' => lambda { |a,b| a.accepted_student_memberships.first.user.first_name.downcase <=> b.accepted_student_memberships.first.user.first_name.downcase},
-      'last_name' => lambda { |a,b| a.accepted_student_memberships.first.user.last_name.downcase <=> b.accepted_student_memberships.last.user.first_name.downcase},
+      'last_name' => lambda { |a,b| a.accepted_student_memberships.first.user.last_name.downcase <=> b.accepted_student_memberships.first.user.last_name.downcase},
       'repo_name' => lambda { |a,b| a.group.repo_name.downcase <=> b.group.repo_name.downcase },
       'revision_timestamp' => lambda { |a,b|
         return -1 if !a.has_submission?
