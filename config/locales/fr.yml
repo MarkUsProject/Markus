@@ -376,6 +376,8 @@ fr:
       replace:              "Remplace"
       delete:               "Supprimer"
       can_begin_grading:    "Peut être évaluée"
+      first_name:     "Prénom"
+      last_name:      "Nom"
 
     grade_entry_forms:
       blank_field: "doit être rempli(e)"
