@@ -128,11 +128,19 @@ document.observe("dom:loaded", function(){
 
 </div><!-- Notice -->
 
-<%= form_remote_tag :url => global_actions_assignment_graders_path(
-                                @assignment),
-                    :html => {:id => "global_action_form"},
-                    :loading => "thinking();",
-                    :complete => "done_thinking();" do %>
+<%= form_tag url_for(global_actions_assignment_graders_path(@assignment)),
+             :id => "global_action_form",
+             :remote => true do %>
+
+<script type='text/javascript'>
+$("global_action_form").observe('ajax:after', function(evt, status, data, xhr) {
+  thinking();
+});
+
+$("global_action_form").observe('ajax:complete', function(evt, status, data, xhr) {
+  done_thinking();
+});
+</script>
 
 <%= hidden_field_tag 'submit_type', 'global_action', :id => 'submit_type' %>
 <%= hidden_field_tag 'current_table', 'groups_table', :id => 'current_table' %>
