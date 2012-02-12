@@ -175,7 +175,7 @@ class AssignmentsController < ApplicationController
       rescue Exception, RuntimeError => e
         @assignment.errors.add(:base, I18n.t("assignment.error",
                                               :message => e.message))
-        redirect_to :action => 'edit', :id => @assignment.id
+        render :action => 'edit', :id => @assignment.id
       return
     end
 
@@ -184,7 +184,7 @@ class AssignmentsController < ApplicationController
       redirect_to :action => 'edit', :id => params[:id]
       return
     else
-      redirect_to :action => 'edit', :id => @assignment.id
+      render :action => 'edit', :id => @assignment.id
     end
   end
 
@@ -463,9 +463,8 @@ class AssignmentsController < ApplicationController
       assignment.section_due_dates_type = true
       assignment.section_groups_only = true
     end
-    
-    # Was the SubmissionRule changed?  If so, wipe out any existing
-    # Periods, and switch the type of the SubmissionRule.
+
+    # Was the SubmissionRule changed?  If so, switch the type of the SubmissionRule.
     # This little conditional has to do some hack-y workarounds, since
     # accepts_nested_attributes_for is a little...dumb.
     if assignment.submission_rule.attributes['type'] !=
@@ -478,20 +477,14 @@ class AssignmentsController < ApplicationController
           :type => params[:assignment][:submission_rule_attributes][:type])
       end
 
-      assignment.submission_rule.destroy
-      submission_rule = SubmissionRule.new
-      # A little hack to get around Rails' protection of the "type"
-      # attribute
-      submission_rule.type =
-         params[:assignment][:submission_rule_attributes][:type]
-      assignment.submission_rule = submission_rule
-      # For some reason, when we create new rule, we can't just apply
-      # the params[:assignment] hash to @assignment.attributes...we have
-      # to create any new periods manually, like this:
-      if !params[:assignment][:submission_rule_attributes][:periods_attributes].nil?
-        assignment.submission_rule.periods_attributes =
-           params[:assignment][:submission_rule_attributes][:periods_attributes]
+      # delete all the previously created periods for the given submission_rule
+      # note that we should not delete this if the current submission rule cannot be saved ( not valid )
+      # otherwise we would end up with no periods!
+      if assignment.submission_rule.valid?
+        assignment.submission_rule.periods.where("id != ?", assignment.submission_rule.id).delete_all
       end
+
+      assignment.submission_rule.type = params[:assignment][:submission_rule_attributes][:type]
     end
 
     if params[:is_group_assignment] == "true"
