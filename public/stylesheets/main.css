@@ -36,7 +36,7 @@ a {
    color: #003399;
    text-decoration: none;
    font-family: Georgia, "Times New Roman", sans-serif;
-   text-size: 1em;
+   font-size: 1em;
    font-style: normal;
    font-weight: normal;
 }
@@ -65,8 +65,7 @@ a.rubric_criterion_link {
 }
 
 h1{
-   font-family: "Myriad", "Myriad Pro", "Lucida Grande", "Lucida Sans
-Unicode", Verdana;
+   font-family: "Myriad", "Myriad Pro", "Lucida Grande", "Lucida Sans Unicode", Verdana;
    font-size: 24px;
    color: #464646;
 }
@@ -85,6 +84,7 @@ h4{
 #header{
   padding: 3px;
   border-bottom: 1px solid #000;
+  min-width: 60em;
 }
 
 #user_info{
@@ -93,9 +93,9 @@ h4{
 }
 
 #logout_area {
-  position: absolute;
+  position: relative;
   right: 5px;
-  top: -3px;
+  top: -6px;
 }
 
 #user_name{
@@ -132,6 +132,9 @@ h4{
   min-width: 75%;
 }
 
+.colsLeftHeavy{
+  min-width: 78.125em;
+}
 /* Title Bar*/
 
 #title_bar{
@@ -186,10 +189,12 @@ h4{
   padding: 0 0 0 130px;
   margin-top: -30px;
   border-bottom: 2px solid #464646;
+  min-width: 70em;
 }
 
 #sub_menu, #sub_sub_menu{
   display: block;
+  min-width: 70em;
 }
 
 #sub_menu li{
@@ -802,7 +807,7 @@ input#extra_mark_description{
 .mark_total{
    font-style: italic;
    font-weight: bold;
-   font-size: 1.4 em;
+   font-size: 1.4em;
    -moz-border-radius: 8px;
    -webkit-border-radius: 8px;
    background-color: #EFEFEF;
@@ -1075,17 +1080,17 @@ div.float_left {
 }
 
 .centreColumn{
-  position: fixed;
-  top: 300px;
-  left: 38%;
-  margin-left: -17px;
+  position: relative;
+  top: 110px;
+  right: 0;
+  overflow: hidden;
 }
 
 .centreColumnGraders{
-  position: fixed;
-  top: 280px;
-  left: 35%;
-  margin-left: -17px;
+  position: relative;
+  top: 110px;
+  right: 0;
+  overflow: hidden;
 }
 
 
@@ -1668,7 +1673,6 @@ div.align_text_right {
 }
 
 .delete_criterion a img{
-	color: none;
 	border: none;
 }
 
@@ -1842,7 +1846,6 @@ fieldset.period{
 
 fieldset.disabled{
   background-color: #eee;
-  color: #464646
   font-style: italic;
 }
 
