@@ -129,9 +129,9 @@ document.observe("dom:loaded", function(){
 </div><!-- Notice -->
 
 <%= form_tag url_for(global_actions_assignment_graders_path(@assignment)),
-	         :id => "global_action_form", 
+             :id => "global_action_form",
              :remote => true do %>
-             
+
 <script type='text/javascript'>
 $("global_action_form").observe('ajax:after', function(evt, status, data, xhr) {
   thinking();
