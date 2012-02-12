@@ -12,26 +12,14 @@
               :desc => (sort_by == 'group_name' && desc.blank?) %>
     </th>
 
-    <th class="<%="ap_sorting_by" if (sort_by == 'first_name')%>
-                <%="ap_sorting_by_desc" if (sort_by == 'first_name' && !desc.blank?)%>">
-      <%= link_to I18n.t("browse_submissions.first_name"),
-              :id => assignment.id,
-              :filter => filter,
-              :page => page,
-              :per_page => per_page,
-              :sort_by => 'first_name',
-              :desc => (sort_by == 'first_name' && desc.blank?) %>
+    <th>
+    <% if assignment.group_assignment? %>
+      <%= I18n.t("browse_submissions.group_members") %>
+    <% else %>
+      <%= I18n.t("browse_submissions.student_name") %>
+   <% end %>
     </th>
 
-    <th class="<%="ap_sorting_by" if (sort_by == 'last_name')%>
-                <%="ap_sorting_by_desc" if (sort_by == 'last_name' && !desc.blank?)%>">
-      <%= link_to I18n.t("browse_submissions.last_name"),
-              :id => assignment.id,
-              :filter => filter,
-              :page => page,
-              :per_page => per_page,
-              :sort_by => 'last_name',
-              :desc => (sort_by == 'last_name' && desc.blank?) %>
     </th>
 
     <th class="<%="ap_sorting_by" if (sort_by == 'repo_name')%>

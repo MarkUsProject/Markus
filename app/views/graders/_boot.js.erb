@@ -11,8 +11,7 @@ document.observe("dom:loaded", function() {
     table_id: $('groups'),
     headers: {
       name: {display: "<%= I18n.t('name') %>", sortable: true},
-      first_name: {display: "<%= I18n.t('user.first_name') %>", sortable: true},
-      last_name: {display: "<%= I18n.t('user.last_name') %>", sortable: true},
+      group_name: {display: "<%= I18n.t('user.group_members') %>", sortable: false},
       section: {display: "<%= I18n.t('graders.section') %>", sortable: true},
       members: {display: "<%= I18n.t('graders.graders') %>", sortable: true, sort_with: 'nohtml'},
       coverage: {display: "<%= I18n.t('graders.coverage') if @assignment.assign_graders_to_criteria %>", sortable: true}

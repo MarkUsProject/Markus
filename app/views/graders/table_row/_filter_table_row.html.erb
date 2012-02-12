@@ -7,16 +7,9 @@
 
 <td>
 <% grouping.students.each do |student| %>
-   <%= student.first_name %>
+   <%= "#{student.first_name} #{student.last_name}" %>
 <% end %>
 </td>
-
-<td>
-<% grouping.students.each do |student| %>
-   <%= student.last_name %>
-<% end %>
-</td>
-
 
 <td>
   <%= grouping.section %>

@@ -47,8 +47,6 @@ module GradersHelper
 
       #These are used for sorting
       table_row[:name] = grouping.group.group_name
-      table_row[:first_name] = grouping.students.collect{ |student| student.first_name }.join(',')
-      table_row[:last_name] = grouping.students.collect{ |student| student.last_name }.join(',')
       table_row[:members] = grouping.tas.collect{ |grader| grader.user_name}.join(',')
       table_row[:coverage] = grouping.criteria_coverage_count
 

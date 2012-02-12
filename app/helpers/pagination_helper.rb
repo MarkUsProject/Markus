@@ -69,8 +69,6 @@ module PaginationHelper
     #of the tables after the groupings have been paginated
     case sort_by
       when "group_name" then to_include = [:group]
-      when "first_name" then to_include = [:group]
-      when "last_name" then to_include = [:group]
       when "repo_name" then to_include = [:group]
       when "section" then to_include = [:group]
       when "revision_timestamp" then to_include = [:current_submission_used]

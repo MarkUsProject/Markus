@@ -377,8 +377,8 @@ en:
       delete:               "Delete"
       can_begin_grading:    "Can begin grading"
       section:              "Section"
-      first_name:           "First Name"
-      last_name:            "Last Name"
+      student_name:         "Student Name"
+      group_members:        "Group Members"
 
     grade_entry_forms:
       blank_field: "can't be blank"
@@ -743,6 +743,7 @@ en:
         first_name:     "First Name"
         last_name:      "Last Name"
         full_name:      "Full Name"
+        group_members:  "Group Members"
         user_type:      "Type"
         grace_credits:  "Grace Credits Left"
         section:        "Section"
