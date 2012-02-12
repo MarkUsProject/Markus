@@ -258,10 +258,11 @@
     <div id="grace_periods">
     <% if rule.object.type.to_s == "GracePeriodSubmissionRule" %>
       <%= rule.fields_for :periods do |period_form| %>
+         <%
         # The bellow conditional is meant to filter out periods that do not match
         # the currently selected submission rule. This only happens when we fail to
         # save a new submission rule.
-        <% if rule.object.type.to_s == rule.object.class.to_s or period_form.object.id.nil? %>
+        if rule.object.type.to_s == rule.object.class.to_s or period_form.object.id.nil? %>
           <%= render :partial => 'grace_period',
                   :locals => {:grace_period => period_form.object,
                               :pf => rule} %>
@@ -287,10 +288,11 @@
     <div id="penalty_decay_periods">
       <% if rule.object.type.to_s == "PenaltyDecayPeriodSubmissionRule" %>
         <%= rule.fields_for :periods do |period_form| %>
+          <%
           # The bellow conditional is meant to filter out periods that do not match
           # the currently selected submission rule. This only happens when we fail to
           # save a new submission rule.
-          <% if rule.object.type.to_s == rule.object.class.to_s or period_form.object.id.nil? %>
+          if rule.object.type.to_s == rule.object.class.to_s or period_form.object.id.nil? %>
             <%= render :partial => 'penalty_decay_period',
                      :locals => {:penalty_decay_period => period_form.object,
                                  :pf => rule} %>
@@ -316,10 +318,11 @@
     <div id="penalty_periods">
     <% if rule.object.type.to_s == "PenaltyPeriodSubmissionRule" %>
       <%= rule.fields_for :periods do |period_form| %>
+         <%
         # The bellow conditional is meant to filter out periods that do not match
         # the currently selected submission rule. This only happens when we fail to
         # save a new submission rule.
-        <% if rule.object.type.to_s == rule.object.class.to_s or period_form.object.id.nil? %>
+        if rule.object.type.to_s == rule.object.class.to_s or period_form.object.id.nil? %>
           <%= render :partial => 'penalty_period',
                   :locals => {:penalty_period => period_form.object,
                               :pf => rule} %>
