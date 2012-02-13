@@ -125,7 +125,7 @@ class ResultsController < ApplicationController
     end   
     
     @code_type = @file.get_file_type
-    render :"results/common/codeviewer"
+    render :results/common/codeviewer
   end
   
   def update_mark
@@ -194,6 +194,7 @@ class ResultsController < ApplicationController
       @extra_mark.update_attributes(params[:extra_mark])
       @extra_mark.unit = ExtraMark::UNITS[:points]
       if !@extra_mark.save
+<<<<<<< HEAD
         render :"results/marker/add_extra_mark_error"
       else
         render :"results/marker/insert_extra_mark"
@@ -201,6 +202,15 @@ class ResultsController < ApplicationController
       return
     end
     render :"results/marker/add_extra_mark"
+=======
+        render :results/marker/add_extra_mark_error
+      else
+        render :results/marker/insert_extra_mark
+      end
+      return
+    end
+    render :results/marker/add_extra_mark
+>>>>>>> render style updated towards Rails 3
   end
 
   #Deletes an extra mark from the database and removes it from the html
@@ -210,7 +220,11 @@ class ResultsController < ApplicationController
     @extra_mark.destroy
     #need to recalculate total mark
     @result = @extra_mark.result
+<<<<<<< HEAD
     render :"results/marker/remove_extra_mark"
+=======
+    render :results/marker/remove_extra_mark
+>>>>>>> render style updated towards Rails 3
   end
 
   #update the mark and/or description of the extra mark
