@@ -22,7 +22,7 @@ class AutomatedTestsController < ApplicationController
       }
       Process.detach(child_pid) unless child_pid.nil?
     end
-    render :action => 'test_replace',
+    render :test_replace,
            :locals => {:test_result_files => @test_result_files,
                        :result => @result}
   end
@@ -50,7 +50,7 @@ class AutomatedTestsController < ApplicationController
           redirect_to :action => 'manage',
                       :assignment_id => params[:assignment_id]
         else
-          render :action => 'manage'
+          render :manage
         end
      end
   end

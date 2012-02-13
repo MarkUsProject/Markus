@@ -59,7 +59,7 @@ class NotesController < ApplicationController
       redirect_to :action => 'index'
     else
       new_retrieve
-      render :action => "new"
+      render :new
     end
   end
 
@@ -93,7 +93,7 @@ class NotesController < ApplicationController
       flash[:success] = I18n.t('notes.update.success')
       redirect_to :action => 'index'
     else
-      render :action => 'edit'
+      render :edit
     end
   end
 
