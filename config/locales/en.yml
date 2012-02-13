@@ -743,6 +743,7 @@ en:
         first_name:     "First Name"
         last_name:      "Last Name"
         full_name:      "Full Name"
+        student_name:   "Student Name"
         group_members:  "Group Members"
         user_type:      "Type"
         grace_credits:  "Grace Credits Left"
