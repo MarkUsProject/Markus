@@ -36,7 +36,14 @@
                     :hours => ((((assignment.due_date - Time.now)/(60 * 60)) % 24).floor)) %>
                 <% end %>
 	      <% else %>
-                <strong><%= I18n.l(assignment.due_date, :format => :long_date) %></strong>
+               <% if assignment.due_date < Time.now %>
+                <strong><%= I18n.l(assignment.section_due_date(assignment.id), :format => :long_date) %></strong><br />
+                <% else %>
+                  <strong><%= I18n.l(assignment.section_due_date(assignment.id), :format => :long_date) %></strong><br />
+                    <%= I18n.t(:days_and_hours_left,
+                    :days => ((((assignment.due_date - Time.now)/(60 * 60 * 24)).floor).to_s),
+                    :hours => ((((assignment.due_date - Time.now)/(60 * 60)) % 24).floor)) %>
+               <% end %>
 	      <% end %>
             </td>
             <td style="width: 40%;">
