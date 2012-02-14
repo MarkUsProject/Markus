@@ -97,6 +97,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       @admin = Admin.make
       @assignment = Assignment.make
 
+
     end
 
     should "upload successfully properly formatted csv file" do
@@ -142,39 +143,6 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       assert_response :redirect
     end
 
-    should "have valid values in database after an upload of a UTF-8 encoded file parsed as UTF-8" do
-      post_as @admin,
-              :csv_upload,
-              :assignment_id => @assignment.id,
-              :csv_upload => {:rubric => fixture_file_upload('../files/test_rubric_criteria_UTF-8.csv')},
-              :encoding => "UTF-8"
-      assert_response :redirect
-      test_criterion = RubricCriterion.find_by_assignment_id_and_rubric_criterion_name(@assignment.id, "RubricCriteriaÈrÉØrr")
-      assert_not_nil test_criterion # rubric criterion should exist
-    end
-
-    should "have valid values in database after an upload of a ISO-8859-1 encoded file parsed as ISO-8859-1" do
-      post_as @admin,
-              :csv_upload,
-              :assignment_id => @assignment.id,
-              :csv_upload => {:rubric => fixture_file_upload('../files/test_rubric_criteria_ISO-8859-1.csv')},
-              :encoding => "ISO-8859-1"
-      assert_response :redirect
-      test_criterion = RubricCriterion.find_by_assignment_id_and_rubric_criterion_name(@assignment.id, "RubricCriteriaÈrÉØrr")
-      assert_not_nil test_criterion # rubric criterion should exist
-    end
-
-    should "have valid values in database after an upload of a UTF-8 encoded file parsed as ISO-8859-1" do
-      post_as @admin,
-              :csv_upload,
-              :assignment_id => @assignment.id,
-              :csv_upload => {:rubric => fixture_file_upload('../files/test_rubric_criteria_UTF-8.csv')},
-              :encoding => "ISO-8859-1"
-      assert_response :redirect
-      test_criterion = RubricCriterion.find_by_assignment_id_and_rubric_criterion_name(@assignment.id, "RubricCriteriaÈrÉØrr")
-      assert_nil test_criterion # rubric criterion should not exist, despite being in file
-    end
-
     should "upload successfully well formatted yml criteria" do
       post_as @admin,
               :yml_upload,
@@ -206,6 +174,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
               :yml_upload,
               :assignment_id => @assignment.id,
               :yml_upload => {:rubric =>
+
                 "cr1:\n  weight: monstrously heavy\n"}
 
       assert_response  :redirect
