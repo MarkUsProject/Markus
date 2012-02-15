@@ -27,7 +27,7 @@ class GradeEntryForm < ActiveRecord::Base
 
   # The total number of marks for this grade entry form
   def out_of_total
-    return grade_entry_items.sum('out_of').to_i
+    return grade_entry_items.sum('out_of').round(2)
   end
 
   # Determine the total mark for a particular student
@@ -37,7 +37,7 @@ class GradeEntryForm < ActiveRecord::Base
 
     grade_entry_student = self.grade_entry_students.find_by_user_id(student_id)
     if !grade_entry_student.nil?
-      total = grade_entry_student.grades.sum('grade')
+      total = grade_entry_student.grades.sum('grade').round(2)
     end
 
     if ((total == 0) && self.all_blank_grades?(grade_entry_student))
