@@ -102,7 +102,7 @@ class AssignmentsController < ApplicationController
     @grade_entry_forms = GradeEntryForm.all(:order => :id)
     if current_user.student?
       #get the section of current user
-      @section = current_user.section 
+      @section = current_user.section
       # get results for assignments for the current user
       @a_id_results = Hash.new()
       @assignments.each do |a|
