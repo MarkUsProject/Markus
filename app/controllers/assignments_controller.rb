@@ -29,6 +29,7 @@ class AssignmentsController < ApplicationController
                      :name
   # Publicly accessible actions ---------------------------------------
 
+
   def student_interface
     @assignment = Assignment.find(params[:id])
     @student = current_user
@@ -100,6 +101,7 @@ class AssignmentsController < ApplicationController
   def index
     @assignments = Assignment.all(:order => :id)
     @grade_entry_forms = GradeEntryForm.all(:order => :id)
+    @section = current_user.section
     if current_user.student?
       # get results for assignments for the current user
       @a_id_results = Hash.new()
