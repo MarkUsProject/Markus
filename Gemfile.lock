@@ -68,7 +68,7 @@ GEM
     mongrel_cluster (1.0.5)
       gem_plugin (>= 0.2.3)
       mongrel (>= 1.0.2)
-    mysql (2.8.1)
+    mysql2 (0.2.18)
     pg (0.11.0)
     polyglot (0.3.2)
     rack (1.2.3)
@@ -129,7 +129,7 @@ DEPENDENCIES
   machinist
   mocha
   mongrel_cluster
-  mysql
+  mysql2 (< 0.3)
   pg
   prototype_legacy_helper (= 0.0.0)!
   railroady
