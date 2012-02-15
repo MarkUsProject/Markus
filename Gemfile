@@ -39,7 +39,8 @@ end
 # Then install your bundle by:
 #   bundle install --without postgresql sqlite
 group :mysql do
-  gem "mysql"
+  # FIXME: mysql2 0.3 is incompatible with rails 3.0.x which we use currently
+  gem "mysql2", "< 0.3"
 end
 
 # If you are a MarkUs developer and use SQLite, make sure you have
@@ -54,7 +55,8 @@ end
 # for production.
 group :development, :test do
   gem "rdoc"
-  gem "rcov"
+  gem "rcov", :platforms => :mri_18
+  gem "simplecov", :platforms => :mri_19
   gem "shoulda"
   gem "machinist"
   gem "faker"
