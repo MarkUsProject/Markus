@@ -20,7 +20,7 @@
 # you are a MarkUs developer.
 #
 #development:
-#  adapter: mysql
+#  adapter: mysql2
 #  encoding: utf8
 #  database: markus_development
 #  username: markus
@@ -32,7 +32,7 @@
 # Do not set this db to the same as development or production.
 #
 #test:
-#  adapter: mysql
+#  adapter: mysql2
 #  encoding: utf8
 #  database: markus_test
 #  username: markus
@@ -43,7 +43,7 @@
 # unique name per MarkUs instance.
 #
 production:
-  adapter: mysql
+  adapter: mysql2
   encoding: utf8
   database: markus_production
   username: markus
