@@ -29,7 +29,6 @@ class AssignmentsController < ApplicationController
                      :name
   # Publicly accessible actions ---------------------------------------
 
-
   def student_interface
     @assignment = Assignment.find(params[:id])
     @student = current_user
