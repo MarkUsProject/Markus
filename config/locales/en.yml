@@ -16,6 +16,7 @@ en:
     logging_in:         "Logging in..."
     login:              "Login"
     login_failed:       "Login failed"
+    cookies_off:        "Please configure your browser to accept cookies."
     password_not_blank: "Your password must not be blank."
     username_not_blank: "Your username must not be blank."
     username_and_password_not_blank: "Your username and password must not be blank."

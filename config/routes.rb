@@ -211,7 +211,7 @@ Markus::Application.routes.draw do
 
   resources :grade_entry_forms do
     collection do
-      post 'student_interface'
+      get 'student_interface'
     end
 
     member do
@@ -220,8 +220,8 @@ Markus::Application.routes.draw do
       get 'csv_download'
       get 'csv_upload'
       post 'update_grade'
-      post 'student_interface'
       post 'update_grade_entry_students'
+      get 'student_interface'
     end
   end
 
