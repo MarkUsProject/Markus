@@ -1,7 +1,11 @@
 <td>
-<span class="link"><%= h(grouping.group.group_name)%></span>
-<% grouping.students.each do |student| %>
+<% if @assignment.group_assignment? %>
+  <span class="link"><%= h(grouping.group.group_name)%></span>
+   <% grouping.students.each do |student| %>
    <%=  student.user_name %>
+  <% end %>
+<% else %>
+  <span class="link"><%= h(grouping.group.group_name)%></span>
 <% end %>
 </td>
 
