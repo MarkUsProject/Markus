@@ -55,6 +55,10 @@ class GroupingTest < ActiveSupport::TestCase
       assert_equal(Time.now.min, last_modified.min)
     end
 
+    should "display Empty Group since no students in the group" do 		
+	   assert_equal "Empty Group", @grouping.get_all_students_in_group
+	end
+
     context "and two unassigned tas" do
       setup do
         @ta2 = Ta.make
@@ -99,6 +103,10 @@ class GroupingTest < ActiveSupport::TestCase
           @grouping.group_name_with_student_user_names
         end
       end
+
+	  should "display comma separated list of students' usernames" do
+	    assert_equal  (@membership.user_name, @inviter.user_name), @grouping.get_all_students_in_group 
+	  end
 
       should "be valid" do
         assert_equal @grouping.student_membership_number, 2
