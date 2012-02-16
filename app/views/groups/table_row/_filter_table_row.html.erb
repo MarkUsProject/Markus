@@ -5,8 +5,7 @@
         <%= link_to image_tag("icons/tick.png",
 			      :alt => I18n.t('groups.is_valid'),
 			      :title => I18n.t('groups.is_valid')),
-		          { :action => 'invalid_grouping', 
-                  :grouping_id => grouping.id },
+          invalid_grouping_assignment_groups_path(:grouping_id => grouping.id),
                   :confirm =>  I18n.t('groups.invalidate_confirm'),
 		          :remote => true
         %>
@@ -14,8 +13,7 @@
         <%= link_to image_tag("icons/cross.png",
 			      :alt => I18n.t('groups.is_not_valid'),
 			      :title => I18n.t('groups.is_not_valid')),
-		          { :action => 'valid_grouping',
-			      :grouping_id => grouping.id },
+		          valid_grouping_assignment_groups_path(:grouping_id => grouping.id),
 	              :confirm =>  I18n.t('groups.validate_confirm'),
 		          :remote => true %>
       <% end %>
@@ -27,18 +25,15 @@
       <%= link_to image_tag("icons/note.png",
 			    :alt => I18n.t('notes.title'),
 			    :title => I18n.t('notes.title')),
-		        { :controller => 'notes',
-			    :action => 'notes_dialog',
-			    :id => assignment.id,
+		      notes_dialog_note_path(:id => assignment.id,
 			    :noteable_id => grouping.id,
 			    :noteable_type => 'Grouping',
 			    :action_to => 'note_message',
-			    :controller_to => 'groups' },
+			    :controller_to => 'groups' ),
 		        :remote => true %>
       <%= link_to image_tag("icons/bin_closed.png",
 			    :alt => I18n.t('groups.delete')),
-		        { :action => 'remove_group',
-			    :grouping_id => grouping.id },
+		        remove_group_assignment_groups_path(:grouping_id => grouping.id),
                 :method => 'delete',
 	            :confirm =>  I18n.t('groups.delete_confirm'),
 		        :remote => true %>
