@@ -8,6 +8,9 @@
 # Make sure to decleare at least one 'source'
 source 'http://rubygems.org'
 
+# RGhost gem for pdf to jpg conversion
+gem 'rghost'
+
 # Bundler requires these gems in all environments
 gem "rails"
 gem 'exception_notification'
