@@ -8,9 +8,6 @@
 # Make sure to decleare at least one 'source'
 source 'http://rubygems.org'
 
-# RGhost gem for pdf to jpg conversion
-gem 'rghost'
-
 # Bundler requires these gems in all environments
 gem "rails"
 gem 'exception_notification'
@@ -23,6 +20,7 @@ gem "will_paginate"
 gem "fastercsv"
 gem "routing-filter"
 gem "dynamic_form"
+gem "rghost"
 
 # To be removed
 gem "prototype_legacy_helper",
