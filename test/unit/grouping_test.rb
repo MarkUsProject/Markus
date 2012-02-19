@@ -104,9 +104,9 @@ class GroupingTest < ActiveSupport::TestCase
         end
       end
 
-	  should "display comma separated list of students' usernames" do
-	    assert_equal  (@membership.user_name, @inviter.user_name), @grouping.get_all_students_in_group 
-	  end
+	  	should "display comma separated list of students' usernames" do
+	    	assert_equal @grouping.get_all_students_in_group, (@membership.user_name, @inviter.user_name)
+	  	end
 
       should "be valid" do
         assert_equal @grouping.student_membership_number, 2
