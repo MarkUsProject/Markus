@@ -37,7 +37,7 @@ class StudentsController < ApplicationController
     if !@user.update_attributes(attrs)
       flash[:error] = I18n.t("students.update.error")
       @sections = Section.find(:all, :order => "name")
-      render :action => :edit
+      render :edit
     else
       flash[:success] = I18n.t("students.update.success",
                                :user_name => @user.user_name)
@@ -70,7 +70,7 @@ class StudentsController < ApplicationController
       end
     rescue RuntimeError => e
       @error = e.message
-      render :action => 'display_error'
+      render :display_error
     end
   end
 
@@ -91,7 +91,7 @@ class StudentsController < ApplicationController
     else
       @sections = Section.find(:all, :order => "name")
       flash[:error] = I18n.t('students.create.error')
-      render :action => 'new'
+      render :new
     end
   end
 

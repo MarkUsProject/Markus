@@ -25,7 +25,7 @@ class AdminsController < ApplicationController
     # update_attributes supplied by ActiveRecords
     if !@user.update_attributes(attrs)
       flash[:error] = I18n.t("admins.update.error")
-      render :action => :edit
+      render :edit
     else
       flash[:success] = I18n.t("admins.update.success",
                                    :user_name => @user.user_name)
