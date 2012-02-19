@@ -41,7 +41,7 @@ class SubmissionsController < ApplicationController
       @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, @path))
       @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
     rescue Exception => @find_revision_error
-      render :repo_browser/find_revision_error
+      render :"repo_browser/find_revision_error"
       return
     end
     @table_rows = {}
@@ -52,10 +52,14 @@ class SubmissionsController < ApplicationController
       @table_rows[directory.id] = construct_repo_browser_directory_table_row(directory_name, directory)
     end
 <<<<<<< HEAD
+<<<<<<< HEAD
     render :"repo_browser/populate_repo_browser"
 =======
     render :repo_browser/populate_repo_browser
 >>>>>>> render style updated towards Rails 3
+=======
+    render :"repo_browser/populate_repo_browser"
+>>>>>>> added quotation marks to multi-level directories in new render style
   end
 
   def file_manager
