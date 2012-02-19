@@ -1,20 +1,27 @@
 #Render the source code for syntax highlighting...
   begin
     page['code_pane'].onmousemove = nil
-    #Non-binary files
+    # Non-binary files
     if !SubmissionFile.is_binary?(@file_contents)
       page.replace_html 'codeviewer',
         :partial => 'results/common/text_codeviewer',
         :locals => { :uid => params[:uid], :file_contents => @file_contents,
         :annots => @annots, :code_type => @code_type}
-    #Supported image files and pdfs
-    elsif @file.is_supported_image? || @file.is_pdf?
+    # Supported image files
+    elsif @file.is_supported_image?
       page.replace_html 'codeviewer',
         :partial => 'results/common/image_codeviewer',
         :locals => { :uid => params[:uid], :file_contents => @file_contents,
         :annots => @annots, :code_type => @code_type,
         :submission_file_id => @submission_file_id}
-    #Rest of the files
+    # Pdf files    
+    elsif @file.is_pdf?
+      page.replace_html 'codeviewer',
+        :partial => 'results/common/pdf_codeviewer',
+        :locals => { :uid => params[:uid], :file_contents => @file_contents,
+        :annots => @annots, :code_type => @code_type,
+        :nb_files => @nb_pdf_files_to_download,
+        :submission_file_id => @submission_file_id}
     else
       page.replace_html 'codeviewer',
         :partial => 'results/common/text_codeviewer',
@@ -23,7 +30,7 @@
         :annots => @annots, :code_type => @code_type}
     end
 
-    #Also update the annotation_summary_list
+    # Also update the annotation_summary_list
     if @current_user.ta? || @current_user.admin?
       page.replace_html 'annotation_summary_list',
         :partial => 'results/marker/annotation_summary',
