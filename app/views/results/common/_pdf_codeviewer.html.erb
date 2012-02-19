@@ -7,7 +7,7 @@
    <div id="image_preview">
        <%# First page to display %>
          <li>      
-           <img  src="<%= url_for(:action => 'download', :controller => 'results', :select_file_id => submission_file_id, :show_in_browser => true, :file_index => 1) -%>" alt="<%=I18n.t("common.image_downlaoding")%>" width="950"/>
+           <img  src="<%= url_for(:action => 'download', :controller => 'results', :select_file_id => submission_file_id, :show_in_browser => true, :file_index => 1) -%>" alt="<%=I18n.t("common.image_downloading")%>" width="950"/>
          </li>
        <%# Other pages to display %>
        <% for i in 2..nb_files %>
