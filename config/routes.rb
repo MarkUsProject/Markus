@@ -228,7 +228,7 @@ Markus::Application.routes.draw do
   resources :notes do
 
     collection do
-	  post 'add_note'
+	    post 'add_note'
       post 'noteable_object_selector'
       get 'new_update_groupings'
       post 'new_update_groupings'
