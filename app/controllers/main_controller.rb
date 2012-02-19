@@ -4,6 +4,8 @@
 class MainController < ApplicationController
 
   include MainHelper
+  include CookieDetection
+
   protect_from_forgery :except => [:login, :page_not_found]
 
   # check for authorization
@@ -20,6 +22,7 @@ class MainController < ApplicationController
   # is redirected to main page if session is still active and valid.
 
   def login
+
     # external auth has been done, skip markus authorization
     if MarkusConfigurator.markus_config_remote_user_auth
       if @markus_auth_remote_user.nil?
@@ -42,6 +45,12 @@ class MainController < ApplicationController
           return
         end
       end
+    end
+
+    # check cookies
+    if !cookies_enabled
+      flash[:login_notice] = I18n.t(:cookies_off)
+      return
     end
 
     @current_user = current_user
@@ -127,7 +136,7 @@ class MainController < ApplicationController
       return
     end
     @assignments = Assignment.find(:all)
-    render :action => 'index', :layout => 'content'
+    render :index, :layout => 'content'
   end
 
   def about
@@ -144,7 +153,7 @@ class MainController < ApplicationController
     else
       render :file => "#{::Rails.root.to_s}/public/404.html", :status => 404 and return
     end
-    render :action => 'api_key_replace', :locals => {:user => @current_user }
+    render :api_key_replace, :locals => {:user => @current_user }
   end
 
   # Render 404 error (page not found) if no other route matches.
