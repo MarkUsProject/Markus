@@ -17,39 +17,29 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
     # Since we are not authenticated and authorized, we should be redirected
     # to the login page
 
-    context "on :add_existing_annotation" do
-      setup do
-        get :add_existing_annotation, :submission_file_id => 1
-      end
-      should respond_with :redirect
+    should "on :add_existing_annotation" do
+      get :add_existing_annotation, :submission_file_id => 1
+      assert_response :redirect
     end
 
-    context "on :create" do
-      setup do
-        get :create, :id => 1
-      end
-      should respond_with :redirect
+    should "on :create" do
+      get :create, :id => 1
+      assert_response :redirect
     end
 
-    context "on :destroy" do
-      setup do
-        delete :destroy, :id => 1
-      end
-      should respond_with :redirect
+    should "on :destroy" do
+      delete :destroy, :id => 1
+      assert_response :redirect
     end
 
-    context "on :update_annotation" do
-      setup do
-        get :update_annotation, :id => 1
-      end
-      should respond_with :redirect
+    should "on :update_annotation" do
+      get :update_annotation, :id => 1
+      assert_response :redirect
     end
 
-    context "on :update_comment" do
-      setup do
-        get :update_comment, :id => 1
-      end
-      should respond_with :redirect
+    should "on :update_comment" do
+      get :update_comment, :id => 1
+      assert_response :redirect
     end
 
   end # end context unauthenticated/unauthorized user GET
@@ -59,39 +49,29 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
     # Since we are not authenticated and authorized, we should be redirected
     # to the login page
 
-    context "on :add_existing_annotation" do
-      setup do
-        post :add_existing_annotation, :id => 1
-      end
-      should respond_with :redirect
+    should "on :add_existing_annotation" do
+      post :add_existing_annotation, :id => 1
+      assert_response :redirect
     end
 
-    context "on :create" do
-      setup do
-        post :create, :id => 1
-      end
-      should respond_with :redirect
+    should "on :create" do
+      post :create, :id => 1
+      assert_response :redirect
     end
 
-    context "on :destroy" do
-      setup do
-        post :destroy, :id => 1
-      end
-      should respond_with :redirect
+    should "on :destroy" do
+      post :destroy, :id => 1
+      assert_response :redirect
     end
 
-    context "on :update_annotation" do
-      setup do
-        post :update_annotation, :id => 1
-      end
-      should respond_with :redirect
+    should "on :update_annotation" do
+      post :update_annotation, :id => 1
+      assert_response :redirect
     end
 
-    context "on :update_comment" do
-      setup do
-        post :update_comment, :id => 1
-      end
-      should respond_with :redirect
+    should "on :update_comment" do
+      post :update_comment, :id => 1
+      assert_response :redirect
     end
 
   end # end context unauthenticated/unauthorized user POST
@@ -107,79 +87,68 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       @result = Submission.make.result
     end
 
-    context "on :add_existing_annotation" do
-      setup do
-        post_as @user, :add_existing_annotation, {
-          :annotation_text_id => @annotation_text.id,
-          :submission_file_id => @submission_file.id,
-          :line_start => 1, :line_end => 1}
-      end
-      should respond_with :success
-      should assign_to :submission_file
-      should assign_to :annotation
-      should render_template 'add_existing_annotation'
+    should "on :add_existing_annotation" do
+      post_as @user, :add_existing_annotation, {
+        :annotation_text_id => @annotation_text.id,
+        :submission_file_id => @submission_file.id,
+        :line_start => 1, :line_end => 1}
+      assert_response :success
+      assert_not_nil assigns :submission_file
+      assert_not_nil assigns :annotation
+      assert_not_nil assigns :annotations
+      assert render_template 'add_existing_annotation'
     end # End context :add_existing_annotation
 
-    context "on :create to make a text annotation" do
-      setup do
-        post_as @user, :create, {:content => @annotation_text.content,
-          :category_id => @category.id,
-          :submission_file_id => @submission_file.id,
-          :line_start => 1, :line_end => 1, :annotation_type => 'text'}
-      end
-      should respond_with :success
-      should assign_to :submission_file
-      should assign_to :annotation
-      should render_template 'create'
+    should "on :create to make a text annotation" do
+      post_as @user, :create, {:content => @annotation_text.content,
+        :category_id => @category.id,
+        :submission_file_id => @submission_file.id,
+        :line_start => 1, :line_end => 1, :annotation_type => 'text'}
+      assert_response :success
+      assert_not_nil assigns :submission_file
+      assert_not_nil assigns :annotation
+      assert render_template 'create'
     end # End context :create text
 
-    context "on :create to make an image annotation" do
-      setup do
-        post_as @user, :create, {:content => @annotation_text.content,
-          :category_id => @category.id,
-          :submission_file_id => @submission_file.id,
-          :coords => "0,0,1,1", :annotation_type => 'image'}
-      end
-      should respond_with :success
-      should assign_to :submission_file
-      should assign_to :annotation
-      should render_template 'create'
+    should "on :create to make an image annotation" do
+      post_as @user, :create, {:content => @annotation_text.content,
+        :category_id => @category.id,
+        :submission_file_id => @submission_file.id,
+        :coords => "0,0,1,1", :annotation_type => 'image'}
+      assert_response :success
+      assert_not_nil assigns :submission_file
+      assert_not_nil assigns :annotation
+      assert render_template 'create'
     end # End context :create image
 
-    context "on :destroy" do
-      setup do
-         anno = TextAnnotation.create({
+    should "on :destroy" do
+      anno = TextAnnotation.create({
         :line_start => 1, :line_end => 1,
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id,
         :annotation_number => 1})
-        post_as @user, :destroy, {:id => anno.id,
-          :submission_file_id => @submission_file.id}
-      end
-      should respond_with :success
-      should render_template 'destroy'
+      post_as @user, :destroy, {:id => anno.id,
+        :submission_file_id => @submission_file.id}
+      assert_response :success
+      assert render_template 'destroy'
     end # End context :destroy
 
-    context "on :update_annotation" do
-      setup do
-         anno = TextAnnotation.create({
+    should "on :update_annotation" do
+      anno = TextAnnotation.create({
         :line_start => 1, :line_end => 1,
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id})
-        post_as @user, :update_annotation, :annotation_text => {
-          :id => @annotation_text.id, :content => @annotation_text.content,
-          :submission_file_id =>@submission_file.id}
-      end
-      should respond_with :success
-      should render_template 'update_annotation'
+      post_as @user, :update_annotation, :annotation_text => {
+        :id => @annotation_text.id, :content => @annotation_text.content,
+        :submission_file_id =>@submission_file.id}
+      assert_response :success
+      assert render_template 'update_annotation'
     end # End context :update_annotation
 
-    context "on :update_comment" do
-      setup do
-         post_as @user, :update_comment, {:result_id => @result.id,
-           :overall_comment => "comment"}
-      end
-      should respond_with :success
+    should "on :update_comment" do
+      post_as @user, :update_comment, {:result_id => @result.id,
+        :overall_comment => "comment"}
+      assert_response :success
     end # End context :update_comment
   end #End context admin POST
 
@@ -194,79 +163,67 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       @result = Submission.make.result
      end
 
-    context "on :add_existing_annotation" do
-      setup do
-        post_as @user, :add_existing_annotation, {
-          :annotation_text_id => @annotation_text.id,
-          :submission_file_id => @submission_file.id,
-          :line_start => 1, :line_end => 1}
-      end
-      should respond_with :success
-      should assign_to :submission_file
-      should assign_to :annotation
-      should render_template 'add_existing_annotation'
+    should "on :add_existing_annotation" do
+      post_as @user, :add_existing_annotation, {
+        :annotation_text_id => @annotation_text.id,
+        :submission_file_id => @submission_file.id,
+        :line_start => 1, :line_end => 1}
+      assert_response :success
+      assert_not_nil assigns :submission_file
+      assert_not_nil assigns :annotation
+      assert render_template 'add_existing_annotation'
     end # End context :add_existing_annotation
 
-    context "on :create to make a text annotation" do
-      setup do
-        post_as @user, :create, {:content => @annotation_text.content,
-          :category_id => @category.id,
-          :submission_file_id => @submission_file.id,
-          :line_start => 1, :line_end => 1, :annotation_type => 'text'}
-      end
-      should respond_with :success
-      should assign_to :submission_file
-      should assign_to :annotation
-      should render_template 'create'
+    should "on :create to make a text annotation" do
+      post_as @user, :create, {:content => @annotation_text.content,
+        :category_id => @category.id,
+        :submission_file_id => @submission_file.id,
+        :line_start => 1, :line_end => 1, :annotation_type => 'text'}
+      assert_response :success
+      assert_not_nil assigns :submission_file
+      assert_not_nil assigns :annotation
+      assert render_template 'create'
     end # End context :create text
 
-    context "on :create to make an image annotation" do
-      setup do
-        post_as @user, :create, {:content => @annotation_text.content,
-          :category_id => @category.id,
-          :submission_file_id => @submission_file.id,
-          :coords => "0,0,1,1", :annotation_type => 'image'}
-      end
-      should respond_with :success
-      should assign_to :submission_file
-      should assign_to :annotation
-      should render_template 'create'
+    should "on :create to make an image annotation" do
+      post_as @user, :create, {:content => @annotation_text.content,
+        :category_id => @category.id,
+        :submission_file_id => @submission_file.id,
+        :coords => "0,0,1,1", :annotation_type => 'image'}
+      assert_response :success
+      assert_not_nil assigns :submission_file
+      assert_not_nil assigns :annotation
+      assert render_template 'create'
     end # End context :create image
 
-    context "on :destroy" do
-      setup do
-         anno = TextAnnotation.create({
+    should "on :destroy" do
+      anno = TextAnnotation.create({
         :line_start => 1, :line_end => 1,
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id,
         :annotation_number => 1})
-        post_as @user, :destroy, {:id => anno.id,
-          :submission_file_id => @submission_file.id}
-      end
-      should respond_with :success
-      should render_template 'destroy'
+      post_as @user, :destroy, {:id => anno.id,
+        :submission_file_id => @submission_file.id}
+      assert_response :success
+      assert render_template 'destroy'
     end # End context :destroy
 
-    context "on :update_annotation" do
-      setup do
-         anno = TextAnnotation.create({
+    should "on :update_annotation" do
+      anno = TextAnnotation.create({
         :line_start => 1, :line_end => 1,
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id})
-        post_as @user, :update_annotation, :annotation_text => {
-          :id => @annotation_text.id, :content => @annotation_text.content,
+      post_as @user, :update_annotation, :annotation_text => {
+        :id => @annotation_text.id, :content => @annotation_text.content,
           :submission_file_id =>@submission_file.id}
-      end
-      should respond_with :success
-      should render_template 'update_annotation'
+      assert_response :success
+      assert render_template 'update_annotation'
     end # End context :update_annotation
 
-    context "on :update_comment" do
-      setup do
-         post_as @user, :update_comment, {:result_id => @result.id,
+    should "on :update_comment" do
+      post_as @user, :update_comment, {:result_id => @result.id,
            :overall_comment => "comment"}
-      end
-      should respond_with :success
+      assert_response :success
     end # End context :update_comment
   end # End context TA POST
 
@@ -281,65 +238,54 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       @submission_file = SubmissionFile.make()
       @result = Submission.make.result
     end
-    context "on :add_existing_annotation" do
-      setup do
-        post_as @user, :add_existing_annotation, {
-          :annotation_text_id => @annotation_text.id,
-          :submission_file_id => @submission_file.id,
-          :line_start => 1, :line_end => 1}
-      end
-      should respond_with :not_found
+
+    should "on :add_existing_annotation" do
+      post_as @user, :add_existing_annotation, {
+        :annotation_text_id => @annotation_text.id,
+        :submission_file_id => @submission_file.id,
+        :line_start => 1, :line_end => 1}
+      assert_response :not_found
     end # End context :add_existing_annotation
 
-    context "on :create to make a text annotation" do
-      setup do
-        post_as @user, :create, {:content => @annotation_text.content,
-          :category_id => @category.id,
-          :submission_file_id => @submission_file.id,
-          :line_start => 1, :line_end => 1, :annotation_type => 'text'}
-      end
-      should respond_with :not_found
+    should "on :create to make a text annotation" do
+      post_as @user, :create, {:content => @annotation_text.content,
+        :category_id => @category.id,
+        :submission_file_id => @submission_file.id,
+        :line_start => 1, :line_end => 1, :annotation_type => 'text'}
+      assert_response :not_found
     end # End context :create
 
-    context "on :create to make an image annotation" do
-      setup do
-        post_as @user, :create, {:content => @annotation_text.content,
-          :category_id => @category.id,
-          :submission_file_id => @submission_file.id,
-          :coords => "0,0,1,1", :annotation_type => 'image'}
-      end
-      should respond_with :not_found
+    should "on :create to make an image annotation" do
+      post_as @user, :create, {:content => @annotation_text.content,
+        :category_id => @category.id,
+        :submission_file_id => @submission_file.id,
+        :coords => "0,0,1,1", :annotation_type => 'image'}
+      assert_response :not_found
     end # End context :create
 
-    context "on :destroy" do
-      setup do
-        delete_as @user,
-                  :destroy,
-                  :id => 67,
-                  :submission_file_id => @submission_file.id
-      end
-      should respond_with :not_found
+    should "on :destroy" do
+      delete_as @user,
+                :destroy,
+                :id => 67,
+                :submission_file_id => @submission_file.id
+      assert_response :not_found
     end # End context :destroy
 
-    context "on :update_annotation" do
-      setup do
-         anno = Annotation.create({
+    should "on :update_annotation" do
+      anno = Annotation.create({
         :line_start => 1, :line_end => 1,
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id})
-        post_as @user, :update_annotation, :annotation_text => {
-          :id => @annotation_text.id, :content => @annotation_text.content,
+      post_as @user, :update_annotation, :annotation_text => {
+        :id => @annotation_text.id, :content => @annotation_text.content,
           :submission_file_id =>@submission_file.id}
-      end
-      should respond_with :not_found
+      assert_response :not_found
     end # End context :update_annotation
 
-    context "on :update_comment" do
-      setup do
-         post_as @user, :update_comment, {:result_id => @result.id,
-           :overall_comment => "comment"}
-      end
-      should respond_with :not_found
+    should "on :update_comment" do
+      post_as @user, :update_comment, {:result_id => @result.id,
+          :overall_comment => "comment"}
+      assert_response :not_found
     end # End context :update_comment
   end # End context Student POST
 end

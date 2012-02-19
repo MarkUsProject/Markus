@@ -17,7 +17,7 @@ class FlexibleCriteriaController < ApplicationController
   def update
     @criterion = FlexibleCriterion.find(params[:id])
     if !@criterion.update_attributes(params[:flexible_criterion])
-      render :action => 'errors'
+      render :errors
       return
     end
     flash.now[:success] = I18n.t('criterion_saved_success')
@@ -40,11 +40,11 @@ class FlexibleCriteriaController < ApplicationController
       @criterion.position = new_position
       if !@criterion.update_attributes(params[:flexible_criterion])
         @errors = @criterion.errors
-        render :action => 'add_criterion_error'
+        render :add_criterion_error
         return
       end
       @criteria.reload
-      render :action => 'create_and_edit'
+      render :create_and_edit
     end
   end
 
