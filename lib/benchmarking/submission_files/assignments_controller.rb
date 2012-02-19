@@ -21,7 +21,7 @@ class AssignmentsController < ApplicationController
         @student.create_group_for_working_alone_student(@assignment.id)
         redirect_to :action => 'student_interface', :id => @assignment.id
       else
-        render :action => 'student_interface', :layout => 'no_menu_header'
+        render :student_interface, :layout => 'no_menu_header'
         return
       end
     else
@@ -67,12 +67,12 @@ class AssignmentsController < ApplicationController
           end 
         end
       end
-      render :action => "student_assignment_list"
+      render :student_assignment_list
       return
     elsif current_user.ta?
-      render :action => "grader_index"
+      render :grader_index
     else
-      render :action => 'index'
+      render :index
     end
   end
   
@@ -127,7 +127,7 @@ class AssignmentsController < ApplicationController
       redirect_to :action => 'edit', :id => params[:id]
       return
     else
-      render :action => 'edit'
+      render :edit
     end
  end
   
@@ -142,7 +142,7 @@ class AssignmentsController < ApplicationController
     @assignment.build_submission_rule
     #@assignment.assignment_files.build
     if !request.post?
-      render :action => 'new'
+      render :new
       return
     end
     # Is the instructor forming groups?
@@ -162,7 +162,7 @@ class AssignmentsController < ApplicationController
     @assignment.transaction do
 
       if !@assignment.save
-        render :action => :new
+        render :new
         return
       end
       if params[:assignment_files]

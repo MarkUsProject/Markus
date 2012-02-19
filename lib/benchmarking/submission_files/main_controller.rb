@@ -85,7 +85,7 @@ class MainController < ApplicationController
       redirect_to :controller => 'assignments', :action => 'index'
       return
     end
-    render :action => 'index', :layout => 'content'
+    render :index, :layout => 'content'
   end
   
 end

@@ -136,7 +136,7 @@ class MainController < ApplicationController
       return
     end
     @assignments = Assignment.find(:all)
-    render :action => 'index', :layout => 'content'
+    render :index, :layout => 'content'
   end
 
   def about
@@ -153,7 +153,7 @@ class MainController < ApplicationController
     else
       render :file => "#{::Rails.root.to_s}/public/404.html", :status => 404 and return
     end
-    render :action => 'api_key_replace', :locals => {:user => @current_user }
+    render :api_key_replace, :locals => {:user => @current_user }
   end
 
   # Render 404 error (page not found) if no other route matches.

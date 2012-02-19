@@ -20,7 +20,7 @@ class RubricsController < ApplicationController
     @criterion = RubricCriterion.find(params[:id])
     @criterion.update_attributes(params[:rubric_criterion])
     if !@criterion.save
-      render :action => 'errors'
+      render :errors
       return
     end
     flash.now[:success] = I18n.t('criterion_saved_success')
@@ -38,9 +38,9 @@ class RubricsController < ApplicationController
       @criterion.set_default_levels
       if !@criterion.save
         flash.now[:error] = I18n.t('criterion_created_error')
-        render :action => 'show_help'
+        render :show_help
       end
-        render :action => 'create_and_edit'
+        render :create_and_edit
     end
   end
   

@@ -23,10 +23,10 @@ class AnnotationCategoriesController < ApplicationController
       @annotation_category.update_attributes(params[:annotation_category])
       @annotation_category.assignment = @assignment
       if !@annotation_category.save
-        render :action => 'new_annotation_category_error'
+        render :new_annotation_category_error
         return
       end
-      render :action => 'insert_new_annotation_category'
+      render :insert_new_annotation_category
       return
     end
   end
@@ -57,11 +57,11 @@ class AnnotationCategoriesController < ApplicationController
       @annotation_text.update_attributes(params[:annotation_text])
       @annotation_text.annotation_category = @annotation_category
       if !@annotation_text.save
-        render :action => 'new_annotation_text_error'
+        render :new_annotation_text_error
         return
       end
       @assignment = Assignment.find(params[:assignment_id])
-      render :action => 'insert_new_annotation_text'
+      render :insert_new_annotation_text
       return
     end
   end

@@ -55,7 +55,7 @@ class AssignmentsController < ApplicationController
         end
         redirect_to :action => 'student_interface', :id => @assignment.id
       else
-        render :action => 'student_interface', :layout => 'no_menu_header'
+        render :student_interface, :layout => 'no_menu_header'
         return
       end
     else
@@ -128,12 +128,12 @@ class AssignmentsController < ApplicationController
         end
       end
 
-      render :action => "student_assignment_list"
+      render :student_assignment_list
       return
     elsif current_user.ta?
-      render :action => "grader_index"
+      render :grader_index
     else
-      render :action => 'index'
+      render :index
     end
   end
 
@@ -175,7 +175,7 @@ class AssignmentsController < ApplicationController
       rescue Exception, RuntimeError => e
         @assignment.errors.add(:base, I18n.t("assignment.error",
                                               :message => e.message))
-        render :action => 'edit', :id => @assignment.id
+        render :edit, :id => @assignment.id
       return
     end
 
@@ -184,7 +184,7 @@ class AssignmentsController < ApplicationController
       redirect_to :action => 'edit', :id => params[:id]
       return
     else
-      render :action => 'edit', :id => @assignment.id
+      render :edit, :id => @assignment.id
     end
   end
 
@@ -203,7 +203,7 @@ class AssignmentsController < ApplicationController
     # set default value if web submits are allowed
     @assignment.allow_web_submits =
         !MarkusConfigurator.markus_config_repository_external_submits_only?
-    render :action => 'new'
+    render :new
   end
 
   # Called after a new assignment form is submitted.
@@ -219,7 +219,7 @@ class AssignmentsController < ApplicationController
       if !@assignment.save
         @assignments = Assignment.all
         @sections = Section.all
-        render :action => :new
+        render :new
         return
       end
       if params[:persist_groups_assignment]
