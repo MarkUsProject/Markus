@@ -106,7 +106,6 @@ class GroupingTest < ActiveSupport::TestCase
       end
 
 	  	should "display comma separated list of students' usernames" do
-			 	#FIXME
 	    	assert_equal "student1, student2", @grouping.get_all_students_in_group
 	  	end
 

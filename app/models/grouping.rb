@@ -70,9 +70,9 @@ class Grouping < ActiveRecord::Base
   end
 
   def group_name_with_student_user_names
-
-    return group.group_name if student_user_names.size == 0
-    return group.group_name + ": " + get_all_students_in_group
+		user_names = get_all_students_in_group
+    return group.group_name if user_names == "Empty Group"
+    return group.group_name + ": " + user_names
   end
 
   def display_for_note
