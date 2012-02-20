@@ -56,6 +56,7 @@ class GroupingTest < ActiveSupport::TestCase
     end
 
     should "display Empty Group since no students in the group" do 		
+			#FIXME
 	   assert_equal "Empty Group", @grouping.get_all_students_in_group
 	end
 
@@ -81,11 +82,11 @@ class GroupingTest < ActiveSupport::TestCase
     context "with two student members" do
       setup do
         # should consist of inviter and another student
-        @membership = StudentMembership.make(
+        @membership = StudentMembership.make(:user => Student.make(:user_name => "student1"),
           :grouping => @grouping,
           :membership_status => StudentMembership::STATUSES[:accepted])
 
-        @inviter_membership = StudentMembership.make(
+        @inviter_membership = StudentMembership.make(:user => Student.make(:user_name => "student2"),
           :grouping => @grouping,
           :membership_status => StudentMembership::STATUSES[:inviter])
         @inviter = @inviter_membership.user
@@ -105,7 +106,8 @@ class GroupingTest < ActiveSupport::TestCase
       end
 
 	  	should "display comma separated list of students' usernames" do
-	    	assert_equal @grouping.get_all_students_in_group, (@membership.user_name, @inviter.user_name)
+			 	#FIXME
+	    	assert_equal "student1, student2", @grouping.get_all_students_in_group
 	  	end
 
       should "be valid" do
