@@ -26,7 +26,7 @@ class TasController < ApplicationController
     # update_attributes supplied by ActiveRecords
     if !@user.update_attributes(attrs)
       flash[:error] = I18n.t("tas.update.error")
-      render :action => :edit
+      render :edit
     else
       flash[:success] = I18n.t("tas.update.success",
                                :user_name => @user.user_name)
@@ -49,7 +49,7 @@ class TasController < ApplicationController
       redirect_to :action => 'index' # Redirect
     else
       flash[:error] = I18n.t("tas.create.error")
-      render :action => 'new'
+      render :new
     end
   end
 

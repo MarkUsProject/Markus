@@ -31,7 +31,7 @@ class GroupsController < ApplicationController
       new_grouping_data = @assignment.add_group(params[:new_group_name])
     rescue Exception => e
       @error = e.message
-      render :action => 'error_single'
+      render :error_single
       return
     end
     @new_grouping = construct_table_row(new_grouping_data, @assignment)
@@ -46,11 +46,11 @@ class GroupsController < ApplicationController
     @removed_groupings = []
     if grouping.has_submission?
         @errors.push(grouping.group.group_name)
-        render :action => "delete_groupings"
+        render :delete_groupings
     else
       grouping.delete_grouping
       @removed_groupings.push(grouping)
-      render :action => "delete_groupings"
+      render :delete_groupings
     end
   end
 
@@ -279,7 +279,7 @@ class GroupsController < ApplicationController
       when "assign"
         if grouping_ids.length != 1
           @error = I18n.t("assignment.group.select_only_one_group")
-          render :action => 'error_single'
+          render :error_single
         elsif student_ids
           add_members(student_ids, grouping_ids[0], @assignment)
           return
@@ -302,7 +302,7 @@ class GroupsController < ApplicationController
      grouping.invalidate_grouping
     end
     @groupings_data = construct_table_rows(groupings, @assignment)
-    render :action => "modify_groupings"
+    render :modify_groupings
   end
 
   # Given a list of grouping, sets their group status to valid if possible
@@ -311,7 +311,7 @@ class GroupsController < ApplicationController
       grouping.validate_grouping
     end
     @groupings_data = construct_table_rows(groupings, @assignment)
-    render :action => "modify_groupings"
+    render :modify_groupings
   end
 
   # Deletes the given list of groupings if possible
@@ -326,7 +326,7 @@ class GroupsController < ApplicationController
           @removed_groupings.push(grouping)
         end
       end
-      render :action => "delete_groupings"
+      render :delete_groupings
   end
 
   # Adds the students given in student_ids to the grouping given in grouping_id
@@ -348,7 +348,7 @@ class GroupsController < ApplicationController
         :group => group_name)
     end
 
-    render :action => "add_members"
+    render :add_members
     return
   end
 
@@ -416,7 +416,7 @@ class GroupsController < ApplicationController
     end
     @students_data = construct_student_table_rows(all_members, @assignment)
     @groupings_data = construct_table_rows(groupings, @assignment)
-    render :action => "remove_members"
+    render :remove_members
   end
 
   #Removes the given student membership from the given grouping
