@@ -81,7 +81,7 @@ class GradersController < ApplicationController
     end
 
     invalid_lines = Grouping.assign_tas_by_csv(params[:grader_mapping].read,
-                                               params[:assignment_id])
+                                               params[:assignment_id], params[:encoding])
     if invalid_lines.size > 0
       flash[:invalid_lines] = invalid_lines
     end
@@ -99,10 +99,10 @@ class GradersController < ApplicationController
 
     if @assignment.marking_scheme_type == 'rubric'
       invalid_lines = RubricCriterion.assign_tas_by_csv(
-      params[:grader_criteria_mapping].read, params[:assignment_id])
+      params[:grader_criteria_mapping].read, params[:assignment_id], params[:encoding])
     else
       invalid_lines = FlexibleCriterion.assign_tas_by_csv(
-      params[:grader_criteria_mapping].read, params[:assignment_id])
+      params[:grader_criteria_mapping].read, params[:assignment_id], params[:encoding])
     end
     if invalid_lines.size > 0
       flash[:invalid_lines] = invalid_lines

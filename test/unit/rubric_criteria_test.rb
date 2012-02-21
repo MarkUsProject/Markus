@@ -175,7 +175,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       tempfile.rewind
       invalid_lines = []
       dst_assignment =  Assignment.make(:marking_scheme_type => 'rubric')
-      nb_updates = RubricCriterion.parse_csv(tempfile, dst_assignment, invalid_lines)
+      nb_updates = RubricCriterion.parse_csv(tempfile, dst_assignment, invalid_lines, nil)
       assert_equal 2, nb_updates
       assert_equal 0, invalid_lines.size
       dst_assignment.reload
@@ -210,7 +210,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       tempfile.rewind
       invalid_lines = []
       dst_assignment = Assignment.make
-      nb_updates = RubricCriterion.parse_csv(tempfile, dst_assignment, invalid_lines)
+      nb_updates = RubricCriterion.parse_csv(tempfile, dst_assignment, invalid_lines, nil)
       assert_equal 1, nb_updates
       assert_equal 0, invalid_lines.size
       dst_assignment.reload
@@ -357,7 +357,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       assignment = Assignment.make
       invalid_lines = []
 
-      nb_updates = RubricCriterion.parse_csv(tempfile, assignment, invalid_lines)
+      nb_updates = RubricCriterion.parse_csv(tempfile, assignment, invalid_lines, nil)
       assert_equal nb_updates, 1
       assert invalid_lines.empty?
     end
@@ -369,7 +369,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       assignment = Assignment.make
       invalid_lines = []
 
-      nb_updates = RubricCriterion.parse_csv(tempfile, assignment, invalid_lines)
+      nb_updates = RubricCriterion.parse_csv(tempfile, assignment, invalid_lines, nil)
       assert_equal 0, nb_updates
       assert_equal 2, invalid_lines.length
     end
