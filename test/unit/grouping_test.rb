@@ -5,6 +5,8 @@ require 'shoulda'
 require 'machinist'
 require 'mocha'
 
+
+
 class GroupingTest < ActiveSupport::TestCase
 
   should belong_to :grouping_queue
@@ -13,7 +15,6 @@ class GroupingTest < ActiveSupport::TestCase
   should have_many :memberships
   should have_many :submissions
   should have_many :notes
-
 
   context "A good grouping model" do
     setup do
