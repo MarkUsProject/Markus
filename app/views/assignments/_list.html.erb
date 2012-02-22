@@ -27,7 +27,7 @@
             </td>
             <td>
               <% if !assignment.section_due_dates_type %>
-                 <% if assignment.due_date < Time.now %>
+                <% if assignment.due_date < Time.now %>
                   <strong><%= I18n.l(assignment.due_date, :format => :long_date) %></strong>
                 <% else %>
                   <strong><%= I18n.l(assignment.due_date, :format => :long_date) %></strong><br />
