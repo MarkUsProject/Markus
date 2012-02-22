@@ -41,7 +41,7 @@ class SubmissionsController < ApplicationController
       @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, @path))
       @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
     rescue Exception => @find_revision_error
-      render :action => 'repo_browser/find_revision_error'
+      render :"repo_browser/find_revision_error"
       return
     end
     @table_rows = {}
@@ -51,7 +51,7 @@ class SubmissionsController < ApplicationController
     @directories.sort.each do |directory_name, directory|
       @table_rows[directory.id] = construct_repo_browser_directory_table_row(directory_name, directory)
     end
-    render :action => 'repo_browser/populate_repo_browser'
+    render :"repo_browser/populate_repo_browser"
   end
 
   def file_manager
@@ -102,7 +102,7 @@ class SubmissionsController < ApplicationController
         @table_rows[directory.id] = construct_file_manager_dir_table_row(directory_name, directory)
       end
     end
-    render :action => 'file_manager_populate'
+    render :file_manager_populate
   end
 
   def manually_collect_and_begin_grading
@@ -158,7 +158,7 @@ class SubmissionsController < ApplicationController
       @table_rows[grouping.id] = construct_submissions_table_row(grouping, assignment)
     end
 
-    render :action => 'submission_table_populate'
+    render :submission_table_populate
   end
 
   def browse
@@ -168,7 +168,7 @@ class SubmissionsController < ApplicationController
 
   def index
     @assignments = Assignment.all(:order => :id)
-    render :action => 'index', :layout => 'sidebar'
+    render :index, :layout => 'sidebar'
   end
 
   # controller handles transactional submission of files
