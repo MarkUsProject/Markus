@@ -37,7 +37,7 @@
                 <% end %>
 	      <% else %>
                <% if assignment.section_due_date(@section) < Time.now %>
-                <strong><%= I18n.l(assignment.section_due_date(@section), :format => :long_date) %></strong><br />
+                <strong><%= I18n.l(assignment.section_due_date(@section), :format => :long_date) %></strong>
                 <% else %>
                   <strong><%= I18n.l(assignment.section_due_date(@section), :format => :long_date) %></strong><br />
                     <%= I18n.t(:days_and_hours_left,
