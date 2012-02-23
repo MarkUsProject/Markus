@@ -1,3 +1,18 @@
+<script type="text/javascript">
+//<![CDATA[
+
+document.observe("dom:loaded", function(){
+modalAddNewSection = new Control.Modal($('add_new_section_dialog'),
+  {
+     overlayOpacity: 0.75,
+     className: 'modalAddNewSection',
+     fade: false
+  });
+	
+});
+//]]>
+</script>
+
 <div class="section">
   <%= form_for @user, :as => :user do |f| %>
 
@@ -22,12 +37,28 @@
         :selected => (@user.has_section?) ? (@user.section.id) : (["−"]) ) %>
     <%= f.label(:section_id, I18n.t("section.legend") ) %> <br />
 
+	<%= link_to_function I18n.t("section.add_section"), 'modalAddNewSection.open()', 
+ 		:class => "button link_button" %>
+
     <%= f.hidden_field :id %>
-    <%= f.submit t(:submit), :name => 'submit', :class => 'button indent_button' %>
+    <%= f.submit t(:submit), :name => 'submit', :class => 'button link_button' %>
     <%= link_to t(:cancel), 
         {:controller => 'students'}, 
-        :class => "button button_link" %>
+        :class => "button link_button" %>
 
   <% end %>
 
+</div>
+
+<!-- Modal Window -->
+<div id="add_new_section_dialog">
+  <%= form_for @section, :as => :section do |f| %>
+	<fieldset>
+		<h2><%= I18n.t("section.add_section") %></h2>
+   		<%= raw(f.label :name, I18n.t("section.name")) %>
+   		<%= raw(f.text_field :name) %> <br />
+   		<%= f.submit I18n.t(:save) %>
+   		<%= button_to_function I18n.t(:close), 'modalAddNewSection.close()' %>
+	</fieldset>
+  <% end %>
 </div>

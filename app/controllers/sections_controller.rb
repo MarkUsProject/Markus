@@ -17,13 +17,23 @@ class SectionsController < ApplicationController
   # Creates a new section
   def create
     @section = Section.new(params[:section])
-    if @section.save
+     uri = session[:original_uri]
+     session[:original_uri] = nil
+    if @section.save  
       flash[:success] = I18n.t('section.create.success',
                                :name => @section.name)
+      if uri
+        redirect_to :controller => 'students', :action => 'new'
+        return
+      end
       redirect_to :action => 'index'
       return
     else
       flash[:error] = I18n.t('section.create.error')
+      if uri
+        redirect_to :controller => 'students', :action => 'new'
+        return
+      end
       render :new
     end
   end
