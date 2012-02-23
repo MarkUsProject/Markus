@@ -5,6 +5,8 @@ require 'shoulda'
 require 'machinist'
 require 'mocha'
 
+
+
 class GroupingTest < ActiveSupport::TestCase
 
   should belong_to :grouping_queue
@@ -17,6 +19,7 @@ class GroupingTest < ActiveSupport::TestCase
   setup do
     clear_fixtures
   end
+
   context "A good grouping model" do
     setup do
       @grouping = Grouping.make
