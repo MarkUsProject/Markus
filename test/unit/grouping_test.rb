@@ -14,7 +14,9 @@ class GroupingTest < ActiveSupport::TestCase
   should have_many :submissions
   should have_many :notes
 
-
+  setup do
+    clear_fixtures
+  end
   context "A good grouping model" do
     setup do
       @grouping = Grouping.make
