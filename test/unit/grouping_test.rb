@@ -61,7 +61,6 @@ class GroupingTest < ActiveSupport::TestCase
     end
 
     should "display Empty Group since no students in the group" do 		
-			#FIXME
 	   assert_equal "Empty Group", @grouping.get_all_students_in_group
 	end
 
