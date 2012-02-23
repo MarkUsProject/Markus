@@ -62,7 +62,7 @@ class GroupingTest < ActiveSupport::TestCase
 
     should "display Empty Group since no students in the group" do 		
 	   assert_equal "Empty Group", @grouping.get_all_students_in_group
-	end
+	  end
 
     context "and two unassigned tas" do
       setup do
