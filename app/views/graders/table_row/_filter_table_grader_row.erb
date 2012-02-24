@@ -6,7 +6,7 @@
     <%= h(grader.get_criterion_associations_count_by_assignment(@assignment)) %>
     <%= link_to image_tag("icons/comment.png", :alt => I18n.t('criteria'),
             :title => I18n.t('criteria')),
-          :url => { :action => 'grader_criteria_dialog',
+          { :action => 'grader_criteria_dialog',
           :id => @assignment.id, :grader => grader.id },
           :remote => true %>
   <% else %>
