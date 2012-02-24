@@ -205,11 +205,9 @@ document.observe("dom:loaded", function() {
                                     @assignment),
                         :complete => "$('loading_list').hide();" %>
   <% else %>
-    <%= remote_function populate_assignment_graders_path(
+    <%= remote_function :url => populate_assignment_graders_path(
                                     @assignment),
                         :complete => "$('loading_list').hide();"  %>
-    <%= remote_function populate_criteria_assignment_graderspath(
-                                    @assignment) %>
   <% end %>
 });
 

@@ -174,7 +174,7 @@ Markus::Application.routes.draw do
         post 'populate_graders'
         post 'populate'
         post 'populate_criteria'
-        get 'set_assign_criteria'
+        post 'set_assign_criteria'
         get 'random_assign'
         get 'upload_dialog'
         get 'unassign'

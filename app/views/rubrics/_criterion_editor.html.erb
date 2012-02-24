@@ -15,14 +15,13 @@
 
 <div class="main_rubric_criteria_edit">
   <div class="align_text_right">
-    <%= link_to_remote I18n.t(:delete),
-		       :url => {:action => 'destroy',
-				:id => criterion.id},
-		       :method => 'delete',
-		       :html => {:class => 'delete',
-		  		 :title => I18n.t(:remove_criteria_title)},
-		       :confirm => I18n.t(:remove_criteria_message),
-		       :remote => true %>
+    <%= link_to_function I18n.t(:delete),
+		       remote_function(:url => {:action => 'destroy',
+				   :id => criterion.id}, 
+				   :confirm => I18n.t(:remove_criteria_message),
+		       :method => 'delete'),
+		       {:class => 'delete',
+		  		 :title => I18n.t(:remove_criteria_title)} %>
   </div>
 
   <span id="<%="criterion_inputs_#{criterion.id}"%>">
