@@ -76,8 +76,8 @@ class StudentsController < ApplicationController
 
   def new
     @user = Student.new(params[:user])
-    @sections = Section.find(:all, :order => "name")
     @section = Section.new
+    @sections = Section.find(:all, :order => "name")
   end
 
   def create
@@ -85,6 +85,7 @@ class StudentsController < ApplicationController
     # params[:user] is a hash of values passed to the controller
     # by the HTML form with the help of ActiveView::Helper::
     @user = Student.new(params[:user])
+    @section = Section.new
     if @user.save
       flash[:success] = I18n.t("students.create.success",
                                :user_name => @user.user_name)
