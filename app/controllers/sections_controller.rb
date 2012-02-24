@@ -24,7 +24,11 @@ class SectionsController < ApplicationController
       flash[:success] = I18n.t('section.create.success',
                                :name => @section.name)
       if uri
-        redirect_to :controller => 'students', :action => 'new'  
+        if uri.eql?('/en/students/new')
+          redirect_to :controller => 'students', :action => 'new'  
+          return
+        end
+        redirect_to uri
         return
       end
       redirect_to :action => 'index'
