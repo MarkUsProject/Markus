@@ -71,7 +71,7 @@ class Grouping < ActiveRecord::Base
 
   def group_name_with_student_user_names
 		user_names = get_all_students_in_group
-    return group.group_name if user_names == "Empty Group"
+    return group.group_name if user_names == I18n.t('assignment.group.empty')
     return group.group_name + ": " + user_names
   end
 
