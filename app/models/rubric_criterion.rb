@@ -1,3 +1,4 @@
+require 'iconv'
 require 'fastercsv'
 require 'csv'
 
@@ -218,8 +219,11 @@ class RubricCriterion < ActiveRecord::Base
   # ===Returns:
   #
   # The number of successfully created criteria.
-  def self.parse_csv(file, assignment, invalid_lines)
+  def self.parse_csv(file, assignment, invalid_lines, encoding)
     nb_updates = 0
+    if encoding != nil
+      file = StringIO.new(Iconv.iconv('UTF-8', encoding, file.read).join)
+    end
     FasterCSV.parse(file.read) do |row|
       next if FasterCSV.generate_line(row).strip.empty?
       begin
@@ -296,8 +300,11 @@ class RubricCriterion < ActiveRecord::Base
   end
 
   # Returns an array containing the criterion names that didn't exist
-  def self.assign_tas_by_csv(csv_file_contents, assignment_id)
+  def self.assign_tas_by_csv(csv_file_contents, assignment_id, encoding)
     failures = []
+    if encoding != nil
+      csv_file_contents = StringIO.new(Iconv.iconv('UTF-8', encoding, csv_file_contents.read).join)
+    end
     FasterCSV.parse(csv_file_contents) do |row|
       criterion_name = row.shift # Knocks the first item from array
       criterion = RubricCriterion.find_by_assignment_id_and_rubric_criterion_name(assignment_id, criterion_name)

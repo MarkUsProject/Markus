@@ -81,7 +81,7 @@ class GradersController < ApplicationController
     end
 
     invalid_lines = Grouping.assign_tas_by_csv(params[:grader_mapping].read,
-                                               params[:assignment_id])
+                                               params[:assignment_id], params[:encoding])
     if invalid_lines.size > 0
       flash[:invalid_lines] = invalid_lines
     end
@@ -99,10 +99,10 @@ class GradersController < ApplicationController
 
     if @assignment.marking_scheme_type == 'rubric'
       invalid_lines = RubricCriterion.assign_tas_by_csv(
-      params[:grader_criteria_mapping].read, params[:assignment_id])
+      params[:grader_criteria_mapping].read, params[:assignment_id], params[:encoding])
     else
       invalid_lines = FlexibleCriterion.assign_tas_by_csv(
-      params[:grader_criteria_mapping].read, params[:assignment_id])
+      params[:grader_criteria_mapping].read, params[:assignment_id], params[:encoding])
     end
     if invalid_lines.size > 0
       flash[:invalid_lines] = invalid_lines
@@ -265,7 +265,7 @@ class GradersController < ApplicationController
     end
     groupings = groupings.uniq
     construct_all_rows(groupings, graders, criteria)
-    render :action => "modify_criteria"
+    render :modify_criteria
   end
 
   def randomly_assign_graders(groupings, grader_ids)
@@ -283,7 +283,7 @@ class GradersController < ApplicationController
       criterion.save
     end
     construct_all_rows(groupings, graders, criteria)
-    render :action => "modify_groupings"
+    render :modify_groupings
   end
 
   def add_graders(groupings, grader_ids)
@@ -298,7 +298,7 @@ class GradersController < ApplicationController
       criterion.save
     end
     construct_all_rows(groupings, graders, criteria)
-    render :action => "modify_groupings"
+    render :modify_groupings
   end
 
   def add_graders_to_criteria(criteria, graders)
@@ -317,7 +317,7 @@ class GradersController < ApplicationController
       grouping.save
     end
     construct_all_rows(groupings, graders, criteria)
-    render :action => "modify_criteria"
+    render :modify_criteria
   end
 
   def remove_graders_from_criteria(criteria, params)
@@ -342,7 +342,7 @@ class GradersController < ApplicationController
       grouping.save
     end
     construct_all_rows(groupings , all_graders, criteria)
-    render :action => "modify_criteria"
+    render :modify_criteria
   end
 
   # Removes the graders contained in params from the groupings given
@@ -365,7 +365,7 @@ class GradersController < ApplicationController
       criterion.save
     end
     construct_all_rows(groupings, Ta.all, @assignment.get_criteria)
-    render :action => "modify_groupings"
+    render :modify_groupings
   end
 
   def construct_all_rows(groupings, graders, criteria)

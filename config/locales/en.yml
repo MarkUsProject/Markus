@@ -215,6 +215,7 @@ en:
     preview:            "Preview"
     invalid_grouping:   "(invalid)"
     validate:           "Validate"
+    encoding:           "Encoding"
 
     marks_released_notice:  "The marks have been released. You cannot change the grades."
     past_due_date_edit_warning:  "WARNING:  The due date you have selected is in the past."

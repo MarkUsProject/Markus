@@ -1,3 +1,4 @@
+require 'iconv'
 require 'fastercsv'
 
 class AnnotationCategoriesController < ApplicationController
@@ -23,10 +24,10 @@ class AnnotationCategoriesController < ApplicationController
       @annotation_category.update_attributes(params[:annotation_category])
       @annotation_category.assignment = @assignment
       if !@annotation_category.save
-        render :action => 'new_annotation_category_error'
+        render :new_annotation_category_error
         return
       end
-      render :action => 'insert_new_annotation_category'
+      render :insert_new_annotation_category
       return
     end
   end
@@ -57,11 +58,11 @@ class AnnotationCategoriesController < ApplicationController
       @annotation_text.update_attributes(params[:annotation_text])
       @annotation_text.annotation_category = @annotation_category
       if !@annotation_text.save
-        render :action => 'new_annotation_text_error'
+        render :new_annotation_text_error
         return
       end
       @assignment = Assignment.find(params[:assignment_id])
-      render :action => 'insert_new_annotation_text'
+      render :insert_new_annotation_text
       return
     end
   end
@@ -98,6 +99,7 @@ class AnnotationCategoriesController < ApplicationController
 
   def csv_upload
     @assignment = Assignment.find(params[:assignment_id])
+    encoding = params[:encoding]
     if !request.post?
       redirect_to :action => 'index', :id => @assignment.id
       return
@@ -106,7 +108,10 @@ class AnnotationCategoriesController < ApplicationController
     annotation_category_number = 0
     annotation_line = 0
     if !annotation_category_list.nil?
-      FasterCSV.parse(annotation_category_list) do |row|
+      if encoding != nil
+        annotation_category_list = StringIO.new(Iconv.iconv('UTF-8', encoding, annotation_category_list.read).join)
+      end
+      FasterCSV.parse(annotation_category_list.read) do |row|
         next if FasterCSV.generate_line(row).strip.empty?
         annotation_line += 1
         result = AnnotationCategory.add_by_row(row, @assignment)
@@ -130,6 +135,7 @@ class AnnotationCategoriesController < ApplicationController
 
   def yml_upload
     @assignment = Assignment.find(params[:assignment_id])
+    encoding = params[:encoding]
     if !request.post?
       redirect_to :action => 'index', :assignment_id => @assignment.id
       return
@@ -139,6 +145,9 @@ class AnnotationCategoriesController < ApplicationController
     annotation_line = 0
     if !file.nil? && !file.blank?
       begin
+        if encoding != nil
+          file = StringIO.new(Iconv.iconv('UTF-8', encoding, file.read).join)
+        end
         annotations = YAML::load(file)
       rescue ArgumentError => e
         flash[:annotation_upload_invalid_lines] =
