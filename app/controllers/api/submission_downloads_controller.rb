@@ -18,14 +18,9 @@ module Api
     #=== Returns
     # The requested file, or a zip file containing all requested files
     def show
-      if !request.get?
-        # pretend this URL does not exist
-        render :file => "#{::Rails.root.to_s}/public/404.html", :status => 404
-        return
-      end
       if !has_required_http_params?(params)
         # incomplete/invalid HTTP params
-        render :file => "#{::Rails.root.to_s}/public/422.xml", :status => 422
+        render 'shared/http_status', :locals => { :code => "422", :message => HttpStatusHelper::ERROR_CODE["message"]["422"] }, :status => 422
         return
       end
 
@@ -35,16 +30,16 @@ module Api
 
       if submission.nil?
         # no such submission
-        render :file => "#{::Rails.root.to_s}/public/422.xml", :status => 422
+        render 'shared/http_status', :locals => { :code => "422", :message => "Submission was not found" }, :status => 422
         return
       end
 
-      #If requested a single file
+      # If requested a single file
       if !params[:filename].blank?
         files = [SubmissionFile.find_by_filename_and_submission_id(params[:filename], submission.id)]
         single_file = true
       else
-      #otherwise we give them the whole directory of files
+      # otherwise we give them the whole directory of files
         files = SubmissionFile.find_all_by_submission_id(submission.id)
         single_file = false
         FileUtils.remove_file("downloads/submissions.zip", true)
@@ -53,7 +48,7 @@ module Api
       files.each do |file|
         if file.nil?
           # no such submission file
-          render :file => "#{::Rails.root.to_s}/public/422.xml", :status => 422
+          render 'shared/http_status', :locals => { :code => "422", :message => "Submission was not found" }, :status => 422
           return
         end
 
@@ -66,7 +61,7 @@ module Api
           end
         rescue Exception => e
             # could not retrieve file
-            render :file => "#{::Rails.root.to_s}/public/500.xml", :status => 500
+            render 'shared/http_status', :locals => { :code => "500", :message => HttpStatusHelper::ERROR_CODE["message"]["500"] }, :status => 500
           return
         end
 
