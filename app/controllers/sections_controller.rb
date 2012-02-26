@@ -12,30 +12,23 @@ class SectionsController < ApplicationController
 
   def new
     @section = Section.new
-    session[:original_uri] = nil
   end
 
   # Creates a new section
   def create
     @section = Section.new(params[:section])
-    uri = session[:original_uri]
-    session[:original_uri] = nil
     if @section.save
       flash[:success] = I18n.t('section.create.success',
                                :name => @section.name)
-      if uri
-        if uri.eql?('/en/students/new')
-          redirect_to :controller => 'students', :action => 'new'  
-          return
-        end
-        redirect_to uri
+      if params[:section_modal]
+        redirect_to :controller => 'students', :action => 'new'  
         return
       end
       redirect_to :action => 'index'
       return
     else
       flash[:error] = I18n.t('section.create.error')
-      if uri
+      if params[:section_modal]
         redirect_to :controller => 'students', :action => 'new'
         return
       end

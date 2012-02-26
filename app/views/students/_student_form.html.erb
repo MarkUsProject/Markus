@@ -14,6 +14,7 @@ modalAddNewSection = new Control.Modal($('add_new_section_dialog'),
 </script>
 
 <div class="section">
+  <%= render :partial => "student_form_add_section_dialog" %>
   <%= form_for @user, :as => :user do |f| %>
 
     <%= render :partial => "shared/error_explanation",
@@ -36,7 +37,7 @@ modalAddNewSection = new Control.Modal($('add_new_section_dialog'),
         ["−"] + @sections.map {|s| [s.name, s.id] },
         :selected => (@user.has_section?) ? (@user.section.id) : (["−"]) ) %>
     <%= f.label(:section_id, I18n.t("section.legend") ) %> <br />
-
+	
 	<%= link_to_function I18n.t("section.add_section"), 'modalAddNewSection.open()', 
  		:class => "button link_button" %>
 
@@ -46,19 +47,5 @@ modalAddNewSection = new Control.Modal($('add_new_section_dialog'),
         {:controller => 'students'}, 
         :class => "button link_button" %>
 
-  <% end %>
-
-</div>
-
-<!-- Modal Window -->
-<div id="add_new_section_dialog">
-  <%= form_for @section do |f| %>
-	<fieldset>
-		<h2><%= I18n.t("section.add_section") %></h2>
-   		<%= raw(f.label :name, I18n.t("section.name")) %>
-   		<%= raw(f.text_field :name) %> <br />
-   		<%= f.submit I18n.t(:save), :onclick => session[:original_uri] = request.fullpath %>
-   		<%= button_to_function I18n.t(:close), 'modalAddNewSection.close()' %>
-	</fieldset>
   <% end %>
 </div>
