@@ -7,10 +7,10 @@ Markus::Application.routes.draw do
   # Install the default routes as the lowest priority.
   root :controller => "main", :action => "login"
    # API routes
-  namespace :api do
-    resources :test_results
-    resources :submission_downloads
-    resources :users
+  namespace :api, :defaults => { :format => 'text' } do
+    resources :test_results, :except => [:new, :edit]
+    resources :submission_downloads, :except => [:new, :edit]
+    resources :users, :except => [:new, :edit]
     resources :main_api
   end
 
@@ -48,8 +48,8 @@ Markus::Application.routes.draw do
 
       collection do
         post 'update_positions'
-        get 'csv_upload'
-        get 'yml_upload'
+        post 'csv_upload'
+        post 'yml_upload'
         get 'download_csv'
         get 'download_yml'
       end
@@ -57,7 +57,7 @@ Markus::Application.routes.draw do
 
     resources :flexible_criteria do
       collection do
-        get 'upload'
+        post 'upload'
         get 'update_positions'
         get 'move_criterion'
         get 'download'
@@ -70,7 +70,7 @@ Markus::Application.routes.draw do
         post 'update' # because of collection
         post 'update_positions'
         get 'update_positions'
-        get 'upload'
+        post 'upload'
         get 'download'
         get 'move_criterion'
       end
@@ -193,12 +193,15 @@ Markus::Application.routes.draw do
 
       collection do
         get 'add_annotation_category'
-        get 'csv_upload'
+        post 'csv_upload'
         get 'delete_annotation_category'
         get 'download'
-        get 'yml_upload'
+        post 'yml_upload'
         post 'add_annotation_category'
         post 'update_annotation_category'
+        get 'add_annotation_text'
+        post 'delete_annotation_text'
+        post 'update_annotation'
       end
     end
   end
@@ -212,7 +215,7 @@ Markus::Application.routes.draw do
       get 'grades'
       get 'g_table_paginate'
       get 'csv_download'
-      get 'csv_upload'
+      post 'csv_upload'
       post 'update_grade'
       post 'update_grade_entry_students'
       get 'student_interface'
@@ -249,14 +252,14 @@ Markus::Application.routes.draw do
       post 'populate'
       get 'manage'
       get 'download_student_list'
-      get 'upload_student_list'
+      post 'upload_student_list'
     end
   end
 
   resources :tas  do
     collection do
       post 'populate'
-      get 'upload_ta_list'
+      post 'upload_ta_list'
       get 'download_ta_list'
     end
   end

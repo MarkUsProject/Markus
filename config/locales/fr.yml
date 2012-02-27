@@ -215,6 +215,7 @@ fr:
     preview:            "Prévisualisation"
     invalid_grouping:   "(invalide)"
     validate:           "Valider"
+    encoding:           "Codage"
 
     marks_released_notice:  "Les notes sont maintenant affichées. Vous ne pouvez plus les changer."
     past_due_date_edit_warning:  "ATTENTION ! La date de retour que vous avez choisie est antérieure à la date actuelle."

@@ -241,13 +241,15 @@ class GradeEntryFormsController < ApplicationController
   def csv_upload
     @grade_entry_form = GradeEntryForm.find(params[:id])
     grades_file = params[:upload][:grades_file]
+    encoding = params[:encoding]
     if request.post? && !grades_file.blank?
       begin
         GradeEntryForm.transaction do
           invalid_lines = []
           num_updates = GradeEntryForm.parse_csv(grades_file,
                                                  @grade_entry_form,
-                                                 invalid_lines)
+                                                 invalid_lines,
+                                                 encoding)
           if !invalid_lines.empty?
             flash[:invalid_lines] = invalid_lines
             flash[:error] = I18n.t('csv_invalid_lines')
