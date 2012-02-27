@@ -18,10 +18,10 @@ h(member.user.last_name) %> <%= I18n.t("student.inviter") %></li>
 <li class="membership_status_pending">
    <span class="last_name"><%= h(member.user.first_name) %> </span> <%= h(member.user.last_name) %> <%= I18n.t("student.invited") %>
    <% if grouping.is_inviter?(@current_user) %>
-     <%= link_to_remote I18n.t(:cancel), :url => {:action => 'disinvite_member', :id => @assignment.id, :membership =>  member.id},
-     :html => {:title => I18n.t("student.cancel_invitation_title"), :class => "delete"},
-     :confirm => I18n.t("student.cancel_invitation")
-     %>
+     <%= link_to_function I18n.t(:cancel), 
+     remote_function(:url => {:action => 'disinvite_member', :id => @assignment.id, :membership =>  member.id},
+                     :confirm => I18n.t("student.cancel_invitation")),
+     {:title => I18n.t("student.cancel_invitation_title"), :class => "delete"} %>
    <% end %>
 </li>
 <%# If this member is rejected %>

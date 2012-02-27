@@ -1,3 +1,4 @@
+require 'iconv'
 require 'fastercsv'
 require 'auto_complete'
 require 'csv_invalid_line_error'
@@ -157,11 +158,16 @@ class GroupsController < ApplicationController
   def csv_upload
     flash[:error] = nil # reset from previous errors
     flash[:invalid_lines] = nil
+    file = params[:group][:grouplist]
     @assignment = Assignment.find(params[:assignment_id])
+    encoding = params[:encoding]
     if request.post? && !params[:group].blank?
       # Transaction allows us to potentially roll back if something
       # really bad happens.
       ActiveRecord::Base.transaction do
+        if encoding != nil
+          file = StringIO.new(Iconv.iconv('UTF-8', encoding, file.read).join)
+        end
         # Old groupings get wiped out
         if !@assignment.groupings.nil? && @assignment.groupings.length > 0
           @assignment.groupings.destroy_all
@@ -169,7 +175,7 @@ class GroupsController < ApplicationController
         flash[:invalid_lines] = [] # Store errors of lines in CSV file
         begin
           # Loop over each row, which lists the members to be added to the group.
-          FasterCSV.parse(params[:group][:grouplist].read).each_with_index do |row, line_nr|
+          FasterCSV.parse(file.read).each_with_index do |row, line_nr|
             begin
               # Potentially raises CSVInvalidLineError
               collision_error = @assignment.add_csv_group(row)

@@ -26,8 +26,7 @@ class MainController < ApplicationController
     # external auth has been done, skip markus authorization
     if MarkusConfigurator.markus_config_remote_user_auth
       if @markus_auth_remote_user.nil?
-        render :file => "#{::Rails.root.to_s}/public/403.html",
-          :status => 403
+        render 'shared/http_status.html', :locals => { :code => "403", :message => HttpStatusHelper::ERROR_CODE["message"]["403"] }, :status => 403, :layout => false
         return
       else
         login_success = login_without_authentication(@markus_auth_remote_user)
@@ -145,13 +144,13 @@ class MainController < ApplicationController
   end
 
   def reset_api_key
-    render :file => "#{::Rails.root.to_s}/public/404.html", :status => 404 and return unless request.post?
+    render 'shared/http_status.html', :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false and return unless request.post?
     # Students shouldn't be able to change their API key
     if !@current_user.student?
       @current_user.reset_api_key
       @current_user.save
     else
-      render :file => "#{::Rails.root.to_s}/public/404.html", :status => 404 and return
+      render 'shared/http_status.html', :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false and return
     end
     render :api_key_replace, :locals => {:user => @current_user }
   end
@@ -159,7 +158,7 @@ class MainController < ApplicationController
   # Render 404 error (page not found) if no other route matches.
   # See config/routes.rb
   def page_not_found
-    render :file => "#{::Rails.root.to_s}/public/404.html", :status => 404
+    render 'shared/http_status.html', :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false
   end
 
   # Authenticates the admin (i.e. validates her password). Given the user, that

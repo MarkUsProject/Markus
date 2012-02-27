@@ -422,6 +422,10 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
                                :action => 'csv_upload',
                                :id => @assignment.id } do |f| %>
   <p>
+    <%=h I18n.t("encoding") %>
+    <%= select_tag(:encoding, options_for_select(@encodings)) %>
+    <br />
+    <br />
     <%= f.file_field :grouplist, :size => 2 %> <br />
     <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
     <%= button_to_function I18n.t('cancel'), "modalUpload.close(); return false;" %>

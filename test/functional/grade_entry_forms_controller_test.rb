@@ -770,5 +770,69 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         end
       end
     end
+
+    context "on :csv_upload" do
+      setup do
+        @student = Student.make(:user_name => "c2ÈrÉØrr", :last_name => "Last", :first_name => "First")
+        @grade_entry_form = GradeEntryForm.make
+        @grade_entry_form_with_grade_entry_items = make_grade_entry_form_with_multiple_grade_entry_items
+        @grade_entry_student = @grade_entry_form_with_grade_entry_items.grade_entry_students.make(:user => @student)
+        @grade_entry_form_with_grade_entry_items.grade_entry_items.each do |grade_entry_item|
+          @grade_entry_student.grades.make(:grade_entry_item => grade_entry_item, :grade => 0)
+        end
+        @grade_entry_items = @grade_entry_form_with_grade_entry_items.grade_entry_items
+      end
+
+      should "have valid values in database after an upload of a UTF-8 encoded file parsed as UTF-8" do
+        @new_grade = 10.0
+        post_as @admin,
+                :csv_upload,
+                :id => @grade_entry_form_with_grade_entry_items.id,
+                :upload => {:grades_file => fixture_file_upload('../files/test_grades_UTF-8.csv')},
+                :encoding => "UTF-8"
+        assert_response :redirect
+        test_student = Student.find_by_user_name('c2ÈrÉØrr')
+        assert_not_nil test_student
+        grade_entry_student = GradeEntryStudent.find_by_user_id(test_student.id)
+        assert_not_nil grade_entry_student
+        grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(grade_entry_student.id, @grade_entry_items[0].id)
+        assert_not_nil grade
+        assert_equal @new_grade, grade.grade
+      end
+
+      should "have valid values in database after an upload of a ISO-8859-1 encoded file parsed as ISO-8859-1" do
+        @new_grade = 10.0
+        post_as @admin,
+                :csv_upload,
+                :id => @grade_entry_form_with_grade_entry_items.id,
+                :upload => {:grades_file => fixture_file_upload('../files/test_grades_ISO-8859-1.csv')},
+                :encoding => "ISO-8859-1"
+        assert_response :redirect
+        test_student = Student.find_by_user_name('c2ÈrÉØrr')
+        assert_not_nil test_student
+        grade_entry_student = GradeEntryStudent.find_by_user_id(test_student.id)
+        assert_not_nil grade_entry_student
+        grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(grade_entry_student.id, @grade_entry_items[0].id)
+        assert_not_nil grade
+        assert_equal @new_grade, grade.grade
+      end
+
+      should "have invalid values in database after an upload of a UTF-8 encoded file parsed as ISO-8859-1" do
+        @new_grade = 10.0
+        post_as @admin,
+                :csv_upload,
+                :id => @grade_entry_form_with_grade_entry_items.id,
+                :upload => {:grades_file => fixture_file_upload('../files/test_grades_UTF-8.csv')},
+                :encoding => "ISO-8859-1"
+        assert_response :redirect
+        test_student = Student.find_by_user_name('c2ÈrÉØrr')
+        assert_not_nil test_student
+        grade_entry_student = GradeEntryStudent.find_by_user_id(test_student.id)
+        assert_not_nil grade_entry_student
+        grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(grade_entry_student.id, @grade_entry_items[0].id)
+        assert_not_nil grade
+        assert_not_equal @new_grade, grade.grade
+      end
+    end
   end
 end

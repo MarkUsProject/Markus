@@ -71,11 +71,12 @@ class RubricsController < ApplicationController
   def csv_upload
     file = params[:csv_upload][:rubric]
     @assignment = Assignment.find(params[:assignment_id])
+    encoding = params[:encoding]
     if request.post? && !file.blank?
       begin
         RubricCriterion.transaction do
           invalid_lines = []
-          nb_updates = RubricCriterion.parse_csv(file, @assignment, invalid_lines)
+          nb_updates = RubricCriterion.parse_csv(file, @assignment, invalid_lines, encoding)
           if !invalid_lines.empty?
             flash[:invalid_lines] = invalid_lines
             flash[:error] = I18n.t('csv_invalid_lines')
@@ -92,6 +93,7 @@ class RubricsController < ApplicationController
   def yml_upload
     criteria_with_errors = ActiveSupport::OrderedHash.new
     assignment = Assignment.find(params[:assignment_id])
+    encoding = params[:encoding]
     if !request.post?
       redirect_to :action => 'index', :id => assignment.id
       return
@@ -99,6 +101,9 @@ class RubricsController < ApplicationController
     file = params[:yml_upload][:rubric]
     if !file.nil? && !file.blank?
       begin
+        if encoding != nil
+          file = StringIO.new(Iconv.iconv('UTF-8', encoding, file.read).join)
+        end
         rubrics = YAML::load(file)
       rescue ArgumentError => e
         flash[:error] =
