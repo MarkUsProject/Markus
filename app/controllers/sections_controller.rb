@@ -21,7 +21,7 @@ class SectionsController < ApplicationController
       flash[:success] = I18n.t('section.create.success',
                                :name => @section.name)
       if params[:section_modal]
-        redirect_to :controller => 'students', :action => 'new'  
+        redirect_to :controller => 'students', :action => 'new'
         return
       end
       redirect_to :action => 'index'
