@@ -21,8 +21,9 @@
       <%= I18n.t('graders.possible_graders') %>:
       <% criterion.tas.each do |ta|%>
         <%= link_to ta.user_name,
-                  { :action => 'add_grader_to_grouping', :id => @assignment.id,
-                    :grouping_id => @grouping.id, :grader_id => ta.id }, :remote => true %>
+                    add_grader_to_grouping_assignment_graders_path(
+                    :id => @assignment.id, :grouping_id => @grouping.id, :grader_id => ta.id), 
+                    :remote => true %>
       <% end %>
     <% end %>
   <% end %>
