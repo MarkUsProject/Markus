@@ -129,7 +129,7 @@ DEPENDENCIES
   machinist
   mocha
   mongrel_cluster
-  mysql2
+  mysql2 (< 0.3)
   pg
   prototype_legacy_helper (= 0.0.0)!
   railroady
