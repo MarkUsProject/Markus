@@ -13,7 +13,7 @@
   <span class="middle">
     <%= link_to raw(I18n.t("marker.notes",
 		:notes => @grouping.notes.size)),
-	        :url => {:controller => 'note',
+	     {:controller => 'notes',
 			 :action => 'notes_dialog',
 			 :id => @grouping.assignment_id,
 			 :noteable_id => group.grouping_ids,
