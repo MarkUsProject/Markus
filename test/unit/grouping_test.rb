@@ -460,7 +460,7 @@ class GroupingTest < ActiveSupport::TestCase
 '''Titanic,ta1
 Ukishima Maru,ta1,ta2
 Blanche Nef,ta2'''
-      failures = Grouping.assign_tas_by_csv(csv_file_data, @assignment.id)
+      failures = Grouping.assign_tas_by_csv(csv_file_data, @assignment.id, nil)
 
       # This should be +1 ta_memberships, because one of those TAs is already
       # assigned to Ukishima Maru in the fixtures
@@ -472,7 +472,7 @@ Blanche Nef,ta2'''
       csv_file_data = '''Titanic,ta1
 Uk125125ishima Maru,ta1,ta2
 Blanche Nef,ta2'''
-      failures = Grouping.assign_tas_by_csv(csv_file_data, @assignment.id)
+      failures = Grouping.assign_tas_by_csv(csv_file_data, @assignment.id, nil)
 
       assert_equal 0, @grouping.ta_memberships.count
       assert_equal failures[0], "Uk125125ishima Maru"

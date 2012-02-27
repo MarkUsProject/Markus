@@ -13,6 +13,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
+      @request.env['HTTP_ACCEPT'] = 'text/plain'
       # get parameters from fixtures
       group = groups(:group_test_result1)
       assignment = assignments(:assignment_test_result1)
@@ -29,6 +30,55 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     should "send the file contents in question" do
       assert_equal(@test_result.file_content, @res.body)
     end
+
+    # START: Checking valid response types
+    context "getting a text response" do
+      setup do
+        @request.env['HTTP_ACCEPT'] = 'text/plain'
+        get "show", :id => "garbage"
+      end
+
+      should "be successful" do
+        assert_template 'shared/http_status'
+        assert_equal @response.content_type, 'text/plain'
+      end
+    end
+
+    context "getting a json response" do
+      setup do
+        @request.env['HTTP_ACCEPT'] = 'application/json'
+        get "show", :id => "garbage"
+      end
+
+      should "be successful" do
+        assert_template 'shared/http_status'
+        assert_equal @response.content_type, 'application/json'
+      end
+    end
+
+    context "getting an xml response" do
+      setup do
+        @request.env['HTTP_ACCEPT'] = 'application/xml'
+        get "show", :id => "garbage"
+      end
+
+      should "be successful" do
+        assert_template 'shared/http_status'
+        assert_equal @response.content_type, 'application/xml'
+      end
+    end
+
+    context "getting an rss response" do
+      setup do
+        @request.env['HTTP_ACCEPT'] = 'application/rss'
+        get "show", :id => "garbage"
+      end
+
+      should "not be successful" do
+        assert_not_equal @response.content_type, 'application/rss'
+      end
+    end
+    # FINISH: Checking valid response types
   end
 
   context "An authenticated POST request to api/test_results" do
@@ -40,6 +90,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
+      @request.env['HTTP_ACCEPT'] = 'text/plain'
       # get parameters from fixtures
       group = groups(:group_test_result1)
       assignment = assignments(:assignment_test_result1)
@@ -67,8 +118,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       assert_not_nil(new_test_result)
       assert_equal(@file_content, new_test_result.file_content)
       # check if a proper response has been sent
-      res_file = File.new("#{::Rails.root.to_s}/public/200.xml")
-      assert_equal(res_file.read, @res.body)
+      assert render_template 'shared/http_status'
     end
   end
 
@@ -79,6 +129,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
+      @request.env['HTTP_ACCEPT'] = 'text/plain'
       # get parameters from fixtures
       group = groups(:group_test_result1)
       assignment = assignments(:assignment_test_result1)
@@ -105,8 +156,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       deleted_test_result = TestResult.find_by_filename(@to_be_deleted_test_result)
       assert_nil(deleted_test_result)
       # check if a proper response has been sent
-      res_file = File.new("#{::Rails.root.to_s}/public/200.xml")
-      assert_equal(res_file.read, @res.body)
+      assert render_template 'shared/http_status'
     end
   end
 
@@ -119,6 +169,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
+      @request.env['HTTP_ACCEPT'] = 'text/plain'
       # get parameters from fixtures
       group = groups(:group_test_result1)
       assignment = assignments(:assignment_test_result1)
@@ -136,8 +187,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       assert_not_nil(updated_test_result)
       assert_equal(@file_content, updated_test_result.file_content)
       # check if a proper response has been sent
-      res_file = File.new("#{::Rails.root.to_s}/public/200.xml")
-      assert_equal(res_file.read, @res.body)
+      assert render_template 'shared/http_status'
     end
   end
 
@@ -147,6 +197,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
+      @request.env['HTTP_ACCEPT'] = 'text/plain'
       # parameters
       @res = get("show", {:id => 1, :filename => "some_filename"})
     end
@@ -155,8 +206,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     should respond_with 422
     should "return a 422 (Unprocessable Entity) response" do
       # check if a proper response has been sent
-      res_file = File.new("#{::Rails.root.to_s}/public/422.xml")
-      assert_equal(res_file.read, @res.body)
+      assert render_template 'shared/http_status'
     end
   end
 
@@ -165,6 +215,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       admin = users(:api_admin)
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
+      @request.env['HTTP_ACCEPT'] = 'text/plain'
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
       @res = post("create", {:filename => "some_filename"})
     end
@@ -173,8 +224,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     should respond_with 422
     should "return a 422 (Unprocessable Entity) response" do
       # check if a proper response has been sent
-      res_file = File.new("#{::Rails.root.to_s}/public/422.xml")
-      assert_equal(res_file.read, @res.body)
+      assert render_template 'shared/http_status'
     end
   end
 
@@ -184,6 +234,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
+      @request.env['HTTP_ACCEPT'] = 'text/plain'
       @res = put("update", {:id => 1, :filename => "some_filename"})
     end
 
@@ -191,8 +242,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     should respond_with 422
     should "return a 422 (Unprocessable Entity) response" do
       # check if a proper response has been sent
-      res_file = File.new("#{::Rails.root.to_s}/public/422.xml")
-      assert_equal(res_file.read, @res.body)
+      assert render_template 'shared/http_status'
     end
   end
 
@@ -202,6 +252,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
+      @request.env['HTTP_ACCEPT'] = 'text/plain'
       @res = delete("destroy", {:id => 1, :filename => "somefilename"})
     end
 
@@ -209,8 +260,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     should respond_with 422
     should "return a 422 (Unprocessable Entity) response" do
       # check if a proper response has been sent
-      res_file = File.new("#{::Rails.root.to_s}/public/422.xml")
-      assert_equal(res_file.read, @res.body)
+      assert render_template 'shared/http_status'
     end
   end
 
@@ -220,6 +270,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
+      @request.env['HTTP_ACCEPT'] = 'text/plain'
       # get parameters from fixtures
       group = groups(:group_test_result1)
       assignment = assignments(:assignment_test_result1)
@@ -233,8 +284,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     should respond_with 404
     should "return a 404 (Not Found) response" do
       # check if a proper response has been sent
-      res_file = File.new("#{::Rails.root.to_s}/public/404.xml")
-      assert_equal(res_file.read, @res.body)
+      assert render_template 'shared/http_status'
     end
   end
 
@@ -244,6 +294,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
+      @request.env['HTTP_ACCEPT'] = 'text/plain'
       # get parameters from fixtures
       group = groups(:group_test_result1)
       assignment = assignments(:assignment_test_result1)
@@ -257,8 +308,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     should respond_with 404
     should "return a 404 (Not Found) response" do
       # check if a proper response has been sent
-      res_file = File.new("#{::Rails.root.to_s}/public/404.xml")
-      assert_equal(res_file.read, @res.body)
+      assert render_template 'shared/http_status'
     end
   end
 
@@ -268,6 +318,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
+      @request.env['HTTP_ACCEPT'] = 'text/plain'
       # get parameters from fixtures
       group = groups(:group_test_result1)
       assignment = assignments(:assignment_test_result1)
@@ -281,8 +332,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     should respond_with 404
     should "return a 404 (Not Found) response" do
       # check if a proper response has been sent
-      res_file = File.new("#{::Rails.root.to_s}/public/404.xml")
-      assert_equal(res_file.read, @res.body)
+      assert render_template 'shared/http_status'
     end
   end
 
