@@ -1,7 +1,7 @@
 <% # Make sure to include the public/javascripts/Grader/file_selector.js
    # file when using this partial
 %>
-<%= form_tag({:action => "download"}, {:id => "grader_view_file_selector_form"}) if can_download %>
+<%= form_tag({:action => "download"}, {:id => "grader_view_file_selector_form"}) do %>
   <%= label_tag "select_file_id", I18n.t("common.submission_file"), :class => "inline_label" %>
   <input type="button" onclick="bump_select($('select_file_id'), -1); return false;" value="<-" />
   <select id="select_file_id" name="select_file_id" onchange="if ($(this).getValue() != '') { load_submitted_file($(this).getValue()); }">
@@ -22,3 +22,4 @@
   <%= label_tag("include_annotations", I18n.t("marker.include_annotations"), :class => "inline_label") if can_download && !files.empty? %>
    <%= check_box_tag("include_annotations", true, false, :id => "include_annotations", :class => "inline_checkbox") if can_download && !files.empty? %>
 
+<% end %>

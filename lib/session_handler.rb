@@ -62,36 +62,31 @@ module SessionHandler
   # specific role.
   def authorize_only_for_admin
     unless authorized?(Admin)
-      render :file => "#{::Rails.root.to_s}/public/404.html",
-        :status => 404
+      render 'shared/http_status.html', :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false
     end
   end
 
   def authorize_for_ta_and_admin
     unless authorized?(Admin) || authorized?(Ta)
-      render :file => "#{::Rails.root.to_s}/public/404.html",
-        :status => 404
+      render 'shared/http_status.html', :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false
     end
   end
 
   def authorize_for_student
     unless authorized?(Student)
-      render :file => "#{::Rails.root.to_s}/public/404.html",
-        :status => 404
+      render 'shared/http_status.html', :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false
     end
   end
 
   def authorize_for_student_and_ta
     unless authorized?(Ta) || authorized?(Student)
-      render :file => "#{::Rails.root.to_s}/public/404.html",
-        :status => 404
+      render 'shared/http_status.html', :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false
     end
   end
 
   def authorize_for_user
     unless authorized?(User)
-      render :file => "#{::Rails.root.to_s}/public/404.html",
-        :status => 404
+      render 'shared/http_status.html', :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false
     end
   end
 

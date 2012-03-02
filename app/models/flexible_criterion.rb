@@ -1,3 +1,4 @@
+require 'iconv'
 require 'fastercsv'
 require 'csv'
 # Represents a flexible criterion used to mark an assignment that
@@ -194,8 +195,11 @@ class FlexibleCriterion < ActiveRecord::Base
   end
 
   # Returns an array containing the criterion names that didn't exist
-  def self.assign_tas_by_csv(csv_file_contents, assignment_id)
+  def self.assign_tas_by_csv(csv_file_contents, assignment_id, encoding)
     failures = []
+    if encoding != nil
+      csv_file_contents = StringIO.new(Iconv.iconv('UTF-8', encoding, csv_file_contents.read).join)
+    end
     FasterCSV.parse(csv_file_contents) do |row|
       criterion_name = row.shift # Knocks the first item from array
       criterion = FlexibleCriterion.find_by_assignment_id_and_flexible_criterion_name(assignment_id, criterion_name)

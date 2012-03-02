@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
   helper :all # include all helpers in the views, all the time
 
   # activate i18n for renaming constants in views
-  before_filter :set_locale, :set_markus_version, :set_remote_user
+  before_filter :set_locale, :set_markus_version, :set_remote_user, :get_file_encodings
   # check for active session on every page
   before_filter :authenticate, :except => [:login, :page_not_found]
 
@@ -68,4 +68,9 @@ class ApplicationController < ActionController::Base
     I18n.load_path -= [locale_path]
     I18n.locale = I18n.default_locale
   end
+
+  def get_file_encodings
+    @encodings = [['Unicode', 'UTF-8'], ['ISO-8859-1', 'ISO-8859-1']]
+  end
+
 end

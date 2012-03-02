@@ -470,8 +470,11 @@ class Grouping < ActiveRecord::Base
   end
 
   # Returns an array containing the group names that didn't exist
-  def self.assign_tas_by_csv(csv_file_contents, assignment_id)
+  def self.assign_tas_by_csv(csv_file_contents, assignment_id, encoding)
     failures = []
+    if encoding != nil
+      csv_file_contents = StringIO.new(Iconv.iconv('UTF-8', encoding, csv_file_contents).join)
+    end
     FasterCSV.parse(csv_file_contents) do |row|
       group_name = row.shift # Knocks the first item from array
       group = Group.find_by_group_name(group_name)

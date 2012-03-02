@@ -118,7 +118,7 @@ class StudentsController < ApplicationController
   def upload_student_list
     if request.post? && !params[:userlist].blank?
       begin
-        result = User.upload_user_list(Student, params[:userlist])
+        result = User.upload_user_list(Student, params[:userlist], params[:encoding])
         if result[:invalid_lines].size > 0
           flash[:invalid_lines] = result[:invalid_lines]
         end

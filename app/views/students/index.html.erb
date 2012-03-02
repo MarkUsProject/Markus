@@ -175,6 +175,10 @@ document.observe("dom:loaded", function(){
       <input type="file" name="userlist" id="userlist"/>
       <br />
       <br />
+      <%=h I18n.t("encoding") %>
+      <%= select_tag(:encoding, options_for_select(@encodings)) %>
+      <br />
+      <br />
       <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
       <%= button_to_function I18n.t(:close), 'modalUpload.close()' %>
     </form>
