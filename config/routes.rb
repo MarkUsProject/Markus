@@ -43,6 +43,7 @@ Markus::Application.routes.draw do
 
     resources :rubrics do
       member do
+        delete 'destroy'
         get 'move_criterion'
       end
 
