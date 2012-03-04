@@ -129,6 +129,7 @@ fr:
         type:  "Type du projet"
         overall_comment: "Commentaire général : "
         group:
+            empty: "Groupe vide"
             assign_over_limit: "Vous avez dépassé le nombre maximal d'étudiants pour le groupe %{group}"
             select_a_group: "Sélectionner un groupe"
             select_one_group: "Vous devez sélectionner au moins un groupe"
