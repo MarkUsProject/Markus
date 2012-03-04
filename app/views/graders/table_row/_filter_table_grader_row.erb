@@ -4,10 +4,11 @@
 <td>
   <% if @assignment.assign_graders_to_criteria %>
     <%= h(grader.get_criterion_associations_count_by_assignment(@assignment)) %>
-    <%= link_to_remote image_tag("icons/comment.png", :alt => I18n.t('criteria'),
+    <%= link_to image_tag("icons/comment.png", :alt => I18n.t('criteria'),
             :title => I18n.t('criteria')),
-          :url => { :action => 'grader_criteria_dialog',
-          :id => @assignment.id, :grader => grader.id } %>
+          grader_criteria_dialog_assignment_graders_path(
+          :id => @assignment.id, :grader => grader.id),
+          :remote => true %>
   <% else %>
     <%= I18n.t('all') %>
   <% end %>
