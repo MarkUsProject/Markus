@@ -7,10 +7,10 @@ Markus::Application.routes.draw do
   # Install the default routes as the lowest priority.
   root :controller => "main", :action => "login"
    # API routes
-  namespace :api do
-    resources :test_results
-    resources :submission_downloads
-    resources :users
+  namespace :api, :defaults => { :format => 'text' } do
+    resources :test_results, :except => [:new, :edit]
+    resources :submission_downloads, :except => [:new, :edit]
+    resources :users, :except => [:new, :edit]
     resources :main_api
   end
 
@@ -128,26 +128,27 @@ Markus::Application.routes.draw do
 
       resources :results do
         collection do
-          get 'update_mark'
-          get 'expand_criteria'
+          post 'update_mark'
+          post 'expand_criteria'
         end
 
         member do
           get 'add_extra_marks'
           get 'add_extra_mark'
           get 'download'
+          post 'download'
           get 'cancel_remark_request'
           get 'codeviewer'
           post 'codeviewer'
-          get 'collapse_criteria'
-          get 'add_extra_mark'
+          post 'collapse_criteria'
+          post 'add_extra_mark'
           get 'next_grouping'
-          get 'remove_extra_mark'
-          get 'expand_unmarked_criteria'
+          post 'remove_extra_mark'
+          post 'expand_unmarked_criteria'
           get 'set_released_to_students'
-          get 'update_overall_comment'
-          get 'update_overall_remark_comment'
-          get 'update_marking_state'
+          post 'update_overall_comment'
+          post 'update_overall_remark_comment'
+          post 'update_marking_state'
           get 'update_remark_request'
           get 'render_test_result'
           get 'update_positions'

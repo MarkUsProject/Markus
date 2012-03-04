@@ -11,6 +11,17 @@ class Api::UsersControllerTest < ActionController::TestCase
     setup do
       # Set garbage HTTP header
       @request.env['HTTP_AUTHORIZATION'] = "garbage http_header"
+      @request.env['HTTP_ACCEPT'] = 'text/plain'
+    end
+
+    context "/index" do
+      setup do
+        get "index"
+      end
+
+      should "fail to authenticate the GET request" do
+        assert_response 403
+      end
     end
 
     context "/show" do
@@ -66,6 +77,7 @@ class Api::UsersControllerTest < ActionController::TestCase
       base_encoded_md5 = @admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
+      @request.env['HTTP_ACCEPT'] = 'text/plain'
     end
 
     # Testing GET
@@ -81,13 +93,62 @@ class Api::UsersControllerTest < ActionController::TestCase
       assert @response.body.include?(@user.last_name)
     end
 
+    # START: Checking valid response types
+    context "getting a text response" do
+      setup do
+        @request.env['HTTP_ACCEPT'] = 'text/plain'
+        get "show", :id => "garbage"
+      end
+
+      should "be successful" do
+        assert_template 'shared/http_status'
+        assert_equal @response.content_type, 'text/plain'
+      end
+    end
+
+    context "getting a json response" do
+      setup do
+        @request.env['HTTP_ACCEPT'] = 'application/json'
+        get "show", :id => "garbage"
+      end
+
+      should "be successful" do
+        assert_template 'shared/http_status'
+        assert_equal @response.content_type, 'application/json'
+      end
+    end
+
+    context "getting an xml response" do
+      setup do
+        @request.env['HTTP_ACCEPT'] = 'application/xml'
+        get "show", :id => "garbage"
+      end
+
+      should "be successful" do
+        assert_template 'shared/http_status'
+        assert_equal @response.content_type, 'application/xml'
+      end
+    end
+
+    context "getting an rss response" do
+      setup do
+        @request.env['HTTP_ACCEPT'] = 'application/rss'
+        get "show", :id => "garbage"
+      end
+
+      should "not be successful" do
+        assert_not_equal @response.content_type, 'application/rss'
+      end
+    end
+    # FINISH: Checking valid response types
+
     context "testing the show function with a user that does not exist" do
       setup do
         get "show", :id => 1, :user_name => "garbage fake user "
       end
 
       should "fail to find the user, 'garbage fake name'" do
-        assert_response 422
+        assert_response 404
       end
     end
 
@@ -186,7 +247,7 @@ class Api::UsersControllerTest < ActionController::TestCase
 
       should "not be able to find the user_name to update" do
         assert User.find_by_user_name("garbage").nil?
-        assert_response 422
+        assert_response 404
       end
     end
 
