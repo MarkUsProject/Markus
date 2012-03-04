@@ -457,7 +457,7 @@ class SubmissionsController < ApplicationController
 
   def update_submissions
     return unless request.post?
-    assignment = Assignment.find(params[:id])
+    assignment = Assignment.find(params[:assignment_id])
     errors = []
     groupings = []
     if params[:ap_select_full] == 'true'
