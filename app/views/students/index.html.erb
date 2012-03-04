@@ -47,7 +47,7 @@ document.observe("dom:loaded", function(){
 <div class="colsLeftHeavy">
 
   <div class="wrapLeft">
-   <%= form_tag :url => {:action => "bulk_modify"},
+   <%= form_tag bulk_modify_students_path(),
  	        :before => "before_form_submit();",
 	        :complete => "after_form_submit();",
 	        :remote => true do %>
