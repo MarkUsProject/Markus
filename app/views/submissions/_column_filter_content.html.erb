@@ -1,4 +1,8 @@
+<div id="content_filter_text">
+
 <form>
+
+<h3> Submission Column Filter</h3>
 
 <input type="checkbox" name="table" value="Group Members" /> <%= I18n.t("browse_submissions.group_name") %> multiple<br />
 <input type="checkbox" name="table" value="Group Name" /> <%= I18n.t("browse_submissions.group_members") %> multiple<br />
@@ -9,6 +13,17 @@
 <input type="checkbox" name="table" value="Grace Credits Used" /> <%= I18n.t("browse_submissions.grace_credits_used") %> multiple<br />
 <input type="checkbox" name="table" value="Final Grade" /> <%= I18n.t("browse_submissions.final_grade") %> multiple<br />
 <input type="checkbox" name="table" value="Section" /> <%= I18n.t("browse_submissions.section") %> multiple<br />
-<input type="checkbox" name="table" value="Can Begin Grading" /> <%= I18n.t("browse_submissions.can_begin_grading") %> multiple
+<input type="checkbox" name="table" value="Can Begin Grading" /> <%= I18n.t("browse_submissions.can_begin_grading") %> multiple <br/>
 
 </form>
+</div>
+
+    <%= submit_tag I18n.t("browse_submissions.save"), :tabindex => 100, :class => 'button indent_button'%>
+    <%= button_to_function "Cancel", 'column_filter_modal.close()', :tabindex => 110 %>
+
+
+<script>
+//<![CDATA[
+column_filter_modal.open();
+//]]>
+</script>

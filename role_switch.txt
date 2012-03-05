@@ -1,0 +1,24 @@
+app/controllers/main_controller.rb:  #   role_switch_handler
+app/controllers/main_controller.rb:  #   role_switch_error
+app/controllers/main_controller.rb:  #   role_switch_content
+app/controllers/main_controller.rb:  #   role_switch
+app/controllers/main_controller.rb:      render :partial => "role_switch_handler",
+app/controllers/main_controller.rb:      render :partial => "role_switch_handler", :locals =>
+app/controllers/main_controller.rb:      render :partial => "role_switch_handler", :locals =>
+app/controllers/main_controller.rb:      render :partial => "role_switch_handler", :locals =>
+app/controllers/main_controller.rb:  def role_switch
+app/controllers/main_controller.rb:  def clear_role_switch_session
+app/views/layouts/_header.html.erb:          role_switch_main_index_path(),
+app/views/layouts/_header.html.erb:        <%= link_to(I18n.t(:clear_role_switch_session_link),
+app/views/layouts/_header.html.erb:                   :action => 'clear_role_switch_session') %>
+app/views/layouts/_role_switch.html.erb:var role_switch_modal = null;
+app/views/layouts/_role_switch.html.erb:  role_switch_modal = new Control.Modal($('role_switch_dialog'),
+app/views/layouts/_role_switch.html.erb:    className: 'role_switch_modal',
+app/views/layouts/_role_switch.html.erb:<div id="role_switch_dialog" style="display:none;">
+app/views/layouts/content.html.erb:  <%= render :partial => 'layouts/role_switch' %>
+app/views/main/_role_switch_content.html.erb:<div id="role_switch_text">
+app/views/main/_role_switch_content.html.erb:    <div id="role_switch_error"><span>&nbsp;</span></div>
+app/views/main/_role_switch_content.html.erb:    <%= button_to_function "Cancel", 'role_switch_modal.close()', :tabindex => 110 %>
+app/views/main/_role_switch_content.html.erb:    role_switch_modal.open();
+app/views/main/_role_switch_handler.rjs:  page.replace_html 'role_switch_error', :partial => "role_switch_error",
+app/views/main/role_switch.rjs:page.replace_html 'role_switch_dialog', :partial => 'role_switch_content'

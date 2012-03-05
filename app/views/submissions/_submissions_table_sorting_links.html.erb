@@ -1,3 +1,12 @@
+<% content_for :head do %>
+  <%= stylesheet_link_tag("livepipe/tabs") %>
+<% end %>
+
+<% # UI LIBRARIES %>
+<%= javascript_include_tag "livepipe/livepipe.js",
+  "livepipe/window.js",
+  "livepipe/tabs.js" %>
+
 <%= render :partial => "submission_column_pop_up.js.erb" %>  
 
 <tr>
@@ -99,7 +108,7 @@
  <%= link_to(image_tag("/images/icons/edit.png",
           :alt => I18n.t("browse_submissions.column_filter"),
           :title => I18n.t("browse_submissions.column_filter"),
-          :id => "column_change"),
+          :id => "column_filter_icon"),
           column_filter_assignment_submissions_path(),
           :remote => true) %>
 </th>
