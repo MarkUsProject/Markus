@@ -488,4 +488,101 @@ Blanche Nef,ta2'''
       assert !@grouping.can_invite?(@student_cannot_invite)
     end
   end
+  
+  context "Assignment has a grace period of 24 hours after due date" do
+    setup do
+      @assignment = Assignment.make
+      # testing
+      @test = Grouping.make
+    
+      grace_period_submission_rule = GracePeriodSubmissionRule.new
+      @assignment.replace_submission_rule(grace_period_submission_rule)
+      GracePeriodDeduction.destroy_all
+
+      grace_period_submission_rule.save
+
+      # On July 1 at 1PM, the instructor sets up the course...
+      pretend_now_is(Time.parse("July 1 2009 1:00PM")) do
+        # Due date is July 23 @ 5PM
+        @assignment.due_date = Time.parse("July 23 2009 5:00PM")
+        # Overtime begins at July 23 @ 5PM
+        # Add a 24 hour grace period
+        add_period_helper(@assignment.submission_rule, 24)
+        # Collect date is now after July 24 @ 5PM
+        @assignment.save
+      end
+      # On July 15, the Student logs in, triggering repository folder
+      # creation
+      pretend_now_is(Time.parse("July 15 2009 6:00PM")) do
+        @grouping.create_grouping_repository_folder
+      end
+    end
+
+    teardown do
+      destroy_repos
+    end
+
+    context "A grouping of only one student" do
+      # @grouping = Grouping.make
+      # @group = Group.make
+      # @grouping = Grouping.make(:assignment => @assignment,
+      #                           :group => @group)
+      #     
+      # StudentMembership.make(:grouping => @grouping,
+      #                        :membership_status => StudentMembership::STATUSES[:inviter],
+      #                        :user => Student.make)
+      # # There should be enough grace credits to deduct
+      # assert @grouping.available_grace_credits > 1
+    # 
+    #   context "submit files before due date" do
+    #     # One day before the due day, the student (the group) submits his assignment
+    #     pretend_now_is(Time.parse("July 22 2009 5:00PM")) do
+    #       assert Time.now < @assignment.due_date
+    #       assert Time.now < @assignment.submission_rule.calculate_collection_time
+    #       @group.access_repo do |repo|
+    #         txn = repo.get_transaction("test")
+    #         txn = add_file_helper(txn, 'TestFile.java', 'Some contents for TestFile.java')
+    #         repo.commit(txn)
+    #       end
+    #     end
+    #   
+    #     # An Instructor or Grader decides to begin grading
+    #     pretend_now_is(Time.parse("July 28 2009 1:00PM")) do
+    #       submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
+    #       submission = @assignment.submission_rule.apply_submission_rule(submission)
+    #       # Assert that GracePeriodDeduction of this grouping shows correctly in the Instructor's view
+    #         assert_equal 1, @grouping.grace_period_deduction_single
+    #     end  
+    #   end # End of context "submit files before due date"  
+    # 
+    #   context "submit files after due date" do
+    #     # 12 hours after the due day, the student (the group) submits his assignment
+    #   
+    #     # Commented so that I can test about 'context' keyword to see if
+    #     # this context is independent with the previous one
+    #   
+    #   
+    #     # pretend_now_is(Time.parse("July 24 2009 5:00AM")) do
+    #     #   assert Time.now > @assignment.due_date
+    #     #   assert Time.now < @assignment.submission_rule.calculate_collection_time
+    #     #   @group.access_repo do |repo|
+    #     #     txn = repo.get_transaction("test")
+    #     #     txn = add_file_helper(txn, 'TestFile.java', 'Some contents for TestFile.java')
+    #     #     repo.commit(txn)
+    #     #   end
+    #     # end
+    #   
+    #     # An Instructor or Grader decides to begin grading
+    #     pretend_now_is(Time.parse("July 28 2009 1:00PM")) do
+    #       submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
+    #       submission = @assignment.submission_rule.apply_submission_rule(submission)
+    #       # Assert that GracePeriodDeduction of this grouping shows correctly in the Instructor's view
+    #         assert_equal 1, @grouping.grace_period_deduction_single
+    #     end  
+    #   end # End of context "submit files before due date"
+    #   
+    end # end of context "A grouping of only one student"
+  
+  
+  end # end of context "Assignment has a grace period of 24 hours after due date"
 end
