@@ -10,9 +10,9 @@
     <%=extra_percentage.extra_mark %>%
   </td>
   <td>
-    <%= button_to (I18n.t("remove"),
+    <%= button_to I18n.t("remove"),
          remove_extra_percentage_assignment_submission_result_path(:id => extra_percentage.id),
-         :class => "table-button",
-         :confirm => I18n.t("marker.marks.confirm_remove_percentage"), :remote => true) %>
+         :class => "table-button", :confirm => I18n.t("marker.marks.confirm_remove_percentage"), 
+         :remote => true %>
   </td>
 </tr>
