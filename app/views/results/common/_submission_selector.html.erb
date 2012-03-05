@@ -13,17 +13,15 @@
   <span class="middle">
     <%= link_to raw(I18n.t("marker.notes",
 		:notes => @grouping.notes.size)),
-	        :url => {:controller => 'note',
-			 :action => 'notes_dialog',
-			 :id => @grouping.assignment_id,
-			 :noteable_id => group.grouping_ids,
-			 :noteable_type => 'Grouping',
-			 :action_to => 'note_message',
-			 :controller_to => 'results',
-			 :highlight_field => 'notes_dialog_link',
-			 :number_of_notes_field => 'number_of_notes'},
-		:html => {:id => 'notes_dialog_link'},
-		:remote => true %>
+       notes_dialog_note_path(:id => @grouping.assignment_id,
+					:noteable_id => group.grouping_ids,
+					:noteable_type => 'Grouping',
+					:action_to => 'note_message',
+					:controller_to => 'results',
+					:highlight_field => 'notes_dialog_link',
+					:number_of_notes_field => 'number_of_notes'),
+     :id => 'notes_dialog_link',
+     :remote => true %>
   |
     (<%=label_tag "marking_state", h(I18n.t("marker.marking_status")), :class => "inline_label" %>
      <% old_result_id = nil %>
