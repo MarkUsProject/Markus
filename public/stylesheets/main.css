@@ -1998,3 +1998,9 @@ pre#test_result_content {
 #curent_time{
   padding: 10px 0px 10px 0px;
 }
+
+.table-button {
+	margin: 2px;
+	padding: 2px;
+	min-width: 0px;
+}
