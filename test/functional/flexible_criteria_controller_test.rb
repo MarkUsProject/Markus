@@ -231,6 +231,10 @@ require 'mocha'
       end
       should assign_to :assignment
       should respond_with :redirect
+      should "route properly" do
+        assert_recognizes({:controller => "flexible_criteria", :assignment_id => "1", :action => "upload" },
+          {:path => "assignments/1/flexible_criteria/upload",  :method => :post})
+      end
     end
 
     should "be able to update_positions" do

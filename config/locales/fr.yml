@@ -129,6 +129,7 @@ fr:
         type:  "Type du projet"
         overall_comment: "Commentaire général : "
         group:
+            empty: "Groupe vide"
             assign_over_limit: "Vous avez dépassé le nombre maximal d'étudiants pour le groupe %{group}"
             select_a_group: "Sélectionner un groupe"
             select_one_group: "Vous devez sélectionner au moins un groupe"
@@ -215,6 +216,7 @@ fr:
     preview:            "Prévisualisation"
     invalid_grouping:   "(invalide)"
     validate:           "Valider"
+    encoding:           "Codage"
 
     marks_released_notice:  "Les notes sont maintenant affichées. Vous ne pouvez plus les changer."
     past_due_date_edit_warning:  "ATTENTION ! La date de retour que vous avez choisie est antérieure à la date actuelle."

@@ -5,6 +5,8 @@ require 'shoulda'
 require 'machinist'
 require 'mocha'
 
+
+
 class GroupingTest < ActiveSupport::TestCase
 
   should belong_to :grouping_queue
@@ -14,6 +16,9 @@ class GroupingTest < ActiveSupport::TestCase
   should have_many :submissions
   should have_many :notes
 
+  setup do
+    clear_fixtures
+  end
 
   context "A good grouping model" do
     setup do
@@ -55,6 +60,10 @@ class GroupingTest < ActiveSupport::TestCase
       assert_equal(Time.now.min, last_modified.min)
     end
 
+    should "display Empty Group since no students in the group" do
+      assert_equal "Empty Group", @grouping.get_all_students_in_group
+    end
+
     context "and two unassigned tas" do
       setup do
         @ta2 = Ta.make
@@ -77,11 +86,11 @@ class GroupingTest < ActiveSupport::TestCase
     context "with two student members" do
       setup do
         # should consist of inviter and another student
-        @membership = StudentMembership.make(
+        @membership = StudentMembership.make(:user => Student.make(:user_name => "student1"),
           :grouping => @grouping,
           :membership_status => StudentMembership::STATUSES[:accepted])
 
-        @inviter_membership = StudentMembership.make(
+        @inviter_membership = StudentMembership.make(:user => Student.make(:user_name => "student2"),
           :grouping => @grouping,
           :membership_status => StudentMembership::STATUSES[:inviter])
         @inviter = @inviter_membership.user
@@ -99,6 +108,10 @@ class GroupingTest < ActiveSupport::TestCase
           @grouping.group_name_with_student_user_names
         end
       end
+
+  should "display comma separated list of students' usernames" do
+    assert_equal "student1, student2", @grouping.get_all_students_in_group
+  end
 
       should "be valid" do
         assert_equal @grouping.student_membership_number, 2
@@ -447,7 +460,7 @@ class GroupingTest < ActiveSupport::TestCase
 '''Titanic,ta1
 Ukishima Maru,ta1,ta2
 Blanche Nef,ta2'''
-      failures = Grouping.assign_tas_by_csv(csv_file_data, @assignment.id)
+      failures = Grouping.assign_tas_by_csv(csv_file_data, @assignment.id, nil)
 
       # This should be +1 ta_memberships, because one of those TAs is already
       # assigned to Ukishima Maru in the fixtures
@@ -459,7 +472,7 @@ Blanche Nef,ta2'''
       csv_file_data = '''Titanic,ta1
 Uk125125ishima Maru,ta1,ta2
 Blanche Nef,ta2'''
-      failures = Grouping.assign_tas_by_csv(csv_file_data, @assignment.id)
+      failures = Grouping.assign_tas_by_csv(csv_file_data, @assignment.id, nil)
 
       assert_equal 0, @grouping.ta_memberships.count
       assert_equal failures[0], "Uk125125ishima Maru"

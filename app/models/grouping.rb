@@ -63,10 +63,16 @@ class Grouping < ActiveRecord::Base
     return accepted_students
   end
 
-  def group_name_with_student_user_names
+  def get_all_students_in_group
     student_user_names = student_memberships.collect {|m| m.user.user_name }
-    return group.group_name if student_user_names.size == 0
-    return group.group_name + ": " + student_user_names.join(', ')
+    return I18n.t('assignment.group.empty') if student_user_names.size == 0
+	  return student_user_names.join(', ')
+  end
+
+  def group_name_with_student_user_names
+		user_names = get_all_students_in_group
+    return group.group_name if user_names == I18n.t('assignment.group.empty')
+    return group.group_name + ": " + user_names
   end
 
   def display_for_note
@@ -465,8 +471,11 @@ class Grouping < ActiveRecord::Base
   end
 
   # Returns an array containing the group names that didn't exist
-  def self.assign_tas_by_csv(csv_file_contents, assignment_id)
+  def self.assign_tas_by_csv(csv_file_contents, assignment_id, encoding)
     failures = []
+    if encoding != nil
+      csv_file_contents = StringIO.new(Iconv.iconv('UTF-8', encoding, csv_file_contents).join)
+    end
     FasterCSV.parse(csv_file_contents) do |row|
       group_name = row.shift # Knocks the first item from array
       group = Group.find_by_group_name(group_name)
