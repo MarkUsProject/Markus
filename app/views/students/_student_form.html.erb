@@ -44,9 +44,7 @@ modalAddNewSection = new Control.Modal($('add_new_section_dialog'),
 
     <%= f.hidden_field :id %>
     <%= f.submit t(:submit), :name => 'submit', :class => 'button link_button' %>
-    <%= link_to t(:cancel),
-	{:controller => 'students'},
-	:class => "button link_button" %>
+    <%= link_to t(:cancel), students_path, :class => "button link_button" %>
 
   <% end %>
 </div>
