@@ -253,6 +253,7 @@ Markus::Application.routes.draw do
     collection do
       post 'populate'
       get 'manage'
+      get 'add_new_section'
       get 'download_student_list'
       post 'upload_student_list'
     end
