@@ -94,6 +94,11 @@ class StudentsControllerTest < AuthenticatedControllerTest
         @section = Section.make
       end
 
+      should "recognize action to bulk modify for a student" do
+        assert_recognizes( {:action => "bulk_modify", :controller => "students"},
+               {:path => "students/bulk_modify", :method => "post"} )
+      end
+
       should "be able to edit a student" do
         get_as @admin,
                :edit,
