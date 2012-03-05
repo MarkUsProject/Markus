@@ -10,11 +10,11 @@ modalAddNewSection = new Control.Modal($('add_new_section_dialog'),
 });
 //]]>
 </script>
+<div id="add_new_section_dialog">
+  <!-- Add new section dialog content gets injected here -->
+</div>
 
 <div class="section">
-  <div id="add_new_section_dialog">
-  <%= render :partial => "sections/student_form_add_section_dialog" %>
-  </div>
   <%= form_for @user, :as => :user do |f| %>
 
     <%= render :partial => "shared/error_explanation",
@@ -37,9 +37,8 @@ modalAddNewSection = new Control.Modal($('add_new_section_dialog'),
         ["−"] + @sections.map {|s| [s.name, s.id] },
         :selected => (@user.has_section?) ? (@user.section.id) : (["−"]) ) %>
     <%= f.label(:section_id, I18n.t("section.legend") ) %> <br />
-
 	<% if defined?new_student %>
-	<%= link_to_function I18n.t("section.add_section"), 'modalAddNewSection.open()', :class => "button link_button" %>
+	<%= link_to I18n.t("section.add_section"), add_new_section_students_path(), :class => "button link_button" %>
 	<% end %>
 
     <%= f.hidden_field :id %>
