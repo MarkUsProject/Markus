@@ -176,29 +176,51 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
     end
 
     should "upload successfully well formatted yml criteria" do
+      yml_string = <<END
+cr1:
+  weight: 5
+  level_0:
+    name: what?
+    description: fail
+  level_1:
+    name: hmm
+    description: almost fail
+  level_2:
+    name: average
+    description: average joe
+  level_3:
+    name: good
+    description: alright
+  level_4:
+    name: poor
+    description: I expected more
+cr2:
+  weight: 2
+END
       post_as @admin,
               :yml_upload,
               :assignment_id => @assignment.id,
-              :yml_upload => {:rubric =>
-           "cr1:\n  weight: 5\n  level_0:\n    name: what?\n    description: fail\n  level_1:\n    name: hmm\n    description: almost fail\n  level_2:\n    name: average\n    description: average joe\n  level_3:\n    name: good\n    description: alright\n  level_4:\n    name: poor\n    description: I expected more\ncr2:\n  weight: 2\n"}
+              :yml_upload => {:rubric => yml_string}
 
       assert_response :redirect
       assert_not_nil set_the_flash.to((I18n.t('rubric_criteria.upload.success',
                                       :nb_updates => 2)))
       @assignment.reload
+      cr1 = @assignment.rubric_criteria.find_by_rubric_criterion_name("cr1")
+      cr2 = @assignment.rubric_criteria.find_by_rubric_criterion_name("cr2")
       assert_equal(@assignment.rubric_criteria.length, 2)
-      assert_equal(@assignment.rubric_criteria[0].weight, 5)
-      assert_equal(@assignment.rubric_criteria[1].weight, 2)
-      assert_equal(@assignment.rubric_criteria[0].level_0_name, "what?")
-      assert_equal(@assignment.rubric_criteria[0].level_0_description, "fail")
-      assert_equal(@assignment.rubric_criteria[0].level_1_name, "hmm")
-      assert_equal(@assignment.rubric_criteria[0].level_1_description, "almost fail")
-      assert_equal(@assignment.rubric_criteria[0].level_2_name, "average")
-      assert_equal(@assignment.rubric_criteria[0].level_2_description, "average joe")
-      assert_equal(@assignment.rubric_criteria[0].level_3_name, "good")
-      assert_equal(@assignment.rubric_criteria[0].level_3_description, "alright")
-      assert_equal(@assignment.rubric_criteria[0].level_4_name, "poor")
-      assert_equal(@assignment.rubric_criteria[0].level_4_description, "I expected more")
+      assert_equal(2, cr2.weight)
+      assert_equal(5, cr1.weight)
+      assert_equal("what?", cr1.level_0_name)
+      assert_equal("fail", cr1.level_0_description)
+      assert_equal("hmm", cr1.level_1_name)
+      assert_equal("almost fail", cr1.level_1_description)
+      assert_equal("average", cr1.level_2_name)
+      assert_equal("average joe", cr1.level_2_description)
+      assert_equal("good", cr1.level_3_name)
+      assert_equal("alright", cr1.level_3_description)
+      assert_equal("poor", cr1.level_4_name)
+      assert_equal("I expected more", cr1.level_4_description)
     end
 
     should "deal with bad weight on yaml file" do
