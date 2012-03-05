@@ -379,6 +379,7 @@ en:
       section:              "Section"
       student_name:         "Student Name"
       group_members:        "Group Members"
+      column_filter:        "Columns Filter"
 
     grade_entry_forms:
       blank_field: "can't be blank"

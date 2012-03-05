@@ -560,6 +560,12 @@ class SubmissionsController < ApplicationController
     render :partial => 'server_time'
   end
 
+  def column_filter
+    # dummy action for remote rjs calls
+    # triggered by clicking on the column_filter icon
+  end
+
+
   private
 
   # Used in update_files and file_manager actions
