@@ -123,6 +123,7 @@ Markus::Application.routes.draw do
       member do
         get 'collect_and_begin_grading'
         get 'manually_collect_and_begin_grading'
+        post 'manually_collect_and_begin_grading'
         get 'repo_browser'
       end
 
@@ -130,6 +131,10 @@ Markus::Application.routes.draw do
         collection do
           get 'update_mark'
           get 'expand_criteria'
+	  get 'collapse_criteria'
+	  get 'expand_unmarked_criteria'
+	  get 'edit'
+	  get 'download'
         end
 
         member do

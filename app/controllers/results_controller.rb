@@ -26,7 +26,7 @@ class ResultsController < ApplicationController
   end
 
   def edit
-    result_id = params[:id]
+    result_id = params[:submission_id]
     @result = Result.find(result_id)
     @assignment = @result.submission.assignment
     @submission = @result.submission
