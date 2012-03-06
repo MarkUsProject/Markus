@@ -36,6 +36,7 @@ modalAddNewSection = new Control.Modal($('add_new_section_dialog'),
         ["−"] + @sections.map {|s| [s.name, s.id] },
         :selected => (@user.has_section?) ? (@user.section.id) : (["−"]) ) %>
     <%= f.label(:section_id, I18n.t("section.legend") ) %> <br />
+
 	<% if defined?new_student %>
 	<%= link_to I18n.t("section.add_section"), add_new_section_students_path(), :class => "button link_button", :remote => true %>
 	<% end %>
