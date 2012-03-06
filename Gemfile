@@ -20,6 +20,7 @@ gem "will_paginate"
 gem "fastercsv"
 gem "routing-filter"
 gem "dynamic_form"
+gem "rghost"
 
 # To be removed
 gem "prototype_legacy_helper",

@@ -118,7 +118,7 @@ Markus::Application.configure do
   ###################################################################
   # Set this to true or false if you want to be able to display and annotate
   # PDF documents within the browser.
-  PDF_SUPPORT = false
+  PDF_SUPPORT = true 
 
   ###################################################################
   # In order for markus to display pdfs, it converts them to jpg format via
