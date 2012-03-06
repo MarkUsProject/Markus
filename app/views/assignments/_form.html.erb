@@ -1,7 +1,6 @@
 <%
   # For the internationalization of the Calendar
 %>
-<%= render :partial => "shared/navigation_warning.js.erb" %>
 
 <% if I18n.default_locale == :en %>
    <%= calendar_date_select_includes "silver" %>
@@ -18,6 +17,8 @@
   <span><%=flash[:success]%></span>
 </div>
 <% end %>
+
+<%= render :partial => "shared/navigation_warning.js.erb" %>
 
 <%= form_for @assignment do |f| %>
   <%= render :partial => "shared/error_explanation",
