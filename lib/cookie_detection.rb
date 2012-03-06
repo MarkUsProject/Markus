@@ -5,32 +5,16 @@ module CookieDetection
   protected
 
   # true if cookies are enabled, false otherwise.
-  def cookies_enabled(*wasEmpty)
-    debugger
+  def cookies_enabled
     if cookies[:cookieTest].blank?
-      if wasEmpty.empty?
+      if params[:cookieTest].nil?
         cookies[:cookieTest] = Time.now
-        cookies_enabled("testing")
+        redirect_to :controller => "main", :action => "login", :cookieTest => "testing"
       else
         return false
       end
    else
      return true
    end 
-   #   return true
-   # else  
-   #   cookies_enabled(true)
-   # end if
-   # if(wasEmpty[0])
-   #   return false
-   # else
-   #   return true
-   # end if
-   # cookies[:cookieTest] = Time.now
-   # session[:return_to] = request.fullpath
-   # if cookies[:cookieTest].blank?
-   #   return false
-   # end
-   # return true
   end
 end
