@@ -251,8 +251,9 @@ Markus::Application.routes.draw do
   resources :annotations do
     collection do
       post 'add_existing_annotation'
-      post 'update_annotation'
+      put 'update_annotation'
       post 'update_comment'
+      delete 'destroy'
     end
   end
 
