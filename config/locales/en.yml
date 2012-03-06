@@ -129,6 +129,7 @@ en:
         type:  "Assignment type"
         overall_comment: "Overall Comment"
         group:
+            empty: "Empty Group"
             assign_over_limit: "You have assigned more than the maximum number of students to group %{group}"
             select_a_group: "Select a group"
             select_one_group: "You need to select at least one group."

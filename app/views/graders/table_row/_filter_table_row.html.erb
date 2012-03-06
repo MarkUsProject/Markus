@@ -19,13 +19,15 @@
     <span class="table_menu">
       <% assigned_count = grouping.criteria_coverage_count %>
       <% if assigned_count == total_criteria_count %>
-        <%= link_to_remote image_tag("icons/tick.png", :alt => I18n.t('graders.covered'),
+        <%= link_to image_tag("icons/tick.png", :alt => I18n.t('graders.covered'),
           :title => I18n.t('graders.covered')),
-          :url => { :action => 'groups_coverage_dialog', :id => @assignment.id, :grouping => grouping.id } %>
+          groups_coverage_dialog_assignment_graders_path(:id => @assignment.id, :grouping => grouping.id),
+          :remote => true %>
       <% else %>
-        <%= link_to_remote image_tag("icons/cross.png", :alt => I18n.t('graders.not_covered'),
+        <%= link_to image_tag("icons/cross.png", :alt => I18n.t('graders.not_covered'),
           :title => I18n.t('graders.not_covered')),
-          :url => { :action => 'groups_coverage_dialog', :id => @assignment.id, :grouping => grouping.id }  %>
+          groups_coverage_dialog_assignment_graders_path(:id => @assignment.id, :grouping => grouping.id),
+          :remote => true %>
       <% end %>
     </span>
       (<%= assigned_count %>/<%=  total_criteria_count %>)

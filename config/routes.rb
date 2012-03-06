@@ -43,6 +43,7 @@ Markus::Application.routes.draw do
 
     resources :rubrics do
       member do
+        delete 'destroy'
         get 'move_criterion'
       end
 
@@ -122,7 +123,7 @@ Markus::Application.routes.draw do
 
       member do
         get 'collect_and_begin_grading'
-        get 'manually_collect_and_begin_grading'
+        post 'manually_collect_and_begin_grading'
         get 'repo_browser'
       end
 
@@ -174,7 +175,7 @@ Markus::Application.routes.draw do
         post 'populate_graders'
         post 'populate'
         post 'populate_criteria'
-        get 'set_assign_criteria'
+        post 'set_assign_criteria'
         get 'random_assign'
         get 'upload_dialog'
         get 'unassign'
