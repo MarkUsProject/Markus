@@ -138,7 +138,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
         :line_start => 1, :line_end => 1,
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id})
-      post_as @user, :update_annotation, :annotation_text => {
+      put_as @user, :update_annotation, :annotation_text => {
         :id => @annotation_text.id, :content => @annotation_text.content,
         :submission_file_id =>@submission_file.id}
       assert_response :success
@@ -213,7 +213,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
         :line_start => 1, :line_end => 1,
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id})
-      post_as @user, :update_annotation, :annotation_text => {
+      put_as @user, :update_annotation, :annotation_text => {
         :id => @annotation_text.id, :content => @annotation_text.content,
           :submission_file_id =>@submission_file.id}
       assert_response :success
