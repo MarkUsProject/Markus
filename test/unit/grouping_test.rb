@@ -549,7 +549,7 @@ Blanche Nef,ta2'''
 
         # Check the number of member in this grouping
         assert_equal 1, @grouping.student_membership_number
-        
+
         submit_files_before_due_date
 
         # An Instructor or Grader decides to begin grading
@@ -557,12 +557,12 @@ Blanche Nef,ta2'''
           submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
           submission = @assignment.submission_rule.apply_submission_rule(submission)
 
-          @grouping.reload            
+          @grouping.reload
           # Should be no deduction because submitting on time
           assert_equal 0, @grouping.grace_period_deduction_single
         end
       end
-      
+
       should "deduct one grace credit" do
 
         # Check the number of member in this grouping
@@ -571,67 +571,67 @@ Blanche Nef,ta2'''
         assert @grouping.available_grace_credits >= 1
 
         submit_files_after_due_date("July 24 2009 9:00AM", "LateSubmission.java", "Some overtime contents")
-        
+
         # An Instructor or Grader decides to begin grading
         pretend_now_is(Time.parse("July 28 2009 1:00PM")) do
           submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
           submission = @assignment.submission_rule.apply_submission_rule(submission)
 
-          @grouping.reload            
+          @grouping.reload
           # Should display 1 credit deduction because of one-day late submission
           assert_equal 1, @grouping.grace_period_deduction_single
         end
       end
-    
+
     end # end of context "A grouping of one student submitting an assignment"
-    
+
     context "A grouping of two students submitting an assignment" do
-      setup do  
+      setup do
         # grouping of two students
         @grouping = Grouping.make(:assignment => @assignment, :group => @group)
         # should consist of inviter and another student
         @membership = StudentMembership.make(:user => Student.make(:user_name => "student1"),
           :grouping => @grouping,
           :membership_status => StudentMembership::STATUSES[:accepted])
-        
+
         @inviter_membership = StudentMembership.make(:user => Student.make(:user_name => "student2"),
           :grouping => @grouping,
           :membership_status => StudentMembership::STATUSES[:inviter])
         @inviter = @inviter_membership.user
-        
+
         # On July 15, the Student logs in, triggering repository folder creation
         pretend_now_is(Time.parse("July 15 2009 6:00PM")) do
           @grouping.create_grouping_repository_folder
         end
       end
-      
+
       should "not deduct grace credits because submission is on time" do
 
         # Check the number of member in this grouping
         assert_equal 2, @grouping.student_membership_number
-        
+
         submit_files_before_due_date
-        
+
         # An Instructor or Grader decides to begin grading
         pretend_now_is(Time.parse("July 28 2009 1:00PM")) do
           submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
           submission = @assignment.submission_rule.apply_submission_rule(submission)
 
-          @grouping.reload            
+          @grouping.reload
           # Should be no deduction because submitting on time
           assert_equal 0, @grouping.grace_period_deduction_single
         end
       end
-      
+
       should "deduct one grace credit" do
 
         # Check the number of member in this grouping
         assert_equal 2, @grouping.student_membership_number
         # Make sure the available grace credits are enough
         assert @grouping.available_grace_credits >= 1
-        
+
         submit_files_after_due_date("July 24 2009 9:00AM", "LateSubmission.java", "Some overtime contents")
-        
+
         # An Instructor or Grader decides to begin grading
         pretend_now_is(Time.parse("July 28 2009 1:00PM")) do
           submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
