@@ -285,12 +285,12 @@ class Grouping < ActiveRecord::Base
     return total.min
   end
 
-  # The grace credits deducted (of one student) for this specific submission 
+  # The grace credits deducted (of one student) for this specific submission
   # in the grouping
   def grace_period_deduction_single
     single = 0
-    # Since for an instance of a grouping all members of the group will get 
-    # deducted the same amount (for a specific assignment), it is safe to pick 
+    # Since for an instance of a grouping all members of the group will get
+    # deducted the same amount (for a specific assignment), it is safe to pick
     # any deduction
     if !grace_period_deductions.nil? && !grace_period_deductions.first.nil?
       single = grace_period_deductions.first.deduction
