@@ -78,9 +78,6 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
         @grouping.accepted_student_memberships.each do |student_membership|
           assert_equal members[student_membership.user.id] - 1, student_membership.user.remaining_grace_credits
         end
-        
-        # Assert that GracePeriodDeduction of this grouping shows correctly in the Instructor's view
-          assert_equal 1, @grouping.grace_period_deduction_single
 
         # We should have all files except NotIncluded.java in the repository.
         assert_not_nil submission.submission_files.find_by_filename("TestFile.java")
@@ -122,9 +119,6 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
         @grouping.accepted_student_memberships.each do |student_membership|
           assert_equal members[student_membership.user.id] - 2, student_membership.user.remaining_grace_credits
         end
-        
-        # Assert that GracePeriodDeduction of this grouping shows correctly in the Instructor's view
-          assert_equal 2, @grouping.grace_period_deduction_single
 
         # We should have all files except NotIncluded.java in the repository.
        assert_not_nil submission.submission_files.find_by_filename("TestFile.java")
@@ -177,10 +171,6 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
             # The students should have 1 grace credits remaining from their 5 grace credits
             assert_equal 4, student_membership.user.remaining_grace_credits
           end
-          
-          # Assert that GracePeriodDeduction of this grouping shows correctly in the Instructor's view
-          # Should only show deduction for this assgument submission, which is 1
-            assert_equal 1, @grouping.grace_period_deduction_single
 
           # We should have all files except NotIncluded.java in the repository.
          assert_not_nil submission.submission_files.find_by_filename("TestFile.java")
@@ -225,10 +215,6 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
             # The students should have 1 grace credits remaining from their 5 grace credits
             assert_equal 3, student_membership.user.remaining_grace_credits
           end
-          
-          # Assert that GracePeriodDeduction of this grouping shows correctly in the Instructor's view
-          # Should only show deduction for this assgument submission, which is 2
-            assert_equal 2, @grouping.grace_period_deduction_single
 
           # We should have all files except NotIncluded.java in the repository.
          assert_not_nil submission.submission_files.find_by_filename("TestFile.java")
@@ -279,9 +265,6 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
         @grouping.accepted_student_memberships.each do |student_membership|
           assert_equal members[student_membership.user.id], student_membership.user.remaining_grace_credits
         end
-        
-        # Assert that GracePeriodDeduction of this grouping shows correctly in the Instructor's view
-          assert_equal 0, @grouping.grace_period_deduction_single
 
         # We should have all files except NotIncluded.java in the repository.
         assert_not_nil submission.submission_files.find_by_filename("TestFile.java")
@@ -329,9 +312,6 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
         @grouping.accepted_student_memberships.each do |student_membership|
           assert_equal members[student_membership.user.id], student_membership.user.remaining_grace_credits
         end
-        
-        # Assert that GracePeriodDeduction of this grouping shows correctly in the Instructor's view
-          assert_equal 0, @grouping.grace_period_deduction_single
 
         # We should have all files except NotIncluded.java in the repository.
         assert_not_nil submission.submission_files.find_by_filename("TestFile.java")
