@@ -27,7 +27,6 @@ class StudentsController < ApplicationController
 
   def edit
     @user = Student.find_by_id(params[:id])
-    @section = Section.new
     @sections = Section.find(:all, :order => "name")
   end
 
