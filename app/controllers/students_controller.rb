@@ -77,7 +77,6 @@ class StudentsController < ApplicationController
 
   def new
     @user = Student.new(params[:user])
-    @section = Section.new
     @sections = Section.find(:all, :order => "name")
   end
 
@@ -86,7 +85,6 @@ class StudentsController < ApplicationController
     # params[:user] is a hash of values passed to the controller
     # by the HTML form with the help of ActiveView::Helper::
     @user = Student.new(params[:user])
-    @section = Section.new
     if @user.save
       flash[:success] = I18n.t("students.create.success",
                                :user_name => @user.user_name)
@@ -102,6 +100,7 @@ class StudentsController < ApplicationController
      # dummy action for remote rjs calls
      # triggered by clicking on the "add a new section" link in the new student page
      # please keep.
+     @section = Section.new
   end
 
   #downloads users with the given role as a csv list

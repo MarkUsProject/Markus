@@ -11,7 +11,6 @@ modalAddNewSection = new Control.Modal($('add_new_section_dialog'),
 //]]>
 </script>
 <div id="add_new_section_dialog">
-  <%= render :partial => "sections/student_form_add_section_dialog" %>
 </div>
 <div class="section">
   <%= form_for @user, :as => :user do |f| %>
@@ -38,7 +37,7 @@ modalAddNewSection = new Control.Modal($('add_new_section_dialog'),
     <%= f.label(:section_id, I18n.t("section.legend") ) %> <br />
 
 	<% if defined?new_student %>
-	<%= link_to I18n.t("section.add_section"), add_new_section_students_path(), :class => "button link_button", :remote => true %>
+	<%= link_to I18n.t("section.add_section"), add_new_section_students_path(), :remote => true, :class => "button link_button"%>
 	<% end %>
 
     <%= f.hidden_field :id %>
