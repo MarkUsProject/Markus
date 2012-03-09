@@ -378,7 +378,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         assert_equal(@old_annotation_categories.length,
                      (new_categories_list.length))
       end
-   
+
       should "on :yml_upload route properly" do
         assert_recognizes({:controller => "annotation_categories", :assignment_id => "1", :action => "yml_upload" },
           {:path => "assignments/1/annotation_categories/yml_upload",  :method => :post})
