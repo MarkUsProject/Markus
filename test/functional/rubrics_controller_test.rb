@@ -140,8 +140,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
                           "criterion 5: " + I18n.t('criteria.error.incomplete_row'),
                           "criterion 6: " + I18n.t('criteria.error.incomplete_row')])
       assert_response :redirect
-    end
-    
+    end    
     should "have valid values in database after an upload of a UTF-8 encoded file parsed as UTF-8" do
       post_as @admin,
               :csv_upload,
