@@ -304,10 +304,48 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       post_as @admin,
               :csv_upload,
               :assignment_id => @assignment.id,
-              :annotation_category_list_csv => 'name, text'
+              :annotation_category_list_csv => StringIO.new("name, text")
       assert_response :redirect
       assert set_the_flash.to((I18n.t('annotations.upload.success', :annotation_category_number => 1)))
       assert_not_nil assigns :assignment
+    end
+    
+    should "on :csv_upload route properly" do
+      assert_recognizes({:controller => "annotation_categories", :assignment_id => "1", :action => "csv_upload" },
+        {:path => "assignments/1/annotation_categories/csv_upload",  :method => :post})
+    end
+
+    should "on :csv_upload have valid values in database after an upload of a UTF-8 encoded file parsed as UTF-8" do
+      post_as @admin,
+              :csv_upload,
+              :assignment_id => @assignment.id,
+              :annotation_category_list_csv => fixture_file_upload('../files/test_annotations_UTF-8.csv'),
+              :encoding => "UTF-8"
+      assert_response :redirect
+      test_annotation = @assignment.annotation_categories.find_by_annotation_category_name("AnnotationÈrÉØrr")
+      assert_not_nil test_annotation # annotation should exist
+    end
+
+    should "on :csv_upload have valid values in database after an upload of a ISO-8859-1 encoded file parsed as ISO-8859-1" do
+      post_as @admin,
+              :csv_upload,
+              :assignment_id => @assignment.id,
+              :annotation_category_list_csv => fixture_file_upload('../files/test_annotations_ISO-8859-1.csv'),
+              :encoding => "ISO-8859-1"
+      assert_response :redirect
+      test_annotation = @assignment.annotation_categories.find_by_annotation_category_name("AnnotationÈrÉØrr")
+      assert_not_nil test_annotation # annotation should exist
+    end
+
+    should "on :csv_upload have valid values in database after an upload of a UTF-8 encoded file parsed as ISO-8859-1" do
+      post_as @admin,
+              :csv_upload,
+              :assignment_id => @assignment.id,
+              :annotation_category_list_csv => fixture_file_upload('../files/test_annotations_UTF-8.csv'),
+              :encoding => "ISO-8859-1"
+      assert_response :redirect
+      test_annotation = @assignment.annotation_categories.find_by_annotation_category_name("AnnotationÈrÉØrr")
+      assert_nil test_annotation # annotation should not exist, despite being in file
     end
 
     context "Annotation Categories" do
@@ -339,6 +377,44 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         new_categories_list = @assignment.annotation_categories
         assert_equal(@old_annotation_categories.length,
                      (new_categories_list.length))
+      end
+      
+      should "on :yml_upload route properly" do
+        assert_recognizes({:controller => "annotation_categories", :assignment_id => "1", :action => "yml_upload" },
+          {:path => "assignments/1/annotation_categories/yml_upload",  :method => :post})
+      end
+
+      should "on :yml_upload have valid values in database after an upload of a UTF-8 encoded file parsed as UTF-8" do
+        post_as @admin,
+                :yml_upload,
+                :assignment_id => @assignment.id,
+                :annotation_category_list_yml => fixture_file_upload('../files/test_annotations_UTF-8.yml'),
+                :encoding => "UTF-8"
+        assert_response :redirect
+        test_annotation = @assignment.annotation_categories.find_by_annotation_category_name("AnnotationÈrÉØrr")
+        assert_not_nil test_annotation # annotation should exist
+      end
+
+      should "on :yml_upload have valid values in database after an upload of a ISO-8859-1 encoded file parsed as ISO-8859-1" do
+        post_as @admin,
+                :yml_upload,
+                :assignment_id => @assignment.id,
+                :annotation_category_list_yml => fixture_file_upload('../files/test_annotations_ISO-8859-1.yml'),
+                :encoding => "ISO-8859-1"
+        assert_response :redirect
+        test_annotation = @assignment.annotation_categories.find_by_annotation_category_name("AnnotationÈrÉØrr")
+        assert_not_nil test_annotation # annotation should exist
+      end
+
+      should "on :yml_upload have valid values in database after an upload of a UTF-8 encoded file parsed as ISO-8859-1" do
+        post_as @admin,
+                :yml_upload,
+                :assignment_id => @assignment.id,
+                :annotation_category_list_yml => fixture_file_upload('../files/test_annotations_UTF-8.yml'),
+                :encoding => "ISO-8859-1"
+        assert_response :redirect
+        test_annotation = @assignment.annotation_categories.find_by_annotation_category_name("AnnotationÈrÉØrr")
+        assert_nil test_annotation # annotation should not exist, despite being in file
       end
     end
   end

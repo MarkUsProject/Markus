@@ -51,15 +51,7 @@ class SubmissionsController < ApplicationController
     @directories.sort.each do |directory_name, directory|
       @table_rows[directory.id] = construct_repo_browser_directory_table_row(directory_name, directory)
     end
-<<<<<<< HEAD
-<<<<<<< HEAD
     render :"repo_browser/populate_repo_browser"
-=======
-    render :repo_browser/populate_repo_browser
->>>>>>> render style updated towards Rails 3
-=======
-    render :"repo_browser/populate_repo_browser"
->>>>>>> added quotation marks to multi-level directories in new render style
   end
 
   def file_manager
