@@ -42,7 +42,7 @@ var PeriodDeltaChain = Class.create({
   set_or_default: function(value, default_value) {
     if (typeof value == 'undefined') {
       return default_value;
-    } 
+    }
     return value;
   }
 });
