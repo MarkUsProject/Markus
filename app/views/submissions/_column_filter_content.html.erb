@@ -1,19 +1,19 @@
 <div id="content_filter_text">
 
-<form>
+<form name="tcol" onsubmit="return false">
 
 <h3> Submission Column Filter</h3>
 
-<input type="checkbox" name="table" value="Group Members" /> <%= I18n.t("browse_submissions.group_name") %> multiple<br />
-<input type="checkbox" name="table" value="Group Name" /> <%= I18n.t("browse_submissions.group_members") %> multiple<br />
-<input type="checkbox" name="table" value="Student Name" /> <%= I18n.t("browse_submissions.student_name") %> multiple<br />
-<input type="checkbox" name="table" value="Repository" /> <%= I18n.t("browse_submissions.repository") %> multiple<br />
-<input type="checkbox" name="table" value="Commit Date" /> <%= I18n.t("browse_submissions.commit_date") %> multiple<br />
-<input type="checkbox" name="table" value="Marking State" /> <%= I18n.t("browse_submissions.marking_state") %> multiple<br />
-<input type="checkbox" name="table" value="Grace Credits Used" /> <%= I18n.t("browse_submissions.grace_credits_used") %> multiple<br />
-<input type="checkbox" name="table" value="Final Grade" /> <%= I18n.t("browse_submissions.final_grade") %> multiple<br />
-<input type="checkbox" name="table" value="Section" /> <%= I18n.t("browse_submissions.section") %> multiple<br />
-<input type="checkbox" name="table" value="Can Begin Grading" /> <%= I18n.t("browse_submissions.can_begin_grading") %> multiple <br/>
+<input type="checkbox" name="tcol1" onclick="toggleVis(this.name)" checked> <%= I18n.t("browse_submissions.group_name") %> <br />
+<input type="checkbox" name="tcol2" onclick="toggleVis(this.name)" checked> <%= I18n.t("browse_submissions.group_members") %> <br />
+<input type="checkbox" name="tcol2" onclick="toggleVis(this.name)" checked> <%= I18n.t("browse_submissions.student_name") %> <br />
+<input type="checkbox" name="tcol3" onclick="toggleVis(this.name)" checked> <%= I18n.t("browse_submissions.repository") %> <br />
+<input type="checkbox" name="tcol4" onclick="toggleVis(this.name)" checked> <%= I18n.t("browse_submissions.commit_date") %> <br />
+<input type="checkbox" name="tcol5" onclick="toggleVis(this.name)" checked> <%= I18n.t("browse_submissions.marking_state") %> <br />
+<input type="checkbox" name="tcol6" onclick="toggleVis(this.name)" checked> <%= I18n.t("browse_submissions.grace_credits_used") %> <br />
+<input type="checkbox" name="tcol7" onclick="toggleVis(this.name)" checked> <%= I18n.t("browse_submissions.final_grade") %> <br />
+<input type="checkbox" name="tcol8" onclick="toggleVis(this.name)" checked> <%= I18n.t("browse_submissions.section") %> <br />
+<input type="checkbox" name="tcol9" onclick="toggleVis(this.name)" checked> <%= I18n.t("browse_submissions.can_begin_grading") %> <br/>
 
 </form>
 </div>

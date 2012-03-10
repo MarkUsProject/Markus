@@ -1,0 +1,10 @@
+app/models/student.rb:  # "Unhides" students not visible and grants repository
+app/views/graders/_boot.js.erb:      name: {display: "<%= I18n.t('name') %>", sortable: true, visible: true},
+app/views/graders/_boot.js.erb:      group_name: {display: "<%= I18n.t('user.group_members') if @assignment.group_assignment? %> <%= I18n.t('user.student_name') if !@assignment.group_assignment? %>", sortable: false, visible: true},
+app/views/graders/_boot.js.erb:      section: {display: "<%= I18n.t('graders.section') %>", sortable: true, visible: true},
+app/views/graders/_boot.js.erb:      members: {display: "<%= I18n.t('graders.graders') %>", sortable: true, sort_with: 'nohtml', visible: true},
+app/views/graders/_boot.js.erb:      coverage: {display: "<%= I18n.t('graders.coverage') if @assignment.assign_graders_to_criteria %>", sortable: true, visible: true}
+app/views/layouts/_sub_menu.html.erb:    <li class="level1 visible_dropdown">
+app/views/layouts/_sub_menu.html.erb:   <li class="level1 visible_dropdown">
+app/views/layouts/_sub_menu.html.erb:   <li class="level1 visible_dropdown">
+app/views/submissions/_submissions_table_sorting_links.html.erb:              :visible => true,

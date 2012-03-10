@@ -7,11 +7,10 @@
   "livepipe/window.js",
   "livepipe/tabs.js" %>
 
-<%= render :partial => "submission_column_pop_up.js.erb" %>  
-
 <tr>
     <th>
     </th>
+    <% if @column_group_name %>
     <th class="<%="ap_sorting_by" if (sort_by == 'group_name')%>
                 <%="ap_sorting_by_desc" if (sort_by == 'group_name' && !desc.blank?)%>">
       <%= link_to I18n.t("browse_submissions.group_name"),
@@ -20,8 +19,10 @@
               :page => page,
               :per_page => per_page,
               :sort_by => 'group_name',
+              :visible => true,
               :desc => (sort_by == 'group_name' && desc.blank?) %>
     </th>
+    <% end %>
 
     <th>
     <% if assignment.group_assignment? %>
