@@ -164,7 +164,7 @@
     }
   });
 
-  document.on("ajax:after", "form", function(event, element) {
+  document.on("ajax:complete", "form", function(event, element) {
     var inputs = element.select("input[type=submit][disabled=true][data-disable-with]");
     inputs.each(function(input) {
       input.value = input.readAttribute('data-original-value');
