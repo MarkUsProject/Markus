@@ -78,6 +78,12 @@ Markus::Application.routes.draw do
     end
 
     resources :groups do
+
+      member do
+        post 'rename_group'
+        get 'rename_group_dialog'
+      end
+
       collection do
         post 'populate'
         post 'populate_students'
@@ -91,8 +97,8 @@ Markus::Application.routes.draw do
         get 'valid_grouping'
         get 'invalid_grouping'
         get 'global_actions'
-        get 'remove_group'
         get 'rename_group'
+        delete 'remove_group'
         post 'add_group'
         post 'global_actions'
       end
@@ -225,9 +231,10 @@ Markus::Application.routes.draw do
   end
 
   resources :notes do
+
     collection do
+      post 'add_note'
       post 'noteable_object_selector'
-      get 'add_note'
       get 'new_update_groupings'
       post 'new_update_groupings'
     end
