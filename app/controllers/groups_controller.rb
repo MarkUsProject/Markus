@@ -67,13 +67,15 @@ class GroupsController < ApplicationController
 
   def rename_group_dialog
     @assignment = Assignment.find(params[:assignment_id])
-    @grouping_id = params[:grouping_id]
+    # id is really the grouping_id, this is due to rails routing
+    @grouping_id = params[:id]
     render :partial => "groups/modal_dialogs/rename_group_dialog.rjs"
   end
 
   def rename_group
     @assignment = Assignment.find(params[:assignment_id])
-    @grouping = Grouping.find(params[:grouping_id])
+    # group_id is really the grouping_id, this is due to rails routing
+    @grouping = Grouping.find(params[:id])
     @group = @grouping.group
 
     # Checking if a group with this name already exists
