@@ -258,7 +258,10 @@ class SubmissionsController < ApplicationController
   end
 
   def browse
-    if current_user.ta?
+    
+ @submission_col_header = { :col1 => true, :col2 => true, :col3 => true, :col4 => true, :col5 => true, :col6 => true, :col7 => true, :col8 => true, :col9 => true}
+ 
+   if current_user.ta?
       params[:filter] = 'assigned'
     else
       if params[:filter] == nil or params[:filter].blank?
@@ -564,7 +567,6 @@ class SubmissionsController < ApplicationController
     # dummy action for remote rjs calls
     # triggered by clicking on the column_filter icon
   end
-
 
   private
 
