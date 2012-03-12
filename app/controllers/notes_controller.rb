@@ -15,7 +15,7 @@ class NotesController < ApplicationController
     @notes = Note.find(:all,
                        :conditions => {:noteable_id => @noteable.id,
                                        :noteable_type => @noteable.class.name})
-    render :partial => "notes/modal_dialogs/notes_dialog.rjs"
+    render :partial => "notes/modal_dialogs/notes_dialog_script.rjs"
   end
 
   def add_note

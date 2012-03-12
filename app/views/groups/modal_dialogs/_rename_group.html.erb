@@ -1,5 +1,7 @@
 <h2><%= I18n.t('groups.rename_group.title') %></h2>
-<% form_remote_tag :url => { :action => 'rename_group', :id => @assignment.id, :grouping_id => @grouping_id} do %>
+<% form_tag( 
+     rename_group_assignment_group_path(@assignment.id, @grouping_id),
+     :remote => true ) do -%>
   <fieldset>
   <%= label_tag "new_groupname", I18n.t('groups.rename_group.group_name') %>
   <input type="text" maxlength="30" id="new_groupname" name="new_groupname">

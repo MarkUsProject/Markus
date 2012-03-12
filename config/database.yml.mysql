@@ -1,7 +1,7 @@
 # MySQL.  Versions 4.1 and 5.0 are recommended.
 #
 # Install the MySQL driver:
-#   gem install mysql
+#   gem install mysql2
 # On Mac OS X:
 #   sudo gem install mysql -- --with-mysql-dir=/usr/local/mysql
 # On Mac OS X Leopard:
