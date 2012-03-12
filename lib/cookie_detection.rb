@@ -13,11 +13,11 @@ module CookieDetection
         # send a parameter, "currentlyTesting" to same controller, and attempt to write cookie again
         redirect_to :controller => "main", :action => "login", :cookieTest => "currentlyTesting"
       else
-        # if the parameter cookieTest is blank, then we have already tried to write a cookie and it is still empty. Cookies are off.
+        # if the parameter cookieTest is set, then we have already tried to write a cookie and it is still empty. Cookies are off.
         return false
       end
    else
      return true
-   end 
+   end
   end
 end
