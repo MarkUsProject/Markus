@@ -39,6 +39,7 @@ Markus::Application.routes.draw do
       get 'deletegroup'
       get 'decline_invitation'
       post 'disinvite_member'
+      get 'render_test_result'
     end
 
     resources :rubrics do
@@ -157,7 +158,6 @@ Markus::Application.routes.draw do
           post 'update_overall_remark_comment'
           post 'update_marking_state'
           get 'update_remark_request'
-          get 'render_test_result'
           get 'update_positions'
           get 'update_mark'
           get 'expand_criteria'
