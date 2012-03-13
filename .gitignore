@@ -3,7 +3,8 @@
 config/database.yml
 config/local_environment_override.rb
 
-# Bundle and log folder
+# Data, bundle and log folder
+data/
 log/
 .bundle/
 

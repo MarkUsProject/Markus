@@ -129,8 +129,6 @@ require 'faker'
   rc.save
 end
 
-require 'faker'
-
 5.times do |time|
   ca = AnnotationCategory.new(
           :id => time,
