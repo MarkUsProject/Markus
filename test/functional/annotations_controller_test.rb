@@ -288,4 +288,14 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       assert_response :not_found
     end # End context :update_comment
   end # End context Student POST
+  
+  should "recognize action to update_annotation" do
+    assert_recognizes( {:action => "update_annotation", :controller => "annotations"},
+                       {:path => "annotations/update_annotation", :method => "put"} )
+  end
+
+  should "recognize action to destroy" do
+    assert_recognizes( {:action => "destroy", :controller => "annotations"},
+                       {:path => "annotations", :method => "delete"} )
+  end
 end
