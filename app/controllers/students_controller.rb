@@ -95,10 +95,10 @@ class StudentsController < ApplicationController
     end
   end
 
+  # dummy action for remote rjs calls
+  # triggered by clicking on the "add a new section" link in the new student page
+  # please keep.
   def add_new_section
-     # dummy action for remote rjs calls
-     # triggered by clicking on the "add a new section" link in the new student page
-     # please keep.
      @section = Section.new
   end
 
