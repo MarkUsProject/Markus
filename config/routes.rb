@@ -101,6 +101,7 @@ Markus::Application.routes.draw do
       collection do
         get 'file_manager'
         get 'browse'
+        get 'column_headers'
         post 'populate_file_manager'
         get 'collect_all_submissions'
         get 'download_simple_csv_report'

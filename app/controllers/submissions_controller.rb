@@ -259,7 +259,7 @@ class SubmissionsController < ApplicationController
 
   def browse
     
- @submission_col_header = { :col1 => true, :col2 => true, :col3 => true, :col4 => true, :col5 => true, :col6 => true, :col7 => true, :col8 => true, :col9 => true}
+   @submission_col_header = { :col1 => true, :col2 => true, :col3 => true, :col4 => true, :col5 => true, :col6 => true, :col7 => true, :col8 => true, :col9 => true}
  
    if current_user.ta?
       params[:filter] = 'assigned'
