@@ -38,8 +38,8 @@ namespace :markus do
   end
   
   desc "Add more student users to the database"
-  # this task depends on :environment and :populate
-  task(:add_students => [:environment, :"db:populate"]) do
+  # this task depends on :environment and :seed
+  task(:add_students => [:environment, :"db:seed"]) do
     puts "Populate database with some additional students"
     STUDENT_CSV = File.expand_path(File.join(__FILE__, '..', '..', '..', 'test', 'classlist-csvs', 'new_students.csv'))
     if File.readable?(STUDENT_CSV)
@@ -51,8 +51,8 @@ namespace :markus do
   end
   
   desc "Create a setup for usability testing."
-  # this task depends on :environment and :populate
-  task(:usability_test_setup => [:environment, :"db:populate"]) do
+  # this task depends on :environment and :seed
+  task(:usability_test_setup => [:environment, :"db:seed"]) do
     puts "Creating a setup for usability testing"
     # modify settings for A1 (solo assignment)
     a1 = Assignment.find_by_short_identifier("A1")
