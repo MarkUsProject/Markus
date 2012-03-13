@@ -56,7 +56,7 @@
 <%
 # Javascript for test result window
 %>
-<%= render :partial => "results/common/test_result_window.html" %>
+<%= render :partial => "assignments/test_result_window.html", :locals => {:aid => @assignment.id}  %>
 
 <%= render :partial => "results/common/annotations.js" %>
 <%= render :partial => "results/student/boot.js", :locals => {:first_file => @first_file} %>

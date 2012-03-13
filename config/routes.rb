@@ -39,6 +39,7 @@ Markus::Application.routes.draw do
       get 'deletegroup'
       get 'decline_invitation'
       post 'disinvite_member'
+      get 'render_test_result'
     end
 
     resources :rubrics do
@@ -78,6 +79,12 @@ Markus::Application.routes.draw do
     end
 
     resources :groups do
+
+      member do
+        post 'rename_group'
+        get 'rename_group_dialog'
+      end
+
       collection do
         post 'populate'
         post 'populate_students'
@@ -91,8 +98,8 @@ Markus::Application.routes.draw do
         get 'valid_grouping'
         get 'invalid_grouping'
         get 'global_actions'
-        get 'remove_group'
         get 'rename_group'
+        delete 'remove_group'
         post 'add_group'
         post 'global_actions'
       end
@@ -151,7 +158,6 @@ Markus::Application.routes.draw do
           post 'update_overall_remark_comment'
           post 'update_marking_state'
           get 'update_remark_request'
-          get 'render_test_result'
           get 'update_positions'
           get 'update_mark'
           get 'expand_criteria'
@@ -225,9 +231,10 @@ Markus::Application.routes.draw do
   end
 
   resources :notes do
+
     collection do
+      post 'add_note'
       post 'noteable_object_selector'
-      get 'add_note'
       get 'new_update_groupings'
       post 'new_update_groupings'
     end
@@ -251,6 +258,7 @@ Markus::Application.routes.draw do
 
   resources :students do
     collection do
+      post 'bulk_modify'
       post 'populate'
       get 'manage'
       get 'download_student_list'
