@@ -1,0 +1,12 @@
+<!-- Modal Window -->
+<%= form_for @section do |f| %>
+  <h2><%= I18n.t("section.add_section") %></h2>
+    <%= raw(f.label :name, I18n.t("section.name")) %>
+    <%= raw(f.text_field :name) %> <br />
+    <%= hidden_field_tag "section_modal", "true" %>
+    <%= f.submit I18n.t(:save) %>
+    <%= button_to_function I18n.t(:close), 'modalAddNewSection.close()' %>
+<% end %>
+<script>
+    modalAddNewSection.open();
+</script>
