@@ -20,10 +20,18 @@ class SectionsController < ApplicationController
     if @section.save
       flash[:success] = I18n.t('section.create.success',
                                :name => @section.name)
+      if params[:section_modal]
+        redirect_to :controller => 'students', :action => 'new'
+        return
+      end
       redirect_to :action => 'index'
       return
     else
       flash[:error] = I18n.t('section.create.error')
+      if params[:section_modal]
+        redirect_to :controller => 'students', :action => 'new'
+        return
+      end
       render :new
     end
   end
