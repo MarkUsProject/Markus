@@ -1,2 +1,2 @@
-page.replace_html 'add_section_error', :partial => "shared/error_explanation", 
+page.replace_html 'add_section_error', :partial => "shared/error_explanation",
   :locals => { :model => @section, :flash_message => error }, :remote => true
