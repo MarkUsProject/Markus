@@ -27,8 +27,6 @@
   padding: 0 0 0 10px;
 }
 
-#annotation_summary_list form { margin: 0 0 10px 0; }
-
 #student_selector {
   -moz-border-radius: 5px;
   background: #ECECEC;
@@ -89,6 +87,20 @@
 #new_annotation_button {
   float: left;
   margin: 0;
+}
+
+.edit_remove_annotation_button {
+  background: #fff;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border: 2px solid #ccc;
+  font-family: "Lucida Grande", Verdana, Arial, sans-serif;
+  font-weight: bold;
+  color: #464646;
+  margin: 5px;
+  font-size: 0.85em;
+  min-width: 0px;
+  padding: 3px 10px 3px 10px;
 }
 
 li.annotation_category {

@@ -929,6 +929,16 @@ input#extra_mark_description{
    -webkit-border-radius: 5px;
 }
 
+#add_new_section_dialog {
+  background: white;
+  border: 1px solid #000000;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  width: 375px;
+  height: 165px;
+  text-align: center;
+}
+
 #about_dialog {
   background: white;
   border: 1px solid #000000;
