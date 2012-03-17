@@ -29,7 +29,7 @@ class SectionsController < ApplicationController
     else
       flash[:error] = I18n.t('section.create.error')
       if params[:section_modal]
-        redirect_to :controller => 'students', :action => 'new'
+        render :partial => "add_new_section_handler", :locals => { :error => flash[:error] }
         return
       end
       render :new

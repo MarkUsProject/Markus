@@ -1,0 +1,1 @@
+page.replace_html 'add_section_error', :partial => "student_form_add_section_error", :locals => { :error => error }
