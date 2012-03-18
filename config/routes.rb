@@ -101,7 +101,6 @@ Markus::Application.routes.draw do
       collection do
         get 'file_manager'
         get 'browse'
-        get 'column_headers'
         post 'populate_file_manager'
         get 'collect_all_submissions'
         get 'download_simple_csv_report'
@@ -120,6 +119,7 @@ Markus::Application.routes.draw do
         post 'server_time'
         get 'download'
         get 'column_filter'
+        get 'update_column_filter'
       end
 
       member do

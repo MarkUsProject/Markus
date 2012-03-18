@@ -111,7 +111,6 @@
                                                             DELETE /assignments/:assignment_id/groups/:id(.:format)                                                           {:controller=>"groups", :action=>"destroy"}
                         file_manager_assignment_submissions GET    /assignments/:assignment_id/submissions/file_manager(.:format)                                             {:controller=>"submissions", :action=>"file_manager"}
                               browse_assignment_submissions GET    /assignments/:assignment_id/submissions/browse(.:format)                                                   {:controller=>"submissions", :action=>"browse"}
-                      column_headers_assignment_submissions GET    /assignments/:assignment_id/submissions/column_headers(.:format)                                           {:controller=>"submissions", :action=>"column_headers"}
                populate_file_manager_assignment_submissions POST   /assignments/:assignment_id/submissions/populate_file_manager(.:format)                                    {:controller=>"submissions", :action=>"populate_file_manager"}
              collect_all_submissions_assignment_submissions GET    /assignments/:assignment_id/submissions/collect_all_submissions(.:format)                                  {:controller=>"submissions", :action=>"collect_all_submissions"}
           download_simple_csv_report_assignment_submissions GET    /assignments/:assignment_id/submissions/download_simple_csv_report(.:format)                               {:controller=>"submissions", :action=>"download_simple_csv_report"}
@@ -129,7 +128,7 @@
                         update_files_assignment_submissions POST   /assignments/:assignment_id/submissions/update_files(.:format)                                             {:controller=>"submissions", :action=>"update_files"}
                          server_time_assignment_submissions POST   /assignments/:assignment_id/submissions/server_time(.:format)                                              {:controller=>"submissions", :action=>"server_time"}
                             download_assignment_submissions GET    /assignments/:assignment_id/submissions/download(.:format)                                                 {:controller=>"submissions", :action=>"download"}
-                       column_filter_assignment_submissions GET    /assignments/:assignment_id/submissions/column_filter(.:format)                                            {:controller=>"submissions", :action=>"column_filter"}
+                update_column_filter_assignment_submissions GET    /assignments/:assignment_id/submissions/update_column_filter(.:format)                                     {:controller=>"submissions", :action=>"update_column_filter"}
             collect_and_begin_grading_assignment_submission GET    /assignments/:assignment_id/submissions/:id/collect_and_begin_grading(.:format)                            {:controller=>"submissions", :action=>"collect_and_begin_grading"}
    manually_collect_and_begin_grading_assignment_submission GET    /assignments/:assignment_id/submissions/:id/manually_collect_and_begin_grading(.:format)                   {:controller=>"submissions", :action=>"manually_collect_and_begin_grading"}
                          repo_browser_assignment_submission GET    /assignments/:assignment_id/submissions/:id/repo_browser(.:format)                                         {:controller=>"submissions", :action=>"repo_browser"}
@@ -309,6 +308,6 @@ update_annotation_category_assignment_annotation_categories POST   /assignments/
 Loaded suite /Library/Ruby/Gems/1.8/bin/rake
 Started
 
-Finished in 0.000155 seconds.
+Finished in 0.000184 seconds.
 
 0 tests, 0 assertions, 0 failures, 0 errors

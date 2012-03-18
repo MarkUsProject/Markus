@@ -257,9 +257,18 @@ class SubmissionsController < ApplicationController
     end
   end
 
+  def update_column_filter
+
+   @submission_col_header = { :col1 => params[:col1] == "yes", :col2 => params[:col2] == "yes", :col3 => params[:col3] == "yes", :col4 => params[:col4] == "yes", :col5 => params[:col5] == "yes", :col6 => params[:col6] == "yes", :col7 => params[:col7] == "yes", :col8 => params[:col8] == "yes", :col9 => params[:col9] == "yes"}
+
+ render :action => "browse"
+
+end
+
   def browse
-    
+
    @submission_col_header = { :col1 => true, :col2 => true, :col3 => true, :col4 => true, :col5 => true, :col6 => true, :col7 => true, :col8 => true, :col9 => true}
+
  
    if current_user.ta?
       params[:filter] = 'assigned'

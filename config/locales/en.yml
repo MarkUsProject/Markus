@@ -382,6 +382,7 @@ en:
       column_filter:        "Columns Filter"
       save:                 "Save"
       cancel:               "Cancel"
+      column_filter: "Column Filter"
 
     grade_entry_forms:
       blank_field: "can't be blank"

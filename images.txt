@@ -1,0 +1,2 @@
+app/views/graders/_boot.js.erb:      icon: {display: "<%= link_to(image_tag("/images/icons/edit.png")) %>", sortable: false, visible: true}
+app/views/submissions/_submissions_table_sorting_links.html.erb: <%= link_to(image_tag("/images/icons/edit.png",
