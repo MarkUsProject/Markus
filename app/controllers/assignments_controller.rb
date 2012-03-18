@@ -10,7 +10,8 @@ class AssignmentsController < ApplicationController
                                  :decline_invitation,
                                  :index,
                                  :student_interface,
-                                 :update_collected_submissions]
+                                 :update_collected_submissions,
+                                 :render_test_result]
 
   before_filter      :authorize_for_student,
                      :only => [:student_interface,
@@ -23,11 +24,30 @@ class AssignmentsController < ApplicationController
                               :decline_invitation]
 
   before_filter      :authorize_for_user,
-                     :only => [:index]
+                     :only => [:index, :render_test_result]
 
   auto_complete_for  :assignment,
                      :name
   # Publicly accessible actions ---------------------------------------
+
+  #=== Description
+  # Action called via Rails' remote_function from the test_result_window partial
+  # Prepares test result and updates content in window.
+  def render_test_result
+    @assignment = Assignment.find(params[:aid])
+    @test_result = TestResult.find(params[:test_result_id])
+
+    # Students can use this action only, when marks have been released
+    if current_user.student? &&
+        (@test_result.submission.grouping.membership_status(current_user).nil? ||
+        @test_result.submission.result.released_to_students == false)
+      render :partial => 'shared/handle_error',
+       :locals => {:error => I18n.t('test_result.error.no_access', :test_result_id => @test_result.id)}
+      return
+    end
+
+    render :template => 'assignments/render_test_result', :layout => "plain"
+  end
 
   def student_interface
     @assignment = Assignment.find(params[:id])

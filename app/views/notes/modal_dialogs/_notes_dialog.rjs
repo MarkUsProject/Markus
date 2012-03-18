@@ -1,5 +1,0 @@
-page.replace_html 'notes_dialog',
-                  :partial => 'note/modal_dialogs/notes_dialog'
-
-page.call('modalNotesGroup.open')
-page.call("$('new_notes').focus")

@@ -5,16 +5,14 @@
     <div class="annotationContent" id="annotation_text_content_display_<%=h(annot.annotation_text.id)%>">
       <%= simple_format(h(annot.annotation_text.content)) %>
     </div>
-    <p class="manageAnnotations"><%= link_to_function I18n.t("edit"), "$('annotation_text_content_edit_#{annot.annotation_text.id}').show();$('annotation_text_content_display_#{annot.annotation_text.id}').hide();" %>
-    &middot;
-    <%= link_to I18n.t("remove"),
-	       :url => {:controller => "annotations",
-			:action=>"destroy",
-			:id=>annot.id,
-			:submission_file_id => @submission_file_id},
-	       :confirm => I18n.t("marker.annotation.sure_to_remove"),
-	       :remote => true %>
-    </p>
+
+    <%= link_to_function I18n.t("edit"),
+         "$('annotation_text_content_edit_#{annot.annotation_text.id}').show();$('annotation_text_content_display_#{annot.annotation_text.id}').hide();",
+         {:class => "float_left edit_remove_annotation_button"} %>
+    <%= button_to I18n.t("remove"),
+         annotations_path(:id => annot.id, :submission_file_id => @submission_file_id),
+         :method => :delete, :class => "edit_remove_annotation_button",
+         :confirm => I18n.t("marker.annotation.sure_to_remove"), :remote => true %>
 
     <div id="annotation_text_content_edit_<%= annot.annotation_text.id %>" class="annotation_text_content_editor">
 

@@ -64,6 +64,11 @@ class StudentsControllerTest < AuthenticatedControllerTest
       assert_response :redirect
       assert_not_nil Student.find_by_user_name('jdoe')
     end
+    
+    should "recognize remote action for add a new section modal" do
+      assert_recognizes( {:controller => "students", :action => "add_new_section" },
+      {:path => "students/add_new_section", :method => "get"} )
+    end
 
     should "not be able to create a student with missing data" do
       post_as @admin,
@@ -92,6 +97,11 @@ class StudentsControllerTest < AuthenticatedControllerTest
       setup do
         @student = Student.make
         @section = Section.make
+      end
+
+      should "recognize action to bulk modify for a student" do
+        assert_recognizes( {:action => "bulk_modify", :controller => "students"},
+               {:path => "students/bulk_modify", :method => "post"} )
       end
 
       should "be able to edit a student" do

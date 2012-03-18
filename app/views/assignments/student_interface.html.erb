@@ -339,7 +339,7 @@
                 <%
                 # Javascript for test result window
                 %>
-                <%= render :partial => "results/common/test_result_window.html" %>
+                <%= render :partial => "assignments/test_result_window.html", :locals => {:aid => @assignment.id} %>
                 <div id="test_results_controls">
                    <%= render :partial => 'results/common/test_selector', :locals => {:test_result_files => @test_result_files, :result => @result} %>
                    <br />
