@@ -44,7 +44,7 @@ namespace :markus do
     STUDENT_CSV = File.expand_path(File.join(__FILE__, '..', '..', '..', 'test', 'classlist-csvs', 'new_students.csv'))
     if File.readable?(STUDENT_CSV)
       csv_students = File.new(STUDENT_CSV)
-      User.upload_user_list(Student, csv_students.read)
+      User.upload_user_list(Student, csv_students.read, nil)
     else
       $stderr.puts "File not found or not readable: #{STUDENT_CSV}"
     end

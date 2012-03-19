@@ -29,10 +29,10 @@ namespace :load do
     a1.save!
 
     # load users
-    STUDENT_CSV = File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'db', 'populate', 'students.csv'))
+    STUDENT_CSV = File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'db', 'data', 'students.csv'))
     if File.readable?(STUDENT_CSV)
       csv_students = File.new(STUDENT_CSV)
-      User.upload_user_list(Student, csv_students.read)
+      User.upload_user_list(Student, csv_students, nil)
     end
     
     # create groupings for each student in A1
