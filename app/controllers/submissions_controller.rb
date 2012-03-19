@@ -261,8 +261,7 @@ class SubmissionsController < ApplicationController
 
    @submission_col_header = { :col1 => params[:col1] == "yes", :col2 => params[:col2] == "yes", :col3 => params[:col3] == "yes", :col4 => params[:col4] == "yes", :col5 => params[:col5] == "yes", :col6 => params[:col6] == "yes", :col7 => params[:col7] == "yes", :col8 => params[:col8] == "yes", :col9 => params[:col9] == "yes"}
 
- render :action => "browse"
-
+ redirect_to({:action => 'browse'}, :alert => "Hello World!")
 end
 
   def browse

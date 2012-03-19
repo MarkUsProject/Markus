@@ -1,0 +1,93 @@
+app/controllers/admins_controller.rb:      redirect_to :action => 'index'
+app/controllers/admins_controller.rb:      redirect_to :action => 'index'
+app/controllers/annotation_categories_controller.rb:      redirect_to :action => 'index',
+app/controllers/annotation_categories_controller.rb:      redirect_to :action => 'index', :id => @assignment.id
+app/controllers/annotation_categories_controller.rb:    redirect_to :action => 'index', :id => @assignment.id
+app/controllers/annotation_categories_controller.rb:      redirect_to :action => 'index', :assignment_id => @assignment.id
+app/controllers/annotation_categories_controller.rb:         redirect_to :action => 'index', :assignment_id => @assignment.id
+app/controllers/annotation_categories_controller.rb:    redirect_to :action => 'index', :assignment_id => @assignment.id
+app/controllers/assignments_controller.rb:        redirect_to :action => 'student_interface', :id => @assignment.id
+app/controllers/assignments_controller.rb:      redirect_to :action => 'edit', :id => params[:id]
+app/controllers/assignments_controller.rb:    redirect_to :action => "edit", :id => @assignment.id
+app/controllers/assignments_controller.rb:    redirect_to :action => 'student_interface', :id => params[:id]
+app/controllers/assignments_controller.rb:    redirect_to :action => 'student_interface', :id => params[:id]
+app/controllers/assignments_controller.rb:    redirect_to :action => 'student_interface', :id => @assignment.id
+app/controllers/assignments_controller.rb:    redirect_to :action => 'student_interface', :id => params[:id]
+app/controllers/assignments_controller.rb:    redirect_to :action => 'student_interface', :id => @assignment.id
+app/controllers/assignments_controller.rb:    redirect_to :action => 'student_interface', :id => params[:id]
+app/controllers/assignments_controller.rb:    redirect_to :controller => 'main'
+app/controllers/automated_tests_controller.rb:          redirect_to :action => 'manage',
+app/controllers/flexible_criteria_controller.rb:    redirect_to :action => 'index', :id => @assignment
+app/controllers/flexible_criteria_controller.rb:    redirect_to :action => 'index', :assignment_id => @assignment.id
+app/controllers/grade_entry_forms_controller.rb:        redirect_to :action => "edit", :id => @grade_entry_form.id
+app/controllers/grade_entry_forms_controller.rb:        redirect_to :action => "edit", :id => @grade_entry_form.id
+app/controllers/grade_entry_forms_controller.rb:    redirect_to :action => 'grades', :id => params[:id]
+app/controllers/grade_entry_forms_controller.rb:    redirect_to :action => 'grades', :id => @grade_entry_form.id
+app/controllers/graders_controller.rb:      redirect_to :action => 'index', :assignment_id => params[:assignment_id]
+app/controllers/graders_controller.rb:    redirect_to :action => 'index', :assignment_id => params[:assignment_id]
+app/controllers/graders_controller.rb:      redirect_to :action => 'index', :assignment_id => params[:assignment_id]
+app/controllers/graders_controller.rb:    redirect_to :action => 'index', :assignment_id => params[:assignment_id]
+app/controllers/groups_controller.rb:    redirect_to :action => "index", :id => params[:id]
+app/controllers/main_controller.rb:          redirect_to( uri || { :action => 'index' } )
+app/controllers/main_controller.rb:      redirect_to :action => 'index'
+app/controllers/main_controller.rb:      redirect_to :action => 'login'
+app/controllers/main_controller.rb:      redirect_to(:action => 'login') && return
+app/controllers/main_controller.rb:      redirect_to( uri || { :action => 'index' } )
+app/controllers/main_controller.rb:      redirect_to :action => 'login'
+app/controllers/main_controller.rb:      redirect_to logout_redirect
+app/controllers/main_controller.rb:      redirect_to :controller => 'assignments', :action => 'index'
+app/controllers/main_controller.rb:    redirect_to :action => 'login'
+app/controllers/notes_controller.rb:      redirect_to :action => 'index'
+app/controllers/notes_controller.rb:      redirect_to :action => 'index'
+app/controllers/results_controller.rb:        redirect_to :action => 'edit',
+app/controllers/results_controller.rb:      redirect_to :action => 'edit',
+app/controllers/results_controller.rb:      redirect_to :controller => 'submissions',
+app/controllers/results_controller.rb:      redirect_to :action => 'edit',
+app/controllers/results_controller.rb:      redirect_to :controller => 'assignments',
+app/controllers/results_controller.rb:    redirect_to :controller => 'results',
+app/controllers/rubrics_controller.rb:    redirect_to :action => 'index', :id => @assignment.id
+app/controllers/rubrics_controller.rb:      redirect_to :action => 'index', :id => assignment.id
+app/controllers/rubrics_controller.rb:        redirect_to :action => 'index', :id => assignment.id
+app/controllers/rubrics_controller.rb:        redirect_to :action => 'index', :id => assignment.id
+app/controllers/rubrics_controller.rb:    redirect_to :action => 'index', :assignment_id => assignment.id
+app/controllers/sections_controller.rb:      redirect_to :action => 'index'
+app/controllers/sections_controller.rb:      redirect_to :action => 'index'
+app/controllers/students_controller.rb:      redirect_to :action => 'index'
+app/controllers/students_controller.rb:      redirect_to :action => 'index' # Redirect
+app/controllers/students_controller.rb:    redirect_to :action => 'index'
+app/controllers/submissions_controller.rb:      redirect_to :controller => 'assignments',
+app/controllers/submissions_controller.rb:    redirect_to :action => 'update_converted_pdfs', :id => @grouping.id
+app/controllers/submissions_controller.rb:    redirect_to :action => 'browse', :id => assignment.id
+app/controllers/submissions_controller.rb:    redirect_to :action => 'browse', :id => assignment.id
+app/controllers/submissions_controller.rb:    redirect_to :action => 'browse', :id => assignment.id
+app/controllers/submissions_controller.rb:  # Note that you shouldn't use redirect_to in this action. This
+app/controllers/submissions_controller.rb:      # can't use redirect_to here. See comment of this action for more details.
+app/controllers/submissions_controller.rb:          # can't use redirect_to here. See comment of this action for more details.
+app/controllers/submissions_controller.rb:        # can't use redirect_to here. See comment of this action for more details.
+app/controllers/submissions_controller.rb:        # can't use redirect_to here. See comment of this action for more details.
+app/controllers/submissions_controller.rb:    redirect_to :action => 'browse', :id => params[:id]
+app/controllers/submissions_controller.rb:    redirect_to :action => 'browse', :id => params[:id]
+app/controllers/tas_controller.rb:      redirect_to :action => :index
+app/controllers/tas_controller.rb:      redirect_to :action => 'index' # Redirect
+app/controllers/tas_controller.rb:    redirect_to :action => 'index'
+app/views/admins/create.rjs:page.redirect_to :action => 'index'
+app/views/assignments/disinvite_member.rjs:page.redirect_to :action => 'student_interface', :id => @assignment.id
+app/views/groups/csv_upload.rjs:page.redirect_to :action => 'manage', :id => @assignment.id
+app/views/groups/decline_invitation.rjs:page.redirect_to :action => 'student_interface', :id => @assignment.id
+app/views/groups/delete_group.rjs:page.redirect_to :controller => 'assignments', :action =>
+app/views/groups/delete_rejected.rjs:page.redirect_to :action => 'student_interface', :id => @assignment.id
+app/views/groups/disinvite_member.rjs:page.redirect_to :action => 'student_interface', :id => @assignment.id
+app/views/groups/invite_member.rjs:page.redirect_to :action => 'student_interface', :id => @assignment.id
+app/views/groups/join.rjs:page.redirect_to :action => 'student_interface', :id => @assignment.id
+app/views/groups/note_message.rjs:page.redirect_to :action => 'manage', :id => @assignment.id
+app/views/groups/use_another_assignment_groups.rjs:page.redirect_to :action => 'manage', :id => @target_assignment.id
+app/views/main/_role_switch_handler.rjs:  page.redirect_to :action => 'index'
+app/views/notes/destroy.rjs:page.redirect_to :action => 'index'
+app/views/results/note_message.rjs:page.redirect_to :action => 'edit', :id => @result.id
+app/views/results/set_released_to_students.rjs:  page.redirect_to :action => 'edit', :id => @old_result.id
+app/views/results/set_released_to_students.rjs:  page.redirect_to :action => 'edit', :id => @result.id
+app/views/sections/destroy.rjs:page.redirect_to :action => 'index'
+app/views/students/bulk_action.rjs:page.redirect_to :controller => 'students', :action => 'index'
+app/views/students/note_message.rjs:page.redirect_to :action => 'index', :id => @student.id
+app/views/submissions/update_converted_pdfs.rjs:      page.redirect_to :controller => 'results', :action => 'edit',
+app/views/submissions/update_converted_pdfs.rjs:    page.redirect_to :controller => 'results', :action => 'edit',

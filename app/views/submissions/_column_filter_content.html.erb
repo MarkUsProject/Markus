@@ -1,6 +1,6 @@
 <div id="content_filter_text">
 
-<%= form_tag update_column_filter_assignment_submissions_path(), :method => 'get', :remote => true do %>
+<% form_tag update_column_filter_assignment_submissions_path(), {:method => 'post', :remote => true} do %>
 
 <h3> 
   <%= I18n.t("browse_submissions.column_filter") %> 
@@ -25,10 +25,9 @@
 <%= check_box_tag 'col9', 'yes', true %>
 <%= label_tag 'col9', I18n.t("browse_submissions.can_begin_grading") %>
 
-<p>
     <%= submit_tag I18n.t("browse_submissions.save"), :tabindex => 100, :class => 'button indent_button'%>
     <%= button_to_function "Cancel", 'column_filter_modal.close()', :tabindex => 110 %>
-</p>
+
 
 <% end %>
 
