@@ -1,0 +1,6 @@
+ 
+
+if(@submition_col_header[:col1] == false)
+               page['sCol1']['style']['display'] = none
+       else
+               page['sCol1']['style']['display'] = inline

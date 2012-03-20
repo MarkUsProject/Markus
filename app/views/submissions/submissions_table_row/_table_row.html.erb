@@ -15,8 +15,8 @@
          value="<%= grouping.id %>" />
 </td>
 
-<% if @submission_col_header[:col1] %>
- <td name="tcol1" id = "tcol1">
+
+ <td name="sCol1" id = "sCol1">
    <% if !grouping.has_submission? %>
      <% if Time.now >=
     assignment.submission_rule.calculate_grouping_collection_time(grouping) %>
@@ -48,10 +48,10 @@
      (<%= h(grouping.accepted_students.collect{ |student| student.user_name}.join(',')) %>)
    <%='<span class="invalid">' + t(:invalid_grouping) + '</span>' if !grouping.is_valid? %>
  </td>
-<% end %>
 
-<% if @submission_col_header[:col2] %>
-<td name="tcol2" id = "tcol2">
+
+
+<td name="sCol2" id = "sCol2">
 <% if assignment.group_assignment? %>
 <%= grouping.accepted_student_memberships.collect{ |membership| "#{membership.user.first_name} #{membership.user.last_name}"}.join(', ') %>
    <% else %>
@@ -60,12 +60,12 @@
      <% end %>	
 <% end %>
 </td>
-<% end %>
 
-<% if @submission_col_header[:col3] %>
+
+
   <% if !@details.nil? %>
     <% assignment.rubric_criteria.each do |criterion| %>
-      <td>
+      <td name="sCol3" id = "sCol3">
         <% if grouping.has_submission? %>
           <% mark = grouping.current_submission_used.result.marks.find_by_markable_id(criterion.id) %>
           <% if mark.nil? || mark.mark.nil?%>
@@ -79,15 +79,15 @@
       </td>
     <% end %>
   <% else %>
-    <td name="tcol3" id = "tcol3">
+    <td name="sCol3" id = "sCol3">
       <%= link_to h(grouping.group.repository_name),
                   repo_browser_assignment_submission_path(assignment,
                                                           grouping) %>
     </td>
-<% end %>
 
-<% if @submission_col_header[:col4] %>
-    <td>
+
+
+    <td name="sCol4" id = "sCol4">
     <% if !grouping.has_submission? %>
     -
     <% else %>
@@ -95,10 +95,10 @@
     <% end %>
     </td>
   <% end %>
-<% end %>
 
-<% if @submission_col_header[:col5] %>
-  <td class="marking_state">
+
+
+  <td name="sCol5" id = "sCol5" class="marking_state">
     <% if !grouping.has_submission? %>
 	<% if assignment.submission_rule.can_collect_now? %>
 	  <%= image_tag('icons/shape_square.png',
@@ -135,10 +135,10 @@
     <% end %>
     <% end %>
   </td>
-<% end %>
 
-<% if @submission_col_header[:col6] %>
-  <td name="tcol6" id = "tcol6">
+
+
+  <td name="sCol6" id = "sCol6">
     <%= h(grouping.grace_period_deduction_sum) %>
   </td>
 <% end %>
@@ -159,20 +159,20 @@
     <% end %>
   <% end %>
   </td>
-<% end %>
 
-<% if @submission_col_header[:col8] %>
+
+
   <%# We don't need to display the section of the group unless it is a section group 
       assignment %>
   <% if assignment.section_groups_only %>
-  <td name="tcol8" id = "tcol8">
+  <td name="sCol8" id = "sCol8">
   	<%= h(grouping.section) %>
   </td>
   <% end %>
-<% end %>
 
-<% if @submission_col_header[:col8] %>
-  <td name="tcol9" id = "tcol9">
+
+
+  <td name="sCol9" id = "sCol9">
     <% if Time.now >= assignment.submission_rule.calculate_grouping_collection_time(grouping) %>
       <%= image_tag('icons/tick.png') %>
     <% else %>
@@ -180,5 +180,5 @@
     <% end %>
   </td>
 </tr>
-<% end %>
+
 <% end %>
