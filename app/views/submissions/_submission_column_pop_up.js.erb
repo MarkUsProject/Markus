@@ -1,0 +1,30 @@
+<script type="text/javascript">
+
+function pop_up() {
+
+  alert("Working");
+  }
+
+function column_selection_popup() {
+    newwindow2=window.open('', 'name', 'width=250,height=250,resizeable,scrollbars');
+    var tmp = newwindow2.document;
+    tmp.write('<input type="checkbox" name="table" value="Group Members" /> <%= I18n.t("browse_submissions.group_name") %> <br />');
+
+tmp.write('<input type="checkbox" name="table" value="Group Name" /> <%= I18n.t("browse_submissions.group_members") %> <br />');
+
+tmp.write('<input type="checkbox" name="table" value="Student Name" /> <%= I18n.t("browse_submissions.student_name") %> <br />');
+
+tmp.write('<input type="checkbox" name="table" value="Repository" /> <%= I18n.t("browse_submissions.repository") %> <br />');
+tmp.write('<input type="checkbox" name="table" value="Commit Date" /> <%= I18n.t("browse_submissions.commit_date") %> <br />');
+tmp.write('<input type="checkbox" name="table" value="Marking State" /> <%= I18n.t("browse_submissions.marking_state") %> <br />');
+tmp.write('<input type="checkbox" name="table" value="Grace Credits Used" /> <%= I18n.t("browse_submissions.grace_credits_used") %> <br />');
+tmp.write('<input type="checkbox" name="table" value="Final Grade" /> <%= I18n.t("browse_submissions.final_grade") %> <br />');
+tmp.write('<input type="checkbox" name="table" value="Section" /> <%= I18n.t("browse_submissions.section") %> <br />');
+tmp.write('<input type="checkbox" name="table" value="Can Begin Grading" /> <%= I18n.t("browse_submissions.can_begin_grading") %> <br />');
+    tmp.close();
+}
+
+
+
+
+</script>

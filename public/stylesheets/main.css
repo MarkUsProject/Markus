@@ -972,6 +972,15 @@ input#extra_mark_description{
   border:10px solid #333;  
 }
 
+#column_filter_dialog {
+  background-color:#fff;
+  padding:10px;  
+  border:5px solid #333;  
+  width: 300px;
+  height: 300px;
+  overflow: scroll;
+}
+
 #about_icon, #switch_role_icon {
   margin-left: 0.5em;
   margin-right: 0.5em;

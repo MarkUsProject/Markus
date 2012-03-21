@@ -1,0 +1,25 @@
+app/controllers/main_controller.rb:  def about
+app/controllers/main_controller.rb:    # triggered by clicking on the about icon
+app/models/group.rb:    # For more info about the exception
+app/views/assignments/student_interface.html.erb:        # information about the group only
+app/views/grade_entry_forms/_form.html.erb:   # #{message} - Some additional information about this grade entry form
+app/views/layouts/_about.html.erb: var about_modal = null;
+app/views/layouts/_about.html.erb:    about_modal = new Control.Modal($('about_dialog'), {
+app/views/layouts/_about.html.erb:      className: 'about_modal',
+app/views/layouts/_about.html.erb:<!-- about scaffold -->
+app/views/layouts/_about.html.erb:<div id="about_dialog" style="display: none;">
+app/views/layouts/_about.html.erb:  <!-- about dialog content gets injected here -->
+app/views/layouts/_header.html.erb:          :alt => I18n.t(:about_markus),
+app/views/layouts/_header.html.erb:          :title => I18n.t(:about_markus),
+app/views/layouts/_header.html.erb:          :id => "about_icon"),
+app/views/layouts/_header.html.erb:          about_main_index_path(),
+app/views/layouts/content.html.erb:  <%= render :partial => 'layouts/about' %>
+app/views/layouts/no_menu_header.html.erb:  <%= render :partial => 'layouts/about' %>
+app/views/main/_about_content.html.erb:<div id="about_text">
+app/views/main/_about_content.html.erb:  <h1><%= I18n.t(:about_markus) %></h1>
+app/views/main/_about_content.html.erb:<div id="about_close">
+app/views/main/_about_content.html.erb:  <a class="button" href="#" onclick="about_modal.close();">
+app/views/main/_about_content.html.erb:about_modal.open();
+app/views/main/about.rjs:page.replace_html 'about_dialog', :partial => 'about_content'
+app/views/results/student/_remark_request.html.erb:      <p class='information'><%= I18n.t("marker.about_remark_save") %>
+app/views/results/student/_remark_request.html.erb:            <%= I18n.t("marker.about_remark_submission") %>
