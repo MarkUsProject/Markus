@@ -5,7 +5,11 @@
       <div id="annotation_holder_<%=annot.annotation_text.id%>" class="annotation_holder"></div>
     <%end%>
    <div id="image_preview">
-       <% (1..nb_files).each do|i| %>
+       <%# First image displayed with a different alt message, in case of boolean PDF_SUPPORT set to false %>
+       <li>
+         <%= image_tag(url_for(:action => 'download', :controller => 'results', :select_file_id => submission_file_id, :show_in_browser => true, :file_index => 1), :alt => I18n.t("common.cant_display_image"), :width => "950") %>
+       </li>
+       <% (2..nb_files).each do|i| %>
          <li>      
 	   <%= image_tag(url_for(:action => 'download', :controller => 'results', :select_file_id => submission_file_id, :show_in_browser => true, :file_index => i), :alt => I18n.t("common.image_downloading"), :width => "950") %>
          </li>
