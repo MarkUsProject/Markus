@@ -2,6 +2,8 @@
   page.select('#s' << key.to_s()).each do |elem|
     if !value
       elem.hide
+    else
+      elem.show
     end
   end
 end
