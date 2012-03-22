@@ -20,7 +20,6 @@ gem "will_paginate"
 gem "fastercsv"
 gem "routing-filter"
 gem "dynamic_form"
-gem "rghost"
 
 # To be removed
 gem "prototype_legacy_helper",
@@ -71,4 +70,12 @@ end
 # group if you are using Phusion Passenger.
 group :mongrel do
   gem "mongrel_cluster"
+end
+
+# If you want to be able to view and annotate PDF files, 
+# make sure that this group is included. GhostScript has to be 
+# installed for rghost to work well. You also need to set
+# the PDF_SUPPORT bool to true in the config file(s).
+group :rghost do
+  gem "rghost"
 end
