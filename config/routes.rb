@@ -136,8 +136,12 @@ Markus::Application.routes.draw do
 
       resources :results do
         collection do
-          post 'update_mark'
-          post 'expand_criteria'
+          get 'update_mark'
+          get 'expand_criteria'
+          get 'collapse_criteria'
+          get 'expand_unmarked_criteria'
+          get 'edit'
+          get 'download'
         end
 
         member do
