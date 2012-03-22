@@ -25,7 +25,7 @@
     <%= check_box_tag 'col9', 'yes', true %>
     <%= label_tag 'col9', I18n.t("browse_submissions.can_begin_grading") %>
 
-    <%= submit_tag I18n.t("browse_submissions.save"), :tabindex => 100, :class => 'button indent_button'%>
+    <%= submit_tag I18n.t("browse_submissions.save"), :tabindex => 100, :class => 'button indent_button' %>
     <%= button_to_function "Cancel", 'column_filter_modal.close()', :tabindex => 110 %>
 
   <% end %>
