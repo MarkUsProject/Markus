@@ -258,16 +258,16 @@ class SubmissionsController < ApplicationController
   end
 
   def update_column_filter
+
     #fix this to use the parameter from the popup
    @submission_col_header = { :Col1 => params[:col1] == "yes", :Col2 => params[:col2] == "yes", :Col3 => params[:col3] == "yes", :Col4 => params[:col4] == "yes", :Col5 => params[:col5] == "yes", :Col6 => params[:col6] == "yes", :Col7 => params[:col7] == "yes", :Col8 => params[:col8] == "yes", :Col9 => params[:col9] == "yes"}
+
 
     #render :template => "update_column_filter", locals => { @submission_col_header => @submission_col_header }
 
   end
 
   def browse
-
-   @submission_col_header = { :col1 => true, :col2 => true, :col3 => true, :col4 => true, :col5 => true, :col6 => true, :col7 => true, :col8 => true, :col9 => true}
 
  
    if current_user.ta?

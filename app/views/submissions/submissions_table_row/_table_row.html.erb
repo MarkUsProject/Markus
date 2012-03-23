@@ -63,7 +63,7 @@
 
   <% if !@details.nil? %>
     <% assignment.rubric_criteria.each do |criterion| %>
-      <td id = "sCol3">
+      <td id>
         <% if grouping.has_submission? %>
           <% mark = grouping.current_submission_used.result.marks.find_by_markable_id(criterion.id) %>
           <% if mark.nil? || mark.mark.nil?%>
@@ -77,12 +77,12 @@
       </td>
     <% end %>
   <% else %>
-    <td id = "sCol4">
+    <td id = "sCol3">
       <%= link_to h(grouping.group.repository_name),
                   repo_browser_assignment_submission_path(assignment,
                                                           grouping) %>
     </td>
-    <td id = "sCol5">
+    <td id = "sCol4">
     <% if !grouping.has_submission? %>
     -
     <% else %>
@@ -90,7 +90,7 @@
     <% end %>
     </td>
   <% end %>
-  <td id = "sCol6" class="marking_state">
+  <td id = "sCol5" class="marking_state">
     <% if !grouping.has_submission? %>
 	<% if assignment.submission_rule.can_collect_now? %>
 	  <%= image_tag('icons/shape_square.png',
@@ -127,10 +127,10 @@
     <% end %>
     <% end %>
   </td>
-  <td>
+  <td  id = "sCol6">
     <%= h(grouping.grace_period_deduction_single) %>
   </td>
-  <td id = "scol7">
+  <td id = "sCol7">
   <% if !grouping.has_submission? %>
     -
   <% else %>
