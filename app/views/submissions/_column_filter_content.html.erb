@@ -6,9 +6,9 @@
       <%= I18n.t("browse_submissions.column_filter") %> 
     </h3>
 
-    <%=check_box_tag 'col1', 'yes', '@submission_col_header[:Col1]' %>
+    <%=check_box_tag 'col1', 'yes', 'submission1' %>
     <%= label_tag 'col1',  I18n.t("browse_submissions.group_name") %> <br />
-    <%= check_box_tag 'col2', 'yes', '@submission_col_header[:col2]'  %>
+    <%= check_box_tag 'col2', 'yes', '@submission_col_header[:Col2]'  %>
     <%= label_tag 'col2' , I18n.t("browse_submissions.student_name") %> <br />
     <%= check_box_tag 'col3', 'yes', false %>
     <%= label_tag 'col3', I18n.t("browse_submissions.repository") %> <br />
