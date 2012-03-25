@@ -319,12 +319,10 @@ en:
       group_to_grader: "You must supply a CSV file for group to grader mapping"
 
     pagination:
-      first: "First"
-      prev: "Prev"
-      no_prev: "< Prev"
-      next: "Next"
-      no_next: "Next >"
-      last: "Last"
+      first: "<< First"
+      prev: "< Prev"
+      next: "Next >"
+      last: "Last >>"
       per_page: "per page"
       jump_to: "Jump to:"
       show: "Show"

@@ -319,11 +319,9 @@ fr:
       group_to_grader: "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux groupes."
 
     pagination:
-      first: "Première"
-      prev: "Précédente"
-      no_prev: "< Précédente"
+      first: "<< Première"
+      prev: "< Précédente"
       next: "Suivante"
-      no_next: "Suivante >"
       last: "Dernière"
       per_page: "par page"
       jump_to: "Aller à la page : "

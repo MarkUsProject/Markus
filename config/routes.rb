@@ -148,11 +148,12 @@ Markus::Application.routes.draw do
           get 'cancel_remark_request'
           get 'codeviewer'
           post 'codeviewer'
-          post 'collapse_criteria'
+          get 'collapse_criteria'
           post 'add_extra_mark'
+          post 'delete_grace_period_deduction'
           get 'next_grouping'
           post 'remove_extra_mark'
-          post 'expand_unmarked_criteria'
+          get 'expand_unmarked_criteria'
           get 'set_released_to_students'
           post 'update_overall_comment'
           post 'update_overall_remark_comment'
@@ -265,6 +266,10 @@ Markus::Application.routes.draw do
       get 'add_new_section'
       get 'download_student_list'
       post 'upload_student_list'
+    end
+
+    member do
+      post 'delete_grace_period_deduction'
     end
   end
 

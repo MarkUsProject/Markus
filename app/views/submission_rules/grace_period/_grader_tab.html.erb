@@ -15,7 +15,13 @@
       <%= u[1].first.deduction %> credits
     </td>
     <td>
-      <%= link_to_remote t('submission_rules.grace_period_submission_rule.remove_deduction'), :url => {:action => 'delete_grace_period_deduction', :id => grouping.id, :deduction_id => u[1].first.id }, :confirm => t('submission_rules.grace_period_submission_rule.confirm_remove_deduction') %>
+      <%= button_to(
+            t('submission_rules.grace_period_submission_rule.remove_deduction'),
+            delete_grace_period_deduction_assignment_submission_result_path(
+                :id => grouping.id, :deduction_id => u[1].first.id),
+            :confirm => t('submission_rules.grace_period_submission_rule.confirm_remove_deduction'),
+            :class => "button_to_delete_deduction",
+            :remote => true) %>
     </td>
   </tr>
 </table>

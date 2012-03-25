@@ -1645,7 +1645,11 @@ div.align_text_right {
    padding: 2px 0px;
 }
 
-.mark_tools input{
+.mark_tools form, form.button_to div {
+  display: inline;
+}
+
+input.button_to_criteria_expansion, input.button_to_delete_deduction {
    min-width: 0px;
    font-size: 0.8em;
    margin: 1px;
