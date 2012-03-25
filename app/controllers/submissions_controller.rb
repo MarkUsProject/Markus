@@ -260,16 +260,20 @@ class SubmissionsController < ApplicationController
   def update_column_filter
 
     #fix this to use the parameter from the popup
-   @submission_col_header = { :Col1 => params[:col1] == "yes", :Col2 => params[:col2] == "yes", :Col3 => params[:col3] == "yes", :Col4 => params[:col4] == "yes", :Col5 => params[:col5] == "yes", :Col6 => params[:col6] == "yes", :Col7 => params[:col7] == "yes", :Col8 => params[:col8] == "yes", :Col9 => params[:col9] == "yes"}
+
+   session[:submission_col_dictionary] = { :Col1 => params[:col1] == "yes", :Col2 => params[:col2] == "yes", :Col3 => params[:col3] == "yes", :Col4 => params[:col4] == "yes", :Col5 => params[:col5] == "yes", :Col6 => params[:col6] == "yes", :Col7 => params[:col7] == "yes", :Col8 => params[:col8] == "yes", :Col9 => params[:col9] == "yes"}
 
 
-    #render :template => "update_column_filter", locals => { @submission_col_header => @submission_col_header }
+    #render :template => "update_column_filter", locals => { session[:submission_col_dictionary] => session[:submission_col_dictionary] }
 
   end
 
   def browse
 
- 
+if session[:submission_col_dictionary].nil?
+   session[:submission_col_dictionary] = { :Col1 => true, :Col2 => true, :Col3 => true, :Col4 => true, :Col5 => true, :Col6 => true, :Col7 => true, :Col8 => true, :Col9 => true}
+end
+
    if current_user.ta?
       params[:filter] = 'assigned'
     else
@@ -309,6 +313,7 @@ class SubmissionsController < ApplicationController
     @desc = params[:desc]
     @filter = params[:filter]
     @sort_by = params[:sort_by]
+
   end
 
   def index
