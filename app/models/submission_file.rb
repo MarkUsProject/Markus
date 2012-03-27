@@ -112,15 +112,26 @@ class SubmissionFile < ActiveRecord::Base
 
     # Remove any old copies of this image if they exist
     i = 1
-    filePathToRemove = File.join(storage_path, self.filename.split('.')[0] + '_' + sprintf("%04d" % i.to_s()) + '.jpg') 
+    filePathToRemove = File.join(storage_path,
+                                 self.filename.split('.')[0] + '_' + sprintf("%04d" % i.to_s()) + '.jpg') 
     while File.exists?(filePathToRemove)
       FileUtils.remove_file(filePathToRemove, true)
       i += 1
-      filePathToRemove = File.join(storage_path, self.filename.split('.')[0] + '_' + sprintf("%04d" % i.to_s()) + '.jpg')
+      filePathToRemove = File.join(storage_path,
+                                   self.filename.split('.')[0] + '_' + sprintf("%04d" % i.to_s()) + '.jpg')
     end
 
-    # Convert a pdf file into a an array of jpg files (one jpg file = one page of the pdf file)
-    RGhost::Convert.new(File.join(storage_path, self.filename)).to :jpeg, :filename => file_path, :multipage => true, :resolution => 150 
+    # Convert a pdf file into a an array of jpg files (one jpg file = one page
+    # of the pdf file)
+    begin
+      RGhost::Convert.new(File.join(storage_path,
+                                    self.filename)).to :jpeg,
+                          :filename => file_path,
+                          :multipage => true,
+                          :resolution => 150 
+    rescue Exception => e
+      m_logger.log(e)
+    end
 
     FileUtils.remove_file(File.join(storage_path, self.filename), true)
     self.is_converted = true
