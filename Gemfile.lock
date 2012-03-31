@@ -39,7 +39,6 @@ GEM
     cgi_multipart_eof_fix (2.5.0)
     columnize (0.3.4)
     daemons (1.1.4)
-    db_populate (0.2.6)
     dynamic_form (1.1.4)
     erubis (2.6.6)
       abstract (>= 1.0.0)
@@ -120,7 +119,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  db_populate
   dynamic_form
   exception_notification
   faker
