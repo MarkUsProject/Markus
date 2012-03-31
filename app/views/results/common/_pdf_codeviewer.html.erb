@@ -1,0 +1,33 @@
+<div id="image_container" class="image_container">
+  <div id="sel_box"></div>
+    <%# Create a box for each image annotation %>
+    <% @annots.each do |annot| %>
+      <div id="annotation_holder_<%=annot.annotation_text.id%>" class="annotation_holder"></div>
+    <%end%>
+   <div id="image_preview">
+       <%# First image displayed with a different alt message, in case of boolean PDF_SUPPORT set to false %>
+       <li>
+         <%= image_tag(url_for(:action => 'download', :controller => 'results', :select_file_id => submission_file_id, :show_in_browser => true, :file_index => 1), :alt => I18n.t("common.cant_display_image"), :width => "950") %>
+       </li>
+       <% (2..nb_files).each do|i| %>
+         <li>      
+	   <%= image_tag(url_for(:action => 'download', :controller => 'results', :select_file_id => submission_file_id, :show_in_browser => true, :file_index => i), :alt => I18n.t("common.image_downloading"), :width => "950") %>
+         </li>
+       <% end %>
+   </div>
+
+  <%# Keep track of all annotations associated with file  %>
+  <input id="annotation_grid"type="hidden" value="<%=h(@file.get_annotation_grid.to_json)%>"></input>
+  <input id="enable_annotations?"type="hidden" value=<%=(@current_user.ta? || @current_user.admin?) && !@result.released_to_students%>></input>
+  <script type="text/javascript">
+  //<![CDATA[
+    source_code_ready_for_image();
+    <% if (defined? annots) %>
+      <% annots.each do |annot| %>
+          add_annotation_text(<%=annot.annotation_text.id%>,
+          '<%=simple_format(h(escape_javascript(annot.annotation_text.content.to_s)))%>');
+      <% end %>
+    <% end %>
+  //]]>
+  </script>
+</div>

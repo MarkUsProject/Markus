@@ -94,6 +94,7 @@ GEM
     rbx-require-relative (0.0.5)
     rcov (0.9.10)
     rdoc (3.9.2)
+    rghost (0.8.7.6)
     routing-filter (0.2.4)
       actionpack
     ruby-debug (0.10.4)
@@ -134,6 +135,7 @@ DEPENDENCIES
   rails
   rcov
   rdoc
+  rghost
   routing-filter
   ruby-debug
   rubyzip

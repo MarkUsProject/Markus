@@ -295,7 +295,8 @@ en:
       submission_file: "Submission File:"
       test_results: "Test Results:"
       no_file_in_repository: "[No files in repository]"
-      cant_display_image: "Image cannot be displayed. If you are trying to view a pdf file its probably too big to display or you have turned off pdf support. Click on the Download button to download the file instead"
+      cant_display_image: "Image cannot be displayed. If you are trying to view a pdf file, please check if you have turned on pdf support. Click on the Download button to download the file instead"
+      image_downloading: "Pdf page downloading. Please wait."
       test_code: "Test Code"
       criterion_incomplete_error: "Mark unfilled but marking state was set to complete"
 
