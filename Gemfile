@@ -12,7 +12,6 @@ source 'http://rubygems.org'
 gem "rails"
 gem 'exception_notification'
 #gem "prototype-rails" Will be needed with Rails3.1
-gem "db_populate"
 gem "rubyzip"
 gem "ya2yaml"
 gem "i18n"
