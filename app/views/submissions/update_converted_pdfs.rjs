@@ -7,12 +7,16 @@ if submission_collector.safely_stop_child_exited
     submission_collector.safely_stop_child_exited = false
     submission_collector.save
       page.redirect_to :controller => 'results', :action => 'edit',
-        :id => @grouping.current_submission_used.result.id
+      :assignment_id => @grouping.assignment_id,
+      :submission_id => @grouping.current_submission_used.id,
+      :id => @grouping.current_submission_used.result.id
     end
   else
     submission_collector.safely_stop_child_exited = false
     submission_collector.save
     page.redirect_to :controller => 'results', :action => 'edit',
+      :assignment_id => @grouping.assignment_id,
+      :submission_id => @grouping.current_submission_used.id,
       :id => @grouping.current_submission_used.result.id
   end
 end

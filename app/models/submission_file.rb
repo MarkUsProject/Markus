@@ -109,25 +109,27 @@ class SubmissionFile < ActiveRecord::Base
       self.path)
     file_path = File.join(storage_path, self.filename.split('.')[0] + '.jpg')
     self.export_file(storage_path)
+
     # Remove any old copies of this image if they exist
-    FileUtils.remove_file(file_path, true) if File.exists?(file_path)
-    m_logger.log("Starting pdf conversion from #{File.join(storage_path, self.filename)} to #{file_path}")
-    # ImageMagick can only save images with heights not exceeding 65500 pixels.
-    # Larger images result in a conversion failure.
-    begin
-      # This is an ImageMagick command, see http://www.imagemagick.org/script/convert.php for documentation
-      # For some reason, ImageMagick seemed to fail silently when not
-      # redirecting the output to a log file. Let's redirect the output to
-      # "something"
-      `convert -limit memory #{MarkusConfigurator.markus_config_pdf_conv_memory_allowance} -limit map 0 -density 150 -resize 66% #{File.join(storage_path, self.filename)} -append #{file_path} >> #{File.join(RAILS_ROOT, "log", "export-pdf.log")}`
-      # Sometimes, ImageMagick fails silently
-      if File.exists?(file_path)
-        m_logger.log("Successfully converted pdf file to jpg")
-      else
-        m_logger.log("Problem in PDF conversion")
-      end
-    rescue Exception => e
-      m_logger.log("Pdf file couldn't be converted")
+    i = 1
+    filePathToRemove = File.join(storage_path,
+                                 self.filename.split('.')[0] + '_' + sprintf("%04d" % i.to_s()) + '.jpg') 
+    while File.exists?(filePathToRemove)
+      FileUtils.remove_file(filePathToRemove, true)
+      i += 1
+      filePathToRemove = File.join(storage_path,
+                                   self.filename.split('.')[0] + '_' + sprintf("%04d" % i.to_s()) + '.jpg')
+    end
+
+    # Convert a pdf file into a an array of jpg files (one jpg file = one page
+    # of the pdf file)
+    file = RGhost::Convert.new(File.join(storage_path,
+                                  self.filename)).to :jpeg,
+                        :filename => file_path,
+                        :multipage => true,
+                        :resolution => 150
+    if file.error
+      m_logger.log("rghost: Image conversion error")
     end
 
     FileUtils.remove_file(File.join(storage_path, self.filename), true)
