@@ -3,7 +3,7 @@
 %>
   <%=label_tag "select_test_result_id", h(I18n.t("common.test_results")), :class => "inline_label" %>
 <%= link_to image_tag("icons/cog_go.png", :alt => I18n.t("common.test_code"), :title => I18n.t("common.test_code"), :id => "test_icon"),
-     assignment_automated_test_path(:assignment_id => @assignment.id, :result => @result), :id => "test_select_link", :remote => true %>
+     assignment_automated_tests_path(:assignment_id => @assignment.id, :result => @result), :id => "test_select_link", :remote => true %>
 
     <script type='text/javascript'>
     $("test_select_link").observe('ajax:after', function(evt, status, data, xhr) {
