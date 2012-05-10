@@ -263,6 +263,8 @@ ActiveRecord::Schema.define(:version => 20120121222559) do
     t.float    "total_mark",           :default => 0.0
   end
 
+  add_index "results", ["submission_id"], :name => "results_u1", :unique => true
+
   create_table "rubric_criteria", :force => true do |t|
     t.string   "rubric_criterion_name",                :null => false
     t.integer  "assignment_id",                        :null => false
