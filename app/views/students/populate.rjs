@@ -1,1 +1,2 @@
 page.call "populate", @students.to_json
+page << "filter('none');"
