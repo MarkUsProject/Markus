@@ -28,9 +28,9 @@
       <%=raw( f.text_field :short_identifier,
                        :onchange =>  "$(
                             'assignment_repository_folder').setValue(
-                                    $(this).getValue())" )%><br />
+                                    $(this).getValue())", :maxlength => 30 )%><br />
     <% else %>
-      <%= raw( f.text_field :short_identifier ) %><br />
+      <%= raw( f.text_field :short_identifier, :maxlength => 30 ) %><br />
     <% end %>
 
     <%= raw( f.label :description, t(:name) ) %>
