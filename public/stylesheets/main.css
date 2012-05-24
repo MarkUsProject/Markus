@@ -446,7 +446,6 @@ input, .button, .button_2{
 }
 
 .link_button{
-    
   position: relative;
   top: 11px;
   min-width: 100px;
@@ -461,8 +460,11 @@ input, .button, .button_2{
   padding: 4px 25px;
   margin: 5px;
   font-size: 0.85em;
-  display: inline-block;
-  
+}
+
+.link_button::-moz-focus-inner {
+    border:0;
+    padding:0;
 }
 
 .button{
