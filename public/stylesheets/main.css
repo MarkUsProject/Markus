@@ -462,11 +462,6 @@ input, .button, .button_2{
   font-size: 0.85em;
 }
 
-.link_button::-moz-focus-inner {
-    border:0;
-    padding:0;
-}
-
 .button{
   padding: 4px 25px;
 }
@@ -482,6 +477,7 @@ input, .button, .button_2{
   min-width: 0px;
 }
 
+
 input[disabled]{
   background: #DDDDDD;
   color: #AAAAAA;
@@ -492,8 +488,7 @@ input[disabled]:hover {
 }
 
 select{
-   padding-left: 5px;
-   margin: 5px;
+   padding: 0 2px;
    -moz-border-radius: 3px;
    -webkit-border-radius: 3px;
    border: 2px solid #ccc;
