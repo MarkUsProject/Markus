@@ -446,6 +446,7 @@ input, .button, .button_2{
 }
 
 .link_button{
+    
   position: relative;
   top: 11px;
   min-width: 100px;
@@ -460,6 +461,8 @@ input, .button, .button_2{
   padding: 4px 25px;
   margin: 5px;
   font-size: 0.85em;
+  display: inline-block;
+  
 }
 
 .button{
@@ -477,7 +480,6 @@ input, .button, .button_2{
   min-width: 0px;
 }
 
-
 input[disabled]{
   background: #DDDDDD;
   color: #AAAAAA;
@@ -488,7 +490,8 @@ input[disabled]:hover {
 }
 
 select{
-   padding: 0 2px;
+   padding-left: 5px;
+   margin: 5px;
    -moz-border-radius: 3px;
    -webkit-border-radius: 3px;
    border: 2px solid #ccc;
