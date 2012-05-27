@@ -4,6 +4,6 @@ if(@annotation_text.annotation_category_id != nil)
   page.replace_html "annotation_text_list_#{@annotation_text.annotation_category_id}", :partial => 'annotation_list', :locals => {:annotation_category => @annotation_text.annotation_category}
 end
 
-page.call(:update_annotation_text, @id, CGI.escapeHTML(@content))
+page.call(:update_annotation_text, @id, CGI.escapeHTML("Hi"))
 page.call(:hide_all_annotation_content_editors)
 
