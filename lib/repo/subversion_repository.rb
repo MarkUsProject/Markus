@@ -223,7 +223,7 @@ module Repository
         raise "Was expecting a timestamp of type Time"
       end
       target_timestamp = target_timestamp.utc
-      if (!path.nil?)
+      if !path.nil?
         return get_revision(latest_revision_number(path, get_revision_number_by_timestamp(target_timestamp)))
       else
         return get_revision(get_revision_number_by_timestamp(target_timestamp))
@@ -736,7 +736,7 @@ module Repository
 
     # Assumes timestamp is a Time object (which is part of the Ruby
     # standard library)
-    def get_revision_number_by_timestamp(target_timestamp)
+    def get_revision_number_by_timestamp(target_timestamp, path = nil)
       if !target_timestamp.kind_of?(Time)
         raise "Was expecting a timestamp of type Time"
       end

@@ -188,7 +188,7 @@ module Repository
       if !timestamp.kind_of?(Time)
         raise "Was expecting a timestamp of type Time"
       end
-      return get_revision_number_by_timestamp(timestamp)
+      return get_revision_number_by_timestamp(timestamp, path)
     end
 
     # Adds a user to the repository and grants him/her the provided permissions
@@ -435,7 +435,7 @@ module Repository
 
     # gets the "closest matching" revision from the revision-timestamp
     # mapping
-    def get_revision_number_by_timestamp(wanted_timestamp)
+    def get_revision_number_by_timestamp(wanted_timestamp, path = nil)
       if @timestamps_revisions.empty?
         raise "No revisions, so no timestamps."
       end
@@ -457,16 +457,24 @@ module Repository
           if (old_diff <= 0 && new_diff <= 0) ||
             (old_diff <= 0 && new_diff > 0) ||
             (new_diff <= 0 && old_diff > 0)
-            temp_diff = [old_diff, new_diff].max
-            temp_timestamp = mapping[temp_diff.to_s]
-            if @timestamps_revisions[temp_timestamp._dump].path_exists?
-              old_diff = temp_diff   
+            if !path.nil?
+              temp_diff = [old_diff, new_diff].max
+              temp_timestamp = mapping[temp_diff.to_s]
+              if @timestamps_revisions[temp_timestamp._dump].path_exists?(path)
+                old_diff = temp_diff   
+              end
+            else
+              old_diff = [old_diff, new_diff].max
             end
           else
             temp_diff = [old_diff, new_diff].min 
             temp_timestamp = mapping[temp_diff.to_s]
-            if @timestamps_revisions[temp_timestamp._dump].path_exists?
-              old_diff = temp_diff   
+            if !path.nil?
+              if @timestamps_revisions[temp_timestamp._dump].path_exists?(path)
+                old_diff = temp_diff   
+              end
+            else
+              old_diff = [old_diff, new_diff].min 
             end
           end
         end
