@@ -218,12 +218,17 @@ module Repository
     # a revision at a current timestamp
     #    target_timestamp
     # should be a Ruby Time instance
-    def get_revision_by_timestamp(target_timestamp)
+    def get_revision_by_timestamp(target_timestamp, path = nil)
       if !target_timestamp.kind_of?(Time)
         raise "Was expecting a timestamp of type Time"
       end
       target_timestamp = target_timestamp.utc
-      return get_revision(get_revision_number_by_timestamp(target_timestamp))
+      if (!path.nil?)
+        return get_revision(latest_revision_number(path, get_revision_number_by_timestamp(target_timestamp)))
+      else
+        return get_revision(get_revision_number_by_timestamp(target_timestamp))
+      end
+      
     end
 
     # Returns a Repository::TransAction object, to work with. Do operations,

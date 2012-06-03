@@ -133,7 +133,7 @@ module Repository
     end
 
     # Return a RepositoryRevision for a given timestamp
-    def get_revision_by_timestamp(timestamp)
+    def get_revision_by_timestamp(timestamp, path = nil)
       raise NotImplementedError,  "Repository.get_revision_by_timestamp: Not yet implemented"
     end
 
