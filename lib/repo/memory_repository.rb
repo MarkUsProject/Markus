@@ -460,17 +460,17 @@ module Repository
             if !path.nil?
               temp_diff = [old_diff, new_diff].max
               temp_timestamp = mapping[temp_diff.to_s]
-              if @timestamps_revisions[temp_timestamp._dump].path_exists?(path)
+              if !(@timestamps_revisions[temp_timestamp._dump].files_at_path(path)).nil?
                 old_diff = temp_diff   
               end
             else
               old_diff = [old_diff, new_diff].max
             end
           else
-            temp_diff = [old_diff, new_diff].min 
-            temp_timestamp = mapping[temp_diff.to_s]
             if !path.nil?
-              if @timestamps_revisions[temp_timestamp._dump].path_exists?(path)
+              temp_diff = [old_diff, new_diff].min 
+              temp_timestamp = mapping[temp_diff.to_s]
+              if !(@timestamps_revisions[temp_timestamp._dump].files_at_path(path)).nil?
                 old_diff = temp_diff   
               end
             else
