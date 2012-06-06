@@ -18,6 +18,8 @@
 </div>
 <% end %>
 
+<%= render :partial => "shared/navigation_warning.js.erb" %>
+
 <%= form_for @assignment do |f| %>
   <%= render :partial => "shared/error_explanation",
       :locals => { :model => @assignment } %>
@@ -25,18 +27,21 @@
   <legend><%= t("assignment.properties") %></legend>
     <%= raw( f.label :short_identifier, t(:short_identifier) ) %>
     <% if @assignment.id.nil? %>
-      <%=raw( f.text_field :short_identifier,
-                       :onchange =>  "$(
-                            'assignment_repository_folder').setValue(
-                                    $(this).getValue())" )%><br />
+      <%=raw( f.text_field :short_identifier ,
+                       :onchange =>  "set_onbeforeunload(true);
+                       $('assignment_repository_folder').setValue($(this).getValue())" )%><br />
     <% else %>
-      <%= raw( f.text_field :short_identifier ) %><br />
+      <%= raw( f.text_field :short_identifier ,
+                            :onchange =>  "set_onbeforeunload(true);" ) %><br />
     <% end %>
 
     <%= raw( f.label :description, t(:name) ) %>
-    <%= raw( f.text_field :description ) %><br />
+    <%= raw( f.text_field :description,
+                          :onchange => "set_onbeforeunload(true);" ) %><br />
     <%= raw( f.label :message ) %>
-    <%= raw( f.text_area :message, :rows => 8, :cols => 65 ) %><br />
+    <%= raw( f.text_area  :message, 
+                          :rows => 8, :cols => 65,
+                          :onchange => "set_onbeforeunload(true);" ) %><br />
 
     <% if !@sections.empty? %>
       <div id="section_due_dates_type_form_right" class="information">
@@ -47,8 +52,9 @@
 
       <div id="section_due_dates_type_form">
         <%= raw( f.label :section_due_dates_type, t("section.due_dates_type") ) %>
-        <%= raw( f.check_box :section_due_dates_type,
-                        :checked => @assignment.section_due_dates_type ) %>
+        <%= raw( f.check_box  :section_due_dates_type,
+                              :checked => @assignment.section_due_dates_type,
+                              :onclick => "set_onbeforeunload(true);" ) %>
       </div>
 
       <%= observe_field "assignment_section_due_dates_type",
@@ -75,7 +81,7 @@
         </div>
       </div>
     <% end %>
-    <%= raw( f.label :due_date, t(:due_date) ) %>
+    <%= raw( f.label :due_date, t(:due_date), :onchange => "set_onbeforeunload(true);" ) %>
 
     <%# TODO update the global due date with the first due date added. %>
 
@@ -84,7 +90,8 @@
           :locale => I18n.default_locale,
           :after_close => "refresh_due_date();",
           :year_range => 0.years.ago..1.years.from_now,
-          :id => "assignment_due_date"} )%>
+          :id => "assignment_due_date",
+          :onchange => "set_onbeforeunload(true);"  } )%>
 
     <%# TODO The following code seriously needs some clean up  !!!!  %>
 
@@ -94,16 +101,18 @@
    <%= t(:iso_due_date_format_example) %><br />
 
    <%= raw( f.label :repository_folder, t(:repository_folder) ) %>
-   /<%= raw( f.text_field :repository_folder ) %><br />
+   /<%= raw( f.text_field :repository_folder, :onchange => "set_onbeforeunload(true);" ) %><br />
    <%= raw( f.label :allow_web_submits, t("assignment.allow_web_submits") ) %>&nbsp;&nbsp;
    <%= raw( f.radio_button :allow_web_submits,
                       true,
-                      :checked => @assignment.allow_web_submits ) %>
+                      :checked => @assignment.allow_web_submits,
+                      :onchange => "set_onbeforeunload(true);" ) %>
    <%= raw( f.label :allow_web_submits_true,
                t("answer_yes"), :class => "radio_label" ) %>&nbsp;&nbsp;
    <%= raw( f.radio_button :allow_web_submits,
                       false,
-                      :checked => !@assignment.allow_web_submits ) %>
+                      :checked => !@assignment.allow_web_submits, 
+                      :onchange => "set_onbeforeunload(true);" ) %>
    <%= raw( f.label :allow_web_submits_false,
                t("answer_no"),
                :class => "radio_label" )  %><br />
@@ -111,13 +120,15 @@
                 t("assignment.display_grader_names_to_students") ) %>&nbsp;&nbsp;
     <%= raw( f.radio_button :display_grader_names_to_students,
                        true,
-                       :checked => @assignment.display_grader_names_to_students ) %>
+                       :checked => @assignment.display_grader_names_to_students ,
+                       :onchange => "set_onbeforeunload(true);" ) %>
     <%= raw( f.label :display_grader_names_to_students_true,
                 t("answer_yes"),
                 :class => "radio_label" ) %>&nbsp;&nbsp;
     <%= raw( f.radio_button :display_grader_names_to_students,
                        false,
-                       :checked => !@assignment.display_grader_names_to_students ) %>
+                       :checked => !@assignment.display_grader_names_to_students, 
+                       :onchange => "set_onbeforeunload(true);" ) %>
     <%= raw( f.label :display_grader_names_to_students_false,
                 t("answer_no"),
                 :class => "radio_label" ) %>
@@ -137,8 +148,9 @@
         :checked => @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[key],
         :onclick =>"notice_marking_scheme_changed(#{@assignment.id.nil?},
                    '#{Assignment::MARKING_SCHEME_TYPE[key]}',
-                   '#{@assignment.marking_scheme_type}')"
-                ) %>
+                   '#{@assignment.marking_scheme_type}')" ,
+        :onchange => "set_onbeforeunload(true);" ) %>
+
       <%= raw( f.label("marking_scheme_type_" + Assignment::MARKING_SCHEME_TYPE[key],
           h(I18n.t("assignment.marking_scheme.#{value}")),
           :class => "radio_label") ) %>
@@ -203,20 +215,24 @@
                 :class => "inline_label") %>
     <%= raw( f.text_field :group_min,
                      :size => 5,
-                     :maxlength => 3) %>
+                     :maxlength => 3,
+                     :onchange => "set_onbeforeunload(true);" ) %>
     <%= raw( f.label :group_max,
                 t("assignment.group.limit_max"),
                 :class => "inline_label") %>
     <%= raw( f.text_field :group_max,
                      :size => 5,
-                     :maxlength => 3) %>
+                     :maxlength => 3,
+                     :onchange => "set_onbeforeunload(true);" ) %>
   </p>
 
   <p id="group_name_autogenerated_style" class="disable">
     <%= raw( f.check_box :group_name_autogenerated ) %>
     <%= raw( f.label :group_name_autogenerated,
                 t("assignment.group.name_autogenerated"),
-                :class => "checkbox_label") %>
+                :class => "checkbox_label",
+                :onchange => "set_onbeforeunload(true);" ) %>
+                
   </p>
 </div>
   </fieldset>
@@ -338,7 +354,8 @@
   <p id="allow_remark_requests">
     <%= raw( f.check_box(:allow_remarks,
                     {:id => "allow_remarks",
-                    :onchange => "toggle_remark_requests($F('allow_remarks'))"},
+                    :onchange => "toggle_remark_requests($F('allow_remarks'));
+                                  set_onbeforeunload(true);"},
                     true,
                     false) ) %>
     <%= raw( f.label("allow_remarks",
@@ -355,18 +372,23 @@
                                 :after_close => "check_due_date(
                                                     $F('remark_due_date'))",
                                 :year_range => 0.years.ago..1.years.from_now,
-                                :id => "remark_due_date"} ) %>
+                                :id => "remark_due_date",
+                                :onchange => "set_onbeforeunload(true);"  } ) %>
     <%= observe_field "remark_due_date",
                       :function => "check_due_date($F('remark_due_date'));" %>
     <%=t(:iso_due_date_format_example)%><br />
     <%= raw( f.label("remark_message",
                 I18n.t("assignment.remark.message"),
                 :class => "textbox_label") ) %>
-    <%= raw( f.text_area :remark_message, :rows => 8, :cols => 65 ) %>
+    <%= raw( f.text_area  :remark_message, 
+                          :rows => 8, 
+                          :cols => 65, 
+                          :onchange => "set_onbeforeunload(true);" ) %>
   </p>
 </fieldset>
 
-<%= f.submit t(:submit) %>
+<%= f.submit t( :submit,
+                :onclick => "set_onbeforeunload(false);" ) %>
 <% end %>
 
 </div>
