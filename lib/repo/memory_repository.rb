@@ -52,7 +52,7 @@ module Repository
       end
       return false
     end
-
+    
     # Open repository at specified location
     def self.open(location)
       if !self.repository_exists?(location)
@@ -446,10 +446,25 @@ module Repository
       end
 
       # find closest matching timestamp
-      best_match = timestamps_list.shift()
-      old_diff = wanted_timestamp - best_match
-      mapping = {}
-      mapping[old_diff.to_s] = best_match
+      mapping = {}    
+      first_timestamp_found = false
+
+      # find first valid revision
+      while !first_timestamp_found && !timestamps_list.empty? do
+        best_match = timestamps_list.shift()
+        old_diff = wanted_timestamp - best_match
+        mapping[old_diff.to_s] = best_match
+        if !path.nil?
+          curr_files = @timestamps_revisions[best_match._dump].find_files_at_path(path) 
+          if !curr_files.blank?
+            first_timestamp_found = true
+          end
+        else
+          first_timestamp_found = true
+        end
+      end
+
+      # find all other valid revision 
       if !timestamps_list.empty?
         timestamps_list.each do |curr_timestamp|
           new_diff = wanted_timestamp - curr_timestamp
@@ -458,26 +473,27 @@ module Repository
             (old_diff <= 0 && new_diff > 0) ||
             (new_diff <= 0 && old_diff > 0)
             if !path.nil?
-              temp_diff = [old_diff, new_diff].max
-              temp_timestamp = mapping[temp_diff.to_s]
-              if !(@timestamps_revisions[temp_timestamp._dump].files_at_path(path)).nil?
-                old_diff = temp_diff   
+              curr_files = @timestamps_revisions[curr_timestamp._dump].find_files_at_path(path) 
+              if !curr_files.blank? 
+                old_diff = [old_diff, new_diff].max   
               end
             else
               old_diff = [old_diff, new_diff].max
             end
           else
             if !path.nil?
-              temp_diff = [old_diff, new_diff].min 
-              temp_timestamp = mapping[temp_diff.to_s]
-              if !(@timestamps_revisions[temp_timestamp._dump].files_at_path(path)).nil?
-                old_diff = temp_diff   
+              curr_files = @timestamps_revisions[curr_timestamp._dump].find_files_at_path(path) 
+              if !curr_files.blank?
+                old_diff = [old_diff, new_diff].min   
               end
             else
               old_diff = [old_diff, new_diff].min 
             end
           end
         end
+      end
+      
+      if first_timestamp_found
         wanted_timestamp = mapping[old_diff.to_s]
         return @timestamps_revisions[wanted_timestamp._dump]
       else
@@ -521,6 +537,11 @@ module Repository
     def files_at_path(path="/")
       return Hash.new if @files.empty?
       return files_at_path_helper(path)
+    end
+
+    def find_files_at_path(path)
+      return Hash.new if @files.empty?
+      return find_files_at_path_helper(path)
     end
 
     def directories_at_path(path="/")
@@ -586,6 +607,23 @@ module Repository
               object.from_revision = @revision_number # reset revision number
               result[object.name] = object
             end
+          end
+        end
+      end
+      return result
+    end
+
+    def find_files_at_path_helper(path)
+      # Automatically append a root slash if not supplied
+      result = Hash.new(nil)
+      @files.each do |object|
+        alt_path = ""
+        if object.path != '/'
+          alt_path = object.path + '/'
+        end
+        if (object.path == path || alt_path == path)
+          if (object.from_revision + 1) == @revision_number
+            result[object.name] = object
           end
         end
       end

@@ -9,12 +9,13 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
     setup do
       @assignment = Assignment.make
       @group = Group.make
+      @student = Student.make
       @grouping = Grouping.make(:assignment => @assignment,
                                 :group => @group)
 
       StudentMembership.make(:grouping => @grouping,
                              :membership_status => "inviter",
-                             :user => Student.make)
+                             :user => @student)
       grace_period_submission_rule = GracePeriodSubmissionRule.new
       @assignment.replace_submission_rule(grace_period_submission_rule)
       GracePeriodDeduction.destroy_all
@@ -323,6 +324,98 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
       end
 
     end
+    
+    context "submit assignment 1 on time and submit assignment 2 before assignment 1 collection time" do
+      setup do
+        @assignment2 = Assignment.make
+        Group.make
+        @grouping2 = Grouping.make(:assignment => @assignment2,
+                                  :group => @group)
+
+        StudentMembership.make(:grouping => @grouping2,
+                               :membership_status => "inviter",
+                               :user => @student)
+        grace_period_submission_rule = GracePeriodSubmissionRule.new
+        @assignment2.replace_submission_rule(grace_period_submission_rule)
+        GracePeriodDeduction.destroy_all
+
+        grace_period_submission_rule.save
+
+        # On July 1 at 1PM, the instructor sets up the course...
+        pretend_now_is(Time.parse("July 2 2009 1:00PM")) do
+          # Due date is July 30 @ 5PM
+          @assignment2.due_date = Time.parse("July 28 2009 5:00PM")
+          # Add two 24 hour grace periods
+          # Overtime begins at July 28 @ 5PM
+          add_period_helper(@assignment2.submission_rule, 24)
+          add_period_helper(@assignment2.submission_rule, 24)
+          # Collect date is now after July 30 @ 5PM
+          @assignment2.save
+        end
+        # On July 16, the Student logs in, triggering repository folder
+        # creation
+        pretend_now_is(Time.parse("July 16 2009 6:00PM")) do
+          @grouping2.create_grouping_repository_folder
+        end
+      end
+
+      should "deduct 0 grace credits" do
+
+        # The Student submits some files before the due date...
+        submit_files_before_due_date
+
+        # Now we're past the due date, but before the collection date, within the first
+        # grace period
+        submit_files_for_next_assignment_after_due_date_before_collection_time("July 23 2009 9:00PM", "OvertimeFile1.java", "Some overtime contents")
+
+        # An Instructor or Grader decides to begin grading
+        pretend_now_is(Time.parse("July 31 2009 1:00PM")) do
+          members = {}
+          @grouping.accepted_student_memberships.each do |student_membership|
+            members[student_membership.user.id] = student_membership.user.remaining_grace_credits
+          end
+          submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
+          submission = @assignment.submission_rule.apply_submission_rule(submission)
+
+          # Assert that each accepted member of this grouping did not get a GracePeriodDeduction
+          @grouping.reload
+          @grouping.accepted_student_memberships.each do |student_membership|
+            assert_equal members[student_membership.user.id], student_membership.user.remaining_grace_credits
+          end
+
+          @grouping2.accepted_student_memberships.each do |student_membership|
+            members[student_membership.user.id] = student_membership.user.remaining_grace_credits
+          end
+          submission2 = Submission.create_by_timestamp(@grouping2, @assignment2.submission_rule.calculate_collection_time)
+          submission2 = @assignment2.submission_rule.apply_submission_rule(submission2)
+
+          # Assert that each accepted member of this grouping did not get a GracePeriodDeduction
+          @grouping2.reload
+          @grouping2.accepted_student_memberships.each do |student_membership|
+            assert_equal members[student_membership.user.id], student_membership.user.remaining_grace_credits
+          end
+
+          # We should have all files except OvertimeFile1.java and NotIncluded.java in the repository.
+          assert_not_nil submission.submission_files.find_by_filename("TestFile.java")
+          assert_not_nil submission.submission_files.find_by_filename("Test.java")
+          assert_not_nil submission.submission_files.find_by_filename("Driver.java")
+          assert_nil submission.submission_files.find_by_filename("OvertimeFile1.java")
+          assert_nil submission.submission_files.find_by_filename("NotIncluded.java")
+          assert_not_nil submission.result
+
+          # We should only have OvertimeFile1.java in the repository.
+          assert_nil submission2.submission_files.find_by_filename("TestFile.java")
+          assert_nil submission2.submission_files.find_by_filename("Test.java")
+          assert_nil submission2.submission_files.find_by_filename("Driver.java")
+          assert_not_nil submission2.submission_files.find_by_filename("OvertimeFile1.java")
+          assert_nil submission2.submission_files.find_by_filename("NotIncluded.java")
+          assert_not_nil submission2.result
+
+        end
+
+      end
+      
+    end
 
   end
 
@@ -366,8 +459,26 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
     end
   end
 
+  def submit_files_for_next_assignment_after_due_date_before_collection_time(time, filename, text)
+    pretend_now_is(Time.parse(time)) do
+      assert Time.now < @assignment2.due_date
+      assert Time.now < @assignment2.submission_rule.calculate_collection_time
+      @group.access_repo do |repo|
+        txn = repo.get_transaction("test1")
+        txn = add_file_helper2(txn, filename, text)
+        repo.commit(txn)
+      end
+    end
+  end
+
   def add_file_helper(txn, file_name, file_contents)
     path = File.join(@assignment.repository_folder, file_name)
+    txn.add(path, file_contents, '')
+    return txn
+  end
+
+  def add_file_helper2(txn, file_name, file_contents)
+    path = File.join(@assignment2.repository_folder, file_name)
     txn.add(path, file_contents, '')
     return txn
   end
