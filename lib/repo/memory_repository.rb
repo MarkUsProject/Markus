@@ -446,7 +446,7 @@ module Repository
       end
 
       # find closest matching timestamp
-      mapping = {}    
+      mapping = {}
       first_timestamp_found = false
 
       # find first valid revision
@@ -454,12 +454,7 @@ module Repository
         best_match = timestamps_list.shift()
         old_diff = wanted_timestamp - best_match
         mapping[old_diff.to_s] = best_match
-        if !path.nil?
-          curr_files = @timestamps_revisions[best_match._dump].find_files_at_path(path) 
-          if !curr_files.blank?
-            first_timestamp_found = true
-          end
-        else
+        if path.nil? || (!path.nil? && @timestamps_revisions[best_match._dump].revision_at_path(path))
           first_timestamp_found = true
         end
       end
@@ -469,30 +464,18 @@ module Repository
         timestamps_list.each do |curr_timestamp|
           new_diff = wanted_timestamp - curr_timestamp
           mapping[new_diff.to_s] = curr_timestamp
-          if (old_diff <= 0 && new_diff <= 0) ||
-            (old_diff <= 0 && new_diff > 0) ||
-            (new_diff <= 0 && old_diff > 0)
-            if !path.nil?
-              curr_files = @timestamps_revisions[curr_timestamp._dump].find_files_at_path(path) 
-              if !curr_files.blank? 
-                old_diff = [old_diff, new_diff].max   
-              end
-            else
+          if path.nil? || (!path.nil? && @timestamps_revisions[curr_timestamp._dump].revision_at_path(path))
+            if(old_diff <= 0 && new_diff <= 0) ||
+              (old_diff <= 0 && new_diff > 0) ||
+              (new_diff <= 0 && old_diff > 0)
               old_diff = [old_diff, new_diff].max
-            end
-          else
-            if !path.nil?
-              curr_files = @timestamps_revisions[curr_timestamp._dump].find_files_at_path(path) 
-              if !curr_files.blank?
-                old_diff = [old_diff, new_diff].min   
-              end
             else
               old_diff = [old_diff, new_diff].min 
             end
           end
         end
       end
-      
+
       if first_timestamp_found
         wanted_timestamp = mapping[old_diff.to_s]
         return @timestamps_revisions[wanted_timestamp._dump]
@@ -539,9 +522,9 @@ module Repository
       return files_at_path_helper(path)
     end
 
-    def find_files_at_path(path)
-      return Hash.new if @files.empty?
-      return find_files_at_path_helper(path)
+    def revision_at_path(path)
+      return false if @files.empty?
+      return revision_at_path_helper(path)
     end
 
     def directories_at_path(path="/")
@@ -613,9 +596,9 @@ module Repository
       return result
     end
 
-    def find_files_at_path_helper(path)
+    # Find if the revision contains files at the path 
+    def revision_at_path_helper(path)
       # Automatically append a root slash if not supplied
-      result = Hash.new(nil)
       @files.each do |object|
         alt_path = ""
         if object.path != '/'
@@ -623,11 +606,11 @@ module Repository
         end
         if (object.path == path || alt_path == path)
           if (object.from_revision + 1) == @revision_number
-            result[object.name] = object
+            return true
           end
         end
       end
-      return result
+      return false
     end
 
   end # end class MemoryRevision

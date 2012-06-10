@@ -328,7 +328,6 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
     context "submit assignment 1 on time and submit assignment 2 before assignment 1 collection time" do
       setup do
         @assignment2 = Assignment.make
-        Group.make
         @grouping2 = Grouping.make(:assignment => @assignment2,
                                   :group => @group)
 
@@ -359,14 +358,18 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
         end
       end
 
+      teardown do
+        destroy_repos
+      end
+
       should "deduct 0 grace credits" do
 
         # The Student submits some files before the due date...
         submit_files_before_due_date
 
         # Now we're past the due date, but before the collection date, within the first
-        # grace period
-        submit_files_for_next_assignment_after_due_date_before_collection_time("July 23 2009 9:00PM", "OvertimeFile1.java", "Some overtime contents")
+        # grace period.  Submit files for Assignment 2
+        submit_files_for_assignment2_after_due_date_before_collection_time_for_assignment1("July 23 2009 9:00PM", "NotIncluded.java", "Not Included in Asssignment 1")
 
         # An Instructor or Grader decides to begin grading
         pretend_now_is(Time.parse("July 31 2009 1:00PM")) do
@@ -383,18 +386,6 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
             assert_equal members[student_membership.user.id], student_membership.user.remaining_grace_credits
           end
 
-          @grouping2.accepted_student_memberships.each do |student_membership|
-            members[student_membership.user.id] = student_membership.user.remaining_grace_credits
-          end
-          submission2 = Submission.create_by_timestamp(@grouping2, @assignment2.submission_rule.calculate_collection_time)
-          submission2 = @assignment2.submission_rule.apply_submission_rule(submission2)
-
-          # Assert that each accepted member of this grouping did not get a GracePeriodDeduction
-          @grouping2.reload
-          @grouping2.accepted_student_memberships.each do |student_membership|
-            assert_equal members[student_membership.user.id], student_membership.user.remaining_grace_credits
-          end
-
           # We should have all files except OvertimeFile1.java and NotIncluded.java in the repository.
           assert_not_nil submission.submission_files.find_by_filename("TestFile.java")
           assert_not_nil submission.submission_files.find_by_filename("Test.java")
@@ -402,17 +393,43 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
           assert_nil submission.submission_files.find_by_filename("OvertimeFile1.java")
           assert_nil submission.submission_files.find_by_filename("NotIncluded.java")
           assert_not_nil submission.result
-
-          # We should only have OvertimeFile1.java in the repository.
-          assert_nil submission2.submission_files.find_by_filename("TestFile.java")
-          assert_nil submission2.submission_files.find_by_filename("Test.java")
-          assert_nil submission2.submission_files.find_by_filename("Driver.java")
-          assert_not_nil submission2.submission_files.find_by_filename("OvertimeFile1.java")
-          assert_nil submission2.submission_files.find_by_filename("NotIncluded.java")
-          assert_not_nil submission2.result
-
         end
+      end
+      
+      should "deduct 1 grace credits" do
 
+        # The Student submits some files before the due date...
+        submit_files_before_due_date
+
+        # Now we're past the due date, but before the collection date, within the first
+        # grace period.  
+        submit_files_after_due_date_before_collection_time("July 23 2009 9:00PM", "OvertimeFile1.java", "Some overtime contents")
+        #Submit files for Assignment 2
+        submit_files_for_assignment2_after_due_date_before_collection_time_for_assignment1("July 23 2009 9:00PM", "NotIncluded.java", "Not Included in Asssignment 1")
+
+        # An Instructor or Grader decides to begin grading
+        pretend_now_is(Time.parse("July 31 2009 1:00PM")) do
+          members = {}
+          @grouping.accepted_student_memberships.each do |student_membership|
+            members[student_membership.user.id] = student_membership.user.remaining_grace_credits
+          end
+          submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
+          submission = @assignment.submission_rule.apply_submission_rule(submission)
+
+          # Assert that each accepted member of this grouping did not get a GracePeriodDeduction
+          @grouping.reload
+          @grouping.accepted_student_memberships.each do |student_membership|
+            assert_equal members[student_membership.user.id] -1, student_membership.user.remaining_grace_credits
+          end
+
+          # We should have all files except OvertimeFile1.java and NotIncluded.java in the repository.
+          assert_not_nil submission.submission_files.find_by_filename("TestFile.java")
+          assert_not_nil submission.submission_files.find_by_filename("Test.java")
+          assert_not_nil submission.submission_files.find_by_filename("Driver.java")
+          assert_not_nil submission.submission_files.find_by_filename("OvertimeFile1.java")
+          assert_nil submission.submission_files.find_by_filename("NotIncluded.java")
+          assert_not_nil submission.result
+        end
       end
       
     end
@@ -459,7 +476,7 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
     end
   end
 
-  def submit_files_for_next_assignment_after_due_date_before_collection_time(time, filename, text)
+  def submit_files_for_assignment2_after_due_date_before_collection_time_for_assignment1(time, filename, text)
     pretend_now_is(Time.parse(time)) do
       assert Time.now < @assignment2.due_date
       assert Time.now < @assignment2.submission_rule.calculate_collection_time
