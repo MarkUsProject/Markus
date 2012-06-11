@@ -27,4 +27,4 @@ page.replace_html 'flexible_edition_pane_menu',
 page.replace_html "criteria_total_mark", @criterion.assignment.total_mark
 page.sortable 'flexible_criteria_pane_list',
               :constraint => :vertical,
-              :url => {:action => :update_positions, :assignment_id => @criterion.assignment.id}
+              :url => {:action => :update_positions, :aid => @criterion.assignment.id}
