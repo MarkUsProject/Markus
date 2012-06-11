@@ -61,8 +61,8 @@ group :development, :test do
   gem "faker"
   gem "railroady"
   gem "time-warp"
-  gem 'ruby-debug', :platforms => :mri_18
-  gem 'ruby-debug19', :require => 'ruby-debug', :platforms => :mri_19
+  gem "ruby-debug", :platforms => :mri_18
+  gem "debugger", :platforms => :mri_19
   gem "mocha"
 end
 
