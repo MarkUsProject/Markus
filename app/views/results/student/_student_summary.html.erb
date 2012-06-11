@@ -37,7 +37,7 @@
                :locals => {:extra_marks_points => extra_marks_points, :result_id => result.id} %>
 
       <div>
-        <div class="float_left"><strong><%= I18n.t("marker.marks.bonus_marks") %></strong></div>
+        <div class="float_left"><strong><%= I18n.t("marker.marks.bonus_marks").html_safe %></strong></div>
         <div class="float_left" id="extra_marks_bonus"><%= h(result.get_positive_extra_points) %></div>
       </div>
       <div class="clear"></div>

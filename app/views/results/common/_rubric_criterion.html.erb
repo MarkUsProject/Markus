@@ -7,7 +7,7 @@ class="mark_criterion_title_div_level" class="float_left">
 <% if old_mark and !old_mark.mark.nil? %>
 <div id="<%="mark_criterion_title_#{mark.id}_oldmark"%>" class="padding_left_old">
   <strong>
-    <%= I18n.t("marker.marks.old") %>
+    <%= I18n.t("marker.marks.old").html_safe %>
     <%= h(old_mark.mark) %>: <%= h(mark_criterion["level_" + old_mark.mark.to_i.to_s + "_name"]) %>&nbsp;
   </strong>
   <%= h(mark_criterion["level_" + old_mark.mark.to_i.to_s + "_description"]) %>

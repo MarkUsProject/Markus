@@ -1,4 +1,6 @@
 include CsvHelper
+require 'iconv'
+
 # GradeEntryForm can represent a test, lab, exam, etc.
 # A grade entry form has many columns which represent the questions and their total
 # marks (i.e. GradeEntryItems) and many rows which represent students and their
@@ -231,11 +233,15 @@ class GradeEntryForm < ActiveRecord::Base
   # grades_file is the CSV file to be parsed
   # grade_entry_form is the grade entry form that is being updated
   # invalid_lines will store all problematic lines from the CSV file
-  def self.parse_csv(grades_file, grade_entry_form, invalid_lines)
+  def self.parse_csv(grades_file, grade_entry_form, invalid_lines, encoding)
     num_updates = 0
     num_lines_read = 0
     names = []
     totals = []
+    grades_file = StringIO.new(grades_file.read)
+    if encoding != nil
+      grades_file = StringIO.new(Iconv.iconv('UTF-8', encoding, grades_file.read).join)
+    end
 
     # Parse the question names
     CsvHelper::Csv.parse(grades_file.readline) do |row|

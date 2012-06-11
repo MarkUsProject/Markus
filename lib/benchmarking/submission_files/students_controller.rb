@@ -22,7 +22,7 @@ class StudentsController < ApplicationController
     attrs = params[:user]
     # update_attributes supplied by ActiveRecords
     if !@user.update_attributes(attrs)
-      render :action => :edit
+      render :edit
     else
       flash[:edit_notice] = @user.user_name + " has been updated."
       redirect_to :action => 'index'
@@ -51,7 +51,7 @@ class StudentsController < ApplicationController
       end
     rescue RuntimeError => e
       @error = e.message
-      render :action => 'display_error'
+      render :display_error
     end
   end
 

@@ -24,7 +24,7 @@ class GroupsController < ApplicationController
     student = Student.find_by_user_name(params[:student_user_name])
     if student.nil?
       @error = "Could not find student with user name #{params[:student_user_name]}"
-      render :action => 'error_single'
+      render :error_single
       return
     end
     set_membership_status = grouping.student_memberships.empty? ?
@@ -75,7 +75,7 @@ class GroupsController < ApplicationController
       new_grouping_data = @assignment.add_group(params[:new_group_name])
     rescue Exception => e
       @error = e.message
-      render :action => 'error_single'
+      render :error_single
       return 
     end
     @new_grouping = construct_table_row(new_grouping_data, @assignment)
@@ -91,11 +91,11 @@ class GroupsController < ApplicationController
     @removed_groupings = []
     if grouping.has_submission?
         @errors.push(grouping.group.group_name)
-        render :action => "delete_groupings"
+        render :delete_groupings
     else
       grouping.delete_grouping
       @removed_groupings.push(grouping)
-      render :action => "delete_groupings"
+      render :delete_groupings
     end
   end
 
@@ -305,11 +305,11 @@ class GroupsController < ApplicationController
         end
         randomly_assign_graders(params[:graders], @assignment.groupings)
         @groupings_data = construct_table_rows(@assignment.groupings, @assignment)
-        render :action => "modify_groupings"
+        render :modify_groupings
         return
       rescue Exception => e
         @error = e.message
-        render :action => 'error_single'
+        render :error_single
         return
       end
     end
@@ -317,7 +317,7 @@ class GroupsController < ApplicationController
     grouping_ids = params[:groupings]
     if params[:groupings].nil? or params[:groupings].size ==  0
       @error = "You need to select at least one group."
-      render :action => 'error_single'
+      render :error_single
       return
     end
     @grouping_data = {}
@@ -336,7 +336,7 @@ class GroupsController < ApplicationController
             @removed_groupings.push(grouping)
 	  end
         end
-        render :action => "delete_groupings"
+        render :delete_groupings
         return
       
       when "invalid"
@@ -345,7 +345,7 @@ class GroupsController < ApplicationController
            grouping.invalidate_grouping
         end
         @groupings_data = construct_table_rows(groupings, @assignment)
-        render :action => "modify_groupings"
+        render :modify_groupings
         return      
       
       when "valid"
@@ -354,17 +354,17 @@ class GroupsController < ApplicationController
            grouping.validate_grouping
         end
         @groupings_data = construct_table_rows(groupings, @assignment)
-        render :action => "modify_groupings"
+        render :modify_groupings
         return
         
       when "assign"
         @groupings_data = assign_tas_to_groupings(grouping_ids, params[:graders])
-        render :action => "modify_groupings"
+        render :modify_groupings
         return
         
       when "unassign"
         @groupings_data = unassign_tas_to_groupings(grouping_ids, params[:graders])
-        render :action => "modify_groupings"
+        render :modify_groupings
         return
     end
   end

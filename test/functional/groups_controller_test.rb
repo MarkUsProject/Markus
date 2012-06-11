@@ -166,7 +166,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         @new_name = "NeW"
         post_as @admin,
                 :rename_group, {:assignment_id => @assignment.id,
-          :grouping_id => @grouping.id, :new_groupname => @new_name}
+          :id => @grouping.id, :new_groupname => @new_name}
         assert assign_to :assignment
         assert assign_to :grouping
         assert assign_to :group
@@ -177,7 +177,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
       should "with existing name" do
         @new_name = Grouping.make.group.group_name
         post_as @admin, :rename_group, {:assignment_id => @assignment.id,
-          :grouping_id => @grouping.id, :new_groupname => @new_name}
+          :id => @grouping.id, :new_groupname => @new_name}
         assert assign_to :assignment
         assert assign_to :grouping
         assert assign_to :group

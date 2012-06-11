@@ -129,6 +129,7 @@ en:
         type:  "Assignment type"
         overall_comment: "Overall Comment"
         group:
+            empty: "Empty Group"
             assign_over_limit: "You have assigned more than the maximum number of students to group %{group}"
             select_a_group: "Select a group"
             select_one_group: "You need to select at least one group."
@@ -215,6 +216,7 @@ en:
     preview:            "Preview"
     invalid_grouping:   "(invalid)"
     validate:           "Validate"
+    encoding:           "Encoding"
 
     marks_released_notice:  "The marks have been released. You cannot change the grades."
     past_due_date_edit_warning:  "WARNING:  The due date you have selected is in the past."
@@ -293,7 +295,8 @@ en:
       submission_file: "Submission File:"
       test_results: "Test Results:"
       no_file_in_repository: "[No files in repository]"
-      cant_display_image: "Image cannot be displayed. If you are trying to view a pdf file its probably too big to display or you have turned off pdf support. Click on the Download button to download the file instead"
+      cant_display_image: "Image cannot be displayed. If you are trying to view a pdf file, please check if you have turned on pdf support. Click on the Download button to download the file instead"
+      image_downloading: "Pdf page downloading. Please wait."
       test_code: "Test Code"
       criterion_incomplete_error: "Mark unfilled but marking state was set to complete"
 

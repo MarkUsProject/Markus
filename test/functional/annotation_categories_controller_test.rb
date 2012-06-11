@@ -8,215 +8,157 @@ require 'mocha'
 
 class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
-  fixtures :all
+  setup do
+    clear_fixtures
+  end
 
-  context "An unauthenticated and unauthorized user doing a GET" do
-
-    # Since we are not authenticated and authorized, we should be redirected
-    # to the login page
-
-    context "on :index" do
-      setup do
-        get :index, :assignment_id => 1
-      end
-      should respond_with :redirect
-    end
-
-    context "on :get_annotations" do
-      setup do
-        get :get_annotations, :assignment_id => 1,:id => 1
-      end
-      should respond_with :redirect
-    end
-
-    context "on :add_annotation_category" do
-      setup do
-        get :add_annotation_category, :assignment_id => 1
-      end
-      should respond_with :redirect
-    end
-
-    context "on :update_annotation_category" do
-      setup do
-        get :update_annotation_category, :assignment_id => 1
-      end
-      should respond_with :redirect
-    end
-
-    context "on :add_annotation_text" do
-      setup do
-        get :add_annotation_text, :assignment_id => 1, :id => 1
-      end
-      should respond_with :redirect
-    end
-
-    context "on :delete_annotation_category" do
-      setup do
-        get :delete_annotation_category, :assignment_id => 1
-      end
-      should respond_with :redirect
-    end
-
-    context "on :download" do
-      setup do
-        get :download, :assignment_id => 1
-      end
-      should respond_with :redirect
-    end
-
-    context "on :csv_upload" do
-      setup do
-        get :csv_upload, :assignment_id => 1
-      end
-      should respond_with :redirect
-    end
-
-  end # end unauthenticated/unauthorized user GET
-
-  context "An unauthenticated and unauthorized user doing a POST" do
+  context "An unauthenticated user" do
 
     # Since we are not authenticated and authorized, we should be redirected
     # to the login page
 
-    context "on :index" do
-      setup do
-        post :index, :assignment_id => 1
-      end
-      should respond_with :redirect
+    should "on :index" do
+      get :index, :assignment_id => 1
+      assert_response :redirect
     end
 
-    context "on :get_annotations" do
-      setup do
-        post :get_annotations, :assignment_id => 1, :id => 1
-      end
-      should respond_with :redirect
+    should "on :get_annotations" do
+      get :get_annotations, :assignment_id => 1,:id => 1
+      assert_response :redirect
     end
 
-    context "on :add_annotation_category" do
-      setup do
-        post :add_annotation_category, :assignment_id => 1
-      end
-      should respond_with :redirect
+    should "on :add_annotation_category" do
+      get :add_annotation_category, :assignment_id => 1
+      assert_response :redirect
     end
 
-    context "on :update_annotation_category" do
-      setup do
-        post :update_annotation_category, :assignment_id => 1
-      end
-      should respond_with :redirect
+    should "on :update_annotation_category" do
+      get :update_annotation_category, :assignment_id => 1
+      assert_response :redirect
     end
 
-    context "on :update_annotation" do
-      setup do
-        post :update_annotation, :assignment_id => 1, :id => 1
-      end
-      should respond_with :redirect
+    should "on :add_annotation_text" do
+      get :add_annotation_text, :assignment_id => 1, :id => 1
+      assert_response :redirect
     end
 
-    context "on :add_annotation_text" do
-      setup do
-        post :add_annotation_text, :assignment_id => 1, :id => 1
-      end
-      should respond_with :redirect
+    should "on :delete_annotation_category" do
+      get :delete_annotation_category, :assignment_id => 1
+      assert_response :redirect
     end
 
-    context "on :delete_annotation_text" do
-      setup do
-        post :delete_annotation_text, :assignment_id => 1, :id => 1
-      end
-      should respond_with :redirect
+    should "on :download" do
+      get :download, :assignment_id => 1
+      assert_response :redirect
     end
 
-    context "on :delete_annotation_category" do
-      setup do
-        post :delete_annotation_category, :assignment_id => 1
-      end
-      should respond_with :redirect
+    should "on :csv_upload" do
+      get :csv_upload, :assignment_id => 1
+      assert_response :redirect
     end
 
-    context "on :download" do
-      setup do
-        post :download, :assignment_id => 1
-      end
-      should respond_with :redirect
+    should "on :index" do
+      post :index, :assignment_id => 1
+      assert_response :redirect
     end
 
-    context "on :csv_upload" do
-      setup do
-        post :csv_upload, :assignment_id => 1
-      end
-      should respond_with :redirect
+    should "on :get_annotations" do
+      post :get_annotations, :assignment_id => 1, :id => 1
+      :w
+      assert_response :redirect
     end
 
-  end # end unauthenticated/unauthorized user POST
-  
-  context "An unauthenticated and unauthorized user doing a PUT" do
-  
-    context "on :update_annotation" do
-      setup do
-        put :update_annotation, :assignment_id => 1, :id => 1
-      end
-      should respond_with :redirect
+    should "on :add_annotation_category" do
+      post :add_annotation_category, :assignment_id => 1
+      assert_response :redirect
+    end
+
+    should "on :update_annotation_category" do
+      post :update_annotation_category, :assignment_id => 1
+      assert_response :redirect
+    end
+
+    should "on :update_annotation" do
+      post :update_annotation, :assignment_id => 1, :id => 1
+      assert_response :redirect
+    end
+
+    should "on :add_annotation_text" do
+      post :add_annotation_text, :assignment_id => 1, :id => 1
+      assert_response :redirect
+    end
+
+    should "on :delete_annotation_text" do
+      post :delete_annotation_text, :assignment_id => 1, :id => 1
+      assert_response :redirect
+    end
+
+    should "on :delete_annotation_category" do
+      post :delete_annotation_category, :assignment_id => 1
+      assert_response :redirect
+    end
+
+    should "on :download" do
+      post :download, :assignment_id => 1
+      assert_response :redirect
+    end
+
+    should "on :csv_upload" do
+      post :csv_upload, :assignment_id => 1
+      assert_response :redirect
+    end
+
+    should "on :update_annotation" do
+      put :update_annotation, :assignment_id => 1, :id => 1
+      assert_response :redirect
     end
     
-  end # end unauthenticated/unauthorized user PUT
-  
-  context "An unauthenticated and unauthorized user doing a DELETE" do
-  
-    context "on :delete_annotation_text" do
-      setup do
-        delete :delete_annotation_text, :assignment_id => 1, :id => 1
-      end
-      should respond_with :redirect
+    should "on :delete_annotation_text" do
+      delete :delete_annotation_text, :assignment_id => 1, :id => 1
+      assert_response :redirect
     end
 
   end # end unauthenticated/unauthorized user DELETE
   
-  context "An authorized and authenticated user doing a GET" do
-    fixtures  :users, :assignments, :annotation_categories, :annotation_texts
+  context "An admin" do
 
     setup do
-      @admin = users(:olm_admin_1)
-      @assignment = assignments(:assignment_1)
-      @category = annotation_categories(:one)
-      @annotation_text = annotation_texts(:one)
+      @admin = Admin.make
+      @category = AnnotationCategory.make
+      @assignment = @category.assignment
+      @annotation_text = AnnotationText.make(
+                :annotation_category => @category)
     end
 
-    context "on :index" do
-      setup do
-        get_as @admin, :index, :assignment_id => @assignment.id
-      end
-      should_not set_the_flash
-      should render_with_layout :content
-      should render_template :index
-      should respond_with :success
-      should assign_to :annotation_categories
-      should assign_to :assignment
+    should "on :index" do
+      get_as @admin, :index, :assignment_id => @assignment.id
+      assert_equal 0, flash.size
+      assert render_with_layout :content
+      assert render_template :index
+      assert_response :success
+      assert_not_nil assigns :annotation_categories
+      assert_not_nil assigns :assignment
     end
 
-    context "on :get_annotations" do
-      setup do
-         get_as @admin,
-                :get_annotations,
-                :assignment_id => @assignment.id,
-                :id => @category.id
-      end
-      should_not set_the_flash
-      should respond_with :success
-      should assign_to :annotation_category
-      should assign_to :annotation_texts
+    should "on :get_annotations" do
+      get_as @admin,
+            :get_annotations,
+            :assignment_id => @assignment.id,
+            :id => @category.id
+      assert_equal 0, flash.size
+      assert_response :success
+      assert_not_nil assigns :annotation_category
+      assert_not_nil assigns :annotation_texts
     end
 
-    context "on :add_annotation_category" do
-      setup do
-        get_as @admin,
-               :add_annotation_category,
-               :assignment_id => @assignment.id
-      end
-      should respond_with :success
-      should render_template :add_annotation_category #this makes sure it didn't call another action
-      should assign_to :assignment
-      should_not assign_to :annotation_category
+    should "on :add_annotation_category" do
+      get_as @admin,
+              :add_annotation_category,
+              :assignment_id => @assignment.id
+      assert_response :success
+      assert render_template :add_annotation_category #this makes sure it didn't call another action
+      assert_not_nil assigns :assignment
+      assert_nil assigns :annotation_category
     end
 
     context "on :update_annotation_category" do
@@ -227,213 +169,252 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
                :assignment_id => @assignment.id,
                :id => @category.id
         assert_response :success
-        assert assign_to :annotation_category
+        assert_not_nil assigns :annotation_category
         assert_equal I18n.t('annotations.update.annotation_category_success'),
                      flash[:success]
       end
 
-      context "with an error on save" do
-        setup do
-          AnnotationCategory.any_instance.stubs(:save).returns(false)
-          AnnotationCategory.any_instance.stubs(:errors).returns("error")
-        end
+      should "with an error on save" do
+        AnnotationCategory.any_instance.stubs(:save).returns(false)
+        AnnotationCategory.any_instance.stubs(:errors).returns("error")
 
-        should "give error messages properly" do
-          get_as @admin,
-                 :update_annotation_category,
-                 :assignment_id => @assignment.id,
-                 :id => @category.id
-          assert_response :success
-          assert_equal flash[:error], "error"
-          assert assign_to :annotation_category
-        end
-      end
-
-    end
-
-    context "on :update_annotation" do
-      setup do
-        AnnotationText.any_instance.expects(:update_attributes).with(
-              @annotation_text)
-        AnnotationText.any_instance.expects(:save).once
         get_as @admin,
-               :update_annotation,
-               :assignment_id => 1,
-               :id => @annotation_text.id,
-               :annotation_text => @annotation_text
+                :update_annotation_category,
+                :assignment_id => @assignment.id,
+                :id => @category.id
+        assert_response :success
+        assert_equal flash[:error], "error"
+        assert_not_nil assigns :annotation_category
       end
-      should respond_with :success
     end
 
-    context "on :add_annotation_text" do
-      setup do
-        AnnotationText.any_instance.expects(:save).never
-        get_as @admin, :add_annotation_text, :assignment_id => 1, :id => @category.id
-      end
-      should respond_with :success
-      should assign_to :annotation_category
-      should_not assign_to :annotation_text
+    should "on :update_annotation" do
+      AnnotationText.any_instance.expects(:update_attributes).with(
+            @annotation_text)
+      AnnotationText.any_instance.expects(:save).once
+      get_as @admin,
+              :update_annotation,
+              :assignment_id => 1,
+              :id => @annotation_text.id,
+              :annotation_text => @annotation_text
+      assert_response :success
     end
 
-    context "on :delete_annotation_text" do
-      setup do
-        AnnotationText.any_instance.expects(:destroy).once
-        get_as @admin, :delete_annotation_text, :assignment_id => 1, :id => @annotation_text.id
-      end
-      should respond_with :success
+    should "on :add_annotation_text" do
+      AnnotationText.any_instance.expects(:save).never
+      get_as @admin,
+             :add_annotation_text,
+             :assignment_id => 1,
+             :id => @category.id
+      assert_response :success
+      assert_not_nil assigns :annotation_category
+      assert_nil assigns :annotation_text
     end
 
-    context "on :delete_annotation_category" do
-      setup do
-        AnnotationCategory.any_instance.expects(:destroy).once
-        get_as @admin, :delete_annotation_category, :assignment_id => 1, :id => @category.id
-      end
-      should respond_with :success
+    should "on :delete_annotation_text" do
+      AnnotationText.any_instance.expects(:destroy).once
+      get_as @admin, :delete_annotation_text, :assignment_id => 1, :id => @annotation_text.id
+      assert_response :success
+    end
+
+    should "on :delete_annotation_category" do
+      AnnotationCategory.any_instance.expects(:destroy).once
+      get_as @admin, :delete_annotation_category, :assignment_id => 1, :id => @category.id
+      assert_response :success
     end
 
     context "on :download" do
 
-      context "in csv" do
-        setup do
-          get_as @admin,
-                 :download,
-                 :assignment_id => @assignment.id,
-                 :format => 'csv'
-        end
-        should respond_with :success
-        should respond_with_content_type 'application/octet-stream'
+      should "in csv" do
+        get_as @admin,
+                :download,
+                :assignment_id => @assignment.id,
+                :format => 'csv'
+        assert_response :success
+        assert respond_with_content_type 'application/octet-stream'
       end
 
-      context "in yml" do
-        setup do
-          get_as @admin, :download, :assignment_id => @assignment.id, :format => 'yml'
-        end
-        should respond_with :success
-        should respond_with_content_type 'application/octet-stream'
+      should "in yml" do
+        get_as @admin, :download, :assignment_id => @assignment.id, :format => 'yml'
+        assert_response :success
+        assert respond_with_content_type 'application/octet-stream'
       end
 
-      context "in error" do
-        setup do
-          get_as @admin, :download, :assignment_id => @assignment.id, :format => 'xml'
-        end
-        should respond_with :redirect
-        should set_the_flash.to((I18n.t("annotations.upload.flash_error", :format => 'xml')))
+      should "in error" do
+        get_as @admin,
+               :download,
+               :assignment_id => @assignment.id, :format => 'xml'
+        assert_response :redirect
+        assert set_the_flash.to((I18n.t("annotations.upload.flash_error",
+                                        :format => 'xml')))
       end
     end
 
-    context "on :csv_upload" do
-      setup do
-        get_as @admin, :csv_upload, :assignment_id => @assignment.id
-      end
-      should respond_with :redirect
-    end
-  end # end authenticated/authorized user GET
-
-  context "An authorized and authenticated user doing a POST" do
-
-    setup do
-      @admin = users(:olm_admin_1)
-      @assignment = assignments(:assignment_1)
-      @category = annotation_categories(:one)
-      @annotation_text = annotation_texts(:one)
+    should "on :csv_upload" do
+      get_as @admin, :csv_upload, :assignment_id => @assignment.id
+      assert_response :redirect
     end
 
     context "on :add_annotation_category" do
 
-      context "without errors" do
-        setup do
-          AnnotationCategory.any_instance.stubs(:save).returns(true)
-          get_as @admin, :add_annotation_category, :assignment_id => @assignment.id
-        end
-        should respond_with :success
-        should assign_to :assignment
+      should "without errors" do
+        AnnotationCategory.any_instance.stubs(:save).returns(true)
+        get_as @admin,
+               :add_annotation_category,
+               :assignment_id => @assignment.id
+        assert_response :success
+        assert_not_nil assigns :assignment
       end
 
-      context "with error on save" do
-        setup do
-          AnnotationCategory.any_instance.stubs(:save).returns(false)
-          post_as @admin, :add_annotation_category, :assignment_id => @assignment.id
-        end
-        should respond_with :success
-        should assign_to :assignment
-        should assign_to :annotation_category
-        should render_template 'new_annotation_category_error'
+      should "with error on save" do
+        AnnotationCategory.any_instance.stubs(:save).returns(false)
+        post_as @admin,
+                :add_annotation_category,
+                :assignment_id => @assignment.id
+        assert_response :success
+        assert_not_nil assigns :assignment
+        assert_not_nil assigns :annotation_category
+        assert render_template 'new_annotation_category_error'
       end
     end
 
     context "on :add_annotation_text" do
 
-      context "without errors" do
-        setup do
-          AnnotationText.any_instance.stubs(:save).returns(true)
-          get_as @admin, :add_annotation_text, :assignment_id => 1, :id => @category.id
-        end
-        should respond_with :success
-        should assign_to :annotation_category
+      should "without errors" do
+        AnnotationText.any_instance.stubs(:save).returns(true)
+        get_as @admin,
+               :add_annotation_text,
+               :assignment_id => 1,
+               :id => @category.id
+        assert_response :success
+        assert_not_nil assigns :annotation_category
       end
 
-      context "with errors on save" do
-        setup do
-          AnnotationText.any_instance.stubs(:save).returns(false)
-          post_as @admin, :add_annotation_text, :assignment_id => 1, :id => @category.id
-        end
-        should respond_with :success
-        should render_template 'new_annotation_text_error'
-        should assign_to :annotation_category
-        should assign_to :annotation_text
+      should "with errors on save" do
+        AnnotationText.any_instance.stubs(:save).returns(false)
+        post_as @admin, :add_annotation_text, :assignment_id => 1, :id => @category.id
+        assert_response :success
+        assert render_template 'new_annotation_text_error'
+        assert_not_nil assigns :annotation_category
+        assert_not_nil assigns :annotation_text
       end
     end
 
-    context "on :csv_upload" do
-      setup do
-        post_as @admin,
-                :csv_upload,
-                :assignment_id => @assignment.id,
-                :annotation_category_list_csv => 'name, text'
-      end
-      should respond_with :redirect
-      should set_the_flash.to((I18n.t('annotations.upload.success', :annotation_category_number => 1)))
-      should assign_to :assignment
+    should "on :csv_upload" do
+      post_as @admin,
+              :csv_upload,
+              :assignment_id => @assignment.id,
+              :annotation_category_list_csv => StringIO.new("name, text")
+      assert_response :redirect
+      assert set_the_flash.to((I18n.t('annotations.upload.success', :annotation_category_number => 1)))
+      assert_not_nil assigns :assignment
+    end
+
+    should "on :csv_upload route properly" do
+      assert_recognizes({:controller => "annotation_categories", :assignment_id => "1", :action => "csv_upload" },
+        {:path => "assignments/1/annotation_categories/csv_upload",  :method => :post})
+    end
+
+    should "on :csv_upload have valid values in database after an upload of a UTF-8 encoded file parsed as UTF-8" do
+      post_as @admin,
+              :csv_upload,
+              :assignment_id => @assignment.id,
+              :annotation_category_list_csv => fixture_file_upload('../files/test_annotations_UTF-8.csv'),
+              :encoding => "UTF-8"
+      assert_response :redirect
+      test_annotation = @assignment.annotation_categories.find_by_annotation_category_name("AnnotationÈrÉØrr")
+      assert_not_nil test_annotation # annotation should exist
+    end
+
+    should "on :csv_upload have valid values in database after an upload of a ISO-8859-1 encoded file parsed as ISO-8859-1" do
+      post_as @admin,
+              :csv_upload,
+              :assignment_id => @assignment.id,
+              :annotation_category_list_csv => fixture_file_upload('../files/test_annotations_ISO-8859-1.csv'),
+              :encoding => "ISO-8859-1"
+      assert_response :redirect
+      test_annotation = @assignment.annotation_categories.find_by_annotation_category_name("AnnotationÈrÉØrr")
+      assert_not_nil test_annotation # annotation should exist
+    end
+
+    should "on :csv_upload have valid values in database after an upload of a UTF-8 encoded file parsed as ISO-8859-1" do
+      post_as @admin,
+              :csv_upload,
+              :assignment_id => @assignment.id,
+              :annotation_category_list_csv => fixture_file_upload('../files/test_annotations_UTF-8.csv'),
+              :encoding => "ISO-8859-1"
+      assert_response :redirect
+      test_annotation = @assignment.annotation_categories.find_by_annotation_category_name("AnnotationÈrÉØrr")
+      assert_nil test_annotation # annotation should not exist, despite being in file
     end
 
     context "Annotation Categories" do
-      setup do
-        clear_fixtures
-        @assignment = Assignment.make
-        @admin = Admin.make
-      end
-      context "on :yml_upload" do
-        setup do
-          @old_annotation_categories =  @assignment.annotation_categories
-          # Needed, otherwise the test fail
-          @old_annotation_categories.length
-          post_as @admin, :yml_upload, :assignment_id => @assignment.id, :annotation_category_list_yml => "--- \n A:\n - A1\n - A2\n"
-        end
+      should "on :yml_upload" do
+        @old_annotation_categories =  @assignment.annotation_categories
+        # Needed, otherwise the test fail
+        @old_annotation_categories.length
+        post_as @admin, :yml_upload, :assignment_id => @assignment.id, :annotation_category_list_yml => "--- \n A:\n - A1\n - A2\n"
 
-        should respond_with :redirect
-        should set_the_flash.to((I18n.t('annotations.upload.success', :annotation_category_number => 1)))
-        should assign_to :assignment
-        should "have added 1 annot. categories" do
-          @assignment.reload
-          new_categories_list = @assignment.annotation_categories
-          assert_equal(@old_annotation_categories.length + 1, (new_categories_list.length))
-        end
+        assert_response :redirect
+        assert set_the_flash.to((I18n.t('annotations.upload.success', :annotation_category_number => 1)))
+        assert_not_nil assigns :assignment
+        @assignment.reload
+        new_categories_list = @assignment.annotation_categories
+        assert_equal(@old_annotation_categories.length + 1, (new_categories_list.length))
       end
 
-      context "on :yml_upload with an error" do
-        setup do
-          @old_annotation_categories =   @assignment.annotation_categories
-          post_as @admin, :yml_upload, :assignment_id => @assignment.id, :annotation_category_list_yml => "--- \n A:\n - A1\n A2\n"
-        end
+      should "on :yml_upload with an error" do
+        @old_annotation_categories = @assignment.annotation_categories
+        post_as @admin,
+                :yml_upload,
+                :assignment_id => @assignment.id,
+                :annotation_category_list_yml => "--- \n A:\n - A1\n A2\n"
 
-        should respond_with :redirect
-        should set_the_flash.to((I18n.t('annotations.upload.syntax_error', :error => "syntax error on line 4, col -1: `'")))
-        should assign_to :assignment
-        should "have added 0 annot. categories" do
-          @assignment.reload
-          new_categories_list = @assignment.annotation_categories
-          assert_equal(@old_annotation_categories.length, (new_categories_list.length))
-        end
+        assert_response :redirect
+        assert set_the_flash.to((I18n.t('annotations.upload.syntax_error', :error => "syntax error on line 4, col -1: `'")))
+        assert_not_nil assigns :assignment
+        @assignment.reload
+        new_categories_list = @assignment.annotation_categories
+        assert_equal(@old_annotation_categories.length,
+                     (new_categories_list.length))
+      end
+
+      should "on :yml_upload route properly" do
+        assert_recognizes({:controller => "annotation_categories", :assignment_id => "1", :action => "yml_upload" },
+          {:path => "assignments/1/annotation_categories/yml_upload",  :method => :post})
+      end
+
+      should "on :yml_upload have valid values in database after an upload of a UTF-8 encoded file parsed as UTF-8" do
+        post_as @admin,
+                :yml_upload,
+                :assignment_id => @assignment.id,
+                :annotation_category_list_yml => fixture_file_upload('../files/test_annotations_UTF-8.yml'),
+                :encoding => "UTF-8"
+        assert_response :redirect
+        test_annotation = @assignment.annotation_categories.find_by_annotation_category_name("AnnotationÈrÉØrr")
+        assert_not_nil test_annotation # annotation should exist
+      end
+
+      should "on :yml_upload have valid values in database after an upload of a ISO-8859-1 encoded file parsed as ISO-8859-1" do
+        post_as @admin,
+                :yml_upload,
+                :assignment_id => @assignment.id,
+                :annotation_category_list_yml => fixture_file_upload('../files/test_annotations_ISO-8859-1.yml'),
+                :encoding => "ISO-8859-1"
+        assert_response :redirect
+        test_annotation = @assignment.annotation_categories.find_by_annotation_category_name("AnnotationÈrÉØrr")
+        assert_not_nil test_annotation # annotation should exist
+      end
+
+      should "on :yml_upload have valid values in database after an upload of a UTF-8 encoded file parsed as ISO-8859-1" do
+        post_as @admin,
+                :yml_upload,
+                :assignment_id => @assignment.id,
+                :annotation_category_list_yml => fixture_file_upload('../files/test_annotations_UTF-8.yml'),
+                :encoding => "ISO-8859-1"
+        assert_response :redirect
+        test_annotation = @assignment.annotation_categories.find_by_annotation_category_name("AnnotationÈrÉØrr")
+        assert_nil test_annotation # annotation should not exist, despite being in file
       end
     end
   end

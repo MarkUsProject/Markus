@@ -4,33 +4,32 @@
     <%= image_tag "handle.png" %>
   </span>
   <span class="criterion_title_div link">
-    <%= link_to_remote truncate(criterion.rubric_criterion_name,
+    <%= link_to truncate(criterion.rubric_criterion_name,
                                :length => 30,
                                :omission => '...'),
-                       :url => edit_assignment_rubric_path(@assignment,
-                                                           criterion),
-		       :method => 'get',
-                       :html => {:id => "criterion_title_#{criterion.id}"} %>
+                       edit_assignment_rubric_path(@assignment, criterion),
+                       :id => "criterion_title_#{criterion.id}", 
+                       :remote => true %>
   </span>
   <span class="criterion_arrow">
     <% if location != :first and location != :single %>
-    <%= link_to_remote image_tag("icons/bullet_arrow_up.png",
-			                    :alt => t('rubric_criteria.move_up')),
-          	       :url => move_criterion_assignment_rubric_path(
+    <%= link_to image_tag("icons/bullet_arrow_up.png",
+			             :alt => t('rubric_criteria.move_up')),
+          	      move_criterion_assignment_rubric_path(
 				  @assignment,
 				  criterion,
 				  :position => criterion.position,
 				  :direction => :up),
-          	      :method => 'get' %>
+          	      :remote => true %>
     <% end %> <br /> <% if  location != :last and location != :single %>
-    <%= link_to_remote image_tag("icons/bullet_arrow_down.png",
+    <%= link_to image_tag("icons/bullet_arrow_down.png",
 		                 :alt =>  t('rubric_criteria.move_down')),
-		       :url => move_criterion_assignment_rubric_path(
+		          move_criterion_assignment_rubric_path(
 				  @assignment,
 				  criterion,
 				  :position => criterion.position,
-		    	          :direction => :down),
-		      :method => 'get' %>
+		    	  :direction => :down),
+		          :remote => true %>
     <% end %>
   </span>
   <span id="criterion_weight_<%= criterion.id %>" class="criterion_weight">

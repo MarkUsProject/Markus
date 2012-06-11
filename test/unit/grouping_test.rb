@@ -5,6 +5,8 @@ require 'shoulda'
 require 'machinist'
 require 'mocha'
 
+
+
 class GroupingTest < ActiveSupport::TestCase
 
   should belong_to :grouping_queue
@@ -14,6 +16,9 @@ class GroupingTest < ActiveSupport::TestCase
   should have_many :submissions
   should have_many :notes
 
+  setup do
+    clear_fixtures
+  end
 
   context "A good grouping model" do
     setup do
@@ -55,6 +60,10 @@ class GroupingTest < ActiveSupport::TestCase
       assert_equal(Time.now.min, last_modified.min)
     end
 
+    should "display Empty Group since no students in the group" do
+      assert_equal "Empty Group", @grouping.get_all_students_in_group
+    end
+
     context "and two unassigned tas" do
       setup do
         @ta2 = Ta.make
@@ -77,11 +86,11 @@ class GroupingTest < ActiveSupport::TestCase
     context "with two student members" do
       setup do
         # should consist of inviter and another student
-        @membership = StudentMembership.make(
+        @membership = StudentMembership.make(:user => Student.make(:user_name => "student1"),
           :grouping => @grouping,
           :membership_status => StudentMembership::STATUSES[:accepted])
 
-        @inviter_membership = StudentMembership.make(
+        @inviter_membership = StudentMembership.make(:user => Student.make(:user_name => "student2"),
           :grouping => @grouping,
           :membership_status => StudentMembership::STATUSES[:inviter])
         @inviter = @inviter_membership.user
@@ -99,6 +108,10 @@ class GroupingTest < ActiveSupport::TestCase
           @grouping.group_name_with_student_user_names
         end
       end
+
+  should "display comma separated list of students' usernames" do
+    assert_equal "student1, student2", @grouping.get_all_students_in_group
+  end
 
       should "be valid" do
         assert_equal @grouping.student_membership_number, 2
@@ -447,7 +460,7 @@ class GroupingTest < ActiveSupport::TestCase
 '''Titanic,ta1
 Ukishima Maru,ta1,ta2
 Blanche Nef,ta2'''
-      failures = Grouping.assign_tas_by_csv(csv_file_data, @assignment.id)
+      failures = Grouping.assign_tas_by_csv(csv_file_data, @assignment.id, nil)
 
       # This should be +1 ta_memberships, because one of those TAs is already
       # assigned to Ukishima Maru in the fixtures
@@ -459,7 +472,7 @@ Blanche Nef,ta2'''
       csv_file_data = '''Titanic,ta1
 Uk125125ishima Maru,ta1,ta2
 Blanche Nef,ta2'''
-      failures = Grouping.assign_tas_by_csv(csv_file_data, @assignment.id)
+      failures = Grouping.assign_tas_by_csv(csv_file_data, @assignment.id, nil)
 
       assert_equal 0, @grouping.ta_memberships.count
       assert_equal failures[0], "Uk125125ishima Maru"
@@ -488,4 +501,180 @@ Blanche Nef,ta2'''
       assert !@grouping.can_invite?(@student_cannot_invite)
     end
   end
+
+  context "Assignment has a grace period of 24 hours after due date" do
+    setup do
+      @assignment = Assignment.make
+      @group = Group.make
+      grace_period_submission_rule = GracePeriodSubmissionRule.new
+      @assignment.replace_submission_rule(grace_period_submission_rule)
+      GracePeriodDeduction.destroy_all
+      grace_period_submission_rule.save
+
+      # On July 1 at 1PM, the instructor sets up the course...
+      pretend_now_is(Time.parse("July 1 2009 1:00PM")) do
+        # Due date is July 23 @ 5PM
+        @assignment.due_date = Time.parse("July 23 2009 5:00PM")
+        # Overtime begins at July 23 @ 5PM
+        # Add a 24 hour grace period
+        period = Period.new
+        period.submission_rule = @assignment.submission_rule
+        period.hours = 24
+        period.save
+        # Collect date is now after July 24 @ 5PM
+        @assignment.save
+      end
+    end
+
+    teardown do
+      destroy_repos
+    end
+
+    context "A grouping of one student submitting an assignment" do
+      setup do
+        # grouping of only one student
+        @grouping = Grouping.make(:assignment => @assignment, :group => @group)
+        @inviter_membership = StudentMembership.make(:user => Student.make(:user_name => "student1"),
+          :grouping => @grouping,
+          :membership_status => StudentMembership::STATUSES[:inviter])
+        @inviter = @inviter_membership.user
+
+        # On July 15, the Student logs in, triggering repository folder creation
+        pretend_now_is(Time.parse("July 15 2009 6:00PM")) do
+          @grouping.create_grouping_repository_folder
+        end
+      end
+
+      should "not deduct grace credits because submission is on time" do
+
+        # Check the number of member in this grouping
+        assert_equal 1, @grouping.student_membership_number
+
+        submit_files_before_due_date
+
+        # An Instructor or Grader decides to begin grading
+        pretend_now_is(Time.parse("July 28 2009 1:00PM")) do
+          submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
+          submission = @assignment.submission_rule.apply_submission_rule(submission)
+
+          @grouping.reload
+          # Should be no deduction because submitting on time
+          assert_equal 0, @grouping.grace_period_deduction_single
+        end
+      end
+
+      should "deduct one grace credit" do
+
+        # Check the number of member in this grouping
+        assert_equal 1, @grouping.student_membership_number
+        # Make sure the available grace credits are enough
+        assert @grouping.available_grace_credits >= 1
+
+        submit_files_after_due_date("July 24 2009 9:00AM", "LateSubmission.java", "Some overtime contents")
+
+        # An Instructor or Grader decides to begin grading
+        pretend_now_is(Time.parse("July 28 2009 1:00PM")) do
+          submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
+          submission = @assignment.submission_rule.apply_submission_rule(submission)
+
+          @grouping.reload
+          # Should display 1 credit deduction because of one-day late submission
+          assert_equal 1, @grouping.grace_period_deduction_single
+        end
+      end
+
+    end # end of context "A grouping of one student submitting an assignment"
+
+    context "A grouping of two students submitting an assignment" do
+      setup do
+        # grouping of two students
+        @grouping = Grouping.make(:assignment => @assignment, :group => @group)
+        # should consist of inviter and another student
+        @membership = StudentMembership.make(:user => Student.make(:user_name => "student1"),
+          :grouping => @grouping,
+          :membership_status => StudentMembership::STATUSES[:accepted])
+
+        @inviter_membership = StudentMembership.make(:user => Student.make(:user_name => "student2"),
+          :grouping => @grouping,
+          :membership_status => StudentMembership::STATUSES[:inviter])
+        @inviter = @inviter_membership.user
+
+        # On July 15, the Student logs in, triggering repository folder creation
+        pretend_now_is(Time.parse("July 15 2009 6:00PM")) do
+          @grouping.create_grouping_repository_folder
+        end
+      end
+
+      should "not deduct grace credits because submission is on time" do
+
+        # Check the number of member in this grouping
+        assert_equal 2, @grouping.student_membership_number
+
+        submit_files_before_due_date
+
+        # An Instructor or Grader decides to begin grading
+        pretend_now_is(Time.parse("July 28 2009 1:00PM")) do
+          submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
+          submission = @assignment.submission_rule.apply_submission_rule(submission)
+
+          @grouping.reload
+          # Should be no deduction because submitting on time
+          assert_equal 0, @grouping.grace_period_deduction_single
+        end
+      end
+
+      should "deduct one grace credit" do
+
+        # Check the number of member in this grouping
+        assert_equal 2, @grouping.student_membership_number
+        # Make sure the available grace credits are enough
+        assert @grouping.available_grace_credits >= 1
+
+        submit_files_after_due_date("July 24 2009 9:00AM", "LateSubmission.java", "Some overtime contents")
+
+        # An Instructor or Grader decides to begin grading
+        pretend_now_is(Time.parse("July 28 2009 1:00PM")) do
+          submission = Submission.create_by_timestamp(@grouping, @assignment.submission_rule.calculate_collection_time)
+          submission = @assignment.submission_rule.apply_submission_rule(submission)
+
+          @grouping.reload
+          # Should display 1 credit deduction because of one-day late submission
+          assert_equal 1, @grouping.grace_period_deduction_single
+        end
+      end
+
+    end # end of context "A grouping of two students submitting an assignment"
+
+  end # end of context "Assignment has a grace period of 24 hours after due date"
+
+  def submit_files_before_due_date
+    pretend_now_is(Time.parse("July 20 2009 5:00PM")) do
+      assert Time.now < @assignment.due_date
+      assert Time.now < @assignment.submission_rule.calculate_collection_time
+      @group.access_repo do |repo|
+        txn = repo.get_transaction("test")
+        txn = add_file_helper(txn, 'TestFile.java', 'Some contents for TestFile.java')
+        repo.commit(txn)
+      end
+    end
+  end
+
+  def submit_files_after_due_date(time, filename, text)
+    pretend_now_is(Time.parse(time)) do
+      assert Time.now > @assignment.due_date
+      assert Time.now < @assignment.submission_rule.calculate_collection_time
+      @group.access_repo do |repo|
+        txn = repo.get_transaction("test")
+        txn = add_file_helper(txn, filename, text)
+        repo.commit(txn)
+      end
+    end
+  end
+
+  def add_file_helper(txn, file_name, file_contents)
+    path = File.join(@assignment.repository_folder, file_name)
+    txn.add(path, file_contents, '')
+    return txn
+  end
+
 end

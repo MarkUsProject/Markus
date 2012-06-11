@@ -64,6 +64,11 @@ class StudentsControllerTest < AuthenticatedControllerTest
       assert_response :redirect
       assert_not_nil Student.find_by_user_name('jdoe')
     end
+    
+    should "recognize remote action for add a new section modal" do
+      assert_recognizes( {:controller => "students", :action => "add_new_section" },
+      {:path => "students/add_new_section", :method => "get"} )
+    end
 
     should "not be able to create a student with missing data" do
       post_as @admin,
@@ -92,6 +97,11 @@ class StudentsControllerTest < AuthenticatedControllerTest
       setup do
         @student = Student.make
         @section = Section.make
+      end
+
+      should "recognize action to bulk modify for a student" do
+        assert_recognizes( {:action => "bulk_modify", :controller => "students"},
+               {:path => "students/bulk_modify", :method => "post"} )
       end
 
       should "be able to edit a student" do
@@ -136,6 +146,52 @@ class StudentsControllerTest < AuthenticatedControllerTest
                      @student.section,
                      'should have been added to section' + @section.name
 
+      end
+
+      should "be able to upload a student CSV file without sections" do
+        post_as @admin,
+                :upload_student_list,
+                :userlist => fixture_file_upload('../classlist-csvs/new_students.csv')
+        assert_response :redirect
+        assert_redirected_to(:controller => "students", :action => 'index')
+        c8mahler = Student.find_by_user_name('c8mahlernew')
+        assert_not_nil c8mahler
+        assert_generates "/en/students/upload_student_list", :controller => "students", :action => "upload_student_list"
+        assert_recognizes({:controller => "students", :action => "upload_student_list" },
+          {:path => "students/upload_student_list", :method => :post})
+      end
+
+      should "have valid values in database after an upload of a UTF-8 encoded file parsed as UTF-8" do
+        post_as @admin,
+                :upload_student_list,
+                :userlist => fixture_file_upload('../files/test-students-utf8.csv'),
+                :encoding => "UTF-8"
+        assert_response :redirect
+        assert_redirected_to(:controller => "students", :action => 'index')
+        test_student = Student.find_by_user_name('c2ÈrÉØrr')
+        assert_not_nil test_student # student should exist
+      end
+
+      should "have valid values in database after an upload of a ISO-8859-1 encoded file parsed as ISO-8859-1" do
+        post_as @admin,
+                :upload_student_list,
+                :userlist => fixture_file_upload('../files/test-students-iso-8859-1.csv'),
+                :encoding => "ISO-8859-1"
+        assert_response :redirect
+        assert_redirected_to(:controller => "students", :action => 'index')
+        test_student = Student.find_by_user_name('c2ÈrÉØrr')
+        assert_not_nil test_student # student should exist
+      end
+
+      should "have invalid values in database after an upload of a UTF-8 encoded file parsed as ISO-8859-1" do
+        post_as @admin,
+                :upload_student_list,
+                :userlist => fixture_file_upload('../files/test-students-utf8.csv'),
+                :encoding => "ISO-8859-1"
+        assert_response :redirect
+        assert_redirected_to(:controller => "students", :action => 'index')
+        test_student = Student.find_by_user_name('c2ÈrÉØrr')
+        assert_nil test_student # student should not be found, despite existing in the CSV file
       end
     end  # -- with a student
   end  # -- An admin

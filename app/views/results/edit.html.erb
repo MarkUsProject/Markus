@@ -7,7 +7,9 @@
 <% # UI LIBRARIES %>
 <%= javascript_include_tag "livepipe/livepipe.js",
   "livepipe/window.js",
-  "livepipe/tabs.js" %>
+  "livepipe/tabs.js",
+  "effects.js",
+  "dragdrop.js" %>
 
 <%= javascript_include_tag "effects.js" %>
 <%= javascript_include_tag "controls.js" %>
@@ -93,7 +95,7 @@ function check_working() {
 <%
 # Javascript for test result window
 %>
-<%= render :partial => "results/common/test_result_window.html" %>
+<%= render :partial => "assignments/test_result_window.html", :locals => {:aid => @assignment.id}  %>
 
 <%= render :partial => "results/common/annotations.js" %>
 <%= render :partial => "results/marker/setup_annotation_categories.js" %>
@@ -104,7 +106,9 @@ function check_working() {
 </div>
 
 <div id="title_bar">
-<h1><%= t('results.title', {:assignment_name => @assignment.short_identifier, :group_name => @group.group_name}) %>
+<h1>
+<%= t('results.title', {:assignment_name => @assignment.short_identifier, :group_name => @group.group_name}) %>
+(<%= @grouping.get_all_students_in_group %>)
 </h1>
 </div>
 <div class="wrapLeft">

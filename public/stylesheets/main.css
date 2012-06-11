@@ -462,6 +462,11 @@ input, .button, .button_2{
   font-size: 0.85em;
 }
 
+.link_button::-moz-focus-inner {
+    border:0;
+    padding:0;
+}
+
 .button{
   padding: 4px 25px;
 }
@@ -477,7 +482,6 @@ input, .button, .button_2{
   min-width: 0px;
 }
 
-
 input[disabled]{
   background: #DDDDDD;
   color: #AAAAAA;
@@ -488,7 +492,8 @@ input[disabled]:hover {
 }
 
 select{
-   padding: 0 2px;
+   padding-left: 5px;
+   margin: 5px;
    -moz-border-radius: 3px;
    -webkit-border-radius: 3px;
    border: 2px solid #ccc;
@@ -927,6 +932,16 @@ input#extra_mark_description{
    border: 1px solid #000000;
    -moz-border-radius: 5px;
    -webkit-border-radius: 5px;
+}
+
+#add_new_section_dialog {
+  background: white;
+  border: 1px solid #000000;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  width: 375px;
+  height: 165px;
+  text-align: center;
 }
 
 #about_dialog {
@@ -1997,4 +2012,10 @@ pre#test_result_content {
 
 #curent_time{
   padding: 10px 0px 10px 0px;
+}
+
+.table-button {
+	margin: 2px;
+	padding: 2px;
+	min-width: 0px;
 }

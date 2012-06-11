@@ -9,10 +9,9 @@
 source 'http://rubygems.org'
 
 # Bundler requires these gems in all environments
-gem "rails"
+gem "rails", "3.0.13"
 gem 'exception_notification'
 #gem "prototype-rails" Will be needed with Rails3.1
-gem "db_populate"
 gem "rubyzip"
 gem "ya2yaml"
 gem "i18n"
@@ -65,4 +64,12 @@ group :development, :test do
   gem 'ruby-debug', :platforms => :mri_18
   gem 'ruby-debug19', :require => 'ruby-debug', :platforms => :mri_19
   gem "mocha"
+end
+
+# If you want to be able to view and annotate PDF files,
+# make sure that this group is included. GhostScript has to be
+# installed for rghost to work well. You also need to set
+# the PDF_SUPPORT bool to true in the config file(s).
+group :rghost do
+  gem "rghost"
 end

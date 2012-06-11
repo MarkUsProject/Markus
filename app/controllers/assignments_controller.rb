@@ -10,7 +10,8 @@ class AssignmentsController < ApplicationController
                                  :decline_invitation,
                                  :index,
                                  :student_interface,
-                                 :update_collected_submissions]
+                                 :update_collected_submissions,
+                                 :render_test_result]
 
   before_filter      :authorize_for_student,
                      :only => [:student_interface,
@@ -23,11 +24,30 @@ class AssignmentsController < ApplicationController
                               :decline_invitation]
 
   before_filter      :authorize_for_user,
-                     :only => [:index]
+                     :only => [:index, :render_test_result]
 
   auto_complete_for  :assignment,
                      :name
   # Publicly accessible actions ---------------------------------------
+
+  #=== Description
+  # Action called via Rails' remote_function from the test_result_window partial
+  # Prepares test result and updates content in window.
+  def render_test_result
+    @assignment = Assignment.find(params[:aid])
+    @test_result = TestResult.find(params[:test_result_id])
+
+    # Students can use this action only, when marks have been released
+    if current_user.student? &&
+        (@test_result.submission.grouping.membership_status(current_user).nil? ||
+        @test_result.submission.result.released_to_students == false)
+      render :partial => 'shared/handle_error',
+       :locals => {:error => I18n.t('test_result.error.no_access', :test_result_id => @test_result.id)}
+      return
+    end
+
+    render :template => 'assignments/render_test_result', :layout => "plain"
+  end
 
   def student_interface
     @assignment = Assignment.find(params[:id])
@@ -48,14 +68,22 @@ class AssignmentsController < ApplicationController
     if @grouping.nil?
       if @assignment.group_max == 1
         begin
-          @student.create_group_for_working_alone_student(@assignment.id)
+          # fix for issue #627
+          # currently create_group_for_working_alone_student only returns false
+          # when saving a grouping throws an exception
+          if !@student.create_group_for_working_alone_student(@assignment.id)
+            # if create_group_for_working_alone_student returned false then the student
+            # must have an ( empty ) existing grouping that he is not a member of.
+            # we must delete this grouping for the transaction to succeed.
+            Grouping.find_by_group_id_and_assignment_id( Group.find_by_group_name(@student.user_name), @assignment.id).destroy
+          end
         rescue RuntimeError => @error
           render 'shared/generic_error', :layout => 'error'
           return
         end
         redirect_to :action => 'student_interface', :id => @assignment.id
       else
-        render :action => 'student_interface', :layout => 'no_menu_header'
+        render :student_interface, :layout => 'no_menu_header'
         return
       end
     else
@@ -101,6 +129,8 @@ class AssignmentsController < ApplicationController
     @assignments = Assignment.all(:order => :id)
     @grade_entry_forms = GradeEntryForm.all(:order => :id)
     if current_user.student?
+      #get the section of current user
+      @section = current_user.section
       # get results for assignments for the current user
       @a_id_results = Hash.new()
       @assignments.each do |a|
@@ -128,12 +158,12 @@ class AssignmentsController < ApplicationController
         end
       end
 
-      render :action => "student_assignment_list"
+      render :student_assignment_list
       return
     elsif current_user.ta?
-      render :action => "grader_index"
+      render :grader_index
     else
-      render :action => 'index'
+      render :index
     end
   end
 
@@ -175,7 +205,7 @@ class AssignmentsController < ApplicationController
       rescue Exception, RuntimeError => e
         @assignment.errors.add(:base, I18n.t("assignment.error",
                                               :message => e.message))
-        render :action => 'edit', :id => @assignment.id
+        render :edit, :id => @assignment.id
       return
     end
 
@@ -184,7 +214,7 @@ class AssignmentsController < ApplicationController
       redirect_to :action => 'edit', :id => params[:id]
       return
     else
-      render :action => 'edit', :id => @assignment.id
+      render :edit, :id => @assignment.id
     end
   end
 
@@ -203,7 +233,7 @@ class AssignmentsController < ApplicationController
     # set default value if web submits are allowed
     @assignment.allow_web_submits =
         !MarkusConfigurator.markus_config_repository_external_submits_only?
-    render :action => 'new'
+    render :new
   end
 
   # Called after a new assignment form is submitted.
@@ -219,7 +249,7 @@ class AssignmentsController < ApplicationController
       if !@assignment.save
         @assignments = Assignment.all
         @sections = Section.all
-        render :action => :new
+        render :new
         return
       end
       if params[:persist_groups_assignment]
@@ -319,7 +349,15 @@ class AssignmentsController < ApplicationController
           raise I18n.t('create_group.fail.can_not_work_alone',
                         :group_min => @assignment.group_min)
         end
-        @student.create_group_for_working_alone_student(@assignment.id)
+        # fix for issue #627
+        # currently create_group_for_working_alone_student only returns false
+        # when saving a grouping throws an exception
+        if !@student.create_group_for_working_alone_student(@assignment.id)
+          # if create_group_for_working_alone_student returned false then the student
+          # must have an ( empty ) existing grouping that he is not a member of.
+          # we must delete this grouping for the transaction to succeed.
+          Grouping.find_by_group_id_and_assignment_id( Group.find_by_group_name(@student.user_name), @assignment.id).destroy
+        end
       else
         @student.create_autogenerated_name_group(@assignment.id)
       end

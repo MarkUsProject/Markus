@@ -1,7 +1,7 @@
 <%= remote_form_for criterion,
 	     :as => :rubric_criterion,
 	     :url => {:action => 'update',
-		      :id => criterion.id} do |f| %>
+		   :id => criterion.id} do |f| %>
 
 <h2>
   <span id="selected_criterion_name">
@@ -14,17 +14,6 @@
 </div>
 
 <div class="main_rubric_criteria_edit">
-  <div class="align_text_right">
-    <%= link_to_remote I18n.t(:delete),
-		       :url => {:action => 'destroy',
-				:id => criterion.id},
-		       :method => 'delete',
-		       :html => {:class => 'delete',
-		  		 :title => I18n.t(:remove_criteria_title)},
-		       :confirm => I18n.t(:remove_criteria_message),
-		       :remote => true %>
-  </div>
-
   <span id="<%="criterion_inputs_#{criterion.id}"%>">
    <%= f.label :rubric_criterion_name, I18n.t(:criterion), :class => "bold_inline_label" %>
    <%= f.text_field :rubric_criterion_name, :class => "fit_to_space" %>
@@ -41,9 +30,18 @@
   <%= f.submit t("rubric_criteria.save")%>
 </div>
 
-
 <div class="rubric_criteria_levels">
   <%= render :partial => 'rubric_criterion_levels', :locals => {:criterion => criterion, :f => f} %>
 </div>
 
 <% end %>
+
+<div class="float_right">
+  <%= button_to I18n.t(:delete),
+           assignment_rubric_path(:id => criterion.id),
+           :confirm => I18n.t(:remove_criteria_message),
+           :method => :delete,
+           :class => 'delete',
+           :title => I18n.t(:remove_criteria_title),
+           :remote => true %>
+</div>
