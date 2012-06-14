@@ -222,7 +222,11 @@ class SubmissionsController < ApplicationController
       flash[:success] = I18n.t("collect_submissions.collection_job_started",
         :assignment_identifier => assignment.short_identifier)
     end
-    redirect_to :action => 'browse', :id => assignment.id
+    redirect_to :action => 'browse', 
+                :id => assignment.id,
+                :per_page => params[:per_page],
+                :group_by => params[:group_by],
+                :filter => params[:filter]   
   end
 
   def collect_ta_submissions
@@ -237,7 +241,11 @@ class SubmissionsController < ApplicationController
       flash[:success] = I18n.t("collect_submissions.collection_job_started",
         :assignment_identifier => assignment.short_identifier)
     end
-    redirect_to :action => 'browse', :id => assignment.id
+    redirect_to :action => 'browse',
+                :id => assignment.id,
+                :per_page => params[:per_page],
+                :group_by => params[:group_by],
+                :filter => params[:filter] 
   end
 
   def update_converted_pdfs
