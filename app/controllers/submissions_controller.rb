@@ -225,7 +225,7 @@ class SubmissionsController < ApplicationController
     redirect_to :action => 'browse', 
                 :id => assignment.id,
                 :per_page => params[:per_page],
-                :group_by => params[:group_by],
+                :sort_by => params[:sort_by],
                 :filter => params[:filter]   
   end
 
@@ -244,7 +244,7 @@ class SubmissionsController < ApplicationController
     redirect_to :action => 'browse',
                 :id => assignment.id,
                 :per_page => params[:per_page],
-                :group_by => params[:group_by],
+                :sort_by => params[:sort_by],
                 :filter => params[:filter] 
   end
 
