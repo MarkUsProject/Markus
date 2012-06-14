@@ -223,7 +223,10 @@ class SubmissionsController < ApplicationController
         :assignment_identifier => assignment.short_identifier)
     end
     redirect_to :action => 'browse', 
-                :id => assignment.id
+                :id => assignment.id,
+                :per_page => params[:per_page],
+                :filter   => params[:filter],
+                :sort_by  => params[:sort_by] 
   end
 
   def collect_ta_submissions
@@ -239,7 +242,10 @@ class SubmissionsController < ApplicationController
         :assignment_identifier => assignment.short_identifier)
     end
     redirect_to :action => 'browse',
-                :id => assignment.id
+                :id => assignment.id,
+                :per_page => params[:per_page],
+                :filter   => params[:filter],
+                :sort_by  => params[:sort_by] 
   end
 
   def update_converted_pdfs
