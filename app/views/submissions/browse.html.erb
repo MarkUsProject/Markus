@@ -20,7 +20,7 @@
                   @assignment.id,
                   :per_page => @per_page,
                   :filter   => @filter,
-                  :sort_by  => sort_by), 
+                  :sort_by  => @sort_by), 
               :confirm => I18n.t("collect_submissions.results_loss_warning") %>
   <span class="menu_bar">|</span>
   <%= link_to I18n.t("browse_submissions.csv_report"),
