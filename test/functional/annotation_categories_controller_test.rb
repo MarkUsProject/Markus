@@ -17,93 +17,92 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     # Since we are not authenticated and authorized, we should be redirected
     # to the login page
 
-    should "on :index" do
+    should "on :index (get)" do
       get :index, :assignment_id => 1
       assert_response :redirect
     end
 
-    should "on :get_annotations" do
+    should "on :get_annotations (get)" do
       get :get_annotations, :assignment_id => 1,:id => 1
       assert_response :redirect
     end
 
-    should "on :add_annotation_category" do
+    should "on :add_annotation_category (get)" do
       get :add_annotation_category, :assignment_id => 1
       assert_response :redirect
     end
 
-    should "on :update_annotation_category" do
+    should "on :update_annotation_category (get)" do
       get :update_annotation_category, :assignment_id => 1
       assert_response :redirect
     end
 
-    should "on :add_annotation_text" do
+    should "on :add_annotation_text (get)" do
       get :add_annotation_text, :assignment_id => 1, :id => 1
       assert_response :redirect
     end
 
-    should "on :delete_annotation_category" do
+    should "on :delete_annotation_category (get)" do
       get :delete_annotation_category, :assignment_id => 1
       assert_response :redirect
     end
 
-    should "on :download" do
+    should "on :download (get)" do
       get :download, :assignment_id => 1
       assert_response :redirect
     end
 
-    should "on :csv_upload" do
+    should "on :csv_upload (get)" do
       get :csv_upload, :assignment_id => 1
       assert_response :redirect
     end
 
-    should "on :index" do
+    should "on :index (post)" do
       post :index, :assignment_id => 1
       assert_response :redirect
     end
 
-    should "on :get_annotations" do
+    should "on :get_annotations (post)" do
       post :get_annotations, :assignment_id => 1, :id => 1
-      :w
       assert_response :redirect
     end
 
-    should "on :add_annotation_category" do
+    should "on :add_annotation_category (post)" do
       post :add_annotation_category, :assignment_id => 1
       assert_response :redirect
     end
 
-    should "on :update_annotation_category" do
+    should "on :update_annotation_category (post)" do
       post :update_annotation_category, :assignment_id => 1
       assert_response :redirect
     end
 
-    should "on :update_annotation" do
+    should "on :update_annotation (post)" do
       post :update_annotation, :assignment_id => 1, :id => 1
       assert_response :redirect
     end
 
-    should "on :add_annotation_text" do
+    should "on :add_annotation_text (post)" do
       post :add_annotation_text, :assignment_id => 1, :id => 1
       assert_response :redirect
     end
 
-    should "on :delete_annotation_text" do
+    should "on :delete_annotation_text (post)" do
       post :delete_annotation_text, :assignment_id => 1, :id => 1
       assert_response :redirect
     end
 
-    should "on :delete_annotation_category" do
+    should "on :delete_annotation_category (post)" do
       post :delete_annotation_category, :assignment_id => 1
       assert_response :redirect
     end
 
-    should "on :download" do
+    should "on :download (post)" do
       post :download, :assignment_id => 1
       assert_response :redirect
     end
 
-    should "on :csv_upload" do
+    should "on :csv_upload (post)" do
       post :csv_upload, :assignment_id => 1
       assert_response :redirect
     end
@@ -112,14 +111,14 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       put :update_annotation, :assignment_id => 1, :id => 1
       assert_response :redirect
     end
-    
+
     should "on :delete_annotation_text" do
       delete :delete_annotation_text, :assignment_id => 1, :id => 1
       assert_response :redirect
     end
 
   end # end unauthenticated/unauthorized user DELETE
-  
+
   context "An admin" do
 
     setup do
