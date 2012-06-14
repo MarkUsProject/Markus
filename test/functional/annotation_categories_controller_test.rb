@@ -249,7 +249,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       end
     end
 
-    should "on :csv_upload" do
+    should "on :csv_upload (get)" do
       get_as @admin, :csv_upload, :assignment_id => @assignment.id
       assert_response :redirect
     end
@@ -299,7 +299,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       end
     end
 
-    should "on :csv_upload" do
+    should "on :csv_upload (post)" do
       post_as @admin,
               :csv_upload,
               :assignment_id => @assignment.id,
