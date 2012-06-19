@@ -301,6 +301,11 @@ class SubmissionsController < ApplicationController
         unsorted_grouping == sorted_grouping
       end
     end
+    
+    if params[:per_page] == nil or params[:per_page].blank?
+       params[:per_page] = 15
+    end
+ 
     @current_page = params[:page].to_i()
     @per_page = params[:per_page]
     @filters = get_filters(S_TABLE_PARAMS)
