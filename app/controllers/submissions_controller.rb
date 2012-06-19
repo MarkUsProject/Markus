@@ -272,10 +272,10 @@ class SubmissionsController < ApplicationController
   def browse
     if cookies[:aper_page] == nil or cookies[:aper_page].blank?
        cookies[:aper_page] = params[:per_page]
-    end 
-
-    params[:per_page] = cookies[:aper_page]
+    end
  
+    params[:per_page] = 15
+
     if current_user.ta?
       params[:filter] = 'assigned'
     else
