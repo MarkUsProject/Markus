@@ -41,7 +41,6 @@
  <% end %>
 
   <% if @current_user.ta? and @assignment.past_collection_date? %>
-  <% :per_page => @per_page%>
   <%= link_to I18n.t("collect_submissions.collect_ta"),
               collect_ta_submissions_assignment_submissions_path(
                   @assignment, 
