@@ -87,7 +87,10 @@ class SubmissionsController < ApplicationController
       }
     }
   }
-
+  
+  if (defined? params[:per_page])
+   cookies[:kristian] = 15
+ 
   def repo_browser
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = Grouping.find(params[:id])
