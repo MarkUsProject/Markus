@@ -13,17 +13,19 @@
 		"+h(assignment.description),
 		{:controller => controller,
 		 :action => action,
-		 :id => assignment},
-		      :class => "assignment_list",
-                      :per_page => 15%>
+		 :id => assignment,
+                 :per_page => 15},
+		      :class => "assignment_list"
+             %>
 	  <% else %>
 	    <%= link_to h(assignment.short_identifier)+":
 		"+h(assignment.description),
 		{:controller => controller,
 		:action => action,
-		:assignment_id => assignment},
-		      :class => "assignment_list", 
-                      :per_page => 15%>
+		:assignment_id => assignment,
+                :per_page => 15},
+		      :class => "assignment_list" 
+             %>
 
 
 	  <% end %>
