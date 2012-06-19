@@ -270,7 +270,7 @@ class SubmissionsController < ApplicationController
   end
 
   def browse
-    @per_page = 15    
+    @per_page = 15 
     if current_user.ta?
       params[:filter] = 'assigned'
     else
@@ -302,16 +302,13 @@ class SubmissionsController < ApplicationController
         unsorted_grouping == sorted_grouping
       end
     end
-    
     @current_page = params[:page].to_i()
+    @per_page = params[:per_page] 
     @filters = get_filters(S_TABLE_PARAMS)
     @per_pages = S_TABLE_PARAMS[:per_pages]
     @desc = params[:desc]
     @filter = params[:filter]
     @sort_by = params[:sort_by]
-    if params[:per_page] == nil or params[:per_page].blank?
-       @per_page = 15
-    end 
   end
 
   def index
