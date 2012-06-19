@@ -304,8 +304,12 @@ class SubmissionsController < ApplicationController
         unsorted_grouping == sorted_grouping
       end
     end
+    
+    if cookies[:per_page] == nil or cookies[:per_page].blank?
+       cookies[:per_page] = params[:per_page]
+    end 
     @current_page = params[:page].to_i()
-    @per_page = per_page[:per_page] 
+    @per_page = cookies[:per_page] 
     @filters = get_filters(S_TABLE_PARAMS)
     @per_pages = S_TABLE_PARAMS[:per_pages]
     @desc = params[:desc]
