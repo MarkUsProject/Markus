@@ -309,7 +309,9 @@ class SubmissionsController < ApplicationController
     @desc = params[:desc]
     @filter = params[:filter]
     @sort_by = params[:sort_by]
-    @per_page = 15 
+    if params[:per_page] == nil or params[:per_page].blank?
+       @per_page = 15
+    end 
   end
 
   def index
