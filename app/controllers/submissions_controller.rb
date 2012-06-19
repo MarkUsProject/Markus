@@ -307,7 +307,7 @@ class SubmissionsController < ApplicationController
     end
     
     @current_page = params[:page].to_i()
-    @per_page = params[:per_page]
+    @per_page = cookies[:per_page]
     @filters = get_filters(S_TABLE_PARAMS)
     @per_pages = S_TABLE_PARAMS[:per_pages]
     @desc = params[:desc]
