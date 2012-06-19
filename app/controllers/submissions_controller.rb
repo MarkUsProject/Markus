@@ -270,7 +270,7 @@ class SubmissionsController < ApplicationController
   end
 
   def browse
-    if cookies[:per_page] == nill or cookies[:per_page].blank?
+    if cookies[:per_page] == nil or cookies[:per_page].blank?
       cookies[:per_page] = params[:per_page]
     end
  
