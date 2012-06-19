@@ -270,7 +270,7 @@ class SubmissionsController < ApplicationController
   end
 
   def browse
-    if params[:per_page] != nill and !params[:per_page].blank?
+    if params[:per_page] != nil and !params[:per_page].blank?
        cookies[:per_page] = params[:per_page]
     end  
     if current_user.ta?
