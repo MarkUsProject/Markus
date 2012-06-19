@@ -13,8 +13,8 @@
 		"+h(assignment.description),
 		{:controller => controller,
 		 :action => action,
-		 :id => assignment,
-                 :per_page => 15},
+		 :id => assignment
+                 },
 		      :class => "assignment_list"
              %>
 	  <% else %>
@@ -22,8 +22,8 @@
 		"+h(assignment.description),
 		{:controller => controller,
 		:action => action,
-		:assignment_id => assignment,
-                :per_page => 15},
+		:assignment_id => assignment
+                },
 		      :class => "assignment_list" 
              %>
 
