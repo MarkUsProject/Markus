@@ -208,7 +208,11 @@ class SubmissionsController < ApplicationController
       SubmissionCollector.instance.push_grouping_to_priority_queue(grouping)
       flash[:success] = I18n.t("collect_submissions.priority_given")
     end
-    redirect_to :action => 'browse', :id => assignment.id
+    redirect_to :action   => 'browse', 
+                :id       => assignment.id,
+                :per_page => params[:per_page],
+                :filter   => params[:filter],
+                :sort_by  => params[:sort_by] 
   end
 
   def collect_all_submissions
@@ -507,7 +511,11 @@ class SubmissionsController < ApplicationController
     end
     flash[:errors] = errors
 
-    redirect_to :action => 'browse', :id => params[:id]
+    redirect_to :action => 'browse',
+                :id => params[:id],
+                :per_page => params[:per_page],
+                :filter   => params[:filter],
+                :sort_by  => params[:sort_by] 
   end
 
   def unrelease
@@ -523,7 +531,11 @@ class SubmissionsController < ApplicationController
       m_logger.log("Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" +
                    "#{assignment.id}' (for #{params[:groupings].length} groups).")
     end
-    redirect_to :action => 'browse', :id => params[:id]
+    redirect_to :action => 'browse', 
+                :id => params[:id],
+                :per_page => params[:per_page],
+                :filter   => params[:filter],
+                :sort_by  => params[:sort_by] 
   end
 
   # See Assignment.get_simple_csv_report for details
