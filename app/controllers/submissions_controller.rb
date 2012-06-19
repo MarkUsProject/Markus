@@ -303,7 +303,7 @@ class SubmissionsController < ApplicationController
     end
     
     if params[:per_page] == nil or params[:per_page].blank?
-       params[:per_page] = 15
+        @per_page = 15
     end
  
     @current_page = params[:page].to_i()
