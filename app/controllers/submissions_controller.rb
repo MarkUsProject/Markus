@@ -38,6 +38,7 @@ class SubmissionsController < ApplicationController
   S_TABLE_PARAMS = {
     :model => Grouping,
     :per_pages => [15, 30, 50, 100, 150, 500, 1000],
+    :per_page => 15, 
     :filters => {
       'none' => {
         :display => I18n.t("browse_submissions.show_all"),
