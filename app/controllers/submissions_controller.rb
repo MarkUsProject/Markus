@@ -281,9 +281,8 @@ class SubmissionsController < ApplicationController
       params[:sort_by] = 'group_name'
     end
     @assignment = Assignment.find(params[:assignment_id])
-    
+    @cookie_name = @assignment.id + "per_page" 
     if params[:per_page] != nil and !params[:per_page].blank?
-       @cookie_name = @assignment.id + "per_page" 
        cookies[:cookie_name] = params[:per_page]
     end
  
@@ -308,8 +307,8 @@ class SubmissionsController < ApplicationController
       end
     end
     
-    if cookies[:1per_page] == nil or cookies[:1per_page].blank?
-       cookies[:1per_page] = params[:per_page]
+    if cookies[:cookie_name] == nil or cookies[:cookie_name].blank?
+       cookies[:cookie_name] = params[:cookie_name]
     end
  
     @current_page = params[:page].to_i()
