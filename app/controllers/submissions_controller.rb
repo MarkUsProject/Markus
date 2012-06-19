@@ -270,7 +270,9 @@ class SubmissionsController < ApplicationController
   end
 
   def browse
-    @per_page = 15 
+    if params[:per_page] != nill and !params[:per_page].blank?
+       cookies[:per_page] = params[:per_page]
+    end  
     if current_user.ta?
       params[:filter] = 'assigned'
     else
@@ -303,7 +305,7 @@ class SubmissionsController < ApplicationController
       end
     end
     @current_page = params[:page].to_i()
-    @per_page = params[:per_page] 
+    @per_page = per_page[:per_page] 
     @filters = get_filters(S_TABLE_PARAMS)
     @per_pages = S_TABLE_PARAMS[:per_pages]
     @desc = params[:desc]
