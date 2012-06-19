@@ -270,9 +270,6 @@ class SubmissionsController < ApplicationController
   end
 
   def browse
-    if params[:per_page] != nil and !params[:per_page].blank?
-       cookies[:per_page] = params[:per_page]
-    end  
     if current_user.ta?
       params[:filter] = 'assigned'
     else
@@ -284,6 +281,12 @@ class SubmissionsController < ApplicationController
       params[:sort_by] = 'group_name'
     end
     @assignment = Assignment.find(params[:assignment_id])
+    
+    if params[:per_page] != nil and !params[:per_page].blank?
+       @cookie_name = @assignment.id + "per_page" 
+       cookies[:cookie_name] = params[:per_page]
+    end
+ 
     @groupings, @groupings_total = handle_paginate_event(
       S_TABLE_PARAMS,                                     # the data structure to handle filtering and sorting
         { :assignment => @assignment,                     # the assignment to filter by
@@ -305,9 +308,10 @@ class SubmissionsController < ApplicationController
       end
     end
     
-    if cookies[:per_page] == nil or cookies[:per_page].blank?
-       cookies[:per_page] = params[:per_page]
-    end 
+    if cookies[:1per_page] == nil or cookies[:1per_page].blank?
+       cookies[:1per_page] = params[:per_page]
+    end
+ 
     @current_page = params[:page].to_i()
     @per_page = cookies[:per_page] 
     @filters = get_filters(S_TABLE_PARAMS)
