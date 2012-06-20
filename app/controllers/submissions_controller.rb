@@ -282,9 +282,8 @@ class SubmissionsController < ApplicationController
     end
     @assignment = Assignment.find(params[:assignment_id])
     
-    @cookie_name = params[:assignment_id] + "per_page" 
     if params[:per_page] != nil and !params[:per_page].blank?
-       cookies[:@cookie_name] = params[:per_page] 
+       cookies[@assignment.id] = params[:per_page] 
     end
  
     @groupings, @groupings_total = handle_paginate_event(
@@ -308,12 +307,12 @@ class SubmissionsController < ApplicationController
       end
     end
     
-    if cookies[:@cookie_name] == nil or cookies[:@cookie_name].blank?
-       cookies[:@cookie_name] = params[:per_page]
+    if cookies[@assignment.id] == nil or cookies[@assignment.id].blank?
+       cookies[@assignment.id] = params[:per_page]
     end
  
     @current_page = params[:page].to_i()
-    @per_page = cookies[:cookie_name] 
+    @per_page = cookies[@assignment.id] 
     @filters = get_filters(S_TABLE_PARAMS)
     @per_pages = S_TABLE_PARAMS[:per_pages]
     @desc = params[:desc]
