@@ -47,7 +47,7 @@ end
 # Then install your bundle by:
 #   bundle install --without postgresql mysql
 group :sqlite do
-  gem 'sqlite3-ruby', :require => 'sqlite3'
+  gem 'sqlite3'
 end
 
 # Other development related required gems. You don't need them
