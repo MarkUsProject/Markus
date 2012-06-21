@@ -3,10 +3,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
 <head>
+	<%= csrf_meta_tag %> 
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <title>Markus - <%= controller.action_name %></title>
   <%= stylesheet_link_tag 'main.css', :media => 'all' %>
-  <%= stylesheet_link_tag 'content.css', :media => 'all' %>
   <%= javascript_include_tag :defaults -%>
   <%= javascript_include_tag 'menu.js' -%>
   <%= yield :head %>
