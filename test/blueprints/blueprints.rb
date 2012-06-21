@@ -1,52 +1,16 @@
 require 'machinist/active_record'
-require 'sham'
 require 'faker'
 
-Sham.section_name {Faker::Name.name}
-
-Sham.user_name {Faker::Internet.user_name}
-Sham.admin_user_name {|i| "machinist_admin#{i}"}
-Sham.student_user_name {|i| "machinist_student#{i}"}
-Sham.ta_user_name {|i| "machinist_ta#{i}"}
-Sham.first_name {Faker::Name.first_name}
-Sham.last_name {Faker::Name.last_name}
-Sham.api_key {|i| "API_KEY_N_#{i}"}
-
-Sham.filename { "#{Faker::Lorem.words(1)[0]}.java"}
-Sham.group_name {|i| "machinist_group#{i}"}
-Sham.grouping_name {|i| "machinist_grouping#{i}"}
-
-Sham.short_identifier {|i| "machinist_A#{i}"}
-Sham.description {Faker::Lorem.sentence(2)}
-Sham.message {Faker::Lorem.sentence(2)}
-Sham.due_date {rand(50).days.from_now}
-
-Sham.notes_message {Faker::Lorem.paragraphs}
-
-Sham.overall_comment {Faker::Lorem.sentence(3)}
-
-Sham.flexible_criterion_name {|i| "machinist_flexible_criterion_#{i}"}
-Sham.rubric_criterion_name {|i| "machinist_rubric_criterion_#{i}"}
-
-Sham.date {rand(50).days.from_now}
-Sham.name {Faker::Name.name}
-
-
-Sham.filename {|i| "file#{i}"}
-Sham.path {|i| "path#{i}"}
-
-Sham.annotation_category_name {|i| "Machinist Annotation Category #{i}"}
-
 Admin.blueprint do
-  user_name {Sham.admin_user_name}
-  first_name {Sham.first_name}
-  last_name {Sham.last_name}
-  api_key
+  user_name {"machinist_admin-#{sn}"}
+  first_name {Faker::Name.first_name}
+  last_name {Faker::Name.last_name}
+  api_key {"API_KEY_N_#{sn}"}
 end
 
 AnnotationCategory.blueprint do
-  assignment {Assignment.make}
-  annotation_category_name {Sham.name}
+  assignment {Assignment.make!}
+  annotation_category_name {"Machinist Annotation Category #{sn}"}
 end
 
 AnnotationText.blueprint do
@@ -55,10 +19,10 @@ AnnotationText.blueprint do
 end
 
 Assignment.blueprint do
-  short_identifier
-  description
-  message
-  due_date
+  short_identifier {"machinist_A#{sn}"}
+  description {Faker::Lorem.sentence(2)}
+  message {Faker::Lorem.paragraphs}
+  due_date {rand(50).days.from_now}
   group_min {2}
   group_max {4}
   student_form_groups {true}
@@ -69,7 +33,7 @@ Assignment.blueprint do
   submission_rule {NoLateSubmissionRule.make}
   allow_web_submits {true}
   display_grader_names_to_students {false}
-  section_due_dates_type(false)
+  section_due_dates_type {false}
   enable_test {true}
   tokens_per_day {10}
   assign_graders_to_criteria {false}
@@ -77,8 +41,8 @@ Assignment.blueprint do
 end
 
 AssignmentFile.blueprint do
-  assignment
-  filename
+  assignment {Assignment.make}
+  filename { "#{Faker::Lorem.words(1)[0]}.java" }
 end
 
 AssignmentStat.blueprint do
@@ -87,21 +51,21 @@ end
 
 CriterionTaAssociation.blueprint do
   criterion
-  ta
+  ta {Ta.make}
 end
 
 ExtraMark.blueprint do
   extra_mark {2}
-  result
-  unit{'percentage'}
+  result {Result.make!}
+  unit {'percentage'}
 end
 
 FlexibleCriterion.blueprint do
   assignment {Assignment.make(:marking_scheme_type => 'flexible')}
-  flexible_criterion_name
-  description
+  flexible_criterion_name {"machinist_flexible_criterion_#{sn}"}
+  description {Faker::Lorem.sentence(2)}
   position {1} # override if many for the same assignment
-  max{10}
+  max {10}
   assigned_groups_count {0}
 end
 
@@ -122,15 +86,15 @@ GracePeriodSubmissionRule.blueprint do
 end
 
 GradeEntryForm.blueprint do
-  short_identifier
-  description
-  message
+  short_identifier {"Grade_Entry-#{sn}"}
+  description {Faker::Lorem.sentence(2)}
+  message {Faker::Lorem.paragraphs}
   date
 end
 
 GradeEntryItem.blueprint do
-  grade_entry_form
-  name
+  grade_entry_form {GradeEntryForm.make}
+  name {Faker::Name.name}
   out_of {10}
 end
 
@@ -141,14 +105,14 @@ GradeEntryStudent.blueprint do
 end
 
 Group.blueprint do
-  group_name {Sham.group_name}
+  group_name { "machinist_group#{sn}" }
   repo_name {group_name}
 end
 
 Grouping.blueprint do
   grouping_queue { nil }
-  group {Group.make}
-  assignment {Assignment.make}
+  group {Group.make!}
+  assignment {Assignment.make!}
   criteria_coverage_count {0}
 end
 
@@ -157,11 +121,11 @@ ImageAnnotation.blueprint do
   x2 {10}
   y1 {0}
   y2 {10}
-  submission_file
-  annotation_text {AnnotationText.make(
+  submission_file {SubmissionFile.make!}
+  annotation_text {AnnotationText.make!(
     :annotation_category => AnnotationCategory.make(:assignment => submission_file.submission.grouping.assignment)
     )}
-  annotation_text_id {1}
+  annotation_text_id {annotation_text.id}
   submission_file_id {submission_file.id}
   annotation_number {rand(1000)+1}
 end
@@ -201,7 +165,7 @@ end
 
 RubricCriterion.blueprint do
   assignment {Assignment.make(:marking_scheme_type => 'rubric')}
-  rubric_criterion_name {Sham.rubric_criterion_name}
+  rubric_criterion_name {"machinist_rubric_criterion_#{sn}"}
   position {1}  # override if many for the same assignment
   weight {1}
   assigned_groups_count {0}
@@ -213,20 +177,20 @@ RubricCriterion.blueprint do
 end
 
 Section.blueprint do
-  name {Sham.section_name}
+  name {Faker::Name.name}
 end
 
 SectionDueDate.blueprint do
   section {Section.make}
   assignment {Assignment.make}
-  due_date
+  due_date {rand(50).days.from_now}
 end
 
 Student.blueprint do
-  user_name {Sham.student_user_name}
-  first_name {Sham.first_name}
-  last_name {Sham.last_name}
-  section
+  user_name { "machinist_student-#{sn}" }
+  first_name {Faker::Name.first_name}
+  last_name {Faker::Name.last_name}
+  section {Section.make}
   grace_credits {5}
 end
 
@@ -235,13 +199,13 @@ Student.blueprint(:hidden) do
 end
 
 StudentMembership.blueprint do
-  user {Student.make}
-  grouping
+  user {Student.make!}
+  grouping {Grouping.make!}
   membership_status {StudentMembership::STATUSES[:pending]}
 end
 
 Submission.blueprint do
-  grouping {Grouping.make}
+  grouping {Grouping.make!}
   submission_version {1}
   submission_version_used {true}
   revision_number {1}
@@ -251,8 +215,8 @@ end
 
 SubmissionFile.blueprint do
   submission {Submission.make}
-  filename {Sham.name}
-  path {Sham.filename}
+  filename { "#{Faker::Lorem.words(1)[0]}.c" }
+  path {"#{Faker::Lorem.words(1)[0]}.java"}
 end
 
 PenaltyDecayPeriodSubmissionRule.blueprint do
@@ -271,35 +235,34 @@ Period.blueprint do
 end
 
 Ta.blueprint do
-  user_name {Sham.ta_user_name}
-  first_name {Sham.first_name}
-  last_name {Sham.last_name}
-  api_key
+  user_name { "machinist_ta-#{sn}" }
+  first_name {Faker::Name.first_name}
+  last_name {Faker::Name.last_name}
+  api_key {"API_KEY_N_#{sn}"}
 end
 
 TaMembership.blueprint do
   user {Ta.make}
-  grouping
+  grouping {Grouping.make}
   membership_status {'pending'}
 end
 
 TestFile.blueprint do
   assignment_id {0}
-  filename
-  filetype
+  filename { "#{Faker::Lorem.words(1)[0]}.ruby" }
   is_private {false}
 end
 
 TestResult.blueprint do
-  submission
-  filename {Sham.filename}
-  file_content {Sham.message}
+  submission {Submission.make}
+  filename { "#{Faker::Lorem.words(1)[0]}.java" }
+  file_content {Faker::Lorem.sentence(2)}
 end
 
 TextAnnotation.blueprint do
   line_start {0}
   line_end {1}
-  submission_file
+  submission_file {SubmissionFile.make}
   annotation_text {AnnotationText.make(
     :annotation_category => AnnotationCategory.make(:assignment => submission_file.submission.grouping.assignment)
     )}
@@ -307,6 +270,6 @@ TextAnnotation.blueprint do
 end
 
 Token.blueprint do
-  grouping_id {Grouping.make.id}
+  grouping {Grouping.make!}
   tokens {5}
 end

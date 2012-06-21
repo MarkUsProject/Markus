@@ -2,7 +2,6 @@ ENV["RAILS_ENV"] = "test"
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 require 'mocha'
-require 'sham'
 
 class ActiveSupport::TestCase
 
@@ -40,10 +39,6 @@ class ActiveSupport::TestCase
   set_fixture_class :flexible_criteria => FlexibleCriterion
 
   # Add more helper methods to be used by all tests here...
-
-  setup {
-    Sham.reset
-  }
 
   def setup_group_fixture_repos
     Group.all.each do |group|
