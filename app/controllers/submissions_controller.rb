@@ -271,14 +271,19 @@ class SubmissionsController < ApplicationController
         params[:filter] = 'none'
       end
     end
-    if params[:sort_by] == nil or params[:sort_by].blank?
-      params[:sort_by] = 'group_name'
-    end
+    
     @assignment = Assignment.find(params[:assignment_id])
     
     @c_per_page = current_user.id.to_s + @assignment.id.to_s + "per_page" 
     if params[:per_page] != nil and !params[:per_page].blank?
        cookies[@c_per_page] = params[:per_page] 
+    end 
+
+    @c_sort_by = current_user.id.to_s + @assignment.id_to_s + "sort_by"
+    if params[:sort_by] != nil and !params[:sort_by].blank?
+       cookies[@c_sort_by] = params[:sort_by]
+    else
+       params[:sort_by] = 'group_name' 
     end
  
     @groupings, @groupings_total = handle_paginate_event(
@@ -305,6 +310,10 @@ class SubmissionsController < ApplicationController
     if cookies[@c_per_page] == nil or cookies[@c_per_page].blank?
        cookies[@c_per_page] = params[:per_page]
     end
+    
+    if cookies[@c_sort_by] == nil or cookies[@c_sort_by].blank?
+       cookies[@c_sort_by] = params[:sort_by]
+    end
  
     @current_page = params[:page].to_i()
     @per_page = cookies[@c_per_page] 
@@ -312,7 +321,7 @@ class SubmissionsController < ApplicationController
     @per_pages = S_TABLE_PARAMS[:per_pages]
     @desc = params[:desc]
     @filter = params[:filter]
-    @sort_by = params[:sort_by]
+    @sort_by = cookies[@c_sort_by]
   end
 
   def index
