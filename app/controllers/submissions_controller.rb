@@ -279,7 +279,7 @@ class SubmissionsController < ApplicationController
        cookies[@c_per_page] = params[:per_page] 
     end 
 
-    @c_sort_by = current_user.id.to_s + @assignment.id_to_s + "sort_by"
+    @c_sort_by = current_user.id.to_s + @assignment.id.to_s + "sort_by"
     if params[:sort_by] != nil and !params[:sort_by].blank?
        cookies[@c_sort_by] = params[:sort_by]
     else
