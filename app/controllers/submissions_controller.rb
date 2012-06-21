@@ -209,10 +209,7 @@ class SubmissionsController < ApplicationController
       flash[:success] = I18n.t("collect_submissions.priority_given")
     end
     redirect_to :action   => 'browse', 
-                :id       => assignment.id,
-                :per_page => params[:per_page],
-                :filter   => params[:filter],
-                :sort_by  => params[:sort_by] 
+                :id       => assignment.id
   end
 
   def collect_all_submissions
@@ -545,10 +542,7 @@ class SubmissionsController < ApplicationController
                    "#{assignment.id}' (for #{params[:groupings].length} groups).")
     end
     redirect_to :action => 'browse', 
-                :id => params[:id],
-                :per_page => params[:per_page],
-                :filter   => params[:filter],
-                :sort_by  => params[:sort_by] 
+                :id => params[:id]
   end
 
   # See Assignment.get_simple_csv_report for details
