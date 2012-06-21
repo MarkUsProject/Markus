@@ -56,7 +56,7 @@ group :development, :test do
   gem "rdoc"
   gem "rcov"
   gem "shoulda"
-  gem "machinist"
+  gem "machinist", "< 2"
   gem "faker"
   gem "railroady"
   gem "time-warp"
