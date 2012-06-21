@@ -36,9 +36,7 @@ GEM
     activesupport (3.0.14)
     arel (2.0.10)
     builder (2.1.2)
-    cgi_multipart_eof_fix (2.5.0)
     columnize (0.3.6)
-    daemons (1.1.8)
     dynamic_form (1.1.4)
     erubis (2.6.6)
       abstract (>= 1.0.0)
@@ -47,10 +45,9 @@ GEM
     faker (1.0.1)
       i18n (~> 0.4)
     fastercsv (1.5.5)
-    fastthread (1.0.7)
-    gem_plugin (0.2.3)
     i18n (0.5.0)
     json (1.7.3)
+    kgio (2.7.4)
     linecache (0.46)
       rbx-require-relative (> 0.0.4)
     machinist (1.0.6)
@@ -63,14 +60,6 @@ GEM
     mime-types (1.18)
     mocha (0.11.4)
       metaclass (~> 0.0.1)
-    mongrel (1.1.5)
-      cgi_multipart_eof_fix (>= 2.4)
-      daemons (>= 1.0.3)
-      fastthread (>= 1.0.1)
-      gem_plugin (>= 0.2.3)
-    mongrel_cluster (1.0.5)
-      gem_plugin (>= 0.2.3)
-      mongrel (>= 1.0.2)
     mysql2 (0.2.18)
     pg (0.13.2)
     polyglot (0.3.3)
@@ -94,6 +83,7 @@ GEM
       rake (>= 0.8.7)
       rdoc (~> 3.4)
       thor (~> 0.14.4)
+    raindrops (0.10.0)
     rake (0.9.2.2)
     rbx-require-relative (0.0.9)
     rcov (1.0.0)
@@ -120,6 +110,10 @@ GEM
       polyglot
       polyglot (>= 0.3.1)
     tzinfo (0.3.33)
+    unicorn (4.3.1)
+      kgio (~> 2.6)
+      rack
+      raindrops (~> 0.7)
     will_paginate (3.0.3)
     ya2yaml (0.31)
 
@@ -134,7 +128,6 @@ DEPENDENCIES
   i18n
   machinist (< 2)
   mocha
-  mongrel_cluster
   mysql2 (< 0.3)
   pg
   prototype_legacy_helper (= 0.0.0)!
@@ -149,5 +142,6 @@ DEPENDENCIES
   shoulda
   sqlite3
   time-warp
+  unicorn
   will_paginate
   ya2yaml
