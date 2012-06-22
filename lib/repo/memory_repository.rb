@@ -440,11 +440,11 @@ module Repository
         raise "No revisions, so no timestamps."
       end
 
-      timestamps_list = []
-      timestamps_list1 = []
+      all_timestamps_list = []
+      remaining_timestamps_list = []
       @timestamps_revisions.keys().each do |time_dump|
-        timestamps_list.push(Time._load(time_dump))
-        timestamps_list1.push(Time._load(time_dump))
+        all_timestamps_list.push(Time._load(time_dump))
+        remaining_timestamps_list.push(Time._load(time_dump))
       end
 
       # find closest matching timestamp
@@ -452,8 +452,8 @@ module Repository
       first_timestamp_found = false
       old_diff = 0
       # find first valid revision
-      timestamps_list.each do |best_match|
-        timestamps_list1.shift()
+      all_timestamps_list.each do |best_match|
+        remaining_timestamps_list.shift()
         old_diff = wanted_timestamp - best_match
         mapping[old_diff.to_s] = best_match
         if path.nil? || (!path.nil? && @timestamps_revisions[best_match._dump].revision_at_path(path))
@@ -463,7 +463,7 @@ module Repository
       end
 
       # find all other valid revision 
-      timestamps_list1.each do |curr_timestamp|
+      remaining_timestamps_list.each do |curr_timestamp|
         new_diff = wanted_timestamp - curr_timestamp
         mapping[new_diff.to_s] = curr_timestamp
         if path.nil? || (!path.nil? && @timestamps_revisions[curr_timestamp._dump].revision_at_path(path))

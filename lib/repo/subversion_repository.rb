@@ -224,7 +224,15 @@ module Repository
       end
       target_timestamp = target_timestamp.utc
       if !path.nil?
-        return get_revision(latest_revision_number(path, get_revision_number_by_timestamp(target_timestamp)))
+        # latest_revision_number will fail if the path does not exist at the given revision number or less than
+        # the revision number.  The begin and ensure statement is to ensure that there is a revision return.
+        # Default is set to revision 0.
+        revision_number = 0
+        begin
+          revision_number = latest_revision_number(path, get_revision_number_by_timestamp(target_timestamp))
+        ensure
+          return get_revision(revision_number)
+        end
       else
         return get_revision(get_revision_number_by_timestamp(target_timestamp))
       end
