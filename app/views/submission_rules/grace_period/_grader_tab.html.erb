@@ -2,7 +2,7 @@
   user_deductions = grouping.grace_period_deductions.group_by {|d| d.membership.user}
 %>
 
-<h3><%=t('submission_rules.grace_period_submission_rule.deductions')%></h3>
+<h3><%=I18n.t('submission_rules.grace_period_submission_rule.deductions')%></h3>
 <% user_deductions.each do |u| %>
 <table>
   <thead>
@@ -15,7 +15,7 @@
       <%= u[1].first.deduction %> credits
     </td>
     <td>
-      <%= link_to_remote t('submission_rules.grace_period_submission_rule.remove_deduction'), :url => {:action => 'delete_grace_period_deduction', :id => grouping.id, :deduction_id => u[1].first.id }, :confirm => t('submission_rules.grace_period_submission_rule.confirm_remove_deduction') %>
+      <%=link_to I18n.t('submission_rules.grace_period_submission_rule.remove_deduction'), :url => {:action => 'delete_grace_period_deduction', :id => grouping.id, :deduction_id => u[1].first.id }, :confirm => I18n.t('submission_rules.grace_period_submission_rule.confirm_remove_deduction') %>
     </td>
   </tr>
 </table>
