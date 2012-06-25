@@ -52,7 +52,7 @@ module Repository
       end
       return false
     end
-
+    
     # Open repository at specified location
     def self.open(location)
       if !self.repository_exists?(location)
@@ -184,11 +184,11 @@ module Repository
     end
 
     # Return a RepositoryRevision for a given timestamp
-    def get_revision_by_timestamp(timestamp)
+    def get_revision_by_timestamp(timestamp, path = nil)
       if !timestamp.kind_of?(Time)
         raise "Was expecting a timestamp of type Time"
       end
-      return get_revision_number_by_timestamp(timestamp)
+      return get_revision_number_by_timestamp(timestamp, path)
     end
 
     # Adds a user to the repository and grants him/her the provided permissions
@@ -421,26 +421,39 @@ module Repository
 
     # gets the "closest matching" revision from the revision-timestamp
     # mapping
-    def get_revision_number_by_timestamp(wanted_time)
+    def get_revision_number_by_timestamp(wanted_timestamp, path = nil)
       if @timestamps_revisions.empty?
         raise "No revisions, so no timestamps."
       end
 
-      timestamps_list = []
+      all_timestamps_list = []
+      remaining_timestamps_list = []
       @timestamps_revisions.keys().each do |time_dump|
-        timestamps_list.push(time_dump)
+        all_timestamps_list.push(Time._load(time_dump))
+        remaining_timestamps_list.push(Time._load(time_dump))
       end
 
       # find closest matching timestamp
-      best_match = timestamps_list.shift()
-      old_diff = wanted_time.to_i - best_match.to_i
       mapping = {}
-      mapping[old_diff.to_s] = best_match
-      if !timestamps_list.empty?
-        timestamps_list.each do |curr_timestamp|
-          new_diff = wanted_time - curr_timestamp
-          mapping[new_diff.to_s] = curr_timestamp
-          if (old_diff <= 0 && new_diff <= 0) ||
+      first_timestamp_found = false
+      old_diff = 0
+      # find first valid revision
+      all_timestamps_list.each do |best_match|
+        remaining_timestamps_list.shift()
+        old_diff = wanted_timestamp - best_match
+        mapping[old_diff.to_s] = best_match
+        if path.nil? || (!path.nil? && @timestamps_revisions[best_match._dump].revision_at_path(path))
+          first_timestamp_found = true
+          break
+        end
+      end
+
+      # find all other valid revision
+      remaining_timestamps_list.each do |curr_timestamp|
+        new_diff = wanted_timestamp - curr_timestamp
+        mapping[new_diff.to_s] = curr_timestamp
+        if path.nil? || (!path.nil? && @timestamps_revisions[curr_timestamp._dump].revision_at_path(path))
+          if(old_diff <= 0 && new_diff <= 0) ||
             (old_diff <= 0 && new_diff > 0) ||
             (new_diff <= 0 && old_diff > 0)
             old_diff = [old_diff, new_diff].max
@@ -448,8 +461,11 @@ module Repository
             old_diff = [old_diff, new_diff].min
           end
         end
-        wanted_time = mapping[old_diff.to_s]
-        return @timestamps_revisions[wanted_time]
+      end
+
+      if first_timestamp_found
+        wanted_timestamp = mapping[old_diff.to_s]
+        return @timestamps_revisions[wanted_timestamp._dump]
       else
         return @current_revision
       end
@@ -491,6 +507,12 @@ module Repository
     def files_at_path(path="/")
       return Hash.new if @files.empty?
       return files_at_path_helper(path)
+    end
+
+    # Return true if there was files submitted at the desired path for the revision
+    def revision_at_path(path)
+      return false if @files.empty?
+      return revision_at_path_helper(path)
     end
 
     def directories_at_path(path="/")
@@ -560,6 +582,23 @@ module Repository
         end
       end
       return result
+    end
+
+    # Find if the revision contains files at the path 
+    def revision_at_path_helper(path)
+      # Automatically append a root slash if not supplied
+      @files.each do |object|
+        alt_path = ""
+        if object.path != '/'
+          alt_path = object.path + '/'
+        end
+        if (object.path == path || alt_path == path)
+          if (object.from_revision + 1) == @revision_number
+            return true
+          end
+        end
+      end
+      return false
     end
 
   end # end class MemoryRevision
