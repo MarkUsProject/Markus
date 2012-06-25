@@ -150,7 +150,7 @@ class MarkusLoggerTest < Test::Unit::TestCase
     end
 
     should "raise exception if logfile is a directory" do
-      baddir = File.join('test','unit','baddir')
+      baddir = File.join('tmp', 'baddir')
       baddir_with_pid = "#{baddir}.#{Process.pid}"
       FileUtils.mkdir_p baddir_with_pid unless File.directory?(baddir_with_pid)
       MarkusConfigurator.stubs(:markus_config_logging_logfile).returns(baddir)
