@@ -43,30 +43,55 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
   context "With an unexisting criteria" do
 
     should "raise en error message on an empty row" do
-      e = assert_raise CSV::IllegalFormatError do
-        FlexibleCriterion.new_from_csv_row([], Assignment.new)
+      if RUBY_VERSION > "1.9"
+        e = assert_raise CSV::MalformedCSVError do
+          FlexibleCriterion.new_from_csv_row([], Assignment.new)
+        end
+      else
+        e = assert_raise CSV::IllegalFormatError do
+          FlexibleCriterion.new_from_csv_row([], Assignment.new)
+        end
       end
       assert_equal I18n.t('criteria_csv_error.incomplete_row'), e.message
     end
 
     should "raise an error message on a 1 element row" do
-      e = assert_raise CSV::IllegalFormatError do
-        FlexibleCriterion.new_from_csv_row(['name'], Assignment.new)
+      if RUBY_VERSION > "1.9"
+        e = assert_raise CSV::MalformedCSVError do
+          FlexibleCriterion.new_from_csv_row(['name'], Assignment.new)
+        end
+      else
+        e = assert_raise CSV::IllegalFormatError do
+          FlexibleCriterion.new_from_csv_row(['name'], Assignment.new)
+        end
       end
       assert_equal I18n.t('criteria_csv_error.incomplete_row'), e.message
     end
 
     should "raise an error message on a invalid maximum value" do
-      e = assert_raise CSV::IllegalFormatError do
-        FlexibleCriterion.new_from_csv_row(['name', 'max_value'], Assignment.new)
+      if RUBY_VERSION > "1.9"
+        e = assert_raise CSV::MalformedCSVError do
+          FlexibleCriterion.new_from_csv_row(['name', 'max_value'], Assignment.new)
+        end
+      else
+        e = assert_raise CSV::IllegalFormatError do
+          FlexibleCriterion.new_from_csv_row(['name', 'max_value'], Assignment.new)
+        end
       end
       assert_equal I18n.t('criteria_csv_error.max_zero'), e.message
     end
 
     should "raise the errors hash in case of an unpredicted error" do
-      e = assert_raise CSV::IllegalFormatError do
-        # That should fail because the assignment doesn't yet exists (in the DB)
-        FlexibleCriterion.new_from_csv_row(['name', 10], Assignment.new)
+      if RUBY_VERSION > "1.9"
+        e = assert_raise CSV::MalformedCSVError do
+          # That should fail because the assignment doesn't yet exists (in the DB)
+          FlexibleCriterion.new_from_csv_row(['name', 10], Assignment.new)
+        end
+      else
+        e = assert_raise CSV::IllegalFormatError do
+          # That should fail because the assignment doesn't yet exists (in the DB)
+          FlexibleCriterion.new_from_csv_row(['name', 10], Assignment.new)
+        end
       end
       assert_instance_of ActiveModel::Errors, e.message
     end
@@ -167,10 +192,18 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
       end
 
       should "fail with corresponding error message if the name is already in use" do
-        e = assert_raise CSV::IllegalFormatError do
-          FlexibleCriterion.new_from_csv_row(
-                    ['criterion1', 1.0, 'any description would do'],
-                    @assignment)
+        if RUBY_VERSION > "1.9"
+          e = assert_raise CSV::MalformedCSVError do
+            FlexibleCriterion.new_from_csv_row(
+              ['criterion1', 1.0, 'any description would do'],
+              @assignment)
+          end
+        else
+          e = assert_raise CSV::IllegalFormatError do
+            FlexibleCriterion.new_from_csv_row(
+              ['criterion1', 1.0, 'any description would do'],
+              @assignment)
+          end
         end
         assert_equal I18n.t('criteria_csv_error.name_not_unique'), e.message
       end

@@ -131,10 +131,16 @@ class Student < User
       end
 
       @grouping.group = @group
-      if !@grouping.save
-        m_logger = MarkusLogger.instance
-        m_logger.log("Could not create a grouping for Student '#{self.user_name}'. The grouping was:  #{@grouping.inspect} - errors: #{@grouping.errors.inspect}", MarkusLogger::ERROR)
-        raise "Sorry!  For some reason, your grouping could not be created.  Please wait a few seconds, and hit refresh to try again.  If you come back to this page, you should inform the course instructor."
+      begin
+        if !@grouping.save
+          m_logger = MarkusLogger.instance
+          m_logger.log("Could not create a grouping for Student '#{self.user_name}'. The grouping was:  #{@grouping.inspect} - errors: #{@grouping.errors.inspect}", MarkusLogger::ERROR)
+          raise "Sorry!  For some reason, your grouping could not be created.  Please wait a few seconds, and hit refresh to try again.  If you come back to this page, you should inform the course instructor."
+        end
+      # This exception will only be thrown when we try to save to a grouping that already exists
+      rescue ActiveRecord::RecordNotUnique => e
+        # transaction has failed, so quit it
+        return false
       end
 
       # We give students the tokens for the test framework
@@ -146,7 +152,7 @@ class Student < User
               :user_id => self.id)
       @member.save
 
-      # Destroy all the other memebrships for this assignment
+      # Destroy all the other memberships for this assignment
       self.destroy_all_pending_memberships(@assignment.id)
 
       # Update repo permissions if need be. This has to happen

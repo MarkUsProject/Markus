@@ -1,4 +1,5 @@
 include CsvHelper
+require 'iconv'
 require 'auto_complete'
 require 'csv_invalid_line_error'
 
@@ -26,15 +27,16 @@ class GroupsController < ApplicationController
   # Verify that all functions below are included in the authorize filter above
 
   def new
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     begin
       new_grouping_data = @assignment.add_group(params[:new_group_name])
     rescue Exception => e
       @error = e.message
-      render :action => 'error_single'
+      render :error_single
       return
     end
     @new_grouping = construct_table_row(new_grouping_data, @assignment)
+    render :add_group
   end
 
   def remove_group
@@ -45,11 +47,11 @@ class GroupsController < ApplicationController
     @removed_groupings = []
     if grouping.has_submission?
         @errors.push(grouping.group.group_name)
-        render :action => "delete_groupings"
+        render :delete_groupings
     else
       grouping.delete_grouping
       @removed_groupings.push(grouping)
-      render :action => "delete_groupings"
+      render :delete_groupings
     end
   end
 
@@ -65,13 +67,15 @@ class GroupsController < ApplicationController
 
   def rename_group_dialog
     @assignment = Assignment.find(params[:assignment_id])
-    @grouping_id = params[:grouping_id]
+    # id is really the grouping_id, this is due to rails routing
+    @grouping_id = params[:id]
     render :partial => "groups/modal_dialogs/rename_group_dialog.rjs"
   end
 
   def rename_group
     @assignment = Assignment.find(params[:assignment_id])
-    @grouping = Grouping.find(params[:grouping_id])
+    # group_id is really the grouping_id, this is due to rails routing
+    @grouping = Grouping.find(params[:id])
     @group = @grouping.group
 
     # Checking if a group with this name already exists
@@ -154,11 +158,16 @@ class GroupsController < ApplicationController
   def csv_upload
     flash[:error] = nil # reset from previous errors
     flash[:invalid_lines] = nil
+    file = params[:group][:grouplist]
     @assignment = Assignment.find(params[:assignment_id])
+    encoding = params[:encoding]
     if request.post? && !params[:group].blank?
       # Transaction allows us to potentially roll back if something
       # really bad happens.
       ActiveRecord::Base.transaction do
+        if encoding != nil
+          file = StringIO.new(Iconv.iconv('UTF-8', encoding, file.read).join)
+        end
         # Old groupings get wiped out
         if !@assignment.groupings.nil? && @assignment.groupings.length > 0
           @assignment.groupings.destroy_all
@@ -166,7 +175,7 @@ class GroupsController < ApplicationController
         flash[:invalid_lines] = [] # Store errors of lines in CSV file
         begin
           # Loop over each row, which lists the members to be added to the group.
-          CSV.parse(params[:group][:grouplist]).each_with_index do |row, line_nr|
+          CsvHelper::Csv.parse(file.read).each_with_index do |row, line_nr|
             begin
               # Potentially raises CSVInvalidLineError
               collision_error = @assignment.add_csv_group(row)
@@ -203,7 +212,7 @@ class GroupsController < ApplicationController
       # This is not handled by the roll back.
       @assignment.update_repository_permissions_forall_groupings
     end
-    redirect_to :action => "manage", :id => params[:id]
+    redirect_to :action => "index", :id => params[:id]
   end
 
   def download_grouplist
@@ -212,7 +221,7 @@ class GroupsController < ApplicationController
     #get all the groups
     groupings = assignment.groupings #FIXME: optimize with eager loading
 
-    file_out = CSV.generate do |csv|
+    file_out = CsvHelper::Csv.generate do |csv|
        groupings.each do |grouping|
          group_array = [grouping.group.group_name, grouping.group.repo_name]
          # csv format is group_name, repo_name, user1_name, user2_name, ... etc
@@ -276,7 +285,7 @@ class GroupsController < ApplicationController
       when "assign"
         if grouping_ids.length != 1
           @error = I18n.t("assignment.group.select_only_one_group")
-          render :action => 'error_single'
+          render :error_single
         elsif student_ids
           add_members(student_ids, grouping_ids[0], @assignment)
           return
@@ -299,7 +308,7 @@ class GroupsController < ApplicationController
      grouping.invalidate_grouping
     end
     @groupings_data = construct_table_rows(groupings, @assignment)
-    render :action => "modify_groupings"
+    render :modify_groupings
   end
 
   # Given a list of grouping, sets their group status to valid if possible
@@ -308,7 +317,7 @@ class GroupsController < ApplicationController
       grouping.validate_grouping
     end
     @groupings_data = construct_table_rows(groupings, @assignment)
-    render :action => "modify_groupings"
+    render :modify_groupings
   end
 
   # Deletes the given list of groupings if possible
@@ -323,7 +332,7 @@ class GroupsController < ApplicationController
           @removed_groupings.push(grouping)
         end
       end
-      render :action => "delete_groupings"
+      render :delete_groupings
   end
 
   # Adds the students given in student_ids to the grouping given in grouping_id
@@ -345,7 +354,7 @@ class GroupsController < ApplicationController
         :group => group_name)
     end
 
-    render :action => "add_members"
+    render :add_members
     return
   end
 
@@ -413,7 +422,7 @@ class GroupsController < ApplicationController
     end
     @students_data = construct_student_table_rows(all_members, @assignment)
     @groupings_data = construct_table_rows(groupings, @assignment)
-    render :action => "remove_members"
+    render :remove_members
   end
 
   #Removes the given student membership from the given grouping

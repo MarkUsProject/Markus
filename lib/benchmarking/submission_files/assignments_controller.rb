@@ -21,7 +21,7 @@ class AssignmentsController < ApplicationController
         @student.create_group_for_working_alone_student(@assignment.id)
         redirect_to :action => 'student_interface', :id => @assignment.id
       else
-        render :action => 'student_interface', :layout => 'no_menu_header'
+        render :student_interface, :layout => 'no_menu_header'
         return
       end
     else
@@ -67,12 +67,12 @@ class AssignmentsController < ApplicationController
           end 
         end
       end
-      render :action => "student_assignment_list"
+      render :student_assignment_list
       return
     elsif current_user.ta?
-      render :action => "grader_index"
+      render :grader_index
     else
-      render :action => 'index'
+      render :index
     end
   end
   
@@ -115,9 +115,9 @@ class AssignmentsController < ApplicationController
 
     # Is the instructor forming groups?
     if params[:is_group_assignment] == "true" && params[:assignment][:student_form_groups] == "0"
-      params[:assignment][:instructor_form_groups] = true
+      params[:assignment][:invalid_override] = true
     else
-      params[:assignment][:instructor_form_groups] = false
+      params[:assignment][:invalid_override] = false
     end
     
     @assignment.attributes = params[:assignment]
@@ -127,7 +127,7 @@ class AssignmentsController < ApplicationController
       redirect_to :action => 'edit', :id => params[:id]
       return
     else
-      render :action => 'edit'
+      render :edit
     end
  end
   
@@ -142,14 +142,14 @@ class AssignmentsController < ApplicationController
     @assignment.build_submission_rule
     #@assignment.assignment_files.build
     if !request.post?
-      render :action => 'new'
+      render :new
       return
     end
     # Is the instructor forming groups?
     if params[:is_group_assignment] == "true" && params[:assignment][:student_form_groups] == "0"
-      params[:assignment][:instructor_form_groups] = true
+      params[:assignment][:invalid_override] = true
     else
-      params[:assignment][:instructor_form_groups] = false
+      params[:assignment][:invalid_override] = false
     end
     
     @assignment = Assignment.new(params[:assignment])
@@ -162,7 +162,7 @@ class AssignmentsController < ApplicationController
     @assignment.transaction do
 
       if !@assignment.save
-        render :action => :new
+        render :new
         return
       end
       if params[:assignment_files]
@@ -235,7 +235,7 @@ class AssignmentsController < ApplicationController
     @student = @current_user
     
     begin
-      if !@assignment.student_form_groups || @assignment.instructor_form_groups
+      if !@assignment.student_form_groups || @assignment.invalid_override
         raise "Assignment does not allow students to form groups"
       end
       if @student.has_accepted_grouping_for?(@assignment.id)
@@ -289,7 +289,7 @@ class AssignmentsController < ApplicationController
     return unless request.post?
     @assignment = Assignment.find(params[:id])
     # if instructor formed group return
-    return if @assignment.instructor_form_groups
+    return if @assignment.invalid_override
     
     @student = @current_user
     @grouping = @student.accepted_grouping_for(@assignment.id)

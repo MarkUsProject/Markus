@@ -35,7 +35,10 @@ class="float_left mark_criterion_expand expanded" >- &nbsp;
             <tr>
                <td id="mark_<%=mark.id%>_<%=num_levels%>" class="<%=td_class%>"
 			     onclick="<%=remote_function :url => {:action => 'update_mark', :mark_id=>mark.id, :mark=>num_levels} %>">
-                 <b><%=num_levels%>: <%=link_to_remote level_name, :url => {:action => 'update_mark', :mark_id=>mark.id, :mark=>num_levels}, :html => {:class => "rubric_criterion_link"} %></b> &nbsp;<%=level_desc%>
+                 <b><%=num_levels%>: <%= link_to level_name,
+                                          update_mark_assignment_submission_results_path(:mark_id => mark.id, :mark => num_levels),
+                                          :class => "rubric_criterion_link", :remote => true %>
+                 </b> &nbsp;<%=level_desc%>
                </td>
             </tr>
          <% end -%>

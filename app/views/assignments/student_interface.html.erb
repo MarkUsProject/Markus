@@ -95,7 +95,7 @@
 
           <% @pending_grouping.each do |grouping|%>
           <div class="sub_block">
-            <p><%= I18n.t("student.invited_by", :inviter_last_name => h(grouping.inviter.last_name), :inviter_first_name => h(grouping.inviter.first_name)) %>
+            <p><%= raw(I18n.t("student.invited_by", :inviter_last_name => h(grouping.inviter.last_name), :inviter_first_name => h(grouping.inviter.first_name))) %>
             </p>
             <% grouping.student_memberships.each do |member|%>
               <ul>
@@ -186,7 +186,7 @@
         # passed.
         if @assignment.past_collection_date? &&
            @assignment.student_form_groups &&
-           !@assignment.instructor_form_groups &&
+           !@assignment.invalid_override &&
            @assignment.group_max > 1
            %>
           <p class="information">
@@ -262,7 +262,7 @@
       <li><%= I18n.t("student.section_groups_only") %></li>
   <% end %>
         <% if @assignment.student_form_groups &&
-              !@assignment.instructor_form_groups &&
+              !@assignment.invalid_override &&
               @assignment.group_max > 1 %>
           <li><%= I18n.t("student.students_can_form_groups") %></li>
           <li>
@@ -270,8 +270,8 @@
                       :group_min => h(@assignment.group_min),
                       :group_max => h(@assignment.group_max)) )%>
           </li>
-        <% elsif @assignment.instructor_form_groups %>
-          <li><%= I18n.t("student.instructor_form_groups") %></li>
+        <% elsif @assignment.invalid_override %>
+          <li><%= I18n.t("student.invalid_override") %></li>
         <% else%>
           <li><%= I18n.t("student.student_work_alone") %></li>
         <% end %>
@@ -301,24 +301,27 @@
             <h3><%= I18n.t("automated_tests.information") %></h3>
             <% if !@grouping.submissions.empty? %>
               <div class="sub_block">
-                <%= I18n.t("automated_tests.revision_used_for_test", :revision => @revision_number) %>
+                <%= raw( I18n.t("automated_tests.revision_used_for_test", 
+                                :revision => @revision_number) ) %>
               </div>
             <% end %>
             <br />
             <div class="sub_block">
               <br />
-              <%= I18n.t("automated_tests.token.tokens_per_day", :tokens => @assignment.tokens_per_day) %>
+              <%= raw( I18n.t("automated_tests.token.tokens_per_day",
+                              :tokens => @assignment.tokens_per_day) ) %>
             </div>
             <br />
             <div class="sub_block">
               <br />
               <% if @token.nil? %>
-               <%= I18n.t("automated_tests.token.tokens_not_given_yet") %>
+               <%= raw ( I18n.t("automated_tests.token.tokens_not_given_yet") ) %>
               <% else %>
                 <% if @token.tokens == 0 %>
-                    <%= I18n.t("automated_tests.token.tokens_no_more_available") %>
+                    <%= raw( I18n.t("automated_tests.token.tokens_no_more_available") ) %>
                 <% else %>
-                    <%= I18n.t("automated_tests.token.tokens_available", :tokens => @token.tokens) %>
+                    <%= raw( I18n.t("automated_tests.token.tokens_available",
+                                    :tokens => @token.tokens) ) %>
                 <% end %>
               <% end %>
               <br />
@@ -336,7 +339,7 @@
                 <%
                 # Javascript for test result window
                 %>
-                <%= render :partial => "results/common/test_result_window.html" %>
+                <%= render :partial => "assignments/test_result_window.html", :locals => {:aid => @assignment.id} %>
                 <div id="test_results_controls">
                    <%= render :partial => 'results/common/test_selector', :locals => {:test_result_files => @test_result_files, :result => @result} %>
                    <br />
@@ -360,7 +363,7 @@
 
 if !@grouping.nil? &&
    @grouping.inviter == @current_user &&
-   !@assignment.instructor_form_groups %>
+   !@assignment.invalid_override %>
   <div id="invite_dialog">
     <%= form_tag({:action => 'invite_member',
         :id => @assignment.id},

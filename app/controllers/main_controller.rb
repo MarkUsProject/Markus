@@ -4,6 +4,8 @@
 class MainController < ApplicationController
 
   include MainHelper
+  include CookieDetection
+
   protect_from_forgery :except => [:login, :page_not_found]
 
   # check for authorization
@@ -20,11 +22,11 @@ class MainController < ApplicationController
   # is redirected to main page if session is still active and valid.
 
   def login
+
     # external auth has been done, skip markus authorization
     if MarkusConfigurator.markus_config_remote_user_auth
       if @markus_auth_remote_user.nil?
-        render :file => "#{::Rails.root.to_s}/public/403.html",
-          :status => 403
+        render 'shared/http_status.html', :locals => { :code => "403", :message => HttpStatusHelper::ERROR_CODE["message"]["403"] }, :status => 403, :layout => false
         return
       else
         login_success = login_without_authentication(@markus_auth_remote_user)
@@ -41,6 +43,17 @@ class MainController < ApplicationController
           render :remote_user_auth_login_fail
           return
         end
+      end
+    end
+
+    # check cookies
+    if !cookies_enabled
+      flash[:login_notice] = I18n.t(:cookies_off)
+      return
+    else
+      if !params[:cookieTest].nil?
+      # remove the :cookieTest => "currentlyTesting" parameter after testing for cookies by redirecting
+      redirect_to :controller => "main", :action => "login"
       end
     end
 
@@ -127,7 +140,7 @@ class MainController < ApplicationController
       return
     end
     @assignments = Assignment.find(:all)
-    render :action => 'index', :layout => 'content'
+    render :index, :layout => 'content'
   end
 
   def about
@@ -136,21 +149,21 @@ class MainController < ApplicationController
   end
 
   def reset_api_key
-    render :file => "#{::Rails.root.to_s}/public/404.html", :status => 404 and return unless request.post?
+    render 'shared/http_status.html', :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false and return unless request.post?
     # Students shouldn't be able to change their API key
     if !@current_user.student?
       @current_user.reset_api_key
       @current_user.save
     else
-      render :file => "#{::Rails.root.to_s}/public/404.html", :status => 404 and return
+      render 'shared/http_status.html', :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false and return
     end
-    render :action => 'api_key_replace', :locals => {:user => @current_user }
+    render :api_key_replace, :locals => {:user => @current_user }
   end
 
   # Render 404 error (page not found) if no other route matches.
   # See config/routes.rb
   def page_not_found
-    render :file => "#{::Rails.root.to_s}/public/404.html", :status => 404
+    render 'shared/http_status.html', :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false
   end
 
   # Authenticates the admin (i.e. validates her password). Given the user, that

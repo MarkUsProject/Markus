@@ -53,7 +53,7 @@ class GradeEntryFormTest < ActiveSupport::TestCase
       @grade_entry_form = GradeEntryForm.make
       @grade_entry_form.grade_entry_items.make(:out_of => 25)
       @grade_entry_form.grade_entry_items.make(:out_of => 50)
-      @grade_entry_form.grade_entry_items.make(:out_of => 10)
+      @grade_entry_form.grade_entry_items.make(:out_of => 10.5)
     end
 
     # Need at least one GradeEntryForm object created for this
@@ -61,7 +61,7 @@ class GradeEntryFormTest < ActiveSupport::TestCase
     should validate_uniqueness_of(:short_identifier).with_message(I18n.t('grade_entry_forms.invalid_identifier'))
 
     should "verify that the total number of marks is calculated correctly" do
-      assert_equal(85, @grade_entry_form.out_of_total)
+      assert_equal(85.5, @grade_entry_form.out_of_total)
     end
   end
 
@@ -72,9 +72,9 @@ class GradeEntryFormTest < ActiveSupport::TestCase
       @grade_entry_items = @grade_entry_form.grade_entry_items
       @grade_entry_student_with_some_grades = @grade_entry_form.grade_entry_students.make
       @grade_entry_student_with_some_grades.grades.make(:grade_entry_item => @grade_entry_items[0],
-                                                        :grade => 3)
+                                                        :grade => 0.4)
       @grade_entry_student_with_some_grades.grades.make(:grade_entry_item => @grade_entry_items[1],
-                                                        :grade => 7)
+                                                        :grade => 0.3)
     end
 
     should "verify the correct value is returned when the student has grades for none of the questions" do
@@ -92,13 +92,13 @@ class GradeEntryFormTest < ActiveSupport::TestCase
     end
 
     should "verify the correct value is returned when the student has grades for some of the questions" do
-      assert_equal(10, @grade_entry_form.calculate_total_mark(@grade_entry_student_with_some_grades.user.id))
+      assert_equal(0.7, @grade_entry_form.calculate_total_mark(@grade_entry_student_with_some_grades.user.id))
     end
 
     should "when the student has grades for all of the questions" do
       @grade_entry_student_with_some_grades.grades.make(:grade_entry_item => @grade_entry_items[2],
                                                         :grade => 60.5)
-      assert_equal(70.5, @grade_entry_form.calculate_total_mark(@grade_entry_student_with_some_grades.user.id))
+      assert_equal(61.2, @grade_entry_form.calculate_total_mark(@grade_entry_student_with_some_grades.user.id))
     end
   end
 

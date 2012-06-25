@@ -7,13 +7,13 @@ class ResultsController < ApplicationController
                             :create,
                             :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria,
                         :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria, :update_marking_state,
-                        :download, :note_message, :render_test_result,
+                        :download, :note_message,
                         :update_overall_remark_comment, :update_remark_request, :cancel_remark_request]
   before_filter      :authorize_for_ta_and_admin, :only => [:edit, :update_mark, :create, :add_extra_mark,
                         :next_grouping, :update_overall_comment, :expand_criteria,
                         :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria,
                         :update_marking_state, :note_message, :update_overall_remark_comment]
-  before_filter      :authorize_for_user, :only => [:codeviewer, :render_test_result, :download]
+  before_filter      :authorize_for_user, :only => [:codeviewer, :download]
   before_filter      :authorize_for_student, :only => [:view_marks, :update_remark_request, :cancel_remark_request]
 
   def note_message
@@ -171,7 +171,7 @@ class ResultsController < ApplicationController
   def download
     #Ensure student doesn't download a file not submitted by his own grouping
     if !authorized_to_download?(params[:select_file_id])
-      render :file => "#{::Rails.root.to_s}/public/404.html", :status => 404
+      render 'shared/http_status.html', :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false
       return
     end
     file = SubmissionFile.find(params[:select_file_id])
@@ -198,8 +198,8 @@ class ResultsController < ApplicationController
     elsif file.is_pdf? && !params[:show_in_browser].nil?
       send_file File.join(MarkusConfigurator.markus_config_pdf_storage,
         file.submission.grouping.group.repository_name, file.path,
-        filename.split('.')[0] + '.jpg'), :type => "image",
-        :disposition => 'inline', :filename => filename
+        filename.split('.')[0] + '_' + sprintf("%04d" % params[:file_index].to_s()) + '.jpg'),
+        :type => "image", :disposition => 'inline', :filename => filename
     else
       send_data file_contents, :filename => filename
     end
@@ -234,26 +234,23 @@ class ResultsController < ApplicationController
       return
     end
     @code_type = @file.get_file_type
-    render :template => 'results/common/codeviewer'
-  end
 
-  #=== Description
-  # Action called via Rails' remote_function from the test_result_window partial
-  # Prepares test result and updates content in window.
-  def render_test_result
-    @assignment = Assignment.find(params[:assignment_id])
-    @test_result = TestResult.find(params[:test_result_id])
-
-    # Students can use this action only, when marks have been released
-    if current_user.student? &&
-        (@test_result.submission.grouping.membership_status(current_user).nil? ||
-        @test_result.submission.result.released_to_students == false)
-      render :partial => 'shared/handle_error',
-       :locals => {:error => I18n.t('test_result.error.no_access', :test_result_id => @test_result.id)}
-      return
+    # if dealing with a pdf file, get the number of images to display
+    if @file.is_pdf? 
+      i = 1 
+      storage_path = File.join(MarkusConfigurator.markus_config_pdf_storage,
+        @file.submission.grouping.group.repository_name,
+        @file.path)
+      filePathToCheck = File.join(storage_path, @file.filename.split('.')[0] + '_' + sprintf("%04d" % i.to_s()) + '.jpg')
+      while File.exists?(filePathToCheck)
+        i += 1
+        filePathToCheck = File.join(storage_path, @file.filename.split('.')[0] + '_' + sprintf("%04d" % i.to_s()) + '.jpg')
+      end
+      i -= 1
+      @nb_pdf_files_to_download = i
     end
 
-    render :template => 'results/render_test_result', :layout => "plain"
+    render :template => 'results/common/codeviewer'
   end
 
   def update_mark

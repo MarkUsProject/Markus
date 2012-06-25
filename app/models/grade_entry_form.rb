@@ -1,4 +1,6 @@
 include CsvHelper
+require 'iconv'
+
 # GradeEntryForm can represent a test, lab, exam, etc.
 # A grade entry form has many columns which represent the questions and their total
 # marks (i.e. GradeEntryItems) and many rows which represent students and their
@@ -26,7 +28,7 @@ class GradeEntryForm < ActiveRecord::Base
 
   # The total number of marks for this grade entry form
   def out_of_total
-    return grade_entry_items.sum('out_of').to_i
+    return grade_entry_items.sum('out_of').round(2)
   end
 
   # Determine the total mark for a particular student
@@ -36,7 +38,7 @@ class GradeEntryForm < ActiveRecord::Base
 
     grade_entry_student = self.grade_entry_students.find_by_user_id(student_id)
     if !grade_entry_student.nil?
-      total = grade_entry_student.grades.sum('grade')
+      total = grade_entry_student.grades.sum('grade').round(2)
     end
 
     if ((total == 0) && self.all_blank_grades?(grade_entry_student))
@@ -177,7 +179,7 @@ class GradeEntryForm < ActiveRecord::Base
   # Get a CSV report of the grades for this grade entry form
   def get_csv_grades_report
     students = Student.all(:conditions => {:hidden => false}, :order => "user_name")
-    csv_string = CSV.generate do |csv|
+    csv_string = CsvHelper::Csv.generate do |csv|
 
       # The first row in the CSV file will contain the question names
       final_result = []
@@ -231,23 +233,27 @@ class GradeEntryForm < ActiveRecord::Base
   # grades_file is the CSV file to be parsed
   # grade_entry_form is the grade entry form that is being updated
   # invalid_lines will store all problematic lines from the CSV file
-  def self.parse_csv(grades_file, grade_entry_form, invalid_lines)
+  def self.parse_csv(grades_file, grade_entry_form, invalid_lines, encoding)
     num_updates = 0
     num_lines_read = 0
     names = []
     totals = []
+    grades_file = StringIO.new(grades_file.read)
+    if encoding != nil
+      grades_file = StringIO.new(Iconv.iconv('UTF-8', encoding, grades_file.read).join)
+    end
 
     # Parse the question names
-    CSV.parse(grades_file.readline) do |row|
-      if !CSV.generate_line(row).strip.empty?
+    CsvHelper::Csv.parse(grades_file.readline) do |row|
+      if !CsvHelper::Csv.generate_line(row).strip.empty?
         names = row
         num_lines_read += 1
       end
     end
 
     # Parse the question totals
-    CSV.parse(grades_file.readline) do |row|
-      if !CSV.generate_line(row).strip.empty?
+    CsvHelper::Csv.parse(grades_file.readline) do |row|
+      if !CsvHelper::Csv.generate_line(row).strip.empty?
         totals = row
         num_lines_read += 1
       end
@@ -263,8 +269,8 @@ class GradeEntryForm < ActiveRecord::Base
     end
 
     # Parse the grades
-    CSV.parse(grades_file.read) do |row|
-      next if CSV.generate_line(row).strip.empty?
+    CsvHelper::Csv.parse(grades_file.read) do |row|
+      next if CsvHelper::Csv.generate_line(row).strip.empty?
       begin
         if num_lines_read > 1
           GradeEntryStudent.create_or_update_from_csv_row(row, grade_entry_form)

@@ -133,7 +133,7 @@ module Repository
     end
 
     # Return a RepositoryRevision for a given timestamp
-    def get_revision_by_timestamp(timestamp)
+    def get_revision_by_timestamp(timestamp, path = nil)
       raise NotImplementedError,  "Repository.get_revision_by_timestamp: Not yet implemented"
     end
 
@@ -320,8 +320,8 @@ module Repository
   end
 
   # A repository factory
-  require File.join(File.dirname(__FILE__),'/memory_repository')
-  require File.join(File.dirname(__FILE__),'/subversion_repository')
+  require File.join(File.dirname(__FILE__),'memory_repository')
+  require File.join(File.dirname(__FILE__),'subversion_repository')
   # Returns a repository class of the requested type,
   # which implements AbstractRepository
 

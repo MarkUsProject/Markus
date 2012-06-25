@@ -1,19 +1,18 @@
 require File.expand_path(File.join(File.dirname(__FILE__),'..', 'memory_repository'))
 require 'test/unit'
 require 'rubygems'
-require 'test/unit'
 require 'shoulda'   # load Thoughtbot Shoulda (used as testing framework)
 require 'time'
 include Repository # bring Repository module into current namespace
 
 class MemoryRepositoryTest < Test::Unit::TestCase
 
-  RESOURCE_DIR = File.expand_path(File.join(File.dirname(__FILE__),"/input_files"))
+  RESOURCE_DIR = File.expand_path(File.join(File.dirname(__FILE__), "input_files"))
   TEST_USER = "testuser"
   REPO_LOCATION = File.expand_path(File.join(File.dirname(__FILE__),'memory_repo1'))
   ANOTHER_REPO_LOCATION = File.expand_path(File.join(File.dirname(__FILE__),'memory_repo2'))
   # following constant not used as of now
-  TEST_REPO_CONTENT = File.expand_path(File.join(File.dirname(__FILE__),'/../memory_repository.yml'))
+  TEST_REPO_CONTENT = File.expand_path(File.join(File.dirname(__FILE__),'..', 'memory_repository.yml'))
 
   context "MemoryRepository class" do
 
@@ -509,7 +508,7 @@ end # end class MemoryRepositoryTest
 # MemoryRevision, an implementation of AbstractRevision
 class MemoryRevisionTest < Test::Unit::TestCase
 
-  RESOURCE_DIR = File.expand_path(File.join(File.dirname(__FILE__),"/input_files"))
+  RESOURCE_DIR = File.expand_path(File.join(File.dirname(__FILE__),"input_files"))
   TEST_USER = "testuser"
 
   context "A MemoryRevision object" do

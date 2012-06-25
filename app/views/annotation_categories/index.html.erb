@@ -7,41 +7,6 @@
                            "livepipe/window.js",
                            "livepipe/tabs.js" %>
 
-<script type="text/javascript">
-//<![CDATA[
-
-   var modalUpload = null;
-   var modalDownload = null;
-
-   function upload_annotation_categories(){
-     modalUpload.open();
-     return false;
-   }
-
-   function download_annotation_categories(){
-      modalDownload.open();
-      return false;
-   }
-
-   document.observe("dom:loaded", function(){
-     modalUpload = new Control.Modal($('upload_dialog'),
-     {
-       overlayOpacity: 0.75,
-       className: 'modalUpload',
-       fade: false
-     });
-
-     modalDownload = new Control.Modal($('download_dialog'),
-     {
-       overlayOpacity: 0.75,
-       className: 'modalDownload',
-       fade: false
-
-     });
-   });
-//]]>
-</script>
-
 
 <%if @assignment.past_due_date?%>
  <div class="notice">
@@ -116,6 +81,10 @@
           <p><%= file_field_tag :annotation_category_list_csv, :size => 0 %>
           </p>
           <p>
+            <%=h I18n.t("encoding") %>
+            <%= select_tag(:encoding, options_for_select(@encodings)) %>
+            <br />
+            <br />
             <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
             <input type="reset" value="<%= t(:cancel) %>" onclick="modalUpload.close();" />
           </p>
@@ -125,6 +94,10 @@
           <p><%= file_field_tag :annotation_category_list_yml, :size => 0 %>
           </p>
           <p>
+            <%=h I18n.t("encoding") %>
+            <%= select_tag(:encoding, options_for_select(@encodings)) %>
+            <br />
+	        <br />
             <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
             <input type="reset" value="<%= t(:cancel) %>" onclick="modalUpload.close();" />
           </p>

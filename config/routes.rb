@@ -7,10 +7,10 @@ Markus::Application.routes.draw do
   # Install the default routes as the lowest priority.
   root :controller => "main", :action => "login"
    # API routes
-  namespace :api do
-    resources :test_results
-    resources :submission_downloads
-    resources :users
+  namespace :api, :defaults => { :format => 'text' } do
+    resources :test_results, :except => [:new, :edit]
+    resources :submission_downloads, :except => [:new, :edit]
+    resources :users, :except => [:new, :edit]
     resources :main_api
   end
 
@@ -39,17 +39,19 @@ Markus::Application.routes.draw do
       get 'deletegroup'
       get 'decline_invitation'
       post 'disinvite_member'
+      get 'render_test_result'
     end
 
     resources :rubrics do
       member do
+        delete 'destroy'
         get 'move_criterion'
       end
 
       collection do
-        get 'update_positions'
-        get 'csv_upload'
-        get 'yml_upload'
+        post 'update_positions'
+        post 'csv_upload'
+        post 'yml_upload'
         get 'download_csv'
         get 'download_yml'
       end
@@ -57,7 +59,7 @@ Markus::Application.routes.draw do
 
     resources :flexible_criteria do
       collection do
-        get 'upload'
+        post 'upload'
         get 'update_positions'
         get 'move_criterion'
         get 'download'
@@ -70,28 +72,34 @@ Markus::Application.routes.draw do
         post 'update' # because of collection
         post 'update_positions'
         get 'update_positions'
-        get 'upload'
+        post 'upload'
         get 'download'
         get 'move_criterion'
       end
     end
 
     resources :groups do
+
+      member do
+        post 'rename_group'
+        get 'rename_group_dialog'
+      end
+
       collection do
         post 'populate'
         post 'populate_students'
         get 'add_group'
         get 'use_another_assignment_groups'
         get 'manage'
-        get 'csv_upload'
+        post 'csv_upload'
         get 'add_csv_group'
         get 'download_grouplist'
         get 'create_groups_when_students_work_alone'
         get 'valid_grouping'
         get 'invalid_grouping'
         get 'global_actions'
-        get 'remove_group'
         get 'rename_group'
+        delete 'remove_group'
         post 'add_group'
         post 'global_actions'
       end
@@ -122,6 +130,7 @@ Markus::Application.routes.draw do
 
       member do
         get 'collect_and_begin_grading'
+        post 'manually_collect_and_begin_grading'
         get 'repo_browser'
       end
 
@@ -129,25 +138,30 @@ Markus::Application.routes.draw do
         collection do
           get 'update_mark'
           get 'expand_criteria'
+          get 'collapse_criteria'
+          get 'expand_unmarked_criteria'
+          get 'edit'
+          get 'download'
         end
 
         member do
           get 'add_extra_marks'
           get 'add_extra_mark'
           get 'download'
+          post 'download'
           get 'cancel_remark_request'
           get 'codeviewer'
-          get 'collapse_criteria'
-          get 'add_extra_mark'
+          post 'codeviewer'
+          post 'collapse_criteria'
+          post 'add_extra_mark'
           get 'next_grouping'
-          get 'remove_extra_mark'
-          get 'expand_unmarked_criteria'
+          post 'remove_extra_mark'
+          post 'expand_unmarked_criteria'
           get 'set_released_to_students'
-          get 'update_overall_comment'
-          get 'update_overall_remark_comment'
-          get 'update_marking_state'
+          post 'update_overall_comment'
+          post 'update_overall_remark_comment'
+          post 'update_marking_state'
           get 'update_remark_request'
-          get 'render_test_result'
           get 'update_positions'
           get 'update_mark'
           get 'expand_criteria'
@@ -159,8 +173,10 @@ Markus::Application.routes.draw do
     resources :graders do
       collection do
         get 'add_grader_to_grouping'
-        get 'csv_upload_grader_groups_mapping'
+        post 'csv_upload_grader_groups_mapping'
         post 'csv_upload_grader_criteria_mapping'
+        get 'download_grader_groupings_mapping'
+        get 'download_grader_criteria_mapping'
         get 'download_dialog'
         get 'download_grouplist'
         get 'grader_criteria_dialog'
@@ -169,7 +185,7 @@ Markus::Application.routes.draw do
         post 'populate_graders'
         post 'populate'
         post 'populate_criteria'
-        get 'set_assign_criteria'
+        post 'set_assign_criteria'
         get 'random_assign'
         get 'upload_dialog'
         get 'unassign'
@@ -181,17 +197,22 @@ Markus::Application.routes.draw do
       member do
         get 'get_annotations'
         delete 'delete_annotation_category'
+        delete 'delete_annotation_text'
+        get 'add_annotation_text'
+        post 'add_annotation_text'
+        put 'update_annotation'
       end
 
       collection do
         get 'add_annotation_category'
-        get 'add_annotation_text'
-        get 'csv_upload'
+        post 'csv_upload'
         get 'delete_annotation_category'
         get 'download'
-        get 'yml_upload'
-        post 'delete_annotation_text'
+        post 'yml_upload'
+        post 'add_annotation_category'
         post 'update_annotation_category'
+        get 'add_annotation_text'
+        post 'delete_annotation_text'
         post 'update_annotation'
       end
     end
@@ -199,24 +220,25 @@ Markus::Application.routes.draw do
 
   resources :grade_entry_forms do
     collection do
-      post 'student_interface'
+      get 'student_interface'
     end
 
     member do
       get 'grades'
       get 'g_table_paginate'
       get 'csv_download'
-      get 'csv_upload'
+      post 'csv_upload'
       post 'update_grade'
-      post 'student_interface'
       post 'update_grade_entry_students'
+      get 'student_interface'
     end
   end
 
   resources :notes do
+
     collection do
+      post 'add_note'
       post 'noteable_object_selector'
-      get 'add_note'
       get 'new_update_groupings'
       post 'new_update_groupings'
     end
@@ -233,24 +255,27 @@ Markus::Application.routes.draw do
   resources :annotations do
     collection do
       post 'add_existing_annotation'
-      post 'update_annotation'
+      put 'update_annotation'
       post 'update_comment'
+      delete 'destroy'
     end
   end
 
   resources :students do
     collection do
+      post 'bulk_modify'
       post 'populate'
       get 'manage'
+      get 'add_new_section'
       get 'download_student_list'
-      get 'upload_student_list'
+      post 'upload_student_list'
     end
   end
 
   resources :tas  do
     collection do
       post 'populate'
-      get 'upload_ta_list'
+      post 'upload_ta_list'
       get 'download_ta_list'
     end
   end
@@ -259,7 +284,8 @@ Markus::Application.routes.draw do
     collection do
       get 'logout'
       get 'about'
-      get 'login_as'
+      post 'login_as'
+      get 'role_switch'
       get 'clear_role_switch_session'
       post 'reset_api_key'
     end
@@ -268,7 +294,6 @@ Markus::Application.routes.draw do
   match 'main', :controller => 'main', :action => 'index'
   match 'main/about', :controller => 'main', :action => 'about'
   match 'main/logout', :controller => 'main', :action => 'logout'
-
 
   # Return a 404 when no route is match
   match '*path', :controller => 'main', :action => 'page_not_found'

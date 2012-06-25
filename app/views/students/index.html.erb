@@ -47,7 +47,7 @@ document.observe("dom:loaded", function(){
 <div class="colsLeftHeavy">
 
   <div class="wrapLeft">
-   <%= form_tag :url => {:action => "bulk_modify"},
+   <%= form_tag bulk_modify_students_path(),
  	        :before => "before_form_submit();",
 	        :complete => "after_form_submit();",
 	        :remote => true do %>
@@ -173,6 +173,10 @@ document.observe("dom:loaded", function(){
                  {:multipart => true} %>
       <label for="userlist"><%=h I18n.t("students.upload.csv_file") %></label>
       <input type="file" name="userlist" id="userlist"/>
+      <br />
+      <br />
+      <%=h I18n.t("encoding") %>
+      <%= select_tag(:encoding, options_for_select(@encodings)) %>
       <br />
       <br />
       <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>

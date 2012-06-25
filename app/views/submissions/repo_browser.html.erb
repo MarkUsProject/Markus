@@ -12,7 +12,9 @@
 
 <div id="title_bar">
   <h1><%= I18n.t("browse_submissions.repository_name",
-                 :repository => @repository_name) %></h1>
+                 :repository => @repository_name)%>
+			(<%= @grouping.get_all_students_in_group%>)
+  </h1>
 </div>
 
 <div class="wrapLeft">
@@ -42,7 +44,11 @@
     </fieldset>
   </div>
 <div class="global_actions">
-  <h2><%= I18n.t("browse_submissions.viewing_revision", :revision_number => @revision_number) %> (<span id="current_revision_timestamp_display"><%= I18n.l(@revision_timestamp, :format => :long_date) %></span>)</h2>
+  <h2><%= raw(I18n.t("browse_submissions.viewing_revision", :revision_number => @revision_number)) %>
+      (<span id="current_revision_timestamp_display">
+         <%= I18n.l(@revision_timestamp, :format => :long_date) %>
+      </span>)
+  </h2>
   <span id="loading_list"><%= image_tag("spinner.gif") %><%=h I18n.t("groups.loading_list") %>
   </span>
 
@@ -61,9 +67,10 @@
 </p>
 </div>
 
-  <%= form_tag :url => {:controller => 'submissions',
+  <%= form_tag url_for( :controller => 'submissions',
 			:action => "manually_collect_and_begin_grading",
-			:id => @grouping.id},
+			:id => @grouping.id,
+			:assignment_id => @assignment.id),
 	       :remote => true do %>
   <%= hidden_field_tag "current_revision_number", @revision_number %>
   <input type="submit" value="<%=I18n.t("browse_submissions.collect_and_grab")%>"

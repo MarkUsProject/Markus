@@ -15,7 +15,7 @@ class NotesController < ApplicationController
     @notes = Note.find(:all,
                        :conditions => {:noteable_id => @noteable.id,
                                        :noteable_type => @noteable.class.name})
-    render :partial => "notes/modal_dialogs/notes_dialog.rjs"
+    render :partial => "notes/modal_dialogs/notes_dialog_script.rjs"
   end
 
   def add_note
@@ -59,7 +59,7 @@ class NotesController < ApplicationController
       redirect_to :action => 'index'
     else
       new_retrieve
-      render :action => "new"
+      render :new
     end
   end
 
@@ -93,7 +93,7 @@ class NotesController < ApplicationController
       flash[:success] = I18n.t('notes.update.success')
       redirect_to :action => 'index'
     else
-      render :action => 'edit'
+      render :edit
     end
   end
 
@@ -126,8 +126,7 @@ class NotesController < ApplicationController
       @note = Note.find(params[:id])
 
       unless @note.user_can_modify?(current_user)
-        render :file => "#{::Rails.root.to_s}/public/404.html",
-          :status => 404
+        render 'shared/http_status.html', :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false
         return
       end
     end

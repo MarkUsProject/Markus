@@ -1,0 +1,18 @@
+---
+RubricCriteria»r…ÿrr: !omap
+  - weight: 1.0
+  - level_0:
+      name: et
+      description: A
+  - level_1:
+      name: deserunt qui sit hic
+      description: B
+  - level_2:
+      name: aut corporis est
+      description: C
+  - level_3:
+      name: voluptates laboriosam
+      description: D
+  - level_4:
+      name: sed
+      description: E

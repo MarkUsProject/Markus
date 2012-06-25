@@ -22,17 +22,17 @@ namespace :load do
     a1.group_name_displayed = false
     a1.repository_folder = a1.short_identifier
     a1.submission_rule = rule
-    a1.instructor_form_groups = false
+    a1.invalid_override = false
     a1.marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
     a1.display_grader_names_to_students = false
     a1.build_assignment_stat
     a1.save!
 
     # load users
-    STUDENT_CSV = File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'db', 'populate', 'students.csv'))
+    STUDENT_CSV = File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'db', 'data', 'students.csv'))
     if File.readable?(STUDENT_CSV)
       csv_students = File.new(STUDENT_CSV)
-      User.upload_user_list(Student, csv_students.read)
+      User.upload_user_list(Student, csv_students, nil)
     end
     
     # create groupings for each student in A1

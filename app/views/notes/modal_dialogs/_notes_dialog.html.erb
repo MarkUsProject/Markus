@@ -21,20 +21,16 @@
         </div>
 
         <div class="float_right">
-            <%= form_tag :url => {
-			    :action => 'add_note',
-			    :id => @return_id,
-			    :noteable_id => @noteable,
-			    :noteable_type => @cls,
-			    :user => @current_user,
-			    :action_to => @action,
-			    :controller_to => @cont,
-			    :highlight_field => @highlight_field,
-			    :number_of_notes_field => @number_of_notes_field},
-			  :complete => "$('notes_submit').setValue(
-					    '#{I18n.t('notes.save')}');
-					$('notes_submit').enable();",
-			  :remote => true do %>
+            <%= form_tag(
+			        add_note_notes_path(:id => @return_id,
+			        :noteable_id => @noteable,
+			        :noteable_type => @cls,
+			        :user => @current_user,
+			        :action_to => @action,
+			        :controller_to => @cont,
+			        :highlight_field => @highlight_field,
+			        :number_of_notes_field => @number_of_notes_field ),
+			        :remote => true ) do %>
             <%= text_area_tag(:new_notes, nil, :rows => 15, :cols=>30) %>
             <p class="p_margin">
 

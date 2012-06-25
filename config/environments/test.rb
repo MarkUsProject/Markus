@@ -27,7 +27,8 @@ Markus::Application.configure do
   # Show Deprecated Warnings (to :log or to :stderr)
   config.active_support.deprecation = :stderr
 
-  require 'ruby-debug'
+  require 'ruby-debug' if RUBY_VERSION == "1.8.7"
+  require 'debugger' if RUBY_VERSION > "1.9"
 
   ###################################################################
   # MarkUs SPECIFIC CONFIGURATION
@@ -117,39 +118,16 @@ Markus::Application.configure do
   ###################################################################
   # Set this to true or false if you want to be able to display and annotate
   # PDF documents within the browser.
-  PDF_SUPPORT = true
-
-  ###################################################################
-  # In order for markus to display pdfs, it converts them to jpg format via
-  # ImageMagick first. The conversion process is very expensive and can quickly
-  # eat up all available RAM and swap memory available to the server causing it
-  # to crash. The solution to this is to set a limit on how much RAM ImageMagick
-  # is allowed to use, forcing it to use the hard-disk for all the needs exceeding
-  # the allowance.
-  #
-  # Using hard-disk memory for conversion is significantly slower than using RAM.
-  # Increasing the memory allowance will help speed up conversion speeds.
-  #
-  # Caution: setting the allowance too high will result in ImageMagick using all
-  # the server RAM and will crash it. Be sure that you can afford the memory you
-  # allow.
-  #
-  # The maximum amount of megabytes that the ImageMagick pdf conversion process
-  # may use. This setting is NOT a limit on MarkUs's total memory use. It only
-  # limits the ImageMagick conversion process.
-  #
-  # 100 mbs should be enough to quickly convert most submissions around 10 pages
-  # long.
-  #
-  # This setting doesn't matter unless PDF_SUPPORT is set to true
-  PDF_CONV_MEMORY_ALLOWANCE = 100
-
+  # When collecting pdfs files, it converts them to jpg format via RGhost.
+  # RGhost is ghostscript dependent. Be sure ghostscript is installed.
+  PDF_SUPPORT = false
 
   ###################################################################
   # Change this to 'REPOSITORY_EXTERNAL_SUBMITS_ONLY = true' if you
   # are using Subversion as a storage backend and the instructor wants his/her
-  # students to submit to the repositories by command-line only. If you
-  # set this to true, students won't be able to submit via the Web interface.
+  # students to submit to the repositories Subversion clients only. Set this
+  # to true if you intend to force students to submit via Subversion
+  # clients only. The MarkUs Web interface for submissions will be read-only.
   REPOSITORY_EXTERNAL_SUBMITS_ONLY = false
 
   ###################################################################

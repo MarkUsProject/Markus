@@ -10,7 +10,8 @@ class AssignmentsController < ApplicationController
                                  :decline_invitation,
                                  :index,
                                  :student_interface,
-                                 :update_collected_submissions]
+                                 :update_collected_submissions,
+                                 :render_test_result]
 
   before_filter      :authorize_for_student,
                      :only => [:student_interface,
@@ -23,11 +24,30 @@ class AssignmentsController < ApplicationController
                               :decline_invitation]
 
   before_filter      :authorize_for_user,
-                     :only => [:index]
+                     :only => [:index, :render_test_result]
 
   auto_complete_for  :assignment,
                      :name
   # Publicly accessible actions ---------------------------------------
+
+  #=== Description
+  # Action called via Rails' remote_function from the test_result_window partial
+  # Prepares test result and updates content in window.
+  def render_test_result
+    @assignment = Assignment.find(params[:aid])
+    @test_result = TestResult.find(params[:test_result_id])
+
+    # Students can use this action only, when marks have been released
+    if current_user.student? &&
+        (@test_result.submission.grouping.membership_status(current_user).nil? ||
+        @test_result.submission.result.released_to_students == false)
+      render :partial => 'shared/handle_error',
+       :locals => {:error => I18n.t('test_result.error.no_access', :test_result_id => @test_result.id)}
+      return
+    end
+
+    render :template => 'assignments/render_test_result', :layout => "plain"
+  end
 
   def student_interface
     @assignment = Assignment.find(params[:id])
@@ -48,14 +68,22 @@ class AssignmentsController < ApplicationController
     if @grouping.nil?
       if @assignment.group_max == 1
         begin
-          @student.create_group_for_working_alone_student(@assignment.id)
+          # fix for issue #627
+          # currently create_group_for_working_alone_student only returns false
+          # when saving a grouping throws an exception
+          if !@student.create_group_for_working_alone_student(@assignment.id)
+            # if create_group_for_working_alone_student returned false then the student
+            # must have an ( empty ) existing grouping that he is not a member of.
+            # we must delete this grouping for the transaction to succeed.
+            Grouping.find_by_group_id_and_assignment_id( Group.find_by_group_name(@student.user_name), @assignment.id).destroy
+          end
         rescue RuntimeError => @error
           render 'shared/generic_error', :layout => 'error'
           return
         end
         redirect_to :action => 'student_interface', :id => @assignment.id
       else
-        render :action => 'student_interface', :layout => 'no_menu_header'
+        render :student_interface, :layout => 'no_menu_header'
         return
       end
     else
@@ -101,6 +129,8 @@ class AssignmentsController < ApplicationController
     @assignments = Assignment.all(:order => :id)
     @grade_entry_forms = GradeEntryForm.all(:order => :id)
     if current_user.student?
+      #get the section of current user
+      @section = current_user.section
       # get results for assignments for the current user
       @a_id_results = Hash.new()
       @assignments.each do |a|
@@ -128,12 +158,12 @@ class AssignmentsController < ApplicationController
         end
       end
 
-      render :action => "student_assignment_list"
+      render :student_assignment_list
       return
     elsif current_user.ta?
-      render :action => "grader_index"
+      render :grader_index
     else
-      render :action => 'index'
+      render :index
     end
   end
 
@@ -175,7 +205,7 @@ class AssignmentsController < ApplicationController
       rescue Exception, RuntimeError => e
         @assignment.errors.add(:base, I18n.t("assignment.error",
                                               :message => e.message))
-        redirect_to :action => 'edit', :id => @assignment.id
+        render :edit, :id => @assignment.id
       return
     end
 
@@ -184,7 +214,7 @@ class AssignmentsController < ApplicationController
       redirect_to :action => 'edit', :id => params[:id]
       return
     else
-      redirect_to :action => 'edit', :id => @assignment.id
+      render :edit, :id => @assignment.id
     end
   end
 
@@ -203,7 +233,7 @@ class AssignmentsController < ApplicationController
     # set default value if web submits are allowed
     @assignment.allow_web_submits =
         !MarkusConfigurator.markus_config_repository_external_submits_only?
-    render :action => 'new'
+    render :new
   end
 
   # Called after a new assignment form is submitted.
@@ -219,7 +249,7 @@ class AssignmentsController < ApplicationController
       if !@assignment.save
         @assignments = Assignment.all
         @sections = Section.all
-        render :action => :new
+        render :new
         return
       end
       if params[:persist_groups_assignment]
@@ -241,7 +271,7 @@ class AssignmentsController < ApplicationController
   def download_csv_grades_report
     assignments = Assignment.all(:order => 'id')
     students = Student.all
-    csv_string = CSV.generate do |csv|
+    csv_string = CsvHelper::Csv.generate do |csv|
       students.each do |student|
         row = []
         row.push(student.user_name)
@@ -308,7 +338,7 @@ class AssignmentsController < ApplicationController
         raise I18n.t('create_group.fail.due_date_passed')
       end
       if !@assignment.student_form_groups ||
-           @assignment.instructor_form_groups
+           @assignment.invalid_override
         raise I18n.t('create_group.fail.not_allow_to_form_groups')
       end
       if @student.has_accepted_grouping_for?(@assignment.id)
@@ -319,7 +349,15 @@ class AssignmentsController < ApplicationController
           raise I18n.t('create_group.fail.can_not_work_alone',
                         :group_min => @assignment.group_min)
         end
-        @student.create_group_for_working_alone_student(@assignment.id)
+        # fix for issue #627
+        # currently create_group_for_working_alone_student only returns false
+        # when saving a grouping throws an exception
+        if !@student.create_group_for_working_alone_student(@assignment.id)
+          # if create_group_for_working_alone_student returned false then the student
+          # must have an ( empty ) existing grouping that he is not a member of.
+          # we must delete this grouping for the transaction to succeed.
+          Grouping.find_by_group_id_and_assignment_id( Group.find_by_group_name(@student.user_name), @assignment.id).destroy
+        end
       else
         @student.create_autogenerated_name_group(@assignment.id)
       end
@@ -376,7 +414,7 @@ class AssignmentsController < ApplicationController
     return unless request.post?
     @assignment = Assignment.find(params[:id])
     # if instructor formed group return
-    return if @assignment.instructor_form_groups
+    return if @assignment.invalid_override
 
     @student = @current_user
     @grouping = @student.accepted_grouping_for(@assignment.id)
@@ -463,9 +501,8 @@ class AssignmentsController < ApplicationController
       assignment.section_due_dates_type = true
       assignment.section_groups_only = true
     end
-    
-    # Was the SubmissionRule changed?  If so, wipe out any existing
-    # Periods, and switch the type of the SubmissionRule.
+
+    # Was the SubmissionRule changed?  If so, switch the type of the SubmissionRule.
     # This little conditional has to do some hack-y workarounds, since
     # accepts_nested_attributes_for is a little...dumb.
     if assignment.submission_rule.attributes['type'] !=
@@ -478,34 +515,28 @@ class AssignmentsController < ApplicationController
           :type => params[:assignment][:submission_rule_attributes][:type])
       end
 
-      assignment.submission_rule.destroy
-      submission_rule = SubmissionRule.new
-      # A little hack to get around Rails' protection of the "type"
-      # attribute
-      submission_rule.type =
-         params[:assignment][:submission_rule_attributes][:type]
-      assignment.submission_rule = submission_rule
-      # For some reason, when we create new rule, we can't just apply
-      # the params[:assignment] hash to @assignment.attributes...we have
-      # to create any new periods manually, like this:
-      if !params[:assignment][:submission_rule_attributes][:periods_attributes].nil?
-        assignment.submission_rule.periods_attributes =
-           params[:assignment][:submission_rule_attributes][:periods_attributes]
+      # delete all the previously created periods for the given submission_rule
+      # note that we should not delete this if the current submission rule cannot be saved ( not valid )
+      # otherwise we would end up with no periods!
+      if assignment.submission_rule.valid?
+        assignment.submission_rule.periods.where("id != ?", assignment.submission_rule.id).delete_all
       end
+
+      assignment.submission_rule.type = params[:assignment][:submission_rule_attributes][:type]
     end
 
     if params[:is_group_assignment] == "true"
       # Is the instructor forming groups?
       if params[:assignment][:student_form_groups] == "0"
-        assignment.instructor_form_groups = true
+        assignment.invalid_override = true
       else
         assignment.student_form_groups = true
-        assignment.instructor_form_groups = false
+        assignment.invalid_override = false
         assignment.group_name_autogenerated = true
       end
     else
       assignment.student_form_groups = false;
-      assignment.instructor_form_groups = false;
+      assignment.invalid_override = false;
       assignment.group_min = 1;
       assignment.group_max = 1;
     end

@@ -1,5 +1,5 @@
 # we need repository permission constants
-require File.join(File.dirname(__FILE__),'/../../lib/repo/repository')
+require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'repo', 'repository')
 class Admin < User
   SESSION_TIMEOUT = USER_ADMIN_SESSION_TIMEOUT
 

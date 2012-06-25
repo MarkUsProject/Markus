@@ -9,49 +9,53 @@ class Api::MainApiControllerTest < ActionController::TestCase
 
   context "An unauthenticated GET request on any API controller" do
     setup do
+      @request.env['HTTP_ACCEPT'] = 'text/plain'
       @res = get("index")
     end
 
     should respond_with :forbidden
 
     should "receive a 403 response" do
-      assert_not_nil(@res =~ /<rsp.*error_message="Forbidden">/)
+      assert_not_nil(@res.body =~ /<title>403 Forbidden<\/title>/)
     end
   end
 
   context "An unauthenticated PUT request on any API controller" do
     setup do
+      @request.env['HTTP_ACCEPT'] = 'text/plain'
       @res = put("index")
     end
 
     should respond_with :forbidden
 
     should "receive a 403 response" do
-      assert_not_nil(@res =~ /<rsp.*error_message="Forbidden">/)
+      assert_not_nil(@res.body  =~ /<title>403 Forbidden<\/title>/)
     end
   end
 
   context "An unauthenticated DELETE request on any API controller" do
     setup do
+      @request.env['HTTP_ACCEPT'] = 'text/plain'
       @res = delete("index")
     end
 
     should respond_with :forbidden
 
     should "receive a 403 response" do
-      assert_not_nil(@res =~ /<rsp.*error_message="Forbidden">/)
+      assert_not_nil(@res.body  =~ /<title>403 Forbidden<\/title>/)
     end
   end
 
   context "An unauthenticated POST request on any API controller" do
     setup do
+      @request.env['HTTP_ACCEPT'] = 'text/plain'
       @res = post("index")
     end
 
     should respond_with :forbidden
 
     should "receive a 403 response" do
-      assert_not_nil(@res =~ /<rsp.*error_message="Forbidden">/)
+      assert_not_nil(@res.body  =~ /<title>403 Forbidden<\/title>/)
     end
   end
 
@@ -60,6 +64,7 @@ class Api::MainApiControllerTest < ActionController::TestCase
       admin = users(:api_admin)
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
+      @request.env['HTTP_ACCEPT'] = 'text/plain'
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
       @res = get("index")
     end
@@ -67,8 +72,7 @@ class Api::MainApiControllerTest < ActionController::TestCase
     should assign_to :current_user
     should respond_with :success
     should "render a success response" do
-      res_file = File.new("#{::Rails.root.to_s}/public/200.xml")
-      assert_equal(@res.body, res_file.read)
+      assert render_template 'shared/http_status'
     end
   end
 
@@ -78,13 +82,14 @@ class Api::MainApiControllerTest < ActionController::TestCase
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
+      @request.env['HTTP_ACCEPT'] = 'text/plain'
       @res = put("index")
     end
 
     should assign_to :current_user
     should "render a success response" do
-      res_file = File.new("#{::Rails.root.to_s}/public/200.xml")
-      assert_equal(@res.body, res_file.read)
+      assert_response :success
+      assert render_template 'shared/http_status'
     end
   end
 
@@ -94,13 +99,14 @@ class Api::MainApiControllerTest < ActionController::TestCase
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
+      @request.env['HTTP_ACCEPT'] = 'text/plain'
       @res = delete("index")
     end
 
     should assign_to :current_user
     should "render a success response" do
-      res_file = File.new("#{::Rails.root.to_s}/public/200.xml")
-      assert_equal(@res.body, res_file.read)
+      assert_response :success
+      assert render_template 'shared/http_status'
     end
   end
 
@@ -110,13 +116,14 @@ class Api::MainApiControllerTest < ActionController::TestCase
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
+      @request.env['HTTP_ACCEPT'] = 'text/plain'
       @res = post("index")
     end
 
     should assign_to :current_user
     should "render a success response" do
-      res_file = File.new("#{::Rails.root.to_s}/public/200.xml")
-      assert_equal(@res.body, res_file.read)
+      assert_response :success
+      assert render_template 'shared/http_status'
     end
   end
 

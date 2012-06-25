@@ -4,6 +4,7 @@
 <%= javascript_include_tag "manage_graders.js" %>
 <%= javascript_include_tag "FilterTable/FilterTable.js" %>
 <%= javascript_include_tag "Graders/tabs_boot.js" %>
+<%= javascript_include_tag "prototype.js" %>
 
 <%= render :partial => "boot.js.erb" %>
 <script type="text/javascript">
@@ -73,11 +74,9 @@ document.observe("dom:loaded", function(){
   <h1><%=h I18n.t("graders.manage_graders") %></h1>
   <div class="colRightGroups">
       <div class="headingButtons">
-      <%= button_to_remote I18n.t("download"),
-        :url => download_dialog_assignment_graders_path(@assignment) %>
+      <%= button_to_function I18n.t("download"), "download_groups();" %>
       <span class="menu_bar">|</span>
-      <%= button_to_remote I18n.t("upload"),
-        :url => upload_dialog_assignment_graders_path(@assignment) %>
+      <%= button_to_function I18n.t("upload"), "upload_groups();" %>
     </div> <!-- rightjustify-->
   </div> <!-- colrightgroups-->
 
@@ -130,11 +129,19 @@ document.observe("dom:loaded", function(){
 
 </div><!-- Notice -->
 
-<%= form_remote_tag :url => global_actions_assignment_graders_path(
-                                @assignment),
-                    :html => {:id => "global_action_form"},
-                    :loading => "thinking();",
-                    :complete => "done_thinking();" do %>
+<%= form_tag url_for(global_actions_assignment_graders_path(@assignment)),
+             :id => "global_action_form",
+             :remote => true do %>
+
+<script type='text/javascript'>
+$("global_action_form").observe('ajax:after', function(evt, status, data, xhr) {
+  thinking();
+});
+
+$("global_action_form").observe('ajax:success', function(evt, status, data, xhr) {
+  done_thinking();
+});
+</script>
 
 <%= hidden_field_tag 'submit_type', 'global_action', :id => 'submit_type' %>
 <%= hidden_field_tag 'current_table', 'groups_table', :id => 'current_table' %>
@@ -259,9 +266,54 @@ document.observe("dom:loaded", function(){
 <!-- Modal Windows -->
 
 <div id="download_dialog">
+  <h2><%= t('groups.download.download_grader_maps') %></h2>
+  <ul>
+    <li><%= link_to t('groups.download.download_grader_groups_csv'),
+		    download_grader_groupings_mapping_assignment_graders_path(@assignment),
+		    :onclick => "modalDownload.close();" %></li>
+    <li><%= link_to t('groups.download.download_grader_criteria_csv'),
+		    download_grader_criteria_mapping_assignment_graders_path(@assignment),
+		    :onclick => "modalDownload.close();" %></li>
+  </ul>
+  <%= button_to_function I18n.t('cancel'), "modalDownload.close(); return false;" %>
 </div>
 
 <div id="upload_dialog">
+  <h2><%= I18n.t("groups.upload.upload_grader_map") %></h2>
+  <%= raw(I18n.t("groups.upload.description_grader_map")) %>
+  <%= form_tag({:controller=>"graders",
+    :action => 'csv_upload_grader_groups_mapping',:id => @assignment.id},
+    {:multipart => true}) do %>
+    <br />
+    <br />
+    <%=h I18n.t("encoding") %>
+    <%= select_tag(:encoding, options_for_select(@encodings)) %>
+    <br />
+    <br />
+    <p><%= file_field_tag :grader_mapping, :size => 2 %> <br />
+      <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
+      <%= button_to_function I18n.t('cancel'), "modalUpload.close(); return false;" %>
+    </p>
+  <% end %>
+
+  <% if @assignment.assign_graders_to_criteria %>
+    <h2><%= I18n.t("groups.upload.upload_grader_criteria_map") %></h2>
+    <%= raw(I18n.t("groups.upload.description_grader_criteria_map")) %>
+    <%= form_tag({:controller=>"graders",
+      :action => 'csv_upload_grader_criteria_mapping',:id => @assignment.id},
+      {:multipart => true}) do %>
+      <br />
+      <br />
+      <%=h I18n.t("encoding") %>
+      <%= select_tag(:encoding, options_for_select(@encodings)) %>
+      <br />
+      <br />
+      <p><%= file_field_tag :grader_criteria_mapping, :size => 2 %> <br />
+        <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
+        <%= button_to_function I18n.t('cancel'), "modalUpload.close(); return false;" %>
+      </p>
+    <% end %>
+  <% end %>
 </div>
 
 <div id="groups_coverage_dialog">

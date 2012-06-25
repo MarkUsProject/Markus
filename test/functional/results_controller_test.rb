@@ -16,6 +16,23 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
   SAMPLE_ERR_MSG = "sample error message"
 
+  should "recognize routes" do
+    assert_recognizes({:controller => "results",
+                       :action => "update_mark",
+                       :assignment_id => '1',
+                       :submission_id => '1'},
+                      {:path => 'assignments/1/submissions/1/results/update_mark',
+                       :method => :get})
+
+    assert_recognizes({:controller => "results",
+                       :action => "expand_criteria",
+                       :assignment_id => '1',
+                       :submission_id => '1'},
+                      {:path => 'assignments/1/submissions/1/results/expand_criteria',
+                       :method => :get})
+
+  end
+
   context "A user" do
 
     # Since we are not authenticated and authorized, we should be redirected
@@ -26,7 +43,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           :assignment_id => 1,
           :submission_id => 1,
           :id => 1
-      assert respond_with :redirect
+      assert_response :redirect
     end
 
     should "not be able to get the next_grouping" do
@@ -34,7 +51,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           :assignment_id => 1,
           :submission_id => 1,
           :id => 1
-      assert respond_with :redirect
+      assert_response :redirect
     end
 
     should "not be able to set_released to student" do
@@ -42,7 +59,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           :assignment_id => 1,
           :submission_id => 1,
           :id => 1
-      assert respond_with :redirect
+      assert_response :redirect
     end
 
     should "not be able to update marking state" do
@@ -51,7 +68,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           :submission_id => 1,
           :id => 1,
           :value => 1
-      assert respond_with :redirect
+      assert_response :redirect
     end
 
     should "not be able to update overall comment" do
@@ -59,7 +76,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           :assignment_id => 1,
           :submission_id => 1,
           :id => 1
-      assert respond_with :redirect
+      assert_response :redirect
     end
 
     should "not be able to update overall remark comment" do
@@ -68,7 +85,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           :submission_id => 1,
           :id => 1
 
-      assert respond_with :redirect
+      assert_response :redirect
     end
 
     should "not be able to update remark request" do
@@ -76,7 +93,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           :assignment_id => 1,
           :submission_id => 1,
           :id => 1
-      assert respond_with :redirect
+      assert_response :redirect
     end
 
     should "not be able to cancel remark request" do
@@ -84,7 +101,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           :assignment_id => 1,
           :submission_id => 1,
           :id => 1
-      assert respond_with :redirect
+      assert_response :redirect
     end
 
     should "not be able to download a file" do
@@ -93,7 +110,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           :submission_id => 1,
           :id => 1,
           :select_file_id => 1
-      assert respond_with :redirect
+      assert_response :redirect
     end
 
     should "not be able to get codeviewer" do
@@ -102,7 +119,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           :submission_id => 1,
           :id => 1,
           :focus_line => 1
-      assert respond_with :redirect
+      assert_response :redirect
     end
 
     should "not be able to update mark" do
@@ -112,7 +129,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           :id => 1,
           :mark_id => 1,
           :mark => 0
-      assert respond_with :redirect
+      assert_response :redirect
     end
 
     should "not be able to view marks" do
@@ -120,7 +137,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           :assignment_id => 1,
           :submission_id => 1,
           :id => 1
-      assert respond_with :redirect
+      assert_response :redirect
     end
 
     should "not be able to add extra mark" do
@@ -129,7 +146,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           :submission_id => 1,
           :id => 1,
           :extra_mark => 1
-      assert respond_with :redirect
+      assert_response :redirect
     end
 
     should "not be able to remove extra marks" do
@@ -137,7 +154,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           :assignment_id => 1,
           :submission_id => 1,
           :id => 1
-      assert respond_with :redirect
+      assert_response :redirect
     end
 
     should "not be able to expand criteria" do
@@ -145,7 +162,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           :assignment_id => 1,
           :submission_id => 1,
           :id => 1
-      assert respond_with :redirect
+      assert_response :redirect
     end
 
     should "not be able to collaps criteria" do
@@ -153,7 +170,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           :assignment_id => 1,
           :submission_id => 1,
           :id => 1
-      assert respond_with :redirect
+      assert_response :redirect
     end
 
     should "not be able to expand unmarked criteria" do
@@ -161,7 +178,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           :assignment_id => 1,
           :submission_id => 1,
           :id => 1
-      assert respond_with :redirect
+      assert_response :redirect
     end
   end # unauthenticated and unauthorized user doing
 
@@ -189,7 +206,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                  :assignment_id => 1,
                  :submission_id => 1,
                  :id => @result.id
-          assert respond_with :missing
+          assert_response :missing
           assert render_template 404
         end
 
@@ -199,7 +216,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                  :assignment_id => 1,
                  :submission_id => 1,
                  :id => @grouping.id
-          assert respond_with :missing
+          assert_response :missing
           assert render_template 404
         end
 
@@ -209,7 +226,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                  :assignment_id => 1,
                  :submission_id => 1,
                  :id => @result.id
-          assert respond_with :missing
+          assert_response :missing
           assert render_template 404
         end
 
@@ -220,7 +237,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :submission_id => 1,
                   :id => @result.id,
                   :value => 1
-          assert respond_with :missing
+          assert_response :missing
           assert render_template 404
         end
 
@@ -232,7 +249,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :submission_id => 1,
                   :id => @result.id,
                   :result => {:overall_comment => @new_comment}
-          assert respond_with :missing
+          assert_response :missing
           assert render_template 404
           @result.reload
           assert_not_equal @result.overall_comment, @new_comment
@@ -246,7 +263,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :submission_id => 1,
                   :id => @result.id,
                   :result => {:overall_comment => @new_comment}
-          assert respond_with :missing
+          assert_response :missing
           assert render_template 404
           @result.reload
           assert_not_equal @result.overall_comment, @new_comment
@@ -260,7 +277,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :submission_id => 1,
                   :id => @result.id,
                   :result => {:overall_comment => @new_comment}
-          assert respond_with :missing
+          assert_response :missing
           assert render_template 404
           @result.reload
           assert_not_equal @result.overall_comment, @new_comment
@@ -274,7 +291,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :submission_id => 1,
                   :id => @result.id,
                   :result => {:overall_comment => @new_comment}
-          assert respond_with :missing
+          assert_response :missing
           assert render_template 404
           @result.reload
           assert_not_equal @result.overall_comment, @new_comment
@@ -304,7 +321,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
               assert_equal 0, flash.size
               assert respond_with_content_type "application/octet-stream"
-              assert respond_with :success
+              assert_response :success
               assert_equal 'file content', @response.body
             end  # -- with permissions to download the file
 
@@ -319,7 +336,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                      :id => 1
 
               assert_equal 0, flash.size
-              assert respond_with :missing
+              assert_response :missing
               assert render_template 404
             end  # -- without permissions to download the file
           end # -- without file error
@@ -340,8 +357,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :id => 1,
                   :select_file_id => 1
 
-            assert set_the_flash.to(SAMPLE_ERR_MSG)
-            assert respond_with :redirect
+            assert_equal flash[:file_download_error], SAMPLE_ERR_MSG
+            assert_response :redirect
           end
 
           should "with supported image to be displayed inside browser" do
@@ -361,7 +378,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :show_in_browser => true
             assert_equal 0, flash.size
             assert respond_with_content_type "image"
-            assert respond_with :success
+            assert_response :success
             assert_equal 'file content', @response.body
           end
 
@@ -382,7 +399,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :include_annotations => true
             assert_equal 0, flash.size
             assert respond_with_content_type "application/octet-stream"
-            assert respond_with :success
+            assert_response :success
             assert_equal 'file content', @response.body
           end
         end
@@ -410,7 +427,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_nil assigns :annots
             assert_nil assigns :all_annots
             assert render_template 'shared/_handle_error.rjs'
-            assert respond_with :success
+            assert_response :success
 
             # Workaround to assert that the error message made its way to
             # the response
@@ -441,7 +458,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_nil assigns :file_contents
             assert_nil assigns :code_type
             assert render_template 'shared/_handle_error.rjs'
-            assert respond_with :success
+            assert_response :success
             # Workaround to assert that the error message made its way to
             # the response
             assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
@@ -468,7 +485,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert assign_to :file_contents
             assert assign_to :code_type
             assert render_template 'results/common/codeviewer'
-            assert respond_with :success
+            assert_response :success
           end
         end
 
@@ -479,7 +496,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                  :submission_id => 1,
                  :mark_id => 1,
                  :mark => 0
-          assert respond_with :missing
+          assert_response :missing
           assert render_template 404
         end
 
@@ -494,7 +511,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert assign_to :assignment
             assert assign_to :grouping
             assert render_template 'results/student/no_submission'
-            assert respond_with :success
+            assert_response :success
           end
 
           should "and his submission has no result" do
@@ -508,7 +525,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert assign_to :grouping
             assert assign_to :submission
             assert render_template 'results/student/no_result'
-            assert respond_with :success
+            assert_response :success
           end
 
           should "and the result has not been released" do
@@ -524,7 +541,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert assign_to :submission
             assert assign_to :result
             assert render_template 'results/student/no_result'
-            assert respond_with :success
+            assert_response :success
           end
 
           should "and the result is available" do
@@ -551,9 +568,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert assign_to :files
             assert assign_to :first_file
             assert assign_to :extra_marks_points
-            assert assign_to:extra_marks_percentage
+            assert assign_to :extra_marks_percentage
             assert assign_to :marks_map
-            assert respond_with :success
+            assert_response :success
             assert render_template :view_marks
           end
         end
@@ -565,7 +582,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                 :submission_id => 1,
                 :id => @result.id,
                 :extra_mark => 1
-          assert respond_with :missing
+          assert_response :missing
           assert render_template 404
         end
 
@@ -575,7 +592,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                  :assignment_id => 1,
                  :submission_id => 1,
                  :id => @result.id
-          assert respond_with :missing
+          assert_response :missing
           assert render_template 404
         end
 
@@ -585,7 +602,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                  :assignment_id => @assignment.id,
                  :submission_id => 1,
                  :id => 1
-          assert respond_with :missing
+          assert_response :missing
           assert render_template 404
         end
 
@@ -595,7 +612,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                  :assignment_id => 1,
                  :submission_id => 1,
                  :id => 1
-          assert respond_with :missing
+          assert_response :missing
           assert render_template 404
         end
 
@@ -606,7 +623,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                  :submission_id => 1,
                  :id => 1,
                  :rid => 1
-          assert respond_with :missing
+          assert_response :missing
           assert render_template 404
         end
       end
@@ -657,7 +674,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               assert_nil assigns(:previous_grouping)
               assert_equal 0, flash.size
               assert render_template :edit
-              assert respond_with :success
+              assert_response :success
             end
 
             should "edit second result correctly" do
@@ -685,7 +702,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
               assert_equal 0, flash.size
               assert render_template :edit
-              assert respond_with :success
+              assert_response :success
             end
 
             should "when editing third result" do
@@ -708,7 +725,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
               assert_equal 0, flash.size
               assert render_template :edit
-              assert respond_with :success
+              assert_response :success
             end
           end
         end
@@ -722,7 +739,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :assignment_id => 1,
                    :submission_id => 1,
                    :id => grouping.id
-            assert respond_with :redirect
+            assert_response :redirect
           end
 
           should "when current grouping has no submission" do
@@ -733,7 +750,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :assignment_id => 1,
                    :submission_id => 1,
                    :id => grouping.id
-            assert respond_with :redirect
+            assert_response :redirect
           end
         end
 
@@ -747,7 +764,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :submission_id => 1,
                   :id => @result.id,
                   :value => 'true'
-          assert respond_with :success
+          assert_response :success
           assert assign_to :result
         end
 
@@ -818,7 +835,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :id => 1
             assert_equal 0, flash.size
             assert respond_with_content_type "application/octet-stream"
-            assert respond_with :success
+            assert_response :success
             assert_equal 'file content', @response.body
           end  # -- without file error
 
@@ -836,8 +853,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :select_file_id => 1,
                    :id => 1
 
-            assert set_the_flash.to(SAMPLE_ERR_MSG)
-            assert respond_with :redirect
+            assert_equal flash[:file_download_error], SAMPLE_ERR_MSG
+            assert_response :redirect
           end  # -- with file error
 
           should "with supported image to be displayed inside browser" do
@@ -856,7 +873,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                     :show_in_browser => true
 
             assert respond_with_content_type "image"
-            assert respond_with :success
+            assert_response :success
             assert_equal 'file content', @response.body
           end  # -- with supported image to be displayed in browser
         end
@@ -892,7 +909,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert assign_to :file_contents
             assert assign_to :code_type
             assert render_template 'results/common/codeviewer'
-            assert respond_with :success
+            assert_response :success
           end  # -- without file error
 
           should "with file error" do
@@ -914,7 +931,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_nil assigns :file_contents
             assert_nil assigns :code_type
             assert render_template 'shared/_handle_error.rjs'
-            assert respond_with :success
+            assert_response :success
             # Workaround to assert that the error message made its way to the
             # response
             assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
@@ -942,7 +959,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                     :mark => "something"
 
             assert render_template 'mark_verify_result.rjs'
-            assert respond_with :success
+            assert_response :success
             # Workaround to assert that the error message made its way to the response
             assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
           end
@@ -960,7 +977,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :mark_id => 1,
                    :mark => 1
             assert render_template 'shared/_handle_error.rjs'
-            assert respond_with :success
+            assert_response :success
             # Workaround to assert that the error message made its way to the response
             assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
           end
@@ -974,7 +991,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :mark_id => @mark.id,
                    :mark => 1
             assert render_template 'results/marker/_update_mark.rjs'
-            assert respond_with :success
+            assert_response :success
           end
 
           should "GET on :view_marks" do
@@ -984,7 +1001,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :submission_id => 1,
                    :id => 1
             assert render_template '404'
-            assert respond_with 404
+            assert_response 404
           end
 
           should "GET on :add_extra_mark" do
@@ -995,7 +1012,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :id => @submission.result.id
             assert assign_to :result
             assert render_template 'results/marker/add_extra_mark'
-            assert respond_with :success
+            assert_response :success
           end
 
           context "POST on :add_extra_mark" do
@@ -1012,7 +1029,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               assert assign_to :result
               assert assign_to :extra_mark
               assert render_template 'results/marker/add_extra_mark_error'
-              assert respond_with :success
+              assert_response :success
             end
 
             should "without save error" do
@@ -1027,7 +1044,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               assert assign_to :result
               assert assign_to :extra_mark
               assert render_template 'results/marker/insert_extra_mark'
-              assert respond_with :success
+              assert_response :success
 
               @submission.result.reload
               assert_equal @old_total_mark + 1, @submission.result.total_mark
@@ -1055,7 +1072,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           assert_equal 0, flash.size
           assert assign_to :result
           assert render_template 'results/marker/remove_extra_mark'
-          assert respond_with :success
+          assert_response :success
 
           @result.reload
           assert_equal @old_total_mark - @extra_mark.extra_mark, @result.total_mark
@@ -1069,7 +1086,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           assert assign_to :assignment
           assert assign_to :mark_criteria
           assert render_template 'results/marker/_expand_criteria.rjs'
-          assert respond_with :success
+          assert_response :success
         end
 
         should "GET on :collapse_criteria" do
@@ -1081,7 +1098,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           assert assign_to :assignment
           assert assign_to :mark_criteria
           assert render_template 'results/marker/_collapse_criteria.rjs'
-          assert respond_with :success
+          assert_response :success
         end
 
         should "GET on :expand_unmarked_criteria" do
@@ -1098,7 +1115,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           assert assign_to :result
           assert assign_to :nil_marks
           assert render_template 'results/marker/_expand_unmarked_criteria'
-          assert respond_with :success
+          assert_response :success
         end
 
         should "POST on :update_overall_comment" do
@@ -1153,7 +1170,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
           assert_equal 0, flash.size
           assert render_template :edit
-          assert respond_with :success
+          assert_response :success
         end
 
         context "GET on :next_grouping" do
@@ -1166,7 +1183,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :submission_id => 1,
                    :id => grouping.id
 
-            assert respond_with :redirect
+            assert_response :redirect
           end
 
           should "when current grouping has no submission" do
@@ -1177,7 +1194,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :assignment_id => 1,
                    :submission_id => 1,
                    :id => grouping.id
-            assert respond_with :redirect
+            assert_response :redirect
           end
         end
 
@@ -1188,7 +1205,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                  :assignment_id => 1,
                  :submission_id => 1,
                  :id => result.id
-          assert respond_with :missing
+          assert_response :missing
           assert render_template 404
         end
 
@@ -1200,7 +1217,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :submission_id => 1,
                   :id => result.id,
                   :marking_state => 'complete'
-          assert respond_with :success
+          assert_response :success
           assert assign_to :result
         end
 
@@ -1224,7 +1241,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :select_file_id => 1
             assert_equal 0, flash.size
             assert respond_with_content_type "application/octet-stream"
-            assert respond_with :success
+            assert_response :success
             assert_equal 'file content', @response.body
           end
 
@@ -1243,8 +1260,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :submission_id => 1,
                    :id => 1,
                    :select_file_id => 1
-            assert set_the_flash.to(SAMPLE_ERR_MSG)
-            assert respond_with :redirect
+            assert_equal flash[:file_download_error], SAMPLE_ERR_MSG
+            assert_response :redirect
           end
 
           should "with supported image to be displayed inside browser" do
@@ -1262,7 +1279,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                     :show_in_browser => true
             assert_equal 0, flash.size
             assert respond_with_content_type "image"
-            assert respond_with :success
+            assert_response :success
             assert_equal 'file content', @response.body
           end
         end
@@ -1293,7 +1310,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_nil assigns :file_contents
             assert_nil assigns :code_type
             assert render_template 'shared/_handle_error.rjs'
-            assert respond_with :success
+            assert_response :success
             # Workaround to assert that the error message made its way to the
             # response
             assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
@@ -1320,7 +1337,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert assign_to :file_contents
             assert assign_to :code_type
             assert render_template 'results/common/codeviewer'
-            assert respond_with :success
+            assert_response :success
           end  # -- without error
         end
 
@@ -1339,7 +1356,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                     :mark_id => @mark.id,
                     :mark => "something"
             assert render_template 'mark_verify_result.rjs'
-            assert respond_with :success
+            assert_response :success
             # Workaround to assert that the error message made its way to the response
             assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
           end
@@ -1352,7 +1369,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :mark_id => @mark.id,
                    :mark => 1
             assert render_template 'results/marker/_update_mark.rjs'
-            assert respond_with :success
+            assert_response :success
           end
         end  # -- GET on :update_mark
 
@@ -1363,7 +1380,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                  :submission_id => 1,
                  :id => 1
           assert render_template '404'
-          assert respond_with 404
+          assert_response 404
         end  # -- GET on :view_marks
 
         should "GET on :add_extra_mark" do
@@ -1375,7 +1392,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                  :id => unmarked_result.id
           assert assign_to :result
           assert render_template 'results/marker/add_extra_mark'
-          assert respond_with :success
+          assert_response :success
         end
 
         context "POST on :add_extra_mark" do
@@ -1396,7 +1413,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert assign_to :result
             assert assign_to :extra_mark
             assert render_template 'results/marker/add_extra_mark_error'
-            assert respond_with :success
+            assert_response :success
           end  # -- with save error
 
           should "without save error" do
@@ -1411,7 +1428,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert assign_to :result
             assert assign_to :extra_mark
             assert render_template 'results/marker/insert_extra_mark'
-            assert respond_with :success
+            assert_response :success
 
             @unmarked_result.reload
             assert_equal @old_total_mark + 1, @unmarked_result.total_mark
@@ -1438,7 +1455,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           assert_equal 0, flash.size
           assert assign_to :result
           assert render_template 'results/marker/remove_extra_mark'
-          assert respond_with :success
+          assert_response :success
 
           @result.reload
           assert_equal @old_total_mark - @extra_mark.extra_mark,
@@ -1453,7 +1470,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           assert assign_to :assignment
           assert assign_to :mark_criteria
           assert render_template 'results/marker/_expand_criteria.rjs'
-          assert respond_with :success
+          assert_response :success
         end
 
         should "be able to collapse_criteria" do
@@ -1465,7 +1482,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           assert assign_to :assignment
           assert assign_to :mark_criteria
           assert render_template 'results/marker/_collapse_criteria.rjs'
-          assert respond_with :success
+          assert_response :success
         end
 
         should "GET on :expand_unmarked_criteria" do
@@ -1481,7 +1498,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           assert assign_to :result
           assert assign_to :nil_marks
           assert render_template 'results/marker/_expand_unmarked_criteria'
-          assert respond_with :success
+          assert_response :success
         end
 
         should "POST on :update_overall_comment" do
