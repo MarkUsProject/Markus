@@ -31,14 +31,14 @@ class MarkTest < ActiveSupport::TestCase
 
   context "A good Mark model" do
     setup do
-      Mark.make
+      Mark.make!
     end
     should validate_uniqueness_of(:markable_id).scoped_to([:result_id, :markable_type])
   end
 
   context "A mark asociated with RubricCriterion" do
     setup do
-      @mark = Mark.make(:rubric, :mark => 2)
+      @mark = Mark.make!(:rubric, :mark => 2)
     end
 
     should "allow valid values" do
@@ -63,7 +63,7 @@ class MarkTest < ActiveSupport::TestCase
   context "A mark asociated with FlexibleCriterion" do
     setup do
       # max of flexible criterion is 10 in blueprint
-      @mark = Mark.make(:flexible, :mark => 4)
+      @mark = Mark.make!(:flexible, :mark => 4)
     end
 
     should "allow valid values" do
@@ -84,4 +84,5 @@ class MarkTest < ActiveSupport::TestCase
       assert_equal(4, @mark.get_mark)
     end
   end
+
 end

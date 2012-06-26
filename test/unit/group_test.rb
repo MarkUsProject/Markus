@@ -18,7 +18,7 @@ class GroupTest < ActiveSupport::TestCase
 
   context "a group" do
     setup do
-      @group = Group.make
+      @group = Group.make!
     end
 
     should "have a unique group name" do
@@ -37,9 +37,9 @@ class GroupTest < ActiveSupport::TestCase
 
     context "linked to an assignment allowing web commits" do
       setup do
-        assignment = Assignment.make(:allow_web_submits => true)
-        @grouping = Grouping.make(:assignment_id => assignment.id,
-                                 :group_id => @group.id)
+        assignment = Assignment.make!(:allow_web_submits => true)
+        @grouping = Grouping.make!(:assignment => assignment,
+                                 :group => @group)
       end
 
       should "return false for external accessible repository" do
@@ -49,9 +49,9 @@ class GroupTest < ActiveSupport::TestCase
 
     context "linked to an assignment not allowing web commits" do
       setup do
-        assignment = Assignment.make(:allow_web_submits => false)
-        @grouping = Grouping.make(:assignment_id => assignment.id,
-                                 :group_id => @group.id)
+        assignment = Assignment.make!(:allow_web_submits => false)
+        @grouping = Grouping.make!(:assignment => assignment,
+                                 :group => @group)
       end
 
       should "return true for external accessible repository" do
@@ -59,6 +59,5 @@ class GroupTest < ActiveSupport::TestCase
       end
     end
   end
+
 end
-
-

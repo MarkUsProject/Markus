@@ -24,7 +24,7 @@ class GradeEntryItemTest < ActiveSupport::TestCase
 
   context "A good Grade Entry Item model" do
     setup do
-      GradeEntryItem.make
+      GradeEntryItem.make!
     end
 
     should validate_uniqueness_of(:name).scoped_to(
@@ -50,7 +50,7 @@ class GradeEntryItemTest < ActiveSupport::TestCase
 
   context "A GradeEntryItem" do
     setup do
-      GradeEntryItem.make
+      GradeEntryItem.make!
     end
 
     # Need at least one GradeEntryItem created for this test to

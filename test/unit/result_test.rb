@@ -16,12 +16,12 @@ class ResultTest < ActiveSupport::TestCase
 
   context "A result with partial state" do
     setup do
-      @result = Result.make(:marking_state => 'partial')
+      @result = Result.make!(:marking_state => 'partial')
     end
 
     should "get subtotal" do
-      Mark.make(:result => @result)
-      Mark.make(:result => @result)
+      Mark.make!(:result => @result)
+      Mark.make!(:result => @result)
       assert_equal(2, @result.get_subtotal, "Subtotal should be equal to 2")
     end
 

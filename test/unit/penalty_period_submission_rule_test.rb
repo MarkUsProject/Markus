@@ -8,11 +8,11 @@ class PenaltyPeriodSubmissionRuleTest < ActiveSupport::TestCase
   # Replace this with your real tests.
   context "Assignment has a single grace period of 24 hours after due date" do
     setup do
-      @assignment = Assignment.make
-      @group = Group.make
-      @grouping = Grouping.make(:assignment => @assignment,
+      @assignment = Assignment.make!
+      @group = Group.make!
+      @grouping = Grouping.make!(:assignment => @assignment,
                                 :group => @group)
-      StudentMembership.make(:grouping => @grouping,
+      StudentMembership.make!(:grouping => @grouping,
                              :membership_status => "inviter")
       penalty_period_submission_rule = PenaltyPeriodSubmissionRule.new
       @assignment.replace_submission_rule(penalty_period_submission_rule)

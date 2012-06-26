@@ -35,7 +35,7 @@ class RubricCriterionTest < ActiveSupport::TestCase
   end
 
   should "round weights that have more than 3 significant digits" do
-    RubricCriterion.make
+    RubricCriterion.make!
     assert RubricCriterion.count > 0
     criterion = RubricCriterion.first
     criterion.weight = 0.5555555555
@@ -44,14 +44,14 @@ class RubricCriterionTest < ActiveSupport::TestCase
   end
 
   should "find a mark for a specific rubric and result" do
-    assignment = Assignment.make
-    grouping = Grouping.make(:assignment => assignment)
-    submission = Submission.make(:grouping => grouping)
-    result = Result.make(:submission => submission)
+    assignment = Assignment.make!
+    grouping = Grouping.make!(:assignment => assignment)
+    submission = Submission.make!(:grouping => grouping)
+    result = Result.make!(:submission => submission)
 
-    rubric = RubricCriterion.make(:assignment => assignment)
+    rubric = RubricCriterion.make!(:assignment => assignment)
 
-    mark = Mark.make(:result => result,
+    mark = Mark.make!(:result => result,
                     :markable => rubric)
     assert_not_nil rubric.mark_for(result.id)
   end
@@ -85,8 +85,8 @@ class RubricCriterionTest < ActiveSupport::TestCase
 
     setup do
       setup_group_fixture_repos
-      @criterion = RubricCriterion.make
-      @ta = Ta.make
+      @criterion = RubricCriterion.make!
+      @ta = Ta.make!
     end
 
     teardown do
@@ -117,18 +117,18 @@ class RubricCriterionTest < ActiveSupport::TestCase
     end
 
     should "assign multiple TAs" do
-      @ta1 = Ta.make
-      @ta2 = Ta.make
-      @ta3 = Ta.make
+      @ta1 = Ta.make!
+      @ta2 = Ta.make!
+      @ta3 = Ta.make!
       assert_equal 0, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
       @criterion.add_tas([@ta1, @ta2, @ta3])
       assert_equal 3, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
     end
 
     should "remove multiple TAs" do
-      @ta1 = Ta.make
-      @ta2 = Ta.make
-      @ta3 = Ta.make
+      @ta1 = Ta.make!
+      @ta2 = Ta.make!
+      @ta3 = Ta.make!
       assert_equal 0, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
       @criterion.add_tas([@ta1, @ta2, @ta3])
       assert_equal 3, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
@@ -140,8 +140,8 @@ class RubricCriterionTest < ActiveSupport::TestCase
     end
 
     should "get the names of TAs assigned to it" do
-      @ta1 = Ta.make(:user_name => 'g9browni')
-      @ta2 = Ta.make(:user_name => 'c7benjam')
+      @ta1 = Ta.make!(:user_name => 'g9browni')
+      @ta2 = Ta.make!(:user_name => 'c7benjam')
       @criterion.add_tas(@ta1)
       @criterion.add_tas(@ta2)
       assert_contains @criterion.get_ta_names, 'g9browni'

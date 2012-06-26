@@ -21,7 +21,7 @@ class GradeEntryFormTest < ActiveSupport::TestCase
 
   context " A good Grade entry model" do
     setup do
-      GradeEntryForm.make
+      GradeEntryForm.make!
     end
 
     should validate_uniqueness_of(
@@ -50,7 +50,7 @@ class GradeEntryFormTest < ActiveSupport::TestCase
   # Tests for out_of_total
   context "A grade entry form object: " do
     setup do
-      @grade_entry_form = GradeEntryForm.make
+      @grade_entry_form = GradeEntryForm.make!
       @grade_entry_form.grade_entry_items.make(:out_of => 25)
       @grade_entry_form.grade_entry_items.make(:out_of => 50)
       @grade_entry_form.grade_entry_items.make(:out_of => 10.5)
@@ -214,7 +214,7 @@ class GradeEntryFormTest < ActiveSupport::TestCase
   # Tests for construct_alpha_category
   context "Construct alphabetical category: " do
     setup do
-      @grade_entry_form = GradeEntryForm.make
+      @grade_entry_form = GradeEntryForm.make!
       @alpha_categories = Array.new(4){[]}
     end
 
@@ -246,7 +246,7 @@ class GradeEntryFormTest < ActiveSupport::TestCase
   # Tests for the alpha_paginate algorithm
   context "Construct alphabetical categories: " do
       setup do
-        @grade_entry_form = GradeEntryForm.make
+        @grade_entry_form = GradeEntryForm.make!
         @students = []
 
         last_names = ["Albert", "Alwyn", "Auric", "Berio", "Bliss", "Bridge", "Britten", "Cage",

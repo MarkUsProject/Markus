@@ -89,11 +89,11 @@ GradeEntryForm.blueprint do
   short_identifier {"Grade_Entry-#{sn}"}
   description {Faker::Lorem.sentence(2)}
   message {Faker::Lorem.paragraphs}
-  date
+  date {Time.now.to_date}
 end
 
 GradeEntryItem.blueprint do
-  grade_entry_form {GradeEntryForm.make}
+  grade_entry_form {GradeEntryForm.make!}
   name {Faker::Name.name}
   out_of {10}
 end
@@ -129,19 +129,19 @@ ImageAnnotation.blueprint do
 end
 
 Mark.blueprint do
-  result {Submission.make.result}
-  markable {RubricCriterion.make(:assignment => result.submission.grouping.assignment)}
+  result {Submission.make!.result}
+  markable {RubricCriterion.make!(:assignment => Submission.make!.result.submission.grouping.assignment)}
   mark {1}
 end
 
 Mark.blueprint(:rubric) do
-  result {Submission.make.result}
-  markable {RubricCriterion.make(:assignment => result.submission.grouping.assignment)}
+  result {Submission.make!.result}
+  markable {RubricCriterion.make!(:assignment => Submission.make!.result.submission.grouping.assignment)}
 end
 
 Mark.blueprint(:flexible) do
-  result {Submission.make.result}
-  markable {FlexibleCriterion.make(:assignment => result.submission.grouping.assignment)}
+  result {Submission.make!.result}
+  markable {FlexibleCriterion.make!(:assignment => Submission.make!.result.submission.grouping.assignment)}
 end
 
 Note.blueprint do
@@ -162,7 +162,7 @@ Result.blueprint do
 end
 
 RubricCriterion.blueprint do
-  assignment {Assignment.make(:marking_scheme_type => 'rubric')}
+  assignment {Assignment.make!(:marking_scheme_type => 'rubric')}
   rubric_criterion_name {"machinist_rubric_criterion_#{sn}"}
   position {1}  # override if many for the same assignment
   weight {1}
@@ -240,8 +240,8 @@ Ta.blueprint do
 end
 
 TaMembership.blueprint do
-  user {Ta.make}
-  grouping {Grouping.make}
+  user {Ta.make!}
+  grouping {Grouping.make!}
   membership_status {'pending'}
 end
 
