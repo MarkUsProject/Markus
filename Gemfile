@@ -12,7 +12,6 @@ source 'http://rubygems.org'
 gem "rails"
 gem 'exception_notification'
 #gem "prototype-rails" Will be needed with Rails3.1
-gem "db_populate"
 gem "rubyzip"
 gem "ya2yaml"
 gem "i18n"
@@ -48,7 +47,7 @@ end
 # Then install your bundle by:
 #   bundle install --without postgresql mysql
 group :sqlite do
-  gem 'sqlite3-ruby', :require => 'sqlite3'
+  gem 'sqlite3'
 end
 
 # Other development related required gems. You don't need them
@@ -57,7 +56,7 @@ group :development, :test do
   gem "rdoc"
   gem "rcov"
   gem "shoulda"
-  gem "machinist"
+  gem "machinist", "< 2"
   gem "faker"
   gem "railroady"
   gem "time-warp"
@@ -65,9 +64,17 @@ group :development, :test do
   gem "mocha"
 end
 
-# If you  plan to use clustered mongrel servers for production
+# If you  plan to use unicorn servers for production
 # make sure that this group is included. You don't need this
 # group if you are using Phusion Passenger.
-group :mongrel do
-  gem "mongrel_cluster"
+group :unicorn do
+  gem "unicorn"
+end
+
+# If you want to be able to view and annotate PDF files, 
+# make sure that this group is included. GhostScript has to be 
+# installed for rghost to work well. You also need to set
+# the PDF_SUPPORT bool to true in the config file(s).
+group :rghost do
+  gem "rghost"
 end

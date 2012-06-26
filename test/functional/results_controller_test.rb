@@ -16,6 +16,23 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
   SAMPLE_ERR_MSG = "sample error message"
 
+  should "recognize routes" do
+    assert_recognizes({:controller => "results",
+                       :action => "update_mark",
+                       :assignment_id => '1',
+                       :submission_id => '1'},
+                      {:path => 'assignments/1/submissions/1/results/update_mark',
+                       :method => :get})
+
+    assert_recognizes({:controller => "results",
+                       :action => "expand_criteria",
+                       :assignment_id => '1',
+                       :submission_id => '1'},
+                      {:path => 'assignments/1/submissions/1/results/expand_criteria',
+                       :method => :get})
+
+  end
+
   context "A user" do
 
     # Since we are not authenticated and authorized, we should be redirected

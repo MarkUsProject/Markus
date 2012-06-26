@@ -4,7 +4,7 @@
   function load_test_result(test_result_id) {
     $('loading_test_result').show();
     $('select_test_result_id').disable();
-    window.open('<%= url_for(:controller => "assignments", :action => "render_test_result", :aid => aid)%>?test_result_id='+test_result_id,
+    window.open('<%= url_for(:controller => "assignments", :action => "render_test_result", :id => @assignment.id, :aid => aid)%>&test_result_id='+test_result_id,
     "Test Results", "width=400,height=250,resizable=yes,scrollbars=yes")
     $('loading_test_result').hide();
     $('select_test_result_id').enable();

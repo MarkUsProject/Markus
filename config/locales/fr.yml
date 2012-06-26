@@ -295,7 +295,8 @@ fr:
       submission_file: "Fichier envoyé : "
       test_results: "Résultat des tests : "
       no_file_in_repository: "[Pas de fichiers dans le dépôt]"
-      cant_display_image: "L'image ne peut pas être affichée. Si vous essayez d'afficher un PDF, ou le fichier est trop grand pour être affiché, ou l'option permettant d'afficher les PDF est désactivée. Vous pouvez télécharger manuellement le fichier."
+      cant_display_image: "L'image ne peut pas être affichée. Si vous essayez d'afficher un PDF, vérifiez que l'option permettant d'afficher les PDF est activée. Vous pouvez télécharger manuellement le fichier."
+      image_downloading: "Page pdf en cours de téléchargement. Veuillez patienter."
       test_code: "Code pour les tests"
       criterion_incomplete_error: "Note non remplie, mais état fixé comme terminé"
 

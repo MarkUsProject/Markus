@@ -29,10 +29,13 @@
     <% if @assignment.id.nil? %>
       <%=raw( f.text_field :short_identifier ,
                        :onchange =>  "set_onbeforeunload(true);
-                       $('assignment_repository_folder').setValue($(this).getValue())" )%><br />
+                       $('assignment_repository_folder').setValue(
+                         $(this).getValue() )",
+                       :maxlength => 30 )%><br />
     <% else %>
       <%= raw( f.text_field :short_identifier ,
-                            :onchange =>  "set_onbeforeunload(true);" ) %><br />
+                            :onchange =>  "set_onbeforeunload(true);",
+                            :maxlength => 30 ) %><br />
     <% end %>
 
     <%= raw( f.label :description, t(:name) ) %>
@@ -95,25 +98,25 @@
 
     <%# TODO The following code seriously needs some clean up  !!!!  %>
 
-   <%= observe_field "assignment_due_date",
+    <%= observe_field "assignment_due_date",
                      :function => "update_due_date(
                                       $F('assignment_due_date'));" %>
-   <%= t(:iso_due_date_format_example) %><br />
+    <%= t(:iso_due_date_format_example) %><br />
 
-   <%= raw( f.label :repository_folder, t(:repository_folder) ) %>
-   /<%= raw( f.text_field :repository_folder, :onchange => "set_onbeforeunload(true);" ) %><br />
-   <%= raw( f.label :allow_web_submits, t("assignment.allow_web_submits") ) %>&nbsp;&nbsp;
-   <%= raw( f.radio_button :allow_web_submits,
+    <%= raw( f.label :repository_folder, t(:repository_folder) ) %>
+    /<%= raw( f.text_field :repository_folder, :onchange => "set_onbeforeunload(true);" ) %><br />
+    <%= raw( f.label :allow_web_submits, t("assignment.allow_web_submits") ) %>&nbsp;&nbsp;
+    <%= raw( f.radio_button :allow_web_submits,
                       true,
                       :checked => @assignment.allow_web_submits,
                       :onchange => "set_onbeforeunload(true);" ) %>
-   <%= raw( f.label :allow_web_submits_true,
+    <%= raw( f.label :allow_web_submits_true,
                t("answer_yes"), :class => "radio_label" ) %>&nbsp;&nbsp;
-   <%= raw( f.radio_button :allow_web_submits,
+    <%= raw( f.radio_button :allow_web_submits,
                       false,
                       :checked => !@assignment.allow_web_submits, 
                       :onchange => "set_onbeforeunload(true);" ) %>
-   <%= raw( f.label :allow_web_submits_false,
+    <%= raw( f.label :allow_web_submits_false,
                t("answer_no"),
                :class => "radio_label" )  %><br />
     <%= raw( f.label :display_grader_names_to_students,
