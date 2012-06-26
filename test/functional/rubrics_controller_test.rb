@@ -24,7 +24,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
     context "with an assignment" do
       setup do
-        @grouping = Grouping.make
+        @grouping = Grouping.make!
         @assignment = @grouping.assignment
       end
 
@@ -66,7 +66,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
       context "and a submission" do
         setup do
-          @submission = Submission.make(:grouping => @grouping)
+          @submission = Submission.make!(:grouping => @grouping)
         end
 
         should "be redirect on edit" do
@@ -94,8 +94,8 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
   context "An admin, with an assignment" do
 
     setup do
-      @admin = Admin.make
-      @assignment = Assignment.make
+      @admin = Admin.make!
+      @assignment = Assignment.make!
 
     end
 
@@ -266,7 +266,7 @@ END
 
     context "with a criterion" do
       setup do
-        @criterion = RubricCriterion.make(:rubric_criterion_name => 'Algorithm',
+        @criterion = RubricCriterion.make!(:rubric_criterion_name => 'Algorithm',
                                           :assignment => @assignment)
       end
 
@@ -333,7 +333,7 @@ END
       end
 
       should "save without error on an assignment as the first criterion" do
-        assignment = Assignment.make
+        assignment = Assignment.make!
         # XXX move elsewhere -> does not need this context
         post_as @admin,
                 :create,
@@ -398,7 +398,7 @@ END
 
       context "with another criterion" do
         setup do
-          @criterion2 = RubricCriterion.make(:assignment => @assignment,
+          @criterion2 = RubricCriterion.make!(:assignment => @assignment,
                                             :position => 2)
         end
 
@@ -451,7 +451,7 @@ END
 
         context "And yet another" do
           setup do
-            criterion = RubricCriterion.make(:assignment => @assignment,
+            criterion = RubricCriterion.make!(:assignment => @assignment,
                                             :position => 3)
             @criteria = @assignment.rubric_criteria
           end

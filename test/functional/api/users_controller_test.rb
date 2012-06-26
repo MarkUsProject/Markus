@@ -72,7 +72,7 @@ class Api::UsersControllerTest < ActionController::TestCase
       clear_fixtures
 
       # Creates admin from blueprints.
-      @admin = Admin.make
+      @admin = Admin.make!
       @admin.reset_api_key
       base_encoded_md5 = @admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
@@ -83,7 +83,7 @@ class Api::UsersControllerTest < ActionController::TestCase
     # Testing GET
     should "testing the show function with a user that exists" do
       # Create dummy user to display
-      @user = Student.make
+      @user = Student.make!
       # fire off request, after setup has been called again, reseting API key.
       get "show", :id => 1, :user_name => @user.user_name
       assert_response :success
@@ -175,7 +175,7 @@ class Api::UsersControllerTest < ActionController::TestCase
 
     context "testing the create function with an existing user_name to cause error" do
       setup do
-        @user = Student.make
+        @user = Student.make!
         @attr = {:user_name => @user.user_name, :last_name => "Tester",
                  :first_name => "Api", :user_type =>"admin" }
         @res = post("create", @attr)
@@ -202,7 +202,7 @@ class Api::UsersControllerTest < ActionController::TestCase
     # Testing PUT
     context "testing the update function with a new first name, last name" do
       setup do
-        @user = Student.make
+        @user = Student.make!
         @new_attr = {:user_name => @user.user_name,
                      :last_name => "TesterChanged",
                      :first_name => "UpdatedApi"}
@@ -253,8 +253,8 @@ class Api::UsersControllerTest < ActionController::TestCase
 
     context "testing the update function with a new_user_name that already exists" do
       setup do
-        @user_to_update = Student.make
-        @existing_user = Student.make
+        @user_to_update = Student.make!
+        @existing_user = Student.make!
         # fire off request
         put "update", :id => 1, :user_name => @user_to_update.user_name,
                               :last_name => "garbage",

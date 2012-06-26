@@ -122,10 +122,10 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
   context "An admin" do
 
     setup do
-      @admin = Admin.make
-      @category = AnnotationCategory.make
+      @admin = Admin.make!
+      @category = AnnotationCategory.make!
       @assignment = @category.assignment
-      @annotation_text = AnnotationText.make(
+      @annotation_text = AnnotationText.make!(
                 :annotation_category => @category)
     end
 

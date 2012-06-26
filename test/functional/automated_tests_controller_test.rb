@@ -15,8 +15,8 @@ class AutomatedTestsControllerTest < AuthenticatedControllerTest
 
   context "A logged Admin" do
     setup do
-      @admin = Admin.make
-      @assignment = Assignment.make
+      @admin = Admin.make!
+      @assignment = Assignment.make!
     end
 
     context "on manage" do

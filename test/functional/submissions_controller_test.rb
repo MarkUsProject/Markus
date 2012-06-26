@@ -13,10 +13,10 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
   context "I am a student trying working alone on an assignment" do
     setup do
-      @group = Group.make
-      @assignment = Assignment.make(:allow_web_submits => true, :group_min => 1)
-      @grouping = Grouping.make(:group => @group, :assignment => @assignment)
-      @membership = StudentMembership.make(:membership_status => 'inviter', :grouping => @grouping)
+      @group = Group.make!
+      @assignment = Assignment.make!(:allow_web_submits => true, :group_min => 1)
+      @grouping = Grouping.make!(:group => @group, :assignment => @assignment)
+      @membership = StudentMembership.make!(:membership_status => 'inviter', :grouping => @grouping)
       @student = @membership.user
     end
 
@@ -259,7 +259,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
     context "and I have a grader. My grade should be able to" do
       setup do
-        @ta_membership = TaMembership.make(:membership_status => :accepted, :grouping => @grouping)
+        @ta_membership = TaMembership.make!(:membership_status => :accepted, :grouping => @grouping)
         @grader = @ta_membership.user
       end
 
@@ -337,7 +337,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       # Test whether or not an Instructor can release/unrelease results correctly
       # Test whether or not an Instructor can download files from student repos
       setup do
-        @admin = Admin.make
+        @admin = Admin.make!
       end
 
       should "My instructor should be able to access the populate repository browser." do

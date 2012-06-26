@@ -23,7 +23,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
   context "An admin" do
     setup do
-      @admin = Admin.make
+      @admin = Admin.make!
     end
 
     should "be able to get new" do
@@ -76,8 +76,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
       context "with section due dates" do
         setup do
-          @section1 = Section.make
-          @section2 = Section.make
+          @section1 = Section.make!
+          @section2 = Section.make!
         end
 
         should "be able to create assignment with section due dates" do
@@ -148,7 +148,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
     context "with an assignment" do
       setup do
-        @assignment = Assignment.make
+        @assignment = Assignment.make!
       end
 
       should "get edit form if not post" do
@@ -305,12 +305,12 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       should "be able to switch submission rule when editing an assignment" do
         # First make sure that the current submission rule is one with periods
         # which we can then switch to NoLateSubmissionRule via a put_as
-        rule = GracePeriodSubmissionRule.make
-        period = Period.make
+        rule = GracePeriodSubmissionRule.make!
+        period = Period.make!
         period.submission_rule = rule
         assert period.save
         assert rule.periods.length > 0
-        @assignment = Assignment.make( :submission_rule => rule )
+        @assignment = Assignment.make!(:submission_rule => rule)
         assert @assignment.submission_rule.is_a?(GracePeriodSubmissionRule)
 
         put_as @admin,
@@ -380,7 +380,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
       should "get assignments list" do
-        submission_rule = NoLateSubmissionRule.make
+        submission_rule = NoLateSubmissionRule.make!
         submission_rule.stubs(:can_collect_now?).returns(false)
         Assignment.any_instance.stubs(
             :submission_rule).returns(submission_rule)
@@ -390,7 +390,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
       should "be able to get a csv grade report" do
-        student = Student.make
+        student = Student.make!
         response_csv = get_as(@admin, :download_csv_grades_report).body
         csv_rows = FasterCSV.parse(response_csv)
         assert_equal Student.all.size, csv_rows.size
@@ -426,8 +426,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
       context "with required files" do
         setup do
-          @file_1 = AssignmentFile.make(:assignment => @assignment)
-          @file_2 = AssignmentFile.make(:assignment => @assignment)
+          @file_1 = AssignmentFile.make!(:assignment => @assignment)
+          @file_2 = AssignmentFile.make!(:assignment => @assignment)
         end
 
         should "be able to remove required files" do
@@ -514,9 +514,9 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
             :section_due_dates_attributes => {
               "0" => {"section_id"=>"2", "due_date"=>"2011-10-27 00:00"},
               "1"=>{"section_id"=>"3", "due_date"=>"2011-10-27 00:00"}
-            } 
+            }
           }
-          
+
         @assignment.reload
         assert_equal false, @assignment.section_due_dates_type
         assert_equal 0, @assignment.section_due_dates.size
@@ -527,7 +527,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
   context "A grader" do
     setup do
-      @grader = Ta.make
+      @grader = Ta.make!
     end
 
     should "not be able to CSV graders report" do
@@ -537,7 +537,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
     context "with an assignment" do
       setup do
-        @assignment = Assignment.make
+        @assignment = Assignment.make!
       end
 
       should "not be able to edit" do
@@ -562,7 +562,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
       should "gets assignment list on the graders" do
-        submission_rule = NoLateSubmissionRule.make
+        submission_rule = NoLateSubmissionRule.make!
         submission_rule.stubs(:can_collect_now?).returns(false)
         Assignment.any_instance.stubs(:submission_rule).returns(
                 submission_rule)
@@ -576,12 +576,12 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
   context "A student" do
     setup do
-      @student = Student.make
+      @student = Student.make!
     end
 
     context "with an assignment" do
       setup do
-        @assignment = Assignment.make(:group_min => 2)
+        @assignment = Assignment.make!(:group_min => 2)
       end
 
       should "get assignment's index" do
@@ -625,7 +625,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
       should "not be able to invite without a group" do
-        students = [Student.make, Student.make]
+        students = [Student.make!, Student.make!]
         user_names = students.collect{
                           |student| student.user_name
                         }.join(', ')
@@ -652,21 +652,21 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
       context "invited in several group" do
         setup do
-          @grouping = Grouping.make(:assignment => @assignment)
-          StudentMembership.make(
+          @grouping = Grouping.make!(:assignment => @assignment)
+          StudentMembership.make!(
               :grouping => @grouping,
               :user => @student,
               :membership_status => StudentMembership::STATUSES[:pending])
-          StudentMembership.make(
+          StudentMembership.make!(
               :grouping => @grouping,
               :membership_status => StudentMembership::STATUSES[:inviter])
 
-          g = Grouping.make(:assignment => @assignment)
-          StudentMembership.make(
+          g = Grouping.make!(:assignment => @assignment)
+          StudentMembership.make!(
               :grouping => g,
               :user => @student,
               :membership_status => StudentMembership::STATUSES[:pending])
-          StudentMembership.make(
+          StudentMembership.make!(
               :grouping => g,
               :membership_status => StudentMembership::STATUSES[:inviter])
 
@@ -700,15 +700,15 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
       context ", inviter of a group" do
         setup do
-          @grouping = Grouping.make(:assignment => @assignment)
-          StudentMembership.make(
+          @grouping = Grouping.make!(:assignment => @assignment)
+          StudentMembership.make!(
               :user => @student,
               :grouping => @grouping,
               :membership_status => StudentMembership::STATUSES[:inviter])
         end
 
         should "be able to invite a student" do
-          student = Student.make
+          student = Student.make!
           post_as(@student,
                   :invite_member,
                   {:id => @assignment.id,
@@ -731,7 +731,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         end
 
         should "not be able to invite a hidden student" do
-          student = Student.make(:hidden => true)
+          student = Student.make!(:hidden => true)
           post_as(@student,
                   :invite_member,
                   {:id => @assignment.id,
@@ -744,7 +744,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         end
 
         should "not be able to invite an already invited student" do
-          sm = StudentMembership.make(:grouping => @grouping)
+          sm = StudentMembership.make!(:grouping => @grouping)
           post_as(@student,
                   :invite_member,
                   {:id => @assignment.id,
@@ -757,7 +757,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         end
 
         should "be able to invite multiple students" do
-          students = [Student.make, Student.make]
+          students = [Student.make!, Student.make!]
           user_names = students.collect{
                 |student| student.user_name
               }.join(',')
@@ -770,7 +770,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         end
 
         should "be able to invite multiple students with malformed string" do
-          students = [Student.make, Student.make]
+          students = [Student.make!, Student.make!]
           invalid_users = ['%(*&@#$(*#$EJDF',
                            'falsj asdlfkjasdl aslkdjasd,dasflk(*!@*@*@!!!',
                            'lkjsdlkfjsdfsdlkfjsfsdf']
@@ -787,7 +787,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         end
 
         should "be able to invite students with spacing" do
-          students = [Student.make, Student.make]
+          students = [Student.make!, Student.make!]
           user_names = students.collect{
                           |student| student.user_name
                         }.join(' ,  ')
@@ -810,7 +810,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         end
 
         should "not be able to invite admins" do
-          admin = Admin.make
+          admin = Admin.make!
           post_as(@student,
                   :invite_member,
                   {:id => @assignment.id,
@@ -824,7 +824,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         end
 
         should "not be able to invite graders" do
-          grader = Ta.make
+          grader = Ta.make!
           post_as(@student,
                   :invite_member,
                   {:id => @assignment.id,
@@ -851,7 +851,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         end
 
         should "be able to delete rejected membership" do
-          sm = StudentMembership.make(
+          sm = StudentMembership.make!(
                   :grouping => @grouping,
                   :membership_status => StudentMembership::STATUSES[:pending])
 
@@ -872,7 +872,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         end
 
         should "be able to disinvite someone" do
-          sm = StudentMembership.make(
+          sm = StudentMembership.make!(
                   :grouping => @grouping,
                   :membership_status => StudentMembership::STATUSES[:rejected])
           post_as @student,
@@ -902,8 +902,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
         context "with pending invitations" do
           setup do
-            @invited = Student.make
-            sm = StudentMembership.make(
+            @invited = Student.make!
+            sm = StudentMembership.make!(
                   :grouping => @grouping,
                   :membership_status => StudentMembership::STATUSES[:pending],
                   :user => @invited)
@@ -925,10 +925,10 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
         context "which is valid" do
           setup do
-             sm = StudentMembership.make(
+             sm = StudentMembership.make!(
                 :grouping => @grouping,
                 :membership_status => StudentMembership::STATUSES[:accepted])
-             sm = StudentMembership.make(
+             sm = StudentMembership.make!(
                 :grouping => @grouping,
                 :membership_status => StudentMembership::STATUSES[:accepted])
 
@@ -950,7 +950,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
         context "with a submission" do
           setup do
-            submission = Submission.make(:grouping => @grouping)
+            submission = Submission.make!(:grouping => @grouping)
           end
 
           should "not be able to delete a group" do
@@ -966,8 +966,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
       context "in a group" do
         setup do
-          @grouping = Grouping.make(:assignment => @assignment)
-          @sm = StudentMembership.make(
+          @grouping = Grouping.make!(:assignment => @assignment)
+          @sm = StudentMembership.make!(
                  :grouping => @grouping,
                  :membership_status => StudentMembership::STATUSES[:accepted],
                  :user => @student)
@@ -998,7 +998,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
     context "with an assignment with group = 1" do
       setup do
-        @assignment = Assignment.make(:group_min => 1)
+        @assignment = Assignment.make!(:group_min => 1)
       end
 
       should "be able to work alone" do
@@ -1016,7 +1016,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
     context "with an assignment where instructors creates groups" do
       setup do
-        @assignment = Assignment.make(:student_form_groups => false)
+        @assignment = Assignment.make!(:student_form_groups => false)
       end
 
       should "not be able to allow to form groups" do
@@ -1030,8 +1030,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
       context "with a group" do
         setup do
-          @grouping = Grouping.make(:assignment => @assignment)
-          StudentMembership.make(
+          @grouping = Grouping.make!(:assignment => @assignment)
+          StudentMembership.make!(
               :grouping => @grouping,
               :membership_status => StudentMembership::STATUSES[:accepted],
               :user => @student)
@@ -1054,7 +1054,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
     context "with an assignment where students have to work alone" do
       setup do
-        @assignment = Assignment.make(:group_min => 1,
+        @assignment = Assignment.make!(:group_min => 1,
                                       :group_max => 1)
       end
 
@@ -1071,20 +1071,20 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
     context "with an assignment, with a past due date" do
       setup do
-        @assignment = Assignment.make(:due_date => 3.days.ago)
+        @assignment = Assignment.make!(:due_date => 3.days.ago)
       end
 
       context "inviter of a group" do
         setup do
-          @grouping = Grouping.make(:assignment => @assignment)
-          sm = StudentMembership.make(
+          @grouping = Grouping.make!(:assignment => @assignment)
+          sm = StudentMembership.make!(
                  :grouping => @grouping,
                  :membership_status => StudentMembership::STATUSES[:inviter],
                  :user => @student)
         end
 
         should "not be able to invite" do
-          student = Student.make
+          student = Student.make!
           post_as @student,
                   :invite_member,
                   {:id => @assignment.id,
@@ -1100,11 +1100,11 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
     context "with an assignmt, with past due date but collection in future" do
       setup do
-        @assignment = Assignment.make(:due_date => 1.days.ago)
+        @assignment = Assignment.make!(:due_date => 1.days.ago)
         grace_period_submission_rule = GracePeriodSubmissionRule.new
         @assignment.replace_submission_rule(grace_period_submission_rule)
         @assignment.save
-        period = Period.make(:submission_rule => @assignment.submission_rule,
+        period = Period.make!(:submission_rule => @assignment.submission_rule,
                              :hours => 62)
       end
 
@@ -1124,8 +1124,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
       context "with a grouping" do
         setup do
-          @grouping = Grouping.make(:assignment => @assignment)
-          StudentMembership.make(
+          @grouping = Grouping.make!(:assignment => @assignment)
+          StudentMembership.make!(
               :grouping => @grouping,
               :membership_status => StudentMembership::STATUSES[:inviter],
               :user => @student)
@@ -1133,7 +1133,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         end
 
         should "be able to invite a student" do
-          student = Student.make
+          student = Student.make!
           post_as @student,
                   :invite_member,
                   {:id => @assignment.id,

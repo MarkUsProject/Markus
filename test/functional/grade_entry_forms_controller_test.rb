@@ -18,8 +18,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
   # An authenticated and authorized student
   context "An authenticated and authorized student doing a " do
     setup do
-      @student = Student.make
-      @grade_entry_form = GradeEntryForm.make
+      @student = Student.make!
+      @grade_entry_form = GradeEntryForm.make!
       @grade_entry_form_with_grade_entry_items = make_grade_entry_form_with_multiple_grade_entry_items
       @grade_entry_student = @grade_entry_form_with_grade_entry_items.grade_entry_students.make(:user => @student)
       @grade_entry_form_with_grade_entry_items.grade_entry_items.each do |grade_entry_item|
@@ -78,7 +78,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
     end
 
     should "GET on :student_interface when the student's mark has been released and it is a blank mark" do
-      student1 = Student.make
+      student1 = Student.make!
       grade_entry_student1 = @grade_entry_form_with_grade_entry_items.grade_entry_students.make(:user => student1)
       grade_entry_student1.released_to_student=true
       grade_entry_student1.save
@@ -120,7 +120,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
   # An authenitcated and authorized TA
   context "An authenticated and authorized TA doing a " do
     setup do
-      @ta = Ta.make
+      @ta = Ta.make!
     end
 
     # TAs are not allowed to create or edit grade entry form properties or access
@@ -159,12 +159,12 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
   # An authenticated and authorized admin
   context "An authenticated and authorized admin doing a " do
     setup do
-      @admin = Admin.make
-      @grade_entry_form = GradeEntryForm.make
+      @admin = Admin.make!
+      @grade_entry_form = GradeEntryForm.make!
       @grade_entry_form_with_grade_entry_items = make_grade_entry_form_with_multiple_grade_entry_items
       @original = @grade_entry_form
       @original_with_grade_entry_items = @grade_entry_form_with_grade_entry_items
-      10.times {Student.make}
+      10.times {Student.make!}
     end
 
     should "GET on :new" do
@@ -489,7 +489,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       end
 
       should ":edit with duplicate GradeEntryItem name" do
-        @grade_entry_form_with_dup = GradeEntryForm.make
+        @grade_entry_form_with_dup = GradeEntryForm.make!
         @q1.name = "Q1"
         @q2.name = "Q1"
         @grade_entry_form_with_dup.grade_entry_items.make(:name => @q1.name)
@@ -624,7 +624,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
     context "POST on :update_grade when the Grade does not have an existing value and the GradeEntryStudent does not exist - " do
       setup do
         @grade_entry_items = @grade_entry_form_with_grade_entry_items.grade_entry_items
-        @student = Student.make
+        @student = Student.make!
       end
 
       should "set an empty grade to a valid value" do
@@ -699,7 +699,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         @students = []
         @specific_students = []
         (0..11).each do |i|
-          student = Student.make(:user_name => "s" + i.to_s, :last_name => last_names[i], :first_name => "Bob")
+          student = Student.make!(:user_name => "s" + i.to_s, :last_name => last_names[i], :first_name => "Bob")
           @students << student
           @grade_entry_form1.grade_entry_students.make(:user => student)
         end
@@ -773,8 +773,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
 
     context "on :csv_upload" do
       setup do
-        @student = Student.make(:user_name => "c2ÈrÉØrr", :last_name => "Last", :first_name => "First")
-        @grade_entry_form = GradeEntryForm.make
+        @student = Student.make!(:user_name => "c2ÈrÉØrr", :last_name => "Last", :first_name => "First")
+        @grade_entry_form = GradeEntryForm.make!
         @grade_entry_form_with_grade_entry_items = make_grade_entry_form_with_multiple_grade_entry_items
         @grade_entry_student = @grade_entry_form_with_grade_entry_items.grade_entry_students.make(:user => @student)
         @grade_entry_form_with_grade_entry_items.grade_entry_items.each do |grade_entry_item|

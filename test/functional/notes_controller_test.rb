@@ -15,7 +15,7 @@ class NotesControllerTest < AuthenticatedControllerTest
   # Security test - these should all fail
   context "An authenticated and authorized student doing a " do
     setup do
-      @student = Student.make
+      @student = Student.make!
     end
 
     should "get on notes_dialog" do
@@ -76,12 +76,12 @@ class NotesControllerTest < AuthenticatedControllerTest
 
   context "An authenticated and authorized TA doing a " do
     setup do
-      @assignment = Assignment.make
-      @grouping = Grouping.make(:assignment =>@assignment)
+      @assignment = Assignment.make!
+      @grouping = Grouping.make!(:assignment =>@assignment)
       @controller_to = 'groups'
       @action_to = 'manage'
       @message = "This is a note"
-      @ta = Ta.make
+      @ta = Ta.make!
     end
 
     should "be able to get :notes_dialog" do
@@ -118,7 +118,7 @@ class NotesControllerTest < AuthenticatedControllerTest
     end
 
     should "get index, with a note" do
-      @note = @note = Note.make( :creator_id => @ta.id )
+      @note = @note = Note.make!( :creator_id => @ta.id )
       get_as @ta, :index
       assert_response :success
       assert render_template 'index.html.erb'
@@ -151,9 +151,9 @@ class NotesControllerTest < AuthenticatedControllerTest
       # earlier, since the DB will get cleared prior each test. Hence, if we
       # wouldn't do this trick, we had no records in the database to refer to
       # when we need them.
-      {:Grouping => lambda {Grouping.make},
-       :Student => lambda {Student.make},
-       :Assignment => lambda {Assignment.make}}.each_pair do |type, noteable|
+      {:Grouping => lambda {Grouping.make!},
+       :Student => lambda {Student.make!},
+       :Assignment => lambda {Assignment.make!}}.each_pair do |type, noteable|
 
         should "with good #{type.to_s} data" do
           @notes = Note.count
@@ -202,14 +202,14 @@ class NotesControllerTest < AuthenticatedControllerTest
 
     context "GET on :edit" do
       should "for a note belonging to themselves (get as TA)" do
-        @note = Note.make(:creator_id => @ta.id)
+        @note = Note.make!(:creator_id => @ta.id)
         get_as @ta, :edit, {:id => @note.id}
         assert_response :success
         assert render_template 'edit.html.erb'
       end
 
       should "for a note belonging to someone else (get as TA)" do
-        @note = Note.make
+        @note = Note.make!
         get_as @ta, :edit, {:id => @note.id}
         assert_response :missing
       end
@@ -218,7 +218,7 @@ class NotesControllerTest < AuthenticatedControllerTest
     context "POST on :update" do
       context "for a note belonging to themselves" do
         should "with bad data" do
-          @note = Note.make(:creator_id => @ta.id)
+          @note = Note.make!(:creator_id => @ta.id)
           post_as @ta,
                   :update,
                   {:id => @note.id,
@@ -229,7 +229,7 @@ class NotesControllerTest < AuthenticatedControllerTest
         end
 
         should "with good data" do
-          @note = Note.make(:creator_id => @ta.id )
+          @note = Note.make!(:creator_id => @ta.id )
           @new_message = "Changed message"
           post_as @ta,
                   :update,
@@ -254,14 +254,14 @@ class NotesControllerTest < AuthenticatedControllerTest
 
     context "DELETE on :destroy" do
       should "for a note belonging to themselves" do
-        @note = Note.make( :creator_id => @ta.id )
+        @note = Note.make!(:creator_id => @ta.id)
         delete_as @ta, :destroy, :id => @note.id
         assert assign_to :note
         assert_equal flash[:success], I18n.t('notes.delete.success')
       end
 
       should "for a note belonging to someone else (delete as TA)" do
-        @note = Note.make
+        @note = Note.make!
         delete_as @ta,
                   :destroy,
                   :id => @note.id
@@ -273,7 +273,7 @@ class NotesControllerTest < AuthenticatedControllerTest
 
   context "An authenticated and authorized admin doing a " do
     setup do
-      @admin = Admin.make
+      @admin = Admin.make!
     end
 
     should "be able to get the index" do
@@ -319,7 +319,7 @@ class NotesControllerTest < AuthenticatedControllerTest
 
     context "with an assignment" do
       setup do
-        @grouping = Grouping.make
+        @grouping = Grouping.make!
         @assignment = @grouping.assignment
         @controller_to = 'groups'
         @action_to = 'manage'
@@ -373,9 +373,9 @@ class NotesControllerTest < AuthenticatedControllerTest
       end
 
 
-      {:Grouping => lambda {Grouping.make},
-      :Student => lambda {Student.make},
-      :Assignment => lambda {Assignment.make} }.each_pair do |type, noteable|
+      {:Grouping => lambda {Grouping.make!},
+      :Student => lambda {Student.make!},
+      :Assignment => lambda {Assignment.make!} }.each_pair do |type, noteable|
 
         should "with good #{type.to_s} data" do
           @notes = Note.count
@@ -407,21 +407,21 @@ class NotesControllerTest < AuthenticatedControllerTest
       end
 
       should "for a note belonging to themselves (get as Admin)" do
-        @note = Note.make(:creator_id => @admin.id)
+        @note = Note.make!(:creator_id => @admin.id)
         get_as @admin, :edit, {:id => @note.id}
         assert_response :success
         assert render_template 'edit.html.erb'
       end
 
       should "for a note belonging to someone else (get as Admin)" do
-        @note = Note.make( :creator_id => Ta.make.id  )
+        @note = Note.make!(:creator_id => Ta.make!.id)
         get_as @admin, :edit, {:id => @note.id}
         assert_response :success
         assert render_template 'edit.html.erb'
       end
 
       should "with bad data" do
-        @note = Note.make(:creator_id => @admin.id)
+        @note = Note.make!(:creator_id => @admin.id)
         post_as @admin,
                 :update, {:id => @note.id, :note => {:notes_message => ''}}
         assert assign_to :note
@@ -430,7 +430,7 @@ class NotesControllerTest < AuthenticatedControllerTest
       end
 
       should "with good data" do
-        @note = Note.make( :creator_id => @admin.id  )
+        @note = Note.make!( :creator_id => @admin.id  )
         @new_message = "Changed message"
         post_as @admin,
                 :update,
@@ -442,7 +442,7 @@ class NotesControllerTest < AuthenticatedControllerTest
       end
 
       should "for a note belonging to someone else (post as Admin)" do
-        @note = Note.make( :creator_id => Ta.make.id  )
+        @note = Note.make!( :creator_id => Ta.make!.id  )
         @new_message = "Changed message"
         post_as @admin,
                 :update,
@@ -453,21 +453,21 @@ class NotesControllerTest < AuthenticatedControllerTest
       end
 
       should "for a note belonging to themselves (delete as Admin)" do
-        @note = Note.make( :creator_id => @admin.id  )
+        @note = Note.make!( :creator_id => @admin.id  )
         delete_as @admin, :destroy, {:id => @note.id}
         assert assign_to :note
         assert_equal flash[:success], I18n.t('notes.delete.success')
       end
 
       should "for a note belonging to someone else (delete as Admin)" do
-        @note = Note.make(:creator_id => Ta.make.id)
+        @note = Note.make!(:creator_id => Ta.make!.id)
         delete_as @admin, :destroy, {:id => @note.id}
         assert assign_to :note
         assert_equal flash[:success], I18n.t('notes.delete.success')
       end
 
       should "have noteable options for selection when viewing noteable_type Grouping" do
-        @note = Note.make( :creator_id => @admin.id )
+        @note = Note.make!( :creator_id => @admin.id )
         post_as @admin,
         :create,
         {:noteable_type => 'Grouping',
@@ -477,7 +477,7 @@ class NotesControllerTest < AuthenticatedControllerTest
       end
 
       should "have noteable options for selection when viewing noteable_type Student" do
-        @note = Note.make( :creator_id => @admin.id )
+        @note = Note.make!( :creator_id => @admin.id )
         post_as @admin,
         :create,
         {:noteable_type => 'Student',
@@ -487,7 +487,7 @@ class NotesControllerTest < AuthenticatedControllerTest
       end
 
       should "have noteable options for selection when viewing noteable_type Assignment" do
-        @note = Note.make( :creator_id => @admin.id )
+        @note = Note.make!( :creator_id => @admin.id )
         post_as @admin,
         :create,
         {:noteable_type => 'Assignment',

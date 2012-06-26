@@ -78,12 +78,12 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
 
   context "An authenticated and authorized admin doing a POST" do
      setup do
-      @user = Admin.make()
-      @assignment = Assignment.make()
-      @text_annotation = TextAnnotation.make()
-      @category = AnnotationCategory.make()
-      @annotation_text = AnnotationText.make()
-      @submission_file = SubmissionFile.make()
+      @user = Admin.make!
+      @assignment = Assignment.make!
+      @text_annotation = TextAnnotation.make!
+      @category = AnnotationCategory.make!
+      @annotation_text = AnnotationText.make!
+      @submission_file = SubmissionFile.make!
       @result = Submission.make.result
     end
 
@@ -154,12 +154,12 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
 
   context "An authenticated and authorized TA doing a POST" do
      setup do
-      @user = Ta.make()
-      @assignment = Assignment.make()
-      @text_annotation = TextAnnotation.make()
-      @category = AnnotationCategory.make()
-      @annotation_text = AnnotationText.make()
-      @submission_file = SubmissionFile.make()
+      @user = Ta.make!
+      @assignment = Assignment.make!
+      @text_annotation = TextAnnotation.make!
+      @category = AnnotationCategory.make!
+      @annotation_text = AnnotationText.make!
+      @submission_file = SubmissionFile.make!
       @result = Submission.make.result
      end
 
@@ -230,13 +230,13 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
   context "An authenticated and authorized Student doing a POST" do
    # A student should get a 404 even if they do everything right
      setup do
-      @user = Student.make()
-      @assignment = Assignment.make()
-      @text_annotation = TextAnnotation.make()
-      @category = AnnotationCategory.make()
-      @annotation_text = AnnotationText.make()
-      @submission_file = SubmissionFile.make()
-      @result = Submission.make.result
+      @user = Student.make!
+      @assignment = Assignment.make!
+      @text_annotation = TextAnnotation.make!
+      @category = AnnotationCategory.make!
+      @annotation_text = AnnotationText.make!
+      @submission_file = SubmissionFile.make!
+      @result = Submission.make!.result
     end
 
     should "on :add_existing_annotation" do
@@ -298,4 +298,5 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
     assert_recognizes( {:action => "destroy", :controller => "annotations"},
                        {:path => "annotations", :method => "delete"} )
   end
+
 end

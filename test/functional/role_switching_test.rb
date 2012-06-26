@@ -19,8 +19,8 @@ class RoleSwitchingTest < AuthenticatedControllerTest
     setup do
       # Tests apply to  main controller
       @controller = MainController.new
-      @admin = Admin.make
-      @student = Student.make
+      @admin = Admin.make!
+      @student = Student.make!
       post :login, :user_login => @admin.user_name, :user_password => 'asfd'
     end
 
@@ -105,8 +105,8 @@ class RoleSwitchingTest < AuthenticatedControllerTest
     setup do
       # Tests apply to  main controller
       @controller = MainController.new
-      @admin = Admin.make
-      @student = Student.make
+      @admin = Admin.make!
+      @student = Student.make!
       post_as @student, :login_as, :effective_user_login => @student.user_name,
           :user_login => @admin.user_name, :admin_password => "adfadsf"
     end
@@ -124,8 +124,8 @@ class RoleSwitchingTest < AuthenticatedControllerTest
     setup do
       # Tests apply to  main controller
       @controller = MainController.new
-      @admin = Admin.make
-      @ta = Ta.make
+      @admin = Admin.make!
+      @ta = Ta.make!
       post_as @ta, :login_as, :effective_user_login => @ta.user_name,
           :user_login => @admin.user_name, :admin_password => "adfadsf"
     end
@@ -148,13 +148,13 @@ class RoleSwitchingTest < AuthenticatedControllerTest
       MarkusConfigurator.stubs(:markus_config_remote_user_auth).returns(true)
       # Tests apply to  main controller
       @controller = MainController.new
-      @admin = Admin.make
+      @admin = Admin.make!
       # Make sure to set "REMOTE_USER" via stubbing the request
       # env.
       mock_request_env = Hash.new
       mock_request_env["HTTP_X_FORWARDED_USER"] = @admin.user_name
       ActionController::TestRequest.any_instance.stubs(:env).returns(mock_request_env)
-      @student = Student.make
+      @student = Student.make!
       post :login, :user_login => @admin.user_name, :user_password => 'asfd'
     end
 
@@ -229,8 +229,8 @@ class RoleSwitchingTest < AuthenticatedControllerTest
       MarkusConfigurator.stubs(:markus_config_remote_user_auth).returns(true)
       # Tests apply to  main controller
       @controller = MainController.new
-      @admin = Admin.make
-      @student = Student.make
+      @admin = Admin.make!
+      @student = Student.make!
       # Make sure to set "REMOTE_USER" via stubbing the request
       # env.
       mock_request_env = Hash.new
@@ -255,8 +255,8 @@ class RoleSwitchingTest < AuthenticatedControllerTest
       MarkusConfigurator.stubs(:markus_config_remote_user_auth).returns(true)
       # Tests apply to  main controller
       @controller = MainController.new
-      @admin = Admin.make
-      @ta = Ta.make
+      @admin = Admin.make!
+      @ta = Ta.make!
       # Make sure to set "REMOTE_USER" via stubbing the request
       # env.
       mock_request_env = Hash.new

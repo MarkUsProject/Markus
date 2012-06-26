@@ -146,7 +146,7 @@ end
 
 Note.blueprint do
   noteable_type  {'Grouping'}
-  noteable_id {Grouping.make.id}
+  noteable_id {Grouping.make!.id}
   user {Admin.make}
   notes_message  {Faker::Lorem.paragraphs}
 end
