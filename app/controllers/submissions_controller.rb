@@ -272,12 +272,12 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     
     @c_per_page = current_user.id.to_s + @assignment.id.to_s + "per_page" 
-    if params[:per_page] != nil and !params[:per_page].blank?
+    if !params[:per_page].blank?
        cookies[@c_per_page] = params[:per_page] 
     end 
 
     @c_sort_by = current_user.id.to_s + @assignment.id.to_s + "sort_by"
-    if params[:sort_by] != nil and !params[:sort_by].blank?
+    if !params[:sort_by].blank?
        cookies[@c_sort_by] = params[:sort_by]
     else
        params[:sort_by] = 'group_name' 
@@ -304,11 +304,11 @@ class SubmissionsController < ApplicationController
       end
     end
     
-    if cookies[@c_per_page] == nil or cookies[@c_per_page].blank?
+    if cookies[@c_per_page].blank?
        cookies[@c_per_page] = params[:per_page]
     end
     
-    if cookies[@c_sort_by] == nil or cookies[@c_sort_by].blank?
+    if cookies[@c_sort_by].blank?
        cookies[@c_sort_by] = params[:sort_by]
     end
  
