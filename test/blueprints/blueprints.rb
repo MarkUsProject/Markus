@@ -99,8 +99,8 @@ GradeEntryItem.blueprint do
 end
 
 GradeEntryStudent.blueprint do
-  grade_entry_form {GradeEntryForm.make}
-  user {Student.make}
+  grade_entry_form {GradeEntryForm.make!}
+  user {Student.make!}
   released_to_student {false}
 end
 

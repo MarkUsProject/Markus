@@ -42,7 +42,7 @@ class SectionTest < ActiveSupport::TestCase
   context "A section with students associated to" do
     setup do
       @section = Section.make!
-      3.times { @section.students.make }
+      3.times { Student.make!(:section => @section) }
     end
 
     should "return true to has_students?" do

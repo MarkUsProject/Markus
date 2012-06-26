@@ -429,7 +429,7 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
           # Assert that each accepted member of this grouping did not get a GracePeriodDeduction
           @grouping.reload
           @grouping.accepted_student_memberships.each do |student_membership|
-            assert_equal members[student_membership.user.id] -1, student_membership.user.remaining_grace_credits
+            assert_equal members[student_membership.user.id] - 1, student_membership.user.remaining_grace_credits
           end
 
           # We should have all files except OvertimeFile1.java and NotIncluded.java in the repository.
