@@ -61,7 +61,7 @@ ExtraMark.blueprint do
 end
 
 FlexibleCriterion.blueprint do
-  assignment {Assignment.make(:marking_scheme_type => 'flexible')}
+  assignment {Assignment.make!(:marking_scheme_type => 'flexible')}
   flexible_criterion_name {"machinist_flexible_criterion_#{sn}"}
   description {Faker::Lorem.sentence(2)}
   position {1} # override if many for the same assignment

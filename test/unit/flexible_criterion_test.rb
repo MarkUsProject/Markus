@@ -11,7 +11,7 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
 
   context "A good FlexiableCriterion model" do
     setup do
-      FlexibleCriterion.make
+      FlexibleCriterion.make!
     end
 
     should belong_to :assignment
@@ -75,7 +75,7 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
 
   context "An assignment, of type flexible criteria" do
     setup do
-      @assignment = Assignment.make(:marking_scheme_type => 'flexible')
+      @assignment = Assignment.make!(:marking_scheme_type => 'flexible')
     end
 
     should "get an empty CSV string" do
@@ -131,16 +131,16 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
 
     context "with three flexible criteria" do
       setup do
-        FlexibleCriterion.make(:assignment => @assignment,
+        FlexibleCriterion.make!(:assignment => @assignment,
                               :flexible_criterion_name => 'criterion1',
                               :description => 'description1, for criterion 1',
                               :max => 10)
-        FlexibleCriterion.make(:assignment => @assignment,
+        FlexibleCriterion.make!(:assignment => @assignment,
                               :flexible_criterion_name => 'criterion2',
                               :description => 'description2, "with quotes"',
                               :max => 10,
                               :position => 2)
-        FlexibleCriterion.make(:assignment => @assignment,
+        FlexibleCriterion.make!(:assignment => @assignment,
                               :flexible_criterion_name => 'criterion3',
                               :description => 'description3!',
                               :max => 1.6,
@@ -158,7 +158,7 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
         tempfile << csv_string
         tempfile.rewind
         invalid_lines = []
-        dst_assignment = Assignment.make(:marking_scheme_type => 'flexible')
+        dst_assignment = Assignment.make!(:marking_scheme_type => 'flexible')
         nb_updates = FlexibleCriterion.parse_csv(
                                 tempfile,
                                 dst_assignment, invalid_lines)
