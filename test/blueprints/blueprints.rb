@@ -121,12 +121,10 @@ ImageAnnotation.blueprint do
   x2 {10}
   y1 {0}
   y2 {10}
-  submission_file {SubmissionFile.make!}
   annotation_text {AnnotationText.make!(
-    :annotation_category => AnnotationCategory.make(:assignment => submission_file.submission.grouping.assignment)
+    :annotation_category => AnnotationCategory.make(:assignment => SubmissionFile.make!.submission.grouping.assignment)
     )}
-  annotation_text_id {annotation_text.id}
-  submission_file_id {submission_file.id}
+  submission_file {SubmissionFile.make!}
   annotation_number {rand(1000)+1}
 end
 
@@ -262,10 +260,10 @@ end
 TextAnnotation.blueprint do
   line_start {0}
   line_end {1}
-  submission_file {SubmissionFile.make}
-  annotation_text {AnnotationText.make(
-    :annotation_category => AnnotationCategory.make(:assignment => submission_file.submission.grouping.assignment)
+  annotation_text {AnnotationText.make!(
+    :annotation_category => AnnotationCategory.make(:assignment => SubmissionFile.make!.submission.grouping.assignment)
     )}
+  submission_file {SubmissionFile.make!}
   annotation_number {rand(1000)+1}
 end
 

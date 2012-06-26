@@ -121,7 +121,7 @@ class TokenTest < ActiveSupport::TestCase
 
   context "Token" do
     setup do
-      @token = Token.make{}
+      @token = Token.make!
     end
     should "be found" do
       assert_equal(@token, Token.find_by_grouping_id(@token.grouping_id))

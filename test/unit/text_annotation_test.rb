@@ -23,7 +23,7 @@ class TextAnnotationTest < ActiveSupport::TestCase
   context "JavaScript functions" do
 
     setup do
-      @textannotation = TextAnnotation.make
+      @textannotation = TextAnnotation.make!
     end
 
     should "render add_annotation_js_string" do

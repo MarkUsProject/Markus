@@ -38,8 +38,8 @@ class TestFileTest < ActiveSupport::TestCase
 
   context "An invalid ant file" do
     setup do
-      @buildfile = TestFile.make(:filetype => 'build.xml', :filename => 'build.xml')
-      @buildproperties = TestFile.make(:filetype => 'build.properties', :filename => 'build.properties')
+      @buildfile = TestFile.make!(:filetype => 'build.xml', :filename => 'build.xml')
+      @buildproperties = TestFile.make!(:filetype => 'build.properties', :filename => 'build.properties')
     end
 
     should "return false when build.xml file is not named build.xml" do
@@ -55,8 +55,8 @@ class TestFileTest < ActiveSupport::TestCase
 
   context "An invalid test file" do
     setup do
-      @validtestfile = TestFile.make(:filetype => 'test', :filename => 'SomeValidTestFile')
-      @invalidtestfile = TestFile.make(:filetype => 'test', :filename => 'TestFile')
+      @validtestfile = TestFile.make!(:filetype => 'test', :filename => 'SomeValidTestFile')
+      @invalidtestfile = TestFile.make!(:filetype => 'test', :filename => 'TestFile')
     end
 
     should "return false when a test file is created with a blank filename" do
@@ -82,8 +82,8 @@ class TestFileTest < ActiveSupport::TestCase
 
   context "An invalid library file" do
     setup do
-      @validlibfile = TestFile.make(:filetype => 'lib', :filename => 'SomeValidLibFile')
-      @invalidlibfile = TestFile.make(:filetype => 'lib', :filename => 'LibFile')
+      @validlibfile = TestFile.make!(:filetype => 'lib', :filename => 'SomeValidLibFile')
+      @invalidlibfile = TestFile.make!(:filetype => 'lib', :filename => 'LibFile')
     end
 
     should "return false when a library file is created with a blank filename" do
@@ -109,8 +109,8 @@ class TestFileTest < ActiveSupport::TestCase
 
   context "An invalid parser file" do
     setup do
-      @validparsefile = TestFile.make(:filetype => 'parse', :filename => 'SomeValidParseFile')
-      @invalidparsefile = TestFile.make(:filetype => 'parse', :filename => 'ParseFile')
+      @validparsefile = TestFile.make!(:filetype => 'parse', :filename => 'SomeValidParseFile')
+      @invalidparsefile = TestFile.make!(:filetype => 'parse', :filename => 'ParseFile')
     end
 
     should "return false when a parser file is created with a blank filename" do

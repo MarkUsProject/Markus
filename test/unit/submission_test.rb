@@ -70,11 +70,11 @@ class SubmissionTest < ActiveSupport::TestCase
   context "The Submission class" do
     should "be able to find a submission object by group name and assignment short identifier" do
       # existing submission
-      assignment = Assignment.make
-      group = Group.make
-      grouping = Grouping.make(:assignment => assignment,
+      assignment = Assignment.make!
+      group = Group.make!
+      grouping = Grouping.make!(:assignment => assignment,
                                :group => group)
-      submission = Submission.make(:grouping => grouping)
+      submission = Submission.make!(:grouping => grouping)
 
       sub2 = Submission.get_submission_by_group_and_assignment(group.group_name,
                                                                 assignment.short_identifier)

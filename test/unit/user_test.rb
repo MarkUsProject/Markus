@@ -27,7 +27,7 @@ class UserTest < ActiveSupport::TestCase
   context "A good User model" do
     setup do
       # Any users will do
-      Student.make
+      Student.make!
     end
 
     should validate_uniqueness_of :user_name

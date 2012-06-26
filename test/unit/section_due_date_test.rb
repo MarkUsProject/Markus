@@ -9,10 +9,10 @@ class SectionTest < ActiveSupport::TestCase
 
   context "An assignment with section due dates" do
     setup do
-      @section = Section.make
+      @section = Section.make!
       @now = DateTime.now
-      @assignment = Assignment.make(:section_due_dates_type => true)
-      SectionDueDate.make(:assignment => @assignment,
+      @assignment = Assignment.make!(:section_due_dates_type => true)
+      SectionDueDate.make!(:assignment => @assignment,
                           :section => @section,
                           :due_date => @now + 3)
     end

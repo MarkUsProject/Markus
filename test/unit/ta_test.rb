@@ -60,10 +60,10 @@ exist_user,USER2,USER2")
 
   context "A ta with a membership" do
     setup do
-      @assignment = Assignment.make
-      @ta = Ta.make
-      @grouping = Grouping.make(:assignment => @assignment)
-      TaMembership.make(:grouping => @grouping,
+      @assignment = Assignment.make!
+      @ta = Ta.make!
+      @grouping = Grouping.make!(:assignment => @assignment)
+      TaMembership.make!(:grouping => @grouping,
                         :user => @ta)
     end
 
