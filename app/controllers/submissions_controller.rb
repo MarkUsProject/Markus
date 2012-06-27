@@ -262,7 +262,7 @@ class SubmissionsController < ApplicationController
 
   def browse
     if current_user.ta?
-      params[:filter] = 'partial'
+      params[:filter] = 'assigned'
     else
       if params[:filter] == nil or params[:filter].blank?
         params[:filter] = 'none'
