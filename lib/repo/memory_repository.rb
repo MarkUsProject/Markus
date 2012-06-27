@@ -31,7 +31,7 @@ module Repository
       @revision_history = []                      # a list (array) of old revisions (i.e. < @current_revision)
       # mapping (hash) of timestamps and revisions
       @timestamps_revisions = {}
-      @timestamps_revisions[Time.now.to_i] = @current_revision   # push first timestamp-revision mapping
+      @timestamps_revisions[Time.now._dump] = @current_revision   # push first timestamp-revision mapping
       @repository_location = location
       @opened = true
 
@@ -158,7 +158,7 @@ module Repository
       @revision_history.push(@current_revision)
       @current_revision = new_rev
       @current_revision.__increment_revision_number() # increment revision number
-      @timestamps_revisions[timestamp] = @current_revision
+      @timestamps_revisions[timestamp._dump] = @current_revision
       @@repositories[@repository_location] = self
       return true
     end
