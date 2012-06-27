@@ -22,7 +22,8 @@ class Submission < ActiveRecord::Base
        raise "Expected a timestamp of type Time"
      end
      repo = grouping.group.repo
-     revision = repo.get_revision_by_timestamp(timestamp)
+     path = grouping.assignment.repository_folder
+     revision = repo.get_revision_by_timestamp(timestamp, path)
      submission = self.generate_new_submission(grouping, revision)
      repo.close
      return submission
