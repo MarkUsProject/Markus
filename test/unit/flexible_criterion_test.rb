@@ -81,19 +81,23 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
       assert_equal I18n.t('criteria_csv_error.max_zero'), e.message
     end
 
-    should "raise the errors hash in case of an unpredicted error" do
+    should "raise exceptions in case of an unpredicted error" do
       if RUBY_VERSION > "1.9"
+        # Capture exception in variable 'e'
         e = assert_raise CSV::MalformedCSVError do
           # That should fail because the assignment doesn't yet exists (in the DB)
           FlexibleCriterion.new_from_csv_row(['name', 10], Assignment.new)
         end
+        assert_instance_of CSV::MalformedCSVError, e
       else
+        # Capture exception in variable 'e'
         e = assert_raise CSV::IllegalFormatError do
           # That should fail because the assignment doesn't yet exists (in the DB)
           FlexibleCriterion.new_from_csv_row(['name', 10], Assignment.new)
         end
+        assert_instance_of CSV::IllegalFormatError, e
       end
-      assert_instance_of ActiveModel::Errors, e.message
+      assert_instance_of String, e.message
     end
 
   end
