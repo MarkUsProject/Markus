@@ -2,7 +2,7 @@
 <%= javascript_include_tag "ajax_paginate" %>
 
 <div class="notice">
-  <% if Time.now >= @assignment.submission_rule.calculate_collection_time %>
+  <% if Time.zone.now >= @assignment.submission_rule.calculate_collection_time %>
      <%=h I18n.t("browse_submissions.grading_can_begin") %>
   <% else %>
      <%=h I18n.t("browse_submissions.grading_can_begin_after",

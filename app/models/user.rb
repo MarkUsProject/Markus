@@ -254,7 +254,7 @@ class User < ActiveRecord::Base
     digest = Digest::SHA2.new(bitlen=512)
     # generate a unique token
     unique_seed = ActiveSupport::SecureRandom.hex(20)
-    return digest.update("#{unique_seed} SECRET! #{Time.now.to_f}").to_s
+    return digest.update("#{unique_seed} SECRET! #{Time.zone.now.to_f}").to_s
   end
 
   # strip input string
