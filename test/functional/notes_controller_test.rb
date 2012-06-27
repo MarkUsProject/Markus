@@ -165,7 +165,7 @@ class NotesControllerTest < AuthenticatedControllerTest
           assert assign_to :note
           assert_equal flash[:success], I18n.t('notes.create.success')
           assert redirect_to(:controller => "note")
-	        assert_equal(@notes + 1,  Note.count )
+          assert_equal(@notes + 1,  Note.count )
         end
       end
     end
@@ -209,7 +209,8 @@ class NotesControllerTest < AuthenticatedControllerTest
       end
 
       should "for a note belonging to someone else (get as TA)" do
-        @note = Note.make!
+        @different_ta = Ta.make!
+        @note = Note.make!(:creator_id => @different_ta.id)
         get_as @ta, :edit, {:id => @note.id}
         assert_response :missing
       end
@@ -242,7 +243,8 @@ class NotesControllerTest < AuthenticatedControllerTest
       end
 
       should "for a note belonging to someone else (post as TA)" do
-        @note = Note.make
+        @different_ta = Ta.make!
+        @note = Note.make!(:creator_id => @different_ta.id)
         @new_message = "Changed message"
         post_as @ta,
                 :update,
@@ -261,7 +263,8 @@ class NotesControllerTest < AuthenticatedControllerTest
       end
 
       should "for a note belonging to someone else (delete as TA)" do
-        @note = Note.make!
+        @different_ta = Ta.make!
+        @note = Note.make!(:creator_id => @different_ta.id)
         delete_as @ta,
                   :destroy,
                   :id => @note.id

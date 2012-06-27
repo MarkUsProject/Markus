@@ -48,7 +48,7 @@ class MainControllerTest < AuthenticatedControllerTest
 
   context "An admin" do
     setup do
-      @admin = Admin.make
+      @admin = Admin.make!
     end
 
     should "be able to login" do
@@ -112,7 +112,7 @@ class MainControllerTest < AuthenticatedControllerTest
 
   context "A student" do
     setup do
-      @student = Student.make
+      @student = Student.make!
     end
 
     should "be redirected to assignments controller" do

@@ -21,9 +21,13 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       @student = Student.make!
       @grade_entry_form = GradeEntryForm.make!
       @grade_entry_form_with_grade_entry_items = make_grade_entry_form_with_multiple_grade_entry_items
-      @grade_entry_student = @grade_entry_form_with_grade_entry_items.grade_entry_students.make(:user => @student)
+      @grade_entry_student = GradeEntryStudent.make!(
+        :grade_entry_form => @grade_entry_form_with_grade_entry_items,
+        :user => @student)
       @grade_entry_form_with_grade_entry_items.grade_entry_items.each do |grade_entry_item|
-        @grade_entry_student.grades.make(:grade_entry_item => grade_entry_item, :grade => 5)
+        Grade.make!(:grade_entry_student => @grade_entry_student,
+                    :grade_entry_item => grade_entry_item,
+                    :grade => 5)
       end
     end
 
@@ -79,7 +83,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
 
     should "GET on :student_interface when the student's mark has been released and it is a blank mark" do
       student1 = Student.make!
-      grade_entry_student1 = @grade_entry_form_with_grade_entry_items.grade_entry_students.make(:user => student1)
+      grade_entry_student1 = GradeEntryStudent.make!(
+        :grade_entry_form => @grade_entry_form_with_grade_entry_items,
+        :user => student1)
       grade_entry_student1.released_to_student=true
       grade_entry_student1.save
       grade_entry_student1 = @grade_entry_form.grade_entry_students.find_by_user_id(student1.id)
@@ -492,7 +498,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         @grade_entry_form_with_dup = GradeEntryForm.make!
         @q1.name = "Q1"
         @q2.name = "Q1"
-        @grade_entry_form_with_dup.grade_entry_items.make(:name => @q1.name)
+        GradeEntryItem.make!(:grade_entry_form => @grade_entry_form_with_dup, :out_of => 25, :name => @q1.name)
         @grade_entry_form_before = @grade_entry_form_with_dup
 
         post_as @admin, :update, {:id => @grade_entry_form_with_dup.id,
@@ -518,11 +524,13 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
     context "POST on :update_grade when the Grade has an existing value - " do
       setup do
         @grade_entry_items = @grade_entry_form_with_grade_entry_items.grade_entry_items
-        @grade_entry_student_with_some_grades = @grade_entry_form_with_grade_entry_items.grade_entry_students.make
-        @grade_entry_student_with_some_grades.grades.make(:grade_entry_item => @grade_entry_items[0],
-                                                          :grade => 3)
-        @grade_entry_student_with_some_grades.grades.make(:grade_entry_item => @grade_entry_items[1],
-                                                          :grade => 7)
+        @grade_entry_student_with_some_grades = GradeEntryStudent.make!(:grade_entry_form => @grade_entry_form_with_grade_entry_items)
+        Grade.make!(:grade_entry_student => @grade_entry_student_with_some_grades,
+                    :grade_entry_item => @grade_entry_items[0],
+                    :grade => 3)
+        Grade.make!(:grade_entry_student => @grade_entry_student_with_some_grades,
+                    :grade_entry_item => @grade_entry_items[1],
+                    :grade => 7)
       end
 
       should "change the existing value to a valid value" do
@@ -575,7 +583,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
     context "POST on :update_grade when the Grade does not have an existing value and the GradeEntryStudent does exist - " do
       setup do
         @grade_entry_items = @grade_entry_form_with_grade_entry_items.grade_entry_items
-        @grade_entry_student = @grade_entry_form_with_grade_entry_items.grade_entry_students.make
+        @grade_entry_student = GradeEntryStudent.make!(:grade_entry_form => @grade_entry_form_with_grade_entry_items)
       end
 
       should "set an empty grade to a valid value" do
@@ -701,7 +709,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         (0..11).each do |i|
           student = Student.make!(:user_name => "s" + i.to_s, :last_name => last_names[i], :first_name => "Bob")
           @students << student
-          @grade_entry_form1.grade_entry_students.make(:user => student)
+          GradeEntryStudent.make!(:grade_entry_form => @grade_entry_form1, :user => student)
         end
       end
 
@@ -776,9 +784,11 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         @student = Student.make!(:user_name => "c2ÈrÉØrr", :last_name => "Last", :first_name => "First")
         @grade_entry_form = GradeEntryForm.make!
         @grade_entry_form_with_grade_entry_items = make_grade_entry_form_with_multiple_grade_entry_items
-        @grade_entry_student = @grade_entry_form_with_grade_entry_items.grade_entry_students.make(:user => @student)
+        @grade_entry_student = GradeEntryStudent.make!(:grade_entry_form => @grade_entry_form_with_grade_entry_items, :user => @student)
         @grade_entry_form_with_grade_entry_items.grade_entry_items.each do |grade_entry_item|
-          @grade_entry_student.grades.make(:grade_entry_item => grade_entry_item, :grade => 0)
+          Grade.make!(:grade_entry_student => @grade_entry_student,
+                      :grade_entry_item => grade_entry_item,
+                      :grade => 0)
         end
         @grade_entry_items = @grade_entry_form_with_grade_entry_items.grade_entry_items
       end
