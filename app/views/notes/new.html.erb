@@ -1,3 +1,5 @@
+<%= render :partial => "shared/navigation_warning.js.erb" %>
+
 <div id="title_bar"><h1><%= I18n.t('notes.new.title') %></h1></div>
 
 <div class="wrapLeft">
@@ -12,6 +14,7 @@
                  item]}) %>
         <%= observe_field :noteable_type,
                           :on => 'onchange',
+                          :onchange => "set_onbeforeunload(true);",
                           :url => noteable_object_selector_notes_path(),
                           :with => "noteable_type",
                           :before => "$('loading_selector').show()",
@@ -27,11 +30,12 @@
 
       <p>
         <%= raw(f.label :notes_message, I18n.t("notes.note")) %>
-        <%= raw(f.text_area :notes_message, :rows => 10) %>
+        <%= raw(f.text_area :notes_message, :rows => 10, 
+                            :onchange => "set_onbeforeunload(true);") %>
       </p>
     </fieldset>
 
-    <%= f.submit I18n.t('save') %>
+    <%= f.submit I18n.t('save'), :onclick => "set_onbeforeunload(false);" %>
     <%= link_to I18n.t('cancel'), notes_path(), :class => "button" %>
   <% end %>
 </div>
