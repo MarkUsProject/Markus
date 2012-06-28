@@ -3,13 +3,10 @@
     <%= image_tag "handle.png" %>
   </span>
   <span class="criterion_title_div link">
-    <%= link_to h(truncate(criterion.flexible_criterion_name,
-			   :length => 30,
-			   :omission => '...')),
-	        {:action => 'edit',
-			 :id => criterion.id},
-		{:id => "criterion_title_#{criterion.id}",
-		:remote => true} %>
+    <%= link_to h(truncate(criterion.flexible_criterion_name, :length => 30, :omission => '...')),
+		        {:action => 'edit', :id => criterion.id},
+				{:id => "criterion_title_#{criterion.id}",
+				:remote => true} %>
   </span>
   <span class="criterion_arrow">
     <% if location != :first and location != :single %>

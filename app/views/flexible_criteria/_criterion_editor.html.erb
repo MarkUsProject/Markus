@@ -4,10 +4,10 @@
   </div>
 <% end %>
 
-<%= remote_form_for criterion,
+<%= form_for criterion,
 	     :as => :flexible_criterion,
-	     :url => {:action => 'update',
-		   :id => criterion.id} do |f| %>
+	     :url => {:action => 'update', :id => criterion.id},
+		   :html => {:remote => true} do |f| %>
 
 <h2>
   <span id="selected_criterion_name">
