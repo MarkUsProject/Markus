@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), 'authenticated_controller_test')
+require File.expand_path(File.join(File.dirname(__FILE__), 'authenticated_controller_test'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 
@@ -114,7 +114,8 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       post_as @user, :create, {:content => @annotation_text.content,
         :category_id => @category.id,
         :submission_file_id => @submission_file.id,
-        :coords => "0,0,1,1", :annotation_type => 'image'}
+        :x1 => 0, :x2 => 1, :y1 => 0, :y2 => 1,
+        :annotation_type => 'image'}
       assert_response :success
       assert_not_nil assigns :submission_file
       assert_not_nil assigns :annotation
@@ -185,11 +186,12 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       assert render_template 'create'
     end # End context :create text
 
-    should "on :create to make an image annotation" do
+    should "create an image annotation" do
       post_as @user, :create, {:content => @annotation_text.content,
         :category_id => @category.id,
         :submission_file_id => @submission_file.id,
-        :coords => "0,0,1,1", :annotation_type => 'image'}
+        :x1 => 0, :x2 => 1, :y1 => 0, :y2 => 1,
+        :annotation_type => 'image'}
       assert_response :success
       assert_not_nil assigns :submission_file
       assert_not_nil assigns :annotation
