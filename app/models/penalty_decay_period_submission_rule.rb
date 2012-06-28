@@ -15,7 +15,7 @@ class PenaltyDecayPeriodSubmissionRule < SubmissionRule
   # after the due date has passed, but before the calculated collection date.
   def overtime_message(grouping)
     # How far are we into overtime?
-    overtime_hours = calculate_overtime_hours_from(Time.now)
+    overtime_hours = calculate_overtime_hours_from(Time.zone.now)
     # Calculate the penalty that the grouping will suffer
     potential_penalty = calculate_penalty(overtime_hours)
 

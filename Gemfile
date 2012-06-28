@@ -47,7 +47,7 @@ end
 # Then install your bundle by:
 #   bundle install --without postgresql mysql
 group :sqlite do
-  gem 'sqlite3-ruby', :require => 'sqlite3'
+  gem 'sqlite3'
 end
 
 # Other development related required gems. You don't need them
@@ -56,7 +56,7 @@ group :development, :test do
   gem "rdoc"
   gem "rcov"
   gem "shoulda"
-  gem "machinist"
+  gem "machinist", "< 2"
   gem "faker"
   gem "railroady"
   gem "time-warp"
@@ -64,11 +64,11 @@ group :development, :test do
   gem "mocha"
 end
 
-# If you  plan to use clustered mongrel servers for production
+# If you  plan to use unicorn servers for production
 # make sure that this group is included. You don't need this
 # group if you are using Phusion Passenger.
-group :mongrel do
-  gem "mongrel_cluster"
+group :unicorn do
+  gem "unicorn"
 end
 
 # If you want to be able to view and annotate PDF files, 

@@ -218,12 +218,25 @@ module Repository
     # a revision at a current timestamp
     #    target_timestamp
     # should be a Ruby Time instance
-    def get_revision_by_timestamp(target_timestamp)
+    def get_revision_by_timestamp(target_timestamp, path = nil)
       if !target_timestamp.kind_of?(Time)
         raise "Was expecting a timestamp of type Time"
       end
       target_timestamp = target_timestamp.utc
-      return get_revision(get_revision_number_by_timestamp(target_timestamp))
+      if !path.nil?
+        # latest_revision_number will fail if the path does not exist at the given revision number or less than
+        # the revision number.  The begin and ensure statement is to ensure that there is a revision return.
+        # Default is set to revision 0.
+        revision_number = 0
+        begin
+          revision_number = latest_revision_number(path, get_revision_number_by_timestamp(target_timestamp))
+        ensure
+          return get_revision(revision_number)
+        end
+      else
+        return get_revision(get_revision_number_by_timestamp(target_timestamp))
+      end
+      
     end
 
     # Returns a Repository::TransAction object, to work with. Do operations,
@@ -731,7 +744,7 @@ module Repository
 
     # Assumes timestamp is a Time object (which is part of the Ruby
     # standard library)
-    def get_revision_number_by_timestamp(target_timestamp)
+    def get_revision_number_by_timestamp(target_timestamp, path = nil)
       if !target_timestamp.kind_of?(Time)
         raise "Was expecting a timestamp of type Time"
       end
