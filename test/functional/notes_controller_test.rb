@@ -202,7 +202,7 @@ class NotesControllerTest < AuthenticatedControllerTest
 
     context "GET on :edit" do
       should "for a note belonging to themselves (get as TA)" do
-        @note = Note.make!(:creator_id => @ta.id)
+        @note = Note.make!(:user => @ta, :creator_id => @ta.id)
         get_as @ta, :edit, {:id => @note.id}
         assert_response :success
         assert render_template 'edit.html.erb'
@@ -230,7 +230,7 @@ class NotesControllerTest < AuthenticatedControllerTest
         end
 
         should "with good data" do
-          @note = Note.make!(:creator_id => @ta.id )
+          @note = Note.make!(:creator_id => @ta.id, :user => @ta)
           @new_message = "Changed message"
           post_as @ta,
                   :update,
@@ -256,7 +256,7 @@ class NotesControllerTest < AuthenticatedControllerTest
 
     context "DELETE on :destroy" do
       should "for a note belonging to themselves" do
-        @note = Note.make!(:creator_id => @ta.id)
+        @note = Note.make!(:creator_id => @ta.id, :user => @ta)
         delete_as @ta, :destroy, :id => @note.id
         assert assign_to :note
         assert_equal flash[:success], I18n.t('notes.delete.success')
