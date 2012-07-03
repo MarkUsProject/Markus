@@ -914,9 +914,11 @@ class AssignmentTest < ActiveSupport::TestCase
           expected_array = []
 
           @assignment.submissions.each do |submission|
-            grouping = submission.grouping
-            group = grouping.group
-            expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name}/#{@assignment.repository_folder} \"#{group.group_name}\"")
+            if submission.submission_version_used == true
+              grouping = submission.grouping
+              group = grouping.group
+              expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name}/#{@assignment.repository_folder} \"#{group.group_name}\"")
+            end
           end
           assert_equal expected_array, @assignment.get_svn_export_commands
         end
@@ -929,9 +931,43 @@ class AssignmentTest < ActiveSupport::TestCase
           expected_array = []
 
           @assignment.submissions.each do |submission|
-            grouping = submission.grouping
-            group = grouping.group
-            expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name}/#{@assignment.repository_folder} \"#{group.group_name}\"")
+            if submission.submission_version_used == true
+              grouping = submission.grouping
+              group = grouping.group
+              expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name}/#{@assignment.repository_folder} \"#{group.group_name}\"")
+            end
+          end
+          assert_equal expected_array, @assignment.get_svn_export_commands
+        end
+      end
+        
+      context "with two groups of a single student each" do
+        setup do
+          (1..2).each do
+            g = Grouping.make(:assignment => @assignment)
+            # create 2 submission for each group
+            (1..2).each do
+              s = Submission.make(:grouping => g)
+              r = s.result
+              (1..2).each do
+                Mark.make(:result => r)
+              end
+              r.reload
+              r.marking_state = Result::MARKING_STATES[:complete]
+              r.save
+            end
+          end
+        end
+        
+        should "be able to get_svn_export_commands with only one entry per group" do        
+          expected_array = []
+
+          @assignment.submissions.each do |submission|
+            if submission.submission_version_used == true
+              grouping = submission.grouping
+              group = grouping.group
+              expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name}/#{@assignment.repository_folder} \"#{group.group_name}\"")
+            end
           end
           assert_equal expected_array, @assignment.get_svn_export_commands
         end
