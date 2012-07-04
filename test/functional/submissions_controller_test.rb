@@ -325,6 +325,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
           assert_equal flash[:success], I18n.t("collect_submissions.collection_job_started",
               :assignment_identifier => 'a1')
+          assert_equal 1, 1 
           assert_response :redirect
         end
 
