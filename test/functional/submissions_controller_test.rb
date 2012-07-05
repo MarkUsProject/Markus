@@ -324,7 +324,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           @assignment.expects(:short_identifier).once.returns('a1')
           @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
           @submission_collector.expects(:push_groupings_to_queue).once
-          post_as @grader,
+          get_as @grader,
                  :collect_ta_submissions, 
                  {:assignment_id => 1,
                   :id => 1,
