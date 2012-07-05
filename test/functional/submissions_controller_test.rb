@@ -328,23 +328,11 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_equal flash[:success], I18n.t("collect_submissions.collection_job_started",
               :assignment_identifier => 'a1')
           assert_response :redirect
+          assert_redirected_to (:action => 'browse', :id => 7) 
         end
 
       end
 
-      context "to check value of per_page is getting saved on browse" do
-         should "first time on browse" do 
-          @submission_collector = SubmissionCollector.instance
-          Assignment.stubs(:find).returns(@assignment)
-          SubmissionCollector.expects(:instance).returns(@submission_collector)
-          @assignment.expects(:short_identifier).once.returns('a1')
-          @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
-          @submission_collector.expects(:push_groupings_to_queue).once
-          get_as @grader, :browse, :assignment_id => 1, :id => 1, :per_page => 30 
-
-          assert_response :success 
-         end 
-      end 
     end
 
     context "and I have an instructor." do
