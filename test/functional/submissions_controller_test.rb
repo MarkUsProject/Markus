@@ -326,12 +326,14 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           @submission_collector.expects(:push_groupings_to_queue).once
           get_as @grader,
                  :collect_ta_submissions, 
-                 {:assignment_id => 1, :per_page => 30},
-                 :id => 1
+                 :assignment_id => 1,
+                 :id => 1,
+                 :per_page => 30 
 
           assert_equal flash[:success], I18n.t("collect_submissions.collection_job_started",
-              :assignment_identifier => 'a1', :per_page => 3)
-          assert_redirected_to(:action => 'browse', :id => @assignment.id) 
+              :assignment_identifier => 'a1')
+          assert_redirected_to(:action => 'browse', :id => @assignment.id)
+          asser_equal :per_page, 3 
         end
 
       end
