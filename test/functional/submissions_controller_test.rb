@@ -310,7 +310,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           @assignment.submission_rule.expects(:can_collect_now?).once.returns(false)
           get_as @grader, :collect_ta_submissions, 
                           :assignment_id => 1, 
-                          :id => 1, 
+                          :id => 1 
           assert_equal flash[:error], I18n.t("collect_submissions.could_not_collect",
               :assignment_identifier => 'a1')
           assert_response :redirect
