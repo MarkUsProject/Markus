@@ -330,7 +330,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                  :id => 1
 
           assert_equal flash[:success], I18n.t("collect_submissions.collection_job_started",
-              :assignment_identifier => 'a1', :per_page => 30)
+              :assignment_identifier => 'a1', :per_page => 3)
           assert_redirected_to(:action => 'browse', :id => @assignment.id) 
         end
 
