@@ -326,9 +326,8 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           @submission_collector.expects(:push_groupings_to_queue).once
           get_as @grader,
                  :collect_ta_submissions, 
-                 :assignment_id => 1,
-                 :id => 1,
-                 :per_page => 30 
+                 {:assignment_id => 1, :per_page => 30},
+                 :id => 1
 
           assert_equal flash[:success], I18n.t("collect_submissions.collection_job_started",
               :assignment_identifier => 'a1')
