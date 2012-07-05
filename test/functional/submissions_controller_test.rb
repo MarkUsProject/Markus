@@ -308,9 +308,10 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           Assignment.stubs(:find).returns(@assignment)
           @assignment.expects(:short_identifier).once.returns('a1')
           @assignment.submission_rule.expects(:can_collect_now?).once.returns(false)
-          get_as @grader, :collect_ta_submissions, 
-                          :assignment_id => 1, 
-                          :id => 1 
+          get_as @grader, 
+                 :collect_ta_submissions, 
+                 :assignment_id => 1, 
+                 :id => 1 
           assert_equal flash[:error], I18n.t("collect_submissions.could_not_collect",
               :assignment_identifier => 'a1')
           assert_response :redirect
@@ -323,8 +324,10 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           @assignment.expects(:short_identifier).once.returns('a1')
           @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
           @submission_collector.expects(:push_groupings_to_queue).once
-          params = { :assignment_id => 1, :id => 1, :per_page => 30 } 
-          get_as @grader, :collect_ta_submissions, params 
+          @params = { :assignment_id => 1, :id => 1, :per_page => 30 } 
+          get_as @grader,
+                 :collect_ta_submissions, 
+                 @params 
 
           assert_equal flash[:success], I18n.t("collect_submissions.collection_job_started",
               :assignment_identifier => 'a1')
