@@ -913,9 +913,9 @@ class AssignmentTest < ActiveSupport::TestCase
         should "be able to get_svn_export_commands" do
           expected_array = []
 
-          @assignment.submissions.each do |submission|
-            if submission.submission_version_used == true
-              grouping = submission.grouping
+          @assignment.groupings.each do |grouping|
+            submission = grouping.current_submission_used
+            if !submission.nil?
               group = grouping.group
               expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name}/#{@assignment.repository_folder} \"#{group.group_name}\"")
             end
@@ -930,9 +930,9 @@ class AssignmentTest < ActiveSupport::TestCase
           end
           expected_array = []
 
-          @assignment.submissions.each do |submission|
-            if submission.submission_version_used == true
-              grouping = submission.grouping
+          @assignment.groupings.each do |grouping|
+            submission = grouping.current_submission_used
+            if !submission.nil?
               group = grouping.group
               expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name}/#{@assignment.repository_folder} \"#{group.group_name}\"")
             end
@@ -941,7 +941,7 @@ class AssignmentTest < ActiveSupport::TestCase
         end
       end
         
-      context "with two groups of a single student each" do
+      context "with two groups of a single student each with multiple submission" do
         setup do
           (1..2).each do
             g = Grouping.make(:assignment => @assignment)
@@ -956,15 +956,16 @@ class AssignmentTest < ActiveSupport::TestCase
               r.marking_state = Result::MARKING_STATES[:complete]
               r.save
             end
+            g.save
           end
         end
-        
-        should "be able to get_svn_export_commands with only one entry per group" do        
+
+        should "be able to get_svn_export_commands" do
           expected_array = []
 
-          @assignment.submissions.each do |submission|
-            if submission.submission_version_used == true
-              grouping = submission.grouping
+          @assignment.groupings.each do |grouping|
+            submission = grouping.current_submission_used
+            if !submission.nil?
               group = grouping.group
               expected_array.push("svn export -r #{submission.revision_number} #{REPOSITORY_EXTERNAL_BASE_URL}/#{group.repository_name}/#{@assignment.repository_folder} \"#{group.group_name}\"")
             end
