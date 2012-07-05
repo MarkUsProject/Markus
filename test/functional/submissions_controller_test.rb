@@ -345,7 +345,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
           assert_response :redirect 
 
-          get_as @grader, :browse, :assignment_id => 1, :id => 1, :per_page = 30
+          get_as @grader, :browse, :assignment_id => 1, :id => 1, :per_page => 30
           assert_equal :per_page, 30 
          end 
       end 
