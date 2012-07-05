@@ -330,11 +330,11 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                   :id => 1,
                   :per_page => 30
                  } 
-
+          @c_per_page = @grader.id.to_s + @assignment.id.to_s + "per_page"
           assert_equal flash[:success], I18n.t("collect_submissions.collection_job_started",
               :assignment_identifier => 'a1')
           assert_redirected_to(:action => 'browse', :id => @assignment.id)
-          assert_equal @request.params[:per_page], 3 
+          assert_equal @request.params[@c_per_page], 30 
         end
 
       end
