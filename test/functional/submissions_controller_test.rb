@@ -342,7 +342,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           @submission_collector.expects(:push_groupings_to_queue).once
           post_as @grader, :browse, :assignment_id => 1, :id => 1, :per_page => 30 
 
-          assert_equal params[:per_page], 30 
+          assert_response :redirect 
          end 
       end 
     end
