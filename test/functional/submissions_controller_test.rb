@@ -334,7 +334,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       end
 
       context "to check value of per_page is getting saved on browse" do
-         should "first time on browse" 
+         should "first time on browse" do 
           @submission_collector = SubmissionCollector.instance
           Assignment.stubs(:find).returns(@assignment)
           SubmissionCollector.expects(:instance).returns(@submission_collector)
