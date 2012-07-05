@@ -333,7 +333,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_equal flash[:success], I18n.t("collect_submissions.collection_job_started",
               :assignment_identifier => 'a1')
           assert_redirected_to(:action => 'browse', :id => @assignment.id)
-          asser_equal :per_page, 3 
+          assert_equal :per_page, 3 
         end
 
       end
