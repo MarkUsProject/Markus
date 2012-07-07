@@ -7,5 +7,6 @@
 <%= javascript_include_tag "create_assignment" %>
 
 <div id="title_bar"><h1><%= t("assignment.edit") %> <%= h(@assignment.short_identifier) %></h1>
+<p>Required Fields <span style='color:red;'>*</span></p>
 </div>
 <%= render :partial => 'form' %>

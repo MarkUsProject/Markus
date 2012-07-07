@@ -1,7 +1,7 @@
 <div class="assignment_file">
 <%= form.fields_for :assignment_files, assignment_file do |f| %>
   <p>
-    <%= f.label :filename, t(:filename) %>
+    <%= f.label :filename, t(:filename).html_safe %>
     <%= f.text_field :filename %>
     <% if !f.object.new_record? %>
       <span>

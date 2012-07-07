@@ -25,7 +25,7 @@
       :locals => { :model => @assignment } %>
 <fieldset>
   <legend><%= t("assignment.properties") %></legend>
-    <%= raw( f.label :short_identifier, t(:short_identifier) ) %>
+    <%= raw( f.label :short_identifier, t(:short_identifier).html_safe ) %>
     <% if @assignment.id.nil? %>
       <%=raw( f.text_field :short_identifier ,
                        :onchange =>  "set_onbeforeunload(true);
@@ -84,7 +84,7 @@
         </div>
       </div>
     <% end %>
-    <%= raw( f.label :due_date, t(:due_date), :onchange => "set_onbeforeunload(true);" ) %>
+    <%= raw( f.label :due_date, t(:due_date).html_safe, :onchange => "set_onbeforeunload(true);" ) %>
 
     <%# TODO update the global due date with the first due date added. %>
 
@@ -103,9 +103,9 @@
                                       $F('assignment_due_date'));" %>
     <%= t(:iso_due_date_format_example) %><br />
 
-    <%= raw( f.label :repository_folder, t(:repository_folder) ) %>
+    <%= raw( f.label :repository_folder, t(:repository_folder).html_safe ) %>
     /<%= raw( f.text_field :repository_folder, :onchange => "set_onbeforeunload(true);" ) %><br />
-    <%= raw( f.label :allow_web_submits, t("assignment.allow_web_submits") ) %>&nbsp;&nbsp;
+    <%= raw( f.label :allow_web_submits, t("assignment.allow_web_submits").html_safe ) %>&nbsp;&nbsp;
     <%= raw( f.radio_button :allow_web_submits,
                       true,
                       :checked => @assignment.allow_web_submits,
@@ -120,7 +120,7 @@
                t("answer_no"),
                :class => "radio_label" )  %><br />
     <%= raw( f.label :display_grader_names_to_students,
-                t("assignment.display_grader_names_to_students") ) %>&nbsp;&nbsp;
+                t("assignment.display_grader_names_to_students").html_safe ) %>&nbsp;&nbsp;
     <%= raw( f.radio_button :display_grader_names_to_students,
                        true,
                        :checked => @assignment.display_grader_names_to_students ,
@@ -144,7 +144,7 @@
   <%= t("assignment.notice.change_marking_scheme_type")%>
 </div>
 <fieldset>
-  <legend><%= t("assignment.marking_scheme.title") %></legend>
+  <legend><%= t("assignment.marking_scheme.title").html_safe %></legend>
   <% Assignment::MARKING_SCHEME_TYPE.each do |key,value| %>
     <p>
       <%= raw( f.radio_button :marking_scheme_type, Assignment::MARKING_SCHEME_TYPE[key],
@@ -242,10 +242,10 @@
 </fieldset>
 
 <fieldset>
-  <legend><%= t("assignment.submission_rules") %></legend>
+  <legend><%= t("assignment.submission_rules").html_safe %></legend>
 
   <%= f.fields_for :submission_rule do |rule| %>
-    <h5><%= t("assignment.submission.penalty_rules") %></h5>
+    <h5><%= t("assignment.submission.penalty_rules").html_safe %></h5>
 
     <p>
       <%= rule.radio_button :type,
