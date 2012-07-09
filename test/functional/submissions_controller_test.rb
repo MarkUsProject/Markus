@@ -334,6 +334,11 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_response :redirect 
 
           assert redirect_to(:action => "browse", id => @assignment.id)
+          get_as @grader,
+                 :browse,
+                 :assignment_id => 1,
+                 :id => @assignment.id
+          assert_equal @request.params[:per_page], 30 
         end 
         
       end
