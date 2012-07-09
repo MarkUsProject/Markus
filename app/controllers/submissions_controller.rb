@@ -271,7 +271,8 @@ class SubmissionsController < ApplicationController
     
     @assignment = Assignment.find(params[:assignment_id])
     
-    @c_per_page = current_user.id.to_s + @assignment.id.to_s + "per_page" 
+    #@c_per_page = current_user.id.to_s + @assignment.id.to_s + "per_page"
+    @c_per_page = "testing_cookie" 
     if !params[:per_page].blank?
        cookies[@c_per_page] = params[:per_page] 
     end 
