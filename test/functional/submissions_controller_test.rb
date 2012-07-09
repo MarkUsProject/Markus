@@ -333,7 +333,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
               :assignment_identifier => 'a1')
           assert_response :redirect 
 
-          assert redirect_to(:action => browse, id => @assignment.id)
+          assert redirect_to(:action => "browse", id => @assignment.id)
         end 
         
       end
