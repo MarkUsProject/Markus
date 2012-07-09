@@ -334,7 +334,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_redirected_to(:action => 'browse', :id => @assignment.id)
           
           get_as @grader,
-                 :browser 
+                 :browse 
           assert_equal @request.params[:per_page], 30
         end
 
