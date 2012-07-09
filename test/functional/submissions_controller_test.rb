@@ -335,7 +335,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           
           get_as @grader,
                  :browse
-                 :assignment_it => 1,
+                 :assignment_id => 1,
                  :id => 1 
           assert_equal @request.params[:per_page], 30
         end
