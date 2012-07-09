@@ -338,7 +338,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           Assignment.stubs(:find).returns(@assignment)
           @assignment.expects(:short_identifier).once.returns('a1')
           @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
-          @c_per_page = @grader.id.to_s + @assignment.id.to_s + "per_page"
+          @c_per_page = "testing_cookie"
           cookies[@c_per_page] = 15 
           get_as @grader,
                  :browse,
