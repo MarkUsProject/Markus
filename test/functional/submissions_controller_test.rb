@@ -343,6 +343,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                  :assignment_id => 1,
                  :id => 1
           assert_response :success
+          assert_equal @request.params[:per_page], 30 
         end
  
       end
