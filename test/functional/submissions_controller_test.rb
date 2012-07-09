@@ -334,18 +334,29 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_response :redirect 
         end 
        
-        should "after collection date" do
+        should "after collection date browse with cookie nil" do
           Assignment.stubs(:find).returns(@assignment)
           @assignment.expects(:short_identifier).once.returns('a1')
           @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
-          @c_per_page = "testing_cookie"
-          cookies[@c_per_page] = 15 
-          get_as @grader,
+          post_as @grader,
                  :browse,
                  :assignment_id => 1,
                  :id => 1
           assert_response :success
-          assert_equal @request.params[:per_page], 3  
+          assert_equal @request.params[:per_page], 30  
+        end
+        
+        should "after collection date browse with cookie not nil" do
+          Assignment.stubs(:find).returns(@assignment)
+          @assignment.expects(:short_identifier).once.returns('a1')
+          @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
+          cookie["testing_cookie"] = 15 
+          post_as @grader,
+                 :browse,
+                 :assignment_id => 1,
+                 :id => 1
+          assert_response :success
+          assert_equal @request.params[:per_page], 30
         end
  
       end
