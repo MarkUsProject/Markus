@@ -333,10 +333,6 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
               :assignment_identifier => 'a1')
           assert_response :redirect
 
-          get_as @grader,
-                 :browse,
-                 :assignment_id => @assignment.id
-          assert_equal @request.params[:per_page], 30 
         end 
         
       end
