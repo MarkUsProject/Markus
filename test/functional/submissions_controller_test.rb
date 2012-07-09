@@ -332,15 +332,19 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_equal flash[:success], I18n.t("collect_submissions.collection_job_started",
               :assignment_identifier => 'a1')
           assert_response :redirect 
-
-          assert redirect_to(:action => "browse", id => @assignment.id)
+        end 
+       
+        should "after collection date" do
+          Assignment.stubs(:find).returns(@assignment)
+          @assignment.expects(:short_identifier).once.returns('a1')
+          @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
           get_as @grader,
                  :browse,
                  :assignment_id => 1,
-                 :id => @assignment.id
-          assert_equal @request.params[:per_page], 30 
-        end 
-        
+                 :id => 1
+          assert_response :success
+        end
+ 
       end
 
     end
