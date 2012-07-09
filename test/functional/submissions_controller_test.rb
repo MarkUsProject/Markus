@@ -336,9 +336,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         
         should "be able to go to browse" do
           get_as @grader,
-                 :browse,
-                 :assignment_id => 1, 
-                 :id => 1
+                 :browse
           assert_response :success
         end 
       end
