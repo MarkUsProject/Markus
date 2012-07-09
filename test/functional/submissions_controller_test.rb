@@ -331,14 +331,14 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                   
           assert_equal flash[:success], I18n.t("collect_submissions.collection_job_started",
               :assignment_identifier => 'a1')
-          assert_response :redirect        
+          assert_response :redirect
+
+          get_as @grader,
+                 :browse,
+                 :assignment_id => @assignment.id
+          assert_equal @request.params[:per_page], 30 
         end 
         
-        should "be able to go to browse" do
-          get_as @grader,
-                 :browse
-          assert_response :success
-        end 
       end
 
     end
