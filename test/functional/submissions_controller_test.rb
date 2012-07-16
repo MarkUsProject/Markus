@@ -334,32 +334,42 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_response :redirect 
         end 
        
-        should "cookie is nil should be set to default value" do
+        should "per_page and sort_by not defined cookies are set to default" do
           Assignment.stubs(:find).returns(@assignment)
           @assignment.expects(:short_identifier).once.returns('a1')
           @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
-          @c_per_page = @grader.id.to_s + "_" + @assignment.id.to_s + "_per_page" 
+
+          @c_per_page = @grader.id.to_s + "_" + @assignment.id.to_s + "_per_page"
+          @c_sort_by = @grader.id.to_s + "_" + @assignment.id.to_s + "_sort_by"
+          
           post_as @grader,
                  :browse,
                  :assignment_id => 1,
                  :id => 1
           assert_response :success
-          assert_equal @request.params[:per_page], 30 
-          assert_equal 15, cookies[@c_per_page], "Debug: Cookies=#{cookies.inspect}"
-          assert_equal "162", @c_per_page 
+          assert_equal 30, cookies[@c_per_page], "Debug: Cookies=#{cookies.inspect}"
+          assert_equal "group_name", cookies[@c_sort_by], "Debug: Cookies=#{cookies.inspect}" 
         end
         
-        should "after collection date browse with cookie not nil" do
+        should "per_page and sort_by defined cookies are set to their values" do
           Assignment.stubs(:find).returns(@assignment)
           @assignment.expects(:short_identifier).once.returns('a1')
-          @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
-          @request.cookies["testing_cookie"] = 15 
+          @assignment.submission_rule.expects(:can_collect_now?).once.returns(true) 
+
+          @c_per_page = @grader.id.to_s + "_" + @assignment.id.to_s + "_per_page"
+          @c_sort_by = @grader.id.to_s + "_" + @assignment.id.to_s + "_sort_by"
+          
           post_as @grader,
                  :browse,
-                 :assignment_id => 1,
-                 :id => 1
+                 {
+                    :assignment_id => 1,
+                    :id => 1,
+                    :per_page => 15,
+                    :sort_by  => "revision_timestamp"
+                 } 
           assert_response :success
-          assert_equal @request.params[:per_page], 30
+          assert_equal 30, cookies[@c_per_page], "Debug: Cookies=#{cookies.inspect}"
+          assert_equal "group_name", cookies[@c_sort_by], "Debug: Cookies=#{cookies.inspect}"  
         end
  
       end
