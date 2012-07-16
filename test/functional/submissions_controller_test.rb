@@ -448,7 +448,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_response :redirect
         end 
 
-        should "per_page and sort_by not defined so cookies are set to default" do
+        should "per_page sort_by not defined so cookies are set to default" do
           Assignment.stubs(:find).returns(@assignment)
           @assignment.expects(:short_identifier).once.returns('a1')
           @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
