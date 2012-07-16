@@ -334,7 +334,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_response :redirect 
         end 
        
-        should "per_page and sort_by not defined cookies are set to default" do
+        should "per_page and sort_by not defined so cookies are set to default" do
           Assignment.stubs(:find).returns(@assignment)
           @assignment.expects(:short_identifier).once.returns('a1')
           @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
@@ -347,11 +347,11 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                  :assignment_id => 1,
                  :id => 1
           assert_response :success
-          assert_equal 30, cookies[@c_per_page], "Debug: Cookies=#{cookies.inspect}"
+          assert_equal "30", cookies[@c_per_page], "Debug: Cookies=#{cookies.inspect}"
           assert_equal "group_name", cookies[@c_sort_by], "Debug: Cookies=#{cookies.inspect}" 
         end
         
-        should "per_page and sort_by defined cookies are set to their values" do
+        should "per_page and sort_by defined so cookies are set to their values" do
           Assignment.stubs(:find).returns(@assignment)
           @assignment.expects(:short_identifier).once.returns('a1')
           @assignment.submission_rule.expects(:can_collect_now?).once.returns(true) 
@@ -368,8 +368,8 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                     :sort_by  => "revision_timestamp"
                  } 
           assert_response :success
-          assert_equal 30, cookies[@c_per_page], "Debug: Cookies=#{cookies.inspect}"
-          assert_equal "group_name", cookies[@c_sort_by], "Debug: Cookies=#{cookies.inspect}"  
+          assert_equal "15", cookies[@c_per_page], "Debug: Cookies=#{cookies.inspect}"
+          assert_equal "revision_timestamp", cookies[@c_sort_by], "Debug: Cookies=#{cookies.inspect}"  
         end
  
       end
@@ -446,6 +446,23 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_equal flash[:success], I18n.t("collect_submissions.collection_job_started",
               :assignment_identifier => 'a1')
           assert_response :redirect
+        end 
+
+        should "per_page and sort_by not defined so cookies are set to default" do
+          Assignment.stubs(:find).returns(@assignment)
+          @assignment.expects(:short_identifier).once.returns('a1')
+          @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
+          
+          @c_per_page = @admin.id.to_s + "_" + @assignment.id.to_s + "_per_page"
+          @c_sort_by  = @admin.id.to_s + "_" + @assignment.id.to_s + "_sort_by"
+
+          post_as @admin,
+                 :browse,
+                 :assignment_id => 1
+          assert_response :success
+          assert_equal "30", cookies[@c_per_page], "Debug: Cookies=#{cookies.inspect}"
+          assert_equal "group_name", cookies[@c_sort_by], "Debug: Cookies=#{cookies.inspect}"
+ 
         end
 
       end
