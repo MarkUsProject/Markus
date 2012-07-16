@@ -442,30 +442,18 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           @assignment.expects(:short_identifier).once.returns('a1')
           @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
           @submission_collector.expects(:push_groupings_to_queue).once
+     
+          @c_per_page = @admin.id.to_s + "_" + @assignment.id.to_s + "_per_page"
+          @c_sort_by  = @admin.id.to_s + "_" + @assignment.id.to_s + "_sort_by"
+ 
           get_as @admin, :collect_all_submissions, :assignment_id => 1, :id => 1
           assert_equal flash[:success], I18n.t("collect_submissions.collection_job_started",
               :assignment_identifier => 'a1')
           assert_response :redirect
-        end 
-
-        should "per_page sort_by not defined so cookies are set to default" do
-          Assignment.stubs(:find).returns(@assignment)
-          @assignment.expects(:short_identifier).once.returns('a1')
-          @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
-          
-          @c_per_page = @admin.id.to_s + "_" + @assignment.id.to_s + "_per_page"
-          @c_sort_by  = @admin.id.to_s + "_" + @assignment.id.to_s + "_sort_by"
-
-          get_as @admin,
-                 :browse,
-                 :assignment_id => 1,
-                 :id => 1
-
-          assert_response :success
           assert_equal "30", cookies[@c_per_page], "Debug: Cookies=#{cookies.inspect}"
           assert_equal "group_name", cookies[@c_sort_by], "Debug: Cookies=#{cookies.inspect}"
  
-        end
+        end 
 
       end
 
