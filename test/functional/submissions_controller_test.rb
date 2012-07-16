@@ -442,7 +442,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           
           get_as @admin,
                  :browse,
-                 :assignment_id => 1
+                 :assignment_id => 1,
                  :id => 1
           
           assert_response :success
