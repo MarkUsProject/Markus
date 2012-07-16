@@ -423,6 +423,18 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
       context "instructor attempts to collect all submissions at once" do
 
+        should "per_page and sort_by not defined" do
+          Assignment.stubs(:find).returns(@assignment)
+          @assignment.expects(:short_identifier).once.returns('a1')
+          @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
+
+          get_as @admin,
+                 :browse,
+                 :assignment_id => @assignment_id,
+
+          assert_response :success
+        end
+ 
         should "before assignment due date" do
           Assignment.stubs(:find).returns(@assignment)
           @assignment.expects(:short_identifier).once.returns('a1')
@@ -433,19 +445,6 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_equal flash[:error], I18n.t("collect_submissions.could_not_collect",
               :assignment_identifier => 'a1')
           assert_response :redirect
-        end
-
-        should "per_page and sort_by not defined" do
-          Assignment.stubs(:find).returns(@assignment)
-          @assignment.expects(:short_identifier).once.returns('a1')
-          @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
-          
-          get_as @admin,
-                 :browse,
-                 :assignment_id => 1,
-                 :id => 1
-          
-          assert_response :success
         end
 
         should "after assignment due date" do
