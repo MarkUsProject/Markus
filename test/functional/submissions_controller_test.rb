@@ -345,7 +345,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                  :id => 1
           assert_response :success
           assert_equal @request.params[:per_page], 30 
-          assert_equal 15, cookies['testing'], "Debug: Cookies=#{cookies.inspect}"
+          assert_equal 15, cookies[@c_per_page], "Debug: Cookies=#{cookies.inspect}"
           assert_equal "162", @c_per_page 
         end
         
