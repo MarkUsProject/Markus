@@ -449,7 +449,9 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
  
         end
 
-        should "before assignment due date" do
+      end
+ 
+      should "per_page and sort_by not defined" do
           Assignment.stubs(:find).returns(@assignment)
           @assignment.expects(:short_identifier).once.returns('a1')
           @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
@@ -457,9 +459,6 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                  :browse,
                  :assignment_id => 1
           assert_response :success
-        end
- 
-
       end
 
       should "instructor tries to release submissions" do
