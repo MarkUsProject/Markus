@@ -342,7 +342,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           @c_per_page = @grader.id.to_s + "_" + @assignment.id.to_s + "_per_page"
           @c_sort_by = @grader.id.to_s + "_" + @assignment.id.to_s + "_sort_by"
           
-          post_as @grader,
+          get_as @grader,
                  :browse,
                  :assignment_id => 1,
                  :id => 1
@@ -359,7 +359,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           @c_per_page = @grader.id.to_s + "_" + @assignment.id.to_s + "_per_page"
           @c_sort_by = @grader.id.to_s + "_" + @assignment.id.to_s + "_sort_by"
           
-          post_as @grader,
+          get_as @grader,
                  :browse,
                  {
                     :assignment_id => 1,
@@ -435,6 +435,19 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_response :redirect
         end
 
+        should "per_page and sort_by not defined" do
+          Assignment.stubs(:find).returns(@assignment)
+          @assignment.expects(:short_identifier).once.returns('a1')
+          @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
+          
+          get_as @admin,
+                 :browse,
+                 :assignment_id => 1
+                 :id => 1
+          
+          assert_response :success
+        end
+
         should "after assignment due date" do
           @submission_collector = SubmissionCollector.instance
           Assignment.stubs(:find).returns(@assignment)
@@ -451,16 +464,6 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
       end
  
-      should "per_page and sort_by not defined" do
-          Assignment.stubs(:find).returns(@assignment)
-          @assignment.expects(:short_identifier).once.returns('a1')
-          @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
-          get_as @admin,
-                 :browse,
-                 :assignment_id => 1
-          assert_response :success
-      end
-
       should "instructor tries to release submissions" do
 
         Assignment.stubs(:find).returns(@assignment)
