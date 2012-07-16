@@ -423,18 +423,6 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
       context "instructor attempts to collect all submissions at once" do
 
-        should "per_page and sort_by not defined" do
-          Assignment.stubs(:find).returns(@assignment)
-          @assignment.expects(:short_identifier).once.returns('a1')
-          @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
-
-          get_as @admin,
-                 :browse,
-                 :assignment_id => @assignment_id,
-
-          assert_response :success
-        end
- 
         should "before assignment due date" do
           Assignment.stubs(:find).returns(@assignment)
           @assignment.expects(:short_identifier).once.returns('a1')
@@ -459,6 +447,44 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
               :assignment_identifier => 'a1')
           assert_response :redirect
  
+        end
+
+        should "per_page and sort_by not defined so set cookies to default" do
+          Assignment.stubs(:find).returns(@assignment)
+          @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
+         
+          @c_per_page = @admin.id.to_s + "_" + @assignment.id.to_s + "_per_page"
+          @c_sort_by = @admin.id.to_s + "_" + @assignment.id.to_s + "_sort_by" 
+          
+          get_as @admin,
+                 :browse,
+                 :assignment_id => 1,
+                 :id => 1
+
+          assert_response :success
+          assert_equal "30", cookies[@c_per_page], "Debug: Cookies=#{cookies.inspect}" 
+          assert_equal "group_name", cookies[@c_sort_by]
+        end
+
+        should "per_page and sort_by not defined so set cookies to default" do
+          Assignment.stubs(:find).returns(@assignment)
+          @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
+
+          @c_per_page = @admin.id.to_s + "_" + @assignment.id.to_s + "_per_page"
+          @c_sort_by = @admin.id.to_s + "_" + @assignment.id.to_s + "_sort_by"
+
+          get_as @admin,
+                 :browse,
+                 {
+                    :assignment_id => 1,
+                    :id => 1, 
+                    :per_page => 15,
+                    :sort_by  => "revision_timestamp" 
+                 }
+ 
+          assert_response :success
+          assert_equal "15", cookies[@c_per_page], "Debug: Cookies=#{cookies.inspect}" 
+          assert_equal "revision_timestamp", cookies[@c_sort_by]
         end
 
       end
