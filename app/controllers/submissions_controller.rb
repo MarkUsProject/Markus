@@ -271,13 +271,12 @@ class SubmissionsController < ApplicationController
     
     @assignment = Assignment.find(params[:assignment_id])
     
-    #@c_per_page = current_user.id.to_s + @assignment.id.to_s + "per_page"
-    @c_per_page = "testing_cookie" 
+    @c_per_page = current_user.id.to_s + "_" + @assignment.id.to_s + "_per_page"
     if !params[:per_page].blank?
        cookies[@c_per_page] = params[:per_page] 
     end 
 
-    @c_sort_by = current_user.id.to_s + @assignment.id.to_s + "sort_by"
+    @c_sort_by = current_user.id.to_s + "_" + @assignment.id.to_s + "_sort_by"
     if !params[:sort_by].blank?
        cookies[@c_sort_by] = params[:sort_by]
     else
