@@ -36,6 +36,7 @@
   </span>
   <br />
   <span><%= t('flexible_criteria.description_hint') %></span>
+  
 </div>
 
 <%= f.submit t("flexible_criteria.save")%>
@@ -50,12 +51,3 @@
   </div>
 <% end %>
 
-<div class="float_right">
-    <%= button_to I18n.t(:delete),
-        assignment_flexible_criterium_path(:id => criterion.id),
-        :confirm => I18n.t(:remove_criteria_message),
-        :method => :delete,
-        :class => 'delete',
-        :title => I18n.t(:remove_criteria_title),
-        :remote => true %>
-</div>

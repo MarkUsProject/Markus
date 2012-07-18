@@ -1,0 +1,10 @@
+<div class='float_right' style="width: 32%; margin-right: 24px;" id='delete_button'>
+<%= button_to I18n.t(:delete),
+assignment_flexible_criterium_path(:id => criterion.id),
+:confirm => I18n.t(:remove_criteria_message),
+:method => :delete,
+:class => 'delete',
+:style => 'float:right;',
+:title => I18n.t(:remove_criteria_title),
+:remote => true %>
+</div>
