@@ -39,8 +39,8 @@ document.observe("dom:loaded", function(){
 <div id="title_bar"><h1><%=h I18n.t("students.manage_students") %></h1>
   <div class="headingButtons">
   <%= link_to I18n.t(:add_new), new_student_path() %>
-  | <%= link_to_function I18n.t(:upload), 'modalUpload.open()' %>
-  | <%= link_to_function I18n.t(:download), 'modalDownload.open()' %>
+  | <%= link_to I18n.t(:upload),'#',:onclick=>'modalUpload.open(); return false;' %>
+  | <%= link_to I18n.t(:download),'#', :onclick=>'modalDownload.open(); return false;' %>
   </div>
 </div>
 
@@ -76,17 +76,17 @@ document.observe("dom:loaded", function(){
           <% end -%>
         </ul>
         <p>
-	  <%= I18n.t(:students_not_successfully_added_message_2)%>
+	  <%= I18n.t(:students_not_successfully_added_message_2) %>
 	</p>
         <ul>
           <li>
-       	    <%= I18n.t(:students_not_successfully_added_message_3)%>
+       	    <%= I18n.t(:students_not_successfully_added_message_3) %>
 	  </li>
           <li>
-       	    <%= I18n.t(:students_not_successfully_added_message_4)%>
+       	    <%= I18n.t(:students_not_successfully_added_message_4) %>
 	  </li>
           <li>
-       	    <%= I18n.t(:students_not_successfully_added_message_5)%>
+       	    <%= I18n.t(:students_not_successfully_added_message_5) %>
 	  </li>
         </ul>
       </div>
@@ -95,23 +95,23 @@ document.observe("dom:loaded", function(){
 
       <div id="toggle_actions">
        <%= I18n.t(:filters) %>:
-       <%= link_to_function raw(
-	  I18n.t(:all) + " (<span id=\"all_students_count\"></span>)"),
-			    "filter('none');",
+       <%= link_to raw(
+	  I18n.t(:all) + " (<span id=\"all_students_count\"></span>)"), '#',
+			    :onclick => "filter('none');",
 			    :id => "filter_link_none",
 			    :class => "filter_selected" %>
        |
-       <%= link_to_function raw(
-	  I18n.t(:active) + " (<span id=\"active_students_count\"></span>)"),
-			    "filter('active');",
+       <%= link_to raw(
+	  I18n.t(:active) + " (<span id=\"active_students_count\"></span>)"), '#',
+			    :onclick => "filter('active');",
 			    :id => "filter_link_active" %>
 
        |
-       <%= link_to_function raw(
+       <%= link_to raw(
 	    I18n.t(:not_active) +
-	    " (<span id=\"inactive_students_count\"></span>)"),
-			    "filter('inactive');",
-			    :id => "filter_link_inactive" %>
+	    " (<span id=\"inactive_students_count\"></span>)"), '#',
+			    :onclick => "filter('inactive');",
+			    :id => "filter_link_inactive"%>
        </div>
        <div class="global_action">
        <span id="loading_list"><%= image_tag("spinner.gif")%><%= I18n.t("groups.loading_list") %> </span>
@@ -180,7 +180,7 @@ document.observe("dom:loaded", function(){
       <br />
       <br />
       <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
-      <%= button_to_function I18n.t(:close), 'modalUpload.close()' %>
+      <%= button_to I18n.t(:close), '#', :onclick => 'modalUpload.close(); return false;' %>
     </form>
 </div>
 
@@ -192,7 +192,7 @@ document.observe("dom:loaded", function(){
   <p><%= link_to I18n.t("students.download.download_xml_format"),
     {:action => 'download_student_list',
     :format => 'xml'}, :onclick => "modalDownload.close();"  %></p>
-  <%= button_to_function I18n.t(:close), 'modalDownload.close()' %>
+  <%= button_to I18n.t(:close), '#' , :onclick => 'modalDownload.close();return false;' %>
 </div>
 
 <div id="notes_dialog">
