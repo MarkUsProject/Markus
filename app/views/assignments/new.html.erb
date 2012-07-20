@@ -2,6 +2,6 @@
 
 <%= render :partial => "boot.js" %>
 <div id="title_bar"><h1><%= I18n.t(:create_new_assignment) %></h1>
-<p>Required Fields <span style='color:red;'>*</span></p>
+<p><%= t("assignment.required_fields").html_safe %></p>
 </div>
 <%= render :partial => 'form' %>
