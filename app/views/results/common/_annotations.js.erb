@@ -166,7 +166,7 @@ function add_existing_annotation(annotation_text_id) {
 
   new Ajax.Request('<%= add_existing_annotation_annotations_path() %>',
                    { asynchronous:true, evalScripts:true, method:'get',
-                    parameters:'submission_file_id='+ $('select_file_id').value +'&line_start=' + positions.line_start + '&line_end=' + positions.line_end + '&annotation_text_id='+ annotation_text_id }) 
+                    parameters:'submission_file_id='+ $('select_file_id').value +'&line_start=' + positions.line_start + '&line_end=' + positions.line_end + '&annotation_text_id='+ annotation_text_id + '&authenticity_token=' + AUTH_TOKEN }) 
 }
 
 
@@ -183,7 +183,7 @@ function load_submitted_file(submission_file_id, focus_line) {
   annotation_manager = null;
   new Ajax.Request('<%=url_for({ :action => :codeviewer, :id => @assignment.id, :uid => @uid })%>',
                    { asynchronous:true, evalScripts:true,
-                    parameters:'submission_file_id='+submission_file_id+'&focus_line='+focus_line })
+                    parameters:'submission_file_id='+submission_file_id+'&focus_line='+focus_line + '&authenticity_token=' + AUTH_TOKEN })
 }
 
 function load_submitted_file_and_focus(submission_file_id, focus_line) {
@@ -212,12 +212,12 @@ function submit_new_annotation(content, category_id, x1, x2, y1, y2) {
   if (positions != null){
     new Ajax.Request('<%=url_for({ :controller => "annotations", :action => "create" })%>',
                    { asynchronous:true, evalScripts:true,
-                    parameters:'annotation_type=text' + '&submission_file_id='+ $('select_file_id').value +'&line_start=' + positions.line_start + ' &line_end=' + positions.line_end + '&content=' + encodeURIComponent(content) + '&category_id=' + category_id })
+                    parameters:'annotation_type=text' + '&submission_file_id='+ $('select_file_id').value +'&line_start=' + positions.line_start + ' &line_end=' + positions.line_end + '&content=' + encodeURIComponent(content) + '&category_id=' + category_id + '&authenticity_token=' + AUTH_TOKEN})
   }
   else{
   	new Ajax.Request('<%=url_for({ :controller => "annotations", :action => "create" })%>',
                    { asynchronous:true, evalScripts:true,
-                    parameters:'annotation_type=image' + '&submission_file_id='+ $('select_file_id').value + '&content=' + encodeURIComponent(content) + '&category_id=' + category_id + '&x1=' + x1 + '&x2=' + x2 + '&y1=' + y1 + '&y2=' + y2 })
+                    parameters:'annotation_type=image' + '&submission_file_id='+ $('select_file_id').value + '&content=' + encodeURIComponent(content) + '&category_id=' + category_id + '&x1=' + x1 + '&x2=' + x2 + '&y1=' + y1 + '&y2=' + y2 + '&authenticity_token=' + AUTH_TOKEN})
   }
 }
 

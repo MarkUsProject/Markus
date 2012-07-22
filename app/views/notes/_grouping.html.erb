@@ -9,7 +9,7 @@
 			                    new Ajax.Request('" + new_update_groupings_notes_path() + "', 
 							                    {asynchronous:true, evalScripts:true, 
 							                     onSuccess:function(request){$('loading_groupings').hide()}, 
-							                     parameters:Form.Element.serialize(this) })" 
+							                     parameters:Form.Element.serialize(this) + '&authenticity_token=' + AUTH_TOKEN })" 
     %>
   </p>
 

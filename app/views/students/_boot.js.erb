@@ -52,7 +52,9 @@ document.observe("dom:loaded", function() {
   });
 
   new Ajax.Request('<%=populate_students_path()%>', 
-                  {asynchronous:true, evalScripts:true, onComplete:function(request){$('loading_list').hide();}})
+                   {asynchronous:true, evalScripts:true, 
+                   onComplete:function(request){$('loading_list').hide();},
+                   parameters: 'authenticity_token=' + AUTH_TOKEN})
 });
 
 //]]>
