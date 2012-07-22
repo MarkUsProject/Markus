@@ -51,8 +51,8 @@ document.observe("dom:loaded", function() {
     total_count_id: 'all_students_count'
   });
 
-  <%= remote_function :url => populate_students_path(),
-                      :complete => "$('loading_list').hide();" %>
+  new Ajax.Request('<%=populate_students_path()%>', 
+                  {asynchronous:true, evalScripts:true, onComplete:function(request){$('loading_list').hide();}})
 });
 
 //]]>
