@@ -152,6 +152,7 @@ Markus::Application.routes.draw do
           get 'cancel_remark_request'
           get 'codeviewer'
           post 'codeviewer'
+          get 'expand_criteria'
           get 'collapse_criteria'
           post 'add_extra_mark'
           post 'delete_grace_period_deduction'
@@ -165,7 +166,6 @@ Markus::Application.routes.draw do
           get 'update_remark_request'
           get 'update_positions'
           get 'update_mark'
-          get 'expand_criteria'
           get 'view_marks'
         end
       end
