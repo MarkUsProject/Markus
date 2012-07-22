@@ -34,7 +34,7 @@ class AssignmentsController < ApplicationController
   # Action called via Rails' remote_function from the test_result_window partial
   # Prepares test result and updates content in window.
   def render_test_result
-    @assignment = Assignment.find(params[:aid])
+    @assignment  = Assignment.find(params[:aid])
     @test_result = TestResult.find(params[:test_result_id])
 
     # Students can use this action only, when marks have been released
@@ -51,8 +51,8 @@ class AssignmentsController < ApplicationController
 
   def student_interface
     @assignment = Assignment.find(params[:id])
-    @student = current_user
-    @grouping = @student.accepted_grouping_for(@assignment.id)
+    @student    = current_user
+    @grouping   = @student.accepted_grouping_for(@assignment.id)
 
     if @student.section &&
        !@student.section.section_due_date_for(@assignment.id).nil?
