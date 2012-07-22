@@ -25,7 +25,7 @@
       :locals => { :model => @assignment } %>
 <fieldset>
   <legend><%= t("assignment.properties") %></legend>
-    <%= raw( f.label :short_identifier, t(:short_identifier).html_safe ) %>
+    <%= raw( f.label :short_identifier, t("assignment.short_identifier").html_safe ) %>
     <% if @assignment.id.nil? %>
       <%=raw( f.text_field :short_identifier ,
                        :onchange =>  "set_onbeforeunload(true);
