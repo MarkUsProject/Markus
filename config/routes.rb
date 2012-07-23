@@ -132,6 +132,7 @@ Markus::Application.routes.draw do
         get 'collect_and_begin_grading'
         post 'manually_collect_and_begin_grading'
         get 'repo_browser'
+        post 'repo_browser'
       end
 
       resources :results do
