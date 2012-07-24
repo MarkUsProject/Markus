@@ -132,6 +132,7 @@ Markus::Application.routes.draw do
         get 'collect_and_begin_grading'
         post 'manually_collect_and_begin_grading'
         get 'repo_browser'
+        post 'repo_browser'
       end
 
       resources :results do
@@ -226,7 +227,7 @@ Markus::Application.routes.draw do
 
     member do
       get 'grades'
-      get 'g_table_paginate'
+      post 'g_table_paginate'
       get 'csv_download'
       post 'csv_upload'
       post 'update_grade'
