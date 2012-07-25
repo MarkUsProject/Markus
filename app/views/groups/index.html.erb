@@ -248,9 +248,7 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
           <%= text_field_tag 'search_groupings', nil,
             :onkeyup => "groupings_table.add_filter('search'); groupings_table.render();",
             :onkeypress => "stop_submit(event);"%>
-          <a class="button" href="#" onclick="make_new_group();">
-            <%= I18n.t(:add_new) %>
-          </a>
+          <%= button_to_function t(:add_new), "make_new_group();" %>
           <div class="globalActionIconsTop">
             <%= image_submit_tag "icons/tick.png",
               :class =>'image_input',
@@ -381,13 +379,9 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
   <input type="text" maxlength="30" id="new_group_name"></input>
   </fieldset>
   <p class="p_modal">  
-  <a class="button" href="#" onclick="submit_new_group(escape($F('new_group_name')))">
-    <%= I18n.t("groups.create_new_group") %>
-  </a>
-    
-  <a class="button" href="#" onclick="modalCreate.close();">
-    <%= I18n.t(:cancel) %>
-  </a>
+    <%= button_to_function I18n.t("groups.create_new_group"),
+  "submit_new_group(escape($F('new_group_name')));" %>	  	
+    <%= button_to_function t(:cancel), 'modalCreate.close()'%>
   </p>
 
 </div>
