@@ -34,8 +34,83 @@ class SubmissionsController < ApplicationController
                           :populate_file_manager,
                           :update_files]
   before_filter :authorize_for_user, :only => [:download]
-
-  S_TABLE_PARAMS = {
+  
+  # TABLE FOR TAs
+  TA_TABLE_PARAMS = {
+    :model => Grouping,
+    :per_pages => [15, 30, 50, 100, 150, 500, 1000],
+    :filters => {
+      'none' => {
+        :display => I18n.t("browse_submissions.show_all"),
+        :proc => lambda { |params, to_include| return params[:assignment].ta_memberships.find_all_by_user_id(params[:user_id], :include => [:grouping => to_include]).collect{m| m.grouping}}},  
+      'unmarked' => {
+        :display => I18n.t("browse_submissions.show_unmarked"),
+        :proc => lambda { |params, to_include| 
+           return(params[:assignment].ta_memberships.find_all_by_user_id (
+                     params[:user_id], :include => [:grouping => to_include]).collect{|m| m.grouping}
+                 ).select { |g| !g.has_submission? || (g.has_submission? && g.current_submission_used.result.marking_state == Result::MARKING_STATES[:unmarked]) } }
+      },
+      
+      'partial' => {
+        :display => I18n.t("browse_submissions.show_partial"),
+        :proc => lambda { |params, to_include| 
+           return(params[:assignment].ta_memberships.find_all_by_user_id(
+                    params[:user_id], :include => [:grouping => to_include]).collect{|m| m.grouping}
+           ).select{|g| g.has_submission? && g.current_submission_used.result.marking_state == Result::MARKING_STATES[:partial]} }
+      },
+      
+      'complete' => {
+        :display => I18n.t("browse_submissions.show_complete"),
+        :proc => lambda{ |params, to_include| 
+           return (params[:assignment].ta_memberships.find_all_by_user_id(
+                     params[:user_id], :include => [:grouping => to_include]).collect{|m| m.grouping}
+           ).select{|g| g.has_submission? && g.current_submission_used.result.marking_state == Result::MARKING_STATES[:complete]} }
+      },
+      
+      'released' => {
+        :display => I18n.t("browse_submissions.show_released"),
+        :proc => lambda{ |params, to_include| 
+           return (params[:assignment].ta_memberships.find_all_by_user_id(
+                     params[:user_id], :include => [:grouping => to_include]).collect{|m| m.grouping}
+           ).select{|g| g.has_submission? && g.current_submission_used.result.released_to_students}}
+      },
+      
+      'assigned' => {
+        :display => I18n.t("browse_submissions.show_assigned_to_me"),
+        :proc => lambda { |params, to_include| return params[:assignment].ta_memberships.find_all_by_user_id(params[:user_id], :include => [:grouping => to_include]).collect{|m| m.grouping} }}
+    },
+    
+    :sorts => {
+'group_name' => lambda { |a,b| a.group.group_name.downcase <=> b.group.group_name.downcase},
+      'repo_name' => lambda { |a,b| a.group.repo_name.downcase <=> b.group.repo_name.downcase },
+      'revision_timestamp' => lambda { |a,b|
+        return -1 if !a.has_submission?
+        return 1 if !b.has_submission?
+        return a.current_submission_used.revision_timestamp <=> b.current_submission_used.revision_timestamp
+      },
+      'marking_state' => lambda { |a,b|
+        return -1 if !a.has_submission?
+        return 1 if !b.has_submission?
+        return a.current_submission_used.result.marking_state <=> b.current_submission_used.result.marking_state
+      },
+      'total_mark' => lambda { |a,b|
+        return -1 if !a.has_submission?
+        return 1 if !b.has_submission?
+        return a.current_submission_used.result.total_mark <=> b.current_submission_used.result.total_mark
+      },
+      'grace_credits_used' => lambda { |a,b|
+        return a.grace_period_deduction_single <=> b.grace_period_deduction_single
+      },
+      'section' => lambda { |a,b|
+        return -1 if !a.section
+        return 1 if !b.section
+        return a.section <=> b.section
+      }
+    }
+  }
+  
+  # TABLE FOR Admin
+  ADMIN_TABLE_PARAMS = {
     :model => Grouping,
     :per_pages => [15, 30, 50, 100, 150, 500, 1000],
     :filters => {
@@ -208,7 +283,8 @@ class SubmissionsController < ApplicationController
       SubmissionCollector.instance.push_grouping_to_priority_queue(grouping)
       flash[:success] = I18n.t("collect_submissions.priority_given")
     end
-    redirect_to :action => 'browse', :id => assignment.id
+    redirect_to :action   => 'browse', 
+                :id       => assignment.id
   end
 
   def collect_all_submissions
@@ -260,17 +336,28 @@ class SubmissionsController < ApplicationController
   end
 
   def browse
-    if current_user.ta?
-      params[:filter] = 'assigned'
-    else
+    #if current_user.ta?
+    #  params[:filter] = 'assigned'
+    #else
       if params[:filter] == nil or params[:filter].blank?
         params[:filter] = 'none'
       end
-    end
-    if params[:sort_by] == nil or params[:sort_by].blank?
-      params[:sort_by] = 'group_name'
-    end
+    #end
+    
     @assignment = Assignment.find(params[:assignment_id])
+    
+    @c_per_page = current_user.id.to_s + @assignment.id.to_s + "per_page" 
+    if !params[:per_page].blank?
+       cookies[@c_per_page] = params[:per_page] 
+    end 
+
+    @c_sort_by = current_user.id.to_s + @assignment.id.to_s + "sort_by"
+    if !params[:sort_by].blank?
+       cookies[@c_sort_by] = params[:sort_by]
+    else
+       params[:sort_by] = 'group_name' 
+    end
+ 
     @groupings, @groupings_total = handle_paginate_event(
       S_TABLE_PARAMS,                                     # the data structure to handle filtering and sorting
         { :assignment => @assignment,                     # the assignment to filter by
@@ -291,14 +378,22 @@ class SubmissionsController < ApplicationController
         unsorted_grouping == sorted_grouping
       end
     end
-
+    
+    if cookies[@c_per_page].blank?
+       cookies[@c_per_page] = params[:per_page]
+    end
+    
+    if cookies[@c_sort_by].blank?
+       cookies[@c_sort_by] = params[:sort_by]
+    end
+ 
     @current_page = params[:page].to_i()
-    @per_page = params[:per_page]
+    @per_page = cookies[@c_per_page] 
     @filters = get_filters(S_TABLE_PARAMS)
     @per_pages = S_TABLE_PARAMS[:per_pages]
     @desc = params[:desc]
     @filter = params[:filter]
-    @sort_by = params[:sort_by]
+    @sort_by = cookies[@c_sort_by]
   end
 
   def index
@@ -501,7 +596,11 @@ class SubmissionsController < ApplicationController
     end
     flash[:errors] = errors
 
-    redirect_to :action => 'browse', :id => params[:id]
+    redirect_to :action => 'browse',
+                :id => params[:id],
+                :per_page => params[:per_page],
+                :filter   => params[:filter],
+                :sort_by  => params[:sort_by] 
   end
 
   def unrelease
@@ -517,7 +616,8 @@ class SubmissionsController < ApplicationController
       m_logger.log("Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" +
                    "#{assignment.id}' (for #{params[:groupings].length} groups).")
     end
-    redirect_to :action => 'browse', :id => params[:id]
+    redirect_to :action => 'browse', 
+                :id => params[:id]
   end
 
   # See Assignment.get_simple_csv_report for details
