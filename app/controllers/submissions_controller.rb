@@ -42,7 +42,7 @@ class SubmissionsController < ApplicationController
     :filters => {
       'none' => {
         :display => I18n.t("browse_submissions.show_all"),
-        :proc => lambda { |params, to_include| return params[:assignment].ta_memberships.find_all_by_user_id(params[:user_id], :include => [:grouping => to_include]).collect{m| m.grouping}}},  
+        :proc => lambda { |params, to_include| return params[:assignment].ta_memberships.find_all_by_user_id(params[:user_id], :include => [:grouping => to_include]).collect{|m| m.grouping}}},  
       'unmarked' => {
         :display => I18n.t("browse_submissions.show_unmarked"),
         :proc => lambda { |params, to_include| 
@@ -336,13 +336,9 @@ class SubmissionsController < ApplicationController
   end
 
   def browse
-    #if current_user.ta?
-    #  params[:filter] = 'assigned'
-    #else
-      if params[:filter] == nil or params[:filter].blank?
-        params[:filter] = 'none'
-      end
-    #end
+    if params[:filter] == nil or params[:filter].blank?
+       params[:filter] = 'none'
+    end
     
     @assignment = Assignment.find(params[:assignment_id])
     
@@ -357,13 +353,21 @@ class SubmissionsController < ApplicationController
     else
        params[:sort_by] = 'group_name' 
     end
- 
-    @groupings, @groupings_total = handle_paginate_event(
-      S_TABLE_PARAMS,                                     # the data structure to handle filtering and sorting
-        { :assignment => @assignment,                     # the assignment to filter by
-          :user_id => current_user.id},                   # the submissions accessable by the current user
-      params)                                             # additional parameters that affect things like sorting
 
+    if current_user.ta? 
+       @groupings, @groupings_total = handle_paginate_event(
+         TA_TABLE_PARAMS,                                     # the data structure to handle filtering and sorting
+         { :assignment => @assignment,                     # the assignment to filter by
+           :user_id => current_user.id},                   # the submissions accessable by the current user
+           params)                                             # additional parameters that affect things like sorting
+    else
+       @groupings, @groupings_total = handle_paginate_event(
+         ADMIN_TABLE_PARAMS,                                     # the data structure to handle filtering and sorting
+         { :assignment => @assignment,                     # the assignment to filter by
+           :user_id => current_user.id},                   # the submissions accessable by the current user
+           params)                                             # additional parameters that affect things like sorting
+
+    end
     #Eager load all data only for those groupings that will be displayed
     sorted_groupings = @groupings
     @groupings = Grouping.find(:all, :conditions => {:id => sorted_groupings},
@@ -388,12 +392,18 @@ class SubmissionsController < ApplicationController
     end
  
     @current_page = params[:page].to_i()
-    @per_page = cookies[@c_per_page] 
-    @filters = get_filters(S_TABLE_PARAMS)
-    @per_pages = S_TABLE_PARAMS[:per_pages]
+    @per_page = cookies[@c_per_page]
     @desc = params[:desc]
     @filter = params[:filter]
     @sort_by = cookies[@c_sort_by]
+ 
+    if current_user.ta? 
+       @filters = get_filters(TA_TABLE_PARAMS)
+       @per_pages = TA_TABLE_PARAMS[:per_pages]
+    else
+       @filters = get_filters(ADMIN_TABLE_PARAMS)
+       @per_pages = ADMIN_TABLE_PARAMS[:per_pages]
+    end
   end
 
   def index
@@ -563,8 +573,12 @@ class SubmissionsController < ApplicationController
         raise I18n.t("student.submission.expect_filter")
       end
       # Get all Groupings for this filter
-      groupings = S_TABLE_PARAMS[:filters][params[:filter]][:proc].call({:assignment => assignment, :user_id => current_user.id}, {})
-    else
+      if current_user.ta? 
+         groupings = TA_TABLE_PARAMS[:filters][params[:filter]][:proc].call({:assignment => assignment, :user_id => current_user.id}, {})
+      else
+         groupings = ADMIN_TABLE_PARAMS[:filters][params[:filter]][:proc].call({:assignment => assignment, :user_id => current_user.id}, {})
+      end 
+   else
       # User selected particular Grouping IDs
       if params[:groupings].nil?
         errors.push(I18n.t('results.must_select_a_group'))
