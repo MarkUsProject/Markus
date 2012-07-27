@@ -336,7 +336,7 @@ class SubmissionsController < ApplicationController
   end
 
   def browse
-    if params[:filter] == nil or params[:filter].blank?
+    if params[:filter].blank?
        params[:filter] = 'none'
     end
     
