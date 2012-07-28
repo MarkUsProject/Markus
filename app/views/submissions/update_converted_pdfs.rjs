@@ -6,17 +6,17 @@ if submission_collector.safely_stop_child_exited
     if @converted_count == @pdf_count
     submission_collector.safely_stop_child_exited = false
     submission_collector.save
-      page.redirect_to :controller => 'results', :action => 'edit',
+    page.redirect_to edit_assignment_submission_result_path(
       :assignment_id => @grouping.assignment_id,
       :submission_id => @grouping.current_submission_used.id,
-      :id => @grouping.current_submission_used.result.id
+      :id => @grouping.current_submission_used.result.id)
     end
   else
     submission_collector.safely_stop_child_exited = false
     submission_collector.save
-    page.redirect_to :controller => 'results', :action => 'edit',
+    page.redirect_to edit_assignment_submission_result_path(
       :assignment_id => @grouping.assignment_id,
       :submission_id => @grouping.current_submission_used.id,
-      :id => @grouping.current_submission_used.result.id
+      :id => @grouping.current_submission_used.result.id)
   end
 end
