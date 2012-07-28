@@ -135,7 +135,7 @@ document.observe("dom:loaded", function(){
 	    <% end %>
 	</select>
       </span>
-      <%= submit_tag t(:apply), :id => 'apply_bulk_action', :name => 'commit' %>
+      <%= submit_tag t(:apply), :id => 'apply_bulk_action', :disable_with => I18n.t('working'), :name => 'commit' %>
 
 
 
