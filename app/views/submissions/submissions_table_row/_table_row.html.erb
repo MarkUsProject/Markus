@@ -14,7 +14,7 @@
 </td>
 <td>
   <% if !grouping.has_submission? %>
-    <% if Time.now >=
+    <% if Time.zone.now >=
     assignment.submission_rule.calculate_grouping_collection_time(grouping) %>
       <%= link_to h(grouping.group.group_name),
                   collect_and_begin_grading_assignment_submission_path(
@@ -137,7 +137,7 @@
   </td>
   <% end %>
   <td>
-    <% if Time.now >= assignment.submission_rule.calculate_grouping_collection_time(grouping) %>
+    <% if Time.zone.now >= assignment.submission_rule.calculate_grouping_collection_time(grouping) %>
       <%= image_tag('icons/tick.png') %>
     <% else %>
       <%= image_tag('icons/cross.png') %>

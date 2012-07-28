@@ -29,10 +29,10 @@
             </td>
             <td>
             	<strong><%= h l(grade_entry_form.date, :format => :short_date) %></strong>
-              <% if grade_entry_form.date > Time.now.to_date %>
+              <% if grade_entry_form.date > Time.zone.now.to_date %>
                 <br />
                 <%= t(:days_left,
-                      :days => grade_entry_form.date - Time.now.to_date)
+                      :days => grade_entry_form.date - Time.zone.now.to_date)
                  %>
               <% end %>
             </td>
@@ -47,7 +47,7 @@
                   %>
                 <% end %>
                 <%= ("(Class Average: " + ("%.2f" % (grade_entry_form.calculate_released_average)).to_s + "%)") %>
-              <% elsif grade_entry_form.date < Time.now.to_date %>
+              <% elsif grade_entry_form.date < Time.zone.now.to_date %>
                 <%= t('grade_entry_forms.students.no_results') %>
               <% end %>
             </td>
