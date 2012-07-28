@@ -16,7 +16,7 @@ class AssignmentStat < ActiveRecord::Base
       return self.grade_distribution_percentage.parse_csv.map{ |x| x.to_i }.to_json
     else
       # Default, empty distribution
-      return [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+      return "[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]"
     end
   end
 end
