@@ -46,7 +46,7 @@ class SubmissionsController < ApplicationController
       'unmarked' => {
         :display => I18n.t("browse_submissions.show_unmarked"),
         :proc => lambda { |params, to_include| 
-           return(params[:assignment].ta_memberships.find_all_by_user_id (
+           return(params[:assignment].ta_memberships.find_all_by_user_id(
                      params[:user_id], :include => [:grouping => to_include]).collect{|m| m.grouping}
                  ).select { |g| !g.has_submission? || (g.has_submission? && g.current_submission_used.result.marking_state == Result::MARKING_STATES[:unmarked]) } }
       },
