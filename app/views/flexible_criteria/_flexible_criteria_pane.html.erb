@@ -22,5 +22,5 @@
   </ul>
 </div>
 <%= sortable_element("flexible_criteria_pane_list",
-                     :url => {:action => "update_positions",
-                              :assignment_id => @assignment.id}) %>
+                     :url => update_positions_assignment_flexible_criteria_path(
+                      @assignment)) %>

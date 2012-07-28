@@ -1869,7 +1869,7 @@ fieldset.disabled{
   color: #464646;
 }
 
-.invalid {
+.invalid, .required_field {
   color: #FF0000;
 }
 

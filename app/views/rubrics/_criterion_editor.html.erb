@@ -1,3 +1,9 @@
+<% if !flash[:success].nil? %>
+  <div class="success">
+    <%= flash[:success] %>
+  </div>
+<% end %>
+
 <%= remote_form_for criterion,
 	     :as => :rubric_criterion,
 	     :url => {:action => 'update',
@@ -38,10 +44,10 @@
 
 <div class="float_right">
   <%= button_to I18n.t(:delete),
-           assignment_rubric_path(:id => criterion.id),
-           :confirm => I18n.t(:remove_criteria_message),
-           :method => :delete,
-           :class => 'delete',
-           :title => I18n.t(:remove_criteria_title),
-           :remote => true %>
+       assignment_rubric_path(:id => criterion.id),
+       :confirm => I18n.t(:remove_criteria_message),
+       :method => :delete,
+       :class => 'delete',
+       :title => I18n.t(:remove_criteria_title),
+       :remote => true %>
 </div>
