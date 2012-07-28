@@ -554,14 +554,14 @@ class SubmissionsController < ApplicationController
       if params[:filter].blank?
         raise I18n.t("student.submission.expect_filter")
       end
-      
+     
+      # Get all Groupings for this filter 
       if current_user.ta?
-        # Get all Groupings for this filter
         groupings = TA_TABLE_PARAMS[:filters][params[:filter]][:proc].call({:assignment => assignment, :user_id => current_user.id}, {})
       else
-        # Get all Groupings for this filter
         groupings = ADMIN_TABLE_PARAMS[:filters][params[:filter]][:proc].call({:assignment => assignment, :user_id => current_user.id}, {})
       end
+    
     else
       # User selected particular Grouping IDs
       if params[:groupings].nil?
