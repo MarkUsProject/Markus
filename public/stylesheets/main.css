@@ -1827,7 +1827,7 @@ fieldset.period{
 }
 
 #grade_entry_items {
-	width: 45%;
+	width: 500px;
 }
 
 .grace_periods_link, .penalty_decay_periods_lin, .penalty_periods_link{
