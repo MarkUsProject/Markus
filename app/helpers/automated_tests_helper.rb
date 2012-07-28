@@ -294,7 +294,7 @@ module AutomatedTestsHelper
     FileUtils.cd(pwd)
 
     # File to store build details
-    filename = I18n.l(Time.now, :format => :ant_date) + ".log"
+    filename = I18n.l(Time.zone.now, :format => :ant_date) + ".log"
     # Status of Ant build
     status = ''
 

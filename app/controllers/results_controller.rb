@@ -86,7 +86,7 @@ class ResultsController < ApplicationController
     collection_time = @assignment.submission_rule.calculate_collection_time.localtime
 
     groupings.delete_if do |grouping|
-      grouping != @grouping && ((!grouping.has_submission? && (Time.now < collection_time)))
+      grouping != @grouping && ((!grouping.has_submission? && (Time.zone.now < collection_time)))
     end
 
     # We sort by Group name by default
@@ -396,7 +396,7 @@ class ResultsController < ApplicationController
     if !@assignment.past_remark_due_date?
       @submission = Submission.find(params[:id])
       @submission.remark_request = params[:submission][:remark_request]
-      @submission.remark_request_timestamp = Time.now
+      @submission.remark_request_timestamp = Time.zone.now
       @submission.save
       @old_result = @submission.result
       if !(@submission.remark_result)
