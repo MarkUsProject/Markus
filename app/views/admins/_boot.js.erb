@@ -21,7 +21,7 @@ document.observe("dom:loaded", function() {
     footer: true,
   });
 
-  <%= remote_function :url => populate_admins_path(), :complete => "$('loading_list').hide();"%>
+  new Ajax.Request( "<%= populate_admins_path() %>", {onSuccess: "$('loading_list').hide();"});
 });
 
 //]]>
