@@ -39,7 +39,7 @@ function submit_new_group(new_group_name) {
   modalCreate.close();
   //send AJAX request 
   new Ajax.Request('<%= new_assignment_group_path(@assignment)%>',
-                   { asynchronous:true, evalScripts:true, method:'get', parameters:'&new_group_name=' + new_group_name + '&authenticity_token=' + AUTH_TOKEN })          
+                   { asynchronous:true, evalScripts:true, method:'get', parameters:'&new_group_name=' + new_group_name + '&authenticity_token=' + AUTH_TOKEN })
 }
 
 function upload_groups(){
@@ -378,9 +378,9 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
   <%= I18n.t("groups.groupe_name") %>
   <input type="text" maxlength="30" id="new_group_name"></input>
   </fieldset>
-  <p class="p_modal">  
+  <p class="p_modal">
     <%= button_to_function I18n.t("groups.create_new_group"),
-  "submit_new_group(escape($F('new_group_name')));" %>	  	
+  "submit_new_group(escape($F('new_group_name')));" %>
     <%= button_to_function t(:cancel), 'modalCreate.close()'%>
   </p>
 
