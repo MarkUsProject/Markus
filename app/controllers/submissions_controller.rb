@@ -35,7 +35,82 @@ class SubmissionsController < ApplicationController
                           :update_files]
   before_filter :authorize_for_user, :only => [:download]
 
-  S_TABLE_PARAMS = {
+  # TABLE FOR TAs
+  TA_TABLE_PARAMS = {
+    :model => Grouping,
+    :per_pages => [15, 30, 50, 100, 150, 500, 1000],
+    :filters => {
+      'none' => {
+        :display => I18n.t("browse_submissions.show_all"),
+        :proc => lambda { |params, to_include| return params[:assignment].ta_memberships.find_all_by_user_id(params[:user_id], :include => [:grouping => to_include]).collect{|m| m.grouping}}},  
+      'unmarked' => {
+        :display => I18n.t("browse_submissions.show_unmarked"),
+        :proc => lambda { |params, to_include| 
+           return(params[:assignment].ta_memberships.find_all_by_user_id (
+                     params[:user_id], :include => [:grouping => to_include]).collect{|m| m.grouping}
+                 ).select { |g| !g.has_submission? || (g.has_submission? && g.current_submission_used.result.marking_state == Result::MARKING_STATES[:unmarked]) } }
+      },
+      
+      'partial' => {
+        :display => I18n.t("browse_submissions.show_partial"),
+        :proc => lambda { |params, to_include| 
+           return(params[:assignment].ta_memberships.find_all_by_user_id(
+                    params[:user_id], :include => [:grouping => to_include]).collect{|m| m.grouping}
+           ).select{|g| g.has_submission? && g.current_submission_used.result.marking_state == Result::MARKING_STATES[:partial]} }
+      },
+      
+      'complete' => {
+        :display => I18n.t("browse_submissions.show_complete"),
+        :proc => lambda{ |params, to_include| 
+           return (params[:assignment].ta_memberships.find_all_by_user_id(
+                     params[:user_id], :include => [:grouping => to_include]).collect{|m| m.grouping}
+           ).select{|g| g.has_submission? && g.current_submission_used.result.marking_state == Result::MARKING_STATES[:complete]} }
+      },
+      
+      'released' => {
+        :display => I18n.t("browse_submissions.show_released"),
+        :proc => lambda{ |params, to_include| 
+           return (params[:assignment].ta_memberships.find_all_by_user_id(
+                     params[:user_id], :include => [:grouping => to_include]).collect{|m| m.grouping}
+           ).select{|g| g.has_submission? && g.current_submission_used.result.released_to_students}}
+      },
+      
+      'assigned' => {
+        :display => I18n.t("browse_submissions.show_assigned_to_me"),
+        :proc => lambda { |params, to_include| return params[:assignment].ta_memberships.find_all_by_user_id(params[:user_id], :include => [:grouping => to_include]).collect{|m| m.grouping} }}
+    },
+    
+    :sorts => {
+'group_name' => lambda { |a,b| a.group.group_name.downcase <=> b.group.group_name.downcase},
+      'repo_name' => lambda { |a,b| a.group.repo_name.downcase <=> b.group.repo_name.downcase },
+      'revision_timestamp' => lambda { |a,b|
+        return -1 if !a.has_submission?
+        return 1 if !b.has_submission?
+        return a.current_submission_used.revision_timestamp <=> b.current_submission_used.revision_timestamp
+      },
+      'marking_state' => lambda { |a,b|
+        return -1 if !a.has_submission?
+        return 1 if !b.has_submission?
+        return a.current_submission_used.result.marking_state <=> b.current_submission_used.result.marking_state
+      },
+      'total_mark' => lambda { |a,b|
+        return -1 if !a.has_submission?
+        return 1 if !b.has_submission?
+        return a.current_submission_used.result.total_mark <=> b.current_submission_used.result.total_mark
+      },
+      'grace_credits_used' => lambda { |a,b|
+        return a.grace_period_deduction_single <=> b.grace_period_deduction_single
+      },
+      'section' => lambda { |a,b|
+        return -1 if !a.section
+        return 1 if !b.section
+        return a.section <=> b.section
+      }
+    }
+  }
+  
+  # TABLE FOR Admin
+  ADMIN_TABLE_PARAMS = {
     :model => Grouping,
     :per_pages => [15, 30, 50, 100, 150, 500, 1000],
     :filters => {
@@ -260,22 +335,28 @@ class SubmissionsController < ApplicationController
   end
 
   def browse
-    if current_user.ta?
-      params[:filter] = 'assigned'
-    else
-      if params[:filter] == nil or params[:filter].blank?
-        params[:filter] = 'none'
-      end
+
+    if params[:filter].blank?
+      params[:filter] = 'none'
     end
+    
     if params[:sort_by] == nil or params[:sort_by].blank?
       params[:sort_by] = 'group_name'
     end
     @assignment = Assignment.find(params[:assignment_id])
-    @groupings, @groupings_total = handle_paginate_event(
-      S_TABLE_PARAMS,                                     # the data structure to handle filtering and sorting
+    if current_user.ta?
+        @groupings, @groupings_total = handle_paginate_event(
+      TA_TABLE_PARAMS,                                     # the data structure to handle filtering and sorting
         { :assignment => @assignment,                     # the assignment to filter by
           :user_id => current_user.id},                   # the submissions accessable by the current user
       params)                                             # additional parameters that affect things like sorting
+    else
+    @groupings, @groupings_total = handle_paginate_event(
+      ADMIN_TABLE_PARAMS,                                     # the data structure to handle filtering and sorting
+        { :assignment => @assignment,                     # the assignment to filter by
+          :user_id => current_user.id},                   # the submissions accessable by the current user
+      params)                                             # additional parameters that affect things like sorting
+    end
 
     #Eager load all data only for those groupings that will be displayed
     sorted_groupings = @groupings
@@ -294,8 +375,14 @@ class SubmissionsController < ApplicationController
 
     @current_page = params[:page].to_i()
     @per_page = params[:per_page]
-    @filters = get_filters(S_TABLE_PARAMS)
-    @per_pages = S_TABLE_PARAMS[:per_pages]
+
+    if current_user.ta?
+      @filters = get_filters(TA_TABLE_PARAMS)
+      @per_pages = TA_TABLE_PARAMS[:per_pages]
+    else
+      @filters = get_filters(ADMIN_TABLE_PARAMS)
+      @per_pages = ADMIN_TABLE_PARAMS[:per_pages]
+    end
     @desc = params[:desc]
     @filter = params[:filter]
     @sort_by = params[:sort_by]
@@ -467,8 +554,14 @@ class SubmissionsController < ApplicationController
       if params[:filter].blank?
         raise I18n.t("student.submission.expect_filter")
       end
-      # Get all Groupings for this filter
-      groupings = S_TABLE_PARAMS[:filters][params[:filter]][:proc].call({:assignment => assignment, :user_id => current_user.id}, {})
+      
+      if current_user.ta?
+        # Get all Groupings for this filter
+        groupings = TA_TABLE_PARAMS[:filters][params[:filter]][:proc].call({:assignment => assignment, :user_id => current_user.id}, {})
+      else
+        # Get all Groupings for this filter
+        groupings = ADMIN_TABLE_PARAMS[:filters][params[:filter]][:proc].call({:assignment => assignment, :user_id => current_user.id}, {})
+      end
     else
       # User selected particular Grouping IDs
       if params[:groupings].nil?
