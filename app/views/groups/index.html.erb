@@ -29,7 +29,12 @@ function make_new_group() {
       return false;
    } else {
    	new Ajax.Request('<%= new_assignment_group_path(@assignment)%>', 
-   	                 { asynchronous:true, evalScripts:true, method:'get', parameters: 'authenticity_token=' + AUTH_TOKEN })     
+   	                 { 
+                      asynchronous:true, 
+                      evalScripts:true, 
+                      method:'get', 
+                      parameters: 'authenticity_token=' + AUTH_TOKEN 
+                    })     
    }
 }
 
@@ -39,7 +44,13 @@ function submit_new_group(new_group_name) {
   modalCreate.close();
   //send AJAX request 
   new Ajax.Request('<%= new_assignment_group_path(@assignment)%>',
-                   { asynchronous:true, evalScripts:true, method:'get', parameters:'&new_group_name=' + new_group_name + '&authenticity_token=' + AUTH_TOKEN })
+                   { 
+                      asynchronous:true, 
+                      evalScripts:true, 
+                      method:'get', 
+                      parameters:'&new_group_name=' + new_group_name + 
+                      '&authenticity_token=' + AUTH_TOKEN 
+                    })
 }
 
 function upload_groups(){
@@ -65,7 +76,12 @@ function submit_assignment_group_use(clone_groups_assignment_id) {
   //send AJAX request
 
   new Ajax.Request('<%= use_another_assignment_groups_assignment_groups_path(@assignment)%> ', 
-                    { asynchronous:true, evalScripts:true, parameters:'&clone_groups_assignment_id=' + clone_groups_assignment_id + '&authenticity_token=' + AUTH_TOKEN })
+                    { 
+                      asynchronous:true, 
+                      evalScripts:true, 
+                      parameters:'&clone_groups_assignment_id=' + clone_groups_assignment_id 
+                        + '&authenticity_token=' + AUTH_TOKEN 
+                    })
 }
 
 document.observe("dom:loaded", function(){

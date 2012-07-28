@@ -132,10 +132,20 @@ document.observe("dom:loaded", function() {
   });
   
   new Ajax.Request('<%= populate_assignment_groups_path(@assignment.id) %>', 
-                    { asynchronous:true, evalScripts:true, onComplete: function() { $('loading_list').hide(); }, parameters: 'authenticity_token=' + AUTH_TOKEN })
+                    { 
+                      asynchronous:true, 
+                      evalScripts:true, 
+                      onComplete: function() { $('loading_list').hide(); }, 
+                      parameters: 'authenticity_token=' + AUTH_TOKEN 
+                    })
 
   new Ajax.Request('<%= populate_students_assignment_groups_path(@assignment.id) %>', 
-                    { asynchronous:true, evalScripts:true, onComplete: function() { $('loading_students_list').hide(); }, parameters: 'authenticity_token=' + AUTH_TOKEN })
+                    { 
+                      asynchronous:true, 
+                      evalScripts:true, 
+                      onComplete: function() { $('loading_students_list').hide(); }, 
+                      parameters: 'authenticity_token=' + AUTH_TOKEN 
+                    })
 });
 
 //]]>
