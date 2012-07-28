@@ -9,7 +9,7 @@ class SubmissionRule < ActiveRecord::Base
 
   def can_collect_now?
     return @can_collect_now if !@can_collect_now.nil?
-    @can_collect_now = Time.now >= get_collection_time
+    @can_collect_now = Time.zone.now >= get_collection_time
   end
 
   # Cache that allows us to quickly get collection time

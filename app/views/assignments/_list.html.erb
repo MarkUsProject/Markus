@@ -27,22 +27,22 @@
             </td>
             <td>
               <% if !assignment.section_due_dates_type %>
-                <% if assignment.due_date < Time.now %>
+                <% if assignment.due_date < Time.zone.now %>
                   <strong><%= I18n.l(assignment.due_date, :format => :long_date) %></strong>
                 <% else %>
                   <strong><%= I18n.l(assignment.due_date, :format => :long_date) %></strong><br />
                     <%= I18n.t(:days_and_hours_left,
-                    :days => ((((assignment.due_date - Time.now)/(60 * 60 * 24)).floor).to_s),
-                    :hours => ((((assignment.due_date - Time.now)/(60 * 60)) % 24).floor)) %>
+                    :days => ((((assignment.due_date - Time.zone.now)/(60 * 60 * 24)).floor).to_s),
+                    :hours => ((((assignment.due_date - Time.zone.now)/(60 * 60)) % 24).floor)) %>
                 <% end %>
 	      <% else %>
-               <% if assignment.section_due_date(@section) < Time.now %>
+               <% if assignment.section_due_date(@section) < Time.zone.now %>
                 <strong><%= I18n.l(assignment.section_due_date(@section), :format => :long_date) %></strong>
                 <% else %>
                   <strong><%= I18n.l(assignment.section_due_date(@section), :format => :long_date) %></strong><br />
                     <%= I18n.t(:days_and_hours_left,
-                    :days => ((((assignment.due_date - Time.now)/(60 * 60 * 24)).floor).to_s),
-                    :hours => ((((assignment.due_date - Time.now)/(60 * 60)) % 24).floor)) %>
+                    :days => ((((assignment.due_date - Time.zone.now)/(60 * 60 * 24)).floor).to_s),
+                    :hours => ((((assignment.due_date - Time.zone.now)/(60 * 60)) % 24).floor)) %>
                <% end %>
 	      <% end %>
             </td>
@@ -56,7 +56,7 @@
                 <%= simple_format(sanitize(@a_id_results[assignment.id].overall_comment)) %>
               </p>
               <%= link_to h(I18n.t('results.results_name')), :controller => "results", :action => 'view_marks', :id => assignment.id %>
-              <% elsif assignment.due_date < Time.now %>
+              <% elsif assignment.due_date < Time.zone.now %>
                 <%= I18n.t(:no_result) %>
               <% end %>
             </td>
