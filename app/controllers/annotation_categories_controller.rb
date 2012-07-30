@@ -1,5 +1,5 @@
+include CsvHelper
 require 'iconv'
-require 'fastercsv'
 
 class AnnotationCategoriesController < ApplicationController
   include AnnotationCategoriesHelper
@@ -111,8 +111,8 @@ class AnnotationCategoriesController < ApplicationController
       if encoding != nil
         annotation_category_list = StringIO.new(Iconv.iconv('UTF-8', encoding, annotation_category_list.read).join)
       end
-      FasterCSV.parse(annotation_category_list.read) do |row|
-        next if FasterCSV.generate_line(row).strip.empty?
+      CsvHelper::Csv.parse(annotation_category_list) do |row|
+        next if CsvHelper::Csv.generate_line(row).strip.empty?
         annotation_line += 1
         result = AnnotationCategory.add_by_row(row, @assignment)
         if result[:annotation_upload_invalid_lines].size > 0
