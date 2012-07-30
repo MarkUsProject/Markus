@@ -14,7 +14,7 @@
     <%= link_to raw(I18n.t("marker.notes",
 		:notes => @grouping.notes.size)),
        notes_dialog_note_path(:id => @grouping.assignment_id,
-					:noteable_id => group.grouping_ids,
+					:noteable_id => @grouping.id,
 					:noteable_type => 'Grouping',
 					:action_to => 'note_message',
 					:controller_to => 'results',

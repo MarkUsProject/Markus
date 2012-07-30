@@ -123,11 +123,11 @@ class Assignment < ActiveRecord::Base
   def past_due_date?
     # If no section due dates
     if !self.section_due_dates_type && self.section_due_dates.empty?
-      return !due_date.nil? && Time.now > due_date
+      return !due_date.nil? && Time.zone.now > due_date
     # If section due dates
     else
       self.section_due_dates.each do |d|
-        if !d.due_date.nil? && Time.now > d.due_date
+        if !d.due_date.nil? && Time.zone.now > d.due_date
           return true
         end
       end
@@ -140,7 +140,7 @@ class Assignment < ActiveRecord::Base
     if self.section_due_dates_type and !grouping.inviter.section.nil?
         section_due_date =
     SectionDueDate.due_date_for(grouping.inviter.section, self)
-        return !section_due_date.nil? && Time.now > section_due_date
+        return !section_due_date.nil? && Time.zone.now > section_due_date
     else
       self.past_due_date?
     end
@@ -172,11 +172,11 @@ class Assignment < ActiveRecord::Base
   end
 
   def past_collection_date?
-    return Time.now > submission_rule.calculate_collection_time
+    return Time.zone.now > submission_rule.calculate_collection_time
   end
 
   def past_remark_due_date?
-    return !remark_due_date.nil? && Time.now > remark_due_date
+    return !remark_due_date.nil? && Time.zone.now > remark_due_date
   end
 
   # Returns a Submission instance for this user depending on whether this
