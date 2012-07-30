@@ -6,30 +6,26 @@
 %>
 
 <%=
-link_to_if(current_page_low > 1, '<< ' + I18n.t("pagination.first"),
+link_to_if(current_page_low > 1, I18n.t("pagination.first"),
     :id => assignment.id,
     :filter => filter,
     :page => 1,
     :per_page => per_page,
     :sort_by => sort_by,
-    :desc => desc ) do
-  "<< " + I18n.t("pagination.first")
-end
+    :desc => desc )
 %>
 
 
 
 <span class="ap_prev_link">
 <%=
-link_to_if( current_page_low > 1, '< ' + I18n.t("pagination.prev"),
+link_to_if( current_page_low > 1, I18n.t("pagination.prev"),
     :id => assignment.id,
     :filter => filter,
     :page => current_page - 1,
     :per_page => per_page,
     :sort_by => sort_by,
-    :desc => desc ) do
-  "< " + I18n.t("pagination.prev")
-end
+    :desc => desc )
 %>
 
 </span>
@@ -38,26 +34,22 @@ end
 
 <span class="ap_next_link">
 <%=
-link_to_if( current_page_high < total_items, I18n.t("pagination.next") + ' >',
+link_to_if( current_page_high < total_items, I18n.t("pagination.next"),
     :id => assignment.id,
     :filter => filter,
     :page => current_page + 1,
     :per_page => per_page,
     :sort_by => sort_by,
-    :desc => desc ) do
-  I18n.t("pagination.next") + ' >'
-end
+    :desc => desc )
 %>
 </span>
 
 <%=
-link_to_if( current_page_high < total_items, I18n.t("pagination.last") + ' >>',
+link_to_if( current_page_high < total_items, I18n.t("pagination.last"),
     :id => assignment.id,
     :filter => filter,
     :page => last_page,
     :per_page => per_page,
     :sort_by => sort_by,
-    :desc => desc ) do
-  I18n.t("pagination.last") + ' >>'
-end
+    :desc => desc )
 %>
