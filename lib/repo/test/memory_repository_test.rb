@@ -1,6 +1,6 @@
-require File.join(File.dirname(__FILE__), '..', 'memory_repository')
-require 'rubygems'
+require File.expand_path(File.join(File.dirname(__FILE__),'..', 'memory_repository'))
 require 'test/unit'
+require 'rubygems'
 require 'shoulda'   # load Thoughtbot Shoulda (used as testing framework)
 require 'time'
 include Repository # bring Repository module into current namespace
