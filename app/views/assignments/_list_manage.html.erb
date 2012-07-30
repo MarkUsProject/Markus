@@ -51,5 +51,15 @@
   <% end %>
 </div>
 
-<%= periodically_call_remote(:url => {:controller => 'assignments',
-    :action => 'update_collected_submissions'}, :frequency => '4') %>
+<script type="text/javascript">
+  new PeriodicalExecuter(function() {
+    new Ajax.Request( '<%= url_for({:controller => 'assignments',
+    :action => 'update_collected_submissions'}) %>', 
+      {
+        asynchronous:true, 
+        evalScripts:true, 
+        parameters:'authenticity_token=' + AUTH_TOKEN
+      }
+    )
+  }, 4)
+</script>
