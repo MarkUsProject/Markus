@@ -1,5 +1,5 @@
 <ul>
-  <%= @errors.each do |error| %>
+  <%= @errors.each_line do |error| %>
     <li><%=error[0]%> <%=error[1]%></li>
   <% end %>
 </ul>

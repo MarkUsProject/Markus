@@ -6,7 +6,7 @@
 
     </p>
     <ul>
-      <%= flash[:error].each do |error_message| %>
+      <%= flash[:error].each_line do |error_message| %>
         <li><%= error_message %></li>
       <% end %>
     </ul>
