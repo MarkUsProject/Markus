@@ -1,5 +1,6 @@
 require 'fastercsv'
 
+
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
   include PaginationHelper
