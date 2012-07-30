@@ -376,7 +376,7 @@ class GroupsController < ApplicationController
           :user_name => student.user_name)
       end
       membership_count = grouping.student_memberships.length
-      grouping.invite(student.user_name, set_membership_status, true)
+      grouping.invite(student.user_name, set_membership_status, true, grouping.grace_period_deduction_single)
       grouping.reload
 
       # report success only if # of memberships increased
