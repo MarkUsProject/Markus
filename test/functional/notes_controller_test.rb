@@ -1,9 +1,9 @@
 # test using MACHINIST
 
-require File.join(File.dirname(__FILE__), '..', 'test_helper')
-require File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints')
-require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
-require File.join(File.dirname(__FILE__), 'authenticated_controller_test')
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
+require File.expand_path(File.join(File.dirname(__FILE__), 'authenticated_controller_test'))
 require 'shoulda'
 
 class NotesControllerTest < AuthenticatedControllerTest

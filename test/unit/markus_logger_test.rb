@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), '..', 'test_helper')
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 require 'markus_logger'
 require 'shoulda'
 require 'mocha'
@@ -20,7 +20,7 @@ class MarkusLoggerTest < Test::Unit::TestCase
       byInterval = false
       oldfiles = 10
       MarkusConfigurator.stubs(:markus_config_logging_rotate_by_interval).returns(byInterval)
-      MarkusConfigurator.stubs(:markus_config_logging_size_threshold).returns(size)
+      MarkusConfigurator.stubs(:markus_config_logging_size_threshold).returns(@size)
       MarkusConfigurator.stubs(:markus_config_logging_rotate_interval).returns(interval)
       MarkusConfigurator.stubs(:markus_config_logging_logfile).returns(@infolog)
       MarkusConfigurator.stubs(:markus_config_logging_errorlogfile).returns(@errorlog)

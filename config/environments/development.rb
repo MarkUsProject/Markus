@@ -28,7 +28,8 @@ Markus::Application.configure do
   # Don't care if the mailer can't send
   config.action_mailer.raise_delivery_errors = false
 
-  require 'ruby-debug'
+  require 'ruby-debug' if RUBY_VERSION == "1.8.7"
+  require 'debugger' if RUBY_VERSION > "1.9"
 
   ###################################################################
   # MarkUs SPECIFIC CONFIGURATION

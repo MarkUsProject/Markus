@@ -1,8 +1,8 @@
-require File.join(File.dirname(__FILE__), 'authenticated_controller_test')
-require File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints')
-require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
+require File.expand_path(File.join(File.dirname(__FILE__), 'authenticated_controller_test'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 
-require 'fastercsv'
+include CsvHelper
 require 'shoulda'
 require 'machinist'
 require 'mocha'
@@ -334,6 +334,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
       should "be able to set instructor forms groups" do
+        @assignment = Assignment.make( :student_form_groups => true )
+        assert @assignment.student_form_groups
         put_as @admin,
                 :update,
                 {:id => @assignment.id,
@@ -341,11 +343,11 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                    :description => 'New Description',
                    :message => 'New Message',
                    :due_date => 3.days.from_now,
-                   :student_form_groups => false,
+                   :student_form_groups => "0",
                    :submission_rule_attributes => {
                      :type => 'NoLateSubmissionRule',
                      :id => @assignment.submission_rule.id}},
-                   :is_group_assignment => true}
+                   :is_group_assignment => "true"}
 
         a = Assignment.find(@assignment.id)
         assert_equal 'New Description', a.description
@@ -358,26 +360,29 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
       should "be able to set students to form groups" do
-        post_as @admin,
-                :edit,
-                {:id => @assignment.id,
-                 :assignment => {
-                   :description => 'New Description',
-                   :message => 'New Message',
-                   :due_date => 3.days.from_now,
-                   :student_form_groups => "true",
-                   :submission_rule_attributes => {
-                     :type => 'NoLateSubmissionRule',
-                     :id => @assignment.submission_rule.id}},
-                   :is_group_assignment => "true"}
+        @assignment = Assignment.make( :student_form_groups => false )
+        assert !@assignment.student_form_groups
+        put_as @admin,
+                :update,
+                { :id => @assignment.id,
+                  :is_group_assignment => "true",
+                  :assignment => {
+                    :student_form_groups => "1",
+                    :submission_rule_attributes => {
+                      :type =>"NoLateSubmissionRule",
+                      :id => @assignment.submission_rule.id
+                    }
+                  }
+                }
 
         @assignment.reload
-        assert I18n.t("assignment.update_success"),
+        assert_redirected_to edit_assignment_path(@assignment)
+        assert_equal I18n.t("assignment.update_success"),
                flash[:success]
 
         assert_not_nil assigns(:assignment)
         assert assigns(:assignment).errors.empty?
-        assert @assignment.student_form_groups, true
+        assert @assignment.student_form_groups
       end
 
       should "get assignments list" do
@@ -393,7 +398,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       should "be able to get a csv grade report" do
         student = Student.make!
         response_csv = get_as(@admin, :download_csv_grades_report).body
-        csv_rows = FasterCSV.parse(response_csv)
+        csv_rows = CsvHelper::Csv.parse(response_csv)
         assert_equal Student.all.size, csv_rows.size
         assignments = Assignment.all(:order => 'id')
         csv_rows.each do |csv_row|

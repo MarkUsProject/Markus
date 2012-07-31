@@ -1,5 +1,5 @@
+include CsvHelper
 require 'iconv'
-require 'fastercsv'
 require 'digest' # required for {set,reset}_api_token
 require 'base64' # required for {set,reset}_api_token
 # required for repository actions
@@ -122,7 +122,7 @@ class User < ActiveRecord::Base
 
   # Classlist parsing --------------------------------------------------------
   def self.generate_csv_list(user_list)
-     file_out = FasterCSV.generate do |csv|
+     file_out = CsvHelper::Csv.generate do |csv|
        user_list.each do |user|
          # csv format is user_name,last_name,first_name
          # We check for user's section
@@ -150,11 +150,11 @@ class User < ActiveRecord::Base
     end
     User.transaction do
       processed_users = []
-      FasterCSV.parse(user_list.read,
-                      :skip_blanks => true,
-                      :row_sep => :auto) do |row|
+      CsvHelper::Csv.parse(user_list,
+                           :skip_blanks => true,
+                           :row_sep => :auto) do |row|
         # don't know how to fetch line so we concat given array
-        next if FasterCSV.generate_line(row).strip.empty?
+        next if CsvHelper::Csv.generate_line(row).strip.empty?
         if processed_users.include?(row[0])
           result[:invalid_lines] = I18n.t('csv_upload_user_duplicate',
                                           {:user_name => row[0]})

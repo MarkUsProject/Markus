@@ -24,7 +24,7 @@ Markus::Application.routes.draw do
 
     collection do
       get 'download_csv_grades_report'
-      get 'update_group_properties_on_persist'
+      post 'update_group_properties_on_persist'
       get 'delete_rejected'
       post 'update_collected_submissions'
     end
@@ -132,6 +132,7 @@ Markus::Application.routes.draw do
         get 'collect_and_begin_grading'
         post 'manually_collect_and_begin_grading'
         get 'repo_browser'
+        post 'repo_browser'
       end
 
       resources :results do
@@ -152,11 +153,13 @@ Markus::Application.routes.draw do
           get 'cancel_remark_request'
           get 'codeviewer'
           post 'codeviewer'
-          post 'collapse_criteria'
+          get 'expand_criteria'
+          get 'collapse_criteria'
           post 'add_extra_mark'
+          post 'delete_grace_period_deduction'
           get 'next_grouping'
           post 'remove_extra_mark'
-          post 'expand_unmarked_criteria'
+          get 'expand_unmarked_criteria'
           get 'set_released_to_students'
           post 'update_overall_comment'
           post 'update_overall_remark_comment'
@@ -164,7 +167,6 @@ Markus::Application.routes.draw do
           get 'update_remark_request'
           get 'update_positions'
           get 'update_mark'
-          get 'expand_criteria'
           get 'view_marks'
         end
       end
@@ -225,7 +227,7 @@ Markus::Application.routes.draw do
 
     member do
       get 'grades'
-      get 'g_table_paginate'
+      post 'g_table_paginate'
       get 'csv_download'
       post 'csv_upload'
       post 'update_grade'
@@ -269,6 +271,10 @@ Markus::Application.routes.draw do
       get 'add_new_section'
       get 'download_student_list'
       post 'upload_student_list'
+    end
+
+    member do
+      post 'delete_grace_period_deduction'
     end
   end
 
