@@ -1,4 +1,5 @@
 Adam Goucher
+Alex Krassikov
 Alexandre Lissy
 Amanda Manarin
 Andrew Louis
@@ -11,11 +12,13 @@ Brian Xu
 Bryan Shen
 Catherine Fawcett
 Christian Jacques
+Camille Guérin
 Clément Delafargue
 Clément Schiano
 Danesh Dadachanji
 Diane Tam
 Dina Sabie
+Erik Traikov
 Evan Browning
 Farah Juma
 Fernando Garces
@@ -25,11 +28,13 @@ Horatiu Halmaghi
 Ibrahim Shahin
 Jérôme Gazel
 Jiahui Xu
+Jordan Saleh
 Joseph Mate
 Joseph Maté
 Justin Foong
 Karel Kahula
 Kurtis Schmidt
+Luke Kysow 
 Mélanie Gaudet
 Michael Lumbroso
 Mike Conley
@@ -37,9 +42,11 @@ Mike Gunderloy
 Misa Sakamoto
 Neha Kumar
 Nelle Varoquaux
+Nicolas Bouillon
 Nicolas Carougeau
 Noé Bedetti
 Oloruntobi Ogunbiyi
+Razvan Vlaicu
 Robert Burke
 Samuel Gougeon
 Severin Gehwolf
@@ -52,8 +59,3 @@ Victoria Mui
 Victor Ivri
 Vivien Suen
 Yansong Zang
-Luke Kysow 
-Razvan Vlaicu
-Erik Traikov
-Alex Krassikov
-Jordan Saleh
