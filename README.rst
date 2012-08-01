@@ -132,18 +132,19 @@ MarkUs' development has been supported by the University of Toronto, École
 Centrale de Nantes, et. al. Kudos to everyone who turned that support into
 working code:
 
-Adam Goucher, Alexandre Lissy, Alex Krassikov, Amanda Manarin, Andrew Louis,
-Anthony Le Jallé, Anton Braverman, Benjamin Thorent, Benjamin Vialle, Bertan
-Guven, Brian Xu, Bryan Shen, Camille Guérin, Catherine Fawcett, Christian
-Jacques, Clément Delafargue, Clément Schiano, Danesh Dadachanji, Diane Tam,
-Dina Sabie, Erik Traikov, Evan Browning, Farah Juma, Fernando Garces, Gabriel
-Roy-Lortie, Geoffrey Flores, Horatiu Halmaghi, Ibrahim Shahin, Jérôme Gazel,
-Jiahui Xu, Jordan Saleh, Joseph Mate, Joseph Maté, Justin Foong, Karel Kahula,
-Kurtis Schmidt, Luke Kysow, Mélanie Gaudet, Michael Lumbroso, Mike Conley, Mike
+Aaron Lee, Adam Goucher, Aimen Khan, Alexandre Lissy, Alex Krassikov, Amanda
+Manarin, Andrew Louis, Anthony Le Jallé, Anton Braverman, Benjamin Thorent,
+Benjamin Vialle, Bertan Guven, Brian Xu, Bryan Shen, Camille Guérin, Catherine
+Fawcett, Christian Jacques, Christine Yu, Clément Delafargue, Clément Schiano,
+Danesh Dadachanji, Diane Tam, Dina Sabie, Egor Philippov, Erik Traikov, Evan
+Browning, Farah Juma, Fernando Garces, Gabriel Roy-Lortie, Geoffrey Flores,
+Hanson Wu, Horatiu Halmaghi, Ibrahim Shahin, Jay Parekh, Jérôme Gazel, Jiahui
+Xu, Jordan Saleh, Joseph Mate, Joseph Maté, Justin Foong, Karel Kahula, Kurtis
+Schmidt, Luke Kysow, Mélanie Gaudet, Michael Lumbroso, Mike Conley, Mike
 Gunderloy, Misa Sakamoto, Neha Kumar, Nelle Varoquaux, Nicolas Bouillon,
 Nicolas Carougeau, Noé Bedetti, Oloruntobi Ogunbiyi, Razvan Vlaicu, Robert
-Burke, Samuel Gougeon, Severin Gehwolf, Shion Kashimura, Simon Lavigne-Giroux,
-Tara Clark, Valentin Roger, Veronica Wong, Victoria Mui, Victor Ivri, Vivien
-Suen, Yansong Zang
+Burke, Samuel Gougeon, Sean Budning, Severin Gehwolf, Shion Kashimura, Simon
+Lavigne-Giroux, Tara Clark, Tianhai Hu, Valentin Roger, Veronica Wong, Victoria
+Mui, Victor Ivri, Vivien Suen, Yansong Zang
 
 Supervisors: Karen Reid, Morgan Magnin
