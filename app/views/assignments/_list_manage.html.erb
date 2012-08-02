@@ -53,8 +53,7 @@
 
 <script type="text/javascript">
   new PeriodicalExecuter(function() {
-    new Ajax.Request( '<%= url_for({:controller => 'assignments',
-    :action => 'update_collected_submissions'}) %>', 
+    new Ajax.Request( '<%= update_collected_submissions_assignments_path() %>', 
       {
         asynchronous:true, 
         evalScripts:true, 
