@@ -6,12 +6,19 @@
 require 'fastercsv' unless RUBY_VERSION > '1.9'
 require 'csv'       if     RUBY_VERSION > '1.9'
 
-module CsvHelper
+def class_defined(klass)
   begin
-    class Csv < CSV
-    end
-  rescue
-    class Csv < FasterCSV
-    end
+    klass = Module.const_get(klass)
+    return klass.is_a?(Class)
+  rescue NameError
+    return false
+  end
+end
+
+module CsvHelper
+  if class_defined("CSV")
+    CsvHelper.const_set :Csv, CSV
+  else
+    CsvHelper.const_set :Csv, FasterCSV
   end
 end
