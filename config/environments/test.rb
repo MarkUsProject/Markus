@@ -27,7 +27,8 @@ Markus::Application.configure do
   # Show Deprecated Warnings (to :log or to :stderr)
   config.active_support.deprecation = :stderr
 
-  require 'ruby-debug'
+  require 'ruby-debug' if RUBY_VERSION == "1.8.7"
+  require 'debugger' if RUBY_VERSION > "1.9"
 
   ###################################################################
   # MarkUs SPECIFIC CONFIGURATION

@@ -1650,7 +1650,11 @@ div.align_text_right {
    padding: 2px 0px;
 }
 
-.mark_tools input{
+.mark_tools form, form.button_to div {
+  display: inline;
+}
+
+input.button_to_criteria_expansion, input.button_to_delete_deduction {
    min-width: 0px;
    font-size: 0.8em;
    margin: 1px;
@@ -1827,7 +1831,7 @@ fieldset.period{
 }
 
 #grade_entry_items {
-	width: 45%;
+	width: 500px;
 }
 
 .grace_periods_link, .penalty_decay_periods_lin, .penalty_periods_link{
