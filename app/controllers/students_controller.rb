@@ -138,7 +138,7 @@ class StudentsController < ApplicationController
   end
 
   def delete_grace_period_deduction
-    grace_deduction = GracePeriodDeduction.find(params[:deduction_id])
+    grace_deduction = GracePeriodDeduction.find(params[:id])
     student_id = grace_deduction.membership.user.id
     grace_deduction.destroy
     student = Student.find(student_id)

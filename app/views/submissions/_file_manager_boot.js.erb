@@ -31,12 +31,10 @@ document.observe("dom:loaded", function() {
     }
   });
 
-  new Ajax.Request('<%= url_for({:action => 'populate_file_manager',
+  <%= remote_function :url => {:action => 'populate_file_manager',
                                :id => @assignment.id,
-                               :path => @path})%>', 
-                   {asynchronous:true, evalScripts:true,
-                   onComplete:function(request){$('loading_list').hide();}, 
-                   parameters: 'authenticity_token=' + AUTH_TOKEN})
+                               :path => @path},
+                      :complete => "$('loading_list').hide();" %>
 
 });
 

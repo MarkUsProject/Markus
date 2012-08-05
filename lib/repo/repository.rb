@@ -320,8 +320,8 @@ module Repository
   end
 
   # A repository factory
-  require File.join(File.dirname(__FILE__),'memory_repository')
-  require File.join(File.dirname(__FILE__),'subversion_repository')
+  require 'repo/memory_repository'
+  require 'repo/subversion_repository'
   # Returns a repository class of the requested type,
   # which implements AbstractRepository
 

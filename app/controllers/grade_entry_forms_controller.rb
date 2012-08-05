@@ -26,7 +26,7 @@ class GradeEntryFormsController < ApplicationController
                     :per_pages => [15, 30, 50, 100, 150],
                     :filters => {'none' => {
                                      :display => 'Show All',
-                                     :proc => lambda { |ignored_1, ignored_2|
+                                     :proc => lambda {
                                           Student.all(:conditions => {
                                               :hidden => false},
                                           :order => "user_name")}}},

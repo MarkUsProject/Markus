@@ -184,12 +184,9 @@
                   :class => "checkbox_label" %>
     <select id="persist_groups_assignment"
             name="persist_groups_assignment"
-            onchange = "new Ajax.Request(
-              '<%= update_group_properties_on_persist_assignments_path() %>',
-              { asynchronous:true, evalScripts:true, parameters: 'assignment_id=' + $F('persist_groups_assignment') }
-              );"
-
-            disabled="">
+            onchange="<%= remote_function(
+                            :url => update_group_properties_on_persist_assignments_path(),
+                            :with => "'assignment_id=' + $F('persist_groups_assignment')")%>" disabled>
       <% @assignments.each do |assignment| %>
         <option value="<%= h(assignment.id) %>">
           <%= h(assignment.short_identifier)%>
@@ -393,7 +390,8 @@
   </p>
 </fieldset>
 
-<%= f.submit t(:submit), :onclick => "set_onbeforeunload(false);" %>
+<%= f.submit t( :submit,
+                :onclick => "set_onbeforeunload(false);" ) %>
 <% end %>
 
 </div>

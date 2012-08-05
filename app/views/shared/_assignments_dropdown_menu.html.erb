@@ -15,7 +15,7 @@
 <% end %>
 
 
-<% Assignment.all.each do |assignment|%>
+<% Assignment.find(:all, :order => 'short_identifier ASC').each do |assignment|%>
   <% if assignment != @assignment %>
     <% if (controller.controller_name == "assignments" &&
           (controller.action_name == "index" or

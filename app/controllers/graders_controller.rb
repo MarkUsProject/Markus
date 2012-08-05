@@ -1,4 +1,5 @@
-include CsvHelper
+require 'fastercsv'
+require 'csv_invalid_line_error'
 
 # Manages actions relating to assigning graders.
 class GradersController < ApplicationController
@@ -115,7 +116,7 @@ class GradersController < ApplicationController
     #get all the groups
     groupings = assignment.groupings
 
-    file_out = CsvHelper::Csv.generate do |csv|
+    file_out = FasterCSV.generate do |csv|
        groupings.each do |grouping|
          group_array = [grouping.group.group_name]
          # csv format is group_name, ta1_name, ta2_name, ... etc
@@ -135,7 +136,7 @@ class GradersController < ApplicationController
     #get all the criteria
     criteria = assignment.get_criteria
 
-    file_out = CsvHelper::Csv.generate do |csv|
+    file_out = FasterCSV.generate do |csv|
        criteria.each do |criterion|
          criterion_array = [criterion.get_name]
          # csv format is criterion_name, ta1_name, ta2_name, ... etc
