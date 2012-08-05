@@ -1,7 +1,7 @@
 <% # Make sure to include the public/javascripts/Grader/file_selector.js
    # file when using this partial
 %>
-<%= form_tag(download_assignment_submission_result_path(@assignment.id, @grouping.current_submission_used.id, @grouping.current_submission_used.result.id)) do %>
+<%= form_tag({:action => "download"}, {:id => "grader_view_file_selector_form"}) do %>
   <%= label_tag "select_file_id", I18n.t("common.submission_file"), :class => "inline_label" %>
   <input type="button" onclick="bump_select($('select_file_id'), -1); return false;" value="<-" />
   <select id="select_file_id" name="select_file_id" onchange="if ($(this).getValue() != '') { load_submitted_file($(this).getValue()); }">

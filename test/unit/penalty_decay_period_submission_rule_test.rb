@@ -1,5 +1,5 @@
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
+require File.join(File.dirname(__FILE__), '..', 'test_helper')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 require 'shoulda'
 require 'time-warp'
 require 'machinist'
@@ -46,8 +46,7 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
     end
 
     should "be able to calculate collection time for a grouping" do
-      assert Time.now <  @assignment.due_date
-      assert_equal @assignment.due_date, @rule.calculate_grouping_collection_time(@membership.grouping)
+      assert Time.now <  @assignment.due_date, @rule.calculate_grouping_collection_time(@membership.grouping)
     end
 
     should "not apply decay period deductions for on-time submissions" do

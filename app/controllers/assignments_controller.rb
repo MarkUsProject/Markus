@@ -1,4 +1,4 @@
-include CsvHelper
+require 'fastercsv'
 class AssignmentsController < ApplicationController
   before_filter      :authorize_only_for_admin,
                      :except => [:deletegroup,
@@ -271,7 +271,7 @@ class AssignmentsController < ApplicationController
   def download_csv_grades_report
     assignments = Assignment.all(:order => 'id')
     students = Student.all
-    csv_string = CsvHelper::Csv.generate do |csv|
+    csv_string = FasterCSV.generate do |csv|
       students.each do |student|
         row = []
         row.push(student.user_name)

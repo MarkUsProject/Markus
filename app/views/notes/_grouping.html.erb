@@ -5,12 +5,11 @@
                    options_from_collection_for_select(@assignments,
                                                       :id,
                                                       :short_identifier),
-                   :onchange => "$('loading_groupings').show();
-			                    new Ajax.Request('" + new_update_groupings_notes_path() + "', 
-							                    {asynchronous:true, evalScripts:true, 
-							                     onSuccess:function(request){$('loading_groupings').hide()}, 
-							                     parameters:Form.Element.serialize(this) + '&authenticity_token=' + AUTH_TOKEN })" 
-    %>
+                   :onchange => remote_function(
+                      :url => new_update_groupings_notes_path(),
+    		      :with => 'Form.Element.serialize(this)',
+		      :before => "$('loading_groupings').show()",
+		      :success => "$('loading_groupings').hide()") %>
   </p>
 
   <p>

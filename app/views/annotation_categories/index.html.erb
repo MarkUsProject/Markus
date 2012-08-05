@@ -18,7 +18,7 @@
 
 <div id="title_bar">
   <h1><%= I18n.t("annotations.title",
-        :assignment_short_identifier => @assignment.short_identifier) %>
+                 :assignment_short_identifier => @assignment.short_identifier) %>
         <%= link_to_function t("annotations.add_annotation_category"), %| if($('add_annotation_category_prompt') != null) {
           $('add_annotation_category_prompt').select();
           $('add_annotation_category_prompt').focus();

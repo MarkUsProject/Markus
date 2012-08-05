@@ -5,61 +5,68 @@
    last_page = total_items / per_page.to_i + 1
 %>
 
-<%= link_to_if(current_page_low > 1, t('pagination.first'),
-               g_table_paginate_grade_entry_form_path(
-                   :id => assignment.id,
-                   :filter => filter,
-                   :page => 1,
-                   :per_page => per_page,
-                   :sort_by => sort_by,
-                   :alpha_category => alpha_pagination_options[0],
-                   :update_alpha_pagination_options => "false"),
-               :remote => true,
-               :before => "ap_thinking_start('#{table_name}');",
-               :complete => "ap_thinking_stop();") %>
+<%= link_to_remote "<< " + t('pagination.first'), :url => {
+      :action => action,
+      :id => assignment.id,
+      :filter => filter,
+      :page => 1,
+      :per_page => per_page,
+      :sort_by => sort_by,
+      :alpha_category => alpha_pagination_options[0],
+      :update_alpha_pagination_options => "false"
+    },
+    :before => "ap_thinking_start('#{table_name}');",
+    :complete => "ap_thinking_stop();" %>
 
 <span class="ap_prev_link">
-<%= link_to_if(current_page_low > 1, t('pagination.prev'),
-               g_table_paginate_grade_entry_form_path(
-                   :id => assignment.id,
-                   :filter => filter,
-                   :page => current_page - 1,
-                   :per_page => per_page,
-                   :sort_by => sort_by,
-                   :alpha_category => alpha_pagination_options[current_page - 2],
-                   :update_alpha_pagination_options => "false"),
-               :remote => :true,
-               :before => "ap_thinking_start('#{table_name}');",
-               :complete => "ap_thinking_stop();") %>
-
+<% if current_page_low > 1 %>
+  <%= link_to_remote "< " + t('pagination.prev'), :url => {
+        :action => action,
+        :id => assignment.id,
+        :filter => filter,
+        :page => current_page - 1,
+        :per_page => per_page,
+        :sort_by => sort_by,
+        :alpha_category => alpha_pagination_options[current_page - 2],
+        :update_alpha_pagination_options => "false"
+      },
+      :before => "ap_thinking_start('#{table_name}');",
+      :complete => "ap_thinking_stop();" %>
+<% else %>
+  <%= t("pagination.no_prev") %>
+<% end %>
 </span>
 
 <strong><%= current_page_low %> - <%= current_page_high %> of <%= total_items %></strong>
 
 <span class="ap_next_link">
-<%= link_to_if(current_page_high < total_items, t('pagination.next'),
-               g_table_paginate_grade_entry_form_path(
-                   :id => assignment.id,
-                   :filter => filter,
-                   :page => current_page + 1,
-                   :per_page => per_page,
-                   :sort_by => sort_by,
-                   :alpha_category => alpha_pagination_options[current_page],
-                   :update_alpha_pagination_options => "false"),
-               :remote => true,
-               :before => "ap_thinking_start('#{table_name}');",
-               :complete => "ap_thinking_stop();") %>
+<% if current_page_high < total_items %>
+  <%= link_to_remote t('pagination.next') + " >", :url => {
+        :action => action,
+        :id => assignment.id,
+        :filter => filter,
+        :page => current_page + 1,
+        :per_page => per_page,
+        :sort_by => sort_by,
+        :alpha_category => alpha_pagination_options[current_page],
+        :update_alpha_pagination_options => "false"
+      },
+      :before => "ap_thinking_start('#{table_name}');",
+      :complete => "ap_thinking_stop();" %>
+<% else %>
+<%= t("pagination.no_next") %>
+<% end %>
 </span>
 
-<%= link_to_if(current_page_high < total_items, t('pagination.last'),
-               g_table_paginate_grade_entry_form_path(
-                   :id => assignment.id,
-                   :filter => filter,
-                   :page => last_page,
-                   :per_page => per_page,
-                   :sort_by => sort_by,
-                   :alpha_category => alpha_pagination_options[last_page - 1],
-                   :update_alpha_pagination_options => "false"),
-               :remote => true,
-               :before => "ap_thinking_start('#{table_name}');",
-               :complete => "ap_thinking_stop();") %>
+<%= link_to_remote t('pagination.last') + " >>", :url => {
+       :action => action,
+       :id => assignment.id,
+       :filter => filter,
+       :page => last_page,
+       :per_page => per_page,
+       :sort_by => sort_by,
+       :alpha_category => alpha_pagination_options[last_page - 1],
+       :update_alpha_pagination_options => "false"
+    },
+    :before => "ap_thinking_start('#{table_name}');",
+    :complete => "ap_thinking_stop();" %>

@@ -3,9 +3,8 @@
 # - A section with no student associated to
 # - A section with student associated to
 
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
-
+require File.join(File.dirname(__FILE__), '..', 'test_helper')
+require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
 require 'shoulda'
 
 class SectionTest < ActiveSupport::TestCase
@@ -56,3 +55,6 @@ class SectionTest < ActiveSupport::TestCase
   end
 
 end
+
+
+

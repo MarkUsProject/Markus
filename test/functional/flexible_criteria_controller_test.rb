@@ -1,4 +1,4 @@
-require File.expand_path(File.join(File.dirname(__FILE__), 'authenticated_controller_test'))
+require File.join(File.dirname(__FILE__), 'authenticated_controller_test')
 require 'shoulda'
 require 'mocha'
 

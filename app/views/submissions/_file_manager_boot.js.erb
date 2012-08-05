@@ -31,11 +31,10 @@ document.observe("dom:loaded", function() {
     }
   });
 
-  new Ajax.Request('<%= populate_file_manager_assignment_submissions_path(:id => @assignment.id,
-                               :path => @path}) %>', 
-                   {asynchronous:true, evalScripts:true,
-                   onComplete:function(request){$('loading_list').hide();}, 
-                   parameters: 'authenticity_token=' + AUTH_TOKEN})
+  <%= remote_function :url => {:action => 'populate_file_manager',
+                               :id => @assignment.id,
+                               :path => @path},
+                      :complete => "$('loading_list').hide();" %>
 
 });
 
