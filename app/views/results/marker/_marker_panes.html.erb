@@ -52,7 +52,7 @@
   <div id="pane_divider">
   </div>
   <!-- End Divider -->
-ddd
+
   <div id="mark_pane" class="float_left">
     <ul id="mark_tabs" class="subsection_tabs">
       <li class="tab"><a href="#mark_viewer"><%= I18n.t("marker.marks.marks") %></a></li>
@@ -61,26 +61,21 @@ ddd
     </ul>
     <div id="mark_viewer" class="tabbedArea">
       <div class="mark_tools">
-        <% #FIXME:  Use :form-class for styling of button_to once available in current version of rails.
-        %>
-        <%= button_to(I18n.t("marker.marks.expand_all"),
-                       expand_criteria_assignment_submission_results_path(:aid => @assignment.id),
-                      :method => :get,
-                      :class => "button_to_criteria_expansion",
-                      :remote => true) %>
-        <%= button_to(I18n.t("marker.marks.collapse_all"),
-                      collapse_criteria_assignment_submission_results_path(:aid => @assignment.id),
-                      :method => :get,
-                      :class => "button_to_criteria_expansion",
-                      :remote => true) %>
-        <%= button_to(I18n.t("marker.marks.expand_unmarked"),
-                      expand_unmarked_criteria_assignment_submission_results_path(:aid => @assignment.id),
-                      :method => :get,
-                      :class => "button_to_criteria_expansion",
-                      :remote => true) %>
-      </div>
-      <div class="clear"></div> <!-- Criterion Tools -->
-      <div id="mark_criteria">
+         <%= button_to_remote(I18n.t("marker.marks.expand_all"),
+                              :url => {:controller => 'results',
+                                       :action => 'expand_criteria',
+                                       :aid => @assignment.id}) %>
+         <%= button_to_remote(I18n.t("marker.marks.collapse_all"),
+                              :url => {:controller => 'results',
+                              :action => 'collapse_criteria',
+                              :aid => @assignment.id}) %>
+         <%= button_to_remote(I18n.t("marker.marks.expand_unmarked"),
+                              :url => {:controller => 'results',
+                                       :action => 'expand_unmarked_criteria',
+                                       :aid => assignment.id,
+                                       :rid => result.id}) %>
+       </div>  <!-- Criterion Tools -->
+       <div id="mark_criteria">
           <ul id="mark_criteria_pane_list">
             <%# also need to render the mark per criteria (if exist) %>
             <% @mark_criteria.each do |mark_criterion| -%>

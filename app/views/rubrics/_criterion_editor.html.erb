@@ -1,6 +1,5 @@
-<%= form_for criterion,
+<%= remote_form_for criterion,
 	     :as => :rubric_criterion,
-	     :remote => true,
 	     :url => {:action => 'update',
 		   :id => criterion.id} do |f| %>
 

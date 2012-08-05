@@ -1,7 +1,6 @@
-require File.expand_path(File.join(File.dirname(__FILE__),
-                                   '..', 'subversion_repository'))
-require 'test/unit' # load Test::Unit
+require File.join(File.dirname(__FILE__), '..', 'subversion_repository')
 require 'rubygems'
+require 'test/unit' # load Test::Unit
 require 'fileutils'
 require 'shoulda'   # load Thoughtbot Shoulda (used as testing framework)
 require 'time'

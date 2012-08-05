@@ -4,35 +4,24 @@
 <%= select_tag "alpha_category",
                 options_for_select(alpha_pagination_options,
                                    alpha_category),
-                :onchange => 
-                  "new Ajax.Request(
-                    '" + g_table_paginate_grade_entry_form_path(:id => grade_entry_form.id, :filter => filter, :sort_by => sort_by) +"', 
-                      {
-                        asynchronous:true, 
-                        evalScripts:true, 
-                        onComplete: function(request){ap_thinking_stop();}, 
-                        parameters:'alpha_category=' + this.options[this.selectedIndex].value
-                      + '&page=' + (this.selectedIndex+1)
-                      + '&per_page=' + $('per_page').options[$('per_page').selectedIndex].value
-                      + '&update_alpha_pagination_options=' + false
-                      + '&authenticity_token=' + AUTH_TOKEN }) "
-                 -%>
+                :onchange => remote_function(:url => {:action => :g_table_paginate, :id => grade_entry_form.id,
+                                          :filter => filter, :sort_by => sort_by},
+    :with => "'alpha_category=' + this.options[this.selectedIndex].value
+              + '&page=' + (this.selectedIndex+1)
+              + '&per_page=' + $('per_page').options[$('per_page').selectedIndex].value
+              + '&update_alpha_pagination_options=' + false",
+    :before => "ap_thinking_start('grades');",
+    :complete => "ap_thinking_stop();") -%>
 <input type="hidden" name="alpha_category" value="<%=alpha_category%>">
 
 <% # Allow the user to modify the number of students displayed per page
 %>
 <%= t('pagination.show') %>
 <%= select_tag "per_page", options_for_select(per_pages, per_page.to_i),
-    :onchange => "
-      ap_thinking_start('grades'); 
-      new Ajax.Request('" + g_table_paginate_grade_entry_form_path(:id => grade_entry_form.id, :filter => filter, :sort_by => sort_by) + 
-        "', 
-        { asynchronous:true, 
-          evalScripts:true, 
-          onComplete:function(request){ap_thinking_stop();}, 
-          parameters:'per_page=' + this.options[this.selectedIndex].value 
-          + '&update_alpha_pagination_options=' + true
-          + '&authenticity_token=' + AUTH_TOKEN })"
-    -%>
+    :onchange => remote_function(:url => {:action => :g_table_paginate, :id => grade_entry_form.id,
+                                          :filter => filter, :sort_by => sort_by},
+    :with => "'per_page=' + this.options[this.selectedIndex].value + '&update_alpha_pagination_options=' + true",
+    :before => "ap_thinking_start('grades');",
+    :complete => "ap_thinking_stop();") -%>
 <%= label_tag "per_page", ' ' + t('pagination.per_page'), :class => "inline_label" %>
 <input type="hidden" name="per_page" value="<%=per_page%>">

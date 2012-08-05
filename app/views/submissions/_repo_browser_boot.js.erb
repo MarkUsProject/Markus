@@ -26,15 +26,15 @@ document.observe("dom:loaded", function() {
       }
     }
 });
-                     
-  new Ajax.Request('<%= populate_repo_browser_assignment_submissions_path(
+
+
+
+  <%= remote_function :url => populate_repo_browser_assignment_submissions_path(
                                 @assignment,
                                 :id => @grouping.id,
                                 :path => @path,
-                                :revision_number => @revision_number) %>', 
-                   {asynchronous:true, evalScripts:true, 
-                   onComplete:function(request){$('loading_list').hide();}, 
-                   parameters: 'authenticity_token=' + AUTH_TOKEN})
+                                :revision_number => @revision_number),
+                      :complete => "$('loading_list').hide();" %>
 
 });
 //]]>

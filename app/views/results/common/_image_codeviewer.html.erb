@@ -5,7 +5,7 @@
     <% @annots.each do |annot| %>
       <div id="annotation_holder_<%=annot.annotation_text.id%>" class="annotation_holder"></div>
     <%end%>
-    <img id="image_preview" src="<%=download_assignment_submission_results_path(:select_file_id => submission_file_id, :show_in_browser => true ) -%>" alt="<%=I18n.t("common.cant_display_image")%>"/>
+    <img id="image_preview" src="<%= url_for(:action => 'download', :controller => 'results', :select_file_id => submission_file_id, :show_in_browser => true) -%>" alt="<%=I18n.t("common.cant_display_image")%>"/>
 
   <%# Keep track of all annotations associated with file.
   %>

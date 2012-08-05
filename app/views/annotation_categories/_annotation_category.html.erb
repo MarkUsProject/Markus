@@ -1,8 +1,11 @@
 <li id="annotation_category_<%=annotation_category.id%>">
 <span class="float_left">
-<%= link_to(truncate(annotation_category.annotation_category_name, :length => 30),
-            get_annotations_assignment_annotation_category_path(@assignment,
-                annotation_category), :remote => true) %>
+<%= link_to_remote truncate(annotation_category.annotation_category_name,
+	             :length => 30),
+	    :url => get_annotations_assignment_annotation_category_path(
+		     @assignment,
+		     annotation_category),
+	    :method => 'get' %>
 </span>
 <span class="annotation_texts_size">
 (<%= annotation_category.annotation_texts.size() %>)

@@ -24,8 +24,9 @@
           :remote => true) %>
 
       <span id="admin_logged_in_as">
-        <% if !session[:real_uid].nil? %>
+        <% if !session[:real_uid].nil?%>
           <b> <%= User.find_by_id(session[:real_uid]).first_name %> </b>
+          <%= I18n.t(:is_logged_in_as)%>
         <% end %>
       </span>
       <span id="user_name">
