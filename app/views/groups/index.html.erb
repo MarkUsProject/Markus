@@ -6,7 +6,8 @@
 <%= javascript_include_tag "Groups/tabs_boot.js" %>
 <%= javascript_include_tag "prototype.js" %>
 <%= javascript_include_tag "rails.js" %>
-<%= csrf_meta_tag %>
+<%= render :partial => 'layouts/head' %>
+
 
 <%= render :partial => "boot.js.erb" %>
 <script type="text/javascript">
@@ -27,10 +28,13 @@ function make_new_group() {
       $('new_group_name').setValue('');
       return false;
    } else {
-     <%= remote_function(
-       :url => new_assignment_group_path(@assignment.id),
-       :method => :get )
-     %>
+   	new Ajax.Request('<%= new_assignment_group_path(@assignment)%>', 
+   	                 { 
+                      asynchronous:true, 
+                      evalScripts:true, 
+                      method:'get', 
+                      parameters: 'authenticity_token=' + AUTH_TOKEN 
+                    })     
    }
 }
 
@@ -38,12 +42,15 @@ function submit_new_group(new_group_name) {
 
   //close the dialog
   modalCreate.close();
-  //send AJAX request
-  <%=
- remote_function(
-    :url  => new_assignment_group_path(@assignment),
-    :with => "'&new_group_name=' + new_group_name")
-  %>
+  //send AJAX request 
+  new Ajax.Request('<%= new_assignment_group_path(@assignment)%>',
+                   { 
+                      asynchronous:true, 
+                      evalScripts:true, 
+                      method:'get', 
+                      parameters:'&new_group_name=' + new_group_name + 
+                      '&authenticity_token=' + AUTH_TOKEN 
+                    })
 }
 
 function upload_groups(){
@@ -67,12 +74,14 @@ function submit_assignment_group_use(clone_groups_assignment_id) {
   //close the dialog
   modalAssignmentGroupReUse.close();
   //send AJAX request
-  <%=
- remote_function(
-    :url  => use_another_assignment_groups_assignment_groups_path(@assignment),
-    :with => "'&clone_groups_assignment_id=' + clone_groups_assignment_id")
-  %>
 
+  new Ajax.Request('<%= use_another_assignment_groups_assignment_groups_path(@assignment)%> ', 
+                    { 
+                      asynchronous:true, 
+                      evalScripts:true, 
+                      parameters:'&clone_groups_assignment_id=' + clone_groups_assignment_id 
+                        + '&authenticity_token=' + AUTH_TOKEN 
+                    })
 }
 
 document.observe("dom:loaded", function(){
@@ -209,7 +218,7 @@ document.observe("dom:loaded", function(){
 
 
 
-<%= form_tag url_for(global_actions_assignment_groups_path(@assignment)),
+<%= form_tag global_actions_assignment_groups_path(@assignment),
              :id => "global_action_form",
              :remote => true do %>
 

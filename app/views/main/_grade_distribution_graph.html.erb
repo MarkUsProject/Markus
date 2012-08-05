@@ -22,11 +22,7 @@
     <% else %>
         legend = '<%= I18n.t("students.students") %>'
     <% end %>
-    g.data(legend,
-        <% assignment.assignment_stat.grade_distribution_array.each do |d| -%>
-            <%= d -%>,
-        <% end -%>
-        '');
+    g.data(legend, <%= assignment.assignment_stat.grade_distribution_array %> );
 
     // Create the labels
     var intervals = 20;

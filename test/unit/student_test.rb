@@ -12,9 +12,9 @@
 #  - with duplicates and sections and update of a section
 #  - with an invalid file
 
-require File.join(File.dirname(__FILE__), '..', 'test_helper')
-require File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints')
-require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 require 'shoulda'
 require 'mocha'
 
@@ -192,8 +192,8 @@ newuser2,USER2,USER2")
       end
 
       should "not add any student to the database" do
-        assert @result[:invalid_lines],["newuser1USER1USER1,"]
-        assert Student.all.size, @num_users + 1
+        assert_equal @result[:invalid_lines].to_s, ["newuser1USER1USER1,"].to_s
+        assert_equal Student.all.size, @num_users + 1
       end
     end
   end

@@ -194,22 +194,45 @@ document.observe("dom:loaded", function() {
     }
   });
 
-  <%= remote_function :url => populate_graders_assignment_graders_path(
-                                  @assignment),
-                      :complete => "$('loading_graders_list').hide();" %>
+  new Ajax.Request('<%= populate_graders_assignment_graders_path(@assignment) %>', 
+    {
+      asynchronous: true, 
+      evalScripts: true, 
+      onComplete: function(request){$('loading_graders_list').hide()},
+      parameters: 'authenticity_token=' + AUTH_TOKEN
+
+    }
+  );
+
   <% if !@assignment.assign_graders_to_criteria %>
     $('criteria').hide();
     $('search_criteria').hide();
     $('search_criteria_label').hide();
-    <%= remote_function :url => populate_assignment_graders_path(
-                                    @assignment),
-                        :complete => "$('loading_list').hide();" %>
+
+    new Ajax.Request('<%= populate_assignment_graders_path(@assignment) %>', 
+      {
+        asynchronous: true, 
+        evalScripts: true, 
+        onComplete: function(request){$('loading_list').hide()},
+        parameters: 'authenticity_token=' + AUTH_TOKEN
+      }
+    );
   <% else %>
-    <%= remote_function :url => populate_assignment_graders_path(
-                                    @assignment),
-                        :complete => "$('loading_list').hide();" %>
-    <%= remote_function :url => populate_criteria_assignment_graders_path(
-                                    @assignment) %>
+    new Ajax.Request('<%= populate_assignment_graders_path(@assignment) %>', 
+      {
+        asynchronous: true, 
+        evalScripts: true, 
+        onComplete: function(request){$('loading_list').hide()},
+        parameters: 'authenticity_token=' + AUTH_TOKEN
+      }
+    );
+    new Ajax.Request('<%= populate_criteria_assignment_graders_path(@assignment) %>', 
+      {
+        asynchronous: true, 
+        evalScripts: true
+      }
+    );
+
   <% end %>
 });
 
