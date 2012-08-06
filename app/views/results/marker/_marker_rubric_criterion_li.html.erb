@@ -8,7 +8,7 @@
 <div id="<%="mark_criterion_title_#{mark_criterion.id}_expand"%>"
 class="float_left mark_criterion_expand expanded" >- &nbsp;
 </div>
-<div id="mark_<%=mark.id%>_nil" class="mark_reset" onclick="<%=remote_function :url => {:action => 'update_mark', :mark_id=>mark.id, :mark=>nil} %>">
+<div id="mark_<%=mark.id%>_nil" class="mark_reset" onclick="new Ajax.Request('<%= url_for({ :action => 'update_mark', :mark_id=>mark.id, :mark=>nil }) %>',{asynchronous:true, evalScripts:true, parameters: 'authenticity_token=' + AUTH_TOKEN})">
 <%=image_tag "icons/pencil_delete.png", :title => "reset mark"%>
 </div>
   <%= render :partial => 'results/common/rubric_criterion',
@@ -34,7 +34,7 @@ class="float_left mark_criterion_expand expanded" >- &nbsp;
             if level_desc && !level_desc.empty? -%>
             <tr>
                <td id="mark_<%=mark.id%>_<%=num_levels%>" class="<%=td_class%>"
-			     onclick="<%=remote_function :url => {:action => 'update_mark', :mark_id=>mark.id, :mark=>num_levels} %>">
+			     onclick="new Ajax.Request('<%= url_for({ :action => 'update_mark', :mark_id=>mark.id, :mark=>num_levels }) %>',{asynchronous:true, evalScripts:true, parameters: 'authenticity_token=' + AUTH_TOKEN})">
                  <b><%=num_levels%>: <%= link_to level_name,
                                           update_mark_assignment_submission_results_path(:mark_id => mark.id, :mark => num_levels),
                                           :class => "rubric_criterion_link", :remote => true %>

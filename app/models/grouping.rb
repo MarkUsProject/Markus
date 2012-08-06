@@ -1,5 +1,5 @@
 # we need repository permission constants
-require 'repo/repository'
+require File.join(File.dirname(__FILE__),'..', '..', 'lib', 'repo', 'repository')
 
 # Represents a collection of students working together on an assignment in a group
 class Grouping < ActiveRecord::Base
@@ -485,7 +485,7 @@ class Grouping < ActiveRecord::Base
     if encoding != nil
       csv_file_contents = StringIO.new(Iconv.iconv('UTF-8', encoding, csv_file_contents).join)
     end
-    FasterCSV.parse(csv_file_contents) do |row|
+    CsvHelper::Csv.parse(csv_file_contents) do |row|
       group_name = row.shift # Knocks the first item from array
       group = Group.find_by_group_name(group_name)
       if group.nil?

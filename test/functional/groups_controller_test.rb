@@ -1,9 +1,9 @@
-require File.join(File.dirname(__FILE__), 'authenticated_controller_test')
-require File.join(File.dirname(__FILE__), '..', 'test_helper')
-require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
+require File.expand_path(File.join(File.expand_path(File.dirname(__FILE__)), 'authenticated_controller_test'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
+include CsvHelper
 require 'shoulda'
 require 'mocha'
-require 'fastercsv'
 
 ## TODO refactor this code
 
@@ -513,7 +513,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         post_as @admin, :global_actions, {:assignment_id => @assignment.id,
           :global_actions => "unassign", :groupings => [@grouping.id],
           "#{@grouping.id}_#{@student2.user_name}" => true}
-        assert respond_with:success
+        assert respond_with :success
         assert render_template 'groups/table_row/_filter_table_student_row.erb'
         assert assign_to :assignment
         @grouping.reload
@@ -588,7 +588,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
           assert !@response.body.empty?
         end
         should "return the expected CSV" do
-          assert_equal @match_array, FasterCSV.parse(@response.body)
+          assert_equal @match_array, CsvHelper::Csv.parse(@response.body)
         end
         should "route properly" do
           assert_recognizes({:controller => "groups", :assignment_id => "1", :action => "download_grouplist" },
@@ -614,7 +614,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
           assert !@response.body.empty?
         end
         should "return the expected CSV, without TAs included" do
-          assert_equal @match_array, FasterCSV.parse(@response.body)
+          assert_equal @match_array, CsvHelper::Csv.parse(@response.body)
         end
         should "route properly" do
           assert_recognizes({:controller => "groups", :assignment_id => "1", :action => "download_grouplist" },
