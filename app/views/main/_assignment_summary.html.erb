@@ -2,14 +2,8 @@
 
   <h2 class="title">
     <%= link_to h(assignment.short_identifier)+":
-          "+h(assignment.description),
-          {
-            :controller => 'assignments',
-            :action => 'edit',
-            :id => assignment.id
-          },
-          :class => 'title'
-    %>
+    "+h(assignment.description), edit_assignment_path(:id => assignment.id), :class => 'title'
+     %>
   </h2>
 
   <div class="left">
