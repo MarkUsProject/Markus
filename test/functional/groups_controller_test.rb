@@ -261,6 +261,92 @@ class GroupsControllerTest < AuthenticatedControllerTest
       assert render_template 'groups/table_row/_filter_table_row.html.erb'
     end
 
+    context "group creation with grace days deduction, All members" do
+      
+      setup do
+        @student1 =  Student.make
+        @student2 =  Student.make
+        @student3 =  Student.make
+      end
+      
+      should "be deducted 0 grace days" do
+        post_add [@student1.id, @student2.id]
+
+        @grouping.accepted_student_memberships.each do |student_membership|
+          deduction = GracePeriodDeduction.new
+          deduction.membership = student_membership
+          deduction.deduction = 0
+          deduction.save
+        end
+        
+        @grouping.reload
+        @grouping.accepted_student_memberships.each do |student_membership|
+          assert_equal 5, student_membership.user.remaining_grace_credits
+        end
+
+        @grouping.add_member(@student3)
+        
+        @grouping.reload
+        @grouping.accepted_student_memberships.each do |student_membership|
+          assert_equal 5, student_membership.user.remaining_grace_credits
+        end
+      end
+      
+      should "be deducted 1 grace days" do
+        post_add [@student1.id]
+
+        @grouping.accepted_student_memberships.each do |student_membership|
+          deduction = GracePeriodDeduction.new
+          deduction.membership = student_membership
+          deduction.deduction = 1
+          deduction.save
+        end
+        
+        @grouping.reload
+        @grouping.accepted_student_memberships.each do |student_membership|
+          assert_equal 4, student_membership.user.remaining_grace_credits
+        end
+        
+        @grouping.add_member(@student2)
+        
+        @grouping.reload
+        @grouping.accepted_student_memberships.each do |student_membership|
+          assert_equal 4, student_membership.user.remaining_grace_credits
+        end
+
+        @grouping.add_member(@student3)
+        
+        @grouping.reload
+        @grouping.accepted_student_memberships.each do |student_membership|
+          assert_equal 4, student_membership.user.remaining_grace_credits
+        end
+      end
+      
+      should "be deducted 2 grace days" do
+        post_add [@student1.id, @student2.id]
+
+        @grouping.accepted_student_memberships.each do |student_membership|
+          deduction = GracePeriodDeduction.new
+          deduction.membership = student_membership
+          deduction.deduction = 2
+          deduction.save
+        end
+        
+        @grouping.reload
+        @grouping.accepted_student_memberships.each do |student_membership|
+          assert_equal 3, student_membership.user.remaining_grace_credits
+        end
+
+        @grouping.add_member(@student3)
+        
+        @grouping.reload
+        @grouping.accepted_student_memberships.each do |student_membership|
+          assert_equal 3, student_membership.user.remaining_grace_credits
+        end
+      end
+      
+    end
+
     context "POST on :global_actions on assign" do
 
       setup do

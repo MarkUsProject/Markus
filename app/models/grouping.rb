@@ -127,7 +127,7 @@ class Grouping < ActiveRecord::Base
   # be part of the group are skipped.
   def invite(members,
              set_membership_status=StudentMembership::STATUSES[:pending],
-             invoked_by_admin=false, deduction_amount=0)
+             invoked_by_admin=false)
     # overloading invite() to accept members arg as both a string and a array
     members = [members] if !members.instance_of?(Array) # put a string in an
                                                  # array
@@ -149,10 +149,6 @@ class Grouping < ActiveRecord::Base
                           MarkusLogger::ERROR)
           else
             m_logger.log("Student invited '#{user.user_name}'.")
-            deduction = GracePeriodDeduction.new
-            deduction.membership = member
-            deduction.deduction = deduction_amount
-            deduction.save
           end
         end
       end
@@ -169,6 +165,12 @@ class Grouping < ActiveRecord::Base
       member.save
       # adjust repo permissions
       update_repository_permissions
+      
+      deduction = GracePeriodDeduction.new
+      deduction.membership = member
+      deduction.deduction = self.grace_period_deduction_single
+      deduction.save
+       
       return member
     end
   end
