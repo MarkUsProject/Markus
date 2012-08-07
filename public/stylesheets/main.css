@@ -51,6 +51,9 @@ a:hover {
    background: inherit;
 }
 
+h2 a.title {
+  font-size: 1.5em;
+}
 a.delete{
 	color: #ee6415;
 }
