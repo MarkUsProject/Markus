@@ -1107,6 +1107,10 @@ en:
     external_authentication_not_supported: "External authentication not supported on your platform!"
     account_disabled: "This account has been disabled"
 
+    #app/views/main/_assignment_summary.html.erb
+
+    assignment_link:           "%{short_id}:%{description}"
+
     #app/views/main/_assignment_info_summary.erb
 
     assignment_average:        "Assignment Average: %{results_average}%"
