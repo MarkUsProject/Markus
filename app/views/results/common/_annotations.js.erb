@@ -31,9 +31,6 @@ function source_code_ready() {
 
 //A version of source_code_ready for image files.
 function source_code_ready_for_image() {
-  if ($('annotation_menu') != null) {
-    $('annotation_menu').hide();
-  }
   annotation_manager = null;
 
   var image_event_handler = new ImageEventHandler();
