@@ -69,6 +69,9 @@ fr:
     is_logged_in_as:     "connecté en tant que :"
     cannot_login_as_another_admin: "Vous ne pouvez vous connecter à la place d'un autre administrateur."
 
+    #app/views/main/_assignment_summary.html.erb
+    assignment_link:           "%{short_id} : %{description}"
+
     # app/views/assignments/_list_manage.html.erb
     current_assignments:      "Projets existants"
     due:                       "à rendre pour le :"
@@ -811,7 +814,7 @@ fr:
         from:  "Du"
         to:  "au"
         alert: "Vous devez activer les temps supplémentaires pour pouvoir ajouter du temps supplémentaire."
-        
+
       penalty_decay_period_submission_rule:
         name: "Période De Pénalité"
         short_name: "Pénalité dépendant du retard"
