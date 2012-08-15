@@ -242,13 +242,13 @@
       </p>
     </div>
   </fieldset>
-<legend><%= t("assignment.submission_rules").html_safe %></legend>
+</fieldset>
 
 <fieldset>
-  <h5><%= t("assignment.submission.penalty_rules").html_safe %></h5>
+  <legend><%= t("assignment.submission_rules").html_safe %></legend>
 
   <%= f.fields_for :submission_rule do |rule| %>
-    <h5><%= t("assignment.submission.penalty_rules") %></h5>
+    <h5><%= t("assignment.submission.penalty_rules").html_safe %></h5>
 
     <p>
       <%= rule.radio_button :type,
