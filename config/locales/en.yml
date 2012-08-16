@@ -288,6 +288,8 @@ en:
         sure_to_remove: "Are you sure you want to remove this annotation?"
         submit_edit: "Submit Edit"
         change_across_submissions: "This change will propogate across all submissions marked with this annotation.  Is this OK?"
+        select_some_text: "You must select some source code text"
+        select_an_area: "You should select an area on the image to annotate"
 
     #app/views/results/common
     common:

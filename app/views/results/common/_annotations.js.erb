@@ -104,7 +104,7 @@ function get_mouse_positions() {
 
   //If no source code lines were selected, bail out
   if(line_start == 0 && line_end == 0) {
-    alert('You must select some source code text');
+    alert("<%= I18n.t('marker.annotation.select_some_text') %>");
     return false;
   }
   //If only one valid source code line was selected, we'll only highlight
@@ -173,7 +173,7 @@ function make_new_image_annotation() {
   var x2 = x1 + parseInt(box.style.width);
   var y2 = y1 + parseInt(box.style.height);
   if ((x2 - x1) < 1 || isNaN(x2 - x1)) {
-    alert("You should select an area on the image to annotate");
+    alert("<%= I18n.t('marker.annotation.select_an_area') %>");
     return false
   }
   //Open the modal dialog to ask for new Annotation details
@@ -206,7 +206,7 @@ function add_existing_annotation(annotation_text_id) {
     var x2 = x1 + parseInt(box.style.width);
     var y2 = y1 + parseInt(box.style.height);
     if ((x2 - x1) < 1 || isNaN(x2 - x1)) {
-      alert("You should select an area on the image to annotate");
+      alert("<%= I18n.t('marker.annotation.select_an_area') %>");
       return false
     }
     new Ajax.Request('<%= add_existing_annotation_annotations_path() %>',
