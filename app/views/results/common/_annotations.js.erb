@@ -172,6 +172,7 @@ function make_new_image_annotation() {
   var x2 = x1 + parseInt(box.style.width);
   var y2 = y1 + parseInt(box.style.height);
   if ((x2 - x1) < 1 || isNaN(x2 - x1)) {
+    alert("You should select an area on the image to annotate");
     return false
   }
   //Open the modal dialog to ask for new Annotation details
@@ -206,6 +207,7 @@ function add_existing_annotation(annotation_text_id) {
     var x2 = x1 + parseInt(box.style.width);
     var y2 = y1 + parseInt(box.style.height);
     if ((x2 - x1) < 1 || isNaN(x2 - x1)) {
+      alert("You should select an area on the image to annotate");
       return false
     }
     new Ajax.Request('<%= add_existing_annotation_annotations_path() %>',
