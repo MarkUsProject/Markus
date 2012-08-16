@@ -10,12 +10,14 @@ var init_code_pane_width = 0;
 var annotation_manager = null;
 var syntax_highlighter_adapter = null;
 
+var is_image;
 
 function source_code_ready() {
   annotation_manager = null;
   $('loading_code').hide();
   $('select_file_id').enable();
-  syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter($$('.dp-highlighter').first().getElementsBySelector('ol').first());
+  syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter(
+      $$('.dp-highlighter').first().getElementsBySelector('ol').first());
 
   //Apply modifications to Syntax Highlighter
   syntax_highlighter_adapter.applyMods();
@@ -27,6 +29,8 @@ function source_code_ready() {
   var annotation_text_displayer = new AnnotationTextDisplayer($('annotation_holder'));
 
   annotation_manager = new SourceCodeLineAnnotations(line_manager, annotation_text_manager, annotation_text_displayer);
+
+  is_image = false;
 }
 
 //A version of source_code_ready for image files.
@@ -35,12 +39,16 @@ function source_code_ready_for_image() {
 
   var image_event_handler = new ImageEventHandler();
   var annotation_text_manager = new AnnotationTextManager();
-  var annotation_text_displayer = new AnnotationTextDisplayer($('annotation_holder'));
+  var annotation_text_displayer = new AnnotationTextDisplayer(
+                                        $('annotation_holder'));
 
-  annotation_manager = new ImageAnnotationGrid(image_event_handler, annotation_text_manager, annotation_text_displayer);
+  annotation_manager = new ImageAnnotationGrid(image_event_handler,
+      annotation_text_manager, annotation_text_displayer);
 
   $('loading_code').hide();
   $('select_file_id').enable();
+
+  is_image = true;
 }
 
 function add_annotation_text(annotation_text_id, content) {
@@ -122,13 +130,18 @@ function get_mouse_positions() {
 
 //Does not work with image annotations, they get created via stop_select_box()
 function make_new_annotation() {
+  if (!is_image) {
+    positions = get_mouse_positions();
+  } else {
+    return make_new_image_annotation();
+  }
+
   //Set global variable 'positions' to current mouse positions
   //TODO:  Refactor?  Why the global variable?
   if (syntax_highlighter_adapter == null) {
     return false;
   }
 
-  positions = get_mouse_positions();
   if(!positions) {
     //If no text was returned, return false;
     return false;
@@ -148,6 +161,32 @@ function make_new_annotation() {
   return false;
 }
 
+function make_new_image_annotation() {
+  var box = $("sel_box");
+  var x1 = parseInt(box.style.left) -
+    $("image_preview").offsetLeft +
+    $("image_container").scrollLeft;
+  var y1 = parseInt(box.style.top) -
+    $("image_preview").offsetTop +
+    $("image_container").scrollTop;
+  var x2 = x1 + parseInt(box.style.width);
+  var y2 = y1 + parseInt(box.style.height);
+  if ((x2 - x1) < 1 || isNaN(x2 - x1)) {
+    return false
+  }
+  //Open the modal dialog to ask for new Annotation details
+  modal.open();
+  //Manually reset the modal dialog values
+  //TODO:  Refactor?
+  $('new_annotation_content').setValue('');
+  $('new_annotation_category').setValue('');
+  $('x1').setValue(x1);
+  $('x2').setValue(x2);
+  $('y1').setValue(y1);
+  $('y2').setValue(y2);
+  $('new_annotation_content').focus();
+}
+
 <%#
 This function takes the ID of some annotation that already
 exists in the database, adds the new annotation link to the
@@ -156,17 +195,62 @@ currently selected text, and then highlights the lines.
 Not supported for image annotations.
 %>
 function add_existing_annotation(annotation_text_id) {
-  positions = get_mouse_positions();
-  if(!positions) {
-    return false;
+  if(is_image) {
+    var box = $("sel_box");
+    var x1 = parseInt(box.style.left) -
+      $("image_preview").offsetLeft +
+      $("image_container").scrollLeft;
+    var y1 = parseInt(box.style.top) -
+      $("image_preview").offsetTop +
+      $("image_container").scrollTop;
+    var x2 = x1 + parseInt(box.style.width);
+    var y2 = y1 + parseInt(box.style.height);
+    if ((x2 - x1) < 1 || isNaN(x2 - x1)) {
+      return false
+    }
+    new Ajax.Request('<%= add_existing_annotation_annotations_path() %>',
+        { asynchronous:true,
+          evalScripts:true,
+          method:'post',
+          parameters:'annotation_type=image' +
+            '&submission_file_id='+
+            $('select_file_id').value +
+            '&annotation_text_id='+
+            annotation_text_id +
+            '&x1=' +
+            x1 +
+            '&x2=' +
+            x2 +
+            '&y1=' +
+            y1 +
+            '&y2=' +
+            y2 +
+            '&authenticity_token=' +
+            AUTH_TOKEN
+        })
+  } else {
+    positions = get_mouse_positions();
+    if (!positions) {
+      return false;
+    }
+    new Ajax.Request('<%= add_existing_annotation_annotations_path() %>',
+      {
+        asynchronous:true,
+        evalScripts:true,
+        method:'post',
+        parameters:'submission_file_id='+
+          $('select_file_id').value +
+          '&line_start=' +
+          positions.line_start +
+          '&line_end=' +
+          positions.line_end +
+          '&annotation_text_id='+
+          annotation_text_id +
+          '&authenticity_token=' +
+          AUTH_TOKEN
+      })
   }
-
-  new Ajax.Request('<%= add_existing_annotation_annotations_path() %>',
-                   { asynchronous:true, evalScripts:true, method:'post',
-                    parameters:'submission_file_id='+ $('select_file_id').value +'&line_start=' + positions.line_start + '&line_end=' + positions.line_end + '&annotation_text_id='+ annotation_text_id + '&authenticity_token=' + AUTH_TOKEN })
 }
-
-
 
 //Load a submitted file into the code-viewer based on file id's
 function load_submitted_file(submission_file_id, focus_line) {
@@ -208,13 +292,42 @@ function submit_new_annotation(content, category_id, x1, x2, y1, y2) {
   //Text annotation
   if (positions != null){
     new Ajax.Request('<%=url_for({ :controller => "annotations", :action => "create" })%>',
-                   { asynchronous:true, evalScripts:true,
-                    parameters:'annotation_type=text' + '&submission_file_id='+ $('select_file_id').value +'&line_start=' + positions.line_start + ' &line_end=' + positions.line_end + '&content=' + encodeURIComponent(content) + '&category_id=' + category_id + '&authenticity_token=' + AUTH_TOKEN})
+        { asynchronous:true, evalScripts:true,
+          parameters:'annotation_type=text' +
+            '&submission_file_id='+
+            $('select_file_id').value +
+            '&line_start=' +
+            positions.line_start +
+            ' &line_end=' +
+            positions.line_end +
+            '&content=' +
+            encodeURIComponent(content) +
+            '&category_id=' +
+            category_id +
+            '&authenticity_token=' +
+            AUTH_TOKEN
+        })
   }
   else{
-  	new Ajax.Request('<%=url_for({ :controller => "annotations", :action => "create" })%>',
-                   { asynchronous:true, evalScripts:true,
-                    parameters:'annotation_type=image' + '&submission_file_id='+ $('select_file_id').value + '&content=' + encodeURIComponent(content) + '&category_id=' + category_id + '&x1=' + x1 + '&x2=' + x2 + '&y1=' + y1 + '&y2=' + y2 + '&authenticity_token=' + AUTH_TOKEN})
+    new Ajax.Request('<%=url_for({ :controller => "annotations", :action => "create" })%>',
+        { asynchronous:true, evalScripts:true,
+          parameters:'annotation_type=image' +
+            '&submission_file_id='+
+            $('select_file_id').value +
+            '&content=' +
+            encodeURIComponent(content) +
+            '&category_id=' +
+            category_id +
+            '&x1=' +
+            x1 +
+            '&x2=' +
+            x2 +
+            '&y1=' +
+            y1 +
+            '&y2=' +
+            y2 +
+            '&authenticity_token=' +
+            AUTH_TOKEN})
   }
 }
 
@@ -240,6 +353,12 @@ function hide_all_annotation_content_editors() {
   $$('.annotation_text_content_editor').each(function(node) {
     $(node).hide();
   });
+  var box = $("sel_box");
+  if (box) {
+    box.style.display = "none";
+    box.style.width = "0";
+    box.style.height = "0";
+  }
 }
 
 //Hide all display boxes on the screen.
