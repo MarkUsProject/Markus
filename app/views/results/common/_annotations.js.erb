@@ -10,6 +10,7 @@ var init_code_pane_width = 0;
 var annotation_manager = null;
 var syntax_highlighter_adapter = null;
 
+//bool to tell the code if an image or code is being shown
 var is_image;
 
 function source_code_ready() {
@@ -128,8 +129,8 @@ function get_mouse_positions() {
   return {line_start: line_start, line_end: line_end};
 }
 
-//Does not work with image annotations, they get created via stop_select_box()
 function make_new_annotation() {
+  //check if image is shown, and call the appropriate function if so
   if (!is_image) {
     positions = get_mouse_positions();
   } else {
@@ -192,8 +193,6 @@ function make_new_image_annotation() {
 This function takes the ID of some annotation that already
 exists in the database, adds the new annotation link to the
 currently selected text, and then highlights the lines.
-
-Not supported for image annotations.
 %>
 function add_existing_annotation(annotation_text_id) {
   if(is_image) {
