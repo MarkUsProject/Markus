@@ -165,8 +165,8 @@ function add_existing_annotation(annotation_text_id) {
   }
 
   new Ajax.Request('<%= add_existing_annotation_annotations_path() %>',
-                   { asynchronous:true, evalScripts:true, method:'get',
-                    parameters:'submission_file_id='+ $('select_file_id').value +'&line_start=' + positions.line_start + '&line_end=' + positions.line_end + '&annotation_text_id='+ annotation_text_id + '&authenticity_token=' + AUTH_TOKEN }) 
+                   { asynchronous:true, evalScripts:true, method:'post',
+                    parameters:'submission_file_id='+ $('select_file_id').value +'&line_start=' + positions.line_start + '&line_end=' + positions.line_end + '&annotation_text_id='+ annotation_text_id + '&authenticity_token=' + AUTH_TOKEN })
 }
 
 
