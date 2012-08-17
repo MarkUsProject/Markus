@@ -263,9 +263,13 @@ function load_submitted_file(submission_file_id, focus_line) {
   $('select_file_id').disable();
   positions = null;
   annotation_manager = null;
-  new Ajax.Request('<%=url_for({ :action => :codeviewer, :id => @assignment.id, :uid => @uid })%>',
-                   { asynchronous:true, evalScripts:true,
-                    parameters:'submission_file_id='+submission_file_id+'&focus_line='+focus_line + '&authenticity_token=' + AUTH_TOKEN })
+  new Ajax.Request('<%=
+                  codeviewer_assignment_submission_result_path(:id => @assignment.id, :uid => @uid) %>',
+                   { asynchronous:true,
+                    evalScripts:true,
+                    parameters:'submission_file_id=' + submission_file_id
+                      + '&focus_line=' + focus_line
+                      + '&authenticity_token=' + AUTH_TOKEN })
 }
 
 function load_submitted_file_and_focus(submission_file_id, focus_line) {
@@ -292,25 +296,25 @@ function submit_new_annotation(content, category_id, x1, x2, y1, y2) {
   //Send AJAX request
   //Text annotation
   if (positions != null){
-    new Ajax.Request('<%=url_for({ :controller => "annotations", :action => "create" })%>',
+    new Ajax.Request('<%= new_annotation_path() %>',
         { asynchronous:true, evalScripts:true,
           parameters:'annotation_type=text' +
-            '&submission_file_id='+
-            $('select_file_id').value +
-            '&line_start=' +
-            positions.line_start +
-            ' &line_end=' +
-            positions.line_end +
-            '&content=' +
-            encodeURIComponent(content) +
-            '&category_id=' +
-            category_id +
-            '&authenticity_token=' +
-            AUTH_TOKEN
+        '&submission_file_id='+
+        $('select_file_id').value +
+        '&line_start=' +
+        positions.line_start +
+        ' &line_end=' +
+        positions.line_end +
+        '&content=' +
+        encodeURIComponent(content) +
+        '&category_id=' +
+        category_id +
+        '&authenticity_token=' +
+        AUTH_TOKEN
         })
   }
   else{
-    new Ajax.Request('<%=url_for({ :controller => "annotations", :action => "create" })%>',
+    new Ajax.Request('<%= new_annotation_path() %>',
         { asynchronous:true, evalScripts:true,
           parameters:'annotation_type=image' +
             '&submission_file_id='+
