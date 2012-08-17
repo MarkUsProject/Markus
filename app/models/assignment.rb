@@ -499,9 +499,12 @@ class Assignment < ActiveRecord::Base
   # Get a list of subversion client commands to be used for scripting
   def get_svn_export_commands
     svn_commands = [] # the commands to be exported
-    self.submissions.each do |submission|
-      grouping = submission.grouping
-      svn_commands.push("svn export -r #{submission.revision_number} #{grouping.group.repository_external_access_url}/#{self.repository_folder} \"#{grouping.group.group_name}\"")
+    
+    self.groupings.each do |grouping|
+      submission = grouping.current_submission_used
+      if !submission.nil?
+        svn_commands.push("svn export -r #{submission.revision_number} #{grouping.group.repository_external_access_url}/#{self.repository_folder} \"#{grouping.group.group_name}\"")
+      end
     end
     return svn_commands
   end
