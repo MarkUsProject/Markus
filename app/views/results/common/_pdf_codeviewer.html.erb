@@ -7,7 +7,8 @@
    <div id="image_preview">
        <%# First image displayed with a different alt message, in case of boolean PDF_SUPPORT set to false %>
        <li>
-         <%= image_tag( download_assignment_submission_results_path(:select_file_id => submission_file_id, 
+         <%= image_tag( download_assignment_submission_results_path(
+            :select_file_id => submission_file_id, 
             :show_in_browser => true, 
             :file_index => 1), 
           :alt => I18n.t("common.cant_display_image"), :width => "950") %>
