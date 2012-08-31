@@ -51,4 +51,49 @@ class PeriodTest < ActiveSupport::TestCase
     end
   end
 
+  context "A penalty decay period" do
+    setup do
+      @period = Period.new
+      @period.submission_rule_type = "PenaltyDecayPeriodSubmissionRule"
+    end
+
+    should "validate presence of deduction" do
+      #no deduction is set
+      assert !@period.valid?
+    end
+
+    should "validate numericality of deduction" do
+      @period.deduction = "string"
+      assert !@period.valid?
+    end
+
+    should "validate presence of interval" do
+      #no interval is set
+      assert !@period.valid?
+    end
+
+    should "validate numericality of interval" do
+      @period.interval = "string"
+      assert !@period.valid?
+    end
+  end
+
+  context "A penalty period" do
+    setup do
+      @period = Period.new
+      @period.submission_rule_type = "PenaltyPeriodSubmissionRule"
+    end
+
+    should "validate presence of deduction" do
+      #no deduction is set
+      assert !@period.valid?
+    end
+
+    should "validate numericality of deduction" do
+      @period.deduction = "string"
+      assert !@period.valid?
+    end
+
+  end
+
 end
