@@ -90,37 +90,33 @@ var ImageEventHandler = Class.create({
       var box = $("sel_box");
       var i;
       var annot_grid = this.get_annotation_grid();
-      box.style.display = "none";
-      var x1 = parseInt(box.style.left) - $("image_preview").offsetLeft + $("image_container").scrollLeft;
-      var y1 = parseInt(box.style.top) - $("image_preview").offsetTop + $("image_container").scrollTop;
-      var x2 = x1 + parseInt(box.style.width);
-      var y2 = y1 + parseInt(box.style.height);
-      box.style.width = "0";
-      box.style.height = "0";
+
       $("image_preview").onmousemove = this.check_for_annotations.bind(this);
       $("image_preview").onmouseup = null;
-      $("image_preview").onmousedown = this.start_select_box.bind(this);
+      $("image_preview").onmousedown = this.remove_select_box.bind(this);
+      $("image_preview").onmousemove = null;
+
+      box.onmousemove = null;
+      box.onmouseup = null;
 
       var me = this;
       annot_grid.each(function(grid_element) {
-        $('annotation_holder_' + grid_element.id).onmousemove = me.check_for_annotations.bind(me);
-        $('annotation_holder_' + grid_element.id).onmousedown = me.start_select_box.bind(me);
+        $('annotation_holder_' + grid_element.id).
+          onmousemove = me.check_for_annotations.bind(me);
+        $('annotation_holder_' + grid_element.id).
+          onmousedown = me.start_select_box.bind(me);
         $('annotation_holder_' + grid_element.id).onmouseup = null;
       })
-      //Open the modal dialog to ask for new Annotation details
-      modal.open();
-      //Manually reset the modal dialog values
-      //TODO:  Refactor?
-      $('new_annotation_content').setValue('');
-      $('new_annotation_category').setValue('');
-      $('x1').setValue(x1);
-      $('x2').setValue(x2);
-      $('y1').setValue(y1);
-      $('y2').setValue(y2);
-      $('new_annotation_content').focus();
-    },
+   },
+    remove_select_box: function() {
+      var box = $("sel_box");
+      box.style.display = "none";
+      box.style.width = "0";
+      box.style.height = "0";
+      $("image_preview").onmousedown = this.start_select_box.bind(this);
+    }
     //Draw red selection outline
-    mouse_move: function(e) {
+    , mouse_move: function(e) {
       var xy_coords = this.get_absolute_cursor_pos(e);
       var box = $("sel_box");
       if (xy_coords[0] >= box.orig_x){
