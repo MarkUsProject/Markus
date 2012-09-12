@@ -2,20 +2,29 @@ class AnnotationsController < ApplicationController
 
   before_filter      :authorize_for_ta_and_admin
 
-  # Not possible to do with image annotations.
   def add_existing_annotation
     return unless request.post?
     @text = AnnotationText.find(params[:annotation_text_id])
     @submission_file_id = params[:submission_file_id]
     @submission_file = SubmissionFile.find(@submission_file_id)
     submission= @submission_file.submission
-    @annotation = TextAnnotation.new
-    @annotation.update_attributes({
-      :line_start => params[:line_start],
-      :line_end => params[:line_end],
-      :submission_file_id => params[:submission_file_id],
-      :annotation_number => submission.annotations.count + 1
-    })
+    if params[:annotation_type] == 'image' then
+      @annotation = ImageAnnotation.new
+      @annotation.update_attributes({
+        :x1 => Integer(params[:x1]), :x2 => Integer(params[:x2]),
+        :y1 => Integer(params[:y1]), :y2 => Integer(params[:y2]),
+        :submission_file_id => params[:submission_file_id],
+        :annotation_number => submission.annotations.count + 1
+      })
+    else
+      @annotation = TextAnnotation.new
+      @annotation.update_attributes({
+        :line_start => params[:line_start],
+        :line_end => params[:line_end],
+        :submission_file_id => params[:submission_file_id],
+        :annotation_number => submission.annotations.count + 1
+      })
+    end
     @annotation.annotation_text = @text
     @annotation.save
     @submission = @submission_file.submission

@@ -1,18 +1,22 @@
 /** Image Annotation Grid Class
 
-This is where most of the action happens:  this class tracks/edits which Annotation Texts are connected to areas of the image.
-It requires a Image Event Handler, an Annotation Text Manager, and an Annotation Text Displayer be provided in the constructor.
+This is where most of the action happens:
+this class tracks/edits which Annotation Texts are connected to areas of the image.
+It requires a Image Event Handler, an Annotation Text Manager,
+and an Annotation Text Displayer be provided in the constructor.
 
 Rules:
 - This class requires/assumes the Prototype javascript library
-- A Source Code Line Manager, an Annotation Text Manager, and an Annotation Text Displayer must be provided in the constructor
+- A Source Code Line Manager, an Annotation Text Manager,
+and an Annotation Text Displayer must be provided in the constructor
 **/
 
 var HORIZONTAL_SCROLLBAR_COMPENSATION = 21;
 var VERTICAL_SCROLLBAR_COMPENSATION = 4;
 
 var ImageAnnotationGrid = Class.create({
-    initialize: function(image_event_handler, annotation_text_manager, annotation_text_displayer){
+    initialize: function(image_event_handler,
+                  annotation_text_manager, annotation_text_displayer){
       this.image_event_handler = image_event_handler;
       this.annotation_text_manager = annotation_text_manager;
       this.annotation_text_displayer = annotation_text_displayer;
@@ -42,19 +46,25 @@ var ImageAnnotationGrid = Class.create({
       var annot_grid = this.get_annotation_grid();
       //convert the ranges to a javascript ObjectRange to use the include() method
       for(i = 0; i < annot_grid.length; i++) {
-        annot_grid[i].x_range = $R(annot_grid[i].x_range.start, annot_grid[i].x_range.end);
-        annot_grid[i].y_range = $R(annot_grid[i].y_range.start, annot_grid[i].y_range.end);
+        annot_grid[i].x_range = $R(
+            annot_grid[i].x_range.start, annot_grid[i].x_range.end);
+        annot_grid[i].y_range = $R(
+            annot_grid[i].y_range.start, annot_grid[i].y_range.end);
       }
     },
     draw_holders: function(){
       var annot_grid = this.get_annotation_grid();
-      var holder, annot_text_id, horiz_range, vert_range, holder_width, holder_height, holder_left, holder_top;
+      var holder, annot_text_id, horiz_range, vert_range, holder_width,
+          holder_height, holder_left, holder_top;
 
       //Edges of the image.
       var top_edge = $("image_preview").offsetTop + $("image_container").scrollTop;
-      var left_edge = $("image_preview").offsetLeft + $("image_container").scrollLeft;
-      var right_edge = $("image_preview").offsetLeft + $("image_container").scrollLeft + $('codeviewer').offsetWidth;
-      var bottom_edge = $("image_preview").offsetTop + $("image_container").scrollTop + $('codeviewer').offsetHeight;
+      var left_edge = $("image_preview").offsetLeft +
+        $("image_container").scrollLeft;
+      var right_edge = $("image_preview").offsetLeft +
+        $("image_container").scrollLeft + $('codeviewer').offsetWidth;
+      var bottom_edge = $("image_preview").offsetTop +
+        $("image_container").scrollTop + $('codeviewer').offsetHeight;
 
       annot_grid.each(function(grid_element) {
         annot_text_id = grid_element.id;
@@ -69,8 +79,10 @@ var ImageAnnotationGrid = Class.create({
         holder_width = parseInt(horiz_range.end) - parseInt(horiz_range.start);
         holder_height = parseInt(vert_range.end) - parseInt(vert_range.start);
 
-        holder.style.left = Math.max(0, holder_left - left_edge) + $("image_preview").offsetLeft + "px";
-        holder.style.top = Math.max(0, holder_top - top_edge) + $("image_preview").offsetTop + "px";
+        holder.style.left = Math.max(0, holder_left - left_edge) +
+                              $("image_preview").offsetLeft + "px";
+        holder.style.top = Math.max(0, holder_top - top_edge) +
+                            $("image_preview").offsetTop + "px";
 
         if(holder_left > right_edge || holder_top > bottom_edge || holder_left + holder_width < left_edge ||
         holder_top + holder_height < top_edge){
