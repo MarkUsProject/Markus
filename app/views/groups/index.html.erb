@@ -183,9 +183,15 @@ document.observe("dom:loaded", function(){
     </div>
   </div>
 
-  <div class="warning" id="warnings" style="display: none; ">
+  <div class="warning" id="warnings_group" style="display: none; ">
     <h3><%=h t("groups.warning") %></h3>
-    <div id="warnings_msg">
+    <div id="warnings_group_msg">
+    </div>
+  </div>
+  
+  <div class="warning" id="warnings_grace" style="display: none; ">
+    <h3><%=h t("groups.warning") %></h3>
+    <div id="warnings_grace_msg">
     </div>
   </div>
 

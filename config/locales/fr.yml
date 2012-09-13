@@ -134,6 +134,7 @@ fr:
         group:
             empty: "Groupe vide"
             assign_over_limit: "Vous avez dépassé le nombre maximal d'étudiants pour le groupe %{group}"
+            grace_day_over_limit: "Vous avez assignez un ou plusieurs étudiants ayant moins de les crédits de grâce le nombre déjà utiliser par le groupe %{group} pour ce devoir"
             select_a_group: "Sélectionner un groupe"
             select_one_group: "Vous devez sélectionner au moins un groupe"
             select_only_one_group: "Vous ne pouvez assigner un(e) étudiant(e) qu'à un seul groupe."
