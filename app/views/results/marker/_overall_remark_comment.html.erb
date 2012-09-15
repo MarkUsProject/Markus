@@ -1,8 +1,11 @@
 <div id="overall_remark_comment_edit">
-  <%= form_for result,
-	       :url => {:action => 'update_overall_remark_comment',
-			:id => result.id},
-	       :remote => true do |f| %>
+    <%= form_for result,
+          :url => { :controller => 'results',
+            :action => 'update_overall_remark_comment',
+            :id => result.id,
+            :submission_id => result.submission_id },
+          :html => { :method => :post },
+          :remote => true do |f| %>
     <%= f.text_area :overall_comment,
 		    :cols => 50,
 		    :rows => 5,
