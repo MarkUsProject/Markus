@@ -32,7 +32,6 @@ class SubmissionRuleTest < ActiveSupport::TestCase
     assert_raise NotImplementedError do
       rule.description_of_rule
     end
-
   end
 
   context "Grace period ids" do

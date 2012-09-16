@@ -261,7 +261,6 @@ class AssignmentsController < ApplicationController
     end
 
     redirect_to :action => "edit", :id => @assignment.id
-
   end
 
   def update_group_properties_on_persist
@@ -516,13 +515,20 @@ class AssignmentsController < ApplicationController
       end
 
       # delete all the previously created periods for the given submission_rule
-      # note that we should not delete this if the current submission rule cannot be saved ( not valid )
+      # note that we should not delete this if the current submission rule
+      # cannot be saved ( not valid )
       # otherwise we would end up with no periods!
       if assignment.submission_rule.valid?
-        assignment.submission_rule.periods.where("id != ?", assignment.submission_rule.id).delete_all
+        assignment.submission_rule.periods.where("id != ?",
+                                                 assignment.submission_rule.id).
+                                                 delete_all
       end
 
       assignment.submission_rule.type = params[:assignment][:submission_rule_attributes][:type]
+      # add the submission type for validate in the model
+      assignment.submission_rule.periods.each do |period|
+        period.submission_rule_type = assignment.submission_rule.type
+      end
     end
 
     if params[:is_group_assignment] == "true"

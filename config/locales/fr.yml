@@ -291,6 +291,8 @@ fr:
         sure_to_remove: "Êtes-vous sûr de vouloir supprimer cette annotation ?"
         submit_edit: "Sauvegarder"
         change_across_submissions: "Ce changement sera propagé à toutes les notes comportant cette annotation, même celles déjà affichées. Êtes-vous sûr de vouloir continuer ?"
+        select_some_text: "Vous devez sélectionner du texte"
+        select_an_area: "Vous devez sélectionner une zone sur l'image pour annoter"
 
     #app/views/results/common
     common:
