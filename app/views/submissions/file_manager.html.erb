@@ -46,11 +46,6 @@
 </p>
 </div>
 
-<% if flash[:commit_notice] %>
-  <div class="warning">
-    <%=flash[:commit_notice]%>
-  </div>
-<% end %>
 
 <% if flash[:transaction_warning] %>
   <div class="warning"><%= flash[:transaction_warning] %></div>
@@ -59,7 +54,8 @@
   <div class="success"><%= flash[:success] %></div>
 <% end %>
 
-<% if @assignment.submission_rule.can_collect_now? %>
+<% if @assignment.submission_rule.can_collect_now? && 
+	flash[:commit_notice] != @assignment.submission_rule.commit_after_collection_message(@grouping)%>
   <div class="warning">
     <%= h(@assignment.submission_rule.after_collection_message(@grouping)) %>
   </div>
@@ -84,6 +80,11 @@
   </div>
 <% end %>
 
+<% if flash[:commit_notice] %>
+  <div class="warning">
+    <%=flash[:commit_notice]%>
+  </div>
+<% end %>
 <% if !@file_manager_errors.nil? && @file_manager_errors[:commit_error] %>
   <div class="warning">
     <%=@file_manager_errors[:commit_error] %>
