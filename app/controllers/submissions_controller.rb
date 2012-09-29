@@ -209,7 +209,8 @@ class SubmissionsController < ApplicationController
       SubmissionCollector.instance.push_grouping_to_priority_queue(grouping)
       flash[:success] = I18n.t("collect_submissions.priority_given")
     end
-    redirect_to :action => 'browse', :id => assignment.id
+    redirect_to :action   => 'browse', 
+                :id       => assignment.id
   end
 
   def collect_all_submissions
@@ -268,10 +269,21 @@ class SubmissionsController < ApplicationController
         params[:filter] = 'none'
       end
     end
-    if params[:sort_by] == nil or params[:sort_by].blank?
-      params[:sort_by] = 'group_name'
-    end
+    
     @assignment = Assignment.find(params[:assignment_id])
+    
+    @c_per_page = current_user.id.to_s + "_" + @assignment.id.to_s + "_per_page"
+    if !params[:per_page].blank?
+       cookies[@c_per_page] = params[:per_page] 
+    end 
+
+    @c_sort_by = current_user.id.to_s + "_" + @assignment.id.to_s + "_sort_by"
+    if !params[:sort_by].blank?
+       cookies[@c_sort_by] = params[:sort_by]
+    else
+       params[:sort_by] = 'group_name' 
+    end
+ 
     @groupings, @groupings_total = handle_paginate_event(
       S_TABLE_PARAMS,                                     # the data structure to handle filtering and sorting
         { :assignment => @assignment,                     # the assignment to filter by
@@ -292,14 +304,22 @@ class SubmissionsController < ApplicationController
         unsorted_grouping == sorted_grouping
       end
     end
-
+    
+    if cookies[@c_per_page].blank?
+       cookies[@c_per_page] = params[:per_page]
+    end
+    
+    if cookies[@c_sort_by].blank?
+       cookies[@c_sort_by] = params[:sort_by]
+    end
+ 
     @current_page = params[:page].to_i()
-    @per_page = params[:per_page]
+    @per_page = cookies[@c_per_page] 
     @filters = get_filters(S_TABLE_PARAMS)
     @per_pages = S_TABLE_PARAMS[:per_pages]
     @desc = params[:desc]
     @filter = params[:filter]
-    @sort_by = params[:sort_by]
+    @sort_by = cookies[@c_sort_by]
   end
 
   def index
@@ -502,7 +522,11 @@ class SubmissionsController < ApplicationController
     end
     flash[:errors] = errors
 
-    redirect_to :action => 'browse', :id => params[:id]
+    redirect_to :action => 'browse',
+                :id => params[:id],
+                :per_page => params[:per_page],
+                :filter   => params[:filter],
+                :sort_by  => params[:sort_by] 
   end
 
   def unrelease
@@ -518,7 +542,8 @@ class SubmissionsController < ApplicationController
       m_logger.log("Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" +
                    "#{assignment.id}' (for #{params[:groupings].length} groups).")
     end
-    redirect_to :action => 'browse', :id => params[:id]
+    redirect_to :action => 'browse', 
+                :id => params[:id]
   end
 
   # See Assignment.get_simple_csv_report for details

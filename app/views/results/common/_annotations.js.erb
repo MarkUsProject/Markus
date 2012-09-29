@@ -296,7 +296,7 @@ function submit_new_annotation(content, category_id, x1, x2, y1, y2) {
   //Send AJAX request
   //Text annotation
   if (positions != null){
-    new Ajax.Request('<%= new_annotation_path() %>',
+    new Ajax.Request('<%=annotations_path()%>',
         { asynchronous:true, evalScripts:true,
           parameters:'annotation_type=text' +
         '&submission_file_id='+
@@ -314,7 +314,7 @@ function submit_new_annotation(content, category_id, x1, x2, y1, y2) {
         })
   }
   else{
-    new Ajax.Request('<%= new_annotation_path() %>',
+    new Ajax.Request('<%=annotations_path()%>',
         { asynchronous:true, evalScripts:true,
           parameters:'annotation_type=image' +
             '&submission_file_id='+
