@@ -466,7 +466,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_equal "group_name", cookies[@c_sort_by]
         end
 
-        should "per_page and sort_by not defined so set cookies to default" do
+        should "per_page 15 pages and sort_by not defined so set cookies to default" do
           Assignment.stubs(:find).returns(@assignment)
           @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
 
