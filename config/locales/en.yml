@@ -158,8 +158,6 @@ en:
             change_marking_scheme_type: "Changing marking scheme will delete your criteria and marks."
         allow_web_submits: "Allow Web Submits?<span class='required_field'>*</span>"
         display_grader_names_to_students: "Display grader names to students?<span class='required_field'>*</span>"
-        section_due_date_not_displayed: "Due dates are specific to sections."
-        section_due_date_type: "Due dates are specified per section."
         section_due_date_option:  "If the section due dates option is checked, students can only form groups within their section."
         section_due_dates_info:  "<b>Important</b> The global due date needs to be filled in. If a section has no due date specified, the global due date will be used instead. Students not assigned to any section will only be allowed to form groups with students without section either."
     your_mark:  "Your mark:"
@@ -442,13 +440,10 @@ en:
       unassigned_students: "Unassigned(<span id=\"unassigned_students_count\"></span>)"
       assigned_students: "Assigned(<span id=\"assigned_students_count\"></span>)"
       another_assignment_group: "Use another assignment's groups"
-      without_a_group: "Students without a group (<span id=\"number_of_ungrouped_students\">%{length}</span>)"
       graders: "Graders (%{graders})"
       all_grouping_counts: "All Groups(<span id=\"all_groupings_count\"></span>)"
       valid_grouping_counts: "Valid (<span id=\"valid_groupings_count\"></span>)"
       not_valid_grouping_counts: "Not Valid (<span id=\"invalid_groupings_count\"></span>)"
-      assigned_grouping_counts: "Assigned (<span id=\"assigned_groupings_count\"></span>)"
-      not_assigned_grouping_counts: "Not assigned (<span id=\"unassigned_groupings_count\"></span>)"
       problem: "There was a problem..."
       warning: "Warning"
       lines_not_processed: "The following lines could not be processed:"
@@ -466,16 +461,12 @@ en:
         already_in_use: "This name is already in use for this assignment."
         group_name: "Group Name"
       randomly_assign_graders: "Randomly assign Graders"
-      confirm_random_assign_graders: "Are you sure you want to randomly assign selected graders to selected groups?"
-      no_graders_selected: "You must select at least one grader for random assignment"
-      no_groups_selected: "You must select at least one group for random assignment"
       cant_delete: "You are not allowed to delete the group."
       cant_delete_already_submitted: "You already submitted something. You cannot delete your group."
       could_not_delete: "Could not delete the following groups - note that groups cannot be deleted for this assignment if a submission has already been created for them for grading."
       delete:  'Delete this group'
       delete_confirm: 'This will remove all members in the group and delete all information associated with this group. Continue?'
       use_another_assignments_groups: "Use another assignment's groups"
-      upload_download: "Upload/Download"
       upload:
         upload: "Upload"
         upload_groups_file: "Upload Groups File"
@@ -510,7 +501,6 @@ en:
       csv:
         could_not_find_source: "Could not find source assignment for cloning groups"
         could_not_find_target: "Could not find target assignment for cloning groups"
-        groups_created: "Groups created"
 
     results:
       title:  "Assignment %{assignment_name} : %{group_name}"
@@ -607,13 +597,10 @@ en:
       confirm_delete_group: "Are you sure you want to delete your group?"
       delete_your_group: "Delete your group"
       disinvite_member: "Are you sure you want to uninvite this member?"
-      disinvite_member_title: "Uninvite this member"
       member_disinvited: "Member disinvited"
       invited: "(invited)"
       inviter: "(inviter)"
       disinvite: "Uninvite"
-      invitation_rejected: "<span class=\"last_name\">%{user_last_name}</span> %{user_first_name} <span class=\"membership_status_rejected\">
-       has decline the invitation</span>"
       cancel_invitation: "Are you sure you want to cancel this invitation?"
       cancel_invitation_title: "Cancel invitation"
       section_groups_only: "You can invite only students of your section"
@@ -685,7 +672,6 @@ en:
       upload:
         not_added: "The following Admins have not been successfully added:"
         make_sure: "Make sure that:"
-        admins_names: "Admin names are alphanumeric"
         each_field: "Each field is separated by a comma (no spaces)"
         each_line: "Each line has the required fields specified above"
       create:
@@ -743,7 +729,6 @@ en:
         section:        "Section"
         display_grader_names_to_students: "Display grader names to students?"
 
-    confirm_bulk_action:  "Are you sure you want to perform this bulk action?"
     hide_students: "Mark as inactive"
     unhide_students: "Mark as active"
 
