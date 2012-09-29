@@ -361,7 +361,8 @@
     <%= raw( f.check_box(:allow_remarks,
                     {:id => "allow_remarks",
                     :onchange => "toggle_remark_requests($F('allow_remarks'));
-                                  set_onbeforeunload(true);"},
+                                  set_onbeforeunload(true);",
+                    :checked => false},
                     true,
                     false) ) %>
     <%= raw( f.label("allow_remarks",
