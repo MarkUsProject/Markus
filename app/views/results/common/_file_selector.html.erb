@@ -8,7 +8,6 @@
     <% if files.empty? %>
       <option value=""><%= I18n.t("common.no_file_in_repository") %></option>
     <% end %>
-    <% files.sort! { |a,b| (a.path + a.filename).downcase <=> (b.path + b.filename).downcase }%>
     <% files.each do |file| %>
         <option value="<%= h(file.id) %>">
           <%= h(File.join(file.path, file.filename)) %>
