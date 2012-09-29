@@ -122,7 +122,7 @@ Markus::Application.configure do
   # PDF documents within the browser.
   # When collecting pdfs files, it converts them to jpg format via RGhost.
   # RGhost is ghostscript dependent. Be sure ghostscript is installed.
-  PDF_SUPPORT = false 
+  PDF_SUPPORT = true 
 
   ###################################################################
   # Change this to 'REPOSITORY_EXTERNAL_SUBMITS_ONLY = true' if you

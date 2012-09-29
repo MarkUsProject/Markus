@@ -2030,3 +2030,28 @@ pre#test_result_content {
 	padding: 2px;
 	min-width: 0px;
 }
+
+#login #login-content br {
+	clear: both !important;
+}
+
+#login #login-content #user_login, #login #login-content #user_password {
+	float: right !important;
+}
+
+#login #login-content input.indent_button {
+	display: block;
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
+
+#login #login-content label {
+	margin-left: 0px !important;
+	min-width: 90px !important;
+	width: 90px !important;
+}
+
+#login #login-content #login_form {
+	margin-left: 30px !important;
+	margin-right: 30px !important;
+}
