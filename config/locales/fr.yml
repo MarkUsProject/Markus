@@ -20,6 +20,8 @@ fr:
     password_not_blank: "Veuillez entrer votre mot de passe."
     username_not_blank: "Veuillez entrer votre nom d'utilisateur."
     username_and_password_not_blank: "Veuillez entrer vos nom d'utilisateur et mot de passe."
+    session_expired:     "Votre session a expiré. Merci de vous reconnecter."
+    please_log_in:       "Merci de vous connecter."
 
     # app/views/layouts/_header.html.erb
     log_out:            "Déconnexion"
