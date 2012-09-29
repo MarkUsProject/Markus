@@ -1,5 +1,6 @@
 <!-- Modal Window -->
-<%= form_for @section do |f| %>
+<%= form_for(@section, :remote => true) do |f| %>
+  <div id="add_section_error"><span>&nbsp;</span></div>
   <h2><%= I18n.t("section.add_section") %></h2>
     <%= raw(f.label :name, I18n.t("section.name")) %>
     <%= raw(f.text_field :name) %> <br />
