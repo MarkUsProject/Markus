@@ -1,5 +1,10 @@
 # Settings specified here will take precedence over those in config/environment.rb
 Markus::Application.configure do
+  # rails will fallback to en, no matter what is set as config.i18n.default_locale
+  # rails will fallback to config.i18n.default_locale translation
+  config.i18n.fallbacks = true
+  config.i18n.fallbacks = [:en]
+
   # The production environment is meant for finished, "live" apps.
   # Code is not reloaded between requests
   config.cache_classes = true
