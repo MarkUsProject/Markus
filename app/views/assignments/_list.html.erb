@@ -55,7 +55,11 @@
               <p><strong><%=h I18n.t("assignment.overall_comment") %></strong><br/>
                 <%= simple_format(sanitize(@a_id_results[assignment.id].overall_comment)) %>
               </p>
-              <%= link_to h(I18n.t('results.results_name')), :controller => "results", :action => 'view_marks', :id => assignment.id %>
+              <%= link_to h(I18n.t('results.results_name')),
+                       view_marks_assignment_submission_result_path(
+                            :assignment_id => assignment.id,
+                            :submission_id => @a_id_results[assignment.id].submission_id,
+                            :id => @a_id_results[assignment.id].id) %>
               <% elsif assignment.due_date < Time.zone.now %>
                 <%= I18n.t(:no_result) %>
               <% end %>

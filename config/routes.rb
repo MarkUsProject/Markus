@@ -160,7 +160,7 @@ Markus::Application.routes.draw do
           get 'next_grouping'
           post 'remove_extra_mark'
           get 'expand_unmarked_criteria'
-          get 'set_released_to_students'
+          post 'set_released_to_students'
           post 'update_overall_comment'
           post 'update_overall_remark_comment'
           post 'update_marking_state'
