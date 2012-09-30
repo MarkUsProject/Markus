@@ -50,9 +50,6 @@ see http://www.markusproject.org/download/
         - mod_rewrite
         - mod_dav_svn (required if you want to allow SVN repository access)
         - mod_authz_svn (required if you want to allow SVN repository access)
-    * ImageMagick (known to work with >=6.5.7, older versions should be ok too)
-      Only required if you plan to be able to view and annotate pdfs within
-      the browser (PDF_SUPPORT setting in config files)
     * Ant, if you plan to use the MarkUs built in testing framework (still in
       alpha)
 
@@ -124,20 +121,8 @@ see http://www.markusproject.org/download/
       See http://docs.rubygems.org/read/chapter/3 for further details.
 
 
-3.2 IMAGEMAGICK (OPTIONAL)
 
-  If you plan on using MarkUs' PDF conversion feature so that you can annotate
-  them using a browser, you need ImageMagick installed.
-
-  To make sure you have ImageMagick installed, run:
-
-    identify --version
-
-  If you don't http://www.imagemagick.org/script/install-source.php#unix
-  has detailed instructions on installing ImageMagick.
-
-
-3.3 INSTALLING MARKUS
+3.2 INSTALLING MARKUS
 
   Once you have the required software installed, it should be pretty straight-
   forward to install MarkUs. We assume you have a database user with appropriate
@@ -192,7 +177,7 @@ you are currently using by issuing the following command:
   bundle exec rake -s markus:version
 
 
-3.4 GETTING RAILS AND REQUIRED GEMS
+3.3 GETTING RAILS AND REQUIRED GEMS
 
   Bundler and required ruby gems (including rails) can be installed like
   so:
