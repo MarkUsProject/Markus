@@ -436,6 +436,7 @@ en:
 
     groups:
       groups: "Groups"
+      add_new: "Add new group"
       manage_groups: "Manage Groups"
       all_students: "All students(<span id=\"all_students_count\"></span>)"
       unassigned_students: "Unassigned(<span id=\"unassigned_students_count\"></span>)"
