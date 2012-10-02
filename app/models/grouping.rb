@@ -165,6 +165,13 @@ class Grouping < ActiveRecord::Base
       member.save
       # adjust repo permissions
       update_repository_permissions
+
+      # Add deductions for the new added member
+      deduction = GracePeriodDeduction.new
+      deduction.membership = member
+      deduction.deduction = self.grace_period_deduction_single
+      deduction.save
+
       return member
     end
   end
