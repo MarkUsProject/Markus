@@ -1,6 +1,30 @@
 # Helper methods for Testing Framework forms
 module AutomatedTestsHelper
 
+  def enqueue_test()
+    
+  end
+  
+  def choose_test_server()
+    
+  end
+  
+  def launch_test()
+    
+  end
+  
+  def result_available?()
+    
+  end
+  
+  def process_result()
+    
+  end
+
+  #######################################################################
+  # TODO: EVERYTHING BELOW THIS POINT IS OLD AND NEEDED TO BE REWRITTEN #
+  #######################################################################
+
   def add_test_file_link(name, form)
     link_to_function name do |page|
       test_file = render(:partial => 'test_file',

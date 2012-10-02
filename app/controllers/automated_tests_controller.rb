@@ -4,6 +4,11 @@ require 'helpers/ensure_config_helper.rb'
 class AutomatedTestsController < ApplicationController
   include AutomatedTestsHelper
 
+  # This is the waiting list for automated testing. Once a test is requested,
+  # it is enqueued and it is waiting for execution. Resque manages this queue. 
+  #@queue = :test_waiting_list
+
+  # TODO: REWRITE THIS FOR THE NEW DESIGN
   def index
     result_id = params[:result]
     @result = Result.find(result_id)
@@ -27,7 +32,7 @@ class AutomatedTestsController < ApplicationController
                        :result => @result}
   end
 
-
+  # TODO: REWRITE THIS FOR THE NEW DESIGN
   #Update function called when files are added to the assigment
 
   def update
@@ -55,7 +60,7 @@ class AutomatedTestsController < ApplicationController
      end
   end
 
-
+  # TODO: REWRITE THIS FOR THE NEW DESIGN
   def manage
     @assignment = Assignment.find(params[:assignment_id])
 
@@ -64,4 +69,26 @@ class AutomatedTestsController < ApplicationController
 
   end
 
+  # Perform a job for automated testing. This code is run by
+  # the Resque workers - it should not be called from other functions.
+  # Collect all the required files from the given paths and launch 
+  # the Test Runner on another server 
+  def self.perform()
+    
+    choose_test_server()
+    launch_test()
+    
+    # BRIAN: busy waiting for result? Another idea will be creating another kind of jobs that check for the result
+    if result_available?
+      process_result()
+    end
+    
+  end
+
+  # Request an automated test. Ask Resque to enqueue a job.
+  def async_test_request
+    Resque.enqueue(automated_tests_controller)
+  end
+
 end
+
