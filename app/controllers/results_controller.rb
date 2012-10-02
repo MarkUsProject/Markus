@@ -326,7 +326,9 @@ class ResultsController < ApplicationController
 
     @annotation_categories = @assignment.annotation_categories
     @group = @grouping.group
-    @files = @submission.submission_files
+    @files = @submission.submission_files.sort do |a, b|
+      File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
+    end
     @test_result_files = @submission.test_results
     @first_file = @files.first
     @extra_marks_points = @result.extra_marks.points
