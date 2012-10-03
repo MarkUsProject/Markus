@@ -20,7 +20,7 @@
     <filename>test1.c</filename>
     <result>
       <status>fail</status>
-      <marks-earned>2/4</marks-earned>
+      <marks-earned>2</marks-earned>
       <test-input>student-file.c</test-input>
       <expected-output>All tests pass!</expected-output>
       <actual-output>3 Failures</actual-output>
@@ -30,7 +30,7 @@
     <filename>test2.c</filename>
     <result>
       <status>pas</status>
-      <marks-earned>4/4</marks-earned>
+      <marks-earned>4</marks-earned>
       <test-input>student-file.c</test-input>
       <expected-output>All tests pass!</expected-output>
       <actual-output>All tests pass!</actual-output>
