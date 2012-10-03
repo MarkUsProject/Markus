@@ -1,0 +1,39 @@
+<test>
+  <pretest>
+    <filename>c-style-checker</filename>
+    <result>
+      <status>pass</status>
+      <marks-earned>4/4</marks-earned>
+      <test-input>student-file.c</test-input>
+      <expected-output></expected-output>
+      <actual-output></actual-output>
+    </result>
+  </pretest>
+  <build>
+    <filename>gcc</filename>
+    <result>
+      <status>normal</status>
+      <actual-output></actual-output>
+    </result>
+  </build>
+  <test-script>
+    <filename>test1.c</filename>
+    <result>
+      <status>fail</status>
+      <marks-earned>2/4</marks-earned>
+      <test-input>student-file.c</test-input>
+      <expected-output>All tests pass!</expected-output>
+      <actual-output>3 Failures</actual-output>
+    </result>
+  </test-script>
+  <test-script>
+    <filename>test2.c</filename>
+    <result>
+      <status>pas</status>
+      <marks-earned>4/4</marks-earned>
+      <test-input>student-file.c</test-input>
+      <expected-output>All tests pass!</expected-output>
+      <actual-output>All tests pass!</actual-output>
+    </result>
+  </test-script>
+</test>
