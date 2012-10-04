@@ -17,47 +17,49 @@ module AutomatedTestsHelper
   end
 
   def process_result(results_xml)
+    test = AutomatedTests.new
     results_xml = results_xml ||
       File.read(RAILS_ROOT + "/automated-tests-files/test.xml")
     parser = XML::Parser.string(results_xml)
     doc = parser.parse
 
-    # get assignmen_id
+    # get assignment_id
     assignment_node = doc.find_first("/test/assignment-id")
-    if not assignment_node
+    if not assignment_node or assignment_node.empty?
       raise "Test result does not have assignment id"
     else
-      puts assignment_node
+      test.assignment_id = assignment_node.content
     end
 
     # get group id
     group_id_node = doc.find_first("/test/group-id")
-    if not group_id_node
+    if not group_id_node or group_id_node.empty?
       raise "Test result has no group id"
     else
-      puts group_id_node
+      test.group_id = group_id_node.content
     end
 
     # get pretests
-    all_pretests_node = []
+    pretest_results = ""
     doc.find("/test/pretest").each { |pretest_node|
-      all_pretests_node << pretest_node
+      pretest_results += pretest_node.to_s
     }
-    puts all_pretests_node
+    test.pretest_result = pretest_results
 
     # get builds
-    all_builds_node = []
+    build_results = ""
     doc.find("/test/build").each { |build_node|
-      all_builds_node << build_node
+      build_results += build_node.to_s
     }
-    puts all_builds_node
+    test.build_result = build_results
 
     # get tests
-    all_tests_node = []
+    test_script_results = ""
     doc.find("/test/test-script").each { |test_script_node|
-      all_tests_node << test_script_node
+      test_script_results += test_script_node.to_s
     }
-    puts all_tests_node
+    test.test_script_result = test_script_results
+    test.save
   end
 
   #######################################################################

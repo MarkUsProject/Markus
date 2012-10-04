@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120121222559) do
+ActiveRecord::Schema.define(:version => 20121004015833) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -95,6 +95,16 @@ ActiveRecord::Schema.define(:version => 20120121222559) do
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true
+
+  create_table "automated_tests", :force => true do |t|
+    t.integer  "assignment_id"
+    t.integer  "group_id"
+    t.text     "pretest_result"
+    t.text     "build_result"
+    t.text     "test_script_result"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "criterion_ta_associations", :force => true do |t|
     t.integer  "ta_id"

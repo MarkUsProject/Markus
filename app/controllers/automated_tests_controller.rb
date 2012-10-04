@@ -5,7 +5,7 @@ class AutomatedTestsController < ApplicationController
   include AutomatedTestsHelper
 
   # This is the waiting list for automated testing. Once a test is requested,
-  # it is enqueued and it is waiting for execution. Resque manages this queue. 
+  # it is enqueued and it is waiting for execution. Resque manages this queue.
   #@queue = :test_waiting_list
 
   # TODO: REWRITE THIS FOR THE NEW DESIGN
@@ -71,18 +71,18 @@ class AutomatedTestsController < ApplicationController
 
   # Perform a job for automated testing. This code is run by
   # the Resque workers - it should not be called from other functions.
-  # Collect all the required files from the given paths and launch 
-  # the Test Runner on another server 
+  # Collect all the required files from the given paths and launch
+  # the Test Runner on another server
   def self.perform()
-    
+
     choose_test_server()
     launch_test()
-    
+
     # BRIAN: busy waiting for result? Another idea will be creating another kind of jobs that check for the result
     if result_available?
       process_result()
     end
-    
+
   end
 
   # Request an automated test. Ask Resque to enqueue a job.

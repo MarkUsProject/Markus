@@ -1,11 +1,11 @@
 class CreateAutomatedTests < ActiveRecord::Migration
   def self.up
     create_table :automated_tests do |t|
-      t.integer :assignmet_id
+      t.integer :assignment_id
       t.integer :group_id
       t.text :pretest_result
-      t.text :buld_result
-      t.text :test_scripts_result
+      t.text :build_result
+      t.text :test_script_result
 
       t.timestamps
     end
