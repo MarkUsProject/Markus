@@ -1,24 +1,63 @@
+require 'libxml'
+
 # Helper methods for Testing Framework forms
 module AutomatedTestsHelper
+  include LibXML
 
   def enqueue_test()
-    
   end
-  
+
   def choose_test_server()
-    
   end
-  
+
   def launch_test()
-    
   end
-  
+
   def result_available?()
-    
   end
-  
-  def process_result()
-    
+
+  def process_result(results_xml)
+    results_xml = results_xml ||
+      File.read(RAILS_ROOT + "/automated-tests-files/test.xml")
+    parser = XML::Parser.string(results_xml)
+    doc = parser.parse
+
+    # get assignmen_id
+    assignment_node = doc.find_first("/test/assignment-id")
+    if not assignment_node
+      raise "Test result does not have assignment id"
+    else
+      puts assignment_node
+    end
+
+    # get group id
+    group_id_node = doc.find_first("/test/group-id")
+    if not group_id_node
+      raise "Test result has no group id"
+    else
+      puts group_id_node
+    end
+
+    # get pretests
+    all_pretests_node = []
+    doc.find("/test/pretest").each { |pretest_node|
+      all_pretests_node << pretest_node
+    }
+    puts all_pretests_node
+
+    # get builds
+    all_builds_node = []
+    doc.find("/test/build").each { |build_node|
+      all_builds_node << build_node
+    }
+    puts all_builds_node
+
+    # get tests
+    all_tests_node = []
+    doc.find("/test/test-script").each { |test_script_node|
+      all_tests_node << test_script_node
+    }
+    puts all_tests_node
   end
 
   #######################################################################

@@ -91,4 +91,3 @@ class AutomatedTestsController < ApplicationController
   end
 
 end
-

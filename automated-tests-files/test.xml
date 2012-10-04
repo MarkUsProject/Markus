@@ -1,4 +1,6 @@
 <test>
+  <assignment-id>2</assignment-id>
+  <group-id>4</group-id>
   <pretest>
     <filename>c-style-checker</filename>
     <result>
