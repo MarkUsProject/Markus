@@ -7,6 +7,7 @@ class Assignment < ActiveRecord::Base
     :rubric => 'rubric'
   }
 
+  has_many :automated_tests
   has_many :rubric_criteria,
            :class_name => "RubricCriterion",
            :order => :position
@@ -499,7 +500,7 @@ class Assignment < ActiveRecord::Base
   # Get a list of subversion client commands to be used for scripting
   def get_svn_export_commands
     svn_commands = [] # the commands to be exported
-    
+
     self.groupings.each do |grouping|
       submission = grouping.current_submission_used
       if !submission.nil?
