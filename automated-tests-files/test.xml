@@ -31,7 +31,7 @@
   <test-script>
     <filename>test2.c</filename>
     <result>
-      <status>pas</status>
+      <status>pass</status>
       <marks-earned>4</marks-earned>
       <test-input>student-file.c</test-input>
       <expected-output>All tests pass!</expected-output>

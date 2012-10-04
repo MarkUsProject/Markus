@@ -6,7 +6,7 @@ class AutomatedTestsController < ApplicationController
 
   # This is the waiting list for automated testing. Once a test is requested,
   # it is enqueued and it is waiting for execution. Resque manages this queue.
-  #@queue = :test_waiting_list
+  @queue = :test_waiting_list
 
   # TODO: REWRITE THIS FOR THE NEW DESIGN
   def index
@@ -66,7 +66,7 @@ class AutomatedTestsController < ApplicationController
 
     # Create ant test files required by Testing Framework
     create_ant_test_files(@assignment)
-
+    self.async_test_request
   end
 
   # Perform a job for automated testing. This code is run by
@@ -74,20 +74,17 @@ class AutomatedTestsController < ApplicationController
   # Collect all the required files from the given paths and launch
   # the Test Runner on another server
   def self.perform()
-
     choose_test_server()
     launch_test()
 
-    # BRIAN: busy waiting for result? Another idea will be creating another kind of jobs that check for the result
-    if result_available?
-      process_result()
-    end
-
+    # BRIAN: busy waiting for result? Another idea will be creating another kind
+    # of jobs that check for the result
+    process_result(nil)
   end
 
   # Request an automated test. Ask Resque to enqueue a job.
   def async_test_request
-    Resque.enqueue(automated_tests_controller)
+    Resque.enqueue(AutomatedTestsController)
   end
 
 end
