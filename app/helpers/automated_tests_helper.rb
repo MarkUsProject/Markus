@@ -1,4 +1,5 @@
 require 'libxml'
+require 'open3'
 
 # Helper methods for Testing Framework forms
 module AutomatedTestsHelper
@@ -36,7 +37,8 @@ module AutomatedTestsHelper
   # Verify that the system has all the files and information in order to
   # run the test.
   def files_available?()
-    
+    #code stub
+    return true
   end
   
   # From a list of test servers, choose the next available server
@@ -50,16 +52,22 @@ module AutomatedTestsHelper
 
   # Launch the test on the test server by scp files to the server
   # and run the script.
+  # This function returns two values: first one is the output from
+  # stdout or stderr, depending on whether the execution passed or 
+  # had error; the second one is a boolean variable, true => execution
+  # passeed, false => error occurred. 
   def launch_test(server_id, group, assignment)
-    # Get src_dir and test_dir
+    # Get src_dir
     src_dir = ""
-    test_dir = ""
+    
+    # Get test_dir
+    test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
     
     # Get the account and address of the server
     server_account = "localtest"
     server_address = "scspc328.cs.uwaterloo.ca"
     
-    # Get the direrctory and name of the script
+    # Get the directory and name of the script
     script_dir = "${HOME}/testrunner"
     script_name = "run.sh"
     
@@ -67,15 +75,28 @@ module AutomatedTestsHelper
     dest_dir = "${HOME}/testrunner/all"
     
     # Remove everything in dest_dir
-    system ("ssh #{server_account}@#{server_address} rm -rf #{dest_dir}")
+    stdout, stderr, status = Open3.capture3("ssh #{server_account}@#{server_address} rm -rf #{dest_dir}")
+    if !(status.successful?)
+      return [stderr, false]
+    end
     
     # Securely copy files to dest_dir
-    system ("scp -p -r #{src_dir} #{server_account}@#{server_address}:#{dest dir}")
-    system ("scp -p -r #{test_dir} #{server_account}@#{server_address}:#{dest dir}")
+    stdout, stderr, status = Open3.capture3("scp -p -r #{src_dir} #{server_account}@#{server_address}:#{dest dir}")
+    if !(status.successful?)
+      return [stderr, false]
+    end
+    stdout, stderr, status = Open3.capture3("scp -p -r #{test_dir} #{server_account}@#{server_address}:#{dest dir}")
+    if !(status.successful?)
+      return [stderr, false]
+    end
     
     # Run script
-    system ("ssh localtest@scspc328.cs.uwaterloo.ca  ./testrunner/run.sh")
-    system ("ssh #{server_account}@#{server_address} #{script_dir}/#{script_name}")
+    stdout, stderr, status = Open3.capture3("ssh #{server_account}@#{server_address} #{script_dir}/#{script_name}")
+    if !(status.successful?)
+      return [stderr, false]
+    else
+      return [stdout, true]
+    end
     
   end
 

@@ -75,10 +75,7 @@ class AutomatedTestsController < ApplicationController
   # the Test Runner on another server
   def self.perform()
     @test_server_id = choose_test_server()#@test_servers
-    launch_test(@test_server_id, @group, @assignment)#there are more parameters...
-
-    # BRIAN: busy waiting for result? Another idea will be creating another kind
-    # of jobs that check for the result
+    result, status = launch_test(@test_server_id, @group, @assignment)#there are more parameters...
 
     # process test result code {{
     test = AutomatedTests.new
