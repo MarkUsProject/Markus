@@ -74,8 +74,8 @@ class AutomatedTestsController < ApplicationController
   # Collect all the required files from the given paths and launch
   # the Test Runner on another server
   def self.perform()
-    #choose_test_server()
-    #launch_test()
+    @test_server_id = choose_test_server()#@test_servers
+    launch_test(@test_server_id, @group, @assignment)#there are more parameters...
 
     # BRIAN: busy waiting for result? Another idea will be creating another kind
     # of jobs that check for the result
@@ -130,7 +130,14 @@ class AutomatedTestsController < ApplicationController
 
   # Request an automated test. Ask Resque to enqueue a job.
   def async_test_request
-    Resque.enqueue(AutomatedTestsController)
+    if has_permission?
+      if files_available? 
+        Resque.enqueue(AutomatedTestsController)
+      else
+        #TODO: error message
+      end
+      #TODO: error message
+    end
   end
 
 end

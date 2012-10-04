@@ -39,7 +39,7 @@
             <%= label_tag "antbuildxmlfile", I18n.t("automated_tests.build_xml"), :class=>"accordian_label" %>
 
             <% if tf.object.filename.to_s != "" && tf.object.filetype == tf.object.filename %>
-              <%= text_field_tag 'test_file_' + tf.id.to_s, tf.object.filename, :id=>"antxmlfilename", :readonly => "true" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <%= text_field_tag 'test_file_' + tf.object.id.to_s, tf.object.filename, :id=>"antxmlfilename", :readonly => "true" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <%= label_tag "replacebuildxmlfile", I18n.t("automated_tests.replace"), :class => "inline_label" %>
             <% end %>
 
@@ -51,7 +51,7 @@
             <%= label_tag "antbuildpropfile", I18n.t("automated_tests.build_prop"), :class=>"accordian_label" %>
 
             <% if tf.object.filename.to_s != "" && tf.object.filetype == tf.object.filename %>
-              <%= text_field_tag 'test_file_' + tf.id.to_s, tf.object.filename, :id=>"antpropfilename", :readonly => "true" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <%= text_field_tag 'test_file_' + tf.object.id.to_s, tf.object.filename, :id=>"antpropfilename", :readonly => "true" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <%= label_tag "replacebuildpropfile", I18n.t("automated_tests.replace"), :class => "inline_label" %>
             <% end %>
 

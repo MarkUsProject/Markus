@@ -7,10 +7,76 @@ module AutomatedTestsHelper
   def enqueue_test()
   end
 
-  def choose_test_server()
+  # Verify the user has the permission to run the tests - admin
+  # and graders always have the permission, while student has to
+  # belong to the group and has >0 tokens.
+  def has_permission?()
+    if @current_user.admin?
+      return true
+    elsif @current_user.ta?
+      return true
+    elsif @current_user.student?
+      # Make sure student belongs to this group
+      if not @current_user.accepted_groupings.include?(@grouping)
+        return false
+      end
+      t = @grouping.token
+      if t == nil
+        raise I18n.t("automated_tests.missing_tokens")
+      end
+      if t.tokens > 0
+        t.decrease_tokens
+        return true
+      else
+        return false
+      end
+    end
   end
 
-  def launch_test()
+  # Verify that the system has all the files and information in order to
+  # run the test.
+  def files_available?()
+    
+  end
+  
+  # From a list of test servers, choose the next available server
+  # using round-robin. Keep looking for available server until 
+  # one is found.
+  # TODO: set timeout and return error if no server is available
+  def choose_test_server()
+    # code stub
+    return 0
+  end
+
+  # Launch the test on the test server by scp files to the server
+  # and run the script.
+  def launch_test(server_id, group, assignment)
+    # Get src_dir and test_dir
+    src_dir = ""
+    test_dir = ""
+    
+    # Get the account and address of the server
+    server_account = "localtest"
+    server_address = "scspc328.cs.uwaterloo.ca"
+    
+    # Get the direrctory and name of the script
+    script_dir = "${HOME}/testrunner"
+    script_name = "run.sh"
+    
+    # Get dest_dir of the files
+    dest_dir = "${HOME}/testrunner/all"
+    
+    # Remove everything in dest_dir
+    system ("ssh #{server_account}@#{server_address} rm -rf #{dest_dir}")
+    
+    # Securely copy files to dest_dir
+    system ("scp -p -r #{src_dir} #{server_account}@#{server_address}:#{dest dir}")
+    system ("scp -p -r #{test_dir} #{server_account}@#{server_address}:#{dest dir}")
+    
+    # Run script
+    system ("ssh localtest@scspc328.cs.uwaterloo.ca  ./testrunner/run.sh")
+    system ("ssh #{server_account}@#{server_address} #{script_dir}/#{script_name}")
+    
   end
 
   def result_available?()
@@ -144,7 +210,7 @@ module AutomatedTestsHelper
       assignment.reload
     end
   end
-
+  
   # Process Testing Framework form
   # - Process new and updated test files (additional validation to be done at the model level)
   def process_test_form(assignment, params)
