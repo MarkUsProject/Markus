@@ -74,12 +74,58 @@ class AutomatedTestsController < ApplicationController
   # Collect all the required files from the given paths and launch
   # the Test Runner on another server
   def self.perform()
-    choose_test_server()
-    launch_test()
+    #choose_test_server()
+    #launch_test()
 
     # BRIAN: busy waiting for result? Another idea will be creating another kind
     # of jobs that check for the result
-    process_result(nil)
+
+    # process test result code {{
+    test = AutomatedTests.new
+    results_xml = results_xml ||
+      File.read(Rails.root.to_s + "/automated-tests-files/test.xml")
+    parser = XML::Parser.string(results_xml)
+    doc = parser.parse
+
+    # get assignment_id
+    assignment_node = doc.find_first("/test/assignment-id")
+    if not assignment_node or assignment_node.empty?
+      raise "Test result does not have assignment id"
+    else
+      test.assignment_id = assignment_node.content
+    end
+
+    # get group id
+    group_id_node = doc.find_first("/test/group-id")
+    if not group_id_node or group_id_node.empty?
+      raise "Test result has no group id"
+    else
+      test.group_id = group_id_node.content
+    end
+
+    # get pretests
+    pretest_results = ""
+    doc.find("/test/pretest").each { |pretest_node|
+      pretest_results += pretest_node.to_s
+    }
+    test.pretest_result = pretest_results
+
+    # get builds
+    build_results = ""
+    doc.find("/test/build").each { |build_node|
+      build_results += build_node.to_s
+    }
+    test.build_result = build_results
+
+    # get tests
+    test_script_results = ""
+    doc.find("/test/test-script").each { |test_script_node|
+      test_script_results += test_script_node.to_s
+    }
+    test.test_script_result = test_script_results
+    puts test.inspect
+    test.save
+    # }}
   end
 
   # Request an automated test. Ask Resque to enqueue a job.
