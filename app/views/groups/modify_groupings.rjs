@@ -1,1 +1,8 @@
+if @warning_no_group_selected
+  page.replace_html 'warning_no_group_selected_msg', @warning_no_group_selected
+  page.show('warning_no_group_selected') 
+else
+  page.hide('warning_no_group_selected')
+end
+
 page.call "modify_groupings", @groupings_data.to_json
