@@ -11,6 +11,10 @@
   <%= javascript_include_tag 'prototype.js' -%>
   <%= javascript_include_tag 'rails.js' -%>
   <%= javascript_include_tag 'menu.js' -%>
+  <% # UI LIBRARIES %>
+  <%= javascript_include_tag "livepipe/livepipe.js",
+    "livepipe/window.js",
+    "livepipe/tabs.js" %>
   <%= yield :head %>
 </head>
 

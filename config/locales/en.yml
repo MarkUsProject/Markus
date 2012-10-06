@@ -132,6 +132,7 @@ en:
         group:
             empty: "Empty Group"
             assign_over_limit: "You have assigned more than the maximum number of students to group %{group}"
+            grace_day_over_limit: "You have assigned one or more students who has less grace period credits than the amount already used by group %{group} for this assignment"
             select_a_group: "Select a group"
             select_only_one_group: "You may only assign each student to one group."
             deleted: "Group has been deleted"
@@ -435,6 +436,7 @@ en:
 
     groups:
       groups: "Groups"
+      add_new: "Add new group"
       manage_groups: "Manage Groups"
       all_students: "All students(<span id=\"all_students_count\"></span>)"
       unassigned_students: "Unassigned(<span id=\"unassigned_students_count\"></span>)"
