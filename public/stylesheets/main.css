@@ -921,7 +921,7 @@ input#extra_mark_description{
    -webkit-border-radius: 5px;
 }
 
-#rename_group_dialog, #upload_dialog, #download_dialog, #notes_dialog,
+#rename_group_dialog, #upload_dialog, #download_dialog,
 #groups_coverage_dialog, #grader_criteria_dialog {
    background: white;
    padding: 0 10px 0 10px;
@@ -931,6 +931,29 @@ input#extra_mark_description{
    max-height: 80%;
    max-width: 80%;
    overflow: auto;
+}
+
+#notes_dialog {
+   background: white;
+   padding: 0 10px 0 10px;
+   border: 1px solid #000000;
+   -moz-border-radius: 5px;
+   -webkit-border-radius: 5px;
+   max-height: 80%;
+   max-width: 80%;
+}
+
+#notes_dialog form {
+   margin-left: 2px;
+}
+
+#notes_dialog textarea {
+   resize: none;
+   margin-top: 0;
+}
+
+#notes_dialog button {
+   margin-bottom: 15px;
 }
 
 #assignment_group_use_dialog, #add_member_dialog, #invite_dialog {
@@ -1045,7 +1068,7 @@ input#extra_mark_description{
 
 #notes_dialog div.notes_existing {
 	width: 250px;
-	height: 255px;
+	height: 248px;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
 	border: 2px solid #ccc;
