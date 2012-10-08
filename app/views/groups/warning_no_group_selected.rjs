@@ -4,7 +4,3 @@ if @warning_no_group_selected
 else
   page.hide('warning_no_group_selected')
 end
-
-
-page.call 'modify_students', @students_data.to_json
-page.call "modify_groupings", @groupings_data.to_json

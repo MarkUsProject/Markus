@@ -263,6 +263,12 @@ class GroupsController < ApplicationController
     student_ids = params[:students]
 
     if params[:groupings].nil? or params[:groupings].size ==  0
+	 #if there is a global action than there should be a group selected
+         if params[:global_actions]
+               @warning_no_group_selected = I18n.t("assignment.group.select_a_group")
+               render :warning_no_group_selected
+               return
+         end
       #Just do nothing
       render :nothing => true
       return
