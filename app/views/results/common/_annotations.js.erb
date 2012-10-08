@@ -10,12 +10,15 @@ var init_code_pane_width = 0;
 var annotation_manager = null;
 var syntax_highlighter_adapter = null;
 
+//bool to tell the code if an image or code is being shown
+var is_image;
 
 function source_code_ready() {
   annotation_manager = null;
   $('loading_code').hide();
   $('select_file_id').enable();
-  syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter($$('.dp-highlighter').first().getElementsBySelector('ol').first());
+  syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter(
+      $$('.dp-highlighter').first().getElementsBySelector('ol').first());
 
   //Apply modifications to Syntax Highlighter
   syntax_highlighter_adapter.applyMods();
@@ -27,23 +30,26 @@ function source_code_ready() {
   var annotation_text_displayer = new AnnotationTextDisplayer($('annotation_holder'));
 
   annotation_manager = new SourceCodeLineAnnotations(line_manager, annotation_text_manager, annotation_text_displayer);
+
+  is_image = false;
 }
 
-//A version of source_code_ready for image files. 
+//A version of source_code_ready for image files.
 function source_code_ready_for_image() {
-  if ($('annotation_menu') != null) {
-    $('annotation_menu').hide();
-  }
   annotation_manager = null;
 
   var image_event_handler = new ImageEventHandler();
   var annotation_text_manager = new AnnotationTextManager();
-  var annotation_text_displayer = new AnnotationTextDisplayer($('annotation_holder'));
+  var annotation_text_displayer = new AnnotationTextDisplayer(
+                                        $('annotation_holder'));
 
-  annotation_manager = new ImageAnnotationGrid(image_event_handler, annotation_text_manager, annotation_text_displayer);
-  
+  annotation_manager = new ImageAnnotationGrid(image_event_handler,
+      annotation_text_manager, annotation_text_displayer);
+
   $('loading_code').hide();
   $('select_file_id').enable();
+
+  is_image = true;
 }
 
 function add_annotation_text(annotation_text_id, content) {
@@ -123,15 +129,20 @@ function get_mouse_positions() {
   return {line_start: line_start, line_end: line_end};
 }
 
-//Does not work with image annotations, they get created via stop_select_box()
 function make_new_annotation() {
+  //check if image is shown, and call the appropriate function if so
+  if (!is_image) {
+    positions = get_mouse_positions();
+  } else {
+    return make_new_image_annotation();
+  }
+
   //Set global variable 'positions' to current mouse positions
   //TODO:  Refactor?  Why the global variable?
   if (syntax_highlighter_adapter == null) {
     return false;
   }
 
-  positions = get_mouse_positions();
   if(!positions) {
     //If no text was returned, return false;
     return false;
@@ -151,27 +162,94 @@ function make_new_annotation() {
   return false;
 }
 
+function make_new_image_annotation() {
+  var box = $("sel_box");
+  var x1 = parseInt(box.style.left) -
+    $("image_preview").offsetLeft +
+    $("image_container").scrollLeft;
+  var y1 = parseInt(box.style.top) -
+    $("image_preview").offsetTop +
+    $("image_container").scrollTop;
+  var x2 = x1 + parseInt(box.style.width);
+  var y2 = y1 + parseInt(box.style.height);
+  if ((x2 - x1) < 1 || isNaN(x2 - x1)) {
+    alert("You should select an area on the image to annotate");
+    return false
+  }
+  //Open the modal dialog to ask for new Annotation details
+  modal.open();
+  //Manually reset the modal dialog values
+  //TODO:  Refactor?
+  $('new_annotation_content').setValue('');
+  $('new_annotation_category').setValue('');
+  $('x1').setValue(x1);
+  $('x2').setValue(x2);
+  $('y1').setValue(y1);
+  $('y2').setValue(y2);
+  $('new_annotation_content').focus();
+}
+
 <%#
 This function takes the ID of some annotation that already
 exists in the database, adds the new annotation link to the
 currently selected text, and then highlights the lines.
-
-Not supported for image annotations.
 %>
 function add_existing_annotation(annotation_text_id) {
-  positions = get_mouse_positions();
-  if(!positions) {
-    return false;
+  if(is_image) {
+    var box = $("sel_box");
+    var x1 = parseInt(box.style.left) -
+      $("image_preview").offsetLeft +
+      $("image_container").scrollLeft;
+    var y1 = parseInt(box.style.top) -
+      $("image_preview").offsetTop +
+      $("image_container").scrollTop;
+    var x2 = x1 + parseInt(box.style.width);
+    var y2 = y1 + parseInt(box.style.height);
+    if ((x2 - x1) < 1 || isNaN(x2 - x1)) {
+      alert("You should select an area on the image to annotate");
+      return false
+    }
+    new Ajax.Request('<%= url_for({ :controller => "annotations",
+                                  :action => "add_existing_annotation" }) %>',
+        { asynchronous:true,
+          evalScripts:true,
+          method:'post',
+          parameters:'annotation_type=image' +
+            '&submission_file_id='+
+            $('select_file_id').value +
+            '&annotation_text_id='+
+            annotation_text_id +
+            '&x1=' +
+            x1 +
+            '&x2=' +
+            x2 +
+            '&y1=' +
+            y1 +
+            '&y2=' +
+            y2
+        })
+  } else {
+    positions = get_mouse_positions();
+    if (!positions) {
+      return false;
+    }
+    new Ajax.Request('<%= url_for({ :controller => "annotations",
+                                  :action => "add_existing_annotation" }) %>',
+      {
+        asynchronous:true,
+        evalScripts:true,
+        method:'post',
+        parameters:'submission_file_id='+
+          $('select_file_id').value +
+          '&line_start=' +
+          positions.line_start +
+          '&line_end=' +
+          positions.line_end +
+          '&annotation_text_id='+
+          annotation_text_id
+      })
   }
-
-  <%= remote_function(
-                    :url => { :controller => "annotations", :action => "add_existing_annotation" },
-                    :with => "'submission_file_id='+ $('select_file_id').value +'&line_start=' + positions.line_start + '&line_end=' + positions.line_end + '&annotation_text_id='+ annotation_text_id")
-                    %>
-
 }
-
-
 
 //Load a submitted file into the code-viewer based on file id's
 function load_submitted_file(submission_file_id, focus_line) {
@@ -189,7 +267,7 @@ function load_submitted_file(submission_file_id, focus_line) {
 function load_submitted_file_and_focus(submission_file_id, focus_line) {
   //First, switch to the source code viewer tab
   code_tab_menu.setActiveTab('code_holder');
-  
+
   if($F('select_file_id') == submission_file_id) {
     focus_source_code_line(focus_line);
   } else {
@@ -245,6 +323,12 @@ function hide_all_annotation_content_editors() {
   $$('.annotation_text_content_editor').each(function(node) {
     $(node).hide();
   });
+  var box = $("sel_box");
+  if (box) {
+    box.style.display = "none";
+    box.style.width = "0";
+    box.style.height = "0";
+  }
 }
 
 //Hide all display boxes on the screen.
