@@ -956,6 +956,13 @@ input#extra_mark_description{
    margin-bottom: 15px;
 }
 
+#notes_dialog .error {
+   padding-top: 0;
+   padding-right: 1em;
+   padding-bottom: 0;
+   padding-left: 3em;
+}
+
 #assignment_group_use_dialog, #add_member_dialog, #invite_dialog {
    background: white;
    padding: 0 10px 0 10px;
