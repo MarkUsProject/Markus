@@ -58,41 +58,42 @@ module AutomatedTestsHelper
   # passeed, false => error occurred. 
   def launch_test(server_id, group, assignment)
     # Get src_dir
-    src_dir = ""
+    src_dir = "${HOME}/workspace_aptana/Markus/data/dev/automated_tests/group_0017/a7"
     
     # Get test_dir
-    test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
+    test_dir = "${HOME}/workspace_aptana/Markus/data/dev/automated_tests/a7"
+    #test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
     
     # Get the account and address of the server
     server_account = "localtest"
     server_address = "scspc328.cs.uwaterloo.ca"
     
     # Get the directory and name of the script
-    script_dir = "${HOME}/testrunner"
+    script_dir = "/home/#{server_account}/testrunner"
     script_name = "run.sh"
     
     # Get dest_dir of the files
-    dest_dir = "${HOME}/testrunner/all"
+    dest_dir = "/home/#{server_account}/testrunner/all"
     
     # Remove everything in dest_dir
     stdout, stderr, status = Open3.capture3("ssh #{server_account}@#{server_address} rm -rf #{dest_dir}")
-    if !(status.successful?)
+    if !(status.success?)
       return [stderr, false]
     end
     
     # Securely copy files to dest_dir
-    stdout, stderr, status = Open3.capture3("scp -p -r #{src_dir} #{server_account}@#{server_address}:#{dest dir}")
-    if !(status.successful?)
+    stdout, stderr, status = Open3.capture3("scp -p -r #{src_dir} #{server_account}@#{server_address}:#{dest_dir}")
+    if !(status.success?)
       return [stderr, false]
     end
-    stdout, stderr, status = Open3.capture3("scp -p -r #{test_dir} #{server_account}@#{server_address}:#{dest dir}")
-    if !(status.successful?)
+    stdout, stderr, status = Open3.capture3("scp -p -r #{test_dir} #{server_account}@#{server_address}:#{dest_dir}")
+    if !(status.success?)
       return [stderr, false]
     end
     
     # Run script
     stdout, stderr, status = Open3.capture3("ssh #{server_account}@#{server_address} #{script_dir}/#{script_name}")
-    if !(status.successful?)
+    if !(status.success?)
       return [stderr, false]
     else
       return [stdout, true]

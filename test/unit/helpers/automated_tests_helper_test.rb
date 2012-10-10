@@ -1,4 +1,5 @@
-require File.join(File.dirname(__FILE__), '..', '..', 'test_helper')
+require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'test_helper'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'blueprints', 'helper'))
 include AutomatedTestsHelper
 require 'shoulda'
 
@@ -16,6 +17,73 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
   def teardown
   end
 
+  context "If there is at least one available server, choose_test_server" do
+    setup do
+      
+    end
+    should "return the id of an available server (positive integer)" do
+      assert choose_test_server() > 0
+    end
+  end
+  
+  context "If there is no available server, choose_test_server" do
+    setup do
+      
+    end
+    should "return 0" do
+      assert choose_test_server() == 0
+    end
+  end
+  context "launch_test" do
+    setup do
+      
+    end
+    should "return true" do
+      result, status = launch_test(0, 0, 0)
+      assert status, result
+    end
+  end
+  
+  context "An admin allowed to run test" do
+    setup do
+      @admin = Admin.make
+      @current_user = @admin
+    end
+    should "have all the files available" do
+      assert files_available?
+    end
+  end
+  
+  context "An admin allowed to run test" do
+    setup do
+      @student = Student.make
+      @current_user = @student
+    end
+    should "have all the files available" do
+      assert files_available?
+    end
+  end
+  
+  context "An admin with no test files" do
+    setup do
+      @admin = Admin.make
+      @current_user = @admin
+    end
+    should "not be allowed to run test" do
+      assert !files_available?
+    end
+  end
+  
+  context "A student with no files in the repository" do
+    setup do
+      @studnet = Student.make
+      @current_user = @student
+    end
+    should "not be allowed to run test" do
+      assert !files_available?
+    end
+  end
+  
   context "An admin allowed to do test" do
     setup do
       @admin = Admin.make

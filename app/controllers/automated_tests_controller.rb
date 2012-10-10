@@ -74,7 +74,16 @@ class AutomatedTestsController < ApplicationController
   # Collect all the required files from the given paths and launch
   # the Test Runner on another server
   def self.perform()
-    @test_server_id = choose_test_server()#@test_servers
+    
+    while true
+      @test_server_id = choose_test_server()#@test_servers
+      if @test_server_id > 0 
+        break
+      else
+        sleep 5               # if no server is available, sleep for 5 second before it checks again
+      end  
+    end
+    
     result, status = launch_test(@test_server_id, @group, @assignment)#there are more parameters...
 
     # process test result code {{
