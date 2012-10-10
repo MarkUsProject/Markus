@@ -190,7 +190,6 @@ class GradersController < ApplicationController
         case params[:global_actions]
           when "assign"
             if params[:graders].nil? or params[:graders].size ==  0
-              #don't do anything if no graders
               @global_action_warning = I18n.t("assignment.group.select_a_grader")
               render :partial => "graders/global_action_warning.rjs"
               return
