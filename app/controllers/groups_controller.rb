@@ -265,8 +265,8 @@ class GroupsController < ApplicationController
     if params[:groupings].nil? or params[:groupings].size ==  0
 	 #if there is a global action than there should be a group selected
          if params[:global_actions]
-               @warning_no_group_selected = I18n.t("assignment.group.select_a_group")
-               render :warning_no_group_selected
+               @global_action_warning = I18n.t("assignment.group.select_a_group")
+               render :partial => "groups/global_action_warning.rjs"
                return
          end
       #Just do nothing
@@ -296,7 +296,8 @@ class GroupsController < ApplicationController
           add_members(student_ids, grouping_ids[0], @assignment)
           return
         else
-          render :nothing => true
+          @global_action_warning = I18n.t("assignment.group.select_a_student")
+          render :partial => "groups/global_action_warning.rjs"
           return
         end
       when "unassign"

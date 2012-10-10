@@ -6,12 +6,7 @@ if !@errors.empty?
   page.show 'errors'
 end
 
-if @warning_no_group_selected
-  page.replace_html 'warning_no_group_selected_msg', @warning_no_group_selected
-  page.show('warning_no_group_selected') 
-else
-  page.hide('warning_no_group_selected')
-end
+page << render(:partial => 'groups/global_action_warning')
 
 ids = []
 @removed_groupings.each do |grouping|
