@@ -9,7 +9,16 @@ class AutomatedTestsController < ApplicationController
   @queue = :test_waiting_list
 
   # TODO: REWRITE THIS FOR THE NEW DESIGN
+  # Index is called when a test run is requested
   def index
+    
+    # JUST FOR TESTING: send 10 test requests to Resque
+    for i in 1..10
+      self.async_test_request()
+      sleep 3
+    end
+    
+=begin
     result_id = params[:result]
     @result = Result.find(result_id)
     @assignment = @result.submission.assignment
@@ -30,10 +39,11 @@ class AutomatedTestsController < ApplicationController
     render :test_replace,
            :locals => {:test_result_files => @test_result_files,
                        :result => @result}
+=end
   end
 
   # TODO: REWRITE THIS FOR THE NEW DESIGN
-  #Update function called when files are added to the assigment
+  #Update is called when files are added to the assigment
 
   def update
       @assignment = Assignment.find(params[:assignment_id])
@@ -61,19 +71,19 @@ class AutomatedTestsController < ApplicationController
   end
 
   # TODO: REWRITE THIS FOR THE NEW DESIGN
+  # Manage is called when the Test Framework UI is loaded
   def manage
     @assignment = Assignment.find(params[:assignment_id])
 
     # Create ant test files required by Testing Framework
     create_ant_test_files(@assignment)
-    self.async_test_request
+    
   end
 
-  # Perform a job for automated testing. This code is run by
-  # the Resque workers - it should not be called from other functions.
-  # Collect all the required files from the given paths and launch
-  # the Test Runner on another server
-  def self.perform()
+  # This function should only be called by self.perform()
+  # Pick a server, launch the Test Runner and wait for the result
+  # Then store the result into the database
+  def perform
     
     while true
       @test_server_id = choose_test_server()#@test_servers
@@ -86,56 +96,18 @@ class AutomatedTestsController < ApplicationController
     
     result, status = launch_test(@test_server_id, @group, @assignment)#there are more parameters...
 
-    # process test result code {{
-    test = AutomatedTests.new
-    results_xml = results_xml ||
-      File.read(Rails.root.to_s + "/automated-tests-files/test.xml")
-    parser = XML::Parser.string(results_xml)
-    doc = parser.parse
-
-    # get assignment_id
-    assignment_node = doc.find_first("/test/assignment-id")
-    if not assignment_node or assignment_node.empty?
-      raise "Test result does not have assignment id"
-    else
-      test.assignment_id = assignment_node.content
-    end
-
-    # get group id
-    group_id_node = doc.find_first("/test/group-id")
-    if not group_id_node or group_id_node.empty?
-      raise "Test result has no group id"
-    else
-      test.group_id = group_id_node.content
-    end
-
-    # get pretests
-    pretest_results = ""
-    doc.find("/test/pretest").each { |pretest_node|
-      pretest_results += pretest_node.to_s
-    }
-    test.pretest_result = pretest_results
-
-    # get builds
-    build_results = ""
-    doc.find("/test/build").each { |build_node|
-      build_results += build_node.to_s
-    }
-    test.build_result = build_results
-
-    # get tests
-    test_script_results = ""
-    doc.find("/test/test-script").each { |test_script_node|
-      test_script_results += test_script_node.to_s
-    }
-    test.test_script_result = test_script_results
-    puts test.inspect
-    test.save
-    # }}
+    process_result(result)
+    
+  end
+  
+  # Perform a job for automated testing. This code is run by
+  # the Resque workers - it should not be called from other functions.
+  def self.perform()
+    new().perform
   end
 
   # Request an automated test. Ask Resque to enqueue a job.
-  def async_test_request
+  def async_test_request()
     if has_permission?
       if files_available? 
         Resque.enqueue(AutomatedTestsController)

@@ -39,7 +39,7 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
       
     end
     should "return true" do
-      result, status = launch_test(0, 0, 0)
+      result, status = launch_test(1, 0, 0)
       assert status, result
     end
   end

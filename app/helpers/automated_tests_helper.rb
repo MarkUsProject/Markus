@@ -47,7 +47,7 @@ module AutomatedTestsHelper
   # TODO: set timeout and return error if no server is available
   def choose_test_server()
     # code stub
-    return 0
+    return 1
   end
 
   # Launch the test on the test server by scp files to the server

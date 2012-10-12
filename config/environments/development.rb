@@ -214,6 +214,38 @@ Markus::Application.configure do
   SESSION_COOKIE_EXPIRE_AFTER = 3.weeks
   SESSION_COOKIE_HTTP_ONLY = true
   SESSION_COOKIE_SECURE = false
+  
+  ###################################################################
+  # Automated Testing settings
+  ###################################################################
+  
+  # The number of test servers for running automated testing
+  NUMBER_TEST_SERVERS = 1
+  # The maximum number of tests running in parallel on one test machine
+  MAX_NUMBER_OF_RUNNING_TESTS = 1
+  # The number of Resque workers MarkUs manages.
+  # It is recommended to have the number of Resque workers equals
+  # the number of test servers times the maximum number of tests running on
+  # one machine, which is essentially the maximum number of possible 
+  # tests running at any given time. Each worker will either be in 
+  # one of the two states: waiting for a test request, or running a test.
+  # A worker can always find an available test server to run the test.
+  # However, the number of Resque workers can be any positive integer.
+  NUMBER_RESQUE_WORKERS = NUMBER_TEST_SERVERS * MAX_NUMBER_OF_RUNNING_TESTS
+  
+  # A list of space separated test servers, each has the format "#{server_account}@#{server_name}".
+  # The number of test servers in this string should match NUMBER_TEST_SERVERS.
+  TEST_SERVER_HOSTS = 'localtest@scspc328.cs.uwaterloo.ca'
+  # The name and the relative path of the test runner script. 
+  # The path is relative to the HOME directory of the test server.  
+  TEST_RUNNER_NAME = 'testrunner/run.sh'
+  # The name and the relative path of the directory where all the test
+  # scripts and source files will be copied to the test server.
+  # The path is relative to the directory where the test runner script is.
+  # All the files in this directory will be deleted before every test run.
+  # Hence, this shouldn't be empty, i.e. the files should not be in the same
+  # directory as the test runner script. All the files in this 
+  TEST_RUNNER_FILE_PATH = 'all/'
 
   ###################################################################
   # END OF MarkUs SPECIFIC CONFIGURATION
