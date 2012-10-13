@@ -16,10 +16,11 @@
     <%= f.hidden_field :id %>
     <%= f.submit t(:submit),
 		 :name => 'submit',
-		 :class => 'button indent_button' %>
+		 :class => 'button indent_button',
+                 :disable_with => I18n.t('working')%>
     <%= link_to t(:cancel), 
         {:controller => controller}, 
-        :class => "button button_link" %>
+        :class => "button indent_button" %>
   <% end %>
 
 </div>
