@@ -122,7 +122,7 @@ document.observe("dom:loaded", function() {
   	        <% end %>
   	      </select>
         </span>
-        <%= submit_tag t(:apply), :id => 'apply_bulk_action', :disable_with => I18n.t('working'), :name => 'commit' %>
+        <%= submit_tag t(:apply), :id => 'apply_bulk_action', :disable_with => I18n.t('working'), :name => 'commit', :class => 'thin-button' %>
       </div>
 
       <div style="overflow:auto; height: 400px;">
@@ -132,7 +132,7 @@ document.observe("dom:loaded", function() {
           </td></tr>
         </table>
       </div>
-      
+
     </div>
     <% end %> <!-- remote form tag -->
   </div>
