@@ -70,11 +70,15 @@ input, button, .button, .button_2 {
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
   border-radius: 10px;
-  outline-width: 0px;   /* no rounded corners, don't show this */
+  outline: none;   /* no rounded corners, don't show this */
   border: 2px solid #ccc;
   color: #464646;
-  padding: 2px 10px;
+  padding: 4px 10px;
   margin: 5px;
+}
+
+input::-moz-focus-inner, button::-moz-focus-inner {
+  border: 0;    /* remove the dotted inner outline in firefox */
 }
 
 button:hover {
@@ -120,14 +124,12 @@ input:focus {
   color: #000;
 }
 
-label, .label{
-  float: left;
-  display: block;
+label, .label {
+  display: inline-block;
   width: 150px;
   padding-top: 3px;
   margin-top: 5px;
   padding-left: 5px;
-  font-weight: bold;
 }
 
 label.radio_label, label.checkbox_label, label.inline_label {
@@ -273,10 +275,10 @@ textarea:focus{
   background: none;
   color: #003399;
   border: none;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: bold;
-  margin: 0;
-  padding: 0 4px;
+  margin: 0px;
+  padding: 0px 4px;
   min-width: 5px;
   cursor: pointer;
   }
@@ -624,31 +626,31 @@ table {
   margin: 4px 0;
 }
 
-table .loading {
-  padding: 4px;
+table tr td.loading, table tr td:hover.loading {
+  height: 30px;
   padding-left: 8px;
+  border: 0px;
+  background-color: #fff;
 }
 
 thead, tfoot {
-  height: 30px;
-  background: #DFDFDF;
+  background: #dfdfdf;
   text-align: left;
 }
 
 th, tfoot tr td {
-  margin: 0px;
-  padding: 0px;
+  height: 18px;
   color: #464646;
   font-weight: bold;
   border: none;
+  padding: 3px;
 }
 
 td {
-   vertical-align: top;
-   border: none;
-   border-bottom: 1px solid #ccc;
-   margin: 0;
-   padding: 0;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  padding: 3px;
+  margin-left: 2px;
 }
 
 td.note {
@@ -1225,15 +1227,14 @@ div.float_left {
 .login {
   position: absolute;
   width: 400px;
-  height: 320px;
   left: 50%;
   margin-left: -200px;
-  top: 50%;
-  margin-top: -200px;
+  top: 15%;
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
   border-radius: 10px;
   border: 2px solid #ccc;
+  padding-bottom: 10px;
 }
 
   .login .login-content {
@@ -1241,7 +1242,6 @@ div.float_left {
   }
 
     .login .login-content label {
-      display: inline-block;
       width: 100px;
     }
 
@@ -1529,16 +1529,11 @@ tfoot tr td.FilterTable_sorting_by_reverse
   padding-left: 1.3em;
 }
 
-
-th, td, tfoot tr td{
-  padding-left: 5px;
-}
-
 tfoot tr td {
   vertical-align: middle;
 }
 
-td a{
+td a {
   text-transform: none;
 }
 
