@@ -68,6 +68,7 @@ h4 {
 input, textarea {
   min-width: 100px;
   font-family: "Lucida Grande", Verdana, Arial, sans-serif;
+  font-size: 1.0em;
   background: #fff;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
@@ -107,6 +108,7 @@ input[type=button], input[type=submit], button, .button, .button_2 {
   color: #147;
   font-weight: bold;
   padding: 6px 24px;
+  font-size: 0.9em;
   text-decoration: none;
   text-shadow: 1px 1px 0px #ffffff;
   border-color: #a7b8be;
@@ -119,6 +121,7 @@ input[type=button]:hover, input[type=submit]:hover, button:hover, .button:hover 
   color: #147;  /* override for a.button */
 }
 input[type=button]:active, input[type=submit]:active, button:active, .button:active {
+  outline: none;
   position: relative;
   top: 1px;
 }
@@ -275,16 +278,16 @@ legend {
 
 /* Title Bar*/
 
-#title_bar{
-   padding-left: 15px;
+#title_bar {
+  padding-left: 15px;
 }
 
-#title_bar h1, .title_bar h1{
-   font-size: 24px;
-   color: #464646;
+#title_bar h1, .title_bar h1 {
+  font-size: 24px;
+  color: #464646;
 }
 
-#title_bar input, #title_bar a, .sub_title a{
+#title_bar input, #title_bar a, .sub_title a {
   background: none;
   color: #003399;
   border: none;
@@ -296,7 +299,7 @@ legend {
   cursor: pointer;
   }
 
-#title_bar span.menu_bar{
+#title_bar span.menu_bar {
   background: none;
   color: #464646;
   border: none;
