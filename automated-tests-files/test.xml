@@ -1,41 +1,10 @@
 <test>
-  <assignment-id>2</assignment-id>
-  <group-id>4</group-id>
-  <pretest>
-    <filename>c-style-checker</filename>
-    <result>
-      <status>pass</status>
-      <marks-earned>4/4</marks-earned>
-      <test-input>student-file.c</test-input>
-      <expected-output></expected-output>
-      <actual-output></actual-output>
-    </result>
-  </pretest>
-  <build>
-    <filename>gcc</filename>
-    <result>
-      <status>normal</status>
-      <actual-output></actual-output>
-    </result>
-  </build>
-  <test-script>
-    <filename>test1.c</filename>
-    <result>
-      <status>fail</status>
-      <marks-earned>2</marks-earned>
-      <test-input>student-file.c</test-input>
-      <expected-output>All tests pass!</expected-output>
-      <actual-output>3 Failures</actual-output>
-    </result>
-  </test-script>
-  <test-script>
-    <filename>test2.c</filename>
-    <result>
-      <status>pass</status>
-      <marks-earned>4</marks-earned>
-      <test-input>student-file.c</test-input>
-      <expected-output>All tests pass!</expected-output>
-      <actual-output>All tests pass!</actual-output>
-    </result>
-  </test-script>
+  <assignment_id>2</assignment_id>
+  <group_id>4</group_id>
+  <test_script_id>1</test_script_id>
+  <result>fail</result>
+  <marks_earned>3</marks_earned>
+  <input>hello world!</input>
+  <expected_output>Hello World!</expected_output>
+  <actual_output>hELLO wORLD!</actual_output>
 </test>

@@ -40,9 +40,9 @@ module AutomatedTestsHelper
     #code stub
     return true
   end
-  
+
   # From a list of test servers, choose the next available server
-  # using round-robin. Keep looking for available server until 
+  # using round-robin. Keep looking for available server until
   # one is found.
   # TODO: set timeout and return error if no server is available
   def choose_test_server()
@@ -53,34 +53,34 @@ module AutomatedTestsHelper
   # Launch the test on the test server by scp files to the server
   # and run the script.
   # This function returns two values: first one is the output from
-  # stdout or stderr, depending on whether the execution passed or 
+  # stdout or stderr, depending on whether the execution passed or
   # had error; the second one is a boolean variable, true => execution
-  # passeed, false => error occurred. 
+  # passeed, false => error occurred.
   def launch_test(server_id, group, assignment)
     # Get src_dir
     src_dir = "${HOME}/workspace_aptana/Markus/data/dev/automated_tests/group_0017/a7"
-    
+
     # Get test_dir
     test_dir = "${HOME}/workspace_aptana/Markus/data/dev/automated_tests/a7"
     #test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
-    
+
     # Get the account and address of the server
     server_account = "localtest"
     server_address = "scspc328.cs.uwaterloo.ca"
-    
+
     # Get the directory and name of the script
     script_dir = "/home/#{server_account}/testrunner"
     script_name = "run.sh"
-    
+
     # Get dest_dir of the files
     dest_dir = "/home/#{server_account}/testrunner/all"
-    
+
     # Remove everything in dest_dir
     stdout, stderr, status = Open3.capture3("ssh #{server_account}@#{server_address} rm -rf #{dest_dir}")
     if !(status.success?)
       return [stderr, false]
     end
-    
+
     # Securely copy files to dest_dir
     stdout, stderr, status = Open3.capture3("scp -p -r #{src_dir} #{server_account}@#{server_address}:#{dest_dir}")
     if !(status.success?)
@@ -90,7 +90,7 @@ module AutomatedTestsHelper
     if !(status.success?)
       return [stderr, false]
     end
-    
+
     # Run script
     stdout, stderr, status = Open3.capture3("ssh #{server_account}@#{server_address} #{script_dir}/#{script_name}")
     if !(status.success?)
@@ -98,7 +98,7 @@ module AutomatedTestsHelper
     else
       return [stdout, true]
     end
-    
+
   end
 
   def result_available?()
@@ -112,41 +112,74 @@ module AutomatedTestsHelper
     doc = parser.parse
 
     # get assignment_id
-    assignment_node = doc.find_first("/test/assignment-id")
+    assignment_node = doc.find_first("/test/assignment_id")
     if not assignment_node or assignment_node.empty?
       raise "Test result does not have assignment id"
     else
       test.assignment_id = assignment_node.content
     end
 
+    # get test_script_id
+    test_script_node = doc.find_first("/test/test_script_id")
+    if not test_script_node or test_script_node.empty?
+      raise "Test result does not have test_script id"
+    else
+      test.test_script_id = test_script_node.content
+    end
+
     # get group id
-    group_id_node = doc.find_first("/test/group-id")
+    group_id_node = doc.find_first("/test/group_id")
     if not group_id_node or group_id_node.empty?
       raise "Test result has no group id"
     else
       test.group_id = group_id_node.content
     end
 
-    # get pretests
-    pretest_results = ""
-    doc.find("/test/pretest").each { |pretest_node|
-      pretest_results += pretest_node.to_s
-    }
-    test.pretest_result = pretest_results
+    # get result: pass, fail, or error
+    result_node = doc.find_first("/test/result")
+    if not result_node or result_node.empty?
+      raise "Test result has no result"
+    else
+      if result_node.content != "pass" and result_node.content != "fail" and
+         result_node.content != "error"
+        raise "invalid value for test result. Should be pass, fail or error"
+      else
+        test.result = result_node.content
+      end
+    end
 
-    # get builds
-    build_results = ""
-    doc.find("/test/build").each { |build_node|
-      build_results += build_node.to_s
-    }
-    test.build_result = build_results
+    # get markus earned
+    marks_earned_node = doc.find_first("/test/marks_earned")
+    if not marks_earned_node or marks_earned_node.empty?
+      raise "Test result has no marks earned"
+    else
+      test.marks_earned = marks_earned_node.content
+    end
 
-    # get tests
-    test_script_results = ""
-    doc.find("/test/test-script").each { |test_script_node|
-      test_script_results += test_script_node.to_s
-    }
-    test.test_script_result = test_script_results
+    # get input
+    input_node = doc.find_first("/test/input")
+    if not input_node or input_node.empty?
+      raise "Test result has no input"
+    else
+      test.input = input_node.content
+    end
+
+    # get expected_output
+    expected_output_node = doc.find_first("/test/expected_output")
+    if not expected_output_node or expected_output_node.empty?
+      raise "Test result has no expected_output"
+    else
+      test.expected_output = expected_output_node.content
+    end
+
+    # get actual_output
+    actual_output_node = doc.find_first("/test/actual_output")
+    if not actual_output_node or actual_output_node.empty?
+      raise "Test result has no actual_output"
+    else
+      test.actual_output = actual_output_node.content
+    end
+
     test.save
   end
 
@@ -232,7 +265,7 @@ module AutomatedTestsHelper
       assignment.reload
     end
   end
-  
+
   # Process Testing Framework form
   # - Process new and updated test files (additional validation to be done at the model level)
   def process_test_form(assignment, params)
