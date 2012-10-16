@@ -179,7 +179,7 @@ class GradersController < ApplicationController
          #if there is a global action than there should be a group selected
           if params[:global_actions]
               @global_action_warning = I18n.t("assignment.group.select_a_group")
-              render :partial => "shared/global_action_warning.rjs"
+			  render :partial => "shared/global_action_warning.rjs"
               return
           end
         end
