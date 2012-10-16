@@ -75,7 +75,7 @@
 
 <% # Display grade entry forms in the dropdown menu
 %>
-<% GradeEntryForm.find(:all, :order => 'short_identifier ASC').each do |grade_entry_form| %>
+<% GradeEntryForm.all(:order => 'short_identifier ASC').each do |grade_entry_form| %>
   <% if grade_entry_form != @grade_entry_form %>
     <% if @current_user.admin? %>
       <li class="level2">
