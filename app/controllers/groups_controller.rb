@@ -266,7 +266,7 @@ class GroupsController < ApplicationController
 	 #if there is a global action than there should be a group selected
          if params[:global_actions]
                @global_action_warning = I18n.t("assignment.group.select_a_group")
-               render :partial => "groups/global_action_warning.rjs"
+               render :partial => "shared/global_action_warning.rjs"
                return
          end
       #Just do nothing
@@ -297,7 +297,7 @@ class GroupsController < ApplicationController
           return
         else
           @global_action_warning = I18n.t("assignment.group.select_a_student")
-          render :partial => "groups/global_action_warning.rjs"
+          render :partial => "shared/global_action_warning.rjs"
           return
         end
       when "unassign"
