@@ -135,6 +135,7 @@ en:
             grace_day_over_limit: "You have assigned one or more students who has less grace period credits than the amount already used by group %{group} for this assignment"
             select_a_group: "Select a group"
             select_a_student: "Select a student"
+            select_a_grader: "Select a grader"
             select_only_one_group: "You may only assign each student to one group."
             deleted: "Group has been deleted"
             work_in_groups:  "Students can work in groups"
