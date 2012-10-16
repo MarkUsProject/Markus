@@ -92,7 +92,7 @@ input::-moz-focus-inner, button::-moz-focus-inner, .button::-moz-focus-inner {
   border: 0;    /* remove the dotted inner outline in firefox */
 }
 
-input[type=button], input[type=submit], button, .button, .button_2 {
+input[type=button][type=reset], input[type=submit], input[type=reset], button, .button {
   -moz-box-shadow: inset 0px 1px 0px 0px #ffffff;
   -webkit-box-shadow: inset 0px 1px 0px 0px #ffffff;
   box-shadow: inset 0px 1px 0px 0px #ffffff;
@@ -114,18 +114,18 @@ input[type=button], input[type=submit], button, .button, .button_2 {
   border-color: #a7b8be;
   cursor: default;
 }
-input[type=button]:hover, input[type=submit]:hover, button:hover, .button:hover {
+input[type=button]:hover, input[type=submit]:hover, input[type=reset]:hover, button:hover, .button:hover {
   background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #dfdfdf), color-stop(1, #ededed) );
   background: -moz-linear-gradient( center top, #dfdfdf 5%, #ededed 100% );
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed');
   background-color: #dfdfdf;
   color: #147;  /* override for a.button */
 }
-input[type=button]:focus, input[type=submit]:focus, button:focus, .button:focus {
+input[type=button]:focus, input[type=submit]:focus, input[type=reset]:focus, button:focus, .button:focus {
   outline: none;
   border-color: #77989e;
 }
-input[type=button]:active, input[type=submit]:active, button:active, .button:active {
+input[type=button]:active, input[type=submit]:active, input[type=reset]:active, button:active, .button:active {
   outline: none;
   position: relative;
   border-color: #77989e;
@@ -582,29 +582,6 @@ span#choose_an_assignment {
 
 .inline_checkbox {
 	  min-width: 0px;
-}
-
-.button_2 {
-   margin-top: 0px;
-   margin-bottom: 10px;
-   padding-bottom: 50px;
-}
-
-.link_button {
-  position: relative;
-  top: 11px;
-  min-width: 100px;
-  background: #fff;
-  -moz-border-radius: 8px;
-  -webkit-border-radius: 8px;
-  border-radius: 8px;
-  border: 2px solid #ccc;
-  text-align: center;
-  font-weight: bold;
-  color: #464646;
-  padding: 4px 25px;
-  margin: 5px;
-  font-size: 0.85em;
 }
 
 .FilterTable_selectable, .inline_checkbox,
