@@ -960,7 +960,7 @@ en:
 
     notes:
         note_on: "%{user_name} on <b>%{display_for}</b>"
-        add_new: "New"
+        add_new: "Add a new note"
         existing: "Existing Notes"
         comment: "Your comment"
         save: "Save Note"
