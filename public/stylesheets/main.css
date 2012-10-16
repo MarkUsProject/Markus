@@ -1915,11 +1915,6 @@ fieldset.period{
 	width: 500px;
 }
 
-.grace_periods_link, .penalty_decay_periods_lin, .penalty_periods_link{
-  margin: 2em;
-  font-size: 0.9em;
-}
-
 #rubric_viewer #criteria_pane{
   width: 100%;
   margin: 0px;

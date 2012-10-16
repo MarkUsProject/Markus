@@ -270,7 +270,7 @@
                     t("submission_rules.grace_period_submission_rule.form_description"),
                     :class => "radio_label" %>
 
-      <span class="grace_periods_link">
+      <span>
         <%= add_grace_period_link(
                 t("submission_rules.grace_period_submission_rule.add_grace_period"),
                 rule,
@@ -300,7 +300,7 @@
       <%= label_tag "penalty_decay_period_submission_rule",
                     t("submission_rules.penalty_decay_period_submission_rule.form_description"),
                     :class => "radio_label" %>
-      <span class="penalty_decay_period_link">
+      <span>
         <%= add_penalty_decay_period_link(
               t("submission_rules.penalty_decay_period_submission_rule.add_penalty_decay"),
               rule,
@@ -330,7 +330,7 @@
       <%= label_tag "penalty_period_submission_rule",
                     t("submission_rules.penalty_period_submission_rule.form_description"),
                     :class => "radio_label" %>
-      <span class="penalty_periods_link">
+      <span>
         <%= add_penalty_period_link(t("submission_rules.penalty_period_submission_rule.add_penalty_period"),
                                     rule,
                                     "penalty_period_link") %>
