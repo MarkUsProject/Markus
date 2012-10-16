@@ -12,9 +12,15 @@ class AutomatedTestsController < ApplicationController
   # Index is called when a test run is requested
   def index
     
+    result_id = params[:result]
+    @result = Result.find(result_id)
+    @grouping = @result.submission.grouping
+    
+    #system ("PIDFILE=./resque.pid BACKGROUND=yes QUEUE=test_waiting_list rake resque:work")
+    
     # JUST FOR TESTING: send 10 test requests to Resque
     for i in 1..10
-      self.async_test_request()
+      self.async_test_request(result_id)
       sleep 3
     end
     
@@ -26,6 +32,7 @@ class AutomatedTestsController < ApplicationController
     @grouping = @result.submission.grouping
     @group = @grouping.group
     @test_result_files = @submission.test_results
+    
     if can_run_test?
       export_repository(@group, File.join(MarkusConfigurator.markus_config_automated_tests_repository, @group.repo_name))
       copy_ant_files(@assignment, File.join(MarkusConfigurator.markus_config_automated_tests_repository, @group.repo_name))
@@ -83,7 +90,14 @@ class AutomatedTestsController < ApplicationController
   # This function should only be called by self.perform()
   # Pick a server, launch the Test Runner and wait for the result
   # Then store the result into the database
-  def perform
+  def perform(result_id)
+    
+    @result = Result.find(result_id)
+    @assignment = @result.submission.assignment
+    @submission = @result.submission
+    @grouping = @result.submission.grouping
+    @group = @grouping.group
+    @test_result_files = @submission.test_results
     
     while true
       @test_server_id = choose_test_server()#@test_servers
@@ -96,21 +110,25 @@ class AutomatedTestsController < ApplicationController
     
     result, status = launch_test(@test_server_id, @group, @assignment)#there are more parameters...
 
+    #system("echo #{result} >> worker1.log")
     process_result(result)
     
   end
   
   # Perform a job for automated testing. This code is run by
   # the Resque workers - it should not be called from other functions.
-  def self.perform()
-    new().perform
+  def self.perform(result_id)
+    # After we enqueue the job to Resque, we wait for a Resque worker
+    # to pick up the job. It creates a new instance of the current class
+    # and calls perform, where we actually do our work. 
+    new().perform(result_id)
   end
 
   # Request an automated test. Ask Resque to enqueue a job.
-  def async_test_request()
+  def async_test_request(result_id)
     if has_permission?
       if files_available? 
-        Resque.enqueue(AutomatedTestsController)
+        Resque.enqueue(AutomatedTestsController, result_id)
       else
         #TODO: error message
       end
