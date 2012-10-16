@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121004015833) do
+ActiveRecord::Schema.define(:version => 20121016212439) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -95,16 +94,6 @@ ActiveRecord::Schema.define(:version => 20121004015833) do
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true
-
-  create_table "automated_tests", :force => true do |t|
-    t.integer  "assignment_id"
-    t.integer  "group_id"
-    t.text     "pretest_result"
-    t.text     "build_result"
-    t.text     "test_script_result"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "criterion_ta_associations", :force => true do |t|
     t.integer  "ta_id"
@@ -357,29 +346,35 @@ ActiveRecord::Schema.define(:version => 20121004015833) do
 
   add_index "submissions", ["grouping_id"], :name => "index_submissions_on_grouping_id"
 
-  create_table "test_files", :force => true do |t|
-    t.string   "filename"
-    t.integer  "assignment_id"
-    t.string   "filetype"
-    t.boolean  "is_private"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+  create_table "test_runs", :force => true do |t|
+    t.integer "assignment_id"
+    t.integer "test_script_id"
+    t.integer "group_id"
+    t.string  "result"
+    t.integer "marks_earned"
+    t.text    "input"
+    t.text    "actual_output"
+    t.text    "expected_output"
   end
 
-  add_index "test_files", ["assignment_id", "filename"], :name => "index_test_files_on_assignment_id_and_filename", :unique => true
-
-  create_table "test_results", :force => true do |t|
-    t.string   "filename"
-    t.text     "file_content"
-    t.integer  "submission_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "status"
-    t.integer  "user_id"
+  create_table "test_scripts", :force => true do |t|
+    t.integer "assignment_id"
+    t.float   "seq_num"
+    t.string  "name"
+    t.string  "script_name"
+    t.text    "description"
+    t.integer "max_marks"
+    t.boolean "run_on_submission"
+    t.boolean "run_on_request"
+    t.boolean "uses_token"
+    t.boolean "halts_testing"
+    t.boolean "display_description"
+    t.boolean "display_run_status"
+    t.boolean "display_marks_earned"
+    t.boolean "display_input"
+    t.boolean "display_expected_output"
+    t.boolean "display_actual_output"
   end
-
-  add_index "test_results", ["filename"], :name => "index_test_results_on_filename"
-  add_index "test_results", ["submission_id"], :name => "index_test_results_on_submission_id"
 
   create_table "tokens", :force => true do |t|
     t.integer "grouping_id"
