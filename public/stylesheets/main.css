@@ -92,7 +92,7 @@ input::-moz-focus-inner, button::-moz-focus-inner, .button::-moz-focus-inner {
   border: 0;    /* remove the dotted inner outline in firefox */
 }
 
-input[type=button][type=reset], input[type=submit], input[type=reset], button, .button {
+input[type=button], input[type=submit], input[type=reset], button, .button {
   -moz-box-shadow: inset 0px 1px 0px 0px #ffffff;
   -webkit-box-shadow: inset 0px 1px 0px 0px #ffffff;
   box-shadow: inset 0px 1px 0px 0px #ffffff;
