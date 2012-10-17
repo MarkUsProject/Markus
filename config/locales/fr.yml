@@ -373,6 +373,8 @@ fr:
       replace:              "Remplace"
       delete:               "Supprimer"
       can_begin_grading:    "Peut être évaluée"
+      student_name:         "Nom de l'étudiant"
+      group_members:  "Membres de groupe"
 
     grade_entry_forms:
       blank_field: "doit être rempli(e)"
@@ -714,6 +716,8 @@ fr:
         first_name:     "Prénom"
         last_name:      "Nom"
         full_name:      "Nom complet"
+        student_name:   "Nom de l'étudiant"
+        group_members:  "Membres de groupe"
         user_type:      "Type"
         grace_credits:  "Crédits de grâce"
         section:        "Section"

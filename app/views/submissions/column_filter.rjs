@@ -1,0 +1,1 @@
+page.replace_html 'column_filter_dialog', :partial => 'column_filter_content'

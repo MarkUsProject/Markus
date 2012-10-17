@@ -1,0 +1,9 @@
+session[:submission_col_dictionary].each do |key, value|
+  page.select('#s' << key.to_s()).each do |elem|
+    if !value
+      elem.hide
+    else
+      elem.show
+    end
+  end
+end
