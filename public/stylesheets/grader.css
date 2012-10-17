@@ -481,6 +481,14 @@ ul#annotation_summary_list {
   font-size:12px;
  }
 
+ #extra_marks_bonus{
+  padding-right:50px;
+ }
+
+ #extra_marks_deducted{
+  padding-right:50px;
+ }
+
   .mark_summary_holder {
     border-bottom: 1px solid #DADADA;
     background: #FBFBFB;
