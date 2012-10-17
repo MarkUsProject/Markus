@@ -228,7 +228,7 @@ Markus::Application.routes.draw do
     member do
       get 'grades'
       get 'g_table_paginate'
-	  post 'g_table_paginate'
+      post 'g_table_paginate'
       get 'csv_download'
       post 'csv_upload'
       post 'update_grade'

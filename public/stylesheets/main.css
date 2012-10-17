@@ -956,6 +956,13 @@ input#extra_mark_description{
    margin-bottom: 15px;
 }
 
+#notes_dialog .error {
+   padding-top: 0;
+   padding-right: 1em;
+   padding-bottom: 0;
+   padding-left: 3em;
+}
+
 #assignment_group_use_dialog, #add_member_dialog, #invite_dialog {
    background: white;
    padding: 0 10px 0 10px;
@@ -2052,4 +2059,29 @@ pre#test_result_content {
 	margin: 2px;
 	padding: 2px;
 	min-width: 0px;
+}
+
+#login #login-content br {
+	clear: both !important;
+}
+
+#login #login-content #user_login, #login #login-content #user_password {
+	float: right !important;
+}
+
+#login #login-content input.indent_button {
+	display: block;
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
+
+#login #login-content label {
+	margin-left: 0px !important;
+	min-width: 90px !important;
+	width: 90px !important;
+}
+
+#login #login-content #login_form {
+	margin-left: 30px !important;
+	margin-right: 30px !important;
 }
