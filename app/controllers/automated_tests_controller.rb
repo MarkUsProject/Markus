@@ -8,22 +8,27 @@ class AutomatedTestsController < ApplicationController
   # it is enqueued and it is waiting for execution. Resque manages this queue.
   @queue = :test_waiting_list
 
-  # TODO: REWRITE THIS FOR THE NEW DESIGN
   # Index is called when a test run is requested
   def index
     
     result_id = params[:result]
     @result = Result.find(result_id)
+    @assignment = @result.submission.assignment
+    @submission = @result.submission
     @grouping = @result.submission.grouping
+    @group = @grouping.group
+    @test_result_files = @submission.test_results
     
-    #system ("PIDFILE=./resque.pid BACKGROUND=yes QUEUE=test_waiting_list rake resque:work")
-    
-    # JUST FOR TESTING: send 10 test requests to Resque
-    for i in 1..10
+    # JUST FOR TESTING: send 5 test requests to Resque
+    for i in 1..5
       self.async_test_request(result_id)
       sleep 3
     end
     
+    render :test_replace,
+           :locals => {:test_result_files => @test_result_files,
+                       :result => @result}
+
 =begin
     result_id = params[:result]
     @result = Result.find(result_id)

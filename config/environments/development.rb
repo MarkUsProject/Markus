@@ -244,7 +244,7 @@ Markus::Application.configure do
   # The path is relative to the directory where the test runner script is.
   # All the files in this directory will be deleted before every test run.
   # Hence, this shouldn't be empty, i.e. the files should not be in the same
-  # directory as the test runner script. All the files in this 
+  # directory as the test runner script.
   TEST_RUNNER_FILE_PATH = 'all/'
 
   ###################################################################
