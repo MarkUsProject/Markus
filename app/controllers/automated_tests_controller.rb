@@ -82,13 +82,14 @@ class AutomatedTestsController < ApplicationController
      end
   end
 
-  # TODO: REWRITE THIS FOR THE NEW DESIGN
   # Manage is called when the Test Framework UI is loaded
   def manage
     @assignment = Assignment.find(params[:assignment_id])
 
-    # Create ant test files required by Testing Framework
-    create_ant_test_files(@assignment)
+    # Create test scripts for testing if no script is available
+    if @assignment && @assignment.test_scirpts.empty?
+      #create_test_scripts(@assignment)
+    end
     
   end
 

@@ -183,6 +183,23 @@ module AutomatedTestsHelper
     test.save
   end
 
+  # Create a repository for the test scripts, and a placeholder script
+  def create_test_scripts(assignment)
+    
+    script_placeholder = TestScript.new
+    script_placeholder.assignment = assignment
+    # more..
+    script_paceholder.save(:validate => false)
+
+    # Setup Testing Framework repository
+    test_dir = File.join(
+                MarkusConfigurator.markus_config_automated_tests_repository,
+                assignment.short_identifier)
+    FileUtils.makedirs(test_dir)
+
+    assignment.reload
+  end
+
   #######################################################################
   # TODO: EVERYTHING BELOW THIS POINT IS OLD AND NEEDED TO BE REWRITTEN #
   #######################################################################
