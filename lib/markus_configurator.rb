@@ -161,6 +161,7 @@ module MarkusConfigurator
       return false
     end
   end
+  
   ######################################
   # MarkusLogger configuration
   ######################################
@@ -228,4 +229,48 @@ module MarkusConfigurator
     end
   end
 
+  ########################################
+  # Automated Testing Configuration
+  ########################################
+  
+  def markus_num_test_servers
+    if defined? NUMBER_TEST_SERVERS
+      return NUMBER_TEST_SERVERS
+    else
+      return 1
+    end
+  end
+  
+  def markus_max_num_of_running_tests
+    if defined? MAX_NUMBER_OF_RUNNING_TESTS
+      return MAX_NUMBER_OF_RUNNING_TESTS
+    else
+      return 1
+    end
+  end
+  
+  def markus_test_server_hosts
+    if defined? TEST_SERVER_HOSTS
+      return TEST_SERVER_HOSTS
+    else
+      return 'testserver@testserver.ca'
+    end
+  end
+  
+  def markus_test_runner_script_name
+    if defined? TEST_RUNNER_NAME
+      return TEST_RUNNER_NAME
+    else
+      return 'testrunner/testrunner.rb'
+    end
+  end
+  
+  def markus_test_run_directory
+    if defined? TEST_RUN_DIRECTORY
+      return TEST_RUN_DIRECTORY
+    else
+      return 'testrunner/test/'
+    end
+  end
+  
 end
