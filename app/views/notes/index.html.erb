@@ -1,29 +1,29 @@
-<div id="title_bar"><h1><%=I18n.t('notes.title')  %>
-<%
-#if there are no noteables,we can't add notes, so do not show Add New link.
-%>
-  <% if @noteables_available %>
-    <%= link_to I18n.t('notes.add_new'), :action => 'new' %></h1>
-	<% else %>
-    </h1><p><%= I18n.t('notes.new.no_noteables') %></p>
-	<% end %>
-</div>
+<div id="title_bar"><h1><%=I18n.t('notes.title')  %></h1></div>
 
 <div class="wrapLeft">
 
-	<% # if there are errors have the error message display %>
-      <% if flash[:error] %>
-        <div class="error">
-          <%= h(flash[:error]) %>
-        </div>
-      <% end %>
+<% # if there are errors have the error message display %>
+  <% if flash[:error] %>
+    <div class="error">
+      <%= h(flash[:error]) %>
+    </div>
+  <% end %>
 
-	<% # if there are success messages to display %>
-      <% if flash[:success] -%>
-        <div class="success">
-          <%= h(flash[:success]) %>
-        </div>
-      <% end %>
+<% # if there are success messages to display %>
+  <% if flash[:success] -%>
+    <div class="success">
+      <%= h(flash[:success]) %>
+    </div>
+  <% end %>
+
+  <%
+  #if there are no noteables,we can't add notes, so do not show Add New link.
+  %>
+  <% if @noteables_available %>
+  <%= link_to I18n.t('notes.add_new'), { :action => 'new' }, :class => 'button' %>
+  <% else %>
+  <p><%= I18n.t('notes.new.no_noteables') %></p>
+  <% end %>
 
 <table id="notes">
 <% for note in @notes %>
@@ -38,17 +38,19 @@
 		<td class="note">
 			<% if note.user_can_modify?(@current_user) -%>
 				<%= button_to I18n.t('edit'),
-				              edit_note_path(note.id),
-				              :method => 'get',
-				              :html => {:class => 'edit'} %>
+	              edit_note_path(note.id),
+	              :method => 'get',
+	              :html => {:class => 'edit'},
+	              :class => 'thin-button' %>
 				<%= button_to I18n.t('delete'),
-				              { :action => 'destroy', :id => note.id },
-				              :html =>
-				              { :class => 'delete',
-				                :title => I18n.t('notes.delete.link_title') },
-		                      :confirm => I18n.t('notes.delete.link_confirm'),
-		                      :method => 'delete',
-		                      :remote => true %>
+		          { :action => 'destroy', :id => note.id },
+		          :html =>
+		          { :class => 'delete',
+		            :title => I18n.t('notes.delete.link_title') },
+		          :confirm => I18n.t('notes.delete.link_confirm'),
+		          :method => 'delete',
+		          :remote => true,
+		          :class => 'thin-button' %>
 			<% else -%>
 				&nbsp;
 			<% end -%>
