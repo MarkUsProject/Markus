@@ -1,29 +1,33 @@
 <%= javascript_include_tag 'application.js' -%>
 <%= javascript_include_tag 'prototype.js' -%>
 <%= javascript_include_tag 'rails.js' -%>
-<div id="login">
-  <div id="login-greeting"><%= I18n.t(:welcome_to) %></div>
+<div class="login">
+  <div class="login-greeting"><%= I18n.t(:welcome_to) %></div>
 
-  <div id="login-image">
+  <div class="login-image">
     <%= image_tag("markus_logo_big.png", :alt => "[Logo] Markus Beta") %>
   </div>
 
-  <div id="login-course"><%= MarkusConfigurator.markus_config_course_name %></div>
+  <div class="login-course"><%= MarkusConfigurator.markus_config_course_name %></div>
 
   <% if flash[:login_notice] -%>
     <div class="error"><%=h flash[:login_notice] %></div>
   <% end -%>
-  <div id="login-content">
+  <div class="login-content">
     <!-- login form -->
     <%= form_tag({ :action => 'login', :id => nil }, :id => 'login_form') do %>
 
-        <%= label_tag 'user_login', I18n.t(:login) -%>
-        <%= text_field_tag 'user_login', nil, :tabindex => 10 %><br />
+      <%= label_tag 'user_login', I18n.t(:login) + ':' -%>
+      <%= text_field_tag 'user_login', nil, :tabindex => 10 %>
+      <br />
+      
+      <%= label_tag 'user_password', I18n.t(:password) + ':' %>
+      <%= password_field_tag 'user_password', nil, :tabindex => 20 %>
+      <br />
 
-        <%= label_tag 'user_password', I18n.t(:password) %>
-        <%= password_field_tag 'user_password', nil, :tabindex => 20 %><br />
-
-        <%= submit_tag I18n.t(:log_in), :disable_with => I18n.t(:logging_in), :tabindex => 100, :class => 'button indent_button'%>
+      <div class="submit">
+        <%= submit_tag I18n.t(:log_in), :disable_with => I18n.t(:logging_in), :tabindex => 100 %>
+      </div>
 
     <% end %>
   </div>
