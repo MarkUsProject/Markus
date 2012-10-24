@@ -1,3 +1,4 @@
+<%= javascript_include_tag "notes" %>
 <%= render :partial => "shared/navigation_warning.js.erb" %>
 
 <div id="title_bar"><h1><%= I18n.t('notes.new.title') %></h1></div>
@@ -12,13 +13,6 @@
            options_for_select(
               Note::NOTEABLES.map {|item| [I18n.t('notes.noteables.' + item),
                  item]}) %>
-        <%= observe_field :noteable_type,
-                          :on => 'onchange',
-                          :onchange => "set_onbeforeunload(true);",
-                          :url => noteable_object_selector_notes_path(),
-                          :with => "noteable_type",
-                          :before => "$('loading_selector').show()",
-                          :success => "$('loading_selector').hide()" %>
         <span id="loading_selector" style="display:none">
           <%= image_tag('spinner.gif') %> <%= I18n.t('notes.new.loading_selector') %>
         </span>
