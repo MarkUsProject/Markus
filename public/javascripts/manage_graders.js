@@ -1,3 +1,26 @@
+/**
+ * page specific event handlers for grader/index.html.erb
+ */
+document.observe("dom:loaded", function() {
+
+  new Form.Element.EventObserver('assign_criteria', function(element, value) {
+
+    value = value || false;
+
+    params = {
+      'value': value,
+      'authenticity_token': AUTH_TOKEN
+    }
+
+    new Ajax.Request('/en/assignments/1/graders/set_assign_criteria?id=1', {
+      asynchronous: true,
+      evalScripts: true,
+      parameters: params
+    })
+  })
+
+});
+
 function populate(json_data) {
   groupings_table.populate(json_data);
   groupings_table.render();

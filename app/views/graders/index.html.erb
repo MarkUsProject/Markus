@@ -176,9 +176,6 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
               :class => 'inline_checkbox' %>
             <%= label_tag 'assign_criteria', I18n.t('graders.assign_to_criteria'),
               :class => 'bold_inline_label'%>
-            <%= observe_field 'assign_criteria',
-              :url => {:action => 'set_assign_criteria', :id => @assignment.id},
-              :on => 'changed', :with => "value" %>
 
             <table class="criteria" id="criteria">
             </table>

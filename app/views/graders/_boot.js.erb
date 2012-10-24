@@ -229,7 +229,9 @@ document.observe("dom:loaded", function() {
     new Ajax.Request('<%= populate_criteria_assignment_graders_path(@assignment) %>', 
       {
         asynchronous: true, 
-        evalScripts: true
+        evalScripts: true,
+        onComplete: function(request){$('loading_list').hide()},
+        parameters: 'authenticity_token=' + AUTH_TOKEN
       }
     );
 
