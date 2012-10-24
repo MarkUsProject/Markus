@@ -58,10 +58,6 @@
                                 :onclick => "set_onbeforeunload(true);" ) %>
         </div>
 
-        <%= observe_field "assignment_section_due_dates_type",
-          :function => "toggle_sections_due_date(
-                        $F('assignment_section_due_dates_type' ));" %>
-
         <div id="section_due_dates_information" style="<%= 'display: none' unless @assignment.section_due_dates_type %>">
           <p class="information">
             <%= raw t("assignment.section_due_dates_info") %>
@@ -96,9 +92,6 @@
 
       <%# TODO The following code seriously needs some clean up  !!!!  %>
 
-      <%= observe_field "assignment_due_date",
-                       :function => "update_due_date(
-                                        $F('assignment_due_date'));" %>
       <%= t(:iso_due_date_format_example) %><br />
 
       <%= raw( f.label :repository_folder, t(:repository_folder).html_safe ) %>
@@ -379,8 +372,7 @@
                                   :year_range => 0.years.ago..1.years.from_now,
                                   :id => "remark_due_date",
                                   :onchange => "set_onbeforeunload(true);"  } ) %>
-      <%= observe_field "remark_due_date",
-                        :function => "check_due_date($F('remark_due_date'));" %>
+
       <%=t(:iso_due_date_format_example)%><br />
       <%= raw( f.label("remark_message",
                   I18n.t("assignment.remark.message"),
