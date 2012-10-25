@@ -263,22 +263,29 @@ class SubmissionsController < ApplicationController
 
   def update_column_filter
 
-    #fix this to use the parameter from the popup
-
-   session[:submission_col_dictionary] = { :Col1 => params[:col1] == "yes", :Col2 => params[:col2] == "yes", :Col3 => params[:col3] == "yes", :Col4 => params[:col4] == "yes", :Col5 => params[:col5] == "yes", :Col6 => params[:col6] == "yes", :Col7 => params[:col7] == "yes", :Col8 => params[:col8] == "yes", :Col9 => params[:col9] == "yes"}
-
-
-    #render :template => "update_column_filter", locals => { session[:submission_col_dictionary] => session[:submission_col_dictionary] }
+    if request.post?
+      session[:submission_col_dictionary] = { :Col1 => params[:col1] == "yes", 
+                                              :Col2 => params[:col2] == "yes", 
+                                              :Col3 => params[:col3] == "yes", 
+                                              :Col4 => params[:col4] == "yes", 
+                                              :Col5 => params[:col5] == "yes", 
+                                              :Col6 => params[:col6] == "yes", 
+                                              :Col7 => params[:col7] == "yes", 
+                                              :Col8 => params[:col8] == "yes", 
+                                              :Col9 => params[:col9] == "yes"}
+    end
+    
+    render :partial => "update_column_filter"
 
   end
 
   def browse
 
-if session[:submission_col_dictionary].nil?
-   session[:submission_col_dictionary] = { :Col1 => true, :Col2 => true, :Col3 => true, :Col4 => true, :Col5 => true, :Col6 => true, :Col7 => true, :Col8 => true, :Col9 => true}
-end
+    if session[:submission_col_dictionary].nil?
+       session[:submission_col_dictionary] = { :Col1 => true, :Col2 => true, :Col3 => true, :Col4 => true, :Col5 => true, :Col6 => true, :Col7 => true, :Col8 => true, :Col9 => true}
+    end
 
-   if current_user.ta?
+    if current_user.ta?
       params[:filter] = 'assigned'
     else
       if params[:filter] == nil or params[:filter].blank?
@@ -328,7 +335,7 @@ end
     if cookies[@c_sort_by].blank?
        cookies[@c_sort_by] = params[:sort_by]
     end
- 
+    
     @current_page = params[:page].to_i()
     @per_page = cookies[@c_per_page] 
     @filters = get_filters(S_TABLE_PARAMS)
@@ -336,6 +343,7 @@ end
     @desc = params[:desc]
     @filter = params[:filter]
     @sort_by = cookies[@c_sort_by]
+
   end
 
   def index

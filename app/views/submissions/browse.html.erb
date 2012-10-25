@@ -151,6 +151,10 @@
                       :desc => @desc } %>
       </tfoot>
     </table>
+    
+    <!-- Will run the "update_column_filter" rjs script by rendering it on load -->
+    <%= javascript_tag render( :partial => 'update_column_filter.rjs') %>
+	<% controller.response.content_type = Mime::HTML%>
 
 
     <div class="ap_nav_box">
@@ -195,6 +199,4 @@
       <div class="clear"></div>
     </div>
   </form>
-
-
 </div>
