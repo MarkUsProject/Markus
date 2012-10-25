@@ -160,7 +160,7 @@ Markus::Application.configure do
   # This setting configures if MarkUs is reading Subversion
   # repositories' permissions only OR is admin of the Subversion
   # repositories. In the latter case, it will write to
-  # $REPOSITORY_SVN_AUTHZ_FILE, otherwise it doesn't. Change this to
+  # REPOSITORY_SVN_AUTHZ_FILE, otherwise it doesn't. Change this to
   # 'false' if repositories are created by a third party.
   IS_REPOSITORY_ADMIN = true
 
@@ -220,31 +220,40 @@ Markus::Application.configure do
   # Automated Testing settings
   ###################################################################
   
-  # The number of test servers for running automated testing
-  NUMBER_TEST_SERVERS = 1
-  # The maximum number of tests running in parallel on one test machine
-  MAX_NUMBER_OF_RUNNING_TESTS = 1
+  # Automated Testing can only be used when this is set to true 
+  AUTOMATED_TESTS_ENGINE_ON = false
   
-  ###################################################################
-  # A list of space separated test servers, each has the format
-  # "#{server_account}@#{server_name}".
-  # The number of test servers in this string should match
-  # $NUMBER_TEST_SERVERS.
-  # SSH Login must be set up before running MarkUs, so that MarkUs
-  # can connect to all test servers without a password. 
-  TEST_SERVER_HOSTS = 'localtest@scspc328.cs.uwaterloo.ca'
+  # All automated testing settings are not defined unless
+  # AUTOMATED_TESTS_ENGINE_ON == true
+  if AUTOMATED_TESTS_ENGINE_ON
   
-  # The name and the path of the test runner script on the test server.
-  TEST_RUNNER_NAME = 'testrunner/testrunner.rb'
-  
-  ###################################################################
-  # The name and the path of the directory where the test runs.
-  # This directory will be destroyed and recreated in every test run.
-  # Then the test runner script along with all test files and source
-  # files will be copied to this directory, and the test runner
-  # script is executed.
-  TEST_RUN_DIRECTORY = 'testrunner/test/'
+    # The number of test servers for running automated testing
+    NUMBER_TEST_SERVERS = 1
+    # The maximum number of tests running in parallel on one test machine
+    MAX_NUMBER_OF_RUNNING_TESTS = 1
+    
+    ###################################################################
+    # A list of space separated test servers, each has the format
+    # "#{server_account}@#{server_name}".
+    # The number of test servers in this string should match
+    # $NUMBER_TEST_SERVERS.
+    # SSH Login must be set up before running MarkUs, so that MarkUs
+    # can connect to all test servers without a password. 
+    TEST_SERVER_HOSTS = 'username@testing.example.com'
+    
+    # The name and the path of the test runner script on the test server.
+    TEST_RUNNER_NAME = 'testrunner/testrunner.rb'
+    
+    ###################################################################
+    # The name and the path of the directory where the test runs.
+    # This directory will be destroyed and recreated in every test run.
+    # Then the test runner script along with all test files and source
+    # files will be copied to this directory, and the test runner
+    # script is executed.
+    TEST_RUN_DIRECTORY = 'testrunner/test/'
 
+  end
+  
   ###################################################################
   # END OF MarkUs SPECIFIC CONFIGURATION
   ###################################################################
