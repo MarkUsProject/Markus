@@ -35,7 +35,8 @@
       </p>
     </fieldset>
 
-    <%= f.submit I18n.t('save'), :onclick => "set_onbeforeunload(false);" %>
+    <%= f.submit I18n.t('save'), :onclick => "set_onbeforeunload(false);",
+    							:disable_with => I18n.t('working') %>
     <%= link_to I18n.t('cancel'), notes_path(), :class => "button" %>
   <% end %>
 </div>
