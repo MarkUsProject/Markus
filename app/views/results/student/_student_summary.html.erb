@@ -38,12 +38,12 @@
 
       <div>
         <div class="float_left"><strong><%= I18n.t("marker.marks.bonus_marks").html_safe %></strong></div>
-        <div class="float_left" id="extra_marks_bonus"><%= h(result.get_positive_extra_points) %></div>
+        <div class="float_right" id="extra_marks_bonus"><%= h(result.get_positive_extra_points) %></div>
       </div>
       <div class="clear"></div>
       <div>
         <div class="float_left"><strong><%= I18n.t("marker.marks.deducted_marks") %></strong></div>
-        <div class="float_left" id="extra_marks_deducted"><%= h(@result.get_negative_extra_points) %></div>
+        <div class="float_right" id="extra_marks_deducted"><%= h(@result.get_negative_extra_points) %></div>
       </div>
     </div>
 
