@@ -102,6 +102,12 @@ document.observe("dom:loaded", function(){
     </div>
   </div>
 
+
+  <div class="warning" id="global_action_warning" style="display: none; ">
+    <h3><%=h t("groups.warning") %></h3>
+    <div id="global_action_warning_msg"></div>
+  </div>
+
   <% # if there are errors have the error message display %>
   <% if flash[:error] || flash[:fail_notice] || flash[:invalid_lines] -%>
     <div class="error">

@@ -176,9 +176,12 @@ class GradersController < ApplicationController
           :include => [{:rubric_criteria => :criterion_ta_associations},
             {:flexible_criteria => :criterion_ta_associations}])
         if params[:groupings].nil? or params[:groupings].size ==  0
-      #don't do anything if no groupings
-          render :nothing => true
-          return
+         #if there is a global action than there should be a group selected
+          if params[:global_actions]
+              @global_action_warning = I18n.t("assignment.group.select_a_group")
+              render :partial => "shared/global_action_warning.rjs"
+              return
+          end
         end
         groupings = Grouping.where(:id => grouping_ids).includes(:assignment,
                                                                  :students,
@@ -186,11 +189,11 @@ class GradersController < ApplicationController
                                                                  :group)
         case params[:global_actions]
           when "assign"
-          if params[:graders].nil? or params[:graders].size ==  0
-            #don't do anything if no graders
-            render :nothing => true
-            return
-          end
+            if params[:graders].nil? or params[:graders].size ==  0
+              @global_action_warning = I18n.t("assignment.group.select_a_grader")
+              render :partial => "shared/global_action_warning.rjs"
+              return
+            end
             add_graders(groupings, grader_ids)
             return
           when "unassign"
@@ -198,8 +201,8 @@ class GradersController < ApplicationController
             return
           when "random_assign"
             if params[:graders].nil? or params[:graders].size ==  0
-              #don't do anything if no graders
-              render :nothing => true
+              @global_action_warning = I18n.t("assignment.group.select_a_grader")
+              render :partial => "shared/global_action_warning.rjs"
               return
             end
             randomly_assign_graders(groupings, grader_ids)

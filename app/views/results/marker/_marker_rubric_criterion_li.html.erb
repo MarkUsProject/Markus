@@ -35,9 +35,7 @@ class="float_left mark_criterion_expand expanded" >- &nbsp;
             <tr>
                <td id="mark_<%=mark.id%>_<%=num_levels%>" class="<%=td_class%>"
 			     onclick="new Ajax.Request('<%= update_mark_assignment_submission_results_path(:mark_id => mark.id, :mark => num_levels) %>',{asynchronous:true, evalScripts:true, parameters: 'authenticity_token=' + AUTH_TOKEN})">
-                 <b><%=num_levels%>: <%= link_to level_name,
-                                          update_mark_assignment_submission_results_path(:mark_id => mark.id, :mark => num_levels),
-                                          :class => "rubric_criterion_link", :remote => true %>
+                 <b><%=num_levels%>: <%= level_name %>
                  </b> &nbsp;<%=level_desc%>
                </td>
             </tr>
