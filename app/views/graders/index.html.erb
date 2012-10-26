@@ -173,7 +173,7 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
               :onkeypress => "stop_submit(event);"%>
             <%= check_box_tag 'assign_criteria', true,
               @assignment.assign_graders_to_criteria,
-              :class => 'inline_checkbox' %>
+              :class => 'inline_checkbox', 'data-action' => url_for(:action => :set_assign_criteria, :id => @assignment.id)%>
             <%= label_tag 'assign_criteria', I18n.t('graders.assign_to_criteria'),
               :class => 'bold_inline_label'%>
 

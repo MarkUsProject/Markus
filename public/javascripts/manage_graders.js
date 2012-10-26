@@ -5,14 +5,15 @@ document.observe("dom:loaded", function() {
 
   new Form.Element.EventObserver('assign_criteria', function(element, value) {
 
-    value = value || false;
+    var value = value || false;
+    var url = element.readAttribute('data-action');
 
-    params = {
+    var params = {
       'value': value,
       'authenticity_token': AUTH_TOKEN
     }
 
-    new Ajax.Request('/en/assignments/1/graders/set_assign_criteria?id=1', {
+    new Ajax.Request(url, {
       asynchronous: true,
       evalScripts: true,
       parameters: params
