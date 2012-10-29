@@ -4,9 +4,9 @@ class Testing < ActiveRecord::Migration
     drop_table :test_results
 
     create_table :test_support_files do |t|
-      t.string :file_name
-      t.references :assignment
-      t.text :description
+      t.string :file_name, { :null => false }
+      t.references :assignment, { :null => false }
+      t.text :description, { :null => false }
     end
 
     add_index :test_support_files,
@@ -14,21 +14,21 @@ class Testing < ActiveRecord::Migration
               :name => "index_test_files_on_assignment_id"
 
     create_table :test_scripts do |t|
-      t.integer "assignment_id"
-      t.float   "seq_num"
-      t.string  "script_name"
-      t.text    "description"
-      t.integer "max_marks"
+      t.integer "assignment_id", { :null => false }
+      t.float   "seq_num", { :null => false }
+      t.string  "script_name", { :null => false }
+      t.text    "description", { :null => false }
+      t.integer "max_marks", { :null => false }
       t.boolean "run_on_submission"
       t.boolean "run_on_request"
       t.boolean "uses_token"
       t.boolean "halts_testing"
-      t.string "display_description"
-      t.string "display_run_status"
-      t.string "display_marks_earned"
-      t.string "display_input"
-      t.string "display_expected_output"
-      t.string "display_actual_output"
+      t.string "display_description", { :null => false }
+      t.string "display_run_status", { :null => false }
+      t.string "display_marks_earned", { :null => false }
+      t.string "display_input", { :null => false }
+      t.string "display_expected_output", { :null => false }
+      t.string "display_actual_output", { :null => false }
     end
 
     add_index :test_scripts,
@@ -38,12 +38,12 @@ class Testing < ActiveRecord::Migration
 
     create_table :test_results do |t|
       t.references :submission
-      t.string "completion_status"
+      t.string "completion_status", { :null => false }
       t.integer "test_script_id"
-      t.integer "marks_earned"
-      t.text    "input_description"
-      t.text    "actual_output"
-      t.text    "expected_output"
+      t.integer "marks_earned", { :null => false }
+      t.text    "input_description", { :null => false }
+      t.text    "actual_output", { :null => false }
+      t.text    "expected_output", { :null => false }
     end
 
     add_index :test_results,

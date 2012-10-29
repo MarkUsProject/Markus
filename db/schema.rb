@@ -1,3 +1,4 @@
+# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -348,40 +349,40 @@ ActiveRecord::Schema.define(:version => 20121028211448) do
 
   create_table "test_results", :force => true do |t|
     t.integer "submission_id"
-    t.string  "completion_status"
+    t.string  "completion_status", :null => false
     t.integer "test_script_id"
-    t.integer "marks_earned"
-    t.text    "input_description"
-    t.text    "actual_output"
-    t.text    "expected_output"
+    t.integer "marks_earned",      :null => false
+    t.text    "input_description", :null => false
+    t.text    "actual_output",     :null => false
+    t.text    "expected_output",   :null => false
   end
 
   add_index "test_results", ["submission_id", "test_script_id"], :name => "submission_id_and_test_script_id"
 
   create_table "test_scripts", :force => true do |t|
-    t.integer "assignment_id"
-    t.float   "seq_num"
-    t.string  "script_name"
-    t.text    "description"
-    t.integer "max_marks"
+    t.integer "assignment_id",           :null => false
+    t.float   "seq_num",                 :null => false
+    t.string  "script_name",             :null => false
+    t.text    "description",             :null => false
+    t.integer "max_marks",               :null => false
     t.boolean "run_on_submission"
     t.boolean "run_on_request"
     t.boolean "uses_token"
     t.boolean "halts_testing"
-    t.string  "display_description"
-    t.string  "display_run_status"
-    t.string  "display_marks_earned"
-    t.string  "display_input"
-    t.string  "display_expected_output"
-    t.string  "display_actual_output"
+    t.string  "display_description",     :null => false
+    t.string  "display_run_status",      :null => false
+    t.string  "display_marks_earned",    :null => false
+    t.string  "display_input",           :null => false
+    t.string  "display_expected_output", :null => false
+    t.string  "display_actual_output",   :null => false
   end
 
   add_index "test_scripts", ["assignment_id", "seq_num"], :name => "index_test_scripts_on_assignment_id_and_seq_num"
 
   create_table "test_support_files", :force => true do |t|
-    t.string  "file_name"
-    t.integer "assignment_id"
-    t.text    "description"
+    t.string  "file_name",     :null => false
+    t.integer "assignment_id", :null => false
+    t.text    "description",   :null => false
   end
 
   add_index "test_support_files", ["assignment_id"], :name => "index_test_files_on_assignment_id"
