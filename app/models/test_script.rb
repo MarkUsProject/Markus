@@ -47,4 +47,15 @@ class TestScript < ActiveRecord::Base
   belongs_to :assignment
   has_many :test_results
   
+  validates_numericality_of :max_marks, :only_integer => true, :greater_than_or_equal_to => 0
+  
+  display_option = %w(do_not_display display_after_submission display_after_collection)
+  display_option_error = "%{value} is not a display option"
+  validates_inclusion_of :display_description, :in => display_option, :error => display_option_error
+  validates_inclusion_of :display_run_status, :in => display_option, :error => display_option_error
+  validates_inclusion_of :display_input, :in => display_option, :error => display_option_error
+  validates_inclusion_of :display_marks_earned, :in => display_option, :error => display_option_error
+  validates_inclusion_of :display_expected_output, :in => display_option, :error => display_option_error
+  validates_inclusion_of :display_actual_output, :in => display_option, :error => display_option_error
+  
 end

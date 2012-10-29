@@ -25,5 +25,9 @@ class TestResult < ActiveRecord::Base
 
   validates_presence_of :submission # we require an associated submission
   validates_associated :submission # submission need to be valid
+  
+  validates_inclusion_of :completion_status, :in => %w(pass fail error), :error => "%{value} is not a valid status"
+  validates_numericality_of :marks_earned, :only_integer => true, :greater_than_or_equal_to => 0
+  
 end
 
