@@ -59,4 +59,12 @@ class TestScript < ActiveRecord::Base
   validates :display_marks_earned, :presence => true
   validates :display_expected_output, :presence => true
   validates :display_actual_output, :presence => true
+  
+  validates_numericality_of :max_marks, :only_integer => true, :greater_than_or_equal_to => 0
+  validates_inclusion_of :display_description, :in => %w(do_not_display display_after_submission display_after_collection), :error => "%{value} is not a display option"
+  validates_inclusion_of :display_run_status, :in => %w(do_not_display display_after_submission display_after_collection), :error => "%{value} is not a display option"
+  validates_inclusion_of :display_input, :in => %w(do_not_display display_after_submission display_after_collection), :error => "%{value} is not a display option"
+  validates_inclusion_of :display_marks_earned, :in => %w(do_not_display display_after_submission display_after_collection), :error => "%{value} is not a display option"
+  validates_inclusion_of :display_expected_output, :in => %w(do_not_display display_after_submission display_after_collection), :error => "%{value} is not a display option"
+  validates_inclusion_of :display_actual_output, :in => %w(do_not_display display_after_submission display_after_collection), :error => "%{value} is not a display option"
 end

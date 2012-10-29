@@ -24,13 +24,12 @@ class TestResult < ActiveRecord::Base
 
   validates_presence_of :submission # we require an associated submission
   validates_associated :submission # submission need to be valid
-  validate :completion_status, :presence => true
+  validates :completion_status, :presence => true
   validates :assignment, :presence => true
   validates :test_script, :presence => true
   validates :marks_earned, :presence => true
-  validates :input_description, :presence => true
-  validates :actual_output, :presence => true
-  validates :expected_output, :presence => true
+  validates_inclusion_of :completion_status, :in => %w(pass fail error), :error => "%{value} is not a valid status"
+  validates_numericality_of :marks_earned, :only_integer => true, :greater_than_or_equal_to => 0
 
 
   #=== Description
