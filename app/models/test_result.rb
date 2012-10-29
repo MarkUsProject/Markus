@@ -24,6 +24,7 @@ class TestResult < ActiveRecord::Base
 
   validates_presence_of :submission # we require an associated submission
   validates_associated :submission # submission need to be valid
+<<<<<<< HEAD
   validates :completion_status, :presence => true
   validates :assignment, :presence => true
   validates :test_script, :presence => true
@@ -41,4 +42,6 @@ class TestResult < ActiveRecord::Base
     self.file_content = new_content
     return self.save
   end
+=======
+>>>>>>> 71eb83021f96a6918f9a2e61e2cf7d7a125c8aee
 end

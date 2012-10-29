@@ -44,6 +44,7 @@
 ##############################################################
 
 class TestScript < ActiveRecord::Base
+<<<<<<< HEAD
   belongs_to :assignment
   
   validates :seq_num, :presence => true
@@ -67,4 +68,8 @@ class TestScript < ActiveRecord::Base
   validates_inclusion_of :display_marks_earned, :in => %w(do_not_display display_after_submission display_after_collection), :error => "%{value} is not a display option"
   validates_inclusion_of :display_expected_output, :in => %w(do_not_display display_after_submission display_after_collection), :error => "%{value} is not a display option"
   validates_inclusion_of :display_actual_output, :in => %w(do_not_display display_after_submission display_after_collection), :error => "%{value} is not a display option"
+=======
+  has_many :test_results
+  has_one :assignment
+>>>>>>> 71eb83021f96a6918f9a2e61e2cf7d7a125c8aee
 end
