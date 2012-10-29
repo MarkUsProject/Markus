@@ -346,18 +346,9 @@ ActiveRecord::Schema.define(:version => 20121028211448) do
 
   add_index "submissions", ["grouping_id"], :name => "index_submissions_on_grouping_id"
 
-  create_table "test_files", :force => true do |t|
-    t.string  "file_name"
-    t.integer "assignment_id"
-    t.text    "description"
-  end
-
-  add_index "test_files", ["assignment_id"], :name => "index_test_files_on_assignment_id"
-
   create_table "test_results", :force => true do |t|
     t.integer "submission_id"
     t.string  "completion_status"
-    t.integer "assignment_id"
     t.integer "test_script_id"
     t.integer "marks_earned"
     t.text    "input_description"
@@ -365,7 +356,7 @@ ActiveRecord::Schema.define(:version => 20121028211448) do
     t.text    "expected_output"
   end
 
-  add_index "test_results", ["assignment_id", "test_script_id", "submission_id"], :name => "assignment_id_and_test_script_id_and_submission_id"
+  add_index "test_results", ["submission_id", "test_script_id"], :name => "submission_id_and_test_script_id"
 
   create_table "test_scripts", :force => true do |t|
     t.integer "assignment_id"
@@ -386,6 +377,14 @@ ActiveRecord::Schema.define(:version => 20121028211448) do
   end
 
   add_index "test_scripts", ["assignment_id", "seq_num"], :name => "index_test_scripts_on_assignment_id_and_seq_num"
+
+  create_table "test_support_files", :force => true do |t|
+    t.string  "file_name"
+    t.integer "assignment_id"
+    t.text    "description"
+  end
+
+  add_index "test_support_files", ["assignment_id"], :name => "index_test_files_on_assignment_id"
 
   create_table "tokens", :force => true do |t|
     t.integer "grouping_id"

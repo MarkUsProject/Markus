@@ -3,13 +3,13 @@ class Testing < ActiveRecord::Migration
     drop_table :test_files
     drop_table :test_results
 
-    create_table :test_files do |t|
+    create_table :test_support_files do |t|
       t.string :file_name
       t.references :assignment
       t.text :description
     end
 
-    add_index :test_files,
+    add_index :test_support_files,
               ["assignment_id"],
               :name => "index_test_files_on_assignment_id"
 
@@ -39,7 +39,6 @@ class Testing < ActiveRecord::Migration
     create_table :test_results do |t|
       t.references :submission
       t.string "completion_status"
-      t.integer "assignment_id"
       t.integer "test_script_id"
       t.integer "marks_earned"
       t.text    "input_description"
@@ -48,14 +47,14 @@ class Testing < ActiveRecord::Migration
     end
 
     add_index :test_results,
-              ["assignment_id", "test_script_id", "submission_id"],
-              :name => "assignment_id_and_test_script_id_and_submission_id"
+              ["submission_id", "test_script_id"],
+              :name => "submission_id_and_test_script_id"
   end
 
   def self.down
     drop_table :test_scripts
     drop_table :test_results
-    drop_table :test_files
+    drop_table :test_support_files
 
     create_table "test_files", :force => true do |t|
       t.string   "filename"
