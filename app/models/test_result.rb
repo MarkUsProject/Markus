@@ -3,7 +3,7 @@ class TestResult < ActiveRecord::Base
 
   validates_presence_of :submission # we require an associated submission
   validates_associated :submission # submission need to be valid
-  validate :completion_status, :presence => true
+  validates :completion_status, :presence => true
   validates :assignment, :presence => true
   validates :test_script, :presence => true
   validates :marks_earned, :presence => true
