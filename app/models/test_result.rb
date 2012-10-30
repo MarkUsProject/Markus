@@ -6,7 +6,7 @@
 # (Configurable for each test script) Also, the admin decides
 # whether or not and when to show the result to the student.
 #
-# The columns of test_support_files are:
+# The attributes of test_support_files are:
 #   submission_id:      id of the submission
 #   test_script_id:     id of the corresponding test script
 #   completion_status:  one of {pass, fail, error}
