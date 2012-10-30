@@ -1,136 +1,48 @@
 # test using MACHINIST
 
-require File.join(File.dirname(__FILE__),'..', 'test_helper')
-require File.join(File.dirname(__FILE__),'..', 'blueprints', 'helper')
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 require 'shoulda'
 
-class TestFileTest < ActiveSupport::TestCase
-  should validate_presence_of :filename
+class TestSupportFileTest < ActiveSupport::TestCase
   should belong_to :assignment
 
-  context "A valid test file" do
+  context "A valid test support file" do
 
-    should "return true when a valid build.xml file is created" do
-      @buildfile = TestFile.make(:filetype => 'build.xml', :filename => 'build.xml')
-      assert @buildfile.valid?
+    should "return true when a valid file is created" do
+      @supportfile = TestSupportFile.make(:file_name => 'input.txt', :description => 'This is an input file')
+      assert @supportfile.valid?
+    end
+    
+    should "return true when the description is empty" do
+      @supportfile = TestSupportFile.make(:file_name => 'actual_output.txt', :description => '')
+      assert @supportfile.valid?
     end
 
-    should "return true when a valid build.properties file is created" do
-      @buildproperties = TestFile.make(:filetype => 'build.properties', :filename => 'build.properties')
-      assert @buildproperties.valid?
-    end
-
-    should "return true when a valid test file is created" do
-      @testfile = TestFile.make(:filetype => 'test', :filename => 'ValidTestFile')
-      assert @testfile.valid?
-    end
-
-    should "return true when a valid lib file is created" do
-      @libfile = TestFile.make(:filetype => 'lib', :filename => 'ValidLibraryFile')
-      assert @libfile.valid?
-    end
-
-    should "return true when a valid parse file is created" do
-      @parsefile = TestFile.make(:filetype => 'parse', :filename => 'ValidParseFile')
-      assert @parsefile.valid?
-    end
   end
 
-  context "An invalid ant file" do
+  context "An invalid test support file" do
+    
     setup do
-      @buildfile = TestFile.make(:filetype => 'build.xml', :filename => 'build.xml')
-      @buildproperties = TestFile.make(:filetype => 'build.properties', :filename => 'build.properties')
+      @validsupportfile = TestSupportFile.make(:file_name => 'valid', :description => 'This is a valid support file')
+      @invalidsupportfile = TestSupportFile.make(:file_name => 'invalid', :description => 'This is an invalid support file')
+    end
+    
+    should "return false when the file_name is blank" do
+      @invalidsupportfile.file_name = '   '
+      assert !@invalidsupportfile.valid?, "support file expected to be invalid when the file name is blank"
     end
 
-    should "return false when build.xml file is not named build.xml" do
-      @buildfile.filename = 'anotherbuildfile'
-      assert !@buildfile.valid?, "build file expected to be invalid when not named build.xml"
+    should "return false when the description is nil" do
+      @invalidsupportfile.descirption = nil
+      assert !@invalidsupportfile.valid?, "support file expected to be invalid when the description is nil"
     end
 
-    should "return false when build.properties file is not named build.properties" do
-      @buildproperties.filename = 'anotherpropfile'
-      assert !@buildproperties.valid?, "properties file expected to be invalid when not named build.properties"
+    should "return false when the file_name already exists" do
+      @invalidsupportfile.file_name = 'valid'
+      assert !@invalidsupportfile.valid?, "support file expected to be invalid when the file name already exists"
     end
+
   end
 
-  context "An invalid test file" do
-    setup do
-      @validtestfile = TestFile.make(:filetype => 'test', :filename => 'SomeValidTestFile')
-      @invalidtestfile = TestFile.make(:filetype => 'test', :filename => 'TestFile')
-    end
-
-    should "return false when a test file is created with a blank filename" do
-      @invalidtestfile.filename = ''
-      assert !@invalidtestfile.valid?, "test file expected to be invalid when filename is blank"
-    end
-
-    should "return false when the test filename already exists" do
-      @invalidtestfile.filename = 'SomeValidTestFile'
-      assert !@invalidtestfile.valid?, "test file expected to be invalid when filename already exists"
-    end
-
-    should "return false when test file is named build.xml" do
-      @invalidtestfile.filename = 'build.xml'
-      assert !@invalidtestfile.valid?, "test file expected to be invalid when filename is build.xml or build.properties"
-    end
-
-    should "return false when test file is named build.properties" do
-      @invalidtestfile.filename = 'build.properties'
-      assert !@invalidtestfile.valid?, "test file expected to be invalid when filename is build.xml or build.properties"
-    end
-  end
-
-  context "An invalid library file" do
-    setup do
-      @validlibfile = TestFile.make(:filetype => 'lib', :filename => 'SomeValidLibFile')
-      @invalidlibfile = TestFile.make(:filetype => 'lib', :filename => 'LibFile')
-    end
-
-    should "return false when a library file is created with a blank filename" do
-      @invalidlibfile.filename = ''
-      assert !@invalidlibfile.valid?, "library file expected to be invalid when filename is blank"
-    end
-
-    should "return false when the library filename already exists" do
-      @invalidlibfile.filename = 'SomeValidLibFile'
-      assert !@invalidlibfile.valid?, "lib file expected to be invalid when filename already exists"
-    end
-
-    should "return false when library file is named build.xml" do
-      @invalidlibfile.filename = 'build.xml'
-      assert !@invalidlibfile.valid?, "lib file expected to be invalid when filename is build.xml or build.properties"
-    end
-
-    should "return false when library file is named build.properties" do
-      @invalidlibfile.filename = 'build.properties'
-      assert !@invalidlibfile.valid?, "lib file expected to be invalid when filename is build.xml or build.properties"
-    end
-  end
-
-  context "An invalid parser file" do
-    setup do
-      @validparsefile = TestFile.make(:filetype => 'parse', :filename => 'SomeValidParseFile')
-      @invalidparsefile = TestFile.make(:filetype => 'parse', :filename => 'ParseFile')
-    end
-
-    should "return false when a parser file is created with a blank filename" do
-      @invalidparsefile.filename = ''
-      assert !@invalidparsefile.valid?, "parser file expected to be invalid when filename is blank"
-    end
-
-    should "return false when the parser filename already exists" do
-      @invalidparsefile.filename = 'SomeValidParseFile'
-      assert !@invalidparsefile.valid?, "parser file expected to be invalid when filename already exists"
-    end
-
-    should "return false when parser file is named build.xml" do
-      @invalidparsefile.filename = 'build.xml'
-      assert !@invalidparsefile.valid?, "parser file expected to be invalid when filename is build.xml or build.properties"
-    end
-
-    should "return false when parser file is named build.properties" do
-      @invalidparsefile.filename = 'build.properties'
-      assert !@invalidparsefile.valid?, "parser file expected to be invalid when filename is build.xml or build.properties"
-    end
-  end
 end
