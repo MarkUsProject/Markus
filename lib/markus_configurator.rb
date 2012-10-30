@@ -229,47 +229,51 @@ module MarkusConfigurator
     end
   end
 
-  ########################################
-  # Automated Testing Configuration
-  ########################################
+  ##########################################
+  # Automated Testing Engine Configuration
+  ##########################################
   
-  def markus_num_test_servers
-    if AUTOMATED_TESTS_ENGINE_ON && (defined? NUMBER_TEST_SERVERS)
-      return NUMBER_TEST_SERVERS
+  def automated_testing_engine_on?
+    return ( (defined? AUTOMATED_TESTING_ENGINE_ON) && AUTOMATED_TESTING_ENGINE_ON == true )
+  end
+  
+  def markus_ate_num_test_servers
+    if automated_testing_engine_on? && (defined? ATE_NUMBER_TEST_SERVERS)
+      return ATE_NUMBER_TEST_SERVERS
     else
       return 0
     end
   end
   
-  def markus_max_num_of_running_tests
-    if AUTOMATED_TESTS_ENGINE_ON && (defined? MAX_NUMBER_OF_RUNNING_TESTS)
-      return MAX_NUMBER_OF_RUNNING_TESTS
+  def markus_ate_max_num_of_running_tests
+    if automated_testing_engine_on? && (defined? ATE_MAX_NUMBER_OF_RUNNING_TESTS)
+      return ATE_MAX_NUMBER_OF_RUNNING_TESTS
     else
       return 0
     end
   end
   
-  def markus_test_server_hosts
-    if AUTOMATED_TESTS_ENGINE_ON && (defined? TEST_SERVER_HOSTS)
-      return TEST_SERVER_HOSTS
+  def markus_ate_test_server_hosts
+    if automated_testing_engine_on? && (defined? ATE_TEST_SERVER_HOSTS)
+      return ATE_TEST_SERVER_HOSTS
     else
-      return ''
+      return 'username@testing.example.com'
     end
   end
   
-  def markus_test_runner_script_name
-    if AUTOMATED_TESTS_ENGINE_ON && (defined? TEST_RUNNER_NAME)
-      return TEST_RUNNER_NAME
+  def markus_ate_test_runner_script_name
+    if automated_testing_engine_on? && (defined? ATE_TEST_RUNNER_NAME)
+      return ATE_TEST_RUNNER_NAME
     else
-      return ''
+      return 'testrunner/testrunner.rb'
     end
   end
   
-  def markus_test_run_directory
-    if AUTOMATED_TESTS_ENGINE_ON && (defined? TEST_RUN_DIRECTORY)
-      return TEST_RUN_DIRECTORY
+  def markus_ate_test_run_directory
+    if automated_testing_engine_on? && (defined? ATE_TEST_RUN_DIRECTORY)
+      return ATE_TEST_RUN_DIRECTORY
     else
-      return ''
+      return 'testrunner/test/'
     end
   end
   
