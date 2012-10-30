@@ -1,2 +1,2 @@
-class TestFile < ActiveRecord::Base
+class TestSupportFile < ActiveRecord::Base
 end
