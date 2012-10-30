@@ -60,7 +60,7 @@ class TestScript < ActiveRecord::Base
   after_destroy :delete_file
 
   validates_numericality_of :max_marks, :only_integer => true, :greater_than_or_equal_to => 0
-  
+
   display_option = %w(do_not_display display_after_submission display_after_collection)
   display_option_error = "%{value} is not a display option"
   validates_inclusion_of :display_description, :in => display_option, :error => display_option_error
