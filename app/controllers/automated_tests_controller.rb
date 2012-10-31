@@ -86,10 +86,12 @@ class AutomatedTestsController < ApplicationController
   def manage
     @assignment = Assignment.find(params[:assignment_id])
 
+    #this is breaking, not actually doing anything so commenting
+    #out for now
     # Create test scripts for testing if no script is available
-    if @assignment && @assignment.test_scirpts.empty?
+    #if @assignment && @assignment.test_scripts.empty?
       #create_test_scripts(@assignment)
-    end
+    #end
     
   end
 

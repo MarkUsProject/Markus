@@ -15,13 +15,15 @@ class Assignment < ActiveRecord::Base
            :class_name => "FlexibleCriterion",
            :order => :position
   has_many :assignment_files
-  has_many :test_files
+  has_many :test_support_files
+  has_many :test_scripts
   has_many :criterion_ta_associations
   has_one :submission_rule
   has_one :assignment_stat
   accepts_nested_attributes_for :submission_rule, :allow_destroy => true
   accepts_nested_attributes_for :assignment_files, :allow_destroy => true
-  accepts_nested_attributes_for :test_files, :allow_destroy => true
+  accepts_nested_attributes_for :test_scripts, :allow_destroy => true
+  accepts_nested_attributes_for :test_support_files, :allow_destroy => true
   accepts_nested_attributes_for :assignment_stat, :allow_destroy => true
 
   has_many :annotation_categories
