@@ -38,12 +38,12 @@
 
       <div>
         <div class="float_left"><strong><%= I18n.t("marker.marks.bonus_marks").html_safe %></strong></div>
-        <div class="float_left" id="extra_marks_bonus"><%= h(result.get_positive_extra_points) %></div>
+        <div class="float_right" id="extra_marks_bonus"><%= h(result.get_positive_extra_points) %></div>
       </div>
       <div class="clear"></div>
       <div>
-        <div class="float_left"><strong><%= I18n.t("marker.marks.deducted_marks") %></strong></div>
-        <div class="float_left" id="extra_marks_deducted"><%= h(@result.get_negative_extra_points) %></div>
+        <div class="float_left"><strong><%= I18n.t("marker.marks.deducted_marks").html_safe %></strong></div>
+        <div class="float_right" id="extra_marks_deducted"><%= h(@result.get_negative_extra_points) %></div>
       </div>
     </div>
 
@@ -56,7 +56,7 @@
           <span> / <%= h(assignment.total_mark) %>  </span>
         </span>
 
-        <span><%= I18n.t("marker.marks.previous_mark") %></span>
+        <span><%= I18n.t("marker.marks.previous_mark").html_safe %></span>
       </div>
     <% end %>
 
@@ -66,5 +66,5 @@
        <span> /<%= h(assignment.total_mark) %>  </span>
       </span>
 
-     <span><%= I18n.t("marker.marks.final_mark") %></span>
+     <span><%= I18n.t("marker.marks.final_mark").html_safe %></span>
          </div>
