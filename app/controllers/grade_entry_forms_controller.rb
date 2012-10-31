@@ -94,11 +94,13 @@ class GradeEntryFormsController < ApplicationController
     # Pagination options
     @per_page = 15
     @current_page = 1
+    @c_sort_by = current_user.id.to_s +  "_"+ @grade_entry_form.id.to_s+ "_sort_by_grades"
    if !params[:sort_by].blank?
-      @sort_by = params[:sort_by]
+      cookies[@c_sort_by] = params[:sort_by]
     else
-      @sort_by = 'last_name'
+      params[:sort_by] = 'last_name'
     end
+    @sort_by = cookies[@c_sort_by]
     @desc = params[:desc]
     @filters = get_filters(G_TABLE_PARAMS)
     @per_pages = G_TABLE_PARAMS[:per_pages]
@@ -118,6 +120,7 @@ class GradeEntryFormsController < ApplicationController
                                                         @students.total_pages)
     session[:alpha_pagination_options] = @alpha_pagination_options
     @alpha_category = @alpha_pagination_options.first
+    @sort_by = cookies[@c_sort_by]
   end
 
   # Handle pagination for grades table
