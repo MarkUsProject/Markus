@@ -32,7 +32,20 @@ class GradeEntryFormsController < ApplicationController
                                           :order => "user_name")}}},
                      :sorts => {'last_name' => lambda {
                                      |a,b| a.last_name.downcase <=>
-                                        b.last_name.downcase}}}
+                                        b.last_name.downcase},
+                                'first_name' => lambda {
+                                      |a,b| a.first_name.downcase <=>
+                                        b.first_name.downcase},
+                                'user_name' => lambda {
+                                     |a,b| a.user_name.downcase <=>
+                                        b.user_name.downcase},
+                                'section' => lambda { |a,b|
+                                      return -1 if !a.section
+                                      return 1 if !b.section
+                                      return a.section.name.downcase <=> b.section.name.downcase},
+
+                                }
+                        }
 
   # Create a new grade entry form
   def new
@@ -81,8 +94,12 @@ class GradeEntryFormsController < ApplicationController
     # Pagination options
     @per_page = 15
     @current_page = 1
-    @sort_by = 'last_name'
-    @desc = false
+   if !params[:sort_by].blank?
+      @sort_by = params[:sort_by]
+    else
+      @sort_by = 'last_name'
+    end
+    @desc = params[:desc]
     @filters = get_filters(G_TABLE_PARAMS)
     @per_pages = G_TABLE_PARAMS[:per_pages]
 
@@ -90,6 +107,9 @@ class GradeEntryFormsController < ApplicationController
                                       @filter,
                                       @sort_by,
                                       {:grade_entry_form => @grade_entry_form})
+    if !params[:desc].blank?
+      all_students.reverse!
+    end
     @students = all_students.paginate(:per_page => @per_page,
                                       :page => @current_page)
     @students_total = all_students.size
