@@ -676,6 +676,10 @@ fr:
       move_criterion:
         error: "Erreur: impossible de déplacer cette rubric."
 
+    flexible_criteria:
+      move_criterion:
+        error: "Erreur: impossible de déplacer ce critère (flexible)."
+    
     add_student:
       success: "L'étudiant(e) %{user_name} a été ajouté(e)."
       fail:
