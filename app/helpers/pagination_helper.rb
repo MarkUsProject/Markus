@@ -41,7 +41,7 @@ module PaginationHelper
       raise "Could not find filter #{filter}"
     end
     items = get_filtered_items(hash, filter, params[:sort_by], object_hash)
-    if !params[:desc].blank?
+    if !params[:desc].blank? && params[:desc]
       items.reverse!
     end
     if params[:per_page].blank?

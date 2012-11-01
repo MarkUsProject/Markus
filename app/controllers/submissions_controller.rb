@@ -282,7 +282,7 @@ class SubmissionsController < ApplicationController
   def browse
 
     if session[:submission_col_dictionary].nil?
-       session[:submission_col_dictionary] = { :Col1 => true, :Col2 => true, :Col3 => true, :Col4 => true, :Col5 => true, :Col6 => true, :Col7 => true, :Col8 => true, :Col9 => true}
+      session[:submission_col_dictionary] = { :Col1 => true, :Col2 => true, :Col3 => true, :Col4 => true, :Col5 => true, :Col6 => true, :Col7 => true, :Col8 => true, :Col9 => true}
     end
 
     if current_user.ta?
@@ -295,16 +295,28 @@ class SubmissionsController < ApplicationController
     
     @assignment = Assignment.find(params[:assignment_id])
     
+    #Save preferences in cookies when they're changed
+    @c_desc = current_user.id.to_s + "_" + @assignment.id.to_s + "_desc"
+    if !params[:sort_by].blank?
+      cookies.permanent[@c_desc] = (!params[:desc].blank?)
+    elsif !cookies[@c_desc].blank?
+      params[:desc] = cookies[@c_desc]
+    end 
+     
     @c_per_page = current_user.id.to_s + "_" + @assignment.id.to_s + "_per_page"
     if !params[:per_page].blank?
-       cookies[@c_per_page] = params[:per_page] 
+      cookies.permanent[@c_per_page] = params[:per_page] 
+    elsif !cookies[@c_per_page].blank?
+      params[:per_page] = cookies[@c_per_page]
     end 
 
     @c_sort_by = current_user.id.to_s + "_" + @assignment.id.to_s + "_sort_by"
     if !params[:sort_by].blank?
-       cookies[@c_sort_by] = params[:sort_by]
+      cookies.permanent[@c_sort_by] = params[:sort_by]
+    elsif !cookies[@c_sort_by].blank?
+      params[:sort_by] = cookies[@c_sort_by]
     else
-       params[:sort_by] = 'group_name' 
+      params[:sort_by] = 'group_name' 
     end
  
     @groupings, @groupings_total = handle_paginate_event(
@@ -328,19 +340,28 @@ class SubmissionsController < ApplicationController
       end
     end
     
+    
+    #Create cookies for preferences if they don't already exist
     if cookies[@c_per_page].blank?
-       cookies[@c_per_page] = params[:per_page]
+      cookies.permanent[@c_per_page] = params[:per_page]
     end
     
     if cookies[@c_sort_by].blank?
-       cookies[@c_sort_by] = params[:sort_by]
+      cookies.permanent[@c_sort_by] = params[:sort_by]
     end
+    
+    if cookies[@c_desc].blank?
+      cookies.permanent[@c_desc] = false
+    end
+    
+    puts "TESTXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    puts params[:desc]
     
     @current_page = params[:page].to_i()
     @per_page = cookies[@c_per_page] 
     @filters = get_filters(S_TABLE_PARAMS)
     @per_pages = S_TABLE_PARAMS[:per_pages]
-    @desc = params[:desc]
+    @desc = cookies[@c_desc]
     @filter = params[:filter]
     @sort_by = cookies[@c_sort_by]
 
