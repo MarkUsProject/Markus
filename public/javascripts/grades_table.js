@@ -19,7 +19,7 @@ document.observe('dom:loaded', function() {
         asynchronous: true,
         evalScripts: true,
         parameters: params
-      })
-    })
-  })
+      });
+    });
+  });
 });

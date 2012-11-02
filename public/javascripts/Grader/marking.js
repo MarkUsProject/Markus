@@ -1,3 +1,11 @@
+document.observe('dom:loaded', function() {
+
+  // TODO: placeholder for js for the flexible marking criteria fields
+  $$('.grade-input').each(function(item) {
+
+  });
+});
+
 function focus_mark_criterion(id) {
   if($('mark_criterion_title_' + id + '_expand').hasClassName('expanded')) {
     hide_criterion(id);
