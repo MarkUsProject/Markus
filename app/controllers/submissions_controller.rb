@@ -273,6 +273,11 @@ class SubmissionsController < ApplicationController
                                               :Col7 => params[:col7] == "yes", 
                                               :Col8 => params[:col8] == "yes", 
                                               :Col9 => params[:col9] == "yes"}
+                                              
+      #Save columns to show/hide in cookies
+      @c_columns = current_user.id.to_s + "_columns"             
+      cookies.permanent[@c_columns] = session[:submission_col_dictionary].to_json
+                          
     end
     
     render :partial => "update_column_filter"
@@ -280,10 +285,6 @@ class SubmissionsController < ApplicationController
   end
 
   def browse
-
-    if session[:submission_col_dictionary].nil?
-      session[:submission_col_dictionary] = { :Col1 => true, :Col2 => true, :Col3 => true, :Col4 => true, :Col5 => true, :Col6 => true, :Col7 => true, :Col8 => true, :Col9 => true}
-    end
 
     if current_user.ta?
       params[:filter] = 'assigned'
@@ -296,6 +297,13 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     
     #Save preferences in cookies when they're changed
+    @c_columns = current_user.id.to_s + "_columns"
+    if session[:submission_col_dictionary].nil? && !cookies[@c_columns].blank?
+      session[:submission_col_dictionary] = JSON.parse(cookies[@c_columns], :symbolize_names => true)
+    elsif session[:submission_col_dictionary].nil?
+      session[:submission_col_dictionary] = { :Col1 => true, :Col2 => true, :Col3 => true, :Col4 => true, :Col5 => true, :Col6 => true, :Col7 => true, :Col8 => true, :Col9 => true}
+    end
+    
     @c_desc = current_user.id.to_s + "_" + @assignment.id.to_s + "_desc"
     if !params[:sort_by].blank?
       cookies.permanent[@c_desc] = (!params[:desc].blank?)
@@ -353,9 +361,6 @@ class SubmissionsController < ApplicationController
     if cookies[@c_desc].blank?
       cookies.permanent[@c_desc] = false
     end
-    
-    puts "TESTXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-    puts params[:desc]
     
     @current_page = params[:page].to_i()
     @per_page = cookies[@c_per_page] 
