@@ -7,7 +7,7 @@
 
 <table>
   <tr>
-    <td><%= I18n.t(:assignment_average, :results_average => h(assignment.results_average || '0')) %></td>
+    <td><%= I18n.t(:assignment_average, :results_average => h(number_with_precision(assignment.results_average, :precision => 1) || '0')) %></td>
   </tr>
 
   <tr>
