@@ -1,8 +1,10 @@
-<%= stylesheet_link_tag("livepipe/tabs") %>
+<% content_for :head do %>
+  <%= stylesheet_link_tag("livepipe/tabs") %>
+<% end %>
 <% # UI LIBRARIES %>
 <%= javascript_include_tag "livepipe/livepipe.js",
 	"livepipe/window.js",
-	"livepipe/tabs.js" ,
+	"livepipe/tabs.js",
   "effects.js",
   "dragdrop.js" %>
 
