@@ -306,9 +306,9 @@ class SubmissionsController < ApplicationController
     
     @c_desc = current_user.id.to_s + "_" + @assignment.id.to_s + "_desc"
     if !params[:sort_by].blank?
-      cookies.permanent[@c_desc] = (!params[:desc].blank?)
+      cookies.permanent[@c_desc] = (!params[:desc].blank?).to_s
     elsif !cookies[@c_desc].blank?
-      params[:desc] = cookies[@c_desc]
+      params[:desc] = (cookies[@c_desc] == "true")
     end 
      
     @c_per_page = current_user.id.to_s + "_" + @assignment.id.to_s + "_per_page"
@@ -366,7 +366,7 @@ class SubmissionsController < ApplicationController
     @per_page = cookies[@c_per_page] 
     @filters = get_filters(S_TABLE_PARAMS)
     @per_pages = S_TABLE_PARAMS[:per_pages]
-    @desc = cookies[@c_desc]
+    @desc = (cookies[@c_desc] == "true")
     @filter = params[:filter]
     @sort_by = cookies[@c_sort_by]
 
