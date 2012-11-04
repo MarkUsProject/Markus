@@ -718,7 +718,7 @@ fr:
         last_name:      "Nom"
         full_name:      "Nom complet"
         student_name:   "Nom de l'étudiant"
-        group_members:  "Membres de groupe"
+        group_members:  "Membres du groupe"
         user_type:      "Type"
         grace_credits:  "Crédits de grâce"
         section:        "Section"
