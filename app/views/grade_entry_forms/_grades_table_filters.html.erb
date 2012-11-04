@@ -4,11 +4,11 @@
 <%= select_tag "alpha_category",
                 options_for_select(alpha_pagination_options, alpha_category),
                 :onchange => "ap_thinking_start('grades');
-                new Ajax.Request(
+                new Ajax.Request('" +
                     g_table_paginate_grade_entry_form_path(
                         :id => grade_entry_form.id,
                         :filter => filter,
-                        :sort_by => sort_by),
+                        :sort_by => sort_by)+ "',
                     { asynchronous:true,
                       evalScripts:true,
                       onComplete:function(request){ap_thinking_stop();},
@@ -25,11 +25,11 @@
 <%= t('pagination.show') %>
 <%= select_tag "per_page", options_for_select(per_pages, per_page.to_i),
     :onchange => "ap_thinking_start('grades'); 
-      new Ajax.Request(
+      new Ajax.Request('" +
         g_table_paginate_grade_entry_form_path(
             :id => grade_entry_form.id,
             :filter => filter,
-            :sort_by => sort_by), 
+            :sort_by => sort_by)+ "', 
         { asynchronous:true, 
           evalScripts:true, 
           onComplete:function(request){ap_thinking_stop();}, 
