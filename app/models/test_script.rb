@@ -59,18 +59,33 @@ class TestScript < ActiveRecord::Base
   # Run delete_file method after removal from db
   after_destroy :delete_file
 
+  validates_presence_of :assignment
+  validates_associated :assignment
+  
+  validates_presence_of :seq_num
+  validates_presence_of :script_name
+  validates_presence_of :max_marks
+  validates_presence_of :description, :if => "description.nil?"
+  
+  validates_uniqueness_of :seq_num
+  validates_uniqueness_of :script_name
+  validates_numericality_of :seq_num
   validates_numericality_of :max_marks, :only_integer => true, :greater_than_or_equal_to => 0
 
-  display_option = %w(do_not_display display_after_submission display_after_collection)
-  display_option_error = "%{value} is not a display option"
-  validates_inclusion_of :display_description, :in => display_option, :error => display_option_error
-  validates_inclusion_of :display_run_status, :in => display_option, :error => display_option_error
-  validates_inclusion_of :display_input, :in => display_option, :error => display_option_error
-  validates_inclusion_of :display_marks_earned, :in => display_option, :error => display_option_error
-  validates_inclusion_of :display_expected_output, :in => display_option, :error => display_option_error
-  validates_inclusion_of :display_actual_output, :in => display_option, :error => display_option_error
+  validates_presence_of :display_description
+  validates_presence_of :display_run_status
+  validates_presence_of :display_marks_earned
+  validates_presence_of :display_input
+  validates_presence_of :display_expected_output
+  validates_presence_of :display_actual_output
   
-  # uniqueness
+  display_option = %w(do_not_display display_after_submission display_after_collection)
+  validates_inclusion_of :display_description, :in => display_option
+  validates_inclusion_of :display_run_status, :in => display_option
+  validates_inclusion_of :display_input, :in => display_option
+  validates_inclusion_of :display_marks_earned, :in => display_option
+  validates_inclusion_of :display_expected_output, :in => display_option
+  validates_inclusion_of :display_actual_output, :in => display_option
   
   # All callback methods are protected methods
   protected

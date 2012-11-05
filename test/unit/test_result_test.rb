@@ -4,42 +4,85 @@ require 'shoulda'
 
 class TestResultTest < ActiveSupport::TestCase
   should belong_to :submission
+  should belong_to :test_script
   
-  # Basic testing: create, delete, update
+  should validate_presence_of :submission
   
+  should validate_presence_of :test_script
+  should validate_presence_of :completion_status
+  should validate_presence_of :marks_earned
+  
+  should validate_numericality_of :marks_earned
+  
+  # create
   context "A valid test result" do
     
     setup do
       @sub = Submission.make
-      @testresult = TestResult.make(:completion_status => 'pass',
+      @script = TestScript.make
+      @testresult = TestResult.make(:submission_id     => @sub.id,
+                                    :test_script_id    => @script.id,
+                                    :completion_status => 'pass',
                                     :marks_earned      => 5,
                                     :input_description => '',
                                     :actual_output     => '   ',
                                     :expected_output   => 'This is the expected output')
-      @testresult.submission = @sub
     end
     
     should "return true when a valid file is created" do
       assert @testresult.valid?
+      assert @testresult.save
     end
     
-    should "return true when the marks_earned is zero" do
+    should "return true when a valid file is created even if the marks_earned is zero" do
       @testresult.marks_earned = 0
       assert @testresult.valid?
+      assert @testresult.save
+    end
+
+    should "return true when a valid file is created even if the input_description is empty" do
+      @testresult.input_description = ''
+      assert @testresult.valid?
+      assert @testresult.save
+    end
+
+    should "return true when a valid file is created even if the actual_output is empty" do
+      @testresult.actual_output = ''
+      assert @testresult.valid?
+      assert @testresult.save
+    end
+
+    should "return true when a valid file is created even if the expected_output is empty" do
+      @testresult.expected_output = ''
+      assert @testresult.valid?
+      assert @testresult.save
     end
 
   end
   
+  # update
   context "An invalid test result" do
     
     setup do
       @sub = Submission.make
-      @testresult = TestResult.make(:completion_status => 'pass',
+      @script = TestScript.make
+      @testresult = TestResult.make(:submission_id     => @sub.id,
+                                    :test_script_id    => @script.id,
+                                    :completion_status => 'pass',
                                     :marks_earned      => 5,
                                     :input_description => '',
                                     :actual_output     => '   ',
                                     :expected_output   => 'This is the expected output')
-      @testresult.submission = @sub
+    end
+    
+    should "return false when there is no submission associated" do
+      @testresult.submission_id = nil
+      assert !@testresult.valid?, "test result expected to be invalid when there is no submission associated"
+    end
+    
+    should "return false when test script is nil" do
+      @testresult.test_script_id = nil
+      assert !@testresult.valid?, "test result expected to be invalid when test script is nil"
     end
     
     should "return false when the marks_earned is negative" do
@@ -48,7 +91,7 @@ class TestResultTest < ActiveSupport::TestCase
     end
     
     should "return false when the marks_earned is not an integer" do
-      @testresult.marks_earned = 49.5
+      @testresult.marks_earned = 0.5
       assert !@testresult.valid?, "test result expected to be invalid when the marks_earned is not an integer"
     end
     
@@ -67,9 +110,26 @@ class TestResultTest < ActiveSupport::TestCase
       assert !@testresult.valid?, "test result expected to be invalid when the expected_output is nil"
     end
     
-    should "return false when there is no submission associated" do
-      @testresult.submission = nil
-      assert !@testresult.valid?, "test result expected to be invalid when there is no submission associated"
+  end
+  
+  #delete
+  context "MarkUs" do
+    
+    setup do
+      @sub = Submission.make
+      @script = TestScript.make
+      @testresult = TestResult.make(:submission_id     => @sub.id,
+                                    :test_script_id    => @script.id,
+                                    :completion_status => 'pass',
+                                    :marks_earned      => 5,
+                                    :input_description => '',
+                                    :actual_output     => '   ',
+                                    :expected_output   => 'This is the expected output')
+    end
+    
+    should "be able to delete a test result" do
+      assert @testresult.valid?
+      assert @testresult.destroy
     end
     
   end

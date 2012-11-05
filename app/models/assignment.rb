@@ -15,8 +15,8 @@ class Assignment < ActiveRecord::Base
            :class_name => "FlexibleCriterion",
            :order => :position
   has_many :assignment_files
-  has_many :test_support_files
-  has_many :test_scripts
+  has_many :test_support_files, :dependent => :destroy
+  has_many :test_scripts, :dependent => :destroy
   has_many :criterion_ta_associations
   has_one :submission_rule
   has_one :assignment_stat

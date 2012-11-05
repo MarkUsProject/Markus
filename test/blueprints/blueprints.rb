@@ -284,7 +284,7 @@ TaMembership.blueprint do
 end
 
 TestScript.blueprint do
-  assignment_id {0}
+  assignment {Assignment.make}
   seq_num {0}
   script_name {Sham.filename}
   description {Sham.description}
@@ -302,15 +302,15 @@ TestScript.blueprint do
 end
 
 TestSupportFile.blueprint do
-  file_name {Sham.message}
-  assignment_id {0}
+  file_name {Sham.filename}
+  assignment {Assignment.make}
   description {Sham.description}
 end
 
 TestResult.blueprint do
-  submission
+  submission {Submission.make}
   completion_status {'pass'}
-  test_script_id {0}
+  test_script {TestScript.make}
   marks_earned {0}
   input_description {Sham.message}
   actual_output {Sham.message}

@@ -6,21 +6,28 @@ require 'shoulda'
 
 class TestSupportFileTest < ActiveSupport::TestCase
   should belong_to :assignment
-
+  
+  should validate_presence_of :assignment
+  should validate_presence_of :file_name
+  
+  # create
   context "A valid test support file" do
 
     should "return true when a valid file is created" do
       @supportfile = TestSupportFile.make(:file_name => 'input.txt', :description => 'This is an input file')
       assert @supportfile.valid?
+      assert @supportfile.save
     end
     
-    should "return true when the description is empty" do
+    should "return true when a valid file is created even if the description is empty" do
       @supportfile = TestSupportFile.make(:file_name => 'actual_output.txt', :description => '')
       assert @supportfile.valid?
+      assert @supportfile.save
     end
 
   end
 
+  # update
   context "An invalid test support file" do
     
     setup do
@@ -43,6 +50,17 @@ class TestSupportFileTest < ActiveSupport::TestCase
       assert !@invalidsupportfile.valid?, "support file expected to be invalid when the file name already exists"
     end
 
+  end
+  
+  # delete
+  context "MarkUs" do
+    
+    should "be able to delete a test support file" do
+      @supportfile = TestSupportFile.make(:file_name => 'input.txt', :description => 'This is an input file')
+      assert @supportfile.valid?
+      assert @supportfile.destroy
+    end
+    
   end
 
 end
