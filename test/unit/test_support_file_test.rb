@@ -34,7 +34,7 @@ class TestSupportFileTest < ActiveSupport::TestCase
     end
 
     should "return false when the description is nil" do
-      @invalidsupportfile.descirption = nil
+      @invalidsupportfile.description = nil
       assert !@invalidsupportfile.valid?, "support file expected to be invalid when the description is nil"
     end
 

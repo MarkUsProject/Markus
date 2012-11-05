@@ -100,7 +100,7 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
       @current_user = @ta
     end
     should "be allowed to do test (current_user is TA)" do
-      assert can_run_test?
+      assert has_permission?
     end
   end
 
@@ -115,7 +115,7 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
       @current_user = @student
     end
     should "be allowed to do test (current_user is student with enough tokens)" do
-      assert can_run_test?
+      assert has_permission?
     end
   end
 
@@ -131,7 +131,7 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
       @current_user = @student
     end
     should "not be allowed to do test (current_user is student with not enough tokens)" do
-      assert !can_run_test?
+      assert !has_permission?
     end
   end
 
@@ -148,7 +148,7 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
     end
     should "not be allowed to do test (no tokens are found for this student)" do
       assert_raise(RuntimeError) do
-        can_run_test? # raises exception
+        has_permission? # raises exception
       end
     end
   end
@@ -163,7 +163,7 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
       @current_user = @student
     end
     should "not be allowed to run tests on a group they do not belong to" do
-      assert !can_run_test?
+      assert !has_permission?
     end
   end
 end

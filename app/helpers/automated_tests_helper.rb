@@ -309,28 +309,4 @@ module AutomatedTestsHelper
     return assignment
   end
 
-  # Verify tests can be executed
-  def can_run_test?()
-    if @current_user.admin?
-      return true
-    elsif @current_user.ta?
-      return true
-    elsif @current_user.student?
-      # Make sure student belongs to this group
-      if not @current_user.accepted_groupings.include?(@grouping)
-        return false
-      end
-      t = @grouping.token
-      if t == nil
-        raise I18n.t("automated_tests.missing_tokens")
-      end
-      if t.tokens > 0
-        t.decrease_tokens
-        return true
-      else
-        return false
-      end
-    end
-  end
-
 end

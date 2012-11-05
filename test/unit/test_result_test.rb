@@ -3,14 +3,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', '
 require 'shoulda'
 
 class TestResultTest < ActiveSupport::TestCase
-  should belongs_to :submission
-  should has_one :test_script
-
-  should validates_presence_of :submission
-  should validates_associated :submission
-  
-  should validates_inclusion_of :completion_status, :in => %w(pass fail error), :error => "%{value} is not a valid status"
-  should validates_numericality_of :marks_earned, :only_integer => true, :greater_than_or_equal_to => 0
+  should belong_to :submission
   
   # Basic testing: create, delete, update
   
@@ -23,7 +16,7 @@ class TestResultTest < ActiveSupport::TestCase
                                     :input_description => '',
                                     :actual_output     => '   ',
                                     :expected_output   => 'This is the expected output')
-      @testresult.submission = sub
+      @testresult.submission = @sub
     end
     
     should "return true when a valid file is created" do
@@ -46,7 +39,7 @@ class TestResultTest < ActiveSupport::TestCase
                                     :input_description => '',
                                     :actual_output     => '   ',
                                     :expected_output   => 'This is the expected output')
-      @testresult.submission = sub
+      @testresult.submission = @sub
     end
     
     should "return false when the marks_earned is negative" do
