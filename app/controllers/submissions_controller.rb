@@ -19,7 +19,9 @@ class SubmissionsController < ApplicationController
                             :collect_ta_submissions,
                             :repo_browser,
                             :populate_repo_browser,
-                            :update_converted_pdfs]
+                            :update_converted_pdfs,
+                            :column_filter,
+                            :update_column_filter]
   before_filter :authorize_for_ta_and_admin,
                 :only => [:browse,
                           :index,
@@ -29,7 +31,9 @@ class SubmissionsController < ApplicationController
                           :collect_ta_submissions,
                           :repo_browser,
                           :populate_repo_browser,
-                          :update_converted_pdfs]
+                          :update_converted_pdfs,
+                          :column_filter,
+                          :update_column_filter]
   before_filter :authorize_for_student,
                 :only => [:file_manager,
                           :populate_file_manager,
@@ -301,6 +305,7 @@ class SubmissionsController < ApplicationController
     if session[:submission_col_dictionary].nil? && !cookies[@c_columns].blank?
       session[:submission_col_dictionary] = JSON.parse(cookies[@c_columns], :symbolize_names => true)
     elsif session[:submission_col_dictionary].nil?
+      puts "SESSION NULLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL"
       session[:submission_col_dictionary] = { :Col1 => true, :Col2 => true, :Col3 => true, :Col4 => true, :Col5 => true, :Col6 => true, :Col7 => true, :Col8 => true, :Col9 => true}
     end
     
