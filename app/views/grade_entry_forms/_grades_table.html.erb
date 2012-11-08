@@ -14,6 +14,13 @@
       <td class="grades_table_cell"><%= h(student.user_name) %></td>
       <td class="grades_table_cell"><%= h(student.last_name) %></td>
       <td class="grades_table_cell"><%= h(student.first_name) %></td>
+      <td class="grades_table_cell">
+        <% if student.has_section? %>
+          <%= student.section.name %>
+        <% else %>
+           -
+        <% end %>
+      </td>
 
       <% grade_entry_student = ((@grade_entry_form.grade_entry_students.find_by_user_id(student.id)) \
                                 or (@grade_entry_form.grade_entry_students.build(:user_id => student.id))) %>

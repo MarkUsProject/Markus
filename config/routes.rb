@@ -137,7 +137,7 @@ Markus::Application.routes.draw do
 
       resources :results do
         collection do
-          get 'update_mark'
+          post 'update_mark'
           get 'expand_criteria'
           get 'collapse_criteria'
           get 'expand_unmarked_criteria'
@@ -160,13 +160,13 @@ Markus::Application.routes.draw do
           get 'next_grouping'
           post 'remove_extra_mark'
           get 'expand_unmarked_criteria'
-          get 'set_released_to_students'
+          post 'set_released_to_students'
           post 'update_overall_comment'
           post 'update_overall_remark_comment'
           post 'update_marking_state'
           get 'update_remark_request'
           get 'update_positions'
-          get 'update_mark'
+          post 'update_mark'
           get 'view_marks'
         end
       end
@@ -228,6 +228,7 @@ Markus::Application.routes.draw do
     member do
       get 'grades'
       get 'g_table_paginate'
+      post 'g_table_paginate'
       get 'csv_download'
       post 'csv_upload'
       post 'update_grade'

@@ -54,7 +54,8 @@
   <div class="success"><%= flash[:success] %></div>
 <% end %>
 
-<% if @assignment.submission_rule.can_collect_now? %>
+<% if @assignment.submission_rule.can_collect_now? && 
+	flash[:commit_notice] != @assignment.submission_rule.commit_after_collection_message(@grouping)%>
   <div class="warning">
     <%= h(@assignment.submission_rule.after_collection_message(@grouping)) %>
   </div>

@@ -6,12 +6,22 @@ else
   page.hide('errors')
 end
 
-if @warning
-  page.replace_html 'warnings_msg', @warning
-  page.show('warnings')
+if @warning_group_size
+  page.replace_html 'warnings_group_msg', @warning_group_size
+  page.show('warnings_group')
 else
-  page.hide('warnings')
+  page.hide('warnings_group')
 end
+
+if @warning_grace_day
+  page.replace_html 'warnings_grace_msg', @warning_grace_day
+  page.show('warnings_grace')
+else
+  page.hide('warnings_grace')
+end
+
+
+page << render(:partial => 'shared/global_action_warning')
 
 page.call 'modify_students', @students_data.to_json
 page.call "modify_groupings", @groupings_data.to_json

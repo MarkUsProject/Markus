@@ -13,32 +13,30 @@
   </div>
 <% end %>
 
-<%= link_to I18n.t('section.add_section'), new_section_path %>
+<%= link_to I18n.t('section.add_section'), new_section_path, :class => 'button' %>
 <% if @sections.empty? %>
   <p><%= I18n.t('section.no_sections') %></p>
 <% else %>
   <table>
     <% @sections.each do |section| %>
-      <tr>
-        <td><%= link_to section.name, edit_section_path(section) %>
-	  <span class="info">(<%= section.students.count %>)</span>
-	</td>
-        <td><%= button_to I18n.t('delete'), {:action => 'destroy',
-					     :id => section.id},
-                :class => 'delete',
-                :confirm => I18n.t('section.delete.link_confirm'),
-                :method => 'delete',
-                :remote => true,
-                :disabled => !section.students.empty?
-            %>
-        </td>
-      </tr>
+    <tr>
+      <td><%= link_to section.name, edit_section_path(section) %>
+        <span class="info">(<%= section.students.count %>)</span>
+      </td>
+      <td><%= button_to I18n.t('delete'),
+        { :action => 'destroy', :id => section.id },
+        :class => 'delete',
+        :confirm => I18n.t('section.delete.link_confirm'),
+        :method => 'delete',
+        :remote => true,
+        :disabled => !section.students.empty?,
+        :class => 'thin-button'
+      %></td>
+    </tr>
     <% end %>
   </table>
 <% end %>
-
 </div>
-
 
 <div class="wrapLeft">
 </div>

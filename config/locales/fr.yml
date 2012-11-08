@@ -26,7 +26,6 @@ fr:
     # app/views/layouts/_header.html.erb
     log_out:            "Déconnexion"
     clear_role_switch_session_link: "Annuler le changement d'utilisateur."
-    logged_in_as:       "| Connecté en tant que <span id=\"user_name\"><b>%{first_name} %{last_name}</b> (%{user_name})</span> |"
     working:            "Chargement…"
     login_as:           "Connexion en tant que"
 
@@ -66,7 +65,6 @@ fr:
     firefox_warning:    "Certaines fonctionnalités ne fonctionnent qu'avec Mozilla Firefox."
     switch_role:         "Changer d'utilisateur"
     admin_password:      "Mot de passe Administrateur"
-    is_logged_in_as:     "connecté en tant que :"
     cannot_login_as_another_admin: "Vous ne pouvez vous connecter à la place d'un autre administrateur."
 
     #app/views/main/_assignment_summary.html.erb
@@ -134,8 +132,10 @@ fr:
         group:
             empty: "Groupe vide"
             assign_over_limit: "Vous avez dépassé le nombre maximal d'étudiants pour le groupe %{group}"
+            grace_day_over_limit: "Vous avez assigné un ou plusieurs étudiants ayant un nombre de crédits de grâce inférieur à celui déjà utilisé par le groupe %{group} pour ce devoir."
             select_a_group: "Sélectionner un groupe"
-            select_one_group: "Vous devez sélectionner au moins un groupe"
+            select_a_student: "Sélectionner un(e) étudiant(e)"
+            select_a_grader: "Sélectionner un correcteur"
             select_only_one_group: "Vous ne pouvez assigner un(e) étudiant(e) qu'à un seul groupe."
             deleted: "Le groupe a été supprimé"
             work_in_groups:  "Les étudiants peuvent travailler en groupe"
@@ -161,8 +161,6 @@ fr:
             change_marking_scheme_type: "Changer le barème effacera vos critères et vos évaluations."
         allow_web_submits: "Envois <em>via</em> l'interface web ?<span class='required_field'>*</span>"
         display_grader_names_to_students: "Afficher le nom du correcteur aux étudiants ?<span class='required_field'>*</span>"
-        section_due_date_not_displayed: "Les dates de retour sont spécifiques aux sections."
-        section_due_date_type: "Les dates de retour sont spécifiées par section."
         section_due_date_option:  "Si l'option date de retour par section est sélectionnée, les groupes seront restreints aux sections"
         section_due_dates_info:  "<b>Important</b> La date de retour « globale » doit être indiquée. Si une section n'a pas de date de retour spécifique, la date « globale » sera utilisée. Si certains étudiants ne font partie d'aucune section, ce sera aussi cette date « globale » qui sera utilisée. Ces étudiants ne pourront se mettre qu'avec d'autres étudiants n'appartenant pas à des sections."
     your_mark:  "Votre note : "
@@ -199,7 +197,6 @@ fr:
     properties:         "Propriétés"
     grades:             "Notes"
     submissions:        "Envois"
-    groups_and_graders: "Correcteurs"
     rubrics:            "Rubriques"
     marking_scheme:     "Barème"
     join:               "Rejoindre"
@@ -207,7 +204,6 @@ fr:
     invite:             "Inviter"
     disinvite:          "Ne plus inviter"
     help:               "Aide"
-    confirm_bulk_action: "Êtes-vous sûr de vouloir exécuter cette action ?"
     give_grace_credits:  "Donner du temps supplémentaire : "
     add_section:        "Ajouter à une section"
     no_result:          "Les notes de ce projet ne sont pas encore disponibles."
@@ -285,9 +281,6 @@ fr:
         no_annotation_in_this_category: "Il n'y a pas d'annotation dans cette catégorie"
         new_annotation: "Nouvelle annotation"
         annotation_category: "Catégorie de l'annotation"
-        reuse_annotation_text: "Réutiliser le texte de l'annotation"
-        choose_text_to_use: "Choisissez le texte à réutiliser"
-        image_annotation_positions_error: "Erreur : la position de l'annotation sur l'image n'a pas pu être chargée"
         sure_to_remove: "Êtes-vous sûr de vouloir supprimer cette annotation ?"
         submit_edit: "Sauvegarder"
         change_across_submissions: "Ce changement sera propagé à toutes les notes comportant cette annotation, même celles déjà affichées. Êtes-vous sûr de vouloir continuer ?"
@@ -318,10 +311,8 @@ fr:
     still_working_warning: "Il y a des travaux non terminés. Ils pourraient ne pas être sauvegardés si vous quittez maintenant."
 
     csv:
-      student_not_found: "L'étudiant(e) '%{user_name}' n'a pas été trouvé(e)."
       repo_collision_warning: "Attention : le répertoire '%{repo_name}' existe déjà. Le nom du groupe était '%{group_name}'."
       line_nr_csv_file_prefix: "ligne %{line_number} du fichier CSV :"
-      errors_and_warnings_msg: "Les lignes suivantes ont entraîné des erreurs ou des warnings :"
       group_to_grader: "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux groupes."
 
     pagination:
@@ -445,18 +436,16 @@ fr:
 
     groups:
       groups: "Groupes"
+      add_new: "Nouvelle groupe"
       manage_groups: "Gérer les groupes"
       all_students: "Tous les étudiants(<span id=\"all_students_count\"></span>)"
       unassigned_students: "Non assigné(s)(<span id=\"unassigned_students_count\"></span>)"
       assigned_students: "Assigné(s)(<span id=\"assigned_students_count\"></span>)"
       another_assignment_group: "Utiliser les groupes d'un autre projet"
-      without_a_group: "Étudiants sans groupe (<span id=\"number_of_ungrouped_students\">%{length}</span>)"
       graders: "Correcteurs (%{graders})"
       all_grouping_counts: "Tous (<span id=\"all_groupings_count\"></span>)"
       valid_grouping_counts: "Valide(s) (<span id=\"valid_groupings_count\"></span>)"
       not_valid_grouping_counts: "Non valide(s) (<span id=\"invalid_groupings_count\"></span>)"
-      assigned_grouping_counts: "Assigné(s) (<span id=\"assigned_groupings_count\"></span>)"
-      not_assigned_grouping_counts: "Non assigné(s) (<span id=\"unassigned_groupings_count\"></span>)"
       problem: "Il y a un problème…"
       warning: "Attention"
       lines_not_processed: "Les lignes suivantes n'ont pas pu être traitées : "
@@ -474,16 +463,12 @@ fr:
         already_in_use: "Ce nom est déjà utilisé pour ce projet."
         group_name: "Nom du groupe"
       randomly_assign_graders: "Attribuer les correcteurs aléatoirement"
-      confirm_random_assign_graders: "Êtes-vous sûr de vouloir attribuer aléatoirement les correcteurs aux groupes sélectionnés ?"
-      no_graders_selected: "Vous devez sélectionner au moins un correcteur pour l'attribution aléatoire."
-      no_groups_selected: "Vous devez sélectionner au moins un groupe pour l'attribution aléatoire."
       cant_delete: "Vous ne pouvez pas supprimer ce groupe."
       cant_delete_already_submitted: "Vous avez déjà envoyé un fichier. Vous ne pouvez pas supprimer votre groupe."
       could_not_delete: "Vous ne pouvez pas supprimer les groupes suivants — un groupe ne peut être supprimé si un envoi a déja été créé pour le groupe."
       delete:  "Supprimer ce groupe"
       delete_confirm: "Enlever tous les membres du groupe et supprimer toutes les informations associées à ce groupe ?"
       use_another_assignments_groups: "Utiliser les groupes d'un autre projet"
-      upload_download: "Envoi/Téléchargement"
       upload:
         upload: "Envoi"
         upload_groups_file: "Envoyer un fichier contenant des groupes"
@@ -518,7 +503,6 @@ fr:
       csv:
         could_not_find_source: "Le projet source pour la copie des groupes n'a pas été trouvé."
         could_not_find_target: "Le projet cible pour la copie des groupes n'a pas été trouvé."
-        groups_created: "Groupes créés"
 
     results:
       title:  "Projet %{assignment_name} : %{group_name}"
@@ -605,13 +589,10 @@ fr:
       confirm_delete_group: "Êtes-vous sûr de vouloir supprimer votre groupe ?"
       delete_your_group: "Suppression du groupe"
       disinvite_member: "Êtes-vous sûr de vouloir annuler l'invitation de cet utilisateur ?"
-      disinvite_member_title: "Ne plus inviter cet utilisateur"
       member_disinvited: "Ce membre ne fait plus partie du groupe"
       invited: "(invité)"
       inviter: "(créateur du groupe)"
       disinvite: "Annuler l'invitation"
-      invitation_rejected: "<span class=\"last_name\">%{user_last_name}</span> %{user_first_name} <span class=\"membership_status_rejected\">
-       a décliné l'invitation</span>"
       cancel_invitation: "Êtes-vous sûr de vouloir annuler l'invitation ?"
       cancel_invitation_title: "Annuler l'invitation"
       section_groups_only: "Vous ne pouvez inviter que des étudiants de votre section"
@@ -682,7 +663,6 @@ fr:
       upload:
         not_added: "Les administrateurs suivants n'ont pas été ajoutés correctement : "
         make_sure: "Vérifiez que : "
-        admins_names: "Les noms des administrateurs sont en caractères alphanumériques."
         each_field: "Chaque champ est séparé par une virgule (pas d'espace)."
         each_line: "Chaque ligne a le bon nombre de champs comme spécifié."
       create:
@@ -740,7 +720,6 @@ fr:
         section:        "Section"
         display_grader_names_to_students: "Afficher le nom du correcteur aux étudiants ?"
 
-    confirm_bulk_action:  "Are you sure you want to perform this bulk action?" #TODO: How to translate 'bulk action'?
     hide_students: "Désactiver les étudiants"
     unhide_students: "Activer les étudiants"
 
@@ -993,8 +972,6 @@ fr:
     criteria_edit_total_mark:     "Ce critère sera noté sur %{criterion_total_mark}."
     criterion_saved_success:   "Le critète a été sauvegardé."
     criterion_deleted_success:  "Le critère et toutes les notes associées ont été supprimés."
-    criterion_created_success:  "Critère créé"
-    criteria_upload_success: "Critère mis à jour"
     criteria:           "Critères"
     criterion:          "Critère"
     total_mark:         "Note totale"
@@ -1017,8 +994,6 @@ fr:
     help_editing_flexible_criteria_message: "
     Sélectionner un critère sur la gauche pour l'éditer. Les nom des critères, leurs descriptions
     et les notes maximales peuvent être modifiés."
-    students_without_a_group_list_message: "Ces étudiants n'ont pas encore de groupes : "
-    no_students_without_a_group_message: "Tous les étudiants sont dans des groupes."
     past_due_date_warning: "La date de retour de ce projet est passée."
 
     section:
@@ -1053,7 +1028,7 @@ fr:
         long_date: "%d %B %Y à %H:%M"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%d %B %Y"
-
+     
       day_names: [dimanche, lundi, mardi, mercredi, jeudi, vendredi, samedi]
       abbr_day_names: [dim, lun, mar, mer, jeu, ven, sam]
       month_names: [~, janvier, février, mars, avril, mai, juin, juillet, août, septembre, octobre, novembre, décembre]
@@ -1107,7 +1082,6 @@ fr:
       revision_used_for_test: "<span class=\"prop_label\">Révision utilisée:</span> %{revision}"
       due_date_is_passed: "Vous ne pouvez pas exécuter de test après la date de retour."
       information: "Information"
-      test_student_code: "Tester le code de l'étudiant(e)"
       run_tests: "Exécuter les tests."
       need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test.<br />
                       Si vous avez envoyé un fichier et vous voulez exécuter un test, veuillez cliquer sur \"Récuperer et préparer test\"."

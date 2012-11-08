@@ -1,20 +1,19 @@
 <%= javascript_include_tag "FilterTable/FilterTable"%>
 <%= javascript_include_tag "users_manager"%>
+<%= javascript_include_tag "effects.js" %>
 
 <%= render :partial => "boot.js.erb"%>
 <%= render :partial => "student_form_actions.js.erb"%>
 
 <script type="text/javascript">
 //<![CDATA[
-
-document.observe("dom:loaded", function(){
+document.observe("dom:loaded", function() {
 
   modalNotesGroup = new Control.Modal($('notes_dialog'),
   {
     overlayOpacity: 0.75,
     className: 'modalNotesGroup',
     fade:false
-
   });
 
   modalUpload = new Control.Modal($('upload_dialog'),
@@ -22,7 +21,6 @@ document.observe("dom:loaded", function(){
     overlayOpacity: 0.75,
     className: 'modalUpload',
     fade:false
-
   });
 
   modalDownload = new Control.Modal($('download_dialog'),
@@ -30,7 +28,6 @@ document.observe("dom:loaded", function(){
     overlayOpacity: 0.75,
     className: 'modalDownload',
     fade:false
-
   });
 });
 //]]>
@@ -38,127 +35,106 @@ document.observe("dom:loaded", function(){
 
 <div id="title_bar"><h1><%=h I18n.t("students.manage_students") %></h1>
   <div class="headingButtons">
-  <%= link_to I18n.t(:add_new), new_student_path() %>
-  | <%= link_to I18n.t(:upload),'#',:onclick=>'modalUpload.open(); return false;' %>
-  | <%= link_to I18n.t(:download),'#', :onclick=>'modalDownload.open(); return false;' %>
+    <%= link_to I18n.t(:add_new), new_student_path() %> |
+    <%= link_to I18n.t(:upload),'#', :onclick => 'modalUpload.open(); return false;' %> |
+    <%= link_to I18n.t(:download),'#', :onclick => 'modalDownload.open(); return false;' %>
   </div>
 </div>
 
 <div class="colsLeftHeavy">
 
   <div class="wrapLeft">
-   <%= form_tag bulk_modify_students_path(),
- 	        :before => "before_form_submit();",
-	        :complete => "after_form_submit();",
-	        :remote => true do %>
+    <%= form_tag bulk_modify_students_path(),
+ 	    :before => "before_form_submit();",
+	    :complete => "after_form_submit();",
+	    :remote => true do %>
 
-    <div id="ajax_error" class="error" style="display:none;">
+    <div id="ajax_error" class="error" style="display:none;"></div>
 
-    </div>
     <div id="list">
       <% if flash[:upload_notice] -%>
-          <p class="notice"><%= h(flash[:upload_notice]) %></p>
+        <p class="notice"><%= h(flash[:upload_notice]) %></p>
       <% end -%>
 
       <% if flash[:success] -%>
-          <p class="success"><%= h(flash[:success]) %></p>
+        <p class="success"><%= h(flash[:success]) %></p>
       <% end -%>
 
       <% # display lines in csv file that has not been successfully processed %>
       <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? -%>
       <div class="errorExplanation" id="errorExplanation">
         <p>
-            <%= I18n.t(:students_not_successfully_added_message_1)%>
-	</p>
+          <%= I18n.t(:students_not_successfully_added_message_1)%>
+	      </p>
         <ul>
           <% for line in flash[:invalid_lines] -%>
           <li><%= h(line) %></li>
           <% end -%>
         </ul>
         <p>
-	  <%= I18n.t(:students_not_successfully_added_message_2) %>
-	</p>
+	        <%= I18n.t(:students_not_successfully_added_message_2) %>
+	      </p>
+
         <ul>
-          <li>
-       	    <%= I18n.t(:students_not_successfully_added_message_3) %>
-	  </li>
-          <li>
-       	    <%= I18n.t(:students_not_successfully_added_message_4) %>
-	  </li>
-          <li>
-       	    <%= I18n.t(:students_not_successfully_added_message_5) %>
-	  </li>
+          <li><%= I18n.t(:students_not_successfully_added_message_3) %></li>
+          <li><%= I18n.t(:students_not_successfully_added_message_4) %></li>
+          <li><%= I18n.t(:students_not_successfully_added_message_5) %></li>
         </ul>
       </div>
       <% end -%>
 
-
       <div id="toggle_actions">
        <%= I18n.t(:filters) %>:
-       <%= link_to raw(
-	  I18n.t(:all) + " (<span id=\"all_students_count\"></span>)"), '#',
-			    :onclick => "filter('none');",
-			    :id => "filter_link_none",
-			    :class => "filter_selected" %>
+       <%= link_to raw(I18n.t(:all) + " (<span id=\"all_students_count\"></span>)"), '#',
+			  :onclick => "filter('none');",
+			  :id => "filter_link_none",
+			  :class => "filter_selected" %>
        |
-       <%= link_to raw(
-	  I18n.t(:active) + " (<span id=\"active_students_count\"></span>)"), '#',
-			    :onclick => "filter('active');",
-			    :id => "filter_link_active" %>
+       <%= link_to raw(I18n.t(:active) + " (<span id=\"active_students_count\"></span>)"), '#',
+			  :onclick => "filter('active');",
+			  :id => "filter_link_active" %>
 
        |
-       <%= link_to raw(
-	    I18n.t(:not_active) +
-	    " (<span id=\"inactive_students_count\"></span>)"), '#',
-			    :onclick => "filter('inactive');",
-			    :id => "filter_link_inactive"%>
-       </div>
-       <div class="global_action">
-       <span id="loading_list"><%= image_tag("spinner.gif")%><%= I18n.t("groups.loading_list") %> </span>
-      <select name="bulk_action" id="bulk_action"
-      onchange="$('bulk_action_2').setValue($(this).getValue());
-      detect_bulk_action_change();">
-        <option value=""><%= t(:bulk_action)%></option>
-        <option value="give_grace_credits"><%= t(:give_grace_credits)%></option>
-	<option value="add_section"><%= I18n.t(:add_section)%></option>
-        <option value="hide"><%= t(:hide_students)%></option>
-        <option value="unhide"><%= t(:unhide_students)%></option>
-      </select>
-      <span id="grace_credit_input" style="display:none;">
-      <%= text_field_tag :number_of_grace_credits, nil, :size => 1, :id => 'number_of_grace_credits' %>
-      </span>
-      <span id="section_input" style="display: none;">
-	<select name="section" id="section">
-		<option value=""> - </option>
-	    <% @sections.each do |section| %>
-		<option value="<%= section.id %>"><%= section.name %></option>
-	    <% end %>
-	</select>
-      </span>
-      <%= submit_tag t(:apply), :id => 'apply_bulk_action', :disable_with => I18n.t('working'), :name => 'commit' %>
-
-
-
+       <%= link_to raw(I18n.t(:not_active) + " (<span id=\"inactive_students_count\"></span>)"), '#',
+			  :onclick => "filter('inactive');",
+			  :id => "filter_link_inactive"%>
       </div>
-
-      <table id="students">
-
-      </table>
 
       <div class="global_action">
-      <select name="bulk_action_2" id="bulk_action_2"
-      onchange="$('bulk_action').setValue($(this).getValue());
-      detect_bulk_action_change(); ">
-      <option value=""><%= t(:bulk_action)%></option>
-        <option value="give_grace_credits"><%= t(:give_grace_credits)%></option>
-	<option value="add_section"><%= t(:add_section) %></option>
-        <option value="hide"><%= t(:hide_students)%> </option>
-        <option value="unhide"><%= t(:unhide_students) %></option>
-      </select>
-      <%= submit_tag t(:apply), :id => 'apply_bulk_action2', :name => 'commit' %>
+        <select name="bulk_action" id="bulk_action"
+        onchange="$('bulk_action_2').setValue($(this).getValue());
+        detect_bulk_action_change();">
+          <option value=""><%= t(:bulk_action)%></option>
+          <option value="give_grace_credits"><%= t(:give_grace_credits)%></option>
+  	      <option value="add_section"><%= I18n.t(:add_section)%></option>
+          <option value="hide"><%= t(:hide_students)%></option>
+          <option value="unhide"><%= t(:unhide_students)%></option>
+        </select>
+
+        <span id="grace_credit_input" style="display:none;">
+        <%= text_field_tag :number_of_grace_credits, nil, :size => 1, :id => 'number_of_grace_credits' %>
+        </span>
+        <span id="section_input" style="display: none;">
+  	      <select name="section" id="section">
+  		      <option value=""> - </option>
+  	        <% @sections.each do |section| %>
+  		      <option value="<%= section.id %>"><%= section.name %></option>
+  	        <% end %>
+  	      </select>
+        </span>
+        <%= submit_tag t(:apply), :id => 'apply_bulk_action', :disable_with => I18n.t('working'), :name => 'commit', :class => 'thin-button' %>
       </div>
+
+      <div style="overflow:auto; height: 400px;">
+        <table id="students">
+          <tr id="loading_list"><td class="loading">
+            <%= image_tag("spinner.gif")%> <%= I18n.t("groups.loading_list") %>
+          </td></tr>
+        </table>
+      </div>
+
+    </div>
     <% end %> <!-- remote form tag -->
-  </div>
   </div>
 </div> <!-- colsLeftHeavy -->
 
@@ -170,7 +146,7 @@ document.observe("dom:loaded", function(){
     <p><%=h I18n.t("students.upload.student_same_number") %></p>
 
     <%= form_tag upload_student_list_students_path(),
-                 {:multipart => true} %>
+      {:multipart => true} %>
       <label for="userlist"><%=h I18n.t("students.upload.csv_file") %></label>
       <input type="file" name="userlist" id="userlist"/>
       <br />
@@ -185,7 +161,7 @@ document.observe("dom:loaded", function(){
 </div>
 
 <div id="download_dialog">
-    <h2><%=h I18n.t("download") %></h2>
+  <h2><%=h I18n.t("download") %></h2>
   <p><%= link_to I18n.t("students.download.download_csv_format"),
     {:controller => 'students', :action => 'download_student_list',
     :format => "csv"}, :onclick => "modalDownload.close();"  %></p>
@@ -195,5 +171,4 @@ document.observe("dom:loaded", function(){
   <%= button_to I18n.t(:close), '#' , :onclick => 'modalDownload.close();return false;' %>
 </div>
 
-<div id="notes_dialog">
-</div>
+<div id="notes_dialog"></div>

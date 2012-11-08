@@ -8,6 +8,7 @@
         </div>
     </div>
     <div class="notes_wrapper_row">
+
         <div class="notes_existing">
             <% @notes.each do |note| %>
             <strong><%= note.user.user_name %>: </strong>
@@ -31,7 +32,7 @@
 			        :highlight_field => @highlight_field,
 			        :number_of_notes_field => @number_of_notes_field ),
 			        :remote => true ) do %>
-            <%= text_area_tag(:new_notes, nil, :rows => 15, :cols=>30) %>
+            <%= text_area_tag(:new_notes, nil, :rows => 15, :cols=>32) %>
             <p class="p_margin">
 
                 <div id="notes_error" class="error" style="display:none;">
@@ -39,11 +40,14 @@
                   <div id="notes_error_list">
                   </div>
                 </div>
-
-                <%= submit_tag I18n.t('notes.save'), :disable_with => I18n.t('working'), :id => "notes_submit" %>
-                <button onclick="modalNotesGroup.close(); return false;">
-                    <%=h I18n.t(:cancel) %>
-                </button>
+                
+                <div class="float_right">
+	                <%= submit_tag I18n.t('notes.save'), :disable_with => I18n.t('working'), :id => "notes_submit" %>
+	                <button onclick="modalNotesGroup.close(); return false;">
+	                    <%=h I18n.t(:cancel) %>
+	                </button>
+                </div>
+                
             </p>
             <% end %>
         </div>

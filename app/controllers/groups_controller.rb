@@ -263,6 +263,12 @@ class GroupsController < ApplicationController
     student_ids = params[:students]
 
     if params[:groupings].nil? or params[:groupings].size ==  0
+	 #if there is a global action than there should be a group selected
+         if params[:global_actions]
+               @global_action_warning = I18n.t("assignment.group.select_a_group")
+               render :partial => "shared/global_action_warning.rjs"
+               return
+         end
       #Just do nothing
       render :nothing => true
       return
@@ -290,7 +296,8 @@ class GroupsController < ApplicationController
           add_members(student_ids, grouping_ids[0], @assignment)
           return
         else
-          render :nothing => true
+          @global_action_warning = I18n.t("assignment.group.select_a_student")
+          render :partial => "shared/global_action_warning.rjs"
           return
         end
       when "unassign"
@@ -350,10 +357,10 @@ class GroupsController < ApplicationController
     students_in_group = grouping.student_membership_number
     group_name = grouping.group.group_name
     if students_in_group > assignment.group_max
-      @warning = I18n.t("assignment.group.assign_over_limit",
+      @warning_group_size = I18n.t("assignment.group.assign_over_limit",
         :group => group_name)
     end
-
+    
     render :add_members
     return
   end
@@ -391,6 +398,13 @@ class GroupsController < ApplicationController
       # only the first student should be the "inviter"
       # (and only update this if it succeeded)
       set_membership_status = StudentMembership::STATUSES[:accepted]
+      
+      # generate a warning if a member is added to a group and they 
+      # have less grace days credits than already used by that group 
+      if student.remaining_grace_credits < grouping.grace_period_deduction_single
+        @warning_grace_day = I18n.t("assignment.group.grace_day_over_limit",
+          :group => grouping.group.group_name)
+      end
     rescue Exception => e
       @error = true
       @messages.push(e.message)

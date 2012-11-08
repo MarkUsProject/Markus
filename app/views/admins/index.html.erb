@@ -3,53 +3,55 @@
 
 <%= render :partial => "boot.js" %>
 
-<div id="title_bar"><h1><%= I18n.t("admins.manage_admins") %></h1>
+<div id="title_bar">
+  <h1><%= I18n.t("admins.manage_admins") %></h1>
   <div class="headingButtons">
     <%= link_to I18n.t(:add_new), new_admin_path() %>
   </div>
 </div>
 
 <div class="colsLeftHeavy">
+  <div class="wrapLeft">
+    <div id="list">
 
-<div><div class="wrapLeft">
- <div id="list">
-      <% if flash[:upload_notice] %>
-          <p class="notice"><%= flash[:upload_notice] %></p>
-      <% end %>
+    <% if flash[:upload_notice] %>
+    <p class="notice"><%= flash[:upload_notice] %></p>
+    <% end %>
 
-      <%# TODO Get rid of edit_notice, and replace with success %>
+    <%# TODO: there is no csv functionality on this page, why is this here? %>
 
-      <% if flash[:edit_notice] %>
-        <p class="success"><%= flash[:edit_notice] %></p>
-      <% end %>
+    <% if flash[:edit_notice] %>
+    <p class="success"><%= flash[:edit_notice] %></p>
+    <% end %>
 
-      <% if flash[:success] %>
-        <p class="success"><%= flash[:success] %></p>
-      <% end %>
+    <% if flash[:success] %>
+    <p class="success"><%= flash[:success] %></p>
+    <% end %>
 
+    <% # display lines in csv file that has not been successfully processed %>
+    <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? %>
+    <div class="errorExplanation" id="errorExplanation">
+      <p><%= I18n.t("admins.not_added") %></p>
+      <ul>
+        <% for line in flash[:invalid_lines] %>
+        <li><%= line %></li>
+        <% end %>
+      </ul>
+      <p><%= I18n.t("graders.make_sure") %></p>
+      <ul>
+        <li><%= I18n.t("admins.ta_names") %></li>
+        <li><%= I18n.t("admins.each_field") %></li>
+        <li><%= I18n.t("admins.each_line") %></li>
+      </ul>
+    </div>
+    <% end %>
 
-      <% # display lines in csv file that has not been successfully processed %>
-      <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? %>
-      <div class="errorExplanation" id="errorExplanation">
-        <p><%= I18n.t("admins.not_added") %></p>
-        <ul>
-          <% for line in flash[:invalid_lines] %>
-          <li><%= line %></li>
-          <% end %>
-        </ul>
-        <p><%= I18n.t("graders.make_sure") %></p>
-        <ul>
-          <li><%= I18n.t("admins.ta_names") %></li>
-          <li><%= I18n.t("admins.each_field") %></li>
-          <li><%= I18n.t("admins.each_line") %></li>
-        </ul>
-      </div>
-      <% end %>
+    <table id="admins">
+      <tr id="loading_list"><td class="loading">
+        <%= image_tag("spinner.gif")%> <%= I18n.t("groups.loading_list") %>
+      </td></tr>
+    </table>
 
-      <table id="admins">
-      </table>
+    </div>
   </div>
-  </div></div>
-
-  <!-- Break between sections -->
- </div> <!-- colsLeftHeavy -->
+</div> <!-- colsLeftHeavy -->

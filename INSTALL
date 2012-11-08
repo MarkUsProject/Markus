@@ -50,7 +50,7 @@ see http://www.markusproject.org/download/
         - mod_rewrite
         - mod_dav_svn (required if you want to allow SVN repository access)
         - mod_authz_svn (required if you want to allow SVN repository access)
-    * ImageMagick (known to work with >=6.5.7, older versions should be ok too)
+    * Ghostscript (known to work with >=9.05, older versions should be ok too)
       Only required if you plan to be able to view and annotate pdfs within
       the browser (PDF_SUPPORT setting in config files)
     * Ant, if you plan to use the MarkUs built in testing framework (still in
@@ -124,17 +124,17 @@ see http://www.markusproject.org/download/
       See http://docs.rubygems.org/read/chapter/3 for further details.
 
 
-3.2 IMAGEMAGICK (OPTIONAL)
+3.2 GHOSTSCRIPT (OPTIONAL)
 
   If you plan on using MarkUs' PDF conversion feature so that you can annotate
-  them using a browser, you need ImageMagick installed.
+  them using a browser, you need Ghostscript installed.
 
-  To make sure you have ImageMagick installed, run:
+  To make sure you have Ghostscript installed, run:
 
-    identify --version
-
-  If you don't http://www.imagemagick.org/script/install-source.php#unix
-  has detailed instructions on installing ImageMagick.
+    ghostscript --version
+	
+  If you don't http://ghostscript.com/doc/9.05/Install.htm#Install_Unix
+  has detailed instructions on installing Ghostscript. 
 
 
 3.3 INSTALLING MARKUS
