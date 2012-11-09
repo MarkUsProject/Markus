@@ -19,7 +19,7 @@
              :method => 'put',
 	     :remote => true do |f| %>
   <%= f.text_area(:content, :size => "50x5") %>
-  <%= f.submit t(:save) %><input type="reset" value="<%=h t(:cancel) %>" onclick="$('annotation_text_<%=annotation_text.id%>_edit').hide();$('annotation_text_<%=annotation_text.id%>_control').show();">
+  <%= f.submit t(:save) , :disable_with => I18n.t('working')%><input type="reset" value="<%=h t(:cancel) %>" onclick="$('annotation_text_<%=annotation_text.id%>_edit').hide();$('annotation_text_<%=annotation_text.id%>_control').show();">
 <% end %>
 </div>
 </li>
