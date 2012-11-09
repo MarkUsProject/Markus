@@ -9,6 +9,6 @@
   <%= f.text_field :annotation_category_name,
 		   :id => "add_annotation_category_prompt",
 		   :size => 20 %><br />
-  <%= f.submit t(:save) %>
+  <%= f.submit t(:save) , :disable_with => I18n.t('working')%>
 <% end %>
 </li>
