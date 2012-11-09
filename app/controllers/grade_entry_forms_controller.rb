@@ -159,6 +159,9 @@ class GradeEntryFormsController < ApplicationController
                        @filter,
                        @sort_by,
                        {:grade_entry_form => @grade_entry_form})
+      if !@desc.blank?
+        all_students.reverse!
+      end
       @alpha_pagination_options = @grade_entry_form.alpha_paginate(
                                      all_students,
                                      @per_page,

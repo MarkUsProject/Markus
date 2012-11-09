@@ -1,5 +1,6 @@
 <% # Allow the user to jump to a page containing certain students
 %>
+<% if sort_by == 'last_name' %>
 <%= label_tag "alpha_category", t('pagination.jump_to'), :class => "inline_label" %>               
 <%= select_tag "alpha_category",
                 options_for_select(alpha_pagination_options, alpha_category),
@@ -18,7 +19,8 @@
                 	            + '&update_alpha_pagination_options=' + false
                 	            + '&authenticity_token=' + AUTH_TOKEN })" -%>
      
-<input type="hidden" name="alpha_category" value="<%=alpha_category%>">
+<input type="hidden" name="alpha_category" value="<%=alpha_category%>" >
+<% end %>
 
 <% # Allow the user to modify the number of students displayed per page
 %>
