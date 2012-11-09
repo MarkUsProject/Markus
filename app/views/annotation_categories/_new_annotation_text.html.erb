@@ -6,6 +6,6 @@
   <%= f.text_area(:content, :rows => '2') %>
   <div class="error" style="display:none;" id="new_annotation_text_error">
   </div>
-  <%= f.submit t(:save) %>
+  <%= f.submit t(:save) , :disable_with => I18n.t('working')%>
 <% end %>
 </li>
