@@ -29,7 +29,8 @@
         g_table_paginate_grade_entry_form_path(
             :id => grade_entry_form.id,
             :filter => filter,
-            :sort_by => sort_by)+ "', 
+            :sort_by => sort_by,
+            :desc => desc)+ "', 
         { asynchronous:true, 
           evalScripts:true, 
           onComplete:function(request){ap_thinking_stop();}, 

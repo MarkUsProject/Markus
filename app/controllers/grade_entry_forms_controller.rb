@@ -92,7 +92,12 @@ class GradeEntryFormsController < ApplicationController
     @filter = 'none'
 
     # Pagination options
-    @per_page = 15
+    if(!params[:per_page].blank?)
+      @per_page = params[:per_page]
+    else
+      @per_page = 15
+    end
+
     @current_page = 1
     @c_sort_by = current_user.id.to_s +  "_"+ @grade_entry_form.id.to_s+ "_sort_by_grades"
    if !params[:sort_by].blank?
