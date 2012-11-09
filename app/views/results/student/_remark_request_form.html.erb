@@ -12,8 +12,10 @@
     <div>
       <%= hidden_field_tag "real_commit", "Submit" %>
       <%= f.submit t(:save_changes), :OnClick => "$('real_commit').value='Save'",
-                   :disabled => true, :id => "remark_request_save" %>
+                   :disabled => true, :id => "remark_request_save", 
+                   :disable_with => I18n.t('working') %>
       <%= f.submit t(:submit_request),
+      			   :disable_with => I18n.t('working'),
                    :id => "remark_request_submit",
                    :confirm => t(:confirm_remark_submit) %>
     </div>
