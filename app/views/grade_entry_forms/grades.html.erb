@@ -124,15 +124,28 @@
       <%= render :partial => 'ajax_paginate/selects', :locals => {:page_items => @students.size, :total_items => @students_total} %>
     </div>
     <table>
-      <thead>
-        <%= render :partial => 'grades_table_column_names' %>
+      <thead id="grades_table_head">
+        <%= render :partial => 'grades_table_column_names',:locals => {:per_page => @per_page,
+                                                                       :filter => @filter,
+                                                                       :sort_by => @sort_by,
+                                                                       :desc => @desc,
+                                                                       :controller => 'grade_entry_forms',
+                                                                       :action => 'grades'
+                                                                       }%>
       </thead>
       <tbody>
         <tr><td id="thinking_table_row" colspan="<%= 6 + @grade_entry_form.grade_entry_items.length %>"><%= render :partial => 'ajax_paginate/thinking' %></td></tr>
       </tbody>
 			<%= render :partial => 'grades_table' %>
-      <tfoot>
-        <%= render :partial => 'grades_table_column_names' %>
+      <tfoot id="grades_table_footer">
+        <%= render :partial => 'grades_table_column_names', :locals => {:per_page => @per_page,
+                                                                         :filter => @filter,
+                                                                         :sort_by => @sort_by,
+                                                                         :desc => @desc,
+                                                                         :controller => 'grade_entry_forms',
+                                                                         :action => 'grades'
+                                                                       }%>
+                                                                           
       </tfoot>
     </table>
 
