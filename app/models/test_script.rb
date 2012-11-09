@@ -35,7 +35,7 @@
 #   display_expected_output
 #   display_actual_output
 #
-#   The 6 atrtributes start with "display" have similar usages.
+#   The 6 attributes start with "display" have similar usages.
 #   Each has a value of one of {"do_not_display",
 #                               "display_after_submission",
 #                               "display_after_collection"},

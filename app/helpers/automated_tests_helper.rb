@@ -5,12 +5,100 @@ require 'open3'
 module AutomatedTestsHelper
   include LibXML
 
-  def enqueue_test()
+  # Find the list of test scripts to run the test. Return the list of
+  # test scripts in the order specified by seq_num (running order)
+  def scripts_to_run(assignment, call_on)
+    # Find all the test scripts of the current assignment
+    all_scripts = TestScripts.find_by_assignment(assignment)
+    
+    list_run_scripts = Array.new
+    
+    # If the test run is requested at collection (by Admin or TA),
+    # All of the test scripts should be run.
+    if call_on == "collection"
+      list_run_scripts = all_scripts
+    else
+      # If the test run is requested at submission or upon request,
+      # verify the script is allowed to run.
+      for script in all_scripts
+        if (call_on == "submission") && script.run_on_submission
+          list_run_scripts.insert(list_run_scripts.length, script)
+        elsif (call_on == "request") && script.run_on_request
+          list_run_scripts.insert(list_run_scripts.length, script)
+        end
+      end
+    end
+    
+    # TODO: verify this
+    # list_run_scripts should be sorted because TestScript has index
+    # ["assignment_id", "seq_num"]. Perform a check here. 
+    ctr = 0
+    while ctr < list_run_scripts.length - 1
+      if (list_run_scripts[ctr].seq_num) > (list_run_scripts[ctr+1].seq_num)
+        raise "list_run_scripts is not sorted"
+      end
+      ctr = ctr + 1
+    end
+    
+    return list_run_scripts
+  end
+  
+  # Given a list of test scripts, verify if a token is required in
+  # order to run these scripts. If at least one test script requires
+  # a token, return true. If none of the test scripts require a token,
+  # return false.
+  def require_token?(list_of_scripts)
+=begin
+      t = @grouping.token
+      if t == nil
+        raise I18n.t("automated_tests.missing_tokens")
+      end
+      # TODO: check this only when the scripts require token
+      if t.tokens > 0
+        t.decrease_tokens
+        return true
+      else
+        return false
+      end
+=end      
+    for script in list_of_scripts
+      if script.uses_token
+        return true
+      end
+    end
+    
+    return false
+  end
+  
+  # Delete test repository directory
+  def delete_test_repo(group, repo_dir)
+    # Delete student's assignment repository if it already exists
+    if (File.exists?(repo_dir))
+      FileUtils.rm_rf(repo_dir)
+    end
+  end
+
+  # Export group repository for testing. Students' submitted files
+  # are stored in the group svn repository. They must be exported
+  # before copying to the test server.
+  def export_group_repo(group, repo_dir)
+    # Create the test framework repository
+    if !(File.exists?(MarkusConfigurator.markus_config_automated_tests_repository))
+      FileUtils.mkdir(MarkusConfigurator.markus_config_automated_tests_repository)
+    end
+
+    # Delete student's assignment repository if it already exists
+    delete_test_repo(group, repo_dir)
+
+    # export
+    return group.repo.export(repo_dir)
+    rescue Exception => e
+      return "#{e.message}"
   end
 
   # Verify the user has the permission to run the tests - admin
   # and graders always have the permission, while student has to
-  # belong to the group and has >0 tokens.
+  # belong to the group.
   def has_permission?()
     if @current_user.admin?
       return true
@@ -20,34 +108,50 @@ module AutomatedTestsHelper
       # Make sure student belongs to this group
       if not @current_user.accepted_groupings.include?(@grouping)
         return false
-      end
-      t = @grouping.token
-      if t == nil
-        raise I18n.t("automated_tests.missing_tokens")
-      end
-      if t.tokens > 0
-        t.decrease_tokens
-        return true
       else
-        return false
+        return true
       end
     end
   end
 
-  # Verify that the system has all the files and information in order to
-  # run the test.
+  # Verify that MarkUs has some files to run the test.
+  # Note: this does not guarantee all required files are presented.
+  # Instead, it checks if there is at least one test script and
+  # source files are successfully exported.
   def files_available?()
-    #code stub
+    test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, @assignment.short_identifier)
+    src_dir = @repo_dir
+    
+    if !(File.exists?(test_dir))
+      return false
+    elsif !(File.exists?(src_dir))
+      return false
+    end
+    
+    scripts = TestScript.find_all_by_assignment(@assignment)
+    if scripts.empty?
+      return false
+    end
+    
     return true
   end
 
   # From a list of test servers, choose the next available server
-  # using round-robin. Keep looking for available server until
-  # one is found.
-  # TODO: set timeout and return error if no server is available
+  # using round-robin. Return -1 if no server is available
+  # TODO: keep track of the max num of tests running on a server 
   def choose_test_server()
-    # code stub
-    return 1
+    
+    @list_of_servers = MarkusConfigurator.markus_ate_test_server_hosts.split(' ')
+    
+    if @last_server.define?
+      # find the index of the last server, and return the next index
+      @last_server = (@list_of_servers.index(@last_server) + 1) % MarkusConfigurator.markus_ate_num_test_servers 
+    else 
+      @last_server = 0
+    end
+    
+    return @last_server
+    
   end
 
   # Launch the test on the test server by scp files to the server
@@ -56,52 +160,64 @@ module AutomatedTestsHelper
   # stdout or stderr, depending on whether the execution passed or
   # had error; the second one is a boolean variable, true => execution
   # passeed, false => error occurred.
-  def launch_test(server_id, group, assignment)
+  def launch_test(server_id, assignment, repo_dir, call_on)
     # Get src_dir
-    src_dir = "${HOME}/workspace_aptana/Markus/data/dev/automated_tests/group_0017/a7"
+    src_dir = repo_dir
 
     # Get test_dir
-    test_dir = "${HOME}/workspace_aptana/Markus/data/dev/automated_tests/a7"
-    #test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
+    test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
 
-    # Get the account and address of the server
-    server_account = "localtest"
-    server_address = "scspc328.cs.uwaterloo.ca"
+    # Get the name of the test server
+    server = @list_of_servers[server_id]
+    
+    # Get the directory and name of the test runner script
+    script = MarkusConfigurator.markus_ate_test_runner_script_name
 
-    # Get the directory and name of the script
-    script_dir = "/home/#{server_account}/testrunner"
-    script_name = "run.sh"
+    # Get the test run directory of the files
+    run_dir = MarkusConfigurator.markus_ate_test_run_directory
 
-    # Get dest_dir of the files
-    dest_dir = "/home/#{server_account}/testrunner/all"
-
-    # Remove everything in dest_dir
-    stdout, stderr, status = Open3.capture3("ssh #{server_account}@#{server_address} rm -rf #{dest_dir}")
+    # Delete the test run directory to remove files from previous test
+    stdout, stderr, status = Open3.capture3("ssh #{server} rm -rf #{run_dir}")
     if !(status.success?)
       return [stderr, false]
     end
 
-    # Securely copy files to dest_dir
-    stdout, stderr, status = Open3.capture3("scp -p -r #{src_dir} #{server_account}@#{server_address}:#{dest_dir}")
+    # Recreate the test run directory
+    stdout, stderr, status = Open3.capture3("ssh #{server} mkdir #{run_dir}")
     if !(status.success?)
       return [stderr, false]
     end
-    stdout, stderr, status = Open3.capture3("scp -p -r #{test_dir} #{server_account}@#{server_address}:#{dest_dir}")
+    
+    # Securely copy source files, test files and test runner script to run_dir
+    stdout, stderr, status = Open3.capture3("scp -p -r #{src_dir}/* #{server}:#{run_dir}")
+    if !(status.success?)
+      return [stderr, false]
+    end
+    stdout, stderr, status = Open3.capture3("scp -p -r #{test_dir}/* #{server}:#{run_dir}")
+    if !(status.success?)
+      return [stderr, false]
+    end
+    stdout, stderr, status = Open3.capture3("ssh #{server} cp #{script} #{run_dir}")
     if !(status.success?)
       return [stderr, false]
     end
 
+    # Find the test scripts for this test run, and parse the argument list
+    list_run_scripts = scripts_to_run(assignment, call_on)
+    arg_list = ""
+    for script in list_run_scripts
+      arg_list = arg_list + " --name #{script.script_name} --marks #{script.max_marks} --halts #{script.halts_testing}"
+    end
+    
     # Run script
-    stdout, stderr, status = Open3.capture3("ssh #{server_account}@#{server_address} #{script_dir}/#{script_name}")
+    script_name = script[(script.rindex('/') + 1) .. (script.length - 1)]
+    stdout, stderr, status = Open3.capture3("ssh #{server} \"cd #{run_dir}; ./#{script_name}#{arg_list}\"")
     if !(status.success?)
       return [stderr, false]
     else
       return [stdout, true]
     end
 
-  end
-
-  def result_available?()
   end
 
   def process_result(results_xml)
