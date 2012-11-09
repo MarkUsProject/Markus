@@ -1,3 +1,4 @@
+require 'rghost'
 class SubmissionFile < ActiveRecord::Base
 
   # Only allow alphanumeric characters, '.', '-', and '_' as
@@ -69,7 +70,7 @@ class SubmissionFile < ActiveRecord::Base
   end
 
   def is_pdf?
-    return File.extname(filename) == '.pdf'
+    return File.extname(filename).casecmp('.pdf') == 0
   end
 
   # Taken from http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/44936
@@ -124,10 +125,11 @@ class SubmissionFile < ActiveRecord::Base
     # Convert a pdf file into a an array of jpg files (one jpg file = one page
     # of the pdf file)
     file = RGhost::Convert.new(File.join(storage_path,
-                                  self.filename)).to :jpeg,
-                        :filename => file_path,
-                        :multipage => true,
-                        :resolution => 150
+                                  self.filename))
+    results = file.to :jpeg,
+                      :filename => file_path,
+                      :multipage => true,
+                      :resolution => 150
     if file.error
       m_logger.log("rghost: Image conversion error")
     end
