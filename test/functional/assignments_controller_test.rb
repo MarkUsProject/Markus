@@ -334,7 +334,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
       should "be able to set instructor forms groups" do
-        @assignment = Assignment.make( :student_form_groups => true )
+        @assignment = Assignment.make!( :student_form_groups => true )
         assert @assignment.student_form_groups
         put_as @admin,
                 :update,
@@ -360,7 +360,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
       should "be able to set students to form groups" do
-        @assignment = Assignment.make( :student_form_groups => false )
+        @assignment = Assignment.make!( :student_form_groups => false )
         assert !@assignment.student_form_groups
         put_as @admin,
                 :update,
