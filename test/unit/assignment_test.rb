@@ -944,13 +944,13 @@ class AssignmentTest < ActiveSupport::TestCase
       context "with two groups of a single student each with multiple submission" do
         setup do
           (1..2).each do
-            g = Grouping.make(:assignment => @assignment)
+            g = Grouping.make!(:assignment => @assignment)
             # create 2 submission for each group
             (1..2).each do
-              s = Submission.make(:grouping => g)
+              s = Submission.make!(:grouping => g)
               r = s.result
               (1..2).each do
-                Mark.make(:result => r)
+                Mark.make!(:result => r)
               end
               r.reload
               r.marking_state = Result::MARKING_STATES[:complete]
