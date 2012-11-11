@@ -1,0 +1,43 @@
+This is the readme file for the test runner.
+
+--------------------------------------------------------
+usage:	ruby testrunner.rb [test_1 flag_1 ...]
+	ruby testrunner.rb < args.in
+
+where args.in uses this format:
+file_1 halt_on_fail
+file_2 halt_on_fail
+...
+
+--------------------------------------------------------
+The test runner returns the following:
+<test_suite>
+	<test>
+		<id>file_i</id>
+		<input>test_input</input>
+		<expected>expected_output</expected>
+		<output>actual_output</output>
+		<marks>marks_earned</marks>
+		<status>Pass/Fail/Error</status>
+	</test>
+	...
+<test_suite>
+
+
+--------------------------------------------------------
+The only requirements on the test files are that the first three lines are:
+"marks\n\n"
+"input\n\n"
+"expected\n\n"
+All remaining output (to stdout) is assumed to be the actual output from the 
+test.
+Currently, the output to stderr is not included in the results.
+
+All imported files are found in the directory "testrunner_data"
+eg: "require testrunner_data/file_1"
+
+--------------------------------------------------------
+The following languages are currently supported:
+-Ruby
+-Racket (cannot handle compilation errors)
+

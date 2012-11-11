@@ -1,0 +1,27 @@
+<test_suite>
+<test>
+<id>testrunner_data/rb_pass_1.rb</id>
+<input>Bob</input>
+<expected>Hello Bob</expected>
+<output>Hello Bob</output>
+<marks>3</marks>
+<status>Pass</status>
+</test>
+<test>
+<id>testrunner_data/rb_fail_1.rb</id>
+<input>Robert</input>
+<expected>Hello Robert</expected>
+<output>Goodbye x
+Goodbye x</output>
+<marks>0</marks>
+<status>Fail</status>
+</test>
+<test>
+<id>testrunner_data/rb_error_1.rb</id>
+<input>Helloooo</input>
+<expected>Helloooo</expected>
+<output></output>
+<marks>0</marks>
+<status>Error</status>
+</test>
+</test_suite>
