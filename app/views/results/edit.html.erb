@@ -5,16 +5,11 @@
 <% end %>
 
 <% # UI LIBRARIES %>
-<%= javascript_include_tag "livepipe/livepipe.js",
-  "livepipe/window.js",
-  "livepipe/tabs.js",
-  "effects.js",
-  "dragdrop.js" %>
-
-<%= javascript_include_tag "effects.js" %>
-<%= javascript_include_tag "controls.js" %>
-<%= javascript_include_tag "DropDownMenu/DropDownMenu.js"%>
-<%= javascript_include_tag "ResizePane/ResizePane.js"%>
+<%= javascript_include_tag "effects.js",
+  "dragdrop.js",
+  "controls.js",
+  "DropDownMenu/DropDownMenu.js",
+  "ResizePane/ResizePane.js" %>
 
 <% # SOURCE CODE GLOWER AND IMAGE ANNOTATION MANAGER %>
 <%= javascript_include_tag "SourceCodeGlower/AnnotationText.js",
