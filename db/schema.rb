@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120121222559) do
+ActiveRecord::Schema.define(:version => 20121028211448) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -348,28 +348,45 @@ ActiveRecord::Schema.define(:version => 20120121222559) do
   add_index "submissions", ["grouping_id"], :name => "index_submissions_on_grouping_id"
 
   create_table "test_files", :force => true do |t|
-    t.string   "filename"
-    t.integer  "assignment_id"
-    t.string   "filetype"
-    t.boolean  "is_private"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.string  "file_name"
+    t.integer "assignment_id"
+    t.text    "description"
   end
 
-  add_index "test_files", ["assignment_id", "filename"], :name => "index_test_files_on_assignment_id_and_filename", :unique => true
+  add_index "test_files", ["assignment_id"], :name => "index_test_files_on_assignment_id"
 
   create_table "test_results", :force => true do |t|
-    t.string   "filename"
-    t.text     "file_content"
-    t.integer  "submission_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "status"
-    t.integer  "user_id"
+    t.integer "submission_id"
+    t.string  "completion_status"
+    t.integer "assignment_id"
+    t.integer "test_script_id"
+    t.integer "marks_earned"
+    t.text    "input_description"
+    t.text    "actual_output"
+    t.text    "expected_output"
   end
 
-  add_index "test_results", ["filename"], :name => "index_test_results_on_filename"
-  add_index "test_results", ["submission_id"], :name => "index_test_results_on_submission_id"
+  add_index "test_results", ["assignment_id", "test_script_id", "submission_id"], :name => "assignment_id_and_test_script_id_and_submission_id"
+
+  create_table "test_scripts", :force => true do |t|
+    t.integer "assignment_id"
+    t.float   "seq_num"
+    t.string  "script_name"
+    t.text    "description"
+    t.integer "max_marks"
+    t.boolean "run_on_submission"
+    t.boolean "run_on_request"
+    t.boolean "uses_token"
+    t.boolean "halts_testing"
+    t.string  "display_description"
+    t.string  "display_run_status"
+    t.string  "display_marks_earned"
+    t.string  "display_input"
+    t.string  "display_expected_output"
+    t.string  "display_actual_output"
+  end
+
+  add_index "test_scripts", ["assignment_id", "seq_num"], :name => "index_test_scripts_on_assignment_id_and_seq_num"
 
   create_table "tokens", :force => true do |t|
     t.integer "grouping_id"
