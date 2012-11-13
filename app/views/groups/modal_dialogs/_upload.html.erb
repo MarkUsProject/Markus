@@ -1,7 +1,7 @@
 <div id="upload">
  <h2><%=h I18n.t("groups.upload.upload_groups_file") %></h2>
          <p>
-    <%= I18n.t("groups.upload.description") %>
+    <%= I18n.t("groups.upload.description").html_safe %>
     <% if !@assignment.groupings.nil? && @assignment.groupings.length > 0 %>
       <br/>
       <div class="information">

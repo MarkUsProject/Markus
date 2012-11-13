@@ -48,9 +48,7 @@
 
       <% if !@sections.empty? %>
         <div id="section_due_dates_type_form_right" class="information">
-          <p>
           <%= t("assignment.section_due_date_option") %>
-          </p>
         </div>
 
         <div id="section_due_dates_type_form">
@@ -217,7 +215,7 @@
 
         <p id="group_limit_style" class="disable">
           <%= raw( f.label :group_min,
-                      t("assignment.group.limit_min"),
+                      t("assignment.group.limit_min").html_safe,
                       :class => "inline_label") %>
           <%= raw( f.text_field :group_min,
                            :size => 5,
@@ -394,7 +392,7 @@
     </p>
   </fieldset>
 
-  <%= f.submit t(:submit), :onclick => "set_onbeforeunload(false);" %>
+  <%= f.submit t(:submit), :disable_with => I18n.t('working'), :onclick => "set_onbeforeunload(false);" %>
   <% end %>
 
 </div>
