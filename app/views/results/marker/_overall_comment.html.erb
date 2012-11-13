@@ -2,7 +2,7 @@
       <div id="overall_comment_edit">
         <%= form_for @result,
           :remote => true,
-          :url => { :action => 'update_overall_comment' } do |f| %>
+          :url => { :action => 'update_overall_comment', :id => @result.id } do |f| %>
           <%= f.text_area :overall_comment,
             :cols => 50,
             :rows => 5,

@@ -1,5 +1,46 @@
 document.observe('dom:loaded', function() {
 
+  // changing the marking status
+  new Form.Element.EventObserver('marking_state', function(element, value) {
+    
+    var value = value || '';
+    var url = element.readAttribute('data-action');
+
+    var params = {
+      'value': value,
+      'authenticity_token': AUTH_TOKEN
+    }
+
+    new Ajax.Request(url, {
+      asynchronous: true,
+      evalScripts: true,
+      parameters: params
+    });
+  });
+
+  // releasing the grades, only available on the admin page
+  var release = $('released')
+  if (release)
+  {
+    new Form.Element.EventObserver(release, function(element, value) {
+      
+      var value = value || '';
+      var url = element.readAttribute('data-action');
+
+      var params = {
+        'value': value,
+        'authenticity_token': AUTH_TOKEN
+      }
+
+      new Ajax.Request(url, {
+        asynchronous: true,
+        evalScripts: true,
+        parameters: params,
+        onSuccess: function(request) { window.onbeforeunload = null; }
+      });
+    });    
+  }
+
   // TODO: placeholder for js for the flexible marking criteria fields
   $$('.grade-input').each(function(item) {
 
