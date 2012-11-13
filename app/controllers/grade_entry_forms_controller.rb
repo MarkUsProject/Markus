@@ -32,7 +32,20 @@ class GradeEntryFormsController < ApplicationController
                                           :order => "user_name")}}},
                      :sorts => {'last_name' => lambda {
                                      |a,b| a.last_name.downcase <=>
-                                        b.last_name.downcase}}}
+                                        b.last_name.downcase},
+                                'first_name' => lambda {
+                                      |a,b| a.first_name.downcase <=>
+                                        b.first_name.downcase},
+                                'user_name' => lambda {
+                                     |a,b| a.user_name.downcase <=>
+                                        b.user_name.downcase},
+                                'section' => lambda { |a,b|
+                                      return -1 if !a.section
+                                      return 1 if !b.section
+                                      return a.section.name.downcase <=> b.section.name.downcase},
+
+                                }
+                        }
 
   # Create a new grade entry form
   def new
@@ -79,10 +92,21 @@ class GradeEntryFormsController < ApplicationController
     @filter = 'none'
 
     # Pagination options
-    @per_page = 15
+    if(!params[:per_page].blank?)
+      @per_page = params[:per_page]
+    else
+      @per_page = 15
+    end
+
     @current_page = 1
-    @sort_by = 'last_name'
-    @desc = false
+    @c_sort_by = current_user.id.to_s +  "_"+ @grade_entry_form.id.to_s+ "_sort_by_grades"
+   if !params[:sort_by].blank?
+      cookies[@c_sort_by] = params[:sort_by]
+    else
+      params[:sort_by] = 'last_name'
+    end
+    @sort_by = cookies[@c_sort_by]
+    @desc = params[:desc]
     @filters = get_filters(G_TABLE_PARAMS)
     @per_pages = G_TABLE_PARAMS[:per_pages]
 
@@ -90,6 +114,9 @@ class GradeEntryFormsController < ApplicationController
                                       @filter,
                                       @sort_by,
                                       {:grade_entry_form => @grade_entry_form})
+    if !params[:desc].blank?
+      all_students.reverse!
+    end
     @students = all_students.paginate(:per_page => @per_page,
                                       :page => @current_page)
     @students_total = all_students.size
@@ -98,6 +125,7 @@ class GradeEntryFormsController < ApplicationController
                                                         @students.total_pages)
     session[:alpha_pagination_options] = @alpha_pagination_options
     @alpha_category = @alpha_pagination_options.first
+    @sort_by = cookies[@c_sort_by]
   end
 
   # Handle pagination for grades table
@@ -131,6 +159,9 @@ class GradeEntryFormsController < ApplicationController
                        @filter,
                        @sort_by,
                        {:grade_entry_form => @grade_entry_form})
+      if !@desc.blank?
+        all_students.reverse!
+      end
       @alpha_pagination_options = @grade_entry_form.alpha_paginate(
                                      all_students,
                                      @per_page,
