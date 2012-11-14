@@ -114,7 +114,7 @@ Markus::Application.configure do
 
   ###################################################################
   # Directory where the Automated Testing Repositories will be created.
-  # make sure markus is allowed to write to this directory
+  # make sure MarkUs is allowed to write to this directory
   AUTOMATED_TESTS_REPOSITORY = "#{::Rails.root.to_s}/data/dev/automated_tests"
 
   ###################################################################
@@ -122,14 +122,15 @@ Markus::Application.configure do
   # PDF documents within the browser.
   # When collecting pdfs files, it converts them to jpg format via RGhost.
   # RGhost is ghostscript dependent. Be sure ghostscript is installed.
-  PDF_SUPPORT = false 
+  PDF_SUPPORT = false
 
   ###################################################################
   # Change this to 'REPOSITORY_EXTERNAL_SUBMITS_ONLY = true' if you
   # are using Subversion as a storage backend and the instructor wants his/her
   # students to submit to the repositories Subversion clients only. Set this
   # to true if you intend to force students to submit via Subversion
-  # clients only. The MarkUs Web interface for submissions will be read-only.
+  # clients only. The MarkUs Web interface for submissions will be read-only
+  # in that case.
   REPOSITORY_EXTERNAL_SUBMITS_ONLY = false
 
   ###################################################################
@@ -159,7 +160,7 @@ Markus::Application.configure do
   # This setting configures if MarkUs is reading Subversion
   # repositories' permissions only OR is admin of the Subversion
   # repositories. In the latter case, it will write to
-  # $REPOSITORY_SVN_AUTHZ_FILE, otherwise it doesn't. Change this to
+  # REPOSITORY_SVN_AUTHZ_FILE, otherwise it doesn't. Change this to
   # 'false' if repositories are created by a third party.
   IS_REPOSITORY_ADMIN = true
 
@@ -214,6 +215,38 @@ Markus::Application.configure do
   SESSION_COOKIE_EXPIRE_AFTER = 3.weeks
   SESSION_COOKIE_HTTP_ONLY = true
   SESSION_COOKIE_SECURE = false
+
+  ###################################################################
+  # Automated Testing Engine settings
+  ###################################################################
+  
+  # Automated Testing Engine(ATE) can only be used when this is set to true 
+  AUTOMATED_TESTING_ENGINE_ON = false
+  
+  # The number of test servers for running automated testing
+  ATE_NUMBER_TEST_SERVERS = 1
+  # The maximum number of tests running in parallel on one test machine
+  ATE_MAX_NUMBER_OF_RUNNING_TESTS = 1
+  
+  ###################################################################
+  # A list of space separated test servers, each has the format
+  # "#{server_account}@#{server_name}".
+  # The number of test servers in this string should match
+  # $NUMBER_TEST_SERVERS.
+  # SSH Login must be set up before running MarkUs, so that MarkUs
+  # can connect to all test servers without a password. 
+  ATE_TEST_SERVER_HOSTS = 'username@testing.example.com'
+  
+  # The name and the path of the test runner script on the test server.
+  ATE_TEST_RUNNER_NAME = 'testrunner/testrunner.rb'
+  
+  ###################################################################
+  # The name and the path of the directory where the test runs.
+  # This directory will be destroyed and recreated in every test run.
+  # Then the test runner script along with all test files and source
+  # files will be copied to this directory, and the test runner
+  # script is executed.
+  ATE_TEST_RUN_DIRECTORY = 'testrunner/test/'
 
   ###################################################################
   # END OF MarkUs SPECIFIC CONFIGURATION
