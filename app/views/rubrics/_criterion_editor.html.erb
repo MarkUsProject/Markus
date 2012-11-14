@@ -32,7 +32,7 @@
   </span>
   <br />
   <br />
-  <%= f.submit t("rubric_criteria.save")%>
+  <%= f.submit t("rubric_criteria.save"), :disable_with => I18n.t('working')%>
 </div>
 
 <div class="rubric_criteria_levels">
