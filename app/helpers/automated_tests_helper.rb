@@ -10,9 +10,9 @@ module AutomatedTestsHelper
   def scripts_to_run(assignment, call_on)
     # Find all the test scripts of the current assignment
     all_scripts = TestScripts.find_by_assignment(assignment)
-    
+
     list_run_scripts = Array.new
-    
+
     # If the test run is requested at collection (by Admin or TA),
     # All of the test scripts should be run.
     if call_on == "collection"
@@ -28,10 +28,10 @@ module AutomatedTestsHelper
         end
       end
     end
-    
+
     # TODO: verify this
     # list_run_scripts should be sorted because TestScript has index
-    # ["assignment_id", "seq_num"]. Perform a check here. 
+    # ["assignment_id", "seq_num"]. Perform a check here.
     ctr = 0
     while ctr < list_run_scripts.length - 1
       if (list_run_scripts[ctr].seq_num) > (list_run_scripts[ctr+1].seq_num)
@@ -39,10 +39,10 @@ module AutomatedTestsHelper
       end
       ctr = ctr + 1
     end
-    
+
     return list_run_scripts
   end
-  
+
   # Given a list of test scripts, verify if a token is required in
   # order to run these scripts. If at least one test script requires
   # a token, return true. If none of the test scripts require a token,
@@ -60,16 +60,16 @@ module AutomatedTestsHelper
       else
         return false
       end
-=end      
+=end
     for script in list_of_scripts
       if script.uses_token
         return true
       end
     end
-    
+
     return false
   end
-  
+
   # Delete test repository directory
   def delete_test_repo(group, repo_dir)
     # Delete student's assignment repository if it already exists
@@ -121,37 +121,37 @@ module AutomatedTestsHelper
   def files_available?()
     test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, @assignment.short_identifier)
     src_dir = @repo_dir
-    
+
     if !(File.exists?(test_dir))
       return false
     elsif !(File.exists?(src_dir))
       return false
     end
-    
+
     scripts = TestScript.find_all_by_assignment(@assignment)
     if scripts.empty?
       return false
     end
-    
+
     return true
   end
 
   # From a list of test servers, choose the next available server
   # using round-robin. Return -1 if no server is available
-  # TODO: keep track of the max num of tests running on a server 
+  # TODO: keep track of the max num of tests running on a server
   def choose_test_server()
-    
+
     @list_of_servers = MarkusConfigurator.markus_ate_test_server_hosts.split(' ')
-    
+
     if @last_server.define?
       # find the index of the last server, and return the next index
-      @last_server = (@list_of_servers.index(@last_server) + 1) % MarkusConfigurator.markus_ate_num_test_servers 
-    else 
+      @last_server = (@list_of_servers.index(@last_server) + 1) % MarkusConfigurator.markus_ate_num_test_servers
+    else
       @last_server = 0
     end
-    
+
     return @last_server
-    
+
   end
 
   # Launch the test on the test server by scp files to the server
@@ -169,7 +169,7 @@ module AutomatedTestsHelper
 
     # Get the name of the test server
     server = @list_of_servers[server_id]
-    
+
     # Get the directory and name of the test runner script
     script = MarkusConfigurator.markus_ate_test_runner_script_name
 
@@ -187,7 +187,7 @@ module AutomatedTestsHelper
     if !(status.success?)
       return [stderr, false]
     end
-    
+
     # Securely copy source files, test files and test runner script to run_dir
     stdout, stderr, status = Open3.capture3("scp -p -r #{src_dir}/* #{server}:#{run_dir}")
     if !(status.success?)
@@ -208,7 +208,7 @@ module AutomatedTestsHelper
     for script in list_run_scripts
       arg_list = arg_list + " --name #{script.script_name} --marks #{script.max_marks} --halts #{script.halts_testing}"
     end
-    
+
     # Run script
     script_name = script[(script.rindex('/') + 1) .. (script.length - 1)]
     stdout, stderr, status = Open3.capture3("ssh #{server} \"cd #{run_dir}; ./#{script_name}#{arg_list}\"")
@@ -220,88 +220,60 @@ module AutomatedTestsHelper
 
   end
 
-  def process_result(results_xml)
-    test = AutomatedTests.new
-    results_xml = results_xml ||
-      File.read(RAILS_ROOT + "/automated-tests-files/test.xml")
-    parser = XML::Parser.string(results_xml)
+  def process_result(result)
+    parser = XML::Parser.string(result)
+
+    # parse the xml doc
     doc = parser.parse
 
-    # get assignment_id
-    assignment_node = doc.find_first("/test/assignment_id")
-    if not assignment_node or assignment_node.empty?
-      raise "Test result does not have assignment id"
-    else
-      test.assignment_id = assignment_node.content
-    end
+    # find all the tests nodes and loop over them
+    tests = doc.find("/test_suite/test")
+    tests.each do |test|
+      test_record = TestResult.new
 
-    # get test_script_id
-    test_script_node = doc.find_first("/test/test_script_id")
-    if not test_script_node or test_script_node.empty?
-      raise "Test result does not have test_script id"
-    else
-      test.test_script_id = test_script_node.content
-    end
+      # loop through the childs of all the tests nodes
+      test.each_child do |child|
+        # save the node's data according to it's name
+        if child.name == "submission_id" then
+          test_record.submission_id = child.content
 
-    # get group id
-    group_id_node = doc.find_first("/test/group_id")
-    if not group_id_node or group_id_node.empty?
-      raise "Test result has no group id"
-    else
-      test.group_id = group_id_node.content
-    end
+        elsif child.name == "test_script_id" then
+          test_record.test_script_id = child.content
 
-    # get result: pass, fail, or error
-    result_node = doc.find_first("/test/result")
-    if not result_node or result_node.empty?
-      raise "Test result has no result"
-    else
-      if result_node.content != "pass" and result_node.content != "fail" and
-         result_node.content != "error"
-        raise "invalid value for test result. Should be pass, fail or error"
-      else
-        test.result = result_node.content
+        elsif child.name == "input" then
+          test_record.input_description = child.content
+
+        elsif child.name == "status" then
+          test_record.completion_status = child.content
+
+        elsif child.name == "marks" then
+          test_record.marks_earned = child.content
+
+        elsif child.name == "output" then
+          test_record.actual_output = child.content
+
+        elsif child.name == "expected" then
+          test_record.expected_output = child.content
+
+        elsif child.name == "test_script_id" then
+          test_record.actual_output = child.content
+
+        else
+          # if the tag was not recognized, raise an error
+          if child.name != "text" then
+            raise "Error: malformed xml from test runner. Unclaimed tag: " +
+              child.name
+          end
+
+        end
       end
+      # save the record
+      test_record.save
     end
-
-    # get markus earned
-    marks_earned_node = doc.find_first("/test/marks_earned")
-    if not marks_earned_node or marks_earned_node.empty?
-      raise "Test result has no marks earned"
-    else
-      test.marks_earned = marks_earned_node.content
-    end
-
-    # get input
-    input_node = doc.find_first("/test/input")
-    if not input_node or input_node.empty?
-      raise "Test result has no input"
-    else
-      test.input = input_node.content
-    end
-
-    # get expected_output
-    expected_output_node = doc.find_first("/test/expected_output")
-    if not expected_output_node or expected_output_node.empty?
-      raise "Test result has no expected_output"
-    else
-      test.expected_output = expected_output_node.content
-    end
-
-    # get actual_output
-    actual_output_node = doc.find_first("/test/actual_output")
-    if not actual_output_node or actual_output_node.empty?
-      raise "Test result has no actual_output"
-    else
-      test.actual_output = actual_output_node.content
-    end
-
-    test.save
   end
 
   # Create a repository for the test scripts, and a placeholder script
   def create_test_scripts(assignment)
-    
     script_placeholder = TestScript.new
     script_placeholder.assignment = assignment
     # more..
