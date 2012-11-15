@@ -300,7 +300,8 @@ class SubmissionsController < ApplicationController
     
     @assignment = Assignment.find(params[:assignment_id])
     
-    load_user_preferences
+    #Save/Load preferences to/from cookies
+    set_preferences_params
  
     @groupings, @groupings_total = handle_paginate_event(
       S_TABLE_PARAMS,                                     # the data structure to handle filtering and sorting
@@ -621,7 +622,7 @@ class SubmissionsController < ApplicationController
     end
   end
   
-  def load_user_preferences
+  def set_preferences_params
     
     #Save preferences in cookies when they're changed (or load them if cookies are present)
     @c_columns = current_user.id.to_s + "_columns"
