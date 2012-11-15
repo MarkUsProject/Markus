@@ -203,15 +203,16 @@ module AutomatedTestsHelper
     end
 
     # Find the test scripts for this test run, and parse the argument list
-    list_run_scripts = scripts_to_run(assignment, call_on)
-    arg_list = ""
-    for script in list_run_scripts
-      arg_list = arg_list + " --name #{script.script_name} --marks #{script.max_marks} --halts #{script.halts_testing}"
-    end
-
+    #list_run_scripts = scripts_to_run(assignment, call_on)
+    #arg_list = ""
+    #for script in list_run_scripts
+    #  arg_list = arg_list + "#{script.script_name} #{script.halts_testing}\n"
+    #end
+    arg_list = "test1.rb false"
+    
     # Run script
     script_name = script[(script.rindex('/') + 1) .. (script.length - 1)]
-    stdout, stderr, status = Open3.capture3("ssh #{server} \"cd #{run_dir}; ./#{script_name}#{arg_list}\"")
+    stdout, stderr, status = Open3.capture3("ssh #{server} \"cd #{run_dir}; ruby #{script_name} < #{arg_list}\"")
     if !(status.success?)
       return [stderr, false]
     else
