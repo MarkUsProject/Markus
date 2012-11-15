@@ -56,7 +56,7 @@ class ResultsController < ApplicationController
 
       if @old_result
         oldmark = criterion.marks.find_or_create_by_result_id(@old_result.id)
-        oldmark.save(false)
+        oldmark.save(:validate => false)
         @old_marks_map[criterion.id] = oldmark
       end
     end
@@ -343,7 +343,7 @@ class ResultsController < ApplicationController
 
       if @old_result
         oldmark = criterion.marks.find_or_create_by_result_id(@old_result.id)
-        oldmark.save(false)
+        oldmark.save(:validate => false)
         @old_marks_map[criterion.id] = oldmark
       end
     end
