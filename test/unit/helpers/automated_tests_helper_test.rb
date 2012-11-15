@@ -17,6 +17,58 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
   def teardown
   end
 
+  context "Successfully run a test?" do
+    setup do
+      @asst = Assignment.make
+      @asst.short_identifier = 'Tmp'
+      @scriptfile = TestScript.make(:assignment_id           => @asst.id,
+                                    :seq_num                 => 1,
+                                    :script_name             => 'test1.rb',
+                                    :description             => 'No description',
+                                    :max_marks               => 5,
+                                    :run_on_submission       => true,
+                                    :run_on_request          => true,
+                                    :uses_token              => false,
+                                    :halts_testing           => false,
+                                    :display_description     => 'do_not_display',
+                                    :display_run_status      => 'do_not_display',
+                                    :display_marks_earned    => 'do_not_display',
+                                    :display_input           => 'do_not_display',
+                                    :display_expected_output => 'do_not_display',
+                                    :display_actual_output   => 'do_not_display')
+      @scriptfile.save
+      
+      @list_of_servers = ['localtest@scspc328.cs.uwaterloo.ca','localtest2@scspc328.cs.uwaterloo.ca']
+      @server_id = 0
+      @repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, 'TmpGroup')
+      @call_on = "submission"
+      
+    end
+    
+    should "print some success result" do
+      result, status = launch_test(@server_id, @asst, @repo_dir, @call_on)
+      puts status
+      puts result
+    end
+  end
+
+  context "MarkUs" do
+    setup do
+      @asst = Assignment.make
+      @group = Group.make
+      @repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, @group.repo_name)
+    end
+    
+    should "be able to delete the test repository" do
+      delete_test_repo(@group, @repo_dir)
+      assert !File.exists?(repo_dir)
+    end
+    
+    should "be able to export the test repository" do
+      assert export_group_repo(@group, @repo_dir)
+    end
+  end
+=begin
   context "If there is at least one available server, choose_test_server" do
     setup do
       
@@ -34,6 +86,7 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
       assert choose_test_server() == 0
     end
   end
+  
   context "launch_test" do
     setup do
       
@@ -166,4 +219,6 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
       assert !has_permission?
     end
   end
+=end
+
 end
