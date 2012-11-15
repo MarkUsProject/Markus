@@ -40,10 +40,7 @@ module PaginationHelper
     if(!filters.include?(filter))
       raise "Could not find filter #{filter}"
     end
-    items = get_filtered_items(hash, filter, params[:sort_by], object_hash)
-    if !params[:desc].blank?
-      items.reverse!
-    end
+    items = get_filtered_items(hash, filter, params[:sort_by], object_hash, desc)
     if params[:per_page].blank?
       params[:per_page] = AP_DEFAULT_PER_PAGE
     end
@@ -63,7 +60,7 @@ module PaginationHelper
     return result
   end
 
-  def get_filtered_items(hash, filter, sort_by, object_hash)
+  def get_filtered_items(hash, filter, sort_by, object_hash, desc)
     to_include = []
     #eager load only the tables needed for the type of sort, eager load the rest
     #of the tables after the groupings have been paginated
@@ -79,6 +76,9 @@ module PaginationHelper
     items = hash[:filters][filter][:proc].call(object_hash, to_include)
     if !sort_by.blank?
       items = items.sort{|a,b| hash[:sorts][sort_by].call(a,b)}
+    end
+    if !desc.blank?
+      items.reverse!
     end
     return items
   end

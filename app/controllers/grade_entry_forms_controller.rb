@@ -100,7 +100,7 @@ class GradeEntryFormsController < ApplicationController
 
     @current_page = 1
     @c_sort_by = current_user.id.to_s +  "_"+ @grade_entry_form.id.to_s+ "_sort_by_grades"
-   if !params[:sort_by].blank?
+    if !params[:sort_by].blank?
       cookies[@c_sort_by] = params[:sort_by]
     else
       params[:sort_by] = 'last_name'
@@ -113,10 +113,8 @@ class GradeEntryFormsController < ApplicationController
     all_students = get_filtered_items(G_TABLE_PARAMS,
                                       @filter,
                                       @sort_by,
-                                      {:grade_entry_form => @grade_entry_form})
-    if !params[:desc].blank?
-      all_students.reverse!
-    end
+                                      {:grade_entry_form => @grade_entry_form},
+                                      params[:desc])
     @students = all_students.paginate(:per_page => @per_page,
                                       :page => @current_page)
     @students_total = all_students.size
@@ -158,10 +156,8 @@ class GradeEntryFormsController < ApplicationController
                        G_TABLE_PARAMS,
                        @filter,
                        @sort_by,
-                       {:grade_entry_form => @grade_entry_form})
-      if !@desc.blank?
-        all_students.reverse!
-      end
+                       {:grade_entry_form => @grade_entry_form},
+                       @desc)
       @alpha_pagination_options = @grade_entry_form.alpha_paginate(
                                      all_students,
                                      @per_page,
@@ -173,7 +169,6 @@ class GradeEntryFormsController < ApplicationController
       @alpha_category = params[:alpha_category]
     end
   end
-
   # Update a grade in the table
   def update_grade
     grade_entry_form = GradeEntryForm.find_by_id(params[:id])
