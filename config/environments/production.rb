@@ -156,7 +156,7 @@ Markus::Application.configure do
   # are using Subversion as a storage backend and the instructor wants his/her
   # students to submit to the repositories Subversion clients only. Set this
   # to true if you intend to force students to submit via Subversion
-  # clients only. The MarkUs Web interface for submissions will be read-only.
+  # clients only. The MarkUs Web interface for submissions will be read-only
   # in that case.
   REPOSITORY_EXTERNAL_SUBMITS_ONLY = false
 
@@ -242,6 +242,38 @@ Markus::Application.configure do
   SESSION_COOKIE_EXPIRE_AFTER = 3.weeks
   SESSION_COOKIE_HTTP_ONLY = true
   SESSION_COOKIE_SECURE = false
+
+  ###################################################################
+  # Automated Testing Engine settings
+  ###################################################################
+  
+  # Automated Testing Engine(ATE) can only be used when this is set to true 
+  AUTOMATED_TESTING_ENGINE_ON = false
+  
+  # The number of test servers for running automated testing
+  ATE_NUMBER_TEST_SERVERS = 1
+  # The maximum number of tests running in parallel on one test machine
+  ATE_MAX_NUMBER_OF_RUNNING_TESTS = 1
+  
+  ###################################################################
+  # A list of space separated test servers, each has the format
+  # "#{server_account}@#{server_name}".
+  # The number of test servers in this string should match
+  # $NUMBER_TEST_SERVERS.
+  # SSH Login must be set up before running MarkUs, so that MarkUs
+  # can connect to all test servers without a password. 
+  ATE_TEST_SERVER_HOSTS = 'username@testing.example.com'
+  
+  # The name and the path of the test runner script on the test server.
+  ATE_TEST_RUNNER_NAME = 'testrunner/testrunner.rb'
+  
+  ###################################################################
+  # The name and the path of the directory where the test runs.
+  # This directory will be destroyed and recreated in every test run.
+  # Then the test runner script along with all test files and source
+  # files will be copied to this directory, and the test runner
+  # script is executed.
+  ATE_TEST_RUN_DIRECTORY = 'testrunner/test/'
 
   ###################################################################
   # END OF MarkUs SPECIFIC CONFIGURATION
