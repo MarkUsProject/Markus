@@ -625,28 +625,28 @@ class SubmissionsController < ApplicationController
   def set_preferences_params
     
     #Save preferences in cookies when they're changed (or load them if cookies are present)
-    @c_columns = current_user.id.to_s + "_columns"
+    @c_columns = current_user.id.to_s + "_submissions_columns"
     if session[:submission_col_dictionary].nil? && !cookies[@c_columns].blank?
       session[:submission_col_dictionary] = JSON.parse(cookies[@c_columns], :symbolize_names => true)
     elsif session[:submission_col_dictionary].nil?
       session[:submission_col_dictionary] = { :Col1 => true, :Col2 => true, :Col3 => true, :Col4 => true, :Col5 => true, :Col6 => true, :Col7 => true, :Col8 => true, :Col9 => true}
     end
     
-    @c_desc = current_user.id.to_s + "_" + @assignment.id.to_s + "_desc"
+    @c_desc = current_user.id.to_s + "_submissions_" + @assignment.id.to_s + "_desc"
     if !params[:sort_by].blank?
       cookies.permanent[@c_desc] = (!params[:desc].blank?).to_s
     elsif !cookies[@c_desc].blank?
       params[:desc] = (cookies[@c_desc] == "true")
     end 
      
-    @c_per_page = current_user.id.to_s + "_" + @assignment.id.to_s + "_per_page"
+    @c_per_page = current_user.id.to_s + "_submissions_" + @assignment.id.to_s + "_per_page"
     if !params[:per_page].blank?
       cookies.permanent[@c_per_page] = params[:per_page] 
     elsif !cookies[@c_per_page].blank?
       params[:per_page] = cookies[@c_per_page]
     end 
 
-    @c_sort_by = current_user.id.to_s + "_" + @assignment.id.to_s + "_sort_by"
+    @c_sort_by = current_user.id.to_s + "_submissions_" + @assignment.id.to_s + "_sort_by"
     if !params[:sort_by].blank?
       cookies.permanent[@c_sort_by] = params[:sort_by]
     elsif !cookies[@c_sort_by].blank?
