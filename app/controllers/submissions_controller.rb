@@ -279,7 +279,7 @@ class SubmissionsController < ApplicationController
                                               :Col9 => params[:col9] == "yes"}
                                               
       #Save columns to show/hide in cookies
-      @c_columns = current_user.id.to_s + "_columns"             
+      @c_columns = current_user.id.to_s + "_submissions_columns"             
       cookies.permanent[@c_columns] = session[:submission_col_dictionary].to_json
                           
     end
