@@ -1,9 +1,13 @@
-<%= form_for criterion,
-	     :as => :rubric_criterion,
-	     :remote => true,
-	     :url => {:action => 'update',
-		   :id => criterion.id} do |f| %>
+<% if !flash[:success].nil? %>
+  <div class="success">
+    <%= flash[:success] %>
+  </div>
+<% end %>
 
+<%= form_for criterion,
+	     :as => :flexible_criterion,
+	     :url => {:action => 'update', :id => criterion.id},
+		   :html => {:remote => true} do |f| %>
 <h2>
   <span id="selected_criterion_name">
     <%= h(criterion.rubric_criterion_name)%>
@@ -28,7 +32,7 @@
   </span>
   <br />
   <br />
-  <%= f.submit t("rubric_criteria.save")%>
+  <%= f.submit t("rubric_criteria.save"), :disable_with => I18n.t('working')%>
 </div>
 
 <div class="rubric_criteria_levels">
@@ -39,10 +43,10 @@
 
 <div class="float_right">
   <%= button_to I18n.t(:delete),
-           assignment_rubric_path(:id => criterion.id),
-           :confirm => I18n.t(:remove_criteria_message),
-           :method => :delete,
-           :class => 'delete',
-           :title => I18n.t(:remove_criteria_title),
-           :remote => true %>
+       assignment_rubric_path(:id => criterion.id),
+       :confirm => I18n.t(:remove_criteria_message),
+       :method => :delete,
+       :class => 'delete',
+       :title => I18n.t(:remove_criteria_title),
+       :remote => true %>
 </div>

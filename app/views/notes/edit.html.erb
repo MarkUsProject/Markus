@@ -23,7 +23,7 @@
                         :onchange => "set_onbeforeunload(true);") %>
 
     <p>
-      <%= f.submit I18n.t('save'), :onclick => "set_onbeforeunload(false);" %>
+      <%= f.submit I18n.t('save'), :disable_with => I18n.t('working'), :onclick => "set_onbeforeunload(false);" %>
     </p>
   <% end %>
 </div>

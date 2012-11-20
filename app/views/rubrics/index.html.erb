@@ -62,11 +62,10 @@
               #{remote_function :url => new_assignment_rubric_path(@assignment),
                                 :method => 'get'}
             }|%>
-   <span class="menu_bar" >|</span>
+  <span class="menu_bar" >|</span>
     <%= button_to_function I18n.t("upload"), "upload_criteria();"%>
-   <span class="menu_bar" >|</span>
+  <span class="menu_bar" >|</span>
     <%= button_to_function I18n.t("download"), "download_criteria();"%>
-
   </div>
 </div><!-- Title bar-->
 
