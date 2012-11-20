@@ -9,7 +9,7 @@ module AutomatedTestsHelper
   # test scripts in the order specified by seq_num (running order)
   def scripts_to_run(assignment, call_on)
     # Find all the test scripts of the current assignment
-    all_scripts = TestScripts.find_by_assignment(assignment)
+    all_scripts = TestScript.find_all_by_assignment_id(assignment.id)
 
     list_run_scripts = Array.new
 
@@ -20,7 +20,7 @@ module AutomatedTestsHelper
     else
       # If the test run is requested at submission or upon request,
       # verify the script is allowed to run.
-      for script in all_scripts
+      all_scripts.each do |script|
         if (call_on == "submission") && script.run_on_submission
           list_run_scripts.insert(list_run_scripts.length, script)
         elsif (call_on == "request") && script.run_on_request
@@ -29,9 +29,10 @@ module AutomatedTestsHelper
       end
     end
 
-    # TODO: verify this
-    # list_run_scripts should be sorted because TestScript has index
-    # ["assignment_id", "seq_num"]. Perform a check here.
+    # sort list_run_scripts using ruby's in place sorting method
+    list_run_scripts.sort_by! {|script| script.seq_num}
+    
+    # list_run_scripts should be sorted now. Perform a check here.
     ctr = 0
     while ctr < list_run_scripts.length - 1
       if (list_run_scripts[ctr].seq_num) > (list_run_scripts[ctr+1].seq_num)
@@ -42,36 +43,9 @@ module AutomatedTestsHelper
 
     return list_run_scripts
   end
-
-  # Given a list of test scripts, verify if a token is required in
-  # order to run these scripts. If at least one test script requires
-  # a token, return true. If none of the test scripts require a token,
-  # return false.
-  def require_token?(list_of_scripts)
-=begin
-      t = @grouping.token
-      if t == nil
-        raise I18n.t("automated_tests.missing_tokens")
-      end
-      # TODO: check this only when the scripts require token
-      if t.tokens > 0
-        t.decrease_tokens
-        return true
-      else
-        return false
-      end
-=end
-    for script in list_of_scripts
-      if script.uses_token
-        return true
-      end
-    end
-
-    return false
-  end
-
+  
   # Delete test repository directory
-  def delete_test_repo(group, repo_dir)
+  def delete_test_repo(repo_dir)
     # Delete student's assignment repository if it already exists
     if (File.exists?(repo_dir))
       FileUtils.rm_rf(repo_dir)
@@ -88,7 +62,7 @@ module AutomatedTestsHelper
     end
 
     # Delete student's assignment repository if it already exists
-    delete_test_repo(group, repo_dir)
+    delete_test_repo(repo_dir)
 
     # export
     return group.repo.export(repo_dir)
@@ -98,7 +72,7 @@ module AutomatedTestsHelper
 
   # Verify the user has the permission to run the tests - admin
   # and graders always have the permission, while student has to
-  # belong to the group.
+  # belong to the group, and have at least one token.
   def has_permission?()
     if @current_user.admin?
       return true
@@ -108,12 +82,20 @@ module AutomatedTestsHelper
       # Make sure student belongs to this group
       if not @current_user.accepted_groupings.include?(@grouping)
         return false
-      else
+      end
+      t = @grouping.token
+      if t == nil
+        raise I18n.t("automated_tests.missing_tokens")
+      end
+      if t.tokens > 0
+        t.decrease_tokens
         return true
+      else
+        return false
       end
     end
   end
-
+  
   # Verify that MarkUs has some files to run the test.
   # Note: this does not guarantee all required files are presented.
   # Instead, it checks if there is at least one test script and
@@ -128,7 +110,7 @@ module AutomatedTestsHelper
       return false
     end
 
-    scripts = TestScript.find_all_by_assignment(@assignment)
+    scripts = TestScript.find_all_by_assignment_id(@assignment.id)
     if scripts.empty?
       return false
     end
@@ -137,15 +119,14 @@ module AutomatedTestsHelper
   end
 
   # From a list of test servers, choose the next available server
-  # using round-robin. Return -1 if no server is available
+  # using round-robin. Return the id of the server, and return -1
+  # if no server is available.
   # TODO: keep track of the max num of tests running on a server
   def choose_test_server()
 
-    @list_of_servers = MarkusConfigurator.markus_ate_test_server_hosts.split(' ')
-
-    if @last_server.define?
+    if (defined? @last_server) && MarkusConfigurator.automated_testing_engine_on?
       # find the index of the last server, and return the next index
-      @last_server = (@list_of_servers.index(@last_server) + 1) % MarkusConfigurator.markus_ate_num_test_servers
+      @last_server = (@last_server + 1) % MarkusConfigurator.markus_ate_num_test_servers
     else
       @last_server = 0
     end
@@ -171,7 +152,7 @@ module AutomatedTestsHelper
     server = @list_of_servers[server_id]
 
     # Get the directory and name of the test runner script
-    script = MarkusConfigurator.markus_ate_test_runner_script_name
+    test_runner = MarkusConfigurator.markus_ate_test_runner_script_name
 
     # Get the test run directory of the files
     run_dir = MarkusConfigurator.markus_ate_test_run_directory
@@ -197,22 +178,21 @@ module AutomatedTestsHelper
     if !(status.success?)
       return [stderr, false]
     end
-    stdout, stderr, status = Open3.capture3("ssh #{server} cp #{script} #{run_dir}")
+    stdout, stderr, status = Open3.capture3("ssh #{server} cp #{test_runner} #{run_dir}")
     if !(status.success?)
       return [stderr, false]
     end
 
     # Find the test scripts for this test run, and parse the argument list
-    #list_run_scripts = scripts_to_run(assignment, call_on)
-    #arg_list = ""
-    #for script in list_run_scripts
-    #  arg_list = arg_list + "#{script.script_name} #{script.halts_testing}\n"
-    #end
-    arg_list = "test1.rb false"
+    list_run_scripts = scripts_to_run(assignment, call_on)
+    arg_list = ""
+    list_run_scripts.each do |script|
+      arg_list = arg_list + "#{script.script_name} #{script.halts_testing}\n"
+    end
     
     # Run script
-    script_name = script[(script.rindex('/') + 1) .. (script.length - 1)]
-    stdout, stderr, status = Open3.capture3("ssh #{server} \"cd #{run_dir}; ruby #{script_name} < #{arg_list}\"")
+    test_runner_name = test_runner[(test_runner.rindex('/') + 1) .. (test_runner.length - 1)]
+    stdout, stderr, status = Open3.capture3("ssh #{server} \"cd #{run_dir}; ruby #{test_runner_name} #{arg_list}\"")
     if !(status.success?)
       return [stderr, false]
     else

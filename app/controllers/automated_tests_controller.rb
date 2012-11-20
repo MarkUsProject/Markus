@@ -22,8 +22,9 @@ class AutomatedTestsController < ApplicationController
     @repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, @group.repo_name)
     export_group_repo(@group, @repo_dir)
     
+    @list_of_servers = MarkusConfigurator.markus_ate_test_server_hosts.split(' ')
+    
     # BRIAN: How do I know when this is called? Whether at submission, upon request, or after due date??
-    # Then I need to figure out which scripts to run (using db columns run_on_*)
     # For now, just assume I have 
     list_call_on = %w(submission request collection)
     call_on = list_call_on[0]
