@@ -290,13 +290,19 @@ module AutomatedTestsHelper
 
  def add_test_script_link(name, form)
     link_to_function name do |page|
+      new_test_script = TestScript.new
       test_script = render(:partial => 'test_script_upload',
                          :locals => {:form => form,
-                                     :test_script => TestScript.new })
+                                     :test_script => new_test_script})
+
+      test_script_options = render(:partial => 'test_script_options',
+                         :locals => {:form => form,
+                                     :test_script => new_test_script })
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_script_id = new Date().getTime();
           $('test_script_files').insert({bottom: "#{ escape_javascript test_script }".replace(/(attributes_\\d+|\\[\\d+\\])/g, new_test_script_id) });
+          $('test_script_options').insert({bottom: "#{ escape_javascript test_script_options }" });
         } else {
           alert("#{I18n.t("automated_tests.add_test_script_file_alert")}");
         }
