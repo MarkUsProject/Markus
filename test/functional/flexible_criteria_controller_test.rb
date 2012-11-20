@@ -71,7 +71,7 @@ require 'mocha'
 
       context "on :move_criterion" do
         setup do
-          get :move_criterion, :assignment_id => 1
+          get :move_criterion, :assignment_id => 1, :id => 1
         end
         should respond_with :redirect
       end
@@ -138,7 +138,7 @@ require 'mocha'
 
     context "on :move_criterion" do
       setup do
-        post :move_criterion, :assignment_id => 1
+        post :move_criterion, :assignment_id => 1, :id => 1
       end
       should respond_with :redirect
     end
@@ -208,7 +208,6 @@ require 'mocha'
         get_as @admin, :new, :assignment_id => @assignment.id
       end
       should assign_to :assignment
-      should_not assign_to :criterion
       should render_template :new
       should respond_with :success
     end
@@ -259,7 +258,6 @@ require 'mocha'
              :move_criterion,
              :assignment_id => @assignment.id,
              :id => @criterion2.id,
-             :position => @criterion2.position,
              :direction => :up
       assert render_template ''
       assert_response :success
@@ -271,7 +269,7 @@ require 'mocha'
 
     should "be able to move_criterion down" do
       @criterion2 = flexible_criteria(:flexible_criterion_2)
-      get_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion.id, :position => @criterion.position, :direction => :down
+      get_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion.id, :direction => :down
       assert render_template ''
       assert_response :success
       @criterion.reload
@@ -310,12 +308,12 @@ require 'mocha'
       should respond_with :success
     end
 
-    context "on :new" do
+    context "on :create" do
       context "with save error" do
         setup do
           FlexibleCriterion.any_instance.expects(:save).once.returns(false)
           FlexibleCriterion.any_instance.expects(:errors).once.returns('error msg')
-          post_as @admin, :new, :assignment_id => @assignment.id, :flexible_criterion => {:flexible_criterion_name => 'first', :max => 10}
+          post_as @admin, :create, :assignment_id => @assignment.id, :flexible_criterion => {:flexible_criterion_name => 'first', :max => 10}
         end
         should assign_to :assignment
         should assign_to :criterion
@@ -327,7 +325,7 @@ require 'mocha'
       context "without error on an assignment as the first criterion" do
         setup do
           assignment = assignments(:flexible_assignment_without_criterion)
-          post_as @admin, :new, :assignment_id => assignment.id, :flexible_criterion => {:flexible_criterion_name => 'first', :max => 10}
+          post_as @admin, :create, :assignment_id => assignment.id, :flexible_criterion => {:flexible_criterion_name => 'first', :max => 10}
         end
         should assign_to :assignment
         should assign_to :criterion
@@ -337,7 +335,7 @@ require 'mocha'
 
       context "without error on an assignment that already has criteria" do
         setup do
-          post_as @admin, :new, :assignment_id => @assignment.id, :flexible_criterion => {:flexible_criterion_name => 'first', :max => 10}
+          post_as @admin, :create, :assignment_id => @assignment.id, :flexible_criterion => {:flexible_criterion_name => 'first', :max => 10}
         end
         should assign_to :assignment
         should assign_to :criterion
@@ -427,7 +425,7 @@ require 'mocha'
     context "on :move_criterion up with 2 criteria" do
       setup do
         @criterion2 = flexible_criteria(:flexible_criterion_2)
-        post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion2.id, :position => @criterion2.position, :direction => 'up'
+        post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion2.id, :direction => 'up'
       end
       should render_template ''
       should respond_with :success
@@ -444,7 +442,7 @@ require 'mocha'
       setup do
         @criterion2 = flexible_criteria(:flexible_criterion_2)
         @criterion3 = flexible_criteria(:flexible_criterion_3)
-        post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion3.id, :position => @criterion3.position, :direction => 'up'
+        post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion3.id, :direction => 'up'
       end
       should render_template ''
       should respond_with :success
@@ -463,7 +461,7 @@ require 'mocha'
       setup do
         @criterion2 = flexible_criteria(:flexible_criterion_2)
         @criterion3 = flexible_criteria(:flexible_criterion_3)
-        post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion2.id, :position => @criterion2.position, :direction => 'up'
+        post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion2.id, :direction => 'up'
       end
       should render_template ''
       should respond_with :success
@@ -481,7 +479,7 @@ require 'mocha'
     context "on :move_criterion down with 2 criteria" do
       setup do
         @criterion2 = flexible_criteria(:flexible_criterion_2)
-        post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion.id, :position => @criterion.position, :direction => 'down'
+        post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion.id, :direction => 'down'
       end
       should render_template ''
       should respond_with :success
@@ -498,7 +496,7 @@ require 'mocha'
       setup do
         @criterion2 = flexible_criteria(:flexible_criterion_2)
         @criterion3 = flexible_criteria(:flexible_criterion_3)
-        post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion.id, :position => @criterion.position, :direction => 'down'
+        post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion.id, :direction => 'down'
       end
       should render_template ''
       should respond_with :success
@@ -517,7 +515,7 @@ require 'mocha'
       setup do
         @criterion2 = flexible_criteria(:flexible_criterion_2)
         @criterion3 = flexible_criteria(:flexible_criterion_3)
-        post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion2.id, :position => @criterion2.position, :direction => 'down'
+        post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion2.id, :direction => 'down'
       end
       should render_template ''
       should respond_with :success
@@ -548,7 +546,7 @@ require 'mocha'
       delete_as @admin, :destroy, :assignment_id => 1, :id => @criterion.id
       assert assign_to :criterion
       assert I18n.t('criterion_deleted_success'), flash[:success]
-      assert_response :redirect
+      assert_response :success
 
       assert_raise ActiveRecord::RecordNotFound do
         FlexibleCriterion.find(@criterion.id)
