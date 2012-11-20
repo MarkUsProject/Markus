@@ -101,7 +101,7 @@ class AutomatedTestsController < ApplicationController
     #out for now
     # Create test scripts for testing if no script is available
     #if @assignment && @assignment.test_scripts.empty?
-      #create_test_scripts(@assignment)
+     # create_test_scripts(@assignment)
     #end
     
   end
