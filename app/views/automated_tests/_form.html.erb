@@ -34,9 +34,9 @@
 
       <h4><%= t("automated_tests.assignment_test_script_files") %></h4>
       <div id="test_script_files">
-        <%= f.fields_for :test_scripts do |ts| %>
-          <% if ts.object.filetype.to_s == "testscript" %>
-            <%= render :partial => 'test_script_upload', :locals => {:test_script => ts.object, :form => f } %>
+          <% f.object.test_scripts.each do |ts| %>
+            <%= f.fields_for ts do |ts_form| %>
+              <%= render :partial => 'test_script_upload', :locals => {:test_script => ts_form.object, :form => f } %>
           <% end %>
         <% end %>
       </div>
@@ -46,9 +46,9 @@
 
       <h4><%= t("automated_tests.assignment_test_support_files") %></h4>
       <div id="test_support_files">
-        <%= f.fields_for :test_support_files do |tsf| %>
-          <% if tsf.object.filetype.to_s == "testfile" %>
-            <%= render :partial => 'test_support_file_upload', :locals => {:test_support_file => tsf.object, :form => f } %>
+        <% f.object.test_support_files.each do |tsf| %>
+          <%= f.fields_for tsf do |tsf_form| %>
+            <%= render :partial => 'test_support_file_upload', :locals => {:test_support_file => tsf_form.object, :form => f } %>
           <% end %>
         <% end %>
       </div>

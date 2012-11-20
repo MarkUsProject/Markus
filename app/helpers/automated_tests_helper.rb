@@ -297,7 +297,6 @@ module AutomatedTestsHelper
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_script_id = new Date().getTime();
           $('test_script_files').insert({bottom: "#{ escape_javascript test_script }".replace(/(attributes_\\d+|\\[\\d+\\])/g, new_test_script_id) });
-          $('assignment_test_script_' + new_test_script_id + '_filename').focus();
         } else {
           alert("#{I18n.t("automated_tests.add_test_script_file_alert")}");
         }
@@ -309,13 +308,11 @@ module AutomatedTestsHelper
     link_to_function name do |page|
       test_support_file = render(:partial => 'test_support_file_upload',
                          :locals => {:form => form,
-                                     :test_support_file => TestSupportFile.new,
-                                     :file_type => "testfile"})
+                                     :test_support_file => TestSupportFile.new })
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_support_file_id = new Date().getTime();
           $('test_support_files').insert({bottom: "#{ escape_javascript test_support_file }".replace(/(attributes_\\d+|\\[\\d+\\])/g, new_test_support_file_id) });
-          $('assignment_test_support_file_' + new_test_support_file_id + '_filename').focus();
         } else {
           alert("#{I18n.t("automated_tests.add_test_support_file_alert")}");
         }
