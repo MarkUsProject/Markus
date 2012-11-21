@@ -1099,9 +1099,11 @@ fr:
       missing_tokens: "Aucun jeton trouvé pour cet(te) étudiant(e) et pour ce projet"
       dir_not_exist: "Le dossier %{dir} requis par Ant n'existe pas."
       script_option:
+        run_settings: "Test Run Settings"
+        display_settings: "UPDATE ME"
         description: "UPDATE ME"
         max_marks: "UPDATE ME"
-        run_on_submissions: "UPDATE ME"
+        run_on_submission: "UPDATE ME"
         run_on_request: "UPDATE ME"
         halts_testing: "UPDATE ME"
         display_description: "UPDATE ME"

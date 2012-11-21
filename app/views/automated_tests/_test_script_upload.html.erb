@@ -11,8 +11,6 @@
   <%= f.file_field :script_name, :size=>"30" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
   <% if f.object_id %>
-    <%= f.label :run_on_request, I18n.t("automated_tests.script_option.run_on_request"), :class => "checkbox_label" %>
-    <%= f.check_box :run_on_request %>
   <% end %>
 
   <% if !f.object.new_record? %>
