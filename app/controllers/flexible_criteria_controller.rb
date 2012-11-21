@@ -25,31 +25,31 @@ class FlexibleCriteriaController < ApplicationController
 
   def new
     @assignment = Assignment.find(params[:assignment_id])
-    if !request.post?
-      return
+    @criterion = FlexibleCriterion.new
+  end
+
+  def create
+    @assignment = Assignment.find(params[:assignment_id])
+    @criteria = @assignment.flexible_criteria
+    if @criteria.length > 0
+      new_position = @criteria.last.position + 1
     else
-      @criteria = @assignment.flexible_criteria
-      if @criteria.length > 0
-        new_position = @criteria.last.position + 1
-      else
-        new_position = 1
-      end
-      @criterion = FlexibleCriterion.new
-      @criterion.assignment = @assignment
-      @criterion.max = FlexibleCriterion::DEFAULT_MAX
-      @criterion.position = new_position
-      if !@criterion.update_attributes(params[:flexible_criterion])
-        @errors = @criterion.errors
-        render :add_criterion_error
-        return
-      end
-      @criteria.reload
-      render :create_and_edit
+      new_position = 1
     end
+    @criterion = FlexibleCriterion.new
+    @criterion.assignment = @assignment
+    @criterion.max = FlexibleCriterion::DEFAULT_MAX
+    @criterion.position = new_position
+    if !@criterion.update_attributes(params[:flexible_criterion])
+      @errors = @criterion.errors
+      render :add_criterion_error
+      return
+    end
+    @criteria.reload
+    render :create_and_edit
   end
 
   def destroy
-    return unless request.delete?
     @criterion = FlexibleCriterion.find(params[:id])
     @assignment = @criterion.assignment
     @criteria = @assignment.flexible_criteria
@@ -57,7 +57,6 @@ class FlexibleCriteriaController < ApplicationController
     # Will be possible when Mark gets its association with FlexibleCriterion.
     @criterion.destroy
     flash.now[:success] = I18n.t('criterion_deleted_success')
-    redirect_to :action => 'index', :id => @assignment
   end
 
   def download
@@ -110,11 +109,6 @@ class FlexibleCriteriaController < ApplicationController
 
   #This method handles the arrows
   def move_criterion
-    position = params[:position].to_i
-    unless request.post?
-      render :nothing => true
-      return
-    end
     if params[:direction] == 'up'
       offset = -1
     elsif  params[:direction] == 'down'
@@ -123,6 +117,7 @@ class FlexibleCriteriaController < ApplicationController
       render :nothing => true
       return
     end
+
     @assignment = Assignment.find(params[:assignment_id])
     @criteria = @assignment.flexible_criteria
     criterion = @criteria.find(params[:id])
@@ -132,9 +127,13 @@ class FlexibleCriteriaController < ApplicationController
       render :nothing => true
       return
     end
-    FlexibleCriterion.update(criterion.id,
-                             :position => other_criterion.position)
-    FlexibleCriterion.update(other_criterion.id, :position => position)
+    # Increase the index by one as the position value is 1 greater than the index
+    index = index + 1
+    criterion.position = index + offset
+    other_criterion.position = index
+    if !(criterion.save and other_criterion.save)
+      flash[:error] = I18n.t("flexible_criteria.move_criterion.error")
+    end
     @criteria.reload
   end
 
