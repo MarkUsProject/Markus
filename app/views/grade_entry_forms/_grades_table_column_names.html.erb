@@ -55,9 +55,8 @@
          ><%= t('user.first_name') %>
       <% end %>
   </th>
-  <th 
-      <% if @current_user.admin? || @current_user.ta?%>
-          class="<%="ap_sorting_by" if (sort_by == 'section')%>
+  <% if @current_user.admin? || @current_user.ta?%>
+  <th class="<%="ap_sorting_by" if (sort_by == 'section')%>
                       <%="ap_sorting_by_desc" if (sort_by == 'section' && !desc.blank?)%>">
           <%= link_to I18n.t("user.section"),
                   :desc => (sort_by == 'section' && desc.blank?),
@@ -66,10 +65,8 @@
                   :filter =>filter, 
                   :controller =>controller,
                   :action => action%>
-      <% else %>
-          ><%= t('user.section') %>
-      <% end %>
   </th>
+  <% end %>
 
   <% # Display the question names and totals
   %>
