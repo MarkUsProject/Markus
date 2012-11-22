@@ -58,10 +58,14 @@ Markus::Application.routes.draw do
     end
 
     resources :flexible_criteria do
+      member do
+        delete 'destroy'
+        get 'move_criterion'
+      end
+
       collection do
         post 'upload'
-        get 'update_positions'
-        get 'move_criterion'
+        post 'update_positions'
         get 'download'
       end
     end

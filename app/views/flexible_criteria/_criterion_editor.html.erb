@@ -6,30 +6,18 @@
 
 <%= form_for criterion,
 	     :as => :flexible_criterion,
-	     :url => {:action => 'update',
-		      :id => criterion.id},
-	     :remote => true do |f| %>
+	     :url => {:action => 'update', :id => criterion.id},
+		   :html => {:remote => true} do |f| %>
 
 <h2>
   <span id="selected_criterion_name">
     <%= h(criterion.flexible_criterion_name)%>
   </span>
-  <%= f.submit t("flexible_criteria.save") %>
 </h2>
 
 <div class="error" id="criterion_<%=criterion.id%>_error" style="display:none;"></div>
 
 <div class="main_flexible_criteria_edit">
-
-  <div class="float_right">
-    <%= link_to I18n.t(:delete),
-		:method => 'delete',
-		:url => {:action => 'delete', :id => criterion.id},
-		:html => {:class => 'delete',
-			  :title => I18n.t(:remove_criteria_title)},
-	        :confirm => I18n.t(:remove_criteria_message),
-		:remote => true %>
-  </div>
 
   <span id="<%="criterion_inputs_#{criterion.id}"%>">
     <%= f.label :flexible_criterion_name, I18n.t(:criterion)%>
@@ -49,7 +37,7 @@
   <span><%= t('flexible_criteria.description_hint') %></span>
 </div>
 
-<%= f.submit t("flexible_criteria.save")%>
+<%= f.submit t("flexible_criteria.save"), :disable_with => I18n.t('working')%>
 <% end %>
 
 <% if !criterion.description.nil? && !criterion.description.empty? %>
@@ -60,3 +48,13 @@
     </div>
   </div>
 <% end %>
+
+<div class="float_right">
+    <%= button_to I18n.t(:delete),
+        assignment_flexible_criterium_path(:id => criterion.id),
+        :confirm => I18n.t(:remove_criteria_message),
+        :method => :delete,
+        :class => 'delete',
+        :title => I18n.t(:remove_criteria_title),
+        :remote => true %>
+</div>
