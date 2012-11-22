@@ -110,7 +110,7 @@ module MarkusConfigurator
   end
 
   #Repository for the test framework
-  #Students file will be compiled, executed and tested in this repository
+  #Students file will be copied into this repository before sending to the test server
   def markus_config_automated_tests_repository
     if defined? AUTOMATED_TESTS_REPOSITORY
       return AUTOMATED_TESTS_REPOSITORY
