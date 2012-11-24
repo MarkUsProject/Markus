@@ -296,7 +296,7 @@ en:
       cant_display_image: "Image cannot be displayed. If you are trying to view a pdf file, please check if you have turned on pdf support. Click on the Download button to download the file instead"
       image_downloading: "Pdf page downloading. Please wait."
       test_code: "Test Code"
-      criterion_incomplete_error: "Mark unfilled but marking state was set to complete"
+      criterion_incomplete_error: "Unable to change marking status to complete, marks missing. Check the marking rubric and make sure that each criterion has been given a mark."
 
     seperate_multiple_with_commas:  "Seperate multiple user names with commas"
     csv_valid_format:   "There was a problem parsing the CSV file you uploaded.  Please ensure that it's a valid CSV format, and that each line ends with a carriage-return line-feed set of characters.  No changes were made. "
@@ -689,6 +689,10 @@ en:
       move_criterion:
         error: "Failed to move rubric."
 
+    flexible_criteria:
+      move_criterion:
+        error: "Failed to move flexible criteria."
+    
     add_student:
       success: "Student %{user_name} added."
       fail:
