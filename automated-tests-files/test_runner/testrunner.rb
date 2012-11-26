@@ -3,36 +3,23 @@ $HALT_ON_FAIL = false
 $HAS_FAILED = false
 
 #
-# given the filename, output, and exit status, this will format them as xml
-# and return the resulting xml
+# given the filename, and suite output, it formats and returns the results
+# also checks to see if a fail/error was encountered
 #
-def parseOutput(fileName, marks, input, expected, output, status)
-  expected = expected.strip()
-  input = input.strip()
-  marks = marks.strip()
+def parseOutput(fileName, output, status)
+  hasFail = ! output["<markus_status>fail</markus_status>"].nil?
+  hasError = ! output["<markus_status>error</markus_status>"].nil?
   
-  if expected == output then earned = marks 
-    else earned = 0 
-  end
-  if status != 0 then exitType = "Error" 
-    elsif expected == output then exitType = "Pass" 
-    else exitType = "Fail" 
-  end
-  
-  if exitType == "Fail" || exitType == "Error" then
+  if hasFail || hasError then
     $HAS_FAILED = true
   else
     $HAS_FAILED = false
   end
-     
-  xml = "<test>\n" \
-        "<id>#{fileName}</id>\n" \
-        "<input>#{input}</input>\n" \
-        "<expected>#{expected}</expected>\n" \
-        "<output>#{output}</output>\n" \
-        "<marks>#{earned}</marks>\n" \
-        "<status>#{exitType}</status>\n" \
-        "</test>\n"
+  
+  xml = "<markus_testsuite>\n" \
+            "<markus_script_name>#{fileName}</markus_script_name>\n" \
+            "#{output}\n" \
+        "</markus_testsuite>\n"
   return xml  
 end
 
@@ -56,7 +43,7 @@ def runTest(fileName)
 open("|-", "r+") do |child|
     if child
       # wait for the child process to finish, then get the exit status
-      
+      # todo: add timeout
       Process.wait
       status = $?
       
@@ -65,20 +52,19 @@ open("|-", "r+") do |child|
         $HAS_FAIL = true
       end
       
-      # get the data from the test script
-      # .gets("") reads up to the first \n\n
-      # .gets(nil) reads everything
-      marks = child.gets("")
-      input = child.gets("")
-      expected = child.gets("")
+      # get the output from the test script
+      # this will include all of the data needed to assign a mark to a student
       output = child.gets(nil)
       # if the output isnt null, strip leading/trailing whitespace
+      # since the output is already marked up (hopefully), we can strip the excess
+      # whitespace in case someone wants to write to a file, instead of 
+      # passing it back to MarkUs
       if !output.nil?
         output = output.strip
       end
       
       # return the xml
-      return parseOutput(fileName, marks, input, expected, output, status)
+      return parseOutput(fileName, output, status)
     else
       # commented formats are not fully supported
       
@@ -130,7 +116,7 @@ end
 
 def main()
   #the output is nested in a <test_stuite> tag
-  output = "<test_suite>\n"  
+  output = "<markus_testrun>\n"  
   
   # if there are no other cmd line args, then stdin is being used
   # if there are no args and stdin isnt being used, then it will crash
@@ -159,7 +145,7 @@ def main()
     nextFile = getNext(useSTD)
   end
   #close the top level tag
-  output = output + "</test_suite>"
+  output = output + "</markus_testrun>"
   # print the entire xml block
   print output
 end
