@@ -1,16 +1,24 @@
 <div class="test_script_options">
 	
 	<% display_options = { 
-		"Do Not Display" => I18n.t("automated_tests.script_options.display_option.do_not_display"), 
 		"Display After Submission" => I18n.t("automated_tests.script_options.display_option.display_after_submission"), 
-		"Display After Collection" => I18n.t("automated_tests.script_options.display_option.display_after_collection") 
+		"Display After Collection" => I18n.t("automated_tests.script_options.display_option.display_after_collection"),
+		"Do Not Display" => I18n.t("automated_tests.script_options.display_option.do_not_display") 
 	} # this is defined and used to validate input in test_script.rb %>
 
 	<%= form.fields_for :test_script, test_script do |f| %>
 
 		<div id="test_script_#{f.object_id}_options">
 
-			<h3>"<%= f.object_id.to_s + I18n.t("automated_tests.test_parameters") %>"</h3>
+			<% if f.object.script_name %>
+				<h3 id="test_script_<% f.object_id %>">
+				<%= f.object.script_name + I18n.t("automated_tests.test_parameters") %> 
+				</h3>
+			<% else %>
+				<h3 id="test_script_<% f.object_id %>">
+				<%= f.object_id.to_s + I18n.t("automated_tests.test_parameters") %>"
+				</h3>
+			<% end %>
 
 			<div id="test_script_#{f.object_id}_run_options" width="60%">
 

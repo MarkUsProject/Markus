@@ -1071,6 +1071,7 @@ fr:
 
     #Test Framework
     automated_tests:
+      remove_file: "UPDATE ME"
       automated_tests: "Tests"
       enable_test:    "Activer les tests pour ce projet"
       required_test_files: "UPDATE ME"
@@ -1099,9 +1100,10 @@ fr:
       missing_tokens: "Aucun jeton trouvé pour cet(te) étudiant(e) et pour ce projet"
       dir_not_exist: "Le dossier %{dir} requis par Ant n'existe pas."
       script_option:
-        run_settings: "Test Run Settings"
+        run_settings: "UPDATE ME"
         display_settings: "UPDATE ME"
         description: "UPDATE ME"
+        update_description: "UPDATE ME"
         max_marks: "UPDATE ME"
         run_on_submission: "UPDATE ME"
         run_on_request: "UPDATE ME"

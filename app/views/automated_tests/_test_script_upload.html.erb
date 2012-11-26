@@ -4,24 +4,27 @@
   <%= f.label :script_name, t(:script_name) %>
 
   <% if f.object.id %>
-    <%= text_field_tag 'test_script_' + f.object_id.to_s, f.object.script_name, :readonly => "true" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <%= f.text_field_tag 'test_script_' + f.object_id.to_s, f.object.script_name, :readonly => "true" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <%= label_tag "replace_scriptname", I18n.t("automated_tests.replace"), :class => "inline_label" %>
   <% end %>
 
-  <%= f.file_field :script_name, :size=>"30" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <%= f.file_field "script_name_" + f.object_id.to_s, { :size=>"30"#, :onChange => "updateScriptName("script_name_" + f.object_id.to_s, f.object_id)" } 
+  } %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
   <% if f.object_id %>
+    <%= I18n.t("automated_tests.script_option.description")%>
+    <% if f.object.description %>
+      <%= text_field_tag :script_description, f.object.description %>
+    <% else %>
+      <%= text_field_tag :script_description, nil, :placeholder => I18n.t("automated_tests.script_option.update_description") %>
+    <% end %>
   <% end %>
 
   <% if !f.object.new_record? %>
-    <%= f.label :_destroy, I18n.t(:remove), :class => "checkbox_label" %>
+    <%= f.label :_destroy, I18n.t("automated_tests.remove_file"), :class => "checkbox_label" %>
     <%= f.check_box :_destroy %>
   <% else %>
-    <%= link_to_function I18n.t(:remove), "$(this).up('.test_script_file').remove()" %>
-  <% end %>
-
-  <% if f.object_id %>
-    <%= f.text_field :description %> </br>
+    <%= link_to_function I18n.t("automated_tests.remove_file"), "$(this).up('.test_script_file').remove()" %>
   <% end %>
 
 <% end %>
