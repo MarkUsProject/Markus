@@ -8,7 +8,7 @@
 
 	<%= form.fields_for :test_script, test_script do |f| %>
 
-		<div id="test_script_#{f.object_id}_options">
+		<div id="test_script_<%= f.object_id.to_s + "_options" %>"</div>
 
 			<% if f.object.script_name %>
 				<h3 id="test_script_<% f.object_id %>">
