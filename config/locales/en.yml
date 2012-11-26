@@ -1104,6 +1104,7 @@ en:
 
     #Test Framework
     automated_tests:
+      remove_file: "Remove File"
       automated_tests: "Test Framework"
       enable_test:    "Enable tests for this assignment"
       required_test_files: "Required files for testing"
@@ -1136,6 +1137,7 @@ en:
         run_settings: "Run Settings:"
         display_settings: "Display Settings:"
         description: "Description:"
+        update_description: "Enter Description Here"
         max_marks: "Maximum marks given from testing"
         run_on_submission: "Run Test on Submission:"
         run_on_request: "Run Test On Request"

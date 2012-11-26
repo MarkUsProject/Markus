@@ -7,6 +7,17 @@
 </div>
 <% end %>
 
+<script>
+  function updateScriptName( filefield_id, objID ) {
+
+    var newName = document.getElementById(id).value;
+    document.getElementById().innerHTML = newDesc;
+    document.getElementById("test_script_" + objID).innerHTML = newName;
+
+  }
+
+</script>
+
 <%= form_for @assignment,
        :as => :assignment,
        :url => manage_assignment_automated_tests_path(),
