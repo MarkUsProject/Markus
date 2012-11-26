@@ -1,4 +1,4 @@
-require "Hello.rb"
+require "sample_files/Hello.rb"
 
 def printResults(name, input, marks, status)
   return "<markus_test>\n" \
