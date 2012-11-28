@@ -1,7 +1,7 @@
 # The actions necessary for managing grade entry forms.
 
 class GradeEntryFormsController < ApplicationController
-  include PaginationHelper
+  include GradeEntryFormsPaginationHelper
   include GradeEntryFormsHelper
 
   before_filter      :authorize_only_for_admin,
@@ -26,25 +26,23 @@ class GradeEntryFormsController < ApplicationController
                     :per_pages => [15, 30, 50, 100, 150],
                     :filters => {'none' => {
                                      :display => 'Show All',
-                                     :proc => lambda { |ignored_1, ignored_2|
-                                          Student.all(:conditions => {
+                                     :proc => lambda { |ignored_1, ignored_2, sort_by, order|
+                                          if !sort_by.blank?
+                                            if sort_by == "section"
+                                              Student.joins(:section).all(:conditions => {
+                                                  :hidden => false},
+                                                  :order => "sections.name "+order)
+                                            else
+                                              Student.all(:conditions => {
+                                                :hidden => false},
+                                                :order => sort_by+" "+order)
+                                            end
+                                          else
+                                            Student.all(:conditions => {
                                               :hidden => false},
-                                          :order => "user_name")}}},
-                     :sorts => {'last_name' => lambda {
-                                     |a,b| a.last_name.downcase <=>
-                                        b.last_name.downcase},
-                                'first_name' => lambda {
-                                      |a,b| a.first_name.downcase <=>
-                                        b.first_name.downcase},
-                                'user_name' => lambda {
-                                     |a,b| a.user_name.downcase <=>
-                                        b.user_name.downcase},
-                                'section' => lambda { |a,b|
-                                      return -1 if !a.section
-                                      return 1 if !b.section
-                                      return a.section.name.downcase <=> b.section.name.downcase},
-
-                                }
+                                              :order => "user_name "+order)
+                                          end
+                                          }}}
                         }
 
   # Create a new grade entry form
@@ -99,13 +97,13 @@ class GradeEntryFormsController < ApplicationController
     end
 
     @current_page = 1
-    @c_sort_by = current_user.id.to_s +  "_"+ @grade_entry_form.id.to_s+ "_sort_by_grades"
+    c_sort_by = current_user.id.to_s +  "_"+ @grade_entry_form.id.to_s+ "_sort_by_grades"
     if !params[:sort_by].blank?
-      cookies[@c_sort_by] = params[:sort_by]
+      cookies[c_sort_by] = params[:sort_by]
     else
       params[:sort_by] = 'last_name'
     end
-    @sort_by = cookies[@c_sort_by]
+    @sort_by = cookies[c_sort_by]
     @desc = params[:desc]
     @filters = get_filters(G_TABLE_PARAMS)
     @per_pages = G_TABLE_PARAMS[:per_pages]
@@ -123,7 +121,7 @@ class GradeEntryFormsController < ApplicationController
                                                         @students.total_pages)
     session[:alpha_pagination_options] = @alpha_pagination_options
     @alpha_category = @alpha_pagination_options.first
-    @sort_by = cookies[@c_sort_by]
+    @sort_by = cookies[c_sort_by]
   end
 
   # Handle pagination for grades table
