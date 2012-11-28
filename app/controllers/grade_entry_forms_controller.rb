@@ -26,7 +26,7 @@ class GradeEntryFormsController < ApplicationController
                     :per_pages => [15, 30, 50, 100, 150],
                     :filters => {'none' => {
                                      :display => 'Show All',
-                                     :proc => lambda { |ignored_1, ignored_2, sort_by, order|
+                                     :proc => lambda { |sort_by, order|
                                           if !sort_by.blank?
                                             if sort_by == "section"
                                               Student.joins(:section).all(:conditions => {
@@ -111,7 +111,6 @@ class GradeEntryFormsController < ApplicationController
     all_students = get_filtered_items(G_TABLE_PARAMS,
                                       @filter,
                                       @sort_by,
-                                      {:grade_entry_form => @grade_entry_form},
                                       params[:desc])
     @students = all_students.paginate(:per_page => @per_page,
                                       :page => @current_page)
@@ -154,7 +153,6 @@ class GradeEntryFormsController < ApplicationController
                        G_TABLE_PARAMS,
                        @filter,
                        @sort_by,
-                       {:grade_entry_form => @grade_entry_form},
                        @desc)
       @alpha_pagination_options = @grade_entry_form.alpha_paginate(
                                      all_students,
