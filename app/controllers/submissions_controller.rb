@@ -267,23 +267,20 @@ class SubmissionsController < ApplicationController
 
   def update_column_filter
 
-    if request.post?
-      session[:submission_col_dictionary] = { :Col1 => params[:col1] == "yes", 
-                                              :Col2 => params[:col2] == "yes", 
-                                              :Col3 => params[:col3] == "yes", 
-                                              :Col4 => params[:col4] == "yes", 
-                                              :Col5 => params[:col5] == "yes", 
-                                              :Col6 => params[:col6] == "yes", 
-                                              :Col7 => params[:col7] == "yes", 
-                                              :Col8 => params[:col8] == "yes", 
-                                              :Col9 => params[:col9] == "yes"}
-                                              
-      #Save columns to show/hide in cookies
-      @c_columns = current_user.id.to_s + "_submissions_columns"             
-      cookies.permanent[@c_columns] = session[:submission_col_dictionary].to_json
+    session[:submission_col_dictionary] = { :Col1 => params[:col1] == "yes", 
+                                            :Col2 => params[:col2] == "yes", 
+                                            :Col3 => params[:col3] == "yes", 
+                                            :Col4 => params[:col4] == "yes", 
+                                            :Col5 => params[:col5] == "yes", 
+                                            :Col6 => params[:col6] == "yes", 
+                                            :Col7 => params[:col7] == "yes", 
+                                            :Col8 => params[:col8] == "yes", 
+                                            :Col9 => params[:col9] == "yes"}
+                                            
+    #Save columns to show/hide in cookies
+    @c_columns = current_user.id.to_s + "_submissions_columns"             
+    cookies.permanent[@c_columns] = session[:submission_col_dictionary].to_json
                           
-    end
-    
     render :partial => "update_column_filter"
 
   end
