@@ -1,11 +1,12 @@
 <% content_for :head do %>
   <%= stylesheet_link_tag("livepipe/tabs") %>
 <% end %>
-
 <% # UI LIBRARIES %>
 <%= javascript_include_tag "livepipe/livepipe.js",
 	"livepipe/window.js",
-	"livepipe/tabs.js" %>
+	"livepipe/tabs.js",
+  "effects.js",
+  "dragdrop.js" %>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -52,8 +53,9 @@
 
 <div id="title_bar">
   <h1><%= I18n.t("flexible_criteria.criteria_management", :identifier => h(@assignment.short_identifier)) %>
-
-        <%= link_to_function t("add_criterion"), %| if($('new_flexible_criterion') != null) {
+  </h1>
+  <div class="headingButtons">
+    <%= link_to_function t("add_criterion"), %| if($('new_flexible_criterion') != null) {
           $('flexible_criterion_flexible_criterion_name').select();
           $('flexible_criterion_flexible_criterion_name').focus();
         } else {
@@ -63,7 +65,7 @@
       <%= button_to_function I18n.t("upload"), "upload_criteria();"%>
     <span class="menu_bar" >|</span>
       <%= button_to_function I18n.t("download"), "download_criteria();"%>
-  </h1>
+  </div>
 </div><!-- Title bar-->
 
 <div class="wrapLeft">
@@ -122,7 +124,8 @@
   <p><%= t('flexible_criteria.download.prompt') %></p>
 
   <ul>
-    <li><%= link_to t('flexible_criteria.download.link'), {:controller=>"flexible_criteria", :action=>"download", :id=> @assignment.id}%></li>
+    <li><%= link_to t('flexible_criteria.download.link'), 
+    {:controller=>"flexible_criteria", :action=>"download", :id=> @assignment.id}%></li>
   </ul>
 
   <input type="reset" value="<%= t(:cancel) %>" onclick="modalDownload.close();">

@@ -695,6 +695,10 @@ en:
       move_criterion:
         error: "Failed to move rubric."
 
+    flexible_criteria:
+      move_criterion:
+        error: "Failed to move flexible criteria."
+    
     add_student:
       success: "Student %{user_name} added."
       fail:

@@ -58,10 +58,14 @@ Markus::Application.routes.draw do
     end
 
     resources :flexible_criteria do
+      member do
+        delete 'destroy'
+        get 'move_criterion'
+      end
+
       collection do
         post 'upload'
-        get 'update_positions'
-        get 'move_criterion'
+        post 'update_positions'
         get 'download'
       end
     end
@@ -163,7 +167,7 @@ Markus::Application.routes.draw do
           post 'remove_extra_mark'
           get 'expand_unmarked_criteria'
           post 'set_released_to_students'
-          post 'update_overall_comment'
+          put 'update_overall_comment'
           post 'update_overall_remark_comment'
           post 'update_marking_state'
           get 'update_remark_request'
