@@ -1,3 +1,27 @@
+/**
+ * page specific event handlers for grader/index.html.erb
+ */
+document.observe("dom:loaded", function() {
+
+  new Form.Element.EventObserver('assign_criteria', function(element, value) {
+
+    var value = value || false;
+    var url = element.readAttribute('data-action');
+
+    var params = {
+      'value': value,
+      'authenticity_token': AUTH_TOKEN
+    }
+
+    new Ajax.Request(url, {
+      asynchronous: true,
+      evalScripts: true,
+      parameters: params
+    })
+  })
+
+});
+
 function populate(json_data) {
   groupings_table.populate(json_data);
   groupings_table.render();

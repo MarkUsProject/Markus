@@ -1,6 +1,8 @@
 <% # The students' grades
 %>
 
+<%= javascript_include_tag 'grades_table' %>
+
 <tbody id="grades">
   <% # The table rows
   %>
@@ -30,13 +32,13 @@
                     or (grade_entry_student.grades.build(:grade_entry_item_id => grade_entry_item.id))) %>
         <% gid = student.id.to_s + '_' + grade_entry_item.id.to_s %>
 
-        <td class="grade"><%= text_field_tag 'grade_' + gid, grade.grade, :size => 4 %></td>
-        <%= observe_field 'grade_' + gid,
-                          :url => {:action => :update_grade},
-                          :with => "'updated_grade=' + encodeURIComponent(value)
-                                   + '&student_id=' + #{student.id}
-                                   + '&grade_entry_item_id=' + #{grade_entry_item.id}
-                                   + '&id=' + #{@grade_entry_form.id}" %>
+        <td class="grade"><%= text_field_tag 'grade_' + gid, grade.grade, 
+                            :size => 4,
+                            :class => 'grade-input',
+                            'data-grade-entry-item-id' => grade_entry_item.id,
+                            'data-student-id' => student.id,
+                            'data-action' => url_for(:action => :update_grade,
+                                              :id => @grade_entry_form.id) %></td>
       <% end %>
 
       <td class="student_total"><%= text_field_tag 'total_' + student.id.to_s,
