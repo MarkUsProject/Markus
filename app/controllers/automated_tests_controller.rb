@@ -66,12 +66,11 @@ class AutomatedTestsController < ApplicationController
 =end
   end
 
-  # TODO: REWRITE THIS FOR THE NEW DESIGN
   #Update is called when files are added to the assigment
-
   def update
       @assignment = Assignment.find(params[:assignment_id])
 
+      #perform transaction, if errors, none of new config saved
       @assignment.transaction do
 
         begin
@@ -80,7 +79,8 @@ class AutomatedTestsController < ApplicationController
         rescue Exception, RuntimeError => e
           @assignment.errors.add(:base, I18n.t("assignment.error",
                                                :message => e.message))
-          return
+          render :manage
+          return        
         end
 
         # Save assignment and associated test files
@@ -89,7 +89,7 @@ class AutomatedTestsController < ApplicationController
           redirect_to :action => 'manage',
                       :assignment_id => params[:assignment_id]
         else
-          render :manage
+          render action => :manage
         end
      end
   end

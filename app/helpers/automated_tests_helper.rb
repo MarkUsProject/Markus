@@ -307,15 +307,7 @@ module AutomatedTestsHelper
     end
   end
 
-  #need to implement this
-  #this is called when a new test script file is added
-  def add_test_script_options(form)
-
-    #TODO
-
-  end
-
-  # NEEDS TO BE UPDATES
+  # NEEDS TO BE UPDATED
   # Process Testing Framework form
   # - Process new and updated test files (additional validation to be done at the model level)
   def process_test_form(assignment, params)
