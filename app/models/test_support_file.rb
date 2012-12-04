@@ -34,7 +34,8 @@ class TestSupportFile < ActiveRecord::Base
   validates_presence_of :file_name
   validates_presence_of :description, :if => "description.nil?"
   
-  validates_uniqueness_of :file_name
+  # TODO: validate the uniqueness of file_name of 
+  # the test support files which belongs to the same assignment
   
   # All callback methods are protected methods
   protected

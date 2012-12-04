@@ -66,8 +66,9 @@ class TestScript < ActiveRecord::Base
   validates_presence_of :max_marks
   validates_presence_of :description, :if => "description.nil?"
   
-  validates_uniqueness_of :seq_num
-  validates_uniqueness_of :script_name
+  # TODO: validate the uniqueness of seq_num, script_name of 
+  # the test scripts which belongs to the same assignment
+  
   validates_numericality_of :seq_num
   validates_numericality_of :max_marks, :only_integer => true, :greater_than_or_equal_to => 0
 
