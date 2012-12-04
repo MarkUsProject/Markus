@@ -5,6 +5,7 @@ require 'shoulda'
 class TestScriptTest < ActiveSupport::TestCase
   should belong_to :assignment
   should have_many :test_results
+  should have_many :test_script_results
   
   should validate_presence_of :assignment
   

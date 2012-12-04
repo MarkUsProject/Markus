@@ -291,7 +291,6 @@ TestScript.blueprint do
   max_marks {0}
   run_on_submission {true}
   run_on_request {true}
-  uses_token {true}
   halts_testing {false}
   display_description {'do_not_display'}
   display_run_status {'do_not_display'}
@@ -307,10 +306,17 @@ TestSupportFile.blueprint do
   description {Sham.description}
 end
 
+TestScriptResult.blueprint do
+  submission {Submission.make}
+  test_script {TestScript.make}
+  marks_earned {0}
+end
+
 TestResult.blueprint do
   submission {Submission.make}
-  completion_status {'pass'}
   test_script {TestScript.make}
+  name {Sham.filename}
+  completion_status {'pass'}
   marks_earned {0}
   input_description {Sham.message}
   actual_output {Sham.message}

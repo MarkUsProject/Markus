@@ -7,6 +7,7 @@ class SubmissionTest < ActiveSupport::TestCase
 
   should have_many :submission_files
   should have_many :test_results
+  should have_many :test_script_results
 
   should "automatically create a result" do
     s = Submission.make
