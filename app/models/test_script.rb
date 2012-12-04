@@ -24,8 +24,6 @@
 #                       when student submits the assignment
 #   run_on_request:     a boolean indicates if this script is run
 #                       when a user sends a test request
-#   uses_token:         a boolean indicates if this script requires
-#                       a token to run
 #   halts_testing:      a boolean indicates if this script halts
 #                       the test run when error occurs
 #   display_description

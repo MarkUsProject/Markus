@@ -21,8 +21,6 @@ class TestScriptTest < ActiveSupport::TestCase
   should allow_value(false).for(:run_on_submission)
   should allow_value(true).for(:run_on_request)
   should allow_value(false).for(:run_on_request)
-  should allow_value(true).for(:uses_token)
-  should allow_value(false).for(:uses_token)
   should allow_value(true).for(:halts_testing)
   should allow_value(false).for(:halts_testing)
   
@@ -48,7 +46,6 @@ class TestScriptTest < ActiveSupport::TestCase
                                     :max_marks               => 5,
                                     :run_on_submission       => true,
                                     :run_on_request          => true,
-                                    :uses_token              => true,
                                     :halts_testing           => false,
                                     :display_description     => 'do_not_display',
                                     :display_run_status      => 'do_not_display',
@@ -91,7 +88,6 @@ class TestScriptTest < ActiveSupport::TestCase
                                          :max_marks               => 5,
                                          :run_on_submission       => true,
                                          :run_on_request          => true,
-                                         :uses_token              => true,
                                          :halts_testing           => false,
                                          :display_description     => display_option[0],
                                          :display_run_status      => display_option[1],
@@ -107,7 +103,6 @@ class TestScriptTest < ActiveSupport::TestCase
                                            :max_marks               => 5,
                                            :run_on_submission       => true,
                                            :run_on_request          => true,
-                                           :uses_token              => true,
                                            :halts_testing           => false,
                                            :display_description     => display_option[2],
                                            :display_run_status      => display_option[1],
@@ -191,7 +186,6 @@ class TestScriptTest < ActiveSupport::TestCase
                                     :max_marks               => 5,
                                     :run_on_submission       => true,
                                     :run_on_request          => true,
-                                    :uses_token              => true,
                                     :halts_testing           => false,
                                     :display_description     => 'do_not_display',
                                     :display_run_status      => 'do_not_display',
