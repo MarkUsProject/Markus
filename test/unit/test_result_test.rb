@@ -9,6 +9,7 @@ class TestResultTest < ActiveSupport::TestCase
   should validate_presence_of :submission
   
   should validate_presence_of :test_script
+  should validate_presence_of :name
   should validate_presence_of :completion_status
   should validate_presence_of :marks_earned
   
@@ -22,6 +23,7 @@ class TestResultTest < ActiveSupport::TestCase
       @script = TestScript.make
       @testresult = TestResult.make(:submission_id     => @sub.id,
                                     :test_script_id    => @script.id,
+                                    :name              => 'unit test 1',
                                     :completion_status => 'pass',
                                     :marks_earned      => 5,
                                     :input_description => '',
@@ -29,30 +31,30 @@ class TestResultTest < ActiveSupport::TestCase
                                     :expected_output   => 'This is the expected output')
     end
     
-    should "return true when a valid file is created" do
+    should "return true when a valid test result is created" do
       assert @testresult.valid?
       assert @testresult.save
     end
     
-    should "return true when a valid file is created even if the marks_earned is zero" do
+    should "return true when a valid test result is created even if the marks_earned is zero" do
       @testresult.marks_earned = 0
       assert @testresult.valid?
       assert @testresult.save
     end
 
-    should "return true when a valid file is created even if the input_description is empty" do
+    should "return true when a valid test result is created even if the input_description is empty" do
       @testresult.input_description = ''
       assert @testresult.valid?
       assert @testresult.save
     end
 
-    should "return true when a valid file is created even if the actual_output is empty" do
+    should "return true when a valid test result is created even if the actual_output is empty" do
       @testresult.actual_output = ''
       assert @testresult.valid?
       assert @testresult.save
     end
 
-    should "return true when a valid file is created even if the expected_output is empty" do
+    should "return true when a valid test result is created even if the expected_output is empty" do
       @testresult.expected_output = ''
       assert @testresult.valid?
       assert @testresult.save
@@ -68,6 +70,7 @@ class TestResultTest < ActiveSupport::TestCase
       @script = TestScript.make
       @testresult = TestResult.make(:submission_id     => @sub.id,
                                     :test_script_id    => @script.id,
+                                    :name              => 'unit test 1',
                                     :completion_status => 'pass',
                                     :marks_earned      => 5,
                                     :input_description => '',
@@ -120,6 +123,7 @@ class TestResultTest < ActiveSupport::TestCase
       @script = TestScript.make
       @testresult = TestResult.make(:submission_id     => @sub.id,
                                     :test_script_id    => @script.id,
+                                    :name              => 'unit test 1',
                                     :completion_status => 'pass',
                                     :marks_earned      => 5,
                                     :input_description => '',

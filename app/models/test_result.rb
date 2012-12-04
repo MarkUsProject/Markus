@@ -1,14 +1,13 @@
 ##############################################################
 # This is the model for the database table test_results,
 # which each instance of this model represents the test result
-# of a test script. It contains all the information of a test
-# run, but not all the information is shown to the student.
-# (Configurable for each test script) Also, the admin decides
-# whether or not and when to show the result to the student.
+# of a unit test. It contains all the information of a unit
+# test.
 #
 # The attributes of test_support_files are:
 #   submission_id:      id of the submission
 #   test_script_id:     id of the corresponding test script
+#   name:               name of the unit test
 #   completion_status:  one of {pass, fail, error}
 #   marks_earned:       number of points earned for this test
 #                       run. A non-negative integer.
@@ -27,6 +26,7 @@ class TestResult < ActiveRecord::Base
   validates_associated :submission # submission need to be valid
   
   validates_presence_of :test_script
+  validates_presence_of :name
   validates_presence_of :completion_status
   validates_presence_of :marks_earned
   
