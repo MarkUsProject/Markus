@@ -3,6 +3,14 @@ class Testing < ActiveRecord::Migration
     drop_table :test_files
     drop_table :test_results
 
+    create_table :test_script_results do |t|
+      t.references :submission
+      t.references :test_script
+      t.integer "marks_earned"
+      t.datetime "created_at"
+      t.datetime "updated_at"
+    end
+
     create_table :test_support_files do |t|
       t.string :file_name, { :null => false }
       t.references :assignment, { :null => false }
@@ -21,7 +29,6 @@ class Testing < ActiveRecord::Migration
       t.integer "max_marks", { :null => false }
       t.boolean "run_on_submission"
       t.boolean "run_on_request"
-      t.boolean "uses_token"
       t.boolean "halts_testing"
       t.string "display_description", { :null => false }
       t.string "display_run_status", { :null => false }
@@ -38,8 +45,9 @@ class Testing < ActiveRecord::Migration
 
     create_table :test_results do |t|
       t.references :submission
+      t.references :test_script
+      t.string "name"
       t.string "completion_status", { :null => false }
-      t.integer "test_script_id"
       t.integer "marks_earned", { :null => false }
       t.text    "input_description", { :null => false }
       t.text    "actual_output", { :null => false }
@@ -55,6 +63,7 @@ class Testing < ActiveRecord::Migration
     drop_table :test_scripts
     drop_table :test_results
     drop_table :test_support_files
+    drop_table :test_script_results
 
     create_table "test_files", :force => true do |t|
       t.string   "filename"

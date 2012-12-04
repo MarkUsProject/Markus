@@ -1,3 +1,4 @@
+# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -94,16 +95,6 @@ ActiveRecord::Schema.define(:version => 20121028211448) do
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true
-
-  create_table "automated_tests", :force => true do |t|
-    t.integer  "assignment_id"
-    t.integer  "group_id"
-    t.text     "pretest_result"
-    t.text     "build_result"
-    t.text     "test_script_result"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "criterion_ta_associations", :force => true do |t|
     t.integer  "ta_id"
@@ -358,8 +349,9 @@ ActiveRecord::Schema.define(:version => 20121028211448) do
 
   create_table "test_results", :force => true do |t|
     t.integer "submission_id"
-    t.string  "completion_status", :null => false
     t.integer "test_script_id"
+    t.string  "name"
+    t.string  "completion_status", :null => false
     t.integer "marks_earned",      :null => false
     t.text    "input_description", :null => false
     t.text    "actual_output",     :null => false
@@ -367,6 +359,14 @@ ActiveRecord::Schema.define(:version => 20121028211448) do
   end
 
   add_index "test_results", ["submission_id", "test_script_id"], :name => "submission_id_and_test_script_id"
+
+  create_table "test_script_results", :force => true do |t|
+    t.integer  "submission_id"
+    t.integer  "test_script_id"
+    t.integer  "marks_earned"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "test_scripts", :force => true do |t|
     t.integer "assignment_id",           :null => false
@@ -376,7 +376,6 @@ ActiveRecord::Schema.define(:version => 20121028211448) do
     t.integer "max_marks",               :null => false
     t.boolean "run_on_submission"
     t.boolean "run_on_request"
-    t.boolean "uses_token"
     t.boolean "halts_testing"
     t.string  "display_description",     :null => false
     t.string  "display_run_status",      :null => false
