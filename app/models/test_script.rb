@@ -44,6 +44,7 @@
 class TestScript < ActiveRecord::Base
   belongs_to :assignment
   has_many :test_results
+  has_many :test_script_results
   
   # Run sanitize_filename before saving to the database
   before_save :sanitize_filename

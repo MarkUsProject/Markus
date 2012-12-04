@@ -9,8 +9,8 @@
 #   test_script_id:     id of the corresponding test script
 #   name:               name of the unit test
 #   completion_status:  one of {pass, fail, error}
-#   marks_earned:       number of points earned for this test
-#                       run. A non-negative integer.
+#   marks_earned:       number of points earned for this unit
+#                       test. A non-negative integer.
 #   input_description:  a string describing the input. It can
 #                       be empty, the input data, or just
 #                       a description.
