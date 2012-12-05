@@ -301,6 +301,12 @@ class GroupsControllerTest < AuthenticatedControllerTest
         post_add [@student1.id]
         # Add 1 deductions to each member
         @grouping.accepted_student_memberships.each do |student_membership|
+          # Remove all old deduction created by post_add
+          deductions = student_membership.user.grace_period_deductions
+          deductions.each do |deduction|
+            student_membership.grace_period_deductions.delete(deduction)
+            deduction.destroy
+          end
           deduction = GracePeriodDeduction.new
           deduction.membership = student_membership
           deduction.deduction = 1
@@ -312,7 +318,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
           # each member has 4 grace credits out of 5
           assert_equal 4, student_membership.user.remaining_grace_credits
         end
-        
+
         @grouping.add_member(@student2)
         
         @grouping.reload
@@ -335,6 +341,12 @@ class GroupsControllerTest < AuthenticatedControllerTest
         post_add [@student1.id, @student2.id]
         # Add 2 deductions to each member
         @grouping.accepted_student_memberships.each do |student_membership|
+          # Remove all old deduction created by post_add
+          deductions = student_membership.user.grace_period_deductions
+          deductions.each do |deduction|
+            student_membership.grace_period_deductions.delete(deduction)
+            deduction.destroy
+          end
           deduction = GracePeriodDeduction.new
           deduction.membership = student_membership
           deduction.deduction = 2
