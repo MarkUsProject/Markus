@@ -274,6 +274,12 @@ class GroupsControllerTest < AuthenticatedControllerTest
         post_add [@student1.id, @student2.id]
         # Add 0 deductions to each member
         @grouping.accepted_student_memberships.each do |student_membership|
+          # Remove all old deduction created by post_add
+          deductions = student_membership.user.grace_period_deductions
+          deductions.each do |deduction|
+            student_membership.grace_period_deductions.delete(deduction)
+            deduction.destroy
+          end
           deduction = GracePeriodDeduction.new
           deduction.membership = student_membership
           deduction.deduction = 0
