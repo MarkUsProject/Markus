@@ -130,6 +130,8 @@ Markus::Application.routes.draw do
         post 'update_files'
         post 'server_time'
         get 'download'
+        get 'column_filter'
+        post 'update_column_filter'
       end
 
       member do

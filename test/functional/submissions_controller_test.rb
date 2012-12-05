@@ -14,11 +14,19 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
   context "I am a student trying working alone on an assignment" do
     setup do
       @group = Group.make
-      @assignment = Assignment.make(:allow_web_submits => true, :group_min => 1)
+      @assignment = Assignment.make(:allow_web_submits => true, :group_min => 1, :assignment_id => 1)
       @grouping = Grouping.make(:group => @group, :assignment => @assignment)
       @membership = StudentMembership.make(:membership_status => 'inviter', :grouping => @grouping)
       @student = @membership.user
     end
+
+     should "recognize action to column headers for an assignment" do
+        assert assign_to :assignment
+        assert_recognizes( {:action => "column_headers", :controller => "submissions"},
+  
+               {:path => "/assignments/1/submissions/column_headers", :method => "get"} )
+  
+      end
 
     should "and I should be able to access the file manager page" do
       get_as @student, :file_manager, :assignment_id => @assignment.id

@@ -1,0 +1,39 @@
+<div id="content_filter_text">
+
+  <% form_tag update_column_filter_assignment_submissions_path(), {:method => 'post', :remote => true} do %>
+
+    <h3> 
+      <%= I18n.t("browse_submissions.column_filter") %> 
+    </h3>
+
+    <%=check_box_tag 'col1', 'yes', session[:submission_col_dictionary][:Col1] %>
+    <%= label_tag 'col1',  I18n.t("browse_submissions.group_name") %> <br />
+    <%= check_box_tag 'col2', 'yes', session[:submission_col_dictionary][:Col2]  %>
+    <%= label_tag 'col2' , I18n.t("browse_submissions.student_name") %> <br />
+    <%= check_box_tag 'col3', 'yes', session[:submission_col_dictionary][:Col3]  %>
+    <%= label_tag 'col3', I18n.t("browse_submissions.repository") %> <br />
+    <%= check_box_tag 'col4', 'yes', session[:submission_col_dictionary][:Col4]  %>
+    <%= label_tag 'col4', I18n.t("browse_submissions.commit_date") %> <br />
+    <%= check_box_tag 'col5', 'yes', session[:submission_col_dictionary][:Col5]  %>
+    <%= label_tag 'col5', I18n.t("browse_submissions.marking_state") %> <br />
+    <%= check_box_tag 'col6', 'yes', session[:submission_col_dictionary][:Col6]  %>
+    <%= label_tag 'col6', I18n.t("browse_submissions.grace_credits_used") %> <br />
+    <%= check_box_tag 'col7', 'yes', session[:submission_col_dictionary][:Col7]  %>
+    <%= label_tag 'col7', I18n.t("browse_submissions.final_grade") %> <br />
+    <%= check_box_tag 'col8', 'yes', session[:submission_col_dictionary][:Col8]  %>
+    <%= label_tag 'col8', I18n.t("browse_submissions.section") %> <br />
+    <%= check_box_tag 'col9', 'yes', session[:submission_col_dictionary][:Col9]  %>
+    <%= label_tag 'col9', I18n.t("browse_submissions.can_begin_grading") %>
+
+    <%= submit_tag I18n.t("browse_submissions.save"), :tabindex => 100, :class => 'button indent_button', :onclick =>  'column_filter_modal.close()' %>
+    <%= button_to_function "Cancel", 'column_filter_modal.close()', :tabindex => 110 %>
+
+  <% end %>
+
+  <script>
+    column_filter_modal.open();
+  </script>
+
+</div>
+
+

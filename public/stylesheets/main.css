@@ -1036,6 +1036,22 @@ input#extra_mark_description{
   border: 10px solid #333;  
 }
 
+#column_filter_dialog {
+  background-color:#fff;
+  padding:15px;  
+  border:5px solid #333;  
+  width: 300px;
+  height: 320px;
+}
+
+#column_filter_dialog input[type="button"], input[type="submit"] {
+  margin-top: 15px;
+  margin-right: 10px;
+  margin-bottom: 15px;
+  margin-left: 5px; 
+  float: right;
+}
+
 #about_icon, #switch_role_icon {
   margin-left: 0.5em;
   margin-right: 0.5em;
