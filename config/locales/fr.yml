@@ -1098,6 +1098,9 @@ fr:
       filename_exists: "a déjà été pris"
       duplicate_filename: "Attempted to upload the following filename more than once: "
       missing_tokens: "Aucun jeton trouvé pour cet(te) étudiant(e) et pour ce projet"
+      not_belong_to_group: "UPDATE ME"
+      test_files_unavailable: "UPDATE ME"
+      source_files_unavailable: "UPDATE ME"
       dir_not_exist: "Le dossier %{dir} requis par Ant n'existe pas."
       script_option:
         run_settings: "UPDATE ME"

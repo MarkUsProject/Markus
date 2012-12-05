@@ -1132,6 +1132,9 @@ en:
       filename_exists: "has already been taken"
       duplicate_filename: "Attempted to upload the following filename more than once: "
       missing_tokens: "No tokens were found for this student and for this assignment"
+      not_belong_to_group: "You do not belong to the group"
+      test_files_unavailable: "There is no test script to run test"
+      source_files_unavailable: "No student file is found for testing"
       dir_not_exist: "The directory %{dir} required for Ant does not exist"
       script_option:
         run_settings: "Run Settings:"
