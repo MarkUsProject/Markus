@@ -1,0 +1,15 @@
+This is the readme file for the test runner.
+
+--------------------------------------------------------
+usage:	ruby testrunner.rb [test_1 flag_1 ...]
+	ruby testrunner.rb < args.in
+
+where args.in uses this format:
+filename_1 halt_on_fail
+filename_2 halt_on_fail
+...
+
+--------------------------------------------------------
+
+Full documentation will be included in the MarkUs manual.
+
