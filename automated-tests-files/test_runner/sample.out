@@ -1,0 +1,58 @@
+<markus_testrun>
+<markus_testsuite>
+<markus_script_name>rb_suite_1.rb</markus_script_name>
+<markus_test>
+<markus_name>Normal Hello</markus_name>
+<markus_input>Bob</markus_input>
+<markus_expected>Hello Bob</markus_expected>
+<markus_actual>Hello Bob</markus_actual>
+<markus_marks_earned>1</markus_marks_earned>
+<markus_status>pass</markus_status>
+</markus_test>
+<markus_test>
+<markus_name>Empty Hello</markus_name>
+<markus_input></markus_input>
+<markus_expected>Hello </markus_expected>
+<markus_actual>Hello </markus_actual>
+<markus_marks_earned>1</markus_marks_earned>
+<markus_status>pass</markus_status>
+</markus_test>
+<markus_test>
+<markus_name>Wrong Answer</markus_name>
+<markus_input>Bob</markus_input>
+<markus_expected>Hello Bob</markus_expected>
+<markus_actual>This-is-rigged</markus_actual>
+<markus_marks_earned>0</markus_marks_earned>
+<markus_status>fail</markus_status>
+</markus_test>
+</markus_testsuite>
+<markus_testsuite>
+<markus_script_name>rb_suite_2.rb</markus_script_name>
+<markus_test>
+<markus_name>Normal Hello</markus_name>
+<markus_input>Bob</markus_input>
+<markus_marks_earned>1</markus_marks_earned>
+<markus_status>Pass</markus_status>
+</markus_test>
+<markus_test>
+<markus_name>Empty Hello</markus_name>
+<markus_input></markus_input>
+<markus_marks_earned>1</markus_marks_earned>
+<markus_status>Pass</markus_status>
+</markus_test>
+<markus_test>
+<markus_name>Wrong Answer</markus_name>
+<markus_input>Bob</markus_input>
+<markus_marks_earned>0</markus_marks_earned>
+<markus_status>Fail</markus_status>
+</markus_test>
+</markus_testsuite>
+<markus_testsuite>
+<markus_script_name>rb_suite_3.rb</markus_script_name>
+<markus_test>
+<markus_name>Question 3</markus_name>
+<markus_marks_earned>2</markus_marks_earned>
+<markus_status>fail</markus_status>
+</markus_test>
+</markus_testsuite>
+</markus_testrun>

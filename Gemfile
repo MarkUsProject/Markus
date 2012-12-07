@@ -9,6 +9,7 @@
 source 'http://rubygems.org'
 
 # Bundler requires these gems in all environments
+gem "resque"
 gem "rails", "3.0.13"
 gem 'exception_notification'
 #gem "prototype-rails" Will be needed with Rails3.1
@@ -19,6 +20,7 @@ gem "will_paginate"
 gem 'fastercsv', :platforms => :ruby_18
 gem "routing-filter"
 gem "dynamic_form"
+gem "libxml-ruby" # xml parser library to parse test results
 
 # To be removed
 gem "prototype_legacy_helper",
