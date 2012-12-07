@@ -33,7 +33,7 @@ def parseOutput(fileName, output, status)
   end
   
   xml = "<test_script>\n" \
-            "<script_name>#{fileName}</script_name>\n" \
+            "<script_name>#{File.basename(fileName)}</script_name>\n" \
             "#{output}\n" \
             "#{marksClause}" \
         "</test_script>\n"
@@ -150,8 +150,18 @@ def main()
   
   # if there are no other cmd line args, then stdin is being used
   # if there are no args and stdin isnt being used, then it will crash
+  # if the argv tag is used, then change the default time limit
   if ARGV[0] == nil then 
     useSTD = true
+  elsif ARGV[0] == '-t' and ARGV[1] == nil then
+    # error
+  elsif ARGV[0] == '-t' and ARGV[2] == nil then
+    useSTD = true
+    $TIME_LIMIT = Integer(ARGV[1])
+  elsif ARGV[0] == '-t' and ARGV[2] != nil then
+    useSTD = false
+    $TIME_LIMIT = Integer(ARGV[1])
+    $LAST_ARG = 2
   else 
     useSTD = false
   end
@@ -164,7 +174,7 @@ def main()
   #using stdin can return nil, and using cmd line can return " ", but not nil
   while(nextFile != nil && nextFile != " ") do
     filedata = nextFile.split(' ')
-    
+
     #extract the test script data
     files.push(filedata[0])
     flags.push(getBool(filedata[1]))
@@ -172,7 +182,7 @@ def main()
     #get the next script
     nextFile = getNext(useSTD)
   end
-  
+
   # if any of the files don't exist, output
   if !checkFiles(files) then
     print "<testrun></testrun>"
