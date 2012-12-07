@@ -318,16 +318,17 @@ module AutomatedTestsHelper
   def process_test_form(assignment, params)
 
     # Hash for storing new and updated test files
-    updated_files = {}
+    updated_script_files = {}
+    updated_support_files = {}
 
     # Retrieve all test file entries
-    testfiles = params[:assignment][:test_files_attributes]
+    testscripts = params[:assignment][:test_script]
 
-    # First check for duplicate filenames:
-    filename_array = []
-    testfiles.values.each do |tfile|
-      if tfile['filename'].respond_to?(:original_filename)
-        fname = tfile['filename'].original_filename
+    # First check for duplicate filenames in test scripts:
+    filename_array = Array.new
+    testscripts.values.each do |tfile|
+      if tfile['script_name'].respond_to?(:original_filename)
+        fname = tfile['script_name'].script_name
         # If this is a duplicate filename, raise error and return
         if !filename_array.include?(fname)
           filename_array << fname
@@ -337,10 +338,26 @@ module AutomatedTestsHelper
       end
     end
 
-    # Filter out files that need to be created and updated:
-    testfiles.each_key do |key|
+    # Retrieve all test file entries
+    testsupporters = params[:assignment][:test_helper_file]
 
-      tfile = testfiles[key]
+    # Now check for duplicate filenames in test helper files:
+    testsupporters.values.each do |tfile|
+      if tfile['file_name'].respond_to?(:original_filename)
+        fname = tfile['file_name'].filename
+        # If this is a duplicate filename, raise error and return
+        if !filename_array.include?(fname)
+          filename_array << fname
+        else
+          raise I18n.t("automated_tests.duplicate_filename") + fname
+        end
+      end
+    end
+
+    # Filter out script files that need to be created and updated:
+    testscripts.each_key do |key|
+
+      tfile = testscripts[key]
 
       # Check to see if this is an update or a new file:
       # - If 'id' exists, this is an update
@@ -352,21 +369,51 @@ module AutomatedTestsHelper
       if tf_id != nil && tfile.size > 1
 
         # Find existing test file to update
-        @existing_testfile = TestFile.find_by_id(tf_id)
-        if @existing_testfile
+        @existing_testscript = TestScript.find_by_id(tf_id)
+        if @existing_testscript
           # Store test file for any possible updating
-          updated_files[key] = tfile
+          updated_script_files[key] = tfile
         end
       end
 
       # Test file needs to be created since record doesn't exist yet
-      if tf_id.nil? && tfile['filename']
-        updated_files[key] = tfile
+      if tf_id.nil? && tfile['script_name']
+        updated_script_files[key] = tfile
       end
     end
 
+    # Filter out helper files that need to be created and updated:
+    testsupporters.each_key do |key|
+
+      tfile = testsupporters[key]
+
+      # Check to see if this is an update or a new file:
+      # - If 'id' exists, this is an update
+      # - If 'id' does not exist, this is a new test file
+      tf_id = tfile['id']
+
+      # If only the 'id' exists in the hash, other attributes were not updated so we skip this entry.
+      # Otherwise, this test file possibly requires an update
+      if tf_id != nil && tfile.size > 1
+
+        # Find existing test file to update
+        @existing_testsupport = TestSupportFile.find_by_id(tf_id)
+        if @existing_testsupport
+          # Store test file for any possible updating
+          updated_support_files[key] = tfile
+        end
+      end
+
+      # Test file needs to be created since record doesn't exist yet
+      if tf_id.nil? && tfile['script_name']
+        updated_support_files[key] = tfile
+      end
+    end
+
+
     # Update test file attributes
-    assignment.test_files_attributes = updated_files
+    assignment.test_support_files_attributes = updated_support_files
+    assignment.test_script_files_attributes = updated_script_files
 
     # Update assignment enable_test and tokens_per_day attributes
     assignment.enable_test = params[:assignment][:enable_test]
