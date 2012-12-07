@@ -14,9 +14,9 @@
   <% if f.object_id %>
     <%= I18n.t("automated_tests.script_option.description")%>
     <% if f.object.description %>
-      <%= text_field_tag :script_description, f.object.description %>
+      <%= text_field_tag :description, f.object.description %>
     <% else %>
-      <%= text_field_tag :script_description, nil, :placeholder => I18n.t("automated_tests.script_option.update_description") %>
+      <%= text_field_tag :description, nil, :placeholder => I18n.t("automated_tests.script_option.update_description") %>
     <% end %>
   <% end %>
 

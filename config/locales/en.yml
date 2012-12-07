@@ -1141,7 +1141,7 @@ en:
         display_settings: "Display Settings:"
         description: "Description:"
         update_description: "Enter Description Here"
-        max_marks: "Maximum marks given from testing"
+        max_marks: "Maximum marks for script"
         run_on_submission: "Run Test on Submission:"
         run_on_request: "Run Test On Request"
         halts_testing: "Halt Testing On Failure"
