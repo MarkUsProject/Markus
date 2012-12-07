@@ -118,10 +118,7 @@ class AutomatedTestsController < ApplicationController
     if has_permission?
       if files_available? 
         Resque.enqueue(AutomatedTestsController, submission_id, call_on)
-      else
-        #TODO: error message
       end
-      #TODO: error message
     end
   end
 

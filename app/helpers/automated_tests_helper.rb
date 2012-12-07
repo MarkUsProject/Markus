@@ -81,7 +81,8 @@ module AutomatedTestsHelper
     elsif @current_user.student?
       # Make sure student belongs to this group
       if not @current_user.accepted_groupings.include?(@grouping)
-        return false
+        # TODO: show the error to user instead of raising a runtime error
+        raise I18n.t("automated_tests.not_belong_to_group")
       end
       t = @grouping.token
       if t == nil
@@ -91,7 +92,8 @@ module AutomatedTestsHelper
         t.decrease_tokens
         return true
       else
-        return false
+        # TODO: show the error to user instead of raising a runtime error
+        raise I18n.t("automated_tests.missing_tokens")
       end
     end
   end
@@ -105,14 +107,17 @@ module AutomatedTestsHelper
     src_dir = @repo_dir
 
     if !(File.exists?(test_dir))
-      return false
+      # TODO: show the error to user instead of raising a runtime error
+      raise I18n.t("automated_tests.test_files_unavailable")
     elsif !(File.exists?(src_dir))
-      return false
+      # TODO: show the error to user instead of raising a runtime error
+      raise I18n.t("automated_tests.source_files_unavailable")
     end
 
     scripts = TestScript.find_all_by_assignment_id(@assignment.id)
     if scripts.empty?
-      return false
+      # TODO: show the error to user instead of raising a runtime error
+      raise I18n.t("automated_tests.test_files_unavailable")
     end
 
     return true
