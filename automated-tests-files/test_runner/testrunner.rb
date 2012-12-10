@@ -1,14 +1,30 @@
+#!/usr/bin/env ruby
+
+require 'timeout'
+
 $LAST_ARG = 0
 $HALT_ON_FAIL = false
 $HAS_FAILED = false
+$TIME_LIMIT = 600     #the maximum amount of time a given test suite can run for, in seconds
 
 #
 # given the filename, and suite output, it formats and returns the results
 # also checks to see if a fail/error was encountered
 #
 def parseOutput(fileName, output, status)
-  hasFail = ! output["<markus_status>fail</markus_status>"].nil?
-  hasError = ! output["<markus_status>error</markus_status>"].nil?
+  # used to set the HAS_FAILED tag
+  hasFail = ! output.downcase["<status>fail</status>"].nil?
+  hasError = ! output.downcase["<status>error</status>"].nil?
+  
+  # used to determine if a default mark should be added
+  hasMarks = ! output.downcase[/<marks_earned>(\d+)<\/marks_earned>/].nil?
+  marksClause = "";
+  
+  # if there are no marks listed, then add a mark of 0 or 1
+  if !hasMarks then
+      marks = if (hasFail || hasError) then 0 else 1 end;
+      marksClause = "<marks_earned>#{marks}</marks_earned>\n"
+  end
   
   if hasFail || hasError then
     $HAS_FAILED = true
@@ -16,70 +32,59 @@ def parseOutput(fileName, output, status)
     $HAS_FAILED = false
   end
   
-  xml = "<markus_testsuite>\n" \
-            "<markus_script_name>#{fileName}</markus_script_name>\n" \
+  xml = "<test_script>\n" \
+            "<script_name>#{File.basename(fileName)}</script_name>\n" \
             "#{output}\n" \
-        "</markus_testsuite>\n"
+            "#{marksClause}" \
+        "</test_script>\n"
   return xml  
 end
 
 #
 # fork a child process (and open a pipe to it) and run the test
-# the parent waits for the child to terminate before continuing
-# 
-# depending on the format of the script, the child will try to run it in a
-# different way.
-# 
-# if the child returns the output, then the parent reads it
-# 
-# the parent then calls parseOutput on the file name, output, and exit status
-# and returns the resulting xml
-#
-# to add support for a language, just add this to internal if block:
-# elsif File.extname(fileName) == ".<lang_extension>"
-#        exec "<program_name> #{fileName} <optional_args>"
+# the parent waits for the child to terminate or timeout before continuing
 # 
 def runTest(fileName)
-open("|-", "r+") do |child|
-    if child
-      # wait for the child process to finish, then get the exit status
-      # todo: add timeout
-      Process.wait
-      status = $?
-      
-      # if there's an error, then the test failed
-      if(status != 0) then
-        $HAS_FAIL = true
-      end
-      
-      # get the output from the test script
-      # this will include all of the data needed to assign a mark to a student
-      output = child.gets(nil)
-      # if the output isnt null, strip leading/trailing whitespace
-      # since the output is already marked up (hopefully), we can strip the excess
-      # whitespace in case someone wants to write to a file, instead of 
-      # passing it back to MarkUs
-      if !output.nil?
-        output = output.strip
-      end
-      
-      # return the xml
-      return parseOutput(fileName, output, status)
-    else
-      # commented formats are not fully supported
-      
-      # run the script
-      if File.extname(fileName) == ".rb"
-        exec "ruby #{fileName}"
-      #elsif File.extname(fileName) == ".rkt"
-      #  exec "racket #{fileName}"
-      #elsif File.extname(fileName) == ".class"
-      #  exec "java #{fileName}"
-      #elsif File.extname(fileName) == ""
-      #  exec "./#{fileName}"
-      end
+  begin
+    # basic timeout check
+    # if the test_suite runs for over N seconds, it times out
+    Timeout.timeout($TIME_LIMIT) do
+      @pipe = IO.popen("./#{fileName}")
+      Process.wait @pipe.pid
     end
+  rescue Timeout::Error
+    # on a timeout, kill the process and make some basic error message in the XML
+    Process.kill 9, @pipe.pid
+    Process.wait @pipe.pid
+    
+    $HAS_FAILED = true
+
+    output = "<test>\n" \
+             "<actual>MarkUs - Timeout</actual>\n" \
+             "<status>Error</status>\n" \
+             "</test>"
+    # then just parse and return that error message
+    return parseOutput(fileName, output, $?)
   end
+    
+  
+  # otherwise, iterate over the pipe's data, one line at a time
+  # and append that to the output
+  output = ""
+  str = @pipe.gets
+  while(! str.nil?) do
+    output = output + str
+    str = @pipe.gets
+  end
+  
+  # check to see if there was a failure
+  if $? != 0 then
+    $HAS_FAILED = true
+  end
+ 
+  # then parse and return the output
+  return parseOutput(fileName, output, $?)
+      
 end
 
 #
@@ -114,14 +119,49 @@ def getBool(s)
   end
 end
 
+#
+# checks to see if all the submitted files exist
+#
+def checkFiles(files)
+  files.each {
+    |file|
+    if  !File.exist?(file) then
+      return false
+    end
+  }
+  return true;
+end
+
+#
+# sets all the test scripts to +x
+# this is done because they are all run using ./filename
+#
+def modFiles(files)
+  files.each{
+    |file|
+    f = File.new(file)
+    f.chmod(0766)
+  }
+end
+
 def main()
   #the output is nested in a <test_stuite> tag
-  output = "<markus_testrun>\n"  
+  output = "<testrun>\n"  
   
   # if there are no other cmd line args, then stdin is being used
   # if there are no args and stdin isnt being used, then it will crash
+  # if the argv tag is used, then change the default time limit
   if ARGV[0] == nil then 
     useSTD = true
+  elsif ARGV[0] == '-t' and ARGV[1] == nil then
+    # error
+  elsif ARGV[0] == '-t' and ARGV[2] == nil then
+    useSTD = true
+    $TIME_LIMIT = Integer(ARGV[1])
+  elsif ARGV[0] == '-t' and ARGV[2] != nil then
+    useSTD = false
+    $TIME_LIMIT = Integer(ARGV[1])
+    $LAST_ARG = 2
   else 
     useSTD = false
   end
@@ -129,23 +169,44 @@ def main()
   # set the first test
   nextFile = getNext(useSTD)
   
+  files = []
+  flags = []
   #using stdin can return nil, and using cmd line can return " ", but not nil
-  while(nextFile != nil && nextFile != " " \
-    && (!$HAS_FAILED || !$HALT_ON_FAIL)) do
+  while(nextFile != nil && nextFile != " ") do
     filedata = nextFile.split(' ')
-    
+
     #extract the test script data
-    filename = filedata[0]
-    $HALT_ON_FAIL = getBool(filedata[1]) 
-        
-    # add its output to the current output
-    output = output + runTest(filename)
+    files.push(filedata[0])
+    flags.push(getBool(filedata[1]))
     
     #get the next script
     nextFile = getNext(useSTD)
   end
+
+  # if any of the files don't exist, output
+  if !checkFiles(files) then
+    print "<testrun></testrun>"
+    exit(-1)
+  end
+  
+  # set the scripts to +x, so they can be run
+  modFiles(files)
+
+  curInd = 0; # current file's index 
+  # runs test on all the files
+  while curInd < files.length && (!$HAS_FAILED || !$HALT_ON_FAIL)
+    # add its output to the current output    
+    filename = files[curInd]
+    $HALT_ON_FAIL = flags[curInd]
+    
+    # append the current file's test results
+    output = output + runTest(filename)
+    
+    curInd = curInd + 1;
+  end
+  
   #close the top level tag
-  output = output + "</markus_testrun>"
+  output = output + "</testrun>"
   # print the entire xml block
   print output
 end

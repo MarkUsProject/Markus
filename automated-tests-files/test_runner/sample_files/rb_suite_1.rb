@@ -1,14 +1,16 @@
-require "sample_files/Hello.rb"
+#!/usr/bin/env ruby
+
+require_relative "Hello.rb"
 
 def printResults(name, input, exp, act, marks, status)
-  return "<markus_test>\n" \
-            "<markus_name>#{name}</markus_name>\n" \
-            "<markus_input>#{input}</markus_input>\n" \
-            "<markus_expected>#{exp}</markus_expected>\n" \
-            "<markus_actual>#{act}</markus_actual>\n" \
-            "<markus_marks_earned>#{marks}</markus_marks_earned>\n" \
-            "<markus_status>#{status}</markus_status>\n" \
-            "</markus_test>"    
+  return "<test>\n" \
+            "<name>#{name}</name>\n" \
+            "<input>#{input}</input>\n" \
+            "<expected>#{exp}</expected>\n" \
+            "<actual>#{act}</actual>\n" \
+            "<marks_earned>#{marks}</marks_earned>\n" \
+            "<status>#{status}</status>\n" \
+            "</test>"    
 end
 
 def test_1()
@@ -41,12 +43,15 @@ def test_3()
   
   marks = if actual == expected then 1 else 0 end
   status = if marks>0 then "pass" else "fail" end
+        
   return printResults(name, input, expected, actual, marks, status)
+  
 end
 
 if __FILE__ == $0 then
   print "#{test_1()}\n" \
           "#{test_2()}\n" \
-          "#{test_3()}\n" \
+          "#{test_3()}"
+  
 end
 

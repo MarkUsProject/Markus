@@ -1,11 +1,18 @@
-require "sample_files/Hello.rb"
+#!/usr/bin/env ruby
+
+require_relative "Hello.rb"
 
 def printResults(name, marks, status)
-  return "<markus_test>\n" \
-            "<markus_name>#{name}</markus_name>\n" \
-            "<markus_marks_earned>#{marks}</markus_marks_earned>\n" \
-            "<markus_status>#{status}</markus_status>\n" \
-            "</markus_test>"    
+    #return "<test>\n" \
+    #        "<name>#{name}</name>\n" \
+    #        "<marks_earned>#{marks}</marks_earned>\n" \
+    #        "<status>#{status}</status>\n" \
+    #        "</test>"  
+            
+  return "<test>\n" \
+            "<name>#{name}</name>\n" \
+            "<status>#{status}</status>\n" \
+            "</test>"    
 end
 
 def test()
@@ -33,6 +40,6 @@ def test()
 end
 
 if __FILE__ == $0 then
-  print "#{test()}\n" 
+  print "#{test()}" 
 end
 
