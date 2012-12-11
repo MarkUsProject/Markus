@@ -34,6 +34,11 @@
               :desc => (sort_by == 'revision_timestamp' && desc.blank?) %>
     </th>
 
+	<th>
+      <!-- This is temperary - this is not the correct string to use -->
+      <%= I18n.t("automated_tests.run_tests") %>
+    </th>
+    
     <th class="<%="ap_sorting_by" if (sort_by == 'marking_state')%>
                 <%="ap_sorting_by_desc" if (sort_by == 'marking_state' && !desc.blank?)%>">
       <%= link_to I18n.t("browse_submissions.marking_state"),

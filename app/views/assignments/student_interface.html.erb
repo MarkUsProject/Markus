@@ -29,6 +29,16 @@
 </div>
 
 <div class="column_floatLeft">
+	<!-- This block is temporary - The run test button should be in a new tab "Automated Test" -->
+	<div class="block">
+		<h2><%= I18n.t("automated_tests.test") %></h2>
+		<div class="block_content">
+			</br>
+            <%= link_to I18n.t("automated_tests.collect_and_test"), assignment_automated_tests_path(:assignment_id => @assignment.id, :submission_id => @grouping.current_submission_used.id), :class => "button"%>
+            </br>
+		</div>
+	</div>
+	
   <div class="block">
     <h2><%= I18n.t("submissions") %></h2>
     <div class="block_content">

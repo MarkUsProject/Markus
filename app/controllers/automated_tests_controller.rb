@@ -9,9 +9,9 @@ class AutomatedTestsController < ApplicationController
   @queue = :test_waiting_list
 
   # Index is called when a test run is requested
-  def index
-    
-    submission_id = params[:submission]
+  def index                               
+         
+    submission_id = params[:submission_id]
     @submission = Submission.find(submission_id)
     @grouping = @submission.grouping
     @assignment = @grouping.assignment
@@ -19,9 +19,8 @@ class AutomatedTestsController < ApplicationController
     
     @repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, @group.repo_name)
     export_group_repo(@group, @repo_dir)
-    
-    # BRIAN: How do I know when this is called? Whether at submission, upon request, or after due date??
-    # For now, just assume I have 
+                                    
+    # TODO: call_on should be passed to index as a parameter. 
     list_call_on = %w(submission request collection)
     call_on = list_call_on[0]
     

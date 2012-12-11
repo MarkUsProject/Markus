@@ -33,6 +33,7 @@ module AutomatedTestsHelper
     list_run_scripts.sort_by! {|script| script.seq_num}
     
     # list_run_scripts should be sorted now. Perform a check here.
+    # Take this out if it causes performance issue.
     ctr = 0
     while ctr < list_run_scripts.length - 1
       if (list_run_scripts[ctr].seq_num) > (list_run_scripts[ctr+1].seq_num)
@@ -44,8 +45,8 @@ module AutomatedTestsHelper
     return list_run_scripts
   end
   
-  # Delete test repository directory
-  def delete_test_repo(repo_dir)
+  # Delete repository directory
+  def delete_repo(repo_dir)
     # Delete student's assignment repository if it already exists
     if (File.exists?(repo_dir))
       FileUtils.rm_rf(repo_dir)
@@ -62,7 +63,7 @@ module AutomatedTestsHelper
     end
 
     # Delete student's assignment repository if it already exists
-    delete_test_repo(repo_dir)
+    delete_repo(repo_dir)
 
     # export
     return group.repo.export(repo_dir)
@@ -148,7 +149,7 @@ module AutomatedTestsHelper
   # passeed, false => error occurred.
   def launch_test(server_id, assignment, repo_dir, call_on)
     # Get src_dir
-    src_dir = repo_dir
+    src_dir = File.join(repo_dir, assignment.short_identifier)
 
     # Get test_dir
     test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
@@ -192,10 +193,11 @@ module AutomatedTestsHelper
     list_run_scripts = scripts_to_run(assignment, call_on)
     arg_list = ""
     list_run_scripts.each do |script|
-      arg_list = arg_list + "#{script.script_name} #{script.halts_testing}\n"
+      arg_list = arg_list + "#{script.script_name} #{script.halts_testing}"
     end
     
     # Run script
+    # FIXME: need a better way to get the basename of test runner
     test_runner_name = test_runner[(test_runner.rindex('/') + 1) .. (test_runner.length - 1)]
     stdout, stderr, status = Open3.capture3("ssh #{server} \"cd #{run_dir}; ruby #{test_runner_name} #{arg_list}\"")
     if !(status.success?)

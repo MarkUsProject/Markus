@@ -73,6 +73,12 @@
     <% end %>
     </td>
   <% end %>
+  
+  <!-- this is temporary - make a better button, change the string too. -->
+  <td class="run_test">>
+  	<%= link_to I18n.t("automated_tests.run_tests"), assignment_automated_tests_path(:assignment_id => @assignment.id, :submission_id => grouping.current_submission_used.id), :class => "button"%>
+  </td>
+  
   <td class="marking_state">
     <% if !grouping.has_submission? %>
 	<% if assignment.submission_rule.can_collect_now? %>
