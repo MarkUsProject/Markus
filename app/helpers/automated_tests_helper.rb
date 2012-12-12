@@ -193,19 +193,18 @@ module AutomatedTestsHelper
     list_run_scripts = scripts_to_run(assignment, call_on)
     arg_list = ""
     list_run_scripts.each do |script|
-      arg_list = arg_list + "#{script.script_name} #{script.halts_testing}"
+      arg_list = arg_list + "#{script.script_name} #{script.halts_testing} "
     end
     
     # Run script
-    # FIXME: need a better way to get the basename of test runner
-    test_runner_name = test_runner[(test_runner.rindex('/') + 1) .. (test_runner.length - 1)]
+    test_runner_name = File.basename(test_runner)
     stdout, stderr, status = Open3.capture3("ssh #{server} \"cd #{run_dir}; ruby #{test_runner_name} #{arg_list}\"")
     if !(status.success?)
       return [stderr, false]
     else
       return [stdout, true]
     end
-
+    
   end
 
   def process_result(result)

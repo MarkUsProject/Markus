@@ -8,6 +8,11 @@ class AutomatedTestsController < ApplicationController
   # it is enqueued and it is waiting for execution. Resque manages this queue.
   @queue = :test_waiting_list
 
+  before_filter      :authorize_only_for_admin,
+                     :only => [:manage, :update]
+  before_filter      :authorize_for_user,
+                     :only => [:index]
+                     
   # Index is called when a test run is requested
   def index                               
          
@@ -28,6 +33,7 @@ class AutomatedTestsController < ApplicationController
     
     self.async_test_request(submission_id, call_on)
     
+    # TODO: render a new page
     #render :test_replace,
     #       :locals => {:test_result_files => @test_result_files,
     #                   :result => @result}
@@ -99,7 +105,12 @@ class AutomatedTestsController < ApplicationController
 
     result, status = launch_test(@test_server_id, @assignment, @repo_dir, call_on)
     
-    process_result(result)
+    if !status
+      # TODO: handle this error better
+      raise "error"
+    else
+      process_result(result)
+    end
 
   end
   
