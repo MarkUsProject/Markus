@@ -5,9 +5,55 @@ require 'open3'
 module AutomatedTestsHelper
   include LibXML
 
+  # This is the waiting list for automated testing. Once a test is requested,
+  # it is enqueued and it is waiting for execution. Resque manages this queue.
+  @queue = :test_waiting_list
+
+  # This is the calling interface to request a test run. 
+  def AutomatedTestsHelper.request_a_test_run(submission_id, call_on, current_user)
+    @current_user = current_user
+    @submission = Submission.find(submission_id)
+    @grouping = @submission.grouping
+    @assignment = @grouping.assignment
+    @group = @grouping.group
+    
+    @repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, @group.repo_name)
+    export_group_repo(@group, @repo_dir)
+                              
+    @list_run_scripts = scripts_to_run(@assignment, call_on)
+    
+    async_test_request(submission_id, call_on)
+  end
+  
+  # Delete repository directory
+  def self.delete_repo(repo_dir)
+    # Delete student's assignment repository if it already exists
+    if (File.exists?(repo_dir))
+      FileUtils.rm_rf(repo_dir)
+    end
+  end
+
+  # Export group repository for testing. Students' submitted files
+  # are stored in the group svn repository. They must be exported
+  # before copying to the test server.
+  def self.export_group_repo(group, repo_dir)
+    # Create the test framework repository
+    if !(File.exists?(MarkusConfigurator.markus_config_automated_tests_repository))
+      FileUtils.mkdir(MarkusConfigurator.markus_config_automated_tests_repository)
+    end
+
+    # Delete student's assignment repository if it already exists
+    delete_repo(repo_dir)
+
+    # export
+    return group.repo.export(repo_dir)
+    rescue Exception => e
+      return "#{e.message}"
+  end
+
   # Find the list of test scripts to run the test. Return the list of
   # test scripts in the order specified by seq_num (running order)
-  def scripts_to_run(assignment, call_on)
+  def self.scripts_to_run(assignment, call_on)
     # Find all the test scripts of the current assignment
     all_scripts = TestScript.find_all_by_assignment_id(assignment.id)
 
@@ -45,36 +91,19 @@ module AutomatedTestsHelper
     return list_run_scripts
   end
   
-  # Delete repository directory
-  def delete_repo(repo_dir)
-    # Delete student's assignment repository if it already exists
-    if (File.exists?(repo_dir))
-      FileUtils.rm_rf(repo_dir)
+  # Request an automated test. Ask Resque to enqueue a job.
+  def self.async_test_request(submission_id, call_on)
+    if has_permission?
+      if files_available? 
+        Resque.enqueue(AutomatedTestsHelper, submission_id, call_on)
+      end
     end
-  end
-
-  # Export group repository for testing. Students' submitted files
-  # are stored in the group svn repository. They must be exported
-  # before copying to the test server.
-  def export_group_repo(group, repo_dir)
-    # Create the test framework repository
-    if !(File.exists?(MarkusConfigurator.markus_config_automated_tests_repository))
-      FileUtils.mkdir(MarkusConfigurator.markus_config_automated_tests_repository)
-    end
-
-    # Delete student's assignment repository if it already exists
-    delete_repo(repo_dir)
-
-    # export
-    return group.repo.export(repo_dir)
-    rescue Exception => e
-      return "#{e.message}"
   end
 
   # Verify the user has the permission to run the tests - admin
   # and graders always have the permission, while student has to
   # belong to the group, and have at least one token.
-  def has_permission?()
+  def self.has_permission?()
     if @current_user.admin?
       return true
     elsif @current_user.ta?
@@ -103,7 +132,7 @@ module AutomatedTestsHelper
   # Note: this does not guarantee all required files are presented.
   # Instead, it checks if there is at least one test script and
   # source files are successfully exported.
-  def files_available?()
+  def self.files_available?()
     test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, @assignment.short_identifier)
     src_dir = @repo_dir
 
@@ -124,11 +153,45 @@ module AutomatedTestsHelper
     return true
   end
 
+  # Perform a job for automated testing. This code is run by
+  # the Resque workers - it should not be called from other functions.
+  def self.perform(submission_id, call_on) 
+    # Pick a server, launch the Test Runner and wait for the result
+    # Then store the result into the database
+  
+    @submission = Submission.find(submission_id)
+    @grouping = @submission.grouping
+    @assignment = @grouping.assignment
+    @group = @grouping.group
+    @repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, @group.repo_name)
+
+    @list_of_servers = MarkusConfigurator.markus_ate_test_server_hosts.split(' ')
+    
+    while true
+      @test_server_id = choose_test_server()
+      if @test_server_id >= 0 
+        break
+      else
+        sleep 5               # if no server is available, sleep for 5 second before it checks again
+      end  
+    end
+
+    result, status = launch_test(@test_server_id, @assignment, @repo_dir, call_on)
+    
+    if !status
+      # TODO: handle this error better
+      raise "error"
+    else
+      process_result(result)
+    end
+
+  end
+
   # From a list of test servers, choose the next available server
   # using round-robin. Return the id of the server, and return -1
   # if no server is available.
   # TODO: keep track of the max num of tests running on a server
-  def choose_test_server()
+  def self.choose_test_server()
 
     if (defined? @last_server) && MarkusConfigurator.automated_testing_engine_on?
       # find the index of the last server, and return the next index
@@ -147,7 +210,7 @@ module AutomatedTestsHelper
   # stdout or stderr, depending on whether the execution passed or
   # had error; the second one is a boolean variable, true => execution
   # passeed, false => error occurred.
-  def launch_test(server_id, assignment, repo_dir, call_on)
+  def self.launch_test(server_id, assignment, repo_dir, call_on)
     # Get src_dir
     src_dir = File.join(repo_dir, assignment.short_identifier)
 
@@ -207,7 +270,7 @@ module AutomatedTestsHelper
     
   end
 
-  def process_result(result)
+  def self.process_result(result)
     parser = XML::Parser.string(result)
 
     # parse the xml doc
