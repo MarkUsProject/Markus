@@ -45,7 +45,7 @@
       <p>
       	<% test_results = TestResult.find_all_by_submission_id(@submission.id) %>
       	<% test_results.each do |result| %>
-      	  <%= result.actual_output %>
+      	  <pre><%= result.actual_output %></pre>
         <% end %>
       </p>
     </div> <!-- Test Results -->

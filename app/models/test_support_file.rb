@@ -34,8 +34,19 @@ class TestSupportFile < ActiveRecord::Base
   validates_presence_of :file_name
   validates_presence_of :description, :if => "description.nil?"
   
-  # TODO: validate the uniqueness of file_name of 
-  # the test support files which belongs to the same assignment
+  # validates the uniqueness of file_name for the same assignment
+  validates_each :file_name do |record, attr, value|
+    # Extract file_name
+    name = value
+    if value.respond_to?(:original_filename)
+      name = value.original_filename
+    end
+
+    dup_file = TestSupportFile.find_by_assignment_id_and_file_name(record.assignment_id, name)
+    if dup_file && dup_file.id != record.id
+      record.errors.add attr, ' ' + name + ' ' + I18n.t("automated_tests.filename_exists")
+    end
+  end
   
   # All callback methods are protected methods
   protected
@@ -45,7 +56,7 @@ class TestSupportFile < ActiveRecord::Base
     # Execute only when full file path exists (indicating a new File object)
     if self.file_name.respond_to?(:original_filename)
       @file_path = self.file_name
-      self.file_name = self.filename.original_filename
+      self.file_name = self.file_name.original_filename
 
       # Sanitize filename:
       self.file_name.strip!
@@ -63,11 +74,9 @@ class TestSupportFile < ActiveRecord::Base
     # Execute if the full file path exists (indicating a new File object)
     if @file_path
       # If the filenames are different, delete the old file
-      if self.file_name != self.file_name_was
-        # Search for old file
-        @testfile = TestFile.find_by_id(self.id)
+      if self.file_name_changed?
         # Delete old file
-        @testfile.delete_file
+        self.delete_file
       end
     end
   end
