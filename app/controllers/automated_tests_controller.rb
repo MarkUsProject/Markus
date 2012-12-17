@@ -16,9 +16,9 @@ class AutomatedTestsController < ApplicationController
     list_call_on = %w(submission request collection)
     call_on = list_call_on[0]
     
-    AutomatedTestsHelper.request_a_test_run(submission_id, 'collection', @current_user)
+    AutomatedTestsHelper.request_a_test_run(submission_id, call_on, @current_user)
     
-    # TODO: render a new page
+    # TODO: render a new partial page
     #render :test_replace,
     #       :locals => {:test_result_files => @test_result_files,
     #                   :result => @result}
@@ -55,7 +55,7 @@ class AutomatedTestsController < ApplicationController
   # Manage is called when the Test Framework UI is loaded
   def manage
     @assignment = Assignment.find(params[:assignment_id])
-
+    
     #this is breaking, not actually doing anything so commenting
     #out for now
     # Create test scripts for testing if no script is available
