@@ -4,7 +4,7 @@
   <%= f.label :script_name, t(:script_name) %>
 
   <% if f.object.id %>
-    <%= f.text_field_tag 'test_script_' + f.object_id.to_s, f.object.script_name, :readonly => "true" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <%= text_field_tag 'test_script_' + f.object_id.to_s, f.object.script_name, :readonly => "true" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <%= label_tag "replace_scriptname", I18n.t("automated_tests.replace"), :class => "inline_label" %>
   <% end %>
 

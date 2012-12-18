@@ -9,6 +9,9 @@ class AutomatedTestsController < ApplicationController
   before_filter      :authorize_for_user,
                      :only => [:index]
                      
+  # This is not being used right now. It was the calling interface to 
+  # request a test run, however, now you can just call
+  # AutomatedTestsHelper.request_a_test_run to send a test request.
   def index                               
     submission_id = params[:submission_id]
     
@@ -24,11 +27,11 @@ class AutomatedTestsController < ApplicationController
     #                   :result => @result}
   end
   
-  #Update is called when files are added to the assigment
+  # Update is called when files are added to the assigment
   def update
       @assignment = Assignment.find(params[:assignment_id])
 
-      #perform transaction, if errors, none of new config saved
+      # Perform transaction, if errors, none of new config saved
       @assignment.transaction do
 
         begin
@@ -47,8 +50,9 @@ class AutomatedTestsController < ApplicationController
           redirect_to :action => 'manage',
                       :assignment_id => params[:assignment_id]
         else
-          render action => :manage
+          render :manage
         end
+        
      end
   end
 

@@ -101,6 +101,7 @@ class AssignmentsController < ApplicationController
       @revision_number = @revision.revision_number
 
       # For running tests
+      # TODO: This is outdated - there is no implementation to collect and prepare for automated test now
       if params[:collect]
         @result = manually_collect_and_prepare_test(@grouping, @revision.revision_number)
       else
@@ -112,6 +113,7 @@ class AssignmentsController < ApplicationController
       else
         @test_result_files = nil
       end
+      
       @token = Token.find_by_grouping_id(@grouping.id)
       if @token
         @token.reassign_tokens_if_new_day()
