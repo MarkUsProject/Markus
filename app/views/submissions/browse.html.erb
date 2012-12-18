@@ -81,7 +81,7 @@
           <%= submit_tag I18n.t("browse_submissions.unrelease_marks"),
             :name => "unrelease_results" %>
           <!-- ATE_SIMPLE_UI: this is temporary. The buttons here should change into a drop down. See bulk actions in user table UI. -->
-          <%= submit_tag I18n.t("automated_tests.run_tests"),
+          <%= submit_tag I18n.t("browse_submissions.run_tests"),
                                 :name => "run_test" %>
           <% if !@assignment.results_average.nil? %>
             <%= I18n.t("browse_submissions.class_average",
@@ -182,7 +182,7 @@
           <%= submit_tag I18n.t("browse_submissions.unrelease_marks"),
                                 :name => "unrelease_results" %>
           <!-- ATE_SIMPLE_UI: this is temporary. The buttons here should change into a drop down. See bulk actions in user table UI. -->
-          <%= submit_tag I18n.t("automated_tests.run_tests"),
+          <%= submit_tag I18n.t("browse_submissions.run_tests"),
                                 :name => "run_test" %>
         <% end %>
       </div>

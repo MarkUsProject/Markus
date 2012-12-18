@@ -26,4 +26,9 @@ module ResultsHelper
     return (!student_can_edit_remark_request(submission))
   end
 
+  # ATE_SIMPLE_UI: this is temporary
+  def test_result_available(submission)
+    test_results = TestResult.find_all_by_submission_id(submission.id)
+    return !test_results.empty?
+  end
 end
