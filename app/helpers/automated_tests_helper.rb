@@ -37,7 +37,7 @@ module AutomatedTestsHelper
   # are stored in the group svn repository. They must be exported
   # before copying to the test server.
   def self.export_group_repo(group, repo_dir)
-    # Create the test framework repository
+    # Create the automated test repository
     if !(File.exists?(MarkusConfigurator.markus_config_automated_tests_repository))
       FileUtils.mkdir(MarkusConfigurator.markus_config_automated_tests_repository)
     end
@@ -324,10 +324,6 @@ module AutomatedTestsHelper
 
   # Create a repository for the test scripts, and a placeholder script
   def create_test_scripts(assignment)
-    script_placeholder = TestScript.new
-    script_placeholder.assignment = assignment
-    # more..
-    script_paceholder.save(:validate => false)
 
     # Setup Testing Framework repository
     test_dir = File.join(
@@ -338,7 +334,21 @@ module AutomatedTestsHelper
     assignment.reload
   end
 
- def add_test_script_link(name, form)
+  # Create a repository for the test scripts and test support files
+  # if it does not exist
+  def create_test_repo(assignment)
+    # Create the automated test repository
+    if !(File.exists?(MarkusConfigurator.markus_config_automated_tests_repository))
+      FileUtils.mkdir(MarkusConfigurator.markus_config_automated_tests_repository)
+    end
+    
+    test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
+    if !(File.exists?(test_dir))
+      FileUtils.mkdir(test_dir)
+    end
+  end
+  
+  def add_test_script_link(name, form)
     link_to_function name do |page|
       new_test_script = TestScript.new
       test_script = render(:partial => 'test_script_upload',
@@ -351,8 +361,8 @@ module AutomatedTestsHelper
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_script_id = new Date().getTime();
-          $('test_script_files').insert({bottom: "#{ escape_javascript test_script }".replace(/(attributes_\\d+|\\[\\d+\\])/g, new_test_script_id) });
-          $('test_script_options').insert({bottom: "#{ escape_javascript test_script_options }" });
+          $('test_scripts').insert({bottom: "#{ escape_javascript test_script }".replace(/(attributes_\\d+|\\[\\d+\\])/g, new_test_script_id) });
+          $('test_script_options').insert({bottom: "#{ escape_javascript test_script_options }".replace(/(attributes_\\d+|\\[\\d+\\])/g, new_test_script_id) });
         } else {
           alert("#{I18n.t("automated_tests.add_test_script_file_alert")}");
         }
@@ -376,108 +386,115 @@ module AutomatedTestsHelper
     end
   end
 
-  # NEEDS TO BE UPDATED
-  # Process Testing Framework form
-  # - Process new and updated test files (additional validation to be done at the model level)
+  # Process new and updated test files (additional validation to be done at the model level)
   def process_test_form(assignment, params)
 
     # Hash for storing new and updated test files
     updated_script_files = {}
     updated_support_files = {}
 
-    # Retrieve all test file entries
-    testscripts = params[:assignment][:test_script]
+    # Array for checking duplicate file names
+    file_name_array = []
+    
+    # Retrieve all test scripts
+    testscripts = params[:assignment][:test_scripts_attributes]
 
-    # First check for duplicate filenames in test scripts:
-    filename_array = Array.new
-    testscripts.values.each do |tfile|
-      if tfile['script_name'].respond_to?(:original_filename)
-        fname = tfile['script_name'].script_name
-        # If this is a duplicate filename, raise error and return
-        if !filename_array.include?(fname)
-          filename_array << fname
-        else
-          raise I18n.t("automated_tests.duplicate_filename") + fname
+    # First check for duplicate script names in test scripts
+    if !testscripts.nil?
+      testscripts.values.each do |tfile|
+        if tfile['script_name'].respond_to?(:original_filename)
+          fname = tfile['script_name'].original_filename
+          # If this is a duplicate script name, raise error and return
+          if !file_name_array.include?(fname)
+            file_name_array << fname
+          else
+            raise I18n.t("automated_tests.duplicate_filename") + fname
+          end
         end
       end
     end
 
-    # Retrieve all test file entries
-    testsupporters = params[:assignment][:test_helper_file]
+    # Retrieve all test support files
+    testsupporters = params[:assignment][:test_support_files_attributes]
 
-    # Now check for duplicate filenames in test helper files:
-    testsupporters.values.each do |tfile|
-      if tfile['file_name'].respond_to?(:original_filename)
-        fname = tfile['file_name'].filename
-        # If this is a duplicate filename, raise error and return
-        if !filename_array.include?(fname)
-          filename_array << fname
-        else
-          raise I18n.t("automated_tests.duplicate_filename") + fname
+    # Now check for duplicate file names in test support files
+    if !testsupporters.nil?
+      testsupporters.values.each do |tfile|
+        if tfile['file_name'].respond_to?(:original_filename)
+          fname = tfile['file_name'].original_filename
+          # If this is a duplicate file name, raise error and return
+          if !file_name_array.include?(fname)
+            file_name_array << fname
+          else
+            raise I18n.t("automated_tests.duplicate_filename") + fname
+          end
         end
       end
     end
 
-    # Filter out script files that need to be created and updated:
-    testscripts.each_key do |key|
-
-      tfile = testscripts[key]
-
-      # Check to see if this is an update or a new file:
-      # - If 'id' exists, this is an update
-      # - If 'id' does not exist, this is a new test file
-      tf_id = tfile['id']
-
-      # If only the 'id' exists in the hash, other attributes were not updated so we skip this entry.
-      # Otherwise, this test file possibly requires an update
-      if tf_id != nil && tfile.size > 1
-
-        # Find existing test file to update
-        @existing_testscript = TestScript.find_by_id(tf_id)
-        if @existing_testscript
-          # Store test file for any possible updating
+    # Filter out script files that need to be created and updated
+    if !testscripts.nil?
+      testscripts.each_key do |key|
+  
+        tfile = testscripts[key]
+  
+        # Check to see if this is an update or a new file:
+        # - If 'id' exists, this is an update
+        # - If 'id' does not exist, this is a new test file
+        tf_id = tfile['id']
+  
+        # If only the 'id' exists in the hash, other attributes were not updated so we skip this entry.
+        # Otherwise, this test file possibly requires an update
+        if tf_id != nil && tfile.size > 1
+  
+          # Find existing test file to update
+          @existing_testscript = TestScript.find_by_id(tf_id)
+          if @existing_testscript
+            # Store test file for any possible updating
+            updated_script_files[key] = tfile
+          end
+        end
+  
+        # Test file needs to be created since record doesn't exist yet
+        if tf_id.nil? && tfile['script_name']
           updated_script_files[key] = tfile
         end
       end
-
-      # Test file needs to be created since record doesn't exist yet
-      if tf_id.nil? && tfile['script_name']
-        updated_script_files[key] = tfile
-      end
     end
 
-    # Filter out helper files that need to be created and updated:
-    testsupporters.each_key do |key|
-
-      tfile = testsupporters[key]
-
-      # Check to see if this is an update or a new file:
-      # - If 'id' exists, this is an update
-      # - If 'id' does not exist, this is a new test file
-      tf_id = tfile['id']
-
-      # If only the 'id' exists in the hash, other attributes were not updated so we skip this entry.
-      # Otherwise, this test file possibly requires an update
-      if tf_id != nil && tfile.size > 1
-
-        # Find existing test file to update
-        @existing_testsupport = TestSupportFile.find_by_id(tf_id)
-        if @existing_testsupport
-          # Store test file for any possible updating
+    # Filter out test support files that need to be created and updated
+    if !testsupporters.nil?
+      testsupporters.each_key do |key|
+  
+        tfile = testsupporters[key]
+  
+        # Check to see if this is an update or a new file:
+        # - If 'id' exists, this is an update
+        # - If 'id' does not exist, this is a new test file
+        tf_id = tfile['id']
+  
+        # If only the 'id' exists in the hash, other attributes were not updated so we skip this entry.
+        # Otherwise, this test file possibly requires an update
+        if tf_id != nil && tfile.size > 1
+  
+          # Find existing test file to update
+          @existing_testsupport = TestSupportFile.find_by_id(tf_id)
+          if @existing_testsupport
+            # Store test file for any possible updating
+            updated_support_files[key] = tfile
+          end
+        end
+  
+        # Test file needs to be created since record doesn't exist yet
+        if tf_id.nil? && tfile['file_name']
           updated_support_files[key] = tfile
         end
       end
-
-      # Test file needs to be created since record doesn't exist yet
-      if tf_id.nil? && tfile['script_name']
-        updated_support_files[key] = tfile
-      end
     end
 
-
     # Update test file attributes
+    assignment.test_scripts_attributes = updated_script_files
     assignment.test_support_files_attributes = updated_support_files
-    assignment.test_script_files_attributes = updated_script_files
 
     # Update assignment enable_test and tokens_per_day attributes
     assignment.enable_test = params[:assignment][:enable_test]

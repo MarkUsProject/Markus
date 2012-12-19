@@ -41,14 +41,11 @@
 
   <fieldset>
     <div class="wrapLeft">
-    <legend><%= I18n.t("automated_tests.required_test_files") %></legend>
 
       <h4><%= t("automated_tests.assignment_test_script_files") %></h4>
-      <div id="test_script_files">
-          <% f.object.test_scripts.each do |ts| %>
-            <%= f.fields_for ts do |ts_form| %>
-              <%= render :partial => 'test_script_upload', :locals => {:test_script => ts_form.object, :form => f } %>
-          <% end %>
+      <div id="test_scripts">
+        <%= f.fields_for :test_scripts do |ts| %>
+          <%= render :partial => 'test_script_upload', :locals => {:test_script => ts.object, :form => f } %>
         <% end %>
       </div>
       <p id="test_script_add_link">
@@ -57,24 +54,21 @@
 
       <h4><%= t("automated_tests.assignment_test_support_files") %></h4>
       <div id="test_support_files">
-        <% f.object.test_support_files.each do |tsf| %>
-          <%= f.fields_for tsf do |tsf_form| %>
-            <%= render :partial => 'test_support_file_upload', :locals => {:test_support_file => tsf_form.object, :form => f } %>
-          <% end %>
-        <% end %>
+	    <%= f.fields_for :test_support_files do |tsf| %>
+	      <%= render :partial => 'test_support_file_upload', :locals => {:test_support_file => tsf.object, :form => f } %>
+	    <% end %>
       </div>
       <p id="test_support_file_add_link">
         <%= add_test_support_file_link t("automated_tests.add_test_support_file_link"), f %>
       </p>
 
+      <h4><%= t("automated_tests.test_parameters") %></h4>
       <div id="test_script_options">
-          <h4><%= t("automated_tests.test_parameters") %></h4>
-            <% f.fields_for :test_scripts do |ts| %>
-                <%= render :partial => 'test_script_options', :locals => { :test_script => ts.object, :form => f } %>
-            <% end %>
+		<% f.fields_for :test_scripts do |ts| %>
+		  <%= render :partial => 'test_script_options', :locals => { :test_script => ts.object, :form => f } %>
+		<% end %>
       </div>
 
-    </div>
     </div>
   </fieldset>
 </fieldset>

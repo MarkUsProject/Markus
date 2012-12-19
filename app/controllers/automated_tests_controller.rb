@@ -29,44 +29,38 @@ class AutomatedTestsController < ApplicationController
   
   # Update is called when files are added to the assigment
   def update
-      @assignment = Assignment.find(params[:assignment_id])
+    @assignment = Assignment.find(params[:assignment_id])
 
-      # Perform transaction, if errors, none of new config saved
-      @assignment.transaction do
+    create_test_repo(@assignment)
+    
+    # Perform transaction, if errors, none of new config saved
+    @assignment.transaction do
 
-        begin
-          # Process testing framework form for validation
-          @assignment = process_test_form(@assignment, params)
-        rescue Exception, RuntimeError => e
-          @assignment.errors.add(:base, I18n.t("assignment.error",
-                                               :message => e.message))
-          render :manage
-          return        
-        end
+      begin
+        # Process testing framework form for validation
+        @assignment = process_test_form(@assignment, params)
+      rescue Exception, RuntimeError => e
+        @assignment.errors.add(:base, I18n.t("assignment.error",
+                                             :message => e.message))
+        render :manage
+        return        
+      end
 
-        # Save assignment and associated test files
-        if @assignment.save
-          flash[:success] = I18n.t("assignment.update_success")
-          redirect_to :action => 'manage',
-                      :assignment_id => params[:assignment_id]
-        else
-          render :manage
-        end
+      # Save assignment and associated test files
+      if @assignment.save
+        flash[:success] = I18n.t("assignment.update_success")
+        redirect_to :action => 'manage',
+                    :assignment_id => params[:assignment_id]
+      else
+        render :manage
+      end
         
-     end
+    end
   end
 
-  # Manage is called when the Test Framework UI is loaded
+  # Manage is called when the Automated Test UI is loaded
   def manage
     @assignment = Assignment.find(params[:assignment_id])
-    
-    #this is breaking, not actually doing anything so commenting
-    #out for now
-    # Create test scripts for testing if no script is available
-    #if @assignment && @assignment.test_scripts.empty?
-     # create_test_scripts(@assignment)
-    #end
-    
   end
 
 end
