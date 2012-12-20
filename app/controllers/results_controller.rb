@@ -33,7 +33,7 @@ class ResultsController < ApplicationController
 
     @old_result = nil
     if @submission.remark_submitted?
-      @old_result = @submission.result
+      @old_result = Result.find(:all, :conditions => ["submission_id = ?", @submission.id], :order =>["id ASC"])[0]
     end
 
     @annotation_categories = @assignment.annotation_categories
@@ -58,7 +58,7 @@ class ResultsController < ApplicationController
 
       if @old_result
         oldmark = criterion.marks.find_or_create_by_result_id(@old_result.id)
-        oldmark.save(false)
+        oldmark.save(:validate => false)
         @old_marks_map[criterion.id] = oldmark
       end
     end
@@ -347,7 +347,7 @@ class ResultsController < ApplicationController
 
       if @old_result
         oldmark = criterion.marks.find_or_create_by_result_id(@old_result.id)
-        oldmark.save(false)
+        oldmark.save(:validate => false)
         @old_marks_map[criterion.id] = oldmark
       end
     end

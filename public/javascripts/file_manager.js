@@ -10,6 +10,7 @@ function injectFileInput() {
   
   remove_new_file_input.observe('change', function(node) {
     $(new_file_field_row).remove();
+    enableDisableSubmit();
   });
   
   var remove_new_file_field_column = new Element('td');
@@ -22,8 +23,24 @@ function injectFileInput() {
   
   $('add_file_tbody').insert( {top: new_file_field_row});
   new_file_field.focus();
+  enableDisableSubmit();
 }
 
+function enableDisableSubmit() {
+  var hasRows = false;
+  $$('tbody').each(function(item) {  
+      var oRows = item.getElementsByTagName('tr');
+      var iRowCount = oRows.length; 
+      if (iRowCount >0) {
+          hasRows = true;
+        }
+    });
+  if (hasRows) {
+    $$('#submit_form input[type=submit]').each(function(item) { item.enable() } );
+  } else {
+    $$('#submit_form input[type=submit]').each(function(item) { item.disable() } ); 
+  }
+}
 /*
  * Strip off some local file-path garbage potentially passed by the browser.
  * Called from app/views/submissions/_file_manager_boot.js.erb
@@ -51,5 +68,5 @@ function normalize_filename(new_file_name) {
 function populate(files_json){
   // var files = files_json.evalJSON();
   files_table.populate(files_json).render();
-
+  enableDisableSubmit();
 }

@@ -1,10 +1,6 @@
-<%= javascript_include_tag "livepipe/livepipe.js" %>
-<%= javascript_include_tag "livepipe/window.js" %>
-<%= javascript_include_tag "livepipe/tabs.js" %>
 <%= javascript_include_tag "manage_graders.js" %>
 <%= javascript_include_tag "FilterTable/FilterTable.js" %>
 <%= javascript_include_tag "Graders/tabs_boot.js" %>
-<%= javascript_include_tag "prototype.js" %>
 
 <%= render :partial => "boot.js.erb" %>
 <script type="text/javascript">
@@ -179,12 +175,9 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
               :onkeypress => "stop_submit(event);"%>
             <%= check_box_tag 'assign_criteria', true,
               @assignment.assign_graders_to_criteria,
-              :class => 'inline_checkbox' %>
+              :class => 'inline_checkbox', 'data-action' => url_for(:action => :set_assign_criteria, :id => @assignment.id)%>
             <%= label_tag 'assign_criteria', I18n.t('graders.assign_to_criteria'),
               :class => 'bold_inline_label'%>
-            <%= observe_field 'assign_criteria',
-              :url => {:action => 'set_assign_criteria', :id => @assignment.id},
-              :on => 'changed', :with => "value" %>
 
             <table class="criteria" id="criteria">
             </table>
