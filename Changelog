@@ -1,3 +1,10 @@
+Changes for MarkUs 1.0.0:
+* Using Rails to 3.0.13
+* Add Support for Ruby 1.9.x
+* Fixed UI bugs
+* Improved filename sanitization.
+* Changed PDF conversion to Ghostscript for faster conversion
+
 Changes for MarkUs 0.10.0:
 * Use of Bundler to manage Gems dependencies.
 * Fixed UI bugs (marking state, released checkbox).
