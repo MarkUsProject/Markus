@@ -165,6 +165,15 @@ class Grouping < ActiveRecord::Base
       member.save
       # adjust repo permissions
       update_repository_permissions
+      # remove any old deduction for this assignment
+      deductions = member.user.grace_period_deductions
+      deductions.each do |deduction|
+debugger
+        if deduction.membership.grouping.assignment.id == assignment.id
+          member.grace_period_deductions.delete(deduction)
+          deduction.destroy
+        end
+      end
 
       # Add deductions for the new added member
       deduction = GracePeriodDeduction.new
