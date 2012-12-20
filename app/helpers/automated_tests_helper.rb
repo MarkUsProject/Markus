@@ -182,7 +182,7 @@ module AutomatedTestsHelper
       # TODO: handle this error better
       raise "error"
     else
-      process_result(result)
+      process_result(result, submission_id, @assignment.id)
     end
 
   end
@@ -270,55 +270,90 @@ module AutomatedTestsHelper
     
   end
 
-  def self.process_result(result)
+  def self.process_result(result, submission_id, assignment_id)
     parser = XML::Parser.string(result)
 
     # parse the xml doc
     doc = parser.parse
 
-    # find all the tests nodes and loop over them
-    tests = doc.find("/test_suite/test")
-    tests.each do |test|
-      test_record = TestResult.new
-
-      # loop through the childs of all the tests nodes
-      test.each_child do |child|
-        # save the node's data according to it's name
-        if child.name == "submission_id" then
-          test_record.submission_id = child.content
-
-        elsif child.name == "test_script_id" then
-          test_record.test_script_id = child.content
-
-        elsif child.name == "input" then
-          test_record.input_description = child.content
-
-        elsif child.name == "status" then
-          test_record.completion_status = child.content
-
-        elsif child.name == "marks" then
-          test_record.marks_earned = child.content
-
-        elsif child.name == "output" then
-          test_record.actual_output = child.content
-
-        elsif child.name == "expected" then
-          test_record.expected_output = child.content
-
-        elsif child.name == "test_script_id" then
-          test_record.actual_output = child.content
-
-        else
-          # if the tag was not recognized, raise an error
-          if child.name != "text" then
-            raise "Error: malformed xml from test runner. Unclaimed tag: " +
-              child.name
-          end
-
-        end
+    # find all the test_script nodes and loop over them
+    test_scripts = doc.find('/testrun/test_script')
+    test_scripts.each do |s_node|
+      script_result = TestScriptResult.new
+      script_result.submission_id = submission_id
+      script_marks_earned = 0    # cumulate the marks_earn in this script
+      
+      # find the script name and save it
+      script_name_nodes = s_node.find('./script_name')
+      if script_name_nodes.length != 1
+        # FIXME: better error message is required (use locale)
+        raise "None or more than one test script name is found in one test_script tag."
+      else
+        script_name = script_name_nodes[0].content
       end
-      # save the record
-      test_record.save
+      
+      # Find all the test scripts with this script_name.
+      # There should be one and only one record - raise exception if not
+      test_script_array = TestScript.find_all_by_assignment_id_and_script_name(assignment_id, script_name)
+      if test_script_array.length != 1
+        # FIXME: better error message is required (use locale)
+        raise "None or more than one test script is found for script name " + script_name
+      else
+        test_script = test_script_array[0]
+      end
+
+      script_result.test_script_id = test_script.id
+
+      # find all the test nodes and loop over them
+      tests = s_node.find('./test')
+      tests.each do |t_node|
+        test_result = TestResult.new
+        test_result.submission_id = submission_id
+        test_result.test_script_id = test_script.id
+        # give default values
+        test_result.name = 'no name is given'
+        test_result.completion_status = 'error'
+        test_result.input_description = ''
+        test_result.expected_output = ''
+        test_result.actual_output = ''
+        test_result.marks_earned = 0
+        
+        t_node.each_element do |child|
+          if child.name == 'name'
+            test_result.name = child.content
+          elsif child.name == 'status'
+            test_result.completion_status = child.content.downcase
+          elsif child.name == 'input'
+            test_result.input_description = child.content
+          elsif child.name == 'expected'
+            test_result.expected_output = child.content
+          elsif child.name == 'actual'
+            test_result.actual_output = child.content
+          elsif child.name == 'marks_earned'
+            test_result.marks_earned = child.content
+            script_marks_earned += child.content.to_i
+          else
+            # FIXME: better error message is required (use locale)
+            raise "Error: malformed xml from test runner. Unclaimed tag: " + child.name
+          end
+        end
+        
+        # save to database
+        test_result.save
+      end
+      
+      # if a marks_earned tag exists under test_script tag, get the value;
+      # otherwise, use the cumulative marks earned from all unit tests
+      script_marks_earned_nodes = s_node.find('./marks_earned')
+      if script_marks_earned_nodes.length == 1
+        script_result.marks_earned = script_marks_earned_nodes[0].content.to_i
+      else
+        script_result.marks_earned = script_marks_earned
+      end
+      
+      # save to database
+      script_result.save
+      
     end
   end
 
