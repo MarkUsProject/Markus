@@ -120,20 +120,24 @@ function check_working() {
 <% end %>
 
 
-<!-- Old testing infrastructure - not in used now 
+
 <%= render :partial => 'results/common/submission_selector', :locals => {:group => @group, :result => @result, :assignment => @assignment, :previous_grouping => @previous_grouping, :next_grouping => @next_grouping} %>
 
 <%= render :partial => 'results/common/errors' %>
 
 <div id="file_selector">
   <%= render :partial => 'results/common/file_selector', :locals => {:files => @files, :can_download => true} %>
+  <!-- Old testing infrastructure - not in used now 
+  <% if false %>
   <% if @assignment.enable_test %>
     <div id="test_results_controls">
       <%= render :partial => 'results/common/test_selector', :locals => {:test_result_files => @test_result_files, :result => @result} %>
     </div>
   <% end %>
+  <% end %>
+  -->
 </div>
- -->
+
 
 <% if !@result.released_to_students %>
 
