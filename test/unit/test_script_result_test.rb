@@ -19,9 +19,9 @@ class TestScriptResultTest < ActiveSupport::TestCase
     setup do
       @sub = Submission.make
       @script = TestScript.make
-      @testscriptresult = TestResult.make(:submission_id     => @sub.id,
-                                          :test_script_id    => @script.id,
-                                          :marks_earned      => 5)
+      @testscriptresult = TestScriptResult.make(:submission_id     => @sub.id,
+                                                :test_script_id    => @script.id,
+                                                :marks_earned      => 5)
     end
     
     should "return true when a valid test script result is created" do
@@ -43,9 +43,9 @@ class TestScriptResultTest < ActiveSupport::TestCase
     setup do
       @sub = Submission.make
       @script = TestScript.make
-      @testscriptresult = TestResult.make(:submission_id     => @sub.id,
-                                          :test_script_id    => @script.id,
-                                          :marks_earned      => 5)
+      @testscriptresult = TestScriptResult.make(:submission_id     => @sub.id,
+                                                :test_script_id    => @script.id,
+                                                :marks_earned      => 5)
     end
     
     should "return false when there is no submission associated" do
@@ -76,9 +76,9 @@ class TestScriptResultTest < ActiveSupport::TestCase
     setup do
       @sub = Submission.make
       @script = TestScript.make
-      @testscriptresult = TestResult.make(:submission_id     => @sub.id,
-                                          :test_script_id    => @script.id,
-                                          :marks_earned      => 5)
+      @testscriptresult = TestScriptResult.make(:submission_id     => @sub.id,
+                                                :test_script_id    => @script.id,
+                                                :marks_earned      => 5)
     end
     
     should "be able to delete a test script result" do

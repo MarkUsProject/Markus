@@ -66,8 +66,32 @@ class TestScript < ActiveRecord::Base
   validates_presence_of :max_marks
   validates_presence_of :description, :if => "description.nil?"
   
-  # TODO: validate the uniqueness of seq_num, script_name of 
-  # the test scripts which belongs to the same assignment
+  # validates the uniqueness of script_name for the same assignment
+  validates_each :script_name do |record, attr, value|
+    # Extract script_name
+    name = value
+    if value.respond_to?(:original_filename)
+      name = value.original_filename
+    end
+
+    # FIXME: create a loop to loop through all dup_file
+    # dup_files = TestScript.find_all_by_assignment_id_and_script_name(record.assignment_id, name)
+    dup_file = TestScript.find_by_assignment_id_and_script_name(record.assignment_id, name)
+    if dup_file && dup_file.id != record.id
+      record.errors.add attr, ' ' + name + ' ' + I18n.t("automated_tests.filename_exists")
+    end
+  end
+  
+  # validates the uniqueness of seq_num for the same assignment
+  validates_each :seq_num do |record, attr, value|
+    # FIXME: create a loop to loop through all dup_file
+    # dup_files = TestScript.find_all_by_assignment_id_and_seq_num(record.assignment_id, value)
+    dup_file = TestScript.find_by_assignment_id_and_seq_num(record.assignment_id, value)
+    if dup_file && dup_file.id != record.id
+      # FIXME: fix the error message: this is not filename
+      record.errors.add attr, ' ' + value.to_s + ' ' + I18n.t("automated_tests.filename_exists")
+    end
+  end
   
   validates_numericality_of :seq_num
   validates_numericality_of :max_marks, :only_integer => true, :greater_than_or_equal_to => 0
@@ -95,7 +119,7 @@ class TestScript < ActiveRecord::Base
     # Execute only when full file path exists (indicating a new File object)
     if self.script_name.respond_to?(:original_filename)
       @file_path = self.script_name
-      self.script_name = self.filename.original_filename
+      self.script_name = self.script_name.original_filename
 
       # Sanitize filename:
       self.script_name.strip!
@@ -113,11 +137,9 @@ class TestScript < ActiveRecord::Base
     # Execute if the full file path exists (indicating a new File object)
     if @file_path
       # If the filenames are different, delete the old file
-      if self.script_name != self.script_name_was
-        # Search for old file
-        @testfile = TestFile.find_by_id(self.id)
+      if self.script_name_changed?
         # Delete old file
-        @testfile.delete_file
+        self.delete_file
       end
     end
   end

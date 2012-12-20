@@ -13,6 +13,10 @@ class AutomatedTestsControllerTest < AuthenticatedControllerTest
     clear_fixtures
   end
 
+  # TODO: the following tests are aged. It worked with the old testing framework,
+  # but not MarkUs ATE. Please rewrite all the tests for this controller
+  
+=begin
   context "A logged Admin" do
     setup do
       @admin = Admin.make
@@ -137,5 +141,5 @@ class AutomatedTestsControllerTest < AuthenticatedControllerTest
       end
     end
   end
-
+=end
 end

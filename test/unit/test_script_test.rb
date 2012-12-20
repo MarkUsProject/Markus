@@ -13,7 +13,7 @@ class TestScriptTest < ActiveSupport::TestCase
   should validate_presence_of :script_name
   should validate_presence_of :max_marks
   
-  # since allow_web_submits is a boolean, should validate_presence_of does
+  # For booleans, should validate_presence_of does
   # not work: see the Rails API documentation for should validate_presence_of
   # (Model validations)
   # should validate_presence_of does not work for boolean value false.
@@ -133,16 +133,15 @@ class TestScriptTest < ActiveSupport::TestCase
       assert !@invalidscriptfile.valid?, "script file expected to be invalid when the max_marks is not integer"
     end
     
-    # TODO: check uniqueness only when the two records have the same assignment id
-    #should "return false when the script_name already exists" do
-    #  @invalidscriptfile.script_name = 'validscript.sh'
-    #  assert !@invalidscriptfile.valid?, "script file expected to be invalid when the script name already exists"
-    #end
-    #
-    #should "return false when the seq_num already exists" do
-    #  @invalidscriptfile.seq_num = 1
-    #  assert !@invalidscriptfile.valid?, "script file expected to be invalid when the seq_num already exists"
-    #end
+    should "return false when the script_name already exists" do
+      @invalidscriptfile.script_name = 'validscript.sh'
+      assert !@invalidscriptfile.valid?, "script file expected to be invalid when the script name already exists in the same assignment"
+    end
+    
+    should "return false when the seq_num already exists" do
+      @invalidscriptfile.seq_num = 1
+      assert !@invalidscriptfile.valid?, "script file expected to be invalid when the seq_num already exists in the same assignment"
+    end
 
     should "return false when the display_description option has an invalid option" do
       @invalidscriptfile.display_description = 'display_after_due_date'

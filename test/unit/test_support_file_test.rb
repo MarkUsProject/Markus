@@ -45,11 +45,12 @@ class TestSupportFileTest < ActiveSupport::TestCase
       assert !@invalidsupportfile.valid?, "support file expected to be invalid when the description is nil"
     end
 
-    # TODO: check uniqueness only when the two records have the same assignment id
-    #should "return false when the file_name already exists" do
-    #  @invalidsupportfile.file_name = 'valid'
-    #  assert !@invalidsupportfile.valid?, "support file expected to be invalid when the file name already exists"
-    #end
+    should "return false when the file_name already exists" do
+      @validsupportfile.assignment_id = 1
+      @invalidsupportfile.assignment_id = 1
+      @invalidsupportfile.file_name = 'valid'
+      assert !@invalidsupportfile.valid?, "support file expected to be invalid when the file name already exists in the same assignment"
+    end
 
   end
   
