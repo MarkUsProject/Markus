@@ -13,6 +13,7 @@ class Submission < ActiveRecord::Base
   has_many   :submission_files, :dependent => :destroy
   has_many   :annotations, :through => :submission_files
   has_many   :test_results, :dependent => :destroy
+  has_many   :test_script_results, :dependent => :destroy
   belongs_to :remark_result, :class_name => "Result"
 
   validates_associated :remark_result

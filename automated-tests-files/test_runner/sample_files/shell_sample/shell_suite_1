@@ -1,0 +1,56 @@
+#!/usr/bin/env sh
+
+# test 1
+
+./hello.rb < input_1.in > actual_1.out
+
+diff actual_1.out expected_1.out > tmp
+
+if test $? -eq 0
+
+then
+	marks=2
+	status="pass"
+else
+	marks=0
+	status="fail"
+fi
+
+echo "<test>
+	<name>Hello</name>
+	<input>"`cat input_1.in`"</input>
+	<expected>"`cat expected_1.out`"</expected>
+	<actual>"`cat actual_1.out`"</actual>
+	<marks_earned>$marks</marks_earned>
+	<status>$status</status>
+</test>"
+
+rm actual_1.out
+
+# test 2 (this one fails)
+
+./goodbye.rb < input_2.in > actual_2.out
+
+diff actual_2.out expected_2.out > tmp
+
+if test $? -eq 0
+
+then
+	marks=2
+	status="pass"
+else
+	marks=0
+	status="fail"
+fi
+
+echo "<test>
+	<name>Hello</name>
+	<input>"`cat input_2.in`"</input>
+	<expected>"`cat expected_2.out`"</expected>
+	<actual>"`cat actual_2.out`"</actual>
+	<marks_earned>$marks</marks_earned>
+	<status>$status</status>
+</test>"
+
+rm actual_2.out
+rm tmp

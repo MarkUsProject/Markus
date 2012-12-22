@@ -33,7 +33,7 @@ class ResultsController < ApplicationController
 
     @old_result = nil
     if @submission.remark_submitted?
-      @old_result = @submission.result
+      @old_result = Result.find(:all, :conditions => ["submission_id = ?", @submission.id], :order =>["id ASC"])[0]
     end
 
     @annotation_categories = @assignment.annotation_categories
@@ -42,7 +42,9 @@ class ResultsController < ApplicationController
     @files = @submission.submission_files.sort do |a, b|
       File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
     end
+    # This is outdated
     @test_result_files = @submission.test_results
+    # ----
     @first_file = @files.first
     @extra_marks_points = @result.extra_marks.points
     @extra_marks_percentage = @result.extra_marks.percentage
@@ -56,7 +58,7 @@ class ResultsController < ApplicationController
 
       if @old_result
         oldmark = criterion.marks.find_or_create_by_result_id(@old_result.id)
-        oldmark.save(false)
+        oldmark.save(:validate => false)
         @old_marks_map[criterion.id] = oldmark
       end
     end
@@ -329,7 +331,9 @@ class ResultsController < ApplicationController
     @files = @submission.submission_files.sort do |a, b|
       File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
     end
+    # This is outdated
     @test_result_files = @submission.test_results
+    # ----
     @first_file = @files.first
     @extra_marks_points = @result.extra_marks.points
     @extra_marks_percentage = @result.extra_marks.percentage
@@ -343,7 +347,7 @@ class ResultsController < ApplicationController
 
       if @old_result
         oldmark = criterion.marks.find_or_create_by_result_id(@old_result.id)
-        oldmark.save(false)
+        oldmark.save(:validate => false)
         @old_marks_map[criterion.id] = oldmark
       end
     end

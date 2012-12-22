@@ -283,17 +283,44 @@ TaMembership.blueprint do
   membership_status {'pending'}
 end
 
-TestFile.blueprint do
-  assignment_id {0}
-  filename
-  filetype
-  is_private {false}
+TestScript.blueprint do
+  assignment {Assignment.make}
+  seq_num {0}
+  script_name {Sham.filename}
+  description {Sham.description}
+  max_marks {0}
+  run_on_submission {true}
+  run_on_request {true}
+  halts_testing {false}
+  display_description {'do_not_display'}
+  display_run_status {'do_not_display'}
+  display_marks_earned {'do_not_display'}
+  display_input {'do_not_display'}
+  display_expected_output {'do_not_display'}
+  display_actual_output {'do_not_display'}
+end
+
+TestSupportFile.blueprint do
+  file_name {Sham.filename}
+  assignment {Assignment.make}
+  description {Sham.description}
+end
+
+TestScriptResult.blueprint do
+  submission {Submission.make}
+  test_script {TestScript.make}
+  marks_earned {0}
 end
 
 TestResult.blueprint do
-  submission
-  filename {Sham.filename}
-  file_content {Sham.message}
+  submission {Submission.make}
+  test_script {TestScript.make}
+  name {Sham.filename}
+  completion_status {'pass'}
+  marks_earned {0}
+  input_description {Sham.message}
+  actual_output {Sham.message}
+  expected_output {Sham.message}
 end
 
 TextAnnotation.blueprint do

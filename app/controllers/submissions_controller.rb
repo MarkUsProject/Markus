@@ -508,6 +508,15 @@ class SubmissionsController < ApplicationController
       changed = set_release_on_results(groupings, false, errors)
       log_message = "Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" +
                     "#{assignment.id}' (for #{changed} groups)."
+    # ATE_SIMPLE_UI: this is temporary 
+    # After this action successfully done, it flashes the message "# of results has successfully changed"
+    # which here, running test is not changing anything. Please see the user table UI for how to properly
+    # do bulk action to table rows.
+    elsif !params[:run_test].nil?
+      changed = run_tests(groupings, errors)
+      log_message = "Run test for assignment '#{assignment.short_identifier}', ID: '" +
+                    "#{assignment.id}' (For #{changed} groups)."
+    # ATE_SIMPLE_UI end
     end
 
 

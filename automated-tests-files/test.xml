@@ -1,0 +1,10 @@
+<test>
+  <assignment_id>2</assignment_id>
+  <group_id>4</group_id>
+  <test_script_id>1</test_script_id>
+  <result>fail</result>
+  <marks_earned>3</marks_earned>
+  <input>hello world!</input>
+  <expected_output>Hello World!</expected_output>
+  <actual_output>hELLO wORLD!</actual_output>
+</test>
