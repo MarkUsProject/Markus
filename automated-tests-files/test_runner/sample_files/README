@@ -1,13 +1,6 @@
-This is the readme file for the test runner.
+This is the explanation for the sample files included with the test runner.
 
---------------------------------------------------------
-usage:	ruby testrunner.rb [test_1 flag_1 ...]
-	ruby testrunner.rb < args.in
+The folder x_sample contains the sample code for writing a test suite in language x.
 
-where args.in uses this format:
-file_1 halt_on_fail
-file_2 halt_on_fail
-...
-
-See the design doc for specs
-
+To execute the test runner on the sample code, simply execute
+	./testrunner < sample_files/x_sample/args.in

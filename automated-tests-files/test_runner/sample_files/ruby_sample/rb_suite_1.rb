@@ -43,12 +43,13 @@ def test_3()
   
   marks = if actual == expected then 1 else 0 end
   status = if marks>0 then "pass" else "fail" end
-        
+          
   return printResults(name, input, expected, actual, marks, status)
   
 end
 
 if __FILE__ == $0 then
+  
   print "#{test_1()}\n" \
           "#{test_2()}\n" \
           "#{test_3()}"
