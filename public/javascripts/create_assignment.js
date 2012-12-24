@@ -1,3 +1,21 @@
+/**
+ * page specific event handlers for assignments/new.html.erb
+ */
+document.observe("dom:loaded", function() {
+
+  new Form.Element.EventObserver('assignment_due_date', function(element, value) {
+    update_due_date($F('assignment_due_date'));
+  })
+
+  new Form.Element.EventObserver('assignment_section_due_dates_type', function(element, value) {
+    toggle_sections_due_date($F('assignment_section_due_dates_type' ));
+  })
+
+  new Form.Element.EventObserver('remark_due_date', function(element, value) {
+    check_due_date($F('remark_due_date'));
+  })
+});
+
 function toggle_persist_groups(persist_groups) {
   if(persist_groups) {
     $('persist_groups_assignment').enable();

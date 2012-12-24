@@ -33,7 +33,7 @@ class ResultsController < ApplicationController
 
     @old_result = nil
     if @submission.remark_submitted?
-      @old_result = @submission.result
+      @old_result = Result.find(:all, :conditions => ["submission_id = ?", @submission.id], :order =>["id ASC"])[0]
     end
 
     @annotation_categories = @assignment.annotation_categories

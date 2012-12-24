@@ -22,7 +22,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                        :assignment_id => '1',
                        :submission_id => '1'},
                       {:path => 'assignments/1/submissions/1/results/update_mark',
-                       :method => :get})
+                       :method => :post})
 
     assert_recognizes({:controller => "results",
                        :action => "expand_criteria",

@@ -20,11 +20,6 @@ gem 'fastercsv', :platforms => :ruby_18
 gem "routing-filter"
 gem "dynamic_form"
 
-# To be removed
-gem "prototype_legacy_helper",
-    "0.0.0",
-    :git => "git://github.com/rails/prototype_legacy_helper.git"
-
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
 # PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).
 # Then install your bundle by:
