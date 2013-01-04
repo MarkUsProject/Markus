@@ -7,7 +7,8 @@ class AssignmentTest < ActiveSupport::TestCase
   should have_many :rubric_criteria
   should have_many :flexible_criteria
   should have_many :assignment_files
-  should have_many :test_files
+  should have_many :test_scripts
+  should have_many :test_support_files
   should have_many :criterion_ta_associations
   should have_one  :submission_rule
 

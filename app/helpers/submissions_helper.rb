@@ -1,4 +1,5 @@
 module SubmissionsHelper
+  include AutomatedTestsHelper
 
   def find_appropriate_grouping(assignment_id, params)
     if current_user.admin? || current_user.ta?
@@ -28,6 +29,22 @@ module SubmissionsHelper
     return changed
   end
 
+  # ATE_SIMPLE_UI: this is temporary
+  def run_tests(groupings, errors)
+    changed = 0
+    groupings.each do |grouping|
+      begin
+        raise I18n.t("marking_state.no_submission", :group_name => grouping.group_name) if !grouping.has_submission?
+        submission_id = grouping.current_submission_used.id
+        AutomatedTestsHelper.request_a_test_run(submission_id, 'collection', @current_user)
+        changed += 1
+      rescue Exception => e
+        errors.push(e.message)
+      end
+    end
+    return changed
+  end
+  
   def construct_file_manager_dir_table_row(directory_name, directory)
     table_row = {}
     table_row[:id] = directory.id

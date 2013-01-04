@@ -1,0 +1,30 @@
+<div class="test_script">
+<%= form.fields_for :test_scripts, test_script do |f| %>
+
+  <%= f.label :script_name, t(:script_name) %>
+
+  <% if f.object.id %>
+    <%= text_field_tag 'test_script_' + f.object_id.to_s, f.object.script_name, :readonly => "true" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <%= label_tag "replace_scriptname", I18n.t("automated_tests.replace"), :class => "inline_label" %>
+  <% end %>
+
+  <%= f.file_field :script_name, :size=>"30" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+  <% if f.object.id %>
+    <%= I18n.t("automated_tests.script_option.description")%>
+    <% if f.object.description %>
+      <%= f.text_field :description, :value => f.object.description %>
+    <% else %>
+      <%= f.text_field :description, :placeholder => I18n.t("automated_tests.script_option.update_description") %>
+    <% end %>
+  <% end %>
+
+  <% if !f.object.new_record? %>
+    <%= f.label :_destroy, I18n.t(:remove), :class => "checkbox_label" %>
+    <%= f.check_box :_destroy %>
+  <% else %>
+    <%= link_to_function I18n.t(:remove), "$(this).up('.test_script').remove()" %>
+  <% end %>
+
+<% end %>
+</div>
