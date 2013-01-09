@@ -176,13 +176,11 @@ see http://www.markusproject.org/download/
       bundle exec rake markus:instructor first_name="test" last_name="test" \
       user_name="markus"
   * Configure Apache httpd (optional, see example config below)
-  * Configure Mongrel or Passenger servers (config/mongrel_cluster.yml)
-    see http://github.com/MarkUsProject/Markus/wiki/ApacheMongrel
-    or http://github.com/MarkUsProject/Markus/wiki/ApachePassenger
-  * Once MarkUs boots up fine (script/server runs without errors), you can start
-    the mongrel cluster
-      mongrel_rails cluster::start
-    see log files (log/mongrel.800x.log) for success/failure messages
+  * Configure Unicorn servers
+      In the MarkUs root folder run unicorn_rails to start the server with 
+      a default port of 8080.  To change port use the flag -l.
+  * Configure Passenger servers see 
+      http://github.com/MarkUsProject/Markus/wiki/ApachePassenger
   * That's it!
 
 If you run into any problems please send e-mail to markus-users@cs.toronto.edu.
