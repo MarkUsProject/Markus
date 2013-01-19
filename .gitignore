@@ -27,3 +27,7 @@ log/
 
 # Eclipse generated project file
 /.project
+
+# Ignore dummy file used to tell .rvmrc to use specific ruby instead of project
+# wide default
+.use-ruby-*
