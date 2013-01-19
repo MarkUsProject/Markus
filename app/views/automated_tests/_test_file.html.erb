@@ -19,7 +19,7 @@
     <%= f.label :_destroy, I18n.t(:remove), :class => "checkbox_label" %>
     <%= f.check_box :_destroy %>
   <% else %>
-    <%= link_to_function I18n.t(:remove), "$(this).up('.test_file').remove()" %>
+    <%= link_to_function I18n.t(:remove), "$(this).up(\".test_file\").remove()" %>
   <% end %>
 
   <% if file_type == "test" %>
