@@ -75,7 +75,7 @@ class Assignment < ActiveRecord::Base
   # Export a YAML formatted string created from the assignment rubric criteria.
   def export_rubric_criteria_yml
     criteria = self.rubric_criteria
-    final = Hash.new
+    final = ActiveSupport::OrderedHash.new
     criteria.each do |criterion|
       inner = ActiveSupport::OrderedHash.new
       inner["weight"] =  criterion["weight"]
