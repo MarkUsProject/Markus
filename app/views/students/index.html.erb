@@ -102,7 +102,7 @@ document.observe("dom:loaded", function() {
 
       <div class="global_action">
         <select name="bulk_action" id="bulk_action"
-        onchange="$('bulk_action_2').setValue($(this).getValue());
+        onchange="$('bulk_action').setValue($(this).getValue());
         detect_bulk_action_change();">
           <option value=""><%= t(:bulk_action)%></option>
           <option value="give_grace_credits"><%= t(:give_grace_credits)%></option>
