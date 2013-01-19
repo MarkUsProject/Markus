@@ -19,11 +19,17 @@ log/
 # Vim swap files
 *.swp
 
+# git local config
+.gitconfig
+
 # Temporary and backup files
 *~
 
 # MarkUs Review poster tool credentials file
 .markusdev-creds
+
+# rvm and rbenv tools
+.rbenv-version
 
 # Eclipse generated project file
 /.project
