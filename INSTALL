@@ -35,7 +35,7 @@ see http://www.markusproject.org/download/
   As mentioned previously, MarkUs is a Ruby on Rails application. General
   requirements are as follows (Note: MarkUs also works using Phusion Passenger):
 
-    * Ruby (version 1.8.7) (version 1.9.x are not supported yet)
+    * Ruby (version 1.8.7 and higher)
     * Ruby development package (required for compiling Ruby PostgreSQL drivers)
     * net/https Ruby library (libopenssl-ruby Debian package)
     * RDoc (required for Gem)
@@ -152,8 +152,8 @@ see http://www.markusproject.org/download/
       cd markus-0.9.0
   * Install Rails and required Ruby gems: see section 3.4 "GETTING RAILS
     AND RUBYGEMS".
-  * Set environment variable ::Rails.env (assumes BASH)
-      export ::Rails.env="production"
+  * Set environment variable RAILS_ENV (assumes BASH)
+      export RAILS_ENV="production"
   * Configure database connection settings to match your settings
       PostgreSQL option:
         cp config/database.yml.postgresql config/database.yml
@@ -176,13 +176,11 @@ see http://www.markusproject.org/download/
       bundle exec rake markus:instructor first_name="test" last_name="test" \
       user_name="markus"
   * Configure Apache httpd (optional, see example config below)
-  * Configure Mongrel or Passenger servers (config/mongrel_cluster.yml)
-    see http://github.com/MarkUsProject/Markus/wiki/ApacheMongrel
-    or http://github.com/MarkUsProject/Markus/wiki/ApachePassenger
-  * Once MarkUs boots up fine (script/server runs without errors), you can start
-    the mongrel cluster
-      mongrel_rails cluster::start
-    see log files (log/mongrel.800x.log) for success/failure messages
+  * Configure Unicorn servers
+      In the MarkUs root folder run unicorn_rails to start the server with 
+      a default port of 8080.  To change port use the flag -l.
+  * Configure Passenger servers see 
+      http://github.com/MarkUsProject/Markus/wiki/ApachePassenger
   * That's it!
 
 If you run into any problems please send e-mail to markus-users@cs.toronto.edu.

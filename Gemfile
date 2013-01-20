@@ -9,7 +9,7 @@
 source 'http://rubygems.org'
 
 # Bundler requires these gems in all environments
-gem "rails", "3.0.13"
+gem "rails", "3.0.19"
 gem 'exception_notification'
 #gem "prototype-rails" Will be needed with Rails3.1
 gem "rubyzip"
@@ -19,11 +19,6 @@ gem "will_paginate"
 gem 'fastercsv', :platforms => :ruby_18
 gem "routing-filter"
 gem "dynamic_form"
-
-# To be removed
-gem "prototype_legacy_helper",
-    "0.0.0",
-    :git => "git://github.com/rails/prototype_legacy_helper.git"
 
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
 # PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).

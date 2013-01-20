@@ -75,7 +75,7 @@ class Assignment < ActiveRecord::Base
   # Export a YAML formatted string created from the assignment rubric criteria.
   def export_rubric_criteria_yml
     criteria = self.rubric_criteria
-    final = Hash.new
+    final = ActiveSupport::OrderedHash.new
     criteria.each do |criterion|
       inner = ActiveSupport::OrderedHash.new
       inner["weight"] =  criterion["weight"]
@@ -733,6 +733,10 @@ class Assignment < ActiveRecord::Base
   # Returns all the submissions that have been graded
   def graded_submissions
     return self.submissions.select { |submission| submission.result.marking_state == Result::MARKING_STATES[:complete] }
+  end
+
+  def groups_submitted
+    return self.groupings.select { |grouping| grouping.has_submission?}
   end
 
   private
