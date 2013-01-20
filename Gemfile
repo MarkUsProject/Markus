@@ -52,6 +52,7 @@ group :development, :test do
   gem "rcov", :platforms => :mri_18
   gem "simplecov", :platforms => :mri_19
   gem "shoulda"
+  gem "thoughtbot-shoulda"
   gem "machinist", "< 2"
   gem "faker"
   gem "railroady"
