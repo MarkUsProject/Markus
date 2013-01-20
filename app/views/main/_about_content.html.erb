@@ -3,7 +3,11 @@
 
   <h2><%= I18n.t(:version) %></h2>
   <p><%= I18n.t(:using_markus_version) %><strong><%= @markus_version %></strong> </p>
-
+  <% if @current_user.admin? %>
+    <p><%= I18n.t(:using_ruby_version) %><strong><%= RUBY_VERSION %></strong> </p>
+    <p><%= I18n.t(:using_rails_version) %><strong><%= Rails::VERSION::STRING %></strong> </p> 
+  <% end %>
+  
   <h2><%= raw(I18n.t(:license)) %></h2>
   <p><%= raw(I18n.t(:markus_license_OSI)) %></p>
 
