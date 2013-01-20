@@ -57,6 +57,17 @@ class MainController < ApplicationController
       end
     end
 
+    # Check if it's the user's first visit this session
+    # Need to accomodate redirects for local and cookie testing
+    if (params.has_key?(:locale) && !params.has_key?(:cookieTest))
+      if session[:first_visit].nil?
+        @first_visit = true
+        session[:first_visit] = 'false'
+      else
+        @first_visit = false
+      end
+    end
+
     @current_user = current_user
     # redirect to main page if user is already logged in.
     if logged_in? && !request.post?

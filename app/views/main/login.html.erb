@@ -1,6 +1,9 @@
-<%= javascript_include_tag 'application.js' -%>
-<%= javascript_include_tag 'prototype.js' -%>
-<%= javascript_include_tag 'rails.js' -%>
+<%= javascript_include_tag 'application.js',
+    'prototype.js',
+    'rails.js',
+    'livepipe/livepipe.js',
+    'livepipe/window.js',
+    'livepipe/tabs.js' %>
 <div class="login">
   <div class="login-greeting"><%= I18n.t(:welcome_to) %></div>
 
@@ -33,9 +36,31 @@
   </div>
 </div>
 
-<%# Try to put focus on the login text field on load %>
+<div id="ie_warning_dialog" style="display:none;">
+  <%= I18n.t(:ie_warning)%><br /><br />
+  <a href=\"http://www.mozilla.org/en-US/firefox/\">FireFox</a><br />
+  <a href=\"https://www.google.com/chrome/\">Google Chrome</a><br /><br />
+  <%= button_to_function "Ok", 'ie_warning_modal.close()', :tabindex => 100 %>
+  <div>&nbsp;</div>
+</div>
+
 <script type="text/javascript">
 //<![CDATA[
-  try{ document.getElementById('user_login').focus(); } catch(e) {}
+  <% if @first_visit %>
+    <%# Alert Internet Explorer users of incompatibility %>
+      if (Prototype.Browser.IE) {
+        var ie_warning_modal = null;
+
+        ie_warning_modal = new Control.Modal(
+          $('ie_warning_dialog'),
+          { overlayOpacity: 0.75, className: 'ie_warning_modal', fade: false }
+        );
+
+        ie_warning_modal.open();
+      }
+  <% end %>
+
+  <%# Try to put focus on the login text field on load %>
+  try { document.getElementById('user_login').focus(); } catch(e) { }
 //]]>
 </script>
