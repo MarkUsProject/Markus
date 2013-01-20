@@ -113,6 +113,7 @@ fr:
       results_loss_warning: "Attention : cette action effacera vos annotations et évaluations.\n\n!Êtes-vous sûr de vouloir continuer ?"
     assignment:
         assignment: "Projet %{short_identifier}"
+        required_fields: "Champs obligatoires <span class='required_field'>*</span>"
         name:           "Nom du projet"
         update_success: "Projet mis à jour"
         create_success:        "Projet créé"
@@ -389,6 +390,7 @@ fr:
       add_column: "Ajouter une colonne"
       remove_column: "Supprimer : "
       properties: "Propriétés de la feuille de note"
+      required_fields: "Champs obligatoires <span class='required_field'>*</span>"
       create:
         success: "Feuille de notes créée"
         title: "Créer une nouvelle feuille de notes"
