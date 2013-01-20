@@ -197,6 +197,11 @@ function default_group_fields() {
 }
 
 function update_due_date(new_due_date) {
+  // does nothing if {grace, penalty_decay, penalty}_periods already created
+  create_grace_periods();
+  create_penalty_decay_periods();
+  create_penalty_periods();
+
   check_due_date(new_due_date);
   grace_periods.set_due_date(new_due_date);
   penalty_decay_periods.set_due_date(new_due_date);
