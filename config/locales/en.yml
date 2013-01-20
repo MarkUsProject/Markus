@@ -22,6 +22,7 @@ en:
     username_and_password_not_blank: "Your username and password must not be blank."
     session_expired:     "Your session has expired. Please log in"
     please_log_in:       "Please log in"
+    ie_warning: "It appears that you are using Internet Explorer. Please note that some features of MarkUs may not work as expected in your browser. For a better user-experience, we suggest considering:"
 
     # app/views/layouts/_header.html.erb
     log_out:            "Log out"

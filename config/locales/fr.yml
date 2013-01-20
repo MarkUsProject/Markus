@@ -22,6 +22,7 @@ fr:
     username_and_password_not_blank: "Veuillez entrer vos nom d'utilisateur et mot de passe."
     session_expired:     "Votre session a expiré. Merci de vous reconnecter."
     please_log_in:       "Merci de vous connecter."
+    ie_warning: "Il semble que vous utilisez Internet Explorer. Veuillez noter que certaines fonctionnalités de MarkUs ne peuvent pas fonctionner comme prévu dans votre navigateur. Pour une meilleure expérience, nous vous suggérons de considerer: "
 
     # app/views/layouts/_header.html.erb
     log_out:            "Déconnexion"
