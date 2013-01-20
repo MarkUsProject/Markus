@@ -735,6 +735,10 @@ class Assignment < ActiveRecord::Base
     return self.submissions.select { |submission| submission.result.marking_state == Result::MARKING_STATES[:complete] }
   end
 
+  def groups_submitted
+    return self.groupings.select { |grouping| grouping.has_submission?}
+  end
+
   private
 
   # Returns true if we are safe to set the repository name
