@@ -1030,10 +1030,14 @@ input#extra_mark_description{
   margin-left: -50px;
 }
 
-#role_switch_dialog {
+#role_switch_dialog, #ie_warning_dialog {
   background-color: #fff;
   padding: 10px;  
   border: 10px solid #333;  
+}
+
+#ie_warning_dialog {
+  width: 400px;
 }
 
 #about_icon, #switch_role_icon {

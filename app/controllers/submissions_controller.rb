@@ -179,11 +179,11 @@ class SubmissionsController < ApplicationController
       @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
       @table_rows = {}
       @files.sort.each do |file_name, file|
-        @table_rows[file.id] = construct_file_manager_table_row(file_name, file)
+        @table_rows[file.object_id] = construct_file_manager_table_row(file_name, file)
       end
       if @grouping.repository_external_commits_only?
         @directories.sort.each do |directory_name, directory|
-          @table_rows[directory.id] = construct_file_manager_dir_table_row(directory_name, directory)
+          @table_rows[directory.object_id] = construct_file_manager_dir_table_row(directory_name, directory)
         end
       end
       render :file_manager_populate
