@@ -3,7 +3,7 @@
    # #{out_of} - The total number of marks
 %>
 <fieldset class="grade_entry_item">
-<legend><%= t('grade_entry_forms.column') %></legend>
+<legend><%= t('grade_entry_forms.column').html_safe %></legend>
 <%= form.fields_for :grade_entry_items, grade_entry_item do |f| %>
   <p>
     <%= raw(f.label :name,
