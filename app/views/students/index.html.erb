@@ -141,7 +141,7 @@ document.observe("dom:loaded", function() {
 <!-- Modal Windows -->
 <div id="upload_dialog">
   <h2><%=h I18n.t("students.upload.upload_a_class_list") %></h2>
-    <p><%= I18n.t("students.upload.select_csv_file") %></p>
+    <p><%= I18n.t("students.upload.select_csv_file").html_safe %></p>
 
     <p><%=h I18n.t("students.upload.student_same_number") %></p>
 
