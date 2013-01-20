@@ -208,6 +208,38 @@ class AssignmentTest < ActiveSupport::TestCase
       assert @assignment.graded_submissions.size == 0
     end
 
+    context "with some assignments submitted once" do
+      setup do
+        grouping = Grouping.make(:assignment => @assignment)
+        2.times do
+          grouping = Grouping.make(:assignment => @assignment)
+          sub = Submission.make(:grouping => grouping)
+        end
+      end
+
+      should "have 2 groups submitted" do
+        assert @assignment.groups_submitted.size == 2
+        assert @assignment.submissions.size == 2
+      end
+    end
+
+    context "with some assignments submitted multiple times" do
+      setup do
+        grouping = Grouping.make(:assignment => @assignment)
+        2.times do
+          grouping = Grouping.make(:assignment => @assignment)
+          2.times do
+            sub = Submission.make(:grouping => grouping)
+          end
+        end
+      end
+
+      should "have 2 groups, each submitted 2 times" do
+        assert @assignment.groups_submitted.size == 2
+        assert @assignment.submissions.size == 4
+      end
+    end
+
     context "with some assignments graded" do
       setup do
         grouping = Grouping.make(:assignment => @assignment)
