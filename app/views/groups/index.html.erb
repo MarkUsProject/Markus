@@ -83,6 +83,15 @@
   }
 
   document.observe("dom:loaded", function() {
+    Ajax.Responders.register({
+      onComplete: function(requester, xhr, json_response) {
+        if(xhr.status == 403) { // forbidden
+          // go back to home page
+          window.location = "<%= root_url %>";
+        }
+      }
+    });
+
 
     // create the modal dialogs
     modalUpload = new Control.Modal($('upload_dialog'),
