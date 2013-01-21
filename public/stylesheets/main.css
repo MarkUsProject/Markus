@@ -7,6 +7,7 @@ body {
 	padding: 0;
 	font-family: "Lucida Grande", Verdana, Arial, sans-serif;
 	font-size: 0.8em;
+  min-width: 600px;
 }
 
 .clear {
@@ -236,7 +237,6 @@ legend {
 #header {
   padding: 3px;
   border-bottom: 1px solid #000;
-  min-width: 60em;
 }
 
 #user_info {
@@ -1618,6 +1618,7 @@ div.align_text_right {
 
 #flexible_criteria_pane, #annotation_category_pane	{
    padding: 0px 2%;
+   width: 24%;
 }
 
 #rubric_criteria_pane .criteria_fieldset, #flexible_criteria_pane .criteria_fieldset, #annotation_category_pane .annotation_categories_fieldset{
