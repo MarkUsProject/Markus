@@ -17,7 +17,7 @@
   <br/>
   <div class="sub_block">
     <span class="prop_label"><%= t("due_date") %>:</span>
-    <%=h I18n.l(@due_date, :format => :long_date ) %>
+    <%= I18n.l(@due_date, :format => :long_date ) %>
   </div>
   <br/>
   <% if @assignment.display_grader_names_to_students%>

@@ -51,7 +51,7 @@
       <p><%= h(flash[:error]) %></p>
       <ul>
         <% flash[:invalid_lines].each do |message| %>
-          <li><%=h(message)%></li>
+          <li><%=(message)%></li>
         <% end %>
       </ul>
     </div>
@@ -186,7 +186,7 @@
   <p><%= f.file_field :grades_file %></p>
   <%= t('grade_entry_forms.csv.upload_format_html') %>
   <p>
-  <%=h I18n.t("encoding") %>
+  <%= I18n.t("encoding") %>
   <%= select_tag(:encoding, options_for_select(@encodings)) %>
   <br />
   <br />
