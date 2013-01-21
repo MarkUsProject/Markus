@@ -2,7 +2,7 @@
   <li class="<%= cycle('annotations1', 'annotations2') %>">
 
     <p class="lineNumber">#<%= annot.annotation_number %> - <%= render :partial => annot.annotation_list_link_partial, :locals => {:annot => annot} %></p>
-    <div class="annotationContent" id="annotation_text_content_display_<%=h(annot.annotation_text.id)%>">
+    <div class="annotationContent" id="annotation_text_content_display_<%=(annot.annotation_text.id)%>">
       <%= simple_format(h(annot.annotation_text.content)) %>
     </div>
 
@@ -23,12 +23,12 @@
 		   :remote => true do |f| %>
 
         <%= f.hidden_field :id%>
-        <input type="hidden" name="annotation_text[submission_file_id]" value="<%=h(@submission_file_id)%>" />
+        <input type="hidden" name="annotation_text[submission_file_id]" value="<%=(@submission_file_id)%>" />
         <p class="manageAnnotations"><%= f.text_area :content, :cols => 60, :rows => 5 %></p>
 
         <p class="manageAnnotations">
         <%= submit_tag I18n.t("marker.annotation.submit_edit") , :confirm => I18n.t("marker.annotation.change_across_submissions") %>
-          <input type="reset" value="<%= I18n.t("cancel") %>" onclick="$('annotation_text_content_edit_<%=h(annot.annotation_text.id)%>').hide();$('annotation_text_content_display_<%=h(annot.annotation_text.id)%>').show();"></input>
+          <input type="reset" value="<%= I18n.t("cancel") %>" onclick="$('annotation_text_content_edit_<%=(annot.annotation_text.id)%>').hide();$('annotation_text_content_display_<%=(annot.annotation_text.id)%>').show();"></input>
         </p>
 
       <% end %>

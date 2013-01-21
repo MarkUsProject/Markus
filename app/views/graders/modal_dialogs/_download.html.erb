@@ -1,5 +1,5 @@
 <div id="download">
-  <h2><%=h I18n.t("groups.download.download_grader_maps") %></h2>
+  <h2><%= I18n.t("groups.download.download_grader_maps") %></h2>
   <%= link_to t("groups.download.download_grader_groups_csv"),
     {:controller=>"graders", :action=>"download_grader_groupings_mapping", :id=> @assignment.id}, :onclick => "modalDownload.close();" %>
   <br /> <br />

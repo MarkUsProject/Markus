@@ -1,7 +1,7 @@
 <p class="due_date">
   <%= I18n.t(:due_date) %>
   <span class="<%= due_date_color(assignment) %>">
-    <%=h I18n.l(assignment.due_date, :format => :long_date ) %>:
+    <%= I18n.l(assignment.due_date, :format => :long_date ) %>:
   </span>
 </p>
 

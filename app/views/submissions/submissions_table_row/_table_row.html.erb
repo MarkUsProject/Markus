@@ -69,7 +69,7 @@
     <% if !grouping.has_submission? %>
     -
     <% else %>
-      <%=h I18n.l(grouping.current_submission_used.revision_timestamp :format => :long_date) %>
+      <%= I18n.l(grouping.current_submission_used.revision_timestamp :format => :long_date) %>
     <% end %>
     </td>
   <% end %>
