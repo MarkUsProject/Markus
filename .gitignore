@@ -3,9 +3,10 @@
 config/database.yml
 config/local_environment_override.rb
 
-# Data, bundle and log folder
+# Data, app documentation, log and bundle folder
 data/
 log/
+doc/app/
 .bundle/
 
 # Patch
