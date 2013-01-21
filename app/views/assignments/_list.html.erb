@@ -52,7 +52,7 @@
               <%= # show results
 								("%.2f" % (@a_id_results[assignment.id].total_mark * 100 / assignment.total_mark)).to_s + "% (Class Average: " + ("%.2f" % (assignment.results_average)).to_s + "%)"
 							%>
-              <p><strong><%=h I18n.t("assignment.overall_comment") %></strong><br/>
+              <p><strong><%= I18n.t("assignment.overall_comment") %></strong><br/>
                 <%= simple_format(sanitize(@a_id_results[assignment.id].overall_comment)) %>
               </p>
               <%= link_to h(I18n.t('results.results_name')),

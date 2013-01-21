@@ -67,7 +67,7 @@ document.observe("dom:loaded", function(){
 </script>
 
 <div id="title_bar">
-  <h1><%=h I18n.t("graders.manage_graders") %></h1>
+  <h1><%= I18n.t("graders.manage_graders") %></h1>
   <div class="colRightGroups">
       <div class="headingButtons">
       <%= button_to_function I18n.t("download"), "download_groups();" %>
@@ -91,7 +91,7 @@ document.observe("dom:loaded", function(){
    %>
 
   <div class="error" id="errors" style="display: none; ">
-    <h3><%=h t("graders.problem") %></h3>
+    <h3><%= t("graders.problem") %></h3>
     <div id="errors_title">
     </div>
     <div id="errors_contents">
@@ -100,7 +100,7 @@ document.observe("dom:loaded", function(){
 
 
   <div class="warning" id="global_action_warning" style="display: none; ">
-    <h3><%=h t("groups.warning") %></h3>
+    <h3><%= t("groups.warning") %></h3>
     <div id="global_action_warning_msg"></div>
   </div>
 
@@ -110,7 +110,7 @@ document.observe("dom:loaded", function(){
       <%= h(flash[:error])+"<br/>" if flash[:error] %>
       <%= h(flash[:fail_notice])+"<br/>" if flash[:fail_notice] %>
       <% if flash[:invalid_lines] %>
-        <%=h I18n.t("graders.lines_not_processed") %>
+        <%= I18n.t("graders.lines_not_processed") %>
         <ul>
         <% flash[:invalid_lines].each do |error| %>
           <li><%=error%></li>
@@ -155,7 +155,7 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
     <div class="wrapRightGroups">
       <div class="pane">
         <span id="loading_list">
-          <%= image_tag("spinner.gif") %><%=h t("groups.loading_list") %></span>
+          <%= image_tag("spinner.gif") %><%= t("groups.loading_list") %></span>
         <ul id="groups_tabs"class="subsection_tabs">
           <li class="tab">
             <a href="#groups_table" id="filter_link_none" class="filter_selected">
@@ -212,7 +212,7 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
     <div class="wrapLeftGroups">
       <div class="pane">
         <span id="loading_graders_list">
-          <%= image_tag("spinner.gif") %><%=h t("groups.loading_list") %></span>
+          <%= image_tag("spinner.gif") %><%= t("groups.loading_list") %></span>
         <ul id="graders_tabs" class="subsection_tabs">
           <li class="tab">
             <a href="#graders_none" id="filter_link_graders_none"  class="filter_selected">
@@ -285,7 +285,7 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
     {:multipart => true}) do %>
     <br />
     <br />
-    <%=h I18n.t("encoding") %>
+    <%= I18n.t("encoding") %>
     <%= select_tag(:encoding, options_for_select(@encodings)) %>
     <br />
     <br />
@@ -303,7 +303,7 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
       {:multipart => true}) do %>
       <br />
       <br />
-      <%=h I18n.t("encoding") %>
+      <%= I18n.t("encoding") %>
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
       <br />
       <br />

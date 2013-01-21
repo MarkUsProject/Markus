@@ -14,7 +14,7 @@
   <div class="login-course"><%= MarkusConfigurator.markus_config_course_name %></div>
 
   <% if flash[:login_notice] -%>
-    <div class="error"><%=h flash[:login_notice] %></div>
+    <div class="error"><%= flash[:login_notice] %></div>
   <% end -%>
   <div class="login-content">
     <!-- login form -->

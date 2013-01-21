@@ -1,5 +1,5 @@
 <li class="criterion_holder <%= cycle('rowA', 'rowB') %>" 
-	id="criterion_<%=h(criterion.id)%>">
+	id="criterion_<%=(criterion.id)%>">
   <span class="criterion_handle">
     <%= image_tag "handle.png" %>
   </span>
@@ -30,7 +30,7 @@
 		:remote => true %>
     <% end %>
   </span>
-  <span id="criterion_max_<%=h(criterion.id)%>" class="criterion_max">
+  <span id="criterion_max_<%=(criterion.id)%>" class="criterion_max">
   	<%= h(criterion.max) %>
   </span>
 </li>

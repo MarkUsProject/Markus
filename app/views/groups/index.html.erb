@@ -151,7 +151,7 @@
 <% end %>
 
 <div id="title_bar">
-  <h1><%=h I18n.t("groups.manage_groups") %></h1>
+  <h1><%= I18n.t("groups.manage_groups") %></h1>
   <div class="colRightGroups">
       <div class="headingButtons  ">
       <%  # Allow cloning groups forward only if its web submits are disallowed
@@ -182,7 +182,7 @@
    %>
 
   <div class="error" id="errors" style="display: none; ">
-    <h3><%=h t("groups.problem") %></h3>
+    <h3><%= t("groups.problem") %></h3>
     <div id="errors_title">
     </div>
     <div id="errors_contents">
@@ -190,18 +190,18 @@
   </div>
 
   <div class="warning" id="warnings_group" style="display: none; ">
-    <h3><%=h t("groups.warning") %></h3>
+    <h3><%= t("groups.warning") %></h3>
     <div id="warnings_group_msg">
     </div>
   </div>
   
   <div class="warning" id="warnings_grace" style="display: none; ">
-    <h3><%=h t("groups.warning") %></h3>
+    <h3><%= t("groups.warning") %></h3>
     <div id="warnings_grace_msg">
     </div>
   </div>
  <div class="warning" id="global_action_warning" style="display: none; ">
-	<h3><%=h t("groups.warning") %></h3>
+	<h3><%= t("groups.warning") %></h3>
 	<div id="global_action_warning_msg">
 	</div>
   </div>
@@ -212,7 +212,7 @@
       <%= h(flash[:error])+"<br/>" if flash[:error] %>
       <%= h(flash[:fail_notice])+"<br/>" if flash[:fail_notice] %>
       <% if flash[:invalid_lines] %>
-        <%=h I18n.t("groups.lines_not_processed") %>
+        <%= I18n.t("groups.lines_not_processed") %>
         <ul>
         <% flash[:invalid_lines].each do |error| %>
           <li><%=error%></li>
@@ -246,7 +246,7 @@
     <div class="wrapRightGroups">
       <div class="pane">
         <span id="loading_list">
-          <%= image_tag("spinner.gif") %><%=h t("groups.loading_list") %></span>
+          <%= image_tag("spinner.gif") %><%= t("groups.loading_list") %></span>
         <ul id="groups_tabs"class="subsection_tabs">
           <li class="tab">
             <a href="#none" id="filter_link_none" class="filter_selected">
@@ -323,7 +323,7 @@
     <div class="wrapLeftGroups">
       <div class="pane">
         <span id="loading_students_list">
-          <%= image_tag("spinner.gif") %><%=h t("groups.loading_list") %></span>
+          <%= image_tag("spinner.gif") %><%= t("groups.loading_list") %></span>
         <ul id="students_tabs" class="subsection_tabs">
           <li class="tab">
             <a href="#students_none" id="filter_link_students_none">
@@ -383,7 +383,7 @@
   <select id="clone_groups_assignment_id" name="clone_groups_assignment_id">
     <% @all_assignments.each do |an_assignment| %>
       <% if an_assignment != @assignment && an_assignment.allow_web_submits == false %>
-        <option value="<%=h(an_assignment.id)%>"><%=h(an_assignment.short_identifier)%></option>
+        <option value="<%=(an_assignment.id)%>"><%=(an_assignment.short_identifier)%></option>
       <% end %>
     <% end %>
   </select>
@@ -416,7 +416,7 @@
 </div>
 
 <div id="download_dialog">
-  <h2><%=h I18n.t("groups.download.download_groups_file") %></h2>
+  <h2><%= I18n.t("groups.download.download_groups_file") %></h2>
   <%= link_to t("groups.download.download_csv"),
     {:controller=>"groups", :action=>"download_grouplist", :id=> @assignment.id}, :onclick => "modalDownload.close();" %>
   <br />
@@ -425,7 +425,7 @@
 </div>
 
 <div id="upload_dialog">
-  <h2><%=h I18n.t("groups.upload.upload_groups_file") %></h2>
+  <h2><%= I18n.t("groups.upload.upload_groups_file") %></h2>
   <p>
     <%= I18n.t("groups.upload.description").html_safe %>
     <% if !@assignment.groupings.nil? && @assignment.groupings.length > 0 %>
@@ -440,7 +440,7 @@
                                :action => 'csv_upload',
                                :id => @assignment.id } do |f| %>
   <p>
-    <%=h I18n.t("encoding") %>
+    <%= I18n.t("encoding") %>
     <%= select_tag(:encoding, options_for_select(@encodings)) %>
     <br />
     <br />

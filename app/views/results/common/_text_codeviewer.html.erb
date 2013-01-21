@@ -1,9 +1,9 @@
 <div id="standby_highlighting" >
   Standby - Highlighting...
 </div>
-<pre id="code" name="code" class="<%=h(@code_type)%>" cols="80" rows="50">
+<pre id="code" name="code" class="<%=(@code_type)%>" cols="80" rows="50">
 <% # The "h" before the filetext allows us to escape HTML/Javascript strings %>
-<%=h file_contents %>
+<%= file_contents %>
 </pre>
 
 

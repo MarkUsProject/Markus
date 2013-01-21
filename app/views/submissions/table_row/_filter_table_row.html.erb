@@ -17,13 +17,13 @@
 <input type="hidden" id="file_revisions[<%= file_name %>]"
 name="file_revisions[<%= file_name %>]" value="<%= file.last_modified_revision%>"/>
 
-<input id="replace_files[<%=h file_name %>]" name="replace_files[<%=h file_name %>]" type="file" onchange="check_change_of_filename('<%=h file_name %>', this.value.escapeHTML(), this); set_onbeforeunload(true);" <%="disabled" if !@grouping.is_valid? %> size="5"/>
+<input id="replace_files[<%= file_name %>]" name="replace_files[<%= file_name %>]" type="file" onchange="check_change_of_filename('<%= file_name %>', this.value.escapeHTML(), this); set_onbeforeunload(true);" <%="disabled" if !@grouping.is_valid? %> size="5"/>
 
-<a href="#" onclick="$('replace_files[<%=h file_name %>]').setValue(''); set_onbeforeunload(true); return false;" >Cancel</a>
+<a href="#" onclick="$('replace_files[<%= file_name %>]').setValue(''); set_onbeforeunload(true); return false;" >Cancel</a>
 </td>
 
 <td>
-<input name="delete_files[<%=h file_name %>]" type="checkbox"
+<input name="delete_files[<%= file_name %>]" type="checkbox"
 <%="disabled" if !@grouping.is_valid? %> onclick="if($(this).getValue()) {
    $('replace_files[<%= h(file_name) %>]').disable();
   } else {
