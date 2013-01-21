@@ -72,6 +72,9 @@ class Assignment < ActiveRecord::Base
   validate :minimum_number_of_groups, :check_timezone
   after_save :update_assigned_tokens
 
+  # Set the default order of assignments: in ascending order of due_date
+  default_scope order('due_date ASC')
+
   # Export a YAML formatted string created from the assignment rubric criteria.
   def export_rubric_criteria_yml
     criteria = self.rubric_criteria
