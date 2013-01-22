@@ -3,7 +3,7 @@
   <% @annotation_categories.each do |annotation_category| %>
   <li class="annotation_category" id="annotation_category_<%=annotation_category.id%>" onclick="return false;" onMouseDown="return false;">
 
-  <%=h(truncate(annotation_category.annotation_category_name, :length => 40)) %>
+  <%=(truncate(annotation_category.annotation_category_name, :length => 40)) %>
 
   <div id="annotation_text_list_<%=annotation_category.id%>" onclick="return false;" onMouseDown="return false;">
       <%= render :partial => "annotations/annotation_list", :locals => {:annotation_category => annotation_category} %>

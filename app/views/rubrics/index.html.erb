@@ -81,7 +81,7 @@
     <% if !flash[:invalid_lines].nil? && !flash[:invalid_lines].empty? %>
       <ul>
         <% flash[:invalid_lines].each do |message| %>
-          <li><%=h(message)%></li>
+          <li><%=(message)%></li>
         <% end %>
       </ul>
   <% end %>
@@ -125,7 +125,7 @@
 	<%= t('csv_special_characters_html') %>
     <br />
     <br />
-    <%=h I18n.t("encoding") %>
+    <%= I18n.t("encoding") %>
     <%= select_tag(:encoding, options_for_select(@encodings)) %>
     <br />
     <br />
@@ -144,7 +144,7 @@
     <%= t('rubric_criteria.upload.format_yml_html') %>
     <br />
     <br />
-    <%=h I18n.t("encoding") %>
+    <%= I18n.t("encoding") %>
     <%= select_tag(:encoding, options_for_select(@encodings)) %>
     <br />
     <br />

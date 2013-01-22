@@ -79,7 +79,7 @@
       <p><%= h(flash[:error]) %></p>
       <ul>
         <% flash[:invalid_lines].each do |message| %>
-          <li><%=h(message)%></li>
+          <li><%=(message)%></li>
 		<% end %>
       </ul>
     </div>
