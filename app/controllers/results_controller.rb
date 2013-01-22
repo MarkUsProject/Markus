@@ -106,10 +106,12 @@ class ResultsController < ApplicationController
         @previous_grouping = groupings[current_grouping_index - 1]
       end
     end
-    m_logger = MarkusLogger.instance
-    m_logger.log("User '#{current_user.user_name}' viewed submission (id: #{@submission.id})" +
-                 "of assignment '#{@assignment.short_identifier}' for group '" +
-                 "#{@group.group_name}'")
+    if MarkusConfigurator.markus_config_logging_enabled?
+      m_logger = MarkusLogger.instance
+      m_logger.log("User '#{current_user.user_name}' viewed submission (id: #{@submission.id})" +
+                   "of assignment '#{@assignment.short_identifier}' for group '" +
+                   "#{@group.group_name}'")
+    end
 
   end
 
@@ -140,14 +142,18 @@ class ResultsController < ApplicationController
     @result.released_to_students = released_to_students
     @result.save
     @result.submission.assignment.set_results_average
-    m_logger = MarkusLogger.instance
+    if MarkusConfigurator.markus_config_logging_enabled?
+      m_logger = MarkusLogger.instance
+    end
     assignment = @result.submission.assignment
-    if params[:value] == 'true'
-      m_logger.log("Marks released for assignment '#{assignment.short_identifier}', ID: '" +
-                   "#{assignment.id}' (for 1 group).")
-    else
-      m_logger.log("Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" +
-                   "#{assignment.id}' (for 1 group).")
+    if MarkusConfigurator.markus_config_logging_enabled?
+      if params[:value] == 'true'
+        m_logger.log("Marks released for assignment '#{assignment.short_identifier}', ID: '" +
+                     "#{assignment.id}' (for 1 group).")
+      else
+        m_logger.log("Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" +
+                     "#{assignment.id}' (for 1 group).")
+      end
     end
   end
 
@@ -259,7 +265,7 @@ class ResultsController < ApplicationController
     submission = result_mark.result.submission  # get submission for logging
     group = submission.grouping.group           # get group for logging
     assignment = submission.grouping.assignment # get assignment for logging
-    m_logger = MarkusLogger.instance
+    m_logger = MarkusLogger.instance if MarkusConfigurator.markus_config_logging_enabled?
 
     # FIXME checking both that result_mark is valid and correctly saved is
     # useless. The validation is done automatically before saving unless
@@ -270,18 +276,22 @@ class ResultsController < ApplicationController
                          :mark_error => result_mark.errors.full_messages.join}
     else
       if !result_mark.save
+        if MarkusConfigurator.markus_config_logging_enabled?
           m_logger.log("Error while trying to update mark of submission. User: '" +
                        "#{current_user.user_name}', Submission ID: '#{submission.id}'," +
                        " Assignment: '#{assignment.short_identifier}', Group: '#{group.group_name}'.",
                        MarkusLogger::ERROR)
-          render :partial => 'shared/handle_error',
-                 :locals => {:error => I18n.t('mark.error.save') + result_mark.errors.full_messages.join}
+        end
+        render :partial => 'shared/handle_error',
+               :locals => {:error => I18n.t('mark.error.save') + result_mark.errors.full_messages.join}
       else
+        if MarkusConfigurator.markus_config_logging_enabled?
           m_logger.log("User '#{current_user.user_name}' updated mark for submission (id: " +
                        "#{submission.id}) of assignment '#{assignment.short_identifier}' for group" +
                        " '#{group.group_name}'.", MarkusLogger::INFO)
-          render :partial => 'results/marker/update_mark',
-                 :locals => { :result_mark => result_mark, :mark_value => result_mark.mark}
+        end
+        render :partial => 'results/marker/update_mark',
+               :locals => { :result_mark => result_mark, :mark_value => result_mark.mark}
       end
     end
   end
@@ -347,9 +357,11 @@ class ResultsController < ApplicationController
         @old_marks_map[criterion.id] = oldmark
       end
     end
-    m_logger = MarkusLogger.instance
-    m_logger.log("Student '#{current_user.user_name}' viewed results for assignment " +
-                 "'#{@assignment.short_identifier}'.")
+    if MarkusConfigurator.markus_config_logging_enabled?
+      m_logger = MarkusLogger.instance
+      m_logger.log("Student '#{current_user.user_name}' viewed results for assignment " +
+                   "'#{@assignment.short_identifier}'.")
+    end
   end
 
   def add_extra_mark

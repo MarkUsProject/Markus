@@ -121,16 +121,21 @@ class MainController < ApplicationController
       page_not_found
       return
     end
-    m_logger = MarkusLogger.instance
+    
+    m_logger = MarkusLogger.instance if MarkusConfigurator.markus_config_logging_enabled?
 
     # The real_uid field of session keeps track of the uid of the original
     # user that is logged in if there is a role switch
     if !session[:real_uid].nil? && !session[:uid].nil?
       #An admin was logged in as a student or grader
-      m_logger.log("Admin '#{User.find_by_id(session[:real_uid]).user_name}' logged out from '#{User.find_by_id(session[:uid]).user_name}'.")
+      if MarkusConfigurator.markus_config_logging_enabled?
+        m_logger.log("Admin '#{User.find_by_id(session[:real_uid]).user_name}' logged out from '#{User.find_by_id(session[:uid]).user_name}'.")
+      end
     else
       #The user was not assuming another role
-      m_logger.log("User '#{current_user.user_name}' logged out.")
+      if MarkusConfigurator.markus_config_logging_enabled?
+        m_logger.log("User '#{current_user.user_name}' logged out.")
+      end
     end
     clear_session
     cookies.delete :auth_token
@@ -222,8 +227,10 @@ class MainController < ApplicationController
 
     # Log the admin that assumed the role of another user together with the time
     # and date that the role switch occurred
-    m_logger = MarkusLogger.instance
-    m_logger.log("Admin '#{current_user.user_name}' logged in as '#{params[:effective_user_login]}'.")
+    if MarkusConfigurator.markus_config_logging_enabled?
+      m_logger = MarkusLogger.instance
+      m_logger.log("Admin '#{current_user.user_name}' logged in as '#{params[:effective_user_login]}'.")
+    end
 
     # Save the uid of the admin that is switching roles
     session[:real_uid] = session[:uid]
@@ -258,16 +265,20 @@ class MainController < ApplicationController
   # provide a vehicle to expire the session (I.e. cancel the
   # role switch).
   def clear_role_switch_session
-    m_logger = MarkusLogger.instance
+    m_logger = MarkusLogger.instance if MarkusConfigurator.markus_config_logging_enabled?
 
     # The real_uid field of session keeps track of the uid of the original
     # user that is logged in if there is a role switch
     if !session[:real_uid].nil? && !session[:uid].nil?
       # An admin was logged in as a student or grader
-      m_logger.log("Admin '#{User.find_by_id(session[:real_uid]).user_name}' logged out from '#{User.find_by_id(session[:uid]).user_name}'.")
+      if MarkusConfigurator.markus_config_logging_enabled?
+        m_logger.log("Admin '#{User.find_by_id(session[:real_uid]).user_name}' logged out from '#{User.find_by_id(session[:uid]).user_name}'.")
+      end
     else
       #The user was not assuming another role
-      m_logger.log("WARNING: Possible break in attempt from '#{current_user.user_name}'.")
+      if MarkusConfigurator.markus_config_logging_enabled?
+        m_logger.log("WARNING: Possible break in attempt from '#{current_user.user_name}'.")
+      end
     end
     clear_session
     cookies.delete :auth_token
@@ -302,8 +313,10 @@ private
     if found_user.admin? && !session[:real_uid].nil? &&
        session[:real_uid] != session[:uid]
       self.current_user = User.find_by_id(session[:uid])
-      m_logger = MarkusLogger.instance
-      m_logger.log("Admin '#{found_user.user_name}' logged in as '#{current_user.user_name}'.")
+      if MarkusConfigurator.markus_config_logging_enabled?
+        m_logger = MarkusLogger.instance
+        m_logger.log("Admin '#{found_user.user_name}' logged in as '#{current_user.user_name}'.")
+      end
     else
       self.current_user = found_user
     end

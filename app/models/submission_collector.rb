@@ -99,17 +99,20 @@ class SubmissionCollector < ActiveRecord::Base
       return
     end
 
-    m_logger = MarkusLogger.instance
-
-    #Check to see if there is still a process running
-    m_logger.log("Checking to see if there is already a submission collection" +
-                 " process running")
+    if MarkusConfigurator.markus_config_logging_enabled?
+      m_logger = MarkusLogger.instance
+      #Check to see if there is still a process running
+      m_logger.log("Checking to see if there is already a submission collection" +
+                   " process running")
+    end
     begin
       unless self.child_pid.nil?
         Process.waitpid(self.child_pid, Process::WNOHANG)
         #If child is still running do nothing, otherwise reset the child_pid
         if $?.nil?
-          m_logger.log("Submission collection process still running, doing nothing")
+          if MarkusConfigurator.markus_config_logging_enabled?
+            m_logger.log("Submission collection process still running, doing nothing")
+          end
           return
         else
           self.child_pid = nil
@@ -128,23 +131,29 @@ class SubmissionCollector < ActiveRecord::Base
     pid = fork do
       begin
         ActiveRecord::Base.establish_connection(db_connection)
-        m_logger.log("Submission collection process established database" +
-                     " connection successfully")
-        #Any custom tasks to be performed by the child can be given as a block
-        if block_given?
-          m_logger.log("Submission collection process now evaluating provided code block")
-          yield
-          m_logger.log("Submission collection process done evaluating provided code block")
+        if MarkusConfigurator.markus_config_logging_enabled?
+          m_logger.log("Submission collection process established database" +
+                       " connection successfully")
+          #Any custom tasks to be performed by the child can be given as a block
+          if block_given?
+            m_logger.log("Submission collection process now evaluating provided code block")
+            yield
+            m_logger.log("Submission collection process done evaluating provided code block")
+          end
         end
 
         while !collect_next_submission.nil?
           if SubmissionCollector.first.stop_child
-            m_logger.log("Submission collection process now exiting because it was " +
-                         "asked to stop by its parent")
+            if MarkusConfigurator.markus_config_logging_enabled?
+              m_logger.log("Submission collection process now exiting because it was " +
+                           "asked to stop by its parent")
+            end
             exit!(0)
           end
         end
-        m_logger.log("Submission collection process done")
+        if MarkusConfigurator.markus_config_logging_enabled?
+          m_logger.log("Submission collection process done")
+        end
         exit!(0)
       ensure
         ActiveRecord::Base.remove_connection
@@ -163,9 +172,11 @@ class SubmissionCollector < ActiveRecord::Base
     grouping = get_next_grouping_for_collection
     return if grouping.nil?
     assignment = grouping.assignment
-    m_logger = MarkusLogger.instance
-    m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
-                 "'#{grouping.id}'")
+    if MarkusConfigurator.markus_config_logging_enabled?
+      m_logger = MarkusLogger.instance
+      m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
+                   "'#{grouping.id}'")
+    end
     time = assignment.submission_rule.calculate_collection_time.localtime
     # Create a new Submission by timestamp.
     # A Result is automatically attached to this Submission, thanks to some

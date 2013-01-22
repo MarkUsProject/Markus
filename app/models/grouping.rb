@@ -135,7 +135,7 @@ class Grouping < ActiveRecord::Base
       next if m.blank? # ignore blank users
       m = m.strip
       user = User.find_by_user_name(m)
-      m_logger = MarkusLogger.instance
+      m_logger = MarkusLogger.instance if MarkusConfigurator.markus_config_logging_enabled?
       if !user
         errors.add(:base, I18n.t('invite_student.fail.dne',
                                   :user_name => m))
@@ -145,10 +145,14 @@ class Grouping < ActiveRecord::Base
           if !member
             errors.add(:base, I18n.t('invite_student.fail.error',
                                       :user_name => user.user_name))
-            m_logger.log("Student failed to invite '#{user.user_name}'",
-                          MarkusLogger::ERROR)
+            if MarkusConfigurator.markus_config_logging_enabled?
+              m_logger.log("Student failed to invite '#{user.user_name}'",
+                            MarkusLogger::ERROR)
+            end
           else
-            m_logger.log("Student invited '#{user.user_name}'.")
+            if MarkusConfigurator.markus_config_logging_enabled?
+              m_logger.log("Student invited '#{user.user_name}'.")
+            end
           end
         end
       end
@@ -178,67 +182,83 @@ class Grouping < ActiveRecord::Base
 
   # define whether user can be invited in this grouping
   def can_invite?(user)
-    m_logger = MarkusLogger.instance
+    m_logger = MarkusLogger.instance if MarkusConfigurator.markus_config_logging_enabled?
     if user && user.student?
       if user.hidden
         errors.add(:base, I18n.t('invite_student.fail.hidden',
                                   :user_name => user.user_name))
-        m_logger.log("Student failed to invite '#{user.user_name}' (account has been " +
-                     "disabled).", MarkusLogger::ERROR)
+        if MarkusConfigurator.markus_config_logging_enabled?
+          m_logger.log("Student failed to invite '#{user.user_name}' (account has been " +
+                       "disabled).", MarkusLogger::ERROR)
+        end
 
         return false
       end
       if self.inviter == user
         errors.add(:base, I18n.t('invite_student.fail.inviting_self',
                                   :user_name => user.user_name))
-        m_logger.log("Student failed to invite '#{user.user_name}'. Tried to invite " +
-                     "himself.", MarkusLogger::ERROR)
+        if MarkusConfigurator.markus_config_logging_enabled?
+          m_logger.log("Student failed to invite '#{user.user_name}'. Tried to invite " +
+                       "himself.", MarkusLogger::ERROR)
+        end
 
 
       end
       if self.assignment.past_collection_date?
         errors.add(:base, I18n.t('invite_student.fail.due_date_passed',
                                   :user_name => user.user_name))
-        m_logger.log("Student failed to invite '#{user.user_name}'. Current time past " +
-                     "collection date.", MarkusLogger::ERROR)
+        if MarkusConfigurator.markus_config_logging_enabled?
+          m_logger.log("Student failed to invite '#{user.user_name}'. Current time past " +
+                       "collection date.", MarkusLogger::ERROR)
+        end
 
         return false
       end
       if self.student_membership_number >= self.assignment.group_max
         errors.add(:base, I18n.t('invite_student.fail.group_max_reached',
                                   :user_name => user.user_name))
-        m_logger.log("Student failed to invite '#{user.user_name}'. Group maximum" +
-                     " reached.", MarkusLogger::ERROR)
+        if MarkusConfigurator.markus_config_logging_enabled?
+          m_logger.log("Student failed to invite '#{user.user_name}'. Group maximum" +
+                       " reached.", MarkusLogger::ERROR)
+        end
         return false
       end
       if self.assignment.section_groups_only &&
         user.section != self.inviter.section
         errors.add(:base, I18n.t('invite_student.fail.not_same_section',
                                   :user_name => user.user_name))
-        m_logger.log("Student failed to invite '#{user.user_name}'. Students not in" +
-                     " same section.", MarkusLogger::ERROR)
+        if MarkusConfigurator.markus_config_logging_enabled?
+          m_logger.log("Student failed to invite '#{user.user_name}'. Students not in" +
+                       " same section.", MarkusLogger::ERROR)
+        end
 
         return false
       end
       if user.has_accepted_grouping_for?(self.assignment.id)
         errors.add(:base, I18n.t('invite_student.fail.already_grouped',
                                   :user_name => user.user_name))
-        m_logger.log("Student failed to invite '#{user.user_name}'. Invitee already part" +
-                     " of another group.", MarkusLogger::ERROR)
+        if MarkusConfigurator.markus_config_logging_enabled?
+          m_logger.log("Student failed to invite '#{user.user_name}'. Invitee already part" +
+                       " of another group.", MarkusLogger::ERROR)
+        end
         return false
       end
       if self.pending?(user)
         errors.add(:base, I18n.t('invite_student.fail.already_pending',
                                   :user_name => user.user_name))
-        m_logger.log("Student failed to invite '#{user.user_name}'. Invitee is already " +
-                     " pending member of this group.", MarkusLogger::ERROR)
+        if MarkusConfigurator.markus_config_logging_enabled?
+          m_logger.log("Student failed to invite '#{user.user_name}'. Invitee is already " +
+                       " pending member of this group.", MarkusLogger::ERROR)
+        end
         return false
       end
     else
       errors.add(:base, I18n.t('invite_student.fail.dne',
                                 :user_name => user.user_name))
-      m_logger.log("Student failed to invite '#{user.user_name}'. Invitee does not " +
-                   " exist.", MarkusLogger::ERROR)
+      if MarkusConfigurator.markus_config_logging_enabled?
+        m_logger.log("Student failed to invite '#{user.user_name}'. Invitee does not " +
+                     " exist.", MarkusLogger::ERROR)
+      end
       return false
     end
     return true
