@@ -216,6 +216,8 @@ Markus::Application.configure do
   ###################################################################
   # Logging Options
   ###################################################################
+  # If set to true then the MarkusLogger will be enabled
+  MARKUS_LOGGING_ENABLED = true
   # If set to true then the rotation of the logfiles will be defined
   # by MARKUS_LOGGING_ROTATE_INTERVAL instead of the size of the file
   MARKUS_LOGGING_ROTATE_BY_INTERVAL = false

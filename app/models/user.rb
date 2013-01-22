@@ -67,24 +67,36 @@ class User < ActiveRecord::Base
       pipe = IO.popen( MarkusConfigurator.markus_config_validate_file, "w+" )
       pipe.puts("#{login}\n#{password}") # write to stdin of markus_config_validate
       pipe.close
-      m_logger = MarkusLogger.instance
+      m_logger = MarkusLogger.instance if MarkusConfigurator.markus_config_logging_enabled?
+      # If the MarkusLoger is enabled, log the login result
+      if MarkusConfigurator.markus_config_logging_enabled?
+        case $?.exitstatus
+          when 0
+            m_logger.log("User '#{login}' logged in.", MarkusLogger::INFO)
+          when 1
+            m_logger.log("Login failed. Reason: No such user '#{login}'.", MarkusLogger::ERROR)
+          when 2
+            m_logger.log("Wrong username/password: User '#{login}'.", MarkusLogger::ERROR)
+          else
+            m_logger.log("User '#{login}' failed to log in.", MarkusLogger::ERROR)
+        end
+      end
+      # Return based on exit status
       case $?.exitstatus
         when 0
-          m_logger.log("User '#{login}' logged in.", MarkusLogger::INFO)
           return AUTHENTICATE_SUCCESS
         when 1
-          m_logger.log("Login failed. Reason: No such user '#{login}'.", MarkusLogger::ERROR)
           return AUTHENTICATE_NO_SUCH_USER
         when 2
-          m_logger.log("Wrong username/password: User '#{login}'.", MarkusLogger::ERROR)
           return AUTHENTICATE_BAD_PASSWORD
         else
-          m_logger.log("User '#{login}' failed to log in.", MarkusLogger::ERROR)
           return AUTHENTICATE_ERROR
       end
     else
-      m_logger.log("User '#{login}' failed to log in. Username/password contained " +
-                   "illegal characters", MarkusLogger::ERROR)
+      if MarkusConfigurator.markus_config_logging_enabled?
+        m_logger.log("User '#{login}' failed to log in. Username/password contained " +
+                     "illegal characters", MarkusLogger::ERROR)
+      end
       return AUTHENTICATE_BAD_CHAR
     end
   end

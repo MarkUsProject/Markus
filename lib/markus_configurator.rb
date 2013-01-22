@@ -164,6 +164,15 @@ module MarkusConfigurator
   ######################################
   # MarkusLogger configuration
   ######################################
+  def markus_config_logging_enabled?
+    if defined? MARKUS_LOGGING_ENABLED
+      return MARKUS_LOGGING_ENABLED
+    else
+      #If not defined, default to true
+      return true
+    end
+  end
+
   def markus_config_validate_file
     if defined? VALIDATE_FILE
       return VALIDATE_FILE

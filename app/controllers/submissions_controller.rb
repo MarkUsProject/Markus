@@ -420,9 +420,11 @@ class SubmissionsController < ApplicationController
         else
           flash[:success] = I18n.t('update_files.success')
           # flush log messages
-          m_logger = MarkusLogger.instance
-          log_messages.each do |msg|
-            m_logger.log(msg)
+          if MarkusConfigurator.markus_config_logging_enabled?
+            m_logger = MarkusLogger.instance
+            log_messages.each do |msg|
+              m_logger.log(msg)
+            end
           end
         end
 
@@ -435,8 +437,10 @@ class SubmissionsController < ApplicationController
         render :file_manager, :id => assignment_id
 
       rescue Exception => e
-        m_logger = MarkusLogger.instance
-        m_logger.log(e.message)
+        if MarkusConfigurator.markus_config_logging_enabled?
+          m_logger = MarkusLogger.instance
+          m_logger.log(e.message)
+        end
         # can't use redirect_to here. See comment of this action for more details.
         @file_manager_errors[:commit_error] = e.message
         set_filebrowser_vars(@grouping.group, @assignment)
@@ -517,8 +521,10 @@ class SubmissionsController < ApplicationController
 
     if changed > 0
       flash[:success] = I18n.t('results.successfully_changed', {:changed => changed})
-      m_logger = MarkusLogger.instance
-      m_logger.log(log_message)
+      if MarkusConfigurator.markus_config_logging_enabled?
+        m_logger = MarkusLogger.instance
+        m_logger.log(log_message)
+      end
     end
     flash[:errors] = errors
 
@@ -537,10 +543,12 @@ class SubmissionsController < ApplicationController
       params[:groupings].each do |g|
         g.unrelease_results
       end
-      m_logger = MarkusLogger.instance
-      assignment = Assignment.find(params[:id])
-      m_logger.log("Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" +
-                   "#{assignment.id}' (for #{params[:groupings].length} groups).")
+      if MarkusConfigurator.markus_config_logging_enabled?
+        m_logger = MarkusLogger.instance
+        assignment = Assignment.find(params[:id])
+        m_logger.log("Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" +
+                     "#{assignment.id}' (for #{params[:groupings].length} groups).")
+      end
     end
     redirect_to :action => 'browse', 
                 :id => params[:id]

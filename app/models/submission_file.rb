@@ -104,7 +104,7 @@ class SubmissionFile < ActiveRecord::Base
 
   def convert_pdf_to_jpg
     return unless MarkusConfigurator.markus_config_pdf_support && self.is_pdf?
-    m_logger = MarkusLogger.instance
+    m_logger = MarkusLogger.instance if MarkusConfigurator.markus_config_logging_enabled?
     storage_path = File.join(MarkusConfigurator.markus_config_pdf_storage,
       self.submission.grouping.group.repository_name,
       self.path)
@@ -130,7 +130,7 @@ class SubmissionFile < ActiveRecord::Base
                       :filename => file_path,
                       :multipage => true,
                       :resolution => 150
-    if file.error
+    if MarkusConfigurator.markus_config_logging_enabled? && file.error
       m_logger.log("rghost: Image conversion error")
     end
 
@@ -163,8 +163,10 @@ class SubmissionFile < ActiveRecord::Base
   # If a file of the same name as the one we are trying to export exists in
   # the given repository, it will be overwritten by the svn exports
   def export_file(storage_path)
-    m_logger = MarkusLogger.instance
-    m_logger.log("Exporting #{self.filename} from student repository")
+    if MarkusConfigurator.markus_config_logging_enabled?
+      m_logger = MarkusLogger.instance
+      m_logger.log("Exporting #{self.filename} from student repository")
+    end
     begin
       # Create the storage directories if they dont already exist
       FileUtils.makedirs(storage_path)
@@ -181,11 +183,13 @@ class SubmissionFile < ActiveRecord::Base
 
     # Let's check the file exists befor claiming the file has been exported
     # properly
-    if File.exists?(File.join(storage_path, self.filename))
-      m_logger.log("Successfuly exported #{self.filename} from student repository to #{File.join(storage_path, self.filename)}")
-    else
-      m_logger.log("Failed to export #{self.filename} from student
-                      repository")
+    if MarkusConfigurator.markus_config_logging_enabled?
+      if File.exists?(File.join(storage_path, self.filename))
+        m_logger.log("Successfuly exported #{self.filename} from student repository to #{File.join(storage_path, self.filename)}")
+      else
+        m_logger.log("Failed to export #{self.filename} from student
+                        repository")
+      end
     end
   end
 

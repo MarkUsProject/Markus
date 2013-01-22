@@ -124,8 +124,10 @@ class Student < User
           @group.repo_name = self.user_name
         end
         if !@group.save
-          m_logger = MarkusLogger.instance
-          m_logger.log("Could not create a group for Student '#{self.user_name}'. The group was #{@group.inspect} - errors: #{@group.errors.inspect}", MarkusLogger::ERROR)
+          if MarkusConfigurator.markus_config_logging_enabled?
+            m_logger = MarkusLogger.instance
+            m_logger.log("Could not create a group for Student '#{self.user_name}'. The group was #{@group.inspect} - errors: #{@group.errors.inspect}", MarkusLogger::ERROR)
+          end
           raise "Sorry!  For some reason, your group could not be created.  Please wait a few seconds, then hit refresh to try again.  If you come back to this page, you should inform the course instructor."
         end
       end
@@ -133,8 +135,10 @@ class Student < User
       @grouping.group = @group
       begin
         if !@grouping.save
-          m_logger = MarkusLogger.instance
-          m_logger.log("Could not create a grouping for Student '#{self.user_name}'. The grouping was:  #{@grouping.inspect} - errors: #{@grouping.errors.inspect}", MarkusLogger::ERROR)
+          if MarkusConfigurator.markus_config_logging_enabled?
+            m_logger = MarkusLogger.instance
+            m_logger.log("Could not create a grouping for Student '#{self.user_name}'. The grouping was:  #{@grouping.inspect} - errors: #{@grouping.errors.inspect}", MarkusLogger::ERROR)
+          end
           raise "Sorry!  For some reason, your grouping could not be created.  Please wait a few seconds, and hit refresh to try again.  If you come back to this page, you should inform the course instructor."
         end
       # This exception will only be thrown when we try to save to a grouping that already exists

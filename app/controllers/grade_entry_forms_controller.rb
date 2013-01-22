@@ -220,8 +220,10 @@ class GradeEntryFormsController < ApplicationController
     if numGradeEntryStudentsChanged > 0
       flash[:success] = I18n.t('grade_entry_forms.grades.successfully_changed',
                {:numGradeEntryStudentsChanged => numGradeEntryStudentsChanged})
-      m_logger = MarkusLogger.instance
-      m_logger.log(log_message)
+      if MarkusConfigurator.markus_config_logging_enabled?
+        m_logger = MarkusLogger.instance
+        m_logger.log(log_message)
+      end
     end
     flash[:errors] = errors
 
