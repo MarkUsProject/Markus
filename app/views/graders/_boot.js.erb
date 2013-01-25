@@ -67,8 +67,8 @@ document.observe("dom:loaded", function() {
     },
     sorts: {
       nohtml: function(a, b) {
-        return a[FILTERTABLE_SORT].stripTags().toLowerCase() < b[FILTERTABLE_SORT].stripTags().toLowerCase();
-      }
+        return a[FILTERTABLE_SORT].stripTags().toLowerCase() > b[FILTERTABLE_SORT].stripTags().toLowerCase() ? 1 : -1;
+        }
     },
     total_count_id: 'all_groupings_count',
     filter_count_ids: {
@@ -133,11 +133,6 @@ document.observe("dom:loaded", function() {
     filter_count_ids: {
       assigned: 'assigned_graders_count',
       unassigned: 'unassigned_graders_count'
-    },
-    sorts: {
-      nohtml: function(a, b) {
-        return a[FILTERTABLE_SORT].stripTags().toLowerCase() < b[FILTERTABLE_SORT].stripTags().toLowerCase();
-        }
     }
   });
 
@@ -189,7 +184,7 @@ document.observe("dom:loaded", function() {
     total_count_id: 'all_criteria_count',
     sorts: {
       nohtml: function(a, b) {
-        return a[FILTERTABLE_SORT].stripTags().toLowerCase() < b[FILTERTABLE_SORT].stripTags().toLowerCase();
+        return a[FILTERTABLE_SORT].stripTags().toLowerCase() > b[FILTERTABLE_SORT].stripTags().toLowerCase() ? 1 : -1;
         }
     }
   });
