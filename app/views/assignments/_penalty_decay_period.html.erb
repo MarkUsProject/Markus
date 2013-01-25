@@ -22,7 +22,7 @@
       </p>
       <p>
         <%= f.label :hours, t("submission_rules.penalty_decay_period_submission_rule.for") %>
-        <%= f.text_field :hours, :size => 1, :class => "PeriodDeltaChain_Hours", :onchange => "penalty_decay_periods.refresh();" %>
+        <%= f.text_field :hours, :size => 1, :class => "PeriodDeltaChain_Hours", :onchange => "if(penalty_decay_periods) { penalty_decay_periods.refresh(); }" %>
         <%= t("submission_rules.penalty_decay_period_submission_rule.hours") %>
       </p>
       <div>
@@ -37,7 +37,7 @@
         <%= f.label :_destroy, t(:remove) %>
         <%= f.check_box :_destroy %>
       <% else %>
-        <%= link_to_function t(:remove), "$(this).up('.period').remove(); penalty_decay_periods.refresh();" %>
+        <%= link_to_function t(:remove), "$(this).up(\".period\").remove(); if(penalty_decay_periods) { penalty_decay_periods.refresh(); }" %>
       <% end %>
     <% end %>
   </p>
