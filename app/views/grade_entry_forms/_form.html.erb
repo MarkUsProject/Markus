@@ -29,7 +29,7 @@
     <% # Basic grade entry form properties
     %>
 
-    <%= raw(f.label :short_identifier, t(:short_identifier)) %>
+    <%= raw(f.label :short_identifier, t(:short_identifier).html_safe) %>
     <%= raw(f.text_field :short_identifier) %><br />
 
     <%= raw(f.label :description, t(:description)) %>
@@ -38,7 +38,7 @@
     <%= raw(f.label :message) %>
     <%= raw(f.text_area :message, :rows => 8, :cols => 65) %><br />
 
-    <%= raw(f.label :date, t(:shortened_date)) %>
+    <%= raw(f.label :date, t(:shortened_date).html_safe) %>
     <%= raw(f.calendar_date_select :date,
                             {:year_range => 0.years.ago..1.years.from_now,
 	                           :locale => I18n.default_locale}) %>

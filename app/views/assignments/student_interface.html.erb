@@ -25,7 +25,7 @@
 </script>
 
 <div id="title_bar">
-  <h1><%=h I18n.t("student.assignment", :short_identifier => @assignment.short_identifier) %></h1>
+  <h1><%= I18n.t("student.assignment", :short_identifier => @assignment.short_identifier) %></h1>
 </div>
 
 <div class="column_floatLeft">
@@ -45,7 +45,7 @@
                         :format => :long_date)) )%>
         </div>
         <span class="info_number">
-          <%=h @num_submitted_files.to_s %>
+          <%= @num_submitted_files.to_s %>
         </span>
         <span class="info"><%= I18n.t("student.files") %></span> <br />
         <%=raw( I18n.t("student.missing_required_files",

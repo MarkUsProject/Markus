@@ -30,7 +30,7 @@ module SubmissionsHelper
 
   def construct_file_manager_dir_table_row(directory_name, directory)
     table_row = {}
-    table_row[:id] = directory.id
+    table_row[:id] = directory.object_id
     table_row[:filter_table_row_contents] = render_to_string :partial => 'submissions/table_row/directory_table_row', :locals => {:directory_name => directory_name, :directory => directory}
     table_row[:filename] = directory_name
     table_row[:last_modified_date_unconverted] = directory.last_modified_date.strftime('%b %d, %Y %H:%M')
@@ -41,7 +41,7 @@ module SubmissionsHelper
 
   def construct_file_manager_table_row(file_name, file)
     table_row = {}
-    table_row[:id] = file.id
+    table_row[:id] = file.object_id
     table_row[:filter_table_row_contents] = render_to_string :partial => 'submissions/table_row/filter_table_row', :locals => {:file_name => file_name, :file => file}
 
     table_row[:filename] = file_name
@@ -59,14 +59,14 @@ module SubmissionsHelper
   def construct_file_manager_table_rows(files)
     result = {}
     files.each do |file_name, file|
-      result[file.id] = construct_file_manager_table_row(file_name, file)
+      result[file.object_id] = construct_file_manager_table_row(file_name, file)
     end
     return result
   end
 
   def construct_repo_browser_table_row(file_name, file)
     table_row = {}
-    table_row[:id] = file.id
+    table_row[:id] = file.object_id
     table_row[:filter_table_row_contents] = render_to_string :partial => 'submissions/repo_browser/filter_table_row', :locals => {:file_name => file_name, :file => file}
     table_row[:filename] = file_name
     table_row[:last_modified_date] = file.last_modified_date.strftime('%d %B, %l:%M%p')
@@ -77,7 +77,7 @@ module SubmissionsHelper
 
   def construct_repo_browser_directory_table_row(directory_name, directory)
     table_row = {}
-    table_row[:id] = directory.id
+    table_row[:id] = directory.object_id
     table_row[:filter_table_row_contents] = render_to_string :partial => 'submissions/repo_browser/directory_row', :locals => {:directory_name => directory_name, :directory => directory}
     table_row[:filename] = directory_name
     table_row[:last_modified_date] = directory.last_modified_date.strftime('%d %B, %l:%M%p')
@@ -89,7 +89,7 @@ module SubmissionsHelper
   def construct_repo_browser_table_rows(files)
     result = {}
     files.each do |file_name, file|
-      result[file.id] = construct_repo_browser_row(file_name, file)
+      result[file.object_id] = construct_repo_browser_row(file_name, file)
     end
     return result
   end

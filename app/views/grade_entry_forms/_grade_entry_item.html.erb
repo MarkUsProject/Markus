@@ -3,7 +3,7 @@
    # #{out_of} - The total number of marks
 %>
 <fieldset class="grade_entry_item">
-<legend><%= t('grade_entry_forms.column') %></legend>
+<legend><%= t('grade_entry_forms.column').html_safe %></legend>
 <%= form.fields_for :grade_entry_items, grade_entry_item do |f| %>
   <p>
     <%= raw(f.label :name,
@@ -25,7 +25,7 @@
                          :class => "inline_label" %> <%= f.check_box :_destroy %>
       </span>
     <% else %>
-      <%= link_to_function I18n.t("delete"), "$(this).up('.grade_entry_item').remove()" %>
+      <%= link_to_function I18n.t("delete"), "$(this).up(\".grade_entry_item\").remove()" %>
     <% end %>
   </p>
 <% end %>

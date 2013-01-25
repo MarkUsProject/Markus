@@ -107,46 +107,66 @@ class MarkusLoggerTest < Test::Unit::TestCase
       end
     end
 
-    should "raise exception if log level is above the FATAL level" do
-      log_level = MarkusLogger::FATAL + 1
-      assert_raise ArgumentError do
-        logger = MarkusLogger.instance
-        logger.log("test", log_level)
+    should "if MarkusLogger is enabled, raise exception if log level is above the FATAL level" do
+      if MarkusConfigurator.markus_config_logging_enabled?
+        log_level = MarkusLogger::FATAL + 1
+        assert_raise ArgumentError do
+          logger = MarkusLogger.instance
+          logger.log("test", log_level)
+        end
       end
     end
 
-    should "raise exception if log level is below the DEBUG level" do
-      log_level = MarkusLogger::DEBUG - 1
-      assert_raise ArgumentError do
-        logger = MarkusLogger.instance
-        logger.log("test", log_level)
+    should "if MarkusLogger is enabled, raise exception if log level is below the DEBUG level" do
+      if MarkusConfigurator.markus_config_logging_enabled?
+        log_level = MarkusLogger::DEBUG - 1
+        assert_raise ArgumentError do
+          logger = MarkusLogger.instance
+          logger.log("test", log_level)
+        end
       end
     end
 
     # Does not work properly on Windows, throws a Permission denied
-    should "rotate infologs when @size bytes of data is reached" do
-      logger = MarkusLogger.instance
-      current_size = File.size(@infolog)
-      chars = ('a'..'z').to_a + ('A'..'Z').to_a
-      msg = (current_size...@size).collect { chars[Kernel.rand(chars.length)] }.join
-      logger.log(msg)
-      logger.log(msg)
-      infolog = @infolog
-      assert File.file?(infolog)
-      assert File.file?(infolog << '.0')
+    should "if MarkusLogger is enabled, rotate infologs when @size bytes of data is reached" do
+      if MarkusConfigurator.markus_config_logging_enabled?
+        logger = MarkusLogger.instance
+        current_size = File.size(@infolog)
+        chars = ('a'..'z').to_a + ('A'..'Z').to_a
+        msg = (current_size...@size).collect { chars[Kernel.rand(chars.length)] }.join
+        logger.log(msg)
+        logger.log(msg)
+        infolog = @infolog
+        assert File.file?(infolog)
+        assert File.file?(infolog << '.0')
+      end
     end
 
     # Does not work properly on Windows, throws a Permission denied
-    should "rotate errorlogs when @size bytes of data is reached" do
-      logger = MarkusLogger.instance
-      current_size = File.size(@errorlog)
-      chars = ('a'..'z').to_a + ('A'..'Z').to_a
-      msg = (current_size...@size).collect { chars[Kernel.rand(chars.length)] }.join
-      logger.log(msg,MarkusLogger::ERROR)
-      logger.log(msg,MarkusLogger::ERROR)
-      errorlog = @errorlog
-      assert File.file?(errorlog)
-      assert File.file?(errorlog << '.0')
+    should "if MarkusLogger is enabled, rotate errorlogs when @size bytes of data is reached" do
+      if MarkusConfigurator.markus_config_logging_enabled?
+        logger = MarkusLogger.instance
+        current_size = File.size(@errorlog)
+        chars = ('a'..'z').to_a + ('A'..'Z').to_a
+        msg = (current_size...@size).collect { chars[Kernel.rand(chars.length)] }.join
+        logger.log(msg,MarkusLogger::ERROR)
+        logger.log(msg,MarkusLogger::ERROR)
+        errorlog = @errorlog
+        assert File.file?(errorlog)
+        assert File.file?(errorlog << '.0')
+      end
+    end
+
+    should "if MarkusLogger is disabled, not write to a file when the log method is called" do
+      if !MarkusConfigurator.markus_config_logging_enabled?
+        logger = MarkusLogger.instance
+        original_size = File.size(@errorlog)
+        chars = ('a'..'z').to_a + ('A'..'Z').to_a
+        msg = (1..12).collect { chars[Kernel.rand(chars.length)] }.join
+        logger.log(msg,MarkusLogger::ERROR)
+        assert File.file?(@errorlog)
+        assert original_size == File.size(@errorlog)
+      end
     end
 
     should "raise exception if logfile is a directory" do
