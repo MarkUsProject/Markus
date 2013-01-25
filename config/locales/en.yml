@@ -659,7 +659,7 @@ en:
       upload:
         select_csv_file: "Select a CSV file of the following form: <code>user_name,last_name,first_name</code>"
         grader_same_user: "If a TA with the same user_name exists, then that TA's information is updated."
-        csv_file:         "CVS File"
+        csv_file:         "CSV File"
         not_added: "The following TAs have not been successfully added:"
         make_sure: "Make sure that:"
         ta_names: "TA names are alphanumeric"
