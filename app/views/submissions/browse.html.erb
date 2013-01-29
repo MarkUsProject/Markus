@@ -3,9 +3,9 @@
 
 <div class="notice">
   <% if Time.zone.now >= @assignment.submission_rule.calculate_collection_time %>
-     <%=h I18n.t("browse_submissions.grading_can_begin") %>
+     <%= I18n.t("browse_submissions.grading_can_begin") %>
   <% else %>
-     <%=h I18n.t("browse_submissions.grading_can_begin_after",
+     <%= I18n.t("browse_submissions.grading_can_begin_after",
        :time => I18n.l(@assignment.submission_rule.calculate_collection_time,
                        :format => :long_date)) %>
   <% end %>
@@ -61,7 +61,7 @@
 
   <% if !flash[:errors].nil? && !flash[:errors].empty? %>
     <div class="error">
-      <h1><%=h I18n.t("browse_submissions.errors") %></h1>
+      <h1><%= I18n.t("browse_submissions.errors") %></h1>
       <ul>
         <% flash[:errors].each do |error_message| %>
 	        <li><%= error_message %></li>

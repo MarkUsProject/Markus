@@ -25,7 +25,7 @@
                          :class => "inline_label" %> <%= f.check_box :_destroy %>
       </span>
     <% else %>
-      <%= link_to_function I18n.t("delete"), "$(this).up('.grade_entry_item').remove()" %>
+      <%= link_to_function I18n.t("delete"), "$(this).up(\".grade_entry_item\").remove()" %>
     <% end %>
   </p>
 <% end %>

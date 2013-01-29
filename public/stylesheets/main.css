@@ -7,6 +7,7 @@ body {
 	padding: 0;
 	font-family: "Lucida Grande", Verdana, Arial, sans-serif;
 	font-size: 0.8em;
+  min-width: 600px;
 }
 
 .clear {
@@ -236,7 +237,6 @@ legend {
 #header {
   padding: 3px;
   border-bottom: 1px solid #000;
-  min-width: 60em;
 }
 
 #user_info {
@@ -1030,10 +1030,14 @@ input#extra_mark_description{
   margin-left: -50px;
 }
 
-#role_switch_dialog {
+#role_switch_dialog, #ie_warning_dialog {
   background-color: #fff;
   padding: 10px;  
   border: 10px solid #333;  
+}
+
+#ie_warning_dialog {
+  width: 400px;
 }
 
 #about_icon, #switch_role_icon {
@@ -1614,6 +1618,7 @@ div.align_text_right {
 
 #flexible_criteria_pane, #annotation_category_pane	{
    padding: 0px 2%;
+   width: 24%;
 }
 
 #rubric_criteria_pane .criteria_fieldset, #flexible_criteria_pane .criteria_fieldset, #annotation_category_pane .annotation_categories_fieldset{

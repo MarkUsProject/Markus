@@ -22,6 +22,7 @@ en:
     username_and_password_not_blank: "Your username and password must not be blank."
     session_expired:     "Your session has expired. Please log in"
     please_log_in:       "Please log in"
+    ie_warning: "It appears that you are using Internet Explorer. Please note that some features of MarkUs may not work as expected in your browser. For a better user-experience, we suggest considering:"
 
     # app/views/layouts/_header.html.erb
     log_out:            "Log out"
@@ -658,7 +659,7 @@ en:
       upload:
         select_csv_file: "Select a CSV file of the following form: <code>user_name,last_name,first_name</code>"
         grader_same_user: "If a TA with the same user_name exists, then that TA's information is updated."
-        csv_file:         "CVS File"
+        csv_file:         "CSV File"
         not_added: "The following TAs have not been successfully added:"
         make_sure: "Make sure that:"
         ta_names: "TA names are alphanumeric"
@@ -764,12 +765,12 @@ en:
         upload_annotations: "Upload Annotations"
         upload_message_csv: "
         <p>
-            Select a CSV file form:<br />
+            Select a CSV file of the following form:<br />
             <code>category_name,annotation_text,annotation_text ... </code><br />
           </p>"
         upload_message_yml: "
         <p>
-            Select a YAML file form:<br />
+            Select a YAML file of the following form:<br />
             <code>category_name: <br />- category_text<br />- category_text</code><br />
 
           </p>"

@@ -45,7 +45,7 @@
   <div id="annotation_category_pane">
     <div class="annotation_categories_fieldset">
      <div class="annotation_categories_list_bar">
-       <span class="annotation_category_title"><b><%=h t("annotations.annotation_category") %></b></span>
+       <span class="annotation_category_title"><b><%= t("annotations.annotation_category") %></b></span>
      </div>
      <span class="clear"></span>
      <ul id="annotation_category_pane_list">
@@ -54,7 +54,7 @@
             <%= render :partial => 'annotation_category', :locals => {:annotation_category => annotation_category} %>
           <% end %>
         <% else %>
-          <div id="no_annotation_categories_info" class="information"><%=h t("annotations.no_annotation_categories") %></div>
+          <div id="no_annotation_categories_info" class="information"><%= t("annotations.no_annotation_categories") %></div>
         <% end %>
       </ul>  <!-- Rubric Criteria Pane -->
   </div>
@@ -64,7 +64,7 @@
       <div id="annotation_list_holder">
        <div id="annotations_help">
         <h1><%= t(:help) %></h1>
-	<p><%=h t("annotations.help_message") %></p>
+	<p><%= t("annotations.help_message") %></p>
       </div>
     </div>
 
@@ -75,13 +75,13 @@
 
 
       <div id="upload_dialog" >
-        <h1><%=h t("annotations.upload.upload_annotations") %></h1>
-        <%= t("annotations.upload.upload_message_csv") %>
+        <h1><%= t("annotations.upload.upload_annotations") %></h1>
+        <%= t("annotations.upload.upload_message_csv").html_safe %>
           <%= form_tag({:action => 'csv_upload', :id => @assignment.id}, {:multipart => true}) do %>
           <p><%= file_field_tag :annotation_category_list_csv, :size => 0 %>
           </p>
           <p>
-            <%=h I18n.t("encoding") %>
+            <%= I18n.t("encoding") %>
             <%= select_tag(:encoding, options_for_select(@encodings)) %>
             <br />
             <br />
@@ -89,12 +89,12 @@
             <input type="reset" value="<%= t(:cancel) %>" onclick="modalUpload.close();" />
           </p>
         <% end %>
-        <%= t("annotations.upload.upload_message_yml") %>
+        <%= t("annotations.upload.upload_message_yml").html_safe %>
         <%= form_tag({:action => 'yml_upload', :id => @assignment.id}, {:multipart => true}) do %>
           <p><%= file_field_tag :annotation_category_list_yml, :size => 0 %>
           </p>
           <p>
-            <%=h I18n.t("encoding") %>
+            <%= I18n.t("encoding") %>
             <%= select_tag(:encoding, options_for_select(@encodings)) %>
             <br />
 	        <br />
@@ -105,7 +105,7 @@
       </div>
 
     <div id="download_dialog">
-    <h1><%=h t("annotations.download.download_annotations") %></h1>
+    <h1><%= t("annotations.download.download_annotations") %></h1>
       <ul>
         <li><%= link_to t("annotations.download.download_csv"), {:action => 'download', :id => @assignment.id, :format => 'csv'}, :onclick => "modalDownload.close();" %></li>
         <li><%= link_to t("annotations.download.download_yml"), {:action => 'download', :id => @assignment.id, :format => 'yml'}, :onclick => "modalDownload.close();" %></li>
