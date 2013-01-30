@@ -22,6 +22,7 @@ en:
     username_and_password_not_blank: "Your username and password must not be blank."
     session_expired:     "Your session has expired. Please log in"
     please_log_in:       "Please log in"
+    ie_warning: "It appears that you are using Internet Explorer. Please note that some features of MarkUs may not work as expected in your browser. For a better user-experience, we suggest considering:"
 
     # app/views/layouts/_header.html.erb
     log_out:            "Log out"
@@ -83,9 +84,9 @@ en:
     download_csv_grade_report:  "Download CSV Grades Report"
     days_and_hours_left:      "(%{days} day(s) and %{hours} hour(s) left)"
     days_left:          "(%{days} day(s) left)"
-    short_identifier:   "Short Identifier"
+    short_identifier:   "Short Identifier<span class='required_field'>*</span>"
     description:        "Description"
-    shortened_date:     "Date"
+    shortened_date:     "Date<span class='required_field'>*</span>"
     due_date:           "Due Date"
     iso_date_format_example:    "Format:  YYYY-MM-DD - Example:  2009-01-13"
     iso_due_date_format_example:    "Format:  YYYY-MM-DD HH:MM - Example:  2009-01-13 17:44"
@@ -386,12 +387,13 @@ en:
       invalid_identifier: "has already been taken"
       invalid_grade: "can only be greater than or equal to 0"
       specify_columns: "Specify column names and totals:"
-      column: "Column"
+      column: "Column<span class='required_field'>*</span>"
       column_name: "Name"
       column_out_of: "Out Of"
       add_column: "Add a column"
       remove_column: "Remove:"
       properties: "Marks Spreadsheet Properties"
+      required_fields: "Required Fields <span class='required_field'>*</span>"
       create:
         success: "Successfully created new marks spreadsheet"
         title: "Add Marks Spreadsheet"
@@ -657,7 +659,7 @@ en:
       upload:
         select_csv_file: "Select a CSV file of the following form: <code>user_name,last_name,first_name</code>"
         grader_same_user: "If a TA with the same user_name exists, then that TA's information is updated."
-        csv_file:         "CVS File"
+        csv_file:         "CSV File"
         not_added: "The following TAs have not been successfully added:"
         make_sure: "Make sure that:"
         ta_names: "TA names are alphanumeric"
@@ -763,12 +765,12 @@ en:
         upload_annotations: "Upload Annotations"
         upload_message_csv: "
         <p>
-            Select a CSV file form:<br />
+            Select a CSV file of the following form:<br />
             <code>category_name,annotation_text,annotation_text ... </code><br />
           </p>"
         upload_message_yml: "
         <p>
-            Select a YAML file form:<br />
+            Select a YAML file of the following form:<br />
             <code>category_name: <br />- category_text<br />- category_text</code><br />
 
           </p>"

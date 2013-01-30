@@ -22,6 +22,7 @@ fr:
     username_and_password_not_blank: "Veuillez entrer vos nom d'utilisateur et mot de passe."
     session_expired:     "Votre session a expiré. Merci de vous reconnecter."
     please_log_in:       "Merci de vous connecter."
+    ie_warning: "Il semble que vous utilisez Internet Explorer. Veuillez noter que certaines fonctionnalités de MarkUs ne peuvent pas fonctionner comme prévu dans votre navigateur. Pour une meilleure expérience, nous vous suggérons de considerer: "
 
     # app/views/layouts/_header.html.erb
     log_out:            "Déconnexion"
@@ -33,8 +34,8 @@ fr:
     about_markus:       "À propos de MarkUs"
     version:            "Version"
     using_markus_version:       "Vous utilisez la version : "
-    using_ruby_version: "Version de ruby: "
-    using_rails_version: "Version de rails: "
+    using_ruby_version: "Version de ruby : "
+    using_rails_version: "Version de rails : "
     license:            "Licence"
     markus_license_OSI: "MarkUs est rendu disponible conformément à la <a href=\"http://www.opensource.org/licenses/mit-license.html\">licence MIT</a> approuvée par l'<a href=\"http://www.opensource.org\">OSI</a>."
     markus_license_permission:  "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:"
@@ -86,9 +87,9 @@ fr:
     download_csv_grade_report:  "Liste des étudiants et des devoirs au format CSV"
     days_and_hours_left:      "(%{days} jour(s) et %{hours} heure(s))"
     days_left:          "(%{days} jour(s) restant(s))"
-    short_identifier:   "Identifiant du projet"
+    short_identifier:   "Identifiant du projet<span class='required_field'>*</span>"
     description:        "Description "
-    shortened_date:     "Date"
+    shortened_date:     "Date<span class='required_field'>*</span>"
     due_date:           "Date de retour "
     iso_date_format_example:    "Format : AAAA-MM-JJ (Exemple : 2009-01-13)"
     iso_due_date_format_example:    "Format : AAAA-MM-JJ HH:MM (Exemple : 2009-01-13 17:44)"
@@ -115,6 +116,7 @@ fr:
       results_loss_warning: "Attention : cette action effacera vos annotations et évaluations.\n\n!Êtes-vous sûr de vouloir continuer ?"
     assignment:
         assignment: "Projet %{short_identifier}"
+        required_fields: "Champs obligatoires <span class='required_field'>*</span>"
         name:           "Nom du projet"
         update_success: "Projet mis à jour"
         create_success:        "Projet créé"
@@ -385,12 +387,13 @@ fr:
       invalid_identifier: "n'est pas disponible" #Pour satisfaire les tests unitaires
       invalid_grade: "peut seulement être supérieur ou égal à 0"
       specify_columns: "Référence des évaluations et notes maximales : "
-      column: "Colonne"
+      column: "Colonne<span class='required_field'>*</span>"
       column_name: "Nom"
       column_out_of: "sur"
       add_column: "Ajouter une colonne"
       remove_column: "Supprimer : "
       properties: "Propriétés de la feuille de note"
+      required_fields: "Champs obligatoires <span class='required_field'>*</span>"
       create:
         success: "Feuille de notes créée"
         title: "Créer une nouvelle feuille de notes"
@@ -750,12 +753,12 @@ fr:
         upload_annotations: "Envoi d'annotations"
         upload_message_csv: "
         <p>
-            Sélectionner un fichier CSV à envoyer : <br />
+            Sélectionner un fichier CSV formaté comme suit : <br />
             <code>category_name,annotation_text,annotation_text … </code><br />
           </p>"
         upload_message_yml: "
         <p>
-            Sélectionner un fichier YAML à envoyer :<br />
+            Sélectionner un fichier YAML formaté comme suit :<br />
             <code>category_name: <br />- category_text<br />- category_text</code><br />
 
           </p>"

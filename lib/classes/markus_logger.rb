@@ -94,19 +94,21 @@ class MarkusLogger
   #=== Exceptions
   # When the log level is not known then an exception of type ArgumentError is raised
   def log(msg, level=INFO)
-    case level
-    when INFO
-      @__logger__.info(msg)
-    when DEBUG
-      @__logger__.debug(msg)
-    when WARN
-      @__logger__.warn(msg)
-    when ERROR
-      @__errorLogger__.error(msg)
-    when FATAL
-      @__errorLogger__.fatal(msg)
-    else
-      raise ArgumentError,('Logger: Unknown loglevel')
+    if MarkusConfigurator.markus_config_logging_enabled?
+      case level
+      when INFO
+        @__logger__.info(msg)
+      when DEBUG
+        @__logger__.debug(msg)
+      when WARN
+        @__logger__.warn(msg)
+      when ERROR
+        @__errorLogger__.error(msg)
+      when FATAL
+        @__errorLogger__.fatal(msg)
+      else
+        raise ArgumentError,('Logger: Unknown loglevel')
+      end
     end
   end
 
