@@ -1100,10 +1100,13 @@ en:
     assignment_link:           "%{short_id}: %{description}"
 
     #app/views/main/_assignment_info_summary.erb
-
-    assignment_average:        "Assignment Average: %{results_average}%"
+    percentage:                "%{percentage}%"
+    assignment_average:        "Assignment Average:"
+    assignment_median:         "Assignment Median:"
     assignments_submitted:     "Assignments Submitted:"
     assignments_graded:        "Assignments Graded:"
+    assignments_failed:        "Number of fails:"
+    assignments_zeros:         "Number of zeros:"
     refresh_graph:             "Refresh the graph"
 
     #app/views/main/_grader_summary.erb

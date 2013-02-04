@@ -139,7 +139,7 @@ class ResultsController < ApplicationController
     end
     @result.released_to_students = released_to_students
     @result.save
-    @result.submission.assignment.set_results_average
+    @result.submission.assignment.set_results_statistics
     m_logger = MarkusLogger.instance
     assignment = @result.submission.assignment
     if params[:value] == 'true'

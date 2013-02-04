@@ -512,7 +512,7 @@ class SubmissionsController < ApplicationController
 
 
     if !groupings.empty?
-      assignment.set_results_average
+      assignment.set_results_statistics
     end
 
     if changed > 0

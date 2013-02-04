@@ -77,6 +77,9 @@ ActiveRecord::Schema.define(:version => 20120121222559) do
     t.string   "repository_folder",                                      :null => false
     t.boolean  "invalid_override"
     t.float    "results_average"
+    t.float    "results_median"
+    t.integer  "results_fails"
+    t.integer  "results_zeros"
     t.string   "marking_scheme_type",              :default => "rubric"
     t.boolean  "allow_web_submits",                :default => true
     t.boolean  "section_groups_only"

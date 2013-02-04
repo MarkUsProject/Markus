@@ -307,7 +307,7 @@ class AssignmentTest < ActiveSupport::TestCase
         @result.marking_state = Result::MARKING_STATES[:complete]
         @result.released_to_students = true
         @result.save
-        assert @assignment.set_results_average
+        assert @assignment.set_results_statistics
         assert_equal(100, @assignment.results_average)
       end
 
