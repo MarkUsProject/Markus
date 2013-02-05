@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120121222559) do
+ActiveRecord::Schema.define(:version => 20130205192032) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -77,9 +76,6 @@ ActiveRecord::Schema.define(:version => 20120121222559) do
     t.string   "repository_folder",                                      :null => false
     t.boolean  "invalid_override"
     t.float    "results_average"
-    t.float    "results_median"
-    t.integer  "results_fails"
-    t.integer  "results_zeros"
     t.string   "marking_scheme_type",              :default => "rubric"
     t.boolean  "allow_web_submits",                :default => true
     t.boolean  "section_groups_only"
@@ -95,6 +91,9 @@ ActiveRecord::Schema.define(:version => 20120121222559) do
     t.boolean  "allow_remarks",                    :default => true,     :null => false
     t.datetime "remark_due_date"
     t.text     "remark_message"
+    t.float    "results_median"
+    t.integer  "results_fails"
+    t.integer  "results_zeros"
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true
