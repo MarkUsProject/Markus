@@ -47,7 +47,7 @@
   	<%= f.label :display_settings, I18n.t("automated_tests.script_option.display_settings") %>
   	
     <%= I18n.t("automated_tests.script_option.display_description") %>
-    <%= f.select :display_description, options_for_select(display_options, f.object.display_description), %>
+    <%= f.select :display_description, options_for_select(display_options, f.object.display_description) %>
 
     <%= I18n.t("automated_tests.script_option.display_run_status") %>
     <%= f.select :display_run_status, options_for_select(display_options, f.object.display_run_status) %>
