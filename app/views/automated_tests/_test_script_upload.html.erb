@@ -10,7 +10,7 @@
 
   <%= f.file_field :script_name, :size=>"30" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-  <% if f.object.id %>
+  <% if f.object.object_id %>
     <%= I18n.t("automated_tests.script_option.description")%>
     <% if f.object.description %>
       <%= f.text_field :description, :value => f.object.description %>
