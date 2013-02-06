@@ -258,7 +258,7 @@ class Assignment < ActiveRecord::Base
     return total
   end
 
-  # calculates the average of released results for this assignment
+  # calculates summary statistics of released results for this assignment
   def set_results_statistics
     groupings = Grouping.find_all_by_assignment_id(self.id)
     results = Array.new
