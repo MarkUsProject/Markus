@@ -753,12 +753,12 @@ fr:
         upload_annotations: "Envoi d'annotations"
         upload_message_csv: "
         <p>
-            Sélectionner un fichier CSV à envoyer : <br />
+            Sélectionner un fichier CSV formaté comme suit : <br />
             <code>category_name,annotation_text,annotation_text … </code><br />
           </p>"
         upload_message_yml: "
         <p>
-            Sélectionner un fichier YAML à envoyer :<br />
+            Sélectionner un fichier YAML formaté comme suit :<br />
             <code>category_name: <br />- category_text<br />- category_text</code><br />
 
           </p>"
