@@ -4,7 +4,7 @@ require 'mocha'
 
   class FlexibleCriteriaControllerTest < AuthenticatedControllerTest
 
-    fixtures :all
+    fixtures :users, :assignments, :flexible_criteria, :marks, :results, :submission_rules
 
     FLEXIBLE_CRITERIA_CSV_STRING = "criterion1,10.0,\"description1, for criterion 1\"\ncriterion2,10.0,\"description2, \"\"with quotes\"\"\"\ncriterion3,1.6,description3!\n"
     FLEXIBLE_CRITERIA_UPLOAD_CSV_STRING = "criterion3,10.0,\"description3, for criterion 3\"\ncriterion4,10.0,\"description4, \"\"with quotes\"\"\"\n"
