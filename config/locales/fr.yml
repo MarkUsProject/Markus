@@ -1073,8 +1073,8 @@ fr:
     assignments_submitted:     "Projets envoyés :"
     assignments_graded:        "Projets corrigés :"
     refresh_graph:             "Actualiser le graphique"
-    outstanding_remark_request: "%{request_count} outstanding remark request"
-    outstanding_remark_requests: "%{request_count} outstanding remark requests"
+    outstanding_remark_request: "%{request_count} demande de remarque restante."
+    outstanding_remark_requests: "%{request_count} demandes de remarque restantes."
 
     #app/views/main/_grader_summary.erb
     grader_distribution:       "Correcteurs assignés :"
