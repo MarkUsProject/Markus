@@ -1105,6 +1105,8 @@ en:
     assignments_submitted:     "Assignments Submitted:"
     assignments_graded:        "Assignments Graded:"
     refresh_graph:             "Refresh the graph"
+    outstanding_remark_request: "%{request_count} outstanding remark request"
+    outstanding_remark_requests: "%{request_count} outstanding remark requests"
 
     #app/views/main/_grader_summary.erb
     grader_distribution:       "Grader Distribution:"

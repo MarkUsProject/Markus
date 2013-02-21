@@ -5,6 +5,12 @@
   </span>
 </p>
 
+<% if assignment.outstanding_remark_request_count != nil && assignment.outstanding_remark_request_count > 0%>
+<p><%= link_to I18n.t((assignment.outstanding_remark_request_count == 1)? :outstanding_remark_request : :outstanding_remark_requests, 
+  :request_count => assignment.outstanding_remark_request_count), 
+  browse_assignment_submissions_path(assignment, :sort_by => 'marking_state') %></p>
+<% end %>
+
 <table>
   <tr>
     <td><%= I18n.t(:assignment_average, :results_average => h(number_with_precision(assignment.results_average, :precision => 1) || '0')) %></td>
