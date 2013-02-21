@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130205192032) do
+ActiveRecord::Schema.define(:version => 20130219230002) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -95,6 +95,7 @@ ActiveRecord::Schema.define(:version => 20130205192032) do
     t.float    "results_median"
     t.integer  "results_fails"
     t.integer  "results_zeros"
+    t.integer  "outstanding_remark_request_count"
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true

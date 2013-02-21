@@ -312,6 +312,20 @@ class Assignment < ActiveRecord::Base
     self.save
   end
 
+  def update_remark_request_count
+    outstanding_count = 0
+    groupings.each do |grouping|
+      submission = grouping.current_submission_used
+      if !submission.nil? && submission.has_remark?
+        if submission.remark_result.marking_state == Result::MARKING_STATES[:partial]
+          outstanding_count += 1
+        end
+      end
+    end
+    self.outstanding_remark_request_count = outstanding_count
+    self.save
+  end
+
   def total_criteria_weight
     factor = 10.0 ** 2
     return (rubric_criteria.sum('weight') * factor).floor / factor

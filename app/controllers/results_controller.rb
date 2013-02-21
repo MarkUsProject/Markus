@@ -15,6 +15,7 @@ class ResultsController < ApplicationController
                         :update_marking_state, :note_message, :update_overall_remark_comment]
   before_filter      :authorize_for_user, :only => [:codeviewer, :download]
   before_filter      :authorize_for_student, :only => [:view_marks, :update_remark_request, :cancel_remark_request]
+  after_filter       :update_remark_request_count, :only => [:update_remark_request, :cancel_remark_request, :set_released_to_students]
 
   def note_message
     @result = Result.find(params[:id])
@@ -479,5 +480,9 @@ class ResultsController < ApplicationController
       return !sub_file.submission.grouping.accepted_students.find(current_user).nil?
     end
     return false
+  end
+  
+  def update_remark_request_count
+    Assignment.find(params[:assignment_id]).update_remark_request_count
   end
 end
