@@ -4,6 +4,17 @@ module Api
   # Allows for adding, modifying and showing users into MarkUs.
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class UsersController < MainApiController
+    # Requires nothing
+    def index
+      users = get_collection(User)
+
+      respond_to do |format|
+        format.any{render :text => get_plain_text_for_users(users)}
+        format.json{render :json => users.to_json(:only => [ :id, :user_name, :type, :first_name, :last_name ])}
+        format.xml{render :xml => users.to_xml(:only => [ :id, :user_name, :type, :first_name, :last_name ], :root => 'users', :skip_types => 'true')}
+      end
+    end
+
     # Requires user_name, user_type,  last_name, first_name, [section_name], [grace_credits]
     def create
       if has_missing_params?(params)
@@ -92,17 +103,6 @@ module Api
       return
     end
 
-    # Requires nothing
-    def index
-      users = User.all
-
-      respond_to do |format|
-        format.any{render :text => get_plain_text_for_users(users)}
-        format.json{render :json => users.to_json(:only => [ :user_name, :type, :first_name, :last_name ])}
-        format.xml{render :xml => users.to_xml(:only => [ :user_name, :type, :first_name, :last_name ])}
-      end
-    end
-
     # Requires user_name
     def show
       if params[:user_name].blank?
@@ -128,21 +128,21 @@ module Api
     end
 
     private
-    
+
     # Get the plain text representation for users
     def get_plain_text_for_users(users)
       data=""
-      
-      users.each do |user| 
+
+      users.each do |user|
         data += t('user.user_name') + ": " + user.user_name + "\n" +
                               t('user.user_type') + ": " + user.type + "\n" +
                               t('user.first_name') + ": " + user.first_name + "\n" +
-                              t('user.last_name') + ": " + user.last_name + "\n\n" 
+                              t('user.last_name') + ": " + user.last_name + "\n\n"
       end
-      
+
       return data
     end
-    
+
     # Process the parameters passed
     def process_attributes(params, attributes)
         # allow the user to provide the section name instead of an id which is meaningless

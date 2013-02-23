@@ -94,5 +94,31 @@ module Api
       end
     end
 
+    #=== Description
+    # Helper method for filtering, limit, offset
+    def get_collection(collection_class)
+      # We'll append .where, .limit, and .offset to the collection
+      collection = collection_class
+
+      filters = {}
+      # params[:filter] will match the following format:
+      # param:argument,param:argument,param:argument...
+      if !params[:filter].blank?
+        valid_filters = /(\w+:\w+,{0,1})+/.match(params[:filter])
+        if !valid_filters.nil?
+          valid_filters.to_s.split(',').each do |filter|
+            key, value = filter.split(':')
+            key = key.to_sym
+            collection = collection.where("#{key} = ?", value)
+          end
+        end
+      end
+
+      # Apply limits and offsets, or get all if they aren't set
+      collection = collection.limit(params[:limit].to_i) if !params[:limit].blank?
+      collection = collection.offset(params[:offset].to_i) if !params[:offset].blank?
+      collection = collection.all if filters.empty?
+    end
+
   end
 end # end Api module
