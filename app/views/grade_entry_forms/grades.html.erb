@@ -92,7 +92,7 @@
         <% end %>
       </div>
       <div class="ap_filters" id="ap_filters_1">
-        <%= render :partial => 'grades_table_filters', :locals => {:filter => @filter, :sort_by => @sort_by,
+        <%= render :partial => 'grades_table_filters', :locals => {:filter => @filter, :sort_by => @sort_by, :desc => @desc,
                                                                    :grade_entry_form => @grade_entry_form, :filters => @filters,
                                                                    :per_page => @per_page, :per_pages => @per_pages,
                                                                    :alpha_pagination_options => @alpha_pagination_options,
@@ -107,6 +107,7 @@
                                                                                          :assignment => @grade_entry_form,
                                                                                          :filter => @filter,
                                                                                          :sort_by => @sort_by,
+                                                                                         :desc => @desc,
                                                                                          :action => 'g_table_paginate',
                                                                                          :table_name => 'grades',
                                                                                          :alpha_category => @alpha_category,
@@ -123,15 +124,28 @@
       <%= render :partial => 'ajax_paginate/selects', :locals => {:page_items => @students.size, :total_items => @students_total} %>
     </div>
     <table>
-      <thead>
-        <%= render :partial => 'grades_table_column_names' %>
+      <thead id="grades_table_head">
+        <%= render :partial => 'grades_table_column_names',:locals => {:per_page => @per_page,
+                                                                       :filter => @filter,
+                                                                       :sort_by => @sort_by,
+                                                                       :desc => @desc,
+                                                                       :controller => 'grade_entry_forms',
+                                                                       :action => 'grades'
+                                                                       }%>
       </thead>
       <tbody>
         <tr><td id="thinking_table_row" colspan="<%= 6 + @grade_entry_form.grade_entry_items.length %>"><%= render :partial => 'ajax_paginate/thinking' %></td></tr>
       </tbody>
 			<%= render :partial => 'grades_table' %>
-      <tfoot>
-        <%= render :partial => 'grades_table_column_names' %>
+      <tfoot id="grades_table_footer">
+        <%= render :partial => 'grades_table_column_names', :locals => {:per_page => @per_page,
+                                                                         :filter => @filter,
+                                                                         :sort_by => @sort_by,
+                                                                         :desc => @desc,
+                                                                         :controller => 'grade_entry_forms',
+                                                                         :action => 'grades'
+                                                                       }%>
+                                                                           
       </tfoot>
     </table>
 
@@ -144,6 +158,7 @@
                                                                                          :assignment => @grade_entry_form,
                                                                                          :filter => @filter,
                                                                                          :sort_by => @sort_by,
+                                                                                         :desc => @desc,
                                                                                          :action => 'g_table_paginate',
                                                                                          :table_name => 'grades',
                                                                                          :alpha_category => @alpha_category,
@@ -164,7 +179,7 @@
       </div>
 
       <div class="ap_filters" id="ap_filters_2">
-        <%= render :partial => 'grades_table_filters', :locals => {:filter => @filter, :sort_by => @sort_by,
+        <%= render :partial => 'grades_table_filters', :locals => {:filter => @filter, :sort_by => @sort_by, :desc => @desc,
                                                                    :grade_entry_form => @grade_entry_form, :filters => @filters,
                                                                    :per_page => @per_page, :per_pages => @per_pages,
                                                                    :alpha_pagination_options => @alpha_pagination_options,

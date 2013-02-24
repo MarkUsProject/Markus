@@ -1,6 +1,6 @@
 require 'will_paginate'
 
-=begin How to Use the Pagination Helper
+=begin How to Use the Grades Entry Form Pagination Helper
 hash requires:
   :model              * the type of data that needs pagination
   :per_pages          * an array of integers, each integer representing
@@ -16,7 +16,7 @@ hash requires:
                         or AJAX request
       => lambda       * the lambda expression that handles the sorting
 =end
-module PaginationHelper
+module GradeEntryFormsPaginationHelper
   # For the hash that's passed to handle_ap_event, these are the required
   # fields.
   AP_REQUIRED_KEYS = [:model, :filters]
@@ -40,7 +40,7 @@ module PaginationHelper
     if(!filters.include?(filter))
       raise "Could not find filter #{filter}"
     end
-    items = get_filtered_items(hash, filter, params[:sort_by], object_hash, desc)
+    items = get_filtered_items(hash, filter, params[:sort_by], desc)
     if params[:per_page].blank?
       params[:per_page] = AP_DEFAULT_PER_PAGE
     end
@@ -60,26 +60,15 @@ module PaginationHelper
     return result
   end
 
-  def get_filtered_items(hash, filter, sort_by, object_hash, desc)
-    to_include = []
-    #eager load only the tables needed for the type of sort, eager load the rest
-    #of the tables after the groupings have been paginated
-    case sort_by
-      when "group_name" then to_include = [:group]
-      when "repo_name" then to_include = [:group]
-      when "section" then to_include = [:group]
-      when "revision_timestamp" then to_include = [:current_submission_used]
-      when "marking_state" then to_include = [{:current_submission_used => :result}]
-      when "total_mark" then to_include = [{:current_submission_used => :result}]
-      when "grace_credits_used" then to_include = [:grace_period_deductions]
-    end
-    items = hash[:filters][filter][:proc].call(object_hash, to_include)
-    if !sort_by.blank?
-      items = items.sort{|a,b| hash[:sorts][sort_by].call(a,b)}
-    end
+  def get_filtered_items(hash, filter, sort_by, desc)
     if !desc.blank?
-      items.reverse!
+      order = "DESC"
+    else
+      order = "ASC"
     end
+
+    items = hash[:filters][filter][:proc].call(sort_by, order)
+
     return items
   end
 
