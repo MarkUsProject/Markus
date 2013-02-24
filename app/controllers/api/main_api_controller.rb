@@ -108,8 +108,10 @@ module Api
         if !valid_filters.nil?
           valid_filters.to_s.split(',').each do |filter|
             key, value = filter.split(':')
-            key = key.to_sym
-            collection = collection.where("#{key} = ?", value)
+            if collection_class.column_names.include?(key)
+              key = key.to_sym
+              collection = collection.where("#{key} = ?", value)
+            end
           end
         end
       end

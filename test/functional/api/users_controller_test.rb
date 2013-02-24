@@ -77,7 +77,74 @@ class Api::UsersControllerTest < ActionController::TestCase
       base_encoded_md5 = @admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
-      @request.env['HTTP_ACCEPT'] = 'text/plain'
+      @request.env['HTTP_ACCEPT'] = 'application/xml'
+    end
+
+    context 'testing index function' do
+      # Create three test accounts
+      setup do
+        @new_user1 = Student.create(:user_name => 'ApiTestStudent1',
+          :last_name => 'ApiTesters', :first_name => 'ApiTesting1')
+        @new_user2 = Student.create(:user_name => "ApiTestStudent2",
+          :last_name => 'ApiTesters', :first_name => 'ApiTesting2')
+        @new_user3 = Student.create(:user_name => 'ApiTestStudent3',
+          :last_name => 'ApiTesters3', :first_name => 'ApiTesting3')
+      end
+
+      should 'get all users in the collection if no options are used' do
+        get 'index'
+        assert_response :success
+        assert_select "user", User.all.size
+      end
+
+      should 'get only first 2 users if a limit of 2 is provided' do
+        get 'index', :limit => '2'
+        assert_response :success
+        assert_select 'user', 2
+        assert @response.body.include?(@admin.user_name)
+        assert @response.body.include?(@new_user1.user_name)
+      end
+
+      should 'get the 3 latest users if a limit of 3 and offset of 1 is used' do
+        get 'index', :limit => '3', :offset => '1'
+        assert_response :success
+        assert_select 'user', 3
+        assert !@response.body.include?(@admin.user_name)
+        assert @response.body.include?(@new_user1.user_name)
+        assert @response.body.include?(@new_user2.user_name)
+        assert @response.body.include?(@new_user3.user_name)
+      end
+
+      should 'get only matching users if a valid filter is used' do
+        get 'index', :filter => 'last_name:ApiTesters'
+        assert_response :success
+        assert_select 'user', 2
+        assert @response.body.include?(@new_user1.user_name)
+        assert @response.body.include?(@new_user2.user_name)
+      end
+
+      should 'get only matching users if multiple valid filters are used' do
+        get 'index', :filter => 'last_name:ApiTesters,first_name:ApiTesting1'
+        assert_response :success
+        assert_select 'user', 1
+        assert @response.body.include?(@new_user1.user_name)
+      end
+
+      should 'ignore invalid filters' do
+        get 'index', :filter => 'type:student,badfilter:invalid'
+        assert_response :success
+        assert_select 'user', 3
+        assert @response.body.include?(@new_user1.user_name)
+        assert @response.body.include?(@new_user2.user_name)
+        assert @response.body.include?(@new_user3.user_name)
+      end
+
+      should 'apply limit/offset after the filter' do
+        get 'index', :filter => 'last_name:ApiTesters', :limit => '1', :offset => '1'
+        assert_response :success
+        assert_select 'user', 1
+        assert @response.body.include?(@new_user2.user_name)
+      end
     end
 
     # Testing GET
