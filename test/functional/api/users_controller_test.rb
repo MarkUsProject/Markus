@@ -80,6 +80,7 @@ class Api::UsersControllerTest < ActionController::TestCase
       @request.env['HTTP_ACCEPT'] = 'application/xml'
     end
 
+    # Testing GET api/users
     context 'testing index function' do
       # Create three test accounts
       setup do
@@ -179,17 +180,44 @@ class Api::UsersControllerTest < ActionController::TestCase
       end
     end
 
-    # Testing GET
-    should "testing the show function with a user that exists" do
-      # Create dummy user to display
-      @user = Student.make
-      # fire off request, after setup has been called again, reseting API key.
-      get "show", :id => 1, :user_name => @user.user_name
-      assert_response :success
-      assert @response.body.include?(@user.user_name)
-      assert @response.body.include?(@user.type)
-      assert @response.body.include?(@user.first_name)
-      assert @response.body.include?(@user.last_name)
+    # Testing GET api/users/:id
+    context 'testing show function' do
+      setup do
+        @user = Student.make
+      end
+
+      should 'return only that user and all default attributes if the id is valid' do
+        get 'show', :id => @user.id.to_s
+        assert_response :success
+        assert @response.body.include?(@user.user_name)
+        elements = ['first-name', 'last-name', 'user-name', 'notes-count',
+          'grace-credits', 'id', 'type']
+        elements.each do |element|
+          assert_select element, 1
+        end
+      end
+
+      should 'return only that user and the specified fields if provided' do
+        get 'show', :id => @user.id.to_s, :fields => 'first_name,user_name'
+        assert_response :success
+        assert @response.body.include?(@user.user_name)
+        assert_select 'user-name', 1
+        assert_select 'first-name', 1
+        elements = ['last-name', 'notes-count', 'grace-credits', 'id', 'type']
+        elements.each do |element|
+          assert_select element, 0
+        end
+      end
+
+      should 'return a 404 if a user with a numeric id doesn\'t exist' do
+        get 'show', :id => '9999'
+        assert_response 404
+      end
+
+      should 'return a 422 if the provided id is not strictly numeric' do
+        get 'show', :id => '9a'
+        assert_response 422
+      end
     end
 
     # START: Checking valid response types
@@ -240,16 +268,6 @@ class Api::UsersControllerTest < ActionController::TestCase
       end
     end
     # FINISH: Checking valid response types
-
-    context "testing the show function with a user that does not exist" do
-      setup do
-        get "show", :id => 1, :user_name => "garbage fake user "
-      end
-
-      should "fail to find the user, 'garbage fake name'" do
-        assert_response 404
-      end
-    end
 
     # Testing POST
     context "testing the create function with valid attributes" do

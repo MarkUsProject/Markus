@@ -59,6 +59,32 @@ module Api
       render 'shared/http_status', :locals => { :code => "200", :message => HttpStatusHelper::ERROR_CODE["message"]["200"] }, :status => 200
     end
 
+    # Requires user_name
+    def show
+      # Check if it's a numeric string
+      if !!(params[:id] =~ /^[0-9]+$/)
+        user = User.find_by_id(params[:id])
+        if user.nil?
+          # No user with that id
+          render 'shared/http_status', :locals => { :code => "404", :message => "No user exists with that id" }, :status => 404
+          return
+        else
+          default_fields = [:id, :user_name, :type, :first_name, :last_name, :grace_credits, :notes_count];
+          fields = fields_to_render(default_fields)
+
+          respond_to do |format|
+            format.any{render :text => get_plain_text_for_users(user)}
+            format.json{render :json => user.to_json(:only => fields)}
+            format.xml{render :xml => user.to_xml(:only => fields, :root => 'users', :skip_types => 'true')}
+          end
+        end
+      else
+        # Invalid params if it wasn't a numeric string
+        render 'shared/http_status', :locals => { :code => "422", :message => "Invalid id" }, :status => 422
+        return
+      end
+    end
+
     # Requires nothing, does nothing
     def destroy
       # Admins should not be deleting users at all so pretend this URL does not exist
@@ -103,30 +129,6 @@ module Api
       # Otherwise everything went alright.
       render 'shared/http_status', :locals => { :code => "200", :message => HttpStatusHelper::ERROR_CODE["message"]["200"] }, :status => 200
       return
-    end
-
-    # Requires user_name
-    def show
-      if params[:user_name].blank?
-        # incomplete/invalid HTTP params
-        render 'shared/http_status', :locals => { :code => "422", :message => "Missing user name" }, :status => 422
-        return
-      end
-
-      # check if there's a valid user.
-      user = User.find_by_user_name(params[:user_name])
-      if user.nil?
-        # no such user
-        render 'shared/http_status', :locals => { :code => "404", :message => "User was not found" }, :status => 404
-        return
-      end
-
-      # Everything went fine, send the response according to the user's format.
-      respond_to do |format|
-        format.any{render :text => get_plain_text_for_users([user])}
-        format.json{render :json => user.to_json(:only => [ :user_name, :type, :first_name, :last_name ])}
-        format.xml{render :xml => user.to_xml(:only => [ :user_name, :type, :first_name, :last_name ])}
-      end
     end
 
     private
