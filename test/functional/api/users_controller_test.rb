@@ -145,6 +145,38 @@ class Api::UsersControllerTest < ActionController::TestCase
         assert_select 'user', 1
         assert @response.body.include?(@new_user2.user_name)
       end
+
+      should 'display all default fields if the fields parameter is not used' do
+        get 'index'
+        assert_response :success
+        elements = ['first-name', 'last-name', 'user-name', 'notes-count',
+          'grace-credits', 'id', 'type']
+        elements.each do |element|
+          assert_select element, {:minimum => 1}
+        end
+      end
+
+      should 'only display specified fields if the fields parameter is used' do
+        get 'index', :fields => 'first_name,last_name'
+        assert_response :success
+        assert_select 'first-name', {:minimum => 1}
+        assert_select 'last-name', {:minimum => 1}
+        elements = ['user-name', 'notes-count', 'grace-credits', 'id', 'type']
+        elements.each do |element|
+          assert_select element, 0
+        end
+      end
+
+      should 'ignore invalid fields provided in the fields parameter' do
+        get 'index', :fields => 'first_name,invalid_field_name'
+        assert_response :success
+        assert_select 'first-name', {:minimum => 1}
+        elements = ['last-name', 'user-name', 'notes-count', 'grace-credits',
+         'id', 'type']
+        elements.each do |element|
+          assert_select element, 0
+        end
+      end
     end
 
     # Testing GET

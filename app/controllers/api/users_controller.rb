@@ -7,11 +7,13 @@ module Api
     # Requires nothing
     def index
       users = get_collection(User)
+      default_fields = [:id, :user_name, :type, :first_name, :last_name, :grace_credits, :notes_count];
+      fields = fields_to_render(default_fields)
 
       respond_to do |format|
         format.any{render :text => get_plain_text_for_users(users)}
-        format.json{render :json => users.to_json(:only => [ :id, :user_name, :type, :first_name, :last_name ])}
-        format.xml{render :xml => users.to_xml(:only => [ :id, :user_name, :type, :first_name, :last_name ], :root => 'users', :skip_types => 'true')}
+        format.json{render :json => users.to_json(:only => fields)}
+        format.xml{render :xml => users.to_xml(:only => fields, :root => 'users', :skip_types => 'true')}
       end
     end
 

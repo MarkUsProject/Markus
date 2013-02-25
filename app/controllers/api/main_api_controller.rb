@@ -122,5 +122,26 @@ module Api
       collection = collection.all if filters.empty?
     end
 
+    #=== Description
+    # Helper method handling which fields to render, given the provided default
+    # fields and those present in params[:fields]
+    def fields_to_render(default_fields)
+      fields = []
+      # params[:fields] will match the following format:
+      # argument,argument,argument...
+      if !params[:fields].blank?
+        filtered_fields = /(\w+,{0,1})+/.match(params[:fields])
+        if !filtered_fields.nil?
+          filtered_fields.to_s.split(',').each do |field|
+            field = field.to_sym
+            fields << field if default_fields.include?(field)
+          end
+        end
+      end
+
+      fields = default_fields if fields.empty?
+      return fields
+    end
+
   end
 end # end Api module
