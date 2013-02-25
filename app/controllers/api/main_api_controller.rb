@@ -143,5 +143,31 @@ module Api
       return fields
     end
 
+    #=== Description
+    # Helper method for getting the plaintext representation of a collection
+    # or a single resource for output using render. Only renders those fields
+    # that are specified in an array, and prepends the string resource_name
+    # to each field
+    def get_plain_text(resource_name, collection_or_resource, fields)
+      plain_text = ""
+
+      # So we can iterate even if it's a single resource
+      if collection_or_resource.kind_of?(Array)
+        collection = collection_or_resource
+      else
+        collection = [collection_or_resource]
+      end
+
+      collection.each do |resource|
+        fields.each do |field|
+          field_name = field
+          plain_text += t("#{resource_name}.#{field_name}") + ": " +
+                        resource[field].to_s + "\n"
+        end
+        plain_text += "\n"
+      end
+
+      return plain_text
+    end
   end
 end # end Api module

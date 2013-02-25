@@ -11,7 +11,7 @@ module Api
       fields = fields_to_render(default_fields)
 
       respond_to do |format|
-        format.any{render :text => get_plain_text_for_users(users)}
+        format.any{render :text => get_plain_text('user', users, fields)}
         format.json{render :json => users.to_json(:only => fields)}
         format.xml{render :xml => users.to_xml(:only => fields, :root => 'users', :skip_types => 'true')}
       end
@@ -73,7 +73,7 @@ module Api
           fields = fields_to_render(default_fields)
 
           respond_to do |format|
-            format.any{render :text => get_plain_text_for_users(user)}
+            format.any{render :text => get_plain_text('user', user, fields)}
             format.json{render :json => user.to_json(:only => fields)}
             format.xml{render :xml => user.to_xml(:only => fields, :root => 'users', :skip_types => 'true')}
           end
@@ -129,22 +129,6 @@ module Api
       # Otherwise everything went alright.
       render 'shared/http_status', :locals => { :code => "200", :message => HttpStatusHelper::ERROR_CODE["message"]["200"] }, :status => 200
       return
-    end
-
-    private
-
-    # Get the plain text representation for users
-    def get_plain_text_for_users(users)
-      data=""
-
-      users.each do |user|
-        data += t('user.user_name') + ": " + user.user_name + "\n" +
-                              t('user.user_type') + ": " + user.type + "\n" +
-                              t('user.first_name') + ": " + user.first_name + "\n" +
-                              t('user.last_name') + ": " + user.last_name + "\n\n"
-      end
-
-      return data
     end
 
     # Process the parameters passed

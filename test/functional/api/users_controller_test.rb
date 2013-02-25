@@ -220,19 +220,48 @@ class Api::UsersControllerTest < ActionController::TestCase
       end
     end
 
-    # START: Checking valid response types
-    context "getting a text response" do
+    # Testing text/plain response, including the use of get_plain_text
+    context 'getting a text response' do
       setup do
+        @user = Student.make
         @request.env['HTTP_ACCEPT'] = 'text/plain'
-        get "show", :id => "garbage"
       end
 
-      should "be successful" do
-        assert_template 'shared/http_status'
+      should 'be successful' do
+        get 'show', :id => @user.id.to_s
         assert_equal @response.content_type, 'text/plain'
+      end
+
+      should 'display default attributes for a resource if fields isn\'t used' do
+        get 'show', :id => @user.id.to_s
+        fields = ['ID', 'User Name', 'Type', 'First Name', 'Last Name',
+                  'Grace Credits Left', 'Notes']
+        fields.each do |field|
+          assert @response.body.include?(field)
+        end
+      end
+
+      should 'display default attributes for a collection if fields isn\'t used' do
+        get 'index'
+        fields = ['ID', 'User Name', 'Type', 'First Name', 'Last Name',
+                  'Grace Credits Left', 'Notes']
+        fields.each do |field|
+          assert @response.body.include?(field)
+        end
+      end
+
+      should 'display only specified fields if the fields parameter is used' do
+        get 'index', :fields => 'first_name,last_name'
+        assert @response.body.include?('First Name')
+        assert @response.body.include?('Last Name')
+        fields = ['ID', 'User Name', 'Type', 'Grace Credits Left', 'Notes']
+        fields.each do |field|
+          assert !@response.body.include?(field)
+        end
       end
     end
 
+    # Testing application/json response
     context "getting a json response" do
       setup do
         @request.env['HTTP_ACCEPT'] = 'application/json'
@@ -245,6 +274,7 @@ class Api::UsersControllerTest < ActionController::TestCase
       end
     end
 
+    # Testing application/xml response
     context "getting an xml response" do
       setup do
         @request.env['HTTP_ACCEPT'] = 'application/xml'
@@ -257,6 +287,7 @@ class Api::UsersControllerTest < ActionController::TestCase
       end
     end
 
+    # Testing an rss response
     context "getting an rss response" do
       setup do
         @request.env['HTTP_ACCEPT'] = 'application/rss'
@@ -267,7 +298,6 @@ class Api::UsersControllerTest < ActionController::TestCase
         assert_not_equal @response.content_type, 'application/rss'
       end
     end
-    # FINISH: Checking valid response types
 
     # Testing POST
     context "testing the create function with valid attributes" do
