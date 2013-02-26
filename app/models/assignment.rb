@@ -258,11 +258,14 @@ class Assignment < ActiveRecord::Base
     return total
   end
 
-  # calculates the average of released results for this assignment
-  def set_results_average
+  # calculates summary statistics of released results for this assignment
+  def set_results_statistics
     groupings = Grouping.find_all_by_assignment_id(self.id)
+    results = Array.new
     results_count = 0
     results_sum = 0
+    results_fails = 0
+    results_zeros = 0
     groupings.each do |grouping|
       submission = grouping.current_submission_used
       if !submission.nil?
@@ -272,14 +275,32 @@ class Assignment < ActiveRecord::Base
           result = submission.result
         end
         if result.released_to_students
+          results.push result.total_mark
           results_sum += result.total_mark
           results_count += 1
+          if result.total_mark < (self.total_mark / 2)
+            results_fails += 1
+          end
+          if result.total_mark == 0
+            results_zeros += 1
+          end
         end
       end
     end
     if results_count == 0
       return false # no marks released for this assignment
     end
+    self.results_fails = results_fails
+    self.results_zeros = results_zeros
+    results_sorted = results.sort
+    median_quantity = 0
+    if (results_count % 2) == 0
+       median_quantity = (results_sorted[results_count/2 - 1] 
+                        + results_sorted[results_count/2]).to_f / 2
+    else
+       median_quantity = results_sorted[results_count/2]
+    end
+    self.results_median = (median_quantity * 100 / self.total_mark)
     # Need to avoid divide by zero
     if results_sum == 0
       self.results_average = 0
