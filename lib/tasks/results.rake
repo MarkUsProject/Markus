@@ -94,8 +94,8 @@ namespace :load do
         result.save
       end
     end
-		# compute average for a1
-		a1.set_results_average
+		# compute summary statistics for a1
+		a1.set_results_statistics
     puts "Done!"
   end
 end

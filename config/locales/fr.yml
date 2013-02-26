@@ -1069,9 +1069,13 @@ fr:
     account_disabled: "Ce compte a été désactivé"
 
     #app/views/main/_assignment_info_summary.erb
-    assignment_average:        "Moyenne : %{results_average} %"
+    percentage:                "%{percentage} %"
+    assignment_average:        "Moyenne :"
+    assignment_median:        "Médiane :"
     assignments_submitted:     "Projets envoyés :"
     assignments_graded:        "Projets corrigés :"
+    assignments_failed:        "Projets sous la moyenne :"
+    assignments_zeros:         "Projets à 0 :"
     refresh_graph:             "Actualiser le graphique"
 
     #app/views/main/_grader_summary.erb
