@@ -299,24 +299,24 @@ class Api::UsersControllerTest < ActionController::TestCase
       end
     end
 
-    # Testing POST
+    # Testing POST api/users
     context "testing the create function with valid attributes" do
       setup do
         # Create paramters for request
         @attr = {:user_name => "ApiTestUser", :last_name => "Tester",
-                 :first_name => "Api", :user_type =>"admin" }
+                 :first_name => "Api", :type =>"admin" }
         # fire off request
         post "create", :id => 1, :user_name => "ApiTestUser", :last_name => "Tester",
-                 :first_name => "Api", :user_type =>"admin"
+                 :first_name => "Api", :type =>"admin"
       end
 
-      should "create the new user specified" do
-        assert_response :success
+      should "create the specified user" do
+        assert_response 201
         @new_user = User.find_by_user_name(@attr[:user_name])
         assert !@new_user.nil?
         assert_equal(@new_user.last_name, @attr[:last_name])
         assert_equal(@new_user.first_name, @attr[:first_name])
-        assert_equal(@new_user.type.downcase, @attr[:user_type])
+        assert_equal(@new_user.type.downcase, @attr[:type])
       end
     end
 
@@ -324,7 +324,7 @@ class Api::UsersControllerTest < ActionController::TestCase
       setup do
         @user = Student.make
         @attr = {:user_name => @user.user_name, :last_name => "Tester",
-                 :first_name => "Api", :user_type =>"admin" }
+                 :first_name => "Api", :type =>"admin" }
         @res = post("create", @attr)
       end
 

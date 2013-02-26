@@ -17,7 +17,7 @@ module Api
       end
     end
 
-    # Requires user_name, user_type,  last_name, first_name, [section_name], [grace_credits]
+    # Requires user_name, type,  last_name, first_name, [section_name], [grace_credits]
     def create
       if has_missing_params?(params)
         # incomplete/invalid HTTP params
@@ -33,7 +33,7 @@ module Api
       end
 
       # No user found so create new one
-      param_user_type = params[:user_type].downcase
+      param_user_type = params[:type].downcase
       if param_user_type == "student"
         user_type = Student
       elsif param_user_type == "ta" || param_user_type == "grader"
@@ -56,7 +56,7 @@ module Api
       end
 
       # Otherwise everything went alright.
-      render 'shared/http_status', :locals => { :code => "200", :message => HttpStatusHelper::ERROR_CODE["message"]["200"] }, :status => 200
+      render 'shared/http_status', :locals => { :code => "201", :message => HttpStatusHelper::ERROR_CODE["message"]["201"] }, :status => 201
     end
 
     # Requires user_name
@@ -151,16 +151,16 @@ module Api
         if !params[:grace_credits].blank?
           attributes["grace_credits"] = params[:grace_credits]
         end
-        if !params[:user_type].blank?
-          attributes["type"] = params[:user_type]
+        if !params[:type].blank?
+          attributes["type"] = params[:type]
         end
 
         return attributes
     end
 
-    # Checks user_name, first_name, last_name, user_type.
+    # Checks user_name, first_name, last_name, type
     def has_missing_params?(params)
-      return params[:user_name].blank? || params[:user_type].blank? ||
+      return params[:user_name].blank? || params[:type].blank? ||
          params[:first_name].blank? || params[:last_name].blank?
     end
   end # end UsersController
