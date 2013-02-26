@@ -295,7 +295,8 @@ class Assignment < ActiveRecord::Base
     results_sorted = results.sort
     median_quantity = 0
     if (results_count % 2) == 0
-       median_quantity = (results_sorted[results_count/2 - 1] + results_sorted[results_count/2]).to_f / 2
+       median_quantity = (results_sorted[results_count/2 - 1] 
+                        + results_sorted[results_count/2]).to_f / 2
     else
        median_quantity = results_sorted[results_count/2]
     end
