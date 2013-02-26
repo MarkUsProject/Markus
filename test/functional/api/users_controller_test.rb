@@ -346,71 +346,32 @@ class Api::UsersControllerTest < ActionController::TestCase
       end
     end
 
-    # Testing PUT
-    context "testing the update function with a new first name, last name" do
+    # Testing PUT api/users/:id
+    context 'testing the update function' do
       setup do
         @user = Student.make
-        @new_attr = {:user_name => @user.user_name,
-                     :last_name => "TesterChanged",
-                     :first_name => "UpdatedApi"}
-        put "update",
-            :id => 1,
-            :user_name => @user.user_name,
-            :last_name => "TesterChanged",
-            :first_name => "UpdatedApi"
+        @second_user = Student.make
       end
 
-      should "and a new, non-existing user name" do
-        @new_attr[:new_user_name] = "apitestuser2"
-        put "update",
-            :id => 1,
-            :user_name => @user.user_name,
-            :new_user_name => 'apitestuser2',
-            :last_name => "TesterChanged",
-            :first_name => "UpdatedApi"
-
-        # Try to find old user_name
-        assert User.find_by_user_name(@user.user_name).nil?
-        # Find user by new user_name
-        @updated_user2 = User.find_by_user_name(@new_attr[:new_user_name])
-        assert !@updated_user2.nil?
-        assert_equal(@updated_user2.last_name, @new_attr[:last_name])
-        assert_equal(@updated_user2.first_name, @new_attr[:first_name])
+      should 'update those attribtues that are supplied' do
+        put 'update', :id => @user.id, :user_name => 'ApiTester',
+            :last_name => 'ApiTestLast', :first_name => 'ApiTestFirst'
+        updated_user = User.find_by_id(@user.id)
+        assert_equal(updated_user.user_name, 'ApiTester')
+        assert_equal(updated_user.last_name, 'ApiTestLast')
+        assert_equal(updated_user.first_name, 'ApiTestFirst')
       end
 
-      should "update the user's first and last name only" do
-        @updated_user = User.find_by_user_name(@user.user_name)
-        assert !@updated_user.nil?
-        assert_equal(@updated_user.last_name, @new_attr[:last_name])
-        assert_equal(@updated_user.first_name, @new_attr[:first_name])
-      end
-    end
-
-    context "testing the update function with a user_name that does not exist" do
-      setup do
-        put "update", :id => 1, :user_name => "garbage", :last_name => "garbage",
-                              :first_name => "garbage"
-      end
-
-      should "not be able to find the user_name to update" do
-        assert User.find_by_user_name("garbage").nil?
-        assert_response 404
-      end
-    end
-
-    context "testing the update function with a new_user_name that already exists" do
-      setup do
-        @user_to_update = Student.make
-        @existing_user = Student.make
-        # fire off request
-        put "update", :id => 1, :user_name => @user_to_update.user_name,
-                              :last_name => "garbage",
-                              :first_name => "garbage",
-                              :new_user_name => @existing_user.user_name
-      end
-
-      should "find the new user_name as existing and cause conflict" do
+      should 'not be able to use a user_name that alreay exists' do
+        put 'update', :id => @user.id, :user_name => @second_user.user_name,
+            :last_name => 'ApiTestLast', :first_name => 'ApiTestFirst'
         assert_response 409
+      end
+
+      should 'not be able to update a user that does not exist' do
+        put 'update', :id => '9999', :user_name => 'RandomName'
+        assert User.find_by_user_name("RandomName").nil?
+        assert_response 404
       end
     end
 

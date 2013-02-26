@@ -91,32 +91,26 @@ module Api
       render 'shared/http_status', :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404
     end
 
-    # Requires user_name, [first_name], [last_name], [new_user_name], [section_name], [grace_credits]
+    # Requires [first_name], [last_name], [user_name], [section_name], [grace_credits]
     def update
-      if params[:user_name].blank?
-        # incomplete/invalid HTTP params
-        render 'shared/http_status', :locals => { :code => "422", :message => HttpStatusHelper::ERROR_CODE["message"]["422"] }, :status => 422
-        return
-      end
-
       # If no user is found, render an error.
-      user = User.find_by_user_name(params[:user_name])
+      user = User.find_by_id(params[:id])
       if user.nil?
         render 'shared/http_status', :locals => { :code => "404", :message => "User was not found" }, :status => 404
         return
       end
 
-      updated_user_name = params[:user_name]
-      if !params[:new_user_name].blank?
-        # Make sure new user_name does not exist
-        if !User.find_by_user_name(params[:new_user_name]).nil?
-          render 'shared/http_status', :locals => { :code => "409", :message => "User already exists" }, :status => 409
+      if !params[:user_name].blank?
+        # Make sure another user isn't using it
+        other_user = User.find_by_user_name(params[:user_name])
+        if !other_user.nil? && other_user != user
+          render 'shared/http_status', :locals => { :code => "409", :message => "Username already in use" }, :status => 409
           return
         end
-        updated_user_name = params[:new_user_name]
+        updated_user_name = params[:user_name]
       end
 
-      attributes={:user_name => updated_user_name}
+      attributes = {:user_name => updated_user_name}
       attributes = process_attributes(params, attributes)
 
       user.attributes = attributes
@@ -131,7 +125,7 @@ module Api
       return
     end
 
-    # Process the parameters passed
+    # Process the parameters passed for user creation and update
     def process_attributes(params, attributes)
         # allow the user to provide the section name instead of an id which is meaningless
         # thus we have to retrieve the id here
@@ -142,17 +136,12 @@ module Api
            end
         end
 
-        if !params[:last_name].blank?
-          attributes["last_name"] =  params[:last_name]
-        end
-        if !params[:first_name].blank?
-          attributes["first_name"] = params[:first_name]
-        end
-        if !params[:grace_credits].blank?
-          attributes["grace_credits"] = params[:grace_credits]
-        end
-        if !params[:type].blank?
-          attributes["type"] = params[:type]
+        parameters = ["last_name", "first_name", "type", "grace_credits"]
+        parameters.each do |parameter|
+          key = parameter.to_sym
+          if !params[key].blank?
+            attributes[parameter] = params[key]
+          end
         end
 
         return attributes
