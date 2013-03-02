@@ -31,4 +31,28 @@ module UsersHelper
     return result
   end
 
+  # Construct a nicely formatted JSON response in the form of an array for our student table
+  def construct_students_table_data(users)
+    student_list = []
+    users.each do |user|
+      result = []
+      result[0] = CGI.escapeHTML(user.user_name)
+      result[1] = CGI.escapeHTML(user.last_name)
+      result[2] = CGI.escapeHTML(user.first_name)
+      student_list.push(result)
+      @render_note_link = false
+      if user.student?
+        result[3] = user.remaining_grace_credits.to_s + '/' + user.grace_credits.to_s
+        if user.has_section?
+          result[4] = user.section.name
+        else
+          result[4] = '-'
+        end
+        @render_note_link = true
+      end
+      result[5] = user.hidden
+    end
+    return student_list
+  end
+
 end

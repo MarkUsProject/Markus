@@ -17,12 +17,19 @@ class StudentsController < ApplicationController
   end
 
   def populate
+    # Process:
+    # 1. AJAX call made by jQuery to populate the student table
+    # 2. Find students from the database
+    # 3. Pass in the student data into the helper function (construct_table_rows defined in UsersHelper)
+    # 4. Return a collection of JSON for the jQuery DataTable plugin to render
     @students_data = Student.find(:all,
                                   :order => "user_name",
                                   :include => [:section,
                                                :grace_period_deductions])
-    # construct_table_rows defined in UsersHelper
-    @students = construct_table_rows(@students_data)
+    @students = construct_students_table_data(@students_data)
+    respond_to do |format|
+      format.json { render :json => @students} 
+    end
   end
 
   def edit
