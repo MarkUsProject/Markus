@@ -1,30 +1,120 @@
 <div class="test_script">
+<% display_options = { 
+  I18n.t("automated_tests.script_option.display_option.display_after_submission") => "display_after_submission", 
+  I18n.t("automated_tests.script_option.display_option.display_after_collection") => "display_after_collection",
+  I18n.t("automated_tests.script_option.display_option.do_not_display") => "do_not_display"
+} # this is defined and used to validate input in test_script.rb 
+%>
+
 <%= form.fields_for :test_scripts, test_script do |f| %>
+<% saved = !f.object.new_record? %>
+<% hide = saved ? 'style="display:none;"' : '' %>
 
-  <%= f.label :script_name, t(:script_name) %>
+<div class="dragarrows">↕</div>
 
-  <% if f.object.id %>
-    <%= text_field_tag 'test_script_' + f.object_id.to_s, f.object.script_name, :readonly => "true" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <%= label_tag "replace_scriptname", I18n.t("automated_tests.replace"), :class => "inline_label" %>
-  <% end %>
+<fieldset class="settings_box">
 
-  <%= f.file_field :script_name, :size=>"30" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <legend>
+    <span class='file_name'>
+      <% if saved %>
+        <%= f.object.script_name %>
+      <% else %>
+        <%= t('automated_tests.new_test_script_file') %>
+      <% end %>
+    </span>
+    <%= link_to_function (saved ? '[+]' : '[-]'), "toggleSettings(this);", :class => "collapse" %>
+  </legend>
 
-  <% if f.object.object_id %>
-    <%= I18n.t("automated_tests.script_option.description")%>
-    <% if f.object.description %>
-      <%= f.text_field :description, :value => f.object.description %>
-    <% else %>
-      <%= f.text_field :description, :placeholder => I18n.t("automated_tests.script_option.update_description") %>
+  <%= f.hidden_field :seq_num, :value => f.object.seq_num, :class => "seqnum" %>
+
+  <div class="settings_left_side">
+    <div class="desc">
+      <%= f.label :description, t('automated_tests.script_option.description'), :style => 'vertical-align:top;' %>
+      <%= f.text_area :description, :value => f.object.description, :cols => 30, :rows => (saved ? 1 : 2)  %>
+    </div>
+
+    <%# For new test scripts, the settings box will be expanded and the settings box
+        will be below the description textarea. For existing test scripts, their max
+        marks field will be in the right side %>
+    <% maxmarks_section  = '<div class="maxmarks">'
+       maxmarks_section += f.label :max_marks, raw(t 'automated_tests.script_option.max_marks')
+       maxmarks_section += "\n"
+       maxmarks_section += f.number_field :max_marks, :value => f.object.max_marks, :size => 10, :maxlength => 8
+       maxmarks_section += '</div>' %>
+    <% if !saved %>
+      <%= raw maxmarks_section %>
     <% end %>
-  <% end %>
 
-  <% if !f.object.new_record? %>
-    <%= f.label :_destroy, I18n.t(:remove), :class => "checkbox_label" %>
-    <%= f.check_box :_destroy %>
-  <% else %>
-    <%= link_to_function I18n.t(:remove), "$(this).up('.test_script').remove()" %>
-  <% end %>
+    <div <%= raw hide %>>
+      <%= f.label :display_settings, t('automated_tests.script_option.display_settings') %> <br/>
+      <ul>
+        <li>
+          <%= f.label :display_description, t('automated_tests.script_option.display_description') %>
+          <%= f.select :display_description, options_for_select(display_options, f.object.display_description) %>
+        </li>
+        <li>
+          <%= f.label :display_run_status, t('automated_tests.script_option.display_run_status') %>
+          <%= f.select :display_run_status, options_for_select(display_options, f.object.display_run_status) %>
+        </li>
+        <li>
+          <%= f.label :display_marks_earned, t('automated_tests.script_option.display_marks_earned') %>
+          <%= f.select :display_marks_earned, options_for_select(display_options, f.object.display_marks_earned) %>
+        </li>
+        <li>
+          <%= f.label :display_input, t('automated_tests.script_option.display_input') %>
+          <%= f.select :display_input, options_for_select(display_options, f.object.display_input) %>
+        </li>
+        <li>
+          <%= f.label :display_expected_output, t('automated_tests.script_option.display_expected_output') %>
+          <%= f.select :display_expected_output, options_for_select(display_options, f.object.display_expected_output) %>
+        </li>
+        <li>
+          <%= f.label :display_actual_output, t('automated_tests.script_option.display_actual_output') %>
+          <%= f.select :display_actual_output, options_for_select(display_options, f.object.display_actual_output) %>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="settings_right_side">
+    <% if saved %>
+      <%= raw maxmarks_section %>
+    <% end %>
+
+    <div <%= raw hide %>>
+      <%= f.label :script_name, (saved ? t('automated_tests.replace') : t('automated_tests.upload_required').html_safe) %>
+      <%= f.file_field :script_name, :size=>"30", :class => 'upload_file' %><br/>
+
+      <% if saved %>
+        <span class="label">
+          <%= link_to(t(:download),
+                      :action => 'download', 
+                      :assignment_id => @assignment.id,
+                      :type => 'script',
+                      :filename => f.object.script_name) %>
+        </span>
+        <br>
+
+        <%= f.label :_destroy, t('automated_tests.remove_file') %>
+        <%= f.check_box :_destroy, :class => "remove_test_script_file" %>
+      <% else %>
+        <%= label_tag "remove", link_to_function(t('automated_tests.remove_file'), "removeNewTestScript(this);") %>
+      <% end %>
+
+      <br/><br/>
+
+      <%= f.label :run_on_request, t("automated_tests.script_option.run_on_request") %>
+      <%= f.check_box :run_on_request, :value => f.object.run_on_request %><br/>
+    
+      <%= f.label :run_on_submission, t("automated_tests.script_option.run_on_submission") %>
+      <%= f.check_box :run_on_submission, :value => f.object.run_on_submission %><br/>
+
+      <%= f.label :halts_testing, t("automated_tests.script_option.halts_testing") %>
+      <%= f.check_box :halts_testing, :value => f.object.halts_testing %>
+    </div>
+  </div>
+  <div style="clear:both;"></div>
+</fieldset>
 
 <% end %>
 </div>

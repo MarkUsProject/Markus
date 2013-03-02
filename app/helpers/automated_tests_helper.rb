@@ -396,8 +396,21 @@ module AutomatedTestsHelper
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_script_id = new Date().getTime();
-          $('test_scripts').insert({bottom: "#{ escape_javascript test_script }".replace(/(attributes_\\d+|\\[\\d+\\])/g, new_test_script_id) });
-          $('test_script_options').insert({bottom: "#{ escape_javascript test_script_options }".replace(/(attributes_\\d+|\\[\\d+\\])/g, new_test_script_id) });
+          var last_seqnum = jQuery('.seqnum').last().val();
+          var new_seqnum = 0;
+          if(last_seqnum) {
+            new_seqnum = 16 + parseFloat(last_seqnum);
+          }
+
+          var new_test_script = jQuery("#{ escape_javascript test_script}".replace(/(attributes_\\d+|\\[\\d+\\])/g, new_test_script_id));
+          jQuery('#test_scripts').append(new_test_script);
+
+          new_test_script.find('.seqnum').val(new_seqnum);
+          new_test_script.data('collapsed', false);
+
+          new_test_script.find('.upload_file').change(function () {
+            new_test_script.find('.file_name').text(this.value);
+          })
         } else {
           alert("#{I18n.t("automated_tests.add_test_script_file_alert")}");
         }
