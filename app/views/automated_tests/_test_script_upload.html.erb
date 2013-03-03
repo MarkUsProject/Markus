@@ -39,7 +39,7 @@
     <% maxmarks_section  = '<div class="maxmarks">'
        maxmarks_section += f.label :max_marks, raw(t 'automated_tests.script_option.max_marks')
        maxmarks_section += "\n"
-       maxmarks_section += f.number_field :max_marks, :value => f.object.max_marks, :size => 10, :maxlength => 8
+       maxmarks_section += f.text_field :max_marks, :value => f.object.max_marks, :size => 10, :maxlength => 8
        maxmarks_section += '</div>' %>
     <% if !saved %>
       <%= raw maxmarks_section %>
@@ -93,7 +93,7 @@
                       :type => 'script',
                       :filename => f.object.script_name) %>
         </span>
-        <br>
+        <br/>
 
         <%= f.label :_destroy, t('automated_tests.remove_file') %>
         <%= f.check_box :_destroy, :class => "remove_test_script_file" %>
