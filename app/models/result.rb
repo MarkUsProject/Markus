@@ -9,7 +9,6 @@ class Result < ActiveRecord::Base
   belongs_to :submission
   has_many :marks
   has_many :extra_marks
-  has_one :remarked_submission, :foreign_key => :remark_result_id
 
   validates_presence_of :marking_state
   validates_inclusion_of :marking_state,

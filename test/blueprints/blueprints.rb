@@ -167,18 +167,18 @@ ImageAnnotation.blueprint do
 end
 
 Mark.blueprint do
-  result {Submission.make.result}
+  result {Result.make}
   markable {RubricCriterion.make(:assignment => result.submission.grouping.assignment)}
   mark {1}
 end
 
 Mark.blueprint(:rubric) do
-  result {Submission.make.result}
+  result {Result.make}
   markable {RubricCriterion.make(:assignment => result.submission.grouping.assignment)}
 end
 
 Mark.blueprint(:flexible) do
-  result {Submission.make.result}
+  result {Result.make}
   markable {FlexibleCriterion.make(:assignment => result.submission.grouping.assignment)}
 end
 

@@ -119,10 +119,10 @@ class ResultsController < ApplicationController
     grouping = Grouping.find(params[:id])
     if grouping.has_submission? && grouping.is_collected? && grouping.current_submission_used.remark_submitted?
         redirect_to :action => 'edit',
-                    :id => grouping.current_submission_used.remark_result.id
+                    :id => grouping.current_submission_used.get_remark_result.id
     elsif grouping.has_submission? && grouping.is_collected?
       redirect_to :action => 'edit',
-                  :id => grouping.current_submission_used.result.id
+                  :id => grouping.current_submission_used.get_original_result.id
     else
       redirect_to :controller => 'submissions',
                   :action => 'collect_and_begin_grading',
@@ -188,7 +188,7 @@ class ResultsController < ApplicationController
       redirect_to :action => 'edit',
                   :assignment_id => params[:assignment_id],
                   :submission_id => file.submission,
-                  :id => file.submission.result
+                  :id => file.submission.get_original_result
       return
     end
     filename = file.filename
@@ -213,7 +213,7 @@ class ResultsController < ApplicationController
     @focus_line = params[:focus_line]
 
     @file = SubmissionFile.find(@submission_file_id)
-    @result = @file.submission.result
+    @result = @file.submission.get_original_result
     # Is the current user a student?
     if current_user.student?
       # The Student does not have access to this file. Display an error.
@@ -308,11 +308,11 @@ class ResultsController < ApplicationController
       return
     end
 
-    @result = @submission.result
+    @result = @submission.get_original_result
     @old_result = nil
     if @submission.remark_submitted?
       @old_result = @result
-      @result = @submission.remark_result
+      @result = @submission.get_remark_result
       # if remark result's marking state is 'unmarked' then the student has
       # saved a remark request but not submitted it yet, therefore, still editable
       if (@result.marking_state != Result::MARKING_STATES[:unmarked] && !@result.released_to_students)
@@ -402,12 +402,12 @@ class ResultsController < ApplicationController
       @submission.remark_request = params[:submission][:remark_request]
       @submission.remark_request_timestamp = Time.zone.now
       @submission.save
-      @old_result = @submission.result
-      if !(@submission.remark_result)
-        @submission.create_remark_result_object
+      @old_result = @submission.get_original_result
+      if !(@submission.get_remark_result)
+        @submission.create_remark_result
       end
       if (params[:real_commit] == "Submit")
-        @result = @submission.remark_result
+        @result = @submission.get_remark_result
         @result.marking_state = Result::MARKING_STATES[:partial]
         @old_result.released_to_students = (params[:value] == 'false')
         @result.save
@@ -419,15 +419,15 @@ class ResultsController < ApplicationController
   def cancel_remark_request
     @submission = Submission.find(params[:submission_id])
 
-    @remark_result = @submission.remark_result
+    @remark_result = @submission.get_remark_result
     @remark_result.submission_id = nil
     @remark_result.save
 
-    @submission.remark_result_id = nil
+    @submission.get_remark_result_id = nil
     @submission.remark_request = nil
     @submission.save
 
-    @result = @submission.result
+    @result = @submission.get_original_result
     @result.released_to_students = true
     @result.save
 
