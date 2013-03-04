@@ -17,7 +17,8 @@ module Api
     # Dummy action (for authentication testing)
     # No public route matches this action.
     def index
-      render 'shared/http_status', :locals => { :code => "200", :message => HttpStatusHelper::ERROR_CODE["message"]["200"] }, :status => 200
+      render 'shared/http_status', :locals => {:code => '200', :message =>
+        HttpStatusHelper::ERROR_CODE['message']['200']}, :status => 200
     end
 
     private
@@ -36,7 +37,8 @@ module Api
           @current_user = User.find_by_user_name(markus_auth_remote_user)
         else
           # REMOTE_USER_AUTH is true, but REMOTE_USER wasn't set, bail out
-          render 'shared/http_status', :locals => { :code => "403", :message => HttpStatusHelper::ERROR_CODE["message"]["403"] }, :status => 403
+          render 'shared/http_status', :locals => {:code => '403', :message =>
+            HttpStatusHelper::ERROR_CODE['message']['403']}, :status => 403
           return
         end
       else
@@ -45,7 +47,8 @@ module Api
         # pretend resource not found if missing or wrong authentication
         # is provided
         if auth_token.nil?
-          render 'shared/http_status', :locals => { :code => "403", :message => HttpStatusHelper::ERROR_CODE["message"]["403"] }, :status => 403
+          render 'shared/http_status', :locals => {:code => '403', :message =>
+            HttpStatusHelper::ERROR_CODE['message']['403']}, :status => 403
           return
         end
         # Find user by api_key_md5
@@ -54,21 +57,24 @@ module Api
 
       if @current_user.nil?
         # Key/username does not exist, so bail out
-        render 'shared/http_status', :locals => { :code => "403", :message => HttpStatusHelper::ERROR_CODE["message"]["403"] }, :status => 403
+        render 'shared/http_status', :locals => {:code => '403', :message =>
+          HttpStatusHelper::ERROR_CODE['message']['403']}, :status => 403
         return
       elsif markus_auth_remote_user.blank?
         # see if the MD5 matches only if REMOTE_USER wasn't used
         curr_user_md5 = Base64.decode64(@current_user.api_key)
         if (Base64.decode64(auth_token) != curr_user_md5)
           # MD5 mismatch, bail out
-          render 'shared/http_status', :locals => { :code => "403", :message => HttpStatusHelper::ERROR_CODE["message"]["403"] }, :status => 403
+          render 'shared/http_status', :locals => {:code => '403', :message =>
+            HttpStatusHelper::ERROR_CODE['message']['403']}, :status => 403
           return
         end
       end
       # Student's aren't allowed yet
       if @current_user.student?
         # API is available for TAs and Admins only
-        render 'shared/http_status', :locals => { :code => "403", :message => HttpStatusHelper::ERROR_CODE["message"]["403"] }, :status => 403
+        render 'shared/http_status', :locals => {:code => '403', :message =>
+          HttpStatusHelper::ERROR_CODE['message']['403']}, :status => 403
         return
       end
     end
@@ -77,7 +83,8 @@ module Api
     # Make sure that the passed format is either text, xml or json
     def check_format
       # support only plain text, xml and json
-      if request.format.symbol != :text and request.format.symbol != :xml and request.format.symbol != :json
+      request_format = request.format.symbol
+      if request_format != :text && request_format != :xml && request_format != :json
         # 406 is the default status code when the format is not support
         render :nothing => true, :status => 406
       end
@@ -94,5 +101,80 @@ module Api
       end
     end
 
+    #=== Description
+    # Helper method for filtering, limit, offset
+    def get_collection(collection_class)
+      # We'll append .where, .limit, and .offset to the collection
+      collection = collection_class
+
+      filters = {}
+      # params[:filter] will match the following format:
+      # param:argument,param:argument,param:argument...
+      if !params[:filter].blank?
+        valid_filters = /(\w+:\w+,{0,1})+/.match(params[:filter])
+        if !valid_filters.nil?
+          valid_filters.to_s.split(',').each do |filter|
+            key, value = filter.split(':')
+            if collection_class.column_names.include?(key)
+              key = key.to_sym
+              collection = collection.where("#{key} = ?", value)
+            end
+          end
+        end
+      end
+
+      # Apply limits and offsets, or get all if they aren't set
+      collection = collection.limit(params[:limit].to_i) if !params[:limit].blank?
+      collection = collection.offset(params[:offset].to_i) if !params[:offset].blank?
+      collection = collection.all if filters.empty?
+    end
+
+    #=== Description
+    # Helper method handling which fields to render, given the provided default
+    # fields and those present in params[:fields]
+    def fields_to_render(default_fields)
+      fields = []
+      # params[:fields] will match the following format:
+      # argument,argument,argument...
+      if !params[:fields].blank?
+        filtered_fields = /(\w+,{0,1})+/.match(params[:fields])
+        if !filtered_fields.nil?
+          filtered_fields.to_s.split(',').each do |field|
+            field = field.to_sym
+            fields << field if default_fields.include?(field)
+          end
+        end
+      end
+
+      fields = default_fields if fields.empty?
+      return fields
+    end
+
+    #=== Description
+    # Helper method for getting the plaintext representation of a collection
+    # or a single resource for output using render. Only renders those fields
+    # that are specified in an array, and prepends the string resource_name
+    # to each field
+    def get_plain_text(resource_name, collection_or_resource, fields)
+      plain_text = ""
+
+      # So we can iterate even if it's a single resource
+      if collection_or_resource.kind_of?(Array)
+        collection = collection_or_resource
+      else
+        collection = [collection_or_resource]
+      end
+
+      collection.each do |resource|
+        fields.each do |field|
+          field_name = field
+          plain_text += t("#{resource_name}.#{field_name}") + ": " +
+                        resource[field].to_s + "\n"
+        end
+        plain_text += "\n"
+      end
+
+      return plain_text
+    end
   end
 end # end Api module
