@@ -209,7 +209,7 @@ class Api::UsersControllerTest < ActionController::TestCase
         end
       end
 
-      should 'return a 404 if a user with a numeric id doesn\'t exist' do
+      should "return a 404 if a user with a numeric id doesn't exist" do
         get 'show', :id => '9999'
         assert_response 404
       end
@@ -232,7 +232,7 @@ class Api::UsersControllerTest < ActionController::TestCase
         assert_equal @response.content_type, 'text/plain'
       end
 
-      should 'display default attributes for a resource if fields isn\'t used' do
+      should "display default attributes for a resource if fields isn't used" do
         get 'show', :id => @user.id.to_s
         fields = ['ID', 'User Name', 'Type', 'First Name', 'Last Name',
                   'Grace Credits Left', 'Notes']
@@ -241,7 +241,7 @@ class Api::UsersControllerTest < ActionController::TestCase
         end
       end
 
-      should 'display default attributes for a collection if fields isn\'t used' do
+      should "display default attributes for a collection if fields isn't used" do
         get 'index'
         fields = ['ID', 'User Name', 'Type', 'First Name', 'Last Name',
                   'Grace Credits Left', 'Notes']
@@ -302,7 +302,7 @@ class Api::UsersControllerTest < ActionController::TestCase
     # Testing POST api/users
     context "testing the create function with valid attributes" do
       setup do
-        # Create paramters for request
+        # Create parameters for request
         @attr = {:user_name => "ApiTestUser", :last_name => "Tester",
                  :first_name => "Api", :type =>"admin" }
         # fire off request
@@ -353,7 +353,7 @@ class Api::UsersControllerTest < ActionController::TestCase
         @second_user = Student.make
       end
 
-      should 'update those attribtues that are supplied' do
+      should 'update those attributes that are supplied' do
         put 'update', :id => @user.id, :user_name => 'ApiTester',
             :last_name => 'ApiTestLast', :first_name => 'ApiTestFirst'
         updated_user = User.find_by_id(@user.id)
@@ -362,7 +362,7 @@ class Api::UsersControllerTest < ActionController::TestCase
         assert_equal(updated_user.first_name, 'ApiTestFirst')
       end
 
-      should 'not be able to use a user_name that alreay exists' do
+      should 'not be able to use a user_name that already exists' do
         put 'update', :id => @user.id, :user_name => @second_user.user_name,
             :last_name => 'ApiTestLast', :first_name => 'ApiTestFirst'
         assert_response 409
@@ -375,7 +375,7 @@ class Api::UsersControllerTest < ActionController::TestCase
       end
     end
 
-    context "testing the destory function is disabled" do
+    context "testing that the destroy function is disabled" do
       setup do
         delete "destroy", :id => 1
       end
