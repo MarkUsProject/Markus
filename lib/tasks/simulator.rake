@@ -197,7 +197,7 @@ namespace :markus do
             # if marked is 2, then it is completely marked
             marked = rand(3)
             if (marked == 1 and !submission.nil?)
-              @result = submission.get_original_result@
+              @result = submission.get_original_result
               @result.marking_state = Result::MARKING_STATES[:partial]
               @result.save
               submission.save
