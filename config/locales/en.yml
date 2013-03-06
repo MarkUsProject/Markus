@@ -696,7 +696,7 @@ en:
     flexible_criteria:
       move_criterion:
         error: "Failed to move flexible criteria."
-    
+
     add_student:
       success: "Student %{user_name} added."
       fail:
@@ -731,14 +731,17 @@ en:
       success:  "Your changes have been made."
 
     user:
+        id:             "ID"
         user_name:      "User Name"
         user_names:     "User Name"
         first_name:     "First Name"
         last_name:      "Last Name"
         full_name:      "Full Name"
+        type:           "Type"
         user_type:      "Type"
         grace_credits:  "Grace Credits Left"
         section:        "Section"
+        notes_count:    "Notes"
         display_grader_names_to_students: "Display grader names to students?"
 
     hide_students: "Mark as inactive"
@@ -1064,7 +1067,7 @@ en:
         long_date: "%B %d, %Y: %I:%M%p"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%B %d, %Y"
-     
+
       day_names: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
       abbr_day_names: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
       month_names: [~, January, February, March, April, May, June, July, August, September, October, November, December]
@@ -1166,7 +1169,7 @@ en:
           zero: "less than one second"
         less_than_x_minutes:
           zero: "less than one minute"
-  
+
     support:
       array:
         sentence_connector: "and"
