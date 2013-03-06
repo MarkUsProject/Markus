@@ -61,8 +61,8 @@ class AssignmentsController < ApplicationController
           grouping = current_user.accepted_grouping_for(a)
           if grouping.has_submission?
             submission = grouping.get_submission_used
-            if submission.has_result? && submission.result.released_to_students
-                @a_id_results[a.id] = submission.result
+            if submission.has_result? && submission.get_original_result.released_to_students
+                @a_id_results[a.id] = submission.get_original_result
             end
           end 
         end
@@ -201,7 +201,7 @@ class AssignmentsController < ApplicationController
             if submission.nil?
               row.push('')
             else
-              row.push(submission.result.total_mark)
+              row.push(submission.get_original_result.total_mark)
             end
           end
         end

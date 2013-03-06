@@ -318,7 +318,7 @@ class RubricCriterion < ActiveRecord::Base
 
   # Updates results already entered with new criteria
   def update_existing_results
-    self.assignment.submissions.each { |submission| submission.result.update_total_mark }
+    self.assignment.submissions.each { |submission| submission.get_original_result.update_total_mark }
   end
 
 end

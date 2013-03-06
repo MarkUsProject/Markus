@@ -30,7 +30,7 @@ class PenaltyPeriodSubmissionRule < SubmissionRule
   def apply_submission_rule(submission)
     # Calculate the appropriate penalty, and attach the ExtraMark to the
     # submission Result
-    result = submission.result
+    result = submission.get_original_result
     overtime_hours = calculate_overtime_hours_from(submission.revision_timestamp)
     penalty_amount = calculate_penalty(overtime_hours)
     if penalty_amount > 0
