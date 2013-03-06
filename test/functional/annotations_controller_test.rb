@@ -84,7 +84,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       @category = AnnotationCategory.make()
       @annotation_text = AnnotationText.make()
       @submission_file = SubmissionFile.make()
-      @result = Submission.make.result
+      @result = Result.make()
     end
 
     should "on :add_existing_annotation" do
@@ -161,7 +161,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       @category = AnnotationCategory.make()
       @annotation_text = AnnotationText.make()
       @submission_file = SubmissionFile.make()
-      @result = Submission.make.result
+      @result = Result.make()
      end
 
     should "on :add_existing_annotation" do
@@ -238,7 +238,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       @category = AnnotationCategory.make()
       @annotation_text = AnnotationText.make()
       @submission_file = SubmissionFile.make()
-      @result = Submission.make.result
+      @result = Result.make()
     end
 
     should "on :add_existing_annotation" do

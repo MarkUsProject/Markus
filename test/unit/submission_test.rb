@@ -10,16 +10,16 @@ class SubmissionTest < ActiveSupport::TestCase
   should "automatically create a result" do
     s = Submission.make
     s.save
-    assert_not_nil s.result, "Result was supposed to be created automatically"
-    assert_equal s.result.marking_state, Result::MARKING_STATES[:unmarked], "Result marking_state should have been automatically set to unmarked"
+    assert_not_nil s.get_original_result, "Result was supposed to be created automatically"
+    assert_equal s.get_original_result.marking_state, Result::MARKING_STATES[:unmarked], "Result marking_state should have been automatically set to unmarked"
   end
 
   should "create a new remark result" do
     s = Submission.make
     s.save
     s.create_remark_result
-    assert_not_nil s.remark_result, "Remark result was supposed to be created"
-    assert_equal s.remark_result.marking_state, Result::MARKING_STATES[:unmarked], "Remark result marking_state should have been automatically set to unmarked"
+    assert_not_nil s.get_remark_result, "Remark result was supposed to be created"
+    assert_equal s.get_remark_result.marking_state, Result::MARKING_STATES[:unmarked], "Remark result marking_state should have been automatically set to unmarked"
   end
 
   context "A submission with a remark result submitted" do
@@ -27,7 +27,9 @@ class SubmissionTest < ActiveSupport::TestCase
       @submission = Submission.make
       @submission.save
       @submission.create_remark_result
-      @submission.remark_result.marking_state = Result::MARKING_STATES[:partial]
+      @result = @submission.get_remark_result
+      @result.marking_state = Result::MARKING_STATES[:partial]
+      @result.save
     end
 
     should "return true on has_remark? call" do
@@ -92,9 +94,9 @@ class SubmissionTest < ActiveSupport::TestCase
 
   should "create a remark result" do
     s = Submission.make
-    s.create_remark_result_object
-    assert_not_nil s.remark_result, "Remark result was supposed to be created"
-    assert_equal s.remark_result.marking_state, Result::MARKING_STATES[:unmarked], "Remark result marking_state should have been automatically set to unmarked"
+    s.create_remark_result
+    assert_not_nil s.get_remark_result, "Remark result was supposed to be created"
+    assert_equal s.get_remark_result.marking_state, Result::MARKING_STATES[:unmarked], "Remark result marking_state should have been automatically set to unmarked"
   end
 
 end
