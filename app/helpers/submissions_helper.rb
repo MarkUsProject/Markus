@@ -18,8 +18,7 @@ module SubmissionsHelper
         raise I18n.t("marking_state.not_complete", :group_name => grouping.group.group_name) if submission.get_original_result.marking_state != Result::MARKING_STATES[:complete]
         @result = submission.get_original_result
         @result.released_to_students = release
-        @result.save
-        if !submission.get_original_result.save
+        if !@result.save
           raise I18n.t("marking_state.result_not_saved", :group_name => grouping.group.group_name)
         end
         changed += 1

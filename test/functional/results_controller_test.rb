@@ -696,7 +696,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
               previous_result = previous_grouping.current_submission_used.get_original_result
               assert_not_nil next_result
               assert_not_nil previous_result
-              debugger
               assert_equal next_grouping, @groupings[2]
               assert_equal previous_grouping, @groupings[0]
               assert next_result.released_to_students
