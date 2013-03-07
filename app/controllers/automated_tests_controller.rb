@@ -99,11 +99,11 @@ class AutomatedTestsController < ApplicationController
 
      # print flash error messages
       else
-      flash[:error] = "The file is not in the expected directory or could not be read."
-      redirect_to :action => 'manage'
+        flash[:error] = I18n.t('automated_tests.download_wrong_place_or_unreadable');
+        redirect_to :action => 'manage'
       end
     else
-      flash[:error] = "The file is not in the database."
+      flash[:error] = I18n.t('automated_tests.download_not_in_db');
       redirect_to :action => 'manage'
     end
   end

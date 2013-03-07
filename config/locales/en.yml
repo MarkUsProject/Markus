@@ -1148,6 +1148,8 @@ en:
       test_files_unavailable: "There is no test script to run test"
       source_files_unavailable: "No student file is found for testing"
       dir_not_exist: "The directory %{dir} required for Ant does not exist"
+      download_wrong_place_or_unreadable: "The requested file is not in the expected directory or could not be read."
+      download_not_in_db: "The requested file is not in the database."
       script_option:
         run_settings: "Run Settings:"
         display_settings: "Display Settings"

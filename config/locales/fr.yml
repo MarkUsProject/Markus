@@ -1114,6 +1114,8 @@ fr:
       test_files_unavailable: "UPDATE ME"
       source_files_unavailable: "UPDATE ME"
       dir_not_exist: "Le dossier %{dir} requis par Ant n'existe pas."
+      download_wrong_place_or_unreadable: "UPDATE ME"
+      download_not_in_db: "UPDATE ME"
       script_option:
         run_settings: "UPDATE ME"
         display_settings: "UPDATE ME"
