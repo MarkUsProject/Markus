@@ -2,7 +2,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), 'authenticated_contro
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints'))
 require 'shoulda'
 require 'machinist'
-require 'mocha'
+require 'mocha/setup'
 
 class RoleSwitchingTest < AuthenticatedControllerTest
 
