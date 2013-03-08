@@ -59,7 +59,7 @@ group :development, :test do
   gem "time-warp"
   gem "ruby-debug", :platforms => :mri_18
   gem "debugger", :platforms => :mri_19
-  gem "mocha"
+  gem "mocha", :require => false
 end
 
 # If you  plan to use unicorn servers for production
