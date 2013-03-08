@@ -5,7 +5,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', '
 include CsvHelper
 require 'shoulda'
 require 'machinist'
-require 'mocha'
+require 'mocha/setup'
 require 'time-warp'
 
 class AssignmentsControllerTest < AuthenticatedControllerTest
