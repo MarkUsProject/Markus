@@ -212,10 +212,10 @@ module AutomatedTestsHelper
   # passeed, false => error occurred.
   def self.launch_test(server_id, assignment, repo_dir, call_on)
     # Get src_dir
-    src_dir = File.join(repo_dir, assignment.short_identifier)
+    src_dir = File.join(repo_dir, assignment.repository_folder)
 
     # Get test_dir
-    test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
+    test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.repository_folder)
 
     # Get the name of the test server
     server = @list_of_servers[server_id]
@@ -239,11 +239,11 @@ module AutomatedTestsHelper
     end
 
     # Securely copy source files, test files and test runner script to run_dir
-    stdout, stderr, status = Open3.capture3("scp -p -r #{src_dir}/* #{server}:#{run_dir}")
+    stdout, stderr, status = Open3.capture3("scp -p -r '#{src_dir}'/* #{server}:#{run_dir}")
     if !(status.success?)
       return [stderr, false]
     end
-    stdout, stderr, status = Open3.capture3("scp -p -r #{test_dir}/* #{server}:#{run_dir}")
+    stdout, stderr, status = Open3.capture3("scp -p -r '#{test_dir}'/* #{server}:#{run_dir}")
     if !(status.success?)
       return [stderr, false]
     end
