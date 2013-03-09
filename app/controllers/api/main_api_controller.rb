@@ -105,7 +105,8 @@ module Api
     # Helper method for filtering, limit, offset
     def get_collection(collection_class)
       # We'll append .where, .limit, and .offset to the collection
-      collection = collection_class
+      # Ignore default_scope order, always order by id to be consistent
+      collection = collection_class.order('id')
 
       filters = {}
       # params[:filter] will match the following format:
@@ -175,6 +176,14 @@ module Api
       end
 
       return plain_text
+    end
+
+    # Checks that the symbols provided in the array aren't blank in the params
+    def has_missing_params?(required_params)
+      required_params.each do |param|
+        return true if params[param].blank?
+      end
+      return false
     end
   end
 end # end Api module

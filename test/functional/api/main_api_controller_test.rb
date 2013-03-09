@@ -60,7 +60,7 @@ class Api::MainApiControllerTest < ActionController::TestCase
   end
 
   # Tests authenticated requests to the API controllers
-  context "Athenticated request to any API controller" do
+  context "Authenticated request to any API controller" do
     setup do
       admin = users(:api_admin)
       base_encoded_md5 = admin.api_key.strip
