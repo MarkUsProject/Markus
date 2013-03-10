@@ -356,5 +356,55 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
       end
     end
 
+    # Testing PUT api/assignments/:id
+    context 'testing the update function' do
+      setup do
+        @assignment = Assignment.make
+        @second_assignment = Assignment.make
+      end
+
+      should 'update those attributes that are supplied' do
+        put 'update', :id => @assignment.id.to_s, :short_identifier => 'TestAs'
+        updated_assignment = Assignment.find_by_id(@assignment.id)
+        assert_equal(updated_assignment.short_identifier, 'TestAs')
+      end
+
+      should 'update the submission rules if provided' do
+        put 'update', :id => @assignment.id.to_s, :allow_remarks => false,
+        :group_mind => '5', :submission_rule_type => 'PenaltyDecayPeriod', 
+        :submission_rule_interval => '12', :submission_rule_deduction => '5',
+        :submission_rule_hours => '8'
+
+        updated_assignment = Assignment.find_by_id(@assignment.id)
+        assert_equal(updated_assignment.submission_rule.type, 
+          PenaltyDecayPeriodSubmissionRule.to_s)
+        assert_equal(updated_assignment.submission_rule.periods.first.interval, 12)
+        assert_equal(updated_assignment.submission_rule.periods.first.deduction, 5)
+        assert_equal(updated_assignment.submission_rule.periods.first.hours, 8)
+      end
+
+      should 'not be able to use a short_identifier that already exists' do
+        put 'update', :id => @assignment.id.to_s, :description => 'Testing', 
+          :short_identifier => @second_assignment.short_identifier
+        assert_response 409
+      end
+
+      should 'not be able to update an assignment that does not exist' do
+        put 'update', :id => '9999', :message => 'TestingMessage'
+        assert Assignment.find_by_message('TestingMessage').nil?
+        assert_response 404
+      end
+    end
+
+    context 'testing that the destroy function is disabled' do
+      setup do
+        delete 'destroy', :id => 1
+      end
+
+      should "pretend the function doesn't exist" do
+        assert_response :missing
+      end
+    end
+
   end
 end
