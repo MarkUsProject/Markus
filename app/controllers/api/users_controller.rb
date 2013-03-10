@@ -22,7 +22,7 @@ module Api
     end
 
     # Requires: user_name, type, first_name, last_name
-    # Optional: [section_name], [grace_credits]
+    # Optional: section_name, grace_credits
     def create
       if has_missing_params?([:user_name, :type, :first_name, :last_name])
         # incomplete/invalid HTTP params
@@ -99,13 +99,13 @@ module Api
 
     # Requires nothing, does nothing
     def destroy
-      # Admins should not be deleting users at all so pretend this URL does not exist
+      # Admins should not be deleting users, so pretend this URL doesn't exist
       render 'shared/http_status', :locals => {:code => '404', :message =>
         HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404
     end
 
     # Requires: id
-    # Optional: [first_name], [last_name], [user_name], [section_name], [grace_credits]
+    # Optional: first_name, last_name, user_name, section_name, grace_credits
     def update
       # If no user is found, render an error.
       user = User.find_by_id(params[:id])

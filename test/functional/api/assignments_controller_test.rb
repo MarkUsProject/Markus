@@ -311,11 +311,14 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
           end
         end
 
-        sub_rule = @assignment.submission_rule
-        assert_equal(sub_rule.type, PenaltyDecayPeriodSubmissionRule.to_s)
-        assert_equal(sub_rule.periods.first.deduction, @attr[:submission_rule_deduction])
-        assert_equal(sub_rule.periods.first.hours, @attr[:submission_rule_hours])
-        assert_equal(sub_rule.periods.first.interval, @attr[:submission_rule_interval])
+        assert_equal(@assignment.submission_rule.type, 
+          PenaltyDecayPeriodSubmissionRule.to_s)
+        assert_equal(@assignment.submission_rule.periods.first.deduction, 
+          @attr[:submission_rule_deduction])
+        assert_equal(@assignment.submission_rule.periods.first.hours, 
+          @attr[:submission_rule_hours])
+        assert_equal(@assignment.submission_rule.periods.first.interval, 
+          @attr[:submission_rule_interval])
       end
     end
 
