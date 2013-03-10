@@ -49,7 +49,7 @@ def runTest(fileName)
     # basic timeout check
     # if the test_suite runs for over N seconds, it times out
     Timeout.timeout($TIME_LIMIT) do
-      @pipe = IO.popen("./#{fileName}")
+      @pipe = IO.popen("./'#{fileName}'")
       Process.wait @pipe.pid
     end
   rescue Timeout::Error
@@ -102,7 +102,7 @@ def getNext(useSTD)
     return s
   else
     # return the next 2 arguments, which will be (fileName, tag)
-    args = "#{ARGV[$LAST_ARG]} #{ARGV[$LAST_ARG+1]}"
+    args = "#{ARGV[$LAST_ARG]}:#{ARGV[$LAST_ARG+1]}"
     $LAST_ARG = $LAST_ARG + 2
     return args
   end
@@ -171,14 +171,14 @@ def main()
   
   files = []
   flags = []
-  #using stdin can return nil, and using cmd line can return " ", but not nil
-  while(nextFile != nil && nextFile != " ") do
-    filedata = nextFile.split(' ')
+  #using stdin can return nil, and using cmd line can return ":", but not nil
+  while(nextFile != nil && nextFile != ":") do
+    filedata = nextFile.split(':')
 
     #extract the test script data
-    files.push(filedata[0])
+    files.push(filedata[0].gsub(/\s/, "\ "))
     flags.push(getBool(filedata[1]))
-    
+
     #get the next script
     nextFile = getNext(useSTD)
   end
