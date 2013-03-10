@@ -9,7 +9,7 @@ class Api::MainApiControllerTest < ActionController::TestCase
 
   context "An unauthenticated GET request on any API controller" do
     setup do
-      @request.env['HTTP_ACCEPT'] = 'text/plain'
+      @request.env['HTTP_ACCEPT'] = 'application/xml'
       @res = get("index")
     end
 
@@ -22,7 +22,7 @@ class Api::MainApiControllerTest < ActionController::TestCase
 
   context "An unauthenticated PUT request on any API controller" do
     setup do
-      @request.env['HTTP_ACCEPT'] = 'text/plain'
+      @request.env['HTTP_ACCEPT'] = 'application/xml'
       @res = put("index")
     end
 
@@ -35,7 +35,7 @@ class Api::MainApiControllerTest < ActionController::TestCase
 
   context "An unauthenticated DELETE request on any API controller" do
     setup do
-      @request.env['HTTP_ACCEPT'] = 'text/plain'
+      @request.env['HTTP_ACCEPT'] = 'application/xml'
       @res = delete("index")
     end
 
@@ -48,7 +48,7 @@ class Api::MainApiControllerTest < ActionController::TestCase
 
   context "An unauthenticated POST request on any API controller" do
     setup do
-      @request.env['HTTP_ACCEPT'] = 'text/plain'
+      @request.env['HTTP_ACCEPT'] = 'application/xml'
       @res = post("index")
     end
 
@@ -65,7 +65,7 @@ class Api::MainApiControllerTest < ActionController::TestCase
       admin = users(:api_admin)
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
-      @request.env['HTTP_ACCEPT'] = 'text/plain'
+      @request.env['HTTP_ACCEPT'] = 'application/xml'
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
     end
 

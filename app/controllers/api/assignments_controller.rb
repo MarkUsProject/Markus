@@ -18,10 +18,9 @@ module Api
       fields = fields_to_render(@@default_fields)
 
       respond_to do |format|
-        format.any{render :text => get_plain_text('assignment', assignments, fields)}
-        format.json{render :json => assignments.to_json(:only => fields)}
-        format.xml{render :xml => assignments.to_xml(:only => fields, :root => 
+        format.any{render :xml => assignments.to_xml(:only => fields, :root => 
           'assignments', :skip_types => 'true')}
+        format.json{render :json => assignments.to_json(:only => fields)}
       end
     end
 
@@ -40,11 +39,9 @@ module Api
           fields = fields_to_render(@@default_fields)
 
           respond_to do |format|
-            format.any{render :text => get_plain_text('assignment', assignment, 
-              fields)}
-            format.json{render :json => assignment.to_json(:only => fields)}
-            format.xml{render :xml => assignment.to_xml(:only => fields, :root => 
+            format.any{render :xml => assignment.to_xml(:only => fields, :root => 
               'assignment', :skip_types => 'true')}
+            format.json{render :json => assignment.to_json(:only => fields)}
           end
         end
       else

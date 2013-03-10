@@ -11,7 +11,7 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
     setup do
       # Set garbage HTTP header
       @request.env['HTTP_AUTHORIZATION'] = 'garbage http_header'
-      @request.env['HTTP_ACCEPT'] = 'text/plain'
+      @request.env['HTTP_ACCEPT'] = 'application/xml'
     end
 
     context '/index' do
@@ -88,43 +88,6 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
                       'marking-scheme-type', 'repository-folder']
     end
 
-    # Testing text/plain response, including the use of get_plain_text
-    # Because we can't use t('assignment.field') to get the translations,
-    # we'll just check a few instead of hard-coding all the strings
-    context 'getting a text response' do
-      setup do
-        @assignment = Assignment.make
-        @request.env['HTTP_ACCEPT'] = 'text/plain'
-      end
-
-      should 'be successful' do
-        get 'show', :id => @assignment.id.to_s
-        assert_equal @response.content_type, 'text/plain'
-      end
-
-      should "display default attributes for a resource if fields aren't used" do
-        get 'show', :id => @assignment.id.to_s
-        assert @response.body.include?('ID')
-        assert @response.body.include?('Repository folder name')
-        assert @response.body.include?('Enable tests')
-      end
-
-      should "display default attributes for a collection if fields aren't used" do
-        get 'index'
-        assert @response.body.include?('ID')
-        assert @response.body.include?('Repository folder name')
-        assert @response.body.include?('Enable tests')
-      end
-
-      should 'display only specified fields if the fields parameter is used' do
-        get 'index', :fields => 'id,description'
-        assert @response.body.include?('ID')
-        assert @response.body.include?('Description')
-        assert !@response.body.include?('Repository folder name')
-        assert !@response.body.include?('Enable tests')
-      end
-    end
-
     # Testing application/json response
     context 'getting a json response' do
       setup do
@@ -151,7 +114,7 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
       end
     end
 
-    # Testing an rss response
+    # Testing an invalid HTTP_ACCEPT type
     context 'getting an rss response' do
       setup do
         @request.env['HTTP_ACCEPT'] = 'application/rss'
