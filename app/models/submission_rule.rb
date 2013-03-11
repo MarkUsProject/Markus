@@ -11,6 +11,10 @@ class SubmissionRule < ActiveRecord::Base
     return @can_collect_now if !@can_collect_now.nil?
     @can_collect_now = Time.zone.now >= get_collection_time
   end
+  
+  def can_collect_grouping_now?(grouping)
+    return Time.zone.now >= calculate_grouping_collection_time(grouping) 
+  end
 
   # Cache that allows us to quickly get collection time
   def get_collection_time
