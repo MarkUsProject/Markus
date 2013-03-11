@@ -256,7 +256,7 @@ module AutomatedTestsHelper
     list_run_scripts = scripts_to_run(assignment, call_on)
     arg_list = ""
     list_run_scripts.each do |script|
-      arg_list = arg_list + "#{script.script_name} #{script.halts_testing} "
+      arg_list = arg_list + "#{script.script_name.gsub(/\s/, "\\ ")} #{script.halts_testing} "
     end
     
     # Run script
