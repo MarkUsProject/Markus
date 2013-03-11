@@ -199,9 +199,11 @@ class SubmissionsController < ApplicationController
   end
 
   def collect_and_begin_grading
+    
     assignment = Assignment.find(params[:assignment_id])
     grouping = Grouping.find(params[:id])
-    if !assignment.submission_rule.can_collect_now?
+    
+    if !assignment.submission_rule.can_collect_grouping_now?(grouping)
       flash[:error] = I18n.t("browse_submissions.could_not_collect",
         :group_name => grouping.group.group_name)
     else
