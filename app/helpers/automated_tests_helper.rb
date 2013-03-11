@@ -431,6 +431,9 @@ module AutomatedTestsHelper
     # Array for checking duplicate file names
     file_name_array = []
     
+    #add existing scripts names
+    params.each {|key, value| if(key[/test_script_\d+/] != nil) then file_name_array << value end}
+    
     # Retrieve all test scripts
     testscripts = params[:assignment][:test_scripts_attributes]
 
