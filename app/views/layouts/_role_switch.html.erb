@@ -3,14 +3,13 @@
 
 var role_switch_modal = null;
 
-document.observe("dom:loaded", function(){
+$(document).ready(function(){
     //Create the modal dialog
-  role_switch_modal = new Control.Modal($('role_switch_dialog'),
+  role_switch_modal = $('#role_switch_dialog').dialog(
   {
-    overlayOpacity: 0.75,
+    modal: true,
     className: 'role_switch_modal',
-    fade:false
-
+    autoOpen: false
   });
 });
 //]]>

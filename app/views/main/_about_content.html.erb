@@ -31,13 +31,13 @@
   <p>&nbsp;</p>
 </div>
 <div id="about_close">
-  <a class="button" href="#" onclick="about_modal.close();">
+  <a class="button" href="#" onclick="about_modal.dialog('close');">
     <%= I18n.t(:close) %>
   </a>
 </div>
 
 <script>
 //<![CDATA[
-about_modal.open();
+about_modal.dialog('open');
 //]]>
 </script>
