@@ -1,5 +1,0 @@
-if (!<%= success %>) {
-	$("#role_switch_error").html('<%= escape_javascript(render(:partial => "role_switch_error.html.erb", :locals => { :error => error })) %>');
-} else {
-	window.location.replace("<%= assignments_path() %>");
-}

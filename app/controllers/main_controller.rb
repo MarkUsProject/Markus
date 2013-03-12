@@ -202,7 +202,7 @@ class MainController < ApplicationController
     end
     if !validation_result[:error].nil?
       # There were validation errors
-      render :file => "/main/role_switch_handler",
+      render :partial => "role_switch_handler",
         :locals => { :error => validation_result[:error], :success => false }
       return
     end
@@ -215,7 +215,7 @@ class MainController < ApplicationController
     # Check if an admin is trying to login as another admin. Should not be allowed
     if found_user.admin?
       # error
-      render :file => "/main/role_switch_handler", :locals =>
+      render :partial => "role_switch_handler", :locals =>
             { :error => I18n.t(:cannot_login_as_another_admin), :success => false }
       return
     end
@@ -237,11 +237,11 @@ class MainController < ApplicationController
       current_user.set_api_key # set api key in DB for user if not yet set
       # All good, redirect to the main page of the viewer, discard
       # role switch modal
-      render :file => "/main/role_switch_handler", :locals =>
+      render :partial => "role_switch_handler", :locals =>
             { :error => '', :success => true }
       return
     else
-      render :file => "/main/role_switch_handler", :locals =>
+      render :partial => "role_switch_handler", :locals =>
             { :error => I18n.t(:login_failed), :success => false }
       return
     end
