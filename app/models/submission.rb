@@ -69,6 +69,27 @@ class Submission < ActiveRecord::Base
     return result
   end
 
+  # returns the latest result - remark result if exists and submitted, else original result
+  def get_latest_result
+    if self.remark_submitted?
+      result = self.get_remark_result
+    else
+      result = self.get_original_result
+    end
+    return result
+  end
+
+  # returns the latest completed result - note: will return nil if there is no completed result
+  def get_latest_completed_result
+    if self.remark_submitted? && self.get_remark_result.marking_state == Result::MARKING_STATES[:complete]
+      return self.get_remark_result
+    end
+    if self.get_original_result.marking_state == Result::MARKING_STATES[:complete]
+      return self.get_original_result
+    end
+    return nil
+  end
+
   # For group submissions, actions here must only be accessible to members
   # that has inviter or accepted status. This check is done when fetching
   # the user or group submission from an assignment (see controller).

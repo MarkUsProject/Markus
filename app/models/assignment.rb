@@ -572,7 +572,7 @@ class Assignment < ActiveRecord::Base
            final_result.push('')
          else
            submission = grouping.current_submission_used
-           final_result.push(submission.get_original_result.total_mark / out_of * 100)
+           final_result.push(submission.get_latest_result.total_mark / out_of * 100)
          end
          csv << final_result
        end
@@ -620,9 +620,9 @@ class Assignment < ActiveRecord::Base
           final_result.push('')                         # extra-percentage
         else
           submission = grouping.current_submission_used
-          final_result.push(submission.get_original_result.total_mark / out_of * 100)
+          final_result.push(submission.get_latest_result.total_mark / out_of * 100)
           rubric_criteria.each do |rubric_criterion|
-            mark = submission.get_original_result.marks.find_by_markable_id_and_markable_type(rubric_criterion.id, "RubricCriterion")
+            mark = submission.get_latest_result.marks.find_by_markable_id_and_markable_type(rubric_criterion.id, "RubricCriterion")
             if mark.nil?
               final_result.push('')
             else
@@ -630,8 +630,8 @@ class Assignment < ActiveRecord::Base
             end
             final_result.push(rubric_criterion.weight)
           end
-          final_result.push(submission.get_original_result.get_total_extra_points)
-          final_result.push(submission.get_original_result.get_total_extra_percentage)
+          final_result.push(submission.get_latest_result.get_total_extra_points)
+          final_result.push(submission.get_latest_result.get_total_extra_percentage)
         end
         # push grace credits info
         grace_credits_data = student.remaining_grace_credits.to_s + "/" + student.grace_credits.to_s
@@ -671,9 +671,9 @@ class Assignment < ActiveRecord::Base
           # Fill in actual values, since we have a grouping
           # and a submission.
           submission = grouping.current_submission_used
-          final_result.push(submission.get_original_result.total_mark / out_of * 100)
+          final_result.push(submission.get_latest_result.total_mark / out_of * 100)
           flexible_criteria.each do |criterion|
-            mark = submission.get_original_result.marks.find_by_markable_id_and_markable_type(criterion.id, "FlexibleCriterion")
+            mark = submission.get_latest_result.marks.find_by_markable_id_and_markable_type(criterion.id, "FlexibleCriterion")
             if mark.nil?
               final_result.push('')
             else
@@ -681,8 +681,8 @@ class Assignment < ActiveRecord::Base
             end
             final_result.push(criterion.max)
           end
-          final_result.push(submission.get_original_result.get_total_extra_points)
-          final_result.push(submission.get_original_result.get_total_extra_percentage)
+          final_result.push(submission.get_latest_result.get_total_extra_points)
+          final_result.push(submission.get_latest_result.get_total_extra_percentage)
         end
         # push grace credits info
         grace_credits_data = student.remaining_grace_credits.to_s + "/" + student.grace_credits.to_s
@@ -744,8 +744,8 @@ class Assignment < ActiveRecord::Base
     groupings.each do |grouping|
       submission = grouping.current_submission_used
       if !submission.nil? && submission.has_result?
-        result = submission.get_original_result
-        if result.marking_state == Result::MARKING_STATES[:complete]
+        result = submission.get_latest_completed_result
+        if !result.nil?
           percentage = (result.total_mark / out_of * 100).ceil
           if percentage == 0
             distribution[0] += 1
