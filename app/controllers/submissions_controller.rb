@@ -277,11 +277,15 @@ class SubmissionsController < ApplicationController
     @c_per_page = current_user.id.to_s + "_" + @assignment.id.to_s + "_per_page"
     if !params[:per_page].blank?
        cookies[@c_per_page] = params[:per_page] 
+    elsif !cookies[@c_per_page].blank?
+       params[:per_page] = cookies[@c_per_page]
     end 
 
     @c_sort_by = current_user.id.to_s + "_" + @assignment.id.to_s + "_sort_by"
     if !params[:sort_by].blank?
        cookies[@c_sort_by] = params[:sort_by]
+    elsif !cookies[@c_sort_by].blank?
+       params[:sort_by] = cookies[@c_sort_by]
     else
        params[:sort_by] = 'group_name' 
     end
