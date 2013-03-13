@@ -1,27 +1,30 @@
 module Api
 
-  #=== Description
-  # Allows for adding, modifying and showing users into MarkUs.
+  # Allows for adding, modifying and showing Markus users.
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class UsersController < MainApiController
-    # Requires nothing
+    # Define default fields to display for index and show methods
+    @@default_fields = [:id, :user_name, :type, :first_name, :last_name,
+                        :grace_credits, :notes_count];
+
+    # Requires: nothing
+    # Optional: filter, fields
     def index
       users = get_collection(User)
-      default_fields = [:id, :user_name, :type, :first_name, :last_name,
-                        :grace_credits, :notes_count];
-      fields = fields_to_render(default_fields)
+      
+      fields = fields_to_render(@@default_fields)
 
       respond_to do |format|
-        format.any{render :text => get_plain_text('user', users, fields)}
-        format.json{render :json => users.to_json(:only => fields)}
-        format.xml{render :xml => users.to_xml(:only => fields, :root => 'users',
+        format.any{render :xml => users.to_xml(:only => fields, :root => 'users',
           :skip_types => 'true')}
+        format.json{render :json => users.to_json(:only => fields)}
       end
     end
 
-    # Requires user_name, type, last_name, first_name, [section_name], [grace_credits]
+    # Requires: user_name, type, first_name, last_name
+    # Optional: section_name, grace_credits
     def create
-      if has_missing_params?(params)
+      if has_missing_params?([:user_name, :type, :first_name, :last_name])
         # incomplete/invalid HTTP params
         render 'shared/http_status', :locals => {:code => '422', :message =>
           HttpStatusHelper::ERROR_CODE['message']['422']}, :status => 422
@@ -66,7 +69,8 @@ module Api
         HttpStatusHelper::ERROR_CODE['message']['201']}, :status => 201
     end
 
-    # Requires user_name
+    # Requires: id
+    # Optional: filter, fields
     def show
       # Check if it's a numeric string
       if !!(params[:id] =~ /^[0-9]+$/)
@@ -77,15 +81,12 @@ module Api
             'No user exists with that id'}, :status => 404
           return
         else
-          default_fields = [:id, :user_name, :type, :first_name, :last_name,
-                            :grace_credits, :notes_count];
-          fields = fields_to_render(default_fields)
+          fields = fields_to_render(@@default_fields)
 
           respond_to do |format|
-            format.any{render :text => get_plain_text('user', user, fields)}
-            format.json{render :json => user.to_json(:only => fields)}
-            format.xml{render :xml => user.to_xml(:only => fields, :root => 'users',
+            format.any{render :xml => user.to_xml(:only => fields, :root => 'users',
               :skip_types => 'true')}
+            format.json{render :json => user.to_json(:only => fields)}
           end
         end
       else
@@ -98,12 +99,13 @@ module Api
 
     # Requires nothing, does nothing
     def destroy
-      # Admins should not be deleting users at all so pretend this URL does not exist
+      # Admins should not be deleting users, so pretend this URL doesn't exist
       render 'shared/http_status', :locals => {:code => '404', :message =>
         HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404
     end
 
-    # Requires [first_name], [last_name], [user_name], [section_name], [grace_credits]
+    # Requires: id
+    # Optional: first_name, last_name, user_name, section_name, grace_credits
     def update
       # If no user is found, render an error.
       user = User.find_by_id(params[:id])
@@ -143,29 +145,22 @@ module Api
 
     # Process the parameters passed for user creation and update
     def process_attributes(params, attributes)
-        # Get the id of the section corresponding to :section_name
-        if !params[:section_name].blank?
-           section = Section.find_by_name(params[:section_name])
-           if !section.blank?
-            attributes["section_id"] = section.id
-           end
+      # Get the id of the section corresponding to :section_name
+      if !params[:section_name].blank?
+        section = Section.find_by_name(params[:section_name])
+        if !section.blank?
+          attributes[:section_id] = section.id
         end
+      end
 
-        parameters = ["last_name", "first_name", "type", "grace_credits"]
-        parameters.each do |parameter|
-          key = parameter.to_sym
-          if !params[key].blank?
-            attributes[parameter] = params[key]
-          end
+      parameters = [:last_name, :first_name, :type, :grace_credits]
+      parameters.each do |key|
+        if !params[key].blank?
+          attributes[key] = params[key]
         end
+      end
 
-        return attributes
-    end
-
-    # Checks user_name, first_name, last_name, type
-    def has_missing_params?(params)
-      return params[:user_name].blank? || params[:type].blank? ||
-         params[:first_name].blank? || params[:last_name].blank?
+      return attributes
     end
   end # end UsersController
 end

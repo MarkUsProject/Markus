@@ -13,7 +13,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
-      @request.env['HTTP_ACCEPT'] = 'text/plain'
+      @request.env['HTTP_ACCEPT'] = 'application/xml'
       # get parameters from fixtures
       group = groups(:group_test_result1)
       assignment = assignments(:assignment_test_result1)
@@ -32,18 +32,6 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     end
 
     # START: Checking valid response types
-    context "getting a text response" do
-      setup do
-        @request.env['HTTP_ACCEPT'] = 'text/plain'
-        get "show", :id => "garbage"
-      end
-
-      should "be successful" do
-        assert_template 'shared/http_status'
-        assert_equal @response.content_type, 'text/plain'
-      end
-    end
-
     context "getting a json response" do
       setup do
         @request.env['HTTP_ACCEPT'] = 'application/json'
@@ -90,7 +78,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
-      @request.env['HTTP_ACCEPT'] = 'text/plain'
+      @request.env['HTTP_ACCEPT'] = 'application/xml'
       # get parameters from fixtures
       group = groups(:group_test_result1)
       assignment = assignments(:assignment_test_result1)
@@ -129,7 +117,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
-      @request.env['HTTP_ACCEPT'] = 'text/plain'
+      @request.env['HTTP_ACCEPT'] = 'application/xml'
       # get parameters from fixtures
       group = groups(:group_test_result1)
       assignment = assignments(:assignment_test_result1)
@@ -169,7 +157,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
-      @request.env['HTTP_ACCEPT'] = 'text/plain'
+      @request.env['HTTP_ACCEPT'] = 'application/xml'
       # get parameters from fixtures
       group = groups(:group_test_result1)
       assignment = assignments(:assignment_test_result1)
@@ -197,7 +185,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
-      @request.env['HTTP_ACCEPT'] = 'text/plain'
+      @request.env['HTTP_ACCEPT'] = 'application/xml'
       # parameters
       @res = get("show", {:id => 1, :filename => "some_filename"})
     end
@@ -215,7 +203,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       admin = users(:api_admin)
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
-      @request.env['HTTP_ACCEPT'] = 'text/plain'
+      @request.env['HTTP_ACCEPT'] = 'application/xml'
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
       @res = post("create", {:filename => "some_filename"})
     end
@@ -234,7 +222,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
-      @request.env['HTTP_ACCEPT'] = 'text/plain'
+      @request.env['HTTP_ACCEPT'] = 'application/xml'
       @res = put("update", {:id => 1, :filename => "some_filename"})
     end
 
@@ -252,7 +240,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
-      @request.env['HTTP_ACCEPT'] = 'text/plain'
+      @request.env['HTTP_ACCEPT'] = 'application/xml'
       @res = delete("destroy", {:id => 1, :filename => "somefilename"})
     end
 
@@ -270,7 +258,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
-      @request.env['HTTP_ACCEPT'] = 'text/plain'
+      @request.env['HTTP_ACCEPT'] = 'application/xml'
       # get parameters from fixtures
       group = groups(:group_test_result1)
       assignment = assignments(:assignment_test_result1)
@@ -294,7 +282,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
-      @request.env['HTTP_ACCEPT'] = 'text/plain'
+      @request.env['HTTP_ACCEPT'] = 'application/xml'
       # get parameters from fixtures
       group = groups(:group_test_result1)
       assignment = assignments(:assignment_test_result1)
@@ -318,7 +306,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
-      @request.env['HTTP_ACCEPT'] = 'text/plain'
+      @request.env['HTTP_ACCEPT'] = 'application/xml'
       # get parameters from fixtures
       group = groups(:group_test_result1)
       assignment = assignments(:assignment_test_result1)
