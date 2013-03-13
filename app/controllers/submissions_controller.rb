@@ -68,15 +68,31 @@ class SubmissionsController < ApplicationController
         return 1 if !b.has_submission?
         return a.current_submission_used.revision_timestamp <=> b.current_submission_used.revision_timestamp
       },
+      # Ordering for marking state: 
+      #   Released (icon: "sent mail") - complete & released_to_student
+      #   Complete (icon: green circle check mark) - complete
+      #   Remark Requested (icon: speech bubble exclamation mark) - partial & remark_submitted
+      #   Partial (icon: pencil) - partial
+      #   Unmarked (icon : pencil) - unmarked
       'marking_state' => lambda { |a,b|
         return -1 if !a.has_submission?
         return 1 if !b.has_submission?
-        return a.current_submission_used.get_original_result.marking_state <=> b.current_submission_used.get_original_result.marking_state
+        return -1 if a.current_submission_used.get_latest_result.released_to_students == true
+        return 1 if b.current_submission_used.get_latest_result.released_to_students == true
+        if a.current_submission_used.get_latest_result.marking_state == Result::MARKING_STATES[:partial] && 
+          b.current_submission_used.get_latest_result.marking_state == Result::MARKING_STATES[:partial]
+            return -1 if a.current_submission_used.remark_submitted?
+            return 1 if b.current_submission_used.remark_submitted?
+            return 0
+        end 
+        return a.current_submission_used.get_latest_result.marking_state <=> 
+          b.current_submission_used.get_latest_result.marking_state
       },
       'total_mark' => lambda { |a,b|
         return -1 if !a.has_submission?
         return 1 if !b.has_submission?
-        return a.current_submission_used.get_original_result.total_mark <=> b.current_submission_used.get_original_result.total_mark
+        return a.current_submission_used.get_latest_result.total_mark <=> 
+          b.current_submission_used.get_latest_result.total_mark
       },
       'grace_credits_used' => lambda { |a,b|
         return a.grace_period_deduction_single <=> b.grace_period_deduction_single
