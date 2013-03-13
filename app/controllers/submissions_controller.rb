@@ -79,17 +79,20 @@ class SubmissionsController < ApplicationController
         return 1 if !b.has_submission?
         return -1 if a.current_submission_used.get_latest_result.released_to_students == true
         return 1 if b.current_submission_used.get_latest_result.released_to_students == true
-        if a.current_submission_used.get_latest_result.marking_state == Result::MARKING_STATES[:partial] && b.current_submission_used.get_latest_result.marking_state == Result::MARKING_STATES[:partial]
-          return -1 if a.current_submission_used.remark_submitted?
-          return 1 if b.current_submission_used.remark_submitted?
-          return 0
+        if a.current_submission_used.get_latest_result.marking_state == Result::MARKING_STATES[:partial] && 
+          b.current_submission_used.get_latest_result.marking_state == Result::MARKING_STATES[:partial]
+            return -1 if a.current_submission_used.remark_submitted?
+            return 1 if b.current_submission_used.remark_submitted?
+            return 0
         end 
-        return a.current_submission_used.get_latest_result.marking_state <=> b.current_submission_used.get_latest_result.marking_state
+        return a.current_submission_used.get_latest_result.marking_state <=> 
+          b.current_submission_used.get_latest_result.marking_state
       },
       'total_mark' => lambda { |a,b|
         return -1 if !a.has_submission?
         return 1 if !b.has_submission?
-        return a.current_submission_used.get_latest_result.total_mark <=> b.current_submission_used.get_latest_result.total_mark
+        return a.current_submission_used.get_latest_result.total_mark <=> 
+          b.current_submission_used.get_latest_result.total_mark
       },
       'grace_credits_used' => lambda { |a,b|
         return a.grace_period_deduction_single <=> b.grace_period_deduction_single
