@@ -80,9 +80,9 @@ module Api
     end
 
     #=== Description
-    # Make sure that the passed format is either text, xml or json
+    # Make sure that the passed format is either xml or json
     def check_format
-      # support only plain text, xml and json
+      # support only xml and json, but allow text so extension isn't required
       request_format = request.format.symbol
       if request_format != :text && request_format != :xml && request_format != :json
         # 406 is the default status code when the format is not support
@@ -105,7 +105,8 @@ module Api
     # Helper method for filtering, limit, offset
     def get_collection(collection_class)
       # We'll append .where, .limit, and .offset to the collection
-      collection = collection_class
+      # Ignore default_scope order, always order by id to be consistent
+      collection = collection_class.order('id')
 
       filters = {}
       # params[:filter] will match the following format:
@@ -150,31 +151,12 @@ module Api
       return fields
     end
 
-    #=== Description
-    # Helper method for getting the plaintext representation of a collection
-    # or a single resource for output using render. Only renders those fields
-    # that are specified in an array, and prepends the string resource_name
-    # to each field
-    def get_plain_text(resource_name, collection_or_resource, fields)
-      plain_text = ""
-
-      # So we can iterate even if it's a single resource
-      if collection_or_resource.kind_of?(Array)
-        collection = collection_or_resource
-      else
-        collection = [collection_or_resource]
+    # Checks that the symbols provided in the array aren't blank in the params
+    def has_missing_params?(required_params)
+      required_params.each do |param|
+        return true if params[param].blank?
       end
-
-      collection.each do |resource|
-        fields.each do |field|
-          field_name = field
-          plain_text += t("#{resource_name}.#{field_name}") + ": " +
-                        resource[field].to_s + "\n"
-        end
-        plain_text += "\n"
-      end
-
-      return plain_text
+      return false
     end
   end
 end # end Api module

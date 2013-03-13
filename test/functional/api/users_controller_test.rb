@@ -6,12 +6,12 @@ require 'base64'
 
 class Api::UsersControllerTest < ActionController::TestCase
 
-  # Testing UNauthenticated requests
+  # Testing unauthenticated requests
   context "An unauthenticated request to api/users" do
     setup do
       # Set garbage HTTP header
       @request.env['HTTP_AUTHORIZATION'] = "garbage http_header"
-      @request.env['HTTP_ACCEPT'] = 'text/plain'
+      @request.env['HTTP_ACCEPT'] = 'application/xml'
     end
 
     context "/index" do
@@ -220,47 +220,6 @@ class Api::UsersControllerTest < ActionController::TestCase
       end
     end
 
-    # Testing text/plain response, including the use of get_plain_text
-    context 'getting a text response' do
-      setup do
-        @user = Student.make
-        @request.env['HTTP_ACCEPT'] = 'text/plain'
-      end
-
-      should 'be successful' do
-        get 'show', :id => @user.id.to_s
-        assert_equal @response.content_type, 'text/plain'
-      end
-
-      should "display default attributes for a resource if fields isn't used" do
-        get 'show', :id => @user.id.to_s
-        fields = ['ID', 'User Name', 'Type', 'First Name', 'Last Name',
-                  'Grace Credits Left', 'Notes']
-        fields.each do |field|
-          assert @response.body.include?(field)
-        end
-      end
-
-      should "display default attributes for a collection if fields isn't used" do
-        get 'index'
-        fields = ['ID', 'User Name', 'Type', 'First Name', 'Last Name',
-                  'Grace Credits Left', 'Notes']
-        fields.each do |field|
-          assert @response.body.include?(field)
-        end
-      end
-
-      should 'display only specified fields if the fields parameter is used' do
-        get 'index', :fields => 'first_name,last_name'
-        assert @response.body.include?('First Name')
-        assert @response.body.include?('Last Name')
-        fields = ['ID', 'User Name', 'Type', 'Grace Credits Left', 'Notes']
-        fields.each do |field|
-          assert !@response.body.include?(field)
-        end
-      end
-    end
-
     # Testing application/json response
     context "getting a json response" do
       setup do
@@ -287,7 +246,7 @@ class Api::UsersControllerTest < ActionController::TestCase
       end
     end
 
-    # Testing an rss response
+    # Testing an invalid HTTP_ACCEPT type
     context "getting an rss response" do
       setup do
         @request.env['HTTP_ACCEPT'] = 'application/rss'
