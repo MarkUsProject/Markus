@@ -1,0 +1,4 @@
+mark_criteria.each do |criterion|
+  page.call "show_criterion", criterion.id
+end
+

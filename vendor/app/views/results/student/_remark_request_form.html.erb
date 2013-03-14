@@ -1,0 +1,24 @@
+<%= javascript_include_tag "effects.js" %>
+<div id="remark_request_edit">
+    <%= form_for submission,
+          :url => { :controller => 'results',
+            :action => 'update_remark_request',
+            :id => submission.id,
+            :assignment_id => assignment.id},
+          :html => { :method => :get },
+          :remote => true do |f| %>
+    <%= f.text_area :remark_request, :cols => 50, :rows => 5,
+                    :id => 'remark_request_text_area',
+                    :onkeydown => "enableRemarkRequestButtons();" %>
+    <div>
+      <%= hidden_field_tag "real_commit", "Submit" %>
+      <%= f.submit t(:save_changes), :OnClick => "$('real_commit').value='Save'",
+                   :disabled => true, :id => "remark_request_save", 
+                   :disable_with => I18n.t('working') %>
+      <%= f.submit t(:submit_request),
+      			   :disable_with => I18n.t('working'),
+                   :id => "remark_request_submit",
+                   :confirm => t(:confirm_remark_submit) %>
+    </div>
+  <% end -%>
+</div>

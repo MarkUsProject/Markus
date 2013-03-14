@@ -1,0 +1,38 @@
+<li class="criterion_holder <%= cycle('rowA', 'rowB') %>"
+    id="criterion_<%=h(criterion.id)%>">
+  <span class="criterion_handle">
+    <%= image_tag "handle.png" %>
+  </span>
+  <span class="criterion_title_div link">
+    <%= link_to truncate(criterion.rubric_criterion_name,
+                               :length => 30,
+                               :omission => '...'),
+                       edit_assignment_rubric_path(@assignment, criterion),
+                       :id => "criterion_title_#{criterion.id}", 
+                       :remote => true %>
+  </span>
+  <span class="criterion_arrow">
+    <% if location != :first and location != :single %>
+    <%= link_to image_tag("icons/bullet_arrow_up.png",
+			             :alt => t('rubric_criteria.move_up')),
+          	      move_criterion_assignment_rubric_path(
+				  @assignment,
+				  criterion,
+				  :position => criterion.position,
+				  :direction => :up),
+          	      :remote => true %>
+    <% end %> <br /> <% if  location != :last and location != :single %>
+    <%= link_to image_tag("icons/bullet_arrow_down.png",
+		                 :alt =>  t('rubric_criteria.move_down')),
+		          move_criterion_assignment_rubric_path(
+				  @assignment,
+				  criterion,
+				  :position => criterion.position,
+		    	  :direction => :down),
+		          :remote => true %>
+    <% end %>
+  </span>
+  <span id="criterion_weight_<%= criterion.id %>" class="criterion_weight">
+    <%= criterion.weight %>
+  </span>
+</li>

@@ -1,0 +1,13 @@
+if @result.marking_state == Result::MARKING_STATES[:complete]
+  # Hide error message (if any)
+  page.hide 'criterion_incomplete_error'
+end
+
+if @current_user.admin?
+  if @result.marking_state == Result::MARKING_STATES[:complete]
+    # Activate the checkbox to release/unrelease
+    page['released'].enable
+  else
+    page['released'].disable
+  end
+end

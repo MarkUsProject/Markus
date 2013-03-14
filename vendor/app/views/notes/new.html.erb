@@ -1,0 +1,36 @@
+<%= javascript_include_tag "notes" %>
+<%= render :partial => "shared/navigation_warning.js.erb" %>
+
+<div id="title_bar"><h1><%= I18n.t('notes.new.title') %></h1></div>
+
+<div class="wrapLeft">
+  <%= form_for @note, :as => :note, :url => notes_path() do |f| %>
+    <%= render :partial => "shared/error_explanation", :locals => { :model => @note } %>
+    <fieldset>
+      <p>
+        <%= label_tag "noteable_type", I18n.t('notes.noteable') %>
+        <%= select_tag "noteable_type",
+           options_for_select(
+              Note::NOTEABLES.map {|item| [I18n.t('notes.noteables.' + item),
+                 item]}) %>
+        <span id="loading_selector" style="display:none">
+          <%= image_tag('spinner.gif') %> <%= I18n.t('notes.new.loading_selector') %>
+        </span>
+      </p>
+
+      <div id="noteable_selector">
+        <%= render  :partial => 'grouping' %>
+      </div>
+
+      <p>
+        <%= raw(f.label :notes_message, I18n.t("notes.note")) %>
+        <%= raw(f.text_area :notes_message, :rows => 10, 
+                            :onchange => "set_onbeforeunload(true);") %>
+      </p>
+    </fieldset>
+
+    <%= f.submit I18n.t('save'), :onclick => "set_onbeforeunload(false);",
+    							:disable_with => I18n.t('working') %>
+    <%= link_to I18n.t('cancel'), notes_path(), :class => "button" %>
+  <% end %>
+</div>

@@ -1,0 +1,13 @@
+<table class="extra_marks_pane_list">
+  <thead>
+    <th><%=h I18n.t("marker.marks.comment") %></th>
+    <th><%= I18n.t("marker.marks.mark") %></th>
+  </thead>
+  <tbody id="extra_marks_list" >
+    <tr>
+     <% extra_marks_points.each do |extra_mark| -%>
+       <%= render :partial => "results/student/extra_mark", :locals => {:extra_mark => extra_mark, :result_id => result_id} %>
+     <% end -%>
+   </tbody>
+</table>
+

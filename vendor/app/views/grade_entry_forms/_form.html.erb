@@ -1,0 +1,72 @@
+<% # Grade entry creation form
+   # #{short_identifier} - An identifier for this grade entry form
+   # #{description} - A name for this grade entry form
+   # #{message} - Some additional information about this grade entry form
+   # #{date} - The date the exam/test/lab corresponding to this grade entry form took place
+   # #{grade_entry_item(s)} - Column name and total
+%>
+<%
+  # For the internationalization of the Calendar
+%>
+<% if I18n.default_locale == :en %>
+   <%= calendar_date_select_includes "silver" %>
+<% else %>
+   <%= calendar_date_select_includes "silver", :locale => I18n.default_locale %>
+<% end %>
+
+<div class="wrapLeft">
+<% if flash[:success] %>
+<div class="success">
+  <span><%=flash[:success]%></span>
+</div>
+<% end %>
+
+<%= form_for @grade_entry_form, :as => :grade_entry_form do |f| %>
+  <%= render :partial => "shared/error_explanation", :locals => { :model => @grade_entry_form } %>
+<fieldset>
+  <legend><%= t('grade_entry_forms.properties') %></legend>
+
+    <% # Basic grade entry form properties
+    %>
+
+    <%= raw(f.label :short_identifier, t(:short_identifier)) %>
+    <%= raw(f.text_field :short_identifier) %><br />
+
+    <%= raw(f.label :description, t(:description)) %>
+    <%= raw(f.text_field :description) %><br />
+
+    <%= raw(f.label :message) %>
+    <%= raw(f.text_area :message, :rows => 8, :cols => 65) %><br />
+
+    <%= raw(f.label :date, t(:shortened_date)) %>
+    <%= raw(f.calendar_date_select :date,
+                            {:year_range => 0.years.ago..1.years.from_now,
+	                           :locale => I18n.default_locale}) %>
+    <%= raw(t(:iso_date_format_example)) %>
+
+    <br />
+
+    <h4><%= t('grade_entry_forms.specify_columns') %></h4>
+
+    <% # Display the column names and totals
+    %>
+    <div id="grade_entry_items">
+      <%= f.fields_for :grade_entry_items do |entry_item| %>
+        <%= render :partial => 'grade_entry_item',
+            		   :locals => {:grade_entry_item => entry_item.object,
+                               :form => f} %>
+      <% end %>
+    </div>
+
+   <% # Allow the user to add a new column to the form
+    %>
+    <p id="grade_entry_item_add_link">
+      <%= add_grade_entry_item_link t('grade_entry_forms.add_column'), f %>
+    </p>
+
+</fieldset>
+
+<%= f.submit  :disable_with => I18n.t('working') %>
+<% end %>
+
+</div>

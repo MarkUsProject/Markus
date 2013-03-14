@@ -1,0 +1,390 @@
+<% # UI LIBRARIES %>
+<%= javascript_include_tag "livepipe/livepipe.js",
+  "livepipe/window.js" %>
+
+<script type="text/javascript">
+//<![CDATA[
+
+  var invite_modal = null;
+
+  function invite(){
+    invite_modal.open();
+    $('invite_member').setValue('');
+    $('invite_member').focus();
+    return false;
+  }
+
+  document.observe("dom:loaded", function(){
+    invite_modal = new Control.Modal($('invite_dialog'), {
+      overlayOpacity: 0.75,
+      className: 'invite_modal',
+      fade: false
+    });
+  });
+//]]>
+</script>
+
+<div id="title_bar">
+  <h1><%=h I18n.t("student.assignment", :short_identifier => @assignment.short_identifier) %></h1>
+</div>
+
+<div class="column_floatLeft">
+  <div class="block">
+    <h2><%= I18n.t("submissions") %></h2>
+    <div class="block_content">
+      <% if !@grouping.nil? %>
+        <% if !@grouping.is_valid? %>
+          <p class="notice">
+            <%= I18n.t("student.group_not_valid") %>
+          </p>
+        <% end %>
+        <h3><%= I18n.t("student.overview") %></h3>
+        <div class="info">
+          <%=raw( I18n.t("student.last_revision_date",
+                        :last_modified_date => I18n.l(@last_modified_date,
+                        :format => :long_date)) )%>
+        </div>
+        <span class="info_number">
+          <%=h @num_submitted_files.to_s %>
+        </span>
+        <span class="info"><%= I18n.t("student.files") %></span> <br />
+        <%=raw( I18n.t("student.missing_required_files",
+                    :missing_files => @num_missing_assignment_files.to_s) )%>
+        <br />
+      <% else %>
+        <p class="notice"><%= I18n.t("student.no_submission_yet") %></p>
+      <% end %>
+    </div>
+  </div>
+  <div class="block">
+    <%= render :partial => 'read'%>
+  </div>
+</div>
+
+<div class="column_floatLeft">
+  <div class="block">
+    <h2><%= I18n.t("student.group_information") %></h2>
+    <div class="block_content">
+      <% if @grouping.nil? %>
+        <p class="notice">
+          <%= I18n.t("student.no_group_yet") %>
+          <% if @assignment.past_collection_date? %>
+            <%= I18n.t("student.grace_date_passed") %>
+          <% end %>!
+        </p>
+
+        <%
+        # Test if the student can form groupings or not
+        if @assignment.student_form_groups == false %>
+          <p>
+            <%= I18n.t("student.not_allowed_to_form_group") %>
+          </p>
+        <% end %>
+
+        <%
+        # See if the student has been invited to some group
+
+        if @student.has_pending_groupings_for?(@assignment.id) %>
+          <h3><%= I18n.t("student.invitations") %></h3>
+
+          <% if flash[:fail_notice] && !flash[:fail_notice].empty? %>
+            <div class="notice">
+              <%=flash[:fail_notice]%>
+            </div>
+          <% end %>
+
+          <% @pending_grouping.each do |grouping|%>
+          <div class="sub_block">
+            <p><%= raw(I18n.t("student.invited_by", :inviter_last_name => h(grouping.inviter.last_name), :inviter_first_name => h(grouping.inviter.first_name))) %>
+            </p>
+            <% grouping.student_memberships.each do |member|%>
+              <ul>
+                  <%= render :partial => "assignments/member", :locals =>
+                    {:member => member, :grouping => grouping} %>
+              </ul>
+            <% end -%>
+
+            <%= link_to I18n.t(:join), :action => 'join_group',
+                    :id => @assignment.id,
+              :grouping_id => grouping.id
+            %>
+            <%= link_to(I18n.t(:refuse),{:action => 'decline_invitation',
+              :id => @assignment.id, :grouping_id => grouping.id},
+              {:class => "delete",:confirm =>
+              I18n.t("student.decline_invitation")})
+            %>
+            </div>
+            <div class="block_line"></div>
+          <% end %>
+        <% end %>
+
+        <%
+        # If students are allowed to form groups and
+        # the grace period for this assignment has not yet passed,
+        # render UI elements for group creation
+
+        if !@assignment.past_collection_date? &&
+           @assignment.student_form_groups %>
+
+          <h3><%= I18n.t("student.form_own_group") %></h3>
+          <p><%= raw(I18n.t("student.form_group", 
+                    :group_min => h(@assignment.group_min), 
+                    :group_max => h(@assignment.group_max))) %>
+          </p>
+
+          <% if @assignment.group_min == 1 %>
+            <p>
+              <%= link_to I18n.t("student.work_alone"),
+                {:action => 'creategroup', :id => @assignment.id, :workalone => 'true'}%>
+            </p>
+          <% end %>
+          <p>
+          <% if @student.has_pending_groupings_for?(@assignment.id)%>
+            <%= link_to(I18n.t(:create),{:action => 'creategroup',
+               :id => @assignment.id},{:confirm =>
+               I18n.t("student.decline_invitation2")})
+            %>
+          <% else %>
+            <%= link_to(I18n.t(:create),{:action => 'creategroup',
+                :id => @assignment.id})
+            %>
+          <% end %>
+          </p>
+        <%end %>
+      <% else %>
+        <%
+        # Since the student has a group already, we display
+        # information about the group only
+        %>
+
+        <%
+        # Check if groupname should be displayed
+        %>
+        <h3>
+          <% if @assignment.group_name_displayed == true %>
+            <%= h(@group.group_name) %>
+          <% else %>
+            <%= I18n.t("student.your_group") %>
+          <% end %>
+          <%
+          # If a group is valid, the current user is the inviter of the group and
+          # she is the _only_ member of this group, she should be possible to delete
+          # her group, provided there haven't been any files submitted.
+
+          if !@grouping.nil? &&
+              @grouping.deletable_by?(@current_user) %>
+            <%= link_to(I18n.t(:delete),
+              {:action => 'deletegroup', :id => @assignment.id},
+              {:confirm => I18n.t("student.confirm_delete_group") ,
+              :title => I18n.t("student.delete_your_group"), :class => "delete"})
+            %>
+          <% end %>
+        </h3>
+        <%
+        # Display group properties are read only warning
+        # when the due date and grace period (if any) have
+        # passed.
+        if @assignment.past_collection_date? &&
+           @assignment.student_form_groups &&
+           !@assignment.invalid_override &&
+           @assignment.group_max > 1
+           %>
+          <p class="information">
+            <%= I18n.t("student.modification_limited") %>
+          </p>
+        <% end %>
+        <% if flash[:fail_notice] && !flash[:fail_notice].empty? %>
+          <div class="notice">
+            <% if flash[:fail_notice].is_a?(Array) %>
+              <ul>
+                <% flash[:fail_notice].each do |message| %>
+                  <li><%=message%></li>
+                <% end %>
+              </ul>
+            <% else %>
+              <%=flash[:fail_notice]%>
+            <% end %>
+          </div>
+        <% end %>
+
+        <% if flash[:success] && !flash[:success].empty? %>
+          <div class="success">
+            <% if flash[:success].is_a?(Array) %>
+              <ul>
+                <% flash[:success].each do |message| %>
+                  <li><%=message%></li>
+                <% end %>
+              </ul>
+            <% else %>
+              <%=flash[:success]%>
+            <% end %>
+          </div>
+        <% end %>
+
+        <%
+        # If the group does not have the right amount of members yet, display
+        # "group is not valid" warning.
+
+        if !@grouping.is_valid? %>
+          <p class="warning">
+            <%= I18n.t("student.invite_more_students") %>
+          </p>
+        <% end %>
+        <%
+        # For each member of this group, display name and status
+        %>
+        <ul>
+          <% @studentmemberships.each do |member|%>
+            <%= render :partial => "assignments/member", :locals =>
+              {:member => member, :grouping => @grouping} %>
+          <% end -%>
+        </ul>
+        <% if @grouping.inviter == @current_user &&
+              @assignment.student_form_groups &&
+              !@assignment.past_collection_date? %>
+          <% if @grouping.student_membership_number < @assignment.group_max %>
+            <%= button_to_function I18n.t(:invite), 'invite(); return false;' %>
+          <% end %>
+        <% end %>
+        <%
+        # Display the URL of this group's repository if applicable
+
+        if @grouping.repository_external_commits_only? %>
+            <h3><%= I18n.t("student.url_group_repository") %></h3>
+              <div class="sub_block">
+                <p><%= h(@grouping.group.repository_external_access_url) %></p>
+              </div>
+        <% end %>
+      <% end %>
+      <h3><%= I18n.t("student.group_properties") %></h3>
+      <ul>
+        <% if @assignment.section_groups_only %>
+      <li><%= I18n.t("student.section_groups_only") %></li>
+  <% end %>
+        <% if @assignment.student_form_groups &&
+              !@assignment.invalid_override &&
+              @assignment.group_max > 1 %>
+          <li><%= I18n.t("student.students_can_form_groups") %></li>
+          <li>
+            <%=raw( I18n.t("student.form_group",
+                      :group_min => h(@assignment.group_min),
+                      :group_max => h(@assignment.group_max)) )%>
+          </li>
+        <% elsif @assignment.invalid_override %>
+          <li><%= I18n.t("student.invalid_override") %></li>
+        <% else%>
+          <li><%= I18n.t("student.student_work_alone") %></li>
+        <% end %>
+        <% if !@grouping.nil? %>
+        <li>
+          <%=raw( I18n.t("student.group_credits",
+                          :available_grace_credits =>
+                              @grouping.available_grace_credits) )%>
+    </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Old testing infrastructure UI
+  <% # HTML for Student Testing Interface %>
+  <% if false %>
+  <% if @assignment.enable_test %>
+  <div class="block">
+    <h2><%= I18n.t("automated_tests.test") %></h2>
+  <% if @grouping.nil? %>
+          <div class="sub_block">
+            <br />
+            <%= I18n.t("automated_tests.need_group_for_test") %>
+            <br />
+          </div>
+  <% else %>
+          <div class="block_content">
+            <h3><%= I18n.t("automated_tests.information") %></h3>
+            <% if !@grouping.submissions.empty? %>
+              <div class="sub_block">
+                <%= raw( I18n.t("automated_tests.revision_used_for_test", 
+                                :revision => @revision_number) ) %>
+              </div>
+            <% end %>
+            <br />
+            <div class="sub_block">
+              <br />
+              <%= raw( I18n.t("automated_tests.token.tokens_per_day",
+                              :tokens => @assignment.tokens_per_day) ) %>
+            </div>
+            <br />
+            <div class="sub_block">
+              <br />
+              <% if @token.nil? %>
+               <%= raw ( I18n.t("automated_tests.token.tokens_not_given_yet") ) %>
+              <% else %>
+                <% if @token.tokens == 0 %>
+                    <%= raw( I18n.t("automated_tests.token.tokens_no_more_available") ) %>
+                <% else %>
+                    <%= raw( I18n.t("automated_tests.token.tokens_available",
+                                    :tokens => @token.tokens) ) %>
+                <% end %>
+              <% end %>
+              <br />
+             </div>
+           <br />
+           <h3><%= I18n.t("automated_tests.run_tests") %></h3>
+           <% if @grouping.assignment.submission_rule.can_collect_now? %>
+             <%= I18n.t("automated_tests.due_date_is_passed") %>
+             <br />
+           <% else %>
+             <% if @result.nil? && @test_result_files.nil? %>
+                <%= I18n.t("automated_tests.need_one_file") %>
+                <br />
+             <% else %>
+                <%
+                # Javascript for test result window
+                %>
+                <%= render :partial => "assignments/test_result_window.html", :locals => {:aid => @assignment.id} %>
+                <div id="test_results_controls">
+                   <%= render :partial => 'results/common/test_selector', :locals => {:test_result_files => @test_result_files, :result => @result} %>
+                   <br />
+                </div>
+               <br />
+             <% end %>
+             <% if @grouping.submissions.empty? %>
+               <br />
+               <%= link_to I18n.t("automated_tests.collect_and_test"), {:controller => 'assignments', :action => 'student_interface', :id => @assignment.id, :grouping_id => @grouping.id , :revision_number => @revision_number, :collect => true}, :class => "button"%>
+               <br />
+             <% end %>
+           <% end %>
+    <% end %>
+    </div>
+  </div>
+  <% end %>
+  <% end %>
+  -->
+</div>
+
+<%
+# HTML for the invite dialog
+
+if !@grouping.nil? &&
+   @grouping.inviter == @current_user &&
+   !@assignment.invalid_override %>
+  <div id="invite_dialog">
+    <%= form_tag({:action => 'invite_member',
+        :id => @assignment.id},
+        {:onsubmit => "$('invite_modal_spinner').show();"}) do %>
+      <h2><%= I18n.t("student.invite") %></h2>
+      <p class="information"><%= t(:seperate_multiple_with_commas) %></p>
+        <fieldset>
+          <label for="invite_member"> <%= I18n.t('user.user_names')%> </label>
+          <%= text_field_tag 'invite_member'%>
+        </fieldset>
+      <p>
+        <span id="invite_modal_spinner" style="display:none;">
+          <%= image_tag("spinner.gif")%><%= I18n.t("student.please_wait") %>
+        </span>
+        <%= submit_tag I18n.t(:submit) %>
+        <input type="reset" value="<%= I18n.t("cancel") %>" onclick="invite_modal.close();" />
+      </p>
+    <% end %>
+  </div>
+<% end %>

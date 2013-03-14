@@ -1,0 +1,12 @@
+<script type="text/javascript">
+//<![CDATA[
+
+  document.observe('dom:loaded', function() {
+
+    <% if @assignment %>
+      toggle_automated_tests(<%= @assignment.enable_test %>);
+    <% end %>
+
+  });
+//]]>
+</script>

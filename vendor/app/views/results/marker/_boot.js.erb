@@ -1,0 +1,31 @@
+<script type="text/javascript">
+//<![CDATA[
+document.observe("dom:loaded", function() {
+  //After DOM is loaded, load up the first submitted file
+  <% if !first_file.nil? %>
+   load_submitted_file('<%=first_file.id%>');
+  <% end %>
+  //Register drop down menus...
+  <% if !@result.released_to_students %>
+  setup_annotation_categories();
+  <% end %>
+
+  //Set up the divider
+  init_content_width = $('content').getWidth();
+  init_code_pane_width = $('code_pane').getWidth();
+  //Create the modal dialog
+  modal = new Control.Modal($('create_annotation_dialog'), {fade:false});
+  setup_divider($('code_pane'), $('pane_divider'));
+});
+
+Event.observe(window, 'load', function() {
+<% @mark_criteria.each do |criterion| %>
+  <% if criterion.has_associated_ta?(@current_user) %>
+    $('mark_criterion_' + <%= criterion.id %>).addClassName('assigned');
+  <% elsif @current_user.type == "Ta" %>
+    hide_criterion(<%= criterion.id %>);
+  <% end %>
+<% end %>
+});
+//]]>
+</script>

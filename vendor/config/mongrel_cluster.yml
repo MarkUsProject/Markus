@@ -1,0 +1,40 @@
+# Example mongrel_cluster configuration
+#
+# Please test if a single mongrel starts first.
+# If it does, use:
+#       mongrel_cluster_ctl start -v -c `pwd`
+# to start your mongrel cluster with configuration
+# specified below.
+#
+# Logfiles go to log/mongrel_<portnumber>.log
+#
+log_file: log/mongrel.log
+#
+# Use port 8000 and upwards for the number of mongrels
+# to start
+port: 8000
+#
+# Use production environment
+environment: production
+#
+# Bind to localhost
+address: 127.0.0.1
+#
+# Location and filenames as to where to put PID files
+pid_file: tmp/pids/mongrel.pid
+#
+# Number of mongrel servers to start
+servers: 3
+#
+# System user under which mongrels will be started
+user: markus
+#
+# System group under which mongrels will be started
+group: markus
+#
+# Document root of static HTML files (you shouldn't change this)
+docroot: public
+#
+# Directory into which to change before starting mongrel servers
+# This shouldn't be changed.
+chdir: ./

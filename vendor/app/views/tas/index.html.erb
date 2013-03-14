@@ -1,0 +1,108 @@
+<%= javascript_include_tag "FilterTable/FilterTable" %>
+<%= javascript_include_tag "users_manager" %>
+
+<%= render :partial => "boot.js" %>
+
+<script type="text/javascript">
+//<![CDATA[
+  document.observe("dom:loaded", function() {
+
+    modalUpload = new Control.Modal($('upload_dialog'),
+    {
+      overlayOpacity: 0.75,
+      className: 'modalUpload',
+      fade:false
+    });
+
+    modalDownload = new Control.Modal($('download_dialog'),
+    {
+      overlayOpacity: 0.75,
+      className: 'modalDownload',
+      fade:false
+    });
+  });
+//]]>
+</script>
+
+<div id="title_bar">
+  <h1><%=h I18n.t("graders.manage_graders") %></h1>
+  <div class="headingButtons">
+    <%= link_to I18n.t(:add_new), new_ta_path() %> |
+    <%= link_to_function I18n.t(:upload), 'modalUpload.open()' %> |
+    <%= link_to_function I18n.t(:download), 'modalDownload.open()' %>
+  </div>
+</div>
+
+<div class="colsLeftHeavy">
+  <div class="wrapLeft">
+    <div id="list">
+
+      <% if flash[:upload_notice] -%>
+      <p class="success"><%=h flash[:upload_notice] %></p>
+      <% end -%>
+
+      <% if flash[:success] %>
+      <div class="success">
+        <%=h(flash[:success]) %>
+      </div>
+      <% end %>
+
+      <% if flash[:edit_notice] -%>
+      <p class="success"><%=h flash[:edit_notice] %></p>
+      <% end -%>
+
+      <% # display lines in csv file that has not been successfully processed %>
+      <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? -%>
+      <div class="errorExplanation" id="errorExplanation">
+        <p><%=h I18n.t("graders.not_added") %></p>
+        <ul>
+          <% for line in flash[:invalid_lines] -%>
+          <li><%= h(line) %></li>
+          <% end -%>
+        </ul>
+        <p><%= I18n.t("graders.make_sure") %></p>
+        <ul>
+          <li><%= I18n.t("graders.ta_names") %></li>
+          <li><%= I18n.t("graders.each_field") %></li>
+          <li><%= I18n.t("graders.each_line") %></li>
+        </ul>
+      </div>
+      <% end -%>
+      <table id="tas">
+        <tr id="loading_list"><td class="loading">
+          <%= image_tag("spinner.gif")%> <%= I18n.t("groups.loading_list") %>
+        </td></tr>
+      </table>
+    </div>
+  </div>
+</div> <!-- colsLeftHeavy -->
+
+<!-- Modal Windows -->
+<div id="upload_dialog">
+  <h2><%=h I18n.t("upload") %></h2>
+  <p><%= I18n.t("graders.upload.select_csv_file") %></p>
+
+  <p><%=h I18n.t("graders.upload.grader_same_user") %></p>
+
+   <%= form_tag upload_ta_list_tas_path(), {:multipart => true} %>
+    <label for="userlist"><%= I18n.t("graders.upload.csv_file") %></label>
+    <input type="file" name="userlist" id="userlist"/>
+    <br />
+    <br />
+    <%=h I18n.t("encoding") %>
+    <%= select_tag(:encoding, options_for_select(@encodings)) %>
+    <br />
+    <br />
+    <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
+    <%= button_to_function I18n.t(:close), 'modalUpload.close()' %>
+  </form>
+</div>
+
+
+<div id="download_dialog">
+  <h2><%=h I18n.t("download") %></h2>
+  <p><%= link_to I18n.t("graders.download.download_list"),
+  {:controller => 'tas', :action => 'download_ta_list',
+  :format => "csv"}, :onclick => "modalDownload.close();" %></p>
+  <%= button_to_function I18n.t(:close), 'modalDownload.close()' %>
+</div>

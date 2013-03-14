@@ -1,0 +1,26 @@
+<% content_for :head do %>
+	<%= javascript_include_tag "Bluff/js-class.js",
+ 		"Bluff/bluff.js",
+		"Bluff/excanvas.js" %>
+<% end %>
+
+<% if !@current_user.student? and
+    # If not Firefox display warning
+    (request.env['HTTP_USER_AGENT'].downcase =~ /gecko/i).nil? %>
+   <p class="notice"><%= I18n.t(:firefox_warning) %></p>
+<% end %>
+
+<div id="title_bar">
+   <h1><%= I18n.t(:dashboard) %></h1>
+</div>
+<div class="wrapLeft">
+<p><%= I18n.t(:welcome_to_markus, {:user_name => @current_user.first_name}) %></p>
+
+  <% @assignments.each do |a| %>
+    <%= render :partial => "assignment_summary", :locals => { :assignment => a } %>
+  <% end %>
+
+  <div id="section">
+    <%= render :partial => "api/key_display", :locals => { :user => @current_user } %>
+  </div>
+</div>

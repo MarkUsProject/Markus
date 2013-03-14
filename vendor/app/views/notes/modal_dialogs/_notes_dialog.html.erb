@@ -1,0 +1,58 @@
+<div class="notes_wrapper">
+    <div class="notes_wrapper_row">
+        <div class="float_left">
+            <h3><%= I18n.t('notes.existing') %></h3>
+        </div>
+        <div class="float_right">
+            <h3><%= I18n.t('notes.comment') %></h3>
+        </div>
+    </div>
+    <div class="notes_wrapper_row">
+
+        <div class="notes_existing">
+            <% @notes.each do |note| %>
+            <strong><%= note.user.user_name %>: </strong>
+            <br>
+            <small><%=note.format_date%></small>
+            <br>
+            &nbsp; <%=note.notes_message %>
+            <br>
+            <br>
+            <% end %>
+        </div>
+
+        <div class="float_right">
+            <%= form_tag(
+			        add_note_notes_path(:id => @return_id,
+			        :noteable_id => @noteable,
+			        :noteable_type => @cls,
+			        :user => @current_user,
+			        :action_to => @action,
+			        :controller_to => @cont,
+			        :highlight_field => @highlight_field,
+			        :number_of_notes_field => @number_of_notes_field ),
+			        :remote => true ) do %>
+            <%= text_area_tag(:new_notes, nil, :rows => 15, :cols=>32) %>
+            <p class="p_margin">
+
+                <div id="notes_error" class="error" style="display:none;">
+                  <p id="notes_error_message"><%= t('notes.error') %></p>
+                  <div id="notes_error_list">
+                  </div>
+                </div>
+                
+                <div class="float_right">
+	                <%= submit_tag I18n.t('notes.save'), :disable_with => I18n.t('working'), :id => "notes_submit" %>
+	                <button onclick="modalNotesGroup.close(); return false;">
+	                    <%=h I18n.t(:cancel) %>
+	                </button>
+                </div>
+                
+            </p>
+            <% end %>
+        </div>
+    </div>
+</div>
+
+
+

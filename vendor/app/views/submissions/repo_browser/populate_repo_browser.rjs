@@ -1,0 +1,2 @@
+page.replace_html 'directories_tbody', :partial => 'submissions/repo_browser/exit_directory'
+page.call "populate", @table_rows.to_json

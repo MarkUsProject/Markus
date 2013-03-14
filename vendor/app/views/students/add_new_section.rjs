@@ -1,0 +1,1 @@
+page.replace_html 'add_new_section_dialog', :partial => 'sections/student_form_add_section_dialog'

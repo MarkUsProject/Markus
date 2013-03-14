@@ -1,0 +1,2 @@
+# Remove the text field for the file with given index
+page["file_#{params[:index]}"].remove

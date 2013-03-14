@@ -1,0 +1,11 @@
+<ul class="annotation_text_list" >
+  <% if annotation_category.annotation_texts.size == 0 %>
+    <%= I18n.t("marker.annotation.no_annotation_in_this_category") %>
+  <% end %>
+
+  <% annotation_category.annotation_texts.each do |annotation_text| %>
+  <li id="annotation_text_<%=h(annotation_text.id)%>" onclick="add_existing_annotation(<%=h(annotation_text.id)%>); return false;" onMouseDown="return false;" title="<%=h(annotation_text.content)%>">
+  <%=h(truncate(annotation_text.content, :length => 40))%>
+  </li>
+  <% end %>
+</ul>

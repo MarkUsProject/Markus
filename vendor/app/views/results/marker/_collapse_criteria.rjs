@@ -1,0 +1,4 @@
+mark_criteria.each do |criterion|
+  page.call "hide_criterion", criterion.id
+end
+
