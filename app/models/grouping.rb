@@ -166,6 +166,9 @@ class Grouping < ActiveRecord::Base
       # adjust repo permissions
       update_repository_permissions
 
+      # remove any old deduction for this assignment
+      remove_grace_period_deduction(member)
+
       # Add deductions for the new added member
       deduction = GracePeriodDeduction.new
       deduction.membership = member
@@ -305,6 +308,17 @@ class Grouping < ActiveRecord::Base
     return single
   end
 
+  # remove all deductions for this assignment for a particular member
+  def remove_grace_period_deduction(membership)
+    deductions = membership.user.grace_period_deductions
+    deductions.each do |deduction|
+      if deduction.membership.grouping.assignment.id == assignment.id
+        membership.grace_period_deductions.delete(deduction)
+        deduction.destroy
+      end
+    end
+  end
+
   # Submission Functions
   def has_submission?
     #Return true if and only if this grouping has at least one submission
@@ -313,7 +327,7 @@ class Grouping < ActiveRecord::Base
   end
 
   def marking_completed?
-    return has_submission? && current_submission_used.result.marking_state == Result::MARKING_STATES[:complete]
+    return has_submission? && current_submission_used.get_original_result.marking_state == Result::MARKING_STATES[:complete]
   end
 
   # EDIT METHODS
