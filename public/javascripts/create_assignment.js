@@ -100,9 +100,24 @@ function toggle_automated_tests(is_testing_framework_enabled) {
   if(is_testing_framework_enabled) {
     jQuery('#tokens').removeClass('disable');
     jQuery('#tokens_per_day').attr('disabled', false);
+    jQuery('#unlimited_tokens').attr('disabled', false);
   } else {
     jQuery('#tokens').addClass('disable');
     jQuery('#tokens_per_day').attr('disabled', true);
+    jQuery('#unlimited_tokens').attr('disabled', true);
+  }
+}
+
+function toggle_tests_tokens(is_unlimited) {
+
+  jQuery('#unlimited_tokens').val(is_unlimited);
+
+  if(is_unlimited) {
+    jQuery('#tokens').removeClass('disable');
+    jQuery('#tokens_per_day').attr('disabled', true);
+  } else {
+    jQuery('#tokens').addClass('disable');
+    jQuery('#tokens_per_day').attr('disabled', false);
   }
 }
 

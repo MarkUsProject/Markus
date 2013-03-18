@@ -70,6 +70,7 @@ class Assignment < ActiveRecord::Base
   validates_inclusion_of :display_grader_names_to_students, :in => [true, false]
   validates_inclusion_of :enable_test, :in => [true, false]
   validates_inclusion_of :assign_graders_to_criteria, :in => [true, false]
+  validates_inclusion_of :unlimited_tokens, :in => [true, false]
 
   before_save :reset_collection_time
   validate :minimum_number_of_groups, :check_timezone
@@ -248,6 +249,8 @@ class Assignment < ActiveRecord::Base
 
   def total_mark
     total = 0
+    
+    #add the marks from the criteria
     if self.marking_scheme_type == 'rubric'
       rubric_criteria.each do |criterion|
         total = total + criterion.weight * 4
@@ -255,6 +258,10 @@ class Assignment < ActiveRecord::Base
     else
       total = flexible_criteria.sum('max')
     end
+    
+    #separately add marks for test scripts
+    total = total + total_test_script_marks
+    
     return total
   end
 
@@ -294,6 +301,14 @@ class Assignment < ActiveRecord::Base
   def total_criteria_weight
     factor = 10.0 ** 2
     return (rubric_criteria.sum('weight') * factor).floor / factor
+  end
+  
+  def total_test_script_marks
+    return test_scripts.sum("max_marks")
+  end
+  
+  def has_test_scripts?
+    return TestScript.exists?(:assignment_id => self.id)
   end
 
   def add_group(new_group_name=nil)
@@ -560,9 +575,10 @@ class Assignment < ActiveRecord::Base
   # Get a detailed CSV report of rubric based marks
   # (includes each criterion) for this assignment.
   # Produces CSV rows such as the following:
-  #   student_name,95.22222,3,4,2,5,5,4,0/2
+  #   student_name,95.22222,3,4,2,5,5,4,1,0/2
   # Criterion values should be read in pairs. I.e. 2,3 means
   # a student scored 2 for a criterion with weight 3.
+  # Second last column is marks from test scripts
   # Last column are grace-credits.
   def get_detailed_csv_report_rubric
     out_of = self.total_mark
@@ -582,6 +598,7 @@ class Assignment < ActiveRecord::Base
           end
           final_result.push('')                         # extra-mark
           final_result.push('')                         # extra-percentage
+          final_result.push('')                         # test script marks
         else
           submission = grouping.current_submission_used
           final_result.push(submission.result.total_mark / out_of * 100)
@@ -596,7 +613,11 @@ class Assignment < ActiveRecord::Base
           end
           final_result.push(submission.result.get_total_extra_points)
           final_result.push(submission.result.get_total_extra_percentage)
+          
+          #push test script results
+          final_result.push(submission.result.get_total_test_script_marks)
         end
+        
         # push grace credits info
         grace_credits_data = student.remaining_grace_credits.to_s + "/" + student.grace_credits.to_s
         final_result.push(grace_credits_data)
@@ -610,7 +631,7 @@ class Assignment < ActiveRecord::Base
   # Get a detailed CSV report of flexible criteria based marks
   # (includes each criterion, with it's out-of value) for this assignment.
   # Produces CSV rows such as the following:
-  #   student_name,95.22222,3,4,2,5,5,4,0/2
+  #   student_name,95.22222,3,4,2,5,5,4,1,0/2
   # Criterion values should be read in pairs. I.e. 2,3 means 2 out-of 3.
   # Last column are grace-credits.
   def get_detailed_csv_report_flexible
@@ -631,6 +652,7 @@ class Assignment < ActiveRecord::Base
           end
           final_result.push('')                 # extra-marks
           final_result.push('')                 # extra-percentage
+          final_result.push('')                 # test script marks
         else
           # Fill in actual values, since we have a grouping
           # and a submission.
@@ -647,6 +669,9 @@ class Assignment < ActiveRecord::Base
           end
           final_result.push(submission.result.get_total_extra_points)
           final_result.push(submission.result.get_total_extra_percentage)
+          
+          #push test script results
+          final_result.push(submission.result.get_total_test_script_marks)
         end
         # push grace credits info
         grace_credits_data = student.remaining_grace_credits.to_s + "/" + student.grace_credits.to_s

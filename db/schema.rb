@@ -92,6 +92,7 @@ ActiveRecord::Schema.define(:version => 20121028211448) do
     t.boolean  "allow_remarks",                    :default => true,     :null => false
     t.datetime "remark_due_date"
     t.text     "remark_message"
+    t.boolean  "unlimited_tokens",                 :default => false
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true

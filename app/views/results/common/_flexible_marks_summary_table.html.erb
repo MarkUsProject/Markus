@@ -23,5 +23,17 @@
 </tr>
 
 <% end -%>
+
+<% if @assignment.has_test_scripts?%>
+
+<tr class="<%= cycle('mark_summary_holderA', 'mark_summary_holderB') %>" id="<%= "test_script_summary" %>">
+    <td><%=t("summary_table.test_script_title")%></td>
+    <td><%= h(@assignment.total_test_script_marks * 1.0) %></td>
+    <td><span id="test_script_summary_mark"><%= h(@submission.result.get_total_test_script_marks * 1.0) %></span> / <%=  h(@assignment.total_test_script_marks * 1.0) %></td>
+
+</tr>
+
+<% end -%>
+
 </table>  <!-- Summary Criteria Pane List -->
 

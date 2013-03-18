@@ -964,6 +964,7 @@ en:
       grade: "Grade"
       x_mark: "x Mark"
       weight: "Weight"
+      test_script_title: "Test scripts"
 
     notes:
         note_on: "%{user_name} on <b>%{display_for}</b>"
@@ -1176,6 +1177,7 @@ en:
         tokens_not_given_yet: "<span class=\"prop_label\">Tokens available:</span> No tokens given yet"
         tokens_no_more_available: "<span class=\"prop_label\">Tokens available:</span >No more tokens available "
         tokens_available: "<span class=\"prop_label\">Tokens available:</span> %{tokens}"
+        unlimited: "Unlimited"
 
 #Missing Activerecord Translations for english
     datetime:

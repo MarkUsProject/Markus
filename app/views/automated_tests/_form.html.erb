@@ -26,6 +26,8 @@
     <p id="tokens">
       <%= label_tag :tokens_per_day, I18n.t("automated_tests.token.tokens_form"), :class => "inline_label" %>
       <%= f.text_field :tokens_per_day, :id=>"tokens_per_day", :size => 5, :maxlength => 3 %>
+      <%= label_tag :unlimited_tokens, I18n.t("automated_tests.token.unlimited"), :class => "checkbox_label" %>
+      <%= f.check_box :unlimited_tokens, :id => "unlimited_tokens", :onchange => "toggle_tests_tokens(jQuery('#unlimited_tokens').is(':checked'))" %>
     </p>
   </div>
 

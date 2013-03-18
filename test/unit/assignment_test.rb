@@ -660,6 +660,7 @@ class AssignmentTest < ActiveSupport::TestCase
             end
             fields.push(submission.result.get_total_extra_points)
             fields.push(submission.result.get_total_extra_percentage)
+            fields.push(submission.result.get_total_test_script_marks)
           end
           # push grace credits info
           grace_credits_data = student.remaining_grace_credits.to_s + "/" + student.grace_credits.to_s
@@ -734,6 +735,7 @@ class AssignmentTest < ActiveSupport::TestCase
             end
             fields.push(submission.result.get_total_extra_points)
             fields.push(submission.result.get_total_extra_percentage)
+            fields.push(submission.result.get_total_test_script_marks)
           end
           # push grace credits info
           grace_credits_data = student.remaining_grace_credits.to_s + "/" + student.grace_credits.to_s
