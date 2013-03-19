@@ -11,7 +11,6 @@ Markus::Application.routes.draw do
     resources :test_results, :except => [:new, :edit]
     resources :submission_downloads, :except => [:new, :edit]
     resources :users, :except => [:new, :edit]
-    resources :assignments, :except => [:new, :edit]
     resources :main_api
   end
 
@@ -240,6 +239,30 @@ Markus::Application.routes.draw do
       post 'update_grade_entry_students'
       get 'student_interface'
     end
+
+    resources :marks_graders do
+      collection do
+        get 'add_grader_to_grouping'
+        post 'csv_upload_grader_groups_mapping'
+        post 'csv_upload_grader_criteria_mapping'
+        get 'download_grader_groupings_mapping'
+        get 'download_grader_criteria_mapping'
+        get 'download_dialog'
+        get 'download_grouplist'
+        get 'grader_criteria_dialog'
+        get 'global_actions'
+        get 'groups_coverage_dialog'
+        post 'populate_graders'
+        post 'populate'
+        post 'populate_criteria'
+        post 'set_assign_criteria'
+        get 'random_assign'
+        get 'upload_dialog'
+        get 'unassign'
+        post 'global_actions'
+      end
+    end
+
   end
 
   resources :notes do

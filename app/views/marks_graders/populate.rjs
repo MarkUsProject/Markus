@@ -1,0 +1,1 @@
+page.call "populate", @table_rows.to_json
