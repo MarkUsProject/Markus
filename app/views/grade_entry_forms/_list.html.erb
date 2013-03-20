@@ -13,7 +13,8 @@
         <tr>
           <th><%=t(:description)%></th>
           <th><%=t(:shortened_date)%></th>
-          <th><%=t('results.results_name')%></th>
+          <% if false %> Note: this hides the results column within the student view
+		<th><%=t('results.results_name')%></th> <% end %>
         </tr>
       </thead>
       <tbody>
@@ -36,6 +37,7 @@
                  %>
               <% end %>
             </td>
+	    <% if false %> Note: this comment hides the results column values within the student view
             <td class="grade_entry_form_result">
               <% if !@g_id_entries.empty? && !@g_id_entries[grade_entry_form.id].nil? %>
                 <strong><%=t('mark_message')%></strong>
@@ -51,6 +53,7 @@
                 <%= t('grade_entry_forms.students.no_results') %>
               <% end %>
             </td>
+	    <% end %>
           </tr>
         <% end %>
       </tbody>
