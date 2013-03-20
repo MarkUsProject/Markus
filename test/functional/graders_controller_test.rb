@@ -4,7 +4,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', '
 
 include CsvHelper
 require 'shoulda'
-require 'mocha'
+require 'mocha/setup'
 
 class GradersControllerTest < AuthenticatedControllerTest
 

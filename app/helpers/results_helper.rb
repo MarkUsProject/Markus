@@ -7,7 +7,7 @@ module ResultsHelper
 
   def can_show_remark_request_tab_in_student_pane(assignment, current_user, submission)
     if (assignment.allow_remarks)
-      if (submission.remark_result and submission.remark_result.released_to_students)
+      if (submission.get_remark_result and submission.get_remark_result.released_to_students)
         return true
       else
         return (current_user.student?)
@@ -18,8 +18,8 @@ module ResultsHelper
   end
 
   def student_can_edit_remark_request(submission)
-    return (!submission.remark_result or
-            submission.remark_result.marking_state == Result::MARKING_STATES[:unmarked])
+    return (!submission.get_remark_result or
+            submission.get_remark_result.marking_state == Result::MARKING_STATES[:unmarked])
   end
 
   def can_show_remark_request_tab_in_marker_pane(submission)

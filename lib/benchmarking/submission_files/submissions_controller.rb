@@ -111,7 +111,7 @@ class SubmissionsController < ApplicationController
     revision_number = params[:current_revision_number].to_i
     new_submission = Submission.create_by_revision_number(grouping, revision_number)
     new_submission = assignment.submission_rule.apply_submission_rule(new_submission)
-    result = new_submission.result
+    result = new_submission.get_original_result
     redirect_to :controller => 'results', :action => 'edit', :id => result.id
   end
 
@@ -128,7 +128,7 @@ class SubmissionsController < ApplicationController
       new_submission = Submission.create_by_timestamp(grouping, time)
       # Apply the SubmissionRule
       new_submission = assignment.submission_rule.apply_submission_rule(new_submission)
-      result = new_submission.result
+      result = new_submission.get_original_result
       redirect_to :controller => 'results', :action => 'edit', :id => result.id
       return
     end
@@ -296,27 +296,28 @@ class SubmissionsController < ApplicationController
             flash[:release_errors].push("#{grouping.group.group_name} had no result")
             next
           end
-          if submission.result.marking_state != Result::MARKING_STATES[:complete]
+          if submission.get_original_result.marking_state != Result::MARKING_STATES[:complete]
             flash[:release_errors].push(I18n.t("marking_state.not_complete", :group_name => grouping.group.group_name))
             next
           end
           if flash[:release_errors].nil? or flash[:release_errors].size == 0
             flash[:release_errors] = nil
           end
-          submission.result.released_to_students = true
-          submission.result.save
+          @result = submission.get_original_result
+          @result.released_to_students = true
+          @result.save
         end
       elsif params[:unrelease_results]
         params[:groupings].each do |g|
           grouping = Grouping.find(g)
-          grouping.get_submission_used.result.unrelease_results
+          grouping.get_submission_used.get_original_result.unrelease_results
         end
       end
     end
     redirect_to :action => 'browse', :id => params[:id]
     if !params[:groupings].nil?
       grouping = Grouping.find(params[:groupings].first)
-      grouping.assignment.set_results_average
+      grouping.assignment.set_results_statistics
     end
   end
 
@@ -345,7 +346,7 @@ class SubmissionsController < ApplicationController
            final_result.push('')
          else
            submission = grouping.get_submission_used
-           final_result.push(submission.result.total_mark)
+           final_result.push(submission.get_original_result.total_mark)
          end
          csv << final_result
        end
@@ -374,9 +375,9 @@ class SubmissionsController < ApplicationController
            final_result.push(0)
          else
            submission = grouping.get_submission_used
-           final_result.push(submission.result.total_mark)
+           final_result.push(submission.get_original_result.total_mark)
            rubric_criteria.each do |rubric_criterion|
-             mark = submission.result.marks.find_by_rubric_criterion_id(rubric_criterion.id)
+             mark = submission.get_original_result.marks.find_by_rubric_criterion_id(rubric_criterion.id)
              if mark.nil?
                final_result.push('')
              else
@@ -385,8 +386,8 @@ class SubmissionsController < ApplicationController
              final_result.push(rubric_criterion.weight)
            end
 
-           final_result.push(submission.result.get_total_extra_points)
-           final_result.push(submission.result.get_total_extra_percentage)
+           final_result.push(submission.get_original_result.get_total_extra_points)
+           final_result.push(submission.get_original_result.get_total_extra_percentage)
            membership = grouping.student_memberships.find_by_user_id(student.id)
            grace_period_deductions = student.grace_period_deductions.find_by_membership_id(membership.id)
            final_result.push(grace_period_deductions || 0)

@@ -5,7 +5,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', '
 include CsvHelper
 require 'shoulda'
 require 'machinist'
-require 'mocha'
+require 'mocha/setup'
 require 'time-warp'
 require 'faker'
 
@@ -420,9 +420,9 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
               assert_not_nil grouping
               assert grouping.has_submission?
               submission = grouping.current_submission_used
-              assert_not_nil submission.result
+              assert_not_nil submission.get_original_result
               assert_equal final_mark.to_f.round,
-                           (submission.result.total_mark / out_of * 100
+                           (submission.get_original_result.total_mark / out_of * 100
                            ).to_f.round
             end
           end

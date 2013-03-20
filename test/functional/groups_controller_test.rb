@@ -3,7 +3,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 include CsvHelper
 require 'shoulda'
-require 'mocha'
+require 'mocha/setup'
 
 ## TODO refactor this code
 
@@ -274,6 +274,12 @@ class GroupsControllerTest < AuthenticatedControllerTest
         post_add [@student1.id, @student2.id]
         # Add 0 deductions to each member
         @grouping.accepted_student_memberships.each do |student_membership|
+          # Remove all old deduction created by post_add
+          deductions = student_membership.user.grace_period_deductions
+          deductions.each do |deduction|
+            student_membership.grace_period_deductions.delete(deduction)
+            deduction.destroy
+          end
           deduction = GracePeriodDeduction.new
           deduction.membership = student_membership
           deduction.deduction = 0
@@ -301,6 +307,12 @@ class GroupsControllerTest < AuthenticatedControllerTest
         post_add [@student1.id]
         # Add 1 deductions to each member
         @grouping.accepted_student_memberships.each do |student_membership|
+          # Remove all old deduction created by post_add
+          deductions = student_membership.user.grace_period_deductions
+          deductions.each do |deduction|
+            student_membership.grace_period_deductions.delete(deduction)
+            deduction.destroy
+          end
           deduction = GracePeriodDeduction.new
           deduction.membership = student_membership
           deduction.deduction = 1
@@ -335,6 +347,12 @@ class GroupsControllerTest < AuthenticatedControllerTest
         post_add [@student1.id, @student2.id]
         # Add 2 deductions to each member
         @grouping.accepted_student_memberships.each do |student_membership|
+          # Remove all old deduction created by post_add
+          deductions = student_membership.user.grace_period_deductions
+          deductions.each do |deduction|
+            student_membership.grace_period_deductions.delete(deduction)
+            deduction.destroy
+          end
           deduction = GracePeriodDeduction.new
           deduction.membership = student_membership
           deduction.deduction = 2

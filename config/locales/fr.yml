@@ -684,7 +684,7 @@ fr:
     flexible_criteria:
       move_criterion:
         error: "Erreur: impossible de déplacer ce critère (flexible)."
-    
+
     add_student:
       success: "L'étudiant(e) %{user_name} a été ajouté(e)."
       fail:
@@ -719,14 +719,17 @@ fr:
       success:  "Les changements ont été enregistrés."
 
     user:
+        id:             "ID"
         user_name:      "Nom d'utilisateur"
         user_names:     "Nom(s) d'utilisateur"
         first_name:     "Prénom"
         last_name:      "Nom"
         full_name:      "Nom complet"
+        type:           "Type"
         user_type:      "Type"
         grace_credits:  "Crédits de grâce"
         section:        "Section"
+        notes_count:    "Notes"
         display_grader_names_to_students: "Afficher le nom du correcteur aux étudiants ?"
 
     hide_students: "Désactiver les étudiants"
@@ -1037,7 +1040,7 @@ fr:
         long_date: "%d %B %Y à %H:%M"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%d %B %Y"
-     
+
       day_names: [dimanche, lundi, mardi, mercredi, jeudi, vendredi, samedi]
       abbr_day_names: [dim, lun, mar, mer, jeu, ven, sam]
       month_names: [~, janvier, février, mars, avril, mai, juin, juillet, août, septembre, octobre, novembre, décembre]
@@ -1069,10 +1072,16 @@ fr:
     account_disabled: "Ce compte a été désactivé"
 
     #app/views/main/_assignment_info_summary.erb
-    assignment_average:        "Moyenne : %{results_average} %"
+    percentage:                "%{percentage} %"
+    assignment_average:        "Moyenne :"
+    assignment_median:        "Médiane :"
     assignments_submitted:     "Projets envoyés :"
     assignments_graded:        "Projets corrigés :"
+    assignments_failed:        "Projets sous la moyenne :"
+    assignments_zeros:         "Projets à 0 :"
     refresh_graph:             "Actualiser le graphique"
+    outstanding_remark_request: "%{request_count} demande de remarque restante."
+    outstanding_remark_requests: "%{request_count} demandes de remarque restantes."
 
     #app/views/main/_grader_summary.erb
     grader_distribution:       "Correcteurs assignés :"

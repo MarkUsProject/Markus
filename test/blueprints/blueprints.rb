@@ -129,19 +129,19 @@ ImageAnnotation.blueprint do
 end
 
 Mark.blueprint do
-  result {Submission.make!.result}
-  markable {RubricCriterion.make!(:assignment => Submission.make!.result.submission.grouping.assignment)}
+  result {Result.make!}
+  markable {RubricCriterion.make!(:assignment => Result.make!.submission.grouping.assignment)}
   mark {1}
 end
 
 Mark.blueprint(:rubric) do
-  result {Submission.make!.result}
-  markable {RubricCriterion.make!(:assignment => Submission.make!.result.submission.grouping.assignment)}
+  result {Result.make!}
+  markable {RubricCriterion.make!(:assignment => Result.make!.submission.grouping.assignment)}
 end
 
 Mark.blueprint(:flexible) do
-  result {Submission.make!.result}
-  markable {FlexibleCriterion.make!(:assignment => Submission.make!.result.submission.grouping.assignment)}
+  result {Result.make!}
+  markable {FlexibleCriterion.make!(:assignment => Result.make!.submission.grouping.assignment)}
 end
 
 Note.blueprint do
@@ -156,7 +156,7 @@ NoLateSubmissionRule.blueprint do
 end
 
 Result.blueprint do
-  submission {Submission.make}
+  submission {Submission.make!}
   marking_state {Result::MARKING_STATES[:partial]}
   total_mark {0}
 end

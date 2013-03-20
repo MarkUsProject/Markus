@@ -113,7 +113,39 @@ class SubmissionRuleTest < ActiveSupport::TestCase
       assert_equal @assignment.due_date,
                    @assignment.submission_rule.get_collection_time
     end
+
   end
+
+
+  context "Assignment with a coming due date and with a past section due date" do
+
+    # called before every single test in this context
+    setup do
+
+      # the assignment due date is to come...
+      @assignment = Assignment.make!(:section_due_dates_type => true,
+        :due_date => 2.days.from_now, :group_min => 1)
+
+      # ... but the section due date is in the past
+      @section = Section.make!(:name => "section1")
+      @sectionDueDate = SectionDueDate.make!(:section => @section,
+        :assignment => @assignment, :due_date => 2.days.ago)
+
+      # create a group of one student from this section, for this assignment
+      @student = Student.make!(:section => @section)
+      @grouping = Grouping.make!(:assignment => @assignment)
+      @studentMembership = StudentMembership.make!(:user => @student, :grouping => @grouping,
+          :membership_status => StudentMembership::STATUSES[:inviter])
+
+    end
+
+    should "be able to collect the submissions from groups of this section" do
+      assert @assignment.submission_rule.can_collect_grouping_now?(@grouping),
+        "Could not collect submission of the group whereas due date for the group's section is past"
+    end
+
+  end
+
 
   context "Assignment with a past due date" do
     setup do

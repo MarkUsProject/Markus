@@ -72,7 +72,7 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
         submission = @assignment.submission_rule.apply_submission_rule(submission)
 
         # Assert that this submission did not get a penalty
-        result = submission.result
+        result = submission.get_original_result
         assert_not_nil result
         assert result.extra_marks.empty?
         assert_equal 0, result.get_total_extra_percentage
@@ -126,7 +126,7 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
         submission = @assignment.submission_rule.apply_submission_rule(submission)
 
         # Assert that this submission got a penalty
-        result = submission.result
+        result = submission.get_original_result
         assert_not_nil result
         # We expect only a single extra mark is attached
         assert_equal -10, result.get_total_extra_percentage
@@ -142,7 +142,7 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
         assert_not_nil submission.submission_files.find_by_filename("Driver.java")
         assert_not_nil submission.submission_files.find_by_filename("OvertimeFile.java")
         assert_nil submission.submission_files.find_by_filename("NotIncluded.java")
-        assert_not_nil submission.result
+        assert_not_nil submission.get_original_result
       end
     end
 
@@ -199,7 +199,7 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
         submission = @assignment.submission_rule.apply_submission_rule(submission)
 
         # Assert that this submission got a penalty
-        result = submission.result
+        result = submission.get_original_result
         assert_not_nil result
         # We expect only a single extra mark is attached
         assert_equal -30, result.get_total_extra_percentage
@@ -217,7 +217,7 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
         assert_not_nil submission.submission_files.find_by_filename("OvertimeFile1.java")
         assert_not_nil submission.submission_files.find_by_filename("OvertimeFile2.java")
         assert_nil submission.submission_files.find_by_filename("NotIncluded.java")
-        assert_not_nil submission.result
+        assert_not_nil submission.get_original_result
       end
     end
 

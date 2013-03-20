@@ -3,7 +3,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', '
 
 require 'shoulda'
 require 'machinist'
-require 'mocha'
+require 'mocha/setup'
 
 
 

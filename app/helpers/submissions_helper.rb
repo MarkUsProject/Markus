@@ -15,9 +15,11 @@ module SubmissionsHelper
         raise I18n.t("marking_state.no_submission", :group_name => grouping.group_name) if !grouping.has_submission?
         submission = grouping.current_submission_used
         raise I18n.t("marking_state.no_result", :group_name => grouping.group.group_name) if !submission.has_result?
-        raise I18n.t("marking_state.not_complete", :group_name => grouping.group.group_name) if submission.result.marking_state != Result::MARKING_STATES[:complete]
-        submission.result.released_to_students = release
-        if !submission.result.save
+        raise I18n.t("marking_state.not_complete", :group_name => grouping.group.group_name) if 
+          submission.get_latest_result.marking_state != Result::MARKING_STATES[:complete]
+        @result = submission.get_latest_result
+        @result.released_to_students = release
+        if !@result.save
           raise I18n.t("marking_state.result_not_saved", :group_name => grouping.group.group_name)
         end
         changed += 1
@@ -106,11 +108,11 @@ module SubmissionsHelper
 
   # Helper methods to determine remark request status on a submission
   def remark_in_progress(submission)
-    return (submission.remark_result and submission.remark_result.marking_state == Result::MARKING_STATES[:partial])
+    return (submission.get_remark_result and submission.get_remark_result.marking_state == Result::MARKING_STATES[:partial])
   end
 
   def remark_complete_but_unreleased(submission)
-    return (submission.remark_result and submission.remark_result.marking_state == Result::MARKING_STATES[:complete] and !submission.remark_result.released_to_students)
+    return (submission.get_remark_result and submission.get_remark_result.marking_state == Result::MARKING_STATES[:complete] and !submission.get_remark_result.released_to_students)
   end
 
 end
