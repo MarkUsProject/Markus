@@ -172,7 +172,8 @@ select {
 }
 
 label, .label {
-  display: inline-block;
+  /* Marc - Commented out the below line due to conflicts with jQuery DataTable plugin*/
+  /*display: inline-block;*/
   width: 150px;
   padding-top: 3px;
   margin-top: 5px;
@@ -598,7 +599,7 @@ span#choose_an_assignment {
 }
 
 
-/* table */
+/* Table */
 
 .filter_selected{
   color: #000;
@@ -638,11 +639,19 @@ th, tfoot tr td {
   padding: 3px;
 }
 
+th.center {
+  text-align: center;
+}
+
 td {
   border: none;
   border-bottom: 1px solid #ccc;
   padding: 3px;
   margin-left: 2px;
+}
+
+td.center {
+  text-align: center;
 }
 
 td.note {
@@ -696,8 +705,110 @@ tr:hover .table_menu {
    padding: 0.1em;
 }
 
+/* jQuery DataTable Plugin */
+.dataTables_length {
+  float: left;
+}
 
-/*student's table*/
+.dataTables_filter {
+  float: right;
+}
+
+table.display thead th {
+  padding: 3px 18px 3px 10px;
+  border-bottom: 1px solid black;
+  font-weight: bold;
+  cursor: pointer;
+  * cursor: hand;
+}
+
+table.display tfoot th {
+  padding: 3px 18px 3px 10px;
+  border-top: 1px solid black;
+  font-weight: bold;
+}
+
+table.display tr.heading2 td {
+  border-bottom: 1px solid #aaa;
+}
+
+table.display td {
+  padding: 3px 10px;
+}
+
+.dataTables_info {
+  float: left;
+}
+
+.dataTables_paginate {
+  float: right;
+  text-align: right;
+}
+
+/* Pagination nested */
+
+.paging_two_button .ui-button {
+  float: left;
+  cursor: pointer;
+  * cursor: hand;
+}
+
+.paging_full_numbers .ui-button {
+  padding: 2px 6px;
+  margin: 0;
+  cursor: pointer;
+  * cursor: hand;
+  color: #333 !important;
+}
+
+.dataTables_paginate .ui-button {
+  margin-right: -0.1em !important;
+}
+
+.paging_full_numbers {
+  width: 350px !important;
+}
+
+.dataTables_wrapper .ui-toolbar {
+  padding: 5px;
+}
+
+.dataTables_paginate {
+  width: auto;
+}
+
+.dataTables_info {
+  padding-top: 3px;
+}
+
+table.display thead th {
+  padding: 3px 0px 3px 10px;
+  cursor: pointer;
+  * cursor: hand;
+}
+
+div.dataTables_wrapper .ui-widget-header {
+  font-weight: normal;
+}
+
+/*DataTable sort icon positioning*/
+div.DataTables_sort_wrapper span {
+  display: inline-block;
+}
+
+table.display thead th div.DataTables_sort_wrapper {
+  position: relative;
+  padding-right: 20px;
+}
+
+table.display thead th div.DataTables_sort_wrapper span {
+  position: absolute;
+  top: 50%;
+  margin-top: -8px;
+  right: 0;
+}
+
+/* Student's table */
 
 tr.student_hidden {
   font-style: italic;
@@ -938,7 +1049,9 @@ input#extra_mark_description{
    border-radius: 5px;
 }
 
-#rename_group_dialog, #upload_dialog, #download_dialog,
+/* Commented out for now due to conflicts with jQuery UI Dialog */
+
+/*#rename_group_dialog, #upload_dialog, #download_dialog,
 #groups_coverage_dialog, #grader_criteria_dialog {
    background: white;
    padding: 0 10px 0 10px;
@@ -949,7 +1062,7 @@ input#extra_mark_description{
    max-height: 80%;
    max-width: 80%;
    overflow: auto;
-}
+}*/
 
 #notes_dialog {
    background: white;
@@ -1290,6 +1403,10 @@ div.float_left {
     text-align: center;
     margin-top: -15px;
   }
+
+#login_form label {
+  display: inline-block;
+}
 
 
 /* Student Interface: Assignment View*/
