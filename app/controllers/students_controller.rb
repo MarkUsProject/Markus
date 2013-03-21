@@ -26,6 +26,8 @@ class StudentsController < ApplicationController
                                   :order => "user_name",
                                   :include => [:section,
                                                :grace_period_deductions])
+
+    # Function below contained within helpers/users_helper.rb
     @students = construct_students_table_data(@students_data)
     respond_to do |format|
       format.json { render :json => @students} 
