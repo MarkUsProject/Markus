@@ -7,6 +7,7 @@
   <title><%= t(:markus) %> - <%= controller.action_name %></title>
   <%= javascript_include_tag 'application.js',
       'jquery.js',
+      'prototype.js',
       'rails.js',
       'jquery-ui.js',
       'prototype.js'%>
@@ -36,5 +37,9 @@
     </div> <!-- container -->
   </div>
 
+  <!-- Toggle jQuery's noConflict mode so it does not conflict with Prototype -->
+  <script type="text/javascript">
+    jQuery.noConflict();
+  </script>
 </body>
 </html>
