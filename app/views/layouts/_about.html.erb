@@ -3,11 +3,13 @@
 
  var about_modal = null;
 
- document.observe("dom:loaded", function(){
-    about_modal = new Control.Modal($('about_dialog'), {
-      overlayOpacity: 0.75,
+ $(document).ready(function(){
+    about_modal = $('#about_dialog').dialog({
+      modal: true,
       className: 'about_modal',
-      fade: false
+      autoOpen: false,
+      minWidth: 600,
+      minHeight: 670
     });
  });
 //]]>
