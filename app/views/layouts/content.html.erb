@@ -8,12 +8,16 @@
   <%= javascript_include_tag 'application.js',
       'jquery.js',
       'rails.js',
-      'jquery-ui.js'%>
+      'jquery-ui.js',
+      'prototype.js'%>
   <%= stylesheet_link_tag 'main.css', :media => 'all' %>
   <%= stylesheet_link_tag 'jquery-ui.css', :media => 'all' %>
   <% # UI LIBRARIES %>
   <%= csrf_meta_tag %>
   <%= yield :head %>
+  <script>
+    jQuery.noConflict();
+  </script>
 </head>
 
 <body>
