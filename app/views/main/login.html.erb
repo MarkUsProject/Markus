@@ -1,6 +1,5 @@
 <%= javascript_include_tag 'jquery.js',
     'jquery-browser.js',
-    'jquery-ui.js',
     'rails.js' %>
 <div class="login">
   <div class="login-greeting"><%= I18n.t(:welcome_to) %></div>
@@ -45,8 +44,8 @@
 //<![CDATA[    
   <% if @first_visit %>
     <%# Alert Internet Explorer users of incompatibility %>
-      if ($.browser.name == 'msie') {
-        $('#ie_warning_dialog').dialog({ 
+      if (jQuery.browser.name == 'msie') {
+        jQuery('#ie_warning_dialog').dialog({ 
           modal: true,
           width: 400,
           buttons: {
@@ -59,6 +58,8 @@
   <% end %>
 
   <%# Try to put focus on the login text field on load %>
-  try { document.getElementById('user_login').focus(); } catch(e) { }
+  jQuery(document).ready(function(){
+    jQuery("#user_login").focus();
+  });
 //]]>
 </script>
