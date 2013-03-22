@@ -212,10 +212,10 @@ module AutomatedTestsHelper
   # passeed, false => error occurred.
   def self.launch_test(server_id, assignment, repo_dir, call_on)
     # Get src_dir
-    src_dir = File.join(repo_dir, assignment.short_identifier)
+    src_dir = File.join(repo_dir, assignment.repository_folder)
 
     # Get test_dir
-    test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
+    test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.repository_folder)
 
     # Get the name of the test server
     server = @list_of_servers[server_id]
@@ -239,11 +239,11 @@ module AutomatedTestsHelper
     end
 
     # Securely copy source files, test files and test runner script to run_dir
-    stdout, stderr, status = Open3.capture3("scp -p -r #{src_dir}/* #{server}:#{run_dir}")
+    stdout, stderr, status = Open3.capture3("scp -p -r '#{src_dir}'/* #{server}:#{run_dir}")
     if !(status.success?)
       return [stderr, false]
     end
-    stdout, stderr, status = Open3.capture3("scp -p -r #{test_dir}/* #{server}:#{run_dir}")
+    stdout, stderr, status = Open3.capture3("scp -p -r '#{test_dir}'/* #{server}:#{run_dir}")
     if !(status.success?)
       return [stderr, false]
     end
@@ -256,7 +256,7 @@ module AutomatedTestsHelper
     list_run_scripts = scripts_to_run(assignment, call_on)
     arg_list = ""
     list_run_scripts.each do |script|
-      arg_list = arg_list + "#{script.script_name} #{script.halts_testing} "
+      arg_list = arg_list + "#{script.script_name.gsub(/\s/, "\\ ")} #{script.halts_testing} "
     end
     
     # Run script
@@ -430,6 +430,9 @@ module AutomatedTestsHelper
 
     # Array for checking duplicate file names
     file_name_array = []
+    
+    #add existing scripts names
+    params.each {|key, value| if(key[/test_script_\d+/] != nil) then file_name_array << value end}
     
     # Retrieve all test scripts
     testscripts = params[:assignment][:test_scripts_attributes]
