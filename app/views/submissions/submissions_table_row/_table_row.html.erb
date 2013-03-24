@@ -136,7 +136,7 @@
   </td>
   <% end %>
   <td>
-    <% if Time.zone.now >= assignment.submission_rule.calculate_grouping_collection_time(grouping) %>
+    <% if assignment.submission_rule.can_collect_grouping_now?(grouping) %>
       <%= image_tag('icons/tick.png') %>
     <% else %>
       <%= image_tag('icons/cross.png') %>
