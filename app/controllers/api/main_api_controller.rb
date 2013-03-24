@@ -103,10 +103,15 @@ module Api
 
     #=== Description
     # Helper method for filtering, limit, offset
-    def get_collection(collection_class)
+    # Optionally accepts a collection - an object of class Active Record::Relation
+    def get_collection(collection_class, collection = nil)
       # We'll append .where, .limit, and .offset to the collection
       # Ignore default_scope order, always order by id to be consistent
-      collection = collection_class.order('id')
+      if !collection.nil?
+        collection = collection.order('id')
+      else
+        collection = collection_class.order('id')
+      end
 
       filters = {}
       # params[:filter] will match the following format:

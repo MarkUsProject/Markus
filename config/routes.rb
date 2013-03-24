@@ -11,7 +11,9 @@ Markus::Application.routes.draw do
     resources :test_results, :except => [:new, :edit]
     resources :submission_downloads, :except => [:new, :edit]
     resources :users, :except => [:new, :edit]
-    resources :assignments, :except => [:new, :edit]
+    resources :assignments, :except => [:new, :edit] do
+      resources :groups, :except => [:new, :edit]
+    end
     resources :main_api
   end
 
