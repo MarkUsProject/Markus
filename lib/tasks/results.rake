@@ -78,7 +78,7 @@ namespace :load do
           end
         end
         submission = Submission.create_by_timestamp(grouping, Time.now)
-        result = submission.get_original_result
+        result = submission.get_latest_result
         # create marks for each criterion and attach to result
         a1.rubric_criteria.each do |criterion|
           # save a mark for each criterion

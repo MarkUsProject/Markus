@@ -269,11 +269,7 @@ class Assignment < ActiveRecord::Base
     groupings.each do |grouping|
       submission = grouping.current_submission_used
       if !submission.nil?
-        if submission.has_result? && submission.remark_submitted?
-          result = submission.get_remark_result
-        elsif submission.has_result?
-          result = submission.get_original_result
-        end
+        result = submission.get_latest_result
         if result.released_to_students
           results.push result.total_mark
           results_sum += result.total_mark
@@ -771,7 +767,7 @@ class Assignment < ActiveRecord::Base
 
   # Returns all the submissions that have been graded
   def graded_submissions
-    return self.submissions.select { |submission| submission.get_original_result.marking_state == Result::MARKING_STATES[:complete] }
+    return self.submissions.select { |submission| submission.get_latest_completed_result }
   end
 
   def groups_submitted
