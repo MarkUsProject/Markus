@@ -207,6 +207,25 @@ class Submission < ActiveRecord::Base
     # link remark result id to submission - must be done after remark result is saved (so it has an id)
     self.remark_result_id = remark_result.id
     self.save
+
+    # populate remark result with old marks
+    original_result = get_original_result
+
+    old_extra_marks = original_result.extra_marks
+    old_extra_marks.each do |old_extra_mark|
+      remark_extra_mark = ExtraMark.new(old_extra_mark.attributes.merge(
+        {:result_id => self.remark_result_id, :created_at => Time.zone.now}))
+      remark_extra_mark.save(:validate => false)
+      remark_result.extra_marks << remark_extra_mark
+    end
+
+    old_marks = original_result.marks
+    old_marks.each do |old_mark|
+      remark_mark = Mark.new(old_mark.attributes.merge(
+        {:result_id => self.remark_result_id, :created_at => Time.zone.now}))
+      remark_mark.save(:validate => false)
+      remark_result.marks << remark_mark
+    end
   end
 
   private
