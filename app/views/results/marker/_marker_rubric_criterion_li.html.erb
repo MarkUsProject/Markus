@@ -22,7 +22,9 @@ class="float_left mark_criterion_expand expanded" >- &nbsp;
         <table id="mark_<%=mark.id%>_table">
 	  <%
         (0...RubricCriterion::RUBRIC_LEVELS).each do |num_levels|
-			      if (num_levels == mark.mark)
+            if (!old_mark.nil? && num_levels == old_mark.mark)
+              td_class = "rubric_criterion_level_old_mark"
+            elsif (num_levels == mark.mark)
               td_class = "rubric_criterion_level_selected"
             else
               td_class = "rubric_criterion_level"
