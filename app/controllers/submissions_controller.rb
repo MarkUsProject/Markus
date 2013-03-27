@@ -46,16 +46,16 @@ class SubmissionsController < ApplicationController
           return params[:assignment].groupings.all(:include => to_include)}},
       'unmarked' => {
         :display => I18n.t("browse_submissions.show_unmarked"),
-        :proc => lambda { |params, to_include| return params[:assignment].groupings.all(:include => [to_include]).select{|g| !g.has_submission? || (g.has_submission? && g.current_submission_used.get_original_result.marking_state == Result::MARKING_STATES[:unmarked]) } }},
+        :proc => lambda { |params, to_include| return params[:assignment].groupings.all(:include => [to_include]).select{|g| !g.has_submission? || (g.has_submission? && g.current_submission_used.get_latest_result.marking_state == Result::MARKING_STATES[:unmarked]) } }},
       'partial' => {
         :display => I18n.t("browse_submissions.show_partial"),
-        :proc => lambda { |params, to_include| return params[:assignment].groupings.all(:include => [to_include]).select{|g| g.has_submission? && g.current_submission_used.get_original_result.marking_state == Result::MARKING_STATES[:partial] } }},
+        :proc => lambda { |params, to_include| return params[:assignment].groupings.all(:include => [to_include]).select{|g| g.has_submission? && g.current_submission_used.get_latest_result.marking_state == Result::MARKING_STATES[:partial] } }},
       'complete' => {
         :display => I18n.t("browse_submissions.show_complete"),
-        :proc => lambda { |params, to_include| return params[:assignment].groupings.all(:include => [to_include]).select{|g| g.has_submission? && g.current_submission_used.get_original_result.marking_state == Result::MARKING_STATES[:complete] } }},
+        :proc => lambda { |params, to_include| return params[:assignment].groupings.all(:include => [to_include]).select{|g| g.has_submission? && g.current_submission_used.get_latest_result.marking_state == Result::MARKING_STATES[:complete] } }},
       'released' => {
         :display => I18n.t("browse_submissions.show_released"),
-        :proc => lambda { |params, to_include| return params[:assignment].groupings.all(:include => [to_include]).select{|g| g.has_submission? && g.current_submission_used.get_original_result.released_to_students} }},
+        :proc => lambda { |params, to_include| return params[:assignment].groupings.all(:include => [to_include]).select{|g| g.has_submission? && g.current_submission_used.get_latest_result.released_to_students} }},
       'assigned' => {
         :display => I18n.t("browse_submissions.show_assigned_to_me"),
         :proc => lambda { |params, to_include| return params[:assignment].ta_memberships.find_all_by_user_id(params[:user_id], :include => [:grouping => to_include]).collect{|m| m.grouping} }}

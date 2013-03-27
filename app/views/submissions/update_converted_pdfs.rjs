@@ -9,7 +9,7 @@ if submission_collector.safely_stop_child_exited
       page.redirect_to edit_assignment_submission_result_path(
       :assignment_id => @grouping.assignment_id,
       :submission_id => @grouping.current_submission_used.id,
-      :id => @grouping.current_submission_used.get_original_result.id)
+      :id => @grouping.current_submission_used.get_latest_result.id)
     end
   else
     submission_collector.safely_stop_child_exited = false
@@ -17,6 +17,6 @@ if submission_collector.safely_stop_child_exited
     page.redirect_to edit_assignment_submission_result_path(
       :assignment_id => @grouping.assignment_id,
       :submission_id => @grouping.current_submission_used.id,
-      :id => @grouping.current_submission_used.get_original_result.id)
+      :id => @grouping.current_submission_used.get_latest_result.id)
   end
 end

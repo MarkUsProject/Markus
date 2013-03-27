@@ -419,9 +419,9 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
               assert_not_nil grouping
               assert grouping.has_submission?
               submission = grouping.current_submission_used
-              assert_not_nil submission.get_original_result
+              assert_not_nil submission.get_latest_result
               assert_equal final_mark.to_f.round,
-                           (submission.get_original_result.total_mark / out_of * 100
+                           (submission.get_latest_result.total_mark / out_of * 100
                            ).to_f.round
             end
           end

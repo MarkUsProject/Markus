@@ -117,12 +117,9 @@ class ResultsController < ApplicationController
 
   def next_grouping
     grouping = Grouping.find(params[:id])
-    if grouping.has_submission? && grouping.is_collected? && grouping.current_submission_used.remark_submitted?
+    if grouping.has_submission? && grouping.is_collected? 
         redirect_to :action => 'edit',
-                    :id => grouping.current_submission_used.get_remark_result.id
-    elsif grouping.has_submission? && grouping.is_collected?
-      redirect_to :action => 'edit',
-                  :id => grouping.current_submission_used.get_original_result.id
+                    :id => grouping.current_submission_used.get_latest_result.id
     else
       redirect_to :controller => 'submissions',
                   :action => 'collect_and_begin_grading',
@@ -188,7 +185,7 @@ class ResultsController < ApplicationController
       redirect_to :action => 'edit',
                   :assignment_id => params[:assignment_id],
                   :submission_id => file.submission,
-                  :id => file.submission.get_original_result
+                  :id => file.submission.get_latest_result.id
       return
     end
     filename = file.filename
@@ -213,7 +210,7 @@ class ResultsController < ApplicationController
     @focus_line = params[:focus_line]
 
     @file = SubmissionFile.find(@submission_file_id)
-    @result = @file.submission.get_original_result
+    @result = @file.submission.get_latest_result
     # Is the current user a student?
     if current_user.student?
       # The Student does not have access to this file. Display an error.
@@ -423,7 +420,7 @@ class ResultsController < ApplicationController
     @remark_result.submission_id = nil
     @remark_result.save
 
-    @submission.get_remark_result_id = nil
+    @submission.remark_result_id = nil
     @submission.remark_request = nil
     @submission.save
 

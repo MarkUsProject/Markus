@@ -79,7 +79,7 @@ class ResultsController < ApplicationController
   def next_grouping
     grouping = Grouping.find(params[:id])
     if grouping.has_submission?
-      redirect_to :action => 'edit', :id => grouping.get_submission_used.get_original_result.id
+      redirect_to :action => 'edit', :id => grouping.get_submission_used.get_latest_result.id
     else
       redirect_to :controller => 'submissions', :action => 'collect_and_begin_grading', :id => grouping.assignment.id, :grouping_id => grouping.id
     end
@@ -91,7 +91,7 @@ class ResultsController < ApplicationController
       file_contents = retrieve_file(file)
     rescue Exception => e
       flash[:file_download_error] = e.message
-      redirect_to :action => 'edit', :id => file.submission.get_original_result.id
+      redirect_to :action => 'edit', :id => file.submission.get_latest_result.id
       return
     end
     send_data file_contents, :disposition => 'inline', :filename => file.filename
@@ -103,7 +103,7 @@ class ResultsController < ApplicationController
     @focus_line = params[:focus_line]
       
     @file = SubmissionFile.find(@submission_file_id)
-    @result = @file.submission.get_original_result
+    @result = @file.submission.get_latest_result
     # Is the current user a student?
     if current_user.student?
       # The Student does not have access to this file.  Render nothing.
@@ -167,6 +167,18 @@ class ResultsController < ApplicationController
       return
     end
     @result = @submission.get_original_result
+    @old_result = nil
+    if @submission.remark_submitted?
+      @old_result = @result
+      @result = @submission.get_remark_result
+      # if remark result's marking state is 'unmarked' then the student has
+      # saved a remark request but not submitted it yet, therefore, still editable
+      if (@result.marking_state != Result::MARKING_STATES[:unmarked] && !@result.released_to_students)
+        render 'results/student/no_remark_result'
+        return
+      end
+    end
+
     if !@result.released_to_students
       render 'results/student/no_result'
       return
