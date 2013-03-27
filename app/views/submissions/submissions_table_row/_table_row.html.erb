@@ -85,8 +85,8 @@
           <%= image_tag('icons/double_exclamation.png',
               :alt => I18n.t('marking_state.remark_requested'),
               :title => I18n.t('marking_state.remark_requested')) %>
-      <% elsif grouping.current_submission_used.get_original_result.marking_state == Result::MARKING_STATES[:complete] %>
-          <% if !grouping.current_submission_used.get_original_result.released_to_students or remark_complete_but_unreleased(grouping.current_submission_used) %>
+      <% elsif grouping.current_submission_used.get_latest_result.marking_state == Result::MARKING_STATES[:complete] %>
+          <% if !grouping.current_submission_used.get_latest_result.released_to_students %>
 		        <%= image_tag('icons/accept.png',
                 :alt => I18n.t('marking_state.completed'),
                 :title => I18n.t('marking_state.completed')) %>
