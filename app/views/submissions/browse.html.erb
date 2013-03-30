@@ -88,7 +88,7 @@
       <% end %>
       
       <% # Collect submissions for a given section %>
-      <% if @current_user.admin? && @assignment.section_groups_only %>
+      <% if @assignment.section_groups_only %>
       	<div class="floatLeft">
       		<%= I18n.t("browse_submissions.collect_work_for_section") %>
       		<select id="section_input" name="section_to_collect">
