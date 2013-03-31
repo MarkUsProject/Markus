@@ -10,8 +10,8 @@ class SubmissionTest < ActiveSupport::TestCase
   should "automatically create a result" do
     s = Submission.make
     s.save
-    assert_not_nil s.get_original_result, "Result was supposed to be created automatically"
-    assert_equal s.get_original_result.marking_state, Result::MARKING_STATES[:unmarked], "Result marking_state should have been automatically set to unmarked"
+    assert_not_nil s.get_latest_result, "Result was supposed to be created automatically"
+    assert_equal s.get_latest_result.marking_state, Result::MARKING_STATES[:unmarked], "Result marking_state should have been automatically set to unmarked"
   end
 
   should "create a new remark result" do

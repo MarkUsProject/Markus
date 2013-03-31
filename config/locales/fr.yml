@@ -114,6 +114,11 @@ fr:
       priority_given: "Une priorité importante a été donné à cet envoi. Il va bientot être prêt."
       errors:               "Erreurs"
       results_loss_warning: "Attention : cette action effacera vos annotations et évaluations.\n\n!Êtes-vous sûr de vouloir continuer ?"
+      must_select_a_section: "Vous devez sélectionner une section pour récupérer les envois de ses groupes."
+      could_not_find_section: "La section demandée n'a pas été trouvée."
+      could_not_collect_section: "Les envois de la section %{section_name} pour le projet %{assignment_identifier} ne peuvent pas être récupérés : la date de récupération pour cette section n'est pas encore passée."
+      no_submission_for_section: "Il n'y a ancun envoi à récupérer pour la section %{section_name}."
+      successfully_collected: "Récupération de %{collected} envoi(s)."
     assignment:
         assignment: "Projet %{short_identifier}"
         required_fields: "Champs obligatoires <span class='required_field'>*</span>"
@@ -378,6 +383,8 @@ fr:
       replace:              "Remplace"
       delete:               "Supprimer"
       can_begin_grading:    "Peut être évaluée"
+      section:              "Section"
+      collect_work_for_section: "Récupérer les envois pour la section :"
 
     grade_entry_forms:
       blank_field: "doit être rempli(e)"
@@ -392,6 +399,7 @@ fr:
       column_out_of: "sur"
       add_column: "Ajouter une colonne"
       remove_column: "Supprimer : "
+      toggle_column: "cacher/montrer"
       properties: "Propriétés de la feuille de note"
       required_fields: "Champs obligatoires <span class='required_field'>*</span>"
       create:

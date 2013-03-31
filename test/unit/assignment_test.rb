@@ -249,7 +249,7 @@ class AssignmentTest < ActiveSupport::TestCase
           grouping = Grouping.make!(:assignment => @assignment)
 
           sub = Submission.make!(:grouping => grouping)
-          result = sub.get_original_result
+          result = sub.get_latest_result
           result.marking_state = Result::MARKING_STATES[:complete]
           result.save
         end
@@ -265,7 +265,7 @@ class AssignmentTest < ActiveSupport::TestCase
         2.times do
           grouping = Grouping.make!(:assignment => @assignment)
           sub = Submission.make!(:grouping => grouping)
-          result = sub.get_original_result
+          result = sub.get_latest_result
           result.marking_state = Result::MARKING_STATES[:complete]
           result.save
         end
@@ -289,7 +289,7 @@ class AssignmentTest < ActiveSupport::TestCase
       setup do
         @membership = StudentMembership.make!(:grouping => Grouping.make!(:assignment => @assignment),:membership_status => StudentMembership::STATUSES[:accepted])
         sub = Submission.make!(:grouping => @membership.grouping)
-        @result = sub.get_original_result
+        @result = sub.get_latest_result
 
         @sum = 0
         [2,2.7,2.2,2].each do |weight|
@@ -650,7 +650,7 @@ class AssignmentTest < ActiveSupport::TestCase
             StudentMembership.make!({:grouping => g, :membership_status => StudentMembership::STATUSES[:accepted]})
           end
           s = Submission.make!(:grouping => g)
-          r = s.get_original_result
+          r = s.get_latest_result
           (0..3).each do |index|
             Mark.make!({:result => r, :markable => criteria[index] })
           end
@@ -679,9 +679,9 @@ class AssignmentTest < ActiveSupport::TestCase
             fields.push('')
           else
             submission = grouping.current_submission_used
-            fields.push(submission.get_original_result.total_mark / out_of * 100)
+            fields.push(submission.get_latest_result.total_mark / out_of * 100)
             rubric_criteria.each do |rubric_criterion|
-              mark = submission.get_original_result.marks.find_by_markable_id_and_markable_type(rubric_criterion.id, "RubricCriterion")
+              mark = submission.get_latest_result.marks.find_by_markable_id_and_markable_type(rubric_criterion.id, "RubricCriterion")
               if mark.nil?
                 fields.push('')
               else
@@ -689,8 +689,8 @@ class AssignmentTest < ActiveSupport::TestCase
               end
               fields.push(rubric_criterion.weight)
             end
-            fields.push(submission.get_original_result.get_total_extra_points)
-            fields.push(submission.get_original_result.get_total_extra_percentage)
+            fields.push(submission.get_latest_result.get_total_extra_points)
+            fields.push(submission.get_latest_result.get_total_extra_percentage)
           end
           # push grace credits info
           grace_credits_data = student.remaining_grace_credits.to_s + "/" + student.grace_credits.to_s
@@ -724,7 +724,7 @@ class AssignmentTest < ActiveSupport::TestCase
             StudentMembership.make!({:grouping => g, :membership_status => StudentMembership::STATUSES[:accepted]})
           end
           s = Submission.make!(:grouping => g)
-          r = s.get_original_result
+          r = s.get_latest_result
           (0..3).each do |index|
             Mark.make!({:result => r, :markable => criteria[index] })
           end
@@ -753,9 +753,9 @@ class AssignmentTest < ActiveSupport::TestCase
             fields.push('')
           else
             submission = grouping.current_submission_used
-            fields.push(submission.get_original_result.total_mark / out_of * 100)
+            fields.push(submission.get_latest_result.total_mark / out_of * 100)
             flexible_criteria.each do |criterion|
-              mark = submission.get_original_result.marks.find_by_markable_id_and_markable_type(criterion.id, "FlexibleCriterion")
+              mark = submission.get_latest_result.marks.find_by_markable_id_and_markable_type(criterion.id, "FlexibleCriterion")
               if mark.nil?
                 fields.push('')
               else
@@ -763,8 +763,8 @@ class AssignmentTest < ActiveSupport::TestCase
               end
               fields.push(criterion.max)
             end
-            fields.push(submission.get_original_result.get_total_extra_points)
-            fields.push(submission.get_original_result.get_total_extra_percentage)
+            fields.push(submission.get_latest_result.get_total_extra_points)
+            fields.push(submission.get_latest_result.get_total_extra_percentage)
           end
           # push grace credits info
           grace_credits_data = student.remaining_grace_credits.to_s + "/" + student.grace_credits.to_s
@@ -808,7 +808,7 @@ class AssignmentTest < ActiveSupport::TestCase
         (1..5).each do |index|
           g = Grouping.make!(:assignment => @assignment)
           s = Submission.make!(:grouping => g)
-          r = s.get_original_result
+          r = s.get_latest_result
           r.total_mark = totals[index - 1]
           r.marking_state = Result::MARKING_STATES[:complete]
           r.save
@@ -860,7 +860,7 @@ class AssignmentTest < ActiveSupport::TestCase
         (1..5).each do |index|
           g = Grouping.make!(:assignment => @assignment)
           s = Submission.make!(:grouping => g)
-          r = s.get_original_result
+          r = s.get_latest_result
           r.total_mark = totals[index - 1]
           r.marking_state = Result::MARKING_STATES[:complete]
           r.save
@@ -910,7 +910,7 @@ class AssignmentTest < ActiveSupport::TestCase
             fields.push('')
           else
             submission = grouping.current_submission_used
-            fields.push(submission.get_original_result.total_mark / @assignment.total_mark * 100)
+            fields.push(submission.get_latest_result.total_mark / @assignment.total_mark * 100)
           end
           expected_string += fields.to_csv
         end
@@ -932,7 +932,7 @@ class AssignmentTest < ActiveSupport::TestCase
             g = Grouping.make!(:assignment => @assignment)
             # StudentMembership.make({:grouping => g,:membership_status => StudentMembership::STATUSES[:inviter] } )
             s = Submission.make!(:grouping => g)
-            r = s.get_original_result
+            r = s.get_latest_result
             (1..2).each do
               Mark.make!(:result => r)
             end
@@ -980,7 +980,7 @@ class AssignmentTest < ActiveSupport::TestCase
             # create 2 submission for each group
             (1..2).each do
               s = Submission.make!(:grouping => g)
-              r = s.get_original_result
+              r = s.get_latest_result
               (1..2).each do
                 Mark.make!(:result => r)
               end

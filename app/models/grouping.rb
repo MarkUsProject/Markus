@@ -327,7 +327,7 @@ class Grouping < ActiveRecord::Base
   end
 
   def marking_completed?
-    return has_submission? && current_submission_used.get_original_result.marking_state == Result::MARKING_STATES[:complete]
+    return has_submission? && current_submission_used.get_latest_result.marking_state == Result::MARKING_STATES[:complete]
   end
 
   # EDIT METHODS

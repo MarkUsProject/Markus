@@ -19,7 +19,8 @@ class SubmissionsController < ApplicationController
                             :collect_ta_submissions,
                             :repo_browser,
                             :populate_repo_browser,
-                            :update_converted_pdfs]
+                            :update_converted_pdfs,
+                            :update_submissions]
   before_filter :authorize_for_ta_and_admin,
                 :only => [:browse,
                           :index,
@@ -29,7 +30,8 @@ class SubmissionsController < ApplicationController
                           :collect_ta_submissions,
                           :repo_browser,
                           :populate_repo_browser,
-                          :update_converted_pdfs]
+                          :update_converted_pdfs,
+                          :update_submissions]
   before_filter :authorize_for_student,
                 :only => [:file_manager,
                           :populate_file_manager,
@@ -46,16 +48,16 @@ class SubmissionsController < ApplicationController
           return params[:assignment].groupings.all(:include => to_include)}},
       'unmarked' => {
         :display => I18n.t("browse_submissions.show_unmarked"),
-        :proc => lambda { |params, to_include| return params[:assignment].groupings.all(:include => [to_include]).select{|g| !g.has_submission? || (g.has_submission? && g.current_submission_used.get_original_result.marking_state == Result::MARKING_STATES[:unmarked]) } }},
+        :proc => lambda { |params, to_include| return params[:assignment].groupings.all(:include => [to_include]).select{|g| !g.has_submission? || (g.has_submission? && g.current_submission_used.get_latest_result.marking_state == Result::MARKING_STATES[:unmarked]) } }},
       'partial' => {
         :display => I18n.t("browse_submissions.show_partial"),
-        :proc => lambda { |params, to_include| return params[:assignment].groupings.all(:include => [to_include]).select{|g| g.has_submission? && g.current_submission_used.get_original_result.marking_state == Result::MARKING_STATES[:partial] } }},
+        :proc => lambda { |params, to_include| return params[:assignment].groupings.all(:include => [to_include]).select{|g| g.has_submission? && g.current_submission_used.get_latest_result.marking_state == Result::MARKING_STATES[:partial] } }},
       'complete' => {
         :display => I18n.t("browse_submissions.show_complete"),
-        :proc => lambda { |params, to_include| return params[:assignment].groupings.all(:include => [to_include]).select{|g| g.has_submission? && g.current_submission_used.get_original_result.marking_state == Result::MARKING_STATES[:complete] } }},
+        :proc => lambda { |params, to_include| return params[:assignment].groupings.all(:include => [to_include]).select{|g| g.has_submission? && g.current_submission_used.get_latest_result.marking_state == Result::MARKING_STATES[:complete] } }},
       'released' => {
         :display => I18n.t("browse_submissions.show_released"),
-        :proc => lambda { |params, to_include| return params[:assignment].groupings.all(:include => [to_include]).select{|g| g.has_submission? && g.current_submission_used.get_original_result.released_to_students} }},
+        :proc => lambda { |params, to_include| return params[:assignment].groupings.all(:include => [to_include]).select{|g| g.has_submission? && g.current_submission_used.get_latest_result.released_to_students} }},
       'assigned' => {
         :display => I18n.t("browse_submissions.show_assigned_to_me"),
         :proc => lambda { |params, to_include| return params[:assignment].ta_memberships.find_all_by_user_id(params[:user_id], :include => [:grouping => to_include]).collect{|m| m.grouping} }}
@@ -501,6 +503,7 @@ class SubmissionsController < ApplicationController
   end
 
   def update_submissions
+    
     return unless request.post?
     assignment = Assignment.find(params[:assignment_id])
     errors = []
@@ -515,7 +518,7 @@ class SubmissionsController < ApplicationController
     else
       # User selected particular Grouping IDs
       if params[:groupings].nil?
-        errors.push(I18n.t('results.must_select_a_group'))
+        errors.push(I18n.t('results.must_select_a_group')) unless !params[:collect_section].nil? 
       else
         groupings = assignment.groupings.find(params[:groupings])
       end
@@ -530,6 +533,15 @@ class SubmissionsController < ApplicationController
       changed = set_release_on_results(groupings, false, errors)
       log_message = "Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" +
                     "#{assignment.id}' (for #{changed} groups)."
+    elsif !params[:collect_section].nil?
+      if params[:section_to_collect] == ""
+        errors.push(I18n.t("collect_submissions.must_select_a_section"))
+      else
+        collected = collect_submissions_for_section(params[:section_to_collect], assignment, errors)
+        if collected > 0
+          flash[:success] = I18n.t("collect_submissions.successfully_collected", :collected => collected)
+        end
+      end
     end
 
 
@@ -537,7 +549,7 @@ class SubmissionsController < ApplicationController
       assignment.set_results_statistics
     end
 
-    if changed > 0
+    if !changed.nil? && changed > 0
       flash[:success] = I18n.t('results.successfully_changed', {:changed => changed})
       m_logger = MarkusLogger.instance
       m_logger.log(log_message)
