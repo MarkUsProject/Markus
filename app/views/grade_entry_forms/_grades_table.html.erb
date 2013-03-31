@@ -41,9 +41,10 @@
                                               :id => @grade_entry_form.id) %></td>
       <% end %>
 
-      <td class="student_total"><%= text_field_tag 'total_' + student.id.to_s,
+      <td class="student_total">
+	<div class="total_value" style="display:inline-block"><%= text_field_tag 'total_' + student.id.to_s,
                                     h(@grade_entry_form.calculate_total_mark(student.id)),
-                                    :size => 4, :disabled => true %></td>
+                                    :size => 4, :disabled => true %></div></td>
       <td>
         <% if grade_entry_student.released_to_student %>
           <%= image_tag('icons/email_go.png')%>

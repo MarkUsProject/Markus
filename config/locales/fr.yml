@@ -399,6 +399,7 @@ fr:
       column_out_of: "sur"
       add_column: "Ajouter une colonne"
       remove_column: "Supprimer : "
+      toggle_column: "cacher/montrer"
       properties: "Propriétés de la feuille de note"
       required_fields: "Champs obligatoires <span class='required_field'>*</span>"
       create:
