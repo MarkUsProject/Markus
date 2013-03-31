@@ -398,6 +398,7 @@ en:
       column_out_of: "Out Of"
       add_column: "Add a column"
       remove_column: "Remove:"
+      toggle_column: "hide/show"
       properties: "Marks Spreadsheet Properties"
       required_fields: "Required Fields <span class='required_field'>*</span>"
       create:

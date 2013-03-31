@@ -23,3 +23,16 @@ document.observe('dom:loaded', function() {
     });
   });
 });
+
+function toggleTotalColVisibility() {
+    var allElements = document.getElementsByClassName("total_value");
+
+    for(var i=0; i < allElements.length; i++)
+    {
+	if(allElements [i].style.display == 'inline-block')
+	  allElements [i].style.display = 'none';
+	else
+	  allElements [i].style.display = 'inline-block';
+    }
+	
+}
