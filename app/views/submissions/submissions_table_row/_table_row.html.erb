@@ -27,18 +27,12 @@
                 collect_and_begin_grading_assignment_submission_path(
                       assignment.id,
                       grouping.id) %>
-  <% elsif grouping.current_submission_used.remark_submitted? %>
-    <%= link_to h(grouping.group.group_name),
-                 edit_assignment_submission_result_path(
-                   assignment.id,
-                   grouping.current_submission_used.id,
-                   grouping.current_submission_used.get_remark_result) %>
   <% else %>
     <%= link_to h(grouping.group.group_name),
                  edit_assignment_submission_result_path(
                    assignment.id,
                    grouping.current_submission_used.id,
-                   grouping.current_submission_used.get_original_result) %>
+                   grouping.current_submission_used.get_latest_result) %>
   <% end %>
     (<%= h(grouping.accepted_students.collect{ |student| student.user_name}.join(',')) %>)
   <%='<span class="invalid">' + t(:invalid_grouping) + '</span>' if !grouping.is_valid? %>
@@ -47,7 +41,7 @@
     <% assignment.rubric_criteria.each do |criterion| %>
       <td>
         <% if grouping.has_submission? %>
-          <% mark = grouping.current_submission_used.get_original_result.marks.find_by_markable_id(criterion.id) %>
+          <% mark = grouping.current_submission_used.get_latest_result.marks.find_by_markable_id(criterion.id) %>
           <% if mark.nil? || mark.mark.nil?%>
             -
           <% else %>
@@ -91,8 +85,8 @@
           <%= image_tag('icons/double_exclamation.png',
               :alt => I18n.t('marking_state.remark_requested'),
               :title => I18n.t('marking_state.remark_requested')) %>
-      <% elsif grouping.current_submission_used.get_original_result.marking_state == Result::MARKING_STATES[:complete] %>
-          <% if !grouping.current_submission_used.get_original_result.released_to_students or remark_complete_but_unreleased(grouping.current_submission_used) %>
+      <% elsif grouping.current_submission_used.get_latest_result.marking_state == Result::MARKING_STATES[:complete] %>
+          <% if !grouping.current_submission_used.get_latest_result.released_to_students %>
 		        <%= image_tag('icons/accept.png',
                 :alt => I18n.t('marking_state.completed'),
                 :title => I18n.t('marking_state.completed')) %>
@@ -119,11 +113,7 @@
     <% if !grouping.current_submission_used.has_result? %>
       -
     <% else %>
-      <% if grouping.current_submission_used.remark_submitted? %>
-        <%= h(grouping.current_submission_used.get_remark_result.total_mark) %>
-      <% else %>
-        <%= h(grouping.current_submission_used.get_original_result.total_mark) %>
-      <% end %>
+      <%= h(grouping.current_submission_used.get_latest_result.total_mark) %>
     <% end %>
   <% end %>
   </td>
