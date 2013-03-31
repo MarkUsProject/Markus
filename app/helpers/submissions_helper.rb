@@ -13,7 +13,7 @@ module SubmissionsHelper
     changed = 0
     groupings.each do |grouping|
       begin
-        raise I18n.t("marking_state.no_submission", :group_name => grouping.group_name) if !grouping.has_submission?
+        raise I18n.t("marking_state.no_submission", :group_name => grouping.group.group_name) if !grouping.has_submission?
         submission = grouping.current_submission_used
         raise I18n.t("marking_state.no_result", :group_name => grouping.group.group_name) if !submission.has_result?
         raise I18n.t("marking_state.not_complete", :group_name => grouping.group.group_name) if submission.result.marking_state != Result::MARKING_STATES[:complete]
@@ -34,7 +34,7 @@ module SubmissionsHelper
     changed = 0
     groupings.each do |grouping|
       begin
-        raise I18n.t("marking_state.no_submission", :group_name => grouping.group_name) if !grouping.has_submission?
+        raise I18n.t("marking_state.no_submission", :group_name => grouping.group.group_name) if !grouping.has_submission?
         submission_id = grouping.current_submission_used.id
         AutomatedTestsHelper.request_a_test_run(submission_id, 'collection', @current_user)
         changed += 1

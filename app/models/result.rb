@@ -36,6 +36,9 @@ class Result < ActiveRecord::Base
     self.marks.find(:all, :include => [:markable]).each do |m|
       total = total + m.get_mark
     end
+    
+    total = total + get_total_test_script_marks
+
     return total
   end
 
@@ -69,6 +72,26 @@ class Result < ActiveRecord::Base
 
   def get_total_extra_percentage_as_points
     return (get_total_extra_percentage * submission.assignment.total_mark / 100)
+  end
+  
+  def get_total_test_script_marks
+    total = 0
+    
+    #find the unique test scripts for this submission
+    test_script_ids = TestScriptResult.select(:test_script_id).where(:submission_id => submission.id)#.uniq
+    
+    #pull out the actual ids from the ActiveRecord objects
+    test_script_ids = test_script_ids.map { |script_id_obj| script_id_obj.test_script_id }
+    
+    #take only the unique ids so we don't add marks from the same script twice
+    test_script_ids = test_script_ids.uniq
+    
+    #add the latest result from each of our test scripts 
+    test_script_ids.each do |test_script_id|
+      test_result = TestScriptResult.where(:test_script_id => test_script_id).last
+      total = total + test_result.marks_earned
+    end
+    return total
   end
 
   # un-releases the result

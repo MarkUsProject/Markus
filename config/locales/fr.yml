@@ -936,6 +936,7 @@ fr:
       grade: "Note intermédiaire"
       x_mark: "x Note"
       weight: "Coefficient"
+      test_script_title: "Scripts de test"
 
     notes:
         note_on: "%{user_name} sur <b>%{display_for}</b>"
