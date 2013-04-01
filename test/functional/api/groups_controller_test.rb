@@ -280,24 +280,14 @@ class Api::GroupsControllerTest < ActionController::TestCase
         assert_response 422
       end
 
-      should "return a 404 if an assignment with a numeric id doesn't exist" do
-        get 'show', :assignment_id => '9999', :id => '1'
+      should "return a 404 if an assignment with that id doesn't exist" do
+        get 'show', :assignment_id => '9999', :id => '9a'
         assert_response 404
       end
 
-      should 'return a 422 if the assignment id is not strictly numeric' do
-        get 'show', :assignment_id => '1', :id => '9a'
-        assert_response 422
-      end
-
-      should "return a 404 if a group with a numeric id doesn't exist" do
+      should "return a 404 if a group with that id doesn't exist" do
         get 'show', :assignment_id => '1', :id => '9999'
         assert_response 404
-      end
-
-      should 'return a 422 if the group id is not strictly numeric' do
-        get 'show', :assignment_id => 'b2', :id => '1'
-        assert_response 422
       end
     end
 
