@@ -74,10 +74,9 @@ class Api::MainApiControllerTest < ActionController::TestCase
         @res = get("index")
       end
 
-      should assign_to :current_user
-      should respond_with :success
-      should "render a success response" do
+      should "render a 404 response by default" do
         assert render_template 'shared/http_status'
+        assert_not_nil(@res.body  =~ /#{HttpStatusHelper::ERROR_CODE['message']['404']}/)
       end
     end
 
@@ -86,10 +85,9 @@ class Api::MainApiControllerTest < ActionController::TestCase
         @res = put("index")
       end
 
-      should assign_to :current_user
-      should "render a success response" do
-        assert_response :success
+      should "render a 404 response by default" do
         assert render_template 'shared/http_status'
+        assert_not_nil(@res.body  =~ /#{HttpStatusHelper::ERROR_CODE['message']['404']}/)
       end
     end
 
@@ -98,10 +96,9 @@ class Api::MainApiControllerTest < ActionController::TestCase
         @res = delete("index")
       end
 
-      should assign_to :current_user
-      should "render a success response" do
-        assert_response :success
+      should "render a 404 response by default" do
         assert render_template 'shared/http_status'
+        assert_not_nil(@res.body  =~ /#{HttpStatusHelper::ERROR_CODE['message']['404']}/)
       end
     end
 
@@ -110,10 +107,9 @@ class Api::MainApiControllerTest < ActionController::TestCase
         @res = post("index")
       end
 
-      should assign_to :current_user
-      should "render a success response" do
-        assert_response :success
+      should "render a 404 response by default" do
         assert render_template 'shared/http_status'
+        assert_not_nil(@res.body  =~ /#{HttpStatusHelper::ERROR_CODE['message']['404']}/)
       end
     end
   end
