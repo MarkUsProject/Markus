@@ -88,27 +88,6 @@ module Api
       end
     end
 
-    # Requires nothing, does nothing
-    def create
-      # Don't allow creating groups through the api
-      render 'shared/http_status', :locals => {:code => '404', :message =>
-        HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404
-    end
-
-    # Requires nothing, does nothing
-    def update
-      # Don't allow updating groups
-      render 'shared/http_status', :locals => {:code => '404', :message =>
-        HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404
-    end
-
-    # Requires nothing, does nothing
-    def destroy
-      # Don't allow deleting groups
-      render 'shared/http_status', :locals => {:code => '404', :message =>
-        HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404
-    end
-
     # Include student_memberships and user info if required
     def include_students(fields)
       students = {}

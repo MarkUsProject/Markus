@@ -10,10 +10,30 @@ module Api
     before_filter :check_format
     before_filter :authenticate
 
-    # Dummy action for authentication testing. No public route matches this action.
+    # Unless overridden by a subclass, all routes are 404's by default
     def index
-      render 'shared/http_status', :locals => {:code => '200', :message =>
-        HttpStatusHelper::ERROR_CODE['message']['200']}, :status => 200
+      render 'shared/http_status', :locals => {:code => '404', :message =>
+        HttpStatusHelper::ERROR_CODE['message']['404']}, :status => 404
+    end
+
+    def show
+      render 'shared/http_status', :locals => {:code => '404', :message =>
+        HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404
+    end
+
+    def create
+      render 'shared/http_status', :locals => {:code => '404', :message =>
+        HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404
+    end
+
+    def update
+      render 'shared/http_status', :locals => {:code => '404', :message =>
+        HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404
+    end
+
+    def destroy
+      render 'shared/http_status', :locals => {:code => '404', :message =>
+        HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404
     end
 
     private

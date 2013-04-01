@@ -92,26 +92,5 @@ module Api
       end
     end
 
-    # The following require nothing and do nothing
-    def show
-      render 'shared/http_status', :locals => {:code => '404', :message =>
-        HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404
-    end
-
-    def create
-      render 'shared/http_status', :locals => {:code => '404', :message =>
-        HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404
-    end
-
-    def update
-      render 'shared/http_status', :locals => {:code => '404', :message =>
-        HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404
-    end
-
-    def destroy
-      render 'shared/http_status', :locals => {:code => '404', :message =>
-        HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404
-    end
-
   end # end SubmissionDownloadsController
 end
