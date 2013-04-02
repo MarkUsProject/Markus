@@ -1,13 +1,13 @@
 <script type="text/javascript">
 //<![CDATA[
-document.observe("dom:loaded", function(){
-modalAddNewSection = new Control.Modal($('add_new_section_dialog'),
-  {
-     overlayOpacity: 0.75,
-     className: 'modalAddNewSection',
-     fade: false
+  jQuery(document).ready(function() {
+    modalAddNewSection = new Control.Modal($('add_new_section_dialog'),
+    {
+        overlayOpacity: 0.75,
+        className: 'modalAddNewSection',
+        fade: false
+    });
   });
-});
 //]]>
 </script>
 <div id="add_new_section_dialog">

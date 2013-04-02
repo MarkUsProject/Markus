@@ -51,6 +51,7 @@ module UsersHelper
         @render_note_link = true
       end
       result[5] = user.hidden
+      result[6] = "<%= link_to I18n.t(:edit), :controller => 'students', :action =>'edit', :id => #{user.id} %>"
     end
     return student_list
   end
