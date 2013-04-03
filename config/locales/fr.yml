@@ -823,6 +823,7 @@ fr:
         after_collection_message: "Le nombre maximal d'heures de pénalité est passé pour ce projet. Tout changement sera enregistré mais non évalué."
         commit_after_collection_message : "La date de retour pour ce projet et le nombre maximum d'heures de retard sont passés. Vos changements ont été enregistrés, mais ne seront pas inclus dans l'évaluation."
         overtime_message: "La date de retour pour ce projet est passée.  Cependant, vous êtes dans une période de pénalité. Vous pouvez changer vos fichiers envoyés mais vous aurez %{penalty_amount}% déduit de votre note finale sur ce projet."
+        extramark_description: "Le dernier envoi date de (%{overtime_hours} heure(s)) après la période de fin. Par conséquent,  %{penalty_amount}% sera déduit de votre note."
         form_description: "Utiliser une pénalité dépendant du retard"
         add_penalty_decay: "Ajouter une période pénalité"
         alert: "Vous devez activer les pénalités pour pouvoir ajouter une période de pénalité dépendant du retard."
