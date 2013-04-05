@@ -286,6 +286,7 @@ en:
         show_old_marks: "Show Old Mark Summary"
       annotation:
         from_line_to: "%{file_path}: Line %{line_start} to %{line_end}"
+        remark_flag: "(remark)"
         no_annotation_in_this_category: "There are no annotations in this category"
         new_annotation: "Create new annotation"
         annotation_category: "Annotation Category"

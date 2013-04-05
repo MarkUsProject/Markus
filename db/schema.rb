@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130219230002) do
+ActiveRecord::Schema.define(:version => 20130402190548) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -42,6 +42,7 @@ ActiveRecord::Schema.define(:version => 20130219230002) do
     t.integer "y2"
     t.string  "type"
     t.integer "annotation_number"
+    t.boolean "is_remark"
   end
 
   add_index "annotations", ["submission_file_id"], :name => "index_annotations_on_assignmentfile_id"
