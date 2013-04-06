@@ -72,7 +72,7 @@ class Api::GroupsControllerTest < ActionController::TestCase
       clear_fixtures
 
       # Create admin from blueprints
-      @admin = Admin.make
+      @admin = Admin.make!
       @admin.reset_api_key
       base_encoded_md5 = @admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
@@ -81,7 +81,7 @@ class Api::GroupsControllerTest < ActionController::TestCase
 
       # Default XML elements displayed
       @default_xml = ['id', 'group-name', 'created-at', 'updated-at', 'first-name',
-                      'last-name', 'user-name', 'membership-status', 
+                      'last-name', 'user-name', 'membership-status',
                       'student-memberships'];
     end
 
@@ -127,18 +127,18 @@ class Api::GroupsControllerTest < ActionController::TestCase
     context 'testing index function' do
       # Create students, groupings and assignments for testing
       setup do
-        @assignment1 = Assignment.make()
-        @assignment2 = Assignment.make()
+        @assignment1 = Assignment.make!
+        @assignment2 = Assignment.make!
 
-        @membership1 = StudentMembership.make(:user => Student.make())
-        @membership2 = StudentMembership.make(:user => Student.make())
+        @membership1 = StudentMembership.make!(:user => Student.make!)
+        @membership2 = StudentMembership.make!(:user => Student.make!)
 
-        @grouping1   = Grouping.make(:assignment => @assignment1, 
+        @grouping1   = Grouping.make!(:assignment => @assignment1,
                                      :student_memberships => [@membership1])
-        @grouping2   = Grouping.make(:assignment => @assignment1,
+        @grouping2   = Grouping.make!(:assignment => @assignment1,
                                      :student_memberships => [@membership2])
-        @grouping3   = Grouping.make(:assignment => @assignment1)
-        @grouping4   = Grouping.make(:assignment => @assignment2)
+        @grouping3   = Grouping.make!(:assignment => @assignment1)
+        @grouping4   = Grouping.make!(:assignment => @assignment2)
 
         @group1      = @grouping1.group
         @group2      = @grouping2.group
@@ -172,7 +172,7 @@ class Api::GroupsControllerTest < ActionController::TestCase
       end
 
       should 'get only matching groups if a valid filter is used' do
-        get 'index', :assignment_id => @assignment1.id.to_s, 
+        get 'index', :assignment_id => @assignment1.id.to_s,
           :filter => "group_name:#{@group1.group_name}"
         assert_response :success
         assert_select 'group', 1
@@ -180,7 +180,7 @@ class Api::GroupsControllerTest < ActionController::TestCase
       end
 
       should "not return matching groups that don't belong to this assignment" do
-        get 'index', :assignment_id => @assignment1.id.to_s, 
+        get 'index', :assignment_id => @assignment1.id.to_s,
           :filter => "group_name:#{@group4.group_name}"
         assert_response :success
         assert_select 'group', 0
@@ -188,7 +188,7 @@ class Api::GroupsControllerTest < ActionController::TestCase
       end
 
       should 'ignore invalid filters' do
-        get 'index', :assignment_id => @assignment1.id.to_s, 
+        get 'index', :assignment_id => @assignment1.id.to_s,
           :filter => "group_name:#{@group1.group_name},badfilter:invalid"
         assert_response :success
         assert_response :success
@@ -205,7 +205,7 @@ class Api::GroupsControllerTest < ActionController::TestCase
       end
 
       should 'only display specified fields if the fields parameter is used' do
-        get 'index', :assignment_id => @assignment1.id.to_s, 
+        get 'index', :assignment_id => @assignment1.id.to_s,
           :fields => 'group_name,id'
         assert_response :success
         assert_select 'group-name', {:minimum => 1}
@@ -219,7 +219,7 @@ class Api::GroupsControllerTest < ActionController::TestCase
       end
 
       should 'ignore invalid fields provided in the fields parameter' do
-        get 'index', :assignment_id => @assignment2.id.to_s, 
+        get 'index', :assignment_id => @assignment2.id.to_s,
           :fields => 'group_name,invalid_field_name'
         assert_response :success
         assert_select 'group-name', {:minimum => 1}
@@ -235,15 +235,15 @@ class Api::GroupsControllerTest < ActionController::TestCase
     context 'testing show function' do
       setup do
         # Create students, groupings and assignments for testing
-        @assignment1 = Assignment.make()
-        @assignment2 = Assignment.make()
+        @assignment1 = Assignment.make!
+        @assignment2 = Assignment.make!
 
-        @membership1 = StudentMembership.make(:user => Student.make())
-        @membership2 = StudentMembership.make(:user => Student.make())
+        @membership1 = StudentMembership.make!(:user => Student.make!)
+        @membership2 = StudentMembership.make!(:user => Student.make!)
 
-        @grouping1   = Grouping.make(:assignment => @assignment1, 
+        @grouping1   = Grouping.make!(:assignment => @assignment1,
                                      :student_memberships => [@membership1])
-        @grouping2   = Grouping.make(:assignment => @assignment2,
+        @grouping2   = Grouping.make!(:assignment => @assignment2,
                                      :student_memberships => [@membership2])
 
         @group1      = @grouping1.group
@@ -251,7 +251,7 @@ class Api::GroupsControllerTest < ActionController::TestCase
       end
 
       should 'return only that group and default attributes if valid id' do
-        get 'show', :assignment_id => @assignment1.id.to_s, 
+        get 'show', :assignment_id => @assignment1.id.to_s,
           :id => @group1.id.to_s
         assert_response :success
         assert @response.body.include?(@group1.group_name)
@@ -262,7 +262,7 @@ class Api::GroupsControllerTest < ActionController::TestCase
       end
 
       should 'return only that group and specified fields if provided' do
-        get 'show', :assignment_id => @assignment2.id.to_s, :id => @group2.id.to_s, 
+        get 'show', :assignment_id => @assignment2.id.to_s, :id => @group2.id.to_s,
           :fields => 'group_name,invalid_field_name'
         assert_response :success
         assert @response.body.include?(@group2.group_name)
