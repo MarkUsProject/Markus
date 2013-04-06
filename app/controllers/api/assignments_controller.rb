@@ -165,13 +165,6 @@ module Api
         HttpStatusHelper::ERROR_CODE['message']['201']}, :status => 201
     end
 
-    # Requires nothing, does nothing
-    def destroy
-      # Don't allow deleting assignments through the API as a precaution
-      render 'shared/http_status', :locals => {:code => '404', :message =>
-        HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404
-    end
-
     # Process the parameters passed for assignment creation and update
     def process_attributes(params, attributes)
       # Loop through default fields other than id
