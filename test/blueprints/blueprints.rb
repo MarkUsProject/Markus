@@ -121,6 +121,7 @@ ImageAnnotation.blueprint do
   x2 {10}
   y1 {0}
   y2 {10}
+  is_remark {false}
   annotation_text {AnnotationText.make!(
     :annotation_category => AnnotationCategory.make(:assignment => SubmissionFile.make!.submission.grouping.assignment)
     )}
@@ -260,6 +261,7 @@ end
 TextAnnotation.blueprint do
   line_start {0}
   line_end {1}
+  is_remark {false}
   annotation_text {AnnotationText.make!(
     :annotation_category => AnnotationCategory.make(:assignment => SubmissionFile.make!.submission.grouping.assignment)
     )}
