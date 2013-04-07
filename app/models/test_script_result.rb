@@ -21,12 +21,16 @@
 class TestScriptResult < ActiveRecord::Base
   belongs_to :submission
   belongs_to :test_script
+  belongs_to :grouping
+  
+  has_many :test_scripts
 
-  validates_presence_of :submission # we require an associated submission
-  validates_associated :submission # submission need to be valid
+  validates_presence_of :grouping # we require an associated grouping
+  validates_associated :grouping  # grouping need to be valid
   
   validates_presence_of :test_script
   validates_presence_of :marks_earned
+  validates_presence_of :repo_revision
   
   validates_numericality_of :marks_earned, :only_integer => true, :greater_than_or_equal_to => 0
 

@@ -348,22 +348,25 @@ ActiveRecord::Schema.define(:version => 20121028211448) do
   add_index "submissions", ["grouping_id"], :name => "index_submissions_on_grouping_id"
 
   create_table "test_results", :force => true do |t|
-    t.integer "submission_id"
+    t.integer "grouping_id"
     t.integer "test_script_id"
+    t.integer "test_script_result_id"
     t.string  "name"
-    t.string  "completion_status", :null => false
-    t.integer "marks_earned",      :null => false
-    t.text    "input_description", :null => false
-    t.text    "actual_output",     :null => false
-    t.text    "expected_output",   :null => false
+    t.string  "completion_status",     :null => false
+    t.integer "marks_earned",          :null => false
+    t.integer "repo_revision"
+    t.text    "input_description",     :null => false
+    t.text    "actual_output",         :null => false
+    t.text    "expected_output",       :null => false
   end
 
-  add_index "test_results", ["submission_id", "test_script_id"], :name => "submission_id_and_test_script_id"
+  add_index "test_results", ["grouping_id", "test_script_id"], :name => "grouping_id_and_test_script_id"
 
   create_table "test_script_results", :force => true do |t|
-    t.integer  "submission_id"
+    t.integer  "grouping_id"
     t.integer  "test_script_id"
     t.integer  "marks_earned"
+    t.integer  "repo_revision"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

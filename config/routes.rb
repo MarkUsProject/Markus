@@ -301,6 +301,12 @@ Markus::Application.routes.draw do
       post 'reset_api_key'
     end
   end
+  
+  resources :automated_tests do
+    member do
+      get 'student_interface'
+    end
+  end
 
   match 'main', :controller => 'main', :action => 'index'
   match 'main/about', :controller => 'main', :action => 'about'

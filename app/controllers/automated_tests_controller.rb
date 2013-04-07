@@ -62,5 +62,41 @@ class AutomatedTestsController < ApplicationController
   def manage
     @assignment = Assignment.find(params[:assignment_id])
   end
+  
+  def student_interface
+    @assignment = Assignment.find(params[:id])
+    @student = current_user
+    @grouping = @student.accepted_grouping_for(@assignment.id)
+
+    if !@grouping.nil?
+      # Look up submission information
+      repo = @grouping.group.repo
+      @revision  = repo.get_latest_revision
+      @revision_number = @revision.revision_number
+      
+      @test_script_results = TestScriptResult.find_by_grouping_id(@grouping.id)
+      
+      @token = Token.find_by_grouping_id(@grouping.id)
+      if @token
+        @token.reassign_tokens_if_new_day()
+      end
+      
+      # For running tests
+      if params[:run_tests] && @token && @token.tokens > 0
+        run_tests(@grouping.id)
+        flash[:notice] = I18n.t("automated_tests.tests_running")
+      end
+    end
+  end
+  
+  def run_tests(grouping_id)
+    changed = 0
+    begin
+      AutomatedTestsHelper.request_a_test_run(grouping_id, 'request', @current_user)
+      return true
+    rescue Exception => e
+      return false
+    end
+  end
 
 end

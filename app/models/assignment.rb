@@ -306,6 +306,11 @@ class Assignment < ActiveRecord::Base
     return test_scripts.sum("max_marks")
   end
   
+  #total marks for scripts that are run on request
+  def total_ror_script_marks
+    return test_scripts.where("run_on_request" => true).sum("max_marks")
+  end
+  
   def has_test_scripts?
     return TestScript.exists?(:assignment_id => self.id)
   end

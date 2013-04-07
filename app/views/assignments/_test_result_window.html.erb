@@ -1,13 +1,18 @@
+<span id="loading_test_result" style="display:none;">
+    <%= image_tag('spinner.gif') %> <%= I18n.t("test_result.loading_results") %>
+  </span>
+
 <script type="text/javascript">
 //<![CDATA[
 
-  function load_test_result(test_result_id) {
+  function load_test_result() {
     $('loading_test_result').show();
-    $('select_test_result_id').disable();
-    window.open('<%= render_test_result_assignment_path(:id => @assignment.id, :aid => aid)%>&test_result_id='+test_result_id,
+    window.open('<%= render_test_result_assignment_path(:id => @assignment.id, :aid => aid, :grouping_id => @grouping.id)%>',
     "Test Results", "width=400,height=250,resizable=yes,scrollbars=yes")
     $('loading_test_result').hide();
-    $('select_test_result_id').enable();
   }
 //]]>
 </script>
+
+<input type="button" onclick="load_test_result()"
+                   value="<%= I18n.t("test_result.button.load")%>" />

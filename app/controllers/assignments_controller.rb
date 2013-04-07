@@ -35,18 +35,9 @@ class AssignmentsController < ApplicationController
   # Prepares test result and updates content in window.
   def render_test_result
     @assignment = Assignment.find(params[:aid])
-    @test_result = TestResult.find(params[:test_result_id])
-
-    # Students can use this action only, when marks have been released
-    if current_user.student? &&
-        (@test_result.submission.grouping.membership_status(current_user).nil? ||
-        @test_result.submission.result.released_to_students == false)
-      render :partial => 'shared/handle_error',
-       :locals => {:error => I18n.t('test_result.error.no_access', :test_result_id => @test_result.id)}
-      return
-    end
-
-    render :template => 'assignments/render_test_result', :layout => "plain"
+    @grouping = Grouping.find(params[:grouping_id])
+  
+    render :template => 'assignments/render_test_result'
   end
 
   def student_interface
@@ -99,25 +90,14 @@ class AssignmentsController < ApplicationController
       repo = @grouping.group.repo
       @revision  = repo.get_latest_revision
       @revision_number = @revision.revision_number
-
-      # For running tests
-      # TODO: This is outdated - there is no implementation to collect and prepare for automated test now
-      if params[:collect]
-        @result = manually_collect_and_prepare_test(@grouping, @revision.revision_number)
-      else
-        @result = automatically_collect_and_prepare_test(@grouping, @revision.revision_number)
-      end
-      #submission = @grouping.submissions.find_by_submission_version_used(true)
-      if @result
-        @test_result_files = @result.submission.test_results
-      else
-        @test_result_files = nil
-      end
       
-      @token = Token.find_by_grouping_id(@grouping.id)
-      if @token
-        @token.reassign_tokens_if_new_day()
-      end
+      #submission = @grouping.submissions.find_by_submission_version_used(true)
+      #if @result
+      #  @test_result_files = @result.submission.test_results
+      #else
+      #  @test_result_files = nil
+      #end
+      
       @last_modified_date = @grouping.assignment_folder_last_modified_date
       @num_submitted_files = @grouping.number_of_submitted_files
       @num_missing_assignment_files = @grouping.missing_assignment_files.length

@@ -217,6 +217,15 @@
 	  <%= link_to I18n.t("results.results_name"),
 		      view_marks_assignment_submission_result_path(@assignment, 1, 1) %>
   </li>
+  <li <% if controller.controller_name == 'automated_tests' %>
+          id="sub_menu_active"
+        <%end%>>
+
+	  <%= link_to I18n.t("automated_tests.title"),
+                :controller => 'automated_tests',
+	              :action => 'student_interface',
+                :id => @assignment.id %>
+  </li>
    <% end %>
    </ul>
 </div>

@@ -43,7 +43,7 @@ class ResultsController < ApplicationController
       File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
     end
     # This is outdated
-    @test_result_files = @submission.test_results
+    #@test_result_files = @submission.test_results
     # ----
     @first_file = @files.first
     @extra_marks_points = @result.extra_marks.points
@@ -332,7 +332,7 @@ class ResultsController < ApplicationController
       File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
     end
     # This is outdated
-    @test_result_files = @submission.test_results
+    #@test_result_files = @submission.test_results
     # ----
     @first_file = @files.first
     @extra_marks_points = @result.extra_marks.points

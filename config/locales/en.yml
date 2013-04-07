@@ -858,7 +858,7 @@ en:
       error:
         no_access: "No access to test result with id #%{test_result_id}."
       button:
-        load: "Load"
+        load: "Load Results"
       no_files_available: "[No test results available]"
       loading_results: "Loading results..."
       running_tests: "Running Tests..."
@@ -1114,8 +1114,11 @@ en:
 
     #Test Framework
     automated_tests:
+      title: "Automated Testing"
+      testing_disabled: "Automated testing is not enabled for this assignment."
       remove_file: "Remove File"
       automated_tests: "Test Framework"
+      test_results: "Test Results"
       enable_test:    "Enable tests for this assignment"
       required_test_files: "Required files for testing"
       need_group_for_test: "You must have a group to run a test"
@@ -1126,8 +1129,8 @@ en:
       due_date_is_passed: "You can not run test as the due date for this assignment is passed"
       information: "Information"
       run_tests: "Run tests"
-      need_one_file: "You need at least one file submitted in order to run tests.<br />
-                      If you already submitted one file and you want to run tests on it, use the \"Collect and Prepare Test\" button below."
+      tests_running: "Running tests. Please wait."
+      need_one_file: "You need at least one file submitted in order to run tests. If you already submitted one file and you want to run tests on it, use the \"Run Tests\" button below."
       collect_and_test: "Collect and Prepare Test"
       add_test_script_file_link: "Add Test Script File"
       add_test_support_file_link: "Add Test Support File"
@@ -1146,6 +1149,7 @@ en:
       test_files_unavailable: "There is no test script to run test"
       source_files_unavailable: "No student file is found for testing"
       dir_not_exist: "The directory %{dir} required for Ant does not exist"
+      marks_obtained: "<span class=\"prop_label\">Marks Obtained:</span> %{marking}"
       script_option:
         run_settings: "Run Settings:"
         display_settings: "Display Settings:"

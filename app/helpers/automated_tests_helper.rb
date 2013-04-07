@@ -10,10 +10,10 @@ module AutomatedTestsHelper
   @queue = :test_waiting_list
 
   # This is the calling interface to request a test run. 
-  def AutomatedTestsHelper.request_a_test_run(submission_id, call_on, current_user)
+  def AutomatedTestsHelper.request_a_test_run(grouping_id, call_on, current_user)
     @current_user = current_user
-    @submission = Submission.find(submission_id)
-    @grouping = @submission.grouping
+    #@submission = Submission.find(submission_id)
+    @grouping = Grouping.find(grouping_id)
     @assignment = @grouping.assignment
     @group = @grouping.group
     
@@ -22,7 +22,7 @@ module AutomatedTestsHelper
                               
     @list_run_scripts = scripts_to_run(@assignment, call_on)
     
-    async_test_request(submission_id, call_on)
+    async_test_request(grouping_id, call_on)
   end
   
   # Delete repository directory
@@ -92,10 +92,10 @@ module AutomatedTestsHelper
   end
   
   # Request an automated test. Ask Resque to enqueue a job.
-  def self.async_test_request(submission_id, call_on)
+  def self.async_test_request(grouping_id, call_on)
     if has_permission?
       if files_available? 
-        Resque.enqueue(AutomatedTestsHelper, submission_id, call_on)
+        Resque.enqueue(AutomatedTestsHelper, grouping_id, call_on)
       end
     end
   end
@@ -155,12 +155,12 @@ module AutomatedTestsHelper
 
   # Perform a job for automated testing. This code is run by
   # the Resque workers - it should not be called from other functions.
-  def self.perform(submission_id, call_on) 
+  def self.perform(grouping_id, call_on) 
     # Pick a server, launch the Test Runner and wait for the result
     # Then store the result into the database
   
-    @submission = Submission.find(submission_id)
-    @grouping = @submission.grouping
+    #@submission = Submission.find(submission_id)
+    @grouping = Grouping.find(grouping_id)
     @assignment = @grouping.assignment
     @group = @grouping.group
     @repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, @group.repo_name)
@@ -182,7 +182,7 @@ module AutomatedTestsHelper
       # TODO: handle this error better
       raise "error"
     else
-      process_result(result, submission_id, @assignment.id)
+      process_result(result, grouping_id, @assignment.id)
     end
 
   end
@@ -270,17 +270,23 @@ module AutomatedTestsHelper
     
   end
 
-  def self.process_result(result, submission_id, assignment_id)
+  def self.process_result(result, grouping_id, assignment_id)
     parser = XML::Parser.string(result)
 
     # parse the xml doc
     doc = parser.parse
+    
+    @grouping = Grouping.find(grouping_id)
+    
+    repo = @grouping.group.repo
+    @revision  = repo.get_latest_revision
+    @revision_number = @revision.revision_number
 
     # find all the test_script nodes and loop over them
     test_scripts = doc.find('/testrun/test_script')
     test_scripts.each do |s_node|
       script_result = TestScriptResult.new
-      script_result.submission_id = submission_id
+      script_result.grouping_id = grouping_id
       script_marks_earned = 0    # cumulate the marks_earn in this script
       
       # find the script name and save it
@@ -303,12 +309,20 @@ module AutomatedTestsHelper
       end
 
       script_result.test_script_id = test_script.id
+      
+      script_marks_earned_nodes = s_node.find('./marks_earned')
+      script_result.marks_earned = script_marks_earned_nodes[0].content.to_i
+      
+      script_result.repo_revision = @revision_number
+      
+      # save to database
+      script_result.save
 
       # find all the test nodes and loop over them
       tests = s_node.find('./test')
       tests.each do |t_node|
         test_result = TestResult.new
-        test_result.submission_id = submission_id
+        test_result.grouping_id = grouping_id
         test_result.test_script_id = test_script.id
         # give default values
         test_result.name = 'no name is given'
@@ -338,6 +352,10 @@ module AutomatedTestsHelper
           end
         end
         
+        test_result.repo_revision = @revision_number
+        
+        test_result.test_script_result_id = script_result.id
+        
         # save to database
         test_result.save
       end
@@ -347,12 +365,9 @@ module AutomatedTestsHelper
       script_marks_earned_nodes = s_node.find('./marks_earned')
       if script_marks_earned_nodes.length == 1
         script_result.marks_earned = script_marks_earned_nodes[0].content.to_i
-      else
-        script_result.marks_earned = script_marks_earned
+        
+        script_result.save
       end
-      
-      # save to database
-      script_result.save
       
     end
   end

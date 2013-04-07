@@ -35,8 +35,8 @@ module SubmissionsHelper
     groupings.each do |grouping|
       begin
         raise I18n.t("marking_state.no_submission", :group_name => grouping.group.group_name) if !grouping.has_submission?
-        submission_id = grouping.current_submission_used.id
-        AutomatedTestsHelper.request_a_test_run(submission_id, 'collection', @current_user)
+
+        AutomatedTestsHelper.request_a_test_run(grouping.id, 'collection', @current_user)
         changed += 1
       rescue Exception => e
         errors.push(e.message)
@@ -47,7 +47,7 @@ module SubmissionsHelper
   
   def construct_file_manager_dir_table_row(directory_name, directory)
     table_row = {}
-    table_row[:id] = directory.id
+    table_row[:id] = directory.object_id
     table_row[:filter_table_row_contents] = render_to_string :partial => 'submissions/table_row/directory_table_row', :locals => {:directory_name => directory_name, :directory => directory}
     table_row[:filename] = directory_name
     table_row[:last_modified_date_unconverted] = directory.last_modified_date.strftime('%b %d, %Y %H:%M')
@@ -58,7 +58,7 @@ module SubmissionsHelper
 
   def construct_file_manager_table_row(file_name, file)
     table_row = {}
-    table_row[:id] = file.id
+    table_row[:id] = file.object_id
     table_row[:filter_table_row_contents] = render_to_string :partial => 'submissions/table_row/filter_table_row', :locals => {:file_name => file_name, :file => file}
 
     table_row[:filename] = file_name

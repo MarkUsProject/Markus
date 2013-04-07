@@ -1,3 +1,26 @@
-<pre id="test_result_content" cols="80" rows="50">
-  <%= h(@test_result.file_content) %>
-</pre>
+<div id="test_results" class="tabbedArea">
+  <% test_script_results = TestScriptResult.find_all_by_grouping_id(@grouping.id) %>
+
+  <ul>
+  <% test_script_results.each do |ts_result| %>
+  	<% test_script = TestScript.find(ts_result.test_script_id) %>
+  	<li>
+  	  Script name: <%= test_script.script_name %>
+  	  <ul>
+  	  <li>Marks earned: <%= ts_result.marks_earned %></li>
+   	  <% test_results = TestResult.find_all_by_grouping_id_and_test_script_id(ts_result.grouping_id, ts_result.test_script_id) %>
+  	  <% test_results.each do |t_result| %>
+ 	    <li>Test name: <%= t_result.name %></li>
+   	    <ul>
+ 	      <li>Completion Status: <%= t_result.completion_status %></li>
+ 	      <li>Marks_earned: <%= t_result.marks_earned %></li>
+  	      <li>Input description: <%= t_result.input_description %></li>
+  	      <li>Actual output: <%= t_result.actual_output %></li>
+  	      <li>Expected output: <%= t_result.expected_output %></li>
+  	    </ul>
+  	  <% end %>
+  	  </ul>
+  	</li>
+  <% end %>
+  </ul>
+</div> <!-- Test Results -->
