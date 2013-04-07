@@ -845,7 +845,7 @@ fr:
       error:
         no_access: "Pas d'accès au résultat des test avec l'id #%{test_result_id}."
       button:
-        load: "Chargement"
+        load: "UPDATE ME"
       no_files_available: "[Pas de résultats de tests disponibles]"
       loading_results: "Chargement des résultats…"
       running_tests: "Tests en cours…"
@@ -1081,8 +1081,11 @@ fr:
 
     #Test Framework
     automated_tests:
+      title: "UPDATE ME"
+      testing_disabled: "UPDATE ME"
       remove_file: "UPDATE ME"
       automated_tests: "Tests"
+      test_results: "UPDATE ME"
       enable_test:    "Activer les tests pour ce projet"
       required_test_files: "UPDATE ME"
       need_group_for_test: "Vous devez avoir un groupe pour exécuter un test"
@@ -1093,8 +1096,8 @@ fr:
       due_date_is_passed: "Vous ne pouvez pas exécuter de test après la date de retour."
       information: "Information"
       run_tests: "Exécuter les tests."
-      need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test.<br />
-                      Si vous avez envoyé un fichier et vous voulez exécuter un test, veuillez cliquer sur \"Récuperer et préparer test\"."
+      tests_running: "UPDATE ME"
+      need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test. Si vous avez envoyé un fichier et vous voulez exécuter un test, veuillez cliquer sur \"Récuperer et préparer test\"."
       collect_and_test: "Récupérer et préparer test"
       add_test_script_file_link: "UPDATE ME"
       add_test_support_file_link: "UPDATE ME"
@@ -1112,6 +1115,7 @@ fr:
       test_files_unavailable: "UPDATE ME"
       source_files_unavailable: "UPDATE ME"
       dir_not_exist: "Le dossier %{dir} requis par Ant n'existe pas."
+      marks_obtained: "UPDATE ME"
       script_option:
         run_settings: "UPDATE ME"
         display_settings: "UPDATE ME"
