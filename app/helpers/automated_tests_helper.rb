@@ -93,8 +93,8 @@ module AutomatedTestsHelper
   
   # Request an automated test. Ask Resque to enqueue a job.
   def self.async_test_request(grouping_id, call_on)
-    if has_permission?
-      if files_available? 
+    if files_available?
+      if has_permission?
         Resque.enqueue(AutomatedTestsHelper, grouping_id, call_on)
       end
     end

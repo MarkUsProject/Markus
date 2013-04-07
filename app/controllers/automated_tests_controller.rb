@@ -80,11 +80,15 @@ class AutomatedTestsController < ApplicationController
       if @token
         @token.reassign_tokens_if_new_day()
       end
-      
+            
       # For running tests
       if params[:run_tests] && @token && @token.tokens > 0
-        run_tests(@grouping.id)
-        flash[:notice] = I18n.t("automated_tests.tests_running")
+        result = run_tests(@grouping.id)
+        if result == nil
+          flash[:notice] = I18n.t("automated_tests.tests_running")
+        else
+          flash[:failure] = result
+        end
       end
     end
   end
@@ -93,9 +97,9 @@ class AutomatedTestsController < ApplicationController
     changed = 0
     begin
       AutomatedTestsHelper.request_a_test_run(grouping_id, 'request', @current_user)
-      return true
+      return nil
     rescue Exception => e
-      return false
+      return e.message
     end
   end
 
