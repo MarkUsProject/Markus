@@ -1147,6 +1147,7 @@ fr:
         tokens_not_given_yet: "<span class=\"prop_label\">Jetons disponibles :</span> jetons pas encore donnés"
         tokens_no_more_available: "<span class=\"prop_label\">Jetons disponibles:</span >pas de jetons disponibles"
         tokens_available: "<span class=\"prop_label\">Jetons disponibles:</span> %{tokens}"
+        unlimited: "Unlimited"
 
 #Missing Activerecord Translations for french
     datetime:

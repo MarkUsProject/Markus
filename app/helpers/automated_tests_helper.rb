@@ -564,6 +564,7 @@ module AutomatedTestsHelper
 
     # Update assignment enable_test and tokens_per_day attributes
     assignment.enable_test = params[:assignment][:enable_test]
+    assignment.unlimited_tokens = params[:assignment][:unlimited_tokens]
     num_tokens = params[:assignment][:tokens_per_day]
     if num_tokens
       assignment.tokens_per_day = num_tokens
