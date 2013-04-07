@@ -1,2 +1,0 @@
-page.replace_html 'find_revision_error', @find_revision_error.message
-page.show 'find_revision_error'

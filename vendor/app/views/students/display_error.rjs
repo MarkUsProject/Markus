@@ -1,2 +1,0 @@
-page.replace_html 'ajax_error', @error
-page.show 'ajax_error'

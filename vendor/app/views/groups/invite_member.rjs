@@ -1,1 +1,0 @@
-page.redirect_to :action => 'student_interface', :id => @assignment.id

@@ -1,2 +1,0 @@
-page.replace_html 'new_annotation_text_error', :partial => 'annotation_text_errors_list', :locals => {:annotation_text => @annotation_text}
-page.show 'new_annotation_text_error'

@@ -1,2 +1,0 @@
-page.replace_html 'new_annotation_category_error', :partial => 'annotation_category_errors_list', :locals => {:annotation_category => @annotation_category}
-page.show 'new_annotation_category_error'

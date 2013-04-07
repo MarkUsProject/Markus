@@ -1,2 +1,0 @@
-page.show "mark_verify_result_#{mark_id}"
-page.replace_html "mark_verify_result_#{mark_id}", mark_error.to_s

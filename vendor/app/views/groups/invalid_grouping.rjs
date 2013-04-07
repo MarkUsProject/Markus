@@ -1,1 +1,0 @@
-page.call "modify_grouping", @grouping_data.to_json

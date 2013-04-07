@@ -1,3 +1,0 @@
-page.replace_html 'rubric_levels_pane_menu',
-                  :partial => 'criterion_editor',
-                  :locals => {:criterion => @criterion}

@@ -1,5 +1,0 @@
-page.insert_html :top,
-                 'rubric_criteria_pane_list',
-                 :partial => 'new_rubric_criterion',
-                 :locals => {:assignment => @assignment}
-page['new_rubric_criterion_prompt'].focus

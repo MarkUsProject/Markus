@@ -1,6 +1,0 @@
-[Testrepo1:/]
-user1 = rw
-someother_user = r
-
-[Repository2:/]
-test = 	r
