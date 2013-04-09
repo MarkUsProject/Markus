@@ -401,6 +401,7 @@ en:
       toggle_column: "hide/show"
       properties: "Marks Spreadsheet Properties"
       required_fields: "Required Fields <span class='required_field'>*</span>"
+      show_total: "Show Total"
       create:
         success: "Successfully created new marks spreadsheet"
         title: "Add Marks Spreadsheet"
@@ -423,6 +424,7 @@ en:
       students:
         title: "Your Term Marks"
         no_results: "There are no marks available yet."
+        detailed_marks_message: "Detailed marks are available."
       csv:
         incomplete_header: "Incomplete grade entry item names or totals."
         incomplete_row: "Contains too little information."

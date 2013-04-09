@@ -335,6 +335,13 @@ legend {
 }
 
 
+/* Left aligns show total checkbox on 
+   grade entry form properties */
+
+#grade_entry_form_show_total {
+  min-width: 0px;
+}
+
 /* menu */
 
 #menu {

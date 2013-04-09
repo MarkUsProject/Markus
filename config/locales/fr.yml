@@ -402,6 +402,7 @@ fr:
       toggle_column: "cacher/montrer"
       properties: "Propriétés de la feuille de note"
       required_fields: "Champs obligatoires <span class='required_field'>*</span>"
+      show_total: "Montrer Totale"
       create:
         success: "Feuille de notes créée"
         title: "Créer une nouvelle feuille de notes"
@@ -423,6 +424,7 @@ fr:
       students:
         title: "Vos feuilles de notes"
         no_results: "Il n'y a pas encore de résultats pour cette feuille de notes."
+        detailed_marks_message: "Marques détaillées sont disponibles."
       csv:
         incomplete_header: "Totaux ou noms manquants."
         incomplete_row: "Ne contient pas assez d'informations."

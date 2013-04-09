@@ -34,15 +34,16 @@
                 <% end %>
               </td>
           <% end %>
-
-          <td>
-            <% total = @grade_entry_form.calculate_total_mark(@student.id) %>
-            <% if total != "" %>
-              <%= total %>
-            <% else %>
-              <%= t('grade_entry_forms.grades.no_mark') %>
-            <% end %>
-         </td>
+	  <% if @grade_entry_form.show_total %>
+		  <td class=grade>
+		    <% total = @grade_entry_form.calculate_total_mark(@student.id) %>
+		    <% if total != "" %>
+		      <%= total %>
+		    <% else %>
+		      <%= t('grade_entry_forms.grades.no_mark') %>
+		    <% end %>
+		 </td>
+	  <% end %>
         </tr>
      </table>
    <% end %>
