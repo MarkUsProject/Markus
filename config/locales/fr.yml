@@ -114,6 +114,11 @@ fr:
       priority_given: "Une priorité importante a été donné à cet envoi. Il va bientot être prêt."
       errors:               "Erreurs"
       results_loss_warning: "Attention : cette action effacera vos annotations et évaluations.\n\n!Êtes-vous sûr de vouloir continuer ?"
+      must_select_a_section: "Vous devez sélectionner une section pour récupérer les envois de ses groupes."
+      could_not_find_section: "La section demandée n'a pas été trouvée."
+      could_not_collect_section: "Les envois de la section %{section_name} pour le projet %{assignment_identifier} ne peuvent pas être récupérés : la date de récupération pour cette section n'est pas encore passée."
+      no_submission_for_section: "Il n'y a ancun envoi à récupérer pour la section %{section_name}."
+      successfully_collected: "Récupération de %{collected} envoi(s)."
     assignment:
         assignment: "Projet %{short_identifier}"
         required_fields: "Champs obligatoires <span class='required_field'>*</span>"
@@ -282,6 +287,7 @@ fr:
         show_old_marks: "Afficher la note précédente "
       annotation:
         from_line_to: "%{file_path} : Lignes %{line_start} à %{line_end}"
+        remark_flag: "(retour)"
         no_annotation_in_this_category: "Il n'y a pas d'annotation dans cette catégorie"
         new_annotation: "Nouvelle annotation"
         annotation_category: "Catégorie de l'annotation"
@@ -378,6 +384,8 @@ fr:
       replace:              "Remplace"
       delete:               "Supprimer"
       can_begin_grading:    "Peut être évaluée"
+      section:              "Section"
+      collect_work_for_section: "Récupérer les envois pour la section :"
 
     grade_entry_forms:
       blank_field: "doit être rempli(e)"
@@ -392,6 +400,7 @@ fr:
       column_out_of: "sur"
       add_column: "Ajouter une colonne"
       remove_column: "Supprimer : "
+      toggle_column: "cacher/montrer"
       properties: "Propriétés de la feuille de note"
       required_fields: "Champs obligatoires <span class='required_field'>*</span>"
       create:
@@ -684,7 +693,7 @@ fr:
     flexible_criteria:
       move_criterion:
         error: "Erreur: impossible de déplacer ce critère (flexible)."
-    
+
     add_student:
       success: "L'étudiant(e) %{user_name} a été ajouté(e)."
       fail:
@@ -719,14 +728,17 @@ fr:
       success:  "Les changements ont été enregistrés."
 
     user:
+        id:             "ID"
         user_name:      "Nom d'utilisateur"
         user_names:     "Nom(s) d'utilisateur"
         first_name:     "Prénom"
         last_name:      "Nom"
         full_name:      "Nom complet"
+        type:           "Type"
         user_type:      "Type"
         grace_credits:  "Crédits de grâce"
         section:        "Section"
+        notes_count:    "Notes"
         display_grader_names_to_students: "Afficher le nom du correcteur aux étudiants ?"
 
     hide_students: "Désactiver les étudiants"
@@ -812,6 +824,7 @@ fr:
         after_collection_message: "Le nombre maximal d'heures de pénalité est passé pour ce projet. Tout changement sera enregistré mais non évalué."
         commit_after_collection_message : "La date de retour pour ce projet et le nombre maximum d'heures de retard sont passés. Vos changements ont été enregistrés, mais ne seront pas inclus dans l'évaluation."
         overtime_message: "La date de retour pour ce projet est passée.  Cependant, vous êtes dans une période de pénalité. Vous pouvez changer vos fichiers envoyés mais vous aurez %{penalty_amount}% déduit de votre note finale sur ce projet."
+        extramark_description: "Le dernier envoi date de (%{overtime_hours} heure(s)) après la période de fin. Par conséquent,  %{penalty_amount}% sera déduit de votre note."
         form_description: "Utiliser une pénalité dépendant du retard"
         add_penalty_decay: "Ajouter une période pénalité"
         alert: "Vous devez activer les pénalités pour pouvoir ajouter une période de pénalité dépendant du retard."
@@ -1037,7 +1050,7 @@ fr:
         long_date: "%d %B %Y à %H:%M"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%d %B %Y"
-     
+
       day_names: [dimanche, lundi, mardi, mercredi, jeudi, vendredi, samedi]
       abbr_day_names: [dim, lun, mar, mer, jeu, ven, sam]
       month_names: [~, janvier, février, mars, avril, mai, juin, juillet, août, septembre, octobre, novembre, décembre]
@@ -1069,10 +1082,16 @@ fr:
     account_disabled: "Ce compte a été désactivé"
 
     #app/views/main/_assignment_info_summary.erb
-    assignment_average:        "Moyenne : %{results_average} %"
+    percentage:                "%{percentage} %"
+    assignment_average:        "Moyenne :"
+    assignment_median:        "Médiane :"
     assignments_submitted:     "Projets envoyés :"
     assignments_graded:        "Projets corrigés :"
+    assignments_failed:        "Projets sous la moyenne :"
+    assignments_zeros:         "Projets à 0 :"
     refresh_graph:             "Actualiser le graphique"
+    outstanding_remark_request: "%{request_count} demande de remarque restante."
+    outstanding_remark_requests: "%{request_count} demandes de remarque restantes."
 
     #app/views/main/_grader_summary.erb
     grader_distribution:       "Correcteurs assignés :"

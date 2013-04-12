@@ -258,28 +258,45 @@ class Assignment < ActiveRecord::Base
     return total
   end
 
-  # calculates the average of released results for this assignment
-  def set_results_average
+  # calculates summary statistics of released results for this assignment
+  def set_results_statistics
     groupings = Grouping.find_all_by_assignment_id(self.id)
+    results = Array.new
     results_count = 0
     results_sum = 0
+    results_fails = 0
+    results_zeros = 0
     groupings.each do |grouping|
       submission = grouping.current_submission_used
       if !submission.nil?
-        if submission.has_result? && submission.remark_submitted?
-          result = submission.remark_result
-        elsif submission.has_result?
-          result = submission.result
-        end
+        result = submission.get_latest_result
         if result.released_to_students
+          results.push result.total_mark
           results_sum += result.total_mark
           results_count += 1
+          if result.total_mark < (self.total_mark / 2)
+            results_fails += 1
+          end
+          if result.total_mark == 0
+            results_zeros += 1
+          end
         end
       end
     end
     if results_count == 0
       return false # no marks released for this assignment
     end
+    self.results_fails = results_fails
+    self.results_zeros = results_zeros
+    results_sorted = results.sort
+    median_quantity = 0
+    if (results_count % 2) == 0
+       median_quantity = (results_sorted[results_count/2 - 1] 
+                        + results_sorted[results_count/2]).to_f / 2
+    else
+       median_quantity = results_sorted[results_count/2]
+    end
+    self.results_median = (median_quantity * 100 / self.total_mark)
     # Need to avoid divide by zero
     if results_sum == 0
       self.results_average = 0
@@ -288,6 +305,21 @@ class Assignment < ActiveRecord::Base
     avg_quantity = results_sum / results_count
     # compute average in percent
     self.results_average = (avg_quantity * 100 / self.total_mark)
+    self.save
+  end
+
+  def update_remark_request_count
+    outstanding_count = 0
+    groupings.each do |grouping|
+      submission = grouping.current_submission_used
+      if !submission.nil? && submission.has_remark?
+        if submission.get_remark_result.marking_state == 
+            Result::MARKING_STATES[:partial]
+          outstanding_count += 1
+        end
+      end
+    end
+    self.outstanding_remark_request_count = outstanding_count
     self.save
   end
 
@@ -536,7 +568,7 @@ class Assignment < ActiveRecord::Base
            final_result.push('')
          else
            submission = grouping.current_submission_used
-           final_result.push(submission.result.total_mark / out_of * 100)
+           final_result.push(submission.get_latest_result.total_mark / out_of * 100)
          end
          csv << final_result
        end
@@ -584,9 +616,9 @@ class Assignment < ActiveRecord::Base
           final_result.push('')                         # extra-percentage
         else
           submission = grouping.current_submission_used
-          final_result.push(submission.result.total_mark / out_of * 100)
+          final_result.push(submission.get_latest_result.total_mark / out_of * 100)
           rubric_criteria.each do |rubric_criterion|
-            mark = submission.result.marks.find_by_markable_id_and_markable_type(rubric_criterion.id, "RubricCriterion")
+            mark = submission.get_latest_result.marks.find_by_markable_id_and_markable_type(rubric_criterion.id, "RubricCriterion")
             if mark.nil?
               final_result.push('')
             else
@@ -594,8 +626,8 @@ class Assignment < ActiveRecord::Base
             end
             final_result.push(rubric_criterion.weight)
           end
-          final_result.push(submission.result.get_total_extra_points)
-          final_result.push(submission.result.get_total_extra_percentage)
+          final_result.push(submission.get_latest_result.get_total_extra_points)
+          final_result.push(submission.get_latest_result.get_total_extra_percentage)
         end
         # push grace credits info
         grace_credits_data = student.remaining_grace_credits.to_s + "/" + student.grace_credits.to_s
@@ -635,9 +667,9 @@ class Assignment < ActiveRecord::Base
           # Fill in actual values, since we have a grouping
           # and a submission.
           submission = grouping.current_submission_used
-          final_result.push(submission.result.total_mark / out_of * 100)
+          final_result.push(submission.get_latest_result.total_mark / out_of * 100)
           flexible_criteria.each do |criterion|
-            mark = submission.result.marks.find_by_markable_id_and_markable_type(criterion.id, "FlexibleCriterion")
+            mark = submission.get_latest_result.marks.find_by_markable_id_and_markable_type(criterion.id, "FlexibleCriterion")
             if mark.nil?
               final_result.push('')
             else
@@ -645,8 +677,8 @@ class Assignment < ActiveRecord::Base
             end
             final_result.push(criterion.max)
           end
-          final_result.push(submission.result.get_total_extra_points)
-          final_result.push(submission.result.get_total_extra_percentage)
+          final_result.push(submission.get_latest_result.get_total_extra_points)
+          final_result.push(submission.get_latest_result.get_total_extra_percentage)
         end
         # push grace credits info
         grace_credits_data = student.remaining_grace_credits.to_s + "/" + student.grace_credits.to_s
@@ -708,8 +740,8 @@ class Assignment < ActiveRecord::Base
     groupings.each do |grouping|
       submission = grouping.current_submission_used
       if !submission.nil? && submission.has_result?
-        result = submission.result
-        if result.marking_state == Result::MARKING_STATES[:complete]
+        result = submission.get_latest_completed_result
+        if !result.nil?
           percentage = (result.total_mark / out_of * 100).ceil
           if percentage == 0
             distribution[0] += 1
@@ -735,7 +767,7 @@ class Assignment < ActiveRecord::Base
 
   # Returns all the submissions that have been graded
   def graded_submissions
-    return self.submissions.select { |submission| submission.result.marking_state == Result::MARKING_STATES[:complete] }
+    return self.submissions.select { |submission| submission.get_latest_completed_result }
   end
 
   def groups_submitted

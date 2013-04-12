@@ -2,7 +2,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), 'authenticated_contro
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 require 'shoulda'
-require 'mocha'
+require 'mocha/setup'
 
 class ResultsControllerTest < AuthenticatedControllerTest
 
@@ -197,7 +197,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               :user => @student,
               :membership_status => StudentMembership::STATUSES[:inviter])
           @submission = Submission.make(:grouping => @grouping)
-          @result = @grouping.submissions.first.result
+          @result = @grouping.submissions.first.get_latest_result
         end
 
         should "not be able to get edit" do
@@ -648,9 +648,10 @@ class ResultsControllerTest < AuthenticatedControllerTest
                 g = Grouping.make(:assignment => @assignment)
                 s = Submission.make(:grouping => g)
                 if time == 2
-                  s.result.marking_state = Result::MARKING_STATES[:complete]
-                  s.result.released_to_students = true
-                  s.result.save
+                  @result = s.get_latest_result
+                  @result.marking_state = Result::MARKING_STATES[:complete]
+                  @result.released_to_students = true
+                  @result.save
                 end
               end
               @groupings = @assignment.groupings.all(:order => 'id ASC')
@@ -658,7 +659,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
             should "edit third result" do
 
-              @result = @groupings[0].current_submission_used.result
+              @result = @groupings[0].current_submission_used.get_latest_result
               get_as @admin,
                      :edit,
                      :assignment_id => 1,
@@ -667,7 +668,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               assert assigns(:next_grouping)
               next_grouping = assigns(:next_grouping)
               assert next_grouping.has_submission?
-              next_result = next_grouping.current_submission_used.result
+              next_result = next_grouping.current_submission_used.get_latest_result
               assert_not_nil next_result
               assert_equal next_grouping, @groupings[1]
               assert !next_result.released_to_students
@@ -678,7 +679,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             end
 
             should "edit second result correctly" do
-              @result = @groupings[1].current_submission_used.result
+              @result = @groupings[1].current_submission_used.get_latest_result
               get_as @admin,
                      :edit,
                      :assignment_id => 1,
@@ -691,8 +692,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
               previous_grouping = assigns(:previous_grouping)
               assert next_grouping.has_submission?
               assert previous_grouping.has_submission?
-              next_result = next_grouping.current_submission_used.result
-              previous_result = previous_grouping.current_submission_used.result
+              next_result = next_grouping.current_submission_used.get_latest_result
+              previous_result = previous_grouping.current_submission_used.get_latest_result
               assert_not_nil next_result
               assert_not_nil previous_result
               assert_equal next_grouping, @groupings[2]
@@ -707,7 +708,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
             should "when editing third result" do
 
-              @result = @groupings[2].current_submission_used.result
+              @result = @groupings[2].current_submission_used.get_latest_result
               get_as @admin,
                      :edit,
                      :assignment_id => 1,
@@ -718,7 +719,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               assert assigns(:previous_grouping)
               previous_grouping = assigns(:previous_grouping)
               assert previous_grouping.has_submission?
-              previous_result = previous_grouping.current_submission_used.result
+              previous_result = previous_grouping.current_submission_used.get_latest_result
               assert_not_nil previous_result
               assert_equal previous_grouping, @groupings[1]
               assert !previous_result.released_to_students
@@ -757,7 +758,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
         should "GET on :set_released_to_students" do
           g = Grouping.make(:assignment => @assignment)
           s = Submission.make(:grouping => g)
-          @result = s.result
+          @result = s.get_latest_result
           get_as @admin,
                   :set_released_to_students,
                   :assignment_id => @assignment,
@@ -776,7 +777,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             # rubric: 21-25%
             g = Grouping.make(:assignment => @assignment)
             s = Submission.make(:grouping => g)
-            @result = s.result
+            @result = s.get_latest_result
             if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
               Mark.make(:rubric, :result => @result)
             else
@@ -943,7 +944,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             g = Grouping.make(:assignment => @assignment)
             @submission = Submission.make(:grouping => g)
 
-            @mark = Mark.make(:result => @submission.result)
+            @mark = Mark.make(:result => @submission.get_latest_result)
           end
 
           should "fails validation" do
@@ -1009,7 +1010,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :add_extra_mark,
                    :assignment_id => 1,
                    :submission_id => @submission.id,
-                   :id => @submission.result.id
+                   :id => @submission.get_latest_result.id
             assert assign_to :result
             assert render_template 'results/marker/add_extra_mark'
             assert_response :success
@@ -1024,7 +1025,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                       :add_extra_mark,
                       :assignment_id => 1,
                       :submission_id => @submission.id,
-                      :id => @submission.result.id,
+                      :id => @submission.get_latest_result.id,
                       :extra_mark => { :extra_mark => 1 }
               assert assign_to :result
               assert assign_to :extra_mark
@@ -1033,21 +1034,21 @@ class ResultsControllerTest < AuthenticatedControllerTest
             end
 
             should "without save error" do
-              @submission.result.update_total_mark
-              @old_total_mark = @submission.result.total_mark
+              @submission.get_latest_result.update_total_mark
+              @old_total_mark = @submission.get_latest_result.total_mark
               post_as @admin,
                       :add_extra_mark,
                       :assignment_id => 1,
                       :submission_id => @submission.id,
-                      :id => @submission.result.id,
+                      :id => @submission.get_latest_result.id,
                       :extra_mark => { :extra_mark => 1 }
               assert assign_to :result
               assert assign_to :extra_mark
               assert render_template 'results/marker/insert_extra_mark'
               assert_response :success
 
-              @submission.result.reload
-              assert_equal @old_total_mark + 1, @submission.result.total_mark
+              @submission.get_latest_result.reload
+              assert_equal @old_total_mark + 1, @submission.get_latest_result.total_mark
             end
           end
         end
@@ -1104,7 +1105,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
         should "GET on :expand_unmarked_criteria" do
           g = Grouping.make(:assignment => @assignment)
           s = Submission.make(:grouping => g)
-          @result = s.result
+          @result = s.get_latest_result
 
           get_as @admin,
                   :expand_unmarked_criteria,
@@ -1248,7 +1249,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           should "with file error" do
             submission = Submission.make
             result = Result.make
-            submission.expects(:result).once.returns(result)
+            submission.expects(:get_latest_result).once.returns(result)
             @file.expects(:submission).twice.returns(submission)
             @file.expects(:retrieve_file).once.raises(
                     Exception.new(SAMPLE_ERR_MSG))
@@ -1493,7 +1494,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :expand_unmarked_criteria,
                   :assignment_id => @assignment.id,
                   :submission_id => 1,
-                  :id => s.result.id
+                  :id => s.get_latest_result.id
           assert assign_to :assignment
           assert assign_to :result
           assert assign_to :nil_marks

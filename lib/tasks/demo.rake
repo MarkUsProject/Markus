@@ -109,8 +109,9 @@ namespace :markus do
       student = Student.find_by_user_name(student_name)
       grouping = student.accepted_grouping_for(a1.id)
       submission = Submission.create_by_timestamp(grouping, Time.now)
-      submission.result.marking_state = Result::MARKING_STATES[:complete]
-      submission.result.save
+      @result = submission.get_latest_result
+      @result.marking_state = Result::MARKING_STATES[:complete]
+      @result.save
     end
 
     

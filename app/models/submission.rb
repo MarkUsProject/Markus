@@ -9,13 +9,10 @@ class Submission < ActiveRecord::Base
 
   validates_numericality_of :submission_version, :only_integer => true
   belongs_to :grouping
-  has_one    :result, :dependent => :destroy
+  has_many   :result, :dependent => :destroy
   has_many   :submission_files, :dependent => :destroy
   has_many   :annotations, :through => :submission_files
   has_many   :test_results, :dependent => :destroy
-  belongs_to :remark_result, :class_name => "Result"
-
-  validates_associated :remark_result
 
   def self.create_by_timestamp(grouping, timestamp)
      if !timestamp.kind_of? Time
@@ -54,6 +51,43 @@ class Submission < ActiveRecord::Base
        new_submission.save
      end
      return new_submission
+  end
+
+  # returns the original result 
+  def get_original_result
+    if self.remark_result_id.nil?
+      result = Result.find(:first, :conditions => ["submission_id = ?", self.id])
+    else 
+      result = Result.find(:first, :conditions => ["submission_id = ? AND id != ?", self.id, self.remark_result_id])
+    end
+    return result
+  end
+
+  # returns the remark result if exists, returns nil if does not exist
+  def get_remark_result
+    result = Result.find(:first, :conditions => ["id = ?", self.remark_result_id])
+    return result
+  end
+
+  # returns the latest result - remark result if exists and submitted, else original result
+  def get_latest_result
+    if self.remark_submitted?
+      result = self.get_remark_result
+    else
+      result = self.get_original_result
+    end
+    return result
+  end
+
+  # returns the latest completed result - note: will return nil if there is no completed result
+  def get_latest_completed_result
+    if self.remark_submitted? && self.get_remark_result.marking_state == Result::MARKING_STATES[:complete]
+      return self.get_remark_result
+    end
+    if self.get_original_result.marking_state == Result::MARKING_STATES[:complete]
+      return self.get_original_result
+    end
+    return nil
   end
 
   # For group submissions, actions here must only be accessible to members
@@ -112,7 +146,7 @@ class Submission < ActiveRecord::Base
 
   # Does this submission have a remark result?
   def has_remark?
-    return !remark_result.nil?
+    return (!self.remark_result_id.nil?)
   end
 
   # Does this submission have a remark request submitted?
@@ -122,7 +156,7 @@ class Submission < ActiveRecord::Base
   # Saved means that the remark request cannot be viewed by instructors or TAs yet and
   #   the student can still make changes to the request details.
   def remark_submitted?
-    return (self.has_remark? && remark_result.marking_state != Result::MARKING_STATES[:unmarked])
+    return (self.has_remark? && self.get_remark_result.marking_state != Result::MARKING_STATES[:unmarked])
   end
 
   # Helper methods
@@ -158,35 +192,46 @@ class Submission < ActiveRecord::Base
     group = Group.find_by_group_name(group_n)
     if !assignment.nil? && !group.nil?
       grouping = group.grouping_for_assignment(assignment.id)
-      return grouping.current_submission_used
-    else
-      return nil
+      return grouping.current_submission_used if !grouping.nil?
     end
+    return nil
   end
 
   def create_remark_result
     remark_result = Result.new
-    self.remark_result = remark_result
+    self.result << remark_result
     remark_result.marking_state = Result::MARKING_STATES[:unmarked]
     remark_result.submission_id = self.id
     remark_result.save
+    # link remark result id to submission - must be done after remark result is saved (so it has an id)
+    self.remark_result_id = remark_result.id
     self.save
-  end
 
-  def create_remark_result_object
-    remark_result = Result.new
-    self.remark_result = remark_result
-    remark_result.marking_state = Result::MARKING_STATES[:unmarked]
-    remark_result.submission_id = self.id
-    remark_result.save
-    self.save
+    # populate remark result with old marks
+    original_result = get_original_result
+
+    old_extra_marks = original_result.extra_marks
+    old_extra_marks.each do |old_extra_mark|
+      remark_extra_mark = ExtraMark.new(old_extra_mark.attributes.merge(
+        {:result_id => self.remark_result_id, :created_at => Time.zone.now}))
+      remark_extra_mark.save(:validate => false)
+      remark_result.extra_marks << remark_extra_mark
+    end
+
+    old_marks = original_result.marks
+    old_marks.each do |old_mark|
+      remark_mark = Mark.new(old_mark.attributes.merge(
+        {:result_id => self.remark_result_id, :created_at => Time.zone.now}))
+      remark_mark.save(:validate => false)
+      remark_result.marks << remark_mark
+    end
   end
 
   private
 
   def create_result
     result = Result.new
-    self.result = result
+    self.result << result
     result.marking_state = Result::MARKING_STATES[:unmarked]
     result.save
   end
@@ -201,7 +246,7 @@ class Submission < ActiveRecord::Base
        end
        old_submission.submission_version_used = false
        old_submission.save
-       old_result = old_submission.result
+       old_result = old_submission.get_original_result
        old_result.released_to_students = false
        old_result.save
      end

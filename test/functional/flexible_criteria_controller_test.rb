@@ -1,6 +1,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), 'authenticated_controller_test'))
 require 'shoulda'
-require 'mocha'
+require 'mocha/setup'
 
   class FlexibleCriteriaControllerTest < AuthenticatedControllerTest
 

@@ -78,7 +78,7 @@ namespace :load do
           end
         end
         submission = Submission.create_by_timestamp(grouping, Time.now)
-        result = submission.result
+        result = submission.get_latest_result
         # create marks for each criterion and attach to result
         a1.rubric_criteria.each do |criterion|
           # save a mark for each criterion
@@ -94,8 +94,8 @@ namespace :load do
         result.save
       end
     end
-		# compute average for a1
-		a1.set_results_average
+		# compute summary statistics for a1
+		a1.set_results_statistics
     puts "Done!"
   end
 end

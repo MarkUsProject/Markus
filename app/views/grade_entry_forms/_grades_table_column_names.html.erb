@@ -82,6 +82,7 @@
   %>
   <th <% if @current_user.admin? or @current_user.ta? %> class="student_total" <% end%> >
     <%= t('grade_entry_forms.grades.total') + " " + h(@grade_entry_form.out_of_total) %>
+    <br /> <a href="#" onclick="toggleTotalColVisibility()"> <%= t('grade_entry_forms.toggle_column') %> </a>
   </th>
   <% if @current_user.admin? or @current_user.ta? %>
     <% # Extra column heading for marking state

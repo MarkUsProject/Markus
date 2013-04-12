@@ -111,6 +111,11 @@ en:
       priority_given: "The submission has been given collection priority. It will be ready soon."
       errors:               "Errors"
       results_loss_warning: "Note: This will erase any marking and annotations already done.\n\nAre you sure you want to proceed?"
+      must_select_a_section: "You must select a section to collect the submissions of its groups."
+      could_not_find_section: "Could not find requested section."
+      could_not_collect_section: "Could not collect submissions for section %{section_name} and assignment %{assignment_identifier} - the section collection date has not been reached."
+      no_submission_for_section: "There isn't any submission to collect for section %{section_name}."
+      successfully_collected: "Successfully collected %{collected} submissions."
     assignment:
         assignment: "Assignment %{short_identifier}"
         required_fields: "Required Fields <span class='required_field'>*</span>"
@@ -281,6 +286,7 @@ en:
         show_old_marks: "Show Old Mark Summary"
       annotation:
         from_line_to: "%{file_path}: Line %{line_start} to %{line_end}"
+        remark_flag: "(remark)"
         no_annotation_in_this_category: "There are no annotations in this category"
         new_annotation: "Create new annotation"
         annotation_category: "Annotation Category"
@@ -378,6 +384,7 @@ en:
       delete:               "Delete"
       can_begin_grading:    "Can begin grading"
       section:              "Section"
+      collect_work_for_section: "Collect work for section:"
 
     grade_entry_forms:
       blank_field: "can't be blank"
@@ -392,6 +399,7 @@ en:
       column_out_of: "Out Of"
       add_column: "Add a column"
       remove_column: "Remove:"
+      toggle_column: "hide/show"
       properties: "Marks Spreadsheet Properties"
       required_fields: "Required Fields <span class='required_field'>*</span>"
       create:
@@ -696,7 +704,7 @@ en:
     flexible_criteria:
       move_criterion:
         error: "Failed to move flexible criteria."
-    
+
     add_student:
       success: "Student %{user_name} added."
       fail:
@@ -731,14 +739,17 @@ en:
       success:  "Your changes have been made."
 
     user:
+        id:             "ID"
         user_name:      "User Name"
         user_names:     "User Name"
         first_name:     "First Name"
         last_name:      "Last Name"
         full_name:      "Full Name"
+        type:           "Type"
         user_type:      "Type"
         grace_credits:  "Grace Credits Left"
         section:        "Section"
+        notes_count:    "Notes"
         display_grader_names_to_students: "Display grader names to students?"
 
     hide_students: "Mark as inactive"
@@ -824,6 +835,7 @@ en:
         after_collection_message: "The maximum number of penalty hours has passed for this assignment. Any changes will be recorded, but not graded."
         commit_after_collection_message: "The due date for this assignment, plus the maximum number of allowed penalty hours, has passed. Your changes have been recorded, but will not be included in the grading."
         overtime_message: "The due date for this assignment has passed and you are now in a penalty period. You can make changes to your submission, but will have %{potential_penalty}% deducted from the final mark on this assignment."
+        extramark_description: "Late submission (%{overtime_hours} hour(s)) resulted in automatic %{penalty_amount}% deduction"
         form_description: "Use Penalty Decay Formula"
         add_penalty_decay: "Add a Decay Period"
         alert: "You must select the Penalty Decay Submission Rule to add a decay period."
@@ -1064,7 +1076,7 @@ en:
         long_date: "%B %d, %Y: %I:%M%p"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%B %d, %Y"
-     
+
       day_names: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
       abbr_day_names: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
       month_names: [~, January, February, March, April, May, June, July, August, September, October, November, December]
@@ -1100,11 +1112,16 @@ en:
     assignment_link:           "%{short_id}: %{description}"
 
     #app/views/main/_assignment_info_summary.erb
-
-    assignment_average:        "Assignment Average: %{results_average}%"
+    percentage:                "%{percentage}%"
+    assignment_average:        "Assignment Average:"
+    assignment_median:         "Assignment Median:"
     assignments_submitted:     "Assignments Submitted:"
     assignments_graded:        "Assignments Graded:"
+    assignments_failed:        "Number of fails:"
+    assignments_zeros:         "Number of zeros:"
     refresh_graph:             "Refresh the graph"
+    outstanding_remark_request: "%{request_count} outstanding remark request"
+    outstanding_remark_requests: "%{request_count} outstanding remark requests"
 
     #app/views/main/_grader_summary.erb
     grader_distribution:       "Grader Distribution:"
@@ -1161,7 +1178,7 @@ en:
           zero: "less than one second"
         less_than_x_minutes:
           zero: "less than one minute"
-  
+
     support:
       array:
         sentence_connector: "and"

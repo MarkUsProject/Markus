@@ -40,7 +40,7 @@ class AssignmentsController < ApplicationController
     # Students can use this action only, when marks have been released
     if current_user.student? &&
         (@test_result.submission.grouping.membership_status(current_user).nil? ||
-        @test_result.submission.result.released_to_students == false)
+        @test_result.submission.get_latest_result.released_to_students == false)
       render :partial => 'shared/handle_error',
        :locals => {:error => I18n.t('test_result.error.no_access', :test_result_id => @test_result.id)}
       return
@@ -138,10 +138,10 @@ class AssignmentsController < ApplicationController
           grouping = current_user.accepted_grouping_for(a)
           if grouping.has_submission?
             submission = grouping.current_submission_used
-            if submission.has_remark? && submission.remark_result.released_to_students
-              @a_id_results[a.id] = submission.remark_result
-            elsif submission.has_result? && submission.result.released_to_students
-              @a_id_results[a.id] = submission.result
+            if submission.has_remark? && submission.get_remark_result.released_to_students
+              @a_id_results[a.id] = submission.get_remark_result
+            elsif submission.has_result? && submission.get_original_result.released_to_students
+              @a_id_results[a.id] = submission.get_original_result
             end
           end
         end
@@ -284,7 +284,7 @@ class AssignmentsController < ApplicationController
             if submission.nil?
               row.push('')
             else
-              total_mark_percentage = submission.result.total_mark / out_of * 100
+              total_mark_percentage = submission.get_latest_result.total_mark / out_of * 100
               if total_mark_percentage.nan?
                 row.push('')
               else
@@ -566,9 +566,9 @@ class AssignmentsController < ApplicationController
       current_submission_used = grouping.submissions.find_by_submission_version_used(true)
       if current_submission_used.revision_number < revision_number
         new_submission = Submission.create_by_revision_number(grouping, revision_number)
-        result = new_submission.result
+        result = new_submission.get_latest_result
       else
-        result = current_submission_used.result
+        result = current_submission_used.get_latest_result
       end
     end
     return result
@@ -582,7 +582,7 @@ class AssignmentsController < ApplicationController
     # And we create a submission with the latest revision of the svn
     if !grouping.assignment.submission_rule.can_collect_now?
       new_submission = Submission.create_by_revision_number(grouping, revision_number)
-      result = new_submission.result
+      result = new_submission.get_latest_result
     end
     return result
   end

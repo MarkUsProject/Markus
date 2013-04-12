@@ -1,7 +1,7 @@
 require File.join(File.dirname(__FILE__), '..', '..', 'test_helper')
 require 'shoulda'
 require 'fileutils'
-require 'mocha'
+require 'mocha/setup'
 require 'will_paginate'
 require 'will_paginate/collection'
 include PaginationHelper
