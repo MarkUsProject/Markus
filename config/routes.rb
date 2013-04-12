@@ -9,8 +9,12 @@ Markus::Application.routes.draw do
    # API routes
   namespace :api, :defaults => { :format => 'text' } do
     resources :test_results, :except => [:new, :edit]
-    resources :submission_downloads, :except => [:new, :edit]
     resources :users, :except => [:new, :edit]
+    resources :assignments, :except => [:new, :edit] do
+      resources :groups, :except => [:new, :edit] do
+        resources :submission_downloads, :except => [:new, :edit]
+      end
+    end
     resources :main_api
   end
 
@@ -245,7 +249,7 @@ Markus::Application.routes.draw do
         get 'add_grader_to_grouping'
         post 'csv_upload_grader_groups_mapping'
         post 'csv_upload_grader_criteria_mapping'
-        get 'download_grader_groupings_mapping'
+        get 'download_grader_students_mapping'
         get 'download_grader_criteria_mapping'
         get 'download_dialog'
         get 'download_grouplist'

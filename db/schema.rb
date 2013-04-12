@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130219230002) do
+ActiveRecord::Schema.define(:version => 20130408025520) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -42,6 +41,7 @@ ActiveRecord::Schema.define(:version => 20130219230002) do
     t.integer "y2"
     t.string  "type"
     t.integer "annotation_number"
+    t.boolean "is_remark"
   end
 
   add_index "annotations", ["submission_file_id"], :name => "index_annotations_on_assignmentfile_id"
@@ -176,6 +176,11 @@ ActiveRecord::Schema.define(:version => 20130219230002) do
   end
 
   add_index "grade_entry_students", ["user_id", "grade_entry_form_id"], :name => "index_grade_entry_students_on_user_id_and_grade_entry_form_id", :unique => true
+
+  create_table "grade_entry_students_tas", :id => false, :force => true do |t|
+    t.integer "grade_entry_student_id"
+    t.integer "ta_id"
+  end
 
   create_table "grades", :force => true do |t|
     t.integer  "grade_entry_item_id"

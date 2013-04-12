@@ -67,7 +67,7 @@ module GradeEntryFormsPaginationHelper
       order = "ASC"
     end
 
-    items = hash[:filters][filter][:proc].call(sort_by, order)
+    items = hash[:filters][filter][:proc].call(sort_by, order, current_user)
 
     return items
   end

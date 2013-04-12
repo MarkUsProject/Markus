@@ -317,6 +317,7 @@ en:
       repo_collision_warning: "Warning: Repository '%{repo_name}' exists already. Group name was: '%{group_name}'."
       line_nr_csv_file_prefix: "Line %{line_number} of CSV file:"
       group_to_grader: "You must supply a CSV file for group to grader mapping"
+      student_to_grader: "You must supply a CSV file for student to grader mapping"
 
     pagination:
       first: "<< First"
@@ -656,6 +657,7 @@ en:
       covered:            "Covered"
       coverage: "Coverage"
       assign_to_criteria: "Assign Graders to Criteria"
+      lines_not_processed: "The following lines could not be processed:"
       upload:
         select_csv_file: "Select a CSV file of the following form: <code>user_name,last_name,first_name</code>"
         grader_same_user: "If a TA with the same user_name exists, then that TA's information is updated."
@@ -669,6 +671,16 @@ en:
         download_list: "Download TA list in CSV format"
         begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
         end_annotation: "%{comment_start} END ANNOTATION %{id} %{comment_end}"
+
+    #Grade Entry Forms Graders' View
+    marks_graders:
+      #upload:
+      download:
+        download_grader_students_csv: "Student / Grader map CSV format"
+      upload:
+        upload_grader_map: "Upload Student / Grader Map"
+        description_grader_map: "CSV file format:<br />
+            <code>student_user_name,grader_user_name,grader_user_name,... </code><br />"
 
     #Admins' View
     admins:

@@ -1,2 +1,2 @@
-page['current_table'].value = 'groups_table'
+page['current_table'].value = 'groupings_table'
 page.reload

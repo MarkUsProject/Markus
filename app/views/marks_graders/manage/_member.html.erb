@@ -1,10 +1,10 @@
 <%
-# Erb template for inserting a member into a group for managing groups
-%>
-<% grouping.ta_memberships.each do |member| %>
-<span id="<%= "mbr_#{member.id}" %>">
-  <%= check_box_tag "#{grouping.id}_#{member.user.user_name}", true, false, :class => 'inline_checkbox', :onclick => "$('grouping_select_' + #{grouping.id}).checked = true;"%>
-  <%=  label_tag "#{grouping.id}_#{member.user.user_name}", member.user.user_name, :class => 'inline_label' %>
-</span>
+# Erb template for adding a grader to a grade entry student row
+%> 
+<% grade_entry_form.grade_entry_students.find_by_user_id(student.id).tas.each do |ta| %>
+	<% ta_user = User.find(ta.id) %>
+	<span id="<%= "mbr_#{ta.id}" %>">
+	  <%= check_box_tag "#{student.id}_#{ta_user.user_name}", true, false, :class => 'inline_checkbox', :onclick => "$('student_select_' + #{student.id}).checked = true;"%>
+	  <%=  label_tag "#{student.id}_#{ta_user.user_name}", ta_user.user_name, :class => 'inline_label' %>
+	</span>
 <% end %>
-

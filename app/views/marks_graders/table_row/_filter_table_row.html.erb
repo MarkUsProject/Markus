@@ -1,37 +1,19 @@
 <td>
-<span class="link"><%= h(grouping.group.group_name)%></span>
-<% grouping.students.each do |student| %>
-   <%=  student.user_name %>
-<% end %>
+<span class="link"><%= h(student.user_name) %></span>
 </td>
+<td><%= h("#{student.first_name} #{student.last_name}") %></td>
 
 <td>
-  <%= grouping.section %>
-</td>
-
-<td>
-<%= render :partial => "graders/manage/member",
-  :locals => {:grouping => grouping } %>
-</td>
-
-<td>
-  <% if @assignment.assign_graders_to_criteria %>
-    <span class="table_menu">
-      <% assigned_count = grouping.criteria_coverage_count %>
-      <% if assigned_count == total_criteria_count %>
-        <%= link_to image_tag("icons/tick.png", :alt => I18n.t('graders.covered'),
-          :title => I18n.t('graders.covered')),
-          groups_coverage_dialog_assignment_graders_path(:id => @assignment.id, :grouping => grouping.id),
-          :remote => true %>
-      <% else %>
-        <%= link_to image_tag("icons/cross.png", :alt => I18n.t('graders.not_covered'),
-          :title => I18n.t('graders.not_covered')),
-          groups_coverage_dialog_assignment_graders_path(:id => @assignment.id, :grouping => grouping.id),
-          :remote => true %>
-      <% end %>
-    </span>
-      (<%= assigned_count %>/<%=  total_criteria_count %>)
-  <% else %>
-
+  <% if !student.section.nil? %>
+    <%= h(student.section.name) %>
   <% end %>
 </td>
+
+<td>
+  <% if !grade_entry_form.grade_entry_students.nil? and !grade_entry_form.grade_entry_students.find_by_user_id(student.id).nil? %>
+    <%= render :partial => "marks_graders/manage/member",
+      :locals => {:student => student, :grade_entry_form => grade_entry_form } %>
+  <% end %>
+</td>
+
+

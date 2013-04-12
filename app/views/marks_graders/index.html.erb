@@ -13,7 +13,6 @@ var modalAddMember = null;
 var modalNotesGroup = null;
 var modalUpload = null;
 var modalDownload = null;
-var modalGraderCriteria = null;
 
 
 
@@ -44,20 +43,6 @@ document.observe("dom:loaded", function(){
 
     });
 
-    modalGroupsCoverage = new Control.Modal($('groups_coverage_dialog'),
-    {
-     overlayOpacity: 0.75,
-     className: 'modalGroupsCoverage',
-     fade: false
-
-    });
-    modalGraderCriteria = new Control.Modal($('grader_criteria_dialog'),
-    {
-     overlayOpacity: 0.75,
-     className: 'modalGraderCriteria',
-     fade: false
-
-    });
 })
 
 
@@ -159,20 +144,17 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
         <ul id="groups_tabs"class="subsection_tabs">
           <li class="tab">
             <a href="#groups_table" id="filter_link_none" class="filter_selected">
-              <%= I18n.t("groups.groups") %></a></li>
-        <li class="tab">
-            <a href="#criteria_table" id="filter_link_criteria_none" class="filter_selected">
-              <%= I18n.t("criteria") %></a></li>
+              <%= I18n.t("students.students") %></a></li>
         </ul>
 
         <div id="groups_table">
           <div class="clear"></div>
 
-          <div id="groups_container" class="tabbedArea">
-            <%= label_tag 'search_groupings', I18n.t('search'),
+          <div id="students_container" class="tabbedArea">
+            <%= label_tag 'search_students', I18n.t('search'),
               :class => 'bold_inline_label',
-              :id => 'search_groupings_label' %>
-            <%= text_field_tag 'search_groupings', nil,
+              :id => 'search_students_label' %>
+            <%= text_field_tag 'search_students', nil,
               :onkeyup => "groupings_table.add_filter('search'); groupings_table.render();",
               :onkeypress => "stop_submit(event);" %>
             <table class="groups" id="groups">
@@ -247,19 +229,16 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
 <div id="download_dialog">
   <h2><%= t('groups.download.download_grader_maps') %></h2>
   <ul>
-    <li><%= link_to t('groups.download.download_grader_groups_csv'),
-		    download_grader_groupings_mapping_grade_entry_form_marks_graders_path(@grade_entry_form),
-		    :onclick => "modalDownload.close();" %></li>
-    <li><%= link_to t('groups.download.download_grader_criteria_csv'),
-		    download_grader_criteria_mapping_grade_entry_form_marks_graders_path(@grade_entry_form),
+    <li><%= link_to t('marks_graders.download.download_grader_students_csv'),
+		    download_grader_students_mapping_grade_entry_form_marks_graders_path(@grade_entry_form),
 		    :onclick => "modalDownload.close();" %></li>
   </ul>
   <%= button_to_function I18n.t('cancel'), "modalDownload.close(); return false;" %>
 </div>
 
 <div id="upload_dialog">
-  <h2><%= I18n.t("groups.upload.upload_grader_map") %></h2>
-  <%= raw(I18n.t("groups.upload.description_grader_map")) %>
+  <h2><%= I18n.t("marks_graders.upload.upload_grader_map") %></h2>
+  <%= raw(I18n.t("marks_graders.upload.description_grader_map")) %>
   <%= form_tag({:controller=>"marks_graders",
     :action => 'csv_upload_grader_groups_mapping',:id => @grade_entry_form.id},
     {:multipart => true}) do %>
@@ -275,10 +254,4 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
     </p>
   <% end %>
 
-</div>
-
-<div id="groups_coverage_dialog">
-</div>
-
-<div id="grader_criteria_dialog">
 </div>

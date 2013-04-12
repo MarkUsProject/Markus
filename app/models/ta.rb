@@ -12,6 +12,8 @@ class Ta < User
 
   has_many :criterion_ta_associations, :dependent => :delete_all
 
+  has_and_belongs_to_many :grade_entry_students
+
   def memberships_for_assignment(assignment)
     return assignment.ta_memberships.find_all_by_user_id(id, :include => {:grouping => :group})
   end
@@ -48,5 +50,10 @@ class Ta < User
   def get_groupings_by_assignment(assignment)
     return groupings.all(:conditions => {:assignment_id => assignment.id},
       :include => [:students, :tas, :group, :assignment])
+  end
+
+  def get_membership_count_by_grade_entry_form(grade_entry_form)
+    return grade_entry_students.count(:include => :grade_entry_form,
+      :conditions => "grade_entry_form_id = #{grade_entry_form.id}")
   end
 end

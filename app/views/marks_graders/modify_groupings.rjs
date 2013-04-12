@@ -1,6 +1,3 @@
 page << render(:partial => 'shared/global_action_warning')
 page.call 'modify_graders', @graders_data.to_json
-page.call 'modify_groupings', @groupings_data.to_json
-if @assignment.assign_graders_to_criteria
-  page.call 'modify_criteria', @criteria_data.to_json
-end
+page.call 'modify_groupings', @students_data.to_json

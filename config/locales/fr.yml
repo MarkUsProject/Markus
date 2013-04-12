@@ -318,6 +318,7 @@ fr:
       repo_collision_warning: "Attention : le répertoire '%{repo_name}' existe déjà. Le nom du groupe était '%{group_name}'."
       line_nr_csv_file_prefix: "ligne %{line_number} du fichier CSV :"
       group_to_grader: "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux groupes."
+      student_to_grader: "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux étudiants."
 
     pagination:
       first: "<< Première"
@@ -643,6 +644,7 @@ fr:
       covered:            "Couvert"
       coverage: "Couverture"
       assign_to_criteria: "Attribuer les correcteurs aux critères"
+      lines_not_processed: "Les lignes suivantes n'ont pas pu être traitées : "
       upload:
         select_csv_file: "Sélectionner un fichier CSV formaté comme suit : <code>user_name,last_name,first_name</code>"
         grader_same_user: "Si un correcteur avec le même nom d'utilisateur existe, ses informations seront mises à jour."
@@ -656,6 +658,16 @@ fr:
         download_list: "Télécharger la liste des correcteurs au format CSV"
         begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
         end_annotation: "%{comment_start} FIN ANNOTATION %{id} %{comment_end}"
+
+    #Grade Entry Forms Graders' View
+    marks_graders:
+      #upload:
+      download:
+        download_grader_students_csv: "Étudiants / attribution des correcteurs CSV"
+      upload: 
+        upload_grader_map: "Envoi de étudiants / Attribution des correcteurs"
+        description_grader_map: "Format du fichier CSV : <br />
+            <code>student_user_name,grader_user_name,grader_user_name,... </code><br />"
 
     #Admins' View
     admins:

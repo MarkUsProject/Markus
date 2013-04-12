@@ -26,23 +26,25 @@ class GradeEntryFormsController < ApplicationController
                     :per_pages => [15, 30, 50, 100, 150],
                     :filters => {'none' => {
                                      :display => 'Show All',
-                                     :proc => lambda { |sort_by, order|
+                                     :proc => lambda { |sort_by, order, user|
+                                          if user.type == "Admin"
+                                            conditions = {:hidden => false}
+                                          else #Display only students to which the TA has been assigned
+                                            conditions = {:hidden => false, :id => Ta.find(user.id).grade_entry_students.all(:select => :user_id).collect(&:user_id)}
+                                          end
+
                                           if !sort_by.blank?
                                             if sort_by == "section"
-                                              Student.joins(:section).all(:conditions => {
-                                                  :hidden => false},
+                                              Student.joins(:section).all(:conditions => conditions,
                                                   :order => "sections.name "+order)
                                             else
-                                              Student.all(:conditions => {
-                                                :hidden => false},
+                                              Student.all(:conditions => conditions,
                                                 :order => sort_by+" "+order)
                                             end
                                           else
-                                            Student.all(:conditions => {
-                                              :hidden => false},
+                                            Student.all(:conditions => conditions,
                                               :order => "user_name "+order)
-                                          end
-                                          }}}
+                                          end }}}
                         }
 
   # Create a new grade entry form

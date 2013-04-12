@@ -1,2 +1,2 @@
-page.replace_html 'download_dialog', :partial => 'graders/modal_dialogs/download'
+page.replace_html 'download_dialog', :partial => 'marks_graders/modal_dialogs/download'
 page.call('modalDownload.open')

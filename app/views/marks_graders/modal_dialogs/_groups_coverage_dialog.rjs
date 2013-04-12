@@ -1,2 +1,0 @@
-page.replace_html 'groups_coverage_dialog', :partial => 'graders/modal_dialogs/groups_coverage'
-page.call('modalGroupsCoverage.open')

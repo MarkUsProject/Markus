@@ -13,26 +13,28 @@ document.observe("dom:loaded", function() {
 		$("centreColumn").setStyle({top: (document.viewport.getScrollOffsets().top + 110) +'px' }); 
 	});
 
+  //This reuses client-side javascript from assignment graders view for performance reasons, hence "groupings_table" name.
   groupings_table = new FilterTable({
     table_id: $('groups'),
     headers: {
-      name: {display: "<%= I18n.t('name') %>", sortable: true},
-      section: {display: "<%= I18n.t('graders.section') %>", sortable: true},
+      user_name: {display: "<%= I18n.t('user.user_name') %>", sortable: true},
+      full_name: {display: "<%= I18n.t('user.full_name') %>", sortable: true},
+      section: {display: "<%= I18n.t('user.section') %>", sortable: true},
       members: {display: "<%= I18n.t('graders.graders') %>", sortable: true, sort_with: 'nohtml'}
     },
     can_select: true,
     can_select_all: true,
     select_all_header: "<%= I18n.t('all') %>",
     can_sort: true,
-    row_prefix: "groupings_row_",
-    select_name: "groupings[]",
-    select_id_prefix: "grouping_select_",
-    select_all_top_id: "grouping_select_all_top",
-    select_all_bottom_id: "grouping_select_all_bottom",
-    selectable_class: "FilterTable_groupings_selectable",
+    row_prefix: "student_row_",
+    select_name: "students[]",
+    select_id_prefix: "student_select_",
+    select_all_top_id: "student_select_all_top",
+    select_all_bottom_id: "student_select_all_bottom",
+    selectable_class: "FilterTable_students_selectable",
     select_onclick: "check_all(this.id.split('_')[2],this.checked)",
     footer: true,
-    default_sort: 'name',
+    default_sort: 'user_name',
     header_id_prefix: "FilterTable_manage_graders_header_",
     filters: {
       validated: function(row) {
@@ -41,10 +43,11 @@ document.observe("dom:loaded", function() {
       unvalidated: function(row) {
         return !row.filter_valid;
       },
-      search: function(row) {
-        return (row.name.toLowerCase().indexOf($('search_groupings').value.toLowerCase()) != -1
-        || row.graders.toLowerCase().indexOf($('search_groupings').value.toLowerCase()) != -1
-        || row.grader_names.toLowerCase().indexOf($('search_groupings').value.toLowerCase()) != -1);
+      search: function(row) { 
+        return (row.user_name.toLowerCase().indexOf($('search_students').value.toLowerCase()) != -1
+        || row.first_name.toLowerCase().indexOf($('search_students').value.toLowerCase()) != -1
+        || row.last_name.toLowerCase().indexOf($('search_students').value.toLowerCase()) != -1
+        || row.section.toLowerCase().indexOf($('search_students').value.toLowerCase()) != -1);
       }
     },
     after_filter_only_by: function(current_filters, new_filter) {
@@ -69,10 +72,10 @@ document.observe("dom:loaded", function() {
         return a[FILTERTABLE_SORT].stripTags().toLowerCase() > b[FILTERTABLE_SORT].stripTags().toLowerCase() ? 1 : -1;
         }
     },
-    total_count_id: 'all_groupings_count',
+    total_count_id: 'all_students_count',
     filter_count_ids: {
-      validated: 'valid_groupings_count',
-      unvalidated: 'invalid_groupings_count'
+      validated: 'valid_students_count',
+      unvalidated: 'invalid_students_count'
     }
   });
 
@@ -82,8 +85,7 @@ document.observe("dom:loaded", function() {
     headers: {
       user_name: {display: "<%= I18n.t('user.user_name') %>", sortable: true},
       full_name: {display: "<%= I18n.t('user.full_name') %>", sortable: true},
-      num_groups: {display: "<%= I18n.t('groups.groups') %>", sortable: true},
-      num_criteria: {display: "<%= I18n.t('criteria') %>", sortable: true}
+      num_groups: {display: "<%= I18n.t('students.students') %>", sortable: true},
     },
     can_select: true,
     can_select_all: true,
@@ -135,60 +137,7 @@ document.observe("dom:loaded", function() {
     }
   });
 
-
-  criteria_table = new FilterTable({
-    table_id: $('criteria'),
-    headers: {
-      criterion_name: {display: "<%= I18n.t('criterion_name') %>", sortable: true},
-      members: {display: "<%= I18n.t('graders.graders') %>", sortable: true, sort_with: 'nohtml'},
-      coverage: {display: "<%= I18n.t('graders.coverage') %>", sortable: true}
-    },
-    can_select: true,
-    can_select_all: true,
-    select_all_header: "<%= I18n.t('all') %>",
-    can_sort: true,
-    row_prefix: "criteria_row_",
-    select_name: "criteria[]",
-    select_id_prefix: "criterion_select_",
-    select_all_top_id: "criterion_select_all_top",
-    select_all_bottom_id: "criterion_select_all_bottom",
-    selectable_class: "FilterTable_criteria_selectable",
-    select_onclick: "check_all(this.id.split('_')[2],this.checked)",
-    footer: true,
-    default_sort: 'criterion_name',
-    default_filters: [],
-    filters: {
-      search: function(row) {
-        return (row.criterion_name.toLowerCase().indexOf($('search_criteria').value.toLowerCase()) != -1
-             || row.members.toLowerCase().indexOf($('search_criteria').value.toLowerCase()) != -1);
-      }
-    },
-    after_filter_only_by: function(current_filters, new_filter) {
-      $('filter_link_criteria_none').removeClassName('filter_selected');
-      current_filters.each(function(filter_key) {
-        if(filter_key != 'search') {
-          $('filter_link_criteria_' + filter_key).removeClassName('filter_selected');
-        }
-      });
-      $('filter_link_criteria_' + new_filter).addClassName('filter_selected');
-    },
-    after_clear_filters: function(current_filters) {
-      current_filters.each(function(filter_key) {
-        if(filter_key != 'search') {
-          $('filter_link_criteria_' + filter_key).removeClassName('filter_selected');
-        }
-      });
-      $('filter_link_criteria_none').  addClassName('filter_selected');
-    },
-    total_count_id: 'all_criteria_count',
-    sorts: {
-      nohtml: function(a, b) {
-        return a[FILTERTABLE_SORT].stripTags().toLowerCase() > b[FILTERTABLE_SORT].stripTags().toLowerCase() ? 1 : -1;
-        }
-    }
-  });
-
-  new Ajax.Request('<%= populate_graders_grade_entry_form_marks_graders_path(@assignment) %>', {
+  new Ajax.Request('<%= populate_graders_grade_entry_form_marks_graders_path(@grade_entry_form) %>', {
     asynchronous: true, 
     evalScripts: true, 
     onComplete: function(request){$('loading_graders_list').hide()},
@@ -197,7 +146,7 @@ document.observe("dom:loaded", function() {
     }
   });
 
-  new Ajax.Request('<%= populate_grade_entry_form_marks_graders_path(@assignment) %>', {
+  new Ajax.Request('<%= populate_grade_entry_form_marks_graders_path(@grade_entry_form) %>', {
     asynchronous: true, 
     evalScripts: true, 
     onComplete: function(request){$('loading_list').hide()},
