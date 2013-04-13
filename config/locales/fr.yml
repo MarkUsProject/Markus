@@ -1102,6 +1102,14 @@ fr:
       tests_running: "UPDATE ME"
       need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test. Si vous avez envoyé un fichier et vous voulez exécuter un test, veuillez cliquer sur \"Récuperer et préparer test\"."
       collect_and_test: "Récupérer et préparer test"
+      date_run: "UPDATE ME"
+      revision_used: "UPDATE ME"
+      test_name: "UPDATE ME"
+      completion_status: "UPDATE ME"
+      marks_earned: "UPDATE ME"
+      input_description: "UPDATE ME"
+      actual_output: "UPDATE ME"
+      expected_output: "UPDATE ME"
       add_test_script_file_link: "UPDATE ME"
       add_test_support_file_link: "UPDATE ME"
       add_test_script_file_alert: "UPDATE ME"
@@ -1147,6 +1155,7 @@ fr:
         tokens_not_given_yet: "<span class=\"prop_label\">Jetons disponibles :</span> jetons pas encore donnés"
         tokens_no_more_available: "<span class=\"prop_label\">Jetons disponibles:</span >pas de jetons disponibles"
         tokens_available: "<span class=\"prop_label\">Jetons disponibles:</span> %{tokens}"
+        unlimited_tokens: "<span class=\"prop_label\">UPDATE ME</span> Unlimited"
         unlimited: "Unlimited"
 
 #Missing Activerecord Translations for french

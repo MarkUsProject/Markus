@@ -114,6 +114,10 @@ module AutomatedTestsHelper
         # TODO: show the error to user instead of raising a runtime error
         raise I18n.t("automated_tests.not_belong_to_group")
       end
+      #can skip checking tokens if we have unlimited
+      if @grouping.assignment.unlimited_tokens
+        return true
+      end
       t = @grouping.token
       if t == nil
         raise I18n.t("automated_tests.missing_tokens")
@@ -135,12 +139,25 @@ module AutomatedTestsHelper
   def self.files_available?()
     test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, @assignment.short_identifier)
     src_dir = @repo_dir
+    assign_dir = @repo_dir + "/" + @assignment.repository_folder
 
     if !(File.exists?(test_dir))
       # TODO: show the error to user instead of raising a runtime error
       raise I18n.t("automated_tests.test_files_unavailable")
     elsif !(File.exists?(src_dir))
       # TODO: show the error to user instead of raising a runtime error
+      raise I18n.t("automated_tests.source_files_unavailable")
+    end
+    
+    if !(File.exists?(assign_dir))
+      # TODO: show the error to user instead of raising a runtime error
+      raise I18n.t("automated_tests.source_files_unavailable")
+    end
+        
+    dir_contents = Dir.entries(assign_dir)
+    
+    #if there are no files in repo (ie only the current and parent directory pointers)
+    if (dir_contents.length <= 2)
       raise I18n.t("automated_tests.source_files_unavailable")
     end
 

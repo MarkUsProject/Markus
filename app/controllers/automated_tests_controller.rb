@@ -82,7 +82,7 @@ class AutomatedTestsController < ApplicationController
       end
             
       # For running tests
-      if params[:run_tests] && @token && @token.tokens > 0
+      if params[:run_tests] && ((@token && @token.tokens > 0) || @assignment.unlimited_tokens)
         result = run_tests(@grouping.id)
         if result == nil
           flash[:notice] = I18n.t("automated_tests.tests_running")
