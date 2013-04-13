@@ -1,3 +1,6 @@
+<% # Make sure to include the public/javascripts/Grader/file_selector.js
+   # file when using this partial
+%>
   <%=label_tag "select_test_result_id", h(I18n.t("common.test_results")), :class => "inline_label" %>
 <%= link_to image_tag("icons/cog_go.png", :alt => I18n.t("common.test_code"), :title => I18n.t("common.test_code"), :id => "test_icon"),
      assignment_automated_tests_path(:assignment_id => @assignment.id, :result => @result), :id => "test_select_link", :remote => true %>
@@ -13,9 +16,17 @@
     </script>
 
   <select id="select_test_result_id" onchange="if ($(this).getValue() != '') { load_test_result($(this).getValue()); }">
-  	
+    <% if test_result_files.find_all_by_user_id(@current_user.id).empty? %>
+      <option value=""><%= I18n.t("test_result.no_files_available")%></option>
+    <% else %>
+      <% test_result_files.find_all_by_user_id(@current_user.id, :order => "created_at DESC").each do |file| %>
+        <option value="<%= h(file.id) %>">
+          <%= h(file.filename) %>
+        </option>
+      <% end %>
+    <% end %>
   </select>
-  <input type="button" onclick="{ load_test_result($('select_test_result_id').getValue()); }"
+  <input type="button" onclick="if ($('select_test_result_id').getValue() != '') { load_test_result($('select_test_result_id').getValue()); }"
       value="<%= I18n.t("test_result.button.load")%>" />
   <span id="loading_test_result" style="display:none;">
     <%= image_tag('spinner.gif') %> <%= I18n.t("test_result.loading_results") %>
@@ -24,5 +35,13 @@
     <%= image_tag('spinner.gif') %> <%= I18n.t("test_result.running_tests") %>
   </span>
   <span id="tests_complete" style="display:none;">
-  	
+    <% if test_result_files.find_last_by_user_id(@current_user.id) %>
+      <% if test_result_files.find_last_by_user_id(@current_user.id).status == 'success' %>
+        <%= I18n.t("test_result.build_successful", {:logfile => test_result_files.find_last_by_user_id(@current_user.id).filename}) %>
+      <% elsif test_result_files.find_last_by_user_id(@current_user.id).status == 'failed' %>
+        <%= I18n.t("test_result.build_failed", {:logfile => test_result_files.find_last_by_user_id(@current_user.id).filename}) %>
+      <% else %>
+        <%= I18n.t("test_result.build_error", {:logfile => test_result_files.find_last_by_user_id(@current_user.id).filename}) %>
+      <% end %>
+    <% end %>
   </span>

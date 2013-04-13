@@ -91,13 +91,6 @@ class AssignmentsController < ApplicationController
       @revision  = repo.get_latest_revision
       @revision_number = @revision.revision_number
       
-      #submission = @grouping.submissions.find_by_submission_version_used(true)
-      #if @result
-      #  @test_result_files = @result.submission.test_results
-      #else
-      #  @test_result_files = nil
-      #end
-      
       @last_modified_date = @grouping.assignment_folder_last_modified_date
       @num_submitted_files = @grouping.number_of_submitted_files
       @num_missing_assignment_files = @grouping.missing_assignment_files.length
