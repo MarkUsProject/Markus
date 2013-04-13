@@ -12,7 +12,7 @@
       <thead>
         <tr>
           <th><%=t(:description)%></th>
-          <th><%=t(:shortened_date)%></th>
+          <th><%=t(:shortened_date).html_safe%></th>
           <% # Note: this hides the results column within the student view %>
 	  <% if !@current_user.student? %>
 		<th><%=t('results.results_name')%></th> <% end %>
