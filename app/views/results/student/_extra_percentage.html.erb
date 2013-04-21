@@ -1,0 +1,12 @@
+<%#
+# Erb template for inserting a new extra mark into an assignment grade
+%>
+
+<tr id="<%= "extra_mark_#{extra_percentage.id}" %>">
+  <td>
+    <%=extra_percentage.description%>
+  </td>
+  <td>
+    <%=extra_percentage.extra_mark %>%
+  </td>
+</tr>
