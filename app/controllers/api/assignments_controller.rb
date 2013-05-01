@@ -161,8 +161,9 @@ module Api
       end
 
       # Made it this far, render success
-      render 'shared/http_status', :locals => {:code => '201', :message =>
-        HttpStatusHelper::ERROR_CODE['message']['201']}, :status => 201
+      render 'shared/http_status', :locals => {:code => '200', :message =>
+        HttpStatusHelper::ERROR_CODE['message']['200']}, :status => 200
+      return
     end
 
     # Process the parameters passed for assignment creation and update

@@ -19,3 +19,8 @@ test_result_controller_test2:
   filename: "example_script.sh"
   file_content: "This is the second example test result.\n"
   submission_id: <%= Fixtures.identify(:test_result_submission1)%>
+
+test_result_controller_test3:
+  filename: "example2.rb"
+  file_content: "This is an example test result.\n"
+  submission_id: <%= Fixtures.identify(:test_result_submission1)%>

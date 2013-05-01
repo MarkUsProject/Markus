@@ -368,6 +368,7 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
 
       should 'update those attributes that are supplied' do
         put 'update', :id => @assignment.id.to_s, :short_identifier => 'TestAs'
+        assert_response 200
         updated_assignment = Assignment.find_by_id(@assignment.id)
         assert_equal(updated_assignment.short_identifier, 'TestAs')
       end

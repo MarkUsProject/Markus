@@ -8,11 +8,11 @@ Markus::Application.routes.draw do
   root :controller => "main", :action => "login"
    # API routes
   namespace :api, :defaults => { :format => 'text' } do
-    resources :test_results, :except => [:new, :edit]
     resources :users, :except => [:new, :edit]
     resources :assignments, :except => [:new, :edit] do
       resources :groups, :except => [:new, :edit] do
         resources :submission_downloads, :except => [:new, :edit]
+        resources :test_results, :except => [:new, :edit]
       end
     end
     resources :main_api
