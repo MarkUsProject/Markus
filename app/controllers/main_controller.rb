@@ -238,7 +238,7 @@ class MainController < ApplicationController
       # All good, redirect to the main page of the viewer, discard
       # role switch modal
       render :partial => "role_switch_handler", :locals =>
-            { :success => true }
+            { :error => '', :success => true }
       return
     else
       render :partial => "role_switch_handler", :locals =>

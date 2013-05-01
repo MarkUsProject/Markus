@@ -1,5 +1,6 @@
 <% content_for :head do %>
 	<%= javascript_include_tag "Bluff/js-class.js",
+    "jquery-browser.js",
  		"Bluff/bluff.js",
 		"Bluff/excanvas.js" %>
 <% end %>
@@ -9,11 +10,11 @@
    
    <script type="text/javascript">
     //<![CDATA[
-    $('firefox_warning').hide();
-
+    jQuery("#firefox_warning").hide();
+    
     // Display warning if not using a Gecko-based browser
-    if (!Prototype.Browser.Gecko) { 
-      $('firefox_warning').show();
+    if (!jQuery.browser.mozilla) { 
+      jQuery('#firefox_warning').show();
     }
     //]]>
   </script>
