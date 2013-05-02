@@ -114,7 +114,14 @@ function check_working() {
   <p class="notice"><%=t(:marks_released_notice)%></p>
 <% end %>
 
-
+<%= @grouping.assignment.section_due_dates.find_by_section_id(@grouping.inviter.section).due_date %>
+<%= @grouping.assignment.due_date %>
+<% if (!@grouping.assignment.section_due_dates.blank? &&
+      !@grouping.assignment.section_due_dates.find_by_section_id(@grouping.inviter.section).due_date.blank? &&
+      @grouping.group.repo.get_latest_revision.timestamp > @grouping.assignment.section_due_dates.find_by_section_id(@grouping.inviter.section).due_date) ||
+      @grouping.group.repo.get_latest_revision.timestamp > @grouping.assignment.due_date %>
+  <p class="error"><%= t(:past_due_date_edit_result_warning) %></p>
+<% end %>
 
 <%= render :partial => 'results/common/submission_selector', :locals => {:group => @group, :result => @result, :assignment => @assignment, :previous_grouping => @previous_grouping, :next_grouping => @next_grouping} %>
 
