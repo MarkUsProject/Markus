@@ -348,6 +348,7 @@ fr:
       find_by_revision_number:    "Par numéro de révision"
       viewing_revision:           "Révision : #<span id=\"current_revision_number_display\">%{revision_number}</span>"
       current_path:         "Chemin actuel : "
+      download_all_files:  "Télécharger tous les fichiers"
       root:                 "[racine]"
       collect_and_grab:     "Récupérer et évaluer cette révision"
       could_not_collect:    "N'a pas pu récupérer cette révision pour le groupe %{group_name}. — La date de de récupération n'a pas encore été atteinte."

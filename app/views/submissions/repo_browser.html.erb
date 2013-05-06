@@ -79,7 +79,6 @@
   </input>
   <div id="progress_text"></div>
   <% end %>
-  <%= link_to 'Zip files', :action => 'downloads', :revision_number => @revision_number, :grouping_id => @grouping.id, :path => @path %>
 </div>
 
 </div>
@@ -88,6 +87,10 @@
 <div class="wrapLeft">
   <table class="files" id="files">
   </table>
+</div>
+
+<div class="wrapLeft">
+  <%= button_to t('browse_submissions.download_all_files'), :action => 'downloads', :revision_number => @revision_number, :grouping_id => @grouping.id, :path => @path %>
 </div>
 
 <script type="text/javascript">
