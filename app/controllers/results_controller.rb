@@ -474,7 +474,7 @@ class ResultsController < ApplicationController
       section = unless grouping.inviter.blank?
         grouping.inviter.section
       end
-      section_due_date = unless section.blank?
+      section_due_date = unless section.blank? || due_dates.blank?
         due_dates.find_by_section_id(section).due_date
       end
 
