@@ -79,6 +79,7 @@
   </input>
   <div id="progress_text"></div>
   <% end %>
+  <%= link_to 'Zip files', :action => 'downloads', :revision_number => @revision_number, :grouping_id => @grouping.id, :path => @path %>
 </div>
 
 </div>
