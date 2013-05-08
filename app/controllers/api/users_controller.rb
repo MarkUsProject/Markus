@@ -5,9 +5,9 @@ module Api
   class UsersController < MainApiController
     # Define default fields to display for index and show methods
     @@default_fields = [:id, :user_name, :type, :first_name, :last_name,
-                        :grace_credits, :notes_count];
+                        :grace_credits, :notes_count]
 
-    # Requires: nothing
+    # Returns users and their attributes
     # Optional: filter, fields
     def index
       users = get_collection(User)
@@ -21,6 +21,7 @@ module Api
       end
     end
 
+    # Creates a new user
     # Requires: user_name, type, first_name, last_name
     # Optional: section_name, grace_credits
     def create
@@ -31,7 +32,7 @@ module Api
         return
       end
 
-      # check if there is an existing user
+      # Check if that user_name is taken
       user = User.find_by_user_name(params[:user_name])
       if !user.nil?
         render 'shared/http_status', :locals => {:code => '409', :message =>
@@ -39,7 +40,7 @@ module Api
         return
       end
 
-      # No user found so create new one
+      # No conflict found, so create new user
       param_user_type = params[:type].downcase
       if param_user_type == "student"
         user_type = Student
@@ -69,31 +70,24 @@ module Api
         HttpStatusHelper::ERROR_CODE['message']['201']}, :status => 201
     end
 
+    # Returns a user and its attributes
     # Requires: id
     # Optional: filter, fields
     def show
-      # Check if it's a numeric string
-      if !!(params[:id] =~ /^[0-9]+$/)
-        user = User.find_by_id(params[:id])
-        if user.nil?
-          # No user with that id
-          render 'shared/http_status', :locals => {:code => '404', :message =>
-            'No user exists with that id'}, :status => 404
-          return
-        else
-          fields = fields_to_render(@@default_fields)
-
-          respond_to do |format|
-            format.any{render :xml => user.to_xml(:only => fields, :root => 'users',
-              :skip_types => 'true')}
-            format.json{render :json => user.to_json(:only => fields)}
-          end
-        end
-      else
-        # Invalid params if it wasn't a numeric string
-        render 'shared/http_status', :locals => {:code => '422', :message =>
-          'Invalid id'}, :status => 422
+      user = User.find_by_id(params[:id])
+      if user.nil?
+        # No user with that id
+        render 'shared/http_status', :locals => {:code => '404', :message =>
+          'No user exists with that id'}, :status => 404
         return
+      else
+        fields = fields_to_render(@@default_fields)
+
+        respond_to do |format|
+          format.any{render :xml => user.to_xml(:only => fields, :root => 'users',
+            :skip_types => 'true')}
+          format.json{render :json => user.to_json(:only => fields)}
+        end
       end
     end
 
@@ -115,18 +109,20 @@ module Api
         return
       end
 
+      # Create a hash to hold fields/values to be updated for the user
+      attributes = {}
+
       if !params[:user_name].blank?
-        # Make sure another user isn't using it
+        # Make sure the user_name isn't taken
         other_user = User.find_by_user_name(params[:user_name])
         if !other_user.nil? && other_user != user
           render 'shared/http_status', :locals => {:code => '409', :message =>
             'Username already in use'}, :status => 409
           return
         end
-        updated_user_name = params[:user_name]
+        attributes[:user_name] = params[:user_name]
       end
 
-      attributes = {:user_name => updated_user_name}
       attributes = process_attributes(params, attributes)
 
       user.attributes = attributes

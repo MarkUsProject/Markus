@@ -137,9 +137,9 @@ module Api
         end
       end
 
-      # Apply limits and offsets, or get all if they aren't set
-      collection = collection.limit(params[:limit].to_i) if !params[:limit].blank?
+      # Apply offsets and limits, or get all if they aren't set
       collection = collection.offset(params[:offset].to_i) if !params[:offset].blank?
+      collection = collection.limit(params[:limit].to_i) if !params[:limit].blank?
       collection = collection.all if filters.empty?
     end
 
