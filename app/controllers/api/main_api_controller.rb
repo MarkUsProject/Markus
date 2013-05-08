@@ -7,8 +7,7 @@ module Api
   # all API controllers should go here.
   class MainApiController < ActionController::Base
 
-    before_filter :check_format
-    before_filter :authenticate
+    before_filter :check_format, :authenticate
 
     # Unless overridden by a subclass, all routes are 404's by default
     def index
@@ -91,10 +90,15 @@ module Api
     end
 
     # Make sure that the passed format is either xml or json
+    # If no format is provided, default to XML
     def check_format
-      # support only xml and json, but allow text so extension isn't required
+      # This allows us to support content negotiation
+      if request.headers["HTTP_ACCEPT"].nil? || request.format == '*/*'
+        request.format = 'xml'
+      end
+
       request_format = request.format.symbol
-      if request_format != :text && request_format != :xml && request_format != :json
+      if request_format != :xml && request_format != :json
         # 406 is the default status code when the format is not support
         render :nothing => true, :status => 406
       end

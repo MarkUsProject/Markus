@@ -20,7 +20,7 @@ module Api
       fields = fields_to_render(@@default_fields)
 
       respond_to do |format|
-        format.any{render :xml => test_results.to_xml(:only => fields, :root => 
+        format.xml{render :xml => test_results.to_xml(:only => fields, :root => 
           'test_results', :skip_types => 'true')}
         format.json{render :json => test_results.to_json(:only => fields)}
       end

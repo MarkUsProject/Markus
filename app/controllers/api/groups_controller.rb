@@ -28,7 +28,7 @@ module Api
       students = include_students(fields)
 
       respond_to do |format|
-        format.any{render :xml => groups.to_xml(:only => fields, :root => 
+        format.xml{render :xml => groups.to_xml(:only => fields, :root => 
           'groups', :skip_types => 'true', :include => students)}
         format.json{render :json => groups.to_json(:only => fields, 
           :include => students)}
@@ -61,7 +61,7 @@ module Api
         students = include_students(fields)
 
         respond_to do |format|
-          format.any{render :xml => group.to_xml(:only => fields, :root => 
+          format.xml{render :xml => group.to_xml(:only => fields, :root => 
             'group', :skip_types => 'true', :include => students)}
           format.json{render :json => group.to_json(:only => fields, 
             :include => students)}
