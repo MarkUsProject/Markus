@@ -40,7 +40,6 @@ class ResultsController < ApplicationController
 
     @annotation_categories = @assignment.annotation_categories
     @grouping = @result.submission.grouping
-    @past_due_date = past_due_date?(@grouping)
     @group = @grouping.group
     @files = @submission.submission_files.sort do |a, b|
       File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
@@ -463,26 +462,6 @@ class ResultsController < ApplicationController
   end
 
   private
-
-    ##
-    # Find the correct due date (section or not) and check if it is before the last commit
-    ##
-    def past_due_date?(grouping)
-
-      timestamp = grouping.group.repo.get_latest_revision.timestamp
-      due_dates = grouping.assignment.section_due_dates
-      section = unless grouping.inviter.blank?
-        grouping.inviter.section
-      end
-      section_due_date = unless section.blank? || due_dates.blank?
-        due_dates.find_by_section_id(section).due_date
-      end
-
-      # condition to return
-      (!due_dates.blank? && !section.blank? &&
-       !section_due_date.blank? && timestamp > section_due_date) ||
-      timestamp > grouping.assignment.due_date
-    end
 
   #Return true if select_file_id matches the id of a file submitted by the
   #current_user. This is to prevent students from downloading files that they
