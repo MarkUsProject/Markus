@@ -514,7 +514,8 @@ class SubmissionsController < ApplicationController
     revision_number = params[:revision_number]
     repo_folder = @assignment.repository_folder
     full_path = File.join(repo_folder, params[:path] || '/')
-    zip_path = "tmp/#{repo_folder}-#{@grouping.group.repo_name}-#{Time.now.strftime('%Y-%m-%d-%H-%M-%S')}.zip"
+    zip_path = "tmp/#{repo_folder}-#{@grouping.group.repo_name}-" +
+               "#{Time.now.strftime('%Y-%m-%d-%H-%M-%S')}.zip"
     zip_name = "#{repo_folder}-#{@grouping.group.repo_name}.zip"
 
     @grouping.group.access_repo do |repo|
@@ -527,12 +528,23 @@ class SubmissionsController < ApplicationController
       # Open Zip file and fill it with all the files in the repo_folder
       Zip::ZipFile.open(zip_path, Zip::ZipFile::CREATE) do |zip_file|
 
+        if revision_number.to_i == 0
+          render :text => t('student.submission.no_revision_available')
+          return
+        end
+
         files = @revision.files_at_path(full_path)
+        if files.count == 0
+          render :text => t('student.submission.no_files_available')
+          return
+        end
+
         files.each do |file|
           begin
             file_contents = repo.download_as_string(file.last)
           rescue Exception => e
-            render :text => t('student.submission.missing_file', :file_name => file.first, :message => e.message)
+            render :text => t('student.submission.missing_file',
+                              :file_name => file.first, :message => e.message)
             return
           end
 
