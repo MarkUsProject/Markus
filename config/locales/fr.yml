@@ -348,6 +348,7 @@ fr:
       find_by_revision_number:    "Par numéro de révision"
       viewing_revision:           "Révision : #<span id=\"current_revision_number_display\">%{revision_number}</span>"
       current_path:         "Chemin actuel : "
+      download_all_files:  "Télécharger tous les fichiers"
       root:                 "[racine]"
       collect_and_grab:     "Récupérer et évaluer cette révision"
       could_not_collect:    "N'a pas pu récupérer cette révision pour le groupe %{group_name}. — La date de de récupération n'a pas encore été atteinte."
@@ -622,6 +623,8 @@ fr:
         external_submit_only: "MarkUs n'accepte que les envois externes"
         invalid_file_name: "Le nom du fichier envoyé est invalide"
         missing_file: "%{file_name} n'a pas pu être téléchargé : %{message}. Le fichier est sans doute manquant."
+        no_files_available: "Aucun fichier disponible"
+        no_revision_available: "Aucune révision disponible"
         expect_filter: "Un filtre sur la sélection est attendu."
         # DO NOT change 'file_name' and 'sanitized_filename' in the following message.
         # See app/views/submissions/_file_manager_boot.js.erb
