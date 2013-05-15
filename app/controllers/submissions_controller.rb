@@ -516,7 +516,7 @@ class SubmissionsController < ApplicationController
     full_path = File.join(repo_folder, params[:path] || '/')
     zip_path = "tmp/#{repo_folder}-#{@grouping.group.repo_name}-" +
                "#{Time.now.strftime('%Y-%m-%d-%H-%M-%S')}.zip"
-    zip_name = "#{repo_folder}-#{@grouping.group.repo_name}.zip"
+    zip_name = "#{repo_folder}-#{@grouping.group.repo_name}"
 
     @grouping.group.access_repo do |repo|
       @revision = if revision_number.nil?
@@ -549,9 +549,9 @@ class SubmissionsController < ApplicationController
           end
 
           # Create the folder in the Zip file if it doesn't exist
-          zip_file.mkdir(full_path) unless zip_file.find_entry(full_path)
+          zip_file.mkdir(zip_name) unless zip_file.find_entry(zip_name)
 
-          zip_file.get_output_stream(full_path + '/' + file.first) do |f|
+          zip_file.get_output_stream(File.join(zip_name, file.first)) do |f|
             f.puts file_contents
           end
         end
@@ -559,7 +559,7 @@ class SubmissionsController < ApplicationController
     end
 
     # Send the Zip file
-    send_file zip_path, :disposition => 'inline', :filename => zip_name
+    send_file zip_path, :disposition => 'inline', :filename => zip_name + '.zip'
   end
 
   def update_submissions
