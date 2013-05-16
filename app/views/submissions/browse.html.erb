@@ -13,7 +13,7 @@
 
 <div id="title_bar">
   <h1><%= I18n.t("browse_submissions.workspace",
-  :short_identifier => h(sanitize(@assignment.short_identifier))) %>
+  :short_identifier => sanitize(@assignment.short_identifier)) %>
   <% if @current_user.admin? %>
   <%= link_to I18n.t("collect_submissions.collect_all"),
               collect_all_submissions_assignment_submissions_path(
@@ -82,7 +82,7 @@
             :name => "unrelease_results" %>
           <% if !@assignment.results_average.nil? %>
             <%= I18n.t("browse_submissions.class_average",
-                       :results_average => h(@assignment.results_average)) %>
+                       :results_average => @assignment.results_average) %>
           <% end %>
         </div>
       <% end %>

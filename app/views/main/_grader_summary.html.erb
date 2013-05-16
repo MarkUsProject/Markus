@@ -6,7 +6,7 @@
 <% else %>
   <ul>
     <% assignment.tas.each do |ta| %>
-      <li><%= "#{h(ta.first_name)} #{h(ta.last_name)}" %></li>
+      <li><%= "#{ta.first_name} #{ta.last_name}" %></li>
     <% end %>
   </ul>
 <% end %>
