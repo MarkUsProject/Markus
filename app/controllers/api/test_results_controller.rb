@@ -1,12 +1,13 @@
 module Api
 
-  # Allows for pushing and downloading of test results
+  # Allows for pushing and downloading of TestResults
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class TestResultsController < MainApiController
     # Define default fields for index method
     @@default_fields = [:id, :filename]
 
-    # Requires: nothing
+    # Returns a list of TesResults associated with a group's assignment submission
+    # Requires: assignment_id, group_id
     # Optional: filter, fields
     def index
       # get_submission renders appropriate error if the submission isn't found
@@ -19,14 +20,14 @@ module Api
       fields = fields_to_render(@@default_fields)
 
       respond_to do |format|
-        format.any{render :xml => test_results.to_xml(:only => fields, :root => 
+        format.xml{render :xml => test_results.to_xml(:only => fields, :root => 
           'test_results', :skip_types => 'true')}
         format.json{render :json => test_results.to_json(:only => fields)}
       end
     end
 
-    # Gets the file contents of a TestResult instance
-    # Requires: id
+    # Sends the contents of the specified TestResult
+    # Requires: assignment_id, group_id, id
     def show
       # get_submission renders appropriate error if the submission isn't found
       submission = get_submission(params[:assignment_id], params[:group_id])
@@ -46,8 +47,10 @@ module Api
                                           :filename => test_result.filename
     end
 
-    # Creates a new TestResult instance
+    # Creates a new test result for a group's latest assignment submission
     # Requires:
+    #  - assignment_id
+    #  - group_id
     #  - filename: Name of the file to be uploaded
     #  - file_content: Contents of the test results file to be uploaded
     def create
@@ -87,7 +90,7 @@ module Api
     end
 
     # Deletes a TestResult instance
-    # Requires: id
+    # Requires: assignment_id, group_id, id
     def destroy
       # get_submission renders appropriate error if the submission isn't found
       submission = get_submission(params[:assignment_id], params[:group_id])
@@ -116,7 +119,7 @@ module Api
     end
 
     # Updates a TestResult instance
-    # Requires: id
+    # Requires: assignment_id, group_id, id
     # Optional:
     #  - filename: New name for the file
     #  - file_content: New contents of the test results file
@@ -134,7 +137,7 @@ module Api
         return
       end
 
-      # Render error if there's a different test result has that filename
+      # Render error if the filename is used by another TestResult for that submission
       existing_file = submission.test_results.find_by_filename(params[:filename])
       if !existing_file.nil? && existing_file.id != params[:id]
         render 'shared/http_status', :locals => {:code => '409', :message =>
