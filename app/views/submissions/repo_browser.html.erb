@@ -70,14 +70,15 @@
   <%= form_tag manually_collect_and_begin_grading_assignment_submission_path(:id => @grouping.id,
       :assignment_id => @assignment.id),
 	       :remote => true do %>
-  <%= hidden_field_tag "current_revision_number", @revision_number %>
-  <input type="submit" value="<%=I18n.t("browse_submissions.collect_and_grab")%>"
-         onclick="if (!confirm('<%=t(:collect_and_grade_overwrite_warning)%>'))
-           return false;
-           $('progress_text').update('<%=I18n.t('stopping_collection_process')%>');
-           return true;" name="commit">
-  </input>
-  <div id="progress_text"></div>
+    <%= hidden_field_tag "current_revision_number", @revision_number %>
+    <input type="submit" value="<%=I18n.t("browse_submissions.collect_and_grab")%>"
+           onclick="if (!confirm('<%=t(:collect_and_grade_overwrite_warning)%>'))
+             return false;
+             $('progress_text').update('<%=I18n.t('stopping_collection_process')%>');
+             return true;" name="commit">
+    </input>
+    <%= link_to t('browse_submissions.download_all_files'), { :action => :downloads, :revision_number => @revision_number, :grouping_id => @grouping.id, :path => @path }, :class => 'button' %>
+    <div id="progress_text"></div>
   <% end %>
 </div>
 
@@ -87,10 +88,6 @@
 <div class="wrapLeft">
   <table class="files" id="files">
   </table>
-</div>
-
-<div class="wrapLeft">
-  <%= button_to t('browse_submissions.download_all_files'), :action => 'downloads', :revision_number => @revision_number, :grouping_id => @grouping.id, :path => @path %>
 </div>
 
 <script type="text/javascript">
