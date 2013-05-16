@@ -146,7 +146,7 @@
           :onchange => "set_onbeforeunload(true);" ) %>
 
         <%= raw( f.label("marking_scheme_type_" + Assignment::MARKING_SCHEME_TYPE[key],
-            h(I18n.t("assignment.marking_scheme.#{value}")),
+            I18n.t("assignment.marking_scheme.#{value}"),
             :class => "radio_label") ) %>
       </p>
     <% end %>
@@ -182,8 +182,8 @@
 
               disabled="">
         <% @assignments.each do |assignment| %>
-          <option value="<%= h(assignment.id) %>">
-            <%= h(assignment.short_identifier)%>
+          <option value="<%= assignment.id %>">
+            <%= assignment.short_identifier %>
           </option>
         <% end %>
       </select>

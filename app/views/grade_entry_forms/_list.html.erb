@@ -24,13 +24,13 @@
             <td class="grade_entry_form_results_name">
               <%=
                 # Grade entry form name
-                link_to h(grade_entry_form.short_identifier) + ': ' + grade_entry_form.description,
+                link_to grade_entry_form.short_identifier + ': ' + grade_entry_form.description,
                 :controller => 'grade_entry_forms',
                 :action => 'student_interface',
                 :id => grade_entry_form.id %>
             </td>
             <td>
-            	<strong><%= h l(grade_entry_form.date, :format => :short_date) %></strong>
+            	<strong><%= l(grade_entry_form.date, :format => :short_date) %></strong>
               <% if grade_entry_form.date > Time.zone.now.to_date %>
                 <br />
                 <%= t(:days_left,
