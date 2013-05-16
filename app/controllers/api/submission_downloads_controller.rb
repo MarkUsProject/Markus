@@ -7,7 +7,7 @@ module Api
 
     # Returns the requested submission file, or a zip containing all submission 
     # files, including all annotations if requested
-    # Requires: nothing
+    # Requires: assignment_id, group_id
     # Optional:
     #  - file_name: Name of the file, if absent all files will be downloaded
     #  - include_annotations: If 'true', will include annotations in the file(s)
@@ -73,8 +73,10 @@ module Api
         end
 
         if files.length == 1
+          # If we only have 1 file being requested, send it
           send_data file_contents, :disposition => 'inline', :filename => file.filename
         else
+          # Otherwise zip up the requested submission files
           Zip::ZipFile.open("tmp/#{zip_name}", Zip::ZipFile::CREATE) do |zipfile|
             if !zipfile.find_entry(file.path)
               zipfile.mkdir(file.path)
