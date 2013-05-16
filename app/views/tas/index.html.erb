@@ -57,7 +57,7 @@
         <p><%= I18n.t("graders.not_added") %></p>
         <ul>
           <% for line in flash[:invalid_lines] -%>
-          <li><%= h(line) %></li>
+          <li><%= line %></li>
           <% end -%>
         </ul>
         <p><%= I18n.t("graders.make_sure") %></p>

@@ -13,8 +13,8 @@
 
     <div class="summary_block">
       <span><strong><%= I18n.t("marker.marks.subtotal") %></strong></span>
-      <span id="current_subtotal_div"> <%= h(result.get_subtotal) %></span>
-      <span> /<%= h(assignment.total_mark) %>  </span>
+      <span id="current_subtotal_div"> <%= result.get_subtotal %></span>
+      <span> /<%= assignment.total_mark %>  </span>
     </div>
 
     <div class="clear"></div><br/>
@@ -29,7 +29,7 @@
     
     <div class="summary_block">
       <b class="total_extra_points_label"><%= I18n.t("marker.marks.total_extra_marks").html_safe %></strong>
-        <span id="total_extra_points"><%= h(result.get_total_extra_points) %></span><br/></b>
+        <span id="total_extra_points"><%= result.get_total_extra_points %></span><br/></b>
     </div>
     
     <div class="clear"></div>
@@ -43,9 +43,9 @@
     
     <div class="summary_block">
         <strong><%= I18n.t("marker.marks.total_extra_percentages").html_safe %></strong>
-        <span id="total_extra_percentage"><%= h(result.get_total_extra_percentage) %></span><br />
+        <span id="total_extra_percentage"><%= result.get_total_extra_percentage %></span><br />
         <strong><%= I18n.t("marker.marks.translated_to_points") %></strong>
-        <span id="total_extra_percentage_as_points"><%= h(result.get_total_extra_percentage_as_points)%></span> <br />
+        <span id="total_extra_percentage_as_points"><%= result.get_total_extra_percentage_as_points %></span> <br />
     </div>
 </div>
 
@@ -57,8 +57,8 @@
 
     <div class="summary_block">
       <span><strong><%= I18n.t("marker.marks.old_subtotal") %></strong></span>
-      <span id="old_subtotal_div"> <%= h(old_result.get_subtotal) %></span>
-      <span> /<%= h(assignment.total_mark) %>  </span>
+      <span id="old_subtotal_div"> <%= old_result.get_subtotal %></span>
+      <span> /<%= assignment.total_mark %>  </span>
     </div>
 
     <div class="clear"></div><br/>
@@ -73,7 +73,7 @@
 
     <div class="summary_block">
       <b class="total_extra_points_label"><%= I18n.t("marker.marks.total_extra_marks").html_safe %></b>
-        <span id="total_extra_points"><%= h(old_result.get_total_extra_points) %></span><br/></b>
+        <span id="total_extra_points"><%= old_result.get_total_extra_points %></span><br/></b>
     </div>
 
     <div class="clear"></div>
@@ -87,9 +87,9 @@
     
     <div class="summary_block">
         <strong><%= I18n.t("marker.marks.total_extra_percentages").html_safe %></strong>
-        <span id="total_extra_percentage"><%= h(old_result.get_total_extra_percentage) %></span><br />
+        <span id="total_extra_percentage"><%= old_result.get_total_extra_percentage %></span><br />
         <strong><%= I18n.t("marker.marks.translated_to_points") %></strong>
-        <span id="total_extra_percentage_as_points"><%= h(old_result.get_total_extra_percentage_as_points)%></span> <br />
+        <span id="total_extra_percentage_as_points"><%= old_result.get_total_extra_percentage_as_points %></span> <br />
     </div>
   </div>
 <% end %>
@@ -99,8 +99,8 @@
 <% if old_result %>
 <div class="mark_total">
   <span class="final_mark">
-    <span id="old_total_mark_div"> <%= h(old_result.total_mark) %>   </span>
-    <span> / <%= h(assignment.total_mark) %>  </span>
+    <span id="old_total_mark_div"> <%= old_result.total_mark %>   </span>
+    <span> / <%= assignment.total_mark %>  </span>
   </span>
 
   <span><%= I18n.t("marker.marks.previous_mark").html_safe  %></span>
@@ -109,8 +109,8 @@
 
 <div class="mark_total">
   <span class="final_mark">
-    <span id="current_total_mark_div"> <%= h(result.total_mark) %>   </span>
-    <span> / <%= h(assignment.total_mark) %>  </span>
+    <span id="current_total_mark_div"> <%= result.total_mark %>   </span>
+    <span> / <%= assignment.total_mark %>  </span>
   </span>
 
   <span><%= I18n.t("marker.marks.final_mark").html_safe  %></span>

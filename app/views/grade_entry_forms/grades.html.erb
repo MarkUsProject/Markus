@@ -43,12 +43,12 @@
 <div class="wrapLeft">
   <% if flash[:upload_notice] %>
     <div class="success">
-      <p><%= h(flash[:upload_notice]) %></p>
+      <p><%= flash[:upload_notice] %></p>
     </div>
   <% end %>
   <% if flash[:error] && !flash[:invalid_lines].nil? && !flash[:invalid_lines].empty? %>
     <div class="error">
-      <p><%= h(flash[:error]) %></p>
+      <p><%= flash[:error] %></p>
       <ul>
         <% flash[:invalid_lines].each do |message| %>
           <li><%=(message)%></li>

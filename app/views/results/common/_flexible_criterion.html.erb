@@ -6,7 +6,7 @@ class="mark_criterion_title_div_level float_left">
 <div id="<%="mark_criterion_title_#{mark.id}_mark"%>" class="padding_left">
 <% if !mark.mark.nil? -%>
   <b>
-    <%= h(mark.mark) %>&nbsp;/ <%= mark_criterion.max%>
+    <%= mark.mark %>&nbsp;/ <%= mark_criterion.max %>
   </b>
   <p><%=mark_criterion.description %></p>
 <% end -%>
