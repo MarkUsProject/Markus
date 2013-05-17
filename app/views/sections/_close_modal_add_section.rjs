@@ -1,0 +1,4 @@
+page << 'modalAddNewSection.close()'
+
+page.replace_html 'select_sections', :partial => 'select_sections',
+                  :locals => { :user => @user }, :remote => true
