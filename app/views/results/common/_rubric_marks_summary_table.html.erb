@@ -17,10 +17,10 @@
 %>
 
 <tr class="<%= cycle('mark_summary_holderA', 'mark_summary_holderB') %>" id="<%= "mark_#{mark.id}_summary" %>">
-    <td><%= h(criterion.rubric_criterion_name) %></td>
-    <td><%= h(criterion.weight) %></td>
-    <td><span id="mark_<%= h(mark.id)%>_summary_mark"><%= h(mark_value) %></span></td>
-    <td><span id="mark_<%= h(mark.id)%>_summary_mark_after_weight"><%= h((mark_value * criterion.weight)) %></span> / <%=  h(criterion.weight * 4) %></td>
+    <td><%= criterion.rubric_criterion_name %></td>
+    <td><%= criterion.weight %></td>
+    <td><span id="mark_<%= mark.id %>_summary_mark"><%= mark_value %></span></td>
+    <td><span id="mark_<%= mark.id %>_summary_mark_after_weight"><%= (mark_value * criterion.weight) %></span> / <%= criterion.weight * 4 %></td>
 
 </tr>
 

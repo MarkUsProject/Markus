@@ -257,11 +257,6 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
         get 'show', :id => '9999'
         assert_response 404
       end
-
-      should 'return a 422 if the provided id is not strictly numeric' do
-        get 'show', :id => '9a'
-        assert_response 422
-      end
     end
 
     # Testing POST api/assignments

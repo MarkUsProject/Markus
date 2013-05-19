@@ -1,6 +1,6 @@
 <td>
 <%=raw( image_tag('icons/page_white_text.png') )%>
-<%=raw( link_to h(file_name), :action => 'download', :id => @assignment.id,
+<%=raw( link_to file_name, :action => 'download', :id => @assignment.id,
  :revision_number => @revision.revision_number, :file_name => file_name,
   :path => @path )%>
 </td>
@@ -25,9 +25,9 @@ name="file_revisions[<%= file_name %>]" value="<%= file.last_modified_revision%>
 <td>
 <input name="delete_files[<%= file_name %>]" type="checkbox"
 <%="disabled" if !@grouping.is_valid? %> onclick="if($(this).getValue()) {
-   $('replace_files[<%= h(file_name) %>]').disable();
+   $('replace_files[<%= file_name %>]').disable();
   } else {
-   $('replace_files[<%= h(file_name) %>]').enable();
+   $('replace_files[<%= file_name %>]').enable();
   }; set_onbeforeunload(true);
 "/>
 

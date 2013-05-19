@@ -1,6 +1,6 @@
 <div id="<%="mark_criterion_title_#{mark_criterion.id}_name"%>"
 class="mark_criterion_title_div_level" class="float_left">
-  <strong><%=link_to_function h(mark_criterion.rubric_criterion_name), "return false", :class => "rubric_criterion_link" %></strong>
+  <strong><%=link_to_function mark_criterion.rubric_criterion_name, "return false", :class => "rubric_criterion_link" %></strong>
 </div>
 <div class="clear"></div>
 
@@ -8,9 +8,9 @@ class="mark_criterion_title_div_level" class="float_left">
 <div id="<%="mark_criterion_title_#{mark.id}_oldmark"%>" class="padding_left_old">
   <strong>
     <%= I18n.t("marker.marks.old").html_safe %>
-    <%= h(old_mark.mark) %>: <%= h(mark_criterion["level_" + old_mark.mark.to_i.to_s + "_name"]) %>&nbsp;
+    <%= old_mark.mark %>: <%= mark_criterion["level_" + old_mark.mark.to_i.to_s + "_name"] %>&nbsp;
   </strong>
-  <%= h(mark_criterion["level_" + old_mark.mark.to_i.to_s + "_description"]) %>
+  <%= mark_criterion["level_" + old_mark.mark.to_i.to_s + "_description"] %>
 </div>
 <% end %>
 
@@ -18,9 +18,9 @@ class="mark_criterion_title_div_level" class="float_left">
 
 <% if !mark.mark.nil? -%>
   <strong>
-    <%= h(mark.mark) %>: <%= h(mark_criterion["level_" + mark.mark.to_i.to_s + "_name"]) %>&nbsp;
+    <%= mark.mark %>: <%= mark_criterion["level_" + mark.mark.to_i.to_s + "_name"] %>&nbsp;
   </strong>
-  <%= h(mark_criterion["level_" + mark.mark.to_i.to_s + "_description"]) %>
+  <%= mark_criterion["level_" + mark.mark.to_i.to_s + "_description"] %>
 <% end -%>
 
 </div>
