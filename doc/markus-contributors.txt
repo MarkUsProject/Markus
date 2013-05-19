@@ -36,6 +36,7 @@ Fernando Garces
 Gabriel Roy-Lortie
 Gaëtan Girin
 Geoffrey Flores
+Ghislain Guiot
 Hanson Wu
 Horatiu Halmaghi
 Ibrahim Shahin
