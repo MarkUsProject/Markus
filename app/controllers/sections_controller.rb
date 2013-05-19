@@ -16,12 +16,15 @@ class SectionsController < ApplicationController
 
   # Creates a new section
   def create
+    @user = Student.new(params[:user])
+
     @section = Section.new(params[:section])
     if @section.save
+      @sections = Section.all
       flash[:success] = I18n.t('section.create.success',
                                :name => @section.name)
       if params[:section_modal]
-        redirect_to :controller => 'students', :action => 'new'
+        render :partial => 'close_modal_add_section'
         return
       end
       redirect_to :action => 'index'
@@ -29,7 +32,8 @@ class SectionsController < ApplicationController
     else
       flash[:error] = I18n.t('section.create.error')
       if params[:section_modal]
-        redirect_to :controller => 'students', :action => 'new'
+        render :partial => 'add_new_section_handler',
+               :locals => { :error => flash[:error] }
         return
       end
       render :new

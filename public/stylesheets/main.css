@@ -998,7 +998,7 @@ input#extra_mark_description{
   -webkit-border-radius: 5px;
   border-radius: 5px;
   width: 375px;
-  height: 165px;
+  padding-bottom: 30px;
   text-align: center;
 }
 
