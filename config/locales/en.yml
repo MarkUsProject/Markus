@@ -75,6 +75,7 @@ en:
     due:                       "due :"
     no_assignments:            "There are currently no assignments."
     class_average:             "Class Average: %{results_average}"
+    submissions_collected: "%{count}/%{size} Submissions collected"
 
     # app/views/assignments/
     name: "Name"
