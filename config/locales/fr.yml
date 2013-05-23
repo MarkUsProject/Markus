@@ -78,6 +78,7 @@ fr:
     due:                       "à rendre pour le :"
     no_assignments:            "Aucun devoir pour le moment."
     class_average:             "Moyenne : %{results_average}"
+    submissions_collected: "%{count}/%{size} Envois récupérés"
 
     # app/views/assignments/
     name: "Nom "
