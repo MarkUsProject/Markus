@@ -654,15 +654,19 @@ Blanche Nef,ta2'''
       @grouping = Grouping.make(:assignment => @assignment, :group => @group)
     end
 
+    teardown do
+      destroy_repos
+    end
+
     context 'without sections' do
 
       should 'before due_date' do
-        submit_file_at_time('July 20 2009 5:00PM', 'my_file1', 'Hello, world!')
+        submit_file_at_time('July 20 2009 5:00PM', 'my_file', 'Hello, world!')
         assert !@grouping.past_due_date?
       end
 
       should 'after due_date' do
-        submit_file_at_time('July 28 2009 5:00PM', 'my_file2', 'Hello, World!')
+        submit_file_at_time('July 28 2009 5:00PM', 'my_file', 'Hello, World!')
         assert @grouping.past_due_date?
       end
     end
@@ -711,7 +715,7 @@ Blanche Nef,ta2'''
     pretend_now_is(Time.parse(time)) do
       @group.access_repo do |repo|
         txn = repo.get_transaction('test')
-        txn = add_file_helper(txn, "filename", text)
+        txn = add_file_helper(txn, filename, text)
         repo.commit(txn)
       end
     end
