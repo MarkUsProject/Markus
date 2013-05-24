@@ -604,6 +604,27 @@ class Grouping < ActiveRecord::Base
     return '-'
   end
 
+  ##
+  # Find the correct due date (section or not) and check if it is after
+  # the last commit
+  ##
+  def past_due_date?
+
+    timestamp = group.repo.get_latest_revision.timestamp
+    due_dates = assignment.section_due_dates
+    section = unless inviter.blank?
+                inviter.section
+              end
+    section_due_date = unless section.blank? || due_dates.blank?
+                         due_dates.find_by_section_id(section).due_date
+                       end
+
+    # condition to return
+    (!due_dates.blank? && !section.blank? &&
+        !section_due_date.blank? && timestamp > section_due_date) ||
+        timestamp > assignment.due_date
+  end
+
   private
 
   # Once a grouping is valid, grant (write) repository permissions for students

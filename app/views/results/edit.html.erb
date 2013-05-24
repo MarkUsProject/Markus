@@ -114,7 +114,9 @@ function check_working() {
   <p class="notice"><%=t(:marks_released_notice)%></p>
 <% end %>
 
-
+<% if @grouping.past_due_date? %>
+  <p class="warning"><%= t(:past_due_date_edit_result_warning) %></p>
+<% end %>
 
 <%= render :partial => 'results/common/submission_selector', :locals => {:group => @group, :result => @result, :assignment => @assignment, :previous_grouping => @previous_grouping, :next_grouping => @next_grouping} %>
 
