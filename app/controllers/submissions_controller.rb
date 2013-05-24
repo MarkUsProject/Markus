@@ -318,7 +318,7 @@ class SubmissionsController < ApplicationController
     sorted_groupings = @groupings
     @groupings = Grouping.find(:all, :conditions => {:id => sorted_groupings},
       :include => [:assignment, :group, :grace_period_deductions,
-        {:current_submission_used => :result},
+        {:current_submission_used => :results},
         {:accepted_student_memberships => :user}])
 
     #re-sort @groupings by the previous order, because eager loading query
