@@ -9,7 +9,7 @@ class Submission < ActiveRecord::Base
 
   validates_numericality_of :submission_version, :only_integer => true
   belongs_to :grouping
-  has_many   :result, :dependent => :destroy
+  has_many   :results, :dependent => :destroy
   has_many   :submission_files, :dependent => :destroy
   has_many   :annotations, :through => :submission_files
   has_many   :test_results, :dependent => :destroy
@@ -141,7 +141,7 @@ class Submission < ActiveRecord::Base
   end
 
   def has_result?
-    return !result.nil?
+    results.any?
   end
 
   # Does this submission have a remark result?
@@ -199,7 +199,7 @@ class Submission < ActiveRecord::Base
 
   def create_remark_result
     remark_result = Result.new
-    self.result << remark_result
+    results << remark_result
     remark_result.marking_state = Result::MARKING_STATES[:unmarked]
     remark_result.submission_id = self.id
     remark_result.save
@@ -231,7 +231,7 @@ class Submission < ActiveRecord::Base
 
   def create_result
     result = Result.new
-    self.result << result
+    results << result
     result.marking_state = Result::MARKING_STATES[:unmarked]
     result.save
   end
