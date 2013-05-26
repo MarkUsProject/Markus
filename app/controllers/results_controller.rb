@@ -463,7 +463,6 @@ class ResultsController < ApplicationController
 
   private
 
-
   #Return true if select_file_id matches the id of a file submitted by the
   #current_user. This is to prevent students from downloading files that they
   #or their group have not submitted. Return false otherwise.

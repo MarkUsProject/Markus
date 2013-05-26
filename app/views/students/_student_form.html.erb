@@ -7,6 +7,7 @@ modalAddNewSection = new Control.Modal($('add_new_section_dialog'),
      className: 'modalAddNewSection',
      fade: false
   });
+  modalAddNewSection.close();
 });
 //]]>
 </script>
@@ -33,15 +34,10 @@ modalAddNewSection = new Control.Modal($('add_new_section_dialog'),
     <%= raw(f.label(:grace_credits, I18n.t("user.grace_credits"))) %>
     <%= raw(f.text_field :grace_credits) %> <br />
 
-    <%= f.select :section_id,
-      options_for_select(
-        ["−"] + @sections.map {|s| [s.name, s.id] },
-        :selected => (@user.has_section?) ? (@user.section.id) : (["−"]) ) %>
-    <%= f.label(:section_id, I18n.t("section.legend") ) %> <br />
-
-	<% if defined?new_student %>
-	<%= link_to I18n.t("section.add_section"), add_new_section_students_path(), :remote => true, :class => "button"%>
-	<% end %>
+    <div id='select_sections'>
+      <%= render :partial => 'sections/select_sections',
+                 :locals => { :user => @user, :new_student => true } %>
+    </div>
 
     <%= f.hidden_field :id %>
     <%= f.submit t(:submit), :name => 'submit', :disable_with => I18n.t('working'),
