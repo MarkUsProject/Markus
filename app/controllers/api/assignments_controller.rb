@@ -33,7 +33,6 @@ module Api
         # No assignment with that id
         render 'shared/http_status', :locals => {:code => '404', :message =>
           'No assignment exists with that id'}, :status => 404
-        return
       else
         fields = fields_to_render(@@default_fields)
 
@@ -63,7 +62,7 @@ module Api
 
       # check if there is an existing assignment
       assignment = Assignment.find_by_short_identifier(params[:short_identifier])
-      if !assignment.nil?
+      unless assignment.nil?
         render 'shared/http_status', :locals => {:code => '409', :message =>
           'Assignment already exists'}, :status => 409
         return
@@ -87,7 +86,7 @@ module Api
 
       new_assignment.submission_rule = submission_rule
 
-      if !new_assignment.save
+      unless new_assignment.save
         # Some error occurred
         render 'shared/http_status', :locals => {:code => '500', :message =>
           HttpStatusHelper::ERROR_CODE['message']['500']}, :status => 500
@@ -119,7 +118,7 @@ module Api
       # Create a hash to hold fields/values to be updated for the assignment
       attributes = {}
 
-      if !params[:short_identifier].blank?
+      unless params[:short_identifier].blank?
         # Make sure another assignment isn't using the new short_identifier
         other_assignment = Assignment.find_by_short_identifier(
           params[:short_identifier])
@@ -135,7 +134,7 @@ module Api
       assignment.attributes = attributes
 
       # Update the submission rule if provided
-      if !params[:submission_rule_type].nil?
+      unless params[:submission_rule_type].nil?
         submission_rule = get_submission_rule(params)
         if submission_rule.nil?
           render 'shared/http_status', :locals => {:code => '500', :message =>
@@ -150,7 +149,7 @@ module Api
         end
       end
 
-      if !assignment.save
+      unless assignment.save
         # Some error occurred
         render 'shared/http_status', :locals => {:code => '500', :message =>
           HttpStatusHelper::ERROR_CODE['message']['500']}, :status => 500
@@ -160,7 +159,6 @@ module Api
       # Made it this far, render success
       render 'shared/http_status', :locals => {:code => '200', :message =>
         HttpStatusHelper::ERROR_CODE['message']['200']}, :status => 200
-      return
     end
 
     # Process the parameters passed for assignment creation and update
@@ -185,7 +183,7 @@ module Api
         end
       end
 
-      return attributes
+      attributes
     end
 
     # Gets the submission rule for POST/PUT requests based on the supplied params
@@ -213,7 +211,7 @@ module Api
         submission_rule = NoLateSubmissionRule.new
       end
 
-      return submission_rule
+      submission_rule
     end
 
   end # end AssignmentsController

@@ -37,7 +37,7 @@ module Api
         return
       end
 
-      if !params[:filename].blank?
+      if params[:filename].present?
         # Find the requested file if filename is set
         files = [SubmissionFile.find_by_filename_and_submission_id(
           params[:filename], submission.id)]
@@ -78,7 +78,7 @@ module Api
         else
           # Otherwise zip up the requested submission files
           Zip::ZipFile.open("tmp/#{zip_name}", Zip::ZipFile::CREATE) do |zipfile|
-            if !zipfile.find_entry(file.path)
+            unless zipfile.find_entry(file.path)
               zipfile.mkdir(file.path)
             end
             zipfile.get_output_stream(file.path + '/' + file.filename) { |f| 
