@@ -480,7 +480,7 @@ class AssignmentsController < ApplicationController
     # accept_nested_attributes_for bug, which do not allow
     # us to remove assignment files. We do not support rails
     # < 2.3.8.
-    if %w(2.3.8, 2.3.9).include?(Rails.version) && !params[:assignment][:assignment_files_attributes].nil?
+    if %w(2.3.8 2.3.9).include?(Rails.version) && !params[:assignment][:assignment_files_attributes].nil?
       params[:assignment][:assignment_files_attributes].each do |key,assignment_file|
         if assignment_file[:_destroy] == '1'
           file_to_destroy = assignment.assignment_files.find_by_id(assignment_file[:id])
