@@ -15,7 +15,7 @@ class NotesController < ApplicationController
     @notes = Note.find(:all,
                        :conditions => {:noteable_id => @noteable.id,
                                        :noteable_type => @noteable.class.name})
-    render :partial => "notes/modal_dialogs/notes_dialog_script.rjs"
+    render :partial => 'notes/modal_dialogs/notes_dialog_script.rjs'
   end
 
   def add_note
@@ -25,14 +25,14 @@ class NotesController < ApplicationController
     @note.notes_message = params[:new_notes]
     @note.noteable_id = params[:noteable_id]
     @note.noteable_type = params[:noteable_type]
-    if !@note.save
-      render "notes/modal_dialogs/notes_dialog_error.rjs"
+    unless @note.save
+      render 'notes/modal_dialogs/notes_dialog_error.rjs'
     else
       @note.reload
       @number_of_notes_field = params[:number_of_notes_field]
       @highlight_field = params[:highlight_field]
       @number_of_notes = @note.noteable.notes.size
-      render "notes/modal_dialogs/notes_dialog_success.rjs"
+      render 'notes/modal_dialogs/notes_dialog_success.rjs'
     end
   end
 
@@ -71,15 +71,15 @@ class NotesController < ApplicationController
   # used for RJS call
   def noteable_object_selector
     case params[:noteable_type]
-      when "Student"
-        @students = Student.find(:all, :order => "user_name")
-      when "Assignment"
+      when 'Student'
+        @students = Student.find(:all, :order => 'user_name')
+      when 'Assignment'
         @assignments = Assignment.all
-      when "Grouping"
+      when 'Grouping'
         new_retrieve
       else
         # default to groupings if all else fails.
-        params[:noteable_type] = "Grouping"
+        params[:noteable_type] = 'Grouping'
         flash[:error] = I18n.t('notes.new.invalid_selector')
         new_retrieve
     end
@@ -126,8 +126,7 @@ class NotesController < ApplicationController
       @note = Note.find(params[:id])
 
       unless @note.user_can_modify?(current_user)
-        render 'shared/http_status.html', :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false
-        return
+        render 'shared/http_status.html', :locals => { :code => '404', :message => HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404, :layout => false
       end
     end
 

@@ -46,7 +46,7 @@ class AssignmentsController < ApplicationController
       return
     end
 
-    render :template => 'assignments/render_test_result', :layout => "plain"
+    render :template => 'assignments/render_test_result', :layout => 'plain'
   end
 
   def student_interface
@@ -71,7 +71,7 @@ class AssignmentsController < ApplicationController
           # fix for issue #627
           # currently create_group_for_working_alone_student only returns false
           # when saving a grouping throws an exception
-          if !@student.create_group_for_working_alone_student(@assignment.id)
+          unless @student.create_group_for_working_alone_student(@assignment.id)
             # if create_group_for_working_alone_student returned false then the student
             # must have an ( empty ) existing grouping that he is not a member of.
             # we must delete this grouping for the transaction to succeed.
@@ -159,7 +159,6 @@ class AssignmentsController < ApplicationController
       end
 
       render :student_assignment_list
-      return
     elsif current_user.ta?
       render :grader_index
     else
@@ -188,7 +187,7 @@ class AssignmentsController < ApplicationController
     @assignments = Assignment.all
     @sections = Section.all
 
-    if !params[:assignment].nil?
+    unless params[:assignment].nil?
       @oldcriteria = @assignment.marking_scheme_type
       @newcriteria = params[:assignment][:marking_scheme_type]
       if @oldcriteria != @newcriteria and !@assignment.get_criteria.nil?
@@ -203,16 +202,15 @@ class AssignmentsController < ApplicationController
     begin
       @assignment = process_assignment_form(@assignment, params)
       rescue Exception, RuntimeError => e
-        @assignment.errors.add(:base, I18n.t("assignment.error",
+        @assignment.errors.add(:base, I18n.t('assignment.error',
                                               :message => e.message))
         render :edit, :id => @assignment.id
       return
     end
 
     if @assignment.save
-      flash[:success] = I18n.t("assignment.update_success")
+      flash[:success] = I18n.t('assignment.update_success')
       redirect_to :action => 'edit', :id => params[:id]
-      return
     else
       render :edit, :id => @assignment.id
     end
@@ -246,7 +244,7 @@ class AssignmentsController < ApplicationController
       rescue Exception, RuntimeError => e
         @assignment.errors.add(:base, e.message)
       end
-      if !@assignment.save
+      unless @assignment.save
         @assignments = Assignment.all
         @sections = Section.all
         render :new
@@ -256,11 +254,11 @@ class AssignmentsController < ApplicationController
         @assignment.clone_groupings_from(params[:persist_groups_assignment])
       end
       if @assignment.save
-        flash[:success] = I18n.t("assignment.create_success")
+        flash[:success] = I18n.t('assignment.create_success')
       end
     end
 
-    redirect_to :action => "edit", :id => @assignment.id
+    redirect_to :action => 'edit', :id => @assignment.id
   end
 
   def update_group_properties_on_persist
@@ -296,7 +294,7 @@ class AssignmentsController < ApplicationController
         csv << row
       end
     end
-    send_data csv_string, :disposition => "attachment",
+    send_data csv_string, :disposition => 'attachment',
                           :filename => "#{COURSE_NAME} grades report.csv"
   end
 
@@ -310,7 +308,7 @@ class AssignmentsController < ApplicationController
     @user.join(@grouping.id)
     m_logger = MarkusLogger.instance
     m_logger.log("Student '#{@user.user_name}' joined group '#{@grouping.group.group_name}'" +
-                 "(accepted invitation).")
+                 '(accepted invitation).')
     redirect_to :action => 'student_interface', :id => params[:id]
   end
 
@@ -351,7 +349,7 @@ class AssignmentsController < ApplicationController
         # fix for issue #627
         # currently create_group_for_working_alone_student only returns false
         # when saving a grouping throws an exception
-        if !@student.create_group_for_working_alone_student(@assignment.id)
+        unless @student.create_group_for_working_alone_student(@assignment.id)
           # if create_group_for_working_alone_student returned false then the student
           # must have an ( empty ) existing grouping that he is not a member of.
           # we must delete this grouping for the transaction to succeed.
@@ -379,7 +377,7 @@ class AssignmentsController < ApplicationController
         raise I18n.t('create_group.fail.do_not_have_a_group')
       end
       # If grouping is not deletable for @current_user for whatever reason, fail.
-      if !@grouping.deletable_by?(@current_user)
+      unless @grouping.deletable_by?(@current_user)
         raise I18n.t('groups.cant_delete')
       end
       if @grouping.has_submission?
@@ -399,7 +397,7 @@ class AssignmentsController < ApplicationController
       flash[:fail_notice] = e.message
       if @grouping.nil?
         m_logger.log(
-           "Failed to delete group, since no accepted group for this user existed." +
+           'Failed to delete group, since no accepted group for this user existed.' +
            "User: '#{current_user.user_name}', Error: '#{e.message}'.", MarkusLogger::ERROR)
       else
         m_logger.log("Failed to delete group '#{@grouping.group.group_name}'. User: '" +
@@ -424,9 +422,9 @@ class AssignmentsController < ApplicationController
     to_invite = params[:invite_member].split(',')
     flash[:fail_notice] = []
     flash[:success] = []
-    m_logger = MarkusLogger.instance
+    MarkusLogger.instance
     @grouping.invite(to_invite)
-    flash[:fail_notice] = @grouping.errors["base"]
+    flash[:fail_notice] = @grouping.errors['base']
     if flash[:fail_notice].blank?
       flash[:success] = I18n.t('invite_student.success')
     end
@@ -482,9 +480,9 @@ class AssignmentsController < ApplicationController
     # accept_nested_attributes_for bug, which do not allow
     # us to remove assignment files. We do not support rails
     # < 2.3.8.
-    if ["2.3.8", "2.3.9"].include?(Rails.version) && !params[:assignment][:assignment_files_attributes].nil?
+    if %w(2.3.8, 2.3.9).include?(Rails.version) && !params[:assignment][:assignment_files_attributes].nil?
       params[:assignment][:assignment_files_attributes].each do |key,assignment_file|
-        if assignment_file[:_destroy] == "1"
+        if assignment_file[:_destroy] == '1'
           file_to_destroy = assignment.assignment_files.find_by_id(assignment_file[:id])
           file_to_destroy.destroy
         end
@@ -492,7 +490,7 @@ class AssignmentsController < ApplicationController
     end
     
     # if there are no section due dates, destroy the objects that were created
-    if params[:assignment][:section_due_dates_type] == "0"
+    if params[:assignment][:section_due_dates_type] == '0'
       assignment.section_due_dates.each { |s| s.destroy }
       assignment.section_due_dates_type = false
       assignment.section_groups_only = false
@@ -509,8 +507,8 @@ class AssignmentsController < ApplicationController
       # Some protective measures here to make sure we haven't been duped...
       potential_rule =
          Module.const_get(params[:assignment][:submission_rule_attributes][:type])
-      if !potential_rule.ancestors.include?(SubmissionRule)
-        raise I18n.t("assignment.not_valid_submission_rule",
+      unless potential_rule.ancestors.include?(SubmissionRule)
+        raise I18n.t('assignment.not_valid_submission_rule',
           :type => params[:assignment][:submission_rule_attributes][:type])
       end
 
@@ -519,7 +517,7 @@ class AssignmentsController < ApplicationController
       # cannot be saved ( not valid )
       # otherwise we would end up with no periods!
       if assignment.submission_rule.valid?
-        assignment.submission_rule.periods.where("id != ?",
+        assignment.submission_rule.periods.where('id != ?',
                                                  assignment.submission_rule.id).
                                                  delete_all
       end
@@ -531,9 +529,9 @@ class AssignmentsController < ApplicationController
       end
     end
 
-    if params[:is_group_assignment] == "true"
+    if params[:is_group_assignment] == 'true'
       # Is the instructor forming groups?
-      if params[:assignment][:student_form_groups] == "0"
+      if params[:assignment][:student_form_groups] == '0'
         assignment.invalid_override = true
       else
         assignment.student_form_groups = true
@@ -541,16 +539,16 @@ class AssignmentsController < ApplicationController
         assignment.group_name_autogenerated = true
       end
     else
-      assignment.student_form_groups = false;
-      assignment.invalid_override = false;
-      assignment.group_min = 1;
-      assignment.group_max = 1;
+      assignment.student_form_groups = false
+      assignment.invalid_override = false
+      assignment.group_min = 1
+      assignment.group_max = 1
     end
-    return assignment
+    assignment
   end
 
   def find_submission_for_test(grouping_id, revision_number)
-    return Submission.find_by_grouping_id_and_revision_number(grouping_id, revision_number)
+    Submission.find_by_grouping_id_and_revision_number(grouping_id, revision_number)
   end
 
   # Used every time a student access to the assignment page
@@ -562,16 +560,15 @@ class AssignmentsController < ApplicationController
     # must run collec_and_test manually first
     return if grouping.submissions.empty?
     # Once it is time to collect files, student should'nt start to do tests
-    if !grouping.assignment.submission_rule.can_collect_now?
+    unless grouping.assignment.submission_rule.can_collect_now?
       current_submission_used = grouping.submissions.find_by_submission_version_used(true)
       if current_submission_used.revision_number < revision_number
         new_submission = Submission.create_by_revision_number(grouping, revision_number)
-        result = new_submission.get_latest_result
+        new_submission.get_latest_result
       else
-        result = current_submission_used.get_latest_result
+        current_submission_used.get_latest_result
       end
     end
-    return result
   end
 
   # Used the first time a student from a grouping wanted
@@ -580,11 +577,10 @@ class AssignmentsController < ApplicationController
     # We check if it not the time to collect files
     # Once it is time to collect files, student should'nt start to do tests
     # And we create a submission with the latest revision of the svn
-    if !grouping.assignment.submission_rule.can_collect_now?
+    unless grouping.assignment.submission_rule.can_collect_now?
       new_submission = Submission.create_by_revision_number(grouping, revision_number)
-      result = new_submission.get_latest_result
+      new_submission.get_latest_result
     end
-    return result
   end
 
 end
