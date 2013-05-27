@@ -15,8 +15,8 @@ class Submission < ActiveRecord::Base
   has_many   :test_results, :dependent => :destroy
 
   def self.create_by_timestamp(grouping, timestamp)
-     if !timestamp.kind_of? Time
-       raise "Expected a timestamp of type Time"
+     unless timestamp.kind_of? Time
+       raise 'Expected a timestamp of type Time'
      end
      repo = grouping.group.repo
      path = grouping.assignment.repository_folder
@@ -56,27 +56,24 @@ class Submission < ActiveRecord::Base
   # returns the original result 
   def get_original_result
     if self.remark_result_id.nil?
-      result = Result.find(:first, :conditions => ["submission_id = ?", self.id])
+      Result.find(:first, :conditions => ['submission_id = ?', self.id])
     else 
-      result = Result.find(:first, :conditions => ["submission_id = ? AND id != ?", self.id, self.remark_result_id])
+      Result.find(:first, :conditions => ['submission_id = ? AND id != ?', self.id, self.remark_result_id])
     end
-    return result
   end
 
   # returns the remark result if exists, returns nil if does not exist
   def get_remark_result
-    result = Result.find(:first, :conditions => ["id = ?", self.remark_result_id])
-    return result
+    Result.find(:first, :conditions => ['id = ?', self.remark_result_id])
   end
 
   # returns the latest result - remark result if exists and submitted, else original result
   def get_latest_result
     if self.remark_submitted?
-      result = self.get_remark_result
+      self.get_remark_result
     else
-      result = self.get_original_result
+      self.get_original_result
     end
-    return result
   end
 
   # returns the latest completed result - note: will return nil if there is no completed result
@@ -87,7 +84,7 @@ class Submission < ActiveRecord::Base
     if self.get_original_result.marking_state == Result::MARKING_STATES[:complete]
       return self.get_original_result
     end
-    return nil
+    nil
   end
 
   # For group submissions, actions here must only be accessible to members
@@ -108,24 +105,24 @@ class Submission < ActiveRecord::Base
       f.user = user
       f.filename = file.original_filename
       f.submitted_at = submission_time
-      f.submission_file_status = "late" if assignment.due_date < submission_time
+      f.submission_file_status = 'late' if assignment.due_date < submission_time
     end
 
     # upload file contents to file system
-    File.open(filepath, "wb") { |f| f.write(file.read) } if submission_file.save
-    return submission_file
+    File.open(filepath, 'wb') { |f| f.write(file.read) } if submission_file.save
+    submission_file
   end
 
   # Delete all records of filename in submissions and store in backup folder
   # (for now, called "BACKUP")
   def remove_file(filename)
     # get all submissions for this filename
-    files = submission_files.all(:conditions => ["filename = ?", filename])
+    files = submission_files.all(:conditions => ['filename = ?', filename])
     return unless files && !files.empty?
     files.each { |f| f.destroy }  # destroy all records first
 
     _adir = submit_dir
-    backup_dir = File.join(_adir, "BACKUP")
+    backup_dir = File.join(_adir, 'BACKUP')
     FileUtils.mkdir_p(backup_dir)
 
     source_file = File.join(_adir, filename)
@@ -137,7 +134,7 @@ class Submission < ActiveRecord::Base
   # Query functions -------------------------------------------------------
   # Figure out which assignment this submission is for
   def assignment
-    return self.grouping.assignment
+    self.grouping.assignment
   end
 
   def has_result?
@@ -146,7 +143,7 @@ class Submission < ActiveRecord::Base
 
   # Does this submission have a remark result?
   def has_remark?
-    return (!self.remark_result_id.nil?)
+    !self.remark_result_id.nil?
   end
 
   # Does this submission have a remark request submitted?
@@ -156,11 +153,11 @@ class Submission < ActiveRecord::Base
   # Saved means that the remark request cannot be viewed by instructors or TAs yet and
   #   the student can still make changes to the request details.
   def remark_submitted?
-    return (self.has_remark? && self.get_remark_result.marking_state != Result::MARKING_STATES[:unmarked])
+    self.has_remark? && self.get_remark_result.marking_state != Result::MARKING_STATES[:unmarked]
   end
 
   # Helper methods
-  def populate_with_submission_files(revision, path="/")
+  def populate_with_submission_files(revision, path='/')
     # Remember that assignments have folders within repositories - these
     # will be "spoofed" as root...
     if path == '/'
