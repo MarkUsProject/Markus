@@ -226,7 +226,7 @@ class GroupsController < ApplicationController
          group_array = [grouping.group.group_name, grouping.group.repo_name]
          # csv format is group_name, repo_name, user1_name, user2_name, ... etc
          grouping.student_memberships.all(:include => :user).each do |member|
-            group_array.push(member.user.user_name);
+            group_array.push(member.user.user_name)
          end
          csv << group_array
        end

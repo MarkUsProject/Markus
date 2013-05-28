@@ -135,7 +135,7 @@ class User < ActiveRecord::Base
          csv << user_array
        end
      end
-     return file_out
+     file_out
   end
 
   def self.upload_user_list(user_class, user_list, encoding)
@@ -169,7 +169,7 @@ class User < ActiveRecord::Base
       end # end prase
     end
     result[:upload_notice] = "#{num_update} user(s) added/updated."
-    return result
+    result
   end
 
   def self.add_user(user_class, row)
@@ -201,7 +201,7 @@ class User < ActiveRecord::Base
       return nil
     end
 
-    return current_user
+    current_user
   end
 
   # Convenience method which returns a configuration Hash for the
@@ -254,7 +254,7 @@ class User < ActiveRecord::Base
     digest = Digest::SHA2.new(bitlen=512)
     # generate a unique token
     unique_seed = ActiveSupport::SecureRandom.hex(20)
-    return digest.update("#{unique_seed} SECRET! #{Time.zone.now.to_f}").to_s
+    digest.update("#{unique_seed} SECRET! #{Time.zone.now.to_f}").to_s
   end
 
   # strip input string

@@ -84,7 +84,6 @@ class AssignmentsController < ApplicationController
         redirect_to :action => 'student_interface', :id => @assignment.id
       else
         render :student_interface, :layout => 'no_menu_header'
-        return
       end
     else
       # We look for the information on this group...
