@@ -42,7 +42,7 @@ class GradersController < ApplicationController
 
   def populate_graders
     @assignment = Assignment.find(params[:assignment_id])
-    @graders = Ta.find(:all)
+    @graders = Ta.all
     @table_rows = construct_grader_table_rows(@graders, @assignment)
   end
 

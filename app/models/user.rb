@@ -93,7 +93,7 @@ class User < ActiveRecord::Base
   #TODO: make these proper associations. They work fine for now but
   # they'll be slow in production
   def active_groupings
-    self.groupings.find(:all, :conditions => ["memberships.membership_status != :u", { :u => StudentMembership::STATUSES[:rejected]}])
+    self.groupings.all(:conditions => ["memberships.membership_status != :u", { :u => StudentMembership::STATUSES[:rejected]}])
   end
 
   # Helper methods -----------------------------------------------------

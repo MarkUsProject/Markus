@@ -150,7 +150,7 @@ class MainController < ApplicationController
       redirect_to :controller => 'assignments', :action => 'index'
       return
     end
-    @assignments = Assignment.find(:all)
+    @assignments = Assignment.all
     render :index, :layout => 'content'
   end
 
