@@ -56,16 +56,16 @@ class Submission < ActiveRecord::Base
   # returns the original result 
   def get_original_result
     if self.remark_result_id.nil?
-      result = Result.find(:first, :conditions => ["submission_id = ?", self.id])
+      result = Result.first(:conditions => ["submission_id = ?", self.id])
     else 
-      result = Result.find(:first, :conditions => ["submission_id = ? AND id != ?", self.id, self.remark_result_id])
+      result = Result.first(:conditions => ["submission_id = ? AND id != ?", self.id, self.remark_result_id])
     end
     return result
   end
 
   # returns the remark result if exists, returns nil if does not exist
   def get_remark_result
-    result = Result.find(:first, :conditions => ["id = ?", self.remark_result_id])
+    result = Result.first(:conditions => ["id = ?", self.remark_result_id])
     return result
   end
 

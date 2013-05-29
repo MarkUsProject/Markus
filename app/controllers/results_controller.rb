@@ -35,7 +35,8 @@ class ResultsController < ApplicationController
 
     @old_result = nil
     if @submission.remark_submitted?
-      @old_result = Result.find(:all, :conditions => ["submission_id = ?", @submission.id], :order =>["id ASC"])[0]
+      @old_result = Result.all(:conditions => ["submission_id = ?", @submission.id],
+                               :order =>["id ASC"])[0]
     end
 
     @annotation_categories = @assignment.annotation_categories
@@ -74,10 +75,8 @@ class ResultsController < ApplicationController
          m.grouping
        end
     elsif current_user.admin?
-      groupings = @assignment.groupings.find(
-                      :all,
-                      :include => :group,
-                      :order => 'id ASC')
+      groupings = @assignment.groupings.all(:include => :group,
+                                            :order => 'id ASC')
     end
 
     # If a grouping's submission's marking_status is complete, we're not going

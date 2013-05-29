@@ -80,7 +80,7 @@ class GroupsController < ApplicationController
 
     # Checking if a group with this name already exists
 
-    if (@groups = Group.find(:first, :conditions => {:group_name =>
+    if (@groups = Group.first(:conditions => {:group_name =>
     [params[:new_groupname]]}))
        existing = true
        groupexist_id = @groups.id
@@ -99,7 +99,7 @@ class GroupsController < ApplicationController
       params[:groupexist_id] = groupexist_id
       params[:assignment_id] = @assignment.id
 
-      if Grouping.find(:all, :conditions => ["assignment_id =
+      if Grouping.all(:conditions => ["assignment_id =
       :assignment_id and group_id = :groupexist_id", {:groupexist_id =>
       groupexist_id, :assignment_id => @assignment.id}])
          flash[:fail_notice] = I18n.t('groups.rename_group.already_in_use')
@@ -141,7 +141,7 @@ class GroupsController < ApplicationController
   def populate_students
     @assignment = Assignment.find(params[:assignment_id],
                                   :include => [:groupings])
-    @students = Student.find(:all)
+    @students = Student.all
     @table_rows = construct_student_table_rows(@students, @assignment)
   end
 
