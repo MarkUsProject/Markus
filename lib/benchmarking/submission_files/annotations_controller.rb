@@ -63,7 +63,7 @@ class AnnotationsController < ApplicationController
   def update_comment
     result = Result.find(params[:result_id])
     result.overall_comment = params[:overall_comment]
-    result.save;
+    result.save
     render :update do |page|
     end
   end

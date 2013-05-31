@@ -454,7 +454,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
          
           @c_per_page = @admin.id.to_s + '_' + @assignment.id.to_s + '_per_page'
-          @c_sort_by = @admin.id.to_s + '_' + @assignment.id.to_s + '"_sort_by" '
+          @c_sort_by = @admin.id.to_s + '_' + @assignment.id.to_s + '_sort_by'
           
           get_as @admin,
                  :browse,
