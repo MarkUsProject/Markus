@@ -735,7 +735,7 @@ class Assignment < ActiveRecord::Base
     end
 
     steps = 100 / intervals # number of percentage steps in each interval
-    groupings = self.groupings.all(:include => [{:current_submission_used => :result}])
+    groupings = self.groupings.all(:include => [{:current_submission_used => :results}])
 
     groupings.each do |grouping|
       submission = grouping.current_submission_used
