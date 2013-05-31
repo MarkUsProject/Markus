@@ -78,7 +78,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
       @request.env['HTTP_ACCEPT'] = 'application/xml'
 
       # Default XML elements displayed
-      @default_xml = ['id', 'filename']
+      @default_xml = %w(id filename)
     end
 
     # Testing application/json response
@@ -176,14 +176,14 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     end
 
     # Testing DELETE api/assignments/id/groups/id/test_results/id
-    context "testing destroy" do
+    context 'testing destroy' do
       setup do
         @group = groups(:group_test_result1)
         @assignment = assignments(:assignment_test_result1)
         @test_result = test_results(:test_result_controller_test2)
       end
 
-      should "delete the test result_result if a valid id is given" do
+      should 'delete the test result_result if a valid id is given' do
         found_before = !TestResult.find_by_id(@test_result.id).nil? ? true : false
         delete 'destroy', :group_id => @group.id, :assignment_id => @assignment.id,
           :id => @test_result.id
