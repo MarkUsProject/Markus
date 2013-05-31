@@ -678,7 +678,7 @@ class Assignment < ActiveRecord::Base
           final_result.push(submission.get_latest_result.get_total_extra_percentage)
         end
         # push grace credits info
-        grace_credits_data = student.remaining_grace_credits.to_s + "/" + student.grace_credits.to_s
+        grace_credits_data = student.remaining_grace_credits.to_s + '/' + student.grace_credits.to_s
         final_result.push(grace_credits_data)
 
         csv << final_result

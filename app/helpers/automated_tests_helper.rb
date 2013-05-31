@@ -24,7 +24,7 @@ module AutomatedTestsHelper
       test_file = render(:partial => 'test_file',
                          :locals => {:form => form,
                                      :test_file => TestFile.new,
-                                     :file_type => "lib"})
+                                     :file_type => 'lib'})
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_file_id = new Date().getTime();
@@ -42,7 +42,7 @@ module AutomatedTestsHelper
       test_file = render(:partial => 'test_file',
                          :locals => {:form => form,
                                      :test_file => TestFile.new,
-                                     :file_type => "parse"})
+                                     :file_type => 'parse'})
       page << %{
         if ($F('is_testing_framework_enabled') != null) {
           var new_test_file_id = new Date().getTime();
@@ -146,7 +146,7 @@ module AutomatedTestsHelper
   end
 
   # Verify tests can be executed
-  def can_run_test?()
+  def can_run_test?
     if @current_user.admin?
       true
     elsif @current_user.ta?

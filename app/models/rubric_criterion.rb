@@ -181,7 +181,7 @@ class RubricCriterion < ActiveRecord::Base
     criterion = assignment.rubric_criteria.find_or_create_by_rubric_criterion_name(rubric_criterion_name)
     #Check that the weight is not a string.
     begin
-      criterion.weight = Float(key[1]["weight"])
+      criterion.weight = Float(key[1]['weight'])
     rescue ArgumentError => e
       raise I18n.t('criteria_csv_error.weight_not_number')
     rescue TypeError => e
@@ -195,10 +195,10 @@ class RubricCriterion < ActiveRecord::Base
     end
     # next comes the level names.
     (0..RUBRIC_LEVELS-1).each do |i|
-      if key[1]["level_" + i.to_s]
-        criterion['level_' + i.to_s + '_name'] = key[1]["level_" + i.to_s]["name"]
+      if key[1]['level_' + i.to_s]
+        criterion['level_' + i.to_s + '_name'] = key[1]['level_' + i.to_s]['name']
         criterion['level_' + i.to_s + '_description'] =
-          key[1]["level_" + i.to_s]["description"]
+          key[1]['level_' + i.to_s]['description']
       end
     end
     unless criterion.save
@@ -234,7 +234,7 @@ class RubricCriterion < ActiveRecord::Base
         RubricCriterion.create_or_update_from_csv_row(row, assignment)
         nb_updates += 1
       rescue RuntimeError => e
-        invalid_lines << row.join(',') + ": " + e.message unless invalid_lines.nil?
+        invalid_lines << row.join(',') + ': ' + e.message unless invalid_lines.nil?
       end
     end
     nb_updates

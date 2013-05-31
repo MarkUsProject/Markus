@@ -220,7 +220,7 @@ class GradeEntryFormsController < ApplicationController
     end
 
     # Releasing/unreleasing marks should be logged
-    log_message = ""
+    log_message = ''
     if params[:release_results]
       numGradeEntryStudentsChanged = set_release_on_grade_entry_students(
                                         grade_entry_students,

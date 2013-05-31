@@ -61,7 +61,7 @@ class GradeEntryForm < ActiveRecord::Base
 
   # Determine the average of all of the students' marks that have been
   # released so far (return a percentage).
-  def calculate_released_average()
+  def calculate_released_average
     totalMarks = 0
     numReleased = 0
 
