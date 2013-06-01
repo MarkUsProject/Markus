@@ -336,8 +336,8 @@ class Assignment < ActiveRecord::Base
       group.save
     else
       return nil if new_group_name.nil?
-      if Group.find(:first, :conditions => {:group_name => new_group_name})
-        group = Group.find(:first, :conditions => {:group_name =>       new_group_name})
+      if Group.first(:conditions => {:group_name => new_group_name})
+        group = Group.first(:conditions => {:group_name => new_group_name})
         if !self.groupings.find_by_group_id(group.id).nil?
           raise "Group #{new_group_name} already exists"
         end
@@ -358,7 +358,7 @@ class Assignment < ActiveRecord::Base
   # Create all the groupings for an assignment where students don't work
   # in groups.
   def create_groupings_when_students_work_alone
-     @students = Student.find(:all)
+     @students = Student.all
      for student in @students do
        if !student.has_accepted_grouping_for?(self.id)
         student.create_group_for_working_alone_student(self.id)
