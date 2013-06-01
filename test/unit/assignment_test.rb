@@ -96,30 +96,38 @@ class AssignmentTest < ActiveSupport::TestCase
   end
 
   context "A past due assignment w/ No Late submission rule" do
-    setup do
-      @assignment = Assignment.make({:due_date => 2.days.ago})
-    end
+    context 'without sections' do
+      setup do
+        @assignment = Assignment.make(:due_date => 2.days.ago)
+      end
 
-    should "return true on past_due_date? call" do
-      assert @assignment.past_due_date?
-    end
-    should "return the last due date" do
-      assert_equal 2.days.ago.day(), @assignment.latest_due_date.day()
-    end
+      should "return true on past_due_date? call" do
+        assert @assignment.past_due_date?
+      end
+      should "return the last due date" do
+        assert_equal 2.days.ago.day(), @assignment.latest_due_date.day()
+      end
 
-    should "return true on past_collection_date? call" do
-      assert @assignment.past_collection_date?
+      should "return true on past_collection_date? call" do
+        assert @assignment.past_collection_date?
+      end
+
+      should 'return an array with only "Due Date"' do
+        assert_equal @assignment.what_past_due_date, ['Due Date']
+      end
     end
 
     context "with a section" do
       setup do
-        @section = Section.make
-        student = Student.make
+        @assignment = Assignment.make(:due_date => 2.days.ago, :section_due_dates_type => true)
+        @section = Section.make(:name => 'section_name')
+        SectionDueDate.make(:section => @section, :assignment => @assignment,
+                            :due_date => 1.day.ago)
+        student = Student.make(:section => @section)
         @grouping = Grouping.make(:assignment => @assignment)
         StudentMembership.make(:grouping => @grouping,
                   :user => student,
                   :membership_status => StudentMembership::STATUSES[:inviter])
-
       end
 
       should "return the normal due date for section due date" do
@@ -128,6 +136,27 @@ class AssignmentTest < ActiveSupport::TestCase
 
       should "return true on section_past_due_date? call" do
         assert @assignment.section_past_due_date?(@grouping)
+      end
+
+      should 'return an array with the section name past' do
+        assert_equal @assignment.what_past_due_date, %w(section_name)
+      end
+
+      context 'and another' do
+        setup do
+          @section = Section.make(:name => 'section_name2')
+          SectionDueDate.make(:section => @section, :assignment => @assignment,
+                              :due_date => 1.day.ago)
+          student = Student.make(:section => @section)
+          @grouping = Grouping.make(:assignment => @assignment)
+          StudentMembership.make(:grouping => @grouping,
+                                 :user => student,
+                                 :membership_status => StudentMembership::STATUSES[:inviter])
+        end
+
+        should 'return an array with the sections name past' do
+          assert_equal @assignment.what_past_due_date, %w(section_name section_name2)
+        end
       end
     end
   end
@@ -143,6 +172,10 @@ class AssignmentTest < ActiveSupport::TestCase
 
     should "return false on past_collection_date? call" do
       assert !@assignment.past_collection_date?
+    end
+
+    should 'return an array with nothing inside' do
+      assert_equal @assignment.what_past_due_date, []
     end
 
   end
