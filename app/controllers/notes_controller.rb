@@ -12,9 +12,8 @@ class NotesController < ApplicationController
     @highlight_field = params[:highlight_field]
     @number_of_notes_field = params[:number_of_notes_field]
 
-    @notes = Note.find(:all,
-                       :conditions => {:noteable_id => @noteable.id,
-                                       :noteable_type => @noteable.class.name})
+    @notes = Note.all(:conditions => {:noteable_id => @noteable.id,
+                                      :noteable_type => @noteable.class.name})
     render :partial => "notes/modal_dialogs/notes_dialog_script.rjs"
   end
 
@@ -37,7 +36,7 @@ class NotesController < ApplicationController
   end
 
   def index
-    @notes = Note.find(:all, :order => "created_at DESC", :include => [:user, :noteable])
+    @notes = Note.all(:order => "created_at DESC", :include => [:user, :noteable])
     @current_user = current_user
     # Notes are attached to noteables, if there are no noteables, we can't make notes.
     @noteables_available = Note.noteables_exist?
@@ -72,7 +71,7 @@ class NotesController < ApplicationController
   def noteable_object_selector
     case params[:noteable_type]
       when "Student"
-        @students = Student.find(:all, :order => "user_name")
+        @students = Student.all(:order => "user_name")
       when "Assignment"
         @assignments = Assignment.all
       when "Grouping"

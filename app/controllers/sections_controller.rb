@@ -7,7 +7,7 @@ class SectionsController < ApplicationController
   # Displays sections, and allows to create them
   #TODO Displays metrics concerning users and sections
   def index
-    @sections = Section.find(:all)
+    @sections = Section.all
   end
 
   def new

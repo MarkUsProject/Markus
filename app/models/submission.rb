@@ -9,7 +9,7 @@ class Submission < ActiveRecord::Base
 
   validates_numericality_of :submission_version, :only_integer => true
   belongs_to :grouping
-  has_many   :result, :dependent => :destroy
+  has_many   :results, :dependent => :destroy
   has_many   :submission_files, :dependent => :destroy
   has_many   :annotations, :through => :submission_files
   has_many   :test_results, :dependent => :destroy
@@ -56,16 +56,16 @@ class Submission < ActiveRecord::Base
   # returns the original result 
   def get_original_result
     if self.remark_result_id.nil?
-      result = Result.find(:first, :conditions => ["submission_id = ?", self.id])
+      result = Result.first(:conditions => ["submission_id = ?", self.id])
     else 
-      result = Result.find(:first, :conditions => ["submission_id = ? AND id != ?", self.id, self.remark_result_id])
+      result = Result.first(:conditions => ["submission_id = ? AND id != ?", self.id, self.remark_result_id])
     end
     return result
   end
 
   # returns the remark result if exists, returns nil if does not exist
   def get_remark_result
-    result = Result.find(:first, :conditions => ["id = ?", self.remark_result_id])
+    result = Result.first(:conditions => ["id = ?", self.remark_result_id])
     return result
   end
 
@@ -141,7 +141,7 @@ class Submission < ActiveRecord::Base
   end
 
   def has_result?
-    return !result.nil?
+    results.any?
   end
 
   # Does this submission have a remark result?
@@ -199,7 +199,7 @@ class Submission < ActiveRecord::Base
 
   def create_remark_result
     remark_result = Result.new
-    self.result << remark_result
+    results << remark_result
     remark_result.marking_state = Result::MARKING_STATES[:unmarked]
     remark_result.submission_id = self.id
     remark_result.save
@@ -231,7 +231,7 @@ class Submission < ActiveRecord::Base
 
   def create_result
     result = Result.new
-    self.result << result
+    results << result
     result.marking_state = Result::MARKING_STATES[:unmarked]
     result.save
   end

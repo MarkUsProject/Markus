@@ -109,9 +109,9 @@ class GroupingTest < ActiveSupport::TestCase
         end
       end
 
-  should "display comma separated list of students' usernames" do
-    assert_equal "student1, student2", @grouping.get_all_students_in_group
-  end
+      should "display comma separated list of students' usernames" do
+        assert_equal "student1, student2", @grouping.get_all_students_in_group
+      end
 
       should "be valid" do
         assert_equal @grouping.student_membership_number, 2
@@ -646,6 +646,80 @@ Blanche Nef,ta2'''
     end # end of context "A grouping of two students submitting an assignment"
 
   end # end of context "Assignment has a grace period of 24 hours after due date"
+
+  context 'submit file with testing past_due_date?' do
+    setup do
+      @assignment = Assignment.make(:due_date => Time.parse('July 22 2009 5:00PM'))
+      @group = Group.make
+      @grouping = Grouping.make(:assignment => @assignment, :group => @group)
+    end
+
+    teardown do
+      destroy_repos
+    end
+
+    context 'without sections' do
+
+      should 'before due_date' do
+        submit_file_at_time('July 20 2009 5:00PM', 'my_file', 'Hello, world!')
+        assert !@grouping.past_due_date?
+      end
+
+      should 'after due_date' do
+        submit_file_at_time('July 28 2009 5:00PM', 'my_file', 'Hello, World!')
+        assert @grouping.past_due_date?
+      end
+    end
+
+    context 'with sections' do
+      setup do
+        @assignment.section_due_dates_type = true
+        @assignment.save
+        @section = Section.make
+        StudentMembership.make(:user => Student.make(:section => @section),
+                               :grouping => @grouping,
+                               :membership_status => StudentMembership::STATUSES[:inviter])
+      end
+
+      should 'before due_date and before section due_date' do
+        SectionDueDate.make(:section => @section, :assignment => @assignment,
+                            :due_date => Time.parse('July 24 2009 5:00PM'))
+        submit_file_at_time('July 20 2009 5:00PM', 'my_file', 'Hello, World!')
+        assert !@grouping.past_due_date?
+      end
+
+      should 'before due_date and after section due_date' do
+        SectionDueDate.make(:section => @section, :assignment => @assignment,
+                            :due_date => Time.parse('July 18 2009 5:00PM'))
+        submit_file_at_time('July 20 2009 5:00PM', 'my_file', 'Hello, World!')
+        assert @grouping.past_due_date?
+      end
+
+      should 'after due_date and before section due_date' do
+        SectionDueDate.make(:section => @section, :assignment => @assignment,
+                            :due_date => Time.parse('July 30 2009 5:00PM'))
+        submit_file_at_time('July 28 2009 1:00PM', 'my_file', 'Hello, World!')
+        assert @grouping.past_due_date?
+      end
+
+      should 'after due_date and after section due_date' do
+        SectionDueDate.make(:section => @section, :assignment => @assignment,
+                            :due_date => Time.parse('July 20 2009 5:00PM'))
+        submit_file_at_time('July 28 2009 1:00PM', 'my_file', 'Hello, World!')
+        assert @grouping.past_due_date?
+      end
+    end
+  end
+
+  def submit_file_at_time(time, filename, text)
+    pretend_now_is(Time.parse(time)) do
+      @group.access_repo do |repo|
+        txn = repo.get_transaction('test')
+        txn = add_file_helper(txn, filename, text)
+        repo.commit(txn)
+      end
+    end
+  end
 
   def submit_files_before_due_date
     pretend_now_is(Time.parse("July 20 2009 5:00PM")) do

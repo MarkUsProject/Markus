@@ -124,18 +124,37 @@ class Assignment < ActiveRecord::Base
 
   # Are we past all the due dates for this assignment?
   def past_due_date?
-    # If no section due dates
-    if !self.section_due_dates_type && self.section_due_dates.empty?
+    # If no section due dates /!\ do not check empty? it could be wrong
+    unless self.section_due_dates_type
       return !due_date.nil? && Time.zone.now > due_date
-    # If section due dates
-    else
-      self.section_due_dates.each do |d|
-        if !d.due_date.nil? && Time.zone.now > d.due_date
-          return true
-        end
-      end
-      return false
     end
+
+    # If section due dates
+    self.section_due_dates.each do |d|
+      if !d.due_date.nil? && Time.zone.now > d.due_date
+        return true
+      end
+    end
+    false
+  end
+
+  # Return an array with names of sections past
+  def what_past_due_date
+    sections_past = []
+
+    unless self.section_due_dates_type
+      if !due_date.nil? && Time.zone.now > due_date
+        return sections_past << 'Due Date'
+      end
+    end
+
+    self.section_due_dates.each do |d|
+      if !d.due_date.nil? && Time.zone.now > d.due_date
+        sections_past << d.section.name
+      end
+    end
+
+    sections_past
   end
 
   # Are we past the due date for this assignment, for this grouping ?
@@ -336,8 +355,8 @@ class Assignment < ActiveRecord::Base
       group.save
     else
       return nil if new_group_name.nil?
-      if Group.find(:first, :conditions => {:group_name => new_group_name})
-        group = Group.find(:first, :conditions => {:group_name =>       new_group_name})
+      if Group.first(:conditions => {:group_name => new_group_name})
+        group = Group.first(:conditions => {:group_name => new_group_name})
         if !self.groupings.find_by_group_id(group.id).nil?
           raise "Group #{new_group_name} already exists"
         end
@@ -358,7 +377,7 @@ class Assignment < ActiveRecord::Base
   # Create all the groupings for an assignment where students don't work
   # in groups.
   def create_groupings_when_students_work_alone
-     @students = Student.find(:all)
+     @students = Student.all
      for student in @students do
        if !student.has_accepted_grouping_for?(self.id)
         student.create_group_for_working_alone_student(self.id)
@@ -735,7 +754,7 @@ class Assignment < ActiveRecord::Base
     end
 
     steps = 100 / intervals # number of percentage steps in each interval
-    groupings = self.groupings.all(:include => [{:current_submission_used => :result}])
+    groupings = self.groupings.all(:include => [{:current_submission_used => :results}])
 
     groupings.each do |grouping|
       submission = grouping.current_submission_used

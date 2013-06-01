@@ -7,34 +7,33 @@
     <ul>
 
 	    <% @assignments.each do |assignment| %>
-        <li>
-	  <% if controller == 'assignments' %>
-	    <%= link_to assignment.short_identifier+":
-		"+assignment.description,
-		{:controller => controller,
-		 :action => action,
-		 :id => assignment},
-		      :class => "assignment_list"%>
-	  <% else %>
-	    <%= link_to assignment.short_identifier+":
-		"+assignment.description,
-		{:controller => controller,
-		:action => action,
-		:assignment_id => assignment},
-		      :class => "assignment_list"%>
+      <li>
+	      <% if controller == 'assignments' %>
+	        <%= link_to assignment.short_identifier+":
+	        "+assignment.description,
+                      {:controller => controller,
+                       :action => action,
+                       :id => assignment},
+                      :class => "assignment_list"%>
+        <% else %>
+          <%= link_to assignment.short_identifier+":
+          "+assignment.description,
+                      {:controller => controller,
+                       :action => action,
+                       :assignment_id => assignment},
+                      :class => "assignment_list"%>
+        <% end %>
 
-
-	  <% end %>
-
-	        <span class="info_due_date"><%= I18n.t(:due) %>
+        <span class="info_due_date"><%= I18n.t(:due) %>
           <span class="info_date">
             <%= I18n.l(assignment.due_date, :format => :long_date ) %>
           </span>
           <span id="collected_submissions_<%=assignment.short_identifier %>">
-            <% if assignment.submission_rule.can_collect_now? %>
-              <%=(" | #{assignment.groupings.all(:conditions =>
-                 {:is_collected => true}).size}/#{assignment.groupings.size}
-                 Submissions Collected")%>
+            <% if assignment.submission_rule.can_collect_now? %>|
+              <%= link_to t('submissions_collected',
+                            :count => assignment.groupings.all(:conditions => {:is_collected => true}).size,
+                            :size => assignment.groupings.size), :controller => :submissions,
+                          :action => :browse, :assignment_id => assignment.id %>
             <% end %>
           </span>
           <span id="class_average__<%=assignment.short_identifier %>">
