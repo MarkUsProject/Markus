@@ -649,9 +649,9 @@ Blanche Nef,ta2'''
 
   context 'submit file with testing past_due_date?' do
     setup do
-      @assignment = Assignment.make(:due_date => Time.parse('July 22 2009 5:00PM'))
-      @group = Group.make
-      @grouping = Grouping.make(:assignment => @assignment, :group => @group)
+      @assignment = Assignment.make!(:due_date => Time.parse('July 22 2009 5:00PM'))
+      @group = Group.make!
+      @grouping = Grouping.make!(:assignment => @assignment, :group => @group)
     end
 
     teardown do
@@ -675,35 +675,35 @@ Blanche Nef,ta2'''
       setup do
         @assignment.section_due_dates_type = true
         @assignment.save
-        @section = Section.make
-        StudentMembership.make(:user => Student.make(:section => @section),
+        @section = Section.make!
+        StudentMembership.make!(:user => Student.make!(:section => @section),
                                :grouping => @grouping,
                                :membership_status => StudentMembership::STATUSES[:inviter])
       end
 
       should 'before due_date and before section due_date' do
-        SectionDueDate.make(:section => @section, :assignment => @assignment,
+        SectionDueDate.make!(:section => @section, :assignment => @assignment,
                             :due_date => Time.parse('July 24 2009 5:00PM'))
         submit_file_at_time('July 20 2009 5:00PM', 'my_file', 'Hello, World!')
         assert !@grouping.past_due_date?
       end
 
       should 'before due_date and after section due_date' do
-        SectionDueDate.make(:section => @section, :assignment => @assignment,
+        SectionDueDate.make!(:section => @section, :assignment => @assignment,
                             :due_date => Time.parse('July 18 2009 5:00PM'))
         submit_file_at_time('July 20 2009 5:00PM', 'my_file', 'Hello, World!')
         assert @grouping.past_due_date?
       end
 
       should 'after due_date and before section due_date' do
-        SectionDueDate.make(:section => @section, :assignment => @assignment,
+        SectionDueDate.make!(:section => @section, :assignment => @assignment,
                             :due_date => Time.parse('July 30 2009 5:00PM'))
         submit_file_at_time('July 28 2009 1:00PM', 'my_file', 'Hello, World!')
         assert @grouping.past_due_date?
       end
 
       should 'after due_date and after section due_date' do
-        SectionDueDate.make(:section => @section, :assignment => @assignment,
+        SectionDueDate.make!(:section => @section, :assignment => @assignment,
                             :due_date => Time.parse('July 20 2009 5:00PM'))
         submit_file_at_time('July 28 2009 1:00PM', 'my_file', 'Hello, World!')
         assert @grouping.past_due_date?

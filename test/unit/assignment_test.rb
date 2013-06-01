@@ -210,10 +210,10 @@ class AssignmentTest < ActiveSupport::TestCase
 
     context "with some assignments submitted once" do
       setup do
-        grouping = Grouping.make(:assignment => @assignment)
+        grouping = Grouping.make!(:assignment => @assignment)
         2.times do
-          grouping = Grouping.make(:assignment => @assignment)
-          sub = Submission.make(:grouping => grouping)
+          grouping = Grouping.make!(:assignment => @assignment)
+          sub = Submission.make!(:grouping => grouping)
         end
       end
 
@@ -225,11 +225,11 @@ class AssignmentTest < ActiveSupport::TestCase
 
     context "with some assignments submitted multiple times" do
       setup do
-        grouping = Grouping.make(:assignment => @assignment)
+        grouping = Grouping.make!(:assignment => @assignment)
         2.times do
-          grouping = Grouping.make(:assignment => @assignment)
+          grouping = Grouping.make!(:assignment => @assignment)
           2.times do
-            sub = Submission.make(:grouping => grouping)
+            sub = Submission.make!(:grouping => grouping)
           end
         end
       end

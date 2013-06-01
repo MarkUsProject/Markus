@@ -123,7 +123,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
     end # End context :create image
 
     should "on :destroy" do
-      anno = TextAnnotation.make({
+      anno = TextAnnotation.make!({
         :line_start => 1, :line_end => 1,
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id,
@@ -135,7 +135,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
     end # End context :destroy
 
     should "on :update_annotation" do
-      anno = TextAnnotation.make({
+      anno = TextAnnotation.make!({
         :line_start => 1, :line_end => 1,
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id})
@@ -199,7 +199,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
     end # End context :create image
 
     should "on :destroy" do
-      anno = TextAnnotation.make({
+      anno = TextAnnotation.make!({
         :line_start => 1, :line_end => 1,
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id,
@@ -211,7 +211,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
     end # End context :destroy
 
     should "on :update_annotation" do
-      anno = TextAnnotation.make({
+      anno = TextAnnotation.make!({
         :line_start => 1, :line_end => 1,
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id})

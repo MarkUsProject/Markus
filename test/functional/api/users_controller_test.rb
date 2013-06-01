@@ -84,11 +84,11 @@ class Api::UsersControllerTest < ActionController::TestCase
     context 'testing index function' do
       # Create three test accounts
       setup do
-        @new_user1 = Student.create(:user_name => 'ApiTestStudent1',
+        @new_user1 = Student.make!(:user_name => 'ApiTestStudent1',
           :last_name => 'ApiTesters', :first_name => 'ApiTesting1')
-        @new_user2 = Student.create(:user_name => "ApiTestStudent2",
+        @new_user2 = Student.make!(:user_name => "ApiTestStudent2",
           :last_name => 'ApiTesters', :first_name => 'ApiTesting2')
-        @new_user3 = Student.create(:user_name => 'ApiTestStudent3',
+        @new_user3 = Student.make!(:user_name => 'ApiTestStudent3',
           :last_name => 'ApiTesters3', :first_name => 'ApiTesting3')
       end
 
