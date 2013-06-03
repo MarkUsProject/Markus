@@ -37,8 +37,8 @@ module Api
 
       # Render error if the TestResult does not exist
       if test_result.nil?
-        render 'shared/http_status', :locals => { :code => "404", :message => 
-          "Test result was not found"}, :status => 404
+        render 'shared/http_status', :locals => { :code => '404', :message =>
+          'Test result was not found'}, :status => 404
         return
       end
 
@@ -67,7 +67,7 @@ module Api
 
       # Render error if there's an existing test result with that filename
       test_result = submission.test_results.find_by_filename(params[:filename])
-      if !test_result.nil?
+      unless test_result.nil?
         render 'shared/http_status', :locals => {:code => '409', :message =>
           'A TestResult with that filename already exists'}, :status => 409
         return
@@ -80,12 +80,10 @@ module Api
         # It worked, render success
         render 'shared/http_status', :locals => {:code => '201', :message =>
           HttpStatusHelper::ERROR_CODE['message']['201']}, :status => 201
-        return
       else
         # Some other error occurred
-        render 'shared/http_status', :locals => { :code => "500", :message => 
-          HttpStatusHelper::ERROR_CODE["message"]["500"] }, :status => 500
-        return
+        render 'shared/http_status', :locals => { :code => '500', :message =>
+          HttpStatusHelper::ERROR_CODE['message']['500'] }, :status => 500
       end
     end
 
@@ -100,21 +98,19 @@ module Api
 
       # Render error if the TestResult does not exist
       if test_result.nil?
-        render 'shared/http_status', :locals => { :code => "404", :message => 
-          "Test result was not found"}, :status => 404
+        render 'shared/http_status', :locals => { :code => '404', :message =>
+          'Test result was not found'}, :status => 404
         return
       end
 
       if test_result.destroy
         # Successfully deleted the TestResult; render success
-        render 'shared/http_status', :locals => { :code => "200", :message => 
-          HttpStatusHelper::ERROR_CODE["message"]["200"]}, :status => 200
-        return
+        render 'shared/http_status', :locals => { :code => '200', :message =>
+          HttpStatusHelper::ERROR_CODE['message']['200']}, :status => 200
       else
         # Some other error occurred
-        render 'shared/http_status', :locals => { :code => "500", :message => 
-          HttpStatusHelper::ERROR_CODE["message"]["500"] }, :status => 500
-        return
+        render 'shared/http_status', :locals => { :code => '500', :message =>
+          HttpStatusHelper::ERROR_CODE['message']['500'] }, :status => 500
       end
     end
 
@@ -132,8 +128,8 @@ module Api
 
       # Render error if the TestResult does not exist
       if test_result.nil?
-        render 'shared/http_status', :locals => { :code => "404", :message => 
-          "Test result was not found"}, :status => 404
+        render 'shared/http_status', :locals => { :code => '404', :message =>
+          'Test result was not found'}, :status => 404
         return
       end
 
@@ -150,14 +146,12 @@ module Api
 
       if test_result.save && test_result.update_file_content(params[:file_content])
         # Everything went fine; report success
-        render 'shared/http_status', :locals => { :code => "200", :message => 
-          HttpStatusHelper::ERROR_CODE["message"]["200"]}, :status => 200
-        return
+        render 'shared/http_status', :locals => { :code => '200', :message =>
+          HttpStatusHelper::ERROR_CODE['message']['200']}, :status => 200
       else
         # Some other error occurred
-        render 'shared/http_status', :locals => { :code => "500", :message => 
-          HttpStatusHelper::ERROR_CODE["message"]["500"] }, :status => 500
-        return
+        render 'shared/http_status', :locals => { :code => '500', :message =>
+          HttpStatusHelper::ERROR_CODE['message']['500'] }, :status => 500
       end
     end
 
@@ -188,7 +182,7 @@ module Api
           'Submission was not found'}, :status => 404
       end
 
-      return submission
+      submission
     end
 
   end # end TestResultsController

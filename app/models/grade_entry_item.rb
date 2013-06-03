@@ -31,12 +31,12 @@ class GradeEntryItem < ActiveRecord::Base
   # a program like Excel to import the CSV.)
   def self.create_or_update_from_csv_rows(names, totals, grade_entry_form)
     # The number of question names given should equal the number of question totals
-    if (names.size != totals.size)
+    if names.size != totals.size
       raise I18n.t('grade_entry_forms.csv.incomplete_header')
     end
 
     # Make sure the first elements in names and totals are ""
-    if !(names.shift == "" and totals.shift == "")
+    unless names.shift == '' and totals.shift == ''
       raise I18n.t('grade_entry_forms.csv.incomplete_header')
     end
 
@@ -44,7 +44,7 @@ class GradeEntryItem < ActiveRecord::Base
     (0..(names.size - 1)).each do |i|
       grade_entry_item = grade_entry_form.grade_entry_items.find_or_create_by_name(names[i])
       grade_entry_item.out_of = totals[i]
-      if !grade_entry_item.save
+      unless grade_entry_item.save
         raise RuntimeError.new(grade_entry_item.errors)
       end
     end

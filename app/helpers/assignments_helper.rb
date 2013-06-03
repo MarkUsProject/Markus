@@ -20,7 +20,7 @@ module AssignmentsHelper
           $('grace_periods').insert({bottom: "#{ escape_javascript period }".replace(/(attributes_\\d+|\[\\d+\])/g, new_period_id) });
           $('assignment_submission_rule_attributes_periods_' + new_period_id + '_hours').focus();
         } else {
-          alert("#{I18n.t("submission_rules.grace_period_submission_rule.alert")}");
+          alert("#{I18n.t('submission_rules.grace_period_submission_rule.alert')}");
         }
       }
     end
@@ -35,7 +35,7 @@ module AssignmentsHelper
         $('penalty_decay_periods').insert({bottom: "#{ escape_javascript period }".replace(/(attributes_\\d+|\[\\d+\])/g, new_period_id) });
         $('assignment_submission_rule_attributes_periods_' + new_period_id + '_hours').focus();
       }  else {
-          alert("#{I18n.t("submission_rules.penalty_decay_period_submission_rule.alert")}");
+          alert("#{I18n.t('submission_rules.penalty_decay_period_submission_rule.alert')}");
         }
      }
     end
@@ -50,7 +50,7 @@ module AssignmentsHelper
         $('penalty_periods').insert({bottom: "#{ escape_javascript period }".replace(/(attributes_\\d+|\[\\d+\])/g, new_period_id) });
         $('assignment_submission_rule_attributes_periods_' + new_period_id + '_hours').focus();
       }  else {
-          alert("#{I18n.t("submission_rules.penalty_period_submission_rule.alert")}");
+          alert("#{I18n.t('submission_rules.penalty_period_submission_rule.alert')}");
         }
      }
     end

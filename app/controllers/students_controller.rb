@@ -12,12 +12,12 @@ class StudentsController < ApplicationController
   end
 
   def index
-    @students = Student.all(:order => "user_name")
-    @sections = Section.all(:order => "name")
+    @students = Student.all(:order => 'user_name')
+    @sections = Section.all(:order => 'name')
   end
 
   def populate
-    @students_data = Student.all(:order => "user_name",
+    @students_data = Student.all(:order => 'user_name',
                                  :include => [:section,
                                               :grace_period_deductions])
     # construct_table_rows defined in UsersHelper
@@ -26,21 +26,21 @@ class StudentsController < ApplicationController
 
   def edit
     @user = Student.find_by_id(params[:id])
-    @sections = Section.all(:order => "name")
+    @sections = Section.all(:order => 'name')
   end
 
   def update
     @user = Student.find_by_id(params[:id])
     attrs = params[:user]
     # update_attributes supplied by ActiveRecords
-    if !@user.update_attributes(attrs)
-      flash[:error] = I18n.t("students.update.error")
-      @sections = Section.all(:order => "name")
-      render :edit
-    else
-      flash[:success] = I18n.t("students.update.success",
+    if @user.update_attributes(attrs)
+      flash[:success] = I18n.t('students.update.success',
                                :user_name => @user.user_name)
       redirect_to :action => 'index'
+    else
+      flash[:error] = I18n.t('students.update.error')
+      @sections = Section.all(:order => 'name')
+      render :edit
     end
   end
 
@@ -48,22 +48,22 @@ class StudentsController < ApplicationController
     student_ids = params[:student_ids]
     begin
       if student_ids.nil? || student_ids.empty?
-        raise I18n.t("students.no_students_selected")
+        raise I18n.t('students.no_students_selected')
       end
       case params[:bulk_action]
-        when "hide"
+        when 'hide'
           Student.hide_students(student_ids)
           @students = construct_table_rows(Student.find(student_ids))
           return
-        when "unhide"
+        when 'unhide'
           Student.unhide_students(student_ids)
           @students = construct_table_rows(Student.find(student_ids))
           return
-        when "give_grace_credits"
+        when 'give_grace_credits'
           Student.give_grace_credits(student_ids, params[:number_of_grace_credits])
           @students = construct_table_rows(Student.find(student_ids))
           return
-        when "add_section"
+        when 'add_section'
           Student.update_section(student_ids, params[:section])
           @students = construct_table_rows(Student.find(student_ids))
       end
@@ -75,7 +75,7 @@ class StudentsController < ApplicationController
 
   def new
     @user = Student.new(params[:user])
-    @sections = Section.all(:order => "name")
+    @sections = Section.all(:order => 'name')
   end
 
   def create
@@ -84,11 +84,11 @@ class StudentsController < ApplicationController
     # by the HTML form with the help of ActiveView::Helper::
     @user = Student.new(params[:user])
     if @user.save
-      flash[:success] = I18n.t("students.create.success",
+      flash[:success] = I18n.t('students.create.success',
                                :user_name => @user.user_name)
       redirect_to :action => 'index' # Redirect
     else
-      @sections = Section.all(:order => "name")
+      @sections = Section.all(:order => 'name')
       flash[:error] = I18n.t('students.create.error')
       render :new
     end
@@ -104,20 +104,20 @@ class StudentsController < ApplicationController
   #downloads users with the given role as a csv list
   def download_student_list
     #find all the users
-    students = Student.all(:order => "user_name")
+    students = Student.all(:order => 'user_name')
     case params[:format]
-    when "csv"
+    when 'csv'
       output = User.generate_csv_list(students)
-      format = "text/csv"
-    when "xml"
+      format = 'text/csv'
+    when 'xml'
       output = students.to_xml
-      format = "text/xml"
+      format = 'text/xml'
     else
       # Raise exception?
       output = students.to_xml
-      format = "text/xml"
+      format = 'text/xml'
     end
-    send_data(output, :type => format, :disposition => "inline")
+    send_data(output, :type => format, :disposition => 'inline')
   end
 
   def upload_student_list

@@ -55,7 +55,7 @@ module Api
         return
       end
 
-      if !group.grouping_for_assignment(params[:assignment_id]).nil?
+      if group.grouping_for_assignment(params[:assignment_id])
         # We found a grouping for that assignment
         fields = fields_to_render(@@default_fields)
         students = include_students(fields)
@@ -70,15 +70,13 @@ module Api
         # The group doesn't have a grouping associated with that assignment
         render 'shared/http_status', :locals => {:code => '422', :message =>
           'The group is not involved with that assignment'}, :status => 422
-        return
       end
     end
 
     # Include student_memberships and user info if required
     def include_students(fields)
-      students = {}
       if fields.include?(:student_memberships)
-        students = {:student_memberships => {:include => :user}}
+        {:student_memberships => {:include => :user}}
       end
     end
 
