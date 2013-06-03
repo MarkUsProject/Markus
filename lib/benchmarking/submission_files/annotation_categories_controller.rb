@@ -19,22 +19,21 @@ class AnnotationCategoriesController < ApplicationController
       @annotation_category = AnnotationCategory.new
       @annotation_category.update_attributes(params[:annotation_category])
       @annotation_category.assignment = @assignment
-      if !@annotation_category.save
+      unless @annotation_category.save
         render :new_annotation_category_error
         return
       end
       render :insert_new_annotation_category
-      return
     end
   end
   
   def update_annotation_category
     @annotation_category = AnnotationCategory.find(params[:id])
     @annotation_category.update_attributes(params[:annotation_category])
-    if !@annotation_category.save
-      flash.now[:error] = @annotation_category.errors
-    else
+    if @annotation_category.save
       flash.now[:success] = I18n.t('annotations.update.annotation_category_success')
+    else
+      flash.now[:error] = @annotation_category.errors
     end
   end
   
@@ -51,12 +50,11 @@ class AnnotationCategoriesController < ApplicationController
       @annotation_text = AnnotationText.new
       @annotation_text.update_attributes(params[:annotation_text])
       @annotation_text.annotation_category = @annotation_category
-      if !@annotation_text.save
+      unless @annotation_text.save
         render :new_annotation_text_error
         return
       end
       render :insert_new_annotation_text
-      return
     end
   end
   
@@ -86,17 +84,17 @@ class AnnotationCategoriesController < ApplicationController
   
   def csv_upload
     @assignment = Assignment.find(params[:id])
-    if !request.post? 
+    unless request.post?
       redirect_to :action => 'index', :id => @assignment.id
     end
     annotation_category_list = params[:annotation_category_list]
     annotation_category_number = 0
     FasterCSV.parse(annotation_category_list) do |row|
       next if FasterCSV.generate_line(row).strip.empty?
-      if !AnnotationCategory.add_by_row(row, @assignment)
-        flash[:annotation_upload_invalid_lines] << row.join(",")
-      else
+      if AnnotationCategory.add_by_row(row, @assignment)
         annotation_category_number += 1
+      else
+        flash[:annotation_upload_invalid_lines] << row.join(',')
       end
     end 
     flash[:annotation_upload_success] = I18n.t('annotations.upload.success', :annotation_category_number => annotation_category_number)

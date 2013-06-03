@@ -9,7 +9,7 @@ class AnnotationsController < ApplicationController
     @submission_file = SubmissionFile.find(@submission_file_id)
     submission= @submission_file.submission
     is_remark = submission.has_remark?
-    if params[:annotation_type] == 'image' then
+    if params[:annotation_type] == 'image'
       @annotation = ImageAnnotation.new
       @annotation.update_attributes({
         :x1 => Integer(params[:x1]), :x2 => Integer(params[:x2]),

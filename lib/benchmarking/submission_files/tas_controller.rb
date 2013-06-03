@@ -21,11 +21,11 @@ class TasController < ApplicationController
     @user = Ta.find_by_id(params[:user][:id])
     attrs = params[:user]
     # update_attributes supplied by ActiveRecords
-    if !@user.update_attributes(attrs)
-      render :edit
-    else
-      flash[:edit_notice] = @user.user_name + " has been updated."
+    if @user.update_attributes(attrs)
+      flash[:edit_notice] = @user.user_name + ' has been updated.'
       redirect_to :action => 'index'
+    else
+      render :edit
     end
   end
 
@@ -48,18 +48,18 @@ class TasController < ApplicationController
     #find all the users
     tas = Ta.find(:all, :order => "user_name")
     case params[:format]
-    when "csv"
+    when 'csv'
       output = User.generate_csv_list(tas)
-      format = "text/csv"
-    when "xml"
+      format = 'text/csv'
+    when 'xml'
       output = tas.to_xml
-      format = "text/xml"
+      format = 'text/xml'
     else
       # Raise exception?
       output = tas.to_xml
-      format = "text/xml"
+      format = 'text/xml'
     end
-    send_data(output, :type => format, :disposition => "inline")
+    send_data(output, :type => format, :disposition => 'inline')
   end
   
   

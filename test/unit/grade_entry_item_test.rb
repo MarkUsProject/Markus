@@ -22,7 +22,7 @@ class GradeEntryItemTest < ActiveSupport::TestCase
   should_not allow_value(-1).for(:out_of)
   should_not allow_value(-100).for(:out_of)
 
-  context "A good Grade Entry Item model" do
+  context 'A good Grade Entry Item model' do
     setup do
       GradeEntryItem.make
     end
@@ -34,10 +34,10 @@ class GradeEntryItemTest < ActiveSupport::TestCase
 
   # Make sure different grade entry forms can have grade entry items
   # with the same name
-  should "allow same column name for different grade entry forms" do
+  should 'allow same column name for different grade entry forms' do
     grade_entry_form_1 = GradeEntryForm.make
     grade_entry_form_2 = GradeEntryForm.make
-    column = grade_entry_form_1.grade_entry_items.make(:name => "Q1")
+    column = grade_entry_form_1.grade_entry_items.make(:name => 'Q1')
 
     # Re-use the column name for a different grade entry form
     dup_column = GradeEntryItem.new
@@ -48,7 +48,7 @@ class GradeEntryItemTest < ActiveSupport::TestCase
     assert dup_column.valid?
   end
 
-  context "A GradeEntryItem" do
+  context 'A GradeEntryItem' do
     setup do
       GradeEntryItem.make
     end

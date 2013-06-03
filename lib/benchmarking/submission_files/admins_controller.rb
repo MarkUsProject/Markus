@@ -20,11 +20,11 @@ class AdminsController < ApplicationController
     @user = Admin.find_by_id(params[:user][:id])
     attrs = params[:user]
     # update_attributes supplied by ActiveRecords
-    if !@user.update_attributes(attrs)
-      render :edit
-    else
-      flash[:edit_notice] = @user.user_name + " has been updated."
+    if @user.update_attributes(attrs)
+      flash[:edit_notice] = @user.user_name + ' has been updated.'
       redirect_to :action => 'index'
+    else
+      render :edit
     end
   end
 

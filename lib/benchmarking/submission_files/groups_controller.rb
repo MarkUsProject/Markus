@@ -41,22 +41,22 @@ class GroupsController < ApplicationController
     grouping = Grouping.find(params[:grouping_id])
     member = grouping.student_memberships.find(params[:mbr_id])  # use group as scope
     if member.membership_status == StudentMembership::STATUSES[:inviter]
-        inviter = true
+      inviter = true
+    else
+      inviter = false
     end
     student = member.user  # need to find user name to add to student list
     
     grouping.remove_member(member)
     if inviter
       inviter = grouping.student_memberships.find_by_membership_status(StudentMembership::STATUSES[:inviter])
-    else 
-      inviter == false
     end
 
     render :update do |page|
       page.visual_effect(:fade, "mbr_#{params[:mbr_id]}", :duration => 0.5)
       page.delay(0.5) { page.remove "mbr_#{params[:mbr_id]}" }
       # add members back to student list
-      page.insert_html :bottom, "student_list",  
+      page.insert_html :bottom, 'student_list',
         "<li id='user_#{student.user_name}'>#{student.user_name}</li>"
      if inviter
         # find the new inviter
@@ -100,42 +100,41 @@ class GroupsController < ApplicationController
   end
 
   def rename_group
-     @assignment = Assignment.find(params[:id])
-     @grouping = Grouping.find(params[:grouping_id]) 
-     @group = @grouping.group
+    @assignment = Assignment.find(params[:id])
+    @grouping = Grouping.find(params[:grouping_id])
+    @group = @grouping.group
 
-     # Checking if a group with this name already exists
+    # Checking if a group with this name already exists
 
     if (@groups = Group.find(:first, :conditions => {:group_name =>
-     [params[:new_groupname]]}))
-         existing = true
-         groupexist_id = @groups.id
+                                                         [params[:new_groupname]]}))
+      existing = true
+      groupexist_id = @groups.id
     end
     
-    if !existing
-        #We update the group_name
-        @group.group_name = params[:new_groupname]
-        @group.save
-        flash[:edit_notice] = "Group name has been updated"
-     else
+    if existing
 
-        # We link the grouping to the group already existing
+      # We link the grouping to the group already existing
 
-        # We verify there is no other grouping linked to this group on the
-        # same assignement
-        params[:groupexist_id] = groupexist_id
-        params[:assignment_id] = @assignment.id
+      # We verify there is no other grouping linked to this group on the
+      # same assignement
+      params[:groupexist_id] = groupexist_id
+      params[:assignment_id] = @assignment.id
 
-        if Grouping.find(:all, :conditions => ["assignment_id =
-        :assignment_id and group_id = :groupexist_id", {:groupexist_id =>
-        groupexist_id, :assignment_id => @assignment.id}])
-           flash[:fail_notice] = "This name is already used for this
-           assignement"
-        else
-          @grouping.update_attribute(:group_id, groupexist_id)
-          flash[:edit_notice] = "Group name has been changed"
-        end
-     end
+      if Grouping.find(:all, :conditions =>
+          ["assignment_id = :assignment_id and group_id = :groupexist_id",
+           {:groupexist_id => groupexist_id, :assignment_id => @assignment.id}])
+        flash[:fail_notice] = 'This name is already used for this assignement'
+      else
+        @grouping.update_attribute(:group_id, groupexist_id)
+        flash[:edit_notice] = 'Group name has been changed'
+      end
+    else
+      #We update the group_name
+      @group.group_name = params[:new_groupname]
+      @group.save
+      flash[:edit_notice] = 'Group name has been updated'
+    end
   end
 
   def valid_grouping
@@ -167,7 +166,7 @@ class GroupsController < ApplicationController
   # Assign TAs to Groupings via a csv file
   def csv_upload_grader_mapping
     if !request.post? || params[:grader_mapping].nil?
-      flash[:error] = "You must supply a CSV file for group to grader mapping"
+      flash[:error] = 'You must supply a CSV file for group to grader mapping'
       redirect_to :action => 'manage', :id => params[:id]
       return
     end
@@ -201,8 +200,8 @@ class GroupsController < ApplicationController
           FasterCSV.parse(params[:group][:grouplist]) do |row|
             retval = @assignment.add_csv_group(row)
             if retval == nil || retval.instance_of?(Array)
-              if !retval.nil?
-                flash[:invalid_lines] << "Line #{line_nr}: User(s) not found: " +retval.join(", ")
+              if retval
+                flash[:invalid_lines] << "Line #{line_nr}: User(s) not found: " +retval.join(', ')
               else
                 flash[:invalid_lines] << line_nr
               end
@@ -212,16 +211,16 @@ class GroupsController < ApplicationController
             line_nr += 1
           end
           msg = "#{num_update} group(s) added."
-          msg += flash[:invalid_lines].length "lines contained errors." if flash[:invalid_lines].length > 0
+          msg += flash[:invalid_lines].length 'lines contained errors.' if flash[:invalid_lines].length > 0
           flash[:upload_notice] = msg
           flash[:invalid_lines] = nil if flash[:invalid_lines].length == 0
         rescue Exception
-          flash[:error] = "There was an error regarding CSV upload."
+          flash[:error] = 'There was an error regarding CSV upload.'
           raise ActiveRecord::Rollback
         end
       end
     end
-    redirect_to :action => "manage", :id => params[:id]
+    redirect_to :action => 'manage', :id => params[:id]
   end
   
   def download_grouplist
@@ -241,7 +240,7 @@ class GroupsController < ApplicationController
        end
      end
 
-    send_data(file_out, :type => "text/csv", :disposition => "inline")
+    send_data(file_out, :type => 'text/csv', :disposition => 'inline')
   end
 
   def use_another_assignment_groups
@@ -249,10 +248,10 @@ class GroupsController < ApplicationController
     source_assignment = Assignment.find(params[:clone_groups_assignment_id])
       
     if source_assignment.nil?
-      flash[:fail_notice] = "Could not find source assignment for cloning groups"
+      flash[:fail_notice] = 'Could not find source assignment for cloning groups'
     end
     if @target_assignment.nil?
-      flash[:fail_notice] = "Could not find target assignment for cloning groups"
+      flash[:fail_notice] = 'Could not find target assignment for cloning groups'
     end
       
     # First, destroy all groupings for the target assignment
@@ -289,7 +288,7 @@ class GroupsController < ApplicationController
       end
     end
 
-    flash[:edit_notice] = "Groups created"
+    flash[:edit_notice] = 'Groups created'
   end
 
   # TODO:  This method is massive, and does way too much.  Whatever happened
@@ -301,7 +300,7 @@ class GroupsController < ApplicationController
     if params[:submit_type] == 'random_assign'
       begin 
         if params[:graders].nil?
-          raise "You must select at least one grader for random assignment"
+          raise 'You must select at least one grader for random assignment'
         end
         randomly_assign_graders(params[:graders], @assignment.groupings)
         @groupings_data = construct_table_rows(@assignment.groupings, @assignment)
@@ -316,7 +315,7 @@ class GroupsController < ApplicationController
     
     grouping_ids = params[:groupings]
     if params[:groupings].nil? or params[:groupings].size ==  0
-      @error = "You need to select at least one group."
+      @error = 'You need to select at least one group.'
       render :error_single
       return
     end
@@ -324,7 +323,7 @@ class GroupsController < ApplicationController
     @groupings = []
     
     case params[:global_actions]
-      when "delete"
+      when 'delete'
         @removed_groupings = []
         @errors = []
         groupings = Grouping.find(grouping_ids)
@@ -339,7 +338,7 @@ class GroupsController < ApplicationController
         render :delete_groupings
         return
       
-      when "invalid"
+      when 'invalid'
         groupings = Grouping.find(grouping_ids)
         groupings.each do |grouping|
            grouping.invalidate_grouping
@@ -348,7 +347,7 @@ class GroupsController < ApplicationController
         render :modify_groupings
         return      
       
-      when "valid"
+      when 'valid'
         groupings = Grouping.find(grouping_ids)
         groupings.each do |grouping|
            grouping.validate_grouping
@@ -357,12 +356,12 @@ class GroupsController < ApplicationController
         render :modify_groupings
         return
         
-      when "assign"
+      when 'assign'
         @groupings_data = assign_tas_to_groupings(grouping_ids, params[:graders])
         render :modify_groupings
         return
         
-      when "unassign"
+      when 'unassign'
         @groupings_data = unassign_tas_to_groupings(grouping_ids, params[:graders])
         render :modify_groupings
         return
