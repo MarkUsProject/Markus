@@ -3,11 +3,11 @@ class StudentsController < ApplicationController
   before_filter    :authorize_only_for_admin
   
   def index
-    @students = Student.find(:all, :order => "user_name")
+    @students = Student.all(:order => "user_name")
   end
   
   def populate
-    @students_data = Student.find(:all, :order => "user_name")
+    @students_data = Student.all(:order => "user_name")
     # construct_table_rows defined in UsersHelper
     @students = construct_table_rows(@students_data)
   end
@@ -84,7 +84,7 @@ class StudentsController < ApplicationController
   #downloads users with the given role as a csv list
   def download_student_list
     #find all the users
-    students = Student.find(:all, :order => "user_name")
+    students = Student.all(:order => "user_name")
     case params[:format]
     when 'csv'
       output = User.generate_csv_list(students)

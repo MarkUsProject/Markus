@@ -113,7 +113,7 @@ class Student < User
       @grouping = Grouping.new
       @grouping.assignment_id = @assignment.id
       if !Group.first(:conditions => {:group_name => self.user_name}).nil?
-        @group = Group.find(:first, :conditions => {:group_name => self.user_name})
+        @group = Group.first(:conditions => {:group_name => self.user_name})
       else
         @group = Group.new(:group_name => self.user_name)
         # We want to have the user_name as repository name,
