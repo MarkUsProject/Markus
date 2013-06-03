@@ -44,17 +44,17 @@ class MainController < ApplicationController
         # This message actually means "Username not found", but it's from a security-perspective
         # not a good idea to report this to the outside world. It makes it easier for attempted break-ins
         # if one can distinguish between existent and non-existent user.
-        flash[:login_notice] = "Login failed." # this is actually a "Username not found."
+        flash[:login_notice] = 'Login failed.' # this is actually a "Username not found."
         return
       end
     else
-      flash[:login_notice] = "Username/password contains illegal characters."
+      flash[:login_notice] = 'Username/password contains illegal characters.'
       return
     end
     
     # Has this student been hidden?
     if found_user.student? && found_user.hidden
-      flash[:login_notice] = "This account has been disabled"
+      flash[:login_notice] = 'This account has been disabled'
       redirect_to(:action => 'login') && return
     end
     
@@ -67,7 +67,7 @@ class MainController < ApplicationController
       # redirect to last visited page or to main page
       redirect_to( uri || { :action => 'index' } )
     else
-      flash[:login_notice] = "Login failed."
+      flash[:login_notice] = 'Login failed.'
     end
   end
   

@@ -6,7 +6,7 @@ module UsersHelper
     users.each do |user|
       result[user.id] = construct_table_row(user)
     end
-    return result
+    result
   end
 
   # Construct a single table row
@@ -27,8 +27,8 @@ module UsersHelper
       @render_note_link = true
     end
     result[:hidden] = user.hidden
-    result[:filter_table_row_contents] = render_to_string :partial => "users/table_row/filter_table_row", :locals => {:user => user, :controller => self.controller_name, :render_note_link => @render_note_link}
-    return result
+    result[:filter_table_row_contents] = render_to_string :partial => 'users/table_row/filter_table_row', :locals => {:user => user, :controller => self.controller_name, :render_note_link => @render_note_link}
+    result
   end
 
 end

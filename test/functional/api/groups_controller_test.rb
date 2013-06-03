@@ -80,9 +80,9 @@ class Api::GroupsControllerTest < ActionController::TestCase
       @request.env['HTTP_ACCEPT'] = 'application/xml'
 
       # Default XML elements displayed
-      @default_xml = ['id', 'group-name', 'created-at', 'updated-at', 'first-name',
-                      'last-name', 'user-name', 'membership-status', 
-                      'student-memberships'];
+      @default_xml = %w(id group-name created-at updated-at first-name
+                        last-name user-name membership-status
+                        student-memberships)
     end
 
     # Testing application/json response

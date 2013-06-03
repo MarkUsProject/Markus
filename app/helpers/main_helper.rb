@@ -8,20 +8,20 @@ module MainHelper
   end
 
   def get_blank_message(blank_login, blank_password)
-    return "" unless blank_login || blank_password
+    return '' unless blank_login || blank_password
 
     if blank_login && blank_password
-      message = I18n.t(:username_and_password_not_blank)
+      I18n.t(:username_and_password_not_blank)
     elsif blank_login
-      message = I18n.t(:username_not_blank)
+      I18n.t(:username_not_blank)
     elsif blank_password
-      message = I18n.t(:password_not_blank)
+      I18n.t(:password_not_blank)
     end
 
   end
 
   def due_date_color(assignment)
-    return assignment.past_collection_date? ? 'after' : 'before'
+    assignment.past_collection_date? ? 'after' : 'before'
   end
 
 end

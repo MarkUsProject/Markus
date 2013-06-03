@@ -8,10 +8,10 @@ class Assignment < ActiveRecord::Base
   }
 
   has_many :rubric_criteria,
-           :class_name => "RubricCriterion",
+           :class_name => 'RubricCriterion',
            :order => :position
   has_many :flexible_criteria,
-           :class_name => "FlexibleCriterion",
+           :class_name => 'FlexibleCriterion',
            :order => :position
   has_many :assignment_files
   has_many :test_files
@@ -27,7 +27,7 @@ class Assignment < ActiveRecord::Base
 
   has_many :groupings
   has_many :ta_memberships,
-           :class_name => "TaMembership",
+           :class_name => 'TaMembership',
            :through => :groupings
   has_many :student_memberships, :through => :groupings
   has_many :tokens, :through => :groupings
@@ -81,44 +81,44 @@ class Assignment < ActiveRecord::Base
     final = ActiveSupport::OrderedHash.new
     criteria.each do |criterion|
       inner = ActiveSupport::OrderedHash.new
-      inner["weight"] =  criterion["weight"]
-      inner["level_0"] = {
-        "name"=>  criterion["level_0_name"] ,
-        "description"=>  criterion["level_0_description"]
+      inner['weight'] =  criterion['weight']
+      inner['level_0'] = {
+        'name' =>  criterion['level_0_name'] ,
+        'description' =>  criterion['level_0_description']
       }
-      inner["level_1"] = {
-        "name"=>  criterion["level_1_name"] ,
-        "description"=>  criterion["level_1_description"]
+      inner['level_1'] = {
+        'name' =>  criterion['level_1_name'] ,
+        'description' =>  criterion['level_1_description']
       }
-      inner["level_2"] = {
-        "name"=>  criterion["level_2_name"] ,
-        "description"=>  criterion["level_2_description"]
+      inner['level_2'] = {
+        'name' =>  criterion['level_2_name'] ,
+        'description' =>  criterion['level_2_description']
       }
-      inner["level_3"] = {
-        "name"=>  criterion["level_3_name"] ,
-        "description"=>  criterion["level_3_description"]
+      inner['level_3'] = {
+        'name' =>  criterion['level_3_name'] ,
+        'description' =>  criterion['level_3_description']
       }
-      inner["level_4"] = {
-        "name"=>  criterion["level_4_name"] ,
-        "description"=> criterion["level_4_description"]
+      inner['level_4'] = {
+        'name' =>  criterion['level_4_name'] ,
+        'description' => criterion['level_4_description']
       }
-      criteria_yml = {"#{criterion["rubric_criterion_name"]}" => inner}
+      criteria_yml = {"#{criterion['rubric_criterion_name']}" => inner}
       final = final.merge(criteria_yml)
     end
-    return final.to_yaml
+    final.to_yaml
   end
 
   def minimum_number_of_groups
     if (group_max && group_min) && group_max < group_min
-      errors.add(:group_max, "must be greater than the minimum number of groups")
-      return false
+      errors.add(:group_max, 'must be greater than the minimum number of groups')
+      false
     end
   end
 
   def check_timezone
     if Time.zone.parse(due_date.to_s).nil?
       errors.add :due_date, 'is not a valid date'
-      return false
+      false
     end
   end
 
@@ -162,7 +162,7 @@ class Assignment < ActiveRecord::Base
     if self.section_due_dates_type and !grouping.inviter.section.nil?
         section_due_date =
     SectionDueDate.due_date_for(grouping.inviter.section, self)
-        return !section_due_date.nil? && Time.zone.now > section_due_date
+        !section_due_date.nil? && Time.zone.now > section_due_date
     else
       self.past_due_date?
     end
@@ -171,34 +171,34 @@ class Assignment < ActiveRecord::Base
   # return the due date for a section
   def section_due_date(section)
     if self.section_due_dates_type
-      if !section.nil?
+      unless section.nil?
         return SectionDueDate.due_date_for(section, self)
       end
     end
-    return self.due_date
+    self.due_date
   end
 
   # Calculate the latest due date. Used to calculate the collection time
   def latest_due_date
-    if !self.section_due_dates_type
-      return self.due_date
-    else
+    if self.section_due_dates_type
       due_date = self.due_date
       self.section_due_dates.each do |d|
         if !d.due_date.nil? && due_date < d.due_date
           due_date = d.due_date
         end
       end
-      return due_date
+      due_date
+    else
+      self.due_date
     end
   end
 
   def past_collection_date?
-    return Time.zone.now > submission_rule.calculate_collection_time
+    Time.zone.now > submission_rule.calculate_collection_time
   end
 
   def past_remark_due_date?
-    return !remark_due_date.nil? && Time.zone.now > remark_due_date
+    !remark_due_date.nil? && Time.zone.now > remark_due_date
   end
 
   # Returns a Submission instance for this user depending on whether this
@@ -220,10 +220,10 @@ class Assignment < ActiveRecord::Base
       grouping.assignment.id != self.id
     }
 
-    unless assignment_groupings.empty?
-      return assignment_groupings.first.submissions.first
+    if assignment_groupings.empty?
+      nil
     else
-      return nil
+      assignment_groupings.first.submissions.first
     end
   end
 
@@ -243,10 +243,10 @@ class Assignment < ActiveRecord::Base
     # condition += " and memberships.status != 'rejected'"
     # add non-pending status clause to condition
     # condition += " and memberships.status != 'pending'" unless pending
-    # groupings.find(:first, :include => :memberships, :conditions => [condition, uid]) #FIXME: needs schema update
+    # groupings.first(:include => :memberships, :conditions => [condition, uid]) #FIXME: needs schema update
 
     #FIXME: needs to be rewritten using a proper query...
-    return User.find(uid).accepted_grouping_for(self.id)
+    User.find(uid).accepted_grouping_for(self.id)
   end
 
   # Make a list of students without any groupings
@@ -254,15 +254,15 @@ class Assignment < ActiveRecord::Base
    @students = Student.all(:order => :last_name, :conditions => {:hidden => false})
    @students_list = []
    @students.each do |s|
-     if !s.has_accepted_grouping_for?(self.id)
+     unless s.has_accepted_grouping_for?(self.id)
        @students_list.push(s)
       end
    end
-   return @students_list
+   @students_list
   end
 
   def display_for_note
-    return short_identifier
+    short_identifier
   end
 
   def total_mark
@@ -274,7 +274,7 @@ class Assignment < ActiveRecord::Base
     else
       total = flexible_criteria.sum('max')
     end
-    return total
+    total
   end
 
   # calculates summary statistics of released results for this assignment
@@ -287,7 +287,7 @@ class Assignment < ActiveRecord::Base
     results_zeros = 0
     groupings.each do |grouping|
       submission = grouping.current_submission_used
-      if !submission.nil?
+      unless submission.nil?
         result = submission.get_latest_result
         if result.released_to_students
           results.push result.total_mark
@@ -344,7 +344,7 @@ class Assignment < ActiveRecord::Base
 
   def total_criteria_weight
     factor = 10.0 ** 2
-    return (rubric_criteria.sum('weight') * factor).floor / factor
+    (rubric_criteria.sum('weight') * factor).floor / factor
   end
 
   def add_group(new_group_name=nil)
@@ -357,7 +357,7 @@ class Assignment < ActiveRecord::Base
       return nil if new_group_name.nil?
       if Group.first(:conditions => {:group_name => new_group_name})
         group = Group.first(:conditions => {:group_name => new_group_name})
-        if !self.groupings.find_by_group_id(group.id).nil?
+        unless self.groupings.find_by_group_id(group.id).nil?
           raise "Group #{new_group_name} already exists"
         end
       else
@@ -370,7 +370,7 @@ class Assignment < ActiveRecord::Base
     grouping.group = group
     grouping.assignment = self
     grouping.save
-    return grouping
+    grouping
   end
 
 
@@ -379,7 +379,7 @@ class Assignment < ActiveRecord::Base
   def create_groupings_when_students_work_alone
      @students = Student.all
      for student in @students do
-       if !student.has_accepted_grouping_for?(self.id)
+       unless student.has_accepted_grouping_for?(self.id)
         student.create_group_for_working_alone_student(self.id)
        end
      end
@@ -407,20 +407,20 @@ class Assignment < ActiveRecord::Base
           !m.user.hidden
         end
         #create the memberships for any user that is not hidden
-        if !unhidden_student_memberships.empty?
+        unless unhidden_student_memberships.empty?
           #create the groupings
           grouping = Grouping.new
           grouping.group_id = g.group_id
           grouping.assignment_id = self.id
           grouping.admin_approved = g.admin_approved
-          raise "Could not save grouping" if !grouping.save
+          raise 'Could not save grouping' if !grouping.save
           all_memberships = unhidden_student_memberships + unhidden_ta_memberships
           all_memberships.each do |m|
             membership = Membership.new
             membership.user_id = m.user_id
             membership.type = m.type
             membership.membership_status = m.membership_status
-            raise "Could not save membership" if !(grouping.memberships << membership)
+            raise 'Could not save membership' if !(grouping.memberships << membership)
           end
           # Ensure all student members have permissions on their group repositories
           grouping.update_repository_permissions
@@ -453,7 +453,7 @@ class Assignment < ActiveRecord::Base
     # similar semantics.
     if is_candidate_for_setting_custom_repo_name?(row)
       # Do this only if user_name exists and is a student.
-      if !Student.find_by_user_name(row[2]).nil?
+      if Student.find_by_user_name(row[2])
         group.repo_name = row[0]
       else
         # Student name does not exist, use provided repo_name
@@ -463,7 +463,7 @@ class Assignment < ActiveRecord::Base
 
     # If we are not repository admin, set the repository name as provided
     # in the csv upload file
-    if !group.repository_admin?
+    unless group.repository_admin?
       group.repo_name = row[1].strip # remove whitespace
     end
     # Note: after_create hook build_repository might raise
@@ -474,8 +474,8 @@ class Assignment < ActiveRecord::Base
     # shouldn't happen anyway, because the lookup earlier should prevent
     # repo collisions e.g. when uploading the same CSV file twice.
     group.save
-    if !group.errors[:base].blank?
-      collision_error = I18n.t("csv.repo_collision_warning",
+    unless group.errors[:base].blank?
+      collision_error = I18n.t('csv.repo_collision_warning',
                           { :repo_name => group.errors.on_base,
                             :group_name => row[0] })
     end
@@ -489,8 +489,8 @@ class Assignment < ActiveRecord::Base
     start_index_group_members = 2 # first field is the group-name, second the repo name, so start at field 3
     (start_index_group_members..(row.length - 1)).each do |i|
       student = Student.find_by_user_name(row[i].strip) # remove whitespace
-      if !student.nil?
-        if (grouping.student_membership_number == 0)
+      if student
+        if grouping.student_membership_number == 0
           # Add first valid member as inviter to group.
           grouping.group_id = group.id
           grouping.save # grouping has to be saved, before we can add members
@@ -501,7 +501,7 @@ class Assignment < ActiveRecord::Base
       end
 
     end
-    return collision_error
+    collision_error
   end
 
   # Updates repository permissions for all groupings of
@@ -521,7 +521,7 @@ class Assignment < ActiveRecord::Base
     student_memberships.each do |student_membership|
       result_students.push(student_membership.user)
     end
-    return result_students
+    result_students
   end
 
   def ungrouped_students
@@ -535,19 +535,19 @@ class Assignment < ActiveRecord::Base
         result.push(grouping)
       end
     end
-    return result
+    result
   end
 
   def invalid_groupings
-    return groupings - valid_groupings
+    groupings - valid_groupings
   end
 
   def assigned_groupings
-    return groupings.all(:joins => :ta_memberships, :include => [{:ta_memberships => :user}]).uniq
+    groupings.all(:joins => :ta_memberships, :include => [{:ta_memberships => :user}]).uniq
   end
 
   def unassigned_groupings
-    return groupings - assigned_groupings
+    groupings - assigned_groupings
   end
 
   # Get a list of subversion client commands to be used for scripting
@@ -556,29 +556,28 @@ class Assignment < ActiveRecord::Base
     
     self.groupings.each do |grouping|
       submission = grouping.current_submission_used
-      if !submission.nil?
+      if submission
         svn_commands.push("svn export -r #{submission.revision_number} #{grouping.group.repository_external_access_url}/#{self.repository_folder} \"#{grouping.group.group_name}\"")
       end
     end
-    return svn_commands
+    svn_commands
   end
 
   # Get a list of group_name, repo-url pairs
   def get_svn_repo_list
-    string = CsvHelper::Csv.generate do |csv|
+    CsvHelper::Csv.generate do |csv|
       self.groupings.each do |grouping|
         group = grouping.group
         csv << [group.group_name,group.repository_external_access_url]
       end
     end
-    return string
   end
 
   # Get a simple CSV report of marks for this assignment
   def get_simple_csv_report
     students = Student.all
     out_of = self.total_mark
-    csv_string = CsvHelper::Csv.generate do |csv|
+    CsvHelper::Csv.generate do |csv|
        students.each do |student|
          final_result = []
          final_result.push(student.user_name)
@@ -592,7 +591,6 @@ class Assignment < ActiveRecord::Base
          csv << final_result
        end
     end
-    return csv_string
   end
 
   # Get a detailed CSV report of marks (includes each criterion)
@@ -601,10 +599,10 @@ class Assignment < ActiveRecord::Base
   def get_detailed_csv_report
     # which marking scheme do we have?
     if self.marking_scheme_type == MARKING_SCHEME_TYPE[:flexible]
-      return get_detailed_csv_report_flexible
+      get_detailed_csv_report_flexible
     else
       # default to rubric
-      return get_detailed_csv_report_rubric
+      get_detailed_csv_report_rubric
     end
   end
 
@@ -619,7 +617,7 @@ class Assignment < ActiveRecord::Base
     out_of = self.total_mark
     students = Student.all
     rubric_criteria = self.rubric_criteria
-    csv_string = CsvHelper::Csv.generate do |csv|
+    CsvHelper::Csv.generate do |csv|
       students.each do |student|
         final_result = []
         final_result.push(student.user_name)
@@ -637,7 +635,7 @@ class Assignment < ActiveRecord::Base
           submission = grouping.current_submission_used
           final_result.push(submission.get_latest_result.total_mark / out_of * 100)
           rubric_criteria.each do |rubric_criterion|
-            mark = submission.get_latest_result.marks.find_by_markable_id_and_markable_type(rubric_criterion.id, "RubricCriterion")
+            mark = submission.get_latest_result.marks.find_by_markable_id_and_markable_type(rubric_criterion.id, 'RubricCriterion')
             if mark.nil?
               final_result.push('')
             else
@@ -649,13 +647,12 @@ class Assignment < ActiveRecord::Base
           final_result.push(submission.get_latest_result.get_total_extra_percentage)
         end
         # push grace credits info
-        grace_credits_data = student.remaining_grace_credits.to_s + "/" + student.grace_credits.to_s
+        grace_credits_data = student.remaining_grace_credits.to_s + '/' + student.grace_credits.to_s
         final_result.push(grace_credits_data)
 
         csv << final_result
       end
     end
-    return csv_string
   end
 
   # Get a detailed CSV report of flexible criteria based marks
@@ -668,7 +665,7 @@ class Assignment < ActiveRecord::Base
     out_of = self.total_mark
     students = Student.all
     flexible_criteria = self.flexible_criteria
-    csv_string = CsvHelper::Csv.generate do |csv|
+    CsvHelper::Csv.generate do |csv|
       students.each do |student|
         final_result = []
         final_result.push(student.user_name)
@@ -688,7 +685,7 @@ class Assignment < ActiveRecord::Base
           submission = grouping.current_submission_used
           final_result.push(submission.get_latest_result.total_mark / out_of * 100)
           flexible_criteria.each do |criterion|
-            mark = submission.get_latest_result.marks.find_by_markable_id_and_markable_type(criterion.id, "FlexibleCriterion")
+            mark = submission.get_latest_result.marks.find_by_markable_id_and_markable_type(criterion.id, 'FlexibleCriterion')
             if mark.nil?
               final_result.push('')
             else
@@ -700,13 +697,12 @@ class Assignment < ActiveRecord::Base
           final_result.push(submission.get_latest_result.get_total_extra_percentage)
         end
         # push grace credits info
-        grace_credits_data = student.remaining_grace_credits.to_s + "/" + student.grace_credits.to_s
+        grace_credits_data = student.remaining_grace_credits.to_s + '/' + student.grace_credits.to_s
         final_result.push(grace_credits_data)
 
         csv << final_result
       end
     end
-    return csv_string
   end
 
   def replace_submission_rule(new_submission_rule)
@@ -723,22 +719,22 @@ class Assignment < ActiveRecord::Base
   def next_criterion_position
     # We're using count here because this fires off a DB query, thus
     # grabbing the most up-to-date count of the rubric criteria.
-    return self.rubric_criteria.count + 1
+    self.rubric_criteria.count + 1
   end
 
   def get_criteria
     if self.marking_scheme_type == 'rubric'
-       return self.rubric_criteria
+      self.rubric_criteria
     else
-       return self.flexible_criteria
+      self.flexible_criteria
     end
   end
 
   def criteria_count
     if self.marking_scheme_type == 'rubric'
-       return self.rubric_criteria.size
+      self.rubric_criteria.size
     else
-       return self.flexible_criteria.size
+      self.flexible_criteria.size
     end
   end
 
@@ -758,9 +754,9 @@ class Assignment < ActiveRecord::Base
 
     groupings.each do |grouping|
       submission = grouping.current_submission_used
-      if !submission.nil? && submission.has_result?
+      if submission && submission.has_result?
         result = submission.get_latest_completed_result
-        if !result.nil?
+        unless result.nil?
           percentage = (result.total_mark / out_of * 100).ceil
           if percentage == 0
             distribution[0] += 1
@@ -775,22 +771,22 @@ class Assignment < ActiveRecord::Base
       end
     end # end of groupings loop
 
-    return distribution
+    distribution
   end
 
   # Returns all the TAs associated with the assignment
   def tas
     ids = self.ta_memberships.map { |m| m.user_id }
-    return Ta.find(ids)
+    Ta.find(ids)
   end
 
   # Returns all the submissions that have been graded
   def graded_submissions
-    return self.submissions.select { |submission| submission.get_latest_completed_result }
+    self.submissions.select { |submission| submission.get_latest_completed_result }
   end
 
   def groups_submitted
-    return self.groupings.select { |grouping| grouping.has_submission?}
+    self.groupings.select { |grouping| grouping.has_submission?}
   end
 
   private
@@ -807,9 +803,9 @@ class Assignment < ActiveRecord::Base
        self.allow_web_submits == false &&
        row.length == 3 && self.group_max == 1 &&
        !row[2].blank? && row[0] == row[2]
-      return true
+      true
     else
-      return false
+      false
     end
   end
 

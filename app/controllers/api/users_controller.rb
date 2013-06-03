@@ -34,7 +34,7 @@ module Api
 
       # Check if that user_name is taken
       user = User.find_by_user_name(params[:user_name])
-      if !user.nil?
+      unless user.nil?
         render 'shared/http_status', :locals => {:code => '409', :message =>
           'User already exists'}, :status => 409
         return
@@ -42,11 +42,11 @@ module Api
 
       # No conflict found, so create new user
       param_user_type = params[:type].downcase
-      if param_user_type == "student"
+      if param_user_type == 'student'
         user_type = Student
-      elsif param_user_type == "ta" || param_user_type == "grader"
+      elsif param_user_type == 'ta' || param_user_type == 'grader'
         user_type = Ta
-      elsif param_user_type == "admin"
+      elsif param_user_type == 'admin'
         user_type = Admin
       else # Unknown user_type, Invalid HTTP params.
         render 'shared/http_status', :locals => { :code => '422', :message =>
@@ -58,7 +58,7 @@ module Api
       attributes = process_attributes(params, attributes)
 
       new_user = user_type.new(attributes)
-      if !new_user.save
+      unless new_user.save
         # Some error occurred
         render 'shared/http_status', :locals => {:code => '500', :message =>
           HttpStatusHelper::ERROR_CODE['message']['500']}, :status => 500
@@ -79,7 +79,6 @@ module Api
         # No user with that id
         render 'shared/http_status', :locals => {:code => '404', :message =>
           'No user exists with that id'}, :status => 404
-        return
       else
         fields = fields_to_render(@@default_fields)
 
@@ -112,7 +111,7 @@ module Api
       # Create a hash to hold fields/values to be updated for the user
       attributes = {}
 
-      if !params[:user_name].blank?
+      unless params[:user_name].blank?
         # Make sure the user_name isn't taken
         other_user = User.find_by_user_name(params[:user_name])
         if !other_user.nil? && other_user != user
@@ -126,7 +125,7 @@ module Api
       attributes = process_attributes(params, attributes)
 
       user.attributes = attributes
-      if !user.save
+      unless user.save
         # Some error occurred
         render 'shared/http_status', :locals => { :code => '500', :message =>
           HttpStatusHelper::ERROR_CODE['message']['500'] }, :status => 500
@@ -136,27 +135,26 @@ module Api
       # Otherwise everything went alright.
       render 'shared/http_status', :locals => {:code => '200', :message =>
         HttpStatusHelper::ERROR_CODE['message']['200']}, :status => 200
-      return
     end
 
     # Process the parameters passed for user creation and update
     def process_attributes(params, attributes)
       # Get the id of the section corresponding to :section_name
-      if !params[:section_name].blank?
+      unless params[:section_name].blank?
         section = Section.find_by_name(params[:section_name])
-        if !section.blank?
+        unless section.blank?
           attributes[:section_id] = section.id
         end
       end
 
       parameters = [:last_name, :first_name, :type, :grace_credits]
       parameters.each do |key|
-        if !params[key].blank?
+        unless params[key].blank?
           attributes[key] = params[key]
         end
       end
 
-      return attributes
+      attributes
     end
   end # end UsersController
 end
