@@ -447,7 +447,7 @@ newuser2,USER2,USER2")
           end
 
           should "create the group" do
-            assert Group.find(:first, :conditions => {:group_name => @student.user_name}), "the group has not been created"
+            assert Group.first(:conditions => {:group_name => @student.user_name}), "the group has not been created"
           end
 
           should "not have any pending memberships" do

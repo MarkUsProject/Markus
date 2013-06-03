@@ -106,8 +106,8 @@ class GroupsController < ApplicationController
 
      # Checking if a group with this name already exists
 
-    if (@groups = Group.find(:first, :conditions => {:group_name =>
-     [params[:new_groupname]]}))
+    if (@groups = Group.first(:conditions =>
+                                  {:group_name => [params[:new_groupname]]}))
          existing = true
          groupexist_id = @groups.id
     end
@@ -126,7 +126,7 @@ class GroupsController < ApplicationController
         params[:groupexist_id] = groupexist_id
         params[:assignment_id] = @assignment.id
 
-        if Grouping.find(:all, :conditions => ["assignment_id =
+        if Grouping.all(:conditions => ["assignment_id =
         :assignment_id and group_id = :groupexist_id", {:groupexist_id =>
         groupexist_id, :assignment_id => @assignment.id}])
            flash[:fail_notice] = "This name is already used for this

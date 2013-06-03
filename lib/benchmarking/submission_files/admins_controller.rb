@@ -6,7 +6,7 @@ class AdminsController < ApplicationController
   end
   
   def populate
-    admins_data = Admin.find(:all, :order => "user_name")
+    admins_data = Admin.all(:order => "user_name")
     # construct_table_rows defined in UsersHelper
     @admins = construct_table_rows(admins_data)
   end
