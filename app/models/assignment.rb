@@ -224,7 +224,7 @@ class Assignment < ActiveRecord::Base
     # condition += " and memberships.status != 'rejected'"
     # add non-pending status clause to condition
     # condition += " and memberships.status != 'pending'" unless pending
-    # groupings.find(:first, :include => :memberships, :conditions => [condition, uid]) #FIXME: needs schema update
+    # groupings.first(:include => :memberships, :conditions => [condition, uid]) #FIXME: needs schema update
 
     #FIXME: needs to be rewritten using a proper query...
     return User.find(uid).accepted_grouping_for(self.id)

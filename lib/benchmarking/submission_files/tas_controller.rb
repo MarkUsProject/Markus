@@ -3,11 +3,11 @@ class TasController < ApplicationController
   before_filter  :authorize_only_for_admin
   
   def index
-    @tas = Ta.find(:all, :order => "user_name")
+    @tas = Ta.all(:order => "user_name")
   end
   
   def populate
-    @tas_data = Ta.find(:all, :order => "user_name")
+    @tas_data = Ta.all(:order => "user_name")
     # construct_table_rows defined in UsersHelper
     @tas = construct_table_rows(@tas_data)
   end
@@ -46,7 +46,7 @@ class TasController < ApplicationController
   #downloads users with the given role as a csv list
   def download_ta_list
     #find all the users
-    tas = Ta.find(:all, :order => "user_name")
+    tas = Ta.all(:order => "user_name")
     case params[:format]
     when "csv"
       output = User.generate_csv_list(tas)

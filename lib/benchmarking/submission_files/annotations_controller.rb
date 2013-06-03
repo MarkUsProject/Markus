@@ -87,7 +87,7 @@ class AnnotationsController < ApplicationController
 #    file_out = ""
 #    assignments = Assignment.find(:all, :order => "id")
 #    students = User.find_all_by_role('student')
-#    results = Result.find(:all)
+#    results = Result.all
 #    #need to create the header, which is the list of assignments and their total
 #    #mark
 #    assignments.each do |asst|
