@@ -65,7 +65,7 @@ class GradeEntryForm < ActiveRecord::Base
     totalMarks = 0
     numReleased = 0
 
-    grade_entry_students = self.grade_entry_students.find(:all, :conditions => { :released_to_student => true })
+    grade_entry_students = self.grade_entry_students.all(:conditions => { :released_to_student => true })
     grade_entry_students.each do |grade_entry_student|
       totalMark = self.calculate_total_mark(grade_entry_student.user_id)
       if totalMark != BLANK_MARK

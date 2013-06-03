@@ -149,7 +149,7 @@ class MainController < ApplicationController
       redirect_to :controller => 'assignments', :action => 'index'
       return
     end
-    @assignments = Assignment.find(:all)
+    @assignments = Assignment.unscoped.all(:order => 'due_date DESC')
     render :index, :layout => 'content'
   end
 

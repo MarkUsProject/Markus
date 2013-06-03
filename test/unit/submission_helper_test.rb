@@ -29,9 +29,9 @@ class SubmissionHelperTest < ActiveSupport::TestCase
     context 'containing only valid characters in a filename' do
       setup do
         @filenames_not_to_be_sanitized = %w(valid_file.sh
-                                            valid_001.file.ext"
-                                            valid-master.png"
-                                            some__file___.org-png"
+                                            valid_001.file.ext
+                                            valid-master.png
+                                            some__file___.org-png
                                             001.txt)
       end
 

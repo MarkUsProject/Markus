@@ -251,7 +251,9 @@ class SubmissionsController < ApplicationController
   def collect_ta_submissions
     assignment = Assignment.find(params[:assignment_id])
     if assignment.submission_rule.can_collect_now?
-      groupings = assignment.groupings.find(:all, :include => :tas, :conditions => ['users.id = ?', current_user.id])
+      groupings = assignment.groupings.all(:include => :tas,
+                                           :conditions => ['users.id = ?',
+                                                           current_user.id])
       submission_collector = SubmissionCollector.instance
       submission_collector.push_groupings_to_queue(groupings)
       flash[:success] = I18n.t('collect_submissions.collection_job_started',
@@ -316,10 +318,11 @@ class SubmissionsController < ApplicationController
 
     #Eager load all data only for those groupings that will be displayed
     sorted_groupings = @groupings
-    @groupings = Grouping.find(:all, :conditions => {:id => sorted_groupings},
-      :include => [:assignment, :group, :grace_period_deductions,
-        {:current_submission_used => :results},
-        {:accepted_student_memberships => :user}])
+    @groupings = Grouping.all(:conditions => {:id => sorted_groupings},
+                              :include =>
+                                  [:assignment, :group, :grace_period_deductions,
+                                   {:current_submission_used => :results},
+                                   {:accepted_student_memberships => :user}])
 
     #re-sort @groupings by the previous order, because eager loading query
     #messed up the grouping order

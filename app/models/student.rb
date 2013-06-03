@@ -74,7 +74,7 @@ class Student < User
 
   def memberships_for(aid)
      @student = self
-     @memberships = StudentMembership.find(:all, :conditions => {:user_id => @student.id})
+     @memberships = StudentMembership.all(:conditions => {:user_id => @student.id})
      @memberships.each do |m|
        if m.grouping.assignment_id != aid
          @memberships.delete(m)
@@ -112,7 +112,7 @@ class Student < User
       @assignment = Assignment.find(aid)
       @grouping = Grouping.new
       @grouping.assignment_id = @assignment.id
-      if !Group.find(:first, :conditions => {:group_name => self.user_name}).nil?
+      if !Group.first(:conditions => {:group_name => self.user_name}).nil?
         @group = Group.find(:first, :conditions => {:group_name => self.user_name})
       else
         @group = Group.new(:group_name => self.user_name)

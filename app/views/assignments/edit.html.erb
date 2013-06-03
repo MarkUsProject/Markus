@@ -1,6 +1,8 @@
-<% if @assignment.past_due_date? %>
+
+<% unless @past_date.nil? || @past_date.empty? %>
   <div class="notice">
-    <%=t('past_due_date_warning')%>
+    <%= t 'past_due_date_notice' %>
+    <%= @past_date.join(', ') %>.
   </div>
 <% end %>
 

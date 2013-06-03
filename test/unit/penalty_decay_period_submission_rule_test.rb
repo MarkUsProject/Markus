@@ -47,7 +47,7 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
 
     should 'be able to calculate collection time for a grouping' do
       assert Time.now <  @assignment.due_date
-      assert_equal @assignment.due_date, @rule.calculate_grouping_collection_time(@membership.grouping)
+      assert_equal @assignment.due_date.to_a, @rule.calculate_grouping_collection_time(@membership.grouping).to_a
     end
 
     should 'not apply decay period deductions for on-time submissions' do

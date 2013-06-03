@@ -32,7 +32,7 @@ class Result < ActiveRecord::Base
   #returns the sum of the marks not including bonuses/deductions
   def get_subtotal
     total = 0.0
-    self.marks.find(:all, :include => [:markable]).each do |m|
+    self.marks.all(:include => [:markable]).each do |m|
       total = total + m.get_mark
     end
     total
