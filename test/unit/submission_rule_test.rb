@@ -9,7 +9,7 @@ class SubmissionRuleTest < ActiveSupport::TestCase
     destroy_repos
   end
 
-  should "raise a whole bunch of NotImplemented errors" do
+  should 'raise a whole bunch of NotImplemented errors' do
     rule = SubmissionRule.new
     rule.assignment = Assignment.make
 
@@ -34,7 +34,7 @@ class SubmissionRuleTest < ActiveSupport::TestCase
     end
   end
 
-  context "Grace period ids" do
+  context 'Grace period ids' do
     setup do
 
 	  # Create SubmissionRule with default type 'GracePeriodSubmissionRule'
@@ -56,7 +56,7 @@ class SubmissionRuleTest < ActiveSupport::TestCase
 	  @period = Period.make(:id => first_period_id + 3, :submission_rule_id => sub_rule_id)
     end
 
-    should "sort in ascending order" do
+    should 'sort in ascending order' do
     # Loop through periods for this SubmissionRule and verify the ids are
     # sorted in ascending order
 	  previous_id = @submission_rule.periods[0][:id]
@@ -67,7 +67,7 @@ class SubmissionRuleTest < ActiveSupport::TestCase
     end
   end
 
-  context "Penalty period ids" do
+  context 'Penalty period ids' do
     setup do
 
 	  # Create SubmissionRule with default type 'PenaltyPeriodSubmissionRule'
@@ -89,7 +89,7 @@ class SubmissionRuleTest < ActiveSupport::TestCase
 	  @period = Period.make(:id => first_period_id + 3, :submission_rule_id => sub_rule_id)
     end
 
-    should "sort in ascending order" do
+    should 'sort in ascending order' do
 	  # Loop through periods for this SubmissionRule and verify the ids are sorted in ascending order
 	  previous_id = @submission_rule.periods[0][:id]
 	  for i in (1..4) do
@@ -99,17 +99,17 @@ class SubmissionRuleTest < ActiveSupport::TestCase
     end
   end
 
-  context "Assignment with a due date in 2 days" do
+  context 'Assignment with a due date in 2 days' do
     setup do
       @assignment = Assignment.make
     end
 
-    should "have not be able to collect" do
+    should 'have not be able to collect' do
       assert !@assignment.submission_rule.can_collect_now?,
-             "assignment cannot be collected now"
+             'assignment cannot be collected now'
     end
 
-    should "be able to get due date" do
+    should 'be able to get due date' do
       assert_equal @assignment.due_date,
                    @assignment.submission_rule.get_collection_time
     end
@@ -117,7 +117,7 @@ class SubmissionRuleTest < ActiveSupport::TestCase
   end
   
   
-  context "Assignment with a coming due date and with a past section due date" do
+  context 'Assignment with a coming due date and with a past section due date' do
     
     # called before every single test in this context
     setup do
@@ -127,7 +127,7 @@ class SubmissionRuleTest < ActiveSupport::TestCase
         :due_date => 2.days.from_now, :group_min => 1)
       
       # ... but the section due date is in the past
-      @section = Section.make(:name => "section1")
+      @section = Section.make(:name => 'section1')
       @sectionDueDate = SectionDueDate.make(:section => @section,
         :assignment => @assignment, :due_date => 2.days.ago)
       
@@ -139,7 +139,7 @@ class SubmissionRuleTest < ActiveSupport::TestCase
       
     end
     
-    should "be able to collect the submissions from groups of this section" do
+    should 'be able to collect the submissions from groups of this section' do
       assert @assignment.submission_rule.can_collect_grouping_now?(@grouping),
         "Could not collect submission of the group whereas due date for the group's section is past"
     end
@@ -147,17 +147,17 @@ class SubmissionRuleTest < ActiveSupport::TestCase
   end
   
   
-  context "Assignment with a past due date" do
+  context 'Assignment with a past due date' do
     setup do
       @assignment = Assignment.make(:due_date => 2.days.ago)
     end
 
-    should "should be able to collect" do
+    should 'should be able to collect' do
       assert_equal(@assignment.due_date, @assignment.submission_rule.get_collection_time,
-        "due date should be equal to collection time for no late submission rule")
+        'due date should be equal to collection time for no late submission rule')
       # due date is two days ago, so it can be collected
       assert @assignment.submission_rule.can_collect_now?,
-             "assignment can be collected now"
+             'assignment can be collected now'
     end
   end
 

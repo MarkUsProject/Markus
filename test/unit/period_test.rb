@@ -8,89 +8,89 @@ class PeriodTest < ActiveSupport::TestCase
   should have_db_column :interval
   should belong_to :submission_rule
 
-  context "A valid grace period" do
+  context 'A valid grace period' do
     setup do
       @period = Period.make
     end
 
-    should "return true when a positive hour value is entered" do
+    should 'return true when a positive hour value is entered' do
       assert @period.valid?
     end
   end
 
-  context "A valid grace period" do
+  context 'A valid grace period' do
     setup do
       @period = Period.make
     end
 
-    should "return true when zero hours is entered" do
+    should 'return true when zero hours is entered' do
       @period.hours = 0
       assert @period.valid?
     end
   end
 
-  context "An invalid grace period" do
+  context 'An invalid grace period' do
     setup do
       @period = Period.make
     end
 
-    should "return false when nil hours is entered" do
+    should 'return false when nil hours is entered' do
       @period.hours = nil
-      assert !@period.valid?, "period expected to be invalid when hours is set to nil"
+      assert !@period.valid?, 'period expected to be invalid when hours is set to nil'
     end
   end
 
-  context "An invalid grace period" do
+  context 'An invalid grace period' do
     setup do
       @period = Period.make
     end
 
-    should "return false when a negative hour value is entered" do
+    should 'return false when a negative hour value is entered' do
       @period.hours = -10
-      assert !@period.valid?, "period expected to be invalid when hours is negative"
+      assert !@period.valid?, 'period expected to be invalid when hours is negative'
     end
   end
 
-  context "A penalty decay period" do
+  context 'A penalty decay period' do
     setup do
       @period = Period.new
-      @period.submission_rule_type = "PenaltyDecayPeriodSubmissionRule"
+      @period.submission_rule_type = 'PenaltyDecayPeriodSubmissionRule'
     end
 
-    should "validate presence of deduction" do
+    should 'validate presence of deduction' do
       #no deduction is set
       assert !@period.valid?
     end
 
-    should "validate numericality of deduction" do
-      @period.deduction = "string"
+    should 'validate numericality of deduction' do
+      @period.deduction = 'string'
       assert !@period.valid?
     end
 
-    should "validate presence of interval" do
+    should 'validate presence of interval' do
       #no interval is set
       assert !@period.valid?
     end
 
-    should "validate numericality of interval" do
-      @period.interval = "string"
+    should 'validate numericality of interval' do
+      @period.interval = 'string'
       assert !@period.valid?
     end
   end
 
-  context "A penalty period" do
+  context 'A penalty period' do
     setup do
       @period = Period.new
-      @period.submission_rule_type = "PenaltyPeriodSubmissionRule"
+      @period.submission_rule_type = 'PenaltyPeriodSubmissionRule'
     end
 
-    should "validate presence of deduction" do
+    should 'validate presence of deduction' do
       #no deduction is set
       assert !@period.valid?
     end
 
-    should "validate numericality of deduction" do
-      @period.deduction = "string"
+    should 'validate numericality of deduction' do
+      @period.deduction = 'string'
       assert !@period.valid?
     end
 
