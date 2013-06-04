@@ -35,7 +35,8 @@ class ResultsController < ApplicationController
 
     @old_result = nil
     if @submission.remark_submitted?
-      @old_result = Result.find(:all, :conditions => ["submission_id = ?", @submission.id], :order =>["id ASC"])[0]
+      @old_result = Result.all(:conditions => ['submission_id = ?', @submission.id],
+                               :order => ['id ASC'])[0]
     end
 
     @annotation_categories = @assignment.annotation_categories
@@ -74,10 +75,8 @@ class ResultsController < ApplicationController
          m.grouping
        end
     elsif current_user.admin?
-      groupings = @assignment.groupings.find(
-                      :all,
-                      :include => :group,
-                      :order => 'id ASC')
+      groupings = @assignment.groupings.all(:include => :group,
+                                            :order => 'id ASC')
     end
 
     # If a grouping's submission's marking_status is complete, we're not going
@@ -101,7 +100,7 @@ class ResultsController < ApplicationController
       @next_grouping = groupings.first
       @previous_grouping = groupings.last
     else
-      if !groupings[current_grouping_index + 1].nil?
+      unless groupings[current_grouping_index + 1].nil?
         @next_grouping = groupings[current_grouping_index + 1]
       end
       if (current_grouping_index - 1) >= 0
@@ -131,7 +130,7 @@ class ResultsController < ApplicationController
   def set_released_to_students
     @result = Result.find(params[:id])
     released_to_students = (params[:value] == 'true')
-    if (params[:old_id])
+    if params[:old_id]
       @old_result = Result.find(params[:old_id])
       @old_result.released_to_students = released_to_students
       @old_result.save
@@ -159,18 +158,17 @@ class ResultsController < ApplicationController
       if params[:value] == Result::MARKING_STATES[:complete]
         @result.submission.assignment.assignment_stat.refresh_grade_distribution
       end
-      render :template => "results/update_marking_state"
+      render :template => 'results/update_marking_state'
     else # Failed to pass validations
       # Show error message
-      render :template => "results/marker/show_result_error"
-      return
+      render :template => 'results/marker/show_result_error'
     end
   end
 
   def download
     #Ensure student doesn't download a file not submitted by his own grouping
-    if !authorized_to_download?(params[:select_file_id])
-      render 'shared/http_status.html', :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false
+    unless authorized_to_download?(params[:select_file_id])
+      render 'shared/http_status.html', :locals => { :code => '404', :message => HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404, :layout => false
       return
     end
     file = SubmissionFile.find(params[:select_file_id])
@@ -192,13 +190,13 @@ class ResultsController < ApplicationController
     #Display the file in the page if it is an image/pdf, and download button
     #was not explicitly pressed
     if file.is_supported_image? && !params[:show_in_browser].nil?
-      send_data file_contents, :type => "image", :disposition => 'inline',
+      send_data file_contents, :type => 'image', :disposition => 'inline',
         :filename => filename
     elsif file.is_pdf? && !params[:show_in_browser].nil?
       send_file File.join(MarkusConfigurator.markus_config_pdf_storage,
         file.submission.grouping.group.repository_name, file.path,
-        filename.split('.')[0] + '_' + sprintf("%04d" % params[:file_index].to_s()) + '.jpg'),
-        :type => "image", :disposition => 'inline', :filename => filename
+        filename.split('.')[0] + '_' + sprintf('%04d' % params[:file_index].to_s()) + '.jpg'),
+        :type => 'image', :disposition => 'inline', :filename => filename
     else
       send_data file_contents, :filename => filename
     end
@@ -240,10 +238,10 @@ class ResultsController < ApplicationController
       storage_path = File.join(MarkusConfigurator.markus_config_pdf_storage,
         @file.submission.grouping.group.repository_name,
         @file.path)
-      filePathToCheck = File.join(storage_path, @file.filename.split('.')[0] + '_' + sprintf("%04d" % i.to_s()) + '.jpg')
+      filePathToCheck = File.join(storage_path, @file.filename.split('.')[0] + '_' + sprintf('%04d' % i.to_s()) + '.jpg')
       while File.exists?(filePathToCheck)
         i += 1
-        filePathToCheck = File.join(storage_path, @file.filename.split('.')[0] + '_' + sprintf("%04d" % i.to_s()) + '.jpg')
+        filePathToCheck = File.join(storage_path, @file.filename.split('.')[0] + '_' + sprintf('%04d' % i.to_s()) + '.jpg')
       end
       i -= 1
       @nb_pdf_files_to_download = i
@@ -263,25 +261,25 @@ class ResultsController < ApplicationController
     # FIXME checking both that result_mark is valid and correctly saved is
     # useless. The validation is done automatically before saving unless
     # specified otherwise.
-    if !result_mark.valid?
+    if result_mark.valid?
+      unless result_mark.save
+        m_logger.log("Error while trying to update mark of submission. User: '" +
+                         "#{current_user.user_name}', Submission ID: '#{submission.id}'," +
+                         " Assignment: '#{assignment.short_identifier}', Group: '#{group.group_name}'.",
+                     MarkusLogger::ERROR)
+        render :partial => 'shared/handle_error',
+               :locals => {:error => I18n.t('mark.error.save') + result_mark.errors.full_messages.join}
+      else
+        m_logger.log("User '#{current_user.user_name}' updated mark for submission (id: " +
+                         "#{submission.id}) of assignment '#{assignment.short_identifier}' for group" +
+                         " '#{group.group_name}'.", MarkusLogger::INFO)
+        render :partial => 'results/marker/update_mark',
+               :locals => { :result_mark => result_mark, :mark_value => result_mark.mark}
+      end
+    else
       render :partial => 'results/marker/mark_verify_result',
              :locals => {:mark_id => result_mark.id,
                          :mark_error => result_mark.errors.full_messages.join}
-    else
-      if !result_mark.save
-          m_logger.log("Error while trying to update mark of submission. User: '" +
-                       "#{current_user.user_name}', Submission ID: '#{submission.id}'," +
-                       " Assignment: '#{assignment.short_identifier}', Group: '#{group.group_name}'.",
-                       MarkusLogger::ERROR)
-          render :partial => 'shared/handle_error',
-                 :locals => {:error => I18n.t('mark.error.save') + result_mark.errors.full_messages.join}
-      else
-          m_logger.log("User '#{current_user.user_name}' updated mark for submission (id: " +
-                       "#{submission.id}) of assignment '#{assignment.short_identifier}' for group" +
-                       " '#{group.group_name}'.", MarkusLogger::INFO)
-          render :partial => 'results/marker/update_mark',
-                 :locals => { :result_mark => result_mark, :mark_value => result_mark.mark}
-      end
     end
   end
 
@@ -295,12 +293,12 @@ class ResultsController < ApplicationController
                   :id => params[:id]
       return
     end
-    if !@grouping.has_submission?
+    unless @grouping.has_submission?
       render 'results/student/no_submission'
       return
     end
     @submission = @grouping.current_submission_used
-    if !@submission.has_result?
+    unless @submission.has_result?
       render 'results/student/no_result'
       return
     end
@@ -312,13 +310,13 @@ class ResultsController < ApplicationController
       @result = @submission.get_remark_result
       # if remark result's marking state is 'unmarked' then the student has
       # saved a remark request but not submitted it yet, therefore, still editable
-      if (@result.marking_state != Result::MARKING_STATES[:unmarked] && !@result.released_to_students)
+      if @result.marking_state != Result::MARKING_STATES[:unmarked] && !@result.released_to_students
         render 'results/student/no_remark_result'
         return
       end
     end
 
-    if !@result.released_to_students
+    unless @result.released_to_students
       render 'results/student/no_result'
       return
     end
@@ -357,12 +355,12 @@ class ResultsController < ApplicationController
       @extra_mark = ExtraMark.new
       @extra_mark.result = @result
       @extra_mark.unit = ExtraMark::UNITS[:points]
-      if !@extra_mark.update_attributes(params[:extra_mark])
-        render :template => 'results/marker/add_extra_mark_error'
-      else
+      if @extra_mark.update_attributes(params[:extra_mark])
         # need to re-calculate total mark
         @result.update_total_mark
         render :template => 'results/marker/insert_extra_mark'
+      else
+        render :template => 'results/marker/add_extra_mark_error'
       end
       return
     end
@@ -394,16 +392,16 @@ class ResultsController < ApplicationController
 
   def update_remark_request
     @assignment = Assignment.find(params[:assignment_id])
-    if !@assignment.past_remark_due_date?
+    unless @assignment.past_remark_due_date?
       @submission = Submission.find(params[:id])
       @submission.remark_request = params[:submission][:remark_request]
       @submission.remark_request_timestamp = Time.zone.now
       @submission.save
       @old_result = @submission.get_original_result
-      if !(@submission.get_remark_result)
+      unless @submission.get_remark_result
         @submission.create_remark_result
       end
-      if (params[:real_commit] == "Submit")
+      if params[:real_commit] == 'Submit'
         @result = @submission.get_remark_result
         @result.marking_state = Result::MARKING_STATES[:partial]
         @old_result.released_to_students = (params[:value] == 'false')
@@ -463,7 +461,6 @@ class ResultsController < ApplicationController
 
   private
 
-
   #Return true if select_file_id matches the id of a file submitted by the
   #current_user. This is to prevent students from downloading files that they
   #or their group have not submitted. Return false otherwise.
@@ -473,11 +470,11 @@ class ResultsController < ApplicationController
       return true
     end
     sub_file = SubmissionFile.find_by_id(select_file_id)
-    if !sub_file.nil?
+    unless sub_file.nil?
       #Check that current_user is in fact in grouping that sub_file belongs to
       return !sub_file.submission.grouping.accepted_students.find(current_user).nil?
     end
-    return false
+    false
   end
   
   def update_remark_request_count

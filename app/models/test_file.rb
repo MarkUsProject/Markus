@@ -36,15 +36,15 @@ class TestFile < ActiveRecord::Base
     # Case 1: test, lib and parse type files cannot be called 'build.xml' or 'build.properties'
     # (need to check this in case the user uploads test, lib or parse files before uploading ant files
     #  in which case the build.xml and build.properties will not exist yet)
-    if (f_type != "build.xml" && f_type != "build.properties") && (f_name == "build.xml" || f_name == "build.properties")
-      record.errors.add(:base, I18n.t("automated_tests.invalid_filename"))
+    if (f_type != 'build.xml' && f_type != 'build.properties') && (f_name == 'build.xml' || f_name == 'build.properties')
+      record.errors.add(:base, I18n.t('automated_tests.invalid_filename'))
     end
 
     # Case 2: build.xml and build.properties must be named correctly
-    if f_type == "build.xml" && f_name != "build.xml"
-      record.errors.add(:base, I18n.t("automated_tests.invalid_buildxml"))
-    elsif f_type == "build.properties" && f_name != "build.properties"
-      record.errors.add(:base, I18n.t("automated_tests.invalid_buildproperties"))
+    if f_type == 'build.xml' && f_name != 'build.xml'
+      record.errors.add(:base, I18n.t('automated_tests.invalid_buildxml'))
+    elsif f_type == 'build.properties' && f_name != 'build.properties'
+      record.errors.add(:base, I18n.t('automated_tests.invalid_buildproperties'))
     end
 
     # Case 3: validates_uniqueness_of filename for this assignment
@@ -52,7 +52,7 @@ class TestFile < ActiveRecord::Base
     if f_name && a_id
       dup_file = TestFile.find_by_assignment_id_and_filename(a_id, f_name)
       if dup_file && dup_file.id != t_id
-        record.errors.add attr, ' ' + f_name + ' ' + I18n.t("automated_tests.filename_exists")
+        record.errors.add attr, ' ' + f_name + ' ' + I18n.t('automated_tests.filename_exists')
       end
     end
   end
@@ -66,9 +66,9 @@ class TestFile < ActiveRecord::Base
 
       # Sanitize filename:
       self.filename.strip!
-      self.filename.gsub(/^(..)+/, ".")
+      self.filename.gsub(/^(..)+/, '.')
       # replace spaces with
-      self.filename.gsub(/[^\s]/, "")
+      self.filename.gsub(/[^\s]/, '')
       # replace all non alphanumeric, underscore or periods with underscore
       self.filename.gsub(/^[\W]+$/, '_')
     end
@@ -98,13 +98,13 @@ class TestFile < ActiveRecord::Base
 
       # Folders for test, lib and parse files:
       # Test Files Folder
-      if self.filetype == "test"
+      if self.filetype == 'test'
         test_dir = File.join(test_dir, 'test')
       # Lib Files Folder
-      elsif self.filetype == "lib"
+      elsif self.filetype == 'lib'
         test_dir = File.join(test_dir, 'lib')
       # Parser Files Folder
-      elsif self.filetype == "parse"
+      elsif self.filetype == 'parse'
         test_dir = File.join(test_dir, 'parse')
       end
 
@@ -115,18 +115,18 @@ class TestFile < ActiveRecord::Base
       FileUtils.makedirs(test_dir)
 
       # Read and write the file (overwrite if it exists)
-      File.open(path, "w+") { |f| f.write(@file_path.read) }
+      File.open(path, 'w+') { |f| f.write(@file_path.read) }
     end
   end
 
   def delete_file
     # Test Framework repository to delete from
     test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
-    if self.filetype == "test"
+    if self.filetype == 'test'
       test_dir = File.join(test_dir, 'test')
-    elsif self.filetype == "lib"
+    elsif self.filetype == 'lib'
       test_dir = File.join(test_dir, 'lib')
-    elsif self.filetype == "parse"
+    elsif self.filetype == 'parse'
       test_dir = File.join(test_dir, 'parse')
     end
 

@@ -8,7 +8,7 @@ include PaginationHelper
 
 class PaginationHelperTest < ActiveSupport::TestCase
 
-  context "I need some points paginated" do
+  context 'I need some points paginated' do
 
     setup do
       if defined?(Oracle).nil?
@@ -19,38 +19,38 @@ class PaginationHelperTest < ActiveSupport::TestCase
         :per_pages => nil,
         :filters => {
           'none' => {
-            :display => "all",
+            :display => 'all',
             :proc => lambda { |params, to_include|
-              return Oracle.get_all()
+              Oracle.get_all()
             }
           },
           'even' => {
-            :display => "even",
+            :display => 'even',
             :proc => lambda { |params, to_include|
-              return Oracle.get_even()
+              Oracle.get_even()
             }
           },
           'odd' => {
-            :display => "odd",
+            :display => 'odd',
             :proc => lambda { |params, to_include|
-              return  Oracle.get_odd()
+              Oracle.get_odd()
             }
           },
           'prime' => {
-            :display => "prime",
+            :display => 'prime',
             :proc => lambda { |params, to_include|
-              return Oracle.get_prime()
+              Oracle.get_prime()
             }
           }
         },
         :sorts => {
-          'x_cord' => lambda { |a,b| return Oracle.x_sort() } ,
-          'y_cord' => lambda { |a,b| return Oracle.y_sort() }
+          'x_cord' => lambda { |a,b| Oracle.x_sort() } ,
+          'y_cord' => lambda { |a,b| Oracle.y_sort() }
         }
       }
     end
 
-    should "display all points, and sort by the x coordinate" do
+    should 'display all points, and sort by the x coordinate' do
       params = { :filter => 'none', :sort_by => 'x_cord' }
 
       # mocking the array that gets returned
@@ -68,7 +68,7 @@ class PaginationHelperTest < ActiveSupport::TestCase
       PaginationHelper.handle_paginate_event( @point_table_params, nil, params )
     end
 
-    should "display prime points, and sort by the y coordinate" do
+    should 'display prime points, and sort by the y coordinate' do
       params = { :filter => 'prime', :sort_by => 'y_cord' }
 
       # mocking the array that gets returned
@@ -86,7 +86,7 @@ class PaginationHelperTest < ActiveSupport::TestCase
       PaginationHelper.handle_paginate_event( @point_table_params, nil, params )
     end
 
-    should "sort in ascending order" do
+    should 'sort in ascending order' do
       params = { :filter => 'none', :sort_by => 'x_cord' }
 
       # mocking the array that gets returned
@@ -103,12 +103,12 @@ class PaginationHelperTest < ActiveSupport::TestCase
       PaginationHelper.handle_paginate_event( @point_table_params, nil, params )
     end
 
-    should "sort in descending order" do
+    should 'sort in descending order' do
       params = { :filter => 'none', :sort_by => 'x_cord', :desc => true }
 
       # mocking the array that gets returned
       array = [ [1,1] , [2,2] , [3,3] , [4,4] , [5,5] ]
-      sorted_array = [ [5,5], [4,4], [3,3], [2,2] [1,1] ]
+      sorted_array = [ [5,5], [4,4], [3,3], [2,2], [1,1] ]
       # desc flag not set, so the array should not be reversed
       sorted_array.expects( :reverse! )
 
@@ -120,7 +120,7 @@ class PaginationHelperTest < ActiveSupport::TestCase
       PaginationHelper.handle_paginate_event( @point_table_params, nil, params )
     end
 
-    should "return a paginated list" do
+    should 'return a paginated list' do
       params = { :filter => 'none', :page => 3, :per_page => 10, :sort_by => 'x_cord' }
 
       # mocking the array that gets returned
@@ -140,17 +140,17 @@ class PaginationHelperTest < ActiveSupport::TestCase
 
     end
 
-    should "return all the filters from the table_params" do
+    should 'return all the filters from the table_params' do
       filters = PaginationHelper.get_filters( @point_table_params )
-      assert filters.include?('all'),  "filters did not include all"
-      assert filters['all'].include?('none'),  "filters did not include none"
-      assert filters.include?('even'),  "filters did not include even"
-      assert filters['even'].include?('even'),  "filters did not include even"
-      assert filters.include?('odd'),   "filters did not include odd"
-      assert filters['odd'].include?('odd'),   "filters did not include odd"
-      assert filters.include?('prime'), "filters did not include prime"
-      assert filters['prime'].include?('prime'), "filters did not include prime"
-      assert_equal filters.size(), 4,   "filters contained an extra filter"
+      assert filters.include?('all'), 'filters did not include all'
+      assert filters['all'].include?('none'), 'filters did not include none'
+      assert filters.include?('even'), 'filters did not include even'
+      assert filters['even'].include?('even'), 'filters did not include even'
+      assert filters.include?('odd'), 'filters did not include odd'
+      assert filters['odd'].include?('odd'), 'filters did not include odd'
+      assert filters.include?('prime'), 'filters did not include prime'
+      assert filters['prime'].include?('prime'), 'filters did not include prime'
+      assert_equal filters.size(), 4, 'filters contained an extra filter'
     end
 
   end

@@ -23,22 +23,22 @@ class Student < User
   # Assignment with id 'aid', where that Membership.membership_status is either
   # 'accepted' or 'inviter'
   def has_accepted_grouping_for?(aid)
-    return !accepted_grouping_for(aid).nil?
+    !accepted_grouping_for(aid).nil?
   end
 
   # Returns the Grouping for an Assignment with id 'aid' if this Student has
   # a Membership in that Grouping where the membership.status is 'accepted'
   # or 'inviter'
   def accepted_grouping_for(aid)
-    return accepted_groupings.find_by_assignment_id(aid)
+    accepted_groupings.find_by_assignment_id(aid)
   end
 
   def has_pending_groupings_for?(aid)
-    return (pending_groupings_for(aid).size > 0)
+    pending_groupings_for(aid).size > 0
   end
 
   def pending_groupings_for(aid)
-    return pending_groupings.find_all_by_assignment_id(aid)
+    pending_groupings.find_all_by_assignment_id(aid)
   end
 
   def remaining_grace_credits
@@ -51,20 +51,20 @@ class Student < User
   end
 
   def display_for_note
-    return  user_name + ": " + last_name+", " + first_name
+    user_name + ': ' + last_name + ', ' + first_name
   end
 
   # return pending memberships for a specific assignment
   def pending_memberships_for(aid)
     groupings = self.pending_groupings_for(aid)
-    if !groupings.nil?
+    if groupings
       pending_memberships = []
       groupings.each do |grouping|
          pending_memberships.push(StudentMembership.find_by_grouping_id_and_user_id(grouping.id, self.id))
       end
       return pending_memberships
     end
-    return nil
+    nil
   end
 
 
@@ -74,20 +74,20 @@ class Student < User
 
   def memberships_for(aid)
      @student = self
-     @memberships = StudentMembership.find(:all, :conditions => {:user_id => @student.id})
+     @memberships = StudentMembership.all(:conditions => {:user_id => @student.id})
      @memberships.each do |m|
        if m.grouping.assignment_id != aid
          @memberships.delete(m)
        end
      end
-     return @memberships
+     @memberships
   end
 
   # invites a student
   def invite(gid)
-    if !self.hidden
+    unless self.hidden
       membership = StudentMembership.new
-      membership.grouping_id = gid;
+      membership.grouping_id = gid
       membership.membership_status = StudentMembership::STATUSES[:pending]
       membership.user_id = self.id
       membership.save
@@ -112,30 +112,30 @@ class Student < User
       @assignment = Assignment.find(aid)
       @grouping = Grouping.new
       @grouping.assignment_id = @assignment.id
-      if !Group.find(:first, :conditions => {:group_name => self.user_name}).nil?
-        @group = Group.find(:first, :conditions => {:group_name => self.user_name})
+      if !Group.first(:conditions => {:group_name => self.user_name}).nil?
+        @group = Group.first(:conditions => {:group_name => self.user_name})
       else
         @group = Group.new(:group_name => self.user_name)
         # We want to have the user_name as repository name,
         # so we have to set the repo_name before we save the group.
         # We do that only if the assignment is set up to be a
         # non-web-submit assignment.
-        if @assignment.allow_web_submits == false
+        unless @assignment.allow_web_submits
           @group.repo_name = self.user_name
         end
-        if !@group.save
+        unless @group.save
           m_logger = MarkusLogger.instance
           m_logger.log("Could not create a group for Student '#{self.user_name}'. The group was #{@group.inspect} - errors: #{@group.errors.inspect}", MarkusLogger::ERROR)
-          raise "Sorry!  For some reason, your group could not be created.  Please wait a few seconds, then hit refresh to try again.  If you come back to this page, you should inform the course instructor."
+          raise 'Sorry!  For some reason, your group could not be created.  Please wait a few seconds, then hit refresh to try again.  If you come back to this page, you should inform the course instructor.'
         end
       end
 
       @grouping.group = @group
       begin
-        if !@grouping.save
+        unless @grouping.save
           m_logger = MarkusLogger.instance
           m_logger.log("Could not create a grouping for Student '#{self.user_name}'. The grouping was:  #{@grouping.inspect} - errors: #{@grouping.errors.inspect}", MarkusLogger::ERROR)
-          raise "Sorry!  For some reason, your grouping could not be created.  Please wait a few seconds, and hit refresh to try again.  If you come back to this page, you should inform the course instructor."
+          raise 'Sorry!  For some reason, your grouping could not be created.  Please wait a few seconds, and hit refresh to try again.  If you come back to this page, you should inform the course instructor.'
         end
       # This exception will only be thrown when we try to save to a grouping that already exists
       rescue ActiveRecord::RecordNotUnique => e
@@ -164,8 +164,8 @@ class Student < User
 
   def create_autogenerated_name_group(aid)
     assignment = Assignment.find(aid)
-    if !assignment.group_name_autogenerated
-      raise "Assignment does not allow for groups with autogenerated names"
+    unless assignment.group_name_autogenerated
+      raise 'Assignment does not allow for groups with autogenerated names'
     end
 
     group = Group.new
@@ -216,8 +216,8 @@ class Student < User
       update_list[student_id] = {:hidden => true}
       # update repo permissions appropriately
       memberships = StudentMembership.find_by_user_id(student_id)
-      if !memberships.nil?
-        if !memberships.instance_of?(Array)
+      if memberships
+        unless memberships.instance_of?(Array)
           memberships = [memberships]
         end
         student = Student.find(student_id)
@@ -246,8 +246,8 @@ class Student < User
       update_list[student_id] = {:hidden => false}
       # update repo permissions appropriately
       memberships = StudentMembership.find_by_user_id(student_id)
-      if !memberships.nil?
-        if !memberships.instance_of?(Array)
+      if memberships
+        unless memberships.instance_of?(Array)
           memberships = [memberships]
         end
         student = Student.find(student_id)
@@ -281,7 +281,7 @@ class Student < User
 
   # Returns true when the student has a section
   def has_section?
-    return !self.section.nil?
+    !self.section.nil?
   end
 
   # Updates the section of a list of students

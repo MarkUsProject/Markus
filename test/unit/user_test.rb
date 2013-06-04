@@ -18,13 +18,13 @@ class UserTest < ActiveSupport::TestCase
   should validate_presence_of :user_name
   should validate_presence_of :last_name
   should validate_presence_of :first_name
-  should allow_value("Student").for(:type)
-  should allow_value("Admin").for(:type)
-  should allow_value("Ta").for(:type)
-  should_not allow_value("OtherTypeOfUser").for(:type)
+  should allow_value('Student').for(:type)
+  should allow_value('Admin').for(:type)
+  should allow_value('Ta').for(:type)
+  should_not allow_value('OtherTypeOfUser').for(:type)
 
 
-  context "A good User model" do
+  context 'A good User model' do
     setup do
       # Any users will do
       Student.make
@@ -35,7 +35,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   # test if user_name, last_name, first_name are stripped correctly
-  context "User creation validations" do
+  context 'User creation validations' do
     setup do
       @unspaceduser_name = 'ausername'
       @unspacedfirst_name = 'afirstname'
@@ -50,7 +50,7 @@ class UserTest < ActiveSupport::TestCase
 
     end
 
-    should "strip all strings with white space" do
+    should 'strip all strings with white space' do
       assert @user.save
       assert_nil User.find_by_user_name('   ausername   ')
       assert_equal @user.user_name, @unspaceduser_name

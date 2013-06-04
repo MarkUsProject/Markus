@@ -14,97 +14,97 @@ module EnsureConfigHelper
   # check directory instead of file because, the logger has not created
   # the file yet
   def self.check_config()
-    check_in_readable_dir(MarkusConfigurator.markus_config_logging_logfile, "MARKUS_LOGGING_LOGFILE")
-    check_in_writable_dir(MarkusConfigurator.markus_config_logging_logfile, "MARKUS_LOGGING_LOGFILE")
-    check_in_executable_dir(MarkusConfigurator.markus_config_logging_logfile, "MARKUS_LOGGING_LOGFILE")
-    check_in_readable_dir(MarkusConfigurator.markus_config_logging_errorlogfile, "MARKUS_LOGGING_ERRORLOGFILE")
-    check_in_writable_dir(MarkusConfigurator.markus_config_logging_errorlogfile, "MARKUS_LOGGING_ERRORLOGFILE")
-    check_in_executable_dir(MarkusConfigurator.markus_config_logging_errorlogfile, "MARKUS_LOGGING_ERRORLOGFILE")
-    check_writable(MarkusConfigurator.markus_config_repository_storage, "REPOSITORY_STORAGE")
-    check_readable(MarkusConfigurator.markus_config_repository_storage, "REPOSITORY_STORAGE")
-    check_executable(MarkusConfigurator.markus_config_repository_storage, "REPOSITORY_STORAGE")
-    check_writable(MarkusConfigurator.markus_config_pdf_storage, "PDF_STORAGE")
-    check_readable(MarkusConfigurator.markus_config_pdf_storage, "PDF_STORAGE")
-    check_in_writable_dir(MarkusConfigurator.markus_config_automated_tests_repository, "automated_tests_REPOSITORY")
+    check_in_readable_dir(MarkusConfigurator.markus_config_logging_logfile, 'MARKUS_LOGGING_LOGFILE')
+    check_in_writable_dir(MarkusConfigurator.markus_config_logging_logfile, 'MARKUS_LOGGING_LOGFILE')
+    check_in_executable_dir(MarkusConfigurator.markus_config_logging_logfile, 'MARKUS_LOGGING_LOGFILE')
+    check_in_readable_dir(MarkusConfigurator.markus_config_logging_errorlogfile, 'MARKUS_LOGGING_ERRORLOGFILE')
+    check_in_writable_dir(MarkusConfigurator.markus_config_logging_errorlogfile, 'MARKUS_LOGGING_ERRORLOGFILE')
+    check_in_executable_dir(MarkusConfigurator.markus_config_logging_errorlogfile, 'MARKUS_LOGGING_ERRORLOGFILE')
+    check_writable(MarkusConfigurator.markus_config_repository_storage, 'REPOSITORY_STORAGE')
+    check_readable(MarkusConfigurator.markus_config_repository_storage, 'REPOSITORY_STORAGE')
+    check_executable(MarkusConfigurator.markus_config_repository_storage, 'REPOSITORY_STORAGE')
+    check_writable(MarkusConfigurator.markus_config_pdf_storage, 'PDF_STORAGE')
+    check_readable(MarkusConfigurator.markus_config_pdf_storage, 'PDF_STORAGE')
+    check_in_writable_dir(MarkusConfigurator.markus_config_automated_tests_repository, 'automated_tests_REPOSITORY')
     check_configured_default_language(MarkusConfigurator.markus_config_default_language)
     ensure_logout_redirect_link_valid
-    if ! ( RUBY_PLATFORM =~ /(:?mswin|mingw)/ ) # should match for Windows only
-      check_if_executes( MarkusConfigurator.markus_config_validate_file, "VALIDATE_FILE")
+    unless RUBY_PLATFORM =~ /(:?mswin|mingw)/  # should match for Windows only
+      check_if_executes(MarkusConfigurator.markus_config_validate_file, 'VALIDATE_FILE')
     end
   end
 
   # Checks if language file for configured default
   # language is present.
-  def self.check_configured_default_language( lang )
-    available_languages = Dir.glob(File.join( ::Rails.root.to_s, "config", "locales", "*.yml" ))
-    available_languages = available_languages.collect{ |file| File.basename(file).chomp(".yml") }
-    if !available_languages.include?( lang )
-      raise ( "Language file #{lang}.yml does not exist in config/locales. Please " +
-              "make sure that MARKUS_DEFAULT_LANGUAGE is configured correctly in " +
-              "config/environments/#{Rails.env}.rb and language file is present." )
+  def self.check_configured_default_language(lang)
+    available_languages = Dir.glob(File.join( ::Rails.root.to_s, 'config', 'locales', '*.yml' ))
+    available_languages = available_languages.collect{ |file| File.basename(file).chomp('.yml') }
+    unless available_languages.include?(lang)
+      raise ("Language file #{lang}.yml does not exist in config/locales. Please " +
+          'make sure that MARKUS_DEFAULT_LANGUAGE is configured correctly in ' +
+          "config/environments/#{Rails.env}.rb and language file is present.")
     end
   end
 
   # checks if the given file's directory is writable
   # and raises an exception if it is not
-  def self.check_in_writable_dir( filename, constant_name )
-    dir = Pathname.new( filename ).dirname
-    if ! File.writable?(dir)
-      raise ( "The setting #{constant_name} with path #{dir} is not writable. Please double" +
-              " check the setting in config/environments/#{Rails.env}.rb" )
+  def self.check_in_writable_dir(filename, constant_name)
+    dir = Pathname.new(filename).dirname
+    unless File.writable?(dir)
+      raise ("The setting #{constant_name} with path #{dir} is not writable. Please double" +
+          " check the setting in config/environments/#{Rails.env}.rb")
     end
   end
 
   # checks if the given file's directory is readable
   # and raises an exception if it is not
-  def self.check_in_readable_dir( filename, constant_name )
-    dir = Pathname.new( filename ).dirname
-    if ! File.readable?( dir )
-      raise ( "The setting #{constant_name} with path #{dir} is not readable. Please double" +
-              " check the setting in config/environments/#{Rails.env}.rb" )
+  def self.check_in_readable_dir(filename, constant_name)
+    dir = Pathname.new(filename).dirname
+    unless File.readable?(dir)
+      raise ("The setting #{constant_name} with path #{dir} is not readable. Please double" +
+          " check the setting in config/environments/#{Rails.env}.rb")
     end
   end
 
   # checks if the given file's directory is executable
   # and raises an exception if it is not
-  def self.check_in_executable_dir( filename, constant_name )
-    dir = Pathname.new( filename ).dirname
-    if ! File.executable?( dir )
-      raise ( "The setting #{constant_name} with path #{dir} is not executable. Please double " +
-              "check the setting in config/environments/#{Rails.env}.rb" )
+  def self.check_in_executable_dir(filename, constant_name)
+    dir = Pathname.new(filename).dirname
+    if ! File.executable?(dir)
+      raise ("The setting #{constant_name} with path #{dir} is not executable. Please double " +
+          "check the setting in config/environments/#{Rails.env}.rb")
     end
   end
 
   # checks if the given file is writable and raises
   # an exception if it is not
-  def self.check_writable( filename, constant_name )
-    if ! File.writable?(filename)
-      raise ( "The setting #{constant_name} with path #{filename} is not writable. Please double" +
-              " check the setting in config/environments/#{Rails.env}.rb" )
+  def self.check_writable(filename, constant_name)
+    unless File.writable?(filename)
+      raise ("The setting #{constant_name} with path #{filename} is not writable. Please double" +
+          " check the setting in config/environments/#{Rails.env}.rb")
     end
   end
 
   # checks if the given file is readable and raises
   # an exception if it is not
-  def self.check_readable( filename, constant_name )
-    if ! File.readable?(filename)
-      raise ( "The setting #{constant_name} with path #{filename} is not readable. Please double" +
-              " check the setting in config/environments/#{Rails.env}.rb" )
+  def self.check_readable(filename, constant_name)
+    unless File.readable?(filename)
+      raise ("The setting #{constant_name} with path #{filename} is not readable. Please double" +
+          " check the setting in config/environments/#{Rails.env}.rb")
     end
   end
 
   # checks if the given file is executable and raises
   # an exception if it is not.
-  def self.check_executable( filename, constant_name )
-    if ! File.executable?(filename)
-      raise ( "The setting #{constant_name} with path #{filename} is not executable. Please double " +
-              "check the setting in config/environments/#{Rails.env}.rb" )
+  def self.check_executable(filename, constant_name)
+    unless File.executable?(filename)
+      raise ("The setting #{constant_name} with path #{filename} is not executable. Please double " +
+          "check the setting in config/environments/#{Rails.env}.rb")
     end
   end
 
   # checks if the given file executes succesfully
-  def self.check_if_executes( filename, constant_name )
-    p_stdin, p_stdout, p_stderr = Open3.popen3( filename )
+  def self.check_if_executes(filename, constant_name)
+    p_stdin, p_stdout, p_stderr = Open3.popen3(filename)
     p_stdin.puts("test\ntest") # write to stdin of markus_config_validate
     p_stdin.close
     # HACKALARM:
@@ -130,7 +130,7 @@ module EnsureConfigHelper
 
   def self.ensure_logout_redirect_link_valid
     logout_redirect = MarkusConfigurator.markus_config_logout_redirect
-    if ["DEFAULT", "NONE"].include?(logout_redirect)
+    if %w(DEFAULT NONE).include?(logout_redirect)
       return
     #We got a URI, ensure its of proper format <>
     elsif logout_redirect.match('^http://|^https://').nil?

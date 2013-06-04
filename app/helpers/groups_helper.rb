@@ -9,7 +9,7 @@ module GroupsHelper
     groupings.each do |grouping|
       result[grouping.id] = construct_table_row(grouping, assignment)
     end
-    return result
+    result
   end
 
   # Given a list of students and an assignment, constructs an array of
@@ -25,7 +25,7 @@ module GroupsHelper
     students.each do |student|
       result[student.id] = construct_student_table_row(student, students_in_assignment)
     end
-    return result
+    result
   end
 
   # Given a grouping and an assignment, constructs a table row to be insterted
@@ -47,7 +47,7 @@ module GroupsHelper
       table_row[:valid] = grouping.is_valid?
       table_row[:filter_valid] = grouping.is_valid?
 
-      return table_row
+      table_row
   end
 
   # Given a student and all students belonging to an assignment
@@ -65,6 +65,6 @@ module GroupsHelper
     table_row[:last_name] = student.last_name
     table_row[:filter_student_assigned] = students_in_assignment.include?(student)
 
-    return table_row
+    table_row
 end
 end

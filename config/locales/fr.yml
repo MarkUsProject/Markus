@@ -78,6 +78,7 @@ fr:
     due:                       "à rendre pour le :"
     no_assignments:            "Aucun devoir pour le moment."
     class_average:             "Moyenne : %{results_average}"
+    submissions_collected: "%{count}/%{size} Envois récupérés"
 
     # app/views/assignments/
     name: "Nom "
@@ -228,6 +229,7 @@ fr:
 
     marks_released_notice:  "Les notes sont maintenant affichées. Vous ne pouvez plus les changer."
     past_due_date_edit_warning:  "ATTENTION ! La date de retour que vous avez choisie est antérieure à la date actuelle."
+    past_due_date_edit_result_warning: "La date du dernier rendu de ce groupe est postérieure à la date de retour."
     release_marks: "Afficher les notes aux étudiants"
     unrelease_marks: "Cacher les notes aux étudiants"
 
@@ -1017,6 +1019,7 @@ fr:
     Sélectionner un critère sur la gauche pour l'éditer. Les nom des critères, leurs descriptions
     et les notes maximales peuvent être modifiés."
     past_due_date_warning: "La date de retour de ce projet est passée."
+    past_due_date_notice: "La date de retour de ce projet est passée pour : "
 
     section:
       name: "Nom de la section"

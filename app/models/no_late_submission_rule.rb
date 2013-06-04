@@ -20,12 +20,12 @@ class NoLateSubmissionRule < SubmissionRule
 
   # NoLateSubmissionRule works with all Assignments
   def assignment_valid?
-    return !assignment.nil?
+    !assignment.nil?
   end
 
   # The NoLateSubmissionRule will not add any penalties
   def apply_submission_rule(submission)
-    return submission
+    submission
   end
 
   def description_of_rule
@@ -33,6 +33,6 @@ class NoLateSubmissionRule < SubmissionRule
   end
 
   def grader_tab_partial
-    return 'submission_rules/no_late/grader_tab'
+    'submission_rules/no_late/grader_tab'
   end
 end

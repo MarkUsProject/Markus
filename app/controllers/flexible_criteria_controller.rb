@@ -16,7 +16,7 @@ class FlexibleCriteriaController < ApplicationController
 
   def update
     @criterion = FlexibleCriterion.find(params[:id])
-    if !@criterion.update_attributes(params[:flexible_criterion])
+    unless @criterion.update_attributes(params[:flexible_criterion])
       render :errors
       return
     end
@@ -40,7 +40,7 @@ class FlexibleCriteriaController < ApplicationController
     @criterion.assignment = @assignment
     @criterion.max = FlexibleCriterion::DEFAULT_MAX
     @criterion.position = new_position
-    if !@criterion.update_attributes(params[:flexible_criterion])
+    unless @criterion.update_attributes(params[:flexible_criterion])
       @errors = @criterion.errors
       render :add_criterion_error
       return
@@ -101,7 +101,7 @@ class FlexibleCriteriaController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @criteria = @assignment.flexible_criteria
     params[:flexible_criteria_pane_list].each_with_index do |id, position|
-      if id != ""
+      unless id == ''
         FlexibleCriterion.update(id, :position => position + 1)
       end
     end
@@ -131,8 +131,8 @@ class FlexibleCriteriaController < ApplicationController
     index = index + 1
     criterion.position = index + offset
     other_criterion.position = index
-    if !(criterion.save and other_criterion.save)
-      flash[:error] = I18n.t("flexible_criteria.move_criterion.error")
+    unless criterion.save and other_criterion.save
+      flash[:error] = I18n.t('flexible_criteria.move_criterion.error')
     end
     @criteria.reload
   end

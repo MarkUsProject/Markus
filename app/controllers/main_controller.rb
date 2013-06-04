@@ -26,7 +26,7 @@ class MainController < ApplicationController
     # external auth has been done, skip markus authorization
     if MarkusConfigurator.markus_config_remote_user_auth
       if @markus_auth_remote_user.nil?
-        render 'shared/http_status.html', :locals => { :code => "403", :message => HttpStatusHelper::ERROR_CODE["message"]["403"] }, :status => 403, :layout => false
+        render 'shared/http_status.html', :locals => { :code => '403', :message => HttpStatusHelper::ERROR_CODE['message']['403'] }, :status => 403, :layout => false
         return
       else
         login_success = login_without_authentication(@markus_auth_remote_user)
@@ -47,19 +47,20 @@ class MainController < ApplicationController
     end
 
     # check cookies
-    if !cookies_enabled
+    if cookies_enabled
+      unless params[:cookieTest].nil?
+        # remove the :cookieTest => "currentlyTesting" parameter after testing for cookies by redirecting
+        redirect_to :controller => 'main', :action => 'login'
+      end
+    else
       flash[:login_notice] = I18n.t(:cookies_off)
       return
-    else
-      if !params[:cookieTest].nil?
-      # remove the :cookieTest => "currentlyTesting" parameter after testing for cookies by redirecting
-      redirect_to :controller => "main", :action => "login"
-      end
+
     end
 
     # Check if it's the user's first visit this session
     # Need to accomodate redirects for local and cookie testing
-    if (params.has_key?(:locale) && !params.has_key?(:cookieTest))
+    if params.has_key?(:locale) && !params.has_key?(:cookieTest)
       if session[:first_visit].nil?
         @first_visit = true
         session[:first_visit] = 'false'
@@ -82,7 +83,7 @@ class MainController < ApplicationController
     # Get information of the user that is trying to login if his or her
     # authentication is valid
     validation_result = validate_user(params[:user_login], params[:user_login], params[:user_password])
-    if !validation_result[:error].nil?
+    unless validation_result[:error].nil?
       flash[:login_notice] = validation_result[:error]
       redirect_to :action => 'login'
       return
@@ -95,7 +96,7 @@ class MainController < ApplicationController
 
     # Has this student been hidden?
     if found_user.student? && found_user.hidden
-      flash[:login_notice] = I18n.t("account_disabled")
+      flash[:login_notice] = I18n.t('account_disabled')
       redirect_to(:action => 'login') && return
     end
 
@@ -117,7 +118,7 @@ class MainController < ApplicationController
   # Clear the sesssion for current user and redirect to login page
   def logout
     logout_redirect = MarkusConfigurator.markus_config_logout_redirect
-    if logout_redirect == "NONE"
+    if logout_redirect == 'NONE'
       page_not_found
       return
     end
@@ -137,10 +138,8 @@ class MainController < ApplicationController
     reset_session
     if logout_redirect == 'DEFAULT'
       redirect_to :action => 'login'
-      return
     else
       redirect_to logout_redirect
-      return
     end
   end
 
@@ -150,7 +149,7 @@ class MainController < ApplicationController
       redirect_to :controller => 'assignments', :action => 'index'
       return
     end
-    @assignments = Assignment.find(:all)
+    @assignments = Assignment.unscoped.all(:order => 'due_date DESC')
     render :index, :layout => 'content'
   end
 
@@ -160,13 +159,13 @@ class MainController < ApplicationController
   end
 
   def reset_api_key
-    render 'shared/http_status.html', :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false and return unless request.post?
+    render 'shared/http_status.html', :locals => { :code => '404', :message => HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404, :layout => false and return unless request.post?
     # Students shouldn't be able to change their API key
-    if !@current_user.student?
+    unless @current_user.student?
       @current_user.reset_api_key
       @current_user.save
     else
-      render 'shared/http_status.html', :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false and return
+      render 'shared/http_status.html', :locals => { :code => '404', :message => HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404, :layout => false and return
     end
     render :api_key_replace, :locals => {:user => @current_user }
   end
@@ -174,7 +173,7 @@ class MainController < ApplicationController
   # Render 404 error (page not found) if no other route matches.
   # See config/routes.rb
   def page_not_found
-    render 'shared/http_status.html', :locals => { :code => "404", :message => HttpStatusHelper::ERROR_CODE["message"]["404"] }, :status => 404, :layout => false
+    render 'shared/http_status.html', :locals => { :code => '404', :message => HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404, :layout => false
   end
 
   # Authenticates the admin (i.e. validates her password). Given the user, that
@@ -200,9 +199,9 @@ class MainController < ApplicationController
                                         params[:user_login],
                                         params[:admin_password])
     end
-    if !validation_result[:error].nil?
+    unless validation_result[:error].nil?
       # There were validation errors
-      render :partial => "role_switch_handler",
+      render :partial => 'role_switch_handler',
         :locals => { :error => validation_result[:error], :success => false }
       return
     end
@@ -215,7 +214,7 @@ class MainController < ApplicationController
     # Check if an admin is trying to login as another admin. Should not be allowed
     if found_user.admin?
       # error
-      render :partial => "role_switch_handler", :locals =>
+      render :partial => 'role_switch_handler', :locals =>
             { :error => I18n.t(:cannot_login_as_another_admin), :success => false }
       return
     end
@@ -237,13 +236,11 @@ class MainController < ApplicationController
       current_user.set_api_key # set api key in DB for user if not yet set
       # All good, redirect to the main page of the viewer, discard
       # role switch modal
-      render :partial => "role_switch_handler", :locals =>
+      render :partial => 'role_switch_handler', :locals =>
             { :success => true }
-      return
     else
-      render :partial => "role_switch_handler", :locals =>
+      render :partial => 'role_switch_handler', :locals =>
             { :error => I18n.t(:login_failed), :success => false }
-      return
     end
   end
 
@@ -273,7 +270,6 @@ class MainController < ApplicationController
     cookies.delete :auth_token
     reset_session
     redirect_to :action => 'login'
-    return
   end
 
 private
@@ -293,7 +289,7 @@ private
 
     # Has this student been hidden?
     if found_user.student? && found_user.hidden
-      flash[:login_notice] = I18n.t("account_disabled")
+      flash[:login_notice] = I18n.t('account_disabled')
       return false
     end
 
@@ -309,10 +305,10 @@ private
     end
 
     if logged_in?
-      return true
+      true
     else
       flash[:login_notice] = I18n.t(:login_failed)
-      return false
+      false
     end
   end
 
@@ -334,7 +330,7 @@ private
     authenticate_response = User.authenticate(real_user,
                                               password)
     if authenticate_response == User::AUTHENTICATE_BAD_PLATFORM
-      validation_result[:error] = I18n.t("external_authentication_not_supported")
+      validation_result[:error] = I18n.t('external_authentication_not_supported')
       return validation_result
     end
     if authenticate_response == User::AUTHENTICATE_SUCCESS
@@ -362,7 +358,7 @@ private
     # Also, set the user key to found_user
     validation_result[:error] = nil
     validation_result[:user] = found_user
-    return validation_result
+    validation_result
   end
 
   # Returns the user with user name "effective_user" from the database given that the user
@@ -394,7 +390,7 @@ private
     # Also, set the user key to found_user
     validation_result[:error] = nil
     validation_result[:user] = found_user
-    return validation_result
+    validation_result
   end
 
 end
