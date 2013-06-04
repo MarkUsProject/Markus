@@ -503,6 +503,58 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         assert_response :redirect
 
       end
+
+      context 'He' do
+        setup do
+          @group = Group.make
+          @student = Student.make
+          @grouping = Grouping.make(:group => @group,
+                                    :assignment => @assignment)
+          @membership = StudentMembership.make(:user => @student,
+                                               :membership_status => 'inviter',
+                                               :grouping => @grouping)
+          @student = @membership.user
+
+          @group.access_repo do |repo|
+            txn = repo.get_transaction('test')
+            path = File.join(@assignment.repository_folder, 'TestFile.java')
+            txn.add(path, 'Some contents for TestFile.java', '')
+            path = File.join(@assignment.repository_folder, 'SecondFile.go')
+            txn.add(path, 'Some contents for SecondFile.go', '')
+            repo.commit(txn)
+
+            # Generate submission
+            @submission = Submission.generate_new_submission(@grouping,
+                                                             repo.get_latest_revision)
+          end
+        end
+
+        should 'be able to download all files submitted in a Zip file' do
+
+          time = Time.now
+          puts time.usec
+          pretend_now_is(time) do
+            get_as @admin, :downloads, :assignment_id => @assignment.id,
+                   :id => @submission.id,
+                   :grouping_id => @grouping.id
+
+            Zip::ZipFile.open("tmp/#{@assignment.short_identifier}_" +
+                                  "#{@grouping.group.group_name}_" +
+                                  "#{time.usec}.zip") do |zipfile|
+              assert_not_nil zipfile.find_entry(
+                                 File.join("#{@assignment.repository_folder}-" +
+                                               "#{@grouping.group.repo_name}",
+                                           'TestFile.java'))
+              #assert_not_nil zipfile.find_entry(@file2_path)
+              #assert_equal(@file1_content, zipfile.read(@file1_path))
+              #assert_equal(@file2_content, zipfile.read(@file2_path))
+            end
+          end
+
+          assert respond_with_content_type 'application/octet-stream'
+          assert_response :success
+        end
+      end
     end
 
   end
