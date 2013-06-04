@@ -8,10 +8,10 @@
 </p>
 <div id="remark_request">
   <h3><%= I18n.t("marker.remark_instructions") %></h3>
-  <%= h(@assignment.remark_message) %>
+  <%= @assignment.remark_message %>
   <h3><%= I18n.t("marker.remark_request") %></h3>
   <div id="remark_request_text">
-    <%= h(@submission.remark_request) %>
+    <%= @submission.remark_request %>
   </div>
 <br/>
 <div>

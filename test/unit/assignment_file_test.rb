@@ -3,11 +3,11 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 
 class AssignmentFileTest < ActiveSupport::TestCase
-  context "A good assignmentFile model" do
+  context 'A good assignmentFile model' do
     setup do
       AssignmentFile.make
     end
-    should "have an unique file name" do
+    should 'have an unique file name' do
       assert validate_uniqueness_of(:filename).scoped_to(:assignment_id)
     end
     should belong_to :assignment

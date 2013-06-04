@@ -4,7 +4,7 @@ if(@text.annotation_category_id != nil)
   page.replace_html "annotation_text_list_#{@text.annotation_category_id}", :partial => 'annotation_list', :locals => {:annotation_category => @text.annotation_category}
 end
 
-page.call(:add_annotation_text, @text.id, simple_format(h(@text.content)))
+page.call(:add_annotation_text, @text.id, simple_format(@text.content))
 page << @annotation.add_annotation_js_string
 
 page.call :hide_all_annotation_content_editors

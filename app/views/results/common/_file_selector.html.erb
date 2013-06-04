@@ -10,8 +10,8 @@
       <option value=""><%= I18n.t("common.no_file_in_repository") %></option>
     <% end %>
     <% files.each do |file| %>
-        <option value="<%= h(file.id) %>">
-          <%= h(File.join(file.path, file.filename)) %>
+        <option value="<%= file.id %>">
+          <%= File.join(file.path, file.filename) %>
         </option>
     <% end %>
   </select>

@@ -6,12 +6,12 @@ module Api
     # Define default fields to display for index and show methods
     @@default_fields = [:id, :group_name, :created_at, :updated_at, :first_name,
                         :last_name, :user_name, :membership_status, 
-                        :student_memberships];
+                        :student_memberships]
 
-    # Requires: nothing
+    # Returns an assignment's groups along with their attributes
+    # Requires: assignment_id
     # Optional: filter, fields
     def index
-      # Check if it's a numeric string
       assignment = Assignment.find_by_id(params[:assignment_id])
       if assignment.nil?
         # No assignment with that id
@@ -28,14 +28,15 @@ module Api
       students = include_students(fields)
 
       respond_to do |format|
-        format.any{render :xml => groups.to_xml(:only => fields, :root => 
+        format.xml{render :xml => groups.to_xml(:only => fields, :root => 
           'groups', :skip_types => 'true', :include => students)}
         format.json{render :json => groups.to_json(:only => fields, 
           :include => students)}
       end
     end
 
-    # Requires: id
+    # Returns a single group along with its attributes
+    # Requires: assignment_id, id
     # Optional: fields
     def show
       # Error if no assignment exists with that id
@@ -54,13 +55,13 @@ module Api
         return
       end
 
-      if !group.grouping_for_assignment(params[:assignment_id]).nil?
+      if group.grouping_for_assignment(params[:assignment_id])
         # We found a grouping for that assignment
         fields = fields_to_render(@@default_fields)
         students = include_students(fields)
 
         respond_to do |format|
-          format.any{render :xml => group.to_xml(:only => fields, :root => 
+          format.xml{render :xml => group.to_xml(:only => fields, :root => 
             'group', :skip_types => 'true', :include => students)}
           format.json{render :json => group.to_json(:only => fields, 
             :include => students)}
@@ -68,16 +69,14 @@ module Api
       else
         # The group doesn't have a grouping associated with that assignment
         render 'shared/http_status', :locals => {:code => '422', :message =>
-          'Group is not involved with that assignment'}, :status => 422
-        return
+          'The group is not involved with that assignment'}, :status => 422
       end
     end
 
     # Include student_memberships and user info if required
     def include_students(fields)
-      students = {}
       if fields.include?(:student_memberships)
-        students = {:student_memberships => {:include => :user}}
+        {:student_memberships => {:include => :user}}
       end
     end
 

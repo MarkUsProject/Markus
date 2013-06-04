@@ -222,13 +222,13 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     grouping = Grouping.find(params[:id])
     
-    if !assignment.submission_rule.can_collect_grouping_now?(grouping)
-      flash[:error] = I18n.t("browse_submissions.could_not_collect",
-        :group_name => grouping.group.group_name)
-    else
+    if assignment.submission_rule.can_collect_grouping_now?(grouping)
       #Push grouping to the priority queue
       SubmissionCollector.instance.push_grouping_to_priority_queue(grouping)
-      flash[:success] = I18n.t("collect_submissions.priority_given")
+      flash[:success] = I18n.t('collect_submissions.priority_given')
+    else
+      flash[:error] = I18n.t('browse_submissions.could_not_collect',
+                             :group_name => grouping.group.group_name)
     end
     redirect_to :action   => 'browse', 
                 :id       => assignment.id
@@ -236,14 +236,14 @@ class SubmissionsController < ApplicationController
 
   def collect_all_submissions
     assignment = Assignment.find(params[:assignment_id], :include => [:groupings])
-    if !assignment.submission_rule.can_collect_now?
-      flash[:error] = I18n.t("collect_submissions.could_not_collect",
-        :assignment_identifier => assignment.short_identifier)
-    else
+    if assignment.submission_rule.can_collect_now?
       submission_collector = SubmissionCollector.instance
       submission_collector.push_groupings_to_queue(assignment.groupings)
-      flash[:success] = I18n.t("collect_submissions.collection_job_started",
-        :assignment_identifier => assignment.short_identifier)
+      flash[:success] = I18n.t('collect_submissions.collection_job_started',
+                               :assignment_identifier => assignment.short_identifier)
+    else
+      flash[:error] = I18n.t('collect_submissions.could_not_collect',
+                             :assignment_identifier => assignment.short_identifier)
     end
     redirect_to :action => 'browse', 
                 :id => assignment.id
@@ -251,15 +251,17 @@ class SubmissionsController < ApplicationController
 
   def collect_ta_submissions
     assignment = Assignment.find(params[:assignment_id])
-    if !assignment.submission_rule.can_collect_now?
-      flash[:error] = I18n.t("collect_submissions.could_not_collect",
-        :assignment_identifier => assignment.short_identifier)
-    else
-      groupings = assignment.groupings.find(:all, :include => :tas, :conditions => ["users.id = ?", current_user.id])
+    if assignment.submission_rule.can_collect_now?
+      groupings = assignment.groupings.all(:include => :tas,
+                                           :conditions => ['users.id = ?',
+                                                           current_user.id])
       submission_collector = SubmissionCollector.instance
       submission_collector.push_groupings_to_queue(groupings)
-      flash[:success] = I18n.t("collect_submissions.collection_job_started",
-        :assignment_identifier => assignment.short_identifier)
+      flash[:success] = I18n.t('collect_submissions.collection_job_started',
+                               :assignment_identifier => assignment.short_identifier)
+    else
+      flash[:error] = I18n.t('collect_submissions.could_not_collect',
+                             :assignment_identifier => assignment.short_identifier)
     end
     redirect_to :action => 'browse',
                 :id => assignment.id
@@ -270,7 +272,7 @@ class SubmissionsController < ApplicationController
     @submission = @grouping.current_submission_used
     @pdf_count= 0
     @converted_count = 0
-    if !@submission.nil?
+    unless @submission.nil?
       @submission.submission_files.each do |file|
         if file.is_pdf?
           @pdf_count += 1
@@ -293,17 +295,17 @@ class SubmissionsController < ApplicationController
     
     @assignment = Assignment.find(params[:assignment_id])
     
-    @c_per_page = current_user.id.to_s + "_" + @assignment.id.to_s + "_per_page"
-    if !params[:per_page].blank?
+    @c_per_page = current_user.id.to_s + '_' + @assignment.id.to_s + '_per_page'
+    if params[:per_page].present?
        cookies[@c_per_page] = params[:per_page] 
-    elsif !cookies[@c_per_page].blank?
+    elsif cookies[@c_per_page].present?
        params[:per_page] = cookies[@c_per_page]
     end 
 
-    @c_sort_by = current_user.id.to_s + "_" + @assignment.id.to_s + "_sort_by"
-    if !params[:sort_by].blank?
+    @c_sort_by = current_user.id.to_s + '_' + @assignment.id.to_s + '_sort_by'
+    if params[:sort_by].present?
        cookies[@c_sort_by] = params[:sort_by]
-    elsif !cookies[@c_sort_by].blank?
+    elsif cookies[@c_sort_by].present?
        params[:sort_by] = cookies[@c_sort_by]
     else
        params[:sort_by] = 'group_name' 
@@ -317,10 +319,11 @@ class SubmissionsController < ApplicationController
 
     #Eager load all data only for those groupings that will be displayed
     sorted_groupings = @groupings
-    @groupings = Grouping.find(:all, :conditions => {:id => sorted_groupings},
-      :include => [:assignment, :group, :grace_period_deductions,
-        {:current_submission_used => :result},
-        {:accepted_student_memberships => :user}])
+    @groupings = Grouping.all(:conditions => {:id => sorted_groupings},
+                              :include =>
+                                  [:assignment, :group, :grace_period_deductions,
+                                   {:current_submission_used => :results},
+                                   {:accepted_student_memberships => :user}])
 
     #re-sort @groupings by the previous order, because eager loading query
     #messed up the grouping order
@@ -371,9 +374,9 @@ class SubmissionsController < ApplicationController
     @path = params[:path] || '/'
     @grouping = current_user.accepted_grouping_for(assignment_id)
     if @grouping.repository_external_commits_only?
-      raise I18n.t("student.submission.external_submit_only")
+      raise I18n.t('student.submission.external_submit_only')
     end
-    if !@grouping.is_valid?
+    unless @grouping.is_valid?
       # can't use redirect_to here. See comment of this action for more details.
       set_filebrowser_vars(@grouping.group, @assignment)
       render :file_manager, :id => assignment_id
@@ -423,7 +426,7 @@ class SubmissionsController < ApplicationController
         new_files.each do |file_object|
           # sanitize_file_name in SubmissionsHelper
           if file_object.original_filename.nil?
-            raise I18n.t("student.submission.invalid_file_name")
+            raise I18n.t('student.submission.invalid_file_name')
           end
           # Sometimes the file pointer of file_object is at the end of the file.
           # In order to avoid empty uploaded files, rewind it to be save.
@@ -433,22 +436,22 @@ class SubmissionsController < ApplicationController
         end
 
         # finish transaction
-        if !txn.has_jobs?
-          flash[:transaction_warning] = I18n.t("student.submission.no_action_detected")
+        unless txn.has_jobs?
+          flash[:transaction_warning] = I18n.t('student.submission.no_action_detected')
           # can't use redirect_to here. See comment of this action for more details.
           set_filebrowser_vars(@grouping.group, @assignment)
           render :file_manager, :id => assignment_id
           return
         end
-        if !repo.commit(txn)
-          @file_manager_errors[:update_conflicts] = txn.conflicts
-        else
+        if repo.commit(txn)
           flash[:success] = I18n.t('update_files.success')
           # flush log messages
           m_logger = MarkusLogger.instance
           log_messages.each do |msg|
             m_logger.log(msg)
           end
+        else
+          @file_manager_errors[:update_conflicts] = txn.conflicts
         end
 
         # Are we past collection time?
@@ -489,7 +492,7 @@ class SubmissionsController < ApplicationController
        file = @revision.files_at_path(File.join(@assignment.repository_folder, path))[params[:file_name]]
        file_contents = repo.download_as_string(file)
       rescue Exception => e
-        render :text => I18n.t("student.submission.missing_file", :file_name => params[:file_name], :message => e.message)
+        render :text => I18n.t('student.submission.missing_file', :file_name => params[:file_name], :message => e.message)
         return
       end
 
@@ -570,7 +573,7 @@ class SubmissionsController < ApplicationController
     if params[:ap_select_full] == 'true'
       # We should have been passed a filter
       if params[:filter].blank?
-        raise I18n.t("student.submission.expect_filter")
+        raise I18n.t('student.submission.expect_filter')
       end
       # Get all Groupings for this filter
       groupings = S_TABLE_PARAMS[:filters][params[:filter]][:proc].call({:assignment => assignment, :user_id => current_user.id}, {})
@@ -583,32 +586,32 @@ class SubmissionsController < ApplicationController
       end
     end
 
-    log_message = ""
-    if !params[:release_results].nil?
+    log_message = ''
+    if params[:release_results]
       changed = set_release_on_results(groupings, true, errors)
       log_message = "Marks released for assignment '#{assignment.short_identifier}', ID: '" +
                     "#{assignment.id}' (for #{changed} groups)."
-    elsif !params[:unrelease_results].nil?
+    elsif params[:unrelease_results]
       changed = set_release_on_results(groupings, false, errors)
       log_message = "Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" +
                     "#{assignment.id}' (for #{changed} groups)."
-    elsif !params[:collect_section].nil?
-      if params[:section_to_collect] == ""
-        errors.push(I18n.t("collect_submissions.must_select_a_section"))
+    elsif params[:collect_section]
+      if params[:section_to_collect] == ''
+        errors.push(I18n.t('collect_submissions.must_select_a_section'))
       else
         collected = collect_submissions_for_section(params[:section_to_collect], assignment, errors)
         if collected > 0
-          flash[:success] = I18n.t("collect_submissions.successfully_collected", :collected => collected)
+          flash[:success] = I18n.t('collect_submissions.successfully_collected', :collected => collected)
         end
       end
     end
 
 
-    if !groupings.empty?
+    unless groupings.empty?
       assignment.set_results_statistics
     end
 
-    if !changed.nil? && changed > 0
+    if changed && changed > 0
       flash[:success] = I18n.t('results.successfully_changed', {:changed => changed})
       m_logger = MarkusLogger.instance
       m_logger.log(log_message)
@@ -625,7 +628,7 @@ class SubmissionsController < ApplicationController
   def unrelease
     return unless request.post?
     if params[:groupings].nil?
-      flash[:release_results] = I18n.t("assignment.group.select_a_group")
+      flash[:release_results] = I18n.t('assignment.group.select_a_group')
     else
       params[:groupings].each do |g|
         g.unrelease_results
@@ -690,8 +693,8 @@ class SubmissionsController < ApplicationController
       @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
       @missing_assignment_files = []
       assignment.assignment_files.each do |assignment_file|
-        if !@revision.path_exists?(File.join(assignment.repository_folder,
-        assignment_file.filename))
+        unless @revision.path_exists?(File.join(assignment.repository_folder,
+                                             assignment_file.filename))
           @missing_assignment_files.push(assignment_file)
         end
       end

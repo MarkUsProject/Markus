@@ -209,8 +209,8 @@
   <% # if there are errors have the error message display %>
   <% if flash[:error] || flash[:fail_notice] || flash[:invalid_lines] -%>
     <div class="error">
-      <%= h(flash[:error])+"<br/>" if flash[:error] %>
-      <%= h(flash[:fail_notice])+"<br/>" if flash[:fail_notice] %>
+      <%= flash[:error]+"<br/>" if flash[:error] %>
+      <%= flash[:fail_notice]+"<br/>" if flash[:fail_notice] %>
       <% if flash[:invalid_lines] %>
         <%= I18n.t("groups.lines_not_processed") %>
         <ul>
@@ -226,8 +226,8 @@
                             %>
   <% if flash[:upload_notice] || flash[:edit_notice] -%>
     <div class="success">
-      <%= h(flash[:upload_notice])+"<br/>" if flash[:upload_notice] %>
-      <%= h(flash[:edit_notice])+"<br/>" if flash[:edit_notice] %>
+      <%= flash[:upload_notice]+"<br/>" if flash[:upload_notice] %>
+      <%= flash[:edit_notice]+"<br/>" if flash[:edit_notice] %>
     </div>
   <% end %>
 

@@ -7,7 +7,7 @@ class SectionsController < ApplicationController
   # Displays sections, and allows to create them
   #TODO Displays metrics concerning users and sections
   def index
-    @sections = Section.find(:all)
+    @sections = Section.all
   end
 
   def new
@@ -16,20 +16,23 @@ class SectionsController < ApplicationController
 
   # Creates a new section
   def create
+    @user = Student.new(params[:user])
+
     @section = Section.new(params[:section])
     if @section.save
+      @sections = Section.all
       flash[:success] = I18n.t('section.create.success',
                                :name => @section.name)
       if params[:section_modal]
-        redirect_to :controller => 'students', :action => 'new'
+        render :partial => 'close_modal_add_section'
         return
       end
       redirect_to :action => 'index'
-      return
     else
       flash[:error] = I18n.t('section.create.error')
       if params[:section_modal]
-        redirect_to :controller => 'students', :action => 'new'
+        render :partial => 'add_new_section_handler',
+               :locals => { :error => flash[:error] }
         return
       end
       render :new
@@ -59,11 +62,11 @@ class SectionsController < ApplicationController
 
     # only destroy section if this user is allowed to do so and the section has no students
     if @section.user_can_modify?(current_user)
-      unless @section.has_students?
+      if @section.has_students?
+        flash[:error] = I18n.t('section.delete.not_empty')
+      else
         @section.destroy
         flash[:success] = I18n.t('section.delete.success')
-      else
-        flash[:error] = I18n.t('section.delete.not_empty')
       end
     else
       flash[:error] = I18n.t('section.delete.error_permissions')

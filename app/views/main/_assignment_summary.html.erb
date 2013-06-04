@@ -3,8 +3,8 @@
   <h2 class="title">
     <%= link_to I18n.t(
         :assignment_link,
-        :short_id => h(assignment.short_identifier),
-        :description => h(assignment.description)),
+        :short_id => assignment.short_identifier,
+        :description => assignment.description),
       edit_assignment_path(:id => assignment.id),
       :class => 'title'
      %>
