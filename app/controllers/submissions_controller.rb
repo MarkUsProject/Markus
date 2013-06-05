@@ -511,7 +511,6 @@ class SubmissionsController < ApplicationController
   ##
   def downloads
     @assignment = Assignment.find(params[:assignment_id])
-
     @grouping = find_appropriate_grouping(@assignment.id, params)
 
     revision_number = params[:revision_number]
@@ -526,13 +525,13 @@ class SubmissionsController < ApplicationController
                   end
       zip_path = "tmp/#{@assignment.short_identifier}_" +
           "#{@grouping.group.group_name}_r#{@revision.revision_number}.zip"
+
+      if revision_number && revision_number.to_i == 0
+        render :text => t('student.submission.no_revision_available')
+        return
+      end
       # Open Zip file and fill it with all the files in the repo_folder
       Zip::ZipFile.open(zip_path, Zip::ZipFile::CREATE) do |zip_file|
-
-        if revision_number && revision_number.to_i == 0
-          render :text => t('student.submission.no_revision_available')
-          return
-        end
 
         files = @revision.files_at_path(full_path)
         if files.count == 0

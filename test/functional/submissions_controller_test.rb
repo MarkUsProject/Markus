@@ -514,6 +514,9 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                                                :membership_status => 'inviter',
                                                :grouping => @grouping)
           @student = @membership.user
+        end
+
+        should 'be able to download all files uploaded in a Zip file' do
           @file1_name = 'TestFile.java'
           @file2_name = 'SecondFile.go'
           @file1_content = "Some contents for TestFile.java\n"
@@ -531,9 +534,6 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
             @submission = Submission.
                 generate_new_submission(@grouping, repo.get_latest_revision)
           end
-        end
-
-        should 'be able to download all files submitted in a Zip file' do
           get_as @admin, :downloads, :assignment_id => @assignment.id,
                  :id => @submission.id,
                  :grouping_id => @grouping.id
@@ -555,6 +555,40 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
             assert_equal(@file1_content, zip_file.read(file1_path))
             assert_equal(@file2_content, zip_file.read(file2_path))
           end
+        end
+
+        should 'not be able to download an empty revision' do
+          @group.access_repo do |repo|
+            txn = repo.get_transaction('test')
+            repo.commit(txn)
+
+            # Generate submission
+            @submission = Submission.
+                generate_new_submission(@grouping, repo.get_latest_revision)
+          end
+          get_as @admin, :downloads, :assignment_id => @assignment.id,
+                 :id => @submission.id,
+                 :grouping_id => @grouping.id
+
+          assert_equal response.body, I18n.t('student.submission.no_files_available')
+        end
+
+        should 'not be able to download the revision 0' do
+          @group.access_repo do |repo|
+            txn = repo.get_transaction('test')
+            path = File.join(@assignment.repository_folder, 'file1_name')
+            txn.add(path, 'file1 content', '')
+            repo.commit(txn)
+
+            # Generate submission
+            @submission = Submission.generate_new_submission(@grouping, repo.get_latest_revision)
+          end
+          get_as @admin, :downloads, :assignment_id => @assignment.id,
+                 :id => @submission.id,
+                 :grouping_id => @grouping.id, :revision_number => '0'
+
+          assert_equal response.body, I18n.t('student.submission.no_revision_available')
+          assert_response :success
         end
       end
     end
