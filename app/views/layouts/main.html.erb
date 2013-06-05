@@ -7,6 +7,8 @@
 
     <title><%= t(:markus) %> - <%= controller.action_name %></title>
     <%= stylesheet_link_tag 'main.css', :media => 'all' %>
+    <%= stylesheet_link_tag 'jquery-ui.css', :media => 'all' %>
+    <%= csrf_meta_tag %>
     <%= yield :head %>
   </head>
 

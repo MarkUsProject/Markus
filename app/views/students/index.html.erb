@@ -2,12 +2,13 @@
 <%= javascript_include_tag "users_manager"%>
 <%= javascript_include_tag "effects.js" %>
 
+<!-- Get necessary data for loading the students table from the _boot.js.erb partial -->
 <%= render :partial => "boot.js.erb"%>
 <%= render :partial => "student_form_actions.js.erb"%>
 
 <script type="text/javascript">
 //<![CDATA[
-document.observe("dom:loaded", function() {
+jQuery(document).ready(function() {
 
   modalNotesGroup = new Control.Modal($('notes_dialog'),
   {

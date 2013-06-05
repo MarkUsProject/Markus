@@ -1,1 +1,0 @@
-page.replace_html 'role_switch_dialog', :partial => 'role_switch_content'

@@ -17,10 +17,15 @@ class StudentsController < ApplicationController
   end
 
   def populate
+    # Process:
+    # 1. AJAX call made by jQuery to populate the student table
+    # 2. Find students from the database
+    # 3. Pass in the student data into the helper function (construct_table_rows defined in UsersHelper)
     @students_data = Student.all(:order => 'user_name',
                                  :include => [:section,
                                               :grace_period_deductions])
-    # construct_table_rows defined in UsersHelper
+
+    # Function below contained within helpers/users_helper.rb
     @students = construct_table_rows(@students_data)
   end
 

@@ -1,6 +1,0 @@
-if !success
-  page.replace_html 'role_switch_error', :partial => "role_switch_error",
-            :locals => { :error => error }
-else
-  page.redirect_to :action => 'index'
-end
