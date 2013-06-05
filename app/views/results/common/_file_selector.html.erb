@@ -22,5 +22,9 @@
   <%= submit_tag I18n.t(:download) if can_download && !files.empty? %>
   <%= label_tag("include_annotations", I18n.t("marker.include_annotations"), :class => "inline_label") if can_download && !files.empty? %>
   <%= check_box_tag("include_annotations", true, false, :id => "include_annotations", :class => "inline_checkbox") if can_download && !files.empty? %>
-  <%= link_to t('browse_submissions.download_all_files'), { :controller => :submissions, :action => :downloads, :revision_number => @submission.revision_number, :grouping_id => @grouping.id }, :class => 'button' if !files.empty? %>
+  <%= link_to t('browse_submissions.download_all_files'),
+              { :controller => :submissions, :action => :downloads,
+                :revision_number => @submission.revision_number,
+                :grouping_id => @grouping.id },
+              :class => 'button' if !files.empty? %>
 <% end %>

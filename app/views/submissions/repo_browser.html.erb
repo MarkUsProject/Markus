@@ -77,7 +77,10 @@
              $('progress_text').update('<%=I18n.t('stopping_collection_process')%>');
              return true;" name="commit">
     </input>
-    <%= link_to t('browse_submissions.download_all_files'), { :action => :downloads, :revision_number => @revision_number, :grouping_id => @grouping.id, :path => @path }, :class => 'button' %>
+    <%= link_to t('browse_submissions.download_all_files'),
+                { :action => :downloads, :revision_number => @revision_number,
+                  :grouping_id => @grouping.id, :path => @path },
+                :class => 'button' %>
     <div id="progress_text"></div>
   <% end %>
 </div>

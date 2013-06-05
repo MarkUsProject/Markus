@@ -558,7 +558,8 @@ class SubmissionsController < ApplicationController
       end
 
       # Send the Zip file
-      send_file zip_path, :disposition => 'inline', :filename => zip_name + '.zip'
+      send_file zip_path, :disposition => 'inline',
+                :filename => zip_name + '.zip'
     end
   end
 
