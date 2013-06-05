@@ -517,16 +517,15 @@ class SubmissionsController < ApplicationController
     revision_number = params[:revision_number]
     repo_folder = @assignment.repository_folder
     full_path = File.join(repo_folder, params[:path] || '/')
-    zip_path = "tmp/#{@assignment.short_identifier}_" +
-        "#{@grouping.group.group_name}_#{Time.now.usec}.zip"
     zip_name = "#{repo_folder}-#{@grouping.group.repo_name}"
-    puts zip_path
     @grouping.group.access_repo do |repo|
       @revision = if revision_number.nil?
                     repo.get_latest_revision
                   else
                     repo.get_revision(revision_number.to_i)
                   end
+      zip_path = "tmp/#{@assignment.short_identifier}_" +
+          "#{@grouping.group.group_name}_r#{@revision.revision_number}.zip"
       # Open Zip file and fill it with all the files in the repo_folder
       Zip::ZipFile.open(zip_path, Zip::ZipFile::CREATE) do |zip_file|
 
@@ -558,10 +557,10 @@ class SubmissionsController < ApplicationController
           end
         end
       end
-    end
 
-    # Send the Zip file
-    send_file zip_path, :disposition => 'inline', :filename => zip_name + '.zip'
+      # Send the Zip file
+      send_file zip_path, :disposition => 'inline', :filename => zip_name + '.zip'
+    end
   end
 
   def update_submissions

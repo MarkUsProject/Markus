@@ -514,45 +514,47 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                                                :membership_status => 'inviter',
                                                :grouping => @grouping)
           @student = @membership.user
+          @file1_name = 'TestFile.java'
+          @file2_name = 'SecondFile.go'
+          @file1_content = "Some contents for TestFile.java\n"
+          @file2_content = "Some contents for SecondFile.go\n"
 
           @group.access_repo do |repo|
             txn = repo.get_transaction('test')
-            path = File.join(@assignment.repository_folder, 'TestFile.java')
-            txn.add(path, 'Some contents for TestFile.java', '')
-            path = File.join(@assignment.repository_folder, 'SecondFile.go')
-            txn.add(path, 'Some contents for SecondFile.go', '')
+            path = File.join(@assignment.repository_folder, @file1_name)
+            txn.add(path, @file1_content, '')
+            path = File.join(@assignment.repository_folder, @file2_name)
+            txn.add(path, @file2_content, '')
             repo.commit(txn)
 
             # Generate submission
-            @submission = Submission.generate_new_submission(@grouping,
-                                                             repo.get_latest_revision)
+            @submission = Submission.
+                generate_new_submission(@grouping, repo.get_latest_revision)
           end
         end
 
         should 'be able to download all files submitted in a Zip file' do
-
-          time = Time.now
-          puts time.usec
-          pretend_now_is(time) do
-            get_as @admin, :downloads, :assignment_id => @assignment.id,
-                   :id => @submission.id,
-                   :grouping_id => @grouping.id
-
-            Zip::ZipFile.open("tmp/#{@assignment.short_identifier}_" +
-                                  "#{@grouping.group.group_name}_" +
-                                  "#{time.usec}.zip") do |zipfile|
-              assert_not_nil zipfile.find_entry(
-                                 File.join("#{@assignment.repository_folder}-" +
-                                               "#{@grouping.group.repo_name}",
-                                           'TestFile.java'))
-              #assert_not_nil zipfile.find_entry(@file2_path)
-              #assert_equal(@file1_content, zipfile.read(@file1_path))
-              #assert_equal(@file2_content, zipfile.read(@file2_path))
-            end
-          end
+          get_as @admin, :downloads, :assignment_id => @assignment.id,
+                 :id => @submission.id,
+                 :grouping_id => @grouping.id
 
           assert respond_with_content_type 'application/octet-stream'
           assert_response :success
+          zip_path = "tmp/#{@assignment.short_identifier}_" +
+              "#{@grouping.group.group_name}_r#{@grouping.group.repo.
+                  get_latest_revision.revision_number}.zip"
+          Zip::ZipFile.open(zip_path) do |zip_file|
+            file1_path = File.join("#{@assignment.repository_folder}-" +
+                                       "#{@grouping.group.repo_name}",
+                                   @file1_name)
+            file2_path = File.join("#{@assignment.repository_folder}-" +
+                                       "#{@grouping.group.repo_name}",
+                                   @file2_name)
+            assert_not_nil zip_file.find_entry(file1_path)
+            assert_not_nil zip_file.find_entry(file2_path)
+            assert_equal(@file1_content, zip_file.read(file1_path))
+            assert_equal(@file2_content, zip_file.read(file2_path))
+          end
         end
       end
     end
