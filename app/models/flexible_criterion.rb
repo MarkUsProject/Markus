@@ -4,7 +4,7 @@ require 'iconv'
 # has the marking_scheme_type attribute set to 'flexible'.
 class FlexibleCriterion < ActiveRecord::Base
 
-  set_table_name "flexible_criteria" # set table name correctly
+  set_table_name 'flexible_criteria' # set table name correctly
   belongs_to :assignment, :counter_cache => true
 
   has_many :marks, :as => :markable, :dependent => :destroy
@@ -24,9 +24,9 @@ class FlexibleCriterion < ActiveRecord::Base
   validates_numericality_of :assignment_id,
                         :only_integer => true,
                         :greater_than => 0,
-                        :message => "can only be whole number greater than 0"
+                        :message => 'can only be whole number greater than 0'
   validates_numericality_of :max,
-                            :message => "must be a number greater than 0.0",
+                            :message => 'must be a number greater than 0.0',
                             :greater_than => 0.0
 
 #  before_save :update_assigned_groups_count
@@ -52,7 +52,7 @@ class FlexibleCriterion < ActiveRecord::Base
       criteria = FlexibleCriterion.find_all_by_assignment_id(assignment.id, :order => :position)
       criteria.each do |c|
         criterion_array = [c.flexible_criterion_name, c.max, c.description]
-        csv << criterion_array;
+        csv << criterion_array
       end
     end
     return csv_string
@@ -77,7 +77,7 @@ class FlexibleCriterion < ActiveRecord::Base
   #                           supplied name is not unique.
   def self.new_from_csv_row(row, assignment)
     if row.length < 2
-      if RUBY_VERSION > "1.9"
+      if RUBY_VERSION > '1.9'
         raise CSV::MalformedCSVError.new(I18n.t('criteria_csv_error.incomplete_row'))
       else
         raise CSV::IllegalFormatError.new(I18n.t('criteria_csv_error.incomplete_row'))
@@ -87,16 +87,16 @@ class FlexibleCriterion < ActiveRecord::Base
     criterion.assignment = assignment
     criterion.flexible_criterion_name = row[0]
     # assert that no other criterion uses the same name for the same assignment.
-    if (FlexibleCriterion.find_all_by_assignment_id_and_flexible_criterion_name(assignment.id, criterion.flexible_criterion_name).size != 0)
-      if RUBY_VERSION > "1.9"
+    if FlexibleCriterion.find_all_by_assignment_id_and_flexible_criterion_name(assignment.id, criterion.flexible_criterion_name).size != 0
+      if RUBY_VERSION > '1.9'
         raise CSV::MalformedCSVError.new(I18n.t('criteria_csv_error.name_not_unique'))
       else
         raise CSV::IllegalFormatError.new(I18n.t('criteria_csv_error.name_not_unique'))
       end
     end
     criterion.max = row[1]
-    if (criterion.max == 0)
-      if RUBY_VERSION > "1.9"
+    if criterion.max == 0
+      if RUBY_VERSION > '1.9'
         raise CSV::MalformedCSVError.new(I18n.t('criteria_csv_error.max_zero'))
       else
         raise CSV::IllegalFormatError.new(I18n.t('criteria_csv_error.max_zero'))
@@ -104,8 +104,8 @@ class FlexibleCriterion < ActiveRecord::Base
     end
     criterion.description = row[2] if !row[2].nil?
     criterion.position = next_criterion_position(assignment)
-    if !criterion.save
-      if RUBY_VERSION > "1.9"
+    unless criterion.save
+      if RUBY_VERSION > '1.9'
         raise CSV::MalformedCSVError.new(criterion.errors)
       else
         raise CSV::IllegalFormatError.new(criterion.errors)
@@ -135,19 +135,19 @@ class FlexibleCriterion < ActiveRecord::Base
     nb_updates = 0
     CsvHelper::Csv.parse(file.read) do |row|
       next if CsvHelper::Csv.generate_line(row).strip.empty?
-      if RUBY_VERSION > "1.9"
+      if RUBY_VERSION > '1.9'
         begin
           FlexibleCriterion.new_from_csv_row(row, assignment)
           nb_updates += 1
         rescue CSV::MalformedCSVError => e
-          invalid_lines << row.join(',') + ": " + e.message unless invalid_lines.nil?
+          invalid_lines << row.join(',') + ': ' + e.message unless invalid_lines.nil?
         end
       else
         begin
           FlexibleCriterion.new_from_csv_row(row, assignment)
           nb_updates += 1
         rescue CSV::IllegalFormatError => e
-          invalid_lines << row.join(',') + ": " + e.message unless invalid_lines.nil?
+          invalid_lines << row.join(',') + ': ' + e.message unless invalid_lines.nil?
         end
       end
     end
@@ -162,11 +162,11 @@ class FlexibleCriterion < ActiveRecord::Base
     #      nevermind the fact that this computation should really belong in assignment
     last_criterion = FlexibleCriterion.find_last_by_assignment_id(assignment.id, :order => :position)
     return last_criterion.position + 1 unless last_criterion.nil?
-    return 1
+    1
   end
 
   def get_weight
-    return 1
+    1
   end
 
   def all_assigned_groups
@@ -174,7 +174,7 @@ class FlexibleCriterion < ActiveRecord::Base
     tas.each do |ta|
       result = result.concat(ta.get_groupings_by_assignment(assignment))
     end
-    return result.uniq
+    result.uniq
   end
 
   def add_tas(ta_array)
@@ -188,7 +188,7 @@ class FlexibleCriterion < ActiveRecord::Base
   end
 
   def get_name
-    return flexible_criterion_name
+    flexible_criterion_name
   end
 
   def remove_tas(ta_array)
@@ -205,14 +205,14 @@ class FlexibleCriterion < ActiveRecord::Base
   end
 
   def get_ta_names
-    return criterion_ta_associations.collect {|association| association.ta.user_name}
+    criterion_ta_associations.collect {|association| association.ta.user_name}
   end
 
   def has_associated_ta?(ta)
-    if !ta.ta?
+    unless ta.ta?
       return false
     end
-    return !(criterion_ta_associations.find_by_ta_id(ta.id) == nil)
+    !(criterion_ta_associations.find_by_ta_id(ta.id) == nil)
   end
 
   def add_tas_by_user_name_array(ta_user_name_array)

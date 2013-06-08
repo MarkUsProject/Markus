@@ -1,4 +1,4 @@
-ENV["RAILS_ENV"] = "test"
+ENV['RAILS_ENV'] = 'test'
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 require 'mocha/setup'
@@ -52,8 +52,8 @@ class ActiveSupport::TestCase
 
   def destroy_repos
     conf = Hash.new
-    conf["IS_REPOSITORY_ADMIN"] = true
-    conf["REPOSITORY_PERMISSION_FILE"] = 'dummyfile'
+    conf['IS_REPOSITORY_ADMIN'] = true
+    conf['REPOSITORY_PERMISSION_FILE'] = 'dummyfile'
     Repository.get_class(REPOSITORY_TYPE, conf).purge_all
   end
 
@@ -96,16 +96,16 @@ class ActiveSupport::TestCase
 end
 
 class ActiveRecord::Base
-  if !defined? ANSI_BOLD
+  unless defined? ANSI_BOLD
     ANSI_BOLD       = "\033[1m"
   end
-  if !defined? ANSI_RESET
+  unless defined? ANSI_RESET
     ANSI_RESET      = "\033[0m"
   end
-  if !defined? ANSI_LGRAY
+  unless defined? ANSI_LGRAY
     ANSI_LGRAY    = "\033[0;37m"
   end
-  if !defined? ANSI_GRAY
+  unless defined? ANSI_GRAY
     ANSI_GRAY     = "\033[1;30m"
   end
 
@@ -117,7 +117,7 @@ class ActiveRecord::Base
     end
     attributes.each do |name, value|
       print "    #{ANSI_BOLD}#{name.ljust(max_name)}#{ANSI_RESET}"
-      print ":"
+      print ':'
       print "#{ANSI_GRAY}#{value.to_s.ljust(max_value)}#{ANSI_RESET}"
       print "\n"
     end

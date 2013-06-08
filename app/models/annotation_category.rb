@@ -27,10 +27,10 @@ class AnnotationCategory < ActiveRecord::Base
       annotation_text = AnnotationText.new
       annotation_text.content = annotation_text_content
       annotation_text.annotation_category = annotation_category
-      if !annotation_text.save
+      unless annotation_text.save
         # This line checks for the case where we are not given a category name
         # i.e ,123
-        annotation_category_name = "" if annotation_category_name.nil?
+        annotation_category_name = '' if annotation_category_name.nil?
         # If for some reason we are not able to update the category
         # send the respective error
         result[:annotation_upload_invalid_lines].push(annotation_category_name)
@@ -62,9 +62,9 @@ class AnnotationCategory < ActiveRecord::Base
       annotation_text = AnnotationText.new
       annotation_text.content = text.to_s
       annotation_text.annotation_category = annotation_category
-      if !annotation_text.save
+      unless annotation_text.save
         # This line checks for the case where we are not given a category name
-        annotation_category_name = "" if annotation_category_name.nil?
+        annotation_category_name = '' if annotation_category_name.nil?
         # If for some reason we are not able to update the category
         # send the respective error
         result[:annotation_upload_invalid_lines].push(annotation_category_name)

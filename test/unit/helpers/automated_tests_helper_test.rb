@@ -13,27 +13,27 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
   def teardown
   end
 
-  context "An admin allowed to do test" do
+  context 'An admin allowed to do test' do
     setup do
       @admin = Admin.make!
       @current_user = @admin
     end
-    should "be allowed to do test (current_user is admin)" do
+    should 'be allowed to do test (current_user is admin)' do
       assert can_run_test?
     end
   end
 
-  context "A user allowed to do test" do
+  context 'A user allowed to do test' do
     setup do
       @ta = Ta.make!
       @current_user = @ta
     end
-    should "be allowed to do test (current_user is TA)" do
+    should 'be allowed to do test (current_user is TA)' do
       assert can_run_test?
     end
   end
 
-  context "A student with sufficient tokens" do
+  context 'A student with sufficient tokens' do
     setup do
       @student = Student.make!
       @token = Token.make!
@@ -43,12 +43,12 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
       @grouping.add_member(@student)
       @current_user = @student
     end
-    should "be allowed to do test (current_user is student with enough tokens)" do
+    should 'be allowed to do test (current_user is student with enough tokens)' do
       assert can_run_test?
     end
   end
 
-  context "A student without any tokens" do
+  context 'A student without any tokens' do
     setup do
       @student = Student.make!
       @token = Token.make!
@@ -59,12 +59,12 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
       @grouping.add_member(@student)
       @current_user = @student
     end
-    should "not be allowed to do test (current_user is student with not enough tokens)" do
+    should 'not be allowed to do test (current_user is student with not enough tokens)' do
       assert !can_run_test?
     end
   end
 
-  context "A student allowed to do test but without a token object" do
+  context 'A student allowed to do test but without a token object' do
     setup do
       @student = Student.make!
       @token = Token.make!
@@ -75,14 +75,14 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
       @grouping.add_member(@student)
       @current_user = @student
     end
-    should "not be allowed to do test (no tokens are found for this student)" do
+    should 'not be allowed to do test (no tokens are found for this student)' do
       assert_raise(RuntimeError) do
         can_run_test? # raises exception
       end
     end
   end
 
-  context "A student" do
+  context 'A student' do
     setup do
       @student = Student.make!
       @token = Token.make!
@@ -91,7 +91,7 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
       @token.save
       @current_user = @student
     end
-    should "not be allowed to run tests on a group they do not belong to" do
+    should 'not be allowed to run tests on a group they do not belong to' do
       assert !can_run_test?
     end
   end

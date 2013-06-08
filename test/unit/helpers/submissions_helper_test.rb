@@ -5,7 +5,7 @@ require 'shoulda'
 
 class SubmissionsHelperTest < ActiveSupport::TestCase
   
-  context "Assignment with section due dates and submissions to collect" do
+  context 'Assignment with section due dates and submissions to collect' do
     
     setup do
       
