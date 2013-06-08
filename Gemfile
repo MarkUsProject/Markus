@@ -52,7 +52,10 @@ group :development, :test do
   gem 'rcov', :platforms => :mri_18
   gem 'simplecov', :platforms => :mri_19
   gem 'shoulda'
-  gem 'thoughtbot-shoulda'
+  # FIXME: shoulda-matchers (>= 2) is incompatible with Ruby 1.8
+  # Remove next line once MarkUs will not support Ruby 1.8,
+  # as shoulda-matchers is a dependency of shoulda
+  gem 'shoulda-matchers', '~>1.5'
   gem 'machinist', '< 2'
   gem 'faker'
   gem 'railroady'
