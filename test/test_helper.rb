@@ -1,6 +1,6 @@
 if RUBY_VERSION > '1.9'
   require 'simplecov'
-  SimpleCov.start 'rails' if ENV["COVERAGE"]
+  SimpleCov.start 'rails' if ENV['COVERAGE']
 end
 
 ENV['RAILS_ENV'] = 'test'
