@@ -506,13 +506,13 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
       context 'He' do
         setup do
-          @group = Group.make
-          @student = Student.make
-          @grouping = Grouping.make(:group => @group,
-                                    :assignment => @assignment)
-          @membership = StudentMembership.make(:user => @student,
-                                               :membership_status => 'inviter',
-                                               :grouping => @grouping)
+          @group = Group.make!
+          @student = Student.make!
+          @grouping = Grouping.make!(:group => @group,
+                                     :assignment => @assignment)
+          @membership = StudentMembership.make!(:user => @student,
+                                                :membership_status => 'inviter',
+                                                :grouping => @grouping)
           @student = @membership.user
         end
 
