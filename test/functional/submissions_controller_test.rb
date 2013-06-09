@@ -503,6 +503,94 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         assert_response :redirect
 
       end
+
+      context 'He' do
+        setup do
+          @group = Group.make
+          @student = Student.make
+          @grouping = Grouping.make(:group => @group,
+                                    :assignment => @assignment)
+          @membership = StudentMembership.make(:user => @student,
+                                               :membership_status => 'inviter',
+                                               :grouping => @grouping)
+          @student = @membership.user
+        end
+
+        should 'be able to download all files uploaded in a Zip file' do
+          @file1_name = 'TestFile.java'
+          @file2_name = 'SecondFile.go'
+          @file1_content = "Some contents for TestFile.java\n"
+          @file2_content = "Some contents for SecondFile.go\n"
+
+          @group.access_repo do |repo|
+            txn = repo.get_transaction('test')
+            path = File.join(@assignment.repository_folder, @file1_name)
+            txn.add(path, @file1_content, '')
+            path = File.join(@assignment.repository_folder, @file2_name)
+            txn.add(path, @file2_content, '')
+            repo.commit(txn)
+
+            # Generate submission
+            @submission = Submission.
+                generate_new_submission(@grouping, repo.get_latest_revision)
+          end
+          get_as @admin, :downloads, :assignment_id => @assignment.id,
+                 :id => @submission.id,
+                 :grouping_id => @grouping.id
+
+          assert respond_with_content_type 'application/octet-stream'
+          assert_response :success
+          zip_path = "tmp/#{@assignment.short_identifier}_" +
+              "#{@grouping.group.group_name}_r#{@grouping.group.repo.
+                  get_latest_revision.revision_number}.zip"
+          Zip::ZipFile.open(zip_path) do |zip_file|
+            file1_path = File.join("#{@assignment.repository_folder}-" +
+                                       "#{@grouping.group.repo_name}",
+                                   @file1_name)
+            file2_path = File.join("#{@assignment.repository_folder}-" +
+                                       "#{@grouping.group.repo_name}",
+                                   @file2_name)
+            assert_not_nil zip_file.find_entry(file1_path)
+            assert_not_nil zip_file.find_entry(file2_path)
+            assert_equal(@file1_content, zip_file.read(file1_path))
+            assert_equal(@file2_content, zip_file.read(file2_path))
+          end
+        end
+
+        should 'not be able to download an empty revision' do
+          @group.access_repo do |repo|
+            txn = repo.get_transaction('test')
+            repo.commit(txn)
+
+            # Generate submission
+            @submission = Submission.
+                generate_new_submission(@grouping, repo.get_latest_revision)
+          end
+          get_as @admin, :downloads, :assignment_id => @assignment.id,
+                 :id => @submission.id,
+                 :grouping_id => @grouping.id
+
+          assert_equal response.body, I18n.t('student.submission.no_files_available')
+        end
+
+        should 'not be able to download the revision 0' do
+          @group.access_repo do |repo|
+            txn = repo.get_transaction('test')
+            path = File.join(@assignment.repository_folder, 'file1_name')
+            txn.add(path, 'file1 content', '')
+            repo.commit(txn)
+
+            # Generate submission
+            @submission = Submission.generate_new_submission(@grouping, repo.get_latest_revision)
+          end
+          get_as @admin, :downloads, :assignment_id => @assignment.id,
+                 :id => @submission.id,
+                 :grouping_id => @grouping.id, :revision_number => '0'
+
+          assert_equal response.body, I18n.t('student.submission.no_revision_available')
+          assert_response :success
+        end
+      end
     end
 
   end
