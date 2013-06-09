@@ -1,5 +1,5 @@
 include CsvHelper
-
+require 'zip/zip'
 
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
@@ -13,6 +13,7 @@ class SubmissionsController < ApplicationController
                             :file_manager,
                             :update_files,
                             :download,
+                            :downloads,
                             :s_table_paginate,
                             :collect_and_begin_grading,
                             :manually_collect_and_begin_grading,
@@ -36,7 +37,7 @@ class SubmissionsController < ApplicationController
                 :only => [:file_manager,
                           :populate_file_manager,
                           :update_files]
-  before_filter :authorize_for_user, :only => [:download]
+  before_filter :authorize_for_user, :only => [:download, :downloads]
 
   S_TABLE_PARAMS = {
     :model => Grouping,
@@ -502,6 +503,63 @@ class SubmissionsController < ApplicationController
         # Otherwise, blast it out to the screen
         render :text => file_contents, :layout => 'sanitized_html'
       end
+    end
+  end
+
+  ##
+  # Download all files from a repository folder in a Zip file.
+  ##
+  def downloads
+    @assignment = Assignment.find(params[:assignment_id])
+    @grouping = find_appropriate_grouping(@assignment.id, params)
+
+    revision_number = params[:revision_number]
+    repo_folder = @assignment.repository_folder
+    full_path = File.join(repo_folder, params[:path] || '/')
+    zip_name = "#{repo_folder}-#{@grouping.group.repo_name}"
+    @grouping.group.access_repo do |repo|
+      @revision = if revision_number.nil?
+                    repo.get_latest_revision
+                  else
+                    repo.get_revision(revision_number.to_i)
+                  end
+      zip_path = "tmp/#{@assignment.short_identifier}_" +
+          "#{@grouping.group.group_name}_r#{@revision.revision_number}.zip"
+
+      if revision_number && revision_number.to_i == 0
+        render :text => t('student.submission.no_revision_available')
+        return
+      end
+      # Open Zip file and fill it with all the files in the repo_folder
+      Zip::ZipFile.open(zip_path, Zip::ZipFile::CREATE) do |zip_file|
+
+        files = @revision.files_at_path(full_path)
+        if files.count == 0
+          render :text => t('student.submission.no_files_available')
+          return
+        end
+
+        files.each do |file|
+          begin
+            file_contents = repo.download_as_string(file.last)
+          rescue Exception => e
+            render :text => t('student.submission.missing_file',
+                              :file_name => file.first, :message => e.message)
+            return
+          end
+
+          # Create the folder in the Zip file if it doesn't exist
+          zip_file.mkdir(zip_name) unless zip_file.find_entry(zip_name)
+
+          zip_file.get_output_stream(File.join(zip_name, file.first)) do |f|
+            f.puts file_contents
+          end
+        end
+      end
+
+      # Send the Zip file
+      send_file zip_path, :disposition => 'inline',
+                :filename => zip_name + '.zip'
     end
   end
 
