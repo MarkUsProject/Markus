@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130402190548) do
+ActiveRecord::Schema.define(:version => 20130611095902) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(:version => 20130402190548) do
     t.integer  "assignment_id",            :null => false
   end
 
+  add_index "annotation_categories", ["annotation_category_name", "assignment_id"], :name => "index_annotation_cat_name_ass_id", :unique => true
   add_index "annotation_categories", ["assignment_id"], :name => "index_annotation_categories_on_assignment_id"
 
   create_table "annotation_texts", :force => true do |t|
