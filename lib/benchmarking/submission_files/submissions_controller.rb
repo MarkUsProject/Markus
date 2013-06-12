@@ -238,7 +238,7 @@ class SubmissionsController < ApplicationController
 
       # Are we past collection time?
       if assignment.submission_rule.can_collect_now?
-        flash[:commit_notice] = assignment.submission_rule.commit_after_collection_message(grouping)
+        flash[:commit_notice] = assignment.submission_rule.commit_after_collection_message
       end
 
       redirect_to :action => 'file_manager', :id => assignment_id
