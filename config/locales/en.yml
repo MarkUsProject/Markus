@@ -227,8 +227,10 @@ en:
     encoding:           "Encoding"
 
     marks_released_notice:  "The marks have been released. You cannot change the grades."
+    commit_after_due_date: "This commit is after the due date."
     past_due_date_edit_warning:  "WARNING:  The due date you have selected is in the past."
-    past_due_date_edit_result_warning: "The last commit of this group is after the due date."
+    past_due_date_edit_result_warning: "The %{href} of this group is after the due date."
+    last_commit: "last commit"
     release_marks: "Release Marks"
     unrelease_marks: "Unrelease Marks"
 
@@ -349,6 +351,7 @@ en:
       find_by_revision_number:    "Find by Revision Number"
       viewing_revision:           "Viewing Revision: #<span id=\"current_revision_number_display\">%{revision_number}</span>"
       current_path:         "Current Path:"
+      download_all_files:  "Download all files"
       root:                 "[root]"
       collect_and_grab:     "Collect and Grade This Revision"
       could_not_collect:    "Could not collect submission for group %{group_name} - the collection date has not been reached yet."
@@ -634,6 +637,8 @@ en:
         external_submit_only: "MarkUs is only accepting external submits"
         invalid_file_name: "Invalid file name on submitted file"
         missing_file: "Could not download %{file_name}: %{message}.  File may be missing."
+        no_files_available: "No files available"
+        no_revision_available: "No revision available"
         expect_filter: "Expected a filter on select full"
         # DO NOT change 'file_name' and 'sanitized_filename' in the following message.
         # See app/views/submissions/_file_manager_boot.js.erb
@@ -1132,6 +1137,10 @@ en:
 
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:         "Grade Distribution"
+
+    #lib/validators/
+    date_validator:
+      invalid_date: "is not a valid date"
 
     #Test Framework
     automated_tests:
