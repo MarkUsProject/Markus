@@ -44,6 +44,7 @@ module Markus
                               #{::Rails.root}/app
                               #{::Rails.root}/controllers/api
                               #{::Rails.root}/lib/classes
+                              #{::Rails.root}/lib/validators
                               )
   # Load any local configuration that is kept out of source control
   # (e.g. gems, patches).
