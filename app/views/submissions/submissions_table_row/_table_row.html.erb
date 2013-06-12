@@ -62,6 +62,9 @@
     <% if !grouping.has_submission? %>
     -
     <% else %>
+      <%= image_tag 'icons/error.png',
+                    :alt => t(:past_due_date_edit_result_warning),
+                    :title => t(:past_due_date_edit_result_warning) if grouping.past_due_date? %>
       <%= I18n.l(grouping.current_submission_used.revision_timestamp :format => :long_date) %>
     <% end %>
     </td>

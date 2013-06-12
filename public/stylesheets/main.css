@@ -25,7 +25,6 @@ a {
 a:hover {
   color: #ee6415;
   text-decoration: none;
-  background: inherit;
 }
 
 h2 a, h3 a, h4 a {
