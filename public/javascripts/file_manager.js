@@ -2,7 +2,8 @@
 function injectFileInput() {
   var new_file_field = new Element('input', {type: 'file',
                     name: 'new_files[]',
-                    onchange: 'sanitized_filename_check(this); return false;'});
+                    onchange: 'sanitized_filename_check(this); return false;',
+                    multiple: true});
   var new_file_field_row = new Element('tr');
   var new_file_field_input_column = new Element('td', {colspan: 4});
   
