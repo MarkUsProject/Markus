@@ -595,7 +595,7 @@ class SubmissionsController < ApplicationController
 
         # Are we past collection time?
         if @assignment.submission_rule.can_collect_now?
-          flash[:commit_notice] = @assignment.submission_rule.commit_after_collection_message(@grouping) # /?\ Why this argument ?
+          flash[:commit_notice] = @assignment.submission_rule.commit_after_collection_message
         end
         # can't use redirect_to here. See comment of this action for more details.
         set_filebrowser_vars(@grouping.group, @assignment)
