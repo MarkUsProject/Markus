@@ -1138,6 +1138,10 @@ en:
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:         "Grade Distribution"
 
+    #lib/validators/
+    date_validator:
+      invalid_date: "is not a valid date"
+
     #Test Framework
     automated_tests:
       automated_tests: "Test Framework"
