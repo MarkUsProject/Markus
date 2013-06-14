@@ -19,7 +19,6 @@ ActiveRecord::Schema.define(:version => 20130611095902) do
     t.integer  "assignment_id",            :null => false
   end
 
-  add_index "annotation_categories", ["annotation_category_name", "assignment_id"], :name => "index_annotation_cat_name_ass_id", :unique => true
   add_index "annotation_categories", ["assignment_id"], :name => "index_annotation_categories_on_assignment_id"
 
   create_table "annotation_texts", :force => true do |t|
