@@ -59,7 +59,7 @@ assignment_build_on_top_of_1:
 
 assignment_2:
    short_identifier: Captain Sparrow
-   description: ""
+   description: "Code even more!!"
    message: ""
    due_date: <%= 43.days.from_now.to_s(:db)%>
    group_min: 1
@@ -78,7 +78,7 @@ assignment_2:
 
 assignment_3:
    short_identifier: Captain Haddock
-   description: ""
+   description: "Code even more!!"
    message: ""
    due_date: <%= 43.days.from_now.to_s(:db)%>
    group_min: 2
@@ -97,7 +97,7 @@ assignment_3:
 
 assignment_4:
    short_identifier: Captain Late
-   description: ""
+   description: "Code even more!!"
    message: ""
    due_date: <%= 2.days.ago.to_s(:db)%>
    group_min: 2
@@ -173,7 +173,7 @@ flexible_assignment:
 
 flexible_assignment_without_criterion:
    short_identifier: "How flexible can you get?"
-   description: ""
+   description: "Code even more!!"
    message: ""
    due_date: <%= 2.days.ago.to_s(:db)%>
    group_min: 2

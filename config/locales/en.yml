@@ -225,6 +225,9 @@ en:
     invalid_grouping:   "(invalid)"
     validate:           "Validate"
     encoding:           "Encoding"
+    assignment_format:  "in %{file}"
+    select_csv_file:    "Select a CSV file of the following form: <code>%{code}</code>"
+    all_csv_file:       "All fields: "
 
     marks_released_notice:  "The marks have been released. You cannot change the grades."
     commit_after_due_date: "This commit is after the due date."

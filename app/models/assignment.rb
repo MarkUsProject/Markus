@@ -60,6 +60,12 @@ class Assignment < ActiveRecord::Base
 
   validates_presence_of :marking_scheme_type
 
+  # For those, please refer to issue #1126
+  # Because of app/views/assignments/_list_manage.html.erb line:13
+  validates :description, :presence => true
+  # Because of app/views/main/_grade_distribution_graph.html.erb:25
+  #validates :assignment_stat, :presence => true
+
   # since allow_web_submits is a boolean, validates_presence_of does not work:
   # see the Rails API documentation for validates_presence_of (Model
   # validations)
