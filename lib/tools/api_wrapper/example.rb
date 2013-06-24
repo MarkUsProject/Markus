@@ -11,22 +11,21 @@ MarkusRESTfulAPI.configure('http://localhost:3000/api',
 # Get a user by their username
 puts 'Get a user by their username'
 user = MarkusRESTfulAPI::Users.get_by_user_name('c5anthei')
-puts user.user_name
+user.each { |key, val| puts "#{key}: #{val}"}
 puts "\n"
 
 # Getting a user by their id
 puts 'Get a user by their id'
 user = MarkusRESTfulAPI::Users.get_by_id(84)
-puts user.user_name
+user.each { |key, val| puts "#{key}: #{val}"}
 puts "\n"
 
 # Getting all admin users. Returns an array of objects of class User
 puts 'Getting all admins'
 admins = MarkusRESTfulAPI::Users.get_all_admins()
 admins.each do |admin|
-  puts "user_name: #{admin.user_name}"
-  puts "first_name: #{admin.first_name}"
-  puts "last_name: #{admin.last_name}"
+  puts "user_name: #{admin['user_name']}"
+  puts "first_name: #{admin['first_name']}"
 end
 puts "\n"
 
@@ -40,11 +39,17 @@ end
 puts "\n"
 
 # Creating a new ta with a generated user_name
-puts 'Creating a new user'
+puts 'Creating a new ta account'
 attributes = { 'user_name' => "User#{rand(10000)}", 'first_name' => 'Dan', 
                'last_name' => 'Test', 'type' => 'ta' }
 user = MarkusRESTfulAPI::Users.create(attributes)
-puts "user_name: #{user.user_name}"
-puts "type: #{user.type}"
-puts "first_name: #{user.first_name}"
-puts "last_name: #{user.last_name}"
+user.each { |key, val| puts "#{key}: #{val}"}
+puts "\n"
+
+# Update the ta we created
+puts "Updating the ta's name to Daniel"
+attributes = { 'first_name' => 'Daniel' }
+MarkusRESTfulAPI::Users.update(user['id'], attributes)
+user = MarkusRESTfulAPI::Users.get_by_id(user['id'])
+user.each { |key, val| puts "#{key}: #{val}"}
+puts "\n"

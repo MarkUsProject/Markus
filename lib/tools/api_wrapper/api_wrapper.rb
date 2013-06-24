@@ -2,7 +2,6 @@ require 'httparty'
 require 'singleton'
 
 class MarkusRESTfulAPI
-  attr_accessor :config
 
   # Stores the api_url and auth_key for later use
   def MarkusRESTfulAPI.configure(api_url, auth_key)
@@ -11,7 +10,7 @@ class MarkusRESTfulAPI
     @@api_url = api_url
   end
 
-  # Makes a GET request to provided URL while supplying the authorization 
+  # Makes a GET request to the provided URL while supplying the authorization 
   # header, and raising an exception on failure
   def MarkusRESTfulAPI.get(url)
     response = HTTParty.get(@@api_url + url, :headers => 
@@ -30,86 +29,73 @@ class MarkusRESTfulAPI
     raise response['rsp']['__content__'] unless response.success?
 
     response
-  end    
+  end
 
-  # A singleton that allows us to retrieve user(s). It enables us to retrieve 
-  # users by user_name, id, first_name, last_name, as well as type
+  # Makes a PUT request to the provided URL, along with the supplied data.
+  # Also uses the authorization header, and raises an exception on failure
+  def MarkusRESTfulAPI.put(url, query)
+    options = { :headers => { 'Authorization' => "MarkUsAuth #{@@auth_key}" },
+                :body => query }
+    response = HTTParty.put(@@api_url + url, options)
+    raise response['rsp']['__content__'] unless response.success?
+
+    response
+  end
+
+  # Makes a DELETE request to the provided URL while supplying the authorization 
+  # header, and raising an exception on failure
+  def MarkusRESTfulAPI.delete(url)
+    response = HTTParty.delete(@@api_url + url, :headers => 
+      { 'Authorization' => "MarkUsAuth #{@@auth_key}" })
+    puts response
+    raise response['rsp']['__content__'] unless response.success?
+
+    response
+  end
+
+  # A singleton that allows us to get and update user(s)
   class Users < MarkusRESTfulAPI
+
     include Singleton
 
     def self.get_by_user_name(user_name)
-      response = self.get("users.json?filter=user_name:#{user_name}")
-      User.new(response['users']['user'])
+      self.get("users.json?filter=user_name:#{user_name}")['users']['user']
     end
 
     def self.get_by_id(id)
-      response = self.get("users/#{id}.json")
-      User.new(response['users'])
+      self.get("users/#{id}.json")['users']
     end
 
     def self.get_all_by_first_name(first_name)
-      response = self.get("users.json?filter=first_name:#{first_name}")
-
-      users = []
-      response['users']['user'].each do |user|
-        users << User.new(user)
-      end
-
-      users
+      self.get("users.json?filter=first_name:#{first_name}")['users']['user']
     end
 
     def self.get_all_admins()
-      response = self.get('users.json?filter=type:admin')
-
-      users = []
-      response['users']['user'].each do |user|
-        users << User.new(user)
-      end
-
-      users
+      self.get('users.json?filter=type:admin')['users']['user']
     end
 
     def self.get_all_tas()
-      response = self.get('users.json?filter=type:ta')
-
-      users = []
-      response['users']['user'].each do |user|
-        users << User.new(user)
-      end
-
-      users
+      self.get('users.json?filter=type:ta')['users']['user']
     end
 
     def self.get_all_students()
-      response = self.get('users.json?filter=type:student')
-
-      users = []
-      response['users']['user'].each do |user|
-        users << User.new(user)
-      end
-
-      users
+      self.get('users.json?filter=type:student')['users']['user']
     end
 
     def self.create(attributes)
       url = 'users.json'
       response = self.post(url, attributes)
-      # Now that the user's been created, return that user
-      user = self.get_by_user_name(attributes['user_name'])
+      self.get_by_user_name(attributes['user_name'])
     end
+
+    def self.update(id, attributes)
+      attributes.delete('id')
+      url = "users/#{id}.json"
+      Users.put(url, attributes)
+      return
+    end
+
   end # Users
-
-  # Represents a single user returned by the API
-  class User
-    attr_accessor :id, :user_name, :type, :first_name, :last_name, :notes_count,
-                  :grace_credits, :section_name
-
-    def initialize(attributes)
-      attributes.each do |key, value|
-        instance_variable_set("@#{key.to_sym}", value)
-      end
-    end
-  end # User
 
 end # MarkusRESTfulAPI
 
