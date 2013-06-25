@@ -58,6 +58,10 @@
           <%= "<code>#{@default_fields.join(', ')}</code>".html_safe %>
         </span>
       </p>
+      <p>
+        <%= t('encoding') %>
+        <%= select_tag(:encoding, options_for_select(@encodings)) %>
+      </p>
       <%= form_tag upload_assignment_list_assignments_path(),
                    {:multipart => true} do %>
         <input type="file" name="assignment_list" id="assignment_list" />
@@ -72,7 +76,7 @@
     </p>
   </div>
 
-  <%= render :partial => "assignments/list_manage",
+  <%= render :partial => 'assignments/list_manage',
              :locals => { :controller => 'assignments', :action => 'edit' } -%>
 </div>
 

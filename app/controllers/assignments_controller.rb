@@ -524,14 +524,20 @@ class AssignmentsController < ApplicationController
     assignment_list = params[:assignment_list]
 
     if assignment_list.blank?
+      redirect_to :action => 'index'
       return
+    end
+
+    encoding = params[:encoding]
+    if encoding != nil
+      assignment_list = StringIO.new(
+          Iconv.iconv('UTF-8', encoding, assignment_list.read).join)
     end
 
     case params[:file_format]
       when 'csv'
-
         begin
-          CsvHelper::Csv.parse(assignment_list.read) do |row|
+          CsvHelper::Csv.parse(assignment_list) do |row|
             map = {}
             DEFAULT_FIELDS.length.times do |i|
               map[DEFAULT_FIELDS[i]] = row[i]
@@ -542,7 +548,6 @@ class AssignmentsController < ApplicationController
           flash[:error] = e.message
         end
       when 'yml'
-
         begin
           map = YAML::load(assignment_list)
           map[:assignments].map do |row|
@@ -554,6 +559,7 @@ class AssignmentsController < ApplicationController
       else
         return
     end
+
     redirect_to :action => 'index'
   end
 
