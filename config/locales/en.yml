@@ -94,6 +94,7 @@ en:
     create_new_assignment:      "Add Assignment"
     manage_course_work: "Manage Course Work"
     repository_folder:  "Repository Folder<span class='required_field'>*</span>"
+    incorrect_format:   "Incorrect format"
     marking_state:
       not_collected: "Not Collected"
       in_progress: "In Progress"

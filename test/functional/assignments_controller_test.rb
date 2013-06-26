@@ -532,6 +532,80 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         assert_equal 0, SectionDueDate.all.size
       end
     end  # -- with an assignment
+
+    context ', on :download_assignment_list,' do
+
+      should 'be able to download a csv file' do
+        get_as @admin, :download_assignment_list, :file_format => 'csv'
+        assert_response :success
+        assert respond_with_content_type 'application/octet-stream'
+      end
+
+      should 'be able to download a yml file' do
+        get_as @admin, :download_assignment_list, :file_format => 'yml'
+        assert_response :success
+        assert respond_with_content_type 'application/octet-stream'
+      end
+
+      should 'not be able to download an xml file' do
+        get_as @admin, :download_assignment_list, :file_format => 'xml'
+        assert_response :redirect
+        assert set_the_flash.to((I18n.t(:incorrect_format)))
+      end
+    end
+
+    context ', on :upload_assignment_list,' do
+
+      should 'be able to upload a csv file' do
+        post_as @admin,
+                :upload_assignment_list,
+                :assignment_list => fixture_file_upload('../files/new_assignments.csv'),
+                :file_format => 'csv'
+        assert_response :redirect
+        assert_redirected_to(:controller => 'assignments', :action => 'index')
+        assert_equal flash[:success], I18n.t('assignment.create_success')
+        assert_equal flash[:error], nil
+        test1 = Assignment.find_by_short_identifier('ATest1')
+        assert_not_nil test1
+        test2 = Assignment.find_by_short_identifier('ATest2')
+        assert_not_nil test2
+        assert_generates '/en/assignments/upload_assignment_list', :controller => 'assignments', :action => 'upload_assignment_list'
+        assert_recognizes({:controller => 'assignments', :action => 'upload_assignment_list' },
+                          {:path => 'assignments/upload_assignment_list', :method => :post})
+      end
+
+      should 'be able to upload a yml file' do
+        post_as @admin,
+                :upload_assignment_list,
+                :assignment_list => fixture_file_upload('../files/new_assignments.yml'),
+                :file_format => 'yml', :encoding => 'UTF-8'
+        assert_response :redirect
+        assert_redirected_to(:controller => 'assignments', :action => 'index')
+        assert_equal flash[:success], I18n.t('assignment.create_success')
+        assert_equal flash[:error], nil
+        test1 = Assignment.find_by_short_identifier('ATest3')
+        assert_not_nil test1
+        test2 = Assignment.find_by_short_identifier('ATest4')
+        assert_not_nil test2
+        assert_generates '/en/assignments/upload_assignment_list', :controller => 'assignments', :action => 'upload_assignment_list'
+        assert_recognizes({:controller => 'assignments', :action => 'upload_assignment_list' },
+                          {:path => 'assignments/upload_assignment_list', :method => :post})
+      end
+
+      should 'not be able to upload a file without require fields' do
+        post_as @admin,
+                :upload_assignment_list,
+                :assignment_list => fixture_file_upload('../files/new_assignments.yml'),
+                :file_format => 'csv'
+        assert_response :redirect
+        assert_redirected_to(:controller => 'assignments', :action => 'index')
+        assert_equal flash[:success], nil
+        assert_not_equal flash[:error], nil
+        test1 = Assignment.find_by_short_identifier('ATest5')
+        assert_nil test1
+      end
+    end
+
   end  # -- an Admin
 
   context 'A grader' do

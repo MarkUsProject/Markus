@@ -1,0 +1,10 @@
+---
+:assignments:
+- :due_date: 2013-06-20 04:00:00
+  :short_identifier: ATest3
+  :description: test3
+  :repository_folder: ATest3
+- :due_date: 2013-06-20 04:00:00
+  :short_identifier: ATest4
+  :description: test4
+  :repository_folder: ATest4

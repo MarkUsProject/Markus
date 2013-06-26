@@ -511,6 +511,8 @@ class AssignmentsController < ApplicationController
         end
         format = 'text/csv'
       else
+        flash[:error] = t(:incorrect_format)
+        redirect_to :action => 'index'
         return
     end
 
@@ -529,23 +531,28 @@ class AssignmentsController < ApplicationController
     end
 
     encoding = params[:encoding]
-    if encoding != nil
-      assignment_list = StringIO.new(
-          Iconv.iconv('UTF-8', encoding, assignment_list.read).join)
-    end
+    assignment_list = if encoding != nil
+                        StringIO.new(Iconv.iconv('UTF-8', encoding,
+                                                 assignment_list.read).join)
+                      else
+                        assignment_list.read
+                      end
 
     case params[:file_format]
       when 'csv'
         begin
           CsvHelper::Csv.parse(assignment_list) do |row|
             map = {}
-            DEFAULT_FIELDS.length.times do |i|
+            row.length.times do |i|
               map[DEFAULT_FIELDS[i]] = row[i]
             end
+            map.delete(nil)
             update_assignment!(map)
           end
         rescue ActiveRecord::ActiveRecordError, ArgumentError => e
           flash[:error] = e.message
+          redirect_to :action => 'index'
+          return
         end
       when 'yml'
         begin
@@ -555,6 +562,8 @@ class AssignmentsController < ApplicationController
           end
         rescue ActiveRecord::ActiveRecordError, ArgumentError => e
           flash[:error] = e.message
+          redirect_to :action => 'index'
+          return
         end
       else
         return
@@ -574,7 +583,7 @@ class AssignmentsController < ApplicationController
         assignment.display_grader_names_to_students = false
       end
       assignment.update_attributes!(map)
-      flash[:success] = I18n.t('assignment.create_success')
+      flash[:success] = t('assignment.create_success')
     end
 
   def process_assignment_form(assignment, params)

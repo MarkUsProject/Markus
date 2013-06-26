@@ -35,13 +35,16 @@
   <div id="download_dialog">
     <h2><%= t('download') %></h2>
     <p>
-      <%= button_to t(:assignment_format, :file => 'csv'),
+      <%= link_to t(:assignment_format, :file => 'csv'),
                     download_assignment_list_assignments_path(
-                            :file_format => 'csv') if @current_user.admin? %>
-
-      <%= button_to t(:assignment_format, :file => 'yml'),
+                            :file_format => 'csv'),
+                    :class => 'button' if @current_user.admin? %>
+      <br />
+      <br />
+      <%= link_to t(:assignment_format, :file => 'yml'),
                     download_assignment_list_assignments_path(
-                            :file_format => 'yml') if @current_user.admin? %>
+                            :file_format => 'yml'),
+                    :class => 'button' if @current_user.admin? %>
     </p>
   </div>
   <div id="upload_dialog">
@@ -58,12 +61,12 @@
           <%= "<code>#{@default_fields.join(', ')}</code>".html_safe %>
         </span>
       </p>
-      <p>
-        <%= t('encoding') %>
-        <%= select_tag(:encoding, options_for_select(@encodings)) %>
-      </p>
       <%= form_tag upload_assignment_list_assignments_path(),
                    {:multipart => true} do %>
+        <p>
+          <%= t('encoding') %>
+          <%= select_tag(:encoding, options_for_select(@encodings)) %>
+        </p>
         <input type="file" name="assignment_list" id="assignment_list" />
         <%= hidden_field_tag :file_format, '', :id => 'file_format' %>
         <% if @current_user.admin? %>
