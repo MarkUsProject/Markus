@@ -134,6 +134,7 @@ Markus::Application.routes.draw do
         post 'update_files'
         post 'server_time'
         get 'download'
+        get 'download_groupings_files'
       end
 
       member do

@@ -43,6 +43,10 @@
                   @assignment), 
               :confirm => I18n.t("collect_submissions.results_loss_warning") %>
  <% end %>
+  <span class="menu_bar">|</span>
+  <%= link_to t('browse_submissions.download_groupings_files'),
+              download_groupings_files_assignment_submissions_path(
+                      :groupings => @groupings) %>
 
 </h1>
 </div>

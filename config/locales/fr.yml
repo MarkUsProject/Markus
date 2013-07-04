@@ -391,6 +391,7 @@ fr:
       can_begin_grading:    "Peut être évaluée"
       section:              "Section"
       collect_work_for_section: "Récupérer les envois pour la section :"
+      download_groupings_files: "Télécharger tous les envois"
 
     grade_entry_forms:
       blank_field: "doit être rempli(e)"
@@ -628,6 +629,7 @@ fr:
         invalid_file_name: "Le nom du fichier envoyé est invalide"
         missing_file: "%{file_name} n'a pas pu être téléchargé : %{message}. Le fichier est sans doute manquant."
         no_files_available: "Aucun fichier disponible"
+        no_groupings_available: "Aucun groupe disponible"
         no_revision_available: "Aucune révision disponible"
         expect_filter: "Un filtre sur la sélection est attendu."
         # DO NOT change 'file_name' and 'sanitized_filename' in the following message.

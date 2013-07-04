@@ -390,6 +390,7 @@ en:
       can_begin_grading:    "Can begin grading"
       section:              "Section"
       collect_work_for_section: "Collect work for section:"
+      download_groupings_files: "Download all submissions"
 
     grade_entry_forms:
       blank_field: "can't be blank"
@@ -638,6 +639,7 @@ en:
         invalid_file_name: "Invalid file name on submitted file"
         missing_file: "Could not download %{file_name}: %{message}.  File may be missing."
         no_files_available: "No files available"
+        no_groupings_available: "No group available"
         no_revision_available: "No revision available"
         expect_filter: "Expected a filter on select full"
         # DO NOT change 'file_name' and 'sanitized_filename' in the following message.
