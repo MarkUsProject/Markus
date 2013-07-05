@@ -141,6 +141,7 @@ Markus::Application.routes.draw do
         post 'manually_collect_and_begin_grading'
         get 'repo_browser'
         post 'repo_browser'
+        get 'downloads'
       end
 
       resources :results do
@@ -158,6 +159,7 @@ Markus::Application.routes.draw do
           get 'add_extra_mark'
           get 'download'
           post 'download'
+          get 'download_zip'
           get 'cancel_remark_request'
           get 'codeviewer'
           post 'codeviewer'
