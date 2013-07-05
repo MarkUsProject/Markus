@@ -196,7 +196,7 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
               :onkeyup => "groupings_table.add_filter('search'); groupings_table.render();",
               :onkeypress => "stop_submit(event);" %>
 
-            <label class="bold_inline_label"><%= t('browse_submissions.section') %></label>
+            <label class="bold_inline_label"><%= t('browse_submissions.sections') %></label>
             <%= select('selection_groupings', 'sections',
                        Section.all.collect { |s| [s.name] },
                        { :include_blank => ' - ' },

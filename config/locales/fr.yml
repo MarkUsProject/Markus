@@ -391,6 +391,7 @@ fr:
       can_begin_grading:    "Peut être évaluée"
       section:              "Section"
       collect_work_for_section: "Récupérer les envois pour la section :"
+      sections:             "Section :"
 
     grade_entry_forms:
       blank_field: "doit être rempli(e)"
