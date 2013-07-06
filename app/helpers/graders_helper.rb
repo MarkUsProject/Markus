@@ -54,6 +54,9 @@ module GradersHelper
       table_row[:graders] = table_row[:members]
       table_row[:grader_names] = grouping.get_ta_names.join(',')
 
+      #This one is used for selection
+      table_row[:section] = grouping.section
+
       table_row
   end
 
