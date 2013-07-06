@@ -534,7 +534,9 @@ class ResultsController < ApplicationController
     sub_file = SubmissionFile.find_by_id(select_file_id)
     unless sub_file.nil?
       #Check that current_user is in fact in grouping that sub_file belongs to
-      return !sub_file.submission.grouping.accepted_students.find(current_user).nil?
+      return !sub_file.submission.grouping.accepted_students.find { |user|
+        user == current_user
+      }.nil?
     end
     false
   end
