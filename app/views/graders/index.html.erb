@@ -195,6 +195,15 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
             <%= text_field_tag 'search_groupings', nil,
               :onkeyup => "groupings_table.add_filter('search'); groupings_table.render();",
               :onkeypress => "stop_submit(event);" %>
+
+            <label class="bold_inline_label"><%= t('browse_submissions.sections') %></label>
+            <%= select('selection_groupings', 'sections',
+                       Section.all.collect { |s| [s.name] },
+                       { :include_blank => ' - ' },
+                       { :onchange => 'groupings_table.add_filter("selection");
+                       return groupings_table.render();',
+                         :onfocus => 'stop_submit(event);' }) %>
+
             <table class="groups" id="groups">
             </table>
           </div><!-- group container -->
