@@ -879,6 +879,89 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end  # -- with supported image to be displayed in browser
         end
 
+        context 'GET on :download_zip' do
+
+          setup do
+            @group = Group.make
+            @student = Student.make
+            @grouping = Grouping.make(:group => @group,
+                                      :assignment => @assignment)
+            @membership = StudentMembership.make(:user => @student,
+                                                 :membership_status => 'inviter',
+                                                 :grouping => @grouping)
+            @student = @membership.user
+            @file1_name = 'TestFile.java'
+            @file1_content = "Some contents for TestFile.java\n"
+
+            @group.access_repo do |repo|
+              txn = repo.get_transaction('test')
+              path = File.join(@assignment.repository_folder, @file1_name)
+              txn.add(path, @file1_content, '')
+              repo.commit(txn)
+
+              # Generate submission
+              @submission = Submission.
+                  generate_new_submission(@grouping, repo.get_latest_revision)
+            end
+            @annotation = TextAnnotation.new
+            @file = SubmissionFile.find_by_submission_id(@submission.id)
+            @annotation.
+                update_attributes({ :line_start => 1,
+                                    :line_end => 2,
+                                    :submission_file_id => @file.id,
+                                    :is_remark => false,
+                                    :annotation_number => @submission.
+                                        annotations.count + 1
+                                  })
+            @annotation.annotation_text = AnnotationText.make
+            @annotation.save
+          end
+
+          should 'download in zip all files with annotations' do
+            get_as @admin, :download_zip,
+                   :assignment_id => @assignment.id,
+                   :submission_id => @submission.id,
+                   :id => @submission.id,
+                   :grouping_id => @grouping.id,
+                   :include_annotations => 'true'
+
+            assert respond_with_content_type 'application/octet-stream'
+            assert_response :success
+            zip_path = "tmp/#{@assignment.short_identifier}_" +
+                "#{@grouping.group.group_name}_r#{@grouping.group.repo.
+                    get_latest_revision.revision_number}_ann.zip"
+            Zip::ZipFile.open(zip_path) do |zip_file|
+              file1_path = File.join("#{@assignment.repository_folder}-" +
+                                         "#{@grouping.group.repo_name}",
+                                     @file1_name)
+              assert_not_nil zip_file.find_entry(file1_path)
+              assert_equal @file.retrieve_file(true), zip_file.read(file1_path)
+            end
+          end
+
+          should 'download in zip all files without annotations' do
+            get_as @admin, :download_zip,
+                   :assignment_id => @assignment.id,
+                   :submission_id => @submission.id,
+                   :id => @submission.id,
+                   :grouping_id => @grouping.id,
+                   :include_annotations => 'false'
+
+            assert respond_with_content_type 'application/octet-stream'
+            assert_response :success
+            zip_path = "tmp/#{@assignment.short_identifier}_" +
+                "#{@grouping.group.group_name}_r#{@grouping.group.repo.
+                    get_latest_revision.revision_number}.zip"
+            Zip::ZipFile.open(zip_path) do |zip_file|
+              file1_path = File.join("#{@assignment.repository_folder}-" +
+                                         "#{@grouping.group.repo_name}",
+                                     @file1_name)
+              assert_not_nil zip_file.find_entry(file1_path)
+              assert_equal @file.retrieve_file, zip_file.read(file1_path)
+            end
+          end
+        end
+
         context 'GET on :codeviewer' do
           setup do
             g = Grouping.make!(:assignment => @assignment)

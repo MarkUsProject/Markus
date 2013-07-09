@@ -2,7 +2,14 @@
    # file when using this partial
 %>
 
-<%= form_tag(download_assignment_submission_result_path(@assignment.id, @grouping.current_submission_used.id, @grouping.current_submission_used.get_latest_result.id)) do %>
+<% content_for :head do %>
+  <%= javascript_include_tag 'results/file_selector' %>
+<% end %>
+
+<%= form_tag(download_assignment_submission_result_path(
+                     @assignment.id, @grouping.current_submission_used.id,
+                     @grouping.current_submission_used.get_latest_result.id),
+             :class => 'download_zip') do %>
   <%= label_tag "select_file_id", I18n.t("common.submission_file"), :class => "inline_label" %>
   <input type="button" onclick="bump_select($('select_file_id'), -1); return false;" value="<-" />
   <select id="select_file_id" name="select_file_id" onchange="if ($(this).getValue() != '') { load_submitted_file($(this).getValue()); }">
@@ -22,9 +29,13 @@
   <%= submit_tag I18n.t(:download) if can_download && !files.empty? %>
   <%= label_tag("include_annotations", I18n.t("marker.include_annotations"), :class => "inline_label") if can_download && !files.empty? %>
   <%= check_box_tag("include_annotations", true, false, :id => "include_annotations", :class => "inline_checkbox") if can_download && !files.empty? %>
-  <%= link_to t('browse_submissions.download_all_files'),
-              { :controller => :submissions, :action => :downloads,
-                :revision_number => @submission.revision_number,
-                :grouping_id => @grouping.id },
-              :class => 'button' if !files.empty? %>
+<% end %>
+
+<%= form_tag(download_zip_assignment_submission_result_path(
+               :assignment_id => @assignment.id,
+               :submission_id => @submission.id,
+               :id => params[:id]),
+             :class => 'download_zip', :method => :get) do %>
+  <%= hidden_field_tag :include_annotations, true, :id => 'download_zip' %>
+  <%= submit_tag t('browse_submissions.download_all_files'), :onclick => 'with_annotations();' unless files.empty? %>
 <% end %>
