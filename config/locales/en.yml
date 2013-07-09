@@ -227,8 +227,10 @@ en:
     encoding:           "Encoding"
 
     marks_released_notice:  "The marks have been released. You cannot change the grades."
+    commit_after_due_date: "This commit is after the due date."
     past_due_date_edit_warning:  "WARNING:  The due date you have selected is in the past."
-    past_due_date_edit_result_warning: "The last commit of this group is after the due date."
+    past_due_date_edit_result_warning: "The %{href} of this group is after the due date."
+    last_commit: "last commit"
     release_marks: "Release Marks"
     unrelease_marks: "Unrelease Marks"
 
@@ -388,6 +390,7 @@ en:
       can_begin_grading:    "Can begin grading"
       section:              "Section"
       collect_work_for_section: "Collect work for section:"
+      sections:             "Section:"
 
     grade_entry_forms:
       blank_field: "can't be blank"
@@ -1135,6 +1138,10 @@ en:
 
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:         "Grade Distribution"
+
+    #lib/validators/
+    date_validator:
+      invalid_date: "is not a valid date"
 
     #Test Framework
     automated_tests:

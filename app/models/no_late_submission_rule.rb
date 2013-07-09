@@ -6,11 +6,11 @@ class NoLateSubmissionRule < SubmissionRule
   # When Students commit code after the collection time, MarkUs should warn
   # the Students with a message saying that the due date has passed, and the
   # work they're submitting will probably not be graded
-  def commit_after_collection_message(grouping)
+  def commit_after_collection_message
     I18n.t 'submission_rules.no_late_submission_rule.commit_after_late_message'
   end
 
-  def after_collection_message(grouping)
+  def after_collection_message
     I18n.t 'submission_rules.no_late_submission_rule.no_late_message'
   end
 

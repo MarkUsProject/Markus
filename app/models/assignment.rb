@@ -69,7 +69,11 @@ class Assignment < ActiveRecord::Base
   validates_inclusion_of :assign_graders_to_criteria, :in => [true, false]
 
   before_save :reset_collection_time
-  validate :minimum_number_of_groups, :check_timezone
+  validate :minimum_number_of_groups
+  # Call custom validator in order to validate the :due_date attribute
+  # :date => true maps to DateValidator (:custom_name => true maps to CustomNameValidator)
+  # Look in lib/validators/* for more info
+  validates :due_date, :date => true
   after_save :update_assigned_tokens
 
   # Set the default order of assignments: in ascending order of due_date
@@ -111,13 +115,6 @@ class Assignment < ActiveRecord::Base
   def minimum_number_of_groups
     if (group_max && group_min) && group_max < group_min
       errors.add(:group_max, 'must be greater than the minimum number of groups')
-      false
-    end
-  end
-
-  def check_timezone
-    if Time.zone.parse(due_date.to_s).nil?
-      errors.add :due_date, 'is not a valid date'
       false
     end
   end
