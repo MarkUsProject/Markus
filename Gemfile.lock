@@ -49,6 +49,9 @@ GEM
       i18n (~> 0.5)
     fastercsv (1.5.5)
     i18n (0.5.0)
+    jquery-rails (3.0.2)
+      railties (>= 3.0, < 5.0)
+      thor (>= 0.14, < 2.0)
     json (1.7.7)
     kgio (2.8.0)
     linecache (0.46)
@@ -138,6 +141,7 @@ DEPENDENCIES
   faker
   fastercsv
   i18n
+  jquery-rails
   machinist (< 2)
   mocha
   mysql2 (< 0.3)

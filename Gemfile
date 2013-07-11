@@ -19,6 +19,7 @@ gem 'will_paginate'
 gem 'fastercsv', :platforms => :ruby_18
 gem 'routing-filter'
 gem 'dynamic_form'
+gem 'jquery-rails'
 
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
 # PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).

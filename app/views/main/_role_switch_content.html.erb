@@ -1,5 +1,5 @@
 <div id="role_switch_text">
-  <% form_tag login_as_main_index_path(), {:method => 'post', :remote => true} do %>
+  <%= form_tag login_as_main_index_path(), {:method => 'post', :remote => true} do %>
     <div id="role_switch_error"><span>&nbsp;</span></div>
     <h2>
       <%= I18n.t(:switch_role)%>
