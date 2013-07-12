@@ -18,20 +18,10 @@ jQuery(document).ready(function() {
     footer: true
   });
 
-//  new Ajax.Request("<%= populate_admins_path() %>", {
-//    asynchronous: true,
-//    evalScripts: true,
-//    onComplete: function (request) {
-//      $('loading_list').hide();
-//    },
-//    parameters: 'authenticity_token=' + AUTH_TOKEN
-//  });
-
   jQuery.ajax({
     url:      "<%= populate_admins_path() %>",
     data:     'authenticity_token=' + AUTH_TOKEN,
     type:     "POST",
-    dataType: "script",
     async:    true,
     complete: function(request) {
       jQuery('#loading_list').hide();
