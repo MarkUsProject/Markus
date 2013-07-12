@@ -1,7 +1,11 @@
 <%= javascript_include_tag "FilterTable/FilterTable" %>
 <%= javascript_include_tag "users_manager" %>
 
-<%= render :partial => "boot.js" %>
+<script type="text/javascript">
+  //<![CDATA[
+  <%= render :partial => 'boot.js' %>
+  //]]>
+</script>
 
 <div id="title_bar">
   <h1><%= I18n.t("admins.manage_admins") %></h1>
