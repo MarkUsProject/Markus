@@ -395,6 +395,7 @@ fr:
       can_begin_grading:    "Peut être évaluée"
       section:              "Section"
       collect_work_for_section: "Récupérer les envois pour la section :"
+      sections:             "Section :"
 
     grade_entry_forms:
       blank_field: "doit être rempli(e)"
@@ -1111,6 +1112,10 @@ fr:
 
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:        "Répartition des notes"
+
+    #lib/validators/
+    date_validator:
+      invalid_date: "n'est pas une date valide"
 
     #Test Framework
     automated_tests:

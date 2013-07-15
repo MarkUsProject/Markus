@@ -394,6 +394,7 @@ en:
       can_begin_grading:    "Can begin grading"
       section:              "Section"
       collect_work_for_section: "Collect work for section:"
+      sections:             "Section:"
 
     grade_entry_forms:
       blank_field: "can't be blank"
@@ -1141,6 +1142,10 @@ en:
 
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:         "Grade Distribution"
+
+    #lib/validators/
+    date_validator:
+      invalid_date: "is not a valid date"
 
     #Test Framework
     automated_tests:

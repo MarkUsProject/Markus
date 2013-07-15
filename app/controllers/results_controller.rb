@@ -7,13 +7,13 @@ class ResultsController < ApplicationController
                             :create,
                             :add_extra_mark, :next_grouping, :update_overall_comment, :expand_criteria,
                         :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria, :update_marking_state,
-                        :download, :note_message,
+                        :download, :download_zip, :note_message,
                         :update_overall_remark_comment, :update_remark_request, :cancel_remark_request]
   before_filter      :authorize_for_ta_and_admin, :only => [:edit, :update_mark, :create, :add_extra_mark,
                         :next_grouping, :update_overall_comment, :expand_criteria,
                         :collapse_criteria, :remove_extra_mark, :expand_unmarked_criteria,
                         :update_marking_state, :note_message, :update_overall_remark_comment]
-  before_filter      :authorize_for_user, :only => [:codeviewer, :download]
+  before_filter      :authorize_for_user, :only => [:codeviewer, :download, :download_zip]
   before_filter      :authorize_for_student, :only => [:view_marks, :update_remark_request, :cancel_remark_request]
   after_filter       :update_remark_request_count, :only => 
    [:update_remark_request, :cancel_remark_request, :set_released_to_students]
@@ -200,6 +200,68 @@ class ResultsController < ApplicationController
     else
       send_data file_contents, :filename => filename
     end
+  end
+
+  def download_zip
+    #Ensure student doesn't download a file not submitted by his own grouping
+    unless authorized_to_download?(params[:select_file_id])
+      render 'shared/http_status.html',
+             :locals => { :code => '404',
+                          :message => HttpStatusHelper::
+                              ERROR_CODE['message']['404'] },
+             :status => 404, :layout => false
+      return
+    end
+    assignment = Assignment.find(params[:assignment_id])
+    submission = Submission.find(params[:submission_id])
+    grouping = Grouping.find(submission.grouping_id)
+
+    revision_number = submission.revision_number
+    repo_folder = assignment.repository_folder
+    zip_name = "#{repo_folder}-#{grouping.group.repo_name}"
+
+    if submission.blank?
+      render :text => t('student.submission.no_files_available')
+      return
+    end
+
+    zip_path = if params[:include_annotations] == 'true'
+                 "tmp/#{assignment.short_identifier}_" +
+                     "#{grouping.group.group_name}_r#{revision_number}_ann.zip"
+               else
+                 "tmp/#{assignment.short_identifier}_" +
+                     "#{grouping.group.group_name}_r#{revision_number}.zip"
+               end
+
+    files = submission.submission_files
+
+    Zip::ZipFile.open(zip_path, Zip::ZipFile::CREATE) do |zip_file|
+      files.each do |file|
+        begin
+          if params[:include_annotations] == 'true' && !file.is_supported_image?
+            file_content = file.retrieve_file(true)
+          else
+            file_content = file.retrieve_file
+          end
+        rescue Exception => e
+          flash[:file_download_error] = e.message
+          redirect_to :action => 'edit',
+                      :assignment_id => params[:assignment_id],
+                      :submission_id => file.submission,
+                      :id => file.submission.get_latest_result.id
+          return
+        end
+        # Create the folder in the Zip file if it doesn't exist
+        zip_file.mkdir(zip_name) unless zip_file.find_entry(zip_name)
+
+        zip_file.get_output_stream(File.join(zip_name, file.filename)) do |f|
+          f.puts file_content
+        end
+      end
+    end
+    # Send the Zip file
+    send_file zip_path, :disposition => 'inline',
+              :filename => zip_name + '.zip'
   end
 
   def codeviewer
@@ -472,7 +534,9 @@ class ResultsController < ApplicationController
     sub_file = SubmissionFile.find_by_id(select_file_id)
     unless sub_file.nil?
       #Check that current_user is in fact in grouping that sub_file belongs to
-      return !sub_file.submission.grouping.accepted_students.find(current_user).nil?
+      return !sub_file.submission.grouping.accepted_students.find { |user|
+        user == current_user
+      }.nil?
     end
     false
   end
