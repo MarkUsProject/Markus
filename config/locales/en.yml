@@ -226,7 +226,7 @@ en:
     invalid_grouping:   "(invalid)"
     validate:           "Validate"
     encoding:           "Encoding"
-    assignment_format:  "in %{file}"
+    assignment_format:  "Download in %{file} format"
     select_csv_file:    "Select a CSV file of the following form: <code>%{code}</code>"
     all_csv_file:       "All fields: "
 

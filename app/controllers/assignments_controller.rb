@@ -490,10 +490,10 @@ class AssignmentsController < ApplicationController
       when 'yml'
         map = {}
         map[:assignments] = []
-        assignments.map do |ass|
+        assignments.map do |assignment|
           m = {}
           DEFAULT_FIELDS.length.times do |i|
-            m[DEFAULT_FIELDS[i]] = ass.send(DEFAULT_FIELDS[i])
+            m[DEFAULT_FIELDS[i]] = assignment.send(DEFAULT_FIELDS[i])
           end
           map[:assignments] << m
         end

@@ -227,7 +227,7 @@ fr:
     invalid_grouping:   "(invalide)"
     validate:           "Valider"
     encoding:           "Codage"
-    assignment_format:  "en %{file}"
+    assignment_format:  "Téléchargement au format %{file}"
     select_csv_file:    "Sélectionner un fichier CSV formaté comme suit : <code>%{code}</code>"
     all_csv_file:       "Tous les champs : "
 
