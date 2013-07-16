@@ -241,22 +241,39 @@ class SubmissionsController < ApplicationController
     @repository_name = @grouping.group.repository_name
     repo = @grouping.group.repo
     begin
-      if !params[:revision_timestamp].nil?
+      if params[:revision_timestamp]
         @revision_number = repo.get_revision_by_timestamp(Time.parse(params[:revision_timestamp])).revision_number
-      elsif !params[:revision_number].nil?
+      elsif params[:revision_number]
         @revision_number = params[:revision_number].to_i
       else
         @revision_number = repo.get_latest_revision.revision_number
       end
       @revision = repo.get_revision(@revision_number)
       @revision_timestamp = @revision.timestamp
-      repo.close
     rescue Exception => e
       flash[:error] = e.message
       @revision_number = repo.get_latest_revision.revision_number
       @revision_timestamp = repo.get_latest_revision.timestamp
-      repo.close
     end
+    # generate an revisions' history with date and num
+    @revisions_history = []
+    rev_number = repo.get_latest_revision.revision_number + 1
+    rev_number.times.each do |rev|
+      begin
+        revision = repo.get_revision(rev)
+        unless revision.path_exists?(
+            File.join(@assignment.repository_folder, @path))
+          raise 'error'
+        end
+      rescue Exception
+        revision = nil
+      end
+      if revision
+        @revisions_history << {:num => revision.revision_number,
+                               :date => revision.timestamp}
+      end
+    end
+    repo.close
   end
 
   def populate_repo_browser
