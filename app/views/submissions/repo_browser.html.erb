@@ -45,9 +45,10 @@
                            @assignment, @grouping),
                    :find_revision_by => 'revision_number' do %>
         <%= select_tag('revision_number',
-                       options_for_select(@revisions_history.collect { |s|
-                         ["#{s[:num]}: #{s[:date]}", s[:num]] },
-                                          @revision_number)) %>
+                   options_for_select(@revisions_history.collect { |s|
+                     [t('browse_submissions.revision_history', :num => s[:num])+
+                              l(s[:date], :format => :long_date), s[:num]] },
+                                      @revision_number)) %>
         <%= submit_tag I18n.t('browse_submissions.find_by_revision_number') %>
       <% end %>
     </fieldset>

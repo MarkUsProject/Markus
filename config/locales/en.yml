@@ -391,6 +391,7 @@ en:
       section:              "Section"
       collect_work_for_section: "Collect work for section:"
       sections:             "Section:"
+      revision_history:     "%{num}: "
 
     grade_entry_forms:
       blank_field: "can't be blank"
