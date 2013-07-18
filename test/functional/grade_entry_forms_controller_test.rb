@@ -6,10 +6,6 @@ require 'will_paginate'
 
 class GradeEntryFormsControllerTest < AuthenticatedControllerTest
 
-  def setup
-    clear_fixtures
-  end
-
   # Constants for :edit tests
   NEW_SHORT_IDENTIFIER = 'NewSI'
   NEW_DESCRIPTION = 'NewDescription'

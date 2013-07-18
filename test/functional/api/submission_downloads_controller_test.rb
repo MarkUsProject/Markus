@@ -71,8 +71,6 @@ class Api::SubmissionDownloadsControllerTest < ActionController::TestCase
   # Testing authenticated requests
   context 'An authenticated request to submission_downloads' do
     setup do
-      # Fixtures have manipulated the DB, clear them off.
-      clear_fixtures
 
       # Create admin from blueprints
       @admin = Admin.make

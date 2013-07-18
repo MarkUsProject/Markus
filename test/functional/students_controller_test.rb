@@ -4,11 +4,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', '
 
 class StudentsControllerTest < AuthenticatedControllerTest
 
-
-  def setup
-    clear_fixtures
-  end
-
   context 'A student' do
     setup do
       @student = Student.make

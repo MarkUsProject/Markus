@@ -9,10 +9,6 @@ require 'mocha/setup'
 
 class GroupsControllerTest < AuthenticatedControllerTest
 
-  def setup
-    clear_fixtures
-  end
-
   context 'An authenticated and authorized student doing a ' do
 
     setup do
@@ -75,7 +71,6 @@ class GroupsControllerTest < AuthenticatedControllerTest
       @admin = Admin.make
       @grouping = Grouping.make
       @assignment = Assignment.make(:groupings => [@grouping])
-      setup_group_fixture_repos
     end
 
     should 'GET on :index(groups_controller)' do
@@ -671,7 +666,6 @@ class GroupsControllerTest < AuthenticatedControllerTest
 
     context 'GET on download_grouplist' do
       setup do
-        setup_group_fixture_repos
         @assignment = Assignment.make
       end
 

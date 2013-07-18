@@ -7,9 +7,6 @@ require 'shoulda'
 require 'mocha/setup'
 
 class SubmissionsControllerTest < AuthenticatedControllerTest
-  def setup
-    clear_fixtures
-  end
 
   context 'I am a student trying working alone on an assignment' do
     setup do

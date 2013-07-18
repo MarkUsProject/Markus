@@ -9,9 +9,9 @@ require 'mocha/setup'
 
 class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
-  setup do
-    clear_fixtures
-  end
+  #setup do
+  #  clear_fixtures
+  #end
 
   context 'An unauthenticated user' do
 

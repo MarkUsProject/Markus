@@ -4,11 +4,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', '
 
 class TasControllerTest < AuthenticatedControllerTest
 
-  def setup
-    clear_fixtures
-  end
-
-
   context 'No user' do
     should 'redirect to the index' do
       get :index
