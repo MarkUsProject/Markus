@@ -70,7 +70,7 @@ class TasControllerTest < AuthenticatedControllerTest
       should 'be able to upload a TA CSV file' do
         post_as @admin,
                 :upload_ta_list,
-                :userlist => fixture_file_upload('../classlist-csvs/new_students.csv')
+                :userlist => fixture_file_upload('classlist-csvs/new_students.csv')
         assert_response :redirect
         assert_redirected_to(:controller => 'tas', :action => 'index')
         c8mahler = Ta.find_by_user_name('c8mahlernew')
@@ -83,7 +83,7 @@ class TasControllerTest < AuthenticatedControllerTest
       should 'have valid values in database after an upload of a ISO-8859-1 encoded TAs file parsed as ISO-8859-1' do
         post_as @admin,
                 :upload_ta_list,
-                :userlist => fixture_file_upload('../files/test-students-iso-8859-1.csv'),
+                :userlist => fixture_file_upload('files/test-students-iso-8859-1.csv'),
                 :encoding => 'ISO-8859-1'
         assert_response :redirect
         assert_redirected_to(:controller => 'tas', :action => 'index')
@@ -94,7 +94,7 @@ class TasControllerTest < AuthenticatedControllerTest
       should 'have valid values in database after an upload of a UTF-8 encoded TAs file parsed as UTF-8' do
         post_as @admin,
                 :upload_ta_list,
-                :userlist => fixture_file_upload('../files/test-students-utf8.csv'),
+                :userlist => fixture_file_upload('files/test-students-utf8.csv'),
                 :encoding => 'UTF-8'
         assert_response :redirect
         assert_redirected_to(:controller => 'tas', :action => 'index')
@@ -105,7 +105,7 @@ class TasControllerTest < AuthenticatedControllerTest
       should 'have invalid values in database after an upload of a UTF-8 encoded TAs file parsed as ISO-8859-1' do
         post_as @admin,
                 :upload_ta_list,
-                :userlist => fixture_file_upload('../files/test-students-utf8.csv'),
+                :userlist => fixture_file_upload('files/test-students-utf8.csv'),
                 :encoding => 'ISO-8859-1'
         assert_response :redirect
         assert_redirected_to(:controller => 'tas', :action => 'index')
