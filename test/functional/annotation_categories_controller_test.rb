@@ -9,10 +9,6 @@ require 'mocha/setup'
 
 class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
-  #setup do
-  #  clear_fixtures
-  #end
-
   context 'An unauthenticated user' do
 
     # Since we are not authenticated and authorized, we should be redirected
