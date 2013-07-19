@@ -1,5 +1,3 @@
-<script type="text/javascript">
-//<![CDATA[
 jQuery(document).ready(function() {
 
   users_table = new FilterTable({
@@ -53,10 +51,13 @@ jQuery(document).ready(function() {
   });
 });
 
-new Ajax.Request('<%=populate_students_path()%>', 
-                   {asynchronous:true, evalScripts:true, 
-                   onComplete:function(request){$('loading_list').hide();},
-                   parameters: 'authenticity_token=' + AUTH_TOKEN})
-
-//]]>
-</script>
+jQuery.ajax({
+  url: "<%= populate_students_path() %>",
+  data: 'authenticity_token=' + AUTH_TOKEN,
+  type: "POST",
+  async: true,
+  dataType: 'json'
+}).done(function (data) {
+          jQuery('#loading_list').hide();
+          populate(JSON.stringify(data));
+        });

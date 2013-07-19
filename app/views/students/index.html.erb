@@ -1,37 +1,37 @@
-<%= javascript_include_tag "FilterTable/FilterTable"%>
-<%= javascript_include_tag "users_manager"%>
-<%= javascript_include_tag "effects.js" %>
+<%= javascript_include_tag 'FilterTable/FilterTable' %>
+<%= javascript_include_tag 'users_manager' %>
+<!-- TODO: see if it's called -->
+<%= javascript_include_tag 'effects.js' %>
 
 <!-- Get necessary data for loading the students table from the _boot.js.erb partial -->
-<%= render :partial => "boot.js.erb"%>
-<%= render :partial => "student_form_actions.js.erb"%>
+<script type="text/javascript">
+  <%= render :partial => 'boot.js.erb' %>
+</script>
 
 <script type="text/javascript">
-//<![CDATA[
-jQuery(document).ready(function() {
+  jQuery(document).ready(function() {
 
-  modalNotesGroup = new Control.Modal($('notes_dialog'),
-  {
-    overlayOpacity: 0.75,
-    className: 'modalNotesGroup',
-    fade:false
-  });
+    modalNotesGroup = new Control.Modal($('notes_dialog'), //jQuery('#notes_dialog').dialog(
+    {
+      overlayOpacity: 0.75,
+      className: 'modalNotesGroup',
+      fade:false
+    });
 
-  modalUpload = new Control.Modal($('upload_dialog'),
-  {
-    overlayOpacity: 0.75,
-    className: 'modalUpload',
-    fade:false
-  });
+    modalUpload = new Control.Modal($('upload_dialog'),
+    {
+      overlayOpacity: 0.75,
+      className: 'modalUpload',
+      fade:false
+    });
 
-  modalDownload = new Control.Modal($('download_dialog'),
-  {
-    overlayOpacity: 0.75,
-    className: 'modalDownload',
-    fade:false
+    modalDownload = new Control.Modal($('download_dialog'),
+    {
+      overlayOpacity: 0.75,
+      className: 'modalDownload',
+      fade:false
+    });
   });
-});
-//]]>
 </script>
 
 <div id="title_bar"><h1><%= I18n.t("students.manage_students") %></h1>
@@ -46,10 +46,7 @@ jQuery(document).ready(function() {
 
   <div class="wrapLeft">
     <%= form_tag bulk_modify_students_path(),
- 	    :before => "before_form_submit();",
-	    :complete => "after_form_submit();",
 	    :remote => true do %>
-
     <div id="ajax_error" class="error" style="display:none;"></div>
 
     <div id="list">

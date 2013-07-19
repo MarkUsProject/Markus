@@ -27,6 +27,9 @@ class StudentsController < ApplicationController
 
     # Function below contained within helpers/users_helper.rb
     @students = construct_table_rows(@students_data)
+    respond_to do |format|
+      format.json { render :json => @students }
+    end
   end
 
   def edit
