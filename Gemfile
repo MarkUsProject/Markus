@@ -10,7 +10,6 @@ source 'http://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'rails', '3.0.20'
-gem 'exception_notification'
 #gem "prototype-rails" Will be needed with Rails3.1
 gem 'rubyzip'
 gem 'ya2yaml'
@@ -19,6 +18,9 @@ gem 'will_paginate'
 gem 'fastercsv', :platforms => :ruby_18
 gem 'routing-filter'
 gem 'dynamic_form'
+# The 'exception_notification' gem version 4 is not compatible with
+# Rails 3.0.x
+gem 'exception_notification', '<4.0'
 
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
 # PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).
@@ -51,8 +53,13 @@ group :development, :test do
   gem 'rdoc'
   gem 'rcov', :platforms => :mri_18
   gem 'simplecov', :platforms => :mri_19
-  gem 'shoulda'
-  gem 'thoughtbot-shoulda'
+  # FIXME: shoulda (>=4.0) introduces several deprecation warnings in tests
+  # we have to fix before doing an upgrade
+  gem 'shoulda', '<3.4'
+  # FIXME: shoulda-matchers (>= 2) is incompatible with Ruby 1.8
+  # Remove next line once MarkUs will not support Ruby 1.8,
+  # as shoulda-matchers is a dependency of shoulda
+  gem 'shoulda-matchers', '~>1.5'
   gem 'machinist', '< 2'
   gem 'faker'
   gem 'railroady'
