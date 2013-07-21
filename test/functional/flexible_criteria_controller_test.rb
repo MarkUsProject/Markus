@@ -437,7 +437,6 @@ require 'mocha/setup'
     end
 
     should 'be able to update_positions' do
-      @criterion2 = FlexibleCriterion.make(:assignment => @assignment)
       post_as @admin,
               :update_positions,
               :flexible_criteria_pane_list => [@criterion2.id,
@@ -454,7 +453,6 @@ require 'mocha/setup'
 
     context 'on :move_criterion up with 2 criteria' do
       setup do
-        @criterion2 = FlexibleCriterion.make(:assignment => @assignment)
         post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion2.id, :direction => 'up'
       end
       should render_template ''
@@ -470,8 +468,6 @@ require 'mocha/setup'
 
     context 'on :move_criterion up with 3 criteria from bottom' do
       setup do
-        @criterion2 = FlexibleCriterion.make(:assignment => @assignment)
-        @criterion3 = FlexibleCriterion.make(:assignment => @assignment)
         post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion3.id, :direction => 'up'
       end
       should render_template ''
@@ -489,9 +485,6 @@ require 'mocha/setup'
 
     context 'on :move_criterion up with 3 criteria from middle' do
       setup do
-        @criterion2 = FlexibleCriterion.make(:assignment => @assignment)
-        @criterion3 = FlexibleCriterion.make(:assignment => @assignment,
-                                             :position => 3)
         post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion2.id, :direction => 'up'
       end
       should render_template ''
@@ -509,7 +502,6 @@ require 'mocha/setup'
 
     context 'on :move_criterion down with 2 criteria' do
       setup do
-        @criterion2 = FlexibleCriterion.make(:assignment => @assignment)
         post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion.id, :direction => 'down'
       end
       should render_template ''
@@ -525,9 +517,6 @@ require 'mocha/setup'
 
     context 'on :move_criterion down with 3 criteria from top' do
       setup do
-        @criterion2 = FlexibleCriterion.make(:assignment => @assignment)
-        @criterion3 = FlexibleCriterion.make(:assignment => @assignment,
-                                             :position => 3)
         post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion.id, :direction => 'down'
       end
       should render_template ''
@@ -545,8 +534,6 @@ require 'mocha/setup'
 
     context 'on :move_criterion down with 3 criteria from middle' do
       setup do
-        @criterion2 = FlexibleCriterion.make(:assignment => @assignment)
-        @criterion3 = FlexibleCriterion.make(:assignment => @assignment)
         post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion2.id, :direction => 'down'
       end
       should render_template ''
