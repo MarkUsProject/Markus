@@ -231,13 +231,13 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
                 :assignment_id => @assignment.id,
                 :format => 'csv'
         assert_response :success
-        assert respond_with_content_type 'application/octet-stream'
+        assert_equal response.header['Content-Type'], 'application/octet-stream'
       end
 
       should 'in yml' do
         get_as @admin, :download, :assignment_id => @assignment.id, :format => 'yml'
         assert_response :success
-        assert respond_with_content_type 'application/octet-stream'
+        assert_equal response.header['Content-Type'], 'application/octet-stream'
       end
 
       should 'in error' do

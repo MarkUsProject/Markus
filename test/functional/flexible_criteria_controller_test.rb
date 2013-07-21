@@ -224,9 +224,9 @@ require 'mocha/setup'
       setup do
         get_as @admin, :download, :assignment_id => @assignment.id
       end
-      should respond_with_content_type 'text/csv'
       should respond_with :success
       should 'respond with appropriate content' do
+        assert_equal response.header['Content-Type'], 'text/csv'
         assert_equal FLEXIBLE_CRITERIA_CSV_STRING, @response.body
         assert_not_nil assigns :assignment
       end
@@ -368,9 +368,9 @@ require 'mocha/setup'
       setup do
         post_as @admin, :download, :assignment_id => @assignment.id
       end
-      should respond_with_content_type 'text/csv'
       should respond_with :success
       should 'respond with appropriate content' do
+        assert_equal response.header['Content-Type'], 'text/csv'
         assert_not_nil assigns :assignment
         assert_equal FLEXIBLE_CRITERIA_CSV_STRING, @response.body
       end

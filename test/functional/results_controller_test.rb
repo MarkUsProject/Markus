@@ -320,7 +320,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                      :id => 1
 
               assert_equal 0, flash.size
-              assert respond_with_content_type 'application/octet-stream'
+              assert_equal response.header['Content-Type'], 'application/octet-stream'
               assert_response :success
               assert_equal 'file content', @response.body
             end  # -- with permissions to download the file
@@ -377,7 +377,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :id => 1,
                   :show_in_browser => true
             assert_equal 0, flash.size
-            assert respond_with_content_type 'image'
+            assert_equal response.header['Content-Type'], 'image'
             assert_response :success
             assert_equal 'file content', @response.body
           end
@@ -398,7 +398,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :id => 1,
                   :include_annotations => true
             assert_equal 0, flash.size
-            assert respond_with_content_type 'application/octet-stream'
+            assert_equal response.header['Content-Type'], 'application/octet-stream'
             assert_response :success
             assert_equal 'file content', @response.body
           end
@@ -835,7 +835,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :select_file_id => 1,
                    :id => 1
             assert_equal 0, flash.size
-            assert respond_with_content_type 'application/octet-stream'
+            assert_equal response.header['Content-Type'], 'application/octet-stream'
             assert_response :success
             assert_equal 'file content', @response.body
           end  # -- without file error
@@ -873,7 +873,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                     :select_file_id => 1,
                     :show_in_browser => true
 
-            assert respond_with_content_type 'image'
+            assert_equal response.header['Content-Type'], 'image'
             assert_response :success
             assert_equal 'file content', @response.body
           end  # -- with supported image to be displayed in browser
@@ -925,7 +925,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :grouping_id => @grouping.id,
                    :include_annotations => 'true'
 
-            assert respond_with_content_type 'application/octet-stream'
+            assert_equal response.header['Content-Type'], 'application/octet-stream'
             assert_response :success
             zip_path = "tmp/#{@assignment.short_identifier}_" +
                 "#{@grouping.group.group_name}_r#{@grouping.group.repo.
@@ -947,7 +947,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :grouping_id => @grouping.id,
                    :include_annotations => 'false'
 
-            assert respond_with_content_type 'application/octet-stream'
+            assert_equal response.header['Content-Type'], 'application/octet-stream'
             assert_response :success
             zip_path = "tmp/#{@assignment.short_identifier}_" +
                 "#{@grouping.group.group_name}_r#{@grouping.group.repo.
@@ -1324,7 +1324,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :id => 1,
                    :select_file_id => 1
             assert_equal 0, flash.size
-            assert respond_with_content_type 'application/octet-stream'
+            assert_equal response.header['Content-Type'], 'application/octet-stream'
             assert_response :success
             assert_equal 'file content', @response.body
           end
@@ -1362,7 +1362,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                     :select_file_id => 1,
                     :show_in_browser => true
             assert_equal 0, flash.size
-            assert respond_with_content_type 'image'
+            assert_equal response.header['Content-Type'], 'image'
             assert_response :success
             assert_equal 'file content', @response.body
           end

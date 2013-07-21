@@ -375,7 +375,7 @@ END
       should 'download rubrics as CSV' do
         get_as @admin, :download_csv, :assignment_id => @assignment.id
         assert assigns :assignment
-        assert respond_with_content_type 'text/csv'
+        assert_equal response.header['Content-Type'], 'text/csv'
         assert_response :success
         assert_equal "Algorithm,1.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n",
                       @response.body

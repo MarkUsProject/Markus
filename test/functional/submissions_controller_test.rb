@@ -538,7 +538,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                  :id => @submission.id,
                  :grouping_id => @grouping.id
 
-          assert respond_with_content_type 'application/octet-stream'
+          assert_equal response.header['Content-Type'], 'application/octet-stream'
           assert_response :success
           zip_path = "tmp/#{@assignment.short_identifier}_" +
               "#{@grouping.group.group_name}_r#{@grouping.group.repo.
