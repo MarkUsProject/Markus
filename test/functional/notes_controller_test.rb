@@ -136,11 +136,11 @@ class NotesControllerTest < AuthenticatedControllerTest
                 :create,
                 {:noteable_type => 'Grouping',
                  :note => {:noteable_id => @grouping.id}}
-        assert assign_to :note
+        assert_not_nil assigns :note
         # FIXME
         assert_equal 0, flash.size
-        assert assign_to :assignments
-        assert assign_to :groupings
+        assert_not_nil assigns :assignments
+        assert_not_nil assigns :groupings
         assert render_template 'new.html.erb'
       end
 
@@ -162,7 +162,7 @@ class NotesControllerTest < AuthenticatedControllerTest
                   {:noteable_type => type.to_s,
                    :note => {:noteable_id => noteable.call().id,
                              :notes_message => @message}}
-          assert assign_to :note
+          assert_not_nil assigns :note
           assert_equal flash[:success], I18n.t('notes.create.success')
           assert redirect_to(:controller => 'note')
 	        assert_equal(@notes + 1,  Note.count )
@@ -179,22 +179,22 @@ class NotesControllerTest < AuthenticatedControllerTest
     context 'GET on :noteable_object_selector' do
       should 'for Groupings' do
         get_as @ta, :noteable_object_selector, :noteable_type => 'Grouping'
-        assert assign_to :assignments
-        assert assign_to :groupings
+        assert_not_nil assigns :assignments
+        assert_not_nil assigns :groupings
         assert_response :success
         assert render_template 'noteable_object_selector.rjs'
       end
 
       should 'for Students' do
         get_as @ta, :noteable_object_selector, :noteable_type => 'Student'
-        assert assign_to :students
+        assert_not_nil assigns :students
         assert_response :success
         assert render_template 'noteable_object_selector.rjs'
       end
 
       should 'for Assignments' do
         get_as @ta, :noteable_object_selector, :noteable_type => 'Assignment'
-        assert assign_to :assignments
+        assert_not_nil assigns :assignments
         assert_response :success
         assert render_template 'noteable_object_selector.rjs'
       end
@@ -223,7 +223,7 @@ class NotesControllerTest < AuthenticatedControllerTest
                   :update,
                   {:id => @note.id,
                    :note => {:notes_message => ''}}
-          assert assign_to :note
+          assert_not_nil assigns :note
           assert_equal 0, flash.size
           assert render_template 'edit.html.erb'
         end
@@ -235,7 +235,7 @@ class NotesControllerTest < AuthenticatedControllerTest
                   :update,
                   {:id => @note.id,
                    :note => {:notes_message => @new_message}}
-          assert assign_to :note
+          assert_not_nil assigns :note
           assert_equal flash[:success], I18n.t('notes.update.success')
           assert redirect_to(:controller => 'note')
         end
@@ -256,7 +256,7 @@ class NotesControllerTest < AuthenticatedControllerTest
       should 'for a note belonging to themselves' do
         @note = Note.make( :creator_id => @ta.id )
         delete_as @ta, :destroy, :id => @note.id
-        assert assign_to :note
+        assert_not_nil assigns :note
         assert_equal flash[:success], I18n.t('notes.delete.success')
       end
 
@@ -265,7 +265,7 @@ class NotesControllerTest < AuthenticatedControllerTest
         delete_as @ta,
                   :destroy,
                   :id => @note.id
-        assert assign_to :note
+        assert_not_nil assigns :note
         assert_equal flash[:error], I18n.t('notes.delete.error_permissions')
       end
     end
@@ -289,7 +289,7 @@ class NotesControllerTest < AuthenticatedControllerTest
 
     should 'for Students' do
       get_as @admin, :noteable_object_selector, :noteable_type => 'Student'
-      assert assign_to :students
+      assert_not_nil assigns :students
       assert_nil assigns(:assignments)
       assert_nil assigns(:groupings)
       assert_response :success
@@ -300,7 +300,7 @@ class NotesControllerTest < AuthenticatedControllerTest
       get_as @admin,
               :noteable_object_selector,
               :noteable_type => 'Assignment'
-      assert assign_to :assignments
+      assert_not_nil assigns :assignments
       assert_nil assigns(:students)
       assert_nil assigns :groupings
       assert_response :success
@@ -310,8 +310,8 @@ class NotesControllerTest < AuthenticatedControllerTest
     should 'for invalid type' do
       get_as @admin, :noteable_object_selector, :noteable_type => 'gibberish'
       assert_equal flash[:error], I18n.t('notes.new.invalid_selector')
-      assert assign_to :assignments
-      assert assign_to :groupings
+      assert_not_nil assigns :assignments
+      assert_not_nil assigns :groupings
       assert_nil assigns :students
       assert_response :success
       assert render_template 'noteable_object_selector.rjs'
@@ -366,8 +366,8 @@ class NotesControllerTest < AuthenticatedControllerTest
                   :note => {:noteable_id => @grouping.id}}
         assert_not_nil assigns :note
         assert_equal 0, flash.size
-        assert assign_to :assignments
-        assert assign_to :groupings
+        assert_not_nil assigns :assignments
+        assert_not_nil assigns :groupings
         assert_nil assigns(:students)
         assert render_template 'new.html.erb'
       end
@@ -384,7 +384,7 @@ class NotesControllerTest < AuthenticatedControllerTest
                   {:noteable_type => type.to_s,
                     :note => {:noteable_id => noteable.call().id,
                               :notes_message => @message}}
-          assert assign_to :note
+          assert_not_nil assigns :note
           assert_equal flash[:success], I18n.t('notes.create.success')
           assert redirect_to(:controller => 'note')
           assert_equal(@notes + 1,  Note.count )
@@ -399,8 +399,8 @@ class NotesControllerTest < AuthenticatedControllerTest
 
       should 'for Groupings' do
         get_as @admin, :noteable_object_selector, :noteable_type => 'Grouping'
-        assert assign_to :assignments
-        assert assign_to :groupings
+        assert_not_nil assigns :assignments
+        assert_not_nil assigns :groupings
         assert_nil assigns(:students)
         assert_response :success
         assert render_template 'noteable_object_selector.rjs'
@@ -424,7 +424,7 @@ class NotesControllerTest < AuthenticatedControllerTest
         @note = Note.make(:creator_id => @admin.id)
         post_as @admin,
                 :update, {:id => @note.id, :note => {:notes_message => ''}}
-        assert assign_to :note
+        assert_not_nil assigns :note
         assert_equal 0, flash.size
         assert render_template 'edit.html.erb'
       end
@@ -436,7 +436,7 @@ class NotesControllerTest < AuthenticatedControllerTest
                 :update,
                 {:id => @note.id,
                   :note => {:notes_message => @new_message}}
-        assert assign_to :note
+        assert_not_nil assigns :note
         assert_equal flash[:success], I18n.t('notes.update.success')
         assert redirect_to(:controller => 'note')
       end
@@ -447,7 +447,7 @@ class NotesControllerTest < AuthenticatedControllerTest
         post_as @admin,
                 :update,
                 {:id => @note.id, :note => {:notes_message => @new_message}}
-        assert assign_to :note
+        assert_not_nil assigns :note
         assert_equal flash[:success], I18n.t('notes.update.success')
         assert redirect_to(:controller => 'note')
       end
@@ -455,14 +455,14 @@ class NotesControllerTest < AuthenticatedControllerTest
       should 'for a note belonging to themselves (delete as Admin)' do
         @note = Note.make( :creator_id => @admin.id  )
         delete_as @admin, :destroy, {:id => @note.id}
-        assert assign_to :note
+        assert_not_nil assigns :note
         assert_equal flash[:success], I18n.t('notes.delete.success')
       end
 
       should 'for a note belonging to someone else (delete as Admin)' do
         @note = Note.make(:creator_id => Ta.make.id)
         delete_as @admin, :destroy, {:id => @note.id}
-        assert assign_to :note
+        assert_not_nil assigns :note
         assert_equal flash[:success], I18n.t('notes.delete.success')
       end
 

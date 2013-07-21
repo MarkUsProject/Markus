@@ -158,8 +158,10 @@ require 'mocha/setup'
       setup do
         get_as @admin, :index, :assignment_id => @assignment.id
       end
-      should assign_to :assignment
-      should assign_to :criteria
+      should 'respond with appropriate content' do
+        assert_not_nil assigns :assignment
+        assert_not_nil assigns :criteria
+      end
       should render_template :index
       should respond_with :success
     end
@@ -168,7 +170,9 @@ require 'mocha/setup'
       setup do
         get_as @admin, :edit, :assignment_id => 1, :id => @criterion.id
       end
-      should assign_to :criterion
+      should 'respond with appropriate content' do
+        assert_not_nil assigns :criterion
+      end
       should render_template :edit
       should respond_with :success
     end
@@ -185,7 +189,9 @@ require 'mocha/setup'
                  :id => @criterion.id,
                  :flexible_criterion => {:flexible_criterion_name => 'one', :max => 10}
         end
-        should assign_to :criterion
+        should 'respond with appropriate content' do
+          assert_not_nil assigns :criterion
+        end
         should render_template 'errors'
         should respond_with :success
       end
@@ -198,7 +204,7 @@ require 'mocha/setup'
                :flexible_criterion => {:flexible_criterion_name => 'one',
                                        :max => 10}
         assert flash[:success], I18n.t('criterion_saved_success')
-        assert assign_to :criterion
+        assert_not_nil assigns :criterion
         assert render_template :update
       end
     end
@@ -207,7 +213,9 @@ require 'mocha/setup'
       setup do
         get_as @admin, :new, :assignment_id => @assignment.id
       end
-      should assign_to :assignment
+      should 'respond with appropriate content' do
+        assert_not_nil assigns :assignment
+      end
       should render_template :new
       should respond_with :success
     end
@@ -216,11 +224,11 @@ require 'mocha/setup'
       setup do
         get_as @admin, :download, :assignment_id => @assignment.id
       end
-      should assign_to :assignment
       should respond_with_content_type 'text/csv'
       should respond_with :success
       should 'respond with appropriate content' do
         assert_equal FLEXIBLE_CRITERIA_CSV_STRING, @response.body
+        assert_not_nil assigns :assignment
       end
     end
 
@@ -228,7 +236,9 @@ require 'mocha/setup'
       setup do
         get_as @admin, :upload, :assignment_id => @assignment.id, :upload => {:flexible => ''}
       end
-      should assign_to :assignment
+      should 'respond with appropriate content' do
+        assert_not_nil assigns :assignment
+      end
       should respond_with :redirect
       should 'route properly' do
         assert_recognizes({:controller => 'flexible_criteria', :assignment_id => '1', :action => 'upload' },
@@ -293,8 +303,10 @@ require 'mocha/setup'
       setup do
         post_as @admin, :index, :assignment_id => @assignment.id
       end
-      should assign_to :assignment
-      should assign_to :criteria
+      should 'respond with appropriate content' do
+        assert_not_nil assigns :assignment
+        assert_not_nil assigns :criteria
+      end
       should render_template :index
       should respond_with :success
     end
@@ -303,7 +315,9 @@ require 'mocha/setup'
       setup do
         post_as @admin, :edit, :assignment_id => 1, :id => @criterion.id
       end
-      should assign_to :criterion
+      should 'respond with appropriate content' do
+        assert_not_nil assigns :criterion
+      end
       should render_template :edit
       should respond_with :success
     end
@@ -315,9 +329,11 @@ require 'mocha/setup'
           FlexibleCriterion.any_instance.expects(:errors).once.returns('error msg')
           post_as @admin, :create, :assignment_id => @assignment.id, :flexible_criterion => {:flexible_criterion_name => 'first', :max => 10}
         end
-        should assign_to :assignment
-        should assign_to :criterion
-        should assign_to :errors
+        should 'respond with appropriate content' do
+          assert_not_nil assigns :criterion
+          assert_not_nil assigns :errors
+          assert_not_nil assigns :assignment
+        end
         should render_template 'flexible_criteria/add_criterion_error'
         should respond_with :success
       end
@@ -327,8 +343,10 @@ require 'mocha/setup'
           assignment = assignments(:flexible_assignment_without_criterion)
           post_as @admin, :create, :assignment_id => assignment.id, :flexible_criterion => {:flexible_criterion_name => 'first', :max => 10}
         end
-        should assign_to :assignment
-        should assign_to :criterion
+        should 'respond with appropriate content' do
+          assert_not_nil assigns :criterion
+          assert_not_nil assigns :assignment
+        end
         should render_template 'flexible_criteria/create_and_edit'
         should respond_with :success
       end
@@ -337,8 +355,10 @@ require 'mocha/setup'
         setup do
           post_as @admin, :create, :assignment_id => @assignment.id, :flexible_criterion => {:flexible_criterion_name => 'first', :max => 10}
         end
-        should assign_to :assignment
-        should assign_to :criterion
+        should 'respond with appropriate content' do
+          assert_not_nil assigns :criterion
+          assert_not_nil assigns :assignment
+        end
         should render_template 'flexible_criteria/create_and_edit'
         should respond_with :success
       end
@@ -348,10 +368,10 @@ require 'mocha/setup'
       setup do
         post_as @admin, :download, :assignment_id => @assignment.id
       end
-      should assign_to :assignment
       should respond_with_content_type 'text/csv'
       should respond_with :success
       should 'respond with appropriate content' do
+        assert_not_nil assigns :assignment
         assert_equal FLEXIBLE_CRITERIA_CSV_STRING, @response.body
       end
     end
@@ -364,7 +384,9 @@ require 'mocha/setup'
           tempfile.rewind
           post_as @admin, :upload, :assignment_id => @assignment.id, :upload => {:flexible => tempfile}
         end
-        should assign_to :assignment
+        should 'respond with appropriate content' do
+          assert_not_nil assigns :assignment
+        end
         should set_the_flash
         should respond_with :redirect
       end
@@ -376,7 +398,9 @@ require 'mocha/setup'
           tempfile.rewind
           post_as @admin, :upload, :assignment_id => @assignment.id, :upload => {:flexible => tempfile}
         end
-        should assign_to :assignment
+        should 'respond with appropriate content' do
+          assert_not_nil assigns :assignment
+        end
         should set_the_flash
         should respond_with :redirect
       end
@@ -391,7 +415,9 @@ require 'mocha/setup'
           @assignment.reload
           @flexible_criteria = @assignment.flexible_criteria
         end
-        should assign_to :assignment
+        should 'respond with appropriate content' do
+          assert_not_nil assigns :assignment
+        end
         should set_the_flash
         should respond_with :redirect
         should 'have successfully uploaded criteria' do
@@ -544,7 +570,7 @@ require 'mocha/setup'
 
     should 'be able to delete the criterion' do
       delete_as @admin, :destroy, :assignment_id => 1, :id => @criterion.id
-      assert assign_to :criterion
+      assert_not_nil assigns :criterion
       assert I18n.t('criterion_deleted_success'), flash[:success]
       assert_response :success
 

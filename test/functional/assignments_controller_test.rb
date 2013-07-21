@@ -28,8 +28,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
     should 'be able to get new' do
       get_as @admin, :new
-      assert assign_to :assignment
-      assert assign_to :assignments
+      assert_not_nil assigns :assignment
+      assert_not_nil assigns :assignments
       assert_response :success
     end
 

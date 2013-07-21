@@ -26,12 +26,12 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       assert_response :success
       # file_manager action assert assign to various instance variables.
       # These are crucial for the file_manager view to work properly.
-      assert assign_to :assignment
-      assert assign_to :grouping
-      assert assign_to :path
-      assert assign_to :revision
-      assert assign_to :files
-      assert assign_to :missing_assignment_files
+      assert_not_nil assigns :assignment
+      assert_not_nil assigns :grouping
+      assert_not_nil assigns :path
+      assert_not_nil assigns :revision
+      assert_not_nil assigns :files
+      assert_not_nil assigns :missing_assignment_files
     end
 
     should 'and I should be able to populate file' do
@@ -55,12 +55,12 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
       # update_files action assert assign to various instance variables.
       # These are crucial for the file_manager view to work properly.
-      assert assign_to :assignment
-      assert assign_to :grouping
-      assert assign_to :path
-      assert assign_to :revision
-      assert assign_to :files
-      assert assign_to :missing_assignment_files
+      assert_not_nil assigns :assignment
+      assert_not_nil assigns :grouping
+      assert_not_nil assigns :path
+      assert_not_nil assigns :revision
+      assert_not_nil assigns :files
+      assert_not_nil assigns :missing_assignment_files
 
       # Check to see if the file was added
       @grouping.group.access_repo do |repo|
@@ -105,12 +105,12 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
       # update_files action assert assign to various instance variables.
       # These are crucial for the file_manager view to work properly.
-      assert assign_to :assignment
-      assert assign_to :grouping
-      assert assign_to :path
-      assert assign_to :revision
-      assert assign_to :files
-      assert assign_to :missing_assignment_files
+      assert_not_nil assigns :assignment
+      assert_not_nil assigns :grouping
+      assert_not_nil assigns :path
+      assert_not_nil assigns :revision
+      assert_not_nil assigns :files
+      assert_not_nil assigns :missing_assignment_files
 
       @grouping.group.access_repo do |repo|
         revision = repo.get_latest_revision
@@ -154,12 +154,12 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
       # update_files action assert assign to various instance variables.
       # These are crucial for the file_manager view to work properly.
-      assert assign_to :assignment
-      assert assign_to :grouping
-      assert assign_to :path
-      assert assign_to :revision
-      assert assign_to :files
-      assert assign_to :missing_assignment_files
+      assert_not_nil assigns :assignment
+      assert_not_nil assigns :grouping
+      assert_not_nil assigns :path
+      assert_not_nil assigns :revision
+      assert_not_nil assigns :files
+      assert_not_nil assigns :missing_assignment_files
 
       @grouping.group.access_repo do |repo|
         revision = repo.get_latest_revision
@@ -190,13 +190,13 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
       # update_files action should assign to various instance variables.
       # These are crucial for the file_manager view to work properly.
-      assert assign_to :assignment
-      assert assign_to :grouping
-      assert assign_to :path
-      assert assign_to :revision
-      assert assign_to :files
-      assert assign_to :missing_assignment_files
-      assert assign_to :file_manager_errors
+      assert_not_nil assigns :assignment
+      assert_not_nil assigns :grouping
+      assert_not_nil assigns :path
+      assert_not_nil assigns :revision
+      assert_not_nil assigns :files
+      assert_not_nil assigns :missing_assignment_files
+      assert_not_nil assigns :file_manager_errors
 
       file_manager_errors = assigns['file_manager_errors']
       @grouping.group.access_repo do |repo|

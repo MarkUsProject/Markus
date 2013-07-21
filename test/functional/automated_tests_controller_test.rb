@@ -40,7 +40,9 @@ class AutomatedTestsControllerTest < AuthenticatedControllerTest
                                           :filetype => 'test', :is_private => '0'}}}}
       end
 
-      should assign_to :assignment
+      should 'respond with appropriate content' do
+        assert_not_nil assigns :assignment
+      end
       should respond_with :redirect
       should set_the_flash.to(I18n.t('assignment.update_success'))
 

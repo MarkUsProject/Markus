@@ -145,7 +145,7 @@ class GradersControllerTest < AuthenticatedControllerTest
     should 'doing a GET on :index(graders_controller)' do
       get_as @admin, :index, {:assignment_id => @assignment.id}
       assert_response :success
-      assert assign_to :assignment
+      assert_not_nil assigns :assignment
     end #manage
 
     context 'doing a POST on :set_assign_criteria' do
