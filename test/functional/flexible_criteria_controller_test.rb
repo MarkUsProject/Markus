@@ -251,8 +251,6 @@ require 'mocha/setup'
     end
 
     should 'be able to update_positions' do
-      @criterion2 = FlexibleCriterion.make(:assignment => @assignment,
-                                           :position => 2)
       get_as @admin,
              :update_positions,
              :flexible_criteria_pane_list => [@criterion2.id,
@@ -268,8 +266,6 @@ require 'mocha/setup'
     end
 
     should 'be able to move_criterion up' do
-      @criterion2 = FlexibleCriterion.make(:assignment => @assignment,
-                                           :position => 2)
       get_as @admin,
              :move_criterion,
              :assignment_id => @assignment.id,
@@ -284,8 +280,6 @@ require 'mocha/setup'
     end
 
     should 'be able to move_criterion down' do
-      @criterion2 = FlexibleCriterion.make(:assignment => @assignment,
-                                           :position => 2)
       get_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion.id, :direction => :down
       assert render_template ''
       assert_response :success
