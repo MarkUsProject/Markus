@@ -6,10 +6,6 @@ require 'will_paginate'
 
 class GradeEntryFormsControllerTest < AuthenticatedControllerTest
 
-  def setup
-    clear_fixtures
-  end
-
   # Constants for :edit tests
   NEW_SHORT_IDENTIFIER = 'NewSI'
   NEW_DESCRIPTION = 'NewDescription'
@@ -804,7 +800,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         post_as @admin,
                 :csv_upload,
                 :id => @grade_entry_form_with_grade_entry_items.id,
-                :upload => {:grades_file => fixture_file_upload('../files/test_grades_UTF-8.csv')},
+                :upload => {:grades_file => fixture_file_upload('files/test_grades_UTF-8.csv')},
                 :encoding => 'UTF-8'
         assert_response :redirect
         test_student = Student.find_by_user_name('c2ÈrÉØrr')
@@ -821,7 +817,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         post_as @admin,
                 :csv_upload,
                 :id => @grade_entry_form_with_grade_entry_items.id,
-                :upload => {:grades_file => fixture_file_upload('../files/test_grades_ISO-8859-1.csv')},
+                :upload => {:grades_file => fixture_file_upload('files/test_grades_ISO-8859-1.csv')},
                 :encoding => 'ISO-8859-1'
         assert_response :redirect
         test_student = Student.find_by_user_name('c2ÈrÉØrr')
@@ -838,7 +834,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         post_as @admin,
                 :csv_upload,
                 :id => @grade_entry_form_with_grade_entry_items.id,
-                :upload => {:grades_file => fixture_file_upload('../files/test_grades_UTF-8.csv')},
+                :upload => {:grades_file => fixture_file_upload('files/test_grades_UTF-8.csv')},
                 :encoding => 'ISO-8859-1'
         assert_response :redirect
         test_student = Student.find_by_user_name('c2ÈrÉØrr')

@@ -7,9 +7,6 @@ require 'shoulda'
 require 'mocha/setup'
 
 class SubmissionsControllerTest < AuthenticatedControllerTest
-  def setup
-    clear_fixtures
-  end
 
   context 'I am a student trying working alone on an assignment' do
     setup do
@@ -41,8 +38,8 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
     #TODO Figure out how to remove fixture_file_upload
     should 'and I should be able to add files' do
-      file_1 = fixture_file_upload(File.join('..', 'files', 'Shapes.java'), 'text/java')
-      file_2 = fixture_file_upload(File.join('..', 'files', 'TestShapes.java'), 'text/java')
+      file_1 = fixture_file_upload(File.join('files', 'Shapes.java'), 'text/java')
+      file_2 = fixture_file_upload(File.join('files', 'TestShapes.java'), 'text/java')
       assert @student.has_accepted_grouping_for?(@assignment.id)
       post_as @student,
               :update_files,
@@ -87,8 +84,8 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         old_file_1 = old_files['Shapes.java']
         old_file_2 = old_files['TestShapes.java']
 
-        @file_1 = fixture_file_upload(File.join('..', 'files', 'Shapes.java'), 'text/java')
-        @file_2 = fixture_file_upload(File.join('..', 'files', 'TestShapes.java'), 'text/java')
+        @file_1 = fixture_file_upload(File.join('files', 'Shapes.java'), 'text/java')
+        @file_2 = fixture_file_upload(File.join('files', 'TestShapes.java'), 'text/java')
 
         post_as @student,
                 :update_files, :assignment_id => @assignment.id,
@@ -178,8 +175,8 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         txn.add(File.join(@assignment.repository_folder, 'TestShapes.java'), 'Content of TestShapes.java')
         repo.commit(txn)
 
-        file_1 = fixture_file_upload(File.join('..', 'files', 'Shapes.java'), 'text/java')
-        file_2 = fixture_file_upload(File.join('..', 'files', 'TestShapes.java'), 'text/java')
+        file_1 = fixture_file_upload(File.join('files', 'Shapes.java'), 'text/java')
+        file_2 = fixture_file_upload(File.join('files', 'TestShapes.java'), 'text/java')
         assert @student.has_accepted_grouping_for?(@assignment.id)
         post_as(@student, :update_files, {:assignment_id => @assignment.id, :new_files => [file_1, file_2]})
       end

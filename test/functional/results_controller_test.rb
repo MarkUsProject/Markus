@@ -6,10 +6,6 @@ require 'mocha/setup'
 
 class ResultsControllerTest < AuthenticatedControllerTest
 
-  def setup
-    clear_fixtures
-  end
-
   def teardown
       destroy_repos
   end

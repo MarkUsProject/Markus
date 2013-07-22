@@ -16,10 +16,6 @@ class GroupingTest < ActiveSupport::TestCase
   should have_many :submissions
   should have_many :notes
 
-  setup do
-    clear_fixtures
-  end
-
   context 'A good grouping model' do
     setup do
       @grouping = Grouping.make
@@ -457,8 +453,6 @@ class GroupingTest < ActiveSupport::TestCase
       csv_file_data = "Titanic,ta1\nUkishima Maru,ta1,ta2\nBlanche Nef,ta2"
       failures = Grouping.assign_tas_by_csv(csv_file_data, @assignment.id, nil)
 
-      # This should be +1 ta_memberships, because one of those TAs is already
-      # assigned to Ukishima Maru in the fixtures
       assert_equal 2, @grouping.ta_memberships.count
       assert_equal 0, failures.size
     end

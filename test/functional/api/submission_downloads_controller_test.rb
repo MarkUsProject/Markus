@@ -71,8 +71,6 @@ class Api::SubmissionDownloadsControllerTest < ActionController::TestCase
   # Testing authenticated requests
   context 'An authenticated request to submission_downloads' do
     setup do
-      # Fixtures have manipulated the DB, clear them off.
-      clear_fixtures
 
       # Create admin from blueprints
       @admin = Admin.make
@@ -107,8 +105,8 @@ class Api::SubmissionDownloadsControllerTest < ActionController::TestCase
         @file1_name = 'Shapes.java'
         @file2_name = 'TestShapes.java'
 
-        file1 = fixture_file_upload(File.join('..', 'files', @file1_name), 'text/java')
-        file2 = fixture_file_upload(File.join('..', 'files', @file2_name), 'text/java')
+        file1 = fixture_file_upload(File.join('files', @file1_name), 'text/java')
+        file2 = fixture_file_upload(File.join('files', @file2_name), 'text/java')
 
         @file1_content = IO.read(file1.path)
         @file2_content = IO.read(file2.path)

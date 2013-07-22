@@ -10,10 +10,6 @@ require 'machinist'
 
 class RubricsControllerTest < AuthenticatedControllerTest
 
-  def setup
-    clear_fixtures
-  end
-
   RUBRIC_CRITERIA_CSV_STRING = "Algorithm Design,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,
 Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,
 Testing,2.2,Horrible,Poor,Satisfactory,Good,Excellent,,,,,
@@ -147,7 +143,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       post_as @admin,
               :csv_upload,
               :assignment_id => @assignment.id,
-              :csv_upload => {:rubric => fixture_file_upload('../files/test_rubric_criteria_UTF-8.csv')},
+              :csv_upload => {:rubric => fixture_file_upload('files/test_rubric_criteria_UTF-8.csv')},
               :encoding => 'UTF-8'
       assert_response :redirect
       test_criterion = RubricCriterion.find_by_assignment_id_and_rubric_criterion_name(@assignment.id, 'RubricCriteriaÈrÉØrr')
@@ -158,7 +154,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       post_as @admin,
               :csv_upload,
               :assignment_id => @assignment.id,
-              :csv_upload => {:rubric => fixture_file_upload('../files/test_rubric_criteria_ISO-8859-1.csv')},
+              :csv_upload => {:rubric => fixture_file_upload('files/test_rubric_criteria_ISO-8859-1.csv')},
               :encoding => 'ISO-8859-1'
       assert_response :redirect
       test_criterion = RubricCriterion.find_by_assignment_id_and_rubric_criterion_name(@assignment.id, 'RubricCriteriaÈrÉØrr')
@@ -169,7 +165,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       post_as @admin,
               :csv_upload,
               :assignment_id => @assignment.id,
-              :csv_upload => {:rubric => fixture_file_upload('../files/test_rubric_criteria_UTF-8.csv')},
+              :csv_upload => {:rubric => fixture_file_upload('files/test_rubric_criteria_UTF-8.csv')},
               :encoding => 'ISO-8859-1'
       assert_response :redirect
       test_criterion = RubricCriterion.find_by_assignment_id_and_rubric_criterion_name(@assignment.id, 'RubricCriteriaÈrÉØrr')

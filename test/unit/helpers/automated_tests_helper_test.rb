@@ -5,7 +5,6 @@ require 'shoulda'
 class AutomatedTestsHelperTest < ActiveSupport::TestCase
 
   def setup
-    clear_fixtures
     @assignment = Assignment.new
     @token = Token.new
     @student = Student.new

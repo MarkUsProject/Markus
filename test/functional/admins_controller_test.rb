@@ -8,10 +8,6 @@ require 'admins_controller'
 
 class AdminsControllerTest < AuthenticatedControllerTest
 
-  def setup
-    clear_fixtures
-  end
-
   def teardown
     destroy_repos
   end

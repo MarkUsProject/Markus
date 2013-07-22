@@ -6,7 +6,6 @@ require 'base64'
 require 'mocha/setup'
 
 class Api::TestResultsControllerTest < ActionController::TestCase
-  fixtures :all
 
   # Testing unauthenticated requests
   context 'An unauthenticated request to test_results' do
@@ -71,7 +70,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
   context 'An authenticated request to test_results' do
     setup do
       # Create admin from blueprints
-      admin = users(:api_admin)
+      admin = Admin.make
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
@@ -125,10 +124,13 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     # Testing GET api/assignments/id/groups/id/test_results
     context 'testing index function' do
       setup do
-        @group = groups(:group_test_result1)
-        @assignment = assignments(:assignment_test_result1)
+        @group = Group.make
+        @assignment = Assignment.make
+        Submission.make(:grouping => Grouping.make(
+            :group => @group, :assignment => @assignment))
         submission = Submission.get_submission_by_group_and_assignment(
           @group[:group_name], @assignment[:short_identifier])
+        TestResult.make(:submission => submission)
         @num_tests = submission.test_results.count
       end
 
@@ -147,9 +149,11 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     # Testing GET api/assignments/id/groups/id/test_results/id
     context 'testing show function' do
       setup do
-        @group = groups(:group_test_result1)
-        @assignment = assignments(:assignment_test_result1)
-        @test_result = test_results(:test_result_controller_test1)
+        @group = Group.make
+        @assignment = Assignment.make
+        submission = Submission.make(:grouping => Grouping.make(
+            :group => @group, :assignment => @assignment))
+        @test_result = TestResult.make(:submission => submission)
       end
 
       should "send the file contents if it's a valid file" do
@@ -178,9 +182,11 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     # Testing DELETE api/assignments/id/groups/id/test_results/id
     context 'testing destroy' do
       setup do
-        @group = groups(:group_test_result1)
-        @assignment = assignments(:assignment_test_result1)
-        @test_result = test_results(:test_result_controller_test2)
+        @group = Group.make
+        @assignment = Assignment.make
+        submission = Submission.make(:grouping => Grouping.make(
+            :group => @group, :assignment => @assignment))
+        @test_result = TestResult.make(:submission => submission)
       end
 
       should 'delete the test result_result if a valid id is given' do
@@ -213,14 +219,17 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     # Testing POST api/assignments/id/groups/id/test_results
     context 'testing create function' do
       setup do
-        @group = groups(:group_test_result1)
-        @assignment = assignments(:assignment_test_result1)
+        @group = Group.make
+        @assignment = Assignment.make
+        Submission.make(:grouping => Grouping.make(
+            :group => @group, :assignment => @assignment))
         @filename = 'testing_tests.xml'
         @file_content = 'testing test files'
         @submission = Submission.get_submission_by_group_and_assignment(
           @group[:group_name], @assignment[:short_identifier])
+        @existing_filename = TestResult.make(
+            :submission => @submission).filename
         @num_test_results = @submission.test_results.count
-        @existing_filename = test_results(:test_result_controller_test2).filename
       end
 
       should "create the file if valid and doesn't already exist" do
@@ -259,13 +268,16 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     # Testing PUT api/assignments/id/groups/id/test_results/id
     context 'testing update function' do
       setup do
-        @group = groups(:group_test_result1)
-        @assignment = assignments(:assignment_test_result1)
-        @test_result = test_results(:test_result_controller_test1)
+        @group = Group.make
+        @assignment = Assignment.make
+        submission = Submission.make(:grouping => Grouping.make(
+            :group => @group, :assignment => @assignment))
+        @test_result = TestResult.make(:submission => submission)
         @filename = 'testing_tests.xml'
         @file_content = 'testing test files'
         @submission = Submission.get_submission_by_group_and_assignment(
           @group[:group_name], @assignment[:short_identifier])
+        @taken_filename = TestResult.make(:submission => @submission).filename
         @num_test_results = @submission.test_results.count
       end
 
@@ -280,9 +292,8 @@ class Api::TestResultsControllerTest < ActionController::TestCase
 
       should 'fail if the filename is taken by another file' do
         current_filename = @test_result.filename
-        taken_filename = test_results(:test_result_controller_test3).filename
         put 'update', :group_id => @group.id, :assignment_id => @assignment.id,
-          :id => @test_result.id, :filename => taken_filename
+          :id => @test_result.id, :filename => @taken_filename
         assert_response 409
         assert_equal @num_test_results, @submission.test_results.length
         assert_equal @test_result.filename, current_filename
