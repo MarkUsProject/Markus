@@ -175,8 +175,7 @@ select {
 }
 
 label, .label {
-  /* Marc - Commented out the below line due to conflicts with jQuery DataTable plugin*/
-  /*display: inline-block;*/
+  display: inline-block;
   width: 150px;
   padding-top: 3px;
   margin-top: 5px;

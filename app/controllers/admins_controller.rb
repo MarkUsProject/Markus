@@ -9,6 +9,9 @@ class AdminsController < ApplicationController
     admins_data = Admin.all(:order => 'user_name')
     # construct_table_rows defined in UsersHelper
     @admins = construct_table_rows(admins_data)
+    respond_to do |format|
+      format.json { render :json => @admins }
+    end
   end
 
   def edit

@@ -23,9 +23,10 @@ jQuery(document).ready(function() {
     data:     'authenticity_token=' + AUTH_TOKEN,
     type:     "POST",
     async:    true,
-    complete: function(request) {
-      jQuery('#loading_list').hide();
-    }
-  });
+    dataType: 'json'
+  }).done(function (data) {
+            jQuery('#loading_list').hide();
+            populate(JSON.stringify(data));
+          });
 
 });
