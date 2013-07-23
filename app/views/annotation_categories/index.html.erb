@@ -3,9 +3,10 @@
 <% end %>
 
 <% # UI LIBRARIES %>
-<%= javascript_include_tag "livepipe/livepipe.js",
-                           "livepipe/window.js",
-                           "livepipe/tabs.js" %>
+<%= javascript_include_tag 'livepipe/livepipe',
+                           'livepipe/window',
+                           'livepipe/tabs',
+                           'AnnotationCategories/index' %>
 
 
 <%if @assignment.past_due_date?%>
