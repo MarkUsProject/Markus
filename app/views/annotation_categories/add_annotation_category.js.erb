@@ -1,0 +1,2 @@
+jQuery('#annotation_category_pane_list').prepend("<%= escape_javascript("#{render :partial => 'new_annotation_category', :locals => { :assignment_id => @assignment.id }}").html_safe %>");
+jQuery('#add_annotation_category_prompt').select();

@@ -1,1 +1,0 @@
-page.insert_html :top, 'annotation_list', :partial => 'new_annotation_text', :locals => {:annotation_category_id => @annotation_category.id}
