@@ -2216,3 +2216,11 @@ pre#test_result_content {
 
 /* styles specific to the graphing on the dashboard */
 
+/* Style for jQuery */
+
+.no-close .ui-dialog-titlebar,
+.no-close .ui-dialog-buttonpane {
+    display: none;
+}
+
+/* end */
