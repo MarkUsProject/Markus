@@ -144,7 +144,8 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       get_as @admin,
             :get_annotations,
             :assignment_id => @assignment.id,
-            :id => @category.id
+            :id => @category.id,
+            :format => :js
       assert_equal 0, flash.size
       assert_response :success
       assert_not_nil assigns :annotation_category
@@ -154,7 +155,8 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     should 'on :add_annotation_category' do
       get_as @admin,
               :add_annotation_category,
-              :assignment_id => @assignment.id
+              :assignment_id => @assignment.id,
+              :format => :js
       assert_response :success
       assert render_template :add_annotation_category #this makes sure it didn't call another action
       assert_not_nil assigns :assignment
@@ -167,7 +169,8 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         get_as @admin,
                :update_annotation_category,
                :assignment_id => @assignment.id,
-               :id => @category.id
+               :id => @category.id,
+               :format => :js
         assert_response :success
         assert_not_nil assigns :annotation_category
         assert_equal I18n.t('annotations.update.annotation_category_success'),
@@ -176,14 +179,15 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
       should 'with an error on save' do
         AnnotationCategory.any_instance.stubs(:save).returns(false)
-        AnnotationCategory.any_instance.stubs(:errors).returns('error')
 
         get_as @admin,
                 :update_annotation_category,
                 :assignment_id => @assignment.id,
-                :id => @category.id
+                :id => @category.id,
+                :format => :js
         assert_response :success
-        assert_equal flash[:error], 'error'
+        assert_not_nil flash[:error]
+        assert_nil flash[:success]
         assert_not_nil assigns :annotation_category
       end
     end
@@ -196,7 +200,8 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
               :update_annotation,
               :assignment_id => 1,
               :id => @annotation_text.id,
-              :annotation_text => @annotation_text
+              :annotation_text => @annotation_text,
+              :format => :js
       assert_response :success
     end
 
@@ -205,7 +210,8 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       get_as @admin,
              :add_annotation_text,
              :assignment_id => 1,
-             :id => @category.id
+             :id => @category.id,
+             :format => :js
       assert_response :success
       assert_not_nil assigns :annotation_category
       assert_nil assigns :annotation_text
@@ -213,13 +219,20 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
     should 'on :delete_annotation_text' do
       AnnotationText.any_instance.expects(:destroy).once
-      get_as @admin, :delete_annotation_text, :assignment_id => 1, :id => @annotation_text.id
+      get_as @admin,
+             :delete_annotation_text,
+             :assignment_id => @assignment.id,
+             :id => @annotation_text.id,
+             :format => :js
       assert_response :success
     end
 
     should 'on :delete_annotation_category' do
       AnnotationCategory.any_instance.expects(:destroy).once
-      get_as @admin, :delete_annotation_category, :assignment_id => 1, :id => @category.id
+      get_as @admin, :delete_annotation_category,
+             :assignment_id => 1,
+             :id => @category.id,
+             :format => :js
       assert_response :success
     end
 
@@ -261,7 +274,8 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         AnnotationCategory.any_instance.stubs(:save).returns(true)
         get_as @admin,
                :add_annotation_category,
-               :assignment_id => @assignment.id
+               :assignment_id => @assignment.id,
+               :format => :js
         assert_response :success
         assert_not_nil assigns :assignment
       end
@@ -270,7 +284,8 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         AnnotationCategory.any_instance.stubs(:save).returns(false)
         post_as @admin,
                 :add_annotation_category,
-                :assignment_id => @assignment.id
+                :assignment_id => @assignment.id,
+                :format => :js
         assert_response :success
         assert_not_nil assigns :assignment
         assert_not_nil assigns :annotation_category
@@ -285,14 +300,18 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         get_as @admin,
                :add_annotation_text,
                :assignment_id => 1,
-               :id => @category.id
+               :id => @category.id,
+               :format => :js
         assert_response :success
         assert_not_nil assigns :annotation_category
       end
 
       should 'with errors on save' do
         AnnotationText.any_instance.stubs(:save).returns(false)
-        post_as @admin, :add_annotation_text, :assignment_id => 1, :id => @category.id
+        post_as @admin, :add_annotation_text,
+                :assignment_id => 1,
+                :id => @category.id,
+                :format => :js
         assert_response :success
         assert render_template 'new_annotation_text_error'
         assert_not_nil assigns :annotation_category

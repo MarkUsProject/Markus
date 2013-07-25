@@ -1,19 +1,14 @@
 <div id="current_annotation_category" class="annotation_category_edit">
-<% if !flash[:error].nil? %>
+<% if flash[:error] %>
   <div class="error">
     <p>
       <%= t('annotations.update.annotation_category_error') %>
-
     </p>
-    <ul>
-      <%= flash[:error].each_line do |error_message| %>
-        <li><%= error_message %></li>
-      <% end %>
-    </ul>
+    <%= flash[:error] %>
   </div>
 <% end %>
 
-<% if !flash[:success].nil? %>
+<% if flash[:success] %>
   <div class="success">
     <%= flash[:success] %>
   </div>

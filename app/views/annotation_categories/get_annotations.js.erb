@@ -1,0 +1,1 @@
+jQuery('#annotation_list_holder').replaceWith("<%= escape_javascript(render :partial => 'annotation_list', :locals => { :annotation_texts => @annotation_texts, :annotation_category => @annotation_category }).html_safe %>");
