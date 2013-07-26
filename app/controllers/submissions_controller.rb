@@ -681,6 +681,7 @@ class SubmissionsController < ApplicationController
 
         ## retrieve the submitted files
         submission = grouping.current_submission_used
+        next unless submission
         files = submission.submission_files
 
         ## create the grouping directory

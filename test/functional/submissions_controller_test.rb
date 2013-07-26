@@ -591,6 +591,46 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_response :success
         end
       end
+
+      context 'download_groupings_files' do
+
+        setup do
+          @assignment = Assignment.make
+          (1..3).to_a.each do |i|
+            instance_variable_set(:"@student#{i}", Student.make)
+            instance_variable_set(:"@grouping#{i}",
+                                  Grouping.make(:assignment => @assignment))
+            StudentMembership.make(
+                :user => instance_variable_get(:"@student#{i}"),
+                :membership_status => 'inviter',
+                :grouping => instance_variable_get(:"@grouping#{i}"))
+            submit_file(@assignment, instance_variable_get(:"@grouping#{i}"),
+                        "file#{i}", "file#{i}'s content\n")
+          end
+        end
+
+        should 'be able to download all submissions from all groups' do
+          get_as @admin, :download_groupings_files,
+                 :assignment_id => @assignment.id,
+                 :groupings => [@grouping1.id, @grouping2.id, @grouping3.id]
+          assert_response :success
+          zip_path = "tmp/#{@assignment.short_identifier}_" +
+              "#{@admin.user_name}.zip"
+          Zip::ZipFile.open(zip_path) do |zip_file|
+            (1..3).to_a.each do |i|
+              instance_variable_set(:"@file#{i}_path", File.join(
+                  "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",
+                  "file#{i}"))
+              assert_not_nil zip_file.find_entry(
+                                 instance_variable_get(:"@file#{i}_path"))
+              assert_equal("file#{i}'s content\n", zip_file.read(
+                  instance_variable_get(:"@file#{i}_path")))
+            end
+          end
+        end
+
+      end
+
     end
 
   end
@@ -621,4 +661,19 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
     destroy_repos
   end
 
+end
+
+private
+
+def submit_file(assignment, grouping, filename = 'file', content = 'content')
+  grouping.group.access_repo do |repo|
+    txn = repo.get_transaction('test')
+    path = File.join(assignment.repository_folder, filename)
+    txn.add(path, content, '')
+    repo.commit(txn)
+
+    # Generate submission
+    Submission.generate_new_submission(
+        grouping, repo.get_latest_revision)
+  end
 end
