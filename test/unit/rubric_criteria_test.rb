@@ -84,7 +84,6 @@ class RubricCriterionTest < ActiveSupport::TestCase
   context ' a Rubric Criterion assigning a TA' do
 
     setup do
-      setup_group_fixture_repos
       @criterion = RubricCriterion.make
       @ta = Ta.make
     end

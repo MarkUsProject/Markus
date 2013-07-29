@@ -3,12 +3,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', '
 require 'shoulda'
 
 class ResultTest < ActiveSupport::TestCase
-  # set_fixture_class is required here, since we don't use Rails'
-  # standard pluralization for rubric criteria
-  # set_fixture_class :rubric_criteria => RubricCriterion
-
-  # Set to false to blow away fixtures cache and ensure our fixtures are loaded
-  # and thus takes into account our set_fixture_class
 
   should have_many :marks
   should have_many :extra_marks
