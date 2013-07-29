@@ -336,7 +336,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
        
         should 'per_page and sort_by not defined so cookies are set to default' do
           Assignment.stubs(:find).returns(@assignment)
-          @assignment.expects(:short_identifier).once.returns('a1')
+          @assignment.expects(:short_identifier).twice.returns('a1')
           @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
 
           @c_per_page = @grader.id.to_s + '_' + @assignment.id.to_s + '_per_page'
@@ -353,7 +353,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         
         should 'per_page and sort_by defined so cookies are set to their values' do
           Assignment.stubs(:find).returns(@assignment)
-          @assignment.expects(:short_identifier).once.returns('a1')
+          @assignment.expects(:short_identifier).twice.returns('a1')
           @assignment.submission_rule.expects(:can_collect_now?).once.returns(true) 
 
           @c_per_page = @grader.id.to_s + '_' + @assignment.id.to_s + '_per_page'

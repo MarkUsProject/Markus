@@ -391,6 +391,7 @@ en:
       section:              "Section"
       collect_work_for_section: "Collect work for section:"
       download_groupings_files: "Download all submissions"
+      sections:             "Section:"
 
     grade_entry_forms:
       blank_field: "can't be blank"
