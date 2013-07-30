@@ -1106,17 +1106,6 @@ input#extra_mark_description{
    border-radius: 5px;
 }
 
-#add_new_section_dialog {
-  background: white;
-  border: 1px solid #000000;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
-  width: 375px;
-  padding-bottom: 30px;
-  text-align: center;
-}
-
 #about_dialog {
   background: white;
   border: 1px solid #000000;
