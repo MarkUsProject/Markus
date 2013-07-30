@@ -70,9 +70,9 @@
         <input type="file" name="assignment_list" id="assignment_list" />
         <%= hidden_field_tag :file_format, '', :id => 'file_format' %>
         <% if @current_user.admin? %>
-          <%= submit_tag t(:assignment_format, :file => 'yml'),
+          <%= submit_tag t(:upload_assignment_format, :file => 'yml'),
                          :onclick => 'return choose_upload("yml")' %>
-          <%= submit_tag t(:assignment_format, :file => 'csv'),
+          <%= submit_tag t(:upload_assignment_format, :file => 'csv'),
                          :onclick => 'return choose_upload("csv")' %>
         <% end %>
       <% end %>

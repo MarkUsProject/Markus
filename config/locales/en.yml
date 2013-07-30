@@ -227,6 +227,7 @@ en:
     validate:           "Validate"
     encoding:           "Encoding"
     assignment_format:  "Download in %{file} format"
+    upload_assignment_format: "Upload in %{file} format"
     select_csv_file:    "Select a CSV file of the following form: <code>%{code}</code>"
     all_csv_file:       "All fields: "
 
