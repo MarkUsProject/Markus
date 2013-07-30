@@ -9,10 +9,6 @@ require 'shoulda'
 
 class AutomatedTestsControllerTest < AuthenticatedControllerTest
 
-  def setup
-    clear_fixtures
-  end
-
   context 'A logged Admin' do
     setup do
       @admin = Admin.make
