@@ -8,10 +8,6 @@ require 'mocha/setup'
 
 class GradersControllerTest < AuthenticatedControllerTest
 
-  def setup
-    clear_fixtures
-  end
-
   context 'An authenticated and authorized student doing a ' do
 
     setup do

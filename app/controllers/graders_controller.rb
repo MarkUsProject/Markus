@@ -69,6 +69,7 @@ class GradersController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
+    @sections = Section.all
   end
 
   # Assign TAs to Groupings via a csv file

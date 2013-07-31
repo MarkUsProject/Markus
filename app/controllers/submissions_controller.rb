@@ -30,6 +30,7 @@ class SubmissionsController < ApplicationController
                           :manually_collect_and_begin_grading,
                           :collect_ta_submissions,
                           :repo_browser,
+                          :download_groupings_files,
                           :populate_repo_browser,
                           :update_converted_pdfs,
                           :update_submissions]
@@ -241,22 +242,39 @@ class SubmissionsController < ApplicationController
     @repository_name = @grouping.group.repository_name
     repo = @grouping.group.repo
     begin
-      if !params[:revision_timestamp].nil?
+      if params[:revision_timestamp]
         @revision_number = repo.get_revision_by_timestamp(Time.parse(params[:revision_timestamp])).revision_number
-      elsif !params[:revision_number].nil?
+      elsif params[:revision_number]
         @revision_number = params[:revision_number].to_i
       else
         @revision_number = repo.get_latest_revision.revision_number
       end
       @revision = repo.get_revision(@revision_number)
       @revision_timestamp = @revision.timestamp
-      repo.close
     rescue Exception => e
       flash[:error] = e.message
       @revision_number = repo.get_latest_revision.revision_number
       @revision_timestamp = repo.get_latest_revision.timestamp
-      repo.close
     end
+    # generate an revisions' history with date and num
+    @revisions_history = []
+    rev_number = repo.get_latest_revision.revision_number + 1
+    rev_number.times.each do |rev|
+      begin
+        revision = repo.get_revision(rev)
+        unless revision.path_exists?(
+            File.join(@assignment.repository_folder, @path))
+          raise 'error'
+        end
+      rescue Exception
+        revision = nil
+      end
+      if revision
+        @revisions_history << {:num => revision.revision_number,
+                               :date => revision.timestamp}
+      end
+    end
+    repo.close
   end
 
   def populate_repo_browser
@@ -644,6 +662,71 @@ class SubmissionsController < ApplicationController
         render :text => file_contents, :layout => 'sanitized_html'
       end
     end
+  end
+
+  ##
+  # Download all files from all groupings in a .zip file.
+  ##
+  def download_groupings_files
+
+    assignment = Assignment.find(params[:assignment_id])
+
+    ## create the zip name with the user name to have less chance to delete
+    ## a currently downloading file
+    short_id = assignment.short_identifier
+    zip_name = short_id + '_' + current_user.user_name + '.zip'
+    ## check if there is a '/' in the file name to replace by '_'
+    zip_path = 'tmp/' + zip_name.tr('/', '_')
+
+    ## delete the old file if it exists
+    File.delete(zip_path) if File.exist?(zip_path)
+
+    grouping_ids = params[:groupings]
+
+    ## if there is no grouping, render a message
+    if grouping_ids.blank?
+      render :text => t('student.submission.no_groupings_available')
+      return
+    end
+
+    groupings = Grouping.find(grouping_ids)
+
+    ## build the zip file
+    Zip::ZipFile.open(zip_path, Zip::ZipFile::CREATE) do |zip_file|
+
+      groupings.map do |grouping|
+
+        ## retrieve the submitted files
+        submission = grouping.current_submission_used
+        next unless submission
+        files = submission.submission_files
+
+        ## create the grouping directory
+        sub_folder = grouping.group.repo_name
+        zip_file.mkdir(sub_folder) unless zip_file.find_entry(sub_folder)
+
+        files.each do |file|
+
+          ## retrieve the file and print an error on redirect back if there is
+          begin
+            file_content = file.retrieve_file
+          rescue Exception => e
+            flash[:error] = e.message
+            redirect_to :back
+            return
+          end
+
+          ## create the file inside the sub folder
+          zip_file.get_output_stream(File.join(sub_folder, file.filename)) do |f|
+            f.puts file_content
+          end
+
+        end
+      end
+    end
+
+    ## Send the Zip file
+    send_file zip_path, :disposition => 'inline', :filename => zip_name
   end
 
   ##

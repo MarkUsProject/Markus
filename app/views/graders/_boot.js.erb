@@ -46,6 +46,11 @@ document.observe("dom:loaded", function() {
         return (row.name.toLowerCase().indexOf($('search_groupings').value.toLowerCase()) != -1
         || row.graders.toLowerCase().indexOf($('search_groupings').value.toLowerCase()) != -1
         || row.grader_names.toLowerCase().indexOf($('search_groupings').value.toLowerCase()) != -1);
+      },
+      selection: function(row) {
+        return (row.section.toLowerCase() ==
+                  $('selection_groupings_sections').value.toLowerCase() ||
+                $('selection_groupings_sections').value.toLowerCase() == '');
       }
     },
     after_filter_only_by: function(current_filters, new_filter) {

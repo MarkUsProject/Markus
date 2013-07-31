@@ -14,7 +14,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     @controller = AssignmentsController.new
     @request = ActionController::TestRequest.new
     @response = ActionController::TestResponse.new
-    clear_fixtures
   end
 
   def teardown

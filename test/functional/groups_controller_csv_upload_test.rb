@@ -19,9 +19,6 @@ class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
     # We need to use SubversionRepository for this test suite
     setup do
 
-      # Get rid of fixtures
-      clear_fixtures
-
       # Non-standard controller test. Rails expects @controller to be set
       @controller = GroupsController.new
 

@@ -1,10 +1,11 @@
 require File.expand_path(File.join(File.dirname(__FILE__), 'authenticated_controller_test'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 require 'shoulda'
 require 'mocha/setup'
 
   class FlexibleCriteriaControllerTest < AuthenticatedControllerTest
-
-    fixtures :all
 
     FLEXIBLE_CRITERIA_CSV_STRING = "criterion1,10.0,\"description1, for criterion 1\"\ncriterion2,10.0,\"description2, \"\"with quotes\"\"\"\ncriterion3,1.6,description3!\n"
     FLEXIBLE_CRITERIA_UPLOAD_CSV_STRING = "criterion3,10.0,\"description3, for criterion 3\"\ncriterion4,10.0,\"description4, \"\"with quotes\"\"\"\n"
@@ -146,12 +147,25 @@ require 'mocha/setup'
   end # An unauthenticated and unauthorized user doing a POST
 
   context 'An authenticated and authorized admin doing a GET' do
-    fixtures :users, :assignments, :flexible_criteria, :marks, :results
 
     setup do
-      @admin = users(:olm_admin_1)
-      @assignment = assignments(:flexible_assignment)
-      @criterion = flexible_criteria(:flexible_criterion_1)
+      @admin = Admin.make
+      @assignment = Assignment.make
+      @criterion = FlexibleCriterion.make(
+          :assignment => @assignment,
+          :flexible_criterion_name => 'criterion1',
+          :description => 'description1, for criterion 1')
+      @criterion2 = FlexibleCriterion.make(
+          :assignment => @assignment,
+          :position => 2,
+          :flexible_criterion_name => 'criterion2',
+          :description => 'description2, "with quotes"')
+      @criterion3 = FlexibleCriterion.make(
+          :assignment => @assignment,
+          :position => 3,
+          :flexible_criterion_name => 'criterion3',
+          :description => 'description3!',
+          :max => 1.6)
     end
 
     context 'on :index' do
@@ -237,7 +251,6 @@ require 'mocha/setup'
     end
 
     should 'be able to update_positions' do
-      @criterion2 = flexible_criteria(:flexible_criterion_2)
       get_as @admin,
              :update_positions,
              :flexible_criteria_pane_list => [@criterion2.id,
@@ -253,7 +266,6 @@ require 'mocha/setup'
     end
 
     should 'be able to move_criterion up' do
-      @criterion2 = flexible_criteria(:flexible_criterion_2)
       get_as @admin,
              :move_criterion,
              :assignment_id => @assignment.id,
@@ -268,7 +280,6 @@ require 'mocha/setup'
     end
 
     should 'be able to move_criterion down' do
-      @criterion2 = flexible_criteria(:flexible_criterion_2)
       get_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion.id, :direction => :down
       assert render_template ''
       assert_response :success
@@ -281,12 +292,25 @@ require 'mocha/setup'
   end # An authenticated and authorized admin doing a GET
 
   context 'An authenticated and authorized admin doing a POST' do
-    fixtures :users, :assignments, :flexible_criteria, :marks, :results
 
     setup do
-      @admin = users(:olm_admin_1)
-      @assignment = assignments(:flexible_assignment)
-      @criterion = flexible_criteria(:flexible_criterion_1)
+      @admin = Admin.make(:user_name => 'olm_admin')
+      @assignment = Assignment.make
+      @criterion = FlexibleCriterion.make(
+          :assignment => @assignment,
+          :flexible_criterion_name => 'criterion1',
+          :description => 'description1, for criterion 1')
+      @criterion2 = FlexibleCriterion.make(
+          :assignment => @assignment,
+          :position => 2,
+          :flexible_criterion_name => 'criterion2',
+          :description => 'description2, "with quotes"')
+      @criterion3 = FlexibleCriterion.make(
+          :assignment => @assignment,
+          :position => 3,
+          :flexible_criterion_name => 'criterion3',
+          :description => 'description3!',
+          :max => 1.6)
     end
 
     context 'on :index' do
@@ -324,7 +348,7 @@ require 'mocha/setup'
 
       context 'without error on an assignment as the first criterion' do
         setup do
-          assignment = assignments(:flexible_assignment_without_criterion)
+          assignment = Assignment.make
           post_as @admin, :create, :assignment_id => assignment.id, :flexible_criterion => {:flexible_criterion_name => 'first', :max => 10}
         end
         should assign_to :assignment
@@ -407,7 +431,6 @@ require 'mocha/setup'
     end
 
     should 'be able to update_positions' do
-      @criterion2 = flexible_criteria(:flexible_criterion_2)
       post_as @admin,
               :update_positions,
               :flexible_criteria_pane_list => [@criterion2.id,
@@ -424,7 +447,6 @@ require 'mocha/setup'
 
     context 'on :move_criterion up with 2 criteria' do
       setup do
-        @criterion2 = flexible_criteria(:flexible_criterion_2)
         post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion2.id, :direction => 'up'
       end
       should render_template ''
@@ -440,8 +462,6 @@ require 'mocha/setup'
 
     context 'on :move_criterion up with 3 criteria from bottom' do
       setup do
-        @criterion2 = flexible_criteria(:flexible_criterion_2)
-        @criterion3 = flexible_criteria(:flexible_criterion_3)
         post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion3.id, :direction => 'up'
       end
       should render_template ''
@@ -459,8 +479,6 @@ require 'mocha/setup'
 
     context 'on :move_criterion up with 3 criteria from middle' do
       setup do
-        @criterion2 = flexible_criteria(:flexible_criterion_2)
-        @criterion3 = flexible_criteria(:flexible_criterion_3)
         post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion2.id, :direction => 'up'
       end
       should render_template ''
@@ -478,7 +496,6 @@ require 'mocha/setup'
 
     context 'on :move_criterion down with 2 criteria' do
       setup do
-        @criterion2 = flexible_criteria(:flexible_criterion_2)
         post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion.id, :direction => 'down'
       end
       should render_template ''
@@ -494,8 +511,6 @@ require 'mocha/setup'
 
     context 'on :move_criterion down with 3 criteria from top' do
       setup do
-        @criterion2 = flexible_criteria(:flexible_criterion_2)
-        @criterion3 = flexible_criteria(:flexible_criterion_3)
         post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion.id, :direction => 'down'
       end
       should render_template ''
@@ -513,8 +528,6 @@ require 'mocha/setup'
 
     context 'on :move_criterion down with 3 criteria from middle' do
       setup do
-        @criterion2 = flexible_criteria(:flexible_criterion_2)
-        @criterion3 = flexible_criteria(:flexible_criterion_3)
         post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion2.id, :direction => 'down'
       end
       should render_template ''
@@ -533,12 +546,11 @@ require 'mocha/setup'
   end # An authenticated and authorized admin doing a POST
 
   context 'An authenticated and authorized admin doing a DELETE' do
-    fixtures :users, :assignments, :flexible_criteria, :marks, :results
 
     setup do
-      @admin = users(:olm_admin_1)
-      @assignment = assignments(:flexible_assignment)
-      @criterion = flexible_criteria(:flexible_criterion_1)
+      @admin = Admin.make
+      @assignment = Assignment.make
+      @criterion = FlexibleCriterion.make(:assignment => @assignment)
     end
 
 

@@ -167,8 +167,12 @@ class ResultsController < ApplicationController
 
   def download
     #Ensure student doesn't download a file not submitted by his own grouping
-    unless authorized_to_download?(params[:select_file_id])
-      render 'shared/http_status.html', :locals => { :code => '404', :message => HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404, :layout => false
+    unless authorized_to_download?(:file_id => params[:select_file_id])
+      render 'shared/http_status.html',
+             :locals => { :code => '404',
+                          :message => HttpStatusHelper::ERROR_CODE[
+                              'message']['404'] }, :status => 404,
+             :layout => false
       return
     end
     file = SubmissionFile.find(params[:select_file_id])
@@ -203,13 +207,14 @@ class ResultsController < ApplicationController
   end
 
   def download_zip
-    #Ensure student doesn't download a file not submitted by his own grouping
-    unless authorized_to_download?(params[:select_file_id])
+
+    #Ensure student doesn't download files not submitted by his own grouping
+    unless authorized_to_download?(:submission_id => params[:submission_id])
       render 'shared/http_status.html',
              :locals => { :code => '404',
-                          :message => HttpStatusHelper::
-                              ERROR_CODE['message']['404'] },
-             :status => 404, :layout => false
+                          :message => HttpStatusHelper::ERROR_CODE[
+                              'message']['404'] }, :status => 404,
+             :layout => false
       return
     end
     assignment = Assignment.find(params[:assignment_id])
@@ -244,11 +249,8 @@ class ResultsController < ApplicationController
             file_content = file.retrieve_file
           end
         rescue Exception => e
-          flash[:file_download_error] = e.message
-          redirect_to :action => 'edit',
-                      :assignment_id => params[:assignment_id],
-                      :submission_id => file.submission,
-                      :id => file.submission.get_latest_result.id
+          render :text => t('student.submission.missing_file',
+                            :file_name => file.filename, :message => e.message)
           return
         end
         # Create the folder in the Zip file if it doesn't exist
@@ -523,20 +525,28 @@ class ResultsController < ApplicationController
 
   private
 
-  #Return true if select_file_id matches the id of a file submitted by the
+  #Return true if submission_id or file_id matches between accepted_student and
   #current_user. This is to prevent students from downloading files that they
   #or their group have not submitted. Return false otherwise.
-  def authorized_to_download?(select_file_id)
+  def authorized_to_download?(map)
     #If the user is a ta or admin, return true as they are authorized.
     if current_user.admin? || current_user.ta?
       return true
     end
-    sub_file = SubmissionFile.find_by_id(select_file_id)
-    unless sub_file.nil?
+    submission = if map[:file_id]
+                   sub_file = SubmissionFile.find_by_id(map[:file_id])
+                   sub_file.submission unless sub_file.nil?
+                 elsif map[:submission_id]
+                   Submission.find(map[:submission_id])
+                 end
+    if submission
       #Check that current_user is in fact in grouping that sub_file belongs to
-      return !sub_file.submission.grouping.accepted_students.find(current_user).nil?
+      !submission.grouping.accepted_students.find { |user|
+        user == current_user
+      }.nil?
+    else
+      false
     end
-    false
   end
   
   def update_remark_request_count

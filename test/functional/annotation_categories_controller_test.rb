@@ -9,10 +9,6 @@ require 'mocha/setup'
 
 class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
-  setup do
-    clear_fixtures
-  end
-
   context 'An unauthenticated user' do
 
     # Since we are not authenticated and authorized, we should be redirected
@@ -338,7 +334,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       post_as @admin,
               :csv_upload,
               :assignment_id => @assignment.id,
-              :annotation_category_list_csv => fixture_file_upload('../files/test_annotations_UTF-8.csv'),
+              :annotation_category_list_csv => fixture_file_upload('files/test_annotations_UTF-8.csv'),
               :encoding => 'UTF-8'
       assert_response :redirect
       test_annotation = @assignment.annotation_categories.find_by_annotation_category_name('AnnotationÈrÉØrr')
@@ -349,7 +345,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       post_as @admin,
               :csv_upload,
               :assignment_id => @assignment.id,
-              :annotation_category_list_csv => fixture_file_upload('../files/test_annotations_ISO-8859-1.csv'),
+              :annotation_category_list_csv => fixture_file_upload('files/test_annotations_ISO-8859-1.csv'),
               :encoding => 'ISO-8859-1'
       assert_response :redirect
       test_annotation = @assignment.annotation_categories.find_by_annotation_category_name('AnnotationÈrÉØrr')
@@ -360,7 +356,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       post_as @admin,
               :csv_upload,
               :assignment_id => @assignment.id,
-              :annotation_category_list_csv => fixture_file_upload('../files/test_annotations_UTF-8.csv'),
+              :annotation_category_list_csv => fixture_file_upload('files/test_annotations_UTF-8.csv'),
               :encoding => 'ISO-8859-1'
       assert_response :redirect
       test_annotation = @assignment.annotation_categories.find_by_annotation_category_name('AnnotationÈrÉØrr')
@@ -407,7 +403,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         post_as @admin,
                 :yml_upload,
                 :assignment_id => @assignment.id,
-                :annotation_category_list_yml => fixture_file_upload('../files/test_annotations_UTF-8.yml'),
+                :annotation_category_list_yml => fixture_file_upload('files/test_annotations_UTF-8.yml'),
                 :encoding => 'UTF-8'
         assert_response :redirect
         test_annotation = @assignment.annotation_categories.find_by_annotation_category_name('AnnotationÈrÉØrr')
@@ -418,7 +414,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         post_as @admin,
                 :yml_upload,
                 :assignment_id => @assignment.id,
-                :annotation_category_list_yml => fixture_file_upload('../files/test_annotations_ISO-8859-1.yml'),
+                :annotation_category_list_yml => fixture_file_upload('files/test_annotations_ISO-8859-1.yml'),
                 :encoding => 'ISO-8859-1'
         assert_response :redirect
         test_annotation = @assignment.annotation_categories.find_by_annotation_category_name('AnnotationÈrÉØrr')
@@ -429,7 +425,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         post_as @admin,
                 :yml_upload,
                 :assignment_id => @assignment.id,
-                :annotcation_category_list_yml => fixture_file_upload('../files/test_annotations_UTF-8.yml'),
+                :annotcation_category_list_yml => fixture_file_upload('files/test_annotations_UTF-8.yml'),
                 :encoding => 'ISO-8859-1'
         assert_response :redirect
         test_annotation = @assignment.annotation_categories.find_by_annotation_category_name('AnnotationÈrÉØrr')

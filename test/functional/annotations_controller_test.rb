@@ -8,10 +8,6 @@ require 'machinist'
 
 class AnnotationsControllerTest < AuthenticatedControllerTest
 
-  def setup
-    clear_fixtures
-  end
-
   context 'An unauthenticated and unauthorized user doing a GET' do
 
     # Since we are not authenticated and authorized, we should be redirected
