@@ -980,7 +980,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
                     :assignment_id => @assignment.id,
                     :submission_id => 1,
                     :id => 1,
-                    :focus_line => 1
+                    :focus_line => 1,
+                    :submission_file_id => @file.id
 
             assert_equal 0, flash.size
             assert_not_nil assigns :assignment
@@ -1003,7 +1004,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :assignment_id => @assignment.id,
                    :submission_id => 1,
                    :id => 1,
-                   :focus_line => 1
+                   :focus_line => 1,
+                   :submission_file_id => @file.id
 
             assert_not_nil assigns :assignment
             assert_not_nil assigns :submission_file_id
@@ -1418,8 +1420,6 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_not_nil assigns :result
             assert_not_nil assigns :annots
             assert_not_nil assigns :all_annots
-            assert_not_nil assigns :file_contents
-            assert_not_nil assigns :code_type
             assert render_template 'results/common/codeviewer'
             assert_response :success
           end  # -- without error
