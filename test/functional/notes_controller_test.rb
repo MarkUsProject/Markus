@@ -8,10 +8,6 @@ require 'shoulda'
 
 class NotesControllerTest < AuthenticatedControllerTest
 
-  def setup
-    clear_fixtures
-  end
-
   # Security test - these should all fail
   context 'An authenticated and authorized student doing a ' do
     setup do

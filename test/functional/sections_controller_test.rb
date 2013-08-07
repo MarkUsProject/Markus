@@ -9,10 +9,6 @@ require 'shoulda'
 
 class SectionsControllerTest < AuthenticatedControllerTest
 
-  def setup
-    clear_fixtures
-  end
-
   context 'A logged student' do
     setup do
       @student = Student.make
