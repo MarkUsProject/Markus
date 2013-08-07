@@ -94,6 +94,7 @@ en:
     create_new_assignment:      "Add Assignment"
     manage_course_work: "Manage Course Work"
     repository_folder:  "Repository Folder<span class='required_field'>*</span>"
+    incorrect_format:   "Incorrect format"
     marking_state:
       not_collected: "Not Collected"
       in_progress: "In Progress"
@@ -225,6 +226,10 @@ en:
     invalid_grouping:   "(invalid)"
     validate:           "Validate"
     encoding:           "Encoding"
+    assignment_format:  "Download in %{file} format"
+    upload_assignment_format: "Upload in %{file} format"
+    select_csv_file:    "Select a CSV file of the following form: <code>%{code}</code>"
+    all_csv_file:       "All fields: "
 
     marks_released_notice:  "The marks have been released. You cannot change the grades."
     commit_after_due_date: "This commit is after the due date."
