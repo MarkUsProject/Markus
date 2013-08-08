@@ -1400,6 +1400,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
           should 'without error' do
             # We don't want to access a real file.
+            SubmissionFile.any_instance.expects(:retrieve_file).once.returns('file content')
             SubmissionFile.stubs(:find).returns(@submission_file)
             get_as @ta,
                     :codeviewer,
