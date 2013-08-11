@@ -681,7 +681,7 @@ fr:
     flexible_criteria:
       move_criterion:
         error: "Erreur: impossible de déplacer ce critère (flexible)."
-    
+
     add_student:
       success: "L'étudiant(e) %{user_name} a été ajouté(e)."
       fail:
@@ -845,7 +845,7 @@ fr:
       error:
         no_access: "Pas d'accès au résultat des test avec l'id #%{test_result_id}."
       button:
-        load: "UPDATE ME"
+        load: "Chargement des résultats"
       no_files_available: "[Pas de résultats de tests disponibles]"
       loading_results: "Chargement des résultats…"
       running_tests: "Tests en cours…"
@@ -1035,7 +1035,7 @@ fr:
         long_date: "%d %B %Y à %H:%M"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%d %B %Y"
-     
+
       day_names: [dimanche, lundi, mardi, mercredi, jeudi, vendredi, samedi]
       abbr_day_names: [dim, lun, mar, mer, jeu, ven, sam]
       month_names: [~, janvier, février, mars, avril, mai, juin, juillet, août, septembre, octobre, novembre, décembre]
@@ -1081,12 +1081,12 @@ fr:
 
     #Test Framework
     automated_tests:
-      title: "UPDATE ME"
-      testing_disabled: "UPDATE ME"
+      title: "Tests automatiques du code"
+      testing_disabled: "Les tests automatiques du code sont désactivés pour ce projet."
       remove_file: "UPDATE ME"
       upload_required:  "Envoyer<span class='required_field'>*</span>"
       automated_tests: "Tests"
-      test_results: "UPDATE ME"
+      test_results: "Résultat des tests"
       expand_all: "Montrer toutes"
       collapse_all: "Cacher toutes"
       enable_test:    "Activer les tests pour ce projet"
@@ -1099,17 +1099,17 @@ fr:
       due_date_is_passed: "Vous ne pouvez pas exécuter de test après la date de retour."
       information: "Information"
       run_tests: "Exécuter les tests."
-      tests_running: "UPDATE ME"
+      tests_running: "Tests en cours. Veuillez patienter."
       need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test. Si vous avez envoyé un fichier et vous voulez exécuter un test, veuillez cliquer sur \"Récuperer et préparer test\"."
       collect_and_test: "Récupérer et préparer test"
-      date_run: "UPDATE ME"
-      revision_used: "UPDATE ME"
-      test_name: "UPDATE ME"
-      completion_status: "UPDATE ME"
-      marks_earned: "UPDATE ME"
-      input_description: "UPDATE ME"
-      actual_output: "UPDATE ME"
-      expected_output: "UPDATE ME"
+      date_run: "Lancement des tests le :"
+      revision_used: "Révision utilisée :"
+      test_name: "Nom du test :"
+      completion_status: "Statut du test :"
+      marks_earned: "Points gagnés :"
+      input_description: "Entrée attendue :"
+      actual_output: "Sortie actuelle :"
+      expected_output: "Sortie attendue :"
       add_test_script_file_link: "UPDATE ME"
       add_test_support_file_link: "UPDATE ME"
       add_test_script_file_alert: "UPDATE ME"
@@ -1126,7 +1126,7 @@ fr:
       test_files_unavailable: "UPDATE ME"
       source_files_unavailable: "UPDATE ME"
       dir_not_exist: "Le dossier %{dir} requis par Ant n'existe pas."
-      marks_obtained: "UPDATE ME"
+      marks_obtained: "Points obtenus :"
       download_wrong_place_or_unreadable: "UPDATE ME"
       download_not_in_db: "UPDATE ME"
       script_option:
@@ -1155,8 +1155,8 @@ fr:
         tokens_not_given_yet: "<span class=\"prop_label\">Jetons disponibles :</span> jetons pas encore donnés"
         tokens_no_more_available: "<span class=\"prop_label\">Jetons disponibles:</span >pas de jetons disponibles"
         tokens_available: "<span class=\"prop_label\">Jetons disponibles:</span> %{tokens}"
-        unlimited_tokens: "<span class=\"prop_label\">UPDATE ME</span> Unlimited"
-        unlimited: "UPDATE ME"
+        unlimited_tokens: "<span class=\"prop_label\">Jetons disponibles :</span> ∞"
+        unlimited: "infinis"
 
 #Missing Activerecord Translations for french
     datetime:

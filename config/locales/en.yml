@@ -694,7 +694,7 @@ en:
     flexible_criteria:
       move_criterion:
         error: "Failed to move flexible criteria."
-    
+
     add_student:
       success: "Student %{user_name} added."
       fail:
@@ -1063,7 +1063,7 @@ en:
         long_date: "%B %d, %Y: %I:%M%p"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%B %d, %Y"
-     
+
       day_names: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
       abbr_day_names: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
       month_names: [~, January, February, March, April, May, June, July, August, September, October, November, December]
@@ -1139,7 +1139,7 @@ en:
       revision_used: "Revision used:"
       test_name: "Test name:"
       completion_status: "Completion status:"
-      marks_earned: "Marks_earned:"
+      marks_earned: "Marks earned:"
       input_description: "Input description:"
       actual_output: "Actual output:"
       expected_output: "Expected output:"
@@ -1199,7 +1199,7 @@ en:
           zero: "less than one second"
         less_than_x_minutes:
           zero: "less than one minute"
-  
+
     support:
       array:
         sentence_connector: "and"
