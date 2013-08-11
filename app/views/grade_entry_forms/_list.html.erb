@@ -41,19 +41,21 @@
 
             <td class="grade_entry_form_result">
               <% if !@g_id_entries.empty? && !@g_id_entries[grade_entry_form.id].nil? %>
-		<% if grade_entry_form.show_total %>
-		        <strong><%=t('mark_message')%></strong>
-		        <% if grade_entry_form.all_blank_grades?(@g_id_entries[grade_entry_form.id]) %>
-		          <%= t('grade_entry_forms.grades.no_mark') %>
-		        <% else %>
-		          <%= # show results
-		            ("%.2f" % (grade_entry_form.calculate_total_percent(@g_id_entries[grade_entry_form.id].user.id).to_s) + "%")
-		          %>
-		        <% end %>
-		        <%= ("(Class Average: " + ("%.2f" % (grade_entry_form.calculate_released_average)).to_s + "%)") %>
-		<% else %>
-			<strong> <%= t('grade_entry_forms.students.detailed_marks_message') %> </strong>
-		<% end %>
+                <% if grade_entry_form.show_total %>
+                        <strong><%=t('mark_message')%></strong>
+                        <% if grade_entry_form.all_blank_grades?(@g_id_entries[grade_entry_form.id]) %>
+                          <%= t('grade_entry_forms.grades.no_mark') %>
+                        <% else %>
+                          <%= # show results
+                            ('%.2f' % (grade_entry_form.calculate_total_percent(
+                              @g_id_entries[grade_entry_form.id].user.id).to_s) + '%') %>
+                        <% end %>
+                        <%= '(' + t(:class_average, :results_average =>
+                            ('%.2f' % (grade_entry_form.calculate_released_average)).to_s) +
+                            '%)' %>
+                <% else %>
+                  <strong> <%= t('grade_entry_forms.students.detailed_marks_message') %> </strong>
+                <% end %>
               <% elsif grade_entry_form.date < Time.zone.now.to_date %>
                 <%= t('grade_entry_forms.students.no_results') %>
               <% end %>
