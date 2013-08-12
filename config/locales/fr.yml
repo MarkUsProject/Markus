@@ -96,6 +96,7 @@ fr:
     create_new_assignment:      "Créer un nouveau projet"
     manage_course_work: "Gestion du cours"
     repository_folder:  "Dossier du projet<span class='required_field'>*</span>"
+    incorrect_format:   "Le format est incorrect"
     marking_state:
       not_collected: "Pas récupéré"
       in_progress: "En cours"
@@ -225,6 +226,10 @@ fr:
     invalid_grouping:   "(invalide)"
     validate:           "Valider"
     encoding:           "Codage"
+    assignment_format:  "Téléchargement au format %{file}"
+    upload_assignment_format: "Envoi au format %{file}"
+    select_csv_file:    "Sélectionner un fichier CSV formaté comme suit : <code>%{code}</code>"
+    all_csv_file:       "Tous les champs : "
 
     marks_released_notice:  "Les notes sont maintenant affichées. Vous ne pouvez plus les changer."
     commit_after_due_date: "Ce commit est postérieur à la date de rendu."
