@@ -1,17 +1,7 @@
 
-document.observe("dom:loaded", function() {
-
-  modalUpload = new Control.Modal($('upload_dialog'),
-    {
-      overlayOpacity: 0.5,
-      className: 'modalUpload'
-    });
-
-  modalDownload = new Control.Modal($('download_dialog'),
-    {
-      overlayOpacity: 0.5,
-      className: 'modalDownload'
-    });
+jQuery(document).ready(function () {
+  window.modal_upload = new ModalMarkus('#upload_dialog');
+  window.modal_download = new ModalMarkus('#download_dialog');
 });
 
 function choose_upload(value) {

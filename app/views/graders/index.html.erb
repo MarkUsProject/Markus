@@ -1,78 +1,17 @@
-<%= javascript_include_tag "manage_graders.js" %>
-<%= javascript_include_tag "FilterTable/FilterTable.js" %>
-<%= javascript_include_tag "Graders/tabs_boot.js" %>
+<%= javascript_include_tag 'manage_graders.js',
+                           'FilterTable/FilterTable.js',
+                           'Graders/tabs_boot.js',
+                           'Graders/index' %>
 
 <%= render :partial => "boot.js.erb" %>
-<script type="text/javascript">
-//<![CDATA[
-
-var modalCreate = null;
-var modalAssignmentGroupReUse = null;
-var modalRenameGroup = null;
-var modalAddMember = null;
-var modalNotesGroup = null;
-var modalUpload = null;
-var modalDownload = null;
-var modalGraderCriteria = null;
-
-
-
-function upload_groups(){
-     modalUpload.open();
-     return false;
-}
-
-function download_groups(){
-      modalDownload.open();
-      return false;
-}
-
-document.observe("dom:loaded", function(){
-    //Create the modal dialog
-    modalUpload = new Control.Modal($('upload_dialog'),
-    {
-     overlayOpacity: 0.75,
-     className: 'modalUpload',
-     fade: false
-    });
-
-    modalDownload = new Control.Modal($('download_dialog'),
-    {
-     overlayOpacity: 0.75,
-     className: 'modalDownload',
-     fade: false
-
-    });
-
-    modalGroupsCoverage = new Control.Modal($('groups_coverage_dialog'),
-    {
-     overlayOpacity: 0.75,
-     className: 'modalGroupsCoverage',
-     fade: false
-
-    });
-    modalGraderCriteria = new Control.Modal($('grader_criteria_dialog'),
-    {
-     overlayOpacity: 0.75,
-     className: 'modalGraderCriteria',
-     fade: false
-
-    });
-})
-
-
-
-
-//]]>
-</script>
 
 <div id="title_bar">
   <h1><%= I18n.t("graders.manage_graders") %></h1>
   <div class="colRightGroups">
       <div class="headingButtons">
-      <%= button_to_function I18n.t("download"), "download_groups();" %>
+      <%= button_to_function I18n.t('download'), 'modal_download.open();' %>
       <span class="menu_bar">|</span>
-      <%= button_to_function I18n.t("upload"), "upload_groups();" %>
+      <%= button_to_function I18n.t('upload'), 'modal_upload.open();' %>
     </div> <!-- rightjustify-->
   </div> <!-- colrightgroups-->
 
@@ -278,12 +217,12 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
   <ul>
     <li><%= link_to t('groups.download.download_grader_groups_csv'),
 		    download_grader_groupings_mapping_assignment_graders_path(@assignment),
-		    :onclick => "modalDownload.close();" %></li>
+		    :onclick => 'modal_download.close();' %></li>
     <li><%= link_to t('groups.download.download_grader_criteria_csv'),
 		    download_grader_criteria_mapping_assignment_graders_path(@assignment),
-		    :onclick => "modalDownload.close();" %></li>
+		    :onclick => 'modal_download.close();' %></li>
   </ul>
-  <%= button_to_function I18n.t('cancel'), "modalDownload.close(); return false;" %>
+  <%= button_to_function I18n.t('cancel'), 'modal_download.close();' %>
 </div>
 
 <div id="upload_dialog">
@@ -300,7 +239,7 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
     <br />
     <p><%= file_field_tag :grader_mapping, :size => 2 %> <br />
       <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
-      <%= button_to_function I18n.t('cancel'), "modalUpload.close(); return false;" %>
+      <%= button_to_function I18n.t('cancel'), 'modal_upload.close();' %>
     </p>
   <% end %>
 
@@ -318,7 +257,7 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
       <br />
       <p><%= file_field_tag :grader_criteria_mapping, :size => 2 %> <br />
         <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
-        <%= button_to_function I18n.t('cancel'), "modalUpload.close(); return false;" %>
+        <%= button_to_function I18n.t('cancel'), 'modal_upload.close();' %>
       </p>
     <% end %>
   <% end %>

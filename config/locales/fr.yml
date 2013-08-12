@@ -65,7 +65,6 @@ fr:
       format_of_assignment_file: "doit être un caractère alphanumérique, « . », « - » ou « _ » uniquement."
 
     # app/views/main/index.html.erb
-    firefox_warning:    "Certaines fonctionnalités ne fonctionnent qu'avec Mozilla Firefox."
     switch_role:         "Changer d'utilisateur"
     admin_password:      "Mot de passe Administrateur"
     cannot_login_as_another_admin: "Vous ne pouvez vous connecter à la place d'un autre administrateur."

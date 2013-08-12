@@ -24,15 +24,14 @@ class SectionsController < ApplicationController
       flash[:success] = I18n.t('section.create.success',
                                :name => @section.name)
       if params[:section_modal]
-        render :partial => 'close_modal_add_section'
+        render 'close_modal_add_section'
         return
       end
       redirect_to :action => 'index'
     else
       flash[:error] = I18n.t('section.create.error')
       if params[:section_modal]
-        render :partial => 'add_new_section_handler',
-               :locals => { :error => flash[:error] }
+        render 'add_new_section_handler'
         return
       end
       render :new
@@ -71,5 +70,6 @@ class SectionsController < ApplicationController
     else
       flash[:error] = I18n.t('section.delete.error_permissions')
     end
+    redirect_to :action => :index
   end
 end

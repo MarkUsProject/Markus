@@ -1,0 +1,5 @@
+<% @assignments.each do |assignment| %>
+	<% if assignment.submission_rule.can_collect_now? %>
+		jQuery("#collected_submissions_<%= assignment.short_identifier %>").html(" | <%= assignment.groupings.all(:conditions => {:is_collected => true}).size %>/ <%= assignment.groupings.size %> Submissions Collected");
+	<% end %>
+<% end %>
