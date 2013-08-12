@@ -39,7 +39,7 @@ class AnnotationCategoriesController < ApplicationController
     if @annotation_category.save
       flash.now[:success] = I18n.t('annotations.update.annotation_category_success')
     else
-      flash.now[:error] = @annotation_category.errors
+      flash.now[:error] = @annotation_category.errors.full_messages
     end
   end
 
@@ -66,6 +66,7 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   def delete_annotation_text
+    @assignment = Assignment.find(params[:assignment_id])
     @annotation_text = AnnotationText.find(params[:id])
     @annotation_text.destroy
   end

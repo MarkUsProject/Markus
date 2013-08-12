@@ -1,2 +1,0 @@
-page.replace "annotation_category_#{@annotation_category.id}", :partial => 'annotation_category', :locals => {:annotation_category => @annotation_category}
-page.replace_html "current_annotation_category", :partial => 'annotation_category_edit', :locals => {:annotation_category => @annotation_category}

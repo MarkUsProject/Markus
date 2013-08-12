@@ -26,9 +26,9 @@
 
   <div id="title_bar" class="headingButtons">
     <%= link_to I18n.t(:upload), '#',
-                :onclick => 'return modalUpload.open()' %> |
+                :onclick => 'modal_upload.open()' %> |
     <%= link_to I18n.t(:download), '#',
-                :onclick => 'return modalDownload.open()' %>
+                :onclick => 'modal_download.open()' %>
   </div>
 
   <!-- Modal Windows -->
@@ -71,9 +71,9 @@
         <%= hidden_field_tag :file_format, '', :id => 'file_format' %>
         <% if @current_user.admin? %>
           <%= submit_tag t(:upload_assignment_format, :file => 'yml'),
-                         :onclick => 'return choose_upload("yml")' %>
+                         :onclick => 'choose_upload("yml")' %>
           <%= submit_tag t(:upload_assignment_format, :file => 'csv'),
-                         :onclick => 'return choose_upload("csv")' %>
+                         :onclick => 'choose_upload("csv")' %>
         <% end %>
       <% end %>
     </p>

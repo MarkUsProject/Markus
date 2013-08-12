@@ -1,6 +1,4 @@
-<script type="text/javascript">
-//<![CDATA[
-document.observe("dom:loaded", function() {
+jQuery(document).ready(function() {
 
   users_table = new FilterTable({
     table_id: $('students'),
@@ -31,17 +29,18 @@ document.observe("dom:loaded", function() {
       }
     },
     after_filter_only_by: function(current_filters, new_filter){
-	$('filter_link_none').removeClassName('filter_selected');
-	current_filters.each(function(filter_key) {
-	    $('filter_link_' + filter_key).removeClassName('filter_selected');
-	});
-	$('filter_link_' + new_filter).addClassName('filter_selected');
+    	$('filter_link_none').removeClassName('filter_selected');
+    	current_filters.each(function(filter_key) {
+    	    $('filter_link_' + filter_key).removeClassName('filter_selected');
+    	});
+    	$('filter_link_' + new_filter).addClassName('filter_selected');
     },
+
     after_clear_filters: function(current_filters) {
-	current_filters.each(function(filter_key) {
-	    $('filter_link_' + filter_key).removeClassName('filter_selected');
-	});
-	$('filter_link_none').addClassName('filter_selected');
+    	current_filters.each(function(filter_key) {
+    	    $('filter_link_' + filter_key).removeClassName('filter_selected');
+    	});
+    	$('filter_link_none').addClassName('filter_selected');
     },
 
     filter_count_ids: {
@@ -50,12 +49,15 @@ document.observe("dom:loaded", function() {
     },
     total_count_id: 'all_students_count'
   });
-
-  new Ajax.Request('<%=populate_students_path()%>', 
-                   {asynchronous:true, evalScripts:true, 
-                   onComplete:function(request){$('loading_list').hide();},
-                   parameters: 'authenticity_token=' + AUTH_TOKEN})
 });
 
-//]]>
-</script>
+jQuery.ajax({
+  url: "<%= populate_students_path() %>",
+  data: 'authenticity_token=' + AUTH_TOKEN,
+  type: "POST",
+  async: true,
+  dataType: 'json'
+}).done(function (data) {
+          jQuery('#loading_list').hide();
+          populate(JSON.stringify(data));
+        });

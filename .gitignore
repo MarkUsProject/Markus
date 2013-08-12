@@ -1,4 +1,6 @@
 # Files ignored by git
+# Ignore nncessary mac files
+.DS_Store
 
 config/database.yml
 config/local_environment_override.rb

@@ -1,47 +1,11 @@
 <%= stylesheet_link_tag("livepipe/tabs") %>
 <% # UI LIBRARIES %>
-<%= javascript_include_tag "livepipe/livepipe.js",
-	"livepipe/window.js",
-	"livepipe/tabs.js" ,
-	"effects.js",
-	"dragdrop.js" %>
-
-<script type="text/javascript">
-//<![CDATA[
-
-  var modalUpload = null;
-  var modalDownload = null;
-
-  function upload_criteria(){
-    modalUpload.open();
-    return false;
-  }
-
-  function download_criteria(){
-    modalDownload.open();
-    return false;
-  }
-
-
-  document.observe("dom:loaded", function(){
-
-    modalUpload = new Control.Modal($('upload_dialog'),
-    {
-      overlayOpacity: 0.75,
-      className: 'modalUpload',
-      fade: false
-    });
-
-    modalDownload = new Control.Modal($('download_dialog'),
-    {
-      overlayOpacity: 0.75,
-      className: 'modalDownload',
-      fade: false
-    });
-
-  });
-//]]>
-</script>
+<%= javascript_include_tag 'livepipe/livepipe.js',
+                           'livepipe/window.js',
+                           'livepipe/tabs.js',
+                           'effects.js',
+                           'dragdrop.js',
+                           'FlexibleCriteria/index' %>
 
 <% if @assignment.past_due_date?%>
   <div class="notice">
@@ -63,9 +27,9 @@
                                 :method => 'get'}
             }|%>
   <span class="menu_bar" >|</span>
-    <%= button_to_function I18n.t("upload"), "upload_criteria();"%>
+    <%= button_to_function I18n.t('upload'), 'modal_upload.open();' %>
   <span class="menu_bar" >|</span>
-    <%= button_to_function I18n.t("download"), "download_criteria();"%>
+    <%= button_to_function I18n.t('download'), 'modal_download.open();' %>
   </div>
 </div><!-- Title bar-->
 
@@ -131,7 +95,7 @@
     <br />
     <p>
       <%= f.submit t(:upload), :disable_with => t(:uploading_please_wait) %>
-      <input type="reset" value="<%= t(:cancel) %>" onclick="modalUpload.close();">
+      <input type="reset" value="<%= t(:cancel) %>" onclick="modal_upload.close();">
     </p>
   <% end %>
 
@@ -150,7 +114,7 @@
     <br />
     <p>
       <%= f.submit t(:upload), :disable_with => t(:uploading_please_wait) %>
-      <input type="reset" value="<%= t(:cancel) %>" onclick="modalUpload.close();">
+      <input type="reset" value="<%= t(:cancel) %>" onclick="modal_upload.close();">
     </p>
   <% end %>
 
@@ -163,10 +127,11 @@
   <ul>
     <li><%= link_to t('rubric_criteria.download.link_csv'),
 		    download_csv_assignment_rubrics_path(@assignment),
-		    :onclick => "modalDownload.close();" %></li>
+		    :onclick => 'modal_download.close();' %></li>
     <li><%= link_to t('rubric_criteria.download.link_yml'),
 		    download_yml_assignment_rubrics_path(@assignment),
-		    :onclick => "modalDownload.close();" %></li>
+		    :onclick => 'modal_download.close();' %></li>
   </ul>
-  <input type="reset" value="<%=t('cancel')%>" onclick="modalDownload.close();">
+  <input type="reset" value="<%=t('cancel')%>"
+         onclick="modal_download.close();">
 </div>
