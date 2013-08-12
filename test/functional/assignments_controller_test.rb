@@ -537,13 +537,13 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       should 'be able to download a csv file' do
         get_as @admin, :download_assignment_list, :file_format => 'csv'
         assert_response :success
-        assert respond_with_content_type 'application/octet-stream'
+        assert_equal 'text/csv', response.header['Content-Type']
       end
 
       should 'be able to download a yml file' do
         get_as @admin, :download_assignment_list, :file_format => 'yml'
         assert_response :success
-        assert respond_with_content_type 'application/octet-stream'
+        assert_equal 'text/yml', response.header['Content-Type']
       end
 
       should 'not be able to download an xml file' do
