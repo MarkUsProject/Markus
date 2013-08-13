@@ -12,7 +12,6 @@ doc/app/
 # Files created by rcov/simplecov
 test/coverage
 test/coverage.data
-coverage/
 
 # Patch
 *.diff
