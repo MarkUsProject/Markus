@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121028211448) do
+ActiveRecord::Schema.define(:version => 20130407172918) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -92,6 +92,7 @@ ActiveRecord::Schema.define(:version => 20121028211448) do
     t.boolean  "allow_remarks",                    :default => true,     :null => false
     t.datetime "remark_due_date"
     t.text     "remark_message"
+    t.boolean  "unlimited_tokens",                 :default => false
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true
@@ -348,22 +349,25 @@ ActiveRecord::Schema.define(:version => 20121028211448) do
   add_index "submissions", ["grouping_id"], :name => "index_submissions_on_grouping_id"
 
   create_table "test_results", :force => true do |t|
-    t.integer "submission_id"
+    t.integer "grouping_id"
     t.integer "test_script_id"
+    t.integer "test_script_result_id"
     t.string  "name"
-    t.string  "completion_status", :null => false
-    t.integer "marks_earned",      :null => false
-    t.text    "input_description", :null => false
-    t.text    "actual_output",     :null => false
-    t.text    "expected_output",   :null => false
+    t.string  "completion_status",     :null => false
+    t.integer "marks_earned",          :null => false
+    t.integer "repo_revision"
+    t.text    "input_description",     :null => false
+    t.text    "actual_output",         :null => false
+    t.text    "expected_output",       :null => false
   end
 
-  add_index "test_results", ["submission_id", "test_script_id"], :name => "submission_id_and_test_script_id"
+  add_index "test_results", ["grouping_id", "test_script_id"], :name => "grouping_id_and_test_script_id"
 
   create_table "test_script_results", :force => true do |t|
-    t.integer  "submission_id"
+    t.integer  "grouping_id"
     t.integer  "test_script_id"
     t.integer  "marks_earned"
+    t.integer  "repo_revision"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

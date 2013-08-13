@@ -42,6 +42,9 @@ class Grouping < ActiveRecord::Base
            :through => :non_rejected_student_memberships
 
   has_one :token
+  
+  has_many :test_results, :dependent => :destroy
+  has_many :test_script_results, :dependent => :destroy
 
   scope :approved_groupings, :conditions => {:admin_approved => true}
 
@@ -588,6 +591,26 @@ class Grouping < ActiveRecord::Base
       return self.inviter.section.name
     end
     return '-'
+  end
+  
+  def get_total_test_script_marks
+    total = 0
+    
+    #find the unique test scripts for this submission
+    test_script_ids = TestScriptResult.select(:test_script_id).where(:grouping_id => self.id)
+    
+    #pull out the actual ids from the ActiveRecord objects
+    test_script_ids = test_script_ids.map { |script_id_obj| script_id_obj.test_script_id }
+    
+    #take only the unique ids so we don't add marks from the same script twice
+    test_script_ids = test_script_ids.uniq
+    
+    #add the latest result from each of our test scripts 
+    test_script_ids.each do |test_script_id|
+      test_result = TestScriptResult.where(:test_script_id => test_script_id, :grouping_id => self.id).last
+      total = total + test_result.marks_earned
+    end
+    return total
   end
 
   private

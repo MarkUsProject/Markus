@@ -27,8 +27,8 @@ module ResultsHelper
   end
 
   # ATE_SIMPLE_UI: this is temporary
-  def test_result_available(assignment, submission)
-    test_script_results = TestScriptResult.find_all_by_submission_id(submission.id)
+  def test_result_available(assignment, grouping)
+    test_script_results = TestScriptResult.find_all_by_grouping_id(grouping.id)
     return (assignment.enable_test) && (!test_script_results.empty?)
   end
 end

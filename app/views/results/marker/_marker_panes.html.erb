@@ -4,7 +4,7 @@
        <li class="tab"><a href="#code_holder"><%= I18n.t("marker.source_code") %></a></li>
        <li class="tab"><a href="#annotations_summary"><%= I18n.t("marker.annot_summary") %></a></li>
        <!-- ATE_SIMPLE_UI: this is temporary -->
-       <% if test_result_available(assignment, submission) %>
+       <% if test_result_available(assignment, submission.grouping) %>
           <li class="tab"><a href="#test_results"><%= I18n.t("marker.test_results") %></a></li>
        <% end %>
        <% if can_show_remark_request_tab_in_marker_pane(submission) %>
@@ -43,8 +43,8 @@
     </div> <!-- Annotations Summary -->
 
     <!-- ATE_SIMPLE_UI: not pretty, but shows the result -->
-    <div id="test_results" class="tabbedArea">
-      <% test_script_results = TestScriptResult.find_all_by_submission_id(@submission.id) %>
+    <!--<div id="test_results" class="tabbedArea">
+      <% test_script_results = TestScriptResult.find_all_by_grouping_id(@submission.grouping.id) %>
       	  
       <ul>
       <% test_script_results.each do |ts_result| %>
@@ -53,7 +53,7 @@
       	  Script name: <%= test_script.script_name %>
       	  <ul>
       	  <li>Marks earned: <%= ts_result.marks_earned %></li>
-      	  <% test_results = TestResult.find_all_by_submission_id_and_test_script_id(ts_result.submission_id, ts_result.test_script_id) %>
+      	  <% test_results = TestResult.find_all_by_grouping_id_and_test_script_id(ts_result.grouping_id, ts_result.test_script_id) %>
       	  <% test_results.each do |t_result| %>
       	    <li>Test name: <%= t_result.name %></li>
       	    <ul>
@@ -68,7 +68,12 @@
       	</li>
       <% end %>
       </ul>
-    </div> <!-- Test Results -->
+    </div>  Test Results -->
+    
+    <%= render :template => 'assignments/render_test_result',
+               :locals => {:result => result,
+                           :grouping => submission.grouping,
+                           :assignment => assignment} %>
 
     <div id="remark_request_tab" class="tabbedArea">
       <% if @submission.has_remark? %>

@@ -4,9 +4,10 @@ class Testing < ActiveRecord::Migration
     drop_table :test_results
 
     create_table :test_script_results do |t|
-      t.references :submission
+      t.references :grouping
       t.references :test_script
       t.integer "marks_earned"
+      t.integer "repo_revision"
       t.datetime "created_at"
       t.datetime "updated_at"
     end
@@ -44,19 +45,21 @@ class Testing < ActiveRecord::Migration
 
 
     create_table :test_results do |t|
-      t.references :submission
+      t.references :grouping
       t.references :test_script
+      t.references :test_script_result
       t.string "name"
       t.string "completion_status", { :null => false }
       t.integer "marks_earned", { :null => false }
+      t.integer "repo_revision"
       t.text    "input_description", { :null => false }
       t.text    "actual_output", { :null => false }
       t.text    "expected_output", { :null => false }
     end
 
     add_index :test_results,
-              ["submission_id", "test_script_id"],
-              :name => "submission_id_and_test_script_id"
+              ["grouping_id", "test_script_id"],
+              :name => "grouping_id_and_test_script_id"
   end
 
   def self.down
