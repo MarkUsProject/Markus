@@ -13,9 +13,9 @@ iframe.ie6_blocker {
 
 .calendar_date_select thead th {
   font-weight:bold;
-  background-color: #000;
+  background-color: #aaa;
   border-top:1px solid #777;
-  border-bottom:2px solid #333;
+  border-bottom:1px solid #777;
   color: white !important;
 }
 
@@ -69,6 +69,7 @@ iframe.ie6_blocker {
 .calendar_date_select .cds_header a.next {
   float:right;
 }
+
 .calendar_date_select .cds_header a.close {
   float:right;
   display:none;
@@ -81,38 +82,40 @@ iframe.ie6_blocker {
 .calendar_date_select .cds_header select.year {
   width:61px;
 }
-
 .calendar_date_select .cds_buttons a {
   color: white;
   font-size: 9px;
 }
+
 .calendar_date_select td {
   font-size:12px;
   width: 24px;
   height: 21px;
   text-align:center;
   vertical-align: middle;
-  background-color: #666666;
+  background-color: #fff;
 }
 .calendar_date_select td.weekend {
-  background-color: #606060;
+  background-color: #eee;
+  border-left:1px solid #ddd;
+  border-right:1px solid #ddd;
 }
 
 .calendar_date_select td div {
-  color: #fff;
+  color: #000;
 }
 .calendar_date_select td div.other {
-  color: #888;
+  color: #ccc;
 }
 .calendar_date_select td.selected div {
-  color:black;
+  color:white;
 }
 
 .calendar_date_select tbody td {
-  border-bottom: 1px solid #555;
+  border-bottom: 1px solid #ddd;
 }
 .calendar_date_select td.selected {
-  background-color:white;
+  background-color:#777;
 }
 
 .calendar_date_select td:hover {
@@ -124,9 +127,8 @@ iframe.ie6_blocker {
 }
 
 .calendar_date_select td.disabled div {
-  color: #454545;
+  color: #e6e6e6;
 }
-
 
 .fieldWithErrors .calendar_date_select {
   border: 2px solid red;
