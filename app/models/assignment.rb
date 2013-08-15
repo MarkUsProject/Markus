@@ -70,6 +70,7 @@ class Assignment < ActiveRecord::Base
   validates_inclusion_of :display_grader_names_to_students, :in => [true, false]
   validates_inclusion_of :enable_test, :in => [true, false]
   validates_inclusion_of :assign_graders_to_criteria, :in => [true, false]
+  validates_inclusion_of :unlimited_tokens, :in => [true, false]
 
   before_save :reset_collection_time
   validate :minimum_number_of_groups, :check_timezone
@@ -304,6 +305,11 @@ class Assignment < ActiveRecord::Base
   
   def total_test_script_marks
     return test_scripts.sum("max_marks")
+  end
+  
+  #total marks for scripts that are run on request
+  def total_ror_script_marks
+    return test_scripts.where("run_on_request" => true).sum("max_marks")
   end
   
   def has_test_scripts?

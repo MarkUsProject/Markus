@@ -21,14 +21,17 @@
 class TestResult < ActiveRecord::Base
   belongs_to :submission
   belongs_to :test_script
+  belongs_to :grouping
+  belongs_to :test_script_result
 
-  validates_presence_of :submission # we require an associated submission
-  validates_associated :submission # submission need to be valid
+  validates_presence_of :grouping # we require an associated grouping
+  validates_associated :grouping  # grouping need to be valid
   
   validates_presence_of :test_script
   validates_presence_of :name
   validates_presence_of :completion_status
   validates_presence_of :marks_earned
+  validates_presence_of :repo_revision
   
   validates_inclusion_of :completion_status, :in => %w(pass fail error), :message => "%{value} is not a valid status"
   validates_numericality_of :marks_earned, :only_integer => true, :greater_than_or_equal_to => 0

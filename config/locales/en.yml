@@ -694,7 +694,7 @@ en:
     flexible_criteria:
       move_criterion:
         error: "Failed to move flexible criteria."
-    
+
     add_student:
       success: "Student %{user_name} added."
       fail:
@@ -858,7 +858,7 @@ en:
       error:
         no_access: "No access to test result with id #%{test_result_id}."
       button:
-        load: "Load"
+        load: "Load Results"
       no_files_available: "[No test results available]"
       loading_results: "Loading results..."
       running_tests: "Running Tests..."
@@ -1063,7 +1063,7 @@ en:
         long_date: "%B %d, %Y: %I:%M%p"
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%B %d, %Y"
-     
+
       day_names: [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
       abbr_day_names: [Sun, Mon, Tue, Wed, Thu, Fri, Sat]
       month_names: [~, January, February, March, April, May, June, July, August, September, October, November, December]
@@ -1114,9 +1114,12 @@ en:
 
     #Test Framework
     automated_tests:
+      title: "Automated Testing"
+      testing_disabled: "Automated testing is not enabled for this assignment."
+      automated_tests: "Test Framework"
+      test_results: "Test Results"
       remove_file: "Remove"
       upload_required: "Upload<span class='required_field'>*</span>"
-      automated_tests: "Test Framework"
       expand_all: "Expand All"
       collapse_all: "Collapse All"
       enable_test:    "Enable tests for this assignment"
@@ -1129,9 +1132,17 @@ en:
       due_date_is_passed: "You cannot run test as the due date for this assignment is passed"
       information: "Information"
       run_tests: "Run tests"
-      need_one_file: "You need at least one file submitted in order to run tests.<br />
-                      If you already submitted one file and you want to run tests on it, use the \"Collect and Prepare Test\" button below."
+      tests_running: "Running tests. Please wait."
+      need_one_file: "You need at least one file submitted in order to run tests. If you already submitted one file and you want to run tests on it, use the \"Run Tests\" button below."
       collect_and_test: "Collect and Prepare Test"
+      date_run: "Date run:"
+      revision_used: "Revision used:"
+      test_name: "Test name:"
+      completion_status: "Completion status:"
+      marks_earned: "Marks earned:"
+      input_description: "Input description:"
+      actual_output: "Actual output:"
+      expected_output: "Expected output:"
       add_test_script_file_link: "Add Test Script File"
       add_test_support_file_link: "Add Test Support File"
       add_test_script_file_alert: "You must enable tests for this assignment to add a test script file."
@@ -1149,6 +1160,7 @@ en:
       test_files_unavailable: "There is no test script to run test"
       source_files_unavailable: "No student file is found for testing"
       dir_not_exist: "The directory %{dir} required for Ant does not exist"
+      marks_obtained: "<span class=\"prop_label\">Marks Obtained:</span> %{marking}"
       download_wrong_place_or_unreadable: "The requested file is not in the expected directory or could not be read."
       download_not_in_db: "The requested file is not in the database."
       script_option:
@@ -1177,6 +1189,8 @@ en:
         tokens_not_given_yet: "<span class=\"prop_label\">Tokens available:</span> No tokens given yet"
         tokens_no_more_available: "<span class=\"prop_label\">Tokens available:</span >No more tokens available "
         tokens_available: "<span class=\"prop_label\">Tokens available:</span> %{tokens}"
+        unlimited_tokens: "<span class=\"prop_label\">Tokens available:</span> Unlimited"
+        unlimited: "Unlimited"
 
 #Missing Activerecord Translations for english
     datetime:
@@ -1185,7 +1199,7 @@ en:
           zero: "less than one second"
         less_than_x_minutes:
           zero: "less than one minute"
-  
+
     support:
       array:
         sentence_connector: "and"
