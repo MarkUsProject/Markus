@@ -6,10 +6,6 @@ require 'mocha/setup'
 
 class ResultsControllerTest < AuthenticatedControllerTest
 
-  def setup
-    clear_fixtures
-  end
-
   def teardown
       destroy_repos
   end
@@ -320,7 +316,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                      :id => 1
 
               assert_equal 0, flash.size
-              assert respond_with_content_type 'application/octet-stream'
+              assert_equal response.header['Content-Type'], 'application/octet-stream'
               assert_response :success
               assert_equal 'file content', @response.body
             end  # -- with permissions to download the file
@@ -377,7 +373,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :id => 1,
                   :show_in_browser => true
             assert_equal 0, flash.size
-            assert respond_with_content_type 'image'
+            assert_equal response.header['Content-Type'], 'image'
             assert_response :success
             assert_equal 'file content', @response.body
           end
@@ -398,7 +394,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :id => 1,
                   :include_annotations => true
             assert_equal 0, flash.size
-            assert respond_with_content_type 'application/octet-stream'
+            assert_equal response.header['Content-Type'], 'application/octet-stream'
             assert_response :success
             assert_equal 'file content', @response.body
           end
@@ -420,9 +416,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
                     :submission_file_id => @no_access_submission_file.id,
                     :focus_line => 1
 
-            assert assign_to :assignment
-            assert assign_to :submission_file_id
-            assert assign_to :focus_line
+            assert_not_nil assigns :assignment
+            assert_not_nil assigns :submission_file_id
+            assert_not_nil assigns :focus_line
             assert_nil assigns :file_contents
             assert_nil assigns :annots
             assert_nil assigns :all_annots
@@ -448,13 +444,13 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :submission_file_id => @submission_file.id,
                   :id => 1,
                   :focus_line => 1
-            assert assign_to :assignment
-            assert assign_to :submission_file_id
-            assert assign_to :focus_line
-            assert assign_to :file
-            assert assign_to :result
-            assert assign_to :annots
-            assert assign_to :all_annots
+            assert_not_nil assigns :assignment
+            assert_not_nil assigns :submission_file_id
+            assert_not_nil assigns :focus_line
+            assert_not_nil assigns :file
+            assert_not_nil assigns :result
+            assert_not_nil assigns :annots
+            assert_not_nil assigns :all_annots
             assert_nil assigns :file_contents
             assert_nil assigns :code_type
             assert render_template 'shared/_handle_error.rjs'
@@ -475,15 +471,15 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :submission_file_id => @submission_file.id,
                   :id => 1,
                   :focus_line => 1
-            assert assign_to :assignment
-            assert assign_to :submission_file_id
-            assert assign_to :focus_line
-            assert assign_to :file
-            assert assign_to :result
-            assert assign_to :annots
-            assert assign_to :all_annots
-            assert assign_to :file_contents
-            assert assign_to :code_type
+            assert_not_nil assigns :assignment
+            assert_not_nil assigns :submission_file_id
+            assert_not_nil assigns :focus_line
+            assert_not_nil assigns :file
+            assert_not_nil assigns :result
+            assert_not_nil assigns :annots
+            assert_not_nil assigns :all_annots
+            assert_not_nil assigns :file_contents
+            assert_not_nil assigns :code_type
             assert render_template 'results/common/codeviewer'
             assert_response :success
           end
@@ -508,8 +504,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :assignment_id => @assignment.id,
                    :submission_id => 1,
                    :id => 1
-            assert assign_to :assignment
-            assert assign_to :grouping
+            assert_not_nil assigns :assignment
+            assert_not_nil assigns :grouping
             assert render_template 'results/student/no_submission'
             assert_response :success
           end
@@ -521,9 +517,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :assignment_id => @assignment.id,
                    :submission_id => 1,
                    :id => 1
-            assert assign_to :assignment
-            assert assign_to :grouping
-            assert assign_to :submission
+            assert_not_nil assigns :assignment
+            assert_not_nil assigns :grouping
+            assert_not_nil assigns :submission
             assert render_template 'results/student/no_result'
             assert_response :success
           end
@@ -536,10 +532,10 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :assignment_id => @assignment.id,
                    :submission_id => 1,
                    :id => 1
-            assert assign_to :assignment
-            assert assign_to :grouping
-            assert assign_to :submission
-            assert assign_to :result
+            assert_not_nil assigns :assignment
+            assert_not_nil assigns :grouping
+            assert_not_nil assigns :submission
+            assert_not_nil assigns :result
             assert render_template 'results/student/no_result'
             assert_response :success
           end
@@ -558,18 +554,18 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :assignment_id => @assignment.id,
                    :submission_id => 1,
                    :id => 1
-            assert assign_to :assignment
-            assert assign_to :grouping
-            assert assign_to :submission
-            assert assign_to :result
-            assert assign_to :mark_criteria
-            assert assign_to :annotation_categories
-            assert assign_to :group
-            assert assign_to :files
-            assert assign_to :first_file
-            assert assign_to :extra_marks_points
-            assert assign_to :extra_marks_percentage
-            assert assign_to :marks_map
+            assert_not_nil assigns :assignment
+            assert_not_nil assigns :grouping
+            assert_not_nil assigns :submission
+            assert_not_nil assigns :result
+            assert_not_nil assigns :mark_criteria
+            assert_not_nil assigns :annotation_categories
+            assert_not_nil assigns :group
+            assert_not_nil assigns :files
+            assert_not_nil assigns :first_file
+            assert_not_nil assigns :extra_marks_points
+            assert_not_nil assigns :extra_marks_percentage
+            assert_not_nil assigns :marks_map
             assert_response :success
             assert render_template :view_marks
           end
@@ -766,7 +762,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :id => @result.id,
                   :value => 'true'
           assert_response :success
-          assert assign_to :result
+          assert_not_nil assigns :result
         end
 
         context 'GET on :update_marking_state' do
@@ -811,9 +807,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
             @assignment.reload
             actual_distribution = @assignment.assignment_stat.grade_distribution_percentage.parse_csv.map{ |x| x.to_i }
             assert_equal actual_distribution, @grade_distribution
+            assert_not_nil assigns :result
           end
           should respond_with :success
-          should assign_to :result
         end
 
         context 'GET on :download' do
@@ -835,7 +831,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :select_file_id => 1,
                    :id => 1
             assert_equal 0, flash.size
-            assert respond_with_content_type 'application/octet-stream'
+            assert_equal response.header['Content-Type'], 'application/octet-stream'
             assert_response :success
             assert_equal 'file content', @response.body
           end  # -- without file error
@@ -873,7 +869,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                     :select_file_id => 1,
                     :show_in_browser => true
 
-            assert respond_with_content_type 'image'
+            assert_equal response.header['Content-Type'], 'image'
             assert_response :success
             assert_equal 'file content', @response.body
           end  # -- with supported image to be displayed in browser
@@ -925,7 +921,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :grouping_id => @grouping.id,
                    :include_annotations => 'true'
 
-            assert respond_with_content_type 'application/octet-stream'
+            assert_equal response.header['Content-Type'], 'application/octet-stream'
             assert_response :success
             zip_path = "tmp/#{@assignment.short_identifier}_" +
                 "#{@grouping.group.group_name}_r#{@grouping.group.repo.
@@ -947,7 +943,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :grouping_id => @grouping.id,
                    :include_annotations => 'false'
 
-            assert respond_with_content_type 'application/octet-stream'
+            assert_equal response.header['Content-Type'], 'application/octet-stream'
             assert_response :success
             zip_path = "tmp/#{@assignment.short_identifier}_" +
                 "#{@grouping.group.group_name}_r#{@grouping.group.repo.
@@ -980,18 +976,19 @@ class ResultsControllerTest < AuthenticatedControllerTest
                     :assignment_id => @assignment.id,
                     :submission_id => 1,
                     :id => 1,
-                    :focus_line => 1
+                    :focus_line => 1,
+                    :submission_file_id => @file.id
 
             assert_equal 0, flash.size
-            assert assign_to :assignment
-            assert assign_to :submission_file_id
-            assert assign_to :focus_line
-            assert assign_to :file
-            assert assign_to :result
-            assert assign_to :annots
-            assert assign_to :all_annots
-            assert assign_to :file_contents
-            assert assign_to :code_type
+            assert_not_nil assigns :assignment
+            assert_not_nil assigns :submission_file_id
+            assert_not_nil assigns :focus_line
+            assert_not_nil assigns :file
+            assert_not_nil assigns :result
+            assert_not_nil assigns :annots
+            assert_not_nil assigns :all_annots
+            assert_not_nil assigns :file_contents
+            assert_not_nil assigns :code_type
             assert render_template 'results/common/codeviewer'
             assert_response :success
           end  # -- without file error
@@ -1003,15 +1000,16 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :assignment_id => @assignment.id,
                    :submission_id => 1,
                    :id => 1,
-                   :focus_line => 1
+                   :focus_line => 1,
+                   :submission_file_id => @file.id
 
-            assert assign_to :assignment
-            assert assign_to :submission_file_id
-            assert assign_to :focus_line
-            assert assign_to :file
-            assert assign_to :result
-            assert assign_to :annots
-            assert assign_to :all_annots
+            assert_not_nil assigns :assignment
+            assert_not_nil assigns :submission_file_id
+            assert_not_nil assigns :focus_line
+            assert_not_nil assigns :file
+            assert_not_nil assigns :result
+            assert_not_nil assigns :annots
+            assert_not_nil assigns :all_annots
             assert_nil assigns :file_contents
             assert_nil assigns :code_type
             assert render_template 'shared/_handle_error.rjs'
@@ -1094,7 +1092,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :assignment_id => 1,
                    :submission_id => @submission.id,
                    :id => @submission.get_latest_result.id
-            assert assign_to :result
+            assert_not_nil assigns :result
             assert render_template 'results/marker/add_extra_mark'
             assert_response :success
           end
@@ -1110,8 +1108,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
                       :submission_id => @submission.id,
                       :id => @submission.get_latest_result.id,
                       :extra_mark => { :extra_mark => 1 }
-              assert assign_to :result
-              assert assign_to :extra_mark
+              assert_not_nil assigns :result
+              assert_not_nil assigns :extra_mark
               assert render_template 'results/marker/add_extra_mark_error'
               assert_response :success
             end
@@ -1125,8 +1123,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
                       :submission_id => @submission.id,
                       :id => @submission.get_latest_result.id,
                       :extra_mark => { :extra_mark => 1 }
-              assert assign_to :result
-              assert assign_to :extra_mark
+              assert_not_nil assigns :result
+              assert_not_nil assigns :extra_mark
               assert render_template 'results/marker/insert_extra_mark'
               assert_response :success
 
@@ -1154,7 +1152,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                  :id => @extra_mark.id
 
           assert_equal 0, flash.size
-          assert assign_to :result
+          assert_not_nil assigns :result
           assert render_template 'results/marker/remove_extra_mark'
           assert_response :success
 
@@ -1167,8 +1165,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
                  :expand_criteria,
                  :assignment_id => @assignment.id,
                  :submission_id => 1
-          assert assign_to :assignment
-          assert assign_to :mark_criteria
+          assert_not_nil assigns :assignment
+          assert_not_nil assigns :mark_criteria
           assert render_template 'results/marker/_expand_criteria.rjs'
           assert_response :success
         end
@@ -1179,8 +1177,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
                  :assignment_id => @assignment.id,
                  :submission_id => 1,
                  :id => 1
-          assert assign_to :assignment
-          assert assign_to :mark_criteria
+          assert_not_nil assigns :assignment
+          assert_not_nil assigns :mark_criteria
           assert render_template 'results/marker/_collapse_criteria.rjs'
           assert_response :success
         end
@@ -1195,9 +1193,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :assignment_id => @assignment.id,
                   :submission_id => 1,
                   :id => @result.id
-          assert assign_to :assignment
-          assert assign_to :result
-          assert assign_to :nil_marks
+          assert_not_nil assigns :assignment
+          assert_not_nil assigns :result
+          assert_not_nil assigns :nil_marks
           assert render_template 'results/marker/_expand_unmarked_criteria'
           assert_response :success
         end
@@ -1302,7 +1300,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :id => result.id,
                   :marking_state => 'complete'
           assert_response :success
-          assert assign_to :result
+          assert_not_nil assigns :result
         end
 
         context 'GET on :download' do
@@ -1324,7 +1322,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :id => 1,
                    :select_file_id => 1
             assert_equal 0, flash.size
-            assert respond_with_content_type 'application/octet-stream'
+            assert_equal response.header['Content-Type'], 'application/octet-stream'
             assert_response :success
             assert_equal 'file content', @response.body
           end
@@ -1362,7 +1360,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                     :select_file_id => 1,
                     :show_in_browser => true
             assert_equal 0, flash.size
-            assert respond_with_content_type 'image'
+            assert_equal response.header['Content-Type'], 'image'
             assert_response :success
             assert_equal 'file content', @response.body
           end
@@ -1384,13 +1382,13 @@ class ResultsControllerTest < AuthenticatedControllerTest
                     :submission_file_id => @submission_file.id,
                     :id => 1,
                     :focus_line => 1
-            assert assign_to :assignment
-            assert assign_to :submission_file_id
-            assert assign_to :focus_line
-            assert assign_to :file
-            assert assign_to :result
-            assert assign_to :annots
-            assert assign_to :all_annots
+            assert_not_nil assigns :assignment
+            assert_not_nil assigns :submission_file_id
+            assert_not_nil assigns :focus_line
+            assert_not_nil assigns :file
+            assert_not_nil assigns :result
+            assert_not_nil assigns :annots
+            assert_not_nil assigns :all_annots
             assert_nil assigns :file_contents
             assert_nil assigns :code_type
             assert render_template 'shared/_handle_error.rjs'
@@ -1402,6 +1400,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
           should 'without error' do
             # We don't want to access a real file.
+            SubmissionFile.any_instance.expects(:retrieve_file).once.returns('file content')
             SubmissionFile.stubs(:find).returns(@submission_file)
             get_as @ta,
                     :codeviewer,
@@ -1411,15 +1410,13 @@ class ResultsControllerTest < AuthenticatedControllerTest
                     :id => 1,
                     :focus_line => 1
 
-            assert assign_to :assignment
-            assert assign_to :submission_file_id
-            assert assign_to :focus_line
-            assert assign_to :file
-            assert assign_to :result
-            assert assign_to :annots
-            assert assign_to :all_annots
-            assert assign_to :file_contents
-            assert assign_to :code_type
+            assert_not_nil assigns :assignment
+            assert_not_nil assigns :submission_file_id
+            assert_not_nil assigns :focus_line
+            assert_not_nil assigns :file
+            assert_not_nil assigns :result
+            assert_not_nil assigns :annots
+            assert_not_nil assigns :all_annots
             assert render_template 'results/common/codeviewer'
             assert_response :success
           end  # -- without error
@@ -1474,7 +1471,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                  :assignment_id => 1,
                  :submission_id => 1,
                  :id => unmarked_result.id
-          assert assign_to :result
+          assert_not_nil assigns :result
           assert render_template 'results/marker/add_extra_mark'
           assert_response :success
         end
@@ -1494,8 +1491,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
                     :submission_id => 1,
                     :id => @unmarked_result.id,
                     :extra_mark => {:extra_mark => 1}
-            assert assign_to :result
-            assert assign_to :extra_mark
+            assert_not_nil assigns :result
+            assert_not_nil assigns :extra_mark
             assert render_template 'results/marker/add_extra_mark_error'
             assert_response :success
           end  # -- with save error
@@ -1509,8 +1506,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
                     :submission_id => 1,
                     :id => @unmarked_result.id,
                     :extra_mark => {:extra_mark => 1}
-            assert assign_to :result
-            assert assign_to :extra_mark
+            assert_not_nil assigns :result
+            assert_not_nil assigns :extra_mark
             assert render_template 'results/marker/insert_extra_mark'
             assert_response :success
 
@@ -1537,7 +1534,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                  :submission_id => 1,
                  :id => @extra_mark.id
           assert_equal 0, flash.size
-          assert assign_to :result
+          assert_not_nil assigns :result
           assert render_template 'results/marker/remove_extra_mark'
           assert_response :success
 
@@ -1551,8 +1548,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
                  :expand_criteria,
                  :assignment_id => @assignment.id,
                  :submission_id => 1
-          assert assign_to :assignment
-          assert assign_to :mark_criteria
+          assert_not_nil assigns :assignment
+          assert_not_nil assigns :mark_criteria
           assert render_template 'results/marker/_expand_criteria.rjs'
           assert_response :success
         end
@@ -1563,8 +1560,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
                  :assignment_id => @assignment.id,
                  :submission_id => 1,
                  :id => 1
-          assert assign_to :assignment
-          assert assign_to :mark_criteria
+          assert_not_nil assigns :assignment
+          assert_not_nil assigns :mark_criteria
           assert render_template 'results/marker/_collapse_criteria.rjs'
           assert_response :success
         end
@@ -1578,9 +1575,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :assignment_id => @assignment.id,
                   :submission_id => 1,
                   :id => s.get_latest_result.id
-          assert assign_to :assignment
-          assert assign_to :result
-          assert assign_to :nil_marks
+          assert_not_nil assigns :assignment
+          assert_not_nil assigns :result
+          assert_not_nil assigns :nil_marks
           assert render_template 'results/marker/_expand_unmarked_criteria'
           assert_response :success
         end

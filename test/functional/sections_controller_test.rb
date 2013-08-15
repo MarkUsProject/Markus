@@ -9,10 +9,6 @@ require 'shoulda'
 
 class SectionsControllerTest < AuthenticatedControllerTest
 
-  def setup
-    clear_fixtures
-  end
-
   context 'A logged student' do
     setup do
       @student = Student.make
@@ -135,7 +131,6 @@ class SectionsControllerTest < AuthenticatedControllerTest
         assert_difference('Section.count', -1) do
           delete_as @admin, :destroy, :id => @section.id
         end
-        assert_response :success
         assert_equal I18n.t('section.delete.success'), flash[:success]
       end
       
@@ -143,7 +138,6 @@ class SectionsControllerTest < AuthenticatedControllerTest
         @student = Student.make
         @section.students << @student
         delete_as @admin, :destroy, :id => @section.id
-        assert_response :success
         assert_equal I18n.t('section.delete.not_empty'), flash[:error]
         assert_not_nil Section.find(@section.id)
       end

@@ -32,15 +32,16 @@
      <%= calendar_date_select_tag "revision_timestamp", @revision_timestamp, :time => true %>
      <%= submit_tag I18n.t("browse_submissions.find_by_revision_timestamp") %>
      <% end %>
-
       <%= form_tag repo_browser_assignment_submission_path(
-                      @assignment,
-                      @grouping),
+                           @assignment, @grouping),
                    :find_revision_by => 'revision_number' do %>
-
-     <%= text_field_tag "revision_number", @revision_number %>
-     <%= submit_tag I18n.t("browse_submissions.find_by_revision_number") %>
-     <% end %>
+        <%= select_tag('revision_number',
+                   options_for_select(@revisions_history.collect { |s|
+                     [t('browse_submissions.revision_history', :num => s[:num])+
+                              l(s[:date], :format => :long_date), s[:num]] },
+                                      @revision_number)) %>
+        <%= submit_tag I18n.t('browse_submissions.find_by_revision_number') %>
+      <% end %>
     </fieldset>
   </div>
 <div class="global_actions">

@@ -8,10 +8,6 @@ require 'mocha/setup'
 
 class GradersControllerTest < AuthenticatedControllerTest
 
-  def setup
-    clear_fixtures
-  end
-
   context 'An authenticated and authorized student doing a ' do
 
     setup do
@@ -145,7 +141,7 @@ class GradersControllerTest < AuthenticatedControllerTest
     should 'doing a GET on :index(graders_controller)' do
       get_as @admin, :index, {:assignment_id => @assignment.id}
       assert_response :success
-      assert assign_to :assignment
+      assert_not_nil assigns :assignment
     end #manage
 
     context 'doing a POST on :set_assign_criteria' do
@@ -173,8 +169,7 @@ class GradersControllerTest < AuthenticatedControllerTest
         #           second_test_group,g9browni
         #           Group 3,c7benjam
         @group_grader_map_file = fixture_file_upload(
-                                    File.join('..',
-                                              'group_csvs',
+                                    File.join('group_csvs',
                                               'group_grader_map.csv'))
       end
 
@@ -248,8 +243,7 @@ class GradersControllerTest < AuthenticatedControllerTest
         #           style,g9browni
         #           class design,c7benjam
         @ctieria_grader_map_file = fixture_file_upload(
-                                      File.join('..',
-                                                'group_csvs',
+                                      File.join('group_csvs',
                                                 'criteria_grader_map.csv'))
       end
 

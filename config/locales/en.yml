@@ -65,7 +65,6 @@ en:
       format_of_assignment_file: "must be alphanumeric, '.', '-' or '_' only"
 
     # app/views/main/index.html.erb
-    firefox_warning:    "Some functionality might only work for Mozilla Firefox users"
     switch_role:         "Switch Role"
     admin_password:      "Admin Password"
     cannot_login_as_another_admin: "You cannot log in as another admin."
@@ -94,6 +93,7 @@ en:
     create_new_assignment:      "Add Assignment"
     manage_course_work: "Manage Course Work"
     repository_folder:  "Repository Folder<span class='required_field'>*</span>"
+    incorrect_format:   "Incorrect format"
     marking_state:
       not_collected: "Not Collected"
       in_progress: "In Progress"
@@ -225,6 +225,10 @@ en:
     invalid_grouping:   "(invalid)"
     validate:           "Validate"
     encoding:           "Encoding"
+    assignment_format:  "Download in %{file} format"
+    upload_assignment_format: "Upload in %{file} format"
+    select_csv_file:    "Select a CSV file of the following form: <code>%{code}</code>"
+    all_csv_file:       "All fields: "
 
     marks_released_notice:  "The marks have been released. You cannot change the grades."
     commit_after_due_date: "This commit is after the due date."
@@ -390,7 +394,9 @@ en:
       can_begin_grading:    "Can begin grading"
       section:              "Section"
       collect_work_for_section: "Collect work for section:"
+      download_groupings_files: "Download all submissions"
       sections:             "Section:"
+      revision_history:     "%{num}: "
 
     grade_entry_forms:
       blank_field: "can't be blank"
@@ -639,6 +645,7 @@ en:
         invalid_file_name: "Invalid file name on submitted file"
         missing_file: "Could not download %{file_name}: %{message}.  File may be missing."
         no_files_available: "No files available"
+        no_groupings_available: "No group available"
         no_revision_available: "No revision available"
         expect_filter: "Expected a filter on select full"
         # DO NOT change 'file_name' and 'sanitized_filename' in the following message.

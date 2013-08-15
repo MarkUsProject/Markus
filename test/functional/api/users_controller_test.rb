@@ -68,8 +68,6 @@ class Api::UsersControllerTest < ActionController::TestCase
   # Testing authenticated requests
   context 'An authenticated request to api/users' do
     setup do
-      # Fixtures have manipulated the DB, clear them off.
-      clear_fixtures
 
       # Creates admin from blueprints.
       @admin = Admin.make

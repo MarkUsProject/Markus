@@ -51,13 +51,16 @@
 </div>
 
 <script type="text/javascript">
-  new PeriodicalExecuter(function() {
-    new Ajax.Request( '<%= update_collected_submissions_assignments_path() %>', 
-      {
-        asynchronous:true, 
-        evalScripts:true, 
-        parameters:'authenticity_token=' + AUTH_TOKEN
-      }
-    )
-  }, 4)
+(function periodic() {
+  jQuery.ajax({
+    url: '<%= update_collected_submissions_assignments_path() %>',
+    data: 'authenticity_token=' + AUTH_TOKEN ,
+    type: "POST",
+    dataType: "script",
+    complete: function() {
+      // Schedule the next request when the current one's complete
+      var timer = setTimeout(periodic, 4000);
+    }
+  });
+})();
 </script>

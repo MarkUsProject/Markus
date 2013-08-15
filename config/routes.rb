@@ -31,6 +31,8 @@ Markus::Application.routes.draw do
       post 'update_group_properties_on_persist'
       get 'delete_rejected'
       post 'update_collected_submissions'
+      get 'download_assignment_list'
+      post 'upload_assignment_list'
     end
 
     member do
@@ -134,6 +136,7 @@ Markus::Application.routes.draw do
         post 'update_files'
         post 'server_time'
         get 'download'
+        get 'download_groupings_files'
       end
 
       member do

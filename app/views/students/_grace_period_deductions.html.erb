@@ -4,7 +4,7 @@
       <%= t('submission_rules.grace_period_submission_rule.credits') %>
     </th>
     <th colspan="2">
-      <%= t('short_identifier') %>
+      <%= t('short_identifier').html_safe %>
     </th>
   </thead>
   <% grace_period_deductions.each do |grace_period_deduction| %>

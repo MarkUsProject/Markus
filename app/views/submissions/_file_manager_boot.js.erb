@@ -46,9 +46,9 @@ document.observe("dom:loaded", function() {
  * See also: public/javascripts/file_manager.js
  */
 function sanitized_filename_check(file_input) {
-  file_name = file_input.value;
+  file_name = file_input.value.replace(/^.*[\\\/]/, '');
   sanitized_filename = file_name.replace(/<%= SubmissionFile::FILENAME_SANITIZATION_REGEXP.source %>/g,
-  "<%= "'#{SubmissionFile::SUBSTITUTION_CHAR}'" %>");
+  "<%= SubmissionFile::SUBSTITUTION_CHAR %>");
   if (file_name != sanitized_filename) {
     msg = <%=raw( I18n.t('student.submission.filename_sanitization_js_warning') )%>;
     if( !confirm(msg) ) {
