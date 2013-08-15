@@ -3,7 +3,6 @@ namespace :coverage do
   task :clean do
     rm_f 'test/coverage'
     rm_f 'test/coverage.data'
-    rm_f 'coverage'
     Rcov = "RAILS_ENV=test rcov --rails --output test/coverage --aggregate test/coverage.data -I'lib:test' \
                    --text-summary -x 'bundler/*,gems/*'" unless RUBY_VERSION > '1.9'
     ENV['COVERAGE'] = 'true' if RUBY_VERSION > '1.9'
