@@ -1,2 +1,2 @@
 page.replace_html 'grader_criteria_dialog', :partial => 'graders/modal_dialogs/grader_criteria'
-page.call('modalGraderCriteria.open')
+page.call('modal_criteria.open')

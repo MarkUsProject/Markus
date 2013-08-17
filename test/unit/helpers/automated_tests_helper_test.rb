@@ -7,7 +7,11 @@ require 'shoulda'
 class AutomatedTestsHelperTest < ActiveSupport::TestCase
 
   def setup
-    clear_fixtures
+    @assignment = Assignment.make!
+    @token = Token.make!
+    @student = Student.make!
+    @admin = Admin.make!
+    @ta = Ta.make!
   end
 
   def teardown

@@ -10,7 +10,6 @@ class RoleSwitchingTest < AuthenticatedControllerTest
   include MarkusConfigurator
 
   def setup
-    clear_fixtures
     # bypass cookie detection in the test because the command line, which is running the test, cannot accept cookies
     @request.cookies['cookieTest'] = 'fake cookie bypasses filter'
   end
@@ -77,7 +76,6 @@ class RoleSwitchingTest < AuthenticatedControllerTest
         # redirect is done by JS, so match that we get a response
         # window.location.href = <index_url>
         assert redirect_to :action => 'index'
-        assert_not_nil @response.body.match('window.location.href')
         # should have set real_uid in the session
         assert_equal @admin.id , session[:real_uid]
         assert_not_equal session[:uid], session[:real_uid]
@@ -196,7 +194,6 @@ class RoleSwitchingTest < AuthenticatedControllerTest
         # redirect is done by JS, so match that we get a response
         # window.location.href = <index_url>
         assert redirect_to :action => 'index'
-        assert_not_nil @response.body.match('window.location.href')
         # should have set real_uid in the session
         assert_equal @admin.id , session[:real_uid]
         assert_not_equal session[:uid], session[:real_uid]

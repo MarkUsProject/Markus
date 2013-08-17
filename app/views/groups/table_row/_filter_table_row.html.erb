@@ -42,7 +42,7 @@
 
 <td>
 <% grouping.student_memberships.each do |member| %>
-   <%= render :partial => "groups/manage/member",
+   <%= render :partial => 'groups/manage/member.html.erb',
 	      :locals => {:member => member,
 			  :grouping => grouping } %>
 <% end -%>

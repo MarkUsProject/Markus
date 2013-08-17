@@ -1,1 +1,0 @@
-page.replace_html "section",  :partial => "api/key_display", :locals => { :user => @current_user }

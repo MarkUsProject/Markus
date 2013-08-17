@@ -1,5 +1,5 @@
 <div id="role_switch_text">
-  <% form_tag login_as_main_index_path(), {:method => 'post', :remote => true} do %>
+  <%= form_tag login_as_main_index_path(), {:method => 'post', :remote => true} do %>
     <div id="role_switch_error"><span>&nbsp;</span></div>
     <h2>
       <%= I18n.t(:switch_role)%>
@@ -16,10 +16,7 @@
     <% end %>
     <br />
     <%= submit_tag I18n.t(:log_in), :disable_with => I18n.t(:logging_in), :tabindex => 100, :class => 'button indent_button'%>
-    <%= button_to_function "Cancel", 'role_switch_modal.close()', :tabindex => 110 %>
+    <%= button_to_function I18n.t(:cancel),
+                           'role_switch_modal.close()', :tabindex => 110 %>
   <% end %>
-  <script>
-    role_switch_modal.open();
-    $('effective_user_login').focus();
-  </script>
 </div>

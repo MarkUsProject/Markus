@@ -65,7 +65,6 @@ fr:
       format_of_assignment_file: "doit être un caractère alphanumérique, « . », « - » ou « _ » uniquement."
 
     # app/views/main/index.html.erb
-    firefox_warning:    "Certaines fonctionnalités ne fonctionnent qu'avec Mozilla Firefox."
     switch_role:         "Changer d'utilisateur"
     admin_password:      "Mot de passe Administrateur"
     cannot_login_as_another_admin: "Vous ne pouvez vous connecter à la place d'un autre administrateur."
@@ -97,6 +96,7 @@ fr:
     create_new_assignment:      "Créer un nouveau projet"
     manage_course_work: "Gestion du cours"
     repository_folder:  "Dossier du projet<span class='required_field'>*</span>"
+    incorrect_format:   "Le format est incorrect"
     marking_state:
       not_collected: "Pas récupéré"
       in_progress: "En cours"
@@ -226,6 +226,10 @@ fr:
     invalid_grouping:   "(invalide)"
     validate:           "Valider"
     encoding:           "Codage"
+    assignment_format:  "Téléchargement au format %{file}"
+    upload_assignment_format: "Envoi au format %{file}"
+    select_csv_file:    "Sélectionner un fichier CSV formaté comme suit : <code>%{code}</code>"
+    all_csv_file:       "Tous les champs : "
 
     marks_released_notice:  "Les notes sont maintenant affichées. Vous ne pouvez plus les changer."
     commit_after_due_date: "Ce commit est postérieur à la date de rendu."
@@ -391,7 +395,9 @@ fr:
       can_begin_grading:    "Peut être évaluée"
       section:              "Section"
       collect_work_for_section: "Récupérer les envois pour la section :"
+      download_groupings_files: "Télécharger tous les envois"
       sections:             "Section :"
+      revision_history:     "%{num} : "
 
     grade_entry_forms:
       blank_field: "doit être rempli(e)"
@@ -629,6 +635,7 @@ fr:
         invalid_file_name: "Le nom du fichier envoyé est invalide"
         missing_file: "%{file_name} n'a pas pu être téléchargé : %{message}. Le fichier est sans doute manquant."
         no_files_available: "Aucun fichier disponible"
+        no_groupings_available: "Aucun groupe disponible"
         no_revision_available: "Aucune révision disponible"
         expect_filter: "Un filtre sur la sélection est attendu."
         # DO NOT change 'file_name' and 'sanitized_filename' in the following message.

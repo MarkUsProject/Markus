@@ -1,11 +1,11 @@
 require File.join(File.dirname(__FILE__),'..', '..', 'test_helper')
+require File.join(File.dirname(__FILE__), '..', '..', 'blueprints', 'blueprints')
+require File.join(File.dirname(__FILE__), '..', '..', 'blueprints', 'helper')
 require 'shoulda'
 require 'base64'
 
 # Tests the authentication mechanism of the MarkUs API
 class Api::MainApiControllerTest < ActionController::TestCase
-
-  fixtures :users
 
   context 'An unauthenticated GET request on any API controller' do
     setup do
@@ -62,7 +62,7 @@ class Api::MainApiControllerTest < ActionController::TestCase
   # Tests authenticated requests to the API controllers
   context 'Authenticated request to any API controller' do
     setup do
-      admin = users(:api_admin)
+      admin = Admin.make
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_ACCEPT'] = 'application/xml'

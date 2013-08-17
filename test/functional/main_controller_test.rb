@@ -16,7 +16,6 @@ class MainControllerTest < AuthenticatedControllerTest
   # actual authentication is in place (i.e. when User.verify is implemented)
 
   def setup
-    clear_fixtures
     # bypass cookie detection in the test because the command line, which is running the test, cannot accept cookies
     @request.cookies['cookieTest'] = 'fake cookie bypasses filter'
   end

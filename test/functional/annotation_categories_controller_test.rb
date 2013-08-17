@@ -9,10 +9,6 @@ require 'mocha/setup'
 
 class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
-  setup do
-    clear_fixtures
-  end
-
   context 'An unauthenticated user' do
 
     # Since we are not authenticated and authorized, we should be redirected
@@ -144,7 +140,8 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       get_as @admin,
             :get_annotations,
             :assignment_id => @assignment.id,
-            :id => @category.id
+            :id => @category.id,
+            :format => :js
       assert_equal 0, flash.size
       assert_response :success
       assert_not_nil assigns :annotation_category
@@ -154,7 +151,8 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     should 'on :add_annotation_category' do
       get_as @admin,
               :add_annotation_category,
-              :assignment_id => @assignment.id
+              :assignment_id => @assignment.id,
+              :format => :js
       assert_response :success
       assert render_template :add_annotation_category #this makes sure it didn't call another action
       assert_not_nil assigns :assignment
@@ -167,7 +165,8 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         get_as @admin,
                :update_annotation_category,
                :assignment_id => @assignment.id,
-               :id => @category.id
+               :id => @category.id,
+               :format => :js
         assert_response :success
         assert_not_nil assigns :annotation_category
         assert_equal I18n.t('annotations.update.annotation_category_success'),
@@ -176,14 +175,15 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
       should 'with an error on save' do
         AnnotationCategory.any_instance.stubs(:save).returns(false)
-        AnnotationCategory.any_instance.stubs(:errors).returns('error')
 
         get_as @admin,
                 :update_annotation_category,
                 :assignment_id => @assignment.id,
-                :id => @category.id
+                :id => @category.id,
+                :format => :js
         assert_response :success
-        assert_equal flash[:error], 'error'
+        assert_not_nil flash[:error]
+        assert_nil flash[:success]
         assert_not_nil assigns :annotation_category
       end
     end
@@ -196,7 +196,8 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
               :update_annotation,
               :assignment_id => 1,
               :id => @annotation_text.id,
-              :annotation_text => @annotation_text
+              :annotation_text => @annotation_text,
+              :format => :js
       assert_response :success
     end
 
@@ -205,7 +206,8 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       get_as @admin,
              :add_annotation_text,
              :assignment_id => 1,
-             :id => @category.id
+             :id => @category.id,
+             :format => :js
       assert_response :success
       assert_not_nil assigns :annotation_category
       assert_nil assigns :annotation_text
@@ -213,13 +215,20 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
     should 'on :delete_annotation_text' do
       AnnotationText.any_instance.expects(:destroy).once
-      get_as @admin, :delete_annotation_text, :assignment_id => 1, :id => @annotation_text.id
+      get_as @admin,
+             :delete_annotation_text,
+             :assignment_id => @assignment.id,
+             :id => @annotation_text.id,
+             :format => :js
       assert_response :success
     end
 
     should 'on :delete_annotation_category' do
       AnnotationCategory.any_instance.expects(:destroy).once
-      get_as @admin, :delete_annotation_category, :assignment_id => 1, :id => @category.id
+      get_as @admin, :delete_annotation_category,
+             :assignment_id => 1,
+             :id => @category.id,
+             :format => :js
       assert_response :success
     end
 
@@ -231,13 +240,13 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
                 :assignment_id => @assignment.id,
                 :format => 'csv'
         assert_response :success
-        assert respond_with_content_type 'application/octet-stream'
+        assert_equal response.header['Content-Type'], 'application/octet-stream'
       end
 
       should 'in yml' do
         get_as @admin, :download, :assignment_id => @assignment.id, :format => 'yml'
         assert_response :success
-        assert respond_with_content_type 'application/octet-stream'
+        assert_equal response.header['Content-Type'], 'application/octet-stream'
       end
 
       should 'in error' do
@@ -261,7 +270,8 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         AnnotationCategory.any_instance.stubs(:save).returns(true)
         get_as @admin,
                :add_annotation_category,
-               :assignment_id => @assignment.id
+               :assignment_id => @assignment.id,
+               :format => :js
         assert_response :success
         assert_not_nil assigns :assignment
       end
@@ -270,7 +280,8 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         AnnotationCategory.any_instance.stubs(:save).returns(false)
         post_as @admin,
                 :add_annotation_category,
-                :assignment_id => @assignment.id
+                :assignment_id => @assignment.id,
+                :format => :js
         assert_response :success
         assert_not_nil assigns :assignment
         assert_not_nil assigns :annotation_category
@@ -285,14 +296,18 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         get_as @admin,
                :add_annotation_text,
                :assignment_id => 1,
-               :id => @category.id
+               :id => @category.id,
+               :format => :js
         assert_response :success
         assert_not_nil assigns :annotation_category
       end
 
       should 'with errors on save' do
         AnnotationText.any_instance.stubs(:save).returns(false)
-        post_as @admin, :add_annotation_text, :assignment_id => 1, :id => @category.id
+        post_as @admin, :add_annotation_text,
+                :assignment_id => 1,
+                :id => @category.id,
+                :format => :js
         assert_response :success
         assert render_template 'new_annotation_text_error'
         assert_not_nil assigns :annotation_category
@@ -319,7 +334,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       post_as @admin,
               :csv_upload,
               :assignment_id => @assignment.id,
-              :annotation_category_list_csv => fixture_file_upload('../files/test_annotations_UTF-8.csv'),
+              :annotation_category_list_csv => fixture_file_upload('files/test_annotations_UTF-8.csv'),
               :encoding => 'UTF-8'
       assert_response :redirect
       test_annotation = @assignment.annotation_categories.find_by_annotation_category_name('AnnotationÈrÉØrr')
@@ -330,7 +345,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       post_as @admin,
               :csv_upload,
               :assignment_id => @assignment.id,
-              :annotation_category_list_csv => fixture_file_upload('../files/test_annotations_ISO-8859-1.csv'),
+              :annotation_category_list_csv => fixture_file_upload('files/test_annotations_ISO-8859-1.csv'),
               :encoding => 'ISO-8859-1'
       assert_response :redirect
       test_annotation = @assignment.annotation_categories.find_by_annotation_category_name('AnnotationÈrÉØrr')
@@ -341,7 +356,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       post_as @admin,
               :csv_upload,
               :assignment_id => @assignment.id,
-              :annotation_category_list_csv => fixture_file_upload('../files/test_annotations_UTF-8.csv'),
+              :annotation_category_list_csv => fixture_file_upload('files/test_annotations_UTF-8.csv'),
               :encoding => 'ISO-8859-1'
       assert_response :redirect
       test_annotation = @assignment.annotation_categories.find_by_annotation_category_name('AnnotationÈrÉØrr')
@@ -388,7 +403,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         post_as @admin,
                 :yml_upload,
                 :assignment_id => @assignment.id,
-                :annotation_category_list_yml => fixture_file_upload('../files/test_annotations_UTF-8.yml'),
+                :annotation_category_list_yml => fixture_file_upload('files/test_annotations_UTF-8.yml'),
                 :encoding => 'UTF-8'
         assert_response :redirect
         test_annotation = @assignment.annotation_categories.find_by_annotation_category_name('AnnotationÈrÉØrr')
@@ -399,7 +414,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         post_as @admin,
                 :yml_upload,
                 :assignment_id => @assignment.id,
-                :annotation_category_list_yml => fixture_file_upload('../files/test_annotations_ISO-8859-1.yml'),
+                :annotation_category_list_yml => fixture_file_upload('files/test_annotations_ISO-8859-1.yml'),
                 :encoding => 'ISO-8859-1'
         assert_response :redirect
         test_annotation = @assignment.annotation_categories.find_by_annotation_category_name('AnnotationÈrÉØrr')
@@ -410,7 +425,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
         post_as @admin,
                 :yml_upload,
                 :assignment_id => @assignment.id,
-                :annotcation_category_list_yml => fixture_file_upload('../files/test_annotations_UTF-8.yml'),
+                :annotcation_category_list_yml => fixture_file_upload('files/test_annotations_UTF-8.yml'),
                 :encoding => 'ISO-8859-1'
         assert_response :redirect
         test_annotation = @assignment.annotation_categories.find_by_annotation_category_name('AnnotationÈrÉØrr')

@@ -1,12 +1,12 @@
 <% content_for :head do %>
-  <%= stylesheet_link_tag("livepipe/tabs") %>
+  <%= stylesheet_link_tag('livepipe/tabs') %>
 <% end %>
 
 <% # UI LIBRARIES %>
-<%= javascript_include_tag "livepipe/livepipe.js",
-                           "livepipe/window.js",
-                           "livepipe/tabs.js" %>
-
+<%= javascript_include_tag 'livepipe/livepipe',
+                           'livepipe/window',
+                           'livepipe/tabs',
+                           'AnnotationCategories/index' %>
 
 <%if @assignment.past_due_date?%>
  <div class="notice">
@@ -14,21 +14,17 @@
  </div>
 <% end %>
 
-<%= render :partial => "boot.js" %>
-
 <div id="title_bar">
   <h1><%= I18n.t("annotations.title",
         :assignment_short_identifier => @assignment.short_identifier) %>
-        <%= link_to_function t("annotations.add_annotation_category"), %| if($('add_annotation_category_prompt') != null) {
-          $('add_annotation_category_prompt').select();
-          $('add_annotation_category_prompt').focus();
-        } else {
-        #{remote_function :url => {:action => "add_annotation_category", :id => @assignment.id}, :method => 'get', :after => "if($('no_annotation_categories_info') != null) { $('no_annotation_categories_info').hide();}" }
-        }|%>
+    <% path = add_annotation_category_assignment_annotation_categories_path(
+            :id => @assignment.id) %>
+        <%= link_to_function t('annotations.add_annotation_category'),
+                             :onclick => "add_annotation_category('#{path}')" %>
   <span class="menu_bar">|</span>
-	<%= button_to_function t("upload"), "upload_annotation_categories();" %>
+	<%= button_to_function t('upload'), 'modal_upload.open();' %>
           <span class="menu_bar">|</span>
-	<%= button_to_function t("download"), "download_annotation_categories();" %>
+	<%= button_to_function t('download'), 'modal_download.open();' %>
 
 </h1>
 </div>
@@ -86,7 +82,8 @@
             <br />
             <br />
             <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
-            <input type="reset" value="<%= t(:cancel) %>" onclick="modalUpload.close();" />
+            <input type="reset" value="<%= t(:cancel) %>"
+                   onclick="modal_upload.close();" />
           </p>
         <% end %>
         <%= t("annotations.upload.upload_message_yml").html_safe %>
@@ -99,7 +96,8 @@
             <br />
 	        <br />
             <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
-            <input type="reset" value="<%= t(:cancel) %>" onclick="modalUpload.close();" />
+            <input type="reset" value="<%= t(:cancel) %>"
+                   onclick="modal_upload.close();" />
           </p>
         <% end %>
       </div>
@@ -107,10 +105,23 @@
     <div id="download_dialog">
     <h1><%= t("annotations.download.download_annotations") %></h1>
       <ul>
-        <li><%= link_to t("annotations.download.download_csv"), {:action => 'download', :id => @assignment.id, :format => 'csv'}, :onclick => "modalDownload.close();" %></li>
-        <li><%= link_to t("annotations.download.download_yml"), {:action => 'download', :id => @assignment.id, :format => 'yml'}, :onclick => "modalDownload.close();" %></li>
+        <li>
+          <%= link_to t('annotations.download.download_csv'),
+                      {:action => 'download',
+                       :id => @assignment.id,
+                       :format => 'csv'},
+                      :onclick => 'modal_download.close();' %>
+        </li>
+        <li>
+          <%= link_to t('annotations.download.download_yml'),
+                      {:action => 'download',
+                       :id => @assignment.id,
+                       :format => 'yml'},
+                      :onclick => 'modal_download.close();' %>
+        </li>
       </ul>
-      <input type="reset" value="<%= t(:cancel) %>" onclick="modalDownload.close();">
+      <input type="reset" value="<%= t(:cancel) %>"
+             onclick="modal_download.close();">
     </div>
 
 

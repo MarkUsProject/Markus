@@ -68,8 +68,6 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
   # Testing authenticated requests
   context 'An authenticated request to api/assignments' do
     setup do
-      # Fixtures have manipulated the DB, clear them off.
-      clear_fixtures
 
       # Create admin from blueprints
       @admin = Admin.make!
@@ -260,6 +258,28 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
     end
 
     # Testing POST api/assignments
+    context 'testing the create function with missing required attributes' do
+      testData = [
+        ['due_date', 'testfail1', 'sample', ''],
+        ['description', 'testfail2', '', '2013-04-07 23:00:01'],
+        ['short_identifier', '', 'sample', '2013-04-07 23:00:01']
+      ]
+
+      testData.each do |missing_attr, short_identifier, description, due_date|
+        setup do
+          # Create parameters for request and send
+          post 'create', :short_identifier => short_identifier,
+            :description => description, :due_date => due_date
+        end
+
+        should "fail in creating the assignment with a missing #{missing_attr}" do
+          assert_response 422
+          @assignment = Assignment.find_by_short_identifier(short_identifier)
+          assert_nil @assignment
+        end
+      end
+    end
+
     context 'testing the create function with minimal valid attributes' do
       setup do
         # Create parameters for request and send

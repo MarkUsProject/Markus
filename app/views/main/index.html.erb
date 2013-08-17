@@ -1,22 +1,7 @@
 <% content_for :head do %>
-	<%= javascript_include_tag "Bluff/js-class.js",
- 		"Bluff/bluff.js",
-		"Bluff/excanvas.js" %>
-<% end %>
-
-<% if !@current_user.student? %>
-   <p id="firefox_warning" class="notice"><%= I18n.t(:firefox_warning) %></p>
-   
-   <script type="text/javascript">
-    //<![CDATA[
-    $('firefox_warning').hide();
-
-    // Display warning if not using a Gecko-based browser
-    if (!Prototype.Browser.Gecko) { 
-      $('firefox_warning').show();
-    }
-    //]]>
-  </script>
+	<%= javascript_include_tag 'Bluff/js-class.js',
+                             'Bluff/bluff.js',
+                             'Bluff/excanvas.js' %>
 <% end %>
 
 <div id="title_bar">

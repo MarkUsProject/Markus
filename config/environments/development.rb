@@ -10,6 +10,7 @@ Markus::Application.configure do
 
   # Show full error reports and disable caching
   config.consider_all_requests_local = true
+  # The following line can be commented out when jQuery is fully implemented in MarkUs
   config.action_view.debug_rjs                         = true
   config.action_controller.perform_caching             = false
   config.action_controller.allow_forgery_protection    = true

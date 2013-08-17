@@ -7,7 +7,7 @@
   <input type="text" maxlength="30" id="new_groupname" name="new_groupname">
   </fieldset>
   <p class="p_margin">
-          <%= submit_tag I18n.t('groups.rename_group.title') %>
-          <button onclick="modalRenameGroup.close(); return false;"><%= I18n.t('cancel') %> </button>
+    <%= submit_tag I18n.t('groups.rename_group.title') %>
+    <%= button_to_function I18n.t('cancel'), 'modal_rename.close()' %>
   </p>
 <% end %>

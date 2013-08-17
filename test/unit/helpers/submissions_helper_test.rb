@@ -7,12 +7,6 @@ class SubmissionsHelperTest < ActiveSupport::TestCase
   
   context 'Assignment with section due dates and submissions to collect' do
     
-    setup do
-      
-      # TODO create fixtures
-      
-    end
-    
     # TODO test SubmissionsHelper#collect_submissions_for_section
     
   end

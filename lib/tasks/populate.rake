@@ -41,7 +41,7 @@ namespace :markus do
   # this task depends on :environment and :seed
   task(:add_students => [:environment, :"db:seed"]) do
     puts "Populate database with some additional students"
-    STUDENT_CSV = File.expand_path(File.join(__FILE__, '..', '..', '..', 'test', 'classlist-csvs', 'new_students.csv'))
+    STUDENT_CSV = File.expand_path(File.join(__FILE__, '..', '..', '..', 'test', 'fixtures', 'classlist-csvs', 'new_students.csv'))
     if File.readable?(STUDENT_CSV)
       csv_students = File.new(STUDENT_CSV)
       User.upload_user_list(Student, csv_students.read, nil)
