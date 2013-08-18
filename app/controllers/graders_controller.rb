@@ -83,7 +83,7 @@ class GradersController < ApplicationController
     invalid_lines = Grouping.assign_tas_by_csv(params[:grader_mapping].read,
                                                params[:assignment_id], params[:encoding])
     if invalid_lines.size > 0
-      flash[:invalid_lines] = invalid_lines
+      flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
     end
     redirect_to :action => 'index', :assignment_id => params[:assignment_id]
   end
@@ -105,7 +105,7 @@ class GradersController < ApplicationController
       params[:grader_criteria_mapping].read, params[:assignment_id], params[:encoding])
     end
     if invalid_lines.size > 0
-      flash[:invalid_lines] = invalid_lines
+      flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
     end
     redirect_to :action => 'index', :assignment_id => params[:assignment_id]
   end

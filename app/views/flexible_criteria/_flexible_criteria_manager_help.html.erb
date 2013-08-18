@@ -1,8 +1,4 @@
-<% if !flash[:success].nil? %>
-  <div class="success">
-  	<%= flash[:success] %>
-  </div>
-<% end %>
+<%= render 'shared/flash_message' %>
 <div id="rubrics_help">
   <h2><%= I18n.t(:help)%></h2>
   <h3><%= I18n.t(:editing_criteria)%></h3>

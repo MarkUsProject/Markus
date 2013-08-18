@@ -9,12 +9,6 @@
                            'dragdrop.js',
                            'FlexibleCriteria/index' %>
 
-<% if @assignment.past_due_date?%>
-  <div class="notice">
-    <%=t('past_due_date_warning')%>
-  </div>
-<% end %>
-
 <div id="title_bar">
   <h1><%= I18n.t("flexible_criteria.criteria_management", :identifier => @assignment.short_identifier) %>
   </h1>
@@ -33,21 +27,7 @@
 </div><!-- Title bar-->
 
 <div class="wrapLeft">
-  <% if flash[:upload_notice] %>
-    <div class="success">
-      <p><%= flash[:upload_notice] %></p>
-    </div>
-  <% end -%>
-  <% if flash[:error] && !flash[:invalid_lines].nil? && !flash[:invalid_lines].empty? %>
-    <div class="error">
-      <p><%= flash[:error] %></p>
-      <ul>
-        <% flash[:invalid_lines].each do |message| %>
-          <li><%=(message)%></li>
-		<% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render 'shared/flash_message' %>
 
   <p id="new_criterion_error" class="warning" style="display: none;"></p>
 
@@ -88,7 +68,7 @@
   <p><%= t('flexible_criteria.download.prompt') %></p>
 
   <ul>
-    <li><%= link_to t('flexible_criteria.download.link'), 
+    <li><%= link_to t('flexible_criteria.download.link'),
     {:controller=>"flexible_criteria", :action=>"download", :id=> @assignment.id}%></li>
   </ul>
 

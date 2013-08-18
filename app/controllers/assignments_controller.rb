@@ -183,7 +183,11 @@ class AssignmentsController < ApplicationController
     @past_date = @assignment.what_past_due_date
     @assignments = Assignment.all
     @sections = Section.all
-    
+
+    unless @past_date.nil? || @past_date.empty?
+      flash[:notice] = t('past_due_date_notice') + @past_date.join(', ')
+    end
+
     # build section_due_dates for each section that doesn't already have a due date
     Section.all.each do |s|
       unless SectionDueDate.find_by_assignment_id_and_section_id(@assignment.id, s.id)
@@ -235,7 +239,7 @@ class AssignmentsController < ApplicationController
     @sections = Section.all
     @assignment.build_submission_rule
     @assignment.build_assignment_stat
-    
+
     # build section_due_dates for each section
     Section.all.each { |s| @assignment.section_due_dates.build(:section => s)}
 
@@ -432,7 +436,6 @@ class AssignmentsController < ApplicationController
 
     to_invite = params[:invite_member].split(',')
     flash[:fail_notice] = []
-    flash[:success] = []
     MarkusLogger.instance
     @grouping.invite(to_invite)
     flash[:fail_notice] = @grouping.errors['base']
@@ -600,7 +603,7 @@ class AssignmentsController < ApplicationController
         end
       end
     end
-    
+
     # if there are no section due dates, destroy the objects that were created
     if params[:assignment][:section_due_dates_type] == '0'
       assignment.section_due_dates.each { |s| s.destroy }

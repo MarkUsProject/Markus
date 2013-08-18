@@ -1,8 +1,4 @@
-<% if !flash[:success].nil? %>
-  <div class="success">
-    <%= flash[:success] %>
-  </div>
-<% end %>
+<%= render 'shared/flash_message' %>
 
 <%= form_for criterion,
 	     :as => :flexible_criterion,
