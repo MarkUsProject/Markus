@@ -878,11 +878,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
         context 'GET on :download_zip' do
 
           setup do
-            @group = Group.make
-            @student = Student.make
-            @grouping = Grouping.make(:group => @group,
+            @group = Group.make!
+            @student = Student.make!
+            @grouping = Grouping.make!(:group => @group,
                                       :assignment => @assignment)
-            @membership = StudentMembership.make(:user => @student,
+            @membership = StudentMembership.make!(:user => @student,
                                                  :membership_status => 'inviter',
                                                  :grouping => @grouping)
             @student = @membership.user
@@ -909,7 +909,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                                     :annotation_number => @submission.
                                         annotations.count + 1
                                   })
-            @annotation.annotation_text = AnnotationText.make
+            @annotation.annotation_text = AnnotationText.make!
             @annotation.save
           end
 

@@ -592,12 +592,12 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       context 'download_groupings_files' do
 
         setup do
-          @assignment = Assignment.make
+          @assignment = Assignment.make!
           (1..3).to_a.each do |i|
-            instance_variable_set(:"@student#{i}", Student.make)
+            instance_variable_set(:"@student#{i}", Student.make!)
             instance_variable_set(:"@grouping#{i}",
-                                  Grouping.make(:assignment => @assignment))
-            StudentMembership.make(
+                                  Grouping.make!(:assignment => @assignment))
+            StudentMembership.make!(
                 :user => instance_variable_get(:"@student#{i}"),
                 :membership_status => 'inviter',
                 :grouping => instance_variable_get(:"@grouping#{i}"))
