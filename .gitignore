@@ -15,6 +15,9 @@ doc/app/
 test/coverage
 test/coverage.data
 
+# Files created by tests
+lib/repo/test/svn_repos/svn_authz
+
 # Patch
 *.diff
 *.patch
