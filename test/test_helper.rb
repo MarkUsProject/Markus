@@ -7,10 +7,6 @@ class ActiveSupport::TestCase
 
   # Add more helper methods to be used by all tests here...
 
-  setup {
-    Sham.reset
-  }
-
   def destroy_repos
     conf = Hash.new
     conf['IS_REPOSITORY_ADMIN'] = true
