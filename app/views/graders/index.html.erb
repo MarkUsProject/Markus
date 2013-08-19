@@ -24,10 +24,8 @@
 <div class="clear"></div>
 
 <div id="notice">
-    <div class="success" id="add_success" style="display: none; ">
-            </div>
-  <% # This is for error display injected by JavaScript
-   %>
+  <div class="success" id="add_success" style="display: none; "></div>
+  <% # This is for error display injected by JavaScript %>
 
   <div class="error" id="errors" style="display: none; ">
     <h3><%= t("graders.problem") %></h3>
@@ -37,37 +35,13 @@
     </div>
   </div>
 
-
   <div class="warning" id="global_action_warning" style="display: none; ">
     <h3><%= t("groups.warning") %></h3>
     <div id="global_action_warning_msg"></div>
   </div>
 
-  <% # if there are errors have the error message display %>
-  <% if flash[:error] || flash[:fail_notice] || flash[:invalid_lines] -%>
-    <div class="error">
-      <%= flash[:error]+"<br/>" if flash[:error] %>
-      <%= flash[:fail_notice]+"<br/>" if flash[:fail_notice] %>
-      <% if flash[:invalid_lines] %>
-        <%= I18n.t("graders.lines_not_processed") %>
-        <ul>
-        <% flash[:invalid_lines].each do |error| %>
-          <li><%=error%></li>
-        <% end %>
-        </ul>
-      <% end %>
-    </div>
-  <% end %>
-
-  <% # if there are success messages to display
-                            %>
-  <% if flash[:upload_notice] || flash[:edit_notice] -%>
-    <div class="success">
-      <%= flash[:upload_notice]+"<br/>" if flash[:upload_notice] %>
-      <%= flash[:edit_notice]+"<br/>" if flash[:edit_notice] %>
-    </div>
-  <% end %>
-
+  <% # all other flash messages %>
+  <%= render 'shared/flash_message' %>
 </div><!-- Notice -->
 
 <%= form_tag global_actions_assignment_graders_path(@assignment),

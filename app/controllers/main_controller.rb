@@ -3,8 +3,7 @@
 # as well as displaying main page
 class MainController < ApplicationController
 
-  include MainHelper
-  include CookieDetection
+  include ApplicationHelper, MainHelper, CookieDetection
 
   protect_from_forgery :except => [:login, :page_not_found]
 
@@ -39,7 +38,7 @@ class MainController < ApplicationController
           redirect_to( uri || { :action => 'index' } )
           return
         else
-          @login_error = flash[:login_notice]
+          @login_error = flash[:error][0]
           render :remote_user_auth_login_fail
           return
         end
@@ -53,7 +52,7 @@ class MainController < ApplicationController
         redirect_to :controller => 'main', :action => 'login'
       end
     else
-      flash[:login_notice] = I18n.t(:cookies_off)
+      flash_message(:error, I18n.t(:cookies_off))
       return
 
     end
@@ -84,7 +83,7 @@ class MainController < ApplicationController
     # authentication is valid
     validation_result = validate_user(params[:user_login], params[:user_login], params[:user_password])
     unless validation_result[:error].nil?
-      flash[:login_notice] = validation_result[:error]
+      flash_message(:error, validation_result[:error])
       redirect_to :action => 'login'
       return
     end
@@ -96,7 +95,7 @@ class MainController < ApplicationController
 
     # Has this student been hidden?
     if found_user.student? && found_user.hidden
-      flash[:login_notice] = I18n.t('account_disabled')
+      flash_message(:error, I18n.t('account_disabled'))
       redirect_to(:action => 'login') && return
     end
 
@@ -110,7 +109,7 @@ class MainController < ApplicationController
       # redirect to last visited page or to main page
       redirect_to( uri || { :action => 'index' } )
     else
-      flash[:login_notice] = I18n.t(:login_failed)
+      flash_message(:error, I18n.t(:login_failed))
     end
   end
 
@@ -283,13 +282,13 @@ private
       # not a good idea to report this to the outside world. It makes it
       # easier for attempted break-ins
       # if one can distinguish between existent and non-existent users.
-      flash[:login_notice] = I18n.t(:login_failed)
+      flash_message(:error, I18n.t(:login_failed))
       return false
     end
 
     # Has this student been hidden?
     if found_user.student? && found_user.hidden
-      flash[:login_notice] = I18n.t('account_disabled')
+      flash_message(:error, I18n.t('account_disabled'))
       return false
     end
 
@@ -307,7 +306,7 @@ private
     if logged_in?
       true
     else
-      flash[:login_notice] = I18n.t(:login_failed)
+      flash_message(:error, I18n.t(:login_failed))
       false
     end
   end

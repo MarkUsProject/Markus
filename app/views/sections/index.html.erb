@@ -2,16 +2,7 @@
 
 <div class="wrapLeft">
 
-<% if flash[:error] %>
-  <div class="error">
-    <%= flash[:error] %>
-  </div>
-<% end %>
-<% if flash[:success] %>
-  <div class="success">
-	 <%= flash[:success] %>
-  </div>
-<% end %>
+<%= render 'shared/flash_message' %>
 
 <%= link_to I18n.t('section.add_section'), new_section_path, :class => 'button' %>
 <% if @sections.empty? %>
