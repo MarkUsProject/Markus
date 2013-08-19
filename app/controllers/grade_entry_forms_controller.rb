@@ -246,7 +246,7 @@ class GradeEntryFormsController < ApplicationController
       m_logger = MarkusLogger.instance
       m_logger.log(log_message)
     end
-    flash[:errors] = errors
+    flash[:error] = errors
 
     redirect_to :action => 'grades', :id => params[:id]
   end
@@ -274,13 +274,11 @@ class GradeEntryFormsController < ApplicationController
                                                  invalid_lines,
                                                  encoding)
           unless invalid_lines.empty?
-            flash[:invalid_lines] = invalid_lines
-            flash[:error] = I18n.t('csv_invalid_lines')
+            flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
           end
           if num_updates > 0
-            flash[:upload_notice] = I18n.t(
-                                 'grade_entry_forms.csv.upload_success',
-                                 :num_updates => num_updates)
+            flash[:notice] = I18n.t('grade_entry_forms.csv.upload_success',
+              :num_updates => num_updates)
           end
         end
       end

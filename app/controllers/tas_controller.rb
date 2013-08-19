@@ -78,7 +78,7 @@ class TasController < ApplicationController
       if result[:invalid_lines].length > 0
         flash[:invalid_lines] = result[:invalid_lines]
       end
-      flash[:upload_notice] = result[:upload_notice]
+      flash[:notice] = result[:upload_notice]
     end
     redirect_to :action => 'index'
   end

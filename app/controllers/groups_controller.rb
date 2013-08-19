@@ -17,7 +17,7 @@ class GroupsController < ApplicationController
   def note_message
     @assignment = Assignment.find(params[:id])
     if params[:success]
-      flash[:upload_notice] = I18n.t('notes.create.success')
+      flash[:notice] = I18n.t('notes.create.success')
     else
       flash[:error] = I18n.t('notes.error')
     end
@@ -102,7 +102,7 @@ class GroupsController < ApplicationController
       if Grouping.all(:conditions => ["assignment_id =
       :assignment_id and group_id = :groupexist_id", {:groupexist_id =>
       groupexist_id, :assignment_id => @assignment.id}])
-         flash[:fail_notice] = I18n.t('groups.rename_group.already_in_use')
+         flash[:error] = I18n.t('groups.rename_group.already_in_use')
       else
         @grouping.update_attribute(:group_id, groupexist_id)
       end
@@ -157,7 +157,6 @@ class GroupsController < ApplicationController
   # specified by the second field will be used instead.
   def csv_upload
     flash[:error] = nil # reset from previous errors
-    flash[:invalid_lines] = nil
     file = params[:group][:grouplist]
     @assignment = Assignment.find(params[:assignment_id])
     encoding = params[:encoding]
@@ -172,7 +171,6 @@ class GroupsController < ApplicationController
         if !@assignment.groupings.nil? && @assignment.groupings.length > 0
           @assignment.groupings.destroy_all
         end
-        flash[:invalid_lines] = [] # Store errors of lines in CSV file
         begin
           # Loop over each row, which lists the members to be added to the group.
           CsvHelper::Csv.parse(file.read).each_with_index do |row, line_nr|
@@ -180,31 +178,25 @@ class GroupsController < ApplicationController
               # Potentially raises CSVInvalidLineError
               collision_error = @assignment.add_csv_group(row)
               unless collision_error.nil?
-                flash[:invalid_lines] << I18n.t('csv.line_nr_csv_file_prefix',
-                                          { :line_number => line_nr + 1 })
-                                          + " #{collision_error}"
+                flash_message(:error, I18n.t('csv.line_nr_csv_file_prefix',
+                  { :line_number => line_nr + 1 }) + " #{collision_error}")
               end
             rescue CSVInvalidLineError => e
-              flash[:invalid_lines] << I18n.t('csv.line_nr_csv_file_prefix',
-                                          { :line_number => line_nr + 1 })
-                                          + " #{e.message}"
+              flash_message(:error, I18n.t('csv.line_nr_csv_file_prefix',
+                { :line_number => line_nr + 1 }) + " #{e.message}")
             end
           end
           @assignment.reload # Need to reload to get newly created groupings
           number_groupings_added = @assignment.groupings.length
-          invalid_lines_count = flash[:invalid_lines].length
-          if invalid_lines_count == 0
-            flash[:invalid_lines] = nil
-          end
-          if number_groupings_added > 0
-            flash[:upload_notice] = I18n.t('csv.groups_added_msg',
-                  { :number_groups => number_groupings_added,
-                    :number_lines => invalid_lines_count })
+          if number_groupings_added > 0 && flash[:error].is_a?(Array)
+            invalid_lines_count = flash[:error].length
+            flash[:notice] = I18n.t('csv.groups_added_msg', { :number_groups =>
+              number_groupings_added, :number_lines => invalid_lines_count })
           end
         rescue Exception => e
           # We should only get here if something *really* bad/unexpected
           # happened.
-          flash[:error] = I18n.t('csv.groups_unrecoverable_error')
+          flash_message(:error, I18n.t('csv.groups_unrecoverable_error'))
           raise ActiveRecord::Rollback
         end
       end
@@ -240,10 +232,10 @@ class GroupsController < ApplicationController
     source_assignment = Assignment.find(params[:clone_groups_assignment_id])
 
     if source_assignment.nil?
-      flash[:fail_notice] = I18n.t('groups.csv.could_not_find_source')
+      flash[:warning] = I18n.t('groups.csv.could_not_find_source')
     end
     if @target_assignment.nil?
-      flash[:fail_notice] = I18n.t('groups.csv.could_not_find_target')
+      flash[:warning] = I18n.t('groups.csv.could_not_find_target')
     end
 
     # Clone the groupings
@@ -360,7 +352,7 @@ class GroupsController < ApplicationController
       @warning_group_size = I18n.t('assignment.group.assign_over_limit',
         :group => group_name)
     end
-    
+
     render :add_members
   end
 
@@ -397,9 +389,9 @@ class GroupsController < ApplicationController
       # only the first student should be the "inviter"
       # (and only update this if it succeeded)
       set_membership_status = StudentMembership::STATUSES[:accepted]
-      
-      # generate a warning if a member is added to a group and they 
-      # have less grace days credits than already used by that group 
+
+      # generate a warning if a member is added to a group and they
+      # have less grace days credits than already used by that group
       if student.remaining_grace_credits < grouping.grace_period_deduction_single
         @warning_grace_day = I18n.t('assignment.group.grace_day_over_limit',
           :group => grouping.group.group_name)

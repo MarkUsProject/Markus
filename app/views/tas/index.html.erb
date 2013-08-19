@@ -17,19 +17,7 @@
   <div class="wrapLeft">
     <div id="list">
 
-      <% if flash[:upload_notice] -%>
-      <p class="success"><%= flash[:upload_notice] %></p>
-      <% end -%>
-
-      <% if flash[:success] %>
-      <div class="success">
-        <%=(flash[:success]) %>
-      </div>
-      <% end %>
-
-      <% if flash[:edit_notice] -%>
-      <p class="success"><%= flash[:edit_notice] %></p>
-      <% end -%>
+      <%= render 'shared/flash_message' %>
 
       <% # display lines in csv file that has not been successfully processed %>
       <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? -%>

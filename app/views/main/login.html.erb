@@ -9,9 +9,7 @@
 
   <div class="login-course"><%= MarkusConfigurator.markus_config_course_name %></div>
 
-  <% if flash[:login_notice] -%>
-    <div class="error"><%= flash[:login_notice] %></div>
-  <% end -%>
+  <%= render 'shared/flash_message' %>
   <div class="login-content">
     <!-- login form -->
     <%= form_tag({ :action => 'login', :id => nil }, :id => 'login_form') do %>
@@ -19,7 +17,7 @@
       <%= label_tag 'user_login', I18n.t(:login) + ':' -%>
       <%= text_field_tag 'user_login', nil, :tabindex => 10 %>
       <br />
-      
+
       <%= label_tag 'user_password', I18n.t(:password) + ':' %>
       <%= password_field_tag 'user_password', nil, :tabindex => 20 %>
       <br />
@@ -40,11 +38,11 @@
 </div>
 
 <script type="text/javascript">
-//<![CDATA[    
+//<![CDATA[
   <% if @first_visit %>
     <%# Alert Internet Explorer users of incompatibility %>
       if (jQuery.browser.name == 'msie') {
-        jQuery('#ie_warning_dialog').dialog({ 
+        jQuery('#ie_warning_dialog').dialog({
           modal: true,
           width: 400,
           buttons: {

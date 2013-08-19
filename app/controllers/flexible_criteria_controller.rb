@@ -4,6 +4,9 @@ class FlexibleCriteriaController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
+    if @assignment.past_due_date?
+      flash[:notice] = t('past_due_date_warning')
+    end
     # TODO until Assignment gets its criteria method
     @criteria =
       FlexibleCriterion.find_all_by_assignment_id( @assignment.id,
@@ -79,12 +82,11 @@ class FlexibleCriteriaController < ApplicationController
                                                    @assignment,
                                                    invalid_lines)
           unless invalid_lines.empty?
-            flash[:invalid_lines] = invalid_lines
-            flash[:error] = I18n.t('csv_invalid_lines')
+            flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
           end
           if nb_updates > 0
-            flash[:upload_notice] = I18n.t('flexible_criteria.upload.success',
-                                            :nb_updates => nb_updates)
+            flash[:notice] = I18n.t('flexible_criteria.upload.success',
+              :nb_updates => nb_updates)
           end
         end
       end
