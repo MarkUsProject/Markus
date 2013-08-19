@@ -78,11 +78,11 @@ class RubricsController < ApplicationController
           invalid_lines = []
           nb_updates = RubricCriterion.parse_csv(file, @assignment, invalid_lines, encoding)
           unless invalid_lines.empty?
-            flash[:invalid_lines] = invalid_lines
-            flash[:error] = I18n.t('csv_invalid_lines')
+            flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
           end
           if nb_updates > 0
-            flash[:upload_notice] = I18n.t('rubric_criteria.upload.success', :nb_updates => nb_updates)
+            flash[:notice] = I18n.t('rubric_criteria.upload.success',
+              :nb_updates => nb_updates)
           end
         end
       end
@@ -106,8 +106,7 @@ class RubricsController < ApplicationController
         end
         rubrics = YAML::load(file)
       rescue ArgumentError => e
-        flash[:error] =
-           I18n.t('rubric_criteria.upload.error') + '  ' +
+        flash[:error] = I18n.t('rubric_criteria.upload.error') + '  ' +
            I18n.t('rubric_criteria.upload.syntax_error', :error => "#{e}")
         redirect_to :action => 'index', :id => assignment.id
         return
@@ -149,7 +148,7 @@ class RubricsController < ApplicationController
       end
 
       if successes > 0
-        flash[:upload_notice] = I18n.t('rubric_criteria.upload.success', :nb_updates => successes)
+        flash[:notice] = I18n.t('rubric_criteria.upload.success', :nb_updates => successes)
       end
     end
     redirect_to :action => 'index', :assignment_id => assignment.id

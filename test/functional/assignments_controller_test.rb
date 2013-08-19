@@ -302,7 +302,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
         @assignment.reload
         # note that a div with this id is only displayed when we have an error on a page
-        assert_select 'div#errorExplanation'
+        assert_select 'div.error'
       end
 
       # Regression test for Github issue #568

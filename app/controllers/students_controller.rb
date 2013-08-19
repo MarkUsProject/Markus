@@ -133,11 +133,12 @@ class StudentsController < ApplicationController
       begin
         result = User.upload_user_list(Student, params[:userlist], params[:encoding])
         if result[:invalid_lines].size > 0
-          flash[:invalid_lines] = result[:invalid_lines]
+          flash[:error] = I18n.t('csv_invalid_lines') +
+            result[:invalid_lines].join(', ')
         end
         flash[:success] = result[:upload_notice]
       rescue RuntimeError
-        flash[:upload_notice] = I18n.t('csv_valid_format')
+        flash[:notice] = I18n.t('csv_valid_format')
       end
 
     end

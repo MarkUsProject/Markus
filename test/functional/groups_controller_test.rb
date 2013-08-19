@@ -178,7 +178,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         assert_not_nil assigns :group
         assert_response :success
         assert_equal @grouping.group.group_name, assigns(:group).group_name
-        assert_equal flash[:fail_notice], I18n.t('groups.rename_group.already_in_use')
+        assert_equal flash[:error], I18n.t('groups.rename_group.already_in_use')
       end
 
     end #:rename_group

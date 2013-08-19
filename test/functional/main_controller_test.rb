@@ -24,24 +24,24 @@ class MainControllerTest < AuthenticatedControllerTest
     should 'be redirected to login' do
       get :index
       assert_redirected_to :action => 'login', :controller => 'main'
-      assert_not_equal '', flash[:login_notice]
+      assert_not_equal '', flash[:error]
     end
 
     should 'should not be able to log in without login and password' do
       post :login, :user_login => '', :user_password => ''
-      assert_not_equal '', flash[:login_notice]
+      assert_not_equal '', flash[:error]
     end
 
     should 'should not be able to log in with a blank login' do
       get :login
       post :login, :user_login => '', :user_password => 'afds'
-      assert_equal I18n.t(:username_not_blank), flash[:login_notice]
+      assert_equal I18n.t(:username_not_blank), flash[:error][0]
     end
 
     should 'should not be able to log in with a blank password' do
       get :login
       post :login, :user_login => 'afds', :user_password => ''
-      assert_equal I18n.t(:password_not_blank), flash[:login_notice]
+      assert_equal I18n.t(:password_not_blank), flash[:error][0]
     end
   end
 
@@ -54,9 +54,9 @@ class MainControllerTest < AuthenticatedControllerTest
       post :login,
            :user_login => @admin.user_name,
            :user_password => 'asfd'
-      # on successful logins there shouldn't be a :login_notice
+      # on successful logins there shouldn't be a :error
       # in the flash
-      assert_equal nil, flash[:login_notice]
+      assert_equal nil, flash[:error]
       assert_redirected_to :action => 'index'
       assert_equal @admin.id, session[:uid]
       assert_not_nil session[:timeout]
@@ -64,7 +64,7 @@ class MainControllerTest < AuthenticatedControllerTest
 
     should 'not be able to login with wrong username' do
       post :login, :user_login => 'afds', :user_password => 'lala'
-      assert_equal I18n.t(:login_failed), flash[:login_notice]
+      assert_equal I18n.t(:login_failed), flash[:error][0]
     end
 
     # Test if logging out redirects user to login page and clears session
