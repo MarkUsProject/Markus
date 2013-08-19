@@ -10,13 +10,13 @@ namespace :markus do
     i.user_name = "instructor"
     i.first_name = "Jim"
     i.last_name = "Clarke"
-    i.save
+    i.save!
     
     puts "Renaming 'c5hanson' to 'student'"
     
     s = Student.find_by_user_name('c5hanson')
     s.user_name = 'student'
-    s.save
+    s.save!
 
     puts "Generating Assignment A1 and A2..."
     a1 = Assignment.new
@@ -34,7 +34,9 @@ namespace :markus do
     a1.submission_rule = rule
     a1.invalid_override = false
     a1.marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
-    a1.save
+    a1.assignment_stat = AssignmentStat.new
+    a1.display_grader_names_to_students = false
+    a1.save!
 
     a2 = Assignment.new
     rule = NoLateSubmissionRule.new
@@ -51,7 +53,9 @@ namespace :markus do
     a2.submission_rule = rule
     a2.invalid_override = false
     a2.marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
-    a2.save
+    a2.assignment_stat = AssignmentStat.new
+    a2.display_grader_names_to_students = false
+    a2.save!
     
     puts "Creating the Rubric for A1..."
     rubric_criteria = [{:rubric_criterion_name => "Uses Conditionals", :weight => 1}, {:rubric_criterion_name => "Code Clarity", :weight => 2}, {:rubric_criterion_name => "Code Is Documented", :weight => 3}, {:rubric_criterion_name => "Uses For Loop", :weight => 1}]
@@ -61,7 +65,7 @@ namespace :markus do
       rc.update_attributes(rubric_criteria)
       rc.update_attributes(default_levels)
       rc.assignment = a1
-      rc.save
+      rc.save!
     end
     
     puts "Create Groupings on A1 and A2 for c5hanson, c5glazun, c5anthei, c5berkel, c5bloche"
@@ -101,7 +105,7 @@ namespace :markus do
     a1_repo.commit(txn)
     sleep 1
     a1.due_date = Time.now
-    a1.save
+    a1.save!
     
     # Create (empty) Submissions and results for all students besides c5hanson
     students = ['c5glazun', 'c5anthei', 'c5berkel', 'c5bloche']
@@ -111,7 +115,7 @@ namespace :markus do
       submission = Submission.create_by_timestamp(grouping, Time.now)
       @result = submission.get_latest_result
       @result.marking_state = Result::MARKING_STATES[:complete]
-      @result.save
+      @result.save!
     end
 
     
