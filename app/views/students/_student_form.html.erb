@@ -3,11 +3,7 @@
 <div class="section">
   <%= form_for @user, :as => :user do |f| %>
 
-    <% if flash[:error] && !flash[:error].empty? %>
-      <div class="notice">
-        <%=flash[:error]%>
-      </div>
-    <% end %>
+    <%= render 'shared/flash_message' %>
 
     <%= raw(f.label(:user_name, I18n.t("user.user_name"))) %>
     <%= raw(f.text_field :user_name) %><br />

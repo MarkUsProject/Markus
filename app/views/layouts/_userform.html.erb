@@ -2,7 +2,7 @@
   <%= form_for @user, :as => :user do |f| %>
 
   <%= render :partial => "shared/error_explanation",
-      :locals => { :model => @user, :flash_message => flash[:error] } %>
+      :locals => { :model => @user } %>
 
     <%= raw(f.label(:user_name, I18n.t("user.user_name"))) %>
     <%= raw(f.text_field :user_name) %><br />
@@ -18,8 +18,8 @@
 		 :name => 'submit',
 		 :class => 'button indent_button',
                  :disable_with => I18n.t('working')%>
-    <%= link_to t(:cancel), 
-        {:controller => controller}, 
+    <%= link_to t(:cancel),
+        {:controller => controller},
         :class => "button indent_button" %>
   <% end %>
 
