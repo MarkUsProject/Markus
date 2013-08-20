@@ -16,6 +16,7 @@ class SubmissionsController < ApplicationController
                             :downloads,
                             :s_table_paginate,
                             :collect_and_begin_grading,
+                            :download_groupings_files,
                             :manually_collect_and_begin_grading,
                             :collect_ta_submissions,
                             :repo_browser,
