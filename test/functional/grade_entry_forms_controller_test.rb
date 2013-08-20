@@ -56,6 +56,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
     end
 
     should "GET on :student_interface when marks have been entered for this student and have been released" do
+      @grade_entry_form_with_grade_entry_items.show_total = true
+      @grade_entry_form_with_grade_entry_items.save
       @grade_entry_student.released_to_student = true
       @grade_entry_student.save
       get_as @student, :student_interface, :id => @grade_entry_form_with_grade_entry_items.id
