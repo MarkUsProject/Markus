@@ -1,9 +1,9 @@
 .calendar_date_select {
-  color:white;
   border:#777 1px solid;
   display:block;
   width:195px;
   z-index: 1000;
+  background-color:white;
 }
 /* this is a fun ie6 hack to get drop downs to stay behind the popup window.  This should always be just underneath .calendar_date_select */
 iframe.ie6_blocker {
@@ -12,23 +12,18 @@ iframe.ie6_blocker {
 }
 
 .calendar_date_select thead th {
+  color: black !important;
   font-weight:bold;
-  background-color: #000;
-  border-top:1px solid #777;
-  border-bottom:2px solid #333;
-  color: white !important;
 }
 
 .calendar_date_select .cds_buttons {
   text-align:center;
   padding:5px 0px;
-  background-color: #555;
 }
 
 .calendar_date_select .cds_footer {
-  background-color: black;
   padding:3px;
-  font-size:12px;
+  font-size:10px;
   text-align:center;
 }
 
@@ -39,9 +34,12 @@ iframe.ie6_blocker {
 
 
 .calendar_date_select .cds_header {
-  background-color: #ccc;
-  border-bottom: 2px solid #aaa;
   text-align:center;
+}
+
+.calendar_date_select .cds_header * {
+  border:0px;
+  background-color:white;  
 }
 
 .calendar_date_select .cds_header span {
@@ -83,7 +81,7 @@ iframe.ie6_blocker {
 }
 
 .calendar_date_select .cds_buttons a {
-  color: white;
+  color: black;
   font-size: 9px;
 }
 .calendar_date_select td {
@@ -92,27 +90,25 @@ iframe.ie6_blocker {
   height: 21px;
   text-align:center;
   vertical-align: middle;
-  background-color: #666666;
+  background-color: #fff;
 }
 .calendar_date_select td.weekend {
-  background-color: #606060;
 }
 
 .calendar_date_select td div {
-  color: #fff;
+  color: #000;
 }
 .calendar_date_select td div.other {
-  color: #888;
+  color: #ccc;
 }
 .calendar_date_select td.selected div {
-  color:black;
+  color:white;
 }
 
 .calendar_date_select tbody td {
-  border-bottom: 1px solid #555;
 }
 .calendar_date_select td.selected {
-  background-color:white;
+  background-color:#777;
 }
 
 .calendar_date_select td:hover {
@@ -124,9 +120,8 @@ iframe.ie6_blocker {
 }
 
 .calendar_date_select td.disabled div {
-  color: #454545;
+  color: #e6e6e6;
 }
-
 
 .fieldWithErrors .calendar_date_select {
   border: 2px solid red;

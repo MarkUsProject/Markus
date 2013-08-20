@@ -42,7 +42,9 @@ class Ta < User
 
   def get_membership_count_by_assignment(assignment)
     memberships.count(:include => :grouping,
-      :conditions => "assignment_id = #{assignment.id}")
+                      :conditions => {
+                          :groupings => { :assignment_id => assignment.id }
+                      })
   end
 
   def get_groupings_by_assignment(assignment)
