@@ -41,10 +41,16 @@
                                               :id => @grade_entry_form.id) %></td>
       <% end %>
 
-      <td class="student_total">
-	<div class="total_value" style="display:inline-block"><%= text_field_tag 'total_' + student.id.to_s,
-                                    @grade_entry_form.calculate_total_mark(student.id),
-                                    :size => 4, :disabled => true %></div></td>
+      <% if @grade_entry_form.show_total %>
+        <td class="student_total">
+          <div class="total_value" style="display:inline-block;">
+            <%= text_field_tag 'total_' + student.id.to_s,
+                @grade_entry_form.calculate_total_mark(student.id),
+                :size => 4, :disabled => true %>
+          </div>
+        </td>
+      <% end %>
+
       <td>
         <% if grade_entry_student.released_to_student %>
           <%= image_tag('icons/email_go.png')%>
