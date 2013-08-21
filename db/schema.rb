@@ -153,6 +153,7 @@ ActiveRecord::Schema.define(:version => 20130611095902) do
     t.date     "date"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "show_total"
   end
 
   add_index "grade_entry_forms", ["short_identifier"], :name => "index_grade_entry_forms_on_short_identifier", :unique => true
