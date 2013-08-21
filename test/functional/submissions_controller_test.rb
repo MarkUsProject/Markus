@@ -626,6 +626,27 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           end
         end
 
+        should '- as Ta - be able to download all submissions from all groups' do
+          @ta = Ta.make
+          get_as @ta, :download_groupings_files,
+                 :assignment_id => @assignment.id,
+                 :groupings => [@grouping1.id, @grouping2.id, @grouping3.id]
+          assert_response :success
+          zip_path = "tmp/#{@assignment.short_identifier}_" +
+              "#{@ta.user_name}.zip"
+          Zip::ZipFile.open(zip_path) do |zip_file|
+            (1..3).to_a.each do |i|
+              instance_variable_set(:"@file#{i}_path", File.join(
+                  "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",
+                  "file#{i}"))
+              assert_not_nil zip_file.find_entry(
+                                 instance_variable_get(:"@file#{i}_path"))
+              assert_equal("file#{i}'s content\n", zip_file.read(
+                  instance_variable_get(:"@file#{i}_path")))
+            end
+          end
+        end
+
       end
 
     end
