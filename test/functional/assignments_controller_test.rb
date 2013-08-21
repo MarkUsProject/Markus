@@ -84,10 +84,10 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         should 'be able to create assignment with section due dates' do
           @attributes['section_due_dates_type'] = '1'
           due_date_attributes = {
-              '0' => { 'section_id' => "#{@section1.id}",
-                       'due_date'   => '2011-10-27 00:00' },
-              '1' => { 'section_id' => "#{@section2.id}",
-                       'due_date'   => '2011-10-29 00:00' }
+              0 => { 'section_id' => "#{@section1.id}",
+                     'due_date'   => '2011-10-27 00:00' },
+              1 => { 'section_id' => "#{@section2.id}",
+                     'due_date'   => '2011-10-29 00:00' }
           }
           @attributes['assignment']['section_due_dates_attributes'] = due_date_attributes
 
@@ -96,8 +96,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           assert_not_nil new_assignment
           assert_equal true, new_assignment.section_due_dates_type
           due_date_attributes.each do |key, value|
-            assert new_assignment.section_due_dates[Integer(
-                      key)].due_date.to_s.include?(value['due_date'])
+            assert new_assignment.section_due_dates[key].
+                       due_date.to_s.include?(value['due_date'])
           end
           assert redirect_to(:action => 'edit', :id => new_assignment)
         end
@@ -107,10 +107,10 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           # That section then uses the main due_date
           @attributes['section_due_dates_type'] = '1'
           due_date_attributes = {
-              '0' => { 'section_id' => "#{@section1.id}",
-                       'due_date'   => nil },
-              '1' => { 'section_id' => "#{@section2.id}",
-                       'due_date'   => '2011-10-29 00:00' }
+              0 => { 'section_id' => "#{@section1.id}",
+                     'due_date'   => nil },
+              1 => { 'section_id' => "#{@section2.id}",
+                     'due_date'   => '2011-10-29 00:00' }
           }
           @attributes['assignment']['section_due_dates_attributes'] = due_date_attributes
 
@@ -119,7 +119,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           assert_not_nil new_assignment
           assert_equal true, new_assignment.section_due_dates_type
           assert_nil new_assignment.section_due_dates[0].due_date
-          assert new_assignment.section_due_dates[1].due_date.to_s.include? due_date_attributes['1']['due_date']
+          assert new_assignment.section_due_dates[1].
+                     due_date.to_s.include? due_date_attributes[1]['due_date']
           assert redirect_to(:action => 'edit', :id => new_assignment)
         end
       end  # With some sections
@@ -1186,8 +1187,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         grace_period_submission_rule = GracePeriodSubmissionRule.new
         @assignment.replace_submission_rule(grace_period_submission_rule)
         @assignment.save
-        period = Period.make(:submission_rule => @assignment.submission_rule,
-                             :hours => 62)
+        Period.make(:submission_rule_id => @assignment.submission_rule.id,
+                    :hours => 62)
       end
 
       should 'have the create group link available' do
