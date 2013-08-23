@@ -47,7 +47,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert_not_nil assigns :student
       assert render_template :student_interface
       assert_response :success
-      assert_equal 0, flash.size
+      assert_equal true, flash.empty?
       assert_match Regexp.new(I18n.t('grade_entry_forms.students.no_results')), @response.body
     end
 
@@ -59,7 +59,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert_not_nil assigns :student
       assert render_template :student_interface
       assert_response :success
-      assert_equal 0, flash.size
+      assert_equal true, flash.empty?
       assert_match Regexp.new(I18n.t('grade_entry_forms.grades.total')), @response.body
       assert_match Regexp.new('15'), @response.body
     end
@@ -70,7 +70,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert_not_nil assigns :student
       assert render_template :student_interface
       assert_response :success
-      assert_equal 0, flash.size
+      assert_equal true, flash.empty?
       assert_match Regexp.new(I18n.t('grade_entry_forms.students.no_results')), @response.body
     end
 
@@ -85,7 +85,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert_not_nil assigns :student
       assert render_template :student_interface
       assert_response :success
-      assert_equal 0, flash.size
+      assert_equal true, flash.empty?
       assert_match Regexp.new(I18n.t('grade_entry_forms.grades.no_mark')), @response.body
     end
 
@@ -110,7 +110,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert_not_nil assigns :student
       assert render_template :student_interface
       assert_response :success
-      assert_equal 0, flash.size
+      assert_equal true, flash.empty?
     end
   end
 
@@ -169,7 +169,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert_not_nil assigns :grade_entry_form
       assert render_template :new
       assert_response :success
-      assert_equal 0, flash.size
+      assert_equal true, flash.empty?
     end
 
     should 'GET on :edit' do
@@ -177,7 +177,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert_not_nil assigns :grade_entry_form
       assert render_template :edit
       assert_response :success
-      assert_equal 0, flash.size
+      assert_equal true, flash.empty?
     end
 
     should 'GET on :student_interface' do
