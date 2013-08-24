@@ -25,7 +25,7 @@ user = MarkusRESTfulAPI::Users.get_by_id(84)
 user.each { |key, val| puts "#{key}: #{val}"}
 puts "\n"
 
-# Getting all admin users. Returns an array of objects of class User
+# Getting all admin users
 puts 'Getting all admins'
 admins = MarkusRESTfulAPI::Users.get_all_admins()
 admins.each do |admin|
@@ -59,4 +59,47 @@ attributes = { 'first_name' => 'Daniel' }
 MarkusRESTfulAPI::Users.update(user['id'], attributes)
 user = MarkusRESTfulAPI::Users.get_by_id(user['id'])
 user.each { |key, val| puts "#{key}: #{val}"}
+puts "\n"
+
+# Assignments
+
+# Get an assignment by its short_identifier
+puts 'Get an assignment by its short_identifier, where short_identifier is A1'
+assignment = MarkusRESTfulAPI::Assignments.get_by_short_identifier('A1')
+assignment.each { |key, val| puts "#{key}: #{val}"}
+puts "\n"
+
+# Getting an assignment by id id
+puts 'Get an assignment by its id, where id is 2'
+assignment = MarkusRESTfulAPI::Assignments.get_by_id(2)
+assignment.each { |key, val| puts "#{key}: #{val}"}
+puts "\n"
+
+# Getting all assignments
+puts 'Getting all assignments'
+assignments = MarkusRESTfulAPI::Assignments.get_all()
+assignments.each do |assignment|
+  ['id', 'short_identifier', 'description'].each do |key|
+    puts "#{key}: #{assignment[key]}"
+  end
+end
+puts "\n"
+
+# Creating a new assignment with a generated short_identifier
+puts 'Creating a new assignment and printing the result'
+attributes = { 'short_identifier' => "AS#{rand(10000)}", 'description' => 'Test',
+               'due_date' => '2013-08-22T00:16:59-04:00' }
+assignment = MarkusRESTfulAPI::Assignments.create(attributes)
+['id', 'short_identifier', 'description'].each do |key|
+  puts "#{key}: #{assignment[key]}"
+end
+puts "\n"
+
+# Update the assignment we created
+puts "Updating the assignment's description to 'Example' and printing the result"
+attributes = { 'description' => 'Example' }
+assignment = MarkusRESTfulAPI::Assignments.update(assignment['id'], attributes)
+['id', 'short_identifier', 'description'].each do |key|
+  puts "#{key}: #{assignment[key]}"
+end
 puts "\n"

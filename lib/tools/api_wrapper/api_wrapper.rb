@@ -1,5 +1,6 @@
 require 'httparty'
 require 'singleton'
+require 'uri'
 
 class MarkusRESTfulAPI
 
@@ -92,12 +93,46 @@ class MarkusRESTfulAPI
     def self.update(id, attributes)
       attributes.delete('id')
       url = "users/#{id}.json"
-      Users.put(url, attributes)
+      self.put(url, attributes)
 
       return
     end
 
   end # Users
+
+  # A singleton that allows us to get and update assignment(s)
+  class Assignments < MarkusRESTfulAPI
+
+    include Singleton
+
+    def self.get_by_id(id)
+      self.get("assignments/#{id}.json")
+    end
+
+    def self.get_by_short_identifier(short_identifier)
+      self.get("assignments.json?filter=short_identifier:#{short_identifier}")[0]
+    end
+
+    def self.get_all()
+      self.get('assignments.json')
+    end
+
+    def self.create(attributes)
+      url = 'assignments.json'
+      response = self.post(url, attributes)
+
+      self.get_by_short_identifier(attributes['short_identifier'])
+    end
+
+    def self.update(id, attributes)
+      attributes.delete('id')
+      url = "assignments/#{id}.json"
+      self.put(url, attributes)
+
+      self.get_by_id(id)
+    end
+
+  end # Groups
 
 end # MarkusRESTfulAPI
 
