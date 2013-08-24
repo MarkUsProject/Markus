@@ -56,8 +56,7 @@ puts "\n"
 # Update the ta we created
 puts "Updating the ta's name to Daniel and printing the result"
 attributes = { 'first_name' => 'Daniel' }
-MarkusRESTfulAPI::Users.update(user['id'], attributes)
-user = MarkusRESTfulAPI::Users.get_by_id(user['id'])
+user = MarkusRESTfulAPI::Users.update(user['id'], attributes)
 user.each { |key, val| puts "#{key}: #{val}"}
 puts "\n"
 

@@ -95,7 +95,7 @@ class MarkusRESTfulAPI
       url = "users/#{id}.json"
       self.put(url, attributes)
 
-      return
+      self.get_by_id(id)
     end
 
   end # Users
