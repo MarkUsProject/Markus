@@ -68,9 +68,9 @@ namespace :markus do
     a1.group_max = 1
     a1.marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
     a1.allow_web_submits = true
-    a1.save
-    req_file1.save
-    req_file2.save
+    a1.save!
+    req_file1.save!
+    req_file2.save!
     
     # modify settings for A2
     a2 = Assignment.find_by_short_identifier("A2")
@@ -92,10 +92,10 @@ namespace :markus do
     req_file3.filename = "Dog.java"
     req_file3.assignment = a2
     rule = NoLateSubmissionRule.new
-    a2.save
-    req_file1.save
-    req_file2.save
-    req_file3.save
+    a2.save!
+    req_file1.save!
+    req_file2.save!
+    req_file3.save!
     
     # Create a third assignment, for which the instructor has formed groups
     groups_csv_string = "Saturn,ignored_repo,c9magnar,c6scriab,g9merika\n
@@ -112,11 +112,13 @@ Neptune,ignored_repo,c7dallap,c7guarni,c7kimear\n"
     a3.submission_rule = rule
     a3.allow_web_submits = true
     a3.marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
-    a3.save
+    a3.assignment_stat = AssignmentStat.new
+    a3.display_grader_names_to_students = false
+    a3.save!
     # create groupings/groups
     groups_csv_string.split("\n").each do |row|
       a3.add_csv_group(row.split(","))
     end
-    req_file1.save
+    req_file1.save!
   end
 end
