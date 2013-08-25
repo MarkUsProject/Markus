@@ -132,7 +132,50 @@ class MarkusRESTfulAPI
       self.get_by_id(id)
     end
 
+  end # Assignments
+
+  # A singleton that allows us to get groups and their submissions
+  class Groups < MarkusRESTfulAPI
+
+    include Singleton
+
+    def self.get_by_id(assignment_id, id)
+      self.get("assignments/#{assignment_id}/groups/#{id}.json")
+    end
+
+    def self.get_by_group_name(assignment_id, group_name)
+      self.get("assignments/#{assignment_id}/groups.json?" +
+        "filter=group_name:#{group_name}")[0]
+    end
+
+    def self.get_all(assignment_id)
+      self.get("assignments/#{assignment_id}/groups.json")
+    end
+
+    # Downloads the file to the current dir, assignment_groupname.zip
+    # Returns the file_name
+    def self.download_submission(assignment_id, id)
+      path = "assignments/#{assignment_id}/groups/#{id}/submission_downloads"
+      uri = URI(@@api_url + path)
+
+      short_identifier = self.get("assignments/#{id}.json")['short_identifier']
+      group = self.get("assignments/#{assignment_id}/groups/#{id}.json")['group_name']
+      file_name = "#{short_identifier}_#{group}.zip"
+
+      Net::HTTP.start(uri.host, uri.port) do |http|
+        request = Net::HTTP::Get.new uri.request_uri
+        request.add_field 'Authorization', "MarkUsAuth #{@@auth_key}"
+
+        http.request request do |response|
+          open file_name, 'w' do |io|
+            response.read_body { |chunk| io.write chunk }
+          end
+        end
+      end
+
+      file_name
+    end
+
   end # Groups
 
 end # MarkusRESTfulAPI
-
