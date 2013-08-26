@@ -10,13 +10,6 @@ require 'machinist'
 
 class RubricsControllerTest < AuthenticatedControllerTest
 
-  RUBRIC_CRITERIA_CSV_STRING = "Algorithm Design,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,
-Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,
-Testing,2.2,Horrible,Poor,Satisfactory,Good,Excellent,,,,,
-Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
-  RUBRIC_CRITERIA_UPLOAD_CSV_STRING = "criterion 5,1.0,l0,l1,l2,l3,l4,d0,d1,d2,d3,d4\n"
-  RUBRIC_CRITERIA_INCOMPLETE_UPLOAD_CSV_STRING = "criterion 5\ncriterion 6\n"
-
   context 'An unauthenticated and unauthorized user' do
 
     context 'with an assignment' do
@@ -97,9 +90,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
     end
 
     should 'upload successfully properly formatted csv file' do
-      tempfile = Tempfile.new('rubric_csv')
-      tempfile << RUBRIC_CRITERIA_CSV_STRING
-      tempfile.rewind
+      tempfile = fixture_file_upload('files/rubric.csv')
       post_as @admin,
              :csv_upload,
              :assignment_id => @assignment.id,
@@ -124,9 +115,7 @@ Correctness,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
     end
 
     should 'deal properly with ill formatted CSV files' do
-      tempfile = Tempfile.new('rubric_csv')
-      tempfile << RUBRIC_CRITERIA_INCOMPLETE_UPLOAD_CSV_STRING
-      tempfile.rewind
+      tempfile = fixture_file_upload('files/rubric_incomplete.csv')
       post_as @admin,
               :csv_upload,
               :assignment_id => @assignment.id,
@@ -427,7 +416,7 @@ END
           c1 = RubricCriterion.find(@criterion.id)
           assert_equal 1, c1.position
           c2 = RubricCriterion.find(@criterion2.id)
-          assert_equal 2, c2.position
+          assert_equal 0, c2.position
         end
 
         should 'be able to move_criterion down' do
@@ -436,14 +425,15 @@ END
                 :assignment_id => @assignment.id,
                 :id => @criterion.id,
                 :position => @criterion.position,
-                :direction => :up
+                :direction => :down
           assert render_template ''
           assert_response :success
 
           c1 = RubricCriterion.find(@criterion.id)
-          assert_equal 1, c1.position
           c2 = RubricCriterion.find(@criterion2.id)
-          assert_equal 2, c2.position
+          assert_equal 1, c1.position
+          assert_equal 0, c2.position
+
         end
 
         context 'And yet another' do
