@@ -44,7 +44,7 @@ Please see the INSTALL file for installation instructions.
 
 * Email a security alert: security@markusproject.org
 * Email a general inquiry: info@markusproject.org
-* Blog: http://blog.markusproject.org/http://blog.markusproject.org/
+* Blog: http://blog.markusproject.org/
 * Sandbox: http://www.markusproject.org/admin-demo
 * Source Code: http://github.com/MarkUsProject/Markus
 * Review Board: http://review.markusproject.org/r/
