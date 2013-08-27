@@ -256,6 +256,17 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
     context 'and I have a grader. My grade should be able to' do
       setup do
+	@grouping1 = Grouping.make(:assignment => @assignment)
+	@grouping1.group.access_repo do |repo|
+          txn = repo.get_transaction('test')
+          path = File.join(@assignment.repository_folder, 'file1_name')
+          txn.add(path, 'file1 content', '')
+          repo.commit(txn)
+
+          # Generate submission
+          Submission.generate_new_submission(Grouping.last, repo.get_latest_revision)
+        end
+	
         @ta_membership = TaMembership.make(:membership_status => :accepted, :grouping => @grouping)
         @grader = @ta_membership.user
       end
@@ -271,8 +282,9 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       should 'access the populate repository browser.' do
         get_as @grader,
                :populate_repo_browser,
-               :assignment_id => 1,
-               :id => Grouping.first.id
+               :assignment_id => @assignment.id,
+               :id => Grouping.last.id,
+               :revision_number => Grouping.last.group.repo.get_latest_revision.revision_number
         assert_response :success
       end
 
