@@ -18,7 +18,7 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
       StudentMembership.make!(:grouping => @grouping,
                              :membership_status => 'inviter',
                              :user => @student)
-      grace_period_submission_rule = GracePeriodSubmissionRule.new
+      grace_period_submission_rule = GracePeriodSubmissionRule.make!
       @assignment.replace_submission_rule(grace_period_submission_rule)
       GracePeriodDeduction.destroy_all
 
@@ -140,10 +140,7 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
       setup do
         # 2 grace credits deduction per student are in the database
         @grouping.accepted_student_memberships.each do |student_membership|
-          deduction = GracePeriodDeduction.new
-          deduction.membership = student_membership
-          deduction.deduction = 2
-          deduction.save
+          deduction = GracePeriodDeduction.make!(:membership => student_membership, :deduction => 2)
         end
       end
 
@@ -336,11 +333,9 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
         StudentMembership.make!(:grouping => @grouping2,
                                :membership_status => 'inviter',
                                :user => @student)
-        grace_period_submission_rule = GracePeriodSubmissionRule.new
+        grace_period_submission_rule = GracePeriodSubmissionRule.make!
         @assignment2.replace_submission_rule(grace_period_submission_rule)
         GracePeriodDeduction.destroy_all
-
-        grace_period_submission_rule.save
 
         # On July 2 at 1PM, the instructor sets up the course...
         pretend_now_is(Time.parse('July 2 2009 1:00PM')) do
@@ -506,10 +501,7 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
 
 
   def add_period_helper(submission_rule, hours)
-    period = Period.new
-    period.submission_rule = submission_rule
-    period.hours = hours
-    period.save
+    period = Period.make!(:submission_rule => submission_rule, :hours => hours)
   end
 
 end
