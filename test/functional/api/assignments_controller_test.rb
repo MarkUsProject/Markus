@@ -90,12 +90,18 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
     context 'getting a json response' do
       setup do
         @request.env['HTTP_ACCEPT'] = 'application/json'
-        get 'show', :id => 'garbage'
       end
 
       should 'be successful' do
+        get 'show', :id => 'garbage'
         assert_template 'shared/http_status'
         assert_equal @response.content_type, 'application/json'
+      end
+
+      should 'not use the ActiveRecord class name as the root' do
+        assignment = Assignment.make
+        get 'show', :id => assignment.id.to_s
+        assert !@response.body.include?('{"assignment":')
       end
     end
 
