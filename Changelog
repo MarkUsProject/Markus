@@ -4,6 +4,13 @@ Changes for MarkUs 1.0.0:
 * Fixed UI bugs
 * Improved filename sanitization.
 * Changed PDF conversion to Ghostscript for faster conversion
+* Issue #1135: start to migrate from Prototype to jQuery
+* Issue #1002: new REST API
+* Issue #1111: grader can dowload all files of a submission
+* Issue #1073: possibility to import and export assignments
+* Several improvements on sections
+* Syntax Highlighter is now working with non utf-8 files
+* Tests are not using fixtures anymore
 * For a list of all fixed issues see: https://github.com/MarkUsProject/Markus/issues?milestone=8
 
 Changes for MarkUs 0.10.0:
