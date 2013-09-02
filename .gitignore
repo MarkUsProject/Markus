@@ -11,6 +11,13 @@ log/
 doc/app/
 .bundle/
 
+# Files created by rcov/simplecov
+test/coverage
+test/coverage.data
+
+# Files created by tests
+lib/repo/test/svn_repos/svn_authz
+
 # Patch
 *.diff
 *.patch
