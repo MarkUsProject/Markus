@@ -66,13 +66,9 @@
       $('working').show();
       window.onbeforeunload = check_working;
     },
-    onComplete: function(requester, xhr, json_response) {
+    onComplete: function() {
       $('working').hide();
       window.onbeforeunload = null;
-      if(xhr.status == 403) { // forbidden
-        // go back to home page
-        window.location = "<%= root_url %>";
-      }
     }
   });
 
