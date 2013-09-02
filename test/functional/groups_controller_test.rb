@@ -106,9 +106,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
       should 'be able to add group without groupname' do
         @assignment = Assignment.make
         Assignment.any_instance.stubs(:add_group).returns(Grouping.make)
-        post_as @admin,
-                :add_group,
-                :assignment_id => @assignment.id
+        post_as @admin, :new, :assignment_id => @assignment.id
         assert_response :success
         assert render_template 'groups/table_row/_filter_table_row'
         assert_not_nil assigns(:assignment) { @assignment }
@@ -116,9 +114,8 @@ class GroupsControllerTest < AuthenticatedControllerTest
       end
 
       should 'be able to create with groupname' do
-        post_as @admin,
-                :add_group,
-                {:assignment_id => @assignment.id, :new_group_name => 'test'}
+        post_as @admin, :new,
+          { :assignment_id => @assignment.id, :new_group_name => 'test' }
         assert_response :success
         assert render_template 'groups/table_row/_filter_table_row.html.erb'
         assert_not_nil assigns(:assignment) { @assignment }
