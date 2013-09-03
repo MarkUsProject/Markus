@@ -122,7 +122,8 @@ namespace :markus do
         while (curr_ta_num <= num_of_tas) do
           puts ''
           # Form a new TA membership with some default value.
-          ta_last_name = (curr_assignment_num_for_name*10 + curr_ta_num).to_s
+          ta_last_name = curr_assignment_num_for_name.to_s + curr_ta_num.to_s +
+            student_num.to_s
           ta_user_name = "TA" + ta_last_name
 
           puts "Start generating " + ta_user_name.to_s + "... "
@@ -140,7 +141,9 @@ namespace :markus do
 
           curr_student_num = 1
           while (curr_student_num <= num_of_students) do
-            student_last_name = (curr_assignment_num_for_name*10 + student_num).to_s
+            student_last_name = curr_assignment_num_for_name.to_s + curr_ta_num.to_s +
+              student_num.to_s
+
             student_user_name = "Student # " +  student_last_name
 
             puts "Start generating " + student_user_name.to_s + "... "
@@ -213,7 +216,7 @@ namespace :markus do
                 m.markable_type = "RubricCriterion"
                 m.markable_id = criterion.id
                 m.result = result
-                m.mark = rand(criterion.weight) # assign some random mark
+                m.mark = rand(4) # assign some random mark
                 m.save!
               end
 
