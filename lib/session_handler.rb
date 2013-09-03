@@ -54,7 +54,15 @@ module SessionHandler
       else
         flash[:login_notice] = I18n.t("please_log_in")
       end
-      redirect_to :controller => 'main', :action => 'login'
+
+      if request.xhr? # is this an XMLHttpRequest?
+        # Redirect users back to referer, or else
+        # they might be redirected to an rjs page.
+        session[:redirect_uri] = request.referer
+        render :nothing => true, :status => :forbidden  # 403 http code
+      else
+        redirect_to :controller => 'main', :action => 'login'
+      end
     end
   end
 

@@ -6,8 +6,8 @@
 
   <%= render :partial => 'layouts/head' %>
 
-
   <%= render :partial => "boot.js.erb" %>
+
   <script type="text/javascript">
   //<![CDATA[
 
@@ -72,7 +72,6 @@
   }
 
   document.observe("dom:loaded", function() {
-
     modalCreate = new Control.Modal($('create_group_dialog'),
     {
       overlayOpacity: 0.75,
