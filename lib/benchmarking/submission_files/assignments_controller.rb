@@ -42,7 +42,7 @@ class AssignmentsController < ApplicationController
       @files = @revision.files_at_path(File.join(File.join(@assignment.repository_folder, path)))
       @missing_assignment_files = []
       @assignment.assignment_files.each do |assignment_file|
-        if !@revision.path_exists?(File.join(@assignment.repository_folder, assignment_file.filename))
+        unless @revision.path_exists?(File.join(@assignment.repository_folder, assignment_file.filename))
           @missing_assignment_files.push(assignment_file)
         end
       end
@@ -61,14 +61,13 @@ class AssignmentsController < ApplicationController
           grouping = current_user.accepted_grouping_for(a)
           if grouping.has_submission?
             submission = grouping.get_submission_used
-            if submission.has_result? && submission.get_original_result.released_to_students
-                @a_id_results[a.id] = submission.get_original_result
+            if submission.has_result? && submission.get_latest_result.released_to_students
+                @a_id_results[a.id] = submission.get_latest_result
             end
           end 
         end
       end
       render :student_assignment_list
-      return
     elsif current_user.ta?
       render :grader_index
     else
@@ -79,7 +78,7 @@ class AssignmentsController < ApplicationController
   def edit
     @assignment = Assignment.find_by_id(params[:id])
     @assignments = Assignment.all
-    if !request.post?
+    unless request.post?
       return
     end
     
@@ -91,8 +90,8 @@ class AssignmentsController < ApplicationController
       # Some protective measures here to make sure we haven't been duped...
       begin
         potential_rule = Module.const_get(params[:assignment][:submission_rule_attributes][:type])
-        if !potential_rule.ancestors.include?(SubmissionRule)
-        raise "#{params[:assignment][:submission_rule_attributes][:type]} is not a valid SubmissionRule"
+        unless potential_rule.ancestors.include?(SubmissionRule)
+          raise "#{params[:assignment][:submission_rule_attributes][:type]} is not a valid SubmissionRule"
         end
       rescue Exception => e
         @assignment.errors.add(:base, "Could not assign SubmissionRule: #{e.message}")
@@ -108,13 +107,13 @@ class AssignmentsController < ApplicationController
       # For some reason, when we create new rule, we can't just apply
       # the params[:assignment] hash to @assignment.attributes...we have
       # to create any new periods manually, like this:
-      if !params[:assignment][:submission_rule_attributes][:periods_attributes].nil?
+      if params[:assignment][:submission_rule_attributes][:periods_attributes]
         @assignment.submission_rule.periods_attributes = params[:assignment][:submission_rule_attributes][:periods_attributes]
       end
     end
 
     # Is the instructor forming groups?
-    if params[:is_group_assignment] == "true" && params[:assignment][:student_form_groups] == "0"
+    if params[:is_group_assignment] == 'true' && params[:assignment][:student_form_groups] == '0'
       params[:assignment][:invalid_override] = true
     else
       params[:assignment][:invalid_override] = false
@@ -123,9 +122,8 @@ class AssignmentsController < ApplicationController
     @assignment.attributes = params[:assignment]
     
     if @assignment.save
-      flash[:notice] = "Successfully Updated Assignment"
+      flash[:notice] = 'Successfully Updated Assignment'
       redirect_to :action => 'edit', :id => params[:id]
-      return
     else
       render :edit
     end
@@ -141,12 +139,12 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.new
     @assignment.build_submission_rule
     #@assignment.assignment_files.build
-    if !request.post?
+    unless request.post?
       render :new
       return
     end
     # Is the instructor forming groups?
-    if params[:is_group_assignment] == "true" && params[:assignment][:student_form_groups] == "0"
+    if params[:is_group_assignment] == 'true' && params[:assignment][:student_form_groups] == '0'
       params[:assignment][:invalid_override] = true
     else
       params[:assignment][:invalid_override] = false
@@ -161,13 +159,13 @@ class AssignmentsController < ApplicationController
 
     @assignment.transaction do
 
-      if !@assignment.save
+      unless @assignment.save
         render :new
         return
       end
       if params[:assignment_files]
         params[:assignment_files].each do |assignment_file_name|
-          if !assignment_file_name.empty?
+          unless assignment_file_name.empty?
             assignment_file = AssignmentFile.new(:filename => assignment_file_name, :assignment => @assignment)
             assignment_file.save
           end
@@ -178,7 +176,7 @@ class AssignmentsController < ApplicationController
       end
       @assignment.save
     end
-    redirect_to :action => "edit", :id => @assignment.id
+    redirect_to :action => 'edit', :id => @assignment.id
   end
   
   def update_group_properties_on_persist
@@ -201,14 +199,14 @@ class AssignmentsController < ApplicationController
             if submission.nil?
               row.push('')
             else
-              row.push(submission.get_original_result.total_mark)
+              row.push(submission.get_latest_result.total_mark)
             end
           end
         end
         csv << row
       end
     end
-    send_data csv_string, :disposition => "attachment", :filename => "#{COURSE_NAME} grades report.csv"
+    send_data csv_string, :disposition => 'attachment', :filename => "#{COURSE_NAME} grades report.csv"
   end
 
 
@@ -236,10 +234,10 @@ class AssignmentsController < ApplicationController
     
     begin
       if !@assignment.student_form_groups || @assignment.invalid_override
-        raise "Assignment does not allow students to form groups"
+        raise 'Assignment does not allow students to form groups'
       end
       if @student.has_accepted_grouping_for?(@assignment.id)
-        raise "You already have a group, and cannot create another"
+        raise 'You already have a group, and cannot create another'
       end
       if params[:workalone]
         if @assignment.group_min != 1
@@ -260,16 +258,16 @@ class AssignmentsController < ApplicationController
     @grouping = @current_user.accepted_grouping_for(@assignment.id)
     begin
       if @grouping.nil?
-        raise "You do not currently have a group"
+        raise 'You do not currently have a group'
       end
-      if !@grouping.is_inviter?(@current_user)
-        raise "Only the inviter can delete the group"
+      unless @grouping.is_inviter?(@current_user)
+        raise 'Only the inviter can delete the group'
       end
       if @grouping.has_submission?
-        raise "You already submitted something. You cannot delete your group."
+        raise 'You already submitted something. You cannot delete your group.'
       end
       if @grouping.is_valid?
-        raise "Your group is valid, and can only be deleted by instructors."
+        raise 'Your group is valid, and can only be deleted by instructors.'
       end
       @grouping.student_memberships.all(:include => :user).each do |member|
         member.destroy
@@ -277,7 +275,7 @@ class AssignmentsController < ApplicationController
       # update repository permissions
       @grouping.update_repository_permissions
       @grouping.destroy
-      flash[:edit_notice] = "Group has been deleted"
+      flash[:edit_notice] = 'Group has been deleted'
     
     rescue RuntimeError => e
       flash[:fail_notice] = e.message
@@ -342,7 +340,7 @@ class AssignmentsController < ApplicationController
     # update repository permissions
     grouping = current_user.accepted_grouping_for(@assignment.id)
     grouping.update_repository_permissions
-    flash[:edit_notice] = "Member disinvited" 
+    flash[:edit_notice] = 'Member disinvited'
   end
 
   # Deletes memberships which have been declined by students

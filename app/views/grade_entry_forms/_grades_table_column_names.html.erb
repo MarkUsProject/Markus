@@ -72,17 +72,23 @@
   %>
   <% @grade_entry_form.grade_entry_items.each do |grade_entry_item| %>
     <th class="out_of">
-      <%= h(grade_entry_item.name) %>
+      <%= grade_entry_item.name %>
       <br />
-      <%= "(" + h(grade_entry_item.out_of) + ")" %>
+      <%= "(" + grade_entry_item.out_of.to_s + ")" %>
     </th>
   <% end %>
 
-  <% # Display the total number of marks for this grade entry form
+  <% # Display the total number of marks for this grade entry form only if 
+     # the "show total" option is checked
   %>
-  <th <% if @current_user.admin? or @current_user.ta? %> class="student_total" <% end%> >
-    <%= t('grade_entry_forms.grades.total') + " " + h(@grade_entry_form.out_of_total) %>
-  </th>
+  <% if @grade_entry_form.show_total %>
+		<th class="student_total" >
+		<%= t('grade_entry_forms.grades.total') + " " + @grade_entry_form.out_of_total.to_s %>
+		<% if @current_user.admin? or @current_user.ta? %>		
+			<br /> <a href="#" onclick="toggleTotalColVisibility()"> <%= t('grade_entry_forms.toggle_column') %> </a>
+		<% end %>
+		</th>
+  <% end %>
   <% if @current_user.admin? or @current_user.ta? %>
     <% # Extra column heading for marking state
     %>

@@ -416,8 +416,20 @@ ul#annotation_summary_list {
     border-bottom:1px solid #DADADA;
     padding: 4px;
     font-size: 1.1em;
+}
+
+.rubric_criterion_level {
     background: #fff;
 }
+
+.rubric_criterion_level_selected {
+    background: #C4FEBC;
+}
+
+.rubric_criterion_level_old_mark {
+    background: #FDFEBC;
+}
+
 .mark_grade_input{
 	font-size:1.0em;
 	margin:1px 1px 4px;

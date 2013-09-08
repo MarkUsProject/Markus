@@ -1,0 +1,5 @@
+source 'http://rubygems.org'
+
+# The API Wrapper requires httparty
+gem "httparty"
+gem "json", "~> 1.8.0"

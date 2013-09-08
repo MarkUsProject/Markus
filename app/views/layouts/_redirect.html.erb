@@ -1,0 +1,8 @@
+<div id="redirect_dialog" style="display:none;">
+  <%= form_tag do %>
+    <p><strong><%= I18n.t(:session_expired)%></strong></p>
+    <br />
+    <%= button_to_function I18n.t(:log_in), 'redirectToLogin()' %>
+    <%= button_to_function I18n.t(:cancel), 'redirect_modal.close()' %>
+  <% end %>
+</div>

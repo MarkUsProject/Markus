@@ -20,7 +20,7 @@ require 'mocha/setup'
 
 class StudentTest < ActiveSupport::TestCase
 
-  context "A good Student model" do
+  context 'A good Student model' do
 
     should have_many(:accepted_groupings).through(:memberships)
     should have_many(:pending_groupings).through(:memberships)
@@ -33,7 +33,7 @@ class StudentTest < ActiveSupport::TestCase
 
   end
 
-  context "CSV and YML upload" do
+  context 'CSV and YML upload' do
 
     # Update tests ---------------------------------------------------------
 
@@ -42,11 +42,11 @@ class StudentTest < ActiveSupport::TestCase
 
     # Test if user with a unique user number has been added to database
 
-    context "with no duplicates and no sections" do
+    context 'with no duplicates and no sections' do
 
       setup do
-        csv_file_data = StringIO.new("newuser1,USER1,USER1
-newuser2,USER2,USER2")
+        csv_file_data = StringIO.new("newuser1,USER1,USER1\n" +
+                                         'newuser2,USER2,USER2')
 
         @num_users = Student.all.size
 
@@ -56,49 +56,49 @@ newuser2,USER2,USER2")
         @csv_2 = Student.find_by_user_name('newuser2')
       end
 
-      should "have no duplicates" do
+      should 'have no duplicates' do
         assert_equal @num_users + 2, Student.all.size, "Expected a different number of users - the CSV upload didn't work"
 
         assert_not_nil @csv_1, "Couldn't find a user uploaded by CSV"
-        assert_equal "USER1", @csv_1.last_name, "Last name did not match"
-        assert_equal "USER1", @csv_1.first_name, "First name did not match"
+        assert_equal 'USER1', @csv_1.last_name, 'Last name did not match'
+        assert_equal 'USER1', @csv_1.first_name, 'First name did not match'
 
         assert_not_nil @csv_2, "Couldn't find a user uploaded by CSV"
-        assert_equal "USER2", @csv_2.last_name, "Last name did not match"
-        assert_equal "USER2", @csv_2.first_name, "First name did not match"
+        assert_equal 'USER2', @csv_2.last_name, 'Last name did not match'
+        assert_equal 'USER2', @csv_2.first_name, 'First name did not match'
       end
     end
 
-    context "with duplicates and no sections" do
+    context 'with duplicates and no sections' do
 
       setup do
 
       end
 
-      should "have no duplicates" do
-        new_user = Student.new({:user_name => "exist_student", :first_name => "Nelle", :last_name => "Varoquaux"})
+      should 'have no duplicates' do
+        new_user = Student.new({:user_name => 'exist_student', :first_name => 'Nelle', :last_name => 'Varoquaux'})
 
-        assert new_user.save, "Could not create a new student"
+        assert new_user.save, 'Could not create a new student'
 
-        csv_file_data = StringIO.new("newuser1,USER1,USER1
-exist_student,USER2,USER2")
+        csv_file_data = StringIO.new("newuser1,USER1,USER1\n" +
+                                         'exist_student,USER2,USER2')
 
         User.upload_user_list(Student, csv_file_data, nil)
 
-        user = Student.find_by_user_name("exist_student")
-        assert_equal "USER2", user.last_name, "Last name was not properly overwritten by CSV file"
-        assert_equal "USER2", user.first_name, "First name was not properly overwritten by CSV file"
+        user = Student.find_by_user_name('exist_student')
+        assert_equal 'USER2', user.last_name, 'Last name was not properly overwritten by CSV file'
+        assert_equal 'USER2', user.first_name, 'First name was not properly overwritten by CSV file'
 
-        other_user = Student.find_by_user_name("newuser1")
-        assert_not_nil other_user, "Could not find the other user uploaded by CSV"
+        other_user = Student.find_by_user_name('newuser1')
+        assert_not_nil other_user, 'Could not find the other user uploaded by CSV'
       end
     end
 
-    context "with no duplicates and sections" do
+    context 'with no duplicates and sections' do
 
       setup do
-        csv_file_data = StringIO.new("newuser1,USER1,USER1,SECTION1
-newuser2,USER2,USER2,SECTION2")
+        csv_file_data = StringIO.new("newuser1,USER1,USER1,SECTION1\n" +
+                                         'newuser2,USER2,USER2,SECTION2')
 
         @num_users = Student.all.size
 
@@ -108,26 +108,26 @@ newuser2,USER2,USER2,SECTION2")
         @csv_2 = Student.find_by_user_name('newuser2')
       end
 
-      should "have no duplicates and correct sections" do
+      should 'have no duplicates and correct sections' do
         assert_equal @num_users + 2, Student.all.size, "Expected a different number of users - the CSV upload didn't work"
 
         assert_not_nil @csv_1, "Couldn't find a user uploaded by CSV"
-        assert_equal "USER1", @csv_1.last_name, "Last name did not match"
-        assert_equal "SECTION1", @csv_1.section.name, "Section did not match"
-        assert_equal "USER1", @csv_1.first_name, "First name did not match"
+        assert_equal 'USER1', @csv_1.last_name, 'Last name did not match'
+        assert_equal 'SECTION1', @csv_1.section.name, 'Section did not match'
+        assert_equal 'USER1', @csv_1.first_name, 'First name did not match'
 
         assert_not_nil @csv_2, "Couldn't find a user uploaded by CSV"
-        assert_equal "USER2", @csv_2.last_name, "Last name did not match"
-        assert_equal "SECTION2", @csv_2.section.name, "Section did not match"
-        assert_equal "USER2", @csv_2.first_name, "First name did not match"
+        assert_equal 'USER2', @csv_2.last_name, 'Last name did not match'
+        assert_equal 'SECTION2', @csv_2.section.name, 'Section did not match'
+        assert_equal 'USER2', @csv_2.first_name, 'First name did not match'
       end
     end
 
-    context "with no duplicates and only one section" do
+    context 'with no duplicates and only one section' do
 
       setup do
-        csv_file_data = StringIO.new("newuser1,USER1,USER1,SECTION1
-newuser2,USER2,USER2")
+        csv_file_data = StringIO.new("newuser1,USER1,USER1,SECTION1\n" +
+                                         'newuser2,USER2,USER2')
 
         @num_users = Student.all.size
 
@@ -137,68 +137,68 @@ newuser2,USER2,USER2")
         @csv_2 = Student.find_by_user_name('newuser2')
       end
 
-      should "have no duplicates and correct sections" do
+      should 'have no duplicates and correct sections' do
         assert_equal @num_users + 2, Student.all.size, "Expected a different number of users - the CSV upload didn't work"
 
         assert_not_nil @csv_1, "Couldn't find a user uploaded by CSV"
-        assert_equal "USER1", @csv_1.last_name, "Last name did not match"
-        assert_equal "SECTION1", @csv_1.section.name, "Section did not match"
-        assert_equal "USER1", @csv_1.first_name, "First name did not match"
+        assert_equal 'USER1', @csv_1.last_name, 'Last name did not match'
+        assert_equal 'SECTION1', @csv_1.section.name, 'Section did not match'
+        assert_equal 'USER1', @csv_1.first_name, 'First name did not match'
 
         assert_not_nil @csv_2, "Couldn't find a user uploaded by CSV"
-        assert_equal "USER2", @csv_2.last_name, "Last name did not match"
-        assert_nil @csv_2.section, "Section should be nil"
-        assert_equal "USER2", @csv_2.first_name, "First name did not match"
+        assert_equal 'USER2', @csv_2.last_name, 'Last name did not match'
+        assert_nil @csv_2.section, 'Section should be nil'
+        assert_equal 'USER2', @csv_2.first_name, 'First name did not match'
       end
     end
 
-    context "with duplicates and sections and update of a section" do
+    context 'with duplicates and sections and update of a section' do
 
       setup do
         @section = Section.create(:name => 'SECTION0')
       end
 
-      should "have no duplicates" do
-        new_user = Student.new(:user_name => "exist_student",
-                               :first_name => "Nelle",
-                               :last_name => "Varoquaux",
+      should 'have no duplicates' do
+        new_user = Student.new(:user_name => 'exist_student',
+                               :first_name => 'Nelle',
+                               :last_name => 'Varoquaux',
                                :section => @section)
 
-        assert new_user.save, "Could not create a new student"
+        assert new_user.save, 'Could not create a new student'
 
-        csv_file_data = StringIO.new("newuser1,USER1,USER1,SECTION1
-exist_student,USER2,USER2,SECTION2")
+        csv_file_data = StringIO.new("newuser1,USER1,USER1,SECTION1\n" +
+                                         'exist_student,USER2,USER2,SECTION2')
 
         User.upload_user_list(Student, csv_file_data, nil)
 
-        user = Student.find_by_user_name("exist_student")
-        assert_equal "USER2", user.last_name, "Last name was not properly overwritten by CSV file"
-        assert_equal "SECTION2", user.section.name, "Section was not properly overwritten by CSV file"
-        assert_equal "USER2", user.first_name, "First name was not properly overwritten by CSV file"
+        user = Student.find_by_user_name('exist_student')
+        assert_equal 'USER2', user.last_name, 'Last name was not properly overwritten by CSV file'
+        assert_equal 'SECTION2', user.section.name, 'Section was not properly overwritten by CSV file'
+        assert_equal 'USER2', user.first_name, 'First name was not properly overwritten by CSV file'
 
-        other_user = Student.find_by_user_name("newuser1")
-        assert_not_nil other_user, "Could not find the other user uploaded by CSV"
+        other_user = Student.find_by_user_name('newuser1')
+        assert_not_nil other_user, 'Could not find the other user uploaded by CSV'
       end
     end
 
-    context "with an invalid file" do
+    context 'with an invalid file' do
 
       setup do
-        @csv_file_data = StringIO.new("newuser1USER1USER1,
-newuser2,USER2,USER2")
+        @csv_file_data = StringIO.new("newuser1USER1USER1,\n" +
+                                          'newuser2,USER2,USER2')
 
         @num_users = Student.all.size
         @result = User.upload_user_list(Student, @csv_file_data, nil)
       end
 
-      should "not add any student to the database" do
-        assert_equal @result[:invalid_lines].to_s, ["newuser1USER1USER1,"].to_s
+      should 'not add any student to the database' do
+        assert_equal @result[:invalid_lines].first, 'newuser1USER1USER1,'
         assert_equal Student.all.size, @num_users + 1
       end
     end
   end
 
-  context "A pair of students in the same group" do
+  context 'A pair of students in the same group' do
     setup do
       @membership1 = StudentMembership.make(:membership_status => StudentMembership::STATUSES[:inviter])
       @grouping = @membership1.grouping
@@ -209,7 +209,7 @@ newuser2,USER2,USER2")
       @student_id_list = [@student1.id, @student2.id]
     end
 
-    should "hide without error" do
+    should 'hide without error' do
       Student.hide_students(@student_id_list)
 
       students = Student.find(@student_id_list)
@@ -217,7 +217,7 @@ newuser2,USER2,USER2")
       assert_equal(true, students[1].hidden)
     end
 
-    should "hide students and have the repo remove them" do
+    should 'hide students and have the repo remove them' do
       # Mocks to enter into the if
       Grouping.any_instance.stubs(:repository_external_commits_only?).returns(true)
       Grouping.any_instance.stubs(:is_valid?).returns(true)
@@ -232,7 +232,7 @@ newuser2,USER2,USER2")
       assert Student.hide_students(@student_id_list)
     end
 
-    should "not error when user is not found on hide and remove" do
+    should 'not error when user is not found on hide and remove' do
       # Mocks to enter into the if that leads to the call to remove the student
       Grouping.any_instance.stubs(:repository_external_commits_only?).returns(true)
       Grouping.any_instance.stubs(:is_valid?).returns(true)
@@ -246,8 +246,8 @@ newuser2,USER2,USER2")
       assert Student.hide_students(@student_id_list)
     end
 
-    [{:type => "negative", :grace_credits => "-10", :expected => 0 },
-     {:type => "positive", :grace_credits => "10", :expected => 15 }].each do |item|
+    [{:type => 'negative', :grace_credits => '-10', :expected => 0 },
+     {:type => 'positive', :grace_credits => '10', :expected => 15 }].each do |item|
       should "not error when given #{item[:type]} grace credits" do
         assert Student.give_grace_credits(@student_id_list, item[:grace_credits])
 
@@ -260,7 +260,7 @@ newuser2,USER2,USER2")
     end
   end
 
-  context "Hidden Students" do
+  context 'Hidden Students' do
     setup do
       @student1 = Student.make(:hidden)
       @student2 = Student.make(:hidden)
@@ -272,7 +272,7 @@ newuser2,USER2,USER2")
       @student_id_list = [@student1.id, @student2.id]
     end
 
-    should "unhide without error" do
+    should 'unhide without error' do
       #TODO test the repo with mocks
       assert Student.unhide_students(@student_id_list)
 
@@ -281,7 +281,7 @@ newuser2,USER2,USER2")
       assert_equal(false, students[1].hidden)
     end
 
-    should "unhide without error when users already exists in repo" do
+    should 'unhide without error when users already exists in repo' do
       # Mocks to enter into the if
       Grouping.any_instance.stubs(:repository_external_commits_only?).returns(true)
       Grouping.any_instance.stubs(:is_valid?).returns(true)
@@ -297,12 +297,12 @@ newuser2,USER2,USER2")
   end
 
 
-  context "A hidden Student" do
+  context 'A hidden Student' do
     setup do
       @student = Student.make(:hidden)
     end
 
-    should "not become a member of a grouping" do
+    should 'not become a member of a grouping' do
       grouping = Grouping.make
       @student.invite(grouping.id)
 
@@ -314,55 +314,55 @@ newuser2,USER2,USER2")
   end
 
 
-  context "A Student" do
+  context 'A Student' do
     setup do
       @student = Student.make
     end
 
-    context "with an assignment" do
+    context 'with an assignment' do
       setup do
         @assignment = Assignment.make(:group_name_autogenerated => false)
       end
 
-      should "not return nil on call to memberships_for" do
+      should 'not return nil on call to memberships_for' do
         assert_not_nil @student.memberships_for(@assignment.id)
       end
 
-      should "return empty when there are no pending memberships" do
+      should 'return empty when there are no pending memberships' do
         pending_memberships = @student.pending_memberships_for(@assignment.id)
 
         assert_not_nil pending_memberships
         assert_equal(0, pending_memberships.length)
       end
 
-      should "return nil when there are no pending groupings" do
+      should 'return nil when there are no pending groupings' do
         Student.any_instance.stubs(:pending_groupings_for).returns(nil)
         pending_memberships = @student.pending_memberships_for(@assignment.id)
         assert_nil pending_memberships
       end
 
-      should "correctly return if it has accepted groupings" do
-        assert !@student.has_accepted_grouping_for?(@assignment.id), "Should return no grouping for this assignment"
+      should 'correctly return if it has accepted groupings' do
+        assert !@student.has_accepted_grouping_for?(@assignment.id), 'Should return no grouping for this assignment'
         membership = StudentMembership.make({:user => @student, :grouping => Grouping.make(:assignment => @assignment),:membership_status => StudentMembership::STATUSES[:inviter]})
         assert @student.has_accepted_grouping_for?(@assignment.id)
       end
 
-      should "correctly return the accepted grouping" do
-        assert_nil @student.accepted_grouping_for(@assignment.id), "Should return no grouping for this assignment"
+      should 'correctly return the accepted grouping' do
+        assert_nil @student.accepted_grouping_for(@assignment.id), 'Should return no grouping for this assignment'
         grouping = Grouping.make(:assignment => @assignment)
         membership = StudentMembership.make({:user => @student, :grouping => grouping,:membership_status => StudentMembership::STATUSES[:inviter]})
         assert_equal(grouping, @student.accepted_grouping_for(@assignment.id))
       end
 
-      should "raise when creating an autogenerated name group" do
+      should 'raise when creating an autogenerated name group' do
         assert_raise RuntimeError do
           @student.create_autogenerated_name_group(@assignment.id)
         end
       end
     end
 
-    context "and a grouping" do
-      should "can be invited to a grouping" do
+    context 'and a grouping' do
+      should 'can be invited to a grouping' do
         grouping = Grouping.make
         #Test that grouping.update_repository_permissions is called at least once
         Grouping.any_instance.expects(:update_repository_permissions).at_least(1)
@@ -382,38 +382,38 @@ newuser2,USER2,USER2")
       end
     end
 
-    context "with a group name autogenerated assignment" do
+    context 'with a group name autogenerated assignment' do
       setup do
         @assignment = Assignment.make(:group_name_autogenerated => true)
         assert @student.create_autogenerated_name_group(@assignment.id)
       end
 
-      should "assert no pending groupings after create" do
+      should 'assert no pending groupings after create' do
         assert !@student.has_pending_groupings_for?(@assignment.id)
       end
 
-      should "assert an accepted grouping exists after create" do
+      should 'assert an accepted grouping exists after create' do
         assert @student.has_accepted_grouping_for?(@assignment.id)
       end
     end
 
-    context "with a pending membership" do
+    context 'with a pending membership' do
       setup do
         @membership = StudentMembership.make({:user => @student})
       end
 
 
-      context "on an assignment" do
+      context 'on an assignment' do
         setup do
           @assignment = @membership.grouping.assignment
         end
 
-        should "succeed at destroying all pending memberships" do
+        should 'succeed at destroying all pending memberships' do
           @student.destroy_all_pending_memberships(@assignment.id)
           assert_equal(0, @student.pending_memberships_for(@assignment.id).length)
         end
 
-        should "reject all other pending memberships upon joining a group" do
+        should 'reject all other pending memberships upon joining a group' do
           grouping = @membership.grouping
           membership2 = StudentMembership.make(:grouping => Grouping.make(:assignment => @assignment), :user => @student)
 
@@ -428,7 +428,7 @@ newuser2,USER2,USER2")
           assert_equal(StudentMembership::STATUSES[:rejected], otherMembership.membership_status)
         end
 
-        should "have pending memberships after their creation." do
+        should 'have pending memberships after their creation.' do
           membership2 = StudentMembership.make(:grouping => Grouping.make(:assignment => @assignment), :user => @student)
 
           pending_memberships = @student.pending_memberships_for(@assignment.id)
@@ -441,32 +441,32 @@ newuser2,USER2,USER2")
           assert_equal [], pending_memberships.delete_if {|e| e.user_id == @student.id}
         end
 
-        context "working alone" do
+        context 'working alone' do
           setup do
             assert @student.create_group_for_working_alone_student(@assignment.id)
           end
 
-          should "create the group" do
-            assert Group.find(:first, :conditions => {:group_name => @student.user_name}), "the group has not been created"
+          should 'create the group' do
+            assert Group.first(:conditions => {:group_name => @student.user_name}), 'the group has not been created'
           end
 
-          should "not have any pending memberships" do
+          should 'not have any pending memberships' do
             assert !@student.has_pending_groupings_for?(@assignment.id)
           end
 
-          should "have an accepted grouping" do
+          should 'have an accepted grouping' do
             assert @student.has_accepted_grouping_for?(@assignment.id)
           end
         end
 
-        context "working alone but has an existing group" do
+        context 'working alone but has an existing group' do
           setup do
             @group = Group.make
             @grouping = Grouping.make({:group => @group, :assignment => @assignment})
             @membership2 = StudentMembership.make({:user => @student, :membership_status => StudentMembership::STATUSES[:inviter], :grouping => @grouping})
           end
 
-          should "work" do
+          should 'work' do
             assert @student.create_group_for_working_alone_student(@assignment.id)
           end
         end
@@ -474,19 +474,19 @@ newuser2,USER2,USER2")
 
     end
 
-    context "with grace credits" do
-      should "return remaining normally" do
+    context 'with grace credits' do
+      should 'return remaining normally' do
         assert_equal(5, @student.remaining_grace_credits)
       end
 
-      should "return normally when over deducted" do
+      should 'return normally when over deducted' do
         deduction1 = GracePeriodDeduction.make(:membership => StudentMembership.make(:user => @student))
         deduction2 = GracePeriodDeduction.make(:membership => deduction1.membership, :deduction => 10)
         assert_equal(-25, @student.remaining_grace_credits)
       end
     end
 
-    should "assert student has a section" do
+    should 'assert student has a section' do
       assert @student.has_section?
     end
 
@@ -495,7 +495,7 @@ newuser2,USER2,USER2")
       assert !student.has_section?
     end
 
-    should "update the section of the students in the list" do
+    should 'update the section of the students in the list' do
       student1 = Student.make(:section => nil)
       student2 = Student.make(:section => nil)
       students_ids = [student1.id, student2.id]
@@ -505,7 +505,7 @@ newuser2,USER2,USER2")
       assert_not_nil students[0].section
     end
 
-    should "update the section of the students in the list, setting it to no section" do
+    should 'update the section of the students in the list, setting it to no section' do
       student1 = Student.make
       student1.save
       student2 = Student.make
@@ -517,8 +517,8 @@ newuser2,USER2,USER2")
       assert_nil students[0].section
     end
 
-    context "as a noteable" do
-      should "display for note without seeing an exception" do
+    context 'as a noteable' do
+      should 'display for note without seeing an exception' do
         assert_nothing_raised do
           @student.display_for_note
         end

@@ -33,9 +33,9 @@ class ResultsController < ApplicationController
   def edit
     result_id = params[:id]
     @result = Result.find(result_id)
-    if @result.released_to_students == true
-       flash[:fail_notice] = "The marks have been released. You cannot
-       change the grades."
+    if @result.released_to_students
+       flash[:fail_notice] = 'The marks have been released. You cannot
+       change the grades.'
     end
     @assignment = @result.submission.assignment
     @rubric_criteria = @assignment.rubric_criteria
@@ -67,7 +67,7 @@ class ResultsController < ApplicationController
     end
     
     current_grouping_index = groupings.index(@grouping)
-    if !groupings[current_grouping_index + 1].nil?
+    if groupings[current_grouping_index + 1]
       @next_grouping = groupings[current_grouping_index + 1]
     end
     if (current_grouping_index - 1) >= 0
@@ -79,7 +79,7 @@ class ResultsController < ApplicationController
   def next_grouping
     grouping = Grouping.find(params[:id])
     if grouping.has_submission?
-      redirect_to :action => 'edit', :id => grouping.get_submission_used.get_original_result.id
+      redirect_to :action => 'edit', :id => grouping.get_submission_used.get_latest_result.id
     else
       redirect_to :controller => 'submissions', :action => 'collect_and_begin_grading', :id => grouping.assignment.id, :grouping_id => grouping.id
     end
@@ -91,7 +91,7 @@ class ResultsController < ApplicationController
       file_contents = retrieve_file(file)
     rescue Exception => e
       flash[:file_download_error] = e.message
-      redirect_to :action => 'edit', :id => file.submission.get_original_result.id
+      redirect_to :action => 'edit', :id => file.submission.get_latest_result.id
       return
     end
     send_data file_contents, :disposition => 'inline', :filename => file.filename
@@ -103,7 +103,7 @@ class ResultsController < ApplicationController
     @focus_line = params[:focus_line]
       
     @file = SubmissionFile.find(@submission_file_id)
-    @result = @file.submission.get_original_result
+    @result = @file.submission.get_latest_result
     # Is the current user a student?
     if current_user.student?
       # The Student does not have access to this file.  Render nothing.
@@ -119,31 +119,36 @@ class ResultsController < ApplicationController
       @file_contents = retrieve_file(@file)
     rescue Exception => e
       render :update do |page|
-        page.call "alert", e.message
+        page.call 'alert', e.message
       end
       return
     end   
     
     @code_type = @file.get_file_type
-    render :"results/common/codeviewer"
+    render :'results/common/codeviewer'
   end
   
   def update_mark
     result_mark = Mark.find(params[:mark_id])
     mark_value = params[:mark]
     result_mark.mark = mark_value
-    if !result_mark.save
+    if result_mark.save
       render :update do |page|
-        page.call 'alert', 'Could not save this mark!: ' + result_mark.errors
+        page.call 'select_mark', result_mark.id, mark_value
+        page.replace_html "rubric_criterion_title_#{result_mark.id.to_s}_mark",
+                          "<b> #{result_mark.mark} #{result_mark.rubric_criterion
+                          ['level_' + result_mark.mark.to_s + '_name']
+                          }</b> #{result_mark.rubric_criterion
+                          ['level_' + result_mark.mark.to_s + '_description']}"
+        page.replace_html "mark_#{result_mark.id.to_s}_summary_mark", result_mark.mark
+        page.replace_html "mark_#{result_mark.id.to_s}_summary_mark_after_weight",
+                          (result_mark.mark * result_mark.rubric_criterion.weight)
+        page.replace_html 'current_subtotal_div', result_mark.result.get_subtotal
+        page.call 'update_total_mark', result_mark.result.total_mark
       end
     else
       render :update do |page|
-        page.call 'select_mark', result_mark.id, mark_value
-        page.replace_html "rubric_criterion_title_#{result_mark.id.to_s}_mark", "<b> #{result_mark.mark} #{result_mark.rubric_criterion["level_" + result_mark.mark.to_s + "_name"]}</b> #{result_mark.rubric_criterion["level_" + result_mark.mark.to_s + "_description"]}"
-        page.replace_html "mark_#{result_mark.id.to_s}_summary_mark", result_mark.mark
-        page.replace_html "mark_#{result_mark.id.to_s}_summary_mark_after_weight", (result_mark.mark * result_mark.rubric_criterion.weight)
-        page.replace_html "current_subtotal_div", result_mark.result.get_subtotal
-        page.call "update_total_mark", result_mark.result.total_mark
+        page.call 'alert', 'Could not save this mark!: ' + result_mark.errors
       end
     end
   end
@@ -157,17 +162,29 @@ class ResultsController < ApplicationController
       return
     end
     
-    if !@grouping.has_submission?
+    unless @grouping.has_submission?
       render 'results/student/no_submission'
       return
     end
     @submission = @grouping.get_submission_used
-    if !@submission.has_result?
+    unless @submission.has_result?
       render 'results/student/no_result'
       return
     end
     @result = @submission.get_original_result
-    if !@result.released_to_students
+    @old_result = nil
+    if @submission.remark_submitted?
+      @old_result = @result
+      @result = @submission.get_remark_result
+      # if remark result's marking state is 'unmarked' then the student has
+      # saved a remark request but not submitted it yet, therefore, still editable
+      if @result.marking_state != Result::MARKING_STATES[:unmarked] && !@result.released_to_students
+        render 'results/student/no_remark_result'
+        return
+      end
+    end
+
+    unless @result.released_to_students
       render 'results/student/no_result'
       return
     end
@@ -193,14 +210,14 @@ class ResultsController < ApplicationController
       @extra_mark.result = @result
       @extra_mark.update_attributes(params[:extra_mark])
       @extra_mark.unit = ExtraMark::UNITS[:points]
-      if !@extra_mark.save
-        render :"results/marker/add_extra_mark_error"
+      if @extra_mark.save
+        render :'results/marker/insert_extra_mark'
       else
-        render :"results/marker/insert_extra_mark"
+        render :'results/marker/add_extra_mark_error'
       end
       return
     end
-    render :"results/marker/add_extra_mark"
+    render :'results/marker/add_extra_mark'
   end
 
   #Deletes an extra mark from the database and removes it from the html
@@ -210,7 +227,7 @@ class ResultsController < ApplicationController
     @extra_mark.destroy
     #need to recalculate total mark
     @result = @extra_mark.result
-    render :"results/marker/remove_extra_mark"
+    render :'results/marker/remove_extra_mark'
   end
 
   #update the mark and/or description of the extra mark
@@ -233,12 +250,12 @@ class ResultsController < ApplicationController
         #1 the display of the extra mark
         page.replace_html("extra_mark_title_#{extra_mark.id}_" + type, val)
         #2 the display of the total mark
-        page.replace_html("current_total_mark_div", result.total_mark)
+        page.replace_html('current_total_mark_div', result.total_mark)
         #3 the divs containing deductions/bonuses
-        page.replace_html("extra_marks_bonus", result.get_bonus_marks)
-        page.replace_html("extra_marks_deducted", result.get_deductions)
+        page.replace_html('extra_marks_bonus', result.get_bonus_marks)
+        page.replace_html('extra_marks_deducted', result.get_deductions)
         #4 the div containing the total mark at the top of the page
-        page.replace_html("current_mark_div", result.total_mark)
+        page.replace_html('current_mark_div', result.total_mark)
       end
     else
       output = {'status' => 'error'}
@@ -284,7 +301,7 @@ class ResultsController < ApplicationController
     if revision.files_at_path(file.path)[file.filename].nil?
       raise "Could not find #{file.filename} in repository #{student_group.repository_name}"
     end
-    return repo.download_as_string(revision.files_at_path(file.path)[file.filename])
+    repo.download_as_string(revision.files_at_path(file.path)[file.filename])
   end
   
 end

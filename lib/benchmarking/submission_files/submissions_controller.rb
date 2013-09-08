@@ -18,7 +18,7 @@ class SubmissionsController < ApplicationController
     @previous_path = File.split(@path).first
     @repository_name = @grouping.group.repository_name
     begin
-      if !params[:revision_timestamp].nil?
+      if params[:revision_timestamp]
         @revision_number = @grouping.group.repo.get_revision_by_timestamp(Time.parse(params[:revision_timestamp])).revision_number
       else
         @revision_number = params[:revision_number] || @grouping.group.repo.get_latest_revision.revision_number
@@ -41,7 +41,7 @@ class SubmissionsController < ApplicationController
       @directories = @revision.directories_at_path(File.join(@assignment.repository_folder, @path))
       @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
     rescue Exception => @find_revision_error
-      render :"repo_browser/find_revision_error"
+      render :'repo_browser/find_revision_error'
       return
     end
     @table_rows = {}
@@ -51,7 +51,7 @@ class SubmissionsController < ApplicationController
     @directories.sort.each do |directory_name, directory|
       @table_rows[directory.id] = construct_repo_browser_directory_table_row(directory_name, directory)
     end
-    render :"repo_browser/populate_repo_browser"
+    render :'repo_browser/populate_repo_browser'
   end
 
   def file_manager
@@ -70,8 +70,8 @@ class SubmissionsController < ApplicationController
     @files = @revision.files_at_path(File.join(@assignment.repository_folder, @path))
     @missing_assignment_files = []
     @assignment.assignment_files.each do |assignment_file|
-      if !@revision.path_exists?(File.join(@assignment.repository_folder,
-      assignment_file.filename))
+      unless @revision.path_exists?(File.join(@assignment.repository_folder,
+                                              assignment_file.filename))
         @missing_assignment_files.push(assignment_file)
       end
     end
@@ -111,16 +111,14 @@ class SubmissionsController < ApplicationController
     revision_number = params[:current_revision_number].to_i
     new_submission = Submission.create_by_revision_number(grouping, revision_number)
     new_submission = assignment.submission_rule.apply_submission_rule(new_submission)
-    result = new_submission.get_original_result
+    result = new_submission.get_latest_result
     redirect_to :controller => 'results', :action => 'edit', :id => result.id
   end
 
   def collect_and_begin_grading
     assignment = Assignment.find(params[:id])
     grouping = Grouping.find(params[:grouping_id])
-    if !assignment.submission_rule.can_collect_now?
-      flash[:error] = "Could not collect submission for group #{grouping.group.group_name} - the collection date has not been reached yet."
-    else
+    if assignment.submission_rule.can_collect_now?
       time = assignment.submission_rule.calculate_collection_time.localtime
       # Create a new Submission by timestamp.
       # A Result is automatically attached to this Submission, thanks to some callback
@@ -128,9 +126,12 @@ class SubmissionsController < ApplicationController
       new_submission = Submission.create_by_timestamp(grouping, time)
       # Apply the SubmissionRule
       new_submission = assignment.submission_rule.apply_submission_rule(new_submission)
-      result = new_submission.get_original_result
+      result = new_submission.get_latest_result
       redirect_to :controller => 'results', :action => 'edit', :id => result.id
       return
+    else
+      flash[:error] = "Could not collect submission for group #{grouping.
+          group.group_name} - the collection date has not been reached yet."
     end
     redirect_to :action => 'browse', :id => assignment.id
   end
@@ -177,7 +178,7 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.find(assignment_id)
     path = params[:path] || '/'
     grouping = current_user.accepted_grouping_for(assignment_id)
-    if !grouping.is_valid?
+    unless grouping.is_valid?
       redirect_to :action => :file_manager, :id => assignment_id
       return
     end
@@ -219,31 +220,32 @@ class SubmissionsController < ApplicationController
       new_files.each do |file_object|
         # sanitize_file_name in SubmissionsHelper
         if file_object.original_filename.nil?
-          raise "Invalid file name on submitted file"
+          raise 'Invalid file name on submitted file'
         end
         txn.add(File.join(assignment_folder, sanitize_file_name(file_object.original_filename)), file_object.read, file_object.content_type)
       end
 
       # finish transaction
-      if !txn.has_jobs?
-        flash[:transaction_warning] = "No actions were detected in the last submit.  Nothing was changed."
-        redirect_to :action => "file_manager", :id => assignment_id
+      unless txn.has_jobs?
+        flash[:transaction_warning] = 'No actions were detected in the last submit.' +
+            ' Nothing was changed.'
+        redirect_to :action => 'file_manager', :id => assignment_id
         return
       end
-      if !repo.commit(txn)
+      unless repo.commit(txn)
         flash[:update_conflicts] = txn.conflicts
       end
 
       # Are we past collection time?
       if assignment.submission_rule.can_collect_now?
-        flash[:commit_notice] = assignment.submission_rule.commit_after_collection_message(grouping)
+        flash[:commit_notice] = assignment.submission_rule.commit_after_collection_message
       end
 
-      redirect_to :action => "file_manager", :id => assignment_id
+      redirect_to :action => 'file_manager', :id => assignment_id
 
     rescue Exception => e
       flash[:commit_error] = e.message
-      redirect_to :action => "file_manager", :id => assignment_id
+      redirect_to :action => 'file_manager', :id => assignment_id
     end
   end
 
@@ -279,43 +281,43 @@ class SubmissionsController < ApplicationController
   def update_submissions
     return unless request.post?
     if params[:groupings].nil?
-      flash[:release_results] = "Select a group"
+      flash[:release_results] = 'Select a group'
     else
       if params[:release_results]
         flash[:release_errors] = []
         params[:groupings].each do |grouping_id|
           grouping = Grouping.find(grouping_id)
-          if !grouping.has_submission?
+          unless grouping.has_submission?
             # TODO:  Neaten this up...
             flash[:release_errors].push("#{grouping.group.group_name} had no submission")
             next
           end
           submission = grouping.get_submission_used
-          if !submission.has_result?
+          unless submission.has_result?
             # TODO:  Neaten this up...
             flash[:release_errors].push("#{grouping.group.group_name} had no result")
             next
           end
-          if submission.get_original_result.marking_state != Result::MARKING_STATES[:complete]
-            flash[:release_errors].push(I18n.t("marking_state.not_complete", :group_name => grouping.group.group_name))
+          if submission.get_latest_result.marking_state != Result::MARKING_STATES[:complete]
+            flash[:release_errors].push(I18n.t('marking_state.not_complete', :group_name => grouping.group.group_name))
             next
           end
           if flash[:release_errors].nil? or flash[:release_errors].size == 0
             flash[:release_errors] = nil
           end
-          @result = submission.get_original_result
+          @result = submission.get_latest_result
           @result.released_to_students = true
           @result.save
         end
       elsif params[:unrelease_results]
         params[:groupings].each do |g|
           grouping = Grouping.find(g)
-          grouping.get_submission_used.get_original_result.unrelease_results
+          grouping.get_submission_used.get_latest_result.unrelease_results
         end
       end
     end
     redirect_to :action => 'browse', :id => params[:id]
-    if !params[:groupings].nil?
+    if params[:groupings]
       grouping = Grouping.find(params[:groupings].first)
       grouping.assignment.set_results_statistics
     end
@@ -325,7 +327,7 @@ class SubmissionsController < ApplicationController
   def unrelease
     return unless request.post?
     if params[:groupings].nil?
-      flash[:release_results] = "Select a group"
+      flash[:release_results] = 'Select a group'
     else
       params[:groupings].each do |g|
         g.unrelease_results
@@ -346,7 +348,7 @@ class SubmissionsController < ApplicationController
            final_result.push('')
          else
            submission = grouping.get_submission_used
-           final_result.push(submission.get_original_result.total_mark)
+           final_result.push(submission.get_latest_result.total_mark)
          end
          csv << final_result
        end
@@ -375,9 +377,9 @@ class SubmissionsController < ApplicationController
            final_result.push(0)
          else
            submission = grouping.get_submission_used
-           final_result.push(submission.get_original_result.total_mark)
+           final_result.push(submission.get_latest_result.total_mark)
            rubric_criteria.each do |rubric_criterion|
-             mark = submission.get_original_result.marks.find_by_rubric_criterion_id(rubric_criterion.id)
+             mark = submission.get_latest_result.marks.find_by_rubric_criterion_id(rubric_criterion.id)
              if mark.nil?
                final_result.push('')
              else
@@ -386,8 +388,8 @@ class SubmissionsController < ApplicationController
              final_result.push(rubric_criterion.weight)
            end
 
-           final_result.push(submission.get_original_result.get_total_extra_points)
-           final_result.push(submission.get_original_result.get_total_extra_percentage)
+           final_result.push(submission.get_latest_result.get_total_extra_points)
+           final_result.push(submission.get_latest_result.get_total_extra_percentage)
            membership = grouping.student_memberships.find_by_user_id(student.id)
            grace_period_deductions = student.grace_period_deductions.find_by_membership_id(membership.id)
            final_result.push(grace_period_deductions || 0)

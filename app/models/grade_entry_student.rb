@@ -42,7 +42,7 @@ class GradeEntryStudent < ActiveRecord::Base
       grade_for_grade_entry_item = working_row.shift
       grade = grade_entry_student.grades.find_or_create_by_grade_entry_item_id(grade_entry_item.id)
       grade.grade = grade_for_grade_entry_item
-      if !grade.save
+      unless grade.save
         raise RuntimeError.new(grade.errors)
       end
     end

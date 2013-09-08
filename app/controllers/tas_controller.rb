@@ -3,11 +3,11 @@ class TasController < ApplicationController
   before_filter  :authorize_only_for_admin
 
   def index
-    @tas = Ta.find(:all, :order => "user_name")
+    @tas = Ta.all(:order => 'user_name')
   end
 
   def populate
-    @tas_data = Ta.find(:all, :order => "user_name")
+    @tas_data = Ta.all(:order => 'user_name')
     # construct_table_rows defined in UsersHelper
     @tas = construct_table_rows(@tas_data)
   end
@@ -24,14 +24,14 @@ class TasController < ApplicationController
     @user = Ta.find_by_id(params[:user][:id])
     attrs = params[:user]
     # update_attributes supplied by ActiveRecords
-    if !@user.update_attributes(attrs)
-      flash[:error] = I18n.t("tas.update.error")
-      render :edit
-    else
-      flash[:success] = I18n.t("tas.update.success",
+    if @user.update_attributes(attrs)
+      flash[:success] = I18n.t('tas.update.success',
                                :user_name => @user.user_name)
 
       redirect_to :action => :index
+    else
+      flash[:error] = I18n.t('tas.update.error')
+      render :edit
     end
   end
 
@@ -44,11 +44,11 @@ class TasController < ApplicationController
     # active records--creates a new record if the model is new, otherwise
     # updates the existing record
     if @user.save
-      flash[:success] = I18n.t("tas.create.success",
+      flash[:success] = I18n.t('tas.create.success',
                                :user_name => @user.user_name)
       redirect_to :action => 'index' # Redirect
     else
-      flash[:error] = I18n.t("tas.create.error")
+      flash[:error] = I18n.t('tas.create.error')
       render :new
     end
   end
@@ -56,20 +56,20 @@ class TasController < ApplicationController
   #downloads users with the given role as a csv list
   def download_ta_list
     #find all the users
-    tas = Ta.find(:all, :order => "user_name")
+    tas = Ta.all(:order => 'user_name')
     case params[:format]
-    when "csv"
+    when 'csv'
       output = User.generate_csv_list(tas)
-      format = "text/csv"
-    when "xml"
+      format = 'text/csv'
+    when 'xml'
       output = tas.to_xml
-      format = "text/xml"
+      format = 'text/xml'
     else
       # Raise exception?
       output = tas.to_xml
-      format = "text/xml"
+      format = 'text/xml'
     end
-    send_data(output, :type => format, :disposition => "inline")
+    send_data(output, :type => format, :disposition => 'inline')
   end
 
   def upload_ta_list
@@ -78,7 +78,7 @@ class TasController < ApplicationController
       if result[:invalid_lines].length > 0
         flash[:invalid_lines] = result[:invalid_lines]
       end
-      flash[:upload_notice] = result[:upload_notice]
+      flash[:notice] = result[:upload_notice]
     end
     redirect_to :action => 'index'
   end

@@ -13,9 +13,9 @@
           <input type="checkbox" name="students[]" class="ap_selectable" id="student_<%=student.id%>" value="<%=student.id%>" />
         </td>
       <% end %>
-      <td class="grades_table_cell"><%= h(student.user_name) %></td>
-      <td class="grades_table_cell"><%= h(student.last_name) %></td>
-      <td class="grades_table_cell"><%= h(student.first_name) %></td>
+      <td class="grades_table_cell"><%= student.user_name %></td>
+      <td class="grades_table_cell"><%= student.last_name %></td>
+      <td class="grades_table_cell"><%= student.first_name %></td>
       <td class="grades_table_cell">
         <% if student.has_section? %>
           <%= student.section.name %>
@@ -41,9 +41,16 @@
                                               :id => @grade_entry_form.id) %></td>
       <% end %>
 
-      <td class="student_total"><%= text_field_tag 'total_' + student.id.to_s,
-                                    h(@grade_entry_form.calculate_total_mark(student.id)),
-                                    :size => 4, :disabled => true %></td>
+      <% if @grade_entry_form.show_total %>
+        <td class="student_total">
+          <div class="total_value" style="display:inline-block;">
+            <%= text_field_tag 'total_' + student.id.to_s,
+                @grade_entry_form.calculate_total_mark(student.id),
+                :size => 4, :disabled => true %>
+          </div>
+        </td>
+      <% end %>
+
       <td>
         <% if grade_entry_student.released_to_student %>
           <%= image_tag('icons/email_go.png')%>

@@ -13,7 +13,7 @@
 
 <div id="title_bar">
   <h1><%= I18n.t("browse_submissions.workspace",
-  :short_identifier => h(sanitize(@assignment.short_identifier))) %>
+  :short_identifier => sanitize(@assignment.short_identifier)) %>
   <% if @current_user.admin? %>
   <%= link_to I18n.t("collect_submissions.collect_all"),
               collect_all_submissions_assignment_submissions_path(
@@ -43,6 +43,10 @@
                   @assignment), 
               :confirm => I18n.t("collect_submissions.results_loss_warning") %>
  <% end %>
+  <span class="menu_bar">|</span>
+  <%= link_to t('browse_submissions.download_groupings_files'),
+              download_groupings_files_assignment_submissions_path(
+                      :groupings => @groupings) %>
 
 </h1>
 </div>
@@ -82,10 +86,31 @@
             :name => "unrelease_results" %>
           <% if !@assignment.results_average.nil? %>
             <%= I18n.t("browse_submissions.class_average",
-                       :results_average => h(@assignment.results_average)) %>
+                       :results_average => @assignment.results_average) %>
           <% end %>
         </div>
       <% end %>
+      
+      <% # Collect submissions for a given section %>
+      <% if @assignment.section_groups_only %>
+      	<div class="floatLeft">
+      		<%= I18n.t("browse_submissions.collect_work_for_section") %>
+      		<select id="section_input" name="section_to_collect">
+      			<option value=""> - </option>
+      			<% @assignment.section_due_dates.each do |section_due_date| %>
+      				<% if Time.zone.now >=
+      					SectionDueDate.due_date_for(section_due_date.section, @assignment) %>
+	      				<option value="<%= section_due_date.section.id %>">
+	      					<%= section_due_date.section.name %>
+	      				</option>
+      				<% end %>
+      			<% end %>
+      		</select>
+      		<%= submit_tag t(:apply), :id => 'apply_collect_section',
+      			:name => 'collect_section', :class => 'thin-button' %>
+      	</div>
+      <% end %>
+      
       <div class="ap_filters" id="ap_filters_1">
         <%= render  :partial => 'submissions_table_filters',
                     :locals => {
@@ -180,6 +205,7 @@
                                 :name => "unrelease_results" %>
         <% end %>
       </div>
+      
       <div class="ap_filters" id="ap_filters_2">
         <%= render  :partial => 'submissions_table_filters',
                     :locals => {

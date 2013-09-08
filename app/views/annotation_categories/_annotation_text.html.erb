@@ -1,10 +1,11 @@
 <li id="annotation_text_<%=annotation_text.id%>">
 <div id="annotation_text_<%=annotation_text.id%>_control">
   <p>
-    <%= simple_format(h(annotation_text.content)) %>
+    <%= simple_format(annotation_text.content) %>
   <div style="float: left; width: auto; padding-top: 5px;">
   <%= link_to_function t(:edit),
-    "$('annotation_text_#{annotation_text.id}_control').hide();$('annotation_text_#{annotation_text.id}_edit').show();",
+    "jQuery('#annotation_text_' + #{annotation_text.id} + '_control').hide();
+    jQuery('#annotation_text_' + #{annotation_text.id} + '_edit').show();",
     :class => "button" %>
   </div>
   <%= button_to t(:delete),
@@ -19,7 +20,10 @@
              :method => 'put',
 	     :remote => true do |f| %>
   <%= f.text_area(:content, :size => "50x5") %>
-  <%= f.submit t(:save) , :disable_with => I18n.t('working')%><input type="reset" value="<%= t(:cancel) %>" onclick="$('annotation_text_<%=annotation_text.id%>_edit').hide();$('annotation_text_<%=annotation_text.id%>_control').show();">
-<% end %>
+  <%= f.submit t(:save) , :disable_with => I18n.t('working')%>
+    <input type="reset" value="<%= t(:cancel) %>"
+           onclick="jQuery('#annotation_text_' + <%= annotation_text.id %> + '_edit').hide();
+             jQuery('#annotation_text_' + <%= annotation_text.id %> + '_control').show();">
+  <% end %>
 </div>
 </li>

@@ -3,12 +3,13 @@
   <p>
     <%= f.label :filename, t(:filename).html_safe %>
     <%= f.text_field :filename %>
-    <% if !f.object.new_record? %>
+    <% if f.object.new_record? %>
+      <%= link_to_function t(:remove),
+                           'jQuery(this).closest(".assignment_file").remove();' %>
+    <% else %>
       <span>
         <b><%= I18n.t(:remove) %> : </b><%= f.check_box :_destroy %>
       </span>
-    <% else %>
-      <%= link_to_function t(:remove), "$(this).up(\".assignment_file\").remove()" %>
     <% end %>
   </p>
 <% end %>

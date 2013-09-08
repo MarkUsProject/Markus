@@ -5,16 +5,22 @@
 <head>
 	<%= render :partial => 'layouts/head' %>
   <title><%= t(:markus) %> - <%= controller.action_name %></title>
+  <%= javascript_include_tag 'application.js',
+      'jquery.js',
+      'prototype.js',
+      'rails.js',
+      'jquery-ui.js'%>
   <%= stylesheet_link_tag 'main.css', :media => 'all' %>
-  <%= stylesheet_link_tag "livepipe/tabs.css", :media => 'all' %>
-  <%= javascript_include_tag 'application.js' -%>
-  <%= javascript_include_tag 'prototype.js' -%>
-  <%= javascript_include_tag 'rails.js' -%>
-  <%= javascript_include_tag 'menu.js' -%>
+  <%= stylesheet_link_tag 'jquery-ui.css', :media => 'all' %>
   <% # UI LIBRARIES %>
-  <%= javascript_include_tag "livepipe/livepipe.js",
-    "livepipe/window.js",
-    "livepipe/tabs.js" %>
+  <%= javascript_include_tag 'menu.js',
+                             'livepipe/livepipe.js',
+                             'livepipe/window.js',
+                             'livepipe/tabs.js',
+                             'layouts',
+                             'prototype-snippet' %>
+  <%= stylesheet_link_tag "livepipe/tabs.css", :media => 'all' %>
+  <%= csrf_meta_tag %>
   <%= yield :head %>
 </head>
 
@@ -26,6 +32,7 @@
     <%= render :partial => 'layouts/sub_sub_menu' %>
     <%= render :partial => 'layouts/about' %>
     <%= render :partial => 'layouts/role_switch' %>
+    <%= render :partial => 'layouts/redirect' %>
     <div id="container">
       <div id="content">
         <%= render :partial => 'layouts/noscript'%>
@@ -34,5 +41,10 @@
     </div> <!-- container -->
   </div>
 
+  <!-- Toggle jQuery's noConflict mode so it does not conflict with Prototype -->
+  <script type="text/javascript">
+    jQuery.noConflict();
+  </script>
+  <%= render 'layouts/redirect.js.erb' %>
 </body>
 </html>

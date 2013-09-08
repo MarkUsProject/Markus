@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   # see http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html#M000514
   protect_from_forgery
   
-  layout "content"
+  layout 'content'
   
   include SessionHandler
   

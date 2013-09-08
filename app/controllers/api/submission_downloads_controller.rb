@@ -1,54 +1,60 @@
 module Api
   require 'zip/zip'
 
-  #=== Description
   # Allows for downloading of submission files and their annotations
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class SubmissionDownloadsController < MainApiController
 
-    #=== Description
-    # Triggered by a HTTP GET request to /api/submission_downloads(.:format)
-    # Downloads a SubmissionFile, possibly with annotations.
-    # Requires the following parameters:
-    #   group_name:   Name of the group that submitten the file
-    #   assignment:   Assignment for which the file was submitted
-    # Allows the following optional paramenters:
-    #   filename:     Name of the file, if absent all files will be downloaded
-    #   include_annotations:  If 'true', will include annotations in the file(s)
-    #=== Returns
-    # The requested file, or a zip file containing all requested files
-    def show
-      if !has_required_http_params?(params)
-        # incomplete/invalid HTTP params
-        render 'shared/http_status', :locals => { :code => "422", :message => HttpStatusHelper::ERROR_CODE["message"]["422"] }, :status => 422
+    # Returns the requested submission file, or a zip containing all submission 
+    # files, including all annotations if requested
+    # Requires: assignment_id, group_id
+    # Optional:
+    #  - file_name: Name of the file, if absent all files will be downloaded
+    #  - include_annotations: If 'true', will include annotations in the file(s)
+    def index
+      assignment = Assignment.find_by_id(params[:assignment_id])
+      if assignment.nil?
+        # No assignment with that id
+        render 'shared/http_status', :locals => {:code => '404', :message =>
+          'No assignment exists with that id'}, :status => 404
+        return
+      end
+        
+      group = Group.find_by_id(params[:group_id])
+      if group.nil?
+        # No group exists with that id
+        render 'shared/http_status', :locals => {:code => '404', :message =>
+          'No group exists with that id'}, :status => 404
         return
       end
 
-      # check if there's a valid submission
-      submission = Submission.get_submission_by_group_and_assignment(params[:group_name],
-                                                                      params[:assignment])
-
+      submission = Submission.get_submission_by_group_and_assignment(
+        group[:group_name], assignment[:short_identifier])
       if submission.nil?
-        # no such submission
-        render 'shared/http_status', :locals => { :code => "422", :message => "Submission was not found" }, :status => 422
+        # No assignment submission by that group
+        render 'shared/http_status', :locals => {:code => '404', :message => 
+          'Submission was not found'}, :status => 404
         return
       end
 
-      # If requested a single file
-      if !params[:filename].blank?
-        files = [SubmissionFile.find_by_filename_and_submission_id(params[:filename], submission.id)]
-        single_file = true
+      if params[:filename].present?
+        # Find the requested file if filename is set
+        files = [SubmissionFile.find_by_filename_and_submission_id(
+          params[:filename], submission.id)]
       else
-      # otherwise we give them the whole directory of files
+        # Otherwise we get all the files in the submission
         files = SubmissionFile.find_all_by_submission_id(submission.id)
-        single_file = false
-        FileUtils.remove_file("downloads/submissions.zip", true)
       end
 
+      zip_name = "#{assignment[:short_identifier]}_#{group[:group_name]}.zip"
+
+      # If only one file is found, send the file, otherwise loop through and 
+      # create a zip with all files
       files.each do |file|
         if file.nil?
-          # no such submission file
-          render 'shared/http_status', :locals => { :code => "422", :message => "Submission was not found" }, :status => 422
+          # No such file in the submission
+          render 'shared/http_status', :locals => {:code => '422', :message => 
+            'File was not found'}, :status => 422
           return
         end
 
@@ -60,44 +66,33 @@ module Api
             file_contents = file.retrieve_file
           end
         rescue Exception => e
-            # could not retrieve file
-            render 'shared/http_status', :locals => { :code => "500", :message => HttpStatusHelper::ERROR_CODE["message"]["500"] }, :status => 500
+            # Could not retrieve file
+            render 'shared/http_status', :locals => {:code => '500', :message => 
+              HttpStatusHelper::ERROR_CODE['message']['500'] }, :status => 500
           return
         end
 
-        #Send the file or make the zip file
-        if single_file
+        if files.length == 1
+          # If we only have 1 file being requested, send it
           send_data file_contents, :disposition => 'inline', :filename => file.filename
         else
-          Zip::ZipFile.open("tmp/submissions.zip", Zip::ZipFile::CREATE) do |zipfile|
-            if ! zipfile.find_entry(file.path)
+          # Otherwise zip up the requested submission files
+          Zip::ZipFile.open("tmp/#{zip_name}", Zip::ZipFile::CREATE) do |zipfile|
+            unless zipfile.find_entry(file.path)
               zipfile.mkdir(file.path)
             end
-            zipfile.get_output_stream(file.path + "/" + file.filename) { |f| f.puts file_contents }
+            zipfile.get_output_stream(file.path + '/' + file.filename) { |f| 
+              f.puts file_contents }
           end
         end
       end
 
-      #Send the zip file
-      if !single_file
-        send_file "tmp/submissions.zip", :disposition => 'inline', :filename => "#{params[:assignment]}_#{params[:group_name]}.zip"
+      # Send the zip
+      if files.length > 1
+        send_file "tmp/#{zip_name}", :disposition => 'inline', :filename => 
+          zip_name
       end
     end
 
-    private
-
-    # Helper method to check for required HTTP parameters
-    def has_required_http_params?(param_hash)
-      # Note: The blank? method is a Rails extension.
-      # Specific keys have to be present, and their values
-      # must not be blank.
-      if !param_hash[:assignment].blank? &&
-      !param_hash[:group_name].blank?
-        return true
-      else
-        return false
-      end
-    end
-  end
-
+  end # end SubmissionDownloadsController
 end

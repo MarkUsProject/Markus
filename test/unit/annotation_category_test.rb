@@ -5,27 +5,27 @@ require 'shoulda'
 
 class AnnotationCategoryTest < ActiveSupport::TestCase
 
-  context "Test annotation add by row" do
-    context ", when no annotation categorie exists" do
+  context 'Test annotation add by row' do
+    context ', when no annotation categorie exists' do
       setup do
         @row = []
-        @row.push("annotation category name")
-        @row.push("annotation text 1")
-        @row.push("annotation text 2")
+        @row.push('annotation category name')
+        @row.push('annotation text 1')
+        @row.push('annotation text 2')
         @assignment = Assignment.make
       end
 
-      should "save the annotation" do
+      should 'save the annotation' do
         assert AnnotationCategory.add_by_row(@row, @assignment)
       end
     end
 
-    context "when the annotation categorie already exists" do
+    context 'when the annotation categorie already exists' do
       setup do
         @row = []
-        @row.push("annotation category name 2")
-        @row.push("annotation text 2 1")
-        @row.push("annotation text 2 2")
+        @row.push('annotation category name 2')
+        @row.push('annotation text 2 1')
+        @row.push('annotation text 2 2')
         @a = AnnotationCategory.all.size
         @assignment = Assignment.make
         AnnotationCategory.add_by_row(@row, @assignment)
@@ -38,23 +38,23 @@ class AnnotationCategoryTest < ActiveSupport::TestCase
 
       # an annotation category has been created.
       # the number of annotation category should be different
-      should "update the annotation" do
+      should 'update the annotation' do
         assert_not_equal(@a, AnnotationCategory.all.size)
       end
     end
 
-    context "when the annotation text of the annotation categorie already exists" do
+    context 'when the annotation text of the annotation categorie already exists' do
       setup do
         @row = []
-        @row.push("annotation category name 3")
-        @row.push("annotation text 3 1")
-        @row.push("annotation text 3 2")
+        @row.push('annotation category name 3')
+        @row.push('annotation text 3 1')
+        @row.push('annotation text 3 2')
         @a = AnnotationText.all.size
         @assignment = Assignment.make
         AnnotationCategory.add_by_row(@row, @assignment)
       end
 
-      should "update the numeber of annotation texts" do
+      should 'update the numeber of annotation texts' do
         assert_not_equal(@a, AnnotationText.all.size)
       end
     end

@@ -15,7 +15,7 @@ class User < ActiveRecord::Base
   has_many :memberships
   has_many :groupings, :through => :memberships
   has_many :notes, :as => :noteable, :dependent => :destroy
-  has_many :accepted_memberships, :class_name => "Membership", :conditions => {:membership_status => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]}
+  has_many :accepted_memberships, :class_name => 'Membership', :conditions => {:membership_status => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]}
 
   validates_presence_of     :user_name, :last_name, :first_name
   validates_uniqueness_of   :user_name
@@ -49,7 +49,11 @@ class User < ActiveRecord::Base
     # Right now, this is \n and \0 only, since username and password
     # are delimited by \n and C programs use \0 to terminate strings
     not_allowed_regexp = Regexp.new(/[\n\0]+/)
-    if !(not_allowed_regexp.match(login) || not_allowed_regexp.match(password))
+    if not_allowed_regexp.match(login) || not_allowed_regexp.match(password)
+      m_logger.log("User '#{login}' failed to log in. Username/password contained " +
+                       'illegal characters', MarkusLogger::ERROR)
+      AUTHENTICATE_BAD_CHAR
+    else
       # Open a pipe and write to stdin of the program specified by config VALIDATE_FILE.
       # We could read something from the programs stdout, but there is no need
       # for that at the moment (you would do it by e.g. pipe.readlines)
@@ -64,7 +68,7 @@ class User < ActiveRecord::Base
       #  1 means no such user
       #  2 means bad password
       #  3 is used for other error exits
-      pipe = IO.popen( MarkusConfigurator.markus_config_validate_file, "w+" )
+      pipe = IO.popen(MarkusConfigurator.markus_config_validate_file, 'w+')
       pipe.puts("#{login}\n#{password}") # write to stdin of markus_config_validate
       pipe.close
       m_logger = MarkusLogger.instance
@@ -82,10 +86,6 @@ class User < ActiveRecord::Base
           m_logger.log("User '#{login}' failed to log in.", MarkusLogger::ERROR)
           return AUTHENTICATE_ERROR
       end
-    else
-      m_logger.log("User '#{login}' failed to log in. Username/password contained " +
-                   "illegal characters", MarkusLogger::ERROR)
-      return AUTHENTICATE_BAD_CHAR
     end
   end
 
@@ -93,7 +93,8 @@ class User < ActiveRecord::Base
   #TODO: make these proper associations. They work fine for now but
   # they'll be slow in production
   def active_groupings
-    self.groupings.find(:all, :conditions => ["memberships.membership_status != :u", { :u => StudentMembership::STATUSES[:rejected]}])
+    self.groupings.all(:conditions => ['memberships.membership_status != :u',
+                                       { :u => StudentMembership::STATUSES[:rejected]}])
   end
 
   # Helper methods -----------------------------------------------------
@@ -117,7 +118,7 @@ class User < ActiveRecord::Base
     if grouping.nil?
       return nil
     end
-    return grouping.current_submission_used
+    grouping.current_submission_used
   end
 
   # Classlist parsing --------------------------------------------------------
@@ -135,7 +136,7 @@ class User < ActiveRecord::Base
          csv << user_array
        end
      end
-     return file_out
+     file_out
   end
 
   def self.upload_user_list(user_class, user_list, encoding)
@@ -160,7 +161,7 @@ class User < ActiveRecord::Base
                                           {:user_name => row[0]})
         else
           if User.add_user(user_class, row).nil?
-            result[:invalid_lines] << row.join(",")
+            result[:invalid_lines] << row.join(',')
           else
             num_update += 1
             processed_users.push(row[0])
@@ -169,7 +170,7 @@ class User < ActiveRecord::Base
       end # end prase
     end
     result[:upload_notice] = "#{num_update} user(s) added/updated."
-    return result
+    result
   end
 
   def self.add_user(user_class, row)
@@ -183,10 +184,10 @@ class User < ActiveRecord::Base
       # append them to the hash that is returned by User.get_default_ta/student_attrs
       # remove the section if the user has one
       if key == :section_name
-        if !val.nil?
+        if val
           # check if the section already exist
           section = Section.find_or_create_by_name(val)
-          user_attributes["section_id"] = section.id
+          user_attributes['section_id'] = section.id
         end
       else
         user_attributes[key] = val
@@ -197,11 +198,11 @@ class User < ActiveRecord::Base
     current_user = user_class.find_or_create_by_user_name(user_attributes[:user_name])
     current_user.attributes = user_attributes
 
-    if !current_user.save
+    unless current_user.save
       return nil
     end
 
-    return current_user
+    current_user
   end
 
   # Convenience method which returns a configuration Hash for the
@@ -209,8 +210,8 @@ class User < ActiveRecord::Base
   def self.repo_config
     # create config
     conf = Hash.new
-    conf["IS_REPOSITORY_ADMIN"] = MarkusConfigurator.markus_config_repository_admin?
-    conf["REPOSITORY_PERMISSION_FILE"] = MarkusConfigurator.markus_config_repository_permission_file
+    conf['IS_REPOSITORY_ADMIN'] = MarkusConfigurator.markus_config_repository_admin?
+    conf['REPOSITORY_PERMISSION_FILE'] = MarkusConfigurator.markus_config_repository_permission_file
     return conf
   end
 
@@ -230,9 +231,9 @@ class User < ActiveRecord::Base
       md5.update(key)
       # base64 encode md5 hash
       self.api_key = Base64.encode64(md5.to_s).strip
-      return self.save
+      self.save
     else
-      return true
+      true
     end
   end
 
@@ -244,7 +245,7 @@ class User < ActiveRecord::Base
     md5.update(key)
     # base64 encode md5 hash
     self.api_key = Base64.encode64(md5.to_s).strip
-    return self.save
+    self.save
   end
 
   private
@@ -254,19 +255,19 @@ class User < ActiveRecord::Base
     digest = Digest::SHA2.new(bitlen=512)
     # generate a unique token
     unique_seed = ActiveSupport::SecureRandom.hex(20)
-    return digest.update("#{unique_seed} SECRET! #{Time.zone.now.to_f}").to_s
+    digest.update("#{unique_seed} SECRET! #{Time.zone.now.to_f}").to_s
   end
 
   # strip input string
   def strip_name
-    if !self.user_name.nil?
-      self.user_name.strip!
+    if self.user_name
+      self.user_name = self.user_name.strip
     end
-    if !self.last_name.nil?
-      self.last_name.strip!
+    if self.last_name
+      self.last_name = self.last_name.strip
     end
-    if !self.first_name.nil?
-      self.first_name.strip!
+    if self.first_name
+      self.first_name = self.first_name.strip
     end
   end
 

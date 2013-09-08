@@ -31,13 +31,5 @@
   <p>&nbsp;</p>
 </div>
 <div id="about_close">
-  <a class="button" href="#" onclick="about_modal.close();">
-    <%= I18n.t(:close) %>
-  </a>
+  <%= button_to_function I18n.t(:close), 'dialog_modal.close();' %>
 </div>
-
-<script>
-//<![CDATA[
-about_modal.open();
-//]]>
-</script>

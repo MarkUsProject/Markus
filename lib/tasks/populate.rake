@@ -1,5 +1,5 @@
 namespace :markus do
-  
+
   desc "Print MarkUs version"
   task :version do
     VERSION_FILE=File.expand_path(File.join(__FILE__, '..', '..', '..', 'app', 'MARKUS_VERSION'))
@@ -15,7 +15,7 @@ namespace :markus do
     end
     puts "MarkUs version: #{version_info["version"]}.#{version_info["patch_level"]}"
   end
-  
+
   desc "Create a single Instructor"
   task(:instructor => :environment) do
     user_name = ENV['user_name']
@@ -36,12 +36,12 @@ namespace :markus do
       puts "Instructor #{user_name} successfully created"
     end
   end
-  
+
   desc "Add more student users to the database"
   # this task depends on :environment and :seed
   task(:add_students => [:environment, :"db:seed"]) do
     puts "Populate database with some additional students"
-    STUDENT_CSV = File.expand_path(File.join(__FILE__, '..', '..', '..', 'test', 'classlist-csvs', 'new_students.csv'))
+    STUDENT_CSV = File.expand_path(File.join(__FILE__, '..', '..', '..', 'test', 'fixtures', 'classlist-csvs', 'new_students.csv'))
     if File.readable?(STUDENT_CSV)
       csv_students = File.new(STUDENT_CSV)
       User.upload_user_list(Student, csv_students.read, nil)
@@ -49,7 +49,7 @@ namespace :markus do
       $stderr.puts "File not found or not readable: #{STUDENT_CSV}"
     end
   end
-  
+
   desc "Create a setup for usability testing."
   # this task depends on :environment and :seed
   task(:usability_test_setup => [:environment, :"db:seed"]) do
@@ -71,7 +71,7 @@ namespace :markus do
     a1.save
     req_file1.save
     req_file2.save
-    
+
     # modify settings for A2
     a2 = Assignment.find_by_short_identifier("A2")
     a2.due_date = 2.week.from_now # due date is 2 weeks from now
@@ -96,7 +96,7 @@ namespace :markus do
     req_file1.save
     req_file2.save
     req_file3.save
-    
+
     # Create a third assignment, for which the instructor has formed groups
     groups_csv_string = "Saturn,ignored_repo,c9magnar,c6scriab,g9merika\n
 Mars,irgnored_repo,c9puccin,c7stanfo,g5dindyv\n

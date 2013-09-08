@@ -32,42 +32,42 @@ class Result < ActiveRecord::Base
   #returns the sum of the marks not including bonuses/deductions
   def get_subtotal
     total = 0.0
-    self.marks.find(:all, :include => [:markable]).each do |m|
+    self.marks.all(:include => [:markable]).each do |m|
       total = total + m.get_mark
     end
-    return total
+    total
   end
 
   #returns the sum of all the POSITIVE extra marks
   def get_positive_extra_points
-    return extra_marks.positive.points.sum('extra_mark')
+    extra_marks.positive.points.sum('extra_mark')
   end
 
   # Returns the sum of all the negative bonus marks
   def get_negative_extra_points
-    return extra_marks.negative.points.sum('extra_mark')
+    extra_marks.negative.points.sum('extra_mark')
   end
 
   def get_total_extra_points
     return 0.0 if extra_marks.empty?
-    return get_positive_extra_points + get_negative_extra_points
+    get_positive_extra_points + get_negative_extra_points
   end
 
   def get_positive_extra_percentage
-    return extra_marks.positive.percentage.sum('extra_mark')
+    extra_marks.positive.percentage.sum('extra_mark')
   end
 
   def get_negative_extra_percentage
-    return extra_marks.negative.percentage.sum('extra_mark')
+    extra_marks.negative.percentage.sum('extra_mark')
   end
 
   def get_total_extra_percentage
     return 0.0 if extra_marks.empty?
-    return get_positive_extra_percentage + get_negative_extra_percentage
+    get_positive_extra_percentage + get_negative_extra_percentage
   end
 
   def get_total_extra_percentage_as_points
-    return (get_total_extra_percentage * submission.assignment.total_mark / 100)
+    get_total_extra_percentage * submission.assignment.total_mark / 100
   end
 
   # un-releases the result
@@ -77,7 +77,7 @@ class Result < ActiveRecord::Base
   end
 
   def mark_as_partial
-    return if self.released_to_students == true
+    return if self.released_to_students
     self.marking_state = Result::MARKING_STATES[:partial]
     self.save
   end
@@ -89,7 +89,7 @@ class Result < ActiveRecord::Base
     if marking_state != MARKING_STATES[:complete]
       self.released_to_students = false
     end
-    return true
+    true
   end
 
   def check_for_nil_marks
@@ -99,6 +99,6 @@ class Result < ActiveRecord::Base
       errors.add_to_base(I18n.t('common.criterion_incomplete_error'))
       return false
     end
-    return true
+    true
   end
 end

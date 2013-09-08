@@ -2,17 +2,6 @@
   <p>
     <a href='#' onclick='return false;' onmouseover='show_old_marks();' onmouseout='hide_old_marks();'><%= I18n.t("marker.marks.show_old_marks") %></a>
   </p>
-  <div id="old_summary_criteria_pane">
-
-    <%= render :partial => "results/common/#{@assignment.marking_scheme_type}_marks_summary_table",
-               :locals => {:mark_criteria => mark_criteria, :marks_map => old_marks_map} %>
-
-      <div class="summary_block" style="border:1px,solid;">
-        <span><strong><%= I18n.t("marker.marks.old_subtotal") %></strong></span>
-        <span id="old_subtotal_div"> <%= h(old_result.get_subtotal) %></span>
-        <span> /<%= h(assignment.total_mark) %>  </span>
-      </div>
-  </div>
 <% end %>
 
 <div id="summary_criteria_pane">
@@ -24,56 +13,105 @@
 
     <div class="summary_block">
       <span><strong><%= I18n.t("marker.marks.subtotal") %></strong></span>
-      <span id="current_subtotal_div"> <%= h(result.get_subtotal) %></span>
-      <span> /<%= h(assignment.total_mark) %>  </span>
+      <span id="current_subtotal_div"> <%= result.get_subtotal %></span>
+      <span> /<%= assignment.total_mark %>  </span>
     </div>
-</div>
 
     <div class="clear"></div><br/>
 
     <div id="extra_marks_pane" class="extra_marks_pane">
       <div class="bonus_deduction"><strong><%= I18n.t("marker.marks.bonus_deductions") %></strong></div>
-    <%= render :partial => 'results/marker/extra_marks_table',
-               :locals => {:extra_marks_points => extra_marks_points, :result_id => result.id} %>
+      <%= render :partial => 'results/marker/extra_marks_table',
+      :locals => {:extra_marks_points => extra_marks_points, :result_id => result.id} %>
     </div>
-      <div class="clear"></div>
-      <div class="summary_block">
+
+    <div class="clear"></div>
+    
+    <div class="summary_block">
       <b class="total_extra_points_label"><%= I18n.t("marker.marks.total_extra_marks").html_safe %></strong>
-      <span id="total_extra_points"><%= h(result.get_total_extra_points) %></span><br/>
-      </div>
-      <div class="clear"></div>
+        <span id="total_extra_points"><%= result.get_total_extra_points %></span><br/></b>
+    </div>
+    
+    <div class="clear"></div>
 
+    <div id="extra_percentage_pane" class="extra_percentage_pane">
+        <%= render :partial => 'results/marker/extra_percentage_table',
+        :locals => {:extra_marks_percentage => extra_marks_percentage, :result_id => result.id} %>
+    </div>
+    
+    <div class="clear"></div>
+    
+    <div class="summary_block">
+        <strong><%= I18n.t("marker.marks.total_extra_percentages").html_safe %></strong>
+        <span id="total_extra_percentage"><%= result.get_total_extra_percentage %></span><br />
+        <strong><%= I18n.t("marker.marks.translated_to_points") %></strong>
+        <span id="total_extra_percentage_as_points"><%= result.get_total_extra_percentage_as_points %></span> <br />
+    </div>
+</div>
 
-  <div id="extra_percentage_pane" class="extra_percentage_pane">
-    <%= render :partial => 'results/marker/extra_percentage_table',
-               :locals => {:extra_marks_percentage => extra_marks_percentage, :result_id => result.id} %>
-  </div>
-  <div class="clear"></div>
-  <div class="summary_block">
-      <strong><%= I18n.t("marker.marks.total_extra_percentages").html_safe %></strong>
-      <span id="total_extra_percentage"><%= h(result.get_total_extra_percentage) %></span><br />
-      <strong><%= I18n.t("marker.marks.translated_to_points") %></strong>
-      <span id="total_extra_percentage_as_points"><%= h(result.get_total_extra_percentage_as_points)%></span> <br />
-      </div>
+<% if old_result %>
+  <div id="old_summary_criteria_pane">
+
+    <%= render :partial => "results/common/#{@assignment.marking_scheme_type}_marks_summary_table",
+    :locals => {:mark_criteria => mark_criteria, :marks_map => old_marks_map} %>
+
+    <div class="summary_block">
+      <span><strong><%= I18n.t("marker.marks.old_subtotal") %></strong></span>
+      <span id="old_subtotal_div"> <%= old_result.get_subtotal %></span>
+      <span> /<%= assignment.total_mark %>  </span>
+    </div>
+
+    <div class="clear"></div><br/>
+
+    <div id="extra_marks_pane" class="extra_marks_pane">
+      <div class="bonus_deduction"><strong><%= I18n.t("marker.marks.bonus_deductions") %></strong></div>
+      <%= render :partial => 'results/student/extra_marks_table',
+      :locals => {:extra_marks_points => old_result.extra_marks.points, :result_id => old_result.id} %>
+    </div>
 
     <div class="clear"></div>
 
-    <% if old_result %>
-      <div class="mark_total">
-        <span class="final_mark">
-          <span id="old_total_mark_div"> <%= h(old_result.total_mark) %>   </span>
-          <span> / <%= h(assignment.total_mark) %>  </span>
-        </span>
-
-        <span><%= I18n.t("marker.marks.previous_mark").html_safe  %></span>
-      </div>
-    <% end %>
-
-    <div class="mark_total">
-      <span class="final_mark">
-        <span id="current_total_mark_div"> <%= h(result.total_mark) %>   </span>
-        <span> / <%= h(assignment.total_mark) %>  </span>
-      </span>
-
-      <span><%= I18n.t("marker.marks.final_mark").html_safe  %></span>
+    <div class="summary_block">
+      <b class="total_extra_points_label"><%= I18n.t("marker.marks.total_extra_marks").html_safe %></b>
+        <span id="total_extra_points"><%= old_result.get_total_extra_points %></span><br/></b>
     </div>
+
+    <div class="clear"></div>
+
+    <div id="extra_percentage_pane" class="extra_percentage_pane">
+        <%= render :partial => 'results/student/extra_percentage_table',
+        :locals => {:extra_marks_percentage => old_result.extra_marks.percentage, :result_id => old_result.id} %>
+    </div>
+    
+    <div class="clear"></div>
+    
+    <div class="summary_block">
+        <strong><%= I18n.t("marker.marks.total_extra_percentages").html_safe %></strong>
+        <span id="total_extra_percentage"><%= old_result.get_total_extra_percentage %></span><br />
+        <strong><%= I18n.t("marker.marks.translated_to_points") %></strong>
+        <span id="total_extra_percentage_as_points"><%= old_result.get_total_extra_percentage_as_points %></span> <br />
+    </div>
+  </div>
+<% end %>
+
+<div class="clear"></div>
+
+<% if old_result %>
+<div class="mark_total">
+  <span class="final_mark">
+    <span id="old_total_mark_div"> <%= old_result.total_mark %>   </span>
+    <span> / <%= assignment.total_mark %>  </span>
+  </span>
+
+  <span><%= I18n.t("marker.marks.previous_mark").html_safe  %></span>
+</div>
+<% end %>
+
+<div class="mark_total">
+  <span class="final_mark">
+    <span id="current_total_mark_div"> <%= result.total_mark %>   </span>
+    <span> / <%= assignment.total_mark %>  </span>
+  </span>
+
+  <span><%= I18n.t("marker.marks.final_mark").html_safe  %></span>
+</div>

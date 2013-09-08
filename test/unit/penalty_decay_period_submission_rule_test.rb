@@ -6,13 +6,13 @@ require 'machinist'
 
 class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
 
-  should "be able to create PenaltyDecayPeriodSubmissionRule" do
+  should 'be able to create PenaltyDecayPeriodSubmissionRule' do
     rule = PenaltyDecayPeriodSubmissionRule.new
     rule.assignment = Assignment.make
     assert rule.save
   end
 
-  context "A section with penalty_decay_period_submission rules." do
+  context 'A section with penalty_decay_period_submission rules.' do
 
     setup do
       @group = Group.make
@@ -41,16 +41,16 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
       destroy_repos
     end
 
-    should "be able to calculate collection time" do
+    should 'be able to calculate collection time' do
       assert Time.now < @assignment.submission_rule.calculate_collection_time
     end
 
-    should "be able to calculate collection time for a grouping" do
+    should 'be able to calculate collection time for a grouping' do
       assert Time.now <  @assignment.due_date
-      assert_equal @assignment.due_date, @rule.calculate_grouping_collection_time(@membership.grouping)
+      assert_equal @assignment.due_date.to_a, @rule.calculate_grouping_collection_time(@membership.grouping).to_a
     end
 
-    should "not apply decay period deductions for on-time submissions" do
+    should 'not apply decay period deductions for on-time submissions' do
       # Student hands in some files on time.
       pretend_now_is(Time.now + 1.days) do
         assert Time.now < @assignment.due_date
@@ -58,7 +58,7 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
         assert Time.now < @assignment.submission_rule.calculate_grouping_collection_time(@membership.grouping)
 
         @group.access_repo do |repo|
-          txn = repo.get_transaction("test")
+          txn = repo.get_transaction('test')
           txn = add_file_helper(txn, 'TestFile.java', 'Some contents for TestFile.java')
           txn = add_file_helper(txn, 'Test.java', 'Some contents for Test.java')
           txn = add_file_helper(txn, 'Driver.java', 'Some contents for Driver.java')
@@ -72,25 +72,25 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
         submission = @assignment.submission_rule.apply_submission_rule(submission)
 
         # Assert that this submission did not get a penalty
-        result = submission.get_original_result
+        result = submission.get_latest_result
         assert_not_nil result
         assert result.extra_marks.empty?
         assert_equal 0, result.get_total_extra_percentage
 
         # We should have collected all files in the repository.
-        assert_not_nil submission.submission_files.find_by_filename("TestFile.java")
-        assert_not_nil submission.submission_files.find_by_filename("Test.java")
-        assert_not_nil submission.submission_files.find_by_filename("Driver.java")
+        assert_not_nil submission.submission_files.find_by_filename('TestFile.java')
+        assert_not_nil submission.submission_files.find_by_filename('Test.java')
+        assert_not_nil submission.submission_files.find_by_filename('Driver.java')
       end
     end
 
-    should "add a 10% penalty to the submission result" do
+    should 'add a 10% penalty to the submission result' do
       # The Student submits some files before the due date...
       pretend_now_is(Time.now + 1.days) do
         assert Time.now < @assignment.due_date
         assert Time.now < @assignment.submission_rule.calculate_collection_time
         @group.access_repo do |repo|
-          txn = repo.get_transaction("test")
+          txn = repo.get_transaction('test')
           txn = add_file_helper(txn, 'TestFile.java', 'Some contents for TestFile.java')
           txn = add_file_helper(txn, 'Test.java', 'Some contents for Test.java')
           txn = add_file_helper(txn, 'Driver.java', 'Some contents for Driver.java')
@@ -103,8 +103,8 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
         assert Time.now > @assignment.due_date
         assert Time.now < @assignment.submission_rule.calculate_collection_time
         @group.access_repo do |repo|
-          txn = repo.get_transaction("test")
-          txn = add_file_helper(txn, "OvertimeFile.java", "Some overtime contents")
+          txn = repo.get_transaction('test')
+          txn = add_file_helper(txn, 'OvertimeFile.java', 'Some overtime contents')
           repo.commit(txn)
         end
       end
@@ -114,8 +114,8 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
         assert Time.now > @assignment.due_date
         assert Time.now > @assignment.submission_rule.calculate_collection_time
         @group.access_repo do |repo|
-          txn = repo.get_transaction("test")
-          txn = add_file_helper(txn, "NotIncluded.java", "Should not be included in grading")
+          txn = repo.get_transaction('test')
+          txn = add_file_helper(txn, 'NotIncluded.java', 'Should not be included in grading')
           repo.commit(txn)
         end
       end
@@ -126,7 +126,7 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
         submission = @assignment.submission_rule.apply_submission_rule(submission)
 
         # Assert that this submission got a penalty
-        result = submission.get_original_result
+        result = submission.get_latest_result
         assert_not_nil result
         # We expect only a single extra mark is attached
         assert_equal -10, result.get_total_extra_percentage
@@ -137,22 +137,22 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
         assert_equal ExtraMark::UNITS[:percentage], penalty.unit
 
         # We should have all files except NotIncluded.java in the repository.
-        assert_not_nil submission.submission_files.find_by_filename("TestFile.java")
-        assert_not_nil submission.submission_files.find_by_filename("Test.java")
-        assert_not_nil submission.submission_files.find_by_filename("Driver.java")
-        assert_not_nil submission.submission_files.find_by_filename("OvertimeFile.java")
-        assert_nil submission.submission_files.find_by_filename("NotIncluded.java")
-        assert_not_nil submission.get_original_result
+        assert_not_nil submission.submission_files.find_by_filename('TestFile.java')
+        assert_not_nil submission.submission_files.find_by_filename('Test.java')
+        assert_not_nil submission.submission_files.find_by_filename('Driver.java')
+        assert_not_nil submission.submission_files.find_by_filename('OvertimeFile.java')
+        assert_nil submission.submission_files.find_by_filename('NotIncluded.java')
+        assert_not_nil submission.get_latest_result
       end
     end
 
-    should "add 30% penalty to submission" do
+    should 'add 30% penalty to submission' do
       # The Student submits some files before the due date...
       pretend_now_is(Time.now + 1.days) do
         assert Time.now < @assignment.due_date
         assert Time.now < @assignment.submission_rule.calculate_collection_time
         @group.access_repo do |repo|
-          txn = repo.get_transaction("test")
+          txn = repo.get_transaction('test')
           txn = add_file_helper(txn, 'TestFile.java', 'Some contents for TestFile.java')
           txn = add_file_helper(txn, 'Test.java', 'Some contents for Test.java')
           txn = add_file_helper(txn, 'Driver.java', 'Some contents for Driver.java')
@@ -165,8 +165,8 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
         assert Time.now > @assignment.due_date
         assert Time.now < @assignment.submission_rule.calculate_collection_time
         @group.access_repo do |repo|
-          txn = repo.get_transaction("test")
-          txn = add_file_helper(txn, "OvertimeFile1.java", "Some overtime contents")
+          txn = repo.get_transaction('test')
+          txn = add_file_helper(txn, 'OvertimeFile1.java', 'Some overtime contents')
           repo.commit(txn)
         end
       end
@@ -176,8 +176,8 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
         assert Time.now > @assignment.due_date
         assert Time.now < @assignment.submission_rule.calculate_collection_time
         @group.access_repo do |repo|
-          txn = repo.get_transaction("test")
-          txn = add_file_helper(txn, "OvertimeFile2.java", "Some overtime contents")
+          txn = repo.get_transaction('test')
+          txn = add_file_helper(txn, 'OvertimeFile2.java', 'Some overtime contents')
           repo.commit(txn)
         end
       end
@@ -187,8 +187,8 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
         assert Time.now > @assignment.due_date
         assert Time.now > @assignment.submission_rule.calculate_collection_time
         @group.access_repo do |repo|
-          txn = repo.get_transaction("test")
-          txn = add_file_helper(txn, "NotIncluded.java", "Should not be included in grading")
+          txn = repo.get_transaction('test')
+          txn = add_file_helper(txn, 'NotIncluded.java', 'Should not be included in grading')
           repo.commit(txn)
         end
       end
@@ -199,7 +199,7 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
         submission = @assignment.submission_rule.apply_submission_rule(submission)
 
         # Assert that this submission got a penalty
-        result = submission.get_original_result
+        result = submission.get_latest_result
         assert_not_nil result
         # We expect only a single extra mark is attached
         assert_equal -30, result.get_total_extra_percentage
@@ -211,13 +211,13 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
 
 
         # We should have all files except NotIncluded.java in the repository.
-        assert_not_nil submission.submission_files.find_by_filename("TestFile.java")
-        assert_not_nil submission.submission_files.find_by_filename("Test.java")
-        assert_not_nil submission.submission_files.find_by_filename("Driver.java")
-        assert_not_nil submission.submission_files.find_by_filename("OvertimeFile1.java")
-        assert_not_nil submission.submission_files.find_by_filename("OvertimeFile2.java")
-        assert_nil submission.submission_files.find_by_filename("NotIncluded.java")
-        assert_not_nil submission.get_original_result
+        assert_not_nil submission.submission_files.find_by_filename('TestFile.java')
+        assert_not_nil submission.submission_files.find_by_filename('Test.java')
+        assert_not_nil submission.submission_files.find_by_filename('Driver.java')
+        assert_not_nil submission.submission_files.find_by_filename('OvertimeFile1.java')
+        assert_not_nil submission.submission_files.find_by_filename('OvertimeFile2.java')
+        assert_nil submission.submission_files.find_by_filename('NotIncluded.java')
+        assert_not_nil submission.get_latest_result
       end
     end
 

@@ -30,14 +30,14 @@ module GradeEntryFormsPaginationHelper
     # in the difference, the hash wasn't complete, and we should bail out.
     if (AP_REQUIRED_KEYS - hash.keys).size > 0
      # Fail loud, fail proud
-      raise "handle_paginate_event received an incomplete parameter hash"
+      raise 'handle_paginate_event received an incomplete parameter hash'
     end
     # Ok, we have everything we need, let's get to work
     filter = params[:filter]
     desc = params[:desc]
     sorts = hash[:sorts]
     filters = hash[:filters]
-    if(!filters.include?(filter))
+    unless filters.include?(filter)
       raise "Could not find filter #{filter}"
     end
     items = get_filtered_items(hash, filter, params[:sort_by], desc)
@@ -57,19 +57,17 @@ module GradeEntryFormsPaginationHelper
     params[:filters].each do |filter_key, filter|
       result[filter[:display]] = filter_key
     end
-    return result
+    result
   end
 
   def get_filtered_items(hash, filter, sort_by, desc)
-    if !desc.blank?
-      order = "DESC"
+    if desc.present?
+      order = 'DESC'
     else
-      order = "ASC"
+      order = 'ASC'
     end
 
-    items = hash[:filters][filter][:proc].call(sort_by, order, current_user)
-
-    return items
+    hash[:filters][filter][:proc].call(sort_by, order, current_user)
   end
 
 end

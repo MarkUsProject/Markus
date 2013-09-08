@@ -137,7 +137,9 @@
 </div>
 
 <% end %>
-<% elsif @current_user.ta? and controller.controller_name == 'assignments' %>
+<% elsif @current_user.ta? and (controller.controller_name == 'assignments' ||
+                                controller.controller_name == 'submissions' ||
+                                controller.controller_name == 'results') %>
 <div id="sub_menu">
   <ul id="root" class="level1 horizontal">
    <li class="level1 visible_dropdown">
@@ -174,7 +176,7 @@
      <% elsif !@assignment.nil? %>
        <% # Display the assignment's short identifier
        %>
-       <span id="choose_an_assignment"><%= h(@assignment.short_identifier) %></span>
+       <span id="choose_an_assignment"><%= @assignment.short_identifier %></span>
     <% elsif !@grade_entry_form.nil? %>
 
         <% # Display the grade entry form's short identifier

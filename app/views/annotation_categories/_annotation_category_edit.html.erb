@@ -1,24 +1,5 @@
 <div id="current_annotation_category" class="annotation_category_edit">
-<% if !flash[:error].nil? %>
-  <div class="error">
-    <p>
-      <%= t('annotations.update.annotation_category_error') %>
-
-    </p>
-    <ul>
-      <%= flash[:error].each_line do |error_message| %>
-        <li><%= error_message %></li>
-      <% end %>
-    </ul>
-  </div>
-<% end %>
-
-<% if !flash[:success].nil? %>
-  <div class="success">
-    <%= flash[:success] %>
-  </div>
-<% end %>
-
+ <%= render 'shared/flash_message' %>
  <div class="float_right">
    <%= button_to t("annotations.delete.delete_message"),
                 delete_annotation_category_assignment_annotation_category_path(

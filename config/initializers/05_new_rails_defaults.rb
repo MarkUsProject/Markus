@@ -1,8 +1,9 @@
 # These settings change the behavior of Rails 2 apps and will be defaults
 # for Rails 3. You can remove this initializer when Rails 3 is released.
 
-# Include Active Record class name as root for JSON serialized output.
-ActiveRecord::Base.include_root_in_json = true
+# As of Rails 3.1.0, including the Active Record class name as root for JSON
+# serialized output is disabled by default
+ActiveRecord::Base.include_root_in_json = false
 
 # Store the full class name (including module namespace) in STI type column.
 ActiveRecord::Base.store_full_sti_class = true

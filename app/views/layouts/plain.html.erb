@@ -4,7 +4,7 @@
 
 <head>	
   <%= render :partial => 'layouts/head' %>
-  <title>Test Result: <%= h(@test_result.filename) %></title>
+  <title>Test Result: <%= @test_result.filename %></title>
   <%= stylesheet_link_tag 'main.css', :media => 'all' %>
   <%= yield :head %>
 </head>

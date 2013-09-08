@@ -1,9 +1,5 @@
-<%= javascript_include_tag 'application.js',
-    'prototype.js',
-    'rails.js',
-    'livepipe/livepipe.js',
-    'livepipe/window.js',
-    'livepipe/tabs.js' %>
+<%= javascript_include_tag 'jquery.js',
+    'rails.js' %>
 <div class="login">
   <div class="login-greeting"><%= I18n.t(:welcome_to) %></div>
 
@@ -13,9 +9,7 @@
 
   <div class="login-course"><%= MarkusConfigurator.markus_config_course_name %></div>
 
-  <% if flash[:login_notice] -%>
-    <div class="error"><%= flash[:login_notice] %></div>
-  <% end -%>
+  <%= render 'shared/flash_message' %>
   <div class="login-content">
     <!-- login form -->
     <%= form_tag({ :action => 'login', :id => nil }, :id => 'login_form') do %>
@@ -23,7 +17,7 @@
       <%= label_tag 'user_login', I18n.t(:login) + ':' -%>
       <%= text_field_tag 'user_login', nil, :tabindex => 10 %>
       <br />
-      
+
       <%= label_tag 'user_password', I18n.t(:password) + ':' %>
       <%= password_field_tag 'user_password', nil, :tabindex => 20 %>
       <br />
@@ -38,29 +32,31 @@
 
 <div id="ie_warning_dialog" style="display:none;">
   <%= I18n.t(:ie_warning)%><br /><br />
-  <a href=\"http://www.mozilla.org/en-US/firefox/\">FireFox</a><br />
-  <a href=\"https://www.google.com/chrome/\">Google Chrome</a><br /><br />
-  <%= button_to_function "Ok", 'ie_warning_modal.close()', :tabindex => 100 %>
-  <div>&nbsp;</div>
+  <a href="http://www.mozilla.org/en-US/firefox/">FireFox</a><br />
+  <a href="https://www.google.com/chrome/">Google Chrome</a><br />
+  <br />
 </div>
 
 <script type="text/javascript">
 //<![CDATA[
   <% if @first_visit %>
     <%# Alert Internet Explorer users of incompatibility %>
-      if (Prototype.Browser.IE) {
-        var ie_warning_modal = null;
-
-        ie_warning_modal = new Control.Modal(
-          $('ie_warning_dialog'),
-          { overlayOpacity: 0.75, className: 'ie_warning_modal', fade: false }
-        );
-
-        ie_warning_modal.open();
+      if (jQuery.browser.name == 'msie') {
+        jQuery('#ie_warning_dialog').dialog({
+          modal: true,
+          width: 400,
+          buttons: {
+            Ok: function() {
+              $(this).dialog('close');
+            }
+          }
+        });
       }
   <% end %>
 
   <%# Try to put focus on the login text field on load %>
-  try { document.getElementById('user_login').focus(); } catch(e) { }
+  jQuery(document).ready(function(){
+    jQuery("#user_login").focus();
+  });
 //]]>
 </script>

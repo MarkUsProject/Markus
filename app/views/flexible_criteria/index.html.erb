@@ -2,57 +2,15 @@
   <%= stylesheet_link_tag("livepipe/tabs") %>
 <% end %>
 <% # UI LIBRARIES %>
-<%= javascript_include_tag "livepipe/livepipe.js",
-	"livepipe/window.js",
-	"livepipe/tabs.js",
-  "effects.js",
-  "dragdrop.js" %>
-
-<script type="text/javascript">
-//<![CDATA[
-
-  var modalUpload = null;
-  var modalDownload = null;
-
-  function upload_criteria(){
-    modalUpload.open();
-    return false;
-  }
-
-  function download_criteria(){
-    modalDownload.open();
-    return false;
-  }
-
-
-  document.observe("dom:loaded", function(){
-
-    modalUpload = new Control.Modal($('upload_dialog'),
-    {
-      overlayOpacity: 0.75,
-      className: 'modalUpload',
-      fade: false
-    });
-
-    modalDownload = new Control.Modal($('download_dialog'),
-    {
-      overlayOpacity: 0.75,
-      className: 'modalDownload',
-      fade: false
-    });
-
-  });
-//]]>
-</script>
-
-<% if @assignment.past_due_date?%>
-  <div class="notice">
-    <%=t('past_due_date_warning')%>
-  </div>
-<% end %>
+<%= javascript_include_tag 'livepipe/livepipe.js',
+                           'livepipe/window.js',
+                           'livepipe/tabs.js',
+                           'effects.js',
+                           'dragdrop.js',
+                           'FlexibleCriteria/index' %>
 
 <div id="title_bar">
-  <h1><%= I18n.t("flexible_criteria.criteria_management", :identifier => h(@assignment.short_identifier)) %>
+  <h1><%= I18n.t("flexible_criteria.criteria_management", :identifier => @assignment.short_identifier) %>
   </h1>
   <div class="headingButtons">
     <%= link_to_function t("add_criterion"), %| if($('new_flexible_criterion') != null) {
@@ -62,28 +20,14 @@
         #{remote_function :url => {:action => "new", :id => @assignment.id}, :method => 'get'}
         }|%>
     <span class="menu_bar" >|</span>
-      <%= button_to_function I18n.t("upload"), "upload_criteria();"%>
+      <%= button_to_function I18n.t('upload'), 'modal_upload.open();' %>
     <span class="menu_bar" >|</span>
-      <%= button_to_function I18n.t("download"), "download_criteria();"%>
+      <%= button_to_function I18n.t('download'), 'modal_download.open();' %>
   </div>
 </div><!-- Title bar-->
 
 <div class="wrapLeft">
-  <% if flash[:upload_notice] %>
-    <div class="success">
-      <p><%= h(flash[:upload_notice]) %></p>
-    </div>
-  <% end -%>
-  <% if flash[:error] && !flash[:invalid_lines].nil? && !flash[:invalid_lines].empty? %>
-    <div class="error">
-      <p><%= h(flash[:error]) %></p>
-      <ul>
-        <% flash[:invalid_lines].each do |message| %>
-          <li><%=(message)%></li>
-		<% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render 'shared/flash_message' %>
 
   <p id="new_criterion_error" class="warning" style="display: none;"></p>
 
@@ -113,7 +57,7 @@
   <%= t('csv_special_characters_html') %>
   <p>
     <%= f.submit t(:upload), :disable_with => t(:uploading_please_wait) %>
-    <input type="reset" value="<%= t(:cancel) %>" onclick="modalUpload.close();">
+    <input type="reset" value="<%= t(:cancel) %>" onclick="modal_upload.close();">
   </p>
   <% end %>
 </div>
@@ -124,10 +68,11 @@
   <p><%= t('flexible_criteria.download.prompt') %></p>
 
   <ul>
-    <li><%= link_to t('flexible_criteria.download.link'), 
+    <li><%= link_to t('flexible_criteria.download.link'),
     {:controller=>"flexible_criteria", :action=>"download", :id=> @assignment.id}%></li>
   </ul>
 
-  <input type="reset" value="<%= t(:cancel) %>" onclick="modalDownload.close();">
+  <input type="reset" value="<%= t(:cancel) %>"
+         onclick="modal_download.close();" >
 </div>
 

@@ -65,7 +65,6 @@ en:
       format_of_assignment_file: "must be alphanumeric, '.', '-' or '_' only"
 
     # app/views/main/index.html.erb
-    firefox_warning:    "Some functionality might only work for Mozilla Firefox users"
     switch_role:         "Switch Role"
     admin_password:      "Admin Password"
     cannot_login_as_another_admin: "You cannot log in as another admin."
@@ -75,6 +74,7 @@ en:
     due:                       "due :"
     no_assignments:            "There are currently no assignments."
     class_average:             "Class Average: %{results_average}"
+    submissions_collected:     "%{count}/%{size} Submissions collected"
 
     # app/views/assignments/
     name: "Name"
@@ -93,6 +93,7 @@ en:
     create_new_assignment:      "Add Assignment"
     manage_course_work: "Manage Course Work"
     repository_folder:  "Repository Folder<span class='required_field'>*</span>"
+    incorrect_format:   "Incorrect format"
     marking_state:
       not_collected: "Not Collected"
       in_progress: "In Progress"
@@ -111,6 +112,11 @@ en:
       priority_given: "The submission has been given collection priority. It will be ready soon."
       errors:               "Errors"
       results_loss_warning: "Note: This will erase any marking and annotations already done.\n\nAre you sure you want to proceed?"
+      must_select_a_section: "You must select a section to collect the submissions of its groups."
+      could_not_find_section: "Could not find requested section."
+      could_not_collect_section: "Could not collect submissions for section %{section_name} and assignment %{assignment_identifier} - the section collection date has not been reached."
+      no_submission_for_section: "There isn't any submission to collect for section %{section_name}."
+      successfully_collected: "Successfully collected %{collected} submissions."
     assignment:
         assignment: "Assignment %{short_identifier}"
         required_fields: "Required Fields <span class='required_field'>*</span>"
@@ -219,9 +225,16 @@ en:
     invalid_grouping:   "(invalid)"
     validate:           "Validate"
     encoding:           "Encoding"
+    assignment_format:  "Download in %{file} format"
+    upload_assignment_format: "Upload in %{file} format"
+    select_csv_file:    "Select a CSV file of the following form: <code>%{code}</code>"
+    all_csv_file:       "All fields: "
 
     marks_released_notice:  "The marks have been released. You cannot change the grades."
+    commit_after_due_date: "This commit is after the due date."
     past_due_date_edit_warning:  "WARNING:  The due date you have selected is in the past."
+    past_due_date_edit_result_warning: "The %{href} of this group is after the due date."
+    last_commit: "last commit"
     release_marks: "Release Marks"
     unrelease_marks: "Unrelease Marks"
 
@@ -281,6 +294,7 @@ en:
         show_old_marks: "Show Old Mark Summary"
       annotation:
         from_line_to: "%{file_path}: Line %{line_start} to %{line_end}"
+        remark_flag: "(remark)"
         no_annotation_in_this_category: "There are no annotations in this category"
         new_annotation: "Create new annotation"
         annotation_category: "Annotation Category"
@@ -342,6 +356,7 @@ en:
       find_by_revision_number:    "Find by Revision Number"
       viewing_revision:           "Viewing Revision: #<span id=\"current_revision_number_display\">%{revision_number}</span>"
       current_path:         "Current Path:"
+      download_all_files:  "Download all files"
       root:                 "[root]"
       collect_and_grab:     "Collect and Grade This Revision"
       could_not_collect:    "Could not collect submission for group %{group_name} - the collection date has not been reached yet."
@@ -379,6 +394,10 @@ en:
       delete:               "Delete"
       can_begin_grading:    "Can begin grading"
       section:              "Section"
+      collect_work_for_section: "Collect work for section:"
+      download_groupings_files: "Download all submissions"
+      sections:             "Section:"
+      revision_history:     "%{num}: "
 
     grade_entry_forms:
       blank_field: "can't be blank"
@@ -393,8 +412,10 @@ en:
       column_out_of: "Out Of"
       add_column: "Add a column"
       remove_column: "Remove:"
+      toggle_column: "hide/show"
       properties: "Marks Spreadsheet Properties"
       required_fields: "Required Fields <span class='required_field'>*</span>"
+      show_total: "Show Total"
       create:
         success: "Successfully created new marks spreadsheet"
         title: "Add Marks Spreadsheet"
@@ -417,6 +438,7 @@ en:
       students:
         title: "Your Term Marks"
         no_results: "There are no marks available yet."
+        detailed_marks_message: "Detailed marks are available."
       csv:
         incomplete_header: "Incomplete grade entry item names or totals."
         incomplete_row: "Contains too little information."
@@ -625,6 +647,9 @@ en:
         external_submit_only: "MarkUs is only accepting external submits"
         invalid_file_name: "Invalid file name on submitted file"
         missing_file: "Could not download %{file_name}: %{message}.  File may be missing."
+        no_files_available: "No files available"
+        no_groupings_available: "No group available"
+        no_revision_available: "No revision available"
         expect_filter: "Expected a filter on select full"
         # DO NOT change 'file_name' and 'sanitized_filename' in the following message.
         # See app/views/submissions/_file_manager_boot.js.erb
@@ -839,6 +864,7 @@ en:
         after_collection_message: "The maximum number of penalty hours has passed for this assignment. Any changes will be recorded, but not graded."
         commit_after_collection_message: "The due date for this assignment, plus the maximum number of allowed penalty hours, has passed. Your changes have been recorded, but will not be included in the grading."
         overtime_message: "The due date for this assignment has passed and you are now in a penalty period. You can make changes to your submission, but will have %{potential_penalty}% deducted from the final mark on this assignment."
+        extramark_description: "Late submission (%{overtime_hours} hour(s)) resulted in automatic %{penalty_amount}% deduction"
         form_description: "Use Penalty Decay Formula"
         add_penalty_decay: "Add a Decay Period"
         alert: "You must select the Penalty Decay Submission Rule to add a decay period."
@@ -1046,6 +1072,7 @@ en:
       Select a criterion on the left to edit it.  Criteria names, descriptions and
       maximum values can be modified."
     past_due_date_warning: "Due date for this assignment is in the past."
+    past_due_date_notice: "Due date for this assignment is in the past for : "
 
     section:
       name: "Name"
@@ -1132,6 +1159,10 @@ en:
 
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:         "Grade Distribution"
+
+    #lib/validators/
+    date_validator:
+      invalid_date: "is not a valid date"
 
     #Test Framework
     automated_tests:

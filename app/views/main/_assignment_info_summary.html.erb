@@ -15,42 +15,42 @@
   <tr>
     <td><%= I18n.t(:assignment_average) %></td>
     <td>
-      <%= I18n.t(:percentage, :percentage => h(number_with_precision(assignment.results_average, :precision => 1) || '0')) %>
+      <%= I18n.t(:percentage, :percentage => number_with_precision(assignment.results_average, :precision => 1) || '0') %>
     </td>
   </tr>
   
   <tr>
   	<td><%= I18n.t(:assignment_median) %></td>
     <td>
-    	<%= I18n.t(:percentage, :percentage => h(number_with_precision(assignment.results_median, :precision => 1) || '0')) %>
+    	<%= I18n.t(:percentage, :percentage => number_with_precision(assignment.results_median, :precision => 1) || '0') %>
     </td>  	
   </tr>
 
   <tr>
     <td><%= I18n.t(:assignments_submitted) %></td>
     <td>
-      <%= h( "#{assignment.groups_submitted.size}/#{assignment.groupings.size}" ) %>
+      <%= "#{assignment.groups_submitted.size}/#{assignment.groupings.size}" %>
     </td>
   </tr>
 
   <tr>
     <td><%= I18n.t(:assignments_graded) %></td>
     <td>
-      <%= h( "#{assignment.graded_submissions.size}/#{assignment.groupings.size}" ) %>
+      <%= "#{assignment.graded_submissions.size}/#{assignment.groupings.size}" %>
     </td>
   </tr>
   
   <tr>
     <td><%= I18n.t(:assignments_failed) %></td>
     <td>
-      <%= h( "#{assignment.results_fails}" ) %>
+      <%= "#{assignment.results_fails}" %>
     </td>
   </tr>
   
   <tr>
     <td><%= I18n.t(:assignments_zeros) %></td>
     <td>
-      <%= h( "#{assignment.results_zeros}") %>
+      <%= "#{assignment.results_zeros}" %>
     </td>
   </tr>
 </table>

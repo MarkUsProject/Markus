@@ -1,43 +1,31 @@
-<%= javascript_include_tag "FilterTable/FilterTable"%>
-<%= javascript_include_tag "users_manager"%>
-<%= javascript_include_tag "effects.js" %>
+<%= javascript_include_tag 'FilterTable/FilterTable' %>
+<%= javascript_include_tag 'users_manager' %>
+<!-- TODO: see if it's called -->
+<%= javascript_include_tag 'effects.js' %>
+<%= javascript_include_tag 'Students/index' %>
 
-<%= render :partial => "boot.js.erb"%>
-<%= render :partial => "student_form_actions.js.erb"%>
+<!-- Get necessary data for loading the students table from the _boot.js.erb partial -->
+<script type="text/javascript">
+  <%= render :partial => 'boot.js.erb' %>
+</script>
 
 <script type="text/javascript">
-//<![CDATA[
-document.observe("dom:loaded", function() {
+  jQuery(document).ready(function() {
 
-  modalNotesGroup = new Control.Modal($('notes_dialog'),
-  {
-    overlayOpacity: 0.75,
-    className: 'modalNotesGroup',
-    fade:false
+    modalNotesGroup = new Control.Modal($('notes_dialog'), //jQuery('#notes_dialog').dialog(
+    {
+      overlayOpacity: 0.75,
+      className: 'modalNotesGroup',
+      fade:false
+    });
   });
-
-  modalUpload = new Control.Modal($('upload_dialog'),
-  {
-    overlayOpacity: 0.75,
-    className: 'modalUpload',
-    fade:false
-  });
-
-  modalDownload = new Control.Modal($('download_dialog'),
-  {
-    overlayOpacity: 0.75,
-    className: 'modalDownload',
-    fade:false
-  });
-});
-//]]>
 </script>
 
 <div id="title_bar"><h1><%= I18n.t("students.manage_students") %></h1>
   <div class="headingButtons">
     <%= link_to I18n.t(:add_new), new_student_path() %> |
-    <%= link_to I18n.t(:upload),'#', :onclick => 'modalUpload.open(); return false;' %> |
-    <%= link_to I18n.t(:download),'#', :onclick => 'modalDownload.open(); return false;' %>
+    <%= link_to I18n.t(:upload),'#', :onclick => 'modal_upload.open(); return false;' %> |
+    <%= link_to I18n.t(:download),'#', :onclick => 'modal_download.open(); return false;' %>
   </div>
 </div>
 
@@ -45,36 +33,21 @@ document.observe("dom:loaded", function() {
 
   <div class="wrapLeft">
     <%= form_tag bulk_modify_students_path(),
- 	    :before => "before_form_submit();",
-	    :complete => "after_form_submit();",
 	    :remote => true do %>
-
     <div id="ajax_error" class="error" style="display:none;"></div>
 
     <div id="list">
-      <% if flash[:upload_notice] -%>
-        <p class="notice"><%= h(flash[:upload_notice]) %></p>
-      <% end -%>
-
-      <% if flash[:success] -%>
-        <p class="success"><%= h(flash[:success]) %></p>
-      <% end -%>
+      <%= render 'shared/flash_message' %>
 
       <% # display lines in csv file that has not been successfully processed %>
-      <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? -%>
+      <% if flash[:error] && flash[:error].is_a?(Array) -%>
       <div class="errorExplanation" id="errorExplanation">
         <p>
           <%= I18n.t(:students_not_successfully_added_message_1)%>
 	      </p>
-        <ul>
-          <% for line in flash[:invalid_lines] -%>
-          <li><%= h(line) %></li>
-          <% end -%>
-        </ul>
         <p>
 	        <%= I18n.t(:students_not_successfully_added_message_2) %>
 	      </p>
-
         <ul>
           <li><%= I18n.t(:students_not_successfully_added_message_3) %></li>
           <li><%= I18n.t(:students_not_successfully_added_message_4) %></li>
@@ -156,7 +129,7 @@ document.observe("dom:loaded", function() {
       <br />
       <br />
       <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
-      <%= button_to I18n.t(:close), '#', :onclick => 'modalUpload.close(); return false;' %>
+      <%= button_to I18n.t(:close), '#', :onclick => 'modal_upload.close(); return false;' %>
     </form>
 </div>
 
@@ -164,11 +137,11 @@ document.observe("dom:loaded", function() {
   <h2><%= I18n.t("download") %></h2>
   <p><%= link_to I18n.t("students.download.download_csv_format"),
     {:controller => 'students', :action => 'download_student_list',
-    :format => "csv"}, :onclick => "modalDownload.close();"  %></p>
+    :format => "csv"}, :onclick => "modal_download.close();"  %></p>
   <p><%= link_to I18n.t("students.download.download_xml_format"),
     {:action => 'download_student_list',
-    :format => 'xml'}, :onclick => "modalDownload.close();"  %></p>
-  <%= button_to I18n.t(:close), '#' , :onclick => 'modalDownload.close();return false;' %>
+    :format => 'xml'}, :onclick => "modal_download.close();"  %></p>
+  <%= button_to I18n.t(:close), '#' , :onclick => 'modal_download.close();return false;' %>
 </div>
 
 <div id="notes_dialog"></div>

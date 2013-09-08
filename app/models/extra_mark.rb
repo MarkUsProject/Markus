@@ -19,10 +19,10 @@ class ExtraMark < ActiveRecord::Base
   validates_presence_of :unit
   validates_format_of   :unit,          :with => /percentage|points/
   validates_presence_of :result_id
-  validates_numericality_of :extra_mark, :message => "Mark must be an number"
-  validates_numericality_of :result_id, :only_integer => true, :greater_than => 0, :message => "result_id must be an id that is an integer greater than 0"
+  validates_numericality_of :extra_mark, :message => 'Mark must be an number'
+  validates_numericality_of :result_id, :only_integer => true, :greater_than => 0, :message => 'result_id must be an id that is an integer greater than 0'
 
   def ensure_not_released_to_students
-    return !result.released_to_students
+    !result.released_to_students
   end
 end

@@ -1,12 +1,10 @@
 <!-- Modal Window -->
-<%= form_for @section do |f| %>
+<%= form_for(@section, :remote => true) do |f| %>
+  <div id="add_section_error"><span>&nbsp;</span></div>
   <h2><%= I18n.t("section.add_section") %></h2>
     <%= raw(f.label :name, I18n.t("section.name")) %>
     <%= raw(f.text_field :name) %> <br />
     <%= hidden_field_tag "section_modal", "true" %>
-    <%= f.submit I18n.t(:save) , :disable_with => I18n.t('working')%>
-    <%= button_to_function I18n.t(:close), 'modalAddNewSection.close()' %>
+    <%= f.submit I18n.t(:save) , :disable_with => I18n.t('working') %>
+    <%= button_to_function I18n.t(:close), 'modal_add_section.close()' %>
 <% end %>
-<script>
-    modalAddNewSection.open();
-</script>

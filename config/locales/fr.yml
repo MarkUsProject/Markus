@@ -65,7 +65,6 @@ fr:
       format_of_assignment_file: "doit être un caractère alphanumérique, « . », « - » ou « _ » uniquement."
 
     # app/views/main/index.html.erb
-    firefox_warning:    "Certaines fonctionnalités ne fonctionnent qu'avec Mozilla Firefox."
     switch_role:         "Changer d'utilisateur"
     admin_password:      "Mot de passe Administrateur"
     cannot_login_as_another_admin: "Vous ne pouvez vous connecter à la place d'un autre administrateur."
@@ -78,6 +77,7 @@ fr:
     due:                       "à rendre pour le :"
     no_assignments:            "Aucun devoir pour le moment."
     class_average:             "Moyenne : %{results_average}"
+    submissions_collected:     "%{count}/%{size} Envois récupérés"
 
     # app/views/assignments/
     name: "Nom "
@@ -96,6 +96,7 @@ fr:
     create_new_assignment:      "Créer un nouveau projet"
     manage_course_work: "Gestion du cours"
     repository_folder:  "Dossier du projet<span class='required_field'>*</span>"
+    incorrect_format:   "Le format est incorrect"
     marking_state:
       not_collected: "Pas récupéré"
       in_progress: "En cours"
@@ -114,6 +115,11 @@ fr:
       priority_given: "Une priorité importante a été donné à cet envoi. Il va bientot être prêt."
       errors:               "Erreurs"
       results_loss_warning: "Attention : cette action effacera vos annotations et évaluations.\n\n!Êtes-vous sûr de vouloir continuer ?"
+      must_select_a_section: "Vous devez sélectionner une section pour récupérer les envois de ses groupes."
+      could_not_find_section: "La section demandée n'a pas été trouvée."
+      could_not_collect_section: "Les envois de la section %{section_name} pour le projet %{assignment_identifier} ne peuvent pas être récupérés : la date de récupération pour cette section n'est pas encore passée."
+      no_submission_for_section: "Il n'y a ancun envoi à récupérer pour la section %{section_name}."
+      successfully_collected: "Récupération de %{collected} envoi(s)."
     assignment:
         assignment: "Projet %{short_identifier}"
         required_fields: "Champs obligatoires <span class='required_field'>*</span>"
@@ -220,9 +226,16 @@ fr:
     invalid_grouping:   "(invalide)"
     validate:           "Valider"
     encoding:           "Codage"
+    assignment_format:  "Téléchargement au format %{file}"
+    upload_assignment_format: "Envoi au format %{file}"
+    select_csv_file:    "Sélectionner un fichier CSV formaté comme suit : <code>%{code}</code>"
+    all_csv_file:       "Tous les champs : "
 
     marks_released_notice:  "Les notes sont maintenant affichées. Vous ne pouvez plus les changer."
+    commit_after_due_date: "Ce commit est postérieur à la date de rendu."
     past_due_date_edit_warning:  "ATTENTION ! La date de retour que vous avez choisie est antérieure à la date actuelle."
+    past_due_date_edit_result_warning: "La date du %{href} de ce groupe est postérieure à la date de retour."
+    last_commit: "dernier rendu"
     release_marks: "Afficher les notes aux étudiants"
     unrelease_marks: "Cacher les notes aux étudiants"
 
@@ -282,6 +295,7 @@ fr:
         show_old_marks: "Afficher la note précédente "
       annotation:
         from_line_to: "%{file_path} : Lignes %{line_start} à %{line_end}"
+        remark_flag: "(retour)"
         no_annotation_in_this_category: "Il n'y a pas d'annotation dans cette catégorie"
         new_annotation: "Nouvelle annotation"
         annotation_category: "Catégorie de l'annotation"
@@ -343,6 +357,7 @@ fr:
       find_by_revision_number:    "Par numéro de révision"
       viewing_revision:           "Révision : #<span id=\"current_revision_number_display\">%{revision_number}</span>"
       current_path:         "Chemin actuel : "
+      download_all_files:  "Télécharger tous les fichiers"
       root:                 "[racine]"
       collect_and_grab:     "Récupérer et évaluer cette révision"
       could_not_collect:    "N'a pas pu récupérer cette révision pour le groupe %{group_name}. — La date de de récupération n'a pas encore été atteinte."
@@ -379,6 +394,11 @@ fr:
       replace:              "Remplace"
       delete:               "Supprimer"
       can_begin_grading:    "Peut être évaluée"
+      section:              "Section"
+      collect_work_for_section: "Récupérer les envois pour la section :"
+      download_groupings_files: "Télécharger tous les envois"
+      sections:             "Section :"
+      revision_history:     "%{num} : "
 
     grade_entry_forms:
       blank_field: "doit être rempli(e)"
@@ -393,8 +413,10 @@ fr:
       column_out_of: "sur"
       add_column: "Ajouter une colonne"
       remove_column: "Supprimer : "
+      toggle_column: "cacher/montrer"
       properties: "Propriétés de la feuille de note"
       required_fields: "Champs obligatoires <span class='required_field'>*</span>"
+      show_total: "Total"
       create:
         success: "Feuille de notes créée"
         title: "Créer une nouvelle feuille de notes"
@@ -416,6 +438,7 @@ fr:
       students:
         title: "Vos feuilles de notes"
         no_results: "Il n'y a pas encore de résultats pour cette feuille de notes."
+        detailed_marks_message: "Les notes détaillées sont disponibles."
       csv:
         incomplete_header: "Totaux ou noms manquants."
         incomplete_row: "Ne contient pas assez d'informations."
@@ -614,6 +637,9 @@ fr:
         external_submit_only: "MarkUs n'accepte que les envois externes"
         invalid_file_name: "Le nom du fichier envoyé est invalide"
         missing_file: "%{file_name} n'a pas pu être téléchargé : %{message}. Le fichier est sans doute manquant."
+        no_files_available: "Aucun fichier disponible"
+        no_groupings_available: "Aucun groupe disponible"
+        no_revision_available: "Aucune révision disponible"
         expect_filter: "Un filtre sur la sélection est attendu."
         # DO NOT change 'file_name' and 'sanitized_filename' in the following message.
         # See app/views/submissions/_file_manager_boot.js.erb
@@ -827,6 +853,7 @@ fr:
         after_collection_message: "Le nombre maximal d'heures de pénalité est passé pour ce projet. Tout changement sera enregistré mais non évalué."
         commit_after_collection_message : "La date de retour pour ce projet et le nombre maximum d'heures de retard sont passés. Vos changements ont été enregistrés, mais ne seront pas inclus dans l'évaluation."
         overtime_message: "La date de retour pour ce projet est passée.  Cependant, vous êtes dans une période de pénalité. Vous pouvez changer vos fichiers envoyés mais vous aurez %{penalty_amount}% déduit de votre note finale sur ce projet."
+        extramark_description: "Le dernier envoi date de (%{overtime_hours} heure(s)) après la période de fin. Par conséquent,  %{penalty_amount}% sera déduit de votre note."
         form_description: "Utiliser une pénalité dépendant du retard"
         add_penalty_decay: "Ajouter une période pénalité"
         alert: "Vous devez activer les pénalités pour pouvoir ajouter une période de pénalité dépendant du retard."
@@ -1019,6 +1046,7 @@ fr:
     Sélectionner un critère sur la gauche pour l'éditer. Les nom des critères, leurs descriptions
     et les notes maximales peuvent être modifiés."
     past_due_date_warning: "La date de retour de ce projet est passée."
+    past_due_date_notice: "La date de retour de ce projet est passée pour : "
 
     section:
       name: "Nom de la section"
@@ -1101,6 +1129,10 @@ fr:
 
     #app/views/main/_grade_distribution_graph.html.erb
     grade_distribution:        "Répartition des notes"
+
+    #lib/validators/
+    date_validator:
+      invalid_date: "n'est pas une date valide"
 
     #Test Framework
     automated_tests:

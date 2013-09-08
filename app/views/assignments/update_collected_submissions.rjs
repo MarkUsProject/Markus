@@ -1,5 +1,0 @@
-@assignments.each do |assignment|
-  if assignment.submission_rule.can_collect_now?
-    page.replace_html "collected_submissions_#{assignment.short_identifier}", h(" | #{assignment.groupings.all(:conditions => {:is_collected => true}).size}/#{assignment.groupings.size} Submissions Collected")
-  end
-end

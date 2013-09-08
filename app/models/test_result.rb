@@ -10,6 +10,6 @@ class TestResult < ActiveRecord::Base
   def update_file_content(new_content)
     return false if new_content.nil?
     self.file_content = new_content
-    return self.save
+    self.save
   end
 end

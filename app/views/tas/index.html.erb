@@ -1,35 +1,15 @@
-<%= javascript_include_tag "FilterTable/FilterTable" %>
-<%= javascript_include_tag "users_manager" %>
+<%= javascript_include_tag 'FilterTable/FilterTable',
+                           'users_manager',
+                           'Graders/index' %>
 
 <%= render :partial => "boot.js" %>
-
-<script type="text/javascript">
-//<![CDATA[
-  document.observe("dom:loaded", function() {
-
-    modalUpload = new Control.Modal($('upload_dialog'),
-    {
-      overlayOpacity: 0.75,
-      className: 'modalUpload',
-      fade:false
-    });
-
-    modalDownload = new Control.Modal($('download_dialog'),
-    {
-      overlayOpacity: 0.75,
-      className: 'modalDownload',
-      fade:false
-    });
-  });
-//]]>
-</script>
 
 <div id="title_bar">
   <h1><%= I18n.t("graders.manage_graders") %></h1>
   <div class="headingButtons">
     <%= link_to I18n.t(:add_new), new_ta_path() %> |
-    <%= link_to_function I18n.t(:upload), 'modalUpload.open()' %> |
-    <%= link_to_function I18n.t(:download), 'modalDownload.open()' %>
+    <%= link_to_function I18n.t(:upload), 'modal_upload.open()' %> |
+    <%= link_to_function I18n.t(:download), 'modal_download.open()' %>
   </div>
 </div>
 
@@ -37,19 +17,7 @@
   <div class="wrapLeft">
     <div id="list">
 
-      <% if flash[:upload_notice] -%>
-      <p class="success"><%= flash[:upload_notice] %></p>
-      <% end -%>
-
-      <% if flash[:success] %>
-      <div class="success">
-        <%=(flash[:success]) %>
-      </div>
-      <% end %>
-
-      <% if flash[:edit_notice] -%>
-      <p class="success"><%= flash[:edit_notice] %></p>
-      <% end -%>
+      <%= render 'shared/flash_message' %>
 
       <% # display lines in csv file that has not been successfully processed %>
       <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? -%>
@@ -57,7 +25,7 @@
         <p><%= I18n.t("graders.not_added") %></p>
         <ul>
           <% for line in flash[:invalid_lines] -%>
-          <li><%= h(line) %></li>
+          <li><%= line %></li>
           <% end -%>
         </ul>
         <p><%= I18n.t("graders.make_sure") %></p>
@@ -94,7 +62,7 @@
     <br />
     <br />
     <%= submit_tag t(:upload), :disable_with => t(:uploading_please_wait) %>
-    <%= button_to_function I18n.t(:close), 'modalUpload.close()' %>
+    <%= button_to_function I18n.t(:close), 'modal_upload.close()' %>
   </form>
 </div>
 
@@ -104,5 +72,5 @@
   <p><%= link_to I18n.t("graders.download.download_list"),
   {:controller => 'tas', :action => 'download_ta_list',
   :format => "csv"}, :onclick => "modalDownload.close();" %></p>
-  <%= button_to_function I18n.t(:close), 'modalDownload.close()' %>
+  <%= button_to_function I18n.t(:close), 'modal_download.close()' %>
 </div>

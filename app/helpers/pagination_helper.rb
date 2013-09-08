@@ -30,14 +30,14 @@ module PaginationHelper
     # in the difference, the hash wasn't complete, and we should bail out.
     if (AP_REQUIRED_KEYS - hash.keys).size > 0
      # Fail loud, fail proud
-      raise "handle_paginate_event received an incomplete parameter hash"
+      raise 'handle_paginate_event received an incomplete parameter hash'
     end
     # Ok, we have everything we need, let's get to work
     filter = params[:filter]
     desc = params[:desc]
     sorts = hash[:sorts]
     filters = hash[:filters]
-    if(!filters.include?(filter))
+    unless filters.include?(filter)
       raise "Could not find filter #{filter}"
     end
     items = get_filtered_items(hash, filter, params[:sort_by], object_hash, desc)
@@ -57,7 +57,7 @@ module PaginationHelper
     params[:filters].each do |filter_key, filter|
       result[filter[:display]] = filter_key
     end
-    return result
+    result
   end
 
   def get_filtered_items(hash, filter, sort_by, object_hash, desc)
@@ -65,22 +65,22 @@ module PaginationHelper
     #eager load only the tables needed for the type of sort, eager load the rest
     #of the tables after the groupings have been paginated
     case sort_by
-      when "group_name" then to_include = [:group]
-      when "repo_name" then to_include = [:group]
-      when "section" then to_include = [:group]
-      when "revision_timestamp" then to_include = [:current_submission_used]
-      when "marking_state" then to_include = [{:current_submission_used => :result}]
-      when "total_mark" then to_include = [{:current_submission_used => :result}]
-      when "grace_credits_used" then to_include = [:grace_period_deductions]
+      when 'group_name' then to_include = [:group]
+      when 'repo_name' then to_include = [:group]
+      when 'section' then to_include = [:group]
+      when 'revision_timestamp' then to_include = [:current_submission_used]
+      when 'marking_state' then to_include = [{:current_submission_used => :results}]
+      when 'total_mark' then to_include = [{:current_submission_used => :results}]
+      when 'grace_credits_used' then to_include = [:grace_period_deductions]
     end
     items = hash[:filters][filter][:proc].call(object_hash, to_include)
-    if !sort_by.blank?
+    unless sort_by.blank?
       items = items.sort{|a,b| hash[:sorts][sort_by].call(a,b)}
     end
-    if !desc.blank?
+    unless desc.blank?
       items.reverse!
     end
-    return items
+    items
   end
 
 end

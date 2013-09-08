@@ -20,10 +20,10 @@
             <td>
               <%=
               	# assignment name
-                link_to h(sanitize(assignment.short_identifier) + ': ' + assignment.description),
+                link_to sanitize(assignment.short_identifier) + ': ' + assignment.description,
                 :controller => controller,
                 :action => action,
-                :id => assignment.id%>
+                :id => assignment.id %>
             </td>
             <td>
               <% if !assignment.section_due_dates_type %>
@@ -55,7 +55,7 @@
               <p><strong><%= I18n.t("assignment.overall_comment") %></strong><br/>
                 <%= simple_format(sanitize(@a_id_results[assignment.id].overall_comment)) %>
               </p>
-              <%= link_to h(I18n.t('results.results_name')),
+              <%= link_to I18n.t('results.results_name'),
                        view_marks_assignment_submission_result_path(
                             :assignment_id => assignment.id,
                             :submission_id => @a_id_results[assignment.id].submission_id,

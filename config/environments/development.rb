@@ -1,3 +1,4 @@
+# encoding: utf-8
 # Settings specified here will take precedence over those in config/environment.rb
 Markus::Application.configure do
   # In the development environment your application's code is reloaded on
@@ -10,6 +11,7 @@ Markus::Application.configure do
 
   # Show full error reports and disable caching
   config.consider_all_requests_local = true
+  # The following line can be commented out when jQuery is fully implemented in MarkUs
   config.action_view.debug_rjs                         = true
   config.action_controller.perform_caching             = false
   config.action_controller.allow_forgery_protection    = true

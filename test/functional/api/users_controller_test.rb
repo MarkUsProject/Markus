@@ -7,69 +7,67 @@ require 'base64'
 class Api::UsersControllerTest < ActionController::TestCase
 
   # Testing unauthenticated requests
-  context "An unauthenticated request to api/users" do
+  context 'An unauthenticated request to api/users' do
     setup do
       # Set garbage HTTP header
-      @request.env['HTTP_AUTHORIZATION'] = "garbage http_header"
+      @request.env['HTTP_AUTHORIZATION'] = 'garbage http_header'
       @request.env['HTTP_ACCEPT'] = 'application/xml'
     end
 
-    context "/index" do
+    context '/index' do
       setup do
-        get "index"
+        get 'index'
       end
 
-      should "fail to authenticate the GET request" do
+      should 'fail to authenticate the GET request' do
         assert_response 403
       end
     end
 
-    context "/show" do
+    context '/show' do
       setup do
-        get "show", :id => 1
+        get 'show', :id => 1
       end
 
-      should "fail to authenticate the GET request" do
+      should 'fail to authenticate the GET request' do
         assert_response 403
       end
     end
 
-    context "/create" do
+    context '/create' do
       setup do
-        @res_create = post("create")
+        @res_create = post('create')
       end
 
-      should "fail to authenticate the GET request" do
+      should 'fail to authenticate the GET request' do
         assert_response 403
       end
     end
 
-    context "/update" do
+    context '/update' do
       setup do
         put 'update', :id => 1
       end
 
-      should "fail to authenticate the GET request" do
+      should 'fail to authenticate the GET request' do
         assert_response 403
       end
     end
 
-    context "/destroy" do
+    context '/destroy' do
       setup do
-        delete "destroy", :id => 1
+        delete 'destroy', :id => 1
       end
 
-      should "fail to authenticate the GET request" do
+      should 'fail to authenticate the GET request' do
         assert_response 403
       end
     end
   end
 
   # Testing authenticated requests
-  context "An authenticated request to api/users" do
+  context 'An authenticated request to api/users' do
     setup do
-      # Fixtures have manipulated the DB, clear them off.
-      clear_fixtures
 
       # Creates admin from blueprints.
       @admin = Admin.make
@@ -86,7 +84,7 @@ class Api::UsersControllerTest < ActionController::TestCase
       setup do
         @new_user1 = Student.create(:user_name => 'ApiTestStudent1',
           :last_name => 'ApiTesters', :first_name => 'ApiTesting1')
-        @new_user2 = Student.create(:user_name => "ApiTestStudent2",
+        @new_user2 = Student.create(:user_name => 'ApiTestStudent2',
           :last_name => 'ApiTesters', :first_name => 'ApiTesting2')
         @new_user3 = Student.create(:user_name => 'ApiTestStudent3',
           :last_name => 'ApiTesters3', :first_name => 'ApiTesting3')
@@ -95,7 +93,7 @@ class Api::UsersControllerTest < ActionController::TestCase
       should 'get all users in the collection if no options are used' do
         get 'index'
         assert_response :success
-        assert_select "user", User.all.size
+        assert_select 'user', User.all.size
       end
 
       should 'get only first 2 users if a limit of 2 is provided' do
@@ -150,8 +148,8 @@ class Api::UsersControllerTest < ActionController::TestCase
       should 'display all default fields if the fields parameter is not used' do
         get 'index'
         assert_response :success
-        elements = ['first-name', 'last-name', 'user-name', 'notes-count',
-          'grace-credits', 'id', 'type']
+        elements = %w(first-name last-name user-name notes-count
+                      grace-credits id type)
         elements.each do |element|
           assert_select element, {:minimum => 1}
         end
@@ -162,7 +160,7 @@ class Api::UsersControllerTest < ActionController::TestCase
         assert_response :success
         assert_select 'first-name', {:minimum => 1}
         assert_select 'last-name', {:minimum => 1}
-        elements = ['user-name', 'notes-count', 'grace-credits', 'id', 'type']
+        elements = %w(user-name notes-count grace-credits id type)
         elements.each do |element|
           assert_select element, 0
         end
@@ -172,8 +170,8 @@ class Api::UsersControllerTest < ActionController::TestCase
         get 'index', :fields => 'first_name,invalid_field_name'
         assert_response :success
         assert_select 'first-name', {:minimum => 1}
-        elements = ['last-name', 'user-name', 'notes-count', 'grace-credits',
-         'id', 'type']
+        elements = %w(last-name user-name notes-count grace-credits
+                      id type)
         elements.each do |element|
           assert_select element, 0
         end
@@ -190,8 +188,8 @@ class Api::UsersControllerTest < ActionController::TestCase
         get 'show', :id => @user.id.to_s
         assert_response :success
         assert @response.body.include?(@user.user_name)
-        elements = ['first-name', 'last-name', 'user-name', 'notes-count',
-          'grace-credits', 'id', 'type']
+        elements = %w(first-name last-name user-name notes-count
+                      grace-credits id type)
         elements.each do |element|
           assert_select element, 1
         end
@@ -203,7 +201,7 @@ class Api::UsersControllerTest < ActionController::TestCase
         assert @response.body.include?(@user.user_name)
         assert_select 'user-name', 1
         assert_select 'first-name', 1
-        elements = ['last-name', 'notes-count', 'grace-credits', 'id', 'type']
+        elements = %w(last-name notes-count grace-credits id type)
         elements.each do |element|
           assert_select element, 0
         end
@@ -213,63 +211,64 @@ class Api::UsersControllerTest < ActionController::TestCase
         get 'show', :id => '9999'
         assert_response 404
       end
-
-      should 'return a 422 if the provided id is not strictly numeric' do
-        get 'show', :id => '9a'
-        assert_response 422
-      end
     end
 
     # Testing application/json response
-    context "getting a json response" do
+    context 'getting a json response' do
       setup do
         @request.env['HTTP_ACCEPT'] = 'application/json'
-        get "show", :id => "garbage"
       end
 
-      should "be successful" do
+      should 'be successful' do
+        get 'show', :id => 'garbage'
         assert_template 'shared/http_status'
         assert_equal @response.content_type, 'application/json'
+      end
+
+      should 'not use the ActiveRecord class name as the root' do
+        user = Admin.make
+        get 'show', :id => user.id.to_s
+        assert !@response.body.include?('{"admin":')
       end
     end
 
     # Testing application/xml response
-    context "getting an xml response" do
+    context 'getting an xml response' do
       setup do
         @request.env['HTTP_ACCEPT'] = 'application/xml'
-        get "show", :id => "garbage"
+        get 'show', :id => 'garbage'
       end
 
-      should "be successful" do
+      should 'be successful' do
         assert_template 'shared/http_status'
         assert_equal @response.content_type, 'application/xml'
       end
     end
 
     # Testing an invalid HTTP_ACCEPT type
-    context "getting an rss response" do
+    context 'getting an rss response' do
       setup do
         @request.env['HTTP_ACCEPT'] = 'application/rss'
-        get "show", :id => "garbage"
+        get 'show', :id => 'garbage'
       end
 
-      should "not be successful" do
+      should 'not be successful' do
         assert_not_equal @response.content_type, 'application/rss'
       end
     end
 
     # Testing POST api/users
-    context "testing the create function with valid attributes" do
+    context 'testing the create function with valid attributes' do
       setup do
         # Create parameters for request
-        @attr = {:user_name => "ApiTestUser", :last_name => "Tester",
-                 :first_name => "Api", :type =>"admin" }
+        @attr = { :user_name => 'ApiTestUser', :last_name => 'Tester',
+                  :first_name => 'Api', :type => 'admin' }
         # fire off request
-        post "create", :id => 1, :user_name => "ApiTestUser", :last_name => "Tester",
-                 :first_name => "Api", :type =>"admin"
+        post 'create', :id => 1, :user_name => 'ApiTestUser', :last_name => 'Tester',
+                 :first_name => 'Api', :type => 'admin'
       end
 
-      should "create the specified user" do
+      should 'create the specified user' do
         assert_response 201
         @new_user = User.find_by_user_name(@attr[:user_name])
         assert !@new_user.nil?
@@ -279,28 +278,28 @@ class Api::UsersControllerTest < ActionController::TestCase
       end
     end
 
-    context "testing the create function with an existing user_name to cause error" do
+    context 'testing the create function with an existing user_name to cause error' do
       setup do
         @user = Student.make
-        @attr = {:user_name => @user.user_name, :last_name => "Tester",
-                 :first_name => "Api", :type =>"admin" }
-        @res = post("create", @attr)
+        @attr = {:user_name => @user.user_name, :last_name => 'Tester',
+                 :first_name => 'Api', :type => 'admin' }
+        @res = post('create', @attr)
       end
 
-      should "find an existing user and cause conflict" do
+      should 'find an existing user and cause conflict' do
         assert !User.find_by_user_name(@attr[:user_name]).nil?
         assert_response :conflict
       end
     end
 
-    context "testing the create function with user_type set to garbage" do
+    context 'testing the create function with user_type set to garbage' do
       setup do
-        @attr = {:user_name => "ApiTestUser", :last_name => "Tester",
-                 :first_name => "Api", :user_type =>"garbage" }
-        @res = post("create", @attr)
+        @attr = {:user_name => 'ApiTestUser', :last_name => 'Tester',
+                 :first_name => 'Api', :user_type => 'garbage' }
+        @res = post('create', @attr)
       end
 
-      should "not be able to process user_type" do
+      should 'not be able to process user_type' do
         assert_response 422
       end
     end
@@ -329,14 +328,14 @@ class Api::UsersControllerTest < ActionController::TestCase
 
       should 'not be able to update a user that does not exist' do
         put 'update', :id => '9999', :user_name => 'RandomName'
-        assert User.find_by_user_name("RandomName").nil?
+        assert User.find_by_user_name('RandomName').nil?
         assert_response 404
       end
     end
 
-    context "testing that the destroy function is disabled" do
+    context 'testing that the destroy function is disabled' do
       setup do
-        delete "destroy", :id => 1
+        delete 'destroy', :id => 1
       end
 
       should "pretend the function doesn't exist" do

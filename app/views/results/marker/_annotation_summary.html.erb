@@ -1,9 +1,9 @@
 <% annots.each do |annot| %>
   <li class="<%= cycle('annotations1', 'annotations2') %>">
 
-    <p class="lineNumber">#<%= annot.annotation_number %> - <%= render :partial => annot.annotation_list_link_partial, :locals => {:annot => annot} %></p>
+    <p class="lineNumber">#<%= annot.annotation_number %> - <%= render :partial => annot.annotation_list_link_partial, :locals => {:annot => annot} %><%=I18n.t("marker.annotation.remark_flag") if (annot.is_remark) %></p>
     <div class="annotationContent" id="annotation_text_content_display_<%=(annot.annotation_text.id)%>">
-      <%= simple_format(h(annot.annotation_text.content)) %>
+      <%= simple_format(annot.annotation_text.content) %>
     </div>
 
     <%= link_to_function I18n.t("edit"),

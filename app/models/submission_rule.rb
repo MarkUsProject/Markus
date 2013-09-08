@@ -13,7 +13,7 @@ class SubmissionRule < ActiveRecord::Base
   end
   
   def can_collect_grouping_now?(grouping)
-    return Time.zone.now >= calculate_grouping_collection_time(grouping) 
+    Time.zone.now >= calculate_grouping_collection_time(grouping)
   end
 
   # Cache that allows us to quickly get collection time
@@ -23,15 +23,15 @@ class SubmissionRule < ActiveRecord::Base
   end
 
   def calculate_collection_time
-    return assignment.latest_due_date + hours_sum.hours
+    assignment.latest_due_date + hours_sum.hours
   end
 
   def calculate_grouping_collection_time(grouping)
-    if !grouping.inviter.section.nil?
-      return SectionDueDate.due_date_for(grouping.inviter.section,
+    if grouping.inviter.section
+      SectionDueDate.due_date_for(grouping.inviter.section,
                                          assignment)
     else
-      return assignment.due_date + hours_sum.hours
+      assignment.due_date + hours_sum.hours
     end
   end
 
@@ -40,7 +40,7 @@ class SubmissionRule < ActiveRecord::Base
   # work they're submitting will probably not be graded
   def commit_after_collection_message
     #I18n.t 'submission_rules.submission_rule.commit_after_collection_message'
-    raise NotImplementedError.new("SubmissionRule:  commit_after_collection_message not implemented")
+    raise NotImplementedError.new('SubmissionRule:  commit_after_collection_message not implemented')
   end
 
   # When Students view the File Manager after the collection time,
@@ -48,34 +48,34 @@ class SubmissionRule < ActiveRecord::Base
   # due date has passed, and that any work they're submitting will
   # probably not be graded
   def after_collection_message
-    raise NotImplementedError.new("SubmissionRule:  after_collection_message not implemented")
+    raise NotImplementedError.new('SubmissionRule:  after_collection_message not implemented')
   end
 
   # When we're past the due date, the File Manager for the students will display
   # a message to tell them that they're currently past the due date.
   def overtime_message
-    raise NotImplementedError.new("SubmissionRule: overtime_message not implemented")
+    raise NotImplementedError.new('SubmissionRule: overtime_message not implemented')
   end
 
   # Returns true or false based on whether the attached Assignment's properties
   # will work with this particular SubmissionRule
   def assignment_valid?
-    raise NotImplementedError.new("SubmissionRule: assignment_valid? not implemented")
+    raise NotImplementedError.new('SubmissionRule: assignment_valid? not implemented')
   end
 
   # Takes a Submission (with an attached Result), and based on the properties of
   # this SubmissionRule, applies penalties to the Result - for example, will
   # add an ExtraMark of a negative value, or perhaps add the use of a Grace Day.
   def apply_submission_rule(submission)
-    raise NotImplementedError.new("SubmissionRule:  apply_submission_rule not implemented")
+    raise NotImplementedError.new('SubmissionRule:  apply_submission_rule not implemented')
   end
 
   def description_of_rule
-    raise NotImplementedError.new("SubmissionRule:  description_of_rule not implemented")
+    raise NotImplementedError.new('SubmissionRule:  description_of_rule not implemented')
   end
 
   def grader_tab_partial(grouping)
-    raise NotImplementedError.new("SubmissionRule:  render_grader_tab not implemented")
+    raise NotImplementedError.new('SubmissionRule:  render_grader_tab not implemented')
   end
 
   def reset_collection_time
@@ -89,11 +89,11 @@ class SubmissionRule < ActiveRecord::Base
     overtime_hours = ((from_time - assignment.due_date) / 1.hour).ceil
     # If the overtime is less than 0, that means it was submitted early, so
     # just return 0 - otherwise, return overtime_hours.
-    return [0, overtime_hours].max
+    [0, overtime_hours].max
   end
 
   def hours_sum
-    return 0
+    0
   end
 
 end

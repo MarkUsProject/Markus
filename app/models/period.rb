@@ -20,14 +20,14 @@ class Period < ActiveRecord::Base
   end
 
   def is_penalty_period?
-    return self.submission_rule_type == "PenaltyPeriodSubmissionRule"
+    self.submission_rule_type == 'PenaltyPeriodSubmissionRule'
   end
 
   def is_grace_period?
-    return self.submission_rule_type == "GracePeriodSubmissionRule"
+    self.submission_rule_type == 'GracePeriodSubmissionRule'
   end
 
   def is_penalty_decay_period?
-    return self.submission_rule_type == "PenaltyDecayPeriodSubmissionRule"
+    self.submission_rule_type == 'PenaltyDecayPeriodSubmissionRule'
   end
 end

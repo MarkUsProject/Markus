@@ -1,6 +1,6 @@
 <td>
 <%=image_tag('icons/folder.png') %>
-<%= link_to h(directory_name), :action => 'file_manager', :id => @assignment.id, :path => File.join(@path, directory_name) %>
+<%= link_to directory_name, :action => 'file_manager', :id => @assignment.id, :path => File.join(@path, directory_name) %>
 </td>
 
 <td>
@@ -8,5 +8,5 @@
 </td>
 
 <td>
-<%= h(directory.user_id) %>
+<%= directory.user_id %>
 </td>

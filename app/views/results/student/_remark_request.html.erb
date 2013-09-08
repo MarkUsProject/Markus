@@ -4,16 +4,16 @@
        <p class='notice'><%= I18n.t("marker.past_remark_due_date") %></p>
      <% else %>
       <div id="remark_request_show_results">
-        <%= h(submission.remark_request) %>
+        <%= submission.remark_request %>
           <div id="overall_comments_show">
             <h3><%= I18n.t("marker.overall_comments") %></h3>
-              <%= h(result.overall_comment) %>
+              <%= result.overall_comment %>
           </div>
       </div>
      <% end %>
   <% else %>
     <h3><%= I18n.t("marker.remark_instructions") %></h3>
-    <%= h(assignment.remark_message) %>
+    <%= assignment.remark_message %>
     <h3><%= I18n.t("marker.remark_request") %></h3>
     <% if student_can_edit_remark_request(submission) %>
       <%= I18n.t("marker.remark_due_date") %>:
@@ -28,10 +28,10 @@
             <%= I18n.t("marker.cancel_remark_to_change") %></p>
     <% else %>
       <div id="remark_request_show">
-        <%= h(submission.remark_request) %>
+        <%= submission.remark_request %>
           <div id="overall_comments_show">
             <h3><%= I18n.t("marker.overall_comments") %></h3>
-              <%= h(result.overall_comment) %>
+              <%= result.overall_comment %>
           </div>
       </div>
     <% end %>

@@ -34,7 +34,7 @@ class RubricCriterionTest < ActiveSupport::TestCase
     assert !assignment_id_dne.save
   end
 
-  should "round weights that have more than 3 significant digits" do
+  should 'round weights that have more than 3 significant digits' do
     RubricCriterion.make
     assert RubricCriterion.count > 0
     criterion = RubricCriterion.first
@@ -43,7 +43,7 @@ class RubricCriterionTest < ActiveSupport::TestCase
     assert_equal 0.556, criterion.weight
   end
 
-  should "find a mark for a specific rubric and result" do
+  should 'find a mark for a specific rubric and result' do
     assignment = Assignment.make
     grouping = Grouping.make(:assignment => assignment)
     submission = Submission.make(:grouping => grouping)
@@ -56,18 +56,18 @@ class RubricCriterionTest < ActiveSupport::TestCase
     assert_not_nil rubric.mark_for(result.id)
   end
 
-  should "Set default levels" do
+  should 'Set default levels' do
     r = RubricCriterion.new
     assert r.set_default_levels
     r.save
-    assert_equal(I18n.t("rubric_criteria.defaults.level_0"), r.level_0_name)
-    assert_equal(I18n.t("rubric_criteria.defaults.level_1"), r.level_1_name)
-    assert_equal(I18n.t("rubric_criteria.defaults.level_2"), r.level_2_name)
-    assert_equal(I18n.t("rubric_criteria.defaults.level_3"), r.level_3_name)
-    assert_equal(I18n.t("rubric_criteria.defaults.level_4"), r.level_4_name)
+    assert_equal(I18n.t('rubric_criteria.defaults.level_0'), r.level_0_name)
+    assert_equal(I18n.t('rubric_criteria.defaults.level_1'), r.level_1_name)
+    assert_equal(I18n.t('rubric_criteria.defaults.level_2'), r.level_2_name)
+    assert_equal(I18n.t('rubric_criteria.defaults.level_3'), r.level_3_name)
+    assert_equal(I18n.t('rubric_criteria.defaults.level_4'), r.level_4_name)
   end
 
-  should "be able to set all the level names at once" do
+  should 'be able to set all the level names at once' do
     r = RubricCriterion.new
     levels = []
     0.upto(RubricCriterion::RUBRIC_LEVELS - 1) do |i|
@@ -81,10 +81,9 @@ class RubricCriterionTest < ActiveSupport::TestCase
   end
 
   # TA Assignment tests
-  context " a Rubric Criterion assigning a TA" do
+  context ' a Rubric Criterion assigning a TA' do
 
     setup do
-      setup_group_fixture_repos
       @criterion = RubricCriterion.make
       @ta = Ta.make
     end
@@ -93,53 +92,53 @@ class RubricCriterionTest < ActiveSupport::TestCase
       destroy_repos
     end
 
-    should "assign a TA by id" do
-      assert_equal 0, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
+    should 'assign a TA by id' do
+      assert_equal 0, @criterion.criterion_ta_associations.count, 'Got unexpected TA membership count'
       @criterion.add_tas(@ta)
-      assert_equal 1, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
+      assert_equal 1, @criterion.criterion_ta_associations.count, 'Got unexpected TA membership count'
     end
 
-    should "not assign the same TA multiple times" do
-      assert_equal 0, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
+    should 'not assign the same TA multiple times' do
+      assert_equal 0, @criterion.criterion_ta_associations.count, 'Got unexpected TA membership count'
       @criterion.add_tas(@ta)
       @ta.reload
       @criterion.add_tas(@ta)
-      assert_equal 1, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
+      assert_equal 1, @criterion.criterion_ta_associations.count, 'Got unexpected TA membership count'
     end
 
-    should "unassign a TA by id" do
-      assert_equal 0, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
+    should 'unassign a TA by id' do
+      assert_equal 0, @criterion.criterion_ta_associations.count, 'Got unexpected TA membership count'
       @criterion.add_tas(@ta)
-      assert_equal 1, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
+      assert_equal 1, @criterion.criterion_ta_associations.count, 'Got unexpected TA membership count'
       @ta.reload
       @criterion.remove_tas(@ta)
-      assert_equal 0, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
+      assert_equal 0, @criterion.criterion_ta_associations.count, 'Got unexpected TA membership count'
     end
 
-    should "assign multiple TAs" do
+    should 'assign multiple TAs' do
       @ta1 = Ta.make
       @ta2 = Ta.make
       @ta3 = Ta.make
-      assert_equal 0, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
+      assert_equal 0, @criterion.criterion_ta_associations.count, 'Got unexpected TA membership count'
       @criterion.add_tas([@ta1, @ta2, @ta3])
-      assert_equal 3, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
+      assert_equal 3, @criterion.criterion_ta_associations.count, 'Got unexpected TA membership count'
     end
 
-    should "remove multiple TAs" do
+    should 'remove multiple TAs' do
       @ta1 = Ta.make
       @ta2 = Ta.make
       @ta3 = Ta.make
-      assert_equal 0, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
+      assert_equal 0, @criterion.criterion_ta_associations.count, 'Got unexpected TA membership count'
       @criterion.add_tas([@ta1, @ta2, @ta3])
-      assert_equal 3, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
+      assert_equal 3, @criterion.criterion_ta_associations.count, 'Got unexpected TA membership count'
       @ta1.reload; @ta2.reload; @ta3.reload
       @criterion.remove_tas([@ta1, @ta3])
-      assert_equal 1, @criterion.criterion_ta_associations.count, "Got unexpected TA membership count"
+      assert_equal 1, @criterion.criterion_ta_associations.count, 'Got unexpected TA membership count'
       @criterion.reload
-      assert_equal @ta2.id, @criterion.tas[0].id, "Did not remove the right TA"
+      assert_equal @ta2.id, @criterion.tas[0].id, 'Did not remove the right TA'
     end
 
-    should "get the names of TAs assigned to it" do
+    should 'get the names of TAs assigned to it' do
       @ta1 = Ta.make(:user_name => 'g9browni')
       @ta2 = Ta.make(:user_name => 'c7benjam')
       @criterion.add_tas(@ta1)
@@ -149,26 +148,26 @@ class RubricCriterionTest < ActiveSupport::TestCase
     end
   end
 
-  context "from an assignment composed of rubric criteria" do
+  context 'from an assignment composed of rubric criteria' do
     setup do
       @csv_string = "Algorithm Design,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,
 Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       @assignment = Assignment.make(:marking_scheme_type => 'rubric')
       RubricCriterion.make(:assignment => @assignment,
-                           :rubric_criterion_name => "Algorithm Design",
+                           :rubric_criterion_name => 'Algorithm Design',
                            :weight => 2.0)
       RubricCriterion.make(:assignment => @assignment,
-                           :rubric_criterion_name => "Documentation",
+                           :rubric_criterion_name => 'Documentation',
                            :weight => 2.7)
 
     end
 
-    should "be able to get a CSV string" do
+    should 'be able to get a CSV string' do
       s = RubricCriterion.create_csv(@assignment)
       assert_equal @csv_string, s
     end
 
-    should "be able to use a generated string for parsing" do
+    should 'be able to use a generated string for parsing' do
       csv_string = RubricCriterion.create_csv(@assignment)
       tempfile = Tempfile.new('rubric_csv')
       tempfile << csv_string
@@ -183,12 +182,12 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
     end
   end
 
-  context "from an assignment composed of rubric criteria with commas and quotes in the descriptions" do
+  context 'from an assignment composed of rubric criteria with commas and quotes in the descriptions' do
     setup do
       @csv_string = "Part 1 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,\"Makes the TA \"\"Shivers\"\"\",\"Leaves the TA \"\"calm\"\"\",\"Makes the TA \"\"grin\"\"\",\"Makes the TA \"\"smile\"\"\",\"Makes, the TA scream: \"\"at last, it was about time\"\"\"\n"
       @assignment = Assignment.make
       RubricCriterion.make(:assignment => @assignment,
-                           :rubric_criterion_name => "Part 1 Programming",
+                           :rubric_criterion_name => 'Part 1 Programming',
                            :weight => 2.0,
                            :level_0_description => 'Makes the TA "Shivers"',
                            :level_1_description => 'Leaves the TA "calm"',
@@ -198,12 +197,12 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
                            )
     end
 
-    should "be able to get a CSV string" do
+    should 'be able to get a CSV string' do
       s = RubricCriterion.create_csv(@assignment)
       assert_equal @csv_string, s
     end
 
-    should "be able to use a generated string for parsing" do
+    should 'be able to use a generated string for parsing' do
       csv_string = RubricCriterion.create_csv(@assignment)
       tempfile = Tempfile.new('rubric_csv')
       tempfile << csv_string
@@ -218,41 +217,41 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
     end
   end
 
-  context "from an assignment without criteria" do
+  context 'from an assignment without criteria' do
     setup do
       @assignment = Assignment.make
     end
 
-    should "be able to get an empty CSV string" do
+    should 'be able to get an empty CSV string' do
       csv_string = RubricCriterion.create_csv(@assignment)
-      assert_equal "", csv_string
+      assert_equal '', csv_string
     end
 
-    context "when parsing a CSV file" do
+    context 'when parsing a CSV file' do
 
-      should "raise an error message on an empty row" do
+      should 'raise an error message on an empty row' do
         e = assert_raise RuntimeError do
           RubricCriterion.create_or_update_from_csv_row([], Assignment.new)
         end
         assert_equal I18n.t('criteria_csv_error.incomplete_row'), e.message
       end
 
-      should "raise an error message on a 1 element row" do
+      should 'raise an error message on a 1 element row' do
         e = assert_raise RuntimeError do
-          RubricCriterion.create_or_update_from_csv_row(['name'], Assignment.new)
+          RubricCriterion.create_or_update_from_csv_row(%w(name), Assignment.new)
         end
         assert_equal I18n.t('criteria_csv_error.incomplete_row'), e.message
       end
 
-      should "raise an error message on a 2 element row" do
+      should 'raise an error message on a 2 element row' do
         e = assert_raise RuntimeError do
-          RubricCriterion.create_or_update_from_csv_row(['name', '1.0'], Assignment.new)
+          RubricCriterion.create_or_update_from_csv_row(%w(name 1.0), Assignment.new)
         end
         assert_equal I18n.t('criteria_csv_error.incomplete_row'), e.message
       end
 
-      should "raise an error message on a row with any number of elements that does not include a name for every criterion" do
-        row = ['name', '1.0']
+      should 'raise an error message on a row with any number of elements that does not include a name for every criterion' do
+        row = %w(name 1.0)
         (0..RubricCriterion::RUBRIC_LEVELS - 2).each do |i|
           row << 'name' + i.to_s
             e = assert_raise RuntimeError do
@@ -262,23 +261,23 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
         end
       end
 
-      should "raise an error message on a row with an invalid weight" do
-        row = ['name', 'weight', 'l0', 'l1', 'l2', 'l3', 'l4']
+      should 'raise an error message on a row with an invalid weight' do
+        row = %w(name weight l0 l1 l2 l3 l4)
         e = assert_raise ActiveRecord::RecordNotSaved do
           RubricCriterion.create_or_update_from_csv_row(row, Assignment.new)
         end
         assert_instance_of ActiveRecord::RecordNotSaved, e
       end
 
-      should "raise the errors hash in case of an unpredicted error" do
+      should 'raise the errors hash in case of an unpredicted error' do
         e = assert_raise ActiveRecord::RecordNotSaved do
           # That should fail because the assignment doesn't yet exists (in the DB)
-          RubricCriterion.create_or_update_from_csv_row(['name', 10, 'l0', 'l1', 'l2', 'l3', 'l4'], Assignment.new)
+          RubricCriterion.create_or_update_from_csv_row(%w(name 10 l0 l1 l2 l3 l4), Assignment.new)
         end
         assert_instance_of ActiveRecord::RecordNotSaved, e
       end
 
-      context "and the row is valid" do
+      context 'and the row is valid' do
 
         setup do
           # we'll need a valid assignment for those cases.
@@ -295,7 +294,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
           @csv_base_row = row
         end
 
-        should "be able to create a new instance without level descriptions" do
+        should 'be able to create a new instance without level descriptions' do
           criterion = RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
           assert_not_nil criterion
           assert_instance_of RubricCriterion, criterion
@@ -305,7 +304,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
           end
         end
 
-        context "and there is an existing rubric criterion with the same name" do
+        context 'and there is an existing rubric criterion with the same name' do
           setup do
             criterion = RubricCriterion.new
             criterion.set_default_levels
@@ -319,7 +318,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
             criterion.weight = 5.0
             assert criterion.save
           end
-          should "allow a criterion with the same name to overwrite" do
+          should 'allow a criterion with the same name to overwrite' do
             assert_nothing_raised do
               criterion = RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
               (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
@@ -331,7 +330,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
           end
         end
 
-        should "be able to create a new instance with level descriptions" do
+        should 'be able to create a new instance with level descriptions' do
           (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
             @csv_base_row << 'description' + i.to_s
           end
@@ -350,7 +349,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
     end
 
-    should "be able to parse a valid CSV file" do
+    should 'be able to parse a valid CSV file' do
       tempfile = Tempfile.new('rubric_criteria_csv')
       tempfile << "criterion 6,1.0,l0,l1,l2,l3,l4,d0,d1,d2,d3,d4\n"
       tempfile.rewind
@@ -362,7 +361,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       assert invalid_lines.empty?
     end
 
-    should "report errors on a invalid CSV file" do
+    should 'report errors on a invalid CSV file' do
       tempfile = Tempfile.new('flexible_criteria_csv')
       tempfile << "criterion 6\n,criterion 7\n"
       tempfile.rewind
@@ -392,7 +391,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
     }
 
     new_rubric_criteria.delete(attr) if attr
-    return RubricCriterion.new(new_rubric_criteria)
+    RubricCriterion.new(new_rubric_criteria)
   end
 
 

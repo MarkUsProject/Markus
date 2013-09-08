@@ -3,6 +3,7 @@ Adam Goucher
 Aimen Khan
 Alex Krassikov
 Alexandre Lissy
+Alysha Kwok
 Amanda Manarin
 Andrew Louis
 Andrey Kulakevich
@@ -19,10 +20,12 @@ Catherine Fawcett
 Christian Jacques
 Christine Yu
 Camille Guérin
+Claire Mayer
 Clément Delafargue
 Clément Schiano
 Danesh Dadachanji
 Daryn Lam
+Daniel St. Jules
 Derek Dowling
 Diane Tam
 Dina Sabie
@@ -33,9 +36,12 @@ Evan Browning
 Farah Juma
 Fernando Garces
 Gabriel Roy-Lortie
+Gaëtan Girin
 Geoffrey Flores
+Ghislain Guiot
 Hanson Wu
 Horatiu Halmaghi
+Ian Smith
 Ibrahim Shahin
 Jay Parekh
 Jeffrey Ling
@@ -51,21 +57,26 @@ Karel Kahula
 Kira McCoan
 Kristian Lejao
 Kurtis Schmidt
-Luke Kysow 
+Luke Kysow
+Marc Bodmer
 Mélanie Gaudet
 Michael Ing
 Michael Lumbroso
 Michael Margel
 Mike Conley
 Mike Gunderloy
+Mike Stewart
+Mike Wu
 Mina Almasry
 Misa Sakamoto
 Neha Kumar
 Nelle Varoquaux
+Nick Lee
 Nicolas Bouillon
 Nicolas Carougeau
 Noé Bedetti
 Oloruntobi Ogunbiyi
+Oussama Ben Amar
 Razvan Vlaicu
 Robert Burke
 Samuel Gougeon

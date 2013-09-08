@@ -29,26 +29,25 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
     end
   end
 
-  context "A submission_collector calling its push_groupings_to_queue" do
+  context 'A submission_collector calling its push_groupings_to_queue' do
 
-    context "when both priority and regular queues are empty" do
+    context 'when both priority and regular queues are empty' do
       setup do
         setup_collector
         @submission_collector.stubs(:start_collection_process)
         @submission_collector.push_groupings_to_queue(@groupings)
       end
 
-      should "push all groupings to the regular queue" do
+      should 'push all groupings to the regular queue' do
         assert_equal @groupings, (@regular_queue).sort { |x,y| x.id <=> y.id}
         assert @priority_queue.empty?
         @groupings.each do |grouping| assert !grouping.is_collected? end
       end
     end
 
-    context "with part of the groupings to be pushed already existing in the
-    regular queue" do
+    context 'with part of the groupings to be pushed already existing in the regular queue' do
 
-      context "and none in the priority_queue" do
+      context 'and none in the priority_queue' do
         setup do
           setup_collector
           @regular_queue.push(@groupings[0])
@@ -57,14 +56,14 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
           @submission_collector.push_groupings_to_queue(@groupings)
         end
 
-        should "only push the groupings that were missing" do
+        should 'only push the groupings that were missing' do
           assert_equal @groupings, (@regular_queue).sort { |x,y| x.id <=> y.id}
           assert @priority_queue.empty?
           assert !@groupings[2].is_collected?
         end
       end
 
-      context "and some in the priority_queue" do
+      context 'and some in the priority_queue' do
         setup do
           setup_collector
           @priority_queue.push(@groupings[2])
@@ -72,7 +71,7 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
           @submission_collector.push_groupings_to_queue(@groupings)
         end
 
-        should "only push the groupings that were in neither queue" do
+        should 'only push the groupings that were in neither queue' do
           assert_equal @groupings.slice(0..1), @regular_queue.sort { |x,y| x.id <=> y.id}
           assert_equal [@groupings[2]], @priority_queue.sort { |x,y| x.id <=> y.id}
           @groupings.slice(1..7).each do |grouping| assert !grouping.is_collected? end
@@ -81,24 +80,23 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
     end
   end
 
-  context "A submission_collector pushing a grouping to the priority queue" do
+  context 'A submission_collector pushing a grouping to the priority queue' do
 
-    context "with both regular and priority queues empty" do
+    context 'with both regular and priority queues empty' do
       setup do
         setup_collector
         @submission_collector.stubs(:start_collection_process)
         @submission_collector.push_grouping_to_priority_queue(@groupings.first)
       end
 
-      should "add that grouping to the priority queue" do
+      should 'add that grouping to the priority queue' do
         assert_equal [@groupings.first], @priority_queue.sort { |x,y| x.id <=> y.id}
         assert @regular_queue.empty?
         @groupings.each do |grouping| assert !grouping.is_collected? end
       end
     end
 
-    context "with neither regular or priority queues empty or containing the
-    grouping" do
+    context 'with neither regular or priority queues empty or containing the grouping' do
       setup do
         setup_collector
         @groupings.slice(0..1).each do
@@ -108,15 +106,15 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
         @submission_collector.push_grouping_to_priority_queue(@groupings[2])
       end
 
-      should "add that grouping to the priority queue" do
+      should 'add that grouping to the priority queue' do
         assert_equal [@groupings[2]], @priority_queue.sort { |x,y| x.id <=> y.id}
         assert_equal @groupings.slice(0..1), @regular_queue.sort { |x,y| x.id <=> y.id}
         assert !@groupings[2].is_collected?
       end
     end
 
-    context "when the grouping is already in" do
-      context "the priority queue" do
+    context 'when the grouping is already in' do
+      context 'the priority queue' do
         setup do
           setup_collector
           @priority_queue.push(@groupings.first)
@@ -124,13 +122,13 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
           @submission_collector.push_grouping_to_priority_queue(@groupings.first)
         end
 
-        should "do nothing" do
+        should 'do nothing' do
           assert_equal [@groupings.first], @priority_queue
           assert @regular_queue.empty?
         end
       end
 
-      context "the regular queue" do
+      context 'the regular queue' do
         setup do
           setup_collector
           @regular_queue.push(@groupings.first)
@@ -138,7 +136,7 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
           @submission_collector.push_grouping_to_priority_queue(@groupings.first)
         end
 
-        should "move it from regular to priority queue" do
+        should 'move it from regular to priority queue' do
           assert_equal [@groupings.first], @priority_queue
           assert @regular_queue.empty?
           assert !@groupings.first.is_collected?
@@ -155,14 +153,14 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
         setup_collector
       end
 
-      should "return nil and modify nothing" do
+      should 'return nil and modify nothing' do
         assert_nil @submission_collector.remove_grouping_from_queue(@groupings[0])
         assert @regular_queue.empty?
         assert @priority_queue.empty?
       end
     end
 
-    context "when the grouping belongs to the regular queue" do
+    context 'when the grouping belongs to the regular queue' do
       setup do
         setup_collector
         @submission_collector.stubs(:start_collection_process)
@@ -171,14 +169,14 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
         @submission_collector.remove_grouping_from_queue(@groupings[2])
       end
 
-      should "remove the grouping from the regular queue" do
+      should 'remove the grouping from the regular queue' do
         assert_nil @groupings[2].grouping_queue
         assert_equal @groupings.slice(0..1), @regular_queue.sort { |x,y| x.id <=> y.id}
         assert_equal [], @priority_queue
       end
     end
 
-    context "when the grouping belongs to the priority queue" do
+    context 'when the grouping belongs to the priority queue' do
       setup do
         setup_collector
         @submission_collector.stubs(:start_collection_process)
@@ -187,7 +185,7 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
         @submission_collector.remove_grouping_from_queue(@groupings[2])
       end
 
-      should "remove the grouping from the priority queue" do
+      should 'remove the grouping from the priority queue' do
         assert_nil @groupings[2].grouping_queue
         assert_equal @groupings.slice(0..1), @regular_queue.sort { |x,y| x.id <=> y.id}
       end
@@ -197,12 +195,12 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
   context "Calling the submission collector's get_next_grouping_for_collection
   method" do
 
-    context "when both priority and regular queues are empty" do
+    context 'when both priority and regular queues are empty' do
       setup do
         setup_collector
       end
 
-      should "return nil" do
+      should 'return nil' do
         assert_nil @submission_collector.get_next_grouping_for_collection
         assert @regular_queue.empty?
         assert @priority_queue.empty?
@@ -217,7 +215,7 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
         @submission_collector.push_groupings_to_queue(@groupings.slice(0..4))
       end
 
-      should "return the first grouping of the regular queue" do
+      should 'return the first grouping of the regular queue' do
         assert_equal @groupings[0],
           @submission_collector.get_next_grouping_for_collection
         assert_equal @groupings.slice(0..4), @regular_queue.sort { |x,y| x.id <=> y.id}
@@ -225,7 +223,7 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
       end
     end
 
-    context "when neither the priority nor the regular queues are empty" do
+    context 'when neither the priority nor the regular queues are empty' do
       setup do
         setup_collector
         @submission_collector.stubs(:start_collection_process)
@@ -233,7 +231,7 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
         @submission_collector.push_grouping_to_priority_queue(@groupings[2])
       end
 
-      should "return the first grouping of the priority queue" do
+      should 'return the first grouping of the priority queue' do
         assert_equal @groupings[2],
           @submission_collector.get_next_grouping_for_collection
         assert_equal @groupings.slice(0..1), @regular_queue.sort { |x,y| x.id <=> y.id}
@@ -244,20 +242,20 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
 
   context "Calling the submission collector's collect_next_submission method" do
 
-    context "when both priority and regular queues are empty" do
+    context 'when both priority and regular queues are empty' do
       setup do
         setup_collector
         @submission_collector.stubs(:start_collection_process)
       end
 
-      should "return nil" do
+      should 'return nil' do
         assert_nil @submission_collector.collect_next_submission
         assert @regular_queue.empty?
         assert @priority_queue.empty?
       end
     end
 
-    context "when there is a submission to collect" do
+    context 'when there is a submission to collect' do
       setup do
         setup_collector
         @submission_collector.stubs(:start_collection_process)
@@ -267,7 +265,7 @@ class SubmissionCollectorTest < ActiveSupport::TestCase
         @submission_collector.collect_next_submission
       end
 
-      should "collect that submission and remove it from the queue" do
+      should 'collect that submission and remove it from the queue' do
         assert @groupings[2].is_collected?
         assert_nil @groupings[2].grouping_queue
         assert_equal @groupings.slice(0..1), @regular_queue.sort { |x,y| x.id <=> y.id}

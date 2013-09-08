@@ -4,7 +4,7 @@
       <%= t('submission_rules.grace_period_submission_rule.credits') %>
     </th>
     <th colspan="2">
-      <%= t('short_identifier') %>
+      <%= t('short_identifier').html_safe %>
     </th>
   </thead>
   <% grace_period_deductions.each do |grace_period_deduction| %>
@@ -15,7 +15,7 @@
     <td>
       <% grouping = grace_period_deduction.membership.grouping %>
       <% if grouping.has_submission? %>
-        <%= link_to(h(grouping.assignment.short_identifier),
+        <%= link_to(grouping.assignment.short_identifier,
                     edit_assignment_submission_result_path(
                         grouping.assignment.id,
                         grouping.current_submission_used.id,

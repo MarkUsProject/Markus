@@ -7,12 +7,12 @@ Markus::Application.routes.draw do
   # Install the default routes as the lowest priority.
   root :controller => "main", :action => "login"
    # API routes
-  namespace :api, :defaults => { :format => 'text' } do
-    resources :test_results, :except => [:new, :edit]
+  namespace :api do
     resources :users, :except => [:new, :edit]
     resources :assignments, :except => [:new, :edit] do
       resources :groups, :except => [:new, :edit] do
         resources :submission_downloads, :except => [:new, :edit]
+        resources :test_results, :except => [:new, :edit]
       end
     end
     resources :main_api
@@ -31,6 +31,8 @@ Markus::Application.routes.draw do
       post 'update_group_properties_on_persist'
       get 'delete_rejected'
       post 'update_collected_submissions'
+      get 'download_assignment_list'
+      post 'upload_assignment_list'
     end
 
     member do
@@ -134,6 +136,7 @@ Markus::Application.routes.draw do
         post 'update_files'
         post 'server_time'
         get 'download'
+        get 'download_groupings_files'
       end
 
       member do
@@ -141,6 +144,7 @@ Markus::Application.routes.draw do
         post 'manually_collect_and_begin_grading'
         get 'repo_browser'
         post 'repo_browser'
+        get 'downloads'
       end
 
       resources :results do
@@ -158,6 +162,7 @@ Markus::Application.routes.draw do
           get 'add_extra_mark'
           get 'download'
           post 'download'
+          get 'download_zip'
           get 'cancel_remark_request'
           get 'codeviewer'
           post 'codeviewer'
@@ -325,6 +330,7 @@ Markus::Application.routes.draw do
       get 'about'
       post 'login_as'
       get 'role_switch'
+      get 'redirect'
       get 'clear_role_switch_session'
       post 'reset_api_key'
     end

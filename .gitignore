@@ -1,4 +1,6 @@
 # Files ignored by git
+# Ignore nncessary mac files
+.DS_Store
 
 config/database.yml
 config/local_environment_override.rb
@@ -8,6 +10,13 @@ data/
 log/
 doc/app/
 .bundle/
+
+# Files created by rcov/simplecov
+test/coverage
+test/coverage.data
+
+# Files created by tests
+lib/repo/test/svn_repos/svn_authz
 
 # Patch
 *.diff
@@ -32,3 +41,6 @@ doc/app/
 # Ignore dummy file used to tell .rvmrc to use specific ruby instead of project
 # wide default
 .use-ruby-*
+
+# RubyMine generated project folder
+.idea

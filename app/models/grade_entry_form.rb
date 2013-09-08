@@ -9,26 +9,22 @@ class GradeEntryForm < ActiveRecord::Base
   has_many                  :grade_entry_items, :dependent => :destroy
   has_many                  :grade_entry_students, :dependent => :destroy
   has_many                  :grades, :through => :grade_entry_items
-  validate                  :check_timezone
+
+  # Call custom validator in order to validate the date attribute
+  # :date => true maps to DateValidator (:custom_name => true maps to CustomNameValidator)
+  # Look in lib/validators/* for more info
+  validates                 :date, :date => true
 
   validates_presence_of     :short_identifier
   validates_uniqueness_of   :short_identifier, :case_sensitive => true
 
   accepts_nested_attributes_for :grade_entry_items, :allow_destroy => true
 
-  BLANK_MARK = ""
-
-  def check_timezone
-    # Check that the date is valid - the date is allowed to be in the past
-    if Time.zone.parse(date.to_s).nil?
-      errors.add :date, I18n.t('grade_entry_forms.invalid_date')
-      return false
-    end
-  end
+  BLANK_MARK = ''
 
   # The total number of marks for this grade entry form
   def out_of_total
-    return grade_entry_items.sum('out_of').round(2)
+    grade_entry_items.sum('out_of').round(2)
   end
 
   # Determine the total mark for a particular student
@@ -37,14 +33,14 @@ class GradeEntryForm < ActiveRecord::Base
     total = BLANK_MARK
 
     grade_entry_student = self.grade_entry_students.find_by_user_id(student_id)
-    if !grade_entry_student.nil?
+    if grade_entry_student
       total = grade_entry_student.grades.sum('grade').round(2)
     end
 
-    if ((total == 0) && self.all_blank_grades?(grade_entry_student))
+    if (total == 0) && self.all_blank_grades?(grade_entry_student)
       total = BLANK_MARK
     end
-    return total
+    total
   end
 
   # Determine the total mark for a particular student, as a percentage
@@ -56,16 +52,16 @@ class GradeEntryForm < ActiveRecord::Base
       percent = (total / self.out_of_total) * 100
     end
 
-    return percent
+    percent
   end
 
   # Determine the average of all of the students' marks that have been
   # released so far (return a percentage).
-  def calculate_released_average()
+  def calculate_released_average
     totalMarks = 0
     numReleased = 0
 
-    grade_entry_students = self.grade_entry_students.find(:all, :conditions => { :released_to_student => true })
+    grade_entry_students = self.grade_entry_students.all(:conditions => { :released_to_student => true })
     grade_entry_students.each do |grade_entry_student|
       totalMark = self.calculate_total_mark(grade_entry_student.user_id)
       if totalMark != BLANK_MARK
@@ -75,11 +71,11 @@ class GradeEntryForm < ActiveRecord::Base
     end
 
     # Watch out for division by 0
-    if (numReleased == 0)
+    if numReleased == 0
       return 0
     end
 
-    return ((totalMarks / numReleased) / self.out_of_total) * 100
+    ((totalMarks / numReleased) / self.out_of_total) * 100
   end
 
   # Return whether or not the given student's grades are all blank
@@ -91,7 +87,7 @@ class GradeEntryForm < ActiveRecord::Base
     grades_without_nils = grades.select do |grade|
       !grade.grade.nil?
     end
-    return grades_without_nils.blank?
+    grades_without_nils.blank?
   end
 
   # Given two last names, construct an alphabetical category for pagination.
@@ -124,7 +120,7 @@ class GradeEntryForm < ActiveRecord::Base
       alpha_categories[i+1] << last_name2[0, index]
     end
 
-    return alpha_categories
+    alpha_categories
   end
 
   # An algorithm for determining the category names for alphabetical pagination
@@ -169,7 +165,7 @@ class GradeEntryForm < ActiveRecord::Base
     # We can now form the category names
     j=0
     (1..total_pages).each do |i|
-      alpha_pagination << (alpha_categories[j].max + "-" + alpha_categories[j+1].max)
+      alpha_pagination << (alpha_categories[j].max + '-' + alpha_categories[j+1].max)
       j += 2
     end
 
@@ -178,8 +174,8 @@ class GradeEntryForm < ActiveRecord::Base
 
   # Get a CSV report of the grades for this grade entry form
   def get_csv_grades_report
-    students = Student.all(:conditions => {:hidden => false}, :order => "user_name")
-    csv_string = CsvHelper::Csv.generate do |csv|
+    students = Student.all(:conditions => {:hidden => false}, :order => 'user_name')
+    CsvHelper::Csv.generate do |csv|
 
       # The first row in the CSV file will contain the question names
       final_result = []
@@ -226,7 +222,6 @@ class GradeEntryForm < ActiveRecord::Base
         csv << final_result
       end
     end
-    return csv_string
   end
 
   # Parse a grade entry form CSV file.
@@ -245,7 +240,7 @@ class GradeEntryForm < ActiveRecord::Base
 
     # Parse the question names
     CsvHelper::Csv.parse(grades_file.readline) do |row|
-      if !CsvHelper::Csv.generate_line(row).strip.empty?
+      unless CsvHelper::Csv.generate_line(row).strip.empty?
         names = row
         num_lines_read += 1
       end
@@ -253,7 +248,7 @@ class GradeEntryForm < ActiveRecord::Base
 
     # Parse the question totals
     CsvHelper::Csv.parse(grades_file.readline) do |row|
-      if !CsvHelper::Csv.generate_line(row).strip.empty?
+      unless CsvHelper::Csv.generate_line(row).strip.empty?
         totals = row
         num_lines_read += 1
       end
@@ -265,7 +260,7 @@ class GradeEntryForm < ActiveRecord::Base
       num_updates += 1
     rescue RuntimeError => e
       invalid_lines << names.join(',')
-      invalid_lines << totals.join(',') + ": " + e.message unless invalid_lines.nil?
+      invalid_lines << totals.join(',') + ': ' + e.message unless invalid_lines.nil?
     end
 
     # Parse the grades
@@ -278,7 +273,7 @@ class GradeEntryForm < ActiveRecord::Base
         end
         num_lines_read += 1
       rescue RuntimeError => e
-        invalid_lines << row.join(',') + ": " + e.message unless invalid_lines.nil?
+        invalid_lines << row.join(',') + ': ' + e.message unless invalid_lines.nil?
       end
     end
     return num_updates

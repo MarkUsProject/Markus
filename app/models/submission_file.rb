@@ -22,24 +22,24 @@ class SubmissionFile < ActiveRecord::Base
     # recognize.  It will return the name of the language, which
     # SyntaxHighlighter can work with.
     case File.extname(filename)
-    when ".sci"
-      return "scilab"
-    when ".java"
-      return "java"
-    when ".rb"
-      return "ruby"
-    when ".py"
-      return "python"
-    when ".js"
-      return "javascript"
-    when ".c"
-      return "c"
-    when ".scm"
-      return "scheme"
-    when ".ss"
-      return "scheme"
+    when '.sci'
+      return 'scilab'
+    when '.java'
+      return 'java'
+    when '.rb'
+      return 'ruby'
+    when '.py'
+      return 'python'
+    when '.js'
+      return 'javascript'
+    when '.c'
+      return 'c'
+    when '.scm'
+      return 'scheme'
+    when '.ss'
+      return 'scheme'
     else
-      return "unknown"
+      return 'unknown'
     end
   end
 
@@ -50,33 +50,33 @@ class SubmissionFile < ActiveRecord::Base
     # comment and the second element being the syntax to end a comment.  Use
     #the language's multiple line comment format.
     case File.extname(filename)
-    when ".java", ".js", ".c"
-      return ["/*", "*/"]
-    when ".rb"
+    when '.java', '.js', '.c'
+      return %w(/* */)
+    when '.rb'
       return ["=begin\n", "\n=end"]
-    when ".py"
-      return ['"""', '"""']
-    when ".scm", ".ss"
-      return ["#|","|#"]
+    when '.py'
+      return %w(""" """)
+    when '.scm', '.ss'
+      return %w(#| |#)
     else
-      return ["##","##"]
+      return %w(## ##)
     end
   end
 
   def is_supported_image?
     #Here you can add more image types to support
-    supported_formats = ['.jpeg', '.jpg', '.gif', '.png']
-    return supported_formats.include?(File.extname(filename))
+    supported_formats = %w(.jpeg .jpg .gif .png)
+    supported_formats.include?(File.extname(filename))
   end
 
   def is_pdf?
-    return File.extname(filename).casecmp('.pdf') == 0
+    File.extname(filename).casecmp('.pdf') == 0
   end
 
   # Taken from http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/44936
   def self.is_binary?(file_contents)
     return file_contents.size == 0 ||
-          file_contents.count("^ -~", "^\r\n") / file_contents.size > 0.3 ||
+          file_contents.count('^ -~', "^\r\n") / file_contents.size > 0.3 ||
           file_contents.count("\x00") > 0
   end
 
@@ -99,7 +99,7 @@ class SubmissionFile < ActiveRecord::Base
         all_annotations.push(extracted_coords)
       end
     end
-    return all_annotations
+    all_annotations
   end
 
   def convert_pdf_to_jpg
@@ -114,12 +114,12 @@ class SubmissionFile < ActiveRecord::Base
     # Remove any old copies of this image if they exist
     i = 1
     filePathToRemove = File.join(storage_path,
-                                 self.filename.split('.')[0] + '_' + sprintf("%04d" % i.to_s()) + '.jpg') 
+                                 self.filename.split('.')[0] + '_' + sprintf('%04d' % i.to_s()) + '.jpg')
     while File.exists?(filePathToRemove)
       FileUtils.remove_file(filePathToRemove, true)
       i += 1
       filePathToRemove = File.join(storage_path,
-                                   self.filename.split('.')[0] + '_' + sprintf("%04d" % i.to_s()) + '.jpg')
+                                   self.filename.split('.')[0] + '_' + sprintf('%04d' % i.to_s()) + '.jpg')
     end
 
     # Convert a pdf file into a an array of jpg files (one jpg file = one page
@@ -131,7 +131,7 @@ class SubmissionFile < ActiveRecord::Base
                       :multipage => true,
                       :resolution => 150
     if file.error
-      m_logger.log("rghost: Image conversion error")
+      m_logger.log('rghost: Image conversion error')
     end
 
     FileUtils.remove_file(File.join(storage_path, self.filename), true)
@@ -147,7 +147,7 @@ class SubmissionFile < ActiveRecord::Base
     revision_number = submission.revision_number
     revision = repo.get_revision(revision_number)
     if revision.files_at_path(path)[filename].nil?
-      raise I18n.t("results.could_not_find_file",
+      raise I18n.t('results.could_not_find_file',
                    :filename => filename,
                    :repository_name => student_group.repository_name)
     end
@@ -156,7 +156,7 @@ class SubmissionFile < ActiveRecord::Base
     if include_annotations
       retrieved_file = add_annotations(retrieved_file)
     end
-    return retrieved_file
+    retrieved_file
   end
 
   # Export this file from the svn repository into storage_path
@@ -182,7 +182,7 @@ class SubmissionFile < ActiveRecord::Base
     # Let's check the file exists befor claiming the file has been exported
     # properly
     if File.exists?(File.join(storage_path, self.filename))
-      m_logger.log("Successfuly exported #{self.filename} from student repository to #{File.join(storage_path, self.filename)}")
+      m_logger.log("Successfully exported #{self.filename} from student repository to #{File.join(storage_path, self.filename)}")
     else
       m_logger.log("Failed to export #{self.filename} from student
                       repository")
@@ -193,18 +193,18 @@ class SubmissionFile < ActiveRecord::Base
 
   def add_annotations(file_contents)
     comment_syntax = get_comment_syntax
-    result = ""
+    result = ''
     file_contents.split("\n").each_with_index do |contents, index|
       annotations.each do |annot|
         if index == annot.line_start.to_i - 1
            text = AnnotationText.find(annot.annotation_text_id).content
-           result = result.concat(I18n.t("graders.download.begin_annotation",
+           result = result.concat(I18n.t('graders.download.begin_annotation',
                :id => annot.annotation_number.to_s,
                :text => text,
                :comment_start => comment_syntax[0],
                :comment_end => comment_syntax[1]) + "\n")
         elsif index == annot.line_end.to_i
-           result = result.concat(I18n.t("graders.download.end_annotation",
+           result = result.concat(I18n.t('graders.download.end_annotation',
                :id => annot.annotation_number.to_s,
                :comment_start => comment_syntax[0],
                :comment_end => comment_syntax[1]) + "\n")
@@ -212,7 +212,7 @@ class SubmissionFile < ActiveRecord::Base
       end
     result = result.concat(contents + "\n")
     end
-    return result
+    result
   end
 end
 

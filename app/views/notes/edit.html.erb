@@ -7,7 +7,7 @@
     <%= render :partial => "shared/error_explanation", :locals => { :model => @note } %>
 
     <p>
-      <b><%=I18n.t('notes.author')%>:</b> <%= h @note.user.user_name %>
+      <b><%=I18n.t('notes.author')%>:</b> <%= @note.user.user_name %>
     </p>
 
     <p>

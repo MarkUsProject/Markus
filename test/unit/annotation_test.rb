@@ -5,7 +5,7 @@ require 'shoulda'
 
 class AnnotationTest < ActiveSupport::TestCase
 
-  context "A good Annotation model" do
+  context 'A good Annotation model' do
 
     should belong_to :submission_file
     should belong_to :annotation_text
@@ -22,9 +22,9 @@ class AnnotationTest < ActiveSupport::TestCase
     should_not allow_value(-1).for(:submission_file_id)
     should_not allow_value(-1).for(:annotation_number)
 
-    should allow_value("ImageAnnotation").for(:type)
-    should allow_value("TextAnnotation").for(:type)
-    should_not allow_value("OtherAnnotation").for(:type)
+    should allow_value('ImageAnnotation').for(:type)
+    should allow_value('TextAnnotation').for(:type)
+    should_not allow_value('OtherAnnotation').for(:type)
 
   end
 

@@ -6,7 +6,7 @@
 
 <% if flash[:error] -%>
 <div class="error">
-  <%= h(flash[:error]) %>
+  <%= flash[:error] %>
 </div>
 <% end %>
 
@@ -32,15 +32,16 @@
      <%= calendar_date_select_tag "revision_timestamp", @revision_timestamp, :time => true %>
      <%= submit_tag I18n.t("browse_submissions.find_by_revision_timestamp") %>
      <% end %>
-
       <%= form_tag repo_browser_assignment_submission_path(
-                      @assignment,
-                      @grouping),
+                           @assignment, @grouping),
                    :find_revision_by => 'revision_number' do %>
-
-     <%= text_field_tag "revision_number", @revision_number %>
-     <%= submit_tag I18n.t("browse_submissions.find_by_revision_number") %>
-     <% end %>
+        <%= select_tag('revision_number',
+                   options_for_select(@revisions_history.collect { |s|
+                     [t('browse_submissions.revision_history', :num => s[:num])+
+                              l(s[:date], :format => :long_date), s[:num]] },
+                                      @revision_number)) %>
+        <%= submit_tag I18n.t('browse_submissions.find_by_revision_number') %>
+      <% end %>
     </fieldset>
   </div>
 <div class="global_actions">
@@ -70,14 +71,18 @@
   <%= form_tag manually_collect_and_begin_grading_assignment_submission_path(:id => @grouping.id,
       :assignment_id => @assignment.id),
 	       :remote => true do %>
-  <%= hidden_field_tag "current_revision_number", @revision_number %>
-  <input type="submit" value="<%=I18n.t("browse_submissions.collect_and_grab")%>"
-         onclick="if (!confirm('<%=t(:collect_and_grade_overwrite_warning)%>'))
-           return false;
-           $('progress_text').update('<%=I18n.t('stopping_collection_process')%>');
-           return true;" name="commit">
-  </input>
-  <div id="progress_text"></div>
+    <%= hidden_field_tag "current_revision_number", @revision_number %>
+    <input type="submit" value="<%=I18n.t("browse_submissions.collect_and_grab")%>"
+           onclick="if (!confirm('<%=t(:collect_and_grade_overwrite_warning)%>'))
+             return false;
+             $('progress_text').update('<%=I18n.t('stopping_collection_process')%>');
+             return true;" name="commit">
+    </input>
+    <%= link_to t('browse_submissions.download_all_files'),
+                { :action => :downloads, :revision_number => @revision_number,
+                  :grouping_id => @grouping.id, :path => @path },
+                :class => 'button' %>
+    <div id="progress_text"></div>
   <% end %>
 </div>
 

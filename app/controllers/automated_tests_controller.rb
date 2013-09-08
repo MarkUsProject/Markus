@@ -39,14 +39,14 @@ class AutomatedTestsController < ApplicationController
           # Process testing framework form for validation
           @assignment = process_test_form(@assignment, params)
         rescue Exception, RuntimeError => e
-          @assignment.errors.add(:base, I18n.t("assignment.error",
+          @assignment.errors.add(:base, I18n.t('assignment.error',
                                                :message => e.message))
           return
         end
 
         # Save assignment and associated test files
         if @assignment.save
-          flash[:success] = I18n.t("assignment.update_success")
+          flash[:success] = I18n.t('assignment.update_success')
           redirect_to :action => 'manage',
                       :assignment_id => params[:assignment_id]
         else

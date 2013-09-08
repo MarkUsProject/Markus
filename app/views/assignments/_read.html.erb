@@ -2,17 +2,17 @@
 <div class="block_content">
   <div class="sub_block">
     <span class="prop_label"><%= t("name") %>:</span>
-    <%= h(@assignment.short_identifier) %>
+    <%= @assignment.short_identifier %>
   </div>
   <br/>
   <div class="sub_block">
     <span class="prop_label"><%= t("description") %>:</span>
-    <%= h(@assignment.description) %>
+    <%= @assignment.description %>
   </div>
   <br/>
   <div class="sub_block">
     <span class="prop_label"><%= t("message") %>:</span>
-    <span class="box sub_block clear"><%= h(@assignment.message) %></span>
+    <span class="box sub_block clear"><%= @assignment.message %></span>
   </div>
   <br/>
   <div class="sub_block">
@@ -44,7 +44,7 @@
   <% else %>
     <ul>
       <% @assignment.assignment_files.each do |assignment_file| %>
-	<li><%= h(assignment_file.filename) %></li>
+	<li><%= assignment_file.filename %></li>
       <% end %>
     </ul>
   <% end %>

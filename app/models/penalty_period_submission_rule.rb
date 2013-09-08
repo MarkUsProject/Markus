@@ -2,11 +2,11 @@ class PenaltyPeriodSubmissionRule < SubmissionRule
 
   # the Students with a message saying that the due date has passed, and the
   # work they're submitting will probably not be graded
-  def commit_after_collection_message(grouping)
+  def commit_after_collection_message
     I18n.t 'submission_rules.penalty_period_submission_rule.commit_after_collection_message'
   end
 
-  def after_collection_message(grouping)
+  def after_collection_message
     I18n.t 'submission_rules.penalty_period_submission_rule.after_collection_message'
   end
 
@@ -18,13 +18,13 @@ class PenaltyPeriodSubmissionRule < SubmissionRule
     # Calculate the penalty that the grouping will suffer
     potential_penalty = calculate_penalty(overtime_hours)
 
-    return I18n.t 'submission_rules.penalty_period_submission_rule.overtime_message', :potential_penalty => potential_penalty
+    I18n.t 'submission_rules.penalty_period_submission_rule.overtime_message', :potential_penalty => potential_penalty
   end
 
 
   # GracePeriodSubmissionRule works with all Assignments
   def assignment_valid?
-    return !assignment.nil?
+    !assignment.nil?
   end
 
   def apply_submission_rule(submission)
@@ -43,7 +43,7 @@ class PenaltyPeriodSubmissionRule < SubmissionRule
       penalty.save
     end
 
-    return submission
+    submission
   end
 
   def description_of_rule
@@ -51,17 +51,17 @@ class PenaltyPeriodSubmissionRule < SubmissionRule
   end
 
   def grader_tab_partial
-    return 'submission_rules/penalty_period/grader_tab'
+    'submission_rules/penalty_period/grader_tab'
   end
 
   private
 
   def hours_sum
-    return periods.sum('hours')
+    periods.sum('hours')
   end
 
   def maximum_penalty
-    return periods.sum('deduction')
+    periods.sum('deduction')
   end
 
   # Given a number of overtime_hours, calculate the penalty percentage that
@@ -78,7 +78,7 @@ class PenaltyPeriodSubmissionRule < SubmissionRule
       overtime_hours = overtime_hours - period.hours
       break if overtime_hours <= 0
     end
-    return total_penalty
+    total_penalty
   end
 
 end

@@ -1,10 +1,10 @@
 <td>
   <%=image_tag('icons/folder.png') %>
-  <%= link_to h(directory.name), :action => 'repo_browser', :id => @grouping.id, :revision_number => @revision_number, :path => File.join(@path, directory.name) %>
+  <%= link_to directory.name, :action => 'repo_browser', :id => @grouping.id, :revision_number => @revision_number, :path => File.join(@path, directory.name) %>
 </td>
 <td>
   <%= I18n.l(directory.last_modified_date, :format => :long_date) %>
 </td>
 <td>
-  <%= h(directory.user_id) %>
+  <%= directory.user_id %>
 </td>

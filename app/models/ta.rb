@@ -15,17 +15,17 @@ class Ta < User
   has_and_belongs_to_many :grade_entry_students
 
   def memberships_for_assignment(assignment)
-    return assignment.ta_memberships.find_all_by_user_id(id, :include => {:grouping => :group})
+    assignment.ta_memberships.find_all_by_user_id(id, :include => {:grouping => :group})
   end
 
   def is_assigned_to_grouping?(grouping_id)
     grouping = Grouping.find(grouping_id)
-    return grouping.ta_memberships.find_all_by_user_id(id).size > 0
+    grouping.ta_memberships.find_all_by_user_id(id).size > 0
   end
 
   def get_criterion_associations_by_assignment(assignment)
     if assignment.assign_graders_to_criteria
-      return criterion_ta_associations.map do |association|
+      criterion_ta_associations.map do |association|
         if association.assignment == assignment
           association
         else
@@ -33,22 +33,22 @@ class Ta < User
         end
       end.compact
     else
-      return []
+      []
     end
   end
 
   def get_criterion_associations_count_by_assignment(assignment)
-    return assignment.criterion_ta_associations.count(
+    assignment.criterion_ta_associations.count(
       :conditions => "ta_id = #{self.id}")
   end
 
   def get_membership_count_by_assignment(assignment)
-    return memberships.count(:include => :grouping,
+    memberships.count(:include => :grouping,
       :conditions => "assignment_id = #{assignment.id}")
   end
 
   def get_groupings_by_assignment(assignment)
-    return groupings.all(:conditions => {:assignment_id => assignment.id},
+    groupings.all(:conditions => {:assignment_id => assignment.id},
       :include => [:students, :tas, :group, :assignment])
   end
 

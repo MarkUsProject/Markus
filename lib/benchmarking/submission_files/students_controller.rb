@@ -3,11 +3,11 @@ class StudentsController < ApplicationController
   before_filter    :authorize_only_for_admin
   
   def index
-    @students = Student.find(:all, :order => "user_name")
+    @students = Student.all(:order => "user_name")
   end
   
   def populate
-    @students_data = Student.find(:all, :order => "user_name")
+    @students_data = Student.all(:order => "user_name")
     # construct_table_rows defined in UsersHelper
     @students = construct_table_rows(@students_data)
   end
@@ -21,11 +21,11 @@ class StudentsController < ApplicationController
     @user = Student.find_by_id(params[:user][:id])
     attrs = params[:user]
     # update_attributes supplied by ActiveRecords
-    if !@user.update_attributes(attrs)
-      render :edit
-    else
-      flash[:edit_notice] = @user.user_name + " has been updated."
+    if @user.update_attributes(attrs)
+      flash[:edit_notice] = @user.user_name + ' has been updated.'
       redirect_to :action => 'index'
+    else
+      render :edit
     end
   end
   
@@ -33,18 +33,18 @@ class StudentsController < ApplicationController
     student_ids = params[:student_ids]
     begin
       if student_ids.nil? || student_ids.empty?
-        raise "No students were selected, so no changes were made."
+        raise 'No students were selected, so no changes were made.'
       end
       case params[:bulk_action]
-        when "hide"
+        when 'hide'
           Student.hide_students(student_ids)
           @students = construct_table_rows(Student.find(student_ids))
           return
-        when "unhide"
+        when 'unhide'
           Student.unhide_students(student_ids)
           @students = construct_table_rows(Student.find(student_ids))
           return
-        when "give_grace_credits"
+        when 'give_grace_credits'
           Student.give_grace_credits(student_ids, params[:number_of_grace_credits])
           @students = construct_table_rows(Student.find(student_ids))
           return
@@ -57,9 +57,9 @@ class StudentsController < ApplicationController
 
   def filter
   case params[:filter]
-    when "hidden"
+    when 'hidden'
        @students = Student.all(:conditions => {:hidden => true}, :order => :user_name)
-    when "visible"
+    when 'visible'
        @students = Student.all(:conditions => {:hidden => false}, :order => :user_name)
     else
       @students = Student.all(:order => :user_name)
@@ -84,20 +84,20 @@ class StudentsController < ApplicationController
   #downloads users with the given role as a csv list
   def download_student_list
     #find all the users
-    students = Student.find(:all, :order => "user_name")
+    students = Student.all(:order => "user_name")
     case params[:format]
-    when "csv"
+    when 'csv'
       output = User.generate_csv_list(students)
-      format = "text/csv"
-    when "xml"
+      format = 'text/csv'
+    when 'xml'
       output = students.to_xml
-      format = "text/xml"
+      format = 'text/xml'
     else
       # Raise exception?
       output = students.to_xml
-      format = "text/xml"
+      format = 'text/xml'
     end
-    send_data(output, :type => format, :disposition => "inline")
+    send_data(output, :type => format, :disposition => 'inline')
   end
   
   def upload_student_list  
