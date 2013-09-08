@@ -11,7 +11,7 @@
 
 <td>
   <% if !grade_entry_form.grade_entry_students.nil? and !grade_entry_form.grade_entry_students.find_by_user_id(student.id).nil? %>
-    <%= render :partial => "marks_graders/manage/member",
+    <%= render :partial => "marks_graders/manage/member.html.erb",
       :locals => {:student => student, :grade_entry_form => grade_entry_form } %>
   <% end %>
 </td>

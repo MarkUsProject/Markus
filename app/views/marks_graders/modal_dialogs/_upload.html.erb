@@ -1,6 +1,6 @@
 <h2><%= I18n.t("marks_graders.upload.upload_grader_map") %></h2>
 <%= I18n.t("marks_graders.upload.description_grader_map") %>
-<% form_tag({:controller=>"graders",
+<%= form_tag({:controller=> "marks_graders",
   :action => 'csv_upload_grader_groups_mapping',:id => @grade_entry_form.id},
   {:multipart => true}) do -%>
   <p><%= file_field_tag :grader_mapping, :size => 2 %> <br />

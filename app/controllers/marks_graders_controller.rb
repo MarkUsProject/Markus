@@ -3,18 +3,17 @@ include CsvHelper
 # Manages actions relating to assigning graders.
 class MarksGradersController < ApplicationController
   include MarksGradersHelper
-  # Administrator
-  # -
-  before_filter      :authorize_only_for_admin
+
+  before_filter :authorize_only_for_admin
 
   def upload_dialog
     @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
-    render :partial => "marks_graders/modal_dialogs/upload_dialog.rjs"
+    render :partial => 'marks_graders/modal_dialogs/upload_dialog.rjs'
   end
 
   def download_dialog
     @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
-    render :partial => "marks_graders/modal_dialogs/download_dialog.rjs"
+    render :partial => 'marks_graders/modal_dialogs/download_dialog.rjs'
   end
 
   def populate
@@ -36,59 +35,54 @@ class MarksGradersController < ApplicationController
   # Assign TAs to Students via a csv file
   def csv_upload_grader_groups_mapping
     if !request.post? || params[:grader_mapping].nil?
-      flash[:error] = I18n.t("csv.student_to_grader")
+      flash[:error] = I18n.t('csv.student_to_grader')
       redirect_to :action => 'index', :grade_entry_form_id => params[:grade_entry_form_id]
       return
     end
 
     invalid_lines = GradeEntryStudent.assign_tas_by_csv(params[:grader_mapping].read,
-                                               params[:grade_entry_form_id], params[:encoding])
-    if invalid_lines.size > 0
-      flash[:invalid_lines] = invalid_lines
-    end
+      params[:grade_entry_form_id], params[:encoding])
+
+    flash[:invalid_lines] = invalid_lines if invalid_lines.size > 0
+
     redirect_to :action => 'index', :grade_entry_form_id => params[:grade_entry_form_id]
   end
 
   #Download grader/student mappings in CSV format.
   def download_grader_students_mapping
     grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
-
-    #get all the students
     students = Student.all
 
     file_out = CsvHelper::Csv.generate do |csv|
       students.each do |student|
-        student_array = [student.user_name]
         # csv format is student_name, ta1_name, ta2_name, ... etc
-
+        student_array = [student.user_name]
         grade_entry_student = grade_entry_form.grade_entry_students.find_by_user_id(student.id)
-        if !grade_entry_student.nil?
-          grade_entry_student.tas.each do |ta|
-            student_array.push(ta.user_name);
-          end
+        unless grade_entry_student.nil?
+          grade_entry_student.tas.each { |ta| student_array.push(ta.user_name) }
         end
 
-          csv << student_array
-        end
-     end
+        csv << student_array
+      end
+    end
 
-    send_data(file_out, :type => "text/csv", :disposition => "inline")
+    send_data(file_out, :type => 'text/csv', :disposition => 'inline')
   end
 
-  #These actions act on all currently selected graders & students
+  # These actions act on all currently selected graders & students
   def global_actions
     student_ids = params[:students]
     grader_ids = params[:graders]
     criteria_ids = params[:criteria]
 
     case params[:current_table]
-      when "groups_table"
+      when 'groups_table'
         @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
         if params[:students].nil? or params[:students].size ==  0
-         #if there is a global action than there should be a student selected
+         # If there is a global action than there should be a student selected
           if params[:global_actions]
-              @global_action_warning = I18n.t("assignment.group.select_a_student")
-              render :partial => "shared/global_action_warning.rjs"
+              @global_action_warning = I18n.t('assignment.group.select_a_student')
+              render :partial => 'shared/global_action_warning.rjs'
               return
           end
         end
@@ -97,8 +91,8 @@ class MarksGradersController < ApplicationController
         case params[:global_actions]
           when "assign"
             if params[:graders].nil? or params[:graders].size ==  0
-              @global_action_warning = I18n.t("assignment.group.select_a_grader")
-              render :partial => "shared/global_action_warning.rjs"
+              @global_action_warning = I18n.t('assignment.group.select_a_grader')
+              render :partial => 'shared/global_action_warning.rjs'
               return
             end
             add_graders(students, grader_ids)
@@ -108,18 +102,18 @@ class MarksGradersController < ApplicationController
             return
           when "random_assign"
             if params[:graders].nil? or params[:graders].size ==  0
-              @global_action_warning = I18n.t("assignment.group.select_a_grader")
-              render :partial => "shared/global_action_warning.rjs"
+              @global_action_warning = I18n.t('assignment.group.select_a_grader')
+              render :partial => 'shared/global_action_warning.rjs'
               return
             end
             randomly_assign_graders(students, grader_ids)
             return
-        end 
+        end
     end
   end
 
   private
-  #These methods are called through global actions
+  # These methods are called through global actions
 
   def randomly_assign_graders(students, grader_ids)
     graders = Ta.where(:id => grader_ids)
@@ -139,13 +133,13 @@ class MarksGradersController < ApplicationController
 
   def add_graders(students, grader_ids)
     graders = Ta.where(:id => grader_ids)
-    #only want valid graders
-    graders = graders.collect {|grader| grader if grader.valid?}
+    # Only want valid graders
+    graders = graders.collect { |grader| grader if grader.valid? }
     students.each do |student|
       grade_entry_student = @grade_entry_form.grade_entry_students.find_or_create_by_user_id(student.id)
       grade_entry_student.add_tas(graders)
     end
-    
+
     construct_all_rows(students, graders)
     render :modify_groupings
   end
@@ -160,9 +154,9 @@ class MarksGradersController < ApplicationController
       grade_entry_student = @grade_entry_form.grade_entry_students.find_by_user_id(student.id)
       if grader_params != [] and !grade_entry_student.nil?
         members = grade_entry_student.tas.delete_if do |grader|
-                    !params["#{student.id}_#{grader.user_name}"]
+          !params["#{student.id}_#{grader.user_name}"]
         end
-        grade_entry_student.remove_tas(members.map{|member| member.id})
+        grade_entry_student.remove_tas(members.map{ |member| member.id })
       end
     end
 

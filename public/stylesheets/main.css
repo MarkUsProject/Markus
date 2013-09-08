@@ -1060,7 +1060,7 @@ input#extra_mark_description{
 
 /* Commented out for now due to conflicts with jQuery UI Dialog */
 
-/*#rename_group_dialog, #upload_dialog, #download_dialog,
+#rename_group_dialog, #upload_dialog, #download_dialog,
 #groups_coverage_dialog, #grader_criteria_dialog {
    background: white;
    padding: 0 10px 0 10px;
@@ -1068,10 +1068,7 @@ input#extra_mark_description{
    -moz-border-radius: 5px;
    -webkit-border-radius: 5px;
    border-radius: 5px;
-   max-height: 80%;
-   max-width: 80%;
-   overflow: auto;
-}*/
+}
 
 #notes_dialog {
    background: white;
