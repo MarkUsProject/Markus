@@ -1113,6 +1113,11 @@ input#extra_mark_description{
    border-radius: 5px;
 }
 
+#redirect_dialog {
+   background: white;
+   padding: 20px;
+}
+
 #about_dialog {
   background: white;
   border: 1px solid #000000;

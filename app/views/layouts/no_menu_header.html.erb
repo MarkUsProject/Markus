@@ -23,6 +23,7 @@
   <%= render :partial => 'layouts/menu' unless controller.action_name == 'login' %>
   <%= render :partial => 'layouts/sub_menu', :locals =>{:no_menu_header => 'true'}%>
   <%= render :partial => 'layouts/about' %>
+  <%= render :partial => 'layouts/redirect' %>
 
   <div id="container">
     <div id="content">
@@ -30,6 +31,8 @@
     </div><!-- Content -->
   </div><!-- Container -->
 </div>
+
+<%= render 'layouts/redirect.js.erb' %>
 
 </body>
 </html>
