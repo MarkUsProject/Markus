@@ -1,1 +1,2 @@
-page.replace_html 'groupings_table', :partial => 'marks_graders/manage/groupings_table', :locals => {:students => @students, :grade_entry_form => @grade_entry_form}
+page.replace_html('groupings_table', :partial => 'marks_graders/manage/groupings_table',
+    :locals => { :students => @students, :grade_entry_form => @grade_entry_form })

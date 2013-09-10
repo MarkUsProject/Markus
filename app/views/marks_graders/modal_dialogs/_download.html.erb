@@ -1,9 +1,0 @@
-<div id="download">
-  <h2><%= I18n.t("groups.download.download_grader_maps") %></h2>
-  <%= link_to t("marks_graders.download.download_grader_students_csv"),
-    {:controller=>"marks_graders", :action=>"download_grader_students_mapping", :id=> @grade_entry_form.id}, :onclick => "modalDownload.close();" %>
-  <br />
-  <br />
-  <button onclick="modalDownload.close(); return false;"><%= I18n.t('cancel') %>
-  </button>
-</div>

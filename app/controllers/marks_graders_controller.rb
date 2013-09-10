@@ -6,16 +6,6 @@ class MarksGradersController < ApplicationController
 
   before_filter :authorize_only_for_admin
 
-  def upload_dialog
-    @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
-    render :partial => 'marks_graders/modal_dialogs/upload_dialog.rjs'
-  end
-
-  def download_dialog
-    @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
-    render :partial => 'marks_graders/modal_dialogs/download_dialog.rjs'
-  end
-
   def populate
     @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
     @students = Student.all
@@ -144,7 +134,7 @@ class MarksGradersController < ApplicationController
     render :modify_groupings
   end
 
-  # Removes the graders contained in params from the students given in studens.
+  # Removes the graders contained in params from the students given in students.
   # This is meant to be called with the params from global_actions, and for
   # each grader to delete it will have a parameter
   # of the form "studentid_graderid"

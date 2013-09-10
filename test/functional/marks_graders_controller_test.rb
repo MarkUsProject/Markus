@@ -22,16 +22,6 @@ class MarksGradersControllerTest < AuthenticatedControllerTest
         assert_response :missing
       end
 
-      should "fail to GET :upload_dialog as a #{user_type}" do
-        get_as @user, :upload_dialog, :grade_entry_form_id => @grade_entry_form.id
-        assert_response :missing
-      end
-
-      should "fail to GET :download_dialog as a #{user_type}" do
-        get_as @user, :download_dialog, :grade_entry_form_id => @grade_entry_form.id
-        assert_response :missing
-      end
-
       should "fail to GET :populate as a #{user_type}" do
         get_as @user, :populate, :grade_entry_form_id => @grade_entry_form.id
         assert_response :missing
@@ -64,22 +54,6 @@ class MarksGradersControllerTest < AuthenticatedControllerTest
       assert @response.body.include?('Manage Graders')
       assert @response.body.include?('Download')
       assert @response.body.include?('Upload')
-    end
-
-    should 'see the upload dialog on GET :upload_dialog' do
-      get_as @admin, :upload_dialog, :grade_entry_form_id => @grade_entry_form.id
-      assert_response :success
-      assert_template :partial => 'marks_graders/modal_dialogs/_upload_dialog'
-      assert_template :partial => 'marks_graders/modal_dialogs/_upload'
-      assert @response.body.include?(I18n.t('marks_graders.upload.upload_grader_map'))
-    end
-
-    should 'see the download dialog on GET :download_dialog' do
-      get_as @admin, :download_dialog, :grade_entry_form_id => @grade_entry_form.id
-      assert_response :success
-      assert_template :partial => 'marks_graders/modal_dialogs/_download_dialog'
-      assert_template :partial => 'marks_graders/modal_dialogs/_download'
-      assert @response.body.include?(I18n.t('groups.download.download_grader_maps'))
     end
 
     should 'receive a list of students on POST :populate' do
