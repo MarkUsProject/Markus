@@ -116,5 +116,64 @@ class MarksGradersControllerTest < AuthenticatedControllerTest
       assert_response :success
       assert_equal csv, @response.body
     end
+
+    should 'be able to assign a grader to a student on POST :global_actions' do
+      post_as @admin, :global_actions, { :grade_entry_form_id => @grade_entry_form.id,
+        :global_actions => 'assign', :students => [@students[0]],
+        :graders => [@graders[0]], :submit_type => 'global_action',
+        :current_table => 'groups_table' }
+
+      assert_nil flash[:error]
+      assert_equal 1, @graders[0].get_membership_count_by_grade_entry_form(@grade_entry_form)
+      assert_equal 1, @grade_entry_form.grade_entry_students.find_by_user_id(@students[0].id).tas.length
+    end
+
+    should 'be able to assign multiple graders to students on POST :global_actions' do
+      post_as @admin, :global_actions, { :grade_entry_form_id => @grade_entry_form.id,
+        :global_actions => 'assign', :students => [@students[0], @students[1]],
+        :graders => [@graders[0], @graders[1]], :submit_type => 'global_action',
+        :current_table => 'groups_table' }
+
+      entry_students = @grade_entry_form.grade_entry_students
+
+      assert_nil flash[:error]
+      assert_equal 2, @graders[0].get_membership_count_by_grade_entry_form(@grade_entry_form)
+      assert_equal 2, @graders[1].get_membership_count_by_grade_entry_form(@grade_entry_form)
+      assert_equal 2, entry_students.find_by_user_id(@students[0].id).tas.length
+      assert_equal 2, entry_students.find_by_user_id(@students[0].id).tas.length
+    end
+
+    should 'be able to randomly and evenly assign graders to students on POST :global_actions' do
+      post_as @admin, :global_actions, { :grade_entry_form_id => @grade_entry_form.id,
+        :global_actions => 'random_assign', :students => [@students[0], @students[1]],
+        :graders => [@graders[0], @graders[1]], :submit_type => 'global_action',
+        :current_table => 'groups_table' }
+
+      entry_students = @grade_entry_form.grade_entry_students
+
+      assert_nil flash[:error]
+      assert_equal 1, @graders[0].get_membership_count_by_grade_entry_form(@grade_entry_form)
+      assert_equal 1, @graders[1].get_membership_count_by_grade_entry_form(@grade_entry_form)
+      assert_equal 1, entry_students.find_by_user_id(@students[0].id).tas.length
+      assert_equal 1, entry_students.find_by_user_id(@students[0].id).tas.length
+    end
+
+    should 'be able to remove a grader from a student on POST :global_actions' do
+      # Add a grader to a student
+      entry_students = @grade_entry_form.grade_entry_students
+      grade_entry_student = entry_students.find_or_create_by_user_id(@students[0].id)
+      grade_entry_student.add_tas(@graders[0])
+
+      remove = "#{@students[0].id}_#{@graders[0].user_name}".to_sym
+      post_as @admin, :global_actions, { :grade_entry_form_id => @grade_entry_form.id,
+        :global_actions => 'unassign', :students => [@students[0]],
+        remove => true, :submit_type => 'global_action',
+        :current_table => 'groups_table' }
+
+      assert_nil flash[:error]
+      assert_equal 0, @graders[0].get_membership_count_by_grade_entry_form(@grade_entry_form)
+      assert_equal 0, entry_students.find_by_user_id(@students[0].id).tas.length
+    end
+
   end # admin context
 end
