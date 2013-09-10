@@ -179,6 +179,11 @@ ActiveRecord::Schema.define(:version => 20130611095902) do
 
   add_index "grade_entry_students", ["user_id", "grade_entry_form_id"], :name => "index_grade_entry_students_on_user_id_and_grade_entry_form_id", :unique => true
 
+  create_table "grade_entry_students_tas", :id => false, :force => true do |t|
+    t.integer "grade_entry_student_id"
+    t.integer "ta_id"
+  end
+
   create_table "grades", :force => true do |t|
     t.integer  "grade_entry_item_id"
     t.integer  "grade_entry_student_id"
