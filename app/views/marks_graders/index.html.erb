@@ -48,7 +48,9 @@ document.observe("dom:loaded", function() {
   </div>
 </div>
 
-<div class="wrapLeft"></div>
+<div class="wrapLeft">
+  <%= render 'shared/flash_message' %>
+</div>
 <div class="clear"></div>
 
 <div id="notice">
@@ -65,31 +67,6 @@ document.observe("dom:loaded", function() {
     <h3><%= t("groups.warning") %></h3>
     <div id="global_action_warning_msg"></div>
   </div>
-
-  <% # if there are errors have the error message display %>
-  <% if flash[:error] || flash[:fail_notice] || flash[:invalid_lines] -%>
-    <div class="error">
-      <%= flash[:error] + "<br/>" if flash[:error] %>
-      <%= flash[:fail_notice] + "<br/>" if flash[:fail_notice] %>
-      <% if flash[:invalid_lines] %>
-        <%= I18n.t("graders.lines_not_processed") %>
-        <ul>
-        <% flash[:invalid_lines].each do |error| %>
-          <li><%= error %></li>
-        <% end %>
-        </ul>
-      <% end %>
-    </div>
-  <% end %>
-
-  <% # if there are success messages to display %>
-  <% if flash[:upload_notice] || flash[:edit_notice] -%>
-    <div class="success">
-      <%= flash[:upload_notice] + "<br/>" if flash[:upload_notice] %>
-      <%= flash[:edit_notice] + "<br/>" if flash[:edit_notice] %>
-    </div>
-  <% end %>
-
 </div><!-- Notice -->
 
 <%= form_tag global_actions_grade_entry_form_marks_graders_path(@grade_entry_form),

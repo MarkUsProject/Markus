@@ -33,7 +33,9 @@ class MarksGradersController < ApplicationController
     invalid_lines = GradeEntryStudent.assign_tas_by_csv(params[:grader_mapping].read,
       params[:grade_entry_form_id], params[:encoding])
 
-    flash[:invalid_lines] = invalid_lines if invalid_lines.size > 0
+    if invalid_lines.size > 0
+      flash[:error] = I18n.t('graders.lines_not_processed') + invalid_lines.join(', ')
+    end
 
     redirect_to :action => 'index', :grade_entry_form_id => params[:grade_entry_form_id]
   end
