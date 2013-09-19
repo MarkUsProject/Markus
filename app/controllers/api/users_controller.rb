@@ -11,7 +11,7 @@ module Api
     # Optional: filter, fields
     def index
       users = get_collection(User)
-      
+
       fields = fields_to_render(@@default_fields)
 
       respond_to do |format|
@@ -83,7 +83,7 @@ module Api
         fields = fields_to_render(@@default_fields)
 
         respond_to do |format|
-          format.xml{render :xml => user.to_xml(:only => fields, :root => 'users',
+          format.xml{render :xml => user.to_xml(:only => fields, :root => 'user',
             :skip_types => 'true')}
           format.json{render :json => user.to_json(:only => fields)}
         end

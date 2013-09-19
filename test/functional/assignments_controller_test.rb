@@ -302,7 +302,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
         @assignment.reload
         # note that a div with this id is only displayed when we have an error on a page
-        assert_select 'div#errorExplanation'
+        assert_select 'div.error'
       end
 
       # Regression test for Github issue #568
@@ -463,7 +463,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           assert_equal @file_1, @assignment.assignment_files.first
         end
       end  # -- with required files
-    
+
       should 'be able to add section due dates' do
         put_as @admin,
                   :update,
@@ -481,13 +481,13 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                     :section_due_dates_attributes => {
                       '0' => { 'section_id' => '2', 'due_date' => '2011-10-27 00:00' },
                       '1' => { 'section_id' => '3', 'due_date' => '2011-10-27 00:00' }
-                    } 
+                    }
                   }
         @assignment.reload
         assert_equal true, @assignment.section_due_dates_type
         assert_equal 2, @assignment.section_due_dates.size
       end
-      
+
       should 'be able to remove section due dates after adding them' do
         put_as @admin,
                   :update,
@@ -505,7 +505,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                     :section_due_dates_attributes => {
                       '0' => { 'section_id' => '2', 'due_date' => '2011-10-27 00:00' },
                       '1' => { 'section_id' => '3', 'due_date' => '2011-10-27 00:00' }
-                    } 
+                    }
                   }
         put_as @admin,
           :update,
@@ -523,9 +523,9 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
             :section_due_dates_attributes => {
               '0' => { 'section_id' => '2', 'due_date' => '2011-10-27 00:00' },
               '1' => { 'section_id' => '3', 'due_date' => '2011-10-27 00:00' }
-            } 
+            }
           }
-          
+
         @assignment.reload
         assert_equal false, @assignment.section_due_dates_type
         assert_equal 0, @assignment.section_due_dates.size

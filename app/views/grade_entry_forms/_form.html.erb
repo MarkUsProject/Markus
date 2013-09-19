@@ -15,11 +15,7 @@
 <% end %>
 
 <div class="wrapLeft">
-<% if flash[:success] %>
-<div class="success">
-  <span><%=flash[:success]%></span>
-</div>
-<% end %>
+<%= render 'shared/flash_message' %>
 
 <%= form_for @grade_entry_form, :as => :grade_entry_form do |f| %>
   <%= render :partial => "shared/error_explanation", :locals => { :model => @grade_entry_form } %>
@@ -35,6 +31,7 @@
     <%= raw(f.label :description, t(:description)) %>
     <%= raw(f.text_field :description) %><br />
 
+
     <%= raw(f.label :message) %>
     <%= raw(f.text_area :message, :rows => 8, :cols => 65) %><br />
 
@@ -44,6 +41,10 @@
 	                           :locale => I18n.default_locale}) %>
     <%= raw(t(:iso_date_format_example)) %>
 
+<br />
+
+    <%= raw(f.label :show_total, t('grade_entry_forms.show_total')) %>
+    <%= raw(f.check_box :show_total) %><br />
     <br />
 
     <h4><%= t('grade_entry_forms.specify_columns') %></h4>

@@ -261,13 +261,13 @@ class User < ActiveRecord::Base
   # strip input string
   def strip_name
     if self.user_name
-      self.user_name.strip!
+      self.user_name = self.user_name.strip
     end
     if self.last_name
-      self.last_name.strip!
+      self.last_name = self.last_name.strip
     end
     if self.first_name
-      self.first_name.strip!
+      self.first_name = self.first_name.strip
     end
   end
 

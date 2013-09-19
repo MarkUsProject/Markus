@@ -8,12 +8,6 @@
                            'livepipe/tabs',
                            'AnnotationCategories/index' %>
 
-<%if @assignment.past_due_date?%>
- <div class="notice">
-   <%=t('past_due_date_warning')%>
- </div>
-<% end %>
-
 <div id="title_bar">
   <h1><%= I18n.t("annotations.title",
         :assignment_short_identifier => @assignment.short_identifier) %>
@@ -30,12 +24,12 @@
 </div>
 
 <div class="wrapLeft">
-	<% if flash[:annotation_upload_invalid_lines] -%>
-		<p class="error"><%= flash[:annotation_upload_invalid_lines] %></p>
-	<% end -%>
-	<% if flash[:annotation_upload_success] -%>
-		<p class="success"><%= flash[:annotation_upload_success] %></p>
-	<% end -%>
+  <%= render 'shared/flash_message' %>
+  <%if @assignment.past_due_date?%>
+   <div class="notice">
+     <%=t('past_due_date_warning')%>
+   </div>
+  <% end %>
 <p id="criterion_error" class="warning" style="display: none;"></p>
 
   <div id="annotation_category_pane">

@@ -16,6 +16,7 @@ class SubmissionsController < ApplicationController
                             :downloads,
                             :s_table_paginate,
                             :collect_and_begin_grading,
+                            :download_groupings_files,
                             :manually_collect_and_begin_grading,
                             :collect_ta_submissions,
                             :repo_browser,
@@ -294,10 +295,10 @@ class SubmissionsController < ApplicationController
       end
       @table_rows = {}
       @files.sort.each do |file_name, file|
-        @table_rows[file.id] = construct_repo_browser_table_row(file_name, file)
+        @table_rows[file.object_id] = construct_repo_browser_table_row(file_name, file)
       end
       @directories.sort.each do |directory_name, directory|
-        @table_rows[directory.id] = construct_repo_browser_directory_table_row(directory_name, directory)
+        @table_rows[directory.object_id] = construct_repo_browser_directory_table_row(directory_name, directory)
       end
       render :template => 'submissions/repo_browser/populate_repo_browser'
     end

@@ -6,8 +6,8 @@
 
   <%= render :partial => 'layouts/head' %>
 
-
   <%= render :partial => "boot.js.erb" %>
+
   <script type="text/javascript">
   //<![CDATA[
 
@@ -25,13 +25,13 @@
     }
     else
     {
-    	new Ajax.Request('<%= new_assignment_group_path(@assignment)%>', 
-                      { 
-                        asynchronous:true, 
-                        evalScripts:true, 
-                        method:'get', 
-                        parameters: 'authenticity_token=' + AUTH_TOKEN 
-                      })     
+    	new Ajax.Request('<%= new_assignment_group_path(@assignment)%>',
+                      {
+                        asynchronous:true,
+                        evalScripts:true,
+                        method:'get',
+                        parameters: 'authenticity_token=' + AUTH_TOKEN
+                      })
     }
   }
 
@@ -39,14 +39,14 @@
 
     //close the dialog
     modalCreate.close();
-    //send AJAX request 
+    //send AJAX request
     new Ajax.Request('<%= new_assignment_group_path(@assignment)%>',
-                     { 
-                        asynchronous:true, 
-                        evalScripts:true, 
-                        method:'get', 
-                        parameters:'&new_group_name=' + new_group_name + 
-                        '&authenticity_token=' + AUTH_TOKEN 
+                     {
+                        asynchronous:true,
+                        evalScripts:true,
+                        method:'get',
+                        parameters:'&new_group_name=' + new_group_name +
+                        '&authenticity_token=' + AUTH_TOKEN
                       })
   }
 
@@ -62,17 +62,16 @@
     modalAssignmentGroupReUse.close();
 
     // send AJAX request
-    new Ajax.Request('<%= use_another_assignment_groups_assignment_groups_path(@assignment)%> ', 
-                      { 
-                        asynchronous:true, 
-                        evalScripts:true, 
-                        parameters:'&clone_groups_assignment_id=' + clone_groups_assignment_id 
-                          + '&authenticity_token=' + AUTH_TOKEN 
+    new Ajax.Request('<%= use_another_assignment_groups_assignment_groups_path(@assignment)%> ',
+                      {
+                        asynchronous:true,
+                        evalScripts:true,
+                        parameters:'&clone_groups_assignment_id=' + clone_groups_assignment_id
+                          + '&authenticity_token=' + AUTH_TOKEN
                       })
   }
 
   document.observe("dom:loaded", function() {
-
     modalCreate = new Control.Modal($('create_group_dialog'),
     {
       overlayOpacity: 0.75,
@@ -161,7 +160,7 @@
     <div id="warnings_group_msg">
     </div>
   </div>
-  
+
   <div class="warning" id="warnings_grace" style="display: none; ">
     <h3><%= t("groups.warning") %></h3>
     <div id="warnings_grace_msg">
@@ -173,31 +172,8 @@
 	</div>
   </div>
 
-  <% # if there are errors have the error message display %>
-  <% if flash[:error] || flash[:fail_notice] || flash[:invalid_lines] -%>
-    <div class="error">
-      <%= flash[:error]+"<br/>" if flash[:error] %>
-      <%= flash[:fail_notice]+"<br/>" if flash[:fail_notice] %>
-      <% if flash[:invalid_lines] %>
-        <%= I18n.t("groups.lines_not_processed") %>
-        <ul>
-        <% flash[:invalid_lines].each do |error| %>
-          <li><%=error%></li>
-        <% end %>
-        </ul>
-      <% end %>
-    </div>
-  <% end %>
-
-  <% # if there are success messages to display
-                            %>
-  <% if flash[:upload_notice] || flash[:edit_notice] -%>
-    <div class="success">
-      <%= flash[:upload_notice]+"<br/>" if flash[:upload_notice] %>
-      <%= flash[:edit_notice]+"<br/>" if flash[:edit_notice] %>
-    </div>
-  <% end %>
-
+  <% # all other flash messages %>
+  <%= render 'shared/flash_message' %>
 </div><!-- Notice -->
 
 

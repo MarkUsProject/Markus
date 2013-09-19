@@ -121,10 +121,7 @@ class RubricsControllerTest < AuthenticatedControllerTest
               :assignment_id => @assignment.id,
               :csv_upload => {:rubric => tempfile}
       assert_not_nil assigns :assignment
-      assert set_the_flash.to(:error => I18n.t('csv_invalid_lines'),
-                              :invalid_lines => [
-                          'criterion 5: ' + I18n.t('criteria.error.incomplete_row'),
-                          'criterion 6: ' + I18n.t('criteria.error.incomplete_row')])
+      assert flash[:error].include?(I18n.t('csv_invalid_lines'))
       assert_response :redirect
     end
 
@@ -474,6 +471,6 @@ END
 
         end
       end # with another submission
-    end 
+    end
   end # An admin, with an assignment, and a rubric criterion
 end

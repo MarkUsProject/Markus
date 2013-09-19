@@ -256,6 +256,17 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
     context 'and I have a grader. My grade should be able to' do
       setup do
+	@grouping1 = Grouping.make(:assignment => @assignment)
+	@grouping1.group.access_repo do |repo|
+          txn = repo.get_transaction('test')
+          path = File.join(@assignment.repository_folder, 'file1_name')
+          txn.add(path, 'file1 content', '')
+          repo.commit(txn)
+
+          # Generate submission
+          Submission.generate_new_submission(Grouping.last, repo.get_latest_revision)
+        end
+	
         @ta_membership = TaMembership.make(:membership_status => :accepted, :grouping => @grouping)
         @grader = @ta_membership.user
       end
@@ -271,8 +282,9 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       should 'access the populate repository browser.' do
         get_as @grader,
                :populate_repo_browser,
-               :assignment_id => 1,
-               :id => Grouping.first.id
+               :assignment_id => @assignment.id,
+               :id => Grouping.last.id,
+               :revision_number => Grouping.last.group.repo.get_latest_revision.revision_number
         assert_response :success
       end
 
@@ -613,6 +625,27 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_response :success
           zip_path = "tmp/#{@assignment.short_identifier}_" +
               "#{@admin.user_name}.zip"
+          Zip::ZipFile.open(zip_path) do |zip_file|
+            (1..3).to_a.each do |i|
+              instance_variable_set(:"@file#{i}_path", File.join(
+                  "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",
+                  "file#{i}"))
+              assert_not_nil zip_file.find_entry(
+                                 instance_variable_get(:"@file#{i}_path"))
+              assert_equal("file#{i}'s content\n", zip_file.read(
+                  instance_variable_get(:"@file#{i}_path")))
+            end
+          end
+        end
+
+        should '- as Ta - be able to download all submissions from all groups' do
+          @ta = Ta.make
+          get_as @ta, :download_groupings_files,
+                 :assignment_id => @assignment.id,
+                 :groupings => [@grouping1.id, @grouping2.id, @grouping3.id]
+          assert_response :success
+          zip_path = "tmp/#{@assignment.short_identifier}_" +
+              "#{@ta.user_name}.zip"
           Zip::ZipFile.open(zip_path) do |zip_file|
             (1..3).to_a.each do |i|
               instance_variable_set(:"@file#{i}_path", File.join(

@@ -7,13 +7,7 @@
 
 <div class="wrapLeft">
 
-  <% if flash[:error] -%>
-    <p class="errorExplanation" id="errorExplanation"><%= flash[:error] %></p>
-  <% end -%>
-
-  <% if flash[:success] -%>
-    <p class="success"><%= flash[:success] %></p>
-  <% end -%>
+  <%= render 'shared/flash_message' %>
 
   <%= link_to I18n.t(:create_new_assignment),
               { :controller => 'assignments',

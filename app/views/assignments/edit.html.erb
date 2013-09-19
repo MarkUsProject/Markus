@@ -1,14 +1,7 @@
-
-<% unless @past_date.nil? || @past_date.empty? %>
-  <div class="notice">
-    <%= t 'past_due_date_notice' %>
-    <%= @past_date.join(', ') %>.
-  </div>
-<% end %>
-
 <%= javascript_include_tag "create_assignment" %>
 
-<div id="title_bar"><h1><%= t("assignment.edit") %> <%= @assignment.short_identifier %></h1>
-<p><%= t("assignment.required_fields").html_safe %></p>
+<div id="title_bar">
+  <h1><%= t("assignment.edit") %> <%= @assignment.short_identifier %></h1>
+  <p><%= t("grade_entry_forms.required_fields").html_safe %></p>
 </div>
 <%= render :partial => 'form' %>
