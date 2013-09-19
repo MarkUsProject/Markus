@@ -34,29 +34,7 @@
 </div><!-- Title bar-->
 
 <div class="wrapLeft">
-<% if flash[:upload_notice] %>
-  <div class="success">
-    <p><%= flash[:upload_notice] %></p>
-  </div>
-<% end %>
-<% if flash[:error] %>
-  <div class="error">
-    <p><%= flash[:error] %></p>
-    <% if !flash[:invalid_lines].nil? && !flash[:invalid_lines].empty? %>
-      <ul>
-        <% flash[:invalid_lines].each do |message| %>
-          <li><%=(message)%></li>
-        <% end %>
-      </ul>
-  <% end %>
-  </div>
-<% end %>
-
-<% if !flash[:success].nil? %>
-  <div class="success">
-    <%= flash[:success] %>
-  </div>
-<% end %>
+  <%= render 'shared/flash_message' %>
 
 <p id="new_criterion_error" class="warning" style="display: none;">
 

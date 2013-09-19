@@ -17,7 +17,8 @@
                              'livepipe/livepipe.js',
                              'livepipe/window.js',
                              'livepipe/tabs.js',
-                             'layouts' %>
+                             'layouts',
+                             'prototype-snippet' %>
   <%= stylesheet_link_tag "livepipe/tabs.css", :media => 'all' %>
   <%= csrf_meta_tag %>
   <%= yield :head %>
@@ -31,6 +32,7 @@
     <%= render :partial => 'layouts/sub_sub_menu' %>
     <%= render :partial => 'layouts/about' %>
     <%= render :partial => 'layouts/role_switch' %>
+    <%= render :partial => 'layouts/redirect' %>
     <div id="container">
       <div id="content">
         <%= render :partial => 'layouts/noscript'%>
@@ -43,5 +45,6 @@
   <script type="text/javascript">
     jQuery.noConflict();
   </script>
+  <%= render 'layouts/redirect.js.erb' %>
 </body>
 </html>

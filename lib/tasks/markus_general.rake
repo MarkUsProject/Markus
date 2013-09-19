@@ -1,5 +1,5 @@
 namespace :markus do
-  
+
   desc "Resets a MarkUs installation. Useful for developers. This is just a rake repos:drop && rake db:reset && rake db:seed"
   task(:reset => :environment) do
     if ENV['environment'].nil?
@@ -14,5 +14,5 @@ namespace :markus do
     Rake::Task['db:seed'].invoke  # repopulate DB
     puts("Resetting development environment of MarkUs finished!")
   end
- 
+
 end

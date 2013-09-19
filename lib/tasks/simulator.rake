@@ -23,7 +23,7 @@ namespace :markus do
   namespace :simulator do
     desc "Generate assignments, random students, submissions and TA data"
     task(:create => :environment) do
-      
+
       num_of_assignments = Integer(ENV["NUM_OF_ASSIGNMENTS"])
       # If the uer did not provide the environment variable "NUM_OF_ASSIGNMENTS",
       # the simulator will create two assignments
@@ -109,13 +109,13 @@ namespace :markus do
         puts "Finish creating assignment" + assignment_short_identifier + "."
 
         puts "Generating TAs ..."
-        num_of_tas = Integer(ENV["NUM_OF_TAS"]) 
+        num_of_tas = Integer(ENV["NUM_OF_TAS"])
         # If the uer did not provide the environment variable "NUM_OF_TAS"
         if ENV["NUM_OF_TAS"].nil?
           num_of_tas = rand(3) + 1
         end
         curr_ta_num = 1
-        # student_num is the student number for students created in this 
+        # student_num is the student number for students created in this
         # assignment. The number will increase by one for the next created
         # student.
         student_num = 1
@@ -151,7 +151,7 @@ namespace :markus do
                     :last_name => student_last_name,
                     :first_name => 'Student',
                     :type => 'Student')
-            
+
             student.save!
             student.create_group_for_working_alone_student(assignment.id)
             student.save

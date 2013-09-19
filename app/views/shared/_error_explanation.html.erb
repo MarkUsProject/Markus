@@ -1,13 +1,6 @@
-<% #requires locals: model - the object that may have an error and flash_message (optional) %>
+<% #requires locals: model - the object that may have an error %>
 <% if model.errors.any? %>
-  <div class="errorExplanation" id="errorExplanation" >
-    <% unless defined?(flash_message) == nil %>
-      <h2><%= flash_message %></h2>
-    <% end %>
-    <ul>
     <% model.errors.full_messages.each do |msg| %>
-      <li><%= msg %></li>
+      <%= content_tag :div, msg, :class => 'error' %>
     <% end %>
-    </ul>
-  </div>
 <% end %>

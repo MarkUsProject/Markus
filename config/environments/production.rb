@@ -1,3 +1,4 @@
+# encoding: utf-8
 # Settings specified here will take precedence over those in config/environment.rb
 Markus::Application.configure do
   # rails will fallback to en, no matter what is set as config.i18n.default_locale

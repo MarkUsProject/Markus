@@ -1,5 +1,5 @@
 namespace :markus do
-  
+
   desc "Resets the API key for Admins and TAs"
   task(:reset_api_keys => :environment) do
     print("Resetting API keys for Admins and TAs...")
@@ -11,5 +11,5 @@ namespace :markus do
     end
     puts(" done!")
   end
- 
+
 end

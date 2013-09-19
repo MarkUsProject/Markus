@@ -1,19 +1,19 @@
 namespace :markus do
   desc "Trying to set up demo"
   task(:reset_demo => :environment) do
-  
+
     puts "Destroying old Assignments"
     Assignment.destroy_all
-  
+
     puts "Converting 'a' to 'instructor'"
     i = Admin.find_by_user_name('a')
     i.user_name = "instructor"
     i.first_name = "Jim"
     i.last_name = "Clarke"
     i.save!
-    
+
     puts "Renaming 'c5hanson' to 'student'"
-    
+
     s = Student.find_by_user_name('c5hanson')
     s.user_name = 'student'
     s.save!
@@ -56,7 +56,7 @@ namespace :markus do
     a2.assignment_stat = AssignmentStat.new
     a2.display_grader_names_to_students = false
     a2.save!
-    
+
     puts "Creating the Rubric for A1..."
     rubric_criteria = [{:rubric_criterion_name => "Uses Conditionals", :weight => 1}, {:rubric_criterion_name => "Code Clarity", :weight => 2}, {:rubric_criterion_name => "Code Is Documented", :weight => 3}, {:rubric_criterion_name => "Uses For Loop", :weight => 1}]
     default_levels = {:level_0_name => "Quite Poor", :level_0_description => "This criterion was not satisifed whatsoever", :level_1_name => "Satisfactory", :level_1_description => "This criterion was satisfied", :level_2_name => "Good", :level_2_description => "This criterion was satisfied well", :level_3_name => "Great", :level_3_description => "This criterion was satisfied really well!", :level_4_name => "Excellent", :level_4_description => "This criterion was satisfied excellently"}
@@ -67,7 +67,7 @@ namespace :markus do
       rc.assignment = a1
       rc.save!
     end
-    
+
     puts "Create Groupings on A1 and A2 for c5hanson, c5glazun, c5anthei, c5berkel, c5bloche"
     students = ['student', 'c5glazun', 'c5anthei', 'c5berkel', 'c5bloche']
     students.each do |student_name|
@@ -81,7 +81,7 @@ namespace :markus do
       end
     end
 
-    puts "Insert a file into student's repository for A1"    
+    puts "Insert a file into student's repository for A1"
     c5hanson = Student.find_by_user_name('student')
 
     grouping = c5hanson.accepted_grouping_for(a1.id)
@@ -106,7 +106,7 @@ namespace :markus do
     sleep 1
     a1.due_date = Time.now
     a1.save!
-    
+
     # Create (empty) Submissions and results for all students besides c5hanson
     students = ['c5glazun', 'c5anthei', 'c5berkel', 'c5bloche']
     students.each do |student_name|
@@ -118,6 +118,6 @@ namespace :markus do
       @result.save!
     end
 
-    
+
   end
 end

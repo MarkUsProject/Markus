@@ -8,7 +8,7 @@ namespace :markus do
         File.delete(REPOSITORY_PERMISSION_FILE)
       end
     end
-    
+
     desc "Build repositories in REPOSITORY_STORAGE for all existing Groups"
     task(:build => :environment) do
       puts "Building Repositories for existing groups..."

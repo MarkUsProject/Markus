@@ -2,12 +2,12 @@ namespace :markus do
   namespace :load do
     desc "Loads 'faked' results into database"
     task(:results => :environment) do
-      
+
       if ENV['short_id'].nil?
         $stderr.puts "Usage: rake load:results short_id=string\n\nNOTE: Assignment must not exist."
         exit(1)
       end
-  
+
       puts "Loading results into database (this might take a long time)... "
       # set up assignments
       a1 = Assignment.new
@@ -28,14 +28,14 @@ namespace :markus do
       a1.display_grader_names_to_students = false
       a1.build_assignment_stat
       a1.save!
-  
+
       # load users
       STUDENT_CSV = File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'db', 'data', 'students.csv'))
       if File.readable?(STUDENT_CSV)
         csv_students = File.new(STUDENT_CSV)
         User.upload_user_list(Student, csv_students, nil)
       end
-      
+
       # create groupings for each student in A1
       students = Student.all
       students.each do |student|
@@ -47,7 +47,7 @@ namespace :markus do
           puts "Caught exception on #{student.user_name}: #{e.message}" # ignore exceptions
         end
       end
-  
+
       # create rubric criteria for a1
       rubric_criteria = [{:rubric_criterion_name => "Uses Conditionals", :weight => 1}, {:rubric_criterion_name => "Code Clarity", :weight => 2}, {:rubric_criterion_name => "Code Is Documented", :weight => 3}, {:rubric_criterion_name => "Uses For Loop", :weight => 1}]
       default_levels = {:level_0_name => "Quite Poor", :level_0_description => "This criterion was not satisifed whatsoever", :level_1_name => "Satisfactory", :level_1_description => "This criterion was satisfied", :level_2_name => "Good", :level_2_description => "This criterion was satisfied well", :level_3_name => "Great", :level_3_description => "This criterion was satisfied really well!", :level_4_name => "Excellent", :level_4_description => "This criterion was satisfied excellently"}
@@ -58,7 +58,7 @@ namespace :markus do
         rc.assignment = a1
         rc.save
       end
-      
+
       # create submissions
       students.each do |student|
         if student.has_accepted_grouping_for?(a1.id)
