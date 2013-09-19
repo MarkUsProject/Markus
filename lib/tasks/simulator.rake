@@ -23,7 +23,7 @@ namespace :markus do
   namespace :simulator do
     desc "Generate assignments, random students, submissions and TA data"
     task(:create => :environment) do
-      
+
       num_of_assignments = Integer(ENV["NUM_OF_ASSIGNMENTS"])
       # If the uer did not provide the environment variable "NUM_OF_ASSIGNMENTS",
       # the simulator will create two assignments
@@ -77,7 +77,8 @@ namespace :markus do
         assignment.invalid_override = false
         assignment.marking_scheme_type = Assignment::MARKING_SCHEME_TYPE[:rubric]
         assignment.display_grader_names_to_students = false
-        assignment.save
+        assignment.assignment_stat = AssignmentStat.new
+        assignment.save!
 
         puts "Creating the Rubric for " + assignment_short_identifier + " ..."
         weight_1 = rand(5) + 5
@@ -99,7 +100,7 @@ namespace :markus do
           rc.update_attributes(rubric_criteria)
           rc.update_attributes(default_levels)
           rc.assignment = assignment
-          rc.save
+          rc.save!
           assignment.rubric_criteria << rc
         end
         assignment.save
@@ -108,19 +109,21 @@ namespace :markus do
         puts "Finish creating assignment" + assignment_short_identifier + "."
 
         puts "Generating TAs ..."
-        num_of_tas = Integer(ENV["NUM_OF_TAS"]) 
+        num_of_tas = Integer(ENV["NUM_OF_TAS"])
         # If the uer did not provide the environment variable "NUM_OF_TAS"
         if ENV["NUM_OF_TAS"].nil?
           num_of_tas = rand(3) + 1
         end
         curr_ta_num = 1
-        # student_num is the student number for students created in this 
+        # student_num is the student number for students created in this
         # assignment. The number will increase by one for the next created
         # student.
         student_num = 1
         while (curr_ta_num <= num_of_tas) do
+          puts ''
           # Form a new TA membership with some default value.
-          ta_last_name = (curr_assignment_num_for_name*10 + curr_ta_num).to_s
+          ta_last_name = curr_assignment_num_for_name.to_s + curr_ta_num.to_s +
+            student_num.to_s
           ta_user_name = "TA" + ta_last_name
 
           puts "Start generating " + ta_user_name.to_s + "... "
@@ -138,7 +141,9 @@ namespace :markus do
 
           curr_student_num = 1
           while (curr_student_num <= num_of_students) do
-            student_last_name = (curr_assignment_num_for_name*10 + student_num).to_s
+            student_last_name = curr_assignment_num_for_name.to_s + curr_ta_num.to_s +
+              student_num.to_s
+
             student_user_name = "Student # " +  student_last_name
 
             puts "Start generating " + student_user_name.to_s + "... "
@@ -146,18 +151,18 @@ namespace :markus do
                     :last_name => student_last_name,
                     :first_name => 'Student',
                     :type => 'Student')
-            
-            student.save
+
+            student.save!
             student.create_group_for_working_alone_student(assignment.id)
             student.save
             grouping = student.accepted_grouping_for(assignment.id)
-            grouping.save
+            grouping.save!
             grouping.create_grouping_repository_folder
-            grouping.save
+            grouping.save!
             grouping.add_tas([ta])
 
             assignment.groupings << grouping
-            assignment.save
+            assignment.save!
 
             assignment_repo = grouping.group.repo
             txn = assignment_repo.get_transaction(student_user_name)
@@ -179,7 +184,7 @@ namespace :markus do
             puts folder_name
             txn.add(folder_name, file_data, 'text/java')
             assignment_repo.commit(txn)
-            assignment.save
+            assignment.save!
 
             num_of_submissions = rand(4)
             curr_submission_num = 1
@@ -187,9 +192,9 @@ namespace :markus do
             while (curr_submission_num <= num_of_submissions)
               date_of_submission = Time.random(:year_range=>1)
               submission = Submission.create_by_timestamp(grouping, date_of_submission)
-              submission.save
+              submission.save!
               curr_submission_num += 1
-              submission.save
+              submission.save!
             end
 
             submission = grouping.current_submission_used
@@ -199,8 +204,8 @@ namespace :markus do
             if (marked == 1 and !submission.nil?)
               @result = submission.get_latest_result
               @result.marking_state = Result::MARKING_STATES[:partial]
-              @result.save
-              submission.save
+              @result.save!
+              submission.save!
             elsif (marked == 2 and  !submission.nil?)
               result = submission.get_latest_result
               # Create a mark for each criterion and attach to result
@@ -211,15 +216,15 @@ namespace :markus do
                 m.markable_type = "RubricCriterion"
                 m.markable_id = criterion.id
                 m.result = result
-                m.mark = rand(criterion.weight) # assign some random mark
-                m.save
+                m.mark = rand(4) # assign some random mark
+                m.save!
               end
 
               result.overall_comment = "Assignment goals pretty much met, but some things would need improvement. Other things are absolutely fantastic! Seriously, this is just some random text."
               result.marking_state = Result::MARKING_STATES[:complete]
               result.released_to_students = true
-              result.save
-              submission.save
+              result.save!
+              submission.save!
             end
 
 
