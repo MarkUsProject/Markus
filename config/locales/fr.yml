@@ -123,7 +123,8 @@ fr:
     assignment:
         assignment: "Projet %{short_identifier}"
         required_fields: "Champs obligatoires <span class='required_field'>*</span>"
-        name:           "Nom du projet"
+        short_identifier:   "Identifiant du projet<span class='required_field'>*</span>"
+        name:           "Nom du projet<span class='required_field'>*</span>"
         update_success: "Projet mis à jour"
         create_success:        "Projet créé"
         error: "La règle d'envoi n'a pas pu être mise en place : #%{message}"
