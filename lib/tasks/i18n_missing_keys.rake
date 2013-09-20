@@ -1,4 +1,4 @@
-m# Invoke this task with "rake i18n:missing_keys"
+# Invoke this task with "rake i18n:missing_keys"
 
 namespace :i18n do
   desc "Find and list translation keys that do not exist in all locales"
