@@ -12,4 +12,6 @@ ids = []
 @removed_groupings.each do |grouping|
   ids.push(grouping.id)
 end
+page.call 'modify_students', @students_data.to_json
 page.call "remove_groupings", ids.to_json
+
