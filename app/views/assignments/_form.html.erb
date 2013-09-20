@@ -34,7 +34,7 @@
                               :maxlength => 30 ) %><br />
       <% end %>
 
-      <%= raw( f.label :description, t(:name) ) %>
+      <%= raw( f.label :description, t("assignment.name").html_safe ) %>
       <%= raw( f.text_field :description,
                             :onchange => "set_onbeforeunload(true);" ) %><br />
       <%= raw( f.label :message ) %>
