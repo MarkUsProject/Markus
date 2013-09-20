@@ -45,6 +45,11 @@ class GroupsController < ApplicationController
     @assignment = grouping.assignment
     @errors = []
     @removed_groupings = []
+		students_to_remove = grouping.students.all
+		grouping.student_memberships.all.each do |member|
+			grouping.remove_member(member.id)
+		end
+		@students_data = construct_student_table_rows(students_to_remove, @assignment)
     if grouping.has_submission?
         @errors.push(grouping.group.group_name)
         render :delete_groupings
@@ -319,11 +324,16 @@ class GroupsController < ApplicationController
     render :modify_groupings
   end
 
-  # Deletes the given list of groupings if possible
+  # Deletes the given list of groupings if possible. Removes each member first.
   def delete_groupings(groupings)
       @removed_groupings = []
       @errors = []
+			students_to_remove = []
       groupings.each do |grouping|
+				students_to_remove = students_to_remove.concat(grouping.students.all)
+				grouping.student_memberships.all.each do |mem|
+					grouping.remove_member(mem.id)
+				end
         if grouping.has_submission?
           @errors.push(grouping.group.group_name)
         else
@@ -331,6 +341,7 @@ class GroupsController < ApplicationController
           @removed_groupings.push(grouping)
         end
       end
+			@students_data = construct_student_table_rows(students_to_remove, @assignment)
       render :delete_groupings
   end
 
