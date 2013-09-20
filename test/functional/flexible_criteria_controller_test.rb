@@ -282,8 +282,8 @@ require 'mocha/setup'
       assert_response :success
       @criterion.reload
       @criterion2.reload
-      assert_equal 1, @criterion.position
-      assert_equal 2, @criterion2.position
+      assert_equal 2, @criterion.position
+      assert_equal 1, @criterion2.position
     end
 
     should 'be able to move_criterion down' do
@@ -292,8 +292,8 @@ require 'mocha/setup'
       assert_response :success
       @criterion.reload
       @criterion2.reload
-      assert_equal 1, @criterion.position
-      assert_equal 2, @criterion2.position
+      assert_equal 2, @criterion.position
+      assert_equal 1, @criterion2.position
     end
 
   end # An authenticated and authorized admin doing a GET
