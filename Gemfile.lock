@@ -72,7 +72,7 @@ GEM
     mocha (0.14.0)
       metaclass (~> 0.0.1)
     multi_json (1.7.9)
-    mysql2 (0.2.20)
+    mysql2 (0.3.13)
     pg (0.16.0)
     polyglot (0.3.3)
     prototype-rails (3.1.0)
@@ -166,7 +166,7 @@ DEPENDENCIES
   json
   machinist (< 2)
   mocha
-  mysql2 (< 0.3)
+  mysql2 (>= 0.3)
   pg
   prototype-rails
   railroady
