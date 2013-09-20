@@ -99,7 +99,7 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
       end
 
       should 'not use the ActiveRecord class name as the root' do
-        assignment = Assignment.make
+        assignment = Assignment.make!
         get 'show', :id => assignment.id.to_s
         assert !@response.body.include?('{"assignment":')
       end

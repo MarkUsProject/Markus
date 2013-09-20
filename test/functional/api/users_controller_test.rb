@@ -226,7 +226,7 @@ class Api::UsersControllerTest < ActionController::TestCase
       end
 
       should 'not use the ActiveRecord class name as the root' do
-        user = Admin.make
+        user = Admin.make!
         get 'show', :id => user.id.to_s
         assert !@response.body.include?('{"admin":')
       end
