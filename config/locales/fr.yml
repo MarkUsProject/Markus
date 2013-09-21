@@ -862,7 +862,7 @@ fr:
         to: "au"
         hours: "heure(s)…"
         after: "Après"
-        each: "chaque"
+        every: "chaque"
         deduct: "déduction"
         for: "pour"
 
