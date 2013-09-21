@@ -288,14 +288,16 @@ class Assignment < ActiveRecord::Base
     results_sum = 0
     results_fails = 0
     results_zeros = 0
+    students_count = 0
     groupings.each do |grouping|
       submission = grouping.current_submission_used
       unless submission.nil?
         result = submission.get_latest_result
         if result.released_to_students
           results.push result.total_mark
-          results_sum += result.total_mark
+          results_sum += result.total_mark * grouping.student_membership_number
           results_count += 1
+          students_count += grouping.student_membership_number
           if result.total_mark < (self.total_mark / 2)
             results_fails += 1
           end
@@ -324,7 +326,7 @@ class Assignment < ActiveRecord::Base
       self.results_average = 0
       return self.save
     end
-    avg_quantity = results_sum / results_count
+    avg_quantity = results_sum / students_count
     # compute average in percent
     self.results_average = (avg_quantity * 100 / self.total_mark)
     self.save

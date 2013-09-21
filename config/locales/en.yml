@@ -1143,7 +1143,7 @@ en:
 
     #app/views/main/_assignment_info_summary.erb
     percentage:                "%{percentage}%"
-    assignment_average:        "Assignment Average:"
+    assignment_average:        "Class Average:"
     assignment_median:         "Assignment Median:"
     assignments_submitted:     "Assignments Submitted:"
     assignments_graded:        "Assignments Graded:"
