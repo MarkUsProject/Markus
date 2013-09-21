@@ -13,7 +13,7 @@
     <%= pf.fields_for :periods, penalty_decay_period do |f| %>
 			<p>
         <%= f.label :deduction, t("submission_rules.penalty_decay_period_submission_rule.deduct") + ":" %>
-        <%= f.text_field :deduction, :size => 1 %>
+        <%= f.text_field :deduction, :size => 1 %>%
       </p>
 			<p>
         <%= f.label :interval, t("submission_rules.penalty_decay_period_submission_rule.each") %>
