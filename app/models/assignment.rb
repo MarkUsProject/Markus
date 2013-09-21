@@ -783,9 +783,19 @@ class Assignment < ActiveRecord::Base
     Ta.find(ids)
   end
 
-  # Returns all the submissions that have been graded
+  # Returns all the submissions that have been graded (completed)
   def graded_submissions
-    self.submissions.select { |submission| submission.get_latest_completed_result }
+		results = []
+		groupings.each do |grouping|
+			if grouping.marking_completed?
+		    submission = grouping.current_submission_used
+		    unless submission.nil?
+		      result = submission.get_latest_result
+					results.push(result)
+				end	
+			end
+		end
+		return results
   end
 
   def groups_submitted
