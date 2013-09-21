@@ -872,7 +872,7 @@ en:
         to: "to"
         hours: "hour(s)..."
         after: "After"
-        each: "each"
+        each: "every"
         deduct: "Deduct"
         for: "for"
 
