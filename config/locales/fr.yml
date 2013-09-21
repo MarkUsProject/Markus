@@ -104,7 +104,7 @@ fr:
       released: "Affiché"
       remark_requested: "Réévaluation demandée"
       not_complete: "La note du groupe %{group_name} ne peut pas être publiée : l'évalutation n'est pas indiquée comme étant terminée."
-      not_complete_unrelease: "(unrelease)La note du groupe %{group_name} ne peut pas être publiée : l'évalutation n'est pas indiquée comme étant terminée."
+      not_complete_unrelease: "La note du groupe %{group_name} ne peut pas être inédi : l'évalutation n'est pas indiquée comme étant terminée."
       no_submission: "%{group_name} n'a pas d'envoi"
       no_result: "%{group_name} n'a pas de résultat"
       result_not_saved: "Le résultat du groupe %{group_name} n'a pas pu être sauvegardé."
