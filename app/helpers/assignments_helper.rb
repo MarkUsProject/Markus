@@ -12,7 +12,7 @@ module AssignmentsHelper
   end
 
   def add_grace_period_link(name, form, element_id)
-    link_to_function name , nil, :id => element_id do |page|
+    link_to_function name , nil, :id => element_id, :style => 'display:none' do |page|
       period = render(:partial => 'grace_period', :locals => {:pf => form, :grace_period => Period.new})
       page << %{
         if ($F('grace_period_submission_rule') != null) {
@@ -27,7 +27,7 @@ module AssignmentsHelper
   end
 
   def add_penalty_decay_period_link(name, form, element_id)
-    link_to_function name , nil, :id => element_id do |page|
+    link_to_function name , nil, :id => element_id, :style => 'display:none' do |page|
       period = render(:partial => 'penalty_decay_period', :locals => {:pf => form, :penalty_decay_period => Period.new})
       page << %{
       if ($F('penalty_decay_period_submission_rule') != null) {
@@ -42,7 +42,7 @@ module AssignmentsHelper
   end
 
   def add_penalty_period_link(name, form, element_id)
-    link_to_function name , nil, :id => element_id do |page|
+    link_to_function name , nil, :id => element_id, :style => 'display:none' do |page|
       period = render(:partial => 'penalty_period', :locals => {:pf => form, :penalty_period => Period.new})
       page << %{
       if ($F('penalty_period_submission_rule') != null) {

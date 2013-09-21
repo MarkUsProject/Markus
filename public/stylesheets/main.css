@@ -2017,6 +2017,10 @@ fieldset.period{
    width: 80%;
 }
 
+#sub_rule_link{
+    margin-left: 5em;
+}
+
 #grade_entry_items {
 	width: 500px;
 }
