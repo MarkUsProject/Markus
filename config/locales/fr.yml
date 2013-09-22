@@ -334,6 +334,7 @@ fr:
       line_nr_csv_file_prefix: "ligne %{line_number} du fichier CSV :"
       group_to_grader: "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux groupes."
       student_to_grader: "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux étudiants."
+      invalid_csv: "Invalid format CSV"
 
     pagination:
       first: "<< Première"
