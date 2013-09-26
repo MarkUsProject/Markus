@@ -144,13 +144,13 @@ class User < ActiveRecord::Base
     result = {}
     result[:invalid_lines] = []  # store lines that were not processed
     # read each line of the file and update classlist
-    if encoding != nil
-      user_list = StringIO.new(Iconv.iconv('UTF-8',
-                                           encoding,
-                                           user_list.read).join)
-    end
-    User.transaction do
-      begin
+    begin
+      if encoding != nil
+        user_list = StringIO.new(Iconv.iconv('UTF-8',
+                                            encoding,
+                                            user_list.read).join)
+      end
+      User.transaction do
         processed_users = []
         CsvHelper::Csv.parse(user_list,
                              :skip_blanks => true,
@@ -168,10 +168,10 @@ class User < ActiveRecord::Base
               processed_users.push(row[0])
             end
           end
-        end # end prase
-      rescue
-        return false
+        end # end phrase
       end
+    rescue
+        return false
     end
     result[:upload_notice] = "#{num_update} user(s) added/updated."
     result

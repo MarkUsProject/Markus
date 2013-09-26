@@ -332,7 +332,7 @@ en:
       line_nr_csv_file_prefix: "Line %{line_number} of CSV file:"
       group_to_grader: "You must supply a CSV file for group to grader mapping"
       student_to_grader: "You must supply a CSV file for student to grader mapping"
-      invalid_csv: "Invalid CSV format"
+      invalid_csv: "The format of the CSV file was not recognized"
 
     pagination:
       first: "<< First"
