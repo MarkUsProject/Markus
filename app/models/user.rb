@@ -168,7 +168,7 @@ class User < ActiveRecord::Base
               processed_users.push(row[0])
             end
           end
-        end # end phrase
+        end # end parse
       end
     rescue
         return false
