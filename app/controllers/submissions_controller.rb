@@ -5,6 +5,8 @@ class SubmissionsController < ApplicationController
   include SubmissionsHelper
   include PaginationHelper
 
+  helper_method :all_assignments_marked?
+
   before_filter :authorize_only_for_admin,
                 :except => [:server_time,
                             :populate_file_manager,
@@ -663,6 +665,20 @@ class SubmissionsController < ApplicationController
         render :text => file_contents, :layout => 'sanitized_html'
       end
     end
+  end
+
+  ##
+  # Checks if all the assignments for the current submission are marked
+  # returns true if all assignments are marked completely
+  ##
+  def all_assignments_marked?
+    marked = Assignment.joins(:groupings => [{:current_submission_used => 
+      :results}]).where('assignments.id' => params[:assignment_id], 
+      'results.marking_state' => Result::MARKING_STATES[:complete])
+    total_assignments = Assignment.joins(:groupings => 
+      [{:current_submission_used => :results}]).where('assignments.id' => 
+      params[:assignment_id])
+    return marked.size == total_assignments.size
   end
 
   ##
