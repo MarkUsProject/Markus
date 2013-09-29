@@ -17,6 +17,7 @@
                              'livepipe/window.js',
                              'livepipe/tabs.js',
                              'layouts',
+                             'rails',
                              'prototype-snippet' %>
   <%= stylesheet_link_tag "livepipe/tabs.css", :media => 'all' %>
   <%= csrf_meta_tag %>
@@ -42,7 +43,7 @@
 
   <!-- Toggle jQuery's noConflict mode so it does not conflict with Prototype -->
   <script type="text/javascript">
-
+    jQuery.noConflict();
   </script>
   <%= render 'layouts/redirect.js.erb' %>
 </body>
