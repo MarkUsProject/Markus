@@ -59,6 +59,7 @@ module Markus
 
   # Enable the asset pipeline
   config.assets.enabled = true
-  
+  config.assets.version = '1.0'
+
   end
 end

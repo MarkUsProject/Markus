@@ -22,11 +22,17 @@ gem 'dynamic_form'
 gem 'exception_notification', '<4.0'
 
 gem 'json'
-gem 'sass'
 gem 'coffee-script'
-gem 'uglifier'
 gem 'jquery-rails'
 gem 'prototype-rails' #Will be needed with Rails3.1
+
+group :assets do
+  gem 'tilt', '~> 1.3.7'
+  gem 'sass-rails',   '~> 3.1.5'
+  gem 'coffee-rails', '~> 3.1.1'
+  gem 'uglifier',     '>= 1.0.3'
+end
+
 
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
 # PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).
