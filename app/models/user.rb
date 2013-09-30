@@ -144,30 +144,34 @@ class User < ActiveRecord::Base
     result = {}
     result[:invalid_lines] = []  # store lines that were not processed
     # read each line of the file and update classlist
-    if encoding != nil
-      user_list = StringIO.new(Iconv.iconv('UTF-8',
-                                           encoding,
-                                           user_list.read).join)
-    end
-    User.transaction do
-      processed_users = []
-      CsvHelper::Csv.parse(user_list,
-                           :skip_blanks => true,
-                           :row_sep => :auto) do |row|
-        # don't know how to fetch line so we concat given array
-        next if CsvHelper::Csv.generate_line(row).strip.empty?
-        if processed_users.include?(row[0])
-          result[:invalid_lines] = I18n.t('csv_upload_user_duplicate',
-                                          {:user_name => row[0]})
-        else
-          if User.add_user(user_class, row).nil?
-            result[:invalid_lines] << row.join(',')
+    begin
+      if encoding != nil
+        user_list = StringIO.new(Iconv.iconv('UTF-8',
+                                            encoding,
+                                            user_list.read).join)
+      end
+      User.transaction do
+        processed_users = []
+        CsvHelper::Csv.parse(user_list,
+                             :skip_blanks => true,
+                             :row_sep => :auto) do |row|
+          # don't know how to fetch line so we concat given array
+          next if CsvHelper::Csv.generate_line(row).strip.empty?
+          if processed_users.include?(row[0])
+            result[:invalid_lines] = I18n.t('csv_upload_user_duplicate',
+                                            {:user_name => row[0]})
           else
-            num_update += 1
-            processed_users.push(row[0])
+            if User.add_user(user_class, row).nil?
+              result[:invalid_lines] << row.join(',')
+            else
+              num_update += 1
+              processed_users.push(row[0])
+            end
           end
-        end
-      end # end prase
+        end # end parse
+      end
+    rescue
+        return false
     end
     result[:upload_notice] = "#{num_update} user(s) added/updated."
     result

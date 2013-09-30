@@ -6,7 +6,7 @@
       <%= simple_format(annot.annotation_text.content) %>
     </div>
 
-    <%= link_to_function I18n.t("edit"),
+    <%= button_to I18n.t("edit"),
          "$('annotation_text_content_edit_#{annot.annotation_text.id}').show();$('annotation_text_content_display_#{annot.annotation_text.id}').hide();",
          {:class => "float_left edit_remove_annotation_button"} %>
     <%= button_to I18n.t("remove"),

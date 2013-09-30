@@ -34,7 +34,7 @@
                               :maxlength => 30 ) %><br />
       <% end %>
 
-      <%= raw( f.label :description, t(:name) ) %>
+      <%= raw( f.label :description, t("assignment.name").html_safe ) %>
       <%= raw( f.text_field :description,
                             :onchange => "set_onbeforeunload(true);" ) %><br />
       <%= raw( f.label :message ) %>
@@ -256,13 +256,6 @@
         <%= label_tag "grace_period_submission_rule",
                       t("submission_rules.grace_period_submission_rule.form_description"),
                       :class => "radio_label" %>
-
-        <span class="grace_periods_link">
-          <%= add_grace_period_link(
-                  t("submission_rules.grace_period_submission_rule.add_grace_period"),
-                  rule,
-                  "grace_period_link")  %>
-        </span>
       </p>
       <div id="grace_periods">
       <% if rule.object.type.to_s == "GracePeriodSubmissionRule" %>
@@ -279,6 +272,14 @@
         <% end %>
       <% end %>
       </div>
+        <div id="sub_rule_link">
+        <span class="grace_periods_link">
+          <%= add_grace_period_link(
+                      t("submission_rules.grace_period_submission_rule.add_grace_period"),
+                      rule,
+                      "grace_period_link")  %>
+        </span>
+        </div>
       <p>
         <%= rule.radio_button :type,
                               "PenaltyDecayPeriodSubmissionRule",
@@ -287,12 +288,6 @@
         <%= label_tag "penalty_decay_period_submission_rule",
                       t("submission_rules.penalty_decay_period_submission_rule.form_description"),
                       :class => "radio_label" %>
-        <span class="penalty_decay_period_link">
-          <%= add_penalty_decay_period_link(
-                t("submission_rules.penalty_decay_period_submission_rule.add_penalty_decay"),
-                rule,
-                "penalty_decay_period_link") %>
-        </span>
       </p>
       <div id="penalty_decay_periods">
         <% if rule.object.type.to_s == "PenaltyDecayPeriodSubmissionRule" %>
@@ -309,6 +304,14 @@
           <% end %>
         <% end %>
       </div>
+        <div id="sub_rule_link">
+        <span class="penalty_decay_period_link">
+          <%= add_penalty_decay_period_link(
+                      t("submission_rules.penalty_decay_period_submission_rule.add_penalty_decay"),
+                      rule,
+                      "penalty_decay_period_link") %>
+        </span>
+        </div>
       <p>
         <%= rule.radio_button :type,
                               "PenaltyPeriodSubmissionRule",
@@ -317,11 +320,6 @@
         <%= label_tag "penalty_period_submission_rule",
                       t("submission_rules.penalty_period_submission_rule.form_description"),
                       :class => "radio_label" %>
-        <span class="penalty_periods_link">
-          <%= add_penalty_period_link(t("submission_rules.penalty_period_submission_rule.add_penalty_period"),
-                                      rule,
-                                      "penalty_period_link") %>
-        </span>
       </p>
 
       <div id="penalty_periods">
@@ -339,6 +337,14 @@
         <% end %>
       <% end %>
       </div>
+        <div id="sub_rule_link">
+        <span class="penalty_periods_link">
+          <%= add_penalty_period_link(
+                      t("submission_rules.penalty_period_submission_rule.add_penalty_period"),
+                      rule,
+                      "penalty_period_link") %>
+        </span>
+        </div>
     <%- end -%>
   </fieldset>
 

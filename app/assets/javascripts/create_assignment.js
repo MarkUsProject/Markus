@@ -231,40 +231,46 @@ function check_due_date(new_due_date) {
 }
 
 function change_submission_rule() {
-  $$('.period').each(function(node) { node.removeClassName('disabled'); });
+  $$('.period').each(function(node) { node.removeClassName('disabled'); node.show(); });
   $$('.period input').each(function(node) {
     $(node).enable();
   });
 
   if($('grace_period_submission_rule').getValue() == null) {
-     // Disable any grace_period_submission_rule periods
-    $$('#grace_periods .period').each(function(node) { node.addClassName('disabled'); });
+      $("grace_period_link").hide();
+      // Disable any grace_period_submission_rule periods
+    $$('#grace_periods .period').each(function(node) { node.addClassName('disabled'); node.hide(); });
     $$('#grace_periods .period input').each(function(node){node.disable();});
   }
   else {
-    if ($$('#grace_periods .period').length == 0) {
+      $("grace_period_link").show();
+      if ($$('#grace_periods .period').length == 0) {
         // Auto expand add a grace period if needed
         $("grace_period_link").onclick();
     }
   }
   if($('penalty_decay_period_submission_rule').getValue() == null) {
+      $("penalty_decay_period_link").hide();
      // Disable any penalty_decay_period_submission_rule periods
-    $$('#penalty_decay_periods .period').each(function(node) { node.addClassName('disabled'); });
+    $$('#penalty_decay_periods .period').each(function(node) { node.addClassName('disabled'); node.hide(); });
     $$('#penalty_decay_periods .period input').each(function(node){node.disable();});
   }
   else {
-    if ($$('#penalty_decay_periods .period').length == 0) {
+      $("penalty_decay_period_link").show();
+      if ($$('#penalty_decay_periods .period').length == 0) {
          // Auto expand add a penalty period if needed
         $("penalty_decay_period_link").onclick();
     }
   }
   if($('penalty_period_submission_rule').getValue() == null) {
-     // Disable any penalty_period_submission_rule periods
-    $$('#penalty_periods .period').each(function(node) { node.addClassName('disabled'); });
+      $("penalty_period_link").hide();
+      // Disable any penalty_period_submission_rule periods
+    $$('#penalty_periods .period').each(function(node) { node.addClassName('disabled'); node.hide(); });
     $$('#penalty_periods .period input').each(function(node){node.disable();});
   }
   else {
-    if ($$('#penalty_periods .period').length == 0) {
+      $("penalty_period_link").show();
+      if ($$('#penalty_periods .period').length == 0) {
          // Auto expand add a penalty period if needed
         $("penalty_period_link").onclick();
     }
