@@ -7,6 +7,7 @@
 //= require prototype
 //= require prototype_ujs
 //= require jquery
+//= require jquery-ui
 
 var ModalMarkus = function (elem) {
   this.elem = elem;
