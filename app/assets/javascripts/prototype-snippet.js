@@ -7,11 +7,11 @@
 
 Ajax.Responders.register({
   onCreate: function(request) {
-    var csrf_meta_tag = $$('meta[name=csrf-token]')[0];
+    var csrf_meta_tags = $$('meta[name=csrf-token]')[0];
 
-    if (csrf_meta_tag) {
+    if (csrf_meta_tags) {
       var header = 'X-CSRF-Token',
-          token = csrf_meta_tag.readAttribute('content');
+          token = csrf_meta_tags.readAttribute('content');
 
       if (!request.options.requestHeaders) {
         request.options.requestHeaders = {};

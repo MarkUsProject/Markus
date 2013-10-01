@@ -47,7 +47,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert_not_nil assigns :student
       assert render_template :student_interface
       assert_response :success
-      assert_equal 0, flash.size
+      assert_equal true, flash.empty?
       assert_match Regexp.new(I18n.t('grade_entry_forms.students.no_results')), @response.body
     end
 
@@ -61,7 +61,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert_not_nil assigns :student
       assert render_template :student_interface
       assert_response :success
-      assert_equal 0, flash.size
+      assert_equal true, flash.empty?
       assert_match Regexp.new(I18n.t('grade_entry_forms.grades.total')), @response.body
       assert_match Regexp.new('15'), @response.body
     end
@@ -72,7 +72,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert_not_nil assigns :student
       assert render_template :student_interface
       assert_response :success
-      assert_equal 0, flash.size
+      assert_equal true, flash.empty?
       assert_match Regexp.new(I18n.t('grade_entry_forms.students.no_results')), @response.body
     end
 
@@ -87,7 +87,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert_not_nil assigns :student
       assert render_template :student_interface
       assert_response :success
-      assert_equal 0, flash.size
+      assert_equal true, flash.empty?
       assert_match Regexp.new(I18n.t('grade_entry_forms.grades.no_mark')), @response.body
     end
 
@@ -112,7 +112,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert_not_nil assigns :student
       assert render_template :student_interface
       assert_response :success
-      assert_equal 0, flash.size
+      assert_equal true, flash.empty?
     end
   end
 
@@ -171,7 +171,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert_not_nil assigns :grade_entry_form
       assert render_template :new
       assert_response :success
-      assert_equal 0, flash.size
+      assert_equal true, flash.empty?
     end
 
     should 'GET on :edit' do
@@ -179,7 +179,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert_not_nil assigns :grade_entry_form
       assert render_template :edit
       assert_response :success
-      assert_equal 0, flash.size
+      assert_equal true, flash.empty?
     end
 
     should 'GET on :student_interface' do
@@ -321,10 +321,11 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
     context 'POST on ' do
       setup do
         @original = @grade_entry_form
-        grade_entry_items = @grade_entry_form_with_grade_entry_items.grade_entry_items
-        @q1 = GradeEntryItem.new(:name => grade_entry_items[0].name, :out_of => grade_entry_items[0].out_of)
-        @q2 = GradeEntryItem.new(:name => grade_entry_items[1].name, :out_of => grade_entry_items[1].out_of)
-        @q3 = GradeEntryItem.new(:name => grade_entry_items[2].name, :out_of => grade_entry_items[2].out_of)
+        @grade_entry_items = @grade_entry_form_with_grade_entry_items.grade_entry_items
+
+        @q1 = { :name => @grade_entry_items[0].name, :out_of => @grade_entry_items[0].out_of }
+        @q2 = { :name => @grade_entry_items[1].name, :out_of => @grade_entry_items[1].out_of }
+        @q3 = { :name => @grade_entry_items[2].name, :out_of => @grade_entry_items[2].out_of }
       end
 
       should ':new with valid properties, including 1 GradeEntryItem' do
@@ -332,7 +333,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                       :description => @grade_entry_form.description,
                                                       :message => @grade_entry_form.message,
                                                       :date => @grade_entry_form.date,
-                                                      :grade_entry_items => [@q1]}}
+                                                      :grade_entry_items_attributes => [@q1]}}
         assert_not_nil assigns :grade_entry_form
         assert_equal flash[:success], I18n.t('grade_entry_forms.create.success')
         assert_response :redirect
@@ -343,14 +344,14 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                       :description => @grade_entry_form.description,
                                                       :message => @grade_entry_form.message,
                                                       :date => @grade_entry_form.date,
-                                                      :grade_entry_items => [@q1, @q2, @q3]}}
+                                                      :grade_entry_items_attributes => [@q1, @q2, @q3]}}
         assert_not_nil assigns :grade_entry_form
         assert_equal flash[:success], I18n.t('grade_entry_forms.create.success')
         assert_response :redirect
       end
 
       should ':new with missing GradeEntryItem name' do
-        @q2.name = ''
+        @q2[:name] = ''
         post_as @admin,
                 :create,
                 {:grade_entry_form => {
@@ -358,18 +359,18 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                       :description => @grade_entry_form.description,
                       :message => @grade_entry_form.message,
                       :date => @grade_entry_form.date,
-                      :grade_entry_items => [@q1, @q2]}}
+                      :grade_entry_items_attributes => [@q1, @q2]}}
         assert_not_nil assigns :grade_entry_form
 
         # Need to escape the I18n string because there is a '(e)' in French for
         # example
         assert_nil flash[:error]
-        assert_equal @q2.errors[:name][0], I18n.t('grade_entry_forms.blank_field')
+        assert_equal [], @grade_entry_form.grade_entry_items
         assert_response :ok
       end
 
       should ':new with invalid GradeEntryItem out_of' do
-        @q2.out_of = 'abc'
+        @q2[:out_of] = 'abc'
         post_as @admin,
                 :create,
                 {:grade_entry_form => {
@@ -377,15 +378,15 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                         :description => @grade_entry_form.description,
                         :message => @grade_entry_form.message,
                         :date => @grade_entry_form.date,
-                        :grade_entry_items => [@q1, @q2]}}
+                        :grade_entry_items_attributes => [@q1, @q2]}}
         assert_not_nil assigns :grade_entry_form
         assert_nil flash[:error]
-        assert_equal @q2.errors[:out_of][0], I18n.t('grade_entry_forms.invalid_column_out_of')
+        assert_equal [], @grade_entry_form.grade_entry_items
         assert_response :ok
       end
 
       should ':new with zero-value GradeEntryItem out_of' do
-        @q2.out_of = 0
+        @q2[:out_of] = 0
         post_as @admin,
                 :create,
                 {:grade_entry_form => {
@@ -393,7 +394,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                         :description => @grade_entry_form.description,
                         :message => @grade_entry_form.message,
                         :date => @grade_entry_form.date,
-                        :grade_entry_items => [@q1, @q2]}}
+                        :grade_entry_items_attributes => [@q1, @q2]}}
         assert_not_nil assigns :grade_entry_form
         assert_equal flash[:success], I18n.t('grade_entry_forms.create.success')
         assert_response :redirect
@@ -408,7 +409,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                       :description => NEW_DESCRIPTION,
                       :message => NEW_MESSAGE,
                       :date => @grade_entry_form.date,
-                      :grade_entry_items => [@q1]}
+                      :grade_entry_items_attributes => [@q1]}
         assert_not_nil assigns :grade_entry_form
         assert_equal flash[:success], I18n.t('grade_entry_forms.edit.success')
         assert_response :redirect
@@ -417,10 +418,14 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         assert_equal NEW_SHORT_IDENTIFIER, g.short_identifier
         assert_equal NEW_DESCRIPTION, g.description
         assert_equal NEW_MESSAGE, g.message
-        assert_equal [@q1], g.grade_entry_items
+
+        assert_equal 1, g.grade_entry_items.length
+        assert_equal @q1[:name], g.grade_entry_items[0][:name]
+        assert_equal @q1[:out_of], g.grade_entry_items[0][:out_of]
       end
 
       should ':edit with valid properties, including multiple GradeEntryItems' do
+        items = [@q1, @q2, @q3]
         put_as @admin,
               :update,
               :id => @grade_entry_form.id,
@@ -429,7 +434,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                     :description => NEW_DESCRIPTION,
                     :message => NEW_MESSAGE,
                     :date => @grade_entry_form.date,
-                    :grade_entry_items => [@q1, @q2, @q3]}
+                    :grade_entry_items_attributes => items}
         assert_not_nil assigns :grade_entry_form
         assert_equal flash[:success], I18n.t('grade_entry_forms.edit.success')
         assert_response :redirect
@@ -438,21 +443,24 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         assert_equal NEW_SHORT_IDENTIFIER, g.short_identifier
         assert_equal NEW_DESCRIPTION, g.description
         assert_equal NEW_MESSAGE, g.message
-        assert_equal [@q1, @q2, @q3], g.grade_entry_items
+        assert_equal 3, g.grade_entry_items.length
+
+        (0...items.length).each do |i|
+          assert_equal items[i][:name], g.grade_entry_items[i][:name]
+          assert_equal items[i][:out_of], g.grade_entry_items[i][:out_of]
+        end
       end
 
       should ':edit with missing GradeEntryItem name' do
-        @q1.name = ''
+        @q1[:name] = ''
         post_as @admin, :update, {:id => @grade_entry_form.id,
                                 :grade_entry_form => {:short_identifier => NEW_SHORT_IDENTIFIER,
                                                       :description => NEW_DESCRIPTION,
                                                       :message => NEW_MESSAGE,
                                                       :date => @grade_entry_form.date,
-                                                      :grade_entry_items => [@q1, @q2]}}
+                                                      :grade_entry_items_attributes => [@q1, @q2]}}
         assert_not_nil assigns :grade_entry_form
         assert_response :ok
-        assert_equal @q1.errors[:name][0], I18n.t('grade_entry_forms.blank_field')
-
         g = GradeEntryForm.find(@grade_entry_form.id)
         assert_equal @original.short_identifier, g.short_identifier
         assert_equal @original.description, g.description
@@ -461,18 +469,16 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       end
 
       should ':edit with invalid GradeEntryItem out_of' do
-        @q1.out_of = -10
+        @q1[:out_of] = -10
         post_as @admin, :update, {:id => @grade_entry_form.id,
                                 :grade_entry_form => {:short_identifier => NEW_SHORT_IDENTIFIER,
                                                       :description => NEW_DESCRIPTION,
                                                       :message => NEW_MESSAGE,
                                                       :date => @grade_entry_form.date,
-                                                      :grade_entry_items => [@q1, @q2]}}
+                                                      :grade_entry_items_attributes => [@q1, @q2]}}
         assert_not_nil assigns :grade_entry_form
         assert_response :ok
         assert_nil flash[:error]
-        assert_equal @q1.errors[:out_of][0], I18n.t('grade_entry_forms.invalid_column_out_of')
-
         g = GradeEntryForm.find(@grade_entry_form.id)
         assert_equal @original.short_identifier, g.short_identifier
         assert_equal @original.description, g.description
@@ -481,7 +487,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       end
 
       should ':edit with zero-value GradeEntryItem out_of' do
-        @q1.out_of = 0
+        @q1[:out_of] = 0
+        items = [@q1, @q2]
         put_as @admin,
                 :update,
                 :id => @grade_entry_form.id,
@@ -490,7 +497,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                       :description => NEW_DESCRIPTION,
                       :message => NEW_MESSAGE,
                       :date => @grade_entry_form.date,
-                      :grade_entry_items => [@q1, @q2]}
+                      :grade_entry_items_attributes => items}
         assert_not_nil assigns :grade_entry_form
         assert_equal flash[:success], I18n.t('grade_entry_forms.edit.success')
         assert_response :redirect
@@ -499,14 +506,19 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         assert_equal NEW_SHORT_IDENTIFIER, g.short_identifier
         assert_equal NEW_DESCRIPTION, g.description
         assert_equal NEW_MESSAGE, g.message
-        assert_equal [@q1, @q2], g.grade_entry_items
+        assert_equal 2, g.grade_entry_items.length
+
+        (0...items.length).each do |i|
+          assert_equal items[i][:name], g.grade_entry_items[i][:name]
+          assert_equal items[i][:out_of], g.grade_entry_items[i][:out_of]
+        end
       end
 
       should ':edit with duplicate GradeEntryItem name' do
         @grade_entry_form_with_dup = GradeEntryForm.make
-        @q1.name = 'Q1'
-        @q2.name = 'Q1'
-        @grade_entry_form_with_dup.grade_entry_items.make(:name => @q1.name)
+        @q1[:name] = 'Q1'
+        @q2[:name] = 'Q1'
+        @grade_entry_form_with_dup.grade_entry_items.make(:name => @q1[:name])
         @grade_entry_form_before = @grade_entry_form_with_dup
 
         post_as @admin, :update, {:id => @grade_entry_form_with_dup.id,
@@ -514,12 +526,12 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
                                                       :description => NEW_DESCRIPTION,
                                                       :message => NEW_MESSAGE,
                                                       :date => @grade_entry_form_with_dup.date,
-                                                      :grade_entry_items => [@q1, @q2]}}
+                                                      :grade_entry_items_attributes => [@q1, @q2]}}
         @grade_entry_form_before.reload
         assert_not_nil assigns :grade_entry_form
         assert_response :ok
         assert_nil flash[:error]
-        assert_equal @q2.errors[:name][0], I18n.t('grade_entry_forms.invalid_name')
+        assert_equal 1, @grade_entry_form_with_dup.grade_entry_items.length
         g = GradeEntryForm.find(@grade_entry_form_with_dup.id)
         assert_equal @grade_entry_form_before.short_identifier, g.short_identifier
         assert_equal @grade_entry_form_before.description, g.description

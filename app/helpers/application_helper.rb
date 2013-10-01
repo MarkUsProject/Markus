@@ -10,7 +10,7 @@ module ApplicationHelper
     # type, and :notice is the most neutral of the four
     type = :notice if !available_types.include?(type)
     # If a flash with that type doesn't exist, create a new array
-    flash[type] = [] if !flash.has_key?(type)
+    flash[type] = [] if !flash.key?(type)
     # If the message doesn't already exist, add it
     unless flash[type].include?(text)
       flash[type].push(text)
