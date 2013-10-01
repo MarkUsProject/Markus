@@ -187,6 +187,13 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
         assert @response.body.include?(@assignment3.short_identifier)
       end
 
+      should 'use case-insensitive matching with filters' do
+        get 'index', :filter => 'message:TEst'
+        assert_response :success
+        assert_select 'assignment', 1
+        assert @response.body.include?(@assignment2.short_identifier)
+      end
+
       should 'apply limit/offset after the filter' do
         get 'index', :filter => 'group_min:2', :limit => '1', :offset => '1'
         assert_response :success
