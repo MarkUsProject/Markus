@@ -101,6 +101,7 @@ en:
       released: "Released"
       remark_requested: "Remark Requested"
       not_complete: "Can not release result for %{group_name}: the marking state is not complete"
+      not_complete_unrelease: "Can not unrelease result for %{group_name}: the marking state is not complete"
       no_submission: "%{group_name} has no submissions"
       no_result: "%{group_name} has no results"
       result_not_saved: "%{group_name}'s submission result could not be saved"
@@ -117,10 +118,11 @@ en:
       could_not_collect_section: "Could not collect submissions for section %{section_name} and assignment %{assignment_identifier} - the section collection date has not been reached."
       no_submission_for_section: "There isn't any submission to collect for section %{section_name}."
       successfully_collected: "Successfully collected %{collected} submissions."
+      marking_incomplete_warning: "Note: Not all of the assignments have been marked.\n\nAre you sure you want to proceed?"
     assignment:
         assignment: "Assignment %{short_identifier}"
-        required_fields: "Required Fields <span class='required_field'>*</span>"
-        name:           "Assignment Name"
+        required_fields: "Required Fields<span class='required_field'>*</span>"
+        name:           "Assignment Name<span class='required_field'>*</span>"
         due_date:       "Due Date<span class='required_field'>*</span>"
         short_identifier:   "Short Identifier<span class='required_field'>*</span>"
         update_success:        "Successfully updated the assignment"
@@ -332,6 +334,7 @@ en:
       line_nr_csv_file_prefix: "Line %{line_number} of CSV file:"
       group_to_grader: "You must supply a CSV file for group to grader mapping"
       student_to_grader: "You must supply a CSV file for student to grader mapping"
+      invalid_csv: "The format of the CSV file was not recognized"
 
     pagination:
       first: "<< First"
@@ -872,7 +875,7 @@ en:
         to: "to"
         hours: "hour(s)..."
         after: "After"
-        each: "each"
+        every: "every"
         deduct: "Deduct"
         for: "for"
 
@@ -1143,7 +1146,7 @@ en:
 
     #app/views/main/_assignment_info_summary.erb
     percentage:                "%{percentage}%"
-    assignment_average:        "Assignment Average:"
+    assignment_average:        "Class Average:"
     assignment_median:         "Assignment Median:"
     assignments_submitted:     "Assignments Submitted:"
     assignments_graded:        "Assignments Graded:"

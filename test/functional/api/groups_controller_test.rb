@@ -200,6 +200,14 @@ class Api::GroupsControllerTest < ActionController::TestCase
         assert @response.body.include?(@group1.group_name)
       end
 
+      should 'use case-insensitive matching with filters' do
+        get 'index', :assignment_id => @assignment1.id.to_s,
+          :filter => "group_name:#{@group1.group_name.swapcase}"
+        assert_response :success
+        assert_select 'group', 1
+        assert @response.body.include?(@group1.group_name)
+      end
+
       should 'display all default fields if the fields parameter is not used' do
         get 'index', :assignment_id => @assignment1.id.to_s
         assert_response :success

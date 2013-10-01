@@ -9,7 +9,8 @@
     <%= raw(f.label :name,
                     t('grade_entry_forms.column_name'),
                     :class => "inline_label") %>
-    <%= raw(f.text_field :name) %>
+    <%= raw(f.text_field :name,
+                         :size => 20) %>
 
     <%= raw(f.label :out_of,
                     t('grade_entry_forms.column_out_of'),

@@ -133,8 +133,7 @@ class NotesControllerTest < AuthenticatedControllerTest
                 {:noteable_type => 'Grouping',
                  :note => {:noteable_id => @grouping.id}}
         assert_not_nil assigns :note
-        # FIXME
-        assert_equal 0, flash.size
+        assert_equal true, flash.empty?
         assert_not_nil assigns :assignments
         assert_not_nil assigns :groupings
         assert render_template 'new.html.erb'
@@ -221,7 +220,7 @@ class NotesControllerTest < AuthenticatedControllerTest
                   {:id => @note.id,
                    :note => {:notes_message => ''}}
           assert_not_nil assigns :note
-          assert_equal 0, flash.size
+          assert_equal true, flash.empty?
           assert render_template 'edit.html.erb'
         end
 
@@ -364,7 +363,7 @@ class NotesControllerTest < AuthenticatedControllerTest
                 {:noteable_type => 'Grouping',
                   :note => {:noteable_id => @grouping.id}}
         assert_not_nil assigns :note
-        assert_equal 0, flash.size
+        assert_equal true, flash.empty?
         assert_not_nil assigns :assignments
         assert_not_nil assigns :groupings
         assert_nil assigns(:students)
@@ -424,7 +423,7 @@ class NotesControllerTest < AuthenticatedControllerTest
         post_as @admin,
                 :update, {:id => @note.id, :note => {:notes_message => ''}}
         assert_not_nil assigns :note
-        assert_equal 0, flash.size
+        assert_equal true, flash.empty?
         assert render_template 'edit.html.erb'
       end
 

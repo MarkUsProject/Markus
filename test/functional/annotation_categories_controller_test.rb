@@ -128,7 +128,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
     should 'on :index' do
       get_as @admin, :index, :assignment_id => @assignment.id
-      assert_equal 0, flash.size
+      assert_equal true, flash.empty?
       assert render_with_layout :content
       assert render_template :index
       assert_response :success
@@ -142,7 +142,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
             :assignment_id => @assignment.id,
             :id => @category.id,
             :format => :js
-      assert_equal 0, flash.size
+      assert_equal true, flash.empty?
       assert_response :success
       assert_not_nil assigns :annotation_category
       assert_not_nil assigns :annotation_texts

@@ -978,7 +978,7 @@ input#extra_mark_description{
   text-align: left;
   border: 1px solid #458B00;
   padding: 3px 30px;
-  background: #BDFCC9 url(../images/icons/accept.png) no-repeat;
+  background: #BDFCC9 url(icons/accept.png) no-repeat;
   background-position: 7px;
   margin: 5px;
 }
@@ -988,7 +988,7 @@ input#extra_mark_description{
   border: 1px solid #E6DB55;
   padding: 3px 3em;
   margin: 1em 4em 1em 4em;
-  background: #FFFFE0 url(../images/icons/exclamation.png) no-repeat;
+  background: #FFFFE0 url('icons/exclamation.png') no-repeat;
   background-position: 7px;
   margin: 5px;
 }
@@ -1021,7 +1021,7 @@ input#extra_mark_description{
 .information{
   border: 1px solid #0047FF;
   padding: 3px 30px;
-  background: #EFEFEF url(../images/icons/information.png) no-repeat;
+  background: #EFEFEF url(icons/information.png) no-repeat;
   background-position: 7px;
 
 }
@@ -1029,7 +1029,7 @@ input#extra_mark_description{
 .warning {
   border: 1px solid #E6DB55;
   padding: 3px 30px;
-  background: #FFFFE0 url(../images/icons/error.png) no-repeat;
+  background: #FFFFE0 url(icons/error.png) no-repeat;
   background-position: 7px;
 
 }
@@ -1567,7 +1567,7 @@ td#thinking_table_row {
 
 th.ap_sorting_by {
   color: #000;
-  background-image: url(../images/icons/bullet_arrow_up.png);
+  background-image: url('icons/bullet_arrow_up.png');
   background-repeat: no-repeat;
   background-position: left;
   padding-left: 1.3em;
@@ -1581,7 +1581,7 @@ th.ap_sorting_by a {
 
 th.ap_sorting_by_desc {
   color: #000;
-  background-image: url(../images/icons/bullet_arrow_down.png);
+  background-image: url(icons/bullet_arrow_down.png);
   background-repeat: no-repeat;
   background-position: left;
   padding-left: 1.3em;
@@ -1625,7 +1625,7 @@ tfoot tr td:hover
 th.FilterTable_sorting_by,
 tfoot tr td.FilterTable_sorting_by {
   color: #000;
-  background-image: url(../images/icons/bullet_arrow_up.png);
+  background-image: url('icons/bullet_arrow_up.png');
   background-repeat: no-repeat;
   background-position: left;
   padding-left: 1.3em;
@@ -1635,7 +1635,7 @@ th.FilterTable_sorting_by_reverse,
 tfoot tr td.FilterTable_sorting_by_reverse
 {
   color: #000;
-  background-image: url(../images/icons/bullet_arrow_down.png);
+  background-image: url(icons/bullet_arrow_down.png);
   background-repeat: no-repeat;
   background-position: left;
   padding-left: 1.3em;
@@ -1705,12 +1705,12 @@ a.icon_remove {
   width: 20px;
   height: 20px;
   text-indent: -90000px;
-  background: no-repeat url('../images/icons/cancel.png');
+  background: no-repeat url('icons/cancel.png');
 }
 
 a.icon_remove:hover {
   text-indent: -9000px;
-  background: no-repeat url('../images/icons/cancel.png');
+  background: no-repeat url('icons/cancel.png');
 }
 
 a img{
@@ -2015,6 +2015,10 @@ fieldset.period{
 #penalty_periods, #grace_periods, #penalty_decay_periods {
    margin-left: 5em;
    width: 80%;
+}
+
+#sub_rule_link{
+    margin-left: 5em;
 }
 
 #grade_entry_items {

@@ -138,6 +138,13 @@ class Api::UsersControllerTest < ActionController::TestCase
         assert @response.body.include?(@new_user3.user_name)
       end
 
+      should 'use case-insensitive matching with filters' do
+        get 'index', :filter => 'type:ADMIN'
+        assert_response :success
+        assert_select 'user', 1
+        assert @response.body.include?(@admin.user_name)
+      end
+
       should 'apply limit/offset after the filter' do
         get 'index', :filter => 'last_name:ApiTesters', :limit => '1', :offset => '1'
         assert_response :success

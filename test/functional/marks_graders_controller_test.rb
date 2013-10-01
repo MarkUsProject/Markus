@@ -59,7 +59,6 @@ class MarksGradersControllerTest < AuthenticatedControllerTest
     should 'receive a list of students on POST :populate' do
       get_as @admin, :populate, :grade_entry_form_id => @grade_entry_form.id
       assert_response :success
-      assert_template :partial => 'marks_graders/table_row/_filter_table_row'
       @students.each { |student| assert @response.body.include?(student.user_name) }
     end
 

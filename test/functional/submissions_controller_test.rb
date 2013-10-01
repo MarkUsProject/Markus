@@ -88,12 +88,11 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         @file_2 = fixture_file_upload(File.join('files', 'TestShapes.java'), 'text/java')
 
         post_as @student,
-                :update_files, :assignment_id => @assignment.id,
-          :replace_files => { 'Shapes.java' =>      @file_1,
-                              'TestShapes.java' =>  @file_2},
-          :file_revisions => {'Shapes.java' =>      old_file_1.from_revision,
-                              'TestShapes.java' =>  old_file_2.from_revision}
-
+          :update_files, :assignment_id => @assignment.id,
+          :replace_files  => { 'Shapes.java'     => @file_1,
+                               'TestShapes.java' => @file_2 },
+          :file_revisions => { 'Shapes.java'     => old_file_1.from_revision,
+                               'TestShapes.java' => old_file_2.from_revision }
       end
 
       # must not respond with redirect_to (see comment in

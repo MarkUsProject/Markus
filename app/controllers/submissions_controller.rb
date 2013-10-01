@@ -5,6 +5,8 @@ class SubmissionsController < ApplicationController
   include SubmissionsHelper
   include PaginationHelper
 
+  helper_method :all_assignments_marked?
+
   before_filter :authorize_only_for_admin,
                 :except => [:server_time,
                             :populate_file_manager,
@@ -549,7 +551,8 @@ class SubmissionsController < ApplicationController
       # values will be the "expected revision numbers" that we'll provide
       # to the transaction to ensure that we don't overwrite a file that's
       # been revised since the user last saw it.
-      file_revisions = params[:file_revisions].nil? ? [] : params[:file_revisions]
+      file_revisions = params[:file_revisions].nil? ? {} : params[:file_revisions]
+      file_revisions.merge!(file_revisions) { |key, v1, v2| v1.to_i rescue v1 }
 
       # The files that will be replaced - just give an empty array
       # if params[:replace_files] is nil
@@ -663,6 +666,20 @@ class SubmissionsController < ApplicationController
         render :text => file_contents, :layout => 'sanitized_html'
       end
     end
+  end
+
+  ##
+  # Checks if all the assignments for the current submission are marked
+  # returns true if all assignments are marked completely
+  ##
+  def all_assignments_marked?
+    marked = Assignment.joins(:groupings => [{:current_submission_used => 
+      :results}]).where('assignments.id' => params[:assignment_id], 
+      'results.marking_state' => Result::MARKING_STATES[:complete])
+    total_assignments = Assignment.joins(:groupings => 
+      [{:current_submission_used => :results}]).where('assignments.id' => 
+      params[:assignment_id])
+    return marked.size == total_assignments.size
   end
 
   ##
