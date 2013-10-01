@@ -135,7 +135,7 @@ class RubricCriterion < ActiveRecord::Base
     begin
       criterion.weight = Float(working_row.shift)
     rescue ArgumentError => e
-      raise I18n.t('criteria_csv_error.weight_not_number')
+      raise ActiveRecord::RecordNotSaved, I18n.t('criteria_csv_error.weight_not_number')
     end
     # Only set the position if this is a new record.
     if criterion.new_record?
@@ -150,7 +150,7 @@ class RubricCriterion < ActiveRecord::Base
       criterion['level_' + i.to_s + '_description'] = desc
     end
     unless criterion.save
-      raise RuntimeError.new(criterion.errors)
+      raise ActiveRecord::RecordNotSaved.new(criterion.errors)
     end
     criterion
   end

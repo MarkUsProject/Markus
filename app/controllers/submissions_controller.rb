@@ -551,7 +551,8 @@ class SubmissionsController < ApplicationController
       # values will be the "expected revision numbers" that we'll provide
       # to the transaction to ensure that we don't overwrite a file that's
       # been revised since the user last saw it.
-      file_revisions = params[:file_revisions].nil? ? [] : params[:file_revisions]
+      file_revisions = params[:file_revisions].nil? ? {} : params[:file_revisions]
+      file_revisions.merge!(file_revisions) { |key, v1, v2| v1.to_i rescue v1 }
 
       # The files that will be replaced - just give an empty array
       # if params[:replace_files] is nil
