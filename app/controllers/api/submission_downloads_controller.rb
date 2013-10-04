@@ -5,7 +5,7 @@ module Api
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class SubmissionDownloadsController < MainApiController
 
-    # Returns the requested submission file, or a zip containing all submission 
+    # Returns the requested submission file, or a zip containing all submission
     # files, including all annotations if requested
     # Requires: assignment_id, group_id
     # Optional:
@@ -19,7 +19,7 @@ module Api
           'No assignment exists with that id'}, :status => 404
         return
       end
-        
+
       group = Group.find_by_id(params[:group_id])
       if group.nil?
         # No group exists with that id
@@ -32,7 +32,7 @@ module Api
         group[:group_name], assignment[:short_identifier])
       if submission.nil?
         # No assignment submission by that group
-        render 'shared/http_status', :locals => {:code => '404', :message => 
+        render 'shared/http_status', :locals => {:code => '404', :message =>
           'Submission was not found'}, :status => 404
         return
       end
@@ -48,12 +48,12 @@ module Api
 
       zip_name = "#{assignment[:short_identifier]}_#{group[:group_name]}.zip"
 
-      # If only one file is found, send the file, otherwise loop through and 
+      # If only one file is found, send the file, otherwise loop through and
       # create a zip with all files
       files.each do |file|
         if file.nil?
           # No such file in the submission
-          render 'shared/http_status', :locals => {:code => '422', :message => 
+          render 'shared/http_status', :locals => {:code => '422', :message =>
             'File was not found'}, :status => 422
           return
         end
@@ -67,7 +67,7 @@ module Api
           end
         rescue Exception => e
             # Could not retrieve file
-            render 'shared/http_status', :locals => {:code => '500', :message => 
+            render 'shared/http_status', :locals => {:code => '500', :message =>
               HttpStatusHelper::ERROR_CODE['message']['500'] }, :status => 500
           return
         end
@@ -81,7 +81,7 @@ module Api
             unless zipfile.find_entry(file.path)
               zipfile.mkdir(file.path)
             end
-            zipfile.get_output_stream(file.path + '/' + file.filename) { |f| 
+            zipfile.get_output_stream(file.path + '/' + file.filename) { |f|
               f.puts file_contents }
           end
         end
@@ -89,7 +89,7 @@ module Api
 
       # Send the zip
       if files.length > 1
-        send_file "tmp/#{zip_name}", :disposition => 'inline', :filename => 
+        send_file "tmp/#{zip_name}", :disposition => 'inline', :filename =>
           zip_name
       end
     end

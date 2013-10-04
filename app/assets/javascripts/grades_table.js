@@ -34,5 +34,5 @@ function toggleTotalColVisibility() {
 	else
 	  allElements [i].style.display = 'inline-block';
     }
-	
+
 }

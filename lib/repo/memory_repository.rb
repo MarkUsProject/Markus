@@ -52,7 +52,7 @@ module Repository
       end
       return false
     end
-    
+
     # Open repository at specified location
     def self.open(location)
       if !self.repository_exists?(location)
@@ -584,7 +584,7 @@ module Repository
       return result
     end
 
-    # Find if the revision contains files at the path 
+    # Find if the revision contains files at the path
     def revision_at_path_helper(path)
       # Automatically append a root slash if not supplied
       @files.each do |object|
