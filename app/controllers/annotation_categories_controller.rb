@@ -46,6 +46,7 @@ class AnnotationCategoriesController < ApplicationController
   def update_annotation
     @annotation_text = AnnotationText.find(params[:id])
     @annotation_text.update_attributes(params[:annotation_text])
+    @annotation_text.last_editor_id = current_user.id
     @annotation_text.save
   end
 
@@ -56,6 +57,8 @@ class AnnotationCategoriesController < ApplicationController
       @annotation_text = AnnotationText.new
       @annotation_text.update_attributes(params[:annotation_text])
       @annotation_text.annotation_category = @annotation_category
+      @annotation_text.creator_id = current_user.id
+      @annotation_text.last_editor_id = current_user.id
       unless @annotation_text.save
         render :new_annotation_text_error
         return
