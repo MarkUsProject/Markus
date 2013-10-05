@@ -19,7 +19,7 @@ class RubricCriterionTest < ActiveSupport::TestCase
 
 #  context "a valid Rubric Criterion model" do
 #    setup do
-#      RubricCriterion.make
+#      RubricCriterion.make!
 #    end
 #
 #    should validate_uniqueness_of(

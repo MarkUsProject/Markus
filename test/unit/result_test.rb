@@ -70,7 +70,7 @@ class ResultTest < ActiveSupport::TestCase
   end
 
   should 'catch a invalid result (wrong marking state)' do
-      result = Result.make
+      result = Result.make!
       result.marking_state = 'wrong'
       assert result.invalid?
   end

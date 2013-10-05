@@ -116,7 +116,7 @@ class GroupingTest < ActiveSupport::TestCase
       end
 
       should 'return membership status are part of the group' do
-        student = Student.make
+        student = Student.make!
         assert_nil @grouping.membership_status(student)
         assert_equal 'accepted',
                      @grouping.membership_status(@membership.user)

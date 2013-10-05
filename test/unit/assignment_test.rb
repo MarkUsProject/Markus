@@ -311,7 +311,7 @@ class AssignmentTest < ActiveSupport::TestCase
 
     context 'as a noteable' do
       should 'display for note without seeing an exception' do
-        assignment = Assignment.make
+        assignment = Assignment.make!
         assert_nothing_raised do
           assignment.display_for_note
         end

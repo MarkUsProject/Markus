@@ -35,8 +35,8 @@ class GradeEntryItemTest < ActiveSupport::TestCase
   # Make sure different grade entry forms can have grade entry items
   # with the same name
   should 'allow same column name for different grade entry forms' do
-    grade_entry_form_1 = GradeEntryForm.make
-    grade_entry_form_2 = GradeEntryForm.make
+    grade_entry_form_1 = GradeEntryForm.make!
+    grade_entry_form_2 = GradeEntryForm.make!
     column = grade_entry_form_1.grade_entry_items.make(:name => 'Q1')
 
     # Re-use the column name for a different grade entry form

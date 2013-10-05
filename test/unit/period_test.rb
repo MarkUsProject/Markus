@@ -10,7 +10,7 @@ class PeriodTest < ActiveSupport::TestCase
 
   context 'A valid grace period' do
     setup do
-      @period = Period.make
+      @period = Period.make!
     end
 
     should 'return true when a positive hour value is entered' do
@@ -20,7 +20,7 @@ class PeriodTest < ActiveSupport::TestCase
 
   context 'A valid grace period' do
     setup do
-      @period = Period.make
+      @period = Period.make!
     end
 
     should 'return true when zero hours is entered' do
@@ -31,7 +31,7 @@ class PeriodTest < ActiveSupport::TestCase
 
   context 'An invalid grace period' do
     setup do
-      @period = Period.make
+      @period = Period.make!
     end
 
     should 'return false when nil hours is entered' do
@@ -42,7 +42,7 @@ class PeriodTest < ActiveSupport::TestCase
 
   context 'An invalid grace period' do
     setup do
-      @period = Period.make
+      @period = Period.make!
     end
 
     should 'return false when a negative hour value is entered' do
