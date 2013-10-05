@@ -378,7 +378,7 @@ class GroupsController < ApplicationController
 
     begin
       if student.hidden
-        raise I18n.t('add_student.fail.hidden', student.user_name)
+        raise I18n.t('add_student.fail.hidden', :user_name => student.user_name)
       end
       if student.has_accepted_grouping_for?(@assignment.id)
         raise I18n.t('add_student.fail.already_grouped',
