@@ -172,7 +172,7 @@ module MarkusConfigurator
       return true
     end
   end
-  
+
   def markus_config_validate_file
     if defined? VALIDATE_FILE
       return VALIDATE_FILE
