@@ -122,8 +122,8 @@ class Api::SubmissionDownloadsControllerTest < ActionController::TestCase
           txn = repo.get_transaction(@student.user_name)
           new_files.each do |file_object|
             file_object.rewind
-            txn.add(File.join(assignment_folder, 
-              file_object.original_filename), 
+            txn.add(File.join(assignment_folder,
+              file_object.original_filename),
               file_object.read, file_object.content_type)
           end
           repo.commit(txn)
@@ -134,7 +134,7 @@ class Api::SubmissionDownloadsControllerTest < ActionController::TestCase
 
       context '/index' do
         should "return a zip containing the two files if filename isn't used" do
-          get 'index', :assignment_id => @assignment.id.to_s, :group_id => 
+          get 'index', :assignment_id => @assignment.id.to_s, :group_id =>
             @group.id.to_s
           output = StringIO.new
           output.binmode
@@ -149,14 +149,14 @@ class Api::SubmissionDownloadsControllerTest < ActionController::TestCase
         end
 
         should 'return the requested file if filename is used' do
-          get 'index', :assignment_id => @assignment.id.to_s, :group_id => 
+          get 'index', :assignment_id => @assignment.id.to_s, :group_id =>
             @group.id.to_s, :filename => @file1_name
           assert_response(:success)
           assert_equal(@file1_content, @response.body)
         end
 
         should "return a 422 if the file doesn't exist" do
-          get 'index', :assignment_id => @assignment.id.to_s, :group_id => 
+          get 'index', :assignment_id => @assignment.id.to_s, :group_id =>
             @group.id.to_s, :filename => 'invalid_file_name'
           assert_response 422
         end
@@ -172,7 +172,7 @@ class Api::SubmissionDownloadsControllerTest < ActionController::TestCase
         end
 
         should "return a 404 if a submission doesn't exist" do
-          get 'index', :assignment_id => @assignment2.id.to_s, :group_id => 
+          get 'index', :assignment_id => @assignment2.id.to_s, :group_id =>
             @group.id.to_s
           assert_response 404
         end

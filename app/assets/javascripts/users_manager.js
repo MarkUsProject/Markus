@@ -9,7 +9,7 @@ function filter(filter_name) {
     switch(filter_name) {
       case 'active':
       case 'inactive':
-        users_table.filter_only_by(filter_name).render();  
+        users_table.filter_only_by(filter_name).render();
         break;
       default:
         users_table.clear_filters().render();
@@ -31,7 +31,7 @@ function detect_bulk_action_change() {
     $('grace_credit_input').show();
     $('number_of_grace_credits').select();
     $('number_of_grace_credits').focus();
-    
+
   } else {
     $('grace_credit_input').hide();
   }
