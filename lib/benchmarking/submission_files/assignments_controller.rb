@@ -1,20 +1,20 @@
 require 'fastercsv'
 class AssignmentsController < ApplicationController
-  before_filter      :authorize_only_for_admin, :except => [:deletegroup, :delete_rejected, :disinvite_member, :invite_member, 
+  before_filter      :authorize_only_for_admin, :except => [:deletegroup, :delete_rejected, :disinvite_member, :invite_member,
   :creategroup, :join_group, :decline_invitation, :index, :student_interface]
-  before_filter      :authorize_for_student, :only => [:student_interface, :deletegroup, :delete_rejected, :disinvite_member, 
+  before_filter      :authorize_for_student, :only => [:student_interface, :deletegroup, :delete_rejected, :disinvite_member,
   :invite_member, :creategroup, :join_group, :decline_invitation]
   before_filter      :authorize_for_user, :only => [:index]
 
   auto_complete_for :assignment, :name
   # Publicly accessible actions ---------------------------------------
-  
+
   def student_interface
     @assignment = Assignment.find(params[:id])
     @student = current_user
     @grouping = @student.accepted_grouping_for(@assignment.id)
     if @student.has_pending_groupings_for?(@assignment.id)
-      @pending_grouping = @student.pending_groupings_for(@assignment.id) 
+      @pending_grouping = @student.pending_groupings_for(@assignment.id)
     end
     if @grouping.nil?
       if @assignment.group_max == 1
@@ -30,7 +30,7 @@ class AssignmentsController < ApplicationController
       @studentmemberships =  @grouping.student_memberships
       # The group name
       @group = @grouping.group
-      # The inviter   
+      # The inviter
       @inviter = @grouping.inviter
 
       # We search for information on the submissions
@@ -38,7 +38,7 @@ class AssignmentsController < ApplicationController
       repo = @grouping.group.repo
       @revision  = repo.get_latest_revision
       @last_modified_date = @revision.directories_at_path('/')[@assignment.repository_folder].last_modified_date
-      
+
       @files = @revision.files_at_path(File.join(File.join(@assignment.repository_folder, path)))
       @missing_assignment_files = []
       @assignment.assignment_files.each do |assignment_file|
@@ -48,8 +48,8 @@ class AssignmentsController < ApplicationController
       end
     end
   end
-  
-  # Displays "Manage Assignments" page for creating and editing 
+
+  # Displays "Manage Assignments" page for creating and editing
   # assignment information
   def index
     @assignments = Assignment.all(:order => :id)
@@ -64,7 +64,7 @@ class AssignmentsController < ApplicationController
             if submission.has_result? && submission.get_latest_result.released_to_students
                 @a_id_results[a.id] = submission.get_latest_result
             end
-          end 
+          end
         end
       end
       render :student_assignment_list
@@ -74,14 +74,14 @@ class AssignmentsController < ApplicationController
       render :index
     end
   end
-  
+
   def edit
     @assignment = Assignment.find_by_id(params[:id])
     @assignments = Assignment.all
     unless request.post?
       return
     end
-    
+
     # Was the SubmissionRule changed?  If so, wipe out any existing
     # Periods, and switch the type of the SubmissionRule.
     # This little conditional has to do some hack-y workarounds, since
@@ -97,7 +97,7 @@ class AssignmentsController < ApplicationController
         @assignment.errors.add(:base, "Could not assign SubmissionRule: #{e.message}")
         return
       end
-      
+
       @assignment.submission_rule.destroy
       submission_rule = SubmissionRule.new
       # A little hack to get around Rails' protection of the "type"
@@ -118,9 +118,9 @@ class AssignmentsController < ApplicationController
     else
       params[:assignment][:invalid_override] = false
     end
-    
+
     @assignment.attributes = params[:assignment]
-    
+
     if @assignment.save
       flash[:notice] = 'Successfully Updated Assignment'
       redirect_to :action => 'edit', :id => params[:id]
@@ -128,11 +128,11 @@ class AssignmentsController < ApplicationController
       render :edit
     end
  end
-  
+
 
   # Form accessible actions --------------------------------------------
   # Post actions that we expect only forms to access them
-  
+
   # Called when form for creating a new assignment is submitted
   def new
     @assignments = Assignment.all
@@ -149,13 +149,13 @@ class AssignmentsController < ApplicationController
     else
       params[:assignment][:invalid_override] = false
     end
-    
+
     @assignment = Assignment.new(params[:assignment])
 
     # A little hack to get around Rails' protection of the "type"
     # attribute
     @assignment.submission_rule.type = params[:assignment][:submission_rule_attributes][:type]
-    
+
 
     @assignment.transaction do
 
@@ -178,11 +178,11 @@ class AssignmentsController < ApplicationController
     end
     redirect_to :action => 'edit', :id => @assignment.id
   end
-  
+
   def update_group_properties_on_persist
     @assignment = Assignment.find(params[:assignment_id])
   end
-  
+
   def download_csv_grades_report
     assignments = Assignment.all
     students = Student.all
@@ -213,7 +213,7 @@ class AssignmentsController < ApplicationController
   # student interface's method
 
   def join_group
-    @assignment = Assignment.find(params[:id]) 
+    @assignment = Assignment.find(params[:id])
     @grouping = Grouping.find(params[:grouping_id])
     @user = Student.find(session[:uid])
     @user.join(@grouping.id)
@@ -231,7 +231,7 @@ class AssignmentsController < ApplicationController
   def creategroup
     @assignment = Assignment.find(params[:id])
     @student = @current_user
-    
+
     begin
       if !@assignment.student_form_groups || @assignment.invalid_override
         raise 'Assignment does not allow students to form groups'
@@ -276,7 +276,7 @@ class AssignmentsController < ApplicationController
       @grouping.update_repository_permissions
       @grouping.destroy
       flash[:edit_notice] = 'Group has been deleted'
-    
+
     rescue RuntimeError => e
       flash[:fail_notice] = e.message
     end
@@ -288,13 +288,13 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find(params[:id])
     # if instructor formed group return
     return if @assignment.invalid_override
-    
+
     @student = @current_user
     @grouping = @student.accepted_grouping_for(@assignment.id)
     if @grouping.nil?
       raise I18n.t('invite_student.fail.need_to_create_group')
     end
-    
+
     to_invite = params[:invite_member].split(',')
     flash[:fail_notice] = []
     flash[:success] = []
@@ -320,7 +320,7 @@ class AssignmentsController < ApplicationController
         if @invited.has_accepted_grouping_for?(@assignment.id)
           raise I18n.t('invite_student.fail.already_grouped', :user_name => user_name)
         end
-        
+
         @invited.invite(@grouping.id)
         flash[:success].push(I18n.t('invite_student.success', :user_name => @invited.user_name))
       rescue Exception => e
@@ -350,6 +350,6 @@ class AssignmentsController < ApplicationController
     membership.delete
     membership.save
     redirect_to :action => 'student_interface', :id => params[:id]
-  end  
+  end
 
 end

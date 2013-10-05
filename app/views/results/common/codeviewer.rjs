@@ -41,7 +41,7 @@
         :locals => { :uid => params[:uid], :file_contents => @file_contents,
         :annots => @annots, :code_type => @code_type,
         :submission_file_id => @submission_file_id}
-    # Pdf files    
+    # Pdf files
     elsif @file.is_pdf?
       page.replace_html 'codeviewer',
         :partial => 'results/common/pdf_codeviewer',

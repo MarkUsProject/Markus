@@ -1,11 +1,11 @@
 class StudentsController < ApplicationController
   include UsersHelper
   before_filter    :authorize_only_for_admin
-  
+
   def index
     @students = Student.all(:order => "user_name")
   end
-  
+
   def populate
     @students_data = Student.all(:order => "user_name")
     # construct_table_rows defined in UsersHelper
@@ -13,8 +13,8 @@ class StudentsController < ApplicationController
   end
 
   def edit
-    @user = Student.find_by_id(params[:id]) 
-  end 
+    @user = Student.find_by_id(params[:id])
+  end
 
   def update
     return unless request.post?
@@ -28,7 +28,7 @@ class StudentsController < ApplicationController
       render :edit
     end
   end
-  
+
   def bulk_modify
     student_ids = params[:student_ids]
     begin
@@ -70,16 +70,16 @@ class StudentsController < ApplicationController
   def create
     return unless request.post?
     # Default attributes: role = TA or role = STUDENT
-    # params[:user] is a hash of values passed to the controller 
+    # params[:user] is a hash of values passed to the controller
     # by the HTML form with the help of ActiveView::Helper::
     @user = Student.new(params[:user])
     # Return unless the save is successful; save inherted from
     # active records--creates a new record if the model is new, otherwise
     # updates the existing record
     return unless @user.save
-    redirect_to :action => 'index' # Redirect 
+    redirect_to :action => 'index' # Redirect
   end
-  
+
 
   #downloads users with the given role as a csv list
   def download_student_list
@@ -99,13 +99,13 @@ class StudentsController < ApplicationController
     end
     send_data(output, :type => format, :disposition => 'inline')
   end
-  
-  def upload_student_list  
+
+  def upload_student_list
     if request.post? && !params[:userlist].blank?
       begin
         result = User.upload_user_list(Student, params[:userlist])
         if result[:invalid_lines].size > 0
-          flash[:invalid_lines] = result[:invalid_lines]        
+          flash[:invalid_lines] = result[:invalid_lines]
         end
         flash[:success] = result[:upload_notice]
       rescue RuntimeError
@@ -114,6 +114,6 @@ class StudentsController < ApplicationController
 
     end
     redirect_to :action => 'index'
-  end  
- 
+  end
+
 end

@@ -17,7 +17,7 @@
   <% if @current_user.admin? %>
   <%= link_to I18n.t("collect_submissions.collect_all"),
               collect_all_submissions_assignment_submissions_path(
-                  @assignment.id), 
+                  @assignment.id),
               :confirm => I18n.t("collect_submissions.results_loss_warning") %>
   <span class="menu_bar">|</span>
   <%= link_to I18n.t("browse_submissions.csv_report"),
@@ -40,12 +40,12 @@
   <% if @current_user.ta? and @assignment.past_collection_date? %>
   <%= link_to I18n.t("collect_submissions.collect_ta"),
               collect_ta_submissions_assignment_submissions_path(
-                  @assignment), 
+                  @assignment),
               :confirm => I18n.t("collect_submissions.results_loss_warning") %>
  <% end %>
 
  <span class="menu_bar">|</span>
- 
+
   <% if all_assignments_marked? %>
   <%= link_to t('browse_submissions.download_groupings_files'),
               download_groupings_files_assignment_submissions_path(
@@ -54,7 +54,7 @@
   <% else %>
   <%= link_to t('browse_submissions.download_groupings_files'),
               download_groupings_files_assignment_submissions_path(
-                      :groupings => @groupings), 
+                      :groupings => @groupings),
                       :confirm => I18n.t("collect_submissions.marking_incomplete_warning")
                        %>
   <% end %>
@@ -101,7 +101,7 @@
           <% end %>
         </div>
       <% end %>
-      
+
       <% # Collect submissions for a given section %>
       <% if @assignment.section_groups_only %>
       	<div class="floatLeft">
@@ -121,7 +121,7 @@
       			:name => 'collect_section', :class => 'thin-button' %>
       	</div>
       <% end %>
-      
+
       <div class="ap_filters" id="ap_filters_1">
         <%= render  :partial => 'submissions_table_filters',
                     :locals => {
@@ -216,7 +216,7 @@
                                 :name => "unrelease_results" %>
         <% end %>
       </div>
-      
+
       <div class="ap_filters" id="ap_filters_2">
         <%= render  :partial => 'submissions_table_filters',
                     :locals => {

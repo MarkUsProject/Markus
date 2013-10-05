@@ -121,19 +121,19 @@ class SectionsControllerTest < AuthenticatedControllerTest
       assert_response :success
       assert_equal I18n.t('section.update.error'), flash[:error]
     end
-    
+
     context 'with an already created section' do
       setup do
         @section = Section.make
       end
-      
+
       should 'be able to delete a section with no students' do
         assert_difference('Section.count', -1) do
           delete_as @admin, :destroy, :id => @section.id
         end
         assert_equal I18n.t('section.delete.success'), flash[:success]
       end
-      
+
       should 'not be able to delete a section with students in it' do
         @student = Student.make
         @section.students << @student

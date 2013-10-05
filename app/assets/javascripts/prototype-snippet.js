@@ -1,6 +1,6 @@
 /*
  * Registers a callback which copies the csrf token into the
- * X-CSRF-Token header with each ajax request.  Necessary to 
+ * X-CSRF-Token header with each ajax request.  Necessary to
  * work with rails applications which have fixed
  * CVE-2011-0447
 */

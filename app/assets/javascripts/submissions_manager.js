@@ -11,7 +11,7 @@ function filter(filter_name) {
       case 'unvalidated':
       case 'assigned':
       case 'unassigned':
-        groupings_table.filter_only_by(filter_name).render();  
+        groupings_table.filter_only_by(filter_name).render();
         break;
       default:
         groupings_table.clear_filters().render();

@@ -326,7 +326,7 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
       end
 
     end
-    
+
     context 'submit assignment 1 on time and submit assignment 2 before assignment 1 collection time' do
       setup do
         @assignment2 = Assignment.make
@@ -365,9 +365,9 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
       end
 
       # Regression test for issue 656.  The issue is when submitting files for an assignment before the grace period
-      # of the previous assignment is over.  When calculating grace days for the previous assignment, it 
+      # of the previous assignment is over.  When calculating grace days for the previous assignment, it
       # takes the newer assignment submission as the submission time.  Therefore, grace days are being
-      # taken off when it shouldn't have. 
+      # taken off when it shouldn't have.
       should 'deduct 0 grace credits' do
 
         # The Student submits some files before the due date...
@@ -401,18 +401,18 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
           assert_not_nil submission.get_latest_result
         end
       end
-      
+
       # Regression test for issue 656.  The issue is when submitting files for an assignment before the grace period
-      # of the previous assignment is over.  When calculating grace days for the previous assignment, it 
+      # of the previous assignment is over.  When calculating grace days for the previous assignment, it
       # takes the newer assignment submission as the submission time.  Therefore, grace days are being
-      # taken off when it shouldn't have. 
+      # taken off when it shouldn't have.
       should 'deduct 1 grace credits' do
 
         # The Student submits some files before the due date...
         submit_files_before_due_date
 
         # Now we're past the due date, but before the collection date, within the first
-        # grace period.  
+        # grace period.
         submit_files_after_due_date_before_collection_time('July 23 2009 9:00PM', 'OvertimeFile1.java', 'Some overtime contents')
         #Submit files for Assignment 2
         submit_files_for_assignment_after_due_before_collection(@assignment2, 'July 24 2009 9:00PM', 'NotIncluded.java', 'Not Included in Asssignment 1')
@@ -441,7 +441,7 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
           assert_not_nil submission.get_latest_result
         end
       end
-      
+
     end
   end
 

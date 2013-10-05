@@ -2,7 +2,7 @@ document.observe('dom:loaded', function() {
 
   // changing the marking status
   new Form.Element.EventObserver('marking_state', function(element, value) {
-    
+
     var url = element.readAttribute('data-action');
 
     var params = {
@@ -22,7 +22,7 @@ document.observe('dom:loaded', function() {
   if (release)
   {
     new Form.Element.EventObserver(release, function(element, value) {
-      
+
       var url = element.readAttribute('data-action');
 
       var params = {
@@ -36,7 +36,7 @@ document.observe('dom:loaded', function() {
         parameters: params,
         onSuccess: function(request) { window.onbeforeunload = null; }
       });
-    });    
+    });
   }
 
   /**

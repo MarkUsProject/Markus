@@ -3,7 +3,7 @@ require 'base64'
 # Scripting API handlers for MarkUs
 module Api
 
-  # This is the parent class of all API controllers. Shared functionality of 
+  # This is the parent class of all API controllers. Shared functionality of
   # all API controllers should go here.
   class MainApiController < ActionController::Base
 
@@ -36,7 +36,7 @@ module Api
     end
 
     private
-    # Auth handler for the MarkUs API. It uses the Authorization HTTP header to 
+    # Auth handler for the MarkUs API. It uses the Authorization HTTP header to
     # determine the user who issued the request. With the Authorization
     # HTTP header comes a Base 64 encoded MD5 digest of the user's private key.
     def authenticate
