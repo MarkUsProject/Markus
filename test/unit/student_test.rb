@@ -303,7 +303,7 @@ class StudentTest < ActiveSupport::TestCase
     end
 
     should 'not become a member of a grouping' do
-      grouping = Grouping.make
+      grouping = Grouping.make!
       @student.invite(grouping.id)
 
       pending_memberships = @student.pending_memberships_for(grouping.assignment_id)

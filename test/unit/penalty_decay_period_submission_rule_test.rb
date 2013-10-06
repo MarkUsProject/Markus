@@ -8,7 +8,7 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
 
   should 'be able to create PenaltyDecayPeriodSubmissionRule' do
     rule = PenaltyDecayPeriodSubmissionRule.new
-    rule.assignment = Assignment.make
+    rule.assignment = Assignment.make!
     assert rule.save
   end
 

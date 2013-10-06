@@ -638,7 +638,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         end
 
         should '- as Ta - be able to download all submissions from all groups' do
-          @ta = Ta.make
+          @ta = Ta.make!
           get_as @ta, :download_groupings_files,
                  :assignment_id => @assignment.id,
                  :groupings => [@grouping1.id, @grouping2.id, @grouping3.id]

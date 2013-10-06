@@ -96,7 +96,7 @@ class Api::GroupsControllerTest < ActionController::TestCase
       end
 
       should 'not use the ActiveRecord class name as the root' do
-        grouping = Grouping.make
+        grouping = Grouping.make!
         get 'index', :assignment_id => grouping.assignment.id.to_s
         assert !@response.body.include?('{"group":')
       end

@@ -80,7 +80,7 @@ class GradeEntryFormTest < ActiveSupport::TestCase
     end
 
     should 'verify the correct value is returned when the student has grades for none of the questions' do
-      student_with_no_grades = Student.make
+      student_with_no_grades = Student.make!
       assert_equal('', @grade_entry_form.calculate_total_mark(student_with_no_grades.id))
     end
 
@@ -162,7 +162,7 @@ class GradeEntryFormTest < ActiveSupport::TestCase
     end
 
     should 'verify the correct value is returned when the student has grades for none of the questions' do
-      student_with_no_grades = @grade_entry_form.grade_entry_students.make
+      student_with_no_grades = @grade_entry_form.grade_entry_students.make!
       assert_equal(true, @grade_entry_form.all_blank_grades?(student_with_no_grades))
     end
 

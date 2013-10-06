@@ -62,7 +62,7 @@ class Api::MainApiControllerTest < ActionController::TestCase
   # Tests authenticated requests to the API controllers
   context 'Authenticated request to any API controller' do
     setup do
-      admin = Admin.make
+      admin = Admin.make!
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_ACCEPT'] = 'application/xml'

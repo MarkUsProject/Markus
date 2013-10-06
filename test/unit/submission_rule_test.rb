@@ -11,7 +11,7 @@ class SubmissionRuleTest < ActiveSupport::TestCase
 
   should 'raise a whole bunch of NotImplemented errors' do
     rule = SubmissionRule.new
-    rule.assignment = Assignment.make
+    rule.assignment = Assignment.make!
 
     assert_raise NotImplementedError do
       rule.commit_after_collection_message

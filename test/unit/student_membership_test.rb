@@ -9,7 +9,7 @@ class StudentMembershipTest < ActiveSupport::TestCase
 
   context 'A good Student Membership model' do
     setup do
-      StudentMembership.make
+      StudentMembership.make!
     end
 
     should validate_presence_of :membership_status
