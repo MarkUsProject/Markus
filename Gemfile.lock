@@ -73,7 +73,7 @@ GEM
     mime-types (1.25)
     mocha (0.14.0)
       metaclass (~> 0.0.1)
-    multi_json (1.8.0)
+    multi_json (1.8.1)
     mysql2 (0.3.13)
     pg (0.17.0)
     polyglot (0.3.3)
@@ -119,7 +119,7 @@ GEM
     ruby-debug-base (0.10.4)
       linecache (>= 0.3)
     rubyzip (0.9.9)
-    sass (3.2.11)
+    sass (3.2.12)
     sass-rails (3.1.7)
       actionpack (~> 3.1.0)
       railties (~> 3.1.0)
@@ -184,7 +184,7 @@ DEPENDENCIES
   rghost
   routing-filter
   ruby-debug
-  rubyzip
+  rubyzip (= 0.9.9)
   sass-rails (~> 3.1.5)
   shoulda (< 3.4)
   shoulda-matchers (~> 1.5)

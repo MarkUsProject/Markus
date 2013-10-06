@@ -10,7 +10,7 @@ source 'http://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'rails', '3.1.12'
-gem 'rubyzip'
+gem 'rubyzip', '= 0.9.9'
 gem 'ya2yaml'
 gem 'i18n'
 gem 'will_paginate'
