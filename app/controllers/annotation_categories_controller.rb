@@ -116,7 +116,7 @@ class AnnotationCategoriesController < ApplicationController
       CsvHelper::Csv.parse(annotation_category_list) do |row|
         next if CsvHelper::Csv.generate_line(row).strip.empty?
         annotation_line += 1
-        result = AnnotationCategory.add_by_row(row, @assignment)
+        result = AnnotationCategory.add_by_row(row, @assignment, current_user)
         if result[:annotation_upload_invalid_lines].size > 0
           flash[:error] = I18n.t('annotations.upload.error',
             :annotation_category => row, :annotation_line => annotation_line)
@@ -156,7 +156,7 @@ class AnnotationCategoriesController < ApplicationController
         return
       end
       annotations.each_key do |key|
-      result = AnnotationCategory.add_by_array(key, annotations.values_at(key), @assignment)
+      result = AnnotationCategory.add_by_array(key, annotations.values_at(key), @assignment, current_user)
       annotation_line += 1
       if result[:annotation_upload_invalid_lines].size > 0
         flash[:error] = I18n.t('annotations.upload.error',

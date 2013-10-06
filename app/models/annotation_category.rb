@@ -14,7 +14,7 @@ class AnnotationCategory < ActiveRecord::Base
   # Takes an array of comma separated values, and tries to assemble an
   # Annotation Category, and associated Annotation Texts
   # Format:  annotation_category,annotation_text,annotation_text,...
-  def self.add_by_row(row, assignment)
+  def self.add_by_row(row, assignment, current_user)
     result = {}
     result[:annotation_upload_invalid_lines] = []
     # The first column is the annotation category name...
@@ -32,6 +32,8 @@ class AnnotationCategory < ActiveRecord::Base
       annotation_text = AnnotationText.new
       annotation_text.content = annotation_text_content
       annotation_text.annotation_category = annotation_category
+      annotation_text.creator_id = current_user.id
+      annotation_text.last_editor_id = current_user.id
       unless annotation_text.save
         # This line checks for the case where we are not given a category name
         # i.e ,123
@@ -52,7 +54,7 @@ class AnnotationCategory < ActiveRecord::Base
   # - annotation_text
   # - annotation_text
   # …
-  def self.add_by_array(annotation_category_name, annotation_texts_content, assignment)
+  def self.add_by_array(annotation_category_name, annotation_texts_content, assignment, current_user)
     result = {}
     result[:annotation_upload_invalid_lines] = []
     annotation_category = assignment.annotation_categories.find_by_annotation_category_name(annotation_category_name)
@@ -67,6 +69,8 @@ class AnnotationCategory < ActiveRecord::Base
       annotation_text = AnnotationText.new
       annotation_text.content = text.to_s
       annotation_text.annotation_category = annotation_category
+      annotation_text.creator_id = current_user.id
+      annotation_text.last_editor_id = current_user.id
       unless annotation_text.save
         # This line checks for the case where we are not given a category name
         annotation_category_name = '' if annotation_category_name.nil?

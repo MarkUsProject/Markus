@@ -16,7 +16,7 @@
     :remote => true %>
 </div>
 <div class="annotation_text_authors">
-  <p>Created By: 
+  <p><%= t("annotations.created_by") %> 
     <% if annotation_text.get_creator.nil? %>
       <%= "N/A" %>
     <% else %>
@@ -25,7 +25,7 @@
   </p>
 </div>
 <div class="annotation_text_authors">
-  <p>Last Edited By: 
+  <p><%= t("annotations.last_edited_by") %>  
     <% if annotation_text.get_last_editor.nil? %>
       <%= "N/A" %>
     <% else %>

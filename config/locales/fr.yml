@@ -783,6 +783,8 @@ fr:
       help_message: "Cliquer sur les catégories d'annotations pour créer des annotations."
       add_annotation_category: "Ajouter une catégorie d'annotations"
       annotations: "Annotations"
+      created_by: "Créée par :"
+      last_edited_by: "Dernière édition par :"
       update:
         annotation_category_success: "La catégorie d'annotations a bien été créée ou mise à jour."
         annotation_category_error: "Erreur dans la mise à jour ou la création de la catégorie d'annotations : "
