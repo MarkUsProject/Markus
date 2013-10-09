@@ -13,7 +13,7 @@ class RubricsController < ApplicationController
 
   def update
     @criterion = RubricCriterion.find(params[:id])
-    if !@criterion.update_attributes(params[:rubric_criterion])
+    unless @criterion.update_attributes(params[:rubric_criterion])
       render :errors
       return
     end
@@ -38,7 +38,7 @@ class RubricsController < ApplicationController
     @criterion.weight = RubricCriterion::DEFAULT_WEIGHT
     @criterion.set_default_levels
     @criterion.position = new_position
-    if !@criterion.update_attributes(params[:rubric_criterion])
+    unless @criterion.update_attributes(params[:rubric_criterion])
       @errors = @criterion.errors
       render :add_criterion_error
       return
@@ -59,13 +59,13 @@ class RubricsController < ApplicationController
   def download_csv
     @assignment = Assignment.find(params[:assignment_id])
     file_out = RubricCriterion.create_csv(@assignment)
-    send_data(file_out, :type => "text/csv", :filename => "#{@assignment.short_identifier}_rubric_criteria.csv", :disposition => "inline")
+    send_data(file_out, :type => 'text/csv', :filename => "#{@assignment.short_identifier}_rubric_criteria.csv", :disposition => 'inline')
   end
 
   def download_yml
      assignment = Assignment.find(params[:assignment_id])
      file_out = assignment.export_rubric_criteria_yml
-     send_data(file_out, :type => "text/plain", :filename => "#{assignment.short_identifier}_rubric_criteria.yml", :disposition => "inline")
+     send_data(file_out, :type => 'text/plain', :filename => "#{assignment.short_identifier}_rubric_criteria.yml", :disposition => 'inline')
   end
 
   def csv_upload
@@ -77,12 +77,12 @@ class RubricsController < ApplicationController
         RubricCriterion.transaction do
           invalid_lines = []
           nb_updates = RubricCriterion.parse_csv(file, @assignment, invalid_lines, encoding)
-          if !invalid_lines.empty?
-            flash[:invalid_lines] = invalid_lines
-            flash[:error] = I18n.t('csv_invalid_lines')
+          unless invalid_lines.empty?
+            flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
           end
           if nb_updates > 0
-            flash[:upload_notice] = I18n.t('rubric_criteria.upload.success', :nb_updates => nb_updates)
+            flash[:notice] = I18n.t('rubric_criteria.upload.success',
+              :nb_updates => nb_updates)
           end
         end
       end
@@ -94,7 +94,7 @@ class RubricsController < ApplicationController
     criteria_with_errors = ActiveSupport::OrderedHash.new
     assignment = Assignment.find(params[:assignment_id])
     encoding = params[:encoding]
-    if !request.post?
+    unless request.post?
       redirect_to :action => 'index', :id => assignment.id
       return
     end
@@ -106,20 +106,19 @@ class RubricsController < ApplicationController
         end
         rubrics = YAML::load(file)
       rescue ArgumentError => e
-        flash[:error] =
-           I18n.t('rubric_criteria.upload.error') + "  " +
+        flash[:error] = I18n.t('rubric_criteria.upload.error') + '  ' +
            I18n.t('rubric_criteria.upload.syntax_error', :error => "#{e}")
         redirect_to :action => 'index', :id => assignment.id
         return
       end
-      if not rubrics
+      unless rubrics
         flash[:error] = I18n.t('rubric_criteria.upload.error') +
-          "  " + I18n.t('rubric_criteria.upload.empty_error')
+          '  ' + I18n.t('rubric_criteria.upload.empty_error')
         redirect_to :action => 'index', :id => assignment.id
         return
       end
       successes = 0
-      i = 1 ;
+      i = 1
       rubrics.each do |key|
         begin
           RubricCriterion.create_or_update_from_yml_key(key, assignment)
@@ -132,24 +131,24 @@ class RubricsController < ApplicationController
         end
       end
 
-      bad_criteria_names = ""
+      bad_criteria_names = ''
       i = 0
       # Create a String from the OrderedHash of bad criteria seperated by commas.
       criteria_with_errors.each_value do |keys|
-        if (i == 0)
+        if i == 0
           bad_criteria_names = keys
           i = i + 1
         else
-          bad_criteria_names = bad_criteria_names + ", " + keys
+          bad_criteria_names = bad_criteria_names + ', ' + keys
         end
       end
 
       if successes < rubrics.length
-        flash[:error] = I18n.t('rubric_criteria.upload.error') + " " + bad_criteria_names
+        flash[:error] = I18n.t('rubric_criteria.upload.error') + ' ' + bad_criteria_names
       end
 
       if successes > 0
-        flash[:upload_notice] = I18n.t('rubric_criteria.upload.success', :nb_updates => successes)
+        flash[:notice] = I18n.t('rubric_criteria.upload.success', :nb_updates => successes)
       end
     end
     redirect_to :action => 'index', :assignment_id => assignment.id
@@ -165,7 +164,7 @@ class RubricsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @criteria = @assignment.rubric_criteria
     params[:rubric_criteria_pane_list].each_with_index do |id, position|
-      if id != ""
+      if id != ''
         RubricCriterion.update(id, :position => position + 1)
       end
     end
@@ -193,8 +192,8 @@ class RubricsController < ApplicationController
     position = criterion.position
     criterion.position = index + offset
     other_criterion.position = index
-    if !(criterion.save and other_criterion.save)
-      flash[:error] = I18n.t("rubrics.move_criterion.error")
+    unless criterion.save and other_criterion.save
+      flash[:error] = I18n.t('rubrics.move_criterion.error')
     end
     @criteria.reload
   end

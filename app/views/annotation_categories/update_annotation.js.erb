@@ -1,0 +1,1 @@
+jQuery('#annotation_text_' + <%= @annotation_text.id %>).replaceWith("<%= escape_javascript(render :partial => 'annotation_text', :locals => { :annotation_text => @annotation_text }).html_safe %>");

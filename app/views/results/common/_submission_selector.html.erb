@@ -23,7 +23,7 @@
      :id => 'notes_dialog_link',
      :remote => true %>
   |
-    (<%=label_tag "marking_state", h(I18n.t("marker.marking_status")), :class => "inline_label" %>
+    (<%=label_tag "marking_state", I18n.t("marker.marking_status"), :class => "inline_label" %>
      <% old_result_id = nil %>
      <% if @old_result %>
         <% old_result_id = @old_result.id %>
@@ -34,12 +34,11 @@
      <%=  select_tag "marking_state", options_for_select(possible_states,[result.marking_state]), :disabled => @result.released_to_students, 'data-action' => url_for(:action => 'update_marking_state', :id => @result.id) %>
 
     <em><%= I18n.t("marker.marks.total_mark") %></em>
-    <span id="current_mark_div"><%= h(result.total_mark) %></span> /
-    <span id="total_mark_div"><%= h(assignment.total_mark) %></span>)
+    <span id="current_mark_div"><%= result.total_mark %></span> /
+    <span id="total_mark_div"><%= assignment.total_mark %></span>)
    <% if @current_user.admin? %>
      | <%= label_tag "released", I18n.t("marker.marks.released"), :class => "inline_label" %>
         <%= check_box_tag "released", true, result.released_to_students, :disabled => result.marking_state != Result::MARKING_STATES[:complete], :class => 'inline_checkbox', 'data-action' => url_for(:action => 'set_released_to_students', :id => @result.id) %>
-     |
     <% end %>
   </span>
 

@@ -2,11 +2,13 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
-  <head>  
+  <head>
     <%= render :partial => 'layouts/head' %>
 
     <title><%= t(:markus) %> - <%= controller.action_name %></title>
     <%= stylesheet_link_tag 'main.css', :media => 'all' %>
+    <%= stylesheet_link_tag 'jquery-ui.css', :media => 'all' %>
+    <%= csrf_meta_tags %>
     <%= yield :head %>
   </head>
 

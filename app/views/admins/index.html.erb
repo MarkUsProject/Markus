@@ -1,7 +1,9 @@
-<%= javascript_include_tag "FilterTable/FilterTable" %>
-<%= javascript_include_tag "users_manager" %>
+<%= javascript_include_tag 'FilterTable/FilterTable' %>
+<%= javascript_include_tag 'users_manager' %>
 
-<%= render :partial => "boot.js" %>
+<script type="text/javascript">
+  <%= render :partial => 'boot.js.erb' %>
+</script>
 
 <div id="title_bar">
   <h1><%= I18n.t("admins.manage_admins") %></h1>
@@ -14,19 +16,9 @@
   <div class="wrapLeft">
     <div id="list">
 
-    <% if flash[:upload_notice] %>
-    <p class="notice"><%= flash[:upload_notice] %></p>
-    <% end %>
+    <%= render 'shared/flash_message' %>
 
     <%# TODO: there is no csv functionality on this page, why is this here? %>
-
-    <% if flash[:edit_notice] %>
-    <p class="success"><%= flash[:edit_notice] %></p>
-    <% end %>
-
-    <% if flash[:success] %>
-    <p class="success"><%= flash[:success] %></p>
-    <% end %>
 
     <% # display lines in csv file that has not been successfully processed %>
     <% if flash[:invalid_lines] && !flash[:invalid_lines].empty? %>

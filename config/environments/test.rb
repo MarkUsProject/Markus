@@ -1,3 +1,4 @@
+# encoding: utf-8
 # Settings specified here will take precedence over those in config/environment.rb
 Markus::Application.configure do
   # The test environment is used exclusively to run your application's
@@ -187,6 +188,9 @@ Markus::Application.configure do
   ###################################################################
   # Logging Options
   ###################################################################
+  # If set to true then the MarkusLogger will be enabled
+  # MarkusLogger-related tests will fail if set to false
+  MARKUS_LOGGING_ENABLED = true
   # If set to true then the rotation of the logfiles will be defined
   # by MARKUS_LOGGING_ROTATE_INTERVAL instead of the size of the file
   MARKUS_LOGGING_ROTATE_BY_INTERVAL = false

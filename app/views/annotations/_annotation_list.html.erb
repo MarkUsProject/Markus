@@ -4,8 +4,8 @@
   <% end %>
 
   <% annotation_category.annotation_texts.each do |annotation_text| %>
-  <li id="annotation_text_<%=h(annotation_text.id)%>" onclick="add_existing_annotation(<%=h(annotation_text.id)%>); return false;" onMouseDown="return false;" title="<%=h(annotation_text.content)%>">
-  <%=h(truncate(annotation_text.content, :length => 40))%>
+  <li id="annotation_text_<%=(annotation_text.id)%>" onclick="add_existing_annotation(<%=(annotation_text.id)%>); return false;" onMouseDown="return false;" title="<%=(annotation_text.content)%>">
+  <%=(truncate(annotation_text.content, :length => 40))%>
   </li>
   <% end %>
 </ul>

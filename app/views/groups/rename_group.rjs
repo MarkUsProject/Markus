@@ -1,2 +1,2 @@
-page.call('modalRenameGroup.close')
+page.call('modal_rename.close')
 page.call "modify_grouping", @grouping_data.to_json

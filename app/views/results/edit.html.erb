@@ -108,13 +108,20 @@ function check_working() {
 </div>
 <div class="wrapLeft">
 <% if flash[:fail_notice] %>
-  <p class="error"><%=h flash[:fail_notice] %></p>
+  <p class="error"><%= flash[:fail_notice] %></p>
 <% end %>
 <% if @result.released_to_students %>
   <p class="notice"><%=t(:marks_released_notice)%></p>
 <% end %>
 
-
+<% if @grouping.past_due_date? %>
+  <p class="warning">
+    <%= t(:past_due_date_edit_result_warning,
+          :href => link_to(t(:last_commit),
+                           repo_browser_assignment_submission_path(
+                                   @assignment, @grouping))).html_safe %>
+  </p>
+<% end %>
 
 <%= render :partial => 'results/common/submission_selector', :locals => {:group => @group, :result => @result, :assignment => @assignment, :previous_grouping => @previous_grouping, :next_grouping => @next_grouping} %>
 

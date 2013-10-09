@@ -4,18 +4,18 @@
 <%= render :partial => "file_manager_boot.js.erb" %>
 
 <div id="title_bar">
-  <h1><%= I18n.t("student.submission.file_manager", :short_identifier => h(sanitize(@assignment.short_identifier))) %></h1>
+  <h1><%= I18n.t("student.submission.file_manager", :short_identifier => sanitize(@assignment.short_identifier)) %></h1>
   <div id="current_time">
   <%= render :partial => "server_time" %>
 
   <script type="text/javascript">
     new PeriodicalExecuter(
       function() {
-        new Ajax.Updater('current_time', 
-          '<%= server_time_assignment_submissions_path(@assignment.id) %>', 
+        new Ajax.Updater('current_time',
+          '<%= server_time_assignment_submissions_path(@assignment.id) %>',
           {
-            asynchronous:true, 
-            evalScripts:true, 
+            asynchronous:true,
+            evalScripts:true,
             parameters:'authenticity_token=' + AUTH_TOKEN
           }
         )
@@ -27,7 +27,7 @@
 
 <div class="wrapLeft">
   <% if flash[:submit_notice] -%>
-     <p class="success"><%= h(flash[:submit_notice]) %> </p>
+     <p class="success"><%= flash[:submit_notice] %> </p>
   <% end %>
 
 
@@ -54,15 +54,15 @@
   <div class="success"><%= flash[:success] %></div>
 <% end %>
 
-<% if @assignment.submission_rule.can_collect_now? && 
-	flash[:commit_notice] != @assignment.submission_rule.commit_after_collection_message(@grouping)%>
+<% if @assignment.submission_rule.can_collect_now? &&
+	flash[:commit_notice] != @assignment.submission_rule.commit_after_collection_message %>
   <div class="warning">
-    <%= h(@assignment.submission_rule.after_collection_message(@grouping)) %>
+    <%= @assignment.submission_rule.after_collection_message %>
   </div>
 <% else %>
   <% if @assignment.section_past_due_date?(@grouping) %>
     <div class="warning">
-      <%= h(@assignment.submission_rule.overtime_message(@grouping)) %>
+      <%= @assignment.submission_rule.overtime_message(@grouping) %>
     </div>
   <% end %>
 <% end %>
@@ -74,7 +74,7 @@
     <p><%= I18n.t("student.submission.file_conflicts") %></p>
     <ul>
     <% @file_manager_errors[:update_conflicts].each do |conflict| %>
-      <li><%= h(conflict.to_s) %></li>
+      <li><%= conflict.to_s %></li>
     <% end %>
     </ul>
   </div>
@@ -104,7 +104,7 @@
   </p>
   <ul id="missing_assignment_files_list" <%='style="display:none;"' if @missing_assignment_files.size > 5%> >
   <% @missing_assignment_files.each do |assignment_file| %>
-    <li><%= h(assignment_file.filename) %></li>
+    <li><%= assignment_file.filename %></li>
   <% end %>
   </ul>
  </div>

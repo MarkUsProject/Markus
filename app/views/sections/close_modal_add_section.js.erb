@@ -1,0 +1,3 @@
+modal_add_section.close();
+
+jQuery('#select_sections').html("<%= escape_javascript(render :partial => 'select_sections', :locals => { :user => @user, :selected => @section.id }).html_safe %>");

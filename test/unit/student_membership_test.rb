@@ -7,7 +7,7 @@ class StudentMembershipTest < ActiveSupport::TestCase
   should belong_to :user
   should belong_to :grouping
 
-  context "A good Student Membership model" do
+  context 'A good Student Membership model' do
     setup do
       StudentMembership.make
     end
@@ -15,23 +15,22 @@ class StudentMembershipTest < ActiveSupport::TestCase
     should validate_presence_of :membership_status
   end
 
-  should "valide format of membership status" do
+  should 'valide format of membership status' do
     # FIXME ? should probably be done using some magic should methods !
     membership = StudentMembership.new
     membership.grouping_id = 1
     membership.user_id = 1
-    membership.membership_status = "jdbffh"
-    assert !membership.save, "saved with a wrong format of
-    membership_status"
+    membership.membership_status = 'jdbffh'
+    assert !membership.save, 'saved with a wrong format of membership_status'
   end
 
-  should "be able to spot an inviter" do
+  should 'be able to spot an inviter' do
     membership = StudentMembership.make(
                   :membership_status => StudentMembership::STATUSES[:inviter])
     assert membership.inviter?
   end
 
-  should "be able to spot an non inviter" do
+  should 'be able to spot an non inviter' do
     membership = StudentMembership.make(
                   :membership_status => StudentMembership::STATUSES[:accepted])
     assert !membership.inviter?

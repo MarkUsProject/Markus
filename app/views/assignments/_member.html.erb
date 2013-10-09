@@ -7,24 +7,24 @@
 <%# If this member is an inviter%>
 <% if member.membership_status == StudentMembership::STATUSES[:inviter] %>
 <li id="member_inviter">
-   <span class="last_name"><%= h(member.user.first_name) %> </span> <%=
-h(member.user.last_name) %> <%= I18n.t("student.inviter") %></li>
+   <span class="last_name"><%= member.user.first_name %> </span> <%=
+member.user.last_name %> <%= I18n.t("student.inviter") %></li>
 <%# If this member is an accepted member %>
 <% elsif member.membership_status == StudentMembership::STATUSES[:accepted] %>
 <li>
-   <span class="last_name"><%= h(member.user.first_name) %> </span> <%= h(member.user.last_name) %></li>
+   <span class="last_name"><%= member.user.first_name %> </span> <%= member.user.last_name %></li>
 <%# If this member is pending%>
 <% elsif member.membership_status == StudentMembership::STATUSES[:pending] %>
 <li class="membership_status_pending">
-   <span class="last_name"><%= h(member.user.first_name) %> </span> <%= h(member.user.last_name) %> <%= I18n.t("student.invited") %>
+   <span class="last_name"><%= member.user.first_name %> </span> <%= member.user.last_name %> <%= I18n.t("student.invited") %>
    <% if grouping.is_inviter?(@current_user) %>
-     <%= link_to I18n.t(:cancel), '#', 
+     <%= link_to I18n.t(:cancel), '#',
         :onclick => "
           new Ajax.Request('" +
              disinvite_member_assignment_path(:id => @assignment.id, :membership => member.id) + "');",
 
         :confirm => I18n.t("student.cancel_invitation"),
-        :title   => I18n.t("student.cancel_invitation_title"), 
+        :title   => I18n.t("student.cancel_invitation_title"),
         :class   => "delete",
         :remote  => true
         %>
@@ -34,8 +34,8 @@ h(member.user.last_name) %> <%= I18n.t("student.inviter") %></li>
 <% elsif member.membership_status == StudentMembership::STATUSES[:rejected] %>
    <% if grouping.is_inviter?(@current_user) %>
 <li class="membership_status_rejected">
-   <span class="last_name"><%= h(member.user.last_name) %> </span> <%=
-h(member.user.first_name) %> (<%=t(:rejected_invitation)%>)
+   <span class="last_name"><%= member.user.last_name %> </span> <%=
+member.user.first_name %> (<%=t(:rejected_invitation)%>)
      <%= link_to I18n.t(:delete), :action => 'delete_rejected', :id => @assignment.id, :membership => member.id %>
 </li>
    <% end %>

@@ -1,5 +1,5 @@
 <td>
-<span class="link"><%= h(grouping.group.group_name)%></span>
+<span class="link"><%= grouping.group.group_name %></span>
     <span class="table_menu">
       <% if grouping.is_valid?%>
         <%= link_to image_tag("icons/tick.png",
@@ -42,7 +42,7 @@
 
 <td>
 <% grouping.student_memberships.each do |member| %>
-   <%= render :partial => "groups/manage/member",
+   <%= render :partial => 'groups/manage/member.html.erb',
 	      :locals => {:member => member,
 			  :grouping => grouping } %>
 <% end -%>

@@ -1,6 +1,6 @@
 <h2><%= I18n.t("groups.upload.upload_grader_map") %></h2>
 <%= I18n.t("groups.upload.description_grader_map") %>
-<% form_tag({:controller=>"graders",
+<%= form_tag({:controller=>"graders",
   :action => 'csv_upload_grader_groups_mapping',:id => @assignment.id},
   {:multipart => true}) do -%>
   <p><%= file_field_tag :grader_mapping, :size => 2 %> <br />
@@ -13,7 +13,7 @@
 <% if @assignment.assign_graders_to_criteria %>
   <h2><%= I18n.t("groups.upload.upload_grader_criteria_map") %></h2>
   <%= I18n.t("groups.upload.description_grader_criteria_map") %>
-  <% form_tag({:controller=>"graders",
+  <%= form_tag({:controller=>"graders",
     :action => 'csv_upload_grader_criteria_mapping',:id => @assignment.id},
     {:multipart => true}) do -%>
     <p><%= file_field_tag :grader_criteria_mapping, :size => 2 %> <br />

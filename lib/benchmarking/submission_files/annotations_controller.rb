@@ -1,17 +1,17 @@
 class AnnotationsController < ApplicationController
-  
+
   before_filter      :authorize_for_ta_and_admin
-  
-  # TODO: Is the assignment closed?  If so, begin generating 
+
+  # TODO: Is the assignment closed?  If so, begin generating
   # Submissions and SubmissionFiles
-   
+
   def add_existing_annotation
     @text = AnnotationText.find(params[:annotation_text_id])
     @submission_file_id = params[:submission_file_id]
     @submission_file = SubmissionFile.find(@submission_file_id)
     @annotation = Annotation.new
     @annotation.update_attributes({
-      :line_start => params[:line_start], 
+      :line_start => params[:line_start],
       :line_end => params[:line_end],
       :submission_file_id => params[:submission_file_id]
     })
@@ -28,8 +28,8 @@ class AnnotationsController < ApplicationController
     })
     @submission_file_id = params[:submission_file_id]
     @submission_file = SubmissionFile.find(@submission_file_id)
-    @annotation = Annotation.create({ 
-      :line_start => params[:line_start], 
+    @annotation = Annotation.create({
+      :line_start => params[:line_start],
       :line_end => params[:line_end],
       :annotation_text_id => @text.id,
       :submission_file_id => params[:submission_file_id]
@@ -46,7 +46,7 @@ class AnnotationsController < ApplicationController
     @submission = @submission_file.submission
     @annotations = @submission.annotations
   end
- 
+
   def update_annotation
     @content = params[:annotation_text][:content]
     @id = params[:annotation_text][:id]
@@ -63,7 +63,7 @@ class AnnotationsController < ApplicationController
   def update_comment
     result = Result.find(params[:result_id])
     result.overall_comment = params[:overall_comment]
-    result.save;
+    result.save
     render :update do |page|
     end
   end
@@ -87,7 +87,7 @@ class AnnotationsController < ApplicationController
 #    file_out = ""
 #    assignments = Assignment.find(:all, :order => "id")
 #    students = User.find_all_by_role('student')
-#    results = Result.find(:all)
+#    results = Result.all
 #    #need to create the header, which is the list of assignments and their total
 #    #mark
 #    assignments.each do |asst|
@@ -96,7 +96,7 @@ class AnnotationsController < ApplicationController
 #    end
 
 #    file_out << "\n"
-#   
+#
 #    #next we generate the list of students and marks
 #    #student# + four spaces + student last name + 2 spaces + student first name
 #    # + marks (each preceded by a tab char)
@@ -123,5 +123,5 @@ class AnnotationsController < ApplicationController
 
 #    send_data(file_out, :type => "text", :disposition => "inline")
 #  end
-#  
+#
 end

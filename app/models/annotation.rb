@@ -5,6 +5,7 @@ class Annotation < ActiveRecord::Base
   validates_presence_of :submission_file
   validates_presence_of :annotation_text
   validates_presence_of :annotation_number
+  validates_inclusion_of :is_remark, :in => [true, false]
 
   validates_associated      :submission_file
   validates_associated      :annotation_text

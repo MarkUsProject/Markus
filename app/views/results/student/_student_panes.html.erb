@@ -20,7 +20,7 @@
       <h3><%= I18n.t("marker.overall_comments") %></h3>
 
       <% comment = ( old_result ? old_result.overall_comment : result.overall_comment )%>
-      <p><%=simple_format(h(comment))%></p>
+      <p><%=simple_format(comment)%></p>
 
       <h3><%= I18n.t("marker.current_annotations") %></h3>
       <p><%= I18n.t("marker.across_all_submission_files") %></p>
