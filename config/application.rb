@@ -44,6 +44,7 @@ module Markus
                               #{::Rails.root}/app
                               #{::Rails.root}/controllers/api
                               #{::Rails.root}/lib/classes
+                              #{::Rails.root}/lib/validators
                               )
   # Load any local configuration that is kept out of source control
   # (e.g. gems, patches).
@@ -55,6 +56,10 @@ module Markus
 
   # Configure sensitive parameters which will be filtered from the log file.
   config.filter_parameters += [:password]
-  
+
+  # Enable the asset pipeline
+  config.assets.enabled = true
+  config.assets.version = '1.0'
+
   end
 end

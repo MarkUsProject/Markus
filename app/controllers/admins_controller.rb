@@ -6,9 +6,12 @@ class AdminsController < ApplicationController
   end
 
   def populate
-    admins_data = Admin.find(:all, :order => "user_name")
+    admins_data = Admin.all(:order => 'user_name')
     # construct_table_rows defined in UsersHelper
     @admins = construct_table_rows(admins_data)
+    respond_to do |format|
+      format.json { render :json => @admins }
+    end
   end
 
   def edit
@@ -23,12 +26,12 @@ class AdminsController < ApplicationController
     @user = Admin.find(params[:id])
     attrs = params[:user]
     # update_attributes supplied by ActiveRecords
-    if !@user.update_attributes(attrs)
-      flash[:error] = I18n.t("admins.update.error")
+    if @user.update_attributes(attrs).nil?
+      flash[:error] = I18n.t('admins.update.error')
       render :edit
     else
-      flash[:success] = I18n.t("admins.update.success",
-                                   :user_name => @user.user_name)
+      flash[:success] = I18n.t('admins.update.success',
+        :user_name => @user.user_name)
       redirect_to :action => 'index'
     end
   end
@@ -43,13 +46,13 @@ class AdminsController < ApplicationController
     # active records--creates a new record if the model is new, otherwise
     # updates the existing record
     if @user.save
-      flash[:success] = I18n.t("admins.create.success",
-                               :user_name => @user.user_name)
+      flash[:success] = I18n.t('admins.create.success',
+        :user_name => @user.user_name)
 
       redirect_to :action => 'index'
     else
       flash[:error] = I18n.t('admins.create.error')
-      render "new"
+      render 'new'
     end
   end
 end

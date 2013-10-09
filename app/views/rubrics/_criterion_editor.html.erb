@@ -1,16 +1,12 @@
-<% if !flash[:success].nil? %>
-  <div class="success">
-    <%= flash[:success] %>
-  </div>
-<% end %>
+<%= render 'shared/flash_message' %>
 
 <%= form_for criterion,
-	     :as => :flexible_criterion,
+	     :as => :rubric_criterion,
 	     :url => {:action => 'update', :id => criterion.id},
 		   :html => {:remote => true} do |f| %>
 <h2>
   <span id="selected_criterion_name">
-    <%= h(criterion.rubric_criterion_name)%>
+    <%= criterion.rubric_criterion_name %>
   </span>
 </h2>
 

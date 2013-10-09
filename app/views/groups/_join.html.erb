@@ -1,8 +1,8 @@
 
-<% form_tag :controller => 'groups', :action => 'join', :id => @assignment.id do %>
+<%= form_tag :controller => 'groups', :action => 'join', :id => @assignment.id do %>
   <p>
-    <b><%= h(@group.inviter.user_name) %></b> has invited you to join his group
-    for assignment <b><%= h(sanitize(@assignment.short_identifier)) %></b>.
+    <b><%= @group.inviter.user_name %></b> has invited you to join his group
+    for assignment <b><%= sanitize(@assignment.short_identifier) %></b>.
   </p>
 
   <p>Would you like to accept this invitation?</p>

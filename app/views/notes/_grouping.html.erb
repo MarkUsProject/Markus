@@ -1,4 +1,4 @@
-<%= fields_for :note, :url => {:action => 'create'} do |f| %>
+<%= fields_for :note do |f| %>
   <p>
     <%= label_tag "assignment_id", I18n.t("notes.noteables.Assignment") %>
     <%= select_tag "assignment_id",
@@ -6,10 +6,10 @@
                                                       :id,
                                                       :short_identifier),
                    :onchange => "$('loading_groupings').show();
-			                    new Ajax.Request('" + new_update_groupings_notes_path() + "', 
-							                    {asynchronous:true, evalScripts:true, 
-							                     onSuccess:function(request){$('loading_groupings').hide()}, 
-							                     parameters:Form.Element.serialize(this) + '&authenticity_token=' + AUTH_TOKEN })" 
+			                    new Ajax.Request('" + new_update_groupings_notes_path() + "',
+							                    {asynchronous:true, evalScripts:true,
+							                     onSuccess:function(request){$('loading_groupings').hide()},
+							                     parameters:Form.Element.serialize(this) + '&authenticity_token=' + AUTH_TOKEN })"
     %>
   </p>
 

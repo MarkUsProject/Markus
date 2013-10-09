@@ -157,28 +157,27 @@ ImageAnnotation.blueprint do
   x2 {10}
   y1 {0}
   y2 {10}
+  is_remark {false}
   submission_file
-  annotation_text {AnnotationText.make(
-    :annotation_category => AnnotationCategory.make(:assignment => submission_file.submission.grouping.assignment)
-    )}
-  annotation_text_id {1}
+  annotation_text
+  annotation_text_id {annotation_text.id}
   submission_file_id {submission_file.id}
   annotation_number {rand(1000)+1}
 end
 
 Mark.blueprint do
-  result {Submission.make.result}
+  result {Result.make}
   markable {RubricCriterion.make(:assignment => result.submission.grouping.assignment)}
   mark {1}
 end
 
 Mark.blueprint(:rubric) do
-  result {Submission.make.result}
+  result {Result.make}
   markable {RubricCriterion.make(:assignment => result.submission.grouping.assignment)}
 end
 
 Mark.blueprint(:flexible) do
-  result {Submission.make.result}
+  result {Result.make}
   markable {FlexibleCriterion.make(:assignment => result.submission.grouping.assignment)}
 end
 
@@ -327,6 +326,7 @@ TextAnnotation.blueprint do
   line_start {0}
   line_end {1}
   submission_file
+  is_remark {false}
   annotation_text {AnnotationText.make(
     :annotation_category => AnnotationCategory.make(:assignment => submission_file.submission.grouping.assignment)
     )}

@@ -1,13 +1,13 @@
 <div id="remark_request">
   <h3><%= I18n.t("marker.remark_instructions") %></h3>
-  <%= h(assignment.remark_message) %>
+  <%= assignment.remark_message %>
   <h3><%= I18n.t("marker.remark_request") %></h3>
 	<div id="remark_request_text">
     <%= I18n.t("marker.remark_submitted_on") %>:
     <% if submission.remark_request_timestamp %>
       <%= I18n.l(submission.remark_request_timestamp, :format => :long_date) %>
     <% end %><br><br>
-    <%= h(submission.remark_request) %>
+    <%= submission.remark_request %>
   </div>
   <div id="overall_remark_comment">
     <h3><%= I18n.t("marker.overall_comments") %></h3>
@@ -15,7 +15,7 @@
       <%= render :partial => 'results/marker/overall_remark_comment', :locals => {:result => result} %>
     <% else %>
       <div id="overall_remark_comment_show">
-        <%= h(result.overall_comment) %>
+        <%= result.overall_comment %>
       </div>
     <% end %>
   </div>

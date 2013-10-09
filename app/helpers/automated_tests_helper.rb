@@ -3,32 +3,33 @@ require 'open3'
 
 # Helper methods for Testing Framework forms
 module AutomatedTestsHelper
+
   include LibXML
 
   # This is the waiting list for automated testing. Once a test is requested,
   # it is enqueued and it is waiting for execution. Resque manages this queue.
   @queue = :test_waiting_list
 
-  # This is the calling interface to request a test run. 
+  # This is the calling interface to request a test run.
   def AutomatedTestsHelper.request_a_test_run(grouping_id, call_on, current_user)
     @current_user = current_user
     #@submission = Submission.find(submission_id)
     @grouping = Grouping.find(grouping_id)
     @assignment = @grouping.assignment
     @group = @grouping.group
-    
+
     @repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, @group.repo_name)
     export_group_repo(@group, @repo_dir)
-                              
+
     @list_run_scripts = scripts_to_run(@assignment, call_on)
-    
+
     async_test_request(grouping_id, call_on)
   end
-  
+
   # Delete repository directory
   def self.delete_repo(repo_dir)
     # Delete student's assignment repository if it already exists
-    if (File.exists?(repo_dir))
+    if File.exists?(repo_dir)
       FileUtils.rm_rf(repo_dir)
     end
   end
@@ -77,7 +78,7 @@ module AutomatedTestsHelper
 
     # sort list_run_scripts using ruby's in place sorting method
     list_run_scripts.sort_by! {|script| script.seq_num}
-    
+
     # list_run_scripts should be sorted now. Perform a check here.
     # Take this out if it causes performance issue.
     ctr = 0
@@ -90,7 +91,7 @@ module AutomatedTestsHelper
 
     return list_run_scripts
   end
-  
+
   # Request an automated test. Ask Resque to enqueue a job.
   def self.async_test_request(grouping_id, call_on)
     if files_available?
@@ -105,9 +106,9 @@ module AutomatedTestsHelper
   # belong to the group, and have at least one token.
   def self.has_permission?()
     if @current_user.admin?
-      return true
+      true
     elsif @current_user.ta?
-      return true
+      true
     elsif @current_user.student?
       # Make sure student belongs to this group
       if not @current_user.accepted_groupings.include?(@grouping)
@@ -120,18 +121,18 @@ module AutomatedTestsHelper
       end
       t = @grouping.token
       if t == nil
-        raise I18n.t("automated_tests.missing_tokens")
+        raise I18n.t('automated_tests.missing_tokens')
       end
       if t.tokens > 0
         t.decrease_tokens
-        return true
+        true
       else
         # TODO: show the error to user instead of raising a runtime error
         raise I18n.t("automated_tests.missing_tokens")
       end
     end
   end
-  
+
   # Verify that MarkUs has some files to run the test.
   # Note: this does not guarantee all required files are presented.
   # Instead, it checks if there is at least one test script and
@@ -148,14 +149,14 @@ module AutomatedTestsHelper
       # TODO: show the error to user instead of raising a runtime error
       raise I18n.t("automated_tests.source_files_unavailable")
     end
-    
+
     if !(File.exists?(assign_dir))
       # TODO: show the error to user instead of raising a runtime error
       raise I18n.t("automated_tests.source_files_unavailable")
     end
-        
+
     dir_contents = Dir.entries(assign_dir)
-    
+
     #if there are no files in repo (ie only the current and parent directory pointers)
     if (dir_contents.length <= 2)
       raise I18n.t("automated_tests.source_files_unavailable")
@@ -172,10 +173,10 @@ module AutomatedTestsHelper
 
   # Perform a job for automated testing. This code is run by
   # the Resque workers - it should not be called from other functions.
-  def self.perform(grouping_id, call_on) 
+  def self.perform(grouping_id, call_on)
     # Pick a server, launch the Test Runner and wait for the result
     # Then store the result into the database
-  
+
     #@submission = Submission.find(submission_id)
     @grouping = Grouping.find(grouping_id)
     @assignment = @grouping.assignment
@@ -183,18 +184,18 @@ module AutomatedTestsHelper
     @repo_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, @group.repo_name)
 
     @list_of_servers = MarkusConfigurator.markus_ate_test_server_hosts.split(' ')
-    
+
     while true
       @test_server_id = choose_test_server()
-      if @test_server_id >= 0 
+      if @test_server_id >= 0
         break
       else
         sleep 5               # if no server is available, sleep for 5 second before it checks again
-      end  
+      end
     end
 
     result, status = launch_test(@test_server_id, @assignment, @repo_dir, call_on)
-    
+
     if !status
       # TODO: handle this error better
       raise "error"
@@ -275,7 +276,7 @@ module AutomatedTestsHelper
     list_run_scripts.each do |script|
       arg_list = arg_list + "#{script.script_name.gsub(/\s/, "\\ ")} #{script.halts_testing} "
     end
-    
+
     # Run script
     test_runner_name = File.basename(test_runner)
     stdout, stderr, status = Open3.capture3("ssh #{server} \"cd #{run_dir}; ruby #{test_runner_name} #{arg_list}\"")
@@ -284,7 +285,7 @@ module AutomatedTestsHelper
     else
       return [stdout, true]
     end
-    
+
   end
 
   def self.process_result(result, grouping_id, assignment_id)
@@ -292,9 +293,9 @@ module AutomatedTestsHelper
 
     # parse the xml doc
     doc = parser.parse
-    
+
     @grouping = Grouping.find(grouping_id)
-    
+
     repo = @grouping.group.repo
     @revision  = repo.get_latest_revision
     @revision_number = @revision.revision_number
@@ -305,7 +306,7 @@ module AutomatedTestsHelper
       script_result = TestScriptResult.new
       script_result.grouping_id = grouping_id
       script_marks_earned = 0    # cumulate the marks_earn in this script
-      
+
       # find the script name and save it
       script_name_nodes = s_node.find('./script_name')
       if script_name_nodes.length != 1
@@ -314,7 +315,7 @@ module AutomatedTestsHelper
       else
         script_name = script_name_nodes[0].content
       end
-      
+
       # Find all the test scripts with this script_name.
       # There should be one and only one record - raise exception if not
       test_script_array = TestScript.find_all_by_assignment_id_and_script_name(assignment_id, script_name)
@@ -326,12 +327,12 @@ module AutomatedTestsHelper
       end
 
       script_result.test_script_id = test_script.id
-      
+
       script_marks_earned_nodes = s_node.find('./marks_earned')
       script_result.marks_earned = script_marks_earned_nodes[0].content.to_i
-      
+
       script_result.repo_revision = @revision_number
-      
+
       # save to database
       script_result.save
 
@@ -348,7 +349,7 @@ module AutomatedTestsHelper
         test_result.expected_output = ''
         test_result.actual_output = ''
         test_result.marks_earned = 0
-        
+
         t_node.each_element do |child|
           if child.name == 'name'
             test_result.name = child.content
@@ -368,24 +369,24 @@ module AutomatedTestsHelper
             raise "Error: malformed xml from test runner. Unclaimed tag: " + child.name
           end
         end
-        
+
         test_result.repo_revision = @revision_number
-        
+
         test_result.test_script_result_id = script_result.id
-        
+
         # save to database
         test_result.save
       end
-      
+
       # if a marks_earned tag exists under test_script tag, get the value;
       # otherwise, use the cumulative marks earned from all unit tests
       script_marks_earned_nodes = s_node.find('./marks_earned')
       if script_marks_earned_nodes.length == 1
         script_result.marks_earned = script_marks_earned_nodes[0].content.to_i
-        
+
         script_result.save
       end
-      
+
     end
   end
 
@@ -405,16 +406,16 @@ module AutomatedTestsHelper
   # if it does not exist
   def create_test_repo(assignment)
     # Create the automated test repository
-    if !(File.exists?(MarkusConfigurator.markus_config_automated_tests_repository))
+    unless File.exists?(MarkusConfigurator.markus_config_automated_tests_repository)
       FileUtils.mkdir(MarkusConfigurator.markus_config_automated_tests_repository)
     end
-    
+
     test_dir = File.join(MarkusConfigurator.markus_config_automated_tests_repository, assignment.short_identifier)
     if !(File.exists?(test_dir))
       FileUtils.mkdir(test_dir)
     end
   end
-  
+
   def add_test_script_link(name, form)
     link_to_function name do |page|
       new_test_script = TestScript.new
@@ -475,10 +476,10 @@ module AutomatedTestsHelper
 
     # Array for checking duplicate file names
     file_name_array = []
-    
+
     #add existing scripts names
     params.each {|key, value| if(key[/test_script_\d+/] != nil) then file_name_array << value end}
-    
+
     # Retrieve all test scripts
     testscripts = params[:assignment][:test_scripts_attributes]
 
@@ -506,10 +507,10 @@ module AutomatedTestsHelper
         if tfile['file_name'].respond_to?(:original_filename)
           fname = tfile['file_name'].original_filename
           # If this is a duplicate file name, raise error and return
-          if !file_name_array.include?(fname)
-            file_name_array << fname
+          if filename_array.include?(fname)
+            raise I18n.t('automated_tests.duplicate_filename') + fname
           else
-            raise I18n.t("automated_tests.duplicate_filename") + fname
+            filename_array << fname
           end
         end
       end
@@ -518,18 +519,18 @@ module AutomatedTestsHelper
     # Filter out script files that need to be created and updated
     if !testscripts.nil?
       testscripts.each_key do |key|
-  
+
         tfile = testscripts[key]
-  
+
         # Check to see if this is an update or a new file:
         # - If 'id' exists, this is an update
         # - If 'id' does not exist, this is a new test file
         tf_id = tfile['id']
-  
+
         # If only the 'id' exists in the hash, other attributes were not updated so we skip this entry.
         # Otherwise, this test file possibly requires an update
         if tf_id != nil && tfile.size > 1
-  
+
           # Find existing test file to update
           @existing_testscript = TestScript.find_by_id(tf_id)
           if @existing_testscript
@@ -537,7 +538,7 @@ module AutomatedTestsHelper
             updated_script_files[key] = tfile
           end
         end
-  
+
         # Test file needs to be created since record doesn't exist yet
         if tf_id.nil? && tfile['script_name']
           updated_script_files[key] = tfile
@@ -548,18 +549,18 @@ module AutomatedTestsHelper
     # Filter out test support files that need to be created and updated
     if !testsupporters.nil?
       testsupporters.each_key do |key|
-  
+
         tfile = testsupporters[key]
-  
+
         # Check to see if this is an update or a new file:
         # - If 'id' exists, this is an update
         # - If 'id' does not exist, this is a new test file
         tf_id = tfile['id']
-  
+
         # If only the 'id' exists in the hash, other attributes were not updated so we skip this entry.
         # Otherwise, this test file possibly requires an update
         if tf_id != nil && tfile.size > 1
-  
+
           # Find existing test file to update
           @existing_testsupport = TestSupportFile.find_by_id(tf_id)
           if @existing_testsupport
@@ -567,7 +568,7 @@ module AutomatedTestsHelper
             updated_support_files[key] = tfile
           end
         end
-  
+
         # Test file needs to be created since record doesn't exist yet
         if tf_id.nil? && tfile['file_name']
           updated_support_files[key] = tfile

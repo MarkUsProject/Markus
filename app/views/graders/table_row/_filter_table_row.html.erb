@@ -1,5 +1,5 @@
 <td>
-<span class="link"><%= h(grouping.group.group_name)%></span>
+<span class="link"><%= grouping.group.group_name %></span>
 <% grouping.students.each do |student| %>
    <%=  student.user_name %>
 <% end %>
@@ -10,7 +10,7 @@
 </td>
 
 <td>
-<%= render :partial => "graders/manage/member",
+<%= render :partial => 'graders/manage/member.html.erb',
   :locals => {:grouping => grouping } %>
 </td>
 

@@ -12,12 +12,9 @@ class NoteTest < ActiveSupport::TestCase
   should belong_to :noteable
   should belong_to :user
 
-  context "noteables_exist?"  do
-    setup do
-      clear_fixtures
-    end
+  context 'noteables_exist?'  do
 
-    should "return false when no noteables exist" do
+    should 'return false when no noteables exist' do
       assert !Note.noteables_exist?
     end
 
@@ -26,7 +23,7 @@ class NoteTest < ActiveSupport::TestCase
         setup do
           @noteable = noteable.call()
         end
-        should  "return true" do
+        should  'return true' do
           assert Note.noteables_exist?
         end
       end

@@ -44,7 +44,7 @@ Please see the INSTALL file for installation instructions.
 
 * Email a security alert: security@markusproject.org
 * Email a general inquiry: info@markusproject.org
-* Blog: http://blog.markusproject.org/http://blog.markusproject.org/
+* Blog: http://blog.markusproject.org/
 * Sandbox: http://www.markusproject.org/admin-demo
 * Source Code: http://github.com/MarkUsProject/Markus
 * Review Board: http://review.markusproject.org/r/
@@ -132,19 +132,20 @@ MarkUs' development has been supported by the University of Toronto, École
 Centrale de Nantes, et. al. Kudos to everyone who turned that support into
 working code:
 
-Aaron Lee, Adam Goucher, Aimen Khan, Alexandre Lissy, Alex Krassikov, Amanda
-Manarin, Andrew Louis, Anthony Le Jallé, Anton Braverman, Benjamin Thorent,
+Aaron Lee, Adam Goucher, Aimen Khan, Alexandre Lissy, Alex Krassikov, Alysha Kwok,
+Amanda Manarin, Andrew Louis, Anthony Le Jallé, Anton Braverman, Benjamin Thorent,
 Benjamin Vialle, Bertan Guven, Brian Xu, Bryan Shen, Camille Guérin, Catherine
 Fawcett, Christian Jacques, Christine Yu, Clément Delafargue, Clément Schiano,
-Danesh Dadachanji, Diane Tam, Dina Sabie, Egor Philippov, Erik Traikov, Evan
-Browning, Farah Juma, Fernando Garces, Gabriel Roy-Lortie, Geoffrey Flores,
-Hanson Wu, Horatiu Halmaghi, Ibrahim Shahin, Jay Parekh, Jérôme Gazel, Jiahui
-Xu, Jordan Saleh, Joseph Mate, Joseph Maté, Justin Foong, Karel Kahula, Kurtis
-Schmidt, Luke Kysow, Mélanie Gaudet, Michael Lumbroso, Mike Conley, Mike
-Gunderloy, Misa Sakamoto, Neha Kumar, Nelle Varoquaux, Nicolas Bouillon,
-Nicolas Carougeau, Noé Bedetti, Oloruntobi Ogunbiyi, Razvan Vlaicu, Robert
-Burke, Samuel Gougeon, Sean Budning, Severin Gehwolf, Shion Kashimura, Simon
-Lavigne-Giroux, Tara Clark, Tianhai Hu, Valentin Roger, Veronica Wong, Victoria
-Mui, Victor Ivri, Vivien Suen, Yansong Zang
+Danesh Dadachanji, Daryn Lam, Daniel St. Jules, Dina Sabie, Diane Tam, Egor
+Philippov, Erik Traikov, Evan Browning, Farah Juma, Fernando Garces, Gabriel Roy-
+Lortie, Geoffrey Flores, Ghislain Guiot, Hanson Wu, Horatiu Halmaghi, Ian Smith,
+Ibrahim Shahin, Jay Parekh, Jérôme Gazel, Jiahui Xu, Jordan Saleh, Joseph Mate,
+Joseph Maté, Justin Foong, Karel Kahula, Kurtis Schmidt, Luke Kysow, Marc Bodmer,
+Mélanie Gaudet, Michael Lumbroso, Mike Conley, Mike Gunderloy, Mike Stewart, Mike
+Wu, Misa Sakamoto, Neha Kumar, Nelle Varoquaux, Nicolas Bouillon, Nick Lee, Nicolas
+Carougeau, Noé Bedetti, Oloruntobi Ogunbiyi, Oussama Ben Amar, Razvan Vlaicu, Robert
+Burke, Samuel Gougeon, Sean Budning, Severin Gehwolf, Shion Kashimura, Simon Lavigne-
+Giroux, Tara Clark, Tianhai Hu, Valentin Roger, Veronica Wong, Victoria Mui, Victor
+Ivri, Vivien Suen, Yansong Zang
 
 Supervisors: Karen Reid, Morgan Magnin
