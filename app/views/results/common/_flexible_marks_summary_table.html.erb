@@ -16,9 +16,9 @@
 %>
 
 <tr class="<%= cycle('mark_summary_holderA', 'mark_summary_holderB') %>" id="<%= "mark_#{mark.id}_summary" %>">
-    <td><%= h(criterion.flexible_criterion_name) %></td>
-    <td><%= h(criterion.max) %></td>
-    <td><span id="mark_<%= h(mark.id)%>_summary_mark"><%= h(mark_value) %></span> / <%=  h(criterion.max) %></td>
+    <td><%= criterion.flexible_criterion_name %></td>
+    <td><%= criterion.max %></td>
+    <td><span id="mark_<%= mark.id %>_summary_mark"><%= mark_value %></span> / <%=  criterion.max %></td>
 
 </tr>
 

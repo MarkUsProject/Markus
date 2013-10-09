@@ -16,7 +16,7 @@ def class_defined(klass)
 end
 
 module CsvHelper
-  if class_defined("CSV")
+  if class_defined('CSV')
     CsvHelper.const_set :Csv, CSV
   else
     CsvHelper.const_set :Csv, FasterCSV

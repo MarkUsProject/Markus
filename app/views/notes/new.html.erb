@@ -24,7 +24,7 @@
 
       <p>
         <%= raw(f.label :notes_message, I18n.t("notes.note")) %>
-        <%= raw(f.text_area :notes_message, :rows => 10, 
+        <%= raw(f.text_area :notes_message, :rows => 10,
                             :onchange => "set_onbeforeunload(true);") %>
       </p>
     </fieldset>

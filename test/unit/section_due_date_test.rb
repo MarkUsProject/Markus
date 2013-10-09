@@ -7,7 +7,7 @@ require 'shoulda'
 
 class SectionTest < ActiveSupport::TestCase
 
-  context "An assignment with section due dates" do
+  context 'An assignment with section due dates' do
     setup do
       @section = Section.make
       @now = DateTime.now
@@ -17,7 +17,7 @@ class SectionTest < ActiveSupport::TestCase
                           :due_date => @now + 3)
     end
 
-    should "return the due date for that section and assignment" do
+    should 'return the due date for that section and assignment' do
       assert equal_dates(@now + 3,
                          SectionDueDate.due_date_for(@section,
                                                      @assignment))

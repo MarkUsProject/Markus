@@ -1,39 +1,16 @@
 <% # Manage grades page
 %>
-<%= javascript_include_tag "ajax_paginate" %>
-<%= javascript_include_tag "livepipe/livepipe.js" %>
-<%= javascript_include_tag "livepipe/window.js" %>
-<%= javascript_include_tag "effects.js" %>
-
-<script type="text/javascript">
-//<![CDATA[
-
-  var modalUpload = null;
-
-  function upload_grades(){
-    modalUpload.open();
-    return false;
-  }
-
-  document.observe("dom:loaded", function(){
-
-    modalUpload = new Control.Modal($('upload_dialog'),
-    {
-      overlayOpacity: 0.75,
-      className: 'modalUpload',
-      fade: false
-    });
-  });
-
-//]]>
-</script>
-
+<%= javascript_include_tag "ajax_paginate",
+                           "livepipe/livepipe.js",
+                           "livepipe/window.js",
+                           "effects.js",
+                           "GradeEntryForms/grades.js" %>
 <div id="title_bar">
   <h1>
     <%= t('grade_entry_forms.grades.title') + " " + @grade_entry_form.short_identifier %>
   </h1>
   <div class="headingButtons">
-    <%= button_to_function t(:upload), "upload_grades();"%>
+    <%= button_to_function t(:upload), "modal_upload.open();"%>
     <span class="menu_bar">|</span>
     <%= link_to t(:download),
                 csv_download_grade_entry_form_path(@grade_entry_form) %>
@@ -41,41 +18,7 @@
 </div>
 
 <div class="wrapLeft">
-  <% if flash[:upload_notice] %>
-    <div class="success">
-      <p><%= h(flash[:upload_notice]) %></p>
-    </div>
-  <% end %>
-  <% if flash[:error] && !flash[:invalid_lines].nil? && !flash[:invalid_lines].empty? %>
-    <div class="error">
-      <p><%= h(flash[:error]) %></p>
-      <ul>
-        <% flash[:invalid_lines].each do |message| %>
-          <li><%=h(message)%></li>
-        <% end %>
-      </ul>
-    </div>
-  <% elsif flash[:error] %>
-    <div class="error">
-      <%=flash[:error]%>
-    </div>
-  <% end %>
-  <% if flash[:success] %>
-    <div class="success">
-      <%=flash[:success]%>
-    </div>
-  <% end %>
-
-  <% if !flash[:errors].nil? && !flash[:errors].empty? %>
-    <div class="error">
-      <h1><%= t('grade_entry_forms.grades.errors') %></h1>
-        <ul>
-          <% flash[:errors].each do |error_message| %>
-            <li><%= error_message %></li>
-          <% end %>
-        </ul>
-    </div>
-  <% end %>
+<%= render 'shared/flash_message' %>
 
   <%= form_tag({:action => 'update_grade_entry_students', :id => @grade_entry_form.id, :filter => 'none'}) %>
   <% if @grade_entry_form.grade_entry_items.empty? %>
@@ -92,7 +35,7 @@
         <% end %>
       </div>
       <div class="ap_filters" id="ap_filters_1">
-        <%= render :partial => 'grades_table_filters', :locals => {:filter => @filter, :sort_by => @sort_by,
+        <%= render :partial => 'grades_table_filters', :locals => {:filter => @filter, :sort_by => @sort_by, :desc => @desc,
                                                                    :grade_entry_form => @grade_entry_form, :filters => @filters,
                                                                    :per_page => @per_page, :per_pages => @per_pages,
                                                                    :alpha_pagination_options => @alpha_pagination_options,
@@ -107,6 +50,7 @@
                                                                                          :assignment => @grade_entry_form,
                                                                                          :filter => @filter,
                                                                                          :sort_by => @sort_by,
+                                                                                         :desc => @desc,
                                                                                          :action => 'g_table_paginate',
                                                                                          :table_name => 'grades',
                                                                                          :alpha_category => @alpha_category,
@@ -123,15 +67,28 @@
       <%= render :partial => 'ajax_paginate/selects', :locals => {:page_items => @students.size, :total_items => @students_total} %>
     </div>
     <table>
-      <thead>
-        <%= render :partial => 'grades_table_column_names' %>
+      <thead id="grades_table_head">
+        <%= render :partial => 'grades_table_column_names',:locals => {:per_page => @per_page,
+                                                                       :filter => @filter,
+                                                                       :sort_by => @sort_by,
+                                                                       :desc => @desc,
+                                                                       :controller => 'grade_entry_forms',
+                                                                       :action => 'grades'
+                                                                       }%>
       </thead>
       <tbody>
         <tr><td id="thinking_table_row" colspan="<%= 6 + @grade_entry_form.grade_entry_items.length %>"><%= render :partial => 'ajax_paginate/thinking' %></td></tr>
       </tbody>
 			<%= render :partial => 'grades_table' %>
-      <tfoot>
-        <%= render :partial => 'grades_table_column_names' %>
+      <tfoot id="grades_table_footer">
+        <%= render :partial => 'grades_table_column_names', :locals => {:per_page => @per_page,
+                                                                         :filter => @filter,
+                                                                         :sort_by => @sort_by,
+                                                                         :desc => @desc,
+                                                                         :controller => 'grade_entry_forms',
+                                                                         :action => 'grades'
+                                                                       }%>
+
       </tfoot>
     </table>
 
@@ -144,6 +101,7 @@
                                                                                          :assignment => @grade_entry_form,
                                                                                          :filter => @filter,
                                                                                          :sort_by => @sort_by,
+                                                                                         :desc => @desc,
                                                                                          :action => 'g_table_paginate',
                                                                                          :table_name => 'grades',
                                                                                          :alpha_category => @alpha_category,
@@ -164,7 +122,7 @@
       </div>
 
       <div class="ap_filters" id="ap_filters_2">
-        <%= render :partial => 'grades_table_filters', :locals => {:filter => @filter, :sort_by => @sort_by,
+        <%= render :partial => 'grades_table_filters', :locals => {:filter => @filter, :sort_by => @sort_by, :desc => @desc,
                                                                    :grade_entry_form => @grade_entry_form, :filters => @filters,
                                                                    :per_page => @per_page, :per_pages => @per_pages,
                                                                    :alpha_pagination_options => @alpha_pagination_options,
@@ -186,12 +144,12 @@
   <p><%= f.file_field :grades_file %></p>
   <%= t('grade_entry_forms.csv.upload_format_html') %>
   <p>
-  <%=h I18n.t("encoding") %>
+  <%= I18n.t("encoding") %>
   <%= select_tag(:encoding, options_for_select(@encodings)) %>
   <br />
   <br />
     <%= f.submit t(:upload), :disable_with => t(:uploading_please_wait) %>
-    <input type="reset" value="<%= t(:cancel) %>" onclick="modalUpload.close();">
+    <input type="reset" value="<%= t(:cancel) %>" onclick="modal_upload.close();">
   </p>
   <% end %>
 </div>

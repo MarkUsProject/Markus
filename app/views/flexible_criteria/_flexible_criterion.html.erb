@@ -1,5 +1,5 @@
-<li class="criterion_holder <%= cycle('rowA', 'rowB') %>" 
-	id="criterion_<%=h(criterion.id)%>">
+<li class="criterion_holder <%= cycle('rowA', 'rowB') %>"
+	id="criterion_<%=(criterion.id)%>">
   <span class="criterion_handle">
     <%= image_tag "handle.png" %>
   </span>
@@ -13,7 +13,7 @@
   </span>
   <span class="criterion_arrow">
     <% if location != :first and location != :single %>
-    <%=  link_to image_tag("icons/bullet_arrow_up.png",
+    <%=  link_to image_tag('icons/bullet_arrow_up.png',
 			   :alt => t('flexible_criteria.move_up')),
 			   move_criterion_assignment_flexible_criterium_path(
 			   @assignment,
@@ -21,7 +21,7 @@
 			   :direction => :up),
 		 :remote => true %>
     <% end %> <br /> <% if  location != :last and location != :single %>
-    <%= link_to image_tag("icons/bullet_arrow_down.png",
+    <%= link_to image_tag('icons/bullet_arrow_down.png',
 			  :alt =>  t('flexible_criteria.move_down')),
 	          move_criterion_assignment_flexible_criterium_path(
 			  @assignment,
@@ -30,7 +30,7 @@
 		:remote => true %>
     <% end %>
   </span>
-  <span id="criterion_max_<%=h(criterion.id)%>" class="criterion_max">
-  	<%= h(criterion.max) %>
+  <span id="criterion_max_<%=(criterion.id)%>" class="criterion_max">
+  	<%= criterion.max %>
   </span>
 </li>

@@ -26,8 +26,8 @@ module GradeEntryFormsHelper
     grade_entry_students.each do |grade_entry_student|
       begin
         grade_entry_student.released_to_student = release
-        if !grade_entry_student.save
-          raise I18n.t("grade_entry_forms.grades.update_error",
+        unless grade_entry_student.save
+          raise I18n.t('grade_entry_forms.grades.update_error',
                        :user_name => grade_entry_student.user.user_name)
         end
         numGradeEntryStudentsChanged += 1
@@ -35,7 +35,7 @@ module GradeEntryFormsHelper
         errors.push(e.message)
       end
     end
-    return numGradeEntryStudentsChanged
+    numGradeEntryStudentsChanged
   end
 
 end

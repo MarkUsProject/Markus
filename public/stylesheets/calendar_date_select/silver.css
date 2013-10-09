@@ -50,11 +50,7 @@ iframe.ie6_blocker {
   font-weight: bold;
 }
 
-.calendar_date_select select {
-  font-size: 11px;
-  color: black;
-  background-color: white;
-}
+.calendar_date_select select { font-size:11px;}
 
 .calendar_date_select .cds_header a:hover {
   color: white;

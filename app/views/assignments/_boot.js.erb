@@ -5,35 +5,53 @@
   var grace_periods = null;
   var penalty_decay_periods = null;
   var penalty_periods = null;
+
+  function create_grace_periods() {
+    if(!grace_periods) {
+      grace_periods = new PeriodDeltaChain({
+        period_root_id: 'grace_periods',
+        date_format: "",
+        due_date: $F('assignment_due_date')
+      });
+    }
+  }
+
+  function create_penalty_decay_periods() {
+    if(!penalty_decay_periods) {
+      penalty_decay_periods = new PeriodDeltaChain({
+        period_root_id: 'penalty_decay_periods',
+        date_format: "",
+        due_date: $F('assignment_due_date')
+      });
+    }
+  }
+
+  function create_penalty_periods() {
+    if(!penalty_periods) {
+      penalty_periods = new PeriodDeltaChain({
+        period_root_id: 'penalty_periods',
+        date_format: "",
+        due_date: $F('assignment_due_date')
+      });
+    }
+  }
+
   document.observe('dom:loaded', function() {
-    grace_periods = new PeriodDeltaChain({
-      period_root_id: 'grace_periods',
-      date_format: "",
-      due_date: $F('assignment_due_date')
-    });
+    if($F('assignment_due_date')) {
+      create_grace_periods();
+      create_penalty_decay_periods();
+      create_penalty_periods();
 
-    penalty_decay_periods = new PeriodDeltaChain({
-      period_root_id: 'penalty_decay_periods',
-      date_format: "",
-      due_date: $F('assignment_due_date')
-    });
+      grace_periods.refresh();
+      penalty_decay_periods.refresh();
+      penalty_periods.refresh();
 
-    penalty_periods = new PeriodDeltaChain({
-      period_root_id: 'penalty_periods',
-      date_format: "",
-      due_date: $F('assignment_due_date')
-    });
-
-    grace_periods.refresh();
-    penalty_decay_periods.refresh();
-    penalty_periods.refresh();
-
-    default_group_fields();
-    <% if !@assignment.nil? %>
-    toggle_group_assignment(<%= @assignment.group_assignment? %>);
-    toggle_remark_requests(<%= @assignment.allow_remarks? %>);
-    <% end %>
-
+      default_group_fields();
+      <% if !@assignment.nil? %>
+      toggle_group_assignment(<%= @assignment.group_assignment? %>);
+      toggle_remark_requests(<%= @assignment.allow_remarks? %>);
+      <% end %>
+    }
   });
 //]]>
 </script>

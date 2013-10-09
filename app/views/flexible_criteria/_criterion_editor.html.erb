@@ -1,8 +1,4 @@
-<% if !flash[:success].nil? %>
-  <div class="success">
-    <%= flash[:success] %>
-  </div>
-<% end %>
+<%= render 'shared/flash_message' %>
 
 <%= form_for criterion,
 	     :as => :flexible_criterion,
@@ -11,7 +7,7 @@
 
 <h2>
   <span id="selected_criterion_name">
-    <%= h(criterion.flexible_criterion_name)%>
+    <%= criterion.flexible_criterion_name %>
   </span>
 </h2>
 

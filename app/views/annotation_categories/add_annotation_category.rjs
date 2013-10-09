@@ -1,5 +1,0 @@
-page.insert_html :top,
-                 'annotation_category_pane_list',
-                 :partial => 'new_annotation_category',
-                 :locals => {:assignment_id => @assignment.id}
-page['add_annotation_category_prompt'].focus

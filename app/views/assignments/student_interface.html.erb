@@ -25,7 +25,7 @@
 </script>
 
 <div id="title_bar">
-  <h1><%=h I18n.t("student.assignment", :short_identifier => @assignment.short_identifier) %></h1>
+  <h1><%= I18n.t("student.assignment", :short_identifier => @assignment.short_identifier) %></h1>
 </div>
 
 <div class="column_floatLeft">
@@ -45,7 +45,7 @@
                         :format => :long_date)) )%>
         </div>
         <span class="info_number">
-          <%=h @num_submitted_files.to_s %>
+          <%= @num_submitted_files.to_s %>
         </span>
         <span class="info"><%= I18n.t("student.files") %></span> <br />
         <%=raw( I18n.t("student.missing_required_files",
@@ -95,7 +95,7 @@
 
           <% @pending_grouping.each do |grouping|%>
           <div class="sub_block">
-            <p><%= raw(I18n.t("student.invited_by", :inviter_last_name => h(grouping.inviter.last_name), :inviter_first_name => h(grouping.inviter.first_name))) %>
+            <p><%= raw(I18n.t("student.invited_by", :inviter_last_name => grouping.inviter.last_name, :inviter_first_name => grouping.inviter.first_name)) %>
             </p>
             <% grouping.student_memberships.each do |member|%>
               <ul>
@@ -127,9 +127,9 @@
            @assignment.student_form_groups %>
 
           <h3><%= I18n.t("student.form_own_group") %></h3>
-          <p><%= raw(I18n.t("student.form_group", 
-                    :group_min => h(@assignment.group_min), 
-                    :group_max => h(@assignment.group_max))) %>
+          <p><%= raw(I18n.t("student.form_group",
+                    :group_min => @assignment.group_min,
+                    :group_max => @assignment.group_max)) %>
           </p>
 
           <% if @assignment.group_min == 1 %>
@@ -162,7 +162,7 @@
         %>
         <h3>
           <% if @assignment.group_name_displayed == true %>
-            <%= h(@group.group_name) %>
+            <%= @group.group_name %>
           <% else %>
             <%= I18n.t("student.your_group") %>
           <% end %>
@@ -252,7 +252,7 @@
         if @grouping.repository_external_commits_only? %>
             <h3><%= I18n.t("student.url_group_repository") %></h3>
               <div class="sub_block">
-                <p><%= h(@grouping.group.repository_external_access_url) %></p>
+                <p><%= @grouping.group.repository_external_access_url %></p>
               </div>
         <% end %>
       <% end %>
@@ -266,9 +266,9 @@
               @assignment.group_max > 1 %>
           <li><%= I18n.t("student.students_can_form_groups") %></li>
           <li>
-            <%=raw( I18n.t("student.form_group",
-                      :group_min => h(@assignment.group_min),
-                      :group_max => h(@assignment.group_max)) )%>
+            <%= raw( I18n.t("student.form_group",
+                      :group_min => @assignment.group_min,
+                      :group_max => @assignment.group_max)) %>
           </li>
         <% elsif @assignment.invalid_override %>
           <li><%= I18n.t("student.invalid_override") %></li>

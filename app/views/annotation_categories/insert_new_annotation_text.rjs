@@ -1,3 +1,0 @@
-page.replace 'add_annotation_text', :partial => 'annotation_text', :locals => {:annotation_text => @annotation_text}
-page.replace "annotation_category_#{@annotation_category.id}", :partial => 'annotation_category', :locals => {:annotation_category => @annotation_category}
-

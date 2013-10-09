@@ -1,15 +1,9 @@
 
-<div class="wrapLeft">
-  <% if flash[:success] %>
-    <div class="success">
-      <%= flash[:success] %>
-    </div>
-  <% end%>
-</div>
+<%= render 'shared/flash_message' %>
+<%= render :partial => "shared/error_explanation",
+    :locals => { :model => @section } %>
 
 <%= form_for @section, :as => :section do |f| %>
-  <%= render :partial => "shared/error_explanation",
-      :locals => { :model => @section, :flash_message => flash[:error] } %>
   <fieldset>
     <legend><%= I18n.t('section.legend') %></legend>
     <%= raw(f.label :name, t("section.name")) %>
@@ -30,9 +24,9 @@
           </thead>
           <% @students.each do |student| %>
             <tr>
-              <td><%= h(student.user_name)%></td>
-              <td><%= h(student.last_name)%></td>
-              <td><%= h(student.first_name)%></td>
+              <td><%= student.user_name%></td>
+              <td><%= student.last_name%></td>
+              <td><%= student.first_name%></td>
               <td><%= link_to I18n.t(:edit), :controller => 'students', :action =>
                 'edit', :id => student%></td>
             </tr>

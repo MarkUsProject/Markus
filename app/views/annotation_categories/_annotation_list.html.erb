@@ -1,22 +1,22 @@
 <div id="annotation_list_holder">
-    <%= render :partial => "annotation_categories/annotation_category_edit", :locals => {:annotation_category => annotation_category}
+    <%= render :partial => 'annotation_categories/annotation_category_edit',
+               :locals => {:annotation_category => annotation_category}
     %>
-<h2>Annotations
-   <%=link_to_function t("annotations.update.add_annotation"),
-         %| if($('add_annotation_text_prompt') != null) {
-              $('add_annotation_text_prompt').select();
-              $('add_annotation_text_prompt').focus();
-            } else {
-              #{remote_function :url => add_annotation_text_assignment_annotation_category_path(:id => @annotation_category.id), :method => 'get'}
-            }|%>
+  <h2>Annotations
+    <% path = add_annotation_text_assignment_annotation_category_path(
+            :id => @annotation_category.id) %>
+    <%= link_to t('annotations.update.add_annotation'), '#',
+                :onclick => "add_annotation_prompt('#{path}')" %>
   </h2>
 <div id="add_annotation_text_control">
 </div>
 <ul id="annotation_list">
 <% if @annotation_texts %>
   <% @annotation_texts.each do |annotation_text| %>
-    <%= render :partial => 'annotation_text', :locals => {:annotation_text => annotation_text} %>
+    <%= render :partial => 'annotation_text',
+               :locals => {:annotation_text => annotation_text} %>
   <% end %>
 <% end %>
 </ul>
 </div>
+

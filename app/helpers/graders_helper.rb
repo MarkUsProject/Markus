@@ -9,7 +9,7 @@ module GradersHelper
     criteria.each do |criterion|
       result[criterion.id] = construct_criterion_table_row(criterion, assignment)
     end
-    return result
+    result
   end
 
   # Given a list of graders and an assignment, constructs an array of
@@ -21,7 +21,7 @@ module GradersHelper
     graders.each do |grader|
       result[grader.id] = construct_grader_table_row(grader, assignment)
     end
-    return result
+    result
   end
 
   # Given a list of groupings and an assignment, constructs an array of
@@ -34,7 +34,7 @@ module GradersHelper
     groupings.each do |grouping|
       result[grouping.id] = construct_table_row(grouping, assignment, total_criteria_count)
     end
-    return result
+    result
   end
 
   def construct_table_row(grouping, assignment, total_criteria_count)
@@ -42,8 +42,11 @@ module GradersHelper
 
       table_row[:id] = grouping.id
       table_row[:filter_table_row_contents] =
-        render_to_string :partial => 'graders/table_row/filter_table_row',
-        :locals => {:grouping => grouping, :assignment => assignment, :total_criteria_count => total_criteria_count}
+        render_to_string :partial =>
+                             'graders/table_row/filter_table_row.html.erb',
+        :locals => { :grouping => grouping,
+                     :assignment => assignment,
+                     :total_criteria_count => total_criteria_count }
 
       #These are used for sorting
       table_row[:name] = grouping.group.group_name
@@ -54,7 +57,10 @@ module GradersHelper
       table_row[:graders] = table_row[:members]
       table_row[:grader_names] = grouping.get_ta_names.join(',')
 
-      return table_row
+      #This one is used for selection
+      table_row[:section] = grouping.section
+
+      table_row
   end
 
   # Given a grader and an assignment, constructs a table row to be insterted
@@ -78,7 +84,7 @@ module GradersHelper
     table_row[:num_groups] = grader.get_membership_count_by_assignment(assignment)
     table_row[:num_criteria] = grader.get_criterion_associations_count_by_assignment(assignment)
 
-    return table_row
+    table_row
   end
 
   # Given a criterion and an assignment, constructs a table row to be insterted
@@ -89,13 +95,13 @@ module GradersHelper
 
     table_row[:id] = criterion.id
     table_row[:filter_table_row_contents] =
-      render_to_string :partial => 'graders/table_row/filter_table_criterion_row',
+      render_to_string :partial => 'graders/table_row/filter_table_criterion_row.html.erb',
       :locals => {:criterion => criterion, :assignment => assignment}
 
     table_row[:criterion_name] = criterion.get_name
     table_row[:members] = criterion.get_ta_names.to_s
     table_row[:coverage] = criterion.assigned_groups_count
 
-    return table_row
+    table_row
   end
 end

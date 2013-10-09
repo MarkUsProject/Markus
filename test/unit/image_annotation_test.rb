@@ -14,7 +14,7 @@ class ImageAnnotationTest < ActiveSupport::TestCase
   should validate_numericality_of :y1
   should validate_numericality_of :y2
 
-  context "Extract Coords" do
+  context 'Extract Coords' do
 
     setup do
       @basic_annot = ImageAnnotation.make(
@@ -26,7 +26,7 @@ class ImageAnnotationTest < ActiveSupport::TestCase
       @annotation = ImageAnnotation.make
     end
 
-    should "put extract Coords" do
+    should 'put extract Coords' do
       assert_equal @basic_annot.extract_coords,
         {:id => @basic_annot.annotation_text_id,
           :x_range => {:start => 0, :end => 10},
@@ -41,19 +41,19 @@ class ImageAnnotationTest < ActiveSupport::TestCase
           :y_range => {:start => 5, :end => 123}}
     end
 
-    should "render add_annotation_js_string" do
+    should 'render add_annotation_js_string' do
       assert @annotation.add_annotation_js_string,
         "add_to_annotation_grid('#{@annotation.extract_coords.to_json()}')"
     end
 
-    should "render remove_annotation_js_string" do
+    should 'render remove_annotation_js_string' do
       assert @annotation.remove_annotation_js_string,
         "remove_annotation(null, null, #{@annotation.annotation_text.id});"
     end
 
-    should "render partial" do
+    should 'render partial' do
       assert @annotation.annotation_list_link_partial,
-        "/annotations/image_annotation_list_link"
+        '/annotations/image_annotation_list_link'
     end
 
   end

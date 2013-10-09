@@ -2,19 +2,7 @@
 
 <div class="wrapLeft">
 
-<% # if there are errors have the error message display %>
-  <% if flash[:error] %>
-    <div class="error">
-      <%= h(flash[:error]) %>
-    </div>
-  <% end %>
-
-<% # if there are success messages to display %>
-  <% if flash[:success] -%>
-    <div class="success">
-      <%= h(flash[:success]) %>
-    </div>
-  <% end %>
+  <%= render 'shared/flash_message' %>
 
   <%
   #if there are no noteables,we can't add notes, so do not show Add New link.

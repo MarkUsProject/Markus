@@ -2,11 +2,11 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
-  include SessionHandler
+  include ApplicationHelper, SessionHandler
 
   protect_from_forgery
 
-  layout "content"
+  layout 'content'
 
   helper :all # include all helpers in the views, all the time
 
@@ -25,9 +25,9 @@ class ApplicationController < ActionController::Base
   # Set version for MarkUs to be available in
   # any view
   def set_markus_version
-    version_file=File.expand_path(File.join(::Rails.root.to_s, "app", "MARKUS_VERSION"))
-    if !File.exist?(version_file)
-      @markus_version = "unknown"
+    version_file=File.expand_path(File.join(::Rails.root.to_s, 'app', 'MARKUS_VERSION'))
+    unless File.exist?(version_file)
+      @markus_version = 'unknown'
       return
     end
     content = File.new(version_file).read
@@ -36,12 +36,12 @@ class ApplicationController < ActionController::Base
       k,v = token.split('=')
       version_info[k.downcase] = v
     end
-    @markus_version = "#{version_info["version"]}.#{version_info["patch_level"]}"
+    @markus_version = "#{version_info['version']}.#{version_info['patch_level']}"
   end
 
   def set_remote_user
-    if !request.env["HTTP_X_FORWARDED_USER"].blank?
-      @markus_auth_remote_user = request.env["HTTP_X_FORWARDED_USER"]
+    unless request.env['HTTP_X_FORWARDED_USER'].blank?
+      @markus_auth_remote_user = request.env['HTTP_X_FORWARDED_USER']
     end
   end
 
@@ -63,14 +63,14 @@ class ApplicationController < ActionController::Base
   # handle unknown locales
   rescue Exception => err
     logger.error err
-    flash.now[:notice] = I18n.t("locale_not_available", :locale => I18n.locale)
+    flash.now[:notice] = I18n.t('locale_not_available', :locale => I18n.locale)
 
     I18n.load_path -= [locale_path]
     I18n.locale = I18n.default_locale
   end
 
   def get_file_encodings
-    @encodings = [['Unicode', 'UTF-8'], ['ISO-8859-1', 'ISO-8859-1']]
+    @encodings = [%w(Unicode UTF-8), %w(ISO-8859-1 ISO-8859-1)]
   end
 
 end

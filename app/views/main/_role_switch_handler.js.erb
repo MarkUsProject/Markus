@@ -1,0 +1,7 @@
+if (<%= error.nil? %>) {
+  window.location.replace("<%= assignments_path() %>");
+} else {
+  jQuery("#role_switch_error").html(
+         '<%= escape_javascript(render(:partial => 'role_switch_error.html.erb',
+                                       :locals => { :error => error })) %>');
+}

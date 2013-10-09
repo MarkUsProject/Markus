@@ -8,12 +8,14 @@ class AnnotationsController < ApplicationController
     @submission_file_id = params[:submission_file_id]
     @submission_file = SubmissionFile.find(@submission_file_id)
     submission= @submission_file.submission
-    if params[:annotation_type] == 'image' then
+    is_remark = submission.has_remark?
+    if params[:annotation_type] == 'image'
       @annotation = ImageAnnotation.new
       @annotation.update_attributes({
         :x1 => Integer(params[:x1]), :x2 => Integer(params[:x2]),
         :y1 => Integer(params[:y1]), :y2 => Integer(params[:y2]),
         :submission_file_id => params[:submission_file_id],
+        :is_remark => is_remark,
         :annotation_number => submission.annotations.count + 1
       })
     else
@@ -22,6 +24,7 @@ class AnnotationsController < ApplicationController
         :line_start => params[:line_start],
         :line_end => params[:line_end],
         :submission_file_id => params[:submission_file_id],
+        :is_remark => is_remark,
         :annotation_number => submission.annotations.count + 1
       })
     end
@@ -39,6 +42,7 @@ class AnnotationsController < ApplicationController
     @submission_file_id = params[:submission_file_id]
     @submission_file = SubmissionFile.find(@submission_file_id)
     submission= @submission_file.submission
+    is_remark = submission.has_remark?
     case params[:annotation_type]
       when 'text'
         @annotation = TextAnnotation.create({
@@ -46,6 +50,7 @@ class AnnotationsController < ApplicationController
           :line_end => params[:line_end],
           :annotation_text_id => @text.id,
           :submission_file_id => params[:submission_file_id],
+          :is_remark => is_remark,
           :annotation_number => submission.annotations.count + 1
         })
       when 'image'
@@ -54,6 +59,7 @@ class AnnotationsController < ApplicationController
           :submission_file_id => params[:submission_file_id],
           :x1 => Integer(params[:x1]), :x2 => Integer(params[:x2]),
           :y1 => Integer(params[:y1]), :y2 => Integer(params[:y2]),
+          :is_remark => is_remark,
           :annotation_number => submission.annotations.count + 1
         })
     end

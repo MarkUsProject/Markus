@@ -13,7 +13,7 @@ class MarkusLogger
   # we only want one instance of this class through the whole
   # program.
   include Singleton
-  
+
   # DEBUG: low-level information for developers
   if !defined?(DEBUG)
     DEBUG = 1
@@ -32,13 +32,13 @@ class MarkusLogger
   end
   # FATAL: an unhandleable error that results in a program crash
   if !defined?(FATAL)
-    FATAL = 5 
+    FATAL = 5
   end
 
   #===Description
   # The singleton module makes the new method private.
   # To initialize a new MarkusLogger object it is necessary to call
-  # instance instead of new. 
+  # instance instead of new.
   # The variables that the loggers will use are defined in the
   # environment.rb file
   #===Exceptions
@@ -94,19 +94,21 @@ class MarkusLogger
   #=== Exceptions
   # When the log level is not known then an exception of type ArgumentError is raised
   def log(msg, level=INFO)
-    case level
-    when INFO
-      @__logger__.info(msg)
-    when DEBUG
-      @__logger__.debug(msg)
-    when WARN
-      @__logger__.warn(msg)
-    when ERROR
-      @__errorLogger__.error(msg)
-    when FATAL
-      @__errorLogger__.fatal(msg)
-    else
-      raise ArgumentError,('Logger: Unknown loglevel')
+    if MarkusConfigurator.markus_config_logging_enabled?
+      case level
+      when INFO
+        @__logger__.info(msg)
+      when DEBUG
+        @__logger__.debug(msg)
+      when WARN
+        @__logger__.warn(msg)
+      when ERROR
+        @__errorLogger__.error(msg)
+      when FATAL
+        @__errorLogger__.fatal(msg)
+      else
+        raise ArgumentError,('Logger: Unknown loglevel')
+      end
     end
   end
 

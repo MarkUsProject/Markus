@@ -2,7 +2,7 @@ page.call(:add_annotation_text, @text.id, @text.content)
 if @annotation.is_a?(TextAnnotation)
   page << "add_annotation(#{@annotation.id},$R(#{@annotation.line_start}, #{@annotation.line_end}), #{@text.id})"
 else
-  page.call(:add_annotation_text, @text.id, simple_format(h(@text.content)))
+  page.call(:add_annotation_text, @text.id, simple_format(@text.content))
   page << @annotation.add_annotation_js_string
 end
 page.replace_html 'annotation_summary_list', :partial => 'results/marker/annotation_summary', :locals => {:annots => @annotations, :submission_file_id => @submission_file_id}

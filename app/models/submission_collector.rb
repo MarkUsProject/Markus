@@ -93,8 +93,8 @@ class SubmissionCollector < ActiveRecord::Base
 
     #Since windows doesn't support fork, the main process will have to collect
     #the submissions.
-    if ( RUBY_PLATFORM =~ /(:?mswin|mingw)/ ) # should match for Windows only
-      while !collect_next_submission.nil?
+    if RUBY_PLATFORM =~ /(:?mswin|mingw)/ # should match for Windows only
+      while collect_next_submission
       end
       return
     end
@@ -102,14 +102,14 @@ class SubmissionCollector < ActiveRecord::Base
     m_logger = MarkusLogger.instance
 
     #Check to see if there is still a process running
-    m_logger.log("Checking to see if there is already a submission collection" +
-                 " process running")
+    m_logger.log('Checking to see if there is already a submission collection' +
+                 ' process running')
     begin
       unless self.child_pid.nil?
         Process.waitpid(self.child_pid, Process::WNOHANG)
         #If child is still running do nothing, otherwise reset the child_pid
         if $?.nil?
-          m_logger.log("Submission collection process still running, doing nothing")
+          m_logger.log('Submission collection process still running, doing nothing')
           return
         else
           self.child_pid = nil
@@ -128,23 +128,23 @@ class SubmissionCollector < ActiveRecord::Base
     pid = fork do
       begin
         ActiveRecord::Base.establish_connection(db_connection)
-        m_logger.log("Submission collection process established database" +
-                     " connection successfully")
+        m_logger.log('Submission collection process established database' +
+                     ' connection successfully')
         #Any custom tasks to be performed by the child can be given as a block
         if block_given?
-          m_logger.log("Submission collection process now evaluating provided code block")
+          m_logger.log('Submission collection process now evaluating provided code block')
           yield
-          m_logger.log("Submission collection process done evaluating provided code block")
+          m_logger.log('Submission collection process done evaluating provided code block')
         end
 
-        while !collect_next_submission.nil?
+        while collect_next_submission
           if SubmissionCollector.first.stop_child
-            m_logger.log("Submission collection process now exiting because it was " +
-                         "asked to stop by its parent")
+            m_logger.log('Submission collection process now exiting because it was ' +
+                         'asked to stop by its parent')
             exit!(0)
           end
         end
-        m_logger.log("Submission collection process done")
+        m_logger.log('Submission collection process done')
         exit!(0)
       ensure
         ActiveRecord::Base.remove_connection
@@ -189,7 +189,7 @@ class SubmissionCollector < ActiveRecord::Base
 
     #Since windows doesn't support fork, the main process will have to collect
     #the submissions.
-    if ( RUBY_PLATFORM =~ /(:?mswin|mingw)/ ) # should match for Windows only
+    if RUBY_PLATFORM =~ /(:?mswin|mingw)/ # should match for Windows only
       grouping.is_collected = false
       remove_grouping_from_queue(grouping)
       grouping.save
@@ -231,7 +231,7 @@ class SubmissionCollector < ActiveRecord::Base
     end
     #setting is_collected here will prevent an sqlite lockout error when pdfs
     #aren't supported
-    if !MarkusConfigurator.markus_config_pdf_support
+    unless MarkusConfigurator.markus_config_pdf_support
       grouping.is_collected = true
       grouping.save
     end
