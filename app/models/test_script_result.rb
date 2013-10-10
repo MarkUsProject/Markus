@@ -11,7 +11,7 @@
 #   test_script_id:     id of the corresponding test script
 #   marks_earned:       number of points earned for this test
 #                       run. A non-negative integer. It can
-#                       override the marks_earned value of 
+#                       override the marks_earned value of
 #                       each unit test of this test suite
 #                       when used by the rubric.
 #   created_at:         time when this model is created
@@ -22,16 +22,17 @@ class TestScriptResult < ActiveRecord::Base
   belongs_to :submission
   belongs_to :test_script
   belongs_to :grouping
-  
+
   has_many :test_results
 
-  validates_presence_of :grouping # we require an associated grouping
-  validates_associated :grouping  # grouping need to be valid
-  
+  validates_presence_of :submission # we require an associated submission
+  validates_presence_of :grouping   # we require an associated grouping
+  validates_associated  :grouping   # grouping need to be valid
+
   validates_presence_of :test_script
   validates_presence_of :marks_earned
   validates_presence_of :repo_revision
-  
+
   validates_numericality_of :marks_earned, :only_integer => true, :greater_than_or_equal_to => 0
 
 end

@@ -22,6 +22,8 @@ class TestResultTest < ActiveSupport::TestCase
       @sub = Submission.make
       @script = TestScript.make
       @testresult = TestResult.make(:submission        => @sub,
+                                    :grouping          => @sub.grouping,
+                                    :repo_revision     => @sub.grouping.group.repo.get_latest_revision,
                                     :test_script       => @script,
                                     :name              => 'unit test 1',
                                     :completion_status => 'pass',
@@ -69,6 +71,8 @@ class TestResultTest < ActiveSupport::TestCase
       @sub = Submission.make
       @script = TestScript.make
       @testresult = TestResult.make(:submission        => @sub,
+                                    :grouping          => @sub.grouping,
+                                    :repo_revision     => @sub.grouping.group.repo.get_latest_revision,
                                     :test_script       => @script,
                                     :name              => 'unit test 1',
                                     :completion_status => 'pass',
@@ -79,12 +83,14 @@ class TestResultTest < ActiveSupport::TestCase
     end
 
     should 'return false when there is no submission associated' do
-      @testresult.submission_id = nil
+      @testresult.submission = nil
+      @testresult.save
       assert !@testresult.valid?, 'test result expected to be invalid when there is no submission associated'
     end
 
     should 'return false when test script is nil' do
-      @testresult.test_script_id = nil
+      @testresult.test_script = nil
+      @testresult.save
       assert !@testresult.valid?, 'test result expected to be invalid when test script is nil'
     end
 
@@ -121,6 +127,8 @@ class TestResultTest < ActiveSupport::TestCase
       @sub = Submission.make
       @script = TestScript.make
       @testresult = TestResult.make(:submission        => @sub,
+                                    :grouping          => @sub.grouping,
+                                    :repo_revision     => @sub.grouping.group.repo.get_latest_revision,
                                     :test_script       => @script,
                                     :name              => 'unit test 1',
                                     :completion_status => 'pass',
