@@ -19,9 +19,11 @@ class TestScriptResultTest < ActiveSupport::TestCase
     setup do
       @sub = Submission.make
       @script = TestScript.make
-      @testscriptresult = TestScriptResult.make(:submission        => @sub,
-                                                :test_script       => @script,
-                                                :marks_earned      => 5)
+      @testscriptresult = TestScriptResult.make(:submission    => @sub,
+                                                :grouping      => @sub.grouping,
+                                                :repo_revision => @sub.grouping.group.repo.get_latest_revision,
+                                                :test_script   => @script,
+                                                :marks_earned  => 5)
     end
 
     should "return true when a valid test script result is created" do
@@ -43,18 +45,20 @@ class TestScriptResultTest < ActiveSupport::TestCase
     setup do
       @sub = Submission.make
       @script = TestScript.make
-      @testscriptresult = TestScriptResult.make(:submission        => @sub,
-                                                :test_script       => @script,
-                                                :marks_earned      => 5)
+      @testscriptresult = TestScriptResult.make(:submission    => @sub,
+                                                :grouping      => @sub.grouping,
+                                                :repo_revision => @sub.grouping.group.repo.get_latest_revision,
+                                                :test_script   => @script,
+                                                :marks_earned  => 5)
     end
 
     should "return false when there is no submission associated" do
-      @testscriptresult.submission_id = nil
+      @testscriptresult.submission = nil
       assert !@testscriptresult.valid?, "test script result expected to be invalid when there is no submission associated"
     end
 
     should "return false when test script is nil" do
-      @testscriptresult.test_script_id = nil
+      @testscriptresult.test_script = nil
       assert !@testscriptresult.valid?, "test script result expected to be invalid when test script is nil"
     end
 
@@ -76,9 +80,11 @@ class TestScriptResultTest < ActiveSupport::TestCase
     setup do
       @sub = Submission.make
       @script = TestScript.make
-      @testscriptresult = TestScriptResult.make(:submission        => @sub.id,
-                                                :test_script       => @script.id,
-                                                :marks_earned      => 5)
+      @testscriptresult = TestScriptResult.make(:submission    => @sub,
+                                                :grouping      => @sub.grouping,
+                                                :repo_revision => @sub.grouping.group.repo.get_latest_revision,
+                                                :test_script   => @script,
+                                                :marks_earned  => 5)
     end
 
     should "be able to delete a test script result" do

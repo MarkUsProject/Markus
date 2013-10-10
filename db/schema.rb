@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131010033936) do
+ActiveRecord::Schema.define(:version => 20131010050432) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -392,6 +392,7 @@ ActiveRecord::Schema.define(:version => 20131010033936) do
     t.integer  "repo_revision"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "submission_id"
   end
 
   create_table "test_scripts", :force => true do |t|
