@@ -1,4 +1,3 @@
-# encoding: utf-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130611095902) do
+ActiveRecord::Schema.define(:version => 20131010033936) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -93,11 +92,11 @@ ActiveRecord::Schema.define(:version => 20130611095902) do
     t.boolean  "allow_remarks",                    :default => true,     :null => false
     t.datetime "remark_due_date"
     t.text     "remark_message"
-    t.boolean  "unlimited_tokens",                 :default => false
     t.float    "results_median"
     t.integer  "results_fails"
     t.integer  "results_zeros"
     t.integer  "outstanding_remark_request_count"
+    t.boolean  "unlimited_tokens",                 :default => false
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true
@@ -370,6 +369,7 @@ ActiveRecord::Schema.define(:version => 20130611095902) do
     t.text    "input_description",     :null => false
     t.text    "actual_output",         :null => false
     t.text    "expected_output",       :null => false
+    t.integer "submission_id"
   end
 
   add_index "test_results", ["grouping_id", "test_script_id"], :name => "grouping_id_and_test_script_id"
