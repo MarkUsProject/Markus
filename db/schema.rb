@@ -358,6 +358,17 @@ ActiveRecord::Schema.define(:version => 20131010033936) do
 
   add_index "submissions", ["grouping_id"], :name => "index_submissions_on_grouping_id"
 
+  create_table "test_files", :force => true do |t|
+    t.string   "filename"
+    t.integer  "assignment_id"
+    t.string   "filetype"
+    t.boolean  "is_private"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "test_files", ["assignment_id", "filename"], :name => "index_test_files_on_assignment_id_and_filename", :unique => true
+
   create_table "test_results", :force => true do |t|
     t.integer "grouping_id"
     t.integer "test_script_id"

@@ -31,8 +31,8 @@ Sham.rubric_criterion_name {|i| "machinist_rubric_criterion_#{i}"}
 Sham.date {rand(50).days.from_now}
 Sham.name {Faker::Name.name}
 
-
 Sham.filename {|i| "file#{i}"}
+Sham.filetype {|i| ['test', 'lib', 'parse'][i % 3] }
 Sham.path {|i| "path#{i}"}
 
 Sham.annotation_category_name {|i| "Machinist Annotation Category #{i}"}
@@ -309,6 +309,11 @@ TestScriptResult.blueprint do
   submission {Submission.make}
   test_script {TestScript.make}
   marks_earned {0}
+end
+
+TestFile.blueprint do
+  filename {Sham.filename}
+  filetype {Sham.filetype}
 end
 
 TestResult.blueprint do
