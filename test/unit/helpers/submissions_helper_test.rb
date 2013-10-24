@@ -4,11 +4,11 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'blueprin
 require 'shoulda'
 
 class SubmissionsHelperTest < ActiveSupport::TestCase
-  
+
   context 'Assignment with section due dates and submissions to collect' do
-    
+
     # TODO test SubmissionsHelper#collect_submissions_for_section
-    
+
   end
-  
+
 end

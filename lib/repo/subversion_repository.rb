@@ -236,7 +236,7 @@ module Repository
       else
         return get_revision(get_revision_number_by_timestamp(target_timestamp))
       end
-      
+
     end
 
     # Returns a Repository::TransAction object, to work with. Do operations,

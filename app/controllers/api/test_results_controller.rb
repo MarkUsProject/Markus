@@ -20,7 +20,7 @@ module Api
       fields = fields_to_render(@@default_fields)
 
       respond_to do |format|
-        format.xml{render :xml => test_results.to_xml(:only => fields, :root => 
+        format.xml{render :xml => test_results.to_xml(:only => fields, :root =>
           'test_results', :skip_types => 'true')}
         format.json{render :json => test_results.to_json(:only => fields)}
       end
@@ -165,7 +165,7 @@ module Api
           'No assignment exists with that id'}, :status => 404
         return nil
       end
-        
+
       group = Group.find_by_id(group_id)
       if group.nil?
         # No group exists with that id
@@ -178,7 +178,7 @@ module Api
         group[:group_name], assignment[:short_identifier])
       if submission.nil?
         # No assignment submission by that group
-        render 'shared/http_status', :locals => {:code => '404', :message => 
+        render 'shared/http_status', :locals => {:code => '404', :message =>
           'Submission was not found'}, :status => 404
       end
 

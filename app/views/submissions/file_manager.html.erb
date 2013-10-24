@@ -11,11 +11,11 @@
   <script type="text/javascript">
     new PeriodicalExecuter(
       function() {
-        new Ajax.Updater('current_time', 
-          '<%= server_time_assignment_submissions_path(@assignment.id) %>', 
+        new Ajax.Updater('current_time',
+          '<%= server_time_assignment_submissions_path(@assignment.id) %>',
           {
-            asynchronous:true, 
-            evalScripts:true, 
+            asynchronous:true,
+            evalScripts:true,
             parameters:'authenticity_token=' + AUTH_TOKEN
           }
         )
@@ -54,7 +54,7 @@
   <div class="success"><%= flash[:success] %></div>
 <% end %>
 
-<% if @assignment.submission_rule.can_collect_now? && 
+<% if @assignment.submission_rule.can_collect_now? &&
 	flash[:commit_notice] != @assignment.submission_rule.commit_after_collection_message %>
   <div class="warning">
     <%= @assignment.submission_rule.after_collection_message %>
