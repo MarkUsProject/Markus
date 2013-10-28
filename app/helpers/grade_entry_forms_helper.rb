@@ -9,7 +9,9 @@ module GradeEntryFormsHelper
   def add_grade_entry_item_link(name, form)
     link_to_function name do |page|
       grade_entry_item = render(:partial => 'grade_entry_item',
-                                :locals => {:form => form, :grade_entry_item => GradeEntryItem.new})
+                                :locals => {:form => form,
+                                            :new_position => 0,
+                                            :grade_entry_item => GradeEntryItem.new})
       page << %{
       var new_grade_entry_item_id = "new_" + new Date().getTime();
       $('grade_entry_items').insert({bottom: "#{ escape_javascript grade_entry_item }".replace(/attributes_\\d+|\\d+\(?=\\]\)/g, new_grade_entry_item_id) });
@@ -38,4 +40,37 @@ module GradeEntryFormsHelper
     numGradeEntryStudentsChanged
   end
 
+  # Adds a position to the item's attributes if it doesn't have one
+  # Removes items that have empty names (so they don't get updated)
+  def update_grade_entry_form_params(attributes)
+
+    @grade_entry_items = attributes[:grade_entry_items_attributes]
+
+    # Find the largest position that has been set
+    max_position = 0
+    @grade_entry_items.each do |key, value|
+      if this_position = value["position"] && this_position.to_i > max_position
+          max_position = this_position.to_i
+      end
+    end
+
+    # Update the attributes hash
+    max_position += 1
+    @grade_entry_items.sort.each do |item|
+      # If there is no name, remove item
+      if item[1][:name] && item[1][:name].empty?
+        @grade_entry_items.delete(item[0])
+      # All items being added have a name
+      elsif item[1][:name] and item[1][:destroy] != 1
+        # If the set position is not valid, update it
+        unless item[1][:position].to_i > 0
+          @grade_entry_items[item[0]][:position] = max_position
+          max_position += 1
+        end
+      end
+    end
+
+    attributes[:grade_entry_items_attributes] = @grade_entry_items
+    return attributes
+  end
 end

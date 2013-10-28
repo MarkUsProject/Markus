@@ -78,9 +78,13 @@ class GradeEntryFormsController < ApplicationController
 
   def update
     @grade_entry_form = GradeEntryForm.find(params[:id])
+
     # Process changes to input properties
     @grade_entry_form.transaction do
-      if @grade_entry_form.update_attributes(params[:grade_entry_form])
+
+      # Edit params before updating model
+      new_params = update_grade_entry_form_params params[:grade_entry_form]
+      if @grade_entry_form.update_attributes(new_params)
         # Success message
         flash[:success] = I18n.t('grade_entry_forms.edit.success')
         redirect_to :action => 'edit', :id => @grade_entry_form.id
