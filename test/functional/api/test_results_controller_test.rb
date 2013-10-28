@@ -84,7 +84,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     context 'getting a json response' do
       setup do
         @request.env['HTTP_ACCEPT'] = 'application/json'
-        get 'show', :assignment_id => 'garbage', :group_id => 'garbage', 
+        get 'show', :assignment_id => 'garbage', :group_id => 'garbage',
           :id => 'garbage'
       end
 
@@ -98,7 +98,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     context 'getting an xml response' do
       setup do
         @request.env['HTTP_ACCEPT'] = 'application/xml'
-        get 'show', :assignment_id => 'garbage', :group_id => 'garbage', 
+        get 'show', :assignment_id => 'garbage', :group_id => 'garbage',
           :id => 'garbage'
       end
 
@@ -112,7 +112,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     context 'getting an rss response' do
       setup do
         @request.env['HTTP_ACCEPT'] = 'application/rss'
-        get 'show', :assignment_id => 'garbage', :group_id => 'garbage', 
+        get 'show', :assignment_id => 'garbage', :group_id => 'garbage',
           :id => 'garbage'
       end
 

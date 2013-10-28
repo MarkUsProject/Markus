@@ -16,6 +16,8 @@ module SubmissionsHelper
         submission = grouping.current_submission_used
         raise I18n.t('marking_state.no_result', :group_name => grouping.group.group_name) if !submission.has_result?
         raise I18n.t('marking_state.not_complete', :group_name => grouping.group.group_name) if
+          submission.get_latest_result.marking_state != Result::MARKING_STATES[:complete] && release
+        raise I18n.t('marking_state.not_complete_unrelease', :group_name => grouping.group.group_name) if
           submission.get_latest_result.marking_state != Result::MARKING_STATES[:complete]
         @result = submission.get_latest_result
         @result.released_to_students = release
@@ -29,26 +31,26 @@ module SubmissionsHelper
     end
     changed
   end
-  
-  
+
+
   # Collects submissions for all the groupings of the given section and assignment
   # Return the number of actually collected submissions
   def collect_submissions_for_section(section_id, assignment, errors)
-    
+
     collected = 0
-    
+
     begin
-      
+
       raise I18n.t('collect_submissions.could_not_find_section') if !Section.exists?(section_id)
       section = Section.find(section_id)
-      
+
       # Check collection date
       if Time.zone.now < SectionDueDate.due_date_for(section, assignment)
         raise I18n.t('collect_submissions.could_not_collect_section',
           :assignment_identifier => assignment.short_identifier,
           :section_name => section.name)
       end
-      
+
       # Collect and count submissions for all groupings of this section
       groupings = Grouping.find_all_by_assignment_id(assignment.id)
       submission_collector = SubmissionCollector.instance
@@ -58,20 +60,20 @@ module SubmissionsHelper
           collected += 1
         end
       end
-      
+
       if collected == 0
         raise I18n.t('collect_submissions.no_submission_for_section',
           :section_name => section.name)
       end
-      
+
     rescue Exception => e
       errors.push(e.message)
     end
-    
+
     collected
-    
+
   end
-  
+
 
   def construct_file_manager_dir_table_row(directory_name, directory)
     table_row = {}

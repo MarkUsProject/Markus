@@ -3,7 +3,7 @@ require 'fastercsv'
 class RubricsController < ApplicationController
 
   before_filter      :authorize_only_for_admin
-  
+
   #max number of rubric levels allowed
   NUM_LEVELS = 5
 
@@ -11,11 +11,11 @@ class RubricsController < ApplicationController
     @assignment = Assignment.find(params[:id])
     @criteria = @assignment.rubric_criteria(:order => 'position')
   end
-  
+
   def edit
     @criterion = RubricCriterion.find(params[:id])
   end
-  
+
   def update
     @criterion = RubricCriterion.find(params[:id])
     @criterion.update_attributes(params[:rubric_criterion])
@@ -25,7 +25,7 @@ class RubricsController < ApplicationController
     end
     flash.now[:success] = I18n.t('criterion_saved_success')
   end
-  
+
   def new
     @assignment = Assignment.find(params[:id])
     if request.post?
@@ -41,7 +41,7 @@ class RubricsController < ApplicationController
       render :create_and_edit
     end
   end
-  
+
   def delete
     return unless request.delete?
     @criterion = RubricCriterion.find(params[:id])
@@ -50,7 +50,7 @@ class RubricsController < ApplicationController
     @criterion.destroy
     flash.now[:success] = I18n.t('criterion_deleted_success')
   end
-   
+
   def download_rubric
      @assignment = Assignment.find(params[:id])
      format = params[:format]
@@ -59,10 +59,10 @@ class RubricsController < ApplicationController
        file_out = create_csv_rubric(@assignment)
      when 'yml'
        file_out = create_yml_rubric(@assignment)
-     end   
+     end
      send_data(file_out, :type => 'text/csv', :disposition => 'inline')
    end
-   
+
    #given an assignment, return the names of the levels in the assignment's
    #rubric
    def get_level_names(assignment)
@@ -90,26 +90,26 @@ class RubricsController < ApplicationController
      end
      csv_string
    end
-   
+
    def create_yml_rubric(assignment)
      #we reconstruct a yaml object representing a rubric which is
      # {levels => array, criteria => array}
      yml_string = ''
      #need to get the level names from the first criterion
      levels_array = get_level_names(assignment)
-     
+
      #this will store all the criteria objects
      criteria_array = []
      assignment.rubric_criteria.each do |criterion|
         #for each criterion we need to reconstruct a yaml object which is
         # {title => string, weight => int, levels => array}
-        
+
         #get the level_descriptions
         level_descriptions = {}
         (0..NUM_LEVELS - 1).each do |i|
           level_descriptions[i]= criterion['level_' + i.to_s + '_description']
         end
-        
+
         #this creates the yaml object for a criterion and adds it to the array
         criteria_array.push({'title' => criterion.rubric_criterion_name,
            'weight' => criterion.weight,
@@ -118,7 +118,7 @@ class RubricsController < ApplicationController
 
      #call to_yaml to generate yaml string for the rubric
      #TODO/FIXME: find a better way to create yaml as to_yaml puts everything in a
-     # (seemingly) random order. 
+     # (seemingly) random order.
      yml_string << {'levels' => levels_array, 'criteria' => criteria_array}.to_yaml
      yml_string
    end
@@ -151,7 +151,7 @@ class RubricsController < ApplicationController
 
     redirect_to :action => 'index', :id => @assignment.id
    end
-   
+
    def parse_csv_rubric(file, assignment)
     num_update = 0
     flash[:invalid_lines] = []  # store lines that were not processed
@@ -161,7 +161,7 @@ class RubricsController < ApplicationController
     levels = nil
     FasterCSV.parse(file.read) do |row|
      next if FasterCSV.generate_line(row).strip.empty?
-     begin 
+     begin
        if first_line #get the row of levels
          levels = row
          first_line = false
@@ -224,7 +224,7 @@ class RubricsController < ApplicationController
     end
       criterion.save
    end
-  
+
   #This method handles the drag/drop RubricCriteria sorting
   def update_positions
     params[:rubric_criteria_pane_list].each_with_index do |id, position|

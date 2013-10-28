@@ -3,7 +3,7 @@ require 'base64'
 # Scripting API handlers for MarkUs
 module Api
 
-  # This is the parent class of all API controllers. Shared functionality of 
+  # This is the parent class of all API controllers. Shared functionality of
   # all API controllers should go here.
   class MainApiController < ActionController::Base
 
@@ -36,7 +36,7 @@ module Api
     end
 
     private
-    # Auth handler for the MarkUs API. It uses the Authorization HTTP header to 
+    # Auth handler for the MarkUs API. It uses the Authorization HTTP header to
     # determine the user who issued the request. With the Authorization
     # HTTP header comes a Base 64 encoded MD5 digest of the user's private key.
     def authenticate
@@ -134,7 +134,21 @@ module Api
             key, value = filter.split(':')
             if collection_class.column_names.include?(key)
               key = key.to_sym
-              collection = collection.where("#{key} = ?", value)
+
+              # Check if validation forces values to be numeric
+              numericality = false
+              collection_class.validators_on(key).each do |validator|
+                if validator.is_a?(ActiveModel::Validations::NumericalityValidator)
+                  collection = collection.where("#{key} = ?", value)
+                  numericality = true
+                  break
+                end
+              end
+
+              # Do a case-insensitive search if dealing with strings
+              unless numericality
+                collection = collection.where("lower(#{key}) = ?", value.downcase)
+              end
             end
           end
         end

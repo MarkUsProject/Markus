@@ -263,8 +263,8 @@ class GradeEntryForm < ActiveRecord::Base
       num_updates += 1
     rescue RuntimeError => e
       invalid_lines << names.join(',')
-      invalid_lines << totals.join(',') + ': ' + 'some error'
-      puts e.message unless invalid_lines.nil?
+      error = e.message.is_a?(String) ? e.message : ''
+      invalid_lines << totals.join(',') + ': ' + error unless invalid_lines.nil?
     end
 
     # Parse the grades
@@ -277,8 +277,8 @@ class GradeEntryForm < ActiveRecord::Base
         end
         num_lines_read += 1
       rescue RuntimeError => e
-        invalid_lines << row.join(',') + ': ' + 'some other error'
-        puts e.message unless invalid_lines.nil?
+        error = e.message.is_a?(String) ? e.message : ''
+        invalid_lines << row.join(',') + ': ' + error unless invalid_lines.nil?
       end
     end
     return num_updates

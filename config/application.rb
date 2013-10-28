@@ -56,6 +56,10 @@ module Markus
 
   # Configure sensitive parameters which will be filtered from the log file.
   config.filter_parameters += [:password]
-  
+
+  # Enable the asset pipeline
+  config.assets.enabled = true
+  config.assets.version = '1.0'
+
   end
 end

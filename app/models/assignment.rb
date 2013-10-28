@@ -288,14 +288,16 @@ class Assignment < ActiveRecord::Base
     results_sum = 0
     results_fails = 0
     results_zeros = 0
+    students_count = 0
     groupings.each do |grouping|
       submission = grouping.current_submission_used
       unless submission.nil?
         result = submission.get_latest_result
         if result.released_to_students
           results.push result.total_mark
-          results_sum += result.total_mark
+          results_sum += result.total_mark * grouping.student_membership_number
           results_count += 1
+          students_count += grouping.student_membership_number
           if result.total_mark < (self.total_mark / 2)
             results_fails += 1
           end
@@ -313,7 +315,7 @@ class Assignment < ActiveRecord::Base
     results_sorted = results.sort
     median_quantity = 0
     if (results_count % 2) == 0
-       median_quantity = (results_sorted[results_count/2 - 1] 
+       median_quantity = (results_sorted[results_count/2 - 1]
                         + results_sorted[results_count/2]).to_f / 2
     else
        median_quantity = results_sorted[results_count/2]
@@ -324,7 +326,7 @@ class Assignment < ActiveRecord::Base
       self.results_average = 0
       return self.save
     end
-    avg_quantity = results_sum / results_count
+    avg_quantity = results_sum / students_count
     # compute average in percent
     self.results_average = (avg_quantity * 100 / self.total_mark)
     self.save
@@ -335,7 +337,7 @@ class Assignment < ActiveRecord::Base
     groupings.each do |grouping|
       submission = grouping.current_submission_used
       if !submission.nil? && submission.has_remark?
-        if submission.get_remark_result.marking_state == 
+        if submission.get_remark_result.marking_state ==
             Result::MARKING_STATES[:partial]
           outstanding_count += 1
         end
@@ -556,7 +558,7 @@ class Assignment < ActiveRecord::Base
   # Get a list of subversion client commands to be used for scripting
   def get_svn_export_commands
     svn_commands = [] # the commands to be exported
-    
+
     self.groupings.each do |grouping|
       submission = grouping.current_submission_used
       if submission
@@ -783,9 +785,16 @@ class Assignment < ActiveRecord::Base
     Ta.find(ids)
   end
 
-  # Returns all the submissions that have been graded
+  # Returns all the submissions that have been graded (completed)
   def graded_submissions
-    self.submissions.select { |submission| submission.get_latest_completed_result }
+    results = []
+    groupings.each do |grouping|
+      if grouping.marking_completed?
+        submission = grouping.current_submission_used
+        results.push(submission.get_latest_result) unless submission.nil?
+      end
+    end
+    results
   end
 
   def groups_submitted
