@@ -72,10 +72,15 @@ module PaginationHelper
       when 'marking_state' then to_include = [{:current_submission_used => :results}]
       when 'total_mark' then to_include = [{:current_submission_used => :results}]
       when 'grace_credits_used' then to_include = [:grace_period_deductions]
+      when 'criterion' then to_include = [{:current_submission_used => :results}]
     end
     items = hash[:filters][filter][:proc].call(object_hash, to_include)
     unless sort_by.blank?
-      items = items.sort{|a,b| hash[:sorts][sort_by].call(a,b)}
+      if sort_by == 'criterion'
+        items = items.sort{|a,b| hash[:sorts][sort_by].call(a,b,object_hash[:cid])}
+      else
+        items = items.sort{|a,b| hash[:sorts][sort_by].call(a,b)}
+      end
     end
     unless desc.blank?
       items.reverse!
