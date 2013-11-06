@@ -46,11 +46,17 @@ module GradeEntryFormsHelper
 
     @grade_entry_items = attributes[:grade_entry_items_attributes]
 
+    if @grade_entry_items == nil
+      return attributes
+    end
+
     # Find the largest position that has been set
     max_position = 0
     @grade_entry_items.each do |key, value|
-      if this_position = value["position"] && this_position.to_i > max_position
+      unless value == nil
+        if this_position = value["position"] && this_position.to_i > max_position
           max_position = this_position.to_i
+        end
       end
     end
 
