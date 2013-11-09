@@ -217,29 +217,43 @@ CalendarDateSelect.prototype = {
     } else if (! this.options.get("buttons")) buttons_div.remove();
     
     if (this.options.get("buttons")) {
+      fontSize = 2;
       buttons_div.build("span", {innerHTML: "&#160;"});
-      if (this.options.get("time")=="mixed" || !this.options.get("time")) b = buttons_div.build("a", {
-          innerHTML: _translations["Today"],
-          href: "#",
-          onclick: function() {this.today(false); return false;}.bindAsEventListener(this)
+      
+      if (this.options.get("time")=="mixed" || !this.options.get("time")) 
+        b = buttons_div.build("a", {
+            innerHTML: "<font size=" + fontSize + ">" + _translations["Today"] + "</font>",
+            href: "#",
+            onclick: function() {this.today(false); return false;}.bindAsEventListener(this)
         });
       
-      if (this.options.get("time")=="mixed") buttons_div.build("span", {innerHTML: "&#160;|&#160;", className:"button_seperator"})
+      if (this.options.get("time")=="mixed") 
+        buttons_div.build("span", 
+          {innerHTML: "&#160;&#160;|&#160;&#160;", 
+          className:"button_seperator"})
       
-      if (this.options.get("time")) b = buttons_div.build("a", {
-        innerHTML: _translations["Now"],
-        href: "#",
-        onclick: function() {this.today(true); return false}.bindAsEventListener(this)
+      if (this.options.get("time")) 
+        b = buttons_div.build("a", {
+          innerHTML: "<font size=" + fontSize + ">" + _translations["Now"] + "</font>", 
+          href: "#", 
+          onclick: function() {this.today(true); return false}.bindAsEventListener(this)
       });
       
       if (!this.options.get("embedded") && !this.closeOnClick())
       {
-        buttons_div.build("span", {innerHTML: "&#160;|&#160;", className:"button_seperator"})
-        buttons_div.build("a", { innerHTML: _translations["OK"], href: "#", onclick: function() {this.close(); return false;}.bindAsEventListener(this) });
+        buttons_div.build("span", {
+          innerHTML: "&#160;&#160;|&#160;&#160;", 
+          className:"button_seperator"})
+        buttons_div.build("a", { 
+          innerHTML: "<font size=" + fontSize + ">" + _translations["OK"] + "</font>", 
+          href: "#", onclick: function() {this.close(); return false;}.bindAsEventListener(this) });
       }
       if (this.options.get('clear_button')) {
-        buttons_div.build("span", {innerHTML: "&#160;|&#160;", className:"button_seperator"})
-        buttons_div.build("a", { innerHTML: _translations["Clear"], href: "#", onclick: function() {this.clearDate(); if (!this.options.get("embedded")) this.close(); return false;}.bindAsEventListener(this) });
+        buttons_div.build("span", {
+          innerHTML: "&#160;&#160;|&#160;&#160;", className:"button_seperator"})
+        buttons_div.build("a", { 
+          innerHTML: "<font size=" + fontSize + ">" + _translations["Clear"] + "</font>", 
+          href: "#", onclick: function() {this.clearDate(); if (!this.options.get("embedded")) this.close(); return false;}.bindAsEventListener(this) });
       }
     }
   },
