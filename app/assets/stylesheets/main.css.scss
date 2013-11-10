@@ -1966,6 +1966,15 @@ ul#annotation_list li{
    margin-left: 5px;
    font-size: 0.9em;
 }
+
+.annotation_text_authors{
+   color: #464646;
+   font-style: italic;
+   margin-left: 5px;
+   display:inline-block;
+   width:200px;
+ }
+
 /* Admin interface: Assignment View*/
 .disable {
   font-style: italic;
