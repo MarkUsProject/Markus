@@ -352,7 +352,7 @@ module Repository
         raise ConfigurationError.new("Required config '#{c}' not set")
       end
     end
-    debugger
+
     case repo_type
       when "svn"
         return SubversionRepository
