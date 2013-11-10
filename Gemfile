@@ -83,3 +83,6 @@ end
 group :rghost do
   gem 'rghost'
 end
+
+gem 'rugged'
+gem 'gitolite'

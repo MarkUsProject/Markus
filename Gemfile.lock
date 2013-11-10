@@ -29,6 +29,7 @@ GEM
       activesupport (= 3.0.20)
     activesupport (3.0.20)
     arel (2.0.10)
+    blankslate (3.1.2)
     bourne (1.5.0)
       mocha (>= 0.13.2, < 0.15)
     builder (2.1.2)
@@ -39,6 +40,7 @@ GEM
       debugger-ruby_core_source (~> 1.2.3)
     debugger-linecache (1.2.0)
     debugger-ruby_core_source (1.2.3)
+    diff-lcs (1.2.4)
     dynamic_form (1.1.4)
     erubis (2.6.6)
       abstract (>= 1.0.0)
@@ -47,6 +49,17 @@ GEM
     faker (1.1.2)
       i18n (~> 0.5)
     fastercsv (1.5.5)
+    gitolite (1.1.0)
+      gratr19 (~> 0.4.4.1)
+      grit (~> 2.5.0)
+      hashery (~> 1.5.0)
+    gratr19 (0.4.4.1)
+    grit (2.5.0)
+      diff-lcs (~> 1.1)
+      mime-types (~> 1.15)
+      posix-spawn (~> 0.3.6)
+    hashery (1.5.0)
+      blankslate
     i18n (0.5.0)
     json (1.8.0)
     kgio (2.8.0)
@@ -66,6 +79,7 @@ GEM
     mysql2 (0.2.18)
     pg (0.15.1)
     polyglot (0.3.3)
+    posix-spawn (0.3.6)
     rack (1.2.8)
     rack-mount (0.6.14)
       rack (>= 1.0.0)
@@ -101,6 +115,7 @@ GEM
     ruby-debug-base (0.10.4)
       linecache (>= 0.3)
     rubyzip (0.9.9)
+    rugged (0.19.0)
     shoulda (3.3.0)
       shoulda-context (~> 1.0)
       shoulda-matchers (~> 1.4)
@@ -135,6 +150,7 @@ DEPENDENCIES
   exception_notification (< 4.0)
   faker
   fastercsv
+  gitolite
   i18n
   machinist (< 2)
   mocha
@@ -148,6 +164,7 @@ DEPENDENCIES
   routing-filter
   ruby-debug
   rubyzip
+  rugged
   shoulda (< 3.4)
   shoulda-matchers (~> 1.5)
   simplecov
