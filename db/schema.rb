@@ -1,4 +1,4 @@
-# encoding: utf-8
+# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130611095902) do
+ActiveRecord::Schema.define(:version => 20131004123913) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -27,6 +27,8 @@ ActiveRecord::Schema.define(:version => 20130611095902) do
     t.integer  "annotation_category_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "creator_id"
+    t.integer  "last_editor_id"
   end
 
   add_index "annotation_texts", ["annotation_category_id"], :name => "index_annotation_texts_on_annotation_category_id"
