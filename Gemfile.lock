@@ -47,6 +47,7 @@ GEM
       debugger-ruby_core_source (~> 1.2.3)
     debugger-linecache (1.2.0)
     debugger-ruby_core_source (1.2.3)
+    diff-lcs (1.2.4)
     dynamic_form (1.1.4)
     erubis (2.7.0)
     exception_notification (3.0.1)
@@ -170,6 +171,7 @@ DEPENDENCIES
   exception_notification (< 4.0)
   faker
   fastercsv
+  gitolite
   i18n
   jquery-rails
   json
@@ -186,7 +188,7 @@ DEPENDENCIES
   routing-filter
   ruby-debug
   rubyzip
-  sass-rails (~> 3.1.5)
+  rugged
   shoulda (< 3.4)
   shoulda-matchers (~> 1.5)
   simplecov
