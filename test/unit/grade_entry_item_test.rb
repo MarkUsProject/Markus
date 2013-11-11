@@ -34,7 +34,6 @@ class GradeEntryItemTest < ActiveSupport::TestCase
   context 'A good Grade Entry Form ' do
     setup do
       @grade_entry_form = GradeEntryForm.make
-
     end
 
     should 'update name if duplicate' do
@@ -61,6 +60,7 @@ class GradeEntryItemTest < ActiveSupport::TestCase
       dup_column.grade_entry_form = grade_entry_form_2
 
       assert dup_column.valid?
+      assert_equal dup_column.name, column.name
     end
   end
 
@@ -68,17 +68,16 @@ class GradeEntryItemTest < ActiveSupport::TestCase
   # Saving should cause invalid inputs to be updated to default
   context 'A Grade Entry Item model with invalid inputs' do
 
-    should 'allow negative out_of values' do
+    should 'set negative out_of values to default value' do
       item = GradeEntryItem.make(:name => 'Q1', :out_of => -10, :position => 1)
       assert item.valid?
       assert_equal 1, item.out_of
     end
 
-    should 'allow empty out_of values' do
+    should 'set empty out_of values to default value' do
       item = GradeEntryItem.make(:name => 'Q1', :out_of => nil, :position => 1)
       assert item.valid?
       assert_equal 1, item.out_of
     end
-
   end
 end
