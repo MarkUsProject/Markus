@@ -15,8 +15,9 @@ module Repository
     # Static method: Creates a new Git repository at
     # location 'connect_string'
     def self.create(connect_string)
-      
-      #Check if repo exists
+      if GitRepository.repository_exists?(connect_string)
+        raise RepositoryCollision.new("There is already a repository at #{connect_string}")
+      end
       if File.exists?(connect_string)
         raise IOError.new("Could not create a repository at #{connect_string}: some directory with same name exists already")
       end
@@ -48,7 +49,7 @@ module Repository
       #gitolite admin repo
       ga_repo = Gitolite::GitoliteAdmin.new("#{::Rails.root.to_s}/data/dev/repos/git_auth")
       conf = ga_repo.config
-      
+
       repo_names.each do |repo_name|
         repo_name = File.basename(repo_name)
         repo = Gitolite::Config::Repo.new(repo_name)
@@ -65,29 +66,26 @@ module Repository
     end
 
 
-       ####################################################################
+    # Static method: Reports if a Git repository exists.
+    # Done in a similarly hacky method as the SVN side.
+    # TODO - find a better way to do this.
+    def self.repository_exists?(repos_path)
+      repos_meta_files_exist = false
+      if File.exist?(File.join(repos_path, "config"))
+        if File.exist?(File.join(repos_path, "description"))
+          if File.exist?(File.join(repos_path, "HEAD"))
+            repos_meta_files_exist = true
+          end
+        end
+      end
+      return repos_meta_files_exist
+    end
+
+
+    ####################################################################
     ##  Semi-private class methods (one should not use them from outside
     ##  this class).
     ####################################################################
-
-    # Semi-private class method: Reads in Repository.conf[:REPOSITORY_PERMISSION_FILE]
-    def self.__read_in_authz_file()
-      # Check if configuration is in order
-      if Repository.conf[:REPOSITORY_PERMISSION_FILE].nil?
-        raise ConfigurationError.new("Required config 'REPOSITORY_PERMISSION_FILE' not set")
-      end
-      if !File.exist?(Repository.conf[:REPOSITORY_PERMISSION_FILE])
-        File.open(Repository.conf[:REPOSITORY_PERMISSION_FILE], "w").close() # create file if not existent
-      end
-      # Load up the Permissions:
-      file_content = ""
-      File.open(Repository.conf[:REPOSITORY_PERMISSION_FILE], "r+") do |auth_file|
-        auth_file.flock(File::LOCK_EX)
-        file_content = auth_file.read()
-        auth_file.flock(File::LOCK_UN) # release lock
-      end
-      return file_content
-    end
 
     # Helper method to translate internal permissions to Subversion
     # permissions
