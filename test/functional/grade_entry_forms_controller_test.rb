@@ -543,12 +543,12 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         @grade_entry_form_before = @grade_entry_form_with_dup
 
         assert_raise ActiveRecord::RecordNotUnique do
-        post_as @admin, :update, {:id => @grade_entry_form_with_dup.id,
-                                :grade_entry_form => {:short_identifier => NEW_SHORT_IDENTIFIER,
-                                                      :description => NEW_DESCRIPTION,
-                                                      :message => NEW_MESSAGE,
-                                                      :date => @grade_entry_form_with_dup.date,
-                                                      :grade_entry_items_attributes => {'new1' => @q1, 'new2' => @q2}}}
+          post_as @admin, :update, {:id => @grade_entry_form_with_dup.id,
+                                    :grade_entry_form => {:short_identifier => NEW_SHORT_IDENTIFIER,
+                                                          :description => NEW_DESCRIPTION,
+                                                          :message => NEW_MESSAGE,
+                                                          :date => @grade_entry_form_with_dup.date,
+                                                          :grade_entry_items_attributes => {'new1' => @q1, 'new2' => @q2}}}
         end
         @grade_entry_form_before.reload
         assert_not_nil assigns :grade_entry_form
@@ -820,16 +820,18 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       end
     end
 
-    context 'on :csv_upload' do
+    context 'POST on :csv_upload with column already in db ' do
       setup do
         @student = Student.make(:user_name => 'c2ÈrÉØrr', :last_name => 'Last', :first_name => 'First')
         @grade_entry_form = GradeEntryForm.make
         @grade_entry_student = @grade_entry_form.grade_entry_students.make(:user => @student)
         @grade_entry_item = @grade_entry_form.grade_entry_items.make(:name => 'something', :position => 1)
+        @old_grade = 0.0
+        @new_grade = 10.0
+        @grade_entry_student.grades.make(:grade_entry_item => @grade_entry_item, :grade => @old_grade)
       end
 
       should 'have valid values in database after an upload of a UTF-8 encoded file parsed as UTF-8' do
-        @new_grade = 10.0
         post_as @admin,
                 :csv_upload,
                 :id => @grade_entry_form.id,
@@ -844,15 +846,12 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       end
 
       should 'have valid values in database after an upload of a ISO-8859-1 encoded file parsed as ISO-8859-1' do
-        @new_grade = 10.0
         post_as @admin,
                 :csv_upload,
                 :id => @grade_entry_form.id,
                 :upload => {:grades_file => fixture_file_upload('files/test_grades_ISO-8859-1.csv')},
                 :encoding => 'ISO-8859-1'
         assert_response :redirect
-        puts 'ISO-8859-1 parsed as ISO-8859-1'
-        test_student = Student.find_by_user_name('c2ÈrÉØrr')
         grade_entry_item = GradeEntryItem.find_by_id(@grade_entry_item.id)
         assert_not_nil grade_entry_item
         assert_equal 'something', grade_entry_item.name
@@ -860,14 +859,12 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
             @grade_entry_student.id, @grade_entry_item.id
         )
-        puts "grade: #{grade}"
         assert_not_nil grade
         assert_equal @new_grade, grade.grade
 
       end
 
       should 'have invalid values in database after an upload of a UTF-8 encoded file parsed as ISO-8859-1' do
-        @new_grade = 10.0
         post_as @admin,
                 :csv_upload,
                 :id => @grade_entry_form_with_grade_entry_items.id,
@@ -878,22 +875,25 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
             @grade_entry_student.id, @grade_entry_item.id
         )
-        assert_nil grade
+        assert_not_nil grade
+        assert_equal @old_grade, grade.grade
       end
 
       should 'have invalid values in database after an upload of an ISO-8859-1 encoded file parsed as UTF-8' do
-        @new_grade = 10.0
-        post_as @admin,
-                :csv_upload,
-                :id => @grade_entry_form_with_grade_entry_items.id,
-                :upload => {:grades_file => fixture_file_upload('files/test_grades_ISO-8859-1.csv')},
-                :encoding => 'UTF-8'
-        assert_response :redirect
+        assert_raise Iconv::IllegalSequence do
+          post_as @admin,
+                  :csv_upload,
+                  :id => @grade_entry_form_with_grade_entry_items.id,
+                  :upload => {:grades_file => fixture_file_upload('files/test_grades_ISO-8859-1.csv')},
+                  :encoding => 'UTF-8'
+        end
+        assert_response :success
         test_student = Student.find_by_user_name('c2ÈrÉØrr')
         grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
             @grade_entry_student.id, @grade_entry_item.id
         )
-        assert_nil grade
+        assert_not_nil grade
+        assert_equal @old_grade, grade.grade
       end
 
       should 'update column out_of' do
@@ -911,20 +911,76 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         assert_equal new_out_of, grade_entry_item.out_of
       end
 
-      should 'delete unused columns' do
+      should 'update old grades' do
+        grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
+            @grade_entry_student.id, @grade_entry_item.id
+        )
+        assert_not_nil grade
+        assert_equal @old_grade, grade.grade
+        post_as @admin,
+                :csv_upload,
+                :id => @grade_entry_form.id,
+                :upload => {:grades_file => fixture_file_upload('files/test_grades_UTF-8.csv')},
+                :encoding => 'UTF-8'
+        assert_response :redirect
+        grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
+            @grade_entry_student.id, @grade_entry_item.id
+        )
+        assert_not_nil grade
+        assert_equal @new_grade, grade.grade
+      end
+    end
 
+    context 'POST on :csv_upload with column not in db ' do
+      setup do
+        @student = Student.make(:user_name => 'c2ÈrÉØrr', :last_name => 'Last', :first_name => 'First')
+        @grade_entry_form = GradeEntryForm.make
+        @grade_entry_student = @grade_entry_form.grade_entry_students.make(:user => @student)
+        @grade_entry_item = @grade_entry_form.grade_entry_items.make(:name => 'not_something', :position => 1)
+        @grade_entry_student.grades.make(:grade_entry_item => @grade_entry_item, :grade => @old_grade)
+      end
+
+      should 'delete unused columns' do
+        post_as @admin,
+                :csv_upload,
+                :id => @grade_entry_form.id,
+                :upload => {:grades_file => fixture_file_upload('files/test_grades_UTF-8.csv')},
+                :encoding => 'UTF-8'
+        assert_response :redirect
+
+        grade_entry_item = GradeEntryItem.find_by_id(@grade_entry_item.id)
+        assert_nil grade_entry_item
       end
 
       should 'delete unused grades' do
-
-      end
-
-      should 'update old grades' do
-
+        post_as @admin,
+                :csv_upload,
+                :id => @grade_entry_form.id,
+                :upload => {:grades_file => fixture_file_upload('files/test_grades_UTF-8.csv')},
+                :encoding => 'UTF-8'
+        assert_response :redirect
+        old_grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
+            @grade_entry_student.id, @grade_entry_item.id
+        )
+        assert_nil old_grade
+        new_grade_entry_item = GradeEntryItem.find_by_name('something')
+        assert_not_nil new_grade_entry_item
+        new_grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
+            @grade_entry_student.id, new_grade_entry_item.id
+        )
+        assert_not_nil new_grade
       end
 
       should 'add new columns' do
+        post_as @admin,
+                :csv_upload,
+                :id => @grade_entry_form.id,
+                :upload => {:grades_file => fixture_file_upload('files/test_grades_UTF-8.csv')},
+                :encoding => 'UTF-8'
+        assert_response :redirect
 
+        grade_entry_item = GradeEntryItem.find_by_name('something')
+        assert_not_nil grade_entry_item
       end
     end
   end

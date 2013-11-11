@@ -42,8 +42,6 @@ class GradeEntryStudent < ActiveRecord::Base
       grade_for_grade_entry_item = working_row.shift
       grade_entry_item = grade_entry_items.find_by_name(grade_entry_name)
 
-      puts "update grade: #{grade_for_grade_entry_item} for grade entry item id: #{grade_entry_item.id}"
-
       # Don't add empty grades and remove grades that did exist but are now empty
       if !grade_for_grade_entry_item || grade_for_grade_entry_item.empty?
         grade = grade_entry_student.grades.find_by_grade_entry_item_id(grade_entry_item.id)
