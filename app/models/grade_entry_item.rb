@@ -60,8 +60,4 @@ class GradeEntryItem < ActiveRecord::Base
     end
 
   end
-
-  def to_s
-    "#{ self.name }, position: #{ self.position }"
-  end
 end
