@@ -54,7 +54,8 @@ module GradeEntryFormsHelper
     max_position = 0
     @grade_entry_items.each do |key, value|
       unless value == nil
-        if this_position = value["position"] && this_position.to_i > max_position
+        this_position = value[:position]
+        if this_position && this_position.to_i > max_position
           max_position = this_position.to_i
         end
       end
@@ -63,13 +64,11 @@ module GradeEntryFormsHelper
     # Update the attributes hash
     max_position += 1
     @grade_entry_items.sort.each do |item|
-      # If there is no name, remove item
-      if item[1][:name] && item[1][:name].empty?
-        @grade_entry_items.delete(item[0])
-      # All items being added have a name
-      elsif item[1][:name] and item[1][:destroy] != 1
+      # Items not added don't have a name
+      # Some items are being deleted so don't update those
+      if item[1][:name] and item[1][:destroy] != 1
         # If the set position is not valid, update it
-        unless item[1][:position].to_i > 0
+        unless @grade_entry_items[item[0]][:position].to_i > 0
           @grade_entry_items[item[0]][:position] = max_position
           max_position += 1
         end
@@ -78,5 +77,9 @@ module GradeEntryFormsHelper
 
     attributes[:grade_entry_items_attributes] = @grade_entry_items
     return attributes
+  end
+
+  def sort_items_by_position(items)
+    sorted = items.sort_by { |hsh| hsh[:position] }
   end
 end

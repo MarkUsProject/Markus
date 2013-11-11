@@ -52,13 +52,13 @@
     <% # Display the column names and totals
     %>
     <div id="grade_entry_items">
-      <% columnNumber = 1 %>
-      <%= f.fields_for :grade_entry_items do |entry_item| %>
-        <%= render :partial => 'grade_entry_item',
+      <% sort_items_by_position(@grade_entry_form.grade_entry_items).each_with_index do |item, index| %>
+        <%= f.fields_for :grade_entry_items, item do |entry_item| %>
+          <%= render :partial => 'grade_entry_item',
             		   :locals => {:grade_entry_item => entry_item.object,
-                                   :new_position => columnNumber,
+                                   :new_position => index+1,
                                    :form => f} %>
-          <% columnNumber = columnNumber + 1 %>
+        <% end %>
       <% end %>
     </div>
 

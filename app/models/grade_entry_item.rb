@@ -18,8 +18,6 @@ class GradeEntryItem < ActiveRecord::Base
                             :message => I18n.t('grade_entry_forms.invalid_column_out_of')
   validates_numericality_of :position, :greater_than_or_equal_to => 0
 
-  before_validation :correct_fields
-
   # Create new grade entry items (or update them if they already exist) using
   # the first two rows from a CSV file
   #
@@ -63,26 +61,7 @@ class GradeEntryItem < ActiveRecord::Base
 
   end
 
-  def correct_fields
-    check_name
-    check_out_of
-  end
-
-  def check_name
-    id = self.id || 0
-    @items_with_same_name = GradeEntryItem.where(
-        ["name == ? AND grade_entry_form_id == ? AND id != ?", self.name, self.grade_entry_form_id, id]
-    )
-    if @items_with_same_name.count > 0
-      self.name += '(rename)'
-    end
-  end
-
-  def check_out_of
-    self.out_of = 1 unless self.out_of && self.out_of >= 0
-  end
-
   def to_s
-    self.name
+    "#{ self.name }, position: #{ self.position }"
   end
 end
