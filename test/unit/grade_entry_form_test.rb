@@ -51,9 +51,9 @@ class GradeEntryFormTest < ActiveSupport::TestCase
   context 'A grade entry form object: ' do
     setup do
       @grade_entry_form = GradeEntryForm.make
-      @grade_entry_form.grade_entry_items.make(:out_of => 25)
-      @grade_entry_form.grade_entry_items.make(:out_of => 50)
-      @grade_entry_form.grade_entry_items.make(:out_of => 10.5)
+      @grade_entry_form.grade_entry_items.make(:out_of => 25, :position => 1)
+      @grade_entry_form.grade_entry_items.make(:out_of => 50, :position => 2)
+      @grade_entry_form.grade_entry_items.make(:out_of => 10.5, :position => 3)
     end
 
     # Need at least one GradeEntryForm object created for this
