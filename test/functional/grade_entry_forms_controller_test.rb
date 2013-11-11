@@ -358,6 +358,31 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         assert_response :redirect
       end
 
+      should ':new with valid properties, including multiple GradeEntryItems with missing positions' do
+        @q1[:position] = nil
+        @q2[:position] = nil
+        @q3[:position] = nil
+        items = [@q1, @q2, @q3]
+        post_as @admin, :create, {:grade_entry_form => {:short_identifier => 'NT',
+                                                        :description => @grade_entry_form.description,
+                                                        :message => @grade_entry_form.message,
+                                                        :date => @grade_entry_form.date,
+                                                        :grade_entry_items_attributes => {'1' => @q1,
+                                                                                          '2' => @q2,
+                                                                                          '3' => @q3}}}
+        assert_not_nil assigns :grade_entry_form
+        assert_equal flash[:success], I18n.t('grade_entry_forms.create.success')
+        assert_response :redirect
+
+        g = GradeEntryForm.find_by_short_identifier('NT')
+
+        (0...items.length).each do |i|
+          assert_equal items[i][:name], g.grade_entry_items[i][:name]
+          assert_equal items[i][:out_of], g.grade_entry_items[i][:out_of]
+          assert_equal i+1, g.grade_entry_items[i][:position]
+        end
+      end
+
       should ':new with missing GradeEntryItem name' do
         @q2[:name] = ''
         post_as @admin,
@@ -461,6 +486,45 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
           assert_equal items[i][:name], g.grade_entry_items[i][:name]
           assert_equal items[i][:out_of], g.grade_entry_items[i][:out_of]
           assert_equal items[i][:position], g.grade_entry_items[i][:position]
+        end
+      end
+
+      should ':edit with valid properties, including multiple GradeEntryItems with missing positions' do
+        @q2[:position] = nil
+        @q3[:position] = nil
+
+        put_as @admin,
+               :update,
+               :id => @grade_entry_form.id,
+               :grade_entry_form => {
+                   :short_identifier => NEW_SHORT_IDENTIFIER,
+                   :description => NEW_DESCRIPTION,
+                   :message => NEW_MESSAGE,
+                   :date => @grade_entry_form.date,
+                   :grade_entry_items_attributes => {'new_1' => @q2,
+                                                     '1' => @q1,
+                                                     'new_2' => @q3}}
+        assert_not_nil assigns :grade_entry_form
+        assert_equal flash[:success], I18n.t('grade_entry_forms.edit.success')
+        assert_response :redirect
+
+        g = GradeEntryForm.find(@grade_entry_form.id)
+        assert_equal NEW_SHORT_IDENTIFIER, g.short_identifier
+        assert_equal NEW_DESCRIPTION, g.description
+        assert_equal NEW_MESSAGE, g.message
+        assert_equal 3, g.grade_entry_items.length
+
+        g.grade_entry_items.each do |item|
+          if @q1[:name] == item[:name]
+            assert_equal @q1[:out_of], item[:out_of]
+            assert_equal 1, item[:position]
+          elsif @q2[:name] == item[:name]
+            assert_equal @q2[:out_of], item[:out_of]
+            assert_equal 2, item[:position]
+          else
+            assert_equal @q3[:out_of], item[:out_of]
+            assert_equal 3, item[:position]
+          end
         end
       end
 
