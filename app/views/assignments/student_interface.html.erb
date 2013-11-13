@@ -3,25 +3,24 @@
   "livepipe/window.js" %>
 
 <script type="text/javascript">
-//<![CDATA[
 
   var invite_modal = null;
 
   function invite(){
     invite_modal.open();
-    $('invite_member').setValue('');
-    $('invite_member').focus();
+    jQuery('#invite_member'.val());
+    jQuery('invite_member').focus();
     return false;
   }
 
-  document.observe("dom:loaded", function(){
-    invite_modal = new Control.Modal($('invite_dialog'), {
+  jQuery(document).ready(function(){
+    invite_modal = new Control.Modal(jQuery('invite_dialog'), {
       overlayOpacity: 0.75,
       className: 'invite_modal',
       fade: false
     });
   });
-//]]>
+
 </script>
 
 <div id="title_bar">
@@ -367,7 +366,7 @@ if !@grouping.nil? &&
   <div id="invite_dialog">
     <%= form_tag({:action => 'invite_member',
         :id => @assignment.id},
-        {:onsubmit => "$('invite_modal_spinner').show();"}) do %>
+        {:onsubmit => "jQuery('#invite_modal_spinner').show();"}) do %>
       <h2><%= I18n.t("student.invite") %></h2>
       <p class="information"><%= t(:seperate_multiple_with_commas) %></p>
         <fieldset>
