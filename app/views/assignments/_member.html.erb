@@ -20,7 +20,7 @@ member.user.last_name %> <%= I18n.t("student.inviter") %></li>
    <% if grouping.is_inviter?(@current_user) %>
      <%= link_to I18n.t(:cancel), '#', 
         :onclick => "
-          new Ajax.Request('" +
+          new jQuery.ajax('" +
              disinvite_member_assignment_path(:id => @assignment.id, :membership => member.id) + "');",
 
         :confirm => I18n.t("student.cancel_invitation"),
