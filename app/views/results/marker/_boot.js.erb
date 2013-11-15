@@ -18,7 +18,7 @@ jQuery(document).ready(function() {
   setup_divider(jQuery('#code_pane'), jQuery('#pane_divider'));
 });
 
-JQuery(window).load(function() 
+JQuery(window).load(function() {
 <% @mark_criteria.each do |criterion| %>
   <% if criterion.has_associated_ta?(@current_user) %>
     JQuery('mark_criterion_' + <%= criterion.id %>).addClass('assigned');
