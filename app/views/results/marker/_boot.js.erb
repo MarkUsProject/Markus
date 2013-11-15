@@ -1,6 +1,6 @@
 <script type="text/javascript">
 //<![CDATA[
-document.observe("dom:loaded", function() {
+jQuery(document).ready(function() {
   //After DOM is loaded, load up the first submitted file
   <% if !first_file.nil? %>
    load_submitted_file('<%=first_file.id%>');
@@ -11,17 +11,17 @@ document.observe("dom:loaded", function() {
   <% end %>
 
   //Set up the divider
-  init_content_width = $('content').getWidth();
-  init_code_pane_width = $('code_pane').getWidth();
+  init_content_width = jQuery('#content').width();
+  init_code_pane_width = jQuery('#code_pane').width();
   //Create the modal dialog
-  modal = new Control.Modal($('create_annotation_dialog'), {fade:false});
-  setup_divider($('code_pane'), $('pane_divider'));
+  modal = new Control.Modal(jQuery('#create_annotation_dialog'), {fade:false});
+  setup_divider(jQuery('#code_pane'), jQuery('#pane_divider'));
 });
 
-Event.observe(window, 'load', function() {
+JQuery(window).load(function() 
 <% @mark_criteria.each do |criterion| %>
   <% if criterion.has_associated_ta?(@current_user) %>
-    $('mark_criterion_' + <%= criterion.id %>).addClassName('assigned');
+    JQuery('mark_criterion_' + <%= criterion.id %>).addClass('assigned');
   <% elsif @current_user.type == "Ta" %>
     hide_criterion(<%= criterion.id %>);
   <% end %>
