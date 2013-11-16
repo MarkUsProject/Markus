@@ -18,6 +18,7 @@
                          :size => 5,
                          :maxlength => 3) %>
 
+    <%= f.hidden_field :position, :value => new_position %>
     <% if !f.object.nil? && !f.object.new_record? %>
       <span>
       <br /> <%= f.label :_destroy, 
