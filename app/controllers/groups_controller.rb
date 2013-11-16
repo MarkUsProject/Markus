@@ -359,11 +359,13 @@ class GroupsController < ApplicationController
     # the maximum size of a group
     students_in_group = grouping.student_membership_number
     group_name = grouping.group.group_name
-    if students_in_group > assignment.group_max
-      @warning_group_size = I18n.t('assignment.group.assign_over_limit',
-        :group => group_name)
-    end
+    if assignment.student_form_groups
+      if students_in_group > assignment.group_max
+        @warning_group_size = I18n.t('assignment.group.assign_over_limit',
+          :group => group_name)
 
+      end
+    end
     render :add_members
   end
 
@@ -378,7 +380,7 @@ class GroupsController < ApplicationController
 
     begin
       if student.hidden
-        raise I18n.t('add_student.fail.hidden', student.user_name)
+        raise I18n.t('add_student.fail.hidden', :user_name => student.user_name)
       end
       if student.has_accepted_grouping_for?(@assignment.id)
         raise I18n.t('add_student.fail.already_grouped',

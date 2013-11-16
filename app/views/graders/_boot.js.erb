@@ -10,7 +10,7 @@ document.observe("dom:loaded", function() {
   //force the middle column to be moved on the y-axis as the page is scrolled
 	Event.observe(document, "scroll", function() {
 		//110 is the displacement for "top" for .centreColumnGraders as can be seen in the main.css
-		$("centreColumn").setStyle({top: (document.viewport.getScrollOffsets().top + 110) +'px' }); 
+		$("centreColumn").setStyle({top: (document.viewport.getScrollOffsets().top + 110) +'px' });
 	});
 
   groupings_table = new FilterTable({
@@ -195,8 +195,8 @@ document.observe("dom:loaded", function() {
   });
 
   new Ajax.Request('<%= populate_graders_assignment_graders_path(@assignment) %>', {
-    asynchronous: true, 
-    evalScripts: true, 
+    asynchronous: true,
+    evalScripts: true,
     onComplete: function(request){$('loading_graders_list').hide()},
     parameters: {
       'authenticity_token': AUTH_TOKEN
@@ -204,8 +204,8 @@ document.observe("dom:loaded", function() {
   });
 
   new Ajax.Request('<%= populate_assignment_graders_path(@assignment) %>', {
-    asynchronous: true, 
-    evalScripts: true, 
+    asynchronous: true,
+    evalScripts: true,
     onComplete: function(request){$('loading_list').hide()},
     parameters: {
       'authenticity_token': AUTH_TOKEN
@@ -218,7 +218,7 @@ document.observe("dom:loaded", function() {
     $('search_criteria_label').hide();
   <% else %>
     new Ajax.Request('<%= populate_criteria_assignment_graders_path(@assignment) %>', {
-      asynchronous: true, 
+      asynchronous: true,
       evalScripts: true,
       onComplete: function(request){$('loading_list').hide()},
       parameters: {

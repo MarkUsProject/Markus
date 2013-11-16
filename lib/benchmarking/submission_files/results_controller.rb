@@ -10,7 +10,7 @@ class ResultsController < ApplicationController
     # Create new Result for this Submission
     @submission_id = params[:id]
     @submission = Submission.find(@submission_id)
-    
+
     # Is there already a result for this Submission?
     if @submission.has_result?
       # If so, our new Result needs to have a version number greater than the
@@ -19,17 +19,17 @@ class ResultsController < ApplicationController
       old_result.result_version_used = false
       old_result.save
     end
-    
+
     new_result = Result.new
     new_result.submission = @submission
     new_result.marking_state = Result::MARKING_STATES[:partial]
     new_result.save
     redirect_to :action => 'edit', :id => new_result.id
   end
-  
+
   def index
   end
-  
+
   def edit
     result_id = params[:id]
     @result = Result.find(result_id)
@@ -65,7 +65,7 @@ class ResultsController < ApplicationController
     if current_user.admin?
       groupings = @assignment.groupings
     end
-    
+
     current_grouping_index = groupings.index(@grouping)
     if groupings[current_grouping_index + 1]
       @next_grouping = groupings[current_grouping_index + 1]
@@ -84,7 +84,7 @@ class ResultsController < ApplicationController
       redirect_to :controller => 'submissions', :action => 'collect_and_begin_grading', :id => grouping.assignment.id, :grouping_id => grouping.id
     end
   end
-  
+
   def download
     file = SubmissionFile.find(params[:select_file_id])
     begin
@@ -96,12 +96,12 @@ class ResultsController < ApplicationController
     end
     send_data file_contents, :disposition => 'inline', :filename => file.filename
   end
-  
+
   def codeviewer
     @assignment = Assignment.find(params[:id])
     @submission_file_id = params[:submission_file_id]
     @focus_line = params[:focus_line]
-      
+
     @file = SubmissionFile.find(@submission_file_id)
     @result = @file.submission.get_latest_result
     # Is the current user a student?
@@ -112,7 +112,7 @@ class ResultsController < ApplicationController
       end
     end
 
-    @annots = @file.annotations    
+    @annots = @file.annotations
     @all_annots = @file.submission.annotations
 
     begin
@@ -122,12 +122,12 @@ class ResultsController < ApplicationController
         page.call 'alert', e.message
       end
       return
-    end   
-    
+    end
+
     @code_type = @file.get_file_type
     render :'results/common/codeviewer'
   end
-  
+
   def update_mark
     result_mark = Mark.find(params[:mark_id])
     mark_value = params[:mark]
@@ -152,7 +152,7 @@ class ResultsController < ApplicationController
       end
     end
   end
-  
+
   def view_marks
     @assignment = Assignment.find(params[:id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
@@ -161,7 +161,7 @@ class ResultsController < ApplicationController
       redirect_to :controller => 'assignments', :action => 'student_interface', :id => params[:id]
       return
     end
-    
+
     unless @grouping.has_submission?
       render 'results/student/no_submission'
       return
@@ -202,7 +202,7 @@ class ResultsController < ApplicationController
       @marks_map[criterion.id] = mark
     end
   end
-  
+
   def add_extra_mark
     @result = Result.find(params[:id])
     if request.post?
@@ -262,25 +262,25 @@ class ResultsController < ApplicationController
       render :json => output.to_json
     end
   end
-  
+
   def update_overall_comment
     @result = Result.find(params[:id])
     @result.overall_comment = params[:result][:overall_comment]
     @result.save
   end
-  
+
   def expand_criteria
     @assignment = Assignment.find(params[:aid])
     @rubric_criteria = @assignment.rubric_criteria
     render :partial => 'results/marker/expand_criteria', :locals => {:rubric_criteria => @rubric_criteria}
   end
-  
+
   def collapse_criteria
     @assignment = Assignment.find(params[:aid])
     @rubric_criteria = @assignment.rubric_criteria
     render :partial => 'results/marker/collapse_criteria', :locals => {:rubric_criteria => @rubric_criteria}
   end
-  
+
   def expand_unmarked_criteria
     @assignment = Assignment.find(params[:aid])
     @rubric_criteria = @assignment.rubric_criteria
@@ -290,9 +290,9 @@ class ResultsController < ApplicationController
     @nil_marks = @result.marks.all(:conditions => {:mark => nil})
     render :partial => 'results/marker/expand_unmarked_criteria', :locals => {:nil_marks => @nil_marks}
   end
-  
+
   private
-  
+
   def retrieve_file(file)
     student_group = file.submission.grouping.group
     repo = student_group.repo
@@ -303,5 +303,5 @@ class ResultsController < ApplicationController
     end
     repo.download_as_string(revision.files_at_path(file.path)[file.filename])
   end
-  
+
 end

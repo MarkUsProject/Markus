@@ -12,9 +12,9 @@ Markus::Application.configure do
   # Show full error reports and disable caching
   config.consider_all_requests_local = true
   # The following line can be commented out when jQuery is fully implemented in MarkUs
-  config.action_view.debug_rjs                         = true
-  config.action_controller.perform_caching             = false
-  config.action_controller.allow_forgery_protection    = true
+  #  config.action_view.debug_rjs                         = true
+  #  config.action_controller.perform_caching             = false
+  #  config.action_controller.allow_forgery_protection    = true
 
   # Load any local configuration that is kept out of source control
   if File.exists?(File.join(File.dirname(__FILE__), 'local_environment_override.rb'))
@@ -124,7 +124,7 @@ Markus::Application.configure do
   # PDF documents within the browser.
   # When collecting pdfs files, it converts them to jpg format via RGhost.
   # RGhost is ghostscript dependent. Be sure ghostscript is installed.
-  PDF_SUPPORT = false 
+  PDF_SUPPORT = false
 
   ###################################################################
   # Change this to 'REPOSITORY_EXTERNAL_SUBMITS_ONLY = true' if you

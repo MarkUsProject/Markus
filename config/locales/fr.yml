@@ -121,6 +121,7 @@ fr:
       could_not_collect_section: "Les envois de la section %{section_name} pour le projet %{assignment_identifier} ne peuvent pas être récupérés : la date de récupération pour cette section n'est pas encore passée."
       no_submission_for_section: "Il n'y a ancun envoi à récupérer pour la section %{section_name}."
       successfully_collected: "Récupération de %{collected} envoi(s)."
+      marking_incomplete_warning: "Attention: Certains rendus n'ont pas été complètement évalués.\n\nÊtes-vous sûr de vouloir continuer?"
     assignment:
         assignment: "Projet %{short_identifier}"
         required_fields: "Champs obligatoires <span class='required_field'>*</span>"
@@ -335,6 +336,7 @@ fr:
       line_nr_csv_file_prefix: "ligne %{line_number} du fichier CSV :"
       group_to_grader: "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux groupes."
       student_to_grader: "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux étudiants."
+      invalid_csv: "Le format du fichier CSV n'a pas été reconnu"
 
     pagination:
       first: "<< Première"
@@ -783,6 +785,8 @@ fr:
       help_message: "Cliquer sur les catégories d'annotations pour créer des annotations."
       add_annotation_category: "Ajouter une catégorie d'annotations"
       annotations: "Annotations"
+      created_by: "Créée par :"
+      last_edited_by: "Dernière édition par :"
       update:
         annotation_category_success: "La catégorie d'annotations a bien été créée ou mise à jour."
         annotation_category_error: "Erreur dans la mise à jour ou la création de la catégorie d'annotations : "

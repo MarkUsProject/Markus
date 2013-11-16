@@ -5,6 +5,8 @@ class SubmissionsController < ApplicationController
   include SubmissionsHelper
   include PaginationHelper
 
+  helper_method :all_assignments_marked?
+
   before_filter :authorize_only_for_admin,
                 :except => [:server_time,
                             :populate_file_manager,
@@ -56,7 +58,7 @@ class SubmissionsController < ApplicationController
       },
       'unmarked' => {
         :display => I18n.t('browse_submissions.show_unmarked'),
-        :proc => lambda { |params, to_include| 
+        :proc => lambda { |params, to_include|
            (params[:assignment].ta_memberships.find_all_by_user_id(
                params[:user_id], :include => [:grouping => to_include]).
                collect{|m| m.grouping}
@@ -64,10 +66,10 @@ class SubmissionsController < ApplicationController
                    g.current_submission_used.get_latest_result.marking_state ==
                        Result::MARKING_STATES[:unmarked]) }}
       },
-      
+
       'partial' => {
         :display => I18n.t('browse_submissions.show_partial'),
-        :proc => lambda { |params, to_include| 
+        :proc => lambda { |params, to_include|
            (params[:assignment].ta_memberships.find_all_by_user_id(
                     params[:user_id], :include => [:grouping => to_include]).
                collect{|m| m.grouping}
@@ -75,10 +77,10 @@ class SubmissionsController < ApplicationController
                g.current_submission_used.get_latest_result.marking_state ==
                    Result::MARKING_STATES[:partial]} }
       },
-      
+
       'complete' => {
         :display => I18n.t('browse_submissions.show_complete'),
-        :proc => lambda{ |params, to_include| 
+        :proc => lambda{ |params, to_include|
           (params[:assignment].ta_memberships.find_all_by_user_id(
               params[:user_id], :include => [:grouping => to_include]).
               collect{|m| m.grouping}
@@ -86,17 +88,17 @@ class SubmissionsController < ApplicationController
               g.current_submission_used.get_latest_result.marking_state ==
                   Result::MARKING_STATES[:complete]} }
       },
-      
+
       'released' => {
         :display => I18n.t('browse_submissions.show_released'),
-        :proc => lambda{ |params, to_include| 
+        :proc => lambda{ |params, to_include|
           (params[:assignment].ta_memberships.find_all_by_user_id(
               params[:user_id], :include => [:grouping => to_include]).
               collect{|m| m.grouping}
           ).select{|g| g.has_submission? &&
               g.current_submission_used.get_latest_result.released_to_students}}
       },
-      
+
       'assigned' => {
         :display => I18n.t('browse_submissions.show_assigned_to_me'),
         :proc => lambda { |params, to_include|
@@ -104,7 +106,7 @@ class SubmissionsController < ApplicationController
               params[:user_id], :include => [:grouping => to_include]).
               collect{|m| m.grouping} }}
     },
-    
+
     :sorts => {
       'group_name' => lambda { |a,b| a.group.group_name.downcase <=>
         b.group.group_name.downcase},
@@ -138,7 +140,7 @@ class SubmissionsController < ApplicationController
       }
     }
   }
-  
+
   # TABLE FOR Admin
   ADMIN_TABLE_PARAMS = {
     :model => Grouping,
@@ -193,7 +195,7 @@ class SubmissionsController < ApplicationController
         ret ||= a.current_submission_used.revision_timestamp <=>
             b.current_submission_used.revision_timestamp
       },
-      # Ordering for marking state: 
+      # Ordering for marking state:
       #   Released (icon: "sent mail") - complete & released_to_student
       #   Complete (icon: green circle check mark) - complete
       #   Remark Requested (icon: speech bubble exclamation mark) - partial & remark_submitted
@@ -361,10 +363,10 @@ class SubmissionsController < ApplicationController
   end
 
   def collect_and_begin_grading
-    
+
     assignment = Assignment.find(params[:assignment_id])
     grouping = Grouping.find(params[:id])
-    
+
     if assignment.submission_rule.can_collect_grouping_now?(grouping)
       #Push grouping to the priority queue
       SubmissionCollector.instance.push_grouping_to_priority_queue(grouping)
@@ -373,7 +375,7 @@ class SubmissionsController < ApplicationController
       flash[:error] = I18n.t('browse_submissions.could_not_collect',
                              :group_name => grouping.group.group_name)
     end
-    redirect_to :action   => 'browse', 
+    redirect_to :action   => 'browse',
                 :id       => assignment.id
   end
 
@@ -388,7 +390,7 @@ class SubmissionsController < ApplicationController
       flash[:error] = I18n.t('collect_submissions.could_not_collect',
                              :assignment_identifier => assignment.short_identifier)
     end
-    redirect_to :action => 'browse', 
+    redirect_to :action => 'browse',
                 :id => assignment.id
   end
 
@@ -434,13 +436,13 @@ class SubmissionsController < ApplicationController
     end
 
     @assignment = Assignment.find(params[:assignment_id])
-    
+
     @c_per_page = current_user.id.to_s + '_' + @assignment.id.to_s + '_per_page'
     if params[:per_page].present?
-       cookies[@c_per_page] = params[:per_page] 
+       cookies[@c_per_page] = params[:per_page]
     elsif cookies[@c_per_page].present?
        params[:per_page] = cookies[@c_per_page]
-    end 
+    end
 
     @c_sort_by = current_user.id.to_s + '_' + @assignment.id.to_s + '_sort_by'
     if params[:sort_by].present?
@@ -448,7 +450,7 @@ class SubmissionsController < ApplicationController
     elsif cookies[@c_sort_by].present?
        params[:sort_by] = cookies[@c_sort_by]
     else
-       params[:sort_by] = 'group_name' 
+       params[:sort_by] = 'group_name'
     end
 
     # the data structure to handle filtering and sorting
@@ -484,15 +486,15 @@ class SubmissionsController < ApplicationController
         unsorted_grouping == sorted_grouping
       end
     end
-    
+
     if cookies[@c_per_page].blank?
        cookies[@c_per_page] = params[:per_page]
     end
-    
+
     if cookies[@c_sort_by].blank?
        cookies[@c_sort_by] = params[:sort_by]
     end
- 
+
     @current_page = params[:page].to_i()
     @per_page = cookies[@c_per_page]
 
@@ -549,7 +551,8 @@ class SubmissionsController < ApplicationController
       # values will be the "expected revision numbers" that we'll provide
       # to the transaction to ensure that we don't overwrite a file that's
       # been revised since the user last saw it.
-      file_revisions = params[:file_revisions].nil? ? [] : params[:file_revisions]
+      file_revisions = params[:file_revisions].nil? ? {} : params[:file_revisions]
+      file_revisions.merge!(file_revisions) { |key, v1, v2| v1.to_i rescue v1 }
 
       # The files that will be replaced - just give an empty array
       # if params[:replace_files] is nil
@@ -663,6 +666,20 @@ class SubmissionsController < ApplicationController
         render :text => file_contents, :layout => 'sanitized_html'
       end
     end
+  end
+
+  ##
+  # Checks if all the assignments for the current submission are marked
+  # returns true if all assignments are marked completely
+  ##
+  def all_assignments_marked?
+    marked = Assignment.joins(:groupings => [{:current_submission_used =>
+      :results}]).where('assignments.id' => params[:assignment_id],
+      'results.marking_state' => Result::MARKING_STATES[:complete])
+    total_assignments = Assignment.joins(:groupings =>
+      [{:current_submission_used => :results}]).where('assignments.id' =>
+      params[:assignment_id])
+    return marked.size == total_assignments.size
   end
 
   ##
@@ -788,7 +805,7 @@ class SubmissionsController < ApplicationController
   end
 
   def update_submissions
-    
+
     return unless request.post?
     assignment = Assignment.find(params[:assignment_id])
     errors = []
@@ -798,18 +815,18 @@ class SubmissionsController < ApplicationController
       if params[:filter].blank?
         raise I18n.t('student.submission.expect_filter')
       end
-     
-      # Get all Groupings for this filter 
+
+      # Get all Groupings for this filter
       if current_user.ta?
         groupings = TA_TABLE_PARAMS[:filters][params[:filter]][:proc].call({:assignment => assignment, :user_id => current_user.id}, {})
       else
         groupings = ADMIN_TABLE_PARAMS[:filters][params[:filter]][:proc].call({:assignment => assignment, :user_id => current_user.id}, {})
       end
-    
+
     else
       # User selected particular Grouping IDs
       if params[:groupings].nil?
-        errors.push(I18n.t('results.must_select_a_group')) unless !params[:collect_section].nil? 
+        errors.push(I18n.t('results.must_select_a_group')) unless !params[:collect_section].nil?
       else
         groupings = assignment.groupings.find(params[:groupings])
       end
@@ -851,7 +868,7 @@ class SubmissionsController < ApplicationController
                 :id => params[:id],
                 :per_page => params[:per_page],
                 :filter   => params[:filter],
-                :sort_by  => params[:sort_by] 
+                :sort_by  => params[:sort_by]
   end
 
   def unrelease
@@ -867,7 +884,7 @@ class SubmissionsController < ApplicationController
       m_logger.log("Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" +
                    "#{assignment.id}' (for #{params[:groupings].length} groups).")
     end
-    redirect_to :action => 'browse', 
+    redirect_to :action => 'browse',
                 :id => params[:id]
   end
 

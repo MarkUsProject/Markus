@@ -1,4 +1,4 @@
-<%= fields_for :note, :url => {:action => 'create'} do |f| %>
+<%= fields_for :note do |f| %>
   <p>
     <%= f.label :noteable_id, I18n.t("notes.noteables.Assignment")%>
     <%= f.select :noteable_id, @assignments.map {|item| [item.short_identifier,item.id]}%>

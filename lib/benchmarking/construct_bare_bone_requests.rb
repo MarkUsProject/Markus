@@ -6,19 +6,19 @@ if __FILE__ == $0
   require 'uri'      # URI parsing lib
   require 'fileutils'
   require 'digest/md5' # required for boundary MD5 hashing
-  
+
   def get_file_header(file_name, boundary)
     head = "--#{boundary}" + CRLF
     head += "Content-Disposition: form-data; name=\"new_files[]\"; filename=\"#{file_name}\"" + CRLF
     head += "Content-Type: application/x-ruby" + CRLF + CRLF
     return head
   end
-  
+
   if ARGV[0].nil?
     puts "usage: construct_requests.rb APP_URI [students_logins_file]"
     exit 1
   end
-  
+
   # Constants:
   # - URI's to post to
   # - File paths, etc
@@ -34,18 +34,18 @@ if __FILE__ == $0
   STUDENTS_LIST_FILE = ARGV[1] || "student_logins.txt"
   SUBMISSION_RES_DIR = File.join(File.dirname(__FILE__), "submission_files")
   CRLF = "\r\n" # convenience constant
-  
+
   # cleanup from previous runs
   if File.exist?(HOME_REQUESTS)
     FileUtils.rm_r(HOME_REQUESTS)
   end
-  
+
   # creat directory structure
   FileUtils.mkdir_p(File.join(HOME_REQUESTS, POST_DIR, LOGIN_DIR))
   FileUtils.mkdir_p(File.join(HOME_REQUESTS, POST_DIR, SUBMISSION_DIR))
   FileUtils.mkdir_p(File.join(HOME_REQUESTS, COOKIES_DIR))
   FileUtils.mkdir_p(File.join(HOME_REQUESTS, BOUNDARY_DIR))
-  
+
   students = File.new(File.join(File.dirname(__FILE__), STUDENTS_LIST_FILE)).readlines
   students.each do |login|
     # construct some login requests
@@ -58,10 +58,10 @@ if __FILE__ == $0
     # get cookie
     cookie = res.response['set-cookie']
     cookie = cookie[0..(cookie.index(";")-1)]
-    
+
     post_request = "user_login=#{login}&user_password=somepassword"
     post_request += "&commit=Log+in" + CRLF
-    
+
     # construct post-body-file for login
     File.open(File.join(HOME_REQUESTS, POST_DIR, LOGIN_DIR, login), "w") { |file|
       file.write(post_request)
@@ -70,13 +70,13 @@ if __FILE__ == $0
     File.open(File.join(HOME_REQUESTS, COOKIES_DIR, login), "w") { |file|
       file.write(cookie + "\n")
     }
-    
+
     # submissions post requests
-    
+
     boundary = Digest::MD5.hexdigest(Time.now.to_f.to_s)
     boundary = "---------------------------" + boundary
     #boundary = Time.now.to_f.to_s.gsub(/\./, "")
-    
+
     submission_post_request_body = ""
     # construct some submission request bodies
     Dir.glob(File.join(SUBMISSION_RES_DIR, "*")).each { |file|
@@ -88,7 +88,7 @@ if __FILE__ == $0
     submission_post_request_body +=  "Content-Disposition: form-data; name=\"commit\"" + CRLF + CRLF
     submission_post_request_body +=  "Submit" + CRLF
     submission_post_request_body += "--#{boundary}--" + CRLF# epilogue
-    
+
     # write submission post request to file
     File.open(File.join(HOME_REQUESTS, POST_DIR, SUBMISSION_DIR, login), "w") { |file|
       file.write(submission_post_request_body)
@@ -96,6 +96,6 @@ if __FILE__ == $0
     # write cookie file for login
     File.open(File.join(HOME_REQUESTS, BOUNDARY_DIR, login), "w") { |file|
       file.write(boundary + "\n")
-    }    
+    }
   end
 end
