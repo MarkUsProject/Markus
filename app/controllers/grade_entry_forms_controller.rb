@@ -28,7 +28,7 @@ class GradeEntryFormsController < ApplicationController
                       'none' => {
                         :display => 'Show All',
                         :proc => lambda { |sort_by, order, user|
-                          if user.type == "Admin"
+                          if user.instance_of? Admin
                             conditions = {:hidden => false}
                           else
                             #Display only students to which the TA has been assigned
