@@ -21,9 +21,9 @@ document.observe("dom:loaded", function() {
     footer: true,
   });
 
-  new Ajax.Request('<%= populate_tas_path() %>', 
-                   {asynchronous:true, evalScripts:true, 
-                   onComplete:function(request){$('loading_list').hide();}, 
+  new Ajax.Request('<%= populate_tas_path() %>',
+                   {asynchronous:true, evalScripts:true,
+                   onComplete:function(request){$('loading_list').hide();},
                    parameters: 'authenticity_token=' + AUTH_TOKEN})
 });
 

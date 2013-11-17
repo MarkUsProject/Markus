@@ -17,10 +17,7 @@ Date.parseFormattedString = function (string) {
    var regexp = "([0-9]{4})(-([0-9]{2})(-([0-9]{2})" +
                 "([T| ]([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?" +
                 "(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?";
-   var d = string.match(new RegExp(regexp, "i"));
-   if (d==null) {
-       return Date.parse(string); // Give javascript a chance to parse it.
-   }
+   var d = string.match(new RegExp(regexp));
 
    var date = new Date(d[1], 0, 1);
 

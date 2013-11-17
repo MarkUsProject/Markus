@@ -11,6 +11,9 @@ log/
 doc/app/
 .bundle/
 
+# Files created by sass
+.sass-cache
+
 # Files created by rcov/simplecov
 test/coverage
 test/coverage.data

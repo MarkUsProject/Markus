@@ -6,8 +6,11 @@ require 'iconv'
 # marks (i.e. GradeEntryItems) and many rows which represent students and their
 # marks on each question (i.e. GradeEntryStudents).
 class GradeEntryForm < ActiveRecord::Base
-  has_many                  :grade_entry_items, :dependent => :destroy
-  has_many                  :grade_entry_students, :dependent => :destroy
+  has_many                  :grade_entry_items,
+                            :dependent => :destroy,
+                            :order => :position
+  has_many                  :grade_entry_students,
+                            :dependent => :destroy
   has_many                  :grades, :through => :grade_entry_items
 
   # Call custom validator in order to validate the date attribute
@@ -260,7 +263,8 @@ class GradeEntryForm < ActiveRecord::Base
       num_updates += 1
     rescue RuntimeError => e
       invalid_lines << names.join(',')
-      invalid_lines << totals.join(',') + ': ' + e.message unless invalid_lines.nil?
+      error = e.message.is_a?(String) ? e.message : ''
+      invalid_lines << totals.join(',') + ': ' + error unless invalid_lines.nil?
     end
 
     # Parse the grades
@@ -268,12 +272,13 @@ class GradeEntryForm < ActiveRecord::Base
       next if CsvHelper::Csv.generate_line(row).strip.empty?
       begin
         if num_lines_read > 1
-          GradeEntryStudent.create_or_update_from_csv_row(row, grade_entry_form)
+          GradeEntryStudent.create_or_update_from_csv_row(row, grade_entry_form, names)
           num_updates += 1
         end
         num_lines_read += 1
       rescue RuntimeError => e
-        invalid_lines << row.join(',') + ': ' + e.message unless invalid_lines.nil?
+        error = e.message.is_a?(String) ? e.message : ''
+        invalid_lines << row.join(',') + ': ' + error unless invalid_lines.nil?
       end
     end
     return num_updates

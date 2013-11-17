@@ -1,4 +1,4 @@
-<li class="criterion_holder <%= cycle('rowA', 'rowB') %>" 
+<li class="criterion_holder <%= cycle('rowA', 'rowB') %>"
 	id="criterion_<%=(criterion.id)%>">
   <span class="criterion_handle">
     <%= image_tag "handle.png" %>
@@ -13,7 +13,7 @@
   </span>
   <span class="criterion_arrow">
     <% if location != :first and location != :single %>
-    <%=  link_to image_tag("icons/bullet_arrow_up.png",
+    <%=  link_to image_tag('icons/bullet_arrow_up.png',
 			   :alt => t('flexible_criteria.move_up')),
 			   move_criterion_assignment_flexible_criterium_path(
 			   @assignment,
@@ -21,7 +21,7 @@
 			   :direction => :up),
 		 :remote => true %>
     <% end %> <br /> <% if  location != :last and location != :single %>
-    <%= link_to image_tag("icons/bullet_arrow_down.png",
+    <%= link_to image_tag('icons/bullet_arrow_down.png',
 			  :alt =>  t('flexible_criteria.move_down')),
 	          move_criterion_assignment_flexible_criterium_path(
 			  @assignment,
