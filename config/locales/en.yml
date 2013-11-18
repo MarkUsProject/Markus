@@ -118,6 +118,7 @@ en:
       could_not_collect_section: "Could not collect submissions for section %{section_name} and assignment %{assignment_identifier} - the section collection date has not been reached."
       no_submission_for_section: "There isn't any submission to collect for section %{section_name}."
       successfully_collected: "Successfully collected %{collected} submissions."
+      marking_incomplete_warning: "Note: Not all of the assignments have been marked.\n\nAre you sure you want to proceed?"
     assignment:
         assignment: "Assignment %{short_identifier}"
         required_fields: "Required Fields<span class='required_field'>*</span>"
@@ -333,6 +334,7 @@ en:
       line_nr_csv_file_prefix: "Line %{line_number} of CSV file:"
       group_to_grader: "You must supply a CSV file for group to grader mapping"
       student_to_grader: "You must supply a CSV file for student to grader mapping"
+      invalid_csv: "The format of the CSV file was not recognized"
 
     pagination:
       first: "<< First"
@@ -793,6 +795,8 @@ en:
       help_message: "Click on an annotation category to add annotations."
       add_annotation_category: "Add Annotation Category"
       annotations: "Annotations"
+      created_by: "Created By:"
+      last_edited_by: "Last Edited By:"
       update:
         annotation_category_success: "This Annotation Category was successfully updated"
         annotation_category_error: "Could not update Annotation Category:"

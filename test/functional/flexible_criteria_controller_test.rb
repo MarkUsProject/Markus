@@ -8,9 +8,6 @@ require 'mocha/setup'
   class FlexibleCriteriaControllerTest < AuthenticatedControllerTest
 
     FLEXIBLE_CRITERIA_CSV_STRING = "criterion1,10.0,\"description1, for criterion 1\"\ncriterion2,10.0,\"description2, \"\"with quotes\"\"\"\ncriterion3,1.6,description3!\n"
-    FLEXIBLE_CRITERIA_UPLOAD_CSV_STRING = "criterion3,10.0,\"description3, for criterion 3\"\ncriterion4,10.0,\"description4, \"\"with quotes\"\"\"\n"
-    FLEXIBLE_CRITERIA_INCOMPLETE_UPLOAD_CSV_STRING = "criterion5\ncriterion6\n"
-    FLEXIBLE_CRITERIA_PARTIAL_UPLOAD_CSV_STRING = "criterion7,5.0\ncriterion8,7.5\n"
 
     context 'An unauthenticated and unauthorized user doing a GET' do
 
@@ -285,8 +282,8 @@ require 'mocha/setup'
       assert_response :success
       @criterion.reload
       @criterion2.reload
-      assert_equal 1, @criterion.position
-      assert_equal 2, @criterion2.position
+      assert_equal 2, @criterion.position
+      assert_equal 1, @criterion2.position
     end
 
     should 'be able to move_criterion down' do
@@ -295,8 +292,8 @@ require 'mocha/setup'
       assert_response :success
       @criterion.reload
       @criterion2.reload
-      assert_equal 1, @criterion.position
-      assert_equal 2, @criterion2.position
+      assert_equal 2, @criterion.position
+      assert_equal 1, @criterion2.position
     end
 
   end # An authenticated and authorized admin doing a GET
@@ -403,10 +400,9 @@ require 'mocha/setup'
     context 'on :upload' do
       context 'with file containing incomplete records' do
         setup do
-          tempfile = Tempfile.new('flexible_csv')
-          tempfile << FLEXIBLE_CRITERIA_INCOMPLETE_UPLOAD_CSV_STRING
-          tempfile.rewind
-          post_as @admin, :upload, :assignment_id => @assignment.id, :upload => {:flexible => tempfile}
+          tempfile = fixture_file_upload('files/flexible_incomplete.csv')
+          post_as @admin, :upload, :assignment_id => @assignment.id,
+                  :upload => {:flexible => tempfile}
         end
         should 'respond with appropriate content' do
           assert_not_nil assigns :assignment
@@ -417,9 +413,7 @@ require 'mocha/setup'
 
       context 'with file containing partial records' do
         setup do
-          tempfile = Tempfile.new('flexible_csv')
-          tempfile << FLEXIBLE_CRITERIA_PARTIAL_UPLOAD_CSV_STRING
-          tempfile.rewind
+          tempfile = fixture_file_upload('files/flexible_partial.csv')
           post_as @admin, :upload, :assignment_id => @assignment.id, :upload => {:flexible => tempfile}
         end
         should 'respond with appropriate content' do
@@ -432,10 +426,9 @@ require 'mocha/setup'
       context 'with file containing full records' do
         setup do
           FlexibleCriterion.destroy_all
-          tempfile = Tempfile.new('flexible_csv')
-          tempfile << FLEXIBLE_CRITERIA_UPLOAD_CSV_STRING
-          tempfile.rewind
-          post_as @admin, :upload, :assignment_id => @assignment.id, :upload => {:flexible => tempfile}
+          tempfile = fixture_file_upload('files/flexible_upload.csv')
+          post_as @admin, :upload, :assignment_id => @assignment.id,
+                  :upload => {:flexible => tempfile}
           @assignment.reload
           @flexible_criteria = @assignment.flexible_criteria
         end

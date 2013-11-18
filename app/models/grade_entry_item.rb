@@ -8,13 +8,15 @@ class GradeEntryItem < ActiveRecord::Base
 
   validates_presence_of   :name
   validates_presence_of   :out_of
+  validates_presence_of   :position
 
   validates_associated    :grade_entry_form
 
-  validates_numericality_of :out_of, :greater_than_or_equal_to => 0,
-                            :message => I18n.t('grade_entry_forms.invalid_column_out_of')
   validates_uniqueness_of   :name, :scope => :grade_entry_form_id,
                             :message => I18n.t('grade_entry_forms.invalid_name')
+  validates_numericality_of :out_of, :greater_than_or_equal_to => 0,
+                            :message => I18n.t('grade_entry_forms.invalid_column_out_of')
+  validates_numericality_of :position, :greater_than_or_equal_to => 0
 
   # Create new grade entry items (or update them if they already exist) using
   # the first two rows from a CSV file
@@ -43,11 +45,19 @@ class GradeEntryItem < ActiveRecord::Base
     # Process the question names and totals
     (0..(names.size - 1)).each do |i|
       grade_entry_item = grade_entry_form.grade_entry_items.find_or_create_by_name(names[i])
+      grade_entry_item.position = i+1
       grade_entry_item.out_of = totals[i]
       unless grade_entry_item.save
         raise RuntimeError.new(grade_entry_item.errors)
       end
     end
-  end
 
+    # Delete old questions
+    grade_entry_form.grade_entry_items.each do |item|
+      unless names.include?(item.name)
+        item.destroy
+      end
+    end
+
+  end
 end

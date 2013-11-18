@@ -53,11 +53,11 @@ class Submission < ActiveRecord::Base
      return new_submission
   end
 
-  # returns the original result 
+  # returns the original result
   def get_original_result
     if self.remark_result_id.nil?
       Result.first(:conditions => ['submission_id = ?', self.id])
-    else 
+    else
       Result.first(:conditions => ['submission_id = ? AND id != ?',
                                    self.id, self.remark_result_id])
     end

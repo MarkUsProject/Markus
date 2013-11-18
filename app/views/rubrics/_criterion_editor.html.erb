@@ -1,7 +1,7 @@
 <%= render 'shared/flash_message' %>
 
 <%= form_for criterion,
-	     :as => :flexible_criterion,
+	     :as => :rubric_criterion,
 	     :url => {:action => 'update', :id => criterion.id},
 		   :html => {:remote => true} do |f| %>
 <h2>
