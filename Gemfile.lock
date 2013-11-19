@@ -30,6 +30,7 @@ GEM
     activesupport (3.1.12)
       multi_json (~> 1.0)
     arel (2.2.3)
+    blankslate (3.1.2)
     bourne (1.5.0)
       mocha (>= 0.13.2, < 0.15)
     builder (3.0.4)
@@ -47,7 +48,7 @@ GEM
       debugger-ruby_core_source (~> 1.2.3)
     debugger-linecache (1.2.0)
     debugger-ruby_core_source (1.2.3)
-    diff-lcs (1.2.4)
+    diff-lcs (1.2.5)
     dynamic_form (1.1.4)
     erubis (2.7.0)
     exception_notification (3.0.1)
@@ -57,6 +58,17 @@ GEM
     faker (1.2.0)
       i18n (~> 0.5)
     fastercsv (1.5.5)
+    gitolite (1.1.0)
+      gratr19 (~> 0.4.4.1)
+      grit (~> 2.5.0)
+      hashery (~> 1.5.0)
+    gratr19 (0.4.4.1)
+    grit (2.5.0)
+      diff-lcs (~> 1.1)
+      mime-types (~> 1.15)
+      posix-spawn (~> 0.3.6)
+    hashery (1.5.0)
+      blankslate
     hike (1.2.3)
     i18n (0.6.5)
     jquery-rails (3.0.4)
@@ -79,6 +91,7 @@ GEM
     mysql2 (0.3.13)
     pg (0.16.0)
     polyglot (0.3.3)
+    posix-spawn (0.3.6)
     prototype-rails (3.1.0)
       rails (~> 3.1)
     rack (1.3.10)
@@ -121,6 +134,7 @@ GEM
     ruby-debug-base (0.10.4)
       linecache (>= 0.3)
     rubyzip (0.9.9)
+    rugged (0.19.0)
     sass (3.2.11)
     sass-rails (3.1.7)
       actionpack (~> 3.1.0)
@@ -189,6 +203,7 @@ DEPENDENCIES
   ruby-debug
   rubyzip
   rugged
+  sass-rails (~> 3.1.5)
   shoulda (< 3.4)
   shoulda-matchers (~> 1.5)
   simplecov
