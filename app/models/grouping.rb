@@ -627,6 +627,7 @@ class Grouping < ActiveRecord::Base
     # create folder only if we are repo admin
     if self.group.repository_admin?
       self.group.access_repo do |repo|
+        debugger
         revision = repo.get_latest_revision
         assignment_folder = File.join('/', assignment.repository_folder)
 
