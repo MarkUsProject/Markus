@@ -12,6 +12,7 @@ module Repository
   class GitRepository < Repository::AbstractRepository
 
 
+<<<<<<< HEAD
     # Constructor: Connects to an existing Git
     # repository, using Ruby bindings; Note: A repository has to be
     # created using GitRespository.create(), it it is not yet existent
@@ -42,6 +43,8 @@ module Repository
       repo = GitRepository.new(connect_string)
     end
 
+=======
+>>>>>>> 38a7a7a571c732051a2d592c5d99ad93e617a2ae
     # Static method: Creates a new Git repository at
     # location 'connect_string'
     def self.create(connect_string)
@@ -55,6 +58,7 @@ module Repository
       #Create it
       repo = Rugged::Repository.init_at(connect_string, :bare)
 
+<<<<<<< HEAD
       #Do an initial commit to get master.
       #TODO. find a better way.
       index = Rugged::Index.new
@@ -68,6 +72,8 @@ module Repository
 
       Rugged::Commit.create(repo, options)
 
+=======
+>>>>>>> 38a7a7a571c732051a2d592c5d99ad93e617a2ae
       #TODO checks.
       repo = Rugged::Repository.new(connect_string)
 
@@ -105,6 +111,7 @@ module Repository
 
       #update gitolite 
       ga_repo.save_and_apply  
+<<<<<<< HEAD
     end
 
     # Returns a Repository::SubversionRevision instance
@@ -119,6 +126,11 @@ module Repository
     def get_revision(revision_number)
       return Repository::GitRevision.new(revision_number, self)
     end
+=======
+
+    end
+
+>>>>>>> 38a7a7a571c732051a2d592c5d99ad93e617a2ae
 
     # Static method: Reports if a Git repository exists.
     # Done in a similarly hacky method as the SVN side.
@@ -136,8 +148,11 @@ module Repository
     end
 
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 38a7a7a571c732051a2d592c5d99ad93e617a2ae
     ####################################################################
     ##  Semi-private class methods (one should not use them from outside
     ##  this class).
@@ -156,6 +171,7 @@ module Repository
     end
 
 
+<<<<<<< HEAD
     ####################################################################
     ##  Private method definitions
     ####################################################################
@@ -257,6 +273,8 @@ module Repository
       @repo #todo
     end
 
+=======
+>>>>>>> 38a7a7a571c732051a2d592c5d99ad93e617a2ae
   end
 
 end
