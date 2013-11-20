@@ -321,7 +321,8 @@ module Repository
 
   # A repository factory
   require File.join(File.dirname(__FILE__),'memory_repository')
-  require File.join(File.dirname(__FILE__),'subversion_repository')
+  #require File.join(File.dirname(__FILE__),'subversion_repository')
+  require File.join(File.dirname(__FILE__),'git_repository')
   # Returns a repository class of the requested type,
   # which implements AbstractRepository
 
@@ -351,11 +352,14 @@ module Repository
         raise ConfigurationError.new("Required config '#{c}' not set")
       end
     end
+
     case repo_type
       when "svn"
         return SubversionRepository
       when "memory"
         return MemoryRepository
+      when "git"
+        return GitRepository
       else
         raise "Repository implementation not found: #{repo_type}"
     end
