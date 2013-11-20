@@ -1,0 +1,5 @@
+jQuery('#new_criterion_error').replaceWith("<%= escape_javascript(render 
+  :partial => 'new_flexible_criterion_errors', 
+  :locals => {:errors => @errors}).html_safe %>")
+	
+jQuery('#new_criterion_error').show();
