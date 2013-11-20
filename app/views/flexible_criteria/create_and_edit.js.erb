@@ -5,7 +5,7 @@ if (@criteria.count > 2) {
 
   jQuery('#criterion_#{@criteria[-2].id}').replaceWith("<%= escape_javascript(render 
   :partial => 'flexible_criterion', 
-  :locals => {:criterion => @criteria[-2], :location => :middle}).html_safe %>")
+  :locals => {:criterion => @criteria[-2], :location => :middle}).html_safe %>");
 	}
 
 
@@ -16,7 +16,7 @@ elsif (@criteria.count == 2){
 
   jQuery('#criterion_#{@criteria.first.id}').replaceWith("<%= escape_javascript(render 
   :partial => 'flexible_criterion', 
-  :locals => {:criterion => @criteria.first, :location => :first}).html_safe %>")
+  :locals => {:criterion => @criteria.first, :location => :first}).html_safe %>");
 	}
 
 else {
@@ -25,14 +25,14 @@ else {
   @criterion, :location => :single }}").html_safe %>");
 	}
 
-jQuery('#new_flexible_criterion').remove()
+jQuery('#new_flexible_criterion').remove();
 
-page.replace_html 'flexible_edition_pane_menu',
-                  :partial => 'criterion_editor',
-                  :locals => {:criterion => @criterion}
+jQuery('#flexible_edition_pane_menu').replaceWith("<%= escape_javascript(render 
+  :partial => 'criterion_editor', 
+  :locals => {:criterion => @criterion}).html_safe %>");
 
-page.replace_html "criteria_total_mark", @criterion.assignment.total_mark
+jQuery('#criteria_total_mark').replaceWith("<%= escape_javascript(@criterion.assignment.total_mark).html_safe %>");
 
-page.sortable 'flexible_criteria_pane_list',
-              :constraint => :vertical,
-              :url => update_positions_assignment_flexible_criteria_path(:aid => @criterion.assignment.id)
+jQuery('#flexible_criteria_pane_list').sortabe("<%= escape_javascript(
+  :constraint => :vertical,
+  :url => update_positions_assignment_flexible_criteria_path(:aid => @criterion.assignment.id)).html_safe %>");
