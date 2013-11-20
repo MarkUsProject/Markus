@@ -1,19 +1,37 @@
 require "rugged"
 require "gitolite"
-#require "digest/md5"
 require File.join(File.dirname(__FILE__),'repository') # load repository module
 
 module Repository
 
-        # Implements AbstractRepository for Git repositories
+  # Implements AbstractRepository for Git repositories
   # It implements the following paradigm:
   #   1. Repositories are created by using ???
   #   2. Existing repositories are opened by using either ???
   class GitRepository < Repository::AbstractRepository
 
+    # Constructor: Connects to an existing Git
+    # repository, using Ruby bindings; Note: A repository has to be
+    # created using GitRespository.create(), it it is not yet existent
     def initialize(connect_string)
-      # connects to a git repo if one exists, if not create one.
-      # use GitRepository.create() to build the repo
+      # Check if configuration is in order
+      if Repository.conf[:IS_REPOSITORY_ADMIN].nil?
+        raise ConfigurationError.new("Required config 'IS_REPOSITORY_ADMIN' not set")
+      end
+      if Repository.conf[:REPOSITORY_PERMISSION_FILE].nil?
+        raise ConfigurationError.new("Required config 'REPOSITORY_PERMISSION_FILE' not set")
+      end
+      begin
+        super(connect_string) # dummy call to super
+      rescue NotImplementedError; end
+      @repos_path = connect_string
+      @closed = false
+      @repos_admin = Repository.conf[:IS_REPOSITORY_ADMIN]
+      if (GitRepository.repository_exists?(@repos_path))
+        @repos = Rugged::Repository.new(@repos_path)
+      else
+        raise "Repository does not exist at path \"" + @repos_path + "\""
+      end
     end
 
     # Static method: Creates a new Git repository at
@@ -29,6 +47,19 @@ module Repository
       #Create it
       repo = Rugged::Repository.init_at(connect_string, :bare)
 
+      #Do an initial commit to get master.
+      #TODO. find a better way.
+      index = Rugged::Index.new
+      options = {}
+      options[:tree] = index.write_tree(repo)
+      options[:author] = { :email => "testuser@github.com", :name => 'Test Author', :time => Time.now }
+      options[:committer] = { :email => "testuser@github.com", :name => 'Test Author', :time => Time.now }
+      options[:message] ||= "Making a commit via Rugged!"
+      options[:parents] = repo.empty? ? [] : [ repo.head.target ].compact
+      options[:update_ref] = 'HEAD'
+
+      Rugged::Commit.create(repo, options)
+
       #TODO checks.
       repo = Rugged::Repository.new(connect_string)
 
@@ -38,7 +69,7 @@ module Repository
     # Static method: Opens an existing Git repository
     # at location 'connect_string'
     def self.open(connect_string)
-      return GitRepository.new(connect_string)
+      repo = GitRepository.new(connect_string)
     end
 
     # static method that should yeild to a git repo and then close it
@@ -65,7 +96,7 @@ module Repository
 
     def self.closable?
       # return if the git library supports close, 
-      # probably going to need to be a dumb method
+      # probably going to need to be a dumby method
     end
 
     def close
@@ -98,15 +129,17 @@ module Repository
     end
     alias download_as_string stringify_files # create alias
 
+    # Returns a Repository::SubversionRevision instance
+    # holding the latest Subversion repository revision
+    # number
     def get_latest_revision
-      # returns a git repo instance holding the latest 
-      # git repo revision. 
-      # MAY require that a Repository::GitRevision be created 
+      return get_revision(latest_revision_number())
     end
 
+    # Returns hash wrapped
+    # as a Git instance
     def get_revision(revision_number)
-      # return the revision_ number wrapped as a Git instance
-      # MAY require that a Repository::GitRevision be created
+      return Repository::GitRevision.new(revision_number, self)
     end
 
     def get_revision_by_timestamp(target_timestamp, path = nil)
@@ -114,14 +147,61 @@ module Repository
       # current timestamp, should be a ruby time stamp instance
     end
 
+    # Returns a Repository::TransAction object, to work with. Do operations,
+    # like 'add', 'remove', etc. on the transaction instead of the repository
     def get_transaction(user_id, comment="")
-      # Returns a Repository::TransAction object, to work with. Do operations,
-      # like 'add', 'remove', etc. on the transaction instead of the repository
+      if user_id.nil?
+        raise "Expected a user_id (Repository.get_transaction(user_id))"
+      end
+      return Repository::Transaction.new(user_id, comment)
     end
 
     def commit(transaction)
       # carries out the actions on a git repo stored in a 
       # transaction. Conflicts should are added to the transaction obejct
+
+      # Carries out actions on a Git repository stored in
+      # 'transaction'. In case of certain conflicts corresponding
+      # Repositor::Conflict(s) are added to the transaction object
+
+      debugger
+      jobs = transaction.jobs
+      txn = @repos.fs.transaction # transaction date is set implicitly
+      txn.set_prop(Repository::SVN_CONSTANTS[:author], transaction.user_id)
+      jobs.each do |job|
+        case job[:action]
+        when :add_path
+          begin
+            txn = make_directory(txn, job[:path])
+          rescue Repository::Conflict => e
+            transaction.add_conflict(e)
+          end
+        when :add
+          begin
+            txn = add_file(txn, job[:path], job[:file_data], job[:mime_type])
+          rescue Repository::Conflict => e
+            transaction.add_conflict(e)
+          end
+        when :remove
+          begin
+            txn = remove_file(txn, job[:path], job[:expected_revision_number])
+          rescue Repository::Conflict => e
+            transaction.add_conflict(e)
+          end
+        when :replace
+          begin
+            txn = replace_file(txn, job[:path], job[:file_data], job[:mime_type], job[:expected_revision_number])
+          rescue Repository::Conflict => e
+            transaction.add_conflict(e)
+          end
+        end
+      end
+
+      if transaction.conflicts?
+        return false
+      end
+      txn.commit
+      return true
     end
 
     def add_user(user_id, permissions)
@@ -145,7 +225,7 @@ module Repository
       # Delete user from access list
     end
 
-     # Sets permissions over several repositories. Use set_permissions to set
+    # Sets permissions over several repositories. Use set_permissions to set
     # permissions on a single repository.
     def self.set_bulk_permissions(repo_names, user_id_permissions_map)
       # Check if configuration is in order
@@ -176,7 +256,6 @@ module Repository
 
       #update gitolite 
       ga_repo.save_and_apply  
-
     end
 
     def self.delete_bulk_permissions(repo_names, user_ids)
@@ -296,18 +375,27 @@ module Repository
       # Function necessary for exporting the git repository, may not be needed
     end
 
+    # Returns the most recent revision of the repository. If a path is specified,
+    # the youngest revision is returned for that path; if a revision is also specified,
+    # the function will return the youngest revision that is equal to or older than the one passed.
+    #
+    # This will only work for paths that have not been deleted from the repository.
+    # GIT NOTE: This will just return the latest hash for now
     def latest_revision_number(path = nil, revision_number = nil)
-      # Returns the most recent revision of the repository. If a path is specified,
-      # the youngest revision is returned for that path; if a revision is also specified,
-      # the function will return the youngest revision that is equal to or older than the one passed.
-      #
-      # This will only work for paths that have not been deleted from the repository.
+      debugger
+      
+      #TODO This was using FS, specific to SVN. Need to look for git.
+
+      @repos.head;
+
     end
 
     def get_revision_number_by_timestamp(target_timestamp, path = nil)
       # Gets the revision of the repo by time stamp
       # Assumes timestamp is a Time object (which is part of the Ruby
       # standard library)
+      #
+      # May not need this function
     end
 
     # adds a file to a transaction and eventually to repository
@@ -453,15 +541,23 @@ module Repository
       return result_string
     end
 
-  end # end class GitRepository
+  end
 
   # Convenience class, so that we can work on Revisions rather
   # than repositories
   class GitRevision < Repository::AbstractRevision
 
+    # Constructor; Check if revision is actually present in
+    # repository
     def initialize(revision_number, repo)
-      # Constructor; Check if revision is actually present in
-      # repository
+      @repo = repo
+      begin
+
+        #TODO we proably dont need this method...
+        @revision = revision_number.target
+
+      end
+      super(revision_number)
     end
 
     # Return all of the files in this repository at the root directory
@@ -470,10 +566,11 @@ module Repository
     end
 
     def path_exists?(path)
-      @repo.__path_exists?(path, @revision_number)
+      debugger
+      @repo #todo
+      # @repo.__path_exists?(path, @revision_number)
     end
 
-    # Return all directories at 'path' (including subfolders??)
     def directories_at_path(path='/')
       result = Hash.new(nil)
       raw_contents = @repo.__get_files(path, @revision_number)
@@ -529,6 +626,7 @@ module Repository
       end
       return result
     end
+
   end
 
 end
