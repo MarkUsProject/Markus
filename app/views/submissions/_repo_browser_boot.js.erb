@@ -1,9 +1,9 @@
-<script type="text/javascript">
+﻿<script type="text/javascript">
 //<![CDATA[
 
 var files_table = null;
 
-document.observe("dom:loaded", function() {
+jQuery(document).ready(function() {
   files_table = new FilterTable({
     table_id: $('files'),
     headers: {
@@ -27,14 +27,20 @@ document.observe("dom:loaded", function() {
     }
 });
 
-  new Ajax.Request('<%= populate_repo_browser_assignment_submissions_path(
-                                @assignment,
+	jQuery.ajax({
+		url: "<%= populate_repo_browser_assignment_submissions_path (
+								@assignment,
                                 :id => @grouping.id,
                                 :path => @path,
-                                :revision_number => @revision_number) %>',
-                   {asynchronous:true, evalScripts:true,
-                   onComplete:function(request){$('loading_list').hide();},
-                   parameters: 'authenticity_token=' + AUTH_TOKEN})
+                                :revision_number => @revision_number) %>",
+		data: 'authenticity_token=' + AUTH_TOKEN,
+		type: "POST",
+		async: true,
+		dataType: 'json'
+		}).done(function (data) {
+			jQuery('#loading_list').hide();
+			populate(JSON.stringify(data));
+			});
 
 });
 //]]>
