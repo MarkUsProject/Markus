@@ -1,0 +1,16 @@
+if (<%= escape_javascript(result_mark.markable_type).html_safe %> == 'RubricCriterion'){
+	select_mark(<%= escape_javascript(result_mark.id).html_safe %>,<%= escape_javascript(mark_value).html_safe %>);
+	if (!<%= escape_javascript(result_mark.mark.nil?).html_safe %>){
+		JQuery("#<%= escape_javascript(mark_criterion_title_#{result_mark.id.to_s}_mark).html_safe %>").replaceWith("<%= escape_javascript(<b> #{result_mark.mark}#{':'}  #{result_mark.markable["level_" + result_mark.mark.to_i.to_s + "_name"]}</b> #{result_mark.markable["level_" + result_mark.mark.to_i.to_s + "_description"]}).html_safe %>");
+	} else {
+		JQuery("#<%= escape_javascript(mark_criterion_title_#{result_mark.id.to_s}_mark).html_safe %>").replaceWith("<%= escape_javascript(nil).html_safe %>");
+	}
+	JQuery("#<%= escape_javascript(mark_#{result_mark.id.to_s}_summary_mark_after_weight).html_safe %>").replaceWith("<%= escape_javascript(result_mark.get_mark).html_safe %>");
+}
+if (<%= escape_javascript(result_mark.markable_type).html_safe %> == 'FlexibleCriterion'){
+	JQuery("#<%= escape_javascript(mark_verify_result_#{result_mark.id.to_s}).html_safe %>").hide();
+}
+JQuery("#<%= escape_javascript(mark_#{result_mark.id.to_s}_summary_mark).html_safe %>").replaceWith("<%= escape_javascript(result_mark.mark).html_safe %>");
+JQuery("#<%= escape_javascript(current_subtotal_div).html_safe %>").replaceWith("<%= escape_javascript(result_mark.result.get_subtotal).html_safe %>");
+JQuery("#marking_state").val(<%= escape_javascript(Result::MARKING_STATES[:partial]).html_safe %>);
+update_total_mark(<%= escape_javascript(result_mark.result.total_mark).html_safe %>);
