@@ -5,11 +5,14 @@
                    options_from_collection_for_select(@assignments,
                                                       :id,
                                                       :short_identifier),
-                   :onchange => "$('loading_groupings').show();
-			                    new Ajax.Request('" + new_update_groupings_notes_path() + "',
-							                    {asynchronous:true, evalScripts:true,
-							                     onSuccess:function(request){$('loading_groupings').hide()},
-							                     parameters:Form.Element.serialize(this) + '&authenticity_token=' + AUTH_TOKEN })"
+                   :onchange =>  "jQuery('#loading_groupings').show();
+																	jQuery.ajax({ url: '" + new_update_groupings_notes_path() + "',
+																	success: function(json){jQuery('#loading_groupings').hide()},
+																	data: jQuery(this).serialize + '&authenticity_token=' + AUTH_TOKEN,
+																	type: "POST",
+																	async: true
+																	});
+
     %>
   </p>
 
