@@ -1,0 +1,7 @@
+modalNotesGroup.close();
+if (!<%= escape_javascript(@number_of_notes_field.blank?).html_safe %>){
+	jQuery('#<%= escape_javascript(@number_of_notes_field).html_safe %>').replaceWith(<%= escape_javascript(@number_of_notes).html_safe %>);
+}
+if (!<%= escape_javascript(@highlight_field.blank?).html_safe %>){
+	jQuery('#<%= escape_javascript(@highlight_field).html_safe %>').highlight(<%= escape_javascript(render :startcolor => "#99CCFF").html_safe %>)
+}
