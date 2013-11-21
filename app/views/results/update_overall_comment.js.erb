@@ -1,0 +1,2 @@
+JQuery('#overall_comment').replaceWith("<%= escape_javascript(render :partial => 'results/marker/overall_comment', :locals => {:result => @result}).html_safe %>");
+JQuery("#overall_comment_text_area").highlight(<%= escape_javascript(render :startcolor => '#BDFCC9').html_safe %>);
