@@ -3,18 +3,17 @@
 
 var groupings_table = null;
 
-document.observe("dom:loaded", function() {
+jQuery(document).ready(function(){
   // Hide AJAX errors DIV
-  $('errors').hide();
+  jQuery('#errors').hide();
 
-  // force the middle column to be moved on the y-axis as the page is scrolled
-  Event.observe(document, "scroll", function() {
-  	// 110 is the displacement for "top" for .centreColumn as can be seen in the main.css
-    $("centreColumn").setStyle({ top: (document.viewport.getScrollOffsets().top + 110 ) +'px' }); 
-  });
+  jQuery(document).scroll(function() {  
+     // 110 is the displacement for "top" for .centreColumn as can be seen in the main.css
+     jQuery('#centreColumn').css(top,(jQuery(document).scrollTop() + 110) + 'px');
+  });  
 
   groupings_table = new FilterTable({
-    table_id: $('groups'),
+    table_id: jQuery('#groups'),
     headers: {
       name: {display: "<%= I18n.t('name') %>", sortable: true},
       members: {display: "<%= I18n.t('members') %>", sortable: true, sort_with: 'nohtml'}
@@ -45,21 +44,21 @@ document.observe("dom:loaded", function() {
       }
     },
     after_filter_only_by: function(current_filters, new_filter) {
-      $('filter_link_none').removeClassName('filter_selected');
+      jQuery('#filter_link_none').removeClass('filter_selected');
       current_filters.each(function(filter_key) {
         if(filter_key != 'search') {
-          $('filter_link_' + filter_key).removeClassName('filter_selected');
+          jQuery('#filter_link_' + filter_key).removeClass('filter_selected');
         }
       });
-      $('filter_link_' + new_filter).addClassName('filter_selected');
+      jQuery('#filter_link_' + new_filter).addClass('filter_selected');
     },
     after_clear_filters: function(current_filters) {
       current_filters.each(function(filter_key) {
         if(filter_key != 'search') {
-          $('filter_link_' + filter_key).removeClassName('filter_selected');
+          jQuery('#filter_link_' + filter_key).removeClass('filter_selected');
         }
       });
-      $('filter_link_none').addClassName('filter_selected');
+      jQuery('#filter_link_none').addClass('filter_selected');
     },
     sorts: {
       nohtml: function(a, b) {
@@ -75,7 +74,7 @@ document.observe("dom:loaded", function() {
 
 
   students_table = new FilterTable({
-    table_id: $('students'),
+    table_id: jQuery('#students'),
     headers: {
       user_name: {display: "<%= I18n.t('user.user_name') %>", sortable: true},
       last_name: {display: "<%= I18n.t('user.last_name') %>", sortable: true},
@@ -102,27 +101,27 @@ document.observe("dom:loaded", function() {
         return !row.filter_student_assigned;
       },
       search: function(row) {
-        return (row.user_name.toLowerCase().indexOf($('search_students').value.toLowerCase()) != -1
-        || row.first_name.toLowerCase().indexOf($('search_students').value.toLowerCase()) != -1
-        || row.last_name.toLowerCase().indexOf($('search_students').value.toLowerCase()) != -1);
+        return (row.user_name.toLowerCase().indexOf(jQuery('#search_students').value.toLowerCase()) != -1
+        || row.first_name.toLowerCase().indexOf(jQuery('#search_students').value.toLowerCase()) != -1
+        || row.last_name.toLowerCase().indexOf(jQuery('#search_students').value.toLowerCase()) != -1);
       }
     },
     after_filter_only_by: function(current_filters, new_filter) {
-      $('filter_link_students_none').removeClassName('filter_selected');
+      jQuery('#filter_link_students_none').removeClass('filter_selected');
       current_filters.each(function(filter_key) {
         if(filter_key != 'search') {
-          $('filter_link_students_' + filter_key).removeClassName('filter_selected');
+          jQuery('#filter_link_students_' + filter_key).removeClass('filter_selected');
         }
       });
-      $('filter_link_students_' + new_filter).addClassName('filter_selected');
+      jQuery('#filter_link_students_' + new_filter).addClass('filter_selected');
     },
     after_clear_filters: function(current_filters) {
       current_filters.each(function(filter_key) {
         if(filter_key != 'search') {
-          $('filter_link_students_' + filter_key).removeClassName('filter_selected');
+          jQuery('#filter_link_students_' + filter_key).removeClass('filter_selected');
         }
       });
-      $('filter_link_students_none').  addClassName('filter_selected');
+      jQuery('#filter_link_students_none').  addClass('filter_selected');
     },
     total_count_id: 'all_students_count',
     filter_count_ids: {
@@ -135,7 +134,7 @@ document.observe("dom:loaded", function() {
                     { 
                       asynchronous:true, 
                       evalScripts:true, 
-                      onComplete: function() { $('loading_list').hide(); }, 
+                      onComplete: function() { jQuery('#loading_list').hide(); }, 
                       parameters: 'authenticity_token=' + AUTH_TOKEN 
                     })
 
@@ -143,7 +142,7 @@ document.observe("dom:loaded", function() {
                     { 
                       asynchronous:true, 
                       evalScripts:true, 
-                      onComplete: function() { $('loading_students_list').hide(); }, 
+                      onComplete: function() { jQuery('#loading_students_list').hide(); }, 
                       parameters: 'authenticity_token=' + AUTH_TOKEN 
                     })
 });
