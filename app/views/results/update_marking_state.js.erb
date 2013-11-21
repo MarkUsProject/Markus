@@ -1,0 +1,13 @@
+if ( <%= escape_javascript(@result.marking_state == Result::MARKING_STATES[:complete]).html_safe %>){
+  # Hide error message (if any)
+  JQuery('#criterion_incomplete_error').hide();
+}
+
+if (<%= escape_javascript(@current_user.admin?).html_safe %>)
+	if ( <%= escape_javascript(@result.marking_state == Result::MARKING_STATES[:complete]).html_safe %>){
+		# Activate the checkbox to release/unrelease
+		jQuery('#released').find('input, textarea').each(function(i) { jQuery(this).removeAttr("readonly"); });
+	} else {
+		jQuery('#released').find('input, textarea').each(function(i) { jQuery(this).attr("readonly","readonly"); });
+	}
+}
