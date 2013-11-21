@@ -11,9 +11,9 @@
 //<![CDATA[
     dp.SyntaxHighlighter.ClipboardSwf = '/javascripts/syntaxhighlighter/clipboard.swf';
     dp.SyntaxHighlighter.HighlightAll('code');
-    $('standby_highlighting').hide();
-    if ($('annotation_menu') != null){
-      $('annotation_menu').show();
+    jQuery('#standby_highlighting').hide();
+    if (jQuery('#annotation_menu') != null){
+      jQuery('#annotation_menu').show();
     }
     source_code_ready();
 
@@ -21,7 +21,7 @@
         <% annots.each do |annot| %>
             add_annotation_text(<%=annot.annotation_text.id%>,
             '<%=simple_format(escape_javascript(annot.annotation_text.content.to_s))%>');
-            add_annotation(<%=annot.id%>, $R(<%= annot.line_start %>, <%= annot.line_end %>),
+            add_annotation(<%=annot.id%>, JQuery.range(<%= annot.line_start %>, <%= annot.line_end %>),
              '<%=annot.annotation_text.id%>');
 
         <% end %>
