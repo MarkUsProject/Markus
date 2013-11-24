@@ -36,9 +36,9 @@ jQuery(document).ready(function(){
         return !row.filter_valid;
       },
       search: function(row) {
-        return (row.name.toLowerCase().indexOf($('search_groupings').value.toLowerCase()) != -1
-        || row.members.toLowerCase().indexOf($('search_groupings').value.toLowerCase()) != -1
-        || row.student_names.toLowerCase().indexOf($('search_groupings').value.toLowerCase()) != -1);
+        return (row.name.toLowerCase().indexOf(jQuery('#search_groupings').value.toLowerCase()) != -1
+        || row.members.toLowerCase().indexOf(jQuery('#search_groupings').value.toLowerCase()) != -1
+        || row.student_names.toLowerCase().indexOf(jQuery('#search_groupings').value.toLowerCase()) != -1);
       }
     },
     after_filter_only_by: function(current_filters, new_filter) {
