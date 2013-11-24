@@ -13,7 +13,7 @@ class MarkusLogger
   # we only want one instance of this class through the whole
   # program.
   include Singleton
-  
+
   # DEBUG: low-level information for developers
   if !defined?(DEBUG)
     DEBUG = 1
@@ -32,13 +32,13 @@ class MarkusLogger
   end
   # FATAL: an unhandleable error that results in a program crash
   if !defined?(FATAL)
-    FATAL = 5 
+    FATAL = 5
   end
 
   #===Description
   # The singleton module makes the new method private.
   # To initialize a new MarkusLogger object it is necessary to call
-  # instance instead of new. 
+  # instance instead of new.
   # The variables that the loggers will use are defined in the
   # environment.rb file
   #===Exceptions

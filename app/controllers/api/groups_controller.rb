@@ -5,7 +5,7 @@ module Api
   class GroupsController < MainApiController
     # Define default fields to display for index and show methods
     @@default_fields = [:id, :group_name, :created_at, :updated_at, :first_name,
-                        :last_name, :user_name, :membership_status, 
+                        :last_name, :user_name, :membership_status,
                         :student_memberships]
 
     # Returns an assignment's groups along with their attributes
@@ -20,7 +20,7 @@ module Api
         return
       end
 
-      collection = Group.joins(:assignments).where(:assignments => 
+      collection = Group.joins(:assignments).where(:assignments =>
         {:id => params[:assignment_id]})
       groups = get_collection(Group, collection)
       fields = fields_to_render(@@default_fields)
@@ -28,9 +28,9 @@ module Api
       students = include_students(fields)
 
       respond_to do |format|
-        format.xml{render :xml => groups.to_xml(:only => fields, :root => 
+        format.xml{render :xml => groups.to_xml(:only => fields, :root =>
           'groups', :skip_types => 'true', :include => students)}
-        format.json{render :json => groups.to_json(:only => fields, 
+        format.json{render :json => groups.to_json(:only => fields,
           :include => students)}
       end
     end
@@ -61,9 +61,9 @@ module Api
         students = include_students(fields)
 
         respond_to do |format|
-          format.xml{render :xml => group.to_xml(:only => fields, :root => 
+          format.xml{render :xml => group.to_xml(:only => fields, :root =>
             'group', :skip_types => 'true', :include => students)}
-          format.json{render :json => group.to_json(:only => fields, 
+          format.json{render :json => group.to_json(:only => fields,
             :include => students)}
         end
       else

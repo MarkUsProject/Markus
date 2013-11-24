@@ -43,7 +43,7 @@ function filter(filter_name) {
     switch(filter_name) {
       case 'validated':
       case 'unvalidated':
-        groupings_table.filter_only_by(filter_name).render();  
+        groupings_table.filter_only_by(filter_name).render();
         break;
       case 'assigned':
       case 'unassigned':
@@ -160,7 +160,7 @@ function check_all (prefix, check) {
   for (i = 0; i < cbox.length; i++){
     if (cbox[i].type == 'checkbox'){
       if (cbox[i].name.split('_')[0] == prefix) {
-        if (check == true) { 
+        if (check == true) {
           cbox[i].checked = true;
         } else {
           cbox[i].checked = null;

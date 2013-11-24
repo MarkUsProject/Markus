@@ -1,4 +1,4 @@
-# encoding: utf-8
+  # encoding: utf-8
 require File.expand_path(File.join(File.dirname(__FILE__), 'authenticated_controller_test'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints'))
@@ -120,10 +120,13 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
 
     setup do
       @admin = Admin.make
+      @editor = Admin.make
       @category = AnnotationCategory.make
       @assignment = @category.assignment
       @annotation_text = AnnotationText.make(
-                :annotation_category => @category)
+                :annotation_category => @category,
+                :creator_id => @admin.id,
+                :last_editor_id => @admin.id)
     end
 
     should 'on :index' do
@@ -160,7 +163,6 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     end
 
     context 'on :update_annotation_category' do
-
       should 'update properly' do
         get_as @admin,
                :update_annotation_category,
@@ -201,16 +203,32 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
       assert_response :success
     end
 
+    context 'As another admin' do
+        should 'update last_editor_id with editor.id' do 
+          get_as @editor,
+                :update_annotation,
+                :assignment_id => 1,
+                :id => @annotation_text.id,
+                :annotation_text => @annotation_text,
+                :format => :js
+        @annotation_text = AnnotationText.find(@annotation_text.id)
+        assert_response :success
+        assert_equal @editor.id, @annotation_text.last_editor_id
+      end
+    end
+
     should 'on :add_annotation_text' do
-      AnnotationText.any_instance.expects(:save).never
+      @annotation_text = AnnotationText.make(:creator_id => @admin.id)
       get_as @admin,
              :add_annotation_text,
              :assignment_id => 1,
              :id => @category.id,
              :format => :js
+      @annotation_text = AnnotationText.find(@annotation_text.id)
       assert_response :success
       assert_not_nil assigns :annotation_category
       assert_nil assigns :annotation_text
+      assert_equal @admin.id, @annotation_text.creator_id
     end
 
     should 'on :delete_annotation_text' do
@@ -300,6 +318,7 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
                :format => :js
         assert_response :success
         assert_not_nil assigns :annotation_category
+        assert render_template 'insert_new_annotation_text'
       end
 
       should 'with errors on save' do

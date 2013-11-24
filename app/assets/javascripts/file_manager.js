@@ -1,4 +1,4 @@
-  // add new row of input 
+  // add new row of input
 function injectFileInput() {
   var new_file_field = new Element('input', {type: 'file',
                     name: 'new_files[]',
@@ -6,22 +6,22 @@ function injectFileInput() {
                     multiple: true});
   var new_file_field_row = new Element('tr');
   var new_file_field_input_column = new Element('td', {colspan: 4});
-  
+
   var remove_new_file_input = new Element('input', {type: 'checkbox'});
-  
+
   remove_new_file_input.observe('change', function(node) {
     $(new_file_field_row).remove();
     enableDisableSubmit();
   });
-  
+
   var remove_new_file_field_column = new Element('td');
   remove_new_file_field_column.insert(remove_new_file_input);
   remove_new_file_field_column.addClassName('delete_row');
-  
+
   new_file_field_input_column.insert(new_file_field);
   new_file_field_row.insert(new_file_field_input_column);
   new_file_field_row.insert(remove_new_file_field_column);
-  
+
   $('add_file_tbody').insert( {top: new_file_field_row});
   new_file_field.focus();
   enableDisableSubmit();
@@ -29,9 +29,9 @@ function injectFileInput() {
 
 function enableDisableSubmit() {
   var hasRows = false;
-  $$('tbody').each(function(item) {  
+  $$('tbody').each(function(item) {
       var oRows = item.getElementsByTagName('tr');
-      var iRowCount = oRows.length; 
+      var iRowCount = oRows.length;
       if (iRowCount >0) {
           hasRows = true;
         }
@@ -39,7 +39,7 @@ function enableDisableSubmit() {
   if (hasRows) {
     $$('#submit_form input[type=submit]').each(function(item) { item.enable() } );
   } else {
-    $$('#submit_form input[type=submit]').each(function(item) { item.disable() } ); 
+    $$('#submit_form input[type=submit]').each(function(item) { item.disable() } );
   }
 }
 /*

@@ -138,7 +138,7 @@ input[type=button]:active, input[type=submit]:active, input[type=reset]:active, 
 input[type=button][disabled], input[type=submit][disabled], input[type=reset][disabled], button[disabled], .button[disabled] {
   background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ededed), color-stop(1, #dfdfdf) );
   background: -moz-linear-gradient( center top, #ededed 5%, #dfdfdf 100% );
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');  
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
   border-color: #a7b8be;
   top: 0px;
 }
@@ -338,7 +338,7 @@ legend {
 }
 
 
-/* Left aligns show total checkbox on 
+/* Left aligns show total checkbox on
    grade entry form properties */
 
 #grade_entry_form_show_total {
@@ -1145,8 +1145,8 @@ input#extra_mark_description{
 
 #role_switch_dialog, #ie_warning_dialog {
   background-color: #fff;
-  padding: 10px;  
-  border: 10px solid #333;  
+  padding: 10px;
+  border: 10px solid #333;
 }
 
 #ie_warning_dialog {
@@ -1966,6 +1966,15 @@ ul#annotation_list li{
    margin-left: 5px;
    font-size: 0.9em;
 }
+
+.annotation_text_authors{
+   color: #464646;
+   font-style: italic;
+   margin-left: 5px;
+   display:inline-block;
+   width:200px;
+ }
+
 /* Admin interface: Assignment View*/
 .disable {
   font-style: italic;

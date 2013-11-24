@@ -19,7 +19,7 @@ Markus::Application.configure do
   #
   config.log_level = :info
   # set log-level (:debug, :info, :warn, :error, :fatal)
-  
+
   # Compress both stylesheets and JavaScripts
   config.assets.js_compressor  = :uglifier
   config.assets.css_compressor = :scss
