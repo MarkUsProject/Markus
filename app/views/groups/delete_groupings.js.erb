@@ -8,10 +8,12 @@ if ("<%= escape_javascript(!@errors.empty?).html_safe %>") {
 
 <%= escape_javascript(render(:partial => 'shared/global_action_warning')) %>
 
+<%=
 ids = []
 @removed_groupings.each do |grouping|
   ids.push(grouping.id)
 end
+%>
 
 modify_students.<%= escape_javascript(@students_data.to_json) %>
 remove_groupings.<%= escape_javascript(ids.to_json) %>
