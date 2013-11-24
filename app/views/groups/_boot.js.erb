@@ -5,7 +5,8 @@ jQuery(document).ready(function(){
   jQuery('#errors').hide();
 
   jQuery(document).scroll(function() {  
-     // 110 is the displacement for "top" for .centreColumn as can be seen in the main.css
+    // force the middle column to be moved on the y-axis as the page is scrolled
+    // 110 is the displacement for "top" for .centreColumn as can be seen in the main.css
      jQuery('#centreColumn').css(top,(jQuery(document).scrollTop() + 110) + 'px');
   }); 
 
@@ -148,4 +149,5 @@ jQuery(document).ready(function(){
           jQuery('#loading_students_list').hide();
           populate(JSON.stringify(data));
    });
+
 });
