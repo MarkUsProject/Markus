@@ -1,0 +1,3 @@
+<%= escape_javascript(render(:partial => 'shared/global_action_warning')) %>
+modify_graders.("<%= escape_javascript(@graders_data.to_json).html_safe %>");
+modify_groupings.("<%= escape_javascript(@students_data.to_json).html_safe %>");
