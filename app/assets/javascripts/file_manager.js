@@ -1,5 +1,5 @@
   // add new row of input
-
+function injectFileInput() {
   var new_file_field = jQuery('<input>', {  
 		type: 'file',
     name: 'new_files[]',
@@ -33,7 +33,7 @@
   new_file_field_row.append(remove_new_file_field_column);
 
   jQuery('#add_file_tbody').prepend(new_file_field_row);
-  new_file_field.select();
+  new_file_field.focus();
   enableDisableSubmit();
 }
 
