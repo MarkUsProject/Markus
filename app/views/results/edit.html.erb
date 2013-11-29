@@ -9,7 +9,8 @@
   "dragdrop.js",
   "controls.js",
   "DropDownMenu/DropDownMenu.js",
-  "ResizePane/ResizePane.js" %>
+  "ResizePane/ResizePane.js",
+	"jquery-ui.js"%>
 
 <% # SOURCE CODE GLOWER AND IMAGE ANNOTATION MANAGER %>
 <%= javascript_include_tag "SourceCodeGlower/AnnotationText.js",
@@ -52,8 +53,8 @@
 //<![CDATA[
 
   var modalNotesGroup = null;
-  document.observe("dom:loaded", function(){
-    modalNotesGroup = new Control.Modal($('notes_dialog'),
+  jQuery(document).ready(function(){
+    modalNotesGroup = new Control.Modal(jQuery('#notes_dialog'),
      {
        overlayOpacity: 0.75,
        className: 'modalNotesGroup',
@@ -61,18 +62,17 @@
       });
 
   // Set up the "working" notices
-  Ajax.Responders.register({
-    onCreate: function() {
-      $('working').show();
+
+	jQuery.ajaxSend(function() {
+      jQuery('#working').show();
       window.onbeforeunload = check_working;
-    },
-    onComplete: function() {
-      $('working').hide();
+  });
+	jQuery.ajaxStop(function() {
+      jQuery('#working').hide();
       window.onbeforeunload = null;
-    }
   });
 
- })
+ });
 
 
 function check_working() {
