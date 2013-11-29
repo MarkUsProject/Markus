@@ -2,16 +2,18 @@
   <p>
     <%= label_tag "assignment_id", I18n.t("notes.noteables.Assignment") %>
     <%= select_tag "assignment_id",
-                   options_from_collection_for_select(@assignments,
-                                                      :id,
-                                                      :short_identifier),
-                   :onchange =>  "jQuery('#loading_groupings').show();
-																	jQuery.ajax({ url: '" + new_update_groupings_notes_path() + "',
-																	success: function(json){jQuery('#loading_groupings').hide()},
-																	data: jQuery(this).serialize + '&authenticity_token=' + AUTH_TOKEN,
-																	type: "POST",
-																	async: true
-																	});
+                   options_from_collection_for_select(
+ @assignments,
+ :id,
+ :short_identifier),
+ :onchange =>  "jQuery('#loading_groupings').show();
+								jQuery.ajax({ url: '" + new_update_groupings_notes_path() + "',
+								success: function(json){jQuery('#loading_groupings').hide()},
+								data: jQuery(this).serialize + '&authenticity_token=' 
+																																	+ AUTH_TOKEN,
+								type: "POST",
+								async: true
+								});"
 
     %>
   </p>
