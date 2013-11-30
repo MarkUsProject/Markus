@@ -16,9 +16,18 @@ var is_image;
 function source_code_ready() {
   annotation_manager = null;
   jQuery('#loading_code').hide();
-  jQuery('#select_file_id').find('input, textarea').each(function(i) { jQuery(this).removeAttr("readonly"); });
-  syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter(;
-      jQuery('.dp-highlighter').first().getElementsBySelector('ol').first());
+  jQuery('#select_file_id').find('input, textarea').each(function(i) {jQuery(this).removeAttr("readonly"); });
+
+	//console.log("VOICI .dp-highlighter :")
+	//console.log($$('.dp-highlighter').first);
+	//console.log(jQuery('.dp-highlighter')[0].getElementsBySelector('ol')[0]);
+	//console.log($( ".dp-highlighter:first" ));
+	//console.log();
+	//jQuery('.dp-highlighter').each(function(){ console.log(":-D"); console.log(jQuery(this)); });
+	//console.log("CT .dp-highlighter")
+
+  syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter(
+      jQuery('.dp-highlighter')[0].getElementsBySelector('ol')[0]);
 
   //Apply modifications to Syntax Highlighter
   syntax_highlighter_adapter.applyMods();
@@ -164,6 +173,9 @@ function make_new_annotation() {
 
 function make_new_image_annotation() {
   var box = jQuery("#sel_box");
+	console.log("VOICI BOOOX :");
+	console.log(box);
+	console.log("CT BOX");
   var x1 = parseInt(box.style.left) -
     jQuery("#image_preview").offsetLeft +
     jQuery("#image_container").scrollLeft;
@@ -210,34 +222,34 @@ function add_existing_annotation(annotation_text_id) {
       return false
     }
 	
-	jQuery.ajax({
-	  url: "<%= add_existing_annotation_annotations_path() %>",
-	  data: 'annotation_type=image' +
-			'&submission_file_id='+ jQuery('#select_file_id').value +
-			'&annotation_text_id='+ annotation_text_id +
-			'&x1=' +  x1 + '&x2=' + x2 +
-			'&y1=' + y1 + '&y2=' + y2 +
-			'&authenticity_token=' + AUTH_TOKEN,
-	  type: "POST",
-	  async: true
-	});
+		jQuery.ajax({
+			url: "<%= add_existing_annotation_annotations_path() %>",
+			data: 'annotation_type=image' +
+				'&submission_file_id='+ jQuery('#select_file_id').val() +
+				'&annotation_text_id='+ annotation_text_id +
+				'&x1=' +  x1 + '&x2=' + x2 +
+				'&y1=' + y1 + '&y2=' + y2 +
+				'&authenticity_token=' + AUTH_TOKEN,
+			type: "POST",
+			async: true
+		});
 		
   } else {
-    positions = get_mouse_positions();
-    if (!positions) {
-      return false;
-    }
+	  positions = get_mouse_positions();
+	  if (!positions) {
+	    return false;
+	  }
 
-	jQuery.ajax({
-	  url: "<%= add_existing_annotation_annotations_path() %>",
-	  data: 'submission_file_id='+ jQuery('#select_file_id').value + 
-			'&line_start=' + positions.line_start + 
-			'&line_end=' + positions.line_end +
-			'&annotation_text_id='+  annotation_text_id +
-			'&authenticity_token=' + AUTH_TOKEN,
-	  type: "POST",
-	  async: true
-	});
+		jQuery.ajax({
+			url: "<%= add_existing_annotation_annotations_path() %>",
+			data: 'submission_file_id='+ jQuery('#select_file_id').val() + 
+				'&line_start=' + positions.line_start + 
+				'&line_end=' + positions.line_end +
+				'&annotation_text_id='+  annotation_text_id +
+				'&authenticity_token=' + AUTH_TOKEN,
+			type: "POST",
+			async: true
+		});
   }
 }
 
@@ -245,7 +257,7 @@ function add_existing_annotation(annotation_text_id) {
 function load_submitted_file(submission_file_id, focus_line) {
   // Clear out any annotation_texts still on the screen
   jQuery('.annotation_text_display').each(function(index) {
-	jQuery(this).remove();
+		jQuery(this).remove();
   });
   
   jQuery('#loading_code').show();  
@@ -290,7 +302,7 @@ function submit_new_annotation(content, category_id, x1, x2, y1, y2) {
     jQuery.ajax({
       url: "<%=annotations_path()%>",
       data: 'annotation_type=text' +
-			'&submission_file_id='+ jQuery('#select_file_id').value +
+			'&submission_file_id='+ jQuery('#select_file_id').val() +
 			'&line_start=' + positions.line_start +
 			'&line_end=' +  positions.line_end +
 			'&content=' + encodeURIComponent(content) +
@@ -304,7 +316,7 @@ function submit_new_annotation(content, category_id, x1, x2, y1, y2) {
     jQuery.ajax({
       url: "<%=annotations_path()%>",
       data: 'annotation_type=image' +
-            '&submission_file_id='+ jQuery('#select_file_id').value +
+            '&submission_file_id='+ jQuery('#select_file_id').val() +
             '&content=' + encodeURIComponent(content) +
             '&category_id=' + category_id +
             '&x1=' + x1 + '&x2=' + x2 + 
