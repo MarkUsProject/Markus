@@ -1,0 +1,10 @@
+jQuery('#criterion_title_#{@criterion.id}').html("<%= escape_javascript(render @criterion.flexible_criterion_name}).html_safe %>");
+
+
+jQuery('#criterion_max_#{@criterion.id}').html("<%= escape_javascript(render @criterion.max}).html_safe %>");
+
+
+jQuery('#criteria_total_mark').html("<%= escape_javascript(render @criterion.assignment.total_mark}).html_safe %>");
+
+
+jQuery('#flexible_edition_pane_menu').html("<%= escape_javascript(render partial => 'criterion_editor', :locals => {:criterion => @criterion}).html_safe %>");
