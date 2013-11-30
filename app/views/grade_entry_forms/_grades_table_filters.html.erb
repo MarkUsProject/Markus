@@ -5,19 +5,23 @@
 <%= select_tag "alpha_category",
                 options_for_select(alpha_pagination_options, alpha_category),
                 :onchange => "ap_thinking_start('grades');
-                new Ajax.Request('" +
-                    g_table_paginate_grade_entry_form_path(
+                jQuery.ajax({
+   url: "" + g_table_paginate_grade_entry_form_path(
                         :id => grade_entry_form.id,
                         :filter => filter,
-                        :sort_by => sort_by)+ "',
-                    { asynchronous:true,
-                      evalScripts:true,
-                      onComplete:function(request){ap_thinking_stop();},
-                      parameters:'alpha_category=' + this.options[this.selectedIndex].value
+                        :sort_by => sort_by)+ "",
+   data: ''alpha_category=' + this.options[this.selectedIndex].value
                 	            + '&page=' + (this.selectedIndex+1)
-                	            + '&per_page=' + $('per_page').options[$('per_page').selectedIndex].value
+                	            + '&per_page=' + jQuery('per_page').options[jQuery('per_page').selectedIndex].value
                 	            + '&update_alpha_pagination_options=' + false
-                	            + '&authenticity_token=' + AUTH_TOKEN })" -%>
+                	            + '&authenticity_token=' + AUTH_TOKEN,
+   type: "POST",
+   async: true,
+   dataType: 'json'
+ }).done(function (data) {
+           ap_thinking_stop();
+           populate(JSON.stringify(data));
+         });
 
 <input type="hidden" name="alpha_category" value="<%=alpha_category%>" >
 <% end %>
@@ -27,18 +31,25 @@
 <%= t('pagination.show') %>
 <%= select_tag "per_page", options_for_select(per_pages, per_page.to_i),
     :onchange => "ap_thinking_start('grades');
-      new Ajax.Request('" +
+     jQuery.ajax({
+   url: "" +
         g_table_paginate_grade_entry_form_path(
             :id => grade_entry_form.id,
             :filter => filter,
             :sort_by => sort_by,
-            :desc => desc)+ "',
-        { asynchronous:true,
-          evalScripts:true,
-          onComplete:function(request){ap_thinking_stop();},
-          parameters:'per_page=' + this.options[this.selectedIndex].value
+            :desc => desc)+ "",
+   data: 'per_page=' + this.options[this.selectedIndex].value
           + '&update_alpha_pagination_options=' + true
-          + '&authenticity_token=' + AUTH_TOKEN })" -%>
+          + '&authenticity_token=' + AUTH_TOKEN ,
+   type: "POST",
+   async: true,
+   dataType: 'json'
+ }).done(function (data) {
+           ap_thinking_stop();
+           populate(JSON.stringify(data));
+         });
+
+
 
 <%= label_tag "per_page", ' ' + t('pagination.per_page'), :class => "inline_label" %>
 <input type="hidden" name="per_page" value="<%=per_page%>">
