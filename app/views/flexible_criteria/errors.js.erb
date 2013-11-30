@@ -1,0 +1,5 @@
+jQuery('#criterion_#{@criterion.id}_error').html("<%= escape_javascript(render :partial => 'errors_list', :locals => { :criterion => @criterion }).html_safe %>");
+
+
+
+jQuery('criterion_#{@criterion.id}_error').show();
