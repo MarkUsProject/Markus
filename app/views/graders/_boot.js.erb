@@ -3,18 +3,16 @@
 
 var groupings_table = null;
 
-document.observe("dom:loaded", function() {
+jQuery(document).ready(function(){})
   // Hide AJAX errors DIV
-  $('errors').hide();
+  jQuery('#errors').hide();
 
   //force the middle column to be moved on the y-axis as the page is scrolled
-	Event.observe(document, "scroll", function() {
-		//110 is the displacement for "top" for .centreColumnGraders as can be seen in the main.css
-		$("centreColumn").setStyle({top: (document.viewport.getScrollOffsets().top + 110) +'px' });
-	});
-
+	jQuery(document).scroll(function(){}) 
+		//110 is the displacement for "top" for .centreColumnGraders as can be seen in the main.css		
+jQuery('#centreColumn').css('document.viewport.getScrollOffsets().top','110')
   groupings_table = new FilterTable({
-    table_id: $('groups'),
+    table_id: jQuery('groups'),
     headers: {
       name: {display: "<%= I18n.t('name') %>", sortable: true},
       section: {display: "<%= I18n.t('graders.section') %>", sortable: true},
@@ -43,32 +41,32 @@ document.observe("dom:loaded", function() {
         return !row.filter_valid;
       },
       search: function(row) {
-        return (row.name.toLowerCase().indexOf($('search_groupings').value.toLowerCase()) != -1
-        || row.graders.toLowerCase().indexOf($('search_groupings').value.toLowerCase()) != -1
-        || row.grader_names.toLowerCase().indexOf($('search_groupings').value.toLowerCase()) != -1);
+        return (row.name.toLowerCase().indexOf(jQuery('#search_groupings').value.toLowerCase()) != -1
+        || row.graders.toLowerCase().indexOf(jQuery('#search_groupings').value.toLowerCase()) != -1
+        || row.grader_names.toLowerCase().indexOf(jQuery('#search_groupings').value.toLowerCase()) != -1);
       },
       selection: function(row) {
         return (row.section.toLowerCase() ==
-                  $('selection_groupings_sections').value.toLowerCase() ||
-                $('selection_groupings_sections').value.toLowerCase() == '');
+                  jQuery('#selection_groupings_sections').value.toLowerCase() ||
+                jQuery('#selection_groupings_sections').value.toLowerCase() == '');
       }
     },
     after_filter_only_by: function(current_filters, new_filter) {
-      $('filter_link_none').removeClassName('filter_selected');
+      jQuery('filter_link_none').removeClassName('filter_selected');
       current_filters.each(function(filter_key) {
         if(filter_key != 'search') {
-          $('filter_link_' + filter_key).removeClassName('filter_selected');
+          jQuery('filter_link_' + filter_key).removeClassName('filter_selected');
         }
       });
-      $('filter_link_' + new_filter).addClassName('filter_selected');
+      jQuery('#filter_link_' + new_filter).addClassName('filter_selected');
     },
     after_clear_filters: function(current_filters) {
       current_filters.each(function(filter_key) {
         if(filter_key != 'search') {
-          $('filter_link_' + filter_key).removeClassName('filter_selected');
+          jQuery('filter_link_' + filter_key).removeClassName('filter_selected');
         }
       });
-      $('filter_link_none').addClassName('filter_selected');
+      jQuery('filter_link_none').addClassName('filter_selected');
     },
     sorts: {
       nohtml: function(a, b) {
@@ -84,7 +82,7 @@ document.observe("dom:loaded", function() {
 
 
   graders_table = new FilterTable({
-    table_id: $('graders'),
+    table_id: jQuery('graders'),
     headers: {
       user_name: {display: "<%= I18n.t('user.user_name') %>", sortable: true},
       full_name: {display: "<%= I18n.t('user.full_name') %>", sortable: true},
@@ -112,27 +110,27 @@ document.observe("dom:loaded", function() {
         return !row.filter_grader_assigned;
       },
       search: function(row) {
-        return (row.user_name.toLowerCase().indexOf($('search_graders').value.toLowerCase()) != -1
-        || row.first_name.toLowerCase().indexOf($('search_graders').value.toLowerCase()) != -1
-        || row.last_name.toLowerCase().indexOf($('search_graders').value.toLowerCase()) != -1);
+        return (row.user_name.toLowerCase().indexOf(jQuery('#search_graders').value.toLowerCase()) != -1
+        || row.first_name.toLowerCase().indexOf(jQuery('#search_graders').value.toLowerCase()) != -1
+        || row.last_name.toLowerCase().indexOf(jQuery('#search_graders').value.toLowerCase()) != -1);
       }
     },
     after_filter_only_by: function(current_filters, new_filter) {
-      $('filter_link_graders_none').removeClassName('filter_selected');
+      jQuery('filter_link_graders_none').removeClassName('filter_selected');
       current_filters.each(function(filter_key) {
         if(filter_key != 'search') {
-          $('filter_link_graders_' + filter_key).removeClassName('filter_selected');
+          jQuery('filter_link_graders_' + filter_key).removeClassName('filter_selected');
         }
       });
-      $('filter_link_graders_' + new_filter).addClassName('filter_selected');
+      jQuery('filter_link_graders_' + new_filter).addClassName('filter_selected');
     },
     after_clear_filters: function(current_filters) {
       current_filters.each(function(filter_key) {
         if(filter_key != 'search') {
-          $('filter_link_graders_' + filter_key).removeClassName('filter_selected');
+          jQuery('filter_link_graders_' + filter_key).removeClassName('filter_selected');
         }
       });
-      $('filter_link_graders_none').  addClassName('filter_selected');
+      jQuery('filter_link_graders_none').addClassName('filter_selected');
     },
     total_count_id: 'all_graders_count',
     filter_count_ids: {
@@ -143,7 +141,7 @@ document.observe("dom:loaded", function() {
 
 
   criteria_table = new FilterTable({
-    table_id: $('criteria'),
+    table_id: jQuery('criteria'),
     headers: {
       criterion_name: {display: "<%= I18n.t('criterion_name') %>", sortable: true},
       members: {display: "<%= I18n.t('graders.graders') %>", sortable: true, sort_with: 'nohtml'},
@@ -165,26 +163,26 @@ document.observe("dom:loaded", function() {
     default_filters: [],
     filters: {
       search: function(row) {
-        return (row.criterion_name.toLowerCase().indexOf($('search_criteria').value.toLowerCase()) != -1
-             || row.members.toLowerCase().indexOf($('search_criteria').value.toLowerCase()) != -1);
+        return (row.criterion_name.toLowerCase().indexOf(jQuery('#search_criteria').value.toLowerCase()) != -1
+             || row.members.toLowerCase().indexOf(jQuery('#search_criteria').value.toLowerCase()) != -1);
       }
     },
     after_filter_only_by: function(current_filters, new_filter) {
-      $('filter_link_criteria_none').removeClassName('filter_selected');
+      jQuery('filter_link_criteria_none').removeClassName('filter_selected');
       current_filters.each(function(filter_key) {
         if(filter_key != 'search') {
-          $('filter_link_criteria_' + filter_key).removeClassName('filter_selected');
+          jQuery('filter_link_criteria_' + filter_key).removeClassName('filter_selected');
         }
       });
-      $('filter_link_criteria_' + new_filter).addClassName('filter_selected');
+      jQuery('filter_link_criteria_' + new_filter).addClassName('filter_selected');
     },
     after_clear_filters: function(current_filters) {
       current_filters.each(function(filter_key) {
         if(filter_key != 'search') {
-          $('filter_link_criteria_' + filter_key).removeClassName('filter_selected');
+          jQuery('filter_link_criteria_' + filter_key).removeClassName('filter_selected');
         }
       });
-      $('filter_link_criteria_none').  addClassName('filter_selected');
+      jQuery('filter_link_criteria_none').addClassName('filter_selected');
     },
     total_count_id: 'all_criteria_count',
     sorts: {
@@ -194,37 +192,46 @@ document.observe("dom:loaded", function() {
     }
   });
 
-  new Ajax.Request('<%= populate_graders_assignment_graders_path(@assignment) %>', {
-    asynchronous: true,
-    evalScripts: true,
-    onComplete: function(request){$('loading_graders_list').hide()},
-    parameters: {
-      'authenticity_token': AUTH_TOKEN
-    }
-  });
 
-  new Ajax.Request('<%= populate_assignment_graders_path(@assignment) %>', {
-    asynchronous: true,
-    evalScripts: true,
-    onComplete: function(request){$('loading_list').hide()},
-    parameters: {
-      'authenticity_token': AUTH_TOKEN
-    }
-  });
+jQuery.ajax({
+   url: "<%= populate_graders_assignment_graders_path(@assignment) %>",
+   data: 'authenticity_token': AUTH_TOKEN,
+   type: "POST",
+   async: true,
+   dataType: 'json'
+ }).done(function (data) {
+           jQuery('#loading_graders_list').hide();
+           populate(JSON.stringify(data));
+         });
+
+jQuery.ajax({
+   url: "<%= populate_graders_assignment_graders_path(@assignment) %>",
+   data: 'authenticity_token': AUTH_TOKEN,
+   type: "POST",
+   async: true,
+   dataType: 'json'
+ }).done(function (data) {
+           jQuery('#loading_list').hide();
+           populate(JSON.stringify(data));
+         });
+
 
   <% if !@assignment.assign_graders_to_criteria %>
-    $('criteria').hide();
-    $('search_criteria').hide();
-    $('search_criteria_label').hide();
+    jQuery('#criteria').hide();
+    jQuery('#search_criteria').hide();
+    jQuery('#search_criteria_label').hide();
   <% else %>
-    new Ajax.Request('<%= populate_criteria_assignment_graders_path(@assignment) %>', {
-      asynchronous: true,
-      evalScripts: true,
-      onComplete: function(request){$('loading_list').hide()},
-      parameters: {
-        'authenticity_token': AUTH_TOKEN
-      }
-    });
+
+jQuery.ajax({
+   url: "<%= populate_criteria_assignment_graders_path(@assignment) %>",
+   data: 'authenticity_token': AUTH_TOKEN,
+   type: "POST",
+   async: true,
+   dataType: 'json'
+ }).done(function (data) {
+           jQuery('#loading_list').hide();
+           populate(JSON.stringify(data));
+         });
   <% end %>
 });
 
