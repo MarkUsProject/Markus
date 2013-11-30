@@ -17,7 +17,7 @@ function source_code_ready() {
   annotation_manager = null;
   jQuery('#loading_code').hide();
   jQuery('#select_file_id').find('input, textarea').each(function(i) { jQuery(this).removeAttr("readonly"); });
-  syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter(
+  syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter(;
       jQuery('.dp-highlighter').first().getElementsBySelector('ol').first());
 
   //Apply modifications to Syntax Highlighter
