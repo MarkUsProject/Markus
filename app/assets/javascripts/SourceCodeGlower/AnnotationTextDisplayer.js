@@ -18,8 +18,13 @@ var TEXT_DISPLAY_Y_OFFSET = 5;
 var AnnotationTextDisplayer = Class.create({
   initialize: function(parent_node) {
     //Create the div that we will display in
-    this.display_node = new Element('div', {'class': 'annotation_text_display', 'onmousemove': 'hide_image_annotations()'});
-    $(parent_node).appendChild(this.display_node);
+		this.display_node = jQuery('<div>');
+		this.display_node.addClass('annotation_text_display');
+		this.display_node.mousemove(function(event) {
+			hide_image_annotations();
+		});
+
+    jQuery(parent_node).append(this.display_node);
     this.hide();
   },
   //Assumes collection is subclass of Prototype Enumerable class
@@ -51,20 +56,18 @@ var AnnotationTextDisplayer = Class.create({
     }
   },
   updateDisplayNode: function(text, x, y) {
-    var display_node = $(this.getDisplayNode());
-    display_node.update(text);
-    display_node.setStyle({
-      left: (x + TEXT_DISPLAY_X_OFFSET) + 'px',
-      top: (y + TEXT_DISPLAY_Y_OFFSET) + 'px'
-    });
+    var display_node = jQuery(this.getDisplayNode());
+    display_node.html(text);
+    display_node.css('left', (x + TEXT_DISPLAY_X_OFFSET) + 'px');
+    display_node.css('top', (y + TEXT_DISPLAY_Y_OFFSET) + 'px');
   },
   //Hide the displayer
   hide: function() {
-    $(this.display_node).hide();
+    jQuery(this.display_node).hide();
   },
   //Show the displayer
   show: function() {
-    $(this.display_node).show();
+    jQuery(this.display_node).show();
   },
   //Returns whether or not the Displayer is showing
   getShowing: function() {
@@ -72,7 +75,7 @@ var AnnotationTextDisplayer = Class.create({
   },
   //Returns the DIV that we're displaying in
   getDisplayNode: function() {
-    return $(this.display_node);
+    return jQuery(this.display_node);
   }
   
 });
