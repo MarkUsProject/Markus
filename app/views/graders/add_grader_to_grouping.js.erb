@@ -1,0 +1,6 @@
+page << render(:partial => 'shared/global_action_warning')
+page.call 'modify_graders', @graders_data.to_json
+page.call 'modify_groupings', @groupings_data.to_json
+page.call 'modify_criteria', @criteria_data.to_json
+
+Query('#roups_coverage_dialog').html("<%= escape_javascript(render :partial => 'graders/modal_dialogs/groups_coverage'}).html_safe %>");
