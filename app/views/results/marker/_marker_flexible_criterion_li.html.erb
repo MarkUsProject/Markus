@@ -2,6 +2,8 @@
 # Erb template for display flexible criterion in the grader view
 %>
 
+<%= javascript_include_tag "jquery-ui.js" %>
+
 <li class="<%= cycle('mark_criterion_holder_A', 'mark_criterion_holder_B') %>" id="<%= "flexible_criterion_#{mark_criterion.id}" %>">
 <!--Mark update info -->
 <div id="mark_verify_result_<%=mark.id%>" class="error" style="display:none;" ><%= I18n.t("marker.marks.invalid_mark") %></div>
