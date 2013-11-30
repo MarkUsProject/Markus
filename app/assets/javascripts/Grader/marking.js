@@ -1,4 +1,4 @@
-document.observe('dom:loaded', function() {
+jQuery(document).ready(function(){}); 
 
   // changing the marking status
   new Form.Element.EventObserver('marking_state', function(element, value) {
@@ -18,10 +18,10 @@ document.observe('dom:loaded', function() {
   });
 
   // releasing the grades, only available on the admin page
-  var release = $('released')
-  if (release)
+  var release = jquery('released')
+  if (releas
   {
-    new Form.Element.EventObserver(release, function(element, value) {
+    new Form.Element.EventObserver(release, function(element, value) // how i can use it ?{
 
       var url = element.readAttribute('data-action');
 
@@ -68,7 +68,7 @@ document.observe('dom:loaded', function() {
 });
 
 function focus_mark_criterion(id) {
-  if($('mark_criterion_title_' + id + '_expand').hasClassName('expanded')) {
+  if(jquery('#mark_criterion_title_' + id + '_expand').hasClass('expanded')) {
     hide_criterion(id);
   } else {
     show_criterion(id);
@@ -76,29 +76,29 @@ function focus_mark_criterion(id) {
 }
 
 function hide_criterion(id) {
-    $('mark_criterion_inputs_' + id).hide();
-    $('mark_criterion_title_' + id).show();
-    $('mark_criterion_title_' + id + "_expand").innerHTML = "+ &nbsp;"
-    $('mark_criterion_title_' + id + "_expand").removeClassName('expanded');
+    jquery('#mark_criterion_inputs_' + id).hide();
+    jquery('#mark_criterion_title_' + id).show();
+    jquery('mark_criterion_title_' + id + "_expand").innerHTML = "+ &nbsp;"
+    jquery('#mark_criterion_title_' + id + "_expand").removeClass('expanded');
 }
 
 function show_criterion(id) {
-    $('mark_criterion_title_'+id+"_expand").innerHTML = "- &nbsp;"
-    $('mark_criterion_inputs_' + id).show();
-    $('mark_criterion_title_' + id + "_expand").addClassName('expanded');
+    jquery('mark_criterion_title_'+id+"_expand").innerHTML = "- &nbsp;"
+    jquery('mark_criterion_inputs_' + id).show();
+    jquery('mark_criterion_title_' + id + "_expand").addClass('expanded');
 }
 
 function select_mark(mark_id, mark) {
-  original_mark = $$('#mark_' + mark_id + '_table .rubric_criterion_level_selected').first()
+  original_mark = jquery('#mark_' + mark_id + '_table .rubric_criterion_level_selected').first()
   if (typeof(original_mark) != "undefined") {
-    original_mark.removeClassName('rubric_criterion_level_selected');
+    original_mark.removeClass('rubric_criterion_level_selected');
   }
   if (mark != null){
-	$('mark_' + mark_id + '_' + mark).addClassName('rubric_criterion_level_selected');
+	jquery('mark_' + mark_id + '_' + mark).addClass('rubric_criterion_level_selected');
   }
 }
 
 function update_total_mark(total_mark) {
-  $('current_mark_div').update(total_mark);
-  $('current_total_mark_div').update(total_mark);
+  jquery('current_mark_div').update(total_mark);
+  jquery('current_total_mark_div').update(total_mark);
 }
