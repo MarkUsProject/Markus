@@ -1,0 +1,71 @@
+jQuery('#grades').replaceWith("<%= escape_javascript(render :partial => 'grades_table'}).html_safe %>");
+
+
+
+
+jQuery('#ap_page_links_1').html("<%= escape_javascript(render :partial => 'ajax_paginate/initial_paginate_links_alpha', :locals => :per_page => @per_page, :current_page => @current_page.to_i,
+                                                             :page_items => @students.size, :total_items => @students_total,
+                                                             :assignment => @grade_entry_form, :filter => @filter,
+                                                             :sort_by => @sort_by, :desc => @desc, :action => 'g_table_paginate',
+                                                             :table_name => 'grades', :alpha_category => @alpha_category,
+                                                             :alpha_pagination_options => @alpha_pagination_options}).html_safe %>");
+
+
+
+
+
+
+jQuery('#ap_page_links_2').html("<%= escape_javascript(render :partial => 'ajax_paginate/initial_paginate_links_alpha',
+                                                 :locals => {:per_page => @per_page, :current_page => @current_page.to_i,
+                                                             :page_items => @students.size, :total_items => @students_total,
+                                                             :assignment => @grade_entry_form, :filter => @filter,
+                                                             :sort_by => @sort_by, :desc => @desc, :action => 'g_table_paginate',
+                                                             :table_name => 'grades', :alpha_category => @alpha_category,
+                                                             :alpha_pagination_options => @alpha_pagination_options}).html_safe %>");
+
+
+
+
+
+
+jQuery('#ap_filters_1').html("<%= escape_javascript(render :partial => 'grades_table_filters',
+                                              :locals => {:filter => @filter, :sort_by => @sort_by, :desc => @desc,
+                                              :grade_entry_form => @grade_entry_form, :filters => @filters,
+                                              :per_page => @per_page, :per_pages => @per_pages,
+                                              :alpha_pagination_options => @alpha_pagination_options,
+                                              :alpha_category => @alpha_category}).html_safe %>");
+
+
+
+
+
+
+
+jQuery('#ap_filters_2').html("<%= escape_javascript(render :partial => 'grades_table_filters',
+                                              :locals => {:filter => @filter, :sort_by => @sort_by, :desc => @desc,
+                                              :grade_entry_form => @grade_entry_form, :filters => @filters,
+                                              :per_page => @per_page, :per_pages => @per_pages,
+                                              :alpha_pagination_options => @alpha_pagination_options,
+                                              :alpha_category => @alpha_category}).html_safe %>");
+
+
+
+
+
+jQuery('#grades_table_head').html("<%= escape_javascript(render :partial => 'grades_table_column_names',
+                                                    :locals => {:filter => @filter, :per_page => @per_page,
+                                                    :sort_by => @sort_by, :desc => @desc, :controller => 'grade_entry_forms',
+                                                    :action => 'grades'}).html_safe %>");
+
+
+
+
+
+jQuery('#grades_table_footer').html("<%= escape_javascript(render :partial => 'grades_table_column_names',
+                                                      :locals => {:filter => @filter, :per_page => @per_page,
+                                                      :sort_by => @sort_by, :desc => @desc, :controller => 'grade_entry_forms',
+                                                      :action => 'grades'}).html_safe %>");
+
+
+
+jQuery('#ap_selects').html("<%= escape_javascript(render :partial => 'ajax_paginate/selects', :locals => {:page_items => @students.size, :total_items => @students_total}).html_safe %>");
