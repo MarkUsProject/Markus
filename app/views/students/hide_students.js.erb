@@ -1,0 +1,11 @@
+<% @student_ids.each do |student_id| %>{ 
+  jQuery('#student_' + student_id + '_checkbox').val('FALSE');
+  jQuery('#student_' + student_id).addClass('hidden_student');
+
+  if (<% @show_hidden_students != 'true' %>){ 
+    jQuery('#student_' + student_id).hide();
+  }
+}
+jQuery('#hidden_students_size').html(<% @hidden_students_size %>);
+
+
