@@ -1,4 +1,4 @@
-document.observe('dom:loaded', function() {
+jQuery(document).ready(function(){
 
   /**
    * get all of the grade input fields, attach an observer that updates
@@ -15,11 +15,12 @@ document.observe('dom:loaded', function() {
         'authenticity_token': AUTH_TOKEN
       }
 
-      new Ajax.Request(url, {
-        asynchronous: true,
-        evalScripts: true,
-        parameters: params
-      });
+	jQuery.ajax({
+	  url: url;
+	  data: params,
+	  async: true
+	});
+
     });
   });
 });
