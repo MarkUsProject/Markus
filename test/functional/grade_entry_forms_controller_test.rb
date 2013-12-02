@@ -55,6 +55,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       @grade_entry_form_with_grade_entry_items.show_total = true
       @grade_entry_form_with_grade_entry_items.save
       @grade_entry_student.released_to_student = true
+      @grade_entry_student.update_total_grade
       @grade_entry_student.save
       get_as @student, :student_interface, :id => @grade_entry_form_with_grade_entry_items.id
       assert_not_nil assigns :grade_entry_form

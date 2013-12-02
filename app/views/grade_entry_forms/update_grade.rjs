@@ -2,7 +2,11 @@ if @grade_saved
   # The grade was successfully updated so highlight the table cell to indicate this
   page["grade_#{@student_id}_#{@grade_entry_item_id}"].visual_effect :highlight, :startcolor => "#99CCFF",
                                     :endcolor => "#FFFFFF", :restorecolor => "#FFFFFF"
-  page["total_#{@student_id}"].value = @updated_student_total.round(2)
+  if @updated_student_total.nil?
+    page["total_#{@student_id}"].value = ''
+  else
+    page["total_#{@student_id}"].value = @updated_student_total.round(2)
+  end
 else
   # Change the background colour of the cell to red to indicate that an error has occurred
   page["grade_#{@student_id}_#{@grade_entry_item_id}"].visual_effect :highlight, :startcolor => "#FFCCCC",

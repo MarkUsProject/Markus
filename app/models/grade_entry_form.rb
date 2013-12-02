@@ -30,31 +30,23 @@ class GradeEntryForm < ActiveRecord::Base
     grade_entry_items.sum('out_of').round(2)
   end
 
-  # Determine the total mark for a particular student
-  def calculate_total_mark(student_id)
-    # Differentiate between a blank total mark and a total mark of 0
-    total = BLANK_MARK
-
-    grade_entry_student = self.grade_entry_students.find_by_user_id(student_id)
-    if grade_entry_student
-      total = grade_entry_student.grades.sum('grade').round(2)
-    end
-
-    if (total == 0) && self.all_blank_grades?(grade_entry_student)
-      total = BLANK_MARK
-    end
-    total
-  end
-
   # Determine the total mark for a particular student, as a percentage
-  def calculate_total_percent(student_id)
-    total = self.calculate_total_mark(student_id)
-    percent = BLANK_MARK
+  def calculate_total_percent(grade_entry_student)
+    unless grade_entry_student.nil?
+      total = grade_entry_student.total_grade
 
-    if total != BLANK_MARK
-      percent = (total / self.out_of_total) * 100
+      # If there is no saved total grade, update it
+      if total.nil?
+        total = grade_entry_student.update_total_grade
+      end
     end
+    percent = BLANK_MARK
+    out_of = self.out_of_total
 
+    # Check for NA mark or division by 0
+    unless total.nil? || out_of == 0
+      percent = (total / out_of) * 100
+    end
     percent
   end
 
@@ -66,8 +58,9 @@ class GradeEntryForm < ActiveRecord::Base
 
     grade_entry_students = self.grade_entry_students.all(:conditions => { :released_to_student => true })
     grade_entry_students.each do |grade_entry_student|
-      totalMark = self.calculate_total_mark(grade_entry_student.user_id)
-      if totalMark != BLANK_MARK
+      # If there is no saved total grade, update it
+      totalMark = grade_entry_student.total_grade || grade_entry_student.update_total_grade
+      unless totalMark.nil?
         totalMarks += totalMark
         numReleased += 1
       end
@@ -77,20 +70,7 @@ class GradeEntryForm < ActiveRecord::Base
     if numReleased == 0
       return 0
     end
-
     ((totalMarks / numReleased) / self.out_of_total) * 100
-  end
-
-  # Return whether or not the given student's grades are all blank
-  # (Needed because ActiveRecord's "sum" method returns 0 even if
-  #  all the grade.grade values are nil and we need to distinguish
-  #  between a total mark of 0 and a blank mark.)
-  def all_blank_grades?(grade_entry_student)
-    grades = grade_entry_student.grades
-    grades_without_nils = grades.select do |grade|
-      !grade.grade.nil?
-    end
-    grades_without_nils.blank?
   end
 
   # Given two last names, construct an alphabetical category for pagination.
@@ -272,7 +252,10 @@ class GradeEntryForm < ActiveRecord::Base
       next if CsvHelper::Csv.generate_line(row).strip.empty?
       begin
         if num_lines_read > 1
-          GradeEntryStudent.create_or_update_from_csv_row(row, grade_entry_form, names)
+          GradeEntryStudent.create_or_update_from_csv_row(row,
+                                                          grade_entry_form,
+                                                          grade_entry_form.grade_entry_items,
+                                                          names)
           num_updates += 1
         end
         num_lines_read += 1
