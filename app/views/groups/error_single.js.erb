@@ -1,0 +1,5 @@
+if ("<%= escape_javascript(!@error.empty?).html_safe %>") {
+  jQuery('#errors_title').replaceWith("<%= escape_javascript(@error)%>");
+  jQuery('#errors').show();
+};
+
