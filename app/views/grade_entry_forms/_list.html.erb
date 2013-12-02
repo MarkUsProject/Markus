@@ -48,7 +48,7 @@
                         <% else %>
                           <%= # show results
                             ('%.2f' % (grade_entry_form.calculate_total_percent(
-                              @g_id_entries[grade_entry_form.id].user.id).to_s) + '%') %>
+                              @g_id_entries[grade_entry_form.id]).to_s) + '%') %>
                         <% end %>
                         <%= '(' + t(:class_average, :results_average =>
                             ('%.2f' % (grade_entry_form.calculate_released_average)).to_s) +
