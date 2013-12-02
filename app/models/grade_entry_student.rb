@@ -127,13 +127,18 @@ class GradeEntryStudent < ActiveRecord::Base
     if total == 0 && self.all_blank_grades?
       total = nil
     end
-    self.total_grade = total
-    self.save
-    puts "update student grade: #{total}"
 
+    if self.total_grade != total
+      self.total_grade = total
+      self.save
+    end
     total
   end
 
+  # Return whether or not the given student's grades are all blank
+  # (Needed because ActiveRecord's "sum" method returns 0 even if
+  #  all the grade.grade values are nil and we need to distinguish
+  #  between a total mark of 0 and a blank mark.)
   def all_blank_grades?
     grades = self.grades
     grades_without_nils = grades.select do |grade|
