@@ -21,10 +21,7 @@ class GradeEntryStudent < ActiveRecord::Base
   # username,q1mark,q2mark,...,
   # create or update the GradeEntryStudent and Grade objects that
   # correspond to the student
-  def self.create_or_update_from_csv_row(row, grade_entry_form, names)
-    # Get the grade entry items for this grade entry form
-    grade_entry_items = grade_entry_form.grade_entry_items
-
+  def self.create_or_update_from_csv_row(row, grade_entry_form, grade_entry_items, names)
     working_row = row.clone
     user_name = working_row.shift
 
@@ -52,10 +49,12 @@ class GradeEntryStudent < ActiveRecord::Base
         grade = grade_entry_student.grades.find_or_create_by_grade_entry_item_id(grade_entry_item.id)
         grade.grade = grade_for_grade_entry_item
         unless grade.save
+          grade_entry_student.update_total_grade
           raise RuntimeError.new(grade.errors)
         end
       end
     end
+    grade_entry_student.update_total_grade
   end
 
   # Returns an array containing the student names that didn't exist
@@ -123,4 +122,23 @@ class GradeEntryStudent < ActiveRecord::Base
     self.save
   end
 
+  def update_total_grade
+    total = self.grades.sum('grade').round(2)
+    if total == 0 && self.all_blank_grades?
+      total = nil
+    end
+    self.total_grade = total
+    self.save
+    puts "update student grade: #{total}"
+
+    total
+  end
+
+  def all_blank_grades?
+    grades = self.grades
+    grades_without_nils = grades.select do |grade|
+      !grade.grade.nil?
+    end
+    grades_without_nils.blank?
+  end
 end
