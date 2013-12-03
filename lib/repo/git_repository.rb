@@ -553,23 +553,50 @@ module Repository
     def initialize(revision_number, repo)
       @repo = repo
       begin
-
-        #TODO we proably dont need this method...
-        @revision = revision_number.target
-
-      end
+        @commit = repo.lookup(revision_number);
+        @timestamp = commit.time
+        if @timestamp.instance_of?(String)
+          @timestamp = Time.parse(@timestamp).localtime
+        elsif @timestamp.instance_of?(Time)
+          @timestamp = @timestamp.localtime
+        end
+      rescue Exception
+        raise RevisionDoesNotExist
+      end 
       super(revision_number)
     end
 
     # Return all of the files in this repository at the root directory
+    # *** Not sure if using path is best here, maybe use repo instead?
+    #
+    # method not thoroughly tested!!
+    #
+    # returns a index object, consult rugged docs for available methods
     def files_at_path(path)
-      return files_at_path_helper(path)
+      begin 
+        return Rugged::Index.new(path)
+        #exception should be cast if file is not found
+      rescue Exception
+        raise Repository::FileDoesNotExistConflict
+      end
     end
 
+    # returns true if the file at the given path exists for the
+    # class's revision_number (commit name)
+    #
+    # method not thoroughly tested!!
+    #
+    # erros with this function can occur with files are incorrectly
+    # added and the git config file is not updated
     def path_exists?(path)
-      debugger
-      @repo #todo
-      # @repo.__path_exists?(path, @revision_number)
+      begin 
+        file = Rugged::Index.new(path)
+        return true
+        #exception should be cast if file is not found
+      rescue Exception
+        # raise Repository::FileDoesNotExistConflict # I don't think raise an exception is needed
+        return false
+      end
     end
 
     def directories_at_path(path='/')
