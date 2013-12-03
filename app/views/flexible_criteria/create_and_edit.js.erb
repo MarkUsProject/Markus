@@ -27,11 +27,11 @@ else {
 
 jQuery('#new_flexible_criterion').remove();
 
-jQuery('#flexible_edition_pane_menu').replaceWith("<%= escape_javascript(render 
+jQuery('#flexible_edition_pane_menu').html("<%= escape_javascript(render 
   :partial => 'criterion_editor', 
   :locals => {:criterion => @criterion}).html_safe %>");
 
-jQuery('#criteria_total_mark').replaceWith("<%= escape_javascript(@criterion.assignment.total_mark).html_safe %>");
+jQuery('#criteria_total_mark').html("<%= escape_javascript(@criterion.assignment.total_mark).html_safe %>");
 
 jQuery('#flexible_criteria_pane_list').sortabe("<%= escape_javascript(
   :constraint => :vertical,

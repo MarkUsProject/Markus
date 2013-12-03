@@ -1,2 +1,9 @@
-page.replace_html "flexible_criteria_pane", :partial => "flexible_criteria/flexible_criteria_pane"
-page.replace_html "flexible_edition_pane_menu", :partial => "flexible_criteria_manager_help"
+jQuery('#flexible_criteria_pane').html("<%= escape_javascript(render 
+ :partial => 'flexible_criteria/flexible_criteria_pane').html_safe %>");
+
+jQuery('#flexible_edition_pane_menu').html("<%= escape_javascript(render 
+ :partial => 'flexible_criteria_manager_help').html_safe %>");
+
+
+
+
