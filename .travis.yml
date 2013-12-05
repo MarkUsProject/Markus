@@ -3,10 +3,9 @@ rvm:
   - 1.9.3
 
 bundler_args: --path=~/.bundle --without development production console
-cache: bundler
 
 before_script:
-  - cp config/database.yml.mysql config/database.yml
+  - cp config/database.yml.ci config/database.yml
   - mysql -e 'create database markus_test;'
   - bundle exec rake db:migrate
   - bundle exec rake db:test:prepare
