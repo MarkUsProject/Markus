@@ -1,0 +1,9 @@
+language: ruby
+rvm:
+  - 1.9.3
+
+bundler_args: --path=~/.bundle --without development production console
+
+env:
+  global:
+    - RAILS_ENV=test
