@@ -6,7 +6,7 @@ bundler_args: --path=~/.bundle --without development production console
 
 before_script:
   - cp config/database.yml.ci config/database.yml
-  - mysql -e 'create database markus_test;'
+  - psql -c 'create database markus_test;' -U postgres
   - bundle exec rake db:migrate
   - bundle exec rake db:test:prepare
 
