@@ -267,6 +267,11 @@ class GradersController < ApplicationController
       groupings.concat(grader.get_groupings_by_assignment(@assignment))
     end
     groupings = groupings.uniq
+    groupings.each do |grouping|
+      covered_criteria = grouping.all_assigned_criteria(grouping.tas)
+      grouping.criteria_coverage_count = covered_criteria.length
+      grouping.save
+    end
     construct_all_rows(groupings, graders, criteria)
     render :modify_criteria
   end
