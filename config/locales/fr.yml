@@ -210,6 +210,7 @@ fr:
     properties:         "Propriétés"
     grades:             "Notes"
     submissions:        "Envois"
+    summaries:          "Récapitulatif"
     rubrics:            "Rubriques"
     marking_scheme:     "Barème"
     join:               "Rejoindre"
@@ -403,6 +404,20 @@ fr:
       download_groupings_files: "Télécharger tous les envois"
       sections:             "Section :"
       revision_history:     "%{num} : "
+
+    summaries_index:
+      group_name:           "Nom du groupe"
+      repository:           "Répertoire"
+      repository_name:      "Répertoire : %{repository}"
+      commit_date:          "Date d'envoi (commit)"
+      marking_state:        "Affichage de la note"
+      grace_credits_used:   "Utilisation des \"grace credits\""
+      final_grade:          "Note finale"
+      criterion:             "critère"
+      per_page:             "par page"
+      filename:             "Fichier"
+      section:              "Section"
+      sections:             "Section :"
 
     grade_entry_forms:
       blank_field: "doit être rempli(e)"
