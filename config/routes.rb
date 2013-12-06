@@ -185,6 +185,8 @@ Markus::Application.routes.draw do
       end
     end
 
+    resources :summaries
+
     resources :graders do
       collection do
         get 'add_grader_to_grouping'
