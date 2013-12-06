@@ -208,6 +208,7 @@ en:
     properties:         "Properties"
     grades:             "Grades"
     submissions:        "Submissions"
+    summaries:          "Summaries"
     rubrics:            "Rubrics"
     marking_scheme:     "Marking Scheme"
     join:               "Join"
@@ -401,6 +402,20 @@ en:
       download_groupings_files: "Download all submissions"
       sections:             "Section:"
       revision_history:     "%{num}: "
+
+    summaries_index:
+      group_name:           "Group Name"
+      repository_name:      "Repository: %{repository}"
+      repository:           "Repository"
+      commit_date:          "Commit Date"
+      marking_state:        "Marking State"
+      grace_credits_used:   "Grace Credits Used"
+      final_grade:          "Final Grade"
+      criterion:             "criterion"
+      per_page:             "per page"
+      filename:             "Filename"
+      section:              "Section"
+      sections:             "Section:"
 
     grade_entry_forms:
       blank_field: "can't be blank"
