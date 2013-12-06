@@ -36,8 +36,8 @@
           <% end %>
 	  <% if @grade_entry_form.show_total %>
 		  <td class=grade>
-		    <% total = @grade_entry_form.calculate_total_mark(@student.id) %>
-		    <% if total != "" %>
+		    <% total = grade_entry_student.total_grade %>
+		    <% if !total.nil? %>
 		      <%= total %>
 		    <% else %>
 		      <%= t('grade_entry_forms.grades.no_mark') %>
