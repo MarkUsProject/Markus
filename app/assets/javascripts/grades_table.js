@@ -1,27 +1,30 @@
 jQuery(document).ready(function(){
+// document.observe('dom:loaded', function() {
 
   /**
    * get all of the grade input fields, attach an observer that updates
    * the grade when it is changed
    */
-  $$('.grade-input').each(function(item) {
-    new Form.Element.EventObserver(item, function(element, value) {
-
-      var url = element.readAttribute('data-action');
-      var params = {
-        'updated_grade': value,
-        'student_id': element.readAttribute('data-student-id'),
-        'grade_entry_item_id': element.readAttribute('data-grade-entry-item-id'),
-        'authenticity_token': AUTH_TOKEN
-      }
-
-	jQuery.ajax({
-	  url: url;
-	  data: params,
-	  async: true
+  jQuery('.grade-input').change(function(element,value) {
+	//prototype: new Form.Element.EventObserver(jQuery(this), function(element, value) {     
+	alert("Hey !");	
+	var url = jQuery(this).attr('data-action');
+	var params = {
+		'updated_grade': value,
+		'student_id': jQuery(this).attr('data-student-id'),
+		'grade_entry_item_id': jQuery(this).attr('data-grade-entry-item-id'),
+		'authenticity_token': AUTH_TOKEN
+	}
+	// Appel AJAX
+	      }).trigger('change');
 	});
-
-    });
+   
+	jQuery.ajax({
+	//prototype:      new Ajax.Request(url, {
+		url: url,        
+		async: true,
+		parameters: params
+	});
   });
 });
 
@@ -35,5 +38,5 @@ function toggleTotalColVisibility() {
 	else
 	  allElements [i].style.display = 'inline-block';
     }
-
+	
 }
