@@ -165,14 +165,14 @@ function make_new_annotation() {
 
 function make_new_image_annotation() {
   var box = jQuery("#sel_box");
-  var x1 = parseInt(box.css('left')) -
-    jQuery("#image_preview").offsetLeft +
-    jQuery("#image_container").scrollLeft;
-  var y1 = parseInt(box.css('top')) -
-    jQuery("#image_preview").offsetTop +
-    jQuery("#image_container").scrollTop;
-  var x2 = x1 + parseInt(box.css('width'));
-  var y2 = y1 + parseInt(box.css('height'));
+  var x1 = box.position().left -
+    jQuery("#image_preview").offset().left +
+    jQuery("#image_container").scrollLeft();
+  var y1 = box.position().top -
+    jQuery("#image_preview").offset().top +
+    jQuery("#image_container").scrollTop();
+  var x2 = x1 + box.width();
+  var y2 = y1 + box.height();
   if ((x2 - x1) < 1 || isNaN(x2 - x1)) {
     alert("<%= I18n.t('marker.annotation.select_an_area') %>");
     return false
@@ -198,15 +198,14 @@ currently selected text, and then highlights the lines.
 function add_existing_annotation(annotation_text_id) {
   if(is_image) {
     var box = jQuery("#sel_box");
-		console.log('add_existing_annotation : ' + '\n left :' +box.css('left') + '\n width :' +box.css('width'));
-    var x1 = parseInt(box.css('left')) -
-      jQuery("#image_preview").offsetLeft +
-      jQuery("#image_container").scrollLeft;
-    var y1 = parseInt(box.css('top')) -
-      jQuery("#image_preview").offsetTop +
-      jQuery("#image_container").scrollTop;
-    var x2 = x1 + parseInt(box.css('width'));
-    var y2 = y1 + parseInt(box.css('height'));
+		var x1 = box.position().left -
+      jQuery("#image_preview").offset().left +
+      jQuery("#image_container").scrollLeft();
+    var y1 = box.position().top -
+      jQuery("#image_preview").offset().top +
+      jQuery("#image_container").scrollTop();
+    var x2 = x1 + box.width();
+    var y2 = y1 + box.height();
     if ((x2 - x1) < 1 || isNaN(x2 - x1)) {
       alert("<%= I18n.t('marker.annotation.select_an_area') %>");
       return false
