@@ -18,14 +18,6 @@ function source_code_ready() {
   jQuery('#loading_code').hide();
   jQuery('#select_file_id').find('input, textarea').each(function(i) {jQuery(this).removeAttr("readonly"); });
 
-	//console.log("VOICI .dp-highlighter :")
-	//console.log($$('.dp-highlighter').first);
-	//console.log(jQuery('.dp-highlighter')[0].getElementsBySelector('ol')[0]);
-	//console.log($( ".dp-highlighter:first" ));
-	//console.log();
-	//jQuery('.dp-highlighter').each(function(){ console.log(":-D"); console.log(jQuery(this)); });
-	//console.log("CT .dp-highlighter")
-
   syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter(
       jQuery('.dp-highlighter')[0].getElementsBySelector('ol')[0]);
 
@@ -173,17 +165,14 @@ function make_new_annotation() {
 
 function make_new_image_annotation() {
   var box = jQuery("#sel_box");
-	console.log("VOICI BOOOX :");
-	console.log(box);
-	console.log("CT BOX");
-  var x1 = parseInt(box.style.left) -
+  var x1 = parseInt(box.css('left')) -
     jQuery("#image_preview").offsetLeft +
     jQuery("#image_container").scrollLeft;
-  var y1 = parseInt(box.style.top) -
+  var y1 = parseInt(box.css('top')) -
     jQuery("#image_preview").offsetTop +
     jQuery("#image_container").scrollTop;
-  var x2 = x1 + parseInt(box.style.width);
-  var y2 = y1 + parseInt(box.style.height);
+  var x2 = x1 + parseInt(box.css('width'));
+  var y2 = y1 + parseInt(box.css('height'));
   if ((x2 - x1) < 1 || isNaN(x2 - x1)) {
     alert("<%= I18n.t('marker.annotation.select_an_area') %>");
     return false
@@ -209,14 +198,15 @@ currently selected text, and then highlights the lines.
 function add_existing_annotation(annotation_text_id) {
   if(is_image) {
     var box = jQuery("#sel_box");
-    var x1 = parseInt(box.style.left) -
+		console.log('add_existing_annotation : ' + '\n left :' +box.css('left') + '\n width :' +box.css('width'));
+    var x1 = parseInt(box.css('left')) -
       jQuery("#image_preview").offsetLeft +
       jQuery("#image_container").scrollLeft;
-    var y1 = parseInt(box.style.top) -
+    var y1 = parseInt(box.css('top')) -
       jQuery("#image_preview").offsetTop +
       jQuery("#image_container").scrollTop;
-    var x2 = x1 + parseInt(box.style.width);
-    var y2 = y1 + parseInt(box.style.height);
+    var x2 = x1 + parseInt(box.css('width'));
+    var y2 = y1 + parseInt(box.css('height'));
     if ((x2 - x1) < 1 || isNaN(x2 - x1)) {
       alert("<%= I18n.t('marker.annotation.select_an_area') %>");
       return false
@@ -353,9 +343,9 @@ function hide_all_annotation_content_editors() {
   });
   var box = jQuery("#sel_box");
   if (box) {
-    box.style.display = "none";
-    box.style.width = "0";
-    box.style.height = "0";
+    box.css('display', 'none');
+    box.css('width','0');
+    box.css('height', '0');
   }
 }
 
