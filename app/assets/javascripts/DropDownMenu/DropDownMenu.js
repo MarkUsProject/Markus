@@ -21,7 +21,7 @@ var DropDownMenu = Class.create({
     jQuery(this.trigger_node).bind('mouseout', function(event) {
       var menu_node = me.getMenuNode();
       var mouse_entered = me.getRelatedTarget(event);
-      if(mouse_entered !== null && !mouse_entered.descendantOf(menu_node) && mouse_entered.tagName != "HTML") {
+      if(mouse_entered !== null && !(jQuery(mouse_entered).closest(menu_node).length > 0) && mouse_entered.tagName != "HTML") {
         me.hide();
       }
     });
