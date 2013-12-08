@@ -1,0 +1,1 @@
+$('#students_table').replaceWith("<%= escape_javascript(render :partial => 'students/students_table', :locals => {:students => @students}).html_safe %>");

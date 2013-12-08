@@ -1,0 +1,2 @@
+$('#directories_tbody').replaceWith("<%= escape_javascript(render :partial => 'submissions/repo_browser/exit_directory').html_safe %>");
+populate("<%= escape_javascript(@table_rows.to_json).html_safe %>");
