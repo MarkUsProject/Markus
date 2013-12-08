@@ -7,12 +7,13 @@
  :id,
  :short_identifier),
  :onchange =>  "jQuery('#loading_groupings').show();
-								jQuery.ajax({ url: '" + new_update_groupings_notes_path() + "',
-								success: function(json){jQuery('#loading_groupings').hide()},
-								data: jQuery(this).serialize + '&authenticity_token=' 
-																																	+ AUTH_TOKEN,
-								type: "POST",
-								async: true
+								jQuery.ajax({
+									url: '" + new_update_groupings_notes_path() + "',
+									type: 'POST',
+									data: jQuery(this).serialize() + '&authenticity_token='+ AUTH_TOKEN,
+									async: true
+								}).done(function() {
+									jQuery('#loading_groupings').hide();
 								});"
 
     %>
