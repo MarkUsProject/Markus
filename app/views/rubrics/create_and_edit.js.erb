@@ -1,0 +1,20 @@
+if ( @criteria.count > 2 ) {
+	$('#rubric_criteria_pane_list').append("<%= escape_javascript("#{render :partial => 'rubric_criterion', :locals => {:criterion => @criterion, :location => :last }").html_safe %>");
+	$('#criterion_#{@criteria[-2].id}').replaceWith("<%= escape_javascript(render :partial => 'rubric_criterion', :locals => {:criterion => @criteria[-2], :location => :middle }).html_safe %>");
+	}
+
+elsif (@criteria.count == 2 ) {
+	$('#rubric_criteria_pane_list').append("<%= escape_javascript("#{render :partial => 'rubric_criterion', :locals => {:criterion => @criterion, :location => :last }").html_safe %>");
+	$('criterion_#{@criteria.first.id}').replaceWith("<%= escape_javascript(render :partial => 'rubric_criterion', :locals => {:criterion => @criteria.first, :location => :first }).html_safe %>");
+	}
+	
+else {
+	$('#rubric_criteria_pane_list').append("<%= escape_javascript("#{render :partial => 'rubric_criterion', :locals => {:criterion => @criterion, :location => :single }").html_safe %>");
+	}
+	
+$('#new_rubric_criterion').remove();
+$('#rubric_levels_pane_menu').replaceWith("<%= escape_javascript(render :partial => 'criterion_editor', :locals => {:criterion => @criterion}).html_safe %>");
+
+$('#rubric_total_weight').replaceWith("<%= escape_javascript(@criterion.assignment.total_criteria_weight).html_safe %>");
+
+$('#rubric_criteria_pane_list').sortable("<%= escape_javascript(render :constraint => :vertical, :url => { :action => :update_positions, :aid => @criterion.assignment.id });

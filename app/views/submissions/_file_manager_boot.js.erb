@@ -1,11 +1,11 @@
-<script type="text/javascript">
+﻿<script type="text/javascript">
 //<![CDATA[
 
 var files_table = null;
 
-document.observe("dom:loaded", function() {
+jQuery(document).ready(function() {
   files_table = new FilterTable({
-    table_id: $('files'),
+    table_id: jQuery('files'),
     headers: {
       filename: {display: "<%= I18n.t('browse_submissions.filename') %>", sortable: true},
       last_modified_date: {display: "<%= I18n.t('browse_submissions.last_revised') %>", sortable: true},
@@ -30,13 +30,17 @@ document.observe("dom:loaded", function() {
       }
     }
   });
-
-  new Ajax.Request('<%= populate_file_manager_assignment_submissions_path(:id => @assignment.id,
-                               :path => @path) %>',
-                   {asynchronous:true, evalScripts:true,
-                   onComplete:function(request){$('loading_list').hide();},
-                   parameters: 'authenticity_token=' + AUTH_TOKEN})
-
+	
+	jQuery.ajax({
+		url: "<%= populate_file_manager_assignment_submissions_path(:id => @assignment.id, :path => @path) %>",
+		data: 'authenticity_token=' + AUTH_TOKEN,
+		type: "POST",
+		async: true,
+		dataType: 'json'
+		}).done(function (data) {
+			jQuery('#loading_list').hide();
+			populate(JSON.stringify(data));
+			});
 });
 
 /*
@@ -52,7 +56,7 @@ function sanitized_filename_check(file_input) {
   if (file_name != sanitized_filename) {
     msg = <%=raw( I18n.t('student.submission.filename_sanitization_js_warning') )%>;
     if( !confirm(msg) ) {
-      $(file_input).setValue('');
+      jQuery(file_input).val('');
     };
   }
 }
@@ -67,7 +71,7 @@ function check_change_of_filename(file_name, new_file_name, file_input) {
   new_file_name = normalize_filename(new_file_name);
   if(file_name != new_file_name) {
     alert(<%=raw( I18n.t('student.submission.replace_file_js_error') )%>);
-    $(file_input).setValue('');
+    jQuery(file_input).val('');
   }
 }
 

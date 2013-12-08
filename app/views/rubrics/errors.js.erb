@@ -1,0 +1,2 @@
+$('#criterion_#{@criterion.id}_error').replaceWith("<%= escape_javascript(render :partial => 'errors_list', :locals => {:criterion => @criterion}).html_safe %>");
+$('criterion_#{@criterion.id}_error').show();
