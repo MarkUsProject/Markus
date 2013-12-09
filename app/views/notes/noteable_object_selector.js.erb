@@ -1,1 +1,1 @@
-jQuery('#noteable_selector').replaceWith(<%= escape_javascript(render :partial => params[:noteable_type].downcase).html_safe %>);
+jQuery('#noteable_selector').html(<%= escape_javascript(render :partial => params[:noteable_type].downcase).html_safe %>);
