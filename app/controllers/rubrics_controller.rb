@@ -9,6 +9,7 @@ class RubricsController < ApplicationController
 
   def edit
     @criterion = RubricCriterion.find(params[:id])
+    render 'edit.js'
   end
 
   def update
@@ -23,6 +24,7 @@ class RubricsController < ApplicationController
   def new
     @assignment = Assignment.find(params[:assignment_id])
     @criterion = RubricCriterion.new
+    render 'new.js'
   end
 
   def create
@@ -40,7 +42,7 @@ class RubricsController < ApplicationController
     @criterion.position = new_position
     unless @criterion.update_attributes(params[:rubric_criterion])
       @errors = @criterion.errors
-      render :add_criterion_error
+      render 'add_criterion_error.js'
       return
     end
     @criteria.reload
@@ -54,6 +56,7 @@ class RubricsController < ApplicationController
     #delete all marks associated with this criterion
     @criterion.destroy
     flash.now[:success] = I18n.t('criterion_deleted_success')
+    render 'destroy.js'
   end
 
   def download_csv
@@ -196,6 +199,7 @@ class RubricsController < ApplicationController
       flash[:error] = I18n.t('rubrics.move_criterion.error')
     end
     @criteria.reload
+    render 'move_criterion.js'
   end
 
 end
