@@ -1,0 +1,5 @@
+if (<%= escape_javascript(@old_result).html_safe %>){
+  window.location.href("<%= escape_javascript(render :id => 'old_result.id', :action => 'edit').html_safe %>");
+} else {
+  window.location.href("<%= escape_javascript(render :id => 'result.id', :action => 'edit').html_safe %>");
+}

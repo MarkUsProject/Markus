@@ -1,0 +1,3 @@
+JQuery('#<%= escape_javascript(mark_verify_result_#{mark_id}).html_safe %>').show();
+JQuery('#<%= escape_javascript(mark_verify_result_#{mark_id}).html_safe %>').replaceWith("<%= escape_javascript(mark_error.to_s).html_safe %>");
+

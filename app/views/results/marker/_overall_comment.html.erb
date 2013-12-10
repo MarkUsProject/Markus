@@ -7,7 +7,7 @@
             :cols => 50,
             :rows => 5,
             :id => 'overall_comment_text_area',
-            :onkeydown => "$('overall_comment_submit').enable();" %>
+			:onkeydown => "jQuery('#overall_comment_submit').find('input, textarea').each(function(i) { jQuery(this).removeAttr('readonly'); });" %>
        <div>
          <%= f.submit t(:save_changes),
            :disable_with => I18n.t('working'),

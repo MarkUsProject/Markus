@@ -135,7 +135,7 @@
       </select>
       </p>
       <p style="margin-top: 5px; border-top: 1px solid #000000; padding-top: 10px;">
-        <button onclick="submit_new_annotation($F('new_annotation_content'), $F('new_annotation_category'), $F('x1'), $F('x2'), $F('y1'), $F('y2'));"><%= I18n.t("marker.annotation.new_annotation") %></button>
+        <button onclick="submit_new_annotation(jQuery('#new_annotation_content').val(), jQuery('#new_annotation_category').val(), jQuery('#x1').val(), jQuery('#x2').val(), jQuery('#y1').val(), jQuery('#y2').val());"><%= I18n.t("marker.annotation.new_annotation") %></button>
         <button onclick="modal.close();"><%= I18n.t("cancel") %></button>
       </p>
 

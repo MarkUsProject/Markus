@@ -1,0 +1,4 @@
+# Marking state set to complete but there is at least one nil mark
+JQuery('#criterion_incomplete_error').replaceWith("<%= escape_javascript(@result.errors[:base]).html_safe %>");
+JQuery('#criterion_incomplete_error').show();
+JQuery('#marking_state').val(<%= escape_javascript(Result::MARKING_STATES[:partial]).html_safe %>);

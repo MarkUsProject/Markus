@@ -6,16 +6,18 @@
      assignment_automated_tests_path(:assignment_id => @assignment.id, :result => @result), :id => "test_select_link", :remote => true %>
 
     <script type='text/javascript'>
-    $("test_select_link").observe('ajax:after', function(evt, status, data, xhr) {
-      $('running_tests').show();
+		JQuery('#test_select_link').bind('ajax:after', function(evt, status, data, xhr) {
+      jQuery('#running_tests').show();
     });
-    $("test_select_link").observe('ajax:complete', function(evt, status, data, xhr) {
-      $('running_tests').hide();
-      $('tests_complete').show();
+	
+	jQuery("#test_select_link").ajaxComplete(function(evt, status, data, xhr) {
+      jQuery('#running_tests').hide();
+      jQuery('#tests_complete').show();
     });
+	
     </script>
 
-  <select id="select_test_result_id" onchange="if ($(this).getValue() != '') { load_test_result($(this).getValue()); }">
+  <select id="select_test_result_id" onchange="if (jQuery(this).val() != '') { load_test_result(jQuery(this).val()); }">
     <% if test_result_files.find_all_by_user_id(@current_user.id).empty? %>
       <option value=""><%= I18n.t("test_result.no_files_available")%></option>
     <% else %>
@@ -26,7 +28,7 @@
       <% end %>
     <% end %>
   </select>
-  <input type="button" onclick="if ($('select_test_result_id').getValue() != '') { load_test_result($('select_test_result_id').getValue()); }"
+  <input type="button" onclick="if (jQuery('#select_test_result_id').val() != '') { load_test_result(jQuery('#select_test_result_id').val()); }"
       value="<%= I18n.t("test_result.button.load")%>" />
   <span id="loading_test_result" style="display:none;">
     <%= image_tag('spinner.gif') %> <%= I18n.t("test_result.loading_results") %>

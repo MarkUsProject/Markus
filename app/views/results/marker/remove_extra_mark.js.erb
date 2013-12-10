@@ -1,0 +1,6 @@
+JQuery('#<%= escape_javascript(extra_mark_#{@extra_mark.id}).html_safe %>').
+JQuery('#current_total_mark_div').replaceWith("<%= escape_javascript(@result.total_mark).html_safe %>");
+JQuery('#total_extra_points').replaceWith("<%= escape_javascript(@result.get_total_extra_points).html_safe %>");
+JQuery('#total_extra_percentage').replaceWith("<%= escape_javascript(@result.get_total_extra_percentage).html_safe %>");
+JQuery('#total_extra_percentage_as_points).replaceWith("<%= escape_javascript(@result.get_total_extra_percentage_as_points).html_safe %>");
+update_total_mark(<%= escape_javascript(@result.total_mark).html_safe %>);
