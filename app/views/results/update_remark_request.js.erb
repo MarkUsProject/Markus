@@ -1,7 +1,7 @@
 if (!<%= escape_javascript(@old_result.released_to_students).html_safe){
 	location.reload();
 } else {
-	JQuery('#remark_request_edit').replaceWith("<%= escape_javascript(render :partial => 'results/student/remark_request_form', :locals => {:submission => @submission, :assignment => @assignment).html_safe %>");
+	JQuery('#remark_request_edit').html("<%= escape_javascript(render :partial => 'results/student/remark_request_form', :locals => {:submission => @submission, :assignment => @assignment).html_safe %>");
   JQuery("#remark_request_text_area").highlight(<%= escape_javascript(render :startcolor => '#BDFCC9').html_safe %>);
 }
 
