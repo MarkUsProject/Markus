@@ -38,8 +38,8 @@ class GradeEntryFormsController < ApplicationController
 
                           if sort_by.present?
                             if sort_by == 'section'
-                              Student.joins(:section).all(:conditions => conditions,
-                                  :order => 'sections.name ' + order)
+                              Student.includes(:section).all(:conditions => conditions,
+                                  :order => 'sections.name ' + order + ', user_name' )
                             else
                               Student.all(:conditions => conditions,
                                 :order => sort_by + ' ' + order)
@@ -102,21 +102,28 @@ class GradeEntryFormsController < ApplicationController
     @filter = 'none'
 
     # Pagination options
-    if params[:per_page].present?
-      @per_page = params[:per_page]
-    else
-      @per_page = 15
-    end
-
     @current_page = 1
+
+    # per_page based on cookie settings; if no cookies set, use default of 15
+    c_per_page = current_user.id.to_s +  '_' +
+        @grade_entry_form.id.to_s + '_per_page_grades'
+    if params[:per_page].present?
+      cookies[c_per_page] = params[:per_page]
+    elsif !cookies[c_per_page]
+      cookies[c_per_page] = 15
+    end
+    @per_page = cookies[c_per_page]
+
+    # sort_by based on cookie settings; if no cookies set, sort by user_name by default
     c_sort_by = current_user.id.to_s +  '_' +
         @grade_entry_form.id.to_s + '_sort_by_grades'
     if params[:sort_by].present?
       cookies[c_sort_by] = params[:sort_by]
-    else
-      params[:sort_by] = 'last_name'
+    elsif !cookies[c_sort_by]
+      cookies[c_sort_by] = 'user_name'
     end
     @sort_by = cookies[c_sort_by]
+
     @desc = params[:desc]
     @filters = get_filters(G_TABLE_PARAMS)
     @per_pages = G_TABLE_PARAMS[:per_pages]
@@ -124,13 +131,13 @@ class GradeEntryFormsController < ApplicationController
     all_students = get_filtered_items(G_TABLE_PARAMS,
                                       @filter,
                                       @sort_by,
-                                      params[:desc])
+                                      @desc)
     @students = all_students.paginate(:per_page => @per_page,
                                       :page => @current_page)
     @students_total = all_students.size
-    @alpha_pagination_options = @grade_entry_form.alpha_paginate(all_students,
+    @alpha_pagination_options = alpha_paginate(all_students,
                                                         @per_page,
-                                                        @students.total_pages)
+                                                        @sort_by)
     session[:alpha_pagination_options] = @alpha_pagination_options
     @alpha_category = @alpha_pagination_options.first
     @sort_by = cookies[c_sort_by]
@@ -149,6 +156,14 @@ class GradeEntryFormsController < ApplicationController
 
     @current_page = params[:page]
     @per_page = params[:per_page]
+
+    c_per_page = current_user.id.to_s +  '_' +
+        @grade_entry_form.id.to_s + '_per_page_grades'
+    unless cookies[c_per_page] == @per_page
+      cookies[c_per_page] = @per_page
+      puts "cookies: setting per page to #{@per_page}"
+    end
+
     @filters = get_filters(G_TABLE_PARAMS)
     @per_pages = G_TABLE_PARAMS[:per_pages]
     @desc = params[:desc]
@@ -156,7 +171,7 @@ class GradeEntryFormsController < ApplicationController
     if params[:sort_by].present?
       @sort_by = params[:sort_by]
     else
-      @sort_by = 'last_name'
+      @sort_by = 'user_name'
     end
 
     # Only re-compute the alpha_pagination_options for the drop-down menu
@@ -167,10 +182,10 @@ class GradeEntryFormsController < ApplicationController
                        @filter,
                        @sort_by,
                        @desc)
-      @alpha_pagination_options = @grade_entry_form.alpha_paginate(
+      @alpha_pagination_options = alpha_paginate(
                                      all_students,
                                      @per_page,
-                                     @students.total_pages)
+                                     @sort_by)
       @alpha_category = @alpha_pagination_options.first
       session[:alpha_pagination_options] = @alpha_pagination_options
     else
@@ -178,6 +193,7 @@ class GradeEntryFormsController < ApplicationController
       @alpha_category = params[:alpha_category]
     end
   end
+
   # Update a grade in the table
   def update_grade
     grade_entry_form = GradeEntryForm.find_by_id(params[:id])
