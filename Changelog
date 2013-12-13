@@ -8,6 +8,8 @@ Changes for MarkUs 1.0.0:
 * Issue #1002: new REST API
 * Issue #1111: grader can dowload all files of a submission
 * Issue #1073: possibility to import and export assignments
+* Issue #1194: add order (position) to grade entry form items
+* Issue #100: refactor the code for calculating a student's average mark
 * Several improvements on sections
 * Syntax Highlighter is now working with non utf-8 files
 * Tests are not using fixtures anymore
