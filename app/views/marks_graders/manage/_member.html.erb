@@ -3,7 +3,7 @@
 	<span id="<%= "mbr_#{ta.id}" %>">
 	  <%= check_box_tag "#{student.id}_#{ta_user.user_name}", true, false,
         :class => 'inline_checkbox', :onclick =>
-        "$('student_select_' + #{student.id}).checked = true;"%>
+        "jQuery('#student_select_' + #{student.id}).checked = true;"%>
 	  <%= label_tag "#{student.id}_#{ta_user.user_name}", ta_user.user_name,
         :class => 'inline_label' %>
 	</span>
