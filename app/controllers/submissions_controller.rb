@@ -225,6 +225,16 @@ class SubmissionsController < ApplicationController
         ret ||= a.current_submission_used.get_latest_result.total_mark <=>
           b.current_submission_used.get_latest_result.total_mark
       },
+      'criterion' => lambda { |a,b,cid|
+        ret = -1 if (!a.has_submission? \
+                 || a.current_submission_used.get_latest_result.marks.find_by_markable_id(cid).nil? \
+                 || a.current_submission_used.get_latest_result.marks.find_by_markable_id(cid).mark.nil?)
+        ret ||= 1 if (!b.has_submission? \
+                  || b.current_submission_used.get_latest_result.marks.find_by_markable_id(cid).nil? \
+                  || b.current_submission_used.get_latest_result.marks.find_by_markable_id(cid).mark.nil?)
+        ret ||= a.current_submission_used.get_latest_result.marks.find_by_markable_id(cid).mark <=>
+          b.current_submission_used.get_latest_result.marks.find_by_markable_id(cid).mark
+      },
       'grace_credits_used' => lambda { |a,b|
         a.grace_period_deduction_single <=> b.grace_period_deduction_single
       },
