@@ -1,0 +1,29 @@
+if ("<%= escape_javascript(@error).html_safe %>") {
+  jQuery('#errors_title').replaceWith("<%= escape_javascript(@messages.join("<br />\n"))%>");
+  jQuery('#errors_contents').replaceWith("<%= escape_javascript(@bad_user_names.join(','))%>");
+  jQuery('#errors').show();
+}
+else {
+  jQuery('#errors').hide();
+};
+
+if ("<%= escape_javascript(@warning_group_size).html_safe %>") {
+  jQuery('#warnings_group_msg').replaceWith("<%= escape_javascript(@warning_group_size)%>");
+  jQuery('#warnings_group').show();
+}
+else{
+  jQuery('#warnings_group').hide();
+};
+
+if ("<%= escape_javascript(@warning_grace_day).html_safe %>") {
+  jQuery('#warnings_grace_msg').replaceWith("<%= escape_javascript(@warning_grace_day)%>");  
+  jQuery('#warnings_grace').show();
+}
+else{
+  jQuery('#warnings_grace').hide();
+};
+
+<%= escape_javascript(render(:partial => 'shared/global_action_warning')) %>
+
+modify_students.("<%= escape_javascript(@students_data.to_json).html_safe %>");
+modify_groupings.("<%= escape_javascript(@groupings_data.to_json).html_safe %>");

@@ -1,0 +1,20 @@
+jQuery('#errors').hide();
+
+if ("<%= escape_javascript(!@errors.empty?).html_safe %>") {
+  jQuery('#errors_title').replaceWith(I18n.t('groups.could_not_delete'));
+  jQuery('#errors_contents').replaceWith("<%= escape_javascript(render :partial => 'delete_errors', :locals => {:group_names => @errors}).html_safe %>");
+  jQuery('#errors').show();
+};
+
+<%= escape_javascript(render(:partial => 'shared/global_action_warning')) %>
+
+<%=
+ids = []
+@removed_groupings.each do |grouping|
+  ids.push(grouping.id)
+end
+%>
+
+modify_students.<%= escape_javascript(@students_data.to_json) %>
+remove_groupings.<%= escape_javascript(ids.to_json) %>
+
