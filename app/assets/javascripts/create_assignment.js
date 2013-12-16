@@ -103,48 +103,48 @@ function toggle_automated_tests(is_testing_framework_enabled) {
     jQuery('tokens').removeClass('disable');
     jQuery('#tokens_per_day').find('input, textarea').each(function(i){jQuery(this).attr("readonly","readonly");});
 
-    jQuery.each(("antbuildfile_style"), function(node) { node.removeClass('disable'); });
-    jQuery.each(("antbuildfile_style input"),function() {
+    jQuery("antbuildfile_style").each(function(node) { node.removeClass('disable'); });
+    jQuery("antbuildfile_style input").each(function() {
       jQuery(node).enable();
     });
-    jQuery.each(("antbuildprop_style"),function(node) { node.removeClass('disable'); });
-    jQuery.each(("antbuildprop_style input"),function() {
+    jQuery("antbuildprop_style").each(function(node) { node.removeClass('disable'); });
+    jQuery("antbuildprop_style input").each(function() {
       jQuery(node).enable();
 	});
-    jQuery.each(("test_files .test_file"), function(node) { node.removeClass('disabled'); });
-    jQuery.each(("test_files .test_file input"),function() {
+    jQuery("test_files .test_file").each(function(node) { node.removeClass('disabled'); });
+    jQuery("test_files .test_file input").each(function() {
       jQuery(node).enable();
     });
-   jQuery.each(("lib_files .test_file"),function(node) { node.removeClass('disabled'); });
-    jQuery.each(("lib_files .test_file input"),function() {
+   jQuery("lib_files .test_file").each(function(node) { node.removeClass('disabled'); });
+    jQuery("lib_files .test_file input").each(function() {
       jQuery(node).enable();
     });
-    jQuery.each(("parser_files .test_file"),function(node) { node.removeClass('disabled'); });
-    jQuery.each(("parser_files .test_file input"),function() {
+    jQuery("parser_files .test_file").each(function(node) { node.removeClass('disabled'); });
+    jQuery("parser_files .test_file input").each(function() {
       jQuery(node).enable();
     });
 // yes 
   } else {
     jQuery('tokens').addClass('disable');
     jQuery('#tokens_per_day').find('input, textarea').each(function(i) { jQuery(this).attr("readonly","readonly"); });
-    jQuery.each(("antbuildfile_style"),function(node) { node.addClass('disable'); });
-    jQuery.each(("antbuildfile_style input"),function() {
+    jQuery("antbuildfile_style").each(function(node) { node.addClass('disable'); });
+    jQuery("antbuildfile_style input").each(function() {
       jQuery(this).attr("readonly","readonly"); 
     });
-    jQuery.each(("antbuildprop_style"),function(node) { node.addClass('disable'); });
-    jQuery.each(("antbuildprop_style input"),function() {
+    jQuery("antbuildprop_style").each(function(node) { node.addClass('disable'); });
+    jQuery("antbuildprop_style input").each(function() {
       jQuery(node).attr("disabled", true);
     });
-    jQuery.each(("test_files .test_file"),function(node) { node.addClass('disabled'); });
-    jQuery.each(("test_files .test_file input"),function() {
+    jQuery("test_files .test_file").each(function(node) { node.addClass('disabled'); });
+    jQuery("test_files .test_file input").each(function() {
       jQuery(node).attr("disabled", true);
     });
-    jQuery.each(("lib_files .test_file"),function(node) { node.addClass('disabled'); });
-    jQuery.each(("lib_files .test_file input"),function() {
+    jQuery("lib_files .test_file").each(function(node) { node.addClass('disabled'); });
+    jQuery("lib_files .test_file input").each(function() {
       jQuery(node).attr("disabled", true);
     });
-    jQuery.each(("parser_files .test_file"),function(node) { node.addClass('disabled'); });
-    jQuery.each(("parser_files .test_file input"),function() {
+    jQuery("parser_files .test_file").each(function(node) { node.addClass('disabled'); });
+    jQuery("parser_files .test_file input").each(function() {
       jQuery(node).attr("disabled", true);
     });
   }
@@ -233,16 +233,16 @@ function check_due_date(new_due_date) {
 }
 
 function change_submission_rule() {
-  jQuery.each(("period"),function(node) { node.removeClass('disabled'); node.show(); });
-  jQuery.each((".period input"),function(node) {
+  jQuery("period").each(function(node) { node.removeClass('disabled'); node.show(); });
+  jQuery(".period input").each(function(node) {
     jQuery(node).attr("disabled", false);
   });
 
   if(jQuery('#grace_period_submission_rule').val() == null) {
       jQuery("#grace_period_link").hide();
       // Disable any grace_period_submission_rule periods
-    jQuery.each(("grace_periods .period"),function(node) { node.addClass('disabled'); node.hide(); });
-    jQuery.each(("grace_periods .period input"),function(node){node.disable();});
+    jQuery("grace_periods .period").each(function(node) { node.addClass('disabled'); node.hide(); });
+    jQuery("grace_periods .period input").each(function(node){node.disable();});
   }
   else {
       jQuery("#grace_period_link").show();
@@ -254,8 +254,8 @@ function change_submission_rule() {
   if(jQuery('#penalty_decay_period_submission_rule').val() == null) {
       jQuery("#penalty_decay_period_link").hide();
      // Disable any penalty_decay_period_submission_rule periods
-    jQuery.each(("penalty_decay_periods .period"), function(node) { node.addClass('disabled'); node.hide(); });
-    jQuery.each(("penalty_decay_periods .period input"),function(node){node.disable();});
+    jQuery("penalty_decay_periods .period").each(function(node) { node.addClass('disabled'); node.hide(); });
+    jQuery("penalty_decay_periods .period input").each(function(node){node.disable();});
   }
   else {
       jQuery("#penalty_decay_period_link").show();
@@ -267,8 +267,8 @@ function change_submission_rule() {
   if(jQuery('#penalty_period_submission_rule').val() == null) {
       jQuery("#penalty_period_link").hide();
       // Disable any penalty_period_submission_rule periods
-    jQuery.each(("penalty_periods .period"), function(node){ node.addClass('disabled'); node.hide(); }); 
-    jQuery.each(("penalty_periods .period input"), function(node){node.disable();});
+    jQuery("penalty_periods .period").each(function(node){ node.addClass('disabled'); node.hide(); }); 
+    jQuery("penalty_periods .period input").each(function(node){node.disable();});
   }
   else {
       jQuery("#penalty_period_link").show();
