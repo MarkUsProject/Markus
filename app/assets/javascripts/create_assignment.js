@@ -248,7 +248,7 @@ function change_submission_rule() {
       jQuery("#grace_period_link").show();
       if (jQuery("grace_periods .period").length == 0) {
         // Auto expand add a grace period if needed
-        jquery("grace_period_link").onclick();
+        jQuery("grace_period_link").onclick();
     }
   }
   if(jQuery('#penalty_decay_period_submission_rule').val() == null) {
