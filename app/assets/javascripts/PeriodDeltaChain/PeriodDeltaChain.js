@@ -19,7 +19,7 @@ var PeriodDeltaChain = Class.create({
   refresh: function() {
     var me = this;
     var current_time = new Date(this.due_date);
-    jQuery("#" + this.period_root_id + "." + this.period_class).(each(function() {
+    jQuery.each((" + this.period_root_id + this.period_class"), function() {
       var from_time_node = node.down('.PeriodDeltaChain_FromTime');
       var to_time_node = node.down('.PeriodDeltaChain_ToTime');
       var hours_value = jQuery('#.PeriodDeltaChain_Hours').val();
@@ -33,7 +33,8 @@ var PeriodDeltaChain = Class.create({
       current_time = to_time;
 
     });
-  }),
+  },
+  
   set_due_date: function(new_due_date) {
     delete this.due_date;
     this.due_date = (typeof new_due_date == 'undefined' ?
