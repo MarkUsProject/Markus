@@ -83,7 +83,7 @@ function toggle_student_form_groups(student_form_groups) {
 }
 
 function toggle_remark_requests(allow_remark_requests) {
-  jquery('#allow_remarks').val(allow_remark_requests);
+  jQuery('#allow_remarks').val(allow_remark_requests);
   if (allow_remark_requests) {
     jQuery('#remark_due_date').find('input, textarea').each(function(i){jQuery(this).attr("readonly","readonly");});
     jQuery('#assignment_remark_message').find('input, textarea').each(function(i){jQuery(this).attr("readonly","readonly");});
