@@ -167,7 +167,7 @@
       <%= check_box_tag "persist_groups", true, false, 
 						:id => "persist_groups", 
 						:onclick => "toggle_persist_groups(jQuery(this).val());", 
-						:disabled => true%>
+						:disabled => false%>
       <%= label_tag "persist_groups",
                     t("assignment.group.persist_group_from"),
                     :class => "checkbox_label" %>
