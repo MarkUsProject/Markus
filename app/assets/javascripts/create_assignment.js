@@ -248,7 +248,7 @@ function change_submission_rule() {
       jQuery("#grace_period_link").show();
       if (jQuery("grace_periods .period").length == 0) {
         // Auto expand add a grace period if needed
-        jQuery("grace_period_link").onclick();
+        jQuery("#grace_period_link").click();
     }
   }
   if(jQuery('#penalty_decay_period_submission_rule').val() == null) {
@@ -261,7 +261,7 @@ function change_submission_rule() {
       jQuery("#penalty_decay_period_link").show();
       if (jQuery("penalty_decay_periods .period").length == 0) {
          // Auto expand add a penalty period if needed
-        jQuery("penalty_decay_period_link").onclick();
+        jQuery("#penalty_decay_period_link").click();
     }
   }
   if(jQuery('#penalty_period_submission_rule').val() == null) {
@@ -274,7 +274,7 @@ function change_submission_rule() {
       jQuery("#penalty_period_link").show();
       if (jQuery("penalty_periods .period").length == 0) {
          // Auto expand add a penalty period if needed
-        jQuery("penalty_period_link").onclick();
+        jQuery("#penalty_period_link").click();
     }
   }
 }
