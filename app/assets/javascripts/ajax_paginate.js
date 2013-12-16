@@ -1,7 +1,5 @@
 function ap_flip_switches_to(flip_to) {
-
-jQuery.each(("input.ap_selectable"),function(node){
-      node.val(flip_to);
+jQuery.each(('input.ap_selectable'),function() {node.val(flip_to);
     }
   );
 }
@@ -28,7 +26,7 @@ function ap_select_none() {
 
 function ap_thinking_start(table_name) { 
   ap_select_none();
-  jQuery(table_name).html('');
+  jQuery('#table_name').html('');
   jQuery('#ap_thinking').show();
 }
 
