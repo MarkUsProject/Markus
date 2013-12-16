@@ -19,7 +19,7 @@ var PeriodDeltaChain = Class.create({
   refresh: function() {
     var me = this;
     var current_time = new Date(this.due_date);
-    jQuery.each((" + this.period_root_id + this.period_class"), function() {
+    jQuery(" + this.period_root_id + this.period_class").each(function() {
       var from_time_node = node.down('.PeriodDeltaChain_FromTime');
       var to_time_node = node.down('.PeriodDeltaChain_ToTime');
       var hours_value = jQuery('#.PeriodDeltaChain_Hours').val();
