@@ -1,5 +1,5 @@
 function ap_flip_switches_to(flip_to) {
-jQuery.each(jquery'input.ap_selectable')function() {node.val(flip_to);
+jQuery.each(('input.ap_selectable'),function() {node.val(flip_to);
     }
   );
 }
