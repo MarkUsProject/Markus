@@ -1,37 +1,37 @@
 function ap_flip_switches_to(flip_to) {
-  $$('input.ap_selectable').each(
-    function(node){
-      node.setValue(flip_to);
+
+jQuery.each(("input.ap_selectable"),function(node){
+      node.val(flip_to);
     }
   );
 }
 
 function ap_select_all() {
-  $('ap_select_full_div').hide();
-  $('ap_select_full').setValue('false');
+  jQuery('#ap_select_full_div').hide();
+  jQuery('#ap_select_full').val('false');
   ap_flip_switches_to(true);
-  $('ap_select_all_div').show();
+  jQuery('#ap_select_all_div').show();
 }
 
 function ap_select_full() {
-  $('ap_select_all_div').hide();
-  $('ap_select_full_div').show();
-  $('ap_select_full').setValue('true');
+  jQuery('#ap_select_all_div').hide();
+  jQuery('#ap_select_full_div').show();
+  jQuery('#ap_select_full').val('true');
 }
 
 function ap_select_none() {
   ap_flip_switches_to(false);
-  $('ap_select_all_div').hide();
-  $('ap_select_full_div').hide();
-  $('ap_select_full').setValue('false');
+  jQuery('#ap_select_all_div').hide();
+  jQuery('#ap_select_full_div').hide();
+  jQuery('#ap_select_full').val('false');
 }
 
 function ap_thinking_start(table_name) { 
   ap_select_none();
-  $(table_name).update('');
-  $('ap_thinking').show();
+  jQuery(table_name).html('');
+  jQuery('#ap_thinking').show();
 }
 
 function ap_thinking_stop() {
-  $('ap_thinking').hide();
+  jQuery('#ap_thinking').hide();
 }
