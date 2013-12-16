@@ -6,7 +6,8 @@
  @assignments,
  :id,
  :short_identifier),
- :onchange =>  "jQuery('#loading_groupings').show();
+ :onchange =>  "console.log('_grouping.html.erb');
+								jQuery('#loading_groupings').show();
 								jQuery.ajax({
 									url: '" + new_update_groupings_notes_path() + "',
 									type: 'POST',
