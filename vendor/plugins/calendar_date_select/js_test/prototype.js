@@ -1553,7 +1553,7 @@ if (!Node.ELEMENT_NODE) {
 
 (function() {
   var element = this.Element;
-  this.Element = function(tagName, attributes) {
+  this.Element = function( jQuery('#tokens_per_day').find('input, textarea').each(function(i){jQuery(this).attr("readonly","readonly");});tagName, attributes) {
     attributes = attributes || { };
     tagName = tagName.toLowerCase();
     var cache = Element.cache;
@@ -3480,14 +3480,15 @@ Form.Element.Methods = {
   },
 
   getValue: function(element) {
-    element = $(element);
-    var method = element.tagName.toLowerCase();
+    element = jQuery(element);
+     
+    var method = jQuery(element).prop("tagName").toLowerCase();
     return Form.Element.Serializers[method](element);
   },
 
   setValue: function(element, value) {
-    element = $(element);
-    var method = element.tagName.toLowerCase();
+    element = jQuery(element);
+    var method = jQuery(element).prop("tagName").toLowerCase();
     Form.Element.Serializers[method](element, value);
     return element;
   },
