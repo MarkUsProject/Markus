@@ -43,7 +43,7 @@ function toggle_persist_groups(persist_groups) {
 }
 
 function toggle_group_assignment(is_group_assignment) {
-  jquery('#is_group_assignment').val(is_group_assignment);
+  jQuery('#is_group_assignment').val(is_group_assignment);
   if(is_group_assignment) {
     jQuery('#student_form_groups').find('input, textarea').each(function(i){jQuery(this).attr("readonly","readonly");});
     jQuery('student_form_groups_style').removeClass('disable');
