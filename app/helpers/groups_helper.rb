@@ -62,7 +62,8 @@ module GroupsHelper
     table_row = {}
 
     table_row[:id] = student.id
-    table_row[:filter_table_row_contents] = render_to_string :partial => 'groups/table_row/filter_table_student_row', :locals => {:student => student}
+    table_row[:filter_table_row_contents] = render_to_string :partial => 'groups/table_row/filter_table_student_row.html.erb', 
+							     :locals => {:student => student}
 
     table_row[:user_name] = student.user_name
     table_row[:first_name] = student.first_name

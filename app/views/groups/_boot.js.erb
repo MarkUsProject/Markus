@@ -1,16 +1,15 @@
-<script type="text/javascript">
-//<![CDATA[
-
 var groupings_table = null;
 
-document.observe("dom:loaded", function() {
+//prototype :  document.observe("dom:loaded", function() {
+jQuery(document).ready(function(){
   // Hide AJAX errors DIV
-  $('errors').hide();
+  jQuery('#errors').hide();
 
   // force the middle column to be moved on the y-axis as the page is scrolled
-  Event.observe(document, "scroll", function() {
+  //prototype : Event.observe(document, "scroll", function() {
+  jQuery(document).scroll(function() { 
   	// 110 is the displacement for "top" for .centreColumn as can be seen in the main.css
-    $("centreColumn").setStyle({ top: (document.viewport.getScrollOffsets().top + 110 ) +'px' });
+    jQuery("#centreColumn").css({ top: (jQuery(window).scrollTop() + 110 ) +'px' });
   });
 
   groupings_table = new FilterTable({
@@ -131,22 +130,23 @@ document.observe("dom:loaded", function() {
     }
   });
 
-  new Ajax.Request('<%= populate_assignment_groups_path(@assignment.id) %>',
-                    {
-                      asynchronous:true,
-                      evalScripts:true,
-                      onComplete: function() { $('loading_list').hide(); },
-                      parameters: 'authenticity_token=' + AUTH_TOKEN
-                    })
+	jQuery.ajax({
+		url: "<%= populate_assignment_groups_path(@assignment.id) %>",
+		data: 'authenticity_token=' + AUTH_TOKEN,
+		async: true,
+		dataType: 'json'
+	}).done(function (data) {
+		jQuery('#loading_list').hide();
+		populate(JSON.stringify(data));
+	});
 
-  new Ajax.Request('<%= populate_students_assignment_groups_path(@assignment.id) %>',
-                    {
-                      asynchronous:true,
-                      evalScripts:true,
-                      onComplete: function() { $('loading_students_list').hide(); },
-                      parameters: 'authenticity_token=' + AUTH_TOKEN
-                    })
+	jQuery.ajax({
+		url: "<%= populate_students_assignment_groups_path(@assignment.id) %>",
+		data: 'authenticity_token=' + AUTH_TOKEN,
+		async: true,
+		dataType: 'json'
+	}).done(function (data) {
+		jQuery('#loading_students_list').hide();
+		populate_students(JSON.stringify(data));
+	});
 });
-
-//]]>
-</script>
