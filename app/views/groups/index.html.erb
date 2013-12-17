@@ -1,17 +1,16 @@
 <% content_for :head do %>
   <%= javascript_include_tag 'manage_groups.js',
-                             'DataTables/media/js/jquery.dataTables.js',
+                             'FilterTable/FilterTable.js',
                              'Groups/tabs_boot.js',
-			     'jquery-ui.js',
                              'Groups/index' %>
 
   <%= render :partial => 'layouts/head' %>
 
-<script type="text/javascript">
-	<%= render :partial => "boot.js.erb" %>
-</script>
+  <%= render :partial => "boot.js.erb" %>
 
-<script type="text/javascript">
+  <script type="text/javascript">
+  //<![CDATA[
+
   var modalCreate = null;
   var modalAssignmentGroupReUse = null;
   var modalAddMember = null;
@@ -72,40 +71,42 @@
                       })
   }
 
-	jQuery(document).ready(function() {
-// document.observe("dom:loaded", function() {
-	    jQuery('#create_group_dialog').dialog( // modalCreate = new Control.Modal($('create_group_dialog'),
-	    {
-	      overlayOpacity: 0.75,
-	      className: 'modalCreate',
-	      fade:false
-	    });
+  document.observe("dom:loaded", function() {
+    modalCreate = new Control.Modal($('create_group_dialog'),
+    {
+      overlayOpacity: 0.75,
+      className: 'modalCreate',
+      fade:false
+    });
 
-	    jQuery('#notes_dialog').dialog( // modalNotesGroup = new Control.Modal($('notes_dialog'),
-	    {
-	      overlayOpacity: 0.75,
-	      className: 'modalNotesGroup',
-	      fade:false
-	    });
+    modalNotesGroup = new Control.Modal($('notes_dialog'),
+    {
+      overlayOpacity: 0.75,
+      className: 'modalNotesGroup',
+      fade:false
+    });
 
-	    jQuery('#assignment_group_use_dialog').dialog( // modalAssignmentGroupReUse = new Control.Modal($('assignment_group_use_dialog'),
-	    {
-	      overlayOpacity: 0.75,
-	      className: 'modalAssignmentGroupReUse',
-	      fade:false
-	    });
+    modalAssignmentGroupReUse = new Control.Modal($('assignment_group_use_dialog'),
+    {
+      overlayOpacity: 0.75,
+      className: 'modalAssignmentGroupReUse',
+      fade:false
+    });
 
-	    // set up event handlers to show the loading spinner while
-	    // an ajax call us working
-	    $("global_action_form").observe('ajax:after', function(evt, status, data, xhr) {
-	      thinking();
-	    });
+    // set up event handlers to show the loading spinner while
+    // an ajax call us working
+    $("global_action_form").observe('ajax:after', function(evt, status, data, xhr) {
+      thinking();
+    });
 
-	    $("global_action_form").observe('ajax:success', function(evt, status, data, xhr) {
-	      done_thinking();
-	    });
-	});
-</script>
+    $("global_action_form").observe('ajax:success', function(evt, status, data, xhr) {
+      done_thinking();
+    });
+
+  });
+
+  //]]>
+  </script>
 <% end %>
 
 
@@ -230,7 +231,7 @@
               :alt => I18n.t("groups.action.delete"),
               :onclick => "$('global_actions').setValue('delete');" %>
           </div>
-          <table id="groups" class="groups">
+          <table class="groups" id="groups">
           </table>
           <%= hidden_field_tag 'submit_type', 'global_action', :id => 'submit_type' %>
           <%= hidden_field_tag 'global_actions'%>
