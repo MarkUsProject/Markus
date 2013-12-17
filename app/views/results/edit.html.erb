@@ -63,13 +63,15 @@
 
   // Set up the "working" notices
 
-	jQuery.ajaxSend(function() {
-      jQuery('#working').show();
+  Ajax.Responders.register({
+    onCreate: function() {
+      $('working').show();
       window.onbeforeunload = check_working;
-  });
-	jQuery.ajaxStop(function() {
-      jQuery('#working').hide();
+    },
+    onComplete: function() {
+      $('working').hide();
       window.onbeforeunload = null;
+    }
   });
 
  });
