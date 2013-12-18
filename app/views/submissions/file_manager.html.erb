@@ -1,4 +1,4 @@
-<%=javascript_include_tag "file_manager"%>
+﻿<%=javascript_include_tag "file_manager"%>
 <%= javascript_include_tag "FilterTable/FilterTable.js" %>
 <%= render :partial => "shared/navigation_warning.js.erb" %>
 <%= render :partial => "file_manager_boot.js.erb" %>
@@ -9,17 +9,21 @@
   <%= render :partial => "server_time" %>
 
   <script type="text/javascript">
-    new PeriodicalExecuter(
-      function() {
-        new Ajax.Updater('current_time',
-          '<%= server_time_assignment_submissions_path(@assignment.id) %>',
-          {
-            asynchronous:true,
-            evalScripts:true,
-            parameters:'authenticity_token=' + AUTH_TOKEN
-          }
-        )
-    }, 60);
+  	function() {
+		jQuery.ajax({
+			url: "<% server_time_assignment_submissions_path(@assignment.id) %>",
+			async: true,
+			timeout: 60,
+			data: {"'authenticity_token=' + AUTH_TOKEN" : "current_time"}
+			success: function(returnData){
+				jQuery("#current_time").html(returnData)
+			}
+			error: function(e){
+				alert(e);
+				}
+		}	
+		)
+	}
   </script>
   </div>
 </div>
@@ -54,8 +58,8 @@
   <div class="success"><%= flash[:success] %></div>
 <% end %>
 
-<% if @assignment.submission_rule.can_collect_now? &&
-	flash[:commit_notice] != @assignment.submission_rule.commit_after_collection_message %>
+<% if @assignment.submission_rule.can_collect_now? && 
+        flash[:commit_notice] != @assignment.submission_rule.commit_after_collection_message %>
   <div class="warning">
     <%= @assignment.submission_rule.after_collection_message %>
   </div>
@@ -133,11 +137,11 @@
 <%= link_to( I18n.t(:cancel),
         {:controller => 'submissions',
            :action => 'file_manager'},
-	 :id => @assignment.id,
-	 :disabled => !@grouping.is_valid?,
-	 :class => "button",
-	 :onclick => "set_onbeforeunload(false); return confirm('#{I18n.t(:discard_changes_message)}');"
-	 ) unless @grouping.repository_external_commits_only? %>
+         :id => @assignment.id,
+         :disabled => !@grouping.is_valid?,
+         :class => "button",
+         :onclick => "set_onbeforeunload(false); return confirm('#{I18n.t(:discard_changes_message)}');"
+         ) unless @grouping.repository_external_commits_only? %>
 <% end %>
 </div>
 
@@ -155,11 +159,11 @@
 <%= link_to( I18n.t(:cancel),
         {:controller => 'submissions',
            :action => 'file_manager'},
-	 :id => @assignment.id,
-	 :disabled => !@grouping.is_valid?,
-	 :class => "button",
-	 :onclick => "set_onbeforeunload(false); return confirm('#{I18n.t(:discard_changes_message)}');"
-	 ) unless @grouping.repository_external_commits_only? %>
+         :id => @assignment.id,
+         :disabled => !@grouping.is_valid?,
+         :class => "button",
+         :onclick => "set_onbeforeunload(false); return confirm('#{I18n.t(:discard_changes_message)}');"
+         ) unless @grouping.repository_external_commits_only? %>
 </div>
 </form>
 <% end %>

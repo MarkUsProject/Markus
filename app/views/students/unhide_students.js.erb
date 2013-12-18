@@ -1,0 +1,6 @@
+<% @student_ids.each do |student_id| %>{ 
+  jQuery('#student_' + student_id + '_checkbox').val('FALSE');
+  jQuery('#student_' + student_id).removeClass('hidden_student');
+}
+
+jQuery('#hidden_students_number').html(<% @hidden_students_number %>);
