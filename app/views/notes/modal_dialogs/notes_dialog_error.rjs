@@ -1,4 +1,0 @@
-page.replace_html 'notes_error_list',
-                  :partial => 'notes/modal_dialogs/notes_dialog_error_list',
-                  :locals => {:errors => @note.errors}
-page.show 'notes_error'
