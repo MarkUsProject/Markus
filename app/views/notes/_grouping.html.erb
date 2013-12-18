@@ -3,28 +3,25 @@
     <%= label_tag "assignment_id", I18n.t("notes.noteables.Assignment") %>
     <%= select_tag "assignment_id",
                    options_from_collection_for_select(
- @assignments,
- :id,
- :short_identifier),
- :onchange =>  "console.log('_grouping.html.erb');
-								jQuery('#loading_groupings').show();
-								jQuery.ajax({
-									url: '" + new_update_groupings_notes_path() + "',
-									type: 'POST',
-									data: jQuery(this).serialize() + '&authenticity_token='+ AUTH_TOKEN,
-									async: true,
-                  dataType: 'json'
-								}).done(function() {
-									jQuery('#loading_groupings').hide();
-								});"
-
+   @assignments,
+   :id,
+   :short_identifier),
+   :onchange =>  "jQuery('#loading_groupings').show();
+                  jQuery.ajax({
+                    url: '" + new_update_groupings_notes_path() + "',
+                    type: 'POST',
+                    data: jQuery(this).serialize() + '&authenticity_token='+ AUTH_TOKEN,
+                    async: true
+                  }).done(function() {
+                    jQuery('#loading_groupings').hide();
+                  });"
     %>
   </p>
 
   <p>
     <%= f.label :noteable_id, I18n.t("notes.noteables.Grouping") %>
     <%= f.select :noteable_id,
-		 @groupings.collect {|p| [p.group_name_with_student_user_names,p.id]} %>
+     @groupings.collect {|p| [p.group_name_with_student_user_names,p.id]} %>
     <span id="loading_groupings" style="display:none">
     <%= image_tag('spinner.gif') %> <%= I18n.t('notes.new.loading_groupings') %>
     </span>

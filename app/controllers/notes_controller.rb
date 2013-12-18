@@ -67,10 +67,7 @@ class NotesController < ApplicationController
   # Used to update the values in the groupings dropdown in the new note form
   def new_update_groupings
     retrieve_groupings(Assignment.find(params[:assignment_id]))
-		respond_to do |format|
-			format.json {render :json => @note}
-		end
-		#render 'new_update_groupings.js'
+    render 'new_update_groupings.js.erb'
   end
 
   # used for RJS call
@@ -109,10 +106,10 @@ class NotesController < ApplicationController
     if @note.user_can_modify?(current_user)
       @note.destroy
       flash[:success] = I18n.t('notes.delete.success')
-			render 'destroy.js'
     else
       flash[:error] = I18n.t('notes.delete.error_permissions')
     end
+	  render 'destroy.js'
   end
 
   private
