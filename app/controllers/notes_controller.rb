@@ -14,7 +14,7 @@ class NotesController < ApplicationController
 
     @notes = Note.all(:conditions => {:noteable_id => @noteable.id,
                                       :noteable_type => @noteable.class.name})
-    render :partial => 'notes/modal_dialogs/notes_dialog_script.rjs'
+    render :partial => 'notes/modal_dialogs/notes_dialog_script.js'
   end
 
   def add_note
@@ -25,13 +25,13 @@ class NotesController < ApplicationController
     @note.noteable_id = params[:noteable_id]
     @note.noteable_type = params[:noteable_type]
     unless @note.save
-      render 'notes/modal_dialogs/notes_dialog_error.rjs'
+      render 'notes/modal_dialogs/notes_dialog_error.js'
     else
       @note.reload
       @number_of_notes_field = params[:number_of_notes_field]
       @highlight_field = params[:highlight_field]
       @number_of_notes = @note.noteable.notes.size
-      render 'notes/modal_dialogs/notes_dialog_success.rjs'
+      render 'notes/modal_dialogs/notes_dialog_success.js'
     end
   end
 
@@ -40,12 +40,14 @@ class NotesController < ApplicationController
     @current_user = current_user
     # Notes are attached to noteables, if there are no noteables, we can't make notes.
     @noteables_available = Note.noteables_exist?
+		render 'index.js'
   end
 
   # gets the objects for groupings on first load.
   def new
     new_retrieve
     @note = Note.new
+		render 'new.js'
   end
 
   def create
@@ -65,6 +67,7 @@ class NotesController < ApplicationController
   # Used to update the values in the groupings dropdown in the new note form
   def new_update_groupings
     retrieve_groupings(Assignment.find(params[:assignment_id]))
+    render 'new_update_groupings.js.erb'
   end
 
   # used for RJS call
@@ -82,9 +85,11 @@ class NotesController < ApplicationController
         flash[:error] = I18n.t('notes.new.invalid_selector')
         new_retrieve
     end
+		render 'noteable_object_selector.js'
   end
 
   def edit
+		render 'edit.js'
   end
 
   def update
@@ -104,6 +109,7 @@ class NotesController < ApplicationController
     else
       flash[:error] = I18n.t('notes.delete.error_permissions')
     end
+	  render 'destroy.js'
   end
 
   private

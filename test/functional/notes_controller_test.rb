@@ -99,7 +99,7 @@ class NotesControllerTest < AuthenticatedControllerTest
               :noteable_id => @grouping.id,
               :controller_to => @controller_to,
               :action_to => @action_to
-      assert render_template 'note/modal_dialogs/notes_dialog_success.rjs'
+      assert render_template 'note/modal_dialogs/notes_dialog_success.js.erb'
     end
 
     should 'be able to add new notes with an invalid note' do
@@ -110,7 +110,7 @@ class NotesControllerTest < AuthenticatedControllerTest
               :noteable_id => @grouping.id,
               :controller_to => @controller_to,
               :action_to => @action_to
-      assert render_template 'note/modal_dialogs/notes_dialog_error.rjs'
+      assert render_template 'note/modal_dialogs/notes_dialog_error.js.erb'
     end
 
     should 'get index, with a note' do
@@ -160,7 +160,7 @@ class NotesControllerTest < AuthenticatedControllerTest
           assert_not_nil assigns :note
           assert_equal flash[:success], I18n.t('notes.create.success')
           assert redirect_to(:controller => 'note')
-	        assert_equal(@notes + 1,  Note.count )
+          assert_equal(@notes + 1,  Note.count )
         end
       end
     end
@@ -168,7 +168,7 @@ class NotesControllerTest < AuthenticatedControllerTest
     should 'be able to update new groupings' do
       get_as @ta, :new_update_groupings, :assignment_id => @assignment.id
       assert_response :success
-      assert render_template 'new_update_groupings.rjs'
+      assert render_template 'new_update_groupings.js.erb'
     end
 
     context 'GET on :noteable_object_selector' do
@@ -177,21 +177,21 @@ class NotesControllerTest < AuthenticatedControllerTest
         assert_not_nil assigns :assignments
         assert_not_nil assigns :groupings
         assert_response :success
-        assert render_template 'noteable_object_selector.rjs'
+        assert render_template 'noteable_object_selector.js.erb'
       end
 
       should 'for Students' do
         get_as @ta, :noteable_object_selector, :noteable_type => 'Student'
         assert_not_nil assigns :students
         assert_response :success
-        assert render_template 'noteable_object_selector.rjs'
+        assert render_template 'noteable_object_selector.js.erb'
       end
 
       should 'for Assignments' do
         get_as @ta, :noteable_object_selector, :noteable_type => 'Assignment'
         assert_not_nil assigns :assignments
         assert_response :success
-        assert render_template 'noteable_object_selector.rjs'
+        assert render_template 'noteable_object_selector.js.erb'
       end
     end
 
@@ -288,7 +288,7 @@ class NotesControllerTest < AuthenticatedControllerTest
       assert_nil assigns(:assignments)
       assert_nil assigns(:groupings)
       assert_response :success
-      assert render_template 'noteable_object_selector.rjs'
+      assert render_template 'noteable_object_selector.js.erb'
     end
 
     should 'for Assignments' do
@@ -299,7 +299,7 @@ class NotesControllerTest < AuthenticatedControllerTest
       assert_nil assigns(:students)
       assert_nil assigns :groupings
       assert_response :success
-      assert render_template 'noteable_object_selector.rjs'
+      assert render_template 'noteable_object_selector.js.erb'
     end
 
     should 'for invalid type' do
@@ -309,7 +309,7 @@ class NotesControllerTest < AuthenticatedControllerTest
       assert_not_nil assigns :groupings
       assert_nil assigns :students
       assert_response :success
-      assert render_template 'noteable_object_selector.rjs'
+      assert render_template 'noteable_object_selector.js.erb'
     end
 
     context 'with an assignment' do
@@ -340,7 +340,7 @@ class NotesControllerTest < AuthenticatedControllerTest
                 :noteable_id => @grouping.id,
                 :controller_to => @controller_to,
                 :action_to => @action_to
-        assert render_template 'note/modal_dialogs/notes_dialog_success.rjs'
+        assert render_template 'note/modal_dialogs/notes_dialog_success.js.erb'
       end
 
       should 'with an invalid note' do
@@ -351,7 +351,7 @@ class NotesControllerTest < AuthenticatedControllerTest
                 :noteable_id => @grouping.id,
                 :controller_to => @controller_to,
                 :action_to => @action_to
-        assert render_template 'note/modal_dialogs/notes_dialog_error.rjs'
+        assert render_template 'note/modal_dialogs/notes_dialog_error.js.erb'
       end
 
       should 'with empty note' do
@@ -389,7 +389,7 @@ class NotesControllerTest < AuthenticatedControllerTest
       should 'GET on :new_update_groupings' do
         get_as @admin, :new_update_groupings, :assignment_id => @assignment.id
         assert_response :success
-        assert render_template 'new_update_groupings.rjs'
+        assert render_template 'new_update_groupings.js.erb'
       end
 
       should 'for Groupings' do
@@ -398,7 +398,7 @@ class NotesControllerTest < AuthenticatedControllerTest
         assert_not_nil assigns :groupings
         assert_nil assigns(:students)
         assert_response :success
-        assert render_template 'noteable_object_selector.rjs'
+        assert render_template 'noteable_object_selector.js.erb'
       end
 
       should 'for a note belonging to themselves (get as Admin)' do
