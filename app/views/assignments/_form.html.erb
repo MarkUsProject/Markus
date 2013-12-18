@@ -25,8 +25,7 @@
       <% if @assignment.id.nil? %>
         <%=raw( f.text_field :short_identifier ,
                          :onchange =>  "set_onbeforeunload(true);
-                         $('assignment_repository_folder').setValue(
-                           $(this).getValue() )",
+ 			 jQuery('#assignment_repository_folder').val(jQuery(this).val())",
                          :maxlength => 30 )%><br />
       <% else %>
         <%= raw( f.text_field :short_identifier ,
@@ -165,7 +164,10 @@
   <fieldset>
     <legend><%= t("assignment.type") %></legend>
     <p id="persist_groups_assignment_style" <%='style="display:none;"' unless @assignments.size > 0 && @assignment.id.nil? %> class="disable">
-      <%= check_box_tag "persist_groups", true, false, :id => "persist_groups", :onclick => "toggle_persist_groups($(this).getValue());", :disabled => true%>
+      <%= check_box_tag "persist_groups", true, false, 
+						:id => "persist_groups", 
+						:onclick => "toggle_persist_groups(jQuery(this).val());", 
+						:disabled => true%>
       <%= label_tag "persist_groups",
                     t("assignment.group.persist_group_from"),
                     :class => "checkbox_label" %>
@@ -173,7 +175,7 @@
               name="persist_groups_assignment"
               onchange = "new Ajax.Request(
                 '<%= update_group_properties_on_persist_assignments_path() %>',
-                { asynchronous:true, evalScripts:true, parameters: 'assignment_id=' + $F('persist_groups_assignment') }
+                { asynchronous:true, evalScripts:true, parameters: 'assignment_id=' + jQuery ('#persist_groups_assignment').val()}
                 );"
 
               disabled="">
@@ -187,7 +189,7 @@
     <p id="is_group_assignment_style">
       <%= raw( check_box_tag "is_group_assignment", true, false,
                              :id => "is_group_assignment",
-                             :onchange => "toggle_group_assignment($F('is_group_assignment'))" ) %>
+                             :onchange => "toggle_group_assignment(jQuery ('#is_group_assignment').val())" ) %>
       <%= raw( label_tag "is_group_assignment", t("assignment.group.work_in_groups"), :class => "checkbox_label" ) %>
     </p>
     <fieldset class="group_properties">
@@ -196,7 +198,7 @@
         <p id="student_form_groups_style" class="disable">
           <%= raw( f.check_box :student_form_groups, :id => "student_form_groups",
                                :onchange =>
-                               "toggle_student_form_groups($F('student_form_groups'))" ) %>
+                               "toggle_student_form_groups(jQuery ('#student_form_groups').val())" ) %>
           <%= raw( label_tag "student_form_groups",
                               t("assignment.group.students_allowed_form_groups"),
                               :class => "checkbox_label" ) %>
@@ -353,7 +355,7 @@
     <p id="allow_remark_requests">
       <%= raw( f.check_box(:allow_remarks,
                       {:id => "allow_remarks",
-                      :onchange => "toggle_remark_requests($F('allow_remarks'));
+                      :onchange => "toggle_remark_requests(jQuery ('#allow_remarks').val());
                                     set_onbeforeunload(true);",
                       :checked => false},
                       true,
@@ -369,8 +371,7 @@
       <%= raw( f.calendar_date_select :remark_due_date,
                                  {:time => "mixed",
                                   :locale => I18n.default_locale,
-                                  :after_close => "check_due_date(
-                                                      $F('remark_due_date'))",
+                                  :after_close => "check_due_date(jQuery ('#remark_due_date').val())",
                                   :year_range => 0.years.ago..1.years.from_now,
                                   :id => "remark_due_date",
                                   :onchange => "set_onbeforeunload(true);"  } ) %>
