@@ -15,10 +15,11 @@ var is_image;
 
 function source_code_ready() {
   annotation_manager = null;
-  $('loading_code').hide();
-  $('select_file_id').enable();
+  jQuery('#loading_code').hide();
+  jQuery('#select_file_id').find('input, textarea').each(function(i) {jQuery(this).removeAttr("readonly"); });
+
   syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter(
-      $$('.dp-highlighter').first().getElementsBySelector('ol').first());
+      jQuery('.dp-highlighter')[0].getElementsBySelector('ol')[0]);
 
   //Apply modifications to Syntax Highlighter
   syntax_highlighter_adapter.applyMods();
@@ -27,7 +28,7 @@ function source_code_ready() {
   var line_factory = new SourceCodeLineFactory();
   var line_manager = new SourceCodeLineManager(syntax_highlighter_adapter, line_factory, collection);
   var annotation_text_manager = new AnnotationTextManager();
-  var annotation_text_displayer = new AnnotationTextDisplayer($('annotation_holder'));
+  var annotation_text_displayer = new AnnotationTextDisplayer(jQuery('#annotation_holder'));
 
   annotation_manager = new SourceCodeLineAnnotations(line_manager, annotation_text_manager, annotation_text_displayer);
 
@@ -41,13 +42,13 @@ function source_code_ready_for_image() {
   var image_event_handler = new ImageEventHandler();
   var annotation_text_manager = new AnnotationTextManager();
   var annotation_text_displayer = new AnnotationTextDisplayer(
-                                        $('annotation_holder'));
+                                        jQuery('#annotation_holder'));
 
   annotation_manager = new ImageAnnotationGrid(image_event_handler,
       annotation_text_manager, annotation_text_displayer);
 
-  $('loading_code').hide();
-  $('select_file_id').enable();
+  jQuery('#loading_code').hide();
+  jQuery('#select_file_id').find('input, textarea').each(function(i) { jQuery(this).removeAttr("readonly"); });
 
   is_image = true;
 }
@@ -151,27 +152,27 @@ function make_new_annotation() {
   modal.open();
   //Manually reset the modal dialog values
   //TODO:  Refactor?
-  $('new_annotation_content').setValue('');
-  $('new_annotation_category').setValue('');
-  $('x1').setValue('');
-  $('x2').setValue('');
-  $('y1').setValue('');
-  $('y2').setValue('');
-  $('new_annotation_content').focus();
+  jQuery('#new_annotation_content').val('');
+  jQuery('#new_annotation_category').val('');
+  jQuery('#x1').val('');
+  jQuery('#x2').val('');
+  jQuery('#y1').val('');
+  jQuery('#y2').val('');
+  jQuery('#new_annotation_content').focus();
 
   return false;
 }
 
 function make_new_image_annotation() {
-  var box = $("sel_box");
-  var x1 = parseInt(box.style.left) -
-    $("image_preview").offsetLeft +
-    $("image_container").scrollLeft;
-  var y1 = parseInt(box.style.top) -
-    $("image_preview").offsetTop +
-    $("image_container").scrollTop;
-  var x2 = x1 + parseInt(box.style.width);
-  var y2 = y1 + parseInt(box.style.height);
+  var box = jQuery("#sel_box");
+  var x1 = parseInt(box.position().left -
+    jQuery("#image_preview").offset().left +
+    jQuery("#image_container").scrollLeft());
+  var y1 = parseInt(box.position().top -
+    jQuery("#image_preview").offset().top +
+    jQuery("#image_container").scrollTop());
+  var x2 = parseInt(x1 + box.width());
+  var y2 = parseInt(y1 + box.height());
   if ((x2 - x1) < 1 || isNaN(x2 - x1)) {
     alert("<%= I18n.t('marker.annotation.select_an_area') %>");
     return false
@@ -180,13 +181,13 @@ function make_new_image_annotation() {
   modal.open();
   //Manually reset the modal dialog values
   //TODO:  Refactor?
-  $('new_annotation_content').setValue('');
-  $('new_annotation_category').setValue('');
-  $('x1').setValue(x1);
-  $('x2').setValue(x2);
-  $('y1').setValue(y1);
-  $('y2').setValue(y2);
-  $('new_annotation_content').focus();
+  jQuery('#new_annotation_content').val('');
+  jQuery('#new_annotation_category').val('');
+  jQuery('#x1').val(x1);
+  jQuery('#x2').val(x2);
+  jQuery('#y1').val(y1);
+  jQuery('#y2').val(y2);
+  jQuery('#new_annotation_content').focus();
 }
 
 <%#
@@ -196,90 +197,81 @@ currently selected text, and then highlights the lines.
 %>
 function add_existing_annotation(annotation_text_id) {
   if(is_image) {
-    var box = $("sel_box");
-    var x1 = parseInt(box.style.left) -
-      $("image_preview").offsetLeft +
-      $("image_container").scrollLeft;
-    var y1 = parseInt(box.style.top) -
-      $("image_preview").offsetTop +
-      $("image_container").scrollTop;
-    var x2 = x1 + parseInt(box.style.width);
-    var y2 = y1 + parseInt(box.style.height);
+    var box = jQuery("#sel_box");
+		var x1 = parseInt(box.position().left -
+      jQuery("#image_preview").offset().left +
+      jQuery("#image_container").scrollLeft());
+    var y1 = parseInt(box.position().top -
+      jQuery("#image_preview").offset().top +
+      jQuery("#image_container").scrollTop());
+    var x2 = parseInt(x1 + box.width());
+    var y2 = parseInt(y1 + box.height)
     if ((x2 - x1) < 1 || isNaN(x2 - x1)) {
       alert("<%= I18n.t('marker.annotation.select_an_area') %>");
       return false
     }
-    new Ajax.Request('<%= add_existing_annotation_annotations_path() %>',
-        { asynchronous:true,
-          evalScripts:true,
-          method:'post',
-          parameters:'annotation_type=image' +
-            '&submission_file_id='+
-            $('select_file_id').value +
-            '&annotation_text_id='+
-            annotation_text_id +
-            '&x1=' +
-            x1 +
-            '&x2=' +
-            x2 +
-            '&y1=' +
-            y1 +
-            '&y2=' +
-            y2 +
-            '&authenticity_token=' +
-            AUTH_TOKEN
-        })
+	
+		jQuery.ajax({
+			url: "<%= add_existing_annotation_annotations_path() %>",
+			data: 'annotation_type=image' +
+				'&submission_file_id='+ jQuery('#select_file_id').val() +
+				'&annotation_text_id='+ annotation_text_id +
+				'&x1=' +  x1 + '&x2=' + x2 +
+				'&y1=' + y1 + '&y2=' + y2 +
+				'&authenticity_token=' + AUTH_TOKEN,
+			type: "POST",
+			async: true
+		});
+		
   } else {
-    positions = get_mouse_positions();
-    if (!positions) {
-      return false;
-    }
-    new Ajax.Request('<%= add_existing_annotation_annotations_path() %>',
-      {
-        asynchronous:true,
-        evalScripts:true,
-        method:'post',
-        parameters:'submission_file_id='+
-          $('select_file_id').value +
-          '&line_start=' +
-          positions.line_start +
-          '&line_end=' +
-          positions.line_end +
-          '&annotation_text_id='+
-          annotation_text_id +
-          '&authenticity_token=' +
-          AUTH_TOKEN
-      })
+	  positions = get_mouse_positions();
+	  if (!positions) {
+	    return false;
+	  }
+
+		jQuery.ajax({
+			url: "<%= add_existing_annotation_annotations_path() %>",
+			data: 'submission_file_id='+ jQuery('#select_file_id').val() + 
+				'&line_start=' + positions.line_start + 
+				'&line_end=' + positions.line_end +
+				'&annotation_text_id='+  annotation_text_id +
+				'&authenticity_token=' + AUTH_TOKEN,
+			type: "POST",
+			async: true
+		});
   }
 }
 
 //Load a submitted file into the code-viewer based on file id's
 function load_submitted_file(submission_file_id, focus_line) {
   // Clear out any annotation_texts still on the screen
-  $$('.annotation_text_display').each(function(node) {
-    node.remove();
+  jQuery('.annotation_text_display').each(function(index) {
+		jQuery(this).remove();
   });
-  $('loading_code').show();
-  $('select_file_id').disable();
+  
+  jQuery('#loading_code').show();  
+  jQuery('#select_file_id').find('input, textarea').each(function(i) { jQuery(this).attr("readonly","readonly"); });
+  
   positions = null;
   annotation_manager = null;
-  new Ajax.Request('<%=
-                  codeviewer_assignment_submission_result_path(:id => @assignment.id, :uid => @uid) %>',
-                   { asynchronous:true,
-                    evalScripts:true,
-                    parameters:'submission_file_id=' + submission_file_id
-                      + '&focus_line=' + focus_line
-                      + '&authenticity_token=' + AUTH_TOKEN })
+  jQuery.ajax({
+    url: "<%= codeviewer_assignment_submission_result_path(:id => @assignment.id, :uid => @uid) %>",
+    data: 'submission_file_id=' + submission_file_id +
+		  '&focus_line=' + focus_line +
+		  '&authenticity_token=' + AUTH_TOKEN,
+    type: "POST",
+    async: true
+  });
 }
 
 function load_submitted_file_and_focus(submission_file_id, focus_line) {
   //First, switch to the source code viewer tab
   code_tab_menu.setActiveTab('code_holder');
 
-  if($F('select_file_id') == submission_file_id) {
+  if(jQuery('#select_file_id').val() == submission_file_id) {
     focus_source_code_line(focus_line);
   } else {
-    $('select_file_id').setValue(submission_file_id);
+    jQuery('#select_file_id').val(submission_file_id);
     load_submitted_file(submission_file_id, focus_line);
   }
 }
@@ -296,43 +288,32 @@ function submit_new_annotation(content, category_id, x1, x2, y1, y2) {
   //Send AJAX request
   //Text annotation
   if (positions != null){
-    new Ajax.Request('<%=annotations_path()%>',
-        { asynchronous:true, evalScripts:true,
-          parameters:'annotation_type=text' +
-        '&submission_file_id='+
-        $('select_file_id').value +
-        '&line_start=' +
-        positions.line_start +
-        ' &line_end=' +
-        positions.line_end +
-        '&content=' +
-        encodeURIComponent(content) +
-        '&category_id=' +
-        category_id +
-        '&authenticity_token=' +
-        AUTH_TOKEN
-        })
+    jQuery.ajax({
+      url: "<%=annotations_path()%>",
+      data: 'annotation_type=text' +
+			'&submission_file_id='+ jQuery('#select_file_id').val() +
+			'&line_start=' + positions.line_start +
+			'&line_end=' +  positions.line_end +
+			'&content=' + encodeURIComponent(content) +
+			'&category_id=' +  category_id +
+			'&authenticity_token=' + AUTH_TOKEN,
+      type: "POST",
+      async: true
+    });
   }
   else{
-    new Ajax.Request('<%=annotations_path()%>',
-        { asynchronous:true, evalScripts:true,
-          parameters:'annotation_type=image' +
-            '&submission_file_id='+
-            $('select_file_id').value +
-            '&content=' +
-            encodeURIComponent(content) +
-            '&category_id=' +
-            category_id +
-            '&x1=' +
-            x1 +
-            '&x2=' +
-            x2 +
-            '&y1=' +
-            y1 +
-            '&y2=' +
-            y2 +
-            '&authenticity_token=' +
-            AUTH_TOKEN})
+    jQuery.ajax({
+      url: "<%=annotations_path()%>",
+      data: 'annotation_type=image' +
+            '&submission_file_id='+ jQuery('#select_file_id').val() +
+            '&content=' + encodeURIComponent(content) +
+            '&category_id=' + category_id +
+            '&x1=' + x1 + '&x2=' + x2 + 
+			'&y1=' + y1 + '&y2=' + y2 +
+            '&authenticity_token=' + AUTH_TOKEN,
+      type: "POST",
+      async: true
+    });
   }
 }
 
@@ -344,25 +325,26 @@ function focus_source_code_line(line_num) {
   //and scroll to it.
   var line = annotation_manager.getLineManager().getLine(line_num);
   if(line != null) {
-    $(line.getLineNode()).scrollIntoView();
+    jQuery('#'+line.getLineNode()).scrollIntoView();
   }
 }
 
 function setup_divider(widen_target, dragger) {
-    var divider = new ResizePane(widen_target, dragger);
-    $('mark_pane').setStyle({'width': $('mark_pane').getStyle('width')});
+    var divider = new ResizePane(widen_target, dragger);	
+	jQuery('#mark_pane').css("width",jQuery('#mark_pane').css('width'));
+	
     return;
 }
 
 function hide_all_annotation_content_editors() {
-  $$('.annotation_text_content_editor').each(function(node) {
-    $(node).hide();
+  jQuery('.annotation_text_content_editor').each(function(index) {
+	jQuery(this).hide();
   });
-  var box = $("sel_box");
+  var box = jQuery("#sel_box");
   if (box) {
-    box.style.display = "none";
-    box.style.width = "0";
-    box.style.height = "0";
+    box.css('display', 'none');
+    box.css('width','0');
+    box.css('height', '0');
   }
 }
 
