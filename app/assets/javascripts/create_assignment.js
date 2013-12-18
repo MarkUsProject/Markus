@@ -281,7 +281,7 @@ function change_submission_rule() {
 
 function notice_marking_scheme_changed(is_assignment_new, clicked_marking_scheme_type, marking_scheme_type) {
   if(is_assignment_new != true && clicked_marking_scheme_type != marking_scheme_type) {
-	if (jQuery('#marking_scheme_notice').hasClass('hidden')) {
+	if (jQuery('marking_scheme_notice').hasClass('hidden')) {
 	    jQuery('marking_scheme_notice').removeClass('hidden');
 	}
 	jQuery('#marking_scheme_notice').show();
