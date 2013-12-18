@@ -174,22 +174,22 @@ function update_group_properties(is_group_assignment, student_form_groups, group
 }
 
 function add_assignment_file() {
-  var new_assignment_file_div = new Element('div', {'class': 'assignment_file'})
-  var new_assignment_file = new Element('input', {'type': 'text', 'name': 'assignment_files[]'})
+  var new_assignment_file_div = jQuery('div', {'class': 'assignment_file'})
+  var new_assignment_file = jQuery('input', {'type': 'text', 'name': 'assignment_files[]'})
   new_assignment_file.observe('keydown', function(e) {
     if(e.keyCode == Event.KEY_RETURN) {
-      e.stop();
+      e.preventDefault();
     }
   });
-  var remove_link = new Element('a', {'href': 'javascript:void(0);'})
-  remove_link.update('x')
-  remove_link.observe('click', function(e) {
+  var remove_link = jQuery('a', {'href': 'javascript:void(0);'})
+  remove_link.html('x')
+  remove_link.click(function(e) {
     jQuery(new_assignment_file_div).remove();
   });
-  new_assignment_file_div.insert(new_assignment_file);
-  new_assignment_file.insert({'after': remove_link});
-  jQuery('assignment_files').insert(new_assignment_file_div);
-  jQuery(new_assignment_file).activate();
+  new_assignment_file_div.after(new_assignment_file);
+  new_assignment_file.after(remove_link);
+  jQuery('#assignment_files').after(new_assignment_file_div);
+  jQuery('#new_assignment_file').focus().select();
 }
 
 function default_group_fields() {
