@@ -186,9 +186,9 @@ function add_assignment_file() {
   remove_link.click(function(e) {
     jQuery(new_assignment_file_div).remove();
   });
-  new_assignment_file_div.append(new_assignment_file);
+  new_assignment_file_div.after(new_assignment_file);
   new_assignment_file.after(remove_link);
-  jQuery('#assignment_files').append(new_assignment_file_div);
+  jQuery('#assignment_files').after(new_assignment_file_div);
   jQuery('#new_assignment_file').focus().select();
 }
 
