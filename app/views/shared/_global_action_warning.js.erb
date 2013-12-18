@@ -1,0 +1,7 @@
+if (<% @global_action_warning%>){
+    jQuery('#global_action_warning_msg').html("<% @global_action_warning %>");
+    jQuery('#global_action_warning').show();
+}
+else {
+    jQuery('#global_action_warning').hide();
+}
