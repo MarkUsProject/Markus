@@ -1,0 +1,5 @@
+if (<% escape_javascript(@grouping.repository_external_commits_only?).html_safe %>) {
+  jQuery('#directories_tbody').html("<%= escape_javascript(render :partial => 'submissions/table_row/exit_directory').html_safe %>");
+}
+populate("<%= escape_javascript(@table_rows.to_json).html_safe %>");
+
