@@ -446,9 +446,6 @@ class ResultsController < ApplicationController
     @result = Result.find(params[:id])
     @result.overall_comment = params[:result][:overall_comment]
     @result.save
-		respond_to do |format|
-			format.json { render :json => @result }
-		end
   end
 
   def update_overall_remark_comment
