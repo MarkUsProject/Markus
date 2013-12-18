@@ -12,7 +12,8 @@
 									url: '" + new_update_groupings_notes_path() + "',
 									type: 'POST',
 									data: jQuery(this).serialize() + '&authenticity_token='+ AUTH_TOKEN,
-									async: true
+									async: true,
+                  dataType: 'json'
 								}).done(function() {
 									jQuery('#loading_groupings').hide();
 								});"

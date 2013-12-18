@@ -68,8 +68,9 @@ class NotesController < ApplicationController
   def new_update_groupings
     retrieve_groupings(Assignment.find(params[:assignment_id]))
 		respond_to do |format|
-			format.json {render :json => 'new_update_groupings'}
+			format.json {render :json => @note}
 		end
+		#render 'new_update_groupings.js'
   end
 
   # used for RJS call

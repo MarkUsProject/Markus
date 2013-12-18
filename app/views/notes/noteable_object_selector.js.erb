@@ -1,1 +1,3 @@
-jQuery('#noteable_selector').html(<%= escape_javascript(render :partial => params[:noteable_type].downcase).html_safe %>);
+alert('noteable_object_selector');
+jQuery('#noteable_selector').html(<%= escape_javascript(
+             render :partial => params[:noteable_type].downcase).html_safe %>);
