@@ -36,7 +36,9 @@ class GroupsController < ApplicationController
       return
     end
     @new_grouping = construct_table_row(new_grouping_data, @assignment)
-    render :add_group
+    respond_to do |format|
+      format.json { render :json => @new_grouping }
+    end
   end
 
   def remove_group
@@ -130,24 +132,27 @@ class GroupsController < ApplicationController
   end
 
   def populate
-    @assignment = Assignment.find(params[:assignment_id],
+    @assignment_data = Assignment.find(params[:assignment_id],
                                   :include => [{
-                                      :groupings => [
-                                          :students,
-                                          :non_rejected_student_memberships,
-                                          :group]}])
-    @groupings = @assignment.groupings
-    @table_rows = {}
-    @groupings.each do |grouping|
-      @table_rows[grouping.id] = construct_table_row(grouping, @assignment)
+                                      :groupings => [:students,:non_rejected_student_memberships,:group]
+				  }])
+    @groupings_data = @assignment_data.groupings
+    @groupings_data.each do |grouping| 
+	@assignment = construct_table_rows(@groupings_data, @assignment_data)
+	respond_to do |format|
+      		format.json { render :json => @assignment }
+	end
     end
   end
 
   def populate_students
-    @assignment = Assignment.find(params[:assignment_id],
+    @assignment_data = Assignment.find(params[:assignment_id],
                                   :include => [:groupings])
-    @students = Student.all
-    @table_rows = construct_student_table_rows(@students, @assignment)
+    @students_data = Student.all
+    @assignment = construct_student_table_rows(@students_data, @assignment_data)
+    respond_to do |format|
+      		format.json { render :json => @assignment }
+    end
   end
 
   def index
@@ -359,13 +364,11 @@ class GroupsController < ApplicationController
     # the maximum size of a group
     students_in_group = grouping.student_membership_number
     group_name = grouping.group.group_name
-    if assignment.student_form_groups
-      if students_in_group > assignment.group_max
-        @warning_group_size = I18n.t('assignment.group.assign_over_limit',
-          :group => group_name)
-
-      end
+    if students_in_group > assignment.group_max
+      @warning_group_size = I18n.t('assignment.group.assign_over_limit',
+        :group => group_name)
     end
+
     render :add_members
   end
 
@@ -380,7 +383,7 @@ class GroupsController < ApplicationController
 
     begin
       if student.hidden
-        raise I18n.t('add_student.fail.hidden', :user_name => student.user_name)
+        raise I18n.t('add_student.fail.hidden', student.user_name)
       end
       if student.has_accepted_grouping_for?(@assignment.id)
         raise I18n.t('add_student.fail.already_grouped',
