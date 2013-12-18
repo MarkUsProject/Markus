@@ -57,15 +57,6 @@
 
   // Set up the "working" notices
 
-	jQuery(document).ajaxSend(function() {
-		jQuery('#working').show();
-		window.onbeforeunload = check_working;
-	});
-	jQuery(document).ajaxStop(function() {
-		jQuery('#working').hide();
-		window.onbeforeunload = null;
-	});
-/*
   Ajax.Responders.register({
     onCreate: function() {
       $('working').show();
@@ -76,7 +67,6 @@
       window.onbeforeunload = null;
     }
   });
-*/
 
  });
 
