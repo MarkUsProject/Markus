@@ -101,52 +101,52 @@ function toggle_automated_tests(is_testing_framework_enabled) {
 
   if(is_testing_framework_enabled) {
     jQuery('tokens').removeClass('disable');
-    jQuery('#tokens_per_day').find('input, textarea').each(function(i){jQuery(this).attr("readonly","readonly");});
+    jQuery('#tokens_per_day').find('input, textarea').each(function(i){jQuery(this).removeAttr("readonly");});
 
     jQuery("antbuildfile_style").each(function(node) { node.removeClass('disable'); });
     jQuery("antbuildfile_style input").each(function() {
-      jQuery(node).enable();
+      jQuery(node).find('input, textarea').each(function(i){jQuery(this).removeAttr("readonly");});
     });
     jQuery("antbuildprop_style").each(function(node) { node.removeClass('disable'); });
     jQuery("antbuildprop_style input").each(function() {
-      jQuery(node).enable();
+      jQuery(node).find('input, textarea').each(function(i){jQuery(this).removeAttr("readonly");});
 	});
     jQuery("test_files .test_file").each(function(node) { node.removeClass('disabled'); });
     jQuery("test_files .test_file input").each(function() {
-      jQuery(node).enable();
+      jQuery(node).find('input, textarea').each(function(i){jQuery(this).removeAttr("readonly");});
     });
    jQuery("lib_files .test_file").each(function(node) { node.removeClass('disabled'); });
     jQuery("lib_files .test_file input").each(function() {
-      jQuery(node).enable();
+      jQuery(node).find('input, textarea').each(function(i){jQuery(this).removeAttr("readonly");});
     });
     jQuery("parser_files .test_file").each(function(node) { node.removeClass('disabled'); });
     jQuery("parser_files .test_file input").each(function() {
-      jQuery(node).enable();
+      jQuery(node).find('input, textarea').each(function(i){jQuery(this).removeAttr("readonly");});
     });
 // yes 
   } else {
     jQuery('tokens').addClass('disable');
     jQuery('#tokens_per_day').find('input, textarea').each(function(i) { jQuery(this).attr("readonly","readonly"); });
     jQuery("antbuildfile_style").each(function(node) { node.addClass('disable'); });
-    jQuery("antbuildfile_style input").each(function() {
+    jQuery('#antbuildfile_style input').find('input, textarea').each(function() {
       jQuery(this).attr("readonly","readonly"); 
     });
     jQuery("antbuildprop_style").each(function(node) { node.addClass('disable'); });
     jQuery("antbuildprop_style input").each(function() {
-      jQuery(node).attr("disabled", true);
+      jQuery(node).find('input, textarea').each(function(i){jQuery(this).attr("readonly","readonly");});
     });
     jQuery("test_files .test_file").each(function(node) { node.addClass('disabled'); });
     jQuery("test_files .test_file input").each(function() {
-      jQuery(node).attr("disabled", true);
+      jQuery(node).find('input, textarea').each(function(i){jQuery(this).attr("readonly","readonly");});
     });
     jQuery("lib_files .test_file").each(function(node) { node.addClass('disabled'); });
-    jQuery("lib_files .test_file input").each(function() {
-      jQuery(node).attr("disabled", true);
+    jQuery("lib_files .test_file input").each(function() {removeclass
+      jQuery(node).find('input, textarea').each(function(i){jQuery(this).attr("readonly","readonly");});
     });
     jQuery("parser_files .test_file").each(function(node) { node.addClass('disabled'); });
     jQuery("parser_files .test_file input").each(function() {
-      jQuery(node).attr("disabled", true);
-    });
+     jQuery(node).find('input, textarea').each(function(i){jQuery(this).attr("readonly","readonly");});
+    })
   }
 }
 
