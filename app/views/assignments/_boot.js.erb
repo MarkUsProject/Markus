@@ -6,12 +6,14 @@
   var penalty_decay_periods = null;
   var penalty_periods = null;
 
+
+
   function create_grace_periods() {
     if(!grace_periods) {
       grace_periods = new PeriodDeltaChain({
         period_root_id: 'grace_periods',
         date_format: "",
-        due_date: $F('assignment_due_date')
+        due_date: jQuery('#assignment_due_date').val()
       });
     }
   }
@@ -21,7 +23,7 @@
       penalty_decay_periods = new PeriodDeltaChain({
         period_root_id: 'penalty_decay_periods',
         date_format: "",
-        due_date: $F('assignment_due_date')
+        due_date: jQuery('#assignment_due_date').val()
       });
     }
   }
@@ -31,13 +33,13 @@
       penalty_periods = new PeriodDeltaChain({
         period_root_id: 'penalty_periods',
         date_format: "",
-        due_date: $F('assignment_due_date')
+        due_date: jQuery('#assignment_due_date').val()
       });
     }
   }
 
-  document.observe('dom:loaded', function() {
-    if($F('assignment_due_date')) {
+  jQuery(document).ready(function() {
+    if(jQuery('#assignment_due_date').val()) {
       create_grace_periods();
       create_penalty_decay_periods();
       create_penalty_periods();
