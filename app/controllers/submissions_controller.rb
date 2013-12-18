@@ -352,6 +352,9 @@ class SubmissionsController < ApplicationController
       end
       render :file_manager_populate
     end
+    respond_to do |format|
+      format.json { render :json => @students }
+    end
   end
 
   def manually_collect_and_begin_grading
