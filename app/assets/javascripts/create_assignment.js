@@ -178,7 +178,7 @@ function add_assignment_file() {
   var new_assignment_file = new Element('input', {'type': 'text', 'name': 'assignment_files[]'})
   new_assignment_file.observe('keydown', function(e) {
     if(e.keyCode == Event.KEY_RETURN) {
-      event.stopPropagation();
+      event.preventDefault();
     }
   });
   var remove_link = new Element('a', {'href': 'javascript:void(0);'})
