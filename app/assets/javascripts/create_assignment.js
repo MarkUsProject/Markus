@@ -146,7 +146,7 @@ function toggle_automated_tests(is_testing_framework_enabled) {
     jQuery("parser_files .test_file").each(function(node) { node.addClass('disabled'); });
     jQuery("parser_files .test_file input").each(function() {
      jQuery(node).find('input, textarea').each(function(i){jQuery(this).attr("readonly","readonly");});
-    };
+    }
   }
 }
 
