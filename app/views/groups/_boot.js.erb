@@ -130,12 +130,14 @@ jQuery(document).ready(function(){
     }
   });
 
-	jQuery.ajax({
+	jQuery.ajax({		
 		url: "<%= populate_assignment_groups_path(@assignment.id) %>",
 		data: 'authenticity_token=' + AUTH_TOKEN,
+		type: 'POST',		
 		async: true,
 		dataType: 'json'
 	}).done(function (data) {
+		console.log('done');
 		jQuery('#loading_list').hide();
 		populate(JSON.stringify(data));
 	});
@@ -143,10 +145,13 @@ jQuery(document).ready(function(){
 	jQuery.ajax({
 		url: "<%= populate_students_assignment_groups_path(@assignment.id) %>",
 		data: 'authenticity_token=' + AUTH_TOKEN,
+		type: 'POST',		
 		async: true,
 		dataType: 'json'
 	}).done(function (data) {
+		console.log('student-done');
 		jQuery('#loading_students_list').hide();
 		populate_students(JSON.stringify(data));
 	});
+
 });

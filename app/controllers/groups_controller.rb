@@ -132,24 +132,22 @@ class GroupsController < ApplicationController
   end
 
   def populate
-    @assignment_data = Assignment.find(params[:assignment_id],
-                                  :include => [{
-                                      :groupings => [:students,:non_rejected_student_memberships,:group]
-				  }])
-    @groupings_data = @assignment_data.groupings
-    @groupings_data.each do |grouping| 
-	@assignment = construct_table_rows(@groupings_data, @assignment_data)
-	respond_to do |format|
-      		format.json { render :json => @assignment }
-	end
-    end
+    @assignment = Assignment.find(params[:assignment_id],
+                                  :include => [{:groupings => [:students,:non_rejected_student_memberships,:group]}])
+    @groupings = @assignment.groupings
+    @groupings.each do |grouping| 
+	@assignment = construct_table_row(grouping, @assignment)
+        respond_to do |format|
+    		format.json { render :json => @assignment }
+        end
+    end   
   end
 
   def populate_students
-    @assignment_data = Assignment.find(params[:assignment_id],
+    @assignment = Assignment.find(params[:assignment_id],
                                   :include => [:groupings])
-    @students_data = Student.all
-    @assignment = construct_student_table_rows(@students_data, @assignment_data)
+    @students = Student.all
+    @assignment = construct_student_table_rows(@students, @assignment)
     respond_to do |format|
       		format.json { render :json => @assignment }
     end
