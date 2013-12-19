@@ -446,12 +446,14 @@ class ResultsController < ApplicationController
     @result = Result.find(params[:id])
     @result.overall_comment = params[:result][:overall_comment]
     @result.save
+		render 'update_overall_comment.js'
   end
 
   def update_overall_remark_comment
     @result = Result.find(params[:id])
     @result.overall_comment = params[:result][:overall_comment]
     @result.save
+		render 'update_overall_remark_comment.js'
   end
 
   def update_remark_request
@@ -473,6 +475,7 @@ class ResultsController < ApplicationController
         @old_result.save
       end
     end
+		render 'update_remark_request.js'
   end
 
   def cancel_remark_request
