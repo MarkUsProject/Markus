@@ -85,34 +85,35 @@ function toggle_automated_tests(is_testing_framework_enabled) {
 
   if(is_testing_framework_enabled) {
     jQuery('tokens').removeClass('disable');
-    jQuery("#tokens_per_day").attr("disabled", false);
+    jQuery('#tokens_per_day').find('input, textarea').each(function(i){jQuery(this).attr("readonly","readonly");});
 
     jQuery("antbuildfile_style").each(function(node) { node.removeClass('disable'); });
     jQuery("antbuildfile_style input").each(function() {
-      jQuery(node).attr("disabled", false);
+      jQuery(node).enable();
     });
     jQuery("antbuildprop_style").each(function(node) { node.removeClass('disable'); });
     jQuery("antbuildprop_style input").each(function() {
-      jQuery(node).attr("disabled", false);
+      jQuery(node).enable();
 	});
     jQuery("test_files .test_file").each(function(node) { node.removeClass('disabled'); });
     jQuery("test_files .test_file input").each(function() {
-      jQuery(node).attr("disabled", false);
+      jQuery(node).enable();
     });
    jQuery("lib_files .test_file").each(function(node) { node.removeClass('disabled'); });
     jQuery("lib_files .test_file input").each(function() {
-      jQuery(node).find('input, textarea').each(function(i){jQuery(this).removeAttr("readonly");});
+      jQuery(node).enable();
     });
     jQuery("parser_files .test_file").each(function(node) { node.removeClass('disabled'); });
     jQuery("parser_files .test_file input").each(function() {
-      jQuery(node).attr("disabled", false);
+      jQuery(node).enable();
     });
 // yes 
   } else {
     jQuery('tokens').addClass('disable');
-    jQuery("#tokens_per_day").attr("disabled", true);
+    jQuery('#tokens_per_day').find('input, textarea').each(function(i) { jQuery(this).attr("readonly","readonly"); });
     jQuery("antbuildfile_style").each(function(node) { node.addClass('disable'); });
-    jQuery("#antbuildfile_style input").attr("disabled", false); 
+    jQuery("antbuildfile_style input").each(function() {
+      jQuery(this).attr("readonly","readonly"); 
     });
     jQuery("antbuildprop_style").each(function(node) { node.addClass('disable'); });
     jQuery("antbuildprop_style input").each(function() {
@@ -123,13 +124,13 @@ function toggle_automated_tests(is_testing_framework_enabled) {
       jQuery(node).attr("disabled", true);
     });
     jQuery("lib_files .test_file").each(function(node) { node.addClass('disabled'); });
-    jQuery("lib_files .test_file input").each(function() {removeclass
+    jQuery("lib_files .test_file input").each(function() {
       jQuery(node).attr("disabled", true);
     });
     jQuery("parser_files .test_file").each(function(node) { node.addClass('disabled'); });
     jQuery("parser_files .test_file input").each(function() {
-     jQuery(node)attr("disabled", true);
-    })
+      jQuery(node).attr("disabled", true);
+    });
   }
 }
 
