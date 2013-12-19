@@ -1,9 +1,11 @@
 <%= javascript_include_tag 'manage_graders.js',
                            'FilterTable/FilterTable.js',
                            'Graders/tabs_boot.js',
-                           'Graders/index' %>
-
+                           'Graders/index', 
+                           'layouts' %>
+<script type="text/javascript">
 <%= render :partial => "boot.js.erb" %>
+</script>
 
 <div id="title_bar">
   <h1><%= I18n.t("graders.manage_graders") %></h1>
@@ -49,11 +51,11 @@
              :remote => true do %>
 
 <script type='text/javascript'>
-$("global_action_form").observe('ajax:after', function(evt, status, data, xhr) {
+jQuery("#global_action_form").bind('ajax:after', function(evt, status, data, xhr){
   thinking();
 });
 
-$("global_action_form").observe('ajax:success', function(evt, status, data, xhr) {
+jQuery("#global_action_form").bind('ajax:success', function(evt, status, data, xhr){
   done_thinking();
 });
 </script>
@@ -163,19 +165,19 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
 
   <div id="centreColumn" class="centreColumnGraders">
       <%= image_submit_tag "random_arrow.png",
-        :onclick => "$('global_actions').setValue('random_assign');",
+        :onclick => "jQuery('#global_actions').val('random_assign');",
         :alt => I18n.t('groups.randomly_assign_graders'),
         :title => I18n.t('groups.randomly_assign_graders'),
         :class =>'image_input' %>
       <br/><br/>
       <%= image_submit_tag "add_arrow.png",
-        :onclick => "$('global_actions').setValue('assign');",
+        :onclick => "jQuery('#global_actions').val('assign');",
         :alt => I18n.t('add_graders'),
         :class =>'image_input',
         :title => I18n.t('add_graders') %>
       <br/><br/>
       <%= image_submit_tag "remove_arrow.png",
-        :onclick => "$('global_actions').setValue('unassign');",
+        :onclick => "jQuery('#global_actions').val('unassign');",
         :alt => I18n.t('remove_graders'),
         :title => I18n.t('remove_graders'),
         :class =>'image_input' %>
@@ -218,9 +220,9 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
   <% end %>
 
   <% if @assignment.assign_graders_to_criteria %>
-    <h2><%= I18n.t("groups.upload.upload_grader_criteria_map") %></h2>
-    <%= raw(I18n.t("groups.upload.description_grader_criteria_map")) %>
-    <%= form_tag({:controller=>"graders",
+    <h2><%= I18n.t('groups.upload.upload_grader_criteria_map') %></h2>
+    <%= raw(I18n.t('groups.upload.description_grader_criteria_map')) %>
+    <%= form_tag({:controller=>'graders',
       :action => 'csv_upload_grader_criteria_mapping',:id => @assignment.id},
       {:multipart => true}) do %>
       <br />
