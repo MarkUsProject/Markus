@@ -28,7 +28,7 @@ class GradeEntryFormsController < ApplicationController
                       'none' => {
                         :display => 'Show All',
                         :proc => lambda { |sort_by, order, user|
-                          if user.type == "Admin"
+                          if user.instance_of? Admin
                             conditions = {:hidden => false}
                           else
                             #Display only students to which the TA has been assigned
@@ -61,7 +61,9 @@ class GradeEntryFormsController < ApplicationController
 
     # Process input properties
     @grade_entry_form.transaction do
-      if @grade_entry_form.update_attributes(params[:grade_entry_form])
+      # Edit params before updating model
+      new_params = update_grade_entry_form_params params[:grade_entry_form]
+      if @grade_entry_form.update_attributes(new_params)
         # Success message
         flash[:success] = I18n.t('grade_entry_forms.create.success')
         redirect_to :action => 'edit', :id => @grade_entry_form.id
@@ -78,9 +80,13 @@ class GradeEntryFormsController < ApplicationController
 
   def update
     @grade_entry_form = GradeEntryForm.find(params[:id])
+
     # Process changes to input properties
     @grade_entry_form.transaction do
-      if @grade_entry_form.update_attributes(params[:grade_entry_form])
+
+      # Edit params before updating model
+      new_params = update_grade_entry_form_params params[:grade_entry_form]
+      if @grade_entry_form.update_attributes(new_params)
         # Success message
         flash[:success] = I18n.t('grade_entry_forms.edit.success')
         redirect_to :action => 'edit', :id => @grade_entry_form.id
@@ -186,7 +192,7 @@ class GradeEntryFormsController < ApplicationController
            @grade_entry_item_id)
     @grade.grade = updated_grade
     @grade_saved = @grade.save
-    @updated_student_total = grade_entry_form.calculate_total_mark(@student_id)
+    @updated_student_total = grade_entry_student.update_total_grade
   end
 
   # For students

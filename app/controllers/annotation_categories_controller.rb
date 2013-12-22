@@ -46,6 +46,7 @@ class AnnotationCategoriesController < ApplicationController
   def update_annotation
     @annotation_text = AnnotationText.find(params[:id])
     @annotation_text.update_attributes(params[:annotation_text])
+    @annotation_text.last_editor_id = current_user.id
     @annotation_text.save
   end
 
@@ -56,6 +57,8 @@ class AnnotationCategoriesController < ApplicationController
       @annotation_text = AnnotationText.new
       @annotation_text.update_attributes(params[:annotation_text])
       @annotation_text.annotation_category = @annotation_category
+      @annotation_text.creator_id = current_user.id
+      @annotation_text.last_editor_id = current_user.id
       unless @annotation_text.save
         render :new_annotation_text_error
         return
@@ -113,7 +116,7 @@ class AnnotationCategoriesController < ApplicationController
       CsvHelper::Csv.parse(annotation_category_list) do |row|
         next if CsvHelper::Csv.generate_line(row).strip.empty?
         annotation_line += 1
-        result = AnnotationCategory.add_by_row(row, @assignment)
+        result = AnnotationCategory.add_by_row(row, @assignment, current_user)
         if result[:annotation_upload_invalid_lines].size > 0
           flash[:error] = I18n.t('annotations.upload.error',
             :annotation_category => row, :annotation_line => annotation_line)
@@ -153,7 +156,7 @@ class AnnotationCategoriesController < ApplicationController
         return
       end
       annotations.each_key do |key|
-      result = AnnotationCategory.add_by_array(key, annotations.values_at(key), @assignment)
+      result = AnnotationCategory.add_by_array(key, annotations.values_at(key), @assignment, current_user)
       annotation_line += 1
       if result[:annotation_upload_invalid_lines].size > 0
         flash[:error] = I18n.t('annotations.upload.error',

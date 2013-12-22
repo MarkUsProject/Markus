@@ -1,7 +1,7 @@
 <div class="test_file">
 <%= form.fields_for :test_files, test_file do |f| %>
 
-  <%= f.label :filename, t(:filename) %>
+  <%= f.label :filename, t(:filename).html_safe %>
 
   <% if f.object.id %>
     <%= text_field_tag 'test_file_' + f.object_id.to_s, f.object.filename, :readonly => "true" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
