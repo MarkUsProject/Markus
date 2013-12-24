@@ -168,7 +168,7 @@ class ResultsController < ApplicationController
   def download
     #Ensure student doesn't download a file not submitted by his own grouping
     unless authorized_to_download?(:file_id => params[:select_file_id])
-      render 'shared/http_status.html',
+      render 'shared/http_status', :formats => [:html],
              :locals => { :code => '404',
                           :message => HttpStatusHelper::ERROR_CODE[
                               'message']['404'] }, :status => 404,
@@ -210,7 +210,7 @@ class ResultsController < ApplicationController
 
     #Ensure student doesn't download files not submitted by his own grouping
     unless authorized_to_download?(:submission_id => params[:submission_id])
-      render 'shared/http_status.html',
+      render 'shared/http_status', :formats => [:html],
              :locals => { :code => '404',
                           :message => HttpStatusHelper::ERROR_CODE[
                               'message']['404'] }, :status => 404,

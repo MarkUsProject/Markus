@@ -67,7 +67,7 @@ class NotesController < ApplicationController
   # Used to update the values in the groupings dropdown in the new note form
   def new_update_groupings
     retrieve_groupings(Assignment.find(params[:assignment_id]))
-    render 'new_update_groupings.js.erb'
+    render 'new_update_groupings.js'
   end
 
   # used for RJS call
@@ -131,7 +131,7 @@ class NotesController < ApplicationController
       @note = Note.find(params[:id])
 
       unless @note.user_can_modify?(current_user)
-        render 'shared/http_status.html', :locals => { :code => '404', :message => HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404, :layout => false
+        render 'shared/http_status', :formats => [:html], :locals => { :code => '404', :message => HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404, :layout => false
       end
     end
 
