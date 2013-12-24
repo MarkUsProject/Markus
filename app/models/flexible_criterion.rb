@@ -4,7 +4,7 @@ require 'iconv'
 # has the marking_scheme_type attribute set to 'flexible'.
 class FlexibleCriterion < ActiveRecord::Base
 
-  set_table_name 'flexible_criteria' # set table name correctly
+  self.table_name =  'flexible_criteria' # set table name correctly
   belongs_to :assignment, :counter_cache => true
 
   has_many :marks, :as => :markable, :dependent => :destroy
