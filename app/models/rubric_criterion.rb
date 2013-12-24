@@ -146,8 +146,8 @@ class RubricCriterion < ActiveRecord::Base
       criterion['level_' + i.to_s + '_name'] = working_row.shift
     end
     # the rest of the values are level descriptions.
-    working_row.each_with_index do |desc, i|
-      criterion['level_' + i.to_s + '_description'] = desc
+    (0..RUBRIC_LEVELS-1).each do |i|
+      criterion['level_' + i.to_s + '_description'] = working_row.shift
     end
     unless criterion.save
       raise ActiveRecord::RecordNotSaved.new(criterion.errors)
