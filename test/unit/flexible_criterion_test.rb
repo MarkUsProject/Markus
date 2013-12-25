@@ -89,7 +89,7 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
           FlexibleCriterion.new_from_csv_row(['name', 10], Assignment.new)
         end
         assert_instance_of Csv::MalformedCSVError, e
-        assert_instance_of String, e.message
+        assert_instance_of ActiveModel::Errors, e.message
       else
         # Capture exception in variable 'e'
         e = assert_raise Csv::IllegalFormatError do
@@ -97,7 +97,7 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
           FlexibleCriterion.new_from_csv_row(['name', 10], Assignment.new)
         end
         assert_instance_of Csv::IllegalFormatError, e
-        assert_instance_of ActiveModel::Errors, e.message
+        assert_instance_of String, e.message
       end
     end
 
