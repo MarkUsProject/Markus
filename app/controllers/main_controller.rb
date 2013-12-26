@@ -13,6 +13,8 @@ class MainController < ApplicationController
                                  :page_not_found]
   before_filter :authorize_only_for_admin, :only => [:login_as]
 
+  layout 'main'
+
   #########################################################################
   # Authentication
 
