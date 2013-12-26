@@ -203,7 +203,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
 
       assert_not_nil assigns :target_assignment
       assert_response :success
-      assert render_template 'use_another_assignment_groups.rjs'
+      assert render_template 'use_another_assignment_groups', :handlers => [:rjs]
     end
 
     should 'should be able to delete' do
@@ -220,7 +220,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
       assert_not_nil assigns :tas
       assert_same_elements [@grouping], assigns(:removed_groupings)
       assert_not_nil assigns(:errors) { [] }
-      assert render_template 'delete_groupings.rjs'
+      assert render_template 'delete_groupings', :handlers => [:rjs]
     end
 
     should 'should be able to do invalid' do

@@ -62,19 +62,19 @@ class GroupsController < ApplicationController
 
   def upload_dialog
     @assignment = Assignment.find(params[:id])
-    render :partial => 'groups/modal_dialogs/upload_dialog.rjs'
+    render :partial => 'groups/modal_dialogs/upload_dialog', :handlers => [:rjs]
   end
 
   def download_dialog
     @assignment = Assignment.find(params[:id])
-    render :partial => 'groups/modal_dialogs/download_dialog.rjs'
+    render :partial => 'groups/modal_dialogs/download_dialog', :handlers => [:rjs]
   end
 
   def rename_group_dialog
     @assignment = Assignment.find(params[:assignment_id])
     # id is really the grouping_id, this is due to rails routing
     @grouping_id = params[:id]
-    render :partial => 'groups/modal_dialogs/rename_group_dialog.rjs'
+    render :partial => 'groups/modal_dialogs/rename_group_dialog', :handlers => [:rjs]
   end
 
   def rename_group
@@ -263,7 +263,7 @@ class GroupsController < ApplicationController
 	 #if there is a global action than there should be a group selected
          if params[:global_actions]
                @global_action_warning = I18n.t('assignment.group.select_a_group')
-               render :partial => 'shared/global_action_warning.rjs'
+               render :partial => 'shared/global_action_warning', :handlers => [:rjs]
                return
          end
       #Just do nothing
@@ -294,7 +294,7 @@ class GroupsController < ApplicationController
           return
         else
           @global_action_warning = I18n.t('assignment.group.select_a_student')
-          render :partial => 'shared/global_action_warning.rjs'
+          render :partial => 'shared/global_action_warning', :handlers => [:rjs]
           return
         end
       when 'unassign'
