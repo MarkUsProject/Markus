@@ -355,7 +355,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                  :assignment_id => 1,
                  :id => 1
           assert_response :success
-          assert_equal '30', cookies[@c_per_page], "Debug: Cookies=#{cookies.inspect}"
+          assert_equal 30, cookies[@c_per_page], "Debug: Cookies=#{cookies.inspect}"
           assert_equal 'group_name', cookies[@c_sort_by], "Debug: Cookies=#{cookies.inspect}"
         end
 
@@ -470,7 +470,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                  :id => 1
 
           assert_response :success
-          assert_equal '30', cookies[@c_per_page], "Debug: Cookies=#{cookies.inspect}"
+          assert_equal 30, cookies[@c_per_page], "Debug: Cookies=#{cookies.inspect}"
           assert_equal 'group_name', cookies[@c_sort_by]
         end
 
@@ -546,7 +546,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                  :id => @submission.id,
                  :grouping_id => @grouping.id
 
-          assert_equal response.header['Content-Type'], 'application/octet-stream'
+          assert_equal 'application/zip', response.header['Content-Type']
           assert_response :success
           zip_path = "tmp/#{@assignment.short_identifier}_" +
               "#{@grouping.group.group_name}_r#{@grouping.group.repo.
