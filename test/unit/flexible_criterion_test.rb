@@ -70,7 +70,11 @@ class FlexibleCriterionTest < ActiveSupport::TestCase
         FlexibleCriterion.new_from_csv_row(['name', 10], Assignment.new)
       end
       assert_instance_of Csv::MalformedCSVError, e
-      assert_instance_of ActiveModel::Errors, e.message
+      if RUBY_VERSION > '1.9'
+        assert_not_nil(e.message =~ /ActiveModel::Errors/)
+      else
+        assert_instance_of ActiveModel::Errors, e.message
+      end
     end
 
   end
