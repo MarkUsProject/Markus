@@ -69,15 +69,9 @@ class EnsureConfigHelperTest < ActiveSupport::TestCase
         should 'throw an exception because the validate file does not exist' do
           #MarkUs on Windows does not support external authentication so skip if Windows platform
           unless RUBY_PLATFORM =~ /(:?mswin|mingw)/
-              if RUBY_VERSION > '1.9'
-                assert_raise Errno::ENOENT do
-                  EnsureConfigHelper.check_config()
-                end
-              else
-                assert_raise RuntimeError do
-                  EnsureConfigHelper.check_config()
-                end
-              end
+            assert_raise RuntimeError do
+              EnsureConfigHelper.check_config()
+            end
           end
         end
 
