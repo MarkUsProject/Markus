@@ -1,0 +1,10 @@
+if @grade_saved
+  # The grade was successfully updated so highlight the table cell to indicate this
+JQuery("#grade_#{@student_id}_#{@grade_entry_item_id}").css({"background-color": "#99CCFF"}). animate({"background-color": "#FFFFFF"}
+
+  page["total_#{@student_id}"].value = @updated_student_total.round(2)
+else
+  # Change the background colour of the cell to red to indicate that an error has occurred
+JQuery("grade_#{@student_id}_#{@grade_entry_item_id}").css({"background-color": "#FFCCCC"}). animate({"background-color": "#FF9999"}
+
+end
