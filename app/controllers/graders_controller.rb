@@ -180,7 +180,7 @@ class GradersController < ApplicationController
          #if there is a global action than there should be a group selected
           if params[:global_actions]
               @global_action_warning = I18n.t('assignment.group.select_a_group')
-              render :partial => 'shared/global_action_warning.rjs'
+              render :partial => 'shared/global_action_warning', :formats => [:js], :handlers => [:erb]
               return
           end
         end
@@ -192,7 +192,7 @@ class GradersController < ApplicationController
           when 'assign'
             if params[:graders].nil? or params[:graders].size ==  0
               @global_action_warning = I18n.t('assignment.group.select_a_grader')
-              render :partial => 'shared/global_action_warning.rjs'
+              render :partial => 'shared/global_action_warning', :formats => [:js], :handlers => [:erb]
               return
             end
             add_graders(groupings, grader_ids)
@@ -203,7 +203,7 @@ class GradersController < ApplicationController
           when 'random_assign'
             if params[:graders].nil? or params[:graders].size ==  0
               @global_action_warning = I18n.t('assignment.group.select_a_grader')
-              render :partial => 'shared/global_action_warning.rjs'
+              render :partial => 'shared/global_action_warning', :formats => [:js], :handlers => [:erb]
               return
             end
             randomly_assign_graders(groupings, grader_ids)

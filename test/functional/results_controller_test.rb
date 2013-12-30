@@ -422,7 +422,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_nil assigns :file_contents
             assert_nil assigns :annots
             assert_nil assigns :all_annots
-            assert render_template 'shared/_handle_error.rjs'
+            assert render_template 'shared/_handle_error.js.erb'
             assert_response :success
 
             # Workaround to assert that the error message made its way to
@@ -453,7 +453,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_not_nil assigns :all_annots
             assert_nil assigns :file_contents
             assert_nil assigns :code_type
-            assert render_template 'shared/_handle_error.rjs'
+            assert render_template 'shared/_handle_error.js.erb'
             assert_response :success
             # Workaround to assert that the error message made its way to
             # the response
@@ -1012,7 +1012,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_not_nil assigns :all_annots
             assert_nil assigns :file_contents
             assert_nil assigns :code_type
-            assert render_template 'shared/_handle_error.rjs'
+            assert render_template 'shared/_handle_error.js.erb'
             assert_response :success
             # Workaround to assert that the error message made its way to the
             # response
@@ -1058,7 +1058,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :id => 1,
                    :mark_id => 1,
                    :mark => 1
-            assert render_template 'shared/_handle_error.rjs'
+            assert render_template 'shared/_handle_error.js.erb'
             assert_response :success
             # Workaround to assert that the error message made its way to the response
             assert_match Regexp.new(SAMPLE_ERR_MSG), @response.body
@@ -1391,7 +1391,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert_not_nil assigns :all_annots
             assert_nil assigns :file_contents
             assert_nil assigns :code_type
-            assert render_template 'shared/_handle_error.rjs'
+            assert render_template 'shared/_handle_error.js.erb'
             assert_response :success
             # Workaround to assert that the error message made its way to the
             # response
