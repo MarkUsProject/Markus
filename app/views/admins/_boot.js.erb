@@ -1,7 +1,7 @@
 jQuery(document).ready(function() {
 
   users_table = new FilterTable({
-    table_id: $('admins'),
+    table_id: jQuery('admins'),
     headers: {
       user_name: {display: "<%= I18n.t('user.user_name') %>", sortable: true},
       last_name: {display: "<%= I18n.t('user.last_name') %>", sortable: true},
@@ -30,3 +30,5 @@ jQuery(document).ready(function() {
           });
 
 });
+
+
