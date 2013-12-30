@@ -1,0 +1,6 @@
+page << @annotation.remove_annotation_js_string
+
+
+jQuery('#annotation_summary_list').replaceWith("<%= escape_javascript(render :partial => 'results/marker/annotation_summary', :locals => {:annots => @annotations, :submission_file_id => @submission_file_id}).html_safe %>");
+
+page.call :hide_all_annotation_content_editors
