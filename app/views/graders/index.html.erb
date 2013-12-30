@@ -3,7 +3,7 @@
                            'Graders/tabs_boot.js',
                            'Graders/index' %>
 
-<%= render :partial => "boot.js.erb" %>
+<%= render :partial => "boot", :formats => [:js], :handlers => [:erb] %>
 
 <div id="title_bar">
   <h1><%= I18n.t("graders.manage_graders") %></h1>

@@ -86,17 +86,19 @@ function check_working() {
 <%
 # Javascript for showing/hiding old marks
 %>
-<%= render :partial => "results/common/old_marks_view_functions.html"%>
+<%= render :partial => "results/common/old_marks_view_functions", :formats => [:html] %>
 
 <%
 # Javascript for test result window
 %>
-<%= render :partial => "assignments/test_result_window.html", :locals => {:aid => @assignment.id}  %>
+<%= render :partial => "assignments/test_result_window", :formats => [:html],
+  :locals => {:aid => @assignment.id}  %>
 
-<%= render :partial => "results/common/annotations.js" %>
-<%= render :partial => "results/marker/setup_annotation_categories.js" %>
+<%= render :partial => "results/common/annotations", :formats => [:js] %>
+<%= render :partial => "results/marker/setup_annotation_categories", :formats => [:js] %>
 
-<%= render :partial => "results/marker/boot.js", :locals => {:first_file => @first_file} %>
+<%= render :partial => "results/marker/boot",
+  :formats => [:js], :locals => {:first_file => @first_file} %>
 
 <div id="notes_dialog">
 </div>
