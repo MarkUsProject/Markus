@@ -1,4 +1,5 @@
-<%= render :partial => "shared/navigation_warning.js.erb" %>
+<%= render :partial => "shared/navigation_warning",
+  :formats => [:js], :handlers => [:erb] %>
 
 <div id="title_bar"><h1><%=I18n.t('notes.edit.title')%></h1></div>
 

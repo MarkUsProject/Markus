@@ -9,12 +9,13 @@
 <% end %>
 <%= javascript_include_tag "PeriodDeltaChain/PeriodDeltaChain" %>
 
-<%= render :partial => 'boot.js' %>
+<%= render :partial => 'boot', :formats => [:js] %>
 
 <div class="wrapLeft">
   <%= render 'shared/flash_message' %>
 
-  <%= render :partial => "shared/navigation_warning.js.erb" %>
+  <%= render :partial => "shared/navigation_warning",
+             :formats => [:js], :handlers => [:erb] %>
 
   <%= form_for @assignment do |f| %>
     <%= render :partial => "shared/error_explanation",

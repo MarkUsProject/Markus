@@ -6,7 +6,7 @@
 
 <!-- Get necessary data for loading the students table from the _boot.js.erb partial -->
 <script type="text/javascript">
-  <%= render :partial => 'boot.js.erb' %>
+  <%= render :partial => 'boot', :formats => [:js], :handlers => [:erb] %>
 </script>
 
 <script type="text/javascript">

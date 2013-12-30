@@ -42,13 +42,18 @@ module Api
 
       # No conflict found, so create new user
       param_user_type = params[:type].downcase
+      params.delete(:type)
+
       if param_user_type == 'student'
-        user_type = Student
+        user_class = Student
+        user_type = User::STUDENT
       elsif param_user_type == 'ta' || param_user_type == 'grader'
-        user_type = Ta
+        user_class = Ta
+        user_type = User::TA
       elsif param_user_type == 'admin'
-        user_type = Admin
-      else # Unknown user_type, Invalid HTTP params.
+        user_class = Admin
+        user_type = User::ADMIN
+      else # Unknown user type, Invalid HTTP params.
         render 'shared/http_status', :locals => { :code => '422', :message =>
           'Unknown user type' }, :status => 422
         return
@@ -57,7 +62,8 @@ module Api
       attributes = { :user_name => params[:user_name] }
       attributes = process_attributes(params, attributes)
 
-      new_user = user_type.new(attributes)
+      new_user = user_class.new(attributes)
+      new_user.type = user_type
       unless new_user.save
         # Some error occurred
         render 'shared/http_status', :locals => {:code => '500', :message =>

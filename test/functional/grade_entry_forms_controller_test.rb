@@ -57,6 +57,8 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       @grade_entry_student.released_to_student = true
       @grade_entry_student.update_total_grade
       @grade_entry_student.save
+      total = @grade_entry_form_with_grade_entry_items.out_of_total.to_i.to_s
+
       get_as @student, :student_interface, :id => @grade_entry_form_with_grade_entry_items.id
       assert_not_nil assigns :grade_entry_form
       assert_not_nil assigns :student
@@ -64,7 +66,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       assert_response :success
       assert_equal true, flash.empty?
       assert_match Regexp.new(I18n.t('grade_entry_forms.grades.total')), @response.body
-      assert_match Regexp.new('15'), @response.body
+      assert_match Regexp.new(total), @response.body
     end
 
     should 'GET on :student_interface when marks have been entered for this student but have not been released' do

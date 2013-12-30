@@ -62,19 +62,19 @@ class GroupsController < ApplicationController
 
   def upload_dialog
     @assignment = Assignment.find(params[:id])
-    render :partial => 'groups/modal_dialogs/upload_dialog.rjs'
+    render :partial => 'groups/modal_dialogs/upload_dialog', :handlers => [:rjs]
   end
 
   def download_dialog
     @assignment = Assignment.find(params[:id])
-    render :partial => 'groups/modal_dialogs/download_dialog.rjs'
+    render :partial => 'groups/modal_dialogs/download_dialog', :handlers => [:rjs]
   end
 
   def rename_group_dialog
     @assignment = Assignment.find(params[:assignment_id])
     # id is really the grouping_id, this is due to rails routing
     @grouping_id = params[:id]
-    render :partial => 'groups/modal_dialogs/rename_group_dialog.rjs'
+    render :partial => 'groups/modal_dialogs/rename_group_dialog', :handlers => [:rjs]
   end
 
   def rename_group

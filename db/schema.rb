@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131202053252) do
+ActiveRecord::Schema.define(:version => 20131224160912) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -264,6 +264,7 @@ ActiveRecord::Schema.define(:version => 20131202053252) do
     t.datetime "updated_at"
     t.float    "hours"
     t.integer  "interval"
+    t.string   "submission_rule_type"
   end
 
   add_index "periods", ["submission_rule_id"], :name => "index_periods_on_submission_rule_id"

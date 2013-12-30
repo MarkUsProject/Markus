@@ -2,7 +2,7 @@
                            'users_manager',
                            'Graders/index' %>
 
-<%= render :partial => "boot.js" %>
+<%= render :partial => "boot", :formats => [:js] %>
 
 <div id="title_bar">
   <h1><%= I18n.t("graders.manage_graders") %></h1>

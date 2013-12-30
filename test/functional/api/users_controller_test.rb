@@ -272,7 +272,7 @@ class Api::UsersControllerTest < ActionController::TestCase
                   :first_name => 'Api', :type => 'admin' }
         # fire off request
         post 'create', :id => 1, :user_name => 'ApiTestUser', :last_name => 'Tester',
-                 :first_name => 'Api', :type => 'admin'
+                       :first_name => 'Api', :type => 'admin'
       end
 
       should 'create the specified user' do
