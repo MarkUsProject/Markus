@@ -1,0 +1,5 @@
+if !@error.empty?
+Query('#errors_title').html("<%= escape_javascript(render @error}).html_safe %>");
+  jQuery('#errors').show();
+end
+
