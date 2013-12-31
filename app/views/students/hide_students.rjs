@@ -1,9 +1,0 @@
-@student_ids.each do |student_id|
-  page['student_' + student_id + '_checkbox'].setValue(false)
-  page['student_' + student_id].addClassName('hidden_student')
-  if @show_hidden_students != 'true'
-    page['student_' + student_id].hide()
-  end
-end
-
-page.replace_html 'hidden_students_size', @hidden_students_size
