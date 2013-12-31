@@ -10,6 +10,9 @@ class TasController < ApplicationController
     @tas_data = Ta.all(:order => 'user_name')
     # construct_table_rows defined in UsersHelper
     @tas = construct_table_rows(@tas_data)
+    respond_to do |format|
+      format.json { render :json => @tas }
+    end
   end
 
   def new

@@ -6,7 +6,7 @@
 
   <%= render :partial => 'layouts/head' %>
 
-  <%= render :partial => "boot.js.erb" %>
+  <%= render :partial => "boot", :formats => [:js], :handlers => [:erb] %>
 
   <script type="text/javascript">
   //<![CDATA[

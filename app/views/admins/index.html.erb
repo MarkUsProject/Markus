@@ -2,7 +2,7 @@
 <%= javascript_include_tag 'users_manager' %>
 
 <script type="text/javascript">
-  <%= render :partial => 'boot.js.erb' %>
+  <%= render :partial => 'boot', :formats => [:js], :handlers => [:erb] %>
 </script>
 
 <div id="title_bar">

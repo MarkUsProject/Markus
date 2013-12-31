@@ -30,6 +30,7 @@ class EnsureConfigHelperTest < ActiveSupport::TestCase
       @log_error_file = "#{@log_dir}/log_error_file.log"
       @source_repo_dir = "#{@temp_dir}/source_repo_dir"
       @validate_script = "#{@temp_dir}/validate_script.sh"
+
       MarkusConfigurator.stubs(:markus_config_logging_logfile).returns(@log_info_file)
       MarkusConfigurator.stubs(:markus_config_logging_errorlogfile).returns(@log_error_file)
       MarkusConfigurator.stubs(:markus_config_repository_storage).returns(@source_repo_dir)
@@ -38,7 +39,7 @@ class EnsureConfigHelperTest < ActiveSupport::TestCase
     end
 
     teardown do
-      FileUtils.rm_r( @temp_dir )
+      FileUtils.rm_r(@temp_dir)
     end
 
     context 'running ensure config when all required files are missing' do
@@ -51,8 +52,9 @@ class EnsureConfigHelperTest < ActiveSupport::TestCase
 
     context 'with a log dir' do
       setup do
-        FileUtils.mkdir( @log_dir )
+        FileUtils.mkdir(@log_dir)
       end
+
       should 'throw an exception because the validate file and repo do not exist' do
         assert_raise RuntimeError do
           EnsureConfigHelper.check_config()
@@ -61,55 +63,44 @@ class EnsureConfigHelperTest < ActiveSupport::TestCase
 
       context 'with a repo dir' do
         setup do
-          FileUtils.mkdir( @source_repo_dir )
+          FileUtils.mkdir(@source_repo_dir)
         end
+
         should 'throw an exception because the validate file does not exist' do
           #MarkUs on Windows does not support external authentication so skip if Windows platform
           unless RUBY_PLATFORM =~ /(:?mswin|mingw)/
-              if RUBY_VERSION > '1.9'
-                assert_raise Errno::ENOENT do
-                  EnsureConfigHelper.check_config()
-                end
-              else
-                assert_raise RuntimeError do
-                  EnsureConfigHelper.check_config()
-                end
-              end
+            assert_raise RuntimeError do
+              EnsureConfigHelper.check_config()
+            end
           end
         end
 
         context 'with an unexecutable validate file' do
           setup do
-            FileUtils.touch([ @validate_script ])
-            FileUtils.chmod( 0600, [ @validate_script ])
+            FileUtils.touch(@validate_script)
+            FileUtils.chmod(0200, @validate_script)
           end
+
           should 'throw an exception because the validate file is not executable' do
-            #MarkUs on Windows does not support external authentication so skip if Windows platform
-            if !(RUBY_PLATFORM =~ /(:?mswin|mingw)/)
-              if RUBY_VERSION > '1.9'
-                assert_raise Errno::EACCES do
-                  EnsureConfigHelper.check_config()
-                end
-              else
-                assert_raise RuntimeError do
-                  EnsureConfigHelper.check_config()
-                end
-              end
+            assert_raise RuntimeError do
+              EnsureConfigHelper.check_config()
             end
           end
         end
 
         context 'with an executable validate file' do
           setup do
-            FileUtils.touch([ @validate_script ])
-            FileUtils.chmod( 0700, [ @validate_script ])
-            f = File.open( @validate_script, 'w' )
-            f.write( "#!/bin/bash\n" )
-            f.write( "read user\n" )
-            f.write( "read password\n" )
-            f.write( 'exit 0' )
+            FileUtils.touch(@validate_script)
+            FileUtils.chmod( 0700, @validate_script)
+
+            f = File.open(@validate_script, 'w')
+            f.write("#!/bin/bash\n")
+            f.write("read user\n")
+            f.write("read password\n")
+            f.write('exit 0')
             f.close
           end
+
           should 'accept the configuration because all files and directories are ready' do
             assert_nothing_raised do
               EnsureConfigHelper.check_config()
@@ -119,20 +110,20 @@ class EnsureConfigHelperTest < ActiveSupport::TestCase
 
         context 'with an executable validate file with an escaped space' do
           setup do
-            @validate_script = "#{@temp_dir}/validate script.sh"
-            FileUtils.touch([ @validate_script ])
-            FileUtils.chmod( 0700, [ @validate_script ])
-            f = File.open( @validate_script, 'w' )
-            f.write( "#!/bin/bash\n" )
-            f.write( "read user\n" )
-            f.write( "read password\n" )
-            f.write( 'exit 0' )
-            f.close
-
-            # escaping
             @validate_script = "#{@temp_dir}/validate\\ script.sh"
             MarkusConfigurator.stubs(:markus_config_validate_file).returns(@validate_script)
+
+            FileUtils.touch(@validate_script)
+            FileUtils.chmod(0700, @validate_script)
+
+            f = File.open(@validate_script, 'w')
+            f.write("#!/bin/bash\n")
+            f.write("read user\n")
+            f.write("read password\n")
+            f.write('exit 0')
+            f.close
           end
+
           should 'accept the configuration because all files and directories are ready' do
             assert_nothing_raised do
               EnsureConfigHelper.check_config()
@@ -143,28 +134,22 @@ class EnsureConfigHelperTest < ActiveSupport::TestCase
         context 'with an executable that is not properly escaped' do
           setup do
             @validate_script = "#{@temp_dir}/validate script.sh"
-            FileUtils.touch([ @validate_script ])
-            FileUtils.chmod( 0700, [ @validate_script ])
             MarkusConfigurator.stubs(:markus_config_validate_file).returns(@validate_script)
-            f = File.open( @validate_script, 'w' )
-            f.write( "#!/bin/bash\n" )
-            f.write( "read user\n" )
-            f.write( "read password\n" )
-            f.write( 'exit 0' )
+
+            FileUtils.touch(@validate_script)
+            FileUtils.chmod(0700, @validate_script)
+
+            f = File.open(@validate_script, 'w')
+            f.write("#!/bin/bash\n")
+            f.write("read user\n")
+            f.write("read password\n")
+            f.write('exit 0')
             f.close
           end
-          should 'not pass the check_if_executes' do
-            #External validation is not supported on Windows so skip this test if platform is Windows
-            if !(RUBY_PLATFORM =~ /(:?mswin|mingw)/)
-              if RUBY_VERSION > '1.9'
-                assert_raise Errno::ENOENT do
-                  EnsureConfigHelper.check_config()
-                end
-              else
-                assert_raise RuntimeError do
-                  EnsureConfigHelper.check_config()
-                end
-              end
+
+          should 'accept the configuration' do
+            assert_nothing_raised do
+              EnsureConfigHelper.check_config()
             end
           end
         end

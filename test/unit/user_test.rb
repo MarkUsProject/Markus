@@ -43,11 +43,10 @@ class UserTest < ActiveSupport::TestCase
       new_user = {
         :user_name => '   ausername   ',
         :last_name => '   alastname  ',
-        :first_name => '   afirstname ',
-        :type => 'Student'
+        :first_name => '   afirstname '
       }
       @user = Student.new(new_user)
-
+      @user.type = 'Student'
     end
 
     should 'strip all strings with white space' do

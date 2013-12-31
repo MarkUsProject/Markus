@@ -29,30 +29,8 @@
   </div>
 </div>
 
-<div id="ie_warning_dialog" style="display:none;">
-  <%= I18n.t(:ie_warning)%><br /><br />
-  <a href="http://www.mozilla.org/en-US/firefox/">FireFox</a><br />
-  <a href="https://www.google.com/chrome/">Google Chrome</a><br />
-  <br />
-</div>
-
 <script type="text/javascript">
 //<![CDATA[
-  <% if @first_visit %>
-    <%# Alert Internet Explorer users of incompatibility %>
-      if (jQuery.browser.name == 'msie') {
-        jQuery('#ie_warning_dialog').dialog({
-          modal: true,
-          width: 400,
-          buttons: {
-            Ok: function() {
-              $(this).dialog('close');
-            }
-          }
-        });
-      }
-  <% end %>
-
   <%# Try to put focus on the login text field on load %>
   jQuery(document).ready(function(){
     jQuery("#user_login").focus();

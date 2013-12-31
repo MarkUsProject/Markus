@@ -192,7 +192,7 @@ class GradeEntryFormsController < ApplicationController
            @grade_entry_item_id)
     @grade.grade = updated_grade
     @grade_saved = @grade.save
-    @updated_student_total = grade_entry_form.calculate_total_mark(@student_id)
+    @updated_student_total = grade_entry_student.update_total_grade
   end
 
   # For students
