@@ -33,7 +33,8 @@ module MarksGradersHelper
 
       table_row[:id] = student.id
       table_row[:filter_table_row_contents] =
-        render_to_string :partial => 'marks_graders/table_row/filter_table_row.html.erb',
+        render_to_string :partial => 'marks_graders/table_row/filter_table_row',
+        :formats => [:html], :handlers => [:erb],
         :locals => { :student => student, :grade_entry_form => grade_entry_form }
 
       #These are used for sorting

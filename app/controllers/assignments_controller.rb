@@ -614,18 +614,20 @@ class AssignmentsController < ApplicationController
       assignment.section_groups_only = true
     end
 
+    # Some protective measures here to make sure we haven't been duped...
+    rule_name = params[:assignment][:submission_rule_attributes][:type]
+    potential_rule = Module.const_get(rule_name) rescue nil
+
+    unless potential_rule && potential_rule.ancestors.include?(SubmissionRule)
+      raise I18n.t('assignment.not_valid_submission_rule',
+        :type => params[:assignment][:submission_rule_attributes][:type])
+    end
+
     # Was the SubmissionRule changed?  If so, switch the type of the SubmissionRule.
     # This little conditional has to do some hack-y workarounds, since
     # accepts_nested_attributes_for is a little...dumb.
     if assignment.submission_rule.attributes['type'] !=
          params[:assignment][:submission_rule_attributes][:type]
-      # Some protective measures here to make sure we haven't been duped...
-      potential_rule =
-         Module.const_get(params[:assignment][:submission_rule_attributes][:type])
-      unless potential_rule.ancestors.include?(SubmissionRule)
-        raise I18n.t('assignment.not_valid_submission_rule',
-          :type => params[:assignment][:submission_rule_attributes][:type])
-      end
 
       # delete all the previously created periods for the given submission_rule
       # note that we should not delete this if the current submission rule

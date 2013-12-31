@@ -9,9 +9,8 @@
 source 'http://rubygems.org'
 
 # Bundler requires these gems in all environments
-gem 'rails', '3.0.20'
-#gem "prototype-rails" Will be needed with Rails3.1
-gem 'rubyzip'
+gem 'rails', '3.2.16'
+gem 'rubyzip', '0.9.9'
 gem 'ya2yaml'
 gem 'i18n'
 gem 'will_paginate'
@@ -21,6 +20,19 @@ gem 'dynamic_form'
 # The 'exception_notification' gem version 4 is not compatible with
 # Rails 3.0.x
 gem 'exception_notification', '<4.0'
+
+gem 'json'
+gem 'coffee-script'
+gem 'jquery-rails'
+gem 'prototype-rails' #Will be needed with Rails3.1
+
+group :assets do
+  gem 'tilt', '~> 1.3.7'
+  gem 'sass-rails',   '~> 3.2.3'
+  gem 'coffee-rails', '~> 3.2.1'
+  gem 'uglifier',     '>= 1.0.3'
+end
+
 
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
 # PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).
@@ -35,8 +47,7 @@ end
 # Then install your bundle by:
 #   bundle install --without postgresql sqlite
 group :mysql do
-  # FIXME: mysql2 0.3 is incompatible with rails 3.0.x which we use currently
-  gem 'mysql2', '< 0.3'
+  gem 'mysql2', '>=0.3'
 end
 
 # If you are a MarkUs developer and use SQLite, make sure you have

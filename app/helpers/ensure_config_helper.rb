@@ -104,25 +104,26 @@ module EnsureConfigHelper
 
   # checks if the given file executes succesfully
   def self.check_if_executes(filename, constant_name)
-    p_stdin, p_stdout, p_stderr = Open3.popen3(filename)
-    p_stdin.puts("test\ntest") # write to stdin of markus_config_validate
-    p_stdin.close
-    # HACKALARM:
-    # Disconnect from DB before reading from stderr. PostgreSQL gets confused
-    # if we don't do this. Since these checks run on server startup/shutdown
-    # only, this should be OK.
-    con_identifier = ActiveRecord::Base.remove_connection
-    error = p_stderr.read
-    # Get DB connection back
-    ActiveRecord::Base.establish_connection(con_identifier)
-    if error.length != 0
-      if error =~ /(Errno::ENOENT)|(Permission denied)/
-        raise ( "The setting #{constant_name} with path #{filename} is not executable. Please double " +
-                "check the setting in config/environments/#{Rails.env}.rb" )
+    output = ''
+    executable = (File.exist?(filename)) ? File.stat(filename).executable? : false
+
+    if executable
+      IO.popen("\"#{filename}\"", 'r+') do |pipe|
+        pipe.puts("test\ntest")
+        pipe.close_write
+
+        output = pipe.read
+        pipe.close_read
+      end
+    end
+
+    unless executable && output.length == 0
+      if !executable || output =~ /(Errno::ENOENT)|(Permission denied)/
+        raise ("The setting #{constant_name} with path #{filename} is not executable. Please double " +
+               "check the setting in config/environments/#{Rails.env}.rb" )
       else
-        # This may not indicate an error (maybe just authentication failed and something
-        # was printed to stderr). Log this, but do no more.
-        $stderr.puts "Error writing to pipe. #{filename}, #{error}. Please double check the" +
+        # This may not indicate an error. Log this, but do no more.
+        $stderr.puts "Output received for #{filename}: #{output}. Please double check the" +
                      " setting in config/environments/#{Rails.env}.rb"
       end
     end

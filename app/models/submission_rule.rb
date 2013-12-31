@@ -4,6 +4,8 @@ class SubmissionRule < ActiveRecord::Base
   has_many :periods, :dependent => :destroy, :order => 'id'
   accepts_nested_attributes_for :periods, :allow_destroy => true
 
+  attr_accessible :type, :periods_attributes
+
 #  validates_associated :assignment
 #  validates_presence_of :assignment
 
@@ -11,7 +13,7 @@ class SubmissionRule < ActiveRecord::Base
     return @can_collect_now if !@can_collect_now.nil?
     @can_collect_now = Time.zone.now >= get_collection_time
   end
-  
+
   def can_collect_grouping_now?(grouping)
     Time.zone.now >= calculate_grouping_collection_time(grouping)
   end

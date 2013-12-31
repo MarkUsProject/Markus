@@ -6,12 +6,12 @@ class AnnotationCategoriesController < ApplicationController
     @assignment = Assignment.find(params[:id])
     @annotation_categories = @assignment.annotation_categories
   end
-  
+
   def get_annotations
     @annotation_category = AnnotationCategory.find(params[:id])
     @annotation_texts = @annotation_category.annotation_texts
   end
-  
+
   def add_annotation_category
     @assignment = Assignment.find(params[:id])
     if request.post?
@@ -26,7 +26,7 @@ class AnnotationCategoriesController < ApplicationController
       render :insert_new_annotation_category
     end
   end
-  
+
   def update_annotation_category
     @annotation_category = AnnotationCategory.find(params[:id])
     @annotation_category.update_attributes(params[:annotation_category])
@@ -36,13 +36,13 @@ class AnnotationCategoriesController < ApplicationController
       flash.now[:error] = @annotation_category.errors
     end
   end
-  
+
   def update_annotation
     @annotation_text = AnnotationText.find(params[:id])
     @annotation_text.update_attributes(params[:annotation_text])
     @annotation_text.save
   end
-  
+
   def add_annotation_text
     @annotation_category = AnnotationCategory.find(params[:id])
     if request.post?
@@ -57,17 +57,17 @@ class AnnotationCategoriesController < ApplicationController
       render :insert_new_annotation_text
     end
   end
-  
+
   def delete_annotation_text
     @annotation_text = AnnotationText.find(params[:id])
     @annotation_text.destroy
   end
-  
+
   def delete_annotation_category
     @annotation_category = AnnotationCategory.find(params[:id])
     @annotation_category.destroy
   end
-  
+
   def download
     @assignment = Assignment.find(params[:id])
     @annotation_categories = @assignment.annotation_categories
@@ -81,7 +81,7 @@ class AnnotationCategoriesController < ApplicationController
       redirect_to :action => 'index', :id => params[:id]
     end
   end
-  
+
   def csv_upload
     @assignment = Assignment.find(params[:id])
     unless request.post?
@@ -96,7 +96,7 @@ class AnnotationCategoriesController < ApplicationController
       else
         flash[:annotation_upload_invalid_lines] << row.join(',')
       end
-    end 
+    end
     flash[:annotation_upload_success] = I18n.t('annotations.upload.success', :annotation_category_number => annotation_category_number)
     redirect_to :action => 'index', :id => @assignment.id
   end

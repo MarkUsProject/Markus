@@ -315,7 +315,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                      :select_file_id => 1,
                      :id => 1
 
-              assert_equal 0, flash.size
+              assert_equal true, flash.empty?
               assert_equal response.header['Content-Type'], 'application/octet-stream'
               assert_response :success
               assert_equal 'file content', @response.body
@@ -331,7 +331,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                      :select_file_id => 1,
                      :id => 1
 
-              assert_equal 0, flash.size
+              assert_equal true, flash.empty?
               assert_response :missing
               assert render_template 404
             end  # -- without permissions to download the file
@@ -372,7 +372,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :select_file_id => 1,
                   :id => 1,
                   :show_in_browser => true
-            assert_equal 0, flash.size
+            assert_equal true, flash.empty?
             assert_equal response.header['Content-Type'], 'image'
             assert_response :success
             assert_equal 'file content', @response.body
@@ -393,7 +393,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                   :select_file_id => 1,
                   :id => 1,
                   :include_annotations => true
-            assert_equal 0, flash.size
+            assert_equal true, flash.empty?
             assert_equal response.header['Content-Type'], 'application/octet-stream'
             assert_response :success
             assert_equal 'file content', @response.body
@@ -669,7 +669,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               assert_equal next_grouping, @groupings[1]
               assert !next_result.released_to_students
               assert_nil assigns(:previous_grouping)
-              assert_equal 0, flash.size
+              assert_equal true, flash.empty?
               assert render_template :edit
               assert_response :success
             end
@@ -697,7 +697,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               assert next_result.released_to_students
               assert !previous_result.released_to_students
 
-              assert_equal 0, flash.size
+              assert_equal true, flash.empty?
               assert render_template :edit
               assert_response :success
             end
@@ -720,7 +720,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
               assert_equal previous_grouping, @groupings[1]
               assert !previous_result.released_to_students
 
-              assert_equal 0, flash.size
+              assert_equal true, flash.empty?
               assert render_template :edit
               assert_response :success
             end
@@ -830,7 +830,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :submission_id => 1,
                    :select_file_id => 1,
                    :id => 1
-            assert_equal 0, flash.size
+            assert_equal true, flash.empty?
             assert_equal response.header['Content-Type'], 'application/octet-stream'
             assert_response :success
             assert_equal 'file content', @response.body
@@ -921,7 +921,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :grouping_id => @grouping.id,
                    :include_annotations => 'true'
 
-            assert_equal response.header['Content-Type'], 'application/octet-stream'
+            assert_equal 'application/zip', response.header['Content-Type']
             assert_response :success
             zip_path = "tmp/#{@assignment.short_identifier}_" +
                 "#{@grouping.group.group_name}_r#{@grouping.group.repo.
@@ -943,7 +943,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :grouping_id => @grouping.id,
                    :include_annotations => 'false'
 
-            assert_equal response.header['Content-Type'], 'application/octet-stream'
+            assert_equal 'application/zip', response.header['Content-Type']
             assert_response :success
             zip_path = "tmp/#{@assignment.short_identifier}_" +
                 "#{@grouping.group.group_name}_r#{@grouping.group.repo.
@@ -979,7 +979,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                     :focus_line => 1,
                     :submission_file_id => @file.id
 
-            assert_equal 0, flash.size
+            assert_equal true, flash.empty?
             assert_not_nil assigns :assignment
             assert_not_nil assigns :submission_file_id
             assert_not_nil assigns :focus_line
@@ -1151,7 +1151,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                  :submission_id => 1,
                  :id => @extra_mark.id
 
-          assert_equal 0, flash.size
+          assert_equal true, flash.empty?
           assert_not_nil assigns :result
           assert render_template 'results/marker/remove_extra_mark'
           assert_response :success
@@ -1250,7 +1250,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                  :submission_id => 1,
                  :id => result.id
 
-          assert_equal 0, flash.size
+          assert_equal true, flash.empty?
           assert render_template :edit
           assert_response :success
         end
@@ -1321,8 +1321,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :submission_id => 1,
                    :id => 1,
                    :select_file_id => 1
-            assert_equal 0, flash.size
-            assert_equal response.header['Content-Type'], 'application/octet-stream'
+            assert_equal true, flash.empty?
+            assert_equal 'application/octet-stream', response.header['Content-Type']
             assert_response :success
             assert_equal 'file content', @response.body
           end
@@ -1359,7 +1359,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                     :id => 1,
                     :select_file_id => 1,
                     :show_in_browser => true
-            assert_equal 0, flash.size
+            assert_equal true, flash.empty?
             assert_equal response.header['Content-Type'], 'image'
             assert_response :success
             assert_equal 'file content', @response.body
@@ -1533,7 +1533,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                  :assignment_id => 1,
                  :submission_id => 1,
                  :id => @extra_mark.id
-          assert_equal 0, flash.size
+          assert_equal true, flash.empty?
           assert_not_nil assigns :result
           assert render_template 'results/marker/remove_extra_mark'
           assert_response :success

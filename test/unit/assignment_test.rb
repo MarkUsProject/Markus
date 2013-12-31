@@ -1005,7 +1005,7 @@ class AssignmentTest < ActiveSupport::TestCase
           assert_equal expected_array, @assignment.get_svn_export_commands
         end
       end
-        
+
       context 'with two groups of a single student each with multiple submission' do
         setup do
           (1..2).each do

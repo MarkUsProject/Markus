@@ -1,4 +1,5 @@
-<%= render :partial => "shared/navigation_warning.js.erb" %>
+<%= render :partial => "shared/navigation_warning",
+  :formats => [:js], :handlers => [:erb] %>
 
 <div id="title_bar"><h1><%=I18n.t('notes.edit.title')%></h1></div>
 
@@ -18,8 +19,11 @@
       <b><%=I18n.t('notes.creation_time')%>:</b> <%= @note.format_date %>
     </p>
 
-    <%= raw(f.label :notes_message, I18n.t('notes.note')+":") %>
-    <%= raw(f.text_area :notes_message, :rows => 8, :cols => 50, 
+    <p>
+      <b><%= I18n.t('notes.note') %>:</b>
+    </p>
+
+    <%= raw(f.text_area :notes_message, :rows => 8, :cols => 50,
                         :onchange => "set_onbeforeunload(true);") %>
 
     <p>

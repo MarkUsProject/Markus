@@ -10,6 +10,9 @@ class TasController < ApplicationController
     @tas_data = Ta.all(:order => 'user_name')
     # construct_table_rows defined in UsersHelper
     @tas = construct_table_rows(@tas_data)
+    respond_to do |format|
+      format.json { render :json => @tas }
+    end
   end
 
   def new
@@ -75,6 +78,11 @@ class TasController < ApplicationController
   def upload_ta_list
     if request.post? && !params[:userlist].blank?
       result = User.upload_user_list(Ta, params[:userlist], params[:encoding])
+      if result == false
+        flash[:notice] = I18n.t('csv.invalid_csv')
+        redirect_to :action => 'index'
+        return
+      end
       if result[:invalid_lines].length > 0
         flash[:invalid_lines] = result[:invalid_lines]
       end

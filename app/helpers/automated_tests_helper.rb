@@ -109,6 +109,9 @@ module AutomatedTestsHelper
 
       tfile = testfiles[key]
 
+      # Can't mass assign assignment_id
+      tfile.delete(:assignment_id)
+
       # Check to see if this is an update or a new file:
       # - If 'id' exists, this is an update
       # - If 'id' does not exist, this is a new test file
