@@ -2,7 +2,8 @@
 require File.expand_path('../application', __FILE__)
 
 # Fix TA pluralization
-ActiveSupport::Inflector.inflections do |inflection| inflection.irregular "ta", "tas"
+ActiveSupport::Inflector.inflections do |inflection|
+  inflection.irregular "ta", "tas"
 end
 
 # Initialize the rails application
