@@ -14,7 +14,7 @@ class MarksGradersController < ApplicationController
 
   def populate_graders
     @grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
-    @graders = Ta.find(:all)
+    @graders = Ta.all
     @table_rows = construct_grader_table_rows(@graders, @grade_entry_form)
   end
 
