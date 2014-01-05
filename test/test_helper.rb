@@ -22,7 +22,7 @@ class ActiveSupport::TestCase
     conf = Hash.new
     conf['IS_REPOSITORY_ADMIN'] = true
     conf['REPOSITORY_PERMISSION_FILE'] = 'dummyfile'
-    Repository.get_class(REPOSITORY_TYPE, conf).purge_all
+    Repository.get_class(MarkusConfigurator.markus_config_repository_type, conf).purge_all
   end
 
   def destroy_converted_pdfs

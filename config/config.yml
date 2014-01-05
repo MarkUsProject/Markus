@@ -70,7 +70,7 @@ defaults: &defaults
   ###################################################################
   # Directory where Repositories will be created. Make sure MarkUs is allowed
   # to write to this directory
-  repository_storage: = <%= "#{::Rails.root.to_s}/data/dev/repos" %>
+  repository_storage: <%= "#{::Rails.root.to_s}/data/dev/repos" %>
 
   ###################################################################
   # Directory where converted PDF files will be stored as JPEGs. Make sure MarkUs
@@ -190,7 +190,20 @@ development:
   <<: *defaults
 
 test:
+  ###################################################################
+  # Specific configuration for test environment
   <<: *defaults
+  repository_storage: <%= "#{::Rails.root.to_s}/data/test/dummy" %>
+  repository_type: "memory"
+  pdf_storage: <%= "#{::Rails.root.to_s}/data/test/pdfs" %>
+  automated_tests_repository: <%= "#{::Rails.root.to_s}/data/test/automated_tests" %>
+  repository_permission_file: <%= "#{::Rails.root.to_s}/data/test/repos/dummy" %>
 
 production:
+  ###################################################################
+  # Specific configuration for production environment
   <<: *defaults
+  repository_storage: <%= "#{::Rails.root.to_s}/data/prod/repos" %>
+  pdf_storage: <%= "#{::Rails.root.to_s}/data/prod/pdfs" %>
+  automated_tests_repository: <%= "#{::Rails.root.to_s}/data/prod/automated_tests" %>
+  repository_permission_file: <%= "#{::Rails.root.to_s}/data/prod/repos/svn_authz" %>
