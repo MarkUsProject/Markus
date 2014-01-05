@@ -137,6 +137,14 @@ module MarkusConfigurator
     end
   end
 
+  def markus_config_session_secret_token
+    if MARKUS_CONFIG['session_secret_token'].nil?
+      raise NotDefined.new('session_secret_token')
+    else
+      MARKUS_CONFIG['session_secret_token']
+    end
+  end
+
   def markus_config_session_cookie_expire_after
     if MARKUS_CONFIG['session_cookie_expire_after'].nil?
       raise NotDefined.new('session_cookie_expire_after')
