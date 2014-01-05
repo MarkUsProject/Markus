@@ -63,24 +63,4 @@ Markus::Application.configure do
 
   # Show Deprecated Warnings (to :log or to :stderr)
   config.active_support.deprecation = :log
-
-
-  ###################################################################
-  # Session Timeouts
-  ###################################################################
-  USER_STUDENT_SESSION_TIMEOUT        = 1800 # Timeout for student users
-  USER_TA_SESSION_TIMEOUT             = 1800 # Timeout for grader users
-  USER_ADMIN_SESSION_TIMEOUT          = 1800 # Timeout for admin users
-
-  ###################################################################
-  # CSV upload order of fields (usually you don't want to change this)
-  ###################################################################
-  # Order of student CSV uploads
-  USER_STUDENT_CSV_UPLOAD_ORDER = [:user_name, :last_name, :first_name, :section_name]
-  # Order of graders CSV uploads
-  USER_TA_CSV_UPLOAD_ORDER  = [:user_name, :last_name, :first_name]
-
-  ###################################################################
-  # END OF MarkUs SPECIFIC CONFIGURATION
-  ###################################################################
 end

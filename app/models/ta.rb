@@ -3,8 +3,8 @@ require File.join(File.dirname(__FILE__), '..', '..', 'lib', 'repo', 'repository
 
 class Ta < User
 
-  CSV_UPLOAD_ORDER = USER_TA_CSV_UPLOAD_ORDER
-  SESSION_TIMEOUT = USER_TA_SESSION_TIMEOUT
+  CSV_UPLOAD_ORDER = MarkusConfigurator.markus_config_user_ta_csv_upload_order
+  SESSION_TIMEOUT = MarkusConfigurator.markus_config_user_ta_session_timeout
 
   after_create  :grant_repository_permissions
   after_destroy :revoke_repository_permissions

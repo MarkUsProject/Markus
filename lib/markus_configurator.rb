@@ -171,14 +171,6 @@ module MarkusConfigurator
     end
   end
 
-  def markus_config_validate_file
-    if MARKUS_CONFIG['validate_file'].nil?
-      raise NotDefined.new('validate_file')
-    else
-      MARKUS_CONFIG['validate_file']
-    end
-  end
-
   def markus_config_logging_rotate_by_interval
     if MARKUS_CONFIG['markus_logging_rotate_by_interval'].nil?
       raise NotDefined.new('markus_logging_rotate_by_interval')
@@ -232,6 +224,54 @@ module MarkusConfigurator
       raise NotDefined.new('markus_default_language')
     else
       MARKUS_CONFIG['markus_default_language']
+    end
+  end
+
+  def markus_config_validate_file
+    if MARKUS_CONFIG['validate_file'].nil?
+      raise NotDefined.new('validate_file')
+    else
+      MARKUS_CONFIG['validate_file']
+    end
+  end
+
+  def markus_config_user_student_session_timeout
+    if MARKUS_CONFIG['user_student_session_timeout'].nil?
+      raise NotDefined.new('user_student_session_timeout')
+    else
+      MARKUS_CONFIG['user_student_session_timeout']
+    end
+  end
+
+  def markus_config_user_ta_session_timeout
+    if MARKUS_CONFIG['user_ta_session_timeout'].nil?
+      raise NotDefined.new('user_ta_session_timeout')
+    else
+      MARKUS_CONFIG['user_ta_session_timeout']
+    end
+  end
+
+  def markus_config_user_admin_session_timeout
+    if MARKUS_CONFIG['user_admin_session_timeout'].nil?
+      raise NotDefined.new('user_admin_session_timeout')
+    else
+      MARKUS_CONFIG['user_admin_session_timeout']
+    end
+  end
+
+  def markus_config_user_student_csv_upload_order
+    if MARKUS_CONFIG['user_student_csv_upload_order'].nil?
+      raise NotDefined.new('user_student_csv_upload_order')
+    else
+      MARKUS_CONFIG['user_student_csv_upload_order']
+    end
+  end
+
+  def markus_config_user_ta_csv_upload_order
+    if MARKUS_CONFIG['user_ta_csv_upload_order'].nil?
+      raise NotDefined.new('user_ta_csv_upload_order')
+    else
+      MARKUS_CONFIG['user_ta_csv_upload_order']
     end
   end
 
