@@ -119,7 +119,7 @@ class SubmissionCollector < ActiveRecord::Base
 
     #If for some reason there is no process with id self.child_pid, simply
     #proceed by forking a new process as usual.
-    rescue Errno::ESRCH, Errno::ECHILD => e
+    rescue Errno::ESRCH, Errno::ECHILD
     end
 
     #We have to re-establish a separate database connection for each process
@@ -245,7 +245,7 @@ class SubmissionCollector < ActiveRecord::Base
         self.save
         Process.waitpid(self.child_pid)
       #Ignore case where no process with child_pid exists
-      rescue Errno::ESRCH, Errno::ECHILD => e
+      rescue Errno::ESRCH, Errno::ECHILD
       ensure
         self.stop_child = false
         self.child_pid = nil

@@ -189,7 +189,7 @@ module Repository
         end
         begin
           @repos.fs.root(file.from_revision).file_contents(File.join(file.path, file.name)){|f| f.read}
-        rescue Svn::Error::FS_NOT_FOUND => e
+        rescue Svn::Error::FS_NOT_FOUND
           raise FileDoesNotExistConflict.new(File.join(file.path, file.name))
         end
       }
@@ -676,9 +676,9 @@ module Repository
         begin
           Svn::Repos.history2(@repos.fs, path, history_function, nil, starting_revision || 0,
                               ending_revision || @repos.fs.youngest_rev, true)
-        rescue Svn::Error::FS_NOT_FOUND => e
+        rescue Svn::Error::FS_NOT_FOUND
           raise Repository::FileDoesNotExistConflict.new(path)
-        rescue Svn::Error::FS_NO_SUCH_REVISION => e
+        rescue Svn::Error::FS_NO_SUCH_REVISION
           raise "Ending revision " + ending_revision.to_s + " does not exist."
         end
         revision_numbers.concat hist

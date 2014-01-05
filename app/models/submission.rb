@@ -45,7 +45,7 @@ class Submission < ActiveRecord::Base
      new_submission.transaction do
        begin
          new_submission.populate_with_submission_files(revision)
-       rescue Repository::FileDoesNotExist => e
+       rescue Repository::FileDoesNotExist
          #populate the submission with no files instead of raising an exception
        end
        new_submission.save

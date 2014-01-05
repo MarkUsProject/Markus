@@ -85,7 +85,7 @@ class MarkusRESTfulAPI
 
     def self.create(attributes)
       url = 'users.json'
-      response = self.post(url, attributes)
+      self.post(url, attributes)
 
       self.get_by_user_name(attributes['user_name'])
     end
@@ -119,7 +119,7 @@ class MarkusRESTfulAPI
 
     def self.create(attributes)
       url = 'assignments.json'
-      response = self.post(url, attributes)
+      self.post(url, attributes)
 
       self.get_by_short_identifier(attributes['short_identifier'])
     end

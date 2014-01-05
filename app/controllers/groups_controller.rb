@@ -198,7 +198,7 @@ class GroupsController < ApplicationController
             flash[:notice] = I18n.t('csv.groups_added_msg', { :number_groups =>
               number_groupings_added, :number_lines => invalid_lines_count })
           end
-        rescue Exception => e
+        rescue Exception
           # We should only get here if something *really* bad/unexpected
           # happened.
           flash_message(:error, I18n.t('csv.groups_unrecoverable_error'))
