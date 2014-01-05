@@ -13,7 +13,7 @@ MARKUS_CONFIG = YAML.load(
 include MarkusConfigurator
 
 # checks to make sure that all the config
-# in markus/config/environments/<env_name>.rb is usable
+# in config/config.yml is usable
 if !Rails.env.test?
-  EnsureConfigHelper.check_config()
+  EnsureConfigHelper.check_config
 end

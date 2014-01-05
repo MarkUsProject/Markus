@@ -4,7 +4,7 @@ if RUBY_VERSION > '1.9'
   SimpleCov.start 'rails' if ENV['COVERAGE']
 end
 
-ENV['RAILS_ENV'] = 'test'
+ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 require 'mocha/setup'
