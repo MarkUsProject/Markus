@@ -88,7 +88,6 @@ class RubricsController < ApplicationController
          csv << criterion_array
        end
      end
-     csv_string
    end
 
    def create_yml_rubric(assignment)
