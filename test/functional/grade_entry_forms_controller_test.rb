@@ -898,7 +898,12 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         @grade_entry_item = @grade_entry_form.grade_entry_items.make!(:name => 'something', :position => 1)
         @old_grade = 0.0
         @new_grade = 10.0
-        @grade_entry_student.grades.make!(:grade_entry_item => @grade_entry_item, :grade => @old_grade)
+        #@grade_entry_student.grades.make!(:grade_entry_item => @grade_entry_item, :grade => @old_grade)
+        @grade_entry_form.grade_entry_items.each do |grade_entry_item|
+          Grade.make!(:grade_entry_student => @grade_entry_student,
+                      :grade_entry_item => grade_entry_item,
+                      :grade => @old_grade)
+        end
       end
 
       should 'have valid values in database after an upload of a UTF-8 encoded file parsed as UTF-8' do
