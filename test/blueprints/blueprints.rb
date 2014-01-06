@@ -96,6 +96,7 @@ GradeEntryItem.blueprint do
   grade_entry_form {GradeEntryForm.make!}
   name {Faker::Name.name}
   out_of {10}
+  position {rand(1000)+1}
 end
 
 GradeEntryStudent.blueprint do

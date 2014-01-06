@@ -45,7 +45,7 @@
         <td class="student_total">
           <div class="total_value" style="display:inline-block;">
             <%= text_field_tag 'total_' + student.id.to_s,
-                @grade_entry_form.calculate_total_mark(student.id),
+                grade_entry_student.total_grade,
                 :size => 4, :disabled => true %>
           </div>
         </td>

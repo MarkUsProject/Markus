@@ -921,7 +921,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :grouping_id => @grouping.id,
                    :include_annotations => 'true'
 
-            assert_equal response.header['Content-Type'], 'application/octet-stream'
+            assert_equal 'application/zip', response.header['Content-Type']
             assert_response :success
             zip_path = "tmp/#{@assignment.short_identifier}_" +
                 "#{@grouping.group.group_name}_r#{@grouping.group.repo.
@@ -943,7 +943,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :grouping_id => @grouping.id,
                    :include_annotations => 'false'
 
-            assert_equal response.header['Content-Type'], 'application/octet-stream'
+            assert_equal 'application/zip', response.header['Content-Type']
             assert_response :success
             zip_path = "tmp/#{@assignment.short_identifier}_" +
                 "#{@grouping.group.group_name}_r#{@grouping.group.repo.
@@ -1322,7 +1322,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                    :id => 1,
                    :select_file_id => 1
             assert_equal true, flash.empty?
-            assert_equal response.header['Content-Type'], 'application/octet-stream'
+            assert_equal 'application/octet-stream', response.header['Content-Type']
             assert_response :success
             assert_equal 'file content', @response.body
           end

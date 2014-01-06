@@ -1185,11 +1185,11 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     context 'with an assignmt, with past due date but collection in future' do
       setup do
         @assignment = Assignment.make!(:due_date => 1.days.ago)
-        grace_period_submission_rule = GracePeriodSubmissionRule.new
+        grace_period_submission_rule = GracePeriodSubmissionRule.make!
         @assignment.replace_submission_rule(grace_period_submission_rule)
         @assignment.save
-        period = Period.make!(:submission_rule => @assignment.submission_rule.id,
-                             :hours => 62)
+        period = Period.make!(:submission_rule => @assignment.submission_rule,
+                              :hours => 62)
       end
 
       should 'have the create group link available' do

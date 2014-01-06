@@ -137,7 +137,6 @@ class ResultsController < ApplicationController
     end
     @result.released_to_students = released_to_students
     @result.save
-    @result.submission.assignment.set_results_statistics
     m_logger = MarkusLogger.instance
     assignment = @result.submission.assignment
     if params[:value] == 'true'
@@ -157,6 +156,7 @@ class ResultsController < ApplicationController
       # If marking_state is complete, update the cached distribution
       if params[:value] == Result::MARKING_STATES[:complete]
         @result.submission.assignment.assignment_stat.refresh_grade_distribution
+        @result.submission.assignment.set_results_statistics
       end
       render :template => 'results/update_marking_state'
     else # Failed to pass validations
@@ -168,7 +168,7 @@ class ResultsController < ApplicationController
   def download
     #Ensure student doesn't download a file not submitted by his own grouping
     unless authorized_to_download?(:file_id => params[:select_file_id])
-      render 'shared/http_status.html',
+      render 'shared/http_status', :formats => [:html],
              :locals => { :code => '404',
                           :message => HttpStatusHelper::ERROR_CODE[
                               'message']['404'] }, :status => 404,
@@ -210,7 +210,7 @@ class ResultsController < ApplicationController
 
     #Ensure student doesn't download files not submitted by his own grouping
     unless authorized_to_download?(:submission_id => params[:submission_id])
-      render 'shared/http_status.html',
+      render 'shared/http_status', :formats => [:html],
              :locals => { :code => '404',
                           :message => HttpStatusHelper::ERROR_CODE[
                               'message']['404'] }, :status => 404,
@@ -446,12 +446,14 @@ class ResultsController < ApplicationController
     @result = Result.find(params[:id])
     @result.overall_comment = params[:result][:overall_comment]
     @result.save
+		render 'update_overall_comment', :formats => [:js]
   end
 
   def update_overall_remark_comment
     @result = Result.find(params[:id])
     @result.overall_comment = params[:result][:overall_comment]
     @result.save
+		render 'update_overall_remark_comment', :formats => [:js]
   end
 
   def update_remark_request
@@ -473,6 +475,7 @@ class ResultsController < ApplicationController
         @old_result.save
       end
     end
+		render 'update_remark_request', :formats => [:js]
   end
 
   def cancel_remark_request

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131004123913) do
+ActiveRecord::Schema.define(:version => 20131224160912) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -167,6 +167,7 @@ ActiveRecord::Schema.define(:version => 20131004123913) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.float    "out_of"
+    t.integer  "position"
   end
 
   add_index "grade_entry_items", ["grade_entry_form_id", "name"], :name => "index_grade_entry_items_on_grade_entry_form_id_and_name", :unique => true
@@ -177,6 +178,7 @@ ActiveRecord::Schema.define(:version => 20131004123913) do
     t.boolean  "released_to_student"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.float    "total_grade"
   end
 
   add_index "grade_entry_students", ["user_id", "grade_entry_form_id"], :name => "index_grade_entry_students_on_user_id_and_grade_entry_form_id", :unique => true
@@ -263,6 +265,7 @@ ActiveRecord::Schema.define(:version => 20131004123913) do
     t.datetime "updated_at"
     t.float    "hours"
     t.integer  "interval"
+    t.string   "submission_rule_type"
   end
 
   add_index "periods", ["submission_rule_id"], :name => "index_periods_on_submission_rule_id"

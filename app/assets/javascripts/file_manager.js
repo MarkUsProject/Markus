@@ -1,45 +1,59 @@
   // add new row of input
 function injectFileInput() {
-  var new_file_field = new Element('input', {type: 'file',
-                    name: 'new_files[]',
-                    onchange: 'sanitized_filename_check(this); return false;',
-                    multiple: true});
-  var new_file_field_row = new Element('tr');
-  var new_file_field_input_column = new Element('td', {colspan: 4});
+  var new_file_field = jQuery('<input>', {  
+		type: 'file',
+    name: 'new_files[]',
+    multiple: true
+  });  
 
-  var remove_new_file_input = new Element('input', {type: 'checkbox'});
+	new_file_field.change(function() {
+		sanitized_filename_check(this);
+		return false;
+	});
 
-  remove_new_file_input.observe('change', function(node) {
-    $(new_file_field_row).remove();
+
+	var new_file_field_row = jQuery('<tr>');
+
+  var new_file_field_input_column = jQuery('<td>', {colspan: 4});
+
+  var remove_new_file_input = jQuery('<input>', {type: 'checkbox'});
+
+	remove_new_file_input.change(function(node) {
+    jQuery(new_file_field_row).remove();
     enableDisableSubmit();
   });
 
-  var remove_new_file_field_column = new Element('td');
-  remove_new_file_field_column.insert(remove_new_file_input);
-  remove_new_file_field_column.addClassName('delete_row');
+  var remove_new_file_field_column = jQuery('<td>');
 
-  new_file_field_input_column.insert(new_file_field);
-  new_file_field_row.insert(new_file_field_input_column);
-  new_file_field_row.insert(remove_new_file_field_column);
+  remove_new_file_field_column.append(remove_new_file_input);
+  remove_new_file_field_column.addClass('delete_row');
 
-  $('add_file_tbody').insert( {top: new_file_field_row});
+  new_file_field_input_column.append(new_file_field);
+  new_file_field_row.append(new_file_field_input_column);
+  new_file_field_row.append(remove_new_file_field_column);
+
+  jQuery('#add_file_tbody').prepend(new_file_field_row);
   new_file_field.focus();
   enableDisableSubmit();
 }
 
 function enableDisableSubmit() {
   var hasRows = false;
-  $$('tbody').each(function(item) {
-      var oRows = item.getElementsByTagName('tr');
+  jQuery('tbody').each(function(i) {
+      var oRows = this.getElementsByTagName('tr');
       var iRowCount = oRows.length;
       if (iRowCount >0) {
           hasRows = true;
         }
     });
   if (hasRows) {
-    $$('#submit_form input[type=submit]').each(function(item) { item.enable() } );
+    jQuery('#submit_form input[type=submit]').each(function(i) {
+  		jQuery(this).find('input, textarea').each(function(i) { jQuery(this).removeAttr("readonly"); });
+		});
   } else {
-    $$('#submit_form input[type=submit]').each(function(item) { item.disable() } );
+    jQuery('#submit_form input[type=submit]').each(function(i) {
+ 		  jQuery(this).find('input, textarea').each(function(i) { jQuery(this).attr("readonly","readonly"); });
+		});
   }
 }
 /*
