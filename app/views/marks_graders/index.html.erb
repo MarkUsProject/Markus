@@ -2,7 +2,7 @@
 <%= javascript_include_tag "FilterTable/FilterTable.js" %>
 <%= javascript_include_tag "Graders/tabs_boot.js" %>
 
-<%= render :partial => "boot.js.erb" %>
+<%= render :partial => "boot", :formats => [:js], :handlers => [:erb] %>
 <script type="text/javascript">
 //<![CDATA[
 

@@ -4,7 +4,7 @@ require 'iconv'
 class RubricCriterion < ActiveRecord::Base
   before_save :round_weight
   after_save :update_existing_results
-  set_table_name 'rubric_criteria' # set table name correctly
+  self.table_name = 'rubric_criteria' # set table name correctly
   belongs_to :assignment, :counter_cache => true
   has_many :marks, :as => :markable, :dependent => :destroy
   has_many :criterion_ta_associations,
@@ -146,8 +146,8 @@ class RubricCriterion < ActiveRecord::Base
       criterion['level_' + i.to_s + '_name'] = working_row.shift
     end
     # the rest of the values are level descriptions.
-    working_row.each_with_index do |desc, i|
-      criterion['level_' + i.to_s + '_description'] = desc
+    (0..RUBRIC_LEVELS-1).each do |i|
+      criterion['level_' + i.to_s + '_description'] = working_row.shift
     end
     unless criterion.save
       raise ActiveRecord::RecordNotSaved.new(criterion.errors)

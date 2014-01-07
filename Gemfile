@@ -9,8 +9,8 @@
 source 'http://rubygems.org'
 
 # Bundler requires these gems in all environments
-gem 'rails', '3.1.12'
-gem 'rubyzip'
+gem 'rails', '3.2.16'
+gem 'rubyzip', '0.9.9'
 gem 'ya2yaml'
 gem 'i18n'
 gem 'will_paginate'
@@ -28,8 +28,8 @@ gem 'prototype-rails' #Will be needed with Rails3.1
 
 group :assets do
   gem 'tilt', '~> 1.3.7'
-  gem 'sass-rails',   '~> 3.1.5'
-  gem 'coffee-rails', '~> 3.1.1'
+  gem 'sass-rails',   '~> 3.2.3'
+  gem 'coffee-rails', '~> 3.2.1'
   gem 'uglifier',     '>= 1.0.3'
 end
 

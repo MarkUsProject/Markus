@@ -42,8 +42,8 @@ module GradersHelper
 
       table_row[:id] = grouping.id
       table_row[:filter_table_row_contents] =
-        render_to_string :partial =>
-                             'graders/table_row/filter_table_row.html.erb',
+        render_to_string :partial => 'graders/table_row/filter_table_row',
+        :formats => [:html], :handlers => [:erb],
         :locals => { :grouping => grouping,
                      :assignment => assignment,
                      :total_criteria_count => total_criteria_count }
@@ -95,7 +95,8 @@ module GradersHelper
 
     table_row[:id] = criterion.id
     table_row[:filter_table_row_contents] =
-      render_to_string :partial => 'graders/table_row/filter_table_criterion_row.html.erb',
+      render_to_string :partial => 'graders/table_row/filter_table_criterion_row',
+      :formats => [:html], :handlers => [:erb],
       :locals => {:criterion => criterion, :assignment => assignment}
 
     table_row[:criterion_name] = criterion.get_name
