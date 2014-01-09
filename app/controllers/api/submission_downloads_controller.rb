@@ -65,7 +65,7 @@ module Api
           else
             file_contents = file.retrieve_file
           end
-        rescue Exception => e
+        rescue Exception
             # Could not retrieve file
             render 'shared/http_status', :locals => {:code => '500', :message =>
               HttpStatusHelper::ERROR_CODE['message']['500'] }, :status => 500

@@ -198,7 +198,7 @@ class MarkusLoggerTest < Test::Unit::TestCase
 
     should 'raise exception if logfile is in a directory with no writing permissions' do
       FileUtils.mkdir_p @baddir unless File.directory?(@baddir)
-      file = File.join(@baddir,'file');
+      file = File.join(@baddir,'file')
       FileUtils.chmod 0000, @baddir
       MarkusConfigurator.stubs(:markus_config_logging_logfile).returns(file)
       assert_raise MarkusLoggerConfigurationError do

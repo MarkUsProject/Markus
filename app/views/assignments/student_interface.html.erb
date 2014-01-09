@@ -75,7 +75,7 @@
 
         <%
         # Test if the student can form groupings or not
-        if @assignment.student_form_groups == false %>
+        if !@assignment.student_form_groups %>
           <p>
             <%= I18n.t("student.not_allowed_to_form_group") %>
           </p>
@@ -161,7 +161,7 @@
         # Check if groupname should be displayed
         %>
         <h3>
-          <% if @assignment.group_name_displayed == true %>
+          <% if @assignment.group_name_displayed %>
             <%= @group.group_name %>
           <% else %>
             <%= I18n.t("student.your_group") %>
