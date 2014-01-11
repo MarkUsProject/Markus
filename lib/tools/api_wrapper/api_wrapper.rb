@@ -71,21 +71,21 @@ class MarkusRESTfulAPI
       self.get("users.json?filter=first_name:#{first_name}")
     end
 
-    def self.get_all_admins()
+    def self.get_all_admins
       self.get('users.json?filter=type:admin')
     end
 
-    def self.get_all_tas()
+    def self.get_all_tas
       self.get('users.json?filter=type:ta')
     end
 
-    def self.get_all_students()
+    def self.get_all_students
       self.get('users.json?filter=type:student')
     end
 
     def self.create(attributes)
       url = 'users.json'
-      response = self.post(url, attributes)
+      self.post(url, attributes)
 
       self.get_by_user_name(attributes['user_name'])
     end
@@ -113,13 +113,13 @@ class MarkusRESTfulAPI
       self.get("assignments.json?filter=short_identifier:#{short_identifier}")[0]
     end
 
-    def self.get_all()
+    def self.get_all
       self.get('assignments.json')
     end
 
     def self.create(attributes)
       url = 'assignments.json'
-      response = self.post(url, attributes)
+      self.post(url, attributes)
 
       self.get_by_short_identifier(attributes['short_identifier'])
     end

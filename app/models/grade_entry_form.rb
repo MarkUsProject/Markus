@@ -147,7 +147,7 @@ class GradeEntryForm < ActiveRecord::Base
 
     # We can now form the category names
     j=0
-    (1..total_pages).each do |i|
+    (1..total_pages).each do
       alpha_pagination << (alpha_categories[j].max + '-' + alpha_categories[j+1].max)
       j += 2
     end

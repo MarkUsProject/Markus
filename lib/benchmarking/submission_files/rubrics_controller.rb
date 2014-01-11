@@ -76,7 +76,7 @@ class RubricsController < ApplicationController
    end
 
    def create_csv_rubric(assignment)
-     csv_string = FasterCSV.generate do |csv|
+     FasterCSV.generate do |csv|
        #first line is level names
        levels_array = get_level_names(assignment)
        csv << levels_array
@@ -88,7 +88,6 @@ class RubricsController < ApplicationController
          csv << criterion_array
        end
      end
-     csv_string
    end
 
    def create_yml_rubric(assignment)
@@ -142,7 +141,7 @@ class RubricsController < ApplicationController
           end
           flash[:success] = 'Rubric added/updated.'
         end
-      rescue Exception => e
+      rescue Exception
         flash[:error] = I18n.t('csv_valid_format')
       end
     end
@@ -189,7 +188,6 @@ class RubricsController < ApplicationController
        criterion.weight = c['weight']
        criterion.position = assignment.rubric_criteria.maximum('position') + 1
        levels = c['levels']
-       i = 0
        0..NUM_LEVELS do |i|
          criterion['level_' + i.to_s + '_description'] = levels[i]
        end

@@ -134,7 +134,7 @@ class RubricCriterion < ActiveRecord::Base
     #Check that the weight is not a string.
     begin
       criterion.weight = Float(working_row.shift)
-    rescue ArgumentError => e
+    rescue ArgumentError
       raise ActiveRecord::RecordNotSaved, I18n.t('criteria_csv_error.weight_not_number')
     end
     # Only set the position if this is a new record.
@@ -182,11 +182,11 @@ class RubricCriterion < ActiveRecord::Base
     #Check that the weight is not a string.
     begin
       criterion.weight = Float(key[1]['weight'])
-    rescue ArgumentError => e
+    rescue ArgumentError
       raise I18n.t('criteria_csv_error.weight_not_number')
-    rescue TypeError => e
+    rescue TypeError
       raise I18n.t('criteria_csv_error.weight_not_number')
-    rescue NoMethodError => e
+    rescue NoMethodError
       raise I18n.t('rubric_criteria.upload.empty_error')
     end
     # Only set the position if this is a new record.

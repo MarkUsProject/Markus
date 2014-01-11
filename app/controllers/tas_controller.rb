@@ -78,7 +78,7 @@ class TasController < ApplicationController
   def upload_ta_list
     if request.post? && !params[:userlist].blank?
       result = User.upload_user_list(Ta, params[:userlist], params[:encoding])
-      if result == false
+      if !result
         flash[:notice] = I18n.t('csv.invalid_csv')
         redirect_to :action => 'index'
         return
