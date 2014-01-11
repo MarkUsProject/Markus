@@ -49,9 +49,7 @@ class ApplicationController < ActionController::Base
   # requested, fall back to default locale.
   def set_locale
     @available_locales = AVAILABLE_LANGS if @available_locales.nil?
-    I18n.locale = params[:locale] || I18n.default_locale # for now, always
-                                                          # resorts to
-                                                          # I18n.default_locale
+    I18n.locale = params[:locale] || I18n.default_locale
 
     locale_path = File.join(LOCALES_DIRECTORY, "#{I18n.locale}.yml")
 
