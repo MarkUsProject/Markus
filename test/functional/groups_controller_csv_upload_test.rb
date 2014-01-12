@@ -77,7 +77,7 @@ class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
       context 'should be able to upload groups using CSV file upload, and repos' do
         setup do
           # We want to be repo admin
-          MarkusConfigurator.stubs(:markus_config_repository_admin?).returns(true)
+          MarkusConfigurator.stubs(:get_config_value('is_repository_admin')).returns(true)
           @assignment = Assignment.make(:allow_web_submits => false,
                                         :group_max => 1, :group_min => 1)
           @res = post_as @admin, :csv_upload, { :assignment_id => @assignment.id, :group => { :grouplist=> @username_repos_csv_file } }
@@ -98,7 +98,7 @@ class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
       context 'should be able to upload groups using CSV file upload, and repos' do
         setup do
           # We want to be repo admin
-          MarkusConfigurator.stubs(:markus_config_repository_admin?).returns(true)
+          MarkusConfigurator.stubs(:get_config_value('is_repository_admin')).returns(true)
           @assignment = Assignment.make(:allow_web_submits => true,
                                         :group_max => 1, :group_min => 1)
           @res = post_as @admin, :csv_upload, {:assignment_id => @assignment.id, :group => { :grouplist=> @username_repos_csv_file } }
@@ -117,7 +117,7 @@ class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
 
         setup do
           # We want to be repo admin
-          MarkusConfigurator.stubs(:markus_config_repository_admin?).returns(true)
+          MarkusConfigurator.stubs(:get_config_value('is_repository_admin')).returns(true)
           @assignment = Assignment.make(:allow_web_submits => false,
                                         :group_max => 1, :group_min => 1)
           @res = post_as @admin, :csv_upload, { :assignment_id => @assignment.id, :group => { :grouplist=> @autogen_repos_csv_file } }
@@ -137,7 +137,7 @@ class GroupsControllerCsvUploadTest < AuthenticatedControllerTest
 
         setup do
           # We do *not* want to be admin
-          MarkusConfigurator.stubs(:markus_config_repository_admin?).returns(false)
+          MarkusConfigurator.stubs(:get_config_value('is_repository_admin')).returns(false)
           @assignment = Assignment.make(:invalid_override => true,
                                         :group_min => 1, :group_max => 3,
                                         :student_form_groups => false)

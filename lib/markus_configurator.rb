@@ -22,14 +22,6 @@ module MarkusConfigurator
   ######################################
   # Repository configuration
   ######################################
-  def markus_config_repository_admin?
-    if MARKUS_CONFIG['is_repository_admin'].nil?
-      raise NotDefined.new('is_repository_admin')
-    else
-      MARKUS_CONFIG['is_repository_admin']
-    end
-  end
-
   def markus_config_repository_storage
     if MARKUS_CONFIG['repository_storage'].nil?
       raise NotDefined.new('repository_storage')

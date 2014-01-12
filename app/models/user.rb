@@ -214,7 +214,7 @@ class User < ActiveRecord::Base
   def self.repo_config
     # create config
     conf = Hash.new
-    conf['IS_REPOSITORY_ADMIN'] = MarkusConfigurator.markus_config_repository_admin?
+    conf['IS_REPOSITORY_ADMIN'] = MarkusConfigurator.get_config_value('is_repository_admin')
     conf['REPOSITORY_PERMISSION_FILE'] = MarkusConfigurator.markus_config_repository_permission_file
     return conf
   end
@@ -278,7 +278,7 @@ class User < ActiveRecord::Base
   # Adds read and write permissions for each newly created Admin or Ta user
   def grant_repository_permissions
     # If we're not the repository admin, bail out
-    return if(self.student? or !MarkusConfigurator.markus_config_repository_admin?)
+    return if(self.student? or !MarkusConfigurator.get_config_value('is_repository_admin'))
 
     conf = User.repo_config
     repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type,
@@ -292,7 +292,7 @@ class User < ActiveRecord::Base
 
   # Revokes read and write permissions for a deleted admin user
   def revoke_repository_permissions
-    return if(self.student? or !MarkusConfigurator.markus_config_repository_admin?)
+    return if(self.student? or !MarkusConfigurator.get_config_value('is_repository_admin'))
 
     conf = User.repo_config
     repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type, conf)
@@ -301,7 +301,7 @@ class User < ActiveRecord::Base
   end
 
   def maintain_repository_permissions
-    return if(self.student? or !MarkusConfigurator.markus_config_repository_admin?)
+    return if(self.student? or !MarkusConfigurator.get_config_value('is_repository_admin'))
     if self.user_name_changed?
       conf = User.repo_config
       repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type, conf)

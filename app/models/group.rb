@@ -54,14 +54,14 @@ class Group < ActiveRecord::Base
   end
 
   def repository_admin?
-    MarkusConfigurator.markus_config_repository_admin?
+    MarkusConfigurator.get_config_value('is_repository_admin')
   end
 
   # Returns configuration for repository
   # configuration
   def repository_config
     conf = Hash.new
-    conf['IS_REPOSITORY_ADMIN'] = MarkusConfigurator.markus_config_repository_admin?
+    conf['IS_REPOSITORY_ADMIN'] = MarkusConfigurator.get_config_value('is_repository_admin')
     conf['REPOSITORY_PERMISSION_FILE'] = MarkusConfigurator.markus_config_repository_permission_file
     conf['REPOSITORY_STORAGE'] = MarkusConfigurator.markus_config_repository_storage
     conf
@@ -69,7 +69,7 @@ class Group < ActiveRecord::Base
 
   def build_repository
     # create repositories and write permissions if and only if we are admin
-    return true if !MarkusConfigurator.markus_config_repository_admin?
+    return true if !MarkusConfigurator.get_config_value('is_repository_admin')
 
     # This might cause repository collision errors, because when the group
     # maximum for an assignment is set to be one, the student's username
