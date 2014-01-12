@@ -11,6 +11,14 @@ module MarkusConfigurator
     end
   end
 
+  def get_config_value(key)
+    if !MARKUS_CONFIG.has_key?(key) || MARKUS_CONFIG[key].nil?
+      raise NotDefined.new(key)
+    else
+      MARKUS_CONFIG[key]
+    end
+  end
+
   ######################################
   # Repository configuration
   ######################################
