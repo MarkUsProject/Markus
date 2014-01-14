@@ -109,8 +109,6 @@ GEM
     rdoc (3.12.2)
       json (~> 1.4)
     rghost (0.9.3)
-    routing-filter (0.3.1)
-      actionpack
     ruby-debug (0.10.4)
       columnize (>= 0.1)
       ruby-debug-base (~> 0.10.4.0)
@@ -181,7 +179,6 @@ DEPENDENCIES
   rcov
   rdoc
   rghost
-  routing-filter
   ruby-debug
   rubyzip (= 0.9.9)
   sass-rails (~> 3.2.3)

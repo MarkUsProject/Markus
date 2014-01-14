@@ -15,16 +15,15 @@ gem 'ya2yaml'
 gem 'i18n'
 gem 'will_paginate'
 gem 'fastercsv', :platforms => :ruby_18
-gem 'routing-filter'
 gem 'dynamic_form'
-# The 'exception_notification' gem version 4 is not compatible with
-# Rails 3.0.x
+# FIXME: The 'exception_notification' gem version 4
+# is not compatible with Rails 3.0.x
 gem 'exception_notification', '<4.0'
 
 gem 'json'
 gem 'coffee-script'
 gem 'jquery-rails'
-gem 'prototype-rails' #Will be needed with Rails3.1
+gem 'prototype-rails' # FIXME: Will be needed with Rails3.1
 
 group :assets do
   gem 'tilt', '~> 1.3.7'
