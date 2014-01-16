@@ -189,7 +189,7 @@ module Repository
         end
         begin
           @repos.fs.root(file.from_revision).file_contents(File.join(file.path, file.name)){|f| f.read}
-        rescue Svn::Error::FS_NOT_FOUND => e
+        rescue Svn::Error::FS_NOT_FOUND
           raise FileDoesNotExistConflict.new(File.join(file.path, file.name))
         end
       }
@@ -524,7 +524,7 @@ module Repository
     ####################################################################
 
     # Semi-private class method: Reads in Repository.conf[:REPOSITORY_PERMISSION_FILE]
-    def self.__read_in_authz_file()
+    def self.__read_in_authz_file
       # Check if configuration is in order
       if Repository.conf[:REPOSITORY_PERMISSION_FILE].nil?
         raise ConfigurationError.new("Required config 'REPOSITORY_PERMISSION_FILE' not set")
@@ -676,9 +676,9 @@ module Repository
         begin
           Svn::Repos.history2(@repos.fs, path, history_function, nil, starting_revision || 0,
                               ending_revision || @repos.fs.youngest_rev, true)
-        rescue Svn::Error::FS_NOT_FOUND => e
+        rescue Svn::Error::FS_NOT_FOUND
           raise Repository::FileDoesNotExistConflict.new(path)
-        rescue Svn::Error::FS_NO_SUCH_REVISION => e
+        rescue Svn::Error::FS_NO_SUCH_REVISION
           raise "Ending revision " + ending_revision.to_s + " does not exist."
         end
         revision_numbers.concat hist
@@ -847,7 +847,7 @@ module Repository
     end
 
     # Helper method to check file permissions of svn auth file
-    def svn_auth_file_checks()
+    def svn_auth_file_checks
       if !@repos_admin # if we are not admin, check if files exist
         if !File.file?(@repos_auth_file)
           raise FileDoesNotExist.new("'#{@repos_auth_file}' not a file or not existent")

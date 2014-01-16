@@ -75,7 +75,7 @@ module Repository
     end
 
     # Destroys all repositories
-    def self.purge_all()
+    def self.purge_all
       @@repositories = {}
     end
 
@@ -164,7 +164,7 @@ module Repository
     end
 
     # Returns the latest revision number (as a RepositoryRevision object)
-    def get_latest_revision()
+    def get_latest_revision
       return @current_revision
     end
 
@@ -554,7 +554,7 @@ module Repository
 
     # Not (!) part of the AbstractRepository API:
     # A simple helper method to be used to increment the revision number
-    def __increment_revision_number()
+    def __increment_revision_number
       @revision_number += 1
     end
 
