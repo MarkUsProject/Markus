@@ -10,11 +10,11 @@ class AnnotationText < ActiveRecord::Base
   
   #Find creator, return nil if not found
   def get_creator
-    user =  User.find_by_id(creator_id)
+    User.find_by_id(creator_id)
   end
 
   #Find last user to update this text, nil if not found
   def get_last_editor
-    editor = User.find_by_id(last_editor_id)
+    User.find_by_id(last_editor_id)
   end
 end

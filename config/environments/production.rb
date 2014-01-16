@@ -27,7 +27,9 @@ Markus::Application.configure do
   # Full error reports are disabled and caching is turned on
   config.consider_all_requests_local = true
   # set to false to turn off traces
-  config.action_view.debug_rjs                         = true
+
+  # FIXME: The following lines can be commented
+  # out when jQuery is fully implemented
   config.action_controller.perform_caching             = true
   config.cache_classes                                 = true
 

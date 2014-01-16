@@ -13,7 +13,7 @@ module EnsureConfigHelper
 =end
   # check directory instead of file because, the logger has not created
   # the file yet
-  def self.check_config()
+  def self.check_config
     check_in_readable_dir(MarkusConfigurator.markus_config_logging_logfile, 'MARKUS_LOGGING_LOGFILE')
     check_in_writable_dir(MarkusConfigurator.markus_config_logging_logfile, 'MARKUS_LOGGING_LOGFILE')
     check_in_executable_dir(MarkusConfigurator.markus_config_logging_logfile, 'MARKUS_LOGGING_LOGFILE')
