@@ -1,6 +1,6 @@
 require "date"
 
-# set English as default
+# set default language
 I18n.default_locale = MarkusConfigurator.markus_config_default_language
 I18n.locale = MarkusConfigurator.markus_config_default_language
 

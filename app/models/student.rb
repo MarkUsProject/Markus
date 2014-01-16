@@ -16,8 +16,8 @@ class Student < User
   validates_numericality_of :grace_credits, :only_integer => true,
     :greater_than_or_equal_to => 0
 
-  CSV_UPLOAD_ORDER = USER_STUDENT_CSV_UPLOAD_ORDER
-  SESSION_TIMEOUT = USER_STUDENT_SESSION_TIMEOUT
+  CSV_UPLOAD_ORDER = MarkusConfigurator.markus_config_user_student_csv_upload_order
+  SESSION_TIMEOUT = MarkusConfigurator.markus_config_user_student_session_timeout
 
   # Returns true if this student has a Membership in a Grouping for an
   # Assignment with id 'aid', where that Membership.membership_status is either

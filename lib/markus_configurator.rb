@@ -3,119 +3,118 @@
 
 module MarkusConfigurator
 
+  class NotDefined < RuntimeError
+    attr_reader :parameter
+    def initialize(parameter)
+      super "'#{parameter}' is not defined for #{::Rails.env} environment.
+             Take a look at #{::Rails.root.to_s}/config/config.yml"
+    end
+  end
+
   ######################################
   # Repository configuration
   ######################################
   def markus_config_repository_admin?
-    if defined? IS_REPOSITORY_ADMIN
-      return IS_REPOSITORY_ADMIN
+    if MARKUS_CONFIG['is_repository_admin'].nil?
+      raise NotDefined.new('is_repository_admin')
     else
-      #If not defined, default to true
-      return true
+      MARKUS_CONFIG['is_repository_admin']
     end
   end
 
   def markus_config_repository_storage
-    if defined? REPOSITORY_STORAGE
-      return REPOSITORY_STORAGE
+    if MARKUS_CONFIG['repository_storage'].nil?
+      raise NotDefined.new('repository_storage')
     else
-      return File.join(::Rails.root.to_s, "repositories")
+      MARKUS_CONFIG['repository_storage']
     end
   end
 
   def markus_config_pdf_storage
-    if defined? PDF_STORAGE
-      return PDF_STORAGE
+    if MARKUS_CONFIG['pdf_storage'].nil?
+      raise NotDefined.new('pdf_storage')
     else
-      return File.join(::Rails.root.to_s, "converted_pdf_dir")
-    end
-  end
-
-  def markus_config_pdf_conv_memory_allowance
-    if defined? PDF_CONV_MEMORY_ALLOWANCE
-      return PDF_CONV_MEMORY_ALLOWANCE
-    else
-      return 100
+      MARKUS_CONFIG['pdf_storage']
     end
   end
 
   def markus_config_pdf_support
-    if defined? PDF_SUPPORT
-      return PDF_SUPPORT
+    if MARKUS_CONFIG['pdf_support'].nil?
+      raise NotDefined.new('pdf_support')
     else
-      return false
+      MARKUS_CONFIG['pdf_support']
     end
   end
 
   def markus_config_repository_type
-    if defined? REPOSITORY_TYPE
-      return REPOSITORY_TYPE
+    if MARKUS_CONFIG['repository_type'].nil?
+      raise NotDefined.new('repository_type')
     else
-      return "svn"
+      MARKUS_CONFIG['repository_type']
     end
   end
 
   def markus_config_repository_external_base_url
-    if defined? REPOSITORY_EXTERNAL_BASE_URL
-      return REPOSITORY_EXTERNAL_BASE_URL
+    if MARKUS_CONFIG['repository_external_base_url'].nil?
+      raise NotDefined.new('repository_external_base_url')
     else
-      return "http://www.example.com/svn"
+      MARKUS_CONFIG['repository_external_base_url']
     end
   end
 
   def markus_config_repository_external_submits_only?
-    case markus_config_repository_type
-      when "svn"
-        if defined? REPOSITORY_EXTERNAL_SUBMITS_ONLY
-          retval = REPOSITORY_EXTERNAL_SUBMITS_ONLY
+    if MARKUS_CONFIG['repository_external_submits_only'].nil?
+      raise NotDefined.new('repository_external_submits_only')
+    else
+      case markus_config_repository_type
+        when 'svn'
+          MARKUS_CONFIG['repository_external_submits_only']
         else
-          retval = false
-        end
-      else
-        retval = false
+          false
+      end
     end
-    return retval
+
   end
 
   def markus_config_repository_permission_file
-    if defined? REPOSITORY_PERMISSION_FILE
-      return REPOSITORY_PERMISSION_FILE
+    if MARKUS_CONFIG['repository_permission_file'].nil?
+      raise NotDefined.new('repository_permission_file')
     else
-      return File.join(markus_config_repository_storage, "svn_authz")
+      MARKUS_CONFIG['repository_permission_file']
     end
   end
 
   def markus_config_course_name
-    if defined? COURSE_NAME
-      return COURSE_NAME
+    if MARKUS_CONFIG['course_name'].nil?
+      raise NotDefined.new('course_name')
     else
-      return "CSC199: Example Course Name"
+      MARKUS_CONFIG['course_name']
     end
   end
 
   def markus_config_logout_redirect
-    if defined? LOGOUT_REDIRECT
-      return LOGOUT_REDIRECT
+    if MARKUS_CONFIG['logout_redirect'].nil?
+      raise NotDefined.new('logout_redirect')
     else
-      return "DEFAULT"
+      MARKUS_CONFIG['logout_redirect']
     end
   end
 
   def markus_config_remote_user_auth
-    if defined? REMOTE_USER_AUTH
-      return REMOTE_USER_AUTH
+    if MARKUS_CONFIG['remote_user_auth'].nil?
+      raise NotDefined.new('remote_user_auth')
     else
-      return false
+      MARKUS_CONFIG['remote_user_auth']
     end
   end
 
   #Repository for the test framework
   #Students file will be compiled, executed and tested in this repository
   def markus_config_automated_tests_repository
-    if defined? AUTOMATED_TESTS_REPOSITORY
-      return AUTOMATED_TESTS_REPOSITORY
+    if MARKUS_CONFIG['automated_tests_repository'].nil?
+      raise NotDefined.new('automated_tests_repository')
     else
-      return File.join(::Rails.root.to_s, "test-framework")
+      MARKUS_CONFIG['automated_tests_repository']
     end
   end
 
@@ -123,117 +122,164 @@ module MarkusConfigurator
   # Markus Session cookie configuration
   ###########################################
   def markus_config_session_cookie_name
-    if defined? SESSION_COOKIE_NAME
-      return SESSION_COOKIE_NAME
+    if MARKUS_CONFIG['session_cookie_name'].nil?
+      raise NotDefined.new('session_cookie_name')
     else
-      return '_markus_session'
+      MARKUS_CONFIG['session_cookie_name']
     end
   end
 
   def markus_config_session_cookie_secret
-    if defined? SESSION_COOKIE_SECRET
-      return SESSION_COOKIE_SECRET
+    if MARKUS_CONFIG['session_cookie_secret'].nil?
+      raise NotDefined.new('session_cookie_secret')
     else
-      return '650d281667d8011a3a6ad6dd4b5d4f9ddbce14a7d78b107812dbb40b24e234256ab2c5572c8196cf6cde6b85942688b6bfd337ffa0daee648d04e1674cf1fdf6'
+      MARKUS_CONFIG['session_cookie_secret']
+    end
+  end
+
+  def markus_config_session_secret_token
+    if MARKUS_CONFIG['session_secret_token'].nil?
+      raise NotDefined.new('session_secret_token')
+    else
+      MARKUS_CONFIG['session_secret_token']
     end
   end
 
   def markus_config_session_cookie_expire_after
-    if defined? SESSION_COOKIE_EXPIRE_AFTER
-      return SESSION_COOKIE_EXPIRE_AFTER
+    if MARKUS_CONFIG['session_cookie_expire_after'].nil?
+      raise NotDefined.new('session_cookie_expire_after')
     else
-      return 3.weeks
+      MARKUS_CONFIG['session_cookie_expire_after']
     end
   end
 
   def markus_config_session_cookie_http_only
-    if defined? SESSION_COOKIE_HTTP_ONLY
-      return SESSION_COOKIE_HTTP_ONLY
+    if MARKUS_CONFIG['session_cookie_http_only'].nil?
+      raise NotDefined.new('session_cookie_http_only')
     else
-      return true
+      MARKUS_CONFIG['session_cookie_http_only']
     end
   end
 
   def markus_config_session_cookie_secure
-    if defined? SESSION_COOKIE_SECURE
-      return SESSION_COOKIE_SECURE
+    if MARKUS_CONFIG['session_cookie_secure'].nil?
+      raise NotDefined.new('session_cookie_secure')
     else
-      return false
+      MARKUS_CONFIG['session_cookie_secure']
     end
   end
   ######################################
   # MarkusLogger configuration
   ######################################
   def markus_config_logging_enabled?
-    if defined? MARKUS_LOGGING_ENABLED
-      return MARKUS_LOGGING_ENABLED
+    if MARKUS_CONFIG['markus_logging_enabled'].nil?
+      raise NotDefined.new('markus_logging_enabled')
     else
-      #If not defined, default to true
-      return true
-    end
-  end
-
-  def markus_config_validate_file
-    if defined? VALIDATE_FILE
-      return VALIDATE_FILE
-    else
-      return "#{::Rails.root.to_s}./config/dummy_validate.sh"
+      MARKUS_CONFIG['markus_logging_enabled']
     end
   end
 
   def markus_config_logging_rotate_by_interval
-    if defined? MARKUS_LOGGING_ROTATE_BY_INTERVAL
-      return MARKUS_LOGGING_ROTATE_BY_INTERVAL
+    if MARKUS_CONFIG['markus_logging_rotate_by_interval'].nil?
+      raise NotDefined.new('markus_logging_rotate_by_interval')
     else
-      return false
+      MARKUS_CONFIG['markus_logging_rotate_by_interval']
     end
   end
 
   def markus_config_logging_size_threshold
-    if defined? MARKUS_LOGGING_SIZE_THRESHOLD
-      return MARKUS_LOGGING_SIZE_THRESHOLD
+    if MARKUS_CONFIG['markus_logging_size_threshold'].nil?
+      raise NotDefined.new('markus_logging_size_threshold')
     else
-      return (1024 * 10**6)
+      MARKUS_CONFIG['markus_logging_size_threshold']
     end
   end
 
   def markus_config_logging_rotate_interval
-    if defined? MARKUS_LOGGING_ROTATE_INTERVAL
-      return MARKUS_LOGGING_ROTATE_INTERVAL
+    if MARKUS_CONFIG['markus_logging_rotate_interval'].nil?
+      raise NotDefined.new('markus_logging_rotate_interval')
     else
-      return 'daily'
+      MARKUS_CONFIG['markus_logging_rotate_interval']
     end
   end
 
   def markus_config_logging_logfile
-    if defined? MARKUS_LOGGING_LOGFILE
-      return MARKUS_LOGGING_LOGFILE
+    if MARKUS_CONFIG['markus_logging_logfile'].nil?
+      raise NotDefined.new('markus_logging_logfile')
     else
-      return File.join(::Rails.root.to_s, "log", "#{::Rails.env}_info.log")
+      MARKUS_CONFIG['markus_logging_logfile']
     end
   end
 
   def markus_config_logging_errorlogfile
-    if defined? MARKUS_LOGGING_ERRORLOGFILE
-      return MARKUS_LOGGING_ERRORLOGFILE
+    if MARKUS_CONFIG['markus_logging_errorlogfile'].nil?
+      raise NotDefined.new('markus_logging_errorlogfile')
     else
-      return File.join(::Rails.root.to_s, "log", "#{::Rails.env}_error.log")
+      MARKUS_CONFIG['markus_logging_errorlogfile']
     end
   end
 
   def markus_config_logging_num_oldfiles
-    if defined? MARKUS_LOGGING_OLDFILES
-      return MARKUS_LOGGING_OLDFILES
+    if MARKUS_CONFIG['markus_logging_oldfiles'].nil?
+      raise NotDefined.new('markus_logging_oldfiles')
     else
-      return 10
+      MARKUS_CONFIG['markus_logging_oldfiles']
     end
   end
 
   def markus_config_default_language
-    if defined? MARKUS_DEFAULT_LANGUAGE
-      return MARKUS_DEFAULT_LANGUAGE
+    if MARKUS_CONFIG['markus_default_language'].nil?
+      raise NotDefined.new('markus_default_language')
     else
-      return 'en'
+      MARKUS_CONFIG['markus_default_language']
+    end
+  end
+
+  def markus_config_validate_file
+    if MARKUS_CONFIG['validate_file'].nil?
+      raise NotDefined.new('validate_file')
+    else
+      MARKUS_CONFIG['validate_file']
+    end
+  end
+
+  def markus_config_user_student_session_timeout
+    if MARKUS_CONFIG['user_student_session_timeout'].nil?
+      raise NotDefined.new('user_student_session_timeout')
+    else
+      MARKUS_CONFIG['user_student_session_timeout']
+    end
+  end
+
+  def markus_config_user_ta_session_timeout
+    if MARKUS_CONFIG['user_ta_session_timeout'].nil?
+      raise NotDefined.new('user_ta_session_timeout')
+    else
+      MARKUS_CONFIG['user_ta_session_timeout']
+    end
+  end
+
+  def markus_config_user_admin_session_timeout
+    if MARKUS_CONFIG['user_admin_session_timeout'].nil?
+      raise NotDefined.new('user_admin_session_timeout')
+    else
+      MARKUS_CONFIG['user_admin_session_timeout']
+    end
+  end
+
+  def markus_config_user_student_csv_upload_order
+    if MARKUS_CONFIG['user_student_csv_upload_order'].nil?
+      raise NotDefined.new('user_student_csv_upload_order')
+    else
+      MARKUS_CONFIG['user_student_csv_upload_order']
+    end
+  end
+
+  def markus_config_user_ta_csv_upload_order
+    if MARKUS_CONFIG['user_ta_csv_upload_order'].nil?
+      raise NotDefined.new('user_ta_csv_upload_order')
+    else
+      MARKUS_CONFIG['user_ta_csv_upload_order']
     end
   end
 

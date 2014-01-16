@@ -4,13 +4,14 @@
 # Make sure the secret is at least 30 characters and all random,
 # no regular words or you'll be exposed to dictionary attacks.
 
+Markus::Application.config.secret_token = MarkusConfigurator.markus_config_session_secret_token
+
 # Please make sure, :session_key is named uniquely if you are hosting
 # several MarkUs instances on one machine. Also, make sure you are changing
 # the :secret string to something else than you find below.
-
-Rails.application.config.session_store :cookie_store,
+Markus::Application.config.session_store :cookie_store,
   :key => MarkusConfigurator.markus_config_session_cookie_name,
-  :secret      => MarkusConfigurator.markus_config_session_cookie_secret,
+  :secret => MarkusConfigurator.markus_config_session_cookie_secret,
   :path => '/',
   :expire_after => MarkusConfigurator.markus_config_session_cookie_expire_after,
   :http_only => MarkusConfigurator.markus_config_session_cookie_http_only,

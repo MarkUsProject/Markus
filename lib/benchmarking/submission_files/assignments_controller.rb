@@ -206,7 +206,7 @@ class AssignmentsController < ApplicationController
         csv << row
       end
     end
-    send_data csv_string, :disposition => 'attachment', :filename => "#{COURSE_NAME} grades report.csv"
+    send_data csv_string, :disposition => 'attachment', :filename => "#{MarkusConfigurator.markus_config_course_name} grades report.csv"
   end
 
 
