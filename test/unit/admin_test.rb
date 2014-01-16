@@ -13,7 +13,7 @@ class AdminTest < ActiveSupport::TestCase
       conf['IS_REPOSITORY_ADMIN'] = true
       conf['REPOSITORY_PERMISSION_FILE'] = MarkusConfigurator.markus_config_repository_permission_file
       @repo = Repository.get_class(markus_config_repository_type, conf)
-      MarkusConfigurator.stubs(:get_config_value('is_repository_admin')).returns(true)
+      MarkusConfigurator.stubs(get_config_value('is_repository_admin')).returns(true)
     end
 
     teardown do
@@ -26,14 +26,14 @@ class AdminTest < ActiveSupport::TestCase
       admin.last_name = 'doe'
       admin.first_name = 'john'
 
-      repo_names = Group.all.collect do |group| File.join(markus_config_repository_storage, group.repository_name) end
+      repo_names = Group.all.collect do |group| File.join(get_config_value('repository_storage'), group.repository_name) end
       @repo.expects(:set_bulk_permissions).times(1).with(repo_names, {admin.user_name => Repository::Permission::READ_WRITE})
       assert admin.save
     end
 
     should 'revoke repository permissions when destroying an admin object' do
       admin = Admin.make
-      repo_names = Group.all.collect do |group| File.join(markus_config_repository_storage, group.repository_name) end
+      repo_names = Group.all.collect do |group| File.join(get_config_value('repository_storage'), group.repository_name) end
       @repo.expects(:delete_bulk_permissions).times(1).with(repo_names, [admin.user_name])
       admin.destroy
     end
@@ -48,7 +48,7 @@ class AdminTest < ActiveSupport::TestCase
       conf['IS_REPOSITORY_ADMIN'] = false
       conf['REPOSITORY_PERMISSION_FILE'] = MarkusConfigurator.markus_config_repository_permission_file
       @repo = Repository.get_class(markus_config_repository_type, conf)
-      MarkusConfigurator.stubs(:get_config_value('is_repository_admin')).returns(false)
+      MarkusConfigurator.stubs(get_config_value('is_repository_admin')).returns(false)
     end
 
     teardown do

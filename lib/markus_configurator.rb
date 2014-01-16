@@ -22,14 +22,6 @@ module MarkusConfigurator
   ######################################
   # Repository configuration
   ######################################
-  def markus_config_repository_storage
-    if MARKUS_CONFIG['repository_storage'].nil?
-      raise NotDefined.new('repository_storage')
-    else
-      MARKUS_CONFIG['repository_storage']
-    end
-  end
-
   def markus_config_pdf_storage
     if MARKUS_CONFIG['pdf_storage'].nil?
       raise NotDefined.new('pdf_storage')

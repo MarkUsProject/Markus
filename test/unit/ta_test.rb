@@ -93,7 +93,7 @@ class TATest < ActiveSupport::TestCase
       ta.first_name = 'john'
 
       repo_names = Group.all.collect do |group|
-                     File.join(markus_config_repository_storage, group.repository_name)
+                     File.join(get_config_value('repository_storage'), group.repository_name)
                    end
       @repo.expects(:set_bulk_permissions).times(1).with(repo_names, {ta.user_name => Repository::Permission::READ_WRITE})
       assert = ta.save
@@ -101,7 +101,7 @@ class TATest < ActiveSupport::TestCase
 
     should 'revoke repository permissions when destroying an TA object' do
       ta = Ta.make
-      repo_names = Group.all.collect do |group| File.join(markus_config_repository_storage, group.repository_name) end
+      repo_names = Group.all.collect do |group| File.join(get_config_value('repository_storage'), group.repository_name) end
       @repo.expects(:delete_bulk_permissions).times(1).with(repo_names, [ta.user_name])
       ta.destroy
     end

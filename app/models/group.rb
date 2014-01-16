@@ -63,7 +63,7 @@ class Group < ActiveRecord::Base
     conf = Hash.new
     conf['IS_REPOSITORY_ADMIN'] = MarkusConfigurator.get_config_value('is_repository_admin')
     conf['REPOSITORY_PERMISSION_FILE'] = MarkusConfigurator.markus_config_repository_permission_file
-    conf['REPOSITORY_STORAGE'] = MarkusConfigurator.markus_config_repository_storage
+    conf['REPOSITORY_STORAGE'] = MarkusConfigurator.get_config_value('repository_storage')
     conf
   end
 
@@ -83,7 +83,7 @@ class Group < ActiveRecord::Base
     # For more info about the exception
     # See 'self.create' of lib/repo/subversion_repository.rb.
     begin
-      Repository.get_class(MarkusConfigurator.markus_config_repository_type, self.repository_config).create(File.join(MarkusConfigurator.markus_config_repository_storage, repository_name))
+      Repository.get_class(MarkusConfigurator.markus_config_repository_type, self.repository_config).create(File.join(MarkusConfigurator.get_config_value('repository_storage'), repository_name))
     rescue Repository::RepositoryCollision => e
       # log the collision
       errors.add(:base, self.repo_name)
@@ -103,13 +103,13 @@ class Group < ActiveRecord::Base
       user_permissions[ta.user_name] = Repository::Permission::READ_WRITE
     end
     group_repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type, self.repository_config)
-    group_repo.set_bulk_permissions([File.join(MarkusConfigurator.markus_config_repository_storage, self.repository_name)], user_permissions)
+    group_repo.set_bulk_permissions([File.join(MarkusConfigurator.get_config_value('repository_storage'), self.repository_name)], user_permissions)
     true
   end
 
   # Return a repository object, if possible
   def repo
-    repo_loc = File.join(MarkusConfigurator.markus_config_repository_storage, self.repository_name)
+    repo_loc = File.join(MarkusConfigurator.get_config_value('repository_storage'), self.repository_name)
     if Repository.get_class(MarkusConfigurator.markus_config_repository_type, self.repository_config).repository_exists?(repo_loc)
       Repository.get_class(MarkusConfigurator.markus_config_repository_type, self.repository_config).open(repo_loc)
     else

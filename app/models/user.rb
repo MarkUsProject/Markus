@@ -284,7 +284,7 @@ class User < ActiveRecord::Base
     repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type,
                                 conf)
     repo_names = Group.all.collect do |group|
-                   File.join(MarkusConfigurator.markus_config_repository_storage,
+                   File.join(MarkusConfigurator.get_config_value('repository_storage'),
                              group.repository_name)
                  end
     repo.set_bulk_permissions(repo_names, {self.user_name => Repository::Permission::READ_WRITE})
@@ -296,7 +296,7 @@ class User < ActiveRecord::Base
 
     conf = User.repo_config
     repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type, conf)
-    repo_names = Group.all.collect do |group| File.join(MarkusConfigurator.markus_config_repository_storage, group.repository_name) end
+    repo_names = Group.all.collect do |group| File.join(MarkusConfigurator.get_config_value('repository_storage'), group.repository_name) end
     repo.delete_bulk_permissions(repo_names, [self.user_name])
   end
 
@@ -305,7 +305,7 @@ class User < ActiveRecord::Base
     if self.user_name_changed?
       conf = User.repo_config
       repo = Repository.get_class(MarkusConfigurator.markus_config_repository_type, conf)
-      repo_names = Group.all.collect do |group| File.join(MarkusConfigurator.markus_config_repository_storage, group.repository_name) end
+      repo_names = Group.all.collect do |group| File.join(MarkusConfigurator.get_config_value('repository_storage'), group.repository_name) end
       repo.delete_bulk_permissions(repo_names, [self.user_name_was])
       repo.set_bulk_permissions(repo_names, {self.user_name => Repository::Permission::READ_WRITE})
     end
