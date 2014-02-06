@@ -45,11 +45,11 @@ class GroupsController < ApplicationController
     @assignment = grouping.assignment
     @errors = []
     @removed_groupings = []
-		students_to_remove = grouping.students.all
-		grouping.student_memberships.all.each do |member|
-			grouping.remove_member(member.id)
-		end
-		@students_data = construct_student_table_rows(students_to_remove, @assignment)
+    students_to_remove = grouping.students.all
+    grouping.student_memberships.all.each do |member|
+      grouping.remove_member(member.id)
+    end
+    @students_data = construct_student_table_rows(students_to_remove, @assignment)
     if grouping.has_submission?
         @errors.push(grouping.group.group_name)
         render :delete_groupings
@@ -260,10 +260,10 @@ class GroupsController < ApplicationController
     student_ids = params[:students]
 
     if params[:groupings].nil? or params[:groupings].size ==  0
-	 #if there is a global action than there should be a group selected
+   #if there is a global action than there should be a group selected
          if params[:global_actions]
                @global_action_warning = I18n.t('assignment.group.select_a_group')
-               render :partial => 'shared/global_action_warning', :handlers => [:rjs]
+               render :partial => 'shared/global_action_warning', :formats => [:js], :handlers => [:erb]
                return
          end
       #Just do nothing
@@ -294,7 +294,7 @@ class GroupsController < ApplicationController
           return
         else
           @global_action_warning = I18n.t('assignment.group.select_a_student')
-          render :partial => 'shared/global_action_warning', :handlers => [:rjs]
+          render :partial => 'shared/global_action_warning', :formats => [:js], :handlers => [:erb]
           return
         end
       when 'unassign'
@@ -328,12 +328,12 @@ class GroupsController < ApplicationController
   def delete_groupings(groupings)
       @removed_groupings = []
       @errors = []
-			students_to_remove = []
+      students_to_remove = []
       groupings.each do |grouping|
-				students_to_remove = students_to_remove.concat(grouping.students.all)
-				grouping.student_memberships.all.each do |mem|
-					grouping.remove_member(mem.id)
-				end
+        students_to_remove = students_to_remove.concat(grouping.students.all)
+        grouping.student_memberships.all.each do |mem|
+          grouping.remove_member(mem.id)
+        end
         if grouping.has_submission?
           @errors.push(grouping.group.group_name)
         else
@@ -341,7 +341,7 @@ class GroupsController < ApplicationController
           @removed_groupings.push(grouping)
         end
       end
-			@students_data = construct_student_table_rows(students_to_remove, @assignment)
+      @students_data = construct_student_table_rows(students_to_remove, @assignment)
       render :delete_groupings
   end
 

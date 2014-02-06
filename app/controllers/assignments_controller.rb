@@ -51,7 +51,7 @@ class AssignmentsController < ApplicationController
     if current_user.student? &&
         (@test_result.submission.grouping.membership_status(current_user).nil? ||
         @test_result.submission.get_latest_result.released_to_students == false)
-      render :partial => 'shared/handle_error',
+      render :partial => 'shared/handle_error', :formats => [:js], :handlers => [:erb],
        :locals => {:error => I18n.t('test_result.error.no_access', :test_result_id => @test_result.id)}
       return
     end
