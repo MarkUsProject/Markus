@@ -111,7 +111,8 @@ class GradeEntryForm < ActiveRecord::Base
     alpha_categories = Array.new(2 * total_pages){[]}
     alpha_pagination = []
 
-    if total_pages == 0
+    # Is total_pages == 0 a necessary check when you can check if there are no students? Clean this up?
+    if (total_pages == 0) || (all_grade_entry_students == [])
       return alpha_pagination
     end
 
