@@ -211,11 +211,15 @@
 
         <div class="clear"></div>
         <div id="groups_container" class="tabbedArea">
+
+           <div class="search_box">
           <%= label_tag 'search_groupings', "Search:", :class => 'bold_inline_label'%>
           <%= text_field_tag 'search_groupings', nil,
             :onkeyup => "groupings_table.add_filter('search'); groupings_table.render();",
             :onkeypress => "stop_submit(event);"%>
-          <%= button_to_function t('groups.add_new'), "make_new_group()" %>
+          <%= button_to_function t('groups.add_new'), "make_new_group()", :class=> 'floatRight' %>
+            </div>
+
           <div class="globalActionIconsTop">
             <%= image_submit_tag "icons/tick.png",
               :class =>'image_input',
