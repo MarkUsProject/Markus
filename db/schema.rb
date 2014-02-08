@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131224160912) do
+ActiveRecord::Schema.define(:version => 20140207162800) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -94,6 +94,7 @@ ActiveRecord::Schema.define(:version => 20131224160912) do
     t.boolean  "allow_remarks",                    :default => true,     :null => false
     t.datetime "remark_due_date"
     t.text     "remark_message"
+    t.boolean  "is_hidden",                        :default => false
     t.float    "results_median"
     t.integer  "results_fails"
     t.integer  "results_zeros"

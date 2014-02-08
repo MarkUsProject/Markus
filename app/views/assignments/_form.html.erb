@@ -123,7 +123,17 @@
       <%= raw( f.label :display_grader_names_to_students_false,
                   t("answer_no"),
                   :class => "radio_label" ) %>
-
+     <br />
+      
+     <%= f.label :is_hidden, t("assignment.is_hidden") %>&nbsp;&nbsp;
+     <%= f.radio_button :is_hidden, true,
+                              :checked => @assignment.is_hidden,
+                              :onchange => "set_onbeforeunload(true);" %>
+     <%= f.label :is_hidden_true, t("answer_yes"), :class => "radio_label"%>
+     <%= f.radio_button :is_hidden, false,
+                              :checked => !@assignment.is_hidden,
+                              :onchange => "set_onbeforeunload(true);" %>
+     <%= f.label :is_hidden_false, t("answer_no"), :class => "radio_label"%>
      <br />
      <br />
   </fieldset>
