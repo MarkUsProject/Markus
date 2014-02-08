@@ -27,7 +27,7 @@
 
   <!-- Modal Windows -->
   <div id="download_dialog">
-    <h2><%= t('download') %></h2>
+    <h2><%= I18n.t('download') %></h2>
     <p>
       <%= link_to t(:assignment_format, :file => 'csv'),
                     download_assignment_list_assignments_path(
@@ -40,6 +40,7 @@
                             :file_format => 'yml'),
                     :class => 'button' if @current_user.admin? %>
     </p>
+    <%= button_to I18n.t(:close), '#', :onclick => 'modal_download.close();return false;' %>
   </div>
   <div id="upload_dialog">
     <h2><%= t('upload') %></h2>
