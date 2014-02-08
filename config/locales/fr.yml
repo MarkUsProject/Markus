@@ -122,6 +122,7 @@ fr:
       successfully_collected: "Récupération de %{collected} envoi(s)."
       marking_incomplete_warning: "Attention: Certains rendus n'ont pas été complètement évalués.\n\nÊtes-vous sûr de vouloir continuer?"
     assignment:
+        hidden: "%{assignment_text} (masqué)"
         assignment: "Projet %{short_identifier}"
         required_fields: "Champs obligatoires <span class='required_field'>*</span>"
         short_identifier:   "Identifiant du projet<span class='required_field'>*</span>"
@@ -172,6 +173,7 @@ fr:
         notice:
             change_marking_scheme_type: "Changer le barème effacera vos critères et vos évaluations."
         allow_web_submits: "Envois <em>via</em> l'interface web ?<span class='required_field'>*</span>"
+        is_hidden: "Cacher le projet aux étudiants ?"
         display_grader_names_to_students: "Afficher le nom du correcteur aux étudiants ?<span class='required_field'>*</span>"
         section_due_date_option:  "Si l'option date de retour par section est sélectionnée, les groupes seront restreints aux sections"
         section_due_dates_info:  "<b>Important</b> La date de retour « globale » doit être indiquée. Si une section n'a pas de date de retour spécifique, la date « globale » sera utilisée. Si certains étudiants ne font partie d'aucune section, ce sera aussi cette date « globale » qui sera utilisée. Ces étudiants ne pourront se mettre qu'avec d'autres étudiants n'appartenant pas à des sections."
