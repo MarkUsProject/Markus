@@ -61,7 +61,7 @@ module SessionHandler
         session[:redirect_uri] = request.referer
         render :nothing => true, :status => :forbidden  # 403 http code
       else
-        redirect_to :controller => 'main', :action => 'login'
+        render :controller => 'main', :action => 'login', :status => :unauthorized # 401 http code
       end
     end
   end
