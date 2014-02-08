@@ -7,7 +7,7 @@
     </div>
 
     <%= button_to I18n.t("edit"),
-         "$('annotation_text_content_edit_#{annot.annotation_text.id}').show();$('annotation_text_content_display_#{annot.annotation_text.id}').hide();",
+         "$('annotation_text_content_edit_<%=(annot.annotation_text.id)%>').show();$('annotation_text_content_display_<%=(annot.annotation_text.id)%>').hide();",
          {:class => "float_left edit_remove_annotation_button"} %>
     <%= button_to I18n.t("remove"),
          annotations_path(:id => annot.id, :submission_file_id => @submission_file_id),
