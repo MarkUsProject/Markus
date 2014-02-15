@@ -354,7 +354,7 @@ class SubmissionsController < ApplicationController
        end
     end
 
-    send_data csv_string, :disposition => 'attachment', :type => 'application/vnd.ms-excel', :filename => "#{assignment.short_identifier} simple report.csv"
+    send_data csv_string, :disposition => 'attachment', :type => 'application/vnd.ms-excel', :filename => "#{assignment.short_identifier}_simple_report.csv"
   end
 
   def download_detailed_csv_report
@@ -400,14 +400,14 @@ class SubmissionsController < ApplicationController
     end
 
 
-    send_data csv_string, :disposition => 'attachment', :type => 'application/vnd.ms-excel', :filename => "#{assignment.short_identifier} detailed report.csv"
+    send_data csv_string, :disposition => 'attachment', :type => 'application/vnd.ms-excel', :filename => "#{assignment.short_identifier}_detailed_report.csv"
   end
 
   # See Assignment.get_svn_commands for details
   def download_svn_export_commands
     assignment = Assignment.find(params[:id])
     string = assignment.get_svn_commands
-    send_data string, :disposition => 'attachment', :type => 'text/plain', :filename => "#{assignment.short_identifier}_svn_exports"
+    send_data string, :disposition => 'attachment', :type => 'text/plain', :filename => "#{assignment.short_identifier}_svn_exports.csv"
   end
 
 end

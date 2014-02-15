@@ -309,8 +309,10 @@ class AssignmentsController < ApplicationController
         csv << row
       end
     end
+    course_name = "#{COURSE_NAME}"
+    course_name_underscore = course_name.squish.downcase.tr(" ", "_")
     send_data csv_string, :disposition => 'attachment',
-                          :filename => "#{COURSE_NAME} grades report.csv"
+                          :filename => "#{course_name_underscore}_grades_report.csv"
   end
 
 
