@@ -108,7 +108,7 @@ pt:
       collect_all: "Coletar todas as submissões"
       collect_ta: "Coletar todas as submissões atribuidos à você"
       could_not_collect: "Nãao foi possível coletar todas as submissões para o projeto %{assignment_identifier} - a data para coleta não foi atingida"
-      collection_job_started: "Coleta das submissões para o projeto %{assignment_identifier} começou. O processo pode demorar, você podera acessar as submissões assim que elas tornarem-se disponiveis."
+      collection_job_started: "Coleta das submissões para o projeto %{assignment_identifier} começou. O processo pode demorar, você podera acessar as submissões assim que elas tornarem-se disponíveis."
       priority_given: "A submissão foi dada prioridade de coleta. Ela estara pronta em breve."
       errors:               "Erros"
       results_loss_warning: "Nota: Isso apagara qualquer avaliação e anotações que já foram feitas.\n\n Tem certeza que deseja continuar?"
@@ -217,7 +217,7 @@ pt:
     give_grace_credits:  "Dar créditos de tolerância:"
     add_section:        "Adicionar seção"
     no_result:          "Nenhuma nota esta disponível para esse projeto."
-    no_remark_result:   "Resultados ainda não estão disponiveis para esse projeto."
+    no_remark_result:   "Resultados ainda não estão disponíveis para esse projeto."
     unmarked:           "sem nota"
     partial:           "partial"
     complete:           "completo"
@@ -773,7 +773,7 @@ pt:
         grace_credits:  "Créditos de tolerância"
         section:        "Seção"
         notes_count:    "Notas"
-        display_grader_names_to_students: "Mostrar nome de avaliadroes aos alunos?"
+        display_grader_names_to_students: "Mostrar nome de avaliadores aos alunos?"
 
     hide_students: "Marcar como inativo"
     unhide_students: "Marcar como ativo"
@@ -898,7 +898,7 @@ pt:
         no_access: "Não há accesso para resultado do teste com id #%{test_result_id}."
       button:
         load: "Carregar"
-      no_files_available: "[Nenhum resultado de testes disponiveis]"
+      no_files_available: "[Nenhum resultado de testes disponíveis]"
       loading_results: "Carregando resultados..."
       running_tests: "Executando testes..."
       build_successful: "Testes Completados. Veja '%{logfile}' para detalhos."
@@ -931,7 +931,7 @@ pt:
       description_hint: "Você pode usar simples HTML tags no campo. Salve as alterações para ver vizualizar."
       download:
         title: "Baixar arquivo de Critério flexível"
-        prompt: "Critérios flexíveis estao disponiveis em CSV."
+        prompt: "Critérios flexíveis estao disponíveis em CSV."
         link: "Baixar critérios flexíveis em formato CSV"
       upload:
         title: "Carregar arquivo de critério flexível"
@@ -954,7 +954,7 @@ pt:
         level_index: "Nível %{index}"
       download:
         title: "Baixar arquivo de rubrica"
-        prompt: "Critério de rubrica estao disponiveis em CSV e YAML."
+        prompt: "Critério de rubrica estao disponíveis em CSV e YAML."
         link_csv: "Baixar rubrica em formato CSV"
         link_yml: "Baixar rubrica em formato YAML"
       upload:
@@ -1119,7 +1119,7 @@ pt:
       pm: 'pm'
 
     #app/views/assignments/_read.html.erb
-    no_grader_assigned: "Avaliador padrao: Instructor(es) do curso"
+    no_grader_assigned: "Avaliador padrão: Instrutor(es) do curso"
 
     locale_not_available: "%{locale} tradução não disponível!"
     external_authentication_not_supported: "Autentificação externa não é suportado pela sua plataforma!"
@@ -1187,11 +1187,11 @@ pt:
       missing_tokens: "Nenhum token foi encontrado para esse estudante e para esse projeto"
       dir_not_exist: "O diretório %{dir} necessario para o Ant não existe"
       token:
-        tokens_form: "Tokens disponiveis por grupo"
+        tokens_form: "Tokens disponíveis por grupo"
         tokens_per_day: "<span class=\"prop_label\">Tokens por dia:</span> %{tokens}"
-        tokens_not_given_yet: "<span class=\"prop_label\">Tokens disponiveis:</span> Nenhum tokens dado"
-        tokens_no_more_available: "<span class=\"prop_label\">Tokens disponiveis:</span > Mais nenhum token disponível "
-        tokens_available: "<span class=\"prop_label\">Tokens disponiveis:</span> %{tokens}"
+        tokens_not_given_yet: "<span class=\"prop_label\">Tokens disponíveis:</span> Nenhum tokens dado"
+        tokens_no_more_available: "<span class=\"prop_label\">Tokens disponíveis:</span > Mais nenhum token disponível "
+        tokens_available: "<span class=\"prop_label\">Tokens disponíveis:</span> %{tokens}"
 
 #Missing Activerecord Translations for english
     datetime:
