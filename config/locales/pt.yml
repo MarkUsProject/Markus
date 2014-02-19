@@ -223,7 +223,7 @@ pt:
     complete:           "completo"
     released:           "liberado"
     preview:            "Prever"
-    invalid_grouping:   "(invalido)"
+    invalid_grouping:   "(inválido)"
     validate:           "Validar"
     encoding:           "Codificação"
     assignment_format:  "Baixar em formato %{file}"
@@ -979,7 +979,7 @@ pt:
                     &nbsp;&nbsp;level_1:<br />
                     &nbsp;&nbsp;&nbsp;&nbsp;[...]
           </p>"
-        error: "Alguns critérios de rubrica eram invalidos:"
+        error: "Alguns critérios de rubrica eram inválidos:"
         syntax_error: "Existe um erro no arquivo carreado : %{error}"
         empty_error: "Nenhum critério foi encontrado no arquivo fornecido."
       error_total: "peso total deve ser positivo"
@@ -1030,7 +1030,7 @@ pt:
             title: "Criar anotação"
             loading_groupings: "Carregando grupos..."
             loading_selector: "Carregando seletor..."
-            invalid_selector: "Seletor escolhido invalido."
+            invalid_selector: "Seletor escolhido inválido."
             no_noteables: "Anotações foram anexadas para grupos, projetos, ou estudantes, mas não há nenhum ainda. Por favor crie um primeiro."
         create:
             success: "Anotação criada com sucesso."
