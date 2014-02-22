@@ -38,6 +38,7 @@ class GradersController < ApplicationController
                                         :group]}])
     @groupings = @assignment.groupings
     @table_rows = construct_table_rows(@groupings, @assignment)
+    render :populate, :formats => [:js]
   end
 
   def populate_graders
