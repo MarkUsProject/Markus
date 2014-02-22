@@ -132,7 +132,7 @@ class GroupsController < ApplicationController
     render :invalid_grouping, :formats => [:js] 
   end
 
-  def populate    
+  def populate
     @assignment = Assignment.find(params[:assignment_id],
                                   :include => [{
                                       :groupings => [
