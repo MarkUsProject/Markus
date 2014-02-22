@@ -136,6 +136,7 @@ class GroupsController < ApplicationController
     @groupings.each do |grouping|
       @table_rows[grouping.id] = construct_table_row(grouping, @assignment)
     end
+    render :populate, :formats => [:js]
   end
 
   def populate_students
