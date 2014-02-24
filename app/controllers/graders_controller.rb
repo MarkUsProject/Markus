@@ -1,4 +1,4 @@
-  include CsvHelper
+include CsvHelper
 
 # Manages actions relating to assigning graders.
 class GradersController < ApplicationController
@@ -40,7 +40,7 @@ class GradersController < ApplicationController
                                       :groupings => [
                                           :students, :tas,
                                         :group]}])
-    @groupings = @assignment.groupings    
+    @groupings = @assignment.groupings
     @table_rows = construct_table_rows(@groupings, @assignment)
     render :populate, :formats => [:js] 
   end
