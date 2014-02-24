@@ -894,7 +894,7 @@ class SubmissionsController < ApplicationController
     send_data assignment.get_simple_csv_report,
               :disposition => 'attachment',
               :type => 'application/vnd.ms-excel',
-              :filename => "#{assignment.short_identifier} simple report.csv"
+              :filename => "#{assignment.short_identifier}_simple_report.csv"
   end
 
   # See Assignment.get_detailed_csv_report for details
@@ -903,7 +903,7 @@ class SubmissionsController < ApplicationController
     send_data assignment.get_detailed_csv_report,
               :disposition => 'attachment',
               :type => 'application/vnd.ms-excel',
-              :filename => "#{assignment.short_identifier} detailed report.csv"
+              :filename => "#{assignment.short_identifier}_detailed_report.csv"
   end
 
   # See Assignment.get_svn_export_commands for details
@@ -912,8 +912,8 @@ class SubmissionsController < ApplicationController
     svn_commands = assignment.get_svn_export_commands
     send_data svn_commands.join("\n"),
               :disposition => 'attachment',
-              :type => 'text/plain',
-              :filename => "#{assignment.short_identifier}_svn_exports"
+              :type => 'application/vnd.ms-excel',
+              :filename => "#{assignment.short_identifier}_svn_exports.csv"
   end
 
   # See Assignment.get_svn_repo_list for details

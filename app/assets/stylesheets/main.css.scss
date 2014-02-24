@@ -1172,6 +1172,7 @@ input#extra_mark_description{
    float: left;
 }
 
+
 .float_left{
    float: left;
 }
@@ -1680,6 +1681,10 @@ td.grade_entry_form_result {
 
 .floatRight {
   float: right;
+}
+
+.search_box{
+  overflow: hidden;
 }
 
 .invisible_list {
@@ -2219,6 +2224,8 @@ pre#test_result_content {
 	padding: 2px;
 	min-width: 0px;
 }
+
+
 
 
 /* styles specific to the graphing on the dashboard */
