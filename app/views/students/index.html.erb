@@ -7,6 +7,7 @@
 <!-- Get necessary data for loading the students table from the _boot.js.erb partial -->
 <script type="text/javascript">
   <%= render :partial => 'boot', :formats => [:js], :handlers => [:erb] %>
+
 </script>
 
 <script type="text/javascript">
@@ -18,6 +19,22 @@
       className: 'modalNotesGroup',
       fade:false
     });
+    $("#student_search").keyup(function() {
+    var value = this.value;
+
+    $("#students").find("tr").each(function(index) {
+        if (index === 0) {
+            return;
+        }
+        
+        var id = $(this).find("td").text();
+        if (id.indexOf(value) == -1){
+            $(this).toggle(false);
+        } else {
+            $(this).toggle(true);
+        }
+    });
+});  
   });
 </script>
 
@@ -96,7 +113,11 @@
   	      </select>
         </span>
         <%= submit_tag t(:apply), :id => 'apply_bulk_action', :disable_with => I18n.t('working'), :name => 'commit', :class => 'thin-button' %>
+      <span>
+      <input type="text" id="student_search" placeholder="Filter Students">
+      </span>
       </div>
+
 
       <div style="overflow:auto; height: 400px;">
         <table id="students">
