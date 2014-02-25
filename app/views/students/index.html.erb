@@ -19,22 +19,7 @@
       className: 'modalNotesGroup',
       fade:false
     });
-    $("#student_search").keyup(function() {
-    var value = this.value;
-
-    $("#students").find("tr").each(function(index) {
-        if (index === 0) {
-            return;
-        }
-        
-        var id = $(this).find("td").text();
-        if (id.indexOf(value) == -1){
-            $(this).toggle(false);
-        } else {
-            $(this).toggle(true);
-        }
-    });
-});  
+   
   });
 </script>
 
