@@ -3,7 +3,7 @@ Markus::Application.routes.draw do
   root :controller => "main", :action => "login"
 
   # optional path scope (denoted by the parentheses)
-  scope "(:locale)", :locale => /en|fr/  do
+  scope "(:locale)", :locale => /en|fr|pt/  do
     # API routes
     namespace :api do
       resources :users, :except => [:new, :edit]
