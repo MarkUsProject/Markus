@@ -608,7 +608,7 @@ pt:
       form_group: "Um grupo deve conter de <strong>%{group_min}</strong> a <strong>%{group_max}</strong> pessoas."
       decline_invitation2: "Isso irá recusar outro convite que você tem. Você tem certeza disso?"
       your_group: "Seu grupo"
-      modification_limited: "Neste ponto, a modificação do seu grupo é muito limitado. Ambos a data de vencimento e período de tolerância (se houver) passaram."
+      modification_limited: "Neste ponto, a modificação do seu grupo é muito limitado. Ambos a data de vencimento e período de tolerância (se houver) já se passaram."
       invite_more_students: " O grupo não é válido. Você precisa convidar mais alunos."
       url_group_repository: "URL para o repositório do seu grupo"
       group_properties: " Propriedades do Grupo "
@@ -634,41 +634,41 @@ pt:
         current_path: "Caminho atual:"
         conflicts: "Conflitos"
         file_conflicts: "Suas mudanças não foram feitas. Os seguintes conflitos foram detectados:"
-        missing_files: "Você ainda precisa enviar %{file} arquivos para este: projeto"
+        missing_files: "Você ainda precisa enviar %{file} arquivos para este projeto"
         toggle_file_list: "Clique aqui para ver a lista de arquivos que faltam."
-        no_action_detected: "Nenhuma ação foi alterada no último envio. Nada foi alterado."
+        no_action_detected: "Nenhuma mudança foi detectada."
         no_marks_available: "Não há avaliações disponíveis."
         external_submit_only: "MarkUs está aceitando apenas envios externos."
         invalid_file_name: "Nome inválido para o arquivo enviado."
-        missing_file: "Não foi possível baixar %{file_name}: %{message}.  Arquivo pode estar sumido."
+        missing_file: "Não foi possível baixar %{file_name}: %{message}.  O arquivo pode estar faltando."
         no_files_available: "Nenhum arquivo disponível"
         no_groupings_available: "Nenhum grupo disponível"
         no_revision_available: "Nenhuma revisão disponível"
-        expect_filter: "Esperado um filtro na seleção completa"
+        expect_filter: "Esperado um filtro na seleção"
         # DO NOT change 'file_name' and 'sanitized_filename' in the following message.
         # See app/views/submissions/_file_manager_boot.js.erb
-        filename_sanitization_js_warning: "\"Depois de enviar o nome do arquivo mudará de '\" + file_name + \"' para '\" + sanitized_filename + \"'. Isso é OK?\""
+        filename_sanitization_js_warning: "\"Depois do envio, o nome do arquivo mudará de '\" + file_name + \"' para '\" + sanitized_filename + \"'. Você tem certeza disso?\""
         # DO NOT change 'file_name' and 'new_file_name' in the following message.
         # See app/views/submissions/_file_manager_boot.js.erb
-        replace_file_js_error: "\"Você não pode substituir '\" + file_name + \"' para '\" + new_file_name + \"'. Você deve substituir um arquivo com um arquivo que tem o mesmo nome.\""
+        replace_file_js_error: "\"Você não pode substituir '\" + file_name + \"' por '\" + new_file_name + \"'. Você deve substituir um arquivo por outro com o mesmo nome.\""
 
 
     tas:
       create:
-        success: "Avaliador criado com sucesso %{user_name}."
+        success: "Avaliador %{user_name} criado com sucesso."
         error:   "Falha ao criar avaliador."
       update:
-        success: "Avaliador atualizado com sucesso %{user_name}."
+        success: "Avaliador %{user_name} atualizado com sucesso."
         error:   "Falha ao atualizar avaliador."
 
     #Graders' View
     graders:
       create_new_grader:  "Criar novo avaliador"
       edit_grader:        "Editar avaliador"
-      manage_graders:     "Gerenciar avaliador"
+      manage_graders:     "Gerenciar avaliadores"
       graders:            "Avaliadores"
       section:            "Sessão"
-      all_graders:        "Todos  avaliadores"
+      all_graders:        "Todos os avaliadores"
       assigned_graders:   "Atribuir avaliador"
       possible_graders:   "Possiveis avaliadores"
       unassigned_graders: " Aliadores sem atribuição"
