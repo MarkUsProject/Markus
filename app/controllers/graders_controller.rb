@@ -42,7 +42,7 @@ class GradersController < ApplicationController
                                         :group]}])
     @groupings = @assignment.groupings
     @table_rows = construct_table_rows(@groupings, @assignment)
-    render :populate, :formats => [:js]
+    render :populate, :formats => [:js] 
   end
 
   def populate_graders
@@ -60,6 +60,7 @@ class GradersController < ApplicationController
                                         :criterion_ta_associations}])
     @criteria = @assignment.get_criteria
     @table_rows = construct_criterion_table_rows(@criteria, @assignment)
+    render :populate_criteria, :formats => [:js] 
   end
 
   def set_assign_criteria
@@ -168,6 +169,7 @@ class GradersController < ApplicationController
       criterion.save
     end
     @criteria_data = construct_criterion_table_rows(criteria, @assignment)
+    render :add_grader_to_grouping, :formats => [:js] 
   end
 
   #These actions act on all currently selected graders & groups
@@ -278,7 +280,7 @@ class GradersController < ApplicationController
       grouping.save
     end
     construct_all_rows(groupings, graders, criteria)
-    render :modify_criteria
+    render :modify_criteria, :formats => [:js] 
   end
 
   def randomly_assign_graders(groupings, grader_ids)
@@ -296,7 +298,7 @@ class GradersController < ApplicationController
       criterion.save
     end
     construct_all_rows(groupings, graders, criteria)
-    render :modify_groupings
+    render :modify_groupings, :formats => [:js] 
   end
 
   def add_graders(groupings, grader_ids)
@@ -311,7 +313,7 @@ class GradersController < ApplicationController
       criterion.save
     end
     construct_all_rows(groupings, graders, criteria)
-    render :modify_groupings
+    render :modify_groupings, :formats => [:js] 
   end
 
   def add_graders_to_criteria(criteria, graders)
@@ -330,7 +332,7 @@ class GradersController < ApplicationController
       grouping.save
     end
     construct_all_rows(groupings, graders, criteria)
-    render :modify_criteria
+    render :modify_criteria, :formats => [:js] 
   end
 
   def remove_graders_from_criteria(criteria, params)
@@ -355,7 +357,7 @@ class GradersController < ApplicationController
       grouping.save
     end
     construct_all_rows(groupings , all_graders, criteria)
-    render :modify_criteria
+    render :modify_criteria, :formats => [:js] 
   end
 
   # Removes the graders contained in params from the groupings given
@@ -378,7 +380,7 @@ class GradersController < ApplicationController
       criterion.save
     end
     construct_all_rows(groupings, Ta.all, @assignment.get_criteria)
-    render :modify_groupings
+    render :modify_groupings, :formats => [:js] 
   end
 
   def construct_all_rows(groupings, graders, criteria)
