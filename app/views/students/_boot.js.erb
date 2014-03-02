@@ -1,5 +1,5 @@
+<script type="text/javascript">
 jQuery(document).ready(function() {
-
   users_table = new FilterTable({
     table_id: $('students'),
     headers: {
@@ -26,7 +26,14 @@ jQuery(document).ready(function() {
       },
       inactive: function(row) {
         return row.hidden;
+      },
+      search: function(row) {
+        return (row.user_name.toLowerCase().indexOf($('search_students').value.toLowerCase()) != -1
+        || row.first_name.toLowerCase().indexOf($('search_students').value.toLowerCase()) != -1
+        || row.last_name.toLowerCase().indexOf($('search_students').value.toLowerCase()) != -1);
       }
+
+
     },
     after_filter_only_by: function(current_filters, new_filter){
     	$('filter_link_none').removeClassName('filter_selected');
@@ -61,3 +68,4 @@ jQuery.ajax({
           jQuery('#loading_list').hide();
           populate(JSON.stringify(data));
         });
+</script>
