@@ -1,4 +1,4 @@
-// CalendarDateSelect version 1.16.1 - a prototype based date picker
+// CalendarDateSelect version 1.16.2 - a prototype based date picker
 // Questions, comments, bugs? - see the project page: http://code.google.com/p/calendardateselect
 if (typeof Prototype == 'undefined') alert("CalendarDateSelect Error: Prototype could not be found. Please make sure that your application's layout includes prototype.js (.g. <%= javascript_include_tag :defaults %>) *before* it includes calendar_date_select.js (.g. <%= calendar_date_select_includes %>).");
 if (Prototype.Version < "1.6") alert("Prototype 1.6.0 is required.  If using earlier version of prototype, please use calendar_date_select version 1.8.3");
@@ -88,7 +88,20 @@ CalendarDateSelect.prototype = {
       minute_interval: 5,
       popup_by: this.target_element,
       month_year: "dropdowns",
-      onchange: this.target_element.onchange,
+      onchange: function(target_element)
+      { return function()
+        { if(target_element.dispatchEvent)
+          { var event=document.createEvent('HTMLEvents');
+            event.initEvent('change', true, true);
+            target_element.dispatchEvent(event);
+          }
+          else
+          { var event=document.createEventObject();
+            event.type='onChange';
+            target_element.fireEvent('onChange', event);
+          }
+        }; 
+      }(this.target_element),
       valid_date_check: nil
     }).merge(options || {});
     this.use_time = this.options.get("time");
@@ -296,7 +309,7 @@ CalendarDateSelect.prototype = {
       this.year_select.setValue(y);
       
     } else {
-      this.month_year_label.update( Date.months[m] + " " + y.toString()  );
+      this.month_year_label.update().insert(Date.months[m] + " " + y.toString());
     }
   },
   populateYearRange: function() {
@@ -313,7 +326,7 @@ CalendarDateSelect.prototype = {
   validYear: function(year) { if (this.flexibleYearRange()) { return true;} else { return this.yearRange().include(year);}  },
   dayHover: function(element) {
     var hover_date = new Date(this.selected_date);
-    hover_date.setYear(element.year); hover_date.setMonth(element.month); hover_date.setDate(element.day);
+    hover_date.setFullYear(element.year, element.month, element.day);
     this.updateFooter(hover_date.toFormattedString(this.use_time));
   },
   dayHoverOut: function(element) { this.updateFooter(); },
@@ -360,9 +373,7 @@ CalendarDateSelect.prototype = {
     if ((this.target_element.disabled || this.target_element.readOnly) && this.options.get("popup") != "force") return false;
     if (parts.get("day")) {
       var t_selected_date = this.selected_date, vdc = this.options.get("valid_date_check");
-      t_selected_date.setYear(parts.get("year"));
-      t_selected_date.setMonth(parts.get("month"));
-      t_selected_date.setDate(parts.get("day"));
+      t_selected_date.setFullYear(parts.get("year"), parts.get("month"), parts.get("day"));
       
       if (vdc && ! vdc(t_selected_date.stripTime())) { return false; }
       this.selected_date = t_selected_date;
