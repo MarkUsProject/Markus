@@ -20,7 +20,7 @@ gem 'dynamic_form'
 # is not compatible with Rails 3.0.x
 gem 'exception_notification', '<4.0'
 gem 'minitest',"4.7.5", :platforms => :ruby_20
-
+gem 'bartt-ssl_requirement', '~>1.4.0', :require => 'ssl_requirement'
 gem 'json'
 gem 'coffee-script'
 gem 'jquery-rails'
