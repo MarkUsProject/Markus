@@ -62,19 +62,17 @@ class StudentsController < ApplicationController
         when 'hide'
           Student.hide_students(student_ids)
           @students = construct_table_rows(Student.find(student_ids))
-          return
         when 'unhide'
           Student.unhide_students(student_ids)
           @students = construct_table_rows(Student.find(student_ids))
-          return
         when 'give_grace_credits'
           Student.give_grace_credits(student_ids, params[:number_of_grace_credits])
           @students = construct_table_rows(Student.find(student_ids))
-          return
         when 'add_section'
           Student.update_section(student_ids, params[:section])
           @students = construct_table_rows(Student.find(student_ids))
       end
+      render :bulk_modify, :formats => [:js]
     rescue RuntimeError => e
       @error = e.message
       render :display_error
