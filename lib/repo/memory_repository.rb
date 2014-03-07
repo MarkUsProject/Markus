@@ -31,7 +31,7 @@ module Repository
       @revision_history = []                      # a list (array) of old revisions (i.e. < @current_revision)
       # mapping (hash) of timestamps and revisions
       @timestamps_revisions = {}
-      @timestamps_revisions[Time.now._dump] = @current_revision   # push first timestamp-revision mapping
+      @timestamps_revisions[Marshal.dump(Time.now)] = @current_revision   # push first timestamp-revision mapping
       @repository_location = location
       @opened = true
 
@@ -158,7 +158,7 @@ module Repository
       @revision_history.push(@current_revision)
       @current_revision = new_rev
       @current_revision.__increment_revision_number() # increment revision number
-      @timestamps_revisions[timestamp._dump] = @current_revision
+      @timestamps_revisions[Marshal.dump(timestamp)] = @current_revision
       @@repositories[@repository_location] = self
       return true
     end
@@ -429,8 +429,8 @@ module Repository
       all_timestamps_list = []
       remaining_timestamps_list = []
       @timestamps_revisions.keys().each do |time_dump|
-        all_timestamps_list.push(Time._load(time_dump))
-        remaining_timestamps_list.push(Time._load(time_dump))
+        all_timestamps_list.push(Marshal.load(time_dump))
+        remaining_timestamps_list.push(Marshal.load(time_dump))
       end
 
       # find closest matching timestamp
@@ -442,7 +442,7 @@ module Repository
         remaining_timestamps_list.shift()
         old_diff = wanted_timestamp - best_match
         mapping[old_diff.to_s] = best_match
-        if path.nil? || (!path.nil? && @timestamps_revisions[best_match._dump].revision_at_path(path))
+        if path.nil? || (!path.nil? && @timestamps_revisions[Marshal.dump(best_match)].revision_at_path(path))
           first_timestamp_found = true
           break
         end
@@ -452,7 +452,7 @@ module Repository
       remaining_timestamps_list.each do |curr_timestamp|
         new_diff = wanted_timestamp - curr_timestamp
         mapping[new_diff.to_s] = curr_timestamp
-        if path.nil? || (!path.nil? && @timestamps_revisions[curr_timestamp._dump].revision_at_path(path))
+        if path.nil? || (!path.nil? && @timestamps_revisions[Marshal.dump(curr_timestamp)].revision_at_path(path))
           if(old_diff <= 0 && new_diff <= 0) ||
             (old_diff <= 0 && new_diff > 0) ||
             (new_diff <= 0 && old_diff > 0)
@@ -465,7 +465,7 @@ module Repository
 
       if first_timestamp_found
         wanted_timestamp = mapping[old_diff.to_s]
-        return @timestamps_revisions[wanted_timestamp._dump]
+        return @timestamps_revisions[Marshal.dump(wanted_timestamp)]
       else
         return @current_revision
       end

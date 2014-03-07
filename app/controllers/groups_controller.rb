@@ -36,7 +36,7 @@ class GroupsController < ApplicationController
       return
     end
     @new_grouping = construct_table_row(new_grouping_data, @assignment)
-    render :add_group
+    render :add_group, :formats => [:js] 
   end
 
   def remove_group
@@ -52,11 +52,11 @@ class GroupsController < ApplicationController
 		@students_data = construct_student_table_rows(students_to_remove, @assignment)
     if grouping.has_submission?
         @errors.push(grouping.group.group_name)
-        render :delete_groupings
+        render :delete_groupings, :formats => [:js] 
     else
       grouping.delete_grouping
       @removed_groupings.push(grouping)
-      render :delete_groupings
+      render :delete_groupings, :formats => [:js] 
     end
   end
 
@@ -113,6 +113,7 @@ class GroupsController < ApplicationController
       end
     end
     @grouping_data = construct_table_row(@grouping, @assignment)
+    render :rename_group, :formats => [:js] 
   end
 
   def valid_grouping
@@ -120,6 +121,7 @@ class GroupsController < ApplicationController
     @grouping = Grouping.find(params[:grouping_id])
     @grouping.validate_grouping
     @grouping_data = construct_table_row(@grouping, @assignment)
+    render :valid_grouping, :formats => [:js] 
   end
 
   def invalid_grouping
@@ -127,6 +129,7 @@ class GroupsController < ApplicationController
     @grouping = Grouping.find(params[:grouping_id])
     @grouping.invalidate_grouping
     @grouping_data = construct_table_row(@grouping, @assignment)
+    render :invalid_grouping, :formats => [:js] 
   end
 
   def populate
@@ -138,10 +141,8 @@ class GroupsController < ApplicationController
                                           :group]}])
     @groupings = @assignment.groupings
     @table_rows = {}
-    @groupings.each do |grouping|
-      @table_rows[grouping.id] = construct_table_row(grouping, @assignment)
-    end
-    render :populate, :formats => [:js]
+    @table_rows = construct_table_rows(@groupings, @assignment)
+    render :populate, :formats => [:js] 
   end
 
   def populate_students
@@ -313,7 +314,7 @@ class GroupsController < ApplicationController
      grouping.invalidate_grouping
     end
     @groupings_data = construct_table_rows(groupings, @assignment)
-    render :modify_groupings
+    render :modify_groupings, :formats => [:js] 
   end
 
   # Given a list of grouping, sets their group status to valid if possible
@@ -322,7 +323,7 @@ class GroupsController < ApplicationController
       grouping.validate_grouping
     end
     @groupings_data = construct_table_rows(groupings, @assignment)
-    render :modify_groupings
+    render :modify_groupings, :formats => [:js] 
   end
 
   # Deletes the given list of groupings if possible. Removes each member first.
@@ -343,7 +344,7 @@ class GroupsController < ApplicationController
         end
       end
 			@students_data = construct_student_table_rows(students_to_remove, @assignment)
-      render :delete_groupings
+      render :delete_groupings, :formats => [:js] 
   end
 
   # Adds the students given in student_ids to the grouping given in grouping_id
@@ -367,7 +368,7 @@ class GroupsController < ApplicationController
 
       end
     end
-    render :add_members
+    render :add_members, :formats => [:js] 
   end
 
   # Adds the student given in student_id to the grouping given in grouping
@@ -441,7 +442,7 @@ class GroupsController < ApplicationController
     end
     @students_data = construct_student_table_rows(all_members, @assignment)
     @groupings_data = construct_table_rows(groupings, @assignment)
-    render :remove_members
+    render :remove_members, :formats => [:js] 
   end
 
   #Removes the given student membership from the given grouping

@@ -57,6 +57,7 @@ GEM
     fastercsv (1.5.5)
     hike (1.2.3)
     i18n (0.6.9)
+    iconv (1.0.4)
     journey (1.0.4)
     jquery-rails (3.0.4)
       railties (>= 3.0, < 5.0)
@@ -71,6 +72,7 @@ GEM
       treetop (~> 1.4.8)
     metaclass (0.0.1)
     mime-types (1.25.1)
+    minitest (4.7.5)
     mocha (0.14.0)
       metaclass (~> 0.0.1)
     multi_json (1.8.2)
@@ -167,9 +169,11 @@ DEPENDENCIES
   faker
   fastercsv
   i18n
+  iconv
   jquery-rails
   json
   machinist (< 2)
+  minitest (= 4.7.5)
   mocha
   mysql2 (>= 0.3)
   pg
