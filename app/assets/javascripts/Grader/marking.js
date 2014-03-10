@@ -102,3 +102,19 @@ function update_total_mark(total_mark) {
   $('current_mark_div').update(total_mark);
   $('current_total_mark_div').update(total_mark);
 }
+
+function update_marking_state_selected(new_marking_state){
+    $$('#marking_state').value = new_marking_state;
+    $$('#marking_state option[value='+new_marking_state+']').first().setAttribute('selected','selected');
+    $$('#marking_state option[value!='+new_marking_state+']').each(function(item){
+        item.removeAttribute('selected');
+    });
+
+    var error_message = document.getElementById('criterion_incomplete_error');
+
+    /* Reload the page if error is displayed and state is being changed to partial */
+    if(error_message.style.display != 'none' && new_marking_state == 'partial'){
+       error_message.innerHTML = "";
+       window.location.reload();
+    }
+}
