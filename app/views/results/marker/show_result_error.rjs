@@ -1,4 +1,5 @@
 # Marking state set to complete but there is at least one nil mark
+page.call 'update_marking_state_selected', Result::MARKING_STATES[:partial]
 page.replace_html 'criterion_incomplete_error', @result.errors[:base]
 page.show 'criterion_incomplete_error'
-page['marking_state'].setValue(Result::MARKING_STATES[:partial])
+#page['marking_state'].setValue(Result::MARKING_STATES[:partial])
