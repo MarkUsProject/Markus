@@ -182,7 +182,10 @@ class AssignmentsController < ApplicationController
 
     @past_date = @assignment.what_past_due_date
     @assignments = Assignment.all
+
     @sections = Section.all
+
+    @section_due_dates = SectionDueDate.where(:assignment_id => @assignment.id).order('due_date DESC').joins(:section).order('name ASC')
 
     unless @past_date.nil? || @past_date.empty?
       flash[:notice] = t('past_due_date_notice') + @past_date.join(', ')
@@ -194,6 +197,9 @@ class AssignmentsController < ApplicationController
         @assignment.section_due_dates.build(:section => s)
       end
     end
+
+
+
   end
 
   # Called when editing assignments form is submitted (PUT).

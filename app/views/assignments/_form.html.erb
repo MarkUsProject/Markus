@@ -60,7 +60,7 @@
             <%= raw t("assignment.section_due_dates_info") %>
           </p>
           <div class="section_due_date_form">
-            <%= f.fields_for :section_due_dates do |due_date_f| %>
+            <%= f.fields_for :section_due_dates, @section_due_dates do |due_date_f| %>
               <p>
                 <%= label 'section', t("section.legend") %> <%= Section.find(due_date_f.object.section_id).name %>
                 <br />
