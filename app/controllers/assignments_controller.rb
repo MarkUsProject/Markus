@@ -184,6 +184,8 @@ class AssignmentsController < ApplicationController
     @assignments = Assignment.all
     @sections = Section.all
 
+    @section_due_dates = SectionDueDate.where(:assignment_id => @assignment.id).order('due_date DESC').joins(:section).order('name ASC')
+
     unless @past_date.nil? || @past_date.empty?
       flash[:notice] = t('past_due_date_notice') + @past_date.join(', ')
     end
