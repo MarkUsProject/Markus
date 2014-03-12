@@ -114,7 +114,6 @@ function update_marking_state_selected(new_marking_state){
 
     /* Reload the page if error is displayed and state is being changed to partial */
     if(error_message.style.display != 'none' && new_marking_state == 'partial'){
-       error_message.innerHTML = "";
        window.location.reload();
     }
 }
