@@ -61,14 +61,11 @@ class AssignmentsController < ApplicationController
 
   def student_interface
     @assignment = Assignment.find(params[:id])
-
-
-    # >>>>>>>>>
+    
     if @assignment.is_hidden
       render :file => "public/404.html", :status => 404
       return
     end
-
 
     @student = current_user
     @grouping = @student.accepted_grouping_for(@assignment.id)
@@ -144,15 +141,10 @@ class AssignmentsController < ApplicationController
   # Displays "Manage Assignments" page for creating and editing
   # assignment information
   def index
-    
-
     #@assignments = Assignment.all(:order => :id)
-
-
     @grade_entry_forms = GradeEntryForm.all(:order => :id)
     @default_fields = DEFAULT_FIELDS
     if current_user.student?
-
       @assignments = Assignment.find(:all, :conditions =>
                                              { :is_hidden => false },
                                             :order => :id)
