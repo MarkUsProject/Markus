@@ -37,7 +37,9 @@ class AnnotationsController < ApplicationController
   def create
     @text = AnnotationText.create({
       :content => params[:content],
-      :annotation_category_id => params[:category_id]
+      :annotation_category_id => params[:category_id],
+      :creator_id => current_user.id,
+      :last_editor_id => current_user.id
     })
     @submission_file_id = params[:submission_file_id]
     @submission_file = SubmissionFile.find(@submission_file_id)
