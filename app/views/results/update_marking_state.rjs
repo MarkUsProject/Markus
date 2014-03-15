@@ -1,6 +1,5 @@
 # Hide error message (if any)
 page.hide 'criterion_incomplete_error'
-page.call 'update_marking_state_selected', @result.marking_state
 
 if @current_user.admin?
   if @result.marking_state == Result::MARKING_STATES[:complete]
