@@ -671,25 +671,25 @@ pt:
       all_graders:        "Todos os avaliadores"
       assigned_graders:   "Atribuir avaliador"
       possible_graders:   "Possiveis avaliadores"
-      unassigned_graders: " Aliadores sem atribuição"
+      unassigned_graders: "Avaliadores sem atribuição"
       not_covered:        "Não coberto"
       covered:            "Coberto"
       coverage: "Cobertura"
       assign_to_criteria: "Atribuir avaliador aos critérios"
       lines_not_processed: "As linhas a seguir não puderam ser processadas:"
       upload:
-        select_csv_file: "Selecione um arquivo CSV da seguinte forma: <code>user_name,last_name,first_name</code>"
-        grader_same_user: "Se uma corretores com o mesmo user_name existe, então, as informações do TA são atualizadas."
+        select_csv_file: "Selecione um arquivo CSV no seguinte formato: <code>user_name,last_name,first_name</code>"
+        grader_same_user: "Se existir um avaliador com o mesmo user_name, suas informações serão atualizadas."
         csv_file:         "Arquivo CSV"
         not_added: "Os seguintes corretores não foram adicionados com sucesso:"
         make_sure: "Tenha certeza que:"
         ta_names: "O nome dos corretores são alfanuméricos "
-        each_field: "Cada campo é separado por uma virgula (sem espaços)"
+        each_field: "Cada campo é separado por uma vírgula (sem espaços)"
         each_line: "Cada linha tem os campos requeridos especificados acima"
       download:
         download_list: "Baixar lista de corretores no formato CSV"
-        begin_annotation: "%{comment_start} ANOTACAO %{id}: %{text} %{comment_end}"
-        end_annotation: "%{comment_start} FIM ANNOTACAO %{id} %{comment_end}"
+        begin_annotation: "%{comment_start} ANOTAÇÃO %{id}: %{text} %{comment_end}"
+        end_annotation: "%{comment_start} FIM DA ANOTAÇÃO %{id} %{comment_end}"
 
     #Grade Entry Forms Graders' View
     marks_graders:
@@ -709,9 +709,9 @@ pt:
       edit_admin:       "Editar Administrador"
       admins: "Administradores"
       upload:
-        not_added: "Os seguintes administradores não foram adicionados com sucesso::"
+        not_added: "Os seguintes administradores não foram adicionados com sucesso:"
         make_sure: "Tenha certeza que:"
-        each_field: "Cada campo é separado por uma virgula (sem espaços)"
+        each_field: "Cada campo é separado por uma vírgula (sem espaços)"
         each_line: "Cada linha tem os campos requeridos especificados acima"
       create:
         success: "Administrador %{user_name} criado com sucesso."
@@ -733,26 +733,26 @@ pt:
       fail:
         general: "Algo saiu errado. Não foi possível inserir %{user_name}."
         dne:  "Não foi possível inserir %{user_name} - esse aluno não existe."
-        hidden:  "Não foi possível inserir %{user_name} - a conta desse aluno foi desabolitada."
+        hidden:  "Não foi possível inserir %{user_name} - a conta desse aluno foi desabilitada."
         already_grouped: "Não foi possível inserir %{user_name} - esse aluno já é membro de outro grupo."
 
     create_group:
       fail:
-        due_date_passed: "Não foi possível criar grupo - a data de entrega para este projeto já passou e há ou não períodos de tolerância permitidos, ou o período de tolerância para este projeto também passou."
-        not_allow_to_form_groups: "Atribuição não permite que os alunos a formar grupos"
+        due_date_passed: "Não foi possível criar grupo - a data de entrega para este projeto já passou e ou não há períodos de carência permitidos, ou o período de tolerância para este projeto já terminou."
+        not_allow_to_form_groups: "Atribuição não permite que os alunos formem grupos"
         already_have_a_group: "Você já tem um grupo, e não pode criar outro"
-        can_not_work_alone: "Você não pode trabalhar sozinho para este projeto - o mínimo tamanho do grupo é de %{group_min}"
-        do_not_have_a_group: "Você não possuímos um grupo"
+        can_not_work_alone: "Você não pode trabalhar sozinho para este projeto - o tamanho mínimo do grupo é de %{group_min}"
+        do_not_have_a_group: "Você não possúi um grupo"
 
     invite_student:
-      success: "Convites bem-sucedidos"
+      success: "Convites enviados com sucesso"
       fail:
         only_inviter: "Apenas o anfitrião pode excluir um convite recusado"
-        due_date_passed: "Não foi possível convidar %{user_name} - a data de entrega para este projeto já passou e, ou não  há períodos de carência permitido, ou o período de tolerância para este projeto também já passou.."
+        due_date_passed: "Não foi possível convidar %{user_name} - a data de entrega para este projeto já passou e, ou não há períodos de carência permitido, ou o período de tolerância para este projeto já acabou."
         dne:  "Não foi possível convidar %{user_name} - esse estudante não existe."
-        hidden:  "Não foi possível convidar %{user_name} - conta deste aluno foi desativada."
+        hidden:  "Não foi possível convidar %{user_name} - conta deste aluno foi desabilitada."
         already_pending: "Não foi possível convidar  %{user_name} - esse aluno já é um membro pendente deste grupo."
-        group_max_reached: "Não foi possível convidar %{user_name} - o grupo já possui tamanho máximo."
+        group_max_reached: "Não foi possível convidar %{user_name} - o grupo já possui o tamanho máximo."
         inviting_self: "Você não pode convidar-se para o seu próprio grupo."
         already_grouped: "Não foi possível convidar %{user_name} - este aluno já é um membro de outro grupo."
         need_to_create_group: "Você deve criar um grupo antes de poder convidar usuários"
@@ -764,7 +764,7 @@ pt:
     user:
         id:             "ID"
         user_name:      "Nome de usuário"
-        user_names:     "Nome de usuário"
+        user_names:     "Nome(s) de usuário"
         first_name:     "Primeiro nome"
         last_name:      "Último nome"
         full_name:      "Nome completo"
@@ -780,16 +780,16 @@ pt:
 
     annotations:
       annotation_category: "Categorias de anotação"
-      no_annotation_categories: "Não há categorias de anotação, ainda.."
+      no_annotation_categories: "Ainda não há categorias de anotação"
       title: "Anotações: %{assignment_short_identifier}"
-      name: "Nome categoria"
+      name: "Nome da categoria"
       help_message: "Clique em uma categoria de anotação para adicionar anotações."
       add_annotation_category: "Adicionar categoria de anotação"
       annotations: "Anotações"
       created_by: "Criado por:"
       last_edited_by: "Última edição por:"
       update:
-        annotation_category_success: "Esta categoria de anotação foi atualizado com sucesso"
+        annotation_category_success: "Esta categoria de anotação foi atualizada com sucesso"
         annotation_category_error: "Não foi possível atualizar a categoria de anotação:"
         annotation_category_name: "Nome da categoria de anotação"
         add_annotation: "Adicionar anotação"
