@@ -3,11 +3,14 @@ document.observe('dom:loaded', function () {
     // Bind the 'send data to db' event to all grade id boxes
     bindEventToGradeEntry();
 
-    /*
+    /**
      Because the page has loaded and 'dom:loaded' has fired, we can't
-     rely on this event to detect changes to the subtree since when we click
-     'Next >' we replace elements on the page instead of reloading it- so
-     we need to detect this change and call bindEventToGradeEntry(); above
+     rely on this event to detect changes to the subtree. When we click
+     'Next >' or '< Prev' we replace elements on the page instead of
+     reloading the page (dom:loaded is not fired in this case). The new
+     grade elements loaded when this happens have not had bindEventToGradeEntry()
+     called on them, and modifying them will do nothing. So we need to detect the
+     change of elements and call bindEventToGradeEntry() on the new grade boxes.
     */
 
     // The following from https://developer.mozilla.org/en/docs/Web/API/MutationObserver
