@@ -121,6 +121,10 @@ Markus::Application.configure do
   # is allowed to write to this directory
 
   PDF_STORAGE = "#{::Rails.root.to_s}/data/dev/pdfs"
+  ###################################################################
+  # Directory where converted DOC files will be stored as JPEGs. Make sure MarkUs
+  # is allowed to write to this directory
+  DOC_STORAGE = "#{::Rails.root.to_s}/data/dev/doc"
 
   ###################################################################
   # Directory where the Automated Testing Repositories will be created.

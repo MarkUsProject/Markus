@@ -50,7 +50,7 @@ class SubmissionFile < ActiveRecord::Base
     # comment and the second element being the syntax to end a comment.  Use
     #the language's multiple line comment format.
     case File.extname(filename)
-    when '.java', '.js', '.c'
+    when '.java', s'.js', '.c'
       return %w(/* */)
     when '.rb'
       return ["=begin\n", "\n=end"]
@@ -139,6 +139,27 @@ class SubmissionFile < ActiveRecord::Base
     self.save
   end
 
+
+def convert_doc_to_jpg
+    return unless MarkusConfigurator.markus_config_doc_support && self.is_doc?
+    m_logger = MarkusLogger.instance
+    storage_path = File.join(MarkusConfigurator.markus_config_doc_storage,
+      self.submission.grouping.group.repository_name,
+      self.path)
+
+ file_path = File.join(storage_path, self.filename.split('.')[0] + '.pdf')
+    self.export_file(storage_path)
+  
+    # Convert a doc file to jpg files
+   Docsplit.extract_images("#{file_path}/#{file_name}.DOC", :output => file_path)
+      if file.error
+      m_logger.log('docsplit: Image conversion error')
+    end
+
+    FileUtils.remove_file(File.join(storage_path, self.filename), true)
+    self.is_converted = true
+    self.save
+  end
   # Return the contents of this SubmissionFile.  Include annotations in the
   # file if include_annotations is true.
   def retrieve_file(include_annotations=false)
