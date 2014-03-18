@@ -72,6 +72,12 @@ class SubmissionFile < ActiveRecord::Base
   def is_pdf?
     File.extname(filename).casecmp('.pdf') == 0
   end
+  def is_doc?
+case File.extname(filename)
+ when '.doc', '.docx', '.odt', '.ods', '.xlsx', 'xls', 'ppt', 'odp'
+ return true
+ end
+ end
 
   # Taken from http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/44936
   def self.is_binary?(file_contents)
