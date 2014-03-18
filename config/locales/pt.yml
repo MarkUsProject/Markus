@@ -165,7 +165,7 @@ pt:
             message:   "Mensagem da revisão"
         marking_scheme:
             title: "Escala de avalição<span class='required_field'>*</span>"
-            rubric: "Rubrica (pré-definido)"
+            rubric: "Rúbrica (pré-definido)"
             flexible: "Flexível (à definir pelo avaliador)"
         notice:
             change_marking_scheme_type: "Alterar a escala de avaliação ira apagar avalições e critérios."
@@ -207,7 +207,7 @@ pt:
     properties:         "Propriedades"
     grades:             "Notas"
     submissions:        "Submissões"
-    rubrics:            "Rubricas"
+    rubrics:            "Rúbricas"
     marking_scheme:     "Esquema de avalição"
     join:               "Juntar"
     refuse:             "Recusar"
@@ -722,7 +722,7 @@ pt:
 
     rubrics:
       move_criterion:
-        error: "Impossível mover rubrica."
+        error: "Impossível mover rúbrica."
 
     flexible_criteria:
       move_criterion:
@@ -801,19 +801,19 @@ pt:
         upload_annotations: "Carregar anotações"
         upload_message_csv: "
         <p>
-            Selecione um arquivo CSV da seguinte forma: <br />
+            Selecione um arquivo CSV no seguinte formato: <br />
             <code>category_name,annotation_text,annotation_text ... </code><br />
           </p>"
         upload_message_yml: "
         <p>
-            Selecione um arquivo YAML da seguinte forma: <br />
+            Selecione um arquivo YAML no seguinte formato: <br />
             <code>category_name: <br />- category_text<br />- category_text</code><br />
 
           </p>"
-        success:  "Carregado com sucesso %{annotation_category_number} categoria de anotações"
-        error:  "Não foi possível fazer o upload de categoria: %{annotation_category} localizado na linha %{annotation_line}"
+        success:  "Carregado com sucesso %{annotation_category_number} categorias de anotações"
+        error:  "Não foi possível fazer o upload de categoria: erro com %{annotation_category} localizado na linha %{annotation_line}"
         syntax_error: "Existe um erro no  arquivo carregado: %{error}"
-        flash_error: "Não foi possível reconhecer %{format} formato para transferir"
+        flash_error: "Não foi possível reconhecer o formato %{format}"
       download:
         download_annotations: "Baixar anotações"
         download_csv: "Baixar em formato CSV"
@@ -822,14 +822,14 @@ pt:
 
     submission_rules:
       submission_rule:
-        description: "Esta é a descrição da classe SubmissionRule. Uma vez que apenas subclasses de SubmissionRule deve ser anexado a um projeto, esta mensagem nunca deve ser vista."
-        commit_after_collection_message: "Esta mensagem é apresentada quando os estudantes apresentarem código após a data de coleta. Desde SubmissionRule deve ser uma subclasse, e não referenciados diretamente por um Assignment, esta mensagem particular nunca deve ser exibido para os alunos."
+        description: "Esta é a descrição da classe SubmissionRule. Uma vez que apenas subclasses de SubmissionRule deven ser anexadas a um projeto, esta mensagem nunca deve ser vista."
+        commit_after_collection_message: "Esta mensagem é apresentada quando os estudantes submeterem código após a data de coleta. Como SubmissionRule será uma subclasse, e não referenciados diretamente por um Assignment, esta mensagem particular nunca deve ser exibido para os alunos."
         overtime_message:  "Esta mensagem é apresentada para os alunos quando eles vêem o seu gerenciador de arquivos após a data de entrega do projeto já ter passado..."
 
       no_late_submission_rule:
         name: "Nenhuma regra para submissão atrasada"
         description: "Nenhuma penalidade será aplicada aos trabalhos atrasados"
-        commit_after_late_message: "A data de entrega para este projeto já passou. Suas alterações foram registradas, mas não será incluído na classificação"
+        commit_after_late_message: "A data de entrega para este projeto já passou. Suas alterações foram registradas, mas não serão incluídas na classificação"
         no_late_message: "A data de entrega para este projeto já passou. Só o que estava em sua pasta na data de entrega será avaliado"
         form_description:  "Não aceitar nenhuma entrega atrasada"
 
@@ -838,7 +838,7 @@ pt:
         short_name:  "Período de tolerância"
         deductions: "Dedução de Período de tolerância"
         remove_deduction: "Remover Dedução"
-        credits: "Créditoss"
+        credits: "Créditos"
         confirm_remove_deduction: "Tem certeza de que deseja excluir este dedução de tolerância?"
         description: "Você pode enviar até %{grace_day_limit} dia (s) após a data de entrega, e vai ter esse número de dias subtraídos os seus dias de tolerância atribuídos"
         after_collection_message: "O número máximo de períodos de tolerância já passou para esse projeto. Quaisquer alterações serão gravadas, mas não classificados."
@@ -851,12 +851,12 @@ pt:
         after:  "Depois"
         from:  "De"
         to:  "para"
-        alert: "Você deve selecionar a regra de envio Prazo de tolerânciapara adicionar um período de tolerância."
+        alert: "Você deve selecionar a regra de envio Prazo de tolerância para adicionar um período de tolerância."
 
       penalty_decay_period_submission_rule:
         name: "Regra de submissão no período de decaimento"
         short_name: "Decaimento de penalidade"
-        description: "Você pode enviar até %{penalty_decay_period_limit} hora (s) após a data de entrega, mas terá a percentagem adequada deduzido do seu resultado final"
+        description: "Você pode enviar até %{penalty_decay_period_limit} hora(s) após a data de entrega, mas terá a percentagem adequada deduzida do seu resultado final"
         after_collection_message: "O número máximo de horas de penalização passou para este projeto. Quaisquer alterações serão gravadas, mas não classificados."
         commit_after_collection_message: "A data de entrega para este projeto, além do número máximo de horas de penalização permitidos, já passou. Suas alterações foram registrados, mas não vai ser incluído na classificação."
         overtime_message: "A data de entrega para este projeto já passou e agora você está em um período de grande penalidade. Você pode fazer alterações na sua submissão, mas terá% %{potential_penalty} deduzido a partir da marca final sobre esta atribuição."
@@ -892,16 +892,16 @@ pt:
     submission_file:
       error:
         no_access: "Não há acesso para o arquivo de submissão com id #%{submission_file_id}."
-        binary_file_message: "Conteudo binario: Use o botao de download para ver o arquivo!"
+        binary_file_message: "Conteudo binário: Use o botao de download para ver o arquivo!"
     test_result:
       error:
         no_access: "Não há accesso para resultado do teste com id #%{test_result_id}."
       button:
         load: "Carregar"
-      no_files_available: "[Nenhum resultado de testes disponíveis]"
+      no_files_available: "[Nenhum resultado disponíveis dos testes]"
       loading_results: "Carregando resultados..."
       running_tests: "Executando testes..."
-      build_successful: "Testes Completados. Veja '%{logfile}' para detalhos."
+      build_successful: "Testes Completados. Veja '%{logfile}' para detalhes."
       build_failed: "Falha de compilação. Veja '%{logfile}' para investigar."
       build_error: "Erro desconhecido com Ant. O Ant foi corretamente instalado? Veja '%{logfile}' para investigar."
 
@@ -912,13 +912,13 @@ pt:
       weight_not_number: "peso não é um número."
 
     csv_special_characters_html: "
-    <p>Se você quer user uma virgula (,) no campo do arquivo CSV , você deve cercar o campo com aspas duplas (\").<br />
+    <p>Se você quer user uma vírgula (,) no campo do arquivo CSV , você deve cercar o campo com aspas duplas (\").<br />
     Se você quiser usar aspas duplas em um campo do aruivo field, você deve cerca-lo com aspas duplas e<br />
-    duplique casa uma de suas aspas duplas(\"\").</p>
-    <p>Segue um exemplo de um campo contendo virgulas e aspas duplas:</p>
+    duplique cada uma de suas aspas duplas(\"\").</p>
+    <p>Segue um exemplo de um campo contendo vírgulas e aspas duplas:</p>
     <code>\"Code style \"\"poor\"\", but the intention was there.\"</code>"
 
-    criterion_name: "Nome critério"
+    criterion_name: "Nome do critério"
 
     flexible_criteria:
       criteria_management:         "Gerenciamento de critério: %{identifier}"
@@ -926,12 +926,12 @@ pt:
       move_up: "Mover para cima"
       move_down: "Mover para baixo"
       name: "Nome do critério flexível"
-      max: "Nota maxima"
+      max: "Nota máxima"
       description: "Descrição"
-      description_hint: "Você pode usar simples HTML tags no campo. Salve as alterações para ver vizualizar."
+      description_hint: "Você pode usar tags simples de HTML no campo. Salve as alterações para vizualizar."
       download:
-        title: "Baixar arquivo de Critério flexível"
-        prompt: "Critérios flexíveis estao disponíveis em CSV."
+        title: "Baixar arquivo de critério flexível"
+        prompt: "Critérios flexíveis estão disponíveis em CSV."
         link: "Baixar critérios flexíveis em formato CSV"
       upload:
         title: "Carregar arquivo de critério flexível"
@@ -940,25 +940,25 @@ pt:
         <p>O arquivo deve possuir o seguinte formato:</p>
         <ul><li>um registro por linha;</li><li>cada linha deve terminar por carriage-return line-feed.</li></ul>
         <code>criteria_name,max_value,description</code>
-        <p>A descrição é opcional. Repare que se isso não existir, a segunda virgula não deve aparecer.</p>"
+        <p>A descrição é opcional. Repare que se isso não existir, a segunda vírgula não deve aparecer.</p>"
         success: "Critério flexível carregado com sucesso: %{nb_updates} atualizado(s)."
 
     rubric_criteria:
-      criteria_management:         "Gerenciamento de rubrica : %{identifier}"
+      criteria_management:         "Gerenciamento de rúbrica : %{identifier}"
       save: "Salvar alterações"
-      name: "Nome de critério de rubrica"
+      name: "Nome de critério de rúbrica"
       move_up: "Mover para cima"
       move_down: "Mover para baixo"
       level:
-        levels: "Niveis"
+        levels: "Níveis"
         level_index: "Nível %{index}"
       download:
-        title: "Baixar arquivo de rubrica"
-        prompt: "Critério de rubrica estao disponíveis em CSV e YAML."
-        link_csv: "Baixar rubrica em formato CSV"
-        link_yml: "Baixar rubrica em formato YAML"
+        title: "Baixar arquivo de rúbrica"
+        prompt: "Critério de rúbrica estão disponíveis em CSV e YAML."
+        link_csv: "Baixar rúbrica em formato CSV"
+        link_yml: "Baixar rúbrica em formato YAML"
       upload:
-        success: "Critério de rubrica carregado com sucesso: %{nb_updates} update(s)."
+        success: "Critério de rúbrica carregado com sucesso: %{nb_updates} atualizada(s)."
         csv_title: "Carregar arquivo CSV"
         yml_title: "Carregar arquivo YML File"
         csv_prompt: "Selecionar um arquivo CSV para carregar"
@@ -967,8 +967,8 @@ pt:
         <p>O arquivo deve possuir o seguinte formato:</p>
         <ul><li>um registro por linha;</li><li>cada linha deve terminar por carriage-return line-feed.</li></ul>
         <code>criteria_name,weight,<em>level_names</em>,<em>level_descriptions</em></code>
-        <p>onde <em>level_names</em> deve conter o nome de casa nível (separado por virgulas)<br />
-        e <em>level_descriptions</em> deve conter a descrição de cada nível (opcional, também separado por virgulas)."
+        <p>onde <em>level_names</em> deve conter o nome de cada nível (separado por vírgulas)<br />
+        e <em>level_descriptions</em> deve conter a descrição de cada nível (opcional, também separado por vírgulas)."
         format_yml_html: "
           <p>O aruivo deve possuir o seguinte formato:<br />
               <code>criterion_name:<br />
@@ -979,14 +979,14 @@ pt:
                     &nbsp;&nbsp;level_1:<br />
                     &nbsp;&nbsp;&nbsp;&nbsp;[...]
           </p>"
-        error: "Alguns critérios de rubrica eram inválidos:"
-        syntax_error: "Existe um erro no arquivo carreado : %{error}"
+        error: "Alguns critérios de rúbrica eram inválidos:"
+        syntax_error: "Existe um erro no arquivo carregado : %{error}"
         empty_error: "Nenhum critério foi encontrado no arquivo fornecido."
-      error_total: "peso total deve ser positivo"
+      error_total: "Peso total deve ser positivo"
       defaults:
         level_0: "Insuficiente"
         level_1: "Fraco"
-        level_2: "Aceitavel"
+        level_2: "Aceitável"
         level_3: "Bom"
         level_4: "Excelente"
         description_0: "Esse critério não foi satisfeito."
@@ -996,20 +996,20 @@ pt:
         description_4: "Esse critério foi quase perfeitamente ou perfeitamente satisfeito."
 
     summary_table:
-      title: "Titulo"
-      max_value: "Valor maximo"
+      title: "Título"
+      max_value: "Valor máximo"
       grade: "Nota"
       x_mark: "x Mark"
       weight: "Peso"
 
     notes:
         note_on: "%{user_name} em <b>%{display_for}</b>"
-        add_new: "Inserir nova observaçao"
+        add_new: "Inserir nova observação"
         existing: "Notas existentes"
         comment: "Seu comentário"
         save: "Salvar observação"
         success: "Nota salva com sucesso"
-        error: "impossível salvar observação"
+        error: "Impossível salvar observação"
         title: "Observação"
         note: "Observação"
         noteable: "Para"
@@ -1022,9 +1022,9 @@ pt:
         creation_time: "Data de criação"
         delete:
             link_title: "Apagar essa anotação"
-            link_confirm: "Isso removera a anotação permanentemente. Continuar?"
+            link_confirm: "Isso removerá a anotação permanentemente. Continuar?"
             success: "Anotação apagada com sucesso ."
-            error_permissions: "Você não possui permissão para apagar a anotação."
+            error_permissions: "Você não possúi permissão para apagar a anotação."
         new:
             note_message: "Mensagem de observação"
             title: "Criar anotação"
@@ -1040,7 +1040,7 @@ pt:
             success: "Anotação foi atualizada com sucesso."
 
     add_criterion:                "Adicionar critério"
-    criteria_edit_total_mark:     "Esse critério sera classificado de %{criterion_total_mark}"
+    criteria_edit_total_mark:     "Esse critério será classificado de %{criterion_total_mark}"
     criterion_saved_success:   "Critério salvo com sucesso"
     criterion_deleted_success:  "Critério, e todas notas associadas foram apagas com sucesso"
     criteria:           "Critério"
@@ -1095,7 +1095,7 @@ pt:
         #MarkUs SHORT_DATE_TIME_FORMAT
         short_date: "%B %d, %Y"
 
-      day_names: [Domingo, Segunda-feira, Terça-feira, Quarta-feira, Quinta-feira, Sexta-feira, Sabado]
+      day_names: [Domingo, Segunda-feira, Terça-feira, Quarta-feira, Quinta-feira, Sexta-feira, Sábado]
       abbr_day_names: [Dom, Seg, Ter, Qua, Qui, Sex, Sab]
       month_names: [~, Janeiro, Fevereiro, Março, Abril, Maio, Junho, Julho, Agosto, Setembro, Outubro, Novembro, Dezembro]
       abbr_month_names: [~, Jan, Feb, Mar, Apr, Mai, Jun, Jul, Aug, Sep, Out, Nov, Dez]
@@ -1162,7 +1162,7 @@ pt:
       required_files_ant: "Arquivos exigidos para Ant"
       need_group_for_test: "Você precisa possuir um grupo para executar os testes"
       test: "Teste"
-      revision_used_for_test: "<span class=\"prop_label\">Revision used:</span> %{revision}"
+      revision_used_for_test: "<span class=\"prop_label\">Revisão utilizada:</span> %{revision}"
       due_date_is_passed: "Você não pode executar o teste pois a sua entrega está fora do prazo "
       information: "Informação"
       run_tests: "Executar testes"
@@ -1180,8 +1180,8 @@ pt:
       assignment_test_files: "Arquivos testes associados"
       assignment_lib_files: "Arquivos de bibliotecas associadas"
       assignment_parser_files: "Arquivos de interpretador associados"
-      private: "privado?"
-      replace: "Subistituir"
+      private: "Privado?"
+      replace: "Substituir"
       filename_exists: "já foi tomado"
       duplicate_filename: "Tentativa de carregamento do seguinte arquivo mais de uma vez: "
       invalid_buildxml: "Arquivo Ant build.xml deve ser nomeado build.xml"
