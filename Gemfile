@@ -64,7 +64,8 @@ group :development, :test do
   gem 'rdoc'
   gem 'iconv', :platforms => :mri_20
   gem 'rcov', :platforms => :mri_18
-  gem 'simplecov', :platforms => [:mri_19,:mri_20]
+  gem 'simplecov', :platforms => :mri_19
+  gem 'machinist'
   # FIXME: shoulda (>=4.0) introduces several deprecation warnings in tests
   # we have to fix before doing an upgrade
   gem 'shoulda', '<3.4'
@@ -72,7 +73,6 @@ group :development, :test do
   # Remove next line once MarkUs will not support Ruby 1.8,
   # as shoulda-matchers is a dependency of shoulda
   gem 'shoulda-matchers', '~>1.5'
-  gem 'machinist', '< 2'
   gem 'faker'
   gem 'railroady'
   gem 'time-warp'

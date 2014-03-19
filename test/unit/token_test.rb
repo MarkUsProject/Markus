@@ -8,7 +8,7 @@ class TokenTest < ActiveSupport::TestCase
   subject { @token }
   context 'valid Token' do
     setup do
-      @token = Token.make
+      @token = Token.make!
     end
     should validate_presence_of :tokens
     should validate_presence_of :grouping_id
@@ -30,7 +30,7 @@ class TokenTest < ActiveSupport::TestCase
   context 'function decrease_tokens' do
     context 'when number of tokens is greater than 0' do
       setup do
-         @token = Token.make
+         @token = Token.make!
          @token.decrease_tokens
       end
 
@@ -121,7 +121,7 @@ class TokenTest < ActiveSupport::TestCase
 
   context 'Token' do
     setup do
-      @token = Token.make{}
+      @token = Token.make!
     end
     should 'be found' do
       assert_equal(@token, Token.find_by_grouping_id(@token.grouping_id))
@@ -130,7 +130,7 @@ class TokenTest < ActiveSupport::TestCase
 
   context 'Token' do
     setup do
-      @token = Token.make
+      @token = Token.make!
     end
     should 'not be found (wrong grouping_id)' do
       assert_nil(Token.find_by_grouping_id(0))

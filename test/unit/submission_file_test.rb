@@ -226,7 +226,7 @@ require 'shoulda'
 
     context 'from an image file' do
       setup do
-        @submissionfile = SubmissionFile.make(:filename => 'filename.jpeg',
+        @submissionfile = SubmissionFile.make!(:filename => 'filename.jpeg',
           :path => 'path')
       end
       context 'with no annotations' do
@@ -236,12 +236,12 @@ require 'shoulda'
       end
       context 'with valid annotations' do
         setup do
-          @annot1 = ImageAnnotation.make({:submission_file => @submissionfile,
+          @annot1 = ImageAnnotation.make!({:submission_file => @submissionfile,
             :x1 => 0, :x2 => 10, :y1 => 0, :y2 => 10,
-            :annotation_text => AnnotationText.make({:id => 1})})
-          @annot2 = ImageAnnotation.make({:submission_file => @submissionfile,
+            :annotation_text => AnnotationText.make!({:id => 1})})
+          @annot2 = ImageAnnotation.make!({:submission_file => @submissionfile,
             :x1 => 57, :x2 => 73, :y1 => 2, :y2 => 100,
-            :annotation_text => AnnotationText.make({:id => 2})})
+            :annotation_text => AnnotationText.make!({:id => 2})})
         end
         should 'return a corresponding array' do
           @submissionfile.annotations.push(@annot1)
@@ -257,7 +257,7 @@ require 'shoulda'
 
     context 'from a pdf file' do
       setup do
-        @submissionfile = SubmissionFile.make(:filename => 'filename.jpeg',
+        @submissionfile = SubmissionFile.make!(:filename => 'filename.jpeg',
           :path => 'path')
       end
       context 'with no annotations' do
@@ -267,12 +267,12 @@ require 'shoulda'
       end
       context 'with valid annotations' do
         setup do
-          @annot1 = ImageAnnotation.make({:submission_file => @submissionfile,
+          @annot1 = ImageAnnotation.make!({:submission_file => @submissionfile,
             :x1 => 0, :x2 => 10, :y1 => 0, :y2 => 10,
-            :annotation_text => AnnotationText.make({:id => 1})})
-          @annot2 = ImageAnnotation.make({:submission_file => @submissionfile,
+            :annotation_text => AnnotationText.make!({:id => 1})})
+          @annot2 = ImageAnnotation.make!({:submission_file => @submissionfile,
             :x1 => 57, :x2 => 73, :y1 => 2, :y2 => 100,
-            :annotation_text => AnnotationText.make({:id => 2})})
+            :annotation_text => AnnotationText.make!({:id => 2})})
         end
         should 'return a corresponding array' do
           @submissionfile.annotations.push(@annot1)

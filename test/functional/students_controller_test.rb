@@ -6,7 +6,7 @@ class StudentsControllerTest < AuthenticatedControllerTest
 
   context 'A student' do
     setup do
-      @student = Student.make
+      @student = Student.make!
     end
 
     should 'not be able to go on :index' do
@@ -37,8 +37,8 @@ class StudentsControllerTest < AuthenticatedControllerTest
 
   context 'An admin' do
     setup do
-      @admin = Admin.make
-      @section = Section.make
+      @admin = Admin.make!
+      @section = Section.make!
     end
 
     should 'be able to get :new' do
@@ -91,8 +91,8 @@ class StudentsControllerTest < AuthenticatedControllerTest
 
     context 'with a student' do
       setup do
-        @student = Student.make
-        @section = Section.make
+        @student = Student.make!
+        @section = Section.make!
       end
 
       should 'recognize action to bulk modify for a student' do

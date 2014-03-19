@@ -19,7 +19,7 @@ class RubricCriterionTest < ActiveSupport::TestCase
 
 #  context "a valid Rubric Criterion model" do
 #    setup do
-#      RubricCriterion.make
+#      RubricCriterion.make!
 #    end
 #
 #    should validate_uniqueness_of(
@@ -35,7 +35,7 @@ class RubricCriterionTest < ActiveSupport::TestCase
   end
 
   should 'round weights that have more than 3 significant digits' do
-    RubricCriterion.make
+    RubricCriterion.make!
     assert RubricCriterion.count > 0
     criterion = RubricCriterion.first
     criterion.weight = 0.5555555555
@@ -44,14 +44,14 @@ class RubricCriterionTest < ActiveSupport::TestCase
   end
 
   should 'find a mark for a specific rubric and result' do
-    assignment = Assignment.make
-    grouping = Grouping.make(:assignment => assignment)
-    submission = Submission.make(:grouping => grouping)
-    result = Result.make(:submission => submission)
+    assignment = Assignment.make!
+    grouping = Grouping.make!(:assignment => assignment)
+    submission = Submission.make!(:grouping => grouping)
+    result = Result.make!(:submission => submission)
 
-    rubric = RubricCriterion.make(:assignment => assignment)
+    rubric = RubricCriterion.make!(:assignment => assignment)
 
-    mark = Mark.make(:result => result,
+    mark = Mark.make!(:result => result,
                     :markable => rubric)
     assert_not_nil rubric.mark_for(result.id)
   end
@@ -84,8 +84,8 @@ class RubricCriterionTest < ActiveSupport::TestCase
   context ' a Rubric Criterion assigning a TA' do
 
     setup do
-      @criterion = RubricCriterion.make
-      @ta = Ta.make
+      @criterion = RubricCriterion.make!
+      @ta = Ta.make!
     end
 
     teardown do
@@ -116,18 +116,18 @@ class RubricCriterionTest < ActiveSupport::TestCase
     end
 
     should 'assign multiple TAs' do
-      @ta1 = Ta.make
-      @ta2 = Ta.make
-      @ta3 = Ta.make
+      @ta1 = Ta.make!
+      @ta2 = Ta.make!
+      @ta3 = Ta.make!
       assert_equal 0, @criterion.criterion_ta_associations.count, 'Got unexpected TA membership count'
       @criterion.add_tas([@ta1, @ta2, @ta3])
       assert_equal 3, @criterion.criterion_ta_associations.count, 'Got unexpected TA membership count'
     end
 
     should 'remove multiple TAs' do
-      @ta1 = Ta.make
-      @ta2 = Ta.make
-      @ta3 = Ta.make
+      @ta1 = Ta.make!
+      @ta2 = Ta.make!
+      @ta3 = Ta.make!
       assert_equal 0, @criterion.criterion_ta_associations.count, 'Got unexpected TA membership count'
       @criterion.add_tas([@ta1, @ta2, @ta3])
       assert_equal 3, @criterion.criterion_ta_associations.count, 'Got unexpected TA membership count'
@@ -139,8 +139,8 @@ class RubricCriterionTest < ActiveSupport::TestCase
     end
 
     should 'get the names of TAs assigned to it' do
-      @ta1 = Ta.make(:user_name => 'g9browni')
-      @ta2 = Ta.make(:user_name => 'c7benjam')
+      @ta1 = Ta.make!(:user_name => 'g9browni')
+      @ta2 = Ta.make!(:user_name => 'c7benjam')
       @criterion.add_tas(@ta1)
       @criterion.add_tas(@ta2)
       assert_contains @criterion.get_ta_names, 'g9browni'
@@ -152,11 +152,11 @@ class RubricCriterionTest < ActiveSupport::TestCase
     setup do
       @csv_string = "Algorithm Design,2.0,Horrible,Poor,Satisfactory,Good,Excellent,,,,,
 Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
-      @assignment = Assignment.make(:marking_scheme_type => 'rubric')
-      RubricCriterion.make(:assignment => @assignment,
+      @assignment = Assignment.make!(:marking_scheme_type => 'rubric')
+      RubricCriterion.make!(:assignment => @assignment,
                            :rubric_criterion_name => 'Algorithm Design',
                            :weight => 2.0)
-      RubricCriterion.make(:assignment => @assignment,
+      RubricCriterion.make!(:assignment => @assignment,
                            :rubric_criterion_name => 'Documentation',
                            :weight => 2.7)
 
@@ -173,7 +173,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       tempfile << csv_string
       tempfile.rewind
       invalid_lines = []
-      dst_assignment =  Assignment.make(:marking_scheme_type => 'rubric')
+      dst_assignment =  Assignment.make!(:marking_scheme_type => 'rubric')
       nb_updates = RubricCriterion.parse_csv(tempfile, dst_assignment, invalid_lines, nil)
       assert_equal 2, nb_updates
       assert_equal 0, invalid_lines.size
@@ -185,8 +185,8 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
   context 'from an assignment composed of rubric criteria with commas and quotes in the descriptions' do
     setup do
       @csv_string = "Part 1 Programming,2.0,Horrible,Poor,Satisfactory,Good,Excellent,\"Makes the TA \"\"Shivers\"\"\",\"Leaves the TA \"\"calm\"\"\",\"Makes the TA \"\"grin\"\"\",\"Makes the TA \"\"smile\"\"\",\"Makes, the TA scream: \"\"at last, it was about time\"\"\"\n"
-      @assignment = Assignment.make
-      RubricCriterion.make(:assignment => @assignment,
+      @assignment = Assignment.make!
+      RubricCriterion.make!(:assignment => @assignment,
                            :rubric_criterion_name => 'Part 1 Programming',
                            :weight => 2.0,
                            :level_0_description => 'Makes the TA "Shivers"',
@@ -208,7 +208,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       tempfile << csv_string
       tempfile.rewind
       invalid_lines = []
-      dst_assignment = Assignment.make
+      dst_assignment = Assignment.make!
       nb_updates = RubricCriterion.parse_csv(tempfile, dst_assignment, invalid_lines, nil)
       assert_equal 1, nb_updates
       assert_equal 0, invalid_lines.size
@@ -219,7 +219,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
   context 'from an assignment without criteria' do
     setup do
-      @assignment = Assignment.make
+      @assignment = Assignment.make!
     end
 
     should 'be able to get an empty CSV string' do
@@ -281,7 +281,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
 
         setup do
           # we'll need a valid assignment for those cases.
-          @assignment = Assignment.make
+          @assignment = Assignment.make!
           # and a valid csv row...
           row = ['criterion 5', '1.0']
           (0..RubricCriterion::RUBRIC_LEVELS - 1).each do |i|
@@ -353,7 +353,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       tempfile = Tempfile.new('rubric_criteria_csv')
       tempfile << "criterion 6,1.0,l0,l1,l2,l3,l4,d0,d1,d2,d3,d4\n"
       tempfile.rewind
-      assignment = Assignment.make
+      assignment = Assignment.make!
       invalid_lines = []
 
       nb_updates = RubricCriterion.parse_csv(tempfile, assignment, invalid_lines, nil)
@@ -365,7 +365,7 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
       tempfile = Tempfile.new('flexible_criteria_csv')
       tempfile << "criterion 6\n,criterion 7\n"
       tempfile.rewind
-      assignment = Assignment.make
+      assignment = Assignment.make!
       invalid_lines = []
 
       nb_updates = RubricCriterion.parse_csv(tempfile, assignment, invalid_lines, nil)
@@ -393,7 +393,5 @@ Documentation,2.7,Horrible,Poor,Satisfactory,Good,Excellent,,,,,\n"
     new_rubric_criteria.delete(attr) if attr
     RubricCriterion.new(new_rubric_criteria)
   end
-
-
 
 end

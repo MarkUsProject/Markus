@@ -185,14 +185,14 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
       context "in an assignment with #{scheme_type} scheme doing a" do
         setup do
-          @student = Student.make
-          @assignment = Assignment.make(:marking_scheme_type => scheme_type)
-          @grouping = Grouping.make(:assignment => @assignment)
-          StudentMembership.make(
+          @student = Student.make!
+          @assignment = Assignment.make!(:marking_scheme_type => scheme_type)
+          @grouping = Grouping.make!(:assignment => @assignment)
+          StudentMembership.make!(
               :grouping => @grouping,
               :user => @student,
               :membership_status => StudentMembership::STATUSES[:inviter])
-          @submission = Submission.make(:grouping => @grouping)
+          @submission = Submission.make!(:grouping => @grouping)
           @result = @grouping.submissions.first.get_latest_result
         end
 
@@ -402,12 +402,12 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         context 'GET on :codeviewer' do
           setup do
-            SubmissionFile.make(:submission => @submission)
+            SubmissionFile.make!(:submission => @submission)
             @submission_file = @result.submission.submission_files.first
           end
 
           should 'and the student has no access to that file' do
-            @no_access_submission_file = SubmissionFile.make
+            @no_access_submission_file = SubmissionFile.make!
             get_as @student,
                     :codeviewer,
                     :assignment_id => @assignment.id,
@@ -541,9 +541,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end
 
           should 'and the result is available' do
-            SubmissionFile.make(:submission => @submission)
-            Mark.make(:result => @result)
-            AnnotationCategory.make(:assignment => @assignment)
+            SubmissionFile.make!(:submission => @submission)
+            Mark.make!(:result => @result)
+            AnnotationCategory.make!(:assignment => @assignment)
             @submission_file = @result.submission.submission_files.first
             @result.marking_state = Result::MARKING_STATES[:complete]
             @result.released_to_students = true
@@ -633,16 +633,16 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
       context "in an assignment with #{scheme_type} scheme doing a" do
         setup do
-          @admin = Admin.make
-          @assignment = Assignment.make(:marking_scheme_type => scheme_type)
+          @admin = Admin.make!
+          @assignment = Assignment.make!(:marking_scheme_type => scheme_type)
         end
 
         context 'GET on :edit' do
           context 'with 2 partial and 1 released/completed results' do
             setup do
               3.times do |time|
-                g = Grouping.make(:assignment => @assignment)
-                s = Submission.make(:grouping => g)
+                g = Grouping.make!(:assignment => @assignment)
+                s = Submission.make!(:grouping => g)
                 if time == 2
                   @result = s.get_latest_result
                   @result.marking_state = Result::MARKING_STATES[:complete]
@@ -729,7 +729,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         context 'GET on :next_grouping' do
           should 'when current grouping has submission' do
-            grouping = Grouping.make
+            grouping = Grouping.make!
             Grouping.any_instance.stubs(:has_submission).returns(true)
             get_as @admin,
                    :next_grouping,
@@ -740,7 +740,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end
 
           should 'when current grouping has no submission' do
-            grouping = Grouping.make
+            grouping = Grouping.make!
             Grouping.any_instance.stubs(:has_submission).returns(false)
             get_as @admin,
                    :next_grouping,
@@ -752,8 +752,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
         end
 
         should 'GET on :set_released_to_students' do
-          g = Grouping.make(:assignment => @assignment)
-          s = Submission.make(:grouping => g)
+          g = Grouping.make!(:assignment => @assignment)
+          s = Submission.make!(:grouping => g)
           @result = s.get_latest_result
           get_as @admin,
                   :set_released_to_students,
@@ -771,13 +771,13 @@ class ResultsControllerTest < AuthenticatedControllerTest
             # for each rubric type, in the following grade range:
             # flexible: 6-10%
             # rubric: 21-25%
-            g = Grouping.make(:assignment => @assignment)
-            s = Submission.make(:grouping => g)
+            g = Grouping.make!(:assignment => @assignment)
+            s = Submission.make!(:grouping => g)
             @result = s.get_latest_result
             if @assignment.marking_scheme_type == Assignment::MARKING_SCHEME_TYPE[:rubric]
-              Mark.make(:rubric, :result => @result)
+              Mark.make!(:rubric, :result => @result)
             else
-              Mark.make(:flexible, :result => @result)
+              Mark.make!(:flexible, :result => @result)
             end
 
             @assignment.assignment_stat.refresh_grade_distribution
@@ -837,7 +837,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end  # -- without file error
 
           should 'download with file error' do
-            submission = Submission.make
+            submission = Submission.make!
             SubmissionFile.any_instance.expects(:retrieve_file).once.raises(Exception.new(SAMPLE_ERR_MSG))
             SubmissionFile.stubs(:find).returns(@file)
 
@@ -878,11 +878,11 @@ class ResultsControllerTest < AuthenticatedControllerTest
         context 'GET on :download_zip' do
 
           setup do
-            @group = Group.make
-            @student = Student.make
-            @grouping = Grouping.make(:group => @group,
+            @group = Group.make!
+            @student = Student.make!
+            @grouping = Grouping.make!(:group => @group,
                                       :assignment => @assignment)
-            @membership = StudentMembership.make(:user => @student,
+            @membership = StudentMembership.make!(:user => @student,
                                                  :membership_status => 'inviter',
                                                  :grouping => @grouping)
             @student = @membership.user
@@ -909,7 +909,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
                                     :annotation_number => @submission.
                                         annotations.count + 1
                                   })
-            @annotation.annotation_text = AnnotationText.make
+            @annotation.annotation_text = AnnotationText.make!
             @annotation.save
           end
 
@@ -960,9 +960,9 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         context 'GET on :codeviewer' do
           setup do
-            g = Grouping.make(:assignment => @assignment)
-            @submission = Submission.make(:grouping => g)
-            @file = SubmissionFile.make(:submission => @submission)
+            g = Grouping.make!(:assignment => @assignment)
+            @submission = Submission.make!(:grouping => g)
+            @file = SubmissionFile.make!(:submission => @submission)
             annotation = Annotation.new
             @file.expects(:annotations).once.returns(annotation)
             SubmissionFile.stubs(:find).returns(@file)
@@ -1022,10 +1022,10 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         context 'GET on :update_mark' do
           setup do
-            g = Grouping.make(:assignment => @assignment)
-            @submission = Submission.make(:grouping => g)
+            g = Grouping.make!(:assignment => @assignment)
+            @submission = Submission.make!(:grouping => g)
 
-            @mark = Mark.make(:result => @submission.get_latest_result)
+            @mark = Mark.make!(:result => @submission.get_latest_result)
           end
 
           should 'fails validation' do
@@ -1135,7 +1135,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
         end
 
         should 'GET on :remove_extra_mark' do
-          @result = Result.make
+          @result = Result.make!
           (3..4).each do |extra_mark_value|
             @extra_mark = ExtraMark.new
             @extra_mark.unit = ExtraMark::UNITS[:points]
@@ -1184,8 +1184,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
         end
 
         should 'GET on :expand_unmarked_criteria' do
-          g = Grouping.make(:assignment => @assignment)
-          s = Submission.make(:grouping => g)
+          g = Grouping.make!(:assignment => @assignment)
+          s = Submission.make!(:grouping => g)
           @result = s.get_latest_result
 
           get_as @admin,
@@ -1201,7 +1201,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
         end
 
         should 'POST on :update_overall_comment' do
-          @result = Result.make
+          @result = Result.make!
           @overall_comment = 'A new overall comment!'
           post_as @admin,
                   :update_overall_comment,
@@ -1214,7 +1214,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
         end
 
         should 'POST on :update_overall_remark_comment' do
-          @result = Result.make
+          @result = Result.make!
           @overall_comment = 'A new overall remark comment!'
           post_as @admin,
                   :update_overall_remark_comment,
@@ -1238,12 +1238,12 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
       context "in an assignment with #{scheme_type} scheme doing a" do
         setup do
-          @ta = Ta.make
-          @assignment = Assignment.make(:marking_scheme_type => scheme_type)
+          @ta = Ta.make!
+          @assignment = Assignment.make!(:marking_scheme_type => scheme_type)
         end
 
         should 'GET on :edit' do
-          result = Result.make
+          result = Result.make!
           get_as @ta,
                  :edit,
                  :assignment_id => 1,
@@ -1257,7 +1257,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         context 'GET on :next_grouping' do
           should 'when current grouping has submission' do
-            grouping = Grouping.make
+            grouping = Grouping.make!
             Grouping.any_instance.stubs(:has_submission).returns(true)
             get_as @ta,
                    :next_grouping,
@@ -1269,7 +1269,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end
 
           should 'when current grouping has no submission' do
-            grouping = Grouping.make
+            grouping = Grouping.make!
             Grouping.any_instance.stubs(:has_submission).returns(false)
             get_as @ta,
                    :next_grouping,
@@ -1281,7 +1281,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
         end
 
         should 'GET on :set_released_to_students' do
-          result = Result.make
+          result = Result.make!
           get_as @ta,
                  :set_released_to_students,
                  :assignment_id => 1,
@@ -1292,7 +1292,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
         end
 
         should 'GET on :update_marking_state' do
-          result = Result.make
+          result = Result.make!
           get_as @ta,
                   :update_marking_state,
                   :assignment_id => 1,
@@ -1328,8 +1328,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
           end
 
           should 'with file error' do
-            submission = Submission.make
-            result = Result.make
+            submission = Submission.make!
+            result = Result.make!
             submission.expects(:get_latest_result).once.returns(result)
             @file.expects(:submission).twice.returns(submission)
             @file.expects(:retrieve_file).once.raises(
@@ -1368,7 +1368,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         context 'GET on :codeviewer' do
           setup do
-            @submission_file = SubmissionFile.make
+            @submission_file = SubmissionFile.make!
           end
 
           should 'be able to codeviewer with file reading error' do
@@ -1424,7 +1424,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         context 'GET on :update_mark' do
           setup do
-            @mark = Mark.make
+            @mark = Mark.make!
           end
 
           should 'fails validation' do
@@ -1465,7 +1465,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
         end  # -- GET on :view_marks
 
         should 'GET on :add_extra_mark' do
-          unmarked_result = Result.make
+          unmarked_result = Result.make!
           get_as @ta,
                  :add_extra_mark,
                  :assignment_id => 1,
@@ -1478,7 +1478,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         context 'POST on :add_extra_mark' do
           setup do
-            @unmarked_result = Result.make
+            @unmarked_result = Result.make!
           end
 
           should 'with save error' do
@@ -1518,7 +1518,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         should 'GET on :remove_extra_mark' do
           # create and save extra marks
-          @result = Result.make
+          @result = Result.make!
           (3..4).each do |extra_mark_value|
             @extra_mark = ExtraMark.new
             @extra_mark.unit = ExtraMark::UNITS[:points]
@@ -1567,8 +1567,8 @@ class ResultsControllerTest < AuthenticatedControllerTest
         end
 
         should 'GET on :expand_unmarked_criteria' do
-          g = Grouping.make(:assignment => @assignment)
-          s = Submission.make(:grouping => g)
+          g = Grouping.make!(:assignment => @assignment)
+          s = Submission.make!(:grouping => g)
 
           get_as @ta,
                   :expand_unmarked_criteria,
@@ -1584,7 +1584,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
 
         should 'POST on :update_overall_comment' do
           @overall_comment = 'A new overall comment!'
-          @result = Result.make
+          @result = Result.make!
           post_as @ta,
                   :update_overall_comment,
                   :assignment_id => 1,
@@ -1596,7 +1596,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
         end
 
         should 'POST on :update_overall_remark_comment' do
-          @result = Result.make
+          @result = Result.make!
           @overall_comment = 'A new overall remark comment!'
           post_as @ta,
                   :update_overall_remark_comment,

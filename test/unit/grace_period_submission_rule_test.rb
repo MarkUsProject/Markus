@@ -9,16 +9,16 @@ include MarkusConfigurator
 class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
   context 'Assignment has two grace periods of 24 hours each after due date' do
     setup do
-      @assignment = Assignment.make
-      @group = Group.make
-      @student = Student.make
-      @grouping = Grouping.make(:assignment => @assignment,
+      @assignment = Assignment.make!
+      @group = Group.make!
+      @student = Student.make!
+      @grouping = Grouping.make!(:assignment => @assignment,
                                 :group => @group)
 
-      StudentMembership.make(:grouping => @grouping,
+      StudentMembership.make!(:grouping => @grouping,
                              :membership_status => 'inviter',
                              :user => @student)
-      grace_period_submission_rule = GracePeriodSubmissionRule.new
+      grace_period_submission_rule = GracePeriodSubmissionRule.make!
       @assignment.replace_submission_rule(grace_period_submission_rule)
       GracePeriodDeduction.destroy_all
 
@@ -140,10 +140,7 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
       setup do
         # 2 grace credits deduction per student are in the database
         @grouping.accepted_student_memberships.each do |student_membership|
-          deduction = GracePeriodDeduction.new
-          deduction.membership = student_membership
-          deduction.deduction = 2
-          deduction.save
+          deduction = GracePeriodDeduction.make!(:membership => student_membership, :deduction => 2)
         end
       end
 
@@ -329,18 +326,16 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
 
     context 'submit assignment 1 on time and submit assignment 2 before assignment 1 collection time' do
       setup do
-        @assignment2 = Assignment.make
-        @grouping2 = Grouping.make(:assignment => @assignment2,
+        @assignment2 = Assignment.make!
+        @grouping2 = Grouping.make!(:assignment => @assignment2,
                                   :group => @group)
 
-        StudentMembership.make(:grouping => @grouping2,
+        StudentMembership.make!(:grouping => @grouping2,
                                :membership_status => 'inviter',
                                :user => @student)
-        grace_period_submission_rule = GracePeriodSubmissionRule.new
+        grace_period_submission_rule = GracePeriodSubmissionRule.make!
         @assignment2.replace_submission_rule(grace_period_submission_rule)
         GracePeriodDeduction.destroy_all
-
-        grace_period_submission_rule.save
 
         # On July 2 at 1PM, the instructor sets up the course...
         pretend_now_is(Time.parse('July 2 2009 1:00PM')) do
@@ -429,7 +424,7 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
           # Assert that each accepted member of this grouping did not get a GracePeriodDeduction
           @grouping.reload
           @grouping.accepted_student_memberships.each do |student_membership|
-            assert_equal members[student_membership.user.id] -1, student_membership.user.remaining_grace_credits
+            assert_equal members[student_membership.user.id] - 1, student_membership.user.remaining_grace_credits
           end
 
           # We should have all files except OvertimeFile1.java and NotIncluded.java in the repository.
@@ -506,10 +501,7 @@ class GracePeriodSubmissionRuleTest < ActiveSupport::TestCase
 
 
   def add_period_helper(submission_rule, hours)
-    period = Period.new
-    period.submission_rule = submission_rule
-    period.hours = hours
-    period.save
+    period = Period.make!(:submission_rule => submission_rule, :hours => hours)
   end
 
 end

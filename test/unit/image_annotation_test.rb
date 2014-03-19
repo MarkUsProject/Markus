@@ -23,7 +23,7 @@ class ImageAnnotationTest < ActiveSupport::TestCase
         {:x1 => -1, :x2 => 3, :y1 => -2, :y2 => 5})
       @spaces_annot = ImageAnnotation.make(
         {:x1 => -1, :x2 => 3, :y1 => 123, :y2 => 5})
-      @annotation = ImageAnnotation.make
+      @annotation = ImageAnnotation.make!
     end
 
     should 'put extract Coords' do

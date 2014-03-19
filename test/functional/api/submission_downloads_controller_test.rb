@@ -73,7 +73,7 @@ class Api::SubmissionDownloadsControllerTest < ActionController::TestCase
     setup do
 
       # Create admin from blueprints
-      @admin = Admin.make
+      @admin = Admin.make!
       @admin.reset_api_key
       base_encoded_md5 = @admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
@@ -91,13 +91,13 @@ class Api::SubmissionDownloadsControllerTest < ActionController::TestCase
       # Create students, groupings, assignments, etc for testing
       # Generates files, uploads them to the repo, and creates a submission as well
       setup do
-        @assignment = Assignment.make(:allow_web_submits => true, :group_min => 1)
-        @assignment2 = Assignment.make
+        @assignment = Assignment.make!(:allow_web_submits => true, :group_min => 1)
+        @assignment2 = Assignment.make!
 
-        @group = Group.make
-        @student = Student.make
-        @grouping = Grouping.make(:group => @group, :assignment => @assignment)
-        @membership = StudentMembership.make(:user => @student,
+        @group = Group.make!
+        @student = Student.make!
+        @grouping = Grouping.make!(:group => @group, :assignment => @assignment)
+        @membership = StudentMembership.make!(:user => @student,
           :membership_status => 'inviter', :grouping => @grouping)
         @student = @membership.user
 

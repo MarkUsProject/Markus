@@ -12,8 +12,8 @@ class AnnotationCategoryTest < ActiveSupport::TestCase
         @row.push('annotation category name')
         @row.push('annotation text 1')
         @row.push('annotation text 2')
-        @assignment = Assignment.make
-        @current_user = Admin.make
+        @assignment = Assignment.make!
+        @current_user = Admin.make!
       end
 
       should 'save the annotation' do
@@ -28,8 +28,8 @@ class AnnotationCategoryTest < ActiveSupport::TestCase
         @row.push('annotation text 2 1')
         @row.push('annotation text 2 2')
         @a = AnnotationCategory.all.size
-        @assignment = Assignment.make
-        @current_user = Admin.make
+        @assignment = Assignment.make!
+        @current_user = Admin.make!
         AnnotationCategory.add_by_row(@row, @assignment, @current_user)
       end
       should validate_presence_of :annotation_category_name
@@ -52,8 +52,8 @@ class AnnotationCategoryTest < ActiveSupport::TestCase
         @row.push('annotation text 3 1')
         @row.push('annotation text 3 2')
         @a = AnnotationText.all.size
-        @assignment = Assignment.make
-        @current_user = Admin.make
+        @assignment = Assignment.make!
+        @current_user = Admin.make!
         AnnotationCategory.add_by_row(@row, @assignment, @current_user)
       end
 

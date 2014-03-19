@@ -8,16 +8,16 @@ class PenaltyDecayPeriodSubmissionRuleTest < ActiveSupport::TestCase
 
   should 'be able to create PenaltyDecayPeriodSubmissionRule' do
     rule = PenaltyDecayPeriodSubmissionRule.new
-    rule.assignment = Assignment.make
+    rule.assignment = Assignment.make!
     assert rule.save
   end
 
   context 'A section with penalty_decay_period_submission rules.' do
 
     setup do
-      @group = Group.make
-      @grouping = Grouping.make(:group => @group)
-      @membership = StudentMembership.make(:grouping => @grouping, :membership_status => StudentMembership::STATUSES[:inviter])
+      @group = Group.make!
+      @grouping = Grouping.make!(:group => @group)
+      @membership = StudentMembership.make!(:grouping => @grouping, :membership_status => StudentMembership::STATUSES[:inviter])
       @assignment = @grouping.assignment
       @rule = PenaltyDecayPeriodSubmissionRule.new
       @assignment.replace_submission_rule(@rule)

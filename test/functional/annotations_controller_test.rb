@@ -74,13 +74,13 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
 
   context 'An authenticated and authorized admin doing a POST' do
      setup do
-      @user = Admin.make
-      @assignment = Assignment.make
-      @text_annotation = TextAnnotation.make
-      @category = AnnotationCategory.make
-      @annotation_text = AnnotationText.make
-      @submission_file = SubmissionFile.make
-      @result = Result.make
+      @user = Admin.make!
+      @assignment = Assignment.make!
+      @text_annotation = TextAnnotation.make!
+      @category = AnnotationCategory.make!
+      @annotation_text = AnnotationText.make!
+      @submission_file = SubmissionFile.make!
+      @result = Result.make!
     end
 
     should 'on :add_existing_annotation' do
@@ -119,7 +119,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
     end # End context :create image
 
     should 'on :destroy' do
-      anno = TextAnnotation.make({
+      anno = TextAnnotation.make!({
         :line_start => 1, :line_end => 1,
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id,
@@ -131,7 +131,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
     end # End context :destroy
 
     should 'on :update_annotation' do
-      anno = TextAnnotation.make({
+      anno = TextAnnotation.make!({
         :line_start => 1, :line_end => 1,
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id})
@@ -151,13 +151,13 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
 
   context 'An authenticated and authorized TA doing a POST' do
      setup do
-      @user = Ta.make
-      @assignment = Assignment.make
-      @text_annotation = TextAnnotation.make
-      @category = AnnotationCategory.make
-      @annotation_text = AnnotationText.make
-      @submission_file = SubmissionFile.make
-      @result = Result.make
+      @user = Ta.make!
+      @assignment = Assignment.make!
+      @text_annotation = TextAnnotation.make!
+      @category = AnnotationCategory.make!
+      @annotation_text = AnnotationText.make!
+      @submission_file = SubmissionFile.make!
+      @result = Result.make!
      end
 
     should 'on :add_existing_annotation' do
@@ -195,7 +195,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
     end # End context :create image
 
     should 'on :destroy' do
-      anno = TextAnnotation.make({
+      anno = TextAnnotation.make!({
         :line_start => 1, :line_end => 1,
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id,
@@ -207,7 +207,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
     end # End context :destroy
 
     should 'on :update_annotation' do
-      anno = TextAnnotation.make({
+      anno = TextAnnotation.make!({
         :line_start => 1, :line_end => 1,
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id})
@@ -228,13 +228,13 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
   context 'An authenticated and authorized Student doing a POST' do
    # A student should get a 404 even if they do everything right
      setup do
-      @user = Student.make
-      @assignment = Assignment.make
-      @text_annotation = TextAnnotation.make
-      @category = AnnotationCategory.make
-      @annotation_text = AnnotationText.make
-      @submission_file = SubmissionFile.make
-      @result = Result.make
+      @user = Student.make!
+      @assignment = Assignment.make!
+      @text_annotation = TextAnnotation.make!
+      @category = AnnotationCategory.make!
+      @annotation_text = AnnotationText.make!
+      @submission_file = SubmissionFile.make!
+      @result = Result.make!
     end
 
     should 'on :add_existing_annotation' do
@@ -296,4 +296,5 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
     assert_recognizes( {:action => 'destroy', :controller => 'annotations'},
                        {:path => 'annotations', :method => 'delete'} )
   end
+
 end

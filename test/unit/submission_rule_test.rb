@@ -11,7 +11,7 @@ class SubmissionRuleTest < ActiveSupport::TestCase
 
   should 'raise a whole bunch of NotImplemented errors' do
     rule = SubmissionRule.new
-    rule.assignment = Assignment.make
+    rule.assignment = Assignment.make!
 
     assert_raise NotImplementedError do
       rule.commit_after_collection_message
@@ -37,71 +37,71 @@ class SubmissionRuleTest < ActiveSupport::TestCase
   context 'Grace period ids' do
     setup do
 
-	  # Create SubmissionRule with default type 'GracePeriodSubmissionRule'
-	  @submission_rule = GracePeriodSubmissionRule.make
-	  sub_rule_id = @submission_rule.id
+    # Create SubmissionRule with default type 'GracePeriodSubmissionRule'
+    @submission_rule = GracePeriodSubmissionRule.make!
+    sub_rule_id = @submission_rule.id
 
-	  # Randomly create five periods for this SubmissionRule (ids unsorted):
+    # Randomly create five periods for this SubmissionRule (ids unsorted):
 
-	  # Create the first period
-	  @period = Period.make(:submission_rule_id => sub_rule_id)
-	  first_period_id = @period.id
+    # Create the first period
+    @period = Period.make!(:submission_rule_id => sub_rule_id)
+    first_period_id = @period.id
 
-	  # Create two other periods
-	  @period = Period.make(:id => first_period_id + 2, :submission_rule_id => sub_rule_id)
-	  @period = Period.make(:id => first_period_id + 4, :submission_rule_id => sub_rule_id)
+    # Create two other periods
+    @period = Period.make!(:id => first_period_id + 2, :submission_rule_id => sub_rule_id)
+    @period = Period.make!(:id => first_period_id + 4, :submission_rule_id => sub_rule_id)
 
-	  # Create two other periods
-	  @period = Period.make(:id => first_period_id + 1, :submission_rule_id => sub_rule_id)
-	  @period = Period.make(:id => first_period_id + 3, :submission_rule_id => sub_rule_id)
+    # Create two other periods
+    @period = Period.make!(:id => first_period_id + 1, :submission_rule_id => sub_rule_id)
+    @period = Period.make!(:id => first_period_id + 3, :submission_rule_id => sub_rule_id)
     end
 
     should 'sort in ascending order' do
     # Loop through periods for this SubmissionRule and verify the ids are
     # sorted in ascending order
-	  previous_id = @submission_rule.periods[0][:id]
-	  for i in (1..4) do
-	     assert @submission_rule.periods[i][:id] > previous_id
-	     previous_id = @submission_rule.periods[i][:id]
-	  end
+    previous_id = @submission_rule.periods[0][:id]
+    for i in (1..4) do
+       assert @submission_rule.periods[i][:id] > previous_id
+       previous_id = @submission_rule.periods[i][:id]
+    end
     end
   end
 
   context 'Penalty period ids' do
     setup do
 
-	  # Create SubmissionRule with default type 'PenaltyPeriodSubmissionRule'
-	  @submission_rule = PenaltyPeriodSubmissionRule.make
-	  sub_rule_id = @submission_rule.id
+      # Create SubmissionRule with default type 'PenaltyPeriodSubmissionRule'
+      @submission_rule = PenaltyPeriodSubmissionRule.make!
+      sub_rule_id = @submission_rule.id
 
-	  # Randomly create five periods for this SubmissionRule (ids unsorted):
+      # Randomly create five periods for this SubmissionRule (ids unsorted):
 
-	  # Create the first period
-	  @period = Period.make(:submission_rule_id => sub_rule_id)
-	  first_period_id = @period.id
+      # Create the first period
+      @period = Period.make!(:submission_rule_id => sub_rule_id)
+      first_period_id = @period.id
 
-	  # Create two other periods
-	  @period = Period.make(:id => first_period_id + 2, :submission_rule_id => sub_rule_id)
-	  @period = Period.make(:id => first_period_id + 4, :submission_rule_id => sub_rule_id)
+      # Create two other periods
+      @period = Period.make!(:id => first_period_id + 2, :submission_rule_id => sub_rule_id)
+      @period = Period.make!(:id => first_period_id + 4, :submission_rule_id => sub_rule_id)
 
-	  # Create two other periods
-	  @period = Period.make(:id => first_period_id + 1, :submission_rule_id => sub_rule_id)
-	  @period = Period.make(:id => first_period_id + 3, :submission_rule_id => sub_rule_id)
+      # Create two other periods
+      @period = Period.make!(:id => first_period_id + 1, :submission_rule_id => sub_rule_id)
+      @period = Period.make!(:id => first_period_id + 3, :submission_rule_id => sub_rule_id)
     end
 
     should 'sort in ascending order' do
-	  # Loop through periods for this SubmissionRule and verify the ids are sorted in ascending order
-	  previous_id = @submission_rule.periods[0][:id]
-	  for i in (1..4) do
-	     assert @submission_rule.periods[i][:id] > previous_id
-	     previous_id = @submission_rule.periods[i][:id]
-	  end
+    # Loop through periods for this SubmissionRule and verify the ids are sorted in ascending order
+    previous_id = @submission_rule.periods[0][:id]
+    for i in (1..4) do
+       assert @submission_rule.periods[i][:id] > previous_id
+       previous_id = @submission_rule.periods[i][:id]
+    end
     end
   end
 
   context 'Assignment with a due date in 2 days' do
     setup do
-      @assignment = Assignment.make
+      @assignment = Assignment.make!
     end
 
     should 'have not be able to collect' do
@@ -123,18 +123,18 @@ class SubmissionRuleTest < ActiveSupport::TestCase
     setup do
 
       # the assignment due date is to come...
-      @assignment = Assignment.make(:section_due_dates_type => true,
+      @assignment = Assignment.make!(:section_due_dates_type => true,
         :due_date => 2.days.from_now, :group_min => 1)
 
       # ... but the section due date is in the past
-      @section = Section.make(:name => 'section1')
-      @sectionDueDate = SectionDueDate.make(:section => @section,
+      @section = Section.make!(:name => 'section1')
+      @sectionDueDate = SectionDueDate.make!(:section => @section,
         :assignment => @assignment, :due_date => 2.days.ago)
 
       # create a group of one student from this section, for this assignment
-      @student = Student.make(:section => @section)
-      @grouping = Grouping.make(:assignment => @assignment)
-      @studentMembership = StudentMembership.make(:user => @student, :grouping => @grouping,
+      @student = Student.make!(:section => @section)
+      @grouping = Grouping.make!(:assignment => @assignment)
+      @studentMembership = StudentMembership.make!(:user => @student, :grouping => @grouping,
           :membership_status => StudentMembership::STATUSES[:inviter])
 
     end
@@ -149,7 +149,7 @@ class SubmissionRuleTest < ActiveSupport::TestCase
 
   context 'Assignment with a past due date' do
     setup do
-      @assignment = Assignment.make(:due_date => 2.days.ago)
+      @assignment = Assignment.make!(:due_date => 2.days.ago)
     end
 
     should 'should be able to collect' do

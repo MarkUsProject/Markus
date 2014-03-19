@@ -13,8 +13,8 @@ class MarksGradersControllerTest < AuthenticatedControllerTest
     users = { 'Student' => Student, 'Ta' => Ta }
     users.each do |user_type, user_class|
       setup do
-        @user = user_class.make
-        @grade_entry_form = GradeEntryForm.make
+        @user = user_class.make!
+        @grade_entry_form = GradeEntryForm.make!
       end
 
       should "fail to GET :index as a #{user_type}" do
@@ -36,15 +36,15 @@ class MarksGradersControllerTest < AuthenticatedControllerTest
 
   context 'An authenticated admin' do
     setup do
-      @admin = Admin.make
-      @grade_entry_form = GradeEntryForm.make
+      @admin = Admin.make!
+      @grade_entry_form = GradeEntryForm.make!
 
       @students = []
       @graders = []
 
       5.times do
-        @students << Student.make
-        @graders << Ta.make
+        @students << Student.make!
+        @graders << Ta.make!
       end
     end
 

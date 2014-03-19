@@ -70,7 +70,7 @@ class Api::UsersControllerTest < ActionController::TestCase
     setup do
 
       # Creates admin from blueprints.
-      @admin = Admin.make
+      @admin = Admin.make!
       @admin.reset_api_key
       base_encoded_md5 = @admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
@@ -82,11 +82,11 @@ class Api::UsersControllerTest < ActionController::TestCase
     context 'testing index function' do
       # Create three test accounts
       setup do
-        @new_user1 = Student.create(:user_name => 'ApiTestStudent1',
+        @new_user1 = Student.make!(:user_name => 'ApiTestStudent1',
           :last_name => 'ApiTesters', :first_name => 'ApiTesting1')
-        @new_user2 = Student.create(:user_name => 'ApiTestStudent2',
+        @new_user2 = Student.make!(:user_name => 'ApiTestStudent2',
           :last_name => 'ApiTesters', :first_name => 'ApiTesting2')
-        @new_user3 = Student.create(:user_name => 'ApiTestStudent3',
+        @new_user3 = Student.make!(:user_name => 'ApiTestStudent3',
           :last_name => 'ApiTesters3', :first_name => 'ApiTesting3')
       end
 
@@ -188,7 +188,7 @@ class Api::UsersControllerTest < ActionController::TestCase
     # Testing GET api/users/:id
     context 'testing show function' do
       setup do
-        @user = Student.make
+        @user = Student.make!
       end
 
       should 'return only that user and all default attributes if the id is valid' do
@@ -233,7 +233,7 @@ class Api::UsersControllerTest < ActionController::TestCase
       end
 
       should 'not use the ActiveRecord class name as the root' do
-        user = Admin.make
+        user = Admin.make!
         get 'show', :id => user.id.to_s
         assert !@response.body.include?('{"admin":')
       end
@@ -287,7 +287,7 @@ class Api::UsersControllerTest < ActionController::TestCase
 
     context 'testing the create function with an existing user_name to cause error' do
       setup do
-        @user = Student.make
+        @user = Student.make!
         @attr = {:user_name => @user.user_name, :last_name => 'Tester',
                  :first_name => 'Api', :type => 'admin' }
         @res = post('create', @attr)
@@ -314,8 +314,8 @@ class Api::UsersControllerTest < ActionController::TestCase
     # Testing PUT api/users/:id
     context 'testing the update function' do
       setup do
-        @user = Student.make
-        @second_user = Student.make
+        @user = Student.make!
+        @second_user = Student.make!
       end
 
       should 'update those attributes that are supplied' do

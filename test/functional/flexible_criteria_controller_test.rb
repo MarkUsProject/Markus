@@ -146,18 +146,18 @@ require 'mocha/setup'
   context 'An authenticated and authorized admin doing a GET' do
 
     setup do
-      @admin = Admin.make
-      @assignment = Assignment.make
-      @criterion = FlexibleCriterion.make(
+      @admin = Admin.make!
+      @assignment = Assignment.make!
+      @criterion = FlexibleCriterion.make!(
           :assignment => @assignment,
           :flexible_criterion_name => 'criterion1',
           :description => 'description1, for criterion 1')
-      @criterion2 = FlexibleCriterion.make(
+      @criterion2 = FlexibleCriterion.make!(
           :assignment => @assignment,
           :position => 2,
           :flexible_criterion_name => 'criterion2',
           :description => 'description2, "with quotes"')
-      @criterion3 = FlexibleCriterion.make(
+      @criterion3 = FlexibleCriterion.make!(
           :assignment => @assignment,
           :position => 3,
           :flexible_criterion_name => 'criterion3',
@@ -301,18 +301,18 @@ require 'mocha/setup'
   context 'An authenticated and authorized admin doing a POST' do
 
     setup do
-      @admin = Admin.make(:user_name => 'olm_admin')
-      @assignment = Assignment.make
-      @criterion = FlexibleCriterion.make(
+      @admin = Admin.make!(:user_name => 'olm_admin')
+      @assignment = Assignment.make!
+      @criterion = FlexibleCriterion.make!(
           :assignment => @assignment,
           :flexible_criterion_name => 'criterion1',
           :description => 'description1, for criterion 1')
-      @criterion2 = FlexibleCriterion.make(
+      @criterion2 = FlexibleCriterion.make!(
           :assignment => @assignment,
           :position => 2,
           :flexible_criterion_name => 'criterion2',
           :description => 'description2, "with quotes"')
-      @criterion3 = FlexibleCriterion.make(
+      @criterion3 = FlexibleCriterion.make!(
           :assignment => @assignment,
           :position => 3,
           :flexible_criterion_name => 'criterion3',
@@ -361,7 +361,7 @@ require 'mocha/setup'
 
       context 'without error on an assignment as the first criterion' do
         setup do
-          assignment = Assignment.make
+          assignment = Assignment.make!
           post_as @admin, :create, :assignment_id => assignment.id, :flexible_criterion => {:flexible_criterion_name => 'first', :max => 10}
         end
         should 'respond with appropriate content' do
@@ -567,9 +567,9 @@ require 'mocha/setup'
   context 'An authenticated and authorized admin doing a DELETE' do
 
     setup do
-      @admin = Admin.make
-      @assignment = Assignment.make
-      @criterion = FlexibleCriterion.make(:assignment => @assignment)
+      @admin = Admin.make!
+      @assignment = Assignment.make!
+      @criterion = FlexibleCriterion.make!(:assignment => @assignment)
     end
 
 

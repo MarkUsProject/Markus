@@ -70,7 +70,7 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
     setup do
 
       # Create admin from blueprints
-      @admin = Admin.make
+      @admin = Admin.make!
       @admin.reset_api_key
       base_encoded_md5 = @admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
@@ -99,7 +99,7 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
       end
 
       should 'not use the ActiveRecord class name as the root' do
-        assignment = Assignment.make
+        assignment = Assignment.make!
         get 'show', :id => assignment.id.to_s
         assert !@response.body.include?('{"assignment":')
       end
@@ -134,11 +134,11 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
     context 'testing index function' do
       # Create three test assignments
       setup do
-        @assignment1 = Assignment.make(:short_identifier => 'A1',
+        @assignment1 = Assignment.make!(:short_identifier => 'A1',
           :due_date => '2012-03-20 23:59:00', :group_min => 1)
-        @assignment2 = Assignment.make(:short_identifier => 'A2',
+        @assignment2 = Assignment.make!(:short_identifier => 'A2',
           :due_date => '2012-03-21 23:59:00', :group_min => 2, :message => 'test')
-        @assignment3 = Assignment.make(:short_identifier => 'A3',
+        @assignment3 = Assignment.make!(:short_identifier => 'A3',
           :due_date => '2012-03-22 23:59:00', :group_min => 2)
       end
 
@@ -237,7 +237,7 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
     # Testing GET api/assignments/:id
     context 'testing show function' do
       setup do
-        @assignment = Assignment.make(:short_identifier => 'A1',
+        @assignment = Assignment.make!(:short_identifier => 'A1',
           :due_date => '2012-03-20 23:59:00', :group_min => 1)
       end
 
@@ -352,7 +352,7 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
 
     context 'testing create with a taken short_identifier' do
       setup do
-        @assignment = Assignment.make
+        @assignment = Assignment.make!
         post 'create', :short_identifier => @assignment.short_identifier,
           :description => 'sample', :due_date => '2013-04-07 23:00:01'
       end
@@ -390,8 +390,8 @@ class Api::AssignmentsControllerTest < ActionController::TestCase
     # Testing PUT api/assignments/:id
     context 'testing the update function' do
       setup do
-        @assignment = Assignment.make
-        @second_assignment = Assignment.make
+        @assignment = Assignment.make!
+        @second_assignment = Assignment.make!
       end
 
       should 'update those attributes that are supplied' do

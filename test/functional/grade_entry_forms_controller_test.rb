@@ -15,12 +15,16 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
   # An authenticated and authorized student
   context 'An authenticated and authorized student doing a ' do
     setup do
-      @student = Student.make
-      @grade_entry_form = GradeEntryForm.make
+      @student = Student.make!
+      @grade_entry_form = GradeEntryForm.make!
       @grade_entry_form_with_grade_entry_items = make_grade_entry_form_with_multiple_grade_entry_items
-      @grade_entry_student = @grade_entry_form_with_grade_entry_items.grade_entry_students.make(:user => @student)
+      @grade_entry_student = GradeEntryStudent.make!(
+        :grade_entry_form => @grade_entry_form_with_grade_entry_items,
+        :user => @student)
       @grade_entry_form_with_grade_entry_items.grade_entry_items.each do |grade_entry_item|
-        @grade_entry_student.grades.make(:grade_entry_item => grade_entry_item, :grade => 5)
+        Grade.make!(:grade_entry_student => @grade_entry_student,
+                    :grade_entry_item => grade_entry_item,
+                    :grade => 5)
       end
     end
 
@@ -80,8 +84,10 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
     end
 
     should "GET on :student_interface when the student's mark has been released and it is a blank mark" do
-      student1 = Student.make
-      grade_entry_student1 = @grade_entry_form_with_grade_entry_items.grade_entry_students.make(:user => student1)
+      student1 = Student.make!
+      grade_entry_student1 = GradeEntryStudent.make!(
+        :grade_entry_form => @grade_entry_form_with_grade_entry_items,
+        :user => student1)
       grade_entry_student1.released_to_student=true
       grade_entry_student1.save
       grade_entry_student1 = @grade_entry_form.grade_entry_students.find_by_user_id(student1.id)
@@ -122,7 +128,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
   # An authenitcated and authorized TA
   context 'An authenticated and authorized TA doing a ' do
     setup do
-      @ta = Ta.make
+      @ta = Ta.make!
     end
 
     # TAs are not allowed to create or edit grade entry form properties or access
@@ -161,12 +167,12 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
   # An authenticated and authorized admin
   context 'An authenticated and authorized admin doing a ' do
     setup do
-      @admin = Admin.make
-      @grade_entry_form = GradeEntryForm.make
+      @admin = Admin.make!
+      @grade_entry_form = GradeEntryForm.make!
       @grade_entry_form_with_grade_entry_items = make_grade_entry_form_with_multiple_grade_entry_items
       @original = @grade_entry_form
       @original_with_grade_entry_items = @grade_entry_form_with_grade_entry_items
-      10.times {Student.make}
+      10.times {Student.make!}
     end
 
     should 'GET on :new' do
@@ -596,10 +602,13 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       end
 
       should ':edit with duplicate GradeEntryItem name' do
-        @grade_entry_form_with_dup = GradeEntryForm.make
+        @grade_entry_form_with_dup = GradeEntryForm.make!
         @q1[:name] = 'Q1'
         @q2[:name] = 'Q1'
-        @grade_entry_form_with_dup.grade_entry_items.make(:name => @q1[:name], :position => 1)
+        GradeEntryItem.make!(:grade_entry_form => @grade_entry_form_with_dup,
+                             :out_of => 25,
+                             :name => @q1[:name],
+                             :position =>1)
         @grade_entry_form_before = @grade_entry_form_with_dup
 
         post_as @admin, :update, {:id => @grade_entry_form_with_dup.id,
@@ -626,11 +635,13 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
     context 'POST on :update_grade when the Grade has an existing value - ' do
       setup do
         @grade_entry_items = @grade_entry_form_with_grade_entry_items.grade_entry_items
-        @grade_entry_student_with_some_grades = @grade_entry_form_with_grade_entry_items.grade_entry_students.make
-        @grade_entry_student_with_some_grades.grades.make(:grade_entry_item => @grade_entry_items[0],
-                                                          :grade => 3)
-        @grade_entry_student_with_some_grades.grades.make(:grade_entry_item => @grade_entry_items[1],
-                                                          :grade => 7)
+        @grade_entry_student_with_some_grades = GradeEntryStudent.make!(:grade_entry_form => @grade_entry_form_with_grade_entry_items)
+        Grade.make!(:grade_entry_student => @grade_entry_student_with_some_grades,
+                    :grade_entry_item => @grade_entry_items[0],
+                    :grade => 3)
+        Grade.make!(:grade_entry_student => @grade_entry_student_with_some_grades,
+                    :grade_entry_item => @grade_entry_items[1],
+                    :grade => 7)
       end
 
       should 'change the existing value to a valid value' do
@@ -683,7 +694,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
     context 'POST on :update_grade when the Grade does not have an existing value and the GradeEntryStudent does exist - ' do
       setup do
         @grade_entry_items = @grade_entry_form_with_grade_entry_items.grade_entry_items
-        @grade_entry_student = @grade_entry_form_with_grade_entry_items.grade_entry_students.make
+        @grade_entry_student = GradeEntryStudent.make!(:grade_entry_form => @grade_entry_form_with_grade_entry_items)
       end
 
       should 'set an empty grade to a valid value' do
@@ -732,7 +743,7 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
     context 'POST on :update_grade when the Grade does not have an existing value and the GradeEntryStudent does not exist - ' do
       setup do
         @grade_entry_items = @grade_entry_form_with_grade_entry_items.grade_entry_items
-        @student = Student.make
+        @student = Student.make!
       end
 
       should 'set an empty grade to a valid value' do
@@ -807,9 +818,9 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
         @students = []
         @specific_students = []
         (0..11).each do |i|
-          student = Student.make(:user_name => 's' + i.to_s, :last_name => last_names[i], :first_name => 'Bob')
+          student = Student.make!(:user_name => 's' + i.to_s, :last_name => last_names[i], :first_name => 'Bob')
           @students << student
-          @grade_entry_form1.grade_entry_students.make(:user => student)
+          GradeEntryStudent.make!(:grade_entry_form => @grade_entry_form1, :user => student)
         end
       end
 
@@ -881,13 +892,18 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
 
     context 'POST on :csv_upload with column already in db ' do
       setup do
-        @student = Student.make(:user_name => 'c2ÈrÉØrr', :last_name => 'Last', :first_name => 'First')
-        @grade_entry_form = GradeEntryForm.make
-        @grade_entry_student = @grade_entry_form.grade_entry_students.make(:user => @student)
-        @grade_entry_item = @grade_entry_form.grade_entry_items.make(:name => 'something', :position => 1)
+        @student = Student.make!(:user_name => 'c2ÈrÉØrr', :last_name => 'Last', :first_name => 'First')
+        @grade_entry_form = GradeEntryForm.make!
+        @grade_entry_student = GradeEntryStudent.make!(:grade_entry_form => @grade_entry_form_with_grade_entry_items, :user => @student)
+        @grade_entry_item = @grade_entry_form.grade_entry_items.make!(:name => 'something', :position => 1)
         @old_grade = 0.0
         @new_grade = 10.0
-        @grade_entry_student.grades.make(:grade_entry_item => @grade_entry_item, :grade => @old_grade)
+        #@grade_entry_student.grades.make!(:grade_entry_item => @grade_entry_item, :grade => @old_grade)
+        @grade_entry_form.grade_entry_items.each do |grade_entry_item|
+          Grade.make!(:grade_entry_student => @grade_entry_student,
+                      :grade_entry_item => grade_entry_item,
+                      :grade => @old_grade)
+        end
       end
 
       should 'have valid values in database after an upload of a UTF-8 encoded file parsed as UTF-8' do

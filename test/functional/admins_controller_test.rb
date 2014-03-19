@@ -21,7 +21,7 @@ class AdminsControllerTest < AuthenticatedControllerTest
 
   context 'An admin' do
     setup do
-      @admin = Admin.make
+      @admin = Admin.make!
     end
 
     should 'be able to get :new' do
@@ -46,7 +46,7 @@ class AdminsControllerTest < AuthenticatedControllerTest
 
     context 'with a second user' do
       setup do
-        @admin2 = Admin.make
+        @admin2 = Admin.make!
       end
 
       should 'be able to update' do

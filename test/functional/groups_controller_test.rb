@@ -12,8 +12,8 @@ class GroupsControllerTest < AuthenticatedControllerTest
   context 'An authenticated and authorized student doing a ' do
 
     setup do
-      @student = Student.make
-      @assignment = Assignment.make
+      @student = Student.make!
+      @assignment = Assignment.make!
     end
 
     should 'GET on :add_group' do
@@ -68,9 +68,9 @@ class GroupsControllerTest < AuthenticatedControllerTest
   context 'An authenticated and authorized admin doing a ' do
 
     setup do
-      @admin = Admin.make
-      @grouping = Grouping.make
-      @assignment = Assignment.make(:groupings => [@grouping])
+      @admin = Admin.make!
+      @grouping = Grouping.make!
+      @assignment = Assignment.make!(:groupings => [@grouping])
     end
 
     should 'GET on :index(groups_controller)' do
@@ -104,8 +104,8 @@ class GroupsControllerTest < AuthenticatedControllerTest
     context 'POST on :add_group' do
 
       should 'be able to add group without groupname' do
-        @assignment = Assignment.make
-        Assignment.any_instance.stubs(:add_group).returns(Grouping.make)
+        @assignment = Assignment.make!
+        Assignment.any_instance.stubs(:add_group).returns(Grouping.make!)
         post_as @admin, :new, :assignment_id => @assignment.id
         assert_response :success
         assert render_template 'groups/table_row/_filter_table_row'
@@ -138,14 +138,14 @@ class GroupsControllerTest < AuthenticatedControllerTest
       end
 
       should 'on group with a submission' do
-        @grouping_with_submission = Grouping.make
+        @grouping_with_submission = Grouping.make!
         delete_as @admin,
                   :remove_group,
                   {:assignment_id => @assignment.id,
                    :grouping_id => @grouping_with_submission.id}
         assert_response :success
         assert render_template 'groups/delete_groupings'
-        assert_not_nil assigns(:assignment) { Assignment.make }
+        assert_not_nil assigns(:assignment) { Assignment.make! }
         assert_not_nil assigns(:errors) { [@grouping_with_submission.group.group_name] }
         assert_not_nil assigns(:removed_groupings) { [] }
       end
@@ -167,7 +167,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
       end
 
       should 'with existing name' do
-        @new_name = Grouping.make.group.group_name
+        @new_name = Grouping.make!.group.group_name
         post_as @admin, :rename_group, {:assignment_id => @assignment.id,
           :id => @grouping.id, :new_groupname => @new_name}
         assert_not_nil assigns :assignment
@@ -195,7 +195,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
     end
 
     should 'be able to clone groups from another assignment' do
-      target_assignment = Assignment.make
+      target_assignment = Assignment.make!
       post_as @admin,
               :use_another_assignment_groups,
               {:assignment_id => target_assignment.id,
@@ -256,9 +256,9 @@ class GroupsControllerTest < AuthenticatedControllerTest
     context 'group creation with grace days deduction, All members' do
 
       setup do
-        @student1 =  Student.make
-        @student2 =  Student.make
-        @student3 =  Student.make
+        @student1 =  Student.make!
+        @student2 =  Student.make!
+        @student3 =  Student.make!
       end
 
       should 'be deducted 0 grace days' do
@@ -371,11 +371,11 @@ class GroupsControllerTest < AuthenticatedControllerTest
     context 'POST on :global_actions on assign' do
 
       setup do
-        @assignment = Assignment.make
+        @assignment = Assignment.make!
       end
 
       should 'and no group selected' do
-        @student =  Student.make
+        @student =  Student.make!
         post_as @admin, :global_actions, {:assignment_id => @assignment.id,
           :global_actions => 'assign', :students => [@student.id]}
         assert_not_nil assigns :assignment
@@ -383,7 +383,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
       end
 
       should 'and no students selected' do
-        @grouping = Grouping.make
+        @grouping = Grouping.make!
         post_as @admin, :global_actions, {:assignment_id => @assignment.id,
           :global_actions => 'assign', :groupings => [@grouping.id]}
         assert_not_nil assigns :assignment
@@ -392,8 +392,8 @@ class GroupsControllerTest < AuthenticatedControllerTest
       end
 
       should 'with a single student not in a group' do
-        @student =  Student.make
-        @grouping = Grouping.make
+        @student =  Student.make!
+        @grouping = Grouping.make!
         post_add [@student.id]
         assert_not_nil assigns :assignment
         assert_response :success
@@ -405,8 +405,8 @@ class GroupsControllerTest < AuthenticatedControllerTest
       end
 
       should 'with a single user who is already grouped on this assignment' do
-        @student =  Student.make
-        @grouping = Grouping.make
+        @student =  Student.make!
+        @grouping = Grouping.make!
         @grouping.add_member(@student)
         post_add [@student.id]
         assert_not_nil assigns :assignment
@@ -419,9 +419,9 @@ class GroupsControllerTest < AuthenticatedControllerTest
       end
 
       should 'with two valid users' do
-        @student1 =  Student.make
-        @student2 =  Student.make
-        @grouping = Grouping.make
+        @student1 =  Student.make!
+        @student2 =  Student.make!
+        @grouping = Grouping.make!
         post_add [@student1.id, @student2.id]
         assert_not_nil assigns :assignment
         assert_not_nil assigns(:error) { false }
@@ -440,9 +440,9 @@ class GroupsControllerTest < AuthenticatedControllerTest
       should 'with two valid users, with assignment past collection date' do
         # stub collection date
         Assignment.any_instance.stubs(:past_collection_date?).returns(true)
-        @student1 =  Student.make
-        @student2 =  Student.make
-        @grouping = Grouping.make
+        @student1 =  Student.make!
+        @student2 =  Student.make!
+        @grouping = Grouping.make!
         post_add [@student1.id, @student2.id]
         assert_not_nil assigns :assignment
         assert_not_nil assigns(:error) { false }
@@ -458,10 +458,10 @@ class GroupsControllerTest < AuthenticatedControllerTest
       end
 
       should 'be able to add members' do
-        @student1 =  Student.make
-        @student2 =  Student.make
-        @grouping = Grouping.make(:assignment => @assignment)
-        @grouping2 = Grouping.make(:assignment => @assignment)
+        @student1 =  Student.make!
+        @student2 =  Student.make!
+        @grouping = Grouping.make!(:assignment => @assignment)
+        @grouping2 = Grouping.make!(:assignment => @assignment)
         @grouping2.add_member(@student1)
         post_add [@student1.id, @student2.id]
 
@@ -481,10 +481,10 @@ class GroupsControllerTest < AuthenticatedControllerTest
       end
 
       should 'with 1 valid user, 1 already assigned user' do
-        @student1 =  Student.make
-        @student2 =  Student.make
-        @grouping = Grouping.make(:assignment => @assignment)
-        @grouping2 = Grouping.make(:assignment => @assignment)
+        @student1 =  Student.make!
+        @student2 =  Student.make!
+        @grouping = Grouping.make!(:assignment => @assignment)
+        @grouping2 = Grouping.make!(:assignment => @assignment)
         @grouping2.add_member(@student2)
         post_add [@student1.id, @student2.id]
 
@@ -504,10 +504,10 @@ class GroupsControllerTest < AuthenticatedControllerTest
       end
 
       should 'with three valid users' do
-        @student1 =  Student.make
-        @student2 =  Student.make
-        @student3 =  Student.make
-        @grouping = Grouping.make
+        @student1 =  Student.make!
+        @student2 =  Student.make!
+        @student3 =  Student.make!
+        @grouping = Grouping.make!
         post_add [@student1.id, @student2.id, @student3.id]
         assert_not_nil assigns :assignment
         assert_not_nil assigns(:error) { true }
@@ -527,11 +527,11 @@ class GroupsControllerTest < AuthenticatedControllerTest
       end
 
       should 'with valid,valid,invalid users' do
-        @student1 =  Student.make
-        @student2 =  Student.make
-        @student3 =  Student.make
-        @grouping = Grouping.make(:assignment => @assignment)
-        @grouping2 = Grouping.make(:assignment => @assignment)
+        @student1 =  Student.make!
+        @student2 =  Student.make!
+        @student3 =  Student.make!
+        @grouping = Grouping.make!(:assignment => @assignment)
+        @grouping2 = Grouping.make!(:assignment => @assignment)
         @grouping2.add_member(@student3)
         post_add [@student1.id, @student2.id, @student3.id]
         assert_not_nil assigns :assignment
@@ -554,11 +554,11 @@ class GroupsControllerTest < AuthenticatedControllerTest
       end
 
       should 'with valid,invalid,valid users' do
-        @student1 =  Student.make
-        @student2 =  Student.make
-        @student3 =  Student.make
-        @grouping = Grouping.make(:assignment => @assignment)
-        @grouping2 = Grouping.make(:assignment => @assignment)
+        @student1 =  Student.make!
+        @student2 =  Student.make!
+        @student3 =  Student.make!
+        @grouping = Grouping.make!(:assignment => @assignment)
+        @grouping2 = Grouping.make!(:assignment => @assignment)
         @grouping2.add_member(@student2)
         post_add [@student1.id, @student2.id, @student3.id]
         assert_not_nil assigns :assignment
@@ -580,11 +580,11 @@ class GroupsControllerTest < AuthenticatedControllerTest
       end
 
       should 'with invalid,valid,valid users' do
-        @student1 =  Student.make
-        @student2 =  Student.make
-        @student3 =  Student.make
-        @grouping = Grouping.make(:assignment => @assignment)
-        @grouping2 = Grouping.make(:assignment => @assignment)
+        @student1 =  Student.make!
+        @student2 =  Student.make!
+        @student3 =  Student.make!
+        @grouping = Grouping.make!(:assignment => @assignment)
+        @grouping2 = Grouping.make!(:assignment => @assignment)
         @grouping2.add_member(@student1)
         post_add [@student1.id, @student2.id, @student3.id]
         assert_not_nil assigns :assignment
@@ -609,12 +609,12 @@ class GroupsControllerTest < AuthenticatedControllerTest
 
     context 'with a grouping' do
       setup do
-        @grouping = Grouping.make
+        @grouping = Grouping.make!
       end
 
       should 'be able to unassigne a member' do
-        @student1 = Student.make
-        @student2 = Student.make
+        @student1 = Student.make!
+        @student2 = Student.make!
         @grouping.add_member(@student1)
         @grouping.add_member(@student2)
         post_as @admin, :global_actions, {:assignment_id => @assignment.id,
@@ -628,8 +628,8 @@ class GroupsControllerTest < AuthenticatedControllerTest
       end
 
       should 'be able to unassign an inviter' do
-        @student1 = Student.make
-        @student2 = Student.make
+        @student1 = Student.make!
+        @student2 = Student.make!
         @grouping.add_member(@student1)
         @grouping.add_member(@student2)
         post_as @admin, :global_actions, {:assignment_id => @assignment.id,
@@ -643,8 +643,8 @@ class GroupsControllerTest < AuthenticatedControllerTest
       end
 
       should 'be able to unassigne all group members' do
-        @student1 = Student.make
-        @student2 = Student.make
+        @student1 = Student.make!
+        @student2 = Student.make!
         @grouping.add_member(@student1)
         @grouping.add_member(@student2)
         post_as @admin, :global_actions, {:assignment_id => @assignment.id,
@@ -663,7 +663,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
 
     context 'GET on download_grouplist' do
       setup do
-        @assignment = Assignment.make
+        @assignment = Assignment.make!
       end
 
       context 'with no groups' do
@@ -685,7 +685,7 @@ class GroupsControllerTest < AuthenticatedControllerTest
         setup do
           # Construct the array that a parse of the returned CSV
           # *should* return
-          @assignment = Assignment.make(:groupings => [Grouping.make])
+          @assignment = Assignment.make!(:groupings => [Grouping.make!])
           @match_array = construct_group_list_array(@assignment.groupings)
           @response = get_as @admin, :download_grouplist, {:assignment_id => @assignment.id}
         end
@@ -704,9 +704,9 @@ class GroupsControllerTest < AuthenticatedControllerTest
 
       context 'with groups, with TAs assigned' do
         setup do
-          @assignment = Assignment.make(:groupings => [Grouping.make])
-          @ta1 = Ta.make
-          @ta2 = Ta.make
+          @assignment = Assignment.make!(:groupings => [Grouping.make!])
+          @ta1 = Ta.make!
+          @ta2 = Ta.make!
           # For each grouping for Assignment 1, assign 2 TAs
           @assignment.groupings.each do |grouping|
             grouping.add_tas_by_user_name_array([@ta1.user_name, @ta2.user_name])

@@ -70,7 +70,7 @@ class Api::TestResultsControllerTest < ActionController::TestCase
   context 'An authenticated request to test_results' do
     setup do
       # Create admin from blueprints
-      admin = Admin.make
+      admin = Admin.make!
       base_encoded_md5 = admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
       @request.env['HTTP_AUTHORIZATION'] = auth_http_header
@@ -124,13 +124,13 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     # Testing GET api/assignments/id/groups/id/test_results
     context 'testing index function' do
       setup do
-        @group = Group.make
-        @assignment = Assignment.make
-        Submission.make(:grouping => Grouping.make(
+        @group = Group.make!
+        @assignment = Assignment.make!
+        Submission.make!(:grouping => Grouping.make!(
             :group => @group, :assignment => @assignment))
         submission = Submission.get_submission_by_group_and_assignment(
           @group[:group_name], @assignment[:short_identifier])
-        TestResult.make(:submission => submission)
+        TestResult.make!(:submission => submission)
         @num_tests = submission.test_results.count
       end
 
@@ -149,11 +149,11 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     # Testing GET api/assignments/id/groups/id/test_results/id
     context 'testing show function' do
       setup do
-        @group = Group.make
-        @assignment = Assignment.make
-        submission = Submission.make(:grouping => Grouping.make(
+        @group = Group.make!
+        @assignment = Assignment.make!
+        submission = Submission.make!(:grouping => Grouping.make!(
             :group => @group, :assignment => @assignment))
-        @test_result = TestResult.make(:submission => submission)
+        @test_result = TestResult.make!(:submission => submission)
       end
 
       should "send the file contents if it's a valid file" do
@@ -182,11 +182,11 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     # Testing DELETE api/assignments/id/groups/id/test_results/id
     context 'testing destroy' do
       setup do
-        @group = Group.make
-        @assignment = Assignment.make
-        submission = Submission.make(:grouping => Grouping.make(
+        @group = Group.make!
+        @assignment = Assignment.make!
+        submission = Submission.make!(:grouping => Grouping.make!(
             :group => @group, :assignment => @assignment))
-        @test_result = TestResult.make(:submission => submission)
+        @test_result = TestResult.make!(:submission => submission)
       end
 
       should 'delete the test result_result if a valid id is given' do
@@ -219,15 +219,15 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     # Testing POST api/assignments/id/groups/id/test_results
     context 'testing create function' do
       setup do
-        @group = Group.make
-        @assignment = Assignment.make
-        Submission.make(:grouping => Grouping.make(
+        @group = Group.make!
+        @assignment = Assignment.make!
+        Submission.make!(:grouping => Grouping.make!(
             :group => @group, :assignment => @assignment))
         @filename = 'testing_tests.xml'
         @file_content = 'testing test files'
         @submission = Submission.get_submission_by_group_and_assignment(
           @group[:group_name], @assignment[:short_identifier])
-        @existing_filename = TestResult.make(
+        @existing_filename = TestResult.make!(
             :submission => @submission).filename
         @num_test_results = @submission.test_results.count
       end
@@ -268,16 +268,16 @@ class Api::TestResultsControllerTest < ActionController::TestCase
     # Testing PUT api/assignments/id/groups/id/test_results/id
     context 'testing update function' do
       setup do
-        @group = Group.make
-        @assignment = Assignment.make
-        submission = Submission.make(:grouping => Grouping.make(
+        @group = Group.make!
+        @assignment = Assignment.make!
+        submission = Submission.make!(:grouping => Grouping.make!(
             :group => @group, :assignment => @assignment))
-        @test_result = TestResult.make(:submission => submission)
+        @test_result = TestResult.make!(:submission => submission)
         @filename = 'testing_tests.xml'
         @file_content = 'testing test files'
         @submission = Submission.get_submission_by_group_and_assignment(
           @group[:group_name], @assignment[:short_identifier])
-        @taken_filename = TestResult.make(:submission => @submission).filename
+        @taken_filename = TestResult.make!(:submission => @submission).filename
         @num_test_results = @submission.test_results.count
       end
 

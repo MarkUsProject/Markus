@@ -15,13 +15,13 @@ class SectionTest < ActiveSupport::TestCase
 
   context 'A section with no student associated to' do
     setup do
-      @section = Section.make
+      @section = Section.make!
     end
 
     context 'With a section due date for an assignment' do
       setup do
-        @assignment = Assignment.make
-        @section_due_date = SectionDueDate.make(:section => @section,
+        @assignment = Assignment.make!
+        @section_due_date = SectionDueDate.make!(:section => @section,
                                                 :assignment => @assignment)
       end
 
@@ -42,8 +42,8 @@ class SectionTest < ActiveSupport::TestCase
 
   context 'A section with students associated to' do
     setup do
-      @section = Section.make
-      3.times { @section.students.make }
+      @section = Section.make!
+      3.times { Student.make!(:section => @section) }
     end
 
     should 'return true to has_students?' do

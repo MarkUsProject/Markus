@@ -1,15 +1,17 @@
 require File.join(File.dirname(__FILE__), '..', '..', 'test_helper')
+require File.join(File.dirname(__FILE__), '..', '..', 'blueprints', 'helper')
+
 include AutomatedTestsHelper
 require 'shoulda'
 
 class AutomatedTestsHelperTest < ActiveSupport::TestCase
 
   def setup
-    @assignment = Assignment.new
-    @token = Token.new
-    @student = Student.new
-    @admin = Admin.new
-    @ta = Ta.new
+    @assignment = Assignment.make!
+    @token = Token.make!
+    @student = Student.make!
+    @admin = Admin.make!
+    @ta = Ta.make!
   end
 
   def teardown
@@ -17,7 +19,7 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
 
   context 'An admin allowed to do test' do
     setup do
-      @admin = Admin.make
+      @admin = Admin.make!
       @current_user = @admin
     end
     should 'be allowed to do test (current_user is admin)' do
@@ -27,7 +29,7 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
 
   context 'A user allowed to do test' do
     setup do
-      @ta = Ta.make
+      @ta = Ta.make!
       @current_user = @ta
     end
     should 'be allowed to do test (current_user is TA)' do
@@ -37,11 +39,11 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
 
   context 'A student with sufficient tokens' do
     setup do
-      @student = Student.make
-      @token = Token.make
+      @student = Student.make!
+      @token = Token.make!
       @token.grouping_id = 2
       @token.save
-      @grouping = Grouping.make(:id => '2')
+      @grouping = Grouping.make!(:id => '2')
       @grouping.add_member(@student)
       @current_user = @student
     end
@@ -52,12 +54,12 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
 
   context 'A student without any tokens' do
     setup do
-      @student = Student.make
-      @token = Token.make
+      @student = Student.make!
+      @token = Token.make!
       @token.grouping_id = 2
       @token.tokens = 0
       @token.save
-      @grouping = Grouping.make(:id => '2')
+      @grouping = Grouping.make!(:id => '2')
       @grouping.add_member(@student)
       @current_user = @student
     end
@@ -68,12 +70,12 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
 
   context 'A student allowed to do test but without a token object' do
     setup do
-      @student = Student.make
-      @token = Token.make
+      @student = Student.make!
+      @token = Token.make!
       @token.grouping_id = 2
       @token.tokens = nil
       @token.save
-      @grouping = Grouping.make(:id => '2')
+      @grouping = Grouping.make!(:id => '2')
       @grouping.add_member(@student)
       @current_user = @student
     end
@@ -86,8 +88,8 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
 
   context 'A student' do
     setup do
-      @student = Student.make
-      @token = Token.make
+      @student = Student.make!
+      @token = Token.make!
       @token.grouping_id = 2
       @token.tokens = nil
       @token.save
@@ -97,4 +99,5 @@ class AutomatedTestsHelperTest < ActiveSupport::TestCase
       assert !can_run_test?
     end
   end
+
 end

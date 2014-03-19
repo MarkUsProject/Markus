@@ -11,7 +11,7 @@ class GradersControllerTest < AuthenticatedControllerTest
   context 'An authenticated and authorized student doing a ' do
 
     setup do
-      @student = Student.make
+      @student = Student.make!
     end
 
     should 'GET on :upload_dialog' do
@@ -134,8 +134,8 @@ class GradersControllerTest < AuthenticatedControllerTest
   context 'An authenticated and authorized admin' do
 
     setup do
-      @admin = Admin.make
-      @assignment = Assignment.make(:marking_scheme_type => 'rubric')
+      @admin = Admin.make!
+      @assignment = Assignment.make!(:marking_scheme_type => 'rubric')
     end
 
     should 'doing a GET on :index(graders_controller)' do
@@ -174,12 +174,12 @@ class GradersControllerTest < AuthenticatedControllerTest
       end
 
       should 'and all graders and groups are valid' do
-        @ta1 = Ta.make(:user_name => 'g9browni')
-        @ta2 = Ta.make(:user_name => 'g9younas')
-        @ta3 = Ta.make(:user_name => 'c7benjam')
-        @grouping1 = Grouping.make(:assignment => @assignment, :group => Group.make(:group_name => 'test_group'))
-        @grouping2 = Grouping.make(:assignment => @assignment, :group => Group.make(:group_name => 'second_test_group'))
-        @grouping3 = Grouping.make(:assignment => @assignment, :group => Group.make(:group_name => 'Group 3'))
+        @ta1 = Ta.make!(:user_name => 'g9browni')
+        @ta2 = Ta.make!(:user_name => 'g9younas')
+        @ta3 = Ta.make!(:user_name => 'c7benjam')
+        @grouping1 = Grouping.make!(:assignment => @assignment, :group => Group.make!(:group_name => 'test_group'))
+        @grouping2 = Grouping.make!(:assignment => @assignment, :group => Group.make!(:group_name => 'second_test_group'))
+        @grouping3 = Grouping.make!(:assignment => @assignment, :group => Group.make!(:group_name => 'Group 3'))
         post_as @admin, :csv_upload_grader_groups_mapping, {
             :assignment_id => @assignment.id,
             :grader_mapping => @group_grader_map_file}
@@ -197,12 +197,12 @@ class GradersControllerTest < AuthenticatedControllerTest
       end
 
       should 'and some graders are invalid' do
-        @ta1 = Ta.make(:user_name => 'g9browni')
-        @ta2 = Ta.make(:user_name => 'g9younas')
-        @ta3 = Ta.make(:user_name => 'c0curtis')
-        @grouping1 = Grouping.make(:assignment => @assignment, :group => Group.make(:group_name => 'test_group'))
-        @grouping2 = Grouping.make(:assignment => @assignment, :group => Group.make(:group_name => 'second_test_group'))
-        @grouping3 = Grouping.make(:assignment => @assignment, :group => Group.make(:group_name => 'Group 3'))
+        @ta1 = Ta.make!(:user_name => 'g9browni')
+        @ta2 = Ta.make!(:user_name => 'g9younas')
+        @ta3 = Ta.make!(:user_name => 'c0curtis')
+        @grouping1 = Grouping.make!(:assignment => @assignment, :group => Group.make!(:group_name => 'test_group'))
+        @grouping2 = Grouping.make!(:assignment => @assignment, :group => Group.make!(:group_name => 'second_test_group'))
+        @grouping3 = Grouping.make!(:assignment => @assignment, :group => Group.make!(:group_name => 'Group 3'))
         post_as @admin, :csv_upload_grader_groups_mapping, {
             :assignment_id => @assignment.id,
             :grader_mapping => @group_grader_map_file}
@@ -217,12 +217,12 @@ class GradersControllerTest < AuthenticatedControllerTest
       end
 
       should 'and some groupings are invalid' do
-        @ta1 = Ta.make(:user_name => 'g9browni')
-        @ta2 = Ta.make(:user_name => 'g9younas')
-        @ta3 = Ta.make(:user_name => 'c7benjam')
-        @grouping1 = Grouping.make(:assignment => @assignment, :group => Group.make(:group_name => 'Group of 7'))
-        @grouping2 = Grouping.make(:assignment => @assignment, :group => Group.make(:group_name => 'second_test_group'))
-        @grouping3 = Grouping.make(:assignment => @assignment, :group => Group.make(:group_name => 'Group 3'))
+        @ta1 = Ta.make!(:user_name => 'g9browni')
+        @ta2 = Ta.make!(:user_name => 'g9younas')
+        @ta3 = Ta.make!(:user_name => 'c7benjam')
+        @grouping1 = Grouping.make!(:assignment => @assignment, :group => Group.make!(:group_name => 'Group of 7'))
+        @grouping2 = Grouping.make!(:assignment => @assignment, :group => Group.make!(:group_name => 'second_test_group'))
+        @grouping3 = Grouping.make!(:assignment => @assignment, :group => Group.make!(:group_name => 'Group 3'))
         post_as @admin, :csv_upload_grader_groups_mapping, {
             :assignment_id => @assignment.id,
             :grader_mapping => @group_grader_map_file}
@@ -249,16 +249,16 @@ class GradersControllerTest < AuthenticatedControllerTest
 
       context 'with rubric criteria' do
         setup do
-          @assignment = Assignment.make(:marking_scheme_type => 'rubric', :assign_graders_to_criteria => true)
+          @assignment = Assignment.make!(:marking_scheme_type => 'rubric', :assign_graders_to_criteria => true)
         end
 
         should 'and all graders and criteria are valid' do
-          @ta1 = Ta.make(:user_name => 'g9browni')
-          @ta2 = Ta.make(:user_name => 'g9younas')
-          @ta3 = Ta.make(:user_name => 'c7benjam')
-          @criterion1 = RubricCriterion.make(:assignment => @assignment, :rubric_criterion_name => 'correctness')
-          @criterion2 = RubricCriterion.make(:assignment => @assignment, :rubric_criterion_name => 'style')
-          @criterion3 = RubricCriterion.make(:assignment => @assignment, :rubric_criterion_name => 'class design')
+          @ta1 = Ta.make!(:user_name => 'g9browni')
+          @ta2 = Ta.make!(:user_name => 'g9younas')
+          @ta3 = Ta.make!(:user_name => 'c7benjam')
+          @criterion1 = RubricCriterion.make!(:assignment => @assignment, :rubric_criterion_name => 'correctness')
+          @criterion2 = RubricCriterion.make!(:assignment => @assignment, :rubric_criterion_name => 'style')
+          @criterion3 = RubricCriterion.make!(:assignment => @assignment, :rubric_criterion_name => 'class design')
           post_as @admin, :csv_upload_grader_criteria_mapping, {
               :assignment_id => @assignment.id,
               :grader_criteria_mapping => @ctieria_grader_map_file}
@@ -276,12 +276,12 @@ class GradersControllerTest < AuthenticatedControllerTest
         end
 
         should 'and some graders are invalid' do
-          @ta1 = Ta.make(:user_name => 'g9browni')
-          @ta2 = Ta.make(:user_name => 'reid')
-          @ta3 = Ta.make(:user_name => 'c7benjam')
-          @criterion1 = RubricCriterion.make(:assignment => @assignment, :rubric_criterion_name => 'correctness')
-          @criterion2 = RubricCriterion.make(:assignment => @assignment, :rubric_criterion_name => 'style')
-          @criterion3 = RubricCriterion.make(:assignment => @assignment, :rubric_criterion_name => 'class design')
+          @ta1 = Ta.make!(:user_name => 'g9browni')
+          @ta2 = Ta.make!(:user_name => 'reid')
+          @ta3 = Ta.make!(:user_name => 'c7benjam')
+          @criterion1 = RubricCriterion.make!(:assignment => @assignment, :rubric_criterion_name => 'correctness')
+          @criterion2 = RubricCriterion.make!(:assignment => @assignment, :rubric_criterion_name => 'style')
+          @criterion3 = RubricCriterion.make!(:assignment => @assignment, :rubric_criterion_name => 'class design')
           post_as @admin, :csv_upload_grader_criteria_mapping, {
               :assignment_id => @assignment.id,
               :grader_criteria_mapping => @ctieria_grader_map_file}
@@ -296,12 +296,12 @@ class GradersControllerTest < AuthenticatedControllerTest
         end
 
         should 'and some criteria are invalid' do
-          @ta1 = Ta.make(:user_name => 'g9browni')
-          @ta2 = Ta.make(:user_name => 'g9younas')
-          @ta3 = Ta.make(:user_name => 'c7benjam')
-          @criterion1 = RubricCriterion.make(:assignment => @assignment, :rubric_criterion_name => 'correctness')
-          @criterion2 = RubricCriterion.make(:assignment => @assignment, :rubric_criterion_name => "professor's whim")
-          @criterion3 = RubricCriterion.make(:assignment => @assignment, :rubric_criterion_name => 'class design')
+          @ta1 = Ta.make!(:user_name => 'g9browni')
+          @ta2 = Ta.make!(:user_name => 'g9younas')
+          @ta3 = Ta.make!(:user_name => 'c7benjam')
+          @criterion1 = RubricCriterion.make!(:assignment => @assignment, :rubric_criterion_name => 'correctness')
+          @criterion2 = RubricCriterion.make!(:assignment => @assignment, :rubric_criterion_name => "professor's whim")
+          @criterion3 = RubricCriterion.make!(:assignment => @assignment, :rubric_criterion_name => 'class design')
           post_as @admin, :csv_upload_grader_criteria_mapping, {
               :assignment_id => @assignment.id,
               :grader_criteria_mapping => @ctieria_grader_map_file}
@@ -317,16 +317,16 @@ class GradersControllerTest < AuthenticatedControllerTest
 
       context 'with flexible criteria' do
         setup do
-          @assignment = Assignment.make(:marking_scheme_type => 'flexible', :assign_graders_to_criteria => true)
+          @assignment = Assignment.make!(:marking_scheme_type => 'flexible', :assign_graders_to_criteria => true)
         end
 
         should 'and all graders and criteria are valid' do
-          @ta1 = Ta.make(:user_name => 'g9browni')
-          @ta2 = Ta.make(:user_name => 'g9younas')
-          @ta3 = Ta.make(:user_name => 'c7benjam')
-          @criterion1 = FlexibleCriterion.make(:assignment => @assignment, :flexible_criterion_name => 'correctness')
-          @criterion2 = FlexibleCriterion.make(:assignment => @assignment, :flexible_criterion_name => 'style')
-          @criterion3 = FlexibleCriterion.make(:assignment => @assignment, :flexible_criterion_name => 'class design')
+          @ta1 = Ta.make!(:user_name => 'g9browni')
+          @ta2 = Ta.make!(:user_name => 'g9younas')
+          @ta3 = Ta.make!(:user_name => 'c7benjam')
+          @criterion1 = FlexibleCriterion.make!(:assignment => @assignment, :flexible_criterion_name => 'correctness')
+          @criterion2 = FlexibleCriterion.make!(:assignment => @assignment, :flexible_criterion_name => 'style')
+          @criterion3 = FlexibleCriterion.make!(:assignment => @assignment, :flexible_criterion_name => 'class design')
           post_as @admin, :csv_upload_grader_criteria_mapping, {
               :assignment_id => @assignment.id,
               :grader_criteria_mapping => @ctieria_grader_map_file}
@@ -342,12 +342,12 @@ class GradersControllerTest < AuthenticatedControllerTest
         end
 
         should 'and some graders are invalid' do
-          @ta1 = Ta.make(:user_name => 'g9browni')
-          @ta2 = Ta.make(:user_name => 'reid')
-          @ta3 = Ta.make(:user_name => 'c7benjam')
-          @criterion1 = FlexibleCriterion.make(:assignment => @assignment, :flexible_criterion_name => 'correctness')
-          @criterion2 = FlexibleCriterion.make(:assignment => @assignment, :flexible_criterion_name => 'style')
-          @criterion3 = FlexibleCriterion.make(:assignment => @assignment, :flexible_criterion_name => 'class design')
+          @ta1 = Ta.make!(:user_name => 'g9browni')
+          @ta2 = Ta.make!(:user_name => 'reid')
+          @ta3 = Ta.make!(:user_name => 'c7benjam')
+          @criterion1 = FlexibleCriterion.make!(:assignment => @assignment, :flexible_criterion_name => 'correctness')
+          @criterion2 = FlexibleCriterion.make!(:assignment => @assignment, :flexible_criterion_name => 'style')
+          @criterion3 = FlexibleCriterion.make!(:assignment => @assignment, :flexible_criterion_name => 'class design')
           post_as @admin, :csv_upload_grader_criteria_mapping, {
               :assignment_id => @assignment.id,
               :grader_criteria_mapping => @ctieria_grader_map_file}
@@ -362,12 +362,12 @@ class GradersControllerTest < AuthenticatedControllerTest
         end
 
         should 'and some criteria are invalid' do
-          @ta1 = Ta.make(:user_name => 'g9browni')
-          @ta2 = Ta.make(:user_name => 'g9younas')
-          @ta3 = Ta.make(:user_name => 'c7benjam')
-          @criterion1 = FlexibleCriterion.make(:assignment => @assignment, :flexible_criterion_name => 'correctness')
-          @criterion2 = FlexibleCriterion.make(:assignment => @assignment, :flexible_criterion_name => "professor's whim")
-          @criterion3 = FlexibleCriterion.make(:assignment => @assignment, :flexible_criterion_name => 'class design')
+          @ta1 = Ta.make!(:user_name => 'g9browni')
+          @ta2 = Ta.make!(:user_name => 'g9younas')
+          @ta3 = Ta.make!(:user_name => 'c7benjam')
+          @criterion1 = FlexibleCriterion.make!(:assignment => @assignment, :flexible_criterion_name => 'correctness')
+          @criterion2 = FlexibleCriterion.make!(:assignment => @assignment, :flexible_criterion_name => "professor's whim")
+          @criterion3 = FlexibleCriterion.make!(:assignment => @assignment, :flexible_criterion_name => 'class design')
           post_as @admin, :csv_upload_grader_criteria_mapping, {
               :assignment_id => @assignment.id,
               :grader_criteria_mapping => @ctieria_grader_map_file}
@@ -384,7 +384,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
     context 'doing a GET on :download_grader_groupings_mapping' do
       setup do
-        @assignment = Assignment.make(:marking_scheme_type => 'rubric', :assign_graders_to_criteria => true)
+        @assignment = Assignment.make!(:marking_scheme_type => 'rubric', :assign_graders_to_criteria => true)
       end
 
       should 'routing properly' do
@@ -398,7 +398,7 @@ class GradersControllerTest < AuthenticatedControllerTest
 
     context 'doing a GET on :download_grader_criteria_mapping' do
       setup do
-        @assignment = Assignment.make(:marking_scheme_type => 'rubric', :assign_graders_to_criteria => true)
+        @assignment = Assignment.make!(:marking_scheme_type => 'rubric', :assign_graders_to_criteria => true)
       end
 
       should 'routing properly' do
@@ -411,10 +411,10 @@ class GradersControllerTest < AuthenticatedControllerTest
     end
 
     should 'doing a POST on :add_grader_to_grouping' do
-        @grouping = Grouping.make(:assignment => @assignment)
-        @grouping2 = Grouping.make(:assignment => @assignment)
-        @ta = Ta.make
-        @ta2 = Ta.make
+        @grouping = Grouping.make!(:assignment => @assignment)
+        @grouping2 = Grouping.make!(:assignment => @assignment)
+        @ta = Ta.make!
+        @ta2 = Ta.make!
         post_as @admin, :add_grader_to_grouping, {:assignment_id => @assignment.id,
             :grouping_id => @grouping.id,
             :grader_id => @ta.id}
@@ -428,12 +428,12 @@ class GradersControllerTest < AuthenticatedControllerTest
 
       context 'POST on :global_actions on random_assign' do
         setup do
-          @grouping1 = Grouping.make(:assignment => @assignment)
-          @grouping2 = Grouping.make(:assignment => @assignment)
-          @grouping3 = Grouping.make(:assignment => @assignment)
-          @ta1 = Ta.make
-          @ta2 = Ta.make
-          @ta3 = Ta.make
+          @grouping1 = Grouping.make!(:assignment => @assignment)
+          @grouping2 = Grouping.make!(:assignment => @assignment)
+          @grouping3 = Grouping.make!(:assignment => @assignment)
+          @ta1 = Ta.make!
+          @ta2 = Ta.make!
+          @ta3 = Ta.make!
         end
 
         should 'and no graders selected' do
@@ -511,7 +511,7 @@ class GradersControllerTest < AuthenticatedControllerTest
         end
 
         should 'and multiple graders and multiple groupings are selected' do
-          @ta3 = Ta.make
+          @ta3 = Ta.make!
           post_as @admin, :global_actions, {:assignment_id => @assignment.id,
             :global_actions => 'random_assign',
             :groupings => [@grouping1, @grouping2, @grouping3],
@@ -526,12 +526,12 @@ class GradersControllerTest < AuthenticatedControllerTest
 
       context 'POST on :global_actions on assign' do
         setup do
-          @grouping1 = Grouping.make(:assignment => @assignment)
-          @grouping2 = Grouping.make(:assignment => @assignment)
-          @grouping3 = Grouping.make(:assignment => @assignment)
-          @ta1 = Ta.make
-          @ta2 = Ta.make
-          @ta3 = Ta.make
+          @grouping1 = Grouping.make!(:assignment => @assignment)
+          @grouping2 = Grouping.make!(:assignment => @assignment)
+          @grouping3 = Grouping.make!(:assignment => @assignment)
+          @ta1 = Ta.make!
+          @ta2 = Ta.make!
+          @ta3 = Ta.make!
         end
 
         should 'and no graders selected' do
@@ -614,7 +614,7 @@ class GradersControllerTest < AuthenticatedControllerTest
         end
 
         should 'and multiple graders and multiple groupings are selected' do
-          @ta3 = Ta.make
+          @ta3 = Ta.make!
           post_as @admin, :global_actions, {:assignment_id => @assignment.id,
             :global_actions => 'assign',
             :groupings => [@grouping1, @grouping2, @grouping3],
@@ -632,8 +632,8 @@ class GradersControllerTest < AuthenticatedControllerTest
         end
 
         should 'and some graders are already assigned to some groups' do
-          TaMembership.make(:user => @ta1, :grouping => @grouping2)
-          TaMembership.make(:user => @ta2, :grouping => @grouping1)
+          TaMembership.make!(:user => @ta1, :grouping => @grouping2)
+          TaMembership.make!(:user => @ta2, :grouping => @grouping1)
           post_as @admin, :global_actions, {:assignment_id => @assignment.id,
             :global_actions => 'assign',
             :groupings => [@grouping1, @grouping2],
@@ -652,17 +652,17 @@ class GradersControllerTest < AuthenticatedControllerTest
 
       context 'POST on :global_actions on unassign' do
         setup do
-          @grouping1 = Grouping.make(:assignment => @assignment)
-          @grouping2 = Grouping.make(:assignment => @assignment)
-          @grouping3 = Grouping.make(:assignment => @assignment)
-          @ta1 = Ta.make
-          @ta2 = Ta.make
-          @ta3 = Ta.make
+          @grouping1 = Grouping.make!(:assignment => @assignment)
+          @grouping2 = Grouping.make!(:assignment => @assignment)
+          @grouping3 = Grouping.make!(:assignment => @assignment)
+          @ta1 = Ta.make!
+          @ta2 = Ta.make!
+          @ta3 = Ta.make!
         end
 
         should 'and no graders or groupings are selected' do
-          TaMembership.make(:user => @ta1, :grouping => @grouping1)
-          TaMembership.make(:user => @ta2, :grouping => @grouping2)
+          TaMembership.make!(:user => @ta1, :grouping => @grouping1)
+          TaMembership.make!(:user => @ta2, :grouping => @grouping2)
           post_as @admin, :global_actions, {:assignment_id => @assignment.id,
             :global_actions => 'unassign',
             :current_table => 'groups_table'}
@@ -673,10 +673,10 @@ class GradersControllerTest < AuthenticatedControllerTest
         end
 
         should 'and all graders from one grouping are selected' do
-          TaMembership.make(:user => @ta1, :grouping => @grouping1)
-          TaMembership.make(:user => @ta2, :grouping => @grouping1)
-          TaMembership.make(:user => @ta3, :grouping => @grouping1)
-          TaMembership.make(:user => @ta3, :grouping => @grouping3)
+          TaMembership.make!(:user => @ta1, :grouping => @grouping1)
+          TaMembership.make!(:user => @ta2, :grouping => @grouping1)
+          TaMembership.make!(:user => @ta3, :grouping => @grouping1)
+          TaMembership.make!(:user => @ta3, :grouping => @grouping3)
           post_as @admin, :global_actions, {:assignment_id => @assignment.id,
             :global_actions => 'unassign',
             :groupings => [@grouping1],
@@ -691,11 +691,11 @@ class GradersControllerTest < AuthenticatedControllerTest
         end
 
         should 'and all groupings from one grader are selected' do
-          TaMembership.make(:user => @ta1, :grouping => @grouping1)
-          TaMembership.make(:user => @ta2, :grouping => @grouping1)
-          TaMembership.make(:user => @ta3, :grouping => @grouping1)
-          TaMembership.make(:user => @ta3, :grouping => @grouping2)
-          TaMembership.make(:user => @ta3, :grouping => @grouping3)
+          TaMembership.make!(:user => @ta1, :grouping => @grouping1)
+          TaMembership.make!(:user => @ta2, :grouping => @grouping1)
+          TaMembership.make!(:user => @ta3, :grouping => @grouping1)
+          TaMembership.make!(:user => @ta3, :grouping => @grouping2)
+          TaMembership.make!(:user => @ta3, :grouping => @grouping3)
           post_as @admin, :global_actions, {:assignment_id => @assignment.id,
             :global_actions => 'unassign',
             :groupings => [@grouping1, @grouping2, @grouping3],
@@ -712,15 +712,15 @@ class GradersControllerTest < AuthenticatedControllerTest
         end
 
         should 'and one grader and one grouping is selected where the grader and grouping have other memberships' do
-          TaMembership.make(:user => @ta1, :grouping => @grouping1)
-          TaMembership.make(:user => @ta2, :grouping => @grouping1)
-          TaMembership.make(:user => @ta3, :grouping => @grouping1)
-          TaMembership.make(:user => @ta1, :grouping => @grouping2)
-          TaMembership.make(:user => @ta2, :grouping => @grouping2)
-          TaMembership.make(:user => @ta3, :grouping => @grouping2)
-          TaMembership.make(:user => @ta1, :grouping => @grouping3)
-          TaMembership.make(:user => @ta2, :grouping => @grouping3)
-          TaMembership.make(:user => @ta3, :grouping => @grouping3)
+          TaMembership.make!(:user => @ta1, :grouping => @grouping1)
+          TaMembership.make!(:user => @ta2, :grouping => @grouping1)
+          TaMembership.make!(:user => @ta3, :grouping => @grouping1)
+          TaMembership.make!(:user => @ta1, :grouping => @grouping2)
+          TaMembership.make!(:user => @ta2, :grouping => @grouping2)
+          TaMembership.make!(:user => @ta3, :grouping => @grouping2)
+          TaMembership.make!(:user => @ta1, :grouping => @grouping3)
+          TaMembership.make!(:user => @ta2, :grouping => @grouping3)
+          TaMembership.make!(:user => @ta3, :grouping => @grouping3)
           post_as @admin, :global_actions, {:assignment_id => @assignment.id,
             :global_actions => 'unassign',
             :groupings => [@grouping2],
@@ -739,15 +739,15 @@ class GradersControllerTest < AuthenticatedControllerTest
         end
 
         should 'and multiple graders and multiple groupings are selected' do
-          TaMembership.make(:user => @ta1, :grouping => @grouping1)
-          TaMembership.make(:user => @ta2, :grouping => @grouping1)
-          TaMembership.make(:user => @ta3, :grouping => @grouping1)
-          TaMembership.make(:user => @ta1, :grouping => @grouping2)
-          TaMembership.make(:user => @ta2, :grouping => @grouping2)
-          TaMembership.make(:user => @ta3, :grouping => @grouping2)
-          TaMembership.make(:user => @ta1, :grouping => @grouping3)
-          TaMembership.make(:user => @ta2, :grouping => @grouping3)
-          TaMembership.make(:user => @ta3, :grouping => @grouping3)
+          TaMembership.make!(:user => @ta1, :grouping => @grouping1)
+          TaMembership.make!(:user => @ta2, :grouping => @grouping1)
+          TaMembership.make!(:user => @ta3, :grouping => @grouping1)
+          TaMembership.make!(:user => @ta1, :grouping => @grouping2)
+          TaMembership.make!(:user => @ta2, :grouping => @grouping2)
+          TaMembership.make!(:user => @ta3, :grouping => @grouping2)
+          TaMembership.make!(:user => @ta1, :grouping => @grouping3)
+          TaMembership.make!(:user => @ta2, :grouping => @grouping3)
+          TaMembership.make!(:user => @ta3, :grouping => @grouping3)
           post_as @admin, :global_actions, {:assignment_id => @assignment.id,
             :global_actions => 'unassign',
             :groupings => [@grouping1, @grouping2, @grouping3],
@@ -774,12 +774,12 @@ class GradersControllerTest < AuthenticatedControllerTest
       context 'with rubric marking scheme doing a' do
         context 'POST on :global_actions on random_assign' do
           setup do
-            @criterion1 = RubricCriterion.make(:assignment => @assignment)
-            @criterion2 = RubricCriterion.make(:assignment => @assignment)
-            @criterion3 = RubricCriterion.make(:assignment => @assignment)
-            @ta1 = Ta.make
-            @ta2 = Ta.make
-            @ta3 = Ta.make
+            @criterion1 = RubricCriterion.make!(:assignment => @assignment)
+            @criterion2 = RubricCriterion.make!(:assignment => @assignment)
+            @criterion3 = RubricCriterion.make!(:assignment => @assignment)
+            @ta1 = Ta.make!
+            @ta2 = Ta.make!
+            @ta3 = Ta.make!
           end
 
           should 'and no graders selected' do
@@ -857,7 +857,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and multiple graders and multiple criteria are selected' do
-            @ta3 = Ta.make
+            @ta3 = Ta.make!
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'random_assign',
               :criteria => [@criterion1, @criterion2, @criterion3],
@@ -872,12 +872,12 @@ class GradersControllerTest < AuthenticatedControllerTest
 
         context 'POST on :global_actions on assign' do
           setup do
-            @criterion1 = RubricCriterion.make(:assignment => @assignment)
-            @criterion2 = RubricCriterion.make(:assignment => @assignment)
-            @criterion3 = RubricCriterion.make(:assignment => @assignment)
-            @ta1 = Ta.make
-            @ta2 = Ta.make
-            @ta3 = Ta.make
+            @criterion1 = RubricCriterion.make!(:assignment => @assignment)
+            @criterion2 = RubricCriterion.make!(:assignment => @assignment)
+            @criterion3 = RubricCriterion.make!(:assignment => @assignment)
+            @ta1 = Ta.make!
+            @ta2 = Ta.make!
+            @ta3 = Ta.make!
           end
 
           should 'and no graders selected' do
@@ -960,7 +960,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and multiple graders and multiple criteria are selected' do
-            @ta3 = Ta.make
+            @ta3 = Ta.make!
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'assign',
               :criteria => [@criterion1, @criterion2, @criterion3],
@@ -978,8 +978,8 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and some graders are already assigned to some criteria' do
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion2)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta1, :criterion => @criterion2)
+            CriterionTaAssociation.make!(:ta => @ta2, :criterion => @criterion1)
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'assign',
               :criteria => [@criterion1, @criterion2],
@@ -1002,17 +1002,17 @@ class GradersControllerTest < AuthenticatedControllerTest
 
         context 'POST on :global_actions on unassign' do
           setup do
-            @criterion1 = RubricCriterion.make(:assignment => @assignment)
-            @criterion2 = RubricCriterion.make(:assignment => @assignment)
-            @criterion3 = RubricCriterion.make(:assignment => @assignment)
-            @ta1 = Ta.make
-            @ta2 = Ta.make
-            @ta3 = Ta.make
+            @criterion1 = RubricCriterion.make!(:assignment => @assignment)
+            @criterion2 = RubricCriterion.make!(:assignment => @assignment)
+            @criterion3 = RubricCriterion.make!(:assignment => @assignment)
+            @ta1 = Ta.make!
+            @ta2 = Ta.make!
+            @ta3 = Ta.make!
           end
 
           should 'and no graders or criteria are selected' do
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion2)
+            CriterionTaAssociation.make!(:ta => @ta1, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta2, :criterion => @criterion2)
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'unassign',
               :current_table => 'criteria_table'}
@@ -1026,10 +1026,10 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and all graders from one criterion are selected' do
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion3)
+            CriterionTaAssociation.make!(:ta => @ta1, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta2, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta3, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta3, :criterion => @criterion3)
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'unassign',
               :criteria => [@criterion1],
@@ -1047,11 +1047,11 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and all criteria from one grader are selected' do
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion2)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion3)
+            CriterionTaAssociation.make!(:ta => @ta1, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta2, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta3, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta3, :criterion => @criterion2)
+            CriterionTaAssociation.make!(:ta => @ta3, :criterion => @criterion3)
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'unassign',
               :criteria => [@criterion1, @criterion2, @criterion3],
@@ -1072,15 +1072,15 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and one grader and one criterion is selected where the grader and criterion have other memberships' do
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion2)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion2)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion2)
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion3)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion3)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion3)
+            CriterionTaAssociation.make!(:ta => @ta1, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta2, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta3, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta1, :criterion => @criterion2)
+            CriterionTaAssociation.make!(:ta => @ta2, :criterion => @criterion2)
+            CriterionTaAssociation.make!(:ta => @ta3, :criterion => @criterion2)
+            CriterionTaAssociation.make!(:ta => @ta1, :criterion => @criterion3)
+            CriterionTaAssociation.make!(:ta => @ta2, :criterion => @criterion3)
+            CriterionTaAssociation.make!(:ta => @ta3, :criterion => @criterion3)
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'unassign',
               :criteria => [@criterion2],
@@ -1102,15 +1102,15 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and multiple graders and multiple criteria are selected' do
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion2)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion2)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion2)
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion3)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion3)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion3)
+            CriterionTaAssociation.make!(:ta => @ta1, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta2, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta3, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta1, :criterion => @criterion2)
+            CriterionTaAssociation.make!(:ta => @ta2, :criterion => @criterion2)
+            CriterionTaAssociation.make!(:ta => @ta3, :criterion => @criterion2)
+            CriterionTaAssociation.make!(:ta => @ta1, :criterion => @criterion3)
+            CriterionTaAssociation.make!(:ta => @ta2, :criterion => @criterion3)
+            CriterionTaAssociation.make!(:ta => @ta3, :criterion => @criterion3)
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'unassign',
               :criteria => [@criterion1, @criterion2, @criterion3],
@@ -1135,17 +1135,17 @@ class GradersControllerTest < AuthenticatedControllerTest
 
       context 'with flexible marking scheme doing a' do
         setup do
-          @assignment = Assignment.make(:marking_scheme_type => 'flexible')
+          @assignment = Assignment.make!(:marking_scheme_type => 'flexible')
         end
 
         context 'POST on :global_actions on random_assign' do
           setup do
-            @criterion1 = FlexibleCriterion.make(:assignment => @assignment)
-            @criterion2 = FlexibleCriterion.make(:assignment => @assignment)
-            @criterion3 = FlexibleCriterion.make(:assignment => @assignment)
-            @ta1 = Ta.make
-            @ta2 = Ta.make
-            @ta3 = Ta.make
+            @criterion1 = FlexibleCriterion.make!(:assignment => @assignment)
+            @criterion2 = FlexibleCriterion.make!(:assignment => @assignment)
+            @criterion3 = FlexibleCriterion.make!(:assignment => @assignment)
+            @ta1 = Ta.make!
+            @ta2 = Ta.make!
+            @ta3 = Ta.make!
           end
 
           should 'and no graders selected' do
@@ -1223,7 +1223,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and multiple graders and multiple criteria are selected' do
-            @ta3 = Ta.make
+            @ta3 = Ta.make!
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'random_assign',
               :criteria => [@criterion1, @criterion2, @criterion3],
@@ -1238,12 +1238,12 @@ class GradersControllerTest < AuthenticatedControllerTest
 
         context 'POST on :global_actions on assign' do
           setup do
-            @criterion1 = FlexibleCriterion.make(:assignment => @assignment)
-            @criterion2 = FlexibleCriterion.make(:assignment => @assignment)
-            @criterion3 = FlexibleCriterion.make(:assignment => @assignment)
-            @ta1 = Ta.make
-            @ta2 = Ta.make
-            @ta3 = Ta.make
+            @criterion1 = FlexibleCriterion.make!(:assignment => @assignment)
+            @criterion2 = FlexibleCriterion.make!(:assignment => @assignment)
+            @criterion3 = FlexibleCriterion.make!(:assignment => @assignment)
+            @ta1 = Ta.make!
+            @ta2 = Ta.make!
+            @ta3 = Ta.make!
           end
 
           should 'and no graders selected' do
@@ -1326,7 +1326,7 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and multiple graders and multiple criteria are selected' do
-            @ta3 = Ta.make
+            @ta3 = Ta.make!
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'assign',
               :criteria => [@criterion1, @criterion2, @criterion3],
@@ -1344,8 +1344,8 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and some graders are already assigned to some criteria' do
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion2)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta1, :criterion => @criterion2)
+            CriterionTaAssociation.make!(:ta => @ta2, :criterion => @criterion1)
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'assign',
               :criteria => [@criterion1, @criterion2],
@@ -1366,17 +1366,17 @@ class GradersControllerTest < AuthenticatedControllerTest
 
         context 'POST on :global_actions on unassign' do
           setup do
-            @criterion1 = FlexibleCriterion.make(:assignment => @assignment)
-            @criterion2 = FlexibleCriterion.make(:assignment => @assignment)
-            @criterion3 = FlexibleCriterion.make(:assignment => @assignment)
-            @ta1 = Ta.make
-            @ta2 = Ta.make
-            @ta3 = Ta.make
+            @criterion1 = FlexibleCriterion.make!(:assignment => @assignment)
+            @criterion2 = FlexibleCriterion.make!(:assignment => @assignment)
+            @criterion3 = FlexibleCriterion.make!(:assignment => @assignment)
+            @ta1 = Ta.make!
+            @ta2 = Ta.make!
+            @ta3 = Ta.make!
           end
 
           should 'and no graders or criteria are selected' do
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion2)
+            CriterionTaAssociation.make!(:ta => @ta1, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta2, :criterion => @criterion2)
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'unassign',
               :current_table => 'criteria_table'}
@@ -1390,10 +1390,10 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and all graders from one criterion are selected' do
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion3)
+            CriterionTaAssociation.make!(:ta => @ta1, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta2, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta3, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta3, :criterion => @criterion3)
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'unassign',
               :criteria => [@criterion1],
@@ -1411,11 +1411,11 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and all criteria from one grader are selected' do
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion2)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion3)
+            CriterionTaAssociation.make!(:ta => @ta1, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta2, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta3, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta3, :criterion => @criterion2)
+            CriterionTaAssociation.make!(:ta => @ta3, :criterion => @criterion3)
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'unassign',
               :criteria => [@criterion1, @criterion2, @criterion3],
@@ -1436,15 +1436,15 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and one grader and one criterion is selected where the grader and criterion have other memberships' do
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion2)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion2)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion2)
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion3)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion3)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion3)
+            CriterionTaAssociation.make!(:ta => @ta1, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta2, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta3, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta1, :criterion => @criterion2)
+            CriterionTaAssociation.make!(:ta => @ta2, :criterion => @criterion2)
+            CriterionTaAssociation.make!(:ta => @ta3, :criterion => @criterion2)
+            CriterionTaAssociation.make!(:ta => @ta1, :criterion => @criterion3)
+            CriterionTaAssociation.make!(:ta => @ta2, :criterion => @criterion3)
+            CriterionTaAssociation.make!(:ta => @ta3, :criterion => @criterion3)
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'unassign',
               :criteria => [@criterion2],
@@ -1467,15 +1467,15 @@ class GradersControllerTest < AuthenticatedControllerTest
           end
 
           should 'and multiple graders and multiple criteria are selected' do
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion1)
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion2)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion2)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion2)
-            CriterionTaAssociation.make(:ta => @ta1, :criterion => @criterion3)
-            CriterionTaAssociation.make(:ta => @ta2, :criterion => @criterion3)
-            CriterionTaAssociation.make(:ta => @ta3, :criterion => @criterion3)
+            CriterionTaAssociation.make!(:ta => @ta1, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta2, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta3, :criterion => @criterion1)
+            CriterionTaAssociation.make!(:ta => @ta1, :criterion => @criterion2)
+            CriterionTaAssociation.make!(:ta => @ta2, :criterion => @criterion2)
+            CriterionTaAssociation.make!(:ta => @ta3, :criterion => @criterion2)
+            CriterionTaAssociation.make!(:ta => @ta1, :criterion => @criterion3)
+            CriterionTaAssociation.make!(:ta => @ta2, :criterion => @criterion3)
+            CriterionTaAssociation.make!(:ta => @ta3, :criterion => @criterion3)
             post_as @admin, :global_actions, {:assignment_id => @assignment.id,
               :global_actions => 'unassign',
               :criteria => [@criterion1, @criterion2, @criterion3],

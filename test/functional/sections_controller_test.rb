@@ -11,7 +11,7 @@ class SectionsControllerTest < AuthenticatedControllerTest
 
   context 'A logged student' do
     setup do
-      @student = Student.make
+      @student = Student.make!
     end
 
     should 'on index' do
@@ -25,17 +25,17 @@ class SectionsControllerTest < AuthenticatedControllerTest
     end
 
     should 'on edit section' do
-      get_as @student, :edit, :id => Section.make.id
+      get_as @student, :edit, :id => Section.make!.id
       assert respond_with :missing
     end
 
     should 'on update new section' do
-      put_as @student, :update, :id => Section.make.id
+      put_as @student, :update, :id => Section.make!.id
       assert_response :missing
     end
 
     should 'not be able to delete a section' do
-      section = Section.make
+      section = Section.make!
       delete_as @student, :destroy, :id => section
       assert respond_with :missing
       assert_not_nil Section.find(section.id)
@@ -44,7 +44,7 @@ class SectionsControllerTest < AuthenticatedControllerTest
 
   context 'A logged Admin' do
     setup do
-      @admin = Admin.make
+      @admin = Admin.make!
     end
 
     should 'on index' do
@@ -61,7 +61,7 @@ class SectionsControllerTest < AuthenticatedControllerTest
     end
 
    should 'not be able to create a section with the same name as a existing one' do
-      section = Section.make
+      section = Section.make!
       post_as @admin, :create, {:section => {:name => section.name}}
       assert_response :success
       assert_equal flash[:error],
@@ -69,7 +69,7 @@ class SectionsControllerTest < AuthenticatedControllerTest
     end
 
     should 'not be able to create a section with a blank name' do
-      section = Section.make
+      section = Section.make!
       post_as @admin, :create, {:section => {:name => ''}}
       assert respond_with :success
       assert_nil Section.find_by_name('')
@@ -79,13 +79,13 @@ class SectionsControllerTest < AuthenticatedControllerTest
     end
 
     should 'be able to edit a section' do
-      section = Section.make
+      section = Section.make!
       get_as @admin, :edit, :id => section.id
       assert_response :success
     end
 
     should "be able to update a section name to 'nosection'" do
-      @section = Section.make
+      @section = Section.make!
       put_as @admin,
               :update,
               :id => @section.id,
@@ -98,22 +98,22 @@ class SectionsControllerTest < AuthenticatedControllerTest
     end
 
     should 'not see a table if no students in this section' do
-      section = Section.make
+      section = Section.make!
       get_as @admin, :edit, :id => section.id
       assert_nil response.body.to_s.match('section_students')
     end
 
     should 'see a table if the section has students in it' do
-      section = Section.make
-      student = Student.make
+      section = Section.make!
+      student = Student.make!
       section.students << student
       get_as @admin, :edit, :id => section.id
       assert_not_nil response.body.to_s.match('section_students')
     end
 
     should 'not be able to edit a section name to an existing name' do
-      @section = Section.make
-      @section2 = Section.make
+      @section = Section.make!
+      @section2 = Section.make!
       put_as @admin,
               :update,
               :id => @section.id,
@@ -124,7 +124,7 @@ class SectionsControllerTest < AuthenticatedControllerTest
 
     context 'with an already created section' do
       setup do
-        @section = Section.make
+        @section = Section.make!
       end
 
       should 'be able to delete a section with no students' do
@@ -135,7 +135,7 @@ class SectionsControllerTest < AuthenticatedControllerTest
       end
 
       should 'not be able to delete a section with students in it' do
-        @student = Student.make
+        @student = Student.make!
         @section.students << @student
         delete_as @admin, :destroy, :id => @section.id
         assert_equal I18n.t('section.delete.not_empty'), flash[:error]

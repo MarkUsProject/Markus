@@ -6,14 +6,14 @@ class NoLateSubmissionRuleTest < ActiveSupport::TestCase
 
   should 'be able to create NoLateSubmissionRule' do
     rule = NoLateSubmissionRule.new
-    rule.assignment = Assignment.make
+    rule.assignment = Assignment.make!
     assert rule.save
   end
 
   context 'A section with no_late_submission rules' do
     setup do
-      @grouping = Grouping.make
-      sm = StudentMembership.make(
+      @grouping = Grouping.make!
+      sm = StudentMembership.make!(
                :grouping => @grouping,
                :membership_status => StudentMembership::STATUSES[:inviter])
       @assignment = @grouping.assignment
@@ -32,10 +32,10 @@ class NoLateSubmissionRuleTest < ActiveSupport::TestCase
 
   # Shouldn't apply any penalties if Submission collection date was after due date
   should 'not change the assignment at all when applied' do
-    assignment = Assignment.make
-    grouping = Grouping.make(:assignment => assignment)
+    assignment = Assignment.make!
+    grouping = Grouping.make!(:assignment => assignment)
     assignment.due_date = Time.now - 2.days
-    submission = Submission.make(:grouping => grouping)
+    submission = Submission.make!(:grouping => grouping)
     submission.revision_timestamp = Time.now
     rule = NoLateSubmissionRule.new
     assignment.replace_submission_rule(rule)
@@ -43,7 +43,5 @@ class NoLateSubmissionRuleTest < ActiveSupport::TestCase
     submission = assignment.submission_rule.apply_submission_rule(submission)
     assert_equal result_extra_marks_num, submission.get_latest_result.extra_marks.size
   end
-
-
 
 end

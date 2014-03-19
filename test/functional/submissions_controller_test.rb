@@ -10,10 +10,10 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
   context 'I am a student trying working alone on an assignment' do
     setup do
-      @group = Group.make
-      @assignment = Assignment.make(:allow_web_submits => true, :group_min => 1)
-      @grouping = Grouping.make(:group => @group, :assignment => @assignment)
-      @membership = StudentMembership.make(:membership_status => 'inviter', :grouping => @grouping)
+      @group = Group.make!
+      @assignment = Assignment.make!(:allow_web_submits => true, :group_min => 1)
+      @grouping = Grouping.make!(:group => @group, :assignment => @assignment)
+      @membership = StudentMembership.make!(:membership_status => 'inviter', :grouping => @grouping)
       @student = @membership.user
     end
 
@@ -255,8 +255,8 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
     context 'and I have a grader. My grade should be able to' do
       setup do
-	@grouping1 = Grouping.make(:assignment => @assignment)
-	@grouping1.group.access_repo do |repo|
+        @grouping1 = Grouping.make(:assignment => @assignment)
+        @grouping1.group.access_repo do |repo|
           txn = repo.get_transaction('test')
           path = File.join(@assignment.repository_folder, 'file1_name')
           txn.add(path, 'file1 content', '')
@@ -266,7 +266,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           Submission.generate_new_submission(Grouping.last, repo.get_latest_revision)
         end
 
-        @ta_membership = TaMembership.make(:membership_status => :accepted, :grouping => @grouping)
+        @ta_membership = TaMembership.make!(:membership_status => :accepted, :grouping => @grouping)
         @grader = @ta_membership.user
       end
 
@@ -390,7 +390,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       # Test whether or not an Instructor can release/unrelease results correctly
       # Test whether or not an Instructor can download files from student repos
       setup do
-        @admin = Admin.make
+        @admin = Admin.make!
       end
 
       should 'My instructor should be able to access the populate repository browser.' do
@@ -514,13 +514,13 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
       context 'He' do
         setup do
-          @group = Group.make
-          @student = Student.make
-          @grouping = Grouping.make(:group => @group,
-                                    :assignment => @assignment)
-          @membership = StudentMembership.make(:user => @student,
-                                               :membership_status => 'inviter',
-                                               :grouping => @grouping)
+          @group = Group.make!
+          @student = Student.make!
+          @grouping = Grouping.make!(:group => @group,
+                                     :assignment => @assignment)
+          @membership = StudentMembership.make!(:user => @student,
+                                                :membership_status => 'inviter',
+                                                :grouping => @grouping)
           @student = @membership.user
         end
 
@@ -603,12 +603,12 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       context 'download_groupings_files' do
 
         setup do
-          @assignment = Assignment.make
+          @assignment = Assignment.make!
           (1..3).to_a.each do |i|
-            instance_variable_set(:"@student#{i}", Student.make)
+            instance_variable_set(:"@student#{i}", Student.make!)
             instance_variable_set(:"@grouping#{i}",
-                                  Grouping.make(:assignment => @assignment))
-            StudentMembership.make(
+                                  Grouping.make!(:assignment => @assignment))
+            StudentMembership.make!(
                 :user => instance_variable_get(:"@student#{i}"),
                 :membership_status => 'inviter',
                 :grouping => instance_variable_get(:"@grouping#{i}"))
@@ -638,7 +638,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         end
 
         should '- as Ta - be able to download all submissions from all groups' do
-          @ta = Ta.make
+          @ta = Ta.make!
           get_as @ta, :download_groupings_files,
                  :assignment_id => @assignment.id,
                  :groupings => [@grouping1.id, @grouping2.id, @grouping3.id]

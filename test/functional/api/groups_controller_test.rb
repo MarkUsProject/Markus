@@ -70,7 +70,7 @@ class Api::GroupsControllerTest < ActionController::TestCase
     setup do
 
       # Create admin from blueprints
-      @admin = Admin.make
+      @admin = Admin.make!
       @admin.reset_api_key
       base_encoded_md5 = @admin.api_key.strip
       auth_http_header = "MarkUsAuth #{base_encoded_md5}"
@@ -96,7 +96,7 @@ class Api::GroupsControllerTest < ActionController::TestCase
       end
 
       should 'not use the ActiveRecord class name as the root' do
-        grouping = Grouping.make
+        grouping = Grouping.make!
         get 'index', :assignment_id => grouping.assignment.id.to_s
         assert !@response.body.include?('{"group":')
       end
@@ -131,18 +131,18 @@ class Api::GroupsControllerTest < ActionController::TestCase
     context 'testing index function' do
       # Create students, groupings and assignments for testing
       setup do
-        @assignment1 = Assignment.make()
-        @assignment2 = Assignment.make()
+        @assignment1 = Assignment.make!
+        @assignment2 = Assignment.make!
 
-        @membership1 = StudentMembership.make(:user => Student.make())
-        @membership2 = StudentMembership.make(:user => Student.make())
+        @membership1 = StudentMembership.make!(:user => Student.make!)
+        @membership2 = StudentMembership.make!(:user => Student.make!)
 
-        @grouping1   = Grouping.make(:assignment => @assignment1,
+        @grouping1   = Grouping.make!(:assignment => @assignment1,
                                      :student_memberships => [@membership1])
-        @grouping2   = Grouping.make(:assignment => @assignment1,
+        @grouping2   = Grouping.make!(:assignment => @assignment1,
                                      :student_memberships => [@membership2])
-        @grouping3   = Grouping.make(:assignment => @assignment1)
-        @grouping4   = Grouping.make(:assignment => @assignment2)
+        @grouping3   = Grouping.make!(:assignment => @assignment1)
+        @grouping4   = Grouping.make!(:assignment => @assignment2)
 
         @group1      = @grouping1.group
         @group2      = @grouping2.group
@@ -247,15 +247,15 @@ class Api::GroupsControllerTest < ActionController::TestCase
     context 'testing show function' do
       setup do
         # Create students, groupings and assignments for testing
-        @assignment1 = Assignment.make()
-        @assignment2 = Assignment.make()
+        @assignment1 = Assignment.make!
+        @assignment2 = Assignment.make!
 
-        @membership1 = StudentMembership.make(:user => Student.make())
-        @membership2 = StudentMembership.make(:user => Student.make())
+        @membership1 = StudentMembership.make!(:user => Student.make!)
+        @membership2 = StudentMembership.make!(:user => Student.make!)
 
-        @grouping1   = Grouping.make(:assignment => @assignment1,
+        @grouping1   = Grouping.make!(:assignment => @assignment1,
                                      :student_memberships => [@membership1])
-        @grouping2   = Grouping.make(:assignment => @assignment2,
+        @grouping2   = Grouping.make!(:assignment => @assignment2,
                                      :student_memberships => [@membership2])
 
         @group1      = @grouping1.group

@@ -14,7 +14,7 @@ class TasControllerTest < AuthenticatedControllerTest
 
   context 'a TA' do
     setup do
-      @ta = Ta.make
+      @ta = Ta.make!
     end
 
     should 'not be able to go on :index' do
@@ -42,7 +42,7 @@ class TasControllerTest < AuthenticatedControllerTest
 
   context 'An admin' do
     setup do
-      @admin = Admin.make
+      @admin = Admin.make!
     end
 
     should 'be able to get :index' do
@@ -57,7 +57,7 @@ class TasControllerTest < AuthenticatedControllerTest
 
     context 'with a TA' do
       setup do
-        @ta = Ta.make
+        @ta = Ta.make!
       end
 
       should 'be able to edit a TA' do

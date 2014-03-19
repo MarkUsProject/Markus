@@ -8,14 +8,14 @@ class SubmissionTest < ActiveSupport::TestCase
   should have_many :submission_files
 
   should 'automatically create a result' do
-    s = Submission.make
+    s = Submission.make!
     s.save
     assert_not_nil s.get_latest_result, 'Result was supposed to be created automatically'
     assert_equal s.get_latest_result.marking_state, Result::MARKING_STATES[:unmarked], 'Result marking_state should have been automatically set to unmarked'
   end
 
   should 'create a new remark result' do
-    s = Submission.make
+    s = Submission.make!
     s.save
     s.create_remark_result
     assert_not_nil s.get_remark_result, 'Remark result was supposed to be created'
@@ -24,7 +24,7 @@ class SubmissionTest < ActiveSupport::TestCase
 
   context 'A submission with a remark result submitted' do
     setup do
-      @submission = Submission.make
+      @submission = Submission.make!
       @submission.save
       @submission.create_remark_result
       @result = @submission.get_remark_result
@@ -43,7 +43,7 @@ class SubmissionTest < ActiveSupport::TestCase
 
   context 'A submission with a remark result not submitted' do
     setup do
-      @submission = Submission.make
+      @submission = Submission.make!
       @submission.save
       @submission.create_remark_result
     end
@@ -59,7 +59,7 @@ class SubmissionTest < ActiveSupport::TestCase
 
   context 'A submission with no remark results' do
     setup do
-      @submission = Submission.make
+      @submission = Submission.make!
       @submission.save
     end
     should 'return false on has_remark? call' do
@@ -73,11 +73,11 @@ class SubmissionTest < ActiveSupport::TestCase
   context 'The Submission class' do
     should 'be able to find a submission object by group name and assignment short identifier' do
       # existing submission
-      assignment = Assignment.make
-      group = Group.make
-      grouping = Grouping.make(:assignment => assignment,
+      assignment = Assignment.make!
+      group = Group.make!
+      grouping = Grouping.make!(:assignment => assignment,
                                :group => group)
-      submission = Submission.make(:grouping => grouping)
+      submission = Submission.make!(:grouping => grouping)
 
       sub2 = Submission.get_submission_by_group_and_assignment(group.group_name,
                                                                 assignment.short_identifier)
@@ -93,7 +93,7 @@ class SubmissionTest < ActiveSupport::TestCase
   end
 
   should 'create a remark result' do
-    s = Submission.make
+    s = Submission.make!
     s.create_remark_result
     assert_not_nil s.get_remark_result, 'Remark result was supposed to be created'
     assert_equal s.get_remark_result.marking_state, Result::MARKING_STATES[:unmarked], 'Remark result marking_state should have been automatically set to unmarked'
