@@ -38,7 +38,7 @@ class GradeEntryFormsController < ApplicationController
 
                               if sort_by.present?
                                 if sort_by == 'section'
-                                  Student.joins(:section).all(:conditions => conditions,
+                                  Student.includes(:section).all(:conditions => conditions,
                                                               :order => 'sections.name ' + order)
                                 else
                                   Student.all(:conditions => conditions,
@@ -116,7 +116,7 @@ class GradeEntryFormsController < ApplicationController
     else
       params[:sort_by] = 'last_name'
     end
-    @sort_by = cookies[c_sort_by]
+    @sort_by = params[:sort_by]
     @desc = params[:desc]
     @filters = get_filters(G_TABLE_PARAMS)
     @per_pages = G_TABLE_PARAMS[:per_pages]
@@ -124,7 +124,7 @@ class GradeEntryFormsController < ApplicationController
     all_students = get_filtered_items(G_TABLE_PARAMS,
                                       @filter,
                                       @sort_by,
-                                      params[:desc])
+                                      @desc)
     @students = all_students.paginate(:per_page => @per_page,
                                       :page => @current_page)
     @students_total = all_students.size
@@ -276,10 +276,31 @@ class GradeEntryFormsController < ApplicationController
 
   # Upload the grades for this grade entry form using a CSV file
   def csv_upload
+
     @grade_entry_form = GradeEntryForm.find(params[:id])
-    grades_file = params[:upload][:grades_file]
+
     encoding = params[:encoding]
-    if request.post? && !grades_file.blank?
+    upload = params[:upload]
+
+    #flag to check whether upload should continue. True if upload should be aborted
+    abort_upload = false
+
+    #Did the user upload a file?
+    if upload.blank?
+      flash[:error] = "No file selected!"
+      abort_upload = true
+    else
+      filename = params[:upload][:grades_file].original_filename
+      filename_extension = filename[-4, 4]
+      if filename_extension != ".csv"
+        abort_upload = true
+        flash[:error] = "You did not upload a .csv file."
+      end
+    end
+
+    #If the request is a post type and the abort flag is down (operation can continue)
+    if request.post? && !abort_upload
+      grades_file = params[:upload][:grades_file]
       begin
         GradeEntryForm.transaction do
           invalid_lines = []
@@ -297,8 +318,7 @@ class GradeEntryFormsController < ApplicationController
         end
       end
     end
-
-    redirect_to :action => 'grades', :id => @grade_entry_form.id
+  redirect_to :action => 'grades', :id => @grade_entry_form.id
   end
 
 end
