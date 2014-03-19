@@ -75,7 +75,7 @@ class TasControllerTest < AuthenticatedControllerTest
         assert_redirected_to(:controller => 'tas', :action => 'index')
         c8mahler = Ta.find_by_user_name('c8mahlernew')
         assert_not_nil c8mahler
-        assert_generates '/en/tas/upload_ta_list', :controller => 'tas', :action => 'upload_ta_list'
+        assert_generates '/tas/upload_ta_list', :controller => 'tas', :action => 'upload_ta_list'
         assert_recognizes({:controller => 'tas', :action => 'upload_ta_list' },
           {:path => 'tas/upload_ta_list', :method => :post})
       end

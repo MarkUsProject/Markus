@@ -570,7 +570,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         assert_not_nil test1
         test2 = Assignment.find_by_short_identifier('ATest2')
         assert_not_nil test2
-        assert_generates '/en/assignments/upload_assignment_list', :controller => 'assignments', :action => 'upload_assignment_list'
+        assert_generates '/assignments/upload_assignment_list', :controller => 'assignments', :action => 'upload_assignment_list'
         assert_recognizes({:controller => 'assignments', :action => 'upload_assignment_list' },
                           {:path => 'assignments/upload_assignment_list', :method => :post})
       end
@@ -588,7 +588,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         assert_not_nil test1
         test2 = Assignment.find_by_short_identifier('ATest4')
         assert_not_nil test2
-        assert_generates '/en/assignments/upload_assignment_list', :controller => 'assignments', :action => 'upload_assignment_list'
+        assert_generates '/assignments/upload_assignment_list', :controller => 'assignments', :action => 'upload_assignment_list'
         assert_recognizes({:controller => 'assignments', :action => 'upload_assignment_list' },
                           {:path => 'assignments/upload_assignment_list', :method => :post})
       end

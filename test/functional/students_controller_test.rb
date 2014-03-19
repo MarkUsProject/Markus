@@ -152,7 +152,7 @@ class StudentsControllerTest < AuthenticatedControllerTest
         assert_redirected_to(:controller => 'students', :action => 'index')
         c8mahler = Student.find_by_user_name('c8mahlernew')
         assert_not_nil c8mahler
-        assert_generates '/en/students/upload_student_list', :controller => 'students', :action => 'upload_student_list'
+        assert_generates '/students/upload_student_list', :controller => 'students', :action => 'upload_student_list'
         assert_recognizes({:controller => 'students', :action => 'upload_student_list' },
           {:path => 'students/upload_student_list', :method => :post})
       end

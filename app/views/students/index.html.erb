@@ -1,13 +1,11 @@
-<%= javascript_include_tag 'FilterTable/FilterTable' %>
-<%= javascript_include_tag 'users_manager' %>
-<!-- TODO: see if it's called -->
-<%= javascript_include_tag 'effects.js' %>
-<%= javascript_include_tag 'Students/index' %>
+<% content_for :head do %>
+<%= javascript_include_tag 'users_manager',
+                             'FilterTable/FilterTable',
+                             'effects.js',
+                             'Students/index' %>
 
 <!-- Get necessary data for loading the students table from the _boot.js.erb partial -->
-<script type="text/javascript">
-  <%= render :partial => 'boot', :formats => [:js], :handlers => [:erb] %>
-</script>
+ <%= render :partial => "boot", :formats => [:js], :handlers => [:erb] %>
 
 <script type="text/javascript">
   jQuery(document).ready(function() {
@@ -18,8 +16,10 @@
       className: 'modalNotesGroup',
       fade:false
     });
+   
   });
 </script>
+<% end %>
 
 <div id="title_bar"><h1><%= I18n.t("students.manage_students") %></h1>
   <div class="headingButtons">
@@ -96,6 +96,14 @@
   	      </select>
         </span>
         <%= submit_tag t(:apply), :id => 'apply_bulk_action', :disable_with => I18n.t('working'), :name => 'commit', :class => 'thin-button' %>
+      </div>
+
+      <div class="searchBox">
+        <%= label_tag 'search_students', "Search:",
+          :class => 'bold_inline_label'%>
+        <%= text_field_tag 'search_students', nil,
+           :onkeyup => "users_table.add_filter('search'); users_table.render();",
+           :onkeypress => "stop_submit(event);" %>
       </div>
 
       <div style="overflow:auto; height: 400px;">
