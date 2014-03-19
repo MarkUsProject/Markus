@@ -38,7 +38,7 @@ class GradeEntryFormsController < ApplicationController
 
                               if sort_by.present?
                                 if sort_by == 'section'
-                                  Student.joins(:section).all(:conditions => conditions,
+                                  Student.includes(:section).all(:conditions => conditions,
                                                               :order => 'sections.name ' + order)
                                 else
                                   Student.all(:conditions => conditions,
@@ -116,7 +116,7 @@ class GradeEntryFormsController < ApplicationController
     else
       params[:sort_by] = 'last_name'
     end
-    @sort_by = cookies[c_sort_by]
+    @sort_by = params[:sort_by]
     @desc = params[:desc]
     @filters = get_filters(G_TABLE_PARAMS)
     @per_pages = G_TABLE_PARAMS[:per_pages]
@@ -124,7 +124,7 @@ class GradeEntryFormsController < ApplicationController
     all_students = get_filtered_items(G_TABLE_PARAMS,
                                       @filter,
                                       @sort_by,
-                                      params[:desc])
+                                      @desc)
     @students = all_students.paginate(:per_page => @per_page,
                                       :page => @current_page)
     @students_total = all_students.size
