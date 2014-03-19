@@ -877,6 +877,47 @@ class GradeEntryFormsControllerTest < AuthenticatedControllerTest
       end
     end
 
+    context 'POST on :csv_upload without a .csv file' do
+      setup do
+        @student = Student.make(:user_name => 'c2ÈrÉØrr', :last_name => 'Last', :first_name => 'First')
+        @grade_entry_form = GradeEntryForm.make
+        @grade_entry_student = @grade_entry_form.grade_entry_students.make(:user => @student)
+        @grade_entry_item = @grade_entry_form.grade_entry_items.make(:name => 'something', :position => 1)
+        @current_grade = 5.0
+        @grade_entry_student.grades.make(:grade_entry_item => @grade_entry_item, :grade => @current_grade)
+      end
+
+      should 'display an error when uploading nothing and leave the db unchanged' do
+        post_as @admin,
+                :csv_upload,
+                :id => @grade_entry_form.id,
+                :upload => nil,
+                :encoding => 'UTF-8'
+        assert_response :redirect
+        assert_equal flash[:error], "No file selected!"
+        grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
+            @grade_entry_student.id, @grade_entry_item.id
+        )
+        assert_not_nil grade
+        assert_equal @current_grade, grade.grade
+      end
+
+      should 'display an error when uploading a non-csv file and leave the db unchanged' do
+        post_as @admin,
+                :csv_upload,
+                :id => @grade_entry_form.id,
+                :upload => {:grades_file => fixture_file_upload('files/failfile.txt')},
+                :encoding => 'UTF-8'
+        assert_response :redirect
+        assert_equal flash[:error], "You did not upload a .csv file."
+        grade = Grade.find_by_grade_entry_student_id_and_grade_entry_item_id(
+            @grade_entry_student.id, @grade_entry_item.id
+        )
+        assert_not_nil grade
+        assert_equal @current_grade, grade.grade
+      end
+    end
+
     context 'POST on :csv_upload with column already in db ' do
       setup do
         @student = Student.make(:user_name => 'c2ÈrÉØrr', :last_name => 'Last', :first_name => 'First')
