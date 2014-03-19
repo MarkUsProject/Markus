@@ -25,31 +25,31 @@ class GradeEntryFormsController < ApplicationController
   G_TABLE_PARAMS = {:model => GradeEntryStudent,
                     :per_pages => [15, 30, 50, 100, 150],
                     :filters => {
-                      'none' => {
-                        :display => 'Show All',
-                        :proc => lambda { |sort_by, order, user|
-                          if user.instance_of? Admin
-                            conditions = {:hidden => false}
-                          else
-                            #Display only students to which the TA has been assigned
-                            conditions = {:hidden => false, :id =>
-                              Ta.find(user.id).grade_entry_students.all(:select => :user_id).collect(&:user_id)}
-                          end
+                        'none' => {
+                            :display => 'Show All',
+                            :proc => lambda { |sort_by, order, user|
+                              if user.instance_of? Admin
+                                conditions = {:hidden => false}
+                              else
+                                #Display only students to which the TA has been assigned
+                                conditions = {:hidden => false, :id =>
+                                    Ta.find(user.id).grade_entry_students.all(:select => :user_id).collect(&:user_id)}
+                              end
 
-                          if sort_by.present?
-                            if sort_by == 'section'
-                              Student.joins(:section).all(:conditions => conditions,
-                                  :order => 'sections.name ' + order)
-                            else
-                              Student.all(:conditions => conditions,
-                                :order => sort_by + ' ' + order)
-                            end
-                          else
-                            Student.all(:conditions => conditions,
-                              :order => 'user_name ' + order)
-                          end
-                      }}}
-                    }
+                              if sort_by.present?
+                                if sort_by == 'section'
+                                  Student.includes(:section).all(:conditions => conditions,
+                                                              :order => 'sections.name ' + order)
+                                else
+                                  Student.all(:conditions => conditions,
+                                              :order => sort_by + ' ' + order)
+                                end
+                              else
+                                Student.all(:conditions => conditions,
+                                            :order => 'user_name ' + order)
+                              end
+                            }}}
+  }
 
   # Create a new grade entry form
   def new
@@ -116,7 +116,7 @@ class GradeEntryFormsController < ApplicationController
     else
       params[:sort_by] = 'last_name'
     end
-    @sort_by = cookies[c_sort_by]
+    @sort_by = params[:sort_by]
     @desc = params[:desc]
     @filters = get_filters(G_TABLE_PARAMS)
     @per_pages = G_TABLE_PARAMS[:per_pages]
@@ -124,7 +124,7 @@ class GradeEntryFormsController < ApplicationController
     all_students = get_filtered_items(G_TABLE_PARAMS,
                                       @filter,
                                       @sort_by,
-                                      params[:desc])
+                                      @desc)
     @students = all_students.paginate(:per_page => @per_page,
                                       :page => @current_page)
     @students_total = all_students.size
