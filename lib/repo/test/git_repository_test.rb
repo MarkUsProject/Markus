@@ -13,8 +13,10 @@ include Repository
 # SubversionRepository, an implementation of AbstractRepository
 class GitRepositoryTest < Test::Unit::TestCase
 
+  # NOTE: PATHS PROVIDED MUST BE "/" TERMINATED
+  # AS COMPARED TO SUBVERSION REPOSITORIES
    GIT_TEST_REPOS_DIR = File.expand_path(File.join(File.dirname(__FILE__),"/git_repos"))
-   TEST_REPO = GIT_TEST_REPOS_DIR + "/repo1"
+   TEST_REPO = GIT_TEST_REPOS_DIR + "/repo1/"
    TEST_EXPORT_REPO = GIT_TEST_REPOS_DIR + "/exported_repo1"
    TEST_EXPORT_REPO_2 = GIT_TEST_REPOS_DIR + "/exported_repo2"
    RESOURCE_DIR = File.expand_path(File.join(File.dirname(__FILE__),"/input_files"))

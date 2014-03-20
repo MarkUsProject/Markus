@@ -47,8 +47,7 @@ module Repository
 
       #Create it
       repo = Rugged::Repository.init_at(connect_string, :bare)
-
-      #Do an initial commit to get master.
+      #Do an initial commit to get master. 
       #TODO. find a better way.
       index = Rugged::Index.new
       options = {}
@@ -63,7 +62,8 @@ module Repository
 
       #TODO checks.
       # .new does not exist for Rugged::Repository
-      repo = Rugged::Repository.new(connect_string)
+      #repo = Rugged::Repository.new(connect_string)
+      repo = Rugged::Repository.discover(connect_string)
 
       return true
     end
@@ -72,6 +72,7 @@ module Repository
     # at location 'connect_string'
     def self.open(connect_string)
       repo = GitRepository.new(connect_string)
+      #repo = GitRepository.new(Rugged::Repository.discover(connect_string))
     end
 
     # static method that should yeild to a git repo and then close it
