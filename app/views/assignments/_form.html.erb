@@ -28,7 +28,8 @@
                          :onchange =>  "set_onbeforeunload(true);
                          $('assignment_repository_folder').setValue(
                            $(this).getValue() )",
-                         :maxlength => 30 )%><br />
+                         :maxlength => 30 )%>
+        <div class="help"></div><br />
       <% else %>
         <%= raw( f.text_field :short_identifier ,
                               :onchange =>  "set_onbeforeunload(true);",

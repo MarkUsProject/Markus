@@ -1027,11 +1027,11 @@ input#extra_mark_description{
 }
 
 .help{
-  border: 1px solid #0047FF;
   padding: 3px 30px;
-  background: #EFEFEF url(icons/help_icon.png) no-repeat;
-  background-position: 7px;
-
+  background: url(icons/help_icon.png) no-repeat;
+  display: inline;
+  float: right;
+  height: 50px;
 }
 
 .warning {
