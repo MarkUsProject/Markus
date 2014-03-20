@@ -1,3 +1,5 @@
+require "rubygems"
+require 'docsplit'
 require 'rghost'
 class SubmissionFile < ActiveRecord::Base
 
@@ -16,6 +18,7 @@ class SubmissionFile < ActiveRecord::Base
   validates_presence_of :path
 
   validates_inclusion_of :is_converted, :in => [true, false]
+  validates_inclusion_of :doc_is_converted, :in => [true, false]
 
   def get_file_type
     # This is where you can add more languages that SubmissionFile will
@@ -50,7 +53,7 @@ class SubmissionFile < ActiveRecord::Base
     # comment and the second element being the syntax to end a comment.  Use
     #the language's multiple line comment format.
     case File.extname(filename)
-    when '.java', s'.js', '.c'
+    when '.java', '.js', '.c'
       return %w(/* */)
     when '.rb'
       return ["=begin\n", "\n=end"]
@@ -69,15 +72,11 @@ class SubmissionFile < ActiveRecord::Base
     supported_formats.include?(File.extname(filename))
   end
 
+  
+
   def is_pdf?
     File.extname(filename).casecmp('.pdf') == 0
   end
-  def is_doc?
-case File.extname(filename)
- when '.doc', '.docx', '.odt', '.ods', '.xlsx', 'xls', 'ppt', 'odp'
- return true
- end
- end
 
   # Taken from http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/44936
   def self.is_binary?(file_contents)
@@ -143,30 +142,9 @@ case File.extname(filename)
     FileUtils.remove_file(File.join(storage_path, self.filename), true)
     self.is_converted = true
     self.save
-  end
-
-
-def convert_doc_to_jpg
-    return unless MarkusConfigurator.markus_config_doc_support && self.is_doc?
-    m_logger = MarkusLogger.instance
-    storage_path = File.join(MarkusConfigurator.markus_config_doc_storage,
-      self.submission.grouping.group.repository_name,
-      self.path)
-    
- file_path = File.join(storage_path, self.filename.split('.')[0])
-    self.export_file(storage_path)
-  
-    # Convert a doc file to jpg files
-   ext=self.get_file_type
-   Docsplit.extract_images("#{file_path}/#{ext}", :output => storage_path)
-      if file.error
-      m_logger.log('docsplit: Image conversion error')
     end
-
-   
-  end
-
-  def get_file_type
+   # return doc type
+   def get_file_type(filename)
     
     case File.extname(filename)
     when '.docx'
@@ -189,6 +167,38 @@ def convert_doc_to_jpg
       return 'unknown'
     end
   end
+
+
+    def is_doc?
+     case File.extname(filename)
+     when '.doc', '.docx', '.odt', '.ods', '.xlsx', 'xls', 'ppt', 'odp'
+     return true
+     end
+ end
+
+  def convert_doc_to_png
+    return unless MarkusConfigurator.markus_config_doc_support && self.is_doc?
+    m_logger = MarkusLogger.instance
+    storage_path = File.join(MarkusConfigurator.markus_config_doc_storage,
+      self.submission.grouping.group.repository_name,
+      self.path)
+  file_path= File.join(storage_path,self.filename.split('.')[0])
+                                  
+
+    self.export_file(storage_path)
+  
+    # Convert a doc file to jpg files
+    ext=self.get_file_type
+   Docsplit.extract_images("#{file_path}/#{ext}", :output => storage_path)
+      if file.error
+      m_logger.log('docsplit: Image conversion error')
+    end
+
+    
+    self.doc_is_converted = true
+    
+  end
+
   # Return the contents of this SubmissionFile.  Include annotations in the
   # file if include_annotations is true.
   def retrieve_file(include_annotations=false)
