@@ -33,7 +33,7 @@
       <% else %>
         <%= raw( f.text_field :short_identifier ,
                               :onchange =>  "set_onbeforeunload(true);",
-                              :maxlength => 30 ) %><br />
+                              :maxlength => 30 ) %><div class="help"><br />
       <% end %>
 
       <%= raw( f.label :description, t("assignment.name").html_safe ) %>
@@ -133,7 +133,7 @@
     <%= t("assignment.notice.change_marking_scheme_type")%>
   </div>
   <fieldset>
-    <legend><%= t("assignment.marking_scheme.title").html_safe %></legend>
+    <legend><%= t("assignment.marking_scheme.title").html_safe %></legend><div class="help"> </div>
     <% Assignment::MARKING_SCHEME_TYPE.each do |key,value| %>
       <p>
         <%= raw( f.radio_button :marking_scheme_type, Assignment::MARKING_SCHEME_TYPE[key],
@@ -150,6 +150,7 @@
     <% end %>
   </fieldset>
   <fieldset>
+    <div class="help"> </div>
     <legend><%= t("assignment.required_files") %></legend>
     <h4><%= t("assignment.required_files_by_student") %></h4>
      <div id="assignment_files">
@@ -165,7 +166,7 @@
   </fieldset>
 
   <fieldset>
-    <legend><%= t("assignment.type") %></legend>
+    <legend><%= t("assignment.type") %></legend><div class="help"> </div>
     <p id="persist_groups_assignment_style" <%='style="display:none;"' unless @assignments.size > 0 && @assignment.id.nil? %> class="disable">
       <%= check_box_tag "persist_groups", true, false, :id => "persist_groups", :onclick => "toggle_persist_groups($(this).getValue());", :disabled => true%>
       <%= label_tag "persist_groups",
@@ -234,7 +235,7 @@
   </fieldset>
 
   <fieldset>
-    <legend><%= t("assignment.submission_rules").html_safe %></legend>
+    <legend><%= t("assignment.submission_rules").html_safe %></legend><div class="help"> </div>
 
     <%= f.fields_for :submission_rule do |rule| %>
       <h5><%= t("assignment.submission.penalty_rules").html_safe %></h5>
@@ -351,7 +352,7 @@
   </fieldset>
 
   <fieldset>
-    <legend><%= t("assignment.remark.rules")%></legend>
+    <legend><%= t("assignment.remark.rules")%></legend><div class="help"> </div>
     <p id="allow_remark_requests">
       <%= raw( f.check_box(:allow_remarks,
                       {:id => "allow_remarks",
