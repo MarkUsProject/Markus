@@ -152,19 +152,42 @@ def convert_doc_to_jpg
     storage_path = File.join(MarkusConfigurator.markus_config_doc_storage,
       self.submission.grouping.group.repository_name,
       self.path)
-
- file_path = File.join(storage_path, self.filename.split('.')[0] + '.pdf')
+    
+ file_path = File.join(storage_path, self.filename.split('.')[0])
     self.export_file(storage_path)
   
     # Convert a doc file to jpg files
-   Docsplit.extract_images("#{file_path}/#{file_name}.DOC", :output => file_path)
+   ext=self.get_file_type
+   Docsplit.extract_images("#{file_path}/#{ext}", :output => storage_path)
       if file.error
       m_logger.log('docsplit: Image conversion error')
     end
 
-    FileUtils.remove_file(File.join(storage_path, self.filename), true)
-    self.is_converted = true
-    self.save
+   
+  end
+
+  def get_file_type
+    
+    case File.extname(filename)
+    when '.docx'
+      return '.docx'
+    when '.doc'
+      return '.doc'
+    when '.slsx'
+      return '.xlsx'
+    when '.odt'
+      return '.odt'
+    when '.xls'
+      return '.xls'
+    when '.ods'
+      return '.ods'
+    when '.ppt'
+      return '.ppt'
+    when '.odp'
+      return '.odp'
+    else
+      return 'unknown'
+    end
   end
   # Return the contents of this SubmissionFile.  Include annotations in the
   # file if include_annotations is true.

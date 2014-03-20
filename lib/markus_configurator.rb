@@ -53,6 +53,13 @@ def markus_config_doc_storage
       return false
     end
   end
+  def markus_config_doc_support
+    if defined? DOC_SUPPORT
+      return DOC_SUPPORT
+    else
+      return false
+    end
+  end
 
   def markus_config_repository_type
     if defined? REPOSITORY_TYPE
