@@ -170,6 +170,8 @@ en:
             flexible: "Flexible"
         notice:
             change_marking_scheme_type: "Changing marking scheme will delete your criteria and marks."
+        help:
+            properties: "This is the test for Assignment Properties."
         allow_web_submits: "Allow Web Submits?<span class='required_field'>*</span>"
         is_hidden: "Hide assignment from students?"
         display_grader_names_to_students: "Display grader names to students?<span class='required_field'>*</span>"

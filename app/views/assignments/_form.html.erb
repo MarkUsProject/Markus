@@ -29,7 +29,7 @@
                          $('assignment_repository_folder').setValue(
                            $(this).getValue() )",
                          :maxlength => 30 )%>
-        <div class="help"></div><br />
+       <div class="help"></div> <div class="help-message"><p><%= t("assignment.help.properties")%></p></div><br />
       <% else %>
         <%= raw( f.text_field :short_identifier ,
                               :onchange =>  "set_onbeforeunload(true);",
