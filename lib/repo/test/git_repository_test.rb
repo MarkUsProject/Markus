@@ -33,15 +33,15 @@ class GitRepositoryTest < Test::Unit::TestCase
                     "Unable to creat a Git repository")
      end
 
-    should "be able to open an existing Git repository" do
-      GitRepository.create(TEST_REPO)
-      repo = GitRepository.open(TEST_REPO)
-      assert_not_nil(repo, "Cannot open supversion repository")
-      assert_instance_of(Repository::GitRepository,
-                         repo,
-                         "Repository is of wrong type")
-      repo.close()
-    end
+    # should "be able to open an existing Git repository" do
+    #   GitRepository.create(TEST_REPO)
+    #   repo = GitRepository.open(TEST_REPO)
+    #   assert_not_nil(repo, "Cannot open supversion repository")
+    #   assert_instance_of(Repository::GitRepository,
+    #                      repo,
+    #                      "Repository is of wrong type")
+    #   repo.close()
+    # end
 
   #   should "be able to access an existing Subversion repository" do
   #     SubversionRepository.create(TEST_REPO)
@@ -65,7 +65,7 @@ class GitRepositoryTest < Test::Unit::TestCase
   #     SubversionRepository.delete(TEST_REPO)
   #     assert(!File.exists?(TEST_REPO), "Did not properly delete the repository")
   #   end
-  # end
+  end
 
   # context "A SubversionRepository instance" do
 

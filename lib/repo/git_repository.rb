@@ -62,7 +62,8 @@ module Repository
       Rugged::Commit.create(repo, options)
 
       #TODO checks.
-      repo = Rugged::Repository.new(connect_string)
+      # .new does not exist for Rugged::Repository
+      #repo = Rugged::Repository.new(connect_string)
 
       return true
     end
