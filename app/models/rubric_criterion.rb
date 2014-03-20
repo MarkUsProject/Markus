@@ -4,7 +4,7 @@ require 'iconv'
 class RubricCriterion < ActiveRecord::Base
   before_save :round_weight
   after_save :update_existing_results
-  set_table_name 'rubric_criteria' # set table name correctly
+  self.table_name = 'rubric_criteria' # set table name correctly
   belongs_to :assignment, :counter_cache => true
   has_many :marks, :as => :markable, :dependent => :destroy
   has_many :criterion_ta_associations,
@@ -134,7 +134,7 @@ class RubricCriterion < ActiveRecord::Base
     #Check that the weight is not a string.
     begin
       criterion.weight = Float(working_row.shift)
-    rescue ArgumentError => e
+    rescue ArgumentError
       raise ActiveRecord::RecordNotSaved, I18n.t('criteria_csv_error.weight_not_number')
     end
     # Only set the position if this is a new record.
@@ -146,8 +146,8 @@ class RubricCriterion < ActiveRecord::Base
       criterion['level_' + i.to_s + '_name'] = working_row.shift
     end
     # the rest of the values are level descriptions.
-    working_row.each_with_index do |desc, i|
-      criterion['level_' + i.to_s + '_description'] = desc
+    (0..RUBRIC_LEVELS-1).each do |i|
+      criterion['level_' + i.to_s + '_description'] = working_row.shift
     end
     unless criterion.save
       raise ActiveRecord::RecordNotSaved.new(criterion.errors)
@@ -182,11 +182,11 @@ class RubricCriterion < ActiveRecord::Base
     #Check that the weight is not a string.
     begin
       criterion.weight = Float(key[1]['weight'])
-    rescue ArgumentError => e
+    rescue ArgumentError
       raise I18n.t('criteria_csv_error.weight_not_number')
-    rescue TypeError => e
+    rescue TypeError
       raise I18n.t('criteria_csv_error.weight_not_number')
-    rescue NoMethodError => e
+    rescue NoMethodError
       raise I18n.t('rubric_criteria.upload.empty_error')
     end
     # Only set the position if this is a new record.

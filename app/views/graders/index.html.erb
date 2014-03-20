@@ -3,7 +3,7 @@
                            'Graders/tabs_boot.js',
                            'Graders/index' %>
 
-<%= render :partial => "boot.js.erb" %>
+<%= render :partial => "boot", :formats => [:js], :handlers => [:erb] %>
 
 <div id="title_bar">
   <h1><%= I18n.t("graders.manage_graders") %></h1>
@@ -111,7 +111,7 @@ $("global_action_form").observe('ajax:success', function(evt, status, data, xhr)
 
             <label class="bold_inline_label"><%= t('browse_submissions.sections') %></label>
             <%= select('selection_groupings', 'sections',
-                       Section.all.collect { |s| [s.name] },
+                       Section.order('name ASC').all.collect { |s| [s.name] },
                        { :include_blank => ' - ' },
                        { :onchange => 'groupings_table.add_filter("selection");
                        return groupings_table.render();',

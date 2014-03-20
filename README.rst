@@ -132,20 +132,24 @@ MarkUs' development has been supported by the University of Toronto, École
 Centrale de Nantes, et. al. Kudos to everyone who turned that support into
 working code:
 
-Aaron Lee, Adam Goucher, Aimen Khan, Alexandre Lissy, Alex Krassikov, Alysha Kwok,
-Amanda Manarin, Andrew Louis, Anthony Le Jallé, Anton Braverman, Benjamin Thorent,
-Benjamin Vialle, Bertan Guven, Brian Xu, Bryan Shen, Camille Guérin, Catherine
-Fawcett, Christian Jacques, Christine Yu, Clément Delafargue, Clément Schiano,
-Danesh Dadachanji, Daryn Lam, Daniel St. Jules, Dina Sabie, Diane Tam, Egor
-Philippov, Erik Traikov, Evan Browning, Farah Juma, Fernando Garces, Gabriel Roy-
-Lortie, Geoffrey Flores, Ghislain Guiot, Hanson Wu, Horatiu Halmaghi, Ian Smith,
-Ibrahim Shahin, Jay Parekh, Jérôme Gazel, Jiahui Xu, Jordan Saleh, Joseph Mate,
-Joseph Maté, Justin Foong, Karel Kahula, Kurtis Schmidt, Luke Kysow, Marc Bodmer,
-Mélanie Gaudet, Michael Lumbroso, Mike Conley, Mike Gunderloy, Mike Stewart, Mike
-Wu, Misa Sakamoto, Neha Kumar, Nelle Varoquaux, Nicolas Bouillon, Nick Lee, Nicolas
-Carougeau, Noé Bedetti, Oloruntobi Ogunbiyi, Oussama Ben Amar, Razvan Vlaicu, Robert
-Burke, Samuel Gougeon, Sean Budning, Severin Gehwolf, Shion Kashimura, Simon Lavigne-
-Giroux, Tara Clark, Tianhai Hu, Valentin Roger, Veronica Wong, Victoria Mui, Victor
-Ivri, Vivien Suen, Yansong Zang
+Aaron Lee, Abdelhamid Benmouffok, Adam Goucher, Aimen Khan, Alexandre Lissy,
+Alex Krassikov, Alysha Kwok, Amanda Manarin, Andrew Louis, Andrey Kulakevich,
+Ante Zheng, Anthony Labaere, Anthony Le Jallé, Anton Braverman, Augustin Doury,
+Benjamin Thorent, Benjamin Vialle, Bertan Guven, Brian Bo, Brian Xu, Bryan Shen,
+Camille Guérin, Catherine Fawcett, Christian Jacques, Christine Yu, Claire Mayer,
+Clément Delafargue, Clément Schiano, Danesh Dadachanji, Daniel St. Jules, Daryn Lam,
+Derek Dowling, Diane Tam, Dina Sabie, Egor Philippov, Emerik Morency, Erik Traikov,
+Evan Browning, Farah Juma, Fernando Garces, François Neber, Gabriel Roy-Lortie,
+Gaëtan Girin, Geoffrey Flores, Ghislain Guiot, Hanson Wu, Horatiu Halmaghi, Ian Smith,
+Ibrahim Shahin, Jay Parekh, Jeffrey Ling, Jérôme Gazel, Jiahui Xu, Joel Burford,
+Joey Perry, Jordan Saleh, Joseph Mate, Joseph Maté, Julien Starozinski, Justin Foong,
+Karel Kahula, Kira McCoan, Kristian Lejao, Kurtis Schmidt, Loïc Labagnara, Luke Kysow,
+Marc Bodmer, Mélanie Gaudet, Michael Ing, Michael Lumbroso, Michael Margel, Mike Conley,
+Mike Gunderloy, Mike Stewart, Mike Wu, Mina Almasry, Misa Sakamoto, Neha Kumar,
+Nelle Varoquaux, Nick Lee, Nicolas Bouillon, Nicolas Carougeau, Noé Bedetti,
+Oloruntobi Ogunbiyi, Oussama Ben Amar, Razvan Vlaicu, Robert Burke, Samuel Gougeon,
+Sean Budning, Severin Gehwolf, Shion Kashimura, Simon Lavigne-Giroux, Tara Clark,
+Tianhai Hu, Valentin Roger, Veronica Wong, Victoria Mui, Victor Ivri, Vivien Suen,
+Yansong Zang
 
 Supervisors: Karen Reid, Morgan Magnin

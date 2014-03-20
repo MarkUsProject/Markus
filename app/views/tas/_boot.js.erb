@@ -1,7 +1,6 @@
-<script type="text/javascript">
-//<![CDATA[
+﻿<script type="text/javascript">
 
-document.observe("dom:loaded", function() {
+jQuery(document).ready(function() {
 
   users_table = new FilterTable({
     table_id: $('tas'),
@@ -21,11 +20,16 @@ document.observe("dom:loaded", function() {
     footer: true,
   });
 
-  new Ajax.Request('<%= populate_tas_path() %>',
-                   {asynchronous:true, evalScripts:true,
-                   onComplete:function(request){$('loading_list').hide();},
-                   parameters: 'authenticity_token=' + AUTH_TOKEN})
+	jQuery.ajax({
+		url: "<%= populate_tas_path() %>",
+		data: 'authenticity_token='+AUTH_TOKEN,
+		type: "POST",
+		async: true,
+		dataType: 'json'
+		}).done(function (data){
+			jQuery('#loading_list').hide();
+			populate(JSON.stringify(data));
+		});
+		
 });
-
-//]]>
 </script>

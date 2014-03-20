@@ -59,7 +59,7 @@ def help
   return message
 end
 
-def load_params()
+def load_params
   # By default, non verbose output
   params = {:verbose => false}
 

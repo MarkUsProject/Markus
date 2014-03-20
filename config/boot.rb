@@ -9,5 +9,5 @@ require 'bundler/setup' if File.exists?(ENV['BUNDLE_GEMFILE'])
 # on Ruby 1.9
 if RUBY_VERSION > "1.9"
   require 'yaml'
-  YAML::ENGINE.yamler= 'syck'
+  YAML::ENGINE.yamler = 'syck' if (defined?(Syck) || defined?(YAML::Syck)) && defined?(YAML::ENGINE)
 end

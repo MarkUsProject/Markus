@@ -138,7 +138,7 @@ class Student < User
           raise 'Sorry!  For some reason, your grouping could not be created.  Please wait a few seconds, and hit refresh to try again.  If you come back to this page, you should inform the course instructor.'
         end
       # This exception will only be thrown when we try to save to a grouping that already exists
-      rescue ActiveRecord::RecordNotUnique => e
+      rescue ActiveRecord::RecordNotUnique
         # transaction has failed, so quit it
         return false
       end

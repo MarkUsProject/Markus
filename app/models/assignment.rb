@@ -293,7 +293,7 @@ class Assignment < ActiveRecord::Base
       submission = grouping.current_submission_used
       unless submission.nil?
         result = submission.get_latest_result
-        if result.released_to_students
+        if result.marking_state == Result::MARKING_STATES[:complete]
           results.push result.total_mark
           results_sum += result.total_mark * grouping.student_membership_number
           results_count += 1

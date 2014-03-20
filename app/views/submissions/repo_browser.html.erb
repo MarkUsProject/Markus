@@ -1,6 +1,6 @@
 <%= javascript_include_tag "FilterTable/FilterTable.js" %>
 <%= javascript_include_tag "repo_browser.js" %>
-<%= render :partial => "repo_browser_boot.js.erb" %>
+<%= render :partial => "repo_browser_boot", :formats => [:js], :handlers => [:erb] %>
 <%= calendar_date_select_includes "silver" %>
 
 

@@ -64,8 +64,7 @@ class AnnotationsController < ApplicationController
     result = Result.find(params[:result_id])
     result.overall_comment = params[:overall_comment]
     result.save
-    render :update do |page|
-    end
+    render :update
   end
 
   #Updates the marking state
