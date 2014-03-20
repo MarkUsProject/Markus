@@ -63,7 +63,7 @@ module Repository
 
       #TODO checks.
       # .new does not exist for Rugged::Repository
-      #repo = Rugged::Repository.new(connect_string)
+      repo = Rugged::Repository.new(connect_string)
 
       return true
     end
