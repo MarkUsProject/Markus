@@ -199,6 +199,7 @@ class SubmissionCollector < ActiveRecord::Base
       new_submission = Submission.create_by_revision_number(grouping, rev_num)
       new_submission.submission_files.each do |subm_file|
         subm_file.convert_pdf_to_jpg if subm_file.is_pdf?
+      end
         subm_file.convert_doc_to_png if subm_file.is_doc?
       end
       grouping.is_collected = true

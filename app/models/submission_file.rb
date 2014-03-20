@@ -143,30 +143,7 @@ class SubmissionFile < ActiveRecord::Base
     self.is_converted = true
     self.save
     end
-   # return doc type
-   def get_file_type(filename)
-    
-    case File.extname(filename)
-    when '.docx'
-      return '.docx'
-    when '.doc'
-      return '.doc'
-    when '.slsx'
-      return '.xlsx'
-    when '.odt'
-      return '.odt'
-    when '.xls'
-      return '.xls'
-    when '.ods'
-      return '.ods'
-    when '.ppt'
-      return '.ppt'
-    when '.odp'
-      return '.odp'
-    else
-      return 'unknown'
-    end
-  end
+   
 
 
     def is_doc?
@@ -182,14 +159,13 @@ class SubmissionFile < ActiveRecord::Base
     storage_path = File.join(MarkusConfigurator.markus_config_doc_storage,
       self.submission.grouping.group.repository_name,
       self.path)
-  file_path= File.join(storage_path,self.filename.split('.')[0])
+  file_path= File.join(storage_path,self.filename)
                                   
 
     self.export_file(storage_path)
   
     # Convert a doc file to jpg files
-    ext=self.get_file_type
-   Docsplit.extract_images("#{file_path}/#{ext}", :output => storage_path)
+   Docsplit.extract_images("#{file_path}", :output => storage_path)
       if file.error
       m_logger.log('docsplit: Image conversion error')
     end
