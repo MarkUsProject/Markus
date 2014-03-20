@@ -39,6 +39,17 @@ document.observe('dom:loaded', function () {
 
 });
 
+/**Updates a cell. Called from Rails controller grade_entry_forms/update_grade to
+ * check if a cell exists before updating it, as cell existence can't be efficiently
+ * checked from the Ruby controller
+ */
+function update_cell(cell, value){
+    // If the cell exists, change it's value to the one supplied
+    if ($(cell)) {
+        $(cell).value = value;
+    }
+}
+
 /**
  * get all of the grade input fields, attach an observer that updates
  * the grade when it is changed
