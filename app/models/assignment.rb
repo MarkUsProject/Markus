@@ -320,7 +320,7 @@ class Assignment < ActiveRecord::Base
     else
        median_quantity = results_sorted[results_count/2]
     end
-    # Need to avoid divide by zero
+    # Avoiding division by 0
     if self.total_mark == 0
       self.results_average = 0
       self.results_median = 0
