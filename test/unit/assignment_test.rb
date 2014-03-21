@@ -323,12 +323,12 @@ class AssignmentTest < ActiveSupport::TestCase
         @membership = StudentMembership.make(:grouping => Grouping.make(:assignment => @assignment),:membership_status => StudentMembership::STATUSES[:accepted])
         sub = Submission.make(:grouping => @membership.grouping)
         @result = sub.get_latest_result
-      end
-
-      should 'return the correct results average mark' do
         @result.marking_state = Result::MARKING_STATES[:complete]
         @result.released_to_students = true
         @result.save
+      end
+
+      should 'return the correct results average mark' do
         assert @assignment.set_results_statistics
         assert_equal(0, @assignment.results_average)
         assert_equal(0, @assignment.results_median)
