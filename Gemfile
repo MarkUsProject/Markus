@@ -12,6 +12,8 @@ source 'http://rubygems.org'
 gem 'rails', '3.2.16'
 gem 'rubyzip', '0.9.9'
 gem 'ya2yaml'
+gem 'libreconv'
+gem 'docsplit'
 gem 'i18n'
 gem 'will_paginate'
 gem 'fastercsv', :platforms => :ruby_18

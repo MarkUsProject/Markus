@@ -30,6 +30,13 @@ module MarkusConfigurator
       return File.join(::Rails.root.to_s, "converted_pdf_dir")
     end
   end
+def markus_config_doc_storage
+    if defined? DOC_STORAGE
+      return DOC_STORAGE
+    else
+      return File.join(::Rails.root.to_s, "converted_doc_dir")
+    end
+  end
 
   def markus_config_pdf_conv_memory_allowance
     if defined? PDF_CONV_MEMORY_ALLOWANCE
@@ -42,6 +49,13 @@ module MarkusConfigurator
   def markus_config_pdf_support
     if defined? PDF_SUPPORT
       return PDF_SUPPORT
+    else
+      return false
+    end
+  end
+  def markus_config_doc_support
+    if defined? DOC_SUPPORT
+      return DOC_SUPPORT
     else
       return false
     end

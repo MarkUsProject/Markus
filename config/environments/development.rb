@@ -121,6 +121,10 @@ Markus::Application.configure do
   # is allowed to write to this directory
 
   PDF_STORAGE = "#{::Rails.root.to_s}/data/dev/pdfs"
+  ###################################################################
+  # Directory where converted DOC files will be stored as JPEGs. Make sure MarkUs
+  # is allowed to write to this directory
+  DOC_STORAGE = "#{::Rails.root.to_s}/data/dev/doc"
 
   ###################################################################
   # Directory where the Automated Testing Repositories will be created.
@@ -132,7 +136,8 @@ Markus::Application.configure do
   # PDF documents within the browser.
   # When collecting pdfs files, it converts them to jpg format via RGhost.
   # RGhost is ghostscript dependent. Be sure ghostscript is installed.
-  PDF_SUPPORT = false
+  PDF_SUPPORT = true
+  DOC_SUPPORT = true
 
   ###################################################################
   # Change this to 'REPOSITORY_EXTERNAL_SUBMITS_ONLY = true' if you

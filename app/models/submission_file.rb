@@ -1,3 +1,5 @@
+require "rubygems"
+require 'docsplit'
 require 'rghost'
 class SubmissionFile < ActiveRecord::Base
 
@@ -16,6 +18,7 @@ class SubmissionFile < ActiveRecord::Base
   validates_presence_of :path
 
   validates_inclusion_of :is_converted, :in => [true, false]
+  validates_inclusion_of :doc_is_converted, :in => [true, false]
 
   def get_file_type
     # This is where you can add more languages that SubmissionFile will
@@ -68,6 +71,8 @@ class SubmissionFile < ActiveRecord::Base
     supported_formats = %w(.jpeg .jpg .gif .png)
     supported_formats.include?(File.extname(filename))
   end
+
+  
 
   def is_pdf?
     File.extname(filename).casecmp('.pdf') == 0
@@ -137,6 +142,37 @@ class SubmissionFile < ActiveRecord::Base
     FileUtils.remove_file(File.join(storage_path, self.filename), true)
     self.is_converted = true
     self.save
+    end
+   
+
+
+    def is_doc?
+     case File.extname(filename)
+     when '.doc', '.docx', '.odt', '.ods', '.xlsx', 'xls', 'ppt', 'odp'
+     return true
+     end
+ end
+
+  def convert_doc_to_png
+    return unless MarkusConfigurator.markus_config_doc_support && self.is_doc?
+    m_logger = MarkusLogger.instance
+    storage_path = File.join(MarkusConfigurator.markus_config_doc_storage,
+      self.submission.grouping.group.repository_name,
+      self.path)
+  file_path= File.join(storage_path,self.filename)
+                                  
+
+    self.export_file(storage_path)
+  
+    # Convert a doc file to jpg files
+   Docsplit.extract_images("#{file_path}", :output => storage_path)
+      if file.error
+      m_logger.log('docsplit: Image conversion error')
+    end
+
+    
+    self.doc_is_converted = true
+    
   end
 
   # Return the contents of this SubmissionFile.  Include annotations in the
