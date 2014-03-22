@@ -315,10 +315,10 @@ class Assignment < ActiveRecord::Base
     results_sorted = results.sort
     median_quantity = 0
     if (results_count % 2) == 0
-       median_quantity = (results_sorted[results_count/2 - 1]
+      median_quantity = (results_sorted[results_count/2 - 1]
                         + results_sorted[results_count/2]).to_f / 2
     else
-       median_quantity = results_sorted[results_count/2]
+      median_quantity = results_sorted[results_count/2]
     end
     # Avoiding division by 0
     if self.total_mark == 0
@@ -327,7 +327,11 @@ class Assignment < ActiveRecord::Base
       return self.save
     end
     self.results_median = (median_quantity * 100 / self.total_mark)
-    avg_quantity = results_sum / students_count
+    if students_count == 0
+      avg_quantity = 0
+    else
+      avg_quantity = results_sum / students_count
+    end
     # compute average in percent
     self.results_average = (avg_quantity * 100 / self.total_mark)
     self.save
