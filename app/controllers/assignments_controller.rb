@@ -61,7 +61,6 @@ class AssignmentsController < ApplicationController
 
   def student_interface
     @assignment = Assignment.find(params[:id])
-    
     if @assignment.is_hidden
       render :file => "public/404.html", :status => 404
       return
