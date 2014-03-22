@@ -37,18 +37,12 @@
       <% elsif @current_user.ta? %>
         <li class="level2">
           <% if assignment.is_hidden %>
-              <%= link_to t("assignment.hidden",
-                              :assignment_text => h(assignment.short_identifier)),
-                    :controller => 'submissions',
-                    :action => 'browse',
-                    :id => assignment.id %>
+              <%= link_to t("assignment.hidden", :assignment_text => h(assignment.short_identifier)), 
+                  browse_assignment_submissions_path(assignment) %>
           <% else %>
-              <%= link_to h(assignment.short_identifier),
-                    :controller => 'submissions',
-                    :action => 'browse',
-                    :id => assignment.id %>
-          <% end %>
-		</li>
+              <%= link_to h(assignment.short_identifier), browse_assignment_submissions_path(assignment) %>
+           <% end %>
+		    </li>
       <% else %>
         <li class="level2">
           <% if assignment.is_hidden %>
