@@ -95,11 +95,11 @@ ActiveRecord::Schema.define(:version => 20140207162800) do
     t.boolean  "allow_remarks",                    :default => true,     :null => false
     t.datetime "remark_due_date"
     t.text     "remark_message"
-    t.boolean  "is_hidden",                        :default => false
     t.float    "results_median"
     t.integer  "results_fails"
     t.integer  "results_zeros"
     t.integer  "outstanding_remark_request_count"
+    t.boolean  "is_hidden",                        :default => false
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true
