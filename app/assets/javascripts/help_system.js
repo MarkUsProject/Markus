@@ -1,8 +1,12 @@
+//= require prototype
 //= require jquery
 //= require jquery-ui
 //= require jquery_ujs
 
 
-$(document).on('click', '.help', function(){
-    alert(1);
+//var helpButton = document.getElementsByClassName('.help');
+jQuery(document).ready(function() {
+jQuery(".help").click(function(){
+    jQuery(".help-message").toggle();
+});
 });
