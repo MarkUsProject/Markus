@@ -200,7 +200,7 @@ class GradeEntryForm < ActiveRecord::Base
               final_result.push(grade.grade || BLANK_MARK)
             end
           end
-          total_percent = self.calculate_total_percent(student.id)
+          total_percent = self.calculate_total_percent(grade_entry_student)
           final_result.push(total_percent)
         end
         csv << final_result
