@@ -171,7 +171,19 @@ en:
         notice:
             change_marking_scheme_type: "Changing marking scheme will delete your criteria and marks."
         help:
-            properties: "This is the test for Assignment Properties."
+            properties:
+              short_identifier:     "Help placeholder for Assignment: Short identifier."
+              assignment_name:      "Help placeholder for Assignment: Assignment Name."
+              message:              "Help placeholder for Assignment: Message."
+              section_due_dates:    "Help placeholder for Assignment: Section Due Dates"
+              due_date:             "Help placeholder for Assignment: Due Date"
+              web_submits:          "Help placeholder for Assignment: Web Submits."
+              display_grader_names: "Help placeholder for Assignment: Display Grader Names"
+              hide_assignment:      "Help placeholder for Assignment: Hide Assignment"
+
+            marking_scheme:     "Help placeholder for Assignment: Marking Scheme."
+
+
         allow_web_submits: "Allow Web Submits?<span class='required_field'>*</span>"
         is_hidden: "Hide assignment from students?"
         display_grader_names_to_students: "Display grader names to students?<span class='required_field'>*</span>"

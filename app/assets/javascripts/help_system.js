@@ -3,10 +3,10 @@
 //= require jquery-ui
 //= require jquery_ujs
 
-
-//var helpButton = document.getElementsByClassName('.help');
 jQuery(document).ready(function() {
-jQuery(".help").click(function(){
-    jQuery(".help-message").toggle();
-});
+    jQuery(".help-message").hide();
+    jQuery(".help").click(function(){
+        var help_section = (jQuery(this).attr('class').split(' ')[1]);
+        jQuery(".help-message").filter("."+help_section).toggle();
+    });
 });

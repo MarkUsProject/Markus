@@ -29,7 +29,8 @@
                          $('assignment_repository_folder').setValue(
                            $(this).getValue() )",
                          :maxlength => 30 )%>
-       <div class="help"></div> <div class="help-message"><p><%= t("assignment.help.properties")%></p></div><br />
+        <p class="help-message assignment_properties_help" ><%= t("assignment.help.properties.short_identifier")%></p>
+       <div class="help assignment_properties_help"></div><br />
       <% else %>
         <%= raw( f.text_field :short_identifier ,
                               :onchange =>  "set_onbeforeunload(true);",
@@ -38,11 +39,13 @@
 
       <%= raw( f.label :description, t("assignment.name").html_safe ) %>
       <%= raw( f.text_field :description,
-                            :onchange => "set_onbeforeunload(true);" ) %><br />
+                            :onchange => "set_onbeforeunload(true);" ) %>
+      <p class="help-message assignment_properties_help"><%= t("assignment.help.properties.assignment_name")%></p><br />
       <%= raw( f.label :message ) %>
       <%= raw( f.text_area  :message,
                             :rows => 8, :cols => 65,
-                            :onchange => "set_onbeforeunload(true);" ) %><br />
+                            :onchange => "set_onbeforeunload(true);" ) %>
+    <p class="help-message assignment_properties_help"><%= t("assignment.help.properties.message")%></p><br />
 
       <% if !@sections.empty? %>
         <div id="section_due_dates_type_form_right" class="information">
@@ -54,6 +57,7 @@
           <%= raw( f.check_box  :section_due_dates_type,
                                 :checked => @assignment.section_due_dates_type,
                                 :onclick => "set_onbeforeunload(true);" ) %>
+        <p class="help-message assignment_properties_help"><%= t("assignment.help.properties.section_due_dates")%></p>
         </div>
 
         <div id="section_due_dates_information" style="<%= 'display: none' unless @assignment.section_due_dates_type %>">
@@ -90,7 +94,8 @@
 
       <%# TODO The following code seriously needs some clean up  !!!!  %>
 
-      <%= t(:iso_due_date_format_example) %><br />
+      <%= t(:iso_due_date_format_example) %>
+      <p class="help-message assignment_properties_help"><%= t("assignment.help.properties.due_date")%></p><br />
 
       <%= raw( f.label :repository_folder, t(:repository_folder).html_safe ) %>
       /<%= raw( f.text_field :repository_folder, :onchange => "set_onbeforeunload(true);" ) %><br />
@@ -107,7 +112,8 @@
                         :onchange => "set_onbeforeunload(true);" ) %>
       <%= raw( f.label :allow_web_submits_false,
                  t("answer_no"),
-                 :class => "radio_label" )  %><br />
+                 :class => "radio_label" )  %>
+      <p class="help-message assignment_properties_help"><%= t("assignment.help.properties.web_submits")%></p><br />
       <%= raw( f.label :display_grader_names_to_students,
                   t("assignment.display_grader_names_to_students").html_safe ) %>&nbsp;&nbsp;
       <%= raw( f.radio_button :display_grader_names_to_students,
@@ -124,7 +130,8 @@
       <%= raw( f.label :display_grader_names_to_students_false,
                   t("answer_no"),
                   :class => "radio_label" ) %>
-     <br />
+      <p class="help-message assignment_properties_help"><%= t("assignment.help.properties.display_grader_names")%></p>
+      <br />
       
      <%= f.label :is_hidden, t("assignment.is_hidden") %>&nbsp;&nbsp;
      <%= f.radio_button :is_hidden, true,
@@ -135,6 +142,7 @@
                               :checked => !@assignment.is_hidden,
                               :onchange => "set_onbeforeunload(true);" %>
      <%= f.label :is_hidden_false, t("answer_no"), :class => "radio_label"%>
+     <p class="help-message assignment_properties_help"><%= t("assignment.help.properties.hide_assignment")%></p>
      <br />
      <br />
   </fieldset>
@@ -143,7 +151,9 @@
     <%= t("assignment.notice.change_marking_scheme_type")%>
   </div>
   <fieldset>
-    <legend><%= t("assignment.marking_scheme.title").html_safe %></legend><div class="help"> </div>
+    <legend><%= t("assignment.marking_scheme.title").html_safe %></legend>
+    <div class="help assignment_marking_scheme_help"> </div>
+    <p class="help-message assignment_marking_scheme_help"><%= t("assignment.help.marking_scheme")%></p><br />
     <% Assignment::MARKING_SCHEME_TYPE.each do |key,value| %>
       <p>
         <%= raw( f.radio_button :marking_scheme_type, Assignment::MARKING_SCHEME_TYPE[key],
