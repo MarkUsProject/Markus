@@ -1,7 +1,9 @@
 document.observe('dom:loaded', function() {
 
   // changing the marking status
-  new Form.Element.EventObserver('marking_state', function(element, value) {
+  new Form.Element.EventObserver('marking_state', update_status);
+
+  function update_status(element, value) {
 
     var url = element.readAttribute('data-action');
 
@@ -15,7 +17,7 @@ document.observe('dom:loaded', function() {
       evalScripts: true,
       parameters: params
     });
-  });
+  }
 
   // releasing the grades, only available on the admin page
   var release = $('released')
@@ -65,6 +67,11 @@ document.observe('dom:loaded', function() {
       });
     });
   });
+
+  /* Update Server status if state change is not currently reflected on server */
+  if (event.target == $('marking_state') && event.memo.reason == 'Update Server'){
+    update_status($('marking_state'), $('marking_state').value);
+  }
 });
 
 function focus_mark_criterion(id) {
@@ -101,4 +108,16 @@ function select_mark(mark_id, mark) {
 function update_total_mark(total_mark) {
   $('current_mark_div').update(total_mark);
   $('current_total_mark_div').update(total_mark);
+}
+
+function update_marking_state_selected(current_marking_state, new_marking_state){
+    $('marking_state').value = new_marking_state;
+
+    var error_message = document.getElementById('criterion_incomplete_error');
+
+    /* Update server state if error displayed or new state is different from server state */
+    if(error_message.style.display != 'none' || current_marking_state != new_marking_state){
+       error_message.style.display = 'none';
+       Event.fire($('marking_state'), "dom:loaded", {reason: 'Update Server'});
+    }
 }

@@ -533,6 +533,17 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
     end  # -- with an assignment
 
+    context 'with a hidden assignment' do
+      setup do
+        @assignment = Assignment.make(:short_identifier => 'AHidden',:is_hidden => true)
+      end
+
+      should 'be able to view it' do
+        get_as @admin, :index
+        assert @response.body.include?(@assignment.short_identifier)
+      end
+    end # -- with a hidden assignment
+
     context ', on :download_assignment_list,' do
 
       should 'be able to download a csv file' do
@@ -655,6 +666,17 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
       end
 
     end  # -- with an Assignment
+
+    context 'with a hidden assignment' do
+      setup do
+        @assignment = Assignment.make(:short_identifier => 'AHidden',:is_hidden => true)
+      end
+
+      should 'be able to view it' do
+        get_as @grader, :index
+        assert @response.body.include?(@assignment.short_identifier)
+      end
+    end # -- with a hidden assignment
   end  # -- with a Grader
 
   context 'A student' do
@@ -1227,7 +1249,17 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
         end
       end
+    end # -- with an assignmt, with past due date but collection in future'
+
+    context 'with a hidden assignment' do
+      setup do
+        @assignment = Assignment.make(:short_identifier => 'AHidden',:is_hidden => true)
+      end
+
+      should 'not be able to view it' do
+        get_as @student, :index
+        assert !@response.body.include?(@assignment.short_identifier)
+      end
     end
   end  # -- A student
-
 end

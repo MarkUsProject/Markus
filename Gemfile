@@ -20,7 +20,6 @@ gem 'dynamic_form'
 # is not compatible with Rails 3.0.x
 gem 'exception_notification', '<4.0'
 gem 'minitest',"4.7.5", :platforms => :ruby_20
-
 gem 'json'
 gem 'coffee-script'
 gem 'jquery-rails'
@@ -31,6 +30,8 @@ group :assets do
   gem 'sass-rails',   '~> 3.2.3'
   gem 'coffee-rails', '~> 3.2.1'
   gem 'uglifier',     '>= 1.0.3'
+  gem 'execjs'
+  gem 'therubyracer'
 end
 
 

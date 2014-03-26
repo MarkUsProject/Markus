@@ -119,6 +119,7 @@ en:
       successfully_collected: "Successfully collected %{collected} submissions."
       marking_incomplete_warning: "Note: Not all of the assignments have been marked.\n\nAre you sure you want to proceed?"
     assignment:
+        hidden: "%{assignment_text} (hidden)"
         assignment: "Assignment %{short_identifier}"
         required_fields: "Required Fields<span class='required_field'>*</span>"
         name:           "Assignment Name<span class='required_field'>*</span>"
@@ -170,6 +171,7 @@ en:
         notice:
             change_marking_scheme_type: "Changing marking scheme will delete your criteria and marks."
         allow_web_submits: "Allow Web Submits?<span class='required_field'>*</span>"
+        is_hidden: "Hide assignment from students?"
         display_grader_names_to_students: "Display grader names to students?<span class='required_field'>*</span>"
         section_due_date_option:  "If the section due dates option is checked, students can only form groups within their section."
         section_due_dates_info:  "<b>Important</b> The global due date needs to be filled in. If a section has no due date specified, the global due date will be used instead. Students not assigned to any section will only be allowed to form groups with students without section either."
