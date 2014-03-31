@@ -11,7 +11,7 @@ document.observe('dom:loaded', function () {
      grade elements loaded when this happens have not had bindEventToGradeEntry()
      called on them, and modifying them will do nothing. So we need to detect the
      change of elements and call bindEventToGradeEntry() on the new grade boxes.
-    */
+     */
 
     // The following from https://developer.mozilla.org/en/docs/Web/API/MutationObserver
 
@@ -23,10 +23,19 @@ document.observe('dom:loaded', function () {
     var target = document.querySelector('#content');
 
     // create an observer instance
-    var observer = new MutationObserver(function(mutations) {
+    var observer = new MutationObserver(function (mutations) {
         // For any mutation observed, call bindEventToGradeEntry();
-        mutations.forEach(function(mutation) {
-            bindEventToGradeEntry();
+        mutations.forEach(function (mutation) {
+
+            // We only want bindEventToGradeEntry() to be called only when it hasn't been
+            // called on a set of grade boxes already. To accomplish this, check if an
+            // attribute exists in the table. If it exists, we called bindEventToGradeEntry()
+            // already. If not, call bindEventToGradeEntry(), then add the attribute.
+            var attr = $('grades').attributes["bound"];
+            if (attr == undefined) {
+                $('grades').attributes['bound'] = 'true';
+                bindEventToGradeEntry();
+            }
         });
     });
 
@@ -43,7 +52,7 @@ document.observe('dom:loaded', function () {
  * check if a cell exists before updating it, as cell existence can't be efficiently
  * checked from the Ruby controller
  */
-function update_cell(cell, value){
+function update_cell(cell, value) {
     // If the cell exists, change it's value to the one supplied
     if ($(cell)) {
         $(cell).value = value;
