@@ -1,5 +1,8 @@
 document.observe('dom:loaded', function () {
 
+    // Prevent the enter key from releasing grades
+    preventDefault();
+
     // Bind the 'send data to db' event to all grade id boxes
     bindEventToGradeEntry();
 
@@ -47,6 +50,17 @@ document.observe('dom:loaded', function () {
     observer.observe(target, config);
 
 });
+
+/** This function will prevent the default HTML5 action of submitting the content form
+ *  when the user presses "enter". As an Admin user, this would release the grades.
+ */
+function preventDefault(){
+    jQuery(document).keypress(function(event){
+        if (event.which == 13) {
+            event.preventDefault();
+        }
+    });
+}
 
 /**Updates a cell. Called from Rails controller grade_entry_forms/update_grade to
  * check if a cell exists before updating it, as cell existence can't be efficiently
