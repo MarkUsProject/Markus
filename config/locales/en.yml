@@ -171,18 +171,13 @@ en:
         notice:
             change_marking_scheme_type: "Changing marking scheme will delete your criteria and marks."
         help:
-            properties:
-              short_identifier:     "Help placeholder for Assignment: Short identifier."
-              assignment_name:      "Help placeholder for Assignment: Assignment Name."
-              message:              "Help placeholder for Assignment: Message."
-              section_due_dates:    "Help placeholder for Assignment: Section Due Dates"
-              due_date:             "Help placeholder for Assignment: Due Date"
-              web_submits:          "Help placeholder for Assignment: Web Submits."
-              display_grader_names: "Help placeholder for Assignment: Display Grader Names"
-              hide_assignment:      "Help placeholder for Assignment: Hide Assignment"
-
-            marking_scheme:     "Help placeholder for Assignment: Marking Scheme."
-
+            assignment_form:
+                properties: "Ever man are put down his very. And marry may table him avoid. Hard sell it were into it upon. He forbade affixed parties of assured to me windows. Happiness him nor she disposing provision. Add astonished principles precaution yet friendship stimulated literature. State thing might stand one his plate. Offending or extremity therefore so difficult he on provision. Tended depart turned not are. "
+                marking_scheme: "Help placeholder for Assignment: Marking Scheme."
+                required_files: "Help placeholder for Assignment: Required Files."
+                assignment_type: "Help placeholder for Assignment: Assignment Type."
+                submission_rules: "Help placeholder for Assignment: Submission Rules."
+                remark_request_rules: "Help placeholder for Assignment: Remark Request Rules."
 
         allow_web_submits: "Allow Web Submits?<span class='required_field'>*</span>"
         is_hidden: "Hide assignment from students?"
