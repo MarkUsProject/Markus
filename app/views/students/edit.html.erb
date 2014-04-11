@@ -1,8 +1,9 @@
 
 <%= javascript_include_tag 'Students/edit' %>
+<%= javascript_include_tag 'help_system' %>
 
 <div id="title_bar">
-<h1><%= I18n.t("students.edit_student") %></h1>
+<h1><%= I18n.t("students.edit_student") %></h1><span class="help users_students_edit"></span>
 </div>
 <div class="wrapLeft">
   <%= render :partial => "student_form", :locals => {:action => 'update'} -%>
