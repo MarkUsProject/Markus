@@ -62,7 +62,13 @@
     <div class="help submissions_help"></div>
 </h1>
 </div>
-<p class="help-message-title submissions_help" ><%= t("assignment.help.submissions")%></p>
+<p class="help-message-title submissions_help" >
+  <% if @current_user.ta? %>
+      <%=t("assignment.help.submissions_graders")%>
+  <% else %>
+      <%= t("assignment.help.submissions_admins")%>
+  <%end%>
+</p>
 <div class="help-break submissions_help"></div>
 <div class="wrapLeft">
   <% if flash[:error] %>
