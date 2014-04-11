@@ -110,6 +110,7 @@
   </script>
 <% end %>
 
+<%= javascript_include_tag "help_system" %>
 
 <% if @assignment.past_due_date? %>
 <div class="notice">
@@ -118,7 +119,7 @@
 <% end %>
 
 <div id="title_bar">
-  <h1><%= I18n.t("groups.manage_groups") %></h1>
+  <h1><%= I18n.t("groups.manage_groups") %><span class="title-help assignment_groups_help"></span></h1>
   <div class="colRightGroups">
       <div class="headingButtons  ">
       <%  # Allow cloning groups forward only if its web submits are disallowed
@@ -135,7 +136,8 @@
   </div> <!-- colrightgroups-->
 
   </div> <!-- title_bar-->
-
+<p class="help-message-tooltip assignment_groups_help" ><%= t("assignment.help.groups")%></p>
+<div class="help-break assignment_groups_help" ></div>
 
 <div class="wrapLeft">
 </div>
