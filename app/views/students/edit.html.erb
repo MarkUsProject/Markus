@@ -9,6 +9,8 @@
   <%= render :partial => "student_form", :locals => {:action => 'update'} -%>
   <h3><%= t('submission_rules.grace_period_submission_rule.deductions')%></h3>
   <div id="grace_period_deductions">
+    <p class="help-message-title users_students_edit" ><%= t("students.help.edit_students.grace_period_deduction")%></p>
+    <div class="help-break users_students_edit"></div>
     <%= render :partial => 'grace_period_deductions',
       :locals => {:grace_period_deductions => @user.grace_period_deductions}%>
   </div>

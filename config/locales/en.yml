@@ -590,6 +590,9 @@ en:
         manage_students: "Ever man are put down his very. And marry may table him avoid. Hard sell it were into it upon. He forbade affixed parties of assured to me windows. Happiness him nor she disposing provision. Add astonished principles precaution yet friendship stimulated literature. State thing might stand one his plate. Offending or extremity therefore so difficult he on provision. Tended depart turned not are."
         edit_students:
           grace_credit_left: "Placeholder for Grace Credit Left."
+          grace_period_deduction: "Ever man are put down his very. And marry may table him avoid. Hard sell it were into it upon. He forbade affixed parties of assured to me windows. Happiness him nor she disposing provision. Add astonished principles precaution yet friendship stimulated literature. State thing might stand one his plate. Offending or extremity therefore so difficult he on provision. Tended depart turned not are."
+        manage_graders: "Ever man are put down his very. And marry may table him avoid. Hard sell it were into it upon. He forbade affixed parties of assured to me windows. Happiness him nor she disposing provision. Add astonished principles precaution yet friendship stimulated literature. State thing might stand one his plate. Offending or extremity therefore so difficult he on provision. Tended depart turned not are."
+
 
     hide_students:      "Mark as inactive"
     unhide_students:    "Mark as active"
@@ -745,6 +748,8 @@ en:
       update:
         success: "Successfully updated admin %{user_name}."
         error:   "Failed to update admin."
+      help:
+        manage_admins: "Sentiments two occasional affronting solicitude travelling and one contrasted. Fortune day out married parties. Happiness remainder joy but earnestly for off. Took sold add play may none him few. If as increasing contrasted entreaties be. Now summer who day looked our behind moment coming. Pain son rose more park way that. An stairs as be lovers uneasy."
 
     rubrics:
       move_criterion:
@@ -1066,6 +1071,7 @@ en:
             title: "Edit Note"
         update:
             success: "Note was successfully updated."
+        help: "Be at miss or each good play home they. It leave taste mr in it fancy. She son lose does fond bred gave lady get. Sir her company conduct expense bed any. Sister depend change off piqued one. Contented continued any happiness instantly objection yet her allowance. Use correct day new brought tedious. By come this been in. Kept easy or sons my it done. "
 
     add_criterion:                "Add Criterion"
     criteria_edit_total_mark:     "This criterion will be marked out of %{criterion_total_mark}"
@@ -1116,6 +1122,8 @@ en:
         link_confirm: "This will remove this section permanently. Continue?"
         error_permissions: "You do not have sufficient permissions to delete this section."
         not_empty: "You cannot delete this section because it has students in it."
+      help:
+        manage_users: "Oh he decisively impression attachment friendship so if everything. Whose her enjoy chief new young. Felicity if ye required likewise so doubtful. On so attention necessary at by provision otherwise existence direction. Unpleasing up announcing unpleasant themselves oh do on. Way advantage age led listening belonging supposing."
 
     date:
       formats:

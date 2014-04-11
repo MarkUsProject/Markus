@@ -16,7 +16,7 @@
 
     <%= raw(f.label(:grace_credits, I18n.t("user.grace_credits"))) %>
     <%= raw(f.text_field :grace_credits) %>
-    <p class="help-message-tooltip users_students_edit" ><%= t("assignment.help.groups")%></p>
+    <p class="help-message-tooltip users_students_edit" ><%= t("students.help.edit_students.grace_credit_left")%></p>
 
     <div id='select_sections'>
       <%= render :partial => 'sections/select_sections',
