@@ -5,8 +5,10 @@
 
 <%= render :partial => "boot", :formats => [:js], :handlers => [:erb] %>
 
+<%= javascript_include_tag "help_system" %>
+
 <div id="title_bar">
-  <h1><%= I18n.t("graders.manage_graders") %></h1>
+  <h1><%= I18n.t("graders.manage_graders") %><span class="title-help assignment_graders_help"></span></h1>
   <div class="colRightGroups">
       <div class="headingButtons">
       <%= button_to_function I18n.t('download'), 'modal_download.open();' %>
@@ -16,7 +18,8 @@
   </div> <!-- colrightgroups-->
 
   </div> <!-- title_bar-->
-
+<p class="help-message-tooltip assignment_graders_help" ><%= t("assignment.help.graders")%></p>
+<div class="help-break assignment_graders_help" ></div>
 
 <div class="wrapLeft">
 </div>
