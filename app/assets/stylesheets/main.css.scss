@@ -1035,6 +1035,14 @@ input#extra_mark_description{
   float: right;
 }
 
+.title-help{
+  padding: 3px 30px;
+  background: url(icons/help_icon.png) no-repeat;
+  height: 40px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
 .help-message-tooltip{
   font-style: normal;
   display: inline-block;
