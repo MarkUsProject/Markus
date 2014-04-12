@@ -146,14 +146,10 @@ GEM
       multi_json (~> 1.0)
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
-<<<<<<< HEAD
-    sqlite3 (1.3.8)
+    sqlite3 (1.3.9)
     therubyracer (0.12.0)
       libv8 (~> 3.16.14.0)
       ref
-=======
-    sqlite3 (1.3.9)
->>>>>>> Adding gemfile.lock after setting calendar as a gem.
     thor (0.18.1)
     tilt (1.3.7)
     time-warp (1.0.13)
