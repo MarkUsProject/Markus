@@ -36,7 +36,7 @@ class SubversionRepositoryTest < Test::Unit::TestCase
     should "be able to open an existing Subversion repository" do
       SubversionRepository.create(TEST_REPO)
       repo = SubversionRepository.open(TEST_REPO)
-      assert_not_nil(repo, "Cannot open supversion repository")
+      assert_not_nil(repo, "Cannot open subversion repository")
       assert_instance_of(Repository::SubversionRepository,
                          repo,
                          "Repository is of wrong type")
