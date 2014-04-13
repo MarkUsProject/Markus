@@ -1,7 +1,7 @@
 document.observe('dom:loaded', function () {
 
     // Prevent the enter key from releasing grades
-    preventDefault();
+    preventEnterSubmit();
 
     // Bind the 'send data to db' event to all grade id boxes
     bindEventToGradeEntry();
@@ -54,7 +54,7 @@ document.observe('dom:loaded', function () {
 /** This function will prevent the default HTML5 action of submitting the content form
  *  when the user presses "enter". As an Admin user, this would release the grades.
  */
-function preventDefault(){
+function preventEnterSubmit(){
     jQuery(document).keypress(function(event){
         if (event.which == 13) {
             event.preventDefault();
