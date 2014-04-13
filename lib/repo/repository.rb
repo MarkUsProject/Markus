@@ -86,22 +86,22 @@ module Repository
 
     #Static method: Yields an existing Repository and closes it afterwards
     def self.access(connect_string)
-      raise NotImplementedError, "Repository::create Not yet implemented"
+      raise NotImplementedError, "Repository::access Not yet implemented"
     end
 
     #Static method: Deletes an existing Subversion repository
     def self.delete(connect_string)
-      raise NotImplementedError, "Repository::create Not yet implemented"
+      raise NotImplementedError, "Repository::delete Not yet implemented"
     end
 
     #Closes the repository
     def close
-      raise NotImplementedError, "Repository::create Not yet implemented"
+      raise NotImplementedError, "Repository::close Not yet implemented"
     end
 
     #Tests if the repository is closed
     def closed?
-      raise NotImplementedError, "Repository::create Not yet implemented"
+      raise NotImplementedError, "Repository::closed Not yet implemented"
     end
 
     # Given either an array of, or a single object of class RevisionFile,
