@@ -72,7 +72,6 @@ module Repository
     # at location 'connect_string'
     def self.open(connect_string)
       repo = GitRepository.new(connect_string)
-      #repo = GitRepository.new(Rugged::Repository.discover(connect_string))
     end
 
     # static method that should yeild to a git repo and then close it
