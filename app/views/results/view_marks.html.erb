@@ -51,16 +51,18 @@
 <%
 # Javascript for showing/hiding old marks
 %>
-<%= render :partial => "results/common/old_marks_view_functions.html"%>
+<%= render :partial => "results/common/old_marks_view_functions", :formats => [:html] %>
 
 <%
 # Javascript for test result window
 %>
-<%= render :partial => "assignments/test_result_window.html", :locals => {:aid => @assignment.id}  %>
+<%= render :partial => "assignments/test_result_window", :formats => [:html],
+  :locals => {:aid => @assignment.id}  %>
 
-<%= render :partial => "results/common/annotations.js" %>
-<%= render :partial => "results/student/boot.js", :locals => {:first_file => @first_file} %>
-<%= render :partial => "results/student/enable_remark_request_buttons.js" %>
+<%= render :partial => "results/common/annotations", :formats => [:js] %>
+<%= render :partial => "results/student/boot",
+  :formats => [:js], :locals => {:first_file => @first_file} %>
+<%= render :partial => "results/student/enable_remark_request_buttons", :formats => [:js] %>
 <div id="title_bar">
 <h1>Results For <%= sanitize(@assignment.short_identifier) %></h1>
 </div>

@@ -113,14 +113,14 @@ if __FILE__ == $0
     #require "debug"
     req = Net::HTTP::Get.new(login_url.path)
     req.add_field('Cookie', cookie)
-    res2 = Net::HTTP.start(login_url.host, login_url.port) {|http|
+    Net::HTTP.start(login_url.host, login_url.port) {|http|
       http.request(req)
     }
     #require "debug"
     assignment_url = URI.parse("http://b2270-02.red.sandbox/markus/app1/main/assignments/student_interface/1")
     get_req = Net::HTTP::Get.new(assignment_url.path)
     get_req.add_field('Cookie', cookie)
-    res3 = Net::HTTP.start(assignment_url.host, assignment_url.port) {|http|
+    Net::HTTP.start(assignment_url.host, assignment_url.port) {|http|
       http.request(get_req)
     }
     #require "debug"

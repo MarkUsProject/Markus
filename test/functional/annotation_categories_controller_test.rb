@@ -204,8 +204,10 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
     end
 
     context 'As another admin' do
-        should 'update last_editor_id with editor.id' do 
-          get_as @editor,
+        should 'update last_editor_id with editor.id' do
+            AnnotationText.any_instance.expects(:update_attributes).with(
+              @annotation_text)
+            get_as @editor,
                 :update_annotation,
                 :assignment_id => 1,
                 :id => @annotation_text.id,
@@ -258,13 +260,13 @@ class AnnotationCategoriesControllerTest < AuthenticatedControllerTest
                 :assignment_id => @assignment.id,
                 :format => 'csv'
         assert_response :success
-        assert_equal response.header['Content-Type'], 'application/octet-stream'
+        assert_equal 'text/csv', response.header['Content-Type']
       end
 
       should 'in yml' do
         get_as @admin, :download, :assignment_id => @assignment.id, :format => 'yml'
         assert_response :success
-        assert_equal response.header['Content-Type'], 'application/octet-stream'
+        assert_equal  'application/octet-stream', response.header['Content-Type']
       end
 
       should 'in error' do

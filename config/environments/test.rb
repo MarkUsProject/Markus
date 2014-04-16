@@ -12,7 +12,7 @@ Markus::Application.configure do
 
   # Show full error reports and disable caching
   config.consider_all_requests_local = true
-  config.action_controller.perform_caching             = false
+  config.action_controller.perform_caching = false
 
   # Disable request forgery protection in test environment
   config.action_controller.allow_forgery_protection = false
@@ -30,6 +30,13 @@ Markus::Application.configure do
 
   require 'ruby-debug' if RUBY_VERSION == "1.8.7"
   require 'debugger' if RUBY_VERSION > "1.9"
+
+  # Raise exception on mass assignment protection for Active Record models
+  config.active_record.mass_assignment_sanitizer = :strict
+
+  # Log the query plan for queries taking more than this (works
+  # with SQLite, MySQL, and PostgreSQL)
+  config.active_record.auto_explain_threshold_in_seconds = 1.0
 
   ###################################################################
   # MarkUs SPECIFIC CONFIGURATION

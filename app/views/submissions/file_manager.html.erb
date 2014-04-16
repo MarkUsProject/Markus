@@ -1,7 +1,9 @@
 <%=javascript_include_tag "file_manager"%>
 <%= javascript_include_tag "FilterTable/FilterTable.js" %>
-<%= render :partial => "shared/navigation_warning.js.erb" %>
-<%= render :partial => "file_manager_boot.js.erb" %>
+<%= render :partial => "shared/navigation_warning",
+           :formats => [:js], :handlers => [:erb] %>
+<%= render :partial => "file_manager_boot",
+           :formats => [:js], :handlers => [:erb] %>
 
 <div id="title_bar">
   <h1><%= I18n.t("student.submission.file_manager", :short_identifier => sanitize(@assignment.short_identifier)) %></h1>

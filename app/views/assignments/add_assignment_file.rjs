@@ -1,2 +1,0 @@
-page.insert_html :bottom, :files, :partial => 'file_fields',
-  :locals => { :assignment_file => @assignment_file }

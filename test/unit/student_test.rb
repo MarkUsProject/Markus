@@ -202,7 +202,7 @@ class StudentTest < ActiveSupport::TestCase
     setup do
       @membership1 = StudentMembership.make(:membership_status => StudentMembership::STATUSES[:inviter])
       @grouping = @membership1.grouping
-      @membership2 = StudentMembership.make({:grouping => @grouping, :membership_status => StudentMembership::STATUSES[:accepted]});
+      @membership2 = StudentMembership.make({:grouping => @grouping, :membership_status => StudentMembership::STATUSES[:accepted]})
       @student1 = @membership1.user
       @student2 = @membership2.user
 

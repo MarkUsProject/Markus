@@ -47,8 +47,7 @@ module Repository
 
       #Create it
       repo = Rugged::Repository.init_at(connect_string, :bare)
-
-      #Do an initial commit to get master.
+      #Do an initial commit to get master. 
       #TODO. find a better way.
       index = Rugged::Index.new
       options = {}
@@ -62,7 +61,9 @@ module Repository
       Rugged::Commit.create(repo, options)
 
       #TODO checks.
-      repo = Rugged::Repository.new(connect_string)
+      # .new does not exist for Rugged::Repository
+      #repo = Rugged::Repository.new(connect_string)
+      repo = Rugged::Repository.discover(connect_string)
 
       return true
     end
